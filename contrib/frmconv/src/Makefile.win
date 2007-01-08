@@ -1,0 +1,36 @@
+# Project: frmconv
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = mingw32-g++.exe
+CC   = mingw32-gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = frm.o frmconv.o out_png.o $(RES)
+LINKOBJ  = frm.o frmconv.o out_png.o $(RES)
+LIBS =  -L"lib" -lws2_32 -lpng  
+INCS =  -I"include" 
+CXXINCS =  -I"lib/gcc/mingw32/3.4.2/include"  -I"include/c++/3.4.2/backward"  -I"include/c++/3.4.2/mingw32"  -I"include/c++/3.4.2"  -I"include"  -I"C:/boost_1_33_0" 
+BIN  = frmconv.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS) --std=c99  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before frmconv.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "frmconv.exe" $(LIBS)
+
+frm.o: frm.c
+	$(CC) -c frm.c -o frm.o $(CFLAGS)
+
+frmconv.o: frmconv.c
+	$(CC) -c frmconv.c -o frmconv.o $(CFLAGS)
+
+out_png.o: out_png.c
+	$(CC) -c out_png.c -o out_png.o $(CFLAGS)
