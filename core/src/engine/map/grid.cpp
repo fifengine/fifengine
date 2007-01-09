@@ -63,13 +63,19 @@ namespace FIFE { namespace map {
 		return m_shift;
 	}
 
+	size_t Grid::getTileImage(int32_t x, int32_t y) const {
+		return getTileImage(Point(x,y));
+	}
+
 	size_t Grid::getTileImage(const Point& p) const {
 		if (!isValidPosition(p) || m_tiles.empty()) {
 			return 0;
 		}
 		return m_tiles[p.x + p.y * m_size.x];
 	}
-
+	void Grid::setTileImage(int32_t x, int32_t y, size_t id) {
+		setTileImage(Point(x,y),id);
+	}
 	void Grid::setTileImage(const Point& p, size_t id) {
 		if (m_tiles.empty()) {
 			m_tiles.resize(m_size.x * m_size.y);
@@ -79,6 +85,22 @@ namespace FIFE { namespace map {
 		}
 		m_tiles[p.x + p.y * m_size.x] = id;
 	}
+
+	Grid::type_paramgrid& Grid::getParamGrid(uint8_t type) {
+		return m_paramgrids.at(type);
+	}
+	const Grid::type_paramgrid& Grid::getParamGrid(uint8_t type) const {
+		return m_paramgrids.at(type);
+	}
+
+	long Grid::getParam(const Point& p, uint8_t type) const {
+		return m_paramgrids.at(type).at(p.x + p.y * m_size.x);
+	}
+
+	void Grid::setParam(const Point& p, uint8_t type, long value) {
+		m_paramgrids.at(type).at(p.x + p.y * m_size.x) = value;
+	}
+
 
 	void Grid::setTilesVisible(bool vis) {
 		m_tiles_visibility = vis;
