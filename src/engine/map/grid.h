@@ -26,6 +26,7 @@
 #include <string>
 
 // 3rd party library includes
+#include <boost/variant.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -119,22 +120,42 @@ namespace FIFE { namespace map {
 			/** API for grid point parameters
 			 *  @bug THIS WILL FAIL - WIP
 			 */
-			type_paramgrid& getParamGrid(uint8_t type);
+			template<typename T>
+			std::vector<T>& getParamGrid(uint8_t type) {
+				return boost::get<T>(m_paramgrids.at(type));
+			}
 			
 			/** API for grid point parameters
 			 *  @bug THIS WILL FAIL - WIP
 			 */
-			const type_paramgrid& getParamGrid(uint8_t type) const;
+			template<typename T>
+			const std::vector<T>& getParamGrid(uint8_t type) const {
+				return boost::get<T>(m_paramgrids.at(type));
+			}
+			
+			/** API for grid point parameters
+			 *  @bug THIS WILL FAIL - WIP
+			 */
+			template<typename T>
+			const T& getParam(const Point& p, uint8_t type) const {
+				return boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x);
+			}
 
 			/** API for grid point parameters
 			 *  @bug THIS WILL FAIL - WIP
 			 */
-			long getParam(const Point& position, uint8_t type) const;
+			template<typename T>
+			T& getParam(const Point& p, uint8_t type)  {
+				return boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x);
+			}
 
 			/** API for grid point parameters
 			 *  @bug THIS WILL FAIL - WIP
 			 */
-			void setParam(const Point& position, uint8_t type, long value);
+			template<typename T>
+			void setParam(const Point& p, uint8_t type, const T& value) {
+				boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x) = value;
+			}
 
 			/** Set Tiles visible
 			 */
@@ -214,7 +235,13 @@ namespace FIFE { namespace map {
 			Geometry* m_geometry;
 			std::string m_overlay_image;
 
-			std::vector<type_paramgrid> m_paramgrids;
+			typedef boost::variant<
+				std::vector<long>,
+				std::vector<bool>,
+				std::vector<float>
+			> type_vargrid;
+
+			std::vector<type_vargrid> m_paramgrids;
 	};
 } } // FIFE::map
 

@@ -86,22 +86,6 @@ namespace FIFE { namespace map {
 		m_tiles[p.x + p.y * m_size.x] = id;
 	}
 
-	Grid::type_paramgrid& Grid::getParamGrid(uint8_t type) {
-		return m_paramgrids.at(type);
-	}
-	const Grid::type_paramgrid& Grid::getParamGrid(uint8_t type) const {
-		return m_paramgrids.at(type);
-	}
-
-	long Grid::getParam(const Point& p, uint8_t type) const {
-		return m_paramgrids.at(type).at(p.x + p.y * m_size.x);
-	}
-
-	void Grid::setParam(const Point& p, uint8_t type, long value) {
-		m_paramgrids.at(type).at(p.x + p.y * m_size.x) = value;
-	}
-
-
 	void Grid::setTilesVisible(bool vis) {
 		m_tiles_visibility = vis;
 	}
