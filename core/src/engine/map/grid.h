@@ -62,9 +62,7 @@ namespace FIFE { namespace map {
 	 *
 	 *  Attributes:
 	 *  <pre>
-	 *	grid-overlay:	Image of the grid cell outline ("tile_outline.png")
 	 * 	name:		Name of the grid ("floor")
-	 *	do-render:	true, if the grid shall be rendered.
 	 *  </pre>
 	 *  
 	 *  Future:
@@ -114,18 +112,56 @@ namespace FIFE { namespace map {
 			 */
 			void setTileImage(const Point& position, size_t image_id);
 
+			/** Set Tiles visible
+			 */
 			void setTilesVisible(bool vis);
+
+			/** Toggle tile visibility
+			 * @see setTilesVisible
+			 */
 			void toggleTilesVisible();
+
+			/** Check tile visibility
+			 * @see setTilesVisible
+			 */
 			bool areTilesVisible() const;
 
+			/** Set object visibility
+			 */
 			void setObjectsVisible(bool vis);
+
+			/** Toggle object visibility
+			 *  @see setObjectsVisible
+			 */
 			void toggleObjectsVisible();
+
+			/** Check object visibility
+			 *  @see setObjectsVisible
+			 */
 			bool areObjectsVisible() const;
 
-			uint8_t getGlobalAlpha() const;
+			/** Set global tile alpha value
+			 *  All tiles are rendered with this alpha value.
+			 */
 			void setGlobalAlpha(uint8_t);
+
+			/** Get global tile alpha value
+			 *  @see setGlobalAlpha
+			 */
+			uint8_t getGlobalAlpha() const;
+
+			/** Change global tile alpha value
+			 *  Ensures no overflow happens and the alpha
+			 *  value stays between 0 (transparent) and
+			 *  255(opaque)
+			 *  @see setGlobalAlpha
+			 */
 			void addToGlobalAlpha(int delta);
 
+			/** Check whether the grid lines shall be drawn
+			 *  Grid lines are drawn by setting an overlay
+			 *  image, which is drawn over each tiles position
+			 */
 			bool isGridOverlayEnabled() const;
 			void setGridOverlayEnabled(bool e);
 			void toggleGridOverlayEnabled();
