@@ -71,6 +71,8 @@ namespace FIFE { namespace map {
 	 */
 	class Grid : public AttributedClass {
 		public:
+			typedef std::vector<long> type_paramgrid;
+
 			/** Constructs a MapGrid instance
 			 */
 			Grid(const Point& size, size_t geometry);
@@ -102,6 +104,7 @@ namespace FIFE { namespace map {
 			 *  @return An image id for the position
 			 */
 			size_t getTileImage(const Point&) const;
+			size_t getTileImage(int32_t x,int32_t y) const;
 
 			/** Get the tile image id of a position
 			 *  @note If the position is invalid nothing is changed
@@ -111,6 +114,27 @@ namespace FIFE { namespace map {
 			 *  @param image_id An image id for the position
 			 */
 			void setTileImage(const Point& position, size_t image_id);
+			void setTileImage(int32_t x,int32_t y, size_t image_id);
+
+			/** API for grid point parameters
+			 *  @bug THIS WILL FAIL - WIP
+			 */
+			type_paramgrid& getParamGrid(uint8_t type);
+			
+			/** API for grid point parameters
+			 *  @bug THIS WILL FAIL - WIP
+			 */
+			const type_paramgrid& getParamGrid(uint8_t type) const;
+
+			/** API for grid point parameters
+			 *  @bug THIS WILL FAIL - WIP
+			 */
+			long getParam(const Point& position, uint8_t type) const;
+
+			/** API for grid point parameters
+			 *  @bug THIS WILL FAIL - WIP
+			 */
+			void setParam(const Point& position, uint8_t type, long value);
 
 			/** Set Tiles visible
 			 */
@@ -189,6 +213,8 @@ namespace FIFE { namespace map {
 			Point m_shift;
 			Geometry* m_geometry;
 			std::string m_overlay_image;
+
+			std::vector<type_paramgrid> m_paramgrids;
 	};
 } } // FIFE::map
 
