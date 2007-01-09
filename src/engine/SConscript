@@ -1,0 +1,58 @@
+import os
+
+Import('env')
+
+our_config_name = 'SFConfig'
+
+def get_files(expected, path, names):
+	# Check if this folder is included for the current build
+	for (k, v) in expected.items():
+		if env[k] != v:
+			return []
+
+	# It passes the filter, so use all cpp files.
+	return [os.path.join(path, x) for x in names if x.endswith('.cpp')]
+
+def get_filter(path, names):
+	if our_config_name not in names: return {'lite': 0}
+
+	try:
+		x = file(os.path.join(path, our_config_name), 'ru')
+		return eval(x.read())
+	finally:
+		x.close()
+
+# Create the file list
+files = []
+for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
+	path = entry[0]
+	if '.svn' in path: continue # skip versioning info folders
+	names = entry[2]
+	
+	if 'SConscript' in names and path != '.': 
+		# Use the custom script for that folder - don't recurse current script!
+		files += SConscript(os.path.join(path, 'SConscript'))
+	else:
+		# Otherwise, conditionally use the folder. By default, use for non-lite build;
+		# a simple 'SConfig' file can override that.
+		files += get_files(get_filter(path, names), path, names)
+
+# Exceptions:
+# audio - only in full BUT special handling <-- in audio/, just do the CPPPATH 
+# logic; in subfolders, use a config that requires lite=0 AND the appropriate
+# audio setting (0 in devnull, 1 in openAL)
+# map/loaders - /xml only if env['xmlmap']; otherwise everything. Lite too!
+# video - similarly, /renderbackends/opengl only if env['opengl']; otherwise
+# everything. Lite too!
+# vfs - main folder, don't use vfswriteformat.cpp for lite, but use everything
+# else. raw/ is only for full
+# tinyxml - only if full AND env['tinyxml']
+
+env.Append(CPPPATH = ['#src/engine'])
+
+if env['lite']:
+	env.StaticLibrary('fifelite', files)
+else:
+	env.StaticLibrary('fife', files)
+	
+# vim: set filetype=python :

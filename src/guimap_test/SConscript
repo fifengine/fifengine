@@ -1,0 +1,13 @@
+import glob
+
+Import('env')
+
+env = env.Copy()
+env.Append(CPPPATH = ['#src/engine'])
+env.Append(LIBS = ['fife'])
+env.Append(LIBPATH = ['#src/engine'])
+
+files = glob.glob('*.cpp')
+env.Program('guimap_test', files)
+
+# vim: set filetype=python :
