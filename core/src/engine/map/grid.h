@@ -23,7 +23,9 @@
 #define FIFE_MAP_GRID_H
 
 // Standard C++ library includes
+#include <map>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <boost/variant.hpp>
@@ -34,6 +36,7 @@
 // Second block: files included from the same folder
 #include "video/point.h"
 #include "attributedclass.h"
+#include "exception.h"
 
 namespace FIFE { namespace map {
 
@@ -157,6 +160,38 @@ namespace FIFE { namespace map {
 				boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x) = value;
 			}
 
+			/** API for grid point parameters
+			 *  @bug THIS WILL FAIL - WIP
+			 */
+			template<typename T>
+			uint8_t addParam(const std::string& name, const T& _default = T()) {
+
+				if( m_paramnames.find(name) == m_paramnames.end() ) {
+					throw NameClash(name);
+				}
+
+				if( m_paramgrids.size() == 250 ) {
+					throw NotSupported("More than 250 parameters per grid.");
+				}
+
+				uint8_t param_id = m_paramgrids.size();
+				m_paramgrids.push_back( std::vector<T>() );
+				m_paramgrids[ param_id ].resize(m_size.x*m_size.y, _default);
+				m_paramnames[ name ] = param_id;
+				return param_id;
+			}
+
+			/** API for grid point parameters
+			 *  @bug THIS WILL FAIL - WIP
+			 */
+			uint8_t getParamByName(const std::string& name) const {
+				type_paramnames::const_iterator i = m_paramnames.find(name);
+				if( i == m_paramnames.end() ) {
+					throw NotFound(name);
+				}
+				return i->second;
+			}
+
 			/** Set Tiles visible
 			 */
 			void setTilesVisible(bool vis);
@@ -242,6 +277,8 @@ namespace FIFE { namespace map {
 			> type_vargrid;
 
 			std::vector<type_vargrid> m_paramgrids;
+			typedef std::map<std::string,uint8_t> type_paramnames ;
+			type_paramnames m_paramnames;
 	};
 } } // FIFE::map
 
