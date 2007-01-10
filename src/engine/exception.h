@@ -121,6 +121,13 @@ namespace FIFE {
 			NotSupported(const std::string& s) : Exception("NotSupported: " + s) {}
 	};
 
+	/** A name or identifier is already in use
+	 */
+	class NameClash : public Exception {
+		public:
+			NameClash(const std::string& s) : Exception("Name already in use: " +s) {}
+	};
+
 }//FIFE
 
 #endif
