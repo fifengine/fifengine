@@ -159,6 +159,14 @@ namespace FIFE { namespace map {
 			void setParam(const Point& p, uint8_t type, const T& value) {
 				boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x) = value;
 			}
+			/** Set a param value
+			 * @see setParam
+			 */
+
+			template<typename T>
+			void setParam(int16_t x,int16_t y, uint8_t type, const T& value) {
+				boost::get<T>(m_paramgrids.at(type)).at(x + y * m_size.x) = value;
+			}
 
 			/** API for grid point parameters
 			 *  @bug THIS WILL FAIL - WIP
@@ -176,7 +184,8 @@ namespace FIFE { namespace map {
 
 				uint8_t param_id = m_paramgrids.size();
 				m_paramgrids.push_back( std::vector<T>() );
-				m_paramgrids[ param_id ].resize(m_size.x*m_size.y, _default);
+				boost::get<std::vector<T> >(m_paramgrids[ param_id ])
+					.resize(m_size.x*m_size.y, _default);
 				m_paramnames[ name ] = param_id;
 				return param_id;
 			}
@@ -190,6 +199,10 @@ namespace FIFE { namespace map {
 					throw NotFound(name);
 				}
 				return i->second;
+			}
+
+			bool hasParamByName(const std::string& name) const {
+				return m_paramnames.find(name) != m_paramnames.end();
 			}
 
 			/** Set Tiles visible
