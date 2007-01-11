@@ -26,7 +26,7 @@
 
 // Platform specific includes
 // Linux
-#if defined( LINUX )
+#if defined( __unix__ )
 #include <AL/al.h>
 #include <AL/alc.h>
 #endif
