@@ -63,6 +63,9 @@ namespace FIFE { namespace map {
 	 *
 	 *  The size simply is the maximum allowd size in grid
 	 *  coords this grid covers.
+	 *  
+	 *  @bug The parameter code is untested, be warned.
+	 *  @bug setTileImage and setParam behave differently on invalid positions.
 	 *
 	 *  Attributes:
 	 *  <pre>
@@ -120,90 +123,103 @@ namespace FIFE { namespace map {
 			void setTileImage(const Point& position, size_t image_id);
 			void setTileImage(int32_t x,int32_t y, size_t image_id);
 
-			/** API for grid point parameters
-			 *  @bug THIS WILL FAIL - WIP
+			/** Get a reference to a parameter grid as vector
+			 *  @param param_id The integer parameter ID
+			 *  @return A reference to the grid as @c std::vector
+			 *  @throw std::out_of_range If the parameter ID is invalid.
+			 *
+			 *  The @c std::vector is indexed like this:
+			 *  @code
+			 *  std::vector<T>& v = grid->getParamGrid<T>( PARAM_ID ); 
+			 *  T value = v[x + y * grid->getSize().x ];
+			 *  @endcode
+			 * 
 			 */
 			template<typename T>
-			std::vector<T>& getParamGrid(uint8_t type) {
-				return boost::get<T>(m_paramgrids.at(type));
-			}
+			std::vector<T>& getParamGrid(uint8_t param_id);
 			
-			/** API for grid point parameters
-			 *  @bug THIS WILL FAIL - WIP
+			/** Get a const reference to a parameter as vector
+			 *  This is the @c const version of @see getParamGrid
 			 */
 			template<typename T>
-			const std::vector<T>& getParamGrid(uint8_t type) const {
-				return boost::get<T>(m_paramgrids.at(type));
-			}
+			const std::vector<T>& getParamGrid(uint8_t param_id) const;
 			
-			/** API for grid point parameters
-			 *  @bug THIS WILL FAIL - WIP
+			/** Get a parameter reference at a grid position
+			 *  @param p The grid position
+			 *  @param param_id The integer parameter ID
+			 *  @return A reference to the value at the grid position
+			 *  @throw std::out_of_range If the parameter ID is invalid.
+			 *  @throw std::out_of_range If the grid position is invalid.
+			 *  @warning Does not really check the position, so it might return a 
+			 *  bogus reference for @c Point(-50,10) for example.
 			 */
 			template<typename T>
-			const T& getParam(const Point& p, uint8_t type) const {
-				return boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x);
-			}
+			T& getParam(const Point& p, uint8_t param_id);
 
-			/** API for grid point parameters
-			 *  @bug THIS WILL FAIL - WIP
+			/** Get a parameter const reference at a grid position
+			 *  This is the @c const version of @see getParam
 			 */
 			template<typename T>
-			T& getParam(const Point& p, uint8_t type)  {
-				return boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x);
-			}
+			const T& getParam(const Point& p, uint8_t type) const;
 
-			/** API for grid point parameters
-			 *  @bug THIS WILL FAIL - WIP
+			/** Get a parameter reference at a grid position
+			 *  @see getParam
 			 */
 			template<typename T>
-			void setParam(const Point& p, uint8_t type, const T& value) {
-				boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x) = value;
-			}
+			T& getParam(int32_t x,int32_t y, uint8_t param_id);
+
+			/** Get a parameter const reference at a grid position
+			 *  @see getParam
+			 */
+			template<typename T>
+			const T& getParam(int32_t x,int32_t y, uint8_t type) const;
+
+			/** Set a parameters value at a grid position
+			 *  @param p The grid position
+			 *  @param param_id The integer parameter ID
+			 *  @param value The new value of the parameter
+			 *  @throw std::out_of_range If the parameter ID is invalid.
+			 *  @throw std::out_of_range If the grid position is invalid.
+			 *  @warning Does not really check the position, so it might set a 
+			 *  bogus value for @c Point(-50,10) for example.
+			 */
+			template<typename T>
+			void setParam(const Point& p, uint8_t param_id, const T& value);
+
 			/** Set a param value
-			 * @see setParam
-			 */
-
-			template<typename T>
-			void setParam(int16_t x,int16_t y, uint8_t type, const T& value) {
-				boost::get<T>(m_paramgrids.at(type)).at(x + y * m_size.x) = value;
-			}
-
-			/** API for grid point parameters
-			 *  @bug THIS WILL FAIL - WIP
+			 *  This is a convenience version of @see setParam
 			 */
 			template<typename T>
-			uint8_t addParam(const std::string& name, const T& _default = T()) {
+			void setParam(int32_t x,int32_t y, uint8_t type, const T& value);
 
-				if( m_paramnames.find(name) == m_paramnames.end() ) {
-					throw NameClash(name);
-				}
-
-				if( m_paramgrids.size() == 250 ) {
-					throw NotSupported("More than 250 parameters per grid.");
-				}
-
-				uint8_t param_id = m_paramgrids.size();
-				m_paramgrids.push_back( std::vector<T>() );
-				boost::get<std::vector<T> >(m_paramgrids[ param_id ])
-					.resize(m_size.x*m_size.y, _default);
-				m_paramnames[ name ] = param_id;
-				return param_id;
-			}
-
-			/** API for grid point parameters
-			 *  @bug THIS WILL FAIL - WIP
+			/** Add a parameter by name and type
+			 *  @param param_name String name of the new parameter
+			 *  @param _default Default value of the parameter
+			 *  @return Integer param ID of the new parameter
+			 *  @throw NameClash If the string parameter name already is in use
+			 *  @throw NotSupported If too many parameters are already in use (250)
 			 */
-			uint8_t getParamByName(const std::string& name) const {
-				type_paramnames::const_iterator i = m_paramnames.find(name);
-				if( i == m_paramnames.end() ) {
-					throw NotFound(name);
-				}
-				return i->second;
-			}
+			template<typename T>
+			uint8_t addParam(const std::string& param_name, const T& _default = T());
 
-			bool hasParamByName(const std::string& name) const {
-				return m_paramnames.find(name) != m_paramnames.end();
-			}
+			/** Get Integer parameter id by parameter name
+			 *  @param param_name String name of a parameter
+			 *  @return Integer parameter ID
+			 *  @throw NotFound if the string parameter name does not exist.
+			 */
+			uint8_t getParamByName(const std::string& param_name) const;
+
+			/** Check existence of a parameter
+			 *  @param param_name String name of a parameter.
+			 *  @return True, if the parameter exists.
+			 */
+			bool hasParamByName(const std::string& param_name) const;
+
+			/** Check existence of a parameter
+			 *  @param param_id Integer ID of a parameter.
+			 *  @return True, if the parameter exists.
+			 */
+			bool hasParam(uint8_t param_id) const;
 
 			/** Set Tiles visible
 			 */
@@ -265,6 +281,11 @@ namespace FIFE { namespace map {
 			 */
 			bool isValidPosition(const Point& pos) const;
 
+			/** Check whether a position is on the grid
+			 *  @see isValidPosition
+			 */
+			bool isValidPosition(int32_t x,int32_t y) const;
+
 			const std::string& getOverlayImage() const;
 			void setOverlayImage(const std::string& fname);
 
@@ -293,6 +314,121 @@ namespace FIFE { namespace map {
 			typedef std::map<std::string,uint8_t> type_paramnames ;
 			type_paramnames m_paramnames;
 	};
+
+	inline
+	bool Grid::isValidPosition(const Point& p) const {
+		return p.x >= 0 && p.x < m_size.x && p.y >= 0 && p.y < m_size.y;
+	}
+
+	inline
+	bool Grid::isValidPosition(int32_t x, int32_t y) const {
+		return x >= 0 && x < m_size.x && y >= 0 && y < m_size.y;
+	}
+
+	inline
+	size_t Grid::getTileImage(int32_t x, int32_t y) const {
+		if (!isValidPosition(x,y) || m_tiles.empty()) {
+			return 0;
+		}
+		return m_tiles[x + y * m_size.x];
+	}
+
+	inline
+	size_t Grid::getTileImage(const Point& p) const {
+		if (!isValidPosition(p) || m_tiles.empty()) {
+			return 0;
+		}
+		return m_tiles[p.x + p.y * m_size.x];
+	}
+
+	template<typename T>
+	inline
+	std::vector<T>& Grid::getParamGrid(uint8_t param_id) {
+		return boost::get<T>(m_paramgrids.at(param_id));
+	}
+	
+	template<typename T>
+	inline
+	const std::vector<T>& Grid::getParamGrid(uint8_t param_id) const {
+		return boost::get<T>(m_paramgrids.at(param_id));
+	}
+	
+	template<typename T>
+	inline
+	T& Grid::getParam(const Point& p, uint8_t param_id)  {
+		return boost::get<T>(m_paramgrids.at(param_id)).at(p.x + p.y * m_size.x);
+	}
+
+	template<typename T>
+	inline
+	const T& Grid::getParam(const Point& p, uint8_t type) const {
+		return boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x);
+	}
+
+	template<typename T>
+	inline
+	T& Grid::getParam(int32_t x,int32_t y, uint8_t param_id)  {
+		return boost::get<T>(m_paramgrids.at(param_id)).at(x + y * m_size.x);
+	}
+
+	template<typename T>
+	inline
+	const T& Grid::getParam(int32_t x,int32_t y, uint8_t type) const {
+		return boost::get<T>(m_paramgrids.at(type)).at(x + y * m_size.x);
+	}
+
+	template<typename T>
+	inline
+	void Grid::setParam(const Point& p, uint8_t param_id, const T& value) {
+		boost::get<T>(m_paramgrids.at(param_id)).at(p.x + p.y * m_size.x) = value;
+	}
+
+	template<typename T>
+	inline
+	void Grid::setParam(int32_t x,int32_t y, uint8_t type, const T& value) {
+		boost::get<T>(m_paramgrids.at(type)).at(x + y * m_size.x) = value;
+	}
+
+	template<typename T>
+	inline
+	uint8_t Grid::addParam(const std::string& param_name, const T& _default) {
+
+		if( m_paramnames.find(param_name) == m_paramnames.end() ) {
+			throw NameClash(param_name);
+		}
+
+		if( m_paramgrids.size() == 250 ) {
+			throw NotSupported("More than 250 parameters per grid.");
+		}
+
+		uint8_t param_id = m_paramgrids.size();
+		m_paramgrids.push_back( std::vector<T>() );
+		boost::get<std::vector<T> >(m_paramgrids[ param_id ])
+			.resize(m_size.x*m_size.y, _default);
+		m_paramnames[ param_name ] = param_id;
+		return param_id;
+	}
+
+	inline
+	uint8_t Grid::getParamByName(const std::string& param_name) const {
+		type_paramnames::const_iterator i = m_paramnames.find(param_name);
+		if( i == m_paramnames.end() ) {
+			throw NotFound(param_name);
+		}
+		return i->second;
+	}
+
+	inline
+	bool Grid::hasParamByName(const std::string& param_name) const {
+		return m_paramnames.find(param_name) != m_paramnames.end();
+	}
+
+	inline
+	bool Grid::hasParam(uint8_t param_id) const {
+		return m_paramgrids.size() > param_id;
+	}
+
+
 } } // FIFE::map
 
 #endif
