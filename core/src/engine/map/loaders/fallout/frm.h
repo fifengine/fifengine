@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -27,7 +27,7 @@
 #include <vector>
 
 // Platform specific includes
-#include "util/fifeint.h"
+#include "util/fife_stdint.h"
 
 // 3rd party library includes
 

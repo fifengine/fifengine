@@ -27,11 +27,10 @@
 #include <vector>
 
 // Platform specific includes
-#include "util/fifeint.h"
+#include "util/fife_stdint.h"
+#include "util/fife_openal.h"
 
 // 3rd party library includes
-#include <AL/al.h>
-#include <AL/alc.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <SDL.h>

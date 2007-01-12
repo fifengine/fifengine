@@ -31,20 +31,14 @@
 #include <AL/alc.h>
 #endif
 
-// Win32 MinGW
-#if defined( WIN32 ) && defined( MINGW )
-#include <AL/al.h>
-#include <AL/alc.h>
-#endif
-
-// Win32 MSVC
-#if defined( WIN32 ) && defined( _MSC_VER )
+// Win32
+#if defined( WIN32 )
 #include <AL/al.h>
 #include <AL/alc.h>
 #endif
 
 // Macintosh
-#if defined( MAC )
+#if defined( APPLE_CC )
 #include <al.h>
 #include <alc.h>
 #endif

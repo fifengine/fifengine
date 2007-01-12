@@ -26,29 +26,30 @@
 
 // Platform specific includes
 // Linux
-#if defined( LINUX )
+#if defined( __unix__ )
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
 
-// Win32 MinGW
-#if defined( WIN32 ) && defined( MINGW )
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
-// Win32 MSVC
-#if defined( WIN32 ) && defined( _MSC_VER )
+// Win32
+#if defined( WIN32 )
+// MSVC
+#if defined( _MSC_VER )
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #undef DELETE
+// MinGW
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
 #endif
 
 // Macintosh
-#if defined( MAC )
+#if defined( APPLE_CC )
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif

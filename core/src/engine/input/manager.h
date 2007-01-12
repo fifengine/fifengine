@@ -28,7 +28,7 @@
 #include <vector>
 
 // Platform specific includes
-#include "util/fifeint.h"
+#include "util/fife_stdint.h"
 
 // 3rd party library includes
 #include <SDL_events.h>
