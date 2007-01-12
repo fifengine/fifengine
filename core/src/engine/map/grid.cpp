@@ -63,16 +63,6 @@ namespace FIFE { namespace map {
 		return m_shift;
 	}
 
-	size_t Grid::getTileImage(int32_t x, int32_t y) const {
-		return getTileImage(Point(x,y));
-	}
-
-	size_t Grid::getTileImage(const Point& p) const {
-		if (!isValidPosition(p) || m_tiles.empty()) {
-			return 0;
-		}
-		return m_tiles[p.x + p.y * m_size.x];
-	}
 	void Grid::setTileImage(int32_t x, int32_t y, size_t id) {
 		setTileImage(Point(x,y),id);
 	}
@@ -126,10 +116,6 @@ namespace FIFE { namespace map {
 	}
 	void Grid::toggleGridOverlayEnabled() {
 		m_grid_overlay = !m_grid_overlay;
-	}
-
-	bool Grid::isValidPosition(const Point& p) const {
-		return p.x >= 0 && p.x < m_size.x && p.y >= 0 && p.y < m_size.y;
 	}
 
 	const std::string& Grid::getOverlayImage() const {
