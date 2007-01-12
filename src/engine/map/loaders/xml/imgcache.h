@@ -27,7 +27,7 @@
 #include <map>
 
 // Platform specific includes
-#include "util/fifeint.h"
+#include "util/fife_stdint.h"
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>

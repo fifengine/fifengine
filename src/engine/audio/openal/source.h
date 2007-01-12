@@ -26,8 +26,10 @@
 #include <string>
 #include <vector>
 
+// Platform specific includes
+#include "util/fife_openal.h"
+
 // 3rd party library includes
-#include <AL/al.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

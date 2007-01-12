@@ -19,15 +19,15 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_POINT_H
-#define FIFE_POINT_H
+#ifndef FIFE_VIDEO_POINT_H
+#define FIFE_VIDEO_POINT_H
 
 // Standard C++ library includes
 #include <cmath>
 #include <iostream>
 
 // Platform specific includes
-#include "util/fifeint.h"
+#include "util/fife_stdint.h"
 
 // 3rd party library includes
 

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -22,11 +22,9 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "util/fifewin.h"
+#include "util/fife_opengl.h"
 
 // 3rd party library includes
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <guichan/opengl.hpp>
 #include <guichan/sdl.hpp>
 #include <guichan.hpp>

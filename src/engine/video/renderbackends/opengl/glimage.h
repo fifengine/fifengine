@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,20 +19,22 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GLIMAGE_H
-#define FIFE_GLIMAGE_H
+#ifndef FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLIMAGE_H
+#define FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLIMAGE_H
 
 // Standard C++ library includes
 #include <vector>
 
 // Platform specific includes
-#include "util/fifeint.h"
-#include "util/fifewin.h"
+#include "util/fife_stdint.h"
+#include "util/fife_opengl.h"
 
 // 3rd party library includes
-#include <GL/gl.h>
 
 // FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "video/image.h"
 
 namespace FIFE {

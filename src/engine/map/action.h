@@ -25,7 +25,7 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "util/fifeint.h"
+#include "util/fife_stdint.h"
 
 // 3rd party library includes
 #include <boost/function.hpp>

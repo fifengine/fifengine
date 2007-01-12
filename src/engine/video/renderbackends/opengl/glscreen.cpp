@@ -22,11 +22,10 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "util/fifewin.h"
+#include "util/fife_opengl.h"
 
 // 3rd party library includes
 #include <guichan/opengl.hpp>
-#include <GL/gl.h>
 #include <SDL.h>
 
 // FIFE includes
