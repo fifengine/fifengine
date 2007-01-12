@@ -76,6 +76,10 @@ namespace FIFE { namespace map {
 		m_tiles[p.x + p.y * m_size.x] = id;
 	}
 
+	bool Grid::hasTiles() const {
+		return !m_tiles.empty();
+	}
+
 	void Grid::setTilesVisible(bool vis) {
 		m_tiles_visibility = vis;
 	}

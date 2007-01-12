@@ -111,9 +111,13 @@ namespace FIFE { namespace map {
 			 *  @return An image id for the position
 			 */
 			size_t getTileImage(const Point&) const;
-			size_t getTileImage(int32_t x,int32_t y) const;
 
 			/** Get the tile image id of a position
+			 *  @see setTileImage
+			 */
+			size_t getTileImage(int32_t x,int32_t y) const;
+
+			/** Set the tile image id of a position
 			 *  @note If the position is invalid nothing is changed
 			 *  @note If no tile have previously set, this
 			 *  will allocate the needed memory.
@@ -121,7 +125,16 @@ namespace FIFE { namespace map {
 			 *  @param image_id An image id for the position
 			 */
 			void setTileImage(const Point& position, size_t image_id);
+
+			/** Set the tile image id of a position
+			 *  @see setTileImage
+			 */
 			void setTileImage(int32_t x,int32_t y, size_t image_id);
+
+			/** Check existance of non-empty tiles
+			 *  @return True, if tiles exist.
+			 */
+			bool hasTiles() const;
 
 			/** Get a reference to a parameter grid as vector
 			 *  @param param_id The integer parameter ID
