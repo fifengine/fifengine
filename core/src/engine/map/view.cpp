@@ -282,7 +282,7 @@ namespace FIFE { namespace map {
 			Grid*   grid          = m_elevation->getGrid(i);
 			uint8_t grid_alpha    = grid->getGlobalAlpha();
 			bool    grid_ovisible = grid->areObjectsVisible();
-			bool    grid_tvisible = grid->areTilesVisible();
+			bool    render_tiles = grid->areTilesVisible() && grid->hasTiles();
 
 			if( !grid_ovisible || grid_alpha == 0 ) {
 				while( visual_it != renderlist.end() && (*visual_it)->getGrid() <= i)
@@ -290,7 +290,7 @@ namespace FIFE { namespace map {
 				continue;
 			}
 
-			if( grid_tvisible )
+			if( render_tiles )
 				renderTiles(grid);
 
 			// TODO Do this correct
