@@ -89,7 +89,9 @@ namespace FIFE { namespace map { namespace command {
 			}
 			visual->setLocation(moi->getLocation());
 
-			Debug("mc_setvisual") << "Setting Visual: " << cmd.stringParam;
+			Debug("mc_setvisual") 
+				<< "Setting Visual: " << cmd.stringParam
+				<< " for object type: " << moi->params[ ObjectInfo::ObjectTypeParam ];
 			if (!moi->getVisualId()) {
 				moi->setVisualId( m_view->addVisual(visual) );
 			} else {

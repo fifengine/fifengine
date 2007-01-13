@@ -142,6 +142,7 @@ namespace FIFE { namespace map {
 			 *  @param param_id The integer parameter ID
 			 *  @return A reference to the grid as @c std::vector
 			 *  @throw std::out_of_range If the parameter ID is invalid.
+			 *  @throw boost::bad_get If the parameter type @c T is invalid.
 			 *
 			 *  The @c std::vector is indexed like this:
 			 *  @code
@@ -165,6 +166,7 @@ namespace FIFE { namespace map {
 			 *  @return A reference to the value at the grid position
 			 *  @throw std::out_of_range If the parameter ID is invalid.
 			 *  @throw std::out_of_range If the grid position is invalid.
+			 *  @throw boost::bad_get If the parameter type @c T is invalid.
 			 *  @warning Does not really check the position, so it might return a 
 			 *  bogus reference for @c Point(-50,10) for example.
 			 */
@@ -195,6 +197,7 @@ namespace FIFE { namespace map {
 			 *  @param value The new value of the parameter
 			 *  @throw std::out_of_range If the parameter ID is invalid.
 			 *  @throw std::out_of_range If the grid position is invalid.
+			 *  @throw boost::bad_get If the parameter type @c T is invalid.
 			 *  @warning Does not really check the position, so it might set a 
 			 *  bogus value for @c Point(-50,10) for example.
 			 */
@@ -205,7 +208,7 @@ namespace FIFE { namespace map {
 			 *  This is a convenience version of @see setParam
 			 */
 			template<typename T>
-			void setParam(int32_t x,int32_t y, uint8_t type, const T& value);
+			void setParam(int32_t x,int32_t y, uint8_t param_id, const T& value);
 
 			/** Add a parameter by name and type
 			 *  @param param_name String name of the new parameter
@@ -418,7 +421,7 @@ namespace FIFE { namespace map {
 	inline
 	uint8_t Grid::addParam(const std::string& param_name, const T& _default) {
 
-		if( m_paramnames.find(param_name) == m_paramnames.end() ) {
+		if( m_paramnames.find(param_name) != m_paramnames.end() ) {
 			throw NameClash(param_name);
 		}
 

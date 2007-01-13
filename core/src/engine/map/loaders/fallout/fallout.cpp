@@ -152,6 +152,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 					}
 				}
 			}
+			Grid* grid = elevation->getGrid(1);
+			grid->addParam<bool>("BLOCKING", false);
 			map->addElevation(elevation);
 		}
 	}
