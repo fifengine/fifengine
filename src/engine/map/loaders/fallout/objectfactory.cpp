@@ -28,6 +28,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "map/map.h"
 #include "map/objectinfo.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
@@ -140,11 +141,16 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			case objtype_misc: {
 				obj->params[ObjectInfo::ObjectTypeParam] = "Misc";
 				uint16_t id = info.proto_pid & 0xffff;
+				
 				if (id != 1 && id != 12)
 					data->moveIndex(4*4);
 
 				//obj = new Object("Misc", info.position);
 				loadImages("misc", m_lst_misc, info, obj);
+				Debug("fallout::ObjectFactory")
+					<< "Misc Item: " << obj->params[ ObjectInfo::ObjectTypeParam ]
+					<< " Visual: " << obj->params[ ObjectInfo::VisualParam ]
+					<< " Proto-PID: " << id;
 			}
 			break;
 
