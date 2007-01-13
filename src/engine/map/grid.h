@@ -433,6 +433,7 @@ namespace FIFE { namespace map {
 		if( !m_param_freelist.empty() ) {
 			param_id = m_param_freelist.back();
 			m_param_freelist.pop_back();
+			m_paramgrids[ param_id ] = std::vector<T>();
 		} else {
 			param_id = m_paramgrids.size();
 			m_paramgrids.push_back( std::vector<T>() );
