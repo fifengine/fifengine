@@ -78,7 +78,9 @@ namespace FIFE { namespace map {
 	 */
 	class Grid : public AttributedClass {
 		public:
-			typedef std::vector<long> type_paramgrid;
+			enum {
+				MAX_PARAM = 100
+			};
 
 			/** Constructs a MapGrid instance
 			 */
@@ -215,6 +217,12 @@ namespace FIFE { namespace map {
 			template<typename T>
 			uint8_t addParam(const std::string& param_name, const T& _default = T());
 
+			/** Remove a parameter by id
+			 *  @param param_id Integer id
+			 *  @throw std::out_of_range If the parameter ID is invalid.
+			 */
+			void removeParam(uint8_t param_id);
+
 			/** Get Integer parameter id by parameter name
 			 *  @param param_name String name of a parameter
 			 *  @return Integer parameter ID
@@ -324,8 +332,12 @@ namespace FIFE { namespace map {
 			> type_vargrid;
 
 			std::vector<type_vargrid> m_paramgrids;
-			typedef std::map<std::string,uint8_t> type_paramnames ;
+			typedef std::map<std::string,uint8_t> type_paramnames;
+			typedef std::map<uint8_t,type_paramnames::iterator> type_paramnames_reverse;
 			type_paramnames m_paramnames;
+			type_paramnames_reverse m_paramnames_reverse;
+
+			std::vector<uint8_t> m_param_freelist;
 	};
 
 	inline
@@ -374,8 +386,8 @@ namespace FIFE { namespace map {
 
 	template<typename T>
 	inline
-	const T& Grid::getParam(const Point& p, uint8_t type) const {
-		return boost::get<T>(m_paramgrids.at(type)).at(p.x + p.y * m_size.x);
+	const T& Grid::getParam(const Point& p, uint8_t param_id) const {
+		return boost::get<T>(m_paramgrids.at(param_id)).at(p.x + p.y * m_size.x);
 	}
 
 	template<typename T>
@@ -386,8 +398,8 @@ namespace FIFE { namespace map {
 
 	template<typename T>
 	inline
-	const T& Grid::getParam(int32_t x,int32_t y, uint8_t type) const {
-		return boost::get<T>(m_paramgrids.at(type)).at(x + y * m_size.x);
+	const T& Grid::getParam(int32_t x,int32_t y, uint8_t param_id) const {
+		return boost::get<T>(m_paramgrids.at(param_id)).at(x + y * m_size.x);
 	}
 
 	template<typename T>
@@ -410,15 +422,23 @@ namespace FIFE { namespace map {
 			throw NameClash(param_name);
 		}
 
-		if( m_paramgrids.size() == 250 ) {
-			throw NotSupported("More than 250 parameters per grid.");
+		if( m_paramgrids.size() == MAX_PARAM ) {
+			throw NotSupported("More than Grid::MAX_PARAM parameters per grid.");
 		}
 
-		uint8_t param_id = m_paramgrids.size();
-		m_paramgrids.push_back( std::vector<T>() );
+		uint8_t param_id;
+		if( !m_param_freelist.empty() ) {
+			param_id = m_param_freelist.back();
+			m_param_freelist.pop_back();
+		} else {
+			param_id = m_paramgrids.size();
+			m_paramgrids.push_back( std::vector<T>() );
+		}
+
 		boost::get<std::vector<T> >(m_paramgrids[ param_id ])
 			.resize(m_size.x*m_size.y, _default);
 		m_paramnames[ param_name ] = param_id;
+		m_paramnames_reverse[ param_id ] = m_paramnames.find(param_name);
 		return param_id;
 	}
 
