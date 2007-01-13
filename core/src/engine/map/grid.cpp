@@ -130,4 +130,21 @@ namespace FIFE { namespace map {
 		m_overlay_image = fname;
 	}
 
+	struct grid_clear_visitor : public boost::static_visitor<> {
+		void operator()(std::vector<long>& v)  const { v.clear(); }
+		void operator()(std::vector<bool>& v)  const { v.clear(); }
+		void operator()(std::vector<float>& v) const { v.clear(); }
+	};
+
+	void Grid::removeParam(uint8_t param_id) {
+		boost::apply_visitor( grid_clear_visitor(), m_paramgrids.at(param_id) );
+		m_param_freelist.push_back( param_id );
+
+		type_paramnames_reverse::iterator it;
+		it = m_paramnames_reverse.find( param_id );
+
+		m_paramnames.erase( it->second );
+		m_paramnames_reverse.erase( it );
+	}
+
 } } // FIFE::map
