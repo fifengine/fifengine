@@ -29,6 +29,7 @@
 #include "util/fife_stdint.h"
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -167,17 +168,18 @@ namespace FIFE {
 
 			static bool littleEndian();
 	};
+	typedef boost::shared_ptr<RawData> RawDataPtr;
 
 	class IndexSaver {
 		public:
-			IndexSaver(RawData* d) : m_rd(d), m_index(m_rd->getCurrentIndex()) {}
+			IndexSaver(RawDataPtr d) : m_rd(d), m_index(m_rd->getCurrentIndex()) {}
 
 			~IndexSaver() {
 				m_rd->setIndex(m_index);
 			}
 
 		private:
-			RawData* m_rd;
+			RawDataPtr m_rd;
 			unsigned int m_index;
 
 			IndexSaver(const IndexSaver&);

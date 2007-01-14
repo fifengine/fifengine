@@ -99,6 +99,7 @@ namespace FIFE {
 		std::string rbackend = SettingsManager::instance()->read<std::string>("RenderBackend", "SDL");
 		RenderManager::instance()->select(rbackend);
 
+		new TimeManager();
 		new VFSSourceFactory();
 		new VFS();
 
@@ -110,7 +111,6 @@ namespace FIFE {
 		new audio::Manager();
 		new GameStateManager();
 		new ScriptBackendManager();
-		new TimeManager();
 	}
 
 	void Engine::killSingletons() {

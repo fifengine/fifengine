@@ -36,12 +36,22 @@
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 	DAT1::DAT1(const std::string& file) : m_datpath(file), m_data(VFS::instance()->open(file))  {
-		Log("MFFalloutDAT1") << "loading: " << file << " filesize: " << m_data->getDataLength();
+		Log("MFFalloutDAT1") 
+			<< "loading: " << file 
+			<< " filesize: " << m_data->getDataLength();
 
 		m_data->setIndex(0);
 
 		const uint32_t dircount = m_data->read32Big();
 		m_data->moveIndex(4*3);
+
+		Log("MFFalloutDAT1") 
+			<< "number of directories " << dircount;
+
+		// Sanity check. Each dir entry needs min. 16 bytes.
+		if( dircount*16 > m_data->getDataLength() ) {
+			throw InvalidFormat("directory count larger than filesize.");
+		}
 
 		std::list<std::string> dir_names;
 		for (uint32_t i = 0; i < dircount; ++i) {
