@@ -1,4 +1,4 @@
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "gcnimageloader_v05.h"
 #include "imagecache.h"
 

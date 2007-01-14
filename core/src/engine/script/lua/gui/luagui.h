@@ -277,10 +277,17 @@ namespace luaGui {
 	};
 
 // now watch this:
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #define WIDGET_FOCUSED_FUNC isFocused
 #else
 #define WIDGET_FOCUSED_FUNC hasFocus
+#endif
+#if GUICHAN_VERSION == 6
+#define GET_WIDGET_EVENT_ID getActionEventId
+#define SET_WIDGET_EVENT_ID setActionEventId
+#else
+#define GET_WIDGET_EVENT_ID getEventId
+#define SET_WIDGET_EVENT_ID setEventId
 #endif
 // amazing, isn't it?
 
@@ -331,10 +338,10 @@ namespace luaGui {
 		return gcn::name::isEnabled(); \
 	} \
 	inline const std::string & f_getEventId() { \
-		return gcn::name::getEventId(); \
+		return gcn::name::GET_WIDGET_EVENT_ID(); \
 	} \
 	inline void f_setEventId(const std::string & s) { \
-		gcn::name::setEventId(s); \
+		gcn::name::SET_WIDGET_EVENT_ID(s); \
 	} \
 	inline void f_setBaseColor(const gcn::Color & color) { \
 		gcn::name::setBaseColor(color); \
@@ -603,7 +610,7 @@ namespace luaGui {
 				return 0;
 			}
 			inline void f_setFont(gcn::Font *fp) { 
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 				mListBox->setFont(fp);
 #else
 				getListBox()->setFont(fp); 
@@ -678,7 +685,7 @@ namespace luaGui {
 			int l_getPadding(lua_State *L);
 			int l_setPadding(lua_State *L);
 			int l_setContent(lua_State *L);
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 			int l_moveToTop(lua_State *L);
 			int l_moveToBottom(lua_State *L);
 			int l_add(lua_State *L);
