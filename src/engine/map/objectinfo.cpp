@@ -39,9 +39,11 @@ namespace FIFE { namespace map {
 	const std::string ObjectInfo::LocationParam    = "location";
 	const std::string ObjectInfo::OrientationParam = "orientation";
 
-	ObjectInfo::ObjectInfo() : AttributedClass("map_object"),
-	m_location(), m_inventory(), m_temporaryInventory(), params(), m_visualId(0),
-	m_isStatic(false) {
+	ObjectInfo::ObjectInfo() 
+		: AttributedClass("map_object"),
+		  m_visualId(0),
+		  m_isStatic(false) {
+
 		params["objtype"] = "undefined";
 		params["name"] = "unnamed";
 		params["visual"] = "";
