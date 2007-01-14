@@ -36,9 +36,12 @@
 #include "map/structure.h"
 #include "vfs/vfs.h"
 
+namespace FIFE {
+	class RawData;
+}
+
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
-	class RawData;
 	class Header;
 	class PALAnimation;
 

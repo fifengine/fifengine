@@ -35,19 +35,29 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "timer.h"
 #include "vfs/vfs.h"
 #include "vfs/vfssource.h"
 
 #include "rawdatadat2.h"
 
+namespace FIFE {
+	class RawData;
+}
+
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 	/** VFSource for the Fallout2 DAT file format
 	 *
+	 *  Implements a kind of lazy initializing, by reading the file list
+	 *  in chunks. Behaviour is the same as if it wouldn't do this,
+	 *  but startup is very fast. But a open/fileExists call with a 
+	 *  filename that doesn't exist, does trigger completely loading
+	 *  the file entries.
+	 *
 	 * @see MFFalloutDAT1
+	 * @todo @b maybe merge common DAT1/DAT2 code in a common base class
 	 */
-
-	// XXX Merge common DAT1/DAT2 code in a common base class
 	class DAT2 : public VFSSource {
 
 		public:
@@ -58,8 +68,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			DAT2(const std::string& path);
 
 			bool fileExists(const std::string& name) const;
-			FIFE::RawData* open(const std::string& file) const;
-			// XXX Why did I need to fully qualify that?
+			RawData* open(const std::string& file) const;
 
 			/** Get Information needed to unpack and extract data
 			 *
@@ -72,9 +81,22 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 		private:
 			std::string m_datpath;
-			RawDataPtr m_data;
+			mutable RawDataPtr m_data;
 			typedef std::map<std::string, RawDataDAT2::s_info> type_filelist;
-			type_filelist m_filelist;
+			mutable type_filelist m_filelist;
+
+			/// number of file entries to read
+			mutable uint32_t m_filecount;
+			/// current index in file
+			mutable unsigned int m_currentIndex;
+			/// lazy loading timer
+			mutable Timer m_timer;
+
+			/// read a bunch of file entries 
+			void readFileEntry() const;
+
+			/// find a file entry
+			type_filelist::const_iterator findFileEntry(const std::string& name) const;
 
 			VFS::type_stringlist list(const std::string& pathstr, bool dirs) const;
 
