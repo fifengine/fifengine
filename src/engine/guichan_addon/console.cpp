@@ -54,9 +54,11 @@ namespace FIFE {
 				: ActionListener() , m_cmd(cmd) {}
 			virtual ~ScriptExecuter(){};
 
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 6
+			void action(const gcn::ActionEvent & event) {
+#elif GUICHAN_VERSION == 5
 			void action(const std::string & eventId, gcn::Widget* widget) {
-#else
+#elif GUICHAN_VERSION == 4
 			void action(const std::string & eventId) {
 #endif
 				try {
@@ -314,10 +316,10 @@ namespace FIFE {
 
 		// Assure the new text is visible
 		gcn::Rectangle rect(0,m_output->getHeight(),0,0);
-#ifdef GUICHAN05
-		m_scrollarea->showWidgetPart(m_output,rect);
-#else
+#if GUICHAN_VERSION == 4
 		m_scrollarea->scrollToRectangle(rect);
+#else
+		m_scrollarea->showWidgetPart(m_output,rect);
 #endif
 	}
 }

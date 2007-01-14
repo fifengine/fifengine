@@ -19,7 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 
 #ifndef FIFE_GCNIMAGELOADER_H
 #define FIFE_GCNIMAGELOADER_H

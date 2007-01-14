@@ -30,7 +30,7 @@
 #include "debugutils.h"
 
 #include "luagui.h"
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "video/gui/gcnfifeimage.h"
 #endif
 
@@ -39,18 +39,18 @@ namespace luaGui {
 	Image::Image(lua_State *L) : gcn::AdvImage(lua_tostring(L, 1)) {
 	}
 	int Image::l_getWidth(lua_State *L) {
-#ifdef GUICHAN05
-		lua_pushnumber(L, FIFE::GCNImage::getWidth());
-#else
+#if GUICHAN_VERSION == 4
 		lua_pushnumber(L, gcn::Image::getWidth());
+#else
+		lua_pushnumber(L, FIFE::GCNImage::getWidth());
 #endif
 		return 1;
 	}
 	int Image::l_getHeight(lua_State *L) {
-#ifdef GUICHAN05
-		lua_pushnumber(L, FIFE::GCNImage::getHeight());
-#else
+#if GUICHAN_VERSION == 4
 		lua_pushnumber(L, gcn::Image::getHeight());
+#else
+		lua_pushnumber(L, FIFE::GCNImage::getHeight());
 #endif
 		return 1;
 	}

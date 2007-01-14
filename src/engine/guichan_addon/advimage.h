@@ -27,7 +27,7 @@
 
 // 3rd party library includes
 #include <guichan.hpp>
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "video/gui/gcnfifeimage.h"
 #endif
 
@@ -39,7 +39,7 @@ namespace FIFE {
 
 namespace gcn {
 
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 	class AdvImage : public FIFE::GCNImage {
 #else
 	class AdvImage : public Image {

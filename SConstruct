@@ -14,7 +14,7 @@ opts.Add(BoolOption('xmlmap', 'Build demo xml-maploader', 1))
 opts.Add(BoolOption('tinyxml', 'Build tinyxml (required for xmlmap)', 1))
 opts.Add(BoolOption('lite',   'Build the lite version of the library (used for FIFEdit, overrides other settings)', 0))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
-opts.Add(BoolOption('guichan05', 'Modifications to use guichan 0.5 (instead of the default 0.4)', 0))
+opts.Add(EnumOption('guichan', 'Choose guichan version (default 0.4)', '4', allowed_values=('4', '5', '6')))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']} )
 
@@ -123,8 +123,7 @@ if env['swig'] == 1:
 if env['lite'] == 1:
 	env.Append(CPPDEFINES = ['LITE'])	
 
-if env['guichan05'] == 1:
-	env.Append(CPPDEFINES = ['GUICHAN05'])
+env.Append(CPPDEFINES = ['GUICHAN_VERSION='+env['guichan']])
 
 if env['audio'] == 1:
 	env.Append(CPPDEFINES = ['HAVE_OPENAL'])	

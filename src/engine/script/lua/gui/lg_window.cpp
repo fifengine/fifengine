@@ -30,7 +30,7 @@
 #include "luagui.h"
 // for lua2gcn_cast
 #include "lua_guimanager.h"
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "lua_gui_actionlistener.h"
 #endif
 
@@ -38,7 +38,7 @@ namespace luaGui {
 
 	Window::Window(lua_State *L) : AWidget(), gcn::Window() {
 		if (lua_gettop(L)) {
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 			gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
 			if (w)
 				gcn::Container::add(w);
@@ -115,7 +115,12 @@ namespace luaGui {
 		return 0;
 	}
 	int Window::l_setContent(lua_State *L) {
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 4
+		gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
+		if (w)
+			gcn::Window::setContent(w);
+		resizeToContent();
+#else
 		FIFE::Log("luaGui::Window", FIFE::Log::LEVEL_WARN) << 
 			"Backward-compatibility hack engaged - you _really_ should use :add on Windows";
 		gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
@@ -123,11 +128,6 @@ namespace luaGui {
 			gcn::Container::clear();
 			gcn::Container::add(w);
 		}
-#else
-		gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
-		if (w)
-			gcn::Window::setContent(w);
-		resizeToContent();
 #endif
 
 		return 0;
@@ -136,7 +136,7 @@ namespace luaGui {
 // new with guichan 0.5
 // simple copy-n-paste from lg_container
 // yes, I know I really shouldn't do that :-)
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 	int Window::l_moveToTop(lua_State *L) {
 		gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
 		if (w == NULL) {
@@ -203,7 +203,7 @@ namespace luaGui {
 		method(Window, getTitleBarHeight),
 		method(Window, setTitleBarHeight),
 		method(Window, setContent),
-#ifdef GUICHAN05
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 		method(Window, moveToTop),
 		method(Window, moveToBottom),
 		method(Window, add),

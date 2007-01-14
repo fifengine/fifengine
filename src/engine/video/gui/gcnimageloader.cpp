@@ -18,7 +18,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
-#ifndef GUICHAN05
+#if GUICHAN_VERSION == 4
 
 // Standard C++ library includes
 
