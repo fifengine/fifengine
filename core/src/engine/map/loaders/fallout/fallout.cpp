@@ -61,16 +61,17 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		vfsfactory->addProvider(new ProviderDAT2());
 		vfsfactory->addProvider(new ProviderDAT1());
 
-		VFS* vfs = VFS::instance();
-		VFSSource* source = vfsfactory->createSource("master.dat");
-		if (source) {
-			vfs->addSource(source);
-		}
-		
-		source = vfsfactory->createSource("critter.dat");
-		if (source) {
-			vfs->addSource(source);
-		}
+////		Moved to content/scripts/startup.lua/load_vfs_sources
+// 		VFS* vfs = VFS::instance();
+// 		VFSSource* source = vfsfactory->createSource("master.dat");
+// 		if (source) {
+// 			vfs->addSource(source);
+// 		}
+// 		
+// 		source = vfsfactory->createSource("critter.dat");
+// 		if (source) {
+// 			vfs->addSource(source);
+// 		}
 
 		//// Init Fallout Map Structure ////
 		m_foElevationFormat = FIFE::map::falloutElevationFormat(Point(100,100));
