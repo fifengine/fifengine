@@ -85,11 +85,14 @@ namespace FIFE {
 	int VFS_LuaScript::addSource(lua_State *L) {
 		std::string sname = luaL_checkstring(L, 1);
 		VFSSource * src = VFSSourceFactory::instance()->createSource(sname);
-		if (src)
+		if (src) {
 			VFS::instance()->addSource(src);
-		else
+			lua_pushboolean(L,1);
+		} else {
 			Warn("lua_vfs") << "Invalid source: " << sname;
-		return 0;
+			lua_pushboolean(L,0);
+		}
+		return 1;
 	}
 
 	int luaopen_vfs(lua_State *L) {

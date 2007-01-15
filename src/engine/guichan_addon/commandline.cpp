@@ -77,8 +77,8 @@ namespace FIFE {
 #else
 	void CommandLine::keyPress(const gcn::Key &key) {
 #endif
+		//Log("command_line") << key.getValue();
 
-		Log("DEBUG-key") << key.getValue();
 		if (key.getValue() == Key::LEFT && mCaretPosition > 0)
 		{
 			--mCaretPosition;
