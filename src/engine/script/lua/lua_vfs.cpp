@@ -29,6 +29,8 @@
 
 #include "video/gui/guimanager.h"
 #include "vfs/vfs.h"
+#include "vfs/vfssource.h"
+#include "vfs/vfssourcefactory.h"
 #include "vfs/raw/rawdata.h"
 
 #include "lua_vfs.h"
@@ -80,6 +82,16 @@ namespace FIFE {
 		return 1;
 	}
 
+	int VFS_LuaScript::addSource(lua_State *L) {
+		std::string sname = luaL_checkstring(L, 1);
+		VFSSource * src = VFSSourceFactory::instance()->createSource(sname);
+		if (src)
+			VFS::instance()->addSource(src);
+		else
+			Warn("lua_vfs") << "Invalid source: " << sname;
+		return 0;
+	}
+
 	int luaopen_vfs(lua_State *L) {
 		luaL_openlib(L, "vfs", VFS_LuaScript::methods, 0);
 		return 0;
@@ -90,6 +102,7 @@ namespace FIFE {
 	const luaL_reg VFS_LuaScript::methods[] = {
 		method(read),
 		method(readlines),
+		method(addSource),
 		{NULL, NULL}
 	};
 }
