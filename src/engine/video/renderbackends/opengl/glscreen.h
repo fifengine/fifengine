@@ -107,6 +107,18 @@ namespace FIFE {
 			 */
 			virtual void fillRectangle(const gcn::Rectangle& rectangle);
 
+#if GUICHAN_VERSION != 4
+			/** Draws a text string.
+			 *
+			 * @note: This is needed for guichan > 0.4; the only purpose
+			 * is to activate GL_TEXTURE_2D before drawing and cleanup
+			 * the flag afterwards.
+			 *
+			 * @note: Ugly, yet the best fix I can see.
+			 */
+			virtual void drawText(const std::string& text, int x, int y, unsigned int alignment = LEFT);
+#endif
+
 			/** Sets the current @c gcn::Graphics color.
 			 *
 			 * @param color New current color.
