@@ -49,7 +49,11 @@ namespace FIFE {
 			 */
 			~CommandLine();
 
+#if GUICHAN_VERSION >= 6
+			void keyPressed(gcn::KeyEvent& keyEvent);
+#else
 			void keyPress(const gcn::Key& key);
+#endif
 			virtual void drawCaret(gcn::Graphics * graphics, int x);
 
 			/** Set callback on pressing the ENTER key
