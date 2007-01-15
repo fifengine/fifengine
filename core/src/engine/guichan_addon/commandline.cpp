@@ -71,9 +71,14 @@ namespace FIFE {
 		m_blinkTimer.start();
 	}
 
-	// directly copied from gcn::textfield with one change
-	void CommandLine::keyPress(const gcn::Key & key) {
-		//Log("DEBUG-key") << key.getValue();
+#if GUICHAN_VERSION >= 6
+	void CommandLine::keyPressed(gcn::KeyEvent &keyEvent) {
+		gcn::Key key = keyEvent.getKey();
+#else
+	void CommandLine::keyPress(const gcn::Key &key) {
+#endif
+
+		Log("DEBUG-key") << key.getValue();
 		if (key.getValue() == Key::LEFT && mCaretPosition > 0)
 		{
 			--mCaretPosition;
