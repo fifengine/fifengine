@@ -43,6 +43,19 @@
 
 namespace FIFE {
 
+	struct GLEnable {
+		GLenum m_flag;
+		GLEnable(GLenum flag) : m_flag(flag) { glEnable(flag); }
+		~GLEnable() { glDisable(m_flag); }
+	};
+
+	struct GLDisable {
+		GLenum m_flag;
+		GLDisable(GLenum flag) : m_flag(flag) { glDisable(flag); }
+		~GLDisable() { glEnable(m_flag); }
+	};
+
+
 	GLScreen::GLScreen() : m_gcn_graph(new gcn::OpenGLGraphics()) {
 		m_gcn_graph->setTargetPlane(SDL_GetVideoSurface()->w, SDL_GetVideoSurface()->h);
 	}
@@ -74,12 +87,9 @@ namespace FIFE {
 		rect.y += clip.yOffset;
 
 #if GUICHAN_VERSION != 4
-		glEnable(GL_TEXTURE_2D);
+		GLEnable flag(GL_TEXTURE_2D);
 #endif
 		fifeimg->render(rect, this);
-#if GUICHAN_VERSION != 4
-		glDisable(GL_TEXTURE_2D);
-#endif
 	}
 
 #if GUICHAN_VERSION != 4
@@ -90,7 +100,7 @@ namespace FIFE {
 			throw GCN_EXCEPTION("No font set.");
 		}
 
-		glEnable(GL_TEXTURE_2D);
+		GLEnable flag(GL_TEXTURE_2D);
 		switch (alignment)
 		{
 			case LEFT:
@@ -105,32 +115,27 @@ namespace FIFE {
 			default:
 				throw GCN_EXCEPTION("Unknown alignment.");
 		}
-		glDisable(GL_TEXTURE_2D);
 	}
 #endif
 
 	void GLScreen::drawPoint(int x, int y) {
-		glDisable(GL_TEXTURE_2D);
+		GLDisable flag(GL_TEXTURE_2D);
 		m_gcn_graph->drawPoint(x, y);
-		glEnable(GL_TEXTURE_2D);
 	}
 
 	void GLScreen::drawLine(int x1, int y1, int x2, int y2) {
-		glDisable(GL_TEXTURE_2D);
+		GLDisable flag(GL_TEXTURE_2D);
 		m_gcn_graph->drawLine(x1, y1, x2, y2);
-		glEnable(GL_TEXTURE_2D);
 	}
 
 	void GLScreen::drawRectangle(const gcn::Rectangle& rectangle) {
-		glDisable(GL_TEXTURE_2D);
+		GLDisable flag(GL_TEXTURE_2D);
 		m_gcn_graph->drawRectangle(rectangle);
-		glEnable(GL_TEXTURE_2D);
 	}
 
 	void GLScreen::fillRectangle(const gcn::Rectangle& rectangle) {
-		glDisable(GL_TEXTURE_2D);
+		GLDisable flag(GL_TEXTURE_2D);
 		m_gcn_graph->fillRectangle(rectangle);
-		glEnable(GL_TEXTURE_2D);
 	}
 
 	void GLScreen::setColor(const gcn::Color& color) {
