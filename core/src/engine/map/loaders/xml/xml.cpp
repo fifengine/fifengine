@@ -326,11 +326,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		ObjectManager* mom = m_map->getObjectManager();
 		ObjectInfo* obj = new ObjectInfo();
 		if (obj) {
-			obj->params[obj->VisualParam] = spriteFilesMap[sprite_gid];
-			obj->params[ObjectInfo::ObjectTypeParam] = obj_typename;
+			obj->setVisualLocation( spriteFilesMap[sprite_gid] );
+			obj->set<std::string>(ObjectInfo::ObjectTypeParam,obj_typename);
 			if (orientation > -1) {
-				obj->params[obj->OrientationParam] = 
-					boost::lexical_cast<std::string>(orientation);
+				obj->set<size_t>(ObjectInfo::OrientationParam,orientation);
 			}
 			Location& loc = obj->getLocation();
 

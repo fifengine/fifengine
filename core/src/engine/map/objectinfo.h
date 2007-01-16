@@ -41,11 +41,12 @@ namespace FIFE { namespace map {
 
 	/** Game Object Representation
 	 *
-	 *  @warning Marked for a redesign.
+	 *  @bug Missing documentation
 	 */
 	class ObjectInfo : public AttributedClass {
 		public:
-			static const std::string VisualParam;
+			typedef std::string type_visual_location;
+
 			static const std::string NameParam;
 			static const std::string ObjectTypeParam;
 			static const std::string LocationParam;
@@ -55,26 +56,23 @@ namespace FIFE { namespace map {
 			ObjectInfo();
 			~ObjectInfo();
 
+			uint16_t getZValue() const;
+			void setZValue(uint16_t z);
 
+			bool isStatic() const;
+			void setStatic(bool s);
 
-			uint16_t getZValue() const { return m_zvalue; }
-			void setZValue(uint16_t z) { m_zvalue = z; }
+			Location& getLocation();
+			void setLocation(const Location& loc);
 
-			bool isStatic() const { return m_isStatic; }
-			void setStatic(bool s) { m_isStatic = s; }
+			const type_visual_location& getVisualLocation() const;
+			void setVisualLocation(const type_visual_location& visual);
 
-			Location& getLocation() { return m_location; }
-			void setLocation(const Location& loc) { m_location = loc; }
+			void setVisualId(size_t visualId);
+			size_t getVisualId() const;
 
-			void setVisualId(size_t visualId) { m_visualId = visualId; }
-			size_t getVisualId() const { return m_visualId; }
-
-			void addToInventory(ObjectInfo* obj) { m_temporaryInventory.push_back(obj); }
-			void addToInventory(size_t objId) { m_inventory.push_back(objId); }
-
-
-			typedef std::map<std::string, std::string> type_params;
-			type_params params;
+			void addToInventory(ObjectInfo* obj);
+			void addToInventory(size_t objId);
 
 			void debugPrint();
 		private:
@@ -92,9 +90,71 @@ namespace FIFE { namespace map {
 			bool   m_isStatic;
 
 			uint16_t m_zvalue;
+			type_visual_location m_visual_location;
 
 			friend class ObjectManager;
 	};
+
+	inline
+	uint16_t ObjectInfo::getZValue() const {
+		return m_zvalue;
+	}
+
+	inline
+	void ObjectInfo::setZValue(uint16_t z) {
+		m_zvalue = z; 
+	}
+
+	inline
+	bool ObjectInfo::isStatic() const {
+		return m_isStatic;
+	}
+
+	inline
+	void ObjectInfo::setStatic(bool s) {
+		m_isStatic = s;
+	}
+
+	inline
+	const ObjectInfo::type_visual_location& ObjectInfo::getVisualLocation() const {
+		return m_visual_location;
+	}
+
+	inline
+	void ObjectInfo::setVisualLocation(const type_visual_location& loc) {
+		m_visual_location = loc;
+	}
+
+	inline
+	Location& ObjectInfo::getLocation() {
+		return m_location;
+	}
+
+	inline
+	void ObjectInfo::setLocation(const Location& loc) {
+		m_location = loc;
+	}
+
+	inline
+	void ObjectInfo::setVisualId(size_t visualId) { 
+		m_visualId = visualId; 
+	}
+
+	inline
+	size_t ObjectInfo::getVisualId() const {
+		return m_visualId; 
+	}
+
+	inline
+	void ObjectInfo::addToInventory(ObjectInfo* obj) { 
+		m_temporaryInventory.push_back(obj); 
+	}
+	
+	inline
+	void ObjectInfo::addToInventory(size_t objId) {
+		m_inventory.push_back(objId);
+	}
+
 } }
 
 #endif // FIFE_MAPOBJECT_INFO_H

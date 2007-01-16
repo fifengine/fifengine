@@ -44,7 +44,7 @@ namespace FIFE { namespace map {
 
 		// set default attributes
 		setOverlayImage("content/gfx/tiles/tile_outline.png");
-		getAttribute<std::string>("name", "__unnamed__");
+		get<std::string>("name", "__unnamed__");
 	}
 
 	const Point& Grid::getSize() const {

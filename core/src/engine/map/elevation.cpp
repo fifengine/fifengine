@@ -45,7 +45,7 @@ namespace FIFE { namespace map {
 			                      structure.grids[i].geometry);
 			grid->setShift(structure.grids[i].shift);
 			grid->setOverlayImage(structure.grids[i].overlay);
-			grid->setAttribute("overlay-offset", structure.grids[i].overlay_offset);
+			grid->set("overlay-offset", structure.grids[i].overlay_offset);
 
 			setGrid(i, grid);
 		}

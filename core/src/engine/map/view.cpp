@@ -238,7 +238,7 @@ namespace FIFE { namespace map {
 
 	void View::renderGridOverlay(Grid* grid, const Point& pos) {
 		Geometry *geometry = grid->getGeometry();
-		Point overlay_offset = grid->getAttribute<Point>("overlay-offset");
+		Point overlay_offset = grid->get<Point>("overlay-offset");
 
 		size_t image_id = getGridOverlayImageId( grid );
 
@@ -251,11 +251,11 @@ namespace FIFE { namespace map {
 	}
 
 	size_t View::getGridOverlayImageId(Grid* grid) {
-		size_t image_id = grid->getAttribute<size_t>("overlay-image-id",0);
+		size_t image_id = grid->get<size_t>("overlay-image-id",0);
 		if( image_id == 0 ) {
 			std::string overlay_image = grid->getOverlayImage();
 			image_id = ImageCache::instance()->addImageFromFile(overlay_image);
-			grid->setAttribute<size_t>("overlay-image-id",image_id);
+			grid->set<size_t>("overlay-image-id",image_id);
 		}
 		return image_id;
 	}

@@ -67,7 +67,7 @@ namespace FIFE {
 			/** Set the value of an attribute
 			 */
 			template<typename T>
-			void setAttribute(const type_attr_id& attr, const T& val) {
+			void set(const type_attr_id& attr, const T& val) {
 				m_attributes[ attr ] = type_attr(val);
 			}
 
@@ -82,7 +82,7 @@ namespace FIFE {
 			 *  to a default value.
 			 */
 			template<typename T>
-			T& getAttribute(const type_attr_id& attr, const T& def = T()) {
+			T& get(const type_attr_id& attr, const T& def = T()) {
 				if( !hasAttribute(attr) ) {
 // Uncomment this to see all default value creation of attributes.
 //
@@ -118,7 +118,7 @@ namespace FIFE {
 			 *  to a default value.
 			 */
 			template<typename T>
-			const T& getAttribute(const type_attr_id& id) const {
+			const T& get(const type_attr_id& id) const {
 				static const type_attr const_attr;
 				if( !hasAttribute(id) ) {
 					return boost::get<T>(const_attr);

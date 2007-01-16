@@ -33,7 +33,6 @@
 
 namespace FIFE { namespace map {
 
-	const std::string ObjectInfo::VisualParam      = "visual";
 	const std::string ObjectInfo::NameParam        = "name";
 	const std::string ObjectInfo::ObjectTypeParam  = "objtype";
 	const std::string ObjectInfo::LocationParam    = "location";
@@ -44,9 +43,8 @@ namespace FIFE { namespace map {
 		  m_visualId(0),
 		  m_isStatic(false) {
 
-		params["objtype"] = "undefined";
-		params["name"] = "unnamed";
-		params["visual"] = "";
+		set<std::string>("objtype","undefined");
+		set<std::string>("name","unnamed");
 
 		m_zvalue = 1;
 	}
@@ -73,7 +71,7 @@ namespace FIFE { namespace map {
 
 	void ObjectInfo::debugPrint() {
 		Log("object")
-			<< "name " << params["name"]
+			<< "name " << get<std::string>("name")
 			<< " at " << m_location.position
 			<< " on elevation " <<  m_location.elevation
 			<< "#" << m_location.grid;

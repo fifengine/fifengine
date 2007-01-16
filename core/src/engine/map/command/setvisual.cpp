@@ -55,7 +55,7 @@ namespace FIFE { namespace map { namespace command {
 
 		if (moi->getLocation().elevation != m_view->getElevationNum()) {
 			Log("mc_setvisual") << "Setting visual for object not on map view.";
-			moi->params[moi->VisualParam] = cmd.stringParam;
+			moi->setVisualLocation(cmd.stringParam);
 			return;
 		}
 
@@ -91,7 +91,8 @@ namespace FIFE { namespace map { namespace command {
 
 			Debug("mc_setvisual") 
 				<< "Setting Visual: " << cmd.stringParam
-				<< " for object type: " << moi->params[ ObjectInfo::ObjectTypeParam ];
+				<< " for object type: " 
+				<< moi->get<std::string>(ObjectInfo::ObjectTypeParam);
 			if (!moi->getVisualId()) {
 				moi->setVisualId( m_view->addVisual(visual) );
 			} else {
