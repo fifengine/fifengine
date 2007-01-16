@@ -112,7 +112,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				break;
 
 			case objtype_critter:
-				obj->params[ObjectInfo::ObjectTypeParam] = "Critter";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Critter");
 				loadCritter(data, info, obj);
 				loadCritterAnimation("critters", m_lst_critters, info, obj);
 				break;
@@ -123,7 +123,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				break;
 
 			case objtype_wall: {
-				obj->params[ObjectInfo::ObjectTypeParam] = "Wall";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Wall");
 				obj->setStatic(true);
 				loadImages("walls", m_lst_walls, info, obj);
 			}
@@ -131,7 +131,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 			case objtype_tile: {
 				data->moveIndex(4);
-				obj->params[ObjectInfo::ObjectTypeParam] = "Tile";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Tile");
 				obj->setStatic(true);
 				obj->setZValue( 0 );
 				loadImages("walls", m_lst_walls, info, obj);
@@ -139,7 +139,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			break;
 
 			case objtype_misc: {
-				obj->params[ObjectInfo::ObjectTypeParam] = "Misc";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Misc");
 				uint16_t id = info.proto_pid & 0xffff;
 				
 				if (id != 1 && id != 12)
@@ -148,8 +148,9 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				//obj = new Object("Misc", info.position);
 				loadImages("misc", m_lst_misc, info, obj);
 				Debug("fallout::ObjectFactory")
-					<< "Misc Item: " << obj->params[ ObjectInfo::ObjectTypeParam ]
-					<< " Visual: " << obj->params[ ObjectInfo::VisualParam ]
+					<< "Misc Item: " 
+					<< obj->get<std::string>(ObjectInfo::ObjectTypeParam)
+					<< " Visual: " << obj->getVisualLocation()
 					<< " Proto-PID: " << id;
 			}
 			break;
@@ -177,38 +178,38 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 		switch(subtype) {
 			case itemtype_armor:
-				obj->params[ObjectInfo::ObjectTypeParam] = "armor";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Armor");
 				break;
 
 			case itemtype_container:
-				obj->params[ObjectInfo::ObjectTypeParam] = "container";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Container");
 				break;
 
 			case itemtype_drug:
-				obj->params[ObjectInfo::ObjectTypeParam] = "item";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Item");
 				break;
 
 			case itemtype_weapon: {
 				data->moveIndex(8);
-				obj->params[ObjectInfo::ObjectTypeParam] = "drug";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Drug");
 			}
 			break;
 
 			case itemtype_ammo: {
 				data->moveIndex(4);
-				obj->params[ObjectInfo::ObjectTypeParam] = "ammo";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Ammo");
 			}
 			break;
 
 			case itemtype_misc: {
 				data->moveIndex(4);
-				obj->params[ObjectInfo::ObjectTypeParam] = "misc";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Misc");
 			}
 			break;
 
 			case itemtype_key: {
 				data->moveIndex(4);
-				obj->params[ObjectInfo::ObjectTypeParam] = "key";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Key");
 			}
 			break;
 
@@ -233,9 +234,9 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		size_t hitpoints = data->read32Big();
 		data->moveIndex(4*2);
 
-		moi->params["ai"] = boost::lexical_cast<std::string>(ai);
-		moi->params["group"]=boost::lexical_cast<std::string>(groupId);
-		moi->params["hitpoints"] = boost::lexical_cast<std::string>(hitpoints);
+		moi->set<size_t>("ai",ai);
+		moi->set<size_t>("group",groupId);
+		moi->set<size_t>("hitpoints",hitpoints);
 	}
 
 	void ObjectFactory::loadScenery(RawDataPtr data, const s_objectinfo& info, ObjectInfo* obj) {
@@ -246,14 +247,14 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		switch (subtype) {
 			case scenerytype_portal: {
 				data->moveIndex(4);
-				obj->params[ObjectInfo::ObjectTypeParam] = "Portal";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Portal");
 			}
 			break;
 
 			case scenerytype_stairs:
 			case scenerytype_elevator: {
 				data->moveIndex(2*4);
-				obj->params[ObjectInfo::ObjectTypeParam] = "Elevator";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Elevator");
 			}
 			break;
 
@@ -263,12 +264,12 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 					data->moveIndex(2*4);
 				else
 					data->moveIndex(4);
-				obj->params[ObjectInfo::ObjectTypeParam] = "Ladder";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Ladder");
 			}
 			break;
 
 			case scenerytype_genereic:
-				obj->params[ObjectInfo::ObjectTypeParam] = "Scenery";
+				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Scenery");
 				correctSceneryZValue(info.frm_pid, obj);
 				break;
 
@@ -285,7 +286,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	void ObjectFactory::loadImages(const std::string& type, list& lst, const s_objectinfo& info, ObjectInfo* obj) {
 		std::string path = "art/" + type +"/" + lst.getProFile((info.frm_pid & 0xffff));
 
-		obj->params[ obj->VisualParam ] = path;
+		obj->setVisualLocation(path);
 	}
 
 	void ObjectFactory::loadCritterAnimation(const std::string& type, CritLST& lst,
@@ -385,8 +386,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			path += ".xml";
 		}
 
-		obj->params[ obj->VisualParam ] = path;
-		obj->params[ obj->OrientationParam ] = boost::lexical_cast<std::string>(info.orientation);
+		obj->setVisualLocation( path );
+		obj->set<size_t>(obj->OrientationParam,info.orientation);
 	}
 
 	void ObjectFactory::correctSceneryZValue(uint32_t frm_pid,ObjectInfo* moi) {
@@ -398,7 +399,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		    || fname == "GOOP03.FRM" || fname == "GOOP04.FRM"
 		  ) {
 			moi->setZValue(0);
-			moi->params[ObjectInfo::ObjectTypeParam] = "Tile";
+			moi->set<std::string>(ObjectInfo::ObjectTypeParam,"Tile");
 		}
 		
 	}

@@ -115,13 +115,13 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		ignoreScripts(file);
 		loadObjects(map, file);
 
-		map->setAttribute<long>("default-elevation",
+		map->set<long>("default-elevation",
 		                        m_header->getDefaultElevation());
 
 		Point playerPos(m_header->getDefaultPlayerPosition() % 200,
 		                m_header->getDefaultPlayerPosition() / 200);
 
-		map->setAttribute<Point>("default-player-position", playerPos);
+		map->set<Point>("default-player-position", playerPos);
 		return map;
 	}
 

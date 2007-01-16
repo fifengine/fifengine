@@ -106,7 +106,7 @@ namespace FIFE { namespace map {
 		m_runner->setRuleset(ScriptContainer::fromFile(ruleset_file));
 		m_runner->initialize(m_view, m_map, m_om);
 		m_runner->start();
-		activateElevation(m_map->getAttribute<size_t>("default-elevation", 0));
+		activateElevation(m_map->get<size_t>("default-elevation", 0));
 
 		Point start_pos;
 // 		Inactive due to bugs
@@ -116,7 +116,7 @@ namespace FIFE { namespace map {
 				<< "No default player position found. "
 				<< "Using centerOfMass(): " << start_pos;
 		}
-		start_pos = m_map->getAttribute<Point>("default-player-position",start_pos);
+		start_pos = m_map->get<Point>("default-player-position",start_pos);
 		m_view->getCamera()->zoomTo( start_pos );
 	}
 

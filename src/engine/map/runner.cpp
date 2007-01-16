@@ -133,7 +133,7 @@ namespace FIFE { namespace map {
 			}
 			Visual* visual = new Visual(moi);
 
-			RenderableLocation loc(moi->params[ObjectInfo::VisualParam]);
+			RenderableLocation loc(moi->getVisualLocation());
 			visual->setRenderable(
 				ImageCache::instance()->addImageFromLocation(loc));
 
@@ -167,10 +167,15 @@ namespace FIFE { namespace map {
 
 		ss << "ruleset:createObject({";
 		
+/*
 		ObjectInfo::type_params::iterator it = moi->params.begin();
 		for (; it != moi->params.end(); ++it) {
 			ss << it->first << " = '" << it->second << "', ";
 		}
+*/
+		ss << "visual='" << moi->getVisualLocation() << "',";
+		ss << "objtype='" << moi->get<std::string>("objtype") << "',";
+		ss << "name='" << moi->get<std::string>("name") << "',";
 		
 		Location& loc = moi->getLocation();
 		
