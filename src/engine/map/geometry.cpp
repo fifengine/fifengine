@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "exception.h"
+#include "util/xmlutil.h"
 
 #include "geometry.h"
 #include "hexgeometry.h"
@@ -105,5 +106,15 @@ namespace FIFE { namespace map {
 	Rect Geometry::gridBoundingRect(const Rect& screenRect) const {
 		return geometry_detail::boundingRect(screenRect, *this, geometry_detail::FROM_SCREEN);
 	}
-	
+
+
+	s_geometry_info s_geometry_info::load(TiXmlElement* e) {
+		xmlutil::assertElement(e, "geometry" );
+		return s_geometry_info(xmlutil::queryElement<std::string>(e,"type"),
+		                       xmlutil::queryElement<uint16_t>(e,"width"),
+                                   xmlutil::queryElement<uint16_t>(e,"height"),
+		                       xmlutil::queryElement<uint16_t>(e,"x0"),
+		                       xmlutil::queryElement<uint16_t>(e,"y0"));
+	}
+
 } };

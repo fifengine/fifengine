@@ -157,9 +157,6 @@ namespace FIFE { namespace map {
 		sendEvent(event_t(0,FIFE_HEARTBEAT));
 	}
 
-	// TODO?
-	void Runner::sendScript(const ScriptContainer& sc) {}
-
 	// Rewrote this using a stringstream instead of multiple lexical_casts.
 	// --zahlman
 	std::string Runner::packObject(ObjectInfo* moi, size_t id) {
@@ -167,12 +164,13 @@ namespace FIFE { namespace map {
 
 		ss << "ruleset:createObject({";
 		
-/*
+/*		// Disabled for now.
 		ObjectInfo::type_params::iterator it = moi->params.begin();
 		for (; it != moi->params.end(); ++it) {
 			ss << it->first << " = '" << it->second << "', ";
 		}
 */
+		// Push standard ruleset data
 		ss << "visual='" << moi->getVisualLocation() << "',";
 		ss << "objtype='" << moi->get<std::string>("objtype") << "',";
 		ss << "name='" << moi->get<std::string>("name") << "',";

@@ -110,6 +110,9 @@ namespace FIFE { namespace map {
 			 */
 			void stop();
 
+			/** Activate an elevation
+			 *
+			 */
 			void activateElevation(size_t elev);
 
 			/** Register a command to a specific command_id
@@ -128,9 +131,11 @@ namespace FIFE { namespace map {
 
 			void processEvent(const event_t& e);
 
-			void sendScript(const ScriptContainer& script);
 			void sendHeartbeat(size_t);
 
+			/** Pack an object into a lua table as string
+			 *  @deprecated This is only a temporary solution
+			 */
 			std::string packObject(ObjectInfo* moi, size_t id);
 
 			typedef std::map<size_t, command::Command*> type_cmdmap;

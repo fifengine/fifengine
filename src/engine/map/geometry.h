@@ -32,6 +32,8 @@
 #include "video/point.h"
 #include "video/rect.h"
 
+class TiXmlElement;
+
 namespace FIFE { namespace map {
 
 	/** The Abstract base class of a tile geometry
@@ -86,5 +88,29 @@ namespace FIFE { namespace map {
 			 */
 			virtual size_t getNumDirections() const = 0;
 	};
+
+	struct s_geometry_info {
+		s_geometry_info() {}
+
+		s_geometry_info(const std::string& _g, uint16_t _w, uint16_t _h,
+					uint16_t _dx, uint16_t _dy)
+			: geometry(_g), w(_w), h(_h), x0(_dx), y0(_dy) {}
+
+		static s_geometry_info load(TiXmlElement* e);
+
+		// geometry class
+		std::string geometry;
+
+		// base size
+		uint16_t w;
+		uint16_t h;
+
+		// leftmost top border intersection point
+		uint16_t x0;
+
+		// topmost left border intersection point
+		uint16_t y0;
+	};
+
 } } // FIFE::map
 #endif
