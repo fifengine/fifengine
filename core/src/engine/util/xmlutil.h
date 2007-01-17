@@ -41,6 +41,9 @@ namespace FIFE {
 
 namespace FIFE { namespace xmlutil {
 
+	void loadMetadata(TiXmlElement* e, AttributedClass& t);
+	void assertElement(TiXmlElement* e, const std::string& element);
+
 	template<typename T>
 	T queryElement(TiXmlElement* e) {
 		if( !e )
@@ -78,6 +81,14 @@ namespace FIFE { namespace xmlutil {
 		             queryElement<int16_t>(e,"w"), queryElement<int16_t>(e,"h") );
 	}
 
+// 	template<>
+// 	inline
+// 	AttributedClass queryElement(TiXmlElement* e) {
+// 		AttributedClass ac;
+// 		loadMetadata(e,ac);
+// 		return ac;
+// 	}
+
 	template<typename T>
 	void foreachElement(TiXmlElement* e, const std::string& element, T& f) {
 		if( !e )
@@ -91,8 +102,5 @@ namespace FIFE { namespace xmlutil {
 	}
 
 
-	void loadMetadata(TiXmlElement* e, AttributedClass& t);
-
-	void assertElement(TiXmlElement* e, const std::string& element);
 } }
 #endif

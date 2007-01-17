@@ -413,6 +413,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			}
 
 			grid->setTileImage(Point(x, y), gid);
+			sdn = sdn->NextSiblingElement("tileat");
 		}
 	}
 

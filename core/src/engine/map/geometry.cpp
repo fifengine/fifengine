@@ -21,6 +21,7 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
+#include <map>
 
 // 3rd party library includes
 
@@ -33,7 +34,7 @@
 
 #include "geometry.h"
 #include "hexgeometry.h"
-#include "rectgeometry.h"
+#include "gridgeometry.h"
 
 namespace FIFE { namespace map {
 
@@ -44,14 +45,7 @@ namespace FIFE { namespace map {
 	// namespace, so that it doesn't clutter the "interface" header.
 	
 	namespace geometry_detail {
-		Geometry* predefined_geometries[] = {
-			new RectGeometry(0, 0, // offset
-			                 80, 36, // tile size
-											 48, 32, -12, 24), // transform
-			// XXX could we get a derivation for the offset values?
-			new HexGeometry(4816, -1080-96-2,
-			                32, 16)
-		};
+		std::map<size_t,s_geometry_info> info_map;
 
 		// Free function helpers - we avoid adding to the 'private' section of the
 		// interface
@@ -87,10 +81,28 @@ namespace FIFE { namespace map {
 		}
 	}
 
-	Geometry* Geometry::getGeometryFromId(size_t id) {
-		if( id >= 2 )
-			throw IndexOverflow(__FUNCTION__); 
-		return geometry_detail::predefined_geometries[id];
+	Geometry* Geometry::createGeometry(size_t id, const Point& mapsize) {
+		std::map<size_t,s_geometry_info>::iterator i = geometry_detail::info_map.find(id);
+		if( i == geometry_detail::info_map.end() ) {
+			throw InvalidFormat(std::string("unknown geometry id: ")
+				+ boost::lexical_cast<std::string>(id));
+		}
+
+		if( i->second.geometry == "HEXAGONAL" ) {
+			return new HexGeometry(i->second, mapsize);
+		}
+
+		if( i->second.geometry == "RECTANGULAR" ) {
+			return new GridGeometry(i->second, mapsize);
+		}
+
+		throw InvalidFormat(std::string("unknown geometry: ")
+			+ boost::lexical_cast<std::string>(i->second.geometry));
+		return 0;
+	}
+
+	void Geometry::registerGeometry(const s_geometry_info& g) {
+		geometry_detail::info_map[g.id] = g;
 	}
 
 	// Default implementations.
@@ -110,11 +122,10 @@ namespace FIFE { namespace map {
 
 	s_geometry_info s_geometry_info::load(TiXmlElement* e) {
 		xmlutil::assertElement(e, "geometry" );
-		return s_geometry_info(xmlutil::queryElement<std::string>(e,"type"),
-		                       xmlutil::queryElement<uint16_t>(e,"width"),
-                                   xmlutil::queryElement<uint16_t>(e,"height"),
-		                       xmlutil::queryElement<uint16_t>(e,"x0"),
-		                       xmlutil::queryElement<uint16_t>(e,"y0"));
+		return s_geometry_info(xmlutil::queryElement<size_t>(e,"id"),
+		                       xmlutil::queryElement<std::string>(e,"type"),
+		                       xmlutil::queryElement<Point>(e,"size"),
+                                   xmlutil::queryElement<Point>(e,"transform"));
 	}
 
 } };

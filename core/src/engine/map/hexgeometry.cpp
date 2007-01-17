@@ -48,6 +48,16 @@ namespace FIFE { namespace map {
 		{ -1,  0,  1,  1,   0, -1 }
 	};
 
+
+	HexGeometry::HexGeometry(const s_geometry_info& g, const Point& mapsize) {
+		m_basesize = g.size;
+
+		m_offset -= toScreen(Point(mapsize.x-1,0)) - g.size;
+		Log(g.geometry)
+			<< "screenBoundingRect("<<Rect(0,0,mapsize.x,mapsize.y)<<") -> " 
+			<< screenBoundingRect(Rect(0,0,mapsize.x,mapsize.y));
+	}
+
 	size_t HexGeometry::getNumDirections() const {
 		return 6;
 	}
@@ -55,15 +65,15 @@ namespace FIFE { namespace map {
 	Point HexGeometry::toScreen(const Point& pos) const {
 		int32_t w  = m_basesize.x;
 		int32_t h  = m_basesize.y;
-		return Point(x_offset - (pos.x*w - (pos.x/2)*(w/2) - pos.y *h),
-                         y_offset + (pos.x/2)*(3*h/4) + pos.y*(3*h/4));
+		return Point(m_offset.x - (pos.x*w - (pos.x/2)*(w/2) - pos.y * h),
+                         m_offset.y + (pos.x/2)*(3*h/4) + pos.y*(3*h/4));
 	}
 	
 	Point HexGeometry::fromScreen(const Point& pos) const {
 		int32_t w  = m_basesize.x;
 		int32_t h  = m_basesize.y;
 
-		Point p2((pos.x - x_offset)/(-w/2), (pos.y - y_offset)/(3*h/4));
+		Point p2((pos.x - m_offset.x)/(-w/2), (pos.y - m_offset.y)/(3*h/4));
 		p2.x = (p2.x + p2.y)/2;
 		p2.y = p2.y - p2.x/2;
 		return p2;

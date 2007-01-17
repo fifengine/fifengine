@@ -34,35 +34,34 @@
 
 namespace FIFE { namespace map {
 	class GridGeometry : public Geometry {
-		// An offset translation (can't be represented in the transform).
-		int x_offset, y_offset;
-		
-		// The "tile size".
-		Point m_basesize;
-
-		// The matrix that transforms grid coordinates to screen coordinates.
-		int xdx, ydx, xdy, ydy;
-		// (Following the conventions of the old code)
-		// [ xdx  ydx ]
-		// [ xdy  ydy ]
-		
-		// The inverse is:
-		//      1      [  ydy -ydx ]
-		// determinant [ -xdy  xdx ]
-		// We cache a determinant value.
-		int determinant;
-
 		public:
-			GridGeometry(int x_offset, int y_offset, int width, int height,
-			             int xdx, int ydx, int xdy, int ydy):
-				x_offset(x_offset), y_offset(y_offset), m_basesize(width, height), 
-				xdx(xdx), ydx(ydx), xdy(xdy), ydy(ydy),
-				determinant(xdx * ydy - ydx * xdy) {}
+			GridGeometry(const s_geometry_info& g, const Point& mapsize);
 		
 			Point toScreen(const Point& gridPos) const;
 			Point fromScreen(const Point& screenPos) const;
-			// directionToGrid and getNumDirections still pure virtual.
+
+			size_t getNumDirections() const;
+			Point directionToGrid(size_t dir, const Point& at = Point()) const; 
+
 			Point baseSize() const { return m_basesize; }
+		private:
+			// An offset translation (can't be represented in the transform).
+			Point m_offset;
+			
+			// The "tile size".
+			Point m_basesize;
+	
+			// The matrix that transforms grid coordinates to screen coordinates.
+			int xdx, ydx, xdy, ydy;
+			// (Following the conventions of the old code)
+			// [ xdx  ydx ]
+			// [ xdy  ydy ]
+			
+			// The inverse is:
+			//      1      [  ydy -ydx ]
+			// determinant [ -xdy  xdx ]
+			// We cache a determinant value.
+			int determinant;
 	};	
 } } // namespace FIFE::map
 

@@ -35,6 +35,7 @@
 #include "exception.h"
 
 #include "factory.h"
+#include "geometry.h"
 #include "loader.h"
 
 namespace FIFE { namespace map {
@@ -44,6 +45,8 @@ namespace FIFE { namespace map {
 #ifdef HAVE_XMLMAP
 		registerLoader(new loaders::xml::XML());
 #endif
+		Geometry::registerGeometry(s_geometry_info(0,"RECTANGULAR",Point(80,36),Point(48,24)));
+		Geometry::registerGeometry(s_geometry_info(1,"HEXAGONAL",Point(32,16),Point(16,12)));
 	}
 
 	// FIXME: use boost::ptr_map ?

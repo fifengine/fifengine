@@ -82,9 +82,13 @@ namespace FIFE { namespace map {
 				MAX_PARAM = 100
 			};
 
-			/** Constructs a MapGrid instance
+			/** Constructs a Grid instance
 			 */
 			Grid(const Point& size, size_t geometry);
+
+			/** Destructs a Grid instance
+			 */
+			~Grid();
 
 			/** Get the Geometry as set in the constructor
 			 *  @return a valid Geometry

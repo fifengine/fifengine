@@ -37,7 +37,7 @@ namespace FIFE { namespace map {
 		m_size(size),
 		m_global_alpha(255),
  		m_shift(),
-		m_geometry(Geometry::getGeometryFromId(geometry)) {
+		m_geometry(Geometry::createGeometry(geometry,size)) {
 
 		m_tiles_visibility = m_objects_visibility = true;
 		m_grid_overlay = false;
@@ -45,6 +45,10 @@ namespace FIFE { namespace map {
 		// set default attributes
 		setOverlayImage("content/gfx/tiles/tile_outline.png");
 		get<std::string>("name", "__unnamed__");
+	}
+
+	Grid::~Grid() {
+		delete m_geometry;
 	}
 
 	const Point& Grid::getSize() const {

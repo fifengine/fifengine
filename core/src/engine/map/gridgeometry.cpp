@@ -28,17 +28,51 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "log.h"
 
 #include "gridgeometry.h"
 
 namespace FIFE { namespace map {
+	const int grid_dx_values[] = {
+		0,  1,  0, -1,
+	};
+
+	const int grid_dy_values[] = {
+		-1,  0,  1,  0,
+	};
+
+	size_t GridGeometry::getNumDirections() const {
+		return 4;
+	}
+
+	GridGeometry::GridGeometry(const s_geometry_info& g, const Point& mapsize) {
+		m_basesize = g.size;
+
+		xdx = g.transform.x;
+		ydy = g.transform.y;
+		xdy = ydy - m_basesize.y;
+		ydx = m_basesize.x - xdx;
+		determinant = xdx*ydy - xdy*ydx;
+		Log(g.geometry)
+			<< "[ " << xdx << ", " << ydx << "]"
+			<< "[ " << xdy << ", " << ydy << "]: "
+			<< "screenBoundingRect("<<Rect(0,0,mapsize.x,mapsize.y)<<") -> " 
+			<< screenBoundingRect(Rect(0,0,mapsize.x,mapsize.y));
+	}
+
+	Point GridGeometry::directionToGrid(size_t direction, const Point&) const {
+		assert(direction >= 0 && direction < getNumDirections());
+		return Point(grid_dx_values[direction],
+		             grid_dy_values[direction]);
+	}
+
 	Point GridGeometry::toScreen(const Point& pos) const {
-		return Point(pos.x * xdx + pos.y * ydx + x_offset,
-		             pos.x * xdy + pos.y * ydy + y_offset);
+		return Point(pos.x * xdx + pos.y * ydx + m_offset.x,
+		             pos.x * xdy + pos.y * ydy + m_offset.y);
 	}
 	
 	Point GridGeometry::fromScreen(const Point& pos) const {
-		Point p2(pos.x - x_offset, pos.y - y_offset);
+		Point p2(pos.x - m_offset.x, pos.y - m_offset.y);
 		
 		return Point((p2.x *  ydy + p2.y * -ydx) / determinant,
 		             (p2.x * -xdy + p2.y *  xdx) / determinant);
