@@ -22,6 +22,7 @@
 #define FIFE_MAP_GEOMETRY_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -36,6 +37,29 @@ class TiXmlElement;
 
 namespace FIFE { namespace map {
 
+	struct s_geometry_info {
+		s_geometry_info() {}
+
+		s_geometry_info(size_t _id, const std::string& _g,
+		                const Point& _size,
+		                const Point& _transform)
+			: id(_id), geometry(_g), size(_size), transform(_transform) {}
+
+		static s_geometry_info load(TiXmlElement* e);
+
+		// id
+		size_t id;
+
+		// geometry class
+		std::string geometry;
+
+		// base size
+		Point size;
+
+		// topmost left border intersection point
+		Point transform;
+	};
+
 	/** The Abstract base class of a tile geometry
 	 */
 	class Geometry {
@@ -47,7 +71,8 @@ namespace FIFE { namespace map {
 
 			virtual ~Geometry() {}
 
-			static Geometry* getGeometryFromId(size_t id);
+			static Geometry* createGeometry(size_t id, const Point& mapsize);
+			static void registerGeometry(const s_geometry_info& info);
 
 			/** Calculate screen position of the upper left corner of the grid 
 			 *  position
@@ -89,28 +114,6 @@ namespace FIFE { namespace map {
 			virtual size_t getNumDirections() const = 0;
 	};
 
-	struct s_geometry_info {
-		s_geometry_info() {}
-
-		s_geometry_info(const std::string& _g, uint16_t _w, uint16_t _h,
-					uint16_t _dx, uint16_t _dy)
-			: geometry(_g), w(_w), h(_h), x0(_dx), y0(_dy) {}
-
-		static s_geometry_info load(TiXmlElement* e);
-
-		// geometry class
-		std::string geometry;
-
-		// base size
-		uint16_t w;
-		uint16_t h;
-
-		// leftmost top border intersection point
-		uint16_t x0;
-
-		// topmost left border intersection point
-		uint16_t y0;
-	};
 
 } } // FIFE::map
 #endif

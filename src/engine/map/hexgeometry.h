@@ -37,9 +37,7 @@ namespace FIFE { namespace map {
 	 */
 	class HexGeometry : public Geometry {
 		public:
-			HexGeometry(int _x_offset, int _y_offset, int width, int height)
-				: x_offset(_x_offset),y_offset(_y_offset),
-				  m_basesize(width, height) {}
+			HexGeometry(const s_geometry_info& g, const Point& mapsize);
 
 			size_t getNumDirections() const;
 			Point directionToGrid(size_t dir, const Point& at = Point()) const;
@@ -49,9 +47,8 @@ namespace FIFE { namespace map {
 			Point fromScreen(const Point& screenPos) const;
 			Point baseSize() const { return m_basesize; }
 		protected:
-			int32_t x_offset;
-			int32_t y_offset;
-			Point   m_basesize;
+			Point m_offset;
+			Point m_basesize;
 	};
 } }
 
