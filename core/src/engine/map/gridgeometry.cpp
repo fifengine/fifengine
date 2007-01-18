@@ -53,6 +53,8 @@ namespace FIFE { namespace map {
 		xdy = ydy - m_basesize.y;
 		ydx = m_basesize.x - xdx;
 		determinant = xdx*ydy - xdy*ydx;
+		assert(determinant);
+
 		Log(g.geometry)
 			<< "[ " << xdx << ", " << ydx << "]"
 			<< "[ " << xdy << ", " << ydy << "]: "

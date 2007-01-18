@@ -45,8 +45,16 @@ namespace FIFE { namespace map {
 #ifdef HAVE_XMLMAP
 		registerLoader(new loaders::xml::XML());
 #endif
-		Geometry::registerGeometry(s_geometry_info(0,"RECTANGULAR",Point(80,36),Point(48,24)));
-		Geometry::registerGeometry(s_geometry_info(1,"HEXAGONAL",Point(32,16),Point(16,12)));
+		Geometry::registerGeometry(s_geometry_info(0,"RECTANGULAR",
+			Point(80,36),  // TILE SIZE
+			Point(48,24),  // TRANSFORM
+			Point(),       // OFFSET
+			0));           // FLAGS: NONE
+		Geometry::registerGeometry(s_geometry_info(1,"HEXAGONAL",
+			Point(32,16),  // TILESIZE
+			Point(16,12),  // TRANSFORM
+			Point(32,16),  // OFFSET
+			1));           // FLAGS: SHIFT AROUND X AXIS
 	}
 
 	// FIXME: use boost::ptr_map ?

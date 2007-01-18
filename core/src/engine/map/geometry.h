@@ -42,8 +42,11 @@ namespace FIFE { namespace map {
 
 		s_geometry_info(size_t _id, const std::string& _g,
 		                const Point& _size,
-		                const Point& _transform)
-			: id(_id), geometry(_g), size(_size), transform(_transform) {}
+		                const Point& _transform,
+		                const Point& _offset,
+		                int _flags)
+			: id(_id), geometry(_g), size(_size), transform(_transform),
+			  offset(_offset), flags(_flags) {}
 
 		static s_geometry_info load(TiXmlElement* e);
 
@@ -58,6 +61,11 @@ namespace FIFE { namespace map {
 
 		// topmost left border intersection point
 		Point transform;
+
+		// extra offset
+		Point offset;
+
+		int flags;
 	};
 
 	/** The Abstract base class of a tile geometry

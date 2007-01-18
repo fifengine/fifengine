@@ -52,6 +52,11 @@ namespace FIFE {
 	}
 
 	VFSSource* VFSSourceFactory::createSource(const std::string& file) const {
+		if( m_usedfiles.count(file) ) {
+			Warn("VFSSourceFactory") << file << " is already used as VFS source)";
+			return 0;
+		}
+
 		type_providers::const_iterator end = m_providers.end();
 		for (type_providers::const_iterator i = m_providers.begin(); i != end; ++i) {
 			const VFSSourceProvider* provider = *i;
@@ -60,6 +65,7 @@ namespace FIFE {
 
 			try {
 				VFSSource* source = provider->createSource(file);
+				m_usedfiles.insert(file);
 				return source;
 			} catch(const Exception& ex) {
 				Log("VFSSourceFactory") << provider->getName() << " thought it could load " << file << " but didn't succeed (" << ex.getMessage() << ")";

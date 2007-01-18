@@ -48,6 +48,7 @@ namespace FIFE { namespace map {
 			Point baseSize() const { return m_basesize; }
 		protected:
 			Point m_offset;
+			Point m_transform;
 			Point m_basesize;
 	};
 } }

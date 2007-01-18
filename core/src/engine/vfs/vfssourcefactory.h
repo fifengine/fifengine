@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <vector>
+#include <set>
 
 // 3rd party library includes
 
@@ -55,13 +56,15 @@ namespace FIFE {
 			 *
 			 * all currently known VFSSourceProviders are tried until one succeeds - if no provider succeeds 0 is returned
 			 * @param file the archive-file
-			 * @return the new VFSSource or 0 if no provider was succesfull
+			 * @return the new VFSSource or 0 if no provider was succesfull or the file was already used as source
 			 */
 			VFSSource* createSource(const std::string& file) const;
 
 		private:
+			typedef std::set<std::string> type_usedfiles;
 			typedef std::vector<VFSSourceProvider*> type_providers;
 			type_providers m_providers;
+			mutable type_usedfiles m_usedfiles;
 
 			void cleanup();
 
