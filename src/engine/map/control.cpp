@@ -121,9 +121,7 @@ namespace FIFE { namespace map {
 	}
 
 	void Control::activateElevation(size_t elev) {
-		if (m_view->getElevationNum() != elev) {
-			m_view->setMap(m_map, elev);
-		}
+		m_view->setMap(m_map, elev);
 		m_runner->activateElevation(elev);
 	}
 

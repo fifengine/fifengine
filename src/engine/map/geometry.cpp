@@ -125,7 +125,9 @@ namespace FIFE { namespace map {
 		return s_geometry_info(xmlutil::queryElement<size_t>(e,"id"),
 		                       xmlutil::queryElement<std::string>(e,"type"),
 		                       xmlutil::queryElement<Point>(e,"size"),
-                                   xmlutil::queryElement<Point>(e,"transform"));
+		                       xmlutil::queryElement<Point>(e,"transform"),
+		                       xmlutil::queryElement<Point>(e,"offset"),
+		                       xmlutil::queryElement<int>(e,"flags"));
 	}
 
 } };
