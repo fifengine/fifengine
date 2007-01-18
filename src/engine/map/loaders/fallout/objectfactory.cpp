@@ -125,6 +125,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			case objtype_wall: {
 				obj->set<std::string>(ObjectInfo::ObjectTypeParam,"Wall");
 				obj->setStatic(true);
+				obj->setZValue( 1 );
 				loadImages("walls", m_lst_walls, info, obj);
 			}
 			break;
