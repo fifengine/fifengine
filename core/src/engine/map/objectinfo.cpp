@@ -46,7 +46,7 @@ namespace FIFE { namespace map {
 		set<std::string>("objtype","undefined");
 		set<std::string>("name","unnamed");
 
-		m_zvalue = 1;
+		m_zvalue = 2;
 	}
 
 	ObjectInfo::~ObjectInfo() {
