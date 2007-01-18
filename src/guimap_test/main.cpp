@@ -42,6 +42,7 @@
 
 int main(int argc, char* argv[]) {
 
+	std::string startup_script("content/scripts/startup.lua");
 	std::string script_setup("content/scripts/fallout2.lua");
 	std::string map_to_load("");
 	
@@ -75,6 +76,7 @@ int main(int argc, char* argv[]) {
 		FIFE::GUIManager::instance();
 
 		FIFE::ScriptBackendManager::instance()->select("Lua");
+		FIFE::CScriptEngine()->runFile(startup_script);
 		FIFE::CScriptEngine()->runFile(script_setup);
 		FIFE::CScriptEngine()->setGlobalInt("screen_width", swidth);
 		FIFE::CScriptEngine()->setGlobalInt("screen_height", sheight);
