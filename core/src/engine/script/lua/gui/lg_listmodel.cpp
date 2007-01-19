@@ -31,7 +31,7 @@ namespace luaGui {
 	ListModel::ListModel(lua_State *L) : 
 		gcn::ListModel(), elements(lua_gettop(L)) {
 			for (int i = 0; i < lua_gettop(L); ++i) {
-				elements[i] = luaL_checkstring(L, i);
+				elements[i] = luaL_checkstring(L, i+1);
 			}
 	}
 	ListModel::~ListModel() {}
@@ -46,7 +46,7 @@ namespace luaGui {
 	}
 	int ListModel::l_addElement(lua_State *L) {
 		for (int i = 0; i < lua_gettop(L); ++i) {
-			elements.push_back( luaL_checkstring(L, i) );
+			elements.push_back( luaL_checkstring(L, i+1) );
 		}
 		return 1;
 	}
@@ -55,6 +55,7 @@ namespace luaGui {
 		return elements.size();
 	}
 	std::string ListModel::getElementAt(int k) {
+		//FIXME: should throw index-out-of-range or something
 		return elements[k];
 	}
 	const char ListModel::className[] = "ListModel";
