@@ -84,28 +84,28 @@ bool FMainWindow::initSignals() {
 	return false;
 }
 
-bool FMainWindow::setSelectedObject(FIFE::MapObjectInfo* object) {
+bool FMainWindow::setSelectedObject(FIFE::map::ObjectInfo* object) {
 	m_selected_object_list.clear();
 	m_selected_object_list.push_front(object);
 	
 	return true;
 }
 
-bool FMainWindow::setSelectedObjectMultiple(std::list<FIFE::MapObjectInfo*> object_list) {
+bool FMainWindow::setSelectedObjectMultiple(std::list<FIFE::map::ObjectInfo*> object_list) {
 	m_selected_object_list.clear();
 	m_selected_object_list = object_list;
 	
 	return true;
 }
 
-FIFE::MapObjectInfo* FMainWindow::getSelectedObject() {
+FIFE::map::ObjectInfo* FMainWindow::getSelectedObject() {
 	return m_selected_object_list.front();
 	
 }
 
-FIFE::MapObjectInfo* FMainWindow::getSelectedObjectFromList(int position) {
+FIFE::map::ObjectInfo* FMainWindow::getSelectedObjectFromList(int position) {
 	int counter = 0;
-	for( std::list<FIFE::MapObjectInfo*>::iterator obj_iter = m_selected_object_list.begin();
+	for( std::list<FIFE::map::ObjectInfo*>::iterator obj_iter = m_selected_object_list.begin();
 	     obj_iter != m_selected_object_list.end() && counter <= position;
 	     obj_iter++ ){
 		if( counter == position ){
@@ -116,7 +116,7 @@ FIFE::MapObjectInfo* FMainWindow::getSelectedObjectFromList(int position) {
 	return 0;
 }
 
-std::list<FIFE::MapObjectInfo*> FMainWindow::getSelectedObjectList() {
+std::list<FIFE::map::ObjectInfo*> FMainWindow::getSelectedObjectList() {
 	return m_selected_object_list;
 }
 

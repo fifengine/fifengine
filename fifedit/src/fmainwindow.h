@@ -116,7 +116,7 @@ namespace FIFEDIT{
 		
 	private:
 		/** FIFE Data Items */
-		FIFE::map* m_map_data;
+		FIFE::map::Map* m_map_data;
 		std::list<FIFE::map::ObjectInfo*> m_selected_object_list;
 		/** Custom Qt Widget and Component Items */
 		FObjectBrowser* m_object_browser;
