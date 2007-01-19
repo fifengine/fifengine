@@ -29,6 +29,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <map>
+#include <set>
 
 // 3rd party library includes
 
@@ -148,7 +150,7 @@ namespace FIFE {
 			 *
 			 * @param args List of args.
 			 */
-			static void parseCmdLine(const std::vector<std::string>& args);
+			static void parseCmdLine(const std::map<std::string,std::vector<std::string> >& args);
 // 			static void setConsole(Console* console);
 
 			/** Set log level threshold.
@@ -186,7 +188,7 @@ namespace FIFE {
 			// The log string.
 			std::string m_logstring;
 
-			typedef std::vector<std::string> type_dbgtypes;
+			typedef std::set<std::string> type_dbgtypes;
 //			typedef std::list<struct log_entry> type_logentries;
 
 			// Vector containing the visible type values.

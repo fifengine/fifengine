@@ -52,6 +52,16 @@ namespace FIFE {
 		return 1;
 	}
 
+	int Engine_LuaScript::getCommandLine(lua_State *L) {
+		lua_newtable(L);
+		const std::vector<std::string>& cmdline = Engine::instance()->getCommandLine();
+		for(size_t i=0; i!= cmdline.size(); ++i) {
+			lua_pushstring(L, cmdline[i].c_str());
+			lua_rawseti(L,-2,i+1);// index: 1..n in lua
+		}
+		return 1;
+	}
+
 	int luaopen_engine(lua_State *L) {
 		luaL_openlib(L, "engine", Engine_LuaScript::methods, 0);
 		return 0;
@@ -64,6 +74,7 @@ namespace FIFE {
 		method(printStatistics),
 		method(stop),
 		method(getFPS),
+		method(getCommandLine),
 		{NULL, NULL}
 	};
 }

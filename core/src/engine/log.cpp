@@ -48,8 +48,7 @@ namespace FIFE {
 		if (m_show) {
 			std::ostringstream stream;
 			stream << std::setfill('0') << std::setw(8) << SDL_GetTicks() << " " << type << ": ";
-			std::string s = stream.str();
-			m_logstring = s;
+			m_logstring = stream.str();
 		};
 	}
 
@@ -59,21 +58,16 @@ namespace FIFE {
 		}
 	}
 
-	void Log::parseCmdLine(const std::vector<std::string>& args) {
-		bool debugargs = false;
+	void Log::parseCmdLine(const std::map<std::string,std::vector<std::string> >& args) {
 		initialize();
 
-		for (unsigned i = 0; i < args.size(); ++i) {
-			const std::string& arg = args[i];
-			if (debugargs) {
-				addVisibleType(arg);
-			} else {
-				if (arg == "--debug") {
-					debugargs = true;
-					m_showall = false;
-				}
-			}
-		}
+		std::map<std::string, std::vector<std::string> >::const_iterator i(args.find("-debug"));
+		if( i == args.end() )
+			return;
+
+		std::vector<std::string>::const_iterator j(i->second.begin());
+		for(;j!=i->second.end(); ++j)
+			Log::addVisibleType(*j);
 	}
 
 	void Log::initialize() {
@@ -103,7 +97,7 @@ namespace FIFE {
 		if (isVisibleType(type)) {
 			return;
 		}
-		m_dbgtypes.push_back(type);
+		m_dbgtypes.insert(type);
 	}
 /*
 	void Log::removeVisibleType(const std::string& type) {
@@ -120,7 +114,7 @@ namespace FIFE {
 	}
 */
 	bool Log::isVisibleType(const std::string& type) {
-		return std::find(m_dbgtypes.begin(), m_dbgtypes.end(), type) != m_dbgtypes.end();
+		return m_dbgtypes.count(type);
 	}
 
 // 	void Log::setConsole(Console* console){

@@ -59,7 +59,6 @@ int main(int argc, char* argv[]) {
 	try {
 		engine = new FIFE::Engine(argc, argv);
 
-		FIFE::GameStateManager::instance();
 		FIFE::SettingsManager* settings = FIFE::SettingsManager::instance();
 
 		unsigned int swidth = settings->read("ScreenWidth", 800);
@@ -71,9 +70,6 @@ int main(int argc, char* argv[]) {
 
 		// it seems this *MUST* be done after setting the video mode!
 		SDL_EnableUNICODE(1);
-
-		FIFE::audio::Manager::instance();
-		FIFE::GUIManager::instance();
 
 		FIFE::ScriptBackendManager::instance()->select("Lua");
 		FIFE::CScriptEngine()->runFile(startup_script);

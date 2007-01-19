@@ -53,7 +53,7 @@ namespace FIFE { namespace map {
 		Geometry::registerGeometry(s_geometry_info(1,"HEXAGONAL",
 			Point(32,16),  // TILESIZE
 			Point(16,12),  // TRANSFORM
-			Point(32,16),  // OFFSET
+			Point(32,10),  // OFFSET
 			1));           // FLAGS: SHIFT AROUND X AXIS
 	}
 
