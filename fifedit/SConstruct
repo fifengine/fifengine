@@ -86,7 +86,10 @@ env = conf.Finish()
 #	platformConfig.addExtras(conf)
 #	env = conf.Finish()
 
-env.Append(CPPFLAGS = ['-Wall', '-Wold-style-cast'])
+if sys.platform == "win32":
+	env.Append(CPPFLAGS = ['-Wall'])
+else:
+	env.Append(CPPFLAGS = ['-Wall', '-Wold-style-cast'])
 
 if env['debug'] == 1:
 	env.Append(CPPFLAGS = ['-ggdb', '-O0'])
