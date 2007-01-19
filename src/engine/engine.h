@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <string>
 #include <vector>
+#include <map>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -83,6 +84,9 @@ namespace FIFE {
 			 */
 			void printStatistics() const;
 
+			const std::vector<std::string>& getCommandLine() const;
+			const std::vector<std::string>& getCommandLine(const std::string& option) const;
+
 			/** Handles event.
 			 *
 			 * Specifically, this handles the QUIT_GAME, MAKE_SCREENSHOT and
@@ -107,6 +111,7 @@ namespace FIFE {
 			double m_avgframetime;
 			/// Command line
 			std::vector<std::string> m_cmdline;
+			std::map<std::string,std::vector<std::string> > m_parsed_cmdline;
 
 			/** Initialise Engine. Called by constructor.
 			 *

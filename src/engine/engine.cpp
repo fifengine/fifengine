@@ -61,8 +61,21 @@ namespace FIFE {
 	Engine::Engine(int argc, char** argv) 
 		: m_run(false), m_makeScreenshot(false), m_avgframetime(0) {
 
-		while( --argc ) {
-			m_cmdline.push_back( argv[argc] );
+		for(int i = 1; i < argc;  ++i ) {
+			m_cmdline.push_back( argv[i] );
+		}
+
+		for(size_t i=0; i != m_cmdline.size(); ++i) {
+			if( !m_cmdline[i].empty() && m_cmdline[i][0] =='-' ) {
+				m_parsed_cmdline[ m_cmdline[i] ] = std::vector<std::string>();
+				for(size_t j=i+1; j != m_cmdline.size(); ++j) {
+					if( !m_cmdline[j].empty() && m_cmdline[j][0] =='-' ) {
+						break;
+					}
+					m_parsed_cmdline[ m_cmdline[i] ].push_back( m_cmdline[j] );
+					++i;
+				}
+			}
 		}
 
 		init();
@@ -90,7 +103,7 @@ namespace FIFE {
 		TTF_Init();
 
 
-		Log::parseCmdLine( m_cmdline );
+		Log::parseCmdLine( m_parsed_cmdline );
 
 		new GUIManager();
 		new RenderManager();
@@ -127,6 +140,21 @@ namespace FIFE {
 		delete SettingsManager::instance();
 		delete TimeManager::instance();
 	}
+
+	const std::vector<std::string>& Engine::getCommandLine() const {
+		return m_cmdline;
+	}
+
+	const std::vector<std::string>& Engine::getCommandLine(const std::string& option) const {
+		static const std::vector<std::string> empty_vector;
+		// being const-correct without mutable:
+		if( m_parsed_cmdline.find(option) != m_parsed_cmdline.end() ) {
+			return m_parsed_cmdline.find( option )->second;
+		} else {
+			return empty_vector;
+		}
+	}
+
 
 	void Engine::start() {
 		CScriptEngine()->callFunction("on_engine_start");

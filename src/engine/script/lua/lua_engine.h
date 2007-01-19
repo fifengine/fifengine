@@ -38,6 +38,7 @@ namespace FIFE {
 			static int makeScreenshot(lua_State *L);
 			static int stop(lua_State *L);
 			static int getFPS(lua_State *L);
+			static int getCommandLine(lua_State *L);
 
 			static const luaL_reg methods[];
 	};
