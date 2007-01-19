@@ -89,6 +89,9 @@ namespace FIFE {
 		lua_pushcfunction(L, luaopen_math);
 		lua_call(L, 0, 0);
 
+		lua_pushcfunction(L, luaopen_package);
+		lua_call(L, 0, 0);
+
 		lua_pushcfunction(L, set_next_mapfile);
 		lua_setglobal(L, "set_next_mapfile");
 
