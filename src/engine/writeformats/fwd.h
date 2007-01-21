@@ -1,0 +1,3 @@
+namespace FIFE {
+	class MapDump;
+}
