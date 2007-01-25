@@ -54,7 +54,7 @@ distribution.
 #define FIFE_SOLVER_GRAPH_H
 
 // Standard C++ library includes
-#include <float.h>
+#include <float.h> // ToDo: consider whether this should be removed?
 #include <vector>
 
 // 3rd party library includes
