@@ -77,7 +77,6 @@ namespace FIFE { namespace solver {
 		float cost;			///< The cost to the state. Use FLT_MAX for infinite cost.
 	};
 
-
 	/**
 		A pure abstract class used to define a set of callbacks. 
 		The client application inherits from 
