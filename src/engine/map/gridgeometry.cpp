@@ -21,6 +21,7 @@
 
 // Standard C++ library includes
 #include <cmath>
+#include <cassert>
 
 // 3rd party library includes
 
