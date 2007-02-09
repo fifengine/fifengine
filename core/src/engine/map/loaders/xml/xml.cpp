@@ -239,10 +239,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 		s_geometry_info geometry_info;
 		TiXmlElement* el1 = el->FirstChildElement("geometry");
-		if(el1)
+		if(el1) {
 			geometry_info = s_geometry_info::load(el1);
-
-
+			Geometry::registerGeometry(geometry_info);
+		}
 
  		el->QueryIntAttribute("width", &width);
  		el->QueryIntAttribute("height", &height);
