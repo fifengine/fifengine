@@ -61,7 +61,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		m_imageIndexMap->clear();
 	}
 
-	SDL_Surface* Imgcache::getSubImage(SDL_Surface* src, uint8_t w, uint8_t h,
+	SDL_Surface* Imgcache::getSubImage(SDL_Surface* src, uint16_t w, uint16_t h,
 	                                   uint8_t xStep, uint8_t yStep) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
@@ -106,8 +106,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 				<< "Error: both tilewidth and tileheight attribute need to be defined!";
  			return 1;
  		}
- 		if (tilewidth > 255 || tileheight > 255) {
- 			Log("ImgcacheLoader") << "Error: tile sizes have to be <= 255";
+ 		if (tilewidth > 65535 || tileheight > 65535) {
+ 			Log("ImgcacheLoader") << "Error: tile sizes have to be <= 65535";
  			return 1;
  		}
 
@@ -140,8 +140,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
  			for (uint8_t y = 0; y < static_cast<uint8_t>(ysteps); y++) {
  				for (uint8_t x = 0; x < static_cast<uint8_t>(xsteps); x++) {
  					SDL_Surface* subimg = getSubImage(base, 
-					                                  static_cast<uint8_t>(tilewidth),
- 					                                  static_cast<uint8_t>(tileheight),
+					                                  static_cast<uint16_t>(tilewidth),
+ 					                                  static_cast<uint16_t>(tileheight),
 					                                  x, y);
 
 					RenderAble* as_img = rbackend->createStaticImageFromSDL(subimg);
