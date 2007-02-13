@@ -63,15 +63,10 @@ namespace loaders { namespace xml {
 	 *
 	 * Notes on the map-format:
 	 *
-	 * Mainly inspired from FO2 with the exception that an \em elevation
-	 * (in xmlmap) only contains the data for either floor *or* roof.
-	 * The first defined elevation will set the floor, the second the roof.
-	 * A single xml file can only contain one (complete) map.
+	 * Mainly inspired from FO2.
+	 * 
 	 *
-	 * [someone else wrote]
-	 *
-	 * Class for loading XML maps
-	 * @warning There are a lot different  methods of actually loading the tile data,
+	 * @note There are a lot different  methods of actually loading the tile data,
 	 * some of them may or may not be tested currently.
 	 * @see map.dtd The document type definition for xml maps.
 	 */

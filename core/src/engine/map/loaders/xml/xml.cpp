@@ -141,12 +141,17 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			el1 = el1->NextSiblingElement("animation");
 		}
 
+		el1 = el->FirstChildElement("geometry");
+		while(el1) {
+			Geometry::registerGeometry(s_geometry_info::load(el1));
+			el1 = el1->NextSiblingElement("geometry");
+		}
+
 		TiXmlElement* el2 = el->FirstChildElement("elevation");
 		if (!el2) {
 			throw Exception("Error: found no 'elevation' entry!");
 		}
 		while (el2) {
-// 			advanceElevationCursor(); // temp hack
 			loadElevation(el2);
 			el2 = el->NextSiblingElement("elevation");
 		}
@@ -237,13 +242,6 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
  		int width, height, shiftx=0, shifty=0;
 		int geometry;
 
-		s_geometry_info geometry_info;
-		TiXmlElement* el1 = el->FirstChildElement("geometry");
-		if(el1) {
-			geometry_info = s_geometry_info::load(el1);
-			Geometry::registerGeometry(geometry_info);
-		}
-
  		el->QueryIntAttribute("width", &width);
  		el->QueryIntAttribute("height", &height);
  		el->QueryIntAttribute("geometry", &geometry);
@@ -257,15 +255,14 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		m_cursor.height = height;
 		m_cursor.geometry = geometry;
 
-		Log("xmlmap")
-			<< "Loading layer #" << m_cursor.layer
-			<< "  size: " << Point(width,height);
-
-
 		Elevation* me = m_cursor.elevation;
 		Grid* grid = new Grid(Point(width,height),geometry); 
 		me->addGrid(grid);
 		m_cursor.layer = me->getNumGrids() - 1;
+
+		Log("xmlmap")
+			<< "Loading layer #" << m_cursor.layer
+			<< "  size: " << Point(width,height);
 
 		if(outline) {
 			grid->setOverlayImage(outline);
@@ -290,7 +287,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
  		TiXmlElement* obj_element = el->FirstChildElement("objects");
  		if (!obj_element) {
-			Log("xmlmap") << "Info: map does not contain static objects";
+			Log("xmlmap") << "Info: layer does not contain static objects";
 			return;
 		}
 
@@ -303,14 +300,12 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 	void XML::loadObject(TiXmlElement* element) {
 		int sprite_gid = -1;
-		int grid_pos = -2;
 		int grid_pos_x = -2;
 		int grid_pos_y = -2;
 		int orientation = -1;
 		int frame = -1;
 		const char *obj_typename = element->Attribute("typename");
 		element->QueryIntAttribute("spriteid", &sprite_gid);
-		element->QueryIntAttribute("gridpos", &grid_pos);
 		element->QueryIntAttribute("grid_x", &grid_pos_x);
 		element->QueryIntAttribute("grid_y", &grid_pos_y);
 		element->QueryIntAttribute("orientation", &orientation);
@@ -321,15 +316,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			return;
 		}
 
-		if (sprite_gid == -1 || (grid_pos == -2 || 
-					(grid_pos_x == -2 && grid_pos_y == -2))) {
+		if (sprite_gid == -1 || (grid_pos_x == -2 && grid_pos_y == -2)) {
 			Log("xmlmap") << "Error: invalid object attribute values";
 			return;
 		}
-		if (grid_pos == -1) {
-			grid_pos_x = grid_pos_y = -1;
-		}
-		
+
 		ObjectManager* mom = m_map->getObjectManager();
 		ObjectInfo* obj = new ObjectInfo();
 		if (obj) {
