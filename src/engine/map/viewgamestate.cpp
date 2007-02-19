@@ -42,6 +42,7 @@
 #include "imagecache.h"
 #include "settingsmanager.h"
 
+#include "camera.h"
 #include "control.h"
 #include "elevation.h"
 #include "grid.h"
@@ -55,12 +56,13 @@ namespace FIFE { namespace map {
 		m_control(new Control()),
 		m_map(0),
 		m_view(0) {
-
+		m_camera = new Camera(m_control);
 		input::Manager::instance()->registerEventListener("map_view", this);
 	}
 
 	ViewGameState::~ViewGameState() {
 		delete m_control;
+		delete m_camera;
 	}
 
 	void ViewGameState::setFile(const std::string& map) {
@@ -81,6 +83,7 @@ namespace FIFE { namespace map {
 		m_valid_map = true;
 
 		m_view = m_control->getView();
+		m_camera->zoomTo( m_view->getCurrentElevation()->get<Point>("default-player-position") );
 
 		input::Manager* inputmanager = input::Manager::instance();
 		inputmanager->pushContext("map_view");

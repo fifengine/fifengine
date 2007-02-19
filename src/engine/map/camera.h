@@ -31,12 +31,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/point.h"
-#include "timeevent.h"
+#include "timer.h"
 
 namespace FIFE { namespace map {
 
 	class View;
 	class Grid;
+	class Control;
 
 	/** A Camera onto the MapView
 	 *
@@ -56,30 +57,31 @@ namespace FIFE { namespace map {
 	 *  I can imagine this being put to good use for
 	 *  story telling.
 	 */
-	class Camera : protected TimeEvent {
-		protected:
-			Camera();
+	class Camera {
+		public:
+			Camera(Control* map_control);
 			~Camera();
 			
-			/** Reset the Camera on a mapview
-			 *
-			 */
-			void reset(View* view);
-			virtual void updateEvent(unsigned long time);
-
-		public:
-
 			/** Start zooming to a specific positon.
 			 */
 			void zoomTo(const Point& gridPosition);
 
+			void update();
 		private:
 			Grid* m_grid;
 			View* m_view;
 			Point m_next_position;
-			bool  m_updating;
+			Timer m_timer;
 
-			friend class View;
+			friend class Control;
+			Control* m_control;
+
+			/** Reset Camera
+			 */
+			void reset();
+			/** Control deleted
+			 */
+			void controlDeleted();
 	};
 } } //FIFE::map
 
