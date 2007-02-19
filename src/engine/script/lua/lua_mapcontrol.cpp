@@ -19,61 +19,71 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_CONTROL_H
-#define FIFE_MAP_CONTROL_H
-
 // Standard C++ library includes
-#include <string>
+
+// Platform specific includes
+#include "util/fife_stdint.h"
 
 // 3rd party library includes
+#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "log.h"
 
-namespace FIFE { 
-	class ScriptEngine;
-	class SettingsManager;
+#include "lua_mapcontrol.h"
 
-namespace map {
+namespace FIFE {
 
-	class Map;
-	class View;
-	class ObjectManager;
-	class Runner;
+	MapControl_Lunar::MapControl_Lunar(lua_State *L) {
+	}
 
-	class Control {
-		public:
-			Control();
-			~Control();
-	
-			void load(const std::string& filename);
+	MapControl_Lunar::~MapControl_Lunar() {
+	}
 
-			void start();
-			void pause();
-			void stop();
+	int MapControl_Lunar::l_start(lua_State *L) {
+		m_control.start();
+		return 0;
+	}
 
-			bool isRunning() const;
-			void turn();
+	int MapControl_Lunar::l_stop(lua_State *L) {
+		m_control.stop();
+		return 0;
+	}
 
-			void activateElevation(size_t);
+	int MapControl_Lunar::l_turn(lua_State *L) {
+		m_control.turn();
+		return 0;
+	}
 
-			View* getView();
-			Map* getMap();
+	int MapControl_Lunar::l_load(lua_State *L) {
+		const char* cfilename = luaL_checkstring(L,1);
+		if( cfilename ) {
+			m_control.load( cfilename );
+		}
+		return 0;
+	}
 
-		protected:
-			std::string m_map_filename;
-			Map* m_map;
-			View* m_view;
-			Runner* m_runner;
-			ObjectManager* m_om;
-			ScriptEngine* m_scriptengine;
-			SettingsManager* m_settings;
+	int MapControl_Lunar::l_activateElevation(lua_State *L) {
+		int elevation = luaL_checkinteger(L,1);
+		m_control.activateElevation( elevation );
+		return 0;
+	}
 
-			void registerCommands();
+
+	const char* MapControl_Lunar::className = "MapControl";
+
+#define method(class, name) {#name, &class::l_  ## name}
+
+	Lunar<MapControl_Lunar>::RegType MapControl_Lunar::methods[] = {
+		method(MapControl_Lunar, start),
+		method(MapControl_Lunar, stop),
+		method(MapControl_Lunar, turn),
+		method(MapControl_Lunar, load),
+		{0,0}
 	};
 
-} } // FIFE::map
-
-#endif // FIFE_MAPCONTROL_H
+}
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

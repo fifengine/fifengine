@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2006 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,61 +19,44 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_CONTROL_H
-#define FIFE_MAP_CONTROL_H
+#ifndef LUA_MAPCONTROL_H
+#define LUA_MAPCONTROL_H
 
 // Standard C++ library includes
-#include <string>
 
 // 3rd party library includes
+#include "lua.hpp"
+#include "lunar.h"
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "timer.h"
+#include "map/control.h"
 
-namespace FIFE { 
-	class ScriptEngine;
-	class SettingsManager;
+namespace FIFE {
 
-namespace map {
-
-	class Map;
-	class View;
-	class ObjectManager;
-	class Runner;
-
-	class Control {
+	class MapControl_Lunar  {
 		public:
-			Control();
-			~Control();
-	
-			void load(const std::string& filename);
+			static const char* className;
+			static Lunar<MapControl_Lunar>::RegType methods[];
 
-			void start();
-			void pause();
-			void stop();
+			MapControl_Lunar(lua_State *L);
+			~MapControl_Lunar();
 
-			bool isRunning() const;
-			void turn();
+			int l_load(lua_State *L);
 
-			void activateElevation(size_t);
+			int l_start(lua_State *L);
+			int l_stop(lua_State *L);
+			int l_turn(lua_State *L);
 
-			View* getView();
-			Map* getMap();
+			int l_activateElevation(lua_State *L);
 
-		protected:
-			std::string m_map_filename;
-			Map* m_map;
-			View* m_view;
-			Runner* m_runner;
-			ObjectManager* m_om;
-			ScriptEngine* m_scriptengine;
-			SettingsManager* m_settings;
+			void update();
 
-			void registerCommands();
+		private:
+			map::Control m_control;
 	};
 
-} } // FIFE::map
+}
 
-#endif // FIFE_MAPCONTROL_H
+#endif
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

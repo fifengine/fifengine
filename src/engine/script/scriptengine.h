@@ -117,27 +117,6 @@ namespace FIFE {
 			 */
 			virtual std::string getGlobalString(const std::string& name) const = 0;
 
-			// c++ only ?
-			/** Hack to export the MapView to the scriptengine.
-			 *
-			 * MapView is not a \em singleton but I need to access it from the scripts;
-			 * this is a primitive solution.
-			 *
-			 * @param Pointer to valid MapView instance
-			 *
-			 * \bug Scripts doing something with the mapview while a) there is none
-			 * or b) the pointer is no longer valid WILL die a horrible death ;-)
-			 */
-			virtual void registerViewInstance(map::View* currentMap) = 0;
-
-			/** Experimental: IGNORE THIS!
-			 *
-			 * \param idx Valid index into the currently active map; requires active MapView!
-			 *
-			 * test-export of game-objects into the script-vm
-			 */
-			virtual void setActiveElevation(size_t) {};
-
 		private:
 			std::string m_name;
 

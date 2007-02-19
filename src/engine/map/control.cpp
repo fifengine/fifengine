@@ -56,13 +56,11 @@ namespace FIFE { namespace map {
 		m_scriptengine(ScriptBackendManager::instance()->current()),
 		m_settings(SettingsManager::instance()) {
 
-		m_scriptengine->registerViewInstance(m_view);
 		registerCommands();
 	}
 
 	Control::~Control() {
 		stop();
-		m_scriptengine->registerViewInstance(0);
 		delete m_view;
 		delete m_runner;
 	}
@@ -90,8 +88,6 @@ namespace FIFE { namespace map {
 		m_view->setViewport(CRenderBackend()->getMainScreen());
 // 		m_view->setRoofAlpha(m_settings->read<int>("RoofAlpha", 128));
 		
-		m_scriptengine->setActiveElevation(0);
-
 		m_om = m_map->getObjectManager();
 		m_om->initialize(m_map);
 
@@ -134,9 +130,15 @@ namespace FIFE { namespace map {
 		}
 	}
 
+	bool Control::isRunning() const {
+		return m_map;
+	}
+
 	void Control::turn() {
-		m_runner->turn();
-		m_view->render();
+		if( isRunning() ) {
+			m_runner->turn();
+			m_view->render();
+		}
 	}
 
 	View* Control::getView() {

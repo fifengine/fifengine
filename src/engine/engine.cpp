@@ -232,12 +232,12 @@ namespace FIFE {
 
 		// Main loop.
 		while (m_run) {
-			manager_time->update();
+			manager_input->handleEvents();
 
 			rbackend->startFrame();
 
+			manager_time->update();
 			manager_gamestates->turn();
-			manager_input->handleEvents();
 			manager_gui->turn();
 
 			rbackend->endFrame();

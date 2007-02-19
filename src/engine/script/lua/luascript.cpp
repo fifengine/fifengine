@@ -37,11 +37,11 @@
 #include "lua_object.h"
 #include "lua_stackguard.h"
 #include "lua_timer.h"
+#include "lua_mapcontrol.h"
 #include "lunar.h"
 
 namespace FIFE {
 
-	extern int luaopen_mapview(lua_State* L);
 	extern int luaopen_console(lua_State* L);
 	extern int luaopen_vfs(lua_State* L);
 	extern int luaopen_engine(lua_State* L);
@@ -97,7 +97,6 @@ namespace FIFE {
 
 		luaopen_gsmanager(L);
 		// 		luaopen_log(L);
-		luaopen_mapview(L);
 		luaopen_console(L);
 		luaopen_audiomanager(L);
 		luaopen_inputmanager(L);
@@ -107,6 +106,7 @@ namespace FIFE {
 		// 		Lunar<Object_LuaScript>::Register2(L);
 
 		Lunar<Timer_Lunar>::Register(L);
+		Lunar<MapControl_Lunar>::Register(L);
 	}
 
 	LuaScript::LuaScript() : ScriptEngine("Lua") {
@@ -275,48 +275,6 @@ namespace FIFE {
 
 	}
 
-	void LuaScript::registerViewInstance(map::View* currentMap) {
-		MapView_LuaScript::registerMap(currentMap);
-	}
-
-	void LuaScript::setActiveMapElevation(size_t id) {
-		LuaStackguard guard(L);
-		map::View* mv = MapView_LuaScript::getMapView();
-		assert(mv!=NULL);
-		lua_getglobal(L, "map");
-		if (lua_istable(L, -1)) {
-			Log("luascript") << "Info: already have loaded map - deleting";
-			lua_pop(L, 1);
-			lua_pushnil(L);
-			lua_setglobal(L, "map");
-			// run gc ?
-		}
-		lua_newtable(L);
-		lua_setglobal(L, "map");
-		// make sure it is on top
-		lua_getglobal(L, "map");
-
-		map::Elevation * me = mv->getCurrentElevation();
-		assert(me!=NULL);
-		/*
-				std::list<Object*> obj_list = me->getObjects();
-				std::list<Object*>::iterator i = obj_list.begin();
-				int c = 0;
-				while (i != obj_list.end()) {
-					//lua_pushlightuserdata(L, static_cast<void*>(*i));
-					Object_LuaScript * lo = new Object_LuaScript(*i);
-					lua_pushnumber(L, c);
-					//lua_pushlightuserdata(L, static_cast<void*>(lo));
-					Lunar<Object_LuaScript>::push(L, lo, true);
-					lua_settable(L, -3);
-					i++;
-					c++;
-				}
-				// pop 'map' of the stack
-		*/
-		lua_pop(L, 1);
-	}
-
 	int LuaScript::set_next_mapfile(lua_State *L) {
 		if (!lua_isstring(L, -1))
 			throw FIFE::ScriptException(std::string("String value expected:") + __FUNCTION__);
@@ -330,13 +288,6 @@ namespace FIFE {
 			throw FIFE::ScriptException("Error: no MapView GameState registered!");
 		return 0;
 	}
-
-	/* now the calls from the scripts to c++ */
-
-	/*void LuaScript::activateGameState(const std::string name) {
-		if (gsm->gameStateExists(name))
-		gsm->activate(name);
-		}*/
 
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
