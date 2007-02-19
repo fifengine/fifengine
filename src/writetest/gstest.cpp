@@ -58,8 +58,6 @@ GSTest::~GSTest() {
 	delete m_mapview;
 	delete m_map;
 	delete m_mapcontrol;
-
-	FIFE::map::Factory::instance()->cleanup();
 }
 
 GSTest::GSTest(const GSTest&) : FIFE::GameState("TestGameState"), m_mapfile(), m_map(0) {}

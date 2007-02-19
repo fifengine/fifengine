@@ -93,8 +93,6 @@ GSTest::~GSTest() {
 //	FIFE::SettingsManager::instance()->write<int>("RoofAlpha", m_mapview->getRoofAlpha());
 	delete m_fpslabel;
 	delete m_mapcontrol;
-
-	FIFE::map::Factory::instance()->cleanup();
 }
 
 GSTest::GSTest(const GSTest&) : FIFE::GameState("TestGameState"), m_mapfile(), m_fontfile()
