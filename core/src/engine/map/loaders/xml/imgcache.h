@@ -67,8 +67,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			/// True, if sharing a global id map
 			bool m_isSharing;
 
-			SDL_Surface* getSubImage(SDL_Surface* src, uint16_t w, uint16_t h,
-			                         uint8_t xStep, uint8_t yStep);
+			SDL_Surface* getSubImage(SDL_Surface* src, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 			SDL_RWops* createRWops(const char*);
 
 		public:

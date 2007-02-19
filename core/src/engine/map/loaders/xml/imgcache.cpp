@@ -30,6 +30,7 @@
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
 #include "vfs/raw/rawdata.h"
+#include "video/rect.h"
 #include "video/renderable.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
@@ -61,31 +62,17 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		m_imageIndexMap->clear();
 	}
 
-	SDL_Surface* Imgcache::getSubImage(SDL_Surface* src, uint16_t w, uint16_t h,
-	                                   uint8_t xStep, uint8_t yStep) {
+	SDL_Surface* Imgcache::getSubImage(SDL_Surface* src, uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
 #else
-		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, w, h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 #endif
+		SDL_FillRect(result, NULL, 0);
+		SDL_SetAlpha(src,0,SDL_ALPHA_OPAQUE);
+		SDL_Rect src_rect = { x, y, w, h };
+		SDL_BlitSurface(src,&src_rect,result,0);
 
-		SDL_FillRect(result, NULL, SDL_MapRGBA(result->format, 0,0,0,255));
-
-		SDL_LockSurface(result);
-		uint32_t* pixeldest = static_cast<uint32_t*>(result->pixels);
-		uint32_t* pixeldata = static_cast<uint32_t*>(src->pixels);
-		pixeldata += src->w * yStep * h + xStep * w;
-
-		for (uint16_t row = 0; row < h; row++) {
-			for (uint16_t col = 0; col < w; col++) {
-				*pixeldest = *pixeldata;
-				++pixeldest;
-				++pixeldata;
-			}
-			pixeldata += src->w - w - xStep * w;
-			pixeldata += xStep * w;
-		}
-		SDL_UnlockSurface(result);
 		return result;
 	}
 
@@ -139,10 +126,12 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			RenderBackend* rbackend = RenderManager::instance()->current();
  			for (uint8_t y = 0; y < static_cast<uint8_t>(ysteps); y++) {
  				for (uint8_t x = 0; x < static_cast<uint8_t>(xsteps); x++) {
- 					SDL_Surface* subimg = getSubImage(base, 
+ 					SDL_Surface* subimg = getSubImage(base,
+					                                  x*tilewidth,
+					                                  y*tileheight,
 					                                  static_cast<uint16_t>(tilewidth),
- 					                                  static_cast<uint16_t>(tileheight),
-					                                  x, y);
+ 					                                  static_cast<uint16_t>(tileheight)
+					                                  );
 
 					RenderAble* as_img = rbackend->createStaticImageFromSDL(subimg);
 					size_t iid = ic->addImage(as_img);
