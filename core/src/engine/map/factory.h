@@ -41,12 +41,12 @@ namespace FIFE { namespace map {
 
 	/** User-Interface to load any kind of supported mapfile.
 	 * 
-	 * The most important function is probably @c loadFile() which
+	 * The most important function is probably @c loadMap() which
 	 * iterates through all supported @em MapLoader(s) until one
 	 * succeeds.
 	 *
-	 * A @em MapLoader needs to be registered with the factory; there
-	 * is probably no reason to unregister a loader... ever.
+	 * A @em MapLoader needs to be registered with the factory; 
+	 * This is done in the constructor.
 	 * 
 	 * @see MapLoader
 	 * @see Map
@@ -58,25 +58,15 @@ namespace FIFE { namespace map {
 	 */
 	class Factory : public DynamicSingleton<Factory> {
 		public:
-			/* Constructor.
+			/** Constructor.
+			 * Called during Engine startup
 			 */
 			Factory();
 
-			/* Destructor.
+			/** Destructor.
+			 * Called during Engine shutdown
 			 */
 			virtual ~Factory();
-
-			/** Registers a format-specific loader class with the factory.
-			 *
-			 * @param loader Pointer to a valid instance (@b no NULL pointers, please).
-			 */
-			void registerLoader(Loader* loader);
-			
-			/** Unregisters a format-specific loader class with the factory.
-			 *
-			 * @param loader Pointer to a valid instance (@b no NULL pointers, please).
-			 */
-			void unregisterLoader(Loader* loader);
 
 			/** Attempts to load a mapfile.
 			 *
@@ -87,16 +77,22 @@ namespace FIFE { namespace map {
 			 * @note Exceptions from the maploaders are caught and @b not propagated.
 			 * @bug Throwing an exception when all loaders fail might be a good idea.
 			 */
-			Map* loadFile(const std::string& path);
+			Map* loadMap(const std::string& path);
+
+
+		private:
+
+			/** Registers a format-specific loader class with the factory.
+			 *
+			 * \param loader Pointer to a valid instance (@b no NULL pointers, please).
+			 * \note Used internally
+			 */
+			void registerLoader(Loader* loader);
 			
 			/** Removes all registered loaders.
-			 *
-			 * Probably never call this yourself; maybe the engine should on exit, 
-			 * but then... why?
 			 */
 			void cleanup();
 
-		private:
 			typedef std::map<std::string, Loader*> type_loaders;
 			// Registered maploaders.
 			type_loaders m_loaders;

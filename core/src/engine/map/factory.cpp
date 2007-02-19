@@ -58,7 +58,7 @@ namespace FIFE { namespace map {
 			Point(32,16),  // TILESIZE
 			Point(16,12),  // TRANSFORM
 			Point(32,10),  // OFFSET
-			1));           // FLAGS: SHIFT AROUND X AXIS
+			Geometry::ShiftXAxis));           // FLAGS: SHIFT AROUND X AXIS
 	}
 
 	// FIXME: use boost::ptr_map ?
@@ -80,16 +80,7 @@ namespace FIFE { namespace map {
 		Log("maploader") << "new maploader: " << loader->getName();
 	}
 
-	void Factory::unregisterLoader(Loader* loader) {
-		type_loaders::iterator i = m_loaders.find(loader->getName());
-		if (i == m_loaders.end()) {
-			return;
-		}
-
-		m_loaders.erase(i);
-	}
-
-	Map* Factory::loadFile(const std::string& path) {
+	Map* Factory::loadMap(const std::string& path) {
 		type_loaders::const_iterator end = m_loaders.end();
 		for (type_loaders::iterator i = m_loaders.begin(); i != end; ++i) {
 			try {

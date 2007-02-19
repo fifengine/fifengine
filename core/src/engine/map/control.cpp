@@ -74,7 +74,7 @@ namespace FIFE { namespace map {
 	void Control::start() {
 		stop();
 
-		m_map = Factory::instance()->loadFile(m_map_filename);
+		m_map = Factory::instance()->loadMap(m_map_filename);
 
 		if (!m_map) {
 			Log("map_control") << "couldn't load map: " << m_map_filename;
