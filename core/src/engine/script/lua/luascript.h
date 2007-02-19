@@ -63,10 +63,9 @@ namespace FIFE {
 			virtual double getGlobalDouble(const std::string& name) const;
 			virtual std::string getGlobalString(const std::string& name) const;
 
-			virtual void registerViewInstance(map::View* currentMap);
-			virtual void setActiveMapElevation(size_t);
-
 			static int set_next_mapfile(lua_State *L);
+
+			lua_State* getState() { return L; }
 		private:
 			//SINGLEFRIEND(LuaScript);
 			lua_State *L;

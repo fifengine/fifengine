@@ -37,22 +37,22 @@ extern "C" {
 
 namespace FIFE {
 
-/*
-	class Object;
+	namespace map {
+		class ObjectInfo;
+	}
+
 	class Object_LuaScript {
 		public:
 			static const char className[];
 			static Lunar<Object_LuaScript>::RegType methods[];
 
-			Object_LuaScript(Object *obj);
+			Object_LuaScript(map::ObjectInfo *obj);
 			~Object_LuaScript();
-			int getPosition(lua_State *L);
-			int setPosition(lua_State *L);
-			int getTypeName(lua_State *L);
+
 		private:
-			Object *m_object;
+			map::ObjectInfo *m_object;
 	};
-*/
+
 }
 #endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -52,6 +52,12 @@ namespace FIFE { namespace map {
 		lua_pushcfunction(vm, luaopen_math);
 		lua_call(vm, 0, 0);
 
+		lua_pushcfunction(vm, luaopen_table);
+		lua_call(vm, 0, 0);
+
+		lua_pushcfunction(vm, luaopen_package);
+		lua_call(vm, 0, 0);
+
 		lua_pushcfunction(vm, luaopen_string);
 		lua_call(vm, 0, 0);
 

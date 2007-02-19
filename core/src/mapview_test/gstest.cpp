@@ -82,7 +82,6 @@ GSTest::GSTest(const std::string& init_with_script) :
 
 	m_mapview = m_mapcontrol->getView();
 	CScriptEngine()->runFile(init_with_script);
-	CScriptEngine()->registerViewInstance(m_mapview);
 	//m_guisetup = new GUISetup();
 	//m_gui->attach("console");
 }
@@ -104,7 +103,6 @@ GSTest& GSTest::operator=(const GSTest&) {
 
 void GSTest::setMapFile(const std::string& map) {
 	m_mapfile = map;
-	CScriptEngine()->registerViewInstance(m_mapview);
 }
 
 void GSTest::setFontFile(const std::string& map) {

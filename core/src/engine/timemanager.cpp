@@ -55,16 +55,21 @@ namespace FIFE {
 		m_average_frame_time = m_average_frame_time*alpha + double(m_time_delta)*(1.-alpha);
 
 		// Update live events.
-		std::vector<TimeEvent*>::iterator Itr = m_events_list.begin();
-		for (; Itr != m_events_list.end(); ++Itr) {
-			if( *Itr ) {
-				(*Itr)->managerUpdateEvent(m_current_time);
+		//
+		// It is very important to NOT use iterators (over a vector)
+		// here, as an event might add enough events to resize the vector.
+		// -> Ugly segfault
+		for (size_t i = 0; i != m_events_list.size(); ++i) {
+			TimeEvent* event = m_events_list[ i ];
+			if( event ) {
+				event->managerUpdateEvent(m_current_time);
 			}
 		}
 
 		// Remove dead events
-		Itr = std::remove( m_events_list.begin(), m_events_list.end(), static_cast<TimeEvent*>(0));
-		m_events_list.erase( Itr, m_events_list.end());
+		std::vector<TimeEvent*>::iterator it;
+		it = std::remove( m_events_list.begin(), m_events_list.end(), static_cast<TimeEvent*>(0));
+		m_events_list.erase( it, m_events_list.end());
 	}
 
 	void TimeManager::registerEvent(TimeEvent* event) {
