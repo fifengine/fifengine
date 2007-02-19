@@ -48,13 +48,15 @@ namespace FIFE { namespace map {
 		{ -1,  0,  1,  1,   0, -1 }
 	};
 
+	const float hex_adjacent_costs[6] = { 1,1,1,1,1,1 };
+
 
 	HexGeometry::HexGeometry(const s_geometry_info& g, const Point& mapsize) {
 		m_basesize = g.size;
 		Point delta;
 		m_transform = g.transform;
 
-		if( g.flags & 1) {
+		if( g.flags & Geometry::ShiftXAxis) {
 			delta -= toScreen(Point(mapsize.x-1,0));
 		}
 
@@ -82,8 +84,6 @@ namespace FIFE { namespace map {
 	}
 	
 	Point HexGeometry::fromScreen(const Point& pos) const {
-		int32_t w  = m_basesize.x;
-		int32_t h  = m_basesize.y;
 		int32_t dx  = m_transform.x;
 		int32_t dy  = m_transform.y;
 
@@ -106,5 +106,8 @@ namespace FIFE { namespace map {
 		             sgrid_mul_values[1][dir] * m_basesize.y);
 	}
 
+	const float* HexGeometry::getAdjacentCosts() const {
+		return hex_adjacent_costs;
+	}
 
 } } // FIFE::map

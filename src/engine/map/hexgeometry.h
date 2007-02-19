@@ -46,6 +46,8 @@ namespace FIFE { namespace map {
 			Point toScreen(const Point& gridPos) const;
 			Point fromScreen(const Point& screenPos) const;
 			Point baseSize() const { return m_basesize; }
+
+			const float* getAdjacentCosts() const;
 		protected:
 			Point m_offset;
 			Point m_transform;

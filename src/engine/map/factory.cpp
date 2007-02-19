@@ -45,12 +45,16 @@ namespace FIFE { namespace map {
 #ifdef HAVE_XMLMAP
 		registerLoader(new loaders::xml::XML());
 #endif
-		Geometry::registerGeometry(s_geometry_info(0,"RECTANGULAR",
+		Geometry::registerGeometry(s_geometry_info(
+			Geometry::FalloutTileGeometry,
+			"RECTANGULAR",
 			Point(80,36),  // TILE SIZE
 			Point(48,24),  // TRANSFORM
 			Point(),       // OFFSET
 			0));           // FLAGS: NONE
-		Geometry::registerGeometry(s_geometry_info(1,"HEXAGONAL",
+		Geometry::registerGeometry(s_geometry_info(
+			Geometry::FalloutObjectGeometry,
+			"HEXAGONAL",
 			Point(32,16),  // TILESIZE
 			Point(16,12),  // TRANSFORM
 			Point(32,10),  // OFFSET

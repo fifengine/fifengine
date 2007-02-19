@@ -35,15 +35,17 @@
 
 namespace FIFE { namespace map {
 	const int grid_dx_values[] = {
-		0,  1,  0, -1,
+		 0,   1,  1,  1, 0, -1, -1, -1 
 	};
 
 	const int grid_dy_values[] = {
-		-1,  0,  1,  0,
+		-1,  -1,  0,  1, 1,  1,  0, -1
 	};
 
+	const float grid_adjacent_costs[8] = { 1,M_SQRT2, 1,M_SQRT2, 1,M_SQRT2, 1,M_SQRT2 };
+
 	size_t GridGeometry::getNumDirections() const {
-		return 4;
+		return 8;
 	}
 
 	GridGeometry::GridGeometry(const s_geometry_info& g, const Point& mapsize) {
@@ -80,5 +82,10 @@ namespace FIFE { namespace map {
 		return Point((p2.x *  ydy + p2.y * -ydx) / determinant,
 		             (p2.x * -xdy + p2.y *  xdx) / determinant);
 	}
+
+	const float* GridGeometry::getAdjacentCosts() const {
+		return grid_adjacent_costs;
+	}
+
 } } // FIFE::map
 
