@@ -44,6 +44,8 @@ namespace FIFE { namespace map {
 			Point directionToGrid(size_t dir, const Point& at = Point()) const; 
 
 			Point baseSize() const { return m_basesize; }
+
+			const float* getAdjacentCosts() const;
 		private:
 			// An offset translation (can't be represented in the transform).
 			Point m_offset;

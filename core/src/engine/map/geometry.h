@@ -77,6 +77,12 @@ namespace FIFE { namespace map {
 				FalloutObjectGeometry = 1
 			};
 
+			enum {
+				ShiftXAxis = 1,
+				ShiftYAxis = 2
+			};
+
+
 			virtual ~Geometry() {}
 
 			static Geometry* createGeometry(size_t id, const Point& mapsize);
@@ -120,6 +126,12 @@ namespace FIFE { namespace map {
 			/** Get Number of Directions
 			 */
 			virtual size_t getNumDirections() const = 0;
+
+			/** Get the movement costs for adjacent nodes
+			 *  Necessary for path finding algorithm.
+			 *  \return A array of positive floats, size equal to getNumDirections()
+			 */
+			virtual const float* getAdjacentCosts() const = 0;
 	};
 
 
