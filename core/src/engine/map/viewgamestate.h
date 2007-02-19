@@ -40,6 +40,7 @@ namespace FIFE { namespace map {
 	class Map;
 	class View;
 	class Control;
+	class Camera;
 
 	/** A GameState for showing a map.
 	 * This class implements a game state used for showing a Map in the map view.
@@ -106,6 +107,7 @@ namespace FIFE { namespace map {
 			Control* m_control;
 			Map* m_map;
 			View* m_view;
+			Camera* m_camera;
 			bool m_valid_map;
 	
 			// Not copyable

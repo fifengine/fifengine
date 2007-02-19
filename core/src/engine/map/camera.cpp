@@ -23,6 +23,7 @@
 #include <cmath>
 
 // 3rd party library includes
+#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -31,6 +32,7 @@
 #include "timemanager.h"
 
 #include "camera.h"
+#include "control.h"
 #include "view.h"
 #include "elevation.h"
 #include "grid.h"
@@ -38,26 +40,29 @@
 
 namespace FIFE { namespace map {
 
-	Camera::Camera() 
-		: TimeEvent(0),
-		m_updating(false) {
+	Camera::Camera(Control* map_control) {
+		m_control = map_control;
+		m_control->addCamera(this);
+
+		m_timer.setInterval(50);
+		m_timer.setCallback( boost::bind( &Camera::update, this ) );
+
+		reset();
 	}
 
 	Camera::~Camera() {
-		if( m_updating ) {
-			TimeManager::instance()->unregisterEvent(this);
-		}
+		if( m_control )
+			m_control->removeCamera(this);
 	}
 
-	void Camera::updateEvent(unsigned long) {
+	void Camera::update() {
 		Point mappos(m_view->getXPos(), m_view->getYPos());
 		Point dist = m_next_position - mappos;
 		
 		uint32_t length = uint32_t(sqrt(static_cast<float>(dist.x * dist.x + 
 		                                                   dist.y * dist.y)));
 		if (length < 50) {
-			TimeManager::instance()->unregisterEvent(this);
-			m_updating = false;
+			m_timer.stop();
 			return;
 		}
 		
@@ -79,20 +84,26 @@ namespace FIFE { namespace map {
 		// center on screen
 		Point offset = Point(m_view->m_rect.w, m_view->m_rect.h) / 2;
 		m_next_position = m_grid->getGeometry()->toScreen(position) - offset;
-		if (!m_updating) {
-			TimeManager::instance()->registerEvent(this);
-			m_updating = true;
-		}
+		m_timer.start();
+
 		Debug("map_camera") 
 			<< "Setting Next position:" << m_next_position;
 	}
 
-	void Camera::reset(View* view) {
-		m_view = view;
+	void Camera::reset() {
+		assert( m_control );
+		m_timer.stop();
+		m_view = m_control->getView();
 		if (!m_view->getCurrentElevation()) {
 			m_grid = 0;
 		} else {
-			m_grid = view->getCurrentElevation()->getReferenceGrid();
+			m_grid = m_view->getCurrentElevation()->getReferenceGrid();
 		}
+	}
+
+	void Camera::controlDeleted() {
+		assert( m_control );
+		m_timer.stop();
+		m_control = 0;
 	}
 } } // FIFE::map

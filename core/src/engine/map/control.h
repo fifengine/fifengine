@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <set>
 
 // 3rd party library includes
 
@@ -39,6 +40,7 @@ namespace FIFE {
 namespace map {
 
 	class Map;
+	class Camera;
 	class View;
 	class ObjectManager;
 	class Runner;
@@ -62,6 +64,9 @@ namespace map {
 			View* getView();
 			Map* getMap();
 
+			void addCamera(Camera* camera);
+			void removeCamera(Camera* camera);
+
 		protected:
 			std::string m_map_filename;
 			Map* m_map;
@@ -70,7 +75,9 @@ namespace map {
 			ObjectManager* m_om;
 			ScriptEngine* m_scriptengine;
 			SettingsManager* m_settings;
+			std::set<Camera*> m_cameras;
 
+			void resetCameras();
 			void registerCommands();
 	};
 

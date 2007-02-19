@@ -61,6 +61,12 @@ namespace FIFE { namespace map {
 
 	Control::~Control() {
 		stop();
+
+		// Real cleanup after 'stop()'
+		std::set<Camera*>::iterator i(m_cameras.begin());
+		for(; i != m_cameras.end(); ++i)
+			(*i)->controlDeleted();
+
 		delete m_view;
 		delete m_runner;
 	}
@@ -103,27 +109,30 @@ namespace FIFE { namespace map {
 		m_runner->initialize(m_view, m_map, m_om);
 		m_runner->start();
 		activateElevation(m_map->get<size_t>("default-elevation", 0));
-
-		Point start_pos;
-// 		Inactive due to bugs
-		if( !m_map->hasAttribute("default-player-position") ) {
-			start_pos = m_view->getCurrentElevation()->centerOfMass();
-			Log("map_control")
-				<< "No default player position found. "
-				<< "Using centerOfMass(): " << start_pos;
-		}
-		start_pos = m_map->get<Point>("default-player-position",start_pos);
-		m_view->getCamera()->zoomTo( start_pos );
 	}
 
 	void Control::activateElevation(size_t elev) {
 		m_view->setMap(m_map, elev);
 		m_runner->activateElevation(elev);
+
+		// Assure a default starting position is set
+		Elevation* current_elevation = m_view->getCurrentElevation();
+		if( !current_elevation->hasAttribute("default-player-position") ) {
+			Point start_pos = current_elevation->centerOfMass();
+			Log("map_control")
+				<< "No default player position found. "
+				<< "Using centerOfMass(): " << start_pos;
+			current_elevation->set<Point>("default-player-position",start_pos);
+		}
+
+		// Assure camera(s) are aware of the change.
+		resetCameras();
 	}
 
 	void Control::stop() {
 		if (m_map) {
 			m_runner->stop();
+			resetCameras();
 			m_view->reset();
 			delete m_map;
 			m_map = 0;
@@ -145,10 +154,24 @@ namespace FIFE { namespace map {
 		return m_view;
 	}
 
+	void Control::addCamera(Camera* camera) {
+		m_cameras.insert(camera);
+	}
+
+	void Control::removeCamera(Camera* camera) {
+		m_cameras.erase(camera);
+	}
+
 	void Control::registerCommands() {
 		m_runner->registerCommand(1, new command::SetVisual());
 		m_runner->registerCommand(2, new command::StartMovement());
 		m_runner->registerCommand(3, new command::EnqueueAction());
+	}
+
+	void Control::resetCameras() {
+		std::set<Camera*>::iterator i(m_cameras.begin());
+		for(; i != m_cameras.end(); ++i)
+			(*i)->reset();
 	}
 
 } } // FIFE::map

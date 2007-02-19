@@ -62,12 +62,9 @@ namespace FIFE { namespace map {
 		m_tilemask = ImageCache::instance()->addImageFromFile("content/gfx/tiles/tile_outline.png");
 		// m_objmask =  ImageCache::instance()->addImageFromFile("msef003.frm");
 
-		m_camera = new Camera();
-
 	}
 
 	View::~View() {
-		delete m_camera;
 		clearVisuals();
 		delete m_vtree;
 	}
@@ -102,7 +99,7 @@ namespace FIFE { namespace map {
 		m_map = map;
 		m_elevation = map->getElevation( elev );
 		m_elevation_id = elev;
-		m_camera->reset(this);
+// 		m_camera->reset(this);
 		elevationChange();
 	}
 
@@ -150,10 +147,6 @@ namespace FIFE { namespace map {
 		Grid* grid = m_elevation->getGrid(visual->getGrid());
 		visual->reset(grid);
 		m_vtree->updateVisual( visualId );
-	}
-
-	Camera* View::getCamera() {
-		return m_camera;
 	}
 
 	void View::elevationChange() {

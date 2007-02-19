@@ -154,8 +154,6 @@ namespace FIFE { namespace map {
 
 			void notifyVisualChanged(size_t visualId);
 
-			Camera* getCamera();
-
 			/** Clean up internal state
 			 */
 			void reset();
@@ -172,8 +170,6 @@ namespace FIFE { namespace map {
 			Map* m_map;
 			/// Current elevation
 			Elevation* m_elevation;
-			/// Camera
-			Camera* m_camera;
 
 			/// Current elevation id
 			size_t m_elevation_id;
