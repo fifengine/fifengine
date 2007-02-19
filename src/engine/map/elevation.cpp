@@ -123,7 +123,9 @@ namespace FIFE { namespace map {
 			}
 		}
 
-		return p/n;
+		if( n > 0 )
+			return p/n;
+		return  p;
 	}
 
 } } //FIFE::map
