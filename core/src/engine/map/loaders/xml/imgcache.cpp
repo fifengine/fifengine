@@ -63,11 +63,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	SDL_Surface* Imgcache::getSubImage(SDL_Surface* src, uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
-#else
-		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-#endif
 		SDL_FillRect(result, NULL, 0);
 		SDL_SetAlpha(src,0,SDL_ALPHA_OPAQUE);
 		SDL_Rect src_rect = { x, y, w, h };

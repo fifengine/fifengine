@@ -206,6 +206,9 @@ namespace FIFE {
 					for (unsigned int x = 0; x < data_chunk_width; ++x) {
 						unsigned int pos = (y + j*256)*pitch + (x + i*256) * 4;
 
+						// FIXME
+						// The following code might not be endianness correct
+
 						uint8_t r = data[pos + 0];
 						uint8_t g = data[pos + 1];
 						uint8_t b = data[pos + 2];
