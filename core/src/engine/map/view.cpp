@@ -269,6 +269,7 @@ namespace FIFE { namespace map {
 		if (!m_elevation || ! m_surface)
 			return;
 
+		m_surface->pushClipArea( gcn::Rectangle(m_rect.x,m_rect.y,m_rect.w,m_rect.h));
 		// The viewport to search for visuals.
 		// To be on the secure side, we scan a slightly larger
 		// than the actual viewport.
@@ -314,6 +315,7 @@ namespace FIFE { namespace map {
 			}
 		}
 
+		m_surface->popClipArea();
 	}
 
 
