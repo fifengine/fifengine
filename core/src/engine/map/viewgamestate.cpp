@@ -101,8 +101,10 @@ namespace FIFE { namespace map {
 	}
 
 	void ViewGameState::turn() {
-		if(m_valid_map)
+		if(m_valid_map) {
 			m_control->turn();
+			m_camera->render();
+		}
 	}
 
 	void ViewGameState::handleEvent(int event) {
@@ -122,19 +124,19 @@ namespace FIFE { namespace map {
 
 		switch (event) {
 			case FIFE::Event::GO_NORTH:
-				m_view->setYPos(m_view->getYPos() - 20);
+				m_camera->moveBy(Point(0,-20));
 				break;
 		
 			case FIFE::Event::GO_SOUTH:
-				m_view->setYPos(m_view->getYPos() + 20);
+				m_camera->moveBy(Point(0,+20));
 				break;
 		
 			case FIFE::Event::GO_EAST:
-				m_view->setXPos(m_view->getXPos() - 20);
+				m_camera->moveBy(Point(-20,0));
 				break;
 		
 			case FIFE::Event::GO_WEST:
-				m_view->setXPos(m_view->getXPos() + 20);
+				m_camera->moveBy(Point(+20,0));
 				break;
 
 			case FIFE::Event::TEST_TOGGLE_OBJECTS:

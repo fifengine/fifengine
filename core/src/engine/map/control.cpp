@@ -146,7 +146,6 @@ namespace FIFE { namespace map {
 	void Control::turn() {
 		if( isRunning() ) {
 			m_runner->turn();
-			m_view->render();
 		}
 	}
 
