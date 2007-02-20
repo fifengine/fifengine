@@ -121,20 +121,16 @@ namespace FIFE {
 
 	void RenderBackendSDL::endFrame() {
 		SDL_Flip(m_screen->getSurface());
-	}
+	}	
 
-	Image* RenderBackendSDL::createStaticImageFromRGBA(const uint8_t* data, unsigned int width, unsigned int height) {
-
-		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,
-		                                            height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+	Image* RenderBackendSDL::createStaticImageFromSDL(SDL_Surface* surface, bool freesurface) {
 		SDL_LockSurface(surface);
-
-		unsigned int size = width * height * 4;
-		uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
-		std::copy(data, data + size, pixeldata);
+		Image* image = new SDLImage(surface);
 		SDL_UnlockSurface(surface);
-
-		return new SDLImage(surface);
+		if (freesurface) {
+			SDL_FreeSurface(surface);
+		}
+		return image;
 	}
 
 	Screen* RenderBackendSDL::getMainScreen() const {

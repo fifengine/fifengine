@@ -20,6 +20,8 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cstring>
+#include <algorithm>
 
 // 3rd party library includes
 #include <boost/scoped_array.hpp>
@@ -39,16 +41,16 @@
 #include "settingsmanager.h"
 
 #include "frm.h"
-#include "pal.h"
-#include "palutil.h"
+#include "animatedpal.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	// FIXME: If this is an intrinsic part of the file format, then we should
 	// just use arrays of that size. Otherwise, there's a bug anyway :)
 	const int FRM_MAX_FRAME_CT = 6;
 
-	FRM::FRM(const std::string& path) : 
+	FRM::FRM(const std::string& path, AnimatedPalette* palette) : 
 		m_file(path),
+		m_palette(palette),
 		m_version(0),
 		m_frames_per_direction(0),
 		m_directions(0),
@@ -62,13 +64,15 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	}
 
 	void FRM::init() {
-		m_custom_gamma = SettingsManager::instance()->read<int>("LightingLevel", 4);
-		if (m_custom_gamma < 1) {
-			m_custom_gamma = 1;
+		m_light_level = SettingsManager::instance()->read<int>("LightingLevel", 4);
+		if (m_light_level < 1) {
+			m_light_level = 1;
 		}
-		if (m_custom_gamma > 4) {
-			m_custom_gamma = 4;
+		if (m_light_level > 4) {
+			m_light_level = 4;
 		}
+		
+		m_palette->setLightLevel(m_light_level);
 	}
 
 	FRM::~FRM() {
@@ -197,54 +201,175 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		img->setYShift(fi.yoff);
 		fi.image = img;
 	}
+	
+	
+	/**
+	  Creates an SDL_Surface with pixel data taken from the given 8-bit pixel data and palette.
+	  The returned surface's format will be RGBA if withAlphaChannel is true,
+	  or 8-bit indexed surface if withAlphaChannel is false.
+	*/
+	SDL_Surface* createSDLSurface(uint8_t* data, uint16_t width, uint16_t height, const AnimatedPalette* palette, bool withAlphaChannel) 
+	{
+		SDL_Surface* image = 0;
+		
+		if (withAlphaChannel) {
+			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+				Uint32 rmask = 0xff000000;
+				Uint32 gmask = 0x00ff0000;
+				Uint32 bmask = 0x0000ff00;
+				Uint32 amask = 0x000000ff;
+			#else
+				Uint32 rmask = 0x000000ff;
+				Uint32 gmask = 0x0000ff00;
+				Uint32 bmask = 0x00ff0000;
+				Uint32 amask = 0xff000000;
+			#endif
+			
+			image = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
+			if (image == 0) {
+				return 0;
+			}
+			// load pixels into image
+			SDL_LockSurface(image);
+
+			int wastedspace = image->pitch - image->format->BytesPerPixel * width;
+			uint8_t* from = data;
+			uint32_t* pixeldata = static_cast<uint32_t*>(image->pixels);
+						
+			for (int y = 0; y < height; ++y) {
+				for (int x = 0; x < width; ++x) {
+					uint8_t index = *(from++);
+					if (index == 0) {
+						*pixeldata = 0x00000000;
+					} else {
+						uint8_t alpha = 0xff;
+						if( index == 108 ) { // 108 is the transparent window pixel index
+							alpha = 0x80;
+						}
+	/** @todo: find solution: 13 should be yellow/red and transparent only for specific objects.
+						else
+						if( 13 == index ) {	///< 13 is transparent force-field
+							alpha = 0x80;
+						}
+	*/
+						*pixeldata = (palette->getRed(index) << 24) | (palette->getGreen(index) << 16) | (palette->getBlue(index) << 8) | alpha;
+					}
+					++pixeldata;
+				}
+				pixeldata += wastedspace;
+			}
+			SDL_UnlockSurface(image);
+		
+		} else {
+		
+			// Create an SDL palette palette
+			SDL_Color colors[256];
+			for (int i = 0; i < 256; i++) {
+				colors[i].r = palette->getRed(i);
+				colors[i].g = palette->getGreen(i);
+				colors[i].b = palette->getBlue(i);
+			}
+		
+			// create 8-bit palette surface
+			image = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
+			if (image == 0) {
+				return 0;
+			}
+			SDL_SetColors(image, colors, 0, 256);
+		
+			// set color key. 0 is transparent
+			SDL_SetColorKey(image, SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
+			
+			// load pixels into image
+			SDL_LockSurface(image);
+			if (image->pitch != width) {
+				// have to copy a line at a time
+			
+				uint8_t* from = data;
+				uint8_t* to = static_cast<uint8_t*>(image->pixels);
+				for (int line = 0; line < height; line++) {
+					std::memcpy(to, from, width);
+				
+					from += width;
+					to += image->pitch;
+				}
+			
+			} else {
+				std::memcpy(image->pixels, data, width * height);
+			}
+			SDL_UnlockSurface(image);
+		}
+		
+		return image;
+	}
+	
+	
 
 	RenderAble* FRM::transferImgToSurface(uint8_t* data, uint16_t width, uint16_t height) {
-		PAL palette("color.pal");
-		int id = 0;
-		PALUtil* palutil = PALUtil::instance();
-		uint8_t* dataCopy = data;
-
-		uint32_t size = width * height * 4;
-		boost::scoped_array<uint8_t> imgdata(new uint8_t[size]);
-		uint32_t* pixeldata = reinterpret_cast<uint32_t*>(imgdata.get());
-		for (uint32_t y = 0; y < height; ++y) {
-			for (uint32_t x = 0; x < width; ++x) {
-				uint8_t index = *(data++);
-				if (index == 0) {
-					*pixeldata = 0x00000000;
+		/*
+			Must loop over the pixels to find special pixels. For readability, this is done 
+			in two seperate steps.
+			1) Look for pixels with the value #108 which should be transparent.
+			2) Look for pixels whose color is meant to be animated.
+		*/
+		bool convertToAlpha = false;
+		int size = width * height;
+		uint8_t* end = data + size;
+		if (end != std::find(data, end, 108)) {
+			// found a partial transparent pixel. Use alpha channel.
+			convertToAlpha = true;
+		}
+		
+		// Check for animated pixels. Can only animate one set of pixels right now. Do not animate
+		// if more sets are found.
+		const AnimatedBlock* block = 0;
+		for (int i = 0; i < size; i++) {
+			const AnimatedBlock* b = m_palette->getBlock(data[i]);
+			if (b != 0 && b != block) {
+				if (block == 0) {
+					// first pixel of any animation block found, remember it
+					block = b;
 				} else {
-					id |= palutil->checkPixel(index);
-
-					uint8_t alpha = 0xff;
-					if( index == 108 ) { // 108 is the transparent window pixel index
-						alpha = 0x80;
-					}
-/** @todo: find solution: 13 should be yellow/red and transparent only for specific objects.
-					else
-					if( 13 == index ) {	///< 13 is transparent force-field
-						alpha = 0x80;
-					}
-*/
-					// FIXME Unify this with palutil gamma calculations. And fix them ;)
-					// --zahlman
-					uint8_t red = std::min(palette.getRed(index) * m_custom_gamma, 0xff) & 0xff;
-					uint8_t green = std::min(palette.getGreen(index) * m_custom_gamma, 0xff) & 0xff;
-					uint8_t blue = std::min(palette.getBlue(index) * m_custom_gamma, 0xff) & 0xff;
-
-					*pixeldata = (red << 24) | (green << 16) | (blue << 8) | alpha;
+					// found a pixel from a second animation block. Can't animate the palette.
+					block = 0;
+					break;
 				}
-				++pixeldata;
-			}
+			} 		
 		}
-
-		if (id && m_frames_per_direction == 1) {
-			PALAnimation palanim(id, dataCopy, width, height, m_custom_gamma );
-			if( palanim.isValid() ) {
-				return palanim.generateAnimation();
+		m_palette->setCurrentAnimation(block);
+				
+		if (block == 0) {
+			// No animation. Create one image.
+			SDL_Surface* image = createSDLSurface(data, width, height, m_palette, convertToAlpha);
+			if (image != 0) {
+				return CRenderBackend()->createStaticImageFromSDL(image);
 			}
-		}
+		} else {
+			// Create an animation.
+			Log("palanim") << "Generating Animation " << block->getName() << " with w,h= " << width << ", " << height;
 
-		return CRenderBackend()->createStaticImageFromRGBA(imgdata.get(), width, height);
+			Animation *anim = new Animation(block->getNumFrames());
+			anim->setFrameDuration(block->getFrameDuration());
+	
+			for(int i = 0; i < block->getNumFrames(); ++i) {			
+				SDL_Surface* image = createSDLSurface(data, width, height, m_palette, convertToAlpha);
+				Image* createdImage = 0;
+				if (image != 0) {
+					createdImage = CRenderBackend()->createStaticImageFromSDL(image);
+				}
+			
+				if (!createdImage) {
+					PANIC_PRINT("image == NULL");
+				}
+				anim->setFrame(i, createdImage);
+				
+				m_palette->incrementFrame();
+			}
+			anim->setCurrentFrame(0);
+			return anim;
+		}
+		
+		return 0;
 	}
 
 	uint16_t FRM::getFramesPerSecond() const {

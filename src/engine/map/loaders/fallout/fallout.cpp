@@ -52,7 +52,6 @@
 #include "objectfactory.h"
 #include "providerdat2.h"
 #include "providerdat1.h"
-//#include "palutil.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
 

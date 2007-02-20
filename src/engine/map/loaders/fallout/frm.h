@@ -42,6 +42,8 @@ namespace FIFE {
 	class RenderAble;
 
 namespace map { namespace loaders { namespace fallout {
+	
+	class AnimatedPalette;
 
 	/** Loads FRM format graphics.
 	 *
@@ -65,7 +67,7 @@ namespace map { namespace loaders { namespace fallout {
 		public:
 			/** Constructor from a file
 			 */
-			FRM(const std::string& file);
+			FRM(const std::string& file, fallout::AnimatedPalette* palette);
 
 			/** Destructor
 			 */
@@ -111,6 +113,7 @@ namespace map { namespace loaders { namespace fallout {
 
 		protected:
 			std::string m_file;
+			fallout::AnimatedPalette* m_palette;
 			RawDataPtr m_data;
 
 			uint32_t m_version;
@@ -119,7 +122,7 @@ namespace map { namespace loaders { namespace fallout {
 			uint16_t m_frames_per_direction;
 			uint16_t m_directions;
 
-			uint8_t m_custom_gamma;
+			uint8_t m_light_level;
 
 			std::vector<int16_t> m_shifts_x;
 			std::vector<int16_t> m_shifts_y;
@@ -137,7 +140,7 @@ namespace map { namespace loaders { namespace fallout {
 			std::vector<std::vector<FrameInfo> > m_frame_info;
 
 			/** Initialize
-			 * Reads in the custom gamma value from the settings.
+			 * Reads in the custom light level value from the settings.
 			 */
 			void init();
 
@@ -157,9 +160,9 @@ namespace map { namespace loaders { namespace fallout {
 			 */
 			void loadFrame(FrameInfo& fi);
 
-			/** Transfer the palette indexed image data to a normal RGBA surface.
+			/** Transfer the palette indexed image data to a RenderAble.
 			 *
-			 * This also uses the gamma value in @c m_custom_gamma
+			 * This also uses the light level value in @c m_light_level
 			 *
 			 * Generates an Image* if the frm file doesn't contain any
 			 * Palette-Animation or if the frm file contains more than 1

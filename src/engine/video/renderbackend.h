@@ -93,7 +93,7 @@ namespace FIFE {
 			 * @return The new Image.
 			 * @see createStaticImageFromSDL()
 			 */
-			virtual Image* createStaticImageFromRGBA(const uint8_t* data, unsigned int width, unsigned int height) = 0;
+			virtual Image* createStaticImageFromRGBA(const uint8_t* data, unsigned int width, unsigned int height);
 
 			/** Helper function to create images from SDL_Surfaces.
 			 *
@@ -104,7 +104,7 @@ namespace FIFE {
 			 * @return The new Image.
 			 * @see createStaticImageFromRGBA()
 			 */
-			Image* createStaticImageFromSDL(SDL_Surface* surface, bool freesurface = true);
+			virtual Image* createStaticImageFromSDL(SDL_Surface* surface, bool freesurface = true) = 0;
 
 			/** Gets the current MainScreen (the displaywindow).
 			 *

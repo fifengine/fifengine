@@ -40,7 +40,6 @@
 #include "critlst.h"
 #include "list.h"
 #include "objectfactory.h"
-#include "palutil.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
 

@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/loaders/fallout/frm.h"
+#include "map/loaders/fallout/animatedpal.h"
 #include "video/animation.h"
 #include "video/image.h"
 #include "log.h"
@@ -36,8 +37,14 @@
 
 namespace FIFE { namespace map { namespace loaders { namespace util {
 
+	fallout::AnimatedPalette* FRMProvider::m_palette = 0;
+
 	RenderAble* FRMProvider::createRenderable() {
-		fallout::FRM frm(getLocation().getFilename());
+		if (m_palette == 0) {
+			m_palette = new fallout::AnimatedPalette();
+		}
+		
+		fallout::FRM frm(getLocation().getFilename(), m_palette);
 
 		uint16_t dir = 0;
 		uint16_t frame = 0; //getLocation().getFrame();
