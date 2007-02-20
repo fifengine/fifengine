@@ -48,7 +48,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			  range [startIndex, endIndex] are read from the palette and added to the new block. If pal is NULL
 			  then no colors are added and the addColor method must be used to fill the animated block.
 			*/
-			AnimatedBlock(const std::string& name, int startIndex, int endIndex, int frameDuration, bool lightAdjust, PAL* pal);
+			AnimatedBlock(const std::string& name, int startIndex, int endIndex, int frameDuration, bool lightAdjust);
 			
 			/** Adds a color that will be mapped to one of the indices of this block.
 			 */			 
