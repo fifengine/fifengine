@@ -29,6 +29,7 @@
 // FIFE includes
 #include "video/gui/guimanager.h"
 #include "exception.h"
+#include "log.h"
 
 #include "renderbackendsdl.h"
 #include "sdlscreen.h"
@@ -68,21 +69,26 @@ namespace FIFE {
 
 		if( 0 == bitsPerPixel ) {
 			/// autodetect best mode
-			unsigned char possibleBitsPerPixel[] = {32, 24, 16, 0};
+			unsigned char possibleBitsPerPixel[] = {16, 24, 32, 0};
 			int i = 0;
 			while( true ) {
 				bitsPerPixel = possibleBitsPerPixel[i];
 				if( !bitsPerPixel ) {
-					throw SDLException("Videomode not available");
+					// Last try, sometimes VideoModeOK seems to lie.
+					// Try bpp=0
+					screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
+					if( !screen ) {
+						throw SDLException("Videomode not available");
+					}
+					break;
 				}
-
-				if ( SDL_VideoModeOK(width, height, bitsPerPixel, flags) ) {
+				bitsPerPixel = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
+				if ( bitsPerPixel ) {
 					screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
 					if( screen ) {
 						break;
 					}
 				}
-
 				++i;
 			}
 		} else {
@@ -91,6 +97,10 @@ namespace FIFE {
 			}
 			screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
 		}
+
+		Log("RenderBackendSDL")
+			<< "Videomode " << width << "x" << height
+			<< " at " << int(screen->format->BitsPerPixel) << " bpp";
 
 		SDL_WM_SetCaption("FIFE", NULL);
 
