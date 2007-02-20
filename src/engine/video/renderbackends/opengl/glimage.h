@@ -48,6 +48,7 @@ namespace FIFE {
 	 * @see RenderBackendOpenGL
 	 * @note Width and height are not limited to powers of two; non-power of two
 	 * images will be converted internally.
+	 * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
 	 */
 	class GLImage : public Image {
 		public:
