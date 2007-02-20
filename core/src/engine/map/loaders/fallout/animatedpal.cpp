@@ -48,15 +48,9 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return c;
 	}
 	
-	AnimatedBlock::AnimatedBlock(const std::string& name, int startIndex, int endIndex, int frameDuration, bool lightAdjust, PAL* pal)
+	AnimatedBlock::AnimatedBlock(const std::string& name, int startIndex, int endIndex, int frameDuration, bool lightAdjust)
 		: m_name(name), m_start_index(startIndex), m_end_index(endIndex), m_frame_duration(frameDuration), m_light_adjust(lightAdjust) {
 
-		if (pal != 0) {			
-			// extract colors from the palette
-			for (uint8_t i = startIndex; i <= endIndex; i++) {
-				addColor(createColor(pal->getRed(i), pal->getGreen(i), pal->getBlue(i)));
-			}
-		}
 	}
 	
 	const std::string& AnimatedBlock::getName() const {
@@ -84,16 +78,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	}
 	
 	void AnimatedBlock::addColor(SDL_Color color) {
-		if (isLightAdjusted()) {
-			// The animated colors that should be light adjusted (shoreline and slime)
-			// are 4 times too bright in the color.pal file. A best solution is probably
-			// to modify the color.pal, but that's annoying to do. It's easier to divide
-			// by 4 here
-			color.r /= 4;
-			color.g /= 4;
-			color.b /= 4;
-		}
-		
+		// Division by 4 in case of slime etc is no good (loose too many bits)
 		m_colors.push_back(color);
 	}
 	
@@ -165,19 +150,22 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	
 	uint8_t AnimatedPalette::lightLevelAdjust(uint8_t colorComp) const {
 		// multiply by the light level and cap at 255
-		return std::min(colorComp * m_light_level, 0xff) & 0xff;
+		double factor = 4.0 / m_light_level;
+		return std::min(double(colorComp) / factor, 255.);
 	}
 	
 	uint8_t AnimatedPalette::getRed(uint8_t index) const {
 		const AnimatedBlock* block = getBlock(index);
 		if (block == 0) {
-			return lightLevelAdjust(m_pal.getRed(index));
+			// Normal LL adjustment
+			return std::min(int(m_pal.getRed(index) * m_light_level), 255);
 		} else {
 			// animated pixel color
 			uint8_t result =  block->getRed(index, m_current_frame);
 			if (block->isLightAdjusted()) {
+				// LL adjustment, but preserve bits
 				result = lightLevelAdjust(result);
-			}
+			} // Else not LL Adjustment (Fire, Monitors and BlinkingRed )
 			return result;			
 		}
 	}
@@ -185,7 +173,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	uint8_t AnimatedPalette::getBlue(uint8_t index) const {
 		const AnimatedBlock* block = getBlock(index);
 		if (block == 0) {
-			return lightLevelAdjust(m_pal.getBlue(index));
+			return std::min(int(m_pal.getBlue(index) * m_light_level), 255);
 		} else {
 			// animated pixel color
 			uint8_t result =  block->getBlue(index, m_current_frame);
@@ -199,7 +187,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	uint8_t AnimatedPalette::getGreen(uint8_t index) const {
 		const AnimatedBlock* block = getBlock(index);
 		if (block == 0) {
-			return lightLevelAdjust(m_pal.getGreen(index));
+			return std::min(int(m_pal.getGreen(index) * m_light_level), 255);
 		} else {
 			// animated pixel color
 			uint8_t result =  block->getGreen(index, m_current_frame);
@@ -218,7 +206,6 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		TiXmlElement* el = node->ToElement();
 		std::string base_palette = xmlutil::queryElement<std::string>(el, "palette");
 		std::auto_ptr<AnimatedPalette> anim_palette(new AnimatedPalette(base_palette));
-		PAL* base_pal = &anim_palette->getBasePalette();
 
 		TiXmlElement* anim_block = el->FirstChildElement("animated-block");
 		while( anim_block ) {
@@ -232,7 +219,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				<< " delay: " << frameDuration << (lightAdjust ? " light-adjusted " : "");
 
 			std::auto_ptr<AnimatedBlock> b(new AnimatedBlock(name,startIndex, endIndex,
-			                               frameDuration, lightAdjust, base_pal));
+			                               frameDuration, lightAdjust));
 			TiXmlElement* color_element = anim_block->FirstChildElement("colors");
 			if( color_element ) {
 				color_element = color_element->FirstChildElement("color");
