@@ -94,6 +94,7 @@ namespace FIFE {
 		return 0;
 	}
 
+	LuaRef GuiManager_LuaScript::m_font;
 
 	/** Adds a luaGui derived widget to the gcn top-container.
 	 *
@@ -161,6 +162,17 @@ namespace FIFE {
 		return 0;
 	}
 
+	int GuiManager_LuaScript::setGlobalFont(lua_State* L) {
+		if( lua_gettop(L) == 0 ) {
+			GUIManager::instance()->setGlobalFont(0);
+			m_font.unref();
+		} else {
+			gcn::Font *font = luaGui::AWidget::lua2font_cast(L);
+			m_font.ref(L,1);
+			GUIManager::instance()->setGlobalFont(font);
+		}
+		return 0;
+	}
 
 	int luaopen_guimanager(lua_State *L) {
 		luaL_openlib(L, "guimanager", GuiManager_LuaScript::methods, 0);
@@ -206,6 +218,7 @@ namespace FIFE {
 		method(remove, removeWidget),
 		method(moveToTop, moveWidgetToTop),
 		method(moveToBottom, moveWidgetToBottom),
+		method(setGlobalFont, setGlobalFont),
 		{NULL, NULL}
 	};
 

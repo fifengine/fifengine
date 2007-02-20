@@ -105,6 +105,14 @@ namespace FIFE {
 
 	}
 
+	void GUIManager::setGlobalFont(gcn::Font* font) {
+		if( font == 0) {
+			gcn::Widget::setGlobalFont(m_font);
+		} else {
+			gcn::Widget::setGlobalFont(font);
+		}
+	}
+
 	void GUIManager::turn() {
 		m_gcn_gui->logic();
 		m_gcn_gui->draw();

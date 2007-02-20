@@ -23,17 +23,13 @@
 #define LUA_GUIMANAGER_H
 
 // Standard C++ library includes
+#include "script/lua/lua.hpp"
 
 // 3rd party library includes
 #include <guichan.hpp>
 
-extern "C" {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
-
 // FIFE includes
+#include "script/lua/lua_ref.h"
 
 namespace FIFE {
 
@@ -48,7 +44,11 @@ namespace FIFE {
 			static int moveWidgetToTop(lua_State *L);
 			static int moveWidgetToBottom(lua_State *L);
 
+			static int setGlobalFont(lua_State* L);
+
 			static const luaL_reg methods[];
+		private:
+			static LuaRef m_font;
 	};
 
 }
