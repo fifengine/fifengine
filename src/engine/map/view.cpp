@@ -143,6 +143,10 @@ namespace FIFE { namespace map {
 		return m_vtree->getVisual(id);
 	}
 
+	bool View::isValidVisualId(size_t id) const {
+		return m_vtree->isValidVisualId(id);
+	}
+
 	void View::notifyVisualChanged(size_t visualId) {
 		Visual *visual = m_vtree->getVisual(visualId);
 		if( !visual )
@@ -152,7 +156,6 @@ namespace FIFE { namespace map {
 		visual->reset(grid);
 		m_vtree->updateVisual( visualId );
 	}
-
 	void View::elevationChange() {
 		clearVisuals();
 

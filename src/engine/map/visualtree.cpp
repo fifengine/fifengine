@@ -100,11 +100,18 @@ namespace FIFE { namespace map {
 	}
 
 	Visual* VisualTree::getVisual(size_t visualId) {
-		s_visualEntry& ventry = m_visuals[ visualId ];
-		assert( ventry.visual != 0 );
 		assert( visualId < m_visuals.size() );
 
+		s_visualEntry& ventry = m_visuals[ visualId ];
+		assert( ventry.visual != 0 );
+
 		return ventry.visual;
+	}
+
+	bool VisualTree::isValidVisualId(size_t visualId) const {
+		if( visualId >= m_visuals.size() )
+			return false;
+		return m_visuals[ visualId ].visual != 0;
 	}
 
 	void VisualTree::clear() {
