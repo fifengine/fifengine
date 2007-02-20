@@ -212,20 +212,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	{
 		SDL_Surface* image = 0;
 		
-		if (withAlphaChannel) {
-			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-				Uint32 rmask = 0xff000000;
-				Uint32 gmask = 0x00ff0000;
-				Uint32 bmask = 0x0000ff00;
-				Uint32 amask = 0x000000ff;
-			#else
-				Uint32 rmask = 0x000000ff;
-				Uint32 gmask = 0x0000ff00;
-				Uint32 bmask = 0x00ff0000;
-				Uint32 amask = 0xff000000;
-			#endif
-			
-			image = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
+		if (withAlphaChannel) {			
+			image = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
 			if (image == 0) {
 				return 0;
 			}
