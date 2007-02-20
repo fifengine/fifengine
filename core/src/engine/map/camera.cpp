@@ -72,12 +72,10 @@ namespace FIFE { namespace map {
 		switch(m_mode) {
 			case TRACKING:
 			{
-				if( !m_view )
+				if( !m_view || !m_view->isValidVisualId(m_tracked_visual) )
 					return;
 		
 				Visual* visual = m_view->getVisual(m_tracked_visual);
-				if( !visual )
-					return;
 		
 				Rect screen_box = visual->getScreenBox();
 				m_next_position = Point(screen_box.x + screen_box.w/2,

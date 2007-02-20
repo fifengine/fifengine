@@ -65,6 +65,14 @@ namespace FIFE { namespace map {
 			 */
 			Visual* getVisual(size_t id);
 
+			/** Get a visual from the visual tree
+			 * \param id The ID of a visual
+			 * \return true, if the id is valid
+			 * \see getVisual
+			 * \note This is only rarely useful (for example Camera::track)
+			 */
+			bool isValidVisualId(size_t id) const;
+
 			/** Delete and remove the visual from the visual tree
 			 *  \param id The ID returned from a previous addVisual call
 			 */

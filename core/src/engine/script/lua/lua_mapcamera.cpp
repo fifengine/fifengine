@@ -62,6 +62,11 @@ namespace FIFE {
 		return 0;
 	}
 
+	int MapCamera_Lunar::l_track(lua_State *L) {
+		map::Camera::track(luaL_checkinteger(L,1));
+		return 0;
+	}
+
 
 	const char* MapCamera_Lunar::className = "MapCamera";
 
@@ -73,6 +78,7 @@ namespace FIFE {
 		method(moveBy),
 		method(moveTo),
 		method(zoomTo),
+		method(track),
 		{NULL, NULL}
 	};
 }

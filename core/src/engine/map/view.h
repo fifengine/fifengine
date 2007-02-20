@@ -152,6 +152,8 @@ namespace FIFE { namespace map {
 			void removeVisual( size_t vidualId );
 			Visual* getVisual(size_t id);
 
+			bool isValidVisualId(size_t id) const;
+
 			void notifyVisualChanged(size_t visualId);
 
 			/** Clean up internal state
