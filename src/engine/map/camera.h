@@ -31,6 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/point.h"
+#include "video/rect.h"
 #include "timer.h"
 
 namespace FIFE { namespace map {
@@ -59,18 +60,48 @@ namespace FIFE { namespace map {
 	 */
 	class Camera {
 		public:
+			enum {
+				ZOOMING  = 1,
+				FREE     = 2,
+				TRACKING = 3
+			};
+
 			Camera(Control* map_control);
 			~Camera();
-			
+
+			/** Set on screen viewport
+			 */
+			void setViewport(const Rect& viewport);
+
 			/** Start zooming to a specific positon.
+			 * Switches to mode ZOOMING
 			 */
 			void zoomTo(const Point& gridPosition);
 
+			/** Move (FREE) Camera by delta pixels
+			 */
+			void moveBy(const Point& delta);
+
+			/** Move (FREE) Camera to grid pos
+			 */
+			void moveTo(const Point& gridPosition);
+
+			/** Start tracking
+			 * FIXME: NOT TESTED
+			 */
+			void track(size_t visualId);
+
 			void update();
+
+			void render();
 		private:
 			Grid* m_grid;
 			View* m_view;
+			Point m_position;
 			Point m_next_position;
+			size_t m_tracked_visual;
+			Rect  m_viewport;
+			int   m_mode;
 			Timer m_timer;
 
 			friend class Control;
