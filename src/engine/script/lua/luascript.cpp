@@ -33,10 +33,10 @@
 #include "gamestatemanager.h"
 
 #include "luascript.h"
-#include "lua_mapview.h"
 #include "lua_object.h"
 #include "lua_stackguard.h"
 #include "lua_timer.h"
+#include "lua_mapcamera.h"
 #include "lua_mapcontrol.h"
 #include "lunar.h"
 
@@ -107,6 +107,7 @@ namespace FIFE {
 
 		Lunar<Timer_Lunar>::Register(L);
 		Lunar<MapControl_Lunar>::Register(L);
+		Lunar<MapCamera_Lunar>::Register(L);
 	}
 
 	LuaScript::LuaScript() : ScriptEngine("Lua") {

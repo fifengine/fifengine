@@ -34,7 +34,7 @@
 
 namespace FIFE {
 
-	class MapControl_Lunar  {
+	class MapControl_Lunar : public map::Control {
 		public:
 			static const char* className;
 			static Lunar<MapControl_Lunar>::RegType methods[];
@@ -51,9 +51,6 @@ namespace FIFE {
 			int l_activateElevation(lua_State *L);
 
 			void update();
-
-		private:
-			map::Control m_control;
 	};
 
 }

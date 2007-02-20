@@ -19,33 +19,61 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef LUA_MAPVIEW_H
-#define LUA_MAPVIEW_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
-#include "lua.hpp"
-#include "lunar.h"
 
 // FIFE includes
-#include "map/view.h"
+#include "lua_mapcamera.h"
+#include "lua_mapcontrol.h"
 
 namespace FIFE {
 
-	class MapView_Lunar
-	{
-		public:
-			static const char* className;
-			static Lunar<MapView_Lunar>::RegType methods[];
+	MapCamera_Lunar::MapCamera_Lunar(lua_State *L) 
+		: map::Camera(Lunar<MapControl_Lunar>::check(L,1)) {
+	}
+	MapCamera_Lunar::~MapCamera_Lunar() {}
 
-			MapView_Lunar(lua_State *L);
-			~MapView_Lunar();
+	int MapCamera_Lunar::l_render(lua_State *L) {
+		map::Camera::render();
+		return 0;
+	}
+
+	int MapCamera_Lunar::l_setViewport(lua_State *L) {
+		map::Camera::setViewport(Rect(luaL_checkinteger(L,1),
+		                              luaL_checkinteger(L,2),
+		                              luaL_checkinteger(L,3),
+		                              luaL_checkinteger(L,4)));
+		return 0;
+	}
+
+	int MapCamera_Lunar::l_moveBy(lua_State *L) {
+		map::Camera::moveBy(Point(luaL_checkinteger(L,1),luaL_checkinteger(L,2)));
+		return 0;
+	}
+
+	int MapCamera_Lunar::l_moveTo(lua_State *L) {
+		map::Camera::moveTo(Point(luaL_checkinteger(L,1),luaL_checkinteger(L,2)));
+		return 0;
+	}
+
+	int MapCamera_Lunar::l_zoomTo(lua_State *L) {
+		map::Camera::zoomTo(Point(luaL_checkinteger(L,1),luaL_checkinteger(L,2)));
+		return 0;
+	}
 
 
-		private:
+	const char* MapCamera_Lunar::className = "MapCamera";
 
+#define method(name) {#name, &MapCamera_Lunar::l_ ## name}
+
+	Lunar<MapCamera_Lunar>::RegType MapCamera_Lunar::methods[] = {
+		method(setViewport),
+		method(render),
+		method(moveBy),
+		method(moveTo),
+		method(zoomTo),
+		{NULL, NULL}
 	};
 }
-#endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

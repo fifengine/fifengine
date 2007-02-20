@@ -44,31 +44,31 @@ namespace FIFE {
 	}
 
 	int MapControl_Lunar::l_start(lua_State *L) {
-		m_control.start();
+		map::Control::start();
 		return 0;
 	}
 
 	int MapControl_Lunar::l_stop(lua_State *L) {
-		m_control.stop();
+		map::Control::stop();
 		return 0;
 	}
 
 	int MapControl_Lunar::l_turn(lua_State *L) {
-		m_control.turn();
+		map::Control::turn();
 		return 0;
 	}
 
 	int MapControl_Lunar::l_load(lua_State *L) {
 		const char* cfilename = luaL_checkstring(L,1);
 		if( cfilename ) {
-			m_control.load( cfilename );
+			map::Control::load( cfilename );
 		}
 		return 0;
 	}
 
 	int MapControl_Lunar::l_activateElevation(lua_State *L) {
 		int elevation = luaL_checkinteger(L,1);
-		m_control.activateElevation( elevation );
+		map::Control::activateElevation( elevation );
 		return 0;
 	}
 
