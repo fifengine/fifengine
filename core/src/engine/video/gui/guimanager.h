@@ -52,28 +52,28 @@ namespace FIFE {
 	 */
 	class GUIManager : public DynamicSingleton<GUIManager> {
 		public:
-			/* Constructor.
+			/** Constructor.
 			 */
 			GUIManager();
-			/* Destructor.
+			/** Destructor.
 			 */
 			virtual ~GUIManager();
 
-			/* Gets the member pointer to the Guichan GUI.
+			/** Gets the member pointer to the Guichan GUI.
 			 *
 			 * @return The member pointer to the Guichan GUI.
 			 */
 			gcn::Gui* getGuichanGUI() const;
 
-			/* Performs the GUI logic and draws the GUI accordingly.
+			/** Performs the GUI logic and draws the GUI accordingly.
 			 *
 			 * This will be called each frame.
 			 */
 			void turn();
-			/* Inits the GUI Manager.
+			/** Inits the GUI Manager.
 			 */
 			void init();
-			/* Resizes the top container.
+			/** Resizes the top container.
 			 *
 			 * @param x The new starting X coordinate.
 			 * @param y The new starting Y coordinate.
@@ -81,26 +81,33 @@ namespace FIFE {
 			 * @param height The new height.
 			 */
 			void resizeTopContainer(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
-			/* Adds a new widget.
+			/** Adds a new widget.
 			 *
 			 * @param A pointer to the widget to add.
 			 */
 			void add(gcn::Widget* widget);
-			/* Removes a widget.
+			/** Removes a widget.
 			 *
 			 * @param A pointer to the widget to remove.
 			 */
 			void remove(gcn::Widget* widget);
-			/* Gets the top container.
+			/** Gets the top container.
 			 *
 			 * @return The top container.
 			 */
 			gcn::Container* getTopContainer() { return m_gcn_topcontainer; }
-			/* Gets the console.
+			/** Gets the console.
 			 *
 			 * @return The console.
 			 */
 			Console* getConsole() { return m_console; };
+
+			/** Set the default global font
+			 * \param font A gcn::Font or NULL
+			 * If NULL is given as parameter, the default font from the
+			 * config file is taken.
+			 */
+			void setGlobalFont(gcn::Font* font);
 
 		private:
 			// The Guichan GUI.

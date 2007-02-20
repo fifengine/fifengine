@@ -40,6 +40,10 @@ namespace FIFE {
 
 			static int read(lua_State *L);
 			static int readlines(lua_State *L);
+
+			static int listFiles(lua_State *L);
+			static int listDirectories(lua_State *L);
+
 			static int addSource(lua_State *L);
 
 			static const luaL_reg methods[];

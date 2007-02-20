@@ -79,7 +79,7 @@ namespace FIFE {
 	Console::Console() 
 		: gcn::Container(),
 		m_textfield(new CommandLine()),
-		m_output(new gcn::TextBox("-- welcome to the console")),
+		m_output(new gcn::TextBox("")),
 		m_scrollarea(new gcn::ScrollArea(m_output)),
 		m_label(new gcn::Label()),
 		m_button(new gcn::Button("Tools"))

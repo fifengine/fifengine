@@ -82,6 +82,37 @@ namespace FIFE {
 		return 1;
 	}
 
+	int VFS_LuaScript::listFiles(lua_State *L) {
+		std::string path = luaL_checkstring(L,1);
+		
+		VFS::type_stringlist files = VFS::instance()->listFiles(path);
+		lua_newtable(L);
+
+		int n=0;
+		for(VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
+			lua_pushlstring(L,i->c_str(),i->size());
+			lua_rawseti(L,-2,n);
+			++n;
+		}
+		return 1;
+	}
+
+	int VFS_LuaScript::listDirectories(lua_State *L) {
+		std::string path = luaL_checkstring(L,1);
+		
+		VFS::type_stringlist files = VFS::instance()->listDirectories(path);
+		lua_newtable(L);
+
+		int n=0;
+		for(VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
+			lua_pushlstring(L,i->c_str(),i->size());
+			lua_rawseti(L,-2,n);
+			++n;
+		}
+		return 1;
+	}
+
+
 	int VFS_LuaScript::addSource(lua_State *L) {
 		std::string sname = luaL_checkstring(L, 1);
 		VFSSource * src = VFSSourceFactory::instance()->createSource(sname);
@@ -105,6 +136,8 @@ namespace FIFE {
 	const luaL_reg VFS_LuaScript::methods[] = {
 		method(read),
 		method(readlines),
+		method(listFiles),
+		method(listDirectories),
 		method(addSource),
 		{NULL, NULL}
 	};
