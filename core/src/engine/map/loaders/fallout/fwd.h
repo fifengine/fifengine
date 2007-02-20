@@ -26,7 +26,6 @@ namespace FIFE {
 				class DAT1;
 				class FRM;
 				class list;
-				class PALUtil;
 			}
 		}
 	}

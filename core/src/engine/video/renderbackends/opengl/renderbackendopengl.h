@@ -80,6 +80,8 @@ namespace FIFE {
 			 */
 			virtual Image* createStaticImageFromRGBA(const uint8_t* data, unsigned int width, unsigned int height);
 			
+			virtual Image* createStaticImageFromSDL(SDL_Surface* surface, bool freesurface = true);
+			
 			/** Returns the current screen.
 			 *
 			 * @note This may be NULL.
@@ -92,6 +94,7 @@ namespace FIFE {
 		private:
 			// OpenGL screen.
 			GLScreen* m_screen;
+			SDL_PixelFormat m_rgba_format;
 	};
 
 }

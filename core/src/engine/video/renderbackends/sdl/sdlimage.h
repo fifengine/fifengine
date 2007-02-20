@@ -72,6 +72,8 @@ namespace FIFE {
 		private:
 			// SDLSurface used to create the SDLImage.
 			SDL_Surface* m_surface;
+			// Last alpha value this image was rendered with
+			Uint8 m_last_alpha;
 	};
 
 }

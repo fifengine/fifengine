@@ -58,6 +58,14 @@ namespace FIFE {
 			 * @param height Height of the image.
 			 */
 			GLImage(const uint8_t* rgbadata, unsigned int width, unsigned int height);
+			/** Constructs an instance from RGBA pixel data.
+			 *
+			 * @param data RGBA (unsigned byte) data matching the next parameters.
+			 * @param width Width of the image.
+			 * @param height Height of the image.
+			 * @param pitch Bytes between the start of each line in the image.
+			 */
+			GLImage(const uint8_t* rgbadata, unsigned int width, unsigned int height, unsigned int pitch);
 			/** Destructor.
 			 *
 			 * Deletes the GL resources allocated by this instance.
@@ -100,7 +108,8 @@ namespace FIFE {
 			GLuint *m_textureid;
 
 			void cleanup();
-			void generateTexture(const uint8_t* data, unsigned int width, unsigned int height);
+			void init(const uint8_t* rgbadata, unsigned int width, unsigned int height, unsigned int pitch);
+			void generateTexture(const uint8_t* data, unsigned int width, unsigned int height, unsigned int pitch);
 
 	};
 

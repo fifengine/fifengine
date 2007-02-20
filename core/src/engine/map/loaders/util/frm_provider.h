@@ -32,7 +32,13 @@
 // Second block: files included from the same folder
 #include "video/renderable_provider.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace util {
+
+
+namespace FIFE { namespace map { namespace loaders {
+	
+	class fallout::AnimatedPalette;
+	
+	namespace util {
 
 	class FRMProvider : public RenderableProvider {
 
@@ -45,6 +51,12 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 			/** Load the FRM and return a RenderAble
 			 */
 			virtual RenderAble* createRenderable();
+			
+		private:
+			/** Holds fallout palette information. Only need one, but many FRMProviderobjects
+			 * are created, so this is static.
+			 */
+			static fallout::AnimatedPalette* m_palette;
 	};
 } } } }
 

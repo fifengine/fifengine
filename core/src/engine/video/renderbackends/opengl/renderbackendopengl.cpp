@@ -42,6 +42,12 @@
 namespace FIFE {
 
 	RenderBackendOpenGL::RenderBackendOpenGL() : RenderBackend("OpenGL"), m_screen(0){
+		// Get the pixelformat we want.
+		SDL_Surface* testsurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 1, 1, 32,
+				0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+
+		m_rgba_format = *(testsurface->format);
+		SDL_FreeSurface(testsurface);
 	}
 
 
@@ -134,6 +140,26 @@ namespace FIFE {
 
 	Image* RenderBackendOpenGL::createStaticImageFromRGBA(const uint8_t* data, unsigned int width, unsigned int height) {
 		return new GLImage(data, width, height);
+	}
+	
+	Image* RenderBackendOpenGL::createStaticImageFromSDL(SDL_Surface* surface, bool freesurface) {
+		// Given an abritary surface, we must convert it to the format GLImage will understand.
+		// It's easiest to let SDL do this for us.
+		// We may want to check if the surface already is in the correct form, to avoid unneeded
+		// copying.
+		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE);
+		if (freesurface) {
+			SDL_FreeSurface(surface);
+		}
+		if (conv != 0) {
+			SDL_LockSurface(conv);
+			Image* image = new GLImage(static_cast<const uint8_t*>(conv->pixels), conv->w, conv->h, conv->pitch);
+			SDL_UnlockSurface(conv);
+			SDL_FreeSurface(conv);
+			return image;
+		}
+	
+		return 0;
 	}
 
 	Screen* RenderBackendOpenGL::getMainScreen() const {

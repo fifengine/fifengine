@@ -35,6 +35,15 @@ namespace FIFE {
 
 	GLImage::GLImage(const uint8_t* rgbadata, unsigned int width, unsigned int height)
 	: m_width(width), m_height(height) {
+		// assume pitch matches the width of the line (there is no wasted space)
+		init(rgbadata, width, height, 4 * width);
+	}
+	GLImage::GLImage(const uint8_t* rgbadata, unsigned int width, unsigned int height, unsigned int pitch)
+	: m_width(width), m_height(height) {
+		init(rgbadata, width, height, pitch);
+	}
+	
+	void GLImage::init(const uint8_t* rgbadata, unsigned int width, unsigned int height, unsigned int pitch) {
 		m_tex_x=0;
 		m_tex_y=0;
 		m_textureid=0;
@@ -42,7 +51,7 @@ namespace FIFE {
 		m_cols=0;
 		m_last_col_width=0;
 		m_last_row_height=0;
-		generateTexture(rgbadata, width, height);
+		generateTexture(rgbadata, width, height, pitch);
 	}
 
 
@@ -134,7 +143,7 @@ namespace FIFE {
 		return m_height;
 	}
 
-	void GLImage::generateTexture(const uint8_t* data, unsigned int width, unsigned int height) {
+	void GLImage::generateTexture(const uint8_t* data, unsigned int width, unsigned int height, unsigned int pitch) {
 		cleanup();
 
 		m_width = width;
@@ -195,7 +204,7 @@ namespace FIFE {
 
 				for (unsigned int y = 0;  y < data_chunk_height; ++y) {
 					for (unsigned int x = 0; x < data_chunk_width; ++x) {
-						unsigned int pos = ((y + j*256)*width + (x + i*256)) * 4;
+						unsigned int pos = (y + j*256)*pitch + (x + i*256) * 4;
 
 						uint8_t r = data[pos + 0];
 						uint8_t g = data[pos + 1];
@@ -210,7 +219,7 @@ namespace FIFE {
 				glBindTexture(GL_TEXTURE_2D, m_textureid[j*m_cols + i]);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16, chunk_width, chunk_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, chunk_width, chunk_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
 
 				delete[] oglbuffer;
 			}

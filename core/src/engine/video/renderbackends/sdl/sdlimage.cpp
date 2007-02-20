@@ -34,12 +34,15 @@
 
 namespace FIFE {
 
-	SDLImage::SDLImage(SDL_Surface* surface) : m_surface(surface) {
-		SDL_Surface* tmp = SDL_DisplayFormatAlpha(m_surface);
-		SDL_FreeSurface(m_surface);
-		m_surface = tmp;
+	SDLImage::SDLImage(SDL_Surface* surface) : m_surface(surface), m_last_alpha(255) {
+		if (m_surface->format->Amask == 0) {
+			SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, 255);
+			m_surface = SDL_DisplayFormat(m_surface);
+		} else {
+			SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
+			m_surface = SDL_DisplayFormatAlpha(m_surface);
+		}
 	}
-
 
 	SDLImage::~SDLImage() {
 		SDL_FreeSurface(m_surface);
@@ -112,40 +115,41 @@ void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
 
 		SDL_LockSurface( dst );
 
+		unsigned char* srcData = reinterpret_cast< unsigned char* > ( src->pixels );
+		unsigned char* dstData = reinterpret_cast< unsigned char* > ( dst->pixels );
+		
+		// move data pointers to the start of the pixels we're copying
+		srcData += tY * src->pitch  + tX * src->format->BytesPerPixel;
+		dstData += screenY * dst->pitch + screenX * dst->format->BytesPerPixel;
+
 		switch( src->format->BitsPerPixel ) {
 			case 32: {
 				switch( dst->format->BitsPerPixel ) {
 					case 16: {
 						if( 0xFFFF == ( dst->format->Rmask | dst->format->Gmask | dst->format->Bmask ) ) {
-							for( int y = 0; y < height; ++y ) {
-								int srcOffset = ( y + tY ) * src->pitch + ( tX * 4 );
-								int dstOffset = ( y + screenY ) * dst->pitch + ( screenX * 2 );
-
-								SDL_BlendRow_RGBA8_to_RGB565( reinterpret_cast< unsigned char* >( src->pixels ) + srcOffset,
-									reinterpret_cast< unsigned char* > ( dst->pixels ) + dstOffset, alpha, width );
+							for( int y = height; y > 0; --y ) {
+								SDL_BlendRow_RGBA8_to_RGB565( srcData, dstData, alpha, width );
+								srcData += src->pitch;
+								dstData += dst->pitch;
 							}
 						}
 					}
 					break;
 
 					case 24: {
-						for( int y = 0; y < height; ++y ) {
-							int srcOffset = ( y + tY ) * src->pitch + ( tX * 4 );
-							int dstOffset = ( y + screenY ) * dst->pitch + ( screenX * 3 );
-
-							SDL_BlendRow_RGBA8_to_RGB8( reinterpret_cast< unsigned char* >( src->pixels ) + srcOffset,
-								reinterpret_cast< unsigned char* >( dst->pixels ) + dstOffset, alpha, width );
+						for( int y = height; y > 0; --y ) {
+							SDL_BlendRow_RGBA8_to_RGB8( srcData, dstData, alpha, width );
+							srcData += src->pitch;
+							dstData += dst->pitch;
 						}
 					}
 					break;
 
 					case 32: {
-						for( int y = 0; y < height; ++y ) {
-							int srcOffset = ( y + tY ) * src->pitch + ( tX * 4 );
-							int dstOffset = ( y + screenY ) * dst->pitch + ( screenX * 4 );
-
-							SDL_BlendRow_RGBA8_to_RGBA8( reinterpret_cast< unsigned char* >( src->pixels ) + srcOffset,
-								reinterpret_cast< unsigned char* >( dst->pixels ) + dstOffset, alpha, width );
+						for( int y = height; y > 0; --y ) {
+							SDL_BlendRow_RGBA8_to_RGBA8( srcData, dstData, alpha, width );
+							srcData += src->pitch;
+							dstData += dst->pitch;
 						}
 					}
 					break;
@@ -160,12 +164,10 @@ void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
 				if( 0x000F == src->format->Amask ) {
 					if( ( 16 == dst->format->BitsPerPixel ) &&
 						( 0xFFFF == ( dst->format->Rmask | dst->format->Gmask | dst->format->Bmask ) ) ) {
-						for( int y = 0; y < height; ++y ) {
-							int srcOffset = ( y + tY ) * src->pitch + ( tX * 2 );
-							int dstOffset = ( y + screenY ) * dst->pitch + ( screenX * 2 );
-
-							SDL_BlendRow_RGBA4_to_RGB565( reinterpret_cast< unsigned char* >( src->pixels ) + srcOffset,
-								reinterpret_cast< unsigned char* > ( dst->pixels ) + dstOffset, alpha, width );
+						for( int y = height; y > 0; --y ) {
+							SDL_BlendRow_RGBA4_to_RGB565( srcData, dstData, alpha, width );
+							srcData += src->pitch;
+							dstData += dst->pitch;
 						}
 					}
 				}
@@ -180,6 +182,10 @@ void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
 	}
 
 	void SDLImage::render(const Rect& rect, Screen* screen, unsigned char alpha) {
+		if (alpha == 0) {
+			return;
+		}
+		
 		SDLScreen* sdlscreen = dynamic_cast<SDLScreen*>(screen);
 		assert(sdlscreen);
 
@@ -191,14 +197,22 @@ void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
 		SDL_Rect r;
 		r.x = rect.x;
 		r.y = rect.y;
-
-		// Setting transparency.
-		if( 255 != alpha ) {
-			// Special blitting routine with alpha blending:
-			// dst.rgb = ( src.rgb * src.a * alpha ) + ( dst.rgb * (255 - ( src.a * alpha ) ) );
-			SDL_BlitSurfaceWithAlpha( m_surface, 0, surface, &r, alpha );
+		
+		if (m_surface->format->Amask == 0) {
+			// Image has no alpha channel. This allows us to use the per-surface alpha.
+			if (m_last_alpha != alpha) {
+				m_last_alpha = alpha;
+				SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
+			}
+			SDL_BlitSurface(m_surface, 0, surface, &r);			
 		} else {
-			SDL_BlitSurface(m_surface, 0, surface, &r);
+			if( 255 != alpha ) {
+				// Special blitting routine with alpha blending:
+				// dst.rgb = ( src.rgb * src.a * alpha ) + ( dst.rgb * (255 - ( src.a * alpha ) ) );
+				SDL_BlitSurfaceWithAlpha( m_surface, 0, surface, &r, alpha );
+			} else {
+				SDL_BlitSurface(m_surface, 0, surface, &r);
+			}
 		}
 	}
 
