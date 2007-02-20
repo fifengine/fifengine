@@ -104,7 +104,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	*/
 	class AnimatedPalette {
 		public:
-			AnimatedPalette();
+			AnimatedPalette(const std::string& base_palette);
 			~AnimatedPalette();
 			
 			/// @return the current light level used by the palette.
@@ -128,10 +128,10 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			void setCurrentAnimation(const AnimatedBlock* block);
 			/// @return the current frame in the animated block.
 			int getCurrentFrame() const;
-			/** Increments the frame number if there are remaining frames in the 
-			  current AnimatedBlock
+
+			/** Set the current frame of the current animated block
 			*/
-			void incrementFrame();
+			void setCurrentFrame(int frame);
 			
 			/** Gets the Red/Green/Blue component of the color of the given index.
 			  The returned color is the animated and light adjusted color, suitable
@@ -140,7 +140,10 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			uint8_t getRed(uint8_t index) const;
 			uint8_t getGreen(uint8_t index) const;
 			uint8_t getBlue(uint8_t index) const;
-			
+
+
+			PAL& getBasePalette() { return m_pal; };
+			static AnimatedPalette* load(const std::string& base_palette);
 		private:
 			PAL m_pal;
 			std::vector<AnimatedBlock*> m_blocks;

@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <memory>
 
 // 3rd party library includes
 #include <SDL_video.h>
@@ -28,10 +29,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "tinyxml/tinyxml.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "debugutils.h"
 #include "exception.h"
+#include "util/xmlutil.h"
 
 #include "animatedpal.h"
 
@@ -107,59 +110,13 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return m_colors[i].g;
 	}
 	
-	AnimatedPalette::AnimatedPalette()
-		: m_pal("color.pal"), m_light_level(4), m_current_block(0), m_current_frame(0) {
+	AnimatedPalette::AnimatedPalette(const std::string& base_palette)
+		: m_pal(base_palette), m_light_level(4), m_current_block(0), m_current_frame(0) {
 	
 		for (size_t i = 0; i < 256; i++) {
 			m_blocks_by_index[i] = 0;
 		}
 
-		// create and add blocks of animated pixels
-		AnimatedBlock* b = 0;		
-		b = new AnimatedBlock("Slime", 229, 232, 200, true, &m_pal);
-		/*b->addColor(createColor(0, 108, 0));
-		b->addColor(createColor(11, 115, 7));
-		b->addColor(createColor(27, 123, 15));
-		b->addColor(createColor(43, 131, 27));*/
-		addBlock(b);
-		
-		b = new AnimatedBlock("Monitors", 233, 237, 100, false, &m_pal);
-		/*b->addColor(createColor(107, 107, 111));
-		b->addColor(createColor(99, 103, 127));
-		b->addColor(createColor(87, 107, 143));
-		b->addColor(createColor(0, 147, 163));
-		b->addColor(createColor(107, 187, 255));*/
-		addBlock(b);
-		
-		// Create a single fire block of both slow and fast fire colors.
-		// We don't currently handle images with pixels from seperate animated
-		// blocks and slow and fast fire are often used together.
-		b = new AnimatedBlock("Fire", 238, 248, 180, false, &m_pal);
-		/*b->addColor(createColor(255, 0, 0));
-		b->addColor(createColor(215, 0, 0));
-		b->addColor(createColor(147, 43, 11));
-		b->addColor(createColor(255, 119, 0));
-		b->addColor(createColor(255, 59, 0));
-		b->addColor(createColor(71, 0, 0));
-		b->addColor(createColor(123, 0, 0));
-		b->addColor(createColor(179, 0, 0));
-		b->addColor(createColor(123, 0, 0));
-		b->addColor(createColor(71, 0, 0));*/
-		addBlock(b);
-		
-		b = new AnimatedBlock("Shoreline", 248, 253, 200, true, &m_pal);
-		/*b->addColor(createColor(83, 63, 43));
-		b->addColor(createColor(75, 59, 43));
-		b->addColor(createColor(67, 55, 39));
-		b->addColor(createColor(63, 51, 39));
-		b->addColor(createColor(55, 47, 35));
-		b->addColor(createColor(51, 43, 35));*/
-		addBlock(b);
-		
-		b = new AnimatedBlock("BlinkingRed", 254, 254, 33, true, &m_pal);
-		//b->addColor(createColor(252, 0, 0));
-		b->addColor(createColor(0, 0, 0));
-		addBlock(b);
 	}
 
 	AnimatedPalette::~AnimatedPalette() {
@@ -202,10 +159,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return m_current_frame;
 	}
 	
-	void AnimatedPalette::incrementFrame() {
-		if (m_current_block != 0 && m_current_frame < m_current_block->getNumFrames()) {
-			m_current_frame++;
-		}
+	void AnimatedPalette::setCurrentFrame(int frame) {
+		m_current_frame = frame % m_current_block->getNumFrames();
 	}
 	
 	uint8_t AnimatedPalette::lightLevelAdjust(uint8_t colorComp) const {
@@ -253,6 +208,44 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			}
 			return result;			
 		}
+	}
+
+	AnimatedPalette* AnimatedPalette::load(const std::string& filename) {
+		TiXmlDocument doc(filename);
+		doc.LoadFile(); // Throws CannotOpenFile
+
+		TiXmlNode* node = doc.RootElement();
+		TiXmlElement* el = node->ToElement();
+		std::string base_palette = xmlutil::queryElement<std::string>(el, "palette");
+		std::auto_ptr<AnimatedPalette> anim_palette(new AnimatedPalette(base_palette));
+		PAL* base_pal = &anim_palette->getBasePalette();
+
+		TiXmlElement* anim_block = el->FirstChildElement("animated-block");
+		while( anim_block ) {
+			std::string name  = xmlutil::queryElement<std::string>(anim_block, "name");
+			int startIndex    = xmlutil::queryElement<int>(anim_block, "start-index");
+			int endIndex      = xmlutil::queryElement<int>(anim_block, "end-index");
+			int frameDuration = xmlutil::queryElement<int>(anim_block, "frame-duration");
+			bool lightAdjust  = xmlutil::queryElement<bool>(anim_block, "light-adjust");
+			Log("palanim")
+				<< name << " from: " << startIndex << " to: " << endIndex
+				<< " delay: " << frameDuration << (lightAdjust ? " light-adjusted " : "");
+
+			std::auto_ptr<AnimatedBlock> b(new AnimatedBlock(name,startIndex, endIndex,
+			                               frameDuration, lightAdjust, base_pal));
+			TiXmlElement* color_element = anim_block->FirstChildElement("colors");
+			if( color_element ) {
+				color_element = color_element->FirstChildElement("color");
+				while( color_element ) {
+					SDL_Color c = xmlutil::queryElement<SDL_Color>(color_element);
+					b->addColor(c);
+					color_element = color_element->NextSiblingElement("color");
+				}
+			}
+			anim_palette->addBlock( b.release() );
+			anim_block = anim_block->NextSiblingElement("animated-block");
+		}
+		return anim_palette.release();
 	}
 
 } } } } //FIFE::map::loaders::fallout
