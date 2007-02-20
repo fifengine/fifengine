@@ -52,7 +52,14 @@ namespace FIFE { namespace map {
 		m_timer.setCallback( boost::bind( &Camera::update, this ) );
 
 		Screen* surface = CRenderBackend()->getMainScreen();
-		m_viewport = Rect(0, 0, surface->getWidth(), surface->getHeight());
+
+		int w = surface->getWidth();
+		int h = surface->getHeight();
+
+		// To view the missing clipping:
+		//setViewport(Rect(w/4, h/4, w/2, h/2));
+		setViewport(Rect(0, 0, w, h));
+
 		reset();
 	}
 
@@ -105,6 +112,7 @@ namespace FIFE { namespace map {
 
 	void Camera::track( size_t visualId ) {
 		m_tracked_visual = visualId;
+		m_timer.start();
 		m_mode = TRACKING;
 	}
 

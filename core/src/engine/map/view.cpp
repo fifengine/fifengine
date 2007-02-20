@@ -87,7 +87,11 @@ namespace FIFE { namespace map {
 			m_surface = 0;
 			return;
 		}
-		setViewport(surface, Rect(0, 0, surface->getWidth(), surface->getHeight()));
+
+		int w = surface->getWidth();
+		int h = surface->getHeight();
+
+		setViewport(surface, Rect(w/4, h/4, w/2, h/2));
 	}
 
 	void View::setViewport(Screen* surface, const Rect& rect) {
@@ -185,6 +189,9 @@ namespace FIFE { namespace map {
 		size_t image_id = getGridOverlayImageId( grid );
 		RenderAble* renderable = ImageCache::instance()->getImage( image_id );
 
+		offset.x -= m_rect.x;
+		offset.y -= m_rect.y;
+
 		Point index;
 		for (index.y = starty; index.y < stopy; ++index.y) {
 			for (index.x = startx; index.x < stopx; ++index.x) {
@@ -213,6 +220,9 @@ namespace FIFE { namespace map {
 		stopy = starty + y_range + 2;
 		starty = std::max(0,starty - 1);
 		stopy = std::min(size.y,stopy);
+
+		offset.x -= m_rect.x;
+		offset.y -= m_rect.y;
 
 		Point basesize = geometry->baseSize();
 		uint8_t alpha = grid->getGlobalAlpha();
@@ -263,10 +273,14 @@ namespace FIFE { namespace map {
 		// To be on the secure side, we scan a slightly larger
 		// than the actual viewport.
 		Rect viewport(m_rect);
-		viewport.x += m_offset.x - delta_border;
-		viewport.y += m_offset.y - delta_border;
+		viewport.x  = m_offset.x - delta_border;
+		viewport.y  = m_offset.y - delta_border;
 		viewport.w += delta_border*2;
 		viewport.h += delta_border*2;
+
+		Point offset(m_offset);
+		offset.x -= m_rect.x;
+		offset.y -= m_rect.y;
 
 		VisualTree::RenderList &renderlist = m_vtree->calculateRenderlist(viewport);
 		VisualTree::RenderList::iterator visual_it = renderlist.begin();
@@ -295,7 +309,7 @@ namespace FIFE { namespace map {
 			}
 
 			while( visual_it != renderlist.end() && (*visual_it)->getGrid() <= i) {
-				(*visual_it)->render(m_surface, m_offset, grid_alpha);
+				(*visual_it)->render(m_surface, offset, grid_alpha);
 				++visual_it;
 			}
 		}

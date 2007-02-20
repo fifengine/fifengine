@@ -19,21 +19,38 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef LUA_MAPCAMERA_H
+#define LUA_MAPCAMERA_H
+
 // Standard C++ library includes
 
 // 3rd party library includes
+#include "lua.hpp"
+#include "lunar.h"
 
 // FIFE includes
-#include "lua_mapview.h"
+#include "map/camera.h"
 
 namespace FIFE {
 
-	const char* MapView_Lunar::className = "MapView";
+	class MapCamera_Lunar : public map::Camera
+	{
+		public:
+			static const char* className;
+			static Lunar<MapCamera_Lunar>::RegType methods[];
 
-#define method(name) {#name, &MapView_Lunar::l_ ## name}
+			MapCamera_Lunar(lua_State *L);
+			~MapCamera_Lunar();
 
-	Lunar<MapView_Lunar>::RegType MapView_Lunar::methods[] = {
-		{NULL, NULL}
+			int l_render(lua_State *L);
+			int l_setViewport(lua_State *L);
+
+			int l_moveBy(lua_State *L);
+			int l_moveTo(lua_State *L);
+
+			int l_zoomTo(lua_State *L);
+
 	};
 }
+#endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
