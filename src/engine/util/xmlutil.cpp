@@ -35,9 +35,9 @@
 namespace FIFE { namespace xmlutil {
 
 	struct ac_setter {
-		AttributedClass& t;
+		AttributedClass* t;
 
-		ac_setter(AttributedClass& _t) : t(_t) {}
+		ac_setter(AttributedClass* _t) : t(_t) {}
 
 		void operator()(TiXmlElement* e) {
 			const char* cname = e->Attribute("name");
@@ -53,7 +53,7 @@ namespace FIFE { namespace xmlutil {
 
 			#define AC_SET_AND_RETURN(type_name)                                         \
 				if( type == # type_name ) {                                            \
-					t.set< type_name >(name, queryElement< type_name >(e) );         \
+					t->set< type_name >(name, queryElement< type_name >(e) );        \
 					return;                                                          \
 				}
 
@@ -69,9 +69,9 @@ namespace FIFE { namespace xmlutil {
 	};
 
 
-	void loadMetadata(TiXmlElement* e, AttributedClass& t) {
+	void loadMetadata(TiXmlElement* e, AttributedClass* t) {
 		if( !e )
-			throw InvalidFormat(std::string("no element"));
+			return;
 
 		ac_setter setter(t);
 		foreachElement(e, "param",setter);

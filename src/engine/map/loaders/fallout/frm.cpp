@@ -76,7 +76,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	}
 
 	FRM::~FRM() {
-    m_data.reset();
+		m_data.reset();
 	}
 
 	RenderAble* FRM::getFrame(uint16_t dir, uint16_t frame) {
@@ -346,12 +346,18 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			}
 		} else {
 			// Create an animation.
-			Log("palanim") << "Generating Animation " << block->getName() << " with w,h= " << width << ", " << height;
+			Log("palanim") 
+				<< "Generating Animation " << block->getName() 
+				<< " with w,h= " << width << ", " << height 
+				<< " frames: " << block->getNumFrames()
+				<< " delay:  " << block->getFrameDuration();
 
 			Animation *anim = new Animation(block->getNumFrames());
 			anim->setFrameDuration(block->getFrameDuration());
 	
 			for(int i = 0; i < block->getNumFrames(); ++i) {			
+				m_palette->setCurrentFrame(i);
+
 				SDL_Surface* image = createSDLSurface(data, width, height, m_palette, convertToAlpha);
 				Image* createdImage = 0;
 				if (image != 0) {
@@ -363,7 +369,6 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				}
 				anim->setFrame(i, createdImage);
 				
-				m_palette->incrementFrame();
 			}
 			anim->setCurrentFrame(0);
 			return anim;

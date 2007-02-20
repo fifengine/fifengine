@@ -26,6 +26,7 @@
 
 // 3rd party library includes
 #include <boost/lexical_cast.hpp>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,7 +42,7 @@ namespace FIFE {
 
 namespace FIFE { namespace xmlutil {
 
-	void loadMetadata(TiXmlElement* e, AttributedClass& t);
+	void loadMetadata(TiXmlElement* e, AttributedClass* t);
 	void assertElement(TiXmlElement* e, const std::string& element);
 
 	template<typename T>
@@ -68,6 +69,18 @@ namespace FIFE { namespace xmlutil {
 		return queryElement<T>(e);
 	}
 
+	template<typename T>
+	T queryElement(TiXmlElement* e, const std::string& element, const T& _default) {
+		if( !e )
+			throw InvalidFormat("no xml element");
+
+		e = e->FirstChildElement(element);
+		if( !e )
+			return _default;
+
+		return queryElement<T>(e);
+	}
+
 	template<>
 	inline
 	Point queryElement(TiXmlElement* e) {
@@ -81,6 +94,15 @@ namespace FIFE { namespace xmlutil {
 		             queryElement<int16_t>(e,"w"), queryElement<int16_t>(e,"h") );
 	}
 
+	template<>
+	inline
+	SDL_Color queryElement(TiXmlElement* e) {
+		SDL_Color c;
+		c.r = queryElement<int>(e,"r");
+		c.g = queryElement<int>(e,"g");
+		c.b = queryElement<int>(e,"b");
+		return c;
+	}
 // 	template<>
 // 	inline
 // 	AttributedClass queryElement(TiXmlElement* e) {

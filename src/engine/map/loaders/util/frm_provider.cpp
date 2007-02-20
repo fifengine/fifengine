@@ -41,7 +41,7 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 
 	RenderAble* FRMProvider::createRenderable() {
 		if (m_palette == 0) {
-			m_palette = new fallout::AnimatedPalette();
+			m_palette = fallout::AnimatedPalette::load("content/gfx/fallout_palette.xml");
 		}
 		
 		fallout::FRM frm(getLocation().getFilename(), m_palette);
@@ -82,6 +82,10 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 
 		} else {
 			RenderAble* image = frm.getFrame(dir, frame);
+			if( dynamic_cast<Animation*>(image) ) {
+				Log("frm_provider") 
+					<< getLocation().toString() <<  " is an (pal)animation.";
+			}
 
 			// set the global -per- renderable shift
 
