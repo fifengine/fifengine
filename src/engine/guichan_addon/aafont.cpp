@@ -28,21 +28,16 @@ namespace FIFE {
 		Log("aa_image_font")
 			<< " loading " << filename;
 
-		VFS* vfs = VFS::instance();
-		RawDataPtr data = vfs->open(filename);
+		RawDataPtr data =  VFS::instance()->open(filename);
 
 		std::string signature(data->readString(4));
-		data->setIndex(0);
 
 		Log("image_font")
 			<< "font '" << filename << "' signature is " << signature;
 
 		if( signature != "AAFF"  ) {
-			throw CannotOpenFile(filename);
+			throw InvalidFormat(filename + " has no AAFF signature");
 		}
-
-		// Skip magic string 'AAFF'
-		data->setIndex( 4 );
 
 		// read global info
 		mHeight = data->read16Big();
@@ -109,7 +104,6 @@ namespace FIFE {
 			m_placeholder = m_glyphs['?'];
 		} else {
 			m_placeholder.surface = 0;
-			m_placeholder.image = 0;
 		}
 
 		// Initialize palettes with this

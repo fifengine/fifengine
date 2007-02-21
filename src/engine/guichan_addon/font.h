@@ -43,7 +43,8 @@ namespace FIFE {
 
 
 	/** Abstract Font Base Class
-	 *  Implements a cache for rendered strings.
+	 *  Uses a cache for rendered strings.
+	 *  @see FontCache
 	 */
 	class FontBase : public gcn::Font {
 		public:
@@ -96,12 +97,20 @@ namespace FIFE {
 			virtual void drawString(gcn::Graphics* graphics, const std::string& text, int x, int y);
 			virtual int getStringIndexAt(const std::string &text, int x);
 
+			/** Render a string to a SDL surface
+			 *  Overwrite this method, in your font implementation.
+			 *  The rsulting SDL surface is cached, so it's not that time critical.
+			 */
 			virtual SDL_Surface* renderString(const std::string& text) = 0;
+
 
 			virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;
 			SDL_Color getColor() const;
 
-			static FontBase*load(const std::string& filename,int size=12, const std::string& glyphs ="");
+			/** Static factory method
+			 * @bug This is ugly.
+			 */
+			static FontBase* load(const std::string& filename,int size=12, const std::string& glyphs ="");
 
 		protected:
 			FontCache m_cache;

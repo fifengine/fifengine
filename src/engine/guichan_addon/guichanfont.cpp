@@ -124,7 +124,6 @@ namespace FIFE {
 			m_placeholder = m_glyphs['?'];
 		} else {
 			m_placeholder.surface = 0;
-			m_placeholder.image = 0;
 		}
 
 		mHeight = surface->h;

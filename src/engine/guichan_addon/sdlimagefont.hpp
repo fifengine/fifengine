@@ -81,25 +81,18 @@
 #include <string>
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
-#include <guichan/font.hpp>
-#include <guichan/graphics.hpp>
-#include <guichan/image.hpp>
-#include <guichan/platform.hpp>
-#include <SDL_ttf.h>
 
 // FIFE includes
 #include "font.h"
 #include "video/point.h"
 
 namespace FIFE {
-	class Image;
-
-	class RawData;
-	typedef boost::shared_ptr<RawData> RawDataPtr;
 
 
-	/** ImageFont base class 
+	/** ImageFont base class
+	 *
+	 *  Just set the glyphs/placeholder in any derived class and the rendering
+	 *  is handled by this class. Also frees all glyph surfaces on destruction.
 	 */
 	class SDLImageFont: public FIFE::FontBase {
 		public:
@@ -114,23 +107,30 @@ namespace FIFE {
 			 */
 			virtual ~SDLImageFont();
 
-
+			/** Get the width in pixels a given text would occupy
+			 *  @param text The text that should be measured.
+			 */
 			virtual int getWidth(const std::string& text) const;
+
+			/** Get the height in pixels a text line would occupy
+			 */
 			virtual int getHeight() const;
 
 			virtual SDL_Surface *renderString(const std::string& text);
-
 			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
 
 		protected:
+			// A glyph (visible character) 
 			typedef struct {
-				FIFE::Point offset;
-				FIFE::Image* image;
+				Point offset;
 				SDL_Surface* surface;
 			} s_glyph;
 
 			typedef std::map<int,s_glyph> type_glyphs;
 			type_glyphs m_glyphs;
+
+			// The glyph used, when the real glyph is not found
+			// Should default to '?'
 			s_glyph m_placeholder;
 
 			int mHeight;
