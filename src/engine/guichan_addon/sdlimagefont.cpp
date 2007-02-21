@@ -98,8 +98,7 @@
 
 namespace FIFE {
 
-	SDLImageFont::SDLImageFont() 
-		: FontBase() {
+	SDLImageFont::SDLImageFont() : FontBase() {
 	}
 
 	SDLImageFont::~SDLImageFont() {

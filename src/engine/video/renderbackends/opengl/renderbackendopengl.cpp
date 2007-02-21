@@ -160,11 +160,17 @@ namespace FIFE {
 			    && m_rgba_format.Gloss == surface->format->Gloss
 			    && m_rgba_format.Bloss == surface->format->Bloss
 			    && m_rgba_format.Aloss == surface->format->Aloss   ) {
+
 				return new GLImage(surface);
 			}
 		}
-		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE);
-		return new GLImage(conv);
+
+		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE|SDL_SRCALPHA);
+		GLImage* image = new GLImage(conv);
+		if( freesurface ) {
+			SDL_FreeSurface( surface );
+		}
+		return image;
 	}
 
 	Screen* RenderBackendOpenGL::getMainScreen() const {
