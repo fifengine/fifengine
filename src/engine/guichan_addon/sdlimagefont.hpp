@@ -129,7 +129,7 @@ namespace gcn {
 			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
 
 		protected:
-			void loadGuichanFont(FIFE::RawDataPtr, const std::string& glyphs);
+			void loadGuichanFont(const std::string& filename, const std::string& glyphs);
 			void loadAAFont(FIFE::RawDataPtr);
 
 			SDL_Color m_aaf_palette[10];
