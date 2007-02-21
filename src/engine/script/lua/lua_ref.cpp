@@ -25,15 +25,52 @@
 // 3rd party library includes
 
 // FIFE includes
+#include "debugutils.h"
+
 #include "lua_ref.h"
 
 namespace FIFE {
 
+	LuaRef* LuaRef::m_list = 0;
+
 	LuaRef::LuaRef() : m_ref(LUA_NOREF),m_state(0) {
+		
+		// Insert 'this' into list of all LuaRef's
+		if( m_list == 0 ) {
+			m_prev = m_succ = 0;
+		} else {
+			m_list->m_prev = this;
+			m_succ = m_list;
+			m_prev = 0;
+		}
+		m_list = this;
+
 	}
 
 	LuaRef::~LuaRef() {
 		unref();
+
+		// Remove 'this' from list of all LuaRef's
+		if( m_succ ) {
+			m_succ->m_prev = m_prev;
+		}
+
+		if( m_prev ) {
+			m_prev->m_succ = m_succ;
+		} else {
+			// No 'prev' -> we are first element, and thus m_list.
+			m_list = m_succ;
+		}
+	}
+
+	void LuaRef::unrefAll(lua_State* L) {
+		LuaRef* lua_ref = m_list;
+		while( lua_ref ) {
+			if( lua_ref->m_state == L ) {
+				lua_ref->unref();
+			}
+			lua_ref = lua_ref->m_succ;
+		}
 	}
 
 	void LuaRef::ref(lua_State *L, int index) {

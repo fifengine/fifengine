@@ -32,7 +32,9 @@
 namespace FIFE {
 
 	/** Utility class for objects that hold refernces to lua objects.
-	 * @bug What happens if the state is destroyed and a reference is still hold?
+	 *
+	 *  Maintains a list of all @c LuaRef instances, which is used to
+	 *  @c unref them when the state the reference is about to close.
 	 */
 	class LuaRef {
 		public:
@@ -76,11 +78,21 @@ namespace FIFE {
 			 */
 			lua_State* getState();
 
+			/** Dereference @b all refrences from a given state.
+			 *  Call this just before the state is closed.
+			 */
+			static void unrefAll(lua_State *L);
+
 		protected:
 			// The lua ref as returned by luaL_ref
 			int m_ref;
 			// The lua state the reference was opetained in
 			lua_State* m_state;
+
+			// Global List of all LuaRef instances.
+			LuaRef* m_prev;
+			LuaRef* m_succ;
+			static LuaRef* m_list;
 	};
 
 }
