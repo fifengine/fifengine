@@ -27,6 +27,7 @@
 
 // FIFE includes
 #include "video/rect.h"
+#include "video/pixelbuffer.h"
 
 #include "sdlblendingfunctions.h"
 #include "sdlimage.h"
@@ -34,23 +35,19 @@
 
 namespace FIFE {
 
-	SDLImage::SDLImage(SDL_Surface* surface) : m_surface(surface), m_last_alpha(255) {
-		if (m_surface->format->Amask == 0) {
-			SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, 255);
-			m_surface = SDL_DisplayFormat(m_surface);
-		} else {
-			SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
-			m_surface = SDL_DisplayFormatAlpha(m_surface);
-		}
+	SDLImage::SDLImage(SDL_Surface* surface) : m_surface(0), m_last_alpha(255) {
+		setPixelBuffer( new PixelBuffer(surface) );
 	}
 
 	SDLImage::~SDLImage() {
-		SDL_FreeSurface(m_surface);
+		if( m_surface ) {
+			SDL_FreeSurface(m_surface);
+		}
 	}
 
 
-void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
-	SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha )	{
+	void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
+	                               SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha ) {
 		if( 0 == alpha ) {
 			return;
 		}
@@ -185,7 +182,8 @@ void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
 		if (alpha == 0) {
 			return;
 		}
-		
+		finalize();
+
 		SDLScreen* sdlscreen = dynamic_cast<SDLScreen*>(screen);
 		assert(sdlscreen);
 
@@ -204,7 +202,7 @@ void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
 				m_last_alpha = alpha;
 				SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
 			}
-			SDL_BlitSurface(m_surface, 0, surface, &r);			
+			SDL_BlitSurface(m_surface, 0, surface, &r);
 		} else {
 			if( 255 != alpha ) {
 				// Special blitting routine with alpha blending:
@@ -216,12 +214,38 @@ void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
 		}
 	}
 
+	void SDLImage::finalize() {
+		if( m_surface ) {
+			return;
+		}
+
+		m_surface = m_pixelbuffer->getSurface();
+
+		if (m_surface->format->Amask == 0) {
+			SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, 255);
+			m_surface = SDL_DisplayFormat(m_surface);
+		} else {
+			SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
+			m_surface = SDL_DisplayFormatAlpha(m_surface);
+		}
+
+		m_pixelbuffer.reset();
+	}
+
 	unsigned int SDLImage::getWidth() const {
-		return m_surface->w;
+		if( m_surface ) {
+			return m_surface->w;
+		} else {
+			return m_pixelbuffer->getSurface()->w;
+		}
 	}
 
 	unsigned int SDLImage::getHeight() const {
-		return m_surface->h;
+		if( m_surface ) {
+			return m_surface->h;
+		} else {
+			return m_pixelbuffer->getSurface()->h;
+		}
 	}
 
 }

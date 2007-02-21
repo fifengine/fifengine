@@ -40,6 +40,7 @@ namespace FIFE {
 			 *
 			 * Creates a new @c SDLImage from an SDL surface
 			 *
+			 * @note Takes ownership of the SDL Surface
 			 * @param surface The SDL surface from which to create the SDLImage.
 			 */
 			SDLImage(SDL_Surface* surface);
@@ -70,6 +71,8 @@ namespace FIFE {
 			virtual unsigned int getHeight() const;
 
 		private:
+			// Call this before accessing m_surface
+			void finalize();
 			// SDLSurface used to create the SDLImage.
 			SDL_Surface* m_surface;
 			// Last alpha value this image was rendered with

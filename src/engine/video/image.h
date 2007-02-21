@@ -25,11 +25,16 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 // FIFE includes
 #include "renderable.h"
 
 namespace FIFE {
+
+	class PixelBuffer;
+	typedef boost::shared_ptr<PixelBuffer> PixelBufferPtr;
 
 	/** Base Class for Images.
 	 *
@@ -43,6 +48,11 @@ namespace FIFE {
 			/** Destructor.
 			 */
 			virtual ~Image();
+
+			/** Get the pixel data used in this image
+			 * @return A shared pointer of the pixelbuffer, which might contain NULL.
+			 */
+			PixelBufferPtr getPixelBuffer();
 
 			/** Sets the X shift of the Image.
 			 *
@@ -66,6 +76,12 @@ namespace FIFE {
 			virtual int getYShift() const;
 		
 		protected:
+			/** Set the internal pixel buffer
+			 */
+			void setPixelBuffer(PixelBuffer* pixelbuffer);
+			// The SDL Surface used.
+			PixelBufferPtr m_pixelbuffer;
+			boost::weak_ptr<PixelBuffer> m_pixelbuffer_weakref;
 			// The X shift of the Image
 			unsigned int m_xshift;
 			// The Y shift of the Image
