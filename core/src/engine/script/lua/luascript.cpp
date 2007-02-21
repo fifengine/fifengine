@@ -38,6 +38,7 @@
 #include "lua_timer.h"
 #include "lua_mapcamera.h"
 #include "lua_mapcontrol.h"
+#include "lua_ref.h"
 #include "lunar.h"
 
 namespace FIFE {
@@ -126,6 +127,7 @@ namespace FIFE {
 	
 	void LuaScript::deinit() {
 		if (L != NULL) {
+			LuaRef::unrefAll(L);
 			lua_close(L);
 			L = NULL;
 			Log("LuaScript") << "scripting disabled";
