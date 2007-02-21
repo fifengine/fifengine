@@ -85,14 +85,16 @@
 #include "exception.h"
 #include "debugutils.h"
 #include "log.h"
-#include "sdlimagefont.hpp"
 #include "video/image.h"
+#include "video/pixelbuffer.h"
 #include "video/rect.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
-
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
+#include "imagecache.h"
+
+#include "sdlimagefont.hpp"
 
 namespace gcn {
 
@@ -115,7 +117,7 @@ namespace gcn {
 			if( signature == "AAFF"  ) {
 				loadAAFont(data);
 			} else {
-				loadGuichanFont(data,glyphs);
+				loadGuichanFont(filename,glyphs);
 			}
 
 		} catch( const FIFE::CannotOpenFile& ) {
@@ -133,26 +135,36 @@ namespace gcn {
 		
 	}
 
-	void SDLImageFont::loadGuichanFont(FIFE::RawDataPtr data, const std::string& glyphs) {
-		// Can 'only' load SDL_image formats (no .frm's)
-		// until the Image class has Pixel access
-		size_t datalen = data->getDataLength();
-		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
-		data->readInto(darray.get(), datalen);
-		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
-		SDL_Surface* surface = IMG_Load_RW(rwops, false);
-		SDL_FreeRW(rwops);
+	void SDLImageFont::loadGuichanFont(const std::string& filename, const std::string& glyphs) {
 
-		if( !surface )
-			throw FIFE::CannotOpenFile("");
+		// FIXME: This Loading procedure is a bit long winded ... 
+		size_t image_id = FIFE::ImageCache::instance()->addImageFromFile(filename);
+		FIFE::Image* image = dynamic_cast<FIFE::Image*>(FIFE::ImageCache::instance()->getImage(image_id));
+
+		if( image == 0 ) {
+			throw FIFE::CannotOpenFile(filename);
+		}
+
+		if( !image->getPixelBuffer() ) {
+			FIFE::ImageCache::instance()->unloadImage( image_id );
+			image = dynamic_cast<FIFE::Image*>(FIFE::ImageCache::instance()->getImage(image_id));
+		}
+
+		if( image == 0 || !image->getPixelBuffer() ) {
+			throw FIFE::CannotOpenFile(filename);
+		}
+
+		SDL_Surface* surface = image->getPixelBuffer()->getSurface();
+		// End of getting the surface ... phew.
+
 
 		// Make sure we get 32bit RGBA
+		// and copy the Pixelbuffers surface
 		SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE,
 			surface->w,surface->h,32,
 			0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
 
 		SDL_BlitSurface(surface,0,tmp,0);
-		SDL_FreeSurface(surface);
 		surface = tmp;
 
 		// Prepare the data for extracting the glyphs.
