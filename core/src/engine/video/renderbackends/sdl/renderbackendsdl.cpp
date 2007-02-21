@@ -123,13 +123,8 @@ namespace FIFE {
 		SDL_Flip(m_screen->getSurface());
 	}	
 
-	Image* RenderBackendSDL::createStaticImageFromSDL(SDL_Surface* surface, bool freesurface) {
-		if( freesurface ) {
-			return new SDLImage(surface);
-		} else {
-			SDL_Surface* surface_copy = SDL_ConvertSurface(surface,surface->format,SDL_SWSURFACE);
-			return new SDLImage(surface_copy);
-		}
+	Image* RenderBackendSDL::createStaticImageFromSDL(SDL_Surface* surface) {
+		return new SDLImage(surface);
 	}
 
 	Screen* RenderBackendSDL::getMainScreen() const {

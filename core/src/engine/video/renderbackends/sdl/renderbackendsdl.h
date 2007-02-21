@@ -74,10 +74,11 @@ namespace FIFE {
 			/** Convenience wrapper around SDLImage.
 			 *
 			 * Creates an SDLImage instance from the specified data.
+			 * Takes ownership over the surface.
 			 * 
 			 * @see SDLImage
 			 */
-			virtual Image* createStaticImageFromSDL(SDL_Surface* surface, bool freesurface = true);
+			virtual Image* createStaticImageFromSDL(SDL_Surface* surface);
 			
 			/** Returns the current screen.
 			 *
