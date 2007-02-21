@@ -37,7 +37,8 @@
 #include "video/image.h"
 
 #include "sdltruetypefont.hpp"
-#include "sdlimagefont.hpp"
+#include "aafont.h"
+#include "guichanfont.h"
 
 namespace FIFE {
 
@@ -82,26 +83,25 @@ namespace FIFE {
 
 		int yoffset = getRowSpacing() / 2;
 
-		FIFE::RenderBackend* rbackend = FIFE::RenderManager::instance()->current();
-		const gcn::ClipRectangle& clip = rbackend->getMainScreen()->getCurrentClipArea();
+		const gcn::ClipRectangle& clip = CRenderBackend()->getMainScreen()->getCurrentClipArea();
 		FIFE::Rect rect;
 		rect.x = x + clip.xOffset;
 		rect.y = y + clip.yOffset + yoffset;
 		rect.w = getWidth(text);
 		rect.h = getHeight();
 
-		if (!rect.intersects(FIFE::Rect(clip.x,clip.y,clip.width,clip.height)) ) {
+		if (!rect.intersects(Rect(clip.x,clip.y,clip.width,clip.height)) ) {
 			return;
 		}
 
 		FIFE::Image* image = m_cache.getRenderedText( this, text );
 		if (image == 0) {
 			SDL_Surface* textSurface = renderString(text);
-			image = rbackend->createStaticImageFromSDL(textSurface);
+			image = CRenderBackend()->createStaticImageFromSDL(textSurface);
 			m_cache.addRenderedText( this, text, image );
 		}
 
-		image->render(rect, rbackend->getMainScreen());
+		image->render(rect, CRenderBackend()->getMainScreen());
 	}
 
 	int FontBase::getStringIndexAt(const std::string &text, int x) {
@@ -117,7 +117,11 @@ namespace FIFE {
 		if( boost::filesystem::extension(filename) == ".ttf" ) {
 			return new gcn::SDLTrueTypeFont(filename,size);
 		}
-		return new gcn::SDLImageFont(filename,glyphs);
+		try {
+			return new GuichanImageFont(filename,glyphs);
+		} catch( CannotOpenFile&  ) {
+			return new AAImageFont(filename);
+		}
 	}
 
 }

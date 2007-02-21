@@ -27,13 +27,13 @@
 #include "exception.h"
 #include "log.h"
 #include "luagui.h"
-#include "guichan_addon/sdlimagefont.hpp"
+#include "guichan_addon/guichanfont.h"
 
 namespace luaGui {
 
 	ImageFont::ImageFont(lua_State *L) {
 
-		m_font = new gcn::SDLImageFont(
+		m_font = new FIFE::GuichanImageFont(
 			luaL_checkstring(L, 1),
 			luaL_checkstring(L, 2));
 
