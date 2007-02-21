@@ -97,14 +97,12 @@ namespace FIFE {
 
 			/** Helper function to create images from SDL_Surfaces.
 			 *
-			 * It just converts the surface into a suitable format for createStaticImageFromRGBA().
-			 *
+			 * Takes ownership over the surface.
 			 * @param surface The surface to convert.
-			 * @param freesurface If true, the surface will be freed.
 			 * @return The new Image.
 			 * @see createStaticImageFromRGBA()
 			 */
-			virtual Image* createStaticImageFromSDL(SDL_Surface* surface, bool freesurface = true) = 0;
+			virtual Image* createStaticImageFromSDL(SDL_Surface* surface) = 0;
 
 			/** Gets the current MainScreen (the displaywindow).
 			 *

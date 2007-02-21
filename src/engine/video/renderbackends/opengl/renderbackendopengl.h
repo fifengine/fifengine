@@ -78,7 +78,7 @@ namespace FIFE {
 			 * 
 			 * @see GLImage
 			 */
-			virtual Image* createStaticImageFromSDL(SDL_Surface* surface, bool freesurface = true);
+			virtual Image* createStaticImageFromSDL(SDL_Surface* surface);
 			
 			/** Returns the current screen.
 			 *
