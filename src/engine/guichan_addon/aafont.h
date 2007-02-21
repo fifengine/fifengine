@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUICHAN_ADDON_FONTBASE_H
-#define FIFE_GUICHAN_ADDON_FONTBASE_H
+#ifndef FIFE_AAF_ADDON_FONT_H
+#define FIFE_AAF_ADDON_FONT_H
 
 // Standard C++ library includes
 #include <string>
@@ -29,89 +29,33 @@
 #include "util/fife_stdint.h"
 
 // 3rd party library includes
-#include <guichan.hpp>
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "fontcache.h"
+#include "sdlimagefont.hpp"
 
-struct SDL_Surface;
 namespace FIFE {
 
 
-	/** Abstract Font Base Class
-	 *  Implements a cache for rendered strings.
+	/**  AA Style Image font (used in fallout)
 	 */
-	class FontBase : public gcn::Font {
+	class AAImageFont : public SDLImageFont {
 		public:
-			FontBase();
-
 			/**
-			 * Sets the spacing between rows in pixels. Default is 0 pixels.
-			 * The spacing can be negative.
+			 * Constructor.
 			 *
-			 * @param spacing the spacing in pixels.
+			 * @param filename the filename of the Image Font.
 			 */
-			virtual void setRowSpacing (int spacing);
+			AAImageFont(const std::string& filename);
 
-			/**
-			 * Gets the spacing between rows in pixels.
-			 *
-			 * @return the spacing.
+			/** Set the coloring of the AAF
 			 */
-			virtual int getRowSpacing() const;
-
-			/**
-			 * Sets the spacing between letters in pixels. Default is 0 pixels.
-			 * The spacing can be negative.
-			 *
-			 * @param spacing the spacing in pixels.
-			 */
-			virtual void setGlyphSpacing(int spacing);
-
-			/**
-			 * Gets the spacing between letters in pixels.
-			 *
-			 * @return the spacing.
-			 */
-			virtual int getGlyphSpacing() const;
-
-			/**
-			 * Sets the use of anti aliasing..
-			 *
-			 * @param antaAlias true for use of antia aliasing.
-			 */
-			virtual void setAntiAlias(bool antiAlias);
-
-			/**
-			 * Checks if anti aliasing is used.
-			 *
-			 * @return true if anti aliasing is used.
-			 */
-			virtual bool isAntiAlias();
-
-			virtual void drawString(gcn::Graphics* graphics, const std::string& text, int x, int y);
-			virtual int getStringIndexAt(const std::string &text, int x);
-
-			virtual SDL_Surface* renderString(const std::string& text) = 0;
-
-			virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;
-			SDL_Color getColor() const;
-
-			static FontBase*load(const std::string& filename,int size=12, const std::string& glyphs ="");
+			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
 
 		protected:
-			FontCache m_cache;
-
-			SDL_Color mColor;
-			int mGlyphSpacing;
-			int mRowSpacing;
-
-			std::string mFilename;
-			bool m_antiAlias;
+			SDL_Color m_aaf_palette[10];
 	};
 
 }

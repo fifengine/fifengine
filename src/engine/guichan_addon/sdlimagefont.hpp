@@ -97,23 +97,17 @@ namespace FIFE {
 
 	class RawData;
 	typedef boost::shared_ptr<RawData> RawDataPtr;
-}
 
-namespace gcn {
-	/** ImageFont implementation
-	 *  @bug AAF needs to be separated out, as AAFonts have different (color setting) semantics
-	 *  @bug Isn't able to load anything apart from SDL_image supported types
+
+	/** ImageFont base class 
 	 */
-	class DECLSPEC SDLImageFont: public FIFE::FontBase {
+	class SDLImageFont: public FIFE::FontBase {
 		public:
 
 			/**
 			 * Constructor.
-			 *
-			 * @param filename the filename of the Image Font.
-			 * @param glyphs the glyphs for Guichan format.
 			 */
-			SDLImageFont(const std::string& filename, const std::string& glyphs);
+			SDLImageFont();
 
 			/**
 			 * Destructor.
@@ -129,10 +123,6 @@ namespace gcn {
 			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
 
 		protected:
-			void loadGuichanFont(const std::string& filename, const std::string& glyphs);
-			void loadAAFont(FIFE::RawDataPtr);
-
-			SDL_Color m_aaf_palette[10];
 			typedef struct {
 				FIFE::Point offset;
 				FIFE::Image* image;
