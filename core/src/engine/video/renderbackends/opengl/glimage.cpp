@@ -26,6 +26,7 @@
 
 // FIFE includes
 #include "video/rect.h"
+#include "video/pixelbuffer.h"
 #include "log.h"
 
 #include "glimage.h"
@@ -33,17 +34,8 @@
 
 namespace FIFE {
 
-	GLImage::GLImage(const uint8_t* rgbadata, unsigned int width, unsigned int height)
-	: m_width(width), m_height(height) {
-		// assume pitch matches the width of the line (there is no wasted space)
-		init(rgbadata, width, height, 4 * width);
-	}
-	GLImage::GLImage(const uint8_t* rgbadata, unsigned int width, unsigned int height, unsigned int pitch)
-	: m_width(width), m_height(height) {
-		init(rgbadata, width, height, pitch);
-	}
-	
-	void GLImage::init(const uint8_t* rgbadata, unsigned int width, unsigned int height, unsigned int pitch) {
+	GLImage::GLImage(SDL_Surface* surface)
+		: m_width(surface->w), m_height(surface->h) {
 		m_tex_x=0;
 		m_tex_y=0;
 		m_textureid=0;
@@ -51,7 +43,7 @@ namespace FIFE {
 		m_cols=0;
 		m_last_col_width=0;
 		m_last_row_height=0;
-		generateTexture(rgbadata, width, height, pitch);
+		setPixelBuffer( new PixelBuffer(surface) );
 	}
 
 
@@ -67,6 +59,10 @@ namespace FIFE {
 	}
 
 	void GLImage::render(const Rect& rect, Screen* screen, unsigned char alpha) {
+		if( m_textureid == 0 ) {
+			generateTexture();
+		}
+
 		GLScreen* glscreen = dynamic_cast<GLScreen*>(screen);
 		assert(glscreen);
 
@@ -143,11 +139,11 @@ namespace FIFE {
 		return m_height;
 	}
 
-	void GLImage::generateTexture(const uint8_t* data, unsigned int width, unsigned int height, unsigned int pitch) {
-		cleanup();
+	void GLImage::generateTexture() {
+		SDL_Surface* surface = m_pixelbuffer->getSurface();
 
-		m_width = width;
-		m_height = height;
+		uint8_t* data = static_cast<uint8_t*>(surface->pixels);
+		int pitch     = surface->pitch;
 
 		m_last_col_width = 1;
 		m_cols = static_cast<int>(m_width/256);
@@ -227,5 +223,7 @@ namespace FIFE {
 				delete[] oglbuffer;
 			}
 		}
+		// Free the pixelbuffer + original surface
+		m_pixelbuffer.reset();
 	}
 }

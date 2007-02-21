@@ -19,46 +19,42 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_PIXELBUFFER_H
+#define FIFE_PIXELBUFFER_H
+
 // Standard C++ library includes
+#include <boost/shared_ptr.hpp>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
-#include "image.h"
-#include "pixelbuffer.h"
 
 namespace FIFE {
 
-	Image::Image():RenderAble(RT_IMAGE), m_xshift(0), m_yshift(0) {}
+	/** Extremly simple SDL_Surface wrapper.
+	 *
+	 * @see Image
+	 */
+	class PixelBuffer  {
+		public:
+			/** Constructor. from SDL_Surface
+			 */
+			PixelBuffer(SDL_Surface* surface);
 
+			/** Destructor.
+			 */
+			~PixelBuffer();
 
-	Image::~Image() {}
+			/** Get the SDL_Surface
+			 */
+			SDL_Surface* getSurface() const;
 
-	PixelBufferPtr Image::getPixelBuffer() {
-		if( m_pixelbuffer ) {
-			return m_pixelbuffer;
-		} else {
-			// TODO Does this work for m_pixelbuffer_weakref==0 ?
-			return m_pixelbuffer_weakref.lock();
-		}
-	}
-
-	void Image::setPixelBuffer(PixelBuffer* pixelbuffer) {
-		m_pixelbuffer = PixelBufferPtr(pixelbuffer);
-		m_pixelbuffer_weakref = boost::weak_ptr<PixelBuffer>(m_pixelbuffer);
-	}
-
-	void Image::setXShift(int xshift) {
-		m_xshift = xshift;
+		protected:
+			SDL_Surface* m_surface;
 	};
-	void Image::setYShift(int yshift) {
-		m_yshift = yshift;
-	};
-	int Image::getXShift() const {
-		return m_xshift;
-	};
-	int Image::getYShift() const {
-		return m_yshift;
-	};
+	typedef boost::shared_ptr<PixelBuffer> PixelBufferPtr;
+
 }
 
+#endif

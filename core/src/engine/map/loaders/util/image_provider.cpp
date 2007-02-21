@@ -43,20 +43,22 @@
 namespace FIFE { namespace map { namespace loaders { namespace util {
 	
 	RenderAble* ImageProvider::createRenderable() {
-		// still untested, but if it works it will work with all backends
-		VFS* vfs = VFS::instance();
-		const std::string& filename = getLocation().getFilename();
-		if (!vfs->exists(filename))
-			return 0;
 
-		RawDataPtr data = vfs->open(filename);
+		const std::string& filename = getLocation().getFilename();
+		RawDataPtr data = VFS::instance()->open(filename);
 		size_t datalen = data->getDataLength();
 		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
 		data->readInto(darray.get(), datalen);
 		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
 		SDL_Surface* surface = IMG_Load_RW(rwops, false);
 		SDL_FreeRW(rwops);
+		if( !surface ) {
+			return 0;
+		}
 
-		return surface ? CRenderBackend()->createStaticImageFromSDL(surface) : 0;
+		// FIXME: If Amask != 0 we should check if the alpha channel
+		//        is actually used.
+		
+		return CRenderBackend()->createStaticImageFromSDL(surface);
 	};
 } } } }

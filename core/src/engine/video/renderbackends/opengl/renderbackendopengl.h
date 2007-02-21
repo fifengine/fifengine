@@ -78,8 +78,6 @@ namespace FIFE {
 			 * 
 			 * @see GLImage
 			 */
-			virtual Image* createStaticImageFromRGBA(const uint8_t* data, unsigned int width, unsigned int height);
-			
 			virtual Image* createStaticImageFromSDL(SDL_Surface* surface, bool freesurface = true);
 			
 			/** Returns the current screen.

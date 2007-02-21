@@ -124,13 +124,12 @@ namespace FIFE {
 	}	
 
 	Image* RenderBackendSDL::createStaticImageFromSDL(SDL_Surface* surface, bool freesurface) {
-		SDL_LockSurface(surface);
-		Image* image = new SDLImage(surface);
-		SDL_UnlockSurface(surface);
-		if (freesurface) {
-			SDL_FreeSurface(surface);
+		if( freesurface ) {
+			return new SDLImage(surface);
+		} else {
+			SDL_Surface* surface_copy = SDL_ConvertSurface(surface,surface->format,SDL_SWSURFACE);
+			return new SDLImage(surface_copy);
 		}
-		return image;
 	}
 
 	Screen* RenderBackendSDL::getMainScreen() const {
