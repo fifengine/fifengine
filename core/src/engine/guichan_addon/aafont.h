@@ -40,6 +40,7 @@ namespace FIFE {
 
 
 	/**  AA Style Image font (used in fallout)
+	 *   See http://www.teamx.ru/eng/files/docs/index.shtml
 	 */
 	class AAImageFont : public SDLImageFont {
 		public:

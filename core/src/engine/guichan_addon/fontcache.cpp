@@ -95,8 +95,9 @@ namespace FIFE {
 		centry.timestamp = TimeManager::instance()->getTime();
 		m_cache.push_front( centry );
 
-		// First entry? Start collection timer
-		if( m_cacheSize == 0 )
+		// Some minimal amount of entries -> start collection timer
+		// Don't have a timer active if only _some_ text is cached.
+		if( m_cacheSize >= m_cacheMaxSize/10 )
 			m_collectTimer.start();
 
 		// Maintain max cache size
