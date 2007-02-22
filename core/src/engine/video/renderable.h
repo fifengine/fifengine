@@ -72,7 +72,8 @@ namespace FIFE {
 				RT_IMAGE              = 2,
 				RT_ANIMATION          = 4,
 				RT_COMPLEX_ANIMATION  = 8,
-				RT_ANY                = 15
+				RT_SUBIMAGE           = 16,
+				RT_ANY                = 31
 			} RenderableTypes;
 
 			/** Constructor.

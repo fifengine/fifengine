@@ -53,12 +53,13 @@ namespace FIFE {
 	 */
 	class RenderableProvider {
 		public:
-			/* Constructor.
+			/** Constructor.
 			 *
 			 * @param location Location of this RenderableProvider.
 			 */
-			RenderableProvider(const RenderableLocation& location);
-			/* Destructor.
+			RenderableProvider(const RenderableLocation& location = RenderableLocation());
+
+			/** Destructor.
 			 */
 			virtual ~RenderableProvider();
 

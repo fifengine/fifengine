@@ -35,7 +35,9 @@
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "video/image.h"
+#include "video/pixelbuffer.h"
 #include "video/animation.h"
+#include "map/loaders/util/subimage_provider.h"
 #include "imagecache.h"
 #include "log.h"
 
@@ -109,41 +111,35 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 					<< "Error: image node with no 'source' attribute!";
  				return 1;
  			}
-			SDL_Surface *base = loadImageAsSurface(imgsrc);
- 			if (!base) {
- 				Log("ImgcacheLoader") << "RenderableFactory failed on " << imgsrc;
- 				return 1;
- 			}
+			size_t base = ic->addImageFromFile(imgsrc);
+			PixelBufferPtr pbuffer = ic->getPixelBuffer(base);
+
  			imagenode->QueryIntAttribute("firstgid", &firstgid);
  			imagenode->QueryIntAttribute("rowskip", &rowskip);
- 			int xsteps = base->w / tilewidth;
- 			int ysteps = base->h / tileheight;
+ 			int xsteps = pbuffer->getSurface()->w / tilewidth;
+ 			int ysteps = pbuffer->getSurface()->h / tileheight;
 
-			RenderBackend* rbackend = RenderManager::instance()->current();
  			for (uint8_t y = 0; y < static_cast<uint8_t>(ysteps); y++) {
  				for (uint8_t x = 0; x < static_cast<uint8_t>(xsteps); x++) {
- 					SDL_Surface* subimg = getSubImage(base,
-					                                  x*tilewidth,
-					                                  y*tileheight,
-					                                  static_cast<uint16_t>(tilewidth),
- 					                                  static_cast<uint16_t>(tileheight)
-					                                  );
 
-					RenderAble* as_img = rbackend->createStaticImageFromSDL(subimg);
-					size_t iid = ic->addImage(as_img);
+					RenderableLocation location(RenderAble::RT_SUBIMAGE);
+					location.addExtension(RenderableLocation::IMAGE_ID, base);
+					location.addExtension(RenderableLocation::X, x*tilewidth);
+					location.addExtension(RenderableLocation::Y, y*tileheight);
+					location.addExtension(RenderableLocation::W, tilewidth);
+					location.addExtension(RenderableLocation::H, tileheight);
+
+					size_t iid = ic->addImageFromLocation(location);
+
  					if (!rowskip) {
  						Log("ImgcacheLoader") 
 							<< "DEBUG1 " << firstgid+x+y*ysteps 
-							<< " image " << int(as_img->getWidth()) 
-							<< "x" << int(as_img->getHeight()) 
 							<< " internal: " << iid;
 
  						(*m_imageIndexMap)[firstgid+x+y*ysteps] = iid;
 					} else {
  						Log("ImgcacheLoader")
 							<< "DEBUG2 " << firstgid+x+y*rowskip
-							<< " image " << int(as_img->getWidth()) 
-							<< "x" << int(as_img->getHeight()) 
 							<< " internal: " << iid;
 
 						(*m_imageIndexMap)[firstgid+x+y*rowskip] = iid;

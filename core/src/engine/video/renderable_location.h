@@ -24,8 +24,11 @@
 
 // Standard C++ library includes
 #include <string>
+#include <map>
 
 // 3rd party library includes
+#include <boost/lexical_cast.hpp>
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 #include "renderable.h"
@@ -62,6 +65,10 @@ namespace FIFE {
 
 	public:
 		typedef RenderAble::RenderableTypes LocationTypes;
+
+		enum ExtensionType {
+			IMAGE_ID, X, Y, W, H, PALETTE
+		};
 
 		/** Constructor.
 		 *
@@ -146,6 +153,17 @@ namespace FIFE {
 		 */
 		void setDirection(unsigned int direction) { m_direction_idx = direction; }
 
+		template<typename T>
+		void addExtension(ExtensionType type, const T& ext) {
+			if( !m_extensions ) {
+				m_extensions = boost::shared_ptr<type_extensions>(new type_extensions());
+			}
+			m_extensions->insert( std::make_pair(type, boost::lexical_cast<std::string>(ext) ) );
+		}
+
+		const std::string& getExtension(ExtensionType type) const;
+
+		bool hasExtension(ExtensionType type) const;
 
 		/** Returns whether the RenderableLocation is valid.
 		 *
@@ -171,6 +189,9 @@ namespace FIFE {
 		bool m_isValid;
 		unsigned int m_frame_idx;
 		unsigned int m_direction_idx;
+
+		typedef std::map<ExtensionType,std::string> type_extensions;
+		mutable boost::shared_ptr<type_extensions> m_extensions;
 	};
 
 }; //FIFE

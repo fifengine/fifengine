@@ -32,7 +32,10 @@
 #include "map/loaders/util/complexanimation_provider.h"
 #include "map/loaders/util/frm_provider.h"
 #include "map/loaders/util/image_provider.h"
+#include "map/loaders/util/subimage_provider.h"
 #include "video/renderable.h"
+#include "video/image.h"
+#include "video/pixelbuffer.h"
 
 #include "debugutils.h"
 #include "exception.h"
@@ -67,6 +70,11 @@ namespace FIFE {
 		map::loaders::util::ComplexAnimationProvider,
 		RenderAble::RT_COMPLEX_ANIMATION
 	> CAPConstructor;
+
+	typedef RenderableProviderConstructorTempl<
+		map::loaders::util::SubImageProvider,
+		RenderAble::RT_SUBIMAGE
+	> SubImageConstructor;
 
 	typedef RenderableProviderConstructorTempl<
 		map::loaders::util::ImageProvider
@@ -108,6 +116,7 @@ namespace FIFE {
 		m_providerconstructors.push_front( new IMGConstructor() );
 		m_providerconstructors.push_front( new FRMConstructor() );
 		m_providerconstructors.push_front( new CAPConstructor() );
+		m_providerconstructors.push_front( new SubImageConstructor() );
 	};
 
 	ImageCache::~ImageCache() {
@@ -205,6 +214,25 @@ namespace FIFE {
 			return centry.renderable;
 		}
 		return loadImage( index );
+	}
+
+	PixelBufferPtr ImageCache::getPixelBuffer(size_t image_id) {
+		Image* image = dynamic_cast<Image*>(getImage(image_id));
+
+		if( image == 0 ) {
+			return PixelBufferPtr();
+		}
+
+		if( !image->getPixelBuffer() ) {
+			unloadImage( image_id );
+			image = dynamic_cast<Image*>(getImage(image_id));
+		}
+
+		if( image == 0 || !image->getPixelBuffer() ) {
+			return PixelBufferPtr();
+		}
+		return image->getPixelBuffer();
+
 	}
 
 	RenderAble* ImageCache::loadImage( size_t index ) {

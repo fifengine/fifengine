@@ -30,7 +30,7 @@
 namespace FIFE {
 
 	
-	RenderBackend::RenderBackend(const std::string& name) : m_name(name)/*, m_gcn_graphics(0), m_gcn_imgloader(0)*/ {
+	RenderBackend::RenderBackend(const std::string& name) : m_name(name) {
 	}
 
 

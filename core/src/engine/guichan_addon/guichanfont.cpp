@@ -31,25 +31,14 @@ namespace FIFE {
 		Log("guichan_image_font")
 			<< " loading " << filename << " glyphs " << glyphs;
 
-		// FIXME: This Loading procedure is a bit long winded ... 
 		size_t image_id = ImageCache::instance()->addImageFromFile(filename);
-		Image* image = dynamic_cast<Image*>(ImageCache::instance()->getImage(image_id));
+		PixelBufferPtr pixelbuffer = ImageCache::instance()->getPixelBuffer(image_id);
 
-		if( image == 0 ) {
+		if( !pixelbuffer ) {
 			throw CannotOpenFile(filename);
 		}
 
-		if( !image->getPixelBuffer() ) {
-			ImageCache::instance()->unloadImage( image_id );
-			image = dynamic_cast<Image*>(ImageCache::instance()->getImage(image_id));
-		}
-
-		if( image == 0 || !image->getPixelBuffer() ) {
-			throw CannotOpenFile(filename);
-		}
-
-		SDL_Surface* surface = image->getPixelBuffer()->getSurface();
-		// End of getting the surface ... phew.
+		SDL_Surface* surface = pixelbuffer->getSurface();
 
 
 		// Make sure we get 32bit RGB
