@@ -19,30 +19,53 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADERS_UTIL_IMAGE_PROVIDER_H
-#define FIFE_MAP_LOADERS_UTIL_IMAGE_PROVIDER_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
 #include <SDL.h>
+#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/renderable_provider.h"
+#include "video/image.h"
+#include "video/pixelbuffer.h"
+#include "video/rendermanager.h"
+#include "video/renderbackend.h"
+#include "debugutils.h"
+#include "exception.h"
+#include "imagecache.h"
+
+#include "subimage_provider.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace util {
+	
+	RenderAble* SubImageProvider::createRenderable() {
+		RenderableLocation loc(getLocation());
+		SDL_Rect src_rect;
 
-	/** ImageProvider for some basic formats like jpeg, png etc. */
-	class ImageProvider : public RenderableProvider {
-		public:
-			ImageProvider(const RenderableLocation& location)
-				: RenderableProvider(location) {}
+		size_t imageid = boost::lexical_cast<size_t>(loc.getExtension(RenderableLocation::IMAGE_ID));
 
-			RenderAble* createRenderable();
+		src_rect.x = boost::lexical_cast<int>(loc.getExtension(RenderableLocation::X));
+		src_rect.y = boost::lexical_cast<int>(loc.getExtension(RenderableLocation::Y));
+		src_rect.w = boost::lexical_cast<int>(loc.getExtension(RenderableLocation::W));
+		src_rect.h = boost::lexical_cast<int>(loc.getExtension(RenderableLocation::H));
+
+		PixelBufferPtr pixelbuffer = ImageCache::instance()->getPixelBuffer(imageid);
+		if( !pixelbuffer ) {
+			return 0;
+		}
+
+		SDL_Surface* src = pixelbuffer->getSurface();
+		uint32_t Amask = src->format->Amask ?  0x000000ff : 0;
+		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, src_rect.w,  src_rect.h, 32,
+		                                           0xff000000, 0x00ff0000, 0x0000ff00, Amask);
+		SDL_FillRect(result, NULL, 0);
+		SDL_SetAlpha(src,0,SDL_ALPHA_OPAQUE);
+		SDL_BlitSurface(src,&src_rect,result,0);
+
+		return CRenderBackend()->createStaticImageFromSDL(result);
 	};
 
 } } } }
-#endif

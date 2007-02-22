@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cassert>
 
 // 3rd party library includes
 
@@ -28,14 +29,12 @@
 
 namespace FIFE {
 
-	PixelBuffer::PixelBuffer(SDL_Surface* surface) : m_surface(0) {
-		m_surface = surface;
+	PixelBuffer::PixelBuffer(SDL_Surface* surface) : m_surface(surface) {
+		assert(surface);
 	}
 
 	PixelBuffer::~PixelBuffer() {
-		if( m_surface ) {
-			SDL_FreeSurface( m_surface );
-		}
+		SDL_FreeSurface( m_surface );
 	}
 
 	SDL_Surface* PixelBuffer::getSurface() const {

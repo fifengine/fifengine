@@ -122,7 +122,10 @@ namespace FIFE {
 		protected:
 			// A glyph (visible character) 
 			typedef struct {
+				// The offset of the glyph relative to the top-left corner.
 				Point offset;
+				// The glyphs image 
+				// should be with SDL_SRCALPHA off, so that it's just copied over.
 				SDL_Surface* surface;
 			} s_glyph;
 

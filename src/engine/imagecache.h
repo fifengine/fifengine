@@ -28,6 +28,7 @@
 #include <vector>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -42,6 +43,8 @@ namespace FIFE {
 
 	class RenderAble;
 	class RenderableProviderConstructor;
+	class PixelBuffer;
+	typedef boost::shared_ptr<PixelBuffer> PixelBufferPtr;
 
 	/** Image cache.
 	 *
@@ -161,6 +164,22 @@ namespace FIFE {
 			 * @return Pointer to the RenderAble.
 			 */
 			RenderAble* getImage(size_t index);
+
+			/** Get a PixelBuffer associated with an image
+			 *
+			 *  This is a convenience function, it essentially gets
+			 *  the image, checks it actually is an Image and tries to
+			 *  aquire it's pixel buffer. It tries hard, but may fail.
+			 *  It will return an invalid PixelBufferPtr then.
+			 *
+			 *  @note This might cause a reload of the image, thus
+			 *  invalidating any pointers you might have currentl in use.
+			 *
+			 *  @param index The index of a RenderAble in the cache.
+			 *  @return Shared pointer of a PixelBuffer
+			 */
+			PixelBufferPtr getPixelBuffer(size_t index);
+
 
 			/** Deletes unused RenderAbles
 			 *

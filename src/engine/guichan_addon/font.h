@@ -103,8 +103,12 @@ namespace FIFE {
 			 */
 			virtual SDL_Surface* renderString(const std::string& text) = 0;
 
-
+			/** Set the color the text should be rendered in
+			 */
 			virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;
+
+			/** Get the color the text was rendered in
+			 */
 			SDL_Color getColor() const;
 
 			/** Static factory method

@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADERS_UTIL_IMAGE_PROVIDER_H
-#define FIFE_MAP_LOADERS_UTIL_IMAGE_PROVIDER_H
+#ifndef FIFE_MAP_LOADERS_UTIL_SUBIMAGE_PROVIDER_H
+#define FIFE_MAP_LOADERS_UTIL_SUBIMAGE_PROVIDER_H
 
 // Standard C++ library includes
 
@@ -32,16 +32,19 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderable_provider.h"
+#include "video/rect.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace util {
 
-	/** ImageProvider for some basic formats like jpeg, png etc. */
-	class ImageProvider : public RenderableProvider {
+	/** ImageProvider for cropping another image */
+	class SubImageProvider : public RenderableProvider {
 		public:
-			ImageProvider(const RenderableLocation& location)
+			SubImageProvider(const RenderableLocation& location)
 				: RenderableProvider(location) {}
 
 			RenderAble* createRenderable();
+
+		protected:
 	};
 
 } } } }

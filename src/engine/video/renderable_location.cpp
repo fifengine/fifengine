@@ -32,7 +32,6 @@ namespace FIFE {
 	RenderableLocation::RenderableLocation( LocationTypes type, const std::string& loc )
 		: m_frame_idx(0),
 		m_direction_idx(0) {
-
 		setType(type);
 		setFilename(loc);
 	};
@@ -51,9 +50,11 @@ namespace FIFE {
 
 		m_frame_idx = loc.m_frame_idx;
 		m_direction_idx = loc.m_direction_idx;
+		m_extensions = loc.m_extensions;
 	};
 
-	RenderableLocation::~RenderableLocation() { };
+	RenderableLocation::~RenderableLocation() {
+	}
 
 	std::string RenderableLocation::getFileExtension() const {
 		size_t pointPos = m_string.find_last_of(".");
@@ -104,8 +105,22 @@ namespace FIFE {
 	};
 
 	void RenderableLocation::setFilename(const std::string& filename) {
-		m_isValid = filename != "";
+		m_isValid = filename != "" || m_type == RenderAble::RT_SUBIMAGE;
 		m_string = filename;
+	}
+
+	const std::string& RenderableLocation::getExtension(ExtensionType type) const {
+		if( !m_extensions ) {
+			m_extensions =  boost::shared_ptr<type_extensions>(new type_extensions());
+		}
+		return (*m_extensions)[ type ];
+	}
+
+	bool RenderableLocation::hasExtension(ExtensionType type) const {
+		if( !m_extensions ) {
+			return false;
+		}
+		return m_extensions->find(type) != m_extensions->end();
 	}
 
 	bool RenderableLocation::isValid() const {
@@ -131,7 +146,21 @@ namespace FIFE {
 		if (m_frame_idx != loc.m_frame_idx)
 			return false;
 		
-		return(m_direction_idx == loc.m_direction_idx);
+		if (m_direction_idx != loc.m_direction_idx)
+			return false;
+
+		if( m_extensions && !loc.m_extensions )
+			return false;
+		if( !m_extensions && loc.m_extensions )
+			return false;
+		if( !m_extensions && !loc.m_extensions )
+			return true;
+
+		if( m_extensions->size() != loc.m_extensions->size() )
+			return false;
+		
+		return std::equal(m_extensions->begin(),m_extensions->end(),
+		                  loc.m_extensions->begin());
 	}
 
 	// It doesn't really matter what this function returns on which input,
@@ -163,7 +192,32 @@ namespace FIFE {
 		if( m_direction_idx != loc.m_direction_idx )
 			return false;
 
-		return m_string < loc.m_string;
+		if( m_string < loc.m_string )
+			return true;
+
+		if( m_string != loc.m_string )
+			return false;
+
+		if( !(m_extensions && loc.m_extensions) )
+			return m_extensions < loc.m_extensions;
+
+		if( m_extensions->size() < loc.m_extensions->size() )
+			return true;
+
+		if( m_extensions->size() > loc.m_extensions->size() )
+			return false;
+
+		type_extensions::iterator it1(m_extensions->begin());
+		type_extensions::iterator it2(loc.m_extensions->begin());
+
+		for(; it1 != m_extensions->end(); ++it1, ++it2){
+			if( it1->first != it2->first )
+				return( it1->first < it2->first );
+
+			if( it1->second != it2->second )
+				return( it1->second < it2->second );
+		}
+		return false;
 	}
 };//FIFE
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
