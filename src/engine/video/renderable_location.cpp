@@ -105,7 +105,6 @@ namespace FIFE {
 	};
 
 	void RenderableLocation::setFilename(const std::string& filename) {
-		m_isValid = filename != "" || m_type == RenderAble::RT_SUBIMAGE;
 		m_string = filename;
 	}
 
@@ -124,8 +123,12 @@ namespace FIFE {
 	}
 
 	bool RenderableLocation::isValid() const {
-		return m_isValid;
-	};
+		if( m_type < RenderAble::RT_SUBIMAGE ) {
+			return m_string != "";
+		} else {
+			return m_extensions;
+		}
+	}
 
 	bool RenderableLocation::operator==(const RenderableLocation& loc) const {
 		// different types => not equal
@@ -133,8 +136,10 @@ namespace FIFE {
 			return false;
 
 		// catch undefined types
+		// this is correct as long undefined (0)
+		// really means undefined 
 		if (m_type == 0)
-			return true; // is this correct? does it matter?
+			return true; 
 
 		// if we get here both have a valid m_string
 		if( m_string.length() != loc.m_string.length() )
