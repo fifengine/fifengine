@@ -59,7 +59,17 @@ namespace FIFE {
 	 *  ImageID = imageCachePtr->addImageFromFile( "somepicture.jpg" );
 	 *  @endcode
 	 *
-	 *  @note: Currently only Files are implemented. Other stuff will follow.
+	 *  Sometimes you will need to use @b extensions for some special
+	 *  types, or to add optional parameters to the loaders.
+	 *  @code
+	 *  location.addExtension(RenderableLocation::PALETTE,"fallout_special_pal.xml");
+	 *  // Note pal extension is not implemented yet
+	 *  @endcode
+	 *
+	 *  @bug LocationTypes are not really used intuitivly
+	 *  @bug The name RenderableLocation is just a tad bit too verbose
+	 *
+	 *  @note The extensions are implicitly shared. No copy on write semantics.
 	 */
 	class RenderableLocation {
 
@@ -153,6 +163,9 @@ namespace FIFE {
 		 */
 		void setDirection(unsigned int direction) { m_direction_idx = direction; }
 
+		/** Add an extension
+		 *  Conveniently cast's to the internal type (string)
+		 */
 		template<typename T>
 		void addExtension(ExtensionType type, const T& ext) {
 			if( !m_extensions ) {
@@ -161,13 +174,19 @@ namespace FIFE {
 			m_extensions->insert( std::make_pair(type, boost::lexical_cast<std::string>(ext) ) );
 		}
 
+		/** Get an extension
+		 *  Will return the internal type - a string.
+		 */
 		const std::string& getExtension(ExtensionType type) const;
 
+		/** Check for the existance of an extension
+		 */
 		bool hasExtension(ExtensionType type) const;
 
 		/** Returns whether the RenderableLocation is valid.
 		 *
 		 *  A location is assumed valid. if it's filename is not ""
+		 *  or it's not a special type.
 		 */
 		bool isValid() const;
 
@@ -176,7 +195,7 @@ namespace FIFE {
 		bool operator ==(const RenderableLocation& loc) const;
 
 		/** Compares two RenderableLocations
-		 * This is needed as the locations should be stored in a \c std::map
+		 *  This is needed as the locations should be stored in a \c std::map
 		 */
 		bool operator <(const RenderableLocation& loc) const;
 
@@ -191,6 +210,7 @@ namespace FIFE {
 		unsigned int m_direction_idx;
 
 		typedef std::map<ExtensionType,std::string> type_extensions;
+		// mutable for getExtension const'ness
 		mutable boost::shared_ptr<type_extensions> m_extensions;
 	};
 
