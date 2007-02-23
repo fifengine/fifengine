@@ -56,6 +56,15 @@ namespace FIFE { namespace map {
 		return 0;
 	}
 
+	Runner::~Runner() {
+
+		// Delete commands
+		type_cmdmap::iterator it = m_commands.begin();
+		for(; it != m_commands.end(); ++it) {
+			delete it->second;
+		}
+	}
+
 	void Runner::setRuleset(const ScriptContainer& rs) {
 		m_ruleset = rs;
 	}

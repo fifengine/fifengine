@@ -38,6 +38,8 @@ namespace FIFE { namespace map {
 
 	class Map;
 	class Loader;
+	class Archetype;
+	class ObjectInfo;
 
 	/** User-Interface to load any kind of supported mapfile.
 	 * 
@@ -79,6 +81,37 @@ namespace FIFE { namespace map {
 			 */
 			Map* loadMap(const std::string& path);
 
+			/** List archetypes
+			 */
+			std::list<std::string> listArchetypes() const;
+
+			/** Load an archetype (collection of tileid/prototypes) from a file.
+			 */
+			void loadArchetypes(const std::string& type, const std::string& filename);
+
+			/** Add an archetype.
+			 */
+			void addArchetype(Archetype* archetype);
+
+			/** Map type to an internal id
+			 *  
+			 */
+			size_t getPrototypeId(const std::string& type);
+
+			/** Map internal id to type name
+			 *  
+			 */
+			const std::string& getPrototypeName(size_t proto_id);
+
+			/** Load a prototype of an object
+			 *  Loading a prototype of an object will set the objects
+			 *  data to default values, that can be overridden.
+			 */
+			void loadPrototype(ObjectInfo* object, size_t proto_id);
+
+			/** Get ImageCache ID if tile with id id
+			 */
+			size_t getTileImageId(size_t id);
 
 		private:
 
