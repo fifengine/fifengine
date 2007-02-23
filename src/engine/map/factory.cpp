@@ -63,21 +63,39 @@ namespace FIFE { namespace map {
 			Geometry::ShiftXAxis));           // FLAGS: SHIFT AROUND X AXIS
 	}
 
-	// FIXME: use boost::ptr_map ?
 	Factory::~Factory() {
+		clearArchetypes();
 		cleanup();
 	}
 
 	void Factory::cleanup() {
+		// FIXME: use boost::ptr_map ?
 		type_loaders::const_iterator end = m_loaders.end();
 		for (type_loaders::iterator i = m_loaders.begin(); i != end; ++i) {
 			delete i->second;
 		}
-
 		m_loaders.clear();
+
+		type_atloaders::const_iterator atend = m_atloaders.end();
+		for (type_atloaders::iterator i = m_atloaders.begin(); i != atend; ++i) {
+			delete i->second;
+		}
+		m_atloaders.clear();
+	}
+
+	void Factory::clearArchetypes() {
+		type_archetypes::iterator i = m_archetypes.begin();
+		for(; i != m_archetypes.end(); ++i) {
+			delete *i;
+		}
+
+		m_protoname_map.clear();
+		m_protoid_map.clear();
+		m_tileids.clear();
 	}
 
 	void Factory::registerLoader(Loader* loader) {
+		assert( loader );
 		m_loaders.insert(std::make_pair(loader->getName(), loader));
 		Log("map::factory") << "new maploader: " << loader->getName();
 	}
@@ -99,6 +117,14 @@ namespace FIFE { namespace map {
 		return 0;
 	}
 
+	void Factory::registerArchetypeLoader(const std::string& type, ArchetypeLoader* loader) {
+		assert( loader );
+		if( m_atloaders.find(type) != m_atloaders.end() ) {
+			throw NameClash(type + " Archetype Loader already registered.");
+		}
+		m_atloaders[ type ] = loader;
+	}
+
 	void Factory::loadArchetypes(const std::string& type, const std::string& filename) {
 		// If it is already loaded, just return.
 		std::list<Archetype*>::iterator i = m_archetypes.begin();
@@ -115,6 +141,7 @@ namespace FIFE { namespace map {
 
 		// 'load' schould not return zero, rather throw a reasonable exception
 		assert( at );
+		assert( at->getTypeName() == type );
 
 		addArchetype( at );
 	}
@@ -124,11 +151,13 @@ namespace FIFE { namespace map {
 	}
 
 	void Factory::loadPrototype(ObjectInfo* object, size_t proto_id) {
+		assert( object );
 		type_protoid_map::const_iterator i(m_protoid_map.find(proto_id));
 		if( i == m_protoid_map.end() ) {
 			return;
 		}
 
+		assert( i->second.archetype );
 		i->second.archetype->loadPrototype(object,proto_id);
 	}
 
