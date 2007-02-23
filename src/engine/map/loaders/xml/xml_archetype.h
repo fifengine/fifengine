@@ -19,7 +19,11 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_MAP_LOADERS_XML_ARCHETYPE_H
+#define FIFE_MAP_LOADERS_XML_ARCHETYPE_H
+
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -27,21 +31,15 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "exception.h"
+#include "map/archetype.h"
 
-#include "archetype.h"
+namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-namespace FIFE { namespace map {
+	class XMLArchetype : public Archetype {
+		public:
+			XMLArchetype(const std::string& filename);
 
-	Archetype::Archetype(const std::string& type, const std::string& filename)
-		: m_typename(type), m_filename(filename) {
-	}
+	};
 
-	Archetype::~Archetype() {
-	}
-
-	void Archetype::loadPrototype(ObjectInfo*, size_t ) {
-		throw NotSupported(m_typename + "::loadPrototype");
-	}
-
-}}
+}}}}
+#endif

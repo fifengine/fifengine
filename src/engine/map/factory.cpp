@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #ifdef HAVE_XMLMAP
 #include "loaders/xml/xml.h"
+#include "loaders/xml/xml_archetype.h"
 #endif
 #include "loaders/fallout/fallout.h"
 #include "debugutils.h"
@@ -46,6 +47,7 @@ namespace FIFE { namespace map {
 		registerLoader(new loaders::fallout::Fallout());
 #ifdef HAVE_XMLMAP
 		registerLoader(new loaders::xml::XML());
+		registerArchetypeLoader("XML",new ArchetypeLoader<loaders::xml::XMLArchetype>());
 #endif
 		Geometry::registerGeometry(s_geometry_info(
 			Geometry::FalloutTileGeometry,
@@ -117,7 +119,7 @@ namespace FIFE { namespace map {
 		return 0;
 	}
 
-	void Factory::registerArchetypeLoader(const std::string& type, ArchetypeLoader* loader) {
+	void Factory::registerArchetypeLoader(const std::string& type, ArchetypeLoaderBase* loader) {
 		assert( loader );
 		if( m_atloaders.find(type) != m_atloaders.end() ) {
 			throw NameClash(type + " Archetype Loader already registered.");

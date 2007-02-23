@@ -40,7 +40,7 @@ namespace FIFE { namespace map {
 	class Map;
 	class Loader;
 	class Archetype;
-	class ArchetypeLoader;
+	class ArchetypeLoaderBase;
 	class ObjectInfo;
 
 	/** User-Interface to load any kind of supported mapfile.
@@ -126,7 +126,7 @@ namespace FIFE { namespace map {
 			 * \param loader Pointer to a valid instance (@b no NULL pointers, please).
 			 * \note Used internally
 			 */
-			void registerArchetypeLoader(const std::string&  type, ArchetypeLoader* loader);
+			void registerArchetypeLoader(const std::string&  type, ArchetypeLoaderBase* loader);
 
 			/** Add an archetype.
 			 */
@@ -150,7 +150,7 @@ namespace FIFE { namespace map {
 			// Registered maploaders.
 			type_loaders m_loaders;
 
-			typedef std::map<std::string, ArchetypeLoader*> type_atloaders;
+			typedef std::map<std::string, ArchetypeLoaderBase*> type_atloaders;
 			// Registered AT loaders.
 			type_atloaders m_atloaders;
 
