@@ -30,6 +30,7 @@
 #include "debugutils.h"
 
 #include "objectinfo.h"
+#include "factory.h"
 
 namespace FIFE { namespace map {
 
@@ -69,11 +70,33 @@ namespace FIFE { namespace map {
 		}
 	}
 
+	void ObjectInfo::loadPrototype(size_t proto_id) {
+		Factory::instance()->loadPrototype(this, proto_id);
+		m_protoid.push_back(proto_id);
+	}
+
+	void ObjectInfo::loadPrototype(const std::string& proto_name) {
+		loadPrototype( Factory::instance()->getPrototypeId(proto_name) );
+	}
+
+	const std::vector<size_t>& ObjectInfo::listPrototypes() const {
+		return m_protoid;
+	}
+
 	void ObjectInfo::debugPrint() {
-		Log("object")
-			<< "name " << get<std::string>("name")
+		Log log("object");
+
+		log	<< "name " << get<std::string>("name")
 			<< " at " << m_location.position
 			<< " on elevation " <<  m_location.elevation
-			<< "#" << m_location.grid;
+			<< "#" << m_location.grid
+			<< " prototypes=";
+
+		for(size_t i=0; i!= m_protoid.size(); ++i) {
+			log <<  Factory::instance()->getPrototypeName( m_protoid[i] );
+			if( i != m_protoid.size() - 1) {
+				log << ",";
+			}
+		}
 	}
 } } //FIFE::map

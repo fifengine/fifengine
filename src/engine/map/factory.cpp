@@ -77,7 +77,7 @@ namespace FIFE { namespace map {
 
 	void Factory::registerLoader(Loader* loader) {
 		m_loaders.insert(std::make_pair(loader->getName(), loader));
-		Log("maploader") << "new maploader: " << loader->getName();
+		Log("map::factory") << "new maploader: " << loader->getName();
 	}
 
 	Map* Factory::loadMap(const std::string& path) {
@@ -93,8 +93,25 @@ namespace FIFE { namespace map {
 			}
 		}
 
-		Log("maploader") << "no loader succeeded for " << path << " :(";
+		Log("map::factory") << "no loader succeeded for " << path << " :(";
 		return 0;
+	}
+
+	// Dummy implementations
+	size_t Factory::getPrototypeId(const std::string& type) {
+		return 0;
+	}
+
+	const std::string& Factory::getPrototypeName(size_t proto_id) {
+		static std::string name = "";
+		return name;
+	}
+
+	void Factory::loadPrototype(ObjectInfo* object, size_t proto_id) {
+		Log("map::factory") 
+			<< "loading prototype "
+			<< proto_id
+			<< " for object " << object;
 	}
 
 } } //FIFE::map
