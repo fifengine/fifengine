@@ -87,6 +87,10 @@ namespace FIFE { namespace map {
 			 */
 			void loadArchetypes(const std::string& type, const std::string& filename);
 
+			/** Remove all loaded archetypes
+			 */
+			void clearArchetypes();
+
 			/** Map type to an internal id
 			 *  
 			 */
@@ -116,6 +120,14 @@ namespace FIFE { namespace map {
 			 */
 			void registerLoader(Loader* loader);
 
+			/** Registers a archetype loader class with the factory.
+			 *
+			 * \param type Type name of the Archetypem the Loader loads.
+			 * \param loader Pointer to a valid instance (@b no NULL pointers, please).
+			 * \note Used internally
+			 */
+			void registerArchetypeLoader(const std::string&  type, ArchetypeLoader* loader);
+
 			/** Add an archetype.
 			 */
 			void addArchetype(Archetype* archetype);
@@ -130,7 +142,7 @@ namespace FIFE { namespace map {
 			 */
 			void addPrototype(Archetype* at, const std::string& proto_name, size_t proto_id);
 
-			/** Removes all registered loaders.
+			/** Removes all registered (archetype)loaders.
 			 */
 			void cleanup();
 
@@ -200,16 +212,9 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	void Factory::addPrototype(Archetype* at, const std::string& proto_name, size_t proto_id) {
-		// FIXME: double lookup
-		m_protoname_map[ proto_name ] = proto_id;
-		type_protoname_map::iterator i(m_protoname_map.find(proto_name));
-
-		s_proto proto;
-		proto.name_iterator = i;
-		proto.archetype = at;
-
-		m_protoid_map[ proto_id ] = proto;
+	void Factory::addPrototype(Archetype* at, const std::string& name, size_t id) {
+		s_proto proto = { m_protoname_map.insert(std::make_pair(name, id)).first, at };
+		m_protoid_map[ id ] = proto;
 	}
 
 } } //FIFE::map
