@@ -74,7 +74,12 @@ namespace FIFE { namespace map {
 			void addToInventory(ObjectInfo* obj);
 			void addToInventory(size_t objId);
 
+			void loadPrototype(size_t proto_id);
+			void loadPrototype(const std::string& proto_name);
+			const std::vector<size_t>& listPrototypes() const;
+
 			void debugPrint();
+
 		private:
 			Location m_location;
 
