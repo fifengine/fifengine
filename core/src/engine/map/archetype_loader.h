@@ -31,16 +31,24 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "archetype.h"
 
 namespace FIFE { namespace map {
+	class Archetype;
 
-	class ArchetypeLoader {
+	class ArchetypeLoaderBase {
 		public:
-			ArchetypeLoader();
-			virtual ~ArchetypeLoader();
+			ArchetypeLoaderBase(){};
+			virtual ~ArchetypeLoaderBase(){};
 
 			virtual Archetype* load(const std::string& filename) = 0;
+	};
+
+	template<typename ArchetypeClass>
+	class ArchetypeLoader : public ArchetypeLoaderBase {
+		public:
+			virtual Archetype* load(const std::string& filename) {
+				return new ArchetypeClass(filename);
+			}
 	};
 
 }}

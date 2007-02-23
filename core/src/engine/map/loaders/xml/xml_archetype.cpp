@@ -27,21 +27,16 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "exception.h"
 
-#include "archetype.h"
+#include "xml_archetype.h"
+namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-namespace FIFE { namespace map {
-
-	Archetype::Archetype(const std::string& type, const std::string& filename)
-		: m_typename(type), m_filename(filename) {
+	XMLArchetype::XMLArchetype(const std::string& filename)
+		: Archetype("XML",filename) {
+		// FIXME TODO LOADING GOES HERE =)
+		// using:
+		//	addTile( tileId, imageId )
+		//	addPrototype( protoName, protoId )
 	}
 
-	Archetype::~Archetype() {
-	}
-
-	void Archetype::loadPrototype(ObjectInfo*, size_t ) {
-		throw NotSupported(m_typename + "::loadPrototype");
-	}
-
-}}
+}}}}

@@ -23,6 +23,7 @@
 #define FIFE_MAP_ARCHETYPE_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -45,7 +46,7 @@ namespace FIFE { namespace map {
 			 *  Loading a prototype of an object will set the objects
 			 *  data to default values, that can be overridden.
 			 */
-			virtual void loadPrototype(ObjectInfo* object, size_t proto_id) = 0;
+			virtual void loadPrototype(ObjectInfo* object, size_t proto_id);
 
 			/** Add a Tile to the Factories repository
 			 *  Use this function during the loading phase of the AT.
