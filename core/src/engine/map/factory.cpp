@@ -123,12 +123,13 @@ namespace FIFE { namespace map {
 		m_archetypes.push_front( archetype );
 	}
 
-	// Dummy implementations
 	void Factory::loadPrototype(ObjectInfo* object, size_t proto_id) {
-		Log("map::factory") 
-			<< "loading prototype "
-			<< proto_id
-			<< " for object " << object;
+		type_protoid_map::const_iterator i(m_protoid_map.find(proto_id));
+		if( i == m_protoid_map.end() ) {
+			return;
+		}
+
+		i->second.archetype->loadPrototype(object,proto_id);
 	}
 
 } } //FIFE::map
