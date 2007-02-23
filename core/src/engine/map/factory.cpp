@@ -34,6 +34,8 @@
 #include "debugutils.h"
 #include "exception.h"
 
+#include "archetype.h"
+#include "archetype_loader.h"
 #include "factory.h"
 #include "geometry.h"
 #include "loader.h"
@@ -97,16 +99,31 @@ namespace FIFE { namespace map {
 		return 0;
 	}
 
+	void Factory::loadArchetypes(const std::string& type, const std::string& filename) {
+		// If it is already loaded, just return.
+		std::list<Archetype*>::iterator i = m_archetypes.begin();
+		for(; i != m_archetypes.end(); ++i) {
+			if( (*i)->getTypeName() == type && (*i)->getFilename() == filename ) {
+				return;
+			}
+		}
+
+		if( m_atloaders.find(type) == m_atloaders.end() ) {
+			throw NotFound(type + " Archetype Loader not found.");
+		}
+		Archetype* at = m_atloaders[type]->load( filename );
+
+		// 'load' schould not return zero, rather throw a reasonable exception
+		assert( at );
+
+		addArchetype( at );
+	}
+
+	void Factory::addArchetype(Archetype* archetype) {
+		m_archetypes.push_front( archetype );
+	}
+
 	// Dummy implementations
-	size_t Factory::getPrototypeId(const std::string& type) {
-		return 0;
-	}
-
-	const std::string& Factory::getPrototypeName(size_t proto_id) {
-		static std::string name = "";
-		return name;
-	}
-
 	void Factory::loadPrototype(ObjectInfo* object, size_t proto_id) {
 		Log("map::factory") 
 			<< "loading prototype "

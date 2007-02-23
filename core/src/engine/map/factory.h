@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <map>
+#include <list>
 #include <string>
 
 // 3rd party library includes
@@ -39,6 +40,7 @@ namespace FIFE { namespace map {
 	class Map;
 	class Loader;
 	class Archetype;
+	class ArchetypeLoader;
 	class ObjectInfo;
 
 	/** User-Interface to load any kind of supported mapfile.
@@ -81,27 +83,19 @@ namespace FIFE { namespace map {
 			 */
 			Map* loadMap(const std::string& path);
 
-			/** List archetypes
-			 */
-			std::list<std::string> listArchetypes() const;
-
 			/** Load an archetype (collection of tileid/prototypes) from a file.
 			 */
 			void loadArchetypes(const std::string& type, const std::string& filename);
 
-			/** Add an archetype.
-			 */
-			void addArchetype(Archetype* archetype);
-
 			/** Map type to an internal id
 			 *  
 			 */
-			size_t getPrototypeId(const std::string& type);
+			size_t getPrototypeId(const std::string& type) const;
 
 			/** Map internal id to type name
 			 *  
 			 */
-			const std::string& getPrototypeName(size_t proto_id);
+			const std::string& getPrototypeName(size_t proto_id) const;
 
 			/** Load a prototype of an object
 			 *  Loading a prototype of an object will set the objects
@@ -109,9 +103,9 @@ namespace FIFE { namespace map {
 			 */
 			void loadPrototype(ObjectInfo* object, size_t proto_id);
 
-			/** Get ImageCache ID if tile with id id
+			/** Get ImageCache ID for tile with id id
 			 */
-			size_t getTileImageId(size_t id);
+			size_t getTileImageId(size_t tile_id) const;
 
 		private:
 
@@ -121,7 +115,11 @@ namespace FIFE { namespace map {
 			 * \note Used internally
 			 */
 			void registerLoader(Loader* loader);
-			
+
+			/** Add an archetype.
+			 */
+			void addArchetype(Archetype* archetype);
+
 			/** Removes all registered loaders.
 			 */
 			void cleanup();
@@ -129,7 +127,52 @@ namespace FIFE { namespace map {
 			typedef std::map<std::string, Loader*> type_loaders;
 			// Registered maploaders.
 			type_loaders m_loaders;
+
+			typedef std::map<std::string, ArchetypeLoader*> type_atloaders;
+			// Registered AT loaders.
+			type_atloaders m_atloaders;
+
+			std::list<Archetype*> m_archetypes;
+
+			typedef std::map<std::string,size_t> type_protoname_map;
+			typedef std::map<size_t,type_protoname_map::iterator> type_protoid_map;
+
+			type_protoname_map m_protoname_map;
+			type_protoid_map   m_protoid_map;
+
+			typedef std::map<size_t,size_t> type_tileids;
+
+			type_tileids m_tileids;
 	};
+
+	inline
+	size_t Factory::getPrototypeId(const std::string& proto_name) const {
+		type_protoname_map::const_iterator i(m_protoname_map.find(proto_name));
+		if( i == m_protoname_map.end() ) {
+			return 0;
+		}
+		return i->second;
+	}
+
+	inline
+	const std::string& Factory::getPrototypeName(size_t proto_id) const {
+		static std::string invalid = "";
+
+		type_protoid_map::const_iterator i(m_protoid_map.find(proto_id));
+		if( i == m_protoid_map.end() ) {
+			return invalid;
+		}
+		return i->second->first;
+	}
+
+	inline
+	size_t Factory::getTileImageId(size_t tile_id) const {
+		type_tileids::const_iterator i(m_tileids.find(tile_id));
+		if( i == m_tileids.end() ) {
+			return 0;
+		}
+		return i->second;
+	}
 
 } } //FIFE::map
 
