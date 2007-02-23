@@ -81,6 +81,9 @@ namespace FIFE { namespace map {
 			/// Indices into MapObjectManager
 			std::vector<size_t> m_inventory;
 
+			/// Prototype ids
+			std::vector<size_t> m_protoid;;
+
 			// XXX pointer ownership??? X_X
 			typedef std::vector<ObjectInfo*> type_temporaryInventory;
 			type_temporaryInventory m_temporaryInventory;

@@ -74,6 +74,10 @@ namespace FIFE { namespace map {
 			/** Constructor
 			 */
 			Runner() : AsyncBridge(), m_ruleset(), m_mom(0), m_slave(0) {}
+
+			/** Destructor
+			 */
+			~Runner();
 	
 			/** Set the ruleset to be used
 			 *  @note Execute this _before_ calling start.
@@ -116,6 +120,7 @@ namespace FIFE { namespace map {
 			void activateElevation(size_t elev);
 
 			/** Register a command to a specific command_id
+			 *  Takes ownership over the commands.
 			 */
 			void registerCommand(size_t commandid, command::Command* command);
 
