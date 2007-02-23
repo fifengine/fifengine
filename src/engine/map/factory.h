@@ -120,6 +120,16 @@ namespace FIFE { namespace map {
 			 */
 			void addArchetype(Archetype* archetype);
 
+			/** Add a Tile to the Factories repository
+			 *  Use this function during the loading phase of the AT.
+			 */
+			void addTile(size_t tile_id, size_t image_id);
+
+			/** Add a Prototype to the Factories repository
+			 *
+			 */
+			void addPrototype(Archetype* at, const std::string& proto_name, size_t proto_id);
+
 			/** Removes all registered loaders.
 			 */
 			void cleanup();
@@ -132,10 +142,18 @@ namespace FIFE { namespace map {
 			// Registered AT loaders.
 			type_atloaders m_atloaders;
 
-			std::list<Archetype*> m_archetypes;
+			typedef std::list<Archetype*> type_archetypes;
+			type_archetypes m_archetypes;
 
+				
 			typedef std::map<std::string,size_t> type_protoname_map;
-			typedef std::map<size_t,type_protoname_map::iterator> type_protoid_map;
+
+			struct s_proto {
+				type_protoname_map::iterator name_iterator;
+				Archetype* archetype;
+			};
+
+			typedef std::map<size_t,s_proto> type_protoid_map;
 
 			type_protoname_map m_protoname_map;
 			type_protoid_map   m_protoid_map;
@@ -143,6 +161,8 @@ namespace FIFE { namespace map {
 			typedef std::map<size_t,size_t> type_tileids;
 
 			type_tileids m_tileids;
+
+			friend class Archetype;
 	};
 
 	inline
@@ -162,7 +182,7 @@ namespace FIFE { namespace map {
 		if( i == m_protoid_map.end() ) {
 			return invalid;
 		}
-		return i->second->first;
+		return i->second.name_iterator->first;
 	}
 
 	inline
@@ -172,6 +192,24 @@ namespace FIFE { namespace map {
 			return 0;
 		}
 		return i->second;
+	}
+
+	inline
+	void Factory::addTile(size_t tile_id, size_t image_id) {
+		m_tileids[ tile_id ] = image_id;
+	}
+
+	inline
+	void Factory::addPrototype(Archetype* at, const std::string& proto_name, size_t proto_id) {
+		// FIXME: double lookup
+		m_protoname_map[ proto_name ] = proto_id;
+		type_protoname_map::iterator i(m_protoname_map.find(proto_name));
+
+		s_proto proto;
+		proto.name_iterator = i;
+		proto.archetype = at;
+
+		m_protoid_map[ proto_id ] = proto;
 	}
 
 } } //FIFE::map

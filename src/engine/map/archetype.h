@@ -30,7 +30,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "attributedclass.h"
+#include "factory.h"
+
 
 namespace FIFE { namespace map {
 	class ObjectInfo;
@@ -44,11 +45,18 @@ namespace FIFE { namespace map {
 			 *  Loading a prototype of an object will set the objects
 			 *  data to default values, that can be overridden.
 			 */
-			void loadPrototype(ObjectInfo* object, size_t proto_id);
+			virtual void loadPrototype(ObjectInfo* object, size_t proto_id) = 0;
 
-			/** Get ImageCache ID if tile with id id
+			/** Add a Tile to the Factories repository
+			 *  Use this function during the loading phase of the AT.
 			 */
-			virtual size_t getTileImageId(size_t id) = 0;
+			void addTile(size_t tile_id, size_t image_id);
+
+			/** Add a Prototype to the Factories repository
+			 *
+			 */
+			void addPrototype(const std::string& proto_name, size_t proto_id);
+
 
 			const std::string& getTypeName() const;
 			const std::string& getFilename() const;
@@ -66,6 +74,16 @@ namespace FIFE { namespace map {
 	inline
 	const std::string& Archetype::getFilename() const {
 		return m_filename;
+	}
+
+	inline
+	void Archetype::addTile(size_t tile_id, size_t image_id) {
+		Factory::instance()->addTile(tile_id,image_id);
+	}
+
+	inline
+	void Archetype::addPrototype(const std::string& proto_name, size_t proto_id) {
+		Factory::instance()->addPrototype(this, proto_name, proto_id);
 	}
 
 }}
