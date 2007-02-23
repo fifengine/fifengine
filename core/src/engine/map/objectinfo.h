@@ -53,13 +53,43 @@ namespace FIFE { namespace map {
 			static const std::string TypeParam;
 			static const std::string OrientationParam;
 
+			/** Constructor
+			 */
 			ObjectInfo();
+
+			/** Destructor
+			 */
 			~ObjectInfo();
 
+			/** Get the Z Value
+			 *
+			 *  The Z value controls in which order objects
+			 *  on the same position are drawn.
+			 *  Lower Z objects are drawn first.
+			 *
+			 *  The Z value 0 has a special meaning, as the
+			 *  object is drawn 'tile-like', that is before
+			 *  any other objects, even if they are at
+			 *  another position. This is useful for slime
+			 *  pools for example.
+			 *
+			 */
 			uint16_t getZValue() const;
+
+			/** Set the Z Value
+			 */
 			void setZValue(uint16_t z);
 
+			/** Get the STATIC flag
+			 *
+			 *  Static objects can not be accessed via normal ruleset scripts,
+			 *  they won't receive any events - they are @b static.
+			 *  This should be the default for walls, scenery and the like.
+			 */
 			bool isStatic() const;
+
+			/** Set the STATIC flag
+			 */
 			void setStatic(bool s);
 
 			Location& getLocation();
@@ -73,6 +103,9 @@ namespace FIFE { namespace map {
 
 			void addToInventory(ObjectInfo* obj);
 			void addToInventory(size_t objId);
+			const std::vector<size_t>& listInventory() const;
+			void removeFromInventory(size_t objId);
+			bool isInInventory(size_t objId) const;
 
 			void loadPrototype(size_t proto_id);
 			void loadPrototype(const std::string& proto_name);
@@ -161,6 +194,21 @@ namespace FIFE { namespace map {
 	inline
 	void ObjectInfo::addToInventory(size_t objId) {
 		m_inventory.push_back(objId);
+	}
+
+	inline 
+	const std::vector<size_t>& ObjectInfo::listInventory() const {
+		return m_inventory;
+	}
+
+	inline 
+	void ObjectInfo::removeFromInventory(size_t objId) {
+		m_inventory.erase(std::find(m_inventory.begin(),m_inventory.end(), objId));
+	}
+
+	inline 
+	bool ObjectInfo::isInInventory(size_t objId) const{
+		return std::find(m_inventory.begin(),m_inventory.end(), objId) != m_inventory.end();
 	}
 
 } }
