@@ -32,6 +32,7 @@
 #include "vfs/raw/rawdata.h"
 #include "map/map.h"
 #include "map/elevation.h"
+#include "map/factory.h"
 #include "map/geometry.h"
 #include "map/grid.h"
 #include "map/objectinfo.h"
@@ -147,6 +148,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			el1 = el1->NextSiblingElement("geometry");
 		}
 
+		el1 = el->FirstChildElement("archetypes");
+		if (el1) {
+			loadArchetypes(el1);
+		}
+
 		TiXmlElement* el2 = el->FirstChildElement("elevation");
 		if (!el2) {
 			throw Exception("Error: found no 'elevation' entry!");
@@ -207,6 +213,26 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if (icL.loadTileset(el)) {
 			throw Exception("Tileset error, aborting ...");
 		}
+	}
+
+	void XML::loadArchetypes(TiXmlElement* el1) {
+		el1 = el1->FirstChildElement("archetype");
+		while(el1) {
+			const char* type = el1->Attribute("type");
+			const char* file = el1->Attribute("source");
+
+			if( type == 0 ) {
+				throw InvalidFormat("no type attribute on <archetype>");
+			}
+
+			if( file == 0 ) {
+				throw InvalidFormat("no file attribute on <archetype>");
+			}
+			
+			Factory::instance()->loadArchetype(type,file);
+			el1 = el1->NextSiblingElement("archetype");
+		}
+
 	}
 
 	void XML::loadElevation(TiXmlElement* el) {

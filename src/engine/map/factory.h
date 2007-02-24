@@ -85,7 +85,7 @@ namespace FIFE { namespace map {
 
 			/** Load an archetype (collection of tileid/prototypes) from a file.
 			 */
-			void loadArchetypes(const std::string& type, const std::string& filename);
+			void loadArchetype(const std::string& type, const std::string& filename);
 
 			/** Remove all loaded archetypes
 			 */
