@@ -144,6 +144,8 @@ namespace loaders { namespace xml {
 			/// Load one element from a set of tile tags with xy info
 			void loadLayerSparseData(TiXmlElement*);
 
+			void loadArchetypes(TiXmlElement*);
+
 			// Not copyable.
 			XML(const XML&);
 			XML& operator=(const XML&);

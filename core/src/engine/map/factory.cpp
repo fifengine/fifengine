@@ -127,7 +127,7 @@ namespace FIFE { namespace map {
 		m_atloaders[ type ] = loader;
 	}
 
-	void Factory::loadArchetypes(const std::string& type, const std::string& filename) {
+	void Factory::loadArchetype(const std::string& type, const std::string& filename) {
 		// If it is already loaded, just return.
 		std::list<Archetype*>::iterator i = m_archetypes.begin();
 		for(; i != m_archetypes.end(); ++i) {
