@@ -150,7 +150,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				Debug("fallout::ObjectFactory")
 					<< "Misc Item: " 
 					<< obj->get<std::string>(ObjectInfo::ObjectTypeParam)
-					<< " Visual: " << obj->getVisualLocation()
+					<< " Visual: " << obj->getVisualLocation().toString()
 					<< " Proto-PID: " << id;
 			}
 			break;
@@ -286,7 +286,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	void ObjectFactory::loadImages(const std::string& type, list& lst, const s_objectinfo& info, ObjectInfo* obj) {
 		std::string path = "art/" + type +"/" + lst.getProFile((info.frm_pid & 0xffff));
 
-		obj->setVisualLocation(path);
+		obj->setVisualLocation( RenderableLocation(RenderAble::RT_IMAGE, path) );
 	}
 
 	void ObjectFactory::loadCritterAnimation(const std::string& type, CritLST& lst,
@@ -386,7 +386,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			path += ".xml";
 		}
 
-		obj->setVisualLocation( path );
+		obj->setVisualLocation( RenderableLocation(RenderAble::RT_COMPLEX_ANIMATION, path) );
 		obj->set<size_t>(obj->OrientationParam,info.orientation);
 	}
 

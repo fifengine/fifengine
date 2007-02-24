@@ -44,7 +44,8 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 	
 	RenderAble* ImageProvider::createRenderable() {
 
-		const std::string& filename = getLocation().getFilename();
+    const RenderableLocation & location = getLocation();
+		const std::string& filename = location.getFilename();
 		RawDataPtr data = VFS::instance()->open(filename);
 		size_t datalen = data->getDataLength();
 		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
@@ -56,9 +57,16 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 			return 0;
 		}
 
+    RenderAble * res = CRenderBackend()->createStaticImageFromSDL(surface);
+
+		if (location.hasExtension(RenderableLocation::X))
+			res->setXShift(boost::lexical_cast<int>(location.getExtension(RenderableLocation::X)));
+		if (location.hasExtension(RenderableLocation::Y))
+			res->setYShift(boost::lexical_cast<int>(location.getExtension(RenderableLocation::Y)));
+
 		// FIXME: If Amask != 0 we should check if the alpha channel
 		//        is actually used.
 		
-		return CRenderBackend()->createStaticImageFromSDL(surface);
+		return res;
 	};
 } } } }

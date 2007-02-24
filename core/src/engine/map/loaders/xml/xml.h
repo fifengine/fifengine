@@ -27,6 +27,7 @@
 #include <map>
 
 // 3rd party library includes
+#include <boost/tuple/tuple.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -90,7 +91,8 @@ namespace loaders { namespace xml {
 			/// Fallout Elevation Format ... used until this reader gets the 
 			/// capabilities to read more sopisticated map 
 			elevation_info m_foElevationFormat;
-			typedef std::map<int, std::string> SpriteFilemapType;
+			typedef boost::tuple<std::string, int, int> FileAndOffsetType;
+			typedef std::map<int, FileAndOffsetType> SpriteFilemapType;
 			SpriteFilemapType spriteFilesMap;
 			
 			/// The currently loaded map.

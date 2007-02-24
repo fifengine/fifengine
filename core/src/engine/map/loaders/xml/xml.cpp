@@ -43,6 +43,7 @@
 #include "imagecache.h"
 
 #include "xml.h"
+#include "xml_archetype.h"
 
 // I did some minor fixes in here (beyond just reformatting) but it's nowhere
 // near exhaustive; my understanding is that we're replacing the XML file
@@ -201,7 +202,13 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 					<< "Error: 'sprite' has to specify valid"
 					<< " sprite_gid and source attributes!";
 			} else {
-				spriteFilesMap[sprite_gid] = std::string(sprite_filename);
+				int x_off, y_off;
+				if (sprite->QueryIntAttribute("x_offset", &x_off) != TIXML_SUCCESS )
+					x_off = 0;
+				if (sprite->QueryIntAttribute("y_offset", &y_off) != TIXML_SUCCESS )
+					y_off = 0;
+
+				spriteFilesMap[sprite_gid] = boost::make_tuple(std::string(sprite_filename), x_off, y_off);
 			}
 			sprite = sprite->NextSiblingElement("sprite");
 		}
@@ -224,10 +231,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			}
 
 			if( file == 0 ) {
-				throw InvalidFormat("no file attribute on <archetype>");
+				XMLArchetype * xmlat = new XMLArchetype(el1);	
+				Factory::instance()->addArchetype(xmlat);
 			}
-			
-			Factory::instance()->loadArchetype(type,file);
+			else			
+				Factory::instance()->loadArchetype(type,file);
 			el1 = el1->NextSiblingElement("archetype");
 		}
 
@@ -348,7 +356,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		ObjectManager* mom = m_map->getObjectManager();
 		ObjectInfo* obj = new ObjectInfo();
 		if (obj) {
-			obj->setVisualLocation( spriteFilesMap[sprite_gid] );
+			RenderableLocation renderable_location(RenderAble::RT_IMAGE, spriteFilesMap[sprite_gid].get<0>() );
+ 			renderable_location.addExtension(RenderableLocation::X, spriteFilesMap[sprite_gid].get<1>() );
+			renderable_location.addExtension(RenderableLocation::Y, spriteFilesMap[sprite_gid].get<2>() );
+			obj->setVisualLocation( renderable_location );
 			obj->set<std::string>(ObjectInfo::ObjectTypeParam,obj_typename);
 			if (orientation > -1) {
 				obj->set<size_t>(ObjectInfo::OrientationParam,orientation);

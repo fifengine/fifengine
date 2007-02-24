@@ -62,6 +62,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		load(el);
 	}
 
+	XMLArchetype::XMLArchetype(TiXmlElement* e) : Archetype("XML", "embedded") {
+		load(e);
+	}
+
 	void XMLArchetype::load(TiXmlElement* e) {
 		assert( e );
 
@@ -248,3 +252,4 @@ if(attr_ok == TIXML_NO_ATTRIBUTE) {                                             
 #undef CHECK_OR_THROW
 
 }}}}
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

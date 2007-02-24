@@ -36,21 +36,23 @@
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	/** XML Archetype
-	 * @see http://wiki.fifengine.de/index.php?title=Archetypes
-	 */
-	class XMLArchetype : public Archetype {
-		public:
-			XMLArchetype(const std::string& filename);
+  /** XML Archetype
+   * @see http://wiki.fifengine.de/index.php?title=Archetypes
+   */
+  class XMLArchetype : public Archetype {
+    public:
+      XMLArchetype(const std::string& filename);
+      XMLArchetype(TiXmlElement* e);
 
-			void load(TiXmlElement* e);
+      void load(TiXmlElement* e);
 
-		protected:
-			void loadArchetypes(TiXmlElement* e);
-			void loadTileset(TiXmlElement* e);
-			void loadImage(TiXmlElement* e, int firstgid, int& gid, int lastgid,
-			               int tw, int th);
-	};
+    protected:
+      void loadArchetypes(TiXmlElement* e);
+      void loadTileset(TiXmlElement* e);
+      void loadImage(TiXmlElement* e, int firstgid, int& gid, int lastgid,
+          int tw, int th);
+  };
 
 }}}}
 #endif
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
