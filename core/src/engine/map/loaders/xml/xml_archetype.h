@@ -32,13 +32,23 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/archetype.h"
+#include "tinyxml/tinyxml.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
+	/** XML Archetype
+	 * @see http://wiki.fifengine.de/index.php?title=Archetypes
+	 */
 	class XMLArchetype : public Archetype {
 		public:
 			XMLArchetype(const std::string& filename);
 
+			void load(TiXmlElement* e);
+
+		protected:
+			void loadArchetypes(TiXmlElement* e);
+			void loadTileset(TiXmlElement* e);
+			void loadImage(TiXmlElement* e, int firstgid, int& gid, int lastgid, int tw, int th);
 	};
 
 }}}}
