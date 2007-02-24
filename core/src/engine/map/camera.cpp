@@ -56,8 +56,6 @@ namespace FIFE { namespace map {
 		int w = surface->getWidth();
 		int h = surface->getHeight();
 
-		// To view the missing clipping:
-		//setViewport(Rect(w/4, h/4, w/2, h/2));
 		setViewport(Rect(0, 0, w, h));
 
 		reset();

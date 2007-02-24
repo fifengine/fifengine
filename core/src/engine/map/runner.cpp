@@ -180,7 +180,7 @@ namespace FIFE { namespace map {
 		}
 */
 		// Push standard ruleset data
-		ss << "visual='" << moi->getVisualLocation().toString() << "',";
+		ss << "visual='" << moi->getVisualLocation().getFilename() << "',";
 		ss << "objtype='" << moi->get<std::string>("objtype") << "',";
 		ss << "name='" << moi->get<std::string>("name") << "',";
 		
