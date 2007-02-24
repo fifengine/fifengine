@@ -91,6 +91,10 @@ namespace FIFE { namespace map {
 			 */
 			void clearArchetypes();
 
+			/** Add an archetype.
+			 */
+			void addArchetype(Archetype* archetype);
+
 			/** Map type to an internal id
 			 *  
 			 */
@@ -127,10 +131,6 @@ namespace FIFE { namespace map {
 			 * \note Used internally
 			 */
 			void registerArchetypeLoader(const std::string&  type, ArchetypeLoaderBase* loader);
-
-			/** Add an archetype.
-			 */
-			void addArchetype(Archetype* archetype);
 
 			/** Add a Tile to the Factories repository
 			 *  Use this function during the loading phase of the AT.

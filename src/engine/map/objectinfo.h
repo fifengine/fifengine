@@ -36,6 +36,7 @@
 #include "attributedclass.h"
 
 #include "location.h"
+#include "video/renderable_location.h"
 
 namespace FIFE { namespace map {
 
@@ -45,7 +46,7 @@ namespace FIFE { namespace map {
 	 */
 	class ObjectInfo : public AttributedClass {
 		public:
-			typedef std::string type_visual_location;
+			typedef RenderableLocation type_visual_location;
 
 			static const std::string NameParam;
 			static const std::string ObjectTypeParam;
