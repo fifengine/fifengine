@@ -48,7 +48,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		protected:
 			void loadArchetypes(TiXmlElement* e);
 			void loadTileset(TiXmlElement* e);
-			void loadImage(TiXmlElement* e, int firstgid, int& gid, int lastgid, int tw, int th);
+			void loadImage(TiXmlElement* e, int firstgid, int& gid, int lastgid,
+			               int tw, int th);
 	};
 
 }}}}

@@ -122,12 +122,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		m_map = new Map(mapname);
 
 		TiXmlElement* el1 = el->FirstChildElement("tileset");
-		if (!el1) {
-			throw Exception("no tileset!");
-		}
-		while (el1) {
-			loadTiles(el1);
-			el1 = el1->NextSiblingElement("tileset");
+		if (el1) {
+			Warn("xmlmap") 
+				<< "Ignoring <tileset> - put it into an Archetype. "
+				<< "Sorry for breaking working maps :-(";
 		}
 
 		el1 = el->FirstChildElement("spriteset");
@@ -385,8 +383,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			int tilegid = -1;
 			tilenode->QueryIntAttribute("gid", &tilegid);
 			if (tilegid > -1) {
-				size_t iid = icL.getImageForId(tilegid);
-				grid->setTileImage(Point(x,y), iid);
+				size_t iid = Factory::instance()->getTileImageId(tilegid);
+				grid->setTileImage(x,y, iid);
 			} else {
 				Log("xmlmap") << "Error: a tile is missing a 'gid' attribute!";
 				tilegid = 0;
@@ -429,7 +427,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 					" gid, x and y (>=0)");
 			}
 
-			grid->setTileImage(Point(x, y), gid);
+			grid->setTileImage(x, y, Factory::instance()->getTileImageId(gid));
 			sdn = sdn->NextSiblingElement("tileat");
 		}
 	}
@@ -468,12 +466,12 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		for (int y=0; y < height; y++) {
 			for (int x=0; x < width; x++) {
 				v = *pixel;
-				size_t iid = icL.getImageForId(v);
+				size_t iid = Factory::instance()->getTileImageId(v);
 				if (iid == 0) {
 					Log("xmlmap") 
 						<< "Invalid id: " << int(v) << " at (" << x << ", " << y << ")";
 				}
-				grid->setTileImage(Point(x, y), iid);
+				grid->setTileImage(x, y, iid);
 				pixel += img->format->BytesPerPixel;
 			}
 			// does this work everywhere?
