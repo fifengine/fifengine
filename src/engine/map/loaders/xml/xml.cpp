@@ -233,9 +233,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			if( file == 0 ) {
 				XMLArchetype * xmlat = new XMLArchetype(el1);	
 				Factory::instance()->addArchetype(xmlat);
-			}
-			else			
+			} else {
 				Factory::instance()->loadArchetype(type,file);
+			}
+
 			el1 = el1->NextSiblingElement("archetype");
 		}
 
