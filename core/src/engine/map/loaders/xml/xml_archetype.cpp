@@ -36,6 +36,8 @@
 #include "video/pixelbuffer.h"
 
 #include "xml_archetype.h"
+#include "object_loader.h"
+
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 	XMLArchetype::XMLArchetype(const std::string& filename)
@@ -80,7 +82,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			tileset_element = tileset_element->NextSiblingElement("tileset");
 		}
 
-
+		TiXmlElement* proto_element = e->FirstChildElement("prototypes");
+		if( proto_element ) {
+			loadPrototypes( proto_element );
+		}
 	}
 
 	void XMLArchetype::loadArchetypes(TiXmlElement* e) {
@@ -250,6 +255,33 @@ if(attr_ok == TIXML_NO_ATTRIBUTE) {                                             
 		}
 	}
 #undef CHECK_OR_THROW
+
+	void XMLArchetype::loadPrototype(ObjectInfo* object, size_t proto_id) {
+		type_prototypes::iterator i = m_prototypes.find( proto_id );
+		if( i == m_prototypes.end() ) {
+			throw NotFound(std::string("no proto_id '")
+			               + boost::lexical_cast<std::string>(proto_id)
+			               + "' in XML Archetype " + getFilename());
+		}
+		i->second->merge( object );
+	}
+
+	void XMLArchetype::loadPrototypes(TiXmlElement* element) {
+		assert( element );
+		element = element->FirstChildElement("prototype");
+		while( element ) {
+			const char* name = element->Attribute("name");
+			if( name == 0 ) {
+				throw InvalidFormat("no 'name' attribute on <prototype>");
+			}
+
+			ObjectLoader* objLoader = new ObjectLoader(element);
+			size_t proto_id = addPrototype(name);
+			m_prototypes[ proto_id ] = objLoader;
+
+			element = element->NextSiblingElement("prototype");
+		}
+	}
 
 }}}}
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

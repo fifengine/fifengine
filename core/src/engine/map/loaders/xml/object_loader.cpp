@@ -19,12 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADERS_XML_ARCHETYPE_H
-#define FIFE_MAP_LOADERS_XML_ARCHETYPE_H
-
 // Standard C++ library includes
-#include <string>
-#include <map>
 
 // 3rd party library includes
 
@@ -32,36 +27,21 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/archetype.h"
-#include "tinyxml/tinyxml.h"
+
+#include "object_loader.h"
+
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	class ObjectLoader;
+	ObjectLoader::ObjectLoader(TiXmlElement* element) {
+	}
 
-	/** XML Archetype
-	 * @see http://wiki.fifengine.de/index.php?title=Archetypes
-	 */
-	class XMLArchetype : public Archetype {
-		public:
-			XMLArchetype(const std::string& filename);
-			XMLArchetype(TiXmlElement* e);
+	ObjectInfo* ObjectLoader::create() {
+		return 0;
+	}
 
-			virtual void loadPrototype(ObjectInfo* object, size_t proto_id);
-		
-		protected:
-			void load(TiXmlElement* e);
-			void loadArchetypes(TiXmlElement* e);
-			void loadPrototypes(TiXmlElement* e);
-
-			void loadTileset(TiXmlElement* e);
-			void loadImage(TiXmlElement* e, int firstgid, int& gid, int lastgid,
-			               int tw, int th);
-
-			typedef std::map<size_t,ObjectLoader*> type_prototypes;
-			type_prototypes m_prototypes;
-	};
+	void ObjectLoader::merge(ObjectInfo* object) {
+	}
 
 }}}}
-#endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
+
