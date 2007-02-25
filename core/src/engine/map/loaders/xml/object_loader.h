@@ -30,10 +30,25 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/point.h"
 #include "map/objectinfo.h"
 #include "tinyxml/tinyxml.h"
+#include "attributedclass.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
+
+	template<typename datatype>
+	struct MaybeData {
+		MaybeData() : haveData(false) {}
+
+		MaybeData& operator=(const datatype& d) {
+			data = d;
+			haveData = true;
+		}
+
+		datatype data;
+		bool haveData;
+	};
 
 	class ObjectLoader {
 		public:
@@ -43,7 +58,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			void merge(ObjectInfo* object);
 
 		private:
-			
+			MaybeData<int>  m_zvalue;
+			MaybeData<bool> m_isstatic;
+			MaybeData<Point> m_position;
+
+			Table m_data;
 	};
 
 }}}}
