@@ -31,6 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/point.h"
+#include "video/renderable_location.h"
 #include "map/objectinfo.h"
 #include "tinyxml/tinyxml.h"
 #include "attributedclass.h"
@@ -44,6 +45,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		MaybeData& operator=(const datatype& d) {
 			data = d;
 			haveData = true;
+			return *this;
 		}
 
 		datatype data;
@@ -58,9 +60,12 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			void merge(ObjectInfo* object);
 
 		private:
-			MaybeData<int>  m_zvalue;
-			MaybeData<bool> m_isstatic;
+			void loadVisual(TiXmlElement* element);
+
+			MaybeData<int>   m_zvalue;
+			MaybeData<bool>  m_isstatic;
 			MaybeData<Point> m_position;
+			MaybeData<RenderableLocation> m_rlocation;
 
 			Table m_data;
 	};

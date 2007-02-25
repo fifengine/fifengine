@@ -44,9 +44,9 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			m_zvalue = xmlutil::queryElement<int>(zvalue_element);
 		}
 
-		TiXmlElement* is_static_element = element->FirstChildElement("is_static");
-		if( is_static_element ) {
-			m_isstatic = xmlutil::queryElement<bool>(is_static_element);
+		TiXmlElement* dynamic_element = element->FirstChildElement("dynamic");
+		if( dynamic_element ) {
+			m_isstatic = true;
 		}
 
 		TiXmlElement* posi_element = element->FirstChildElement("position");
@@ -54,7 +54,55 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			m_position = xmlutil::queryElement<Point>(posi_element);
 		}
 
+		TiXmlElement* visual_element = element->FirstChildElement("visual");
+		if( visual_element ) {
+			loadVisual( visual_element );
+		}
+
 		xmlutil::loadMetadata( element, &m_data );
+	}
+
+	void ObjectLoader::loadVisual(TiXmlElement* element) {
+		assert( element );
+		RenderableLocation location;
+		int attr_ok;
+
+		TiXmlElement* image_element = element->FirstChildElement("image");
+		if( image_element ) {
+			location.setType( RenderAble::RT_IMAGE );
+
+			const char* source = image_element->Attribute("source");
+			if( source == 0 ) {
+				throw InvalidFormat("no 'source' attribute on <image> element");
+			}
+			location.setFilename( source );
+
+			int x_off, y_off;
+			attr_ok = image_element->QueryIntAttribute("x_offset",&x_off);
+			if( attr_ok == TIXML_SUCCESS ) {
+				location.addExtension(RenderableLocation::X, x_off);
+			}
+
+			attr_ok = image_element->QueryIntAttribute("y_offset",&y_off);
+			if( attr_ok == TIXML_SUCCESS ) {
+				location.addExtension(RenderableLocation::Y, y_off);
+			}
+
+			m_rlocation = location;
+		}
+
+		TiXmlElement* animation_element = element->FirstChildElement("animation");
+		if( animation_element ) {
+			location.setType( RenderAble::RT_ANIMATION );
+
+			const char* source = animation_element->Attribute("source");
+			if( source == 0 ) {
+				throw InvalidFormat("no 'source' attribute on <animation> element");
+			}
+			location.setFilename( source );
+
+			m_rlocation = location;
+		}
 	}
 
 	ObjectInfo* ObjectLoader::create() {
@@ -76,6 +124,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 		if( m_position.haveData ) {
 			object->getLocation().position = m_position.data;
+		}
+
+		if( m_rlocation.haveData ) {
+			object->setVisualLocation( m_rlocation.data );
 		}
 
 		object->updateAttributes( object, true );
