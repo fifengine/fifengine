@@ -72,7 +72,26 @@ namespace FIFE { namespace map {
 
 	void ObjectInfo::loadPrototype(size_t proto_id) {
 		Factory::instance()->loadPrototype(this, proto_id);
-		m_protoid.push_back(proto_id);
+
+		// Move the proto_id to the end of m_protoid
+		// if it was used before, and otherwise append it.
+
+		size_t proto_pos = m_protoid.size();
+		for(size_t i = 0; i != m_protoid.size(); ++i) {
+			if( m_protoid[i] == proto_id ) {
+				proto_pos = i;
+				break;
+			}
+		}
+		if( proto_pos == m_protoid.size() ) {
+			m_protoid.push_back(proto_id);
+		} else {
+			for(size_t i = proto_pos; i != m_protoid.size() - 1; ++i) {
+				m_protoid[ i ] = m_protoid[ i + 1 ];
+			}
+			m_protoid.back() = proto_id;
+		}
+
 	}
 
 	void ObjectInfo::loadPrototype(const std::string& proto_name) {
