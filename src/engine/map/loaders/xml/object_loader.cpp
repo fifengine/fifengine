@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cassert>
 
 // 3rd party library includes
 
@@ -27,20 +28,57 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "exception.h"
+#include "util/xmlutil.h"
 
 #include "object_loader.h"
 
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	ObjectLoader::ObjectLoader(TiXmlElement* element) {
+	ObjectLoader::ObjectLoader(TiXmlElement* element) : m_data("Table") {
+		assert( element );
+
+		TiXmlElement* zvalue_element = element->FirstChildElement("zvalue");
+		if( zvalue_element ) {
+			m_zvalue = xmlutil::queryElement<int>(zvalue_element);
+		}
+
+		TiXmlElement* is_static_element = element->FirstChildElement("is_static");
+		if( is_static_element ) {
+			m_isstatic = xmlutil::queryElement<bool>(is_static_element);
+		}
+
+		TiXmlElement* posi_element = element->FirstChildElement("position");
+		if( posi_element ) {
+			m_position = xmlutil::queryElement<Point>(posi_element);
+		}
+
+		xmlutil::loadMetadata( element, &m_data );
 	}
 
 	ObjectInfo* ObjectLoader::create() {
-		return 0;
+		ObjectInfo* object = new ObjectInfo();
+		merge( object );
+		return object;
 	}
 
 	void ObjectLoader::merge(ObjectInfo* object) {
+		assert( object );
+
+		if( m_zvalue.haveData ) {
+			object->setZValue( m_zvalue.data ); 
+		}
+
+		if( m_isstatic.haveData ) {
+			object->setStatic( m_isstatic.data );
+		}
+
+		if( m_position.haveData ) {
+			object->getLocation().position = m_position.data;
+		}
+
+		object->updateAttributes( object, true );
 	}
 
 }}}}
