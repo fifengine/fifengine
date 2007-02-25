@@ -50,6 +50,11 @@ namespace luaGui {
 		}
 		return 1;
 	}
+
+	int ListModel::l_clear(lua_State *L) {
+		elements.clear();
+		return 0;
+	}
 		
 	int ListModel::getNumberOfElements() {
 		return elements.size();
@@ -65,6 +70,7 @@ namespace luaGui {
 		method(ListModel, addElement),
 		method(ListModel, getNumberOfElements),
 		method(ListModel, getElementAt),
+		method(ListModel, clear),
 		{0,0}
 	};
 }

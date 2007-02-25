@@ -118,6 +118,7 @@ namespace luaGui {
 			int l_getNumberOfElements(lua_State *L);
 			int l_getElementAt(lua_State *L);
 			int l_addElement(lua_State *L);
+			int l_clear(lua_State *L);
 			int getNumberOfElements();
 			std::string getElementAt(int k);
 			
