@@ -44,7 +44,6 @@
 #include "commandline.h"
 #include "console.h"
 
-
 namespace FIFE {
 	const unsigned  Console::m_maxOutputRows = 50;
 

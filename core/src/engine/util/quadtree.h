@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by the Klaus Blindert                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -18,11 +18,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
-#ifndef QUADTREE_H
-#define QUADTREE_H
+
+#ifndef FIFE_UTIL_QUADTREE_H
+#define FIFE_UTIL_QUADTREE_H
+
+// Standard C++ library includes
 #include <cassert>
 
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "video/rect.h"
+
 namespace FIFE {
 
 template<typename DataType, int MinimumSize = 128>

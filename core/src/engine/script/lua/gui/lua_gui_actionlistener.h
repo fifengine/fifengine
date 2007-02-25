@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,25 +19,24 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef LUA_GUI_ACTIONLISTENER
-#define LUA_GUI_ACTIONLISTENER
+#ifndef FIFE_SCRIPT_LUA_GUI_LUA_GUI_ACTIONLISTENER
+#define FIFE_SCRIPT_LUA_GUI_LUA_GUI_ACTIONLISTENER
 
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
+#include "script/lua/lua.hpp"
 #include <guichan.hpp>
 
-extern "C" {
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
-}
-
 // FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "singleton.h"
 
 namespace FIFE {
+
 	class ActionListener_Lua : public gcn::ActionListener,
 				 public DynamicSingleton<ActionListener_Lua>
 	{

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -53,8 +53,8 @@
 
 ****************************************************************************/
 
-#ifndef FIFE_RECT_H
-#define FIFE_RECT_H
+#ifndef FIFE_VIDEO_RECT_H
+#define FIFE_VIDEO_RECT_H
 
 // Standard C++ library includes
 #include <iostream>
@@ -63,6 +63,9 @@
 #include <SDL.h>
 
 // FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "point.h"
 
 namespace FIFE {

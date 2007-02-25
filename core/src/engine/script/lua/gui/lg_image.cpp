@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -25,14 +25,19 @@
 #include <boost/bind.hpp>
 
 // FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "script/scriptbackendmanager.h"
+
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
+#include "video/gui/gcnfifeimage.h"
+#endif
+
 #include "video/animation.h"
 #include "debugutils.h"
 
 #include "luagui.h"
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
-#include "video/gui/gcnfifeimage.h"
-#endif
 
 namespace luaGui {
 

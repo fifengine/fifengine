@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef LUASCRIPT_LUNAR_H
-#define LUASCRIPT_LUNAR_H
+#ifndef FIFE_SCRIPT_LUA_LUNAR_H
+#define FIFE_SCRIPT_LUA_LUNAR_H
 
 /** copied from http://lua-users.org/wiki/CppBindingWithLunar
  * - added include-guards and fixed old-style cast
@@ -30,10 +30,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-extern "C" {
-#include "lua.h"
-#include "lauxlib.h"
-}
+#include "lua.hpp"
 
 // FIFE includes
 #include "exception.h"

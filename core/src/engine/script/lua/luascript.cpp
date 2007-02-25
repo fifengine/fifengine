@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -25,21 +25,24 @@
 #include <list>
 
 // 3rd party library includes
+#include "lunar.h"
 
 // FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "gui/lua_gui_actionlistener.h"
 #include "map/elevation.h"
 #include "map/viewgamestate.h"
 #include "gamestatemanager.h"
 
 #include "luascript.h"
-#include "lua_object.h"
-#include "lua_stackguard.h"
-#include "lua_timer.h"
 #include "lua_mapcamera.h"
 #include "lua_mapcontrol.h"
+#include "lua_object.h"
 #include "lua_ref.h"
-#include "lunar.h"
+#include "lua_stackguard.h"
+#include "lua_timer.h"
 
 namespace FIFE {
 

@@ -35,7 +35,6 @@
 #include "asyncbridge.h"
 #include "log.h"
 
-
 namespace FIFE {
 
 	int AsyncBridge::all_losses = 0;
