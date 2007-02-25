@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAPVIEW_H
-#define FIFE_MAPVIEW_H
+#ifndef FIFE_MAP_VIEW_H
+#define FIFE_MAP_VIEW_H
 
 // Standard C++ library includes
 #include <cstddef>
@@ -32,6 +32,9 @@
 // 3rd party library includes
 
 // FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "video/point.h"
 #include "video/rect.h"
 

@@ -54,26 +54,21 @@ distribution.
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-
 #ifndef GRINNINGLIZARD_MICROPATHER_INCLUDED
 #define GRINNINGLIZARD_MICROPATHER_INCLUDED
 
-/** @mainpage MicroPather
-	
-	MicroPather is a path finder and A* solver (astar or a-star) written in platform independent 
-	C++ that can be easily integrated into existing code. MicroPather focuses on being a path 
-	finding engine for video games but is a generic A* solver. MicroPather is open source, with 
-	a license suitable for open source or commercial use.
-
-	An overview of using MicroPather is in the <A HREF="../readme.htm">readme</A> or
-	on the Grinning Lizard website: http://grinninglizard.com/micropather/
-*/
-
-#include <vector>
+// Standard C++ library includes
+#include <cassert>
+#include <cfloat>
 #include <list>
-#include <assert.h>
-#include <float.h>
+#include <vector>
 
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "solver/graph.h"
 #include "solver/solver.h"
 

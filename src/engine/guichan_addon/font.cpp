@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -28,17 +28,19 @@
 #include <guichan.hpp>
 
 // FIFE includes
-#include "font.h"
-
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "video/image.h"
 #include "video/rect.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "video/screen.h"
-#include "video/image.h"
 
-#include "sdltruetypefont.hpp"
 #include "aafont.h"
+#include "font.h"
 #include "guichanfont.h"
+#include "sdltruetypefont.hpp"
 
 namespace FIFE {
 
@@ -125,5 +127,3 @@ namespace FIFE {
 	}
 
 }
-
-

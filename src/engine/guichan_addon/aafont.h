@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_AAF_ADDON_FONT_H
-#define FIFE_AAF_ADDON_FONT_H
+#ifndef FIFE_GUICHAN_ADDON_AAFONT_H
+#define FIFE_GUICHAN_ADDON_AAFONT_H
 
 // Standard C++ library includes
 #include <string>
@@ -37,7 +37,6 @@
 #include "sdlimagefont.hpp"
 
 namespace FIFE {
-
 
 	/**  AA Style Image font (used in fallout)
 	 *   See http://www.teamx.ru/eng/files/docs/index.shtml

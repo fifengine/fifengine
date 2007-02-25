@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,18 +19,14 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef LUASCRIPT_H
-#define LUASCRIPT_H
+#ifndef FIFE_SCRIPT_LUA_LUASCRIPT_H
+#define FIFE_SCRIPT_LUA_LUASCRIPT_H
 
 // Standard C++ library includes
 #include <string>
 
 // 3rd party library includes
-extern "C" {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
+#include "lua.hpp"
 
 // FIFE includes
 // to access the following

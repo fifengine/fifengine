@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -25,18 +25,20 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "exception.h"
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 
 #include "video/gui/guimanager.h"
+#include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "vfs/vfssource.h"
 #include "vfs/vfssourcefactory.h"
-#include "vfs/raw/rawdata.h"
+#include "exception.h"
 
 #include "lua_vfs.h"
 
 namespace FIFE {
-
 
 	int VFS_LuaScript::read(lua_State *L) {
 		std::string fname = luaL_checkstring(L,1);

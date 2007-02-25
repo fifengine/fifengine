@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2006 by the FIFE Team                              *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GCN_ANIMIMAGE_H
-#define FIFE_GCN_ANIMIMAGE_H
+#ifndef FIFE_GUICHAN_ADDON_ADVIMAGE_H
+#define FIFE_GUICHAN_ADDON_ADVIMAGE_H
 
 // Standard C++ library includes
 #include <string>
@@ -32,6 +32,9 @@
 #endif
 
 // FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 
 namespace FIFE {
 	class Animation;
