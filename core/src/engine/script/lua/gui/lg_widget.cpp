@@ -232,6 +232,23 @@ namespace luaGui {
 		return 0;
 	}*/
 
+	int AWidget::l_requestModalFocus(lua_State *L) {
+		try {
+			f_requestModalFocus();
+		}
+		catch (const gcn::Exception & e) {
+			lua_pushboolean(L, false);
+			return 1;
+		}
+		lua_pushboolean(L, true);
+		return 1;
+	}
+
+	int AWidget::l_releaseModalFocus(lua_State *L) {
+		f_releaseModalFocus();
+		return 0;
+	}
+
 	// note that in *this* case the following is not done;
 	// this means 'AWidget' is unknown to Lua, the magic is
 	// done by c++ inheritance.
