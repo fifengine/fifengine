@@ -154,13 +154,14 @@ namespace FIFE { namespace map {
 
 	void Factory::loadPrototype(ObjectInfo* object, size_t proto_id) {
 		assert( object );
-		type_protoid_map::const_iterator i(m_protoid_map.find(proto_id));
-		if( i == m_protoid_map.end() ) {
+		if( proto_id >= m_protoid_map.size() ) {
 			return;
 		}
 
-		assert( i->second.archetype );
-		i->second.archetype->loadPrototype(object,proto_id);
+		s_proto& proto = m_protoid_map[proto_id];
+
+		assert( proto.archetype );
+		proto.archetype->loadPrototype(object,proto_id);
 	}
 
 } } //FIFE::map

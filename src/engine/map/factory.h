@@ -26,6 +26,7 @@
 #include <map>
 #include <list>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 
@@ -140,7 +141,7 @@ namespace FIFE { namespace map {
 			/** Add a Prototype to the Factories repository
 			 *
 			 */
-			void addPrototype(Archetype* at, const std::string& proto_name, size_t proto_id);
+			size_t addPrototype(Archetype* at, const std::string& proto_name);
 
 			/** Removes all registered (archetype)loaders.
 			 */
@@ -165,7 +166,7 @@ namespace FIFE { namespace map {
 				Archetype* archetype;
 			};
 
-			typedef std::map<size_t,s_proto> type_protoid_map;
+			typedef std::vector<s_proto> type_protoid_map;
 
 			type_protoname_map m_protoname_map;
 			type_protoid_map   m_protoid_map;
@@ -189,12 +190,12 @@ namespace FIFE { namespace map {
 	inline
 	const std::string& Factory::getPrototypeName(size_t proto_id) const {
 		static std::string invalid = "";
-
-		type_protoid_map::const_iterator i(m_protoid_map.find(proto_id));
-		if( i == m_protoid_map.end() ) {
+		if( proto_id > m_protoid_map.size() ) {
 			return invalid;
 		}
-		return i->second.name_iterator->first;
+
+		const s_proto& proto = m_protoid_map[proto_id];
+		return proto.name_iterator->first;
 	}
 
 	inline
@@ -212,9 +213,11 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	void Factory::addPrototype(Archetype* at, const std::string& name, size_t id) {
+	size_t Factory::addPrototype(Archetype* at, const std::string& name) {
+		size_t id = m_protoid_map.size();
 		s_proto proto = { m_protoname_map.insert(std::make_pair(name, id)).first, at };
-		m_protoid_map[ id ] = proto;
+		m_protoid_map.push_back( proto );
+		return id;
 	}
 
 } } //FIFE::map

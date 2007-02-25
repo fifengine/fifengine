@@ -56,7 +56,7 @@ namespace FIFE { namespace map {
 			/** Add a Prototype to the Factories repository
 			 *
 			 */
-			void addPrototype(const std::string& proto_name, size_t proto_id);
+			size_t addPrototype(const std::string& proto_name);
 
 
 			const std::string& getTypeName() const;
@@ -83,8 +83,8 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	void Archetype::addPrototype(const std::string& proto_name, size_t proto_id) {
-		Factory::instance()->addPrototype(this, proto_name, proto_id);
+	size_t Archetype::addPrototype(const std::string& proto_name) {
+		return Factory::instance()->addPrototype(this, proto_name);
 	}
 
 }}
