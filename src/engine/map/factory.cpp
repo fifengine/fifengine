@@ -32,6 +32,7 @@
 #include "loaders/xml/xml_archetype.h"
 #endif
 #include "loaders/fallout/fallout.h"
+#include "util/purge.h"
 #include "debugutils.h"
 #include "exception.h"
 
@@ -71,25 +72,15 @@ namespace FIFE { namespace map {
 	}
 
 	void Factory::cleanup() {
-		// FIXME: use boost::ptr_map ?
-		type_loaders::const_iterator end = m_loaders.end();
-		for (type_loaders::iterator i = m_loaders.begin(); i != end; ++i) {
-			delete i->second;
-		}
+		purge_map( m_loaders );
 		m_loaders.clear();
 
-		type_atloaders::const_iterator atend = m_atloaders.end();
-		for (type_atloaders::iterator i = m_atloaders.begin(); i != atend; ++i) {
-			delete i->second;
-		}
+		purge_map( m_atloaders );
 		m_atloaders.clear();
 	}
 
 	void Factory::clearArchetypes() {
-		type_archetypes::iterator i = m_archetypes.begin();
-		for(; i != m_archetypes.end(); ++i) {
-			delete *i;
-		}
+		purge( m_archetypes );
 
 		m_protoname_map.clear();
 		m_protoid_map.clear();

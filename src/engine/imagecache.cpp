@@ -31,11 +31,13 @@
 #include "map/loaders/fallout/frm.h"
 #include "map/loaders/util/complexanimation_provider.h"
 #include "map/loaders/util/frm_provider.h"
+#include "map/loaders/util/animation_provider.h"
 #include "map/loaders/util/image_provider.h"
 #include "map/loaders/util/subimage_provider.h"
 #include "video/renderable.h"
 #include "video/image.h"
 #include "video/pixelbuffer.h"
+#include "util/purge.h"
 
 #include "debugutils.h"
 #include "exception.h"
@@ -77,8 +79,14 @@ namespace FIFE {
 	> SubImageConstructor;
 
 	typedef RenderableProviderConstructorTempl<
-		map::loaders::util::ImageProvider
+		map::loaders::util::ImageProvider,
+		RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED
 	> IMGConstructor; 
+
+	typedef RenderableProviderConstructorTempl<
+		map::loaders::util::AnimationProvider,
+		RenderAble::RT_ANIMATION
+	> AnimationConstructor;
 
 	class DummyImage : public RenderAble {
 			std::string m_msg;
@@ -117,6 +125,7 @@ namespace FIFE {
 		m_providerconstructors.push_front( new FRMConstructor() );
 		m_providerconstructors.push_front( new CAPConstructor() );
 		m_providerconstructors.push_front( new SubImageConstructor() );
+		m_providerconstructors.push_front( new AnimationConstructor() );
 	};
 
 	ImageCache::~ImageCache() {
@@ -138,10 +147,7 @@ namespace FIFE {
 	}
 
 	void ImageCache::cleanProviders() {
-		type_providerconstructors::const_iterator end = m_providerconstructors.end();
-		for(type_providerconstructors::iterator it = m_providerconstructors.begin(); it != end; ++it )
-			delete *it;
-
+		purge( m_providerconstructors );
 		m_providerconstructors.clear();
 	}
 
