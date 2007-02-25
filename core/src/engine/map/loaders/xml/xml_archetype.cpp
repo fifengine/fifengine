@@ -279,6 +279,9 @@ if(attr_ok == TIXML_NO_ATTRIBUTE) {                                             
 			size_t proto_id = addPrototype(name);
 			m_prototypes[ proto_id ] = objLoader;
 
+			Log("xml::archetype")
+				<< " loaded Prottype '" << name << "' as " << proto_id;
+
 			element = element->NextSiblingElement("prototype");
 		}
 	}
