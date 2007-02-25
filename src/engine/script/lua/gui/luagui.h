@@ -236,6 +236,8 @@ namespace luaGui {
 			virtual void f_setBaseColor(const gcn::Color & color) = 0;
 			virtual void f_setForegroundColor(const gcn::Color & color) = 0;
 			virtual void f_setBackgroundColor(const gcn::Color & color) = 0;
+			virtual void f_requestModalFocus() = 0;
+			virtual void f_releaseModalFocus() = 0;
 			/*
 				 virtual const gcn::Color & f_getBaseColor() = 0;
 				 virtual const gcn::Color & f_getForegroundColor() = 0;
@@ -261,6 +263,8 @@ namespace luaGui {
 			int l_setBaseColor(lua_State *L);
 			int l_setForegroundColor(lua_State *L);
 			int l_setBackgroundColor(lua_State *L);
+			int l_requestModalFocus(lua_State *L);
+			int l_releaseModalFocus(lua_State *L);
 			/*
 				 int l_getBaseColor(lua_State *L);
 				 int l_getForegroundColor(lua_State *L);
@@ -349,19 +353,27 @@ namespace luaGui {
 	/*			inline const gcn::Color & f_getBaseColor() { \
 					return gcn::name::getBaseColor(); \
 					} \
-					*/	inline void f_setForegroundColor(const gcn::Color & color) { \
-						gcn::name::setForegroundColor(color); \
-					} \
+					*/ \
+	inline void f_setForegroundColor(const gcn::Color & color) { \
+		gcn::name::setForegroundColor(color); \
+	} \
 	/*		inline const gcn::Color & f_getForegroundColor() { \
 				return gcn::name::getForegroundColor(); \
 				} \
-				*/		inline void f_setBackgroundColor(const gcn::Color & color) { \
-					gcn::name::setBackgroundColor(color); \
-				} \
+				*/	\
+	inline void f_setBackgroundColor(const gcn::Color & color) { \
+		gcn::name::setBackgroundColor(color); \
+	} \
 	/*		inline const gcn::Color & f_getBackgroundColor() { \
 				return gcn::name::getBackgroundColor(); \
 				} \
-				*/ 
+				*/ \
+	inline void f_requestModalFocus() { \
+		gcn::name::requestModalFocus(); \
+	} \
+	inline void f_releaseModalFocus() { \
+		gcn::name::releaseModalFocus(); \
+	}
 
 #define LUAGUI_SETFONT_IMPL(name)	int l_setFont(lua_State *L) { \
 		gcn::Font* fp = lua2font_cast(L); \
@@ -397,7 +409,9 @@ namespace luaGui {
 	method(name, getEventId), \
 	method(name, setBaseColor), \
 	method(name, setForegroundColor), \
-	method(name, setBackgroundColor) \
+	method(name, setBackgroundColor), \
+	method(name, requestModalFocus), \
+	method(name, releaseModalFocus) \
 
 	class Label : public AWidget, public gcn::Label {
 		public:
