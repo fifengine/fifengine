@@ -276,8 +276,7 @@ namespace luaGui {
 			//static const char className[];
 			//static Lunar<AWidget>::RegType methods[];
 			static gcn::Font* lua2font_cast(lua_State *L);
-		private:
-			gcn::Color* lua2gcn_color_cast(lua_State *L);
+			static gcn::Color* lua2gcn_color_cast(lua_State *L);
 	};
 
 // now watch this:
