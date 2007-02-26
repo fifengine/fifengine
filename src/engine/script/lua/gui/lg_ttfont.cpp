@@ -55,12 +55,26 @@ namespace luaGui {
 	int TTFont::l_setColor(lua_State *L) {
 		if( m_font == 0 )
 			return 0;
-
+		
 		Uint8 r, g, b;
-		r = Uint8(lua_tonumber(L, 1));
-		g = Uint8(lua_tonumber(L, 2));
-		b = Uint8(lua_tonumber(L, 3));
-		m_font->setColor(r, g, b);
+		gcn::Color * c = NULL;
+
+		switch (lua_gettop(L)) {
+			case 3:
+				r = Uint8(lua_tonumber(L, 1));
+				g = Uint8(lua_tonumber(L, 2));
+				b = Uint8(lua_tonumber(L, 3));
+				m_font->setColor(r, g, b);
+				break;
+			case 1:
+				c = AWidget::lua2gcn_color_cast(L);
+				if (c)
+					m_font->setColor(c->r, c->g, c->b);
+				break;
+			default:
+				FIFE::Log("TTFont::setColor") << "Invalid parameter";
+				break;
+		}
 		return 0;
 	}
 	const char TTFont::className[] = "TTFont";
