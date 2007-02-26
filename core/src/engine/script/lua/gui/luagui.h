@@ -144,6 +144,7 @@ namespace luaGui {
 			int l_setAnimActive(lua_State *L);
 			int l_setAnimDirection(lua_State *L);
 			int l_setAnimEndCallback(lua_State *L);
+			int l_isAnimation(lua_State *L);
 
 			void animEndCallback();
 

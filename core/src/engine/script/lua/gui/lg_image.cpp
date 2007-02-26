@@ -63,7 +63,16 @@ namespace luaGui {
 		setAnimActive(lua_toboolean(L, 1));
 		return 0;
 	}
-  int Image::l_setAnimDirection(lua_State *L) {
+	int Image::l_isAnimation(lua_State *L) {
+		FIFE::Animation* a = getImageAsAnimation();
+		if (!a) {
+			lua_pushboolean(L,0);
+		} else {
+			lua_pushboolean(L,1);
+		}
+		return 1;
+	}
+	int Image::l_setAnimDirection(lua_State *L) {
 		setAnimDirection(lua_toboolean(L, 1));
 		return 0;
 	}
@@ -91,6 +100,7 @@ namespace luaGui {
 		method(Image, setAnimActive),
 		method(Image, setAnimDirection),
 		method(Image, setAnimEndCallback),
+		method(Image, isAnimation),
 		{0,0}
 	};
 }

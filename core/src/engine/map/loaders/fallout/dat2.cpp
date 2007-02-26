@@ -121,7 +121,19 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return i->second;
 	}
 
-	DAT2::type_filelist::const_iterator DAT2::findFileEntry(const std::string& name) const {
+	DAT2::type_filelist::const_iterator DAT2::findFileEntry(const std::string& path) const {
+
+		// Either the normalization is bogus, or we have to do
+		// it here, too. Otherwise we can't load the files returned
+		// by listFiles.
+
+		std::string name = path;
+
+		// Normalize the path
+		if (name.find("./") == 0) {
+			name.erase(0, 2);
+		}
+
 		type_filelist::const_iterator i = m_filelist.find(name);
 
 		// We might have another chance to find the file
