@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "exception.h"
+#include "util/purge.h"
 #include "util/xmlutil.h"
 #include "map/factory.h"
 
@@ -72,6 +73,19 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		xmlutil::loadMetadata( element, &m_data );
+
+		TiXmlElement* inventory_element = element->FirstChildElement("inventory");
+		if( inventory_element ) {
+			inventory_element = inventory_element->FirstChildElement("object");
+			while( inventory_element ) {
+				m_inventory.push_back(new ObjectLoader(inventory_element));
+				inventory_element = inventory_element->NextSiblingElement("object");
+			}
+		}
+	}
+
+	ObjectLoader::~ObjectLoader() {
+		purge( m_inventory );
 	}
 
 	void ObjectLoader::loadVisual(TiXmlElement* element) {
@@ -147,6 +161,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		object->updateAttributes( &m_data, true );
+
+		for( size_t i=0; i!= m_inventory.size(); ++i) {
+			object->addToInventory( m_inventory[i]->create() );
+		}
 	}
 
 }}}}

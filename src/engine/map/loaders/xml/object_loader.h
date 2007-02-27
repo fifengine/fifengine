@@ -55,6 +55,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	class ObjectLoader {
 		public:
 			ObjectLoader(TiXmlElement* element);
+			~ObjectLoader();
 
 			ObjectInfo* create();
 			void merge(ObjectInfo* object);
@@ -69,6 +70,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 			Table m_data;
 			std::vector<size_t> m_prototypes;
+			std::vector<ObjectLoader*> m_inventory;
 	};
 
 }}}}
