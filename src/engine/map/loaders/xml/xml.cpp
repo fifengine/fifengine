@@ -383,7 +383,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		// And finally add it.
-		object->getLocation().grid        = m_cursor.layer;
+		object->getLocation().grid      = m_cursor.layer;
 		object->getLocation().elevation = m_cursor.elevationNumber;
 
 		ObjectManager* mom = m_map->getObjectManager();
