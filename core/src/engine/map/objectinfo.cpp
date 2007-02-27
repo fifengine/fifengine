@@ -42,7 +42,7 @@ namespace FIFE { namespace map {
 	ObjectInfo::ObjectInfo() 
 		: AttributedClass("map_object"),
 		  m_visualId(0),
-		  m_isStatic(false) {
+		  m_isStatic(true) {
 
 		set<std::string>("objtype","undefined");
 		set<std::string>("name","unnamed");

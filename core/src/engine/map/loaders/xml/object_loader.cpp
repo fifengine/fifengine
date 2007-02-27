@@ -30,6 +30,7 @@
 // Second block: files included from the same folder
 #include "exception.h"
 #include "util/xmlutil.h"
+#include "map/factory.h"
 
 #include "object_loader.h"
 
@@ -39,6 +40,17 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	ObjectLoader::ObjectLoader(TiXmlElement* element) : m_data("Table") {
 		assert( element );
 
+		TiXmlElement* proto_element = element->FirstChildElement("prototype");
+		while( proto_element ) {
+			const char* proto_name = proto_element->Attribute("name");
+			if( !proto_name ) {
+				throw InvalidFormat("no 'name' attribute on <prototype>");
+			}
+			m_prototypes.push_back( Factory::instance()->getPrototypeId(proto_name) );
+			proto_element = proto_element->NextSiblingElement("prototype");
+		}
+
+
 		TiXmlElement* zvalue_element = element->FirstChildElement("zvalue");
 		if( zvalue_element ) {
 			m_zvalue = xmlutil::queryElement<int>(zvalue_element);
@@ -46,7 +58,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 		TiXmlElement* dynamic_element = element->FirstChildElement("dynamic");
 		if( dynamic_element ) {
-			m_isstatic = true;
+			m_isstatic = false;
 		}
 
 		TiXmlElement* posi_element = element->FirstChildElement("position");
@@ -114,6 +126,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	void ObjectLoader::merge(ObjectInfo* object) {
 		assert( object );
 
+		for( size_t i=0; i!=m_prototypes.size(); ++i ) {
+			object->loadPrototype( m_prototypes[i] );
+		}
+
 		if( m_zvalue.haveData ) {
 			object->setZValue( m_zvalue.data ); 
 		}
@@ -130,7 +146,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			object->setVisualLocation( m_rlocation.data );
 		}
 
-		object->updateAttributes( object, true );
+		object->updateAttributes( &m_data, true );
 	}
 
 }}}}

@@ -88,13 +88,6 @@ namespace loaders { namespace xml {
 			virtual Map* loadFile(const std::string& path);
 			
 		private:
-			/// Fallout Elevation Format ... used until this reader gets the 
-			/// capabilities to read more sopisticated map 
-			elevation_info m_foElevationFormat;
-			typedef boost::tuple<std::string, int, int> FileAndOffsetType;
-			typedef std::map<int, FileAndOffsetType> SpriteFilemapType;
-			SpriteFilemapType spriteFilesMap;
-			
 			/// The currently loaded map.
 			Map* m_map;
 
@@ -110,21 +103,11 @@ namespace loaders { namespace xml {
 				int width;
 				/// Height of the loaded map
 				int height;
-
-				size_t geometry;
 			};
 			s_loadcursor m_cursor;
 
-			/// The ImageLoader tool
-			Imgcache icL;
-
 			/// Reset internal structure.
 			void cleanup();
-
-			/// Load tileset element
-			void loadTiles(TiXmlElement*);
-			/// Load spriteset element
-			void loadSpriteSet(TiXmlElement*);
 
 			/// Load the whole map ...
 			void loadMap(TiXmlElement*);
@@ -139,13 +122,17 @@ namespace loaders { namespace xml {
 			/// dispatches to loadLayerXXX
 			void loadLayer(TiXmlElement*);
 
+#if 0
 			/// Load one Layer form an image
 			void loadLayerImage(TiXmlElement*);
+#endif
+
 			/// Load one Layer from a set of tile tags
 			void loadLayerData(TiXmlElement*);
 			/// Load one element from a set of tile tags with xy info
 			void loadLayerSparseData(TiXmlElement*);
 
+			/// Assure required Archetypes are loaded
 			void loadArchetypes(TiXmlElement*);
 
 			// Not copyable.
