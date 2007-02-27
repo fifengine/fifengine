@@ -100,7 +100,7 @@ namespace FIFE { namespace map {
 		the_thread = SDL_CreateThread(slaveThread, 0);
 
 		std::string script;
-		for (size_t i = 0; i != m_mom->m_objects.size(); ++i) {
+		for (size_t i = 1; i < m_mom->m_objects.size(); ++i) {
 			ObjectInfo* moi = m_mom->getObject(i);
 			if (moi->isStatic() || !m_ruleset.isValid()) {
 				m_static_objects[moi->getLocation().elevation].push_back(moi);
@@ -146,10 +146,16 @@ namespace FIFE { namespace map {
 			Visual* visual = new Visual(moi);
 
 			RenderableLocation loc(moi->getVisualLocation());
-			visual->setRenderable(
-				ImageCache::instance()->addImageFromLocation(loc));
+			size_t iid = ImageCache::instance()->addImageFromLocation(loc);
+			visual->setRenderable(iid);
 
 			visual->setLocation(moi->getLocation());
+
+			Debug("map::runner")
+				<< "Adding Visual for static object iid:" << iid
+				<< " rloc:" << loc.toString();
+			moi->debugPrint();
+
 			m_view->addVisual(visual);
 		}
 	}
