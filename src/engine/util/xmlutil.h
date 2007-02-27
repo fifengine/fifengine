@@ -84,6 +84,18 @@ namespace FIFE { namespace xmlutil {
 
 	template<>
 	inline
+	std::string queryElement(TiXmlElement* e) {
+		if( !e )
+			throw InvalidFormat("no xml element");
+
+		const char* value = e->GetText();
+		if( !value )
+			throw InvalidFormat(std::string("empty xml element"));
+		return std::string(value);
+	}
+
+	template<>
+	inline
 	Point queryElement(TiXmlElement* e) {
 		return Point( queryElement<int16_t>(e,"x"), queryElement<int16_t>(e,"y") );
 	}

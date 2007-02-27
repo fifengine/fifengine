@@ -57,6 +57,10 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 			return 0;
 		}
 
+		Debug("subimage_loader")
+			<< "iid:" << imageid 
+			<< " rect:" << Rect(src_rect.x,src_rect.y,src_rect.w,src_rect.h);
+
 		SDL_Surface* src = pixelbuffer->getSurface();
 		uint32_t Amask = src->format->Amask ?  0x000000ff : 0;
 		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, src_rect.w,  src_rect.h, 32,

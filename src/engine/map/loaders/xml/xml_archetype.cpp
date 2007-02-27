@@ -92,7 +92,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		assert( e );
 		e = e->FirstChildElement("archetype");
 		while( e ) {
-			// FIXME Duplicated from XML::loadArchetypes.
+			// Subtle difference to
+			// XML::loadArchetypes  -- no embedded ATs
 			const char* type = e->Attribute("type");
 			const char* file = e->Attribute("source");
 
@@ -233,8 +234,8 @@ if(attr_ok == TIXML_NO_ATTRIBUTE) {                                             
 			cols = (pbuffer->getSurface()->h - y_offset)/(th + col_padding);
 		}
 
-		for(int x=0; x < rows; ++x) {
-			for(int y=0; y < cols; ++y) {
+		for(int y=0; y < rows; ++y) {
+			for(int x=0; x < cols; ++x) {
 				RenderableLocation location(RenderAble::RT_SUBIMAGE);
 				location.addExtension(RenderableLocation::IMAGE_ID, base_image);
 				location.addExtension(RenderableLocation::X, x*(tw+row_padding) + x_offset);
@@ -245,11 +246,11 @@ if(attr_ok == TIXML_NO_ATTRIBUTE) {                                             
 				size_t image_id = ImageCache::instance()->addImageFromLocation(location);
 				addTile( gid, image_id );
 				Debug("xml::archetype")
-					<< "TILE:" << source << "(" << base_image << ") crop="
-					<< x*(tw+row_padding) + x_offset << "x "
+					<< "TILE:" << source << "(" << base_image << ") crop= ["
+					<< x*(tw+row_padding) + x_offset << "x"
 					<< y*(th+col_padding) + y_offset << " - "
 					<< tw << "x" << th
-					<< " => " << gid;
+					<< "] => " << gid << "(" << image_id << ")";
 				gid += 1;
 			}
 		}

@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <memory>
 
 // 3rd party library includes
 #include <SDL_image.h>
@@ -38,12 +39,14 @@
 #include "map/objectinfo.h"
 #include "map/objectmanager.h"
 #include "tinyxml/tinyxml.h"
+#include "util/xmlutil.h"
 #include "debugutils.h"
 #include "exception.h"
 #include "imagecache.h"
 
 #include "xml.h"
 #include "xml_archetype.h"
+#include "object_loader.h"
 
 // I did some minor fixes in here (beyond just reformatting) but it's nowhere
 // near exhaustive; my understanding is that we're replacing the XML file
@@ -71,7 +74,6 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	void XML::cleanup() {
 		m_cursor.elevation =0;
 		m_cursor.elevationNumber = -1;
-		icL.clear();
 	}
 
 	Map* XML::loadFile(const std::string& path) {
@@ -115,13 +117,30 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XML::loadMap(TiXmlElement* el) {
-		const char* mapname = el->Attribute("name");
-		int mapid = -1;
-		el->QueryIntAttribute("id", &mapid);
-		Log("xmlmap") << "Loading: " << mapname << " (" << mapid << ")";
+		std::string mapname;
+		int format_version;
 
-		m_map = new Map(mapname);
+		// Read properties
+		TiXmlElement* props_element = el->FirstChildElement("properties");
+		if (!props_element) {
+			throw InvalidFormat("no <properties> section in <map>");
+		}
+		mapname        = xmlutil::queryElement<std::string>(props_element,"name");
+		format_version = xmlutil::queryElement<int>(props_element,"format");
 
+		if( props_element->NextSiblingElement("properties") ) {
+			throw InvalidFormat("more than one <properties> section in <map>");
+		}
+
+		if( mapname == "" ) {
+			throw InvalidFormat("empty <name> in <map><properties>");
+		}
+
+		if( format_version != 1 ) {
+			throw InvalidFormat("wrong <format> in <map><properties>");
+		}
+
+		// Deprecated sections
 		TiXmlElement* el1 = el->FirstChildElement("tileset");
 		if (el1) {
 			Warn("xmlmap") 
@@ -130,17 +149,20 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		el1 = el->FirstChildElement("spriteset");
-		while (el1) {
-			loadSpriteSet(el1);
-			el1 = el1->NextSiblingElement("spriteset");
+		if (el1) {
+			Warn("xmlmap") 
+				<< "Ignoring <spriteset>. "
+				<< "Sorry for breaking working maps :-(";
 		}
 
 		el1 = el->FirstChildElement("animation");
-		while (el1) {
-			icL.loadAnimation(el1);
-			el1 = el1->NextSiblingElement("animation");
+		if (el1) {
+			Warn("xmlmap") 
+				<< "Ignoring <animation> "
+				<< "Sorry for breaking working maps :-(";
 		}
 
+		// Geometries + Archetypes
 		el1 = el->FirstChildElement("geometry");
 		while(el1) {
 			Geometry::registerGeometry(s_geometry_info::load(el1));
@@ -152,13 +174,22 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			loadArchetypes(el1);
 		}
 
+		// Finally create map, load metadata and loop through elevation
+		m_map = new Map(mapname);
+
+		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
+		if (metadata_element) {
+			xmlutil::loadMetadata(metadata_element,m_map);
+		}
+
+
 		TiXmlElement* el2 = el->FirstChildElement("elevation");
 		if (!el2) {
 			throw Exception("Error: found no 'elevation' entry!");
 		}
 		while (el2) {
 			loadElevation(el2);
-			el2 = el->NextSiblingElement("elevation");
+			el2 = el2->NextSiblingElement("elevation");
 		}
 
 		// I'm sure this can be refactored into something nicer. --zahlman
@@ -191,35 +222,6 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 	}
 
-	void XML::loadSpriteSet(TiXmlElement* element) {
-		TiXmlElement* sprite = element->FirstChildElement("sprite");
-		while (sprite) {
-			const char* sprite_filename = sprite->Attribute("source");
-			int sprite_gid = -1;
-			sprite->QueryIntAttribute("id", &sprite_gid);
-			if (sprite_gid == -1 || !sprite_filename) {
-				Log("xmlmap")
-					<< "Error: 'sprite' has to specify valid"
-					<< " sprite_gid and source attributes!";
-			} else {
-				int x_off, y_off;
-				if (sprite->QueryIntAttribute("x_offset", &x_off) != TIXML_SUCCESS )
-					x_off = 0;
-				if (sprite->QueryIntAttribute("y_offset", &y_off) != TIXML_SUCCESS )
-					y_off = 0;
-
-				spriteFilesMap[sprite_gid] = boost::make_tuple(std::string(sprite_filename), x_off, y_off);
-			}
-			sprite = sprite->NextSiblingElement("sprite");
-		}
-	}
-
-	void XML::loadTiles(TiXmlElement* el) {
-		if (icL.loadTileset(el)) {
-			throw Exception("Tileset error, aborting ...");
-		}
-	}
-
 	void XML::loadArchetypes(TiXmlElement* el1) {
 		el1 = el1->FirstChildElement("archetype");
 		while(el1) {
@@ -231,7 +233,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			}
 
 			if( file == 0 ) {
-				XMLArchetype * xmlat = new XMLArchetype(el1);	
+				XMLArchetype* xmlat = new XMLArchetype(el1);	
 				Factory::instance()->addArchetype(xmlat);
 			} else {
 				Factory::instance()->loadArchetype(type,file);
@@ -243,9 +245,19 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XML::loadElevation(TiXmlElement* el) {
-		int reference_grid = 0;
- 		el->QueryIntAttribute("refgrid", &reference_grid);
-		
+		int refgrid = 0;
+
+		TiXmlElement* props_element = el->FirstChildElement("properties");
+		if (!props_element) {
+			throw InvalidFormat("no <properties> section in <elevation>");
+		}
+		if( props_element->NextSiblingElement("properties") ) {
+			throw InvalidFormat("more than one <properties> section in <elevation>");
+		}
+
+		refgrid = xmlutil::queryElement<int>(props_element,"refgrid");
+
+
 		TiXmlElement* el2 = el->FirstChildElement("layer");
 		if (!el2) {
 			throw Exception("Error: found no 'layer' entry!");
@@ -255,6 +267,12 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 		m_cursor.elevation = new Elevation(structure);
 		m_cursor.elevationNumber += 1;
+
+		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
+		if (metadata_element) {
+			xmlutil::loadMetadata(metadata_element, m_cursor.elevation);
+		}
+
 		try{
 			while (el2) {
 				loadLayer(el2);
@@ -264,43 +282,46 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			delete m_cursor.elevation;
 			throw;
 		}
-		m_cursor.elevation->setReferenceGrid(reference_grid);
-		
+		m_cursor.elevation->setReferenceGrid(refgrid);
 		m_map->addElevation(m_cursor.elevation);
 	}
 
 
 	void XML::loadLayer(TiXmlElement* el) {
 		assert(el);
- 		int width, height, shiftx=0, shifty=0;
+
+		Point size, shift;
 		int geometry;
 
- 		el->QueryIntAttribute("width", &width);
- 		el->QueryIntAttribute("height", &height);
- 		el->QueryIntAttribute("geometry", &geometry);
+		TiXmlElement* props_element = el->FirstChildElement("properties");
+		if (!props_element) {
+			throw InvalidFormat("no <properties> section in <layer>");
+		}
+		if( props_element->NextSiblingElement("properties") ) {
+			throw InvalidFormat("more than one <properties> section in <elevation>");
+		}
+		size     = xmlutil::queryElement<Point>(props_element,"size");
+		shift    = xmlutil::queryElement<Point>(props_element,"shift",Point());
+		geometry = xmlutil::queryElement<int>(props_element,"geometry");
 
- 		el->QueryIntAttribute("shiftx", &shiftx);
- 		el->QueryIntAttribute("shifty", &shifty);
-
-		const char* outline = el->Attribute("outline");
-
-		m_cursor.width = width;
-		m_cursor.height = height;
-		m_cursor.geometry = geometry;
+		m_cursor.width  = size.x;
+		m_cursor.height = size.y;
 
 		Elevation* me = m_cursor.elevation;
-		Grid* grid = new Grid(Point(width,height),geometry); 
+		Grid* grid = new Grid(size,geometry); 
 		me->addGrid(grid);
 		m_cursor.layer = me->getNumGrids() - 1;
+		grid->setShift(shift);
+
+		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
+		if (metadata_element) {
+			xmlutil::loadMetadata(metadata_element, grid);
+		}
 
 		Log("xmlmap")
 			<< "Loading layer #" << m_cursor.layer
-			<< "  size: " << Point(width,height);
+			<< "  size: " << size;
 
-		if(outline) {
-			grid->setOverlayImage(outline);
-		}
-		grid->setShift(Point(shiftx,shifty));
 
  		TiXmlElement* mdat = el->FirstChildElement("data");
  		if (mdat) { // plain data found
@@ -308,16 +329,14 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
  		} else if ( (mdat = el->FirstChildElement("sparsedata")) ) {
 			// "sparsedata" found
 			loadLayerSparseData(mdat);
-		} else if ( (mdat = el->FirstChildElement("image")) ) {
+		}
+#if 0
+		if ( (mdat = el->FirstChildElement("image")) ) {
 			// image-as-data found
 			loadLayerImage(mdat);
 		}
+#endif
 		
-// 		if (!mdat) {
-// 			throw Exception("Error: elevation with no valid data child");
-//  		// end of any-data handler section
-// 		}
-
  		TiXmlElement* obj_element = el->FirstChildElement("objects");
  		if (!obj_element) {
 			Log("xmlmap") << "Info: layer does not contain static objects";
@@ -332,49 +351,46 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XML::loadObject(TiXmlElement* element) {
-		int sprite_gid = -1;
-		int grid_pos_x = -2;
-		int grid_pos_y = -2;
-		int orientation = -1;
-		int frame = -1;
-		const char *obj_typename = element->Attribute("typename");
-		element->QueryIntAttribute("spriteid", &sprite_gid);
-		element->QueryIntAttribute("grid_x", &grid_pos_x);
-		element->QueryIntAttribute("grid_y", &grid_pos_y);
-		element->QueryIntAttribute("orientation", &orientation);
-		element->QueryIntAttribute("frame", &frame);
+		assert( element );
+		std::auto_ptr<ObjectInfo> object(new ObjectInfo());
 
-		if (!obj_typename) {
-			Log("xmlmap") << "Error: object does not specify typename attribute";
-			return;
+		const char* proto_name = element->Attribute("prototype");
+		if( proto_name ) {
+			// Shortcut for the <object prototype="proto" x="100" y="100"/>
+			// case.
+			int attr_ok, x,y;
+
+			object->loadPrototype( proto_name );
+
+			attr_ok = element->QueryIntAttribute("x",&x );
+			if( attr_ok == TIXML_SUCCESS ) {
+				object->getLocation().position.x = x;
+			}
+
+			attr_ok = element->QueryIntAttribute("y",&y );
+			if( attr_ok == TIXML_SUCCESS ) {
+				object->getLocation().position.y = y;
+			}
+
+		} else {
+			// ObjectLoader does the hard work.
+			// Might be inefficient, as it translates to
+			// an internal state. But we'll see if this
+			// amounts to something.
+
+			ObjectLoader loader(element);
+			loader.merge( object.get() );
 		}
 
-		if (sprite_gid == -1 || (grid_pos_x == -2 && grid_pos_y == -2)) {
-			Log("xmlmap") << "Error: invalid object attribute values";
-			return;
-		}
+		// And finally add it.
+		object->getLocation().grid        = m_cursor.layer;
+		object->getLocation().elevation = m_cursor.elevationNumber;
 
 		ObjectManager* mom = m_map->getObjectManager();
-		ObjectInfo* obj = new ObjectInfo();
-		if (obj) {
-			RenderableLocation renderable_location(RenderAble::RT_IMAGE, spriteFilesMap[sprite_gid].get<0>() );
- 			renderable_location.addExtension(RenderableLocation::X, spriteFilesMap[sprite_gid].get<1>() );
-			renderable_location.addExtension(RenderableLocation::Y, spriteFilesMap[sprite_gid].get<2>() );
-			obj->setVisualLocation( renderable_location );
-			obj->set<std::string>(ObjectInfo::ObjectTypeParam,obj_typename);
-			if (orientation > -1) {
-				obj->set<size_t>(ObjectInfo::OrientationParam,orientation);
-			}
-			Location& loc = obj->getLocation();
 
-			loc.elevation = m_cursor.elevationNumber;
-			loc.position = Point(grid_pos_x, grid_pos_y);
-			loc.grid = m_cursor.layer;
+		object->debugPrint();
 
-			obj->setStatic(true);
-			obj->debugPrint();
-			mom->addObject(obj);
-		}
+		mom->addObject( object.release() );
 	}
 
 	void XML::loadLayerData(TiXmlElement* element) {
@@ -399,7 +415,6 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 				grid->setTileImage(x,y, iid);
 			} else {
 				Log("xmlmap") << "Error: a tile is missing a 'gid' attribute!";
-				tilegid = 0;
 			}
 			tilenode = tilenode->NextSiblingElement("tile");
 
@@ -444,6 +459,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 	}
 
+#if 0
 	void XML::loadLayerImage(TiXmlElement* element) {
 		Grid* grid = m_cursor.elevation->getGrid(m_cursor.layer);
 		int width  = m_cursor.width;
@@ -496,6 +512,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 		SDL_FreeSurface(img);
 	}
+#endif
 
 } } } } // FIFE::map::loaders::xml
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

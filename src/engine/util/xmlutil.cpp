@@ -51,6 +51,15 @@ namespace FIFE { namespace xmlutil {
 			std::string name(cname);
 			std::string type(ctype);
 
+			if( type == "text" ) {
+				t->set<std::string>(name, queryElement<std::string>(e) );
+				return;
+			}
+			if( type == "int" ) {
+				t->set<long>(name, queryElement<int>(e) );
+				return;
+			}
+
 			#define AC_SET_AND_RETURN(type_name)                                         \
 				if( type == # type_name ) {                                            \
 					t->set< type_name >(name, queryElement< type_name >(e) );        \
@@ -62,7 +71,7 @@ namespace FIFE { namespace xmlutil {
 			AC_SET_AND_RETURN( size_t );
 			AC_SET_AND_RETURN( Point );
 			AC_SET_AND_RETURN( Rect );
-			AC_SET_AND_RETURN( std::string );
+
 
 			#undef AC_SET_AND_RETURN
 		}

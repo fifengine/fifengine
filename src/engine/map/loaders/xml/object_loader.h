@@ -68,6 +68,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			MaybeData<RenderableLocation> m_rlocation;
 
 			Table m_data;
+			std::vector<size_t> m_prototypes;
 	};
 
 }}}}
