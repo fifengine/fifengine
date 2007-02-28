@@ -217,7 +217,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				throw InvalidFormat("unknown itemtype");
 				break;
 		}
-
+		obj->setStatic(true);
 #if 0
 		if (obj) {
 			loadImages("items", m_lst_items, info, obj);
@@ -237,6 +237,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		moi->set<size_t>("ai",ai);
 		moi->set<size_t>("group",groupId);
 		moi->set<size_t>("hitpoints",hitpoints);
+
+		moi->setStatic(false);
 	}
 
 	void ObjectFactory::loadScenery(RawDataPtr data, const s_objectinfo& info, ObjectInfo* obj) {
