@@ -111,7 +111,10 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 			animation->setFrame(i, frames[i]);
 		}
 		animation->setCurrentFrame(0);
-		
+		Debug("animation_loader")
+			<< "file: '" << filename
+			<< "' frames:" << frames.size();
+
 		return animation;
 	}
 

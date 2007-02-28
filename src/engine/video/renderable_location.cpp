@@ -138,12 +138,6 @@ namespace FIFE {
 		if( m_type != loc.m_type )
 			return false;
 
-		// catch undefined types
-		// this is correct as long undefined (0)
-		// really means undefined 
-		if (m_type == 0)
-			return true; 
-
 		// if we get here both have a valid m_string
 		if( m_string.length() != loc.m_string.length() )
 			return false;
@@ -182,11 +176,6 @@ namespace FIFE {
 
 		if( m_type != loc.m_type )
 			return false;
-
-		if( !isValid() )
-			return false; // catch for special case; is this correct?
-		
-		// assume m_type > 0
 
 		if( m_frame_idx < loc.m_frame_idx )
 			return true;
