@@ -219,6 +219,12 @@ namespace FIFE {
 
 
 	void Engine::mainLoop() {
+		int fpslimit =  SettingsManager::instance()->read<int>("FPSLimit",60);
+		if( fpslimit < 10 ) {
+			fpslimit = 10;
+		}
+		int frame_update_time = 1000 / fpslimit;
+
 		// Get instance variables.
 		GameStateManager* manager_gamestates = GameStateManager::instance();
 		input::Manager* manager_input = input::Manager::instance();
@@ -232,6 +238,7 @@ namespace FIFE {
 
 		// Main loop.
 		while (m_run) {
+			int32_t frame_start_time = SDL_GetTicks();
 			manager_input->handleEvents();
 
 			rbackend->startFrame();
@@ -251,6 +258,12 @@ namespace FIFE {
 
 			ImageCache::instance()->collect();
 			m_avgframetime = manager_time->getAverageFrameTime();
+
+			int frame_sleep_time = frame_start_time + frame_update_time - SDL_GetTicks();
+			if (frame_sleep_time < 0) {
+				frame_sleep_time = 0; // Delay=0 means an OS yield.
+			}
+			SDL_Delay(frame_sleep_time);
 		}
 		CScriptEngine()->callFunction("on_engine_stop");
 
