@@ -43,7 +43,7 @@ namespace FIFE { namespace map {
 		m_grid_overlay = false;
 
 		// set default attributes
-		setOverlayImage("content/gfx/tiles/tile_outline.png");
+		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");
 		get<std::string>("name", "__unnamed__");
 	}
 
@@ -124,14 +124,6 @@ namespace FIFE { namespace map {
 	}
 	void Grid::toggleGridOverlayEnabled() {
 		m_grid_overlay = !m_grid_overlay;
-	}
-
-	const std::string& Grid::getOverlayImage() const {
-		return m_overlay_image;
-	}
-
-	void Grid::setOverlayImage(const std::string& fname) {
-		m_overlay_image = fname;
 	}
 
 	struct grid_clear_visitor : public boost::static_visitor<> {

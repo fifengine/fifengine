@@ -314,9 +314,6 @@ namespace FIFE { namespace map {
 			 */
 			bool isValidPosition(int32_t x,int32_t y) const;
 
-			const std::string& getOverlayImage() const;
-			void setOverlayImage(const std::string& fname);
-
 		protected:
 			Point m_size;
 
@@ -330,7 +327,6 @@ namespace FIFE { namespace map {
 
 			Point m_shift;
 			Geometry* m_geometry;
-			std::string m_overlay_image;
 
 			typedef boost::variant<
 				std::vector<long>,
