@@ -37,7 +37,7 @@
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	class ObjectLoader;
+	class Prototype;
 
 	/** XML Archetype
 	 * @see http://wiki.fifengine.de/index.php?title=Archetypes
@@ -65,7 +65,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			void loadImage(TiXmlElement* e, int firstgid, int& gid, int lastgid,
 			               int tw, int th);
 
-			typedef std::map<size_t,ObjectLoader*> type_prototypes;
+			typedef std::map<size_t,Prototype*> type_prototypes;
 			type_prototypes m_prototypes;
 	};
 
