@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/elevation.h"
-#include "map/grid.h"
+#include "map/layer.h"
 
 #include "mapdump.h"
 
@@ -90,12 +90,12 @@ namespace FIFE {
 				m_output_file->newLine();			
 			}
 			*/
-			size_t tile_grid_count = elevation->getNumGrids();
+			size_t tile_grid_count = elevation->getNumLayers();
 
 			output_buffer = "Tiles: \n";
 			m_output_file->writeLine(output_buffer);			
 			for( size_t tile_index = 0; tile_index < tile_grid_count; tile_index++ ){
-				map::Grid* local_tile_grid = elevation->getGrid(tile_index);
+				map::Layer* local_tile_grid = elevation->getLayer(tile_index);
 				output_buffer = "Tile Grid: ";
 				m_output_file->write(output_buffer, 0, output_buffer.size());
 				m_output_file->rawWrite<size_t>(tile_index);

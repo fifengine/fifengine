@@ -37,7 +37,7 @@
 namespace FIFE { namespace map {
 
 	class View;
-	class Grid;
+	class Layer;
 	class Control;
 
 	/** A Camera onto the MapView
@@ -95,8 +95,8 @@ namespace FIFE { namespace map {
 
 			void render();
 		private:
-			Grid* m_grid;
-			View* m_view;
+			Layer* m_layer;
+			View*  m_view;
 			Point m_position;
 			Point m_next_position;
 			size_t m_tracked_visual;

@@ -35,7 +35,7 @@
 #include "map/elevation.h"
 #include "map/factory.h"
 #include "map/geometry.h"
-#include "map/grid.h"
+#include "map/layer.h"
 #include "map/objectinfo.h"
 #include "map/objectmanager.h"
 #include "tinyxml/tinyxml.h"
@@ -263,7 +263,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			throw Exception("Error: found no 'layer' entry!");
 		}
 		elevation_info structure;
-		structure.numberOfGrids = 0;
+		structure.numberOfLayers = 0;
 
 		m_cursor.elevation = new Elevation(structure);
 		m_cursor.elevationNumber += 1;
@@ -282,7 +282,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			delete m_cursor.elevation;
 			throw;
 		}
-		m_cursor.elevation->setReferenceGrid(refgrid);
+		m_cursor.elevation->setReferenceLayer(refgrid);
 		m_map->addElevation(m_cursor.elevation);
 	}
 
@@ -308,14 +308,14 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		m_cursor.height = size.y;
 
 		Elevation* me = m_cursor.elevation;
-		Grid* grid = new Grid(size,geometry); 
-		me->addGrid(grid);
-		m_cursor.layer = me->getNumGrids() - 1;
-		grid->setShift(shift);
+		Layer* layer = new Layer(size,geometry); 
+		me->addLayer(layer);
+		m_cursor.layer = me->getNumLayers() - 1;
+		layer->setShift(shift);
 
 		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
 		if (metadata_element) {
-			xmlutil::loadMetadata(metadata_element, grid);
+			xmlutil::loadMetadata(metadata_element, layer);
 		}
 
 		Log("xmlmap")
@@ -383,7 +383,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		// And finally add it.
-		object->getLocation().grid      = m_cursor.layer;
+		object->getLocation().layer     = m_cursor.layer;
 		object->getLocation().elevation = m_cursor.elevationNumber;
 
 		ObjectManager* mom = m_map->getObjectManager();
@@ -394,9 +394,9 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XML::loadLayerData(TiXmlElement* element) {
-		Grid* grid = m_cursor.elevation->getGrid(m_cursor.layer);
-		int width  = m_cursor.width;
-		int height = m_cursor.height;
+		Layer* layer = m_cursor.elevation->getLayer(m_cursor.layer);
+		int width    = m_cursor.width;
+		int height   = m_cursor.height;
 
 		// seek for w*h <tile> entries
 		unsigned int x = 0;
@@ -412,7 +412,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			tilenode->QueryIntAttribute("gid", &tilegid);
 			if (tilegid > -1) {
 				size_t iid = Factory::instance()->getTileImageId(tilegid);
-				grid->setTileImage(x,y, iid);
+				layer->setTileImage(x,y, iid);
 			} else {
 				Log("xmlmap") << "Error: a tile is missing a 'gid' attribute!";
 			}
@@ -433,7 +433,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XML::loadLayerSparseData(TiXmlElement* element) {
-		Grid* grid = m_cursor.elevation->getGrid(m_cursor.layer);
+		Layer* layer = m_cursor.elevation->getLayer(m_cursor.layer);
 
 		TiXmlElement *sdn = element->FirstChildElement("tileat");
 		if (!sdn) {
@@ -454,14 +454,14 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 					" gid, x and y (>=0)");
 			}
 
-			grid->setTileImage(x, y, Factory::instance()->getTileImageId(gid));
+			layer->setTileImage(x, y, Factory::instance()->getTileImageId(gid));
 			sdn = sdn->NextSiblingElement("tileat");
 		}
 	}
 
 #if 0
 	void XML::loadLayerImage(TiXmlElement* element) {
-		Grid* grid = m_cursor.elevation->getGrid(m_cursor.layer);
+		Layer* Layer = m_cursor.elevation->getLayer(m_cursor.layer);
 		int width  = m_cursor.width;
 		int height = m_cursor.height;
 
@@ -499,7 +499,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 					Log("xmlmap") 
 						<< "Invalid id: " << int(v) << " at (" << x << ", " << y << ")";
 				}
-				grid->setTileImage(x, y, iid);
+				Layer->setTileImage(x, y, iid);
 				pixel += img->format->BytesPerPixel;
 			}
 			// does this work everywhere?

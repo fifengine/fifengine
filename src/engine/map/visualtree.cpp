@@ -154,9 +154,9 @@ namespace FIFE { namespace map {
 	}
 
 	bool visual_compare(Visual* a, Visual* b) {
-		if( a->getGrid() < b->getGrid() )
+		if( a->getLayer() < b->getLayer() )
 			return true;
-		if( a->getGrid() > b->getGrid() )
+		if( a->getLayer() > b->getLayer() )
 			return false;
 
 		if( a->getZValue() == 0 && b->getZValue())

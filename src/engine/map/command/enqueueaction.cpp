@@ -30,6 +30,7 @@
 #include "map/action.h"
 #include "map/map.h"
 #include "map/elevation.h"
+#include "map/layer.h"
 #include "map/geometry.h"
 #include "map/objectinfo.h"
 #include "map/objectmanager.h"
@@ -57,7 +58,7 @@ namespace FIFE { namespace map { namespace command {
 	MotionProxy::MotionProxy(Map* map, View* mapview, size_t visualId)
 		: m_View(mapview), m_visualId(visualId) {
 		Location loc(m_View->getVisual(m_visualId)->getLocation());
-		m_geometry = map->getElevation(loc.elevation)->getGrid(loc.grid)->getGeometry();
+		m_geometry = map->getElevation(loc.elevation)->getLayer(loc.layer)->getGeometry();
 	}
 
 	void MotionProxy::operator()(const Action& action) {

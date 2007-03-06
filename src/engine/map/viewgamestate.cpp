@@ -45,7 +45,7 @@
 #include "camera.h"
 #include "control.h"
 #include "elevation.h"
-#include "grid.h"
+#include "layer.h"
 #include "view.h"
 #include "viewgamestate.h"
 
@@ -112,15 +112,15 @@ namespace FIFE { namespace map {
 			return;
 
 		FIFE::map::Elevation* elevation = m_view->getCurrentElevation();
-		FIFE::map::Grid *obj_grid=0, *floor_grid=0, *roof_grid=0;
+		FIFE::map::Layer *obj_grid=0, *floor_grid=0, *roof_grid=0;
 
 		// FIXME Hardcoded map structure
-		if( elevation->getNumGrids() > 0)
-			floor_grid = elevation->getGrid(0);
-		if( elevation->getNumGrids() > 1)
-			obj_grid   = elevation->getGrid(1);
-		if( elevation->getNumGrids() > 2)
-			roof_grid  = elevation->getGrid(2);
+		if( elevation->getNumLayers() > 0)
+			floor_grid = elevation->getLayer(0);
+		if( elevation->getNumLayers() > 1)
+			obj_grid   = elevation->getLayer(1);
+		if( elevation->getNumLayers() > 2)
+			roof_grid  = elevation->getLayer(2);
 
 		switch (event) {
 			case FIFE::Event::GO_NORTH:

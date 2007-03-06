@@ -28,12 +28,12 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "geometry.h"
-#include "grid.h"
+#include "layer.h"
 
 namespace FIFE { namespace map {
 
-	Grid::Grid(const Point& size, size_t geometry)
-		: AttributedClass("map_grid"),
+	Layer::Layer(const Point& size, size_t geometry)
+		: AttributedClass("map_Layer"),
 		m_size(size),
 		m_global_alpha(255),
  		m_shift(),
@@ -44,33 +44,32 @@ namespace FIFE { namespace map {
 
 		// set default attributes
 		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");
-		get<std::string>("name", "__unnamed__");
 	}
 
-	Grid::~Grid() {
+	Layer::~Layer() {
 		delete m_geometry;
 	}
 
-	const Point& Grid::getSize() const {
+	const Point& Layer::getSize() const {
 		return m_size;
 	}
 
-	Geometry* Grid::getGeometry() {
+	Geometry* Layer::getGeometry() {
 		return m_geometry;
 	}
 
-	void Grid::setShift(const Point& shift) {
+	void Layer::setShift(const Point& shift) {
 		m_shift = shift;
 	}
 
-	const Point& Grid::getShift() const {
+	const Point& Layer::getShift() const {
 		return m_shift;
 	}
 
-	void Grid::setTileImage(int32_t x, int32_t y, size_t id) {
+	void Layer::setTileImage(int32_t x, int32_t y, size_t id) {
 		setTileImage(Point(x,y),id);
 	}
-	void Grid::setTileImage(const Point& p, size_t id) {
+	void Layer::setTileImage(const Point& p, size_t id) {
 		if (m_tiles.empty()) {
 			m_tiles.resize(m_size.x * m_size.y);
 		}
@@ -80,60 +79,60 @@ namespace FIFE { namespace map {
 		m_tiles[p.x + p.y * m_size.x] = id;
 	}
 
-	bool Grid::hasTiles() const {
+	bool Layer::hasTiles() const {
 		return !m_tiles.empty();
 	}
 
-	void Grid::setTilesVisible(bool vis) {
+	void Layer::setTilesVisible(bool vis) {
 		m_tiles_visibility = vis;
 	}
-	void Grid::toggleTilesVisible() {
+	void Layer::toggleTilesVisible() {
 		m_tiles_visibility = !m_tiles_visibility;
 	}
-	bool Grid::areTilesVisible() const {
+	bool Layer::areTilesVisible() const {
 		return m_tiles_visibility;
 	}
 
-	void Grid::setObjectsVisible(bool vis) {
+	void Layer::setObjectsVisible(bool vis) {
 		m_objects_visibility = vis;
 	}
-	void Grid::toggleObjectsVisible() {
+	void Layer::toggleObjectsVisible() {
 		m_objects_visibility = !m_objects_visibility;
 	}
-	bool Grid::areObjectsVisible() const {
+	bool Layer::areObjectsVisible() const {
 		return m_objects_visibility;
 	}
 
-	uint8_t Grid::getGlobalAlpha() const {
+	uint8_t Layer::getGlobalAlpha() const {
 		return m_global_alpha;
 	}
 
-	void Grid::setGlobalAlpha(uint8_t alpha) {
+	void Layer::setGlobalAlpha(uint8_t alpha) {
 		m_global_alpha = alpha;
 	}
 
-	void Grid::addToGlobalAlpha(int delta) {
+	void Layer::addToGlobalAlpha(int delta) {
 		m_global_alpha = std::min(255, std::max(0, m_global_alpha + delta));
 	}
 
-	bool Grid::isGridOverlayEnabled() const {
+	bool Layer::isGridOverlayEnabled() const {
 		return m_grid_overlay;
 	}
-	void Grid::setGridOverlayEnabled(bool e) {
+	void Layer::setGridOverlayEnabled(bool e) {
 		m_grid_overlay = e;
 	}
-	void Grid::toggleGridOverlayEnabled() {
+	void Layer::toggleGridOverlayEnabled() {
 		m_grid_overlay = !m_grid_overlay;
 	}
 
-	struct grid_clear_visitor : public boost::static_visitor<> {
+	struct Layer_clear_visitor : public boost::static_visitor<> {
 		void operator()(std::vector<long>& v)  const { v.clear(); }
 		void operator()(std::vector<bool>& v)  const { v.clear(); }
 		void operator()(std::vector<float>& v) const { v.clear(); }
 	};
 
-	void Grid::removeParam(uint8_t param_id) {
-		boost::apply_visitor( grid_clear_visitor(), m_paramgrids.at(param_id) );
+	void Layer::removeParam(uint8_t param_id) {
+		boost::apply_visitor( Layer_clear_visitor(), m_paramLayers.at(param_id) );
 		m_param_freelist.push_back( param_id );
 
 		type_paramnames_reverse::iterator it;

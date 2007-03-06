@@ -35,26 +35,26 @@
 #include "video/point.h"
 
 namespace FIFE { namespace map {
-	struct grid_info {
+	struct layer_info {
 		size_t geometry;
 		std::string overlay;
 		Point size;
 		Point shift;
 		Point overlay_offset;
 
-		grid_info(size_t geometry, const std::string& overlay, Point size, 
+		layer_info(size_t geometry, const std::string& overlay, Point size, 
 		          Point shift = Point(), Point overlay_offset = Point()) :
 			geometry(geometry), overlay(overlay), size(size), shift(shift),
 			overlay_offset(overlay_offset) {}
 	};
 
 	struct elevation_info {
-		size_t numberOfGrids;
-		std::vector<grid_info> grids;
-		size_t referenceGrid;
+		size_t numberOfLayers;
+		std::vector<layer_info> layers;
+		size_t referenceLayer;
 
-		elevation_info(grid_info* begin, grid_info* end, int rg) : 
-			numberOfGrids(end - begin), grids(begin, end), referenceGrid(rg) {}
+		elevation_info(layer_info* begin, layer_info* end, int rg) : 
+			numberOfLayers(end - begin), layers(begin, end), referenceLayer(rg) {}
 
 		/* FIXME? */
 		elevation_info() {}

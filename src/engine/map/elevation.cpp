@@ -32,25 +32,25 @@
 #include "exception.h"
 
 #include "elevation.h"
-#include "grid.h"
+#include "layer.h"
 #include "geometry.h"
 
 namespace FIFE { namespace map {
 	Elevation::Elevation(const elevation_info& structure) 
 		: AttributedClass("map_elevation"),
-		m_reference_grid(0) {
+		m_reference_layer(0) {
 
-		setNumGrids(structure.numberOfGrids);
-		for (size_t i = 0; i != structure.numberOfGrids; ++i) {
-			Grid *grid = new Grid(structure.grids[i].size,
-			                      structure.grids[i].geometry);
-			grid->setShift(structure.grids[i].shift);
-			grid->set("_OVERLAY_IMAGE",structure.grids[i].overlay);
-			grid->set("_OVERLAY_IMAGE_OFFSET", structure.grids[i].overlay_offset);
+		setNumLayers(structure.numberOfLayers);
+		for (size_t i = 0; i != structure.numberOfLayers; ++i) {
+			Layer *layer = new Layer(structure.layers[i].size,
+			                      structure.layers[i].geometry);
+			layer->setShift(structure.layers[i].shift);
+			layer->set("_OVERLAY_IMAGE",structure.layers[i].overlay);
+			layer->set("_OVERLAY_IMAGE_OFFSET", structure.layers[i].overlay_offset);
 
-			setGrid(i, grid);
+			setLayer(i, layer);
 		}
-		setReferenceGrid(structure.referenceGrid);
+		setReferenceLayer(structure.referenceLayer);
 	}
 
 	// XXX Why are we storing pointers?
@@ -60,34 +60,34 @@ namespace FIFE { namespace map {
 	}
 
 	void Elevation::cleanup() {
-		purge(m_grids);
+		purge(m_layers);
 	}
 
-	size_t Elevation::getNumGrids() const {
-		return m_grids.size();
+	size_t Elevation::getNumLayers() const {
+		return m_layers.size();
 	}
 
-	void Elevation::setNumGrids(size_t n) {
-		m_grids.resize(n);
+	void Elevation::setNumLayers(size_t n) {
+		m_layers.resize(n);
 	}
 
-	void Elevation::setGrid(size_t idx, Grid* grid) {
-		m_grids[idx] = grid;
+	void Elevation::setLayer(size_t idx, Layer* Layer) {
+		m_layers[idx] = Layer;
 	}
-	void Elevation::addGrid(Grid* grid) {
-		m_grids.push_back(grid);
-	}
-
-	Grid* Elevation::getGrid(size_t idx) {
-		return m_grids.at(idx);
+	void Elevation::addLayer(Layer* layer) {
+		m_layers.push_back(layer);
 	}
 
-	void Elevation::setReferenceGrid(size_t grid) {
-		m_reference_grid = grid;
+	Layer* Elevation::getLayer(size_t idx) {
+		return m_layers.at(idx);
 	}
 
-	Grid* Elevation::getReferenceGrid() {
-		return getGrid(m_reference_grid);
+	void Elevation::setReferenceLayer(size_t layer) {
+		m_reference_layer = layer;
+	}
+
+	Layer* Elevation::getReferenceLayer() {
+		return getLayer(m_reference_layer);
 	}
 
 	Point Elevation::centerOfMass() {
@@ -95,17 +95,17 @@ namespace FIFE { namespace map {
 		Point p;
 
 		// Sanity checks.
-		Grid* ref_grid = getReferenceGrid();
-		if( ref_grid == 0 )
+		Layer* ref_layer = getReferenceLayer();
+		if( ref_layer == 0 )
 			return p;
 
-		Geometry* ref_geo = ref_grid->getGeometry();
+		Geometry* ref_geo = ref_layer->getGeometry();
 		if( ref_geo == 0 )
 			return p;
 
 
-		type_grids::iterator end = m_grids.end();
-		for (type_grids::iterator i = m_grids.begin(); i != end; ++i) {
+		type_layers::iterator end = m_layers.end();
+		for (type_layers::iterator i = m_layers.begin(); i != end; ++i) {
 			Point pos;
 			Geometry *geo = (*i)->getGeometry();
 			if( geo == 0 )
