@@ -60,6 +60,15 @@ namespace FIFE { namespace xmlutil {
 				return;
 			}
 
+			if( type == "id" ) {
+				int id = queryElement<int>(e);
+				if( id < 0 ) {
+					throw InvalidFormat("'id' parameter must be >0 ");
+				}
+				t->set<size_t>(name,id);
+				return;
+			}
+
 			#define AC_SET_AND_RETURN(type_name)                                         \
 				if( type == # type_name ) {                                            \
 					t->set< type_name >(name, queryElement< type_name >(e) );        \
@@ -67,8 +76,6 @@ namespace FIFE { namespace xmlutil {
 				}
 
 			AC_SET_AND_RETURN( bool );
-			AC_SET_AND_RETURN( long );
-			AC_SET_AND_RETURN( size_t );
 			AC_SET_AND_RETURN( Point );
 			AC_SET_AND_RETURN( Rect );
 

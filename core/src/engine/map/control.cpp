@@ -108,7 +108,7 @@ namespace FIFE { namespace map {
 		m_runner->setRuleset(ScriptContainer::fromFile(ruleset_file));
 		m_runner->initialize(m_view, m_map, m_om);
 		m_runner->start();
-		activateElevation(m_map->get<size_t>("default-elevation", 0));
+		activateElevation(m_map->get<size_t>("_START_ELEVATION", 0));
 	}
 
 	void Control::activateElevation(size_t elev) {
@@ -117,12 +117,12 @@ namespace FIFE { namespace map {
 
 		// Assure a default starting position is set
 		Elevation* current_elevation = m_view->getCurrentElevation();
-		if( !current_elevation->hasAttribute("default-player-position") ) {
+		if( !current_elevation->hasAttribute("_START_POSITION") ) {
 			Point start_pos = current_elevation->centerOfMass();
 			Log("map_control")
-				<< "No default player position found. "
+				<< "No start position found. "
 				<< "Using centerOfMass(): " << start_pos;
-			current_elevation->set<Point>("default-player-position",start_pos);
+			current_elevation->set<Point>("_START_POSITION",start_pos);
 		}
 
 		// Assure camera(s) are aware of the change.
