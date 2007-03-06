@@ -36,7 +36,7 @@
 #include "video/pixelbuffer.h"
 
 #include "xml_archetype.h"
-#include "object_loader.h"
+#include "prototype.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
@@ -276,7 +276,7 @@ if(attr_ok == TIXML_NO_ATTRIBUTE) {                                             
 				throw InvalidFormat("no 'name' attribute on <prototype>");
 			}
 
-			ObjectLoader* objLoader = new ObjectLoader(element);
+			Prototype* objLoader = new Prototype(element);
 			size_t proto_id = addPrototype(name);
 			m_prototypes.insert( std::make_pair(proto_id,objLoader) );
 

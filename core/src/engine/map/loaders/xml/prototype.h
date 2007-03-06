@@ -63,17 +63,17 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	 *  Prototypes otherwise.
 	 *
 	 */
-	class ObjectLoader {
+	class Prototype {
 		public:
 			/** Constructor
 			 *  Creates itself from an XML Element.
 			 *  Throws on imvalid format entries.
 			 */
-			ObjectLoader(TiXmlElement* element);
+			Prototype(TiXmlElement* element);
 
 			/** Destructor
 			 */
-			~ObjectLoader();
+			~Prototype();
 
 			/** Create an object from this Prototype
 			 */
@@ -95,7 +95,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 			Table m_data;
 			std::vector<size_t> m_prototypes;
-			std::vector<ObjectLoader*> m_inventory;
+			std::vector<Prototype*> m_inventory;
 	};
 
 }}}}

@@ -46,7 +46,7 @@
 
 #include "xml.h"
 #include "xml_archetype.h"
-#include "object_loader.h"
+#include "prototype.h"
 
 // I did some minor fixes in here (beyond just reformatting) but it's nowhere
 // near exhaustive; my understanding is that we're replacing the XML file
@@ -378,7 +378,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			// an internal state. But we'll see if this
 			// amounts to something.
 
-			ObjectLoader loader(element);
+			Prototype loader(element);
 			loader.merge( object.get() );
 		}
 

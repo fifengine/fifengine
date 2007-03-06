@@ -33,12 +33,12 @@
 #include "util/xmlutil.h"
 #include "map/factory.h"
 
-#include "object_loader.h"
+#include "prototype.h"
 
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	ObjectLoader::ObjectLoader(TiXmlElement* element) : m_data("Table") {
+	Prototype::Prototype(TiXmlElement* element) : m_data("Table") {
 		assert( element );
 
 		TiXmlElement* proto_element = element->FirstChildElement("prototype");
@@ -78,17 +78,17 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if( inventory_element ) {
 			inventory_element = inventory_element->FirstChildElement("object");
 			while( inventory_element ) {
-				m_inventory.push_back(new ObjectLoader(inventory_element));
+				m_inventory.push_back(new Prototype(inventory_element));
 				inventory_element = inventory_element->NextSiblingElement("object");
 			}
 		}
 	}
 
-	ObjectLoader::~ObjectLoader() {
+	Prototype::~Prototype() {
 		purge( m_inventory );
 	}
 
-	void ObjectLoader::loadVisual(TiXmlElement* element) {
+	void Prototype::loadVisual(TiXmlElement* element) {
 		assert( element );
 		RenderableLocation location;
 		int attr_ok;
@@ -131,13 +131,13 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 	}
 
-	ObjectInfo* ObjectLoader::create() {
+	ObjectInfo* Prototype::create() {
 		ObjectInfo* object = new ObjectInfo();
 		merge( object );
 		return object;
 	}
 
-	void ObjectLoader::merge(ObjectInfo* object) {
+	void Prototype::merge(ObjectInfo* object) {
 		assert( object );
 
 		for( size_t i=0; i!=m_prototypes.size(); ++i ) {
