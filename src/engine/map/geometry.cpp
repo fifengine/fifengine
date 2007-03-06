@@ -121,13 +121,23 @@ namespace FIFE { namespace map {
 
 
 	s_geometry_info s_geometry_info::load(TiXmlElement* e) {
+		s_geometry_info geometry;
+		
 		xmlutil::assertElement(e, "geometry" );
-		return s_geometry_info(xmlutil::queryElement<size_t>(e,"id"),
-		                       xmlutil::queryElement<std::string>(e,"type"),
-		                       xmlutil::queryElement<Point>(e,"size"),
-		                       xmlutil::queryElement<Point>(e,"transform"),
-		                       xmlutil::queryElement<Point>(e,"offset"),
-		                       xmlutil::queryElement<int>(e,"flags"));
+		geometry.id       = xmlutil::queryElement<size_t>(e,"id");
+		geometry.geometry = xmlutil::queryElement<std::string>(e,"type");
+		if(geometry.geometry != "HEXAGONAL" && geometry.geometry != "RECTANGULAR") {
+			throw InvalidFormat("geometry has to have a type"
+			                    " of either HEXAGONAL or RECTANGULAR");
+		}
+
+		geometry.size = xmlutil::queryElement<Point>(e,"size");
+
+		geometry.transform = xmlutil::queryElement<Point>(e,"transform",geometry.size);
+		geometry.offset    = xmlutil::queryElement<Point>(e,"offset",Point());
+		geometry.flags     = xmlutil::queryElement<int>(e,"flags",0);
+
+		return geometry;
 	}
 
 } };
