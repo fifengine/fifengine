@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "debugutils.h"
+#include "util/purge.h"
 
 #include "elevation.h"
 #include "grid.h"
@@ -49,10 +50,7 @@ namespace FIFE { namespace map {
 
 	void Map::cleanup() {
 		// Delete Elevations
-		type_elevations::const_iterator end = m_elevations.end();
-		for (type_elevations::iterator i = m_elevations.begin(); i != end; ++i) {
-			delete *i;
-		}
+		purge( m_elevations );
 		m_elevations.clear();
 		
 		// Delete objects

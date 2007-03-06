@@ -278,7 +278,7 @@ if(attr_ok == TIXML_NO_ATTRIBUTE) {                                             
 
 			ObjectLoader* objLoader = new ObjectLoader(element);
 			size_t proto_id = addPrototype(name);
-			m_prototypes[ proto_id ] = objLoader;
+			m_prototypes.insert( std::make_pair(proto_id,objLoader) );
 
 			Log("xml::archetype")
 				<< " loaded Prottype '" << name << "' as " << proto_id;

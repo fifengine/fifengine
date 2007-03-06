@@ -52,12 +52,37 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		bool haveData;
 	};
 
+	/** Prototype loader class
+	 *
+	 *  Loads itself from an XML element, recursivly adding inventory items.
+	 *  Can be used to directly create an object from it, or saved to use
+	 *  it as a prototype.
+	 *
+	 *  It's important that this class does not change values it didn't read
+	 *  from the XML element, as it would overwrite the values set by other
+	 *  Prototypes otherwise.
+	 *
+	 */
 	class ObjectLoader {
 		public:
+			/** Constructor
+			 *  Creates itself from an XML Element.
+			 *  Throws on imvalid format entries.
+			 */
 			ObjectLoader(TiXmlElement* element);
+
+			/** Destructor
+			 */
 			~ObjectLoader();
 
+			/** Create an object from this Prototype
+			 */
 			ObjectInfo* create();
+
+			/** Merge the data from this Prototype
+			 *  Overwrites the values set in the given object,
+			 *  by the data read in the constructor.
+			 */
 			void merge(ObjectInfo* object);
 
 		private:
