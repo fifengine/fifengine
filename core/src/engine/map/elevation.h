@@ -70,15 +70,6 @@ namespace FIFE { namespace map {
 	 * \todo Export the yet unwritten functionality into the scriptengine...
 	 * ... and we are a lot closer to a game.
 	 *
-	 * \bug ~Inherited~ Fallout map size limitation
-	 * This bug isn't written in code in *this* class, but it seems to belong here
-	 * nonetheless.
-	 *
-	 * The problem isn't storage capacity, but the formula calculating the hexgrid
-	 * position from a single integer value (div/mod 200; see object.cpp, maybe
-	 * not the only case).
-	 * Certainly not good, but not that important for now.
-	 * 
 	 */
 	class Elevation : public AttributedClass {
 		public:

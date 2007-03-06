@@ -60,8 +60,8 @@ namespace FIFE { namespace map {
 	class Map : public AttributedClass {
 		public:
 			typedef enum {
-				OnStartScript = 1,
-				OnStopScript = 2,
+				OnStartScript     = 1,
+				OnStopScript      = 2,
 				OnElevationChange = 3
 			} ScriptType;
 
@@ -84,8 +84,6 @@ namespace FIFE { namespace map {
 			std::string m_mapname;
 			ObjectManager* m_mom;
 
-			// XXX Why do we store these by pointer?
-			
 			typedef std::vector<Elevation*> type_elevations;
 			type_elevations m_elevations;
 

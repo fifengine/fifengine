@@ -38,8 +38,6 @@
 #include "tinyxml/tinyxml.h"
 #include "vfs/vfs.h"
 
-#include "imgcache.h"
-
 namespace FIFE { namespace map { 
 	class RawData;
 	class Elevation;
@@ -49,26 +47,16 @@ namespace loaders { namespace xml {
 
 	/** An XML-based maploader for the fife-engine.
 	 *
-	 * This is an experiment to determine what kind of features
-	 * a map (and other object) format require. Furthermore it
-	 * is a second test-case for the fife engine, a demo howto
-	 * write a maploader and quick way to create some (free)
-	 * content (that can be released with the engine).
-	 *
 	 * TinyXML: http://www.grinninglizard.com/tinyxml/
 	 *
 	 * DTD: https://mirror1.cvsdude.com/trac/fife/content/browser/HEAD/maps/map.dtd
 	 * 
-	 * @see Loader
-	 * @see ImgcacheLoader
+	 * @see map::Factory, XMLArchetype, ObjectLoader
 	 *
-	 * Notes on the map-format:
+	 * Notes on the map-format: http://wiki.fifengine.de/index.php?title=Map_Format
 	 *
 	 * Mainly inspired from FO2.
 	 * 
-	 *
-	 * @note There are a lot different  methods of actually loading the tile data,
-	 * some of them may or may not be tested currently.
 	 * @see map.dtd The document type definition for xml maps.
 	 */
 	class XML : public Loader {
