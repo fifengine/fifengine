@@ -23,11 +23,8 @@
 #define FIFE_MAP_LOADERS_XML_XML_H
 
 // Standard C++ library includes
-#include <list>
-#include <map>
 
 // 3rd party library includes
-#include <boost/tuple/tuple.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

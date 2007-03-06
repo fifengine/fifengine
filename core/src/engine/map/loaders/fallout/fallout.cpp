@@ -31,7 +31,7 @@
 // Second block: files included from the same folder
 // XXX Do we really need all this?
 #include "map/map.h"
-#include "map/grid.h"
+#include "map/layer.h"
 #include "map/geometry.h"
 #include "map/objectinfo.h"
 #include "map/objectmanager.h"
@@ -137,8 +137,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 					// i just confused? ;)
 					Point tilepos(99-x,y);
 
-					Grid* floorgrid  = elevation->getGrid(0);
-					Grid* roofgrid   = elevation->getGrid(2);
+					Layer* floorgrid  = elevation->getLayer(0);
+					Layer* roofgrid   = elevation->getLayer(2);
 					if (roof > 1) {
 						std::string roof_file = "art/tiles/" + lst.getProFile(roof);
 						const s_imgdata& imgdata = getImageID(roof_file);
@@ -152,8 +152,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 					}
 				}
 			}
-			Grid* grid = elevation->getGrid(1);
-			grid->addParam<bool>("BLOCKING", false);
+			Layer* layer = elevation->getLayer(1);
+			layer->addParam<bool>("BLOCKING", false);
 			map->addElevation(elevation);
 		}
 	}
@@ -237,7 +237,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				if( obj ) {
 					// Reposition obj on "larger" map
 					obj->getLocation().elevation = fife_elev;
-					obj->getLocation().grid = 1;
+					obj->getLocation().layer = 1;
 					mom->addObject(obj);
 				}
 			}

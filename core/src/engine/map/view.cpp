@@ -42,7 +42,7 @@
 #include "camera.h"
 #include "elevation.h"
 #include "geometry.h"
-#include "grid.h"
+#include "layer.h"
 #include "map.h"
 #include "objectinfo.h"
 #include "view.h"
@@ -57,11 +57,11 @@ namespace FIFE { namespace map {
 		m_surface(0),
 		m_rect(),
 		m_elevation(0),
-		m_grid_pos(-1) {
+		m_layer_pos(-1) {
 		// Quick hack for getting the masks.
 		// msef003.frm >> hex outline
 		// msef000.frm >> hex outline
-		m_grid_id = 0;
+		m_layer_id = 0;
 		m_tilemask = ImageCache::instance()->addImageFromFile("content/gfx/tiles/tile_outline.png");
 		// m_objmask =  ImageCache::instance()->addImageFromFile("msef003.frm");
 
@@ -76,7 +76,7 @@ namespace FIFE { namespace map {
 		: m_surface(0),
 		m_rect(),
 		m_elevation(0),
-		m_grid_pos() , m_grid_id(0) {
+		m_layer_pos() , m_layer_id(0) {
 	}
 
 	View& View::operator=(const View&) {
@@ -130,8 +130,8 @@ namespace FIFE { namespace map {
 		if( visual == 0 ) {
 			return 0;
 		}
-		Grid* grid = m_elevation->getGrid(visual->getLocation().grid);
-		visual->reset(grid);
+		Layer* layer = m_elevation->getLayer(visual->getLocation().layer);
+		visual->reset(layer);
 // 		Log("map_view")
 // 			<< "Adding visual at " << visual->getScreenBox();
 
@@ -155,8 +155,8 @@ namespace FIFE { namespace map {
 		if( !visual )
 			return;
 
-		Grid* grid = m_elevation->getGrid(visual->getGrid());
-		visual->reset(grid);
+		Layer* layer = m_elevation->getLayer(visual->getLayer());
+		visual->reset(layer);
 		m_vtree->updateVisual( visualId );
 	}
 	void View::elevationChange() {
@@ -169,13 +169,13 @@ namespace FIFE { namespace map {
 	}
 
 	void View::loadOverlayImage(const std::string & filename) {
-		m_grid_id = ImageCache::instance()->addImageFromFile(filename);
-		//m_grid_pos = -1;
+		m_layer_id = ImageCache::instance()->addImageFromFile(filename);
+		//m_layer_pos = -1;
 	}
 
-	void View::renderGrid(Grid* grid ) {
-		Point offset = m_offset + grid->getShift();
-		Geometry* geometry = grid->getGeometry();
+	void View::renderGridOverlay(Layer* layer ) {
+		Point offset = m_offset + layer->getShift();
+		Geometry* geometry = layer->getGeometry();
 
 		int startx, starty, stopx, stopy;
 		Rect draw = geometry->gridBoundingRect(Rect(offset.x,offset.y,m_rect.w,m_rect.h));
@@ -183,7 +183,7 @@ namespace FIFE { namespace map {
 		starty = draw.y;
 		int x_range = draw.w;
 		int y_range = draw.h;
-		Point size = grid->getSize();
+		Point size = layer->getSize();
 		stopx = startx + x_range + 2;
 		stopx = std::min(size.x, stopx);
 		startx = std::max(0, startx);
@@ -192,7 +192,7 @@ namespace FIFE { namespace map {
 		stopy = std::min(size.y,stopy);
 
 		Point basesize = geometry->baseSize();
-		size_t image_id = getGridOverlayImageId( grid );
+		size_t image_id = getGridOverlayImageId( layer );
 		RenderAble* renderable = ImageCache::instance()->getImage( image_id );
 
 		offset.x -= m_rect.x;
@@ -209,9 +209,9 @@ namespace FIFE { namespace map {
 	}
 
 
-	void View::renderTiles( Grid* grid ) {
-		Point offset = m_offset + grid->getShift();
-		Geometry* geometry = grid->getGeometry();
+	void View::renderTiles( Layer* layer ) {
+		Point offset = m_offset + layer->getShift();
+		Geometry* geometry = layer->getGeometry();
 
 		int startx, starty, stopx, stopy;
 		Rect draw = geometry->gridBoundingRect(Rect(offset.x,offset.y,m_rect.w,m_rect.h));
@@ -219,7 +219,7 @@ namespace FIFE { namespace map {
 		starty = draw.y;
 		int x_range = draw.w;
 		int y_range = draw.h;
-		Point size = grid->getSize();
+		Point size = layer->getSize();
 		stopx = startx + x_range + 2;
 		stopx = std::min(size.x, stopx);
 		startx = std::max(0, startx - 1);
@@ -231,13 +231,13 @@ namespace FIFE { namespace map {
 		offset.y -= m_rect.y;
 
 		Point basesize = geometry->baseSize();
-		uint8_t alpha = grid->getGlobalAlpha();
+		uint8_t alpha = layer->getGlobalAlpha();
 		Point index;
 		for (index.y = starty; index.y < stopy; ++index.y) {
 			for (index.x = startx; index.x < stopx; ++index.x) {
 				Point pos = geometry->toScreen(index) - offset;
 				Rect target(pos.x,pos.y,basesize.x,basesize.y);
-				size_t id = grid->getTileImage(index);
+				size_t id = layer->getTileImage(index);
 				RenderAble* renderable = ImageCache::instance()->getImage(id);
 				renderable->render(target,m_surface,alpha);
 			}
@@ -245,11 +245,11 @@ namespace FIFE { namespace map {
 
 	}
 
-	void View::renderGridOverlay(Grid* grid, const Point& pos) {
-		Geometry *geometry = grid->getGeometry();
-		Point overlay_offset = grid->get<Point>("_OVERLAY_IMAGE_OFFSET");
+	void View::renderLayerOverlay(Layer* layer, const Point& pos) {
+		Geometry *geometry = layer->getGeometry();
+		Point overlay_offset = layer->get<Point>("_OVERLAY_IMAGE_OFFSET");
 
-		size_t image_id = getGridOverlayImageId( grid );
+		size_t image_id = getGridOverlayImageId( layer );
 
 		RenderAble* image = ImageCache::instance()->getImage( image_id );
 
@@ -259,13 +259,13 @@ namespace FIFE { namespace map {
 		image->render(target,m_surface);
 	}
 
-	size_t View::getGridOverlayImageId(Grid* grid) {
+	size_t View::getGridOverlayImageId(Layer* layer) {
 		// FIXME Using the metadata like this (saving the id) is crap.
-		size_t image_id = grid->get<size_t>("_OVERLAY_IMAGE_ID",0);
+		size_t image_id = layer->get<size_t>("_OVERLAY_IMAGE_ID",0);
 		if( image_id == 0 ) {
-			std::string overlay_image = grid->get<std::string>("_OVERLAY_IMAGE");
+			std::string overlay_image = layer->get<std::string>("_OVERLAY_IMAGE");
 			image_id = ImageCache::instance()->addImageFromFile(overlay_image);
-			grid->set<size_t>("_OVERLAY_IMAGE_ID",image_id);
+			layer->set<size_t>("_OVERLAY_IMAGE_ID",image_id);
 		}
 		return image_id;
 	}
@@ -293,31 +293,31 @@ namespace FIFE { namespace map {
 		VisualTree::RenderList &renderlist = m_vtree->calculateRenderlist(viewport);
 		VisualTree::RenderList::iterator visual_it = renderlist.begin();
 
-		for(size_t i=0; i!= m_elevation->getNumGrids(); ++i) {
-			Grid*   grid          = m_elevation->getGrid(i);
-			uint8_t grid_alpha    = grid->getGlobalAlpha();
-			bool    grid_ovisible = grid->areObjectsVisible();
-			bool    render_tiles = grid->areTilesVisible() && grid->hasTiles();
+		for(size_t i=0; i!= m_elevation->getNumLayers(); ++i) {
+			Layer*  layer          = m_elevation->getLayer(i);
+			uint8_t layer_alpha    = layer->getGlobalAlpha();
+			bool    layer_ovisible = layer->areObjectsVisible();
+			bool    render_tiles = layer->areTilesVisible() && layer->hasTiles();
 
-			if( !grid_ovisible || grid_alpha == 0 ) {
-				while( visual_it != renderlist.end() && (*visual_it)->getGrid() <= i)
+			if( !layer_ovisible || layer_alpha == 0 ) {
+				while( visual_it != renderlist.end() && (*visual_it)->getLayer() <= i)
 					++visual_it;
 				continue;
 			}
 
 			if( render_tiles )
-				renderTiles(grid);
+				renderTiles(layer);
 
 			// TODO Do this correct
-			Point grid_pos = i ? m_grid_pos : m_tilemask_pos;
-			renderGridOverlay(grid,grid_pos);
+			Point layer_pos = i ? m_layer_pos : m_tilemask_pos;
+			renderLayerOverlay(layer,layer_pos);
 
-			if( grid->isGridOverlayEnabled() ) {
-				renderGrid(grid);
+			if( layer->isGridOverlayEnabled() ) {
+				renderGridOverlay(layer);
 			}
 
-			while( visual_it != renderlist.end() && (*visual_it)->getGrid() <= i) {
-				(*visual_it)->render(m_surface, offset, grid_alpha);
+			while( visual_it != renderlist.end() && (*visual_it)->getLayer() <= i) {
+				(*visual_it)->render(m_surface, offset, layer_alpha);
 				++visual_it;
 			}
 		}
@@ -359,20 +359,20 @@ namespace FIFE { namespace map {
 			return;
 		}
 
-		if( m_elevation->getNumGrids() > 1 ) {
+		if( m_elevation->getNumLayers() > 1 ) {
 			if( button == 3 ) {
-				Grid *grid = m_elevation->getGrid(0);
-				Geometry *geometry = grid->getGeometry();
+				Layer *layer = m_elevation->getLayer(0);
+				Geometry *geometry = layer->getGeometry();
 				m_tilemask_pos = geometry->fromScreen(Point(x,y) + m_offset);
-				Log("mapview") << "Selected tile grid: " << m_tilemask_pos;
+				Log("mapview") << "Selected tile Layer: " << m_tilemask_pos;
 			} else {
-				Grid *grid = m_elevation->getGrid(1);
-				Geometry *geometry = grid->getGeometry();
+				Layer *layer = m_elevation->getLayer(1);
+				Geometry *geometry = layer->getGeometry();
 				// FIXME: I am not sure where exactly this offset comes from
 				// A rounding problem in map/defaultobjectgeometry.cpp ???
 				// Seems to work correctly for mouse selection, though -phoku
-				m_grid_pos = geometry->fromScreen(Point(x,y) + m_offset - Point(48,16));
-				Log("mapview") << "Selected object grid: " << m_grid_pos;
+				m_layer_pos = geometry->fromScreen(Point(x,y) + m_offset - Point(48,16));
+				Log("mapview") << "Selected object layer: " << m_layer_pos;
 			}
 		}
 

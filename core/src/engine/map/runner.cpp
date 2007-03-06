@@ -202,7 +202,7 @@ namespace FIFE { namespace map {
 			ss << loc.elevation;
 		}
 		
-		ss << ", grid = " << loc.grid
+		ss << ", grid = " << loc.layer
 		   << ", x = " << loc.position.x
 		   << ", y = " << loc.position.y
 		   << " }, id = " << id << "}); ";

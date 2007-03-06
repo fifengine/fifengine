@@ -38,9 +38,8 @@
 
 namespace FIFE { namespace map {
 
-	class ObjectGrid;
-	class Grid;
-	class Object;
+	class ObjectInfo;
+	class Layer;
 
 	/** Contains a game level.
 	 * 
@@ -49,7 +48,7 @@ namespace FIFE { namespace map {
 	 * \li @see MapTile
 	 * \li @see Object
 	 *
-	 * Tiles are only graphics and they are on a separate grid.
+	 * Tiles are only graphics and they are on a separate Layer.
 	 *
 	 * Objects can be: critters, items, walls, scenery and non-visible 
 	 * entities (blockers).
@@ -57,10 +56,10 @@ namespace FIFE { namespace map {
 	 * \todo Objects are stored in a std::list; this causes a number of
 	 * problems:
 	 *
-	 * \note Search the wiki for: fallout map geometry; the hex-grid should
+	 * \note Search the wiki for: fallout map geometry; the hex-Layer should
 	 * work with a left->right, back->front drawing order.
 	 *
-	 * \todo One hex-grid may be occupied by more than one object; we need
+	 * \todo One hex-Layer may be occupied by more than one object; we need
 	 * to handle this case, probably with some made-up logic.
 	 * (for example: objects get an (artificial) size; ~smallest~ object 
 	 * drawn first, larger ones above)
@@ -77,35 +76,35 @@ namespace FIFE { namespace map {
 			Elevation(const elevation_info& structure);
 			~Elevation();
 
-			/** Add a grid at the top
-			 * The elevation now owns the grid.
-			 * Increases num grids by one.
+			/** Add a Layer at the top
+			 * The elevation now owns the Layer.
+			 * Increases num Layers by one.
 			 */
-			void addGrid(Grid* grid);
-			void setGrid(size_t numgrids, Grid* grid);
-			Grid* getGrid(size_t);
-			size_t getNumGrids() const;
-			void setNumGrids(size_t numgrids);
+			void addLayer(Layer* layer);
+			void setLayer(size_t numLayers, Layer* layer);
+			Layer* getLayer(size_t);
+			size_t getNumLayers() const;
+			void setNumLayers(size_t numLayers);
 
-			/** Set the 'reference' grid
+			/** Set the 'reference' Layer
 			 */
-			void setReferenceGrid(size_t grid);
+			void setReferenceLayer(size_t layer);
 
-			/** Get the 'reference' grid
+			/** Get the 'reference' Layer
 			 */
-			map::Grid* getReferenceGrid();
+			Layer* getReferenceLayer();
 
 			/** Try to calculate a valid nice starting position
 			 */
 			Point centerOfMass();
 
 		private:
-			typedef std::vector<map::Grid*> type_grids;
-			type_grids m_grids;
+			typedef std::vector<Layer*> type_layers;
+			type_layers m_layers;
 
 			int m_width;
 			int m_height;
-			size_t m_reference_grid;
+			size_t m_reference_layer;
 
 			void cleanup();
 

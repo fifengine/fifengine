@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_GRID_H
-#define FIFE_MAP_GRID_H
+#ifndef FIFE_MAP_LAYER_H
+#define FIFE_MAP_LAYER_H
 
 // Standard C++ library includes
 #include <map>
@@ -47,7 +47,7 @@ namespace FIFE { namespace map {
 	 *  This can be for example a Tile layer 
 	 *  as the roofs and floors of a fo2 map
 	 *  but can also just contain "objects"
-	 *  on grid coords.
+	 *  on Layer coords.
 	 * 
 	 *  The tiles are *not* allways created only on
 	 *  a first "setTileImage".
@@ -56,39 +56,36 @@ namespace FIFE { namespace map {
 	 *  "geometry", "shift" and "size":
 	 *
 	 *  The geometry is used to position objects on this
-	 *  Grid and the Tiles too.
+	 *  Layer and the Tiles too.
 	 *
 	 *  The shift is added to all screen coords and
 	 *  will create the illusion of a height-difference :-)
 	 *
-	 *  The size simply is the maximum allowd size in grid
-	 *  coords this grid covers.
+	 *  The size simply is the maximum allowd size in Layer
+	 *  coords this Layer covers.
 	 *  
 	 *  @bug The parameter code is untested, be warned.
 	 *  @bug setTileImage and setParam behave differently on invalid positions.
 	 *
-	 *  Attributes:
-	 *  <pre>
-	 * 	name:		Name of the grid ("floor")
-	 *  </pre>
+	 *  Attributes: 
 	 *  
 	 *  Future:
-	 *  	Connections between grids to walk through (Elevators...)
-	 *	Grouping of grids (These grids are roofs ... etc)
+	 *  	Connections between Layers to walk through (Elevators...)
+	 *	Grouping of Layers (These Layers are roofs ... etc)
 	 */
-	class Grid : public AttributedClass {
+	class Layer : public AttributedClass {
 		public:
 			enum {
 				MAX_PARAM = 100
 			};
 
-			/** Constructs a Grid instance
+			/** Constructs a Layer instance
 			 */
-			Grid(const Point& size, size_t geometry);
+			Layer(const Point& size, size_t geometry);
 
-			/** Destructs a Grid instance
+			/** Destructs a Layer instance
 			 */
-			~Grid();
+			~Layer();
 
 			/** Get the Geometry as set in the constructor
 			 *  @return a valid Geometry
@@ -96,7 +93,7 @@ namespace FIFE { namespace map {
 			Geometry* getGeometry();
 
 			/** Get the size as set in the constructor
-			 *  @return the size in grid coords
+			 *  @return the size in Layer coords
 			 */
 			const Point& getSize() const;
 
@@ -111,9 +108,9 @@ namespace FIFE { namespace map {
 			const Point& getShift() const;
 
 			/** Get the tile image id of a position
-			 *  @note If the position is invalid or the grid
+			 *  @note If the position is invalid or the Layer
 			 *	is not yet created 0 is returned (a DummyImage id)
-			 *  @param position A valid grid position
+			 *  @param position A valid Layer position
 			 *  @return An image id for the position
 			 */
 			size_t getTileImage(const Point&) const;
@@ -127,7 +124,7 @@ namespace FIFE { namespace map {
 			 *  @note If the position is invalid nothing is changed
 			 *  @note If no tile have previously set, this
 			 *  will allocate the needed memory.
-			 *  @param position A valid grid position
+			 *  @param position A valid Layer position
 			 *  @param image_id An image id for the position
 			 */
 			void setTileImage(const Point& position, size_t image_id);
@@ -142,34 +139,34 @@ namespace FIFE { namespace map {
 			 */
 			bool hasTiles() const;
 
-			/** Get a reference to a parameter grid as vector
+			/** Get a reference to a parameter Layer as vector
 			 *  @param param_id The integer parameter ID
-			 *  @return A reference to the grid as @c std::vector
+			 *  @return A reference to the Layer as @c std::vector
 			 *  @throw std::out_of_range If the parameter ID is invalid.
 			 *  @throw boost::bad_get If the parameter type @c T is invalid.
 			 *
 			 *  The @c std::vector is indexed like this:
 			 *  @code
-			 *  std::vector<T>& v = grid->getParamGrid<T>( PARAM_ID ); 
-			 *  T value = v[x + y * grid->getSize().x ];
+			 *  std::vector<T>& v = Layer->getParamLayer<T>( PARAM_ID ); 
+			 *  T value = v[x + y * Layer->getSize().x ];
 			 *  @endcode
 			 * 
 			 */
 			template<typename T>
-			std::vector<T>& getParamGrid(uint8_t param_id);
+			std::vector<T>& getParamLayer(uint8_t param_id);
 			
 			/** Get a const reference to a parameter as vector
-			 *  This is the @c const version of @see getParamGrid
+			 *  This is the @c const version of @see getParamLayer
 			 */
 			template<typename T>
-			const std::vector<T>& getParamGrid(uint8_t param_id) const;
+			const std::vector<T>& getParamLayer(uint8_t param_id) const;
 			
-			/** Get a parameter reference at a grid position
-			 *  @param p The grid position
+			/** Get a parameter reference at a Layer position
+			 *  @param p The Layer position
 			 *  @param param_id The integer parameter ID
-			 *  @return A reference to the value at the grid position
+			 *  @return A reference to the value at the Layer position
 			 *  @throw std::out_of_range If the parameter ID is invalid.
-			 *  @throw std::out_of_range If the grid position is invalid.
+			 *  @throw std::out_of_range If the Layer position is invalid.
 			 *  @throw boost::bad_get If the parameter type @c T is invalid.
 			 *  @warning Does not really check the position, so it might return a 
 			 *  bogus reference for @c Point(-50,10) for example.
@@ -177,30 +174,30 @@ namespace FIFE { namespace map {
 			template<typename T>
 			T& getParam(const Point& p, uint8_t param_id);
 
-			/** Get a parameter const reference at a grid position
+			/** Get a parameter const reference at a Layer position
 			 *  This is the @c const version of @see getParam
 			 */
 			template<typename T>
 			const T& getParam(const Point& p, uint8_t type) const;
 
-			/** Get a parameter reference at a grid position
+			/** Get a parameter reference at a Layer position
 			 *  @see getParam
 			 */
 			template<typename T>
 			T& getParam(int32_t x,int32_t y, uint8_t param_id);
 
-			/** Get a parameter const reference at a grid position
+			/** Get a parameter const reference at a Layer position
 			 *  @see getParam
 			 */
 			template<typename T>
 			const T& getParam(int32_t x,int32_t y, uint8_t type) const;
 
-			/** Set a parameters value at a grid position
-			 *  @param p The grid position
+			/** Set a parameters value at a Layer position
+			 *  @param p The Layer position
 			 *  @param param_id The integer parameter ID
 			 *  @param value The new value of the parameter
 			 *  @throw std::out_of_range If the parameter ID is invalid.
-			 *  @throw std::out_of_range If the grid position is invalid.
+			 *  @throw std::out_of_range If the Layer position is invalid.
 			 *  @throw boost::bad_get If the parameter type @c T is invalid.
 			 *  @warning Does not really check the position, so it might set a 
 			 *  bogus value for @c Point(-50,10) for example.
@@ -303,13 +300,13 @@ namespace FIFE { namespace map {
 			void setGridOverlayEnabled(bool e);
 			void toggleGridOverlayEnabled();
 
-			/** Check whether a position is on the grid
-			 *  @param positon A grid position to check
-			 *  @return True, only if the position is on the grid
+			/** Check whether a position is on the Layer
+			 *  @param positon A Layer position to check
+			 *  @return True, only if the position is on the Layer
 			 */
 			bool isValidPosition(const Point& pos) const;
 
-			/** Check whether a position is on the grid
+			/** Check whether a position is on the Layer
 			 *  @see isValidPosition
 			 */
 			bool isValidPosition(int32_t x,int32_t y) const;
@@ -332,9 +329,9 @@ namespace FIFE { namespace map {
 				std::vector<long>,
 				std::vector<bool>,
 				std::vector<float>
-			> type_vargrid;
+			> type_varLayer;
 
-			std::vector<type_vargrid> m_paramgrids;
+			std::vector<type_varLayer> m_paramLayers;
 			typedef std::map<std::string,uint8_t> type_paramnames;
 			typedef std::map<uint8_t,type_paramnames::iterator> type_paramnames_reverse;
 			type_paramnames m_paramnames;
@@ -344,17 +341,17 @@ namespace FIFE { namespace map {
 	};
 
 	inline
-	bool Grid::isValidPosition(const Point& p) const {
+	bool Layer::isValidPosition(const Point& p) const {
 		return p.x >= 0 && p.x < m_size.x && p.y >= 0 && p.y < m_size.y;
 	}
 
 	inline
-	bool Grid::isValidPosition(int32_t x, int32_t y) const {
+	bool Layer::isValidPosition(int32_t x, int32_t y) const {
 		return x >= 0 && x < m_size.x && y >= 0 && y < m_size.y;
 	}
 
 	inline
-	size_t Grid::getTileImage(int32_t x, int32_t y) const {
+	size_t Layer::getTileImage(int32_t x, int32_t y) const {
 		if (!isValidPosition(x,y) || m_tiles.empty()) {
 			return 0;
 		}
@@ -362,7 +359,7 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	size_t Grid::getTileImage(const Point& p) const {
+	size_t Layer::getTileImage(const Point& p) const {
 		if (!isValidPosition(p) || m_tiles.empty()) {
 			return 0;
 		}
@@ -371,75 +368,75 @@ namespace FIFE { namespace map {
 
 	template<typename T>
 	inline
-	std::vector<T>& Grid::getParamGrid(uint8_t param_id) {
-		return boost::get<T>(m_paramgrids.at(param_id));
+	std::vector<T>& Layer::getParamLayer(uint8_t param_id) {
+		return boost::get<T>(m_paramLayers.at(param_id));
 	}
 	
 	template<typename T>
 	inline
-	const std::vector<T>& Grid::getParamGrid(uint8_t param_id) const {
-		return boost::get<T>(m_paramgrids.at(param_id));
+	const std::vector<T>& Layer::getParamLayer(uint8_t param_id) const {
+		return boost::get<T>(m_paramLayers.at(param_id));
 	}
 	
 	template<typename T>
 	inline
-	T& Grid::getParam(const Point& p, uint8_t param_id)  {
-		return boost::get<T>(m_paramgrids.at(param_id)).at(p.x + p.y * m_size.x);
+	T& Layer::getParam(const Point& p, uint8_t param_id)  {
+		return boost::get<T>(m_paramLayers.at(param_id)).at(p.x + p.y * m_size.x);
 	}
 
 	template<typename T>
 	inline
-	const T& Grid::getParam(const Point& p, uint8_t param_id) const {
-		return boost::get<T>(m_paramgrids.at(param_id)).at(p.x + p.y * m_size.x);
+	const T& Layer::getParam(const Point& p, uint8_t param_id) const {
+		return boost::get<T>(m_paramLayers.at(param_id)).at(p.x + p.y * m_size.x);
 	}
 
 	template<typename T>
 	inline
-	T& Grid::getParam(int32_t x,int32_t y, uint8_t param_id)  {
-		return boost::get<T>(m_paramgrids.at(param_id)).at(x + y * m_size.x);
+	T& Layer::getParam(int32_t x,int32_t y, uint8_t param_id)  {
+		return boost::get<T>(m_paramLayers.at(param_id)).at(x + y * m_size.x);
 	}
 
 	template<typename T>
 	inline
-	const T& Grid::getParam(int32_t x,int32_t y, uint8_t param_id) const {
-		return boost::get<T>(m_paramgrids.at(param_id)).at(x + y * m_size.x);
+	const T& Layer::getParam(int32_t x,int32_t y, uint8_t param_id) const {
+		return boost::get<T>(m_paramLayers.at(param_id)).at(x + y * m_size.x);
 	}
 
 	template<typename T>
 	inline
-	void Grid::setParam(const Point& p, uint8_t param_id, const T& value) {
-		boost::get<T>(m_paramgrids.at(param_id)).at(p.x + p.y * m_size.x) = value;
+	void Layer::setParam(const Point& p, uint8_t param_id, const T& value) {
+		boost::get<T>(m_paramLayers.at(param_id)).at(p.x + p.y * m_size.x) = value;
 	}
 
 	template<typename T>
 	inline
-	void Grid::setParam(int32_t x,int32_t y, uint8_t type, const T& value) {
-		boost::get<T>(m_paramgrids.at(type)).at(x + y * m_size.x) = value;
+	void Layer::setParam(int32_t x,int32_t y, uint8_t type, const T& value) {
+		boost::get<T>(m_paramLayers.at(type)).at(x + y * m_size.x) = value;
 	}
 
 	template<typename T>
 	inline
-	uint8_t Grid::addParam(const std::string& param_name, const T& _default) {
+	uint8_t Layer::addParam(const std::string& param_name, const T& _default) {
 
 		if( m_paramnames.find(param_name) != m_paramnames.end() ) {
 			throw NameClash(param_name);
 		}
 
-		if( m_paramgrids.size() == MAX_PARAM ) {
-			throw NotSupported("More than Grid::MAX_PARAM parameters per grid.");
+		if( m_paramLayers.size() == MAX_PARAM ) {
+			throw NotSupported("More than Layer::MAX_PARAM parameters per Layer.");
 		}
 
 		uint8_t param_id;
 		if( !m_param_freelist.empty() ) {
 			param_id = m_param_freelist.back();
 			m_param_freelist.pop_back();
-			m_paramgrids[ param_id ] = std::vector<T>();
+			m_paramLayers[ param_id ] = std::vector<T>();
 		} else {
-			param_id = m_paramgrids.size();
-			m_paramgrids.push_back( std::vector<T>() );
+			param_id = m_paramLayers.size();
+			m_paramLayers.push_back( std::vector<T>() );
 		}
 
-		boost::get<std::vector<T> >(m_paramgrids[ param_id ])
+		boost::get<std::vector<T> >(m_paramLayers[ param_id ])
 			.resize(m_size.x*m_size.y, _default);
 		m_paramnames[ param_name ] = param_id;
 		m_paramnames_reverse[ param_id ] = m_paramnames.find(param_name);
@@ -447,7 +444,7 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	uint8_t Grid::getParamByName(const std::string& param_name) const {
+	uint8_t Layer::getParamByName(const std::string& param_name) const {
 		type_paramnames::const_iterator i = m_paramnames.find(param_name);
 		if( i == m_paramnames.end() ) {
 			throw NotFound(param_name);
@@ -456,13 +453,13 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	bool Grid::hasParamByName(const std::string& param_name) const {
+	bool Layer::hasParamByName(const std::string& param_name) const {
 		return m_paramnames.find(param_name) != m_paramnames.end();
 	}
 
 	inline
-	bool Grid::hasParam(uint8_t param_id) const {
-		return m_paramgrids.size() > param_id;
+	bool Layer::hasParam(uint8_t param_id) const {
+		return m_paramLayers.size() > param_id;
 	}
 
 

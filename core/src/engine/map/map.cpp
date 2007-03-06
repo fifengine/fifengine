@@ -31,7 +31,7 @@
 #include "util/purge.h"
 
 #include "elevation.h"
-#include "grid.h"
+#include "layer.h"
 #include "map.h"
 #include "objectmanager.h"
 
@@ -104,11 +104,11 @@ namespace FIFE { namespace map {
 		if (location.elevation >= m_elevations.size())
 			return false;
 
-		if (location.grid >= m_elevations[location.elevation]->getNumGrids())
+		if (location.layer >= m_elevations[location.elevation]->getNumLayers())
 			return false;
 
 		return m_elevations[location.elevation]->
-			     getGrid(location.grid)->isValidPosition(location.position);
+			     getLayer(location.layer)->isValidPosition(location.position);
 	}
 
 } } //FIFE::map

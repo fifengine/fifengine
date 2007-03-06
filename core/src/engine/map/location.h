@@ -36,7 +36,7 @@ namespace FIFE { namespace map {
 	class Location {
 		public:
 			size_t elevation;
-			size_t grid;
+			size_t layer;
 			Point position;
 	};
 } }

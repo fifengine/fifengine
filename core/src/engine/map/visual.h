@@ -34,7 +34,6 @@
 #include "video/rect.h"
 #include "video/renderable.h"
 
-#include "grid.h"
 #include "location.h"
 
 namespace FIFE {
@@ -51,6 +50,7 @@ namespace FIFE { namespace map { namespace effect {
 namespace FIFE { namespace map {
 
 	class ObjectInfo;
+	class Layer;
 
 	class Visual {
 		public:
@@ -60,7 +60,7 @@ namespace FIFE { namespace map {
 			void addEffect(effect::Effect* ve);
 			void removeEffect(effect::Effect* ve);
 
-			void reset(Grid* grid);
+			void reset(Layer* grid);
 			void render(Screen* screen, const Point& viewport, uint8_t alpha = 255);
 
 			void setRenderable( size_t renderable,
@@ -68,7 +68,7 @@ namespace FIFE { namespace map {
 
 			void setLocation(const Location& location);
 			const Location& getLocation() const;
-			size_t getGrid() const { return m_location.grid; };
+			size_t getLayer() const { return m_location.layer; };
 			size_t getLinearPosition() const { return m_linearposition; };
 
 			size_t getZValue() const { return m_zvalue; };

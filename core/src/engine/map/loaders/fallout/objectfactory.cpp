@@ -53,7 +53,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		m_lst_critters("art/critters/critters.lst"),
 		m_default_moi()
 	{
-		m_default_moi.getLocation().grid = 1;
+		m_default_moi.getLocation().layer = 1;
 	}
 
 	uint32_t ObjectFactory::getProSubType(const std::string& path) const {

@@ -36,6 +36,7 @@
 #include "geometry.h"
 #include "objectinfo.h"
 #include "visual.h"
+#include "layer.h"
 
 namespace FIFE { namespace map { 
 
@@ -91,7 +92,7 @@ namespace FIFE { namespace map {
 
 	}
 
-	void Visual::reset(Grid* grid) {
+	void Visual::reset(Layer* grid) {
 
 		if( !m_renderable ) {
 			m_screenbox = Rect();

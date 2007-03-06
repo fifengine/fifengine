@@ -33,18 +33,18 @@
 namespace FIFE { namespace map {
 
 	elevation_info falloutElevationFormat(const Point& size) {
-		grid_info grids[3] = {
-			grid_info(Geometry::FalloutTileGeometry, 
+		layer_info layers[3] = {
+			layer_info(Geometry::FalloutTileGeometry, 
 			          "content/gfx/tiles/tile_outline.png",
 			          size), // Floor
-			grid_info(Geometry::FalloutObjectGeometry,
+			layer_info(Geometry::FalloutObjectGeometry,
 			          "content/gfx/objects/object_outline.png",
 			          size * 2, Point(), Point(-16, -12)), // Objects
-			grid_info(Geometry::FalloutTileGeometry, 
+			layer_info(Geometry::FalloutTileGeometry, 
 			          "content/gfx/tiles/tile_outline.png",
 			          size, Point(0, 96)) // Roof
 		};
 
-		return elevation_info(grids, grids + 3, 1);
+		return elevation_info(layers, layers + 3, 1);
 	}
 } } // FIFE::map::structure

@@ -39,7 +39,7 @@
 #include "view.h"
 #include "visual.h"
 #include "elevation.h"
-#include "grid.h"
+#include "layer.h"
 #include "geometry.h"
 
 namespace FIFE { namespace map {
@@ -119,23 +119,23 @@ namespace FIFE { namespace map {
 	}
 
 	void Camera::moveTo(const Point& position) {
-		if( !m_grid )
+		if( !m_layer )
 			return;
 
 		Point offset = Point(m_viewport.w, m_viewport.h) / 2;
-		m_position = m_grid->getGeometry()->toScreen(position) - offset;
+		m_position = m_layer->getGeometry()->toScreen(position) - offset;
 
 		m_timer.stop();
 		m_mode = FREE;
 	}
 
 	void Camera::zoomTo(const Point& position) {
-		if (!m_grid) {
+		if (!m_layer) {
 			return;
 		}
 		// center on screen
 		Point offset = Point(m_viewport.w, m_viewport.h) / 2;
-		m_next_position = m_grid->getGeometry()->toScreen(position) - offset;
+		m_next_position = m_layer->getGeometry()->toScreen(position) - offset;
 		m_timer.start();
 
 		Debug("map_camera") 
@@ -155,11 +155,11 @@ namespace FIFE { namespace map {
 		m_timer.stop();
 		m_view = m_control->getView();
 		if (!m_view->getCurrentElevation()) {
-			m_grid = 0;
+			m_layer = 0;
 			m_position = Point();
 			m_mode = FREE;
 		} else {
-			m_grid = m_view->getCurrentElevation()->getReferenceGrid();
+			m_layer = m_view->getCurrentElevation()->getReferenceLayer();
 			m_position = Point(m_view->getXPos(),m_view->getYPos());
 			m_mode = FREE;
 		}

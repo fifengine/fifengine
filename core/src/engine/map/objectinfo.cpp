@@ -108,7 +108,7 @@ namespace FIFE { namespace map {
 		log	<< "name " << get<std::string>("name")
 			<< " at " << m_location.position
 			<< " on elevation " <<  m_location.elevation
-			<< "#" << m_location.grid
+			<< "#" << m_location.layer
 			<< " prototypes=";
 
 		for(size_t i=0; i!= m_protoid.size(); ++i) {

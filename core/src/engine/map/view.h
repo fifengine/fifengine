@@ -51,7 +51,7 @@ namespace FIFE { namespace map {
 	class Elevation;
 
 
-	class Grid;
+	class Layer;
 	class Visual;
 	class VisualTree;
 
@@ -183,25 +183,25 @@ namespace FIFE { namespace map {
 			Point m_offset;
 
 			/// Current position for the mouseclick overlay
-			Point m_grid_pos;
+			Point m_layer_pos;
 			Point m_tilemask_pos;
 			/// Images for grid overlay 
-			size_t m_grid_id;
+			size_t m_layer_id;
 			size_t m_tilemask;
 
 
-			void renderTiles(Grid* grid);
-			void renderGrid(Grid* grid);
+			void renderTiles(Layer* layer);
+			void renderGridOverlay(Layer* grid);
 
 			void renderVisuals(size_t);
 
-			void renderGridOverlay(Grid* grid, const Point& pos);
+			void renderLayerOverlay(Layer* grid, const Point& pos);
 
 			void elevationChange();
 			void clearVisuals();
 
 			/// Utility Function
-			size_t getGridOverlayImageId(Grid* grid);
+			size_t getGridOverlayImageId(Layer* grid);
 
 			/// Prevent copy construction
 			View(const View&);
