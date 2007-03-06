@@ -163,10 +163,13 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		// Geometries + Archetypes
-		el1 = el->FirstChildElement("geometry");
-		while(el1) {
-			Geometry::registerGeometry(s_geometry_info::load(el1));
-			el1 = el1->NextSiblingElement("geometry");
+		TiXmlElement* geometry_element = el->FirstChildElement("geometries");
+		if( geometry_element ) {
+			geometry_element = geometry_element->FirstChildElement("geometry");
+			while(geometry_element) {
+				Geometry::registerGeometry(s_geometry_info::load(geometry_element));
+				geometry_element = geometry_element->NextSiblingElement("geometry");
+			}
 		}
 
 		el1 = el->FirstChildElement("archetypes");
