@@ -26,6 +26,7 @@
 #include <map>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,9 +42,10 @@ namespace FIFE { namespace map {
 	class View;
 	class ObjectManager;
 	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 	class ScriptEngine;
 	class ScriptingSlave;
-	class ObjectInfo;
+
 	namespace command { class Command; }
 
 	/** The Engine side of the ruleset scripting interface
@@ -131,7 +133,7 @@ namespace FIFE { namespace map {
 			View* m_view;
 			ScriptingSlave* m_slave;
 
-			typedef std::map<size_t, std::vector<ObjectInfo*> > type_static_objects;
+			typedef std::map<size_t, std::vector<ObjectPtr> > type_static_objects;
 			type_static_objects m_static_objects;
 
 			void processEvent(const event_t& e);
@@ -141,7 +143,7 @@ namespace FIFE { namespace map {
 			/** Pack an object into a lua table as string
 			 *  @deprecated This is only a temporary solution
 			 */
-			std::string packObject(ObjectInfo* moi, size_t id);
+			std::string packObject(ObjectPtr moi, size_t id);
 
 			typedef std::map<size_t, command::Command*> type_cmdmap;
 			type_cmdmap m_commands;

@@ -41,7 +41,7 @@
 namespace FIFE { namespace map { namespace command {
 
 	void SetVisual::execute(const Info& cmd) {
-		ObjectInfo* moi = m_mom->getObject(cmd.object);
+		ObjectPtr moi = m_mom->getObject(cmd.object);
 
 		if (!moi) {
 			Warn("mc_setvisual") << "No MOI for object " << cmd.object;

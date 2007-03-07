@@ -62,7 +62,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return file->read32Big();
 	}
 
-	ObjectInfo* ObjectFactory::createObject(RawDataPtr data) {
+	ObjectPtr ObjectFactory::createObject(RawDataPtr data) {
 		s_objectinfo info;
 
 		data->moveIndex(4); // serpartor or something like that..
@@ -79,18 +79,16 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		uint32_t inventory_count = data->read32Big();
 		data->moveIndex(3*4);
 
-		ObjectInfo* obj = loadObject(data, info);
+		ObjectPtr obj = loadObject(data, info);
 
 		while (inventory_count--) {
 			data->moveIndex(4);
 
-			ObjectInfo* iobj = createObject(data);
+			ObjectPtr iobj = createObject(data);
 			if (obj) {
 				if (iobj) {
 					obj->addToInventory( iobj );
 				}
-			} else {
-				delete iobj;
 			}
 		}
 
@@ -101,10 +99,10 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return obj;
 	}
 
-	ObjectInfo* ObjectFactory::loadObject(RawDataPtr data, const s_objectinfo& info) {
+	ObjectPtr ObjectFactory::loadObject(RawDataPtr data, const s_objectinfo& info) {
 		uint8_t type = (info.proto_pid >> 24) & 0xff;
 
-		ObjectInfo* obj = new ObjectInfo(m_default_moi);
+		ObjectPtr obj(new ObjectInfo(m_default_moi));
 		switch(type) {
 			case objtype_item:
 				loadItem(data, info, obj);
@@ -159,8 +157,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			case objtype_inventory:
 			case objtype_head:
 			case objtype_background:
-				delete obj;
-				return 0;
+				return ObjectPtr();
 
 				break;
 			default:
@@ -171,7 +168,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return obj;
 	}
 
-	void ObjectFactory::loadItem(RawDataPtr data, const s_objectinfo& info, ObjectInfo* obj) {
+	void ObjectFactory::loadItem(RawDataPtr data, const s_objectinfo& info, ObjectPtr obj) {
 		uint16_t id = info.proto_pid & 0xffff;
 		static list itemlst("proto/items/items.lst");
 		uint32_t subtype = getProSubType("proto/items/" + itemlst.getProFile(id - 1));
@@ -225,7 +222,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 #endif
 	}
 
-	void ObjectFactory::loadCritter(RawDataPtr data, const s_objectinfo& info, ObjectInfo* moi) {
+	void ObjectFactory::loadCritter(RawDataPtr data, const s_objectinfo& info, ObjectPtr moi) {
 		// The rest is unknown!
 		data->moveIndex(4*4);
 		size_t ai = data->read32Big();
@@ -241,7 +238,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		moi->setStatic(false);
 	}
 
-	void ObjectFactory::loadScenery(RawDataPtr data, const s_objectinfo& info, ObjectInfo* obj) {
+	void ObjectFactory::loadScenery(RawDataPtr data, const s_objectinfo& info, ObjectPtr obj) {
 		uint16_t id = info.proto_pid & 0xffff;
 		static list itemlst("proto/scenery/scenery.lst");
 		uint32_t subtype = getProSubType("proto/scenery/" + itemlst.getProFile(id - 1));
@@ -285,14 +282,14 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		}
 	}
 
-	void ObjectFactory::loadImages(const std::string& type, list& lst, const s_objectinfo& info, ObjectInfo* obj) {
+	void ObjectFactory::loadImages(const std::string& type, list& lst, const s_objectinfo& info, ObjectPtr obj) {
 		std::string path = "art/" + type +"/" + lst.getProFile((info.frm_pid & 0xffff));
 
 		obj->setVisualLocation( RenderableLocation(RenderAble::RT_IMAGE, path) );
 	}
 
 	void ObjectFactory::loadCritterAnimation(const std::string& type, CritLST& lst,
-			const s_objectinfo& info, ObjectInfo* obj) {
+			const s_objectinfo& info, ObjectPtr obj) {
 		std::string path;
 		bool useXMLCritter = SettingsManager::instance()->read<bool>("UseXMLCritters",false);
 		uint32_t idx =  info.frm_pid & 0x00000fff;
@@ -392,7 +389,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		obj->set<size_t>(obj->OrientationParam,info.orientation);
 	}
 
-	void ObjectFactory::correctSceneryZValue(uint32_t frm_pid,ObjectInfo* moi) {
+	void ObjectFactory::correctSceneryZValue(uint32_t frm_pid,ObjectPtr moi) {
 		std::string fname = m_lst_scenery.getProFile(frm_pid & 0xffff);
 		
 		if( fname == "slimpol1.frm" || fname == "slimpol2.frm" 

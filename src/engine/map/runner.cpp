@@ -101,7 +101,7 @@ namespace FIFE { namespace map {
 
 		std::string script;
 		for (size_t i = 1; i < m_mom->m_objects.size(); ++i) {
-			ObjectInfo* moi = m_mom->getObject(i);
+			ObjectPtr moi = m_mom->getObject(i);
 			if (moi->isStatic() || !m_ruleset.isValid()) {
 				m_static_objects[moi->getLocation().elevation].push_back(moi);
 			} else {
@@ -139,7 +139,7 @@ namespace FIFE { namespace map {
 
 		// display static visuals
 		for (size_t i = 0; i < m_static_objects[elevation].size(); ++i) {
-			ObjectInfo* moi = m_static_objects[elevation][i];
+			ObjectPtr moi = m_static_objects[elevation][i];
 			if (!m_map->isValidLocation(moi->getLocation())) {
 				continue;
 			}
@@ -177,7 +177,7 @@ namespace FIFE { namespace map {
 
 	// Rewrote this using a stringstream instead of multiple lexical_casts.
 	// --zahlman
-	std::string Runner::packObject(ObjectInfo* moi, size_t id) {
+	std::string Runner::packObject(ObjectPtr moi, size_t id) {
 		std::stringstream ss;
 
 		ss << "ruleset:createObject({";

@@ -29,6 +29,8 @@
 #include <vector>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
+
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -43,6 +45,7 @@ namespace FIFE { namespace map {
 	class Archetype;
 	class ArchetypeLoaderBase;
 	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 
 	/** User-Interface to load any kind of supported mapfile.
 	 * 

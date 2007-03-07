@@ -32,6 +32,7 @@
 #include "util/purge.h"
 #include "util/xmlutil.h"
 #include "map/factory.h"
+#include "map/objectinfo.h"
 
 #include "prototype.h"
 
@@ -131,9 +132,9 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 	}
 
-	ObjectInfo* Prototype::create() {
-		ObjectInfo* object = new ObjectInfo();
-		merge( object );
+	ObjectPtr Prototype::create() {
+		ObjectPtr object(new ObjectInfo());
+		merge( object.get() );
 		return object;
 	}
 

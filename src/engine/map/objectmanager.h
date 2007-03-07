@@ -27,6 +27,7 @@
 #include <vector>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -36,18 +37,19 @@
 namespace FIFE { namespace map {
 	class Map;
 	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 
 	class ObjectManager {
 		public:
-			typedef std::vector<ObjectInfo*> type_objects;
+			typedef std::vector<ObjectPtr> type_objects;
 
 			ObjectManager();
 			~ObjectManager();
 
 			void initialize( Map* );
 
-			size_t addObject(ObjectInfo* moi);
-			ObjectInfo* getObject(size_t);
+			size_t addObject(ObjectPtr moi);
+			ObjectPtr getObject(size_t);
 
 			type_objects& getObjects();
 		private:
@@ -60,7 +62,7 @@ namespace FIFE { namespace map {
 			/** Finalize Object or delete it.
 			 * Refill Inventory.
 			 */
-			bool finalizeObject(ObjectInfo* moi);
+			bool finalizeObject(ObjectPtr moi);
 			friend class Runner;
 	};
 } } // FIFE::map

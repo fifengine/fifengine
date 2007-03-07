@@ -40,7 +40,7 @@
 
 namespace FIFE { namespace map { 
 
-	Visual::Visual(ObjectInfo* moi) 
+	Visual::Visual(ObjectPtr moi) 
 		: 
 		m_renderable(0),
 		m_screenbox() {
