@@ -51,9 +51,7 @@ namespace FIFE { namespace map {
 	}
 
 	ObjectInfo::~ObjectInfo() {
-		for(size_t i=0; i != m_temporaryInventory.size(); ++i) {
-			delete m_temporaryInventory[i];
-		}
+		m_temporaryInventory.clear();
 
 		/**
 			Make a test whether a MapVisual is still set for this

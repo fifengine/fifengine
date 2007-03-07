@@ -37,24 +37,21 @@
 namespace FIFE { namespace map {
 
 	ObjectManager::ObjectManager() : m_map(0), m_objects() {
-		m_objects.push_back(new ObjectInfo());
+		m_objects.push_back(ObjectPtr(new ObjectInfo()));
 	}
 
 	ObjectManager::~ObjectManager() {
-		type_objects::iterator it = m_objects.begin();
-		for (; it != m_objects.end(); ++it) {
-			delete *it;
-		}
+		m_objects.clear();
 	}
 
-	size_t ObjectManager::addObject(ObjectInfo* moi) {
+	size_t ObjectManager::addObject(ObjectPtr moi) {
 		if (!moi) { return 0; }
 		finalizeObject(moi);
 		m_objects.push_back(moi);
 		return m_objects.size() - 1;
 	}
 
-	ObjectInfo* ObjectManager::getObject(size_t objectId) {
+	ObjectPtr ObjectManager::getObject(size_t objectId) {
 		return m_objects[objectId];
 	}
 
@@ -67,7 +64,7 @@ namespace FIFE { namespace map {
 		finalizeAllObjects();
 	}
 
-	bool ObjectManager::finalizeObject(ObjectInfo* moi) {
+	bool ObjectManager::finalizeObject(ObjectPtr moi) {
 		if (!moi) {
 			return false;
 		}
@@ -77,8 +74,7 @@ namespace FIFE { namespace map {
 			if (finalizeObject(*it)) {
 				size_t objectId = addObject(*it);
 				moi->m_inventory.push_back(objectId);
-			} else {
-				delete *it;
+				(*it).reset();
 			}
 		}
 		moi->m_temporaryInventory.clear();
@@ -89,8 +85,7 @@ namespace FIFE { namespace map {
 		for (type_objects::iterator it = m_objects.begin();
 		     it != m_objects.end(); ++it) {
 			if (!finalizeObject(*it)) {
-				delete *it;
-				*it = 0;
+				(*it).reset();
 			}
 		}
 	}

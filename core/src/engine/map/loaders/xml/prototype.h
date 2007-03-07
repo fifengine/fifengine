@@ -32,11 +32,15 @@
 // Second block: files included from the same folder
 #include "video/point.h"
 #include "video/renderable_location.h"
-#include "map/objectinfo.h"
 #include "tinyxml/tinyxml.h"
 #include "attributedclass.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace xml {
+namespace FIFE { namespace map { 
+
+	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
+
+namespace loaders { namespace xml {
 
 	template<typename datatype>
 	struct MaybeData {
@@ -77,7 +81,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 			/** Create an object from this Prototype
 			 */
-			ObjectInfo* create();
+			ObjectPtr create();
 
 			/** Merge the data from this Prototype
 			 *  Overwrites the values set in the given object,

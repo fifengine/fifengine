@@ -26,6 +26,7 @@
 #include <set>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -50,11 +51,12 @@ namespace FIFE { namespace map { namespace effect {
 namespace FIFE { namespace map {
 
 	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 	class Layer;
 
 	class Visual {
 		public:
-			explicit Visual(ObjectInfo* moi = 0);
+			explicit Visual(ObjectPtr moi = ObjectPtr());
 			~Visual();
 
 			void addEffect(effect::Effect* ve);
@@ -78,7 +80,7 @@ namespace FIFE { namespace map {
 
 			const Rect& getScreenBox() const { return m_screenbox; };
 
-			ObjectInfo* getObject() { return m_moi; };
+			ObjectPtr getObject() { return m_moi; };
 
 			uint8_t getAlpha() const { return m_alpha; };
 			void setAlpha(uint8_t alpha) { m_alpha=alpha; };
@@ -98,7 +100,7 @@ namespace FIFE { namespace map {
 			size_t m_linearposition;
 			size_t m_zvalue;
 
-			ObjectInfo* m_moi;
+			ObjectPtr m_moi;
 
 			void calculateScreenbox(RenderAble*);
 	};

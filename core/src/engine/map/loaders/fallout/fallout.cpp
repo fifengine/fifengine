@@ -233,7 +233,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			ObjectManager* mom = map->getObjectManager();
 
 			for (uint32_t i = 0; i < count_objects_current; ++i) {
-				ObjectInfo* obj = objfactory.createObject(data);
+				ObjectPtr obj = objfactory.createObject(data);
 				if( obj ) {
 					// Reposition obj on "larger" map
 					obj->getLocation().elevation = fife_elev;

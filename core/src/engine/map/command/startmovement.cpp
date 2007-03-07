@@ -40,7 +40,7 @@
 namespace FIFE { namespace map { namespace command {
 
 	void StartMovement::execute(const Info& cmd) {
-		ObjectInfo* moi = m_mom->getObject(cmd.object);
+		ObjectPtr moi = m_mom->getObject(cmd.object);
 		long x = cmd.params[0];
 		long y = cmd.params[1];
 

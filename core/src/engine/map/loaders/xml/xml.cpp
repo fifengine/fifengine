@@ -355,7 +355,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 	void XML::loadObject(TiXmlElement* element) {
 		assert( element );
-		std::auto_ptr<ObjectInfo> object(new ObjectInfo());
+		ObjectPtr object(new ObjectInfo());
 
 		const char* proto_name = element->Attribute("prototype");
 		if( proto_name ) {
@@ -393,7 +393,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 		object->debugPrint();
 
-		mom->addObject( object.release() );
+		mom->addObject( object );
 	}
 
 	void XML::loadLayerData(TiXmlElement* element) {

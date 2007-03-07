@@ -30,6 +30,7 @@
 #include "util/fife_stdint.h"
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -44,11 +45,12 @@ namespace FIFE {
 	class ImageCache;
 
 namespace map { 
+
 	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 
 namespace loaders { namespace fallout {
 
-	class Object;
 	class RawData;
 	class list;
 	class FRM;
@@ -87,7 +89,7 @@ namespace loaders { namespace fallout {
 			 * Thus the RawDataPtr must have it's index at a specific
 			 * position.
 			 */
-			ObjectInfo* createObject(RawDataPtr data);
+			ObjectPtr createObject(RawDataPtr data);
 
 		private:
 
@@ -148,27 +150,27 @@ namespace loaders { namespace fallout {
 
 			/** Dispatches object loading to more specific functions.
 			 */
-			ObjectInfo* loadObject(RawDataPtr data, const s_objectinfo& info);
+			ObjectPtr loadObject(RawDataPtr data, const s_objectinfo& info);
 
 			/** Load an Item object
 			 */
-			void loadItem(RawDataPtr data, const s_objectinfo& info, ObjectInfo*);
+			void loadItem(RawDataPtr data, const s_objectinfo& info, ObjectPtr);
 
 			/** Load a Critter object
 			 */
-			void loadCritter(RawDataPtr data, const s_objectinfo& info, ObjectInfo*);
+			void loadCritter(RawDataPtr data, const s_objectinfo& info, ObjectPtr);
 	
 			/** Load a scenery object
 			 */
-			void loadScenery(RawDataPtr data, const s_objectinfo& info, ObjectInfo*);
+			void loadScenery(RawDataPtr data, const s_objectinfo& info, ObjectPtr);
 
 			/** Correct Z value for tile-like scenery objects
 			 *  @bug Hardcoded list of frms to correct.
 			 */
-			void correctSceneryZValue(uint32_t frm_pid,ObjectInfo* moi);
+			void correctSceneryZValue(uint32_t frm_pid,ObjectPtr moi);
 
-			void loadImages(const std::string& type, list& lst, const s_objectinfo& info, ObjectInfo*);
-			void loadCritterAnimation(const std::string& type, CritLST& lst, const s_objectinfo& info, ObjectInfo*);
+			void loadImages(const std::string& type, list& lst, const s_objectinfo& info, ObjectPtr);
+			void loadCritterAnimation(const std::string& type, CritLST& lst, const s_objectinfo& info, ObjectPtr);
 
 
 			uint32_t getProSubType(const std::string& path) const;

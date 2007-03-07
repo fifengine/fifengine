@@ -28,6 +28,7 @@
 #include <vector>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -39,6 +40,9 @@
 #include "video/renderable_location.h"
 
 namespace FIFE { namespace map {
+
+	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 
 	/** Game Object Representation
 	 *
@@ -102,7 +106,7 @@ namespace FIFE { namespace map {
 			void setVisualId(size_t visualId);
 			size_t getVisualId() const;
 
-			void addToInventory(ObjectInfo* obj);
+			void addToInventory(ObjectPtr obj);
 			void addToInventory(size_t objId);
 			const std::vector<size_t>& listInventory() const;
 			void removeFromInventory(size_t objId);
@@ -124,7 +128,7 @@ namespace FIFE { namespace map {
 			std::vector<size_t> m_protoid;;
 
 			// XXX pointer ownership??? X_X
-			typedef std::vector<ObjectInfo*> type_temporaryInventory;
+			typedef std::vector<ObjectPtr> type_temporaryInventory;
 			type_temporaryInventory m_temporaryInventory;
 
 
@@ -188,7 +192,7 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	void ObjectInfo::addToInventory(ObjectInfo* obj) { 
+	void ObjectInfo::addToInventory(ObjectPtr obj) { 
 		m_temporaryInventory.push_back(obj); 
 	}
 	

@@ -85,7 +85,7 @@ namespace FIFE { namespace map { namespace command {
 	}
 
 	void EnqueueAction::execute(const Info& cmd) {
-		ObjectInfo* moi = m_mom->getObject(cmd.object);
+		ObjectPtr moi = m_mom->getObject(cmd.object);
 
 		if (!moi) {
 			Warn("mc_enqueueaction") << "No MOI for object " << cmd.object;
