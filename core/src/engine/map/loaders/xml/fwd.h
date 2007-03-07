@@ -5,8 +5,10 @@ namespace FIFE {
 		class RawData;
 		namespace loaders {
 			namespace xml {
-				class XML;
 				class Imgcache;
+				class Prototype;
+				class XML;
+				class XMLArchetype;
 			}
 		}
 	}

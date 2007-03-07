@@ -1,13 +1,15 @@
 namespace FIFE {
+	class AAImageFont;
+	class Animation;
+	class CommandLine;
 	class Console;
+	class FontBase;
 	class FontCache;
+	class GuichanImageFont;
 	class Image;
 	class ScriptExecuter;
-	class FontBase;
-	class CommandLine;
-	class Animation;
 }
 namespace gcn {
-	class TwoButton;
 	class AdvImage;
+	class TwoButton;
 }

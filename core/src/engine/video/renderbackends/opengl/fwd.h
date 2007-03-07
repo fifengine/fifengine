@@ -1,7 +1,7 @@
 namespace FIFE {
-	class RenderBackendOpenGL;
-	class GLScreen;
 	class GLImage;
+	class GLScreen;
+	class RenderBackendOpenGL;
 }
 namespace gcn {
 	class OpenGLGraphics;

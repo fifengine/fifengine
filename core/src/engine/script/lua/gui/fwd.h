@@ -3,28 +3,28 @@ namespace FIFE {
 	class GuiManager_LuaScript;
 }
 namespace luaGui {
-	class TextBox;
-	class FIFE;
-	class TextField;
-	class ListModel;
 	class AWidget;
-	class ClipRectangle;
-	class ScrollArea;
-	class Slider;
-	class ClickLabel;
-	class ImageFont;
-	class RadioButton;
-	class Window;
-	class DropDown;
-	class Container;
-	class Image;
-	class TwoButton;
 	class Button;
-	class Icon;
 	class CheckBox;
+	class ClickLabel;
+	class ClipRectangle;
 	class Color;
-	class Rectangle;
-	class TTFont;
+	class Container;
+	class DropDown;
+	class FIFE;
+	class Icon;
+	class Image;
+	class ImageFont;
 	class Label;
 	class ListBox;
+	class ListModel;
+	class RadioButton;
+	class Rectangle;
+	class ScrollArea;
+	class Slider;
+	class TTFont;
+	class TextBox;
+	class TextField;
+	class TwoButton;
+	class Window;
 }

@@ -1,17 +1,18 @@
 namespace FIFE {
-	class RenderAble;
-	class Point;
-	class Rect;
-	class Image;
-	class RenderManager;
-	class ComplexAnimation;
-	class Screen;
-	class PartialAction;
-	class RenderBackend;
-	class RenderableLocation;
-	class RenderableProvider;
 	class Animation;
 	class CRenderBackend;
+	class ComplexAnimation;
+	class Image;
+	class PartialAction;
+	class PixelBuffer;
+	class Point;
+	class Rect;
+	class RenderAble;
+	class RenderBackend;
+	class RenderManager;
+	class RenderableLocation;
+	class RenderableProvider;
+	class Screen;
 	namespace map {
 		class Geometry;
 	}

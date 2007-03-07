@@ -121,8 +121,13 @@ class sorter:
 		return self._format('')
 
 	def _format(self, indent):
-		result = ''.join([indent + x + ';\n' for x in self.current])
-		for key in self.sub:
+		result = [indent + x + ';\n' for x in self.current]
+		result.sort()
+		result = ''.join(result)
+		keys = self.sub.keys()
+		#print keys
+		keys.sort()
+		for key in keys:
 			result += indent + key + ' {\n' + self.sub[key]._format(indent + '\t') + indent + '}\n'
 		return result
 

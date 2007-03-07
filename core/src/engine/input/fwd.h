@@ -1,7 +1,7 @@
 namespace FIFE {
 	namespace input {
-		class Manager;
-		class ListenerRaw;
 		class Listener;
+		class ListenerRaw;
+		class Manager;
 	}
 }

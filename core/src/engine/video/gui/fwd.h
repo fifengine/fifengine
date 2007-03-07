@@ -1,13 +1,13 @@
 namespace FIFE {
-	class GUIManager;
 	class Console;
 	class GCNImage;
 	class GCNImageLoader;
+	class GUIManager;
 }
 namespace gcn {
-	class Gui;
-	class Widget;
 	class Container;
-	class SDLInput;
 	class Font;
+	class Gui;
+	class SDLInput;
+	class Widget;
 }
