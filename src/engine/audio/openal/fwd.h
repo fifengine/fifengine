@@ -1,11 +1,11 @@
 namespace FIFE {
 	namespace audio {
-		class Manager;
-		class Source;
-		class OggVorbisDecoder;
-		class Decoder;
-		class Buffer;
 		class ACMDecoder;
+		class Buffer;
+		class Decoder;
+		class Manager;
+		class OggVorbisDecoder;
+		class Source;
 		namespace ACM_detail {
 			class Unpacker;
 		}

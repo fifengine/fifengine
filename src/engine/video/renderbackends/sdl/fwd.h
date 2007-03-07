@@ -1,7 +1,7 @@
 namespace FIFE {
-	class SDLScreen;
-	class SDLImage;
 	class RenderBackendSDL;
+	class SDLImage;
+	class SDLScreen;
 }
 namespace gcn {
 	class SDLGraphics;

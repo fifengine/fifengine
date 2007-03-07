@@ -1,44 +1,48 @@
 class TiXmlElement;
 namespace FIFE {
-	class Screen;
-	class SettingsManager;
-	class ScriptEngine;
 	class ComplexAnimation;
+	class Screen;
+	class ScriptEngine;
+	class SettingsManager;
 	namespace map {
-		class Factory;
-		class View;
 		class Action;
-		class ScriptingSlave;
-		class event_t;
-		class Elevation;
-		class Control;
-		class ScriptEngine;
-		class Object;
+		class Archetype;
+		class ArchetypeLoader;
+		class ArchetypeLoaderBase;
 		class Camera;
-		class Map;
-		class Service;
-		class HexGeometry;
-		class Visual;
-		class ObjectInfo;
-		class ViewGameState;
-		class ObjectGrid;
+		class Control;
+		class Elevation;
+		class Factory;
+		class Geometry;
 		class Grid;
 		class GridGeometry;
-		class VisualTree;
-		class ObjectManager;
-		class Geometry;
-		class Runner;
-		class Location;
+		class HexGeometry;
+		class Layer;
 		class Loader;
+		class Location;
+		class Map;
+		class Object;
+		class ObjectGrid;
+		class ObjectInfo;
+		class ObjectManager;
+		class Runner;
+		class ScriptEngine;
+		class ScriptingSlave;
+		class Service;
+		class View;
+		class ViewGameState;
+		class Visual;
+		class VisualTree;
+		class event_t;
+		namespace command {
+			class Command;
+		}
 		namespace effect {
 			class Effect;
 		}
 		namespace event_detail {
-			class PayloadWrapper;
 			class Payload;
-		}
-		namespace command {
-			class Command;
+			class PayloadWrapper;
 		}
 	}
 }

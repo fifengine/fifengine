@@ -1,30 +1,33 @@
+class SDL_Color;
 namespace FIFE {
-	class RenderAble;
-	class ImageCache;
-	class Image;
 	class Animation;
+	class Image;
+	class ImageCache;
 	class RawData;
+	class RenderAble;
 	namespace map {
 		class ObjectInfo;
 		namespace loaders {
 			namespace fallout {
+				class AnimatedBlock;
+				class AnimatedPalette;
+				class Animation;
+				class CritLST;
+				class DAT1;
+				class DAT2;
+				class FRM;
+				class Fallout;
 				class Header;
+				class LZSSDecoder;
+				class Object;
+				class ObjectFactory;
+				class PAL;
+				class PALAnimation;
 				class ProviderDAT1;
 				class ProviderDAT2;
 				class RawData;
-				class RawDataDAT2;
-				class ObjectFactory;
 				class RawDataDAT1;
-				class PALAnimation;
-				class PAL;
-				class Animation;
-				class CritLST;
-				class LZSSDecoder;
-				class Fallout;
-				class Object;
-				class DAT2;
-				class DAT1;
-				class FRM;
+				class RawDataDAT2;
 				class list;
 			}
 		}

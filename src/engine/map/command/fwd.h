@@ -1,11 +1,11 @@
 namespace FIFE {
 	namespace map {
 		namespace command {
-			class StartMovement;
-			class SetVisual;
+			class Command;
 			class EnqueueAction;
 			class Info;
-			class Command;
+			class SetVisual;
+			class StartMovement;
 		}
 	}
 }

@@ -1,10 +1,10 @@
 namespace FIFE {
-	class file_format;
-	class VFSSource;
 	class RawData;
+	class VFS;
+	class VFSHostSystem;
+	class VFSSource;
+	class VFSSourceFactory;
 	class VFSSourceProvider;
 	class VFSWriteFormat;
-	class VFSSourceFactory;
-	class VFSHostSystem;
-	class VFS;
+	class file_format;
 }
