@@ -135,6 +135,10 @@ namespace FIFE {
 				return *val;
 			}
 
+			const std::type_info& getTypeInfo(const type_attr_id& id)  {
+				return m_attributes[ id ].type();
+			}
+
 			/** Check whether an attribute exists
 			 *  @param id Id of the attriute to check
 			 *  @return True, if the attribute was set already

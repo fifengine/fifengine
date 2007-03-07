@@ -19,6 +19,9 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_SCRIPT_LUA_TABLE_H
+#define FIFE_SCRIPT_LUA_TABLE_H
+
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -27,35 +30,27 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/objectinfo.h"
 
-#include "lua_object.h"
+struct lua_State;
 
 namespace FIFE {
 
+	class AttributedClass;
+	typedef AttributedClass Table;
 
-	Object_LuaScript::Object_LuaScript(map::ObjectPtr obj) : m_object(obj) {
-	}
+	/** Table like Attribute access mixin
+	 */
+	class Table_LuaScript {
+		public:
+			Table_LuaScript();
+			virtual ~Table_LuaScript();
 
-	Object_LuaScript::Object_LuaScript(lua_State* L) : m_object(new map::ObjectInfo()) {
-	}
+			int getAttr(lua_State* L);
+			int setAttr(lua_State* L);
 
-	Object_LuaScript::~Object_LuaScript() {
-	}
-
-	Table* Object_LuaScript::getTable() { 
-		return m_object.get();
-	}
-
-	const char Object_LuaScript::className[] = "GObject";
-
-#define method(class, name) {#name, &class::name}
-	Lunar<Object_LuaScript>::RegType Object_LuaScript::methods[] = {
-		method(Object_LuaScript, getAttr),
-		method(Object_LuaScript, setAttr),
-		{0,0}
+			virtual Table* getTable() = 0;
 	};
 
 }
-
+#endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
