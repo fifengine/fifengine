@@ -107,11 +107,11 @@ namespace FIFE {
 		luaopen_guimanager(L);
 		luaopen_engine(L);
 		luaopen_vfs(L);
-		// 		Lunar<Object_LuaScript>::Register2(L);
 
 		Lunar<Timer_Lunar>::Register(L);
 		Lunar<MapControl_Lunar>::Register(L);
 		Lunar<MapCamera_Lunar>::Register(L);
+		Lunar<Object_LuaScript>::Register(L);
 	}
 
 	LuaScript::LuaScript() : ScriptEngine("Lua") {

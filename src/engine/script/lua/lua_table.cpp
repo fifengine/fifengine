@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2006 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,45 +19,89 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SCRIPT_LUA_LUA_OBJECT_H
-#define FIFE_SCRIPT_LUA_LUA_OBJECT_H
-
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
 #include "lua.hpp"
-#include "lunar.h"
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "attributedclass.h"
 
 #include "lua_table.h"
 
+
 namespace FIFE {
 
-	namespace map {
-		class ObjectInfo;
-		typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
+	Table_LuaScript::Table_LuaScript() {}
+	Table_LuaScript::~Table_LuaScript() {}
+
+	int Table_LuaScript::getAttr(lua_State* L) {
+		std::string key = lua_tostring(L,1);
+
+// 		lua_getglobal(L,self->classname().c_str());
+// 		lua_pushstring(L,key.c_str());
+// 		lua_gettable(L,-2);
+// 		lua_remove(L,-2);
+// 		if( !lua_isnil(L,-1) )
+// 			return 1;
+// 		lua_pop(L,1);
+
+		AttributedClass *t = getTable();
+		if (!t) {
+			lua_pushnil(L);
+			return 1;
+		}
+
+		if (!t->hasAttribute(key)) {
+			lua_pushnil(L);
+			return 1;
+		}
+
+		if( typeid(key) == t->getTypeInfo(key) ) {
+			std::string value = t->get<std::string>(key);
+			lua_pushstring(L,value.c_str());
+			return 1;
+		}
+
+		if( typeid(long(1)) == t->getTypeInfo(key) ) {
+			long value = t->get<long>(key);
+			lua_pushnumber(L,value);
+			return 1;
+		}
+
+		Debug("LuaTable")
+			<< "get failed to determine lua type of  "
+			<< t->getTypeInfo(key).name();
+
+		lua_pushnil(L);
+		return 1;
 	}
 
-	class Object_LuaScript : public Table_LuaScript {
-		public:
-			static const char className[];
-			static Lunar<Object_LuaScript>::RegType methods[];
+	int Table_LuaScript::setAttr(lua_State* L) {
+		AttributedClass *t = getTable();
+		if (!t)
+			return 0;
 
-			Object_LuaScript(lua_State *L);
-			Object_LuaScript(map::ObjectPtr obj);
-			virtual ~Object_LuaScript();
+		std::string key = lua_tostring(L,1);
 
-			virtual Table* getTable();
-
-		private:
-			map::ObjectPtr m_object;
-	};
-
+		switch(lua_type(L,2)) {
+		case LUA_TNUMBER:
+			{
+				long number = lua_tointeger(L,2);
+				lua_pop(L,1);
+				t->set<long>(key,number);
+				return 0;
+			}
+		case LUA_TSTRING:
+			t->set<std::string>(key,lua_tostring(L,2));
+			lua_pop(L,1);
+			return 0;
+		}
+	
+		std::string value = lua_tostring(L,2);
+		lua_pop(L,1);
+		t->set<std::string>(key,value);
+		return 0;
+	}
 }
-#endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
