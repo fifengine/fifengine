@@ -6,7 +6,6 @@ if env['lite'] == 0:
 		'engine/SConscript',
 		'mapview_test/SConscript',
 		'guimap_test/SConscript',
-            	'writetest/SConscript',
 	]
 
 if env['testcases'] == 1:

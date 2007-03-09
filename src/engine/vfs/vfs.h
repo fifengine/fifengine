@@ -36,15 +36,12 @@
 // Second block: files included from the same folder
 #include "singleton.h"
 
-#include "vfsdatastruct.h"
-
 namespace FIFE {
 
 	class RawData;
 	typedef ::boost::shared_ptr<RawData> RawDataPtr;
 
 	class VFSSource;
-	class VFSWriteFormat;
 	/** the main VFS (virtual file system) class
 	 *
 	 * The VFS is intended to provide transparent and portable access to files.
@@ -73,12 +70,6 @@ namespace FIFE {
 			/** remove a VFSSource */
 			void removeSource(VFSSource* source);
 			
-			/** Add a new VFSWriteFormat */
-			void addFormat(VFSWriteFormat* format);
-			
-			/** remove a VFSWriteFormat */
-			void removeFormat(VFSWriteFormat* format);
-
 			/** Check if the given file exists
 			 *
 			 * @param file the filename
@@ -128,37 +119,13 @@ namespace FIFE {
 			 */
 			type_stringlist listDirectories(const std::string& path, const std::string& filterregex) const;
 
-			/** Write to a file.
-			 *  Writes the specified data to a file using the appropriate format.
-			 * 
-			 * @param data_structure the data structure to be written to disk.
-			 * @param file_name the path and file name to write the data to.
-			 * @param format the file format to use to write the data.
-			 * @throws InvalidDataFormat if the data structure and file format do not match.
-			 */
-			bool fileWrite(void* data_structure, std::string& file_name, file_format* format);
-			/** Finds a file format that matches the search string.
-			 *  Searches the names and extensions of supported formats for one that 
-			 *  matches the supplied string and returns the file format struct.
-			 * @param search_string the string to search for
-			 * @return the file_format instance that matches
-			 */
-			file_format* findFileFormat(std::string search_string);
 		private:
 			typedef std::vector<VFSSource*> type_sources;
-			typedef std::vector<VFSWriteFormat*> type_formats;
 			type_sources m_sources;
-			type_formats m_write_formats;
-			format_list m_supported_formats;
 
 			void filterList(type_stringlist& list, const std::string& regex) const;
-			/** Add a list of supported formats for a VFSWriteFormat to the VFS list */
-			void addSupportedFormat(VFSWriteFormat* format);
-			/** Remove a list of supported formats for a VFSWriteFormat from the VFS list */
-			void removeSupportedFormat(VFSWriteFormat* format);
 			std::string lower(const std::string&) const;
 			VFSSource* getSourceForFile(const std::string& file) const;
-			VFSWriteFormat* getWriteFormat(file_format* format) const;
 	};
 
 }

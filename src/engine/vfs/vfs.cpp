@@ -36,11 +36,10 @@
 
 #include "vfs.h"
 #include "vfssource.h"
-#include "vfswriteformat.h"
 
 namespace FIFE {
 
-	VFS::VFS() : m_sources(), m_write_formats() {}
+	VFS::VFS() : m_sources() {}
 
 	VFS::~VFS() {
 		cleanup();
@@ -50,11 +49,6 @@ namespace FIFE {
 		type_sources sources = m_sources;
 		type_sources::const_iterator end = sources.end();
 		for (type_sources::iterator i = sources.begin(); i != end; ++i)
-			delete *i;
-			
-		type_formats formats = m_write_formats;
-		type_formats::const_iterator fEnd = formats.end();
-		for( type_formats::iterator i = formats.begin(); i != fEnd; i++)
 			delete *i;
 	}
 
@@ -68,22 +62,6 @@ namespace FIFE {
 			m_sources.erase(i);
 	}
 	
-	void VFS::addFormat(VFSWriteFormat* format) {
-		m_write_formats.push_back(format);
-		addSupportedFormat(format);
-	}
-	
-	void VFS::removeFormat(VFSWriteFormat* format) {
-		removeSupportedFormat(format);
-		
-		type_formats::iterator i = std::find(m_write_formats.begin(),
-											 m_write_formats.end(),
-											 format);
-		if( i != m_write_formats.end() ){
-			m_write_formats.erase(i);
-		}
-	}
-
 	VFSSource* VFS::getSourceForFile(const std::string& file) const {
 		type_sources::const_iterator i = std::find_if(m_sources.begin(), m_sources.end(),
 		                                 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), file));
@@ -162,58 +140,4 @@ namespace FIFE {
 		}
 
 	}
-	
-	bool VFS::fileWrite(void* data_structure, std::string& file_name, file_format *format){
-		VFSWriteFormat* formatter = getWriteFormat(format);
-		if( formatter != NULL){
-			if( formatter->writeFile(data_structure, file_name, format) ){
-				return true;
-			}
-		}
-		else
-		{
-			Log("VFS") << "WARNING: formatter returned from getWriteFormat() is invalid";
-		}
-		return false;			
-	}
-	
-	VFSWriteFormat* VFS::getWriteFormat(file_format* format) const {
-		for( unsigned int i = 0; i < m_write_formats.size(); i++ ){
-			if( m_write_formats[i]->supportsFormat(format) ){
-				return m_write_formats[i];
-			}
-		}
-		Log("VFS") << "no write format found for format: " << format->name;
-		return 0;
-	}
-	
-	void VFS::addSupportedFormat(VFSWriteFormat* format){
-		format_list temp_list = format->getSupportedFormats();
-
-		for( unsigned int i = 0; i < temp_list.size(); i++ ){
-			m_supported_formats.push_back(temp_list[i]);
-		}
-	}
-	
-	void VFS::removeSupportedFormat(VFSWriteFormat* format){
-		format_list temp_list;
-		temp_list = format->getSupportedFormats();
-		for( format_list::iterator i = temp_list.begin(); i != temp_list.end(); i++ ){
-			format_list::iterator local_i = std::find(m_supported_formats.begin(), m_supported_formats.end(), *i);
-			if( local_i != m_supported_formats.end() ){
-				m_supported_formats.erase(local_i);
-			}
-		}
-	}
-	file_format* VFS::findFileFormat(std::string search_string){
-		for( unsigned int i = 0; i < m_supported_formats.size(); i++ ){
-			if( (m_supported_formats[i]->extension == search_string) ||
-				(m_supported_formats[i]->name == search_string) )
-					return m_supported_formats[i];
-		}
-		Log("VFS") << "no file_format for " << search_string << " found";
-		return 0;
-	}
 }
-
-
