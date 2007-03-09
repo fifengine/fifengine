@@ -19,37 +19,47 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADER_H
-#define FIFE_MAP_LOADER_H
-
 // Standard C++ library includes
-#include <string>
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "map/layer.h"
 
-namespace FIFE { namespace map {
+#include "lua_layer.h"
 
-	class Map;
-	typedef boost::shared_ptr<Map> MapPtr;
-	
-	class Loader {
-		public:
-			Loader(const std::string& name) : m_name(name) {}
-			virtual ~Loader() {}
+namespace FIFE {
 
-			const std::string& getName() const { return m_name; }
 
-			virtual MapPtr loadFile(const std::string& path) = 0;
+	Layer_LuaScript::Layer_LuaScript(map::LayerPtr obj) : m_layer(obj) {
+	}
 
-		private:
-			std::string m_name;
+	Layer_LuaScript::Layer_LuaScript(lua_State* L) : m_layer() {
+		int x = int(luaL_checknumber(L,1));
+		int y = int(luaL_checknumber(L,2));
+		int g = int(luaL_checknumber(L,3));
+		m_layer = map::LayerPtr(new map::Layer(Point(x,y),g));
+	}
+
+	Layer_LuaScript::~Layer_LuaScript() {
+	}
+
+	Table* Layer_LuaScript::getTable() { 
+		return m_layer.get();
+	}
+
+	const char Layer_LuaScript::className[] = "Layer";
+
+#define method(class, name) {#name, &class::name}
+	Lunar<Layer_LuaScript>::RegType Layer_LuaScript::methods[] = {
+		method(Layer_LuaScript, getAttr),
+		method(Layer_LuaScript, setAttr),
+		{0,0}
 	};
-} } //FIFE::map
 
-#endif
+}
+
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

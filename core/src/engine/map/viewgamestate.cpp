@@ -111,8 +111,8 @@ namespace FIFE { namespace map {
 		if(!m_valid_map)
 			return;
 
-		FIFE::map::Elevation* elevation = m_view->getCurrentElevation();
-		FIFE::map::Layer *obj_grid=0, *floor_grid=0, *roof_grid=0;
+		FIFE::map::ElevationPtr elevation = m_view->getCurrentElevation();
+		FIFE::map::LayerPtr obj_grid, floor_grid, roof_grid;
 
 		// FIXME Hardcoded map structure
 		if( elevation->getNumLayers() > 0)

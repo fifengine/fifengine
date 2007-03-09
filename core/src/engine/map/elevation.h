@@ -27,6 +27,7 @@
 #include <vector>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -40,6 +41,10 @@ namespace FIFE { namespace map {
 
 	class ObjectInfo;
 	class Layer;
+	typedef boost::shared_ptr<Layer> LayerPtr;
+
+	class Elevation;
+	typedef boost::shared_ptr<Elevation> ElevationPtr;
 
 	/** Contains a game level.
 	 * 
@@ -73,16 +78,16 @@ namespace FIFE { namespace map {
 	class Elevation : public AttributedClass {
 		public:
 
-			Elevation(const elevation_info& structure);
+			Elevation(const elevation_info& structure = elevation_info());
 			~Elevation();
 
 			/** Add a Layer at the top
 			 * The elevation now owns the Layer.
 			 * Increases num Layers by one.
 			 */
-			void addLayer(Layer* layer);
-			void setLayer(size_t numLayers, Layer* layer);
-			Layer* getLayer(size_t);
+			void addLayer(LayerPtr layer);
+			void setLayer(size_t numLayers, LayerPtr layer);
+			LayerPtr getLayer(size_t);
 			size_t getNumLayers() const;
 			void setNumLayers(size_t numLayers);
 
@@ -92,21 +97,19 @@ namespace FIFE { namespace map {
 
 			/** Get the 'reference' Layer
 			 */
-			Layer* getReferenceLayer();
+			LayerPtr getReferenceLayer();
 
 			/** Try to calculate a valid nice starting position
 			 */
 			Point centerOfMass();
 
 		private:
-			typedef std::vector<Layer*> type_layers;
+			typedef std::vector<LayerPtr> type_layers;
 			type_layers m_layers;
 
 			int m_width;
 			int m_height;
 			size_t m_reference_layer;
-
-			void cleanup();
 
 			// Not copyable.
 			Elevation(const Elevation&);

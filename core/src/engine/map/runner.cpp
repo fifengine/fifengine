@@ -72,14 +72,14 @@ namespace FIFE { namespace map {
 		m_ruleset = rs;
 	}
 
-	void Runner::initialize(View* view, Map* map, ObjectManager* mom) {
+	void Runner::initialize(View* view, MapPtr map, ObjectManager* mom) {
 		m_mom = mom;
 		m_map = map;
 		m_view = view;
 
 		type_cmdmap::iterator it = m_commands.begin();
 		for(; it != m_commands.end(); ++it) {
-			it->second->initialize(view, map, m_mom);
+			it->second->initialize(view, map.get(), m_mom);
 		}
 	}
 
@@ -106,6 +106,7 @@ namespace FIFE { namespace map {
 				m_static_objects[moi->getLocation().elevation].push_back(moi);
 			} else {
 				script += packObject(moi, i);
+				sendEvent(makeEvent(FIFE_NEW_OBJECT,moi));
 			}
 		}
 
@@ -122,7 +123,7 @@ namespace FIFE { namespace map {
 		int result;
 		SDL_WaitThread(the_thread, &result);
 		clearQueue();
-		Log("map_runner") 
+		Log("map_runner")
 			<< "Scripting Thread returned " << result;
 	}
 
@@ -151,10 +152,10 @@ namespace FIFE { namespace map {
 
 			visual->setLocation(moi->getLocation());
 
-			Debug("map::runner")
-				<< "Adding Visual for static object iid:" << iid
-				<< " rloc:" << loc.toString();
-			moi->debugPrint();
+// 			Debug("map::runner")
+// 				<< "Adding Visual for static object iid:" << iid
+// 				<< " rloc:" << loc.toString();
+// 			moi->debugPrint();
 
 			m_view->addVisual(visual);
 		}

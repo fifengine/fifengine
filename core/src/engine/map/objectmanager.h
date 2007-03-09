@@ -36,6 +36,7 @@
 
 namespace FIFE { namespace map {
 	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 
@@ -46,14 +47,14 @@ namespace FIFE { namespace map {
 			ObjectManager();
 			~ObjectManager();
 
-			void initialize( Map* );
+			void initialize( MapPtr );
 
 			size_t addObject(ObjectPtr moi);
 			ObjectPtr getObject(size_t);
 
 			type_objects& getObjects();
 		private:
-			Map* m_map;
+			MapPtr m_map;
 
 			type_objects m_objects;
 

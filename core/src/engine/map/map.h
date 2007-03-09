@@ -28,6 +28,7 @@
 #include <vector>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,6 +42,8 @@
 namespace FIFE { namespace map {
 
 	class Elevation;
+	typedef boost::shared_ptr<Elevation> ElevationPtr;
+
 	class ObjectManager;
 	/** A container of \c MapElevation(s).
 	 *
@@ -65,13 +68,14 @@ namespace FIFE { namespace map {
 				OnElevationChange = 3
 			} ScriptType;
 
-			Map(const std::string& mapname);
+			Map(const std::string& mapname = "");
 			~Map();
 
+			void setMapName(const std::string& name);
 			const std::string& getMapName() const;
 			size_t getElevationCount() const;
-			Elevation* getElevation(size_t index) const;
-			void addElevation(Elevation*);
+			ElevationPtr getElevation(size_t index) const;
+			void addElevation(ElevationPtr);
 
 			void setScript(ScriptType scripttype, const ScriptContainer&);
 			const ScriptContainer& getScript(ScriptType scripttype);
@@ -84,7 +88,7 @@ namespace FIFE { namespace map {
 			std::string m_mapname;
 			ObjectManager* m_mom;
 
-			typedef std::vector<Elevation*> type_elevations;
+			typedef std::vector<ElevationPtr> type_elevations;
 			type_elevations m_elevations;
 
 			typedef std::map<ScriptType, ScriptContainer> type_scriptmap;

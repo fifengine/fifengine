@@ -101,7 +101,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return i->second;
 	}
 
-	Map* Fallout::loadFile(const std::string& filepath) {
+	MapPtr Fallout::loadFile(const std::string& filepath) {
 		cleanup();
 		RawDataPtr file = VFS::instance()->open(filepath);
 
@@ -109,7 +109,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		file->moveIndex(m_header->getNumGlobalVars() * 4 + 
 		                m_header->getNumLocalVars() * 4);
 
-		Map* map = new Map(m_header->getMapName());
+		MapPtr map(new Map(m_header->getMapName()));
 		loadTiles(map, file);
 		ignoreScripts(file);
 		loadObjects(map, file);
@@ -124,10 +124,10 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return map;
 	}
 
-	void Fallout::loadTiles(Map* map, RawDataPtr data) {
+	void Fallout::loadTiles(MapPtr map, RawDataPtr data) {
 		list lst("art/tiles/tiles.lst");
 		for (unsigned int e = 0; e < m_header->getNumElevations(); ++e) {
-			Elevation* elevation = new Elevation(m_foElevationFormat);
+			ElevationPtr elevation(new Elevation(m_foElevationFormat));
 			for (unsigned int y = 0; y < 100; ++y) {
 				for (unsigned int x = 0; x < 100; ++x) {
 					unsigned int roof = data->read16Big();
@@ -137,8 +137,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 					// i just confused? ;)
 					Point tilepos(99-x,y);
 
-					Layer* floorgrid  = elevation->getLayer(0);
-					Layer* roofgrid   = elevation->getLayer(2);
+					LayerPtr floorgrid  = elevation->getLayer(0);
+					LayerPtr roofgrid   = elevation->getLayer(2);
 					if (roof > 1) {
 						std::string roof_file = "art/tiles/" + lst.getProFile(roof);
 						const s_imgdata& imgdata = getImageID(roof_file);
@@ -152,7 +152,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 					}
 				}
 			}
-			Layer* layer = elevation->getLayer(1);
+			LayerPtr layer = elevation->getLayer(1);
 			layer->addParam<bool>("BLOCKING", false);
 			map->addElevation(elevation);
 		}
@@ -205,7 +205,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		}
 	}
 
-	void Fallout::loadObjects(Map* map, RawDataPtr data) {
+	void Fallout::loadObjects(MapPtr map, RawDataPtr data) {
 		uint32_t count_objects_all = data->read32Big();
 		Log("mlfallout") << "trying to load " << count_objects_all << " objects";
 

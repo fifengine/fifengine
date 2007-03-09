@@ -43,7 +43,8 @@ namespace FIFE { namespace map {
 		FIFE_SHUTDOWN,
 		FIFE_EXEC,
 		FIFE_EXEC_FILE,
-		FIFE_EXEC_STRING
+		FIFE_EXEC_STRING,
+		FIFE_NEW_OBJECT
 	};
 
 	namespace event_detail {

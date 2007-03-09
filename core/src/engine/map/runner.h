@@ -39,6 +39,8 @@
 namespace FIFE { namespace map {
 
 	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
+
 	class View;
 	class ObjectManager;
 	class ObjectInfo;
@@ -95,7 +97,7 @@ namespace FIFE { namespace map {
 			 *
 			 *  The pointers are used to initialize the commands
 			 */
-			void initialize(View* view, Map* map, ObjectManager* mom);
+			void initialize(View* view, MapPtr map, ObjectManager* mom);
 
 			/** Start the ruleset execution
 			 *  This will start the ruleset, the scripting thread and will
@@ -129,7 +131,7 @@ namespace FIFE { namespace map {
 		private:
 			ScriptContainer m_ruleset;
 			ObjectManager* m_mom;
-			Map* m_map;
+			MapPtr m_map;
 			View* m_view;
 			ScriptingSlave* m_slave;
 

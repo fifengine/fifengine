@@ -155,7 +155,7 @@ namespace FIFE { namespace map {
 		m_timer.stop();
 		m_view = m_control->getView();
 		if (!m_view->getCurrentElevation()) {
-			m_layer = 0;
+			m_layer.reset();
 			m_position = Point();
 			m_mode = FREE;
 		} else {

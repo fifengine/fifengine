@@ -92,7 +92,7 @@ namespace FIFE { namespace map {
 
 	}
 
-	void Visual::reset(Layer* grid) {
+	void Visual::reset(LayerPtr grid) {
 
 		if( !m_renderable ) {
 			m_screenbox = Rect();

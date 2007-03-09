@@ -27,6 +27,7 @@
 #include <set>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -40,6 +41,8 @@ namespace FIFE {
 namespace map {
 
 	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
+
 	class Camera;
 	class View;
 	class ObjectManager;
@@ -51,6 +54,7 @@ namespace map {
 			~Control();
 	
 			void load(const std::string& filename);
+			void setMap(MapPtr map);
 
 			void start();
 			void pause();
@@ -62,14 +66,14 @@ namespace map {
 			void activateElevation(size_t);
 
 			View* getView();
-			Map* getMap();
+			MapPtr getMap();
 
 			void addCamera(Camera* camera);
 			void removeCamera(Camera* camera);
 
 		protected:
 			std::string m_map_filename;
-			Map* m_map;
+			MapPtr m_map;
 			View* m_view;
 			Runner* m_runner;
 			ObjectManager* m_om;

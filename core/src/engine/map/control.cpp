@@ -50,7 +50,7 @@ namespace FIFE { namespace map {
 
 	Control::Control() 
 		: m_map_filename(""),
-		m_map(0),
+		m_map(),
 		m_view(new View()),
 		m_runner(new Runner()),
 		m_scriptengine(ScriptBackendManager::instance()->current()),
@@ -73,23 +73,27 @@ namespace FIFE { namespace map {
 
 	void Control::load(const std::string& filename) {
 		m_map_filename = filename;
-	}
 
-	void Control::start() {
-		stop();
-
-		m_map = Factory::instance()->loadMap(m_map_filename);
-
-		if (!m_map) {
+		MapPtr map(Factory::instance()->loadMap(m_map_filename));
+		if (!map) {
 			Log("map_control") << "couldn't load map: " << m_map_filename;
 			throw CannotOpenFile(m_map_filename);
 		}
+
+		setMap(map);
+	}
+
+	void Control::setMap(MapPtr map) {
+		stop();
+		m_map = map;
 		if (m_map->getElevationCount() == 0) {
 			Warn("map_control") 
 				<< "map: " << m_map_filename << " has no elevations";
 			throw CannotOpenFile(m_map_filename);
 		}
-		
+	}
+
+	void Control::start() {
 		m_view->setMap(m_map, 0);
 		m_view->setViewport(CRenderBackend()->getMainScreen());
 // 		m_view->setRoofAlpha(m_settings->read<int>("RoofAlpha", 128));
@@ -116,7 +120,7 @@ namespace FIFE { namespace map {
 		m_runner->activateElevation(elev);
 
 		// Assure a default starting position is set
-		Elevation* current_elevation = m_view->getCurrentElevation();
+		ElevationPtr current_elevation = m_view->getCurrentElevation();
 		if( !current_elevation->hasAttribute("_START_POSITION") ) {
 			Point start_pos = current_elevation->centerOfMass();
 			Log("map_control")
@@ -134,8 +138,7 @@ namespace FIFE { namespace map {
 			m_runner->stop();
 			resetCameras();
 			m_view->reset();
-			delete m_map;
-			m_map = 0;
+			m_map.reset();
 		}
 	}
 

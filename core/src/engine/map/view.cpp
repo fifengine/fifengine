@@ -56,7 +56,7 @@ namespace FIFE { namespace map {
 		m_vtree(new VisualTree()),
 		m_surface(0),
 		m_rect(),
-		m_elevation(0),
+		m_elevation(),
 		m_layer_pos(-1) {
 		// Quick hack for getting the masks.
 		// msef003.frm >> hex outline
@@ -68,14 +68,14 @@ namespace FIFE { namespace map {
 	}
 
 	View::~View() {
-		clearVisuals();
+		reset();
 		delete m_vtree;
 	}
 
 	View::View(const View&) 
 		: m_surface(0),
 		m_rect(),
-		m_elevation(0),
+		m_elevation(),
 		m_layer_pos() , m_layer_id(0) {
 	}
 
@@ -102,7 +102,7 @@ namespace FIFE { namespace map {
 		m_rect = rect;
 	}
 
-	void View::setMap(Map* map, size_t elev) {
+	void View::setMap(MapPtr map, size_t elev) {
 		m_map = map;
 		m_elevation = map->getElevation( elev );
 		m_elevation_id = elev;
@@ -130,7 +130,7 @@ namespace FIFE { namespace map {
 		if( visual == 0 ) {
 			return 0;
 		}
-		Layer* layer = m_elevation->getLayer(visual->getLocation().layer);
+		LayerPtr layer = m_elevation->getLayer(visual->getLocation().layer);
 		visual->reset(layer);
 // 		Log("map_view")
 // 			<< "Adding visual at " << visual->getScreenBox();
@@ -155,7 +155,7 @@ namespace FIFE { namespace map {
 		if( !visual )
 			return;
 
-		Layer* layer = m_elevation->getLayer(visual->getLayer());
+		LayerPtr layer = m_elevation->getLayer(visual->getLayer());
 		visual->reset(layer);
 		m_vtree->updateVisual( visualId );
 	}
@@ -173,7 +173,7 @@ namespace FIFE { namespace map {
 		//m_layer_pos = -1;
 	}
 
-	void View::renderGridOverlay(Layer* layer ) {
+	void View::renderGridOverlay(LayerPtr layer ) {
 		Point offset = m_offset + layer->getShift();
 		Geometry* geometry = layer->getGeometry();
 
@@ -209,7 +209,7 @@ namespace FIFE { namespace map {
 	}
 
 
-	void View::renderTiles( Layer* layer ) {
+	void View::renderTiles( LayerPtr layer ) {
 		Point offset = m_offset + layer->getShift();
 		Geometry* geometry = layer->getGeometry();
 
@@ -245,7 +245,7 @@ namespace FIFE { namespace map {
 
 	}
 
-	void View::renderLayerOverlay(Layer* layer, const Point& pos) {
+	void View::renderLayerOverlay(LayerPtr layer, const Point& pos) {
 		Geometry *geometry = layer->getGeometry();
 		Point overlay_offset = layer->get<Point>("_OVERLAY_IMAGE_OFFSET");
 
@@ -259,7 +259,7 @@ namespace FIFE { namespace map {
 		image->render(target,m_surface);
 	}
 
-	size_t View::getGridOverlayImageId(Layer* layer) {
+	size_t View::getGridOverlayImageId(LayerPtr layer) {
 		// FIXME Using the metadata like this (saving the id) is crap.
 		size_t image_id = layer->get<size_t>("_OVERLAY_IMAGE_ID",0);
 		if( image_id == 0 ) {
@@ -294,10 +294,10 @@ namespace FIFE { namespace map {
 		VisualTree::RenderList::iterator visual_it = renderlist.begin();
 
 		for(size_t i=0; i!= m_elevation->getNumLayers(); ++i) {
-			Layer*  layer          = m_elevation->getLayer(i);
-			uint8_t layer_alpha    = layer->getGlobalAlpha();
-			bool    layer_ovisible = layer->areObjectsVisible();
-			bool    render_tiles = layer->areTilesVisible() && layer->hasTiles();
+			LayerPtr layer          = m_elevation->getLayer(i);
+			uint8_t  layer_alpha    = layer->getGlobalAlpha();
+			bool     layer_ovisible = layer->areObjectsVisible();
+			bool     render_tiles = layer->areTilesVisible() && layer->hasTiles();
 
 			if( !layer_ovisible || layer_alpha == 0 ) {
 				while( visual_it != renderlist.end() && (*visual_it)->getLayer() <= i)
@@ -339,7 +339,7 @@ namespace FIFE { namespace map {
 		m_elevation_id = id;
 	}
 
-	Elevation* View::getCurrentElevation() const {
+	ElevationPtr View::getCurrentElevation() const {
 		return m_elevation;
 	}
 
@@ -361,12 +361,12 @@ namespace FIFE { namespace map {
 
 		if( m_elevation->getNumLayers() > 1 ) {
 			if( button == 3 ) {
-				Layer *layer = m_elevation->getLayer(0);
+				LayerPtr layer = m_elevation->getLayer(0);
 				Geometry *geometry = layer->getGeometry();
 				m_tilemask_pos = geometry->fromScreen(Point(x,y) + m_offset);
 				Log("mapview") << "Selected tile Layer: " << m_tilemask_pos;
 			} else {
-				Layer *layer = m_elevation->getLayer(1);
+				LayerPtr layer = m_elevation->getLayer(1);
 				Geometry *geometry = layer->getGeometry();
 				// FIXME: I am not sure where exactly this offset comes from
 				// A rounding problem in map/defaultobjectgeometry.cpp ???
@@ -401,6 +401,8 @@ namespace FIFE { namespace map {
 
 	void View::reset() {
 		clearVisuals();
+		m_map.reset();
+		m_elevation.reset();
 	}
 
 } } //FIFE::map

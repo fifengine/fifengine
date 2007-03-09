@@ -19,37 +19,43 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADER_H
-#define FIFE_MAP_LOADER_H
-
 // Standard C++ library includes
-#include <string>
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "map/elevation.h"
 
-namespace FIFE { namespace map {
+#include "lua_elevation.h"
 
-	class Map;
-	typedef boost::shared_ptr<Map> MapPtr;
-	
-	class Loader {
-		public:
-			Loader(const std::string& name) : m_name(name) {}
-			virtual ~Loader() {}
+namespace FIFE {
 
-			const std::string& getName() const { return m_name; }
 
-			virtual MapPtr loadFile(const std::string& path) = 0;
+	Elevation_LuaScript::Elevation_LuaScript(map::ElevationPtr obj) : m_elevation(obj) {
+	}
 
-		private:
-			std::string m_name;
+	Elevation_LuaScript::Elevation_LuaScript(lua_State* L) : m_elevation(new map::Elevation()) {
+	}
+
+	Elevation_LuaScript::~Elevation_LuaScript() {
+	}
+
+	Table* Elevation_LuaScript::getTable() { 
+		return m_elevation.get();
+	}
+
+	const char Elevation_LuaScript::className[] = "Elevation";
+
+#define method(class, name) {#name, &class::name}
+	Lunar<Elevation_LuaScript>::RegType Elevation_LuaScript::methods[] = {
+		method(Elevation_LuaScript, getAttr),
+		method(Elevation_LuaScript, setAttr),
+		{0,0}
 	};
-} } //FIFE::map
 
-#endif
+}
+
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

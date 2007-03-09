@@ -53,6 +53,7 @@ namespace FIFE { namespace map {
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 	class Layer;
+	typedef boost::shared_ptr<Layer> LayerPtr;
 
 	class Visual {
 		public:
@@ -62,7 +63,7 @@ namespace FIFE { namespace map {
 			void addEffect(effect::Effect* ve);
 			void removeEffect(effect::Effect* ve);
 
-			void reset(Layer* grid);
+			void reset(LayerPtr grid);
 			void render(Screen* screen, const Point& viewport, uint8_t alpha = 255);
 
 			void setRenderable( size_t renderable,

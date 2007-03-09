@@ -84,7 +84,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			 * \note This function propagates exceptions outward: not found, 
 			 * invalid format.
 			 */
-			virtual Map* loadFile(const std::string& path);
+			virtual MapPtr loadFile(const std::string& path);
 
 		private:
 			Header* m_header;
@@ -102,7 +102,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 			/** Load Floor and Roof tiles into the Map
 			 */
-			void loadTiles(Map* map, RawDataPtr data);
+			void loadTiles(MapPtr map, RawDataPtr data);
 
 			/** Skip over scripts
 			 */
@@ -110,7 +110,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 			/** Load Objects
 			 */
-			void loadObjects(Map* map, RawDataPtr data);
+			void loadObjects(MapPtr map, RawDataPtr data);
 
 			/** Clean up internal data
 			 */

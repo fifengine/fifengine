@@ -30,7 +30,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/command/info.h"
+#include "map/objectinfo.h"
 #include "script/lua/lua_stackguard.h"
+#include "script/lua/lua_object.h"
 #include "script/scriptcontainer.h"
 #include "event.h" // FIXME: Needed?
 #include "log.h"
@@ -73,6 +75,8 @@ namespace FIFE { namespace map {
 		lua_setglobal(vm, "FIFE_ExecCommand");
 		lua_pushcfunction(vm, lua_sleep);
 		lua_setglobal(vm, "FIFE_Sleep");
+
+		Lunar<Object_LuaScript>::Register(vm);
 	}
 	
 	ScriptingSlave::~ScriptingSlave() {
@@ -162,15 +166,22 @@ namespace FIFE { namespace map {
 	}
 
 	void ScriptingSlave::processEvent(const event_t& e) {
+		LuaStackguard guard(vm);
+
 		switch (e.code()) {
 			case FIFE_HEARTBEAT: {
 				m_ticks = e.ticks();
 			} break;
-													 
+
 			case FIFE_EXEC_STRING:
 			case FIFE_EXEC_FILE:
 			case FIFE_EXEC:
-			processExecEvent(e);
+				processExecEvent(e);
+			break;
+			case FIFE_NEW_OBJECT:
+				lua_getglobal(vm, "AddObject");
+				Lunar<Object_LuaScript>::push(vm, new Object_LuaScript(e.get<ObjectPtr>()));
+				lua_pcall(vm,1,0,0);
 			break;
 	
 			default: {

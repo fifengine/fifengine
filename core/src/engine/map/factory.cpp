@@ -93,7 +93,7 @@ namespace FIFE { namespace map {
 		Log("map::factory") << "new maploader: " << loader->getName();
 	}
 
-	Map* Factory::loadMap(const std::string& path) {
+	MapPtr Factory::loadMap(const std::string& path) {
 		type_loaders::const_iterator end = m_loaders.end();
 		for (type_loaders::iterator i = m_loaders.begin(); i != end; ++i) {
 			try {
@@ -107,7 +107,7 @@ namespace FIFE { namespace map {
 		}
 
 		Log("map::factory") << "no loader succeeded for " << path << " :(";
-		return 0;
+		return MapPtr();
 	}
 
 	void Factory::registerArchetypeLoader(const std::string& type, ArchetypeLoaderBase* loader) {

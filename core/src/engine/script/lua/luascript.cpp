@@ -40,6 +40,9 @@
 #include "lua_mapcamera.h"
 #include "lua_mapcontrol.h"
 #include "lua_object.h"
+#include "lua_layer.h"
+#include "lua_elevation.h"
+#include "lua_map.h"
 #include "lua_ref.h"
 #include "lua_stackguard.h"
 #include "lua_timer.h"
@@ -112,6 +115,9 @@ namespace FIFE {
 		Lunar<MapControl_Lunar>::Register(L);
 		Lunar<MapCamera_Lunar>::Register(L);
 		Lunar<Object_LuaScript>::Register(L);
+		Lunar<Layer_LuaScript>::Register(L);
+		Lunar<Elevation_LuaScript>::Register(L);
+		Lunar<Map_LuaScript>::Register(L);
 	}
 
 	LuaScript::LuaScript() : ScriptEngine("Lua") {
