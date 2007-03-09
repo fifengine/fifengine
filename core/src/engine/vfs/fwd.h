@@ -5,6 +5,4 @@ namespace FIFE {
 	class VFSSource;
 	class VFSSourceFactory;
 	class VFSSourceProvider;
-	class VFSWriteFormat;
-	class file_format;
 }

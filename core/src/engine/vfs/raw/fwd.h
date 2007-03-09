@@ -4,5 +4,4 @@ namespace FIFE {
 	class RawDataFile;
 	class RawDataMemSource;
 	class RawDataSource;
-	class RawWriteText;
 }
