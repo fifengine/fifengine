@@ -39,9 +39,9 @@
 #include "video/renderbackend.h"
 #include "debugutils.h"
 #include "exception.h"
+#include "imagecache.h"
 #include "log.h"
 
-#include "imagecache.h"
 #include "guichanfont.h"
 
 namespace FIFE {
