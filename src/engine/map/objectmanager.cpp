@@ -36,7 +36,7 @@
 
 namespace FIFE { namespace map {
 
-	ObjectManager::ObjectManager() : m_map(0), m_objects() {
+	ObjectManager::ObjectManager() : m_map(), m_objects() {
 		m_objects.push_back(ObjectPtr(new ObjectInfo()));
 	}
 
@@ -59,7 +59,7 @@ namespace FIFE { namespace map {
 		return m_objects;
 	}
 
-	void ObjectManager::initialize(Map* m) {
+	void ObjectManager::initialize(MapPtr m) {
 		m_map = m;
 		finalizeAllObjects();
 	}

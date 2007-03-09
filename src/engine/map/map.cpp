@@ -50,7 +50,6 @@ namespace FIFE { namespace map {
 
 	void Map::cleanup() {
 		// Delete Elevations
-		purge( m_elevations );
 		m_elevations.clear();
 		
 		// Delete objects
@@ -60,12 +59,15 @@ namespace FIFE { namespace map {
 	const std::string& Map::getMapName() const {
 		return m_mapname;
 	}
+	void Map::setMapName(const std::string& name) {
+		m_mapname = name;
+	}
 
 	size_t Map::getElevationCount() const {
 		return m_elevations.size();
 	}
 
-	Elevation* Map::getElevation(size_t index) const {
+	ElevationPtr Map::getElevation(size_t index) const {
 		if (index >= getElevationCount()) {
 			PANIC_PRINT("invalid elevationlevel: " << index);
 		}
@@ -73,7 +75,7 @@ namespace FIFE { namespace map {
 		return *(m_elevations.begin() + index);
 	}
 
-	void Map::addElevation(Elevation* elevation) {
+	void Map::addElevation(ElevationPtr elevation) {
 		m_elevations.push_back(elevation);
 	}
 

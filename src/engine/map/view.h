@@ -30,6 +30,7 @@
 #include <vector>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -47,11 +48,15 @@ namespace FIFE {
 namespace FIFE { namespace map {
 
 	class Map;
-	class Camera;
-	class Elevation;
+	typedef boost::shared_ptr<Map> MapPtr;
 
+	class Camera;
+
+	class Elevation;
+	typedef boost::shared_ptr<Elevation> ElevationPtr;
 
 	class Layer;
+	typedef boost::shared_ptr<Layer> LayerPtr;
 	class Visual;
 	class VisualTree;
 
@@ -89,7 +94,7 @@ namespace FIFE { namespace map {
 			 *
 			 * @param elevation the mapelevation to render
 			 */
-			void setMap(Map* map, size_t elev);
+			void setMap(MapPtr map, size_t elev);
 
 			/** Renders the map */
 			void render();
@@ -139,7 +144,7 @@ namespace FIFE { namespace map {
 
 			/** Get the current elevation
 			 */
-			Elevation* getCurrentElevation() const;
+			ElevationPtr getCurrentElevation() const;
 
 			/** Handle a mouseclick
 			 */
@@ -172,9 +177,9 @@ namespace FIFE { namespace map {
 			Rect m_rect;
 
 			/// Current Map
-			Map* m_map;
+			MapPtr m_map;
 			/// Current elevation
-			Elevation* m_elevation;
+			ElevationPtr m_elevation;
 
 			/// Current elevation id
 			size_t m_elevation_id;
@@ -190,18 +195,18 @@ namespace FIFE { namespace map {
 			size_t m_tilemask;
 
 
-			void renderTiles(Layer* layer);
-			void renderGridOverlay(Layer* grid);
+			void renderTiles(LayerPtr layer);
+			void renderGridOverlay(LayerPtr grid);
 
 			void renderVisuals(size_t);
 
-			void renderLayerOverlay(Layer* grid, const Point& pos);
+			void renderLayerOverlay(LayerPtr grid, const Point& pos);
 
 			void elevationChange();
 			void clearVisuals();
 
 			/// Utility Function
-			size_t getGridOverlayImageId(Layer* grid);
+			size_t getGridOverlayImageId(LayerPtr grid);
 
 			/// Prevent copy construction
 			View(const View&);

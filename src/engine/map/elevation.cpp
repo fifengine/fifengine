@@ -42,8 +42,8 @@ namespace FIFE { namespace map {
 
 		setNumLayers(structure.numberOfLayers);
 		for (size_t i = 0; i != structure.numberOfLayers; ++i) {
-			Layer *layer = new Layer(structure.layers[i].size,
-			                      structure.layers[i].geometry);
+			LayerPtr layer(new Layer(structure.layers[i].size,
+			                         structure.layers[i].geometry));
 			layer->setShift(structure.layers[i].shift);
 			layer->set("_OVERLAY_IMAGE",structure.layers[i].overlay);
 			layer->set("_OVERLAY_IMAGE_OFFSET", structure.layers[i].overlay_offset);
@@ -53,14 +53,7 @@ namespace FIFE { namespace map {
 		setReferenceLayer(structure.referenceLayer);
 	}
 
-	// XXX Why are we storing pointers?
-	// Consider also boost::ptr_vector
 	Elevation::~Elevation() {
-		cleanup();
-	}
-
-	void Elevation::cleanup() {
-		purge(m_layers);
 	}
 
 	size_t Elevation::getNumLayers() const {
@@ -71,14 +64,14 @@ namespace FIFE { namespace map {
 		m_layers.resize(n);
 	}
 
-	void Elevation::setLayer(size_t idx, Layer* Layer) {
+	void Elevation::setLayer(size_t idx, LayerPtr Layer) {
 		m_layers[idx] = Layer;
 	}
-	void Elevation::addLayer(Layer* layer) {
+	void Elevation::addLayer(LayerPtr layer) {
 		m_layers.push_back(layer);
 	}
 
-	Layer* Elevation::getLayer(size_t idx) {
+	LayerPtr Elevation::getLayer(size_t idx) {
 		return m_layers.at(idx);
 	}
 
@@ -86,7 +79,7 @@ namespace FIFE { namespace map {
 		m_reference_layer = layer;
 	}
 
-	Layer* Elevation::getReferenceLayer() {
+	LayerPtr Elevation::getReferenceLayer() {
 		return getLayer(m_reference_layer);
 	}
 
@@ -95,8 +88,8 @@ namespace FIFE { namespace map {
 		Point p;
 
 		// Sanity checks.
-		Layer* ref_layer = getReferenceLayer();
-		if( ref_layer == 0 )
+		LayerPtr ref_layer = getReferenceLayer();
+		if( !ref_layer )
 			return p;
 
 		Geometry* ref_geo = ref_layer->getGeometry();

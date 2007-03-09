@@ -41,6 +41,8 @@
 namespace FIFE { namespace map {
 
 	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
+
 	class Loader;
 	class Archetype;
 	class ArchetypeLoaderBase;
@@ -81,11 +83,11 @@ namespace FIFE { namespace map {
 			 * Tries all registered loaders until success.
 			 *
 			 * @param file Path to file to load.
-			 * @return Pointer load @em Map instance (on success) or NULL pointer on failure.
+			 * @return Pointer load @em Map instance (on success) or an invalid pointer on failure.
 			 * @note Exceptions from the maploaders are caught and @b not propagated.
 			 * @bug Throwing an exception when all loaders fail might be a good idea.
 			 */
-			Map* loadMap(const std::string& path);
+			MapPtr loadMap(const std::string& path);
 
 			/** Load an archetype (collection of tileid/prototypes) from a file.
 			 */

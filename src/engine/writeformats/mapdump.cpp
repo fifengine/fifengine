@@ -62,7 +62,7 @@ namespace FIFE {
 			if( !map_structure->getElevation(index) ){
 				return false;
 			}
-			map::Elevation* elevation = map_structure->getElevation(index);
+			map::ElevationPtr elevation = map_structure->getElevation(index);
 			if( !elevation ){
 				return false;
 			}
@@ -95,7 +95,7 @@ namespace FIFE {
 			output_buffer = "Tiles: \n";
 			m_output_file->writeLine(output_buffer);			
 			for( size_t tile_index = 0; tile_index < tile_grid_count; tile_index++ ){
-				map::Layer* local_tile_grid = elevation->getLayer(tile_index);
+				map::LayerPtr local_tile_grid = elevation->getLayer(tile_index);
 				output_buffer = "Tile Grid: ";
 				m_output_file->write(output_buffer, 0, output_buffer.size());
 				m_output_file->rawWrite<size_t>(tile_index);

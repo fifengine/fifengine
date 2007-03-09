@@ -19,37 +19,43 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADER_H
-#define FIFE_MAP_LOADER_H
-
 // Standard C++ library includes
-#include <string>
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "map/map.h"
 
-namespace FIFE { namespace map {
+#include "lua_map.h"
 
-	class Map;
-	typedef boost::shared_ptr<Map> MapPtr;
-	
-	class Loader {
-		public:
-			Loader(const std::string& name) : m_name(name) {}
-			virtual ~Loader() {}
+namespace FIFE {
 
-			const std::string& getName() const { return m_name; }
 
-			virtual MapPtr loadFile(const std::string& path) = 0;
+	Map_LuaScript::Map_LuaScript(map::MapPtr obj) : m_map(obj) {
+	}
 
-		private:
-			std::string m_name;
+	Map_LuaScript::Map_LuaScript(lua_State* L) : m_map(new map::Map()) {
+	}
+
+	Map_LuaScript::~Map_LuaScript() {
+	}
+
+	Table* Map_LuaScript::getTable() { 
+		return m_map.get();
+	}
+
+	const char Map_LuaScript::className[] = "Map";
+
+#define method(class, name) {#name, &class::name}
+	Lunar<Map_LuaScript>::RegType Map_LuaScript::methods[] = {
+		method(Map_LuaScript, getAttr),
+		method(Map_LuaScript, setAttr),
+		{0,0}
 	};
-} } //FIFE::map
 
-#endif
+}
+
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -25,6 +25,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -38,7 +39,9 @@
 namespace FIFE { namespace map { 
 	class RawData;
 	class Elevation;
+	typedef boost::shared_ptr<Elevation> ElevationPtr;
 	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
 
 namespace loaders { namespace xml {
 
@@ -70,16 +73,16 @@ namespace loaders { namespace xml {
 			 * @param path The XML map file ( in vfs)
 			 * @return The loaded map or 0 on error.
 			 */
-			virtual Map* loadFile(const std::string& path);
+			virtual MapPtr loadFile(const std::string& path);
 			
 		private:
 			/// The currently loaded map.
-			Map* m_map;
+			MapPtr m_map;
 
 			/// Structure holding information about where the current loading takes place.
 			struct s_loadcursor {
 				/// Current elevation, 0 if not defined yet
-				Elevation* elevation;
+				ElevationPtr elevation;
 				/// starting with 0
 				int elevationNumber;
 				/// Current layer

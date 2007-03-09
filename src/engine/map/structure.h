@@ -57,7 +57,7 @@ namespace FIFE { namespace map {
 			numberOfLayers(end - begin), layers(begin, end), referenceLayer(rg) {}
 
 		/* FIXME? */
-		elevation_info() {}
+		elevation_info() : numberOfLayers(0) {}
 	};
 
 	/** Tiny Helper class for Elevation Creation

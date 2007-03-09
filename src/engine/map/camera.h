@@ -25,6 +25,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -38,6 +39,7 @@ namespace FIFE { namespace map {
 
 	class View;
 	class Layer;
+	typedef boost::shared_ptr<Layer> LayerPtr;
 	class Control;
 
 	/** A Camera onto the MapView
@@ -95,7 +97,7 @@ namespace FIFE { namespace map {
 
 			void render();
 		private:
-			Layer* m_layer;
+			LayerPtr m_layer;
 			View*  m_view;
 			Point m_position;
 			Point m_next_position;

@@ -72,11 +72,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XML::cleanup() {
-		m_cursor.elevation =0;
+		m_cursor.elevation.reset();
 		m_cursor.elevationNumber = -1;
 	}
 
-	Map* XML::loadFile(const std::string& path) {
+	MapPtr XML::loadFile(const std::string& path) {
 		cleanup();
 
 		TiXmlDocument doc(path);
@@ -85,7 +85,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			Log("xmlmap")
 				<< "Error loading file " << path << ": "
 				<< doc.ErrorDesc();
-			return 0;
+			return MapPtr();
 		}
 
 		TiXmlNode* node = doc.RootElement();
@@ -94,24 +94,25 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			el = node->ToElement();
 		else {
 			Log("xmlmap") << "Error: could not switch to xml:element?";
-			return 0;
+			return MapPtr();
 		}
 
 		if (node && strcmp(el->Value(), "map") != 0)  {
 			Log("xmlmap")
 				<< "Error loading file " << path << ": "
 				<< "Root element is " << el->Value() << " instead of 'map'";
-			return 0;
+			return MapPtr();
 		}
 
-		m_map = 0;
+		m_map.reset();
 		try {
 			loadMap( el );
 		} catch(Exception& e) {
 			Warn("xmlmap") << e.getMessage();
-			if( m_map )
-				delete m_map;
-			return 0;
+			if( m_map ) {
+				m_map.reset();
+			}
+			throw;
 		}
 		return m_map;
 	}
@@ -178,11 +179,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		// Finally create map, load metadata and loop through elevation
-		m_map = new Map(mapname);
+		m_map = MapPtr(new Map(mapname));
 
 		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
 		if (metadata_element) {
-			xmlutil::loadMetadata(metadata_element,m_map);
+			xmlutil::loadMetadata(metadata_element,m_map.get());
 		}
 
 
@@ -268,12 +269,12 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		elevation_info structure;
 		structure.numberOfLayers = 0;
 
-		m_cursor.elevation = new Elevation(structure);
+		m_cursor.elevation = ElevationPtr(new Elevation(structure));
 		m_cursor.elevationNumber += 1;
 
 		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
 		if (metadata_element) {
-			xmlutil::loadMetadata(metadata_element, m_cursor.elevation);
+			xmlutil::loadMetadata(metadata_element, m_cursor.elevation.get());
 		}
 
 		try{
@@ -282,7 +283,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 				el2 = el2->NextSiblingElement("layer");
 			}
 		} catch(...) {
-			delete m_cursor.elevation;
+			m_cursor.elevation.reset();
 			throw;
 		}
 		m_cursor.elevation->setReferenceLayer(refgrid);
@@ -310,15 +311,15 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		m_cursor.width  = size.x;
 		m_cursor.height = size.y;
 
-		Elevation* me = m_cursor.elevation;
-		Layer* layer = new Layer(size,geometry); 
+		ElevationPtr me = m_cursor.elevation;
+		LayerPtr layer(new Layer(size,geometry));
 		me->addLayer(layer);
 		m_cursor.layer = me->getNumLayers() - 1;
 		layer->setShift(shift);
 
 		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
 		if (metadata_element) {
-			xmlutil::loadMetadata(metadata_element, layer);
+			xmlutil::loadMetadata(metadata_element, layer.get());
 		}
 
 		Log("xmlmap")
@@ -397,7 +398,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XML::loadLayerData(TiXmlElement* element) {
-		Layer* layer = m_cursor.elevation->getLayer(m_cursor.layer);
+		LayerPtr layer = m_cursor.elevation->getLayer(m_cursor.layer);
 		int width    = m_cursor.width;
 		int height   = m_cursor.height;
 
@@ -436,7 +437,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XML::loadLayerSparseData(TiXmlElement* element) {
-		Layer* layer = m_cursor.elevation->getLayer(m_cursor.layer);
+		LayerPtr layer = m_cursor.elevation->getLayer(m_cursor.layer);
 
 		TiXmlElement *sdn = element->FirstChildElement("tileat");
 		if (!sdn) {
