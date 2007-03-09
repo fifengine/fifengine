@@ -49,7 +49,7 @@
 #endif
 
 // Macintosh
-#if defined( APPLE_CC )
+#if defined( __APPLE_CC__ )
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif

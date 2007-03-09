@@ -38,7 +38,7 @@
 #endif
 
 // Macintosh
-#if defined( APPLE_CC )
+#if defined( __APPLE_CC__ )
 #include <al.h>
 #include <alc.h>
 #endif
