@@ -20,8 +20,6 @@
 ***************************************************************************/
 
 // Standard C++ library includes
-#include <ctime>
-#include <vector>
 #include <stdio.h>
 
 // 3rd party library includes
@@ -31,7 +29,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/rect.h"
 #include "settingsmanager.h"
 
 using boost::unit_test::test_suite;
