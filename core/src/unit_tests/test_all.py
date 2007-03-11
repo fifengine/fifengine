@@ -13,7 +13,8 @@ for line in open(os.sep.join((dirpath, 'SConscript'))):
     m = reprg.match(line.strip())
     if m:
         progs.append(m.group(1))
-    
+
 for prog in progs:
+    print '\n===== Running %s =====' % prog
     if os.system(os.sep.join(('.', dirpath, prog))):
         break

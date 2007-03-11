@@ -56,6 +56,8 @@
 #include "settingsmanager.h"
 #include "timemanager.h"
 
+static const std::string SETTINGS_FILE_NAME = "fife.config";
+
 namespace FIFE {
 
 	Engine::Engine(int argc, char** argv) 
@@ -90,6 +92,7 @@ namespace FIFE {
 
 	void Engine::init() {
 		new SettingsManager();
+		FIFE::SettingsManager::instance()->loadSettings(SETTINGS_FILE_NAME);
 
 		// If failed to init SDL throw exception.
 		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
@@ -137,6 +140,7 @@ namespace FIFE {
 		delete RenderManager::instance();
 		delete GUIManager::instance();
 		delete input::Manager::instance();
+		SettingsManager::instance()->saveSettings(SETTINGS_FILE_NAME);
 		delete SettingsManager::instance();
 		delete TimeManager::instance();
 	}

@@ -43,9 +43,24 @@ namespace FIFE {
 			SettingsManager();
 			virtual ~SettingsManager();
 
-			void loadSettings();
-			void saveSettings() const;
+			/** Load settings from settings file
+			 * @param settings_file_name name of the settings file to use
+			 */
+			void loadSettings(const std::string& settings_file_name);
 
+			/** Save settings to settings file. If file does not exist and create_on_failure = false,
+			 *  raises CannotOpenFile exception
+			 * @param settings_file_name name of the settings file to use
+			 * @param create_on_failure creates new settings file in case named settings file cannot be found
+			 */
+			void saveSettings(const std::string& settings_file_name, bool create_on_failure=false) const;
+
+			/** Get the name of current settings file.
+			 * 
+			 * @return The state's registration name.
+			 */
+			const std::string& getName() const;
+			
 			template <typename T> T read(const std::string& key, const T& def) {
 				type_settings::const_iterator i = m_settings.find(key);
 				if (i == m_settings.end()) {
@@ -67,6 +82,7 @@ namespace FIFE {
 
 			typedef std::map<std::string, std::string> type_settings;
 			type_settings m_settings;
+			std::string m_settings_file_name;
 
 	};
 

@@ -32,22 +32,20 @@
 #include "exception.h"
 #include "settingsmanager.h"
 
-static const std::string SETTINGS_FILE = "fife.config";
-
 namespace FIFE {
 
-	SettingsManager::SettingsManager() : m_settings() {
-		loadSettings();
+	SettingsManager::SettingsManager() : 
+		m_settings(),
+		m_settings_file_name("") {
 	}
 
 	SettingsManager::~SettingsManager() {
-		saveSettings();
 	}
 
-	void SettingsManager::loadSettings() {
-		std::ifstream settings(SETTINGS_FILE.c_str());
+	void SettingsManager::loadSettings(const std::string& settings_file_name) {
+		std::ifstream settings(settings_file_name.c_str());
 		if (!settings) {
-			Log() << "no settingsfile (" << SETTINGS_FILE << ") found";
+			Log() << "no settingsfile (" << settings_file_name << ") found";
 			return;
 		}
 
@@ -64,10 +62,14 @@ namespace FIFE {
 		}
 	}
 
-	void SettingsManager::saveSettings() const {
-		std::ofstream settings(SETTINGS_FILE.c_str());
-		if (!settings) throw CannotOpenFile(SETTINGS_FILE);
+	void SettingsManager::saveSettings(const std::string& settings_file_name, bool create_on_failure) const {
+		std::fstream testfile(settings_file_name.c_str(), std::ios_base::in);
+		if (!testfile && !create_on_failure) {
+			throw CannotOpenFile(settings_file_name);
+		}
+		testfile.close();
 
+		std::ofstream settings(settings_file_name.c_str());
 		type_settings::const_iterator end = m_settings.end();
 		for (type_settings::const_iterator i = m_settings.begin(); i != end; ++i) {
 			settings << i->first << "=" << i->second << std::endl;
