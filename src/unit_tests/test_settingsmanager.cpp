@@ -21,7 +21,8 @@
 
 // Standard C++ library includes
 #include <ctime>
-#include <vector> 
+#include <vector>
+#include <stdio.h>
 
 // 3rd party library includes
 #include <boost/test/unit_test.hpp>
@@ -31,62 +32,44 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/rect.h"
+#include "settingsmanager.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;
 
-void rectangle_intersection() {
-	Rect a(0,0,10,10);
+static const std::string SETTINGS_FILE_NAME = "__test_settingsmanager.data";
 
-	std::vector<Rect> do_intersect;
-#define ADD_RECT(x,y,w,h) do_intersect.push_back( Rect(x,y,w,h) )
-
-	ADD_RECT(5,5,10,10);
-	ADD_RECT(-5,5,10,10);
-	ADD_RECT(-5,-5,10,10);
-	ADD_RECT(5,-5,10,10);
-
-	ADD_RECT(-5,5,20,1);
-	ADD_RECT(-5,5,10,1);
-
-	ADD_RECT(5,-5,1,20);
-	ADD_RECT(5,-5,1,10);
-
-	ADD_RECT(5,5,3,3);
-	
-	ADD_RECT(-5,-5,30,30);
-
-	for(size_t i=0; i<do_intersect.size(); ++i) {
-		BOOST_CHECK(a.intersects(do_intersect[i]));
-		BOOST_CHECK(do_intersect[i].intersects(a));
-	}	
-
-	std::vector<Rect> dont_intersect;
-
-#undef ADD_RECT
-#define ADD_RECT(x,y,w,h) dont_intersect.push_back( Rect(x,y,w,h) )
-
-	ADD_RECT(-5,-5,4,4);
-	ADD_RECT(-5,-5,40,4);
-	ADD_RECT(-5,-5,4,40);
-	ADD_RECT(-5,-5,4,4);
-
-	ADD_RECT(15,15,4,4);
-	ADD_RECT(15,15,40,4);
-	ADD_RECT(15,15,4,40);
-
-	for(size_t i=0; i<dont_intersect.size(); ++i) {
-		BOOST_CHECK(!a.intersects(dont_intersect[i]));
-		BOOST_CHECK(!dont_intersect[i].intersects(a));
-	}	
-
+void write_test() {
+	boost::shared_ptr<SettingsManager> sm(new SettingsManager());
+	sm->write("firstValue", 1);
+	sm->write("secondValue", 3);
+	sm->write("font", "content/fonts/FreeMono.ttf");
+	sm->write("boolValue", false);
+	BOOST_CHECK_THROW(sm->saveSettings(SETTINGS_FILE_NAME, false), CannotOpenFile);
+	sm->saveSettings(SETTINGS_FILE_NAME, true);
 }
 
+void read_test() {
+	boost::shared_ptr<SettingsManager> sm(new SettingsManager());
+	sm->loadSettings(SETTINGS_FILE_NAME);
+	unsigned int utmp = sm->read("firstValue", 0);
+	BOOST_CHECK(utmp != 0);
+	utmp = sm->read("secondValue", 100);
+	BOOST_CHECK(utmp == 3);
+	std::string strtmp = sm->read<std::string>("font", "-");
+	BOOST_CHECK(strtmp == "content/fonts/FreeMono.ttf");
+	bool btmp = sm->read("boolValue", true);
+	BOOST_CHECK(!btmp);
+}
+
+void cleanup_test() {
+	BOOST_CHECK(remove(SETTINGS_FILE_NAME.c_str()) == 0);
+}
 
 test_suite* init_unit_test_suite(int argc, char** argv) {
-	test_suite* test = BOOST_TEST_SUITE("Rectangle Tests");
-
-	test->add( BOOST_TEST_CASE( &rectangle_intersection ),0 );
-
+	test_suite* test = BOOST_TEST_SUITE("Settings manager tests");
+	test->add(BOOST_TEST_CASE(&write_test), 0);
+	test->add(BOOST_TEST_CASE(&read_test), 0);
+	test->add(BOOST_TEST_CASE(&cleanup_test), 0);
 	return test;
 }

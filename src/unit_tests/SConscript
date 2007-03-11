@@ -9,6 +9,7 @@ env.Append(LIBPATH = ['#src/engine'])
 
 # geometry test removed, API has been changed but test are not up-to-date
 # env.Program('test_geometry', ['test_geometry.cpp'])
+env.Program('test_settingsmanager', ['test_settingsmanager.cpp'])
 env.Program('test_rect', ['test_rect.cpp'])
 env.Program('test_events', ['test_events.cpp'])
 
