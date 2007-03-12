@@ -33,7 +33,6 @@
 #include "map/layer.h"
 #include "map/geometry.h"
 #include "map/objectinfo.h"
-#include "map/objectmanager.h"
 #include "map/view.h"
 #include "map/visual.h"
 #include "video/complexanimation.h"

@@ -34,7 +34,6 @@
 #include "map/layer.h"
 #include "map/geometry.h"
 #include "map/objectinfo.h"
-#include "map/objectmanager.h"
 #include "map/structure.h"
 #include "map/elevation.h"
 #include "vfs/raw/rawdata.h"

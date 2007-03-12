@@ -81,12 +81,9 @@ namespace FIFE { namespace map {
 			const ScriptContainer& getScript(ScriptType scripttype);
 			bool hasScript(ScriptType scripttype) const;
 
-			ObjectManager* getObjectManager();
-
 			bool isValidLocation(const Location& location) const;
 		private:
 			std::string m_mapname;
-			ObjectManager* m_mom;
 
 			typedef std::vector<ElevationPtr> type_elevations;
 			type_elevations m_elevations;
