@@ -390,11 +390,9 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		object->getLocation().layer     = m_cursor.layer;
 		object->getLocation().elevation = m_cursor.elevationNumber;
 
-		ObjectManager* mom = m_map->getObjectManager();
-
 		object->debugPrint();
-
-		mom->addObject( object );
+		LayerPtr layer = m_cursor.elevation->getLayer(m_cursor.layer);
+		layer->addObject( object );
 	}
 
 	void XML::loadLayerData(TiXmlElement* element) {

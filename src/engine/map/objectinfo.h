@@ -36,6 +36,7 @@
 // Second block: files included from the same folder
 #include "attributedclass.h"
 
+#include "smart_list.h"
 #include "location.h"
 #include "video/renderable_location.h"
 
@@ -140,6 +141,7 @@ namespace FIFE { namespace map {
 
 			friend class ObjectManager;
 	};
+	typedef SmartList<ObjectInfo> ObjectList;
 
 	inline
 	uint16_t ObjectInfo::getZValue() const {

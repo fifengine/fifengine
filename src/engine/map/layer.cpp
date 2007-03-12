@@ -65,6 +65,57 @@ namespace FIFE { namespace map {
 	const Point& Layer::getShift() const {
 		return m_shift;
 	}
+	
+	bool Layer::hasObjects() const {
+		return !m_objects.empty();
+	}
+
+	void Layer::addObject(ObjectPtr object) {
+		addObjectAt( object, object->getLocation().position );
+	}
+	void Layer::addObjectAt(ObjectPtr object, int32_t x,int32_t y) {
+		if( !hasObjects() ) {
+			m_objects.resize(m_size.y * m_size.x);
+		}
+		m_objects.at(x + y * m_size.x).append( object );
+	}
+
+	ObjectList& Layer::getObjectsAt(int32_t x,int32_t y) {
+		if( hasObjects() ) {
+			m_objects.resize(m_size.y * m_size.x);
+		}
+		return m_objects.at(x + y * m_size.x);
+	}
+
+	const ObjectList& Layer::getObjectsAt(int32_t x,int32_t y) const {
+		static ObjectList objects;
+		if( hasObjects() ) {
+			return m_objects.at(x + y * m_size.x);
+		}
+		return objects;
+	}
+
+	void Layer::addObjectAt(ObjectPtr object, const Point& p) {
+		if( !hasObjects() ) {
+			m_objects.resize(m_size.y * m_size.x);
+		}
+		m_objects.at(p.x + p.y * m_size.x).append( object );
+	}
+
+	ObjectList& Layer::getObjectsAt(const Point& p) {
+		if( hasObjects() ) {
+			m_objects.resize(m_size.y * m_size.x);
+		}
+		return m_objects.at(p.x + p.y * m_size.x);
+	}
+
+	const ObjectList& Layer::getObjectsAt(const Point& p) const {
+		static ObjectList objects;
+		if( hasObjects() ) {
+			return m_objects.at(p.x + p.y * m_size.x);
+		}
+		return objects;
+	}
 
 	void Layer::setTileImage(int32_t x, int32_t y, size_t id) {
 		setTileImage(Point(x,y),id);
