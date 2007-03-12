@@ -40,7 +40,7 @@ namespace FIFE { namespace map {
 	const std::string ObjectInfo::OrientationParam = "orientation";
 
 	ObjectInfo::ObjectInfo() 
-		: AttributedClass("map_object"),
+		: AttributedClass("GObject"),
 		  m_visualId(0),
 		  m_isStatic(true) {
 

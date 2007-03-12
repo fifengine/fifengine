@@ -47,6 +47,7 @@ namespace FIFE {
 		public:
 			static const char className[];
 			static Lunar<Elevation_LuaScript>::RegType methods[];
+			static Lunar<Elevation_LuaScript>::RegType metamethods[];
 
 			Elevation_LuaScript(lua_State *L);
 			Elevation_LuaScript(map::ElevationPtr obj);

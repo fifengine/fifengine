@@ -114,10 +114,10 @@ namespace FIFE {
 		Lunar<Timer_Lunar>::Register(L);
 		Lunar<MapControl_Lunar>::Register(L);
 		Lunar<MapCamera_Lunar>::Register(L);
-		Lunar<Object_LuaScript>::Register(L);
-		Lunar<Layer_LuaScript>::Register(L);
-		Lunar<Elevation_LuaScript>::Register(L);
-		Lunar<Map_LuaScript>::Register(L);
+		Lunar<Object_LuaScript>::RegisterTable(L);
+		Lunar<Layer_LuaScript>::RegisterTable(L);
+		Lunar<Elevation_LuaScript>::RegisterTable(L);
+		Lunar<Map_LuaScript>::RegisterTable(L);
 	}
 
 	LuaScript::LuaScript() : ScriptEngine("Lua") {

@@ -47,6 +47,7 @@ namespace FIFE {
 		public:
 			static const char className[];
 			static Lunar<Map_LuaScript>::RegType methods[];
+			static Lunar<Map_LuaScript>::RegType metamethods[];
 
 			Map_LuaScript(lua_State *L);
 			Map_LuaScript(map::MapPtr obj);

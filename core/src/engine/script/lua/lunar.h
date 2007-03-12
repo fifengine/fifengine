@@ -85,8 +85,7 @@ template <typename T> class Lunar {
 		lua_pop(L, 2);  // drop metatable and method table
 	}
 
-	// I need a version w/o "new" access; consider this _very_ experimental (skyb)
-	static void Register2(lua_State *L) {
+	static void RegisterTable(lua_State *L) {
 		lua_newtable(L);
 		int methods = lua_gettop(L);
 
@@ -112,19 +111,33 @@ template <typename T> class Lunar {
 		set(L, metatable, "__gc");
 
 		lua_newtable(L);                // mt for method table
+		lua_pushcfunction(L, new_T);
+		lua_pushvalue(L, -1);           // dup new_T function
+		set(L, methods, "new");         // add new_T to method table
+		set(L, -3, "__call");           // mt.__call = new_T
 		lua_setmetatable(L, methods);
 
 		// fill method table with methods from class T
 		for (RegType *l = T::methods; l->name; l++) {
-			lua_pushstring(L, l->name);
-			lua_pushlightuserdata(L, static_cast<void*>(l));
-			lua_pushcclosure(L, thunk, 1);
-			lua_settable(L, methods);
+			registerFunction(L,methods,methods,l);
+		}
+
+		// fill meta method table with methods from class T
+		for (RegType *l = T::metamethods; l->name; l++) {
+			registerFunction(L,metatable,methods,l);
 		}
 
 		lua_pop(L, 2);  // drop metatable and method table
 	}
 
+	static void registerFunction(lua_State* L, int t, int methods, RegType* regtype) {
+		lua_pushstring(L,regtype->name);
+		lua_pushlightuserdata(L, static_cast<void*>(regtype));
+		lua_pushstring(L, T::className);
+		lua_pushvalue(L,methods);
+		lua_pushcclosure(L, thunk, 3);
+		lua_settable(L, t);
+	}
 
 	// call named lua method from userdata method table
 	static int call(lua_State *L, const char *method,
