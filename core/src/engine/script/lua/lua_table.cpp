@@ -75,9 +75,12 @@ namespace FIFE {
 		Point a_point;
 		if( typeid(a_point) == t->getTypeInfo(key) ) {
 			Point value = t->get<Point>(key);
+			lua_createtable(L,2,0);
 			lua_pushnumber(L,value.x);
+			lua_rawseti(L,-2, 1);
 			lua_pushnumber(L,value.y);
-			return 2;
+			lua_rawseti(L,-2, 2);
+			return 1;
 		}
 
 		Debug("LuaTable")
@@ -105,30 +108,31 @@ namespace FIFE {
 		}
 		lua_pop(L,1);
 
-		if( lua_gettop(L) >= 3
-		    && lua_type(L,2) == LUA_TNUMBER
-		    && lua_type(L,3) == LUA_TNUMBER  ) {
-			long x = lua_tointeger(L,2);
-			long y = lua_tointeger(L,3);
-			lua_pop(L,2);
-			t->set<Point>(key,Point(x,y));
-			return 0;
-		}
-
 		switch(lua_type(L,2)) {
 		case LUA_TNUMBER:
-			{
-				long number = lua_tointeger(L,2);
-				lua_pop(L,1);
-				t->set<long>(key,number);
-				return 0;
-			}
+			t->set<long>(key,lua_tointeger(L,2));
+			lua_pop(L,2);
+			return 0;
+
 		case LUA_TSTRING:
 			t->set<std::string>(key,lua_tostring(L,2));
-			lua_pop(L,1);
+			lua_pop(L,2);
 			return 0;
+
+		case LUA_TTABLE:
+			if( lua_objlen(L,2) == 2 ) {
+				lua_rawgeti(L,2,1);
+				lua_rawgeti(L,2,2);
+				Point p( luaL_checkinteger(L,3), luaL_checkinteger(L,4) );
+				t->set<Point>(key,p);
+				lua_pop(L,4);
+			} else {
+				luaL_error(L,"not a valid attribute table");
+			}
+			break;
+
 		default:
-			luaL_error(L,"not a valid attribute value");
+			luaL_error(L,"not a valid attribute type");
 		}
 		return 0;
 	}
