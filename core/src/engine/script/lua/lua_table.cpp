@@ -83,11 +83,8 @@ namespace FIFE {
 			return 1;
 		}
 
-		Debug("LuaTable")
-			<< "get failed to determine lua type of  "
-			<< t->getTypeInfo(key).name();
-
-		lua_pushnil(L);
+		luaL_error(L,"failed to determine lua type of '%s' c++ type is '%s'",
+		           key.c_str(),t->getTypeInfo(key).name());
 		return 1;
 	}
 
