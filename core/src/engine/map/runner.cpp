@@ -108,7 +108,6 @@ namespace FIFE { namespace map {
 			ObjectIterator object_it(m_map->getElevation(i));
 			ObjectPtr object;
 			while((object = object_it.next())) {
-				m_static_objects[object->getLocation().elevation].push_back(object);
 				if ( !object->isStatic() && use_ruleset) {
 					object->set<long>("elevation",object->getLocation().elevation);
 					object->set<long>("layer",object->getLocation().layer);
@@ -121,7 +120,6 @@ namespace FIFE { namespace map {
 	}
 
 	void Runner::stop() {
-		m_static_objects.clear();
 		sendShutdown();
 		sendEvents();
 		int result;
@@ -142,27 +140,29 @@ namespace FIFE { namespace map {
 		sendNewExecScEvent("ActivateElevation(" +
 		                   boost::lexical_cast<std::string>(elevation) + ")");
 
-		// display static visuals
-		for (size_t i = 0; i < m_static_objects[elevation].size(); ++i) {
-			ObjectPtr moi = m_static_objects[elevation][i];
-			if (!m_map->isValidLocation(moi->getLocation())) {
-				continue;
-			}
-			Visual* visual = new Visual(moi);
-
-			RenderableLocation loc(moi->getVisualLocation());
+		// display _all_ visuals
+		ObjectIterator object_it(m_map->getElevation(elevation));
+		size_t nv = 0, no = 0;
+		ObjectPtr object;
+		while((object = object_it.next())) {
+			RenderableLocation loc(object->getVisualLocation());
 			size_t iid = ImageCache::instance()->addImageFromLocation(loc);
-			visual->setRenderable(iid, loc.getType());
+			if( iid ) {
+				++nv;
 
-			visual->setLocation(moi->getLocation());
-
-			Debug("map_runner")
-				<< "Adding Visual for static object iid:" << iid
-				<< " rloc:" << loc.toString();
-// 			moi->debugPrint();
-
-			moi->setVisualId( m_view->addVisual(visual) );
+				Visual* visual = new Visual(object);
+				visual->setRenderable(iid, loc.getType());
+				visual->setLocation(object->getLocation());
+				object->setVisualId( m_view->addVisual(visual) );
+				Log("map_runner")
+					<< "Adding Visual for static object iid:" << iid
+					<< " rloc:" << loc.toString();
+			}
+			++no;
 		}
+		Log("map_runner")
+			<< "Displaying " << nv << " visuals from "
+			<< no << " objects on elevation " << elevation;
 	}
 
 	void Runner::processEvent(const event_t& e) {

@@ -135,9 +135,6 @@ namespace FIFE { namespace map {
 			View* m_view;
 			ScriptingSlave* m_slave;
 
-			typedef std::map<size_t, std::vector<ObjectPtr> > type_static_objects;
-			type_static_objects m_static_objects;
-
 			void processEvent(const event_t& e);
 
 			void sendHeartbeat(size_t);
