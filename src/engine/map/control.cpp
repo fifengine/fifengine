@@ -98,9 +98,6 @@ namespace FIFE { namespace map {
 		m_view->setViewport(CRenderBackend()->getMainScreen());
 // 		m_view->setRoofAlpha(m_settings->read<int>("RoofAlpha", 128));
 		
-		m_om = m_map->getObjectManager();
-		m_om->initialize(m_map);
-
 		if (m_map->hasScript(Map::OnStartScript)) {
 			Log("map_control") 
 				<< "Executing: OnStartScript ";
@@ -110,7 +107,7 @@ namespace FIFE { namespace map {
 		std::string ruleset_file = m_settings->read<std::string>("Ruleset", 
 		                           "content/scripts/demos/example_ruleset.lua");
 		m_runner->setRuleset(ScriptContainer::fromFile(ruleset_file));
-		m_runner->initialize(m_view, m_map, m_om);
+		m_runner->initialize(m_map, m_view);
 		m_runner->start();
 		activateElevation(m_map->get<size_t>("_START_ELEVATION", 0));
 	}

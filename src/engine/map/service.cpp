@@ -33,10 +33,9 @@
 
 namespace FIFE { namespace map {
 
-	void Service::initialize(View* mv, Map* m, ObjectManager* mom) {
-		m_view = mv;
-		m_map = m;
-		m_mom = mom;
+	void Service::initialize(MapPtr map, View* view) {
+		m_view = view;
+		m_map  = map;
 		postInitialize();
 	}
 

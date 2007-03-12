@@ -25,17 +25,23 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE { namespace map { namespace command {
+namespace FIFE { namespace map { 
+
+	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
+
+namespace command {
 
 	class Info {
 		public:
-			size_t object;
+			ObjectPtr object;
 			size_t commandId;
 			size_t params[4];
 			std::string stringParam;

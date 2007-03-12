@@ -76,7 +76,7 @@ namespace FIFE { namespace map {
 		lua_pushcfunction(vm, lua_sleep);
 		lua_setglobal(vm, "FIFE_Sleep");
 
-		Lunar<Object_LuaScript>::Register(vm);
+		Lunar<Object_LuaScript>::RegisterTable(vm);
 	}
 	
 	ScriptingSlave::~ScriptingSlave() {
@@ -125,7 +125,7 @@ namespace FIFE { namespace map {
 
 		command::Info cmd;
 		
-		cmd.object    = size_t(lua_tonumber(L, 1));
+		cmd.object    = Lunar<Object_LuaScript>::check(L, 1)->getObject();
 		cmd.commandId = size_t(lua_tonumber(L, 2));
 
 		// use checkinteger, checklong causes a "old-style cast"
@@ -181,7 +181,12 @@ namespace FIFE { namespace map {
 			case FIFE_NEW_OBJECT:
 				lua_getglobal(vm, "AddObject");
 				Lunar<Object_LuaScript>::push(vm, new Object_LuaScript(e.get<ObjectPtr>()));
-				lua_pcall(vm,1,0,0);
+				if( lua_pcall(vm,1,0,0) ) {
+					Warn("scripting_slave")
+						<< "Coudn't execute script send by MapRunner: "
+						<< lua_tostring(vm, -1);
+					lua_pop(vm,1);
+				}
 			break;
 	
 			default: {

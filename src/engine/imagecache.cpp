@@ -178,7 +178,7 @@ namespace FIFE {
 
 	size_t ImageCache::addImageFromLocation( const RenderableLocation& location ) {
 		if( !location.isValid() ) {
-			DEBUG_PRINT("invalid location: " << location.toString());
+			Debug("image_cache") << "invalid location: " << location.toString();
 			return UNDEFINED_ID;
 		}
 

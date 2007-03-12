@@ -54,6 +54,7 @@ namespace FIFE {
 			virtual ~Object_LuaScript();
 
 			virtual Table* getTable();
+			map::ObjectPtr getObject() { return m_object; }
 
 		private:
 			map::ObjectPtr m_object;

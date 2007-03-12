@@ -390,7 +390,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			path += ".xml";
 			obj->setVisualLocation( RenderableLocation(RenderAble::RT_COMPLEX_ANIMATION, path) );
 		}
-
+		obj->set<std::string>("_visual_path",path);
 		obj->set<size_t>(obj->OrientationParam,info.orientation);
 	}
 

@@ -41,7 +41,7 @@
 namespace FIFE { namespace map { namespace command {
 
 	void SetVisual::execute(const Info& cmd) {
-		ObjectPtr moi = m_mom->getObject(cmd.object);
+		ObjectPtr moi = cmd.object;
 
 		if (!moi) {
 			Warn("mc_setvisual") << "No MOI for object " << cmd.object;
@@ -49,7 +49,9 @@ namespace FIFE { namespace map { namespace command {
 		}
 
 		if (!m_map->isValidLocation(moi->getLocation())) {
-			Warn("mc_setvisual") << "Cannot set visual for object not on map.";
+			Warn("mc_setvisual") 
+				<< "Cannot set visual for object not on map: "
+				<< moi->getLocation();
 			return;
 		}
 
@@ -79,6 +81,7 @@ namespace FIFE { namespace map { namespace command {
 			RenderableLocation loc(cmd.stringParam);
 			loc.setType(RenderAble::RT_COMPLEX_ANIMATION);
 			loc.setDirection(cmd.params[0]);
+			moi->setVisualLocation(loc);
 
 			visual->setRenderable(
 				ImageCache::instance()->addImageFromLocation(loc),
@@ -105,5 +108,7 @@ namespace FIFE { namespace map { namespace command {
 		} else { // !m_view
 			moi->setVisualId(0);
 		}
+		moi->set<long>("_visual_id",moi->getVisualId());
+		moi->set<std::string>("_visual_path",moi->getVisualLocation().toString());
 	}
 } } }
