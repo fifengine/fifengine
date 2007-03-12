@@ -39,7 +39,6 @@
 
 #include "event.h" // <-- ?
 #include "map.h"
-#include "objectmanager.h"
 #include "objectinfo.h"
 #include "object_iterator.h"
 #include "runner.h"

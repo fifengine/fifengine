@@ -42,7 +42,6 @@
 #include "elevation.h"
 #include "factory.h"
 #include "map.h"
-#include "objectmanager.h"
 #include "runner.h"
 #include "view.h"
 

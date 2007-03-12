@@ -33,14 +33,12 @@
 #include "elevation.h"
 #include "layer.h"
 #include "map.h"
-#include "objectmanager.h"
 
 namespace FIFE { namespace map {
 
 	Map::Map(const std::string& mapname) 
 		: AttributedClass("map"),
 		m_mapname(mapname),
-		m_mom(new ObjectManager()),
 		m_elevations(0) {
 	}
 
@@ -51,9 +49,6 @@ namespace FIFE { namespace map {
 	void Map::cleanup() {
 		// Delete Elevations
 		m_elevations.clear();
-		
-		// Delete objects
-		delete m_mom;
 	}
 
 	const std::string& Map::getMapName() const {
@@ -96,10 +91,6 @@ namespace FIFE { namespace map {
 
 	const ScriptContainer& Map::getScript(Map::ScriptType st) {
 		return m_scripts[st];
-	}
-
-	ObjectManager* Map::getObjectManager() {
-		return m_mom;
 	}
 
 	bool Map::isValidLocation(const Location& location) const {
