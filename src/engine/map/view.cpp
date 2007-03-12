@@ -132,8 +132,8 @@ namespace FIFE { namespace map {
 		}
 		LayerPtr layer = m_elevation->getLayer(visual->getLocation().layer);
 		visual->reset(layer);
-// 		Log("map_view")
-// 			<< "Adding visual at " << visual->getScreenBox();
+		Log("map_view")
+			<< "Adding visual at " << visual->getScreenBox();
 
 		return m_vtree->addVisual(visual);
 	}

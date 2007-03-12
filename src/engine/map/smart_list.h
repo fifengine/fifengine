@@ -46,13 +46,15 @@ namespace FIFE { namespace map {
 			typedef boost::shared_ptr<T> EntryPtr;
 
 			SmartList(){};
+			SmartList(const SmartList&);
 
 			void append(EntryPtr entry);
 			void insert(EntryPtr before, EntryPtr entry);
 			void erase(EntryPtr entry);
 			bool contains(EntryPtr entry) const;
-			EntryPtr at(size_t index);
+			EntryPtr at(size_t index) const;
 			size_t size() const;
+			bool empty() const;
 			void clear();
 
 		protected:
@@ -63,6 +65,13 @@ namespace FIFE { namespace map {
 			type_list m_list;
 			type_map  m_map;
 	};
+
+	template<typename T>
+	SmartList<T>::SmartList(const SmartList<T>& slist) {
+		for(size_t i=0; i!=slist.size(); ++i) {
+			append( slist.at(i) );
+		}
+	}
 
 	template<typename T>
 	bool SmartList<T>::contains(EntryPtr entry) const {
@@ -79,7 +88,9 @@ namespace FIFE { namespace map {
 	void SmartList<T>::insert(EntryPtr before, EntryPtr entry) {
 		typename type_map::iterator i(m_map.find(before));
 		m_list.insert(i->second,entry);
-		m_map.insert( std::make_pair(--i->second) );
+		typename type_list::iterator list_i = i->second;
+		--list_i;
+		m_map.insert( std::make_pair(list_i) );
 	}
 
 	template<typename T>
@@ -93,7 +104,7 @@ namespace FIFE { namespace map {
 	}
 
 	template<typename T>
-	typename SmartList<T>::EntryPtr SmartList<T>::at(size_t index) {
+	typename SmartList<T>::EntryPtr SmartList<T>::at(size_t index) const {
 		return m_list.at(index);
 	}
 
@@ -105,7 +116,13 @@ namespace FIFE { namespace map {
 
 	template<typename T>
 	size_t SmartList<T>::size() const {
+		assert( m_map.size() == m_list.size() );
 		return m_map.size();
+	}
+
+	template<typename T>
+	bool SmartList<T>::empty() const {
+		return size() == 0;
 	}
 
 

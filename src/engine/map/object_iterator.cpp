@@ -39,6 +39,7 @@ namespace FIFE { namespace map {
 		// SKIP TO A LAYER THAT HAS OBJECTS.
 		m_layer = 0;
 		m_object = 0;
+
 		if( !m_elevation ) {
 			return;
 		}
@@ -59,8 +60,12 @@ namespace FIFE { namespace map {
 		// We have a valid layer. Find a gridpos with objects.
 		LayerPtr layer = m_elevation->getLayer(m_layer);
 		ObjectList& objects = layer->getObjectsAt( m_gridpos );
-		while( objects.size() == m_object ) {
-			m_object = 0;
+		if( m_object < objects.size() ) {
+			return objects.at( m_object++ );
+		}
+		m_object = 0;
+
+		do {
 			m_gridpos.x += 1;
 			if( m_gridpos.x == layer->getSize().x ) {
 				m_gridpos.y += 1;
@@ -69,8 +74,7 @@ namespace FIFE { namespace map {
 					break;
 				}
 			}
-			objects = layer->getObjectsAt( m_gridpos );
-		}
+		} while( layer->getObjectsAt( m_gridpos ).empty() );
 
 		if( m_gridpos.y == layer->getSize().y ) {
 			// Reached end-of-layer
@@ -87,7 +91,7 @@ namespace FIFE { namespace map {
 			}
 			return next();
 		}
-		return objects.at( m_object++ );
+		return next();
 	}
 
 }}
