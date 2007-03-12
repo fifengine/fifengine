@@ -72,6 +72,14 @@ namespace FIFE {
 			return 1;
 		}
 
+		Point a_point;
+		if( typeid(a_point) == t->getTypeInfo(key) ) {
+			Point value = t->get<Point>(key);
+			lua_pushnumber(L,value.x);
+			lua_pushnumber(L,value.y);
+			return 2;
+		}
+
 		Debug("LuaTable")
 			<< "get failed to determine lua type of  "
 			<< t->getTypeInfo(key).name();
@@ -97,6 +105,15 @@ namespace FIFE {
 		}
 		lua_pop(L,1);
 
+		if( lua_gettop(L) >= 3
+		    && lua_type(L,2) == LUA_TNUMBER
+		    && lua_type(L,3) == LUA_TNUMBER  ) {
+			long x = lua_tointeger(L,2);
+			long y = lua_tointeger(L,3);
+			lua_pop(L,2);
+			t->set<Point>(key,Point(x,y));
+			return 0;
+		}
 
 		switch(lua_type(L,2)) {
 		case LUA_TNUMBER:

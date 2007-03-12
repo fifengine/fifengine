@@ -64,6 +64,8 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 
 		int frameDelay = 0;
 		int actionFrame = 0;
+		int xshift = 0;
+		int yshift = 0;
 		element->QueryIntAttribute("delay", &frameDelay);
 		element->QueryIntAttribute("action", &actionFrame);
 
@@ -111,6 +113,8 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 			animation->setFrame(i, frames[i]);
 		}
 		animation->setCurrentFrame(0);
+		animation->setXShift(xshift);
+		animation->setYShift(yshift);
 		Debug("animation_loader")
 			<< "file: '" << filename
 			<< "' frames:" << frames.size();

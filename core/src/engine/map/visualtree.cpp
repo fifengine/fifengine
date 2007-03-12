@@ -33,6 +33,7 @@
 #include "visual.h"
 #include "visualtree.h"
 
+#include "log.h"
 #include "video/rect.h"
 
 namespace FIFE { namespace map {
@@ -79,6 +80,11 @@ namespace FIFE { namespace map {
 		ventry.visual = visual;
 		const Rect& screen_box = visual->getScreenBox();
 		if( screen_box.w == 0 || screen_box.h == 0 ) {
+// 			Log("vtree")
+// 				<< "Discarding empty visual " << screen_box;
+// 			if( visual->getObject() ) {
+// 				visual->getObject()->debugPrint();
+// 			}
 			ventry.node = 0;
 		} else {
 			ventry.node = m_vtree.find_container( screen_box );

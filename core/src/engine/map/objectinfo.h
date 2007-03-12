@@ -42,6 +42,7 @@
 
 namespace FIFE { namespace map {
 
+	class View;
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 	typedef SmartList<ObjectInfo> ObjectList;

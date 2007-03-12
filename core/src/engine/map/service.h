@@ -26,6 +26,7 @@
 #include <string>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -33,21 +34,21 @@
 // Second block: files included from the same folder
 #include "location.h"
 
+
 namespace FIFE { namespace map {
 
 	class View;
 	class Map;
-	class ObjectManager;
+	typedef boost::shared_ptr<Map> MapPtr;
 
 	class Service {
 		public:
 			Service(const std::string& name) : m_name(name),
-			m_view(0), m_map(0), m_mom(0) {}
+				m_map(), m_view(0) {}
 
 			virtual ~Service() {}
 
-			// XXX Why not just use a constructor?
-			void initialize(View*, Map*, ObjectManager*);
+			void initialize(MapPtr map, View* view);
 
 			const std::string& getName() const { return m_name; }
 
@@ -55,9 +56,8 @@ namespace FIFE { namespace map {
 			std::string m_name;
 
 		protected:
+			MapPtr m_map;
 			View* m_view;
-			Map* m_map;
-			ObjectManager* m_mom;
 
 			virtual void postInitialize();
 	};

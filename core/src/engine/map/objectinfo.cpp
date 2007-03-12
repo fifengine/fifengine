@@ -31,6 +31,7 @@
 
 #include "objectinfo.h"
 #include "factory.h"
+#include "view.h"
 
 namespace FIFE { namespace map {
 
@@ -102,9 +103,7 @@ namespace FIFE { namespace map {
 		Log log("object");
 
 		log	<< "name " << get<std::string>("name")
-			<< " at " << m_location.position
-			<< " on elevation " <<  m_location.elevation
-			<< "#" << m_location.layer
+			<< " at " << m_location
 			<< " prototypes=";
 
 		for(size_t i=0; i!= m_protoid.size(); ++i) {
@@ -114,4 +113,5 @@ namespace FIFE { namespace map {
 			}
 		}
 	}
+
 } } //FIFE::map

@@ -73,14 +73,13 @@ namespace FIFE { namespace map {
 		m_ruleset = rs;
 	}
 
-	void Runner::initialize(View* view, MapPtr map, ObjectManager* mom) {
-		m_mom = mom;
+	void Runner::initialize(MapPtr map, View* view) {
 		m_map = map;
 		m_view = view;
 
 		type_cmdmap::iterator it = m_commands.begin();
 		for(; it != m_commands.end(); ++it) {
-			it->second->initialize(view, map.get(), m_mom);
+			it->second->initialize(map, view);
 		}
 	}
 
@@ -110,9 +109,11 @@ namespace FIFE { namespace map {
 			ObjectIterator object_it(m_map->getElevation(i));
 			ObjectPtr object;
 			while((object = object_it.next())) {
-				if (object->isStatic() || !use_ruleset) {
-					m_static_objects[object->getLocation().elevation].push_back(object);
-				} else {
+				m_static_objects[object->getLocation().elevation].push_back(object);
+				if ( !object->isStatic() && use_ruleset) {
+					object->set<long>("elevation",object->getLocation().elevation);
+					object->set<long>("layer",object->getLocation().layer);
+					object->set<Point>("position",object->getLocation().position);
 					sendEvent(makeEvent(FIFE_NEW_OBJECT,object));
 				}
 			}
@@ -152,7 +153,7 @@ namespace FIFE { namespace map {
 
 			RenderableLocation loc(moi->getVisualLocation());
 			size_t iid = ImageCache::instance()->addImageFromLocation(loc);
-			visual->setRenderable(iid);
+			visual->setRenderable(iid, loc.getType());
 
 			visual->setLocation(moi->getLocation());
 
@@ -161,7 +162,7 @@ namespace FIFE { namespace map {
 				<< " rloc:" << loc.toString();
 // 			moi->debugPrint();
 
-			m_view->addVisual(visual);
+			moi->setVisualId( m_view->addVisual(visual) );
 		}
 	}
 

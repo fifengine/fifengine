@@ -97,7 +97,7 @@ namespace FIFE { namespace map {
 			 *
 			 *  The pointers are used to initialize the commands
 			 */
-			void initialize(View* view, MapPtr map, ObjectManager* mom);
+			void initialize(MapPtr map, View* view);
 
 			/** Start the ruleset execution
 			 *  This will start the ruleset, the scripting thread and will

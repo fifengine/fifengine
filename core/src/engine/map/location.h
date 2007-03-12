@@ -23,6 +23,7 @@
 #define FIFE_MAP_LOCATION_H
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 
@@ -39,5 +40,10 @@ namespace FIFE { namespace map {
 			size_t layer;
 			Point position;
 	};
+
+	/** Print coords of the Loacation to a stream
+	 */
+	std::ostream& operator<<(std::ostream& os, const Location& loc);
+
 } }
 #endif //FIFE_MAPLOCATION_H

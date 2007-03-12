@@ -85,7 +85,7 @@ namespace FIFE { namespace map { namespace command {
 	}
 
 	void EnqueueAction::execute(const Info& cmd) {
-		ObjectPtr moi = m_mom->getObject(cmd.object);
+		ObjectPtr moi = cmd.object;
 
 		if (!moi) {
 			Warn("mc_enqueueaction") << "No MOI for object " << cmd.object;
@@ -98,7 +98,7 @@ namespace FIFE { namespace map { namespace command {
 		}
 
 		if (moi->getVisualId() == 0) {
-			Warn("mc_enqueueaction") << "No visual";
+			Warn("mc_enqueueaction") << "No visual id";
 			return;
 		}
 		
@@ -112,9 +112,11 @@ namespace FIFE { namespace map { namespace command {
 		if (anim) {
 			Action action(cmd.params[0], cmd.params[1]);
 			if (cmd.params[3]) {
-				action.endCallback = MotionProxy(m_map, m_view, moi->getVisualId());
+				action.endCallback = MotionProxy(m_map.get(), m_view, moi->getVisualId());
 			}
 			anim->enqueueAction(action);
+		} else {
+			Warn("mc_enqueueaction") << "Not an animation?";
 		}
 	}
 } } }
