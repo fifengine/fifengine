@@ -95,11 +95,7 @@ namespace FIFE { namespace map {
 		setSource(m_slave);
 		m_slave->setSource(this);
 
-		bool use_ruleset = false;
-		if( use_ruleset ) {
-			sendEvent(makeEvent(FIFE_EXEC,m_ruleset));
-			use_ruleset = m_ruleset.isValid();
-		}
+		sendEvent(makeEvent(FIFE_EXEC,m_ruleset));
 
 		sendEvents();
 		the_thread = SDL_CreateThread(slaveThread, 0);
@@ -108,7 +104,7 @@ namespace FIFE { namespace map {
 			ObjectIterator object_it(m_map->getElevation(i));
 			ObjectPtr object;
 			while((object = object_it.next())) {
-				if ( !object->isStatic() && use_ruleset) {
+				if ( !object->isStatic() && m_ruleset.isValid()) {
 					object->set<long>("elevation",object->getLocation().elevation);
 					object->set<long>("layer",object->getLocation().layer);
 					object->set<Point>("position",object->getLocation().position);
