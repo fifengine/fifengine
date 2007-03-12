@@ -230,7 +230,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 			Log("mlfallout") 
 				<< "Elevation " << elev  << " objects: " << count_objects_current;
-			ObjectManager* mom = map->getObjectManager();
+			LayerPtr layer = map->getElevation(fife_elev)->getLayer(1);
 
 			for (uint32_t i = 0; i < count_objects_current; ++i) {
 				ObjectPtr obj = objfactory.createObject(data);
@@ -238,7 +238,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 					// Reposition obj on "larger" map
 					obj->getLocation().elevation = fife_elev;
 					obj->getLocation().layer = 1;
-					mom->addObject(obj);
+					layer->addObject( obj );
 				}
 			}
 			fife_elev++;

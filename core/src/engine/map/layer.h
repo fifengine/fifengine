@@ -39,6 +39,8 @@
 #include "attributedclass.h"
 #include "exception.h"
 
+#include "objectinfo.h"
+
 namespace FIFE { namespace map {
 
 	class Geometry;
@@ -107,6 +109,39 @@ namespace FIFE { namespace map {
 			 *  @return The shift in screen coords
 			 */
 			const Point& getShift() const;
+
+			/** Check existance of objects on this layer
+			 *  @return True, if objects exist.
+			 */
+			bool hasObjects() const;
+
+			/** Add an object to the position given by it's location
+			 */
+			void addObject(ObjectPtr object);
+
+			/** Add an object at a specific position
+			 */
+			void addObjectAt(ObjectPtr object, int32_t x,int32_t y);
+
+			/** Add an object at a specific position
+			 */
+			void addObjectAt(ObjectPtr object, const Point& p);
+
+			/** Get a List of all objects at position
+			 */
+			ObjectList& getObjectsAt(int32_t x,int32_t y);
+
+			/** Get a List of all objects at position
+			 */
+			const ObjectList& getObjectsAt(int32_t x,int32_t y) const;
+
+			/** Get a List of all objects at position
+			 */
+			ObjectList& getObjectsAt(const Point& p);
+
+			/** Get a List of all objects at position
+			 */
+			const ObjectList& getObjectsAt(const Point& p) const;
 
 			/** Get the tile image id of a position
 			 *  @note If the position is invalid or the Layer
@@ -322,6 +357,7 @@ namespace FIFE { namespace map {
 			bool m_grid_overlay;
 
 			std::vector<size_t> m_tiles;
+			std::vector<ObjectList> m_objects;
 
 			Point m_shift;
 			Geometry* m_geometry;

@@ -378,14 +378,19 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				path.append("m");
 			else
 				path.append(boost::lexical_cast<std::string>(id3 - 1));
+
+			RenderableLocation loc(RenderAble::RT_ANIMATION, path);
+			loc.setDirection( info.orientation );
+			obj->setVisualLocation( loc );
+
 		} else {
 			// XML Critter path.
 			path = SettingsManager::instance()->read<std::string>("XMLCrittersBaseDirectory","content/gfx/critters/");
 			path += lst.getProFile(idx);
 			path += ".xml";
+			obj->setVisualLocation( RenderableLocation(RenderAble::RT_COMPLEX_ANIMATION, path) );
 		}
 
-		obj->setVisualLocation( RenderableLocation(RenderAble::RT_COMPLEX_ANIMATION, path) );
 		obj->set<size_t>(obj->OrientationParam,info.orientation);
 	}
 

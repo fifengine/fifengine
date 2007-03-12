@@ -41,6 +41,7 @@
 #include "map.h"
 #include "objectmanager.h"
 #include "objectinfo.h"
+#include "object_iterator.h"
 #include "runner.h"
 #include "view.h"
 #include "visual.h"
@@ -95,25 +96,28 @@ namespace FIFE { namespace map {
 		the_slave = m_slave = new ScriptingSlave();
 		setSource(m_slave);
 		m_slave->setSource(this);
-		sendEvent(makeEvent(FIFE_EXEC,m_ruleset));
+
+		bool use_ruleset = false;
+		if( use_ruleset ) {
+			sendEvent(makeEvent(FIFE_EXEC,m_ruleset));
+			use_ruleset = m_ruleset.isValid();
+		}
+
 		sendEvents();
 		the_thread = SDL_CreateThread(slaveThread, 0);
 
-		std::string script;
-		for (size_t i = 1; i < m_mom->m_objects.size(); ++i) {
-			ObjectPtr moi = m_mom->getObject(i);
-			if (moi->isStatic() || !m_ruleset.isValid()) {
-				m_static_objects[moi->getLocation().elevation].push_back(moi);
-			} else {
-				script += packObject(moi, i);
-				sendEvent(makeEvent(FIFE_NEW_OBJECT,moi));
+		for(size_t i =0; i!= m_map->getElevationCount(); ++i) {
+			ObjectIterator object_it(m_map->getElevation(i));
+			ObjectPtr object;
+			while((object = object_it.next())) {
+				if (object->isStatic() || !use_ruleset) {
+					m_static_objects[object->getLocation().elevation].push_back(object);
+				} else {
+					sendEvent(makeEvent(FIFE_NEW_OBJECT,object));
+				}
 			}
 		}
-
-		Debug("map_runner") << "Script Object Injektion!\n";
-		sendNewExecScEvent(script);
 		sendEvents();
-		Debug("map_runner") << "Script Object Injektion! (returned)\n";
 	}
 
 	void Runner::stop() {
@@ -135,7 +139,7 @@ namespace FIFE { namespace map {
 
 	void Runner::activateElevation(size_t elevation) {
 		// send the activation command to the ruleset.
-		sendNewExecScEvent("ruleset:activateElevation(" +
+		sendNewExecScEvent("ActivateElevation(" +
 		                   boost::lexical_cast<std::string>(elevation) + ")");
 
 		// display static visuals
@@ -152,9 +156,9 @@ namespace FIFE { namespace map {
 
 			visual->setLocation(moi->getLocation());
 
-// 			Debug("map::runner")
-// 				<< "Adding Visual for static object iid:" << iid
-// 				<< " rloc:" << loc.toString();
+			Debug("map_runner")
+				<< "Adding Visual for static object iid:" << iid
+				<< " rloc:" << loc.toString();
 // 			moi->debugPrint();
 
 			m_view->addVisual(visual);
@@ -174,41 +178,6 @@ namespace FIFE { namespace map {
 
 	void Runner::sendHeartbeat(size_t beat) {
 		sendEvent(event_t(0,FIFE_HEARTBEAT));
-	}
-
-	// Rewrote this using a stringstream instead of multiple lexical_casts.
-	// --zahlman
-	std::string Runner::packObject(ObjectPtr moi, size_t id) {
-		std::stringstream ss;
-
-		ss << "ruleset:createObject({";
-		
-/*		// Disabled for now.
-		ObjectInfo::type_params::iterator it = moi->params.begin();
-		for (; it != moi->params.end(); ++it) {
-			ss << it->first << " = '" << it->second << "', ";
-		}
-*/
-		// Push standard ruleset data
-		ss << "visual='" << moi->getVisualLocation().getFilename() << "',";
-		ss << "objtype='" << moi->get<std::string>("objtype") << "',";
-		ss << "name='" << moi->get<std::string>("name") << "',";
-		
-		Location& loc = moi->getLocation();
-		
-		ss << " location = { elevation = " ;
-		if (loc.elevation > 1000) {
-			ss << "nil";
-		} else {
-			ss << loc.elevation;
-		}
-		
-		ss << ", grid = " << loc.layer
-		   << ", x = " << loc.position.x
-		   << ", y = " << loc.position.y
-		   << " }, id = " << id << "}); ";
-
-		return ss.str();
 	}
 
 	void Runner::doCommand(const command::Info& cmd) {

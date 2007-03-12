@@ -142,11 +142,6 @@ namespace FIFE { namespace map {
 
 			void sendHeartbeat(size_t);
 
-			/** Pack an object into a lua table as string
-			 *  @deprecated This is only a temporary solution
-			 */
-			std::string packObject(ObjectPtr moi, size_t id);
-
 			typedef std::map<size_t, command::Command*> type_cmdmap;
 			type_cmdmap m_commands;
 			void doCommand(const command::Info& cmd);
