@@ -44,6 +44,7 @@ namespace FIFE { namespace map {
 
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
+	typedef SmartList<ObjectInfo> ObjectList;
 
 	/** Game Object Representation
 	 *
@@ -108,10 +109,7 @@ namespace FIFE { namespace map {
 			size_t getVisualId() const;
 
 			void addToInventory(ObjectPtr obj);
-			void addToInventory(size_t objId);
-			const std::vector<size_t>& listInventory() const;
-			void removeFromInventory(size_t objId);
-			bool isInInventory(size_t objId) const;
+			ObjectList& getInventory();
 
 			void loadPrototype(size_t proto_id);
 			void loadPrototype(const std::string& proto_name);
@@ -122,16 +120,10 @@ namespace FIFE { namespace map {
 		private:
 			Location m_location;
 
-			/// Indices into MapObjectManager
-			std::vector<size_t> m_inventory;
-
 			/// Prototype ids
 			std::vector<size_t> m_protoid;;
 
-			// XXX pointer ownership??? X_X
-			typedef std::vector<ObjectPtr> type_temporaryInventory;
-			type_temporaryInventory m_temporaryInventory;
-
+			ObjectList m_inventory;
 
 			size_t m_visualId;
 			bool   m_isStatic;
@@ -141,7 +133,6 @@ namespace FIFE { namespace map {
 
 			friend class ObjectManager;
 	};
-	typedef SmartList<ObjectInfo> ObjectList;
 
 	inline
 	uint16_t ObjectInfo::getZValue() const {
@@ -195,27 +186,12 @@ namespace FIFE { namespace map {
 
 	inline
 	void ObjectInfo::addToInventory(ObjectPtr obj) { 
-		m_temporaryInventory.push_back(obj); 
+		m_inventory.append(obj); 
 	}
 	
-	inline
-	void ObjectInfo::addToInventory(size_t objId) {
-		m_inventory.push_back(objId);
-	}
-
 	inline 
-	const std::vector<size_t>& ObjectInfo::listInventory() const {
+	ObjectList& ObjectInfo::getInventory() {
 		return m_inventory;
-	}
-
-	inline 
-	void ObjectInfo::removeFromInventory(size_t objId) {
-		m_inventory.erase(std::find(m_inventory.begin(),m_inventory.end(), objId));
-	}
-
-	inline 
-	bool ObjectInfo::isInInventory(size_t objId) const{
-		return std::find(m_inventory.begin(),m_inventory.end(), objId) != m_inventory.end();
 	}
 
 } }
