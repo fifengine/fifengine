@@ -69,15 +69,6 @@ namespace FIFE { namespace map {
 			return false;
 		}
 		
-		ObjectInfo::type_temporaryInventory::iterator it = moi->m_temporaryInventory.begin();
-		for(; it != moi->m_temporaryInventory.end(); ++it) {
-			if (finalizeObject(*it)) {
-				size_t objectId = addObject(*it);
-				moi->m_inventory.push_back(objectId);
-				(*it).reset();
-			}
-		}
-		moi->m_temporaryInventory.clear();
 		return true;
 	}
 

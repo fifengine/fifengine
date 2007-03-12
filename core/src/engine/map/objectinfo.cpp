@@ -51,8 +51,6 @@ namespace FIFE { namespace map {
 	}
 
 	ObjectInfo::~ObjectInfo() {
-		m_temporaryInventory.clear();
-
 		/**
 			Make a test whether a MapVisual is still set for this
 			object. On Deletion this will try to dereference an
