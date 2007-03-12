@@ -154,7 +154,7 @@ namespace FIFE { namespace map {
 				visual->setRenderable(iid, loc.getType());
 				visual->setLocation(object->getLocation());
 				object->setVisualId( m_view->addVisual(visual) );
-				Log("map_runner")
+				Debug("map_runner")
 					<< "Adding Visual for static object iid:" << iid
 					<< " rloc:" << loc.toString();
 			}
