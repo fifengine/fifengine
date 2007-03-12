@@ -60,6 +60,13 @@ namespace FIFE {
 		{0,0}
 	};
 
+	Lunar<Layer_LuaScript>::RegType Layer_LuaScript::metamethods[] = {
+		{ "__index", &Layer_LuaScript::getAttr },
+		{ "__newindex", &Layer_LuaScript::setAttr },
+		{0,0}
+	};
+
+
 }
 
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

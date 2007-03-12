@@ -41,13 +41,13 @@ namespace FIFE {
 	int Table_LuaScript::getAttr(lua_State* L) {
 		std::string key = lua_tostring(L,1);
 
-// 		lua_getglobal(L,self->classname().c_str());
-// 		lua_pushstring(L,key.c_str());
-// 		lua_gettable(L,-2);
-// 		lua_remove(L,-2);
-// 		if( !lua_isnil(L,-1) )
-// 			return 1;
-// 		lua_pop(L,1);
+		lua_pushvalue(L,lua_upvalueindex(3));
+		lua_pushstring(L,key.c_str());
+		lua_gettable(L,-2);
+		lua_remove(L,-2);
+		if( !lua_isnil(L,-1) )
+			return 1;
+		lua_pop(L,1);
 
 		AttributedClass *t = getTable();
 		if (!t) {
@@ -85,7 +85,18 @@ namespace FIFE {
 		if (!t)
 			return 0;
 
-		std::string key = lua_tostring(L,1);
+		std::string key = luaL_checkstring(L,1);
+
+		lua_pushvalue(L,lua_upvalueindex(3));
+		lua_pushstring(L,key.c_str());
+		lua_gettable(L,-2);
+		lua_remove(L,-2);
+		if( !lua_isnil(L,-1) ) {
+			const char* classname = lua_tostring(L,lua_upvalueindex(2));
+			luaL_error(L,"'%s' is already a method in '%s'",key.c_str(),classname);
+		}
+		lua_pop(L,1);
+
 
 		switch(lua_type(L,2)) {
 		case LUA_TNUMBER:
@@ -99,11 +110,9 @@ namespace FIFE {
 			t->set<std::string>(key,lua_tostring(L,2));
 			lua_pop(L,1);
 			return 0;
+		default:
+			luaL_error(L,"not a valid attribute value");
 		}
-	
-		std::string value = lua_tostring(L,2);
-		lua_pop(L,1);
-		t->set<std::string>(key,value);
 		return 0;
 	}
 }
