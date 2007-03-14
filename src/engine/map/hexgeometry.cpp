@@ -103,7 +103,7 @@ namespace FIFE { namespace map {
 	Point HexGeometry::directionToScreen(size_t dir) const {
 		assert(dir < getNumDirections());
 		return Point(sgrid_mul_values[0][dir] * m_basesize.x/2,
-		             sgrid_mul_values[1][dir] * m_basesize.y);
+		             sgrid_mul_values[1][dir] * m_transform.y);
 	}
 
 	const float* HexGeometry::getAdjacentCosts() const {

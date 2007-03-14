@@ -153,6 +153,15 @@ void geo_directionToScreen_props() {
 		points.push_back(Point(raw_points[i],raw_points[i+1]));
 	}
 
+	Point start(0,0);
+	Point p(start);
+	for(size_t i=0; i!= n_dirs; ++i) {
+		p = p + geometry->directionToScreen(i);
+	}
+	BOOST_CHECK_MESSAGE( p == start,
+		"One round-trip should end at start(" << start << ")"
+		<< " - ended at " << p << " instead.");
+
 	for(size_t pi = 0; pi != points.size(); ++pi) {
 		for(size_t di = 0; di != n_dirs; ++di) {
 			Point a = geometry->directionToScreen(di);
