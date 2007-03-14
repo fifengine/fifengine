@@ -355,7 +355,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 	void XML::loadObject(TiXmlElement* element) {
 		assert( element );
-		ObjectPtr object(new ObjectInfo());
+		ObjectPtr object(ObjectInfo::create());
 
 		const char* proto_name = element->Attribute("prototype");
 		if( proto_name ) {

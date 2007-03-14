@@ -50,10 +50,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		m_lst_items("art/items/items.lst"),
 		m_lst_scenery("art/scenery/scenery.lst"),
 		m_lst_misc("art/misc/misc.lst"),
-		m_lst_critters("art/critters/critters.lst"),
-		m_default_moi()
+		m_lst_critters("art/critters/critters.lst")
 	{
-		m_default_moi.getLocation().layer = 1;
 	}
 
 	uint32_t ObjectFactory::getProSubType(const std::string& path) const {
@@ -102,7 +100,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	ObjectPtr ObjectFactory::loadObject(RawDataPtr data, const s_objectinfo& info) {
 		uint8_t type = (info.proto_pid >> 24) & 0xff;
 
-		ObjectPtr obj(new ObjectInfo(m_default_moi));
+		ObjectPtr obj = ObjectInfo::create();
 		switch(type) {
 			case objtype_item:
 				loadItem(data, info, obj);

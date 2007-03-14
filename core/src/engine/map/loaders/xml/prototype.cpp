@@ -133,7 +133,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	ObjectPtr Prototype::create() {
-		ObjectPtr object(new ObjectInfo());
+		ObjectPtr object(ObjectInfo::create());
 		merge( object.get() );
 		return object;
 	}

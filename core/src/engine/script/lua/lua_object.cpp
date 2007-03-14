@@ -37,7 +37,7 @@ namespace FIFE {
 	Object_LuaScript::Object_LuaScript(map::ObjectPtr obj) : m_object(obj) {
 	}
 
-	Object_LuaScript::Object_LuaScript(lua_State* L) : m_object(new map::ObjectInfo()) {
+	Object_LuaScript::Object_LuaScript(lua_State* L) : m_object(map::ObjectInfo::create()) {
 	}
 
 	Object_LuaScript::~Object_LuaScript() {

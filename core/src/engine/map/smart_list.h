@@ -80,17 +80,21 @@ namespace FIFE { namespace map {
 	
 	template<typename T>
 	void SmartList<T>::append(EntryPtr entry) {
-		m_list.push_back( entry );
-		m_map.insert( std::make_pair(entry,--m_list.end()) );
+		if( !contains(entry) ) {
+			m_list.push_back( entry );
+			m_map.insert( std::make_pair(entry,--m_list.end()) );
+		}
 	}
 
 	template<typename T>
 	void SmartList<T>::insert(EntryPtr before, EntryPtr entry) {
-		typename type_map::iterator i(m_map.find(before));
-		m_list.insert(i->second,entry);
-		typename type_list::iterator list_i = i->second;
-		--list_i;
-		m_map.insert( std::make_pair(list_i) );
+		if( !contains(entry) ) {
+			typename type_map::iterator i(m_map.find(before));
+			m_list.insert(i->second,entry);
+			typename type_list::iterator list_i = i->second;
+			--list_i;
+			m_map.insert( std::make_pair(list_i) );
+		}
 	}
 
 	template<typename T>
@@ -101,6 +105,7 @@ namespace FIFE { namespace map {
 		}
 		m_list.erase( i->second );
 		m_map.erase( i );
+		entry->resetOwner();
 	}
 
 	template<typename T>
