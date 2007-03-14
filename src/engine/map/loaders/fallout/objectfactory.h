@@ -146,8 +146,6 @@ namespace loaders { namespace fallout {
 			list m_lst_misc;
 			CritLST m_lst_critters;
 
-			ObjectInfo m_default_moi;
-
 			/** Dispatches object loading to more specific functions.
 			 */
 			ObjectPtr loadObject(RawDataPtr data, const s_objectinfo& info);

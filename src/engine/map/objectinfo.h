@@ -29,6 +29,8 @@
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+#include <boost/variant.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -43,8 +45,15 @@
 namespace FIFE { namespace map {
 
 	class View;
+
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
+	typedef boost::weak_ptr<ObjectInfo> ObjectWeakPtr;
+
+	class Layer;
+	typedef boost::shared_ptr<Layer> LayerPtr;
+	typedef boost::weak_ptr<Layer> LayerWeakPtr;
+
 	typedef SmartList<ObjectInfo> ObjectList;
 
 	/** Game Object Representation
@@ -54,6 +63,7 @@ namespace FIFE { namespace map {
 	class ObjectInfo : public AttributedClass {
 		public:
 			typedef RenderableLocation type_visual_location;
+			typedef boost::variant<LayerWeakPtr,ObjectWeakPtr> type_owner;
 
 			static const std::string NameParam;
 			static const std::string ObjectTypeParam;
@@ -61,9 +71,9 @@ namespace FIFE { namespace map {
 			static const std::string TypeParam;
 			static const std::string OrientationParam;
 
-			/** Constructor
+			/** Factory method.
 			 */
-			ObjectInfo();
+			static ObjectPtr create();
 
 			/** Destructor
 			 */
@@ -103,14 +113,30 @@ namespace FIFE { namespace map {
 			Location& getLocation();
 			void setLocation(const Location& loc);
 
+			void setOwner(LayerPtr  owner);
+			void setOwner(ObjectPtr owner);
+			void resetOwner();
+
+			bool isOwner(LayerPtr  owner) const;
+			bool isOwner(ObjectPtr owner) const;
+			bool isIndirectOwner(ObjectPtr owner) const;
+
+			bool hasOwner() const;
+
+			type_owner& getOwner() { return m_owner; }
+			const type_owner& getOwner() const { return m_owner; }
+
+			void addToInventory(ObjectPtr obj);
+			ObjectList& getInventory();
+
+			// INTERNAL USE
+
 			const type_visual_location& getVisualLocation() const;
 			void setVisualLocation(const type_visual_location& visual);
 
 			void setVisualId(size_t visualId);
 			size_t getVisualId() const;
 
-			void addToInventory(ObjectPtr obj);
-			ObjectList& getInventory();
 
 			void loadPrototype(size_t proto_id);
 			void loadPrototype(const std::string& proto_name);
@@ -118,8 +144,17 @@ namespace FIFE { namespace map {
 
 			void debugPrint();
 
+			static long globalCount();
 		private:
+			/** Constructor
+			 */
+			ObjectInfo();
+
+			static long m_count;
+
 			Location m_location;
+			type_owner    m_owner;
+			ObjectWeakPtr m_self;
 
 			/// Prototype ids
 			std::vector<size_t> m_protoid;;
@@ -185,10 +220,6 @@ namespace FIFE { namespace map {
 		return m_visualId; 
 	}
 
-	inline
-	void ObjectInfo::addToInventory(ObjectPtr obj) { 
-		m_inventory.append(obj); 
-	}
 	
 	inline 
 	ObjectList& ObjectInfo::getInventory() {

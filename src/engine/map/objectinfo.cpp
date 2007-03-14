@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "debugutils.h"
+#include "exception.h"
 
 #include "objectinfo.h"
 #include "factory.h"
@@ -40,6 +41,8 @@ namespace FIFE { namespace map {
 	const std::string ObjectInfo::LocationParam    = "location";
 	const std::string ObjectInfo::OrientationParam = "orientation";
 
+	long ObjectInfo::m_count = 0;
+
 	ObjectInfo::ObjectInfo() 
 		: AttributedClass("GObject"),
 		  m_visualId(0),
@@ -49,6 +52,14 @@ namespace FIFE { namespace map {
 		set<std::string>("name","unnamed");
 
 		m_zvalue = 2;
+
+		m_count += 1;
+	}
+
+	ObjectPtr ObjectInfo::create() {
+		ObjectPtr object(new ObjectInfo());
+		object->m_self = object;
+		return object;
 	}
 
 	ObjectInfo::~ObjectInfo() {
@@ -65,6 +76,7 @@ namespace FIFE { namespace map {
 				<< "Dangling MapVisual pointing to deleted MapObjectInfo";
 			debugPrint();
 		}
+		m_count -= 1;
 	}
 
 	void ObjectInfo::loadPrototype(size_t proto_id) {
@@ -99,6 +111,103 @@ namespace FIFE { namespace map {
 		return m_protoid;
 	}
 
+
+	struct owner_reset : public boost::static_visitor<> {
+		ObjectWeakPtr m_self;
+		owner_reset(ObjectWeakPtr self) : m_self(self) {}
+
+		void operator()(LayerWeakPtr& my_layer) const {
+			if( my_layer.expired() ) {
+				return;
+			}
+			// LayerPtr layer(my_layer.lock());
+			// layer->removeObject( m_self );
+			my_layer.reset();
+		}
+
+		void operator()(ObjectWeakPtr& my_object) const {
+			if( my_object.expired() ) {
+				return;
+			}
+			ObjectPtr object(my_object.lock());
+			object->getInventory().erase( m_self.lock() );
+			my_object.reset();
+		}
+
+	};
+
+
+	void ObjectInfo::setOwner(LayerPtr layer) {
+		if( hasOwner() ) {
+			boost::apply_visitor( owner_reset(m_self), m_owner);
+		}
+		m_owner = LayerWeakPtr(layer);
+	}
+
+	void ObjectInfo::setOwner(ObjectPtr object) {
+		if( hasOwner() ) {
+			boost::apply_visitor( owner_reset(m_self), m_owner);
+		}
+		m_owner = ObjectWeakPtr(object);
+	}
+
+	void ObjectInfo::resetOwner() {
+		setOwner(ObjectPtr());
+	}
+
+	struct owner_expired : public boost::static_visitor<bool> {
+
+		template<typename T>
+		bool operator()(const T& my_owner) const { return my_owner.expired(); }
+
+	};
+
+	bool ObjectInfo::hasOwner() const {
+		return !boost::apply_visitor( owner_expired(), m_owner );
+	}
+
+	template<typename T>
+	bool is_owner(const ObjectInfo::type_owner& owner, const boost::shared_ptr<T>& object) {
+		const boost::weak_ptr<T>* p = boost::get<boost::weak_ptr<T> >(&owner);
+		if( !p || p->expired() ) {
+			return false;
+		}
+		return p->lock() == object;
+	}
+
+
+	bool ObjectInfo::isOwner(LayerPtr  owner) const {
+		return is_owner<Layer>(m_owner, owner);
+	}
+
+	bool ObjectInfo::isOwner(ObjectPtr owner) const {
+		return is_owner<ObjectInfo>(m_owner, owner);
+	}
+
+	bool ObjectInfo::isIndirectOwner(ObjectPtr owner) const {
+		const ObjectWeakPtr* p = boost::get<ObjectWeakPtr>(&m_owner);
+		if( !p || p->expired() ) {
+			return false;
+		} else {
+			ObjectPtr obj(p->lock());
+			if( obj == owner ) {
+				return true;
+			} else {
+				return obj->isIndirectOwner( owner );
+			}
+		}
+	}
+
+	void ObjectInfo::addToInventory(ObjectPtr obj) {
+		if( obj ) {
+			if( isIndirectOwner( obj ) ) {
+				throw Exception("This is not a Klein Bottle");
+			}
+			obj->setOwner( m_self.lock() );
+			m_inventory.append(obj); 
+		}
+	}
+
 	void ObjectInfo::debugPrint() {
 		Log log("object");
 
@@ -113,5 +222,10 @@ namespace FIFE { namespace map {
 			}
 		}
 	}
+
+	long ObjectInfo::globalCount() { 
+		return m_count;
+	}
+
 
 } } //FIFE::map
