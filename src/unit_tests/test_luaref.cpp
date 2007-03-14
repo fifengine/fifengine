@@ -103,7 +103,7 @@ void simple_test()
 	
 	BOOST_CHECK( lua_gettop(L) == 1 );
 	
-	FIFE::LuaRef luaref;
+	LuaRef luaref;
 	luaref.ref(L, 1);
 	lua_pop(L, 1);
 	
@@ -119,12 +119,37 @@ void simple_test()
 	lua_run(L, cmd_buf);
 	luaref.ref(L, 1);
 	lua_pop(L, 1);
-	FIFE::LuaRef::unrefAll(L);
+	LuaRef::unrefAll(L);
 	BOOST_CHECK( !luaref.isValid() );
+}
+
+void anonymous_function_test() {
+	environment env;
+	lua_State *L = env.state;
+	
+	LuaRef luaref;
+	lua_run(L, "foo = function() print(\"Lambda called.\") end");
+	lua_getglobal(L,"foo");
+	luaref.ref(L,1);
+	lua_pop(L,1);
+	lua_run(L, "_G[\"foo\"] = nil");
+	BOOST_CHECK( lua_gettop(L) == 0);
+	lua_gc(L, LUA_GCCOLLECT, 0);
+
+	lua_getglobal(L,"foo");
+	BOOST_CHECK( lua_isnil(L, 1) );
+	lua_pop(L,1);
+
+	luaref.push();
+	BOOST_CHECK( lua_isfunction(L, 1) );
+	lua_call(L,0,0); // Should print the message
+
+	LuaRef::unrefAll(L);
 }
 
 test_suite* init_unit_test_suite(int argc, char** argv) {
 	test_suite* test = BOOST_TEST_SUITE("Lua Ref tests");
 	test->add(BOOST_TEST_CASE(&simple_test), 0);
+	test->add(BOOST_TEST_CASE(&anonymous_function_test), 0);
 	return test;
 }
