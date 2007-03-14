@@ -62,6 +62,8 @@ void simple_ownership_test() {
 	LayerPtr layer2(new Layer(Point(100,100),1));
 	ObjectPtr object(ObjectInfo::create());
 
+	std::cout << "sizeof(map::ObjectInfo) = " << sizeof(ObjectInfo) << std::endl;
+
 	BOOST_CHECK( !object->hasOwner() );
 	BOOST_CHECK( !object->isOwner( layer ) );
 	BOOST_CHECK( !object->isOwner( layer2 ) );
