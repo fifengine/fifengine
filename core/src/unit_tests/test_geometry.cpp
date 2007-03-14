@@ -30,29 +30,54 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/geometry.h"
+#include "map/layer.h"
+#include "map/objectinfo.h"
+#include "map/factory.h"
+#include "vfs/vfssourcefactory.h"
+#include "vfs/vfs.h"
+#include "settingsmanager.h"
+
 
 using boost::unit_test::test_suite;
 using namespace FIFE::map;
 using namespace FIFE;
 
+// Map Environment
+struct environment {
+	boost::shared_ptr<SettingsManager> settings;
+	boost::shared_ptr<VFSSourceFactory> vfssources;
+	boost::shared_ptr<VFS> vfs;
+	boost::shared_ptr<Factory> factory;
+
+	environment()
+		: settings(new SettingsManager()),
+		  vfssources(new VFSSourceFactory()),
+		  vfs(new VFS()),
+		  factory(new Factory()) {}
+};
+
 int raw_points[] = { 0,0, -1,-1, -1,0, 12,-12, -12,-12,  -12,12, 529,395, 4000,501, 700,3888  };
 
 void geometries_exist() {
-	BOOST_CHECK(Geometry::getGeometryFromId(0) != 0);
-	BOOST_CHECK(Geometry::getGeometryFromId(1) != 0);
+	environment env;
+
+	BOOST_CHECK(Geometry::createGeometry(0,Point()) != 0);
+	BOOST_CHECK(Geometry::createGeometry(1,Point()) != 0);
 	// Only 2 Geometries ... 2 should return 0;
-	BOOST_CHECK(Geometry::getGeometryFromId(2) == 0);
+	BOOST_CHECK_THROW(Geometry::createGeometry(2,Point()), InvalidFormat);
 }
 
 template<int id>
 void geo_identities() {
+	environment env;
+
 #define ABS(n) ((n) < 0 ? -(n) : (n)) 
 	std::vector<Point> points;
 	for(size_t i=0; i+1 < sizeof(raw_points)/sizeof(int); i+=2) {
 		points.push_back(Point(raw_points[i],raw_points[i+1]));
 	}
 
-	Geometry *geometry = Geometry::getGeometryFromId(id);
+	Geometry *geometry = Geometry::createGeometry(id,Point());
 	for(size_t i=0; i != points.size(); ++i) {
 		Point new_point = geometry->fromScreen(geometry->toScreen(points[i]));
 		BOOST_CHECK_MESSAGE( new_point == points[i],
@@ -71,7 +96,9 @@ void geo_identities() {
 
 template<int id>
 void geo_directionToGrid_props() {
-	Geometry *geometry = Geometry::getGeometryFromId(id);
+	environment env;
+
+	Geometry *geometry = Geometry::createGeometry(id,Point());
 	size_t n_dirs = geometry->getNumDirections();
 
 	Point start(0,0);
@@ -116,7 +143,9 @@ void geo_directionToGrid_props() {
 
 template<int id>
 void geo_directionToScreen_props() {
-	Geometry *geometry = Geometry::getGeometryFromId(id);
+	environment env;
+
+	Geometry *geometry = Geometry::createGeometry(id,Point());
 	size_t n_dirs = geometry->getNumDirections();
 
 	std::vector<Point> points;
