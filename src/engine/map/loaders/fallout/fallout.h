@@ -100,7 +100,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 			/** Create Fallout style elevation
 			 */
-			ElevationPtr Fallout::createElevation();
+			ElevationPtr createElevation();
 
 			/** Load Floor and Roof tiles into the Map
 			 */
