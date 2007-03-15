@@ -105,9 +105,9 @@ namespace FIFE { namespace map {
 			ObjectPtr object;
 			while((object = object_it.next())) {
 				if ( !object->isStatic() && m_ruleset.isValid()) {
-					object->set<long>("elevation",object->getLocation().elevation);
-					object->set<long>("layer",object->getLocation().layer);
-					object->set<Point>("position",object->getLocation().position);
+					object->set<long>("elevation",object->getElevation());
+					object->set<long>("layer",object->getLayer());
+					object->set<Point>("position",object->getPosition());
 					sendEvent(makeEvent(FIFE_NEW_OBJECT,object));
 				}
 			}

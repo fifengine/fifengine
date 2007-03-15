@@ -30,6 +30,7 @@
 #include "map/map.h"
 
 #include "lua_map.h"
+#include "lua_elevation.h"
 
 namespace FIFE {
 
@@ -43,6 +44,22 @@ namespace FIFE {
 	Map_LuaScript::~Map_LuaScript() {
 	}
 
+	int Map_LuaScript::getElevation(lua_State* L) {
+		int id = int(luaL_checkinteger(L,1));
+		if( id < 0 || id >= m_map->getElevationCount() ) {
+			luaL_error(L,"no elevation %d - max elevation nr is %d",
+			           id,m_map->getElevationCount());
+		}
+		Lunar<Elevation_LuaScript>::push(L,new Elevation_LuaScript(m_map->getElevation(id)));
+		return 1;
+	}
+
+	int Map_LuaScript::addElevation(lua_State* L) {
+		map::ElevationPtr elevation = Lunar<Elevation_LuaScript>::check(L,1)->getElevation();
+		m_map->addElevation(elevation);
+		return 0;
+	}
+
 	Table* Map_LuaScript::getTable() { 
 		return m_map.get();
 	}
@@ -53,6 +70,8 @@ namespace FIFE {
 	Lunar<Map_LuaScript>::RegType Map_LuaScript::methods[] = {
 		method(Map_LuaScript, getAttr),
 		method(Map_LuaScript, setAttr),
+		method(Map_LuaScript, getElevation),
+		method(Map_LuaScript, addElevation),
 		{0,0}
 	};
 

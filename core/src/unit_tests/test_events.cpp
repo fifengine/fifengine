@@ -186,7 +186,8 @@ void event_refct() {
 test_suite* init_unit_test_suite(int argc, char** argv) {
 	test_suite* test = BOOST_TEST_SUITE("Event Test");
 
-	test->add( BOOST_TEST_CASE( &event_props ),0 );
+	// Disabled performance tests. They take way too long
+	//test->add( BOOST_TEST_CASE( &event_props ),0 );
 	test->add( BOOST_TEST_CASE( &event_refct ),0 );
 
 	return test;

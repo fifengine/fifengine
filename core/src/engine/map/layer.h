@@ -30,6 +30,7 @@
 // 3rd party library includes
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -42,6 +43,10 @@
 #include "objectinfo.h"
 
 namespace FIFE { namespace map {
+
+	class Layer;
+	typedef boost::shared_ptr<Layer> LayerPtr;
+	typedef boost::weak_ptr<Layer> LayerWeakPtr;
 
 	class Geometry;
 	/** A basic layer on a map elevation
@@ -82,9 +87,10 @@ namespace FIFE { namespace map {
 				MAX_PARAM = 100
 			};
 
+
 			/** Constructs a Layer instance
 			 */
-			Layer(const Point& size, size_t geometry);
+			static LayerPtr create(const Point& size, size_t geometry);
 
 			/** Destructs a Layer instance
 			 */
@@ -115,7 +121,7 @@ namespace FIFE { namespace map {
 			 */
 			bool hasObjects() const;
 
-			/** Add an object to the position given by it's location
+			/** Add an object at a specific position
 			 */
 			void addObject(ObjectPtr object);
 
@@ -142,6 +148,10 @@ namespace FIFE { namespace map {
 			/** Get a List of all objects at position
 			 */
 			const ObjectList& getObjectsAt(const Point& p) const;
+
+			void removeObject(ObjectPtr object);
+
+			const ObjectList& getAllObjects() const;
 
 			/** Get the tile image id of a position
 			 *  @note If the position is invalid or the Layer
@@ -348,6 +358,13 @@ namespace FIFE { namespace map {
 			bool isValidPosition(int32_t x,int32_t y) const;
 
 		protected:
+			/** Constructs a Layer instance
+			 */
+			Layer(const Point& size, size_t geometry);
+			void insertedObject(ObjectPtr object, const Point& p);
+
+			LayerWeakPtr m_self;
+
 			Point m_size;
 
 			uint8_t m_global_alpha;
@@ -357,6 +374,8 @@ namespace FIFE { namespace map {
 			bool m_grid_overlay;
 
 			std::vector<size_t> m_tiles;
+
+			ObjectList m_all_objects;
 			std::vector<ObjectList> m_objects;
 
 			Point m_shift;

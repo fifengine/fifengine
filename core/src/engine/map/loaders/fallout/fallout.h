@@ -33,7 +33,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/loader.h"
-#include "map/structure.h"
 #include "vfs/vfs.h"
 
 namespace FIFE {
@@ -88,7 +87,6 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 		private:
 			Header* m_header;
-			elevation_info m_foElevationFormat;
 
 			struct s_imgdata {
 				size_t cacheid;
@@ -99,6 +97,10 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 			typedef std::map<std::string, s_imgdata> type_cached;
 			type_cached m_cached;
+
+			/** Create Fallout style elevation
+			 */
+			ElevationPtr Fallout::createElevation();
 
 			/** Load Floor and Roof tiles into the Map
 			 */

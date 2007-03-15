@@ -14,7 +14,13 @@ for line in open(os.sep.join((dirpath, 'SConscript'))):
     if m:
         progs.append(m.group(1))
 
+failed = []
 for prog in progs:
     print '\n===== Running %s =====' % prog
     if os.system(os.sep.join(('.', dirpath, prog))):
-        break
+        failed.append( prog )
+
+if failed:
+    print '\n===== Failed Tests ====='
+    for prog in failed:
+        print prog

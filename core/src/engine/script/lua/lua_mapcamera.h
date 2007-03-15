@@ -49,9 +49,9 @@ namespace FIFE {
 			int l_setViewport(lua_State *L);
 
 			int l_moveBy(lua_State *L);
-			int l_moveTo(lua_State *L);
+			int l_jumpTo(lua_State *L);
 
-			int l_zoomTo(lua_State *L);
+			int l_moveTo(lua_State *L);
 			int l_track(lua_State *L);
 
 	};

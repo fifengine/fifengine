@@ -53,7 +53,14 @@ namespace FIFE {
 			Layer_LuaScript(map::LayerPtr obj);
 			virtual ~Layer_LuaScript();
 
+			int addObject(lua_State*L);
+			int addObjectAt(lua_State*L);
+			int getObjectsAt(lua_State*L);
+			int removeObject(lua_State*L);
+
 			virtual Table* getTable();
+
+			map::LayerPtr getLayer() { return m_layer; }
 
 		private:
 			map::LayerPtr m_layer;

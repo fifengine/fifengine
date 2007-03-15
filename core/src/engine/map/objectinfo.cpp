@@ -33,6 +33,7 @@
 #include "objectinfo.h"
 #include "factory.h"
 #include "view.h"
+#include "layer.h"
 
 namespace FIFE { namespace map {
 
@@ -52,7 +53,7 @@ namespace FIFE { namespace map {
 		set<std::string>("name","unnamed");
 
 		m_zvalue = 2;
-
+		m_inventory = 0;
 		m_count += 1;
 	}
 
@@ -77,6 +78,10 @@ namespace FIFE { namespace map {
 			debugPrint();
 		}
 		m_count -= 1;
+
+		if( m_inventory ) {
+			delete m_inventory;
+		}
 	}
 
 	void ObjectInfo::loadPrototype(size_t proto_id) {
@@ -120,8 +125,8 @@ namespace FIFE { namespace map {
 			if( my_layer.expired() ) {
 				return;
 			}
-			// LayerPtr layer(my_layer.lock());
-			// layer->removeObject( m_self );
+			LayerPtr layer(my_layer.lock());
+			layer->removeObject( m_self.lock() );
 			my_layer.reset();
 		}
 
@@ -204,7 +209,7 @@ namespace FIFE { namespace map {
 				throw Exception("This is not a Klein Bottle");
 			}
 			obj->setOwner( m_self.lock() );
-			m_inventory.append(obj); 
+			getInventory().append(obj); 
 		}
 	}
 

@@ -35,8 +35,6 @@
 // Second block: files included from the same folder
 #include "attributedclass.h"
 
-#include "structure.h"
-
 namespace FIFE { namespace map {
 
 	class ObjectInfo;
@@ -78,7 +76,7 @@ namespace FIFE { namespace map {
 	class Elevation : public AttributedClass {
 		public:
 
-			Elevation(const elevation_info& structure = elevation_info());
+			Elevation();
 			~Elevation();
 
 			/** Add a Layer at the top

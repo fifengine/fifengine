@@ -55,13 +55,13 @@ namespace FIFE {
 		return 0;
 	}
 
-	int MapCamera_Lunar::l_moveTo(lua_State *L) {
-		map::Camera::moveTo(Point(luaL_checkinteger(L,1),luaL_checkinteger(L,2)));
+	int MapCamera_Lunar::l_jumpTo(lua_State *L) {
+		map::Camera::jumpTo(Point(luaL_checkinteger(L,1),luaL_checkinteger(L,2)));
 		return 0;
 	}
 
-	int MapCamera_Lunar::l_zoomTo(lua_State *L) {
-		map::Camera::zoomTo(Point(luaL_checkinteger(L,1),luaL_checkinteger(L,2)));
+	int MapCamera_Lunar::l_moveTo(lua_State *L) {
+		map::Camera::moveTo(Point(luaL_checkinteger(L,1),luaL_checkinteger(L,2)));
 		return 0;
 	}
 
@@ -79,8 +79,8 @@ namespace FIFE {
 		method(setViewport),
 		method(render),
 		method(moveBy),
+		method(jumpTo),
 		method(moveTo),
-		method(zoomTo),
 		method(track),
 		{NULL, NULL}
 	};

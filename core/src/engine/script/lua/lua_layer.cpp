@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #include "map/layer.h"
 
+#include "lua_object.h"
 #include "lua_layer.h"
 
 namespace FIFE {
@@ -41,11 +42,48 @@ namespace FIFE {
 		int x = int(luaL_checknumber(L,1));
 		int y = int(luaL_checknumber(L,2));
 		int g = int(luaL_checknumber(L,3));
-		m_layer = map::LayerPtr(new map::Layer(Point(x,y),g));
+		m_layer = map::Layer::create(Point(x,y),g);
 	}
 
 	Layer_LuaScript::~Layer_LuaScript() {
 	}
+
+	int Layer_LuaScript::addObject(lua_State*L) {
+		map::ObjectPtr object = Lunar<Object_LuaScript>::check(L,1)->getObject();
+		m_layer->addObject( object );
+		return 0;
+	}
+
+	int Layer_LuaScript::addObjectAt(lua_State*L) {
+		map::ObjectPtr object = Lunar<Object_LuaScript>::check(L,1)->getObject();
+		m_layer->addObjectAt( object, int(luaL_checknumber(L,2)),
+		                              int(luaL_checknumber(L,3)));
+		return 0;
+	}
+
+	int Layer_LuaScript::removeObject(lua_State*L) {
+		map::ObjectPtr object = Lunar<Object_LuaScript>::check(L,1)->getObject();
+		m_layer->removeObject( object );
+		return 0;
+	}
+
+	int Layer_LuaScript::getObjectsAt(lua_State*L) {
+		int x = int(luaL_checknumber(L,1));
+		int y = int(luaL_checknumber(L,2));
+		if( !m_layer->hasObjects() ) {
+			lua_newtable(L);
+			return 1;
+		}
+
+		const map::ObjectList& objects = m_layer->getObjectsAt(x,y);
+		lua_createtable(L,objects.size(),0);
+		for(size_t i=0; i != objects.size(); ++i) {
+			Lunar<Object_LuaScript>::push(L, new Object_LuaScript(objects.at(i)) );
+			lua_rawseti(L,-2,i+1);
+		}
+		return 1;
+	}
+	
 
 	Table* Layer_LuaScript::getTable() { 
 		return m_layer.get();
@@ -57,6 +95,10 @@ namespace FIFE {
 	Lunar<Layer_LuaScript>::RegType Layer_LuaScript::methods[] = {
 		method(Layer_LuaScript, getAttr),
 		method(Layer_LuaScript, setAttr),
+		method(Layer_LuaScript, addObject),
+		method(Layer_LuaScript, addObjectAt),
+		method(Layer_LuaScript, getObjectsAt),
+		method(Layer_LuaScript, removeObject),
 		{0,0}
 	};
 

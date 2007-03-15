@@ -80,7 +80,7 @@ namespace FIFE { namespace map {
 		int32_t dx  = m_transform.x;
 		int32_t dy  = m_transform.y;
 		return Point(m_offset.x - (pos.x*w - (pos.x/2)*dx - pos.y * h),
-                         m_offset.y + (pos.x/2)*dy + pos.y*dy);
+		             m_offset.y + (pos.x/2)*dy + pos.y*dy);
 	}
 	
 	Point HexGeometry::fromScreen(const Point& pos) const {

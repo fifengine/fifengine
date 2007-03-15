@@ -154,7 +154,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		if( m_position.haveData ) {
-			object->getLocation().position = m_position.data;
+			object->setPosition( m_position.data );
 		}
 
 		if( m_rlocation.haveData ) {

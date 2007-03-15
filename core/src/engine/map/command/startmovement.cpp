@@ -54,8 +54,8 @@ namespace FIFE { namespace map { namespace command {
 			return;
 		}
 
-		moi->getLocation().position.x += x;
-		moi->getLocation().position.y += y;
+// 		moi->getLocation().position.x += x;
+// 		moi->getLocation().position.y += y;
 		if (moi->getLocation().elevation != m_view->getElevationNum()) {
 			Log("mc_startmovement") 
 				<< "Will just set location for object not on mapview";
