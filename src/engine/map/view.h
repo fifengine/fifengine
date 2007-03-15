@@ -136,7 +136,7 @@ namespace FIFE { namespace map {
 
 			/** Get total number of elevations
 			 */
-			size_t getElevationCount() const;
+			size_t getNumElevations() const;
 
 			/** Set the current elevation id
 			 */

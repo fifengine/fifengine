@@ -46,9 +46,9 @@ namespace FIFE {
 
 	int Map_LuaScript::getElevation(lua_State* L) {
 		int id = int(luaL_checkinteger(L,1));
-		if( id < 0 || id >= m_map->getElevationCount() ) {
+		if( id < 0 || id >= int(m_map->getNumElevations()) ) {
 			luaL_error(L,"no elevation %d - max elevation nr is %d",
-			           id,m_map->getElevationCount());
+			           id,m_map->getNumElevations());
 		}
 		Lunar<Elevation_LuaScript>::push(L,new Elevation_LuaScript(m_map->getElevation(id)));
 		return 1;

@@ -58,12 +58,12 @@ namespace FIFE { namespace map {
 		m_mapname = name;
 	}
 
-	size_t Map::getElevationCount() const {
+	size_t Map::getNumElevations() const {
 		return m_elevations.size();
 	}
 
 	ElevationPtr Map::getElevation(size_t index) const {
-		if (index >= getElevationCount()) {
+		if (index >= getNumElevations()) {
 			PANIC_PRINT("invalid elevationlevel: " << index);
 		}
 

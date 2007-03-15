@@ -73,7 +73,7 @@ namespace FIFE { namespace map {
 
 			void setMapName(const std::string& name);
 			const std::string& getMapName() const;
-			size_t getElevationCount() const;
+			size_t getNumElevations() const;
 			ElevationPtr getElevation(size_t index) const;
 			void addElevation(ElevationPtr);
 

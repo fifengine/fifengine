@@ -325,9 +325,9 @@ namespace FIFE { namespace map {
 	size_t View::getElevationNum() const {
 		return m_elevation_id;
 	}
-	size_t View::getElevationCount() const {
+	size_t View::getNumElevations() const {
 		assert(m_map);
-		return m_map->getElevationCount();
+		return m_map->getNumElevations();
 	}
 
 	void View::setElevationNum(size_t id) {
