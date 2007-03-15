@@ -23,6 +23,7 @@
 #define FIFE_MAP_ELEVATION_H
 
 // Standard C++ library includes
+#include <algorithm>
 #include <list>
 #include <vector>
 
@@ -88,6 +89,11 @@ namespace FIFE { namespace map {
 			LayerPtr getLayer(size_t);
 			size_t getNumLayers() const;
 			void setNumLayers(size_t numLayers);
+
+			template<typename T>
+			void forEachLayer(T visitor) {
+				std::for_each(m_layers.begin(),m_layers.end(),visitor);
+			}
 
 			/** Set the 'reference' Layer
 			 */

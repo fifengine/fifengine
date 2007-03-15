@@ -23,7 +23,7 @@
 #define FIFE_MAP_OBJECTLIST_H
 
 // Standard C++ library includes
-#include <deque>
+#include <list>
 #include <map>
 
 // 3rd party library includes
@@ -44,8 +44,13 @@ namespace FIFE { namespace map {
 	/** 
 	 */
 	class ObjectList {
+		protected:
+			typedef std::list<ObjectPtr> type_list;
+			typedef type_list::iterator iterator;
+
 		public:
 			typedef boost::function1<void,ObjectPtr> type_callback;
+			typedef type_list::const_iterator const_iterator;
 
 			ObjectList(){};
 			ObjectList(const ObjectList&);
@@ -55,17 +60,18 @@ namespace FIFE { namespace map {
 			void insert(ObjectPtr before, ObjectPtr entry);
 			void erase(ObjectPtr entry);
 			bool contains(ObjectPtr entry) const;
-			ObjectPtr at(size_t index) const;
+
 			size_t size() const;
 			bool empty() const;
 			void clear();
+
+			const_iterator begin() const;
+			const_iterator end() const;
 
 			void setRemoveCallback(const type_callback& callback);
 			void setInsertCallback(const type_callback& callback);
 
 		protected:
-			typedef std::deque<ObjectPtr> type_list;
-			typedef type_list::iterator iterator;
 			typedef std::map<ObjectPtr,iterator> type_map;
 
 			type_list m_list;

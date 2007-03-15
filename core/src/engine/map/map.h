@@ -77,6 +77,11 @@ namespace FIFE { namespace map {
 			ElevationPtr getElevation(size_t index) const;
 			void addElevation(ElevationPtr);
 
+			template<typename T>
+			void forEachElevation(T visitor) {
+				std::for_each(m_elevations.begin(),m_elevations.end(),visitor);
+			}
+
 			void setScript(ScriptType scripttype, const ScriptContainer&);
 			const ScriptContainer& getScript(ScriptType scripttype);
 			bool hasScript(ScriptType scripttype) const;

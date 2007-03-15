@@ -77,8 +77,9 @@ namespace FIFE {
 
 		const map::ObjectList& objects = m_layer->getObjectsAt(x,y);
 		lua_createtable(L,objects.size(),0);
-		for(size_t i=0; i != objects.size(); ++i) {
-			Lunar<Object_LuaScript>::push(L, new Object_LuaScript(objects.at(i)) );
+		map::ObjectList::const_iterator it(objects.begin());
+		for(size_t i=0; it != objects.end(); ++it, ++i) {
+			Lunar<Object_LuaScript>::push(L, new Object_LuaScript(*it) );
 			lua_rawseti(L,-2,i+1);
 		}
 		return 1;

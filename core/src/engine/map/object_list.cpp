@@ -34,13 +34,21 @@
 namespace FIFE { namespace map {
 
 	ObjectList::ObjectList(const ObjectList& slist) {
-		for(size_t i=0; i!=slist.size(); ++i) {
-			append( slist.at(i) );
+		for(const_iterator i = slist.m_list.begin(); i != slist.m_list.end(); ++i) {
+			append( *i );
 		}
 	}
 
 	ObjectList::~ObjectList() {
 		clear();
+	}
+
+	ObjectList::const_iterator ObjectList::begin() const {
+		return m_list.begin();
+	}
+
+	ObjectList::const_iterator ObjectList::end() const {
+		return m_list.end();
 	}
 
 	bool ObjectList::contains(ObjectPtr entry) const {
@@ -75,6 +83,7 @@ namespace FIFE { namespace map {
 		if( i == m_map.end() ) {
 			return;
 		}
+		assert( *(i->second) == i->first );
 		m_list.erase( i->second );
 		m_map.erase( i );
 		if( m_on_remove ) {
@@ -82,10 +91,6 @@ namespace FIFE { namespace map {
 		} else {
 			entry->resetOwner();
 		}
-	}
-
-	ObjectPtr ObjectList::at(size_t index) const {
-		return m_list.at(index);
 	}
 
 	void ObjectList::clear() {

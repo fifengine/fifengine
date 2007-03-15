@@ -130,11 +130,9 @@ namespace FIFE { namespace map {
 		if( visual == 0 ) {
 			return 0;
 		}
-		LayerPtr layer = m_elevation->getLayer(visual->getLocation().layer);
-		visual->reset(layer);
+		visual->reset();
 // 		Log("map_view")
 // 			<< "Adding visual at " << visual->getScreenBox();
-
 		return m_vtree->addVisual(visual);
 	}
 
@@ -154,9 +152,7 @@ namespace FIFE { namespace map {
 		Visual *visual = m_vtree->getVisual(visualId);
 		if( !visual )
 			return;
-
-		LayerPtr layer = m_elevation->getLayer(visual->getLayer());
-		visual->reset(layer);
+		visual->reset();
 		m_vtree->updateVisual( visualId );
 	}
 	void View::elevationChange() {
@@ -300,7 +296,7 @@ namespace FIFE { namespace map {
 			bool     render_tiles = layer->areTilesVisible() && layer->hasTiles();
 
 			if( !layer_ovisible || layer_alpha == 0 ) {
-				while( visual_it != renderlist.end() && (*visual_it)->getLayer() <= i)
+				while( visual_it != renderlist.end() && (*visual_it)->getLayerNumber() <= i)
 					++visual_it;
 				continue;
 			}
@@ -316,7 +312,7 @@ namespace FIFE { namespace map {
 				renderGridOverlay(layer);
 			}
 
-			while( visual_it != renderlist.end() && (*visual_it)->getLayer() <= i) {
+			while( visual_it != renderlist.end() && (*visual_it)->getLayerNumber() <= i) {
 				(*visual_it)->render(m_surface, offset, layer_alpha);
 				++visual_it;
 			}

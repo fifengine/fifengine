@@ -47,14 +47,14 @@ namespace FIFE { namespace map { namespace command {
 			return;
 		}
 
-		if (!m_map->isValidLocation(moi->getLocation())) {
+		if (!moi->getLayer()) {
 			Warn("mc_setvisual") 
 				<< "Cannot set visual for object not on map: "
 				<< moi->getLocation();
 			return;
 		}
 
-		if (moi->getLocation().elevation != m_view->getElevationNum()) {
+		if (moi->getElevation() != m_view->getElevationNum()) {
 			Log("mc_setvisual") << "Setting visual for object not on map view.";
 			moi->setVisualLocation(cmd.stringParam);
 			return;
@@ -89,7 +89,6 @@ namespace FIFE { namespace map { namespace command {
 			if (anim) {
 				anim->enqueueAction(Action(0, cmd.params[0]));
 			}
-			visual->setLocation(moi->getLocation());
 
 			Debug("mc_setvisual") 
 				<< "Setting Visual: " << cmd.stringParam

@@ -160,9 +160,9 @@ namespace FIFE { namespace map {
 	}
 
 	bool visual_compare(Visual* a, Visual* b) {
-		if( a->getLayer() < b->getLayer() )
+		if( a->getLayerNumber() < b->getLayerNumber() )
 			return true;
-		if( a->getLayer() > b->getLayer() )
+		if( a->getLayerNumber() > b->getLayerNumber() )
 			return false;
 
 		if( a->getZValue() == 0 && b->getZValue())
