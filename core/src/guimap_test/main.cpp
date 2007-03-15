@@ -32,6 +32,7 @@
 // Second block: files included from the same folder
 #include "audio/manager.h"
 #include "map/viewgamestate.h"
+#include "map/objectinfo.h"
 #include "script/scriptbackendmanager.h"
 #include "video/gui/guimanager.h"
 #include "video/rendermanager.h"
@@ -108,6 +109,8 @@ int main(int argc, char* argv[]) {
 	}
 	delete mapview;
 	delete engine;
+
+	FIFE::Log("guimap_test") << "map objects left alive: " << FIFE::map::ObjectInfo::globalCount();
 	//FIXME: something about saving settings ?
 
 	return 0;

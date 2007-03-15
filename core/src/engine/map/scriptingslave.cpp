@@ -180,7 +180,9 @@ namespace FIFE { namespace map {
 			break;
 			case FIFE_NEW_OBJECT:
 				lua_getglobal(vm, "AddObject");
-				Lunar<Object_LuaScript>::push(vm, new Object_LuaScript(e.get<ObjectPtr>()));
+				Lunar<Object_LuaScript>::push(vm,
+					new Object_LuaScript(e.get<ObjectPtr>()),true);
+
 				if( lua_pcall(vm,1,0,0) ) {
 					Warn("scripting_slave")
 						<< "Coudn't execute script send by MapRunner: "

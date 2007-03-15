@@ -40,6 +40,7 @@
 #include "camera.h"
 #include "control.h"
 #include "elevation.h"
+#include "objectinfo.h"
 #include "factory.h"
 #include "map.h"
 #include "runner.h"
@@ -68,6 +69,8 @@ namespace FIFE { namespace map {
 
 		delete m_view;
 		delete m_runner;
+
+		Log("map_control") << "objects left alive: " << ObjectInfo::globalCount();
 	}
 
 	void Control::load(const std::string& filename) {

@@ -50,7 +50,7 @@ namespace FIFE {
 			luaL_error(L,"no elevation %d - max elevation nr is %d",
 			           id,m_map->getNumElevations());
 		}
-		Lunar<Elevation_LuaScript>::push(L,new Elevation_LuaScript(m_map->getElevation(id)));
+		Lunar<Elevation_LuaScript>::push(L,new Elevation_LuaScript(m_map->getElevation(id)),true);
 		return 1;
 	}
 

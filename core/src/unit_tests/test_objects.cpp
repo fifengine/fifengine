@@ -120,42 +120,43 @@ void inventory_ownership_test() {
 
 void layer_ownership_test() {
 	environment env;
-
-	ObjectPtr o1(ObjectInfo::create());
-	ObjectPtr o2(ObjectInfo::create());
-
-	LayerPtr layer = Layer::create(Point(100,100),0);
-
-	layer->addObject( o1 );
-	layer->addObjectAt( o2, 50,50 );
+	{
+		ObjectPtr o1(ObjectInfo::create());
+		ObjectPtr o2(ObjectInfo::create());
 	
-	BOOST_CHECK( o1->isOwner( layer ) );
-	BOOST_CHECK( o2->isOwner( layer ) );
-
-	layer->removeObject( o1 );
-	layer->getObjectsAt(50,50).erase( o2 );
-
-	BOOST_CHECK( !o1->hasOwner() );
-	BOOST_CHECK( !o2->hasOwner() );
-
-	layer->addObjectAt( o1, 10,10 );
-	layer->addObjectAt( o1, 20,20 );
-	layer->getObjectsAt(90,90).append( o2 );
+		LayerPtr layer = Layer::create(Point(100,100),0);
 	
-	BOOST_CHECK( o1->isOwner( layer ) );
-	BOOST_CHECK( o2->isOwner( layer ) );
-
-	BOOST_CHECK( layer->getObjectsAt(10,10).empty() );
-	BOOST_CHECK( o1->getPosition() == Point(20,20) );
-	BOOST_CHECK( o2->getPosition() == Point(90,90) );
-
-	o1->resetOwner();
-	o2->resetOwner();
-
-	BOOST_CHECK( layer->getObjectsAt(20,20).empty() );
-	BOOST_CHECK( layer->getObjectsAt(90,90).empty() );
-	BOOST_CHECK( layer->getAllObjects().empty() );
-
+		layer->addObject( o1 );
+		layer->addObjectAt( o2, 50,50 );
+		
+		BOOST_CHECK( o1->isOwner( layer ) );
+		BOOST_CHECK( o2->isOwner( layer ) );
+	
+		layer->removeObject( o1 );
+		layer->getObjectsAt(50,50).erase( o2 );
+	
+		BOOST_CHECK( !o1->hasOwner() );
+		BOOST_CHECK( !o2->hasOwner() );
+	
+		layer->addObjectAt( o1, 10,10 );
+		layer->addObjectAt( o1, 20,20 );
+		layer->getObjectsAt(90,90).append( o2 );
+		
+		BOOST_CHECK( o1->isOwner( layer ) );
+		BOOST_CHECK( o2->isOwner( layer ) );
+	
+		BOOST_CHECK( layer->getObjectsAt(10,10).empty() );
+		BOOST_CHECK( o1->getPosition() == Point(20,20) );
+		BOOST_CHECK( o2->getPosition() == Point(90,90) );
+	
+		o1->resetOwner();
+		o2->resetOwner();
+	
+		BOOST_CHECK( layer->getObjectsAt(20,20).empty() );
+		BOOST_CHECK( layer->getObjectsAt(90,90).empty() );
+		BOOST_CHECK( layer->getAllObjects().empty() );
+	}
+	BOOST_CHECK( ObjectInfo::globalCount() == 0 );
 }
 
 

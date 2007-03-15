@@ -79,7 +79,7 @@ namespace FIFE {
 		lua_createtable(L,objects.size(),0);
 		map::ObjectList::const_iterator it(objects.begin());
 		for(size_t i=0; it != objects.end(); ++it, ++i) {
-			Lunar<Object_LuaScript>::push(L, new Object_LuaScript(*it) );
+			Lunar<Object_LuaScript>::push(L, new Object_LuaScript(*it),true );
 			lua_rawseti(L,-2,i+1);
 		}
 		return 1;

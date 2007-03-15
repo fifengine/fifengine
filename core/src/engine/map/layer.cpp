@@ -54,9 +54,11 @@ namespace FIFE { namespace map {
 	}
 
 	Layer::~Layer() {
+// 		Log("layer") << "before clear() objects: " << ObjectInfo::globalCount();
 		m_all_objects.clear();
 		m_objects.clear();
 		delete m_geometry;
+// 		Log("layer") << "after  clear() objects: " << ObjectInfo::globalCount();
 	}
 
 	const Point& Layer::getSize() const {

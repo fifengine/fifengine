@@ -40,6 +40,7 @@
 #include "visual.h"
 #include "elevation.h"
 #include "layer.h"
+#include "objectinfo.h"
 #include "geometry.h"
 
 namespace FIFE { namespace map {
@@ -70,6 +71,9 @@ namespace FIFE { namespace map {
 		switch(m_mode) {
 			case TRACKING:
 			{
+				if( m_tracked_object ) {
+					m_tracked_visual = m_tracked_object->getVisualId();
+				}
 				if( !m_view || !m_view->isValidVisualId(m_tracked_visual) )
 					return;
 		
@@ -81,7 +85,7 @@ namespace FIFE { namespace map {
 			}
 			// FALL THROUGH
 
-			case ZOOMING:
+			case MOVING:
 			{
 				Point dist = m_next_position - m_position;
 				
@@ -107,18 +111,27 @@ namespace FIFE { namespace map {
 	}
 
 	void Camera::track( size_t visualId ) {
+		m_tracked_object.reset();
 		m_tracked_visual = visualId;
 		m_timer.start();
 		m_mode = TRACKING;
 	}
 
+	void Camera::track( ObjectPtr object ) {
+		m_tracked_object = object;
+		m_timer.start();
+		m_mode = TRACKING;
+	}
+
 	void Camera::moveBy(const Point& delta) {
+		m_tracked_object.reset();
 		m_position += delta;
 		m_timer.stop();
 		m_mode = FREE;
 	}
 
 	void Camera::jumpTo(const Point& position) {
+		m_tracked_object.reset();
 		if( !m_layer )
 			return;
 
@@ -130,6 +143,7 @@ namespace FIFE { namespace map {
 	}
 
 	void Camera::moveTo(const Point& position) {
+		m_tracked_object.reset();
 		if (!m_layer) {
 			return;
 		}
@@ -140,7 +154,7 @@ namespace FIFE { namespace map {
 
 		Debug("map_camera") 
 			<< "Setting Next position:" << m_next_position;
-		m_mode = ZOOMING;
+		m_mode = MOVING;
 	}
 
 	void Camera::render() {
@@ -151,6 +165,7 @@ namespace FIFE { namespace map {
 	}
 
 	void Camera::reset() {
+		m_tracked_object.reset();
 		assert( m_control );
 		m_timer.stop();
 		m_view = m_control->getView();
@@ -168,6 +183,7 @@ namespace FIFE { namespace map {
 	void Camera::controlDeleted() {
 		assert( m_control );
 		m_timer.stop();
+		m_layer.reset();
 		m_control = 0;
 	}
 

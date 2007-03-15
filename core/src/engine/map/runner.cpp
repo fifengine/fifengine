@@ -131,6 +131,7 @@ namespace FIFE { namespace map {
 		int result;
 		SDL_WaitThread(the_thread, &result);
 		clearQueue();
+// 		delete m_slave;
 		Log("map_runner")
 			<< "Scripting Thread returned " << result;
 	}
