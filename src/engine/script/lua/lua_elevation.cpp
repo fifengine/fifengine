@@ -50,7 +50,7 @@ namespace FIFE {
 			luaL_error(L,"no layer %d - max layer nr is %d",
 			           id,m_elevation->getNumLayers());
 		}
-		Lunar<Layer_LuaScript>::push(L,new Layer_LuaScript(m_elevation->getLayer(id)));
+		Lunar<Layer_LuaScript>::push(L,new Layer_LuaScript(m_elevation->getLayer(id)),true);
 		return 1;
 	}
 

@@ -40,6 +40,8 @@ namespace FIFE { namespace map {
 	class View;
 	class Layer;
 	typedef boost::shared_ptr<Layer> LayerPtr;
+	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 	class Control;
 
 	/** A Camera onto the MapView
@@ -63,7 +65,7 @@ namespace FIFE { namespace map {
 	class Camera {
 		public:
 			enum {
-				ZOOMING  = 1,
+				MOVING   = 1,
 				FREE     = 2,
 				TRACKING = 3
 			};
@@ -76,7 +78,7 @@ namespace FIFE { namespace map {
 			void setViewport(const Rect& viewport);
 
 			/** Start zooming to a specific positon.
-			 * Switches to mode ZOOMING
+			 * Switches to mode MOVING
 			 */
 			void moveTo(const Point& gridPosition);
 
@@ -89,9 +91,13 @@ namespace FIFE { namespace map {
 			void jumpTo(const Point& gridPosition);
 
 			/** Start tracking
-			 * FIXME: NOT TESTED
 			 */
 			void track(size_t visualId);
+
+			/** Start tracking
+			 * FIXME: NOT TESTED
+			 */
+			void track(ObjectPtr object);
 
 			void update();
 
@@ -102,6 +108,7 @@ namespace FIFE { namespace map {
 			Point m_position;
 			Point m_next_position;
 			size_t m_tracked_visual;
+			ObjectPtr m_tracked_object;
 			Rect  m_viewport;
 			int   m_mode;
 			Timer m_timer;
