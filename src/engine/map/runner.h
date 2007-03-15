@@ -144,6 +144,9 @@ namespace FIFE { namespace map {
 			void doCommand(const command::Info& cmd);
 
 			void sendNewExecScEvent(const std::string& name);
+
+			friend struct send_objects;
+			friend struct display_objects;
 	};
 } }
 

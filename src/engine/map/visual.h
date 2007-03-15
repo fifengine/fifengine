@@ -63,15 +63,17 @@ namespace FIFE { namespace map {
 			void addEffect(effect::Effect* ve);
 			void removeEffect(effect::Effect* ve);
 
-			void reset(LayerPtr grid);
+			void reset();
 			void render(Screen* screen, const Point& viewport, uint8_t alpha = 255);
 
 			void setRenderable( size_t renderable,
 				RenderAble::RenderableTypes type = RenderAble::RT_IMAGE );
 
-			void setLocation(const Location& location);
-			const Location& getLocation() const;
-			size_t getLayer() const { return m_location.layer; };
+			void setPosition(const Point& p);
+			void setLayer(LayerPtr layer);
+
+			LayerPtr getLayer() const { return m_layer; }
+			size_t getLayerNumber() const { return m_layer_num; };
 			size_t getLinearPosition() const { return m_linearposition; };
 
 			size_t getZValue() const { return m_zvalue; };
@@ -87,9 +89,11 @@ namespace FIFE { namespace map {
 			void setAlpha(uint8_t alpha) { m_alpha=alpha; };
 
 		private:
-			Location m_location;
-			size_t m_renderable;
-			uint8_t m_alpha;
+			Point    m_grid_position;
+			LayerPtr m_layer;
+			size_t   m_layer_num;
+			size_t   m_renderable;
+			uint8_t  m_alpha;
 
 			std::set<effect::Effect*> m_effects;
 
@@ -107,14 +111,14 @@ namespace FIFE { namespace map {
 	};
 
 	inline
-	void Visual::setLocation(const Location& location) {
-		m_location = location;
+	void Visual::setPosition(const Point& p) {
+		m_grid_position = p;
 	}
 
-	inline
-	const Location& Visual::getLocation() const {
-		return m_location;
-	}
+// 	inline
+// 	const Point& Visual::getPosition() const {
+// 		return m_grid_position;
+// 	}
 
 	inline
 	ComplexAnimation* Visual::getComplexAnimation() {

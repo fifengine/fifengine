@@ -37,10 +37,11 @@
 #include "log.h"
 #include "scriptingslave.h"
 
-#include "event.h" // <-- ?
+#include "event.h"
 #include "map.h"
+#include "elevation.h"
+#include "layer.h"
 #include "objectinfo.h"
-#include "object_iterator.h"
 #include "runner.h"
 #include "view.h"
 #include "visual.h"
@@ -90,6 +91,24 @@ namespace FIFE { namespace map {
 		sendEvent(makeEvent(FIFE_EXEC,sc));
 	}
 
+	struct send_objects {
+		Runner& runner;
+		send_objects(Runner& r) : runner(r) {}
+
+		void operator()(LayerPtr l) const     { l->forEachObject( send_objects(*this) ); }
+		void operator()(ElevationPtr e) const { e->forEachLayer( send_objects(*this) );  }
+
+		void operator()(ObjectPtr object) const {
+			if ( !object->isStatic() ) {
+				object->set<long>("elevation",object->getElevation());
+				object->set<long>("layer",object->getLayerNum());
+				object->set<Point>("position",object->getPosition());
+				runner.sendEvent(makeEvent(FIFE_NEW_OBJECT,object));
+			}
+		}
+	};
+
+
 	void Runner::start() {
 		the_slave = m_slave = new ScriptingSlave();
 		setSource(m_slave);
@@ -100,18 +119,9 @@ namespace FIFE { namespace map {
 		sendEvents();
 		the_thread = SDL_CreateThread(slaveThread, 0);
 
-		for(size_t i =0; i!= m_map->getElevationCount(); ++i) {
-			ObjectIterator object_it(m_map->getElevation(i));
-			ObjectPtr object;
-			while((object = object_it.next())) {
-				if ( !object->isStatic() && m_ruleset.isValid()) {
-					object->set<long>("elevation",object->getElevation());
-					object->set<long>("layer",object->getLayer());
-					object->set<Point>("position",object->getPosition());
-					sendEvent(makeEvent(FIFE_NEW_OBJECT,object));
-				}
-			}
-		}
+		send_objects send(*this);
+		m_map->forEachElevation(send);
+
 		sendEvents();
 	}
 
@@ -131,31 +141,43 @@ namespace FIFE { namespace map {
 		processEvents();
 	}
 
-	void Runner::activateElevation(size_t elevation) {
-		// send the activation command to the ruleset.
-		sendNewExecScEvent("ActivateElevation(" +
-		                   boost::lexical_cast<std::string>(elevation) + ")");
+	struct display_objects {
+		Runner& runner;
+		size_t& nvisuals;
+		size_t& nobjects;
+		display_objects(Runner& r,size_t& nv,size_t& no)
+			: runner(r),nvisuals(nv),nobjects(no) {}
 
-		// display _all_ visuals
-		ObjectIterator object_it(m_map->getElevation(elevation));
-		size_t nv = 0, no = 0;
-		ObjectPtr object;
-		while((object = object_it.next())) {
+		void operator()(LayerPtr l)      { l->forEachObject( display_objects(*this) ); }
+
+		void operator()(ObjectPtr object)  {
 			RenderableLocation loc(object->getVisualLocation());
 			size_t iid = ImageCache::instance()->addImageFromLocation(loc);
 			if( iid ) {
-				++nv;
-
 				Visual* visual = new Visual(object);
 				visual->setRenderable(iid, loc.getType());
-				visual->setLocation(object->getLocation());
-				object->setVisualId( m_view->addVisual(visual) );
+				object->setVisualId( runner.m_view->addVisual(visual) );
 				Debug("map_runner")
 					<< "Adding Visual for static object iid:" << iid
 					<< " rloc:" << loc.toString();
+				++nvisuals;
 			}
-			++no;
+			++nobjects;
 		}
+
+	};
+
+	void Runner::activateElevation(size_t elevation_id) {
+		// send the activation command to the ruleset.
+		sendNewExecScEvent("ActivateElevation(" +
+		                   boost::lexical_cast<std::string>(elevation_id) + ")");
+
+		// display _all_ visuals
+		ElevationPtr elevation = m_map->getElevation(elevation_id);
+		size_t nv = 0, no = 0;
+		display_objects display(*this,nv,no);
+		elevation->forEachLayer(display);
+
 		Log("map_runner")
 			<< "Displaying " << nv << " visuals from "
 			<< no << " objects on elevation " << elevation;

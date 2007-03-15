@@ -50,6 +50,7 @@ namespace FIFE { namespace map {
 		m_zvalue = 0;
 		if( moi ) {
 			m_zvalue = moi->getZValue();
+			m_layer  = moi->getLayer();
 		}
 	}
 
@@ -92,16 +93,24 @@ namespace FIFE { namespace map {
 
 	}
 
-	void Visual::reset(LayerPtr grid) {
+	void Visual::setLayer(LayerPtr layer) {
+		m_layer = layer;
+		reset();
+	}
 
-		if( !m_renderable ) {
+	void Visual::reset() {
+		if( !m_renderable || !m_layer ) {
 			m_screenbox = Rect();
 			return;
 		}
 
-		Geometry* geometry = grid->getGeometry();
-		m_position = geometry->toScreen( m_location.position );
-		m_linearposition = m_location.position.x + m_location.position.y * grid->getSize().x;
+		if( m_moi ) {
+			m_grid_position = m_moi->getPosition();
+		}
+
+		Geometry* geometry = m_layer->getGeometry();
+		m_position = geometry->toScreen( m_grid_position );
+		m_linearposition = m_grid_position.x + m_grid_position.y * m_layer->getSize().x;
 
 		if (m_renderableType == RenderAble::RT_COMPLEX_ANIMATION) {
 			ComplexAnimation* anim = dynamic_cast<ComplexAnimation*>(m_renderableCopy);
@@ -111,6 +120,8 @@ namespace FIFE { namespace map {
 			RenderAble* r = ImageCache::instance()->getImage( m_renderable );
 			calculateScreenbox(r);
 		}
+
+		m_layer_num = m_layer->getLayerNumber();
 	}
 
 	void Visual::render(Screen* screen, const Point& shift, uint8_t alpha) {

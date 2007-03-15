@@ -52,10 +52,12 @@ namespace FIFE { namespace map {
 		m_layers.resize(n);
 	}
 
-	void Elevation::setLayer(size_t idx, LayerPtr Layer) {
-		m_layers[idx] = Layer;
+	void Elevation::setLayer(size_t idx, LayerPtr layer) {
+		layer->m_layer_num = idx;
+		m_layers[idx] = layer;
 	}
 	void Elevation::addLayer(LayerPtr layer) {
+		layer->m_layer_num = m_layers.size();
 		m_layers.push_back(layer);
 	}
 

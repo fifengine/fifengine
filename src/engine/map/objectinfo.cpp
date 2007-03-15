@@ -203,6 +203,14 @@ namespace FIFE { namespace map {
 		}
 	}
 
+	LayerPtr ObjectInfo::getLayer() const {
+		const LayerWeakPtr* p = boost::get<LayerWeakPtr>(&m_owner);
+		if( !p ) {
+			return LayerPtr();
+		}
+		return p->lock();
+	}
+
 	void ObjectInfo::addToInventory(ObjectPtr obj) {
 		if( obj ) {
 			if( isIndirectOwner( obj ) ) {

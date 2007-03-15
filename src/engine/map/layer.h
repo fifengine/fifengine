@@ -23,6 +23,7 @@
 #define FIFE_MAP_LAYER_H
 
 // Standard C++ library includes
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
@@ -111,6 +112,10 @@ namespace FIFE { namespace map {
 			 */
 			void setShift(const Point& shift);
 
+			/** Get number of layer in elevation
+			 */
+			size_t getLayerNumber() const;
+
 			/** Get the screen coord shift
 			 *  @return The shift in screen coords
 			 */
@@ -152,6 +157,11 @@ namespace FIFE { namespace map {
 			void removeObject(ObjectPtr object);
 
 			const ObjectList& getAllObjects() const;
+
+			template<typename T>
+			void forEachObject(T visitor) {
+				std::for_each(m_all_objects.begin(),m_all_objects.end(),visitor);
+			}
 
 			/** Get the tile image id of a position
 			 *  @note If the position is invalid or the Layer
@@ -368,6 +378,7 @@ namespace FIFE { namespace map {
 			Point m_size;
 
 			uint8_t m_global_alpha;
+			size_t m_layer_num;
 
 			bool m_tiles_visibility;
 			bool m_objects_visibility;
@@ -394,6 +405,8 @@ namespace FIFE { namespace map {
 			type_paramnames_reverse m_paramnames_reverse;
 
 			std::vector<uint8_t> m_param_freelist;
+			// For setting layernum
+			friend class Elevation;
 	};
 
 	inline
@@ -404,6 +417,11 @@ namespace FIFE { namespace map {
 	inline
 	bool Layer::isValidPosition(int32_t x, int32_t y) const {
 		return x >= 0 && x < m_size.x && y >= 0 && y < m_size.y;
+	}
+
+	inline 
+	size_t Layer::getLayerNumber() const {
+		return m_layer_num;
 	}
 
 	inline

@@ -56,8 +56,8 @@ namespace FIFE { namespace map { namespace command {
 
 	MotionProxy::MotionProxy(Map* map, View* mapview, size_t visualId)
 		: m_View(mapview), m_visualId(visualId) {
-		Location loc(m_View->getVisual(m_visualId)->getLocation());
-		m_geometry = map->getElevation(loc.elevation)->getLayer(loc.layer)->getGeometry();
+// 		Location loc(m_View->getVisual(m_visualId)->getLocation());
+// 		m_geometry = map->getElevation(loc.elevation)->getLayer(loc.layer)->getGeometry();
 	}
 
 	void MotionProxy::operator()(const Action& action) {
@@ -68,18 +68,20 @@ namespace FIFE { namespace map { namespace command {
 		if (!v) {
 			return;
 		}
-
-		Location loc(v->getLocation());
-
-		Point p0(loc.position);
-		loc.position = p0 + m_geometry->directionToGrid(action.direction, p0);
+		ObjectPtr object = v->getObject();
+		if( !object ) {
+			return;
+		}
+		Geometry *geometry = v->getLayer()->getGeometry();
+		Point p0 = object->getPosition();
+		Point p1 = p0 + geometry->directionToGrid(action.direction, p0);
 
 		Debug("motion_proxy")
 			<< "called for visual: " << m_visualId
-			<< " new posi: " << loc.position
+			<< " new posi: " << p1
 			<< " old posi: " << p0;
 
-		v->setLocation(loc);
+		object->getLayer()->addObjectAt( object, p1 );
 		m_View->notifyVisualChanged(m_visualId);
 	}
 
