@@ -147,7 +147,7 @@ namespace FIFE { namespace map {
 			case FIFE::Event::TEST_CHANGE_ELEVATION:
 			{
 				size_t elevation = m_view->getElevationNum() + 1;
-				if (elevation >= m_view->getElevationCount())
+				if (elevation >= m_view->getNumElevations())
 					elevation = 0;
 	
 				m_control->activateElevation(elevation);

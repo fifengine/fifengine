@@ -101,7 +101,7 @@ namespace FIFE { namespace map {
 		void operator()(ObjectPtr object) const {
 			if ( !object->isStatic() ) {
 				object->set<long>("elevation",object->getElevation());
-				object->set<long>("layer",object->getLayerNum());
+				object->set<long>("layer",object->getLayerNumber());
 				object->set<Point>("position",object->getPosition());
 				runner.sendEvent(makeEvent(FIFE_NEW_OBJECT,object));
 			}

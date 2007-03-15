@@ -194,7 +194,7 @@ void GSTest::handleKeyEvent(const SDL_KeyboardEvent& ev) {
 
 			case SDLK_e: {
 				size_t elevation = m_mapview->getElevationNum() + 1;
-				if (elevation >= m_mapview->getElevationCount())
+				if (elevation >= m_mapview->getNumElevations())
 					elevation = 0;
 
 				m_mapcontrol->activateElevation(elevation);

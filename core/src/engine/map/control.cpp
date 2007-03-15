@@ -85,7 +85,7 @@ namespace FIFE { namespace map {
 	void Control::setMap(MapPtr map) {
 		stop();
 		m_map = map;
-		if (m_map->getElevationCount() == 0) {
+		if (m_map->getNumElevations() == 0) {
 			Warn("map_control") 
 				<< "map: " << m_map_filename << " has no elevations";
 			throw CannotOpenFile(m_map_filename);

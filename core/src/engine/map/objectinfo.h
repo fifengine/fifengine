@@ -112,7 +112,7 @@ namespace FIFE { namespace map {
 			const Point& getPosition() const;
 
 			const Location& getLocation() const;
-			size_t getLayerNum() const;
+			size_t getLayerNumber() const;
 			void setLayer(size_t);
 
 			LayerPtr getLayer() const;
@@ -199,7 +199,7 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	size_t ObjectInfo::getLayerNum() const {
+	size_t ObjectInfo::getLayerNumber() const {
 		return m_location.layer;
 	}
 
