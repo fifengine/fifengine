@@ -78,7 +78,7 @@ namespace FIFE { namespace map {
 			/** Start zooming to a specific positon.
 			 * Switches to mode ZOOMING
 			 */
-			void zoomTo(const Point& gridPosition);
+			void moveTo(const Point& gridPosition);
 
 			/** Move (FREE) Camera by delta pixels
 			 */
@@ -86,7 +86,7 @@ namespace FIFE { namespace map {
 
 			/** Move (FREE) Camera to grid pos
 			 */
-			void moveTo(const Point& gridPosition);
+			void jumpTo(const Point& gridPosition);
 
 			/** Start tracking
 			 * FIXME: NOT TESTED

@@ -36,21 +36,9 @@
 #include "geometry.h"
 
 namespace FIFE { namespace map {
-	Elevation::Elevation(const elevation_info& structure) 
+	Elevation::Elevation() 
 		: AttributedClass("map_elevation"),
 		m_reference_layer(0) {
-
-		setNumLayers(structure.numberOfLayers);
-		for (size_t i = 0; i != structure.numberOfLayers; ++i) {
-			LayerPtr layer(new Layer(structure.layers[i].size,
-			                         structure.layers[i].geometry));
-			layer->setShift(structure.layers[i].shift);
-			layer->set("_OVERLAY_IMAGE",structure.layers[i].overlay);
-			layer->set("_OVERLAY_IMAGE_OFFSET", structure.layers[i].overlay_offset);
-
-			setLayer(i, layer);
-		}
-		setReferenceLayer(structure.referenceLayer);
 	}
 
 	Elevation::~Elevation() {

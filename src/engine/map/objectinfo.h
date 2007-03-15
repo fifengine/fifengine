@@ -38,7 +38,7 @@
 // Second block: files included from the same folder
 #include "attributedclass.h"
 
-#include "smart_list.h"
+#include "object_list.h"
 #include "location.h"
 #include "video/renderable_location.h"
 
@@ -53,8 +53,6 @@ namespace FIFE { namespace map {
 	class Layer;
 	typedef boost::shared_ptr<Layer> LayerPtr;
 	typedef boost::weak_ptr<Layer> LayerWeakPtr;
-
-	typedef SmartList<ObjectInfo> ObjectList;
 
 	/** Game Object Representation
 	 *
@@ -110,8 +108,25 @@ namespace FIFE { namespace map {
 			 */
 			void setStatic(bool s);
 
-			Location& getLocation();
-			void setLocation(const Location& loc);
+			void setPosition(const Point& p);
+			const Point& getPosition() const;
+
+			const Location& getLocation() const;
+			size_t getLayer() const;
+			void setLayer(size_t);
+			size_t getElevation() const;
+			void setElevation(size_t);
+
+			// INVENTORY
+
+			void addToInventory(ObjectPtr obj);
+			void removeFromInventory(ObjectPtr obj);
+			ObjectList& getInventory();
+			const ObjectList& getInventory() const;
+
+			// INTERNAL USE
+
+			// OWNERSHIP (MOSTLY INTERNAL USE)
 
 			void setOwner(LayerPtr  owner);
 			void setOwner(ObjectPtr owner);
@@ -125,11 +140,6 @@ namespace FIFE { namespace map {
 
 			type_owner& getOwner() { return m_owner; }
 			const type_owner& getOwner() const { return m_owner; }
-
-			void addToInventory(ObjectPtr obj);
-			ObjectList& getInventory();
-
-			// INTERNAL USE
 
 			const type_visual_location& getVisualLocation() const;
 			void setVisualLocation(const type_visual_location& visual);
@@ -152,14 +162,14 @@ namespace FIFE { namespace map {
 
 			static long m_count;
 
-			Location m_location;
+			Location      m_location;
 			type_owner    m_owner;
 			ObjectWeakPtr m_self;
 
 			/// Prototype ids
 			std::vector<size_t> m_protoid;;
 
-			ObjectList m_inventory;
+			ObjectList* m_inventory;
 
 			size_t m_visualId;
 			bool   m_isStatic;
@@ -167,8 +177,43 @@ namespace FIFE { namespace map {
 			uint16_t m_zvalue;
 			type_visual_location m_visual_location;
 
-			friend class ObjectManager;
+			friend struct owner_reset;
 	};
+
+	inline
+	void ObjectInfo::setPosition(const Point& p) {
+		m_location.position = p;
+	}
+
+	inline
+	const Point& ObjectInfo::getPosition() const {
+		return m_location.position;
+	}
+
+	inline
+	const Location& ObjectInfo::getLocation() const {
+		return m_location;
+	}
+
+	inline
+	size_t ObjectInfo::getLayer() const {
+		return m_location.layer;
+	}
+
+	inline
+	void ObjectInfo::setLayer(size_t layer) {
+		m_location.layer = layer;
+	}
+
+	inline
+	size_t ObjectInfo::getElevation() const {
+		return m_location.elevation;
+	}
+
+	inline
+	void ObjectInfo::setElevation(size_t elevation) {
+		m_location.elevation = elevation;
+	}
 
 	inline
 	uint16_t ObjectInfo::getZValue() const {
@@ -201,16 +246,6 @@ namespace FIFE { namespace map {
 	}
 
 	inline
-	Location& ObjectInfo::getLocation() {
-		return m_location;
-	}
-
-	inline
-	void ObjectInfo::setLocation(const Location& loc) {
-		m_location = loc;
-	}
-
-	inline
 	void ObjectInfo::setVisualId(size_t visualId) { 
 		m_visualId = visualId; 
 	}
@@ -222,8 +257,21 @@ namespace FIFE { namespace map {
 
 	
 	inline 
+	const ObjectList& ObjectInfo::getInventory() const {
+		static ObjectList static_inventory;
+		if( !m_inventory ) {
+			return static_inventory;
+		} else {
+			return *m_inventory;
+		}
+	}
+
+	inline 
 	ObjectList& ObjectInfo::getInventory() {
-		return m_inventory;
+		if( !m_inventory ) {
+			m_inventory = new ObjectList();
+		}
+		return *m_inventory;
 	}
 
 } }

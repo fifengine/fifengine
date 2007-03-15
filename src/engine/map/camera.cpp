@@ -118,7 +118,7 @@ namespace FIFE { namespace map {
 		m_mode = FREE;
 	}
 
-	void Camera::moveTo(const Point& position) {
+	void Camera::jumpTo(const Point& position) {
 		if( !m_layer )
 			return;
 
@@ -129,7 +129,7 @@ namespace FIFE { namespace map {
 		m_mode = FREE;
 	}
 
-	void Camera::zoomTo(const Point& position) {
+	void Camera::moveTo(const Point& position) {
 		if (!m_layer) {
 			return;
 		}

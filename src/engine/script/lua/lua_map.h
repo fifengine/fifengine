@@ -53,7 +53,12 @@ namespace FIFE {
 			Map_LuaScript(map::MapPtr obj);
 			virtual ~Map_LuaScript();
 
+			int getElevation(lua_State* L);
+			int addElevation(lua_State* L);
+
 			virtual Table* getTable();
+
+			map::MapPtr getMap() { return m_map; }
 
 		private:
 			map::MapPtr m_map;

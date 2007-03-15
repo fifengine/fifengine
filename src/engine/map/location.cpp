@@ -32,6 +32,8 @@
 
 namespace FIFE { namespace map {
 
+	Location::Location() : elevation(0),layer(0) {}
+
 	std::ostream& operator<<(std::ostream& os, const Location& loc) {
 		os << loc.position;
 		os << "E" << loc.elevation << "#" << loc.layer;

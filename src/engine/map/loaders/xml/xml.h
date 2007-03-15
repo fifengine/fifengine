@@ -32,7 +32,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/loader.h"
-#include "map/structure.h"
 #include "tinyxml/tinyxml.h"
 #include "vfs/vfs.h"
 

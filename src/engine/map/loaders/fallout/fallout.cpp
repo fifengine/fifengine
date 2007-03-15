@@ -34,7 +34,6 @@
 #include "map/layer.h"
 #include "map/geometry.h"
 #include "map/objectinfo.h"
-#include "map/structure.h"
 #include "map/elevation.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfssourcefactory.h"
@@ -71,8 +70,6 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 // 			vfs->addSource(source);
 // 		}
 
-		//// Init Fallout Map Structure ////
-		m_foElevationFormat = FIFE::map::falloutElevationFormat(Point(100,100));
 	}
 
 	Fallout::~Fallout() {
@@ -123,10 +120,33 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return map;
 	}
 
+	ElevationPtr Fallout::createElevation() {
+		ElevationPtr elevation(new Elevation());
+
+		LayerPtr layer = Layer::create(Point(100,100),Geometry::FalloutTileGeometry);
+		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");
+		elevation->addLayer( layer );
+
+		layer = Layer::create(Point(200,200),Geometry::FalloutObjectGeometry);
+		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/objects/object_outline.png");
+		layer->set<Point>("_OVERLAY_IMAGE_OFFSET", Point(-16, -12));
+		elevation->addLayer( layer );
+
+		layer = Layer::create(Point(100,100),Geometry::FalloutTileGeometry);
+		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");
+		layer->setShift(Point(0,96));
+		elevation->addLayer( layer );
+
+		elevation->setReferenceLayer(1);
+
+		return elevation;
+	}
+
 	void Fallout::loadTiles(MapPtr map, RawDataPtr data) {
 		list lst("art/tiles/tiles.lst");
 		for (unsigned int e = 0; e < m_header->getNumElevations(); ++e) {
-			ElevationPtr elevation(new Elevation(m_foElevationFormat));
+			ElevationPtr elevation = createElevation();
+
 			for (unsigned int y = 0; y < 100; ++y) {
 				for (unsigned int x = 0; x < 100; ++x) {
 					unsigned int roof = data->read16Big();
@@ -234,9 +254,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			for (uint32_t i = 0; i < count_objects_current; ++i) {
 				ObjectPtr obj = objfactory.createObject(data);
 				if( obj ) {
-					// Reposition obj on "larger" map
-					obj->getLocation().elevation = fife_elev;
-					obj->getLocation().layer = 1;
+					obj->setElevation( fife_elev );
+					obj->setLayer( 1 );
 					layer->addObject( obj );
 				}
 			}

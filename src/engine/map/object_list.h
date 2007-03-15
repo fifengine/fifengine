@@ -19,32 +19,64 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_MAP_OBJECTLIST_H
+#define FIFE_MAP_OBJECTLIST_H
+
 // Standard C++ library includes
+#include <deque>
+#include <map>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "geometry.h"
-#include "structure.h"
+
 
 namespace FIFE { namespace map {
 
-	elevation_info falloutElevationFormat(const Point& size) {
-		layer_info layers[3] = {
-			layer_info(Geometry::FalloutTileGeometry, 
-			          "content/gfx/tiles/tile_outline.png",
-			          size), // Floor
-			layer_info(Geometry::FalloutObjectGeometry,
-			          "content/gfx/objects/object_outline.png",
-			          size * 2, Point(), Point(-16, -12)), // Objects
-			layer_info(Geometry::FalloutTileGeometry, 
-			          "content/gfx/tiles/tile_outline.png",
-			          size, Point(0, 96)) // Roof
-		};
+	class ObjectInfo;
+	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 
-		return elevation_info(layers, layers + 3, 1);
-	}
-} } // FIFE::map::structure
+	/** 
+	 */
+	class ObjectList {
+		public:
+			typedef boost::function1<void,ObjectPtr> type_callback;
+
+			ObjectList(){};
+			ObjectList(const ObjectList&);
+			~ObjectList();
+
+			void append(ObjectPtr entry);
+			void insert(ObjectPtr before, ObjectPtr entry);
+			void erase(ObjectPtr entry);
+			bool contains(ObjectPtr entry) const;
+			ObjectPtr at(size_t index) const;
+			size_t size() const;
+			bool empty() const;
+			void clear();
+
+			void setRemoveCallback(const type_callback& callback);
+			void setInsertCallback(const type_callback& callback);
+
+		protected:
+			typedef std::deque<ObjectPtr> type_list;
+			typedef type_list::iterator iterator;
+			typedef std::map<ObjectPtr,iterator> type_map;
+
+			type_list m_list;
+			type_map  m_map;
+			type_callback m_on_remove;
+			type_callback m_on_insert;
+	};
+
+
+
+} } //FIFE::map
+
+#endif
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

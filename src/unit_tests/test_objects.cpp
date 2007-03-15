@@ -58,8 +58,8 @@ struct environment {
 void simple_ownership_test() {
 	environment env;
 
-	LayerPtr layer(new Layer(Point(100,100),0));
-	LayerPtr layer2(new Layer(Point(100,100),1));
+	LayerPtr layer = Layer::create(Point(100,100),0);
+	LayerPtr layer2 = Layer::create(Point(100,100),1);
 	ObjectPtr object(ObjectInfo::create());
 
 	std::cout << "sizeof(map::ObjectInfo) = " << sizeof(ObjectInfo) << std::endl;
@@ -118,9 +118,51 @@ void inventory_ownership_test() {
 	BOOST_CHECK( ObjectInfo::globalCount() == 0 );
 }
 
+void layer_ownership_test() {
+	environment env;
+
+	ObjectPtr o1(ObjectInfo::create());
+	ObjectPtr o2(ObjectInfo::create());
+
+	LayerPtr layer = Layer::create(Point(100,100),0);
+
+	layer->addObject( o1 );
+	layer->addObjectAt( o2, 50,50 );
+	
+	BOOST_CHECK( o1->isOwner( layer ) );
+	BOOST_CHECK( o2->isOwner( layer ) );
+
+	layer->removeObject( o1 );
+	layer->getObjectsAt(50,50).erase( o2 );
+
+	BOOST_CHECK( !o1->hasOwner() );
+	BOOST_CHECK( !o2->hasOwner() );
+
+	layer->addObjectAt( o1, 10,10 );
+	layer->addObjectAt( o1, 20,20 );
+	layer->getObjectsAt(90,90).append( o2 );
+	
+	BOOST_CHECK( o1->isOwner( layer ) );
+	BOOST_CHECK( o2->isOwner( layer ) );
+
+	BOOST_CHECK( layer->getObjectsAt(10,10).empty() );
+	BOOST_CHECK( o1->getPosition() == Point(20,20) );
+	BOOST_CHECK( o2->getPosition() == Point(90,90) );
+
+	o1->resetOwner();
+	o2->resetOwner();
+
+	BOOST_CHECK( layer->getObjectsAt(20,20).empty() );
+	BOOST_CHECK( layer->getObjectsAt(90,90).empty() );
+	BOOST_CHECK( layer->getAllObjects().empty() );
+
+}
+
+
 test_suite* init_unit_test_suite(int argc, char** argv) {
 	test_suite* test = BOOST_TEST_SUITE("Object tests");
 	test->add(BOOST_TEST_CASE(&simple_ownership_test), 0);
 	test->add(BOOST_TEST_CASE(&inventory_ownership_test), 0);
+	test->add(BOOST_TEST_CASE(&layer_ownership_test), 0);
 	return test;
 }

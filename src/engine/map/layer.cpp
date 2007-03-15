@@ -22,6 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -31,6 +32,12 @@
 #include "layer.h"
 
 namespace FIFE { namespace map {
+
+	LayerPtr Layer::create(const Point& size, size_t geometry) {
+		LayerPtr layer(new Layer(size,geometry));
+		layer->m_self = layer;
+		return layer;
+	}
 
 	Layer::Layer(const Point& size, size_t geometry)
 		: AttributedClass("map_Layer"),
@@ -47,6 +54,8 @@ namespace FIFE { namespace map {
 	}
 
 	Layer::~Layer() {
+		m_all_objects.clear();
+		m_objects.clear();
 		delete m_geometry;
 	}
 
@@ -71,42 +80,65 @@ namespace FIFE { namespace map {
 	}
 
 	void Layer::addObject(ObjectPtr object) {
-		addObjectAt( object, object->getLocation().position );
+		addObjectAt( object, object->getPosition() );
 	}
+
 	void Layer::addObjectAt(ObjectPtr object, int32_t x,int32_t y) {
-		if( !hasObjects() ) {
-			m_objects.resize(m_size.y * m_size.x);
-		}
-		m_objects.at(x + y * m_size.x).append( object );
-	}
-
-	ObjectList& Layer::getObjectsAt(int32_t x,int32_t y) {
-		if( hasObjects() ) {
-			m_objects.resize(m_size.y * m_size.x);
-		}
-		return m_objects.at(x + y * m_size.x);
-	}
-
-	const ObjectList& Layer::getObjectsAt(int32_t x,int32_t y) const {
-		static ObjectList objects;
-		if( hasObjects() ) {
-			return m_objects.at(x + y * m_size.x);
-		}
-		return objects;
+		addObjectAt( object, Point(x,y) );
 	}
 
 	void Layer::addObjectAt(ObjectPtr object, const Point& p) {
 		if( !hasObjects() ) {
 			m_objects.resize(m_size.y * m_size.x);
 		}
-		m_objects.at(p.x + p.y * m_size.x).append( object );
+		ObjectList& object_list = m_objects.at(p.x + p.y * m_size.x);
+		if( object_list.empty() ) {
+			object_list.setRemoveCallback( boost::bind( &Layer::removeObject, this, _1 ) );
+			object_list.setInsertCallback( boost::bind( &Layer::insertedObject,this,_1, p));
+		}
+		object_list.append( object );
+	}
+
+	void Layer::removeObject(ObjectPtr object) {
+		// FIXME This is VERY inefficient
+		// the resetOwner and the getObjectsAt().erase
+		// might trigger a call to this function AGAIN!
+		if( !object ) {
+			return;
+		}
+		if( !m_all_objects.contains( object ) ) {
+			return;
+		}
+		m_all_objects.erase(object);
+		getObjectsAt( object->getPosition() ).erase( object );
+		object->resetOwner();
+	}
+
+	void Layer::insertedObject(ObjectPtr object, const Point& p) {
+		object->setOwner( m_self.lock() );
+		object->setPosition( p );
+		m_all_objects.append(object);
+	}
+
+	ObjectList& Layer::getObjectsAt(int32_t x,int32_t y) {
+		return getObjectsAt(Point(x,y));
+	}
+
+	const ObjectList& Layer::getObjectsAt(int32_t x,int32_t y) const {
+		return getObjectsAt(Point(x,y));
 	}
 
 	ObjectList& Layer::getObjectsAt(const Point& p) {
 		if( hasObjects() ) {
 			m_objects.resize(m_size.y * m_size.x);
 		}
-		return m_objects.at(p.x + p.y * m_size.x);
+
+		ObjectList& object_list = m_objects.at(p.x + p.y * m_size.x);
+		if( object_list.empty() ) {
+			object_list.setRemoveCallback( boost::bind( &Layer::removeObject, this, _1 ) );
+			object_list.setInsertCallback( boost::bind( &Layer::insertedObject,this,_1,p));
+		}
+		return object_list;
 	}
 
 	const ObjectList& Layer::getObjectsAt(const Point& p) const {
@@ -115,6 +147,10 @@ namespace FIFE { namespace map {
 			return m_objects.at(p.x + p.y * m_size.x);
 		}
 		return objects;
+	}
+
+	const ObjectList& Layer::getAllObjects() const {
+		return m_all_objects;
 	}
 
 	void Layer::setTileImage(int32_t x, int32_t y, size_t id) {

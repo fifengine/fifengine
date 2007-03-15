@@ -265,10 +265,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if (!el2) {
 			throw Exception("Error: found no 'layer' entry!");
 		}
-		elevation_info structure;
-		structure.numberOfLayers = 0;
-
-		m_cursor.elevation = ElevationPtr(new Elevation(structure));
+		m_cursor.elevation = ElevationPtr(new Elevation());
 		m_cursor.elevationNumber += 1;
 
 		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
@@ -311,7 +308,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		m_cursor.height = size.y;
 
 		ElevationPtr me = m_cursor.elevation;
-		LayerPtr layer(new Layer(size,geometry));
+		LayerPtr layer = Layer::create(size,geometry);
 		me->addLayer(layer);
 		m_cursor.layer = me->getNumLayers() - 1;
 		layer->setShift(shift);
@@ -361,20 +358,25 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if( proto_name ) {
 			// Shortcut for the <object prototype="proto" x="100" y="100"/>
 			// case.
+			Point p;
 			int attr_ok, x,y;
 
 			object->loadPrototype( proto_name );
 
+			// FIXME: Policy?
+			// Not sure whether to allow setting only x or y?
 			attr_ok = element->QueryIntAttribute("x",&x );
 			if( attr_ok == TIXML_SUCCESS ) {
-				object->getLocation().position.x = x;
+				p.x = x;
+
+				attr_ok = element->QueryIntAttribute("y",&y );
+				if( attr_ok == TIXML_SUCCESS ) {
+					p.y = y;
+				}
+				object->setPosition(p);
 			}
 
-			attr_ok = element->QueryIntAttribute("y",&y );
-			if( attr_ok == TIXML_SUCCESS ) {
-				object->getLocation().position.y = y;
-			}
-
+			
 		} else {
 			// ObjectLoader does the hard work.
 			// Might be inefficient, as it translates to
@@ -386,11 +388,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		// And finally add it.
-		object->getLocation().layer     = m_cursor.layer;
-		object->getLocation().elevation = m_cursor.elevationNumber;
 
 		object->debugPrint();
 		LayerPtr layer = m_cursor.elevation->getLayer(m_cursor.layer);
+		object->setLayer( m_cursor.layer );
 		layer->addObject( object );
 	}
 

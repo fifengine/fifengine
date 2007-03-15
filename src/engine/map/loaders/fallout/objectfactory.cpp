@@ -91,7 +91,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		}
 
 		if (obj) {
-			obj->getLocation().position = Point( info.position % 200, info.position / 200 );
+			obj->setPosition( Point( info.position % 200, info.position / 200 ) );
 		}
 
 		return obj;

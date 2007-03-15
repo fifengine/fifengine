@@ -83,7 +83,7 @@ namespace FIFE { namespace map {
 		m_valid_map = true;
 
 		m_view = m_control->getView();
-		m_camera->zoomTo( m_view->getCurrentElevation()->get<Point>("_START_POSITION") );
+		m_camera->moveTo( m_view->getCurrentElevation()->get<Point>("_START_POSITION") );
 
 		input::Manager* inputmanager = input::Manager::instance();
 		inputmanager->pushContext("map_view");
