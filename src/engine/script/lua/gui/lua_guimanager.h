@@ -52,6 +52,7 @@ namespace FIFE {
 			static const luaL_reg methods[];
 		private:
 			static LuaRef m_font;
+			static luaGui::Widget2RefPtrMap m_child_refs;
 	};
 
 }

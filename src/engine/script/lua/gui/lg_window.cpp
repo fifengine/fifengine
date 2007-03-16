@@ -43,8 +43,15 @@ namespace luaGui {
 		if (lua_gettop(L)) {
 #if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 			gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
-			if (w)
+			if (w) {
+				lua_pushvalue(L, 1);
+				FIFE::LuaRef* lref = new FIFE::LuaRef();
+				lref->ref(L, 1);
+				//FIXME: can overwrite existing ptr!
+				m_child_refs[w] = LuaRefPtr( lref );
+
 				gcn::Container::add(w);
+			}
 #else
 			gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
 			if (w)
@@ -128,6 +135,14 @@ namespace luaGui {
 			"Backward-compatibility hack engaged - you _really_ should use :add on Windows";
 		gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
 		if (w) {
+			lua_pushvalue(L, 1);
+			FIFE::LuaRef* lref = new FIFE::LuaRef();
+			lref->ref(L, 1);
+			//FIXME: can overwrite existing ptr!
+			m_child_refs[w] = LuaRefPtr( lref );
+
+			gcn::Container::add(w);
+
 			gcn::Container::clear();
 			gcn::Container::add(w);
 		}
@@ -166,6 +181,11 @@ namespace luaGui {
 			FIFE::Log("luaGui::Window") << "Cannot add a NULL pointer!";
 			return 0;
 		}
+		lua_pushvalue(L, 1);
+		FIFE::LuaRef* lref = new FIFE::LuaRef();
+		lref->ref(L, 1);
+		//FIXME: can overwrite existing ptr!
+		m_child_refs[w] = LuaRefPtr( lref );
 		FIFE::ActionListener_Lua * al = FIFE::ActionListener_Lua::instance();
 		w->addActionListener(al);
 		gcn::Container::add(w);
@@ -178,6 +198,7 @@ namespace luaGui {
 			FIFE::Log("luaGui::Window") << "Cannot remove a NULL pointer!";
 			return 0;
 		}
+		m_child_refs.erase(w);
 		gcn::Container::remove(w);
 		return 0;
 	}

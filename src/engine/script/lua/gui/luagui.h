@@ -25,11 +25,13 @@
 // Standard C++ library includes
 #include <string>
 #include <vector>
+#include <map>
 
 // 3rd party library includes
 #include "script/lua/lua.hpp"
 #include "script/lua/lunar.h"
 #include <guichan.hpp>
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -40,6 +42,7 @@
 #include "guichan_addon/icon2.hpp"
 #include "guichan_addon/font.h"
 #include "log.h"
+#include "script/lua/lua_ref.h"
 
 /** Exports partial guichan functionality to Lua.
  *
@@ -70,6 +73,9 @@
  * @see http://lua-users.org/wiki/CppBindingWithLunar
  */
 namespace luaGui {
+
+	typedef boost::shared_ptr<FIFE::LuaRef> LuaRefPtr;
+	typedef std::map<gcn::Widget*, LuaRefPtr> Widget2RefPtrMap;
 
 #if 0
 	// I don't think we'll need the next two ?
@@ -277,6 +283,9 @@ namespace luaGui {
 			//static Lunar<AWidget>::RegType methods[];
 			static gcn::Font* lua2font_cast(lua_State *L);
 			static gcn::Color* lua2gcn_color_cast(lua_State *L);
+
+		protected:
+			FIFE::LuaRef m_font_ref;
 	};
 
 // now watch this:
@@ -377,6 +386,8 @@ namespace luaGui {
 #define LUAGUI_SETFONT_IMPL(name)	int l_setFont(lua_State *L) { \
 		gcn::Font* fp = lua2font_cast(L); \
 		if (fp != NULL) { \
+			lua_pushvalue(L, 1); \
+			m_font_ref.ref(L, 1); \
 			f_setFont(fp); \
 		} \
 		else \
@@ -449,6 +460,7 @@ namespace luaGui {
 	class Icon : public AWidget, public gcn::Icon2 {
 		private:
 			typedef struct { gcn::Image *pT; } userdataType;
+			FIFE::LuaRef m_image_ref;
 		public:
 			Icon(lua_State *L);
 			virtual ~Icon();
@@ -540,6 +552,8 @@ namespace luaGui {
 			// --
 			static const char className[];
 			static Lunar<Container>::RegType methods[];
+		private:
+			Widget2RefPtrMap m_child_refs;
 	};
 
 	class ScrollArea : public AWidget, public gcn::ScrollArea {
@@ -589,6 +603,7 @@ namespace luaGui {
 	class ListBox : public AWidget, public gcn::ListBox {
 		private:
 			typedef struct { gcn::ListModel *pT; } userdataType;
+			FIFE::LuaRef m_listmodel_ref;
 		public:
 			ListBox(lua_State *L);
 			virtual ~ListBox();
@@ -606,6 +621,7 @@ namespace luaGui {
 	class DropDown : public AWidget, public gcn::DropDown {
 		private:
 			typedef struct { gcn::ListModel *pT; } userdataType;
+			FIFE::LuaRef m_listmodel_ref;
 		public:
 			DropDown(lua_State *L);
 			virtual ~DropDown();
@@ -725,6 +741,8 @@ namespace luaGui {
 			// --
 			static const char className[];
 			static Lunar<Window>::RegType methods[];
+		private:
+			Widget2RefPtrMap m_child_refs;
 
 	};
 

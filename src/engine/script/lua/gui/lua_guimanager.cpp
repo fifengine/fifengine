@@ -121,6 +121,12 @@ namespace FIFE {
 			Warn("lua_Guimanager") << "Error: cannot add pointer to non-luaGui::Widget!";
 			return 0;
 		}
+		lua_pushvalue(L, 1);
+		FIFE::LuaRef* lref = new FIFE::LuaRef();
+		lref->ref(L, 1);
+		//FIXME: can overwrite existing ptr!
+		m_child_refs[_w] = luaGui::LuaRefPtr( lref );
+
 		_w->addActionListener(al);
 		gman->add(_w);
 		return 0;
@@ -135,6 +141,7 @@ namespace FIFE {
 			Warn("lua_Guimanager") << "Error: cannot remove pointer to non-luaGui::Widget!";
 			return 0;
 		}
+		m_child_refs.erase(_w);
 		gman->remove(_w);
 		return 0;
 	}
@@ -225,5 +232,6 @@ namespace FIFE {
 		{NULL, NULL}
 	};
 
+	luaGui::Widget2RefPtrMap GuiManager_LuaScript::m_child_refs;
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
