@@ -41,7 +41,11 @@
 
 namespace luaGui {
 
-	Image::Image(lua_State *L) : gcn::AdvImage(lua_tostring(L, 1)) {
+	Image::Image(lua_State *L) : gcn::AdvImage() {
+		if (lua_isnumber(L, 1))
+			loadFromCache(lua_tointeger(L, 1));
+		else
+			loadFromFile(lua_tostring(L, 1));
 	}
 	int Image::l_getWidth(lua_State *L) {
 #if GUICHAN_VERSION == 4

@@ -35,6 +35,15 @@
 
 namespace gcn {
 #if (GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6)
+	AdvImage::AdvImage() : FIFE::GCNImage() {
+		cacheId = 0;
+	}
+	void AdvImage::loadFromCache(const size_t imageId) {
+		cacheId = imageId;
+	}
+	void AdvImage::loadFromFile(const std::string & filename) {
+		cacheId = FIFE::ImageCache::instance()->addImageFromFile(filename);
+	}
 	AdvImage::AdvImage(const std::string & filename) : FIFE::GCNImage() {
 		cacheId = FIFE::ImageCache::instance()->addImageFromFile(filename);
 #else
