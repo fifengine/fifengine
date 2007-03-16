@@ -48,6 +48,11 @@ namespace gcn {
 	class AdvImage : public Image {
 #endif
 		public:
+#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
+			AdvImage();
+			void loadFromFile(const std::string & filename);
+			void loadFromCache(const size_t id);
+#endif
 			AdvImage(const std::string& filename);
 			~AdvImage();
 
