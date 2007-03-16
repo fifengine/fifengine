@@ -70,6 +70,11 @@ namespace luaGui {
 			FIFE::Log("luaGui::Container") << "Cannot add a NULL pointer!";
 			return 0;
 		}
+		lua_pushvalue(L, 1);
+		FIFE::LuaRef* lref = new FIFE::LuaRef();
+		lref->ref(L, 1);
+		//FIXME: can overwrite existing ptr!
+		m_child_refs[w] = LuaRefPtr( lref );
 		FIFE::ActionListener_Lua * al = FIFE::ActionListener_Lua::instance();
 		w->addActionListener(al);
 		gcn::Container::add(w);
@@ -82,6 +87,7 @@ namespace luaGui {
 			FIFE::Log("luaGui::Container") << "Cannot remove a NULL pointer!";
 			return 0;
 		}
+		m_child_refs.erase(w);
 		gcn::Container::remove(w);
 		return 0;
 	}
