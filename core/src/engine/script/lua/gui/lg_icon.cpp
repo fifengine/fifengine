@@ -40,6 +40,8 @@ namespace luaGui {
 
 	int Icon::l_setImage(lua_State *L) {
 		setImage(static_cast<userdataType*>(luaL_checkudata(L, 1, luaGui::Image::className))->pT);
+		lua_pushvalue(L, 1);
+		m_image_ref.ref(L, 1);
 		return 0;
 	}
 	

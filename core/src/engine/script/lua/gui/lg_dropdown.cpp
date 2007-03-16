@@ -36,6 +36,8 @@ namespace luaGui {
 	DropDown::DropDown(lua_State *L) : AWidget(), 
 		gcn::DropDown(static_cast<userdataType*>(luaL_checkudata(L, 1, 
 					luaGui::ListModel::className))->pT) {
+			lua_pushvalue(L, 1);
+			m_listmodel_ref.ref(L, 1);
 			// ugly hack to enforce the sub-listbox to the same size as this
 			mListBox->setSize(700, 1);
 	}
@@ -43,6 +45,8 @@ namespace luaGui {
 	int DropDown::l_setListModel(lua_State *L) {
 		gcn::DropDown::setListModel(static_cast<userdataType*>(luaL_checkudata(L, 1, 
 					luaGui::ListModel::className))->pT);
+		lua_pushvalue(L, 1);
+		m_listmodel_ref.ref(L, 1);
 		return 0;
 	}
 	int DropDown::l_getSelected(lua_State *L) {

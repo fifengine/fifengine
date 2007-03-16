@@ -36,12 +36,16 @@ namespace luaGui {
 	ListBox::ListBox(lua_State *L) : AWidget(), 
 		gcn::ListBox(static_cast<userdataType*>(luaL_checkudata(L, 1, 
 					luaGui::ListModel::className))->pT) {
+		lua_pushvalue(L, 1);
+		m_listmodel_ref.ref(L, 1);
 		adjustSize();
 	}
 	ListBox::~ListBox() {}
 	int ListBox::l_setListModel(lua_State *L) {
 		gcn::ListBox::setListModel(static_cast<userdataType*>(luaL_checkudata(L, 1, 
 					luaGui::ListModel::className))->pT);
+		lua_pushvalue(L, 1);
+		m_listmodel_ref.ref(L, 1);
 		return 0;
 	}
 	int ListBox::l_getSelected(lua_State *L) {
