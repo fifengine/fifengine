@@ -96,6 +96,10 @@ namespace luaGui {
 		lua_pushboolean(L, _opaque);
 		return 1;
 	}
+	int TextBox::l_clear(lua_State *L) {
+		mTextRows.clear();
+		return 0;
+	}
 
 	const char TextBox::className[] = "TextBox";
 #define method(class, name) {#name, &class::l_ ## name}
@@ -114,6 +118,7 @@ namespace luaGui {
 		method(TextBox, getTextRow),
 		method(TextBox, setTextRow),
 		method(TextBox, setFont),
+		method(TextBox, clear),
 
 		LUAGUI_WIDGET_DEF(TextBox),
 

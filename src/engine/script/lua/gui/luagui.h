@@ -592,6 +592,7 @@ namespace luaGui {
 			int l_isEditable(lua_State *L);
 			int l_setEditable(lua_State *L);
 			int l_addRow(lua_State *L);
+			int l_clear(lua_State *L);
 			// -
 			LUAGUI_SETFONT_IMPL(TextBox);
 			LUAGUI_WIDGET_IMPL(TextBox);
