@@ -10,6 +10,5 @@ env['LINKFLAGS'] = '-Xlinker --unresolved-symbols -Xlinker ignore-all'
 env.Program('datextract', ['main.cpp', 'usage.cpp'],
   LIBS=['fife', 'SDL', 'SDL_ttf', 'guichan', 'guichan_sdl', 'openal'],# 'SDL_image', 'png'],
   LIBPATH=[corepath+'/src/engine'])
-
-  
+ 
 # vim: set filetype=python:
