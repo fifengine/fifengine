@@ -1,0 +1,15 @@
+corepath = '../../core'
+env = Environment()
+
+env.Append(CPPPATH = [corepath+'/src/engine', corepath+'/src/guichan_addon',
+  '/usr/include/SDL'])
+#env['CXXFLAGS'] = '-ggdb'
+
+env['LINKFLAGS'] = '-Xlinker --unresolved-symbols -Xlinker ignore-all'
+
+env.Program('datextract', ['main.cpp', 'usage.cpp'],
+  LIBS=['fife', 'SDL', 'SDL_ttf', 'guichan', 'guichan_sdl', 'openal'],# 'SDL_image', 'png'],
+  LIBPATH=[corepath+'/src/engine'])
+
+  
+# vim: set filetype=python:
