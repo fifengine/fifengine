@@ -46,9 +46,15 @@ void test_decoder() {
 	Log::setLogLevel(Log::LEVEL_MAX);
 	boost::shared_ptr<VFS> vfs(new VFS());
 	vfs->addSource(new VFSHostSystem());
+
+	if ((!vfs->exists(COMPRESSED_FILE))) {
+		BOOST_ERROR("Test source " << COMPRESSED_FILE << " not found");
+		return;
+	}
+
 	vfs->addSource(new DAT1(COMPRESSED_FILE));
 
-	if ((!vfs->exists(COMPRESSED_FILE)) || (!vfs->exists("test.txt"))) {
+	if ((!vfs->exists(RAW_FILE)) || (!vfs->exists("test.txt"))) {
 		BOOST_ERROR("Test files not found");
 	}
 
