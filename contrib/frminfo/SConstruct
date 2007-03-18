@@ -8,7 +8,7 @@ env['CXXFLAGS'] = '-ggdb'
 env['LINKFLAGS'] = '-Xlinker --unresolved-symbols -Xlinker ignore-all'
 
 env.Program('frminfo', ['main.cpp', 'frm_raw_loader.cpp', 'png_write.cpp'],
-  LIBS=['fife', 'SDL', 'SDL_image', 'png'],
+  LIBS=['fife', 'SDL', 'SDL_ttf', 'guichan', 'guichan_sdl', 'openal', 'SDL_image', 'png'],
   LIBPATH=[corepath+'/src/engine'])
 
   

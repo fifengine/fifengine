@@ -29,9 +29,10 @@
 // FIFE includes
 
 namespace FIFE {
-	class RawFRM : public MFFalloutFRM {
+  class map::loaders::fallout::AnimatedPalette;
+	class RawFRM : public map::loaders::fallout::FRM {
 		public:
-			RawFRM(const std::string & fname);
+			RawFRM(const std::string & fname, map::loaders::fallout::AnimatedPalette* palette);
 			uint8_t* getFrameRaw(uint16_t dir, uint16_t frame);
 			uint8_t* getFrameRGBA(uint16_t dir, uint16_t frame);
 			std::pair<uint16_t, uint16_t> getFrameDimension(uint16_t dir, uint16_t frame);

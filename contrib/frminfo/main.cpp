@@ -22,6 +22,7 @@
 // Standard C++ library includes
 #include <iostream>
 #include <string>
+#include <vector>
 
 // Platform dependent includes
 #ifndef __WIN32
@@ -34,11 +35,12 @@
 #include <SDL.h>
 
 // FIFE includes
-#include "map/loaders/fallout/mffalloutcritlst.h"
-#include "map/loaders/fallout/mffalloutdat2.h"
-#include "map/loaders/fallout/mffalloutfrm.h"
-#include "map/loaders/fallout/mffalloutlst.h"
-#include "map/mapfactory.h"
+#include "map/loaders/fallout/animatedpal.h"
+#include "map/loaders/fallout/critlst.h"
+#include "map/loaders/fallout/dat2.h"
+#include "map/loaders/fallout/frm.h"
+#include "map/loaders/fallout/list.h"
+#include "map/factory.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
 #include "video/renderbackends/sdl/sdlimage.h"
@@ -88,10 +90,11 @@ static void printusage(const std::string& execname) {
 
 extern int write_png(const char *filename, SDL_Surface& surface);
 
-FIFE::MapFactory* mapfactory = NULL;
+FIFE::Engine * engine = NULL;
+FIFE::map::Factory* mapfactory = NULL;
 FIFE::VFS* vfs = NULL;
 FIFE::RawFRM* tile = NULL;
-FIFE::MFFalloutLST* list = NULL;
+FIFE::map::loaders::fallout::list* list = NULL;
 
 typedef struct s_list_type {
 	const unsigned int numEntries;
@@ -130,7 +133,7 @@ void cleanup() {
 }
 
 void showList(int k) {
-	list = new FIFE::MFFalloutLST(knownLists[k].path);
+	list = new FIFE::map::loaders::fallout::list(knownLists[k].path);
 	char* tmp = strdup(knownLists[k].path);
 	char* tmp2 = dirname(tmp);
 
@@ -158,7 +161,7 @@ const char* action_suffix[] = {
 };
 
 void showCritList(int k) {
-	FIFE::MFFalloutCritLST critlist(knownLists[k].path);
+	FIFE::map::loaders::fallout::CritLST critlist(knownLists[k].path);
 	char* tmp = strdup(knownLists[k].path);
 	char* tmp2 = dirname(tmp);
 	
@@ -226,8 +229,13 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	new FIFE::SettingsManager();
-	FIFE::Log::parseCmdLine(argc, argv);
+  char *argv_fake[1] = {argv[0]};
+  try {
+    engine = new FIFE::Engine(0, argv_fake);
+  }
+  catch (const FIFE::Exception& exception) {
+    std::cerr << "Error: could not start engine: " << exception.getMessage() << std::endl;
+  }
 	SDL_Init(SDL_INIT_VIDEO);
 	//SDL_SetVideoMode(640, 480, 32, 0);
 	bool saveAsPNG = false;
@@ -235,18 +243,17 @@ int main(int argc, char* argv[]) {
 		saveAsPNG = true;
 
 	try {
-		new FIFE::VFSSourceFactory();
-		new FIFE::VFS();
+    FIFE::VFSSourceFactory::instance();
+    vfs = FIFE::VFS::instance();
 
-		new FIFE::MapFactory();
+		FIFE::map::Factory::instance();
 
-		vfs = FIFE::VFS::instance();
 		vfs->addSource(new FIFE::VFSHostSystem());
 		if (vfs->exists(masterDat)) {
-			vfs->addSource(new FIFE::MFFalloutDAT2(masterDat));
+			vfs->addSource(new FIFE::map::loaders::fallout::DAT2(masterDat));
 		}
 		if (vfs->exists(critterDat)) {
-			vfs->addSource(new FIFE::MFFalloutDAT2(critterDat));
+			vfs->addSource(new FIFE::map::loaders::fallout::DAT2(critterDat));
 		}
 		if (showListCnt > -1) {
 			if(showListCnt==14) {
@@ -257,7 +264,9 @@ int main(int argc, char* argv[]) {
 		}
 
 		if (tilepath.size() > 0) {
-			tile = new FIFE::RawFRM(tilepath.c_str());
+      FIFE::map::loaders::fallout::AnimatedPalette* m_palette = 
+        FIFE::map::loaders::fallout::AnimatedPalette::load("content/gfx/fallout_palette.xml");
+			tile = new FIFE::RawFRM(tilepath.c_str(), m_palette);
 			if (tile == NULL) {
 				std::cerr << "Error: got a NULL instead of an Image!" << std::endl;
 				cleanup();

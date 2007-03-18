@@ -24,26 +24,26 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "map/loaders/fallout/mffalloutfrm.h"
-#include "map/loaders/fallout/mffalloutpal.h"
-#include "map/loaders/fallout/palutil.h"
+#include "map/loaders/fallout/frm.h"
+#include "map/loaders/fallout/pal.h"
+#include "map/loaders/fallout/animatedpal.h"
 #include "vfs/raw/rawdata.h"
 
 #include "frm_raw_loader.h"
 
 namespace FIFE {
-	RawFRM::RawFRM(const std::string & fname) : MFFalloutFRM(fname) {
+	RawFRM::RawFRM(const std::string & fname, map::loaders::fallout::AnimatedPalette* palette) : map::loaders::fallout::FRM(fname, palette) {
 	}
 
 	std::pair<uint16_t, uint16_t> RawFRM::getFrameDimension(uint16_t dir, uint16_t frame) {
-		FrameInfo *fi = m_frame_info[dir][frame];
-		return std::make_pair(fi->width, fi->height);
+		FrameInfo & fi = m_frame_info[dir][frame];
+		return std::make_pair(fi.width, fi.height);
 	}
 
 	uint8_t* RawFRM::getFrameRaw(uint16_t dir, uint16_t frame) {
-		FrameInfo *fi = m_frame_info[dir][frame];
-		uint32_t size = fi->width * fi->height;
-		m_data->setIndex(fi->fpos);
+		FrameInfo & fi = m_frame_info[dir][frame];
+		uint32_t size = fi.width * fi.height;
+		m_data->setIndex(fi.fpos);
 		uint8_t* raw_data = new uint8_t[size];
 		uint8_t* buff = raw_data;
 		m_data->readInto(raw_data, size);
@@ -52,23 +52,22 @@ namespace FIFE {
 
 	uint8_t* RawFRM::getFrameRGBA(uint16_t dir, uint16_t frame) {
 		uint8_t* _data = getFrameRaw(dir, frame);
-		MFFalloutPAL palette("color.pal");
+		map::loaders::fallout::PAL palette("color.pal");
 		int id = 0;
-		PALUtil* palutil = PALUtil::instance();
 		uint8_t* dataCopy = _data;
 
-		FrameInfo *fi = m_frame_info[dir][frame];
+		FrameInfo &fi = m_frame_info[dir][frame];
 
-		uint32_t size = fi->width * fi->height * 4;
+		uint32_t size = fi.width * fi.height * 4;
 		uint8_t* rgba_data = new uint8_t[size];
 		uint32_t* pixeldata = reinterpret_cast<uint32_t*>(rgba_data);
-		for (uint32_t y = 0; y < fi->height; ++y) {
-			for (uint32_t x = 0; x < fi->width; ++x) {
+		for (uint32_t y = 0; y < fi.height; ++y) {
+			for (uint32_t x = 0; x < fi.width; ++x) {
 				uint8_t index = *(_data++);
 				if (index == 0) {
 					*pixeldata = 0x00000000;
 				} else {
-					id |= palutil->checkPixel(index);
+					//id |= palutil->checkPixel(index);
 
 					uint8_t alpha = 0xff;
 					if( index == 108 ) { // 108 is the transparent window pixel index
@@ -80,11 +79,15 @@ namespace FIFE {
 						alpha = 0x80;
 						}
 						*/
+
+          /*
 					uint8_t red = std::min(palette.getRed(index) * m_custom_gamma, 0xff) & 0xff;
 					uint8_t green = std::min(palette.getGreen(index) * m_custom_gamma, 0xff) & 0xff;
 					uint8_t blue = std::min(palette.getBlue(index) * m_custom_gamma, 0xff) & 0xff;
 
 					*pixeldata = (red << 24) | (green << 16) | (blue << 8) | alpha;
+          */
+          *pixeldata = (palette.getRed(index) << 24) | (palette.getGreen(index) << 16) | (palette.getBlue(index) << 8) | alpha;
 				}
 				++pixeldata;
 			}
