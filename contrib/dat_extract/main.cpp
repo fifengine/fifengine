@@ -20,7 +20,7 @@
 ***************************************************************************/
 
 // Standard C++ library includes
-//#include <cassert>
+#include <cassert>
 #include <iostream>
 #include <string>
 
