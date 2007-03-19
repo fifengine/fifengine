@@ -88,7 +88,6 @@ namespace FIFE { namespace map {
 				MAX_PARAM = 100
 			};
 
-
 			/** Constructs a Layer instance
 			 */
 			static LayerPtr create(const Point& size, size_t geometry);
@@ -127,10 +126,12 @@ namespace FIFE { namespace map {
 			bool hasObjects() const;
 
 			/** Add an object at a specific position
+			 *  Does the equivalent to @c addObject( object, object->getPosition() )
 			 */
 			void addObject(ObjectPtr object);
 
 			/** Add an object at a specific position
+			 *  Does the equivalent to @c addObject( object, Point(x,y) )
 			 */
 			void addObjectAt(ObjectPtr object, int32_t x,int32_t y);
 
@@ -139,10 +140,12 @@ namespace FIFE { namespace map {
 			void addObjectAt(ObjectPtr object, const Point& p);
 
 			/** Get a List of all objects at position
+			 *  Does the equivalent of @c getObjectsAt( Point(x,y) )
 			 */
 			ObjectList& getObjectsAt(int32_t x,int32_t y);
 
 			/** Get a List of all objects at position
+			 *  Does the equivalent of @c getObjectsAt( Point(x,y) ) const
 			 */
 			const ObjectList& getObjectsAt(int32_t x,int32_t y) const;
 
@@ -154,10 +157,16 @@ namespace FIFE { namespace map {
 			 */
 			const ObjectList& getObjectsAt(const Point& p) const;
 
+			/** Remove an object from the layer
+			 */
 			void removeObject(ObjectPtr object);
 
+			/** Return a constant reference to the list of all objects on this layer.
+			 */
 			const ObjectList& getAllObjects() const;
 
+			/** Apply a visitor to each object on this layer
+			 */
 			template<typename T>
 			void forEachObject(T visitor) {
 				std::for_each(m_all_objects.begin(),m_all_objects.end(),visitor);

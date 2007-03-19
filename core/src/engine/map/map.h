@@ -68,15 +68,36 @@ namespace FIFE { namespace map {
 				OnElevationChange = 3
 			} ScriptType;
 
-			Map(const std::string& mapname = "");
+			/** Construct a map
+			 */
+			explicit Map(const std::string& mapname = "");
+
+			/** Destructor
+			 */
 			~Map();
 
+			/** Set the maps 'name'
+			 */
 			void setMapName(const std::string& name);
+
+			/** Get the maps 'name'
+			 */
 			const std::string& getMapName() const;
+
+			/** Return the number of elevations on this map
+			 */
 			size_t getNumElevations() const;
+
+			/** Return the elevation with a given index
+			 */
 			ElevationPtr getElevation(size_t index) const;
+
+			/** Add an elevation to this map
+			 */
 			void addElevation(ElevationPtr);
 
+			/** Apply a visitor to each elevation
+			 */
 			template<typename T>
 			void forEachElevation(T visitor) {
 				std::for_each(m_elevations.begin(),m_elevations.end(),visitor);
