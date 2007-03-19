@@ -91,6 +91,9 @@ struct environment {
 
 void simple_test()
 {
+	// Check whether LuaRef gracefully handles
+	// lua_close() though it's still held.
+
 	environment env;
 	lua_State *L = env.state;
 	
@@ -124,11 +127,13 @@ void simple_test()
 }
 
 void anonymous_function_test() {
+	// Check whether LuaRef is suitable for callbacks.
+
 	environment env;
 	lua_State *L = env.state;
 	
 	LuaRef luaref;
-	lua_run(L, "foo = function() print(\"Lambda called.\") end");
+	lua_run(L, "foo = function() print(\"Lambda call works.\") end");
 	lua_getglobal(L,"foo");
 	luaref.ref(L,1);
 	lua_pop(L,1);
@@ -147,9 +152,38 @@ void anonymous_function_test() {
 	LuaRef::unrefAll(L);
 }
 
+void double_ref_test() {
+	environment env;
+	
+	lua_State *L = env.state;
+	
+	LuaRef luaref[2];
+	lua_run(L, "foo = function() print(\"Double references work.\") end");
+	lua_getglobal(L,"foo");
+	luaref[0].ref(L,1);
+	luaref[1].ref(L,1);
+	lua_pop(L,1);
+	lua_run(L, "_G[\"foo\"] = nil");
+	BOOST_CHECK( lua_gettop(L) == 0);
+	lua_gc(L, LUA_GCCOLLECT, 0);
+
+	luaref[0].unref();
+	lua_gc(L, LUA_GCCOLLECT, 0);
+
+	// Now one reference was released,
+	// but 'foo' should still not be gc'ed.
+
+	luaref[1].push();
+	BOOST_CHECK( lua_isfunction(L, 1) );
+	lua_call(L,0,0); // Should print the message
+
+	LuaRef::unrefAll(L);
+}
+
 test_suite* init_unit_test_suite(int argc, char** argv) {
 	test_suite* test = BOOST_TEST_SUITE("Lua Ref tests");
 	test->add(BOOST_TEST_CASE(&simple_test), 0);
 	test->add(BOOST_TEST_CASE(&anonymous_function_test), 0);
+	test->add(BOOST_TEST_CASE(&double_ref_test), 0);
 	return test;
 }
