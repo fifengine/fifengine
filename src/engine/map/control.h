@@ -45,29 +45,70 @@ namespace map {
 
 	class Camera;
 	class View;
-	class ObjectManager;
 	class Runner;
 
+	/** The controlling class binding together dynamic environment and visualisation
+	 *  This class must be instantiated to have a visible, life map. It will
+	 *  take care of setting up the environment for rendering and scripting.
+	 *
+	 *  @bug The states probably do NOT work correctly. (WORK IN PROGRESS)
+	 */
 	class Control {
 		public:
+			/** Constructor
+			 */
 			Control();
+
+			/** Destructor
+			 */
 			~Control();
 	
+			/** Load and set a map from a map file
+			 *  Does the equivalent to
+			 *  @code
+			 *  map_control.setMap( map::Factory::instance()->loadMap() )
+			 *  @endcode
+			 */
 			void load(const std::string& filename);
+
+			/** Sets a map to be controlled
+			 *  If a map is already in use, this will call @b stop()
+			 *  but not @b start().
+			 */
 			void setMap(MapPtr map);
 
+			/** Start a map - setting up script environment and rendering.
+			 */
 			void start();
+			/** Pause a map - suspend script environment, rendering can continue.
+			 */
 			void pause();
+
+			/** Stop a map - shuting down script environment and rendering.
+			 */
 			void stop();
 
+			/** Return the 'started' state of the map
+			 */
 			bool isRunning() const;
+
+			/** Process events in the script environemnt.
+			 */
 			void turn();
 
+			/** Switch to another elevation
+			 */
 			void activateElevation(size_t);
 
+			/** Return the map view used by this control
+			 */
 			View* getView();
+
+			/** Return the map operated by this control
+			 */
 			MapPtr getMap();
 
+			
 			void addCamera(Camera* camera);
 			void removeCamera(Camera* camera);
 
@@ -76,7 +117,6 @@ namespace map {
 			MapPtr m_map;
 			View* m_view;
 			Runner* m_runner;
-			ObjectManager* m_om;
 			ScriptEngine* m_scriptengine;
 			SettingsManager* m_settings;
 			std::set<Camera*> m_cameras;

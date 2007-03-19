@@ -47,37 +47,21 @@ namespace FIFE { namespace map {
 
 	/** Contains a game level.
 	 * 
-	 * Or more exactly: stores (a number of) other objects that contain
-	 * the actual data:
-	 * \li @see MapTile
-	 * \li @see Object
-	 *
 	 * Tiles are only graphics and they are on a separate Layer.
 	 *
 	 * Objects can be: critters, items, walls, scenery and non-visible 
 	 * entities (blockers).
 	 *
-	 * \todo Objects are stored in a std::list; this causes a number of
-	 * problems:
-	 *
-	 * \note Search the wiki for: fallout map geometry; the hex-Layer should
-	 * work with a left->right, back->front drawing order.
-	 *
-	 * \todo One hex-Layer may be occupied by more than one object; we need
-	 * to handle this case, probably with some made-up logic.
-	 * (for example: objects get an (artificial) size; ~smallest~ object 
-	 * drawn first, larger ones above)
-	 *
-	 * \todo This seems like the right place to add pathfinding/line-of-sight.
-	 *
-	 * \todo Export the yet unwritten functionality into the scriptengine...
-	 * ... and we are a lot closer to a game.
-	 *
 	 */
 	class Elevation : public AttributedClass {
 		public:
 
+			/** Constructor
+			 */
 			Elevation();
+
+			/** Destructor
+			 */
 			~Elevation();
 
 			/** Add a Layer at the top
@@ -85,11 +69,17 @@ namespace FIFE { namespace map {
 			 * Increases num Layers by one.
 			 */
 			void addLayer(LayerPtr layer);
-			void setLayer(size_t numLayers, LayerPtr layer);
-			LayerPtr getLayer(size_t);
-			size_t getNumLayers() const;
-			void setNumLayers(size_t numLayers);
 
+			/** Get a layer by its index
+			 */
+			LayerPtr getLayer(size_t);
+
+			/** Get the overall number of layers
+			 */
+			size_t getNumLayers() const;
+
+			/** Apply a visitor to each layer
+			 */
 			template<typename T>
 			void forEachLayer(T visitor) {
 				std::for_each(m_layers.begin(),m_layers.end(),visitor);
