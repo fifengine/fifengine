@@ -48,13 +48,20 @@
 
 namespace FIFE { namespace map {
 
+	/* Avoid reinterpret_cast with this pod wrapper. */
+	struct slave_wrapper {
+		ScriptingSlave* slave;
+		slave_wrapper(ScriptingSlave* _slave) : slave(_slave) {}
+	};
+
 	int Runner::slaveThread(void* data) {
-		ScriptingSlave* slave = reinterpret_cast<ScriptingSlave*>(data);
+		slave_wrapper* slavew  = static_cast<slave_wrapper*>(data);
 		Debug("slavethread") << "SlaveThread: entering ScriptingSlave::loop()";
-		assert(slave);
-		slave->loop();
+		assert(slavew->slave);
+		slavew->slave->loop();
 		Debug("slavethread") << "SlaveThread: leaving ScriptingSlave::loop() ";
-		delete slave;
+		delete slavew->slave;
+		delete slavew;
 		return 0;
 	}
 
@@ -89,6 +96,9 @@ namespace FIFE { namespace map {
 		sendEvent(makeEvent(FIFE_EXEC,sc));
 	}
 
+	/* Recursive visitor for sending all objects on a map to
+	   the scripting slave.
+	*/
 	struct send_objects {
 		Runner& runner;
 		send_objects(Runner& r) : runner(r) {}
@@ -115,10 +125,8 @@ namespace FIFE { namespace map {
 		sendEvent(makeEvent(FIFE_EXEC,m_ruleset));
 
 		sendEvents();
-		m_thread = SDL_CreateThread(Runner::slaveThread, m_slave);
-
-		send_objects send(*this);
-		m_map->forEachElevation(send);
+		m_thread = SDL_CreateThread(Runner::slaveThread, new slave_wrapper(m_slave));
+		m_map->forEachElevation( send_objects(*this) );
 
 		sendEvents();
 	}
@@ -174,8 +182,7 @@ namespace FIFE { namespace map {
 		// display _all_ visuals
 		ElevationPtr elevation = m_map->getElevation(elevation_id);
 		size_t nv = 0, no = 0;
-		display_objects display(*this,nv,no);
-		elevation->forEachLayer(display);
+		elevation->forEachLayer( display_objects (*this,nv,no) );
 
 		Log("map_runner")
 			<< "Displaying " << nv << " visuals from "
