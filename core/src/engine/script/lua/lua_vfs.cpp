@@ -78,7 +78,7 @@ namespace FIFE {
 		int n = 0;
 		while(data->getLine(line)) {
 			lua_pushlstring(L,line.c_str(),line.size());
-			lua_rawseti(L,-2,n);
+			lua_rawseti(L,-2,n+1);
 			++n;
 		}
 		return 1;
@@ -93,7 +93,7 @@ namespace FIFE {
 		int n=0;
 		for(VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
 			lua_pushlstring(L,i->c_str(),i->size());
-			lua_rawseti(L,-2,n);
+			lua_rawseti(L,-2,n+1);
 			++n;
 		}
 		return 1;
@@ -108,7 +108,7 @@ namespace FIFE {
 		int n=0;
 		for(VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
 			lua_pushlstring(L,i->c_str(),i->size());
-			lua_rawseti(L,-2,n);
+			lua_rawseti(L,-2,n+1);
 			++n;
 		}
 		return 1;
