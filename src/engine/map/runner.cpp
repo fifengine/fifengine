@@ -48,15 +48,13 @@
 
 namespace FIFE { namespace map {
 
-	static ScriptingSlave* the_slave = 0;
-	static SDL_Thread* the_thread = 0;
-
-	int slaveThread(void*) {
+	int Runner::slaveThread(void* data) {
+		ScriptingSlave* slave = reinterpret_cast<ScriptingSlave*>(data);
 		Debug("slavethread") << "SlaveThread: entering ScriptingSlave::loop()";
-		assert(the_slave);
-		the_slave->loop();
+		assert(slave);
+		slave->loop();
 		Debug("slavethread") << "SlaveThread: leaving ScriptingSlave::loop() ";
-		delete the_slave;
+		delete slave;
 		return 0;
 	}
 
@@ -110,14 +108,14 @@ namespace FIFE { namespace map {
 
 
 	void Runner::start() {
-		the_slave = m_slave = new ScriptingSlave();
+		m_slave = new ScriptingSlave();
 		setSource(m_slave);
 		m_slave->setSource(this);
 
 		sendEvent(makeEvent(FIFE_EXEC,m_ruleset));
 
 		sendEvents();
-		the_thread = SDL_CreateThread(slaveThread, 0);
+		m_thread = SDL_CreateThread(Runner::slaveThread, m_slave);
 
 		send_objects send(*this);
 		m_map->forEachElevation(send);
@@ -129,9 +127,9 @@ namespace FIFE { namespace map {
 		sendShutdown();
 		sendEvents();
 		int result;
-		SDL_WaitThread(the_thread, &result);
+		SDL_WaitThread(m_thread, &result);
 		clearQueue();
-// 		delete m_slave;
+		m_thread = 0;
 		Log("map_runner")
 			<< "Scripting Thread returned " << result;
 	}

@@ -34,15 +34,13 @@
 #include "script/lua/lua_stackguard.h"
 #include "script/lua/lua_object.h"
 #include "script/scriptcontainer.h"
-#include "event.h" // FIXME: Needed?
+#include "event.h"
 #include "log.h"
 
 #include "scriptingslave.h"
 
 namespace FIFE { namespace map {
 
-	ScriptingSlave* ScriptingSlave::m_instance;
-	
 	ScriptingSlave::ScriptingSlave() : 
 		AsyncBridge(), m_ticks(SDL_GetTicks()), m_sleeping() {
 
@@ -63,17 +61,26 @@ namespace FIFE { namespace map {
 		lua_pushcfunction(vm, luaopen_string);
 		lua_call(vm, 0, 0);
 
-		m_instance = this;
 		/* 
 		* This could be unified to make extension easier...
 		* e.g Array of funtions and corresponding lua-names 
 		*/
-		// Use upvalues: http://www.lua.org/pil/27.3.3.html
-		lua_pushcfunction(vm, lua_registerObject);
+		m_slave_wrapper = new s_slave;
+		m_slave_wrapper->slave = this;
+
+		// Do not directly cast 'this' to void*
+		// Or bad things _might_ happen.
+
+		lua_pushlightuserdata(vm,static_cast<void*>(m_slave_wrapper));
+		lua_pushcclosure(vm, lua_registerObject,1);
 		lua_setglobal(vm, "FIFE_RegisterObject");
-		lua_pushcfunction(vm, lua_execcommand);
+
+		lua_pushlightuserdata(vm,static_cast<void*>(m_slave_wrapper));
+		lua_pushcclosure(vm, lua_execcommand,1);
 		lua_setglobal(vm, "FIFE_ExecCommand");
-		lua_pushcfunction(vm, lua_sleep);
+
+		lua_pushlightuserdata(vm,static_cast<void*>(m_slave_wrapper));
+		lua_pushcclosure(vm, lua_sleep,1);
 		lua_setglobal(vm, "FIFE_Sleep");
 
 		Lunar<Object_LuaScript>::RegisterTable(vm);
@@ -81,7 +88,7 @@ namespace FIFE { namespace map {
 	
 	ScriptingSlave::~ScriptingSlave() {
 		lua_close(vm);
-		m_instance = 0;
+		delete m_slave_wrapper;
 	}
 
 	void ScriptingSlave::prepareGObjectCall(int ref, const std::string& function) {
@@ -112,16 +119,21 @@ namespace FIFE { namespace map {
 	}
 	
 	int ScriptingSlave::lua_registerObject(lua_State* L) {
-		// Ugly, ugly fucker. static is not good. use lunar, tolua or similar to make calls to C++ better?
-		lua_State* vm = m_instance->vm;
-	
-		int ref = luaL_ref(vm, LUA_REGISTRYINDEX);
-		lua_pushnumber(vm, ref);
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		lua_pushnumber(L, ref);
 		return 1;
 	}
 
+	ScriptingSlave* ScriptingSlave::lua_getslave(lua_State *L) {
+		ScriptingSlave* self = static_cast<s_slave*>(lua_touserdata(L,lua_upvalueindex(1)))->slave;
+		if( self == 0 ) {
+			luaL_error(L,"no slave upvalue?");
+		}
+		return self;
+	}
+
 	int ScriptingSlave::lua_execcommand(lua_State *L) {
-		ScriptingSlave* me = m_instance;
+		ScriptingSlave* self = lua_getslave(L);
 
 		command::Info cmd;
 		
@@ -137,31 +149,31 @@ namespace FIFE { namespace map {
 
 		cmd.stringParam = std::string(luaL_checkstring(L, 7));
 
-		me->sendEvent(makeEvent(FIFE_EXECCOMMAND, cmd));
+		self->sendEvent(makeEvent(FIFE_EXECCOMMAND, cmd));
 		return 0;
 	}
 	
 	int ScriptingSlave::lua_sleep(lua_State* L) {
-		ScriptingSlave* me = m_instance;
+		ScriptingSlave* self = lua_getslave(L);
 	
 		int ref    = int(lua_tonumber(L, 1));
 		int ticks  = int(lua_tonumber(L, 2));
 
-		if (me->m_sleeping_objects.find(ref) != me->m_sleeping_objects.end()) {
+		if (self->m_sleeping_objects.find(ref) != self->m_sleeping_objects.end()) {
 			Debug("scripting_slave")
 				<< "lua table " << ref 
 				<< " is already sleeping.";
 			return 0;
 		}
-		me->m_sleeping_objects.insert(ref);
+		self->m_sleeping_objects.insert(ref);
 			
 		sleeping_t s;
 
 		s.id = ref;
-		s.sleep_time = me->m_ticks;
-		s.wake_time  = me->m_ticks + ticks;
+		s.sleep_time = self->m_ticks;
+		s.wake_time  = self->m_ticks + ticks;
 
-		me->m_sleeping.push(s);
+		self->m_sleeping.push(s);
 		return 0;
 	}
 
@@ -222,7 +234,6 @@ namespace FIFE { namespace map {
 		}
 	}
 
-	// XXX verify me
 	int ScriptingSlave::wakeThem() {
 		int n = 0;
 		

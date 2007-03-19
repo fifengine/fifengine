@@ -36,6 +36,8 @@
 #include "script/scriptcontainer.h"
 #include "asyncbridge.h"
 
+struct SDL_Thread;
+
 namespace FIFE { namespace map {
 
 	class Map;
@@ -129,11 +131,13 @@ namespace FIFE { namespace map {
 			void registerCommand(size_t commandid, command::Command* command);
 
 		private:
+			static int slaveThread(void* data);
 			ScriptContainer m_ruleset;
 			ObjectManager* m_mom;
 			MapPtr m_map;
-			View* m_view;
+			View*  m_view;
 			ScriptingSlave* m_slave;
+			SDL_Thread*     m_thread;
 
 			void processEvent(const event_t& e);
 

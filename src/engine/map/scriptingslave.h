@@ -43,7 +43,6 @@ extern "C" {
 namespace FIFE { namespace map {
 
 	class ScriptingSlave : public AsyncBridge {
-			static ScriptingSlave* m_instance;
 		public:
 			ScriptingSlave();
 			virtual ~ScriptingSlave();
@@ -97,6 +96,13 @@ namespace FIFE { namespace map {
 			static int lua_registerObject(lua_State* L);
 			static int lua_sleep(lua_State* L);
 			static int lua_execcommand(lua_State* L);
+
+			struct s_slave {
+				ScriptingSlave *slave;
+			};
+			s_slave* m_slave_wrapper;
+
+			static ScriptingSlave* lua_getslave(lua_State* L);
 	};
 } } // FIFE::map
 
