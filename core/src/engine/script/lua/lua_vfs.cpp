@@ -23,6 +23,7 @@
 #include <string>
 
 // 3rd party library includes
+#include <boost/scoped_array.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -53,9 +54,10 @@ namespace FIFE {
 			lua_pushnil(L);
 			return 1;
 		}
-
-		std::string retval( data->readString(data->getDataLength()) );
-		lua_pushlstring(L,retval.c_str(),retval.size());
+		uint32_t size = data->getDataLength();
+		boost::scoped_array<uint8_t> array(new uint8_t[ size ]);
+		data->readInto(array.get(),size);
+		lua_pushlstring(L,reinterpret_cast<char*>(array.get()),size);
 		return 1;
 	}
 	int VFS_LuaScript::readlines(lua_State *L) {
