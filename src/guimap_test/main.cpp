@@ -43,20 +43,49 @@
 #include "gamestatemanager.h"
 #include "settingsmanager.h"
 
-int main(int argc, char* argv[]) {
-
+void initScripts(FIFE::Engine* engine) {
 	std::string startup_script("content/scripts/startup.lua");
 	std::string script_setup("content/scripts/fallout2.lua");
 	std::string map_to_load("");
-	
-	if (argc == 2) {
-		script_setup = argv[1];
+
+	FIFE::SettingsManager* settings = FIFE::SettingsManager::instance();
+
+	unsigned int swidth = settings->read("ScreenWidth", 800);
+	unsigned int sheight = settings->read("ScreenHeight", 600);
+
+	FIFE::ScriptBackendManager::instance()->select("Lua");
+	FIFE::CScriptEngine()->runFile(startup_script);
+
+	const std::vector<std::string>& scripts = engine->getCommandLine("-script");
+	if( !scripts.empty() ) {
+		for(size_t i=0; i!=scripts.size(); ++i) {
+			FIFE::CScriptEngine()->runFile(scripts[i]);
+		}
+	} else {
+		if( !engine->getCommandLine().empty() 
+			&& !engine->getCommandLine().front().empty()
+			&& engine->getCommandLine().front()[0] != '-' ) {
+			FIFE::CScriptEngine()->runFile( engine->getCommandLine().front());
+		} else {
+			FIFE::CScriptEngine()->runFile(script_setup);
+		}
 	}
-	if (argc == 3) {
-		if (std::string(argv[1]) == "-map")
-			map_to_load = argv[2];
+	const std::vector<std::string>& maps = engine->getCommandLine("-map");
+	if( !maps.empty() ) {
+		map_to_load = maps.front();
 	}
 
+	if (map_to_load.size() > 0)
+		FIFE::CScriptEngine()->setGlobalString("_tmp_map_to_load", map_to_load);
+
+	FIFE::CScriptEngine()->setGlobalInt("screen_width", swidth);
+	FIFE::CScriptEngine()->setGlobalInt("screen_height", sheight);
+
+}
+
+int main(int argc, char* argv[]) {
+
+	
 	FIFE::map::ViewGameState * mapview = NULL;
 	FIFE::Engine* engine = NULL;
 	try {
@@ -73,14 +102,7 @@ int main(int argc, char* argv[]) {
 
 		// it seems this *MUST* be done after setting the video mode!
 		SDL_EnableUNICODE(1);
-
-		FIFE::ScriptBackendManager::instance()->select("Lua");
-		FIFE::CScriptEngine()->runFile(startup_script);
-		FIFE::CScriptEngine()->runFile(script_setup);
-		FIFE::CScriptEngine()->setGlobalInt("screen_width", swidth);
-		FIFE::CScriptEngine()->setGlobalInt("screen_height", sheight);
-		if (map_to_load.size() > 0)
-			FIFE::CScriptEngine()->setGlobalString("_tmp_map_to_load", map_to_load);
+		initScripts(engine);
 
 		// construct a mapview-gamestate; inactive by default
 		mapview = new FIFE::map::ViewGameState();
