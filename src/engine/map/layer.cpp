@@ -23,15 +23,20 @@
 
 // 3rd party library includes
 #include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "exception.h"
+
 #include "geometry.h"
 #include "layer.h"
 
 namespace FIFE { namespace map {
+
+	long Layer::m_count = 0;
 
 	LayerPtr Layer::create(const Point& size, size_t geometry) {
 		LayerPtr layer(new Layer(size,geometry));
@@ -46,11 +51,18 @@ namespace FIFE { namespace map {
  		m_shift(),
 		m_geometry(Geometry::createGeometry(geometry,size)) {
 
+		if( size.x <= 0 || size.y <= 0 ) {
+			throw NotSupported(std::string("invalid layer size:")
+			                   +boost::lexical_cast<std::string>(size));
+		}
+
 		m_tiles_visibility = m_objects_visibility = true;
 		m_grid_overlay = false;
 
 		// set default attributes
 		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");
+
+		m_count += 1;
 	}
 
 	Layer::~Layer() {
@@ -58,7 +70,16 @@ namespace FIFE { namespace map {
 		m_all_objects.clear();
 		m_objects.clear();
 		delete m_geometry;
+		m_count -= 1;
 // 		Log("layer") << "after  clear() objects: " << ObjectInfo::globalCount();
+	}
+
+	long Layer::globalCount() {
+		return m_count;
+	}
+
+	ElevationPtr Layer::getElevation() {
+		return m_elevation.lock();
 	}
 
 	const Point& Layer::getSize() const {

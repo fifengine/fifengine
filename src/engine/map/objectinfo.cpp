@@ -214,7 +214,7 @@ namespace FIFE { namespace map {
 	void ObjectInfo::addToInventory(ObjectPtr obj) {
 		if( obj ) {
 			if( isIndirectOwner( obj ) ) {
-				throw Exception("This is not a Klein Bottle");
+				throw Duplicate("Inventory ... This is not a Klein Bottle");
 			}
 			obj->setOwner( m_self.lock() );
 			getInventory().append(obj); 

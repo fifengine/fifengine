@@ -100,7 +100,8 @@ namespace FIFE {
 			CannotOpenFile(const std::string& s) : Exception("CannotOpenFile: " + s) {}
 	};
 
-	/** Buy more ram ;) 
+	/** Buy more ram ;)
+	 *  @bug The memory allocation in @c std::string might fail, resulting in terminate.
 	 */
 	class OutOfMemory : public Exception {
 		public:
@@ -126,6 +127,13 @@ namespace FIFE {
 	class NameClash : public Exception {
 		public:
 			NameClash(const std::string& s) : Exception("Name already in use: " +s) {}
+	};
+
+	/** A duplicate item was added, where this is not allowed.
+	 */
+	class Duplicate : public Exception {
+		public:
+			Duplicate(const std::string& s) : Exception("Duplicate item: " +s) {}
 	};
 
 }//FIFE

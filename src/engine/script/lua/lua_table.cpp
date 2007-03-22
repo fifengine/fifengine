@@ -106,6 +106,10 @@ namespace FIFE {
 		lua_pop(L,1);
 
 		switch(lua_type(L,2)) {
+		case LUA_TNIL:
+			t->del(key);
+			return 0;
+
 		case LUA_TNUMBER:
 			t->set<long>(key,lua_tointeger(L,2));
 			lua_pop(L,2);

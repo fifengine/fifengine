@@ -38,25 +38,51 @@ namespace FIFE {
 	Elevation_LuaScript::Elevation_LuaScript(map::ElevationPtr obj) : m_elevation(obj) {
 	}
 
-	Elevation_LuaScript::Elevation_LuaScript(lua_State* L) : m_elevation(new map::Elevation()) {
+	Elevation_LuaScript::Elevation_LuaScript(lua_State* L) : m_elevation(map::Elevation::create()) {
 	}
 
 	Elevation_LuaScript::~Elevation_LuaScript() {
 	}
 
 	int Elevation_LuaScript::getLayer(lua_State*L) {
-		int id = int(luaL_checkinteger(L,1));
-		if( id < 0 || id > m_elevation->getNumLayers() ) {
+		int id = luaL_checkinteger(L,1) - 1;
+		if( id < 0 || id > int(m_elevation->getNumLayers()) ) {
 			luaL_error(L,"no layer %d - max layer nr is %d",
-			           id,m_elevation->getNumLayers());
+			           id+1,m_elevation->getNumLayers());
 		}
 		Lunar<Layer_LuaScript>::push(L,new Layer_LuaScript(m_elevation->getLayer(id)),true);
+		return 1;
+	}
+
+	int Elevation_LuaScript::getNumLayers(lua_State*L) {
+		lua_pushinteger(L, m_elevation->getNumLayers() );
 		return 1;
 	}
 
 	int Elevation_LuaScript::addLayer(lua_State*L) {
 		map::LayerPtr layer = Lunar<Layer_LuaScript>::check(L,1)->getLayer();
 		m_elevation->addLayer( layer );
+		return 0;
+	}
+
+	int Elevation_LuaScript::insertLayer(lua_State*L) {
+		int id = luaL_checkinteger(L,1) - 1;
+		if( id < 0 || id > int(m_elevation->getNumLayers()) ) {
+			luaL_error(L,"no layer %d - max layer nr is %d",
+			           id+1,m_elevation->getNumLayers());
+		}
+		map::LayerPtr layer = Lunar<Layer_LuaScript>::check(L,2)->getLayer();
+		m_elevation->insertLayer(size_t(id), layer );
+		return 0;
+	}
+
+	int Elevation_LuaScript::removeLayer(lua_State*L) {
+		int id = luaL_checkinteger(L,1) - 1;
+		if( id < 0 || id > int(m_elevation->getNumLayers()) ) {
+			luaL_error(L,"no layer %d - max layer nr is %d",
+			           id+1,m_elevation->getNumLayers());
+		}
+		m_elevation->removeLayer(size_t(id));
 		return 0;
 	}
 
@@ -71,7 +97,10 @@ namespace FIFE {
 		method(Elevation_LuaScript, getAttr),
 		method(Elevation_LuaScript, setAttr),
 		method(Elevation_LuaScript, getLayer),
+		method(Elevation_LuaScript, getNumLayers),
 		method(Elevation_LuaScript, addLayer),
+		method(Elevation_LuaScript, insertLayer),
+		method(Elevation_LuaScript, removeLayer),
 		{0,0}
 	};
 

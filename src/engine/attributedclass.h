@@ -58,7 +58,7 @@ namespace FIFE {
 			 *
 			 *  @param class_name The class name of the inheriting class
 			 */
-			AttributedClass(const type_attr_id& class_name);
+			AttributedClass(const type_attr_id& class_name = "Table");
 
 			AttributedClass(const AttributedClass& ac);
 
@@ -89,7 +89,7 @@ namespace FIFE {
 			template<typename T>
 			T& get(const type_attr_id& attr, const T& def = T()) {
 				SDL_mutexP(m_mutex);
-				if( !hasAttribute(attr) ) {
+				if( m_attributes.find(attr) == m_attributes.end() ) {
 // Uncomment this to see all default value creation of attributes.
 //
 // 					Debug("attributed_class")
@@ -111,6 +111,15 @@ namespace FIFE {
 				return *val;
 			}
 
+			/** Remove an attribute
+			 */
+			void del(const type_attr_id& attr) {
+				SDL_mutexP(m_mutex);
+				m_attributes.erase( attr );
+				SDL_mutexV(m_mutex);
+			}
+
+
 			/** Get the value of an attribute
 			 *
 			 *  This is the const version of the above function,
@@ -128,7 +137,7 @@ namespace FIFE {
 			const T& get(const type_attr_id& id) const {
 				SDL_mutexP(m_mutex);
 				static const type_attr const_attr;
-				if( !hasAttribute(id) ) {
+				if( m_attributes.find(id) == m_attributes.end() ) {
 					SDL_mutexV(m_mutex);
 					return boost::get<T>(const_attr);
 				}
@@ -190,13 +199,16 @@ namespace FIFE {
 
 	/** A anonymous table of values.
 	 */
-	typedef AttributedClass Table;		
+	typedef AttributedClass Table;
 
 // Inline Functions
 
 	inline
 	bool AttributedClass::hasAttribute(const type_attr_id& attr) const {
-		return m_attributes.find(attr) != m_attributes.end();
+		SDL_mutexP(m_mutex);
+		bool found = m_attributes.find(attr) != m_attributes.end();
+		SDL_mutexV(m_mutex);
+		return found;
 	}
 
 	inline

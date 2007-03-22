@@ -105,7 +105,9 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		file->moveIndex(m_header->getNumGlobalVars() * 4 + 
 		                m_header->getNumLocalVars() * 4);
 
-		MapPtr map(new Map(m_header->getMapName()));
+		MapPtr map = Map::create();
+		map->setMapName(m_header->getMapName());
+
 		loadTiles(map, file);
 		ignoreScripts(file);
 		loadObjects(map, file);
@@ -121,7 +123,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	}
 
 	ElevationPtr Fallout::createElevation() {
-		ElevationPtr elevation(new Elevation());
+		ElevationPtr elevation = Elevation::create();
 
 		LayerPtr layer = Layer::create(Point(100,100),Geometry::FalloutTileGeometry);
 		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");

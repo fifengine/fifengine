@@ -150,13 +150,24 @@ namespace FIFE { namespace map {
 			void setVisualId(size_t visualId);
 			size_t getVisualId() const;
 
-
+			/** Load a prototype by it's id
+			 */
 			void loadPrototype(size_t proto_id);
+
+			/** Load a prototype by it's name
+			 */
 			void loadPrototype(const std::string& proto_name);
+
+			/** Get the list of prototypes, applied to this object
+			 *  The returned list is in order of the loadPrototype
+			 *  calls.
+			 */
 			const std::vector<size_t>& listPrototypes() const;
 
 			void debugPrint();
 
+			/** Get total number of objects
+			 */
 			static long globalCount();
 		private:
 			/** Constructor
@@ -181,6 +192,9 @@ namespace FIFE { namespace map {
 			type_visual_location m_visual_location;
 
 			friend struct owner_reset;
+
+			ObjectInfo(const ObjectInfo&);
+			ObjectInfo& operator=(const ObjectInfo&);
 	};
 
 	inline

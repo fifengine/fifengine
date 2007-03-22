@@ -20,8 +20,10 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
+#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -36,12 +38,31 @@
 #include "geometry.h"
 
 namespace FIFE { namespace map {
+
+	long Elevation::m_count = 0;
+
+	ElevationPtr Elevation::create() {
+		ElevationPtr elevation(new Elevation);
+		elevation->m_self = elevation;
+		return elevation;
+	}
+
 	Elevation::Elevation() 
 		: AttributedClass("map_elevation"),
 		m_reference_layer(0) {
+		m_count += 1;
 	}
 
 	Elevation::~Elevation() {
+		m_count -= 1;
+	}
+
+	MapPtr Elevation::getMap() {
+		return m_map.lock();
+	}
+
+	long Elevation::globalCount() {
+		return m_count;
 	}
 
 	size_t Elevation::getNumLayers() const {
@@ -49,12 +70,64 @@ namespace FIFE { namespace map {
 	}
 
 	void Elevation::addLayer(LayerPtr layer) {
+		if( !layer ) {
+			throw NotSupported("can't add empty layer");
+		}
+		if( layer->getElevation() ) {
+			throw Duplicate("layer already contained in an elevation");
+		}
+
 		layer->m_layer_num = m_layers.size();
+		layer->m_elevation = m_self;
 		m_layers.push_back(layer);
 	}
 
-	LayerPtr Elevation::getLayer(size_t idx) {
-		return m_layers.at(idx);
+	LayerPtr Elevation::getLayer(size_t index) {
+		if( index >= getNumLayers() ) {
+			throw IndexOverflow(std::string("invalid layer number: ") +
+			                    boost::lexical_cast<std::string>(index));
+		}
+		return m_layers[index];
+	}
+
+	void Elevation::insertLayer(size_t index, LayerPtr layer) {
+		if( !layer ) {
+			throw NotSupported("can't add empty layer");
+		}
+		if( layer->getElevation() ) {
+			throw Duplicate("layer already contained in an elevation");
+		}
+
+		if( index >= getNumLayers() ) {
+			throw IndexOverflow(std::string("invalid layer number: ") +
+			                    boost::lexical_cast<std::string>(index));
+		}
+		m_layers.insert(m_layers.begin()+index,layer);
+		layer->m_elevation = m_self;
+		resetLayerNumbers();
+	}
+
+	void Elevation::removeLayer(size_t index) {
+		if( index >= getNumLayers() ) {
+			throw IndexOverflow(std::string("invalid layer number: ") +
+			                    boost::lexical_cast<std::string>(index));
+		}
+		m_layers[index]->m_elevation.reset();
+		m_layers.erase(m_layers.begin()+index);
+		resetLayerNumbers();
+	}
+
+	void Elevation::clearLayers() {
+		for(size_t i = 0; i!= getNumLayers(); ++i) {
+			m_layers[i]->m_elevation.reset();
+		}
+		m_layers.clear();
+	}
+
+	void Elevation::resetLayerNumbers() {
+		for(size_t i=0; i!=m_layers.size(); ++i) {
+			m_layers[i]->m_layer_num = i;
+		}
 	}
 
 	void Elevation::setReferenceLayer(size_t layer) {
@@ -83,8 +156,10 @@ namespace FIFE { namespace map {
 		for (type_layers::iterator i = m_layers.begin(); i != end; ++i) {
 			Point pos;
 			Geometry *geo = (*i)->getGeometry();
-			if( geo == 0 )
+
+			if( !(*i)->hasTiles() ) {
 				continue;
+			}
 
 			for(pos.x=0; pos.x != (*i)->getSize().x; ++pos.x) {
 				for(pos.y=0; pos.y != (*i)->getSize().y; ++pos.y) {

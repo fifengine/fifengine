@@ -91,6 +91,21 @@ void simple_ownership_test() {
 	BOOST_CHECK( !object->isOwner( LayerPtr() ) );
 }
 
+void indirect_ownership_test() {
+	environment env;
+
+	ObjectPtr o1 = ObjectInfo::create();
+	ObjectPtr o2 = ObjectInfo::create();
+	ObjectPtr o3 = ObjectInfo::create();
+
+	o1->addToInventory( o2 );
+	o2->addToInventory( o3 );
+	
+	BOOST_CHECK( o3->isIndirectOwner( o1 ) );
+	BOOST_CHECK( !o1->isIndirectOwner( o3 ) );
+	BOOST_CHECK_THROW( o3->addToInventory( o1 ), Duplicate );
+}
+
 void inventory_ownership_test() {
 	environment env;
 	BOOST_CHECK( ObjectInfo::globalCount() == 0 );
@@ -165,5 +180,6 @@ test_suite* init_unit_test_suite(int argc, char** argv) {
 	test->add(BOOST_TEST_CASE(&simple_ownership_test), 0);
 	test->add(BOOST_TEST_CASE(&inventory_ownership_test), 0);
 	test->add(BOOST_TEST_CASE(&layer_ownership_test), 0);
+	test->add(BOOST_TEST_CASE(&indirect_ownership_test), 0);
 	return test;
 }

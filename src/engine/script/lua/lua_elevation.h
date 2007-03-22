@@ -55,6 +55,9 @@ namespace FIFE {
 
 			int getLayer(lua_State*L);
 			int addLayer(lua_State*L);
+			int getNumLayers(lua_State*L);
+			int insertLayer(lua_State*L);
+			int removeLayer(lua_State*L);
 
 			virtual Table* getTable();
 
