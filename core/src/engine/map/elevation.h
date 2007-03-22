@@ -29,6 +29,7 @@
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -44,25 +45,36 @@ namespace FIFE { namespace map {
 
 	class Elevation;
 	typedef boost::shared_ptr<Elevation> ElevationPtr;
+	typedef boost::weak_ptr<Elevation> ElevationWeakPtr;
+
+	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
+	typedef boost::weak_ptr<Map> MapWeakPtr;
 
 	/** Contains a game level.
 	 * 
 	 * Tiles are only graphics and they are on a separate Layer.
 	 *
-	 * Objects can be: critters, items, walls, scenery and non-visible 
-	 * entities (blockers).
-	 *
+	 * \invariant getLayer(index)->getLayerNumber() == index
+	 * \invariant elevation->addLayer(layer); layer->getElevation() == elevation
+	 * \invariant elevation->insertLayer(index,layer); layer->getElevation() == elevation
+	 * \invariant elevation->removeLayer(layer->getLayerNumber()); 
+	 *  layer->getElevation() == ElevationPtr()
 	 */
 	class Elevation : public AttributedClass {
 		public:
 
-			/** Constructor
+			/** Constructs a elevation instance
 			 */
-			Elevation();
+			static ElevationPtr create();
 
 			/** Destructor
 			 */
 			~Elevation();
+
+			/** Retrieve the map this elevation is contained in
+			 */
+			MapPtr getMap();
 
 			/** Add a Layer at the top
 			 * The elevation now owns the Layer.
@@ -77,6 +89,18 @@ namespace FIFE { namespace map {
 			/** Get the overall number of layers
 			 */
 			size_t getNumLayers() const;
+
+			/** Insert a layer to the elevation
+			 */
+			void insertLayer(size_t index, LayerPtr layer);
+
+			/** Remove a layer from the elevation
+			 */
+			void removeLayer(size_t index);
+
+			/** Remove all layers from the elevation
+			 */
+			void clearLayers();
 
 			/** Apply a visitor to each layer
 			 */
@@ -97,7 +121,20 @@ namespace FIFE { namespace map {
 			 */
 			Point centerOfMass();
 
+			/** Get total number of elevations
+			 */
+			static long globalCount();
 		private:
+			/** Constructor
+			 */
+			Elevation();
+
+			void resetLayerNumbers();
+
+			ElevationWeakPtr m_self;
+			MapWeakPtr m_map;
+			static long m_count;
+
 			typedef std::vector<LayerPtr> type_layers;
 			type_layers m_layers;
 
@@ -108,6 +145,8 @@ namespace FIFE { namespace map {
 			// Not copyable.
 			Elevation(const Elevation&);
 			Elevation& operator=(const Elevation&);
+
+			friend class Map;
 	};
 
 } } //FIFE::map

@@ -49,6 +49,10 @@ namespace FIFE { namespace map {
 	typedef boost::shared_ptr<Layer> LayerPtr;
 	typedef boost::weak_ptr<Layer> LayerWeakPtr;
 
+	class Elevation;
+	typedef boost::shared_ptr<Elevation> ElevationPtr;
+	typedef boost::weak_ptr<Elevation> ElevationWeakPtr;
+
 	class Geometry;
 	/** A basic layer on a map elevation
 	 *
@@ -95,6 +99,10 @@ namespace FIFE { namespace map {
 			/** Destructs a Layer instance
 			 */
 			~Layer();
+
+			/** Get the elevation this layer is contained in
+			 */
+			ElevationPtr getElevation();
 
 			/** Get the Geometry as set in the constructor
 			 *  @return a valid Geometry
@@ -376,6 +384,9 @@ namespace FIFE { namespace map {
 			 */
 			bool isValidPosition(int32_t x,int32_t y) const;
 
+			/** Get total number of layers
+			 */
+			static long globalCount();
 		protected:
 			/** Constructs a Layer instance
 			 */
@@ -383,6 +394,8 @@ namespace FIFE { namespace map {
 			void insertedObject(ObjectPtr object, const Point& p);
 
 			LayerWeakPtr m_self;
+			ElevationWeakPtr m_elevation;
+			static long m_count;
 
 			Point m_size;
 

@@ -51,7 +51,7 @@ namespace FIFE {
 		type_attributes::const_iterator i(attrObject->m_attributes.begin());
 		type_attributes::const_iterator end(attrObject->m_attributes.end());
 		for(; i != end; ++i) {
-			if( !override && hasAttribute( i->first ) )
+			if( !override && m_attributes.find(i->first) != m_attributes.end() )
 				continue;
 			m_attributes[ i->first ] = i->second;
 		}

@@ -14,6 +14,7 @@ env.Program('test_rect', ['test_rect.cpp'])
 env.Program('test_geometry', ['test_geometry.cpp'])
 env.Program('test_events', ['test_events.cpp'])
 env.Program('test_objects', ['test_objects.cpp'])
+env.Program('test_map', ['test_map.cpp'])
 env.Program('test_luaref', ['test_luaref.cpp'])
 env.Program('test_dat1', ['test_dat1.cpp'])
 

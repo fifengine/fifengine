@@ -20,8 +20,10 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
+#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -36,19 +38,26 @@
 
 namespace FIFE { namespace map {
 
-	Map::Map(const std::string& mapname) 
-		: AttributedClass("map"),
-		m_mapname(mapname),
-		m_elevations(0) {
+	long Map::m_count = 0;
+
+	MapPtr Map::create() {
+		MapPtr map(new Map);
+		map->m_self = map;
+		return map;
+	}
+
+	Map::Map() 
+		: AttributedClass("map") {
+		m_count += 1;
 	}
 
 	Map::~Map() {
-		cleanup();
+		clearElevations();
+		m_count -= 1;
 	}
 
-	void Map::cleanup() {
-		// Delete Elevations
-		m_elevations.clear();
+	long Map::globalCount() {
+		return m_count;
 	}
 
 	const std::string& Map::getMapName() const {
@@ -64,14 +73,53 @@ namespace FIFE { namespace map {
 
 	ElevationPtr Map::getElevation(size_t index) const {
 		if (index >= getNumElevations()) {
-			PANIC_PRINT("invalid elevationlevel: " << index);
+			throw IndexOverflow(std::string("invalid elevationlevel: ")
+			                    + boost::lexical_cast<std::string>(index));
 		}
 
 		return *(m_elevations.begin() + index);
 	}
 
 	void Map::addElevation(ElevationPtr elevation) {
+		if( !elevation ) {
+			throw NotSupported("can't add invalid elevation");
+		}
+		if( elevation->getMap() ) {
+			throw Duplicate("elevation already in a map");
+		}
 		m_elevations.push_back(elevation);
+		elevation->m_map = m_self;
+	}
+
+	void Map::insertElevation(size_t index, ElevationPtr elevation) {
+		if( !elevation ) {
+			throw NotSupported("can't add invalid elevation");
+		}
+		if( elevation->getMap() ) {
+			throw Duplicate("elevation already in a map");
+		}
+		if (index >= getNumElevations()) {
+			throw IndexOverflow(std::string("invalid elevationlevel: ")
+			                    + boost::lexical_cast<std::string>(index));
+		}
+		m_elevations.insert(m_elevations.begin() + index,elevation);
+		elevation->m_map = m_self;
+	}
+
+	void Map::removeElevation(size_t index) {
+		if (index >= getNumElevations()) {
+			throw IndexOverflow(std::string("invalid elevationlevel: ")
+			                    + boost::lexical_cast<std::string>(index));
+		}
+		m_elevations[index]->m_map.reset();
+		m_elevations.erase(m_elevations.begin() + index);
+	}
+
+	void Map::clearElevations() {
+		for(size_t i=0; i!= getNumElevations(); ++i) {
+			m_elevations[i].reset();
+		}
+		m_elevations.clear();
 	}
 
 	void Map::setScript(Map::ScriptType st, const ScriptContainer& script) {

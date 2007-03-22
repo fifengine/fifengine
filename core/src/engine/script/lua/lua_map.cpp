@@ -38,19 +38,24 @@ namespace FIFE {
 	Map_LuaScript::Map_LuaScript(map::MapPtr obj) : m_map(obj) {
 	}
 
-	Map_LuaScript::Map_LuaScript(lua_State* L) : m_map(new map::Map()) {
+	Map_LuaScript::Map_LuaScript(lua_State* L) : m_map(map::Map::create()) {
 	}
 
 	Map_LuaScript::~Map_LuaScript() {
 	}
 
 	int Map_LuaScript::getElevation(lua_State* L) {
-		int id = int(luaL_checkinteger(L,1));
+		int id = luaL_checkinteger(L,1) - 1;
 		if( id < 0 || id >= int(m_map->getNumElevations()) ) {
 			luaL_error(L,"no elevation %d - max elevation nr is %d",
-			           id,m_map->getNumElevations());
+			           id+1,m_map->getNumElevations());
 		}
 		Lunar<Elevation_LuaScript>::push(L,new Elevation_LuaScript(m_map->getElevation(id)),true);
+		return 1;
+	}
+
+	int Map_LuaScript::getNumElevations(lua_State* L) {
+		lua_pushinteger(L,m_map->getNumElevations());
 		return 1;
 	}
 
@@ -59,6 +64,25 @@ namespace FIFE {
 		m_map->addElevation(elevation);
 		return 0;
 	}
+
+	int Map_LuaScript::insertElevation(lua_State* L) {
+		map::ElevationPtr elevation = Lunar<Elevation_LuaScript>::check(L,2)->getElevation();
+		int index = luaL_checkinteger(L,1) - 1;
+		if( index < 0 || index >= int(m_map->getNumElevations()) ) {
+			luaL_error(L,"invalid elevation: %d",index+1);
+		}
+		m_map->insertElevation(size_t(index), elevation);
+		return 0;
+	}
+	int Map_LuaScript::removeElevation(lua_State* L) {
+		int index = luaL_checkinteger(L,1) - 1;
+		if( index < 0 || index >= int(m_map->getNumElevations()) ) {
+			luaL_error(L,"invalid elevation: %d",index+1);
+		}
+		m_map->removeElevation(size_t(index));
+		return 0;
+	}
+
 
 	Table* Map_LuaScript::getTable() { 
 		return m_map.get();
@@ -72,6 +96,9 @@ namespace FIFE {
 		method(Map_LuaScript, setAttr),
 		method(Map_LuaScript, getElevation),
 		method(Map_LuaScript, addElevation),
+		method(Map_LuaScript, getNumElevations),
+		method(Map_LuaScript, insertElevation),
+		method(Map_LuaScript, removeElevation),
 		{0,0}
 	};
 

@@ -178,7 +178,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		// Finally create map, load metadata and loop through elevation
-		m_map = MapPtr(new Map(mapname));
+		m_map = Map::create();
+		m_map->setMapName(mapname);
 
 		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
 		if (metadata_element) {
@@ -265,7 +266,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if (!el2) {
 			throw Exception("Error: found no 'layer' entry!");
 		}
-		m_cursor.elevation = ElevationPtr(new Elevation());
+		m_cursor.elevation = Elevation::create();
 		m_cursor.elevationNumber += 1;
 
 		TiXmlElement* metadata_element = el->FirstChildElement("metadata");

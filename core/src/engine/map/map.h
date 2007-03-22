@@ -29,6 +29,7 @@
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -44,11 +45,14 @@ namespace FIFE { namespace map {
 	class Elevation;
 	typedef boost::shared_ptr<Elevation> ElevationPtr;
 
-	class ObjectManager;
-	/** A container of \c MapElevation(s).
+	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
+	typedef boost::weak_ptr<Map> MapWeakPtr;
+
+	/** A container of \c Elevation(s).
 	 *
-	 * The actual data is contained in \c MapElevation objects; only one
-	 * \c MapElevation can be displayed at any time.
+	 * The actual data is contained in \c Elevation objects; only one
+	 * \c Elevation can be displayed at any time.
 	 *
 	 * Fallout legacy: A map (file or this object) contains a number of
 	 * levels in one file (to switch between some level w/o loading).
@@ -70,7 +74,7 @@ namespace FIFE { namespace map {
 
 			/** Construct a map
 			 */
-			explicit Map(const std::string& mapname = "");
+			static MapPtr create();
 
 			/** Destructor
 			 */
@@ -96,6 +100,18 @@ namespace FIFE { namespace map {
 			 */
 			void addElevation(ElevationPtr);
 
+			/** Add an elevation to this map
+			 */
+			void insertElevation(size_t index, ElevationPtr);
+
+			/** Remove an elevation from this map
+			 */
+			void removeElevation(size_t index);
+
+			/** Remove all elevations from a map
+			 */
+			void clearElevations();
+
 			/** Apply a visitor to each elevation
 			 */
 			template<typename T>
@@ -108,8 +124,18 @@ namespace FIFE { namespace map {
 			bool hasScript(ScriptType scripttype) const;
 
 			bool isValidLocation(const Location& location) const;
+
+			/** Get total number of maps
+			 */
+			static long globalCount();
 		private:
+			/** Construct a map
+			 */
+			Map();
+
 			std::string m_mapname;
+			MapWeakPtr m_self;
+			static long m_count;
 
 			typedef std::vector<ElevationPtr> type_elevations;
 			type_elevations m_elevations;
@@ -117,7 +143,8 @@ namespace FIFE { namespace map {
 			typedef std::map<ScriptType, ScriptContainer> type_scriptmap;
 			type_scriptmap m_scripts;
 
-			void cleanup();
+			Map(const Map& map);
+			Map& operator=(const Map& map);
 	};
 
 } } //FIFE::map

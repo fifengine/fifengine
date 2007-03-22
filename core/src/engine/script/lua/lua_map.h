@@ -55,6 +55,9 @@ namespace FIFE {
 
 			int getElevation(lua_State* L);
 			int addElevation(lua_State* L);
+			int getNumElevations(lua_State* L);
+			int insertElevation(lua_State* L);
+			int removeElevation(lua_State* L);
 
 			virtual Table* getTable();
 
