@@ -216,7 +216,12 @@ template <typename T> class Lunar {
 		lua_remove(L, 1);  // remove self so member function args start at index 1
 		// get member function from upvalue
 		RegType *l = static_cast<RegType*>(lua_touserdata(L, lua_upvalueindex(1)));
-		return (obj->*(l->mfunc))(L);  // call member function
+		try {
+			return (obj->*(l->mfunc))(L);  // call member function
+		} catch( FIFE::Exception& e ) {
+			luaL_error(L,"caught FIFE exception: %s",e.getMessage().c_str());
+		}
+		return 0;
 	}
 
 	// create a new T object and

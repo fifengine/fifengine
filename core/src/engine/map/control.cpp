@@ -54,13 +54,14 @@ namespace FIFE { namespace map {
 		m_view(new View()),
 		m_runner(new Runner()),
 		m_scriptengine(ScriptBackendManager::instance()->current()),
-		m_settings(SettingsManager::instance()) {
+		m_settings(SettingsManager::instance()),
+		m_isrunning(false) {
 
 		registerCommands();
 	}
 
 	Control::~Control() {
-		stop();
+		clearMap();
 
 		// Real cleanup after 'stop()'
 		std::set<Camera*>::iterator i(m_cameras.begin());
@@ -86,35 +87,42 @@ namespace FIFE { namespace map {
 	}
 
 	void Control::setMap(MapPtr map) {
-		stop();
-		m_map = map;
-		if (m_map->getNumElevations() == 0) {
+		if (map->getNumElevations() == 0) {
 			Warn("map_control") 
 				<< "map: " << m_map_filename << " has no elevations";
 			throw CannotOpenFile(m_map_filename);
 		}
+		stop();
+		m_map = map;
+
+		m_view->setMap(m_map, 0);
+		m_view->setViewport(CRenderBackend()->getMainScreen());
+		std::string ruleset_file = m_settings->read<std::string>("Ruleset", 
+		                           "content/scripts/demos/example_ruleset.lua");
+		m_runner->setRuleset(ScriptContainer::fromFile(ruleset_file));
+		m_runner->initialize(m_map, m_view);
 	}
 
 	void Control::start() {
-		m_view->setMap(m_map, 0);
-		m_view->setViewport(CRenderBackend()->getMainScreen());
-// 		m_view->setRoofAlpha(m_settings->read<int>("RoofAlpha", 128));
-		
+		if( !m_map || isRunning() ) {
+			return;
+		}
+
 		if (m_map->hasScript(Map::OnStartScript)) {
 			Log("map_control") 
 				<< "Executing: OnStartScript ";
 			m_scriptengine->execute(m_map->getScript(Map::OnStartScript));
 		}
-
-		std::string ruleset_file = m_settings->read<std::string>("Ruleset", 
-		                           "content/scripts/demos/example_ruleset.lua");
-		m_runner->setRuleset(ScriptContainer::fromFile(ruleset_file));
-		m_runner->initialize(m_map, m_view);
 		m_runner->start();
+		m_isrunning = true;
 		activateElevation(m_map->get<size_t>("_START_ELEVATION", 0));
 	}
 
 	void Control::activateElevation(size_t elev) {
+		if( !isRunning() ) {
+			return;
+		}
+
 		m_view->setMap(m_map, elev);
 		m_runner->activateElevation(elev);
 
@@ -133,16 +141,21 @@ namespace FIFE { namespace map {
 	}
 
 	void Control::stop() {
-		if (m_map) {
+		if (m_map && isRunning()) {
 			m_runner->stop();
 			resetCameras();
 			m_view->reset();
-			m_map.reset();
+			m_isrunning = false;
 		}
 	}
 
+	void Control::clearMap() {
+		stop();
+		m_map.reset();
+	}
+
 	bool Control::isRunning() const {
-		return m_map;
+		return m_isrunning;
 	}
 
 	void Control::turn() {

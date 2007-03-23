@@ -113,9 +113,13 @@ int main(int argc, char* argv[]) {
 
 	} catch (const FIFE::Exception& exception) {
 		std::cerr << "fife:exception during startup: " << exception.getMessage() << std::endl;
+		delete mapview;
+		delete engine;
 		return 1;
 	} catch (const gcn::Exception& exception) {
 		std::cerr << "gcn:exception during startup: " << exception.getMessage() << std::endl;
+		delete mapview;
+		delete engine;
 		return 1;
 	}
 
@@ -123,10 +127,14 @@ int main(int argc, char* argv[]) {
 		engine->start();
 	} catch (const FIFE::Exception & exception) {
 		std::cerr << "uncaught fife:exception during game: " << exception.getMessage() << std::endl;
+		delete mapview;
+		delete engine;
 		return 1;
 	}
 	catch (const gcn::Exception& exception) {
 		std::cerr << "uncaught gcn:exception during game: " << exception.getMessage() << std::endl;
+		delete mapview;
+		delete engine;
 		return 1;
 	}
 	delete mapview;

@@ -108,6 +108,10 @@ namespace map {
 			 */
 			MapPtr getMap();
 
+			/** Clear the currently loaded map
+			 */
+			void clearMap();
+
 			
 			void addCamera(Camera* camera);
 			void removeCamera(Camera* camera);
@@ -120,6 +124,8 @@ namespace map {
 			ScriptEngine* m_scriptengine;
 			SettingsManager* m_settings;
 			std::set<Camera*> m_cameras;
+
+			bool m_isrunning;
 
 			void resetCameras();
 			void registerCommands();
