@@ -34,12 +34,7 @@
 // just a quick&dirty wrapper around anchorites implementation - needs to be replaced with our own LZSS implementation
 namespace FIFE {
 
-	static const uint32_t RING_SIZE = 4096;
-	static const uint32_t THRESHOLD = 2;
-
 	LZSSDecoder::LZSSDecoder() {}
-
-
 	LZSSDecoder::~LZSSDecoder() {}
 
 
@@ -53,31 +48,26 @@ namespace FIFE {
 			uint16_t bytesToRead = blockdesc & 0x7fff;
 
 			if (blockdesc & 0x8000) { // uncompressed
-				input->readInto(output, bytesToRead);
+				input->readInto(output + m_outindex, bytesToRead);
 				m_outindex += bytesToRead;
-			} else
-				LZSSDecode(input, bytesToRead, output);
-
+			} else {
+				// Allocate +2 bytes so that on corrupt data the LZSS
+				// decoder won't crash the input buffer.
+				std::vector<uint8_t> indata(bytesToRead + 2);
+				input->readInto(&indata[0], bytesToRead);
+				LZSSDecode(&indata[0], bytesToRead, output);
+				// Note outindex is advanced inside LZSSDecode.
+			}
+			
 		}
 	}
 
-	inline
-	int LZSSDecoder::getByte(char* in, int& ibuf, int len) {
-		if( ibuf == len ) return -1;
-		return int(in[ibuf++]) & 0xFF;
-	}
-
-	bool LZSSDecoder::LZSSDecode(RawDataPtr in_file, long nInputLength, uint8_t* out) {
-
-		bool bSuccess = true;
-
+	void LZSSDecoder::LZSSDecode(uint8_t* in , long len, uint8_t* out) {
 		const long c_nRingBufferSize        = 4096;
 		const long c_nMatchLengthUpperLimit =   18;
 		const long c_nThreshold             =    2;
 
 		char buffer[c_nRingBufferSize + c_nMatchLengthUpperLimit - 1];
-		char* in = new char[nInputLength];
-		in_file->readInto(reinterpret_cast<uint8_t*>(in),nInputLength);
 		int ibuf = 0;
 		int c;
 
@@ -94,29 +84,21 @@ namespace FIFE {
 
 		r = c_nRingBufferSize - c_nMatchLengthUpperLimit;
 		flags = 0;
-		for ( ; ; ) {
+		while ( ibuf < len ) {
 			if (((flags >>= 1) & 256) == 0) {
-				if( (c = getByte(in,ibuf,nInputLength)) == -1 ) {
-					goto out;
-				}
+				c = in[ibuf++];
 				flags = c | 0xff00;/* uses higher byte cleverly to count eight */
 			}
 
 			if (flags & 1) {
-				if( (c = getByte(in,ibuf,nInputLength)) == -1 ) {
-					goto out;
-				}
+				c = in[ibuf++];
 				out[m_outindex++] = c;
 
 				buffer[r++] = c;
 				r &= (c_nRingBufferSize - 1);
 			} else {
-				if( (i = getByte(in,ibuf,nInputLength)) == -1 ) {
-					goto out;
-				}
-				if( (j = getByte(in,ibuf,nInputLength)) == -1 ) {
-					goto out;
-				}
+				i = in[ibuf++];
+				j = in[ibuf++];
 
 				i |= ((j & 0xf0) << 4);
 				j = (j & 0x0f) + c_nThreshold;
@@ -131,10 +113,6 @@ namespace FIFE {
 				}
 			}
 		}
-
-	out:
-		delete[] in;
-		return bSuccess;
 	}
 
 

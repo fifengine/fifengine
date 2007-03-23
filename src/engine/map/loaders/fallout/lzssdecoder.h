@@ -34,6 +34,7 @@ namespace FIFE {
 	/** A helper class for unpacking LZSS encoded data 
 	 * @bug just a quick&dirty LZSS implementation, optimized a bit
 	 *      see revision 719 for the original one and 795 for the broken optimized one
+	 * @bug the lzss decoder might very well crash on corrupt data.
 	 */
 	class LZSSDecoder {
 		public:
@@ -55,8 +56,7 @@ namespace FIFE {
 		private:
 			uint32_t m_outlen;
 			uint32_t m_outindex;
-			int getByte(char* in, int& ibuf, int len);
-			bool LZSSDecode(RawDataPtr in, long nInputLength, uint8_t* out);
+			void LZSSDecode(uint8_t* in, long len, uint8_t* out);
 
 	};
 
