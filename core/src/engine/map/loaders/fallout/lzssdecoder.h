@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2006 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,27 +19,32 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADERS_FALLOUT_LZSSDECODER_H
-#define FIFE_MAP_LOADERS_FALLOUT_LZSSDECODER_H
+#ifndef FIFE_LZSSDECODER_H
+#define FIFE_LZSSDECODER_H
 
 // Standard C++ library includes
-
-// Platform specific includes
-#include "util/fife_stdint.h"
 
 // 3rd party library includes
 
 // FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+#include "util/fife_stdint.h"
 #include "vfs/vfs.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace fallout {
+namespace FIFE {
 	/** A helper class for unpacking LZSS encoded data 
+	 * @bug just a quick&dirty LZSS implementation, optimized a bit
+	 *      see revision 719 for the original one and 795 for the broken optimized one
 	 */
 	class LZSSDecoder {
 		public:
+			/** Constructor
+			 */
+			LZSSDecoder();
+
+			/** Destructor
+			 */
+			~LZSSDecoder();
+
 			/** Decodes from a file into a pointer.
 			 * @param input The VFS file to read from
 			 * @param output The memory location to write to
@@ -50,14 +55,11 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		private:
 			uint32_t m_outlen;
 			uint32_t m_outindex;
+			int getByte(char* in, int& ibuf, int len);
+			bool LZSSDecode(RawDataPtr in, long nInputLength, uint8_t* out);
 
-			bool LZSSDecode(uint8_t* in, long nInputLength, uint8_t* out);
-
-			void putByte(uint8_t c, uint8_t* out) {
-				out[m_outindex++] = c;
-			}
 	};
 
-} } } }
+}
 
 #endif
