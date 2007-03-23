@@ -140,7 +140,8 @@ namespace FIFE {
 		delete RenderManager::instance();
 		delete GUIManager::instance();
 		delete input::Manager::instance();
-		SettingsManager::instance()->saveSettings(SETTINGS_FILE_NAME);
+		// DO override not pre-existing config.
+		SettingsManager::instance()->saveSettings(SETTINGS_FILE_NAME,true);
 		delete SettingsManager::instance();
 		delete TimeManager::instance();
 	}
