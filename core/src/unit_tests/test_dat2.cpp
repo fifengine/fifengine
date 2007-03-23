@@ -28,23 +28,55 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "map/map.h"
+#include "map/elevation.h"
+#include "map/layer.h"
+#include "map/objectinfo.h"
+#include "map/factory.h"
+#include "vfs/vfssourcefactory.h"
+#include "vfs/vfs.h"
+#include "settingsmanager.h"
+#include "timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
-#include "map/loaders/fallout/dat1.h"
+#include "map/loaders/fallout/dat2.h"
 #include "vfs/raw/rawdata.h"
 #include "log.h"
 #include "exception.h"
+
+
+using boost::unit_test::test_suite;
+using namespace FIFE::map;
+using namespace FIFE;
+
+// Environment
+struct environment {
+	boost::shared_ptr<SettingsManager> settings;
+	boost::shared_ptr<TimeManager> timemanager;
+	boost::shared_ptr<VFSSourceFactory> vfssources;
+	boost::shared_ptr<VFS> vfs;
+	boost::shared_ptr<Factory> factory;
+
+	environment()
+		: settings(new SettingsManager()),
+		  timemanager(new TimeManager()),
+		  vfssources(new VFSSourceFactory()),
+		  vfs(new VFS()),
+		  factory(new Factory()) {}
+};
 
 using boost::unit_test::test_suite;
 using namespace FIFE::map::loaders::fallout;
 using namespace FIFE;
 
-static const std::string COMPRESSED_FILE = "data/dat1vfstest.dat";
+static const std::string COMPRESSED_FILE = "data/dat2vfstest.dat";
 static const std::string RAW_FILE = "data/test.map";
 
 void test_decoder() {
+	environment env;
+
 	Log::setLogLevel(Log::LEVEL_MAX);
-	boost::shared_ptr<VFS> vfs(new VFS());
+	VFS* vfs = VFS::instance();
 	vfs->addSource(new VFSHostSystem());
 
 	if ((!vfs->exists(COMPRESSED_FILE))) {
@@ -52,14 +84,14 @@ void test_decoder() {
 		return;
 	}
 
-	vfs->addSource(new DAT1(COMPRESSED_FILE));
+	vfs->addSource(new DAT2(COMPRESSED_FILE));
 
-	if ((!vfs->exists(RAW_FILE)) || (!vfs->exists("dat1vfstest.map"))) {
+	if ((!vfs->exists(RAW_FILE)) || (!vfs->exists("dat2vfstest.map"))) {
 		BOOST_ERROR("Test files not found");
 	}
 
 	RawDataPtr fraw = vfs->open(RAW_FILE);
-	RawDataPtr fcomp = vfs->open("dat1vfstest.map");
+	RawDataPtr fcomp = vfs->open("dat2vfstest.map");
 
 	if (fraw->getDataLength() != fcomp->getDataLength()) {
 		std::cout << "raw length = " << fraw->getDataLength() \
@@ -97,7 +129,7 @@ void test_decoder() {
 }
 
 test_suite* init_unit_test_suite(int argc, char** argv) {
-	test_suite* test = BOOST_TEST_SUITE("DAT1 tests");
+	test_suite* test = BOOST_TEST_SUITE("DAT2 tests");
 	test->add(BOOST_TEST_CASE(&test_decoder), 0);
 	return test;
 }
