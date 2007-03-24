@@ -113,7 +113,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		loadObjects(map, file);
 
 		size_t start_elevation = m_header->getDefaultElevation();
-		map->set<size_t>("_START_ELEVATION",start_elevation);
+		map->set<long>("_START_ELEVATION",start_elevation);
 
 		Point playerPos(m_header->getDefaultPlayerPosition() % 200,
 		                m_header->getDefaultPlayerPosition() / 200);

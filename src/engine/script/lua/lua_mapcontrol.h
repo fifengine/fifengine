@@ -46,10 +46,14 @@ namespace FIFE {
 			~MapControl_Lunar();
 
 			int l_load(lua_State *L);
+			int l_setMap(lua_State *L);
+			int l_clearMap(lua_State *L);
+			int l_getMap(lua_State *L);
 
 			int l_start(lua_State *L);
 			int l_stop(lua_State *L);
 			int l_turn(lua_State *L);
+			int l_isRunning(lua_State*L);
 
 			int l_activateElevation(lua_State *L);
 
