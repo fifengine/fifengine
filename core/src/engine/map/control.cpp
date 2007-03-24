@@ -164,6 +164,10 @@ namespace FIFE { namespace map {
 		}
 	}
 
+	MapPtr Control::getMap() {
+		return m_map;
+	}
+
 	View* Control::getView() {
 		return m_view;
 	}

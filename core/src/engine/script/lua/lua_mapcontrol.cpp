@@ -33,6 +33,7 @@
 // Second block: files included from the same folder
 #include "log.h"
 
+#include "lua_map.h"
 #include "lua_mapcontrol.h"
 
 namespace FIFE {
@@ -66,6 +67,32 @@ namespace FIFE {
 		return 0;
 	}
 
+	int MapControl_Lunar::l_setMap(lua_State *L) {
+		map::MapPtr map = Lunar<Map_LuaScript>::check(L,1)->getMap();
+		map::Control::setMap(map);
+		return 0;
+	}
+
+	int MapControl_Lunar::l_clearMap(lua_State *L) {
+		map::Control::clearMap();
+		return 0;
+	}
+
+	int MapControl_Lunar::l_getMap(lua_State *L) {
+		map::MapPtr map = map::Control::getMap();
+		if( !map ) {
+			lua_pushnil(L);
+		} else {
+			Lunar<Map_LuaScript>::push(L,new Map_LuaScript(map),true);
+		}
+		return 1;
+	}
+
+	int MapControl_Lunar::l_isRunning(lua_State *L) {
+		lua_pushboolean(L,map::Control::isRunning());
+		return 1;
+	}
+
 	int MapControl_Lunar::l_activateElevation(lua_State *L) {
 		int elevation = luaL_checkinteger(L,1);
 		map::Control::activateElevation( elevation );
@@ -82,6 +109,11 @@ namespace FIFE {
 		method(MapControl_Lunar, stop),
 		method(MapControl_Lunar, turn),
 		method(MapControl_Lunar, load),
+		method(MapControl_Lunar, setMap),
+		method(MapControl_Lunar, getMap),
+		method(MapControl_Lunar, clearMap),
+		method(MapControl_Lunar, isRunning),
+		method(MapControl_Lunar, activateElevation),
 		{0,0}
 	};
 
