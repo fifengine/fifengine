@@ -125,6 +125,10 @@ namespace FIFE { namespace map {
 			 */
 			void activateElevation(size_t elev);
 
+			/** Display elevation
+			 */
+			void displayElevation(size_t elev);
+
 			/** Register a command to a specific command_id
 			 *  Takes ownership over the commands.
 			 */

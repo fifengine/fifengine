@@ -98,7 +98,7 @@ namespace map {
 
 			/** Switch to another elevation
 			 */
-			void activateElevation(size_t);
+			void setElevation(size_t);
 
 			/** Return the map view used by this control
 			 */
@@ -126,6 +126,7 @@ namespace map {
 			std::set<Camera*> m_cameras;
 
 			bool m_isrunning;
+			size_t m_elevation;
 
 			void resetCameras();
 			void registerCommands();
