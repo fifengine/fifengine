@@ -93,9 +93,9 @@ namespace FIFE {
 		return 1;
 	}
 
-	int MapControl_Lunar::l_activateElevation(lua_State *L) {
+	int MapControl_Lunar::l_setElevation(lua_State *L) {
 		int elevation = luaL_checkinteger(L,1);
-		map::Control::activateElevation( elevation );
+		map::Control::setElevation( elevation );
 		return 0;
 	}
 
@@ -113,7 +113,7 @@ namespace FIFE {
 		method(MapControl_Lunar, getMap),
 		method(MapControl_Lunar, clearMap),
 		method(MapControl_Lunar, isRunning),
-		method(MapControl_Lunar, activateElevation),
+		method(MapControl_Lunar, setElevation),
 		{0,0}
 	};
 

@@ -82,7 +82,6 @@ namespace FIFE { namespace map {
 			Log("map_control") << "couldn't load map: " << m_map_filename;
 			throw CannotOpenFile(m_map_filename);
 		}
-
 		setMap(map);
 	}
 
@@ -92,7 +91,7 @@ namespace FIFE { namespace map {
 				<< "map: " << m_map_filename << " has no elevations";
 			throw CannotOpenFile(m_map_filename);
 		}
-		stop();
+		clearMap();
 		m_map = map;
 
 		m_view->setMap(m_map, 0);
@@ -101,6 +100,8 @@ namespace FIFE { namespace map {
 		                           "content/scripts/demos/example_ruleset.lua");
 		m_runner->setRuleset(ScriptContainer::fromFile(ruleset_file));
 		m_runner->initialize(m_map, m_view);
+		m_elevation = size_t(-1);
+		setElevation(m_map->get<long>("_START_ELEVATION", 0));
 	}
 
 	void Control::start() {
@@ -115,16 +116,16 @@ namespace FIFE { namespace map {
 		}
 		m_runner->start();
 		m_isrunning = true;
-		activateElevation(m_map->get<size_t>("_START_ELEVATION", 0));
+		m_runner->activateElevation(m_elevation);
 	}
 
-	void Control::activateElevation(size_t elev) {
-		if( !isRunning() ) {
+	void Control::setElevation(size_t elev) {
+		if( m_elevation == elev || !m_map ) {
 			return;
 		}
-
+		m_elevation = elev;
 		m_view->setMap(m_map, elev);
-		m_runner->activateElevation(elev);
+		m_runner->displayElevation(elev);
 
 		// Assure a default starting position is set
 		ElevationPtr current_elevation = m_view->getCurrentElevation();
@@ -138,20 +139,28 @@ namespace FIFE { namespace map {
 
 		// Assure camera(s) are aware of the change.
 		resetCameras();
+
+		if( !isRunning() ) {
+			return;
+		}
+
+		m_runner->activateElevation(elev);
 	}
 
 	void Control::stop() {
 		if (m_map && isRunning()) {
 			m_runner->stop();
-			resetCameras();
-			m_view->reset();
 			m_isrunning = false;
 		}
 	}
 
 	void Control::clearMap() {
-		stop();
-		m_map.reset();
+		if( m_map ) {
+			stop();
+			resetCameras();
+			m_view->reset();
+			m_map.reset();
+		}
 	}
 
 	bool Control::isRunning() const {

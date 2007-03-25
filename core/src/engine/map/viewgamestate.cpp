@@ -150,7 +150,7 @@ namespace FIFE { namespace map {
 				if (elevation >= m_view->getNumElevations())
 					elevation = 0;
 	
-				m_control->activateElevation(elevation);
+				m_control->setElevation(elevation);
 				break;
 			}
 	

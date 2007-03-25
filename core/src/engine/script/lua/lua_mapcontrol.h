@@ -55,7 +55,7 @@ namespace FIFE {
 			int l_turn(lua_State *L);
 			int l_isRunning(lua_State*L);
 
-			int l_activateElevation(lua_State *L);
+			int l_setElevation(lua_State *L);
 
 			void update();
 	};

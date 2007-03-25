@@ -164,10 +164,11 @@ namespace FIFE { namespace map {
 				Visual* visual = new Visual(object);
 				visual->setRenderable(iid, loc.getType());
 				object->setVisualId( runner.m_view->addVisual(visual) );
-				Debug("map_runner")
-					<< "Adding Visual for static object iid:" << iid
-					<< " rloc:" << loc.toString();
 				++nvisuals;
+
+				Debug("map_runner")
+					<< "Adding Visual for object iid:" << iid
+					<< " rloc:" << loc.toString();
 			}
 			++nobjects;
 		}
@@ -175,18 +176,22 @@ namespace FIFE { namespace map {
 	};
 
 	void Runner::activateElevation(size_t elevation_id) {
+		displayElevation(elevation_id);
 		// send the activation command to the ruleset.
 		sendNewExecScEvent("ActivateElevation(" +
 		                   boost::lexical_cast<std::string>(elevation_id) + ")");
 
+	}
+
+	void Runner::displayElevation(size_t elev) {
 		// display _all_ visuals
-		ElevationPtr elevation = m_map->getElevation(elevation_id);
+		ElevationPtr elevation = m_map->getElevation(elev);
 		size_t nv = 0, no = 0;
 		elevation->forEachLayer( display_objects (*this,nv,no) );
 
 		Log("map_runner")
 			<< "Displaying " << nv << " visuals from "
-			<< no << " objects on elevation " << elevation;
+			<< no << " objects on elevation " << elev;
 	}
 
 	void Runner::processEvent(const event_t& e) {
