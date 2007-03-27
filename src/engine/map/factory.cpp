@@ -64,6 +64,8 @@ namespace FIFE { namespace map {
 			Point(16,12),  // TRANSFORM
 			Point(32,10),  // OFFSET
 			Geometry::ShiftXAxis));           // FLAGS: SHIFT AROUND X AXIS
+
+		addPrototype(0, "invalid_proto");
 	}
 
 	Factory::~Factory() {
@@ -145,7 +147,7 @@ namespace FIFE { namespace map {
 
 	void Factory::loadPrototype(ObjectInfo* object, size_t proto_id) {
 		assert( object );
-		if( proto_id >= m_protoid_map.size() ) {
+		if( proto_id == 0 || proto_id >= m_protoid_map.size() ) {
 			return;
 		}
 
