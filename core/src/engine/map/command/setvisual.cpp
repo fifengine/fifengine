@@ -84,7 +84,7 @@ namespace FIFE { namespace map { namespace command {
 
 			visual->setRenderable(
 				ImageCache::instance()->addImageFromLocation(loc),
-				RenderAble::RT_COMPLEX_ANIMATION );
+				loc.getType() );
 			ComplexAnimation* anim = visual->getComplexAnimation();
 			if (anim) {
 				anim->enqueueAction(Action(0, cmd.params[0]));
@@ -107,6 +107,6 @@ namespace FIFE { namespace map { namespace command {
 			moi->setVisualId(0);
 		}
 		moi->set<long>("_visual_id",moi->getVisualId());
-		moi->set<std::string>("_visual_path",moi->getVisualLocation().toString());
+		moi->set<std::string>("_visual_path",moi->getVisualLocation().getFilename());
 	}
 } } }
