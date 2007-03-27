@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/objectinfo.h"
+#include "map/factory.h"
 
 #include "lua_object.h"
 
@@ -43,6 +44,16 @@ namespace FIFE {
 	Object_LuaScript::~Object_LuaScript() {
 	}
 
+	int Object_LuaScript::loadPrototype(lua_State*L) {
+		const char* protoname = luaL_checkstring(L,1);
+		size_t proto_id = map::Factory::instance()->getPrototypeId(protoname);
+		if( proto_id == 0 ) {
+			luaL_error(L,"invalid/unknown prototype: '%s'",protoname);
+		}
+		m_object->loadPrototype(proto_id);
+		return 0;
+	}
+
 	Table* Object_LuaScript::getTable() { 
 		return m_object.get();
 	}
@@ -53,6 +64,7 @@ namespace FIFE {
 	Lunar<Object_LuaScript>::RegType Object_LuaScript::methods[] = {
 		method(Object_LuaScript, getAttr),
 		method(Object_LuaScript, setAttr),
+		method(Object_LuaScript, loadPrototype),
 		{0,0}
 	};
 

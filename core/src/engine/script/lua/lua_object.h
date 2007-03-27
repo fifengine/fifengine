@@ -53,6 +53,8 @@ namespace FIFE {
 			Object_LuaScript(map::ObjectPtr obj);
 			virtual ~Object_LuaScript();
 
+			int loadPrototype(lua_State*L);
+
 			virtual Table* getTable();
 			map::ObjectPtr getObject() { return m_object; }
 
