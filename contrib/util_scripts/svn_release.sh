@@ -80,15 +80,16 @@ http://wiki.fifengine.de/index.php?title=Linux_compile_guide#Compiling
    lower case filenames.
 
 4) run: ./guimap_test
-   you can also load scripts, like: ./guimap_test
-   content/scripts/demos/level_chooser2.lua
+   you can also load scripts, like: 
+   ./guimap_test content/scripts/demos/level_chooser2.lua
 EOF
   cat <<EOF >${TMPDIR}/README
 ==========================
-FIFE 2007.0 (official src release based on FIFE engine SVN rev. ${SVN_CORE_REV} &
+FIFE 2007.1 (official src release based on FIFE engine SVN rev. ${SVN_CORE_REV} &
 content SVN rev. ${SVN_DATA_REV})
 ==========================
 
+FIXME: needs update here!
 
 Intention of this release:
 ==========================
@@ -220,7 +221,7 @@ get_content
 get_core
 post_install
 OUTFILE=fife_core-r${SVN_CORE_REV}_content-r${SVN_DATA_REV}.tar.bz2
-OUTFILE=FIFE_2007.0_src.tar.bz2
+#OUTFILE=FIFE_2007.1_src.tar.bz2
 if [ $RE_AS_DIR -eq 0 ]; then
   archive_dir_as $TMPDIR $PWD/$OUTFILE
   rm -rf $TMPDIR
