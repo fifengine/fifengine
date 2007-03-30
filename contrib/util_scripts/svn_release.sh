@@ -66,8 +66,7 @@ function archive_dir_as() {
 
 function post_install() {
   cat <<EOF >${TMPDIR}/INSTALL
-This is just a quick install guide. If you encouter problems while
-compiling, have a look at our more detailed guides at the FIFEwiki:
+This is just a quick install guide. If you encouter problems while compiling, have a look at our more detailed guides at the FIFEwiki:
 http://wiki.fifengine.de/index.php?title=Linux_compile_guide#Compiling
 
 1) compile the engine
@@ -89,33 +88,17 @@ FIFE 2007.1 (official src release based on FIFE engine SVN rev. ${SVN_CORE_REV} 
 content SVN rev. ${SVN_DATA_REV})
 ==========================
 
-FIXME: needs update here!
-
-Intention of this release:
-==========================
-We've decided to release this little present as two of our coders were
-hard working in the last weeks to get some new fixes and features into
-FIFE. So here we go :-) Please note that there will be no groundbreaking
-new features in this release because we did concentrate on refactoring
-important parts of our codebase.
-
-You can post problems in the help section of our forums:
-http://www.fifengine.de/module-pnForum-viewforum-forum-7.phtml
-
-Thanks for your support.
-
 Important changes since last version
 ==========================
-* Manipulate mapview by removing objects and critters (they get restored
-  at elevation change)
-* New stylish console (yeah!)
-* Load maps & make screenshots via console
-* New guichan widgets
-* Scriptable LUA gui (see guitest and content/scrips)
-* Better code documentation
-* Taking screenshots
-* New renderbackend approach
-* A LOT of fixes :-)
+* Fixed DAT1 decoding code (bug was introduced with the DAT1 rewrite)
+* Major map model classes have been exported to Lua and are now accessable via the console
+* Map size dependant, configurable geometries 
+* Colorkeying for the SDL renderer
+* Stable custom XML map format for FIFE :-)
+* Add custom VFS sources via vfs.addSource (see content/etc/vfs_sources.txt)
+* Increased startup speed with FO2 DAT files
+* Enhanced camera with support for multiple viewports (see content/scripts/demos/map_control.lua)
+* Built against SDL_image 1.2.5 and guichan 0.61 now
 ==========================
 
 For a complete changelog visit:
@@ -125,28 +108,30 @@ What works:
 ==========================
 * Loading Fallout 1 .dat archives
 * Loading Fallout 2 .dat archives
-* Override .dat files by using unpacked local files (first useful
-  'modding' feature)
+* Override .dat files by using unpacked local files (first useful 'modding' feature)
 * Load Fallout 1 .map files
 * Load Fallout 2 .map files
 * Choose resolutions from 640 * 480 up to 1920 * 1440
-* Choose between SDL software rendering and OpenGL hardware accelerated
-  render backends
+* Choose between SDL software rendering and OpenGL hardware accelerated render backends
 * Play your favourite song as .ogg or .acm background music
 * Map scrolling with the arrow keys
 * Cycle through map elevations (-> e)
 * Toggle roof tiles on / off (-> r)
 * Toggle objects on / off (-> o)
-* Increase (-> s) and decrease (-> x) the degree of alphablending for
-  roof tiles
-* Increase (-> a) and decrease (-> y) the degree of alphablending
-  for objects
+* Increase (-> s) and decrease (-> x) the degree of alphablending for roof tiles
+* Increase (-> a) and decrease (-> y) the degree of alphablending for objects
 * Taking screenshots (-> p)
 * Ingame console for tweaking and testing (-> F10)
-* Tile and object grids (use "t" and "g" to toggle them off / on) if
-  you use the guimap_test binary
+* Tile and object grids (use "t" and "g" to toggle them off / on) if you use the guimap_test binary
 * Critter animations
 * Palette animations for Fallout .pal files (animated tiles & objects)
+* Manipulate mapview by removing objects and critters (they get restored at elevation change)
+* New stylish console (yeah!)
+* Load maps & make screenshots via console
+* New guichan widgets
+* Scriptable LUA gui (see guitest and content/scrips)
+* Better code documentation
+* Taking screenshots
 
 
 What does not work:
@@ -167,7 +152,7 @@ Working with Fallout 1 maps:
 * Copy the "master.dat" & "critter.dat" from your Fallout 1 install to
   your FIFE install directory
 * Launch FIFE via:
-  ./guimap_test content/scripts/demos/load_fo1_maps.lua
+	./guimap_test content/scripts/demos/load_fo1_maps.lua
 
 
 Working with Fallout 2 maps:
@@ -175,39 +160,32 @@ Working with Fallout 2 maps:
 * Copy the "master.dat" & "critter.dat" from your Fallout 2 install to
   your FIFE install directory
 * Launch FIFE via:
-  ./guimap_test content/scripts/demos/load_fo2_maps.lua
+	./guimap_test content/scripts/demos/load_fo2_maps.lua
 
 
 Working with custom (XML) maps:
 ==========================
-FIFE supports a (temporary) own map format so you can test the engine
-without having one of the Fallout games installed. The used graphics
-for these new maps are released under GPL and are just temporary
-versions. Feel free to provide us your gfx skills so we can create a
-high quality free FIFE map that will be featured in one of the next
-releases. You can add Fallout maps you created yourself to the list by
-editing /FIFE_dir/content/etc/maps_custom.txt.
+FIFE supports a stable own map format now so you can test the engine without having one of the Fallout games installed. The used graphics for these new maps are released under GPL and are just temporary versions. Feel free to provide us your gfx skills so we can create a high quality free FIFE map that will be featured in one of the next releases. You can add Fallout maps you created yourself to the list by editing /FIFE_dir/content/etc/maps_custom.txt.
 
 * Launch FIFE via:
- ./guimap_test content/scripts/demos/load_custom_maps.lua
+	./guimap_test content/scripts/demos/load_custom_maps.lua
+
+FIXME: Update before 2007.1 gets released
+Caution: currently only chess.xml and scratch.xml are up to date and working with the latest code. A more full-featured XML map will (hopefully) come with the final 2007.1 release.
 
 
 Loading maps via the maploader interface:
 ==========================
-Make sure that you've launched FIFE via 
- ./guimap_test content/scripts/demos/load_custom_maps.lua
-Select the map you want to view from the dropdown menu and load it. 
-Take screenshots (via the "p"-key) or do whatever you want. If you want to 
-load the new map press F10, and click on the "Tools" button in the
-console. You can load another map via the maploader interface now.
+Make sure that you've launched FIFE via:
+	./guimap_test content/scripts/demos/load_custom_maps.lua
+
+Select the map you want to view from the dropdown menu and load it.  Take screenshots (via the "p"-key) or do whatever you want. If you want to load the new map press F10, and click on the "Tools" button in the console. You can load another map via the maploader interface now.
 
 
 FIFE searching for new members:
 ==========================
-Last but not not least FIFE is always searching for new members that
-want to support the project by contributing. If you think that FIFE is
-worth being supported you visit the following page to get an overview
-over the free positions on the team:
+Last but not not least FIFE is always searching for new members that want to support the project by contributing. If you think that FIFE is
+worth being supported you visit the following page to get an overview over the free positions on the team:
 http://wiki.fifengine.de/index.php?title=Help_wanted
 
 You can contact the FIFE team @ fife-public@lists.sourceforge.net
