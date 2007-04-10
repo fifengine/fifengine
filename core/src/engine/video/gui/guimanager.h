@@ -112,6 +112,12 @@ namespace FIFE {
 			 */
 			void setGlobalFont(gcn::Font* font);
 
+			/** Gets default fotn
+			 *
+			 * @return Default font.
+			 */
+			gcn::Font* getDefaultFont() { return m_font; };
+
 		private:
 			// The Guichan GUI.
 			gcn::Gui* m_gcn_gui;

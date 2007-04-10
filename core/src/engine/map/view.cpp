@@ -34,6 +34,7 @@
 #include "video/animation.h"
 #include "video/renderable.h"
 #include "video/screen.h"
+#include "video/gui/guimanager.h"
 #include "debugutils.h"
 #include "exception.h"
 #include "imagecache.h"
@@ -58,8 +59,9 @@ namespace FIFE { namespace map {
 		m_rect(),
 		m_elevation(),
 		m_layer_pos(-1),
-		m_viewcoordinfo("0.0"),
-		m_objcoordinfo("0.0") {
+		m_tilecoordinfo("TILE: 0.0"),
+		m_objcoordinfo("OBJ: 0.0"),
+		m_coordinfo(false) {
 		// Quick hack for getting the masks.
 		// msef003.frm >> hex outline
 		// msef000.frm >> hex outline
@@ -319,7 +321,10 @@ namespace FIFE { namespace map {
 				++visual_it;
 			}
 		}
-		m_surface->drawText(m_viewcoordinfo + " - " + m_objcoordinfo , 0, 0);
+		if (m_coordinfo) {
+			m_surface->setFont(GUIManager::instance()->getDefaultFont());
+			m_surface->drawText(m_tilecoordinfo + " - " + m_objcoordinfo , 0, 0);
+		}
 		m_surface->popClipArea();
 	}
 
@@ -358,15 +363,14 @@ namespace FIFE { namespace map {
 		}
 
 		std::stringstream ss;
-		std::string txt;
 		if( m_elevation->getNumLayers() > 1 ) {
 			if( button == 3 ) {
 				LayerPtr layer = m_elevation->getLayer(0);
 				Geometry *geometry = layer->getGeometry();
 				m_tilemask_pos = geometry->fromScreen(Point(x,y) + m_offset);
 				Log("mapview") << "Selected tile Layer: " << m_tilemask_pos;
-				ss << m_tilemask_pos.x << "." << m_tilemask_pos.y;
-				ss >> m_viewcoordinfo;
+				ss << "TILE: " << m_tilemask_pos.x << "." << m_tilemask_pos.y;
+				m_tilecoordinfo = ss.str();
 
 			} else {
 				LayerPtr layer = m_elevation->getLayer(1);
@@ -375,9 +379,9 @@ namespace FIFE { namespace map {
 				// A rounding problem in map/defaultobjectgeometry.cpp ???
 				// Seems to work correctly for mouse selection, though -phoku
 				m_layer_pos = geometry->fromScreen(Point(x,y) + m_offset - Point(48,16));
-				ss << m_layer_pos.x << "." << m_layer_pos.y;
-				ss >> m_objcoordinfo;
 				Log("mapview") << "Selected object layer: " << m_layer_pos;
+				ss << "OBJ: " << m_layer_pos.x << "." << m_layer_pos.y;
+				m_objcoordinfo = ss.str();
 			}
 		}
 
@@ -409,6 +413,11 @@ namespace FIFE { namespace map {
 		m_map.reset();
 		m_elevation.reset();
 	}
+
+	void View::toggleCoordInfoEnabled() {
+		m_coordinfo = !m_coordinfo;
+	}
+
 
 } } //FIFE::map
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

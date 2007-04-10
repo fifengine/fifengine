@@ -168,6 +168,11 @@ namespace FIFE { namespace map {
 				if(obj_grid)
 					obj_grid->toggleGridOverlayEnabled();
 				break;
+			
+			case FIFE::Event::TEST_TOGGLE_COORDS:
+				if (m_view)
+					m_view->toggleCoordInfoEnabled();
+				break;
 
 			case FIFE::Event::TEST_INCREASE_ALPHA:
 				if(roof_grid)

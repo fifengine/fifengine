@@ -57,22 +57,23 @@ namespace FIFE {
 				GO_SOUTH_EAST = 7,
 				GO_SOUTH_WEST = 8,
 				// Test toggles for the MapViewGameState.
-				TEST_TOGGLE_OBJECTS   = 9,
-				TEST_TOGGLE_FLOOR     = 10,
-				TEST_TOGGLE_ROOF      = 11,
-				TEST_TOGGLE_TILE_GRID = 12,
-				TEST_TOGGLE_OBJ_GRID  = 13,
-				TEST_CHANGE_ELEVATION = 14,
-				TEST_INCREASE_ALPHA   = 15,
-				TEST_DECREASE_ALPHA   = 16,
+				TEST_TOGGLE_OBJECTS   = 201,
+				TEST_TOGGLE_FLOOR     = 202,
+				TEST_TOGGLE_ROOF      = 203,
+				TEST_TOGGLE_TILE_GRID = 204,
+				TEST_TOGGLE_OBJ_GRID  = 205,
+				TEST_CHANGE_ELEVATION = 206,
+				TEST_INCREASE_ALPHA   = 207,
+				TEST_DECREASE_ALPHA   = 208,
+				TEST_TOGGLE_COORDS    = 209,
 				// Used by Engine.
-				MAKE_SCREENSHOT = 17,
-				QUIT_GAME       = 18,
+				MAKE_SCREENSHOT = 401,
+				QUIT_GAME       = 402,
 				// These are just examples.
-				QUIT_MAP = 19,
-				GUI_TOGGLE_CONSOLE = 20,
+				QUIT_MAP = 601,
+				GUI_TOGGLE_CONSOLE = 602,
 				// Another sentinel. Keep the value correct, although it is not used atm.
-				NR_OF_EVENTS = 21
+				NR_OF_EVENTS = 22
 			};
 
 		// Not Used. Are they NEEDED?		

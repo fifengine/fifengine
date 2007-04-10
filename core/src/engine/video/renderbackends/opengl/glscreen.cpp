@@ -48,14 +48,34 @@ namespace FIFE {
 
 	struct GLEnable {
 		GLenum m_flag;
-		GLEnable(GLenum flag) : m_flag(flag) { glEnable(flag); }
-		~GLEnable() { glDisable(m_flag); }
+		GLboolean m_oldval;
+		GLEnable(GLenum flag) : m_flag(flag) { 
+			glGetBooleanv(flag, &m_oldval);
+			if (!m_oldval) {
+				glEnable(flag);
+			}
+		}
+		~GLEnable() { 
+			if (!m_oldval) {
+				glDisable(m_flag);
+			}
+		}
 	};
 
 	struct GLDisable {
 		GLenum m_flag;
-		GLDisable(GLenum flag) : m_flag(flag) { glDisable(flag); }
-		~GLDisable() { glEnable(m_flag); }
+		GLboolean m_oldval;
+		GLDisable(GLenum flag) : m_flag(flag) { 
+			glGetBooleanv(flag, &m_oldval);
+			if (m_oldval) {
+				glDisable(flag);
+			}
+		}
+		~GLDisable() { 
+			if (m_oldval) {
+				glEnable(m_flag);
+			}
+		}
 	};
 
 
