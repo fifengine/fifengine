@@ -89,23 +89,23 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 	}
 
 	void XMLArchetype::loadArchetypes(TiXmlElement* e) {
-		assert( e );
+		assert(e);
 		e = e->FirstChildElement("archetype");
-		while( e ) {
-			// Subtle difference to
-			// XML::loadArchetypes  -- no embedded ATs
+		while (e) {
 			const char* type = e->Attribute("type");
-			const char* file = e->Attribute("source");
+			const char* source = e->Attribute("source");
 
-			if( type == 0 ) {
+			if (!type) {
 				throw InvalidFormat("no type attribute on <archetype>");
 			}
 
-			if( file == 0 ) {
-				throw InvalidFormat("no file attribute on <archetype>");
+			if (!source) {
+				XMLArchetype* xmlat = new XMLArchetype(e);	
+				Factory::instance()->addArchetype(xmlat);
+			} else {
+				Factory::instance()->loadArchetype(type, source);
 			}
-			
-			Factory::instance()->loadArchetype(type,file);
+
 			e = e->NextSiblingElement("archetype");
 		}
 	}

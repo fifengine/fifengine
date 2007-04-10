@@ -226,26 +226,26 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 	}
 
-	void XML::loadArchetypes(TiXmlElement* el1) {
-		el1 = el1->FirstChildElement("archetype");
-		while(el1) {
-			const char* type = el1->Attribute("type");
-			const char* file = el1->Attribute("source");
+	void XML::loadArchetypes(TiXmlElement* e) {
+		assert(e);
+		e = e->FirstChildElement("archetype");
+		while (e) {
+			const char* type = e->Attribute("type");
+			const char* source = e->Attribute("source");
 
-			if( type == 0 ) {
+			if (!type) {
 				throw InvalidFormat("no type attribute on <archetype>");
 			}
 
-			if( file == 0 ) {
-				XMLArchetype* xmlat = new XMLArchetype(el1);	
+			if (!source) {
+				XMLArchetype* xmlat = new XMLArchetype(e);	
 				Factory::instance()->addArchetype(xmlat);
 			} else {
-				Factory::instance()->loadArchetype(type,file);
+				Factory::instance()->loadArchetype(type, source);
 			}
 
-			el1 = el1->NextSiblingElement("archetype");
+			e = e->NextSiblingElement("archetype");
 		}
-
 	}
 
 	void XML::loadElevation(TiXmlElement* el) {
