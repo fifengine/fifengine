@@ -154,6 +154,10 @@ namespace FIFE { namespace map {
 			 */
 			void loadOverlayImage(const std::string& filename);
 
+			/** Toggles coordinate info from upper left corner
+			 */
+			void toggleCoordInfoEnabled();
+
 			//////////////  NEW INTERFACE ///////////////////////
 
 			size_t addVisual( Visual* visual );
@@ -193,8 +197,10 @@ namespace FIFE { namespace map {
 			/// Images for grid overlay 
 			size_t m_layer_id;
 			size_t m_tilemask;
-
-			std::string m_viewcoordinfo;
+			
+			/// Coordinate information shown on screen
+			bool m_coordinfo;
+			std::string m_tilecoordinfo;
 			std::string m_objcoordinfo;
 
 
