@@ -194,6 +194,9 @@ namespace FIFE { namespace map {
 			size_t m_layer_id;
 			size_t m_tilemask;
 
+			std::string m_viewcoordinfo;
+			std::string m_objcoordinfo;
+
 
 			void renderTiles(LayerPtr layer);
 			void renderGridOverlay(LayerPtr grid);

@@ -57,7 +57,9 @@ namespace FIFE { namespace map {
 		m_surface(0),
 		m_rect(),
 		m_elevation(),
-		m_layer_pos(-1) {
+		m_layer_pos(-1),
+		m_viewcoordinfo("0.0"),
+		m_objcoordinfo("0.0") {
 		// Quick hack for getting the masks.
 		// msef003.frm >> hex outline
 		// msef000.frm >> hex outline
@@ -317,7 +319,7 @@ namespace FIFE { namespace map {
 				++visual_it;
 			}
 		}
-
+		m_surface->drawText(m_viewcoordinfo + " - " + m_objcoordinfo , 0, 0);
 		m_surface->popClipArea();
 	}
 
@@ -355,12 +357,17 @@ namespace FIFE { namespace map {
 			return;
 		}
 
+		std::stringstream ss;
+		std::string txt;
 		if( m_elevation->getNumLayers() > 1 ) {
 			if( button == 3 ) {
 				LayerPtr layer = m_elevation->getLayer(0);
 				Geometry *geometry = layer->getGeometry();
 				m_tilemask_pos = geometry->fromScreen(Point(x,y) + m_offset);
 				Log("mapview") << "Selected tile Layer: " << m_tilemask_pos;
+				ss << m_tilemask_pos.x << "." << m_tilemask_pos.y;
+				ss >> m_viewcoordinfo;
+
 			} else {
 				LayerPtr layer = m_elevation->getLayer(1);
 				Geometry *geometry = layer->getGeometry();
@@ -368,6 +375,8 @@ namespace FIFE { namespace map {
 				// A rounding problem in map/defaultobjectgeometry.cpp ???
 				// Seems to work correctly for mouse selection, though -phoku
 				m_layer_pos = geometry->fromScreen(Point(x,y) + m_offset - Point(48,16));
+				ss << m_layer_pos.x << "." << m_layer_pos.y;
+				ss >> m_objcoordinfo;
 				Log("mapview") << "Selected object layer: " << m_layer_pos;
 			}
 		}
