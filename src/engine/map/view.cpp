@@ -191,9 +191,10 @@ namespace FIFE { namespace map {
 		starty = std::max(0,starty);
 		stopy = std::min(size.y,stopy);
 
-		Point basesize = geometry->baseSize();
 		size_t image_id = getGridOverlayImageId( layer );
 		RenderAble* renderable = ImageCache::instance()->getImage( image_id );
+		int targetw = renderable->getWidth();
+		int targeth = renderable->getHeight();
 
 		offset.x -= m_rect.x;
 		offset.y -= m_rect.y;
@@ -202,7 +203,7 @@ namespace FIFE { namespace map {
 		for (index.y = starty; index.y < stopy; ++index.y) {
 			for (index.x = startx; index.x < stopx; ++index.x) {
 				Point pos = geometry->toScreen(index) - offset;
-				Rect target(pos.x,pos.y,basesize.x,basesize.y);
+				Rect target(pos.x,pos.y,targetw,targeth);
 				renderable->render(target,m_surface);
 			}
 		}
@@ -230,15 +231,14 @@ namespace FIFE { namespace map {
 		offset.x -= m_rect.x;
 		offset.y -= m_rect.y;
 
-		Point basesize = geometry->baseSize();
 		uint8_t alpha = layer->getGlobalAlpha();
 		Point index;
 		for (index.y = starty; index.y < stopy; ++index.y) {
 			for (index.x = startx; index.x < stopx; ++index.x) {
 				Point pos = geometry->toScreen(index) - offset;
-				Rect target(pos.x,pos.y,basesize.x,basesize.y);
 				size_t id = layer->getTileImage(index);
 				RenderAble* renderable = ImageCache::instance()->getImage(id);
+				Rect target(pos.x,pos.y,renderable->getWidth(),renderable->getHeight());
 				renderable->render(target,m_surface,alpha);
 			}
 		}
@@ -253,9 +253,8 @@ namespace FIFE { namespace map {
 
 		RenderAble* image = ImageCache::instance()->getImage( image_id );
 
-		Point basesize = geometry->baseSize();
 		Point spos = geometry->toScreen(pos) - m_offset - overlay_offset;
-		Rect target(spos.x,spos.y,basesize.x,basesize.y);
+		Rect target(spos.x,spos.y,image->getWidth(),image->getHeight());
 		image->render(target,m_surface);
 	}
 

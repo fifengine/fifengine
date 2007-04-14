@@ -198,6 +198,8 @@ namespace FIFE {
 		SDL_Rect r;
 		r.x = rect.x;
 		r.y = rect.y;
+		r.w = rect.w;
+		r.h = rect.h;
 		
 		if (m_surface->format->Amask == 0) {
 			// Image has no alpha channel. This allows us to use the per-surface alpha.
