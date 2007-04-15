@@ -4,7 +4,6 @@ sconscripts = []
 if env['lite'] == 0:
 	sconscripts  += [
 		'engine/SConscript',
-		'mapview_test/SConscript',
 		'guimap_test/SConscript',
 	]
 
