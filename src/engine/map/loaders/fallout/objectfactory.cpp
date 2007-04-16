@@ -383,7 +383,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 		} else {
 			// XML Critter path.
-			path = SettingsManager::instance()->read<std::string>("XMLCrittersBaseDirectory","content/gfx/critters/");
+			path = SettingsManager::instance()->read<std::string>("XMLCrittersBaseDirectory","content/animations/critters/fallout/");
 			path += lst.getProFile(idx);
 			path += ".xml";
 			obj->setVisualLocation( RenderableLocation(RenderAble::RT_COMPLEX_ANIMATION, path) );
