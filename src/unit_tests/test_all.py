@@ -24,3 +24,6 @@ if failed:
     print '\n===== Failed Tests ====='
     for prog in failed:
         print prog
+else:
+	print '\n========================'
+	print 'All unit tests run without failure\n'
