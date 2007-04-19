@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <string>
 #include <vector>
+#include <map>
 
 // Platform specific includes
 #include "util/fife_stdint.h"
@@ -36,6 +37,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
+
+#include "coloroverride.h"
 
 namespace FIFE { 
 	class RawData;
@@ -170,6 +173,17 @@ namespace map { namespace loaders { namespace fallout {
 			 *
 			 */
 			RenderAble* transferImgToSurface(uint8_t* data, uint16_t w, uint16_t h);
+			
+			/**
+			 * The specific ColorOverride for the FRM file or the default ColorOverride
+			 * if no specific overrides.
+			 */
+			const ColorOverride* m_override;
+			
+			// determines if the override colors have been loaded
+			static bool loaded_overrides;
+			// holds all the ColorOverride objects for all FRMs
+			static ColorOverride::OverrideMap overrides;
 	};
 
 } } } }

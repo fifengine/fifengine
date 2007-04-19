@@ -57,13 +57,26 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		m_shifts_x(FRM_MAX_FRAME_CT),
 		m_shifts_y(FRM_MAX_FRAME_CT),
 		m_offsets(FRM_MAX_FRAME_CT),
-		m_frame_info(FRM_MAX_FRAME_CT) {
+		m_frame_info(FRM_MAX_FRAME_CT),
+		m_override(&ColorOverride::EMPTY_OVERRIDE) {
 
 		init();
 		load();
 	}
 
 	void FRM::init() {
+		// This isn't very nice, but there's no single static place to load
+		// the overrides. Load it here, buy only once.
+		if (!loaded_overrides) {
+			loaded_overrides = true;
+			ColorOverride::load("content/gfx/fallout_overrides.xml", overrides);
+		}
+		
+		ColorOverride::OverrideMap::iterator i = overrides.find(m_file);
+		if (i != overrides.end()) {
+			m_override = &i->second;
+		}
+				
 		m_light_level = SettingsManager::instance()->read<int>("LightingLevel", 4);
 		if (m_light_level < 1) {
 			m_light_level = 1;
@@ -208,11 +221,11 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	  The returned surface's format will be RGBA if withAlphaChannel is true,
 	  or 8-bit indexed surface if withAlphaChannel is false.
 	*/
-	SDL_Surface* createSDLSurface(uint8_t* data, uint16_t width, uint16_t height, const AnimatedPalette* palette, bool withAlphaChannel) 
+	SDL_Surface* createSDLSurface(uint8_t* data, uint16_t width, uint16_t height, const AnimatedPalette* palette, const ColorOverride* override) 
 	{
 		SDL_Surface* image = 0;
 		
-		if (withAlphaChannel) {			
+		if (!override->areAllOverridesOpaque()) {			
 			image = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
 			if (image == 0) {
 				return 0;
@@ -223,25 +236,21 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			int wastedspace = image->pitch - image->format->BytesPerPixel * width;
 			uint8_t* from = data;
 			uint32_t* pixeldata = static_cast<uint32_t*>(image->pixels);
+			
+			RGBA rgba;
 						
 			for (int y = 0; y < height; ++y) {
 				for (int x = 0; x < width; ++x) {
 					uint8_t index = *(from++);
-					if (index == 0) {
-						*pixeldata = 0x00000000;
-					} else {
-						uint8_t alpha = 0xff;
-						if( index == 108 ) { // 108 is the transparent window pixel index
-							alpha = 0x80;
-						}
-	/** @todo: find solution: 13 should be yellow/red and transparent only for specific objects.
-						else
-						if( 13 == index ) {	///< 13 is transparent force-field
-							alpha = 0x80;
-						}
-	*/
-						*pixeldata = (palette->getRed(index) << 24) | (palette->getGreen(index) << 16) | (palette->getBlue(index) << 8) | alpha;
-					}
+
+					rgba.r = palette->getRed(index);
+					rgba.g = palette->getGreen(index);
+					rgba.b = palette->getBlue(index);
+					rgba.a = (index == 0) ? 0 : 255;
+
+					override->getOverride(index, rgba);					
+					*pixeldata = (rgba.r << 24) | (rgba.g << 16) | (rgba.b << 8) | rgba.a;
+					
 					++pixeldata;
 				}
 				pixeldata += wastedspace;
@@ -252,10 +261,19 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		
 			// Create an SDL palette palette
 			SDL_Color colors[256];
+			
 			for (int i = 0; i < 256; i++) {
-				colors[i].r = palette->getRed(i);
-				colors[i].g = palette->getGreen(i);
-				colors[i].b = palette->getBlue(i);
+				RGBA rgba;
+				rgba.r = palette->getRed(i);
+				rgba.g = palette->getGreen(i);
+				rgba.b = palette->getBlue(i);
+				rgba.a = 255;
+
+				override->getOverride(i, rgba);
+				
+				colors[i].r = rgba.r;
+				colors[i].g = rgba.g;
+				colors[i].b = rgba.b;
 			}
 		
 			// create 8-bit palette surface
@@ -294,19 +312,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	
 
 	RenderAble* FRM::transferImgToSurface(uint8_t* data, uint16_t width, uint16_t height) {
-		/*
-			Must loop over the pixels to find special pixels. For readability, this is done 
-			in two seperate steps.
-			1) Look for pixels with the value #108 which should be transparent.
-			2) Look for pixels whose color is meant to be animated.
-		*/
-		bool convertToAlpha = false;
 		int size = width * height;
-		uint8_t* end = data + size;
-		if (end != std::find(data, end, 108)) {
-			// found a partial transparent pixel. Use alpha channel.
-			convertToAlpha = true;
-		}
 		
 		// Check for animated pixels. Can only animate one set of pixels right now. Do not animate
 		// if more sets are found.
@@ -328,7 +334,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				
 		if (block == 0) {
 			// No animation. Create one image.
-			SDL_Surface* image = createSDLSurface(data, width, height, m_palette, convertToAlpha);
+			SDL_Surface* image = createSDLSurface(data, width, height, m_palette, m_override);
 			if (image != 0) {
 				return CRenderBackend()->createStaticImageFromSDL(image);
 			}
@@ -346,7 +352,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			for(int i = 0; i < block->getNumFrames(); ++i) {			
 				m_palette->setCurrentFrame(i);
 
-				SDL_Surface* image = createSDLSurface(data, width, height, m_palette, convertToAlpha);
+				SDL_Surface* image = createSDLSurface(data, width, height, m_palette, m_override);
 				Image* createdImage = 0;
 				if (image != 0) {
 					createdImage = CRenderBackend()->createStaticImageFromSDL(image);
@@ -376,5 +382,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	uint32_t FRM::getNumFrames() const {
 		return m_frames_per_direction;
 	}
+	
+	bool FRM::loaded_overrides = false;
+	std::map<std::string, ColorOverride> FRM::overrides;
 
 } } } }
