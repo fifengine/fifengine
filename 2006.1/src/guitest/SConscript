@@ -1,0 +1,13 @@
+import glob
+
+Import('env')
+
+env = env.Copy()
+env.Append(CPPPATH = ['#src/engine','#src/guichan_addon'])
+env.Append(LIBS = ['fife'])
+env.Append(LIBPATH = ['#src/engine','#src/guichan_addon'])
+
+files = glob.glob('*.cpp')
+env.Program('guitest', files)
+
+# vim: set filetype=python :

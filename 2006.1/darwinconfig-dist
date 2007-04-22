@@ -1,0 +1,11 @@
+env_sdl.Append(LINKFLAGS = '-framework OpenAL -framework Cocoa -framework CoreFoundation')
+env_sdl.ParseConfig('sdl-config --cflags --libs')
+env_sdl.Append(LIBS = ['-lSDL_ttf', '-lvorbisfile', '-lSDL_console', '-llua', '-llualib', '-lz', '-lguichan', '-lguichan_sdl'])
+gl_link = '-framework OpenGL -lguichan_opengl'
+include_dirs = ['-I/opt/local/include', '-I/usr/local/include', '-I/sw/include']
+default_flags += include_dirs
+
+#XXX Dodgy hack to use the include subdirectories
+for d in include_dirs:
+    if d.startswith('-I'):
+        default_flags += [d+'/SDL_console', d+'/vorbis']

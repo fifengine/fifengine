@@ -1,0 +1,22 @@
+Import('env')
+
+sconscripts = []
+if env['lite'] == 0:
+	sconscripts  += [
+		'engine/SConscript',
+		'mapview_test/SConscript',
+		'guimap_test/SConscript',
+            	'writetest/SConscript',
+	]
+
+if env['testcases'] == 1:
+	sconscripts.append('unit_tests/SConscript')
+
+
+if env['lite'] == 1:
+	sconscripts = [
+		'engine/SConscript'
+	]
+
+SConscript(sconscripts)
+# vim: set filetype=python :

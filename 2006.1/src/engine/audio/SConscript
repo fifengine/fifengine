@@ -1,0 +1,15 @@
+
+Import('env')
+
+if env['audio']==0:
+	objs = env.Object('devnull/audiomanager.cpp')
+	env.Append(CPPPATH = ['#src/engine/audio/devnull'])
+else:
+	objs = [ env.Object('openal/audiomanager.cpp'), env.Object('openal/audiodecoder.cpp'),
+	         env.Object('openal/audiodecoder_acm.cpp'), env.Object('openal/audiodecoder_oggvorbis.cpp'),
+	         env.Object('openal/audiosource.cpp'), env.Object('openal/audiobuffer.cpp') ]
+	env.Append(CPPPATH = ['#src/engine/audio/openal'])
+	
+Return('objs')
+
+# vim: set filetype=python :

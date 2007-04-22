@@ -1,0 +1,61 @@
+import glob
+import dircache
+import os
+
+DIR_MAPLOADERS = 'maploaders/'
+
+
+maploader_files = []
+maploader_includes = []
+
+luascript_files = []
+swig_files = []
+util_files = []
+
+for entry in dircache.listdir(DIR_MAPLOADERS):
+
+	if entry.startswith('.'):
+		continue
+	if entry == 'xmlmap':
+		if ARGUMENTS.get('xmlmap', 'no') == 'no':
+			continue
+
+	if os.path.isdir(DIR_MAPLOADERS + entry):	
+		path = DIR_MAPLOADERS + entry
+		maploader_files += glob.glob(path + '/*.cpp')
+		maploader_includes.append(path)
+		print('found maploader ' + entry)
+
+Import('env')
+
+if ARGUMENTS.get('swig', 'no') == 'yes' or ARGUMENTS.get('swig', 'no') == '1':
+	if os.path.isdir('swig/'):
+		path = 'swig'
+		if env['makeswig'] == 1:
+			for entry in glob.glob(path + '/*.i'):
+				"`swig -lua -c++  ${entry}`" #does this work?
+		swig_files += glob.glob(path + '/*.cxx')
+
+if env['script'] == 'lua':
+	if os.path.isdir('luascript/'):
+		path = 'luascript' 
+		luascript_files += glob.glob(path + '/*.cpp')
+
+if ARGUMENTS.get('xmlmap', 'no') == 'yes' or ARGUMENTS.get('xmlmap', 'no') == '1':
+	if os.path.isdir('tinyxml/'):
+		path = 'tinyxml'
+		util_files += glob.glob(path + '/*.cpp')
+	if os.path.isdir('util/'):
+		util_files += glob.glob('util/*.cpp')
+
+Import('env_sdl')
+env_sdl = env_sdl.Copy()
+env_sdl.Append(CPPPATH = maploader_includes)
+env_sdl.Append(CPPPATH = ['#src/engine', '#src/guichan_addon'])
+env_sdl.Append(LIBS = ['guichanfife'])
+env_sdl.Append(LIBPATH = ['#src/guichan_addon'])
+
+files = glob.glob('*.cpp') + maploader_files + util_files + luascript_files + swig_files
+env_sdl.StaticLibrary('fife', files)
+
+# vim: set filetype=python :

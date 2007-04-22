@@ -1,0 +1,22 @@
+Import('env')
+
+if env['script'] == 'lua':
+	objlist = [ env.Object('lg_button.cpp'), env.Object('lg_color.cpp'), 
+            env.Object('lg_container.cpp'), env.Object('lg_icon.cpp'),
+            env.Object('lg_image.cpp'), env.Object('lg_label.cpp'),
+            env.Object('lg_textfield.cpp'), env.Object('lg_twobutton.cpp'),
+            env.Object('lg_widget.cpp'), env.Object('lua_audiomanager.cpp'),
+            env.Object('lua_gamestatemanager.cpp'), env.Object('lua_gui_actionlistener.cpp'),
+            env.Object('lua_guimanager.cpp'), env.Object('lua_mapview.cpp'),
+            env.Object('lua_inputmanager.cpp'), env.Object('lg_listmodel.cpp'),
+            env.Object('lua_object.cpp'), env.Object('luascript.cpp'),
+            env.Object('lg_ttfont.cpp'), env.Object('lg_checkbox.cpp'), 
+            env.Object('lg_scrollarea.cpp'), env.Object('lg_textbox.cpp'),
+            env.Object('lg_listbox.cpp'), env.Object('lg_dropdown.cpp'),
+            env.Object('lg_radiobutton.cpp'), env.Object('lg_slider.cpp'),
+            env.Object('lg_window.cpp'), env.Object('lg_clicklabel.cpp'),
+            env.Object('lua_stackguard.cpp') ]
+else:
+	objlist = []
+
+Return('objlist')

@@ -1,0 +1,18 @@
+import glob
+import sys
+
+Import('env')
+
+env = env.Copy()
+env.Append(CPPPATH = ['#src/engine'])
+env.Append(LIBS = ['fife'])
+env.Append(LIBPATH = ['#src/engine'])
+
+if sys.platform == 'darwin':
+	env.Object('SDLMain.m')
+files = glob.glob('*.cpp')
+if sys.platform == 'darwin':
+	files.append('SDLMain.o')
+env.Program('guimap_test', files)
+
+# vim: set filetype=python :

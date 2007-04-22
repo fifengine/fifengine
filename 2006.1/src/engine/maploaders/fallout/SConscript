@@ -1,0 +1,16 @@
+Import('env')
+
+FILESLIST = [ 'lzssdecoder.cpp', 'mffalloutdat1.cpp', 'mffalloutheader.cpp',
+       'mffalloutpal.cpp', 'mffalloutrawdatadat1.cpp', 'mffallout.cpp',
+       'mffalloutdat2.cpp', 'mffalloutlst.cpp', 'mffalloutproviderdat1.cpp',
+       'mffalloutrawdatadat2.cpp', 'mffalloutcritlst.cpp', 'mffalloutfrm.cpp',
+       'mffalloutobjectfactory.cpp', 'mffalloutproviderdat2.cpp', 'palutil.cpp' ]
+
+objlist = []
+
+for file in FILESLIST:
+	objlist += env.Object(file)
+
+Return('objlist')
+
+# vim: set filetype=python :

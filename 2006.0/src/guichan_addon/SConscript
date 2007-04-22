@@ -1,0 +1,13 @@
+import glob
+
+Import('env_sdl')
+
+env = env_sdl.Copy()
+env.Append(CPPPATH = ['#src/engine'])
+env.Append(LIBS = ['fife'])
+env.Append(LIBPATH = ['#src/engine'])
+
+files = glob.glob('*.cpp')
+env.StaticLibrary('guichanfife', files)
+
+# vim: set filetype=python :
