@@ -164,6 +164,13 @@ void geo_directionToScreen_props() {
 
 	for(size_t pi = 0; pi != points.size(); ++pi) {
 		for(size_t di = 0; di != n_dirs; ++di) {
+			// Ignore negative coords for now
+			// These do not work since the toScreen function
+			// for hex geometry do not work correctly in that case.
+			if( points[pi].x <= 0 || points[pi].y <= 0 ) {
+				continue;
+			}
+
 			Point a = geometry->directionToScreen(di);
 			Point b = geometry->toScreen(points[pi] + geometry->directionToGrid(di,points[pi]))
 				- geometry->toScreen(points[pi]);
