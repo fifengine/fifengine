@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
 		mapview->getMap(); // just to suppress the 'unused variable warning'
 
 		// Play music in the background
-		FIFE::audio::Manager::instance()->setAmbientSound(settings->read<std::string>("BackgroundMusic", "music.ogg"));
+		FIFE::audio::Manager::instance()->setAmbientSound(settings->read<std::string>("BackgroundMusic", "content/audio/music/maybe.ogg"));
 
 	} catch (const FIFE::Exception& exception) {
 		std::cerr << "fife:exception during startup: " << exception.getMessage() << std::endl;
