@@ -11,7 +11,7 @@ env.Append(LIBPATH = ['#src/engine'])
 # Check it, if you change something here
 env.Program('test_settingsmanager', ['test_settingsmanager.cpp'])
 env.Program('test_rect', ['test_rect.cpp'])
-#env.Program('test_geometry', ['test_geometry.cpp'])
+env.Program('test_geometry', ['test_geometry.cpp'])
 env.Program('test_events', ['test_events.cpp'])
 env.Program('test_objects', ['test_objects.cpp'])
 env.Program('test_map', ['test_map.cpp'])
