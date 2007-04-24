@@ -24,6 +24,7 @@
 // 3rd party library includes
 #include <guichan.hpp>
 #include <SDL.h>
+#include <boost/algorithm/string.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -66,7 +67,7 @@ namespace FIFE { namespace map {
 	}
 
 	void ViewGameState::setFile(const std::string& map) {
-		m_filename = map;
+		m_filename = boost::trim_copy_if(map, boost::algorithm::is_cntrl());
 	}
 
 	void ViewGameState::activate() {
