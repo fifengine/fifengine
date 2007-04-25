@@ -28,7 +28,6 @@
 
 // Platform specific includes
 #include "util/fife_stdint.h"
-#include "util/fife_openal.h"
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
@@ -43,6 +42,7 @@
 
 #include "buffer.h"
 #include "source.h"
+#include "fife_openal.h"
 
 namespace FIFE { namespace audio {
 

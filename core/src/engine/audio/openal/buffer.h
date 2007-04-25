@@ -27,7 +27,6 @@
 
 // Platform specific includes
 #include "util/fife_stdint.h"
-#include "util/fife_openal.h"
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
@@ -36,6 +35,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "fife_openal.h"
 
 namespace FIFE { namespace audio {
 	

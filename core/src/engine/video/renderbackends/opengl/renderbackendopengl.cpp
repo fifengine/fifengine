@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "util/fife_opengl.h"
 
 // 3rd party library includes
 #include <guichan/opengl.hpp>
@@ -35,6 +34,7 @@
 #include "debugutils.h"
 #include "exception.h"
 
+#include "fife_opengl.h"
 #include "glimage.h"
 #include "glscreen.h"
 #include "renderbackendopengl.h"

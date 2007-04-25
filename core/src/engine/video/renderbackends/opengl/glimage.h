@@ -27,7 +27,6 @@
 
 // Platform specific includes
 #include "util/fife_stdint.h"
-#include "util/fife_opengl.h"
 
 // 3rd party library includes
 
@@ -36,6 +35,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/image.h"
+
+#include "fife_opengl.h"
 
 namespace FIFE {
 

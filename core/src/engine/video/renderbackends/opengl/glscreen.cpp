@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "util/fife_opengl.h"
 
 // 3rd party library includes
 #include <guichan/opengl.hpp>
@@ -36,6 +35,7 @@
 #include "video/renderable.h"
 #include "imagecache.h"
 
+#include "fife_opengl.h"
 #include "glscreen.h"
 
 #if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6

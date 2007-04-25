@@ -27,7 +27,6 @@
 #include <vector>
 
 // Platform specific includes
-#include "util/fife_openal.h"
 
 // 3rd party library includes
 
@@ -38,6 +37,7 @@
 #include "timeevent.h"
 
 #include "buffer.h"
+#include "fife_openal.h"
 
 namespace FIFE { namespace audio {
 

@@ -27,7 +27,6 @@
 
 // Platform specific includes
 #include "util/fife_stdint.h"
-#include "util/fife_openal.h"
 
 // 3rd party library includes
 
@@ -36,6 +35,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "config.h"
+#include "fife_openal.h"
 
 namespace FIFE { namespace audio {
 
