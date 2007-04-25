@@ -34,15 +34,7 @@ namespace FIFE {
 	Rect::Rect(int x, int y, unsigned int w, unsigned int h) : x(x), y(y), w(w), h(h) {
 	}
 
-	Rect::Rect(const SDL_Rect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {
-	}
-
 	std::ostream& operator<<(std::ostream& os, const Rect& r) {
-		return
-			os << "("<<r.x<<","<<r.y<<")-("<<r.w<<","<<r.h<<")";
-	}
-
-	std::ostream& operator<<(std::ostream& os, const SDL_Rect& r) {
 		return
 			os << "("<<r.x<<","<<r.y<<")-("<<r.w<<","<<r.h<<")";
 	}

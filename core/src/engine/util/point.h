@@ -27,7 +27,7 @@
 #include <iostream>
 
 // Platform specific includes
-#include "util/fife_stdint.h"
+#include "fife_stdint.h"
 
 // 3rd party library includes
 

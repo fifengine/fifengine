@@ -60,7 +60,6 @@
 #include <iostream>
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -97,12 +96,6 @@ namespace FIFE {
 			 * Creates a new Rect with the values defaulting to 0.
 			 */
 			explicit Rect(int x = 0, int y = 0, unsigned int width = 0, unsigned int height = 0);
-
-			/** Constructor.
-			 * 
-			 * Creates a new Rect from a SDL rect
-			 */
-			explicit Rect(const SDL_Rect& rect);
 
 			/** The X coordinate of the right edge.
 			 */
