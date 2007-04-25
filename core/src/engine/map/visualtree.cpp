@@ -34,7 +34,7 @@
 #include "visualtree.h"
 
 #include "log.h"
-#include "video/rect.h"
+#include "util/rect.h"
 
 namespace FIFE { namespace map {
 

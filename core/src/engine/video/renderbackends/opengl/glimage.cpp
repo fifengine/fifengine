@@ -29,7 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/pixelbuffer.h"
-#include "video/rect.h"
+#include "util/rect.h"
 #include "log.h"
 
 #include "glimage.h"

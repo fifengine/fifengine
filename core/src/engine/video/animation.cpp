@@ -36,7 +36,7 @@
 
 #include "animation.h"
 #include "image.h"
-#include "rect.h"
+#include "util/rect.h"
 
 namespace FIFE {
 

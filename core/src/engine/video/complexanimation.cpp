@@ -37,7 +37,7 @@
 #include "animation.h"
 #include "complexanimation.h"
 #include "partialaction.h"
-#include "rect.h"
+#include "util/rect.h"
 
 namespace FIFE {
 

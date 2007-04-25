@@ -35,7 +35,7 @@
 #include "debugutils.h"
 #include "exception.h"
 #include "log.h"
-#include "video/rect.h"
+#include "util/rect.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 

@@ -34,8 +34,8 @@
 // Second block: files included from the same folder
 #include "exception.h"
 #include "tinyxml/tinyxml.h"
-#include "video/point.h"
-#include "video/rect.h"
+#include "point.h"
+#include "rect.h"
 
 namespace FIFE {
 	class AttributedClass;

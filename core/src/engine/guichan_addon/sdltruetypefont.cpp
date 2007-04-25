@@ -84,8 +84,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/rect.h"
 #include "video/image.h"
-#include "video/rect.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "video/screen.h"

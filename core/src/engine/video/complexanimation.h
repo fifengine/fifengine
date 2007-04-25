@@ -40,7 +40,7 @@
 #include "map/action.h"
 #include "timeevent.h"
 
-#include "point.h"
+#include "util/point.h"
 #include "renderable.h"
 
 namespace FIFE {
