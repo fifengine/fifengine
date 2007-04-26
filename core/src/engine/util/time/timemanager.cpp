@@ -31,6 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/debugutils.h"
+
 #include "timeevent.h"
 #include "timemanager.h"
 

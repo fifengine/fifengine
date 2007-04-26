@@ -32,8 +32,8 @@
 #include "input/manager.h"
 #include "video/gui/guimanager.h"
 #include "util/log.h"
-#include "timeevent.h"
-#include "timemanager.h"
+#include "util/time/timeevent.h"
+#include "util/time/timemanager.h"
 
 #include "commandline.h"
 

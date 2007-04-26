@@ -38,7 +38,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/action.h"
-#include "timeevent.h"
+#include "util/time/timeevent.h"
 
 #include "util/point.h"
 #include "renderable.h"

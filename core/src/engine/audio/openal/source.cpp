@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/log.h"
-#include "timemanager.h"
+#include "util/time/timemanager.h"
 
 #include "manager.h"
 #include "source.h"

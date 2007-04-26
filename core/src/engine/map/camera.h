@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 #include "util/rect.h"
-#include "timer.h"
+#include "util/time/timer.h"
 
 namespace FIFE { namespace map {
 

@@ -32,7 +32,7 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
-#include "timemanager.h"
+#include "util/time/timemanager.h"
 
 #include "animation.h"
 #include "image.h"

@@ -36,7 +36,7 @@
 #include "vfs/vfssourcefactory.h"
 #include "vfs/vfs.h"
 #include "util/settingsmanager.h"
-#include "timemanager.h"
+#include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
 #include "map/loaders/fallout/dat2.h"

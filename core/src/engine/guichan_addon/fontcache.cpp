@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "video/image.h"
 #include "util/log.h"
-#include "timemanager.h"
+#include "util/time/timemanager.h"
 
 #include "font.h"
 #include "fontcache.h"

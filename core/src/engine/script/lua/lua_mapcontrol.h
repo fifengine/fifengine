@@ -33,7 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/control.h"
-#include "timer.h"
+#include "util/time/timer.h"
 
 namespace FIFE {
 

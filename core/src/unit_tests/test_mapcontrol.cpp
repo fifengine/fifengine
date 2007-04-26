@@ -34,7 +34,7 @@
 #include "map/control.h"
 #include "map/elevation.h"
 #include "map/layer.h"
-#include "timemanager.h"
+#include "util/time/timemanager.h"
 #include "util/settingsmanager.h"
 #include "engine.h"
 
