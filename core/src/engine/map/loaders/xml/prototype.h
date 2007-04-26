@@ -33,7 +33,7 @@
 #include "util/point.h"
 #include "video/renderable_location.h"
 #include "tinyxml/tinyxml.h"
-#include "attributedclass.h"
+#include "util/attributedclass.h"
 
 namespace FIFE { namespace map { 
 

@@ -38,7 +38,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/point.h"
-#include "attributedclass.h"
+#include "util/attributedclass.h"
 #include "util/exception.h"
 
 #include "objectinfo.h"

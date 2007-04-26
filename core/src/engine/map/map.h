@@ -36,7 +36,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "script/scriptcontainer.h"
-#include "attributedclass.h"
+#include "util/attributedclass.h"
 
 #include "location.h"
 
