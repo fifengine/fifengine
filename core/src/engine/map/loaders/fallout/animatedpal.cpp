@@ -150,8 +150,8 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	
 	uint8_t AnimatedPalette::lightLevelAdjust(uint8_t colorComp) const {
 		// multiply by the light level and cap at 255
-		double factor = 4.0 / m_light_level;
-		return std::min(double(colorComp) / factor, 255.);
+		colorComp = colorComp * m_light_level / 4;
+		return std::min(colorComp, 255);
 	}
 	
 	uint8_t AnimatedPalette::getRed(uint8_t index) const {
