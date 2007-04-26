@@ -38,7 +38,7 @@
 #include "video/screen.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
-#include "log.h"
+#include "util/log.h"
 #include "timemanager.h"
 
 #include "commandline.h"

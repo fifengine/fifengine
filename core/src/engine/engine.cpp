@@ -51,7 +51,7 @@
 #include "gamestate.h"
 #include "gamestatemanager.h"
 #include "imagecache.h"
-#include "log.h"
+#include "util/log.h"
 #include "util/settingsmanager.h"
 #include "timemanager.h"
 

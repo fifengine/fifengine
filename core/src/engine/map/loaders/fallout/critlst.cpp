@@ -30,7 +30,7 @@
 #include "vfs/vfs.h"
 #include "vfs/raw/rawdata.h"
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "critlst.h"
 #include "remove_all.h"

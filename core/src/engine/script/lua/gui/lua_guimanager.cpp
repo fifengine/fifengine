@@ -30,7 +30,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/gui/guimanager.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "luagui.h"
 #include "lua_gui_actionlistener.h"

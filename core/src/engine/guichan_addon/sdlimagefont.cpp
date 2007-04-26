@@ -95,7 +95,7 @@
 #include "vfs/vfs.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "imagecache.h"
 #include "sdlimagefont.hpp"

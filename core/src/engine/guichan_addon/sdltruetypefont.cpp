@@ -90,7 +90,7 @@
 #include "video/rendermanager.h"
 #include "video/screen.h"
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "sdltruetypefont.hpp"
 

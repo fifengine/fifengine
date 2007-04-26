@@ -33,7 +33,7 @@
 #include "script/scriptengine.h"
 #include "util/debugutils.h"
 #include "gamestatemanager.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "lua_gamestatemanager.h"
 

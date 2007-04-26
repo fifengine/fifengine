@@ -31,7 +31,7 @@
 #include "map/loaders/fallout/animatedpal.h"
 #include "video/animation.h"
 #include "video/image.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "frm_provider.h"
 

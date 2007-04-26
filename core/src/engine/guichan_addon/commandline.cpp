@@ -31,7 +31,7 @@
 // Second block: files included from the same folder
 #include "input/manager.h"
 #include "video/gui/guimanager.h"
-#include "log.h"
+#include "util/log.h"
 #include "timeevent.h"
 #include "timemanager.h"
 

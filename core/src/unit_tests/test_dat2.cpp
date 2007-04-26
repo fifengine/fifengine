@@ -41,7 +41,7 @@
 #include "vfs/vfshostsystem.h"
 #include "map/loaders/fallout/dat2.h"
 #include "vfs/raw/rawdata.h"
-#include "log.h"
+#include "util/log.h"
 #include "util/exception.h"
 
 

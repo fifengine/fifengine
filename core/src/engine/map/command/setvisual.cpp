@@ -33,7 +33,7 @@
 #include "map/visual.h"
 #include "video/complexanimation.h"
 #include "imagecache.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "setvisual.h"
 

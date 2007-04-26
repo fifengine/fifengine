@@ -34,7 +34,7 @@
 
 // FIFE includes
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 
 template <typename T> class Lunar {
 	typedef struct { T *pT; } userdataType;

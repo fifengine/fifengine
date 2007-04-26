@@ -33,7 +33,7 @@
 #include "visual.h"
 #include "visualtree.h"
 
-#include "log.h"
+#include "util/log.h"
 #include "util/rect.h"
 
 namespace FIFE { namespace map {

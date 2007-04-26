@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/debugutils.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "luagui.h"
 

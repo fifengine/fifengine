@@ -35,7 +35,7 @@
 #include "script/lua/lua_object.h"
 #include "script/scriptcontainer.h"
 #include "event.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "scriptingslave.h"
 

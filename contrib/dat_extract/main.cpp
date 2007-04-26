@@ -45,7 +45,7 @@
 #include "util/debugutils.h"
 #include "engine.h"
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 #include "util/settingsmanager.h"
 
 using namespace FIFE;

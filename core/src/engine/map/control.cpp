@@ -34,7 +34,7 @@
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 #include "util/settingsmanager.h"
 
 #include "camera.h"

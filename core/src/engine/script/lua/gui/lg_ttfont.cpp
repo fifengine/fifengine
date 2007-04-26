@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "guichan_addon/sdltruetypefont.hpp"
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "luagui.h"
 

@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "util/exception.h"
 #include "imagecache.h"
-#include "log.h"
+#include "util/log.h"
 #include "map/factory.h"
 #include "video/renderable_location.h"
 #include "video/pixelbuffer.h"

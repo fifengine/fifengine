@@ -41,7 +41,7 @@
 #include "guichan_addon/twobutton.h"
 #include "guichan_addon/icon2.hpp"
 #include "guichan_addon/font.h"
-#include "log.h"
+#include "util/log.h"
 #include "script/lua/lua_ref.h"
 
 /** Exports partial guichan functionality to Lua.

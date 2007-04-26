@@ -32,7 +32,7 @@
 #include "vfs/vfshostsystem.h"
 #include "map/loaders/fallout/dat1.h"
 #include "vfs/raw/rawdata.h"
-#include "log.h"
+#include "util/log.h"
 #include "util/exception.h"
 
 using boost::unit_test::test_suite;

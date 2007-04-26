@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "video/pixelbuffer.h"
 #include "util/rect.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "glimage.h"
 #include "glscreen.h"

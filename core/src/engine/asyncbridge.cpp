@@ -33,7 +33,7 @@
 #include "map/event.h"
 
 #include "asyncbridge.h"
-#include "log.h"
+#include "util/log.h"
 
 namespace FIFE {
 

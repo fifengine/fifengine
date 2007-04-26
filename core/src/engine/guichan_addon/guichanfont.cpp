@@ -40,7 +40,7 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "guichanfont.h"
 

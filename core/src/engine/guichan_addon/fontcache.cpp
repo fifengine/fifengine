@@ -32,7 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/image.h"
-#include "log.h"
+#include "util/log.h"
 #include "timemanager.h"
 
 #include "font.h"

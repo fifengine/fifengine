@@ -34,7 +34,7 @@
 #include "command/info.h"
 #include "command/command.h"
 #include "imagecache.h"
-#include "log.h"
+#include "util/log.h"
 #include "scriptingslave.h"
 
 #include "event.h"

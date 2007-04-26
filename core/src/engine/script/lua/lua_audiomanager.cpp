@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "audio/manager.h"
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 
 #include "lua_audiomanager.h"
 

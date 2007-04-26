@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "log.h"
+#include "util/log.h"
 #include "util/rect.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
