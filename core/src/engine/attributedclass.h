@@ -37,7 +37,7 @@
 #include "util/point.h"
 #include "util/rect.h"
 
-#include "debugutils.h"
+#include "util/debugutils.h"
 
 namespace FIFE {
 

@@ -31,7 +31,7 @@
 // Second block: files included from the same folder
 #include "script/lua/gui/luagui.h"
 #include "script/scriptengine.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "gamestatemanager.h"
 #include "log.h"
 

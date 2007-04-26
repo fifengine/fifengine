@@ -29,7 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 
 #include "header.h"

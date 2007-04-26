@@ -32,7 +32,7 @@
 // Second block: files included from the same folder
 #include "video/animation.h"
 #include "video/image.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "tinyxml/tinyxml.h"
 #include "util/purge.h"

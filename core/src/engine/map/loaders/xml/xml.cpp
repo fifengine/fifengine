@@ -39,7 +39,7 @@
 #include "map/objectinfo.h"
 #include "tinyxml/tinyxml.h"
 #include "util/xmlutil.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
 

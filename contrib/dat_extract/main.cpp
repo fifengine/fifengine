@@ -42,7 +42,7 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "engine.h"
 #include "util/exception.h"
 #include "log.h"

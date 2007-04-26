@@ -36,7 +36,7 @@
 #include "script/scriptengine.h"
 
 // using these
-#include "debugutils.h"
+#include "util/debugutils.h"
 
 namespace FIFE {
 

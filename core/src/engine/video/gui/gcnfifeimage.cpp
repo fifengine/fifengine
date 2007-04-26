@@ -1,7 +1,7 @@
 #if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "video/gui/gcnfifeimage.h"
 #include "imagecache.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 
 namespace FIFE {
   GCNImage::GCNImage() : gcn::Image(), 

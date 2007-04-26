@@ -35,7 +35,7 @@
 #include "video/renderable.h"
 #include "video/screen.h"
 #include "video/gui/guimanager.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
 #include "log.h"

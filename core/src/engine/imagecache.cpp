@@ -39,7 +39,7 @@
 #include "video/pixelbuffer.h"
 #include "util/purge.h"
 
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
 

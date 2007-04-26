@@ -37,7 +37,7 @@
 #include "video/pixelbuffer.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
 #include "log.h"

@@ -33,7 +33,7 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "settingsmanager.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
 

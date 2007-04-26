@@ -30,7 +30,7 @@
 #include "tinyxml/tinyxml.h"
 #include "video/partialaction.h"
 #include "video/complexanimation.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
 

@@ -30,7 +30,7 @@
 #include "video/complexanimation.h"
 #include "video/renderable.h"
 #include "map/effects/visualeffect.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "imagecache.h"
 
 #include "geometry.h"

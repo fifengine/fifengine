@@ -36,7 +36,7 @@
 #include "video/gui/guimanager.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "engine.h"
 #include "events.h"
 #include "util/exception.h"

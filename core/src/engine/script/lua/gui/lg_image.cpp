@@ -35,7 +35,7 @@
 #endif
 
 #include "video/animation.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 
 #include "luagui.h"
 

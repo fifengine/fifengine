@@ -29,7 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "script/scriptengine.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "log.h"
 
 #include "lua_gui_actionlistener.h"

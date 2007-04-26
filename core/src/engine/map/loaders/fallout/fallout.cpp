@@ -37,7 +37,7 @@
 #include "map/elevation.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfssourcefactory.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
 #include "settingsmanager.h"

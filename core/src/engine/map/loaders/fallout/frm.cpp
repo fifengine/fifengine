@@ -36,7 +36,7 @@
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "util/exception.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "imagecache.h"
 #include "settingsmanager.h"
 

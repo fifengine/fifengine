@@ -44,7 +44,7 @@
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
 
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "engine.h"
 #include "events.h"
 #include "util/exception.h"

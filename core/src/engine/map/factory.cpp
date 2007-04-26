@@ -33,7 +33,7 @@
 #endif
 #include "loaders/fallout/fallout.h"
 #include "util/purge.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 
 #include "archetype.h"

@@ -93,7 +93,7 @@
 #include "video/rendermanager.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
-#include "debugutils.h"
+#include "util/debugutils.h"
 #include "util/exception.h"
 #include "log.h"
 
