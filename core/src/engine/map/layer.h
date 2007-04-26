@@ -39,7 +39,7 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 #include "attributedclass.h"
-#include "exception.h"
+#include "util/exception.h"
 
 #include "objectinfo.h"
 

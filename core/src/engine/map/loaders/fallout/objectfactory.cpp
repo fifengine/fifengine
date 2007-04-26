@@ -34,7 +34,7 @@
 #include "vfs/vfs.h"
 #include "settingsmanager.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "imagecache.h"
 
 #include "critlst.h"

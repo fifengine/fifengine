@@ -47,7 +47,7 @@
 #include "debugutils.h"
 #include "engine.h"
 #include "events.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "gamestate.h"
 #include "gamestatemanager.h"
 #include "imagecache.h"

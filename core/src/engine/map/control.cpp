@@ -33,7 +33,7 @@
 #include "script/scriptbackendmanager.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 #include "settingsmanager.h"
 

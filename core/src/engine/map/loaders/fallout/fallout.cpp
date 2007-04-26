@@ -38,7 +38,7 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfssourcefactory.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "imagecache.h"
 #include "settingsmanager.h"
 

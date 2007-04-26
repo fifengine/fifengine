@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "guichan_addon/sdltruetypefont.hpp"
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 
 #include "luagui.h"

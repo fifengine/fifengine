@@ -94,7 +94,7 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 
 #include "imagecache.h"

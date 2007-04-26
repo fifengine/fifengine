@@ -49,7 +49,7 @@
 #include "video/rendermanager.h"
 #include "engine.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "settingsmanager.h"
 
 #include "frm_raw_loader.h"

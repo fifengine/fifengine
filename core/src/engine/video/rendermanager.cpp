@@ -33,7 +33,7 @@
 #	include "renderbackends/opengl/renderbackendopengl.h"
 #endif
 
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 
 #include "renderbackend.h"

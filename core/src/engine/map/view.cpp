@@ -36,7 +36,7 @@
 #include "video/screen.h"
 #include "video/gui/guimanager.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "imagecache.h"
 #include "log.h"
 

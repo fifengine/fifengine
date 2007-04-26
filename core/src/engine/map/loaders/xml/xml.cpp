@@ -40,7 +40,7 @@
 #include "tinyxml/tinyxml.h"
 #include "util/xmlutil.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "imagecache.h"
 
 #include "xml.h"

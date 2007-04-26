@@ -34,7 +34,7 @@
 #include "loaders/fallout/fallout.h"
 #include "util/purge.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 
 #include "archetype.h"
 #include "archetype_loader.h"

@@ -39,7 +39,7 @@
 #include "video/renderbackend.h"
 #include "engine.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "gamestatemanager.h"
 #include "settingsmanager.h"
 

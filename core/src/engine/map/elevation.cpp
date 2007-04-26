@@ -31,7 +31,7 @@
 // Second block: files included from the same folder
 #include "debugutils.h"
 #include "util/purge.h"
-#include "exception.h"
+#include "util/exception.h"
 
 #include "elevation.h"
 #include "layer.h"

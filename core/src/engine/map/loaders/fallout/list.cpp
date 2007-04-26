@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 
 #include "list.h"

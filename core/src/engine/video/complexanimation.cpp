@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "map/geometry.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "imagecache.h"
 #include "timemanager.h"
 

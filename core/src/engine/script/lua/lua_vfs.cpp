@@ -35,7 +35,7 @@
 #include "vfs/vfs.h"
 #include "vfs/vfssource.h"
 #include "vfs/vfssourcefactory.h"
-#include "exception.h"
+#include "util/exception.h"
 
 #include "lua_vfs.h"
 

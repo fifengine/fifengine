@@ -89,7 +89,7 @@
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "video/screen.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 
 #include "sdltruetypefont.hpp"

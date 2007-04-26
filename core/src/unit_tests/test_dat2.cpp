@@ -42,7 +42,7 @@
 #include "map/loaders/fallout/dat2.h"
 #include "vfs/raw/rawdata.h"
 #include "log.h"
-#include "exception.h"
+#include "util/exception.h"
 
 
 using boost::unit_test::test_suite;

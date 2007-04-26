@@ -32,7 +32,7 @@
 // FIFE includes
 #include "video/gui/guimanager.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 
 #include "fife_opengl.h"
 #include "glimage.h"

@@ -31,7 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/gui/guimanager.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 
 #include "renderbackendsdl.h"

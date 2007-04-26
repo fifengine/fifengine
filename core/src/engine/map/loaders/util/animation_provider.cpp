@@ -33,7 +33,7 @@
 #include "video/animation.h"
 #include "video/image.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "tinyxml/tinyxml.h"
 #include "util/purge.h"
 

@@ -39,7 +39,6 @@
 #include "vfs/vfs.h"
 #include "settingsmanager.h"
 #include "script/lua/lunar.h"
-#include "exception.cpp"
 #include "script/lua/lua_ref.h"
 
 

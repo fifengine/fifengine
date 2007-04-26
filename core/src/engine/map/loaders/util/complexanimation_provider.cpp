@@ -31,7 +31,7 @@
 #include "video/partialaction.h"
 #include "video/complexanimation.h"
 #include "debugutils.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "imagecache.h"
 
 #include "complexanimation_provider.h"

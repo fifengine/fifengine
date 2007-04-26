@@ -39,7 +39,7 @@
 #include "debugutils.h"
 #include "engine.h"
 #include "events.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "imagecache.h"
 #include "settingsmanager.h"
 

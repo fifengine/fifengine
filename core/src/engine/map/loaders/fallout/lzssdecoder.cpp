@@ -26,7 +26,7 @@
 
 // FIFE includes
 #include "vfs/raw/rawdata.h"
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 
 #include "lzssdecoder.h"

@@ -33,7 +33,7 @@
 #include "lua.hpp"
 
 // FIFE includes
-#include "exception.h"
+#include "util/exception.h"
 #include "log.h"
 
 template <typename T> class Lunar {
