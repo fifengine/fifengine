@@ -32,7 +32,7 @@
 #include "map/objectinfo.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"

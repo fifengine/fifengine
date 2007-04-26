@@ -38,7 +38,7 @@
 #include "util/exception.h"
 #include "util/debugutils.h"
 #include "imagecache.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 #include "frm.h"
 #include "animatedpal.h"

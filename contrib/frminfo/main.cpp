@@ -50,7 +50,7 @@
 #include "engine.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 #include "frm_raw_loader.h"
 

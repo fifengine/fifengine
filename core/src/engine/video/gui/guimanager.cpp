@@ -35,7 +35,7 @@
 #include "video/rendermanager.h"
 #include "video/screen.h"
 #include "guimanager.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 #include "gcnimageloader.h"
 

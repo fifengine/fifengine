@@ -33,7 +33,7 @@
 // #include "guichan_addon/console.h"
 #include "util/debugutils.h"
 #include "log.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 namespace FIFE {
 

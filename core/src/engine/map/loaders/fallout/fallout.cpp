@@ -40,7 +40,7 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 #include "fallout.h"
 #include "dat2.h"

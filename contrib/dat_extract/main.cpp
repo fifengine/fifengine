@@ -46,7 +46,7 @@
 #include "engine.h"
 #include "util/exception.h"
 #include "log.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 using namespace FIFE;
 

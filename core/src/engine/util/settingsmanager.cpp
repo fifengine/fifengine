@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 namespace FIFE {
 

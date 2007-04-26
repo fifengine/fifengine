@@ -35,7 +35,7 @@
 #include "video/rendermanager.h"
 #include "util/exception.h"
 #include "log.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 #include "camera.h"
 #include "control.h"

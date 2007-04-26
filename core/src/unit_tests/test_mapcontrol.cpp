@@ -35,7 +35,7 @@
 #include "map/elevation.h"
 #include "map/layer.h"
 #include "timemanager.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 #include "engine.h"
 
 using boost::unit_test::test_suite;

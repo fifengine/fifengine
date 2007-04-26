@@ -52,8 +52,7 @@
 #include "gamestatemanager.h"
 #include "imagecache.h"
 #include "log.h"
-#include "settingsmanager.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 #include "timemanager.h"
 
 static const std::string SETTINGS_FILE_NAME = "fife.config";

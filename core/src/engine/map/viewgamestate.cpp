@@ -41,7 +41,7 @@
 #include "events.h"
 #include "util/exception.h"
 #include "imagecache.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 #include "camera.h"
 #include "control.h"

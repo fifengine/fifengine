@@ -41,7 +41,7 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "gamestatemanager.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 void initScripts(FIFE::Engine* engine) {
 	std::string startup_script("content/scripts/startup.lua");

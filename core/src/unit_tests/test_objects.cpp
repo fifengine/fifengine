@@ -34,7 +34,7 @@
 #include "map/factory.h"
 #include "vfs/vfssourcefactory.h"
 #include "vfs/vfs.h"
-#include "settingsmanager.h"
+#include "util/settingsmanager.h"
 
 
 using boost::unit_test::test_suite;
