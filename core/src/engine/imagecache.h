@@ -37,7 +37,7 @@
 #include "video/renderable_location.h"
 #include "video/renderable_provider.h"
 
-#include "singleton.h"
+#include "util/singleton.h"
 
 namespace FIFE {
 

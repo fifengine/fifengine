@@ -34,7 +34,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "singleton.h"
+#include "util/singleton.h"
 
 namespace FIFE {
 
