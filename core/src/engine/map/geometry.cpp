@@ -30,7 +30,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "util/xmlutil.h"
+#include "xml/xmlutil.h"
 
 #include "geometry.h"
 #include "hexgeometry.h"

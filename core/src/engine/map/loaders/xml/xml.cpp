@@ -38,7 +38,7 @@
 #include "map/layer.h"
 #include "map/objectinfo.h"
 #include "xml/tinyxml/tinyxml.h"
-#include "util/xmlutil.h"
+#include "xml/xmlutil.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "imagecache.h"

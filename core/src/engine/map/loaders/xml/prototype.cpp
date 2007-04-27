@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "util/exception.h"
 #include "util/purge.h"
-#include "util/xmlutil.h"
+#include "xml/xmlutil.h"
 #include "map/factory.h"
 #include "map/objectinfo.h"
 

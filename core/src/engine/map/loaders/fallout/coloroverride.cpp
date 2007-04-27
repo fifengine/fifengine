@@ -29,7 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "xml/tinyxml/tinyxml.h"
-#include "util/xmlutil.h"
+#include "xml/xmlutil.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "util/debugutils.h"
