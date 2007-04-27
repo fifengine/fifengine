@@ -32,7 +32,7 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 #include "video/renderable_location.h"
-#include "tinyxml/tinyxml.h"
+#include "xml/tinyxml/tinyxml.h"
 #include "util/attributedclass.h"
 
 namespace FIFE { namespace map { 

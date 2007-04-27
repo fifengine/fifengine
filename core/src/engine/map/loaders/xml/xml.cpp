@@ -37,7 +37,7 @@
 #include "map/geometry.h"
 #include "map/layer.h"
 #include "map/objectinfo.h"
-#include "tinyxml/tinyxml.h"
+#include "xml/tinyxml/tinyxml.h"
 #include "util/xmlutil.h"
 #include "util/debugutils.h"
 #include "util/exception.h"

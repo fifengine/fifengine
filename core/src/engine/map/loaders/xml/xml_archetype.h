@@ -33,7 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/archetype.h"
-#include "tinyxml/tinyxml.h"
+#include "xml/tinyxml/tinyxml.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
