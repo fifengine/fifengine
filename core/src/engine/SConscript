@@ -1,4 +1,4 @@
-import os
+import os, sys
 
 Import('env')
 
@@ -50,9 +50,20 @@ for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
 
 env.Append(CPPPATH = ['#core/src/engine'])
 
+files.remove('./main.cpp')
 if env['lite']:
 	env.StaticLibrary('fifelite', files)
 else:
 	env.StaticLibrary('fife', files)
 	
+if not env['lite']:
+	env.Append(LIBS = ['fife'])
+	env.Append(LIBPATH = ['#core/src/engine'])
+
+	enginefiles = ['main.cpp']
+	if sys.platform == 'darwin':
+		env.Object('SDLMain.m')
+		enginefiles.append('SDLMain.o')
+	env.Program('fife_engine', enginefiles)
+
 # vim: set filetype=python :

@@ -7,6 +7,7 @@ if env['lite'] == 0:
 		'guimap_test/SConscript',
 	]
 
+
 if env['lite'] == 1:
 	sconscripts = [
 		'engine/SConscript'
