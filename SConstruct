@@ -27,13 +27,16 @@ def tryConfigCommand(context, cmd):
 	return ret
 
 def importConfig(config):
-	config = __import__(config)
-	return config
+	module = __import__(config)
+	parts = config.split('.')
+	for part in parts[1:]:
+		module = getattr(module, part)
+	return module
 
 def getPlatformConfig():
 	pathparts = ('build', '%s-config' % sys.platform)
 	filename = os.path.join(*pathparts)
-	sconsfilename = '/'.join(pathparts)
+	sconsfilename = '.'.join(pathparts)
 	if os.path.exists(filename + '.py'):
 		return importConfig(sconsfilename)
 	else:
