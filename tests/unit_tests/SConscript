@@ -3,9 +3,9 @@ import glob
 Import('env')
 
 env = env.Copy()
-env.Append(CPPPATH = ['#src/engine'])
+env.Append(CPPPATH = ['#core/src/engine'])
 env.Append(LIBS = ['fife','boost_unit_test_framework'])
-env.Append(LIBPATH = ['#src/engine'])
+env.Append(LIBPATH = ['#core/src/engine'])
 
 # The test_all.py script relies on this specific layout.
 # Check it, if you change something here

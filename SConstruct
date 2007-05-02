@@ -31,7 +31,7 @@ def importConfig(config):
 	return config
 
 def getPlatformConfig():
-	filename = '%s-config' % sys.platform
+	filename = 'build/%s-config' % sys.platform
 	if os.path.exists(filename + '.py'):
 		return importConfig(filename)
 	else:
@@ -125,7 +125,10 @@ if env['audio'] == 1:
 	
 Export('env')
 
-SConscript(['src/SConscript'])
+sconscripts = ['core/src/SConscript']
+if env['testcases']:
+	sconscripts.append('tests/unit_tests/SConscript')
+SConscript(sconscripts)
 
 # vim: set filetype=python: 
 

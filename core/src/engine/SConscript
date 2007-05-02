@@ -48,7 +48,7 @@ for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
 # else. raw/ is only for full
 # tinyxml - only if full AND env['tinyxml']
 
-env.Append(CPPPATH = ['#src/engine'])
+env.Append(CPPPATH = ['#core/src/engine'])
 
 if env['lite']:
 	env.StaticLibrary('fifelite', files)
