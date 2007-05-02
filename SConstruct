@@ -31,14 +31,17 @@ def importConfig(config):
 	return config
 
 def getPlatformConfig():
-	filename = 'build/%s-config' % sys.platform
+	pathparts = ('build', '%s-config' % sys.platform)
+	filename = os.path.join(*pathparts)
+	sconsfilename = '/'.join(pathparts)
 	if os.path.exists(filename + '.py'):
-		return importConfig(filename)
+		return importConfig(sconsfilename)
 	else:
 		print 'no custom platform-config found (searched: %s.py)' % filename
 		filename += '-dist'
+		sconsfilename += '-dist'
 		if os.path.exists(filename + '.py'):
-			return importConfig(filename)
+			return importConfig(sconsfilename)
 		print 'no platform-config found (searched: %s.py)' % filename
 		Exit(1)
 
