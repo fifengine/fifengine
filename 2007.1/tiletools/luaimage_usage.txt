@@ -1,0 +1,31 @@
+ script_file input_image [output_image]
+
+This is a very simple image manipulation program using LUA;
+
+Alpha warning: you have to specify 'output_image'; the program
+refuses to overwrite the original file. The 'input_image' can
+be any format SDL_image can load; the output can be BMP or PNG
+(depending on chosen file extension).
+
+The script has to be valid LUA; base, io, string and math lib
+are loaded. Furthermore the following exist:
+
+* variables:
+width, height, bpp : from the input image
+
+* functions:
+r,g,b   = get_rgb(x,y)
+r,g,b,a = get_rgba(x,y)
+          set_rgb(x,y,r,g,b)
+          set_rgba(x,y,r,g,b,a)
+
+Example 'script_file':
+-- a comment
+-- rgb -> bgr conversion
+for y=0, height-1 do
+	for x=0, width-1 do
+		r,g,b = get_rgb (x,y)
+    set_rgb(x,y,b,g,r)
+	end
+end
+--
