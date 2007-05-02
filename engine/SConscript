@@ -48,7 +48,7 @@ for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
 # else. raw/ is only for full
 # tinyxml - only if full AND env['tinyxml']
 
-env.Append(CPPPATH = ['#core/src/engine'])
+env.Append(CPPPATH = ['#engine'])
 
 files.remove('./main.cpp')
 if env['lite']:
@@ -58,7 +58,7 @@ else:
 	
 if not env['lite']:
 	env.Append(LIBS = ['fife'])
-	env.Append(LIBPATH = ['#core/src/engine'])
+	env.Append(LIBPATH = ['#engine'])
 
 	enginefiles = ['main.cpp']
 	if sys.platform == 'darwin':

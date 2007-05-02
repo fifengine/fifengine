@@ -125,7 +125,7 @@ if env['audio'] == 1:
 	
 Export('env')
 
-sconscripts = ['core/src/engine/SConscript']
+sconscripts = ['engine/SConscript']
 if env['testcases']:
 	sconscripts.append('tests/unit_tests/SConscript')
 SConscript(sconscripts)
