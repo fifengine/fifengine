@@ -50,7 +50,7 @@ for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
 
 env.Append(CPPPATH = ['#engine'])
 
-files.remove('./main.cpp')
+files.remove(os.path.join('.', 'main.cpp'))
 if env['lite']:
 	env.StaticLibrary('fifelite', files)
 else:
