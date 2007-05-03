@@ -56,14 +56,4 @@ if env['lite']:
 else:
 	env.StaticLibrary('fife', files)
 	
-if not env['lite']:
-	env.Append(LIBS = ['fife'])
-	env.Append(LIBPATH = ['#engine'])
-
-	enginefiles = ['main.cpp']
-	if sys.platform == 'darwin':
-		env.Object('SDLMain.m')
-		enginefiles.append('SDLMain.o')
-	env.Program('fife_engine', enginefiles)
-
 # vim: set filetype=python :
