@@ -1,0 +1,106 @@
+<!--
+	This is an auto-generated XML file
+	defining the animation actions a
+	critter can perform.
+	
+	Generator: make_xml.py
+-->
+<complex-animation name="hmbjmp" geometry="1">
+	<!-- ACTION: IDLE FRAMES: 12 FPS: 10 -->
+	<action id="0" direction="255">
+		<animation src="art/critters/hmbjmpaa.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="0" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: WALK FRAMES: 8 FPS: 10 -->
+	<action id="1" direction="255">
+		<animation src="art/critters/hmbjmpab.frm"/>
+		<motion distance="2"/>
+		<partial-action number="0">
+			<frames start="0" number="4"/>
+			<step number="0"/>
+			<partial-action action="1" number="1" direction="255"/>
+		</partial-action>
+		<partial-action number="1">
+			<frames start="4" number="4"/>
+			<step number="1"/>
+			<partial-action action="1" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: PICKUP FRAMES: 9 FPS: 10 -->
+	<action id="4" direction="255">
+		<animation src="art/critters/hmbjmpak.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="9"/>
+			<step number="0"/>
+			<partial-action action="4" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: USE FRAMES: 12 FPS: 10 -->
+	<action id="5" direction="255">
+		<animation src="art/critters/hmbjmpal.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="5" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: DODGE FRAMES: 7 FPS: 10 -->
+	<action id="6" direction="255">
+		<animation src="art/critters/hmbjmpan.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="7"/>
+			<step number="0"/>
+			<partial-action action="6" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITFRONT FRAMES: 6 FPS: 10 -->
+	<action id="7" direction="255">
+		<animation src="art/critters/hmbjmpao.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="6"/>
+			<step number="0"/>
+			<partial-action action="7" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITBACK FRAMES: 6 FPS: 10 -->
+	<action id="8" direction="255">
+		<animation src="art/critters/hmbjmpap.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="6"/>
+			<step number="0"/>
+			<partial-action action="8" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: KICK FRAMES: 17 FPS: 10 -->
+	<action id="9" direction="255">
+		<animation src="art/critters/hmbjmpar.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="17"/>
+			<step number="0"/>
+			<partial-action action="9" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: PUNCH FRAMES: 11 FPS: 10 -->
+	<action id="11" direction="255">
+		<animation src="art/critters/hmbjmpaq.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="11"/>
+			<step number="0"/>
+			<partial-action action="11" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+
+</complex-animation>

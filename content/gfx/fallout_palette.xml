@@ -1,0 +1,134 @@
+<animated-palette>
+	<palette>color.pal</palette>
+<!--
+			// create and add blocks of animated pixels
+		AnimatedBlock* b = 0;		
+		b = new AnimatedBlock("Slime", 229, 232, 200, true, &m_pal);
+		b->addColor(createColor(0, 108, 0));
+		b->addColor(createColor(11, 115, 7));
+		b->addColor(createColor(27, 123, 15));
+		b->addColor(createColor(43, 131, 27));
+		addBlock(b);
+		
+		b = new AnimatedBlock("Monitors", 233, 237, 100, false, &m_pal);
+		b->addColor(createColor(107, 107, 111));
+		b->addColor(createColor(99, 103, 127));
+		b->addColor(createColor(87, 107, 143));
+		b->addColor(createColor(0, 147, 163));
+		b->addColor(createColor(107, 187, 255));
+		addBlock(b);
+		
+		// Create a single fire block of both slow and fast fire colors.
+		// We don't currently handle images with pixels from seperate animated
+		// blocks and slow and fast fire are often used together.
+		b = new AnimatedBlock("Fire", 238, 248, 180, false, &m_pal);
+		b->addColor(createColor(255, 0, 0));
+		b->addColor(createColor(215, 0, 0));
+		b->addColor(createColor(147, 43, 11));
+		b->addColor(createColor(255, 119, 0));
+		b->addColor(createColor(255, 59, 0));
+		b->addColor(createColor(71, 0, 0));
+		b->addColor(createColor(123, 0, 0));
+		b->addColor(createColor(179, 0, 0));
+		b->addColor(createColor(123, 0, 0));
+		b->addColor(createColor(71, 0, 0));
+		addBlock(b);
+		
+		b = new AnimatedBlock("Shoreline", 248, 253, 200, true, &m_pal);
+		b->addColor(createColor(83, 63, 43));
+		b->addColor(createColor(75, 59, 43));
+		b->addColor(createColor(67, 55, 39));
+		b->addColor(createColor(63, 51, 39));
+		b->addColor(createColor(55, 47, 35));
+		b->addColor(createColor(51, 43, 35));
+		addBlock(b);
+		
+		b = new AnimatedBlock("BlinkingRed", 254, 254, 33, true, &m_pal);
+		b->addColor(createColor(252, 0, 0));
+		b->addColor(createColor(0, 0, 0));
+		addBlock(b);
+-->
+	<animated-block>
+		<name>Slime</name>
+		<start-index>229</start-index>
+		<end-index>232</end-index>
+		<frame-duration>200</frame-duration>
+		<light-adjust>1</light-adjust>
+		<colors>
+			<color><r>0</r><g>108</g><b>0</b></color>
+			<color><r>11</r><g>115</g><b>7</b></color>
+			<color><r>27</r><g>123</g><b>15</b></color>
+			<color><r>43</r><g>131</g><b>27</b></color>
+		</colors>
+	</animated-block>
+	
+	<animated-block>
+		<name>Monitors</name>
+		<start-index>233</start-index>
+		<end-index>237</end-index>
+		<frame-duration>100</frame-duration>
+		<light-adjust>0</light-adjust>
+		<colors>
+			<color><r>107</r><g>107</g><b>111</b></color>
+			<color><r>99</r><g>103</g><b>127</b></color>
+			<color><r>87</r><g>107</g><b>143</b></color>
+			<color><r>0</r><g>147</g><b>163</b></color>
+			<color><r>107</r><g>187</g><b>255</b></color>
+		</colors>
+	</animated-block>
+		
+	<!-- 
+	     	Create a single fire block of both slow and fast fire colors.
+		We don't currently handle images with pixels from seperate animated
+		blocks and slow and fast fire are often used together.
+	-->
+	
+	<animated-block>
+		<name>Fire</name>
+		<start-index>238</start-index>
+		<end-index>248</end-index>
+		<frame-duration>150</frame-duration>
+		<light-adjust>0</light-adjust>
+		<colors>
+			<color><r>255</r><g>0</g><b>0</b></color>
+			<color><r>215</r><g>0</g><b>0</b></color>
+			<color><r>147</r><g>43</g><b>11</b></color>
+			<color><r>255</r><g>119</g><b>0</b></color>
+			<color><r>255</r><g>59</g><b>0</b></color>
+			<color><r>71</r><g>0</g><b>0</b></color>
+			<color><r>123</r><g>0</g><b>0</b></color>
+			<color><r>179</r><g>0</g><b>0</b></color>
+			<color><r>123</r><g>0</g><b>0</b></color>
+			<color><r>71</r><g>0</g><b>0</b></color>
+		</colors>
+	</animated-block>
+
+	<animated-block>
+		<name>Shoreline</name>
+		<start-index>248</start-index>
+		<end-index>253</end-index>
+		<frame-duration>200</frame-duration>
+		<light-adjust>1</light-adjust>
+		<colors>
+			<color><r>83</r><g>63</g><b>43</b></color>
+			<color><r>75</r><g>59</g><b>43</b></color>
+			<color><r>67</r><g>55</g><b>39</b></color>
+			<color><r>63</r><g>51</g><b>39</b></color>
+			<color><r>55</r><g>47</g><b>35</b></color>
+			<color><r>51</r><g>43</g><b>35</b></color>
+		</colors>
+	</animated-block>
+	
+	<animated-block>
+		<name>BlinkingRed</name>
+		<start-index>254</start-index>
+		<end-index>254</end-index>
+		<frame-duration>33</frame-duration>
+		<light-adjust>0</light-adjust>
+		<colors>
+			<color><r>252</r><g>0</g><b>0</b></color>
+			<color><r>0</r><g>0</g><b>0</b></color>
+		</colors>
+	</animated-block>
+	
+</animated-palette>

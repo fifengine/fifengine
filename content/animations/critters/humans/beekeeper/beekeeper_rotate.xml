@@ -1,0 +1,18 @@
+<animation delay="350" id="3001">
+	<frame source="content/gfx/critters/beekeeper/walking_e0000.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_e0001.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_se0000.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_se0001.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_s0000.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_s0001.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_sw0000.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_sw0001.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_w0000.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_w0001.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_nw0000.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_nw0001.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_n0000.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_n0001.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_ne0000.png" />
+	<frame source="content/gfx/critters/beekeeper/walking_ne0001.png" />
+</animation>

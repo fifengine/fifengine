@@ -1,0 +1,71 @@
+<!--
+	This is an auto-generated XML file
+	defining the animation actions a
+	critter can perform.
+	
+	Generator: make_xml.py
+-->
+<complex-animation name="nmlosr" geometry="1">
+	<!-- ACTION: IDLE FRAMES: 10 FPS: 8 -->
+	<action id="0" direction="255">
+		<animation src="art/critters/nmlosraa.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="10"/>
+			<step number="0"/>
+			<partial-action action="0" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: WALK FRAMES: 12 FPS: 12 -->
+	<action id="1" direction="255">
+		<animation src="art/critters/nmlosrab.frm"/>
+		<motion distance="1"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="1" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: DODGE FRAMES: 7 FPS: 10 -->
+	<action id="6" direction="255">
+		<animation src="art/critters/nmlosran.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="7"/>
+			<step number="0"/>
+			<partial-action action="6" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITFRONT FRAMES: 5 FPS: 10 -->
+	<action id="7" direction="255">
+		<animation src="art/critters/nmlosrao.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="5"/>
+			<step number="0"/>
+			<partial-action action="7" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITBACK FRAMES: 7 FPS: 10 -->
+	<action id="8" direction="255">
+		<animation src="art/critters/nmlosrap.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="7"/>
+			<step number="0"/>
+			<partial-action action="8" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: PUNCH FRAMES: 12 FPS: 8 -->
+	<action id="11" direction="255">
+		<animation src="art/critters/nmlosraq.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="11" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+
+</complex-animation>

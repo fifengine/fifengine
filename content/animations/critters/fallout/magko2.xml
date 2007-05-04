@@ -1,0 +1,117 @@
+<!--
+	This is an auto-generated XML file
+	defining the animation actions a
+	critter can perform.
+	
+	Generator: make_xml.py
+-->
+<complex-animation name="magko2" geometry="1">
+	<!-- ACTION: IDLE FRAMES: 16 FPS: 10 -->
+	<action id="0" direction="255">
+		<animation src="art/critters/magko2aa.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="16"/>
+			<step number="0"/>
+			<partial-action action="0" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: WALK FRAMES: 15 FPS: 20 -->
+	<action id="1" direction="255">
+		<animation src="art/critters/magko2ab.frm"/>
+		<motion distance="1"/>
+		<partial-action number="0">
+			<frames start="0" number="15"/>
+			<step number="0"/>
+			<partial-action action="1" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: RUN FRAMES: 11 FPS: 25 -->
+	<action id="2" direction="255">
+		<animation src="art/critters/magko2at.frm"/>
+		<motion distance="2"/>
+		<partial-action number="0">
+			<frames start="0" number="5"/>
+			<step number="0"/>
+			<partial-action action="2" number="1" direction="255"/>
+		</partial-action>
+		<partial-action number="1">
+			<frames start="5" number="5"/>
+			<step number="1"/>
+			<partial-action action="2" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: PICKUP FRAMES: 12 FPS: 16 -->
+	<action id="4" direction="255">
+		<animation src="art/critters/magko2ak.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="4" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: USE FRAMES: 12 FPS: 20 -->
+	<action id="5" direction="255">
+		<animation src="art/critters/magko2al.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="5" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: DODGE FRAMES: 16 FPS: 20 -->
+	<action id="6" direction="255">
+		<animation src="art/critters/magko2an.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="16"/>
+			<step number="0"/>
+			<partial-action action="6" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITFRONT FRAMES: 8 FPS: 13 -->
+	<action id="7" direction="255">
+		<animation src="art/critters/magko2ao.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="8"/>
+			<step number="0"/>
+			<partial-action action="7" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITBACK FRAMES: 8 FPS: 13 -->
+	<action id="8" direction="255">
+		<animation src="art/critters/magko2ap.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="8"/>
+			<step number="0"/>
+			<partial-action action="8" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: KICK FRAMES: 12 FPS: 20 -->
+	<action id="9" direction="255">
+		<animation src="art/critters/magko2ar.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="9" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: PUNCH FRAMES: 12 FPS: 16 -->
+	<action id="11" direction="255">
+		<animation src="art/critters/magko2aq.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="11" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+
+</complex-animation>

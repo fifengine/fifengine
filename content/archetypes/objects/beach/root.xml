@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>root.xml</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+	<archetypes>
+		<archetype type="XML">
+			<prototypes>
+				<prototype name="Root:001">
+					<visual>
+						<image source="content/gfx/objects/beach/root01.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Root:002">
+					<visual>
+						<image source="content/gfx/objects/beach/root02.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Root:003">
+					<visual>
+						<image source="content/gfx/objects/beach/root03.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Root:004">
+					<visual>
+						<image source="content/gfx/objects/beach/root04.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Root:005">
+					<visual>
+						<image source="content/gfx/objects/beach/root05.png"/>
+					</visual>
+				</prototype>
+			</prototypes>
+		</archetype>
+	</archetypes>
+</map>

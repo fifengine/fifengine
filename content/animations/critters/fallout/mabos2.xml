@@ -1,0 +1,20 @@
+<!--
+	This is an auto-generated XML file
+	defining the animation actions a
+	critter can perform.
+	
+	Generator: make_xml.py
+-->
+<complex-animation name="mabos2" geometry="1">
+	<!-- ACTION: IDLE FRAMES: 1 FPS: 10 -->
+	<action id="0" direction="255">
+		<animation src="art/critters/mabos2aa.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="1"/>
+			<step number="0"/>
+			<partial-action action="0" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+
+</complex-animation>

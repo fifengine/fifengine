@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>quay.xml</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+	<archetypes>
+		<archetype type="XML">
+			<prototypes>
+				<prototype name="Quay:001">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_001.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:002">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_002.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:003">
+					<visual>
+						<prototype name="Object:Tilelike" />
+						<image source="content/gfx/objects/quay/quay_003.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:004">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_004.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:005">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_005.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:006">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_006.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:007">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_007.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:008">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_008.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:009">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_009.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:010">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_010.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:011">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_011.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:012">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_012.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:013">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_013.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:014">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_014.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:015">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_015.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:016">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_016.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:017">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_017.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:018">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_018.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:019">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_019.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:020">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_020.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:021">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_021.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:022">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_022.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:023">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_023.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:024">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_024.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:025">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_025.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:026">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_026.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:027">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_027.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:028">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_028.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:029">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_029.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:030">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_030.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:031">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_031.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:032">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_032.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:033">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_033.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:034">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_034.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:035">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_035.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:036">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_036.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:037">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_037.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:038">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_038.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:039">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_039.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Quay:040">
+					<prototype name="Object:Tilelike" />
+					<visual>
+						<image source="content/gfx/objects/quay/quay_040.png"/>
+					</visual>
+				</prototype>
+			</prototypes>
+		</archetype>
+	</archetypes>
+</map>

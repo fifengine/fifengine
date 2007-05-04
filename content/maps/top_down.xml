@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>top-down test</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+
+	<metadata>
+		<param name="_START_ELEVATION" type="id">2</param>
+	</metadata>
+
+	<archetypes>
+		<!-- Tile archetypes -->
+		<archetype type="XML" source="content/archetypes/tiles/rpgtileset.xml" />
+		<archetype type="XML" source="content/archetypes/tiles/top_down_tiles.xml" />
+	</archetypes>
+
+	<geometries>		
+		<geometry>
+			<!-- Elevation 0 tile geometry -->
+			<id>3</id>
+			<type>RECTANGULAR</type>
+			
+			<size>
+				<x>48</x>
+				<y>48</y>
+			</size>
+		</geometry>
+
+		<geometry>
+			<!-- Elevation 0 object geometry -->
+			<id>4</id>
+			<type>RECTANGULAR</type>
+			
+			<size>
+				<x>12</x>
+				<y>12</y>
+			</size>
+		</geometry>
+
+		<geometry>
+			<!-- Elevation 1 tile geometry -->
+			<id>5</id>
+			<type>RECTANGULAR</type>
+			
+			<size>
+				<x>200</x>
+				<y>200</y>
+			</size>
+		</geometry>
+
+		<geometry>
+			<!-- Elevation 1 object geometry -->
+			<id>6</id>
+			<type>RECTANGULAR</type>
+			
+			<size>
+				<x>50</x>
+				<y>50</y>
+			</size>
+		</geometry>
+	</geometries>
+
+	<elevation>
+		<properties>
+			<refgrid>1</refgrid>
+		</properties>
+		<layer>
+			<properties>
+				<size><x>4</x><y>4</y></size>
+				<geometry>3</geometry>
+			</properties>
+			<metadata>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square01.png</param>
+				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
+			</metadata>
+			<sparsedata>
+				<tileat gid="11126" x="0" y="0" />
+				<tileat gid="11127" x="1" y="0" />
+				<tileat gid="11128" x="2" y="0" />
+				<tileat gid="11129" x="3" y="0" />
+							
+				<tileat gid="11126" x="0" y="1" />
+				<tileat gid="11127" x="0" y="2" />
+				
+				<tileat gid="11126" x="3" y="1" />
+				<tileat gid="11127" x="3" y="2" />
+				
+				<tileat gid="11126" x="0" y="3" />
+				<tileat gid="11127" x="1" y="3" />
+				<tileat gid="11128" x="2" y="3" />
+				<tileat gid="11129" x="3" y="3" />
+			</sparsedata>
+		</layer>
+		<layer>
+			<metadata>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_square01.png</param>
+			</metadata>
+			<properties>
+				<size><x>16</x><y>16</y></size>
+
+				<!-- We use the predefined Fallout object hex geometry -->
+				<geometry>4</geometry>
+			</properties>
+			<objects>				
+			</objects>
+		</layer>
+	</elevation>
+
+	<elevation> 
+		<properties>
+			<refgrid>1</refgrid>
+		</properties>
+		
+		<layer>
+			<properties>
+				<size><x>10</x><y>10</y></size>
+				<geometry>5</geometry>
+			</properties>
+			<metadata>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square02.png</param>
+				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
+			</metadata>
+
+			<!--of tiles; geometry references the geo defined above -->
+			<data>
+				<tile gid="13004" /><tile gid="13002" /><tile gid="13004" /><tile gid="13004" /><tile gid="13004" />
+				<tile gid="13001" /><tile gid="13002" /><tile gid="13004" /><tile gid="13002" /><tile gid="13003" />
+
+				<tile gid="13002" /><tile gid="13003" /><tile gid="13002" /><tile gid="13003" /><tile gid="13004" />
+				<tile gid="13004" /><tile gid="13003" /><tile gid="13003" /><tile gid="13001" /><tile gid="13003" />
+
+				<tile gid="13001" /><tile gid="13001" /><tile gid="13001" /><tile gid="13004" /><tile gid="13001" />
+				<tile gid="13002" /><tile gid="13001" /><tile gid="13001" /><tile gid="13004" /><tile gid="13001" />
+
+				<tile gid="13003" /><tile gid="13004" /><tile gid="13003" /><tile gid="13002" /><tile gid="13003" />
+				<tile gid="13003" /><tile gid="13002" /><tile gid="13004" /><tile gid="13002" /><tile gid="13004" />
+
+				<tile gid="13003" /><tile gid="13004" /><tile gid="13002" /><tile gid="13004" /><tile gid="13002" />
+				<tile gid="13002" /><tile gid="13004" /><tile gid="13004" /><tile gid="13001" /><tile gid="13004" />
+
+				<tile gid="13003" /><tile gid="13001" /><tile gid="13001" /><tile gid="13003" /><tile gid="13004" />
+				<tile gid="13002" /><tile gid="13001" /><tile gid="13001" /><tile gid="13002" /><tile gid="13001" />
+
+				<tile gid="13001" /><tile gid="13004" /><tile gid="13004" /><tile gid="13004" /><tile gid="13002" />
+				<tile gid="13003" /><tile gid="13002" /><tile gid="13004" /><tile gid="13003" /><tile gid="13003" />
+
+				<tile gid="13003" /><tile gid="13001" /><tile gid="13002" /><tile gid="13004" /><tile gid="13004" />
+				<tile gid="13003" /><tile gid="13002" /><tile gid="13003" /><tile gid="13003" /><tile gid="13002" />
+
+				<tile gid="13003" /><tile gid="13001" /><tile gid="13002" /><tile gid="13004" /><tile gid="13004" />
+				<tile gid="13002" /><tile gid="13001" /><tile gid="13004" /><tile gid="13002" /><tile gid="13003" />
+
+				<tile gid="13004" /><tile gid="13003" /><tile gid="13003" /><tile gid="13004" /><tile gid="13002" />
+				<tile gid="13004" /><tile gid="13002" /><tile gid="13004" /><tile gid="13003" /><tile gid="13004" />
+			</data>
+		</layer>
+		<layer>
+			<metadata>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_square02.png</param>
+			</metadata>
+			<properties>
+				<size><x>40</x><y>40</y></size>
+
+				<!-- We use the predefined Fallout object hex geometry -->
+				<geometry>6</geometry>
+			</properties>
+			<objects>				
+			</objects>
+		</layer>
+	</elevation>
+</map>

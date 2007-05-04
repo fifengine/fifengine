@@ -1,0 +1,122 @@
+<!--
+	This is an auto-generated XML file
+	defining the animation actions a
+	critter can perform.
+	
+	Generator: make_xml.py
+-->
+<complex-animation name="nmdocc" geometry="1">
+	<!-- ACTION: IDLE FRAMES: 12 FPS: 10 -->
+	<action id="0" direction="255">
+		<animation src="art/critters/nmdoccaa.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="0" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: WALK FRAMES: 8 FPS: 10 -->
+	<action id="1" direction="255">
+		<animation src="art/critters/nmdoccab.frm"/>
+		<motion distance="1"/>
+		<partial-action number="0">
+			<frames start="0" number="8"/>
+			<step number="0"/>
+			<partial-action action="1" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: RUN FRAMES: 9 FPS: 16 -->
+	<action id="2" direction="255">
+		<animation src="art/critters/nmdoccat.frm"/>
+		<motion distance="5"/>
+		<partial-action number="0">
+			<frames start="0" number="1"/>
+			<step number="0"/>
+			<partial-action action="2" number="1" direction="255"/>
+		</partial-action>
+		<partial-action number="1">
+			<frames start="1" number="1"/>
+			<step number="1"/>
+			<partial-action action="2" number="2" direction="255"/>
+		</partial-action>
+		<partial-action number="2">
+			<frames start="2" number="1"/>
+			<step number="2"/>
+			<partial-action action="2" number="3" direction="255"/>
+		</partial-action>
+		<partial-action number="3">
+			<frames start="3" number="1"/>
+			<step number="3"/>
+			<partial-action action="2" number="4" direction="255"/>
+		</partial-action>
+		<partial-action number="4">
+			<frames start="4" number="1"/>
+			<step number="4"/>
+			<partial-action action="2" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: PICKUP FRAMES: 9 FPS: 8 -->
+	<action id="4" direction="255">
+		<animation src="art/critters/nmdoccak.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="9"/>
+			<step number="0"/>
+			<partial-action action="4" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: USE FRAMES: 12 FPS: 8 -->
+	<action id="5" direction="255">
+		<animation src="art/critters/nmdoccal.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="12"/>
+			<step number="0"/>
+			<partial-action action="5" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: DODGE FRAMES: 7 FPS: 10 -->
+	<action id="6" direction="255">
+		<animation src="art/critters/nmdoccan.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="7"/>
+			<step number="0"/>
+			<partial-action action="6" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITFRONT FRAMES: 6 FPS: 10 -->
+	<action id="7" direction="255">
+		<animation src="art/critters/nmdoccao.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="6"/>
+			<step number="0"/>
+			<partial-action action="7" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITBACK FRAMES: 6 FPS: 10 -->
+	<action id="8" direction="255">
+		<animation src="art/critters/nmdoccap.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="6"/>
+			<step number="0"/>
+			<partial-action action="8" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: PUNCH FRAMES: 11 FPS: 10 -->
+	<action id="11" direction="255">
+		<animation src="art/critters/nmdoccaq.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="11"/>
+			<step number="0"/>
+			<partial-action action="11" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+
+</complex-animation>

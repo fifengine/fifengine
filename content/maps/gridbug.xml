@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>top-down test</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+
+	<!-- tiling a world-map
+	All tiles need to have the same dimension!
+
+	For now:  All images MUST BE RGBA !
+	-->
+	<geometries>
+		<geometry>
+			<id>3</id> <!-- not 0 or 1! already used -->
+			<type>RECTANGULAR</type>
+			
+			<!-- the next two repeat the tile dimension from above -->
+			<size ><x>200</x><y>200</y></size>
+		</geometry>
+		
+		<geometry>
+			<id>4</id> <!-- not 0 or 1! already used -->
+			<type>RECTANGULAR</type>
+			
+			<!-- tile dimensions -->
+			<size><x>48</x><y>48</y></size>
+		</geometry>
+	</geometries>
+
+	<archetypes>
+		<archetype type="XML" source="content/gfx/tiles/rpgtileset.xml" />
+		
+		<archetype type="XML">
+			<tileset name="top-down tiles" tilewidth="200" tileheight="200" firstgid="12001" lastgid="13000">
+				<image source="content/gfx/tiles/chess/flat1.png" singletile="1" />
+				<image source="content/gfx/tiles/chess/flat2.png" singletile="1" />
+				<image source="content/gfx/tiles/chess/flat3.png" singletile="1" />
+				<image source="content/gfx/tiles/chess/flat4.png" singletile="1" />
+			</tileset>
+		</archetype>
+	</archetypes>
+	<elevation>
+		<properties>
+			<refgrid>0</refgrid>
+		</properties>
+		<layer>
+			<properties>
+				<size><x>4</x><y>4</y></size>
+				<geometry>4</geometry>
+			</properties>
+			<metadata>
+				<!-- Commented out to trigger the grid bug for testing purposes
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square01.png</param>
+				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
+				-->
+			</metadata>
+			<sparsedata>
+				<tileat gid="10126" x="0" y="0" />
+				<tileat gid="10127" x="1" y="0" />
+				<tileat gid="10128" x="2" y="0" />
+				<tileat gid="10129" x="3" y="0" />
+							
+				<tileat gid="10126" x="0" y="1" />
+				<tileat gid="10127" x="0" y="2" />
+				
+				<tileat gid="10126" x="3" y="1" />
+				<tileat gid="10127" x="3" y="2" />
+				
+				<tileat gid="10126" x="0" y="3" />
+				<tileat gid="10127" x="1" y="3" />
+				<tileat gid="10128" x="2" y="3" />
+				<tileat gid="10129" x="3" y="3" />
+			</sparsedata>
+		</layer>
+	</elevation>
+
+	<elevation> 
+
+		<!-- what exactly does refgrid="0" mean? [skyb] -->
+		<properties>
+			<refgrid>0</refgrid>
+		</properties>
+		
+		<layer>
+			<properties>
+				<size><x>10</x><y>10</y></size>
+				<geometry>3</geometry>
+			</properties>
+			<metadata>
+				<!-- Commented out to trigger the grid bug for testing purposes
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square02.png</param>
+				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
+				-->
+			</metadata>
+
+			<!--of tiles; geometry references the geo defined above -->
+			<data>
+				<tile  gid="12004" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12004" /><tile  gid="12004" /><tile  gid="12001" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12003" />
+				<tile  gid="12002" /><tile  gid="12003" /><tile  gid="12002" /><tile  gid="12003" /><tile  gid="12004" /><tile  gid="12004" /><tile  gid="12003" /><tile  gid="12003" /><tile  gid="12001" /><tile  gid="12003" />
+				<tile  gid="12001" /><tile  gid="12001" /><tile  gid="12001" /><tile  gid="12004" /><tile  gid="12001" /><tile  gid="12002" /><tile  gid="12001" /><tile  gid="12001" /><tile  gid="12004" /><tile  gid="12001" />
+				<tile  gid="12003" /><tile  gid="12004" /><tile  gid="12003" /><tile  gid="12002" /><tile  gid="12003" /><tile  gid="12003" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12004" />
+				<tile  gid="12003" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12004" /><tile  gid="12001" /><tile  gid="12004" />
+				<tile  gid="12003" /><tile  gid="12001" /><tile  gid="12001" /><tile  gid="12003" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12001" /><tile  gid="12001" /><tile  gid="12002" /><tile  gid="12001" />
+				<tile  gid="12001" /><tile  gid="12004" /><tile  gid="12004" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12003" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12003" /><tile  gid="12003" />
+				<tile  gid="12003" /><tile  gid="12001" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12004" /><tile  gid="12003" /><tile  gid="12002" /><tile  gid="12003" /><tile  gid="12003" /><tile  gid="12002" />
+				<tile  gid="12003" /><tile  gid="12001" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12001" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12003" />
+				<tile  gid="12004" /><tile  gid="12003" /><tile  gid="12003" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12002" /><tile  gid="12004" /><tile  gid="12003" /><tile  gid="12004" />
+			</data>
+		</layer>
+	</elevation>
+</map>
