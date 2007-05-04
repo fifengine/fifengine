@@ -9,8 +9,5 @@ cd \
 cd %_%\..\..\..
 scons debug=0 >> "%_%\engine_build_log.txt" 2>&1
 
-:: Copy the important binaries to the bin directory
-copy engine\fife_engine.exe %_%\bin\fife_engine.exe
-
 :: Return us to the directory we started from
 cd %_%
