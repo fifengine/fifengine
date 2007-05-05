@@ -13,6 +13,7 @@ opts.Add(BoolOption('tinyxml', 'Build tinyxml (required for xmlmap)', 1))
 opts.Add(BoolOption('lite',   'Build the lite version of the library (used for FIFEdit, overrides other settings)', 0))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
 opts.Add(EnumOption('guichan', 'Choose guichan version (default 0.6)', '6', allowed_values=('4','5','6')))
+opts.Add(BoolOption('msvcproj',  'Create MSVC project file', 0))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']} )
 
