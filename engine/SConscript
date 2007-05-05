@@ -63,7 +63,7 @@ def get_msvc_repr(d, tabcount=2, curpath=''):
 			retstr.append(tabcount * '\t' + '</Filter>')
 		else:
 			newpath = os.path.join('..', '..', '..', 'engine', newpath)
-			retstr.append(tabcount * '\t' + '<File Name="%s"></File>' % newpath)
+			retstr.append(tabcount * '\t' + '<File RelativePath="%s"></File>' % newpath)
 	return '\n'.join(retstr)
 
 		
