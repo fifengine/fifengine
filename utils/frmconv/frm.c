@@ -38,6 +38,7 @@ void freefrmanim(frm_anim *anim) {
 }
 
 frm_frame *fetchFRMFrame(unsigned char *buf, uint32_t buflen, uint8_t direct) {
+	int i = 0;
 	frm_frame *frame = malloc(sizeof(frm_frame));
 
 	if (!frame || buflen < 8)
@@ -64,7 +65,7 @@ frm_frame *fetchFRMFrame(unsigned char *buf, uint32_t buflen, uint8_t direct) {
 		return NULL;
 	}
 	
-	for(int i=0; i < frame->height; ++i) {
+	for(i=0; i < frame->height; ++i) {
 		frame->rowptr[i] = malloc(sizeof(unsigned char) * frame->width);
 		if (!frame->rowptr[i]) {
 			printf("ERROR: no memory\n");

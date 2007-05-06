@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 	frm_anim *anim;
 	FILE *outfile=NULL, *inputfile;
 	short int mng=0;
-	int c;
+	int c, i;
 	
 	if (argc > 6) {
 		printf(helpstr,argv[0]);
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
 		
 		frame = anim->frames;
 		
-		for (int i=0; frame && i<anim->nrofframes && i<999; ++i) {
+		for (i=0; frame && i<anim->nrofframes && i<999; ++i) {
 			if (outputname) {
 				sprintf(buf, "%s%03d.png", outputname, i);
 				outfile = fopen(buf, "wb");

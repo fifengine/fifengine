@@ -1,4 +1,5 @@
 import os, sys
+from utils.util_scripts.path import path as upath
 
 opts = Options('options.py', ARGUMENTS)
 opts.Add(BoolOption('audio',  'Enable audio (openal/libvorbis) support', 1)) 
@@ -8,10 +9,11 @@ opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
 opts.Add(EnumOption('script', 'Enable which script-language backend', 'lua', allowed_values=('none', 'lua')))
 opts.Add(BoolOption('xmlmap', 'Build demo xml-maploader', 1))
 opts.Add(BoolOption('tinyxml', 'Build tinyxml (required for xmlmap)', 1))
-opts.Add(BoolOption('lite',   'Build the lite version of the library (used for FIFEdit, overrides other settings)', 0))
+opts.Add(BoolOption('lite',   'Build the lite version of the library (used for editor, overrides other settings)', 0))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
 opts.Add(EnumOption('guichan', 'Choose guichan version (default 0.6)', '6', allowed_values=('4','5','6')))
 opts.Add(BoolOption('msvcproj',  'Create MSVC project file', 0))
+opts.Add(BoolOption('utils',  'Build utilities', 0))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 
@@ -111,34 +113,30 @@ else:
 		else:
 			env.Append(CPPFLAGS = ['-O2'])
 	
-	# This section should be refactored...
-	if env['profile'] == 1:
+	if env['profile']:
 		env.Append(CPPFLAGS = ['-pg'])
 		env.Append(LINKFLAGS = ['-pg'])
 	
-	if env['xmlmap'] == 1:
+	if env['xmlmap']:
 		env.Append(CPPDEFINES = ['HAVE_XMLMAP'])
 	
-	if env['opengl'] == 1:
+	if env['opengl']:
 		env.Append(CPPDEFINES = ['HAVE_OPENGL'])
 	
 	if env['script'] == 'lua':
 		env.Append(CPPDEFINES = ['SCRIPTENGINE_LUA'])
 	
-	if env['lite'] == 1:
+	if env['lite']:
 		env.Append(CPPDEFINES = ['LITE'])	
 	
 	env.Append(CPPDEFINES = ['GUICHAN_VERSION='+env['guichan']])
 	
-	if env['audio'] == 1:
+	if env['audio']:
 		env.Append(CPPDEFINES = ['HAVE_OPENAL'])	
 		
 	Export('env')
 	
-	sconscripts = ['engine/SConscript']
-	if env['testcases']:
-		sconscripts.append('tests/unit_tests/SConscript')
-	SConscript(sconscripts)
+	SConscript('engine/SConscript')
 	
 	if not env['lite']:
 		env.Append(LIBS = ['fife'])
@@ -149,6 +147,15 @@ else:
 			env.Object('SDLMain.m')
 			enginefiles.append('SDLMain.o')
 		env.Program('fife_engine', enginefiles)
+		
+		if env['testcases']:
+			SConscript('tests/unit_tests/SConscript')
+
+		if env['utils']:
+			SConscript([str(p) for p in upath('utils').walkfiles('SConscript')])
+
+
+	
 
 # vim: set filetype=python: 
 

@@ -1,0 +1,9 @@
+import glob
+
+Import('env')
+env = env.Copy()
+env.Replace(CC = 'gcc', CCFLAGS = '-O2', CPPFLAGS = ['-Wall'])
+files = glob.glob('*.c')
+env.Program('frmconv', files)
+	
+# vim: set filetype=python :
