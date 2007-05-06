@@ -36,6 +36,7 @@ for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
 		# Otherwise, conditionally use the folder. By default, use for non-lite build;
 		# a simple 'SConfig' file can override that.
 		files += get_files(get_filter(path, names), path, names)
+files.remove(os.path.join('.', 'main.cpp'))
 cppfiles = [f for f in files if f.endswith('cpp')]
 
 # ------------- msvc file list creation begin ----------------
@@ -93,7 +94,6 @@ if env['msvcproj']:
 
 env.Append(CPPPATH = ['#/engine'])
 
-cppfiles.remove(os.path.join('.', 'main.cpp'))
 if not env['msvcproj']:
 	if env['lite']:
 		env.StaticLibrary('fifelite', cppfiles)
