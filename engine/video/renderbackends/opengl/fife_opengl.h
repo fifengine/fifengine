@@ -35,8 +35,6 @@
 #if defined( WIN32 )
 // MSVC
 #if defined( _MSC_VER )
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
 #include <windows.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
