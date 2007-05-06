@@ -75,7 +75,9 @@ if env['msvcproj']:
 	xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
 	projtxt = open(_jp(msvcbuildpath, 'fifeproj_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
-	open(_jp(msvcbuildpath, 'fife.vcproj'), 'w').write(projtxt)
+	vcprojfilename = _jp(msvcbuildpath, 'fife.vcproj')
+	open(vcprojfilename, 'w').write(projtxt)
+	print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(vcprojfilename)
 # ------------- msvc file list creation end ----------------
 
 # Exceptions:
@@ -89,12 +91,13 @@ if env['msvcproj']:
 # else. raw/ is only for full
 # tinyxml - only if full AND env['tinyxml']
 
-env.Append(CPPPATH = ['#engine'])
+env.Append(CPPPATH = ['#/engine'])
 
-files.remove(os.path.join('.', 'main.cpp'))
-if env['lite']:
-	env.StaticLibrary('fifelite', cppfiles)
-else:
-	env.StaticLibrary('fife', cppfiles)
+cppfiles.remove(os.path.join('.', 'main.cpp'))
+if not env['msvcproj']:
+	if env['lite']:
+		env.StaticLibrary('fifelite', cppfiles)
+	else:
+		env.StaticLibrary('fife', cppfiles)
 	
 # vim: set filetype=python :

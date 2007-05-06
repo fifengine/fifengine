@@ -1,6 +1,4 @@
-import os
-import sys
-
+import os, sys
 
 opts = Options('options.py', ARGUMENTS)
 opts.Add(BoolOption('audio',  'Enable audio (openal/libvorbis) support', 1)) 
@@ -15,7 +13,7 @@ opts.Add(BoolOption('profile', 'Build with profiling information', 0))
 opts.Add(EnumOption('guichan', 'Choose guichan version (default 0.6)', '6', allowed_values=('4','5','6')))
 opts.Add(BoolOption('msvcproj',  'Create MSVC project file', 0))
 
-env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']} )
+env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 
 Help(opts.GenerateHelpText(env))
 
@@ -86,66 +84,71 @@ def checkSimpleLib(context, liblist, header = '', lang = 'c', required = 1):
 
 	return False
 
-
-# if not env.GetOption('clean'): 
-platformConfig = getPlatformConfig()
-env = platformConfig.initEnvironment(env)
-conf = Configure(env, custom_tests = { 'checkConf' : checkConf, 'checkPKG' : checkPKG, 'checkSimpleLib' : checkSimpleLib })
-
-platformConfig.addExtras(conf)
-env = conf.Finish()
-
-if sys.platform == "win32":
-	env.Append(CPPFLAGS = ['-Wall'])
+if env['msvcproj']:
+	Export('env')
+	SConscript(['engine/SConscript'])
 else:
-	env.Append(CPPFLAGS = ['-Wall', '-Wold-style-cast'])
-
-if env['debug'] == 1:
-	env.Append(CPPFLAGS = ['-ggdb', '-O0'])
-else:
-	if os.getenv('CXXFLAGS'):
-		env.Append(CPPFLAGS = Split(os.environ['CXXFLAGS']))
-	else:
-		env.Append(CPPFLAGS = ['-O2'])
-
-# This section should be refactored...
-if env['profile'] == 1:
-	env.Append(CPPFLAGS = ['-pg'])
-	env.Append(LINKFLAGS = ['-pg'])
-
-if env['xmlmap'] == 1:
-	env.Append(CPPDEFINES = ['HAVE_XMLMAP'])
-
-if env['opengl'] == 1:
-	env.Append(CPPDEFINES = ['HAVE_OPENGL'])
-
-if env['script'] == 'lua':
-	env.Append(CPPDEFINES = ['SCRIPTENGINE_LUA'])
-
-if env['lite'] == 1:
-	env.Append(CPPDEFINES = ['LITE'])	
-
-env.Append(CPPDEFINES = ['GUICHAN_VERSION='+env['guichan']])
-
-if env['audio'] == 1:
-	env.Append(CPPDEFINES = ['HAVE_OPENAL'])	
+	platformConfig = getPlatformConfig()
+	env = platformConfig.initEnvironment(env)
+	conf = Configure(env, 
+                     custom_tests = {'checkConf': checkConf, 'checkPKG': checkPKG, 'checkSimpleLib': checkSimpleLib},
+					 conf_dir = '#/build/.sconf_temp',
+					 log_file = '#/build/config.log')
 	
-Export('env')
+	platformConfig.addExtras(conf)
+	env = conf.Finish()
 
-sconscripts = ['engine/SConscript']
-if env['testcases']:
-	sconscripts.append('tests/unit_tests/SConscript')
-SConscript(sconscripts)
-
-if not env['lite']:
-	env.Append(LIBS = ['fife'])
-	env.Append(LIBPATH = ['#engine'])
-
-	enginefiles = ['engine/main.cpp']
-	if sys.platform == 'darwin':
-		env.Object('SDLMain.m')
-		enginefiles.append('SDLMain.o')
-	env.Program('fife_engine', enginefiles)
+	if sys.platform == "win32":
+		env.Append(CPPFLAGS = ['-Wall'])
+	else:
+		env.Append(CPPFLAGS = ['-Wall', '-Wold-style-cast'])
+	
+	if env['debug'] == 1:
+		env.Append(CPPFLAGS = ['-ggdb', '-O0'])
+	else:
+		if os.getenv('CXXFLAGS'):
+			env.Append(CPPFLAGS = Split(os.environ['CXXFLAGS']))
+		else:
+			env.Append(CPPFLAGS = ['-O2'])
+	
+	# This section should be refactored...
+	if env['profile'] == 1:
+		env.Append(CPPFLAGS = ['-pg'])
+		env.Append(LINKFLAGS = ['-pg'])
+	
+	if env['xmlmap'] == 1:
+		env.Append(CPPDEFINES = ['HAVE_XMLMAP'])
+	
+	if env['opengl'] == 1:
+		env.Append(CPPDEFINES = ['HAVE_OPENGL'])
+	
+	if env['script'] == 'lua':
+		env.Append(CPPDEFINES = ['SCRIPTENGINE_LUA'])
+	
+	if env['lite'] == 1:
+		env.Append(CPPDEFINES = ['LITE'])	
+	
+	env.Append(CPPDEFINES = ['GUICHAN_VERSION='+env['guichan']])
+	
+	if env['audio'] == 1:
+		env.Append(CPPDEFINES = ['HAVE_OPENAL'])	
+		
+	Export('env')
+	
+	sconscripts = ['engine/SConscript']
+	if env['testcases']:
+		sconscripts.append('tests/unit_tests/SConscript')
+	SConscript(sconscripts)
+	
+	if not env['lite']:
+		env.Append(LIBS = ['fife'])
+		env.Append(LIBPATH = ['#/engine'])
+	
+		enginefiles = ['engine/main.cpp']
+		if sys.platform == 'darwin':
+			env.Object('SDLMain.m')
+			enginefiles.append('SDLMain.o')
+		env.Program('fife_engine', enginefiles)
 
 # vim: set filetype=python: 
 
