@@ -95,6 +95,13 @@ if dontBuild:
 		SConscript(['engine/SConscript'])
 	if env['doxygen']:
 		# should prolly be done using scons builders...
+		import shutil
+		try:
+			print "removing old documentation directory"
+			shutil.rmtree('doc/doxygen/html')
+		except OSError:
+			pass
+		print "generating new doxygen documentation"
 		os.system('doxygen doc/doxygen/doxyfile')
 
 else:
