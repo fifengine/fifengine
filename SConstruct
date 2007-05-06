@@ -12,12 +12,15 @@ opts.Add(BoolOption('tinyxml', 'Build tinyxml (required for xmlmap)', 1))
 opts.Add(BoolOption('lite',   'Build the lite version of the library (used for editor, overrides other settings)', 0))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
 opts.Add(EnumOption('guichan', 'Choose guichan version (default 0.6)', '6', allowed_values=('4','5','6')))
-opts.Add(BoolOption('msvcproj',  'Create MSVC project file', 0))
+opts.Add(BoolOption('msvcproj',  "Create MSVC project file. If defined, won't build code", 0))
 opts.Add(BoolOption('utils',  'Build utilities', 0))
+opts.Add(BoolOption('doxygen',  "Generates doxygen documentation into doc/doxygen/html. If defined, won't build code", 0))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 
 Help(opts.GenerateHelpText(env))
+
+dontBuild = env['msvcproj'] or env['doxygen']
 
 # helper functions
 def tryConfigCommand(context, cmd):
@@ -86,9 +89,14 @@ def checkSimpleLib(context, liblist, header = '', lang = 'c', required = 1):
 
 	return False
 
-if env['msvcproj']:
+if dontBuild:
 	Export('env')
-	SConscript(['engine/SConscript'])
+	if env['msvcproj']:
+		SConscript(['engine/SConscript'])
+	if env['doxygen']:
+		# should prolly be done using scons builders...
+		os.system('doxygen doc/doxygen/doxyfile')
+
 else:
 	platformConfig = getPlatformConfig()
 	env = platformConfig.initEnvironment(env)
