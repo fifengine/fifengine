@@ -85,12 +85,10 @@ if env['msvcproj']:
 # audio - only in full BUT special handling <-- in audio/, just do the CPPPATH 
 # logic; in subfolders, use a config that requires lite=0 AND the appropriate
 # audio setting (0 in devnull, 1 in openAL)
-# map/loaders - /xml only if env['xmlmap']; otherwise everything. Lite too!
 # video - similarly, /renderbackends/opengl only if env['opengl']; otherwise
 # everything. Lite too!
 # vfs - main folder, don't use vfswriteformat.cpp for lite, but use everything
 # else. raw/ is only for full
-# tinyxml - only if full AND env['tinyxml']
 
 env.Append(CPPPATH = ['#/engine'])
 

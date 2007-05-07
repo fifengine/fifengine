@@ -6,8 +6,6 @@ opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations',
 opts.Add(BoolOption('testcases',  'Build testcases in unit_tests', 0))
 opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
 opts.Add(EnumOption('script', 'Enable which script-language backend', 'lua', allowed_values=('none', 'lua')))
-opts.Add(BoolOption('xmlmap', 'Build demo xml-maploader', 1))
-opts.Add(BoolOption('tinyxml', 'Build tinyxml (required for xmlmap)', 1))
 opts.Add(BoolOption('lite',   'Build the lite version of the library (used for editor, overrides other settings)', 0))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
 opts.Add(EnumOption('guichan', 'Choose guichan version (default 0.6)', '6', allowed_values=('4','5','6')))
@@ -130,9 +128,6 @@ else:
 	if env['profile']:
 		env.Append(CPPFLAGS = ['-pg'])
 		env.Append(LINKFLAGS = ['-pg'])
-	
-	if env['xmlmap']:
-		env.Append(CPPDEFINES = ['HAVE_XMLMAP'])
 	
 	if env['opengl']:
 		env.Append(CPPDEFINES = ['HAVE_OPENGL'])

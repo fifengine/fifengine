@@ -27,10 +27,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#ifdef HAVE_XMLMAP
 #include "loaders/xml/xml.h"
 #include "loaders/xml/xml_archetype.h"
-#endif
 #include "loaders/fallout/fallout.h"
 #include "util/purge.h"
 #include "util/debugutils.h"
@@ -46,10 +44,8 @@ namespace FIFE { namespace map {
 
 	Factory::Factory() : m_loaders() {
 		registerLoader(new loaders::fallout::Fallout());
-#ifdef HAVE_XMLMAP
 		registerLoader(new loaders::xml::XML());
 		registerArchetypeLoader("XML",new ArchetypeLoader<loaders::xml::XMLArchetype>());
-#endif
 		Geometry::registerGeometry(s_geometry_info(
 			Geometry::FalloutTileGeometry,
 			"RECTANGULAR",
