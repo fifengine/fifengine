@@ -1,6 +1,6 @@
 :: Users will need to change paths if they use custom MinGW or SCons version that didn't ship with the SDK
 set _=%CD%
-SET PATH=%Path%;%_%\..\mingw\applications\scons
+SET PATH=%Path%;%_%\applications\scons
 
 :: Goto TRUNK and call SCons
 cd \
