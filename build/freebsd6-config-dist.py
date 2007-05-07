@@ -9,10 +9,9 @@ def initEnvironment(env):
 	return env
 
 def addExtras(context):
-	if context.env['audio'] == 1:
-		context.env.Append(CPPPATH = ['/usr/local/include/vorbis'])
-		context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
-		context.checkSimpleLib(['openal'], 'AL/al.h')
+	context.env.Append(CPPPATH = ['/usr/local/include/vorbis'])
+	context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
+	context.checkSimpleLib(['openal'], 'AL/al.h')
 
 	if context.env['script'] == 'lua':
 		context.env.Append(LIBS = ['lua'])

@@ -2,7 +2,6 @@ import os, sys
 from utils.util_scripts.path import path as upath
 
 opts = Options('options.py', ARGUMENTS)
-opts.Add(BoolOption('audio',  'Enable audio (openal/libvorbis) support', 1)) 
 opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations', 1))
 opts.Add(BoolOption('testcases',  'Build testcases in unit_tests', 0))
 opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
@@ -146,9 +145,6 @@ else:
 	
 	env.Append(CPPDEFINES = ['GUICHAN_VERSION='+env['guichan']])
 	
-	if env['audio']:
-		env.Append(CPPDEFINES = ['HAVE_OPENAL'])	
-		
 	Export('env')
 	
 	SConscript('engine/SConscript')

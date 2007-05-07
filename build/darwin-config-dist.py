@@ -1,4 +1,4 @@
-import os
+#import os
 
 def initEnvironment(env):
     env.Append(ENV={'PATH' : os.environ['PATH']})
