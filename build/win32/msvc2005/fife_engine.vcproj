@@ -3,8 +3,8 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="fife_engine"
-	ProjectGUID="{96025707-5759-400D-80E5-A1E94C8A79A2}"
-	RootNamespace="fife_trunk_core"
+	ProjectGUID="{D99A3288-99F3-46EB-94C8-31F6D3237F8B}"
+	RootNamespace="fife_engine"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\static_libs\"
+			OutputDirectory="..\..\..\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -97,7 +97,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\static_libs"
+			OutputDirectory="..\..\..\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -178,10 +178,16 @@
 	<References>
 	</References>
 	<Files>
-		<File
-			RelativePath="..\..\..\engine\main.cpp"
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-		</File>
+			<File
+				RelativePath="..\..\..\engine\main.cpp"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

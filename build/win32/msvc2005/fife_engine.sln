@@ -1,12 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libfife", "fife.vcproj", "{E6EBEB4C-DA3B-4CDE-A2EA-6E823DB46BB3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libfife", "fife.vcproj", "{96025707-5759-400D-80E5-A1E94C8A79A2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fife_engine", "fife_engine.vcproj", "{96025707-5759-400D-80E5-A1E94C8A79A2}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E6EBEB4C-DA3B-4CDE-A2EA-6E823DB46BB3} = {E6EBEB4C-DA3B-4CDE-A2EA-6E823DB46BB3}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fife_engine", "fife_engine.vcproj", "{D99A3288-99F3-46EB-94C8-31F6D3237F8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,14 +11,14 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E6EBEB4C-DA3B-4CDE-A2EA-6E823DB46BB3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E6EBEB4C-DA3B-4CDE-A2EA-6E823DB46BB3}.Debug|Win32.Build.0 = Debug|Win32
-		{E6EBEB4C-DA3B-4CDE-A2EA-6E823DB46BB3}.Release|Win32.ActiveCfg = Release|Win32
-		{E6EBEB4C-DA3B-4CDE-A2EA-6E823DB46BB3}.Release|Win32.Build.0 = Release|Win32
 		{96025707-5759-400D-80E5-A1E94C8A79A2}.Debug|Win32.ActiveCfg = Debug|Win32
 		{96025707-5759-400D-80E5-A1E94C8A79A2}.Debug|Win32.Build.0 = Debug|Win32
 		{96025707-5759-400D-80E5-A1E94C8A79A2}.Release|Win32.ActiveCfg = Release|Win32
 		{96025707-5759-400D-80E5-A1E94C8A79A2}.Release|Win32.Build.0 = Release|Win32
+		{D99A3288-99F3-46EB-94C8-31F6D3237F8B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D99A3288-99F3-46EB-94C8-31F6D3237F8B}.Debug|Win32.Build.0 = Debug|Win32
+		{D99A3288-99F3-46EB-94C8-31F6D3237F8B}.Release|Win32.ActiveCfg = Release|Win32
+		{D99A3288-99F3-46EB-94C8-31F6D3237F8B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
