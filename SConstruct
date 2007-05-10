@@ -150,8 +150,8 @@ else:
 	
 		enginefiles = ['engine/main.cpp']
 		if sys.platform == 'darwin':
-			env.Object('SDLMain.m')
-			enginefiles.append('SDLMain.o')
+			env.Object('engine/SDLMain.m')
+			enginefiles.append('engine/SDLMain.o')
 		env.Program('fife_engine', enginefiles)
 		
 		if env['testcases']:
