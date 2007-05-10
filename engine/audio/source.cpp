@@ -30,7 +30,7 @@
 #include "util/log.h"
 #include "util/time/timemanager.h"
 
-#include "manager.h"
+#include "audiomanager.h"
 #include "source.h"
 
 namespace FIFE { namespace audio {

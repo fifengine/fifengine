@@ -34,7 +34,7 @@
 
 #include "config.h"
 #include "decoder.h"
-#include "manager.h"
+#include "audiomanager.h"
 
 /* Changelog:
  * -Try to use Log more often

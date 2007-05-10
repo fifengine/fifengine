@@ -30,7 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "audio/manager.h"
+#include "audio/audiomanager.h"
 #include "map/viewgamestate.h"
 #include "map/objectinfo.h"
 #include "script/scriptbackendmanager.h"

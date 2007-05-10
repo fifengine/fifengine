@@ -31,7 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 // FIXME: Do we really have all these dependencies here?
-#include "input/manager.h"
+#include "input/inputmanager.h"
 #include "vfs/vfs.h"
 #include "video/gui/guimanager.h"
 #include "video/rendermanager.h"

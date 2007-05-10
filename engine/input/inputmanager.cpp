@@ -36,7 +36,7 @@
 #include "engine.h"
 
 #include "listener.h"
-#include "manager.h"
+#include "inputmanager.h"
 
 namespace FIFE { namespace input {
 

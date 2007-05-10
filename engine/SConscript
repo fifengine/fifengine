@@ -37,7 +37,24 @@ for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
 		# a simple 'SConfig' file can override that.
 		files += get_files(get_filter(path, names), path, names)
 files.remove(os.path.join('.', 'main.cpp'))
+
 cppfiles = [f for f in files if f.endswith('cpp')]
+
+# check that we don't have files having same names (bad for visual studio + static analysis)
+dupePaths = {}; dupes = []
+for f in cppfiles:
+	fname = os.path.basename(f)
+	try:
+		dupePaths[fname].append(f)
+	except KeyError:
+		dupePaths[fname] = [f]
+for fname, paths in dupePaths.items():
+	if len(paths) > 1:
+		dupes.append('%s -> %s' % (fname, ', '.join(paths)))
+if dupes:
+	print "\nError found: All cpp file names must be unique in FIFE, the following were not:"
+	for l in dupes: print l
+	Exit(1)
 
 # ------------- msvc file list creation begin ----------------
 def create_dict_tree(source_dict):
