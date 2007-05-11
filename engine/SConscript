@@ -85,17 +85,16 @@ def get_msvc_repr(d, tabcount=2, curpath=''):
 	return '\n'.join(retstr)
 
 		
-if env['msvcproj']:
-	_jp = os.path.join
-	_sep = os.path.sep
-	msvcbuildpath = _jp('..', 'build', 'win32', 'msvc2005')
-	vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep), 1)[1] for f in files]
-	xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
-	projtxt = open(_jp(msvcbuildpath, 'fifeproj_template.xml'), 'r').read()
-	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
-	vcprojfilename = _jp(msvcbuildpath, 'fife.vcproj')
-	open(vcprojfilename, 'w').write(projtxt)
-	print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(vcprojfilename)
+_jp = os.path.join
+_sep = os.path.sep
+msvcbuildpath = _jp('..', 'build', 'win32', 'msvc2005')
+vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep), 1)[1] for f in files]
+xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
+projtxt = open(_jp(msvcbuildpath, 'fifeproj_template.xml'), 'r').read()
+projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
+vcprojfilename = _jp(msvcbuildpath, 'fife.vcproj')
+open(vcprojfilename, 'w').write(projtxt)
+print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(vcprojfilename)
 # ------------- msvc file list creation end ----------------
 
 # Exceptions:
