@@ -31,6 +31,7 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
+
 #include "gamestatemanager.h"
 #include "gamestate.h"
 

@@ -31,7 +31,7 @@
 #include "map/objectinfo.h"
 #include "map/view.h"
 #include "map/visual.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/log.h"
 
 #include "startmovement.h"

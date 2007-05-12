@@ -31,7 +31,7 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/time/timemanager.h"
 
 #include "animation.h"

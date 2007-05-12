@@ -31,7 +31,7 @@
 #include "video/renderable.h"
 #include "map/effects/visualeffect.h"
 #include "util/debugutils.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 
 #include "geometry.h"
 #include "objectinfo.h"

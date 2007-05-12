@@ -36,7 +36,7 @@
 #include "map/view.h"
 #include "map/visual.h"
 #include "video/complexanimation.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/log.h"
 
 #include "enqueueaction.h"
@@ -89,7 +89,7 @@ namespace FIFE { namespace map { namespace command {
 		ObjectPtr moi = cmd.object;
 
 		if (!moi) {
-			Warn("mc_enqueueaction") << "No MOI for object " << cmd.object;
+			Debug("mc_enqueueaction") << "No MOI for object " << cmd.object;
 			return;
 		}
 
@@ -99,13 +99,13 @@ namespace FIFE { namespace map { namespace command {
 		}
 
 		if (moi->getVisualId() == 0) {
-			Warn("mc_enqueueaction") << "No visual id";
+			Debug("mc_enqueueaction") << "No visual id";
 			return;
 		}
 		
 		Visual* visual = m_view->getVisual(moi->getVisualId());
 		if (!visual) {
-			Warn("mc_enqueueaction") << "No visual";
+			Debug("mc_enqueueaction") << "No visual";
 			return;
 		}
 
@@ -117,7 +117,7 @@ namespace FIFE { namespace map { namespace command {
 			}
 			anim->enqueueAction(action);
 		} else {
-			Warn("mc_enqueueaction") << "Not an animation?";
+			Debug("mc_enqueueaction") << "Not an animation?";
 		}
 	}
 } } }

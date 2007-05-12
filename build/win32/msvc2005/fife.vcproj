@@ -149,8 +149,6 @@
 	<References>
 	</References>
 	<Files>
-		<File RelativePath="..\..\..\engine\asyncbridge.cpp"></File>
-		<File RelativePath="..\..\..\engine\asyncbridge.h"></File>
 		<Filter Name="audio">
 			<File RelativePath="..\..\..\engine\audio\audiomanager.cpp"></File>
 			<File RelativePath="..\..\..\engine\audio\audiomanager.h"></File>
@@ -170,8 +168,6 @@
 		</Filter>
 		<File RelativePath="..\..\..\engine\engine.cpp"></File>
 		<File RelativePath="..\..\..\engine\engine.h"></File>
-		<File RelativePath="..\..\..\engine\events.h"></File>
-		<File RelativePath="..\..\..\engine\fwd.h"></File>
 		<Filter Name="guichan_addon">
 			<File RelativePath="..\..\..\engine\guichan_addon\aafont.cpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\aafont.h"></File>
@@ -194,9 +190,8 @@
 			<File RelativePath="..\..\..\engine\guichan_addon\twobutton.cpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\twobutton.h"></File>
 		</Filter>
-		<File RelativePath="..\..\..\engine\imagecache.cpp"></File>
-		<File RelativePath="..\..\..\engine\imagecache.h"></File>
 		<Filter Name="input">
+			<File RelativePath="..\..\..\engine\input\events.h"></File>
 			<File RelativePath="..\..\..\engine\input\fwd.h"></File>
 			<File RelativePath="..\..\..\engine\input\inputmanager.cpp"></File>
 			<File RelativePath="..\..\..\engine\input\inputmanager.h"></File>
@@ -207,6 +202,8 @@
 			<File RelativePath="..\..\..\engine\map\archetype.cpp"></File>
 			<File RelativePath="..\..\..\engine\map\archetype.h"></File>
 			<File RelativePath="..\..\..\engine\map\archetype_loader.h"></File>
+			<File RelativePath="..\..\..\engine\map\asyncbridge.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\asyncbridge.h"></File>
 			<File RelativePath="..\..\..\engine\map\camera.cpp"></File>
 			<File RelativePath="..\..\..\engine\map\camera.h"></File>
 			<Filter Name="command">
@@ -405,8 +402,10 @@
 			<File RelativePath="..\..\..\engine\script\scriptengine.h"></File>
 		</Filter>
 		<Filter Name="solver">
+			<File RelativePath="..\..\..\engine\solver\fwd.h"></File>
 			<File RelativePath="..\..\..\engine\solver\graph.h"></File>
 			<Filter Name="micropather_solver">
+				<File RelativePath="..\..\..\engine\solver\micropather_solver\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\solver\micropather_solver\micropather.cpp"></File>
 				<File RelativePath="..\..\..\engine\solver\micropather_solver\micropather.h"></File>
 			</Filter>
@@ -422,6 +421,7 @@
 			<File RelativePath="..\..\..\engine\util\fife_stdint.h"></File>
 			<File RelativePath="..\..\..\engine\util\fwd.h"></File>
 			<Filter Name="gamestate">
+				<File RelativePath="..\..\..\engine\util\gamestate\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\util\gamestate\gamestate.cpp"></File>
 				<File RelativePath="..\..\..\engine\util\gamestate\gamestate.h"></File>
 				<File RelativePath="..\..\..\engine\util\gamestate\gamestatemanager.cpp"></File>
@@ -439,6 +439,7 @@
 			<File RelativePath="..\..\..\engine\util\settingsmanager.h"></File>
 			<File RelativePath="..\..\..\engine\util\singleton.h"></File>
 			<Filter Name="time">
+				<File RelativePath="..\..\..\engine\util\time\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\util\time\timeevent.cpp"></File>
 				<File RelativePath="..\..\..\engine\util\time\timeevent.h"></File>
 				<File RelativePath="..\..\..\engine\util\time\timemanager.cpp"></File>
@@ -484,6 +485,8 @@
 			</Filter>
 			<File RelativePath="..\..\..\engine\video\image.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\image.h"></File>
+			<File RelativePath="..\..\..\engine\video\imagecache.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\imagecache.h"></File>
 			<File RelativePath="..\..\..\engine\video\partialaction.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\partialaction.h"></File>
 			<File RelativePath="..\..\..\engine\video\pixelbuffer.cpp"></File>
@@ -525,6 +528,7 @@
 			<File RelativePath="..\..\..\engine\video\screen.h"></File>
 		</Filter>
 		<Filter Name="xml">
+			<File RelativePath="..\..\..\engine\xml\fwd.h"></File>
 			<Filter Name="tinyxml">
 				<File RelativePath="..\..\..\engine\xml\tinyxml\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\xml\tinyxml\tinystr.cpp"></File>

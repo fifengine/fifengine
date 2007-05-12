@@ -35,7 +35,7 @@
 #include "util/settingsmanager.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 
 #include "critlst.h"
 #include "list.h"

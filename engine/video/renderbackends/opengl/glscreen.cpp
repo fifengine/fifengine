@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "util/rect.h"
 #include "video/renderable.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 
 #include "fife_opengl.h"
 #include "glscreen.h"

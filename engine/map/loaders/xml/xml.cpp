@@ -41,7 +41,7 @@
 #include "xml/xmlutil.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 
 #include "xml.h"
 #include "xml_archetype.h"

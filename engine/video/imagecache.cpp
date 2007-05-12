@@ -41,7 +41,7 @@
 
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 
 namespace FIFE {
 

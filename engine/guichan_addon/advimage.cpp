@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "video/animation.h"
 #include "video/renderable.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 
 #include "advimage.h"
 

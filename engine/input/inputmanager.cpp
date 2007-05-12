@@ -31,12 +31,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/gui/guimanager.h"
 #include "util/debugutils.h"
-#include "engine.h"
 
 #include "listener.h"
 #include "inputmanager.h"
+#include "events.h"
 
 namespace FIFE { namespace input {
 
@@ -150,23 +149,19 @@ namespace FIFE { namespace input {
 		std::list<Listener*>::iterator it,end(eventListener.end()),anyend(anyeventListener.end());
 
 		SDL_Event event;
-		// ugly, but has to do for now...
-		gcn::SDLInput *input = dynamic_cast<gcn::SDLInput*>(GUIManager::instance()->getGuichanGUI()->getInput());
-		if (!input) {
-			Warn("GuichanGUI->getInput == 0 ... discarding events!");
-			return;
-		}
-
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_QUIT:
-					Engine::instance()->stop();
+					for(it = anyeventListener.begin(); it != anyend; ++it) {
+						(*it)->handleEvent(Event::QUIT_GAME);
+					}
 					break;
-
 				case SDL_KEYDOWN:
 					// Do this for now, until we can rely on startup scripts.
 					if (event.key.keysym.sym == SDLK_ESCAPE) {
-						Engine::instance()->stop();
+						for(it = eventListener.begin(); it != end; ++it) {
+							(*it)->handleEvent(Event::QUIT_GAME);
+						}
 					}
 					// FIXME: Damn this IS ugly.
 					if (kmap.find(event.key.keysym.sym) != kmap.end()) {
@@ -192,8 +187,7 @@ namespace FIFE { namespace input {
 			if ((event.type == SDL_MOUSEBUTTONUP) || (event.type == SDL_MOUSEBUTTONDOWN))
 				handleMouseButtonEvent(event.button);
 			
-			// All events pushed to guichan.
-			input->pushInput(event);
+			// push raw events
 			if (m_forced_listener) {
 				m_forced_listener->handleEvent(&event);
 			}

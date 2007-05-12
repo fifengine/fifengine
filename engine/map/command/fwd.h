@@ -1,5 +1,6 @@
 namespace FIFE {
 	namespace map {
+		class ObjectInfo;
 		namespace command {
 			class Command;
 			class EnqueueAction;

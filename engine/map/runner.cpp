@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "command/info.h"
 #include "command/command.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/log.h"
 #include "scriptingslave.h"
 

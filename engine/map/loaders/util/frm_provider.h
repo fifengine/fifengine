@@ -32,6 +32,7 @@
 // Second block: files included from the same folder
 #include "video/renderable_provider.h"
 
+
 namespace FIFE { namespace map { namespace loaders {
 	
 	class fallout::AnimatedPalette;

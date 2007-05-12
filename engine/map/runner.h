@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "map/command/info.h"
 #include "script/scriptcontainer.h"
-#include "asyncbridge.h"
+#include "map/asyncbridge.h"
 
 struct SDL_Thread;
 

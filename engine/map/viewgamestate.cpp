@@ -37,10 +37,9 @@
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "util/debugutils.h"
-#include "engine.h"
-#include "events.h"
+#include "input/events.h"
 #include "util/exception.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/settingsmanager.h"
 
 #include "camera.h"

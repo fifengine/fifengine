@@ -32,6 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/singleton.h"
+#include "input/listener.h"
 
 namespace gcn {
 
@@ -53,7 +54,7 @@ namespace FIFE {
 	 *
 	 * This class controls the GUI system in FIFE.
 	 */
-	class GUIManager : public DynamicSingleton<GUIManager> {
+	class GUIManager : public DynamicSingleton<GUIManager>, input::ListenerRaw {
 		public:
 			/** Constructor.
 			 */
@@ -112,11 +113,17 @@ namespace FIFE {
 			 */
 			void setGlobalFont(gcn::Font* font);
 
-			/** Gets default fotn
+			/** Gets default font
 			 *
 			 * @return Default font.
 			 */
 			gcn::Font* getDefaultFont() { return m_font; };
+
+			/** Listen forced events from input manager
+			 *
+			 * \param event raw SDL event coming from input manager
+			 */
+			void handleEvent(SDL_Event* event);
 
 		private:
 			// The Guichan GUI.

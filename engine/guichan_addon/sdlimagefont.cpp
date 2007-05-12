@@ -96,8 +96,8 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "util/log.h"
+#include "video/imagecache.h"
 
-#include "imagecache.h"
 #include "sdlimagefont.hpp"
 
 namespace FIFE {

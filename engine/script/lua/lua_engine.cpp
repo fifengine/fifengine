@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "engine.h"
-#include "events.h"
+#include "input/events.h"
 
 #include "lua_engine.h"
 

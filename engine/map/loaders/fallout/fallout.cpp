@@ -39,7 +39,7 @@
 #include "vfs/vfssourcefactory.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/settingsmanager.h"
 
 #include "fallout.h"

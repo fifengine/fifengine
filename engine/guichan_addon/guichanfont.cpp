@@ -39,7 +39,7 @@
 #include "video/renderbackend.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/log.h"
 
 #include "guichanfont.h"

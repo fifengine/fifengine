@@ -46,11 +46,11 @@
 
 #include "util/debugutils.h"
 #include "engine.h"
-#include "events.h"
+#include "input/events.h"
 #include "util/exception.h"
 #include "util/gamestate/gamestate.h"
 #include "util/gamestate/gamestatemanager.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/log.h"
 #include "util/settingsmanager.h"
 #include "util/time/timemanager.h"
@@ -107,6 +107,7 @@ namespace FIFE {
 
 		Log::parseCmdLine( m_parsed_cmdline );
 
+		new input::Manager();
 		new GUIManager();
 		new RenderManager();
 
@@ -120,7 +121,6 @@ namespace FIFE {
 
 		VFS::instance()->addSource(new VFSHostSystem());
 
-		new input::Manager();
 		new ImageCache();
 		new map::Factory();
 		new audio::Manager();
@@ -171,7 +171,9 @@ namespace FIFE {
 	}
 
 	void Engine::handleEvent(int event) {
+		Log("received some event in engine");
 		if (event == Event::QUIT_GAME) {
+			Log("received Event::QUIT_GAME in engine");
 			stop();
 		} else if (event == Event::MAKE_SCREENSHOT) {
 			m_makeScreenshot = true;

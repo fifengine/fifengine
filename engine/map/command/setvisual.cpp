@@ -32,7 +32,7 @@
 #include "map/view.h"
 #include "map/visual.h"
 #include "video/complexanimation.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 #include "util/log.h"
 
 #include "setvisual.h"

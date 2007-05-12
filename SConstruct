@@ -11,13 +11,13 @@ opts.Add(BoolOption('profile', 'Build with profiling information', 0))
 opts.Add(EnumOption('guichan', 'Choose guichan version (default 0.6)', '6', allowed_values=('4','5','6')))
 opts.Add(BoolOption('msvcproj',  "Create MSVC project file. If defined, won't build code", 0))
 opts.Add(BoolOption('utils',  'Build utilities', 0))
-opts.Add(BoolOption('doxygen',  "Generates doxygen documentation into doc/doxygen/html. If defined, won't build code", 0))
+opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 
 Help(opts.GenerateHelpText(env))
 
-dontBuild = env['msvcproj'] or env['doxygen']
+dontBuild = env['msvcproj'] or env['docs']
 
 # helper functions
 def tryConfigCommand(context, cmd):
@@ -90,16 +90,32 @@ if dontBuild:
 	Export('env')
 	if env['msvcproj']:
 		SConscript(['engine/SConscript'])
-	if env['doxygen']:
+	if env['docs']:
+		_jp = os.path.join
 		# should prolly be done using scons builders...
-		import shutil
 		try:
-			print "removing old documentation directory"
-			shutil.rmtree('doc/doxygen/html')
+			print "removing old documentation directories"
+			upath('doc/doxygen/html').rmtree()
 		except OSError:
 			pass
 		print "generating new doxygen documentation"
-		os.system('doxygen doc/doxygen/doxyfile')
+		#os.system('doxygen ' + _jp('doc', 'doxygen', 'doxyfile'))
+		print "doxygen documentation created succesfully"
+
+		print "generating directory dependency graph"
+		cinc2dot = upath(_jp('utils', 'util_scripts', 'cinclude2dot'))	
+		outdir = upath(_jp('doc', 'diagrams'))
+		tmpfile = outdir / upath('incdep.dot')
+		os.system(str(cinc2dot) + ' --src engine --include engine --merge directory > ' + str(tmpfile))
+		# remove references to util
+		outlines = []
+		for line in tmpfile.lines():
+			if line.find('-> "engine/util"') == -1:
+				outlines.append(line)
+		tmpfile.write_lines(outlines)
+		#os.system('dot -Tps ' + str(tmpfile) + ' > ' + str(outdir / upath('incdep.ps')))
+		#tmpfile.remove()
+		print "directory dependency graph created succesfully"
 
 else:
 	platformConfig = getPlatformConfig()

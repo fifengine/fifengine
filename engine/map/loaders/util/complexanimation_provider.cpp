@@ -32,7 +32,7 @@
 #include "video/complexanimation.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "imagecache.h"
+#include "video/imagecache.h"
 
 #include "complexanimation_provider.h"
 

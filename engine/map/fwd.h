@@ -24,6 +24,7 @@ namespace FIFE {
 		class Object;
 		class ObjectGrid;
 		class ObjectInfo;
+		class ObjectList;
 		class ObjectManager;
 		class Runner;
 		class ScriptEngine;

@@ -3,6 +3,7 @@ namespace FIFE {
 	class Animation;
 	class Image;
 	class ImageCache;
+	class LZSSDecoder;
 	class RawData;
 	class RenderAble;
 	namespace map {
@@ -12,6 +13,7 @@ namespace FIFE {
 				class AnimatedBlock;
 				class AnimatedPalette;
 				class Animation;
+				class ColorOverride;
 				class CritLST;
 				class DAT1;
 				class DAT2;
