@@ -172,10 +172,6 @@
 		<File RelativePath="..\..\..\engine\engine.h"></File>
 		<File RelativePath="..\..\..\engine\events.h"></File>
 		<File RelativePath="..\..\..\engine\fwd.h"></File>
-		<File RelativePath="..\..\..\engine\gamestate.cpp"></File>
-		<File RelativePath="..\..\..\engine\gamestate.h"></File>
-		<File RelativePath="..\..\..\engine\gamestatemanager.cpp"></File>
-		<File RelativePath="..\..\..\engine\gamestatemanager.h"></File>
 		<Filter Name="guichan_addon">
 			<File RelativePath="..\..\..\engine\guichan_addon\aafont.cpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\aafont.h"></File>
@@ -425,6 +421,12 @@
 			<File RelativePath="..\..\..\engine\util\exception.h"></File>
 			<File RelativePath="..\..\..\engine\util\fife_stdint.h"></File>
 			<File RelativePath="..\..\..\engine\util\fwd.h"></File>
+			<Filter Name="gamestate">
+				<File RelativePath="..\..\..\engine\util\gamestate\gamestate.cpp"></File>
+				<File RelativePath="..\..\..\engine\util\gamestate\gamestate.h"></File>
+				<File RelativePath="..\..\..\engine\util\gamestate\gamestatemanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\util\gamestate\gamestatemanager.h"></File>
+			</Filter>
 			<File RelativePath="..\..\..\engine\util\log.cpp"></File>
 			<File RelativePath="..\..\..\engine\util\log.h"></File>
 			<File RelativePath="..\..\..\engine\util\point.cpp"></File>

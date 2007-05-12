@@ -40,7 +40,7 @@
 #include "engine.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "gamestatemanager.h"
+#include "util/gamestate/gamestatemanager.h"
 #include "util/settingsmanager.h"
 
 void initScripts(FIFE::Engine* engine) {

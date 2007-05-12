@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "input/listener.h"
 
-#include "gamestate.h"
+#include "util/gamestate/gamestate.h"
 
 namespace FIFE { namespace map {
 

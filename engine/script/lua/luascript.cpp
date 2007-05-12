@@ -34,7 +34,7 @@
 #include "gui/lua_gui_actionlistener.h"
 #include "map/elevation.h"
 #include "map/viewgamestate.h"
-#include "gamestatemanager.h"
+#include "util/gamestate/gamestatemanager.h"
 
 #include "luascript.h"
 #include "lua_mapcamera.h"

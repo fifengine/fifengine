@@ -32,7 +32,7 @@
 #include "script/lua/gui/luagui.h"
 #include "script/scriptengine.h"
 #include "util/debugutils.h"
-#include "gamestatemanager.h"
+#include "util/gamestate/gamestatemanager.h"
 #include "util/log.h"
 
 #include "lua_gamestatemanager.h"
