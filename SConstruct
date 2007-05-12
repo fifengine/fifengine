@@ -99,22 +99,11 @@ if dontBuild:
 		except OSError:
 			pass
 		print "generating new doxygen documentation"
-		#os.system('doxygen ' + _jp('doc', 'doxygen', 'doxyfile'))
+		os.system('doxygen ' + _jp('doc', 'doxygen', 'doxyfile'))
 		print "doxygen documentation created succesfully"
 
 		print "generating directory dependency graph"
-		cinc2dot = upath(_jp('utils', 'util_scripts', 'cinclude2dot'))	
-		outdir = upath(_jp('doc', 'diagrams'))
-		tmpfile = outdir / upath('incdep.dot')
-		os.system(str(cinc2dot) + ' --src engine --include engine --merge directory > ' + str(tmpfile))
-		# remove references to util
-		outlines = []
-		for line in tmpfile.lines():
-			if line.find('-> "engine/util"') == -1:
-				outlines.append(line)
-		tmpfile.write_lines(outlines)
-		#os.system('dot -Tps ' + str(tmpfile) + ' > ' + str(outdir / upath('incdep.ps')))
-		#tmpfile.remove()
+		os.system('python ' + _jp('utils', 'util_scripts', 'dep_scan.py'))
 		print "directory dependency graph created succesfully"
 
 else:

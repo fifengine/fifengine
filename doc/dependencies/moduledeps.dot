@@ -1,0 +1,25 @@
+digraph "source tree" {
+    overlap=scale;
+    size="8,10";
+    ratio="fill";
+    fontsize="16";
+    fontname="Helvetica";
+    clusterrank="local";
+    "xml" -> "xml"
+    "xml" -> "vfs"
+    "map" -> "xml"
+    "map" -> "map"
+    "map" -> "video"
+    "map" -> "vfs"
+    "map" -> "input"
+    "guichan_addon" -> "vfs"
+    "guichan_addon" -> "video"
+    "guichan_addon" -> "input"
+    "guichan_addon" -> "guichan_addon"
+    "video" -> "input"
+    "video" -> "map"
+    "video" -> "video"
+    "video" -> "guichan_addon"
+    "input" -> "input"
+    "vfs" -> "vfs"
+}

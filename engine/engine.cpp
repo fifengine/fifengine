@@ -171,9 +171,7 @@ namespace FIFE {
 	}
 
 	void Engine::handleEvent(int event) {
-		Log("received some event in engine");
 		if (event == Event::QUIT_GAME) {
-			Log("received Event::QUIT_GAME in engine");
 			stop();
 		} else if (event == Event::MAKE_SCREENSHOT) {
 			m_makeScreenshot = true;

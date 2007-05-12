@@ -1,0 +1,113 @@
+digraph "source tree" {
+    overlap=scale;
+    size="8,10";
+    ratio="fill";
+    fontsize="16";
+    fontname="Helvetica";
+    clusterrank="local";
+subgraph cluster_0 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "xml"; "xml/tinyxml"
+    label = "xml";
+}
+subgraph cluster_1 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "map"; "map/loaders/xml"; "map/command"; "map/loaders/fallout"; "map/effects"; "map/loaders/util"
+    label = "map";
+}
+subgraph cluster_2 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "guichan_addon"
+    label = "guichan_addon";
+}
+subgraph cluster_3 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "video"; "video/gui"; "video/renderbackends/opengl"; "video/renderbackends/sdl"
+    label = "video";
+}
+subgraph cluster_4 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "input"
+    label = "input";
+}
+subgraph cluster_5 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "vfs"; "vfs/raw"
+    label = "vfs";
+}
+    "xml" -> "xml"
+    "xml" -> "xml/tinyxml"
+    "map" -> "xml"
+    "map" -> "map"
+    "map" -> "map/loaders/xml"
+    "map" -> "map/command"
+    "map" -> "video/gui"
+    "map" -> "map/loaders/fallout"
+    "map" -> "video"
+    "map" -> "map/effects"
+    "map" -> "input"
+    "map" -> "vfs"
+    "map/loaders/xml" -> "xml"
+    "map/loaders/xml" -> "map"
+    "map/loaders/xml" -> "map/loaders/xml"
+    "map/loaders/xml" -> "xml/tinyxml"
+    "map/loaders/xml" -> "vfs/raw"
+    "map/loaders/xml" -> "video"
+    "map/loaders/xml" -> "vfs"
+    "map/command" -> "map"
+    "map/command" -> "map/command"
+    "map/command" -> "video"
+    "video/gui" -> "video"
+    "video/gui" -> "video/gui"
+    "video/gui" -> "input"
+    "video/gui" -> "guichan_addon"
+    "video/renderbackends/sdl" -> "video/gui"
+    "video/renderbackends/sdl" -> "video"
+    "video/renderbackends/sdl" -> "video/renderbackends/sdl"
+    "map/loaders/fallout" -> "xml"
+    "map/loaders/fallout" -> "map"
+    "map/loaders/fallout" -> "map/loaders/fallout"
+    "map/loaders/fallout" -> "xml/tinyxml"
+    "map/loaders/fallout" -> "vfs/raw"
+    "map/loaders/fallout" -> "video"
+    "map/loaders/fallout" -> "vfs"
+    "guichan_addon" -> "video/gui"
+    "guichan_addon" -> "guichan_addon"
+    "guichan_addon" -> "video"
+    "guichan_addon" -> "vfs/raw"
+    "guichan_addon" -> "input"
+    "guichan_addon" -> "vfs"
+    "video/renderbackends/opengl" -> "video/renderbackends/opengl"
+    "video/renderbackends/opengl" -> "video/gui"
+    "video/renderbackends/opengl" -> "video"
+    "map/effects" -> "map"
+    "map/effects" -> "map/effects"
+    "vfs/raw" -> "vfs/raw"
+    "video" -> "map/loaders/fallout"
+    "video" -> "map"
+    "video" -> "video"
+    "video" -> "video/renderbackends/sdl"
+    "map/loaders/util" -> "map/loaders/fallout"
+    "map/loaders/util" -> "vfs"
+    "map/loaders/util" -> "xml/tinyxml"
+    "map/loaders/util" -> "video"
+    "map/loaders/util" -> "vfs/raw"
+    "xml/tinyxml" -> "vfs"
+    "xml/tinyxml" -> "xml/tinyxml"
+    "xml/tinyxml" -> "vfs/raw"
+    "vfs" -> "vfs"
+    "vfs" -> "vfs/raw"
+    "input" -> "input"
+}
