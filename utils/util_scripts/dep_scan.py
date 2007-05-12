@@ -7,8 +7,10 @@ ROOTDIRNAME = 'engine'
 FILE_DEPS_OUT = 'doc/dependencies/filedeps'
 DIR_DEPS_OUT = 'doc/dependencies/dirdeps'
 MODULE_DEPS_OUT = 'doc/dependencies/moduledeps'
-SKIPPED_PROVIDERS = ['/util/', '/script/', '/solver/']
-SKIPPED_USERS = ['/script/', '/audio/', 'engine.cpp', 'main.cpp', '/solver/', 'engine.h']
+#SKIPPED_PROVIDERS = ['/util/', '/script/', '/solver/']
+#SKIPPED_USERS = ['/script/', '/audio/', 'engine.cpp', 'main.cpp', '/solver/', 'engine.h']
+SKIPPED_PROVIDERS = ['/util/']
+SKIPPED_USERS = ['engine.cpp', 'main.cpp', 'engine.h']
 
 reInc = re.compile('#include "(.*?)"')
 

@@ -23,42 +23,51 @@ subgraph cluster_2 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
+    "script/lua/gui"; "script/lua"; "script"
+    label = "script";
+}
+subgraph cluster_3 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "solver/micropather_solver"; "solver"
+    label = "solver";
+}
+subgraph cluster_4 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
     "guichan_addon"
     label = "guichan_addon";
 }
-subgraph cluster_3 {
+subgraph cluster_5 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "video"; "video/gui"; "video/renderbackends/opengl"; "video/renderbackends/sdl"
     label = "video";
 }
-subgraph cluster_4 {
+subgraph cluster_6 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "input"
     label = "input";
 }
-subgraph cluster_5 {
+subgraph cluster_7 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "audio"
+    label = "audio";
+}
+subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "vfs"; "vfs/raw"
     label = "vfs";
 }
-    "xml" -> "xml"
-    "xml" -> "xml/tinyxml"
-    "map" -> "xml"
-    "map" -> "map"
-    "map" -> "map/loaders/xml"
-    "map" -> "map/command"
-    "map" -> "video/gui"
-    "map" -> "map/loaders/fallout"
-    "map" -> "video"
-    "map" -> "map/effects"
-    "map" -> "input"
-    "map" -> "vfs"
     "map/loaders/xml" -> "xml"
     "map/loaders/xml" -> "map"
     "map/loaders/xml" -> "map/loaders/xml"
@@ -66,6 +75,17 @@ subgraph cluster_5 {
     "map/loaders/xml" -> "vfs/raw"
     "map/loaders/xml" -> "video"
     "map/loaders/xml" -> "vfs"
+    "script/lua/gui" -> "video/gui"
+    "script/lua/gui" -> "script"
+    "script/lua/gui" -> "script/lua/gui"
+    "script/lua/gui" -> "script/lua"
+    "script/lua/gui" -> "guichan_addon"
+    "script/lua/gui" -> "video"
+    "video/renderbackends/opengl" -> "video/renderbackends/opengl"
+    "video/renderbackends/opengl" -> "video/gui"
+    "video/renderbackends/opengl" -> "video"
+    "xml" -> "xml"
+    "xml" -> "xml/tinyxml"
     "map/command" -> "map"
     "map/command" -> "map/command"
     "map/command" -> "video"
@@ -73,9 +93,8 @@ subgraph cluster_5 {
     "video/gui" -> "video/gui"
     "video/gui" -> "input"
     "video/gui" -> "guichan_addon"
-    "video/renderbackends/sdl" -> "video/gui"
-    "video/renderbackends/sdl" -> "video"
-    "video/renderbackends/sdl" -> "video/renderbackends/sdl"
+    "script" -> "script/lua"
+    "script" -> "script"
     "map/loaders/fallout" -> "xml"
     "map/loaders/fallout" -> "map"
     "map/loaders/fallout" -> "map/loaders/fallout"
@@ -83,18 +102,48 @@ subgraph cluster_5 {
     "map/loaders/fallout" -> "vfs/raw"
     "map/loaders/fallout" -> "video"
     "map/loaders/fallout" -> "vfs"
+    "script/lua" -> "map"
+    "script/lua" -> "video/gui"
+    "script/lua" -> "script"
+    "script/lua" -> "script/lua/gui"
+    "script/lua" -> "script/lua"
+    "script/lua" -> "guichan_addon"
+    "script/lua" -> "vfs/raw"
+    "script/lua" -> "input"
+    "script/lua" -> "audio"
+    "script/lua" -> "vfs"
+    "solver/micropather_solver" -> "solver"
+    "solver/micropather_solver" -> "solver/micropather_solver"
+    "xml/tinyxml" -> "vfs"
+    "xml/tinyxml" -> "xml/tinyxml"
+    "xml/tinyxml" -> "vfs/raw"
+    "vfs/raw" -> "vfs/raw"
+    "input" -> "input"
+    "map" -> "xml"
+    "map" -> "map"
+    "map" -> "map/loaders/xml"
+    "map" -> "map/command"
+    "map" -> "video/gui"
+    "map" -> "script"
+    "map" -> "map/loaders/fallout"
+    "map" -> "script/lua"
+    "map" -> "video"
+    "map" -> "map/effects"
+    "map" -> "input"
+    "map" -> "vfs"
+    "map/effects" -> "map"
+    "map/effects" -> "map/effects"
+    "video/renderbackends/sdl" -> "video/gui"
+    "video/renderbackends/sdl" -> "video"
+    "video/renderbackends/sdl" -> "video/renderbackends/sdl"
+    "solver" -> "solver"
     "guichan_addon" -> "video/gui"
+    "guichan_addon" -> "script"
     "guichan_addon" -> "guichan_addon"
     "guichan_addon" -> "video"
     "guichan_addon" -> "vfs/raw"
     "guichan_addon" -> "input"
     "guichan_addon" -> "vfs"
-    "video/renderbackends/opengl" -> "video/renderbackends/opengl"
-    "video/renderbackends/opengl" -> "video/gui"
-    "video/renderbackends/opengl" -> "video"
-    "map/effects" -> "map"
-    "map/effects" -> "map/effects"
-    "vfs/raw" -> "vfs/raw"
     "video" -> "map/loaders/fallout"
     "video" -> "map"
     "video" -> "video"
@@ -104,10 +153,9 @@ subgraph cluster_5 {
     "map/loaders/util" -> "xml/tinyxml"
     "map/loaders/util" -> "video"
     "map/loaders/util" -> "vfs/raw"
-    "xml/tinyxml" -> "vfs"
-    "xml/tinyxml" -> "xml/tinyxml"
-    "xml/tinyxml" -> "vfs/raw"
+    "audio" -> "audio"
+    "audio" -> "vfs"
+    "audio" -> "vfs/raw"
     "vfs" -> "vfs"
     "vfs" -> "vfs/raw"
-    "input" -> "input"
 }
