@@ -288,19 +288,9 @@ namespace luaGui {
 			FIFE::LuaRef m_font_ref;
 	};
 
-// now watch this:
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #define WIDGET_FOCUSED_FUNC isFocused
-#else
-#define WIDGET_FOCUSED_FUNC hasFocus
-#endif
-#if GUICHAN_VERSION == 6
 #define GET_WIDGET_EVENT_ID getActionEventId
 #define SET_WIDGET_EVENT_ID setActionEventId
-#else
-#define GET_WIDGET_EVENT_ID getEventId
-#define SET_WIDGET_EVENT_ID setEventId
-#endif
 // amazing, isn't it?
 
 #define LUAGUI_WIDGET_IMPL(name) \
@@ -640,11 +630,7 @@ namespace luaGui {
 				return 0;
 			}
 			inline void f_setFont(gcn::Font *fp) { 
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 				mListBox->setFont(fp);
-#else
-				getListBox()->setFont(fp); 
-#endif
 				setFont(fp);
 			}
 
@@ -715,13 +701,11 @@ namespace luaGui {
 			int l_getPadding(lua_State *L);
 			int l_setPadding(lua_State *L);
 			int l_setContent(lua_State *L);
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 			int l_moveToTop(lua_State *L);
 			int l_moveToBottom(lua_State *L);
 			int l_add(lua_State *L);
 			int l_remove(lua_State *L);
 			int l_clear(lua_State *L);
-#endif
 
 			int l_setFont(lua_State *L) {
 				gcn::Font* fp = lua2font_cast(L);

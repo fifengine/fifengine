@@ -34,9 +34,7 @@
 
 #include "sdlscreen.h"
 
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "video/gui/gcnfifeimage.h"
-#endif
 
 namespace FIFE {
 
@@ -62,12 +60,8 @@ namespace FIFE {
 
 
   void SDLScreen::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 		const GCNImage* g_img = static_cast<const GCNImage*>(image);
 		size_t imgid = g_img->_getData();
-#else
-		size_t imgid = reinterpret_cast<size_t>(image->_getData());
-#endif
 		RenderAble* fifeimg = ImageCache::instance()->getImage(imgid);
 
 		const gcn::ClipRectangle& clip = getCurrentClipArea();

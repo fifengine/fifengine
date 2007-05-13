@@ -27,9 +27,7 @@
 
 // 3rd party library includes
 #include <guichan.hpp>
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "video/gui/gcnfifeimage.h"
-#endif
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -42,19 +40,13 @@ namespace FIFE {
 
 namespace gcn {
 
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 	class AdvImage : public FIFE::GCNImage {
-#else
-	class AdvImage : public Image {
-#endif
 		public:
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 			AdvImage();
-			void loadFromFile(const std::string & filename);
-			void loadFromCache(const size_t id);
-#endif
 			AdvImage(const std::string& filename);
 			~AdvImage();
+			void loadFromFile(const std::string & filename);
+			void loadFromCache(const size_t id);
 
 			void setAnimActive(bool active);
 			void setAnimDirection(bool forward);

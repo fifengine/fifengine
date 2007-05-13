@@ -38,11 +38,9 @@
 #include "fife_opengl.h"
 #include "glscreen.h"
 
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "video/gui/gcnfifeimage.h"
 #include "guichan/font.hpp"
 #include "guichan/exception.hpp"
-#endif
 
 namespace FIFE {
 
@@ -96,12 +94,8 @@ namespace FIFE {
 	}
 
 	void GLScreen::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {
-#if GUICHAN_VERSION == 4
-		size_t imgid = reinterpret_cast<size_t>(image->_getData());
-#else
 		const GCNImage* g_img = static_cast<const GCNImage*>(image);
 		size_t imgid = g_img->_getData();
-#endif
 		RenderAble* fifeimg = ImageCache::instance()->getImage(imgid);
 
 		const gcn::ClipRectangle& clip = getCurrentClipArea();
@@ -109,13 +103,10 @@ namespace FIFE {
 		rect.x += clip.xOffset;
 		rect.y += clip.yOffset;
 
-#if GUICHAN_VERSION != 4
 		GLEnable flag(GL_TEXTURE_2D);
-#endif
 		fifeimg->render(rect, this);
 	}
 
-#if GUICHAN_VERSION != 4
 	void GLScreen::drawText(const std::string& text, int x, int y,
 			unsigned int alignment) {
 		if (mFont == NULL)
@@ -139,7 +130,6 @@ namespace FIFE {
 				throw GCN_EXCEPTION("Unknown alignment.");
 		}
 	}
-#endif
 
 	void GLScreen::drawPoint(int x, int y) {
 		GLDisable flag(GL_TEXTURE_2D);

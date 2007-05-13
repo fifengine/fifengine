@@ -40,10 +40,6 @@ namespace gcn {
 		assert(down!=NULL);
 		setBorderSize(0);
 		adjustSize();
-#if GUICHAN_VERSION == 4 || GUICHAN_VERSION == 5
-		mMouseDown = false;
-		mKeyDown = false;
-#endif
 		mCaption = "";
 	}
 	TwoButton::TwoButton(Image * up_file , Image *down_file, 
@@ -54,10 +50,6 @@ namespace gcn {
 		assert(down!=NULL);
 		setBorderSize(0);
 		adjustSize();
-#if GUICHAN_VERSION == 4 || GUICHAN_VERSION == 5
-		mMouseDown = false;
-		mKeyDown = false;
-#endif
 		mCaption = caption;
 	}
 	TwoButton::~TwoButton() {

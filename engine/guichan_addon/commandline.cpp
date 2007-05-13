@@ -71,12 +71,8 @@ namespace FIFE {
 		m_blinkTimer.start();
 	}
 
-#if GUICHAN_VERSION >= 6
 	void CommandLine::keyPressed(gcn::KeyEvent &keyEvent) {
 		gcn::Key key = keyEvent.getKey();
-#else
-	void CommandLine::keyPress(const gcn::Key &key) {
-#endif
 		//Log("command_line") << key.getValue();
 
 		if (key.getValue() == Key::LEFT && mCaretPosition > 0)

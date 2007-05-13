@@ -34,7 +34,6 @@
 #include "advimage.h"
 
 namespace gcn {
-#if (GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6)
 	AdvImage::AdvImage() : FIFE::GCNImage() {
 		cacheId = 0;
 	}
@@ -46,21 +45,13 @@ namespace gcn {
 	}
 	AdvImage::AdvImage(const std::string & filename) : FIFE::GCNImage() {
 		cacheId = FIFE::ImageCache::instance()->addImageFromFile(filename);
-#else
-	AdvImage::AdvImage(const std::string& filename) : Image(filename) {
-#endif
 	}
 
 	AdvImage::~AdvImage() {
 	}
 
 	FIFE::Animation* AdvImage::getImageAsAnimation() {
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 		FIFE::RenderAble* ra = FIFE::ImageCache::instance()->getImage(cacheId);
-#else
-		FIFE::RenderAble* ra =  FIFE::ImageCache::instance()->getImage(
-				 reinterpret_cast<size_t>(_getData()));
-#endif
 		if (ra->getType() == FIFE::RenderAble::RT_ANIMATION) {
 			FIFE::Animation* a = dynamic_cast<FIFE::Animation*>(ra);
 			return a;

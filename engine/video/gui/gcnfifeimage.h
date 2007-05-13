@@ -1,10 +1,6 @@
 #ifndef FIFE_GCN_IMAGE_H
 #define FIFE_GCN_IMAGE_H
 
-#if GUICHAN_VERSION == 4
-#error "This code is for Guichan 0.5 and above - if this is, please -DGUICHAN_VERSION=X"
-#endif
-
 #include "guichan/color.hpp"
 #include "guichan/image.hpp"
 

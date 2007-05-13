@@ -42,14 +42,8 @@ namespace FIFE {
 	}
 	ActionListener_Lua::~ActionListener_Lua() {
 	}
-#if GUICHAN_VERSION == 6
 	void ActionListener_Lua::action(const gcn::ActionEvent & event) {
 		const std::string & action = event.getId();
-#elif GUICHAN_VERSION == 5
-	void ActionListener_Lua::action(const std::string &action, gcn::Widget* widget) {
-#elif GUICHAN_VERSION == 4
-	void ActionListener_Lua::action(const std::string &action) {
-#endif
 		DEBUG_PRINT("GUI-Action: " << action);
 		if (isReady)
 			luaAction(action);

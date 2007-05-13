@@ -53,13 +53,7 @@ namespace FIFE {
 				: ActionListener() , m_cmd(cmd) {}
 			virtual ~ScriptExecuter(){};
 
-#if GUICHAN_VERSION == 6
 			void action(const gcn::ActionEvent & event) {
-#elif GUICHAN_VERSION == 5
-			void action(const std::string & eventId, gcn::Widget* widget) {
-#elif GUICHAN_VERSION == 4
-			void action(const std::string & eventId) {
-#endif
 				try {
 					CScriptEngine()->callFunction(m_cmd.c_str());
 				} catch(FIFE::Exception & e) {
@@ -315,11 +309,7 @@ namespace FIFE {
 
 		// Assure the new text is visible
 		gcn::Rectangle rect(0,m_output->getHeight(),0,0);
-#if GUICHAN_VERSION == 4
-		m_scrollarea->scrollToRectangle(rect);
-#else
 		m_scrollarea->showWidgetPart(m_output,rect);
-#endif
 	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

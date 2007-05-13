@@ -30,9 +30,7 @@
 // Second block: files included from the same folder
 #include "script/scriptbackendmanager.h"
 
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "video/gui/gcnfifeimage.h"
-#endif
 
 #include "video/animation.h"
 #include "util/debugutils.h"
@@ -48,19 +46,11 @@ namespace luaGui {
 			loadFromFile(lua_tostring(L, 1));
 	}
 	int Image::l_getWidth(lua_State *L) {
-#if GUICHAN_VERSION == 4
-		lua_pushnumber(L, gcn::Image::getWidth());
-#else
 		lua_pushnumber(L, FIFE::GCNImage::getWidth());
-#endif
 		return 1;
 	}
 	int Image::l_getHeight(lua_State *L) {
-#if GUICHAN_VERSION == 4
-		lua_pushnumber(L, gcn::Image::getHeight());
-#else
 		lua_pushnumber(L, FIFE::GCNImage::getHeight());
-#endif
 		return 1;
 	}
 	int Image::l_setAnimActive(lua_State *L) {

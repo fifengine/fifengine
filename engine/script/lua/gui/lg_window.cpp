@@ -33,15 +33,12 @@
 #include "luagui.h"
 // for lua2gcn_cast
 #include "lua_guimanager.h"
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 #include "lua_gui_actionlistener.h"
-#endif
 
 namespace luaGui {
 
 	Window::Window(lua_State *L) : AWidget(), gcn::Window() {
 		if (lua_gettop(L)) {
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 			gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
 			if (w) {
 				lua_pushvalue(L, 1);
@@ -52,11 +49,6 @@ namespace luaGui {
 
 				gcn::Container::add(w);
 			}
-#else
-			gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
-			if (w)
-				gcn::Window::setContent(w);
-#endif
 		}
 		if (lua_gettop(L) == 2)
 			gcn::Window::setCaption(luaL_checkstring(L, 2));
@@ -125,12 +117,6 @@ namespace luaGui {
 		return 0;
 	}
 	int Window::l_setContent(lua_State *L) {
-#if GUICHAN_VERSION == 4
-		gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
-		if (w)
-			gcn::Window::setContent(w);
-		resizeToContent();
-#else
 		FIFE::Log("luaGui::Window", FIFE::Log::LEVEL_WARN) << 
 			"Backward-compatibility hack engaged - you _really_ should use :add on Windows";
 		gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
@@ -146,15 +132,12 @@ namespace luaGui {
 			gcn::Container::clear();
 			gcn::Container::add(w);
 		}
-#endif
-
 		return 0;
 	}
 
 // new with guichan 0.5
 // simple copy-n-paste from lg_container
 // yes, I know I really shouldn't do that :-)
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 	int Window::l_moveToTop(lua_State *L) {
 		gcn::Widget *w = FIFE::GuiManager_LuaScript::lua2gcn_cast(L);
 		if (w == NULL) {
@@ -207,7 +190,6 @@ namespace luaGui {
 		gcn::Container::clear();
 		return 0;
 	}
-#endif
 
 	const char Window::className[] = "Window";
 #define method(class, name) {#name, &class::l_ ## name}
@@ -227,13 +209,11 @@ namespace luaGui {
 		method(Window, getTitleBarHeight),
 		method(Window, setTitleBarHeight),
 		method(Window, setContent),
-#if GUICHAN_VERSION == 5 || GUICHAN_VERSION == 6
 		method(Window, moveToTop),
 		method(Window, moveToBottom),
 		method(Window, add),
 		method(Window, remove),
 		method(Window, clear),
-#endif
 
 		LUAGUI_WIDGET_DEF(Window),
 

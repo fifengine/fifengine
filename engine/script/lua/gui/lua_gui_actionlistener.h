@@ -43,13 +43,7 @@ namespace FIFE {
 		public:
 			ActionListener_Lua();
 			~ActionListener_Lua();
-#if GUICHAN_VERSION == 5
-			void action(const std::string&, gcn::Widget*);
-#elif GUICHAN_VERSION == 6
 			void action(const gcn::ActionEvent & event);
-#elif GUICHAN_VERSION == 4
-			void action(const std::string &action);
-#endif
 			void setup(lua_State *L, const std::string &global, const std::string &table);
 		private:
 			void luaAction(const std::string &action);
