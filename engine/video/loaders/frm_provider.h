@@ -35,7 +35,9 @@
 
 namespace FIFE { namespace map { namespace loaders {
 	
-	class fallout::AnimatedPalette;
+	namespace fallout {
+		class AnimatedPalette;
+	}
 	
 	namespace util {
 

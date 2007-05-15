@@ -279,19 +279,6 @@
 					<File RelativePath="..\..\..\engine\map\loaders\fallout\remove_all.cpp"></File>
 					<File RelativePath="..\..\..\engine\map\loaders\fallout\remove_all.h"></File>
 				</Filter>
-				<Filter Name="util">
-					<File RelativePath="..\..\..\engine\map\loaders\util\animation_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\animation_provider.h"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\complexanimation_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\complexanimation_provider.h"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\frm_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\frm_provider.h"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\fwd.h"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\image_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\image_provider.h"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\subimage_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\map\loaders\util\subimage_provider.h"></File>
-				</Filter>
 				<Filter Name="xml">
 					<File RelativePath="..\..\..\engine\map\loaders\xml\fwd.h"></File>
 					<File RelativePath="..\..\..\engine\map\loaders\xml\prototype.cpp"></File>
@@ -402,10 +389,8 @@
 			<File RelativePath="..\..\..\engine\script\scriptengine.h"></File>
 		</Filter>
 		<Filter Name="solver">
-			<File RelativePath="..\..\..\engine\solver\fwd.h"></File>
 			<File RelativePath="..\..\..\engine\solver\graph.h"></File>
 			<Filter Name="micropather_solver">
-				<File RelativePath="..\..\..\engine\solver\micropather_solver\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\solver\micropather_solver\micropather.cpp"></File>
 				<File RelativePath="..\..\..\engine\solver\micropather_solver\micropather.h"></File>
 			</Filter>
@@ -421,7 +406,6 @@
 			<File RelativePath="..\..\..\engine\util\fife_stdint.h"></File>
 			<File RelativePath="..\..\..\engine\util\fwd.h"></File>
 			<Filter Name="gamestate">
-				<File RelativePath="..\..\..\engine\util\gamestate\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\util\gamestate\gamestate.cpp"></File>
 				<File RelativePath="..\..\..\engine\util\gamestate\gamestate.h"></File>
 				<File RelativePath="..\..\..\engine\util\gamestate\gamestatemanager.cpp"></File>
@@ -439,7 +423,6 @@
 			<File RelativePath="..\..\..\engine\util\settingsmanager.h"></File>
 			<File RelativePath="..\..\..\engine\util\singleton.h"></File>
 			<Filter Name="time">
-				<File RelativePath="..\..\..\engine\util\time\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\util\time\timeevent.cpp"></File>
 				<File RelativePath="..\..\..\engine\util\time\timeevent.h"></File>
 				<File RelativePath="..\..\..\engine\util\time\timemanager.cpp"></File>
@@ -478,8 +461,6 @@
 				<File RelativePath="..\..\..\engine\video\gui\gcnfifeimage.h"></File>
 				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader.cpp"></File>
 				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader.h"></File>
-				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader_v05.cpp"></File>
-				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader_v05.h"></File>
 				<File RelativePath="..\..\..\engine\video\gui\guimanager.cpp"></File>
 				<File RelativePath="..\..\..\engine\video\gui\guimanager.h"></File>
 			</Filter>
@@ -487,6 +468,18 @@
 			<File RelativePath="..\..\..\engine\video\image.h"></File>
 			<File RelativePath="..\..\..\engine\video\imagecache.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\imagecache.h"></File>
+			<Filter Name="loaders">
+				<File RelativePath="..\..\..\engine\video\loaders\animation_provider.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\animation_provider.h"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\complexanimation_provider.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\complexanimation_provider.h"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\frm_provider.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\frm_provider.h"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\image_provider.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\image_provider.h"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\subimage_provider.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\loaders\subimage_provider.h"></File>
+			</Filter>
 			<File RelativePath="..\..\..\engine\video\partialaction.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\partialaction.h"></File>
 			<File RelativePath="..\..\..\engine\video\pixelbuffer.cpp"></File>
@@ -528,7 +521,6 @@
 			<File RelativePath="..\..\..\engine\video\screen.h"></File>
 		</Filter>
 		<Filter Name="xml">
-			<File RelativePath="..\..\..\engine\xml\fwd.h"></File>
 			<Filter Name="tinyxml">
 				<File RelativePath="..\..\..\engine\xml\tinyxml\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\xml\tinyxml\tinystr.cpp"></File>
