@@ -20,7 +20,11 @@ def addExtras(context):
 	context.checkSimpleLib(['guichan_sdl'])
 	context.checkSimpleLib(['boost_filesystem', 'boost_filesystem-gcc'])
 	context.checkSimpleLib(['boost_regex', 'boost_regex-gcc'])
-
+	
 	if context.env['opengl']:
 		context.env.Append(LIBS = ['GL', 'GLU'])
 		context.checkSimpleLib(['guichan_opengl'])
+	
+	if context.env['movie']:
+		context.checkSimpleLib(['libavformat', 'avformat'], 'avformat.h')
+		context.checkSimpleLib(['libavcodec', 'avcodec'], 'avcodec.h')

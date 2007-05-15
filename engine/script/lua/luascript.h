@@ -60,6 +60,7 @@ namespace FIFE {
 			virtual std::string getGlobalString(const std::string& name) const;
 
 			static int set_next_mapfile(lua_State *L);
+			static int set_next_videofile(lua_State *L);
 
 			lua_State* getState() { return L; }
 		private:

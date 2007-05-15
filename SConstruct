@@ -8,10 +8,10 @@ opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
 opts.Add(EnumOption('script', 'Enable which script-language backend', 'lua', allowed_values=('none', 'lua')))
 opts.Add(BoolOption('lite',   'Build the lite version of the library (used for editor, overrides other settings)', 0))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
-opts.Add(EnumOption('guichan', 'Choose guichan version (default 0.6)', '6', allowed_values=('4','5','6')))
 opts.Add(BoolOption('msvcproj',  "Create MSVC project file. If defined, won't build code", 0))
 opts.Add(BoolOption('utils',  'Build utilities', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
+opts.Add(BoolOption('movie', 'Enable movie playback', 0))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 
@@ -143,7 +143,8 @@ else:
 	if env['lite']:
 		env.Append(CPPDEFINES = ['LITE'])	
 	
-	env.Append(CPPDEFINES = ['GUICHAN_VERSION='+env['guichan']])
+	if env['movie']:
+		env.Append(CPPDEFINES = ['HAVE_MOVIE'])
 	
 	Export('env')
 	

@@ -42,6 +42,9 @@
 #include "util/exception.h"
 #include "util/gamestate/gamestatemanager.h"
 #include "util/settingsmanager.h"
+#ifdef HAVE_MOVIE
+#include "video/movie/video_gamestate.h"
+#endif
 
 void initScripts(FIFE::Engine* engine) {
 	std::string startup_script("content/scripts/startup.lua");
@@ -87,6 +90,9 @@ int main(int argc, char* argv[]) {
 
 	
 	FIFE::map::ViewGameState * mapview = NULL;
+#ifdef HAVE_MOVIE
+	FIFE::VideoGameState * video_view = NULL;
+#endif
 	FIFE::Engine* engine = NULL;
 	try {
 		engine = new FIFE::Engine(argc, argv);
@@ -107,6 +113,10 @@ int main(int argc, char* argv[]) {
 		// construct a mapview-gamestate; inactive by default
 		mapview = new FIFE::map::ViewGameState();
 		mapview->getMap(); // just to suppress the 'unused variable warning'
+
+#ifdef HAVE_MOVIE
+		video_view = new FIFE::VideoGameState();
+#endif
 
 		// Play music in the background
 		FIFE::audio::Manager::instance()->setAmbientSound(settings->read<std::string>("BackgroundMusic", "content/audio/music/maybe.ogg"));
@@ -138,6 +148,9 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	delete mapview;
+#ifdef HAVE_MOVIE
+	delete video_view;
+#endif
 	delete engine;
 
 	FIFE::Log("guimap_test") << "map objects left alive: " << FIFE::map::ObjectInfo::globalCount();

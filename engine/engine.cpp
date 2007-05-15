@@ -28,6 +28,13 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
+#ifdef HAVE_MOVIE
+#define INT64_C
+#define __STDC_CONSTANT_MACROS
+#include <stdint.h>
+#include "ffmpeg/avformat.h"
+#endif
+
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
@@ -104,6 +111,9 @@ namespace FIFE {
 
 		TTF_Init();
 
+#ifdef HAVE_MOVIE
+		av_register_all();
+#endif
 
 		Log::parseCmdLine( m_parsed_cmdline );
 

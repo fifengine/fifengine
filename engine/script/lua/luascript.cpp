@@ -35,6 +35,9 @@
 #include "map/elevation.h"
 #include "map/viewgamestate.h"
 #include "util/gamestate/gamestatemanager.h"
+#ifdef HAVE_MOVIE
+#include "video/movie/video_gamestate.h"
+#endif
 
 #include "luascript.h"
 #include "lua_mapcamera.h"
@@ -101,6 +104,9 @@ namespace FIFE {
 
 		lua_pushcfunction(L, set_next_mapfile);
 		lua_setglobal(L, "set_next_mapfile");
+
+		lua_pushcfunction(L, set_next_videofile);
+		lua_setglobal(L, "set_next_videofile");
 
 		luaopen_gsmanager(L);
 		// 		luaopen_log(L);
@@ -287,9 +293,24 @@ namespace FIFE {
 
 	}
 
+	template <typename GS_T> 
+		void set_next_T(const std::string & t_name, const std::string & value_string) {
+		GameStateManager *gsm = GameStateManager::instance();
+		GS_T * gs = NULL;
+		assert(gsm);
+		if (gsm->gameStateExists(t_name)) {
+			gs = static_cast<GS_T*>(gsm->getGameState(t_name));
+			assert(gs);
+			gs->setFile(value_string);
+		}
+		else
+			throw FIFE::ScriptException("Error: no " + t_name + " GameState registered!");
+	}
+
 	int LuaScript::set_next_mapfile(lua_State *L) {
 		if (!lua_isstring(L, -1))
 			throw FIFE::ScriptException(std::string("String value expected:") + __FUNCTION__);
+/*
 		map::ViewGameState *mvgs = NULL;
 		GameStateManager *gsm = GameStateManager::instance();
 		assert(gsm);
@@ -298,8 +319,23 @@ namespace FIFE {
 			mvgs->setFile(lua_tostring(L, -1));
 		} else
 			throw FIFE::ScriptException("Error: no MapView GameState registered!");
+*/
+		std::string v(lua_tostring(L, -1));
+		set_next_T<map::ViewGameState>("MapView", v);
 		return 0;
 	}
+
+	int LuaScript::set_next_videofile(lua_State *L) {
+		if (!lua_isstring(L, -1))
+			throw FIFE::ScriptException(std::string("String value expected:") + __FUNCTION__);
+		std::string v(lua_tostring(L, -1));
+#ifdef HAVE_MOVIE
+		set_next_T<VideoGameState>("MoviePlayer", v);
+#else
+#endif
+		return 0;
+	}
+
 
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
