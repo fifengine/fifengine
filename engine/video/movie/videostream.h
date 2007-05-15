@@ -23,41 +23,41 @@
  */
 
 namespace FIFE {
-  /** Helper around video stream data.
-   *
-   * @Bug loading from system-fs, not VFS!
-   * @Bug audio-stream ignored!
-   *
-   * You should derive from this class and use the
-   * data in the protected members.
-   *
-   * Call \em load before doing anything else, \em nextFrame
-   * once to switch to the first frame and continue until
-   * it returns false.
-   *
-   * \frame contains the image data.
-   */
-  class VideoStream {
-    public:
-      VideoStream();
-      ~VideoStream();
-      void  load(const std::string & file);
-      bool  nextFrame();
-      float getFps();
-      uint32_t getWidth();
-      uint32_t getHeight();
-    protected:
-      AVFormatContext *formatCtx;
-      AVCodecContext  *codecCtx;
-      AVCodec         *codec;
-      AVFrame         *frame;
-      AVFrame         *frameRGB;
-      int              vStreamId;
-    private:
-      void setNull();
-      void cleanup();
-      uint8_t *vBuffer;
-  };
+	/** Helper around video stream data.
+	*
+	* @Bug loading from system-fs, not VFS!
+	* @Bug audio-stream ignored!
+	*
+	* You should derive from this class and use the
+	* data in the protected members.
+	*
+	* Call \em load before doing anything else, \em nextFrame
+	* once to switch to the first frame and continue until
+	* it returns false.
+	*
+	* \frame contains the image data.
+	*/
+	class VideoStream {
+		public:
+			VideoStream();
+			~VideoStream();
+			void  load(const std::string & file);
+			bool  nextFrame();
+			float getFps();
+			uint32_t getWidth();
+			uint32_t getHeight();
+		protected:
+			AVFormatContext *formatCtx;
+			AVCodecContext  *codecCtx;
+			AVCodec         *codec;
+			AVFrame         *frame;
+			AVFrame         *frameRGB;
+			int              vStreamId;
+		private:
+			void setNull();
+			void cleanup();
+			uint8_t *vBuffer;
+	};
 }
 
 #endif
