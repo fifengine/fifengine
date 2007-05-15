@@ -31,3 +31,6 @@ def addExtras(context):
 		context.env.Append(CPPPATH = ['/usr/X11R6/include'])
 		context.env.Append(LIBPATH = ['/usr/X11R6/lib'])
 		context.checkSimpleLib(['guichan_opengl'])
+
+	# Caution: workaround for the linking order issues on FreeBSD; this is no perfect solution but it works at least
+	context.env.Append(LIBS = ['fife', 'lua'])
