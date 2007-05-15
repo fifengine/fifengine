@@ -35,16 +35,16 @@
 
 #include "frm_provider.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace util {
+namespace FIFE { namespace video { namespace loaders {
 
-	fallout::AnimatedPalette* FRMProvider::m_palette = 0;
+	map::loaders::fallout::AnimatedPalette* FRMProvider::m_palette = 0;
 
 	RenderAble* FRMProvider::createRenderable() {
 		if (m_palette == 0) {
-			m_palette = fallout::AnimatedPalette::load("content/gfx/fallout_palette.xml");
+			m_palette = map::loaders::fallout::AnimatedPalette::load("content/gfx/fallout_palette.xml");
 		}
 		
-		fallout::FRM frm(getLocation().getFilename(), m_palette);
+		map::loaders::fallout::FRM frm(getLocation().getFilename(), m_palette);
 
 		uint16_t dir = 0;
 		uint16_t frame = 0; //getLocation().getFrame();
@@ -95,4 +95,4 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 			return image;
 		}
 	}
-} } } }
+} } }

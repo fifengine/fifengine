@@ -39,7 +39,7 @@
 
 #include "subimage_provider.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace util {
+namespace FIFE { namespace video { namespace loaders {
 	
 	RenderAble* SubImageProvider::createRenderable() {
 		RenderableLocation loc(getLocation());
@@ -72,4 +72,4 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 		return CRenderBackend()->createStaticImageFromSDL(result);
 	};
 
-} } } }
+} } }

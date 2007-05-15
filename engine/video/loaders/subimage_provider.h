@@ -34,7 +34,7 @@
 #include "util/rect.h"
 #include "video/renderable_provider.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace util {
+namespace FIFE { namespace video { namespace loaders {
 
 	/** ImageProvider for cropping another image */
 	class SubImageProvider : public RenderableProvider {
@@ -47,5 +47,5 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 		protected:
 	};
 
-} } } }
+} } }
 #endif

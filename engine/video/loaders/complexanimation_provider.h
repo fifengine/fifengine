@@ -40,7 +40,7 @@ namespace FIFE {
 	class ComplexAnimation;
 	class PartialAction;
 
-namespace map { namespace loaders { namespace util {
+namespace video { namespace loaders {
 	typedef boost::shared_ptr<PartialAction> PartialActionPtr;
 
 	/** Complex Animation Provider 
@@ -99,5 +99,5 @@ namespace map { namespace loaders { namespace util {
 			ComplexAnimation* m_complexAnimation;
 			std::vector<PartialActionPtr>    m_partialActions;
 	};
-} } } }
+} } }
 #endif

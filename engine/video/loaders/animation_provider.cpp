@@ -40,7 +40,7 @@
 #include "animation_provider.h"
 #include "image_provider.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace util {
+namespace FIFE { namespace video { namespace loaders {
 	
 	RenderAble* AnimationProvider::createRenderable() {
 
@@ -122,4 +122,4 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 		return animation;
 	}
 
-} } } }
+} } }

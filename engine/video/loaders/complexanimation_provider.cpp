@@ -36,7 +36,7 @@
 
 #include "complexanimation_provider.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace util {
+namespace FIFE { namespace video { namespace loaders {
 
 	namespace CAP {
 		const std::string LogScope = "cmplx_anim_provider";
@@ -264,5 +264,5 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 		return PartialActionPtr();
 	}
 
-} } } }
+} } }
 

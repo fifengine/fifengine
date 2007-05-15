@@ -63,27 +63,27 @@ namespace FIFE {
 	};
 
 	typedef RenderableProviderConstructorTempl<
-		map::loaders::util::FRMProvider,
+		video::loaders::FRMProvider,
 		RenderAble::RT_IMAGE|RenderAble::RT_ANIMATION|RenderAble::RT_UNDEFINED
 	> FRMConstructor;
 
 	typedef RenderableProviderConstructorTempl<
-		map::loaders::util::ComplexAnimationProvider,
+		video::loaders::ComplexAnimationProvider,
 		RenderAble::RT_COMPLEX_ANIMATION
 	> CAPConstructor;
 
 	typedef RenderableProviderConstructorTempl<
-		map::loaders::util::SubImageProvider,
+		video::loaders::SubImageProvider,
 		RenderAble::RT_SUBIMAGE
 	> SubImageConstructor;
 
 	typedef RenderableProviderConstructorTempl<
-		map::loaders::util::ImageProvider,
+		video::loaders::ImageProvider,
 		RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED
 	> IMGConstructor; 
 
 	typedef RenderableProviderConstructorTempl<
-		map::loaders::util::AnimationProvider,
+		video::loaders::AnimationProvider,
 		RenderAble::RT_ANIMATION
 	> AnimationConstructor;
 

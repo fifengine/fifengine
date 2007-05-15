@@ -40,11 +40,11 @@
 
 #include "image_provider.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace util {
+namespace FIFE { namespace video { namespace loaders {
 	
 	RenderAble* ImageProvider::createRenderable() {
 
-    const RenderableLocation & location = getLocation();
+	const RenderableLocation & location = getLocation();
 		const std::string& filename = location.getFilename();
 		RawDataPtr data = VFS::instance()->open(filename);
 		size_t datalen = data->getDataLength();
@@ -69,4 +69,4 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 		
 		return res;
 	};
-} } } }
+} } }

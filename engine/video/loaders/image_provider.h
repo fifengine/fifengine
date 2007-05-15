@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "video/renderable_provider.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace util {
+namespace FIFE { namespace video { namespace loaders {
 
 	/** ImageProvider for some basic formats like jpeg, png etc. */
 	class ImageProvider : public RenderableProvider {
@@ -44,5 +44,5 @@ namespace FIFE { namespace map { namespace loaders { namespace util {
 			RenderAble* createRenderable();
 	};
 
-} } } }
+} } }
 #endif
