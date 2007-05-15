@@ -192,6 +192,8 @@ namespace FIFE { namespace map {
 		stopy = std::min(size.y,stopy);
 
 		size_t image_id = getGridOverlayImageId( layer );
+		Point overlay_offset = layer->get<Point>("_OVERLAY_IMAGE_OFFSET");
+
 		RenderAble* renderable = ImageCache::instance()->getImage( image_id );
 		int targetw = renderable->getWidth();
 		int targeth = renderable->getHeight();
@@ -202,7 +204,7 @@ namespace FIFE { namespace map {
 		Point index;
 		for (index.y = starty; index.y < stopy; ++index.y) {
 			for (index.x = startx; index.x < stopx; ++index.x) {
-				Point pos = geometry->toScreen(index) - offset;
+				Point pos = geometry->toScreen(index) - offset - overlay_offset;
 				Rect target(pos.x,pos.y,targetw,targeth);
 				renderable->render(target,m_surface);
 			}
