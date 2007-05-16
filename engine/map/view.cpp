@@ -111,7 +111,6 @@ namespace FIFE { namespace map {
 		m_map = map;
 		m_elevation = map->getElevation( elev );
 		m_elevation_id = elev;
-// 		m_camera->reset(this);
 		elevationChange();
 	}
 

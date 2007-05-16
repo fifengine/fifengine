@@ -301,6 +301,8 @@
 			<File RelativePath="..\..\..\engine\map\runner.h"></File>
 			<File RelativePath="..\..\..\engine\map\scriptingslave.cpp"></File>
 			<File RelativePath="..\..\..\engine\map\scriptingslave.h"></File>
+			<File RelativePath="..\..\..\engine\map\selection.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\selection.h"></File>
 			<File RelativePath="..\..\..\engine\map\service.cpp"></File>
 			<File RelativePath="..\..\..\engine\map\service.h"></File>
 			<File RelativePath="..\..\..\engine\map\view.cpp"></File>
