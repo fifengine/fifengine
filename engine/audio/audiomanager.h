@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_AUDIO_MANAGER_H
-#define FIFE_AUDIO_MANAGER_H
+#ifndef FIFE_AUDIO_AUDIOMANAGER_H
+#define FIFE_AUDIO_AUDIOMANAGER_H
 
 // Standard C++ library includes
 #include <string>

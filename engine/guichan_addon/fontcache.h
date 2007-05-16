@@ -23,8 +23,8 @@
 #define FIFE_GUICHAN_ADDON_FONTCACHE_H
 
 // Standard C++ library includes
-#include <string>
 #include <list>
+#include <string>
 
 // Platform specific includes
 

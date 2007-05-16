@@ -27,8 +27,8 @@
 #include <vector>
 
 // 3rd party library includes
-#include <guichan.hpp>
 #include <boost/function.hpp>
+#include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

@@ -33,9 +33,9 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 
-#include "listener.h"
-#include "inputmanager.h"
 #include "events.h"
+#include "inputmanager.h"
+#include "listener.h"
 
 namespace FIFE { namespace input {
 

@@ -24,9 +24,9 @@
 
 // Platform specific includes
 #include "util/fife_stdint.h"
-#include <SDL.h>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

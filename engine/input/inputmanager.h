@@ -19,12 +19,12 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_INPUT_MANAGER_H
-#define FIFE_INPUT_MANAGER_H
+#ifndef FIFE_INPUT_INPUTMANAGER_H
+#define FIFE_INPUT_INPUTMANAGER_H
 
 // Standard C++ library includes
-#include <map>
 #include <list>
+#include <map>
 #include <vector>
 
 // Platform specific includes

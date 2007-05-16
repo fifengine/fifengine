@@ -24,23 +24,23 @@
 
 // Platform specific includes
 #include "util/fife_stdint.h"
-#include <SDL.h>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/debugutils.h"
+#include "util/exception.h"
+#include "util/log.h"
 #include "util/rect.h"
 #include "video/image.h"
+#include "video/imagecache.h"
 #include "video/pixelbuffer.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
-#include "util/debugutils.h"
-#include "util/exception.h"
-#include "video/imagecache.h"
-#include "util/log.h"
 
 #include "guichanfont.h"
 

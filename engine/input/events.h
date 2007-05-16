@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTS_H
-#define FIFE_EVENTS_H
+#ifndef FIFE_INPUT_EVENTS_H
+#define FIFE_INPUT_EVENTS_H
 
 // Standard C++ library includes
 #include <string>

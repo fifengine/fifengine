@@ -23,9 +23,9 @@
 #define FIFE_ENGINE_H
 
 // Standard C++ library includes
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 // 3rd party library includes
 #include <SDL.h>

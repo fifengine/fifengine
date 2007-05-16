@@ -76,7 +76,6 @@
 #ifndef GCN_SDLIMAGEFONT_HPP
 #define GCN_SDLIMAGEFONT_HPP
 
-
 // Standard C++ library includes
 #include <map>
 #include <string>

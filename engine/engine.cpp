@@ -31,7 +31,7 @@
 #ifdef HAVE_MOVIE
 #define INT64_C
 #define __STDC_CONSTANT_MACROS
-#include <stdint.h>
+#include "util/fife_stdint.h"
 #include "ffmpeg/avformat.h"
 #endif
 
@@ -41,26 +41,26 @@
 // Second block: files included from the same folder
 #include "audio/audiomanager.h"
 #include "guichan_addon/console.h"
+#include "input/events.h"
 #include "input/inputmanager.h"
 #include "map/factory.h"
 #include "script/scriptbackendmanager.h"
 #include "video/gui/guimanager.h"
+#include "video/imagecache.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
-
 #include "util/debugutils.h"
-#include "engine.h"
-#include "input/events.h"
-#include "util/exception.h"
 #include "util/gamestate/gamestate.h"
 #include "util/gamestate/gamestatemanager.h"
-#include "video/imagecache.h"
+#include "util/time/timemanager.h"
+#include "util/exception.h"
 #include "util/log.h"
 #include "util/settingsmanager.h"
-#include "util/time/timemanager.h"
+
+#include "engine.h"
 
 static const std::string SETTINGS_FILE_NAME = "fife.config";
 

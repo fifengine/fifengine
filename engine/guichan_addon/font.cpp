@@ -33,8 +33,8 @@
 // Second block: files included from the same folder
 #include "util/rect.h"
 #include "video/image.h"
-#include "video/rendermanager.h"
 #include "video/renderbackend.h"
+#include "video/rendermanager.h"
 #include "video/screen.h"
 
 #include "aafont.h"

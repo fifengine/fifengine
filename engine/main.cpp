@@ -1,23 +1,23 @@
 /***************************************************************************
-*   Copyright (C) 2005-2007 by the FIFE Team                              *
-*   fife-public@lists.sourceforge.net                                     *
-*   This file is part of FIFE.                                            *
-*                                                                         *
-*   FIFE is free software; you can redistribute it and/or modify          *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
-***************************************************************************/
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   fife-public@lists.sourceforge.net                                     *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or modify          *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
+ ***************************************************************************/
 
 // Standard C++ library includes
 #include <iostream>
@@ -37,11 +37,13 @@
 #include "video/gui/guimanager.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
-#include "engine.h"
+#include "util/gamestate/gamestatemanager.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "util/gamestate/gamestatemanager.h"
 #include "util/settingsmanager.h"
+
+#include "engine.h"
+
 #ifdef HAVE_MOVIE
 #include "video/movie/video_gamestate.h"
 #endif
@@ -90,9 +92,11 @@ int main(int argc, char* argv[]) {
 
 	
 	FIFE::map::ViewGameState * mapview = NULL;
+
 #ifdef HAVE_MOVIE
 	FIFE::VideoGameState * video_view = NULL;
 #endif
+
 	FIFE::Engine* engine = NULL;
 	try {
 		engine = new FIFE::Engine(argc, argv);
@@ -148,9 +152,11 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	delete mapview;
+
 #ifdef HAVE_MOVIE
 	delete video_view;
 #endif
+
 	delete engine;
 
 	FIFE::Log("guimap_test") << "map objects left alive: " << FIFE::map::ObjectInfo::globalCount();
