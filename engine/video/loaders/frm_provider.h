@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADERS_UTIL_FRM_PROVIDER_H
-#define FIFE_MAP_LOADERS_UTIL_FRM_PROVIDER_H
+#ifndef FIFE_VIDEO_LOADERS_FRM_PROVIDER_H
+#define FIFE_VIDEO_LOADERS_FRM_PROVIDER_H
 
 // Standard C++ library includes
 

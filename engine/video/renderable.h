@@ -39,15 +39,8 @@ namespace FIFE {
 
 	class Screen;
 	class Rect;
-	// class RenderableProvider;
 	class Image;
 	class Animation;
-
-/*
-	void intrusive_ptr_add_ref(RenderableProvider* p);
-	void intrusive_ptr_release(RenderableProvider* p);
-	typedef ::boost::intrusive_ptr<RenderableProvider> RenderableProviderPtr;
-*/
 
 	/** The Abstract Base Class for anything renderable.
 	 *
@@ -136,35 +129,15 @@ namespace FIFE {
 			 */
 			virtual int getYShift() const =0;
 
-//			bool hasProvider() const;
-//			void setProvider(RenderableProviderPtr p);
-//			RenderableProviderPtr getProvider() const { return m_provider; };
-
 			/** Returns the type of renderable as set in the Constructor.
 			 *
 			 * @return The type of RenderAble.
 			 */
 			RenderableTypes getType() const { return m_type; };
-			/*virtual Image* toImage() { return 0; };
-			virtual Animation* toAnimation() { return 0; };*/
 		protected:
-			// The type of RenderAble.
+			/// The type of RenderAble.
 			RenderableTypes m_type;
-//			RenderableProviderPtr m_provider;
-
-//		friend class RenderableProvider;
 	};
-/*
-	inline
-	bool RenderAble::hasProvider() const {
-		return m_provider != 0;
-	};
-
-	inline
-	void RenderAble::setProvider(RenderableProviderPtr p) {
-		m_provider = p;
-	};
-*/
 }
 
 #endif

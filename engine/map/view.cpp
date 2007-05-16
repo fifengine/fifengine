@@ -59,9 +59,10 @@ namespace FIFE { namespace map {
 		m_rect(),
 		m_elevation(),
 		m_layer_pos(-1),
+		m_coordinfo(false),
 		m_tilecoordinfo("TILE: 0.0"),
-		m_objcoordinfo("OBJ: 0.0"),
-		m_coordinfo(false) {
+		m_objcoordinfo("OBJ: 0.0")
+	{
 		// Quick hack for getting the masks.
 		// msef003.frm >> hex outline
 		// msef000.frm >> hex outline
