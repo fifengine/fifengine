@@ -34,6 +34,8 @@
 #include "vfs/vfs.h"
 #include "video/imagecache.h"
 #include "video/renderable.h"
+#include "video/renderable_location.h"
+#include "util/exception.h"
 #include "util/settingsmanager.h"
 
 
@@ -55,6 +57,11 @@ struct environment {
 };
 
 void invariants_test() {
+	// This test case checks the invariant that adding duplicate
+	// entries don't get different ids, which would be a memory
+	// leak.
+	// It is not covering all scenarios.
+
 	environment env;
 
 	std::string filename;
@@ -74,6 +81,33 @@ void invariants_test() {
 		BOOST_CHECK( ids.count( id ) == 1 );
 	}
 
+	// Same test with some more sophisticated locations
+	filename = "someimage.png";
+	for(int i=0; i!= 100; ++i) {
+		RenderableLocation location(RenderAble::RT_IMAGE,filename);
+		location.addExtension( RenderableLocation::X, i);
+		location.addExtension( RenderableLocation::Y, 100-i);
+		size_t id = env.imagecache->addImageFromLocation(location);
+		BOOST_CHECK( ids.count( id ) == 0 );
+		ids.insert( id );
+	}
+
+	for(int i=0; i!= 100; ++i) {
+		RenderableLocation location(RenderAble::RT_IMAGE,filename);
+		location.addExtension( RenderableLocation::X, i);
+		location.addExtension( RenderableLocation::Y, 100-i);
+		size_t id = env.imagecache->addImageFromLocation(location);
+		BOOST_CHECK( ids.count( id ) == 1 );
+	}
+
+	// We have added 200 so far, 1 is intrinsic. so 201 must not exist
+	BOOST_CHECK_THROW( env.imagecache->getImage( 201 ), IndexOverflow );
+
+	// Check that - also the images obviously don't exist - we get
+	// an Image pointer
+	for(size_t i=0; i < 201; ++i) {
+		BOOST_CHECK( env.imagecache->getImage( i ) );
+	}
 }
 
 test_suite* init_unit_test_suite(int argc, char** argv) {

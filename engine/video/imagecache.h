@@ -173,7 +173,7 @@ namespace FIFE {
 			 *  It will return an invalid PixelBufferPtr then.
 			 *
 			 *  @note This might cause a reload of the image, thus
-			 *  invalidating any pointers you might have currentl in use.
+			 *  invalidating any pointers you might have currently in use.
 			 *
 			 *  @param index The index of a RenderAble in the cache.
 			 *  @return Shared pointer of a PixelBuffer
