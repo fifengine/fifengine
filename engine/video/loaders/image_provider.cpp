@@ -57,7 +57,7 @@ namespace FIFE { namespace video { namespace loaders {
 			return 0;
 		}
 
-    RenderAble * res = CRenderBackend()->createStaticImageFromSDL(surface);
+		RenderAble * res = CRenderBackend()->createStaticImageFromSDL(surface);
 
 		if (location.hasExtension(RenderableLocation::X))
 			res->setXShift(boost::lexical_cast<int>(location.getExtension(RenderableLocation::X)));

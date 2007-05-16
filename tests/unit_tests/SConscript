@@ -19,5 +19,6 @@ env.Program('test_mapcontrol', ['test_mapcontrol.cpp'])
 env.Program('test_luaref', ['test_luaref.cpp'])
 env.Program('test_dat1', ['test_dat1.cpp'])
 env.Program('test_dat2', ['test_dat2.cpp'])
+env.Program('test_imagecache', ['test_imagecache.cpp'])
 
 # vim: set filetype=python :
