@@ -38,8 +38,8 @@
 #include "vfs/vfssourcefactory.h"
 #include "vfs/vfs.h"
 #include "util/settingsmanager.h"
-#include "script/lua/lunar.h"
-#include "script/lua/lua_ref.h"
+#include "script/lunar.h"
+#include "script/lua_ref.h"
 
 
 using boost::unit_test::test_suite;

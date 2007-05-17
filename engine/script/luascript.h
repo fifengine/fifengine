@@ -32,15 +32,13 @@
 // to access the following
 #include "map/view.h"
 
-// implements this
-#include "script/scriptengine.h"
-
-// using these
 #include "util/debugutils.h"
+#include "util/singleton.h"
 
 namespace FIFE {
 
-	class LuaScript : public ScriptEngine {
+	class ScriptContainer;
+	class LuaScript: public DynamicSingleton<LuaScript> {
 		public:
 			LuaScript();
 			virtual ~LuaScript();
@@ -48,15 +46,62 @@ namespace FIFE {
 			virtual void init();
 			virtual void deinit();
 			
+			/** Run a scriptfile.
+			 * @param filename VFS path to the script
+			 *
+			 * \note The VM state is not cleared when calling this; global variables
+			 * will be shared between scripts.
+			 *
+			 * \note Any kind of exception caused by calling this script will
+			 * be returned to the caller; this is valid for all \b run* functions.
+			 *
+			 * \see start function
+			 */
 			virtual void runFile(const std::string& scriptFile);
+
+			/** Run a string.
+			 * @param string with valid code (for the current backend)
+			 *
+			 * \note The quick-n-dirty way to run something.
+			 */
 			virtual void runString(const std::string& string);
+			
+			/** Call a script-function.
+			 * @param Name of the function to call.
+			 *
+			 * \note Used for simple callbacks (the GUI); no arguments or return
+			 * values, but a lot faster than calling \c runString().
+			 */
 			virtual void callFunction(const std::string& name);
 
+			/** Execute a ScriptContainer
+			 *
+			 * @param script The ScriptContainer to run
+			 */
+			virtual void execute(const ScriptContainer& sc);
+
+			/** Completely boring mutator for global script-variables.
+			 */
 			virtual void setGlobalInt(const std::string& name, const int val);
+
+			/** Completely boring mutator for global script-variables.
+			 */
 			virtual void setGlobalDouble(const std::string& name, const double val);
+
+			/** Completely boring mutator for global script-variables.
+			 */
 			virtual void setGlobalString(const std::string& name, const std::string& val);
+
+			/** Revolutionary concept: accessor function for script variables.
+			 */
 			virtual int getGlobalInt(const std::string& name) const;
+
+			/** Revolutionary concept: accessor function for script variables.
+			 */
 			virtual double getGlobalDouble(const std::string& name) const;
+
+			/** Revolutionary concept: accessor function for script variables.
+			 */
 			virtual std::string getGlobalString(const std::string& name) const;
 
 			static int set_next_mapfile(lua_State *L);
@@ -64,7 +109,7 @@ namespace FIFE {
 
 			lua_State* getState() { return L; }
 		private:
-			//SINGLEFRIEND(LuaScript);
+
 			lua_State *L;
 			void _initLua();
 

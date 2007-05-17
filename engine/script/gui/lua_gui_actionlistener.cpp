@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cassert>
 
 // 3rd party library includes
 
@@ -27,26 +28,63 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "scriptcontainer.h"
-#include "scriptengine.h"
+#include "util/debugutils.h"
+#include "util/log.h"
+#include "util/exception.h"
+
+#include "lua_gui_actionlistener.h"
 
 namespace FIFE {
 
-	ScriptEngine::ScriptEngine(const std::string& name) : m_name(name) {}
-
-
-	ScriptEngine::~ScriptEngine() {}
-
-	const std::string& ScriptEngine::name() const {
-		return m_name;
+	ActionListener_Lua::ActionListener_Lua() {
+		isReady = false;
+		m_L = NULL;
 	}
-
-	void ScriptEngine::execute(const ScriptContainer& sc) {
-		if( sc.type == ScriptContainer::ScriptFile ) {
-			runFile(sc.value.c_str());
-		} else if( sc.type == ScriptContainer::ScriptString ) {
-			runString(sc.value.c_str());
+	ActionListener_Lua::~ActionListener_Lua() {
+	}
+	void ActionListener_Lua::action(const gcn::ActionEvent & event) {
+		const std::string & action = event.getId();
+		DEBUG_PRINT("GUI-Action: " << action);
+		if (isReady)
+			luaAction(action);
+		else
+			Warn("ActionListener_Lua") << "Warning: received action event while in non-setup state";
+	}
+	void ActionListener_Lua::setup(lua_State *L, const std::string &global,
+			const std::string &table) {
+		m_global = global;
+		m_table = table;
+		m_L = L;
+		isReady = true;
+	}
+	void ActionListener_Lua::luaAction(const std::string &action) {
+		lua_getglobal(m_L, m_global.c_str());
+		if (!lua_istable(m_L, -1)) {
+			Warn("lg_Actionlistener") << "Error: " << m_global << " is not a table";
+			lua_pop(m_L, 1);
+			return;
 		}
-	}
+		// assert table
+		lua_pushstring(m_L, m_table.c_str());
+		lua_gettable(m_L, -2);
+		if (!lua_istable(m_L, -1)) {
+			Warn("lg_Actionlistener") << "Error: sub-element " << m_table << " is not a table";
+			lua_pop(m_L, 2);
+			return;
+		}
+		lua_pushstring(m_L, action.c_str());
+		lua_gettable(m_L, -2);
+		if (!lua_isfunction(m_L, -1)) {
+			Warn("lg_Actionlistener") << "Warning: there is no function: " << action;
+			lua_pop(m_L, 3);
+			return;
+		}
+		// getfield(L, "actions");
+		if (lua_pcall(m_L, 0, 0, 0) != 0) {
+			throw ScriptException(lua_tostring(m_L,-1));
+		}
+		lua_pop(m_L, 2);
 
+	}
 }
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

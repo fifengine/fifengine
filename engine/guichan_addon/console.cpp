@@ -33,7 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "input/inputmanager.h"
-#include "script/scriptbackendmanager.h"
+#include "script/luascript.h"
 #include "video/gui/guimanager.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
@@ -55,7 +55,7 @@ namespace FIFE {
 
 			void action(const gcn::ActionEvent & event) {
 				try {
-					CScriptEngine()->callFunction(m_cmd.c_str());
+					LuaScript::instance()->callFunction(m_cmd.c_str());
 				} catch(FIFE::Exception & e) {
 					Log("Console") << "Caught exception: " << e.getMessage();
 				}
@@ -274,7 +274,7 @@ namespace FIFE {
 
 		// run the command
 		try {
-			CScriptEngine()->runString(cmd.c_str());
+			LuaScript::instance()->runString(cmd.c_str());
 		}
 		catch (FIFE::Exception & e) {
 			Debug("Console") << "Caught exception: " << e.getMessage();

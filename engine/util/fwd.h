@@ -21,6 +21,7 @@ namespace FIFE {
 	class QuadTree;
 	class Rect;
 	class SDLException;
+	class ScriptException;
 	class SettingsManager;
 	class StaticSingleton;
 }

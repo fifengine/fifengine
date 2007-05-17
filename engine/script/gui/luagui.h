@@ -28,8 +28,8 @@
 #include <map>
 
 // 3rd party library includes
-#include "script/lua/lua.hpp"
-#include "script/lua/lunar.h"
+#include "script/lua.hpp"
+#include "script/lunar.h"
 #include <guichan.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -42,7 +42,7 @@
 #include "guichan_addon/icon2.hpp"
 #include "guichan_addon/font.h"
 #include "util/log.h"
-#include "script/lua/lua_ref.h"
+#include "script/lua_ref.h"
 
 /** Exports partial guichan functionality to Lua.
  *

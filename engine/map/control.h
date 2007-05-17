@@ -35,7 +35,7 @@
 // Second block: files included from the same folder
 
 namespace FIFE { 
-	class ScriptEngine;
+	class LuaScript;
 	class SettingsManager;
 
 namespace map {
@@ -121,7 +121,7 @@ namespace map {
 			MapPtr m_map;
 			View* m_view;
 			Runner* m_runner;
-			ScriptEngine* m_scriptengine;
+			LuaScript* m_scriptengine;
 			SettingsManager* m_settings;
 			std::set<Camera*> m_cameras;
 

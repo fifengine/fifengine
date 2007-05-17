@@ -19,42 +19,40 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SCRIPT_LUA_GUI_LUA_GUIMANAGER_H
-#define FIFE_SCRIPT_LUA_GUI_LUA_GUIMANAGER_H
+#ifndef FIFE_SCRIPT_LUA_GUI_LUA_GUI_ACTIONLISTENER
+#define FIFE_SCRIPT_LUA_GUI_LUA_GUI_ACTIONLISTENER
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
-#include "script/lua/lua.hpp"
+#include "script/lua.hpp"
 #include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "script/lua/lua_ref.h"
+#include "util/singleton.h"
 
 namespace FIFE {
 
-	class GuiManager_LuaScript
+	class ActionListener_Lua : public gcn::ActionListener,
+				 public DynamicSingleton<ActionListener_Lua>
 	{
 		public:
-			static gcn::Widget * lua2gcn_cast(lua_State *L);
-
-			// exported functions
-			static int addWidget(lua_State *L);
-			static int removeWidget(lua_State *L);
-			static int moveWidgetToTop(lua_State *L);
-			static int moveWidgetToBottom(lua_State *L);
-
-			static int setGlobalFont(lua_State* L);
-
-			static const luaL_reg methods[];
+			ActionListener_Lua();
+			~ActionListener_Lua();
+			void action(const gcn::ActionEvent & event);
+			void setup(lua_State *L, const std::string &global, const std::string &table);
 		private:
-			static LuaRef m_font;
-			static luaGui::Widget2RefPtrMap m_child_refs;
+			void luaAction(const std::string &action);
+			std::string m_global;
+			std::string m_table;
+			lua_State *m_L;
+			bool isReady;
 	};
-
 }
+
 #endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

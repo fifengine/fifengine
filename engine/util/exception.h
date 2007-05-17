@@ -136,6 +136,13 @@ namespace FIFE {
 			Duplicate(const std::string& s) : Exception("Duplicate item: " +s) {}
 	};
 
+	/** Error related to scripting functionality
+	 */
+	class ScriptException : public Exception {
+		public:
+			ScriptException(const std::string& s) : Exception ( "Script-Exception: " +s) {};
+	};
+
 }//FIFE
 
 #endif

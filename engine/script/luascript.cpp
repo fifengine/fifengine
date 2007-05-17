@@ -40,6 +40,7 @@
 #endif
 
 #include "luascript.h"
+#include "scriptcontainer.h"
 #include "lua_mapcamera.h"
 #include "lua_mapcontrol.h"
 #include "lua_object.h"
@@ -65,7 +66,7 @@ namespace FIFE {
 	void LuaScript::_initLua() {
 		L = lua_open();
 		if (L == NULL)
-			throw FIFE::ScriptException(name() + " - Creating LUA state failed");
+			throw FIFE::ScriptException("LuaScript - Creating LUA state failed");
 
 		/* Lua 5.0 init calls are commented out; I am surprised this was
 		 * working at all with 5.1?
@@ -126,9 +127,9 @@ namespace FIFE {
 		Lunar<Map_LuaScript>::RegisterTable(L);
 	}
 
-	LuaScript::LuaScript() : ScriptEngine("Lua") {
+	LuaScript::LuaScript() {
 		new ActionListener_Lua();
-		Log("LuaScript") << "Scripting enabled: " << name();
+		Log("LuaScript") << "Scripting enabled";
 		L = NULL;
 	}
 
@@ -334,6 +335,14 @@ namespace FIFE {
 #else
 #endif
 		return 0;
+	}
+
+	void LuaScript::execute(const ScriptContainer& sc) {
+		if( sc.type == ScriptContainer::ScriptFile ) {
+			runFile(sc.value.c_str());
+		} else if( sc.type == ScriptContainer::ScriptString ) {
+			runString(sc.value.c_str());
+		}
 	}
 
 

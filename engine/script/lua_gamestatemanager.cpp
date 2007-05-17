@@ -29,8 +29,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "script/lua/gui/luagui.h"
-#include "script/scriptengine.h"
+#include "script/gui/luagui.h"
 #include "util/debugutils.h"
 #include "util/gamestate/gamestatemanager.h"
 #include "util/log.h"

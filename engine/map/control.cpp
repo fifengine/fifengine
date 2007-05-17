@@ -30,7 +30,7 @@
 #include "map/command/enqueueaction.h"
 #include "map/command/setvisual.h"
 #include "map/command/startmovement.h"
-#include "script/scriptbackendmanager.h"
+#include "script/luascript.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "util/exception.h"
@@ -53,7 +53,7 @@ namespace FIFE { namespace map {
 		m_map(),
 		m_view(new View()),
 		m_runner(new Runner()),
-		m_scriptengine(ScriptBackendManager::instance()->current()),
+		m_scriptengine(LuaScript::instance()),
 		m_settings(SettingsManager::instance()),
 		m_isrunning(false) {
 

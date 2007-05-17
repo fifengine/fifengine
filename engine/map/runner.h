@@ -47,7 +47,6 @@ namespace FIFE { namespace map {
 	class ObjectManager;
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
-	class ScriptEngine;
 	class ScriptingSlave;
 
 	namespace command { class Command; }

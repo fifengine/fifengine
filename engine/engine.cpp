@@ -44,7 +44,7 @@
 #include "input/events.h"
 #include "input/inputmanager.h"
 #include "map/factory.h"
-#include "script/scriptbackendmanager.h"
+#include "script/luascript.h"
 #include "video/gui/guimanager.h"
 #include "video/imagecache.h"
 #include "video/renderbackend.h"
@@ -135,12 +135,13 @@ namespace FIFE {
 		new map::Factory();
 		new audio::Manager();
 		new GameStateManager();
-		new ScriptBackendManager();
+		new LuaScript();
+		LuaScript::instance()->init();
 	}
 
 	void Engine::killSingletons() {
 		delete GameStateManager::instance();
-		delete ScriptBackendManager::instance();
+		delete LuaScript::instance();
 		delete audio::Manager::instance();
 		delete map::Factory::instance();
 		delete ImageCache::instance();
@@ -171,7 +172,7 @@ namespace FIFE {
 
 
 	void Engine::start() {
-		CScriptEngine()->callFunction("on_engine_start");
+		LuaScript::instance()->callFunction("on_engine_start");
 		m_run = true;
 		mainLoop();
 	}
@@ -279,7 +280,7 @@ namespace FIFE {
 			}
 			SDL_Delay(frame_sleep_time);
 		}
-		CScriptEngine()->callFunction("on_engine_stop");
+		LuaScript::instance()->callFunction("on_engine_stop");
 
 		// Unregister self from the input manager.
 		//manager_input->popContext(InputManager::ENGINE_CONTEXT);

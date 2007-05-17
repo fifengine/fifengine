@@ -70,7 +70,6 @@ namespace loaders { namespace fallout {
 	 * 
 	 * \bug This class can (really) only be used from within the
 	 * fallout-maploader; creating new objects should be possible in-game
-	 * (for example from the scriptengine).
 	 * \bug The m_lst_* member variables are not used! Change that or remove them.
 	 * \bug Remove unused functions.
 	 */

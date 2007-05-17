@@ -31,8 +31,8 @@
 // Second block: files included from the same folder
 #include "map/command/info.h"
 #include "map/objectinfo.h"
-#include "script/lua/lua_stackguard.h"
-#include "script/lua/lua_object.h"
+#include "script/lua_stackguard.h"
+#include "script/lua_object.h"
 #include "script/scriptcontainer.h"
 #include "event.h"
 #include "util/log.h"

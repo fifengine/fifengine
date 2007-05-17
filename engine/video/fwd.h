@@ -3,6 +3,7 @@ namespace FIFE {
 	class CRenderBackend;
 	class ComplexAnimation;
 	class Image;
+	class ImageCache;
 	class PartialAction;
 	class PixelBuffer;
 	class Point;
@@ -12,6 +13,7 @@ namespace FIFE {
 	class RenderManager;
 	class RenderableLocation;
 	class RenderableProvider;
+	class RenderableProviderConstructor;
 	class Screen;
 	namespace map {
 		class Geometry;

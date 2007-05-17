@@ -22,26 +22,80 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "script/lua/luascript.h"
+#include "script/luascript.h"
 
-#include "scriptbackendmanager.h"
+#include "video/gui/gcnfifeimage.h"
 
-namespace FIFE {
+#include "video/animation.h"
+#include "util/debugutils.h"
 
-	ScriptBackendManager::ScriptBackendManager() {
-		add(new LuaScript());
+#include "luagui.h"
+
+namespace luaGui {
+
+	Image::Image(lua_State *L) : gcn::AdvImage() {
+		if (lua_isnumber(L, 1))
+			loadFromCache(lua_tointeger(L, 1));
+		else
+			loadFromFile(lua_tostring(L, 1));
 	}
-
-	ScriptBackendManager::~ScriptBackendManager() {
-
+	int Image::l_getWidth(lua_State *L) {
+		lua_pushnumber(L, FIFE::GCNImage::getWidth());
+		return 1;
 	}
-
-	void ScriptBackendManager::add(ScriptEngine* s) {
-		BackendManager<std::string, ScriptEngine>::add(s->name(), s);
+	int Image::l_getHeight(lua_State *L) {
+		lua_pushnumber(L, FIFE::GCNImage::getHeight());
+		return 1;
 	}
+	int Image::l_setAnimActive(lua_State *L) {
+		setAnimActive(lua_toboolean(L, 1));
+		return 0;
+	}
+	int Image::l_isAnimation(lua_State *L) {
+		FIFE::Animation* a = getImageAsAnimation();
+		if (!a) {
+			lua_pushboolean(L,0);
+		} else {
+			lua_pushboolean(L,1);
+		}
+		return 1;
+	}
+	int Image::l_setAnimDirection(lua_State *L) {
+		setAnimDirection(lua_toboolean(L, 1));
+		return 0;
+	}
+	int Image::l_setAnimEndCallback(lua_State *L) {
+		FIFE::Animation* a = getImageAsAnimation();
+		if (!a)
+			return 0;
+		if (lua_isnil(L, 1))
+			a->setOnEndCallback(NULL);
+		else
+			a->setOnEndCallback(boost::bind(&Image::animEndCallback, this));
+		m_callbackName = "gui.anim_end.";
+		m_callbackName.append(luaL_checkstring(L, 1));
+		return 0;
+	}
+	void Image::animEndCallback() {
+		FIFE::LuaScript::instance()->callFunction(m_callbackName.c_str());
+	}
+	const char Image::className[] = "Image";
+#define method(class, name) {#name, &class::l_ ## name}
+
+	Lunar<Image>::RegType Image::methods[] = {
+		method(Image, getWidth),
+		method(Image, getHeight),
+		method(Image, setAnimActive),
+		method(Image, setAnimDirection),
+		method(Image, setAnimEndCallback),
+		method(Image, isAnimation),
+		{0,0}
+	};
 }
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

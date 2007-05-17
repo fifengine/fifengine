@@ -1,8 +1,8 @@
 class TiXmlElement;
 namespace FIFE {
+	class AsyncBridge;
 	class ComplexAnimation;
 	class Screen;
-	class ScriptEngine;
 	class SettingsManager;
 	namespace map {
 		class Action;
@@ -27,8 +27,8 @@ namespace FIFE {
 		class ObjectList;
 		class ObjectManager;
 		class Runner;
-		class ScriptEngine;
 		class ScriptingSlave;
+		class Selection;
 		class Service;
 		class View;
 		class ViewGameState;

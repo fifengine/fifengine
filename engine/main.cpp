@@ -33,7 +33,7 @@
 #include "audio/audiomanager.h"
 #include "map/viewgamestate.h"
 #include "map/objectinfo.h"
-#include "script/scriptbackendmanager.h"
+#include "script/luascript.h"
 #include "video/gui/guimanager.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
@@ -58,21 +58,20 @@ void initScripts(FIFE::Engine* engine) {
 	unsigned int swidth = settings->read("ScreenWidth", 800);
 	unsigned int sheight = settings->read("ScreenHeight", 600);
 
-	FIFE::ScriptBackendManager::instance()->select("Lua");
-	FIFE::CScriptEngine()->runFile(startup_script);
+	FIFE::LuaScript::instance()->runFile(startup_script);
 
 	const std::vector<std::string>& scripts = engine->getCommandLine("-script");
 	if( !scripts.empty() ) {
 		for(size_t i=0; i!=scripts.size(); ++i) {
-			FIFE::CScriptEngine()->runFile(scripts[i]);
+			FIFE::LuaScript::instance()->runFile(scripts[i]);
 		}
 	} else {
 		if( !engine->getCommandLine().empty() 
 			&& !engine->getCommandLine().front().empty()
 			&& engine->getCommandLine().front()[0] != '-' ) {
-			FIFE::CScriptEngine()->runFile( engine->getCommandLine().front());
+			FIFE::LuaScript::instance()->runFile( engine->getCommandLine().front());
 		} else {
-			FIFE::CScriptEngine()->runFile(script_setup);
+			FIFE::LuaScript::instance()->runFile(script_setup);
 		}
 	}
 	const std::vector<std::string>& maps = engine->getCommandLine("-map");
@@ -81,10 +80,10 @@ void initScripts(FIFE::Engine* engine) {
 	}
 
 	if (map_to_load.size() > 0)
-		FIFE::CScriptEngine()->setGlobalString("_tmp_map_to_load", map_to_load);
+		FIFE::LuaScript::instance()->setGlobalString("_tmp_map_to_load", map_to_load);
 
-	FIFE::CScriptEngine()->setGlobalInt("screen_width", swidth);
-	FIFE::CScriptEngine()->setGlobalInt("screen_height", sheight);
+	FIFE::LuaScript::instance()->setGlobalInt("screen_width", swidth);
+	FIFE::LuaScript::instance()->setGlobalInt("screen_height", sheight);
 
 }
 
