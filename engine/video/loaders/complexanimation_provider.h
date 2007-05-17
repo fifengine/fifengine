@@ -25,6 +25,9 @@
 // Standard C++ library includes
 #include <vector>
 
+// Platform specific includes
+#include "util/fife_stdint.h"
+
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
 

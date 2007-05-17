@@ -5,7 +5,7 @@
 // INT64_C undefined
 #define INT64_C
 #define __STDC_CONSTANT_MACROS
-#include <stdint.h>
+#include <boost/cstdint.hpp>
 
 #include <string>
 
