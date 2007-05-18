@@ -37,12 +37,28 @@
 
 namespace FIFE { namespace map {
 
-	Selection::Selection(LayerPtr layer)
+	Selection::Selection(LayerWeakPtr layer)
 		: m_mode(SingleSelectionMode),
 		m_imageid(0),
 		m_layer(layer),
 		m_selected(false)
 	{
+		initImageFromLayer();
+	}
+
+	Selection::Selection(const Selection& selection)
+		: m_mode(selection.m_mode),
+		m_imageid(selection.m_imageid),
+		m_layer(selection.m_layer),
+		m_selected(selection.m_selected)
+	{
+	}
+
+	Selection::~Selection() {
+	}
+
+	void Selection::initImageFromLayer() {
+		LayerPtr layer = m_layer.lock();
 		if( layer ) {
 			std::string imagefile = layer->get<std::string>("_OVERLAY_IMAGE");
 			Point offset = layer->get<Point>("_OVERLAY_IMAGE_OFFSET");
@@ -58,9 +74,6 @@ namespace FIFE { namespace map {
 
 			m_imageid = ImageCache::instance()->addImageFromLocation(location);
 		}
-	}
-
-	Selection::~Selection() {
 	}
 
 	void Selection::setImage(size_t imageid) {
@@ -134,16 +147,30 @@ namespace FIFE { namespace map {
 	}
 
 	void Selection::render(Screen* screen, const Point& offset) {
-		if( !m_selected )
+		if( !m_selected || !screen )
 			return;
 
-		Geometry *geometry = m_layer->getGeometry();
+		LayerPtr layer = m_layer.lock();
+		if( !layer )
+			return;
+
+		Geometry *geometry = layer->getGeometry();
 
 		RenderAble* image = ImageCache::instance()->getImage( m_imageid );
 
-		Point pos = geometry->toScreen(m_selection) - offset;
-		Rect target(pos.x,pos.y,image->getWidth(),image->getHeight());
-		image->render(target,screen);
+		if( m_mode == SingleSelectionMode ) {
+			Point pos = geometry->toScreen(m_selection) - offset;
+			Rect target(pos.x,pos.y,image->getWidth(),image->getHeight());
+			image->render(target,screen);
+		}
+
+		if( m_mode == MultiSelectionMode ) {
+			for(size_t i=0; i != m_multiselection.size(); ++i) {
+				Point pos = geometry->toScreen(m_multiselection[i]) - offset;
+				Rect target(pos.x,pos.y,image->getWidth(),image->getHeight());
+				image->render(target,screen);
+			}
+		}
 	}
 
 

@@ -63,13 +63,14 @@ namespace FIFE { namespace map {
 	 *  story telling.
 	 */
 	class Camera {
-		public:
+			/// Internal camera motion mode.
 			enum {
 				MOVING   = 1,
 				FREE     = 2,
 				TRACKING = 3
 			};
 
+		public:
 			Camera(Control* map_control);
 			~Camera();
 
@@ -95,12 +96,13 @@ namespace FIFE { namespace map {
 			void track(size_t visualId);
 
 			/** Start tracking
-			 * FIXME: NOT TESTED
 			 */
 			void track(ObjectPtr object);
 
 			void update();
 
+			/** Render this camera's view on the map
+			 */
 			void render();
 		private:
 			LayerPtr m_layer;

@@ -26,6 +26,7 @@
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,6 +42,7 @@ namespace FIFE {
 
 	class Layer;
 	typedef boost::shared_ptr<Layer> LayerPtr;
+	typedef boost::weak_ptr<Layer> LayerWeakPtr;
 
 	class Selection {
 
@@ -50,7 +52,9 @@ namespace FIFE {
 				MultiSelectionMode
 			};
 
-			Selection(LayerPtr layer);
+			Selection(LayerWeakPtr layer);
+			Selection(const Selection& selection);
+
 			~Selection();
 
 			void setImage(size_t imageid);
@@ -68,11 +72,13 @@ namespace FIFE {
 		private:
 			Mode m_mode;
 			size_t m_imageid;
-			LayerPtr m_layer;
+			LayerWeakPtr m_layer;
 
 			bool m_selected;
 			Point m_selection;
 			std::vector<Point> m_multiselection;
+
+			void initImageFromLayer();
 	};
 
 } } //FIFE::map
