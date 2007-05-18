@@ -252,4 +252,11 @@ namespace FIFE { namespace map {
 		m_paramnames_reverse.erase( it );
 	}
 
+	SelectionPtr Layer::getSelection() const {
+		if( !m_selection ) {
+			m_selection = SelectionPtr( new Selection(m_self) );
+		}
+		return m_selection;
+	}
+
 } } // FIFE::map

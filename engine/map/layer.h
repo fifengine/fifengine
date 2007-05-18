@@ -42,6 +42,7 @@
 #include "util/exception.h"
 
 #include "objectinfo.h"
+#include "selection.h"
 
 namespace FIFE { namespace map {
 
@@ -384,6 +385,8 @@ namespace FIFE { namespace map {
 			 */
 			bool isValidPosition(int32_t x,int32_t y) const;
 
+			SelectionPtr getSelection() const;
+
 			/** Get total number of layers
 			 */
 			static long globalCount();
@@ -413,6 +416,7 @@ namespace FIFE { namespace map {
 
 			Point m_shift;
 			Geometry* m_geometry;
+			mutable SelectionPtr m_selection;
 
 			typedef boost::variant<
 				std::vector<long>,

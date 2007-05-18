@@ -44,6 +44,11 @@ namespace FIFE {
 	typedef boost::shared_ptr<Layer> LayerPtr;
 	typedef boost::weak_ptr<Layer> LayerWeakPtr;
 
+	class Selection;
+	typedef boost::shared_ptr<Selection> SelectionPtr;
+	typedef boost::weak_ptr<Selection> SelectionWeakPtr;
+
+
 	class Selection {
 
 		public:

@@ -309,9 +309,7 @@ namespace FIFE { namespace map {
 			if( render_tiles )
 				renderTiles(layer);
 
-			// TODO Do this correct
-			Point layer_pos = i ? m_layer_pos : m_tilemask_pos;
-			renderLayerOverlay(layer,layer_pos);
+			layer->getSelection()->render( m_surface, m_offset );
 
 			if( layer->isGridOverlayEnabled() ) {
 				renderGridOverlay(layer);
@@ -369,6 +367,8 @@ namespace FIFE { namespace map {
 				LayerPtr layer = m_elevation->getLayer(0);
 				Geometry *geometry = layer->getGeometry();
 				m_tilemask_pos = geometry->fromScreen(Point(x,y) + m_offset);
+				layer->getSelection()->select( m_tilemask_pos );
+
 				Log("mapview") << "Selected tile Layer: " << m_tilemask_pos;
 				ss << "TILE: " << m_tilemask_pos.x << "." << m_tilemask_pos.y;
 				m_tilecoordinfo = ss.str();
@@ -379,7 +379,9 @@ namespace FIFE { namespace map {
 				// FIXME: I am not sure where exactly this offset comes from
 				// A rounding problem in map/defaultobjectgeometry.cpp ???
 				// Seems to work correctly for mouse selection, though -phoku
-				m_layer_pos = geometry->fromScreen(Point(x,y) + m_offset - Point(48,16));
+				m_layer_pos = geometry->fromScreen(Point(x,y) + m_offset);
+				layer->getSelection()->select( m_layer_pos );
+
 				Log("mapview") << "Selected object layer: " << m_layer_pos;
 				ss << "OBJ: " << m_layer_pos.x << "." << m_layer_pos.y;
 				m_objcoordinfo = ss.str();
