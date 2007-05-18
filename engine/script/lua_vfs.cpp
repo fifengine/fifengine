@@ -30,7 +30,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-#include "video/gui/guimanager.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "vfs/vfssource.h"

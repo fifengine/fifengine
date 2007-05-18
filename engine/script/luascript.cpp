@@ -32,7 +32,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "gui/lua_gui_actionlistener.h"
-#include "map/elevation.h"
 #include "map/viewgamestate.h"
 #include "util/gamestate/gamestatemanager.h"
 #ifdef HAVE_MOVIE

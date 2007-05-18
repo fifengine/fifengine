@@ -30,7 +30,6 @@
 
 // FIFE includes
 // to access the following
-#include "map/view.h"
 
 #include "util/debugutils.h"
 #include "util/singleton.h"
