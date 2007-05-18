@@ -57,16 +57,39 @@ namespace FIFE {
 
 			~Selection();
 
+			/** Set the image to use for overlaying this selection on a map view
+			 *  You normally don't need to call this,
+			 *  as the Selection will read the overlay image from
+			 *  the map data
+			 */
 			void setImage(size_t imageid);
 
+			/** Set the current selection mode
+			 */
 			void setMode(Mode mode);
+
+			/** Get the current selection mode
+			 */
 			Mode getMode() const;
 
+			/** Select a specific point
+			 */
 			void select(const Point& p);
+
+			/** Un-Select a specific point
+			 */
 			void unselect(const Point& p);
+
+			/** Check whether a map coord is selected
+			 */
 			bool isSelected(const Point& p) const;
+
+			/** Clear all selected points
+			 */
 			void clearSelection();
 
+			/** Render this selection
+			 */
 			void render(Screen* screen, const Point& offset);
 
 		private:
