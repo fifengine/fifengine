@@ -2,12 +2,14 @@
 import sys, re, os
 from path import path
 
-ROOTDIRNAME = 'engine'
+SKIPPED_SOURCES = ['log.cpp']
+INCLUDED_SOURCE_DIRS = ['engine/map']
 
-sources = list(path(ROOTDIRNAME).walkfiles('*.cpp'))
 reMethodDef = re.compile(r'(\w+::[~\w]+)\(.*?\)\s*{\s*$')
-SKIPPED_SOURCES = ['log.cpp', 'vfs/raw', 'renderbackends']
-		
+sources = []
+for sd in INCLUDED_SOURCE_DIRS:
+	sources += list(path(sd).walkfiles('*.cpp'))
+
 for src in sources:
 	skipSrc = False
 	for s in SKIPPED_SOURCES:
