@@ -36,6 +36,7 @@
 #include "util/settingsmanager.h"
 
 namespace FIFE {
+	std::map<int, int> FlowTracer::thread2depth;
 
 	Log::type_dbgtypes Log::m_dbgtypes;
 	bool Log::m_showall = false;

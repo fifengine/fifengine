@@ -33,6 +33,7 @@
 #include <set>
 
 // 3rd party library includes
+#include <SDL_thread.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -215,6 +216,29 @@ namespace FIFE {
 	inline Log Debug( const std::string& type ) {
 		return Log( type, Log::LEVEL_DEBUG );
 	}
+
+	class FlowTracer {
+		public:
+			FlowTracer(const std::string &txt) {
+				m_txt = txt;
+				int threadId = SDL_ThreadID();
+				std::cout << std::setw(FlowTracer::thread2depth[threadId] + 3) << "-> " << m_txt << std::endl;
+				FlowTracer::thread2depth[threadId] += 2;
+			}
+			~FlowTracer() {
+				int threadId = SDL_ThreadID();
+				FlowTracer::thread2depth[threadId] -= 2;
+				std::cout << std::setw(FlowTracer::thread2depth[threadId] + 3) << "<- " << m_txt << std::endl;
+				if (FlowTracer::thread2depth[threadId] < 0) {
+					FlowTracer::thread2depth[threadId] = 0;
+				}
+			}
+		private:
+			static std::map<int, int> thread2depth;
+			std::string m_txt;
+	};
+	#define FLOW_TRACE(txt) FlowTracer(#txt)
+
 }
 
 namespace std {
