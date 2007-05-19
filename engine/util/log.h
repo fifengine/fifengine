@@ -219,25 +219,13 @@ namespace FIFE {
 
 	class FlowTracer {
 		public:
-			FlowTracer(const std::string &txt) {
-				m_txt = txt;
-				int threadId = SDL_ThreadID();
-				std::cout << std::setw(FlowTracer::thread2depth[threadId] + 3) << "-> " << m_txt << std::endl;
-				FlowTracer::thread2depth[threadId] += 2;
-			}
-			~FlowTracer() {
-				int threadId = SDL_ThreadID();
-				FlowTracer::thread2depth[threadId] -= 2;
-				std::cout << std::setw(FlowTracer::thread2depth[threadId] + 3) << "<- " << m_txt << std::endl;
-				if (FlowTracer::thread2depth[threadId] < 0) {
-					FlowTracer::thread2depth[threadId] = 0;
-				}
-			}
+			FlowTracer(const std::string &txt);
+			~FlowTracer();
 		private:
 			static std::map<int, int> thread2depth;
 			std::string m_txt;
 	};
-	#define FLOW_TRACE(txt) FIFE::FlowTracer(#txt)
+	#define FLOW_TRACE(txt) FIFE::FlowTracer _ft(#txt);
 
 }
 

@@ -127,4 +127,19 @@ namespace FIFE {
 // 			m_console->print( str );
 	};
 
+	FlowTracer::FlowTracer(const std::string &txt) {
+		m_txt = txt;
+		int threadId = SDL_ThreadID();
+		std::cout << std::setw(FlowTracer::thread2depth[threadId] + 3) << "-> " << m_txt << std::endl;
+		FlowTracer::thread2depth[threadId] += 2;
+	}
+	FlowTracer::~FlowTracer() {
+		int threadId = SDL_ThreadID();
+		FlowTracer::thread2depth[threadId] -= 2;
+		std::cout << std::setw(FlowTracer::thread2depth[threadId] + 3) << "<- " << m_txt << std::endl;
+		if (FlowTracer::thread2depth[threadId] < 0) {
+			FlowTracer::thread2depth[threadId] = 0;
+		}
+	}	
+
 }
