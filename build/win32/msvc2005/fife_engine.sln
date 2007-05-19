@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libfife", "fife.vcproj", "{96025707-5759-400D-80E5-A1E94C8A79A2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fife_engine", "fife_engine.vcproj", "{D99A3288-99F3-46EB-94C8-31F6D3237F8B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{96025707-5759-400D-80E5-A1E94C8A79A2} = {96025707-5759-400D-80E5-A1E94C8A79A2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
