@@ -237,7 +237,7 @@ namespace FIFE {
 			static std::map<int, int> thread2depth;
 			std::string m_txt;
 	};
-	#define FLOW_TRACE(txt) FlowTracer(#txt)
+	#define FLOW_TRACE(txt) FIFE::FlowTracer(#txt)
 
 }
 
