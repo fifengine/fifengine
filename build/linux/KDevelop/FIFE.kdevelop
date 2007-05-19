@@ -13,7 +13,7 @@
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram></mainprogram>
+      <mainprogram>../../../fife_engine</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs></programargs>
@@ -145,7 +145,7 @@
       <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
-      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>
