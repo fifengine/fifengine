@@ -1,3 +1,6 @@
+// This script will automatically generate a solution and 
+// one VC project per unit test .cpp file.
+
 function createTargetFolder(folder) {
   var fso = new ActiveXObject("Scripting.FileSystemObject");
   if (!fso.FolderExists(folder))
