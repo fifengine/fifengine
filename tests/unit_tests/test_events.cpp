@@ -183,7 +183,7 @@ void event_refct() {
 	SDL_Quit();
 }
 
-test_suite* init_unit_test_suite(int argc, char** argv) {
+test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Event Test");
 
 	// Disabled performance tests. They take way too long

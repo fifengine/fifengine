@@ -171,7 +171,7 @@ void layer_numbering_test() {
 	}
 }
 
-test_suite* init_unit_test_suite(int argc, char** argv) {
+test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Map/Elevation/Layer tests");
 	test->add(BOOST_TEST_CASE(&map_test), 0);
 	test->add(BOOST_TEST_CASE(&elevation_test), 0);

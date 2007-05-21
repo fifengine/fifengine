@@ -179,7 +179,7 @@ void double_ref_test() {
 	LuaRef::unrefAll(L);
 }
 
-test_suite* init_unit_test_suite(int argc, char** argv) {
+test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Lua Ref tests");
 	test->add(BOOST_TEST_CASE(&simple_test), 0);
 	test->add(BOOST_TEST_CASE(&anonymous_function_test), 0);

@@ -63,7 +63,7 @@ void cleanup_test() {
 	BOOST_CHECK(remove(SETTINGS_FILE_NAME.c_str()) == 0);
 }
 
-test_suite* init_unit_test_suite(int argc, char** argv) {
+test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Settings manager tests");
 	test->add(BOOST_TEST_CASE(&write_test), 0);
 	test->add(BOOST_TEST_CASE(&read_test), 0);

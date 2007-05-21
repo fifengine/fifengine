@@ -184,7 +184,7 @@ void geo_directionToScreen_props() {
 	}
 }
 
-test_suite* init_unit_test_suite(int argc, char** argv) {
+test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Geometry Tests");
 
 	test->add( BOOST_TEST_CASE( &geometries_exist ),0 );

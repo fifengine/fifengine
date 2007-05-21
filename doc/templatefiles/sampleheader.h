@@ -62,7 +62,7 @@ namespace FIFE {
 		 */
 		~Foo();
 
-     // OPERATORS
+	// OPERATORS
 		/** Assignment operator.
 		 *
 		 * @param from The value to assign to this object.

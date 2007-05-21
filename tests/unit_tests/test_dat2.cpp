@@ -128,7 +128,7 @@ void test_decoder() {
 	delete[] d_comp;
 }
 
-test_suite* init_unit_test_suite(int argc, char** argv) {
+test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("DAT2 tests");
 	test->add(BOOST_TEST_CASE(&test_decoder), 0);
 	return test;
