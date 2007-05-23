@@ -39,8 +39,16 @@ function writeSolution(nameList, guidList) {
   solution.WriteLine("Microsoft Visual Studio Solution File, Format Version 9.00");
   solution.WriteLine("# Visual Studio 2005");
   
+  // Add the libfife project:
+  solution.WriteLine("Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"libfife\", \"..\\fife.vcproj\", \"{96025707-5759-400D-80E5-A1E94C8A79A2}\"");
+  solution.WriteLine("EndProject");
+  
+  // Add the test projects:
   for (var i in nameList) {
-    solution.WriteLine("Project(\"" + guidList[i] + "\") = \"" + nameList[i] + "\", \"" + nameList[i] + ".vcproj\", \"{B6321146-2FA6-4295-B1F8-41045197C770}\"");
+    solution.WriteLine("Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"" + nameList[i] + "\", \"" + nameList[i] + ".vcproj\", \"" + guidList[i] + "\"");
+    solution.WriteLine("	ProjectSection(ProjectDependencies) = postProject");
+    solution.WriteLine("		{96025707-5759-400D-80E5-A1E94C8A79A2} = {96025707-5759-400D-80E5-A1E94C8A79A2}");
+    solution.WriteLine("	EndProjectSection");
     solution.WriteLine("EndProject");
   }
   
@@ -50,10 +58,19 @@ function writeSolution(nameList, guidList) {
   solution.WriteLine("		Release|Win32 = Release|Win32");
   solution.WriteLine("	EndGlobalSection");
   solution.WriteLine("	GlobalSection(ProjectConfigurationPlatforms) = postSolution");
-  solution.WriteLine("		{B6321146-2FA6-4295-B1F8-41045197C770}.Debug|Win32.ActiveCfg = Debug|Win32");
-  solution.WriteLine("		{B6321146-2FA6-4295-B1F8-41045197C770}.Debug|Win32.Build.0 = Debug|Win32");
-  solution.WriteLine("		{B6321146-2FA6-4295-B1F8-41045197C770}.Release|Win32.ActiveCfg = Release|Win32");
-  solution.WriteLine("		{B6321146-2FA6-4295-B1F8-41045197C770}.Release|Win32.Build.0 = Release|Win32");
+
+  solution.WriteLine("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Debug|Win32.ActiveCfg = Debug|Win32");
+  solution.WriteLine("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Debug|Win32.Build.0 = Debug|Win32");
+  solution.WriteLine("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Release|Win32.ActiveCfg = Release|Win32");
+  solution.WriteLine("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Release|Win32.Build.0 = Release|Win32");
+  
+  for (var i in nameList) {
+    solution.WriteLine("		" + guidList[i] + ".Debug|Win32.ActiveCfg = Debug|Win32");
+    solution.WriteLine("		" + guidList[i] + ".Debug|Win32.Build.0 = Debug|Win32");
+    solution.WriteLine("		" + guidList[i] + ".Release|Win32.ActiveCfg = Release|Win32");
+    solution.WriteLine("		" + guidList[i] + ".Release|Win32.Build.0 = Release|Win32");
+  }
+  
   solution.WriteLine("	EndGlobalSection");
   solution.WriteLine("	GlobalSection(SolutionProperties) = preSolution");
   solution.WriteLine("		HideSolutionNode = FALSE");
