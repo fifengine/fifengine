@@ -38,7 +38,7 @@ using namespace FIFE;
 
 static const std::string ZIP_FILE = "data/zipvfstest.zip";
 
-static boost::shared_ptr<VFS> initialize_vfs() {
+static boost::shared_ptr<VFS> initialize_vfs(bool add_zip) {
 	boost::shared_ptr<VFS> result(new VFS());
 
 	// Make sure the zip file we are testing with actually exists:
@@ -47,47 +47,67 @@ static boost::shared_ptr<VFS> initialize_vfs() {
 		BOOST_FAIL("Test zip archive \"" << ZIP_FILE << "\" not found.");
 	}
 
-	// Add the zip provider:
-	FIFE::zip::ZipProvider provider;
-	if (!provider.isReadable(ZIP_FILE)) {
-		BOOST_FAIL("Test zip archive \"" << ZIP_FILE << "\" not readable.");
+	if (add_zip)
+	{
+		// Add the zip provider:
+		FIFE::zip::ZipProvider provider;
+		// Validity of the zip file is checked in one of the tests below.
+		result->addSource(provider.createSource(ZIP_FILE));
 	}
 
 	return result;
 }
 
+void test_isReadable() {
+	boost::shared_ptr<VFS> pvfs = initialize_vfs(false);
+	FIFE::zip::ZipProvider provider;
+	if (!provider.isReadable(ZIP_FILE)) {
+		BOOST_ERROR("Test zip archive \"" << ZIP_FILE << "\" not readable.");
+	}
+}
+
+void test_isNotReadable() {
+	boost::shared_ptr<VFS> pvfs = initialize_vfs(false);
+	FIFE::zip::ZipProvider provider;
+	if (provider.isReadable("data/dat1vfstest.dat")) {
+		BOOST_ERROR("False positive on a non-zip file.");
+	}
+}
+
 void test_fileExists() {
 	Log::setLogLevel(Log::LEVEL_MAX);
-	initialize_vfs();
+	initialize_vfs(true);
 	BOOST_ERROR("Blank Test. Please provide an implementation");
 }
 
 void test_fileNotExists() {
 	Log::setLogLevel(Log::LEVEL_MAX);
-	initialize_vfs();
+	initialize_vfs(true);
 	BOOST_ERROR("Blank Test. Please provide an implementation");
 }
 
 void test_listFiles() {
 	Log::setLogLevel(Log::LEVEL_MAX);
-	initialize_vfs();
+	initialize_vfs(true);
 	BOOST_ERROR("Blank Test. Please provide an implementation");
 }
 
 void test_listDirectories() {
 	Log::setLogLevel(Log::LEVEL_MAX);
-	initialize_vfs();
+	initialize_vfs(true);
 	BOOST_ERROR("Blank Test. Please provide an implementation");
 }
 
 void test_fileRead() {
 	Log::setLogLevel(Log::LEVEL_MAX);
-	initialize_vfs();
+	initialize_vfs(true);
 	BOOST_ERROR("Blank Test. Please provide an implementation");
 }
 
 test_suite* init_unit_test_suite(int argc, char* argv[]) {
 	test_suite* test = BOOST_TEST_SUITE("VFS Zip tests");
+	test->add(BOOST_TEST_CASE(&test_isReadable), 0);
+	test->add(BOOST_TEST_CASE(&test_isNotReadable), 0);
 	test->add(BOOST_TEST_CASE(&test_fileExists), 0);
 	test->add(BOOST_TEST_CASE(&test_fileNotExists), 0);
 	test->add(BOOST_TEST_CASE(&test_listFiles), 0);

@@ -27,12 +27,26 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "vfs/vfs.h"
 
 #include "zipprovider.h"
 
 namespace FIFE { namespace zip {
 	bool ZipProvider::isReadable(const std::string& file) const {
-		return false;
+		// File name must have a .zip extension:
+		// TODO: Case sensitive?
+		if (file.find(".zip") == std::string::npos)
+			return false;
+
+		// File should exist:
+		VFS* vfs = VFS::instance();
+		if (!vfs->exists(file))
+			return false;
+
+		// File should start with the bytes "PK":
+		// TODO: ...
+
+		return true;
 	}
 
 	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) const {
