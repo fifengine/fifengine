@@ -31,4 +31,25 @@
 #include "zipsource.h"
 
 namespace FIFE { namespace zip {
+	ZipSource::ZipSource(const std::string& zip_file) {
+	}
+
+	ZipSource::~ZipSource() {
+	}
+	
+	bool ZipSource::fileExists(const std::string& file) const {
+		return false;
+	}
+
+	RawData* ZipSource::open(const std::string& file) const {
+		return NULL;
+	}
+
+	VFS::type_stringlist ZipSource::listFiles(const std::string& path) const {
+		return VFS::type_stringlist();
+	}
+
+	VFS::type_stringlist ZipSource::listDirectories(const std::string& path) const {
+		return VFS::type_stringlist();
+	}
 }}

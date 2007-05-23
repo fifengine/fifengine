@@ -30,6 +30,7 @@
 #include "vfs/vfs.h"
 
 #include "zipprovider.h"
+#include "zipsource.h"
 
 namespace FIFE { namespace zip {
 	bool ZipProvider::isReadable(const std::string& file) const {
@@ -50,6 +51,7 @@ namespace FIFE { namespace zip {
 	}
 
 	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) const {
-		return NULL;
+		if (isReadable(file))
+			return new ZipSource(file);
 	}
 }}

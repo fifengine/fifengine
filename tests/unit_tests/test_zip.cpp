@@ -74,6 +74,14 @@ void test_isNotReadable() {
 	}
 }
 
+void test_createSource() {
+	boost::shared_ptr<VFS> pvfs = initialize_vfs(false);
+	FIFE::zip::ZipProvider provider;
+	if (provider.createSource(ZIP_FILE) == NULL) {
+		BOOST_ERROR("Provider does not make a valid source.");
+	}
+}
+
 void test_fileExists() {
 	Log::setLogLevel(Log::LEVEL_MAX);
 	initialize_vfs(true);
