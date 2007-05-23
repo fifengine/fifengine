@@ -60,6 +60,7 @@ namespace FIFE { namespace map {
 		m_elevation(),
 		m_layer_pos(-1),
 		m_coordinfo(false),
+		m_fadeout(false),
 		m_tilecoordinfo("TILE: 0.0"),
 		m_objcoordinfo("OBJ: 0.0")
 	{
@@ -404,11 +405,11 @@ namespace FIFE { namespace map {
 			Visual* visual = m_vtree->getVisual(reflist[i]);
 			if( visual->getObject() )
 				visual->getObject()->debugPrint();
-			visual->addEffect( new effect::Fade(visual,0,250) );
+			if( m_fadeout )
+				visual->addEffect( new effect::Fade(visual,0,250) );
 // 			m_vtree->removeVisual( reflist[i] );
 		}
 		
-
 	}
 
 	void View::reset() {
@@ -421,6 +422,9 @@ namespace FIFE { namespace map {
 		m_coordinfo = !m_coordinfo;
 	}
 
+	void View::toggleFadeOutEffect() {
+		m_fadeout = !m_fadeout;
+	}
 
 } } //FIFE::map
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -158,6 +158,11 @@ namespace FIFE { namespace map {
 			 */
 			void toggleCoordInfoEnabled();
 
+			/** Toggles a fadeout effect for mouse-selected objects
+			 */
+			void toggleFadeOutEffect();
+
+
 			//////////////  NEW INTERFACE ///////////////////////
 
 			size_t addVisual( Visual* visual );
@@ -203,6 +208,8 @@ namespace FIFE { namespace map {
 			std::string m_tilecoordinfo;
 			std::string m_objcoordinfo;
 
+			/// Objects fadeout on mouse-selection
+			bool m_fadeout;
 
 			void renderTiles(LayerPtr layer);
 			void renderGridOverlay(LayerPtr grid);

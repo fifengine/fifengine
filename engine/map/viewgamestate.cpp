@@ -174,6 +174,11 @@ namespace FIFE { namespace map {
 					m_view->toggleCoordInfoEnabled();
 				break;
 
+			case FIFE::Event::TEST_TOGGLE_FADEOUT:
+				if (m_view)
+					m_view->toggleFadeOutEffect();
+			  break;
+
 			case FIFE::Event::TEST_INCREASE_ALPHA:
 				if(roof_grid)
 					roof_grid->addToGlobalAlpha(5);
