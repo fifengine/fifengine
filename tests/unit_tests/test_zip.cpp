@@ -29,13 +29,31 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/log.h"
+#include "vfs/vfs.h"
+#include "vfs/vfshostsystem.h"
+#include "vfs/zip/zipprovider.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;
 
 static const std::string ZIP_FILE = "data/zipvfstest.zip";
 
-static void initialize_vfs() {
+static boost::shared_ptr<VFS> initialize_vfs() {
+	boost::shared_ptr<VFS> result(new VFS());
+
+	// Make sure the zip file we are testing with actually exists:
+	result->addSource(new VFSHostSystem());
+	if ((!result->exists(ZIP_FILE))) {
+		BOOST_FAIL("Test zip archive \"" << ZIP_FILE << "\" not found.");
+	}
+
+	// Add the zip provider:
+	FIFE::zip::ZipProvider provider;
+	if (!provider.isReadable(ZIP_FILE)) {
+		BOOST_FAIL("Test zip archive \"" << ZIP_FILE << "\" not readable.");
+	}
+
+	return result;
 }
 
 void test_fileExists() {

@@ -31,4 +31,11 @@
 #include "zipprovider.h"
 
 namespace FIFE { namespace zip {
+	bool ZipProvider::isReadable(const std::string& file) const {
+		return false;
+	}
+
+	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) const {
+		return NULL;
+	}
 }}

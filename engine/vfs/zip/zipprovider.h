@@ -41,6 +41,8 @@ namespace FIFE { namespace zip {
 	 */
 	class ZipProvider : public VFSSourceProvider {
 	public:
+		ZipProvider() : VFSSourceProvider("ZIP") { }
+
 		bool isReadable(const std::string& file) const;
 		VFSSource* createSource(const std::string& file) const;
 	};
