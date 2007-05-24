@@ -75,13 +75,16 @@ namespace FIFE { namespace map {
 		return Point(pos.x * xdx + pos.y * ydx + m_offset.x,
 		             pos.x * xdy + pos.y * ydy + m_offset.y);
 	}
-	
+
 	Point GridGeometry::fromScreen(const Point& pos) const {
 		Point p2(pos.x - m_offset.x, pos.y - m_offset.y);
-		
-		return Point((p2.x *  ydy + p2.y * -ydx) / determinant,
-		             (p2.x * -xdy + p2.y *  xdx) / determinant);
-	}
+
+		float x = static_cast<float>(p2.x * ydy + p2.y * -ydx) / determinant;
+		float y = static_cast<float>(p2.x * -xdy + p2.y * xdx) / determinant;
+
+		return Point(static_cast<int>(round(x)),
+		             static_cast<int>(round(y)));
+	} 
 
 	const float* GridGeometry::getAdjacentCosts() const {
 		return grid_adjacent_costs;
