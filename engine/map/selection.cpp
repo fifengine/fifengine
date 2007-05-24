@@ -21,6 +21,9 @@
 
 // Standard C++ library includes
 
+// Platform specific includes
+#include "util/fife_math.h"
+
 // 3rd party library includes
 
 // FIFE includes
@@ -28,7 +31,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/imagecache.h"
-#include "util/fife_math.h"
 #include "util/rect.h"
 
 #include "layer.h"
