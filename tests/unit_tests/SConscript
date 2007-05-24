@@ -21,5 +21,6 @@ env.Program('test_dat1', ['test_dat1.cpp'])
 env.Program('test_dat2', ['test_dat2.cpp'])
 env.Program('test_zip', ['test_zip.cpp'])
 env.Program('test_imagecache', ['test_imagecache.cpp'])
+env.Program('test_eventchannel', ['test_eventchannel.cpp'])
 
 # vim: set filetype=python :

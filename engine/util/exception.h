@@ -34,11 +34,11 @@
 
 namespace FIFE {
 
-        /** Exception base class.
-         *
-         * All other exceptions derived from this merely adjust the error string
-         * to be slightly more specific.
-         */
+	/** Exception base class.
+	 *
+	 * All other exceptions derived from this merely adjust the error string
+	 * to be slightly more specific.
+	 */
 	class Exception {
 		public:
 			/** Constructor. 
@@ -142,6 +142,14 @@ namespace FIFE {
 		public:
 			ScriptException(const std::string& s) : Exception ( "Script-Exception: " +s) {};
 	};
+
+	/** Error related to event functionality
+	 */
+	class EventException : public Exception {
+		public:
+			EventException(const std::string& s) : Exception ( "Event Exception: " +s) {};
+	};
+
 
 }//FIFE
 

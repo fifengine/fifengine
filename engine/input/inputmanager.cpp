@@ -129,9 +129,7 @@ namespace FIFE { namespace input {
 		unregisterEventListener(listener);
 	}
 
-	void Manager::handleEvents() {
-		// FIXME: This needs to be re-written more readable!
-		// See the note on getCurrentContext()
+	void Manager::onSdlEvent(const SDL_Event& event) {
 		std::list<Listener*> eventListener,anyeventListener;
 		type_eventmap &kmap = m_context_eventmap[getCurrentContext()];
 		type_eventmap &anymap = m_context_eventmap[ENGINE_CONTEXT];
@@ -148,49 +146,46 @@ namespace FIFE { namespace input {
 
 		std::list<Listener*>::iterator it,end(eventListener.end()),anyend(anyeventListener.end());
 
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-				case SDL_QUIT:
-					for(it = anyeventListener.begin(); it != anyend; ++it) {
+		switch (event.type) {
+			case SDL_QUIT:
+				for(it = anyeventListener.begin(); it != anyend; ++it) {
+					(*it)->handleEvent(Event::QUIT_GAME);
+				}
+				break;
+			case SDL_KEYDOWN:
+				// Do this for now, until we can rely on startup scripts.
+				if (event.key.keysym.sym == SDLK_ESCAPE) {
+					for(it = eventListener.begin(); it != end; ++it) {
 						(*it)->handleEvent(Event::QUIT_GAME);
 					}
-					break;
-				case SDL_KEYDOWN:
-					// Do this for now, until we can rely on startup scripts.
-					if (event.key.keysym.sym == SDLK_ESCAPE) {
-						for(it = eventListener.begin(); it != end; ++it) {
-							(*it)->handleEvent(Event::QUIT_GAME);
-						}
+				}
+				// FIXME: Damn this IS ugly.
+				if (kmap.find(event.key.keysym.sym) != kmap.end()) {
+					for(it = eventListener.begin(); it != end; ++it) {
+						(*it)->handleEvent( kmap[event.key.keysym.sym] );
 					}
-					// FIXME: Damn this IS ugly.
-					if (kmap.find(event.key.keysym.sym) != kmap.end()) {
-						for(it = eventListener.begin(); it != end; ++it) {
-							(*it)->handleEvent( kmap[event.key.keysym.sym] );
-						}
-					} else if (anymap.find(event.key.keysym.sym) != anymap.end()) {
-						for(it = anyeventListener.begin(); it != anyend; ++it) {
-							(*it)->handleEvent( anymap[event.key.keysym.sym] );
-						}
-					} else {
-						handleKeyEvent(event.key);
+				} else if (anymap.find(event.key.keysym.sym) != anymap.end()) {
+					for(it = anyeventListener.begin(); it != anyend; ++it) {
+						(*it)->handleEvent( anymap[event.key.keysym.sym] );
 					}
-					break;
+				} else {
+					handleKeyEvent(event.key);
+				}
+				break;
 
-				case SDL_KEYUP:
-					// Log("DEBUG-k1") << event.key.keysym.sym;
-					break;
-				default:
-					break;
-			}
+			case SDL_KEYUP:
+				// Log("DEBUG-k1") << event.key.keysym.sym;
+				break;
+			default:
+				break;
+		}
 
-			if ((event.type == SDL_MOUSEBUTTONUP) || (event.type == SDL_MOUSEBUTTONDOWN))
-				handleMouseButtonEvent(event.button);
-			
-			// push raw events
-			if (m_forced_listener) {
-				m_forced_listener->handleEvent(&event);
-			}
+		if ((event.type == SDL_MOUSEBUTTONUP) || (event.type == SDL_MOUSEBUTTONDOWN))
+			handleMouseButtonEvent(event.button);
+		
+		// push raw events
+		if (m_forced_listener) {
+			m_forced_listener->handleEvent(const_cast<SDL_Event*>(&event));
 		}
 	}
 

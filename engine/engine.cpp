@@ -43,6 +43,7 @@
 #include "guichan_addon/console.h"
 #include "input/events.h"
 #include "input/inputmanager.h"
+#include "eventchannel/manager/eventmanager.h"
 #include "map/factory.h"
 #include "script/luascript.h"
 #include "video/gui/guimanager.h"
@@ -117,7 +118,10 @@ namespace FIFE {
 
 		Log::parseCmdLine( m_parsed_cmdline );
 
+		new EventManager();
 		new input::Manager();
+		EventManager::instance()->addSdlEventListener(input::Manager::instance());
+
 		new GUIManager();
 		new RenderManager();
 
@@ -150,6 +154,7 @@ namespace FIFE {
 		delete RenderManager::instance();
 		delete GUIManager::instance();
 		delete input::Manager::instance();
+		delete EventManager::instance();
 		// DO override not pre-existing config.
 		SettingsManager::instance()->saveSettings(SETTINGS_FILE_NAME,true);
 		delete SettingsManager::instance();
@@ -243,6 +248,7 @@ namespace FIFE {
 		// Get instance variables.
 		GameStateManager* manager_gamestates = GameStateManager::instance();
 		input::Manager* manager_input = input::Manager::instance();
+		EventManager* evtmanager = EventManager::instance();
 		RenderBackend* rbackend = RenderManager::instance()->current();
 		GUIManager* manager_gui = GUIManager::instance();
 		TimeManager* manager_time = TimeManager::instance();
@@ -254,7 +260,7 @@ namespace FIFE {
 		// Main loop.
 		while (m_run) {
 			int32_t frame_start_time = SDL_GetTicks();
-			manager_input->handleEvents();
+			evtmanager->processEvents();
 
 			rbackend->startFrame();
 

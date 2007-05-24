@@ -168,6 +168,54 @@
 		</Filter>
 		<File RelativePath="..\..\..\engine\engine.cpp"></File>
 		<File RelativePath="..\..\..\engine\engine.h"></File>
+		<Filter Name="eventchannel">
+			<Filter Name="base">
+				<File RelativePath="..\..\..\engine\eventchannel\base\ec_event.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\base\ec_ievent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\base\ec_iinputevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\base\ec_inputevent.h"></File>
+			</Filter>
+			<Filter Name="command">
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_command.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_commandids.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommand.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommandcontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommanddispatcher.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommandlistener.h"></File>
+			</Filter>
+			<Filter Name="key">
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikey.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeycontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeyevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeylistener.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_key.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_keyevent.h"></File>
+			</Filter>
+			<Filter Name="manager">
+				<File RelativePath="..\..\..\engine\eventchannel\manager\eventmanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\manager\eventmanager.h"></File>
+			</Filter>
+			<Filter Name="mouse">
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imousecontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imouseevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imouselistener.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_mouseevent.h"></File>
+			</Filter>
+			<Filter Name="sdl">
+				<File RelativePath="..\..\..\engine\eventchannel\sdl\ec_isdleventcontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\sdl\ec_isdleventlistener.h"></File>
+			</Filter>
+			<Filter Name="source">
+				<File RelativePath="..\..\..\engine\eventchannel\source\ec_eventsourcetypes.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\source\ec_ieventsource.h"></File>
+			</Filter>
+			<Filter Name="widget">
+				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetcontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetlistener.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_widgetevent.h"></File>
+			</Filter>
+		</Filter>
 		<Filter Name="guichan_addon">
 			<File RelativePath="..\..\..\engine\guichan_addon\aafont.cpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\aafont.h"></File>

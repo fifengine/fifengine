@@ -38,6 +38,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/singleton.h"
+#include "eventchannel/sdl/ec_isdleventlistener.h"
 
 namespace FIFE { namespace input {
 
@@ -74,7 +75,7 @@ namespace FIFE { namespace input {
 	 *
 	 * @see input::Listener, input::ListenerRaw, Events
 	 * */
-	class Manager : public DynamicSingleton<Manager> {
+	class Manager : public DynamicSingleton<Manager>, public ISdlEventListener {
 		public:
 			/** The Engine context.
 			 *
@@ -190,6 +191,8 @@ namespace FIFE { namespace input {
 			 * @bug Does the GUI get all events pushed in???
 			 */
 			void handleEvents();
+
+			void onSdlEvent(const SDL_Event& evt);
 
 		private:
 			typedef std::multimap<int, Listener*> type_listeners_key;
