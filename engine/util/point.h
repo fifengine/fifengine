@@ -23,10 +23,10 @@
 #define FIFE_VIDEO_POINT_H
 
 // Standard C++ library includes
-#include <cmath>
 #include <iostream>
 
 // Platform specific includes
+#include "fife_math.h"
 #include "fife_stdint.h"
 
 // 3rd party library includes

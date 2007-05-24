@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <cmath>
 
 // 3rd party library includes
 #include <boost/bind.hpp>
@@ -30,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/time/timemanager.h"
+#include "util/fife_math.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "video/screen.h"

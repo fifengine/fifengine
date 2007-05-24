@@ -21,7 +21,6 @@
 
 // Standard C++ library includes
 #include <algorithm>
-#include <cmath>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -38,6 +37,7 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "video/imagecache.h"
+#include "util/fife_math.h"
 #include "util/log.h"
 
 #include "camera.h"

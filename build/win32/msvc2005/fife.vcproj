@@ -398,6 +398,7 @@
 			<File RelativePath="..\..\..\engine\util\debugutils.h"></File>
 			<File RelativePath="..\..\..\engine\util\exception.cpp"></File>
 			<File RelativePath="..\..\..\engine\util\exception.h"></File>
+			<File RelativePath="..\..\..\engine\util\fife_math.h"></File>
 			<File RelativePath="..\..\..\engine\util\fife_stdint.h"></File>
 			<File RelativePath="..\..\..\engine\util\fwd.h"></File>
 			<Filter Name="gamestate">

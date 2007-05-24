@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <cmath>
 
 // 3rd party library includes
 
@@ -29,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/imagecache.h"
+#include "util/fife_math.h"
 #include "util/rect.h"
 
 #include "layer.h"
