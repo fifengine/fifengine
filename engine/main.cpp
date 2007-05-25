@@ -51,7 +51,7 @@
 
 void initScripts(FIFE::Engine* engine) {
 	std::string startup_script("content/scripts/startup.lua");
-	std::string script_setup("content/scripts/fallout2.lua");
+	std::string script_setup("content/scripts/demos/load_custom_maps_developers.lua");
 	std::string map_to_load("");
 
 	FIFE::SettingsManager* settings = FIFE::SettingsManager::instance();
