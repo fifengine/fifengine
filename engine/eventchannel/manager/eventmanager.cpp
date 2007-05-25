@@ -436,8 +436,6 @@ namespace FIFE {
 			(*i)->onSdlEvent(evt);
 			++i;
 		}
-		std::cout << "testing..." << std::endl;
-
 	}
 
 	void EventManager::dispatchWidgetEvent(IWidgetEvent& evt) {

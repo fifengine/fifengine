@@ -32,7 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/singleton.h"
-#include "input/listener.h"
+#include "eventchannel/sdl/ec_isdleventlistener.h"
 
 namespace gcn {
 
@@ -54,7 +54,7 @@ namespace FIFE {
 	 *
 	 * This class controls the GUI system in FIFE.
 	 */
-	class GUIManager : public DynamicSingleton<GUIManager>, input::ListenerRaw {
+	class GUIManager : public DynamicSingleton<GUIManager>, public ISdlEventListener {
 		public:
 			/** Constructor.
 			 */
@@ -119,11 +119,7 @@ namespace FIFE {
 			 */
 			gcn::Font* getDefaultFont() { return m_font; };
 
-			/** Listen forced events from input manager
-			 *
-			 * \param event raw SDL event coming from input manager
-			 */
-			void handleEvent(SDL_Event* event);
+			void onSdlEvent(const SDL_Event& evt);
 
 		private:
 			// The Guichan GUI.

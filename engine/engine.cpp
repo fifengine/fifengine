@@ -120,9 +120,10 @@ namespace FIFE {
 
 		new EventManager();
 		new input::Manager();
+		new GUIManager();
+		EventManager::instance()->addSdlEventListener(GUIManager::instance());
 		EventManager::instance()->addSdlEventListener(input::Manager::instance());
 
-		new GUIManager();
 		new RenderManager();
 
 		// Select the render backend.

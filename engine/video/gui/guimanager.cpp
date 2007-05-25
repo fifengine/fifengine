@@ -36,7 +36,6 @@
 #include "video/screen.h"
 #include "guimanager.h"
 #include "util/settingsmanager.h"
-#include "input/inputmanager.h"
 #include "util/debugutils.h"
 
 #include "gcnimageloader.h"
@@ -55,8 +54,6 @@ namespace FIFE {
 		m_gcn_gui->setInput(m_input);
 
 		gcn::Image::setImageLoader(m_gcn_imgloader);
-		void setForcedListener(ListenerRaw* listener);
-		input::Manager::instance()->setForcedListener(this);
 	}
 
 	GUIManager::~GUIManager() {
@@ -68,13 +65,13 @@ namespace FIFE {
 		delete m_font;
 	}
 
-	void GUIManager::handleEvent(SDL_Event* event) {
+	void GUIManager::onSdlEvent(const SDL_Event& evt) {
 		gcn::SDLInput *input = dynamic_cast<gcn::SDLInput*>(m_gcn_gui->getInput());
 		if (!input) {
 			Warn("GuichanGUI->getInput == 0 ... discarding events!");
 			return;
 		}
-		input->pushInput(*event);
+		input->pushInput(evt);
 	}
 
 	void GUIManager::resizeTopContainer(unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
