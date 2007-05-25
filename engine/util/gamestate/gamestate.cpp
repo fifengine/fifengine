@@ -32,7 +32,20 @@
 
 namespace FIFE {
 
-	GameState::GameState(const std::string& name) : m_name(name) {
+	GameState::GameState(
+		const std::string& name,
+		IKeyController& kc,
+		IMouseController& mc,
+		IWidgetController& wc,
+		ICommandController& cc,
+		ICommandDispatcher& cd) : 
+
+		m_keycontroller(kc),
+		m_mousecontroller(mc),
+		m_widgetcontroller(wc),
+		m_commandcontroller(cc),
+		m_commanddispatcher(cd),
+		m_name(name) {
 		GameStateManager::instance()->registerState(this);
 	}
 

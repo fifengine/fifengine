@@ -55,12 +55,6 @@ namespace FIFE { namespace input {
 			 */
 			virtual void handleEvent(int event) {}
 
-			/** Called by InputManager to alert of key event.
-			 *
-			 * @param event The keyboard event to be handled.
-			 */
-			virtual void handleKeyEvent(const SDL_KeyboardEvent& event) {}
-
 			/** Called by InputManager to alert of mouse event.
 			 *
 			 * @param event The mouse event to be handled.

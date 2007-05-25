@@ -65,6 +65,27 @@ namespace FIFE {
 		virtual int getTimeStamp() { return m_timestamp; }
 		virtual void setTimeStamp(int timestamp ) { m_timestamp = timestamp; }
 
+		virtual const std::string getName() const {
+			return std::string("Event");
+		}
+
+		/** Gets attribute string of the event
+		 */
+		virtual const std::string getAttrStr() const {
+			std::stringstream ss;
+			ss << "consumed = " << m_isconsumed << ", ";
+			ss << "src = " << m_eventsource << ", ";
+			ss << "timestamp = " << m_timestamp;
+			return ss.str();
+		}
+
+		virtual const std::string getDebugString() const { 
+			std::stringstream ss;
+			ss << getName() << std::endl;
+			ss << getAttrStr() << std::endl;
+			return ss.str();
+		}
+
 	private:
 		bool m_isconsumed;
 		IEventSource* m_eventsource;

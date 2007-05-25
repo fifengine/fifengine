@@ -214,12 +214,6 @@ namespace FIFE { namespace input {
 			// The forced listener.
 			ListenerRaw* m_forced_listener;
 
-			/** Pass a key event to all appropiate key listeners.
-			 *
-			 * @param event The event to be passed on.
-			 */
-			void handleKeyEvent(const SDL_KeyboardEvent& event);
-
 			/** Pass a mouse event to all mouse listeners.
 			 *
 			 * @param event The event to be passed on.

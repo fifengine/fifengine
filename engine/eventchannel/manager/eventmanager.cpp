@@ -425,8 +425,8 @@ namespace FIFE {
 					break;
 				default:
 					break;
-				++i;
 			}
+			++i;
 		}
 	}
 
@@ -453,7 +453,7 @@ namespace FIFE {
 				case SDL_QUIT: {
 					Command cmd;
 					cmd.setSource(this);
-					cmd.setCommandType(CMD_QUIT);
+					cmd.setCommandType(CMD_QUIT_GAME);
 					dispatchCommand(cmd);
 					break;
 					}

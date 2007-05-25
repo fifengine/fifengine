@@ -38,6 +38,7 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 #include "util/rect.h"
+#include "eventchannel/mouse/ec_imouselistener.h"
 
 namespace FIFE {
 
@@ -64,7 +65,7 @@ namespace FIFE { namespace map {
 
 	/** Renders a map to a surface 
 	 */
-	class View {
+	class View: public IMouseListener {
 		public:
 
 			/** Create a new empty View object.
@@ -146,9 +147,18 @@ namespace FIFE { namespace map {
 			 */
 			ElevationPtr getCurrentElevation() const;
 
-			/** Handle a mouseclick
-			 */
 			void onMouseClick(unsigned char type, unsigned char button, unsigned short x, unsigned short y);
+
+			void mouseEntered(IMouseEvent& evt) {}
+			void mouseExited(IMouseEvent& evt) {}
+			void mousePressed(IMouseEvent& evt);
+			void mouseReleased(IMouseEvent& evt) {}
+			void mouseClicked(IMouseEvent& evt) {}
+			void mouseWheelMovedUp(IMouseEvent& evt) {}
+			void mouseWheelMovedDown(IMouseEvent& evt) {}
+			void mouseMoved(IMouseEvent& evt) {}
+			void mouseDragged(IMouseEvent& evt) {}
+
 
 			/** Set the overlay image for the hex grid selection
 			 */

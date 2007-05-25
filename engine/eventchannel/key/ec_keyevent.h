@@ -80,6 +80,11 @@ namespace FIFE {
 		virtual int getTimeStamp() { return InputEvent::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { InputEvent::setTimeStamp(timestamp); }
 
+		virtual const std::string getName() const {
+			return std::string("KeyEvent");
+		}
+		virtual const std::string getDebugString() const { return InputEvent::getDebugString(); }
+
 	private:
         KeyEventType m_eventtype;
         bool m_isnumericpad;

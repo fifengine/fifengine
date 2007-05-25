@@ -65,6 +65,14 @@ namespace FIFE {
 		 */
 		virtual int getTimeStamp() = 0;
 
+		/** Gets the debugstring of the event
+		 */
+		virtual const std::string getDebugString() const = 0;
+
+		/** Gets the name of the event
+		 */
+		virtual const std::string getName() const = 0;
+
 		virtual ~IEvent() {}
 
 	};

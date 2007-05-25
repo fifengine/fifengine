@@ -31,6 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "audio/audiomanager.h"
+#include "eventchannel/manager/eventmanager.h"
 #include "map/viewgamestate.h"
 #include "map/objectinfo.h"
 #include "script/luascript.h"
@@ -113,8 +114,9 @@ int main(int argc, char* argv[]) {
 		SDL_EnableUNICODE(1);
 		initScripts(engine);
 
+		FIFE::EventManager& em = *FIFE::EventManager::instance();
 		// construct a mapview-gamestate; inactive by default
-		mapview = new FIFE::map::ViewGameState();
+		mapview = new FIFE::map::ViewGameState(em, em, em, em, em);
 		mapview->getMap(); // just to suppress the 'unused variable warning'
 
 #ifdef HAVE_MOVIE

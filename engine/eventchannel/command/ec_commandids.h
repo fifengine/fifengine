@@ -38,8 +38,30 @@ namespace FIFE {
 	/**  Types for different commands
 	 */
 	enum CommandType {
-		CMD_UNKNOWN			= -1,
-		CMD_QUIT			= 0
+		CMD_UNKNOWN	 = -1,
+		CMD_GO_NORTH = 1,
+		CMD_GO_SOUTH = 2,
+		CMD_GO_WEST  = 3,
+		CMD_GO_EAST  = 4,
+		// Unused, but may become useful.
+		CMD_GO_NORTH_EAST = 5,
+		CMD_GO_NORTH_WEST = 6,
+		CMD_GO_SOUTH_EAST = 7,
+		CMD_GO_SOUTH_WEST = 8,
+		// Test toggles for the MapViewGameState.
+		CMD_TEST_TOGGLE_OBJECTS   = 201,
+		CMD_TEST_TOGGLE_FLOOR     = 202,
+		CMD_TEST_TOGGLE_ROOF      = 203,
+		CMD_TEST_TOGGLE_TILE_GRID = 204,
+		CMD_TEST_TOGGLE_OBJ_GRID  = 205,
+		CMD_TEST_CHANGE_ELEVATION = 206,
+		CMD_TEST_INCREASE_ALPHA   = 207,
+		CMD_TEST_DECREASE_ALPHA   = 208,
+		CMD_TEST_TOGGLE_COORDS    = 209,
+		CMD_TEST_TOGGLE_FADEOUT   = 210,
+		// Used by Engine.
+		CMD_MAKE_SCREENSHOT = 401,
+		CMD_QUIT_GAME       = 402,
 	};
 
 } //FIFE

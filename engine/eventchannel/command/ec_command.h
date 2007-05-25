@@ -76,6 +76,12 @@ namespace FIFE {
 		virtual int getTimeStamp() { return Event::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { Event::setTimeStamp(timestamp); }
 
+		virtual const std::string getName() const {
+			return std::string("Command");
+		}
+		virtual const std::string getDebugString() const { return Event::getDebugString(); }
+
+
 	private:
 		CommandType m_commandtype;
 		int m_code;

@@ -62,9 +62,9 @@ namespace FIFE { namespace map {
 		m_elevation(),
 		m_layer_pos(-1),
 		m_coordinfo(false),
-		m_fadeout(false),
 		m_tilecoordinfo("TILE: 0.0"),
-		m_objcoordinfo("OBJ: 0.0")
+		m_objcoordinfo("OBJ: 0.0"),
+		m_fadeout(false)
 	{
 		// Quick hack for getting the masks.
 		// msef003.frm >> hex outline
@@ -349,15 +349,14 @@ namespace FIFE { namespace map {
 	}
 
 
-	void View::onMouseClick(uint8_t type, uint8_t button, unsigned short x, unsigned short y) {
+	void View::mousePressed(IMouseEvent& evt) {
 		// Here's a big fat mark for deprecation
 		// This should probably be somewhere else,
 		// But right now it's handy for testing the viewing code
 
-		Log("mapview") 
-			<< "Click: type/button x,y " 
-			<< int(type) << "/" << int(button) 
-			<< " " << x << "," << y;
+		int x = evt.getX();
+ 		int y = evt.getY();
+		Log("View::mousePressed - ") << evt.getDebugString();
 
 		if( 0 == m_map ) {
 			Warn("mapview") << "Received mouse events while not initialized!";
@@ -366,7 +365,7 @@ namespace FIFE { namespace map {
 
 		std::stringstream ss;
 		if( m_elevation->getNumLayers() > 1 ) {
-			if( button == 3 ) {
+			if( evt.getButton() == IMouseEvent::RIGHT) {
 				LayerPtr layer = m_elevation->getLayer(0);
 				Geometry *geometry = layer->getGeometry();
 				m_tilemask_pos = geometry->fromScreen(Point(x,y) + m_offset);

@@ -50,8 +50,13 @@
 #include "viewgamestate.h"
 
 namespace FIFE { namespace map {
-	ViewGameState::ViewGameState() 
-		: FIFE::GameState("MapView"),
+	ViewGameState::ViewGameState(
+				IKeyController& kc,
+				IMouseController& mc,
+				IWidgetController& wc,
+				ICommandController& cc,
+				ICommandDispatcher& cd) 
+		: FIFE::GameState("MapView", kc, mc, wc, cc, cd),
 		m_filename(),
 		m_control(new Control()),
 		m_map(0),
@@ -84,11 +89,11 @@ namespace FIFE { namespace map {
 
 		m_view = m_control->getView();
 		m_camera->moveTo( m_view->getCurrentElevation()->get<Point>("_START_POSITION") );
+		m_mousecontroller.addMouseListener(m_view);
+		std::cout << " >>>> added" << std::endl;
 
 		input::Manager* inputmanager = input::Manager::instance();
 		inputmanager->pushContext("map_view");
-		inputmanager->registerMouseButtonListener(this);
-
 	}
 
 	void ViewGameState::deactivate() {
@@ -96,7 +101,8 @@ namespace FIFE { namespace map {
 			return;
 		input::Manager* inputmanager = input::Manager::instance();
 		inputmanager->popContext("map_view");
-		inputmanager->unregisterMouseButtonListener(this);
+		m_mousecontroller.removeMouseListener(m_view);
+		std::cout << " >>>> removed" << std::endl;
 		m_control->stop();
 	}
 
@@ -194,7 +200,4 @@ namespace FIFE { namespace map {
 		}
 	}
 
-  void ViewGameState::handleMouseButtonEvent(const SDL_MouseButtonEvent& event) {
-    m_view->onMouseClick(event.type, event.button, event.x, event.y);
-  }
 } } // FIFE::map

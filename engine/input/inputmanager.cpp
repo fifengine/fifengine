@@ -168,8 +168,6 @@ namespace FIFE { namespace input {
 					for(it = anyeventListener.begin(); it != anyend; ++it) {
 						(*it)->handleEvent( anymap[event.key.keysym.sym] );
 					}
-				} else {
-					handleKeyEvent(event.key);
 				}
 				break;
 
@@ -208,22 +206,10 @@ namespace FIFE { namespace input {
 	}
 #endif
 
-	void Manager::handleKeyEvent(const SDL_KeyboardEvent& event) {
-		// Keep this for now ...
-		type_listeners_key listeners = m_listeners_key;
-		typedef type_listeners_key::iterator iterator;
-		typedef type_listeners_key::const_iterator const_iterator;
-		typedef std::pair<iterator, const_iterator> iter_pair;
-		iter_pair limits = listeners.equal_range(event.keysym.sym);
-		for (iterator i = limits.first; i != limits.second; ++i) {
-			i->second->handleKeyEvent(event);
-		}
-
 #if 0
 		dispatch_to_matches(m_listeners_key, uint8_t(event.keysym.sym), 
 		                    std::mem_fun(&Listener::handleKeyEvent));
 #endif
-	}
 
 	// And also an iterator-adapter for doing this double-indirection.
 	// But maybe we should really just use boost::ptr_map or something?

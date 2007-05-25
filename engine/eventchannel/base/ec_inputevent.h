@@ -71,6 +71,10 @@ namespace FIFE {
 		virtual int getTimeStamp() { return Event::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { Event::setTimeStamp(timestamp); }
 
+		virtual const std::string getName() const {
+			return std::string("InputEvent");
+		}
+		virtual const std::string getDebugString() const { return Event::getDebugString(); }
 
 	private:
 		bool m_isshiftpressed;
