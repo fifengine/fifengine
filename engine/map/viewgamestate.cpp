@@ -118,11 +118,12 @@ namespace FIFE { namespace map {
 	}
 
 	void ViewGameState::mouseDragged(IMouseEvent& evt) {
+		const int draggingFactor = 1.0;
 		if (evt.isControlPressed()) {
 			if (m_prevDragX && m_prevDragY) {
 				Log(evt.getDebugString());
-				int xd = static_cast<int>(static_cast<float>(m_prevDragX - evt.getX()) / 1.5);
-				int yd = static_cast<int>(static_cast<float>(m_prevDragY - evt.getY()) / 1.5);
+				int xd = static_cast<int>(static_cast<float>(m_prevDragX - evt.getX()) / draggingFactor);
+				int yd = static_cast<int>(static_cast<float>(m_prevDragY - evt.getY()) / draggingFactor);
 				m_camera->moveBy(Point(xd, yd));
 			}
 			m_prevDragX = evt.getX();
