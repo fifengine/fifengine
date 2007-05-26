@@ -98,8 +98,8 @@ namespace FIFE {
 
 
 	void Engine::init() {
-		new SettingsManager();
-		FIFE::SettingsManager::instance()->loadSettings(SETTINGS_FILE_NAME);
+		FIFE::SettingsManager* settings = new SettingsManager();
+		settings->loadSettings(SETTINGS_FILE_NAME);
 
 		// If failed to init SDL throw exception.
 		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
@@ -127,7 +127,7 @@ namespace FIFE {
 		new RenderManager();
 
 		// Select the render backend.
-		std::string rbackend = SettingsManager::instance()->read<std::string>("RenderBackend", "SDL");
+		std::string rbackend = settings->read<std::string>("RenderBackend", "SDL");
 		RenderManager::instance()->select(rbackend);
 
 		new TimeManager();
@@ -139,6 +139,13 @@ namespace FIFE {
 		new ImageCache();
 		new map::Factory();
 		new audio::Manager();
+		int volume = settings->read<int>("InitialVolume", 10);
+		if (volume > 10) {
+			volume = 10;
+		} else if (volume < 0) {
+			volume = 0;
+		}
+		audio::Manager::instance()->setVolume(static_cast<float>(volume) / 10);
 		new GameStateManager();
 		new LuaScript();
 		LuaScript::instance()->init();
