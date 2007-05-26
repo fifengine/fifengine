@@ -55,7 +55,9 @@ namespace FIFE { namespace map {
 		m_filename(),
 		m_control(new Control()),
 		m_map(0),
-		m_view(0) {
+		m_view(0),
+		m_prevDragX(0),
+		m_prevDragY(0) {
 		m_camera = new Camera(m_control);
 		input::Manager::instance()->registerEventListener("map_view", this);
 	}
@@ -85,6 +87,7 @@ namespace FIFE { namespace map {
 		m_view = m_control->getView();
 		m_camera->moveTo( m_view->getCurrentElevation()->get<Point>("_START_POSITION") );
 		m_eventcontroller.addMouseListener(m_view);
+		m_eventcontroller.addMouseListener(this);
 		std::cout << " >>>> added" << std::endl;
 
 		input::Manager* inputmanager = input::Manager::instance();
@@ -96,6 +99,7 @@ namespace FIFE { namespace map {
 			return;
 		input::Manager* inputmanager = input::Manager::instance();
 		inputmanager->popContext("map_view");
+		m_eventcontroller.removeMouseListener(this);
 		m_eventcontroller.removeMouseListener(m_view);
 		std::cout << " >>>> removed" << std::endl;
 		m_control->stop();
@@ -105,6 +109,24 @@ namespace FIFE { namespace map {
 		if(m_valid_map) {
 			m_control->turn();
 			m_camera->render();
+		}
+	}
+
+	void ViewGameState::mousePressed(IMouseEvent& evt) {
+		m_prevDragX = 0;
+		m_prevDragY = 0;
+	}
+
+	void ViewGameState::mouseDragged(IMouseEvent& evt) {
+		if (evt.isControlPressed()) {
+			if (m_prevDragX && m_prevDragY) {
+				Log(evt.getDebugString());
+				int xd = static_cast<int>(static_cast<float>(m_prevDragX - evt.getX()) / 1.5);
+				int yd = static_cast<int>(static_cast<float>(m_prevDragY - evt.getY()) / 1.5);
+				m_camera->moveBy(Point(xd, yd));
+			}
+			m_prevDragX = evt.getX();
+			m_prevDragY = evt.getY();
 		}
 	}
 

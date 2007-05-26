@@ -63,11 +63,11 @@ namespace FIFE {
 		 */
 		enum MouseButtonType
 		{
-			UNKNOWN_BUTTON = -1,
 			EMPTY = 0,
-			LEFT,
-			RIGHT,
-			MIDDLE
+			LEFT = 1,
+			RIGHT = 2,
+			MIDDLE = 4,
+			UNKNOWN_BUTTON = 8
 		};
 
 		/**

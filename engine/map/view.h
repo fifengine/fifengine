@@ -147,8 +147,6 @@ namespace FIFE { namespace map {
 			 */
 			ElevationPtr getCurrentElevation() const;
 
-			void onMouseClick(unsigned char type, unsigned char button, unsigned short x, unsigned short y);
-
 			void mouseEntered(IMouseEvent& evt) {}
 			void mouseExited(IMouseEvent& evt) {}
 			void mousePressed(IMouseEvent& evt);

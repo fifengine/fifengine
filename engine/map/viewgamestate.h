@@ -32,6 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "input/listener.h"
+#include "eventchannel/mouse/ec_imouselistener.h"
 
 #include "util/gamestate/gamestate.h"
 
@@ -49,7 +50,7 @@ namespace FIFE { namespace map {
 	 * You can also set a mapfile, that will be loaded once this state gets activated.
 	 * It also does some housekeeping with maps, mapview and the scriptengine.
 	 */
-	class ViewGameState : public GameState, public input::Listener {
+	class ViewGameState : public GameState, public input::Listener, public IMouseListener {
 		public:
 			/** Constructor
 			 * Create a mapview, register as inputlistener and register the mapview
@@ -98,6 +99,16 @@ namespace FIFE { namespace map {
 			 */
 			View* getView() { return m_view; }
 			
+			void mouseEntered(IMouseEvent& evt) {}
+			void mouseExited(IMouseEvent& evt) {}
+			void mousePressed(IMouseEvent& evt);
+			void mouseReleased(IMouseEvent& evt) {}
+			void mouseClicked(IMouseEvent& evt) {}
+			void mouseWheelMovedUp(IMouseEvent& evt) {}
+			void mouseWheelMovedDown(IMouseEvent& evt) {}
+			void mouseMoved(IMouseEvent& evt) {}
+			void mouseDragged(IMouseEvent& evt);
+
 		private:
 			std::string m_filename;
 			Control* m_control;
@@ -105,6 +116,8 @@ namespace FIFE { namespace map {
 			View* m_view;
 			Camera* m_camera;
 			bool m_valid_map;
+			int m_prevDragX;
+			int m_prevDragY;
 	
 			// Not copyable
 			ViewGameState(const ViewGameState&);

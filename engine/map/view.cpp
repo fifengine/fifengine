@@ -349,17 +349,20 @@ namespace FIFE { namespace map {
 	}
 
 
-	void View::mouseReleased(IMouseEvent& evt) {Log(evt.getDebugString());}
-	void View::mouseClicked(IMouseEvent& evt) {Log(evt.getDebugString());}
-	void View::mouseWheelMovedUp(IMouseEvent& evt) {Log(evt.getDebugString());}
-	void View::mouseWheelMovedDown(IMouseEvent& evt) {Log(evt.getDebugString());}
+	void View::mouseReleased(IMouseEvent& evt) {}
+	void View::mouseClicked(IMouseEvent& evt) {}
+	void View::mouseWheelMovedUp(IMouseEvent& evt) {}
+	void View::mouseWheelMovedDown(IMouseEvent& evt) {}
 	void View::mouseMoved(IMouseEvent& evt) {}
-	void View::mouseDragged(IMouseEvent& evt) {Log(evt.getDebugString());}
+	void View::mouseDragged(IMouseEvent& evt) {}
 
 	void View::mousePressed(IMouseEvent& evt) {
 		// Here's a big fat mark for deprecation
 		// This should probably be somewhere else,
 		// But right now it's handy for testing the viewing code
+		if (evt.isControlPressed()) {
+			return;
+		}
 		Log(evt.getDebugString());
 		
 		int x = evt.getX();

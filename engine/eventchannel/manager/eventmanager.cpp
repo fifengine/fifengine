@@ -45,14 +45,15 @@ namespace FIFE {
 		m_mouselisteners(), 
 		m_sdleventlisteners(), 
 		m_widgetlisteners(),
-		m_keystatemap()
+		m_keystatemap(),
+		m_mousestate(0)
  	{
 	}
 
 	EventManager::~EventManager() {
 	}
 
-	void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
+	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
 		mouseevt.setX(sdlevt.button.x);
 		mouseevt.setY(sdlevt.button.y);
 		mouseevt.setButton(IMouseEvent::EMPTY);
@@ -88,9 +89,12 @@ namespace FIFE {
 				mouseevt.setType(IMouseEvent::PRESSED);
 			}
 		}
+		if ((mouseevt.getType() == IMouseEvent::MOVED) && m_mousestate) {
+			mouseevt.setType(IMouseEvent::DRAGGED);
+		}
 	}
 
-	void fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt) {
+	void EventManager::fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt) {
 		if (sdlevt.type == SDL_KEYDOWN) {
 			keyevt.setType(IKeyEvent::PRESSED);
 		} else if (sdlevt.type == SDL_KEYUP) {
@@ -274,10 +278,6 @@ namespace FIFE {
 		}
 	}
 
-	void EventManager::storeKeyState(IKeyEvent& evt) {
-		m_keystatemap[evt.getKey().getValue()] = (evt.getType() == IKeyEvent::PRESSED);
-	}
-
 	void EventManager::fillModifiers(InputEvent& evt) {
 		evt.setAltPressed(m_keystatemap[IKey::ALT_GR] |
 						m_keystatemap[IKey::LEFT_ALT] |
@@ -361,7 +361,7 @@ namespace FIFE {
 					KeyEvent keyevt;
 					keyevt.setSource(this);
 					fillKeyEvent(event, keyevt);
-					storeKeyState(keyevt);
+					m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == IKeyEvent::PRESSED);
 					dispatchKeyEvent(keyevt);
 					}
 					break;
@@ -372,6 +372,11 @@ namespace FIFE {
 					mouseevt.setSource(this);
 					fillMouseEvent(event, mouseevt);
 					fillModifiers(mouseevt);
+					if (event.type == SDL_MOUSEBUTTONDOWN) {
+						m_mousestate |= static_cast<int>(mouseevt.getButton());
+					} else if (event.type == SDL_MOUSEBUTTONUP) {
+						m_mousestate &= ~static_cast<int>(mouseevt.getButton());
+					}
 					dispatchMouseEvent(mouseevt);
 					break;
 					}
