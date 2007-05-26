@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
 		mapview->getMap(); // just to suppress the 'unused variable warning'
 
 #ifdef HAVE_MOVIE
-		video_view = new FIFE::VideoGameState();
+		video_view = new FIFE::VideoGameState(em);
 #endif
 
 		// Play music in the background

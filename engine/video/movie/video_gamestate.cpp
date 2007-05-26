@@ -37,7 +37,9 @@
 #include "video_gamestate.h"
 
 namespace FIFE {
-	VideoGameState::VideoGameState() : GameState("MoviePlayer"), filename("test.avi") {
+	VideoGameState::VideoGameState(IEventController& ec) : 
+		GameState("MoviePlayer", ec), 
+		filename("test.avi") {
 		sdl_ov = 0;
 	}
 	

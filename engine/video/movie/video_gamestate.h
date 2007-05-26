@@ -44,7 +44,7 @@ namespace FIFE {
 	 */
 	class VideoGameState : public GameState {
 		public:
-			VideoGameState();
+			VideoGameState(IEventController& ec);
 			~VideoGameState();
 			void activate();
 			void deactivate();
