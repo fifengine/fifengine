@@ -139,7 +139,7 @@ namespace FIFE {
 		new ImageCache();
 		new map::Factory();
 		new audio::Manager();
-		int volume = settings->read<int>("InitialVolume", 10);
+		int volume = settings->read<int>("InitialVolume", 5);
 		if (volume > 10) {
 			volume = 10;
 		} else if (volume < 0) {
