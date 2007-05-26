@@ -376,11 +376,6 @@ namespace FIFE { namespace map {
 				LayerPtr layer = m_elevation->getLayer(0);
 				Geometry *geometry = layer->getGeometry();
 				m_tilemask_pos = geometry->fromScreen(Point(x,y) + m_offset);
-				// FIXME: There's an off-by-one error here; I don't know what's
-				// introducing it, although perhaps its the dx/dy values in
-				// gridgeometry.cpp. Does anyone with more experience with this
-				// code want to see if they can find a way around this hack? -jwt
-				m_tilemask_pos -= Point(0,1);
 				layer->getSelection()->select( m_tilemask_pos );
 
 				Log("mapview") << "Selected tile Layer: " << m_tilemask_pos;
@@ -394,7 +389,6 @@ namespace FIFE { namespace map {
 				// A rounding problem in map/defaultobjectgeometry.cpp ???
 				// Seems to work correctly for mouse selection, though -phoku
 				m_layer_pos = geometry->fromScreen(Point(x,y) + m_offset);
-				m_layer_pos -= Point(0,1); // off by one; see above comments
 				layer->getSelection()->select( m_layer_pos );
 
 				Log("mapview") << "Selected object layer: " << m_layer_pos;

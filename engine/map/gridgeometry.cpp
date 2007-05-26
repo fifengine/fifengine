@@ -84,8 +84,11 @@ namespace FIFE { namespace map {
 		float x = static_cast<float>(p2.x * ydy + p2.y * -ydx) / determinant;
 		float y = static_cast<float>(p2.x * -xdy + p2.y * xdx) / determinant;
 
+		// FIXME: There's an off-by-one error here; I don't know what's
+		// introducing it, although perhaps its the dx/dy values; there's 
+		// a similar problem for hexs. -jwt
 		return Point(static_cast<int>(round(x)),
-		             static_cast<int>(round(y)));
+		             static_cast<int>(round(y)) - 1);
 	} 
 
 	const float* GridGeometry::getAdjacentCosts() const {
