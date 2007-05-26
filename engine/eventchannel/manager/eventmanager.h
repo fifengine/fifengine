@@ -39,6 +39,7 @@
 #include "../key/ec_ikeylistener.h"
 #include "../key/ec_ikey.h"
 #include "../ec_ieventcontroller.h"
+#include "../mouse/ec_imouseevent.h"
 
 namespace FIFE {
 
@@ -97,6 +98,7 @@ namespace FIFE {
 		std::vector<IWidgetListener*> m_widgetlisteners;
 		std::map<int, bool> m_keystatemap;
 		int m_mousestate;
+		IMouseEvent::MouseButtonType m_mostrecentbtn;
 	};
 } //FIFE
 

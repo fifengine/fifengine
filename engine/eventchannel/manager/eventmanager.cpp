@@ -46,7 +46,8 @@ namespace FIFE {
 		m_sdleventlisteners(), 
 		m_widgetlisteners(),
 		m_keystatemap(),
-		m_mousestate(0)
+		m_mousestate(0),
+		m_mostrecentbtn(IMouseEvent::EMPTY)
  	{
 	}
 
@@ -91,6 +92,7 @@ namespace FIFE {
 		}
 		if ((mouseevt.getType() == IMouseEvent::MOVED) && m_mousestate) {
 			mouseevt.setType(IMouseEvent::DRAGGED);
+			mouseevt.setButton(m_mostrecentbtn);
 		}
 	}
 
@@ -374,6 +376,7 @@ namespace FIFE {
 					fillModifiers(mouseevt);
 					if (event.type == SDL_MOUSEBUTTONDOWN) {
 						m_mousestate |= static_cast<int>(mouseevt.getButton());
+						m_mostrecentbtn = mouseevt.getButton();
 					} else if (event.type == SDL_MOUSEBUTTONUP) {
 						m_mousestate &= ~static_cast<int>(mouseevt.getButton());
 					}

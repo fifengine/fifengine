@@ -184,6 +184,8 @@
 				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommandlistener.h"></File>
 			</Filter>
 			<File RelativePath="..\..\..\engine\eventchannel\ec_ieventcontroller.h"></File>
+			<File RelativePath="..\..\..\engine\eventchannel\ec_lua_eventcontroller.cpp"></File>
+			<File RelativePath="..\..\..\engine\eventchannel\ec_lua_eventcontroller.h"></File>
 			<Filter Name="key">
 				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikey.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeycontroller.h"></File>
@@ -191,6 +193,10 @@
 				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeylistener.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\key\ec_key.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\key\ec_keyevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_lua_key.cpp"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_lua_key.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_lua_keyevent.cpp"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_lua_keyevent.h"></File>
 			</Filter>
 			<Filter Name="manager">
 				<File RelativePath="..\..\..\engine\eventchannel\manager\eventmanager.cpp"></File>
@@ -200,6 +206,8 @@
 				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imousecontroller.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imouseevent.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imouselistener.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_lua_mouseevent.cpp"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_lua_mouseevent.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_mouseevent.h"></File>
 			</Filter>
 			<Filter Name="sdl">

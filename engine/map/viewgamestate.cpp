@@ -119,7 +119,8 @@ namespace FIFE { namespace map {
 
 	void ViewGameState::mouseDragged(IMouseEvent& evt) {
 		const int draggingFactor = 1.0;
-		if (evt.isControlPressed()) {
+		Log(evt.getDebugString());
+		if (evt.isControlPressed() || (evt.getButton() == IMouseEvent::MIDDLE)) {
 			if (m_prevDragX && m_prevDragY) {
 				Log(evt.getDebugString());
 				int xd = static_cast<int>(static_cast<float>(m_prevDragX - evt.getX()) / draggingFactor);

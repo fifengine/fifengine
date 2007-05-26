@@ -360,7 +360,7 @@ namespace FIFE { namespace map {
 		// Here's a big fat mark for deprecation
 		// This should probably be somewhere else,
 		// But right now it's handy for testing the viewing code
-		if (evt.isControlPressed()) {
+		if (evt.isControlPressed() || (evt.getButton() == IMouseEvent::MIDDLE)) {
 			return;
 		}
 		Log(evt.getDebugString());
