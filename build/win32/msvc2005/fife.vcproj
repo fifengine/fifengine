@@ -183,6 +183,7 @@
 				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommanddispatcher.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommandlistener.h"></File>
 			</Filter>
+			<File RelativePath="..\..\..\engine\eventchannel\ec_ieventcontroller.h"></File>
 			<Filter Name="key">
 				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikey.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeycontroller.h"></File>

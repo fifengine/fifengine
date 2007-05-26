@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
 
 		FIFE::EventManager& em = *FIFE::EventManager::instance();
 		// construct a mapview-gamestate; inactive by default
-		mapview = new FIFE::map::ViewGameState(em, em, em, em, em);
+		mapview = new FIFE::map::ViewGameState(em);
 		mapview->getMap(); // just to suppress the 'unused variable warning'
 
 #ifdef HAVE_MOVIE

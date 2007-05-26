@@ -35,15 +35,10 @@
 // Second block: files included from the same folder
 //
 #include "util/singleton.h"
-#include "../command/ec_icommandcontroller.h"
-#include "../command/ec_icommanddispatcher.h"
-#include "../key/ec_ikeycontroller.h"
+
 #include "../key/ec_ikeylistener.h"
 #include "../key/ec_ikey.h"
-#include "../mouse/ec_imousecontroller.h"
-#include "../sdl/ec_isdleventcontroller.h"
-#include "../widget/ec_iwidgetcontroller.h"
-#include "../source/ec_ieventsource.h"
+#include "../ec_ieventcontroller.h"
 
 namespace FIFE {
 
@@ -53,13 +48,7 @@ namespace FIFE {
 	 */
 	class EventManager: 
 		public DynamicSingleton<EventManager>, 
-		public ICommandController,
-		public IKeyController, 
-		public IMouseController, 
-		public ISdlEventController, 
-		public IWidgetController,
-		public ICommandDispatcher, 
-		public IEventSource {
+		public IEventController {
 	public:
 		/** Constructor.
 		 */

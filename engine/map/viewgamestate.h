@@ -32,7 +32,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "input/listener.h"
-#include "eventchannel/mouse/ec_imouselistener.h"
 
 #include "util/gamestate/gamestate.h"
 
@@ -57,12 +56,7 @@ namespace FIFE { namespace map {
 			 * instance within the scripting engine.
 			 * It also currently sets the overlay image for the hexgrid selection tool.
 			 */
-			ViewGameState(
-				IKeyController& kc,
-				IMouseController& mc,
-				IWidgetController& wc,
-				ICommandController& cc,
-				ICommandDispatcher& cd);
+			ViewGameState(IEventController& ec);
 
 			/** Destructor
 			 */

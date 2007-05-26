@@ -31,11 +31,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "eventchannel/key/ec_ikeycontroller.h"
-#include "eventchannel/mouse/ec_imousecontroller.h"
-#include "eventchannel/widget/ec_iwidgetcontroller.h"
-#include "eventchannel/command/ec_icommandcontroller.h"
-#include "eventchannel/command/ec_icommanddispatcher.h"
+#include "eventchannel/ec_ieventcontroller.h"
 
 namespace FIFE {
 
@@ -64,14 +60,11 @@ namespace FIFE {
 			/** Constructor. Registers self with GameStateManager.
 			 * 
 			 * @param name The unique name which the state will be registered as.
+			 * @param ec Event controller that can be used to register to listen specific events
+			 *    and send commands to other subsystems
 			 */
 			GameState(
-				const std::string& name, 
-				IKeyController& kc,
-				IMouseController& mc,
-				IWidgetController& wc,
-				ICommandController& cc,
-				ICommandDispatcher& cd);
+				const std::string& name, IEventController& ec);
 
 			/** Destructor. Unregisters self with the GameStateManager.
 			 */
@@ -102,11 +95,7 @@ namespace FIFE {
 			virtual void turn(); // Called while gamestate is active.
 
 		protected:
-			IKeyController& m_keycontroller;
-			IMouseController& m_mousecontroller;
-			IWidgetController& m_widgetcontroller;
-			ICommandController& m_commandcontroller;
-			ICommandDispatcher& m_commanddispatcher;
+			IEventController& m_eventcontroller;
 
 		private:
 			// The name which the state is registered as.
