@@ -76,6 +76,17 @@ namespace FIFE {
 		}
 		virtual const std::string getDebugString() const { return Event::getDebugString(); }
 
+		virtual const std::string getAttrStr() const {
+			std::stringstream ss;
+			ss << Event::getAttrStr() << std::endl;
+			ss << "shift = " << m_isshiftpressed << ", ";
+			ss << "ctrl = " << m_iscontrolpressed << ", ";
+			ss << "alt = " << m_isaltpressed << ", ";
+			ss << "meta = " << m_ismetapressed;
+			return  ss.str();
+		}
+
+
 	private:
 		bool m_isshiftpressed;
 		bool m_iscontrolpressed;

@@ -42,6 +42,7 @@
 #include "ec_ievent.h"
 #include "../source/ec_ieventsource.h"
 
+
 namespace FIFE {
 	/**  Base class for all events
 	 */

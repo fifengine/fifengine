@@ -35,216 +35,21 @@
 #include "../widget/ec_widgetevent.h"
 #include "../command/ec_command.h"
 
-
 #include "eventmanager.h"
 
 namespace FIFE {
 
-	IKey::KeyType convertKeyCharacter(const SDL_Event& evt) {
-		SDL_keysym keysym = evt.key.keysym;
-		
-		IKey::KeyType value = IKey::INVALID_KEY;
+	EventManager::EventManager(): 
+		m_commandlisteners(), 
+		m_keylisteners(),
+		m_mouselisteners(), 
+		m_sdleventlisteners(), 
+		m_widgetlisteners(),
+		m_keystatemap()
+ 	{
+	}
 
-		if (keysym.unicode < 255)
-		{
-			value = static_cast<IKey::KeyType>(keysym.unicode);
-		}
-
-		switch (keysym.sym)
-		{
-		case SDLK_TAB:
-			value = IKey::TAB;
-			break;
-		case SDLK_LALT:
-			value = IKey::LEFT_ALT;
-			break;
-		case SDLK_RALT:
-			value = IKey::RIGHT_ALT;
-			break;
-		case SDLK_LSHIFT:
-			value = IKey::LEFT_SHIFT;
-			break;
-		case SDLK_RSHIFT:
-			value = IKey::RIGHT_SHIFT;
-			break;
-		case SDLK_LCTRL:
-			value = IKey::LEFT_CONTROL;
-			break;
-		case SDLK_RCTRL:
-			value = IKey::RIGHT_CONTROL;
-			break;
-		case SDLK_BACKSPACE:
-			value = IKey::BACKSPACE;
-			break;
-		case SDLK_PAUSE:
-			value = IKey::PAUSE;
-			break;
-		case SDLK_SPACE:
-			// Special characters like ~ (tilde) ends up
-			// with the keysym.sym SDLK_SPACE which
-			// without this check would be lost. The check
-			// is only valid on key down events in SDL.
-			if (evt.type == SDL_KEYUP || keysym.unicode == ' ')
-			{
-				value = IKey::SPACE;
-			}
-			break;
-		case SDLK_ESCAPE:
-			value = IKey::ESCAPE;
-			break;
-		case SDLK_DELETE:
-			value = IKey::DELETE;
-			break;
-		case SDLK_INSERT:
-			value = IKey::INSERT;
-			break;
-		case SDLK_HOME:
-			value = IKey::HOME;
-			break;
-		case SDLK_END:
-			value = IKey::END;
-			break;
-		case SDLK_PAGEUP:
-			value = IKey::PAGE_UP;
-			break;
-		case SDLK_PRINT:
-			value = IKey::PRINT_SCREEN;
-			break;
-		case SDLK_PAGEDOWN:
-			value = IKey::PAGE_DOWN;
-			break;
-		case SDLK_F1:
-			value = IKey::F1;
-			break;
-		case SDLK_F2:
-			value = IKey::F2;
-			break;
-		case SDLK_F3:
-			value = IKey::F3;
-			break;
-		case SDLK_F4:
-			value = IKey::F4;
-			break;
-		case SDLK_F5:
-			value = IKey::F5;
-			break;
-		case SDLK_F6:
-			value = IKey::F6;
-			break;
-		case SDLK_F7:
-			value = IKey::F7;
-			break;
-		case SDLK_F8:
-			value = IKey::F8;
-			break;
-		case SDLK_F9:
-			value = IKey::F9;
-			break;
-		case SDLK_F10:
-			value = IKey::F10;
-			break;
-		case SDLK_F11:
-			value = IKey::F11;
-			break;
-		case SDLK_F12:
-			value = IKey::F12;
-			break;
-		case SDLK_F13:
-			value = IKey::F13;
-			break;
-		case SDLK_F14:
-			value = IKey::F14;
-			break;
-		case SDLK_F15:
-			value = IKey::F15;
-			break;
-		case SDLK_NUMLOCK:
-			value = IKey::NUM_LOCK;
-			break;
-		case SDLK_CAPSLOCK:
-			value = IKey::CAPS_LOCK;
-			break;
-		case SDLK_SCROLLOCK:
-			value = IKey::SCROLL_LOCK;
-			break;
-		case SDLK_RMETA:
-			value = IKey::RIGHT_META;
-			break;
-		case SDLK_LMETA:
-			value = IKey::LEFT_META;
-			break;
-		case SDLK_LSUPER:
-			value = IKey::LEFT_SUPER;
-			break;
-		case SDLK_RSUPER:
-			value = IKey::RIGHT_SUPER;
-			break;
-		case SDLK_MODE:
-			value = IKey::ALT_GR;
-			break;
-		case SDLK_UP:
-			value = IKey::UP;
-			break;
-		case SDLK_DOWN:
-			value = IKey::DOWN;
-			break;
-		case SDLK_LEFT:
-			value = IKey::LEFT;
-			break;
-		case SDLK_RIGHT:
-			value = IKey::RIGHT;
-			break;
-		case SDLK_RETURN:
-			value = IKey::ENTER;
-			break;
-		case SDLK_KP_ENTER:
-			value = IKey::ENTER;
-			break;
-
-		default:
-			break;
-		}
-
-		if (!(keysym.mod & KMOD_NUM))
-		{
-			switch (keysym.sym)
-			{
-			case SDLK_KP0:
-				value = IKey::INSERT;
-				break;
-			case SDLK_KP1:
-				value = IKey::END;
-				break;
-			case SDLK_KP2:
-				value = IKey::DOWN;
-				break;
-			case SDLK_KP3:
-				value = IKey::PAGE_DOWN;
-				break;
-			case SDLK_KP4:
-				value = IKey::LEFT;
-				break;
-			case SDLK_KP5:
-				value = IKey::INVALID_KEY;
-				break;
-			case SDLK_KP6:
-				value = IKey::RIGHT;
-				break;
-			case SDLK_KP7:
-				value = IKey::HOME;
-				break;
-			case SDLK_KP8:
-				value = IKey::UP;
-				break;
-			case SDLK_KP9:
-				value = IKey::PAGE_UP;
-				break;
-			default:
-				break;
-			}
-		}
-
-		return value;
+	EventManager::~EventManager() {
 	}
 
 	void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
@@ -299,15 +104,91 @@ namespace FIFE {
 		keyevt.setMetaPressed(sdlevt.key.keysym.mod & KMOD_META);
 		keyevt.setNumericPad(sdlevt.key.keysym.sym >= SDLK_KP0
 							&& sdlevt.key.keysym.sym <= SDLK_KP_EQUALS);
-		keyevt.setKey(Key(convertKeyCharacter(sdlevt)));
-	}
 
-	EventManager::EventManager(): m_commandlisteners(), m_keylisteners(),
-		m_mouselisteners(), m_sdleventlisteners(), m_widgetlisteners()
- 	{
-	}
+		SDL_keysym keysym = sdlevt.key.keysym;
+		IKey::KeyType value = IKey::INVALID_KEY;
+		if (keysym.unicode < 255) {
+			value = static_cast<IKey::KeyType>(keysym.unicode);
+		}
 
-	EventManager::~EventManager() {
+		std::string repr("");
+		#define MAP_KEY(_orig, _new) case _orig: value = _new; repr = #_new; break;
+		switch (keysym.sym) {
+			MAP_KEY(SDLK_TAB, IKey::TAB);
+			MAP_KEY(SDLK_LALT, IKey::LEFT_ALT);
+			MAP_KEY(SDLK_RALT, IKey::RIGHT_ALT);
+			MAP_KEY(SDLK_LSHIFT, IKey::LEFT_SHIFT);
+			MAP_KEY(SDLK_RSHIFT, IKey::RIGHT_SHIFT);
+			MAP_KEY(SDLK_LCTRL, IKey::LEFT_CONTROL);
+			MAP_KEY(SDLK_RCTRL, IKey::RIGHT_CONTROL);
+			MAP_KEY(SDLK_BACKSPACE, IKey::BACKSPACE);
+			MAP_KEY(SDLK_PAUSE, IKey::PAUSE);
+			MAP_KEY(SDLK_ESCAPE, IKey::ESCAPE);
+			MAP_KEY(SDLK_DELETE, IKey::DELETE);
+			MAP_KEY(SDLK_INSERT, IKey::INSERT);
+			MAP_KEY(SDLK_HOME, IKey::HOME);
+			MAP_KEY(SDLK_END, IKey::END);
+			MAP_KEY(SDLK_PAGEUP, IKey::PAGE_UP);
+			MAP_KEY(SDLK_PRINT, IKey::PRINT_SCREEN);
+			MAP_KEY(SDLK_PAGEDOWN, IKey::PAGE_DOWN);
+			MAP_KEY(SDLK_F1, IKey::F1);
+			MAP_KEY(SDLK_F2, IKey::F2);
+			MAP_KEY(SDLK_F3, IKey::F3);
+			MAP_KEY(SDLK_F4, IKey::F4);
+			MAP_KEY(SDLK_F5, IKey::F5);
+			MAP_KEY(SDLK_F6, IKey::F6);
+			MAP_KEY(SDLK_F7, IKey::F7);
+			MAP_KEY(SDLK_F8, IKey::F8);
+			MAP_KEY(SDLK_F9, IKey::F9);
+			MAP_KEY(SDLK_F10, IKey::F10);
+			MAP_KEY(SDLK_F11, IKey::F11);
+			MAP_KEY(SDLK_F12, IKey::F12);
+			MAP_KEY(SDLK_F13, IKey::F13);
+			MAP_KEY(SDLK_F14, IKey::F14);
+			MAP_KEY(SDLK_F15, IKey::F15);
+			MAP_KEY(SDLK_NUMLOCK, IKey::NUM_LOCK);
+			MAP_KEY(SDLK_CAPSLOCK, IKey::CAPS_LOCK);
+			MAP_KEY(SDLK_SCROLLOCK, IKey::SCROLL_LOCK);
+			MAP_KEY(SDLK_RMETA, IKey::RIGHT_META);
+			MAP_KEY(SDLK_LMETA, IKey::LEFT_META);
+			MAP_KEY(SDLK_LSUPER, IKey::LEFT_SUPER);
+			MAP_KEY(SDLK_RSUPER, IKey::RIGHT_SUPER);
+			MAP_KEY(SDLK_MODE, IKey::ALT_GR);
+			MAP_KEY(SDLK_UP, IKey::UP);
+			MAP_KEY(SDLK_DOWN, IKey::DOWN);
+			MAP_KEY(SDLK_LEFT, IKey::LEFT);
+			MAP_KEY(SDLK_RIGHT, IKey::RIGHT);
+			MAP_KEY(SDLK_RETURN, IKey::ENTER);
+			MAP_KEY(SDLK_KP_ENTER, IKey::ENTER);
+		case SDLK_SPACE:
+			// Special characters like ~ (tilde) ends up with the keysym.sym SDLK_SPACE which
+			// without this check would be lost. The check is only valid on key down events in SDL.
+			if (sdlevt.type == SDL_KEYUP || keysym.unicode == ' ') {
+				value = IKey::SPACE;
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (!(keysym.mod & KMOD_NUM)) {
+			switch (keysym.sym) {
+			MAP_KEY(SDLK_KP0, IKey::INSERT);
+			MAP_KEY(SDLK_KP1, IKey::END);
+			MAP_KEY(SDLK_KP2, IKey::DOWN);
+			MAP_KEY(SDLK_KP3, IKey::PAGE_DOWN);
+			MAP_KEY(SDLK_KP4, IKey::LEFT);
+			MAP_KEY(SDLK_KP5, IKey::INVALID_KEY);
+			MAP_KEY(SDLK_KP6, IKey::RIGHT);
+			MAP_KEY(SDLK_KP7, IKey::HOME);
+			MAP_KEY(SDLK_KP8, IKey::UP);
+			MAP_KEY(SDLK_KP9, IKey::PAGE_UP);
+			default:
+				break;
+			}
+		}
+
+		keyevt.setKey(Key(value, repr));
 	}
 
 	template<typename T>
@@ -393,6 +274,22 @@ namespace FIFE {
 		}
 	}
 
+	void EventManager::storeKeyState(IKeyEvent& evt) {
+		m_keystatemap[evt.getKey().getValue()] = (evt.getType() == IKeyEvent::PRESSED);
+	}
+
+	void EventManager::fillModifiers(InputEvent& evt) {
+		evt.setAltPressed(m_keystatemap[IKey::ALT_GR] |
+						m_keystatemap[IKey::LEFT_ALT] |
+						m_keystatemap[IKey::RIGHT_ALT]);
+		evt.setControlPressed(m_keystatemap[IKey::LEFT_CONTROL] |
+							m_keystatemap[IKey::RIGHT_CONTROL]);
+		evt.setMetaPressed(m_keystatemap[IKey::LEFT_META] |
+							m_keystatemap[IKey::RIGHT_META]);
+		evt.setShiftPressed(m_keystatemap[IKey::LEFT_SHIFT] |
+							m_keystatemap[IKey::RIGHT_SHIFT]);
+	}
+
 	void EventManager::dispatchMouseEvent(IMouseEvent& evt) {
 		std::vector<IMouseListener*>::iterator i = m_mouselisteners.begin();
 		while (i != m_mouselisteners.end()) {
@@ -464,6 +361,7 @@ namespace FIFE {
 					KeyEvent keyevt;
 					keyevt.setSource(this);
 					fillKeyEvent(event, keyevt);
+					storeKeyState(keyevt);
 					dispatchKeyEvent(keyevt);
 					}
 					break;
@@ -473,6 +371,7 @@ namespace FIFE {
 					MouseEvent mouseevt;
 					mouseevt.setSource(this);
 					fillMouseEvent(event, mouseevt);
+					fillModifiers(mouseevt);
 					dispatchMouseEvent(mouseevt);
 					break;
 					}

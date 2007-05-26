@@ -349,14 +349,21 @@ namespace FIFE { namespace map {
 	}
 
 
+	void View::mouseReleased(IMouseEvent& evt) {Log(evt.getDebugString());}
+	void View::mouseClicked(IMouseEvent& evt) {Log(evt.getDebugString());}
+	void View::mouseWheelMovedUp(IMouseEvent& evt) {Log(evt.getDebugString());}
+	void View::mouseWheelMovedDown(IMouseEvent& evt) {Log(evt.getDebugString());}
+	void View::mouseMoved(IMouseEvent& evt) {}
+	void View::mouseDragged(IMouseEvent& evt) {Log(evt.getDebugString());}
+
 	void View::mousePressed(IMouseEvent& evt) {
 		// Here's a big fat mark for deprecation
 		// This should probably be somewhere else,
 		// But right now it's handy for testing the viewing code
-
+		Log(evt.getDebugString());
+		
 		int x = evt.getX();
  		int y = evt.getY();
-		Log("View::mousePressed - ") << evt.getDebugString();
 
 		if( 0 == m_map ) {
 			Warn("mapview") << "Received mouse events while not initialized!";

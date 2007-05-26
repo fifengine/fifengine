@@ -152,12 +152,12 @@ namespace FIFE { namespace map {
 			void mouseEntered(IMouseEvent& evt) {}
 			void mouseExited(IMouseEvent& evt) {}
 			void mousePressed(IMouseEvent& evt);
-			void mouseReleased(IMouseEvent& evt) {}
-			void mouseClicked(IMouseEvent& evt) {}
-			void mouseWheelMovedUp(IMouseEvent& evt) {}
-			void mouseWheelMovedDown(IMouseEvent& evt) {}
-			void mouseMoved(IMouseEvent& evt) {}
-			void mouseDragged(IMouseEvent& evt) {}
+			void mouseReleased(IMouseEvent& evt);
+			void mouseClicked(IMouseEvent& evt);
+			void mouseWheelMovedUp(IMouseEvent& evt);
+			void mouseWheelMovedDown(IMouseEvent& evt);
+			void mouseMoved(IMouseEvent& evt);
+			void mouseDragged(IMouseEvent& evt);
 
 
 			/** Set the overlay image for the hex grid selection

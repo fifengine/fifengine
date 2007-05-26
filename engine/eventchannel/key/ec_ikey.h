@@ -56,6 +56,11 @@ namespace FIFE {
 		 */
 		virtual int getValue() const = 0;
 
+		/** Gets the string representation of the key. 
+		 */
+		virtual std::string getAsString() const = 0;
+
+
 		enum KeyType {
 			INVALID_KEY		   = -1,
 			SPACE              = ' ',

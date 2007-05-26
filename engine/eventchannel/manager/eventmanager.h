@@ -43,6 +43,7 @@
 namespace FIFE {
 
 	class ICommandListener;
+	class InputEvent;
 
 	/**  Event Manager manages all events related to FIFE
 	 */
@@ -83,14 +84,16 @@ namespace FIFE {
 		void dispatchMouseEvent(IMouseEvent& evt);
 		void dispatchSdlEvent(SDL_Event& evt);
 		void dispatchWidgetEvent(IWidgetEvent& evt);
+		void fillModifiers(InputEvent& evt);
+		void storeKeyState(IKeyEvent& evt);
 
 		std::vector<ICommandListener*> m_commandlisteners;
 		std::vector<IKeyListener*> m_keylisteners;
 		std::vector<IMouseListener*> m_mouselisteners;
 		std::vector<ISdlEventListener*> m_sdleventlisteners;
 		std::vector<IWidgetListener*> m_widgetlisteners;
+		std::map<int, bool> m_keystatemap;
 	};
-
 } //FIFE
 
 #endif

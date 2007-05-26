@@ -43,8 +43,11 @@ namespace FIFE {
 	public:
         /** Constructor
 		 * @param value value of the key
+		 * @param repr string represntation of the key
          */
-		Key(int value): m_value(value) {}
+		Key(int value, const std::string& repr=""): 
+			m_value(value),
+			m_repr(repr) {}
 
         /** Destructor.
          */
@@ -70,8 +73,15 @@ namespace FIFE {
 			return m_value;
 		}
 
+		/** Gets the string representation of the key. 
+		 */
+		std::string getAsString() const {
+			return m_repr;
+		}
+
 	private:
 		int m_value;
+		std::string m_repr;
 	};
 
 } //FIFE

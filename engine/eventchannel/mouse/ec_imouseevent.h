@@ -98,6 +98,65 @@ namespace FIFE {
 
 		virtual ~IMouseEvent() {}
 	};
+
+	inline const std::string mouseEventType2str(IMouseEvent::MouseEventType t) {
+		std::string s("unknown");
+		switch (t) {
+			case IMouseEvent::MOVED:
+				s = "moved";
+				break;
+			case IMouseEvent::PRESSED:
+				s = "pressed";
+				break;
+			case IMouseEvent::RELEASED:
+				s = "released";
+				break;
+			case IMouseEvent::WHEEL_MOVED_DOWN:
+				s = "wheel moved down";
+				break;
+			case IMouseEvent::WHEEL_MOVED_UP:
+				s = "wheel moved up";
+				break;
+			case IMouseEvent::CLICKED:
+				s = "clicked";
+				break;
+			case IMouseEvent::ENTERED:
+				s = "entered";
+				break;
+			case IMouseEvent::EXITED:
+				s = "excited";
+				break;
+			case IMouseEvent::DRAGGED:
+				s = "dragged";
+				break;
+			default:
+				break;
+		}
+		return s;
+	}
+
+	inline const std::string mouseButtonType2str(IMouseEvent::MouseButtonType t) {
+		std::string s("unknown");
+		switch (t) {
+			case IMouseEvent::EMPTY:
+				s = "empty";
+				break;
+			case IMouseEvent::LEFT:
+				s = "left";
+				break;
+			case IMouseEvent::RIGHT:
+				s = "right";
+				break;
+			case IMouseEvent::MIDDLE:
+				s = "middle";
+				break;
+			default:
+				break;
+		}
+		return s;
+	}
+
 } //FIFE
+
 
 #endif

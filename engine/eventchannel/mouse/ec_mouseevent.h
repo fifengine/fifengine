@@ -87,6 +87,15 @@ namespace FIFE {
 			return std::string("MouseEvent");
 		}
 		virtual const std::string getDebugString() const { return InputEvent::getDebugString(); }
+		virtual const std::string getAttrStr() const {
+			std::stringstream ss;
+			ss << InputEvent::getAttrStr() << std::endl;
+			ss << "event = " << mouseEventType2str(m_eventtype) << ", ";
+			ss << "button = " << mouseButtonType2str(m_buttontype) << ", ";
+			ss << "x = " << m_x << ", ";
+			ss << "y = " << m_y;
+			return  ss.str();
+		}
 
 
 	private:
