@@ -85,48 +85,20 @@ namespace FIFE { namespace map {
 	
 	Point HexGeometry::fromScreen(const Point& pos) const {
 
-		// tile box (for hit testing) 
-		float dx = 2 * m_transform.x;
-		float dy = m_transform.y;
-
-		// not sure where this offset is coming from; it may just be
-		// there to align us with the relative origin
-		float x = static_cast<float>(pos.x - m_offset.x);
-		float y = static_cast<float>(pos.y - m_offset.y);
-
-		// the great divide; convert screen coordinates to tile coordinates;
-		// coordinates should now be considered on the skewed axes; note that
-		// the x coordinates are reversed. This divides the space into a grid
-		// we will hit-test within a box on this grid.
-		Point mouse_box = Point(static_cast<int>(ceil(x/(-dx))),
-		                        static_cast<int>(round(y/dy)));
-
-		Point hex = Point(0,0);
-
-		// because of the skewed axes, the hex x and y coordinates are both
-		// dependent on both the mouse x and y coordinates; this logic
-		// describes the relationship. A picture and further comments can
-		// be found on the wiki at:
-		// http://wiki.fifengine.de/index.php?title=Fallout%27s_map_geometry#Hexagonal_Implementation_Details
-		if(mouse_box.y % 2 == 0) {
-			// recompute mousebox.x and round since boxes don't line up on even rows
-			hex.x = mouse_box.y/2 + round(x/(-dx));
-		}
-		else {
-			hex.x = (mouse_box.y - 1)/2 + mouse_box.x;
-		}
-
-		if(hex.x % 2 == 0) {
-			hex.y = mouse_box.y - hex.x/2 - 1;
-		}
-		else {
-			hex.y = mouse_box.y - (hex.x + 1)/2;
-		}
-
 		// FIXME: hit testing is not pixel-perfect; hexs are just being
 		// approximated by boxes. Even accounting for that, things still
 		// seem to be a bit off. Still, this seems much better than before.
 		// -jwt
+
+		float mouse_x = static_cast<float>(pos.x - m_offset.x) / (-m_transform.x);
+		float mouse_y = static_cast<float>(pos.y - m_offset.y) / m_transform.y;
+
+		Point hex;
+
+		// x coordinates seem to be off by half a hex; corrected by adding 1.0f
+		// to the mouse coordinates (just another offset!)
+		hex.x = static_cast<int32_t>(floor((mouse_x + mouse_y + 1.0f) / 2.0f));
+		hex.y = static_cast<int32_t>(floor(mouse_y)) - (hex.x / 2); 
 
 		return hex;
 	}
