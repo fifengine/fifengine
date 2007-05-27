@@ -38,6 +38,8 @@
 #include "video/movie/video_gamestate.h"
 #endif
 
+#include "eventchannel/lua/lua_mouselistener.h"
+
 #include "luascript.h"
 #include "scriptcontainer.h"
 #include "lua_mapcamera.h"
@@ -124,6 +126,7 @@ namespace FIFE {
 		Lunar<Layer_LuaScript>::RegisterTable(L);
 		Lunar<Elevation_LuaScript>::RegisterTable(L);
 		Lunar<Map_LuaScript>::RegisterTable(L);
+		Lunar<LuaMouseListener>::Register(L);
 	}
 
 	LuaScript::LuaScript() {

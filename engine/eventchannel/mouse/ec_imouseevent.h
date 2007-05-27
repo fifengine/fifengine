@@ -23,7 +23,7 @@
 #define FIFE_EVENTCHANNEL_IMOUSEEVENT_H
 
 // Standard C++ library includes
-//
+#include <string>
 
 // 3rd party library includes
 //
@@ -112,10 +112,10 @@ namespace FIFE {
 				s = "released";
 				break;
 			case IMouseEvent::WHEEL_MOVED_DOWN:
-				s = "wheel moved down";
+				s = "wheel_moved_down";
 				break;
 			case IMouseEvent::WHEEL_MOVED_UP:
-				s = "wheel moved up";
+				s = "wheel_moved_up";
 				break;
 			case IMouseEvent::CLICKED:
 				s = "clicked";

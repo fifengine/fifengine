@@ -36,7 +36,8 @@
 
 namespace FIFE {
 
-	LuaEventListener::LuaEventListener(lua_State* L) : m_listening(false) {
+	LuaEventListener::LuaEventListener(lua_State* L) 
+		: m_eventhandlers(), m_knownhandlers(), m_listening(false) {
 		lua_newtable(L);
 		m_eventhandlers.ref(L,-1);
 		
@@ -93,7 +94,7 @@ namespace FIFE {
 		lua_pushstring(L,name);
 		lua_pushinteger(L,1);
 		lua_settable(L,-3);
-		lua_pop(L,2);
+		lua_pop(L,1);
 	}
 
 	lua_State* LuaEventListener::buildEvent(const IEvent& event) {

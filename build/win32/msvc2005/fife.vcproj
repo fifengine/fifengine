@@ -201,6 +201,7 @@
 			<Filter Name="lua">
 				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_listener.cpp"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_listener.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_mouselistener.cpp"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_mouselistener.h"></File>
 			</Filter>
 			<Filter Name="manager">

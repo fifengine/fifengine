@@ -1,0 +1,124 @@
+/***************************************************************************
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   fife-public@lists.sourceforge.net                                     *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or modify          *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
+ ***************************************************************************/
+
+#ifndef FIFE_EVENTCHANNEL_LUA_MOUSE_LISTENER_H
+#define FIFE_EVENTCHANNEL_LUA_MOUSE_LISTENER_H
+
+// Standard C++ library includes
+#include <string>
+
+// 3rd party library includes
+#include <boost/shared_ptr.hpp>
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+
+#include "script/lua.hpp"
+#include "script/lunar.h"
+#include "script/lua_ref.h"
+#include "eventchannel/base/ec_ievent.h"
+#include "eventchannel/mouse/ec_imouseevent.h"
+#include "eventchannel/mouse/ec_imouselistener.h"
+
+#include "lua_listener.h"
+
+namespace FIFE {
+
+	/** Lua Mouse Listener
+	 */
+	class LuaMouseListener : public LuaEventListener, public IMouseListener {
+		public:
+			static const char className[];
+			static Lunar<LuaMouseListener>::RegType methods[];
+
+			LuaMouseListener(lua_State *L);
+			virtual ~LuaMouseListener();
+			
+			/**
+			* Called when the mouse has entered into the event source area.
+			* @param evt describes the event.
+			*/
+			virtual void mouseEntered(IMouseEvent& evt);
+	
+			/**
+			* Called when the mouse has exited the event source area.
+			* @param evt describes the event.
+			*/
+			virtual void mouseExited(IMouseEvent& evt);
+	
+			/**
+			* Called when a mouse button has been pressed on the event source area.
+			* NOTE: A mouse press is NOT equal to a mouse click.
+			* @param evt describes the event.
+			*/
+			virtual void mousePressed(IMouseEvent& evt);
+	
+			/**
+			* Called when a mouse button has been released on the event source area.
+			* @param evt describes the event.
+			*/
+			virtual void mouseReleased(IMouseEvent& evt);
+	
+			/**
+			* Called when a mouse button is pressed and released (clicked) on
+			* the event source area.
+			* @param evt describes the event.
+			*/
+			virtual void mouseClicked(IMouseEvent& evt);
+	
+			/**
+			* Called when the mouse wheel has moved up on the event source area.
+			* @param evt describes the event.
+			*/
+			virtual void mouseWheelMovedUp(IMouseEvent& evt);
+	
+			/**
+			* Called when the mouse wheel has moved down on the event source area.
+			* @param mousEvent describes the event.
+			*/
+			virtual void mouseWheelMovedDown(IMouseEvent& evt);
+	
+			/**
+			* Called when the mouse has moved in the event source area and no mouse button
+			* has been pressed
+			* @param evt describes the event.
+			*/
+			virtual void mouseMoved(IMouseEvent& evt);
+	
+			/**
+			* Called when the mouse has moved and the mouse has previously been
+			* pressed on the event source.
+			* @param evt describes the event.
+			*/
+			virtual void mouseDragged(IMouseEvent& evt);
+
+		protected:
+			virtual void doReceiveEvents();
+			virtual void doIgnoreEvents();
+		
+			lua_State* buildMouseEvent(const IMouseEvent& event);
+		
+	};
+
+}
+#endif
