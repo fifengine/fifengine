@@ -40,7 +40,7 @@ class EventTester: public ICommandListener {
 public:
 	EventTester(): m_commandreceived(false) {}
 
-	void onCommand(const ICommand& command) {
+	void onCommand(ICommand& command) {
 		m_commandreceived = true;
 	}
 

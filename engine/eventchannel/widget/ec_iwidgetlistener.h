@@ -49,7 +49,7 @@ namespace FIFE {
 		 * occured.
 		 * @param evy the event of the action.
 		 */
-		virtual void onWidgetAction(const IWidgetEvent& evt) = 0;
+		virtual void onWidgetAction(IWidgetEvent& evt) = 0;
 
 		virtual ~IWidgetListener() {}
 	};

@@ -65,10 +65,11 @@ namespace FIFE {
 		delete m_font;
 	}
 
-	void GUIManager::onSdlEvent(const SDL_Event& evt) {
+	void GUIManager::onSdlEvent(SDL_Event& evt) {
 		gcn::SDLInput *input = dynamic_cast<gcn::SDLInput*>(m_gcn_gui->getInput());
 		if (!input) {
-			Warn("GuichanGUI->getInput == 0 ... discarding events!");
+			Warn("GUIManager")
+				<< "GuichanGUI->getInput == 0 ... discarding events!";
 			return;
 		}
 		input->pushInput(evt);

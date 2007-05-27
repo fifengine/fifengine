@@ -83,11 +83,12 @@ namespace FIFE {
 		virtual int getTimeStamp() { return InputEvent::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { InputEvent::setTimeStamp(timestamp); }
 
-		virtual const std::string getName() const {
-			return std::string("MouseEvent");
+		virtual const std::string& getName() const {
+			const static std::string eventName("MouseEvent");
+			return eventName;
 		}
-		virtual const std::string getDebugString() const { return InputEvent::getDebugString(); }
-		virtual const std::string getAttrStr() const {
+		virtual std::string getDebugString() const { return InputEvent::getDebugString(); }
+		virtual std::string getAttrStr() const {
 			std::stringstream ss;
 			ss << InputEvent::getAttrStr() << std::endl;
 			ss << "event = " << mouseEventType2str(m_eventtype) << ", ";

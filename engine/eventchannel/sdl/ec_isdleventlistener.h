@@ -46,7 +46,7 @@ namespace FIFE {
 		/** Called when an SDL event is received from SDL
 		 * @param evt SDL event
 		 */
-		virtual void onSdlEvent(const SDL_Event& evt) = 0;
+		virtual void onSdlEvent(SDL_Event& evt) = 0;
 
 		virtual ~ISdlEventListener() {}
 	};

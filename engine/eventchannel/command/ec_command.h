@@ -49,9 +49,7 @@ namespace FIFE {
 		Command(): 
 			Event(),
 			m_commandtype(CMD_UNKNOWN), 
-			m_code(0), 
-			m_data1(0), 
-			m_data2(0) {}
+			m_code(0) {}
 
         /** Destructor.
          */
@@ -63,12 +61,6 @@ namespace FIFE {
 		int getCode() { return m_code; }
 		void setCode(int code) { m_code = code; }
 
-		void* getData1() { return m_data1; }
-		void setData1(void* data1) { m_data1 = data1; }
-
-		void* getData2() { return m_data2; }
-		void setData2(void* data2) { m_data2 = data2; }
-
 		virtual void consume() { Event::consume(); }
 		virtual bool isConsumed() { return Event::isConsumed(); }
 		virtual IEventSource* getSource() { return Event::getSource(); }
@@ -76,10 +68,11 @@ namespace FIFE {
 		virtual int getTimeStamp() { return Event::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { Event::setTimeStamp(timestamp); }
 
-		virtual const std::string getName() const {
-			return std::string("Command");
+		virtual const std::string& getName() const {
+			const static std::string eventName("Command");
+			return eventName;
 		}
-		virtual const std::string getDebugString() const { return Event::getDebugString(); }
+		virtual std::string getDebugString() const { return Event::getDebugString(); }
 
 
 	private:

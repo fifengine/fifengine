@@ -129,7 +129,7 @@ namespace FIFE { namespace input {
 		unregisterEventListener(listener);
 	}
 
-	void Manager::onSdlEvent(const SDL_Event& event) {
+	void Manager::onSdlEvent(SDL_Event& event) {
 		std::list<Listener*> eventListener,anyeventListener;
 		type_eventmap &kmap = m_context_eventmap[getCurrentContext()];
 		type_eventmap &anymap = m_context_eventmap[ENGINE_CONTEXT];

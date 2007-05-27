@@ -53,16 +53,6 @@ namespace FIFE {
 		 */
 		virtual int getCode() = 0;
 
-		/** Gets the data pointer 1 of this command. Meaning of data depends on the command type
-		 * @return data 1 of this command
-		 */
-		virtual void* getData1() = 0;
-
-		/** Gets the data pointer 2 of this command. Meaning of data depends on the command type
-		 * @return data 2 of this command
-		 */
-		virtual void* getData2() = 0;
-
 		virtual ~ICommand() {}
 	};
 

@@ -46,7 +46,7 @@ namespace FIFE {
 		/** Called when an command is received from a command source
 		 * @param command command coming from command source
 		 */
-		virtual void onCommand(const ICommand& command) = 0;
+		virtual void onCommand(ICommand& command) = 0;
 
 		virtual ~ICommandListener() {}
 	};

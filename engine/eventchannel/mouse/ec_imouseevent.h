@@ -82,7 +82,7 @@ namespace FIFE {
 		 * the source event source. 
 		 * @return the y coordinate of the mouse event.
 		 */
-        virtual int getY() const = 0;
+                virtual int getY() const = 0;
 
 		/**
 		 * Gets the type of the event.
@@ -99,7 +99,7 @@ namespace FIFE {
 		virtual ~IMouseEvent() {}
 	};
 
-	inline const std::string mouseEventType2str(IMouseEvent::MouseEventType t) {
+	inline std::string mouseEventType2str(IMouseEvent::MouseEventType t) {
 		std::string s("unknown");
 		switch (t) {
 			case IMouseEvent::MOVED:
@@ -135,7 +135,7 @@ namespace FIFE {
 		return s;
 	}
 
-	inline const std::string mouseButtonType2str(IMouseEvent::MouseButtonType t) {
+	inline std::string mouseButtonType2str(IMouseEvent::MouseButtonType t) {
 		std::string s("unknown");
 		switch (t) {
 			case IMouseEvent::EMPTY:

@@ -43,16 +43,16 @@ namespace FIFE {
 	 */
 	class KeyEvent: public InputEvent, public IKeyEvent {
 	public:
-        /** Constructor
-         */
+		/** Constructor
+		 */
 		KeyEvent(): 
 			InputEvent(), 
 			m_eventtype(UNKNOWN), 
 			m_isnumericpad(false),
 			m_key(Key(0)) {}
 
-        /** Destructor.
-         */
+		/** Destructor.
+		 */
 		virtual ~KeyEvent() {}
 
 		KeyEventType getType() const { return m_eventtype; }
@@ -80,15 +80,16 @@ namespace FIFE {
 		virtual int getTimeStamp() { return InputEvent::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { InputEvent::setTimeStamp(timestamp); }
 
-		virtual const std::string getName() const {
-			return std::string("KeyEvent");
+		virtual const std::string& getName() const {
+			const static std::string eventName("KeyEvent");
+			return eventName;
 		}
-		virtual const std::string getDebugString() const { return InputEvent::getDebugString(); }
+		virtual std::string getDebugString() const { return InputEvent::getDebugString(); }
 
 	private:
-        KeyEventType m_eventtype;
-        bool m_isnumericpad;
-        Key m_key;
+		KeyEventType m_eventtype;
+		bool m_isnumericpad;
+		Key m_key;
 	};
 
 } //FIFE

@@ -73,7 +73,7 @@ namespace FIFE {
 		virtual void removeWidgetListener(IWidgetListener* listener) = 0;
 		virtual EventSourceType getEventSourceType() = 0;
 
-		void dispatchCommand(const ICommand& command) = 0;
+		void dispatchCommand(ICommand& command) = 0;
 	};
 
 } //FIFE

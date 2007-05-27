@@ -192,7 +192,7 @@ namespace FIFE { namespace input {
 			 */
 			void handleEvents();
 
-			void onSdlEvent(const SDL_Event& evt);
+			void onSdlEvent(SDL_Event& evt);
 
 		private:
 			typedef std::multimap<int, Listener*> type_listeners_key;

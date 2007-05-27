@@ -255,7 +255,7 @@ namespace FIFE {
 		removeListener<IWidgetListener*>(m_widgetlisteners, listener);
 	}
 
-	void EventManager::dispatchCommand(const ICommand& command) {
+	void EventManager::dispatchCommand(ICommand& command) {
 		std::vector<ICommandListener*>::iterator i = m_commandlisteners.begin();
 		while (i != m_commandlisteners.end()) {
 			(*i)->onCommand(command);

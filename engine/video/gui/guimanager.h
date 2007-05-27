@@ -119,7 +119,7 @@ namespace FIFE {
 			 */
 			gcn::Font* getDefaultFont() { return m_font; };
 
-			void onSdlEvent(const SDL_Event& evt);
+			void onSdlEvent(SDL_Event& evt);
 
 		private:
 			// The Guichan GUI.

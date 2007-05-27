@@ -45,7 +45,7 @@ namespace FIFE {
 		/** Use this method to send command to command listeners
 		 * @param command command to dispatch
 		 */
-		virtual void dispatchCommand(const ICommand& command) = 0;
+		virtual void dispatchCommand(ICommand& command) = 0;
 
 		virtual ~ICommandDispatcher() {}
 	};

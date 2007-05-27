@@ -41,16 +41,16 @@ namespace FIFE {
 	 */
 	class Key: public IKey {
 	public:
-        /** Constructor
+		/** Constructor
 		 * @param value value of the key
 		 * @param repr string represntation of the key
-         */
+		*/
 		Key(int value, const std::string& repr=""): 
 			m_value(value),
 			m_repr(repr) {}
 
-        /** Destructor.
-         */
+		/** Destructor.
+		 */
 		virtual ~Key() {}
 
 		bool isCharacter() const {
@@ -75,7 +75,7 @@ namespace FIFE {
 
 		/** Gets the string representation of the key. 
 		 */
-		std::string getAsString() const {
+		const std::string& getAsString() const {
 			return m_repr;
 		}
 

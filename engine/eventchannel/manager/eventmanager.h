@@ -74,7 +74,7 @@ namespace FIFE {
 		void removeWidgetListener(IWidgetListener* listener);
 		EventSourceType getEventSourceType();
 
-		void dispatchCommand(const ICommand& command);
+		void dispatchCommand(ICommand& command);
 
 		/** Process the SDL event queue.
 		 * This is to be called only by the engine itself once per frame. 
