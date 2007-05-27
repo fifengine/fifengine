@@ -9,7 +9,7 @@ function load_map( mapname )
 	state_manager.activate('MapView')
 	label:setText("Current map: " .. mapname .. "\n-- More information will follow here\n-- once the bindings are more complete")
 -- 	state_manager.deactivate('MapView')
-end  
+end
 
 gui.actions.on_loadmap = function()
   load_map(level_list:getElementAt(level_drop:getSelected()))
@@ -165,8 +165,8 @@ function main_menu()
 
 end
 
-
 function on_engine_start()
   dofile('content/scripts/bindings.lua')
-  main_menu()  
+  main_menu()
+  if _tmp_map_to_load ~= nil then load_map(_tmp_map_to_load) end
 end
