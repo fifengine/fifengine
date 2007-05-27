@@ -55,7 +55,7 @@ namespace FIFE {
 	}
 
 	void LuaMouseListener::doIgnoreEvents() {
-		EventManager::instance()->addMouseListener(this);
+		EventManager::instance()->removeMouseListener(this);
 	}
 
 	lua_State* LuaMouseListener::buildMouseEvent(const IMouseEvent& event) {

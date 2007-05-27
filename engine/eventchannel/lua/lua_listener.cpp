@@ -115,7 +115,7 @@ namespace FIFE {
 		lua_remove(L,-2);
 		// stack layout: ... event, handler - reverse it and call.
 		lua_insert(L,-2);
-		if( !lua_pcall(L,1,1,0) ) {
+		if( lua_pcall(L,1,1,0) ) {
 			const char* error_message = lua_tostring(L,-1);
 			Warn("LuaEventListener")
 				<< "Error in event callback:" << error_message;
