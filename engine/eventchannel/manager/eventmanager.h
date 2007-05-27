@@ -25,6 +25,7 @@
 // Standard C++ library includes
 //
 #include <vector>
+#include <map>
 
 // 3rd party library includes
 //
