@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_LUA_LISTENER_H
-#define FIFE_EVENTCHANNEL_LUA_LISTENER_H
+#ifndef FIFE_EVENTCHANNEL_LUA_KEY_LISTENER_H
+#define FIFE_EVENTCHANNEL_LUA_KEY_LISTENER_H
 
 // Standard C++ library includes
 #include <string>
@@ -35,38 +35,40 @@
 #include "script/lua.hpp"
 #include "script/lunar.h"
 #include "script/lua_ref.h"
-#include "eventchannel/base/ec_ievent.h"
-#include "eventchannel/base/ec_iinputevent.h"
+#include "eventchannel/key/ec_ikeyevent.h"
+#include "eventchannel/key/ec_ikeylistener.h"
+
+#include "lua_listener.h"
 
 namespace FIFE {
 
-	/** Lua Eventlistener Base class.
+	/** Lua Key Listener
 	 */
-	class LuaEventListener{
+	class LuaKeyListener : public LuaEventListener, public IKeyListener {
 		public:
-			LuaEventListener(lua_State *L);
-			virtual ~LuaEventListener();
+			static const char className[];
+			static Lunar<LuaKeyListener>::RegType methods[];
 
-			int setHandler(lua_State *L);
-			int getHandler(lua_State *L);
+			LuaKeyListener(lua_State *L);
+			virtual ~LuaKeyListener();
 			
-			int receiveEvents(lua_State *L);
-			int ignoreEvents(lua_State *L);
+			/** Called if a key is pressed
+			 * If a key is held down the multiple key presses are generated.
+			 * @param keyevent discribes the event.
+			 */
+			virtual void keyPressed(IKeyEvent& evt);
+	
+			/** Called if a key is released
+			 * @param keyevent discribes the event.
+			 */
+			virtual void keyReleased(IKeyEvent& evt);
 
 		protected:
-			virtual void doReceiveEvents() = 0;
-			virtual void doIgnoreEvents() = 0;
+			virtual void doReceiveEvents();
+			virtual void doIgnoreEvents();
 		
-			lua_State* buildEvent(const IEvent& event);
-			lua_State* buildInputEvent(const IInputEvent& event);
-
-			void dispatch(lua_State* L, IEvent& event, const std::string& eventname);
-			void addKnownHandler(lua_State*L, const char* name);
-			const char* checkHandler(lua_State* L, int index);
-		private:
-			LuaRef m_eventhandlers;
-			LuaRef m_knownhandlers;
-			bool m_listening;
+			lua_State* buildKeyEvent(const IKeyEvent& event);
+		
 	};
 
 }

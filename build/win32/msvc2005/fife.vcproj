@@ -193,6 +193,8 @@
 				<File RelativePath="..\..\..\engine\eventchannel\key\ec_keyevent.h"></File>
 			</Filter>
 			<Filter Name="lua">
+				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_keylistener.cpp"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_keylistener.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_listener.cpp"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_listener.h"></File>
 				<File RelativePath="..\..\..\engine\eventchannel\lua\lua_mouselistener.cpp"></File>
