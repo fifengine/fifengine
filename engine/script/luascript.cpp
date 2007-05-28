@@ -39,6 +39,7 @@
 #endif
 
 #include "eventchannel/lua/lua_mouselistener.h"
+#include "eventchannel/lua/lua_keylistener.h"
 
 #include "luascript.h"
 #include "scriptcontainer.h"
@@ -127,6 +128,7 @@ namespace FIFE {
 		Lunar<Elevation_LuaScript>::RegisterTable(L);
 		Lunar<Map_LuaScript>::RegisterTable(L);
 		Lunar<LuaMouseListener>::Register(L);
+		Lunar<LuaKeyListener>::Register(L);
 	}
 
 	LuaScript::LuaScript() {
