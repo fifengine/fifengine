@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <cassert>
 
 // 3rd party library includes
 
@@ -28,75 +27,55 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
-#include "util/log.h"
-#include "util/exception.h"
-#include "eventchannel/widget/ec_widgetevent.h"
 
-#include "lua_gui_actionlistener.h"
+#include "eventchannel/manager/eventmanager.h"
+
+#include "lua_widgetlistener.h"
 
 namespace FIFE {
 
-	ActionListener_Lua::ActionListener_Lua(IWidgetListener& wl): m_widgetlistener(wl) {
-		isReady = false;
-		m_L = NULL;
-	}
-	ActionListener_Lua::~ActionListener_Lua() {
-	}
-	void ActionListener_Lua::action(const gcn::ActionEvent & event) {
-		const std::string & action = event.getId();	
-		DEBUG_PRINT("GUI-Action: " << action);
-		if (isReady) {
-			WidgetEvent evt;
-			evt.setId(action);
-			evt.setSource(this);
-			m_widgetlistener.onWidgetAction(evt);
-			
-			luaAction(action);
-		} else {
-			Warn("ActionListener_Lua")
-				<< "Warning: received action event while in non-setup state";
-		}
-	}
-	void ActionListener_Lua::setup(lua_State *L, const std::string &global,
-			const std::string &table) {
-		m_global = global;
-		m_table = table;
-		m_L = L;
-		isReady = true;
-	}
-	EventSourceType ActionListener_Lua::getEventSourceType() {
-		return ES_GUICHAN_WIDGET;
+
+	LuaWidgetListener::LuaWidgetListener(lua_State* L) : LuaEventListener(L), IWidgetListener() {
+		addKnownHandler(L,"onWidgetAction");
 	}
 
-	void ActionListener_Lua::luaAction(const std::string &action) {
-		lua_getglobal(m_L, m_global.c_str());
-		if (!lua_istable(m_L, -1)) {
-			Warn("lg_Actionlistener") << "Error: " << m_global << " is not a table";
-			lua_pop(m_L, 1);
-			return;
-		}
-		// assert table
-		lua_pushstring(m_L, m_table.c_str());
-		lua_gettable(m_L, -2);
-		if (!lua_istable(m_L, -1)) {
-			Warn("lg_Actionlistener") << "Error: sub-element " << m_table << " is not a table";
-			lua_pop(m_L, 2);
-			return;
-		}
-		lua_pushstring(m_L, action.c_str());
-		lua_gettable(m_L, -2);
-		if (!lua_isfunction(m_L, -1)) {
-			Warn("lg_Actionlistener") << "Warning: there is no function: " << action;
-			lua_pop(m_L, 3);
-			return;
-		}
-		// getfield(L, "actions");
-		if (lua_pcall(m_L, 0, 0, 0) != 0) {
-			throw ScriptException(lua_tostring(m_L,-1));
-		}
-		lua_pop(m_L, 2);
-
+	LuaWidgetListener::~LuaWidgetListener() {
 	}
+
+	void LuaWidgetListener::doReceiveEvents() {
+		EventManager::instance()->addWidgetListener(this);
+	}
+
+	void LuaWidgetListener::doIgnoreEvents() {
+		EventManager::instance()->removeWidgetListener(this);
+	}
+
+	lua_State* LuaWidgetListener::buildWidgetEvent(const IWidgetEvent& event) {
+		lua_State* L = buildEvent(event);
+		
+		lua_pushstring(L,"action");
+		lua_pushstring(L,event.getId().c_str());
+		lua_settable(L,-3);
+		
+		return L;
+	}
+
+	void LuaWidgetListener::onWidgetAction(IWidgetEvent& evt) {
+		lua_State* L = buildWidgetEvent(evt);
+		dispatch(L,evt,"onWidgetAction");
+	}
+
+	const char LuaWidgetListener::className[] = "_WidgetListener";
+
+#define method(class, name) {#name, &class::name}
+	Lunar<LuaWidgetListener>::RegType LuaWidgetListener::methods[] = {
+		method(LuaEventListener, getHandler),
+		method(LuaEventListener, setHandler),
+		method(LuaEventListener, receiveEvents),
+		method(LuaEventListener, ignoreEvents),
+		{0,0}
+	};
+
 }
+
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

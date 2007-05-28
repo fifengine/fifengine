@@ -40,6 +40,7 @@
 
 #include "eventchannel/lua/lua_mouselistener.h"
 #include "eventchannel/lua/lua_keylistener.h"
+#include "eventchannel/lua/lua_widgetlistener.h"
 #include "eventchannel/widget/ec_iwidgetlistener.h"
 
 #include "luascript.h"

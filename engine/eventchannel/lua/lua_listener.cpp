@@ -171,28 +171,34 @@ namespace FIFE {
 		lua_pushstring(L,eventname.c_str());
 		lua_gettable(L,-2); 
 		lua_remove(L,-2);
-		// stack layout: ... event, handler - reverse it and call.
-		lua_insert(L,-2);
-		LuaRef eventtable;
-		eventtable.ref(L,-1);
 		
-		if( lua_pcall(L,1,0,0) ) {
-			const char* error_message = lua_tostring(L,-1);
-			Warn("LuaEventListener")
-				<< "Error in event callback:" << error_message;
-			lua_pop(L,1);
-		} else {
-			// check whether the event.isconsumed entry changed to "false"
-			// and if that's the case - call consume 
-			eventtable.push();
-			lua_pushstring(L,"isconsumed");
-			lua_gettable(L,-2);
-			if( !lua_toboolean(L,-1) ) {
-				event.consume();
-			}
+		if( lua_isnil(L,-1) ) {
+			// no handler set
 			lua_pop(L,2);
+		} else {
+			// stack layout: ... event, handler - reverse it and call.
+			lua_insert(L,-2);
+			LuaRef eventtable;
+			eventtable.ref(L,-1);
+			
+			if( lua_pcall(L,1,0,0) ) {
+				const char* error_message = lua_tostring(L,-1);
+				Warn("LuaEventListener")
+					<< "Error in event callback:" << error_message;
+				lua_pop(L,1);
+			} else {
+				// check whether the event.isconsumed entry changed to "false"
+				// and if that's the case - call consume 
+				eventtable.push();
+				lua_pushstring(L,"isconsumed");
+				lua_gettable(L,-2);
+				if( !lua_toboolean(L,-1) ) {
+					event.consume();
+				}
+				lua_pop(L,2);
+			}
 		}
-
+		
 		if( m_eventStackTop != lua_gettop(L) ) {
 			Warn("LuaEventListener")
 				<< "Event stack unbalanced - is: " << lua_gettop(L)
