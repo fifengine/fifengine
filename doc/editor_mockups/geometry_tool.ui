@@ -609,51 +609,6 @@ p, li { white-space: pre-wrap; }
             </item>
            </layout>
           </item>
-          <item row="5" column="0" >
-           <widget class="QCheckBox" name="checkBox_3" >
-            <property name="text" >
-             <string>Flag #3</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" >
-           <widget class="QCheckBox" name="checkBox_5" >
-            <property name="text" >
-             <string>Flag #1</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label_12" >
-            <property name="text" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:12pt;">Flags:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" >
-           <widget class="QCheckBox" name="checkBox_2" >
-            <property name="text" >
-             <string>Flag #4</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0" >
-           <widget class="QCheckBox" name="checkBox" >
-            <property name="text" >
-             <string>Flag #5</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" >
-           <widget class="QCheckBox" name="checkBox_4" >
-            <property name="text" >
-             <string>Flag #2</string>
-            </property>
-           </widget>
-          </item>
           <item row="8" column="0" >
            <layout class="QVBoxLayout" >
             <property name="margin" >

@@ -1,12 +1,12 @@
 ==========================
-FIFE 2007.1 (release officielle finale basé sur le moteurFIFE SVN rev. 1004 & content SVN rev. 162)
+FIFE 2007.1 (release officielle finale basé sur le moteur FIFE SVN rev. 1004 & content SVN rev. 162)
 ==========================
 
 Le but de cette release:
 ==========================
 La voilà: la version finale de notre étape 2007.1. C'est une release assez importante pour nous car notre propre format de carte est enfin mis en place et a été utilisé pour notre première carte de démonstration qui était assez énorme. Bienvenue sur l'île FIFE :-)
 
-Les graphismes utilisés pour cette carte de démonstration N'ONT PAS ETE CREES PAR NOUS! Ils ont été créés par Reiner Prokein. Vous pouvez récupérer ses graphsmes gratuitement sur sont site "Reiner's Tilesets" :
+Les graphismes utilisés pour cette carte de démonstration NE SONT PAS LES NOTRES! Ils ont été créés par Reiner Prokein. Vous pouvez récupérer ses graphismes gratuitement sur son site "Reiner's Tilesets" :
 http://reinerstileset.4players.de/
 
 
@@ -58,7 +58,7 @@ Ce qui ne marche pas:
 
 Configuration
 ===========================
-* FIFE utilise un fichier appelé "fife.config" pour donner à l'utilisateur un controle sur certains aspects du moteur
+* FIFE utilise un fichier appelé "fife.config" pour donner à l'utilisateur un contrôle sur certains aspects du moteur
 * Le fichier est commenté en anglais et s'explique de lui-même.
 
 Travailler avec les cartes de Fallout 1:
@@ -67,7 +67,7 @@ Sous Windows:
 * Copiez le "master.dat" & "critter.dat" de Fallout 1 et mettez les dans le répertoire d'installation de FIFE
 * Modifiez le FIFE.bat pour démarrer FIFE via: guimap_test.exe content/scripts/demos/load_fo1_maps.lua
 
-In Linux:
+Sous Linux:
 * Copiez (ou liez) le "master.dat" & "critter.dat" de Fallout 1 et mettez les dans le répertoire contenant guimap_test
 * Démarrez FIFE via ./guimap_test content/scripts/demos/load_fo1_maps.lua
 
@@ -77,12 +77,12 @@ Sous Windows:
 * Copiez le "master.dat" & "critter.dat" de Fallout 2 et mettez les dans le répertoire d'installation de FIFE
 * Modifiez le FIFE.bat pour démarrer FIFE via: guimap_test.exe content/scripts/demos/load_fo2_maps.lua
 
-In Linux:
+Sous Linux:
 * Copiez (ou liez) le "master.dat" & "critter.dat" de Fallout 2 et mettez les dans le répertoire contenant guimap_test
 * Démarrez FIFE via ./guimap_test content/scripts/demos/load_fo2_maps.lua
 
 
-Travailler avec des cartes (XML) personalisées:
+Travailler avec des cartes (XML) personnalisées:
 ==========================
 FIFE possède son propre format de carte maintenant donc vous pouvez testez le moteur sans avoir un des jeux Fallout installé. Vous pouvez ajoutez une carte personalisée XML ou une carte Fallout en modifiant /FIFE_dir/content/etc/maps_custom_players.txt (maps_custom_developers.txt si vous démarrez FIFE avec le script développeur lua).
 
@@ -92,7 +92,7 @@ Sous Windows:
 Sous Linux:
 * Démarrez FIFE via ./guimap_test content/scripts/demos/load_custom_maps_players.lua
 
-Astuce: la carte de démonstration actuelle est "official_map.xml". Les autres cartes dans la liste qui sont un peu anciennes et semblent avoir quelques problèmes. C'est pourquoi nous vous conseillons d'utiliser la carte officielle de démonstration. Un guide pour le format des cartes est disponible sur le wiki si vous souhaitez créer des cartes personalisées pour FIFE :
+Astuce: la carte de démonstration actuelle est "official_map.xml". Les autres cartes dans la liste qui sont un peu anciennes et semblent avoir quelques problèmes. C'est pourquoi nous vous conseillons d'utiliser la carte officielle de démonstration. Un guide pour le format des cartes est disponible sur le wiki si vous souhaitez créer des cartes personnalisées pour FIFE :
 http://wiki.fifengine.de/index.php?title=Map_Format
 
 Chargement des cartes via l'interface "maploader" :
@@ -102,7 +102,7 @@ Vérifiez que vous avez lancé FIFE via "guimap_test.exe content/scripts/demos/loa
 Problèmes de Son:
 ==========================
 Sous Windows:
-Si vous n'entendez pas la chanson "Maybe" lorsque vous démarrez FIFE, vous devrez installer une version à jour de driver OpenAL pour résoudre ce problème. Exécutez simplement le OpenALwEAX.exe qui est dans votre répertoire FIFE. S'il vous plait reportez tout bug sur les fourms fifengine.de si en installant ce driver à jour vous n'avez _PAS_ résolu votre problème de son. 
+Si vous n'entendez pas la chanson "Maybe" lorsque vous démarrez FIFE, vous devrez installer une version à jour du driver OpenAL pour résoudre ce problème. Exécutez simplement le OpenALwEAX.exe qui est dans votre répertoire FIFE. S'il vous plait reportez tout bug sur les fourms fifengine.de si, après installation de ce driver à jour vous n'avez _PAS_ résolu votre problème de son. 
 
 FIFE recherche des nouveaux membres:
 ==========================
