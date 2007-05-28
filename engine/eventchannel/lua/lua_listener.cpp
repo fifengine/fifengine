@@ -117,6 +117,7 @@ namespace FIFE {
 
 	lua_State* LuaEventListener::buildEvent(const IEvent& event) {
 		lua_State* L = m_knownhandlers.getState();
+		m_eventStackTop = lua_gettop(L);
 		lua_newtable(L);
 		
 		lua_pushstring(L,"name");
@@ -190,6 +191,13 @@ namespace FIFE {
 				event.consume();
 			}
 			lua_pop(L,2);
+		}
+
+		if( m_eventStackTop != lua_gettop(L) ) {
+			Warn("LuaEventListener")
+				<< "Event stack unbalanced - is: " << lua_gettop(L)
+				<< " should be:" << m_eventStackTop;
+			lua_settop(L,m_eventStackTop);
 		}
 	}
 

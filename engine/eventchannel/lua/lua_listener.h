@@ -136,6 +136,9 @@ namespace FIFE {
 			
 			/// Listening flag.
 			bool m_listening;
+			
+			/// Event stack guard
+			int m_eventStackTop;
 	};
 
 }
