@@ -37,6 +37,7 @@
 #include "script/lunar.h"
 #include "script/lua_ref.h"
 #include "eventchannel/base/ec_ievent.h"
+#include "eventchannel/base/ec_iinputevent.h"
 
 namespace FIFE {
 
@@ -58,6 +59,8 @@ namespace FIFE {
 			virtual void doIgnoreEvents() = 0;
 		
 			lua_State* buildEvent(const IEvent& event);
+			lua_State* buildInputEvent(const IInputEvent& event);
+
 			void dispatch(lua_State* L, IEvent& event, const std::string& eventname);
 			void addKnownHandler(lua_State*L, const char* name);
 			const char* checkHandler(lua_State* L, int index);

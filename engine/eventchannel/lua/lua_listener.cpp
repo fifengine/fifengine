@@ -138,6 +138,33 @@ namespace FIFE {
 		return L;
 	}
 	
+	lua_State* LuaEventListener::buildInputEvent(const IInputEvent& event) {
+		lua_State* L = buildEvent(event);
+
+		lua_pushstring(L,"mods");
+		lua_newtable(L);
+		
+		lua_pushstring(L,"alt");
+		lua_pushboolean(L,event.isAltPressed());
+		lua_settable(L,-3);
+		
+		lua_pushstring(L,"control");
+		lua_pushboolean(L,event.isControlPressed());
+		lua_settable(L,-3);
+
+		lua_pushstring(L,"meta");
+		lua_pushboolean(L,event.isMetaPressed());
+		lua_settable(L,-3);
+
+		lua_pushstring(L,"shift");
+		lua_pushboolean(L,event.isShiftPressed());
+		lua_settable(L,-3);
+		
+		lua_settable(L,-3);
+
+		return L;
+	}
+	
 	void  LuaEventListener::dispatch(lua_State* L, IEvent& event, const std::string& eventname) {
 		m_eventhandlers.push();
 		lua_pushstring(L,eventname.c_str());

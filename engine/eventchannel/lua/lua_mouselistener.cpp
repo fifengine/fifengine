@@ -59,7 +59,7 @@ namespace FIFE {
 	}
 
 	lua_State* LuaMouseListener::buildMouseEvent(const IMouseEvent& event) {
-		lua_State* L = buildEvent(event);
+		lua_State* L = buildInputEvent(event);
 		lua_pushstring(L,"eventName");
 		lua_pushstring(L,event.getName().c_str());
 		lua_settable(L,-3);
