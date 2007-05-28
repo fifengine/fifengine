@@ -113,11 +113,13 @@ namespace FIFE {
 
 		SDL_keysym keysym = sdlevt.key.keysym;
 		IKey::KeyType value = IKey::INVALID_KEY;
+		std::string repr("");
+		
 		if (keysym.unicode < 255) {
 			value = static_cast<IKey::KeyType>(keysym.unicode);
+			repr.push_back(value);
 		}
 
-		std::string repr("");
 		#define MAP_KEY(_orig, _new) case _orig: value = _new; repr = #_new; break;
 		switch (keysym.sym) {
 			MAP_KEY(SDLK_TAB, IKey::TAB);

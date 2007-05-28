@@ -99,6 +99,10 @@ namespace map {
 			/** Switch to another elevation
 			 */
 			void setElevation(size_t);
+			
+			/** Get current elevation
+			 */
+			size_t getCurrentElevation() const;
 
 			/** Return the map view used by this control
 			 */

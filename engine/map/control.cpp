@@ -147,6 +147,10 @@ namespace FIFE { namespace map {
 		m_runner->activateElevation(elev);
 	}
 
+	size_t Control::getCurrentElevation() const {
+		return m_elevation;
+	}
+
 	void Control::stop() {
 		if (m_map && isRunning()) {
 			m_runner->stop();

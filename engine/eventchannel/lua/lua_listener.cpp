@@ -217,5 +217,4 @@ namespace FIFE {
 		return 0;
 	}
 
-
 }
