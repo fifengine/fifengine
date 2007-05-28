@@ -345,6 +345,10 @@ namespace FIFE {
 		}	
 	}
 
+	void EventManager::onWidgetAction(IWidgetEvent& evt) {
+		dispatchWidgetEvent(evt);
+	}
+
 	void EventManager::processEvents(){
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {

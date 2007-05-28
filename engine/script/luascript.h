@@ -37,9 +37,10 @@
 namespace FIFE {
 
 	class ScriptContainer;
+	class IWidgetListener;
 	class LuaScript: public DynamicSingleton<LuaScript> {
 		public:
-			LuaScript();
+			LuaScript(IWidgetListener& wl);
 			virtual ~LuaScript();
 
 			virtual void init();

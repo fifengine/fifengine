@@ -31,19 +31,20 @@
 #include "util/debugutils.h"
 #include "util/log.h"
 #include "util/exception.h"
+#include "eventchannel/widget/ec_widgetevent.h"
 
 #include "lua_gui_actionlistener.h"
 
 namespace FIFE {
 
-	ActionListener_Lua::ActionListener_Lua() {
+	ActionListener_Lua::ActionListener_Lua(IWidgetListener& wl): m_widgetlistener(wl) {
 		isReady = false;
 		m_L = NULL;
 	}
 	ActionListener_Lua::~ActionListener_Lua() {
 	}
 	void ActionListener_Lua::action(const gcn::ActionEvent & event) {
-		const std::string & action = event.getId();
+		const std::string & action = event.getId();	
 		DEBUG_PRINT("GUI-Action: " << action);
 		if (isReady)
 			luaAction(action);
@@ -57,7 +58,16 @@ namespace FIFE {
 		m_L = L;
 		isReady = true;
 	}
+	EventSourceType ActionListener_Lua::getEventSourceType() {
+		return ES_GUICHAN_WIDGET;
+	}
+
 	void ActionListener_Lua::luaAction(const std::string &action) {
+		WidgetEvent evt;
+		evt.setId(action);
+		evt.setSource(this);
+		m_widgetlistener.onWidgetAction(evt);
+
 		lua_getglobal(m_L, m_global.c_str());
 		if (!lua_istable(m_L, -1)) {
 			Warn("lg_Actionlistener") << "Error: " << m_global << " is not a table";

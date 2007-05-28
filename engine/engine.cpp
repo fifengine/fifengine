@@ -118,11 +118,11 @@ namespace FIFE {
 
 		Log::parseCmdLine( m_parsed_cmdline );
 
-		new EventManager();
+		EventManager* evm = new EventManager();
 		new input::Manager();
 		new GUIManager();
-		EventManager::instance()->addSdlEventListener(GUIManager::instance());
-		EventManager::instance()->addSdlEventListener(input::Manager::instance());
+		evm ->addSdlEventListener(GUIManager::instance());
+		evm ->addSdlEventListener(input::Manager::instance());
 
 		new RenderManager();
 
@@ -147,7 +147,7 @@ namespace FIFE {
 		}
 		audio::Manager::instance()->setVolume(static_cast<float>(volume) / 10);
 		new GameStateManager();
-		new LuaScript();
+		new LuaScript(*evm);
 		LuaScript::instance()->init();
 	}
 

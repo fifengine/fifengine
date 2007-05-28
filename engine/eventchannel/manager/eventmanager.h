@@ -40,7 +40,7 @@
 #include "../key/ec_ikeylistener.h"
 #include "../key/ec_ikey.h"
 #include "../ec_ieventcontroller.h"
-#include "../mouse/ec_imouseevent.h"
+#include "../widget/ec_iwidgetlistener.h"
 
 namespace FIFE {
 
@@ -53,7 +53,8 @@ namespace FIFE {
 	 */
 	class EventManager: 
 		public DynamicSingleton<EventManager>, 
-		public IEventController {
+		public IEventController,
+		public IWidgetListener {
 	public:
 		/** Constructor.
 		 */
@@ -76,6 +77,8 @@ namespace FIFE {
 		EventSourceType getEventSourceType();
 
 		void dispatchCommand(ICommand& command);
+
+		void onWidgetAction(IWidgetEvent& evt);
 
 		/** Process the SDL event queue.
 		 * This is to be called only by the engine itself once per frame. 

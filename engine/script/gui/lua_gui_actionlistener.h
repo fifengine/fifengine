@@ -34,23 +34,31 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/singleton.h"
+#include "eventchannel/widget/ec_iwidgetlistener.h"
+#include "eventchannel/source/ec_eventsourcetypes.h"
+#include "eventchannel/source/ec_ieventsource.h"
+
 
 namespace FIFE {
 
-	class ActionListener_Lua : public gcn::ActionListener,
-				 public DynamicSingleton<ActionListener_Lua>
+	class ActionListener_Lua : 
+		public gcn::ActionListener,
+		public DynamicSingleton<ActionListener_Lua>,
+		public IEventSource
 	{
 		public:
-			ActionListener_Lua();
+			ActionListener_Lua(IWidgetListener& wl);
 			~ActionListener_Lua();
 			void action(const gcn::ActionEvent & event);
 			void setup(lua_State *L, const std::string &global, const std::string &table);
+			EventSourceType getEventSourceType();
 		private:
 			void luaAction(const std::string &action);
 			std::string m_global;
 			std::string m_table;
 			lua_State *m_L;
 			bool isReady;
+			IWidgetListener& m_widgetlistener;
 	};
 }
 

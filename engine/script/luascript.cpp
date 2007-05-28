@@ -40,6 +40,7 @@
 
 #include "eventchannel/lua/lua_mouselistener.h"
 #include "eventchannel/lua/lua_keylistener.h"
+#include "eventchannel/widget/ec_iwidgetlistener.h"
 
 #include "luascript.h"
 #include "scriptcontainer.h"
@@ -131,8 +132,8 @@ namespace FIFE {
 		Lunar<LuaKeyListener>::Register(L);
 	}
 
-	LuaScript::LuaScript() {
-		new ActionListener_Lua();
+	LuaScript::LuaScript(IWidgetListener& wl) {
+		new ActionListener_Lua(wl);
 		Log("LuaScript") << "Scripting enabled";
 		L = NULL;
 	}
