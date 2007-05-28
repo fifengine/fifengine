@@ -60,10 +60,10 @@ namespace FIFE {
 		virtual ~Event() {}
 
 		virtual void consume() { m_isconsumed = true; }
-		virtual bool isConsumed() { return m_isconsumed; }
+		virtual bool isConsumed() const { return m_isconsumed; }
 		virtual IEventSource* getSource() { return m_eventsource; }
 		virtual void setSource(IEventSource* source) { m_eventsource = source; }
-		virtual int getTimeStamp() { return m_timestamp; }
+		virtual int getTimeStamp() const { return m_timestamp; }
 		virtual void setTimeStamp(int timestamp ) { m_timestamp = timestamp; }
 
 		virtual const std::string& getName() const {

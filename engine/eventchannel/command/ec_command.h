@@ -62,10 +62,10 @@ namespace FIFE {
 		void setCode(int code) { m_code = code; }
 
 		virtual void consume() { Event::consume(); }
-		virtual bool isConsumed() { return Event::isConsumed(); }
+		virtual bool isConsumed() const { return Event::isConsumed(); }
 		virtual IEventSource* getSource() { return Event::getSource(); }
 		virtual void setSource(IEventSource* source) { Event::setSource(source); }
-		virtual int getTimeStamp() { return Event::getTimeStamp(); }
+		virtual int getTimeStamp() const { return Event::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { Event::setTimeStamp(timestamp); }
 
 		virtual const std::string& getName() const {

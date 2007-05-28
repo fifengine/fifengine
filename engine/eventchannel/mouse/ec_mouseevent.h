@@ -77,10 +77,10 @@ namespace FIFE {
 		virtual void setShiftPressed(bool pressed) { InputEvent::setShiftPressed(pressed); }
 
 		virtual void consume() { InputEvent::consume(); }
-		virtual bool isConsumed() { return InputEvent::isConsumed(); }
+		virtual bool isConsumed() const { return InputEvent::isConsumed(); }
 		virtual IEventSource* getSource() { return InputEvent::getSource(); }
 		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
-		virtual int getTimeStamp() { return InputEvent::getTimeStamp(); }
+		virtual int getTimeStamp() const { return InputEvent::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { InputEvent::setTimeStamp(timestamp); }
 
 		virtual const std::string& getName() const {

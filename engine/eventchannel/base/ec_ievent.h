@@ -55,7 +55,7 @@ namespace FIFE {
 		/** Checks if the event is consumed.
          * @return true if the event is consumed, false otherwise.
 		 */
-		virtual bool isConsumed() = 0;
+		virtual bool isConsumed() const = 0;
 
 		/** Gets the source of the event.
 		 */
@@ -63,7 +63,7 @@ namespace FIFE {
 
 		/** Gets the timestamp of the event
 		 */
-		virtual int getTimeStamp() = 0;
+		virtual int getTimeStamp() const = 0;
 
 		/** Gets the debugstring of the event
 		 */

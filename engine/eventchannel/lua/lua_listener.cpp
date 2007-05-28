@@ -36,6 +36,24 @@
 
 namespace FIFE {
 
+	static int consume(lua_State* L) {
+		if( !lua_istable(L,1) ) {
+			luaL_argerror(L,1,"event table expected");
+			return 0;
+		}
+		lua_pushstring(L,"isconsumed");
+		lua_pushvalue(L,-1);
+		lua_gettable(L,-3);
+		if( lua_isnil(L,-1) ) {
+			luaL_argerror(L,1,"event table expected - 'isconsumed' missing");
+			return 0;
+		}
+		lua_pop(L,1);
+		lua_pushboolean(L,0);
+		lua_settable(L,-3);
+		return 0;
+	}
+
 	LuaEventListener::LuaEventListener(lua_State* L) 
 		: m_eventhandlers(), m_knownhandlers(), m_listening(false) {
 		lua_newtable(L);
@@ -105,6 +123,18 @@ namespace FIFE {
 		lua_pushstring(L,event.getName().c_str());
 		lua_settable(L,-3);
 		
+		lua_pushstring(L,"timestamp");
+		lua_pushinteger(L,event.getTimeStamp());
+		lua_settable(L,-3);
+		
+		lua_pushstring(L,"isconsumed");
+		lua_pushboolean(L,event.isConsumed());
+		lua_settable(L,-3);
+
+		lua_pushstring(L,"consume");
+		lua_pushcclosure(L, consume, 0);
+		lua_settable(L,-3);
+		
 		return L;
 	}
 	
@@ -115,12 +145,25 @@ namespace FIFE {
 		lua_remove(L,-2);
 		// stack layout: ... event, handler - reverse it and call.
 		lua_insert(L,-2);
-		if( lua_pcall(L,1,1,0) ) {
+		LuaRef eventtable;
+		eventtable.ref(L,-1);
+		
+		if( lua_pcall(L,1,0,0) ) {
 			const char* error_message = lua_tostring(L,-1);
 			Warn("LuaEventListener")
 				<< "Error in event callback:" << error_message;
+			lua_pop(L,1);
+		} else {
+			// check whether the event.isconsumed entry changed to "false"
+			// and if that's the case - call consume 
+			eventtable.push();
+			lua_pushstring(L,"isconsumed");
+			lua_gettable(L,-2);
+			if( !lua_toboolean(L,-1) ) {
+				event.consume();
+			}
+			lua_pop(L,2);
 		}
-		lua_pop(L,1);
 	}
 
 	int LuaEventListener::receiveEvents(lua_State *L) {
