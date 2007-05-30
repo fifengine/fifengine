@@ -23,6 +23,7 @@
 
 // 3rd party library includes
 #include <guichan/sdl/sdlinput.hpp>
+#include <guichan/focushandler.hpp>
 #include <guichan.hpp>
 
 // FIFE includes
@@ -42,7 +43,9 @@
 
 namespace FIFE {
 
-	GUIManager::GUIManager() : m_gcn_gui(new gcn::Gui()), 
+	GUIManager::GUIManager() : 
+		m_gcn_gui(new gcn::Gui()), 
+		m_focushandler(0),
         m_gcn_topcontainer(new gcn::Container()), 
         m_gcn_imgloader(new GCNImageLoader()) , 
         m_input(new gcn::SDLInput()) {
@@ -54,6 +57,7 @@ namespace FIFE {
 		m_gcn_gui->setInput(m_input);
 
 		gcn::Image::setImageLoader(m_gcn_imgloader);
+		m_focushandler = m_gcn_topcontainer->_getFocusHandler();
 	}
 
 	GUIManager::~GUIManager() {
@@ -130,5 +134,28 @@ namespace FIFE {
 	void GUIManager::turn() {
 		m_gcn_gui->logic();
 		m_gcn_gui->draw();
+	}
+
+	void GUIManager::evaluateKeyEventConsumption(IKeyEvent& evt) {
+		gcn::Widget* w = m_focushandler->getFocused();
+		if (w) {
+			evt.consume();
+			//std::cout << "key event consumed" << std::endl;
+		}
+	}
+
+	void GUIManager::evaluateMouseEventConsumption(IMouseEvent& evt) {
+		gcn::Widget* w = m_gcn_topcontainer->getWidgetAt(evt.getX(), evt.getY());
+		if (w && w->isVisible()) {
+			evt.consume();
+			//std::cout << "mouse event consumed" << std::endl;
+		}
+	}
+
+	void GUIManager::mousePressed(IMouseEvent& evt) {
+ 		evaluateMouseEventConsumption(evt);
+		if (!evt.isConsumed()) {
+			m_focushandler->focusNone();
+		}
 	}
 }

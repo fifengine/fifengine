@@ -120,9 +120,13 @@ namespace FIFE {
 
 		EventManager* evm = new EventManager();
 		new input::Manager();
-		new GUIManager();
-		evm ->addSdlEventListener(GUIManager::instance());
-		evm ->addSdlEventListener(input::Manager::instance());
+		GUIManager* guimanager = new GUIManager();
+		evm->addSdlEventListener(guimanager);
+		// keep guimanager as the first key listener so that it can evaluate guichan hits
+		evm->addKeyListener(guimanager);
+		// keep guimanager as the first mouse listener so that it can evaluate guichan hits
+		evm->addMouseListener(guimanager);
+		evm->addSdlEventListener(input::Manager::instance());
 
 		new RenderManager();
 

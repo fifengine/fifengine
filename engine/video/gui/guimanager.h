@@ -33,6 +33,8 @@
 // Second block: files included from the same folder
 #include "util/singleton.h"
 #include "eventchannel/sdl/ec_isdleventlistener.h"
+#include "eventchannel/mouse/ec_imouselistener.h"
+#include "eventchannel/key/ec_ikeylistener.h"
 
 namespace gcn {
 
@@ -41,6 +43,7 @@ namespace gcn {
 	class Widget;
 	class SDLInput;
 	class Font;
+	class FocusHandler;
 
 }
 
@@ -49,12 +52,18 @@ namespace FIFE {
 
 	class GCNImageLoader;
 	class Console;
+	class IKeyEvent;
+	class IMouseEvent;
 
 	/* GUI Manager.
 	 *
 	 * This class controls the GUI system in FIFE.
 	 */
-	class GUIManager : public DynamicSingleton<GUIManager>, public ISdlEventListener {
+	class GUIManager : 
+		public DynamicSingleton<GUIManager>, 
+		public ISdlEventListener,
+		public IKeyListener,
+		public IMouseListener {
 		public:
 			/** Constructor.
 			 */
@@ -120,10 +129,26 @@ namespace FIFE {
 			gcn::Font* getDefaultFont() { return m_font; };
 
 			void onSdlEvent(SDL_Event& evt);
+			void keyPressed(IKeyEvent& evt) { evaluateKeyEventConsumption(evt); }
+			void keyReleased(IKeyEvent& evt) { evaluateKeyEventConsumption(evt); }
+			void mouseEntered(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseExited(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mousePressed(IMouseEvent& evt);
+			void mouseReleased(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseClicked(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseWheelMovedUp(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseWheelMovedDown(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseMoved(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseDragged(IMouseEvent& evt) { /* do not consume dragging events */ }
 
 		private:
+			void evaluateKeyEventConsumption(IKeyEvent& evt);
+			void evaluateMouseEventConsumption(IMouseEvent& evt);
+
 			// The Guichan GUI.
 			gcn::Gui* m_gcn_gui;
+			// Focus handler for input management
+			gcn::FocusHandler* m_focushandler;
 			// The top container of the GUI.
 			gcn::Container* m_gcn_topcontainer;
 			// The imageloader.
