@@ -15,6 +15,8 @@
 	<archetypes>
 		<!-- Load tile archetypes -->
 		<archetype type="XML" source="content/archetypes/tiles/mask_tiles.xml" />
+
+		<archetype type="XML" source="content/archetypes/objects/third_party/wulax.xml" />
 	</archetypes>
 
 	<!-- We can't use geometry 0 or 1 as these are the predefined Fallout tile and object geometries. 
@@ -246,6 +248,7 @@
 				<geometry>3</geometry>
 			</properties>
 			<objects>
+				<object prototype="Wulax:Building:001" x="50" y="50" />
 			</objects>
 		</layer>
 	</elevation>
