@@ -173,8 +173,14 @@ namespace FIFE {
 		m_textureid = new GLuint[m_rows*m_cols];
 		memset(m_textureid, 0x00, m_rows*m_cols*sizeof(GLuint));
 
-		m_tex_x = static_cast<float>(m_width%256) / static_cast<float>(m_last_col_width);
-		m_tex_y = static_cast<float>(m_height%256) / static_cast<float>(m_last_row_height);
+		if(m_width%256) {
+			m_tex_x = static_cast<float>(m_width%256) / static_cast<float>(m_last_col_width);
+			m_tex_y = static_cast<float>(m_height%256) / static_cast<float>(m_last_row_height);
+		}
+		else {  // (m_width%256) / m_last_col_width == 0 == 256 (mod 256)
+			m_tex_x = 1.0f;
+			m_tex_y = 1.0f;
+		}
 
 		unsigned int chunk_width;
 		unsigned int chunk_height;
@@ -186,6 +192,9 @@ namespace FIFE {
 				if (i==m_cols-1) {
 					chunk_width = m_last_col_width;
 					data_chunk_width = m_width%256;
+					if(data_chunk_width == 0) {  // 0 == 256 (mod 256)
+						data_chunk_width = 256;
+					}
 				} else {
 					chunk_width = 256;
 					data_chunk_width = 256;
@@ -193,6 +202,9 @@ namespace FIFE {
 				if (j==m_rows-1) {
 					chunk_height = m_last_row_height;
 					data_chunk_height = m_height%256;
+					if(data_chunk_height == 0) {  // 0 = 256 (mod 256)
+						data_chunk_height = 256;
+					}
 				} else {
 					chunk_height = 256;
 					data_chunk_height = 256;
