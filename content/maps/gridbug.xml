@@ -52,7 +52,7 @@
 			</properties>
 			<metadata>
 				<!-- Commented out to trigger the grid bug for testing purposes
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square_48_48.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/outlines/tile_outline_square_48_48.png</param>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
 				-->
 			</metadata>
@@ -90,7 +90,7 @@
 			</properties>
 			<metadata>
 				<!-- Commented out to trigger the grid bug for testing purposes
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square_200_200.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/outlines/tile_outline_square_200_200.png</param>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
 				-->
 			</metadata>

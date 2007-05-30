@@ -87,7 +87,7 @@
 				<geometry>2</geometry>
 			</properties>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_diamond_126_96.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/outlines/tile_outline_diamond_126_96.png</param>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
 			</metadata>
 			<data>
@@ -272,7 +272,7 @@
 		<!-- OBJECT LAYER -->
 		<layer>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_diamond_32_24.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/outlines/object_outline_diamond_32_24.png</param>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
 			</metadata>
 			<properties>

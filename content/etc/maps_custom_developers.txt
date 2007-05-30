@@ -1,4 +1,5 @@
 content/maps/chess.xml
+content/maps/contest_map.xml
 content/maps/example_map.xml
 content/maps/gridbug.xml
 content/maps/official_map.xml

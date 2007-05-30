@@ -70,7 +70,7 @@ namespace FIFE { namespace map {
 		// msef003.frm >> hex outline
 		// msef000.frm >> hex outline
 		m_layer_id = 0;
-		m_tilemask = ImageCache::instance()->addImageFromFile("content/gfx/tiles/tile_outline_fallout.png");
+		m_tilemask = ImageCache::instance()->addImageFromFile("content/gfx/tiles/outlines/tile_outline_fallout.png");
 		// m_objmask =  ImageCache::instance()->addImageFromFile("msef003.frm");
 
 	}
