@@ -60,7 +60,7 @@ namespace FIFE { namespace map {
 		m_grid_overlay = false;
 
 		// set default attributes
-		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");
+		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline_fallout.png");
 
 		m_count += 1;
 	}

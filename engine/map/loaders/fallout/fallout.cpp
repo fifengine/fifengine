@@ -126,16 +126,16 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		ElevationPtr elevation = Elevation::create();
 
 		LayerPtr layer = Layer::create(Point(100,100),Geometry::FalloutTileGeometry);
-		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");
+		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline_fallout.png");
 		elevation->addLayer( layer );
 
 		layer = Layer::create(Point(200,200),Geometry::FalloutObjectGeometry);
-		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/objects/object_outline.png");
+		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/objects/object_outline_fallout.png");
 		layer->set<Point>("_OVERLAY_IMAGE_OFFSET", Point(-16, -12));
 		elevation->addLayer( layer );
 
 		layer = Layer::create(Point(100,100),Geometry::FalloutTileGeometry);
-		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline.png");
+		layer->set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/tile_outline_fallout.png");
 		layer->setShift(Point(0,96));
 		elevation->addLayer( layer );
 

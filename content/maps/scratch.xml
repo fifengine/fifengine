@@ -30,6 +30,9 @@
 			<param name="_START_POSITION" type="Point"><x>3</x><y>3</y></param>
 		</metadata>
 		<layer>
+			<metadata>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_fallout.png</param>
+			</metadata>
 			<properties>
 				<size><x>6</x><y>6</y></size>
 
@@ -47,7 +50,7 @@
 		</layer>
 		<layer>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_fallout.png</param>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>-16</x><y>-12</y></param>
 			</metadata>
 			<properties>

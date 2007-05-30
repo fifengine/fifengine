@@ -72,7 +72,7 @@
 				<geometry>3</geometry>
 			</properties>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square01.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square_48_48.png</param>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
 			</metadata>
 			<sparsedata>
@@ -95,7 +95,7 @@
 		</layer>
 		<layer>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_square01.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_square_12_12.png</param>
 			</metadata>
 			<properties>
 				<size><x>16</x><y>16</y></size>
@@ -119,7 +119,7 @@
 				<geometry>5</geometry>
 			</properties>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square02.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_square_200_200.png</param>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
 			</metadata>
 
@@ -158,7 +158,7 @@
 		</layer>
 		<layer>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_square02.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_square_50_50.png</param>
 			</metadata>
 			<properties>
 				<size><x>40</x><y>40</y></size>

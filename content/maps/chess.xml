@@ -24,7 +24,7 @@
 		</metadata>
 		<layer>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/tile_outline_fallout.png</param>
 			</metadata>
 			<properties>
 				<size><x>10</x><y>10</y></size>
@@ -67,7 +67,7 @@
 		</layer>
 		<layer>
 			<metadata>
-				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline.png</param>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/object_outline_fallout.png</param>
 			</metadata>
 			<properties>
 				<size><x>20</x><y>20</y></size>
