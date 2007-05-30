@@ -261,6 +261,9 @@ namespace FIFE {
 		std::vector<ICommandListener*>::iterator i = m_commandlisteners.begin();
 		while (i != m_commandlisteners.end()) {
 			(*i)->onCommand(command);
+			if (command.isConsumed()) {
+				break;
+			}
 			++i;
 		}
 	}
@@ -277,6 +280,9 @@ namespace FIFE {
 					break;
 				default:
 					break;
+			}
+			if (evt.isConsumed()) {
+				break;
 			}
 			++i;
 		}
@@ -327,6 +333,9 @@ namespace FIFE {
 				default:
 					break;
 			}
+			if (evt.isConsumed()) {
+				break;
+			}
 			++i;
 		}
 	}
@@ -343,6 +352,9 @@ namespace FIFE {
 		std::vector<IWidgetListener*>::iterator i = m_widgetlisteners.begin();
 		while (i != m_widgetlisteners.end()) {
 			(*i)->onWidgetAction(evt);
+			if (evt.isConsumed()) {
+				break;
+			}
 			++i;
 		}	
 	}
