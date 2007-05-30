@@ -11,7 +11,12 @@
 				<!-- Draw an object tile-like -->
 				<prototype name="Wulax:Building:001">
 					<visual>
-						<image source="content/gfx/objects/third_party/wulax_building.png"/>
+						<image source="content/gfx/objects/third_party/wulax_building_001.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Wulax:Building:002">
+					<visual>
+						<image source="content/gfx/objects/third_party/wulax_building_002.png"/>
 					</visual>
 				</prototype>
 			</prototypes>

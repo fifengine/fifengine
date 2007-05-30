@@ -248,6 +248,7 @@
 				<geometry>3</geometry>
 			</properties>
 			<objects>
+				<object prototype="Wulax:Building:002" x="40" y="40" />
 				<object prototype="Wulax:Building:001" x="50" y="50" />
 			</objects>
 		</layer>
