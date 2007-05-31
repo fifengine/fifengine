@@ -14,6 +14,7 @@
 
 	<archetypes>
 		<!-- Load tile archetypes -->
+		<archetype type="XML" source="content/archetypes/tiles/160_96_tiles.xml" />
 		<archetype type="XML" source="content/archetypes/tiles/mask_tiles.xml" />
 
 		<archetype type="XML" source="content/archetypes/objects/third_party/wulax.xml" />
@@ -61,179 +62,179 @@
 			<data>
 				<!-- TILE DATA, SPLIT INTO 25 COLUMNS (0 - 24) OF 5*5 TILE CHUNKS -->
 				<!-- COLUMN 0 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 1 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />>
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />>
 
 				<!-- COLUMN 2 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 3 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 4 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 5 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 6 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 7 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 8 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 9 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 10 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 11 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 12 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 13 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 14 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 15 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 16 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 17 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 18 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 19 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 20 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 21 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 22 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 23 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 
 				<!-- COLUMN 24 -->
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
-				<tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" /><tile gid="17001" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
+				<tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" /><tile gid="18002" />
 			</data>		
 		</layer>
 
@@ -248,7 +249,7 @@
 				<geometry>3</geometry>
 			</properties>
 			<objects>
-				<object prototype="Wulax:Building:002" x="40" y="40" />
+				<object prototype="Wulax:Building:002" x="40" y="38" />
 				<object prototype="Wulax:Building:001" x="50" y="50" />
 			</objects>
 		</layer>
