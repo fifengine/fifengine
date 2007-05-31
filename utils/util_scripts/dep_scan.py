@@ -128,6 +128,7 @@ def main():
 			out.append('    "' + user + '" -> "' + provider + '"')
 	write_dot_file('%s.dot' % MODULE_DEPS_OUT, out)
 	os.system('dot -Tps %s.dot > %s.ps' % (MODULE_DEPS_OUT, MODULE_DEPS_OUT))
+	os.system('dot -Tpng %s.dot	 > %s.png' % (MODULE_DEPS_OUT, MODULE_DEPS_OUT))
 	
 	# write dir dep graph
 	out = []
