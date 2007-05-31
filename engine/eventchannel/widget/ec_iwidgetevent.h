@@ -46,7 +46,7 @@ namespace FIFE {
 		 * Gets the id of the event.
 		 * @return the id of the event.
 		 */
-		const std::string& getId() const;
+		virtual const std::string& getId() const = 0;
 
 		virtual ~IWidgetEvent() {}
 	};

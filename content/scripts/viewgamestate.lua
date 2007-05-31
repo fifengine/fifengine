@@ -14,6 +14,8 @@ local function _get_loaded_map_control()
 end
 
 local LevelChooser = class(function(self)
+	self.widgetListener = WidgetListener()
+	
 	local container = Container()
 	local white = Color(255,255,255)
 	local black = Color(0,64,0)
@@ -29,13 +31,13 @@ local LevelChooser = class(function(self)
 	self.window:setBackgroundColor(black)
 	self.window:setCaption("Level Chooser")
 	
-	container:setSize(200,200)
+	container:setSize(260,200)
 	container:setOpaque(true)
 	
 	container:setBaseColor(black)
 	self.window:setBaseColor(black)
 	
-	self.window:setSize(200,240)
+	self.window:setSize(270,240)
 	self.isshown = false
 	self.container = container
 	
@@ -49,6 +51,13 @@ local LevelChooser = class(function(self)
 	self.mapchooser:setFont(self.bfont)
 	self.mapchooser:setSize(180,20)
 	self.mapchooser:setPosition(5,20)
+	
+	local button = Button("Load")
+	button:setFont(self.font)
+	button:setPosition(200,20)
+	button:setSize(50,20)
+	self.widgetListener:setHandler( button, bind(self.loadMap,self) )
+	container:add(button)
 	
 	local label = Label("Elevations")
 	label:setFont(self.font)
@@ -76,7 +85,10 @@ local LevelChooser = class(function(self)
 	self.container:add(self.elevationchooser)
 	self.container:add(self.layerchooser)
 	
-	self:loadMapSet{"content/etc/maps_fo2.txt"}
+	self:loadMapSet{"content/etc/maps_custom_developers.txt"}
+	self.widgetListener:receiveEvents()
+	
+	self.onLoadMap = function(filename) end
 end)
 
 function LevelChooser:loadMapSet(filelist)
@@ -128,6 +140,14 @@ function LevelChooser:update(mapcontrol)
 	self.layerchooser:setSelected(0)
 end
 
+function LevelChooser:loadMap(event)
+	map = tostring(self.maps:getElementAt(self.mapchooser:getSelected()))
+	--HA?
+	map = map:sub(0,#map - 1)
+	console.print("load map '" .. map .. "'")
+	self.onLoadMap(map)
+end
+
 local ViewGameState = class(function(self)
 	self.mapcontrol = _get_loaded_map_control()
 	self.map = self.mapcontrol:getMap()
@@ -141,6 +161,7 @@ local ViewGameState = class(function(self)
 	self.keyListener:setHandler("keyReleased",bind(self.keyReleased,self))
 	
 	self.levelchooser = LevelChooser()
+	self.levelchooser.onLoadMap = bind(self.loadMap,self)
 	self.move = { dx = 0, dy = 0 }
 end)
 
@@ -161,6 +182,15 @@ function ViewGameState:deactivate()
 	self.mouseListener:ignoreEvents()
 	self.keyListener:ignoreEvents()
 	self.camera = nil
+end
+
+function ViewGameState:loadMap(filename)
+	self.mapcontrol:load( filename )
+	if self.mapcontrol:getMap() then
+		self.map = self.mapcontrol:getMap()
+	end
+	self.mapcontrol:setElevation(1)
+	self.levelchooser:update(self.mapcontrol)
 end
 
 function ViewGameState:turn()

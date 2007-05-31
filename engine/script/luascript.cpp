@@ -131,6 +131,7 @@ namespace FIFE {
 		Lunar<Map_LuaScript>::RegisterTable(L);
 		Lunar<LuaMouseListener>::Register(L);
 		Lunar<LuaKeyListener>::Register(L);
+		Lunar<LuaWidgetListener>::Register(L);
 	}
 
 	LuaScript::LuaScript(IWidgetListener& wl) {

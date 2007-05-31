@@ -541,6 +541,12 @@
 				<File RelativePath="..\..\..\engine\video\loaders\subimage_provider.cpp"></File>
 				<File RelativePath="..\..\..\engine\video\loaders\subimage_provider.h"></File>
 			</Filter>
+			<Filter Name="movie">
+				<File RelativePath="..\..\..\engine\video\movie\video_gamestate.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\movie\video_gamestate.h"></File>
+				<File RelativePath="..\..\..\engine\video\movie\videostream.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\movie\videostream.h"></File>
+			</Filter>
 			<File RelativePath="..\..\..\engine\video\partialaction.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\partialaction.h"></File>
 			<File RelativePath="..\..\..\engine\video\pixelbuffer.cpp"></File>

@@ -11,6 +11,7 @@ end)
 
 WidgetListener = class(function(self)
 	self.captures = {}
+	self.widgets = {}
 	self.widgetListener = _WidgetListener()
 	self.widgetListener:setHandler("onWidgetAction",function(event)
 		widget = self.widgets[event.action]
