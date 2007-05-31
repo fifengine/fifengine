@@ -39,14 +39,20 @@
 namespace FIFE {
 	std::map<int, int> FlowTracer::thread2depth;
 	std::ofstream* tracefile = NULL;
+	std::ofstream* logfile = NULL;
 
 	Log::type_dbgtypes Log::m_dbgtypes;
 	bool Log::m_showall = false;
+	bool Log::m_uselogfile = false;
+	bool Log::m_usestdout = true;
 	int Log::m_logLevelTreshold = 0;
 // 	Console* Log::m_console = 0;
 
 	Log::Log(const std::string& type, const type_log_level& log_level )
 	: m_show(Log::m_showall || isVisibleLogLevel(log_level) || isVisibleType(type)) {
+		if (!logfile) {
+			logfile = new std::ofstream("fife.log");
+		}
 		if (m_show) {
 			std::ostringstream stream;
 			stream << std::setfill('0') << std::setw(8) << SDL_GetTicks() << " " << type << ": ";
@@ -74,6 +80,8 @@ namespace FIFE {
 
 	void Log::initialize() {
 		int llt = SettingsManager::instance()->read<int>("LogLevel",int(LEVEL_LOG));
+		m_uselogfile = SettingsManager::instance()->read<bool>("LogToFile",false);
+		m_usestdout = SettingsManager::instance()->read<bool>("LogToPrompt",true);
 		if (llt < 0 || llt > int(LEVEL_MAX)) {
 			DEBUG_PRINT("log level from settings file is " << llt);
 			llt= std::min(std::max(0,llt),int(LEVEL_MAX));
@@ -124,7 +132,12 @@ namespace FIFE {
 // 	};
 
 	void Log::logString(const std::string& str){
-		std::cout << str << std::flush;
+		if (m_usestdout) {
+			std::cout << str << std::flush;
+		}
+		if (m_uselogfile) {
+			*logfile << str << std::endl;
+		}
 // 		if( m_console )
 // 			m_console->print( str );
 	};

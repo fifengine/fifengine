@@ -188,6 +188,10 @@ namespace FIFE {
 			bool m_show;
 			// The log string.
 			std::string m_logstring;
+			// Is output logged to file or not
+			static bool m_uselogfile;
+			// Is output logged to stdout or not
+			static bool m_usestdout;
 
 			typedef std::set<std::string> type_dbgtypes;
 //			typedef std::list<struct log_entry> type_logentries;
