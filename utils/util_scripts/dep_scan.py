@@ -53,7 +53,7 @@ def fill_dep_infos(file2inc, fileUser2provider, dirUser2provider, moduleUser2pro
 			
 		for i in incs:
 			user = str(f.dirname()).replace(ROOTDIRNAME + _S, '')
-			header = f.dirname() / path(i)
+			header = path((f.dirname() / path(i)).abspath().split(ROOTDIRNAME + _S)[1])
 			if not header.isfile():
 				header = path(ROOTDIRNAME) / path(i)
 				if not header.isfile():
