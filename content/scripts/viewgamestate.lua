@@ -1,5 +1,6 @@
 require 'content/scripts/statemanager'
 require 'content/scripts/class'
+require 'content/scripts/widgetlistener'
 
 do
 
