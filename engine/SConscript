@@ -11,7 +11,10 @@ def get_files(expected, path, names):
 			return []
 
 	# It passes the filter, so use all cpp files.
-	return [os.path.join(path, x) for x in names if (x.endswith('.cpp') or x.endswith('.h'))]
+	return [os.path.join(path, x) for x in names if (
+		x.endswith('.cpp') or 
+		x.endswith('.h') or
+		x.endswith('.hpp'))]
 
 def get_filter(path, names):
 	if our_config_name not in names: return {'lite': 0}
@@ -42,6 +45,7 @@ except ValueError:
 	pass
 
 cppfiles = [f for f in files if f.endswith('cpp')]
+headerfiles = [f for f in files if not f.endswith('cpp')]
 
 # check that we don't have files having same names (bad for visual studio + static analysis)
 dupePaths = {}; dupes = []
@@ -100,17 +104,36 @@ open(vcprojfilename, 'w').write(projtxt)
 print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(vcprojfilename)
 # ------------- msvc file list creation end ----------------
 
-# Exceptions:
-# audio - only in full BUT special handling <-- in audio/, just do the CPPPATH 
-# logic; in subfolders, use a config that requires lite=0 AND the appropriate
-# audio setting (0 in devnull, 1 in openAL)
-# video - similarly, /renderbackends/opengl only if env['opengl']; otherwise
-# everything. Lite too!
-# vfs - main folder, don't use vfswriteformat.cpp for lite, but use everything
-# else. raw/ is only for full
+# ------------- code::blocks file list creation begin ----------------
+codeblocksHeaderDef = \
+'''		<Unit filename="..\..\..\engine\%s">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>'''
+
+codeblocksCppDef = \
+'''		<Unit filename="..\..\..\engine\%s">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>'''
+cbbuildpath = _jp('..', 'build', 'win32', 'code_blocks')
+xmlstr = []
+for f in files:
+	newf = f.replace('/', '\\')
+	if f in headerfiles:
+		xmlstr.append(codeblocksHeaderDef % newf[2:])
+	else:
+		xmlstr.append(codeblocksCppDef % newf[2:])
+projtxt = open(_jp(cbbuildpath, 'fifelib_template.xml'), 'r').read()
+projtxt = projtxt.replace('__FILE_INSERTION_POINT__', '\n'.join(xmlstr))
+cbprojfilename = _jp(cbbuildpath, 'fife lib.cbp')
+open(cbprojfilename, 'w').write(projtxt)
+print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(cbprojfilename)
+# ------------- code::blocks file list creation end ----------------
 
 env.Append(CPPPATH = ['#/engine'])
-
 if not env['msvcproj']:
 	if env['lite']:
 		env.StaticLibrary('fifelite', cppfiles)

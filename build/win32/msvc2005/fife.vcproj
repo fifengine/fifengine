@@ -244,8 +244,11 @@
 			<File RelativePath="..\..\..\engine\guichan_addon\guichanfont.cpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\guichanfont.h"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\icon2.cpp"></File>
+			<File RelativePath="..\..\..\engine\guichan_addon\icon2.hpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\sdlimagefont.cpp"></File>
+			<File RelativePath="..\..\..\engine\guichan_addon\sdlimagefont.hpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\sdltruetypefont.cpp"></File>
+			<File RelativePath="..\..\..\engine\guichan_addon\sdltruetypefont.hpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\twobutton.cpp"></File>
 			<File RelativePath="..\..\..\engine\guichan_addon\twobutton.h"></File>
 		</Filter>
@@ -404,6 +407,7 @@
 				<File RelativePath="..\..\..\engine\script\gui\lua_guimanager.h"></File>
 				<File RelativePath="..\..\..\engine\script\gui\luagui.h"></File>
 			</Filter>
+			<File RelativePath="..\..\..\engine\script\lua.hpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_audiomanager.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_audiomanager.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_console.cpp"></File>
