@@ -31,6 +31,7 @@
 #include "util/exception.h"
 #include "video/imagecache.h"
 #include "util/log.h"
+#include "util/purge.h"
 #include "map/factory.h"
 #include "video/renderable_location.h"
 #include "video/pixelbuffer.h"
@@ -66,6 +67,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 
 	XMLArchetype::XMLArchetype(TiXmlElement* e) : Archetype("XML", "embedded") {
 		load(e);
+	}
+
+	XMLArchetype::~XMLArchetype() {
+		purge_map<type_prototypes>(m_prototypes);
 	}
 
 	void XMLArchetype::load(TiXmlElement* e) {

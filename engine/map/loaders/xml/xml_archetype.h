@@ -48,6 +48,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			 *  Loads an archetype from the given filename
 			 */
 			XMLArchetype(const std::string& filename);
+			virtual ~XMLArchetype();
 
 			/** Constructor
 			 *  Loads an embedded archetype
