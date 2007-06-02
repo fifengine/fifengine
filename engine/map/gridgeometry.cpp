@@ -52,7 +52,8 @@ namespace FIFE { namespace map {
 
 	GridGeometry::GridGeometry(const s_geometry_info& g, const Point& mapsize) {
 		m_basesize = g.size;
-
+		m_offset   = g.offset;
+		
 		xdx = g.transform.x;
 		ydy = g.transform.y;
 		xdy = ydy - m_basesize.y;
