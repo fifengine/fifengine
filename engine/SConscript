@@ -63,6 +63,21 @@ if dupes:
 	for l in dupes: print l
 	Exit(1)
 
+# ------------- filter windows project file lists  ----------------
+# paths that should be skipped from generation
+PROJECT_SKIPPED_PATHS = ['/video/movie']
+
+_sep = os.path.sep
+PROJECT_SKIPPED_PATHS = [p.replace('/', _sep) for p in PROJECT_SKIPPED_PATHS]
+projectfiles = []
+for f in files:
+	if PROJECT_SKIPPED_PATHS:
+		for skippath in PROJECT_SKIPPED_PATHS:
+			if f.find(skippath) == -1:
+				projectfiles.append(f)
+	else:
+		projectfiles.append(f)
+
 # ------------- msvc file list creation begin ----------------
 def create_dict_tree(source_dict):
 	for f in source_dict.keys():
@@ -93,9 +108,8 @@ def get_msvc_repr(d, tabcount=2, curpath=''):
 
 		
 _jp = os.path.join
-_sep = os.path.sep
 msvcbuildpath = _jp('..', 'build', 'win32', 'msvc2005')
-vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep), 1)[1] for f in files]
+vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep), 1)[1] for f in projectfiles]
 xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
 projtxt = open(_jp(msvcbuildpath, 'fifeproj_template.xml'), 'r').read()
 projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
@@ -120,12 +134,13 @@ codeblocksCppDef = \
 		</Unit>'''
 cbbuildpath = _jp('..', 'build', 'win32', 'code_blocks')
 xmlstr = []
-for f in files:
-	newf = f.replace('/', '\\')
+for f in projectfiles:
+	newf = os.path.abspath(f).split('%sengine%s' % (_sep, _sep), 1)[1]
+	newf = newf.replace('/', '\\')
 	if f in headerfiles:
-		xmlstr.append(codeblocksHeaderDef % newf[2:])
+		xmlstr.append(codeblocksHeaderDef % newf)
 	else:
-		xmlstr.append(codeblocksCppDef % newf[2:])
+		xmlstr.append(codeblocksCppDef % newf)
 projtxt = open(_jp(cbbuildpath, 'fifelib_template.xml'), 'r').read()
 projtxt = projtxt.replace('__FILE_INSERTION_POINT__', '\n'.join(xmlstr))
 cbprojfilename = _jp(cbbuildpath, 'fife lib.cbp')
@@ -134,7 +149,7 @@ print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspat
 # ------------- code::blocks file list creation end ----------------
 
 env.Append(CPPPATH = ['#/engine'])
-if not env['msvcproj']:
+if not env['projfiles']:
 	if env['lite']:
 		env.StaticLibrary('fifelite', cppfiles)
 	else:

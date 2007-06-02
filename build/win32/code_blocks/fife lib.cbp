@@ -1525,23 +1525,23 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\s\vfs.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfs.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\s\vfshostsystem.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfshostsystem.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\s\vfssource.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfssource.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\s\vfssourcefactory.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfssourcefactory.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\s\vfssourceprovider.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfssourceprovider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>

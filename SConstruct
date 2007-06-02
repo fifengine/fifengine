@@ -8,7 +8,7 @@ opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
 opts.Add(EnumOption('script', 'Enable which script-language backend', 'lua', allowed_values=('none', 'lua')))
 opts.Add(BoolOption('lite',   'Build the lite version of the library (used for editor, overrides other settings)', 0))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
-opts.Add(BoolOption('msvcproj',  "Create MSVC project file. If defined, won't build code", 0))
+opts.Add(BoolOption('projfiles',  "Create IDE project files. If defined, won't build code", 0))
 opts.Add(BoolOption('utils',  'Build utilities', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
 opts.Add(BoolOption('movie', 'Enable movie playback', 0))
@@ -17,7 +17,7 @@ env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 
 Help(opts.GenerateHelpText(env))
 
-dontBuild = env['msvcproj'] or env['docs']
+dontBuild = env['projfiles'] or env['docs']
 
 # helper functions
 def tryConfigCommand(context, cmd):
@@ -88,7 +88,7 @@ def checkSimpleLib(context, liblist, header = '', lang = 'c', required = 1):
 
 if dontBuild:
 	Export('env')
-	if env['msvcproj']:
+	if env['projfiles']:
 		SConscript(['engine/SConscript'])
 	if env['docs']:
 		_jp = os.path.join
