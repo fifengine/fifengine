@@ -380,6 +380,7 @@
 			<File RelativePath="..\..\..\engine\script\fwd.h"></File>
 			<Filter Name="gui">
 				<File RelativePath="..\..\..\engine\script\gui\fwd.h"></File>
+				<File RelativePath="..\..\..\engine\script\gui\lg_aafont.cpp"></File>
 				<File RelativePath="..\..\..\engine\script\gui\lg_button.cpp"></File>
 				<File RelativePath="..\..\..\engine\script\gui\lg_checkbox.cpp"></File>
 				<File RelativePath="..\..\..\engine\script\gui\lg_clicklabel.cpp"></File>

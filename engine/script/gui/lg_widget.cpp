@@ -150,10 +150,11 @@ namespace luaGui {
 		// FIXME: Direct dispatch. Rather ugly.
 		typedef struct { luaGui::TTFont *pT; }    ud_TTFont;
 		typedef struct { luaGui::ImageFont *pT; } ud_ImageFont;
+		typedef struct { luaGui::AAFont *pT; }		ud_AAFont;
 		
 
 		if( !lua_isuserdata(L,1) ) {
-			luaL_typerror(L, 1, "ImageFont or TTFont");
+			luaL_typerror(L, 1, "AAFont, ImageFont or TTFont");
 		}
 
 		void *p = lua_touserdata(L,1);
@@ -166,8 +167,12 @@ namespace luaGui {
 			ud_TTFont *u = static_cast<ud_TTFont*>(p);
 			font = u->pT->getFont();
 		}
+		else if ( isudata(L, 1, luaGui::AAFont::className) ) {
+			ud_AAFont *u = static_cast<ud_AAFont*>(p);
+			font = u->pT->getFont();
+		}
 		if( font == 0 ) {
-			luaL_typerror(L, 1, "valid ImageFont or TTFont");
+			luaL_typerror(L, 1, "valid AAFont, ImageFont or TTFont");
 		}
 		return font;
 

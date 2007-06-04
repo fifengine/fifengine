@@ -190,6 +190,20 @@ namespace luaGui {
 			FIFE::FontBase *m_font;
 	};
 
+	class AAFont {
+		public:
+			AAFont(lua_State *L);
+			~AAFont();
+
+			FIFE::FontBase* getFont() { return m_font; }
+			int l_setColor(lua_State* L);
+
+			static const char className[];
+			static Lunar<AAFont>::RegType methods[];
+		private:
+			FIFE::FontBase *m_font;
+	};
+
 	class ImageFont  {
 		public:
 			ImageFont(lua_State* L);

@@ -196,6 +196,7 @@ namespace FIFE {
 		Lunar<luaGui::TwoButton>::Register(L);
 		Lunar<luaGui::TTFont>::Register(L);
 		Lunar<luaGui::ImageFont>::Register(L);
+		Lunar<luaGui::AAFont>::Register(L);
 		Lunar<luaGui::CheckBox>::Register(L);
 		Lunar<luaGui::ScrollArea>::Register(L);
 		Lunar<luaGui::TextBox>::Register(L);
