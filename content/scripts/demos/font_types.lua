@@ -41,5 +41,4 @@ function on_engine_start()
   gui.label3:setFont(gui.font3)
   gui.top:add(gui.label3)
 
-  print(tostring(Label))
 end
