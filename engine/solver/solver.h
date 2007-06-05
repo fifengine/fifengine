@@ -98,7 +98,7 @@ namespace FIFE { namespace solver {
 	  public:
 		typedef boost::function1<void, const Solution&> SearchCompleteCallback;
 
-		virtual ~Solver() = 0;
+		virtual ~Solver() {};
 
 
                 virtual void setSearchSpace( Graph& searchSpace ) = 0;

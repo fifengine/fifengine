@@ -12,6 +12,7 @@ opts.Add(BoolOption('projfiles',  "Create IDE project files. If defined, won't b
 opts.Add(BoolOption('utils',  'Build utilities', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
 opts.Add(BoolOption('movie', 'Enable movie playback', 0))
+opts.Add(BoolOption('shared', 'Build libfife as a shared library', 0))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 
@@ -158,7 +159,10 @@ else:
 		if sys.platform == 'darwin':
 			env.Object('engine/SDLMain.m')
 			enginefiles.append('engine/SDLMain.o')
-		env.Program('fife_engine', enginefiles)
+		if env['shared']:
+			env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine'])
+		else:
+			env.Program('fife_engine', enginefiles)
 		
 		if env['testcases']:
 			SConscript('tests/unit_tests/SConscript')

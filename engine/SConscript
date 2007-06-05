@@ -153,6 +153,9 @@ if not env['projfiles']:
 	if env['lite']:
 		env.StaticLibrary('fifelite', cppfiles)
 	else:
-		env.StaticLibrary('fife', cppfiles)
+		if env['shared']:
+			env.SharedLibrary('fife', cppfiles)
+		else:
+			env.StaticLibrary('fife', cppfiles)
 	
 # vim: set filetype=python :
