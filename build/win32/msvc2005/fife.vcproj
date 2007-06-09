@@ -443,8 +443,6 @@
 			<File RelativePath="..\..\..\engine\script\lua_stackguard.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_table.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_table.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_timer.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_timer.h"></File>
 			<File RelativePath="..\..\..\engine\script\luascript.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\luascript.h"></File>
 			<File RelativePath="..\..\..\engine\script\lunar.h"></File>
@@ -487,6 +485,10 @@
 			<File RelativePath="..\..\..\engine\util\settingsmanager.h"></File>
 			<File RelativePath="..\..\..\engine\util\singleton.h"></File>
 			<Filter Name="time">
+				<Filter Name="lua">
+					<File RelativePath="..\..\..\engine\util\time\lua\lua_timer.cpp"></File>
+					<File RelativePath="..\..\..\engine\util\time\lua\lua_timer.h"></File>
+				</Filter>
 				<File RelativePath="..\..\..\engine\util\time\timeevent.cpp"></File>
 				<File RelativePath="..\..\..\engine\util\time\timeevent.h"></File>
 				<File RelativePath="..\..\..\engine\util\time\timemanager.cpp"></File>

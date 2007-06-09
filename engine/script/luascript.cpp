@@ -48,12 +48,12 @@
 #include "map/lua/lua_layer.h"
 #include "map/lua/lua_elevation.h"
 #include "map/lua/lua_map.h"
+#include "util/time/lua/lua_timer.h"
 
 #include "luascript.h"
 #include "scriptcontainer.h"
 #include "lua_ref.h"
 #include "lua_stackguard.h"
-#include "lua_timer.h"
 
 namespace FIFE {
 
