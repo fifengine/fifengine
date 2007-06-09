@@ -361,6 +361,20 @@
 			</Filter>
 			<File RelativePath="..\..\..\engine\map\location.cpp"></File>
 			<File RelativePath="..\..\..\engine\map\location.h"></File>
+			<Filter Name="lua">
+				<File RelativePath="..\..\..\engine\map\lua\lua_elevation.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_elevation.h"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_layer.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_layer.h"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_map.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_map.h"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_mapcamera.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_mapcamera.h"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_mapcontrol.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_mapcontrol.h"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_object.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\lua\lua_object.h"></File>
+			</Filter>
 			<File RelativePath="..\..\..\engine\map\map.cpp"></File>
 			<File RelativePath="..\..\..\engine\map\map.h"></File>
 			<File RelativePath="..\..\..\engine\map\object_list.cpp"></File>
@@ -419,22 +433,10 @@
 			<File RelativePath="..\..\..\engine\script\lua.hpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_console.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_console.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_elevation.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_elevation.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_engine.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_engine.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_gamestatemanager.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_gamestatemanager.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_layer.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_layer.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_map.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_map.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_mapcamera.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_mapcamera.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_mapcontrol.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_mapcontrol.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_object.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_object.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_ref.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_ref.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_stackguard.cpp"></File>

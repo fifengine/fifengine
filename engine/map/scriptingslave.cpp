@@ -29,10 +29,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "lua/lua_object.h"
+
 #include "map/command/info.h"
 #include "map/objectinfo.h"
 #include "script/lua_stackguard.h"
-#include "script/lua_object.h"
 #include "script/scriptcontainer.h"
 #include "event.h"
 #include "util/log.h"

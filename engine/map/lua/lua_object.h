@@ -19,51 +19,46 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SCRIPT_LUA_LUA_LAYER_H
-#define FIFE_SCRIPT_LUA_LUA_LAYER_H
+#ifndef FIFE_SCRIPT_LUA_LUA_OBJECT_H
+#define FIFE_SCRIPT_LUA_LUA_OBJECT_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
 #include "lua.hpp"
-#include "lunar.h"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-
-#include "lua_table.h"
+#include "script/lunar.h"
+#include "script/lua_table.h"
 
 namespace FIFE {
 
 	namespace map {
-		class Layer;
-		typedef boost::shared_ptr<Layer> LayerPtr;
+		class ObjectInfo;
+		typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 	}
 
-	class Layer_LuaScript : public Table_LuaScript {
+	class Object_LuaScript : public Table_LuaScript {
 		public:
 			static const char className[];
-			static Lunar<Layer_LuaScript>::RegType methods[];
-			static Lunar<Layer_LuaScript>::RegType metamethods[];
+			static Lunar<Object_LuaScript>::RegType methods[];
+			static Lunar<Object_LuaScript>::RegType metamethods[];
 
-			Layer_LuaScript(lua_State *L);
-			Layer_LuaScript(map::LayerPtr obj);
-			virtual ~Layer_LuaScript();
+			Object_LuaScript(lua_State *L);
+			Object_LuaScript(map::ObjectPtr obj);
+			virtual ~Object_LuaScript();
 
-			int addObject(lua_State*L);
-			int addObjectAt(lua_State*L);
-			int getObjectsAt(lua_State*L);
-			int removeObject(lua_State*L);
+			int loadPrototype(lua_State*L);
 
 			virtual Table* getTable();
-
-			map::LayerPtr getLayer() { return m_layer; }
+			map::ObjectPtr getObject() { return m_object; }
 
 		private:
-			map::LayerPtr m_layer;
+			map::ObjectPtr m_object;
 	};
 
 }

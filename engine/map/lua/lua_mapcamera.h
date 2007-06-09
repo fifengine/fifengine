@@ -19,54 +19,42 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SCRIPT_LUA_LUA_MAP_H
-#define FIFE_SCRIPT_LUA_LUA_MAP_H
+#ifndef FIFE_SCRIPT_LUA_LUA_MAPCAMERA_H
+#define FIFE_SCRIPT_LUA_LUA_MAPCAMERA_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
 #include "lua.hpp"
-#include "lunar.h"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-
-#include "lua_table.h"
+#include "script/lunar.h"
+#include "map/camera.h"
 
 namespace FIFE {
 
-	namespace map {
-		class Map;
-		typedef boost::shared_ptr<Map> MapPtr;
-	}
-
-	class Map_LuaScript : public Table_LuaScript {
+	class MapCamera_Lunar : public map::Camera
+	{
 		public:
-			static const char className[];
-			static Lunar<Map_LuaScript>::RegType methods[];
-			static Lunar<Map_LuaScript>::RegType metamethods[];
+			static const char* className;
+			static Lunar<MapCamera_Lunar>::RegType methods[];
 
-			Map_LuaScript(lua_State *L);
-			Map_LuaScript(map::MapPtr obj);
-			virtual ~Map_LuaScript();
+			MapCamera_Lunar(lua_State *L);
+			~MapCamera_Lunar();
 
-			int getElevation(lua_State* L);
-			int addElevation(lua_State* L);
-			int getNumElevations(lua_State* L);
-			int insertElevation(lua_State* L);
-			int removeElevation(lua_State* L);
+			int l_render(lua_State *L);
+			int l_setViewport(lua_State *L);
 
-			virtual Table* getTable();
+			int l_moveBy(lua_State *L);
+			int l_jumpTo(lua_State *L);
 
-			map::MapPtr getMap() { return m_map; }
+			int l_moveTo(lua_State *L);
+			int l_track(lua_State *L);
 
-		private:
-			map::MapPtr m_map;
 	};
-
 }
 #endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
