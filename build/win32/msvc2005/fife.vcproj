@@ -163,6 +163,10 @@
 			<File RelativePath="..\..\..\engine\audio\decoder_oggvorbis.h"></File>
 			<File RelativePath="..\..\..\engine\audio\fife_openal.h"></File>
 			<File RelativePath="..\..\..\engine\audio\fwd.h"></File>
+			<Filter Name="lua">
+				<File RelativePath="..\..\..\engine\audio\lua\lua_audiomanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\audio\lua\lua_audiomanager.h"></File>
+			</Filter>
 			<File RelativePath="..\..\..\engine\audio\source.cpp"></File>
 			<File RelativePath="..\..\..\engine\audio\source.h"></File>
 		</Filter>
@@ -409,8 +413,6 @@
 				<File RelativePath="..\..\..\engine\script\gui\luagui.h"></File>
 			</Filter>
 			<File RelativePath="..\..\..\engine\script\lua.hpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_audiomanager.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_audiomanager.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_console.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_console.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_elevation.cpp"></File>
