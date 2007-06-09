@@ -262,6 +262,10 @@
 			<File RelativePath="..\..\..\engine\input\inputmanager.cpp"></File>
 			<File RelativePath="..\..\..\engine\input\inputmanager.h"></File>
 			<File RelativePath="..\..\..\engine\input\listener.h"></File>
+			<Filter Name="lua">
+				<File RelativePath="..\..\..\engine\input\lua\lua_inputmanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\input\lua\lua_inputmanager.h"></File>
+			</Filter>
 		</Filter>
 		<Filter Name="map">
 			<File RelativePath="..\..\..\engine\map\action.h"></File>
@@ -421,8 +425,6 @@
 			<File RelativePath="..\..\..\engine\script\lua_engine.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_gamestatemanager.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_gamestatemanager.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_inputmanager.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_inputmanager.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_layer.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_layer.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_map.cpp"></File>
