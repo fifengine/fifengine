@@ -443,8 +443,6 @@
 			<File RelativePath="..\..\..\engine\script\lua_table.h"></File>
 			<File RelativePath="..\..\..\engine\script\lua_timer.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\lua_timer.h"></File>
-			<File RelativePath="..\..\..\engine\script\lua_vfs.cpp"></File>
-			<File RelativePath="..\..\..\engine\script\lua_vfs.h"></File>
 			<File RelativePath="..\..\..\engine\script\luascript.cpp"></File>
 			<File RelativePath="..\..\..\engine\script\luascript.h"></File>
 			<File RelativePath="..\..\..\engine\script\lunar.h"></File>
@@ -496,6 +494,10 @@
 			</Filter>
 		</Filter>
 		<Filter Name="vfs">
+			<Filter Name="lua">
+				<File RelativePath="..\..\..\engine\vfs\lua\lua_vfs.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\lua\lua_vfs.h"></File>
+			</Filter>
 			<Filter Name="raw">
 				<File RelativePath="..\..\..\engine\vfs\raw\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\vfs\raw\rawdata.cpp"></File>
