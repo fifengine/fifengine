@@ -88,21 +88,29 @@ namespace FIFE { namespace map {
 				+ boost::lexical_cast<std::string>(id));
 		}
 
+		Geometry* g = 0;
+
 		if( i->second.geometry == "HEXAGONAL" ) {
-			return new HexGeometry(i->second, mapsize);
+			g = new HexGeometry(i->second, mapsize);
 		}
-
-		if( i->second.geometry == "RECTANGULAR" ) {
-			return new GridGeometry(i->second, mapsize);
+		else if( i->second.geometry == "RECTANGULAR" ) {
+			g = new GridGeometry(i->second, mapsize);
 		}
-
-		throw InvalidFormat(std::string("unknown geometry: ")
-			+ boost::lexical_cast<std::string>(i->second.geometry));
-		return 0;
+		else {
+			throw InvalidFormat(std::string("unknown geometry: ")
+				+ boost::lexical_cast<std::string>(i->second.geometry));
+		}
+		
+		g->m_gid = id;
+		return g;
 	}
 
 	void Geometry::registerGeometry(const s_geometry_info& g) {
 		geometry_detail::info_map[g.id] = g;
+	}
+	
+	const s_geometry_info& Geometry::getInfo() {
+		return geometry_detail::info_map[m_gid];
 	}
 
 	// Default implementations.

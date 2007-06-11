@@ -260,6 +260,6 @@ function ViewGameState:keyReleased(event)
 end
 
 statemanager:add( "mapview", ViewGameState() )
-statemanager.initial_state = "mapview"
+statemanager:activate("mapview")
 
 end

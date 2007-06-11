@@ -64,7 +64,7 @@ namespace FIFE { namespace map {
 	 *  on Layer coords.
 	 * 
 	 *  The tiles are *not* allways created only on
-	 *  a first "setTileImage".
+	 *  a first "setTileGID".
  	 *  
 	 *  The most important features of this class are
 	 *  "geometry", "shift" and "size":
@@ -79,7 +79,7 @@ namespace FIFE { namespace map {
 	 *  coords this Layer covers.
 	 *  
 	 *  @bug The parameter code is untested, be warned.
-	 *  @bug setTileImage and setParam behave differently on invalid positions.
+	 *  @bug setTileGID and setParam behave differently on invalid positions.
 	 *
 	 *  Attributes: 
 	 *  
@@ -181,6 +181,41 @@ namespace FIFE { namespace map {
 				std::for_each(m_all_objects.begin(),m_all_objects.end(),visitor);
 			}
 
+			/** Get the width (in tiles) of the layer
+			 */
+			int32_t getLayerWidth() const;
+
+			/** Get the height (in tiles) of the layer
+			 */
+			int32_t getLayerHeight() const;
+
+			/** Get the global id of the tile at the point
+			 *  @note If the position is invalid or the Layer
+			 *  is not yet created 0 is returned (a DummyImage id)
+			 *  @param position A valid Layer position
+			 *  @return A global id for the position
+			 */
+			size_t getTileGID(const Point&) const;
+
+			/** Get the global id of the tile at the point
+			 *  @see getGID
+			 */
+			size_t getTileGID(int32_t x, int32_t y) const;
+
+			/** Set the global id of the tile at the point
+			 *  @note If the position is invalid nothing is changed
+			 *  @note if no tile have previously set, this
+			 *  will allocate the needed memory.
+			 *  @param position A valid Layer position
+			 *  @param id A global id for the position
+			 */
+			void setTileGID(const Point& position, size_t id);
+
+			/** Set the global id of the tile at the point
+			 *  @see setTileGID
+			 */
+			void setTileGID(int32_t x, int32_t y, size_t id);
+
 			/** Get the tile image id of a position
 			 *  @note If the position is invalid or the Layer
 			 *	is not yet created 0 is returned (a DummyImage id)
@@ -198,6 +233,9 @@ namespace FIFE { namespace map {
 			 *  @note If the position is invalid nothing is changed
 			 *  @note If no tile have previously set, this
 			 *  will allocate the needed memory.
+			 *	@note This is exposed for LEGACY FALLOUT reasons;
+			 *	use setTileGID instead to maintain current xml
+			 *	map storage functionality.
 			 *  @param position A valid Layer position
 			 *  @param image_id An image id for the position
 			 */
@@ -409,6 +447,10 @@ namespace FIFE { namespace map {
 			bool m_objects_visibility;
 			bool m_grid_overlay;
 
+			// NOTE: is the expense of storing both tiles and tilegids worth
+			// computation saved from not calculating tiles from tilegids each
+			// time?
+			std::vector<size_t> m_tilegids;
 			std::vector<size_t> m_tiles;
 
 			ObjectList m_all_objects;
@@ -448,6 +490,29 @@ namespace FIFE { namespace map {
 	inline 
 	size_t Layer::getLayerNumber() const {
 		return m_layer_num;
+	}
+
+	inline
+	int32_t Layer::getLayerHeight() const {
+		return m_size.y;
+	}
+
+	inline
+	int32_t Layer::getLayerWidth() const {
+		return m_size.x;
+	}
+
+	inline
+	size_t Layer::getTileGID(const Point& p) const {
+		if (!isValidPosition(p.x,p.y) || m_tilegids.empty()) {
+			return 0;
+		}
+		return m_tilegids[p.x + p.y * m_size.x];
+	}
+
+	inline
+	size_t Layer::getTileGID(int32_t x, int32_t y) const {
+		return getTileGID(Point(x,y));
 	}
 
 	inline

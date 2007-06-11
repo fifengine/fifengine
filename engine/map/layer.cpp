@@ -33,6 +33,7 @@
 
 #include "geometry.h"
 #include "layer.h"
+#include "factory.h"
 
 namespace FIFE { namespace map {
 
@@ -176,9 +177,20 @@ namespace FIFE { namespace map {
 		return m_all_objects;
 	}
 
-	void Layer::setTileImage(int32_t x, int32_t y, size_t id) {
-		setTileImage(Point(x,y),id);
+	void Layer::setTileGID(const Point& p, size_t id) {
+		if(m_tilegids.empty()) {
+			m_tilegids.resize(m_size.x * m_size.y);
+		}
+		if(!isValidPosition(p)) {
+			return;
+		}
+		m_tilegids[p.x + p.y * m_size.x] = id;
+		setTileImage(p.x, p.y, Factory::instance()->getTileImageId(id));
 	}
+  void Layer::setTileGID(int32_t x, int32_t y, size_t id) {
+		setTileGID(Point(x,y),id);
+  }
+
 	void Layer::setTileImage(const Point& p, size_t id) {
 		if (m_tiles.empty()) {
 			m_tiles.resize(m_size.x * m_size.y);
@@ -187,6 +199,9 @@ namespace FIFE { namespace map {
 			return;
 		}
 		m_tiles[p.x + p.y * m_size.x] = id;
+	}
+	void Layer::setTileImage(int32_t x, int32_t y, size_t id) {
+		setTileImage(Point(x,y),id);
 	}
 
 	bool Layer::hasTiles() const {

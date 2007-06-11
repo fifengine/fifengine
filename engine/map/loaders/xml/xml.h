@@ -37,6 +37,8 @@
 
 namespace FIFE { namespace map { 
 	class RawData;
+	class Layer;
+	typedef boost::shared_ptr<Layer> LayerPtr;
 	class Elevation;
 	typedef boost::shared_ptr<Elevation> ElevationPtr;
 	class Map;
@@ -73,7 +75,13 @@ namespace loaders { namespace xml {
 			 * @return The loaded map or 0 on error.
 			 */
 			virtual MapPtr loadFile(const std::string& path);
-			
+
+			/** Save a XML map
+			 * @param path The XML file to save to ( in vfs)
+			 * @param map The loaded map to be saved
+			 */
+			virtual void saveFile(const std::string& path, MapPtr map);
+
 		private:
 			/// The currently loaded map.
 			MapPtr m_map;
@@ -121,6 +129,12 @@ namespace loaders { namespace xml {
 
 			/// Assure required Archetypes are loaded
 			void loadArchetypes(TiXmlElement*);
+
+			/// Write an XML representation of an elevation
+			TiXmlElement* writeElevation(ElevationPtr elevation);
+
+			/// Write an XML representation of a layer
+			TiXmlElement* writeLayer(LayerPtr layer);
 
 			// Not copyable.
 			XML(const XML&);

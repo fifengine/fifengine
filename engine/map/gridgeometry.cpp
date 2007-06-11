@@ -85,11 +85,16 @@ namespace FIFE { namespace map {
 		float x = static_cast<float>(p2.x * ydy + p2.y * -ydx) / determinant;
 		float y = static_cast<float>(p2.x * -xdy + p2.y * xdx) / determinant;
 
-		// FIXME: There's an off-by-one error here; I don't know what's
-		// introducing it, although perhaps its the dx/dy values; there's 
-		// a similar problem for hexs. -jwt
+		// FIXME: The following two statements work for skewed and top-down
+		// grids respectively; the logic must be unified for correct
+		// addressing in both cases. There is reason to prefer the second
+		// statement since it avoids an off-by-one error, but other logic
+		// must be added to correctly address skewed tiles.
 		return Point(static_cast<int>(round(x)),
 		             static_cast<int>(round(y)) - 1);
+
+		// return Point(static_cast<int>(floor(x)),
+		//              static_cast<int>(floor(y)));
 	} 
 
 	const float* GridGeometry::getAdjacentCosts() const {

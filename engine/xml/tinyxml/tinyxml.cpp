@@ -1092,10 +1092,13 @@ bool TiXmlDocument::LoadFile( const char* filename, TiXmlEncoding encoding )
 	return false;
 }
 
+//
+// the whole body of this function was commented out... any reason? --jwt
+//
 bool TiXmlDocument::SaveFile( const char * filename ) const
 {
 	// The old c stuff lives on...
-  /*
+  
 	FILE* fp = fopen( filename, "w" );
 	if ( fp )
 	{
@@ -1112,7 +1115,7 @@ bool TiXmlDocument::SaveFile( const char * filename ) const
 		Print( fp, 0 );
 		fclose( fp );
 		return true;
-	}*/
+	}
 	return true;
 }
 

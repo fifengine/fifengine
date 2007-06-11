@@ -66,6 +66,13 @@
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
+	// useful for writing xml
+	std::string int_to_string(int x) {
+		std::ostringstream o;
+		o << x;
+		return o.str();
+	}
+
 	XML::~XML() {
 		cleanup();
 	}
@@ -113,6 +120,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			}
 			throw;
 		}
+
+		// temporary debug saving! delete this later
+		saveFile("content/maps/savefile.xml",m_map);
+
 		return m_map;
 	}
 
@@ -414,8 +425,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			int tilegid = -1;
 			tilenode->QueryIntAttribute("gid", &tilegid);
 			if (tilegid > -1) {
-				size_t iid = Factory::instance()->getTileImageId(tilegid);
-				layer->setTileImage(x,y, iid);
+				layer->setTileGID(x,y,tilegid);
 			} else {
 				Log("xmlmap") << "Error: a tile is missing a 'gid' attribute!";
 			}
@@ -457,7 +467,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 					" gid, x and y (>=0)");
 			}
 
-			layer->setTileImage(x, y, Factory::instance()->getTileImageId(gid));
+			layer->setTileGID(x,y,gid);
 			sdn = sdn->NextSiblingElement("tileat");
 		}
 	}
@@ -516,6 +526,192 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		SDL_FreeSurface(img);
 	}
 #endif
+
+	void XML::saveFile(const std::string& path, MapPtr mapdata) {
+		cleanup();
+
+		TiXmlDocument doc;
+
+		//
+		// construct XML from MapPtr
+		//
+
+		doc.LinkEndChild(new TiXmlDeclaration( "1.0", "", "" ));
+
+		TiXmlElement* map = new TiXmlElement("map");
+		doc.LinkEndChild(map);
+
+		TiXmlElement* properties = new TiXmlElement("properties");
+		map->LinkEndChild(properties);
+		{
+			TiXmlElement* name = new TiXmlElement("name");
+			properties->LinkEndChild(name);
+			name->LinkEndChild(new TiXmlText(mapdata->getMapName()));
+
+			// this value doesn't seem to be stored internally, so I'm
+			// just defaulting it to 1 until a better solution can be found
+			TiXmlElement* map_version = new TiXmlElement("version");
+			properties->LinkEndChild(map_version);
+			map_version->LinkEndChild(new TiXmlText("1"));
+
+			// shouldn't be hard-coded to 1 once we have multiple versions
+			TiXmlElement* format_version = new TiXmlElement("format");
+			properties->LinkEndChild(format_version);
+			format_version->LinkEndChild(new TiXmlText("1"));
+		}
+
+		TiXmlElement* metadata = new TiXmlElement("metadata");
+		map->LinkEndChild(metadata);
+		{
+			// TODO: metadata is not currently stored with map data 
+		}
+		
+		TiXmlElement* archetypes = new TiXmlElement("archetypes");
+		map->LinkEndChild(archetypes);
+		{
+			// TODO: archetypes are not currently stored with map data
+		}
+
+		TiXmlElement* geometries = new TiXmlElement("geometries");
+		map->LinkEndChild(geometries);
+		{
+			for(size_t i = 0; i < mapdata->getNumElevations(); ++i) {
+				ElevationPtr e = mapdata->getElevation(i);
+				for(size_t j = 0; j < e->getNumLayers(); ++j) {
+					LayerPtr l = e->getLayer(j);
+
+					// TODO: check for duplication?
+
+					const s_geometry_info& gdata = l->getGeometry()->getInfo();
+					TiXmlElement* geometry = new TiXmlElement("geometry");
+					geometries->LinkEndChild(geometry);
+					{
+						TiXmlElement* id = new TiXmlElement("id");
+						geometry->LinkEndChild(id);
+						id->LinkEndChild(new TiXmlText(int_to_string(gdata.id)));
+
+						TiXmlElement* type = new TiXmlElement("type");
+						geometry->LinkEndChild(type);
+						type->LinkEndChild(new TiXmlText(gdata.geometry));
+
+						TiXmlElement* size = new TiXmlElement("size");
+						geometry->LinkEndChild(size);
+						{
+							TiXmlElement* x = new TiXmlElement("x");
+							size->LinkEndChild(x);
+							x->LinkEndChild(new TiXmlText(int_to_string(gdata.size.x)));
+
+							TiXmlElement* y = new TiXmlElement("y");
+							size->LinkEndChild(y);
+							y->LinkEndChild(new TiXmlText(int_to_string(gdata.size.y)));
+						}
+
+						TiXmlElement* transform = new TiXmlElement("transform");
+						geometry->LinkEndChild(transform);
+						{
+							TiXmlElement* x = new TiXmlElement("x");
+							transform->LinkEndChild(x);
+							x->LinkEndChild(new TiXmlText(int_to_string(gdata.transform.x)));
+
+							TiXmlElement* y = new TiXmlElement("y");
+							transform->LinkEndChild(y);
+							y->LinkEndChild(new TiXmlText(int_to_string(gdata.transform.y)));
+						}
+					}
+				}
+			}
+		}
+
+		for(size_t i = 0; i < mapdata->getNumElevations(); ++i) {
+			map->LinkEndChild(writeElevation(mapdata->getElevation(i)));
+		}
+
+		doc.SaveFile(path);
+	}
+
+	TiXmlElement* XML::writeElevation(ElevationPtr elevation) {
+		TiXmlElement* xml_elevation = new TiXmlElement("elevation");
+
+		TiXmlElement* properties = new TiXmlElement("properties");
+		xml_elevation->LinkEndChild(properties);
+		{
+			TiXmlElement* refgrid = new TiXmlElement("refgrid");
+			properties->LinkEndChild(refgrid);
+			refgrid->LinkEndChild(new TiXmlText(int_to_string(elevation->getReferenceLayer()->getLayerNumber())));
+		}
+
+		TiXmlElement* metadata = new TiXmlElement("metadata");
+		xml_elevation->LinkEndChild(metadata);
+		{
+			// TODO 
+		}
+
+		for(size_t i = 0; i < elevation->getNumLayers(); ++i) {
+			xml_elevation->LinkEndChild(writeLayer(elevation->getLayer(i)));
+		}
+
+		return xml_elevation;
+	}
+
+	TiXmlElement* XML::writeLayer(LayerPtr layer) {
+		TiXmlElement* xml_layer = new TiXmlElement("layer");
+
+		TiXmlElement* properties = new TiXmlElement("properties");
+		xml_layer->LinkEndChild(properties);
+		{
+			TiXmlElement* size = new TiXmlElement("size");
+			properties->LinkEndChild(size);
+			{
+				TiXmlElement* x = new TiXmlElement("x");
+				size->LinkEndChild(x);
+				x->LinkEndChild(new TiXmlText(int_to_string(layer->getLayerWidth())));
+
+				TiXmlElement* y = new TiXmlElement("y");
+				size->LinkEndChild(y);
+				y->LinkEndChild(new TiXmlText(int_to_string(layer->getLayerHeight())));
+			}
+
+			TiXmlElement* geometry = new TiXmlElement("geometry");
+			properties->LinkEndChild(geometry);
+			geometry->LinkEndChild(new TiXmlText(int_to_string(layer->getGeometry()->getInfo().id)));
+		}
+
+		TiXmlElement* metadata = new TiXmlElement("metadata");
+		xml_layer->LinkEndChild(metadata);
+		{
+			// TODO 
+		}
+
+		if(layer->hasTiles()) {
+			TiXmlElement* data = new TiXmlElement("data");
+			xml_layer->LinkEndChild(data);
+			for(int32_t x = 0; x < layer->getLayerWidth(); ++x) { 
+				for(int32_t y = 0; y < layer->getLayerHeight(); ++y) {
+					TiXmlElement* tile = new TiXmlElement("tile");
+					tile->SetAttribute("gid", layer->getTileGID(x,y));
+					data->LinkEndChild(tile);
+				}
+			}
+		}
+
+		if(layer->hasObjects()) {
+			const ObjectList& l = layer->getAllObjects();
+
+			TiXmlElement* objects = new TiXmlElement("objects");
+			xml_layer->LinkEndChild(objects);
+			for(ObjectList::const_iterator it = l.begin(); it != l.end(); ++it) {
+				TiXmlElement* object = new TiXmlElement("object");
+				// TODO: support multiple prototypes? 
+				size_t pid = *((*it)->listPrototypes().begin());
+				object->SetAttribute("prototype",Factory::instance()->getPrototypeName(pid));
+				object->SetAttribute("x",(*it)->getPosition().x);
+				object->SetAttribute("y",(*it)->getPosition().y);
+				objects->LinkEndChild(object);
+			}
+		}
+
+		return xml_layer;
+	}
 
 } } } } // FIFE::map::loaders::xml
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -88,6 +88,11 @@ namespace FIFE { namespace map {
 			static Geometry* createGeometry(size_t id, const Point& mapsize);
 			static void registerGeometry(const s_geometry_info& info);
 
+			/** Get the raw geometry data for this geometry; used to reconstitute
+			 *  an xml map file when saving. Maybe this method should be reconsidered?
+			 */
+			const s_geometry_info& getInfo();
+
 			/** Calculate screen position of the upper left corner of the grid 
 			 *  position
 			 *
@@ -132,6 +137,10 @@ namespace FIFE { namespace map {
 			 *  \return A array of positive floats, size equal to getNumDirections()
 			 */
 			virtual const float* getAdjacentCosts() const = 0;
+
+		private:
+
+			size_t m_gid; // global identifier used to reference this geometry by xml map data
 	};
 
 
