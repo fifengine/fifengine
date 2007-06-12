@@ -10,7 +10,7 @@ def addExtras(context):
 	context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
 	context.checkSimpleLib(['openal'], 'AL/al.h')
 	if context.env['script'] == 'lua':
-		context.checkSimpleLib(['lua5.1'])
+		context.checkSimpleLib(['lua5.1', 'lua-5.1'])
 #		context.checkSimpleLib(['lualib50', 'lua'], 'lualib.h')
 #		context.checkSimpleLib(['lualib'], 'lualib.h', required=0)
 	context.checkSimpleLib(['SDL'], 'SDL.h')
