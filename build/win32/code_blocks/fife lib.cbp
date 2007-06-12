@@ -39,1935 +39,1923 @@
 			<Add option="-O3"/>
 			<Add option="-Wall"/>
 		</Compiler>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\audiomanager.cpp">
+		<Unit filename="..\..\..\engine\audio\audiomanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\audiomanager.h">
+		<Unit filename="..\..\..\engine\audio\audiomanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\buffer.cpp">
+		<Unit filename="..\..\..\engine\audio\buffer.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\buffer.h">
+		<Unit filename="..\..\..\engine\audio\buffer.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\config.h">
+		<Unit filename="..\..\..\engine\audio\config.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\decoder.cpp">
+		<Unit filename="..\..\..\engine\audio\decoder.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\decoder.h">
+		<Unit filename="..\..\..\engine\audio\decoder.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\decoder_acm.cpp">
+		<Unit filename="..\..\..\engine\audio\decoder_acm.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\decoder_acm.h">
+		<Unit filename="..\..\..\engine\audio\decoder_acm.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\decoder_oggvorbis.cpp">
+		<Unit filename="..\..\..\engine\audio\decoder_oggvorbis.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\decoder_oggvorbis.h">
+		<Unit filename="..\..\..\engine\audio\decoder_oggvorbis.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\fife_openal.h">
+		<Unit filename="..\..\..\engine\audio\fife_openal.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\fwd.h">
+		<Unit filename="..\..\..\engine\audio\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\lua\lua_audiomanager.cpp">
+		<Unit filename="..\..\..\engine\audio\lua\lua_audiomanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\lua\lua_audiomanager.h">
+		<Unit filename="..\..\..\engine\audio\lua\lua_audiomanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\source.cpp">
+		<Unit filename="..\..\..\engine\audio\source.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\audio\source.h">
+		<Unit filename="..\..\..\engine\audio\source.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\engine.cpp">
+		<Unit filename="..\..\..\engine\engine.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\engine.h">
+		<Unit filename="..\..\..\engine\engine.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\base\ec_event.h">
+		<Unit filename="..\..\..\engine\eventchannel\base\ec_event.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\base\ec_ievent.h">
+		<Unit filename="..\..\..\engine\eventchannel\base\ec_ievent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\base\ec_iinputevent.h">
+		<Unit filename="..\..\..\engine\eventchannel\base\ec_iinputevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\base\ec_inputevent.h">
+		<Unit filename="..\..\..\engine\eventchannel\base\ec_inputevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\command\ec_command.h">
+		<Unit filename="..\..\..\engine\eventchannel\command\ec_command.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\command\ec_commandids.h">
+		<Unit filename="..\..\..\engine\eventchannel\command\ec_commandids.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\command\ec_icommand.h">
+		<Unit filename="..\..\..\engine\eventchannel\command\ec_icommand.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\command\ec_icommandcontroller.h">
+		<Unit filename="..\..\..\engine\eventchannel\command\ec_icommandcontroller.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\command\ec_icommanddispatcher.h">
+		<Unit filename="..\..\..\engine\eventchannel\command\ec_icommanddispatcher.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\command\ec_icommandlistener.h">
+		<Unit filename="..\..\..\engine\eventchannel\command\ec_icommandlistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\ec_ieventcontroller.h">
+		<Unit filename="..\..\..\engine\eventchannel\ec_ieventcontroller.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\key\ec_ikey.h">
+		<Unit filename="..\..\..\engine\eventchannel\key\ec_ikey.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\key\ec_ikeycontroller.h">
+		<Unit filename="..\..\..\engine\eventchannel\key\ec_ikeycontroller.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\key\ec_ikeyevent.h">
+		<Unit filename="..\..\..\engine\eventchannel\key\ec_ikeyevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\key\ec_ikeylistener.h">
+		<Unit filename="..\..\..\engine\eventchannel\key\ec_ikeylistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\key\ec_key.h">
+		<Unit filename="..\..\..\engine\eventchannel\key\ec_key.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\key\ec_keyevent.h">
+		<Unit filename="..\..\..\engine\eventchannel\key\ec_keyevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\lua\lua_keylistener.cpp">
+		<Unit filename="..\..\..\engine\eventchannel\lua\lua_keylistener.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\lua\lua_keylistener.h">
+		<Unit filename="..\..\..\engine\eventchannel\lua\lua_keylistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\lua\lua_listener.cpp">
+		<Unit filename="..\..\..\engine\eventchannel\lua\lua_listener.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\lua\lua_listener.h">
+		<Unit filename="..\..\..\engine\eventchannel\lua\lua_listener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\lua\lua_mouselistener.cpp">
+		<Unit filename="..\..\..\engine\eventchannel\lua\lua_mouselistener.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\lua\lua_mouselistener.h">
+		<Unit filename="..\..\..\engine\eventchannel\lua\lua_mouselistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\lua\lua_widgetlistener.cpp">
+		<Unit filename="..\..\..\engine\eventchannel\lua\lua_widgetlistener.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\lua\lua_widgetlistener.h">
+		<Unit filename="..\..\..\engine\eventchannel\lua\lua_widgetlistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\manager\eventmanager.cpp">
+		<Unit filename="..\..\..\engine\eventchannel\manager\eventmanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\manager\eventmanager.h">
+		<Unit filename="..\..\..\engine\eventchannel\manager\eventmanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\mouse\ec_imousecontroller.h">
+		<Unit filename="..\..\..\engine\eventchannel\mouse\ec_imousecontroller.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\mouse\ec_imouseevent.h">
+		<Unit filename="..\..\..\engine\eventchannel\mouse\ec_imouseevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\mouse\ec_imouselistener.h">
+		<Unit filename="..\..\..\engine\eventchannel\mouse\ec_imouselistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\mouse\ec_mouseevent.h">
+		<Unit filename="..\..\..\engine\eventchannel\mouse\ec_mouseevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\sdl\ec_isdleventcontroller.h">
+		<Unit filename="..\..\..\engine\eventchannel\sdl\ec_isdleventcontroller.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\sdl\ec_isdleventlistener.h">
+		<Unit filename="..\..\..\engine\eventchannel\sdl\ec_isdleventlistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\source\ec_eventsourcetypes.h">
+		<Unit filename="..\..\..\engine\eventchannel\source\ec_eventsourcetypes.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\source\ec_ieventsource.h">
+		<Unit filename="..\..\..\engine\eventchannel\source\ec_ieventsource.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\widget\ec_iwidgetcontroller.h">
+		<Unit filename="..\..\..\engine\eventchannel\widget\ec_iwidgetcontroller.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\widget\ec_iwidgetevent.h">
+		<Unit filename="..\..\..\engine\eventchannel\widget\ec_iwidgetevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\widget\ec_iwidgetlistener.h">
+		<Unit filename="..\..\..\engine\eventchannel\widget\ec_iwidgetlistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\eventchannel\widget\ec_widgetevent.h">
+		<Unit filename="..\..\..\engine\eventchannel\widget\ec_widgetevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\aafont.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\aafont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\aafont.h">
+		<Unit filename="..\..\..\engine\guichan_addon\aafont.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\advimage.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\advimage.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\advimage.h">
+		<Unit filename="..\..\..\engine\guichan_addon\advimage.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\commandline.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\commandline.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\commandline.h">
+		<Unit filename="..\..\..\engine\guichan_addon\commandline.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\console.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\console.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\console.h">
+		<Unit filename="..\..\..\engine\guichan_addon\console.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\font.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\font.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\font.h">
+		<Unit filename="..\..\..\engine\guichan_addon\font.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\fontcache.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\fontcache.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\fontcache.h">
+		<Unit filename="..\..\..\engine\guichan_addon\fontcache.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\fwd.h">
+		<Unit filename="..\..\..\engine\guichan_addon\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\guichanfont.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\guichanfont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\guichanfont.h">
+		<Unit filename="..\..\..\engine\guichan_addon\guichanfont.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\icon2.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\icon2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\icon2.hpp">
+		<Unit filename="..\..\..\engine\guichan_addon\icon2.hpp">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\sdlimagefont.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\sdlimagefont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\sdlimagefont.hpp">
+		<Unit filename="..\..\..\engine\guichan_addon\sdlimagefont.hpp">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\sdltruetypefont.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\sdltruetypefont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\sdltruetypefont.hpp">
+		<Unit filename="..\..\..\engine\guichan_addon\sdltruetypefont.hpp">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\twobutton.cpp">
+		<Unit filename="..\..\..\engine\guichan_addon\twobutton.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\guichan_addon\twobutton.h">
+		<Unit filename="..\..\..\engine\guichan_addon\twobutton.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\input\events.h">
+		<Unit filename="..\..\..\engine\input\events.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\input\fwd.h">
+		<Unit filename="..\..\..\engine\input\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\input\inputmanager.cpp">
+		<Unit filename="..\..\..\engine\input\inputmanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\input\inputmanager.h">
+		<Unit filename="..\..\..\engine\input\inputmanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\input\listener.h">
+		<Unit filename="..\..\..\engine\input\listener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\input\lua\lua_inputmanager.cpp">
+		<Unit filename="..\..\..\engine\input\lua\lua_inputmanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\input\lua\lua_inputmanager.h">
+		<Unit filename="..\..\..\engine\input\lua\lua_inputmanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\action.h">
+		<Unit filename="..\..\..\engine\map\action.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\archetype.cpp">
+		<Unit filename="..\..\..\engine\map\archetype.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\archetype.h">
+		<Unit filename="..\..\..\engine\map\archetype.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\archetype_loader.h">
+		<Unit filename="..\..\..\engine\map\archetype_loader.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\asyncbridge.cpp">
+		<Unit filename="..\..\..\engine\map\asyncbridge.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\asyncbridge.h">
+		<Unit filename="..\..\..\engine\map\asyncbridge.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\camera.cpp">
+		<Unit filename="..\..\..\engine\map\camera.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\camera.h">
+		<Unit filename="..\..\..\engine\map\camera.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\command.h">
+		<Unit filename="..\..\..\engine\map\command\command.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\enqueueaction.cpp">
+		<Unit filename="..\..\..\engine\map\command\enqueueaction.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\enqueueaction.h">
+		<Unit filename="..\..\..\engine\map\command\enqueueaction.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\fwd.h">
+		<Unit filename="..\..\..\engine\map\command\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\info.h">
+		<Unit filename="..\..\..\engine\map\command\info.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\setvisual.cpp">
+		<Unit filename="..\..\..\engine\map\command\setvisual.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\setvisual.h">
+		<Unit filename="..\..\..\engine\map\command\setvisual.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\startmovement.cpp">
+		<Unit filename="..\..\..\engine\map\command\startmovement.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\command\startmovement.h">
+		<Unit filename="..\..\..\engine\map\command\startmovement.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\control.cpp">
+		<Unit filename="..\..\..\engine\map\control.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\control.h">
+		<Unit filename="..\..\..\engine\map\control.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\effects\fade.cpp">
+		<Unit filename="..\..\..\engine\map\effects\fade.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\effects\fade.h">
+		<Unit filename="..\..\..\engine\map\effects\fade.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\effects\fwd.h">
+		<Unit filename="..\..\..\engine\map\effects\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\effects\visualeffect.cpp">
+		<Unit filename="..\..\..\engine\map\effects\visualeffect.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\effects\visualeffect.h">
+		<Unit filename="..\..\..\engine\map\effects\visualeffect.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\elevation.cpp">
+		<Unit filename="..\..\..\engine\map\elevation.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\elevation.h">
+		<Unit filename="..\..\..\engine\map\elevation.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\event.h">
+		<Unit filename="..\..\..\engine\map\event.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\factory.cpp">
+		<Unit filename="..\..\..\engine\map\factory.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\factory.h">
+		<Unit filename="..\..\..\engine\map\factory.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\fwd.h">
+		<Unit filename="..\..\..\engine\map\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\geometry.cpp">
+		<Unit filename="..\..\..\engine\map\geometry.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\geometry.h">
+		<Unit filename="..\..\..\engine\map\geometry.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\gridgeometry.cpp">
+		<Unit filename="..\..\..\engine\map\gridgeometry.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\gridgeometry.h">
+		<Unit filename="..\..\..\engine\map\gridgeometry.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\hexgeometry.cpp">
+		<Unit filename="..\..\..\engine\map\hexgeometry.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\hexgeometry.h">
+		<Unit filename="..\..\..\engine\map\hexgeometry.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\layer.cpp">
+		<Unit filename="..\..\..\engine\map\layer.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\layer.h">
+		<Unit filename="..\..\..\engine\map\layer.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loader.h">
+		<Unit filename="..\..\..\engine\map\loader.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\animatedpal.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\animatedpal.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\animatedpal.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\animatedpal.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\coloroverride.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\coloroverride.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\coloroverride.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\coloroverride.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\critlst.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\critlst.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\critlst.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\critlst.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\dat1.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\dat1.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\dat1.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\dat1.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\dat2.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\dat2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\dat2.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\dat2.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\fallout.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\fallout.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\fallout.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\fallout.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\frm.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\frm.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\frm.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\frm.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\fwd.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\header.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\header.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\header.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\header.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\list.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\list.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\list.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\list.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\lzssdecoder.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\lzssdecoder.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\lzssdecoder.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\lzssdecoder.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\objectfactory.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\objectfactory.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\objectfactory.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\objectfactory.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\pal.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\pal.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\pal.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\pal.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\providerdat1.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\providerdat1.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\providerdat1.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\providerdat1.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\providerdat2.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\providerdat2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\providerdat2.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\providerdat2.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\rawdatadat1.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\rawdatadat1.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\rawdatadat1.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\rawdatadat1.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\rawdatadat2.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\rawdatadat2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\rawdatadat2.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\rawdatadat2.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\remove_all.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\remove_all.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\fallout\remove_all.h">
+		<Unit filename="..\..\..\engine\map\loaders\fallout\remove_all.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\xml\fwd.h">
+		<Unit filename="..\..\..\engine\map\loaders\xml\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\xml\prototype.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\xml\prototype.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\xml\prototype.h">
+		<Unit filename="..\..\..\engine\map\loaders\xml\prototype.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\xml\xml.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\xml\xml.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\xml\xml.h">
+		<Unit filename="..\..\..\engine\map\loaders\xml\xml.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\xml\xml_archetype.cpp">
+		<Unit filename="..\..\..\engine\map\loaders\xml\xml_archetype.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\loaders\xml\xml_archetype.h">
+		<Unit filename="..\..\..\engine\map\loaders\xml\xml_archetype.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\location.cpp">
+		<Unit filename="..\..\..\engine\map\location.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\location.h">
+		<Unit filename="..\..\..\engine\map\location.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_elevation.cpp">
+		<Unit filename="..\..\..\engine\map\lua\lua_elevation.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_elevation.h">
+		<Unit filename="..\..\..\engine\map\lua\lua_elevation.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_layer.cpp">
+		<Unit filename="..\..\..\engine\map\lua\lua_layer.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_layer.h">
+		<Unit filename="..\..\..\engine\map\lua\lua_layer.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_map.cpp">
+		<Unit filename="..\..\..\engine\map\lua\lua_map.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_map.h">
+		<Unit filename="..\..\..\engine\map\lua\lua_map.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_mapcamera.cpp">
+		<Unit filename="..\..\..\engine\map\lua\lua_mapcamera.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_mapcamera.h">
+		<Unit filename="..\..\..\engine\map\lua\lua_mapcamera.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_mapcontrol.cpp">
+		<Unit filename="..\..\..\engine\map\lua\lua_mapcontrol.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_mapcontrol.h">
+		<Unit filename="..\..\..\engine\map\lua\lua_mapcontrol.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_object.cpp">
+		<Unit filename="..\..\..\engine\map\lua\lua_object.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\lua\lua_object.h">
+		<Unit filename="..\..\..\engine\map\lua\lua_object.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\map.cpp">
+		<Unit filename="..\..\..\engine\map\map.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\map.h">
+		<Unit filename="..\..\..\engine\map\map.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\object_list.cpp">
+		<Unit filename="..\..\..\engine\map\object_list.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\object_list.h">
+		<Unit filename="..\..\..\engine\map\object_list.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\objectinfo.cpp">
+		<Unit filename="..\..\..\engine\map\objectinfo.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\objectinfo.h">
+		<Unit filename="..\..\..\engine\map\objectinfo.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\runner.cpp">
+		<Unit filename="..\..\..\engine\map\runner.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\runner.h">
+		<Unit filename="..\..\..\engine\map\runner.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\scriptingslave.cpp">
+		<Unit filename="..\..\..\engine\map\scriptingslave.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\scriptingslave.h">
+		<Unit filename="..\..\..\engine\map\scriptingslave.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\selection.cpp">
+		<Unit filename="..\..\..\engine\map\selection.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\selection.h">
+		<Unit filename="..\..\..\engine\map\selection.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\service.cpp">
+		<Unit filename="..\..\..\engine\map\service.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\service.h">
+		<Unit filename="..\..\..\engine\map\service.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\view.cpp">
+		<Unit filename="..\..\..\engine\map\view.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\view.h">
+		<Unit filename="..\..\..\engine\map\view.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\viewgamestate.cpp">
+		<Unit filename="..\..\..\engine\map\viewgamestate.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\viewgamestate.h">
+		<Unit filename="..\..\..\engine\map\viewgamestate.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\visual.cpp">
+		<Unit filename="..\..\..\engine\map\visual.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\visual.h">
+		<Unit filename="..\..\..\engine\map\visual.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\visualtree.cpp">
+		<Unit filename="..\..\..\engine\map\visualtree.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\map\visualtree.h">
+		<Unit filename="..\..\..\engine\map\visualtree.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\fwd.h">
+		<Unit filename="..\..\..\engine\script\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\fwd.h">
+		<Unit filename="..\..\..\engine\script\gui\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_aafont.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_aafont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_button.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_button.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_checkbox.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_checkbox.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_clicklabel.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_clicklabel.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_color.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_color.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_container.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_container.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_dropdown.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_dropdown.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_icon.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_icon.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_image.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_image.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_imagefont.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_imagefont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_label.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_label.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_listbox.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_listbox.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_listmodel.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_listmodel.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_radiobutton.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_radiobutton.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_scrollarea.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_scrollarea.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_slider.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_slider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_textbox.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_textbox.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_textfield.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_textfield.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_ttfont.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_ttfont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_twobutton.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_twobutton.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_widget.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_widget.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lg_window.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lg_window.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lua_gui_actionlistener.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lua_gui_actionlistener.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lua_gui_actionlistener.h">
+		<Unit filename="..\..\..\engine\script\gui\lua_gui_actionlistener.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lua_guimanager.cpp">
+		<Unit filename="..\..\..\engine\script\gui\lua_guimanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\lua_guimanager.h">
+		<Unit filename="..\..\..\engine\script\gui\lua_guimanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\gui\luagui.h">
+		<Unit filename="..\..\..\engine\script\gui\luagui.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua.hpp">
+		<Unit filename="..\..\..\engine\script\lua.hpp">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_console.cpp">
+		<Unit filename="..\..\..\engine\script\lua_console.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_console.h">
+		<Unit filename="..\..\..\engine\script\lua_console.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_engine.cpp">
+		<Unit filename="..\..\..\engine\script\lua_engine.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_engine.h">
+		<Unit filename="..\..\..\engine\script\lua_engine.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_gamestatemanager.cpp">
+		<Unit filename="..\..\..\engine\script\lua_gamestatemanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_gamestatemanager.h">
+		<Unit filename="..\..\..\engine\script\lua_gamestatemanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_ref.cpp">
+		<Unit filename="..\..\..\engine\script\lua_ref.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_ref.h">
+		<Unit filename="..\..\..\engine\script\lua_ref.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_stackguard.cpp">
+		<Unit filename="..\..\..\engine\script\lua_stackguard.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_stackguard.h">
+		<Unit filename="..\..\..\engine\script\lua_stackguard.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_table.cpp">
+		<Unit filename="..\..\..\engine\script\lua_table.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lua_table.h">
+		<Unit filename="..\..\..\engine\script\lua_table.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\luascript.cpp">
+		<Unit filename="..\..\..\engine\script\luascript.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\luascript.h">
+		<Unit filename="..\..\..\engine\script\luascript.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\lunar.h">
+		<Unit filename="..\..\..\engine\script\lunar.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\scriptcontainer.cpp">
+		<Unit filename="..\..\..\engine\script\scriptcontainer.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\script\scriptcontainer.h">
+		<Unit filename="..\..\..\engine\script\scriptcontainer.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\solver\graph.h">
+		<Unit filename="..\..\..\engine\solver\graph.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\solver\micropather_solver\micropather.cpp">
+		<Unit filename="..\..\..\engine\solver\micropather_solver\micropather.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\solver\micropather_solver\micropather.h">
+		<Unit filename="..\..\..\engine\solver\micropather_solver\micropather.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\solver\solver.h">
+		<Unit filename="..\..\..\engine\solver\solver.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\attributedclass.cpp">
+		<Unit filename="..\..\..\engine\util\attributedclass.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\attributedclass.h">
+		<Unit filename="..\..\..\engine\util\attributedclass.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\backendmanager.h">
+		<Unit filename="..\..\..\engine\util\backendmanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\debugutils.h">
+		<Unit filename="..\..\..\engine\util\debugutils.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\exception.cpp">
+		<Unit filename="..\..\..\engine\util\exception.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\exception.h">
+		<Unit filename="..\..\..\engine\util\exception.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\fife_math.h">
+		<Unit filename="..\..\..\engine\util\fife_math.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\fife_stdint.h">
+		<Unit filename="..\..\..\engine\util\fife_stdint.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\fwd.h">
+		<Unit filename="..\..\..\engine\util\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\gamestate\gamestate.cpp">
+		<Unit filename="..\..\..\engine\util\gamestate\gamestate.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\gamestate\gamestate.h">
+		<Unit filename="..\..\..\engine\util\gamestate\gamestate.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\gamestate\gamestatemanager.cpp">
+		<Unit filename="..\..\..\engine\util\gamestate\gamestatemanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\gamestate\gamestatemanager.h">
+		<Unit filename="..\..\..\engine\util\gamestate\gamestatemanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\log.cpp">
+		<Unit filename="..\..\..\engine\util\log.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\log.h">
+		<Unit filename="..\..\..\engine\util\log.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\point.cpp">
+		<Unit filename="..\..\..\engine\util\point.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\point.h">
+		<Unit filename="..\..\..\engine\util\point.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\purge.h">
+		<Unit filename="..\..\..\engine\util\purge.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\quadtree.h">
+		<Unit filename="..\..\..\engine\util\quadtree.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\rect.cpp">
+		<Unit filename="..\..\..\engine\util\rect.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\rect.h">
+		<Unit filename="..\..\..\engine\util\rect.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\settingsmanager.cpp">
+		<Unit filename="..\..\..\engine\util\settingsmanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\settingsmanager.h">
+		<Unit filename="..\..\..\engine\util\settingsmanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\singleton.h">
+		<Unit filename="..\..\..\engine\util\singleton.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\time\lua\lua_timer.cpp">
+		<Unit filename="..\..\..\engine\util\time\lua\lua_timer.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\time\lua\lua_timer.h">
+		<Unit filename="..\..\..\engine\util\time\lua\lua_timer.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\time\timeevent.cpp">
+		<Unit filename="..\..\..\engine\util\time\timeevent.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\time\timeevent.h">
+		<Unit filename="..\..\..\engine\util\time\timeevent.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\time\timemanager.cpp">
+		<Unit filename="..\..\..\engine\util\time\timemanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\time\timemanager.h">
+		<Unit filename="..\..\..\engine\util\time\timemanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\time\timer.cpp">
+		<Unit filename="..\..\..\engine\util\time\timer.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\util\time\timer.h">
+		<Unit filename="..\..\..\engine\util\time\timer.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\lua\lua_vfs.cpp">
+		<Unit filename="..\..\..\engine\vfs\lua\lua_vfs.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\lua\lua_vfs.h">
+		<Unit filename="..\..\..\engine\vfs\lua\lua_vfs.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\fwd.h">
+		<Unit filename="..\..\..\engine\vfs\raw\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\rawdata.cpp">
+		<Unit filename="..\..\..\engine\vfs\raw\rawdata.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\rawdata.h">
+		<Unit filename="..\..\..\engine\vfs\raw\rawdata.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\rawdatafile.cpp">
+		<Unit filename="..\..\..\engine\vfs\raw\rawdatafile.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\rawdatafile.h">
+		<Unit filename="..\..\..\engine\vfs\raw\rawdatafile.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\rawdatamemsource.cpp">
+		<Unit filename="..\..\..\engine\vfs\raw\rawdatamemsource.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\rawdatamemsource.h">
+		<Unit filename="..\..\..\engine\vfs\raw\rawdatamemsource.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\rawdatasource.cpp">
+		<Unit filename="..\..\..\engine\vfs\raw\rawdatasource.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\raw\rawdatasource.h">
+		<Unit filename="..\..\..\engine\vfs\raw\rawdatasource.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\zip\zipprovider.cpp">
+		<Unit filename="..\..\..\engine\vfs\zip\zipprovider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\zip\zipprovider.h">
+		<Unit filename="..\..\..\engine\vfs\zip\zipprovider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\zip\zipsource.cpp">
+		<Unit filename="..\..\..\engine\vfs\zip\zipsource.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\zip\zipsource.h">
+		<Unit filename="..\..\..\engine\vfs\zip\zipsource.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\action.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\animation.cpp">
+		<Unit filename="..\..\..\engine\video\animation.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\animation.h">
+		<Unit filename="..\..\..\engine\video\animation.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\complexanimation.cpp">
+		<Unit filename="..\..\..\engine\video\complexanimation.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\complexanimation.h">
+		<Unit filename="..\..\..\engine\video\complexanimation.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\fwd.h">
+		<Unit filename="..\..\..\engine\video\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\gui\fwd.h">
+		<Unit filename="..\..\..\engine\video\gui\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\gui\gcnfifeimage.cpp">
+		<Unit filename="..\..\..\engine\video\gui\gcnfifeimage.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\gui\gcnfifeimage.h">
+		<Unit filename="..\..\..\engine\video\gui\gcnfifeimage.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\gui\gcnimageloader.cpp">
+		<Unit filename="..\..\..\engine\video\gui\gcnimageloader.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\gui\gcnimageloader.h">
+		<Unit filename="..\..\..\engine\video\gui\gcnimageloader.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\gui\guimanager.cpp">
+		<Unit filename="..\..\..\engine\video\gui\guimanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\gui\guimanager.h">
+		<Unit filename="..\..\..\engine\video\gui\guimanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\image.cpp">
+		<Unit filename="..\..\..\engine\video\image.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\image.h">
+		<Unit filename="..\..\..\engine\video\image.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\imagecache.cpp">
+		<Unit filename="..\..\..\engine\video\imagecache.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\imagecache.h">
+		<Unit filename="..\..\..\engine\video\imagecache.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\animation_provider.cpp">
+		<Unit filename="..\..\..\engine\video\loaders\animation_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\animation_provider.h">
+		<Unit filename="..\..\..\engine\video\loaders\animation_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\complexanimation_provider.cpp">
+		<Unit filename="..\..\..\engine\video\loaders\complexanimation_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\complexanimation_provider.h">
+		<Unit filename="..\..\..\engine\video\loaders\complexanimation_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\frm_provider.cpp">
+		<Unit filename="..\..\..\engine\video\loaders\frm_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\frm_provider.h">
+		<Unit filename="..\..\..\engine\video\loaders\frm_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\image_provider.cpp">
+		<Unit filename="..\..\..\engine\video\loaders\image_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\image_provider.h">
+		<Unit filename="..\..\..\engine\video\loaders\image_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\subimage_provider.cpp">
+		<Unit filename="..\..\..\engine\video\loaders\subimage_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\loaders\subimage_provider.h">
+		<Unit filename="..\..\..\engine\video\loaders\subimage_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\partialaction.cpp">
+		<Unit filename="..\..\..\engine\video\partialaction.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\partialaction.h">
+		<Unit filename="..\..\..\engine\video\partialaction.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\pixelbuffer.cpp">
+		<Unit filename="..\..\..\engine\video\pixelbuffer.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\pixelbuffer.h">
+		<Unit filename="..\..\..\engine\video\pixelbuffer.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderable.cpp">
+		<Unit filename="..\..\..\engine\video\renderable.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderable.h">
+		<Unit filename="..\..\..\engine\video\renderable.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderable_location.cpp">
+		<Unit filename="..\..\..\engine\video\renderable_location.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderable_location.h">
+		<Unit filename="..\..\..\engine\video\renderable_location.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderable_provider.cpp">
+		<Unit filename="..\..\..\engine\video\renderable_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderable_provider.h">
+		<Unit filename="..\..\..\engine\video\renderable_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackend.cpp">
+		<Unit filename="..\..\..\engine\video\renderbackend.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackend.h">
+		<Unit filename="..\..\..\engine\video\renderbackend.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\opengl\fife_opengl.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\opengl\fife_opengl.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\opengl\fwd.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\opengl\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\opengl\glimage.cpp">
+		<Unit filename="..\..\..\engine\video\renderbackends\opengl\glimage.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\opengl\glimage.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\opengl\glimage.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\opengl\glscreen.cpp">
+		<Unit filename="..\..\..\engine\video\renderbackends\opengl\glscreen.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\opengl\glscreen.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\opengl\glscreen.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\opengl\renderbackendopengl.cpp">
+		<Unit filename="..\..\..\engine\video\renderbackends\opengl\renderbackendopengl.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\opengl\renderbackendopengl.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\opengl\renderbackendopengl.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\fwd.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\renderbackendsdl.cpp">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\renderbackendsdl.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\renderbackendsdl.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\renderbackendsdl.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\sdlblendingfunctions.cpp">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\sdlblendingfunctions.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\sdlblendingfunctions.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\sdlblendingfunctions.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\sdlimage.cpp">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\sdlimage.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\sdlimage.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\sdlimage.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\sdlscreen.cpp">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\sdlscreen.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\renderbackends\sdl\sdlscreen.h">
+		<Unit filename="..\..\..\engine\video\renderbackends\sdl\sdlscreen.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\rendermanager.cpp">
+		<Unit filename="..\..\..\engine\video\rendermanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\rendermanager.h">
+		<Unit filename="..\..\..\engine\video\rendermanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\screen.cpp">
+		<Unit filename="..\..\..\engine\video\screen.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\video\screen.h">
+		<Unit filename="..\..\..\engine\video\screen.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\tinyxml\fwd.h">
+		<Unit filename="..\..\..\engine\xml\tinyxml\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\tinyxml\tinystr.cpp">
+		<Unit filename="..\..\..\engine\xml\tinyxml\tinystr.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\tinyxml\tinystr.h">
+		<Unit filename="..\..\..\engine\xml\tinyxml\tinystr.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\tinyxml\tinyxml.cpp">
+		<Unit filename="..\..\..\engine\xml\tinyxml\tinyxml.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\tinyxml\tinyxml.h">
+		<Unit filename="..\..\..\engine\xml\tinyxml\tinyxml.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\tinyxml\tinyxmlerror.cpp">
+		<Unit filename="..\..\..\engine\xml\tinyxml\tinyxmlerror.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\tinyxml\tinyxmlparser.cpp">
+		<Unit filename="..\..\..\engine\xml\tinyxml\tinyxmlparser.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\xmlutil.cpp">
+		<Unit filename="..\..\..\engine\xml\xmlutil.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\xml\xmlutil.h">
+		<Unit filename="..\..\..\engine\xml\xmlutil.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\vfs.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfs.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\vfshostsystem.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfshostsystem.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\vfssource.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfssource.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\vfssourcefactory.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfssourcefactory.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\trunk\engine\vfs\vfssourceprovider.cpp">
+		<Unit filename="..\..\..\engine\vfs\vfssourceprovider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
