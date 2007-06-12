@@ -110,7 +110,7 @@ def get_msvc_repr(d, tabcount=2, curpath=''):
 		
 _jp = os.path.join
 msvcbuildpath = _jp('..', 'build', 'win32', 'msvc2005')
-vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep), 1)[1] for f in projectfiles]
+vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1] for f in projectfiles]
 xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
 projtxt = open(_jp(msvcbuildpath, 'fifeproj_template.xml'), 'r').read()
 projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
@@ -136,7 +136,7 @@ codeblocksCppDef = \
 cbbuildpath = _jp('..', 'build', 'win32', 'code_blocks')
 xmlstr = []
 for f in projectfiles:
-	newf = os.path.abspath(f).split('%sengine%s' % (_sep, _sep), 1)[1]
+	newf = os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1]
 	newf = newf.replace('/', '\\')
 	if f in headerfiles:
 		xmlstr.append(codeblocksHeaderDef % newf)
