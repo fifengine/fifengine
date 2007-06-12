@@ -569,7 +569,23 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		TiXmlElement* archetypes = new TiXmlElement("archetypes");
 		map->LinkEndChild(archetypes);
 		{
-			// TODO: archetypes are not currently stored with map data
+			// TODO: this method just dumps all loaded archetypes. since
+			// archetypes don't seem to be flushed when a new map is loaded,
+			// this is incorrect behavior.
+			
+			std::list<Archetype*> l = Factory::instance()->dumpArchetypes();
+
+			for(std::list<Archetype*>::iterator it = l.begin(); it != l.end(); ++it) {
+				// there seems to be an "embedded" entry for every normal
+				// entry in the list; I don't think we want these
+				if((*it)->getFilename() == "embedded")
+					continue;
+
+				TiXmlElement* archetype = new TiXmlElement("archetype");
+				archetypes->LinkEndChild(archetype);
+				archetype->SetAttribute("type", (*it)->getTypeName());
+				archetype->SetAttribute("source", (*it)->getFilename());
+			}
 		}
 
 		TiXmlElement* geometries = new TiXmlElement("geometries");

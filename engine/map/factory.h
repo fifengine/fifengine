@@ -101,6 +101,12 @@ namespace FIFE { namespace map {
 			 */
 			void addArchetype(Archetype* archetype);
 
+			/** Get a complete listing of currently loaded archetypes
+			 *  @note maybe this should be made private? it's only currently
+			 *  used to for saving data to xml...
+			 */
+			std::list<Archetype*>& dumpArchetypes();
+
 			/** Map type to an internal id
 			 *  
 			 */
@@ -201,6 +207,11 @@ namespace FIFE { namespace map {
 
 		const s_proto& proto = m_protoid_map[proto_id];
 		return proto.name_iterator->first;
+	}
+
+	inline
+	std::list<Archetype*>& Factory::dumpArchetypes() {
+		return m_archetypes;
 	}
 
 	inline
