@@ -59,6 +59,7 @@ namespace FIFE {
 		CMD_TEST_DECREASE_ALPHA   = 208,
 		CMD_TEST_TOGGLE_COORDS    = 209,
 		CMD_TEST_TOGGLE_FADEOUT   = 210,
+		CMD_TEST_SAVE             = 211,
 		// Used by Engine.
 		CMD_MAKE_SCREENSHOT = 401,
 		CMD_QUIT_GAME       = 402,

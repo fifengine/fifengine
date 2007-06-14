@@ -107,6 +107,10 @@ namespace FIFE { namespace map {
 		Log("map::factory") << "no loader succeeded for " << path << " :(";
 		return MapPtr();
 	}
+	
+	void Factory::saveMap(MapPtr map, const std::string& path) {
+		m_loaders["XMLMap"]->saveFile(path,map);
+	}
 
 	void Factory::registerArchetypeLoader(const std::string& type, ArchetypeLoaderBase* loader) {
 		assert( loader );

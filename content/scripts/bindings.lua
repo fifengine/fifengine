@@ -27,6 +27,7 @@ TEST_INCREASE_ALPHA   = 207
 TEST_DECREASE_ALPHA   = 208
 TEST_TOGGLE_COORDS    = 209
 TEST_TOGGLE_FADEOUT   = 210
+TEST_SAVE             = 211
 
 GUI_TOGGLE_CONSOLE  = 602
 
@@ -66,6 +67,7 @@ key_setup('map_view', {
     SDLK_g       = TEST_TOGGLE_OBJ_GRID,
     SDLK_c       = TEST_TOGGLE_COORDS,
     SDLK_d       = TEST_TOGGLE_FADEOUT,
+    SDLK_v       = TEST_SAVE,
 })
 
 -- equivalent to above:

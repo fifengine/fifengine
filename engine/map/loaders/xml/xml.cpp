@@ -121,9 +121,6 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			throw;
 		}
 
-		// temporary debug saving! delete this later
-		saveFile("content/maps/savefile.xml",m_map);
-
 		return m_map;
 	}
 
@@ -560,11 +557,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			format_version->LinkEndChild(new TiXmlText("1"));
 		}
 
-		TiXmlElement* metadata = new TiXmlElement("metadata");
-		map->LinkEndChild(metadata);
-		{
-			// TODO: metadata is not currently stored with map data 
-		}
+		// metadata
+		map->LinkEndChild(mapdata->recoverXml());
 		
 		TiXmlElement* archetypes = new TiXmlElement("archetypes");
 		map->LinkEndChild(archetypes);
@@ -656,11 +650,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			refgrid->LinkEndChild(new TiXmlText(int_to_string(elevation->getReferenceLayer()->getLayerNumber())));
 		}
 
-		TiXmlElement* metadata = new TiXmlElement("metadata");
-		xml_elevation->LinkEndChild(metadata);
-		{
-			// TODO 
-		}
+		xml_elevation->LinkEndChild(elevation->recoverXml());
 
 		for(size_t i = 0; i < elevation->getNumLayers(); ++i) {
 			xml_elevation->LinkEndChild(writeLayer(elevation->getLayer(i)));
@@ -692,17 +682,13 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			geometry->LinkEndChild(new TiXmlText(int_to_string(layer->getGeometry()->getInfo().id)));
 		}
 
-		TiXmlElement* metadata = new TiXmlElement("metadata");
-		xml_layer->LinkEndChild(metadata);
-		{
-			// TODO 
-		}
+		xml_layer->LinkEndChild(layer->recoverXml());
 
 		if(layer->hasTiles()) {
 			TiXmlElement* data = new TiXmlElement("data");
 			xml_layer->LinkEndChild(data);
-			for(int32_t x = 0; x < layer->getLayerWidth(); ++x) { 
-				for(int32_t y = 0; y < layer->getLayerHeight(); ++y) {
+			for(int32_t y = 0; y < layer->getLayerHeight(); ++y) {
+				for(int32_t x = 0; x < layer->getLayerWidth(); ++x) { 
 					TiXmlElement* tile = new TiXmlElement("tile");
 					tile->SetAttribute("gid", layer->getTileGID(x,y));
 					data->LinkEndChild(tile);

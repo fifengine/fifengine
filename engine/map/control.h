@@ -71,6 +71,10 @@ namespace map {
 			 */
 			void load(const std::string& filename);
 
+			/** Save the map to a map file
+			 */
+			void save(const std::string& filename);
+
 			/** Sets a map to be controlled
 			 *  If a map is already in use, this will call @b stop()
 			 *  but not @b start().

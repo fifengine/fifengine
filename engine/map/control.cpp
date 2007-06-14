@@ -85,6 +85,10 @@ namespace FIFE { namespace map {
 		setMap(map);
 	}
 
+	void Control::save(const std::string& filename) {
+		Factory::instance()->saveMap(m_map, filename);
+	}
+
 	void Control::setMap(MapPtr map) {
 		if (map->getNumElevations() == 0) {
 			Warn("map_control") 

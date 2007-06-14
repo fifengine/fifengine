@@ -213,6 +213,11 @@ namespace FIFE { namespace map {
 				if(roof_grid)
 					roof_grid->addToGlobalAlpha(-5);
 				break;
+
+			case FIFE::Event::TEST_SAVE:
+				if(m_control)
+					m_control->save("content/maps/savefile.xml");
+				break;
 	
 			default:
 				break;

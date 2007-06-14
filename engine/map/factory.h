@@ -89,6 +89,11 @@ namespace FIFE { namespace map {
 			 */
 			MapPtr loadMap(const std::string& path);
 
+			/** Saves the map
+			 * @param the map to be saved.
+			 */
+			void saveMap(MapPtr map, const std::string& path);
+
 			/** Load an archetype (collection of tileid/prototypes) from a file.
 			 */
 			void loadArchetype(const std::string& type, const std::string& filename);

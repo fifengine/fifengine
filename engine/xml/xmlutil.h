@@ -36,7 +36,7 @@
 #include "util/point.h"
 #include "util/rect.h"
 
-#include "tinyxml/tinyxml.h"
+#include "xml/tinyxml/tinyxml.h"
 
 namespace FIFE {
 	class AttributedClass;

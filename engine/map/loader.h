@@ -46,6 +46,14 @@ namespace FIFE { namespace map {
 			const std::string& getName() const { return m_name; }
 
 			virtual MapPtr loadFile(const std::string& path) = 0;
+			
+			/**
+			 * @note saving to fallout format is not currently supported;
+			 * such an attempt will fail silently.
+			 */
+			virtual void saveFile(const std::string & path, MapPtr map)
+			{
+			}
 
 		private:
 			std::string m_name;
