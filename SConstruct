@@ -10,11 +10,14 @@ opts.Add(BoolOption('lite',   'Build the lite version of the library (used for e
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
 opts.Add(BoolOption('projfiles',  "Create IDE project files. If defined, won't build code", 0))
 opts.Add(BoolOption('utils',  'Build utilities', 0))
+opts.Add(BoolOption('ext',  'Build external dependencies', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
 opts.Add(BoolOption('movie', 'Enable movie playback', 0))
 opts.Add(BoolOption('shared', 'Build libfife as a shared library', 0))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
+env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
+rootp = env['SCONS_ROOT_PATH']
 
 Help(opts.GenerateHelpText(env))
 
@@ -159,10 +162,12 @@ else:
 		if sys.platform == 'darwin':
 			env.Object('engine/SDLMain.m')
 			enginefiles.append('engine/SDLMain.o')
+		if env['ext']:
+			SConscript('ext/SConscript')
 		if env['shared']:
-			env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine'])
+			env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
 		else:
-			env.Program('fife_engine', enginefiles)
+			env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,ext/install/lib'])
 		
 		if env['testcases']:
 			SConscript('tests/unit_tests/SConscript')

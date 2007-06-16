@@ -3,10 +3,11 @@ def initEnvironment(env):
 
 def addExtras(context):
 	context.env.Append(LIBS = 'm')
-	context.env.Append(LIBPATH = "/opt/lib")
-	context.env.Append(CPPPATH = "/opt/include")
+	context.env.Replace(LIBPATH = ['/opt/lib', '%s/ext/install/lib' % context.env['SCONS_ROOT_PATH']])
+	context.env.Append(CPPPATH = ['/opt/include', 
+	                              '/usr/include/vorbis', 
+	                              '%s/ext/install/include' % context.env['SCONS_ROOT_PATH']])
 	
-	context.env.Append(CPPPATH = ['/usr/include/vorbis'])
 	context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
 	context.checkSimpleLib(['openal'], 'AL/al.h')
 	if context.env['script'] == 'lua':
