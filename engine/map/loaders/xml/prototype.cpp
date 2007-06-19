@@ -32,7 +32,7 @@
 #include "util/purge.h"
 #include "xml/xmlutil.h"
 #include "map/factory.h"
-#include "map/objectinfo.h"
+#include "map/structures/objectinfo.h"
 
 #include "prototype.h"
 

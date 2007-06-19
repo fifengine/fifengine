@@ -30,13 +30,13 @@
 #include "video/complexanimation.h"
 #include "video/renderable.h"
 #include "map/effects/visualeffect.h"
+#include "map/geometries/geometry.h"
 #include "util/debugutils.h"
 #include "video/imagecache.h"
+#include "map/structures/objectinfo.h"
+#include "map/structures/layer.h"
 
-#include "geometry.h"
-#include "objectinfo.h"
 #include "visual.h"
-#include "layer.h"
 
 namespace FIFE { namespace map { 
 

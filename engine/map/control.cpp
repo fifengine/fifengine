@@ -36,13 +36,13 @@
 #include "util/exception.h"
 #include "util/log.h"
 #include "util/settingsmanager.h"
+#include "structures/elevation.h"
+#include "structures/objectinfo.h"
+#include "structures/map.h"
 
 #include "camera.h"
 #include "control.h"
-#include "elevation.h"
-#include "objectinfo.h"
 #include "factory.h"
-#include "map.h"
 #include "runner.h"
 #include "view.h"
 

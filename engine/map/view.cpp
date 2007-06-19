@@ -33,6 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/effects/fade.h"
+#include "map/geometries/geometry.h"
 #include "video/animation.h"
 #include "video/renderable.h"
 #include "video/screen.h"
@@ -41,13 +42,13 @@
 #include "util/exception.h"
 #include "video/imagecache.h"
 #include "util/log.h"
+#include "map/structures/elevation.h"
+#include "map/structures/layer.h"
+#include "map/structures/map.h"
+#include "map/structures/objectinfo.h"
+#include "map/structures/selection.h"
 
 #include "camera.h"
-#include "elevation.h"
-#include "geometry.h"
-#include "layer.h"
-#include "map.h"
-#include "objectinfo.h"
 #include "view.h"
 #include "visual.h"
 #include "visualtree.h"

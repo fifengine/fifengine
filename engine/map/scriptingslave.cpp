@@ -32,7 +32,7 @@
 #include "lua/lua_object.h"
 
 #include "map/command/info.h"
-#include "map/objectinfo.h"
+#include "map/structures/objectinfo.h"
 #include "script/lua_stackguard.h"
 #include "script/scriptcontainer.h"
 #include "event.h"

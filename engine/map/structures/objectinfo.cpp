@@ -29,10 +29,9 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
+#include "map/factory.h"
 
 #include "objectinfo.h"
-#include "factory.h"
-#include "view.h"
 #include "layer.h"
 
 namespace FIFE { namespace map {

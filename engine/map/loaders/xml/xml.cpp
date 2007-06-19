@@ -31,12 +31,12 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
-#include "map/map.h"
-#include "map/elevation.h"
 #include "map/factory.h"
-#include "map/geometry.h"
-#include "map/layer.h"
-#include "map/objectinfo.h"
+#include "map/structures/map.h"
+#include "map/structures/elevation.h"
+#include "map/structures/layer.h"
+#include "map/structures/objectinfo.h"
+#include "map/geometries/geometry.h"
 #include "xml/tinyxml/tinyxml.h"
 #include "xml/xmlutil.h"
 #include "util/debugutils.h"

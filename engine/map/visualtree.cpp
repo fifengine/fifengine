@@ -29,12 +29,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "objectinfo.h"
 #include "visual.h"
 #include "visualtree.h"
 
 #include "util/log.h"
 #include "util/rect.h"
+#include "map/structures/objectinfo.h"
 
 namespace FIFE { namespace map {
 

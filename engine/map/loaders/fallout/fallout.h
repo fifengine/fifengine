@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/loader.h"
+#include "map/loaders/loader.h"
 #include "vfs/vfs.h"
 
 namespace FIFE {

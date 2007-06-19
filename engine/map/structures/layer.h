@@ -42,7 +42,6 @@
 #include "util/exception.h"
 
 #include "objectinfo.h"
-#include "selection.h"
 
 namespace FIFE { namespace map {
 
@@ -53,6 +52,10 @@ namespace FIFE { namespace map {
 	class Elevation;
 	typedef boost::shared_ptr<Elevation> ElevationPtr;
 	typedef boost::weak_ptr<Elevation> ElevationWeakPtr;
+
+	class Selection;
+	typedef boost::shared_ptr<Selection> SelectionPtr;
+	typedef boost::weak_ptr<Selection> SelectionWeakPtr;
 
 	class Geometry;
 	/** A basic layer on a map elevation

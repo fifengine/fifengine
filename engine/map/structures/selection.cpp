@@ -32,9 +32,9 @@
 // Second block: files included from the same folder
 #include "video/imagecache.h"
 #include "util/rect.h"
+#include "map/geometries/geometry.h"
 
 #include "layer.h"
-#include "geometry.h"
 #include "selection.h"
 
 namespace FIFE { namespace map {

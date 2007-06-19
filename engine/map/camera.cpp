@@ -35,15 +35,15 @@
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "video/screen.h"
+#include "map/geometries/geometry.h"
+#include "map/structures/elevation.h"
+#include "map/structures/layer.h"
+#include "map/structures/objectinfo.h"
 
 #include "camera.h"
 #include "control.h"
 #include "view.h"
 #include "visual.h"
-#include "elevation.h"
-#include "layer.h"
-#include "objectinfo.h"
-#include "geometry.h"
 
 namespace FIFE { namespace map {
 

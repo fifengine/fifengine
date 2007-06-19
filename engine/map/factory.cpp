@@ -33,12 +33,12 @@
 #include "util/purge.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
+#include "map/geometries/geometry.h"
+#include "map/structures/archetype.h"
+#include "loaders/archetype_loader.h"
+#include "loaders/loader.h"
 
-#include "archetype.h"
-#include "archetype_loader.h"
 #include "factory.h"
-#include "geometry.h"
-#include "loader.h"
 
 namespace FIFE { namespace map {
 

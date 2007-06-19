@@ -30,10 +30,11 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
+#include "map/geometries/geometry.h"
+#include "map/factory.h"
 
-#include "geometry.h"
 #include "layer.h"
-#include "factory.h"
+#include "selection.h"
 
 namespace FIFE { namespace map {
 

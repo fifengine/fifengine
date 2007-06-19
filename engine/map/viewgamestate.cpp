@@ -41,11 +41,11 @@
 #include "util/exception.h"
 #include "video/imagecache.h"
 #include "util/settingsmanager.h"
+#include "structures/elevation.h"
+#include "structures/layer.h"
 
 #include "camera.h"
 #include "control.h"
-#include "elevation.h"
-#include "layer.h"
 #include "view.h"
 #include "viewgamestate.h"
 

@@ -33,7 +33,7 @@
 #include "audio/audiomanager.h"
 #include "eventchannel/manager/eventmanager.h"
 #include "map/viewgamestate.h"
-#include "map/objectinfo.h"
+#include "map/structures/objectinfo.h"
 #include "script/luascript.h"
 #include "video/gui/guimanager.h"
 #include "video/rendermanager.h"

@@ -32,10 +32,10 @@
 #include "util/debugutils.h"
 #include "util/purge.h"
 #include "util/exception.h"
+#include "map/geometries/geometry.h"
 
 #include "elevation.h"
 #include "layer.h"
-#include "geometry.h"
 
 namespace FIFE { namespace map {
 
