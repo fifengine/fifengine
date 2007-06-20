@@ -145,7 +145,7 @@
       <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
-      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*</hidepatterns>
+      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*,*os</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>

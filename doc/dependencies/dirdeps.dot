@@ -16,7 +16,7 @@ subgraph cluster_1 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "map/loaders/fallout"; "map"; "map/loaders/xml"; "map/command"; "map/effects"
+    "map"; "map/loaders/xml"; "map/command"; "map/lua"; "map/loaders/fallout"; "map/structures"; "map/loaders"; "map/effects"; "map/geometries"
     label = "map";
 }
 subgraph cluster_2 {
@@ -51,7 +51,7 @@ subgraph cluster_6 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "util/gamestate"
+    "util"; "util/gamestate"; "util/time/lua"
     label = "util";
 }
 subgraph cluster_7 {
@@ -65,21 +65,21 @@ subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "input"
+    "input"; "input/lua"
     label = "input";
 }
 subgraph cluster_9 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "audio"
+    "audio"; "audio/lua"
     label = "audio";
 }
 subgraph cluster_10 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "vfs/zip"; "vfs"; "vfs/raw"
+    "vfs/zip"; "vfs/lua"; "vfs"; "vfs/raw"
     label = "vfs";
 }
     "video/loaders" -> "map/loaders/fallout"
@@ -88,12 +88,16 @@ subgraph cluster_10 {
     "video/loaders" -> "vfs"
     "video/loaders" -> "vfs/raw"
     "util/gamestate" -> "eventchannel"
+    "audio/lua" -> "audio"
     "map/loaders/xml" -> "xml"
     "map/loaders/xml" -> "map"
+    "map/loaders/xml" -> "map/structures"
+    "map/loaders/xml" -> "map/loaders"
     "map/loaders/xml" -> "xml/tinyxml"
     "map/loaders/xml" -> "vfs/raw"
     "map/loaders/xml" -> "video"
     "map/loaders/xml" -> "vfs"
+    "map/loaders/xml" -> "map/geometries"
     "vfs/zip" -> "vfs"
     "video/renderbackends/opengl" -> "video/gui"
     "video/renderbackends/opengl" -> "video"
@@ -109,8 +113,12 @@ subgraph cluster_10 {
     "script/gui" -> "video"
     "script/gui" -> "eventchannel/source"
     "script/gui" -> "eventchannel/widget"
+    "map/geometries" -> "xml"
+    "xml" -> "xml/tinyxml"
     "map/command" -> "map"
     "map/command" -> "video"
+    "map/command" -> "map/structures"
+    "map/command" -> "map/geometries"
     "video/gui" -> "video/gui"
     "video/gui" -> "eventchannel/mouse"
     "video/gui" -> "eventchannel/key"
@@ -118,49 +126,63 @@ subgraph cluster_10 {
     "video/gui" -> "guichan_addon"
     "video/gui" -> "eventchannel/sdl"
     "script" -> "map"
-    "script" -> "eventchannel/widget"
+    "script" -> "video/movie"
     "script" -> "video/gui"
+    "script" -> "map/lua"
     "script" -> "guichan_addon"
     "script" -> "eventchannel/lua"
-    "script" -> "vfs/raw"
-    "script" -> "input"
-    "script" -> "video/movie"
-    "script" -> "vfs"
-    "script" -> "audio"
+    "script" -> "eventchannel/widget"
     "map/loaders/fallout" -> "xml"
-    "map/loaders/fallout" -> "map"
+    "map/loaders/fallout" -> "map/structures"
+    "map/loaders/fallout" -> "map/loaders"
     "map/loaders/fallout" -> "xml/tinyxml"
     "map/loaders/fallout" -> "vfs/raw"
     "map/loaders/fallout" -> "video"
     "map/loaders/fallout" -> "vfs"
+    "map/loaders/fallout" -> "map/geometries"
+    "input/lua" -> "input"
     "solver/micropather_solver" -> "solver"
     "xml/tinyxml" -> "vfs"
     "xml/tinyxml" -> "vfs/raw"
+    "map/lua" -> "map"
+    "map/lua" -> "map/structures"
+    "map/lua" -> "script"
     "input" -> "eventchannel/sdl"
-    "map" -> "xml"
     "map" -> "map"
     "map" -> "map/command"
     "map" -> "video/gui"
     "map" -> "script"
+    "map" -> "map/structures"
     "map" -> "eventchannel/mouse"
     "map" -> "video"
     "map" -> "map/effects"
     "map" -> "input"
     "map" -> "vfs"
+    "map" -> "map/geometries"
+    "util" -> "xml/tinyxml"
     "map/effects" -> "map"
-    "audio" -> "vfs"
-    "audio" -> "vfs/raw"
-    "video/renderbackends/sdl" -> "video/gui"
-    "video/renderbackends/sdl" -> "video"
-    "guichan_addon" -> "vfs"
-    "guichan_addon" -> "script"
-    "guichan_addon" -> "video/gui"
-    "guichan_addon" -> "video"
-    "guichan_addon" -> "vfs/raw"
-    "video" -> "map"
-    "video" -> "video"
-    "video" -> "video/loaders"
+    "vfs/lua" -> "vfs"
+    "vfs/lua" -> "vfs/raw"
     "video/movie" -> "video"
     "video/movie" -> "video/renderbackends/sdl"
+    "video/renderbackends/sdl" -> "video/gui"
+    "video/renderbackends/sdl" -> "video"
+    "map/structures" -> "map"
+    "map/structures" -> "script"
+    "map/structures" -> "video"
+    "map/structures" -> "map/geometries"
+    "guichan_addon" -> "video/gui"
+    "guichan_addon" -> "script"
+    "guichan_addon" -> "video"
+    "guichan_addon" -> "vfs/raw"
+    "guichan_addon" -> "input"
+    "guichan_addon" -> "vfs"
+    "video" -> "video/loaders"
+    "video" -> "map"
+    "video" -> "video"
+    "video" -> "map/geometries"
+    "audio" -> "vfs"
+    "audio" -> "vfs/raw"
     "vfs" -> "vfs/raw"
+    "util/time/lua" -> "script"
 }
