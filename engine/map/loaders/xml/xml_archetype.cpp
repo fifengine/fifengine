@@ -32,7 +32,6 @@
 #include "video/imagecache.h"
 #include "util/log.h"
 #include "util/purge.h"
-#include "map/factory.h"
 #include "video/renderable_location.h"
 #include "video/pixelbuffer.h"
 
@@ -41,8 +40,8 @@
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	XMLArchetype::XMLArchetype(const std::string& filename)
-		: Archetype("XML",filename) {
+	XMLArchetype::XMLArchetype(const std::string& filename, MapPtr parent)
+		: Archetype("XML",filename, parent) {
 
 		Log("xml::archetype")
 			<< "Loading " << filename;
@@ -65,7 +64,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		load(el);
 	}
 
-	XMLArchetype::XMLArchetype(TiXmlElement* e) : Archetype("XML", "embedded") {
+	XMLArchetype::XMLArchetype(TiXmlElement* e, MapPtr parent) : Archetype("XML", "embedded", parent) {
 		load(e);
 	}
 
@@ -105,10 +104,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			}
 
 			if (!source) {
-				XMLArchetype* xmlat = new XMLArchetype(e);	
-				Factory::instance()->addArchetype(xmlat);
+				Archetype* xmlat = new XMLArchetype(e, m_map);	
+				addArchetype(xmlat);
 			} else {
-				Factory::instance()->loadArchetype(type, source);
+				addArchetype(Archetype::load(type, source, m_map));
 			}
 
 			e = e->NextSiblingElement("archetype");
@@ -281,7 +280,7 @@ if(attr_ok == TIXML_NO_ATTRIBUTE) {                                             
 				throw InvalidFormat("no 'name' attribute on <prototype>");
 			}
 
-			Prototype* objLoader = new Prototype(element);
+			Prototype* objLoader = new Prototype(element, m_map);
 			size_t proto_id = addPrototype(name);
 			m_prototypes.insert( std::make_pair(proto_id,objLoader) );
 

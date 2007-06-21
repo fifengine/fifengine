@@ -29,9 +29,10 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "map/factory.h"
 
 #include "objectinfo.h"
+#include "map.h"
+#include "elevation.h"
 #include "layer.h"
 
 namespace FIFE { namespace map {
@@ -84,7 +85,9 @@ namespace FIFE { namespace map {
 	}
 
 	void ObjectInfo::loadPrototype(size_t proto_id) {
-		Factory::instance()->loadPrototype(this, proto_id);
+
+		// TODO: this looks like a hack; see note in map.h on loadPrototype
+		getLayer()->getElevation()->getMap()->loadPrototype(this, proto_id);
 
 		// Move the proto_id to the end of m_protoid
 		// if it was used before, and otherwise append it.
@@ -108,7 +111,7 @@ namespace FIFE { namespace map {
 	}
 
 	void ObjectInfo::loadPrototype(const std::string& proto_name) {
-		loadPrototype( Factory::instance()->getPrototypeId(proto_name) );
+		loadPrototype(getLayer()->getElevation()->getMap()->getPrototypeId(proto_name));
 	}
 
 	const std::vector<size_t>& ObjectInfo::listPrototypes() const {
@@ -228,7 +231,7 @@ namespace FIFE { namespace map {
 			<< " prototypes=";
 
 		for(size_t i=0; i!= m_protoid.size(); ++i) {
-			log <<  Factory::instance()->getPrototypeName( m_protoid[i] );
+			log << getLayer()->getElevation()->getMap()->getPrototypeName(m_protoid[i]);
 			if( i != m_protoid.size() - 1) {
 				log << ",";
 			}

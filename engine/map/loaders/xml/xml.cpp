@@ -31,7 +31,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
-#include "map/factory.h"
 #include "map/structures/map.h"
 #include "map/structures/elevation.h"
 #include "map/structures/layer.h"
@@ -170,6 +169,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 				<< "Sorry for breaking working maps :-(";
 		}
 
+		// create the map
+		m_map = Map::create();
+		m_map->setMapName(mapname);
+
 		// Geometries + Archetypes
 		TiXmlElement* geometry_element = el->FirstChildElement("geometries");
 		if( geometry_element ) {
@@ -185,9 +188,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			loadArchetypes(el1);
 		}
 
-		// Finally create map, load metadata and loop through elevation
-		m_map = Map::create();
-		m_map->setMapName(mapname);
+		// load metadata and loop through elevation
 
 		TiXmlElement* metadata_element = el->FirstChildElement("metadata");
 		if (metadata_element) {
@@ -246,10 +247,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			}
 
 			if (!source) {
-				XMLArchetype* xmlat = new XMLArchetype(e);	
-				Factory::instance()->addArchetype(xmlat);
+				Archetype* xmlat = new XMLArchetype(e, m_map);	
+				m_map->addArchetype(xmlat);
 			} else {
-				Factory::instance()->loadArchetype(type, source);
+				m_map->addArchetype(Archetype::load(type, source,m_map));
 			}
 
 			e = e->NextSiblingElement("archetype");
@@ -282,6 +283,9 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			xmlutil::loadMetadata(metadata_element, m_cursor.elevation.get());
 		}
 
+		m_map->addElevation(m_cursor.elevation);
+		m_cursor.elevation->setReferenceLayer(refgrid);
+
 		try{
 			while (el2) {
 				loadLayer(el2);
@@ -291,8 +295,6 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			m_cursor.elevation.reset();
 			throw;
 		}
-		m_cursor.elevation->setReferenceLayer(refgrid);
-		m_map->addElevation(m_cursor.elevation);
 	}
 
 
@@ -363,6 +365,10 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		assert( element );
 		ObjectPtr object(ObjectInfo::create());
 
+		LayerPtr layer = m_cursor.elevation->getLayer(m_cursor.layer);
+		object->setLayer( m_cursor.layer );
+		layer->addObject( object );
+
 		const char* proto_name = element->Attribute("prototype");
 		if( proto_name ) {
 			// Shortcut for the <object prototype="proto" x="100" y="100"/>
@@ -392,16 +398,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			// an internal state. But we'll see if this
 			// amounts to something.
 
-			Prototype loader(element);
+			Prototype loader(element, m_map);
 			loader.merge( object.get() );
 		}
 
-		// And finally add it.
-
 		object->debugPrint();
-		LayerPtr layer = m_cursor.elevation->getLayer(m_cursor.layer);
-		object->setLayer( m_cursor.layer );
-		layer->addObject( object );
 	}
 
 	void XML::loadLayerData(TiXmlElement* element) {
@@ -563,15 +564,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		TiXmlElement* archetypes = new TiXmlElement("archetypes");
 		map->LinkEndChild(archetypes);
 		{
-			// TODO: this method just dumps all loaded archetypes. since
-			// archetypes don't seem to be flushed when a new map is loaded,
-			// this is incorrect behavior.
-			
-			std::list<Archetype*> l = Factory::instance()->dumpArchetypes();
+			std::list<Archetype*> l = mapdata->dumpArchetypes();
 
 			for(std::list<Archetype*>::iterator it = l.begin(); it != l.end(); ++it) {
-				// there seems to be an "embedded" entry for every normal
-				// entry in the list; I don't think we want these
+				// TODO: add support for saving actual embedded archetypes (rather
+				// than just links)
 				if((*it)->getFilename() == "embedded")
 					continue;
 
@@ -670,11 +667,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			{
 				TiXmlElement* x = new TiXmlElement("x");
 				size->LinkEndChild(x);
-				x->LinkEndChild(new TiXmlText(int_to_string(layer->getLayerWidth())));
+				x->LinkEndChild(new TiXmlText(int_to_string(layer->getSize().x)));
 
 				TiXmlElement* y = new TiXmlElement("y");
 				size->LinkEndChild(y);
-				y->LinkEndChild(new TiXmlText(int_to_string(layer->getLayerHeight())));
+				y->LinkEndChild(new TiXmlText(int_to_string(layer->getSize().y)));
 			}
 
 			TiXmlElement* geometry = new TiXmlElement("geometry");
@@ -687,8 +684,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if(layer->hasTiles()) {
 			TiXmlElement* data = new TiXmlElement("data");
 			xml_layer->LinkEndChild(data);
-			for(int32_t y = 0; y < layer->getLayerHeight(); ++y) {
-				for(int32_t x = 0; x < layer->getLayerWidth(); ++x) { 
+			for(int32_t y = 0; y < layer->getSize().y; ++y) {
+				for(int32_t x = 0; x < layer->getSize().x; ++x) { 
 					TiXmlElement* tile = new TiXmlElement("tile");
 					tile->SetAttribute("gid", layer->getTileGID(x,y));
 					data->LinkEndChild(tile);
@@ -705,7 +702,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 				TiXmlElement* object = new TiXmlElement("object");
 				// TODO: support multiple prototypes? 
 				size_t pid = *((*it)->listPrototypes().begin());
-				object->SetAttribute("prototype",Factory::instance()->getPrototypeName(pid));
+				object->SetAttribute("prototype",layer->getElevation()->getMap()->getPrototypeName(pid));
 				object->SetAttribute("x",(*it)->getPosition().x);
 				object->SetAttribute("y",(*it)->getPosition().y);
 				objects->LinkEndChild(object);

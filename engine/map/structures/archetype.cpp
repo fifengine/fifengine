@@ -28,16 +28,53 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
+#include "util/purge.h"
+#include "map/loaders/archetype_loader.h"
 
 #include "archetype.h"
 
 namespace FIFE { namespace map {
 
-	Archetype::Archetype(const std::string& type, const std::string& filename)
-		: m_typename(type), m_filename(filename) {
+	Archetype::Archetype(const std::string& type, const std::string& filename, MapPtr parent)
+		: m_typename(type), m_filename(filename), m_map(parent)
+	{
+	}
+
+	Archetype* Archetype::load(const std::string& type, const std::string& filename, MapPtr map) {
+		typedef std::map<std::string, ArchetypeLoaderBase*> type_atloaders;
+		static type_atloaders loaders;
+
+		if(loaders.empty()) {
+			// memory leak?
+			loaders.insert(std::make_pair("XML",ArchetypeLoaderBase::createLoader("XML")));
+		}
+/*
+    // If it is already loaded, just return.
+		std::list<Archetype*>::iterator i = m_archetypes.begin();
+		for(; i != m_archetypes.end(); ++i) {
+			if( (*i)->getTypeName() == type && (*i)->getFilename() == filename ) {
+				return;
+			}
+		}
+*/
+		if(loaders.find(type) == loaders.end()) {
+			throw NotFound(type + " Archetype Loader not found.");
+		}
+		Archetype* at = loaders[type]->load(filename, map);
+
+		// 'load' schould not return zero, rather throw a reasonable exception
+		assert(at);
+		assert(at->getTypeName() == type);
+
+		return at;
 	}
 
 	Archetype::~Archetype() {
+		purge(m_archetypes);
+	}
+
+	void Archetype::addArchetype(Archetype* archetype) {
+    m_archetypes.push_back(archetype);
 	}
 
 	void Archetype::loadPrototype(ObjectInfo*, size_t ) {

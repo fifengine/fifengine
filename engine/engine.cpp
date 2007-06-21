@@ -44,7 +44,6 @@
 #include "input/events.h"
 #include "input/inputmanager.h"
 #include "eventchannel/manager/eventmanager.h"
-#include "map/factory.h"
 #include "script/luascript.h"
 #include "video/gui/guimanager.h"
 #include "video/imagecache.h"
@@ -141,7 +140,6 @@ namespace FIFE {
 		VFS::instance()->addSource(new VFSHostSystem());
 
 		new ImageCache();
-		new map::Factory();
 		new audio::Manager();
 		int volume = settings->read<int>("InitialVolume", 5);
 		if (volume > 10) {
@@ -159,7 +157,6 @@ namespace FIFE {
 		delete GameStateManager::instance();
 		delete LuaScript::instance();
 		delete audio::Manager::instance();
-		delete map::Factory::instance();
 		delete ImageCache::instance();
 		delete VFS::instance();
 		delete VFSSourceFactory::instance();

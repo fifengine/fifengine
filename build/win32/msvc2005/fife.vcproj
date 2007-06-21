@@ -296,8 +296,6 @@
 				<File RelativePath="..\..\..\engine\map\effects\visualeffect.h"></File>
 			</Filter>
 			<File RelativePath="..\..\..\engine\map\event.h"></File>
-			<File RelativePath="..\..\..\engine\map\factory.cpp"></File>
-			<File RelativePath="..\..\..\engine\map\factory.h"></File>
 			<File RelativePath="..\..\..\engine\map\fwd.h"></File>
 			<Filter Name="geometries">
 				<File RelativePath="..\..\..\engine\map\geometries\geometry.cpp"></File>
@@ -308,6 +306,7 @@
 				<File RelativePath="..\..\..\engine\map\geometries\hexgeometry.h"></File>
 			</Filter>
 			<Filter Name="loaders">
+				<File RelativePath="..\..\..\engine\map\loaders\archetype_loader.cpp"></File>
 				<File RelativePath="..\..\..\engine\map\loaders\archetype_loader.h"></File>
 				<Filter Name="fallout">
 					<File RelativePath="..\..\..\engine\map\loaders\fallout\animatedpal.cpp"></File>
@@ -346,6 +345,7 @@
 					<File RelativePath="..\..\..\engine\map\loaders\fallout\remove_all.cpp"></File>
 					<File RelativePath="..\..\..\engine\map\loaders\fallout\remove_all.h"></File>
 				</Filter>
+				<File RelativePath="..\..\..\engine\map\loaders\loader.cpp"></File>
 				<File RelativePath="..\..\..\engine\map\loaders\loader.h"></File>
 				<Filter Name="xml">
 					<File RelativePath="..\..\..\engine\map\loaders\xml\fwd.h"></File>
@@ -600,7 +600,6 @@
 			<File RelativePath="..\..\..\engine\video\screen.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\screen.h"></File>
 		</Filter>
-		<File RelativePath="..\..\..\engine\video.h"></File>
 		<Filter Name="xml">
 			<Filter Name="tinyxml">
 				<File RelativePath="..\..\..\engine\xml\tinyxml\fwd.h"></File>

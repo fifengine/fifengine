@@ -184,14 +184,6 @@ namespace FIFE { namespace map {
 				std::for_each(m_all_objects.begin(),m_all_objects.end(),visitor);
 			}
 
-			/** Get the width (in tiles) of the layer
-			 */
-			int32_t getLayerWidth() const;
-
-			/** Get the height (in tiles) of the layer
-			 */
-			int32_t getLayerHeight() const;
-
 			/** Get the global id of the tile at the point
 			 *  @note If the position is invalid or the Layer
 			 *  is not yet created 0 is returned (a DummyImage id)
@@ -493,16 +485,6 @@ namespace FIFE { namespace map {
 	inline 
 	size_t Layer::getLayerNumber() const {
 		return m_layer_num;
-	}
-
-	inline
-	int32_t Layer::getLayerHeight() const {
-		return m_size.y;
-	}
-
-	inline
-	int32_t Layer::getLayerWidth() const {
-		return m_size.x;
 	}
 
 	inline

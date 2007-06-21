@@ -31,15 +31,15 @@
 #include "util/exception.h"
 #include "util/purge.h"
 #include "xml/xmlutil.h"
-#include "map/factory.h"
 #include "map/structures/objectinfo.h"
+#include "map/structures/map.h"
 
 #include "prototype.h"
 
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	Prototype::Prototype(TiXmlElement* element) : m_data("Table") {
+	Prototype::Prototype(TiXmlElement* element, MapPtr map) : m_data("Table") {
 		assert( element );
 
 		TiXmlElement* proto_element = element->FirstChildElement("prototype");
@@ -48,7 +48,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			if( !proto_name ) {
 				throw InvalidFormat("no 'name' attribute on <prototype>");
 			}
-			m_prototypes.push_back( Factory::instance()->getPrototypeId(proto_name) );
+			m_prototypes.push_back( map->getPrototypeId(proto_name) );
 			proto_element = proto_element->NextSiblingElement("prototype");
 		}
 
@@ -79,7 +79,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if( inventory_element ) {
 			inventory_element = inventory_element->FirstChildElement("object");
 			while( inventory_element ) {
-				m_inventory.push_back(new Prototype(inventory_element));
+				m_inventory.push_back(new Prototype(inventory_element,map));
 				inventory_element = inventory_element->NextSiblingElement("object");
 			}
 		}

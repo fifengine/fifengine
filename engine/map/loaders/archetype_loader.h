@@ -26,6 +26,7 @@
 #include <string>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -35,19 +36,29 @@
 namespace FIFE { namespace map {
 	class Archetype;
 
+	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
+
 	class ArchetypeLoaderBase {
 		public:
 			ArchetypeLoaderBase(){};
 			virtual ~ArchetypeLoaderBase(){};
 
-			virtual Archetype* load(const std::string& filename) = 0;
+			/** create a loader
+			 *
+			 * @param type the kind of loader to be created; current options are
+			 *   XML
+			 */
+			static ArchetypeLoaderBase* createLoader(const std::string& type);
+
+			virtual Archetype* load(const std::string& filename, MapPtr parent) = 0;
 	};
 
 	template<typename ArchetypeClass>
 	class ArchetypeLoader : public ArchetypeLoaderBase {
 		public:
-			virtual Archetype* load(const std::string& filename) {
-				return new ArchetypeClass(filename);
+			virtual Archetype* load(const std::string& filename, MapPtr parent) {
+				return new ArchetypeClass(filename, parent);
 			}
 	};
 

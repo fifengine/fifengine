@@ -31,10 +31,11 @@
 // Second block: files included from the same folder
 #include "util/exception.h"
 #include "map/geometries/geometry.h"
-#include "map/factory.h"
 
 #include "layer.h"
 #include "selection.h"
+#include "elevation.h"
+#include "map.h"
 
 namespace FIFE { namespace map {
 
@@ -186,7 +187,7 @@ namespace FIFE { namespace map {
 			return;
 		}
 		m_tilegids[p.x + p.y * m_size.x] = id;
-		setTileImage(p.x, p.y, Factory::instance()->getTileImageId(id));
+		setTileImage(p.x, p.y, getElevation()->getMap()->getTileImageId(id));
 	}
   void Layer::setTileGID(int32_t x, int32_t y, size_t id) {
 		setTileGID(Point(x,y),id);

@@ -40,6 +40,9 @@ namespace FIFE { namespace map {
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 
+	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
+
 namespace loaders { namespace xml {
 
 	template<typename datatype>
@@ -73,7 +76,7 @@ namespace loaders { namespace xml {
 			 *  Creates itself from an XML Element.
 			 *  Throws on imvalid format entries.
 			 */
-			Prototype(TiXmlElement* element);
+			Prototype(TiXmlElement* element, MapPtr map);
 
 			/** Destructor
 			 */

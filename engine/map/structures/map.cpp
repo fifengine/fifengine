@@ -31,10 +31,13 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/purge.h"
+#include "map/loaders/loader.h"
+#include "map/geometries/geometry.h"
 
 #include "elevation.h"
 #include "layer.h"
 #include "map.h"
+#include "archetype.h"
 
 namespace FIFE { namespace map {
 
@@ -46,12 +49,62 @@ namespace FIFE { namespace map {
 		return map;
 	}
 
+	MapPtr Map::load(const std::string& filename) {
+		typedef std::map<std::string, Loader*> type_loaders;
+		static type_loaders loaders;
+
+		if(loaders.empty()) { 
+			// memory leak?
+			loaders.insert(std::make_pair("Fallout", Loader::createLoader("Fallout")));
+			loaders.insert(std::make_pair("XML", Loader::createLoader("XML")));
+		}
+
+		// load these geometries manually for Fallout backwards-compatibility
+		Geometry::registerGeometry(s_geometry_info(
+			Geometry::FalloutTileGeometry,
+			"RECTANGULAR",
+			Point(80,36),  // TILE SIZE
+			Point(48,24),  // TRANSFORM
+			Point(),       // OFFSET
+			0));           // FLAGS: NONE
+		Geometry::registerGeometry(s_geometry_info(
+			Geometry::FalloutObjectGeometry,
+			"HEXAGONAL",
+			Point(32,16),  // TILESIZE
+			Point(16,12),  // TRANSFORM
+			Point(32,10),  // OFFSET
+			Geometry::ShiftXAxis));           // FLAGS: SHIFT AROUND X AXIS
+
+
+		type_loaders::const_iterator end = loaders.end();
+		for (type_loaders::iterator i = loaders.begin(); i != end; ++i) {
+			try {
+				Loader* loader = i->second;
+				Debug("maploader") << "trying to load " << filename;
+				return loader->loadFile(filename);
+			} catch (const Exception& ex) {
+				Log("maploader") << ex.getMessage();
+				continue;
+			}
+		}
+
+		Log("map::Map::load") << "no loader succeeded for " << filename << " :(";
+		return MapPtr();
+	}
+
+	void Map::save(const std::string& filename) {
+		static Loader* loader = Loader::createLoader("XML");
+
+		loader->saveFile(filename, MapPtr(m_self));
+	}
+
 	Map::Map() 
 		: AttributedClass("map") {
 		m_count += 1;
 	}
 
 	Map::~Map() {
+		purge(m_archetypes);
 		clearElevations();
 		m_count -= 1;
 	}
@@ -65,6 +118,63 @@ namespace FIFE { namespace map {
 	}
 	void Map::setMapName(const std::string& name) {
 		m_mapname = name;
+	}
+
+	void Map::addArchetype(Archetype* archetype) {
+		m_archetypes.push_back(archetype);
+	}
+
+	std::list<Archetype*>& Map::dumpArchetypes() {
+		return m_archetypes;
+	}
+
+  void Map::loadPrototype(ObjectInfo* object, size_t proto_id) {
+		assert( object );
+		if( proto_id == 0 || proto_id >= m_protoid_map.size() ) {
+			return;
+		}
+
+		s_proto& proto = m_protoid_map[proto_id];
+
+		assert(proto.archetype);
+		proto.archetype->loadPrototype(object,proto_id);
+	}
+
+  size_t Map::addPrototype(Archetype* at, const std::string& name) {
+		size_t id = m_protoid_map.size();
+		s_proto proto = { m_protoname_map.insert(std::make_pair(name, id)).first, at };
+		m_protoid_map.push_back( proto );
+		return id;
+  }
+
+	size_t Map::getPrototypeId(const std::string& proto_name) const {
+		type_protoname_map::const_iterator i(m_protoname_map.find(proto_name));
+		if( i == m_protoname_map.end() ) {
+			return 0;
+		}
+		return i->second;
+	}
+
+	const std::string& Map::getPrototypeName(size_t proto_id) const {
+		static std::string invalid = "";
+		if( proto_id > m_protoid_map.size() ) {
+			return invalid;
+		}
+
+		const s_proto& proto = m_protoid_map[proto_id];
+		return proto.name_iterator->first;
+	}
+
+	void Map::addTile(size_t tileid, size_t imageid) {
+		m_tileids[tileid] = imageid;
+	}
+
+	size_t Map::getTileImageId(size_t tile_id) const {
+		type_tileids::const_iterator i(m_tileids.find(tile_id));
+		if( i == m_tileids.end() ) {
+			return 0;
+		}
+		return i->second;
 	}
 
 	size_t Map::getNumElevations() const {

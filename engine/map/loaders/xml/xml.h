@@ -52,7 +52,7 @@ namespace loaders { namespace xml {
 	 *
 	 * DTD: https://mirror1.cvsdude.com/trac/fife/content/browser/HEAD/maps/map.dtd
 	 * 
-	 * @see map::Factory, XMLArchetype, ObjectLoader
+	 * @see XMLArchetype, ObjectLoader
 	 *
 	 * Notes on the map-format: http://wiki.fifengine.de/index.php?title=Map_Format
 	 *

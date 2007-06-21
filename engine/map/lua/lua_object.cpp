@@ -28,7 +28,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/structures/objectinfo.h"
-#include "map/factory.h"
+#include "map/structures/layer.h"
+#include "map/structures/elevation.h"
+#include "map/structures/map.h"
 
 #include "lua_object.h"
 
@@ -46,7 +48,7 @@ namespace FIFE {
 
 	int Object_LuaScript::loadPrototype(lua_State*L) {
 		const char* protoname = luaL_checkstring(L,1);
-		size_t proto_id = map::Factory::instance()->getPrototypeId(protoname);
+		size_t proto_id = m_object->getLayer()->getElevation()->getMap()->getPrototypeId(protoname);
 		if( proto_id == 0 ) {
 			luaL_error(L,"invalid/unknown prototype: '%s'",protoname);
 		}

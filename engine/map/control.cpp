@@ -42,7 +42,6 @@
 
 #include "camera.h"
 #include "control.h"
-#include "factory.h"
 #include "runner.h"
 #include "view.h"
 
@@ -77,7 +76,7 @@ namespace FIFE { namespace map {
 	void Control::load(const std::string& filename) {
 		m_map_filename = filename;
 
-		MapPtr map(Factory::instance()->loadMap(m_map_filename));
+		MapPtr map(Map::load(m_map_filename));
 		if (!map) {
 			Log("map_control") << "couldn't load map: " << m_map_filename;
 			throw CannotOpenFile(m_map_filename);
@@ -86,7 +85,7 @@ namespace FIFE { namespace map {
 	}
 
 	void Control::save(const std::string& filename) {
-		Factory::instance()->saveMap(m_map, filename);
+		m_map->save(filename);
 	}
 
 	void Control::setMap(MapPtr map) {

@@ -45,6 +45,10 @@ namespace FIFE { namespace map {
 	class Elevation;
 	typedef boost::shared_ptr<Elevation> ElevationPtr;
 
+	class Archetype;
+
+	class ObjectInfo;
+
 	class Map;
 	typedef boost::shared_ptr<Map> MapPtr;
 	typedef boost::weak_ptr<Map> MapWeakPtr;
@@ -72,9 +76,19 @@ namespace FIFE { namespace map {
 				OnElevationChange = 3
 			} ScriptType;
 
-			/** Construct a map
+			/** Construct an (empty) map
 			 */
 			static MapPtr create();
+
+			/** Construct a map from a file
+			 * @param filename the name of the map file to be loaded
+		 	*/
+			static MapPtr load(const std::string& filename);
+
+			/** Save this map
+			 * @param filename the name of the file to save to
+			 */
+			void save(const std::string& filename);
 
 			/** Destructor
 			 */
@@ -87,6 +101,43 @@ namespace FIFE { namespace map {
 			/** Get the maps 'name'
 			 */
 			const std::string& getMapName() const;
+
+			/** Add an archetype
+			 */
+			void addArchetype(Archetype* archetype);
+
+			/** Dump a list of this map's archetypes; this is a hack for exporting
+			 * data to a savefile; maybe the loaders should be friended instead?
+			 */
+			std::list<Archetype*>& dumpArchetypes();
+			
+			/** Load a prototype
+			 * @note I just stuck this here for now; there may be a more logical 
+				 * place for it --jwt
+			 */
+			void loadPrototype(ObjectInfo* object, size_t proto_id);
+
+			/** Add a prototype
+			 */
+			size_t addPrototype(Archetype* at, const std::string& proto_name);
+
+      /** Map type to an internal id
+			 */
+			size_t getPrototypeId(const std::string& type) const;
+
+			/** Map internal id to type name
+			 */
+			const std::string& getPrototypeName(size_t proto_id) const;
+
+			/** Add a tile
+			 * @param tileid the identifier used by the tile in a map file
+			 * @param imageid the identifier used by the video image cache for this tile
+			 */
+			void addTile(size_t tileid, size_t imageid);
+
+      /** Get ImageCache ID for tile with tile id
+			 */
+			size_t getTileImageId(size_t tile_id) const;
 
 			/** Return the number of elevations on this map
 			 */
@@ -136,6 +187,23 @@ namespace FIFE { namespace map {
 			std::string m_mapname;
 			MapWeakPtr m_self;
 			static long m_count;
+
+      typedef std::list<Archetype*> type_archetypes;
+			type_archetypes m_archetypes;
+
+      typedef std::map<size_t,size_t> type_tileids;
+			type_tileids m_tileids;
+
+      typedef std::map<std::string,size_t> type_protoname_map;
+
+			struct s_proto {
+				type_protoname_map::iterator name_iterator;
+				Archetype* archetype;
+			};
+
+			typedef std::vector<s_proto> type_protoid_map;
+			type_protoname_map m_protoname_map;
+		  type_protoid_map   m_protoid_map;
 
 			typedef std::vector<ElevationPtr> type_elevations;
 			type_elevations m_elevations;

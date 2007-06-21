@@ -66,7 +66,7 @@ namespace map {
 			/** Load and set a map from a map file
 			 *  Does the equivalent to
 			 *  @code
-			 *  map_control.setMap( map::Factory::instance()->loadMap() )
+			 *  map_control.setMap( Map::load(filename) )
 			 *  @endcode
 			 */
 			void load(const std::string& filename);

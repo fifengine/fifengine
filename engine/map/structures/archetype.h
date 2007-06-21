@@ -32,18 +32,28 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/factory.h"
-
+#include "map.h"
 
 namespace FIFE { namespace map {
 
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
 
+	class Map;
+	typedef boost::shared_ptr<Map> MapPtr;
+
 	class Archetype {
 		public:
-			Archetype(const std::string& type, const std::string& filename);
+			Archetype(const std::string& type, const std::string& filename, MapPtr parent);
 			virtual ~Archetype();
+
+			/** Load an archetype
+			 */
+			static Archetype* load(const std::string& type, const std::string& filename, MapPtr map);
+
+      /** Add a (nested) archetype
+			 */
+			void addArchetype(Archetype* archetype);
 
 			/** Load a prototype of an object
 			 *  Loading a prototype of an object will set the objects
@@ -51,21 +61,27 @@ namespace FIFE { namespace map {
 			 */
 			virtual void loadPrototype(ObjectInfo* object, size_t proto_id);
 
-			/** Add a Tile to the Factories repository
-			 *  Use this function during the loading phase of the AT.
+			/** Add a tile to this archetype's parent map
+			 * This function is used during the loading phase of the AT
 			 */
-			void addTile(size_t tile_id, size_t image_id);
+			void addTile(size_t tileid, size_t imageid);
 
-			/** Add a Prototype to the Factories repository
-			 *
+			/** Add a Prototype to this archetype's parent map
 			 */
 			size_t addPrototype(const std::string& proto_name);
-
 
 			const std::string& getTypeName() const;
 			const std::string& getFilename() const;
 
 		protected:
+
+			// the map that loaded this archetype
+			MapPtr m_map;
+
+			// archetypes can nest archetypes
+			typedef std::list<Archetype*> type_archetypes;
+			type_archetypes m_archetypes;
+		
 			std::string m_typename;
 			std::string m_filename;
 	};
@@ -82,12 +98,12 @@ namespace FIFE { namespace map {
 
 	inline
 	void Archetype::addTile(size_t tile_id, size_t image_id) {
-		Factory::instance()->addTile(tile_id,image_id);
+		m_map->addTile(tile_id, image_id);
 	}
 
 	inline
 	size_t Archetype::addPrototype(const std::string& proto_name) {
-		return Factory::instance()->addPrototype(this, proto_name);
+		return m_map->addPrototype(this, proto_name);
 	}
 
 }}

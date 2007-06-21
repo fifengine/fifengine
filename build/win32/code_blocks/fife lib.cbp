@@ -641,16 +641,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\map\factory.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\map\factory.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="..\..\..\engine\map\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -685,6 +675,10 @@
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\map\loaders\archetype_loader.cpp">
+			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="..\..\..\engine\map\loaders\archetype_loader.h">
@@ -867,6 +861,10 @@
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\map\loaders\loader.cpp">
+			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="..\..\..\engine\map\loaders\loader.h">
@@ -1590,12 +1588,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="..\..\..\engine\vfs\zip\zipsource.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\video.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
