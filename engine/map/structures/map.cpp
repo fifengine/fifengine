@@ -31,7 +31,7 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/purge.h"
-#include "map/loaders/loader.h"
+#include "loaders/archetype_loader.h"
 #include "map/geometries/geometry.h"
 
 #include "elevation.h"
@@ -49,62 +49,16 @@ namespace FIFE { namespace map {
 		return map;
 	}
 
-	MapPtr Map::load(const std::string& filename) {
-		typedef std::map<std::string, Loader*> type_loaders;
-		static type_loaders loaders;
-
-		if(loaders.empty()) { 
-			// memory leak?
-			loaders.insert(std::make_pair("Fallout", Loader::createLoader("Fallout")));
-			loaders.insert(std::make_pair("XML", Loader::createLoader("XML")));
-		}
-
-		// load these geometries manually for Fallout backwards-compatibility
-		Geometry::registerGeometry(s_geometry_info(
-			Geometry::FalloutTileGeometry,
-			"RECTANGULAR",
-			Point(80,36),  // TILE SIZE
-			Point(48,24),  // TRANSFORM
-			Point(),       // OFFSET
-			0));           // FLAGS: NONE
-		Geometry::registerGeometry(s_geometry_info(
-			Geometry::FalloutObjectGeometry,
-			"HEXAGONAL",
-			Point(32,16),  // TILESIZE
-			Point(16,12),  // TRANSFORM
-			Point(32,10),  // OFFSET
-			Geometry::ShiftXAxis));           // FLAGS: SHIFT AROUND X AXIS
-
-
-		type_loaders::const_iterator end = loaders.end();
-		for (type_loaders::iterator i = loaders.begin(); i != end; ++i) {
-			try {
-				Loader* loader = i->second;
-				Debug("maploader") << "trying to load " << filename;
-				return loader->loadFile(filename);
-			} catch (const Exception& ex) {
-				Log("maploader") << ex.getMessage();
-				continue;
-			}
-		}
-
-		Log("map::Map::load") << "no loader succeeded for " << filename << " :(";
-		return MapPtr();
-	}
-
-	void Map::save(const std::string& filename) {
-		static Loader* loader = Loader::createLoader("XML");
-
-		loader->saveFile(filename, MapPtr(m_self));
-	}
-
 	Map::Map() 
 		: AttributedClass("map") {
 		m_count += 1;
+		m_atloaders.insert(std::make_pair("XML",ArchetypeLoaderBase::createLoader("XML")));
 	}
 
 	Map::~Map() {
 		purge(m_archetypes);
+    // TODO: purge seems to have trouble with maps? Fix this so we can get rid of this memory leak
+		//purge(m_atloaders);
 		clearElevations();
 		m_count -= 1;
 	}
@@ -118,6 +72,28 @@ namespace FIFE { namespace map {
 	}
 	void Map::setMapName(const std::string& name) {
 		m_mapname = name;
+	}
+
+	void Map::loadArchetype(const std::string& type, const std::string& filename) {
+		// If it is already loaded, just return.
+		std::list<Archetype*>::iterator i = m_archetypes.begin();
+		for(; i != m_archetypes.end(); ++i) {
+			if( (*i)->getTypeName() == type && (*i)->getFilename() == filename ) {
+				return;
+			}
+		}
+
+		if(m_atloaders.find(type) == m_atloaders.end()) {
+			throw NotFound(type + " Archetype Loader not found.");
+		}
+
+		Archetype* at = m_atloaders[type]->load(filename, MapPtr(m_self));
+
+		// 'load' schould not return zero, rather throw a reasonable exception
+		assert(at);
+		assert(at->getTypeName() == type);
+
+		addArchetype(at);
 	}
 
 	void Map::addArchetype(Archetype* archetype) {

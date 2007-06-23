@@ -40,8 +40,8 @@ namespace FIFE { namespace map { namespace command {
 
 	void StartMovement::execute(const Info& cmd) {
 		ObjectPtr moi = cmd.object;
-		long x = cmd.params[0];
-		long y = cmd.params[1];
+//		long x = cmd.params[0];
+//		long y = cmd.params[1];
 
 		if (!moi) {
 			Warn("mc_startmovement") << "No MOI for object " << cmd.object;

@@ -30,15 +30,18 @@
 #include "map/command/enqueueaction.h"
 #include "map/command/setvisual.h"
 #include "map/command/startmovement.h"
+#include "map/geometries/geometry.h"
+#include "map/structures/elevation.h"
+#include "map/structures/objectinfo.h"
+#include "map/structures/map.h"
 #include "script/luascript.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "util/exception.h"
 #include "util/log.h"
+#include "util/purge.h"
 #include "util/settingsmanager.h"
-#include "structures/elevation.h"
-#include "structures/objectinfo.h"
-#include "structures/map.h"
+#include "loaders/loader.h"
 
 #include "camera.h"
 #include "control.h"
@@ -56,11 +59,33 @@ namespace FIFE { namespace map {
 		m_settings(SettingsManager::instance()),
 		m_isrunning(false) {
 
+		m_loaders.insert(std::make_pair("Fallout", Loader::createLoader("Fallout")));
+		m_loaders.insert(std::make_pair("XML", Loader::createLoader("XML")));
+
+    // load these geometries manually for Fallout backwards-compatibility
+		Geometry::registerGeometry(s_geometry_info(
+			Geometry::FalloutTileGeometry,
+			"RECTANGULAR",
+			Point(80,36),  // TILE SIZE
+			Point(48,24),  // TRANSFORM
+			Point(),       // OFFSET
+			0));           // FLAGS: NONE
+		Geometry::registerGeometry(s_geometry_info(
+			Geometry::FalloutObjectGeometry,
+			"HEXAGONAL",
+			Point(32,16),             // TILESIZE
+			Point(16,12),             // TRANSFORM
+			Point(32,10),             // OFFSET
+			Geometry::ShiftXAxis));   // FLAGS: SHIFT AROUND X AXIS
+
 		registerCommands();
 	}
 
 	Control::~Control() {
 		clearMap();
+
+		// TODO: purge seems to have trouble with maps? Fix this so we can get rid of this memory leak
+		//purge(m_loaders);
 
 		// Real cleanup after 'stop()'
 		std::set<Camera*>::iterator i(m_cameras.begin());
@@ -76,7 +101,25 @@ namespace FIFE { namespace map {
 	void Control::load(const std::string& filename) {
 		m_map_filename = filename;
 
-		MapPtr map(Map::load(m_map_filename));
+		MapPtr map;
+		
+		type_loaders::iterator i = m_loaders.begin();
+		for (; i != m_loaders.end(); ++i) {
+			try {
+				Loader* loader = i->second;
+				Debug("maploader") << "trying to load " << filename;
+				map = loader->loadFile(filename);
+				break;
+			} catch (const Exception& ex) {
+			Log("maploader") << ex.getMessage();
+			continue;
+			}
+		}
+
+		if(i == m_loaders.end()) {
+			Log("map::Map::load") << "no loader succeeded for " << filename << " :(";
+		}
+
 		if (!map) {
 			Log("map_control") << "couldn't load map: " << m_map_filename;
 			throw CannotOpenFile(m_map_filename);
@@ -85,7 +128,7 @@ namespace FIFE { namespace map {
 	}
 
 	void Control::save(const std::string& filename) {
-		m_map->save(filename);
+		m_loaders["XML"]->saveFile(filename, m_map);
 	}
 
 	void Control::setMap(MapPtr map) {

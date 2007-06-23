@@ -47,10 +47,6 @@ namespace FIFE { namespace map {
 			Archetype(const std::string& type, const std::string& filename, MapPtr parent);
 			virtual ~Archetype();
 
-			/** Load an archetype
-			 */
-			static Archetype* load(const std::string& type, const std::string& filename, MapPtr map);
-
       /** Add a (nested) archetype
 			 */
 			void addArchetype(Archetype* archetype);

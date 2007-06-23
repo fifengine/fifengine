@@ -46,6 +46,8 @@ namespace FIFE { namespace map {
 	typedef boost::shared_ptr<Elevation> ElevationPtr;
 
 	class Archetype;
+	
+	class ArchetypeLoaderBase;
 
 	class ObjectInfo;
 
@@ -80,16 +82,6 @@ namespace FIFE { namespace map {
 			 */
 			static MapPtr create();
 
-			/** Construct a map from a file
-			 * @param filename the name of the map file to be loaded
-		 	*/
-			static MapPtr load(const std::string& filename);
-
-			/** Save this map
-			 * @param filename the name of the file to save to
-			 */
-			void save(const std::string& filename);
-
 			/** Destructor
 			 */
 			~Map();
@@ -102,6 +94,10 @@ namespace FIFE { namespace map {
 			 */
 			const std::string& getMapName() const;
 
+			/** Load an archetype
+			 */
+			void loadArchetype(const std::string& type, const std::string& filename);
+
 			/** Add an archetype
 			 */
 			void addArchetype(Archetype* archetype);
@@ -112,8 +108,6 @@ namespace FIFE { namespace map {
 			std::list<Archetype*>& dumpArchetypes();
 			
 			/** Load a prototype
-			 * @note I just stuck this here for now; there may be a more logical 
-				 * place for it --jwt
 			 */
 			void loadPrototype(ObjectInfo* object, size_t proto_id);
 
@@ -187,6 +181,9 @@ namespace FIFE { namespace map {
 			std::string m_mapname;
 			MapWeakPtr m_self;
 			static long m_count;
+
+			typedef std::map<std::string, ArchetypeLoaderBase*> type_atloaders;
+	    type_atloaders m_atloaders;
 
       typedef std::list<Archetype*> type_archetypes;
 			type_archetypes m_archetypes;

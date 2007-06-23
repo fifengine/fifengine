@@ -43,6 +43,8 @@ namespace map {
 	class Map;
 	typedef boost::shared_ptr<Map> MapPtr;
 
+	class Loader;
+
 	class Camera;
 	class View;
 	class Runner;
@@ -132,6 +134,9 @@ namespace map {
 			LuaScript* m_scriptengine;
 			SettingsManager* m_settings;
 			std::set<Camera*> m_cameras;
+
+			typedef std::map<std::string, Loader*> type_loaders;
+			type_loaders m_loaders;
 
 			bool m_isrunning;
 			size_t m_elevation;
