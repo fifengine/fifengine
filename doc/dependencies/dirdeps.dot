@@ -16,7 +16,7 @@ subgraph cluster_1 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "map"; "map/loaders/xml"; "map/command"; "map/lua"; "map/loaders/fallout"; "map/structures"; "map/loaders"; "map/effects"; "map/geometries"
+    "map"; "map/command"; "map/lua"; "map/structures"; "map/effects"; "map/geometries"
     label = "map";
 }
 subgraph cluster_2 {
@@ -37,68 +37,65 @@ subgraph cluster_4 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "eventchannel/base"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/lua"; "eventchannel/source"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
-    label = "eventchannel";
+    "guichan_addon"
+    label = "guichan_addon";
 }
 subgraph cluster_5 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "guichan_addon"
-    label = "guichan_addon";
+    "eventchannel/base"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/lua"; "eventchannel/source"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
+    label = "eventchannel";
 }
 subgraph cluster_6 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "loaders/video_loaders"; "loaders/xml"; "loaders/fallout"; "loaders"
+    label = "loaders";
+}
+subgraph cluster_7 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "util"; "util/gamestate"; "util/time/lua"
     label = "util";
 }
-subgraph cluster_7 {
+subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "video/loaders"; "video/gui"; "video/renderbackends/sdl"; "video"; "video/renderbackends/opengl"; "video/movie"
+    "video/movie"; "video"; "video/gui"; "video/renderbackends/opengl"; "video/renderbackends/sdl"
     label = "video";
 }
-subgraph cluster_8 {
+subgraph cluster_9 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "input"; "input/lua"
     label = "input";
 }
-subgraph cluster_9 {
+subgraph cluster_10 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "audio"; "audio/lua"
     label = "audio";
 }
-subgraph cluster_10 {
+subgraph cluster_11 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "vfs/zip"; "vfs/lua"; "vfs"; "vfs/raw"
     label = "vfs";
 }
-    "video/loaders" -> "map/loaders/fallout"
-    "video/loaders" -> "xml/tinyxml"
-    "video/loaders" -> "video"
-    "video/loaders" -> "vfs"
-    "video/loaders" -> "vfs/raw"
     "util/gamestate" -> "eventchannel"
     "audio/lua" -> "audio"
-    "map/loaders/xml" -> "xml"
-    "map/loaders/xml" -> "map"
-    "map/loaders/xml" -> "map/structures"
-    "map/loaders/xml" -> "map/loaders"
-    "map/loaders/xml" -> "xml/tinyxml"
-    "map/loaders/xml" -> "vfs/raw"
-    "map/loaders/xml" -> "video"
-    "map/loaders/xml" -> "vfs"
-    "map/loaders/xml" -> "map/geometries"
-    "vfs/zip" -> "vfs"
+    "loaders/video_loaders" -> "xml/tinyxml"
+    "loaders/video_loaders" -> "loaders/fallout"
+    "loaders/video_loaders" -> "video"
+    "loaders/video_loaders" -> "vfs"
+    "loaders/video_loaders" -> "vfs/raw"
     "video/renderbackends/opengl" -> "video/gui"
     "video/renderbackends/opengl" -> "video"
     "eventchannel/lua" -> "script"
@@ -132,14 +129,14 @@ subgraph cluster_10 {
     "script" -> "guichan_addon"
     "script" -> "eventchannel/lua"
     "script" -> "eventchannel/widget"
-    "map/loaders/fallout" -> "xml"
-    "map/loaders/fallout" -> "map/structures"
-    "map/loaders/fallout" -> "map/loaders"
-    "map/loaders/fallout" -> "xml/tinyxml"
-    "map/loaders/fallout" -> "vfs/raw"
-    "map/loaders/fallout" -> "video"
-    "map/loaders/fallout" -> "vfs"
-    "map/loaders/fallout" -> "map/geometries"
+    "loaders/xml" -> "xml"
+    "loaders/xml" -> "map/structures"
+    "loaders/xml" -> "loaders"
+    "loaders/xml" -> "video"
+    "loaders/xml" -> "vfs/raw"
+    "loaders/xml" -> "xml/tinyxml"
+    "loaders/xml" -> "vfs"
+    "loaders/xml" -> "map/geometries"
     "input/lua" -> "input"
     "solver/micropather_solver" -> "solver"
     "xml/tinyxml" -> "vfs"
@@ -157,6 +154,7 @@ subgraph cluster_10 {
     "map" -> "video"
     "map" -> "map/effects"
     "map" -> "input"
+    "map" -> "loaders"
     "map" -> "vfs"
     "map" -> "map/geometries"
     "util" -> "xml/tinyxml"
@@ -165,9 +163,18 @@ subgraph cluster_10 {
     "vfs/lua" -> "vfs/raw"
     "video/movie" -> "video"
     "video/movie" -> "video/renderbackends/sdl"
+    "vfs/zip" -> "vfs"
+    "loaders/fallout" -> "xml"
+    "loaders/fallout" -> "map/structures"
+    "loaders/fallout" -> "loaders"
+    "loaders/fallout" -> "video"
+    "loaders/fallout" -> "vfs/raw"
+    "loaders/fallout" -> "xml/tinyxml"
+    "loaders/fallout" -> "vfs"
+    "loaders/fallout" -> "map/geometries"
     "video/renderbackends/sdl" -> "video/gui"
     "video/renderbackends/sdl" -> "video"
-    "map/structures" -> "map"
+    "map/structures" -> "loaders"
     "map/structures" -> "script"
     "map/structures" -> "video"
     "map/structures" -> "map/geometries"
@@ -177,7 +184,7 @@ subgraph cluster_10 {
     "guichan_addon" -> "vfs/raw"
     "guichan_addon" -> "input"
     "guichan_addon" -> "vfs"
-    "video" -> "video/loaders"
+    "video" -> "loaders/video_loaders"
     "video" -> "map"
     "video" -> "video"
     "video" -> "map/geometries"
