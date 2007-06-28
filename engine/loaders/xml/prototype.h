@@ -76,7 +76,7 @@ namespace loaders { namespace xml {
 			 *  Creates itself from an XML Element.
 			 *  Throws on imvalid format entries.
 			 */
-			Prototype(TiXmlElement* element, MapPtr map);
+			Prototype(TiXmlElement* element, MapWeakPtr map);
 
 			/** Destructor
 			 */

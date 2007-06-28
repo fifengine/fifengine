@@ -115,7 +115,7 @@ namespace FIFE { namespace map {
 			 */
 			size_t addPrototype(Archetype* at, const std::string& proto_name);
 
-      /** Map type to an internal id
+			/** Map type to an internal id
 			 */
 			size_t getPrototypeId(const std::string& type) const;
 
@@ -129,7 +129,7 @@ namespace FIFE { namespace map {
 			 */
 			void addTile(size_t tileid, size_t imageid);
 
-      /** Get ImageCache ID for tile with tile id
+			/** Get ImageCache ID for tile with tile id
 			 */
 			size_t getTileImageId(size_t tile_id) const;
 

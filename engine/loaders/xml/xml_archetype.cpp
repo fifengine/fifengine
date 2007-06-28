@@ -40,7 +40,7 @@
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	XMLArchetype::XMLArchetype(const std::string& filename, MapPtr parent)
+	XMLArchetype::XMLArchetype(const std::string& filename, MapWeakPtr parent)
 		: Archetype("XML",filename, parent) {
 
 		Log("xml::archetype")
@@ -64,7 +64,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		load(el);
 	}
 
-	XMLArchetype::XMLArchetype(TiXmlElement* e, MapPtr parent) : Archetype("XML", "embedded", parent) {
+	XMLArchetype::XMLArchetype(TiXmlElement* e, MapWeakPtr parent) : Archetype("XML", "embedded", parent) {
 		load(e);
 	}
 
@@ -107,7 +107,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 				Archetype* xmlat = new XMLArchetype(e, m_map);	
 				addArchetype(xmlat);
 			} else {
-				m_map->loadArchetype(type, source);
+				MapPtr map = m_map.lock();
+				map->loadArchetype(type, source);
 			}
 
 			e = e->NextSiblingElement("archetype");

@@ -119,8 +119,11 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			}
 			throw;
 		}
-
-		return m_map;
+		
+		// Release the map ptr after we're done ...
+		MapPtr map = m_map;
+		m_map.reset();
+		return map;
 	}
 
 	void XML::loadMap(TiXmlElement* el) {

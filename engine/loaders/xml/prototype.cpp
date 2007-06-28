@@ -39,8 +39,9 @@
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 
-	Prototype::Prototype(TiXmlElement* element, MapPtr map) : m_data("Table") {
+	Prototype::Prototype(TiXmlElement* element, MapWeakPtr map) : m_data("Table") {
 		assert( element );
+		MapPtr locked_map = map.lock();
 
 		TiXmlElement* proto_element = element->FirstChildElement("prototype");
 		while( proto_element ) {
@@ -48,7 +49,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			if( !proto_name ) {
 				throw InvalidFormat("no 'name' attribute on <prototype>");
 			}
-			m_prototypes.push_back( map->getPrototypeId(proto_name) );
+			m_prototypes.push_back( locked_map->getPrototypeId(proto_name) );
 			proto_element = proto_element->NextSiblingElement("prototype");
 		}
 

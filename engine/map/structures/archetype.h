@@ -41,13 +41,14 @@ namespace FIFE { namespace map {
 
 	class Map;
 	typedef boost::shared_ptr<Map> MapPtr;
+	typedef boost::weak_ptr<Map> MapWeakPtr;
 
 	class Archetype {
 		public:
-			Archetype(const std::string& type, const std::string& filename, MapPtr parent);
+			Archetype(const std::string& type, const std::string& filename, MapWeakPtr parent);
 			virtual ~Archetype();
 
-      /** Add a (nested) archetype
+			/** Add a (nested) archetype
 			 */
 			void addArchetype(Archetype* archetype);
 
@@ -72,7 +73,9 @@ namespace FIFE { namespace map {
 		protected:
 
 			// the map that loaded this archetype
-			MapPtr m_map;
+			// note, that we need a weak ptr, as we can be owned by a map
+			// so we need to avoid a reference cycle.
+			MapWeakPtr m_map;
 
 			// archetypes can nest archetypes
 			typedef std::list<Archetype*> type_archetypes;
@@ -94,12 +97,14 @@ namespace FIFE { namespace map {
 
 	inline
 	void Archetype::addTile(size_t tile_id, size_t image_id) {
-		m_map->addTile(tile_id, image_id);
+		MapPtr map = m_map.lock();
+		map->addTile(tile_id, image_id);
 	}
 
 	inline
 	size_t Archetype::addPrototype(const std::string& proto_name) {
-		return m_map->addPrototype(this, proto_name);
+		MapPtr map = m_map.lock();
+		return map->addPrototype(this, proto_name);
 	}
 
 }}

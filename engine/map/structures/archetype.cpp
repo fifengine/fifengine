@@ -34,7 +34,7 @@
 
 namespace FIFE { namespace map {
 
-	Archetype::Archetype(const std::string& type, const std::string& filename, MapPtr parent)
+	Archetype::Archetype(const std::string& type, const std::string& filename, MapWeakPtr parent)
 		: m_map(parent), m_typename(type), m_filename(filename)
 	{
 	}

@@ -87,7 +87,7 @@ namespace FIFE { namespace map {
 			throw NotFound(type + " Archetype Loader not found.");
 		}
 
-		Archetype* at = m_atloaders[type]->load(filename, MapPtr(m_self));
+		Archetype* at = m_atloaders[type]->load(filename, m_self);
 
 		// 'load' schould not return zero, rather throw a reasonable exception
 		assert(at);

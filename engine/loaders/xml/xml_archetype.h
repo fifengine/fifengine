@@ -47,13 +47,13 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			/** Constructor
 			 *  Loads an archetype from the given filename
 			 */
-			XMLArchetype(const std::string& filename, MapPtr parent);
+			XMLArchetype(const std::string& filename, MapWeakPtr parent);
 			virtual ~XMLArchetype();
 
 			/** Constructor
 			 *  Loads an embedded archetype
 			 */
-			XMLArchetype(TiXmlElement* e, MapPtr parent);
+			XMLArchetype(TiXmlElement* e, MapWeakPtr parent);
 
 			virtual void loadPrototype(ObjectInfo* object, size_t proto_id);
 		
