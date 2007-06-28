@@ -360,6 +360,72 @@ class EventExceptionPtr(EventException):
         self.__class__ = EventException
 _fife.EventException_swigregister(EventExceptionPtr)
 
+class SettingsManager(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, SettingsManager, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, SettingsManager, name)
+    def __repr__(self):
+        return "<%s.%s; proxy of C++ FIFE::SettingsManager instance at %s>" % (self.__class__.__module__, self.__class__.__name__, self.this,)
+    def __init__(self, *args):
+        _swig_setattr(self, SettingsManager, 'this', _fife.new_SettingsManager(*args))
+        _swig_setattr(self, SettingsManager, 'thisown', 1)
+    def __del__(self, destroy=_fife.delete_SettingsManager):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+
+    def loadSettings(*args): return _fife.SettingsManager_loadSettings(*args)
+    def saveSettings(*args): return _fife.SettingsManager_saveSettings(*args)
+    def read_int(*args): return _fife.SettingsManager_read_int(*args)
+    def read_bool(*args): return _fife.SettingsManager_read_bool(*args)
+    def read_string(*args): return _fife.SettingsManager_read_string(*args)
+    def write_int(*args): return _fife.SettingsManager_write_int(*args)
+    def write_bool(*args): return _fife.SettingsManager_write_bool(*args)
+    def write_string(*args): return _fife.SettingsManager_write_string(*args)
+
+class SettingsManagerPtr(SettingsManager):
+    def __init__(self, this):
+        _swig_setattr(self, SettingsManager, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, SettingsManager, 'thisown', 0)
+        self.__class__ = SettingsManager
+_fife.SettingsManager_swigregister(SettingsManagerPtr)
+
+class Log(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Log, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, Log, name)
+    def __repr__(self):
+        return "<%s.%s; proxy of C++ FIFE::Log instance at %s>" % (self.__class__.__module__, self.__class__.__name__, self.this,)
+    LEVEL_MAX = _fife.Log_LEVEL_MAX
+    LEVEL_DEBUG = _fife.Log_LEVEL_DEBUG
+    LEVEL_LOG = _fife.Log_LEVEL_LOG
+    LEVEL_WARN = _fife.Log_LEVEL_WARN
+    def __init__(self, *args):
+        _swig_setattr(self, Log, 'this', _fife.new_Log(*args))
+        _swig_setattr(self, Log, 'thisown', 1)
+    def __del__(self, destroy=_fife.delete_Log):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+
+    __swig_getmethods__["setLogLevel"] = lambda x: _fife.Log_setLogLevel
+    if _newclass:setLogLevel = staticmethod(_fife.Log_setLogLevel)
+    __swig_getmethods__["initialize"] = lambda x: _fife.Log_initialize
+    if _newclass:initialize = staticmethod(_fife.Log_initialize)
+
+class LogPtr(Log):
+    def __init__(self, this):
+        _swig_setattr(self, Log, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, Log, 'thisown', 0)
+        self.__class__ = Log
+_fife.Log_swigregister(LogPtr)
+
+Log_setLogLevel = _fife.Log_setLogLevel
+
+Log_initialize = _fife.Log_initialize
+
 class Engine(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Engine, name, value)

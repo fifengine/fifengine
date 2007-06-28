@@ -153,8 +153,13 @@
 		<File RelativePath="..\..\..\engine\engine.h"></File>
 		<File RelativePath="..\..\..\engine\fife_wrap.cxx"></File>
 		<Filter Name="util">
+			<File RelativePath="..\..\..\engine\util\debugutils.h"></File>
 			<File RelativePath="..\..\..\engine\util\exception.cpp"></File>
 			<File RelativePath="..\..\..\engine\util\exception.h"></File>
+			<File RelativePath="..\..\..\engine\util\log.cpp"></File>
+			<File RelativePath="..\..\..\engine\util\log.h"></File>
+			<File RelativePath="..\..\..\engine\util\settingsmanager.cpp"></File>
+			<File RelativePath="..\..\..\engine\util\settingsmanager.h"></File>
 		</Filter>
 	</Files>
 	<Globals>

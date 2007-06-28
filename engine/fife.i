@@ -4,6 +4,8 @@
 %}
 
 %include "util/exception.i"
+%include "util/settingsmanager.i"
+%include "util/log.i"
 
 namespace FIFE {
 	class Engine {

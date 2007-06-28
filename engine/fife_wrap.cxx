@@ -1439,19 +1439,21 @@ SWIG_Python_SetModule(swig_module_info *swig_module) {
 #define SWIGTYPE_p_FIFE__IndexOverflow swig_types[5]
 #define SWIGTYPE_p_FIFE__InvalidConversion swig_types[6]
 #define SWIGTYPE_p_FIFE__InvalidFormat swig_types[7]
-#define SWIGTYPE_p_FIFE__NameClash swig_types[8]
-#define SWIGTYPE_p_FIFE__NotFound swig_types[9]
-#define SWIGTYPE_p_FIFE__NotSupported swig_types[10]
-#define SWIGTYPE_p_FIFE__OutOfMemory swig_types[11]
-#define SWIGTYPE_p_FIFE__SDLException swig_types[12]
-#define SWIGTYPE_p_FIFE__ScriptException swig_types[13]
-#define SWIGTYPE_p_char swig_types[14]
-#define SWIGTYPE_ptrdiff_t swig_types[15]
-#define SWIGTYPE_size_t swig_types[16]
-#define SWIGTYPE_std__ptrdiff_t swig_types[17]
-#define SWIGTYPE_std__size_t swig_types[18]
-static swig_type_info *swig_types[20];
-static swig_module_info swig_module = {swig_types, 19, 0, 0, 0, 0};
+#define SWIGTYPE_p_FIFE__Log swig_types[8]
+#define SWIGTYPE_p_FIFE__NameClash swig_types[9]
+#define SWIGTYPE_p_FIFE__NotFound swig_types[10]
+#define SWIGTYPE_p_FIFE__NotSupported swig_types[11]
+#define SWIGTYPE_p_FIFE__OutOfMemory swig_types[12]
+#define SWIGTYPE_p_FIFE__SDLException swig_types[13]
+#define SWIGTYPE_p_FIFE__ScriptException swig_types[14]
+#define SWIGTYPE_p_FIFE__SettingsManager swig_types[15]
+#define SWIGTYPE_p_char swig_types[16]
+#define SWIGTYPE_ptrdiff_t swig_types[17]
+#define SWIGTYPE_size_t swig_types[18]
+#define SWIGTYPE_std__ptrdiff_t swig_types[19]
+#define SWIGTYPE_std__size_t swig_types[20]
+static swig_type_info *swig_types[22];
+static swig_module_info swig_module = {swig_types, 21, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1548,6 +1550,173 @@ SWIGINTERNINLINE PyObject*
   {
     return SWIG_FromCharArray(s.data(), s.size());
   }
+
+
+#include "util/settingsmanager.h"
+
+
+#include <limits.h>
+
+
+SWIGINTERN int
+  SWIG_CheckLongInRange(long value, long min_value, long max_value,
+			const char *errmsg)
+{
+  if (value < min_value) {
+    if (errmsg) {
+      PyErr_Format(PyExc_OverflowError, 
+		   "value %ld is less than '%s' minimum %ld", 
+		   value, errmsg, min_value);
+    }
+    return 0;    
+  } else if (value > max_value) {
+    if (errmsg) {
+      PyErr_Format(PyExc_OverflowError,
+		   "value %ld is greater than '%s' maximum %ld", 
+		   value, errmsg, max_value);
+    }
+    return 0;
+  }
+  return 1;
+}
+
+
+SWIGINTERN int
+  SWIG_AsVal_long(PyObject * obj, long* val)
+{
+  if (PyLong_Check(obj)) {
+    long v = PyLong_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return 1;
+    } else {
+      if (!val) PyErr_Clear();
+      return 0;
+    }
+  }
+  if (PyInt_Check(obj)) {
+    if (val) *val = PyInt_AsLong(obj);
+    return 1;
+  }
+  if (val) {
+    SWIG_type_error("long", obj);
+  }
+  return 0;
+ }
+
+
+#if INT_MAX != LONG_MAX
+SWIGINTERN int
+  SWIG_AsVal_int(PyObject *obj, int *val)
+{ 
+  const char* errmsg = val ? "int" : (char*)0;
+  long v;
+  if (SWIG_AsVal_long(obj, &v)) {
+    if (SWIG_CheckLongInRange(v, INT_MIN,INT_MAX, errmsg)) {
+      if (val) *val = static_cast<int >(v);
+      return 1;
+    } else {
+      return 0;
+    }
+  } else {
+    PyErr_Clear();
+  }
+  if (val) {
+    SWIG_type_error(errmsg, obj);
+  }
+  return 0;    
+}
+#else
+SWIGINTERNINLINE int
+  SWIG_AsVal_int(PyObject *obj, int *val)
+{
+  return SWIG_AsVal_long(obj,(long*)val);
+}
+#endif
+
+
+SWIGINTERN int
+  SWIG_AsVal_bool(PyObject *obj, bool *val)
+{
+  if (obj == Py_True) {
+    if (val) *val = true;
+    return 1;
+  }
+  if (obj == Py_False) {
+    if (val) *val = false;
+    return 1;
+  }
+  int res = 0;
+  if (SWIG_AsVal_int(obj, &res)) {    
+    if (val) *val = res ? true : false;
+    return 1;
+  } else {
+    PyErr_Clear();
+  }  
+  if (val) {
+    SWIG_type_error("bool", obj);
+  }
+  return 0;
+}
+
+
+SWIGINTERNINLINE bool
+SWIG_As_bool(PyObject* obj)
+{
+  bool v;
+  if (!SWIG_AsVal_bool(obj, &v)) {
+    /*
+      this is needed to make valgrind/purify happier. 
+     */
+    memset((void*)&v, 0, sizeof(bool));
+  }
+  return v;
+}
+
+  
+SWIGINTERNINLINE int
+SWIG_Check_bool(PyObject* obj)
+{
+  return SWIG_AsVal_bool(obj, (bool*)0);
+}
+
+
+SWIGINTERNINLINE int
+SWIG_As_int(PyObject* obj)
+{
+  int v;
+  if (!SWIG_AsVal_int(obj, &v)) {
+    /*
+      this is needed to make valgrind/purify happier. 
+     */
+    memset((void*)&v, 0, sizeof(int));
+  }
+  return v;
+}
+
+  
+SWIGINTERNINLINE int
+SWIG_Check_int(PyObject* obj)
+{
+  return SWIG_AsVal_int(obj, (int*)0);
+}
+
+
+  /*@/usr/share/swig1.3/python/pymacros.swg,72,SWIG_define@*/
+#define SWIG_From_int PyInt_FromLong
+/*@@*/
+
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_bool(bool value)
+{
+  PyObject *obj = value ? Py_True : Py_False;
+  Py_INCREF(obj);
+  return obj;
+}
+
+
+#include "util/log.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -2290,6 +2459,678 @@ static PyObject * EventException_swigregister(PyObject *, PyObject *args) {
     Py_INCREF(obj);
     return Py_BuildValue((char *)"");
 }
+static PyObject *_wrap_new_SettingsManager(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *result;
+    
+    if(!PyArg_ParseTuple(args,(char *)":new_SettingsManager")) goto fail;
+    result = (FIFE::SettingsManager *)new FIFE::SettingsManager();
+    
+    resultobj = SWIG_NewPointerObj((void*)(result), SWIGTYPE_p_FIFE__SettingsManager, 1);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_delete_SettingsManager(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:delete_SettingsManager",&obj0)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    delete arg1;
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_loadSettings(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    int res2 = 0 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OO:SettingsManager_loadSettings",&obj0,&obj1)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    (arg1)->loadSettings((std::string const &)*arg2);
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_saveSettings__SWIG_0(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    bool arg3 ;
+    int res2 = 0 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:SettingsManager_saveSettings",&obj0,&obj1,&obj2)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    {
+        arg3 = static_cast<bool >(SWIG_As_bool(obj2)); 
+        if (SWIG_arg_fail(3)) SWIG_fail;
+    }
+    ((FIFE::SettingsManager const *)arg1)->saveSettings((std::string const &)*arg2,arg3);
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_saveSettings__SWIG_1(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    int res2 = 0 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OO:SettingsManager_saveSettings",&obj0,&obj1)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    ((FIFE::SettingsManager const *)arg1)->saveSettings((std::string const &)*arg2);
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_saveSettings(PyObject *self, PyObject *args) {
+    int argc;
+    PyObject *argv[4];
+    int ii;
+    
+    argc = PyObject_Length(args);
+    for (ii = 0; (ii < argc) && (ii < 3); ii++) {
+        argv[ii] = PyTuple_GetItem(args,ii);
+    }
+    if (argc == 2) {
+        int _v;
+        {
+            void *ptr;
+            if (SWIG_ConvertPtr(argv[0], &ptr, SWIGTYPE_p_FIFE__SettingsManager, 0) == -1) {
+                _v = 0;
+                PyErr_Clear();
+            } else {
+                _v = 1;
+            }
+        }
+        if (_v) {
+            _v = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+            if (_v) {
+                return _wrap_SettingsManager_saveSettings__SWIG_1(self,args);
+            }
+        }
+    }
+    if (argc == 3) {
+        int _v;
+        {
+            void *ptr;
+            if (SWIG_ConvertPtr(argv[0], &ptr, SWIGTYPE_p_FIFE__SettingsManager, 0) == -1) {
+                _v = 0;
+                PyErr_Clear();
+            } else {
+                _v = 1;
+            }
+        }
+        if (_v) {
+            _v = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+            if (_v) {
+                _v = SWIG_Check_bool(argv[2]);
+                if (_v) {
+                    return _wrap_SettingsManager_saveSettings__SWIG_0(self,args);
+                }
+            }
+        }
+    }
+    
+    PyErr_SetString(PyExc_NotImplementedError,"No matching function for overloaded 'SettingsManager_saveSettings'");
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_read_int(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    int *arg3 = 0 ;
+    int result;
+    int res2 = 0 ;
+    int temp3 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:SettingsManager_read_int",&obj0,&obj1,&obj2)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    {
+        temp3 = static_cast<int >(SWIG_As_int(obj2));
+        if (SWIG_arg_fail(3)) SWIG_fail;
+        arg3 = &temp3;
+    }
+    result = (int)(arg1)->SWIGTEMPLATEDISAMBIGUATOR read<int >((std::string const &)*arg2,(int const &)*arg3);
+    
+    {
+        resultobj = SWIG_From_int(static_cast<int >(result)); 
+    }
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_read_bool(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    bool *arg3 = 0 ;
+    bool result;
+    int res2 = 0 ;
+    bool temp3 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:SettingsManager_read_bool",&obj0,&obj1,&obj2)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    {
+        temp3 = static_cast<bool >(SWIG_As_bool(obj2));
+        if (SWIG_arg_fail(3)) SWIG_fail;
+        arg3 = &temp3;
+    }
+    result = (bool)(arg1)->SWIGTEMPLATEDISAMBIGUATOR read<bool >((std::string const &)*arg2,(bool const &)*arg3);
+    
+    {
+        resultobj = SWIG_From_bool(static_cast<bool >(result)); 
+    }
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_read_string(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    std::string *arg3 = 0 ;
+    std::string result;
+    int res2 = 0 ;
+    int res3 = 0 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:SettingsManager_read_string",&obj0,&obj1,&obj2)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    {
+        std::string *ptr = (std::string *)0;
+        res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+        if (!res3) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj2);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(3)) SWIG_fail;
+        arg3 = ptr;
+    }
+    result = (arg1)->SWIGTEMPLATEDISAMBIGUATOR read<std::string >((std::string const &)*arg2,(std::string const &)*arg3);
+    
+    {
+        resultobj = SWIG_From_std_string(static_cast<std::string >(result)); 
+    }
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    if (res3 == SWIG_NEWOBJ) delete arg3;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    if (res3 == SWIG_NEWOBJ) delete arg3;
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_write_int(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    int *arg3 = 0 ;
+    int res2 = 0 ;
+    int temp3 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:SettingsManager_write_int",&obj0,&obj1,&obj2)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    {
+        temp3 = static_cast<int >(SWIG_As_int(obj2));
+        if (SWIG_arg_fail(3)) SWIG_fail;
+        arg3 = &temp3;
+    }
+    (arg1)->SWIGTEMPLATEDISAMBIGUATOR write<int >((std::string const &)*arg2,(int const &)*arg3);
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_write_bool(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    bool *arg3 = 0 ;
+    int res2 = 0 ;
+    bool temp3 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:SettingsManager_write_bool",&obj0,&obj1,&obj2)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    {
+        temp3 = static_cast<bool >(SWIG_As_bool(obj2));
+        if (SWIG_arg_fail(3)) SWIG_fail;
+        arg3 = &temp3;
+    }
+    (arg1)->SWIGTEMPLATEDISAMBIGUATOR write<bool >((std::string const &)*arg2,(bool const &)*arg3);
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    return NULL;
+}
+
+
+static PyObject *_wrap_SettingsManager_write_string(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::SettingsManager *arg1 = (FIFE::SettingsManager *) 0 ;
+    std::string *arg2 = 0 ;
+    std::string *arg3 = 0 ;
+    int res2 = 0 ;
+    int res3 = 0 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:SettingsManager_write_string",&obj0,&obj1,&obj2)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__SettingsManager, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+        if (!res2) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj1);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = ptr;
+    }
+    {
+        std::string *ptr = (std::string *)0;
+        res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+        if (!res3) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj2);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(3)) SWIG_fail;
+        arg3 = ptr;
+    }
+    (arg1)->SWIGTEMPLATEDISAMBIGUATOR write<std::string >((std::string const &)*arg2,(std::string const &)*arg3);
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    if (res3 == SWIG_NEWOBJ) delete arg3;
+    return resultobj;
+    fail:
+    if (res2 == SWIG_NEWOBJ) delete arg2;
+    if (res3 == SWIG_NEWOBJ) delete arg3;
+    return NULL;
+}
+
+
+static PyObject * SettingsManager_swigregister(PyObject *, PyObject *args) {
+    PyObject *obj;
+    if (!PyArg_ParseTuple(args,(char*)"O", &obj)) return NULL;
+    SWIG_TypeClientData(SWIGTYPE_p_FIFE__SettingsManager, obj);
+    Py_INCREF(obj);
+    return Py_BuildValue((char *)"");
+}
+static PyObject *_wrap_new_Log__SWIG_0(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    std::string *arg1 = 0 ;
+    FIFE::Log::type_log_level *arg2 = 0 ;
+    FIFE::Log *result;
+    int res1 = 0 ;
+    FIFE::Log::type_log_level temp2 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OO:new_Log",&obj0,&obj1)) goto fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res1 = SWIG_AsPtr_std_string(obj0, &ptr);
+        if (!res1) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj0);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(1)) SWIG_fail;
+        arg1 = ptr;
+    }
+    {
+        temp2 = static_cast<FIFE::Log::type_log_level >(SWIG_As_int(obj1));
+        if (SWIG_arg_fail(2)) SWIG_fail;
+        arg2 = &temp2;
+    }
+    result = (FIFE::Log *)new FIFE::Log((std::string const &)*arg1,(enum FIFE::Log::type_log_level const &)*arg2);
+    
+    resultobj = SWIG_NewPointerObj((void*)(result), SWIGTYPE_p_FIFE__Log, 1);
+    if (res1 == SWIG_NEWOBJ) delete arg1;
+    return resultobj;
+    fail:
+    if (res1 == SWIG_NEWOBJ) delete arg1;
+    return NULL;
+}
+
+
+static PyObject *_wrap_new_Log__SWIG_1(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    std::string *arg1 = 0 ;
+    FIFE::Log *result;
+    int res1 = 0 ;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:new_Log",&obj0)) goto fail;
+    {
+        std::string *ptr = (std::string *)0;
+        res1 = SWIG_AsPtr_std_string(obj0, &ptr);
+        if (!res1) {
+            if (!PyErr_Occurred())
+            SWIG_type_error("std::string", obj0);
+        } else if (!ptr) {
+            SWIG_null_ref("std::string");
+        }
+        if (SWIG_arg_fail(1)) SWIG_fail;
+        arg1 = ptr;
+    }
+    result = (FIFE::Log *)new FIFE::Log((std::string const &)*arg1);
+    
+    resultobj = SWIG_NewPointerObj((void*)(result), SWIGTYPE_p_FIFE__Log, 1);
+    if (res1 == SWIG_NEWOBJ) delete arg1;
+    return resultobj;
+    fail:
+    if (res1 == SWIG_NEWOBJ) delete arg1;
+    return NULL;
+}
+
+
+static PyObject *_wrap_new_Log__SWIG_2(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::Log *result;
+    
+    if(!PyArg_ParseTuple(args,(char *)":new_Log")) goto fail;
+    result = (FIFE::Log *)new FIFE::Log();
+    
+    resultobj = SWIG_NewPointerObj((void*)(result), SWIGTYPE_p_FIFE__Log, 1);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_new_Log(PyObject *self, PyObject *args) {
+    int argc;
+    PyObject *argv[3];
+    int ii;
+    
+    argc = PyObject_Length(args);
+    for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+        argv[ii] = PyTuple_GetItem(args,ii);
+    }
+    if (argc == 0) {
+        return _wrap_new_Log__SWIG_2(self,args);
+    }
+    if (argc == 1) {
+        int _v;
+        _v = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
+        if (_v) {
+            return _wrap_new_Log__SWIG_1(self,args);
+        }
+    }
+    if (argc == 2) {
+        int _v;
+        _v = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
+        if (_v) {
+            _v = SWIG_Check_int(argv[1]);
+            if (_v) {
+                return _wrap_new_Log__SWIG_0(self,args);
+            }
+        }
+    }
+    
+    PyErr_SetString(PyExc_NotImplementedError,"No matching function for overloaded 'new_Log'");
+    return NULL;
+}
+
+
+static PyObject *_wrap_delete_Log(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::Log *arg1 = (FIFE::Log *) 0 ;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:delete_Log",&obj0)) goto fail;
+    SWIG_Python_ConvertPtr(obj0, (void **)&arg1, SWIGTYPE_p_FIFE__Log, SWIG_POINTER_EXCEPTION | 0);
+    if (SWIG_arg_fail(1)) SWIG_fail;
+    delete arg1;
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_Log_setLogLevel(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::Log::type_log_level arg1 ;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:Log_setLogLevel",&obj0)) goto fail;
+    {
+        arg1 = static_cast<FIFE::Log::type_log_level >(SWIG_As_int(obj0)); 
+        if (SWIG_arg_fail(1)) SWIG_fail;
+    }
+    FIFE::Log::setLogLevel(arg1);
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_Log_initialize(PyObject *, PyObject *args) {
+    PyObject *resultobj = NULL;
+    FIFE::Log::type_log_level arg1 ;
+    bool arg2 ;
+    bool arg3 ;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:Log_initialize",&obj0,&obj1,&obj2)) goto fail;
+    {
+        arg1 = static_cast<FIFE::Log::type_log_level >(SWIG_As_int(obj0)); 
+        if (SWIG_arg_fail(1)) SWIG_fail;
+    }
+    {
+        arg2 = static_cast<bool >(SWIG_As_bool(obj1)); 
+        if (SWIG_arg_fail(2)) SWIG_fail;
+    }
+    {
+        arg3 = static_cast<bool >(SWIG_As_bool(obj2)); 
+        if (SWIG_arg_fail(3)) SWIG_fail;
+    }
+    FIFE::Log::initialize(arg1,arg2,arg3);
+    
+    Py_INCREF(Py_None); resultobj = Py_None;
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject * Log_swigregister(PyObject *, PyObject *args) {
+    PyObject *obj;
+    if (!PyArg_ParseTuple(args,(char*)"O", &obj)) return NULL;
+    SWIG_TypeClientData(SWIGTYPE_p_FIFE__Log, obj);
+    Py_INCREF(obj);
+    return Py_BuildValue((char *)"");
+}
 static PyObject *_wrap_new_Engine(PyObject *, PyObject *args) {
     PyObject *resultobj = NULL;
     FIFE::Engine *result;
@@ -2369,6 +3210,22 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_EventException", _wrap_new_EventException, METH_VARARGS, NULL},
 	 { (char *)"delete_EventException", _wrap_delete_EventException, METH_VARARGS, NULL},
 	 { (char *)"EventException_swigregister", EventException_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_SettingsManager", _wrap_new_SettingsManager, METH_VARARGS, NULL},
+	 { (char *)"delete_SettingsManager", _wrap_delete_SettingsManager, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_loadSettings", _wrap_SettingsManager_loadSettings, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_saveSettings", _wrap_SettingsManager_saveSettings, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_read_int", _wrap_SettingsManager_read_int, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_read_bool", _wrap_SettingsManager_read_bool, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_read_string", _wrap_SettingsManager_read_string, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_write_int", _wrap_SettingsManager_write_int, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_write_bool", _wrap_SettingsManager_write_bool, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_write_string", _wrap_SettingsManager_write_string, METH_VARARGS, NULL},
+	 { (char *)"SettingsManager_swigregister", SettingsManager_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_Log", _wrap_new_Log, METH_VARARGS, NULL},
+	 { (char *)"delete_Log", _wrap_delete_Log, METH_VARARGS, NULL},
+	 { (char *)"Log_setLogLevel", _wrap_Log_setLogLevel, METH_VARARGS, NULL},
+	 { (char *)"Log_initialize", _wrap_Log_initialize, METH_VARARGS, NULL},
+	 { (char *)"Log_swigregister", Log_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Engine", _wrap_new_Engine, METH_VARARGS, NULL},
 	 { (char *)"delete_Engine", _wrap_delete_Engine, METH_VARARGS, NULL},
 	 { (char *)"Engine_swigregister", Engine_swigregister, METH_VARARGS, NULL},
@@ -2422,12 +3279,14 @@ static swig_type_info _swigt__p_FIFE__Exception = {"_p_FIFE__Exception", "FIFE::
 static swig_type_info _swigt__p_FIFE__IndexOverflow = {"_p_FIFE__IndexOverflow", "FIFE::IndexOverflow *", 0, 0, 0};
 static swig_type_info _swigt__p_FIFE__InvalidConversion = {"_p_FIFE__InvalidConversion", "FIFE::InvalidConversion *", 0, 0, 0};
 static swig_type_info _swigt__p_FIFE__InvalidFormat = {"_p_FIFE__InvalidFormat", "FIFE::InvalidFormat *", 0, 0, 0};
+static swig_type_info _swigt__p_FIFE__Log = {"_p_FIFE__Log", "FIFE::Log *", 0, 0, 0};
 static swig_type_info _swigt__p_FIFE__NameClash = {"_p_FIFE__NameClash", "FIFE::NameClash *", 0, 0, 0};
 static swig_type_info _swigt__p_FIFE__NotFound = {"_p_FIFE__NotFound", "FIFE::NotFound *", 0, 0, 0};
 static swig_type_info _swigt__p_FIFE__NotSupported = {"_p_FIFE__NotSupported", "FIFE::NotSupported *", 0, 0, 0};
 static swig_type_info _swigt__p_FIFE__OutOfMemory = {"_p_FIFE__OutOfMemory", "FIFE::OutOfMemory *", 0, 0, 0};
 static swig_type_info _swigt__p_FIFE__SDLException = {"_p_FIFE__SDLException", "FIFE::SDLException *", 0, 0, 0};
 static swig_type_info _swigt__p_FIFE__ScriptException = {"_p_FIFE__ScriptException", "FIFE::ScriptException *", 0, 0, 0};
+static swig_type_info _swigt__p_FIFE__SettingsManager = {"_p_FIFE__SettingsManager", "FIFE::SettingsManager *", 0, 0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, 0};
 static swig_type_info _swigt__ptrdiff_t = {"_ptrdiff_t", "ptrdiff_t", 0, 0, 0};
 static swig_type_info _swigt__size_t = {"_size_t", "size_t", 0, 0, 0};
@@ -2443,12 +3302,14 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_FIFE__IndexOverflow,
   &_swigt__p_FIFE__InvalidConversion,
   &_swigt__p_FIFE__InvalidFormat,
+  &_swigt__p_FIFE__Log,
   &_swigt__p_FIFE__NameClash,
   &_swigt__p_FIFE__NotFound,
   &_swigt__p_FIFE__NotSupported,
   &_swigt__p_FIFE__OutOfMemory,
   &_swigt__p_FIFE__SDLException,
   &_swigt__p_FIFE__ScriptException,
+  &_swigt__p_FIFE__SettingsManager,
   &_swigt__p_char,
   &_swigt__ptrdiff_t,
   &_swigt__size_t,
@@ -2464,12 +3325,14 @@ static swig_cast_info _swigc__p_FIFE__Exception[] = {  {&_swigt__p_FIFE__Excepti
 static swig_cast_info _swigc__p_FIFE__IndexOverflow[] = {  {&_swigt__p_FIFE__IndexOverflow, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__InvalidConversion[] = {  {&_swigt__p_FIFE__InvalidConversion, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__InvalidFormat[] = {  {&_swigt__p_FIFE__InvalidFormat, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__Log[] = {  {&_swigt__p_FIFE__Log, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__NameClash[] = {  {&_swigt__p_FIFE__NameClash, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__NotFound[] = {  {&_swigt__p_FIFE__NotFound, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__NotSupported[] = {  {&_swigt__p_FIFE__NotSupported, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__OutOfMemory[] = {  {&_swigt__p_FIFE__OutOfMemory, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__SDLException[] = {  {&_swigt__p_FIFE__SDLException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__ScriptException[] = {  {&_swigt__p_FIFE__ScriptException, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__SettingsManager[] = {  {&_swigt__p_FIFE__SettingsManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__ptrdiff_t[] = {  {&_swigt__ptrdiff_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__size_t[] = {  {&_swigt__size_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -2485,12 +3348,14 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_FIFE__IndexOverflow,
   _swigc__p_FIFE__InvalidConversion,
   _swigc__p_FIFE__InvalidFormat,
+  _swigc__p_FIFE__Log,
   _swigc__p_FIFE__NameClash,
   _swigc__p_FIFE__NotFound,
   _swigc__p_FIFE__NotSupported,
   _swigc__p_FIFE__OutOfMemory,
   _swigc__p_FIFE__SDLException,
   _swigc__p_FIFE__ScriptException,
+  _swigc__p_FIFE__SettingsManager,
   _swigc__p_char,
   _swigc__ptrdiff_t,
   _swigc__size_t,
@@ -2932,5 +3797,17 @@ SWIGEXPORT void SWIG_init(void) {
     SWIG_InitializeModule(0);
     SWIG_InstallConstants(d,swig_const_table);
     
+    {
+        PyDict_SetItemString(d,"Log_LEVEL_MAX", SWIG_From_int(static_cast<int >(FIFE::Log::LEVEL_MAX))); 
+    }
+    {
+        PyDict_SetItemString(d,"Log_LEVEL_DEBUG", SWIG_From_int(static_cast<int >(FIFE::Log::LEVEL_DEBUG))); 
+    }
+    {
+        PyDict_SetItemString(d,"Log_LEVEL_LOG", SWIG_From_int(static_cast<int >(FIFE::Log::LEVEL_LOG))); 
+    }
+    {
+        PyDict_SetItemString(d,"Log_LEVEL_WARN", SWIG_From_int(static_cast<int >(FIFE::Log::LEVEL_WARN))); 
+    }
 }
 
