@@ -30,6 +30,11 @@ def get_filter(path, names):
 	finally:
 		x.close()
 
+# run swig
+print "Running swig"
+os.system('swig -c++ -python fife.i')
+print "Swig completed"
+
 # Create the file list
 files = []
 for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
@@ -160,7 +165,7 @@ if not env['projfiles']:
 		env.StaticLibrary('fifelite', cppfiles)
 	else:
 		if env['shared']:
-			flib = env.SharedLibrary('fife', cppfiles)
+			flib = env.SharedLibrary('fife', cppfiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib'])
 			env.InstallAs(['_fife.so'], [flib])
 		else:
 			env.StaticLibrary('fife', cppfiles)

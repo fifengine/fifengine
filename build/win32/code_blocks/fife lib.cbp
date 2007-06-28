@@ -49,7 +49,7 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\engine_wrap.cxx">
+		<Unit filename="..\..\..\engine\fife_wrap.cxx">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>

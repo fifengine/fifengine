@@ -1,4 +1,4 @@
-%module engine
+%module fife
 %{
 #include "engine.h"
 %}
@@ -7,6 +7,7 @@
 
 namespace FIFE {
 	class Engine {
+	public:
 		Engine();
 		virtual ~Engine();
 	};

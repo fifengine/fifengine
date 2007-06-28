@@ -37,16 +37,6 @@
 
 namespace FIFE {
 
-	/** This is the engine kernel.
-	 *
-	 * This object is created by the client app using Engine::instance().
-	 * Its constructor and destructor create and destroy the various
-	 * engine system managers. Once the gamestate and other settings have
-	 * been properly initialised by the client code the client calls
-	 * start() to enter the main loop. The class gets registered as an input
-	 * listener when it enters the mainLoop() function.
-	 *
-	 */
 	class Engine {
 		public:
 			/** Constructor
