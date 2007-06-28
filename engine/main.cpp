@@ -34,6 +34,7 @@
 #include "eventchannel/manager/eventmanager.h"
 #include "map/viewgamestate.h"
 #include "map/structures/map.h"
+#include "map/structures/layer.h"
 #include "map/structures/objectinfo.h"
 #include "script/luascript.h"
 #include "video/gui/guimanager.h"
@@ -162,8 +163,9 @@ int main(int argc, char* argv[]) {
 	delete engine;
 
 	FIFE::Log("guimap_test") 
-		<< "maps/objects left alive (should be 0/0): " 
+		<< "maps/layers/objects left alive (should be 0/0/0): " 
 		<< FIFE::map::Map::globalCount()
+		<< "/" << FIFE::map::Layer::globalCount()
 		<< "/" << FIFE::map::ObjectInfo::globalCount();
 	//FIXME: something about saving settings ?
 

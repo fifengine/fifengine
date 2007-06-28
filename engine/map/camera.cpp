@@ -65,8 +65,11 @@ namespace FIFE { namespace map {
 	}
 
 	Camera::~Camera() {
-		if( m_control )
+		if( m_control ) {
 			m_control->removeCamera(this);
+		}
+		m_tracked_object.reset();
+		m_layer.reset();
 	}
 
 	void Camera::update() {
@@ -168,11 +171,12 @@ namespace FIFE { namespace map {
 
 	void Camera::reset() {
 		m_tracked_object.reset();
+		m_layer.reset();
+
 		assert( m_control );
 		m_timer.stop();
 		m_view = m_control->getView();
 		if (!m_view->getCurrentElevation()) {
-			m_layer.reset();
 			m_position = Point();
 			m_mode = FREE;
 		} else {
