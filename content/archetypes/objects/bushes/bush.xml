@@ -1,0 +1,629 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>bush.xml</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+	<archetypes>
+		<archetype type="XML">
+			<prototypes>
+				<prototype name="Bush:001">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_001.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:002">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_002.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:003">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_003.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:004">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_004.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:005">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_005.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:006">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_006.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:007">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_007.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:008">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_008.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:009">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_009.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:010">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_010.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:011">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_011.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:012">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_012.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:013">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_013.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:014">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_014.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:015">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_015.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:016">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_016.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:017">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_017.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:018">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_018.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:019">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_019.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:020">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_020.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:021">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_021.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:022">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_022.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:023">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_023.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:024">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_024.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:025">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_025.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:026">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_026.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:027">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_027.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:028">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_028.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:029">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_029.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:030">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_030.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:031">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_031.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:032">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_032.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:033">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_033.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:034">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_034.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:035">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_035.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:036">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_036.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:037">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_037.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:038">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_038.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:039">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_039.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:040">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_040.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:041">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_041.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:042">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_042.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:043">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_043.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:044">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_044.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:045">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_045.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:046">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_046.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:047">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_047.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:048">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_048.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:049">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_049.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:050">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_050.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:051">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_051.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:052">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_052.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:053">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_053.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:054">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_054.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:055">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_055.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:056">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_056.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:057">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_057.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:058">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_058.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:059">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_059.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:060">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_060.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:061">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_061.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:062">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_062.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:063">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_063.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:064">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_064.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:065">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_065.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:066">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_066.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:067">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_067.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:068">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_068.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:069">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_069.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:070">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_070.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:071">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_071.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:072">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_072.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:073">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_073.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:074">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_074.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:075">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_075.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:076">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_076.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:077">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_077.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:078">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_078.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:079">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_079.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:080">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_080.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:081">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_081.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:082">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_082.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:083">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_083.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:084">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_084.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:085">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_085.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:086">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_086.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:087">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_087.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:088">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_088.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:089">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_089.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:090">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_090.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:091">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_091.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:092">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_092.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:093">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_093.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:094">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_094.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:095">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_095.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:096">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_096.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:097">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_097.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:098">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_098.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:099">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_099.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:100">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_100.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:101">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_101.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:102">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_102.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:103">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_103.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:104">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_104.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:105">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_105.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:106">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_106.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:107">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_107.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:108">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_108.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:109">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_109.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:110">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_110.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:111">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_111.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:112">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_112.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:113">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_113.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:114">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_114.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:115">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_115.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:116">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_116.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:117">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_117.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:118">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_118.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:119">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_119.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:120">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_120.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:121">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_121.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:122">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_122.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Bush:123">
+					<visual>
+						<image source="content/gfx/objects/bushes/bush_123.png"/>
+					</visual>
+				</prototype>
+			</prototypes>
+		</archetype>
+	</archetypes>
+</map>

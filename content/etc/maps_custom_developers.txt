@@ -1,0 +1,9 @@
+content/maps/chess.xml
+content/maps/contest_map.xml
+content/maps/example_map.xml
+content/maps/gridbug.xml
+content/maps/objects_testcase.xml
+content/maps/official_map.xml
+content/maps/scratch.xml
+content/maps/testmap.xml
+content/maps/top_down.xml

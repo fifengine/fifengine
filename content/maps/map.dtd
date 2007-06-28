@@ -1,0 +1,114 @@
+<!--
+  The following describes a 2D raster map with an arbitrary number of
+  elevations. It is inspired by the format defined by "Tiled".
+  See: http://mapeditor.org/
+//-->
+
+<!ELEMENT map (tileset+,spriteset*,animation*,elevation+,run?)>
+
+<!-- a map should at least define a human-readable name and a (int?)
+     value for identification. //-->
+<!ATTLIST map 
+  name CDATA #REQUIRED
+  id   CDATA #REQUIRED
+  >
+
+<!-- a map can cause the engine to run a Lua command; either an embedded
+string or a file (in the content/scripts directory) -->
+<!ELEMENT run (script|string)>
+<!ELEMENT script EMPTY>
+<!ATTLIST script
+  source CDATA #REQUIRED
+  >
+<!ELEMENT string (#PCDATA)>
+
+
+<!-- each elevation contains ONE of these: 
+ -   a "data" child, which contains
+     width*height "tile" elements (left->right, top->down)
+ -   a "sparsedata" child which contains a number of "tileat" childs
+ -   a "image" child (I guess 8bit grayscale for now)
+//-->
+
+<!-- an elevation is a sequence of layers; at least one -->
+<!ELEMENT elevation (layer+)>
+<!ATTLIST elevation
+  refgrid CDATA #REQUIRED
+  >
+<!ELEMENT layer (geometry?,(data|sparsedata|image)?,objects?)>
+<!ATTLIST layer
+  width    CDATA #REQUIRED
+  height   CDATA #REQUIRED
+  geometry CDATA #IMPLIED
+  outline  CDATA #IMPLIED
+  >
+<!ELEMENT data (tile*)>
+<!ELEMENT tile EMPTY>
+<!ATTLIST tile
+  gid       CDATA #REQUIRED
+  >
+<!ELEMENT sparsedata (tileat*)>
+<!ELEMENT tileat EMPTY>
+<!ATTLIST tileat
+  gid       CDATA #REQUIRED
+  x         CDATA #REQUIRED
+  y         CDATA #REQUIRED
+  >
+<!ELEMENT geometry (id, type, size, transform, offset, flags)>
+<!ELEMENT id ANY>
+<!ELEMENT type ANY>
+<!ELEMENT size (x,y)>
+<!ELEMENT transform (x,y)>
+<!ELEMENT offset (x,y)>
+<!ELEMENT flags ANY>
+<!ELEMENT x ANY>
+<!ELEMENT y ANY>
+<!-- a tileset should contain at least one image child; otherwise it
+     _has_ to reference another tileset with a "source" attr (can't
+     validate that for now).
+//-->
+<!ELEMENT tileset (image*)>
+<!ATTLIST tileset
+  name       CDATA #IMPLIED
+  tilewidth  CDATA #IMPLIED
+  tileheight CDATA #IMPLIED
+  source     CDATA #IMPLIED
+  >
+<!ELEMENT image EMPTY>
+<!ATTLIST image
+  source  CDATA #REQUIRED
+  firstgid    CDATA #IMPLIED
+  rowskip CDATA #IMPLIED
+  >
+<!ELEMENT spriteset (sprite*)>
+<!ELEMENT sprite EMPTY>
+<!ATTLIST sprite
+  id       CDATA #REQUIRED
+  source   CDATA #REQUIRED
+>
+<!ELEMENT objects (object+)>
+<!ELEMENT object EMPTY>
+<!ATTLIST object
+  typename  CDATA #REQUIRED
+  gridpos   CDATA #REQUIRED
+  spriteid  CDATA #REQUIRED
+  grid_x    CDATA #IMPLIED
+  grid_y    CDATA #IMPLIED
+  >
+
+<!-- until anims find a nice home... -->
+<!ELEMENT animation (frame+)>
+
+<!ATTLIST animation
+  id     CDATA #REQUIRED
+  delay  CDATA #REQUIRED
+  action CDATA #IMPLIED
+  >
+
+<!ELEMENT frame EMPTY>
+
+<!ATTLIST frame
+  source CDATA #REQUIRED
+  x_off  CDATA #IMPLIED
+  y_off  CDATA #IMPLIED
+  >

@@ -1,0 +1,18 @@
+Welcome to the F.I.F.E. Demo Release.
+Toggle the Console with F10.
+
+Move around the map with cursor keys.
+r - Toggle roof visibility,
+o - Toggle object visibility,
+a - Toggle roof transparency,
+c - Toggle coordinate visibility,
+s - Increase roof alpha level,
+x - Decrease roof alpha level,
++ - Increase global gamma level,
+- - Decrease global gamma level,
+e - Cycle through elevations.
+
+--- Have fun :) ---
+
+You can now actually use the lua console a bit.
+Try mapview.setXPos(0) or console.print(...) for example

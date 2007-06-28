@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE CodeBlocks_project_file>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="1"/>
+	<Project>
+		<Option title="FIFE program"/>
+		<Option makefile="Makefile"/>
+		<Option makefile_is_custom="0"/>
+		<Option compiler="0"/>
+		<Build>
+			<Target title="default">
+				<Option output="..\..\..\fife_engine.exe"/>
+				<Option working_dir="..\..\..\..\trunk"/>
+				<Option object_output=".objs"/>
+				<Option deps_output=".deps"/>
+				<Option external_deps="..\mingw\static_libs\libfife.a;"/>
+				<Option type="0"/>
+				<Option compiler="0"/>
+				<Option parameters="content/scripts/demos/load_custom_maps_developers.lua"/>
+				<Option projectResourceIncludeDirsRelation="0"/>
+				<Compiler>
+					<Add directory="..\..\..\engine"/>
+					<Add directory="..\mingw\include\boost"/>
+					<Add directory="..\mingw\include\gettext"/>
+					<Add directory="..\mingw\include\guichan"/>
+					<Add directory="..\mingw\include\libvorbis"/>
+					<Add directory="..\mingw\include\lua51"/>
+					<Add directory="..\mingw\include\ogg"/>
+					<Add directory="..\mingw\include\openal"/>
+					<Add directory="..\mingw\include\opengl"/>
+					<Add directory="..\mingw\include\png"/>
+					<Add directory="..\mingw\include\sdl"/>
+					<Add directory="..\mingw\include\sdl_image"/>
+					<Add directory="..\mingw\include\sdl_ttf"/>
+					<Add directory="..\mingw\include\zlib"/>
+				</Compiler>
+				<Linker>
+					<Add library="..\mingw\static_libs\libfife.a"/>
+					<Add library="..\mingw\applications\mingw\lib\libmingw32.a"/>
+					<Add library="..\mingw\static_libs\libzlib.a"/>
+					<Add library="..\mingw\static_libs\SDL_image.lib"/>
+					<Add library="..\mingw\static_libs\liblua51.a"/>
+					<Add library="..\mingw\static_libs\libguichan.a"/>
+					<Add library="..\mingw\static_libs\libguichan_sdl.a"/>
+					<Add library="..\mingw\static_libs\libvorbis.a"/>
+					<Add library="..\mingw\static_libs\libogg.a"/>
+					<Add library="..\mingw\static_libs\libvorbisfile.a"/>
+					<Add library="..\mingw\static_libs\libSDLmain.a"/>
+					<Add library="..\mingw\static_libs\libSDL.dll.a"/>
+					<Add library="..\mingw\static_libs\OpenAL32.lib"/>
+					<Add library="..\mingw\static_libs\SDL_ttf.lib"/>
+					<Add library="..\mingw\static_libs\libboost_filesystem.a"/>
+					<Add library="..\mingw\static_libs\libboost_regex.a"/>
+					<Add library="..\mingw\static_libs\libpng.a"/>
+					<Add library="..\mingw\static_libs\ws2_32.lib"/>
+					<Add library="..\mingw\static_libs\libguichan_opengl.a"/>
+					<Add library="..\mingw\static_libs\libopengl32.a"/>
+					<Add library="..\mingw\static_libs\libglu32.a"/>
+					<Add library="..\mingw\applications\mingw\lib\libwinmm.a"/>
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-O3"/>
+			<Add option="-Wall"/>
+		</Compiler>
+		<Unit filename="..\..\..\engine\main.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

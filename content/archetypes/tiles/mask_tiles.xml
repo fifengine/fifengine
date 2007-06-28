@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>mask_tiles.xml</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+	<archetypes>
+		<archetype type="XML">
+			<tileset name="160 * 96 mask tiles for testing" tilewidth="160" tileheight="96" firstgid="17001" lastgid="18000">
+				<image source="content/gfx/tiles/masks/diamond_160_96.png" singletile="1" />
+			</tileset>
+		</archetype>
+	</archetypes>
+</map>

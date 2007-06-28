@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>starfish.xml</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+	<archetypes>
+		<archetype type="XML">
+			<prototypes>
+				<prototype name="Starfish:001">
+					<visual>
+						<image source="content/gfx/objects/beach/starfish01.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Starfish:002">
+					<visual>
+						<image source="content/gfx/objects/beach/starfish02.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Starfish:003">
+					<visual>
+						<image source="content/gfx/objects/beach/starfish03.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Starfish:004">
+					<visual>
+						<image source="content/gfx/objects/beach/starfish04.png"/>
+					</visual>
+				</prototype>
+			</prototypes>
+		</archetype>
+	</archetypes>
+</map>

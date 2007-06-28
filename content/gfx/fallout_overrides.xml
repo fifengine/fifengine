@@ -1,0 +1,51 @@
+<!-- 
+Overrides colors for certain FRM files. Mostly used to set a lower alpha for
+a certain index.
+
+If only the alpha component is set ex: "<color index="108" a="128"/>" then the 
+rgb components will come from the palette. If the rgb components are set, but the
+alpha component is not, then the alpha will default to 255.
+-->
+
+<color-overrides>
+	<override>
+		<name>art/scenery/vwin01.frm</name>
+		<name>art/scenery/vwin02.frm</name>
+		<name>art/scenery/vwin03.frm</name>
+		<name>art/scenery/vwin04.frm</name>
+		<name>art/scenery/vwin05.frm</name>
+		<name>art/scenery/vwin06.frm</name>
+		<name>art/scenery/vwin07.frm</name>
+		<color index="108" a="128"/>
+	</override>
+	
+	<override>
+		<name>art/scenery/ffield01.frm</name>
+		<name>art/scenery/ffield03.frm</name>
+		<color index="13" r="120" g="120" b="0" a="80"/>
+	</override>
+	
+	<override>
+		<name>art/scenery/ffield02.frm</name>
+		<name>art/scenery/ffield04.frm</name>
+		<color index="12" r="120" g="0" b="0" a="80"/>
+	</override>
+	
+	<override>
+		<name>art/scenery/forcf03.frm</name>
+		<name>art/scenery/forcf04.frm</name>
+		<name>art/scenery/forcf05.frm</name>
+		<name>art/scenery/forcf06.frm</name>
+		<color index="11" r="120" g="0" b="0" a="80"/>
+	</override>
+	
+	<override>
+		<name>art/scenery/steam01.frm</name>
+		<name>art/scenery/steam02.frm</name>
+		<color index="16" a="128"/>
+	</override>
+	
+	<override name="art/scenery/steam03.frm">
+		<color index="9" a="128"/>
+	</override>
+</color-overrides>

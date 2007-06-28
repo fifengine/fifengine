@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>Chessboard 1</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+
+	<metadata>
+		<param name="_START_ELEVATION" type="id">1</param>
+	</metadata>
+
+	<archetypes>
+		<!-- Load tile archetypes -->
+		<archetype type="XML" source="content/archetypes/tiles/chess_tiles.xml" />
+	</archetypes>
+	
+	<elevation>
+		<properties>
+			<refgrid>0</refgrid>
+		</properties>
+		<metadata>
+			<param name="_START_POSITION" type="Point"><x>0</x><y>5</y></param>
+		</metadata>
+		<layer>
+			<metadata>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/tiles/outlines/tile_outline_fallout.png</param>
+			</metadata>
+			<properties>
+				<size><x>10</x><y>10</y></size>
+
+				<!-- We use the predefined Fallout tile geometry -->
+				<geometry>0</geometry>
+			</properties>
+			
+			<data>
+				<tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" />
+				<tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" />
+
+				<tile gid="10003" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" />
+				<tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10003" />
+
+				<tile gid="10003" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" />
+				<tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10003" />
+
+				<tile gid="10003" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" />
+				<tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10003" />
+
+				<tile gid="10003" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" />
+				<tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10003" />
+      
+				<tile gid="10003" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" />
+				<tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10003" />
+      
+				<tile gid="10003" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" />
+				<tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10003" />
+      
+				<tile gid="10003" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" />
+				<tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10003" />
+      
+				<tile gid="10003" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" />
+				<tile gid="10002" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10003" />
+      
+				<tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" />
+				<tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" />
+			</data>
+		</layer>
+		<layer>
+			<metadata>
+				<param name="_OVERLAY_IMAGE" type="text">content/gfx/objects/outlines/object_outline_fallout.png</param>
+			</metadata>
+			<properties>
+				<size><x>20</x><y>20</y></size>
+
+				<!-- We use the predefined Fallout object hex geometry -->
+				<geometry>1</geometry>
+			</properties>
+			<objects>				
+			</objects>
+		</layer>
+	</elevation>
+</map>
