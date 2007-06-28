@@ -13,7 +13,7 @@ opts.Add(BoolOption('utils',  'Build utilities', 0))
 opts.Add(BoolOption('ext',  'Build external dependencies', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
 opts.Add(BoolOption('movie', 'Enable movie playback', 0))
-opts.Add(BoolOption('shared', 'Build libfife as a shared library', 0))
+opts.Add(BoolOption('shared', 'Build libfife as a shared library', 1))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
@@ -109,7 +109,9 @@ if dontBuild:
 		print "generating directory dependency graph"
 		os.system('python ' + _jp('utils', 'util_scripts', 'dep_scan.py'))
 		print "directory dependency graph created succesfully"
-
+elif env['ext']:
+	Export('env')
+	SConscript('ext/SConscript')
 else:
 	platformConfig = getPlatformConfig()
 	env = platformConfig.initEnvironment(env)
@@ -162,8 +164,6 @@ else:
 		if sys.platform == 'darwin':
 			env.Object('engine/SDLMain.m')
 			enginefiles.append('engine/SDLMain.o')
-		if env['ext']:
-			SConscript('ext/SConscript')
 		if env['shared']:
 			env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
 		else:
