@@ -44,7 +44,7 @@ namespace FIFE { namespace map {
 	}
 
 	void Archetype::addArchetype(Archetype* archetype) {
-    m_archetypes.push_back(archetype);
+		m_archetypes.push_back(archetype);
 	}
 
 	void Archetype::loadPrototype(ObjectInfo*, size_t ) {

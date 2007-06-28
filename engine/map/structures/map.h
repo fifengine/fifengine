@@ -183,15 +183,15 @@ namespace FIFE { namespace map {
 			static long m_count;
 
 			typedef std::map<std::string, ArchetypeLoaderBase*> type_atloaders;
-	    type_atloaders m_atloaders;
+			type_atloaders m_atloaders;
 
-      typedef std::list<Archetype*> type_archetypes;
+			typedef std::list<Archetype*> type_archetypes;
 			type_archetypes m_archetypes;
 
-      typedef std::map<size_t,size_t> type_tileids;
+			typedef std::map<size_t,size_t> type_tileids;
 			type_tileids m_tileids;
 
-      typedef std::map<std::string,size_t> type_protoname_map;
+			typedef std::map<std::string,size_t> type_protoname_map;
 
 			struct s_proto {
 				type_protoname_map::iterator name_iterator;
@@ -200,7 +200,7 @@ namespace FIFE { namespace map {
 
 			typedef std::vector<s_proto> type_protoid_map;
 			type_protoname_map m_protoname_map;
-		  type_protoid_map   m_protoid_map;
+			type_protoid_map   m_protoid_map;
 
 			typedef std::vector<ElevationPtr> type_elevations;
 			type_elevations m_elevations;

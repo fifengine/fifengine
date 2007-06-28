@@ -57,8 +57,8 @@ namespace FIFE { namespace map {
 
 	Map::~Map() {
 		purge(m_archetypes);
-    // TODO: purge seems to have trouble with maps? Fix this so we can get rid of this memory leak
-		//purge(m_atloaders);
+		// Use purge_map for deleting std::map values
+		purge_map(m_atloaders);
 		clearElevations();
 		m_count -= 1;
 	}
@@ -104,7 +104,7 @@ namespace FIFE { namespace map {
 		return m_archetypes;
 	}
 
-  void Map::loadPrototype(ObjectInfo* object, size_t proto_id) {
+	void Map::loadPrototype(ObjectInfo* object, size_t proto_id) {
 		assert( object );
 		if( proto_id == 0 || proto_id >= m_protoid_map.size() ) {
 			return;
@@ -116,12 +116,12 @@ namespace FIFE { namespace map {
 		proto.archetype->loadPrototype(object,proto_id);
 	}
 
-  size_t Map::addPrototype(Archetype* at, const std::string& name) {
+	size_t Map::addPrototype(Archetype* at, const std::string& name) {
 		size_t id = m_protoid_map.size();
 		s_proto proto = { m_protoname_map.insert(std::make_pair(name, id)).first, at };
 		m_protoid_map.push_back( proto );
 		return id;
-  }
+	}
 
 	size_t Map::getPrototypeId(const std::string& proto_name) const {
 		type_protoname_map::const_iterator i(m_protoname_map.find(proto_name));
