@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE CodeBlocks_workspace_file>
-<CodeBlocks_workspace_file>
-	<Workspace title="Workspace">
-		<Project filename="fife lib.cbp"/>
-		<Project filename="fife program.cbp" active="1"/>
-	</Workspace>
-</CodeBlocks_workspace_file>
