@@ -109,7 +109,9 @@ if dontBuild:
 		print "generating directory dependency graph"
 		os.system('python ' + _jp('utils', 'util_scripts', 'dep_scan.py'))
 		print "directory dependency graph created succesfully"
-
+elif env['ext']:
+	Export('env')
+	SConscript('ext/SConscript')
 else:
 	platformConfig = getPlatformConfig()
 	env = platformConfig.initEnvironment(env)
@@ -162,8 +164,6 @@ else:
 		if sys.platform == 'darwin':
 			env.Object('engine/SDLMain.m')
 			enginefiles.append('engine/SDLMain.o')
-		if env['ext']:
-			SConscript('ext/SConscript')
 		if env['shared']:
 			env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
 		else:
