@@ -156,8 +156,16 @@
 			<File RelativePath="..\..\..\engine\util\debugutils.h"></File>
 			<File RelativePath="..\..\..\engine\util\exception.cpp"></File>
 			<File RelativePath="..\..\..\engine\util\exception.h"></File>
+			<File RelativePath="..\..\..\engine\util\fife_math.h"></File>
+			<File RelativePath="..\..\..\engine\util\fife_stdint.h"></File>
 			<File RelativePath="..\..\..\engine\util\log.cpp"></File>
 			<File RelativePath="..\..\..\engine\util\log.h"></File>
+			<File RelativePath="..\..\..\engine\util\point.cpp"></File>
+			<File RelativePath="..\..\..\engine\util\point.h"></File>
+			<File RelativePath="..\..\..\engine\util\purge.h"></File>
+			<File RelativePath="..\..\..\engine\util\quadtree.h"></File>
+			<File RelativePath="..\..\..\engine\util\rect.cpp"></File>
+			<File RelativePath="..\..\..\engine\util\rect.h"></File>
 			<File RelativePath="..\..\..\engine\util\settingsmanager.cpp"></File>
 			<File RelativePath="..\..\..\engine\util\settingsmanager.h"></File>
 		</Filter>
