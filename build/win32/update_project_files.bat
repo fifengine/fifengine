@@ -7,7 +7,7 @@ SET PATH=%_%\applications\scons;%_%\applications\mingw\bin
 
 :: Goto TRUNK and call SCons
 cd \
-cd %_%\..\..\..\
+cd %_%\..\..\
 scons projfiles=1
 
 :: Return us to the directory we started from

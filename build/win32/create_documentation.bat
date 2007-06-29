@@ -7,7 +7,7 @@ del %_%\engine_build_log.txt
 
 :: Goto TRUNK and call SCons
 cd \
-cd %_%\..\..\..
+cd %_%\..\..
 scons docs=1 >> "%_%\doxygen_log.txt" 2>&1
 
 :: Return us to the directory we started from

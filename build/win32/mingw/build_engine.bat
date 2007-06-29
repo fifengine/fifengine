@@ -3,7 +3,7 @@ set _=%CD%
 
 :: To avoid path collisions the following line was commented out and replaced with a slightly different version
 :: SET PATH=%Path%;%_%\applications\scons;%_%\applications\mingw\bin
-SET PATH=%_%\applications\scons;%_%\applications\mingw\bin
+SET PATH=%_%\..\applications\scons;%_%\..\applications\mingw\bin
 
 :: Goto TRUNK and call SCons
 cd \
