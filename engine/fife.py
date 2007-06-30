@@ -340,52 +340,36 @@ class TimeManager(_object):
     def getTimeDelta(*args): return _fife.TimeManager_getTimeDelta(*args)
     def getAverageFrameTime(*args): return _fife.TimeManager_getAverageFrameTime(*args)
     def printStatistics(*args): return _fife.TimeManager_printStatistics(*args)
+    def registerEvent(*args): return _fife.TimeManager_registerEvent(*args)
+    def unregisterEvent(*args): return _fife.TimeManager_unregisterEvent(*args)
 TimeManager_swigregister = _fife.TimeManager_swigregister
 TimeManager_swigregister(TimeManager)
 
-class TimerListener(_object):
+class TimeEvent(_object):
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, TimerListener, name, value)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, TimeEvent, name, value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, TimerListener, name)
+    __getattr__ = lambda self, name: _swig_getattr(self, TimeEvent, name)
     __repr__ = _swig_repr
-    def onTimer(*args): return _fife.TimerListener_onTimer(*args)
-    __swig_destroy__ = _fife.delete_TimerListener
-    __del__ = lambda self : None;
     def __init__(self, *args): 
-        if self.__class__ == TimerListener:
+        if self.__class__ == TimeEvent:
             args = (None,) + args
         else:
             args = (self,) + args
-        this = _fife.new_TimerListener(*args)
+        this = _fife.new_TimeEvent(*args)
         try: self.this.append(this)
         except: self.this = this
+    __swig_destroy__ = _fife.delete_TimeEvent
+    __del__ = lambda self : None;
+    def updateEvent(*args): return _fife.TimeEvent_updateEvent(*args)
+    def setPeriod(*args): return _fife.TimeEvent_setPeriod(*args)
+    def getPeriod(*args): return _fife.TimeEvent_getPeriod(*args)
     def __disown__(self):
         self.this.disown()
-        _fife.disown_TimerListener(self)
+        _fife.disown_TimeEvent(self)
         return weakref_proxy(self)
-TimerListener_swigregister = _fife.TimerListener_swigregister
-TimerListener_swigregister(TimerListener)
-
-class Timer(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Timer, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Timer, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        this = _fife.new_Timer(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _fife.delete_Timer
-    __del__ = lambda self : None;
-    def setInterval(*args): return _fife.Timer_setInterval(*args)
-    def start(*args): return _fife.Timer_start(*args)
-    def stop(*args): return _fife.Timer_stop(*args)
-    def setCallback(*args): return _fife.Timer_setCallback(*args)
-    def setListener(*args): return _fife.Timer_setListener(*args)
-Timer_swigregister = _fife.Timer_swigregister
-Timer_swigregister(Timer)
+TimeEvent_swigregister = _fife.TimeEvent_swigregister
+TimeEvent_swigregister(TimeEvent)
 
 class Engine(_object):
     __swig_setmethods__ = {}

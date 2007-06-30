@@ -2975,14 +2975,11 @@ namespace Swig {
 #define SWIGTYPE_p_FIFE__SDLException swig_types[13]
 #define SWIGTYPE_p_FIFE__ScriptException swig_types[14]
 #define SWIGTYPE_p_FIFE__SettingsManager swig_types[15]
-#define SWIGTYPE_p_FIFE__TimeManager swig_types[16]
-#define SWIGTYPE_p_FIFE__Timer swig_types[17]
-#define SWIGTYPE_p_FIFE__TimerListener swig_types[18]
-#define SWIGTYPE_p_boost__function0Tvoid_t swig_types[19]
-#define SWIGTYPE_p_char swig_types[20]
-#define SWIGTYPE_p_type_callback swig_types[21]
-static swig_type_info *swig_types[23];
-static swig_module_info swig_module = {swig_types, 22, 0, 0, 0, 0};
+#define SWIGTYPE_p_FIFE__TimeEvent swig_types[16]
+#define SWIGTYPE_p_FIFE__TimeManager swig_types[17]
+#define SWIGTYPE_p_char swig_types[18]
+static swig_type_info *swig_types[20];
+static swig_module_info swig_module = {swig_types, 19, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3407,7 +3404,7 @@ SWIG_From_unsigned_SS_long  (unsigned long value)
   #define SWIG_From_double   PyFloat_FromDouble 
 
 
-#include "util/time/timer.h"
+#include "util/time/timeevent.h"
 
 
 SWIGINTERN int
@@ -3461,36 +3458,38 @@ SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val)
 
 #include "fife_wrap.h"
 
-SwigDirector_TimerListener::SwigDirector_TimerListener(PyObject *self): FIFE::TimerListener(), Swig::Director(self) {
-  SWIG_DIRECTOR_RGTR((FIFE::TimerListener *)this, this); 
+SwigDirector_TimeEvent::SwigDirector_TimeEvent(PyObject *self, int period): FIFE::TimeEvent(period), Swig::Director(self) {
+  SWIG_DIRECTOR_RGTR((FIFE::TimeEvent *)this, this); 
 }
 
 
 
 
-void SwigDirector_TimerListener::onTimer() {
+SwigDirector_TimeEvent::~SwigDirector_TimeEvent() {
+}
+
+void SwigDirector_TimeEvent::updateEvent(unsigned long time) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_From_unsigned_SS_long(static_cast< unsigned long >(time));
   if (!swig_get_self()) {
-    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call TimerListener.__init__.");
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call TimeEvent.__init__.");
   }
 #if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
   const size_t swig_method_index = 0;
-  const char * const swig_method_name = "onTimer";
+  const char * const swig_method_name = "updateEvent";
   PyObject* method = swig_get_method(swig_method_index, swig_method_name);
-  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
 #else
-  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "onTimer", NULL);
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"updateEvent", (char *)"(O)" ,(PyObject *)obj0);
 #endif
   if (result == NULL) {
     PyObject *error = PyErr_Occurred();
     if (error != NULL) {
-      Swig::DirectorMethodException::raise("Error detected when calling 'TimerListener.onTimer'");
+      Swig::DirectorMethodException::raise("Error detected when calling 'TimeEvent.updateEvent'");
     }
   }
 }
 
-
-SwigDirector_TimerListener::~SwigDirector_TimerListener() {
-}
 
 #ifdef __cplusplus
 extern "C" {
@@ -5143,6 +5142,66 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_TimeManager_registerEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::TimeManager *arg1 = (FIFE::TimeManager *) 0 ;
+  FIFE::TimeEvent *arg2 = (FIFE::TimeEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:TimeManager_registerEvent",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimeManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeManager_registerEvent" "', argument " "1"" of type '" "FIFE::TimeManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::TimeManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__TimeEvent, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeManager_registerEvent" "', argument " "2"" of type '" "FIFE::TimeEvent *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::TimeEvent * >(argp2);
+  (arg1)->registerEvent(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeManager_unregisterEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::TimeManager *arg1 = (FIFE::TimeManager *) 0 ;
+  FIFE::TimeEvent *arg2 = (FIFE::TimeEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:TimeManager_unregisterEvent",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimeManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeManager_unregisterEvent" "', argument " "1"" of type '" "FIFE::TimeManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::TimeManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__TimeEvent, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeManager_unregisterEvent" "', argument " "2"" of type '" "FIFE::TimeEvent *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::TimeEvent * >(argp2);
+  (arg1)->unregisterEvent(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *TimeManager_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -5150,28 +5209,151 @@ SWIGINTERN PyObject *TimeManager_swigregister(PyObject *SWIGUNUSEDPARM(self), Py
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap_TimerListener_onTimer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new_TimeEvent__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  FIFE::TimerListener *arg1 = (FIFE::TimerListener *) 0 ;
+  PyObject *arg1 = (PyObject *) 0 ;
+  int arg2 ;
+  FIFE::TimeEvent *result = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:new_TimeEvent",&obj0,&obj1)) SWIG_fail;
+  arg1 = obj0;
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_TimeEvent" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  if ( arg1 != Py_None ) {
+    /* subclassed */
+    result = (FIFE::TimeEvent *)new SwigDirector_TimeEvent(arg1,arg2); 
+  } else {
+    SWIG_SetErrorMsg(PyExc_RuntimeError,"accessing abstract class or protected constructor"); 
+    SWIG_fail;
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__TimeEvent, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_TimeEvent__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  FIFE::TimeEvent *result = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_TimeEvent",&obj0)) SWIG_fail;
+  arg1 = obj0;
+  if ( arg1 != Py_None ) {
+    /* subclassed */
+    result = (FIFE::TimeEvent *)new SwigDirector_TimeEvent(arg1); 
+  } else {
+    SWIG_SetErrorMsg(PyExc_RuntimeError,"accessing abstract class or protected constructor"); 
+    SWIG_fail;
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__TimeEvent, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_TimeEvent(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    _v = (argv[0] != 0);
+    if (_v) {
+      return _wrap_new_TimeEvent__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    _v = (argv[0] != 0);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_TimeEvent__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'new_TimeEvent'.\n  Possible C/C++ prototypes are:\n    FIFE::TimeEvent(PyObject *,int)\n    FIFE::TimeEvent(PyObject *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_TimeEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::TimeEvent *arg1 = (FIFE::TimeEvent *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_TimeEvent",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimeEvent, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_TimeEvent" "', argument " "1"" of type '" "FIFE::TimeEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::TimeEvent * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeEvent_updateEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::TimeEvent *arg1 = (FIFE::TimeEvent *) 0 ;
+  unsigned long arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned long val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
   Swig::Director *director = 0;
   bool upcall = false;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:TimerListener_onTimer",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimerListener, 0 |  0 );
+  if (!PyArg_ParseTuple(args,(char *)"OO:TimeEvent_updateEvent",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimeEvent, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimerListener_onTimer" "', argument " "1"" of type '" "FIFE::TimerListener *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeEvent_updateEvent" "', argument " "1"" of type '" "FIFE::TimeEvent *""'"); 
   }
-  arg1 = reinterpret_cast< FIFE::TimerListener * >(argp1);
+  arg1 = reinterpret_cast< FIFE::TimeEvent * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeEvent_updateEvent" "', argument " "2"" of type '" "unsigned long""'");
+  } 
+  arg2 = static_cast< unsigned long >(val2);
   director = SWIG_DIRECTOR_CAST(arg1);
   upcall = (director && (director->swig_get_self()==obj0));
   try {
     if (upcall) {
-      (arg1)->FIFE::TimerListener::onTimer();
+      Swig::DirectorPureVirtualException::raise("FIFE::TimeEvent::updateEvent");
     } else {
-      (arg1)->onTimer();
+      (arg1)->updateEvent(arg2);
     }
   } catch (Swig::DirectorException&) {
     SWIG_fail;
@@ -5183,21 +5365,29 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_TimerListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_TimeEvent_setPeriod(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  FIFE::TimerListener *arg1 = (FIFE::TimerListener *) 0 ;
+  FIFE::TimeEvent *arg1 = (FIFE::TimeEvent *) 0 ;
+  int arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:delete_TimerListener",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimerListener, SWIG_POINTER_DISOWN |  0 );
+  if (!PyArg_ParseTuple(args,(char *)"OO:TimeEvent_setPeriod",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimeEvent, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_TimerListener" "', argument " "1"" of type '" "FIFE::TimerListener *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeEvent_setPeriod" "', argument " "1"" of type '" "FIFE::TimeEvent *""'"); 
   }
-  arg1 = reinterpret_cast< FIFE::TimerListener * >(argp1);
-  delete arg1;
-  
+  arg1 = reinterpret_cast< FIFE::TimeEvent * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeEvent_setPeriod" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  (arg1)->setPeriod(arg2);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -5205,41 +5395,41 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_TimerListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_TimeEvent_getPeriod(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  PyObject *arg1 = (PyObject *) 0 ;
-  FIFE::TimerListener *result = 0 ;
+  FIFE::TimeEvent *arg1 = (FIFE::TimeEvent *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
   PyObject * obj0 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:new_TimerListener",&obj0)) SWIG_fail;
-  arg1 = obj0;
-  if ( arg1 != Py_None ) {
-    /* subclassed */
-    result = (FIFE::TimerListener *)new SwigDirector_TimerListener(arg1); 
-  } else {
-    result = (FIFE::TimerListener *)new FIFE::TimerListener(); 
+  if (!PyArg_ParseTuple(args,(char *)"O:TimeEvent_getPeriod",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimeEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeEvent_getPeriod" "', argument " "1"" of type '" "FIFE::TimeEvent *""'"); 
   }
-  
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__TimerListener, SWIG_POINTER_NEW |  0 );
+  arg1 = reinterpret_cast< FIFE::TimeEvent * >(argp1);
+  result = (int)(arg1)->getPeriod();
+  resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
   return NULL;
 }
 
 
-SWIGINTERN PyObject *_wrap_disown_TimerListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_disown_TimeEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  FIFE::TimerListener *arg1 = (FIFE::TimerListener *) 0 ;
+  FIFE::TimeEvent *arg1 = (FIFE::TimeEvent *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:disown_TimerListener",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimerListener, 0 |  0 );
+  if (!PyArg_ParseTuple(args,(char *)"O:disown_TimeEvent",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__TimeEvent, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "disown_TimerListener" "', argument " "1"" of type '" "FIFE::TimerListener *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "disown_TimeEvent" "', argument " "1"" of type '" "FIFE::TimeEvent *""'"); 
   }
-  arg1 = reinterpret_cast< FIFE::TimerListener * >(argp1);
+  arg1 = reinterpret_cast< FIFE::TimeEvent * >(argp1);
   {
     Swig::Director *director = dynamic_cast<Swig::Director *>(arg1);
     if (director) director->swig_disown();
@@ -5252,187 +5442,10 @@ fail:
 }
 
 
-SWIGINTERN PyObject *TimerListener_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *TimeEvent_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__TimerListener, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *_wrap_new_Timer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  FIFE::Timer *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)":new_Timer")) SWIG_fail;
-  result = (FIFE::Timer *)new FIFE::Timer();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__Timer, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_Timer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  FIFE::Timer *arg1 = (FIFE::Timer *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:delete_Timer",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Timer, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_Timer" "', argument " "1"" of type '" "FIFE::Timer *""'"); 
-  }
-  arg1 = reinterpret_cast< FIFE::Timer * >(argp1);
-  delete arg1;
-  
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Timer_setInterval(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  FIFE::Timer *arg1 = (FIFE::Timer *) 0 ;
-  unsigned long arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  unsigned long val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Timer_setInterval",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Timer, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Timer_setInterval" "', argument " "1"" of type '" "FIFE::Timer *""'"); 
-  }
-  arg1 = reinterpret_cast< FIFE::Timer * >(argp1);
-  ecode2 = SWIG_AsVal_unsigned_SS_long(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Timer_setInterval" "', argument " "2"" of type '" "unsigned long""'");
-  } 
-  arg2 = static_cast< unsigned long >(val2);
-  (arg1)->setInterval(arg2);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Timer_start(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  FIFE::Timer *arg1 = (FIFE::Timer *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Timer_start",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Timer, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Timer_start" "', argument " "1"" of type '" "FIFE::Timer *""'"); 
-  }
-  arg1 = reinterpret_cast< FIFE::Timer * >(argp1);
-  (arg1)->start();
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Timer_stop(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  FIFE::Timer *arg1 = (FIFE::Timer *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Timer_stop",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Timer, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Timer_stop" "', argument " "1"" of type '" "FIFE::Timer *""'"); 
-  }
-  arg1 = reinterpret_cast< FIFE::Timer * >(argp1);
-  (arg1)->stop();
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Timer_setCallback(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  FIFE::Timer *arg1 = (FIFE::Timer *) 0 ;
-  FIFE::Timer::type_callback *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Timer_setCallback",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Timer, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Timer_setCallback" "', argument " "1"" of type '" "FIFE::Timer *""'"); 
-  }
-  arg1 = reinterpret_cast< FIFE::Timer * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__function0Tvoid_t,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Timer_setCallback" "', argument " "2"" of type '" "FIFE::Timer::type_callback const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Timer_setCallback" "', argument " "2"" of type '" "FIFE::Timer::type_callback const &""'"); 
-  }
-  arg2 = reinterpret_cast< FIFE::Timer::type_callback * >(argp2);
-  (arg1)->setCallback((FIFE::Timer::type_callback const &)*arg2);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Timer_setListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  FIFE::Timer *arg1 = (FIFE::Timer *) 0 ;
-  FIFE::TimerListener *arg2 = (FIFE::TimerListener *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Timer_setListener",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Timer, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Timer_setListener" "', argument " "1"" of type '" "FIFE::Timer *""'"); 
-  }
-  arg1 = reinterpret_cast< FIFE::Timer * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__TimerListener, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Timer_setListener" "', argument " "2"" of type '" "FIFE::TimerListener *""'"); 
-  }
-  arg2 = reinterpret_cast< FIFE::TimerListener * >(argp2);
-  (arg1)->setListener(arg2);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *Timer_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj;
-  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__Timer, SWIG_NewClientData(obj));
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__TimeEvent, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
@@ -5542,20 +5555,16 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"TimeManager_getTimeDelta", _wrap_TimeManager_getTimeDelta, METH_VARARGS, NULL},
 	 { (char *)"TimeManager_getAverageFrameTime", _wrap_TimeManager_getAverageFrameTime, METH_VARARGS, NULL},
 	 { (char *)"TimeManager_printStatistics", _wrap_TimeManager_printStatistics, METH_VARARGS, NULL},
+	 { (char *)"TimeManager_registerEvent", _wrap_TimeManager_registerEvent, METH_VARARGS, NULL},
+	 { (char *)"TimeManager_unregisterEvent", _wrap_TimeManager_unregisterEvent, METH_VARARGS, NULL},
 	 { (char *)"TimeManager_swigregister", TimeManager_swigregister, METH_VARARGS, NULL},
-	 { (char *)"TimerListener_onTimer", _wrap_TimerListener_onTimer, METH_VARARGS, NULL},
-	 { (char *)"delete_TimerListener", _wrap_delete_TimerListener, METH_VARARGS, NULL},
-	 { (char *)"new_TimerListener", _wrap_new_TimerListener, METH_VARARGS, NULL},
-	 { (char *)"disown_TimerListener", _wrap_disown_TimerListener, METH_VARARGS, NULL},
-	 { (char *)"TimerListener_swigregister", TimerListener_swigregister, METH_VARARGS, NULL},
-	 { (char *)"new_Timer", _wrap_new_Timer, METH_VARARGS, NULL},
-	 { (char *)"delete_Timer", _wrap_delete_Timer, METH_VARARGS, NULL},
-	 { (char *)"Timer_setInterval", _wrap_Timer_setInterval, METH_VARARGS, NULL},
-	 { (char *)"Timer_start", _wrap_Timer_start, METH_VARARGS, NULL},
-	 { (char *)"Timer_stop", _wrap_Timer_stop, METH_VARARGS, NULL},
-	 { (char *)"Timer_setCallback", _wrap_Timer_setCallback, METH_VARARGS, NULL},
-	 { (char *)"Timer_setListener", _wrap_Timer_setListener, METH_VARARGS, NULL},
-	 { (char *)"Timer_swigregister", Timer_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_TimeEvent", _wrap_new_TimeEvent, METH_VARARGS, NULL},
+	 { (char *)"delete_TimeEvent", _wrap_delete_TimeEvent, METH_VARARGS, NULL},
+	 { (char *)"TimeEvent_updateEvent", _wrap_TimeEvent_updateEvent, METH_VARARGS, NULL},
+	 { (char *)"TimeEvent_setPeriod", _wrap_TimeEvent_setPeriod, METH_VARARGS, NULL},
+	 { (char *)"TimeEvent_getPeriod", _wrap_TimeEvent_getPeriod, METH_VARARGS, NULL},
+	 { (char *)"disown_TimeEvent", _wrap_disown_TimeEvent, METH_VARARGS, NULL},
+	 { (char *)"TimeEvent_swigregister", TimeEvent_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Engine", _wrap_new_Engine, METH_VARARGS, NULL},
 	 { (char *)"delete_Engine", _wrap_delete_Engine, METH_VARARGS, NULL},
 	 { (char *)"Engine_swigregister", Engine_swigregister, METH_VARARGS, NULL},
@@ -5617,12 +5626,9 @@ static swig_type_info _swigt__p_FIFE__OutOfMemory = {"_p_FIFE__OutOfMemory", "FI
 static swig_type_info _swigt__p_FIFE__SDLException = {"_p_FIFE__SDLException", "FIFE::SDLException *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__ScriptException = {"_p_FIFE__ScriptException", "FIFE::ScriptException *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__SettingsManager = {"_p_FIFE__SettingsManager", "FIFE::SettingsManager *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__TimeEvent = {"_p_FIFE__TimeEvent", "FIFE::TimeEvent *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__TimeManager = {"_p_FIFE__TimeManager", "FIFE::TimeManager *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_FIFE__Timer = {"_p_FIFE__Timer", "FIFE::Timer *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_FIFE__TimerListener = {"_p_FIFE__TimerListener", "FIFE::TimerListener *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_boost__function0Tvoid_t = {"_p_boost__function0Tvoid_t", "boost::function0<void > *|FIFE::Timer::type_callback *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_type_callback = {"_p_type_callback", "type_callback *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_FIFE__CannotOpenFile,
@@ -5641,12 +5647,9 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_FIFE__SDLException,
   &_swigt__p_FIFE__ScriptException,
   &_swigt__p_FIFE__SettingsManager,
+  &_swigt__p_FIFE__TimeEvent,
   &_swigt__p_FIFE__TimeManager,
-  &_swigt__p_FIFE__Timer,
-  &_swigt__p_FIFE__TimerListener,
-  &_swigt__p_boost__function0Tvoid_t,
   &_swigt__p_char,
-  &_swigt__p_type_callback,
 };
 
 static swig_cast_info _swigc__p_FIFE__CannotOpenFile[] = {  {&_swigt__p_FIFE__CannotOpenFile, 0, 0, 0},{0, 0, 0, 0}};
@@ -5665,12 +5668,9 @@ static swig_cast_info _swigc__p_FIFE__OutOfMemory[] = {  {&_swigt__p_FIFE__OutOf
 static swig_cast_info _swigc__p_FIFE__SDLException[] = {  {&_swigt__p_FIFE__SDLException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__ScriptException[] = {  {&_swigt__p_FIFE__ScriptException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__SettingsManager[] = {  {&_swigt__p_FIFE__SettingsManager, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__TimeEvent[] = {  {&_swigt__p_FIFE__TimeEvent, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__TimeManager[] = {  {&_swigt__p_FIFE__TimeManager, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_FIFE__Timer[] = {  {&_swigt__p_FIFE__Timer, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_FIFE__TimerListener[] = {  {&_swigt__p_FIFE__TimerListener, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_boost__function0Tvoid_t[] = {  {&_swigt__p_boost__function0Tvoid_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_type_callback[] = {  {&_swigt__p_type_callback, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_FIFE__CannotOpenFile,
@@ -5689,12 +5689,9 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_FIFE__SDLException,
   _swigc__p_FIFE__ScriptException,
   _swigc__p_FIFE__SettingsManager,
+  _swigc__p_FIFE__TimeEvent,
   _swigc__p_FIFE__TimeManager,
-  _swigc__p_FIFE__Timer,
-  _swigc__p_FIFE__TimerListener,
-  _swigc__p_boost__function0Tvoid_t,
   _swigc__p_char,
-  _swigc__p_type_callback,
 };
 
 
