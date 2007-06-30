@@ -28,7 +28,7 @@
 // Second block: files included from the same folder
 
 #include "archetype_loader.h"
-#include "xml/xml_archetype.h"
+#include "native/map_loaders/xml_archetype.h"
 
 namespace FIFE { namespace map {
 

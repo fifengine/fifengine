@@ -41,7 +41,7 @@
 #include "util/log.h"
 #include "util/purge.h"
 #include "util/settingsmanager.h"
-#include "loaders/loader.h"
+#include "loaders/map_loader.h"
 
 #include "camera.h"
 #include "control.h"

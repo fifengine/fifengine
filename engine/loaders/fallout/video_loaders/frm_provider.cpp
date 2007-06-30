@@ -27,8 +27,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "loaders/fallout/frm.h"
-#include "loaders/fallout/animatedpal.h"
+#include "loaders/fallout/map_loaders/frm.h"
+#include "loaders/fallout/map_loaders/animatedpal.h"
 #include "video/animation.h"
 #include "video/image.h"
 #include "util/log.h"

@@ -525,273 +525,273 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\animatedpal.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\animatedpal.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\animatedpal.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\animatedpal.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\coloroverride.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\coloroverride.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\coloroverride.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\coloroverride.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\critlst.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\critlst.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\critlst.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\critlst.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\dat1.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\dat1.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\dat1.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\dat1.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\dat2.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\dat2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\dat2.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\dat2.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\fallout.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\fallout.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\fallout.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\fallout.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\frm.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\frm.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\frm.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\frm.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\fwd.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\header.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\header.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\header.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\header.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\list.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\list.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\list.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\list.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\lzssdecoder.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\lzssdecoder.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\lzssdecoder.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\lzssdecoder.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\objectfactory.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\objectfactory.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\objectfactory.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\objectfactory.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\pal.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\pal.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\pal.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\pal.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\providerdat1.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\providerdat1.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\providerdat1.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\providerdat1.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\providerdat2.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\providerdat2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\providerdat2.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\providerdat2.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\rawdatadat1.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat1.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\rawdatadat1.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat1.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\rawdatadat2.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\rawdatadat2.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat2.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\remove_all.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\remove_all.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\fallout\remove_all.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\map_loaders\remove_all.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\loader.cpp">
+		<Unit filename="..\..\..\engine\loaders\fallout\video_loaders\frm_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\loader.h">
+		<Unit filename="..\..\..\engine\loaders\fallout\video_loaders\frm_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\animation_provider.cpp">
+		<Unit filename="..\..\..\engine\loaders\map_loader.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\animation_provider.h">
+		<Unit filename="..\..\..\engine\loaders\map_loader.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\complexanimation_provider.cpp">
+		<Unit filename="..\..\..\engine\loaders\native\map_loaders\fwd.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\loaders\native\map_loaders\prototype.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\complexanimation_provider.h">
+		<Unit filename="..\..\..\engine\loaders\native\map_loaders\prototype.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\frm_provider.cpp">
+		<Unit filename="..\..\..\engine\loaders\native\map_loaders\xml.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\frm_provider.h">
+		<Unit filename="..\..\..\engine\loaders\native\map_loaders\xml.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\image_provider.cpp">
+		<Unit filename="..\..\..\engine\loaders\native\map_loaders\xml_archetype.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\image_provider.h">
+		<Unit filename="..\..\..\engine\loaders\native\map_loaders\xml_archetype.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\subimage_provider.cpp">
+		<Unit filename="..\..\..\engine\loaders\native\video_loaders\animation_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\video_loaders\subimage_provider.h">
+		<Unit filename="..\..\..\engine\loaders\native\video_loaders\animation_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\xml\fwd.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\loaders\xml\prototype.cpp">
+		<Unit filename="..\..\..\engine\loaders\native\video_loaders\complexanimation_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\xml\prototype.h">
+		<Unit filename="..\..\..\engine\loaders\native\video_loaders\complexanimation_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\xml\xml.cpp">
+		<Unit filename="..\..\..\engine\loaders\native\video_loaders\image_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\xml\xml.h">
+		<Unit filename="..\..\..\engine\loaders\native\video_loaders\image_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\xml\xml_archetype.cpp">
+		<Unit filename="..\..\..\engine\loaders\native\video_loaders\subimage_provider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\loaders\xml\xml_archetype.h">
+		<Unit filename="..\..\..\engine\loaders\native\video_loaders\subimage_provider.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

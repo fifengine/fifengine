@@ -28,11 +28,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "loaders/video_loaders/complexanimation_provider.h"
-#include "loaders/video_loaders/frm_provider.h"
-#include "loaders/video_loaders/animation_provider.h"
-#include "loaders/video_loaders/image_provider.h"
-#include "loaders/video_loaders/subimage_provider.h"
+#include "loaders/native/video_loaders/complexanimation_provider.h"
+#include "loaders/fallout/video_loaders/frm_provider.h"
+#include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/image_provider.h"
+#include "loaders/native/video_loaders/subimage_provider.h"
 #include "video/renderable.h"
 #include "video/image.h"
 #include "video/pixelbuffer.h"

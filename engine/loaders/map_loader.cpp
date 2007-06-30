@@ -28,9 +28,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-#include "loader.h"
-#include "xml/xml.h"
-#include "fallout/fallout.h"
+#include "map_loader.h"
+#include "native/map_loaders/xml.h"
+#include "fallout/map_loaders/fallout.h"
 
 namespace FIFE { namespace map {
 
