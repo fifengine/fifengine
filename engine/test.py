@@ -43,8 +43,10 @@ class MyEventListener(fife.ICommandListener):
 l = MyEventListener()
 m.addCommandListener(l)
 cmd = fife.Command()
-cmd.setCode(2)
+cmd.setCode(0)
 print "Sending command..."
-m.dispatchCommand(cmd)
+for i in xrange(20):
+	m.dispatchCommand(cmd)
+	cmd.setCode(i)
 m.removeCommandListener(l)
 del l
