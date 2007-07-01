@@ -11,7 +11,7 @@ log = fife.Log.initialize(fife.Log.LEVEL_MAX, True, True)
 fife.Log("Testing log...")
 
 
-class MyEvent(fife.TimeEvent):
+class MyTimeEvent(fife.TimeEvent):
 	def __init__(self, period):
 		fife.TimeEvent.__init__(self, period)
 		self.counter = 0
@@ -21,7 +21,7 @@ class MyEvent(fife.TimeEvent):
 		self.counter += 1
 
 m = fife.TimeManager()
-e = MyEvent(300)
+e = MyTimeEvent(300)
 m.registerEvent(e)
 
 for i in xrange(20):
@@ -31,3 +31,20 @@ for i in xrange(20):
 print "finishing"
 m.unregisterEvent(e)
 del e
+
+m = fife.EventManager()
+class MyEventListener(fife.ICommandListener):
+	def __init__(self):
+		fife.ICommandListener.__init__(self)
+	
+	def onCommand(self, command):
+		print "received command with code %d" % command.getCode()		
+
+l = MyEventListener()
+m.addCommandListener(l)
+cmd = fife.Command()
+cmd.setCode(2)
+print "Sending command..."
+m.dispatchCommand(cmd)
+m.removeCommandListener(l)
+del l

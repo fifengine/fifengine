@@ -2960,26 +2960,41 @@ namespace Swig {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_FIFE__CannotOpenFile swig_types[0]
-#define SWIGTYPE_p_FIFE__Duplicate swig_types[1]
-#define SWIGTYPE_p_FIFE__Engine swig_types[2]
-#define SWIGTYPE_p_FIFE__EventException swig_types[3]
-#define SWIGTYPE_p_FIFE__Exception swig_types[4]
-#define SWIGTYPE_p_FIFE__IndexOverflow swig_types[5]
-#define SWIGTYPE_p_FIFE__InvalidConversion swig_types[6]
-#define SWIGTYPE_p_FIFE__InvalidFormat swig_types[7]
-#define SWIGTYPE_p_FIFE__Log swig_types[8]
-#define SWIGTYPE_p_FIFE__NameClash swig_types[9]
-#define SWIGTYPE_p_FIFE__NotFound swig_types[10]
-#define SWIGTYPE_p_FIFE__NotSupported swig_types[11]
-#define SWIGTYPE_p_FIFE__OutOfMemory swig_types[12]
-#define SWIGTYPE_p_FIFE__SDLException swig_types[13]
-#define SWIGTYPE_p_FIFE__ScriptException swig_types[14]
-#define SWIGTYPE_p_FIFE__SettingsManager swig_types[15]
-#define SWIGTYPE_p_FIFE__TimeEvent swig_types[16]
-#define SWIGTYPE_p_FIFE__TimeManager swig_types[17]
-#define SWIGTYPE_p_char swig_types[18]
-static swig_type_info *swig_types[20];
-static swig_module_info swig_module = {swig_types, 19, 0, 0, 0, 0};
+#define SWIGTYPE_p_FIFE__Command swig_types[1]
+#define SWIGTYPE_p_FIFE__Duplicate swig_types[2]
+#define SWIGTYPE_p_FIFE__Engine swig_types[3]
+#define SWIGTYPE_p_FIFE__EventException swig_types[4]
+#define SWIGTYPE_p_FIFE__EventManager swig_types[5]
+#define SWIGTYPE_p_FIFE__Exception swig_types[6]
+#define SWIGTYPE_p_FIFE__ICommand swig_types[7]
+#define SWIGTYPE_p_FIFE__ICommandListener swig_types[8]
+#define SWIGTYPE_p_FIFE__IEventSource swig_types[9]
+#define SWIGTYPE_p_FIFE__IKey swig_types[10]
+#define SWIGTYPE_p_FIFE__IKeyEvent swig_types[11]
+#define SWIGTYPE_p_FIFE__IKeyListener swig_types[12]
+#define SWIGTYPE_p_FIFE__IMouseEvent swig_types[13]
+#define SWIGTYPE_p_FIFE__IMouseListener swig_types[14]
+#define SWIGTYPE_p_FIFE__IWidgetEvent swig_types[15]
+#define SWIGTYPE_p_FIFE__IWidgetListener swig_types[16]
+#define SWIGTYPE_p_FIFE__IndexOverflow swig_types[17]
+#define SWIGTYPE_p_FIFE__InvalidConversion swig_types[18]
+#define SWIGTYPE_p_FIFE__InvalidFormat swig_types[19]
+#define SWIGTYPE_p_FIFE__KeyEvent swig_types[20]
+#define SWIGTYPE_p_FIFE__Log swig_types[21]
+#define SWIGTYPE_p_FIFE__MouseEvent swig_types[22]
+#define SWIGTYPE_p_FIFE__NameClash swig_types[23]
+#define SWIGTYPE_p_FIFE__NotFound swig_types[24]
+#define SWIGTYPE_p_FIFE__NotSupported swig_types[25]
+#define SWIGTYPE_p_FIFE__OutOfMemory swig_types[26]
+#define SWIGTYPE_p_FIFE__SDLException swig_types[27]
+#define SWIGTYPE_p_FIFE__ScriptException swig_types[28]
+#define SWIGTYPE_p_FIFE__SettingsManager swig_types[29]
+#define SWIGTYPE_p_FIFE__TimeEvent swig_types[30]
+#define SWIGTYPE_p_FIFE__TimeManager swig_types[31]
+#define SWIGTYPE_p_FIFE__WidgetEvent swig_types[32]
+#define SWIGTYPE_p_char swig_types[33]
+static swig_type_info *swig_types[35];
+static swig_module_info swig_module = {swig_types, 34, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3451,6 +3466,21 @@ SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val)
 }
 
 
+#include "eventchannel/command/ec_command.h"
+#include "eventchannel/command/ec_commandids.h"
+#include "eventchannel/command/ec_icommandlistener.h"
+#include "eventchannel/key/ec_key.h"
+#include "eventchannel/key/ec_keyevent.h"
+#include "eventchannel/key/ec_ikeylistener.h"
+#include "eventchannel/source/ec_eventsourcetypes.h"
+#include "eventchannel/source/ec_ieventsource.h"
+#include "eventchannel/mouse/ec_mouseevent.h"
+#include "eventchannel/mouse/ec_imouselistener.h"
+#include "eventchannel/widget/ec_widgetevent.h"
+#include "eventchannel/widget/ec_iwidgetlistener.h"
+#include "eventchannel/manager/eventmanager.h"
+
+
 
 /* ---------------------------------------------------
  * C++ director class methods
@@ -3490,6 +3520,676 @@ void SwigDirector_TimeEvent::updateEvent(unsigned long time) {
   }
 }
 
+
+SwigDirector_IEventSource::SwigDirector_IEventSource(PyObject *self): FIFE::IEventSource(), Swig::Director(self) {
+  SWIG_DIRECTOR_RGTR((FIFE::IEventSource *)this, this); 
+}
+
+
+
+
+FIFE::EventSourceType SwigDirector_IEventSource::getEventSourceType() {
+  FIFE::EventSourceType c_result;
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IEventSource.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 0;
+  const char * const swig_method_name = "getEventSourceType";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "getEventSourceType", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IEventSource.getEventSourceType'");
+    }
+  }
+  int swig_val;
+  int swig_res = SWIG_AsVal_int(result, &swig_val);
+  if (!SWIG_IsOK(swig_res)) {
+    Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_res)), "in output value of type '""FIFE::EventSourceType""'");
+  }
+  c_result = static_cast< FIFE::EventSourceType >(swig_val);
+  return (FIFE::EventSourceType) c_result;
+}
+
+
+SwigDirector_IEventSource::~SwigDirector_IEventSource() {
+}
+
+SwigDirector_Command::SwigDirector_Command(PyObject *self): FIFE::Command(), Swig::Director(self) {
+  SWIG_DIRECTOR_RGTR((FIFE::Command *)this, this); 
+}
+
+
+
+
+FIFE::CommandType SwigDirector_Command::getCommandType() {
+  FIFE::CommandType c_result;
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 0;
+  const char * const swig_method_name = "getCommandType";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "getCommandType", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.getCommandType'");
+    }
+  }
+  int swig_val;
+  int swig_res = SWIG_AsVal_int(result, &swig_val);
+  if (!SWIG_IsOK(swig_res)) {
+    Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_res)), "in output value of type '""FIFE::CommandType""'");
+  }
+  c_result = static_cast< FIFE::CommandType >(swig_val);
+  return (FIFE::CommandType) c_result;
+}
+
+
+int SwigDirector_Command::getCode() {
+  int c_result;
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 1;
+  const char * const swig_method_name = "getCode";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "getCode", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.getCode'");
+    }
+  }
+  int swig_val;
+  int swig_res = SWIG_AsVal_int(result, &swig_val);
+  if (!SWIG_IsOK(swig_res)) {
+    Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_res)), "in output value of type '""int""'");
+  }
+  c_result = static_cast< int >(swig_val);
+  return (int) c_result;
+}
+
+
+SwigDirector_Command::~SwigDirector_Command() {
+}
+
+void SwigDirector_Command::consume() {
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 2;
+  const char * const swig_method_name = "consume";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "consume", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.consume'");
+    }
+  }
+}
+
+
+bool SwigDirector_Command::isConsumed() const {
+  bool c_result;
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 3;
+  const char * const swig_method_name = "isConsumed";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "isConsumed", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.isConsumed'");
+    }
+  }
+  bool swig_val;
+  int swig_res = SWIG_AsVal_bool(result, &swig_val);
+  if (!SWIG_IsOK(swig_res)) {
+    Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_res)), "in output value of type '""bool""'");
+  }
+  c_result = static_cast< bool >(swig_val);
+  return (bool) c_result;
+}
+
+
+FIFE::IEventSource *SwigDirector_Command::getSource() {
+  void *swig_argp ;
+  int swig_res ;
+  swig_owntype own ;
+  
+  FIFE::IEventSource *c_result;
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 4;
+  const char * const swig_method_name = "getSource";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "getSource", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.getSource'");
+    }
+  }
+  swig_res = SWIG_ConvertPtrAndOwn(result, &swig_argp, SWIGTYPE_p_FIFE__IEventSource,  0  | SWIG_POINTER_DISOWN, &own);
+  if (!SWIG_IsOK(swig_res)) {
+    Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_res)), "in output value of type '""FIFE::IEventSource *""'");
+  }
+  c_result = reinterpret_cast< FIFE::IEventSource * >(swig_argp);
+  swig_acquire_ownership_obj(SWIG_as_voidptr(c_result), own);
+  return (FIFE::IEventSource *) c_result;
+}
+
+
+void SwigDirector_Command::setSource(FIFE::IEventSource *source) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(source), SWIGTYPE_p_FIFE__IEventSource,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 5;
+  const char * const swig_method_name = "setSource";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"setSource", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.setSource'");
+    }
+  }
+}
+
+
+int SwigDirector_Command::getTimeStamp() const {
+  int c_result;
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 6;
+  const char * const swig_method_name = "getTimeStamp";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "getTimeStamp", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.getTimeStamp'");
+    }
+  }
+  int swig_val;
+  int swig_res = SWIG_AsVal_int(result, &swig_val);
+  if (!SWIG_IsOK(swig_res)) {
+    Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_res)), "in output value of type '""int""'");
+  }
+  c_result = static_cast< int >(swig_val);
+  return (int) c_result;
+}
+
+
+void SwigDirector_Command::setTimeStamp(int timestamp) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_From_int(static_cast< int >(timestamp));
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 7;
+  const char * const swig_method_name = "setTimeStamp";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"setTimeStamp", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.setTimeStamp'");
+    }
+  }
+}
+
+
+std::string const &SwigDirector_Command::getName() const {
+  std::string *c_result;
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 8;
+  const char * const swig_method_name = "getName";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "getName", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.getName'");
+    }
+  }
+  std::string *swig_optr = 0;
+  int swig_ores = SWIG_AsPtr_std_string(result, &swig_optr);
+  if (!SWIG_IsOK(swig_ores)) {
+    Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_ores)), "in output value of type '""std::string const &""'");
+  } else {
+    if (!swig_optr) {
+      Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ValueError), "invalid null reference " "in output value of type '""std::string const &""'");
+    } 
+  }    
+  c_result = swig_optr;
+  if (SWIG_IsNewObj(swig_ores)) {
+    swig_acquire_ownership(swig_optr);
+  }
+  return (std::string const &) *c_result;
+}
+
+
+std::string SwigDirector_Command::getDebugString() const {
+  std::string c_result;
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call Command.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 9;
+  const char * const swig_method_name = "getDebugString";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, NULL, NULL);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *) "getDebugString", NULL);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'Command.getDebugString'");
+    }
+  }
+  std::string *swig_optr = 0;
+  int swig_ores = SWIG_AsPtr_std_string(result, &swig_optr);
+  if (!SWIG_IsOK(swig_ores) || !swig_optr) {
+    Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError((swig_optr ? swig_ores : SWIG_TypeError))), "in output value of type '""std::string""'");
+  }
+  c_result = *swig_optr;
+  if (SWIG_IsNewObj(swig_ores)) delete swig_optr;
+  return (std::string) c_result;
+}
+
+
+SwigDirector_ICommandListener::SwigDirector_ICommandListener(PyObject *self): FIFE::ICommandListener(), Swig::Director(self) {
+  SWIG_DIRECTOR_RGTR((FIFE::ICommandListener *)this, this); 
+}
+
+
+
+
+void SwigDirector_ICommandListener::onCommand(FIFE::ICommand &command) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&command), SWIGTYPE_p_FIFE__ICommand,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call ICommandListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 0;
+  const char * const swig_method_name = "onCommand";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"onCommand", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'ICommandListener.onCommand'");
+    }
+  }
+}
+
+
+SwigDirector_ICommandListener::~SwigDirector_ICommandListener() {
+}
+
+SwigDirector_IKeyListener::SwigDirector_IKeyListener(PyObject *self): FIFE::IKeyListener(), Swig::Director(self) {
+  SWIG_DIRECTOR_RGTR((FIFE::IKeyListener *)this, this); 
+}
+
+
+
+
+void SwigDirector_IKeyListener::keyPressed(FIFE::IKeyEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IKeyEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IKeyListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 0;
+  const char * const swig_method_name = "keyPressed";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"keyPressed", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IKeyListener.keyPressed'");
+    }
+  }
+}
+
+
+void SwigDirector_IKeyListener::keyReleased(FIFE::IKeyEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IKeyEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IKeyListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 1;
+  const char * const swig_method_name = "keyReleased";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"keyReleased", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IKeyListener.keyReleased'");
+    }
+  }
+}
+
+
+SwigDirector_IKeyListener::~SwigDirector_IKeyListener() {
+}
+
+SwigDirector_IMouseListener::SwigDirector_IMouseListener(PyObject *self): FIFE::IMouseListener(), Swig::Director(self) {
+  SWIG_DIRECTOR_RGTR((FIFE::IMouseListener *)this, this); 
+}
+
+
+
+
+void SwigDirector_IMouseListener::mouseEntered(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 0;
+  const char * const swig_method_name = "mouseEntered";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mouseEntered", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mouseEntered'");
+    }
+  }
+}
+
+
+void SwigDirector_IMouseListener::mouseExited(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 1;
+  const char * const swig_method_name = "mouseExited";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mouseExited", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mouseExited'");
+    }
+  }
+}
+
+
+void SwigDirector_IMouseListener::mousePressed(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 2;
+  const char * const swig_method_name = "mousePressed";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mousePressed", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mousePressed'");
+    }
+  }
+}
+
+
+void SwigDirector_IMouseListener::mouseReleased(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 3;
+  const char * const swig_method_name = "mouseReleased";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mouseReleased", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mouseReleased'");
+    }
+  }
+}
+
+
+void SwigDirector_IMouseListener::mouseClicked(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 4;
+  const char * const swig_method_name = "mouseClicked";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mouseClicked", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mouseClicked'");
+    }
+  }
+}
+
+
+void SwigDirector_IMouseListener::mouseWheelMovedUp(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 5;
+  const char * const swig_method_name = "mouseWheelMovedUp";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mouseWheelMovedUp", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mouseWheelMovedUp'");
+    }
+  }
+}
+
+
+void SwigDirector_IMouseListener::mouseWheelMovedDown(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 6;
+  const char * const swig_method_name = "mouseWheelMovedDown";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mouseWheelMovedDown", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mouseWheelMovedDown'");
+    }
+  }
+}
+
+
+void SwigDirector_IMouseListener::mouseMoved(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 7;
+  const char * const swig_method_name = "mouseMoved";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mouseMoved", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mouseMoved'");
+    }
+  }
+}
+
+
+void SwigDirector_IMouseListener::mouseDragged(FIFE::IMouseEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IMouseListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 8;
+  const char * const swig_method_name = "mouseDragged";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"mouseDragged", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IMouseListener.mouseDragged'");
+    }
+  }
+}
+
+
+SwigDirector_IMouseListener::~SwigDirector_IMouseListener() {
+}
+
+SwigDirector_IWidgetListener::SwigDirector_IWidgetListener(PyObject *self): FIFE::IWidgetListener(), Swig::Director(self) {
+  SWIG_DIRECTOR_RGTR((FIFE::IWidgetListener *)this, this); 
+}
+
+
+
+
+void SwigDirector_IWidgetListener::onWidgetAction(FIFE::IWidgetEvent &evt) {
+  swig::PyObject_var obj0;
+  obj0 = SWIG_NewPointerObj(SWIG_as_voidptr(&evt), SWIGTYPE_p_FIFE__IWidgetEvent,  0 );
+  if (!swig_get_self()) {
+    Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call IWidgetListener.__init__.");
+  }
+#if defined(SWIG_PYTHON_DIRECTOR_VTABLE)
+  const size_t swig_method_index = 0;
+  const char * const swig_method_name = "onWidgetAction";
+  PyObject* method = swig_get_method(swig_method_index, swig_method_name);
+  swig::PyObject_var result = PyObject_CallFunction(method, (char *)"(O)" ,(PyObject *)obj0);
+#else
+  swig::PyObject_var result = PyObject_CallMethod(swig_get_self(), (char *)"onWidgetAction", (char *)"(O)" ,(PyObject *)obj0);
+#endif
+  if (result == NULL) {
+    PyObject *error = PyErr_Occurred();
+    if (error != NULL) {
+      Swig::DirectorMethodException::raise("Error detected when calling 'IWidgetListener.onWidgetAction'");
+    }
+  }
+}
+
+
+SwigDirector_IWidgetListener::~SwigDirector_IWidgetListener() {
+}
 
 #ifdef __cplusplus
 extern "C" {
@@ -5449,6 +6149,3097 @@ SWIGINTERN PyObject *TimeEvent_swigregister(PyObject *SWIGUNUSEDPARM(self), PyOb
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_IKey_isCharacter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKey *arg1 = (FIFE::IKey *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IKey_isCharacter",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKey, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IKey_isCharacter" "', argument " "1"" of type '" "FIFE::IKey const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKey * >(argp1);
+  result = (bool)((FIFE::IKey const *)arg1)->isCharacter();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IKey_isNumber(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKey *arg1 = (FIFE::IKey *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IKey_isNumber",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKey, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IKey_isNumber" "', argument " "1"" of type '" "FIFE::IKey const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKey * >(argp1);
+  result = (bool)((FIFE::IKey const *)arg1)->isNumber();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IKey_isLetter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKey *arg1 = (FIFE::IKey *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IKey_isLetter",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKey, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IKey_isLetter" "', argument " "1"" of type '" "FIFE::IKey const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKey * >(argp1);
+  result = (bool)((FIFE::IKey const *)arg1)->isLetter();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IKey_getValue(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKey *arg1 = (FIFE::IKey *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IKey_getValue",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKey, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IKey_getValue" "', argument " "1"" of type '" "FIFE::IKey const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKey * >(argp1);
+  result = (int)((FIFE::IKey const *)arg1)->getValue();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IKey_getAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKey *arg1 = (FIFE::IKey *) 0 ;
+  std::string *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IKey_getAsString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKey, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IKey_getAsString" "', argument " "1"" of type '" "FIFE::IKey const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKey * >(argp1);
+  {
+    std::string const &_result_ref = ((FIFE::IKey const *)arg1)->getAsString();
+    result = (std::string *) &_result_ref;
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_IKey(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKey *arg1 = (FIFE::IKey *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_IKey",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKey, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IKey" "', argument " "1"" of type '" "FIFE::IKey *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKey * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *IKey_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__IKey, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_IEventSource_getEventSourceType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IEventSource *arg1 = (FIFE::IEventSource *) 0 ;
+  FIFE::EventSourceType result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IEventSource_getEventSourceType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IEventSource, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IEventSource_getEventSourceType" "', argument " "1"" of type '" "FIFE::IEventSource *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IEventSource * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IEventSource::getEventSourceType");
+    } else {
+      result = (FIFE::EventSourceType)(arg1)->getEventSourceType();
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_IEventSource(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IEventSource *arg1 = (FIFE::IEventSource *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_IEventSource",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IEventSource, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IEventSource" "', argument " "1"" of type '" "FIFE::IEventSource *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IEventSource * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_IEventSource(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  FIFE::IEventSource *result = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_IEventSource",&obj0)) SWIG_fail;
+  arg1 = obj0;
+  if ( arg1 != Py_None ) {
+    /* subclassed */
+    result = (FIFE::IEventSource *)new SwigDirector_IEventSource(arg1); 
+  } else {
+    SWIG_SetErrorMsg(PyExc_RuntimeError,"accessing abstract class or protected constructor"); 
+    SWIG_fail;
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IEventSource, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_disown_IEventSource(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IEventSource *arg1 = (FIFE::IEventSource *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:disown_IEventSource",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IEventSource, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "disown_IEventSource" "', argument " "1"" of type '" "FIFE::IEventSource *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IEventSource * >(argp1);
+  {
+    Swig::Director *director = dynamic_cast<Swig::Director *>(arg1);
+    if (director) director->swig_disown();
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *IEventSource_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__IEventSource, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_ICommand_getCommandType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::ICommand *arg1 = (FIFE::ICommand *) 0 ;
+  FIFE::CommandType result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:ICommand_getCommandType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__ICommand, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ICommand_getCommandType" "', argument " "1"" of type '" "FIFE::ICommand *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::ICommand * >(argp1);
+  result = (FIFE::CommandType)(arg1)->getCommandType();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ICommand_getCode(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::ICommand *arg1 = (FIFE::ICommand *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:ICommand_getCode",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__ICommand, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ICommand_getCode" "', argument " "1"" of type '" "FIFE::ICommand *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::ICommand * >(argp1);
+  result = (int)(arg1)->getCode();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_ICommand(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::ICommand *arg1 = (FIFE::ICommand *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_ICommand",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__ICommand, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ICommand" "', argument " "1"" of type '" "FIFE::ICommand *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::ICommand * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *ICommand_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__ICommand, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_Command(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  FIFE::Command *result = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_Command",&obj0)) SWIG_fail;
+  arg1 = obj0;
+  if ( arg1 != Py_None ) {
+    /* subclassed */
+    result = (FIFE::Command *)new SwigDirector_Command(arg1); 
+  } else {
+    result = (FIFE::Command *)new FIFE::Command(); 
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__Command, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_Command(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_Command",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_Command" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_getCommandType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  FIFE::CommandType result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Command_getCommandType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_getCommandType" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      result = (FIFE::CommandType)(arg1)->FIFE::Command::getCommandType();
+    } else {
+      result = (FIFE::CommandType)(arg1)->getCommandType();
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_setCommandType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  FIFE::CommandType arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Command_setCommandType",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_setCommandType" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Command_setCommandType" "', argument " "2"" of type '" "FIFE::CommandType""'");
+  } 
+  arg2 = static_cast< FIFE::CommandType >(val2);
+  (arg1)->setCommandType(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_getCode(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Command_getCode",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_getCode" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      result = (int)(arg1)->FIFE::Command::getCode();
+    } else {
+      result = (int)(arg1)->getCode();
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_setCode(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Command_setCode",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_setCode" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Command_setCode" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  (arg1)->setCode(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_consume(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Command_consume",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_consume" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      (arg1)->FIFE::Command::consume();
+    } else {
+      (arg1)->consume();
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_isConsumed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Command_isConsumed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_isConsumed" "', argument " "1"" of type '" "FIFE::Command const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      result = (bool)((FIFE::Command const *)arg1)->FIFE::Command::isConsumed();
+    } else {
+      result = (bool)((FIFE::Command const *)arg1)->isConsumed();
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_getSource(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  FIFE::IEventSource *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Command_getSource",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_getSource" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      result = (FIFE::IEventSource *)(arg1)->FIFE::Command::getSource();
+    } else {
+      result = (FIFE::IEventSource *)(arg1)->getSource();
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  director = SWIG_DIRECTOR_CAST(result);
+  if (director) {
+    resultobj = director->swig_get_self();
+    Py_INCREF(resultobj);
+  } else {
+    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IEventSource, 0 |  0 );
+  }
+  if (director) {
+    SWIG_AcquirePtr(resultobj, director->swig_release_ownership(SWIG_as_voidptr(result)));
+  }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_setSource(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  FIFE::IEventSource *arg2 = (FIFE::IEventSource *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Command_setSource",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_setSource" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__IEventSource, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Command_setSource" "', argument " "2"" of type '" "FIFE::IEventSource *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IEventSource * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      (arg1)->FIFE::Command::setSource(arg2);
+    } else {
+      (arg1)->setSource(arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_getTimeStamp(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Command_getTimeStamp",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_getTimeStamp" "', argument " "1"" of type '" "FIFE::Command const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      result = (int)((FIFE::Command const *)arg1)->FIFE::Command::getTimeStamp();
+    } else {
+      result = (int)((FIFE::Command const *)arg1)->getTimeStamp();
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_setTimeStamp(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Command_setTimeStamp",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_setTimeStamp" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Command_setTimeStamp" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      (arg1)->FIFE::Command::setTimeStamp(arg2);
+    } else {
+      (arg1)->setTimeStamp(arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_getName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  std::string *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Command_getName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_getName" "', argument " "1"" of type '" "FIFE::Command const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      {
+        std::string const &_result_ref = ((FIFE::Command const *)arg1)->FIFE::Command::getName();
+        result = (std::string *) &_result_ref;
+      }
+    } else {
+      {
+        std::string const &_result_ref = ((FIFE::Command const *)arg1)->getName();
+        result = (std::string *) &_result_ref;
+      }
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  if (director) {
+    director->swig_release_ownership(SWIG_as_voidptr(result));
+  }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Command_getDebugString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  std::string result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Command_getDebugString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Command_getDebugString" "', argument " "1"" of type '" "FIFE::Command const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      result = ((FIFE::Command const *)arg1)->FIFE::Command::getDebugString();
+    } else {
+      result = ((FIFE::Command const *)arg1)->getDebugString();
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_disown_Command(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::Command *arg1 = (FIFE::Command *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:disown_Command",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__Command, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "disown_Command" "', argument " "1"" of type '" "FIFE::Command *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::Command * >(argp1);
+  {
+    Swig::Director *director = dynamic_cast<Swig::Director *>(arg1);
+    if (director) director->swig_disown();
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *Command_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__Command, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_ICommandListener_onCommand(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::ICommandListener *arg1 = (FIFE::ICommandListener *) 0 ;
+  FIFE::ICommand *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ICommandListener_onCommand",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__ICommandListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ICommandListener_onCommand" "', argument " "1"" of type '" "FIFE::ICommandListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::ICommandListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__ICommand,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ICommandListener_onCommand" "', argument " "2"" of type '" "FIFE::ICommand &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ICommandListener_onCommand" "', argument " "2"" of type '" "FIFE::ICommand &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::ICommand * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::ICommandListener::onCommand");
+    } else {
+      (arg1)->onCommand(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_ICommandListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::ICommandListener *arg1 = (FIFE::ICommandListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_ICommandListener",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__ICommandListener, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ICommandListener" "', argument " "1"" of type '" "FIFE::ICommandListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::ICommandListener * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_ICommandListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  FIFE::ICommandListener *result = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_ICommandListener",&obj0)) SWIG_fail;
+  arg1 = obj0;
+  if ( arg1 != Py_None ) {
+    /* subclassed */
+    result = (FIFE::ICommandListener *)new SwigDirector_ICommandListener(arg1); 
+  } else {
+    SWIG_SetErrorMsg(PyExc_RuntimeError,"accessing abstract class or protected constructor"); 
+    SWIG_fail;
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__ICommandListener, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_disown_ICommandListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::ICommandListener *arg1 = (FIFE::ICommandListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:disown_ICommandListener",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__ICommandListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "disown_ICommandListener" "', argument " "1"" of type '" "FIFE::ICommandListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::ICommandListener * >(argp1);
+  {
+    Swig::Director *director = dynamic_cast<Swig::Director *>(arg1);
+    if (director) director->swig_disown();
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *ICommandListener_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__ICommandListener, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *IKeyEvent_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__IKeyEvent, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_KeyEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_KeyEvent")) SWIG_fail;
+  result = (FIFE::KeyEvent *)new FIFE::KeyEvent();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__KeyEvent, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_KeyEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_KeyEvent",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_KeyEvent" "', argument " "1"" of type '" "FIFE::KeyEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_getType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  FIFE::IKeyEvent::KeyEventType result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_getType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_getType" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (FIFE::IKeyEvent::KeyEventType)((FIFE::KeyEvent const *)arg1)->getType();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_setType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  FIFE::IKeyEvent::KeyEventType arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:KeyEvent_setType",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_setType" "', argument " "1"" of type '" "FIFE::KeyEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "KeyEvent_setType" "', argument " "2"" of type '" "FIFE::IKeyEvent::KeyEventType""'");
+  } 
+  arg2 = static_cast< FIFE::IKeyEvent::KeyEventType >(val2);
+  (arg1)->setType(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_isNumericPad(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_isNumericPad",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_isNumericPad" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (bool)((FIFE::KeyEvent const *)arg1)->isNumericPad();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_getKey(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  FIFE::IKey *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_getKey",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_getKey" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  {
+    FIFE::IKey const &_result_ref = ((FIFE::KeyEvent const *)arg1)->getKey();
+    result = (FIFE::IKey *) &_result_ref;
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IKey, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_isAltPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_isAltPressed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_isAltPressed" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (bool)((FIFE::KeyEvent const *)arg1)->isAltPressed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_isControlPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_isControlPressed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_isControlPressed" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (bool)((FIFE::KeyEvent const *)arg1)->isControlPressed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_isMetaPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_isMetaPressed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_isMetaPressed" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (bool)((FIFE::KeyEvent const *)arg1)->isMetaPressed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_isShiftPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_isShiftPressed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_isShiftPressed" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (bool)((FIFE::KeyEvent const *)arg1)->isShiftPressed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_consume(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_consume",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_consume" "', argument " "1"" of type '" "FIFE::KeyEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  (arg1)->consume();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_isConsumed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_isConsumed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_isConsumed" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (bool)((FIFE::KeyEvent const *)arg1)->isConsumed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_getSource(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  FIFE::IEventSource *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_getSource",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_getSource" "', argument " "1"" of type '" "FIFE::KeyEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (FIFE::IEventSource *)(arg1)->getSource();
+  director = SWIG_DIRECTOR_CAST(result);
+  if (director) {
+    resultobj = director->swig_get_self();
+    Py_INCREF(resultobj);
+  } else {
+    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IEventSource, 0 |  0 );
+  }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_getTimeStamp(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_getTimeStamp",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_getTimeStamp" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = (int)((FIFE::KeyEvent const *)arg1)->getTimeStamp();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_getName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  std::string *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_getName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_getName" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  {
+    std::string const &_result_ref = ((FIFE::KeyEvent const *)arg1)->getName();
+    result = (std::string *) &_result_ref;
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_KeyEvent_getDebugString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::KeyEvent *arg1 = (FIFE::KeyEvent *) 0 ;
+  std::string result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:KeyEvent_getDebugString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__KeyEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "KeyEvent_getDebugString" "', argument " "1"" of type '" "FIFE::KeyEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::KeyEvent * >(argp1);
+  result = ((FIFE::KeyEvent const *)arg1)->getDebugString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *KeyEvent_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__KeyEvent, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_IKeyListener_keyPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKeyListener *arg1 = (FIFE::IKeyListener *) 0 ;
+  FIFE::IKeyEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IKeyListener_keyPressed",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKeyListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IKeyListener_keyPressed" "', argument " "1"" of type '" "FIFE::IKeyListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKeyListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IKeyEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IKeyListener_keyPressed" "', argument " "2"" of type '" "FIFE::IKeyEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IKeyListener_keyPressed" "', argument " "2"" of type '" "FIFE::IKeyEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IKeyEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IKeyListener::keyPressed");
+    } else {
+      (arg1)->keyPressed(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IKeyListener_keyReleased(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKeyListener *arg1 = (FIFE::IKeyListener *) 0 ;
+  FIFE::IKeyEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IKeyListener_keyReleased",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKeyListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IKeyListener_keyReleased" "', argument " "1"" of type '" "FIFE::IKeyListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKeyListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IKeyEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IKeyListener_keyReleased" "', argument " "2"" of type '" "FIFE::IKeyEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IKeyListener_keyReleased" "', argument " "2"" of type '" "FIFE::IKeyEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IKeyEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IKeyListener::keyReleased");
+    } else {
+      (arg1)->keyReleased(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_IKeyListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKeyListener *arg1 = (FIFE::IKeyListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_IKeyListener",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKeyListener, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IKeyListener" "', argument " "1"" of type '" "FIFE::IKeyListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKeyListener * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_IKeyListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  FIFE::IKeyListener *result = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_IKeyListener",&obj0)) SWIG_fail;
+  arg1 = obj0;
+  if ( arg1 != Py_None ) {
+    /* subclassed */
+    result = (FIFE::IKeyListener *)new SwigDirector_IKeyListener(arg1); 
+  } else {
+    SWIG_SetErrorMsg(PyExc_RuntimeError,"accessing abstract class or protected constructor"); 
+    SWIG_fail;
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IKeyListener, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_disown_IKeyListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IKeyListener *arg1 = (FIFE::IKeyListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:disown_IKeyListener",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IKeyListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "disown_IKeyListener" "', argument " "1"" of type '" "FIFE::IKeyListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IKeyListener * >(argp1);
+  {
+    Swig::Director *director = dynamic_cast<Swig::Director *>(arg1);
+    if (director) director->swig_disown();
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *IKeyListener_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__IKeyListener, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *IMouseEvent_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__IMouseEvent, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_MouseEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_MouseEvent")) SWIG_fail;
+  result = (FIFE::MouseEvent *)new FIFE::MouseEvent();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__MouseEvent, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_MouseEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_MouseEvent",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_MouseEvent" "', argument " "1"" of type '" "FIFE::MouseEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_getButton(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  FIFE::IMouseEvent::MouseButtonType result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_getButton",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_getButton" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (FIFE::IMouseEvent::MouseButtonType)((FIFE::MouseEvent const *)arg1)->getButton();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_getType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  FIFE::IMouseEvent::MouseEventType result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_getType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_getType" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (FIFE::IMouseEvent::MouseEventType)((FIFE::MouseEvent const *)arg1)->getType();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_getX(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_getX",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_getX" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (int)((FIFE::MouseEvent const *)arg1)->getX();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_getY(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_getY",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_getY" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (int)((FIFE::MouseEvent const *)arg1)->getY();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_isAltPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_isAltPressed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_isAltPressed" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (bool)((FIFE::MouseEvent const *)arg1)->isAltPressed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_isControlPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_isControlPressed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_isControlPressed" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (bool)((FIFE::MouseEvent const *)arg1)->isControlPressed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_isMetaPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_isMetaPressed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_isMetaPressed" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (bool)((FIFE::MouseEvent const *)arg1)->isMetaPressed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_isShiftPressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_isShiftPressed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_isShiftPressed" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (bool)((FIFE::MouseEvent const *)arg1)->isShiftPressed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_consume(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_consume",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_consume" "', argument " "1"" of type '" "FIFE::MouseEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  (arg1)->consume();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_isConsumed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_isConsumed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_isConsumed" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (bool)((FIFE::MouseEvent const *)arg1)->isConsumed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_getSource(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  FIFE::IEventSource *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_getSource",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_getSource" "', argument " "1"" of type '" "FIFE::MouseEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (FIFE::IEventSource *)(arg1)->getSource();
+  director = SWIG_DIRECTOR_CAST(result);
+  if (director) {
+    resultobj = director->swig_get_self();
+    Py_INCREF(resultobj);
+  } else {
+    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IEventSource, 0 |  0 );
+  }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_getTimeStamp(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_getTimeStamp",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_getTimeStamp" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = (int)((FIFE::MouseEvent const *)arg1)->getTimeStamp();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_getName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  std::string *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_getName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_getName" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  {
+    std::string const &_result_ref = ((FIFE::MouseEvent const *)arg1)->getName();
+    result = (std::string *) &_result_ref;
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MouseEvent_getDebugString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::MouseEvent *arg1 = (FIFE::MouseEvent *) 0 ;
+  std::string result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:MouseEvent_getDebugString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__MouseEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MouseEvent_getDebugString" "', argument " "1"" of type '" "FIFE::MouseEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::MouseEvent * >(argp1);
+  result = ((FIFE::MouseEvent const *)arg1)->getDebugString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *MouseEvent_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__MouseEvent, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mouseEntered(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mouseEntered",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mouseEntered" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mouseEntered" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mouseEntered" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mouseEntered");
+    } else {
+      (arg1)->mouseEntered(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mouseExited(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mouseExited",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mouseExited" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mouseExited" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mouseExited" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mouseExited");
+    } else {
+      (arg1)->mouseExited(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mousePressed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mousePressed",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mousePressed" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mousePressed" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mousePressed" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mousePressed");
+    } else {
+      (arg1)->mousePressed(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mouseReleased(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mouseReleased",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mouseReleased" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mouseReleased" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mouseReleased" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mouseReleased");
+    } else {
+      (arg1)->mouseReleased(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mouseClicked(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mouseClicked",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mouseClicked" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mouseClicked" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mouseClicked" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mouseClicked");
+    } else {
+      (arg1)->mouseClicked(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mouseWheelMovedUp(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mouseWheelMovedUp",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mouseWheelMovedUp" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mouseWheelMovedUp" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mouseWheelMovedUp" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mouseWheelMovedUp");
+    } else {
+      (arg1)->mouseWheelMovedUp(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mouseWheelMovedDown(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mouseWheelMovedDown",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mouseWheelMovedDown" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mouseWheelMovedDown" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mouseWheelMovedDown" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mouseWheelMovedDown");
+    } else {
+      (arg1)->mouseWheelMovedDown(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mouseMoved(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mouseMoved",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mouseMoved" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mouseMoved" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mouseMoved" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mouseMoved");
+    } else {
+      (arg1)->mouseMoved(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IMouseListener_mouseDragged(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  FIFE::IMouseEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IMouseListener_mouseDragged",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IMouseListener_mouseDragged" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IMouseEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IMouseListener_mouseDragged" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IMouseListener_mouseDragged" "', argument " "2"" of type '" "FIFE::IMouseEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IMouseListener::mouseDragged");
+    } else {
+      (arg1)->mouseDragged(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_IMouseListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_IMouseListener",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IMouseListener" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_IMouseListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  FIFE::IMouseListener *result = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_IMouseListener",&obj0)) SWIG_fail;
+  arg1 = obj0;
+  if ( arg1 != Py_None ) {
+    /* subclassed */
+    result = (FIFE::IMouseListener *)new SwigDirector_IMouseListener(arg1); 
+  } else {
+    SWIG_SetErrorMsg(PyExc_RuntimeError,"accessing abstract class or protected constructor"); 
+    SWIG_fail;
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IMouseListener, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_disown_IMouseListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IMouseListener *arg1 = (FIFE::IMouseListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:disown_IMouseListener",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "disown_IMouseListener" "', argument " "1"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IMouseListener * >(argp1);
+  {
+    Swig::Director *director = dynamic_cast<Swig::Director *>(arg1);
+    if (director) director->swig_disown();
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *IMouseListener_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__IMouseListener, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_IWidgetEvent_getId(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IWidgetEvent *arg1 = (FIFE::IWidgetEvent *) 0 ;
+  std::string *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IWidgetEvent_getId",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IWidgetEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IWidgetEvent_getId" "', argument " "1"" of type '" "FIFE::IWidgetEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IWidgetEvent * >(argp1);
+  {
+    std::string const &_result_ref = ((FIFE::IWidgetEvent const *)arg1)->getId();
+    result = (std::string *) &_result_ref;
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_IWidgetEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IWidgetEvent *arg1 = (FIFE::IWidgetEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_IWidgetEvent",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IWidgetEvent, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IWidgetEvent" "', argument " "1"" of type '" "FIFE::IWidgetEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IWidgetEvent * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *IWidgetEvent_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__IWidgetEvent, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_WidgetEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_WidgetEvent")) SWIG_fail;
+  result = (FIFE::WidgetEvent *)new FIFE::WidgetEvent();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__WidgetEvent, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_WidgetEvent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *arg1 = (FIFE::WidgetEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_WidgetEvent",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__WidgetEvent, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_WidgetEvent" "', argument " "1"" of type '" "FIFE::WidgetEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::WidgetEvent * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WidgetEvent_getId(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *arg1 = (FIFE::WidgetEvent *) 0 ;
+  std::string *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:WidgetEvent_getId",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__WidgetEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WidgetEvent_getId" "', argument " "1"" of type '" "FIFE::WidgetEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::WidgetEvent * >(argp1);
+  {
+    std::string const &_result_ref = ((FIFE::WidgetEvent const *)arg1)->getId();
+    result = (std::string *) &_result_ref;
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WidgetEvent_consume(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *arg1 = (FIFE::WidgetEvent *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:WidgetEvent_consume",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__WidgetEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WidgetEvent_consume" "', argument " "1"" of type '" "FIFE::WidgetEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::WidgetEvent * >(argp1);
+  (arg1)->consume();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WidgetEvent_isConsumed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *arg1 = (FIFE::WidgetEvent *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:WidgetEvent_isConsumed",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__WidgetEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WidgetEvent_isConsumed" "', argument " "1"" of type '" "FIFE::WidgetEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::WidgetEvent * >(argp1);
+  result = (bool)((FIFE::WidgetEvent const *)arg1)->isConsumed();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WidgetEvent_getSource(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *arg1 = (FIFE::WidgetEvent *) 0 ;
+  FIFE::IEventSource *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Swig::Director *director = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:WidgetEvent_getSource",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__WidgetEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WidgetEvent_getSource" "', argument " "1"" of type '" "FIFE::WidgetEvent *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::WidgetEvent * >(argp1);
+  result = (FIFE::IEventSource *)(arg1)->getSource();
+  director = SWIG_DIRECTOR_CAST(result);
+  if (director) {
+    resultobj = director->swig_get_self();
+    Py_INCREF(resultobj);
+  } else {
+    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IEventSource, 0 |  0 );
+  }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WidgetEvent_getTimeStamp(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *arg1 = (FIFE::WidgetEvent *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:WidgetEvent_getTimeStamp",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__WidgetEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WidgetEvent_getTimeStamp" "', argument " "1"" of type '" "FIFE::WidgetEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::WidgetEvent * >(argp1);
+  result = (int)((FIFE::WidgetEvent const *)arg1)->getTimeStamp();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WidgetEvent_getName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *arg1 = (FIFE::WidgetEvent *) 0 ;
+  std::string *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:WidgetEvent_getName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__WidgetEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WidgetEvent_getName" "', argument " "1"" of type '" "FIFE::WidgetEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::WidgetEvent * >(argp1);
+  {
+    std::string const &_result_ref = ((FIFE::WidgetEvent const *)arg1)->getName();
+    result = (std::string *) &_result_ref;
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WidgetEvent_getDebugString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::WidgetEvent *arg1 = (FIFE::WidgetEvent *) 0 ;
+  std::string result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:WidgetEvent_getDebugString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__WidgetEvent, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WidgetEvent_getDebugString" "', argument " "1"" of type '" "FIFE::WidgetEvent const *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::WidgetEvent * >(argp1);
+  result = ((FIFE::WidgetEvent const *)arg1)->getDebugString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *WidgetEvent_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__WidgetEvent, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_IWidgetListener_onWidgetAction(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IWidgetListener *arg1 = (FIFE::IWidgetListener *) 0 ;
+  FIFE::IWidgetEvent *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Swig::Director *director = 0;
+  bool upcall = false;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IWidgetListener_onWidgetAction",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IWidgetListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IWidgetListener_onWidgetAction" "', argument " "1"" of type '" "FIFE::IWidgetListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IWidgetListener * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__IWidgetEvent,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IWidgetListener_onWidgetAction" "', argument " "2"" of type '" "FIFE::IWidgetEvent &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IWidgetListener_onWidgetAction" "', argument " "2"" of type '" "FIFE::IWidgetEvent &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IWidgetEvent * >(argp2);
+  director = SWIG_DIRECTOR_CAST(arg1);
+  upcall = (director && (director->swig_get_self()==obj0));
+  try {
+    if (upcall) {
+      Swig::DirectorPureVirtualException::raise("FIFE::IWidgetListener::onWidgetAction");
+    } else {
+      (arg1)->onWidgetAction(*arg2);
+    }
+  } catch (Swig::DirectorException&) {
+    SWIG_fail;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_IWidgetListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IWidgetListener *arg1 = (FIFE::IWidgetListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_IWidgetListener",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IWidgetListener, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IWidgetListener" "', argument " "1"" of type '" "FIFE::IWidgetListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IWidgetListener * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_IWidgetListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  FIFE::IWidgetListener *result = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_IWidgetListener",&obj0)) SWIG_fail;
+  arg1 = obj0;
+  if ( arg1 != Py_None ) {
+    /* subclassed */
+    result = (FIFE::IWidgetListener *)new SwigDirector_IWidgetListener(arg1); 
+  } else {
+    SWIG_SetErrorMsg(PyExc_RuntimeError,"accessing abstract class or protected constructor"); 
+    SWIG_fail;
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__IWidgetListener, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_disown_IWidgetListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::IWidgetListener *arg1 = (FIFE::IWidgetListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:disown_IWidgetListener",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__IWidgetListener, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "disown_IWidgetListener" "', argument " "1"" of type '" "FIFE::IWidgetListener *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::IWidgetListener * >(argp1);
+  {
+    Swig::Director *director = dynamic_cast<Swig::Director *>(arg1);
+    if (director) director->swig_disown();
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *IWidgetListener_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__IWidgetListener, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_EventManager(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_EventManager")) SWIG_fail;
+  result = (FIFE::EventManager *)new FIFE::EventManager();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FIFE__EventManager, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_EventManager(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_EventManager",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EventManager" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_addCommandListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::ICommandListener *arg2 = (FIFE::ICommandListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_addCommandListener",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_addCommandListener" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__ICommandListener, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_addCommandListener" "', argument " "2"" of type '" "FIFE::ICommandListener *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::ICommandListener * >(argp2);
+  (arg1)->addCommandListener(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_removeCommandListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::ICommandListener *arg2 = (FIFE::ICommandListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_removeCommandListener",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_removeCommandListener" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__ICommandListener, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_removeCommandListener" "', argument " "2"" of type '" "FIFE::ICommandListener *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::ICommandListener * >(argp2);
+  (arg1)->removeCommandListener(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_addKeyListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::IKeyListener *arg2 = (FIFE::IKeyListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_addKeyListener",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_addKeyListener" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__IKeyListener, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_addKeyListener" "', argument " "2"" of type '" "FIFE::IKeyListener *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IKeyListener * >(argp2);
+  (arg1)->addKeyListener(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_removeKeyListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::IKeyListener *arg2 = (FIFE::IKeyListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_removeKeyListener",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_removeKeyListener" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__IKeyListener, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_removeKeyListener" "', argument " "2"" of type '" "FIFE::IKeyListener *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IKeyListener * >(argp2);
+  (arg1)->removeKeyListener(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_addMouseListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::IMouseListener *arg2 = (FIFE::IMouseListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_addMouseListener",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_addMouseListener" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_addMouseListener" "', argument " "2"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseListener * >(argp2);
+  (arg1)->addMouseListener(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_removeMouseListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::IMouseListener *arg2 = (FIFE::IMouseListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_removeMouseListener",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_removeMouseListener" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__IMouseListener, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_removeMouseListener" "', argument " "2"" of type '" "FIFE::IMouseListener *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IMouseListener * >(argp2);
+  (arg1)->removeMouseListener(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_addWidgetListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::IWidgetListener *arg2 = (FIFE::IWidgetListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_addWidgetListener",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_addWidgetListener" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__IWidgetListener, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_addWidgetListener" "', argument " "2"" of type '" "FIFE::IWidgetListener *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IWidgetListener * >(argp2);
+  (arg1)->addWidgetListener(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_removeWidgetListener(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::IWidgetListener *arg2 = (FIFE::IWidgetListener *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_removeWidgetListener",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_removeWidgetListener" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_FIFE__IWidgetListener, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_removeWidgetListener" "', argument " "2"" of type '" "FIFE::IWidgetListener *""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::IWidgetListener * >(argp2);
+  (arg1)->removeWidgetListener(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_getEventSourceType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::EventSourceType result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:EventManager_getEventSourceType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_getEventSourceType" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  result = (FIFE::EventSourceType)(arg1)->getEventSourceType();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_dispatchCommand(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  FIFE::ICommand *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:EventManager_dispatchCommand",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_dispatchCommand" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FIFE__ICommand,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "EventManager_dispatchCommand" "', argument " "2"" of type '" "FIFE::ICommand &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "EventManager_dispatchCommand" "', argument " "2"" of type '" "FIFE::ICommand &""'"); 
+  }
+  arg2 = reinterpret_cast< FIFE::ICommand * >(argp2);
+  (arg1)->dispatchCommand(*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_EventManager_processEvents(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  FIFE::EventManager *arg1 = (FIFE::EventManager *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:EventManager_processEvents",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_FIFE__EventManager, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EventManager_processEvents" "', argument " "1"" of type '" "FIFE::EventManager *""'"); 
+  }
+  arg1 = reinterpret_cast< FIFE::EventManager * >(argp1);
+  (arg1)->processEvents();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *EventManager_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_FIFE__EventManager, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 SWIGINTERN PyObject *_wrap_new_Engine(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   FIFE::Engine *result = 0 ;
@@ -5565,6 +9356,130 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"TimeEvent_getPeriod", _wrap_TimeEvent_getPeriod, METH_VARARGS, NULL},
 	 { (char *)"disown_TimeEvent", _wrap_disown_TimeEvent, METH_VARARGS, NULL},
 	 { (char *)"TimeEvent_swigregister", TimeEvent_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IKey_isCharacter", _wrap_IKey_isCharacter, METH_VARARGS, NULL},
+	 { (char *)"IKey_isNumber", _wrap_IKey_isNumber, METH_VARARGS, NULL},
+	 { (char *)"IKey_isLetter", _wrap_IKey_isLetter, METH_VARARGS, NULL},
+	 { (char *)"IKey_getValue", _wrap_IKey_getValue, METH_VARARGS, NULL},
+	 { (char *)"IKey_getAsString", _wrap_IKey_getAsString, METH_VARARGS, NULL},
+	 { (char *)"delete_IKey", _wrap_delete_IKey, METH_VARARGS, NULL},
+	 { (char *)"IKey_swigregister", IKey_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IEventSource_getEventSourceType", _wrap_IEventSource_getEventSourceType, METH_VARARGS, NULL},
+	 { (char *)"delete_IEventSource", _wrap_delete_IEventSource, METH_VARARGS, NULL},
+	 { (char *)"new_IEventSource", _wrap_new_IEventSource, METH_VARARGS, NULL},
+	 { (char *)"disown_IEventSource", _wrap_disown_IEventSource, METH_VARARGS, NULL},
+	 { (char *)"IEventSource_swigregister", IEventSource_swigregister, METH_VARARGS, NULL},
+	 { (char *)"ICommand_getCommandType", _wrap_ICommand_getCommandType, METH_VARARGS, NULL},
+	 { (char *)"ICommand_getCode", _wrap_ICommand_getCode, METH_VARARGS, NULL},
+	 { (char *)"delete_ICommand", _wrap_delete_ICommand, METH_VARARGS, NULL},
+	 { (char *)"ICommand_swigregister", ICommand_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_Command", _wrap_new_Command, METH_VARARGS, NULL},
+	 { (char *)"delete_Command", _wrap_delete_Command, METH_VARARGS, NULL},
+	 { (char *)"Command_getCommandType", _wrap_Command_getCommandType, METH_VARARGS, NULL},
+	 { (char *)"Command_setCommandType", _wrap_Command_setCommandType, METH_VARARGS, NULL},
+	 { (char *)"Command_getCode", _wrap_Command_getCode, METH_VARARGS, NULL},
+	 { (char *)"Command_setCode", _wrap_Command_setCode, METH_VARARGS, NULL},
+	 { (char *)"Command_consume", _wrap_Command_consume, METH_VARARGS, NULL},
+	 { (char *)"Command_isConsumed", _wrap_Command_isConsumed, METH_VARARGS, NULL},
+	 { (char *)"Command_getSource", _wrap_Command_getSource, METH_VARARGS, NULL},
+	 { (char *)"Command_setSource", _wrap_Command_setSource, METH_VARARGS, NULL},
+	 { (char *)"Command_getTimeStamp", _wrap_Command_getTimeStamp, METH_VARARGS, NULL},
+	 { (char *)"Command_setTimeStamp", _wrap_Command_setTimeStamp, METH_VARARGS, NULL},
+	 { (char *)"Command_getName", _wrap_Command_getName, METH_VARARGS, NULL},
+	 { (char *)"Command_getDebugString", _wrap_Command_getDebugString, METH_VARARGS, NULL},
+	 { (char *)"disown_Command", _wrap_disown_Command, METH_VARARGS, NULL},
+	 { (char *)"Command_swigregister", Command_swigregister, METH_VARARGS, NULL},
+	 { (char *)"ICommandListener_onCommand", _wrap_ICommandListener_onCommand, METH_VARARGS, NULL},
+	 { (char *)"delete_ICommandListener", _wrap_delete_ICommandListener, METH_VARARGS, NULL},
+	 { (char *)"new_ICommandListener", _wrap_new_ICommandListener, METH_VARARGS, NULL},
+	 { (char *)"disown_ICommandListener", _wrap_disown_ICommandListener, METH_VARARGS, NULL},
+	 { (char *)"ICommandListener_swigregister", ICommandListener_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IKeyEvent_swigregister", IKeyEvent_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_KeyEvent", _wrap_new_KeyEvent, METH_VARARGS, NULL},
+	 { (char *)"delete_KeyEvent", _wrap_delete_KeyEvent, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_getType", _wrap_KeyEvent_getType, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_setType", _wrap_KeyEvent_setType, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_isNumericPad", _wrap_KeyEvent_isNumericPad, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_getKey", _wrap_KeyEvent_getKey, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_isAltPressed", _wrap_KeyEvent_isAltPressed, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_isControlPressed", _wrap_KeyEvent_isControlPressed, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_isMetaPressed", _wrap_KeyEvent_isMetaPressed, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_isShiftPressed", _wrap_KeyEvent_isShiftPressed, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_consume", _wrap_KeyEvent_consume, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_isConsumed", _wrap_KeyEvent_isConsumed, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_getSource", _wrap_KeyEvent_getSource, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_getTimeStamp", _wrap_KeyEvent_getTimeStamp, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_getName", _wrap_KeyEvent_getName, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_getDebugString", _wrap_KeyEvent_getDebugString, METH_VARARGS, NULL},
+	 { (char *)"KeyEvent_swigregister", KeyEvent_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IKeyListener_keyPressed", _wrap_IKeyListener_keyPressed, METH_VARARGS, NULL},
+	 { (char *)"IKeyListener_keyReleased", _wrap_IKeyListener_keyReleased, METH_VARARGS, NULL},
+	 { (char *)"delete_IKeyListener", _wrap_delete_IKeyListener, METH_VARARGS, NULL},
+	 { (char *)"new_IKeyListener", _wrap_new_IKeyListener, METH_VARARGS, NULL},
+	 { (char *)"disown_IKeyListener", _wrap_disown_IKeyListener, METH_VARARGS, NULL},
+	 { (char *)"IKeyListener_swigregister", IKeyListener_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IMouseEvent_swigregister", IMouseEvent_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_MouseEvent", _wrap_new_MouseEvent, METH_VARARGS, NULL},
+	 { (char *)"delete_MouseEvent", _wrap_delete_MouseEvent, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_getButton", _wrap_MouseEvent_getButton, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_getType", _wrap_MouseEvent_getType, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_getX", _wrap_MouseEvent_getX, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_getY", _wrap_MouseEvent_getY, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_isAltPressed", _wrap_MouseEvent_isAltPressed, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_isControlPressed", _wrap_MouseEvent_isControlPressed, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_isMetaPressed", _wrap_MouseEvent_isMetaPressed, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_isShiftPressed", _wrap_MouseEvent_isShiftPressed, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_consume", _wrap_MouseEvent_consume, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_isConsumed", _wrap_MouseEvent_isConsumed, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_getSource", _wrap_MouseEvent_getSource, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_getTimeStamp", _wrap_MouseEvent_getTimeStamp, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_getName", _wrap_MouseEvent_getName, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_getDebugString", _wrap_MouseEvent_getDebugString, METH_VARARGS, NULL},
+	 { (char *)"MouseEvent_swigregister", MouseEvent_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mouseEntered", _wrap_IMouseListener_mouseEntered, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mouseExited", _wrap_IMouseListener_mouseExited, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mousePressed", _wrap_IMouseListener_mousePressed, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mouseReleased", _wrap_IMouseListener_mouseReleased, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mouseClicked", _wrap_IMouseListener_mouseClicked, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mouseWheelMovedUp", _wrap_IMouseListener_mouseWheelMovedUp, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mouseWheelMovedDown", _wrap_IMouseListener_mouseWheelMovedDown, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mouseMoved", _wrap_IMouseListener_mouseMoved, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_mouseDragged", _wrap_IMouseListener_mouseDragged, METH_VARARGS, NULL},
+	 { (char *)"delete_IMouseListener", _wrap_delete_IMouseListener, METH_VARARGS, NULL},
+	 { (char *)"new_IMouseListener", _wrap_new_IMouseListener, METH_VARARGS, NULL},
+	 { (char *)"disown_IMouseListener", _wrap_disown_IMouseListener, METH_VARARGS, NULL},
+	 { (char *)"IMouseListener_swigregister", IMouseListener_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IWidgetEvent_getId", _wrap_IWidgetEvent_getId, METH_VARARGS, NULL},
+	 { (char *)"delete_IWidgetEvent", _wrap_delete_IWidgetEvent, METH_VARARGS, NULL},
+	 { (char *)"IWidgetEvent_swigregister", IWidgetEvent_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_WidgetEvent", _wrap_new_WidgetEvent, METH_VARARGS, NULL},
+	 { (char *)"delete_WidgetEvent", _wrap_delete_WidgetEvent, METH_VARARGS, NULL},
+	 { (char *)"WidgetEvent_getId", _wrap_WidgetEvent_getId, METH_VARARGS, NULL},
+	 { (char *)"WidgetEvent_consume", _wrap_WidgetEvent_consume, METH_VARARGS, NULL},
+	 { (char *)"WidgetEvent_isConsumed", _wrap_WidgetEvent_isConsumed, METH_VARARGS, NULL},
+	 { (char *)"WidgetEvent_getSource", _wrap_WidgetEvent_getSource, METH_VARARGS, NULL},
+	 { (char *)"WidgetEvent_getTimeStamp", _wrap_WidgetEvent_getTimeStamp, METH_VARARGS, NULL},
+	 { (char *)"WidgetEvent_getName", _wrap_WidgetEvent_getName, METH_VARARGS, NULL},
+	 { (char *)"WidgetEvent_getDebugString", _wrap_WidgetEvent_getDebugString, METH_VARARGS, NULL},
+	 { (char *)"WidgetEvent_swigregister", WidgetEvent_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IWidgetListener_onWidgetAction", _wrap_IWidgetListener_onWidgetAction, METH_VARARGS, NULL},
+	 { (char *)"delete_IWidgetListener", _wrap_delete_IWidgetListener, METH_VARARGS, NULL},
+	 { (char *)"new_IWidgetListener", _wrap_new_IWidgetListener, METH_VARARGS, NULL},
+	 { (char *)"disown_IWidgetListener", _wrap_disown_IWidgetListener, METH_VARARGS, NULL},
+	 { (char *)"IWidgetListener_swigregister", IWidgetListener_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_EventManager", _wrap_new_EventManager, METH_VARARGS, NULL},
+	 { (char *)"delete_EventManager", _wrap_delete_EventManager, METH_VARARGS, NULL},
+	 { (char *)"EventManager_addCommandListener", _wrap_EventManager_addCommandListener, METH_VARARGS, NULL},
+	 { (char *)"EventManager_removeCommandListener", _wrap_EventManager_removeCommandListener, METH_VARARGS, NULL},
+	 { (char *)"EventManager_addKeyListener", _wrap_EventManager_addKeyListener, METH_VARARGS, NULL},
+	 { (char *)"EventManager_removeKeyListener", _wrap_EventManager_removeKeyListener, METH_VARARGS, NULL},
+	 { (char *)"EventManager_addMouseListener", _wrap_EventManager_addMouseListener, METH_VARARGS, NULL},
+	 { (char *)"EventManager_removeMouseListener", _wrap_EventManager_removeMouseListener, METH_VARARGS, NULL},
+	 { (char *)"EventManager_addWidgetListener", _wrap_EventManager_addWidgetListener, METH_VARARGS, NULL},
+	 { (char *)"EventManager_removeWidgetListener", _wrap_EventManager_removeWidgetListener, METH_VARARGS, NULL},
+	 { (char *)"EventManager_getEventSourceType", _wrap_EventManager_getEventSourceType, METH_VARARGS, NULL},
+	 { (char *)"EventManager_dispatchCommand", _wrap_EventManager_dispatchCommand, METH_VARARGS, NULL},
+	 { (char *)"EventManager_processEvents", _wrap_EventManager_processEvents, METH_VARARGS, NULL},
+	 { (char *)"EventManager_swigregister", EventManager_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Engine", _wrap_new_Engine, METH_VARARGS, NULL},
 	 { (char *)"delete_Engine", _wrap_delete_Engine, METH_VARARGS, NULL},
 	 { (char *)"Engine_swigregister", Engine_swigregister, METH_VARARGS, NULL},
@@ -5574,6 +9489,15 @@ static PyMethodDef SwigMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static void *_p_FIFE__MouseEventTo_p_FIFE__IMouseEvent(void *x) {
+    return (void *)((FIFE::IMouseEvent *)  ((FIFE::MouseEvent *) x));
+}
+static void *_p_FIFE__WidgetEventTo_p_FIFE__IWidgetEvent(void *x) {
+    return (void *)((FIFE::IWidgetEvent *)  ((FIFE::WidgetEvent *) x));
+}
+static void *_p_FIFE__CommandTo_p_FIFE__ICommand(void *x) {
+    return (void *)((FIFE::ICommand *)  ((FIFE::Command *) x));
+}
 static void *_p_FIFE__SDLExceptionTo_p_FIFE__Exception(void *x) {
     return (void *)((FIFE::Exception *)  ((FIFE::SDLException *) x));
 }
@@ -5610,15 +9534,32 @@ static void *_p_FIFE__CannotOpenFileTo_p_FIFE__Exception(void *x) {
 static void *_p_FIFE__NotSupportedTo_p_FIFE__Exception(void *x) {
     return (void *)((FIFE::Exception *)  ((FIFE::NotSupported *) x));
 }
+static void *_p_FIFE__KeyEventTo_p_FIFE__IKeyEvent(void *x) {
+    return (void *)((FIFE::IKeyEvent *)  ((FIFE::KeyEvent *) x));
+}
 static swig_type_info _swigt__p_FIFE__CannotOpenFile = {"_p_FIFE__CannotOpenFile", "FIFE::CannotOpenFile *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__Command = {"_p_FIFE__Command", "FIFE::Command *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__Duplicate = {"_p_FIFE__Duplicate", "FIFE::Duplicate *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__Engine = {"_p_FIFE__Engine", "FIFE::Engine *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__EventException = {"_p_FIFE__EventException", "FIFE::EventException *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__EventManager = {"_p_FIFE__EventManager", "FIFE::EventManager *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__Exception = {"_p_FIFE__Exception", "FIFE::Exception *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__ICommand = {"_p_FIFE__ICommand", "FIFE::ICommand *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__ICommandListener = {"_p_FIFE__ICommandListener", "FIFE::ICommandListener *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__IEventSource = {"_p_FIFE__IEventSource", "FIFE::IEventSource *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__IKey = {"_p_FIFE__IKey", "FIFE::IKey *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__IKeyEvent = {"_p_FIFE__IKeyEvent", "FIFE::IKeyEvent *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__IKeyListener = {"_p_FIFE__IKeyListener", "FIFE::IKeyListener *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__IMouseEvent = {"_p_FIFE__IMouseEvent", "FIFE::IMouseEvent *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__IMouseListener = {"_p_FIFE__IMouseListener", "FIFE::IMouseListener *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__IWidgetEvent = {"_p_FIFE__IWidgetEvent", "FIFE::IWidgetEvent *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__IWidgetListener = {"_p_FIFE__IWidgetListener", "FIFE::IWidgetListener *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__IndexOverflow = {"_p_FIFE__IndexOverflow", "FIFE::IndexOverflow *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__InvalidConversion = {"_p_FIFE__InvalidConversion", "FIFE::InvalidConversion *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__InvalidFormat = {"_p_FIFE__InvalidFormat", "FIFE::InvalidFormat *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__KeyEvent = {"_p_FIFE__KeyEvent", "FIFE::KeyEvent *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__Log = {"_p_FIFE__Log", "FIFE::Log *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__MouseEvent = {"_p_FIFE__MouseEvent", "FIFE::MouseEvent *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__NameClash = {"_p_FIFE__NameClash", "FIFE::NameClash *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__NotFound = {"_p_FIFE__NotFound", "FIFE::NotFound *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__NotSupported = {"_p_FIFE__NotSupported", "FIFE::NotSupported *", 0, 0, (void*)0, 0};
@@ -5628,18 +9569,33 @@ static swig_type_info _swigt__p_FIFE__ScriptException = {"_p_FIFE__ScriptExcepti
 static swig_type_info _swigt__p_FIFE__SettingsManager = {"_p_FIFE__SettingsManager", "FIFE::SettingsManager *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__TimeEvent = {"_p_FIFE__TimeEvent", "FIFE::TimeEvent *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FIFE__TimeManager = {"_p_FIFE__TimeManager", "FIFE::TimeManager *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_FIFE__WidgetEvent = {"_p_FIFE__WidgetEvent", "FIFE::WidgetEvent *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_FIFE__CannotOpenFile,
+  &_swigt__p_FIFE__Command,
   &_swigt__p_FIFE__Duplicate,
   &_swigt__p_FIFE__Engine,
   &_swigt__p_FIFE__EventException,
+  &_swigt__p_FIFE__EventManager,
   &_swigt__p_FIFE__Exception,
+  &_swigt__p_FIFE__ICommand,
+  &_swigt__p_FIFE__ICommandListener,
+  &_swigt__p_FIFE__IEventSource,
+  &_swigt__p_FIFE__IKey,
+  &_swigt__p_FIFE__IKeyEvent,
+  &_swigt__p_FIFE__IKeyListener,
+  &_swigt__p_FIFE__IMouseEvent,
+  &_swigt__p_FIFE__IMouseListener,
+  &_swigt__p_FIFE__IWidgetEvent,
+  &_swigt__p_FIFE__IWidgetListener,
   &_swigt__p_FIFE__IndexOverflow,
   &_swigt__p_FIFE__InvalidConversion,
   &_swigt__p_FIFE__InvalidFormat,
+  &_swigt__p_FIFE__KeyEvent,
   &_swigt__p_FIFE__Log,
+  &_swigt__p_FIFE__MouseEvent,
   &_swigt__p_FIFE__NameClash,
   &_swigt__p_FIFE__NotFound,
   &_swigt__p_FIFE__NotSupported,
@@ -5649,18 +9605,33 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_FIFE__SettingsManager,
   &_swigt__p_FIFE__TimeEvent,
   &_swigt__p_FIFE__TimeManager,
+  &_swigt__p_FIFE__WidgetEvent,
   &_swigt__p_char,
 };
 
 static swig_cast_info _swigc__p_FIFE__CannotOpenFile[] = {  {&_swigt__p_FIFE__CannotOpenFile, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__Command[] = {  {&_swigt__p_FIFE__Command, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__Duplicate[] = {  {&_swigt__p_FIFE__Duplicate, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__Engine[] = {  {&_swigt__p_FIFE__Engine, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__EventException[] = {  {&_swigt__p_FIFE__EventException, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__EventManager[] = {  {&_swigt__p_FIFE__EventManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__Exception[] = {  {&_swigt__p_FIFE__Exception, 0, 0, 0},  {&_swigt__p_FIFE__SDLException, _p_FIFE__SDLExceptionTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__NotFound, _p_FIFE__NotFoundTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__OutOfMemory, _p_FIFE__OutOfMemoryTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__Duplicate, _p_FIFE__DuplicateTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__ScriptException, _p_FIFE__ScriptExceptionTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__EventException, _p_FIFE__EventExceptionTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__InvalidConversion, _p_FIFE__InvalidConversionTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__NameClash, _p_FIFE__NameClashTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__IndexOverflow, _p_FIFE__IndexOverflowTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__InvalidFormat, _p_FIFE__InvalidFormatTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__CannotOpenFile, _p_FIFE__CannotOpenFileTo_p_FIFE__Exception, 0, 0},  {&_swigt__p_FIFE__NotSupported, _p_FIFE__NotSupportedTo_p_FIFE__Exception, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__ICommand[] = {  {&_swigt__p_FIFE__ICommand, 0, 0, 0},  {&_swigt__p_FIFE__Command, _p_FIFE__CommandTo_p_FIFE__ICommand, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__ICommandListener[] = {  {&_swigt__p_FIFE__ICommandListener, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__IEventSource[] = {  {&_swigt__p_FIFE__IEventSource, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__IKey[] = {  {&_swigt__p_FIFE__IKey, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__IKeyEvent[] = {  {&_swigt__p_FIFE__IKeyEvent, 0, 0, 0},  {&_swigt__p_FIFE__KeyEvent, _p_FIFE__KeyEventTo_p_FIFE__IKeyEvent, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__IKeyListener[] = {  {&_swigt__p_FIFE__IKeyListener, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__IMouseEvent[] = {  {&_swigt__p_FIFE__IMouseEvent, 0, 0, 0},  {&_swigt__p_FIFE__MouseEvent, _p_FIFE__MouseEventTo_p_FIFE__IMouseEvent, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__IMouseListener[] = {  {&_swigt__p_FIFE__IMouseListener, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__IWidgetEvent[] = {  {&_swigt__p_FIFE__IWidgetEvent, 0, 0, 0},  {&_swigt__p_FIFE__WidgetEvent, _p_FIFE__WidgetEventTo_p_FIFE__IWidgetEvent, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__IWidgetListener[] = {  {&_swigt__p_FIFE__IWidgetListener, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__IndexOverflow[] = {  {&_swigt__p_FIFE__IndexOverflow, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__InvalidConversion[] = {  {&_swigt__p_FIFE__InvalidConversion, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__InvalidFormat[] = {  {&_swigt__p_FIFE__InvalidFormat, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__KeyEvent[] = {  {&_swigt__p_FIFE__KeyEvent, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__Log[] = {  {&_swigt__p_FIFE__Log, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__MouseEvent[] = {  {&_swigt__p_FIFE__MouseEvent, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__NameClash[] = {  {&_swigt__p_FIFE__NameClash, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__NotFound[] = {  {&_swigt__p_FIFE__NotFound, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__NotSupported[] = {  {&_swigt__p_FIFE__NotSupported, 0, 0, 0},{0, 0, 0, 0}};
@@ -5670,18 +9641,33 @@ static swig_cast_info _swigc__p_FIFE__ScriptException[] = {  {&_swigt__p_FIFE__S
 static swig_cast_info _swigc__p_FIFE__SettingsManager[] = {  {&_swigt__p_FIFE__SettingsManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__TimeEvent[] = {  {&_swigt__p_FIFE__TimeEvent, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FIFE__TimeManager[] = {  {&_swigt__p_FIFE__TimeManager, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FIFE__WidgetEvent[] = {  {&_swigt__p_FIFE__WidgetEvent, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_FIFE__CannotOpenFile,
+  _swigc__p_FIFE__Command,
   _swigc__p_FIFE__Duplicate,
   _swigc__p_FIFE__Engine,
   _swigc__p_FIFE__EventException,
+  _swigc__p_FIFE__EventManager,
   _swigc__p_FIFE__Exception,
+  _swigc__p_FIFE__ICommand,
+  _swigc__p_FIFE__ICommandListener,
+  _swigc__p_FIFE__IEventSource,
+  _swigc__p_FIFE__IKey,
+  _swigc__p_FIFE__IKeyEvent,
+  _swigc__p_FIFE__IKeyListener,
+  _swigc__p_FIFE__IMouseEvent,
+  _swigc__p_FIFE__IMouseListener,
+  _swigc__p_FIFE__IWidgetEvent,
+  _swigc__p_FIFE__IWidgetListener,
   _swigc__p_FIFE__IndexOverflow,
   _swigc__p_FIFE__InvalidConversion,
   _swigc__p_FIFE__InvalidFormat,
+  _swigc__p_FIFE__KeyEvent,
   _swigc__p_FIFE__Log,
+  _swigc__p_FIFE__MouseEvent,
   _swigc__p_FIFE__NameClash,
   _swigc__p_FIFE__NotFound,
   _swigc__p_FIFE__NotSupported,
@@ -5691,6 +9677,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_FIFE__SettingsManager,
   _swigc__p_FIFE__TimeEvent,
   _swigc__p_FIFE__TimeManager,
+  _swigc__p_FIFE__WidgetEvent,
   _swigc__p_char,
 };
 
@@ -6216,5 +10203,77 @@ SWIGEXPORT void SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Log_LEVEL_DEBUG",SWIG_From_int(static_cast< int >(FIFE::Log::LEVEL_DEBUG)));
   SWIG_Python_SetConstant(d, "Log_LEVEL_LOG",SWIG_From_int(static_cast< int >(FIFE::Log::LEVEL_LOG)));
   SWIG_Python_SetConstant(d, "Log_LEVEL_WARN",SWIG_From_int(static_cast< int >(FIFE::Log::LEVEL_WARN)));
+  SWIG_Python_SetConstant(d, "ES_ENGINE",SWIG_From_int(static_cast< int >(FIFE::ES_ENGINE)));
+  SWIG_Python_SetConstant(d, "ES_GUICHAN_WIDGET",SWIG_From_int(static_cast< int >(FIFE::ES_GUICHAN_WIDGET)));
+  SWIG_Python_SetConstant(d, "ES_MAPVIEW",SWIG_From_int(static_cast< int >(FIFE::ES_MAPVIEW)));
+  SWIG_Python_SetConstant(d, "CMD_UNKNOWN",SWIG_From_int(static_cast< int >(FIFE::CMD_UNKNOWN)));
+  SWIG_Python_SetConstant(d, "CMD_GO_NORTH",SWIG_From_int(static_cast< int >(FIFE::CMD_GO_NORTH)));
+  SWIG_Python_SetConstant(d, "CMD_GO_SOUTH",SWIG_From_int(static_cast< int >(FIFE::CMD_GO_SOUTH)));
+  SWIG_Python_SetConstant(d, "CMD_GO_WEST",SWIG_From_int(static_cast< int >(FIFE::CMD_GO_WEST)));
+  SWIG_Python_SetConstant(d, "CMD_GO_EAST",SWIG_From_int(static_cast< int >(FIFE::CMD_GO_EAST)));
+  SWIG_Python_SetConstant(d, "CMD_GO_NORTH_EAST",SWIG_From_int(static_cast< int >(FIFE::CMD_GO_NORTH_EAST)));
+  SWIG_Python_SetConstant(d, "CMD_GO_NORTH_WEST",SWIG_From_int(static_cast< int >(FIFE::CMD_GO_NORTH_WEST)));
+  SWIG_Python_SetConstant(d, "CMD_GO_SOUTH_EAST",SWIG_From_int(static_cast< int >(FIFE::CMD_GO_SOUTH_EAST)));
+  SWIG_Python_SetConstant(d, "CMD_GO_SOUTH_WEST",SWIG_From_int(static_cast< int >(FIFE::CMD_GO_SOUTH_WEST)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_TOGGLE_OBJECTS",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_TOGGLE_OBJECTS)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_TOGGLE_FLOOR",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_TOGGLE_FLOOR)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_TOGGLE_ROOF",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_TOGGLE_ROOF)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_TOGGLE_TILE_GRID",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_TOGGLE_TILE_GRID)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_TOGGLE_OBJ_GRID",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_TOGGLE_OBJ_GRID)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_CHANGE_ELEVATION",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_CHANGE_ELEVATION)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_INCREASE_ALPHA",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_INCREASE_ALPHA)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_DECREASE_ALPHA",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_DECREASE_ALPHA)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_TOGGLE_COORDS",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_TOGGLE_COORDS)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_TOGGLE_FADEOUT",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_TOGGLE_FADEOUT)));
+  SWIG_Python_SetConstant(d, "CMD_TEST_SAVE",SWIG_From_int(static_cast< int >(FIFE::CMD_TEST_SAVE)));
+  SWIG_Python_SetConstant(d, "CMD_MAKE_SCREENSHOT",SWIG_From_int(static_cast< int >(FIFE::CMD_MAKE_SCREENSHOT)));
+  SWIG_Python_SetConstant(d, "CMD_QUIT_GAME",SWIG_From_int(static_cast< int >(FIFE::CMD_QUIT_GAME)));
+  SWIG_Python_SetConstant(d, "IKey_INVALID_KEY",SWIG_From_int(static_cast< int >(FIFE::IKey::INVALID_KEY)));
+  SWIG_Python_SetConstant(d, "IKey_SPACE",SWIG_From_int(static_cast< int >(FIFE::IKey::SPACE)));
+  SWIG_Python_SetConstant(d, "IKey_TAB",SWIG_From_int(static_cast< int >(FIFE::IKey::TAB)));
+  SWIG_Python_SetConstant(d, "IKey_ENTER",SWIG_From_int(static_cast< int >(FIFE::IKey::ENTER)));
+  SWIG_Python_SetConstant(d, "IKey_LEFT_ALT",SWIG_From_int(static_cast< int >(FIFE::IKey::LEFT_ALT)));
+  SWIG_Python_SetConstant(d, "IKey_RIGHT_ALT",SWIG_From_int(static_cast< int >(FIFE::IKey::RIGHT_ALT)));
+  SWIG_Python_SetConstant(d, "IKey_LEFT_SHIFT",SWIG_From_int(static_cast< int >(FIFE::IKey::LEFT_SHIFT)));
+  SWIG_Python_SetConstant(d, "IKey_RIGHT_SHIFT",SWIG_From_int(static_cast< int >(FIFE::IKey::RIGHT_SHIFT)));
+  SWIG_Python_SetConstant(d, "IKey_LEFT_CONTROL",SWIG_From_int(static_cast< int >(FIFE::IKey::LEFT_CONTROL)));
+  SWIG_Python_SetConstant(d, "IKey_RIGHT_CONTROL",SWIG_From_int(static_cast< int >(FIFE::IKey::RIGHT_CONTROL)));
+  SWIG_Python_SetConstant(d, "IKey_LEFT_META",SWIG_From_int(static_cast< int >(FIFE::IKey::LEFT_META)));
+  SWIG_Python_SetConstant(d, "IKey_RIGHT_META",SWIG_From_int(static_cast< int >(FIFE::IKey::RIGHT_META)));
+  SWIG_Python_SetConstant(d, "IKey_LEFT_SUPER",SWIG_From_int(static_cast< int >(FIFE::IKey::LEFT_SUPER)));
+  SWIG_Python_SetConstant(d, "IKey_RIGHT_SUPER",SWIG_From_int(static_cast< int >(FIFE::IKey::RIGHT_SUPER)));
+  SWIG_Python_SetConstant(d, "IKey_INSERT",SWIG_From_int(static_cast< int >(FIFE::IKey::INSERT)));
+  SWIG_Python_SetConstant(d, "IKey_HOME",SWIG_From_int(static_cast< int >(FIFE::IKey::HOME)));
+  SWIG_Python_SetConstant(d, "IKey_PAGE_UP",SWIG_From_int(static_cast< int >(FIFE::IKey::PAGE_UP)));
+  SWIG_Python_SetConstant(d, "IKey_DELETE",SWIG_From_int(static_cast< int >(FIFE::IKey::DELETE)));
+  SWIG_Python_SetConstant(d, "IKey_END",SWIG_From_int(static_cast< int >(FIFE::IKey::END)));
+  SWIG_Python_SetConstant(d, "IKey_PAGE_DOWN",SWIG_From_int(static_cast< int >(FIFE::IKey::PAGE_DOWN)));
+  SWIG_Python_SetConstant(d, "IKey_ESCAPE",SWIG_From_int(static_cast< int >(FIFE::IKey::ESCAPE)));
+  SWIG_Python_SetConstant(d, "IKey_CAPS_LOCK",SWIG_From_int(static_cast< int >(FIFE::IKey::CAPS_LOCK)));
+  SWIG_Python_SetConstant(d, "IKey_BACKSPACE",SWIG_From_int(static_cast< int >(FIFE::IKey::BACKSPACE)));
+  SWIG_Python_SetConstant(d, "IKey_F1",SWIG_From_int(static_cast< int >(FIFE::IKey::F1)));
+  SWIG_Python_SetConstant(d, "IKey_F2",SWIG_From_int(static_cast< int >(FIFE::IKey::F2)));
+  SWIG_Python_SetConstant(d, "IKey_F3",SWIG_From_int(static_cast< int >(FIFE::IKey::F3)));
+  SWIG_Python_SetConstant(d, "IKey_F4",SWIG_From_int(static_cast< int >(FIFE::IKey::F4)));
+  SWIG_Python_SetConstant(d, "IKey_F5",SWIG_From_int(static_cast< int >(FIFE::IKey::F5)));
+  SWIG_Python_SetConstant(d, "IKey_F6",SWIG_From_int(static_cast< int >(FIFE::IKey::F6)));
+  SWIG_Python_SetConstant(d, "IKey_F7",SWIG_From_int(static_cast< int >(FIFE::IKey::F7)));
+  SWIG_Python_SetConstant(d, "IKey_F8",SWIG_From_int(static_cast< int >(FIFE::IKey::F8)));
+  SWIG_Python_SetConstant(d, "IKey_F9",SWIG_From_int(static_cast< int >(FIFE::IKey::F9)));
+  SWIG_Python_SetConstant(d, "IKey_F10",SWIG_From_int(static_cast< int >(FIFE::IKey::F10)));
+  SWIG_Python_SetConstant(d, "IKey_F11",SWIG_From_int(static_cast< int >(FIFE::IKey::F11)));
+  SWIG_Python_SetConstant(d, "IKey_F12",SWIG_From_int(static_cast< int >(FIFE::IKey::F12)));
+  SWIG_Python_SetConstant(d, "IKey_F13",SWIG_From_int(static_cast< int >(FIFE::IKey::F13)));
+  SWIG_Python_SetConstant(d, "IKey_F14",SWIG_From_int(static_cast< int >(FIFE::IKey::F14)));
+  SWIG_Python_SetConstant(d, "IKey_F15",SWIG_From_int(static_cast< int >(FIFE::IKey::F15)));
+  SWIG_Python_SetConstant(d, "IKey_PRINT_SCREEN",SWIG_From_int(static_cast< int >(FIFE::IKey::PRINT_SCREEN)));
+  SWIG_Python_SetConstant(d, "IKey_SCROLL_LOCK",SWIG_From_int(static_cast< int >(FIFE::IKey::SCROLL_LOCK)));
+  SWIG_Python_SetConstant(d, "IKey_PAUSE",SWIG_From_int(static_cast< int >(FIFE::IKey::PAUSE)));
+  SWIG_Python_SetConstant(d, "IKey_NUM_LOCK",SWIG_From_int(static_cast< int >(FIFE::IKey::NUM_LOCK)));
+  SWIG_Python_SetConstant(d, "IKey_ALT_GR",SWIG_From_int(static_cast< int >(FIFE::IKey::ALT_GR)));
+  SWIG_Python_SetConstant(d, "IKey_LEFT",SWIG_From_int(static_cast< int >(FIFE::IKey::LEFT)));
+  SWIG_Python_SetConstant(d, "IKey_RIGHT",SWIG_From_int(static_cast< int >(FIFE::IKey::RIGHT)));
+  SWIG_Python_SetConstant(d, "IKey_UP",SWIG_From_int(static_cast< int >(FIFE::IKey::UP)));
+  SWIG_Python_SetConstant(d, "IKey_DOWN",SWIG_From_int(static_cast< int >(FIFE::IKey::DOWN)));
 }
 

@@ -371,6 +371,420 @@ class TimeEvent(_object):
 TimeEvent_swigregister = _fife.TimeEvent_swigregister
 TimeEvent_swigregister(TimeEvent)
 
+ES_ENGINE = _fife.ES_ENGINE
+ES_GUICHAN_WIDGET = _fife.ES_GUICHAN_WIDGET
+ES_MAPVIEW = _fife.ES_MAPVIEW
+CMD_UNKNOWN = _fife.CMD_UNKNOWN
+CMD_GO_NORTH = _fife.CMD_GO_NORTH
+CMD_GO_SOUTH = _fife.CMD_GO_SOUTH
+CMD_GO_WEST = _fife.CMD_GO_WEST
+CMD_GO_EAST = _fife.CMD_GO_EAST
+CMD_GO_NORTH_EAST = _fife.CMD_GO_NORTH_EAST
+CMD_GO_NORTH_WEST = _fife.CMD_GO_NORTH_WEST
+CMD_GO_SOUTH_EAST = _fife.CMD_GO_SOUTH_EAST
+CMD_GO_SOUTH_WEST = _fife.CMD_GO_SOUTH_WEST
+CMD_TEST_TOGGLE_OBJECTS = _fife.CMD_TEST_TOGGLE_OBJECTS
+CMD_TEST_TOGGLE_FLOOR = _fife.CMD_TEST_TOGGLE_FLOOR
+CMD_TEST_TOGGLE_ROOF = _fife.CMD_TEST_TOGGLE_ROOF
+CMD_TEST_TOGGLE_TILE_GRID = _fife.CMD_TEST_TOGGLE_TILE_GRID
+CMD_TEST_TOGGLE_OBJ_GRID = _fife.CMD_TEST_TOGGLE_OBJ_GRID
+CMD_TEST_CHANGE_ELEVATION = _fife.CMD_TEST_CHANGE_ELEVATION
+CMD_TEST_INCREASE_ALPHA = _fife.CMD_TEST_INCREASE_ALPHA
+CMD_TEST_DECREASE_ALPHA = _fife.CMD_TEST_DECREASE_ALPHA
+CMD_TEST_TOGGLE_COORDS = _fife.CMD_TEST_TOGGLE_COORDS
+CMD_TEST_TOGGLE_FADEOUT = _fife.CMD_TEST_TOGGLE_FADEOUT
+CMD_TEST_SAVE = _fife.CMD_TEST_SAVE
+CMD_MAKE_SCREENSHOT = _fife.CMD_MAKE_SCREENSHOT
+CMD_QUIT_GAME = _fife.CMD_QUIT_GAME
+class IKey(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IKey, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IKey, name)
+    def __init__(self): raise AttributeError, "No constructor defined"
+    __repr__ = _swig_repr
+    def isCharacter(*args): return _fife.IKey_isCharacter(*args)
+    def isNumber(*args): return _fife.IKey_isNumber(*args)
+    def isLetter(*args): return _fife.IKey_isLetter(*args)
+    def getValue(*args): return _fife.IKey_getValue(*args)
+    def getAsString(*args): return _fife.IKey_getAsString(*args)
+    INVALID_KEY = _fife.IKey_INVALID_KEY
+    SPACE = _fife.IKey_SPACE
+    TAB = _fife.IKey_TAB
+    ENTER = _fife.IKey_ENTER
+    LEFT_ALT = _fife.IKey_LEFT_ALT
+    RIGHT_ALT = _fife.IKey_RIGHT_ALT
+    LEFT_SHIFT = _fife.IKey_LEFT_SHIFT
+    RIGHT_SHIFT = _fife.IKey_RIGHT_SHIFT
+    LEFT_CONTROL = _fife.IKey_LEFT_CONTROL
+    RIGHT_CONTROL = _fife.IKey_RIGHT_CONTROL
+    LEFT_META = _fife.IKey_LEFT_META
+    RIGHT_META = _fife.IKey_RIGHT_META
+    LEFT_SUPER = _fife.IKey_LEFT_SUPER
+    RIGHT_SUPER = _fife.IKey_RIGHT_SUPER
+    INSERT = _fife.IKey_INSERT
+    HOME = _fife.IKey_HOME
+    PAGE_UP = _fife.IKey_PAGE_UP
+    DELETE = _fife.IKey_DELETE
+    END = _fife.IKey_END
+    PAGE_DOWN = _fife.IKey_PAGE_DOWN
+    ESCAPE = _fife.IKey_ESCAPE
+    CAPS_LOCK = _fife.IKey_CAPS_LOCK
+    BACKSPACE = _fife.IKey_BACKSPACE
+    F1 = _fife.IKey_F1
+    F2 = _fife.IKey_F2
+    F3 = _fife.IKey_F3
+    F4 = _fife.IKey_F4
+    F5 = _fife.IKey_F5
+    F6 = _fife.IKey_F6
+    F7 = _fife.IKey_F7
+    F8 = _fife.IKey_F8
+    F9 = _fife.IKey_F9
+    F10 = _fife.IKey_F10
+    F11 = _fife.IKey_F11
+    F12 = _fife.IKey_F12
+    F13 = _fife.IKey_F13
+    F14 = _fife.IKey_F14
+    F15 = _fife.IKey_F15
+    PRINT_SCREEN = _fife.IKey_PRINT_SCREEN
+    SCROLL_LOCK = _fife.IKey_SCROLL_LOCK
+    PAUSE = _fife.IKey_PAUSE
+    NUM_LOCK = _fife.IKey_NUM_LOCK
+    ALT_GR = _fife.IKey_ALT_GR
+    LEFT = _fife.IKey_LEFT
+    RIGHT = _fife.IKey_RIGHT
+    UP = _fife.IKey_UP
+    DOWN = _fife.IKey_DOWN
+    __swig_destroy__ = _fife.delete_IKey
+    __del__ = lambda self : None;
+IKey_swigregister = _fife.IKey_swigregister
+IKey_swigregister(IKey)
+
+class IEventSource(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IEventSource, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IEventSource, name)
+    __repr__ = _swig_repr
+    def getEventSourceType(*args): return _fife.IEventSource_getEventSourceType(*args)
+    __swig_destroy__ = _fife.delete_IEventSource
+    __del__ = lambda self : None;
+    def __init__(self, *args): 
+        if self.__class__ == IEventSource:
+            args = (None,) + args
+        else:
+            args = (self,) + args
+        this = _fife.new_IEventSource(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def __disown__(self):
+        self.this.disown()
+        _fife.disown_IEventSource(self)
+        return weakref_proxy(self)
+IEventSource_swigregister = _fife.IEventSource_swigregister
+IEventSource_swigregister(IEventSource)
+
+class ICommand(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, ICommand, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, ICommand, name)
+    def __init__(self): raise AttributeError, "No constructor defined"
+    __repr__ = _swig_repr
+    def getCommandType(*args): return _fife.ICommand_getCommandType(*args)
+    def getCode(*args): return _fife.ICommand_getCode(*args)
+    __swig_destroy__ = _fife.delete_ICommand
+    __del__ = lambda self : None;
+ICommand_swigregister = _fife.ICommand_swigregister
+ICommand_swigregister(ICommand)
+
+class Command(ICommand):
+    __swig_setmethods__ = {}
+    for _s in [ICommand]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Command, name, value)
+    __swig_getmethods__ = {}
+    for _s in [ICommand]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, Command, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        if self.__class__ == Command:
+            args = (None,) + args
+        else:
+            args = (self,) + args
+        this = _fife.new_Command(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _fife.delete_Command
+    __del__ = lambda self : None;
+    def getCommandType(*args): return _fife.Command_getCommandType(*args)
+    def setCommandType(*args): return _fife.Command_setCommandType(*args)
+    def getCode(*args): return _fife.Command_getCode(*args)
+    def setCode(*args): return _fife.Command_setCode(*args)
+    def consume(*args): return _fife.Command_consume(*args)
+    def isConsumed(*args): return _fife.Command_isConsumed(*args)
+    def getSource(*args): return _fife.Command_getSource(*args)
+    def setSource(*args): return _fife.Command_setSource(*args)
+    def getTimeStamp(*args): return _fife.Command_getTimeStamp(*args)
+    def setTimeStamp(*args): return _fife.Command_setTimeStamp(*args)
+    def getName(*args): return _fife.Command_getName(*args)
+    def getDebugString(*args): return _fife.Command_getDebugString(*args)
+    def __disown__(self):
+        self.this.disown()
+        _fife.disown_Command(self)
+        return weakref_proxy(self)
+Command_swigregister = _fife.Command_swigregister
+Command_swigregister(Command)
+
+class ICommandListener(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, ICommandListener, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, ICommandListener, name)
+    __repr__ = _swig_repr
+    def onCommand(*args): return _fife.ICommandListener_onCommand(*args)
+    __swig_destroy__ = _fife.delete_ICommandListener
+    __del__ = lambda self : None;
+    def __init__(self, *args): 
+        if self.__class__ == ICommandListener:
+            args = (None,) + args
+        else:
+            args = (self,) + args
+        this = _fife.new_ICommandListener(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def __disown__(self):
+        self.this.disown()
+        _fife.disown_ICommandListener(self)
+        return weakref_proxy(self)
+ICommandListener_swigregister = _fife.ICommandListener_swigregister
+ICommandListener_swigregister(ICommandListener)
+
+class IKeyEvent(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IKeyEvent, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IKeyEvent, name)
+    def __init__(self): raise AttributeError, "No constructor defined"
+    __repr__ = _swig_repr
+IKeyEvent_swigregister = _fife.IKeyEvent_swigregister
+IKeyEvent_swigregister(IKeyEvent)
+
+class KeyEvent(IKeyEvent):
+    __swig_setmethods__ = {}
+    for _s in [IKeyEvent]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, KeyEvent, name, value)
+    __swig_getmethods__ = {}
+    for _s in [IKeyEvent]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, KeyEvent, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _fife.new_KeyEvent(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _fife.delete_KeyEvent
+    __del__ = lambda self : None;
+    def getType(*args): return _fife.KeyEvent_getType(*args)
+    def setType(*args): return _fife.KeyEvent_setType(*args)
+    def isNumericPad(*args): return _fife.KeyEvent_isNumericPad(*args)
+    def getKey(*args): return _fife.KeyEvent_getKey(*args)
+    def isAltPressed(*args): return _fife.KeyEvent_isAltPressed(*args)
+    def isControlPressed(*args): return _fife.KeyEvent_isControlPressed(*args)
+    def isMetaPressed(*args): return _fife.KeyEvent_isMetaPressed(*args)
+    def isShiftPressed(*args): return _fife.KeyEvent_isShiftPressed(*args)
+    def consume(*args): return _fife.KeyEvent_consume(*args)
+    def isConsumed(*args): return _fife.KeyEvent_isConsumed(*args)
+    def getSource(*args): return _fife.KeyEvent_getSource(*args)
+    def getTimeStamp(*args): return _fife.KeyEvent_getTimeStamp(*args)
+    def getName(*args): return _fife.KeyEvent_getName(*args)
+    def getDebugString(*args): return _fife.KeyEvent_getDebugString(*args)
+KeyEvent_swigregister = _fife.KeyEvent_swigregister
+KeyEvent_swigregister(KeyEvent)
+
+class IKeyListener(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IKeyListener, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IKeyListener, name)
+    __repr__ = _swig_repr
+    def keyPressed(*args): return _fife.IKeyListener_keyPressed(*args)
+    def keyReleased(*args): return _fife.IKeyListener_keyReleased(*args)
+    __swig_destroy__ = _fife.delete_IKeyListener
+    __del__ = lambda self : None;
+    def __init__(self, *args): 
+        if self.__class__ == IKeyListener:
+            args = (None,) + args
+        else:
+            args = (self,) + args
+        this = _fife.new_IKeyListener(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def __disown__(self):
+        self.this.disown()
+        _fife.disown_IKeyListener(self)
+        return weakref_proxy(self)
+IKeyListener_swigregister = _fife.IKeyListener_swigregister
+IKeyListener_swigregister(IKeyListener)
+
+class IMouseEvent(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IMouseEvent, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IMouseEvent, name)
+    def __init__(self): raise AttributeError, "No constructor defined"
+    __repr__ = _swig_repr
+IMouseEvent_swigregister = _fife.IMouseEvent_swigregister
+IMouseEvent_swigregister(IMouseEvent)
+
+class MouseEvent(IMouseEvent):
+    __swig_setmethods__ = {}
+    for _s in [IMouseEvent]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, MouseEvent, name, value)
+    __swig_getmethods__ = {}
+    for _s in [IMouseEvent]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, MouseEvent, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _fife.new_MouseEvent(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _fife.delete_MouseEvent
+    __del__ = lambda self : None;
+    def getButton(*args): return _fife.MouseEvent_getButton(*args)
+    def getType(*args): return _fife.MouseEvent_getType(*args)
+    def getX(*args): return _fife.MouseEvent_getX(*args)
+    def getY(*args): return _fife.MouseEvent_getY(*args)
+    def isAltPressed(*args): return _fife.MouseEvent_isAltPressed(*args)
+    def isControlPressed(*args): return _fife.MouseEvent_isControlPressed(*args)
+    def isMetaPressed(*args): return _fife.MouseEvent_isMetaPressed(*args)
+    def isShiftPressed(*args): return _fife.MouseEvent_isShiftPressed(*args)
+    def consume(*args): return _fife.MouseEvent_consume(*args)
+    def isConsumed(*args): return _fife.MouseEvent_isConsumed(*args)
+    def getSource(*args): return _fife.MouseEvent_getSource(*args)
+    def getTimeStamp(*args): return _fife.MouseEvent_getTimeStamp(*args)
+    def getName(*args): return _fife.MouseEvent_getName(*args)
+    def getDebugString(*args): return _fife.MouseEvent_getDebugString(*args)
+MouseEvent_swigregister = _fife.MouseEvent_swigregister
+MouseEvent_swigregister(MouseEvent)
+
+class IMouseListener(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IMouseListener, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IMouseListener, name)
+    __repr__ = _swig_repr
+    def mouseEntered(*args): return _fife.IMouseListener_mouseEntered(*args)
+    def mouseExited(*args): return _fife.IMouseListener_mouseExited(*args)
+    def mousePressed(*args): return _fife.IMouseListener_mousePressed(*args)
+    def mouseReleased(*args): return _fife.IMouseListener_mouseReleased(*args)
+    def mouseClicked(*args): return _fife.IMouseListener_mouseClicked(*args)
+    def mouseWheelMovedUp(*args): return _fife.IMouseListener_mouseWheelMovedUp(*args)
+    def mouseWheelMovedDown(*args): return _fife.IMouseListener_mouseWheelMovedDown(*args)
+    def mouseMoved(*args): return _fife.IMouseListener_mouseMoved(*args)
+    def mouseDragged(*args): return _fife.IMouseListener_mouseDragged(*args)
+    __swig_destroy__ = _fife.delete_IMouseListener
+    __del__ = lambda self : None;
+    def __init__(self, *args): 
+        if self.__class__ == IMouseListener:
+            args = (None,) + args
+        else:
+            args = (self,) + args
+        this = _fife.new_IMouseListener(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def __disown__(self):
+        self.this.disown()
+        _fife.disown_IMouseListener(self)
+        return weakref_proxy(self)
+IMouseListener_swigregister = _fife.IMouseListener_swigregister
+IMouseListener_swigregister(IMouseListener)
+
+class IWidgetEvent(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IWidgetEvent, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IWidgetEvent, name)
+    def __init__(self): raise AttributeError, "No constructor defined"
+    __repr__ = _swig_repr
+    def getId(*args): return _fife.IWidgetEvent_getId(*args)
+    __swig_destroy__ = _fife.delete_IWidgetEvent
+    __del__ = lambda self : None;
+IWidgetEvent_swigregister = _fife.IWidgetEvent_swigregister
+IWidgetEvent_swigregister(IWidgetEvent)
+
+class WidgetEvent(IWidgetEvent):
+    __swig_setmethods__ = {}
+    for _s in [IWidgetEvent]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, WidgetEvent, name, value)
+    __swig_getmethods__ = {}
+    for _s in [IWidgetEvent]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, WidgetEvent, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _fife.new_WidgetEvent(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _fife.delete_WidgetEvent
+    __del__ = lambda self : None;
+    def getId(*args): return _fife.WidgetEvent_getId(*args)
+    def consume(*args): return _fife.WidgetEvent_consume(*args)
+    def isConsumed(*args): return _fife.WidgetEvent_isConsumed(*args)
+    def getSource(*args): return _fife.WidgetEvent_getSource(*args)
+    def getTimeStamp(*args): return _fife.WidgetEvent_getTimeStamp(*args)
+    def getName(*args): return _fife.WidgetEvent_getName(*args)
+    def getDebugString(*args): return _fife.WidgetEvent_getDebugString(*args)
+WidgetEvent_swigregister = _fife.WidgetEvent_swigregister
+WidgetEvent_swigregister(WidgetEvent)
+
+class IWidgetListener(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IWidgetListener, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IWidgetListener, name)
+    __repr__ = _swig_repr
+    def onWidgetAction(*args): return _fife.IWidgetListener_onWidgetAction(*args)
+    __swig_destroy__ = _fife.delete_IWidgetListener
+    __del__ = lambda self : None;
+    def __init__(self, *args): 
+        if self.__class__ == IWidgetListener:
+            args = (None,) + args
+        else:
+            args = (self,) + args
+        this = _fife.new_IWidgetListener(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def __disown__(self):
+        self.this.disown()
+        _fife.disown_IWidgetListener(self)
+        return weakref_proxy(self)
+IWidgetListener_swigregister = _fife.IWidgetListener_swigregister
+IWidgetListener_swigregister(IWidgetListener)
+
+class EventManager(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, EventManager, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, EventManager, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _fife.new_EventManager(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _fife.delete_EventManager
+    __del__ = lambda self : None;
+    def addCommandListener(*args): return _fife.EventManager_addCommandListener(*args)
+    def removeCommandListener(*args): return _fife.EventManager_removeCommandListener(*args)
+    def addKeyListener(*args): return _fife.EventManager_addKeyListener(*args)
+    def removeKeyListener(*args): return _fife.EventManager_removeKeyListener(*args)
+    def addMouseListener(*args): return _fife.EventManager_addMouseListener(*args)
+    def removeMouseListener(*args): return _fife.EventManager_removeMouseListener(*args)
+    def addWidgetListener(*args): return _fife.EventManager_addWidgetListener(*args)
+    def removeWidgetListener(*args): return _fife.EventManager_removeWidgetListener(*args)
+    def getEventSourceType(*args): return _fife.EventManager_getEventSourceType(*args)
+    def dispatchCommand(*args): return _fife.EventManager_dispatchCommand(*args)
+    def processEvents(*args): return _fife.EventManager_processEvents(*args)
+EventManager_swigregister = _fife.EventManager_swigregister
+EventManager_swigregister(EventManager)
+
 class Engine(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Engine, name, value)

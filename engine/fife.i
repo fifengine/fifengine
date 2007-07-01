@@ -8,6 +8,7 @@
 %include "util/log.i"
 %include "util/time/timemanager.i"
 %include "util/time/timeevent.i"
+%include "eventchannel/eventchannel.i"
 
 namespace FIFE {
 	class Engine {
