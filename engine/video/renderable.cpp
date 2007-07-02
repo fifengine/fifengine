@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "renderable.h"
-#include "renderable_provider.h"
+//#include "renderable_provider.h"
 
 namespace FIFE {
 

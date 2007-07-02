@@ -46,7 +46,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 	/** Fallout 1/2 data MapLoader implementation.
 	 *
-	 * \see map::Loader
+	 * \see map::MapLoader
 	 *
 	 * This class uses all other fallout-specific classes (especially
 	 * \c ObjectFactory) to create the fife-defined classes from
@@ -67,7 +67,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	 * \see map::Elevation
 	 * \see map::Map
 	 */
-	class Fallout : public Loader {
+	class Fallout : public MapLoader {
 		public:
 			/** Constructor
 			 * @note This will also add the DAT1 and DAT2 Source providers and

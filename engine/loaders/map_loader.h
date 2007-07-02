@@ -38,7 +38,7 @@ namespace FIFE { namespace map {
 	class Map;
 	typedef boost::shared_ptr<Map> MapPtr;
 	
-	class Loader {
+	class MapLoader {
 		public:
 
 			/** create a loader
@@ -47,10 +47,10 @@ namespace FIFE { namespace map {
 			 *   XML
 			 *   Fallout
 			 */
-			static Loader* createLoader(const std::string& type);
+			static MapLoader* createLoader(const std::string& type);
 
-			Loader(const std::string& name) : m_name(name) {}
-			virtual ~Loader() {}
+			MapLoader(const std::string& name) : m_name(name) {}
+			virtual ~MapLoader() {}
 
 			const std::string& getName() const { return m_name; }
 

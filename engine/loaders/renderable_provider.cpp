@@ -28,6 +28,11 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/debugutils.h"
+#include "loaders/native/video_loaders/complexanimation_provider.h"
+#include "loaders/fallout/video_loaders/frm_provider.h"
+#include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/image_provider.h"
+#include "loaders/native/video_loaders/subimage_provider.h"
 
 #include "renderable_provider.h"
 
@@ -43,4 +48,36 @@ namespace FIFE {
 	void RenderableProvider::unload() {
 		// DUMMY IMPLEMENTATION
 	};
+
+	RenderableProviderConstructor* RenderableProviderConstructor::createRenderableProviderConstructor(RenderableProviderType type) {
+		switch(type) {
+			case ERPT_FRM:
+				return new RenderableProviderConstructorTempl<
+				            video::loaders::FRMProvider,
+				            RenderAble::RT_IMAGE|RenderAble::RT_ANIMATION|RenderAble::RT_UNDEFINED >();
+
+			case ERPT_Animation:
+				return new RenderableProviderConstructorTempl<
+				            video::loaders::AnimationProvider,
+				            RenderAble::RT_ANIMATION >();
+
+			case ERPT_ComplexAnimation:
+				return new RenderableProviderConstructorTempl<
+			 	           video::loaders::ComplexAnimationProvider,
+				            RenderAble::RT_COMPLEX_ANIMATION >();
+
+			case ERPT_SubImage:
+				return new RenderableProviderConstructorTempl<
+				            video::loaders::SubImageProvider,
+				            RenderAble::RT_SUBIMAGE >();
+		
+			case ERPT_Image:
+				return new RenderableProviderConstructorTempl<
+				            video::loaders::ImageProvider,
+				            RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED >(); 
+		}
+
+		return 0;
+	}
+
 };

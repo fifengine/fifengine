@@ -59,8 +59,8 @@ namespace FIFE { namespace map {
 		m_settings(SettingsManager::instance()),
 		m_isrunning(false) {
 
-		m_loaders.insert(std::make_pair("Fallout", Loader::createLoader("Fallout")));
-		m_loaders.insert(std::make_pair("XML", Loader::createLoader("XML")));
+		m_loaders.insert(std::make_pair("Fallout", MapLoader::createLoader("Fallout")));
+		m_loaders.insert(std::make_pair("XML", MapLoader::createLoader("XML")));
 
     // load these geometries manually for Fallout backwards-compatibility
 		Geometry::registerGeometry(s_geometry_info(
@@ -84,8 +84,7 @@ namespace FIFE { namespace map {
 	Control::~Control() {
 		clearMap();
 
-		// TODO: purge seems to have trouble with maps? Fix this so we can get rid of this memory leak
-		//purge(m_loaders);
+		purge_map(m_loaders);
 
 		// Real cleanup after 'stop()'
 		std::set<Camera*>::iterator i(m_cameras.begin());
@@ -106,7 +105,7 @@ namespace FIFE { namespace map {
 		type_loaders::iterator i = m_loaders.begin();
 		for (; i != m_loaders.end(); ++i) {
 			try {
-				Loader* loader = i->second;
+				MapLoader* loader = i->second;
 				Debug("maploader") << "trying to load " << filename;
 				map = loader->loadFile(filename);
 				break;

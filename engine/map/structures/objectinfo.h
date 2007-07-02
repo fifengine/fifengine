@@ -40,7 +40,7 @@
 
 #include "object_list.h"
 #include "location.h"
-#include "video/renderable_location.h"
+#include "loaders/renderable_location.h"
 
 namespace FIFE { namespace map {
 

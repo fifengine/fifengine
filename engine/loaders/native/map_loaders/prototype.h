@@ -31,7 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/point.h"
-#include "video/renderable_location.h"
+#include "loaders/renderable_location.h"
 #include "xml/tinyxml/tinyxml.h"
 #include "util/attributedclass.h"
 

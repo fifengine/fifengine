@@ -53,7 +53,7 @@
 
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
-	Fallout::Fallout() : Loader("Fallout"), m_header(0), m_cached() {
+	Fallout::Fallout() : MapLoader("Fallout"), m_header(0), m_cached() {
 		VFSSourceFactory* vfsfactory = VFSSourceFactory::instance();
 		vfsfactory->addProvider(new ProviderDAT2());
 		vfsfactory->addProvider(new ProviderDAT1());

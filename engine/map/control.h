@@ -43,7 +43,7 @@ namespace map {
 	class Map;
 	typedef boost::shared_ptr<Map> MapPtr;
 
-	class Loader;
+	class MapLoader;
 
 	class Camera;
 	class View;
@@ -135,7 +135,7 @@ namespace map {
 			SettingsManager* m_settings;
 			std::set<Camera*> m_cameras;
 
-			typedef std::map<std::string, Loader*> type_loaders;
+			typedef std::map<std::string, MapLoader*> type_loaders;
 			type_loaders m_loaders;
 
 			bool m_isrunning;

@@ -60,11 +60,11 @@ namespace loaders { namespace xml {
 	 * 
 	 * @see map.dtd The document type definition for xml maps.
 	 */
-	class XML : public Loader {
+	class XML : public MapLoader {
 		public:
 			/** Constructor
 			 */
-			XML() : Loader("XMLMap") {}
+			XML() : MapLoader("XMLMap") {}
 
 			/** Destructor
 			 */

@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "renderable.h"
+#include "video/renderable.h"
 #include "renderable_location.h"
 
 namespace FIFE {
@@ -101,6 +101,40 @@ namespace FIFE {
 			delete p;
 	};
 
+
+	enum RenderableProviderType {
+		ERPT_FRM,
+		ERPT_Animation,
+		ERPT_ComplexAnimation,
+		ERPT_SubImage,
+		ERPT_Image,
+	};
+
+  class RenderableProviderConstructor {
+		public:
+			virtual ~RenderableProviderConstructor() {};
+
+			/** Create a RenderableProviderConstructor
+			 *
+			 * @param type the kind of loader to be created:
+			 * @see RenderableProviderType
+			 */
+			static RenderableProviderConstructor* createRenderableProviderConstructor(RenderableProviderType type);
+
+			virtual RenderableProviderPtr create(const RenderableLocation& location) = 0;
+	};
+
+	template<typename Klass, uint32_t allowed_types = RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED>
+	class RenderableProviderConstructorTempl : public  RenderableProviderConstructor {
+		public:
+			virtual ~RenderableProviderConstructorTempl() {};
+			virtual RenderableProviderPtr create(const RenderableLocation& location) {
+				if( !(location.getType() & allowed_types) ) {
+					return RenderableProviderPtr();
+				}
+				return RenderableProviderPtr(new Klass(location));
+			};
+	};
 
 } //FIFE
 

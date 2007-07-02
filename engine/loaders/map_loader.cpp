@@ -34,7 +34,7 @@
 
 namespace FIFE { namespace map {
 
-Loader* Loader::createLoader(const std::string& type) {
+MapLoader* MapLoader::createLoader(const std::string& type) {
 	if(type == "XML")
 		return new loaders::xml::XML();
 	if(type == "Fallout")

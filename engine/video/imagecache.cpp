@@ -28,11 +28,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "loaders/native/video_loaders/complexanimation_provider.h"
-#include "loaders/fallout/video_loaders/frm_provider.h"
-#include "loaders/native/video_loaders/animation_provider.h"
-#include "loaders/native/video_loaders/image_provider.h"
-#include "loaders/native/video_loaders/subimage_provider.h"
 #include "video/renderable.h"
 #include "video/image.h"
 #include "video/pixelbuffer.h"
@@ -43,49 +38,6 @@
 #include "video/imagecache.h"
 
 namespace FIFE {
-
-	class RenderableProviderConstructor {
-		public:
-			virtual ~RenderableProviderConstructor() {};
-			virtual RenderableProviderPtr create(const RenderableLocation& location) = 0;
-	};
-
-	template<typename Klass, uint32_t allowed_types = RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED>
-	class RenderableProviderConstructorTempl : public  RenderableProviderConstructor {
-		public:
-			virtual ~RenderableProviderConstructorTempl() {};
-			virtual RenderableProviderPtr create(const RenderableLocation& location) {
-				if( !(location.getType() & allowed_types) ) {
-					return RenderableProviderPtr();
-				}
-				return RenderableProviderPtr(new Klass(location));
-			};
-	};
-
-	typedef RenderableProviderConstructorTempl<
-		video::loaders::FRMProvider,
-		RenderAble::RT_IMAGE|RenderAble::RT_ANIMATION|RenderAble::RT_UNDEFINED
-	> FRMConstructor;
-
-	typedef RenderableProviderConstructorTempl<
-		video::loaders::ComplexAnimationProvider,
-		RenderAble::RT_COMPLEX_ANIMATION
-	> CAPConstructor;
-
-	typedef RenderableProviderConstructorTempl<
-		video::loaders::SubImageProvider,
-		RenderAble::RT_SUBIMAGE
-	> SubImageConstructor;
-
-	typedef RenderableProviderConstructorTempl<
-		video::loaders::ImageProvider,
-		RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED
-	> IMGConstructor; 
-
-	typedef RenderableProviderConstructorTempl<
-		video::loaders::AnimationProvider,
-		RenderAble::RT_ANIMATION
-	> AnimationConstructor;
 
 	class DummyImage : public RenderAble {
 			std::string m_msg;
@@ -120,11 +72,11 @@ namespace FIFE {
 		m_stats.cstart = m_stats.total = 0;
 		m_stats.dummies = 0;
 
-		m_providerconstructors.push_front( new IMGConstructor() );
-		m_providerconstructors.push_front( new FRMConstructor() );
-		m_providerconstructors.push_front( new CAPConstructor() );
-		m_providerconstructors.push_front( new SubImageConstructor() );
-		m_providerconstructors.push_front( new AnimationConstructor() );
+		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_Image));
+		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_FRM));
+		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_ComplexAnimation));
+		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_SubImage));
+		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_Animation));
 	};
 
 	ImageCache::~ImageCache() {
