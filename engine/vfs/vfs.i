@@ -6,12 +6,11 @@
 %include "std_string.i"
 %include "std_vector.i"
 
+typedef unsigned char uint8_t;
 namespace std {
    %template(vectors) vector<std::string>;
    %template(vectoru) vector<uint8_t>;
 };
-
-typedef unsigned char uint8_t;
 
 namespace FIFE {
 	class VFSUtility {
