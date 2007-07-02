@@ -126,7 +126,7 @@ else:
 	if sys.platform == "win32":
 		env.Append(CPPFLAGS = ['-Wall'])
 	else:
-		env.Append(CPPFLAGS = ['-Wall', '-Wold-style-cast'])
+		env.Append(CPPFLAGS = ['-Wall']) # removed old style cast warnings for now (swig creates these)
 	
 	if env['debug'] == 1:
 		env.Append(CPPFLAGS = ['-ggdb', '-O0'])

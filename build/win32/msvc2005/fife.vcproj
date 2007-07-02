@@ -151,6 +151,55 @@
 	<Files>
 		<File RelativePath="..\..\..\engine\engine.cpp"></File>
 		<File RelativePath="..\..\..\engine\engine.h"></File>
+		<Filter Name="eventchannel">
+			<Filter Name="base">
+				<File RelativePath="..\..\..\engine\eventchannel\base\ec_event.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\base\ec_ievent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\base\ec_iinputevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\base\ec_inputevent.h"></File>
+			</Filter>
+			<Filter Name="command">
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_command.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_commandids.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommand.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommandcontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommanddispatcher.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommandlistener.h"></File>
+			</Filter>
+			<File RelativePath="..\..\..\engine\eventchannel\ec_ieventcontroller.h"></File>
+			<Filter Name="key">
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikey.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeycontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeyevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeylistener.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_key.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\key\ec_keyevent.h"></File>
+			</Filter>
+			<Filter Name="manager">
+				<File RelativePath="..\..\..\engine\eventchannel\manager\eventmanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\manager\eventmanager.h"></File>
+			</Filter>
+			<Filter Name="mouse">
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imousecontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imouseevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imouselistener.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_mouseevent.h"></File>
+			</Filter>
+			<Filter Name="sdl">
+				<File RelativePath="..\..\..\engine\eventchannel\sdl\ec_isdleventcontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\sdl\ec_isdleventlistener.h"></File>
+			</Filter>
+			<Filter Name="source">
+				<File RelativePath="..\..\..\engine\eventchannel\source\ec_eventsourcetypes.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\source\ec_ieventsource.h"></File>
+			</Filter>
+			<Filter Name="widget">
+				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetcontroller.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetevent.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetlistener.h"></File>
+				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_widgetevent.h"></File>
+			</Filter>
+		</Filter>
 		<File RelativePath="..\..\..\engine\fife_wrap.cxx"></File>
 		<File RelativePath="..\..\..\engine\fife_wrap.h"></File>
 		<Filter Name="util">
@@ -179,6 +228,31 @@
 				<File RelativePath="..\..\..\engine\util\time\timemanager.h"></File>
 				<File RelativePath="..\..\..\engine\util\time\timer.cpp"></File>
 				<File RelativePath="..\..\..\engine\util\time\timer.h"></File>
+			</Filter>
+		</Filter>
+		<Filter Name="vfs">
+			<Filter Name="raw">
+				<File RelativePath="..\..\..\engine\vfs\raw\fwd.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\raw\rawdata.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\raw\rawdata.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\raw\rawdatafile.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\raw\rawdatafile.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\raw\rawdatamemsource.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\raw\rawdatamemsource.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\raw\rawdatasource.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\raw\rawdatasource.h"></File>
+			</Filter>
+			<File RelativePath="..\..\..\engine\vfs\vfs.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfshostsystem.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfssource.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfssourcefactory.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfsutility.cpp"></File>
+			<Filter Name="zip">
+				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.h"></File>
 			</Filter>
 		</Filter>
 	</Files>

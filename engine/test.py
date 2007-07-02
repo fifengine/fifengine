@@ -11,6 +11,7 @@ log = fife.Log.initialize(fife.Log.LEVEL_MAX, True, True)
 fife.Log("Testing log...")
 
 
+print "Testing timers"
 class MyTimeEvent(fife.TimeEvent):
 	def __init__(self, period):
 		fife.TimeEvent.__init__(self, period)
@@ -21,10 +22,10 @@ class MyTimeEvent(fife.TimeEvent):
 		self.counter += 1
 
 m = fife.TimeManager()
-e = MyTimeEvent(300)
+e = MyTimeEvent(0)
 m.registerEvent(e)
 
-for i in xrange(20):
+for i in xrange(10):
 	time.sleep(0.1)
 	m.update()
 
@@ -50,3 +51,9 @@ for i in xrange(20):
 	cmd.setCode(i)
 m.removeCommandListener(l)
 del l
+
+
+vfs = fife.VFSUtility()
+print vfs.listFiles('.')
+print vfs.listDirectories('.')
+print vfs.readLines('test.py')
