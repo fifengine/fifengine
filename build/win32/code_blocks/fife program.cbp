@@ -63,6 +63,8 @@
 		<Compiler>
 			<Add option="-O3"/>
 			<Add option="-Wall"/>
+			<Add option="-DHAVE_OPENGL"/>
+			<Add option="-DSCRIPTENGINE_LUA"/>
 		</Compiler>
 		<Unit filename="..\..\..\engine\main.cpp">
 			<Option compilerVar="CPP"/>

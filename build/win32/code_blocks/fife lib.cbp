@@ -38,6 +38,8 @@
 		<Compiler>
 			<Add option="-O3"/>
 			<Add option="-Wall"/>
+			<Add option="-DHAVE_OPENGL"/>
+			<Add option="-DSCRIPTENGINE_LUA"/>
 		</Compiler>
 		<Unit filename="..\..\..\engine\audio\audiomanager.cpp">
 			<Option compilerVar="CPP"/>
@@ -1623,6 +1625,26 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="..\..\..\engine\vfs\vfs.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\vfs\vfshostsystem.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\vfs\vfssource.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\vfs\vfssourcefactory.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\vfs\vfssourceprovider.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="..\..\..\engine\vfs\zip\zipprovider.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -1935,26 +1957,6 @@
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\vfs.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\vfshostsystem.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\vfssource.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\vfssourcefactory.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\vfssourceprovider.cpp">
-			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
 	</Project>

@@ -38,6 +38,8 @@
 		<Compiler>
 			<Add option="-O3"/>
 			<Add option="-Wall"/>
+			<Add option="-DHAVE_OPENGL"/>
+			<Add option="-DSCRIPTENGINE_LUA"/>
 		</Compiler>
 __FILE_INSERTION_POINT__
 	</Project>
