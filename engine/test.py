@@ -22,7 +22,7 @@ class MyTimeEvent(fife.TimeEvent):
 		self.counter += 1
 
 m = fife.TimeManager()
-e = MyTimeEvent(0)
+e = MyTimeEvent(100)
 m.registerEvent(e)
 
 for i in xrange(10):

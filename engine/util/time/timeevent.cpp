@@ -20,8 +20,10 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -33,7 +35,7 @@ namespace FIFE {
 
 	TimeEvent::TimeEvent(int period) {
 		m_period		= period;
-		m_last_updated	= 0;
+		m_last_updated	= SDL_GetTicks();
 	}
 
 	TimeEvent::~TimeEvent() {
