@@ -21,19 +21,19 @@ class MyTimeEvent(fife.TimeEvent):
 		print "testing timer event... %d, %d" % (curtime, self.counter)
 		self.counter += 1
 
-m = fife.TimeManager()
+timemanager = fife.TimeManager()
 e = MyTimeEvent(100)
-m.registerEvent(e)
+timemanager.registerEvent(e)
 
 for i in xrange(10):
 	time.sleep(0.1)
-	m.update()
+	timemanager.update()
 
 print "finishing"
-m.unregisterEvent(e)
+timemanager.unregisterEvent(e)
 del e
 
-m = fife.EventManager()
+eventmanager = fife.EventManager()
 class MyEventListener(fife.ICommandListener):
 	def __init__(self):
 		fife.ICommandListener.__init__(self)
@@ -42,14 +42,14 @@ class MyEventListener(fife.ICommandListener):
 		print "received command with code %d" % command.getCode()		
 
 l = MyEventListener()
-m.addCommandListener(l)
+eventmanager.addCommandListener(l)
 cmd = fife.Command()
 cmd.setCode(0)
 print "Sending command..."
 for i in xrange(20):
-	m.dispatchCommand(cmd)
+	eventmanager.dispatchCommand(cmd)
 	cmd.setCode(i)
-m.removeCommandListener(l)
+eventmanager.removeCommandListener(l)
 del l
 
 
@@ -58,3 +58,11 @@ print vfs.listFiles('.')
 print vfs.listDirectories('.')
 print vfs.readLines('test.py')
 print vfs.readBytes('test.py')
+
+
+audiomanager = fife.AudioManager()
+audiomanager.setAmbientSound('../content/audio/music/maybe.ogg')
+for i in xrange(30):
+	audiomanager.setVolume(i % 8)
+	time.sleep(0.2)
+del audiomanager

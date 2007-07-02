@@ -18,6 +18,7 @@ namespace boost {
 %include "util/time/timeevent.i"
 %include "eventchannel/eventchannel.i"
 %include "vfs/vfs.i"
+%include "audio/audiomanager.i"
 
 namespace FIFE {
 	class Engine {
