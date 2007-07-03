@@ -19,3 +19,6 @@ def addExtras(context):
 	if context.env['movie']:
 		#context.env.Append(CPPPATH = [path + '\\include\\ffmpeg'])
 		context.env.Append(LIBS = ['avformat-51', 'avcodec-51', 'avutil-49', 'swscale-0'])
+	
+	if context.env['zip']:
+		context.env.Append(LIBS = ['minizip'])

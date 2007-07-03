@@ -59,6 +59,9 @@
 #include "util/exception.h"
 #include "util/log.h"
 #include "util/settingsmanager.h"
+#ifdef HAVE_ZIP
+#include "vfs/zip/zipprovider.h"
+#endif
 
 #include "engine.h"
 
@@ -138,6 +141,12 @@ namespace FIFE {
 		new VFS();
 
 		VFS::instance()->addSource(new VFSHostSystem());
+
+#ifdef HAVE_ZIP
+		// FIXME: Just for testing purposes. This code needs to be refactured to another place
+		// where general loader initialization is done.
+		VFSSourceFactory::instance()->addProvider( new zip::ZipProvider() );
+#endif
 
 		new ImageCache();
 		new audio::Manager();
