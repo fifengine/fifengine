@@ -30,3 +30,6 @@ def addExtras(context):
 	if context.env['movie']:
 		context.checkSimpleLib(['libavformat', 'avformat'], 'avformat.h')
 		context.checkSimpleLib(['libavcodec', 'avcodec'], 'avcodec.h')
+
+	if context.env['zip']:
+		context.checkSimpleLib(['minizip'])

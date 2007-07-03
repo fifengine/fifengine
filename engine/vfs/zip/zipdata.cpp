@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
 
@@ -29,33 +28,43 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "vfs/vfs.h"
 
-#include "zipprovider.h"
-#include "zipsource.h"
+#include "zipdata.h"
 
 namespace FIFE { namespace zip {
-	bool ZipProvider::isReadable(const std::string& file) const {
-		// File name must have a .zip extension:
-		// TODO: Case sensitive?
-		if (file.find(".zip") == std::string::npos)
-			return false;
+	ZipData::ZipData(const std::string& zip_file, const std::string& file) {
+		m_file = unzOpen(zip_file.c_str());
 
-		// File should exist:
-		VFS* vfs = VFS::instance();
-		if (!vfs->exists(file))
-			return false;
+		int error = 0;
+		error = unzLocateFile(m_file, file.c_str(), 2);
+		if (error != 0)
+			throw Exception("minizip error " + error);
 
-		// File should start with the bytes "PK":
-		// TODO: ...
+		unz_file_info info;
+		error = unzGetCurrentFileInfo(m_file, &info,
+			NULL, 0, NULL, 0, NULL, 0);
+		if (error != 0)
+			throw Exception("minizip error " + error);
+		m_size = info.uncompressed_size;
 
-		return true;
+		error = unzOpenCurrentFile(m_file);
+		if (error != 0)
+			throw Exception("minizip error " + error);
 	}
 
-	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) const {
-		if (isReadable(file))
-			return new ZipSource(file);
-		else
-			throw Exception("File " + file + " is not readable.");
+	ZipData::~ZipData() {
+		unzCloseCurrentFile(m_file);
+		unzClose(m_file);
+	}
+
+	unsigned int ZipData::getSize() const {
+		return m_size;
+	}
+
+	void ZipData::readInto(uint8_t* buffer, unsigned int start, unsigned int length) {
+		int error =
+			unzReadCurrentFile(m_file, (voidp)buffer, length * sizeof(uint8_t));
+		if (error < 0)
+			throw Exception("minizip error " + error);
 	}
 }}

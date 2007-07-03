@@ -44,10 +44,19 @@ namespace FIFE { namespace zip {
 		ZipSource(const std::string& zip_file);
 		~ZipSource();
 
+		/// WARNING: fileExists, listFiles and listDirectories are not
+		// thread-safe, and will probably break if called from multiple
+		// threads at the same time.
 		bool fileExists(const std::string& file) const;
 		RawData* open(const std::string& file) const;
 		VFS::type_stringlist listFiles(const std::string& path) const;
 		VFS::type_stringlist listDirectories(const std::string& path) const;
+
+	private:
+		// PImpl pattern, so the users of this header don't need to know
+		// about minizip.
+		struct zip_data_t;
+		struct zip_data_t* m_data;
 	};
 } //zip
 } //FIFE
