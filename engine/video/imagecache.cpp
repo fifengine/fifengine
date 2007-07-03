@@ -72,11 +72,6 @@ namespace FIFE {
 		m_stats.cstart = m_stats.total = 0;
 		m_stats.dummies = 0;
 
-		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_Image));
-		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_FRM));
-		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_ComplexAnimation));
-		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_SubImage));
-		m_providerconstructors.push_front(RenderableProviderConstructor::createRenderableProviderConstructor(ERPT_Animation));
 	};
 
 	ImageCache::~ImageCache() {
@@ -109,6 +104,10 @@ namespace FIFE {
 			<< "Dummies: " << m_stats.dummies << std::endl
 			<< "Loadable:" << m_stats.loadable << std::endl;
 	};
+
+	void ImageCache::addRenderableProviderConstructor(RenderableProviderConstructor* provider) {
+		m_providerconstructors.push_front(provider);
+	}
 
 	size_t ImageCache::addImage(RenderAble* renderable) {
 		if( renderable == 0 )

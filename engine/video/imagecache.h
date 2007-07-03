@@ -34,8 +34,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "loaders/renderable_location.h"
-#include "loaders/renderable_provider.h"
+#include "renderable_location.h"
+#include "renderable_provider.h"
 
 #include "util/singleton.h"
 
@@ -126,6 +126,14 @@ namespace FIFE {
 			virtual ~ImageCache();
 
 			enum {	UNDEFINED_ID = 0 };
+
+			/** Adds a RenderableProviderConstructor for loading a certain type of
+			 * RenderAbles. Before a RenderAble can be added, a Constructor
+			 * capable of loading that type of RenderAble must be supplied.
+			 *
+			 * @param provider the RenderableProviderConstructor to be added
+			 */
+			void addRenderableProviderConstructor(RenderableProviderConstructor* provider);
 
 			/** Adds an already created RenderAble* to the cache.
 			 *

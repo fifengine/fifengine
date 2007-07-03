@@ -32,7 +32,7 @@
 #include "video/imagecache.h"
 #include "util/log.h"
 #include "util/purge.h"
-#include "loaders/renderable_location.h"
+#include "video/renderable_location.h"
 #include "video/pixelbuffer.h"
 
 #include "xml_archetype.h"

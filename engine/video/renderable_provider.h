@@ -101,25 +101,9 @@ namespace FIFE {
 			delete p;
 	};
 
-
-	enum RenderableProviderType {
-		ERPT_FRM,
-		ERPT_Animation,
-		ERPT_ComplexAnimation,
-		ERPT_SubImage,
-		ERPT_Image,
-	};
-
   class RenderableProviderConstructor {
 		public:
 			virtual ~RenderableProviderConstructor() {};
-
-			/** Create a RenderableProviderConstructor
-			 *
-			 * @param type the kind of loader to be created:
-			 * @see RenderableProviderType
-			 */
-			static RenderableProviderConstructor* createRenderableProviderConstructor(RenderableProviderType type);
 
 			virtual RenderableProviderPtr create(const RenderableLocation& location) = 0;
 	};

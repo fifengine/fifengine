@@ -62,6 +62,11 @@
 #ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
 #endif
+#include "loaders/native/video_loaders/complexanimation_provider.h"
+#include "loaders/fallout/video_loaders/frm_provider.h"
+#include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/image_provider.h"
+#include "loaders/native/video_loaders/subimage_provider.h"
 
 #include "engine.h"
 
@@ -145,10 +150,35 @@ namespace FIFE {
 #ifdef HAVE_ZIP
 		// FIXME: Just for testing purposes. This code needs to be refactured to another place
 		// where general loader initialization is done.
+		//
+		// ADDENDUM: As you can see below, RenderableProviderConstructors are now being introduced
+		// in the same way. I think all these initializations will seem more natural once the
+		// extend branch is up and running and these are all being initialized by scripts. --jwt
 		VFSSourceFactory::instance()->addProvider( new zip::ZipProvider() );
 #endif
 
 		new ImageCache();
+		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                                          video::loaders::FRMProvider,
+		                                                          RenderAble::RT_IMAGE|RenderAble::RT_ANIMATION|RenderAble::RT_UNDEFINED >());
+
+		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                                          video::loaders::AnimationProvider,
+		                                                          RenderAble::RT_ANIMATION >());
+
+		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                                          video::loaders::ComplexAnimationProvider,
+		                                                          RenderAble::RT_COMPLEX_ANIMATION >());
+
+		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                                          video::loaders::SubImageProvider,
+		                                                          RenderAble::RT_SUBIMAGE >());
+
+		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                                          video::loaders::ImageProvider,
+		                                                          RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED >());
+
+
 		new audio::Manager();
 		int volume = settings->read<int>("InitialVolume", 5);
 		if (volume > 10) {

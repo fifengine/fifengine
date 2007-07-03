@@ -336,10 +336,6 @@
 					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\subimage_provider.h"></File>
 				</Filter>
 			</Filter>
-			<File RelativePath="..\..\..\engine\loaders\renderable_location.cpp"></File>
-			<File RelativePath="..\..\..\engine\loaders\renderable_location.h"></File>
-			<File RelativePath="..\..\..\engine\loaders\renderable_provider.cpp"></File>
-			<File RelativePath="..\..\..\engine\loaders\renderable_provider.h"></File>
 		</Filter>
 		<Filter Name="map">
 			<File RelativePath="..\..\..\engine\map\action.h"></File>
@@ -570,6 +566,10 @@
 			<File RelativePath="..\..\..\engine\video\pixelbuffer.h"></File>
 			<File RelativePath="..\..\..\engine\video\renderable.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\renderable.h"></File>
+			<File RelativePath="..\..\..\engine\video\renderable_location.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\renderable_location.h"></File>
+			<File RelativePath="..\..\..\engine\video\renderable_provider.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\renderable_provider.h"></File>
 			<File RelativePath="..\..\..\engine\video\renderbackend.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\renderbackend.h"></File>
 			<Filter Name="renderbackends">
