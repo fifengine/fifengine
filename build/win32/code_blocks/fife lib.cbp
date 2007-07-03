@@ -23,6 +23,7 @@
 					<Add directory="..\mingw\include\guichan"/>
 					<Add directory="..\mingw\include\libvorbis"/>
 					<Add directory="..\mingw\include\lua51"/>
+					<Add directory="..\mingw\include\minizip"/>
 					<Add directory="..\mingw\include\ogg"/>
 					<Add directory="..\mingw\include\openal"/>
 					<Add directory="..\mingw\include\opengl"/>
@@ -40,6 +41,7 @@
 			<Add option="-Wall"/>
 			<Add option="-DHAVE_OPENGL"/>
 			<Add option="-DSCRIPTENGINE_LUA"/>
+			<Add option="-DHAVE_ZIP"/>
 		</Compiler>
 		<Unit filename="..\..\..\engine\audio\audiomanager.cpp">
 			<Option compilerVar="CPP"/>
@@ -1640,36 +1642,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="..\..\..\engine\vfs\raw\rawdatasource.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\zip\zipdata.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\zip\zipdata.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\zip\zipprovider.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\zip\zipprovider.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\zip\zipsource.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\vfs\zip\zipsource.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

@@ -21,4 +21,5 @@ def addExtras(context):
 		context.env.Append(LIBS = ['avformat-51', 'avcodec-51', 'avutil-49', 'swscale-0'])
 	
 	if context.env['zip']:
+		context.env.Append(CPPPATH = [path + '\\include\\minizip'])
 		context.env.Append(LIBS = ['minizip'])

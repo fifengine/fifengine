@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\engine;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
+				AdditionalIncludeDirectories="..\..\..\engine;.\include;.\include\guichan;.\include\lua51;.\include\minizip;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;HAVE_OPENGL;SCRIPTENGINE_LUA;GUICHAN_VERSION=6;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="guichan_opengl_d.lib guichan_sdl_d.lib guichan_d.lib lua51.lib ogg_static_d.lib sdl.lib SDL_image.lib SDL_ttf.lib vorbis_static_d.lib vorbisfile_static_d.lib zlib.lib"
+				AdditionalDependencies="guichan_opengl_d.lib guichan_sdl_d.lib guichan_d.lib lua51.lib ogg_static_d.lib sdl.lib SDL_image.lib SDL_ttf.lib vorbis_static_d.lib vorbisfile_static_d.lib zlib.lib minizip.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_d.lib"
 				AdditionalLibraryDirectories=".\static_libs"
 			/>
@@ -107,7 +107,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\engine;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
+				AdditionalIncludeDirectories="..\..\..\engine;.\include;.\include\guichan;.\include\lua51;.\include\minizip.lib;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_OPENGL;SCRIPTENGINE_LUA;GUICHAN_VERSION=6;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -126,7 +126,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="guichan_opengl.lib guichan_sdl.lib guichan.lib lua51.lib ogg_static.lib sdl.lib sdlmain.lib SDL_image.lib SDL_ttf.lib vorbis_static.lib vorbisfile_static.lib zlib.lib"
+				AdditionalDependencies="guichan_opengl.lib guichan_sdl.lib guichan.lib lua51.lib ogg_static.lib sdl.lib sdlmain.lib SDL_image.lib SDL_ttf.lib vorbis_static.lib vorbisfile_static.lib zlib.lib minizip.lib"
 				  AdditionalLibraryDirectories=".\static_libs"
 			/>
 			<Tool
@@ -544,14 +544,6 @@
 			<File RelativePath="..\..\..\engine\vfs\vfssource.cpp"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssourcefactory.cpp"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
-			<Filter Name="zip">
-				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.h"></File>
-			</Filter>
 		</Filter>
 		<Filter Name="video">
 			<File RelativePath="..\..\..\engine\video\animation.cpp"></File>

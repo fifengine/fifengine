@@ -25,6 +25,7 @@
 					<Add directory="..\mingw\include\guichan"/>
 					<Add directory="..\mingw\include\libvorbis"/>
 					<Add directory="..\mingw\include\lua51"/>
+					<Add directory="..\mingw\include\minizip"/>
 					<Add directory="..\mingw\include\ogg"/>
 					<Add directory="..\mingw\include\openal"/>
 					<Add directory="..\mingw\include\opengl"/>
@@ -56,6 +57,7 @@
 					<Add library="..\mingw\static_libs\libguichan_opengl.a"/>
 					<Add library="..\mingw\static_libs\libopengl32.a"/>
 					<Add library="..\mingw\static_libs\libglu32.a"/>
+					<Add library="..\mingw\static_libs\minizip.lib"/>
 					<Add library="..\applications\mingw\lib\libwinmm.a"/>
 				</Linker>
 			</Target>

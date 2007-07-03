@@ -8,7 +8,7 @@ SET PATH=%_%\..\applications\scons;%_%\..\applications\mingw\bin
 :: Goto TRUNK and call SCons
 cd \
 cd %_%\..\..\..\
-scons debug=0
+scons debug=0 zip=1
 
 :: Return us to the directory we started from
 cd %_%
