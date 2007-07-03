@@ -266,6 +266,19 @@
 			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfsutility.cpp"></File>
 		</Filter>
+		<Filter Name="xml">
+			<Filter Name="tinyxml">
+				<File RelativePath="..\..\..\engine\xml\tinyxml\fwd.h"></File>
+				<File RelativePath="..\..\..\engine\xml\tinyxml\tinystr.cpp"></File>
+				<File RelativePath="..\..\..\engine\xml\tinyxml\tinystr.h"></File>
+				<File RelativePath="..\..\..\engine\xml\tinyxml\tinyxml.cpp"></File>
+				<File RelativePath="..\..\..\engine\xml\tinyxml\tinyxml.h"></File>
+				<File RelativePath="..\..\..\engine\xml\tinyxml\tinyxmlerror.cpp"></File>
+				<File RelativePath="..\..\..\engine\xml\tinyxml\tinyxmlparser.cpp"></File>
+			</Filter>
+			<File RelativePath="..\..\..\engine\xml\xmlutil.cpp"></File>
+			<File RelativePath="..\..\..\engine\xml\xmlutil.h"></File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

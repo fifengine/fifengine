@@ -1,0 +1,15 @@
+class StringToBuffer;
+class TiXmlAttribute;
+class TiXmlAttributeSet;
+class TiXmlBase;
+class TiXmlComment;
+class TiXmlDeclaration;
+class TiXmlDocument;
+class TiXmlElement;
+class TiXmlHandle;
+class TiXmlNode;
+class TiXmlOutStream;
+class TiXmlParsingData;
+class TiXmlString;
+class TiXmlText;
+class TiXmlUnknown;
