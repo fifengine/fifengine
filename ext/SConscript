@@ -5,6 +5,12 @@ Import('env')
 
 curpath = str(path('.'))
 installpath = str((path('.') / path('install')).abspath())
+
+os.chdir( str( path( '.' ) / path( 'minizip' ) ) )
+os.system( 'make' )
+os.system( 'make install prefix=%s' % installpath )
+os.chdir( '..' )
+
 os.chdir(str(path('.') / path('guichan-0.6.1')))
 
 os.system('./configure')
@@ -12,3 +18,4 @@ os.system('make')
 os.system('make install prefix=%s' % installpath)
 
 os.chdir(curpath)
+
