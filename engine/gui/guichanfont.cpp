@@ -39,7 +39,6 @@
 #include "video/image.h"
 #include "video/imagecache.h"
 #include "video/pixelbuffer.h"
-#include "video/rendermanager.h"
 #include "video/renderbackend.h"
 
 #include "guichanfont.h"

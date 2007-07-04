@@ -35,10 +35,10 @@
 #include "input/inputmanager.h"
 #include "script/luascript.h"
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
 #include "video/screen.h"
 #include "util/time/timemanager.h"
 #include "util/log.h"
+#include "util/exception.h"
 
 #include "guimanager.h"
 #include "commandline.h"
@@ -78,7 +78,7 @@ namespace FIFE {
 		m_button(new gcn::Button("Tools"))
 		{
 		
-		Screen *screen = CRenderBackend()->getMainScreen();
+		Screen *screen = RenderBackend::instance()->getMainScreen();
 		assert(screen);
 
 		int w, h, b, input_h, bbar_h, button_w;

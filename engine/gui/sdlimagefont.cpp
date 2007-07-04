@@ -96,7 +96,6 @@
 #include "video/imagecache.h"
 #include "video/pixelbuffer.h"
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
 
 #include "sdlimagefont.hpp"
 

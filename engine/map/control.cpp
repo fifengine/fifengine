@@ -36,7 +36,6 @@
 #include "map/structures/map.h"
 #include "script/luascript.h"
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
 #include "util/exception.h"
 #include "util/log.h"
 #include "util/purge.h"
@@ -140,7 +139,7 @@ namespace FIFE { namespace map {
 		m_map = map;
 
 		m_view->setMap(m_map, 0);
-		m_view->setViewport(CRenderBackend()->getMainScreen());
+		m_view->setViewport(RenderBackend::instance()->getMainScreen());
 		std::string ruleset_file = m_settings->read<std::string>("Ruleset", 
 		                           "content/scripts/demos/example_ruleset.lua");
 		m_runner->setRuleset(ScriptContainer::fromFile(ruleset_file));

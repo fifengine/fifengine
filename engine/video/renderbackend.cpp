@@ -28,7 +28,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "renderbackend.h"
-#include "rendermanager.h"
 
 namespace FIFE {
 	

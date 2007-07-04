@@ -31,7 +31,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
 #include "video/screen.h"
 #include "video/gui/gcnimageloader.h"
 #include "util/settingsmanager.h"
@@ -103,7 +102,7 @@ namespace FIFE {
 	}
 
 	void GUIManager::init() {
-		Screen* screen = CRenderBackend()->getMainScreen();
+		Screen* screen = RenderBackend::instance()->getMainScreen();
 		m_gcn_gui->setGraphics(screen);
 		resizeTopContainer(0, 0, screen->getWidth(), screen->getHeight());
 

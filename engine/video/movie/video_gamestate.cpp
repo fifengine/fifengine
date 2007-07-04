@@ -31,7 +31,6 @@
 #include "util/time/timemanager.h"
 #include "util/log.h"
 #include "video/renderbackends/sdl/sdlscreen.h"
-#include "video/rendermanager.h"
 #include "video/screen.h"
 
 #include "video_gamestate.h"
@@ -50,23 +49,19 @@ namespace FIFE {
 			Warn(__FILE__) << "No movie set!";
 			exit(1);
 		}
-		RenderManager *rm = RenderManager::instance();
-		RenderBackend *actual = rm->current();
-		RenderBackend *_sdl = rm->get("SDL");
-		
-		SDL_Surface * screen = static_cast<SDLScreen*>(_sdl->getMainScreen())->getSurface();
+		std::string rbackend = settings->read<std::string>("RenderBackend", "SDL");
+		if (rbackend != "SDL") {
+			Warn(__FILE__) << "Only SDL supported at this time";
+			exit(1);
+		}
 	
-		if (_sdl == actual) {
-			sdl_ov = new SDL_Video_Overlay(screen);
-			try {
-				sdl_ov->load(filename);
-			}
-			catch (const CannotOpenFile & e) {
-				Warn(__FILE__) << e.getMessage();
-				exit(1);
-			}
-		} else {
-			Warn(__FILE__) << "OpenGL not supported at this time";
+		SDL_Surface * screen = static_cast<SDLScreen*>(RenderBackend::instance()->getMainScreen())->getSurface();
+		sdl_ov = new SDL_Video_Overlay(screen);
+		try {
+			sdl_ov->load(filename);
+		}
+		catch (const CannotOpenFile & e) {
+			Warn(__FILE__) << e.getMessage();
 			exit(1);
 		}
 		now_t = TimeManager::instance()->getTime();

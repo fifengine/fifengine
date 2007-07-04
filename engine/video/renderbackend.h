@@ -35,6 +35,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/singleton.h"
 
 namespace FIFE {
 
@@ -42,7 +43,7 @@ namespace FIFE {
 	class Image;
 
 	 /** Abstract interface for all the renderbackends. */
-	class RenderBackend {
+	class RenderBackend: public DynamicSingleton<RenderBackend> {
 		public:
 			/** Constructor.
 			 *

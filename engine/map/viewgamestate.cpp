@@ -34,7 +34,6 @@
 #include "input/inputmanager.h"
 #include "vfs/vfs.h"
 #include "gui/guimanager.h"
-#include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "util/debugutils.h"
 #include "input/events.h"

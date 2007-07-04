@@ -89,7 +89,6 @@
 #include "util/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
 #include "video/screen.h"
 
 #include "sdltruetypefont.hpp"

@@ -38,7 +38,6 @@
 #include "map/structures/objectinfo.h"
 #include "script/luascript.h"
 #include "gui/guimanager.h"
-#include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "util/gamestate/gamestatemanager.h"
 #include "util/debugutils.h"
@@ -110,7 +109,7 @@ int main(int argc, char* argv[]) {
 		unsigned char bitsPerPixel = settings->read("BitsPerPixel", 0);
 		bool fullscreen = settings->read("FullScreen", false);
 
-		FIFE::CRenderBackend()->createMainScreen(swidth, sheight, bitsPerPixel, fullscreen);
+		FIFE::RenderBackend::instance()->createMainScreen(swidth, sheight, bitsPerPixel, fullscreen);
 		FIFE::GUIManager* guimanager = FIFE::GUIManager::instance();
 		guimanager->init();
 

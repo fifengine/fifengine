@@ -33,7 +33,6 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "video/image.h"
-#include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
@@ -57,7 +56,7 @@ namespace FIFE { namespace video { namespace loaders {
 			return 0;
 		}
 
-		RenderAble * res = CRenderBackend()->createStaticImageFromSDL(surface);
+		RenderAble * res = RenderBackend::instance()->createStaticImageFromSDL(surface);
 
 		if (location.hasExtension(RenderableLocation::X))
 			res->setXShift(boost::lexical_cast<int>(location.getExtension(RenderableLocation::X)));

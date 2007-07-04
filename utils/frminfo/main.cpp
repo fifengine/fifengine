@@ -46,7 +46,6 @@
 #include "video/renderbackends/sdl/sdlimage.h"
 #include "video/gui/guimanager.h"
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
 #include "engine.h"
 #include "util/debugutils.h"
 #include "util/exception.h"

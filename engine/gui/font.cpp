@@ -32,9 +32,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/rect.h"
+#include "util/exception.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
 #include "video/screen.h"
 
 #include "aafont.h"
@@ -85,7 +85,7 @@ namespace FIFE {
 
 		int yoffset = getRowSpacing() / 2;
 
-		const gcn::ClipRectangle& clip = CRenderBackend()->getMainScreen()->getCurrentClipArea();
+		const gcn::ClipRectangle& clip = RenderBackend::instance()->getMainScreen()->getCurrentClipArea();
 		FIFE::Rect rect;
 		rect.x = x + clip.xOffset;
 		rect.y = y + clip.yOffset + yoffset;
@@ -99,11 +99,11 @@ namespace FIFE {
 		FIFE::Image* image = m_cache.getRenderedText( this, text );
 		if (image == 0) {
 			SDL_Surface* textSurface = renderString(text);
-			image = CRenderBackend()->createStaticImageFromSDL(textSurface);
+			image = RenderBackend::instance()->createStaticImageFromSDL(textSurface);
 			m_cache.addRenderedText( this, text, image );
 		}
 
-		image->render(rect, CRenderBackend()->getMainScreen());
+		image->render(rect, RenderBackend::instance()->getMainScreen());
 	}
 
 	int FontBase::getStringIndexAt(const std::string &text, int x) {

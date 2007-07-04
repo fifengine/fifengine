@@ -31,7 +31,6 @@
 // Second block: files included from the same folder
 #include "video/image.h"
 #include "video/pixelbuffer.h"
-#include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
@@ -69,7 +68,7 @@ namespace FIFE { namespace video { namespace loaders {
 		SDL_SetAlpha(src,0,SDL_ALPHA_OPAQUE);
 		SDL_BlitSurface(src,&src_rect,result,0);
 
-		return CRenderBackend()->createStaticImageFromSDL(result);
+		return RenderBackend::instance()->createStaticImageFromSDL(result);
 	};
 
 } } }

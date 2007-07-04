@@ -34,7 +34,6 @@
 #include "video/animation.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
 #include "util/exception.h"
 #include "util/debugutils.h"
 #include "video/imagecache.h"
@@ -336,7 +335,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			// No animation. Create one image.
 			SDL_Surface* image = createSDLSurface(data, width, height, m_palette, m_override);
 			if (image != 0) {
-				return CRenderBackend()->createStaticImageFromSDL(image);
+				return RenderBackend::instance()->createStaticImageFromSDL(image);
 			}
 		} else {
 			// Create an animation.
@@ -355,7 +354,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 				SDL_Surface* image = createSDLSurface(data, width, height, m_palette, m_override);
 				Image* createdImage = 0;
 				if (image != 0) {
-					createdImage = CRenderBackend()->createStaticImageFromSDL(image);
+					createdImage = RenderBackend::instance()->createStaticImageFromSDL(image);
 				}
 			
 				if (!createdImage) {

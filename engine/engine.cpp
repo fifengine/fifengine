@@ -48,7 +48,8 @@
 #include "gui/guimanager.h"
 #include "video/imagecache.h"
 #include "video/renderbackend.h"
-#include "video/rendermanager.h"
+#include "video/renderbackends/opengl/renderbackendopengl.h"
+#include "video/renderbackends/sdl/renderbackendsdl.h"
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
@@ -135,11 +136,16 @@ namespace FIFE {
 		evm->addMouseListener(guimanager);
 		evm->addSdlEventListener(input::Manager::instance());
 
-		new RenderManager();
-
 		// Select the render backend.
 		std::string rbackend = settings->read<std::string>("RenderBackend", "SDL");
-		RenderManager::instance()->select(rbackend);
+		if (rbackend == "SDL") {
+			new RenderBackendSDL();
+			std::cout << "SDL Render backend created" << std::endl;
+		} else {
+			new RenderBackendOpenGL();
+			std::cout << "OpenGL Render backend created" << std::endl;
+		}
+		RenderBackend::instance()->init();
 
 		new TimeManager();
 		new VFSSourceFactory();
@@ -199,7 +205,8 @@ namespace FIFE {
 		delete ImageCache::instance();
 		delete VFS::instance();
 		delete VFSSourceFactory::instance();
-		delete RenderManager::instance();
+		RenderBackend::instance()->deinit();
+		delete RenderBackend::instance();
 		delete GUIManager::instance();
 		delete input::Manager::instance();
 		delete EventManager::instance();
@@ -279,10 +286,7 @@ namespace FIFE {
 		}
 		
 		// The current backend makes the screenshot.
-		RenderBackend* rback = RenderManager::instance()->current();
-		if (rback) {
-			rback->captureScreen(fname.str());
-		}
+		RenderBackend::instance()->captureScreen(fname.str());
 	}
 
 
@@ -297,7 +301,7 @@ namespace FIFE {
 		GameStateManager* manager_gamestates = GameStateManager::instance();
 		input::Manager* manager_input = input::Manager::instance();
 		EventManager* evtmanager = EventManager::instance();
-		RenderBackend* rbackend = RenderManager::instance()->current();
+		RenderBackend* rbackend = RenderBackend::instance();
 		GUIManager* manager_gui = GUIManager::instance();
 		TimeManager* manager_time = TimeManager::instance();
 
