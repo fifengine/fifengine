@@ -28,7 +28,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/geometries/geometry.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "video/imagecache.h"
@@ -345,20 +344,14 @@ namespace FIFE {
 		m_state.size.y  = animation->getFrame(m_state.frame)->getHeight();
 	}
 
-	void ComplexAnimation::resetGeometry(map::Geometry *geometry) {
-		assert(geometry);
-		size_t numDirections = geometry->getNumDirections();
-
-		m_warpOffsets.resize(numDirections);
-		for(size_t i = 0; i != numDirections; ++i) {
-			m_warpOffsets[i] = geometry->directionToScreen(i);
-		}
+	void ComplexAnimation::resetGeometry(const std::vector<Point>& offsets) {
+		m_warpOffsets = offsets;
 
 		Animation* animation = dynamic_cast<Animation*>(ImageCache::instance()->getImage(m_state.animation));
 		if (animation && m_state.partialAction)
 			calculateScreenBox(animation);
 // 		Warn("cap") << __FUNCTION__ << ": " << m_state.size;
-	}
+	} 
 
 	unsigned ComplexAnimation::getWidth() const {
 		return m_state.size.x;//m_shifts_x[currentFrame];

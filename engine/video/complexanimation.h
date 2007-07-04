@@ -38,10 +38,10 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/time/timeevent.h"
-
 #include "util/point.h"
+
 #include "renderable.h"
-#include "map/action.h"
+#include "action.h"
 
 namespace FIFE {
 	namespace map { class Geometry; }
@@ -144,7 +144,7 @@ namespace FIFE {
 
 			void emptyQueue();
 
-			void resetGeometry(map::Geometry *geometry);
+			void resetGeometry(const std::vector<Point>& offsets);
 
 			void render(const Rect& rect, Screen* screen, uint8_t alpha = 255);
 

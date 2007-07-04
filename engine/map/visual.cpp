@@ -114,7 +114,12 @@ namespace FIFE { namespace map {
 
 		if (m_renderableType == RenderAble::RT_COMPLEX_ANIMATION) {
 			ComplexAnimation* anim = dynamic_cast<ComplexAnimation*>(m_renderableCopy);
-			anim->resetGeometry( geometry );
+
+			std::vector<Point> offsets;
+			for(size_t i = 0; i != geometry->getNumDirections(); ++i) {
+				offsets.push_back(geometry->directionToScreen(i));
+			}
+			anim->resetGeometry(offsets);
 			calculateScreenbox(anim);
 		} else { 
 			RenderAble* r = ImageCache::instance()->getImage( m_renderable );

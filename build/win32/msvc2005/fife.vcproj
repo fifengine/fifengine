@@ -340,7 +340,6 @@
 			</Filter>
 		</Filter>
 		<Filter Name="map">
-			<File RelativePath="..\..\..\engine\map\action.h"></File>
 			<File RelativePath="..\..\..\engine\map\asyncbridge.cpp"></File>
 			<File RelativePath="..\..\..\engine\map\asyncbridge.h"></File>
 			<File RelativePath="..\..\..\engine\map\camera.cpp"></File>
@@ -544,6 +543,7 @@
 			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
 		</Filter>
 		<Filter Name="video">
+			<File RelativePath="..\..\..\engine\video\action.h"></File>
 			<File RelativePath="..\..\..\engine\video\animation.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\animation.h"></File>
 			<File RelativePath="..\..\..\engine\video\complexanimation.cpp"></File>
