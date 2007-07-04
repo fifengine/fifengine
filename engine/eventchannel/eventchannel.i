@@ -1,0 +1,216 @@
+%module(directors="1") eventchannel
+%{
+#include "eventchannel/command/ec_command.h"
+#include "eventchannel/command/ec_commandids.h"
+#include "eventchannel/command/ec_icommandlistener.h"
+#include "eventchannel/key/ec_key.h"
+#include "eventchannel/key/ec_keyevent.h"
+#include "eventchannel/key/ec_ikeylistener.h"
+#include "eventchannel/source/ec_eventsourcetypes.h"
+#include "eventchannel/source/ec_ieventsource.h"
+#include "eventchannel/mouse/ec_mouseevent.h"
+#include "eventchannel/mouse/ec_imouselistener.h"
+#include "eventchannel/widget/ec_widgetevent.h"
+#include "eventchannel/widget/ec_iwidgetlistener.h"
+#include "eventchannel/manager/eventmanager.h"
+%}
+
+%include "eventchannel/source/ec_eventsourcetypes.h"
+%include "eventchannel/command/ec_commandids.h"
+%include "eventchannel/key/ec_ikey.h"
+%include "eventchannel/key/ec_ikey.h"
+
+namespace FIFE {
+
+	%feature("director") IEventSource;
+	class IEventSource {
+	public:
+		virtual EventSourceType getEventSourceType() = 0;
+		virtual ~IEventSource();
+	};
+
+
+	class ICommand {
+	public:
+		virtual CommandType getCommandType() = 0;
+		virtual int getCode() = 0;
+		virtual ~ICommand();
+	};
+	%feature("director") Command;
+	class Command: public ICommand {
+	public:
+		Command();
+		virtual ~Command();
+		CommandType getCommandType();
+		void setCommandType(CommandType type);
+		int getCode();
+		void setCode(int code);
+		virtual void consume();
+		virtual bool isConsumed() const;
+		virtual IEventSource* getSource();
+		virtual void setSource(IEventSource* source);
+		virtual int getTimeStamp() const;
+		virtual void setTimeStamp(int timestamp);
+		virtual const std::string& getName() const;
+		virtual std::string getDebugString() const;
+	};
+
+	%feature("director") ICommandListener;
+	class ICommandListener {
+	public:
+		virtual void onCommand(ICommand& command) = 0;
+		virtual ~ICommandListener() {}
+	};
+
+	class IKeyEvent {
+		enum KeyEventType {
+			UNKNOWN = -1,
+			PRESSED = 0,
+			RELEASED
+		};
+		virtual KeyEventType getType() const = 0;
+		virtual bool isNumericPad() const = 0;
+		virtual const IKey& getKey() const = 0;
+		virtual ~IKeyEvent();
+	};
+	class KeyEvent: public IKeyEvent {
+	public:
+		KeyEvent();
+		virtual ~KeyEvent();
+		KeyEventType getType() const;
+		void setType(KeyEventType type);
+	
+		bool isNumericPad() const;
+		const IKey& getKey() const;
+		virtual bool isAltPressed() const;
+		virtual bool isControlPressed() const;
+		virtual bool isMetaPressed() const;
+		virtual bool isShiftPressed() const;
+
+		virtual void consume();
+		virtual bool isConsumed() const;
+		virtual IEventSource* getSource();
+		virtual int getTimeStamp() const;
+
+		virtual const std::string& getName() const;
+		virtual std::string getDebugString() const;
+	};
+
+	%feature("director") IKeyListener;
+	class IKeyListener {
+	public:
+		virtual void keyPressed(IKeyEvent& evt) = 0;
+		virtual void keyReleased(IKeyEvent& evt) = 0;
+		virtual ~IKeyListener();
+	};
+
+	class IMouseEvent {
+		enum MouseEventType
+		{
+			UNKNOWN_EVENT = -1,
+			MOVED = 0,
+			PRESSED,
+			RELEASED,
+			WHEEL_MOVED_DOWN,
+			WHEEL_MOVED_UP,
+			CLICKED,
+			ENTERED,
+			EXITED,
+			DRAGGED
+		};
+
+		enum MouseButtonType
+		{
+			EMPTY = 0,
+			LEFT = 1,
+			RIGHT = 2,
+			MIDDLE = 4,
+			UNKNOWN_BUTTON = 8
+		};
+		virtual int getX() const = 0;
+        virtual int getY() const = 0;
+		virtual MouseEventType getType() const = 0;
+		virtual MouseButtonType getButton() const = 0;
+		virtual ~IMouseEvent();
+	};
+	class MouseEvent: public IMouseEvent {
+	public:
+		MouseEvent();
+		virtual ~MouseEvent();
+		MouseButtonType getButton() const;
+		MouseEventType getType() const;
+		int getX() const;
+		int getY() const;
+		virtual bool isAltPressed() const;
+		virtual bool isControlPressed() const;
+		virtual bool isMetaPressed() const;
+		virtual bool isShiftPressed() const;
+
+		virtual void consume();
+		virtual bool isConsumed() const;
+		virtual IEventSource* getSource();
+		virtual int getTimeStamp() const;
+
+		virtual const std::string& getName() const;
+		virtual std::string getDebugString() const;
+	};
+
+	%feature("director") IMouseListener;
+	class IMouseListener {
+	public:
+		virtual void mouseEntered(IMouseEvent& evt) = 0;
+		virtual void mouseExited(IMouseEvent& evt) = 0;
+		virtual void mousePressed(IMouseEvent& evt) = 0;
+		virtual void mouseReleased(IMouseEvent& evt) = 0;
+		virtual void mouseClicked(IMouseEvent& evt) = 0;
+		virtual void mouseWheelMovedUp(IMouseEvent& evt) = 0;
+		virtual void mouseWheelMovedDown(IMouseEvent& evt) = 0;
+		virtual void mouseMoved(IMouseEvent& evt) = 0;
+		virtual void mouseDragged(IMouseEvent& evt) = 0;
+		virtual ~IMouseListener();
+	};
+
+	class IWidgetEvent {
+	public:
+		virtual const std::string& getId() const = 0;
+		virtual ~IWidgetEvent();
+	};
+	class WidgetEvent: public IWidgetEvent {
+	public:
+		WidgetEvent();
+		~WidgetEvent();
+		const std::string& getId() const;
+
+		virtual void consume();
+		virtual bool isConsumed() const;
+		virtual IEventSource* getSource();
+		virtual int getTimeStamp() const;
+
+		virtual const std::string& getName() const;
+		virtual std::string getDebugString() const;
+	};
+
+	%feature("director") IWidgetListener;
+	class IWidgetListener {
+	public:
+		virtual void onWidgetAction(IWidgetEvent& evt) = 0;
+		virtual ~IWidgetListener();
+	};
+
+	class EventManager {
+	public:
+		EventManager();
+		virtual ~EventManager();
+		void addCommandListener(ICommandListener* listener);
+		void removeCommandListener(ICommandListener* listener);
+		void addKeyListener(IKeyListener* listener);
+		void removeKeyListener(IKeyListener* listener);
+		void addMouseListener(IMouseListener* listener);
+		void removeMouseListener(IMouseListener* listener);
+		void addWidgetListener(IWidgetListener* listener);
+		void removeWidgetListener(IWidgetListener* listener);
+		EventSourceType getEventSourceType();
+		void dispatchCommand(ICommand& command);
+		void processEvents();
+	};
+};
