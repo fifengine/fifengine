@@ -29,11 +29,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/gui/guimanager.h"
 #include "util/time/timeevent.h"
 #include "util/time/timemanager.h"
 #include "util/log.h"
 
+#include "guimanager.h"
 #include "commandline.h"
 
 namespace FIFE {

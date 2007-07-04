@@ -365,117 +365,127 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\aafont.cpp">
+		<Unit filename="..\..\..\engine\gui\aafont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\aafont.h">
+		<Unit filename="..\..\..\engine\gui\aafont.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\advimage.cpp">
+		<Unit filename="..\..\..\engine\gui\advimage.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\advimage.h">
+		<Unit filename="..\..\..\engine\gui\advimage.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\commandline.cpp">
+		<Unit filename="..\..\..\engine\gui\commandline.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\commandline.h">
+		<Unit filename="..\..\..\engine\gui\commandline.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\console.cpp">
+		<Unit filename="..\..\..\engine\gui\console.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\console.h">
+		<Unit filename="..\..\..\engine\gui\console.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\font.cpp">
+		<Unit filename="..\..\..\engine\gui\font.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\font.h">
+		<Unit filename="..\..\..\engine\gui\font.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\fontcache.cpp">
+		<Unit filename="..\..\..\engine\gui\fontcache.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\fontcache.h">
+		<Unit filename="..\..\..\engine\gui\fontcache.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\fwd.h">
+		<Unit filename="..\..\..\engine\gui\fwd.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\guichanfont.cpp">
+		<Unit filename="..\..\..\engine\gui\guichanfont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\guichanfont.h">
+		<Unit filename="..\..\..\engine\gui\guichanfont.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\icon2.cpp">
+		<Unit filename="..\..\..\engine\gui\guimanager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\icon2.hpp">
+		<Unit filename="..\..\..\engine\gui\guimanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\sdlimagefont.cpp">
+		<Unit filename="..\..\..\engine\gui\icon2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\sdlimagefont.hpp">
+		<Unit filename="..\..\..\engine\gui\icon2.hpp">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\sdltruetypefont.cpp">
+		<Unit filename="..\..\..\engine\gui\sdlimagefont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\sdltruetypefont.hpp">
+		<Unit filename="..\..\..\engine\gui\sdlimagefont.hpp">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\twobutton.cpp">
+		<Unit filename="..\..\..\engine\gui\sdltruetypefont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\guichan_addon\twobutton.h">
+		<Unit filename="..\..\..\engine\gui\sdltruetypefont.hpp">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\gui\twobutton.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\gui\twobutton.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -1674,16 +1684,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="..\..\..\engine\video\gui\gcnimageloader.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\video\gui\guimanager.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\video\gui\guimanager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

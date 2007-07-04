@@ -30,7 +30,6 @@
 #include <SDL.h>
 
 // FIFE includes
-#include "video/gui/guimanager.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
 
@@ -126,9 +125,6 @@ namespace FIFE {
 		glEnable(GL_SCISSOR_TEST);
 
 		m_screen = new GLScreen();
-		GUIManager* guimanager = GUIManager::instance();
-		guimanager->init();
-
 		return m_screen;
 	}
 

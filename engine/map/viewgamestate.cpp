@@ -33,7 +33,7 @@
 // FIXME: Do we really have all these dependencies here?
 #include "input/inputmanager.h"
 #include "vfs/vfs.h"
-#include "video/gui/guimanager.h"
+#include "gui/guimanager.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "util/debugutils.h"

@@ -40,12 +40,12 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "audio/audiomanager.h"
-#include "guichan_addon/console.h"
+#include "gui/console.h"
 #include "input/events.h"
 #include "input/inputmanager.h"
 #include "eventchannel/manager/eventmanager.h"
 #include "script/luascript.h"
-#include "video/gui/guimanager.h"
+#include "gui/guimanager.h"
 #include "video/imagecache.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"

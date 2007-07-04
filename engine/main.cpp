@@ -37,7 +37,7 @@
 #include "map/structures/layer.h"
 #include "map/structures/objectinfo.h"
 #include "script/luascript.h"
-#include "video/gui/guimanager.h"
+#include "gui/guimanager.h"
 #include "video/rendermanager.h"
 #include "video/renderbackend.h"
 #include "util/gamestate/gamestatemanager.h"
@@ -111,6 +111,8 @@ int main(int argc, char* argv[]) {
 		bool fullscreen = settings->read("FullScreen", false);
 
 		FIFE::CRenderBackend()->createMainScreen(swidth, sheight, bitsPerPixel, fullscreen);
+		FIFE::GUIManager* guimanager = FIFE::GUIManager::instance();
+		guimanager->init();
 
 		// it seems this *MUST* be done after setting the video mode!
 		SDL_EnableUNICODE(1);

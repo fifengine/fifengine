@@ -37,10 +37,10 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "guichan_addon/advimage.h"
-#include "guichan_addon/twobutton.h"
-#include "guichan_addon/icon2.hpp"
-#include "guichan_addon/font.h"
+#include "gui/advimage.h"
+#include "gui/twobutton.h"
+#include "gui/icon2.hpp"
+#include "gui/font.h"
 #include "util/log.h"
 #include "script/lua_ref.h"
 

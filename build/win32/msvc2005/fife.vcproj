@@ -231,30 +231,32 @@
 				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_widgetevent.h"></File>
 			</Filter>
 		</Filter>
-		<Filter Name="guichan_addon">
-			<File RelativePath="..\..\..\engine\guichan_addon\aafont.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\aafont.h"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\advimage.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\advimage.h"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\commandline.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\commandline.h"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\console.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\console.h"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\font.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\font.h"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\fontcache.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\fontcache.h"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\fwd.h"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\guichanfont.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\guichanfont.h"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\icon2.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\icon2.hpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\sdlimagefont.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\sdlimagefont.hpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\sdltruetypefont.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\sdltruetypefont.hpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\twobutton.cpp"></File>
-			<File RelativePath="..\..\..\engine\guichan_addon\twobutton.h"></File>
+		<Filter Name="gui">
+			<File RelativePath="..\..\..\engine\gui\aafont.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\aafont.h"></File>
+			<File RelativePath="..\..\..\engine\gui\advimage.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\advimage.h"></File>
+			<File RelativePath="..\..\..\engine\gui\commandline.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\commandline.h"></File>
+			<File RelativePath="..\..\..\engine\gui\console.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\console.h"></File>
+			<File RelativePath="..\..\..\engine\gui\font.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\font.h"></File>
+			<File RelativePath="..\..\..\engine\gui\fontcache.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\fontcache.h"></File>
+			<File RelativePath="..\..\..\engine\gui\fwd.h"></File>
+			<File RelativePath="..\..\..\engine\gui\guichanfont.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\guichanfont.h"></File>
+			<File RelativePath="..\..\..\engine\gui\guimanager.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\guimanager.h"></File>
+			<File RelativePath="..\..\..\engine\gui\icon2.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\icon2.hpp"></File>
+			<File RelativePath="..\..\..\engine\gui\sdlimagefont.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\sdlimagefont.hpp"></File>
+			<File RelativePath="..\..\..\engine\gui\sdltruetypefont.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\sdltruetypefont.hpp"></File>
+			<File RelativePath="..\..\..\engine\gui\twobutton.cpp"></File>
+			<File RelativePath="..\..\..\engine\gui\twobutton.h"></File>
 		</Filter>
 		<Filter Name="input">
 			<File RelativePath="..\..\..\engine\input\events.h"></File>
@@ -553,8 +555,6 @@
 				<File RelativePath="..\..\..\engine\video\gui\gcnfifeimage.h"></File>
 				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader.cpp"></File>
 				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader.h"></File>
-				<File RelativePath="..\..\..\engine\video\gui\guimanager.cpp"></File>
-				<File RelativePath="..\..\..\engine\video\gui\guimanager.h"></File>
 			</Filter>
 			<File RelativePath="..\..\..\engine\video\image.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\image.h"></File>

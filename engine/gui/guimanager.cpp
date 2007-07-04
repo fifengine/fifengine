@@ -30,16 +30,17 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "guichan_addon/console.h"
-#include "guichan_addon/font.h"
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "video/screen.h"
-#include "guimanager.h"
+#include "video/gui/gcnimageloader.h"
 #include "util/settingsmanager.h"
 #include "util/debugutils.h"
 
-#include "gcnimageloader.h"
+#include "guimanager.h"
+#include "console.h"
+#include "font.h"
+
 
 namespace FIFE {
 
