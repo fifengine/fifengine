@@ -266,6 +266,62 @@
 			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfsutility.cpp"></File>
 		</Filter>
+		<Filter Name="video">
+			<File RelativePath="..\..\..\engine\video\action.h"></File>
+			<File RelativePath="..\..\..\engine\video\animation.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\animation.h"></File>
+			<File RelativePath="..\..\..\engine\video\complexanimation.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\complexanimation.h"></File>
+			<File RelativePath="..\..\..\engine\video\fwd.h"></File>
+			<Filter Name="gui">
+				<File RelativePath="..\..\..\engine\video\gui\fwd.h"></File>
+				<File RelativePath="..\..\..\engine\video\gui\gcnfifeimage.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\gui\gcnfifeimage.h"></File>
+				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader.cpp"></File>
+				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader.h"></File>
+			</Filter>
+			<File RelativePath="..\..\..\engine\video\image.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\image.h"></File>
+			<File RelativePath="..\..\..\engine\video\imagecache.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\imagecache.h"></File>
+			<File RelativePath="..\..\..\engine\video\partialaction.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\partialaction.h"></File>
+			<File RelativePath="..\..\..\engine\video\pixelbuffer.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\pixelbuffer.h"></File>
+			<File RelativePath="..\..\..\engine\video\renderable.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\renderable.h"></File>
+			<File RelativePath="..\..\..\engine\video\renderable_location.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\renderable_location.h"></File>
+			<File RelativePath="..\..\..\engine\video\renderable_provider.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\renderable_provider.h"></File>
+			<File RelativePath="..\..\..\engine\video\renderbackend.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\renderbackend.h"></File>
+			<Filter Name="renderbackends">
+				<Filter Name="opengl">
+					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\fife_opengl.h"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\fwd.h"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\glimage.cpp"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\glimage.h"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\glscreen.cpp"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\glscreen.h"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\renderbackendopengl.cpp"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\renderbackendopengl.h"></File>
+				</Filter>
+				<Filter Name="sdl">
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\fwd.h"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\renderbackendsdl.cpp"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\renderbackendsdl.h"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlblendingfunctions.cpp"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlblendingfunctions.h"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlimage.cpp"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlimage.h"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlscreen.cpp"></File>
+					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlscreen.h"></File>
+				</Filter>
+			</Filter>
+			<File RelativePath="..\..\..\engine\video\screen.cpp"></File>
+			<File RelativePath="..\..\..\engine\video\screen.h"></File>
+		</Filter>
 		<Filter Name="xml">
 			<Filter Name="tinyxml">
 				<File RelativePath="..\..\..\engine\xml\tinyxml\fwd.h"></File>
