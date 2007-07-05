@@ -53,6 +53,8 @@ namespace FIFE {
 
 			void action(const gcn::ActionEvent & event) {
 				try {
+					std::cout << "Action to console " << m_cmd.c_str() << std::endl;
+					std::cout << "TODO: provide console interface for scripting side" << std::endl;
 				} catch(FIFE::Exception & e) {
 					Log("Console") << "Caught exception: " << e.getMessage();
 				}
