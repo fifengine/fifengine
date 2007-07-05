@@ -9,39 +9,110 @@ subgraph cluster_0 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "util"; "util/time"
-    label = "util";
+    "engine"
+    label = "engine";
 }
 subgraph cluster_1 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "engine"
-    label = "engine";
+    "xml"; "xml/tinyxml"
+    label = "xml";
 }
 subgraph cluster_2 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "vfs/zip"; "vfs/lua"; "vfs"; "vfs/raw"
-    label = "vfs";
+    "gui"
+    label = "gui";
 }
 subgraph cluster_3 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "eventchannel/manager"
+    "eventchannel/key"; "eventchannel/sdl"; "eventchannel/manager"; "eventchannel/mouse"
     label = "eventchannel";
 }
+subgraph cluster_4 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "util"; "util/time"
+    label = "util";
+}
+subgraph cluster_5 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "video/movie"; "video"; "video/gui"; "video/renderbackends/opengl"; "video/renderbackends/sdl"
+    label = "video";
+}
+subgraph cluster_6 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "audio"
+    label = "audio";
+}
+subgraph cluster_7 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "vfs/zip"; "vfs"; "vfs/raw"
+    label = "vfs";
+}
     "engine" -> "engine"
-    "vfs/zip" -> "vfs"
-    "vfs/lua" -> "util"
-    "vfs/lua" -> "vfs"
-    "vfs/lua" -> "vfs/raw"
+    "engine" -> "vfs/zip"
+    "engine" -> "video/renderbackends/sdl"
+    "engine" -> "gui"
+    "engine" -> "util"
+    "engine" -> "video"
+    "engine" -> "util/time"
+    "engine" -> "video/renderbackends/opengl"
+    "engine" -> "audio"
+    "engine" -> "vfs"
+    "engine" -> "eventchannel/manager"
     "util" -> "util"
+    "video/movie" -> "util"
+    "video/movie" -> "util/time"
+    "video/movie" -> "video"
+    "video/movie" -> "video/renderbackends/sdl"
+    "video/gui" -> "util"
+    "video/gui" -> "video"
+    "video/gui" -> "video/gui"
+    "video/renderbackends/sdl" -> "util"
+    "video/renderbackends/sdl" -> "video/gui"
+    "video/renderbackends/sdl" -> "video"
+    "xml" -> "util"
+    "xml" -> "xml/tinyxml"
+    "gui" -> "video/gui"
+    "gui" -> "eventchannel/mouse"
+    "gui" -> "util"
+    "gui" -> "eventchannel/key"
+    "gui" -> "video"
+    "gui" -> "vfs/raw"
+    "gui" -> "util/time"
+    "gui" -> "vfs"
+    "gui" -> "eventchannel/sdl"
     "vfs/raw" -> "util"
+    "vfs/zip" -> "util"
+    "vfs/zip" -> "vfs"
+    "vfs/zip" -> "vfs/raw"
+    "video/renderbackends/opengl" -> "util"
+    "video/renderbackends/opengl" -> "video/gui"
+    "video/renderbackends/opengl" -> "video"
+    "xml/tinyxml" -> "vfs"
+    "xml/tinyxml" -> "vfs/raw"
     "util/time" -> "util"
+    "video" -> "util"
+    "video" -> "util/time"
+    "video" -> "video"
+    "audio" -> "util"
+    "audio" -> "util/time"
+    "audio" -> "vfs"
+    "audio" -> "vfs/raw"
     "vfs" -> "util"
+    "vfs" -> "vfs"
     "vfs" -> "vfs/raw"
     "eventchannel/manager" -> "util"
 }

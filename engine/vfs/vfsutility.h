@@ -31,7 +31,6 @@
 // FIFE includes
 
 namespace FIFE {
-	class VFS;
 	class VFSUtility {
 		public:
 			VFSUtility();
@@ -41,8 +40,6 @@ namespace FIFE {
 			std::vector<std::string> listFiles(const std::string& path);
 			std::vector<std::string> listDirectories(const std::string& path);
 			bool addSource(const std::string& sname);
-		private:
-			VFS* vfs;
 	};
 }
 

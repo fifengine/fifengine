@@ -37,6 +37,17 @@
 
 namespace FIFE {
 
+	namespace audio {
+		class Manager;
+	}
+	class RenderBackend;
+	class GUIManager;
+	class VFS;
+	class EventManager;
+	class TimeManager;
+	class ImageCache;
+	class SettingsManager;
+
 	class Engine {
 		public:
 			/** Constructor
@@ -47,6 +58,26 @@ namespace FIFE {
 			 */
 			virtual ~Engine();
 
+			/** Runs one cycle for the engine
+			 */
+			void pump();
+
+			audio::Manager* getAudioManager();
+			EventManager* getEventManager();
+			VFS* getVFS();
+			TimeManager* getTimeManager();
+			SettingsManager* getSettingsManager();
+
+		private:
+			/** Initializes the engine
+			 */
+			void init();
+
+			RenderBackend* m_renderbackend;
+			GUIManager* m_guimanager;
+			EventManager* m_eventmanager;
+			TimeManager* m_timemanager;
+			ImageCache* m_imagecache;
 	};
 
 }//FIFE

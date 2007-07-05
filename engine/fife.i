@@ -1,7 +1,6 @@
 %module fife
 %{
 #include <boost/shared_ptr.hpp>
-#include "engine.h"
 %}
 
 namespace boost {
@@ -19,11 +18,4 @@ namespace boost {
 %include "eventchannel/eventchannel.i"
 %include "vfs/vfs.i"
 %include "audio/audiomanager.i"
-
-namespace FIFE {
-	class Engine {
-	public:
-		Engine();
-		virtual ~Engine();
-	};
-}
+%include "engine.i"

@@ -5,9 +5,26 @@ digraph "source tree" {
     fontsize="16";
     fontname="Helvetica";
     clusterrank="local";
-    "util" -> "util"
     "engine" -> "engine"
+    "engine" -> "gui"
+    "engine" -> "eventchannel"
+    "engine" -> "util"
+    "engine" -> "video"
+    "engine" -> "audio"
+    "engine" -> "vfs"
+    "xml" -> "xml"
+    "xml" -> "util"
+    "xml" -> "vfs"
+    "gui" -> "util"
+    "gui" -> "video"
+    "gui" -> "vfs"
+    "gui" -> "eventchannel"
+    "eventchannel" -> "util"
+    "util" -> "util"
+    "video" -> "util"
+    "video" -> "video"
+    "audio" -> "util"
+    "audio" -> "vfs"
     "vfs" -> "util"
     "vfs" -> "vfs"
-    "eventchannel" -> "util"
 }

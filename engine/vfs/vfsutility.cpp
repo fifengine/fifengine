@@ -42,13 +42,9 @@
 
 namespace FIFE {
 	VFSUtility::VFSUtility() {
-		vfs = new VFS();
-		std::cout << "in VFSUtility constructor" << std::endl;
-		vfs->addSource(new FIFE::VFSHostSystem());
 	}
 
 	VFSUtility::~VFSUtility() {
-		delete vfs;
 	}
 
 	std::vector<uint8_t> VFSUtility::readBytes(const std::string& fname) {
@@ -100,7 +96,7 @@ namespace FIFE {
 			VFS::instance()->addSource(src);
 			return true;
 		} else {
-			Warn("lua_vfs") << "Invalid source: " << sname;
+			Warn("VFSUtility") << "Invalid source: " << sname;
 			return false;
 		}
 	}

@@ -3,8 +3,9 @@ import fife, time
 print "Creating engine"
 engine = fife.Engine()
 
-print "Creating settings manager"
-settings = fife.SettingsManager()
+print "Testing settings manager"
+settings = engine.getSettingsManager()
+print "  RenderBackend = " + settings.read_string('RenderBackend', 'none defined')
 
 print "Testing log"
 log = fife.Log.initialize(fife.Log.LEVEL_MAX, True, True)
@@ -21,7 +22,7 @@ class MyTimeEvent(fife.TimeEvent):
 		print "testing timer event... %d, %d" % (curtime, self.counter)
 		self.counter += 1
 
-timemanager = fife.TimeManager()
+timemanager = engine.getTimeManager()
 e = MyTimeEvent(100)
 timemanager.registerEvent(e)
 
@@ -31,9 +32,8 @@ for i in xrange(10):
 
 print "finishing"
 timemanager.unregisterEvent(e)
-del e
 
-eventmanager = fife.EventManager()
+eventmanager = engine.getEventManager()
 class MyEventListener(fife.ICommandListener):
 	def __init__(self):
 		fife.ICommandListener.__init__(self)
@@ -45,24 +45,23 @@ l = MyEventListener()
 eventmanager.addCommandListener(l)
 cmd = fife.Command()
 cmd.setCode(0)
-print "Sending command..."
+print "Sending commands..."
 for i in xrange(20):
 	eventmanager.dispatchCommand(cmd)
 	cmd.setCode(i)
 eventmanager.removeCommandListener(l)
-del l
 
-
+print "Testing VFS"
 vfs = fife.VFSUtility()
 print vfs.listFiles('.')
 print vfs.listDirectories('.')
 print vfs.readLines('test.py')
 print vfs.readBytes('test.py')
 
-
-audiomanager = fife.AudioManager()
+print "Testing audio"
+audiomanager = engine.getAudioManager()
 audiomanager.setAmbientSound('../content/audio/music/maybe.ogg')
-for i in xrange(30):
+for i in xrange(15):
 	audiomanager.setVolume(i % 8)
 	time.sleep(0.2)
-del audiomanager
+
