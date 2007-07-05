@@ -38,7 +38,6 @@
 				<Linker>
 					<Add library="..\mingw\static_libs\libfife.a"/>
 					<Add library="..\applications\mingw\lib\libmingw32.a"/>
-					<Add library="..\mingw\static_libs\libzlib.a"/>
 					<Add library="..\mingw\static_libs\SDL_image.lib"/>
 					<Add library="..\mingw\static_libs\liblua51.a"/>
 					<Add library="..\mingw\static_libs\libguichan.a"/>
@@ -57,8 +56,9 @@
 					<Add library="..\mingw\static_libs\libguichan_opengl.a"/>
 					<Add library="..\mingw\static_libs\libopengl32.a"/>
 					<Add library="..\mingw\static_libs\libglu32.a"/>
-					<Add library="..\mingw\static_libs\minizip.lib"/>
 					<Add library="..\applications\mingw\lib\libwinmm.a"/>
+					<Add library="..\mingw\static_libs\libzlib.a"/>
+					<Add library="..\mingw\static_libs\minizip.lib"/>
 				</Linker>
 			</Target>
 		</Build>
