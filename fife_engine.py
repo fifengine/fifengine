@@ -1,8 +1,15 @@
-import fife, time
+import os
+os.environ['PYTHONPATH'] = '.'
+print os.getenv('PYTHONPATH')
+import engine.fife as fife
+import time
 
 print "Creating engine"
 engine = fife.Engine()
 
+for i in xrange(100):
+	engine.pump()
+	
 print "Testing settings manager"
 settings = engine.getSettingsManager()
 print "  RenderBackend = " + settings.read_string('RenderBackend', 'none defined')
@@ -55,12 +62,12 @@ print "Testing VFS"
 vfs = fife.VFSUtility()
 print vfs.listFiles('.')
 print vfs.listDirectories('.')
-print vfs.readLines('test.py')
-print vfs.readBytes('test.py')
+print vfs.readLines('fife_engine.py')
+print vfs.readBytes('fife_engine.py')
 
 print "Testing audio"
 audiomanager = engine.getAudioManager()
-audiomanager.setAmbientSound('../content/audio/music/maybe.ogg')
+audiomanager.setAmbientSound('content/audio/music/maybe.ogg')
 for i in xrange(15):
 	audiomanager.setVolume(i % 8)
 	time.sleep(0.2)

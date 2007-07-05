@@ -109,8 +109,8 @@ namespace FIFE {
 		av_register_all();
 #endif
 
-		EventManager* m_eventmanager = new EventManager();
-		GUIManager* m_guimanager = new GUIManager();
+		m_eventmanager = new EventManager();
+		m_guimanager = new GUIManager();
 		m_eventmanager->addSdlEventListener(m_guimanager);
 		// keep guimanager as the first key listener so that it can evaluate guichan hits
 		m_eventmanager->addKeyListener(m_guimanager);
@@ -168,6 +168,15 @@ namespace FIFE {
 			volume = 0;
 		}
 		audio::Manager::instance()->setVolume(static_cast<float>(volume) / 10);
+
+		unsigned int swidth = settings->read("ScreenWidth", 800);
+		unsigned int sheight = settings->read("ScreenHeight", 600);
+		unsigned char bitsPerPixel = settings->read("BitsPerPixel", 0);
+		bool fullscreen = settings->read("FullScreen", false);
+
+		FIFE::RenderBackend::instance()->createMainScreen(swidth, sheight, bitsPerPixel, fullscreen);
+		m_guimanager->init();
+		SDL_EnableUNICODE(1);
 	}
 
 	void Engine::pump() {

@@ -34,7 +34,8 @@ namespace FIFE {
 	// Remember TimeEvent(-1) means that even an registered event won't be called
 	Timer::Timer() 
 		: TimeEvent(-1), 
-		m_active(false) {
+		m_active(false),
+		m_listener(0) {
 	}
 
 	Timer::~Timer() {

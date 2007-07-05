@@ -34,6 +34,10 @@
 
 int main(int argc, char* argv[]) {
 	FIFE::Engine* e = new FIFE::Engine();
+	for (int i = 0; i < 100; i++) {
+		e->pump();
+	}
+	
 	delete e;
 	return 0;
 }
