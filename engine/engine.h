@@ -67,6 +67,7 @@ namespace FIFE {
 			VFS* getVFS();
 			TimeManager* getTimeManager();
 			SettingsManager* getSettingsManager();
+			GUIManager* getGuiManager();
 
 		private:
 			/** Initializes the engine

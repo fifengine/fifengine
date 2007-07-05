@@ -34,7 +34,7 @@
 
 int main(int argc, char* argv[]) {
 	FIFE::Engine* e = new FIFE::Engine();
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 10000; i++) {
 		e->pump();
 	}
 	

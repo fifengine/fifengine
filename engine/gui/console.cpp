@@ -45,31 +45,9 @@
 namespace FIFE {
 	const unsigned  Console::m_maxOutputRows = 50;
 
-	class ScriptExecuter : public gcn::ActionListener {
-		public:
-			ScriptExecuter(const std::string& cmd) 
-				: ActionListener() , m_cmd(cmd) {}
-			virtual ~ScriptExecuter(){};
-
-			void action(const gcn::ActionEvent & event) {
-				try {
-					std::cout << "Action to console " << m_cmd.c_str() << std::endl;
-					std::cout << "TODO: provide console interface for scripting side" << std::endl;
-				} catch(FIFE::Exception & e) {
-					Log("Console") << "Caught exception: " << e.getMessage();
-				}
-			};
-
-			void setCommand(const std::string& cmd) {
-				m_cmd = cmd;
-			}
-
-		private:
-			std::string m_cmd;
-	};
-
 	Console::Console() 
 		: gcn::Container(),
+		m_consoleexec(0),
 		m_textfield(new CommandLine()),
 		m_output(new gcn::TextBox("")),
 		m_scrollarea(new gcn::ScrollArea(m_output)),
@@ -154,13 +132,7 @@ namespace FIFE {
 		m_animationTimer.setInterval(20);
 		m_animationTimer.setCallback( boost::bind(&Console::updateAnimation, this) );
 
-		//NOTE Needs a script binding to it..
-		m_scriptexecuter = new ScriptExecuter("on_tools_button_clicked");
-		m_button->addActionListener( m_scriptexecuter );
-
-		// Match leading _ or alpha. Then . and 0-9 may occur
-		m_single_word_rx = 
-			"^\\s*(_(\\d|\\w)*|(\\d|\\w)+)(\\.(_(\\d|\\w)*|(\\d|\\w)+))*\\s*$";
+		m_button->addActionListener(this);
 	}
 
 	Console::~Console() {
@@ -175,8 +147,6 @@ namespace FIFE {
 		delete m_scrollarea;
 		delete m_label;
 		delete m_button;
-
-		delete m_scriptexecuter;
 	}
 
 	void Console::updateCaption() {
@@ -249,27 +219,22 @@ namespace FIFE {
 		m_animationTimer.start();
 	}
 
-
 	void Console::execute(std::string cmd) {
 // 		Log("Console") << "EXECUTE";
 		if (cmd.empty())
 			return;
-
-		boost::regex  regex(m_single_word_rx, boost::regex::perl|boost::regex::icase);
-		boost::cmatch match;
-		bool single_word = boost::regex_match(cmd.c_str(), match, regex);
-
-		if( single_word ) {
-			cmd = std::string("console.print(") + cmd + ")";
-		}
 
 		// copy input to output
 		println(m_prompt + cmd);
 
 		// run the command
 		try {
-			std::cout << "Execution request to console " << cmd.c_str() << std::endl;
-			std::cout << "TODO: provide console interface for scripting side" << std::endl;
+			if (m_consoleexec) {
+				std::string resp = m_consoleexec->onCommand(cmd);
+				println(resp);
+			} else {
+				std::cout << "ConsoleExecuter not bind, but command received: " << cmd.c_str() << std::endl;
+			}
 		}
 		catch (FIFE::Exception & e) {
 			Debug("Console") << "Caught exception: " << e.getMessage();
@@ -305,6 +270,22 @@ namespace FIFE {
 		// Assure the new text is visible
 		gcn::Rectangle rect(0,m_output->getHeight(),0,0);
 		m_scrollarea->showWidgetPart(m_output,rect);
+	}
+
+	void Console::action(const gcn::ActionEvent & event) {
+		if (m_consoleexec) {
+			m_consoleexec->onToolsClick();
+		} else {
+			std::cout << "ConsoleExecuter not bind, but tools button clicked" << std::endl;
+		}
+	}
+
+	void Console::setConsoleExecuter(ConsoleExecuter* const consoleexec) {
+		m_consoleexec = consoleexec;
+	}
+
+	void Console::removeConsoleExecuter() {
+		m_consoleexec = NULL;
 	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

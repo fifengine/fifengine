@@ -13,6 +13,7 @@ namespace FIFE {
 	class VFS;
 	class TimeManager;
 	class SettingsManager;
+	class GUIManager;
 
 	class Engine {
 		public:
@@ -25,5 +26,6 @@ namespace FIFE {
 			VFS* getVFS();
 			TimeManager* getTimeManager();
 			SettingsManager* getSettingsManager();
+			GUIManager* getGuiManager();
 	};
 }

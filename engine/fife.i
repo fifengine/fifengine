@@ -19,3 +19,5 @@ namespace boost {
 %include "vfs/vfs.i"
 %include "audio/audiomanager.i"
 %include "engine.i"
+%include "gui/guimanager.i"
+%include "gui/console.i"

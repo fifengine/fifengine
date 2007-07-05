@@ -37,13 +37,30 @@
 namespace FIFE {
 
 	class CommandLine;
-	class ScriptExecuter;
+
+	/**
+	* Console executer is listener interface for console activity
+	*/
+	class ConsoleExecuter {
+		public:
+			/** Destructor
+			 */
+			virtual ~ConsoleExecuter() {}
+
+			/** Called when console tools button is clicked
+			 */
+			virtual void onToolsClick() = 0;
+
+			/** Called when user has typed command to console and pressed enter
+			 * @return response from executer
+			 */
+			virtual std::string onCommand(const std::string& command) = 0;
+	};
+
 
 	/** Ingame Console
-	 *
-	 * Activated with F10.
 	 */
-	class Console : public gcn::Container {
+	class Console : public gcn::Container, public gcn::ActionListener {
 		public:
 			/** Constructor
 			 */
@@ -51,7 +68,7 @@ namespace FIFE {
 
 			/** Destructor
 			 */
-			~Console();
+			virtual ~Console();
 
 			/** Print one or more lines to the console output
 			 */
@@ -99,9 +116,23 @@ namespace FIFE {
 			 *  @note Is a timer callback.
 			 */
 			void updateAnimation();
+
+			/** Callback from guichan to respond to button press
+			 */
+			void action(const gcn::ActionEvent & event);
+
+			/** Sets executer for the console
+			 */
+			void setConsoleExecuter(ConsoleExecuter* const consoleexec);
+
+			/** Removes executer for the console
+			 */
+			void removeConsoleExecuter();
+
 		private:
 
 			bool m_isAttached;
+			ConsoleExecuter* m_consoleexec;
 			
 			CommandLine*      m_textfield;
 			gcn::TextBox*     m_output;
@@ -110,10 +141,7 @@ namespace FIFE {
 			gcn::Button*      m_button;
 			static const unsigned m_maxOutputRows;
 
-			ScriptExecuter* m_scriptexecuter;
-
 			std::string m_prompt;
-			std::string m_single_word_rx;
 
 
 			int m_hiddenPos;

@@ -7,9 +7,6 @@ import time
 print "Creating engine"
 engine = fife.Engine()
 
-for i in xrange(100):
-	engine.pump()
-	
 print "Testing settings manager"
 settings = engine.getSettingsManager()
 print "  RenderBackend = " + settings.read_string('RenderBackend', 'none defined')
@@ -68,7 +65,28 @@ print vfs.readBytes('fife_engine.py')
 print "Testing audio"
 audiomanager = engine.getAudioManager()
 audiomanager.setAmbientSound('content/audio/music/maybe.ogg')
-for i in xrange(15):
-	audiomanager.setVolume(i % 8)
+for i in xrange(8):
+	audiomanager.setVolume(i % 2)
 	time.sleep(0.2)
 
+class MyExecuter(fife.ConsoleExecuter):
+	def onToolsClick(self):
+		print "In python, tools clicked"
+
+	def onCommand(self, command):
+		print "In python, command %s received" % command
+		result = "no result"
+		try:
+			result = str(eval(command))
+		except:
+			pass
+		print "result = " + result
+		return result
+	
+guimanager = engine.getGuiManager()
+console = guimanager.getConsole()
+consoleexec = MyExecuter()
+console.setConsoleExecuter(consoleexec)
+
+for i in xrange(10000):
+	engine.pump()
