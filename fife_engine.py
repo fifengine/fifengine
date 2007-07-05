@@ -65,9 +65,9 @@ print vfs.readBytes('fife_engine.py')
 print "Testing audio"
 audiomanager = engine.getAudioManager()
 audiomanager.setAmbientSound('content/audio/music/maybe.ogg')
-for i in xrange(8):
-	audiomanager.setVolume(i % 2)
-	time.sleep(0.2)
+for i in xrange(20):
+	audiomanager.setVolume(float(i % 10) / 10)
+	time.sleep(0.1)
 
 class MyExecuter(fife.ConsoleExecuter):
 	def __init__(self):
