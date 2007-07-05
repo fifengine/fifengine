@@ -11,7 +11,7 @@ del %_%\engine_build_log.txt
 :: Goto TRUNK and call SCons
 cd \
 cd %_%\..\..\..
-scons debug=0 >> "%_%\engine_build_log.txt" 2>&1
+scons debug=0 zip=1 >> "%_%\engine_build_log.txt" 2>&1
 
 :: Return us to the directory we started from
 cd %_%

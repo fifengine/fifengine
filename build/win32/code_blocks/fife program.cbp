@@ -58,7 +58,7 @@
 					<Add library="..\mingw\static_libs\libglu32.a"/>
 					<Add library="..\applications\mingw\lib\libwinmm.a"/>
 					<Add library="..\mingw\static_libs\libzlib.a"/>
-					<Add library="..\mingw\static_libs\minizip.lib"/>
+					<Add library="..\mingw\static_libs\libminizip.a"/>
 				</Linker>
 			</Target>
 		</Build>
