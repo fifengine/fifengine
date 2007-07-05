@@ -100,10 +100,6 @@ namespace FIFE { namespace map {
 		m_archetypes.push_back(archetype);
 	}
 
-	std::list<Archetype*>& Map::dumpArchetypes() {
-		return m_archetypes;
-	}
-
 	void Map::loadPrototype(ObjectInfo* object, size_t proto_id) {
 		assert( object );
 		if( proto_id == 0 || proto_id >= m_protoid_map.size() ) {

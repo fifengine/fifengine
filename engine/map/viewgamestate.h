@@ -38,6 +38,8 @@
 
 namespace FIFE { namespace map {
 
+	class MapLoader;
+
 	class Map;
 	class View;
 	class Control;
@@ -63,6 +65,8 @@ namespace FIFE { namespace map {
 			 */
 			virtual ~ViewGameState();
 			// XXX Needed explicitly? Not sure with multiple inheritance
+
+			void addMapLoader(MapLoader* loader);
 			
 			/** Set the mapfile that will be loaded when this state gets activeted
 			 * @param map The map filename.

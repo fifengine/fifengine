@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <list>
 
 // 3rd party library includes
 #include <boost/shared_ptr.hpp>
@@ -35,19 +36,13 @@
 
 namespace FIFE { namespace map {
 
+	class Archetype;
+
 	class Map;
 	typedef boost::shared_ptr<Map> MapPtr;
 	
 	class MapLoader {
 		public:
-
-			/** create a loader
-			 *
-			 * @param type the kind of loader to be created; current options are
-			 *   XML
-			 *   Fallout
-			 */
-			static MapLoader* createLoader(const std::string& type);
 
 			MapLoader(const std::string& name) : m_name(name) {}
 			virtual ~MapLoader() {}
@@ -63,6 +58,10 @@ namespace FIFE { namespace map {
 			virtual void saveFile(const std::string & path, MapPtr map)
 			{
 			}
+
+		protected:
+
+			std::list<Archetype*>& getArchetypes(MapPtr map);
 
 		private:
 			std::string m_name;

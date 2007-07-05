@@ -29,18 +29,12 @@
 // Second block: files included from the same folder
 
 #include "map_loader.h"
-#include "native/map_loaders/xml.h"
-#include "fallout/map_loaders/fallout.h"
+#include "map/structures/map.h"
 
 namespace FIFE { namespace map {
 
-MapLoader* MapLoader::createLoader(const std::string& type) {
-	if(type == "XML")
-		return new loaders::xml::XML();
-	if(type == "Fallout")
-		return new loaders::fallout::Fallout();
-
-	return 0;
+std::list<Archetype*>& MapLoader::getArchetypes(MapPtr map) {
+	return map->m_archetypes;
 }
 
 } }; 

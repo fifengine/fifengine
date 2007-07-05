@@ -40,7 +40,7 @@
 #include "util/log.h"
 #include "util/purge.h"
 #include "util/settingsmanager.h"
-#include "loaders/map_loader.h"
+#include "map/map_loader.h"
 
 #include "camera.h"
 #include "control.h"
@@ -57,9 +57,6 @@ namespace FIFE { namespace map {
 		m_scriptengine(LuaScript::instance()),
 		m_settings(SettingsManager::instance()),
 		m_isrunning(false) {
-
-		m_loaders.insert(std::make_pair("Fallout", MapLoader::createLoader("Fallout")));
-		m_loaders.insert(std::make_pair("XML", MapLoader::createLoader("XML")));
 
     // load these geometries manually for Fallout backwards-compatibility
 		Geometry::registerGeometry(s_geometry_info(
@@ -94,6 +91,10 @@ namespace FIFE { namespace map {
 		delete m_runner;
 
 		Log("map_control") << "objects left alive: " << ObjectInfo::globalCount();
+	}
+
+	void Control::addMapLoader(MapLoader* loader) {
+		m_loaders.insert(std::pair<std::string,MapLoader*>(loader->getName(), loader));
 	}
 
 	void Control::load(const std::string& filename) {

@@ -102,11 +102,6 @@ namespace FIFE { namespace map {
 			 */
 			void addArchetype(Archetype* archetype);
 
-			/** Dump a list of this map's archetypes; this is a hack for exporting
-			 * data to a savefile; maybe the loaders should be friended instead?
-			 */
-			std::list<Archetype*>& dumpArchetypes();
-			
 			/** Load a prototype
 			 */
 			void loadPrototype(ObjectInfo* object, size_t proto_id);
@@ -210,6 +205,8 @@ namespace FIFE { namespace map {
 
 			Map(const Map& map);
 			Map& operator=(const Map& map);
+
+			friend class MapLoader;
 	};
 
 } } //FIFE::map

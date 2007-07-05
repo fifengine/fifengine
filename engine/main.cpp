@@ -43,6 +43,8 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "util/settingsmanager.h"
+#include "loaders/native/map_loaders/xml.h"
+#include "loaders/fallout/map_loaders/fallout.h"
 
 #include "engine.h"
 
@@ -120,6 +122,8 @@ int main(int argc, char* argv[]) {
 		FIFE::EventManager& em = *FIFE::EventManager::instance();
 		// construct a mapview-gamestate; inactive by default
 		mapview = new FIFE::map::ViewGameState(em);
+		mapview->addMapLoader(new FIFE::map::loaders::fallout::Fallout());
+		mapview->addMapLoader(new FIFE::map::loaders::xml::XML());
 		mapview->getMap(); // just to suppress the 'unused variable warning'
 
 #ifdef HAVE_MOVIE

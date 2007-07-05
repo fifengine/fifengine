@@ -315,8 +315,6 @@
 					<File RelativePath="..\..\..\engine\loaders\fallout\video_loaders\frm_provider.h"></File>
 				</Filter>
 			</Filter>
-			<File RelativePath="..\..\..\engine\loaders\map_loader.cpp"></File>
-			<File RelativePath="..\..\..\engine\loaders\map_loader.h"></File>
 			<Filter Name="native">
 				<Filter Name="map_loaders">
 					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\fwd.h"></File>
@@ -390,6 +388,8 @@
 				<File RelativePath="..\..\..\engine\map\lua\lua_object.cpp"></File>
 				<File RelativePath="..\..\..\engine\map\lua\lua_object.h"></File>
 			</Filter>
+			<File RelativePath="..\..\..\engine\map\map_loader.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\map_loader.h"></File>
 			<File RelativePath="..\..\..\engine\map\runner.cpp"></File>
 			<File RelativePath="..\..\..\engine\map\runner.h"></File>
 			<File RelativePath="..\..\..\engine\map\scriptingslave.cpp"></File>
@@ -540,14 +540,6 @@
 			<File RelativePath="..\..\..\engine\vfs\vfssource.cpp"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssourcefactory.cpp"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
-			<Filter Name="zip">
-				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.h"></File>
-			</Filter>
 		</Filter>
 		<Filter Name="video">
 			<File RelativePath="..\..\..\engine\video\action.h"></File>

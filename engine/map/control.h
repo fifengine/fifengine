@@ -64,6 +64,8 @@ namespace map {
 			/** Destructor
 			 */
 			~Control();
+
+			void addMapLoader(MapLoader* loader);
 	
 			/** Load and set a map from a map file
 			 *  Does the equivalent to

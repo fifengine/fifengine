@@ -567,7 +567,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		TiXmlElement* archetypes = new TiXmlElement("archetypes");
 		map->LinkEndChild(archetypes);
 		{
-			std::list<Archetype*> l = mapdata->dumpArchetypes();
+			std::list<Archetype*> l = getArchetypes(mapdata);
 
 			for(std::list<Archetype*>::iterator it = l.begin(); it != l.end(); ++it) {
 				// TODO: add support for saving actual embedded archetypes (rather

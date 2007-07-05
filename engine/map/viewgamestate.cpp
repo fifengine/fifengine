@@ -66,6 +66,11 @@ namespace FIFE { namespace map {
 		delete m_camera;
 	}
 
+	void ViewGameState::addMapLoader(MapLoader* loader) {
+		if(m_control)
+			m_control->addMapLoader(loader);
+	}
+
 	void ViewGameState::setFile(const std::string& map) {
 		m_filename = boost::trim_copy_if(map, boost::algorithm::is_cntrl());
 	}
