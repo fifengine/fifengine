@@ -19,68 +19,66 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SETTINGSMANAGER_H
-#define FIFE_SETTINGSMANAGER_H
+#ifndef FIFE_GUICHAN_ADDON_COMMANDLINE_H
+#define FIFE_GUICHAN_ADDON_COMMANDLINE_H
 
 // Standard C++ library includes
-#include <map>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
-#include <boost/lexical_cast.hpp>
+#include <boost/function.hpp>
+#include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "exception.h"
-#include "singleton.h"
+#include "util/time/timer.h"
 
 namespace FIFE {
 
-	class SettingsManager: public DynamicSingleton<SettingsManager> {
+	/** A Command line widget
+	 */
+	class CommandLine : public gcn::TextField {
 		public:
-			SettingsManager();
-			virtual ~SettingsManager();
+			typedef boost::function1<void,std::string> type_callback;
 
-			/** Load settings from settings file
-			 * @param settings_file_name name of the settings file to use
+			/** Constructor
 			 */
-			void loadSettings(const std::string& settings_file_name);
+			CommandLine();
 
-			/** Save settings to settings file. If file does not exist and create_on_failure = false,
-			 *  raises CannotOpenFile exception
-			 * @param settings_file_name name of the settings file to use
-			 * @param create_on_failure creates new settings file in case named settings file cannot be found
+			/** Destructor
 			 */
-			void saveSettings(const std::string& settings_file_name, bool create_on_failure=false) const;
+			~CommandLine();
 
-			template <typename T> T read(const std::string& key, const T& def) {
-				type_settings::const_iterator i = m_settings.find(key);
-				if (i == m_settings.end()) {
-					write(key, def);
-					return def;
-				}
-				try {
-					return boost::lexical_cast<T>(i->second);
-				} catch( boost::bad_lexical_cast& ) {
-					return def;
-				}
-			}
+			void keyPressed(gcn::KeyEvent& keyEvent);
+			virtual void drawCaret(gcn::Graphics * graphics, int x);
 
-			template <typename T> void write(const std::string& key, const T& value) {
-				m_settings[key] = boost::lexical_cast<std::string>(value);
-			}
+			/** Set callback on pressing the ENTER key
+			 */
+			void setCallback(const type_callback& cb);
 
+			/** Toggle the caret visibility
+			 */
+			void toggleCaretVisible();
+
+			/** Start blinking the caret
+			 */
+			void startBlinking();
+
+			/** Stop blinking the caret for a few seconds
+			 */
+			void stopBlinking();
 		private:
-
-			typedef std::map<std::string, std::string> type_settings;
-			type_settings m_settings;
-			std::string m_settings_file_name;
-
+			type_callback m_callback;
+			std::vector<std::string> m_history;
+			size_t m_history_position;
+			std::string m_cmdline;
+			bool m_caretVisible;
+			Timer m_blinkTimer;
+			Timer m_suppressBlinkTimer;
 	};
-
-}//FIFE
-
+}
 #endif
-
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -19,68 +19,41 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SETTINGSMANAGER_H
-#define FIFE_SETTINGSMANAGER_H
+#ifndef FIFE_GUICHAN_ADDON_TWOBUTTON_H
+#define FIFE_GUICHAN_ADDON_TWOBUTTON_H
 
 // Standard C++ library includes
-#include <map>
 #include <string>
 
 // 3rd party library includes
-#include <boost/lexical_cast.hpp>
+#include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "exception.h"
-#include "singleton.h"
 
-namespace FIFE {
+namespace gcn {
 
-	class SettingsManager: public DynamicSingleton<SettingsManager> {
+	class TwoButton : public Button {
 		public:
-			SettingsManager();
-			virtual ~SettingsManager();
-
-			/** Load settings from settings file
-			 * @param settings_file_name name of the settings file to use
-			 */
-			void loadSettings(const std::string& settings_file_name);
-
-			/** Save settings to settings file. If file does not exist and create_on_failure = false,
-			 *  raises CannotOpenFile exception
-			 * @param settings_file_name name of the settings file to use
-			 * @param create_on_failure creates new settings file in case named settings file cannot be found
-			 */
-			void saveSettings(const std::string& settings_file_name, bool create_on_failure=false) const;
-
-			template <typename T> T read(const std::string& key, const T& def) {
-				type_settings::const_iterator i = m_settings.find(key);
-				if (i == m_settings.end()) {
-					write(key, def);
-					return def;
-				}
-				try {
-					return boost::lexical_cast<T>(i->second);
-				} catch( boost::bad_lexical_cast& ) {
-					return def;
-				}
-			}
-
-			template <typename T> void write(const std::string& key, const T& value) {
-				m_settings[key] = boost::lexical_cast<std::string>(value);
-			}
-
+			TwoButton(Image *up_image, Image *down_image);
+			TwoButton(Image *up_image, Image *down_image,
+					const char * caption);
+			~TwoButton();
+			void draw(Graphics *graphics);
+			void adjustSize();
+			/*
+			bool isPressed() const;
+			void mousePress(int,int,int);
+			void mouseRelease(int,int,int);
+			*/
 		private:
-
-			typedef std::map<std::string, std::string> type_settings;
-			type_settings m_settings;
-			std::string m_settings_file_name;
-
+			Image *up;
+			Image *down;
 	};
 
-}//FIFE
+}
 
 #endif
-
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

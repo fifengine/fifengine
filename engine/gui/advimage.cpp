@@ -19,68 +19,60 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SETTINGSMANAGER_H
-#define FIFE_SETTINGSMANAGER_H
-
 // Standard C++ library includes
-#include <map>
-#include <string>
 
 // 3rd party library includes
-#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "exception.h"
-#include "singleton.h"
+#include "video/animation.h"
+#include "video/imagecache.h"
+#include "video/renderable.h"
 
-namespace FIFE {
+#include "advimage.h"
 
-	class SettingsManager: public DynamicSingleton<SettingsManager> {
-		public:
-			SettingsManager();
-			virtual ~SettingsManager();
+namespace gcn {
+	AdvImage::AdvImage() : FIFE::GCNImage() {
+		cacheId = 0;
+	}
+	void AdvImage::loadFromCache(const size_t imageId) {
+		cacheId = imageId;
+	}
+	void AdvImage::loadFromFile(const std::string & filename) {
+		cacheId = FIFE::ImageCache::instance()->addImageFromFile(filename);
+	}
+	AdvImage::AdvImage(const std::string & filename) : FIFE::GCNImage() {
+		cacheId = FIFE::ImageCache::instance()->addImageFromFile(filename);
+	}
 
-			/** Load settings from settings file
-			 * @param settings_file_name name of the settings file to use
-			 */
-			void loadSettings(const std::string& settings_file_name);
+	AdvImage::~AdvImage() {
+	}
 
-			/** Save settings to settings file. If file does not exist and create_on_failure = false,
-			 *  raises CannotOpenFile exception
-			 * @param settings_file_name name of the settings file to use
-			 * @param create_on_failure creates new settings file in case named settings file cannot be found
-			 */
-			void saveSettings(const std::string& settings_file_name, bool create_on_failure=false) const;
+	FIFE::Animation* AdvImage::getImageAsAnimation() {
+		FIFE::RenderAble* ra = FIFE::ImageCache::instance()->getImage(cacheId);
+		if (ra->getType() == FIFE::RenderAble::RT_ANIMATION) {
+			FIFE::Animation* a = dynamic_cast<FIFE::Animation*>(ra);
+			return a;
+		}
+		return NULL;
+	}
 
-			template <typename T> T read(const std::string& key, const T& def) {
-				type_settings::const_iterator i = m_settings.find(key);
-				if (i == m_settings.end()) {
-					write(key, def);
-					return def;
-				}
-				try {
-					return boost::lexical_cast<T>(i->second);
-				} catch( boost::bad_lexical_cast& ) {
-					return def;
-				}
-			}
 
-			template <typename T> void write(const std::string& key, const T& value) {
-				m_settings[key] = boost::lexical_cast<std::string>(value);
-			}
+	void AdvImage::setAnimActive(bool active) {
+		FIFE::Animation* a = getImageAsAnimation();
+		if (!a)
+			return;
+		a->setIsActive(active);
+	}
 
-		private:
+	void AdvImage::setAnimDirection(bool forward) {
+		FIFE::Animation* a = getImageAsAnimation();
+		if (!a)
+			return;
+		a->setDirection(forward);
+	}
 
-			typedef std::map<std::string, std::string> type_settings;
-			type_settings m_settings;
-			std::string m_settings_file_name;
-
-	};
-
-}//FIFE
-
-#endif
-
+}
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

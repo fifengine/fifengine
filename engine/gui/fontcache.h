@@ -19,68 +19,79 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SETTINGSMANAGER_H
-#define FIFE_SETTINGSMANAGER_H
+#ifndef FIFE_GUICHAN_ADDON_FONTCACHE_H
+#define FIFE_GUICHAN_ADDON_FONTCACHE_H
 
 // Standard C++ library includes
-#include <map>
+#include <list>
 #include <string>
 
+// Platform specific includes
+
 // 3rd party library includes
-#include <boost/lexical_cast.hpp>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "exception.h"
-#include "singleton.h"
+#include "util/time/timer.h"
 
+struct SDL_Surface;
 namespace FIFE {
+	class FontBase;
+	class Image;
 
-	class SettingsManager: public DynamicSingleton<SettingsManager> {
+	/** Generic cache for rendered text
+	 *  Caches a number of Images with text, as rendered by a Font.
+	 *  Makes sure no more than a maximum number of strings is cached at a time.
+	 *  Automatically removes cached strings not used for a minute.
+	 *  Doesn't use resources (apart from a minimum) if not used after a while.
+	 *
+	 *  @todo Should probably use a @c std::map instead of a @c std::list
+	 */
+	class FontCache {
 		public:
-			SettingsManager();
-			virtual ~SettingsManager();
-
-			/** Load settings from settings file
-			 * @param settings_file_name name of the settings file to use
+			/** Constructor
+			 *  Constructs a cache with a maximum of cacheSize entries
 			 */
-			void loadSettings(const std::string& settings_file_name);
+			FontCache(size_t cacheSize = 200);
 
-			/** Save settings to settings file. If file does not exist and create_on_failure = false,
-			 *  raises CannotOpenFile exception
-			 * @param settings_file_name name of the settings file to use
-			 * @param create_on_failure creates new settings file in case named settings file cannot be found
+			/** Destructor
 			 */
-			void saveSettings(const std::string& settings_file_name, bool create_on_failure=false) const;
+			~FontCache();
 
-			template <typename T> T read(const std::string& key, const T& def) {
-				type_settings::const_iterator i = m_settings.find(key);
-				if (i == m_settings.end()) {
-					write(key, def);
-					return def;
-				}
-				try {
-					return boost::lexical_cast<T>(i->second);
-				} catch( boost::bad_lexical_cast& ) {
-					return def;
-				}
-			}
+			/** Get a cache string image
+			 */
+			Image* getRenderedText( FontBase* fontbase, const std::string& text);
 
-			template <typename T> void write(const std::string& key, const T& value) {
-				m_settings[key] = boost::lexical_cast<std::string>(value);
-			}
+			/** Add a cache string image
+			 */
+			void addRenderedText( FontBase* fontbase, const std::string& text, Image* image);
 
-		private:
+			/** Remove entries not used since a minute
+			 *  Is a timer callback.
+			 */
+			void removeOldEntries();
 
-			typedef std::map<std::string, std::string> type_settings;
-			type_settings m_settings;
-			std::string m_settings_file_name;
+		protected:
+			typedef struct {
+				std::string text;
+				SDL_Color color;
+				bool antialias;
+				int glyph_spacing;
+				int row_spacing;
+				uint32_t timestamp;
 
+				Image* image;
+			} s_cache_entry;
+
+			typedef std::list<s_cache_entry> type_cache;
+			type_cache m_cache;
+			size_t m_cacheSize;
+			size_t m_cacheMaxSize;
+
+			Timer m_collectTimer;
 	};
-
-}//FIFE
-
+}
 #endif
-

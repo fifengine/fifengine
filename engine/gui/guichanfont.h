@@ -19,68 +19,40 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SETTINGSMANAGER_H
-#define FIFE_SETTINGSMANAGER_H
+#ifndef FIFE_GUICHAN_ADDON_GUICHANFONT_H
+#define FIFE_GUICHAN_ADDON_GUICHANFONT_H
 
 // Standard C++ library includes
-#include <map>
 #include <string>
 
+// Platform specific includes
+#include "util/fife_stdint.h"
+
 // 3rd party library includes
-#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "exception.h"
-#include "singleton.h"
+#include "sdlimagefont.hpp"
 
 namespace FIFE {
 
-	class SettingsManager: public DynamicSingleton<SettingsManager> {
+	/** Guichan Style Image font
+	 *
+	 *  Can read any of: http://guichan.sourceforge.net/imagefontcollection.shtml
+	 */
+	class GuichanImageFont : public SDLImageFont {
 		public:
-			SettingsManager();
-			virtual ~SettingsManager();
-
-			/** Load settings from settings file
-			 * @param settings_file_name name of the settings file to use
+			/**
+			 * Constructor.
+			 *
+			 * @param filename the filename of the Image Font.
+			 * @param glyphs the glyphs for Guichan format.
 			 */
-			void loadSettings(const std::string& settings_file_name);
-
-			/** Save settings to settings file. If file does not exist and create_on_failure = false,
-			 *  raises CannotOpenFile exception
-			 * @param settings_file_name name of the settings file to use
-			 * @param create_on_failure creates new settings file in case named settings file cannot be found
-			 */
-			void saveSettings(const std::string& settings_file_name, bool create_on_failure=false) const;
-
-			template <typename T> T read(const std::string& key, const T& def) {
-				type_settings::const_iterator i = m_settings.find(key);
-				if (i == m_settings.end()) {
-					write(key, def);
-					return def;
-				}
-				try {
-					return boost::lexical_cast<T>(i->second);
-				} catch( boost::bad_lexical_cast& ) {
-					return def;
-				}
-			}
-
-			template <typename T> void write(const std::string& key, const T& value) {
-				m_settings[key] = boost::lexical_cast<std::string>(value);
-			}
-
-		private:
-
-			typedef std::map<std::string, std::string> type_settings;
-			type_settings m_settings;
-			std::string m_settings_file_name;
-
+			GuichanImageFont(const std::string& filename, const std::string& glyphs);
 	};
 
-}//FIFE
+}
 
 #endif
-
