@@ -145,7 +145,7 @@
       <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
-      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*,*os</hidepatterns>
+      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*,*os,fife.log,*.so,*.pyc,__init__.py</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>

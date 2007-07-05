@@ -70,12 +70,20 @@ for i in xrange(8):
 	time.sleep(0.2)
 
 class MyExecuter(fife.ConsoleExecuter):
+	def __init__(self):
+		fife.ConsoleExecuter.__init__(self)
+		self.quitRequested = False
+		
 	def onToolsClick(self):
 		print "In python, tools clicked"
 
 	def onCommand(self, command):
 		print "In python, command %s received" % command
 		result = "no result"
+		if command.lower() in ('quit', 'exit'):
+			self.quitRequested = True
+			return "quitting"
+		
 		try:
 			result = str(eval(command))
 		except:
@@ -88,5 +96,7 @@ console = guimanager.getConsole()
 consoleexec = MyExecuter()
 console.setConsoleExecuter(consoleexec)
 
-for i in xrange(10000):
+while True:
 	engine.pump()
+	if consoleexec.quitRequested:
+		break
