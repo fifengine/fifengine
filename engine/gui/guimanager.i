@@ -6,7 +6,7 @@
 namespace FIFE {
 	class Console;
 	class GUIManager {
-		public:
-			Console* getConsole();
+	public:
+		Console* getConsole();
 	};
 }

@@ -3,9 +3,6 @@
 #include "vfs/vfsutility.h"
 %}
 
-%include "std_string.i"
-%include "std_vector.i"
-
 typedef unsigned char uint8_t;
 namespace std {
    %template(vectors) vector<std::string>;

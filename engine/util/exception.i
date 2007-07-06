@@ -3,8 +3,6 @@
 #include "util/exception.h"
 %}
 
-%include "std_string.i"
-
 namespace FIFE {
 	class Exception {
 	public:

@@ -311,8 +311,24 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\generatedfiles\swigwrappers\lua\fife_wrap.cxx">
+		<Unit filename="..\..\..\engine\generatedfiles\swigwrappers\python\fife_wrap.cxx">
 				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\generatedfiles\swigwrappers\python\fife_wrap.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\gui\base\advimage.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\gui\base\advimage.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\gui\console\commandline.cpp">
@@ -406,16 +422,6 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\gui\guimanager.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\gui\widgets\advimage.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\gui\widgets\advimage.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

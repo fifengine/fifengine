@@ -40,6 +40,12 @@ namespace FIFE {
 
 namespace gcn {
 
+	class ImageAnimationListener {
+	public:
+		virtual void onAnimationEnd() = 0;
+		virtual ~ImageAnimationListener() {}
+	};
+
 	class AdvImage : public FIFE::GCNImage {
 		public:
 			AdvImage();
@@ -50,8 +56,14 @@ namespace gcn {
 
 			void setAnimActive(bool active);
 			void setAnimDirection(bool forward);
+			void setAnimListener(ImageAnimationListener* animationlistener);
+			void removeAnimListener();
+			bool isAnimation();
+
 		protected:
 			FIFE::Animation* getImageAsAnimation();
+		private:
+			ImageAnimationListener* m_animationlistener;
 	};
 
 }

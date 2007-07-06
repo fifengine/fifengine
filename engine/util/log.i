@@ -3,8 +3,6 @@
 #include "util/log.h"
 %}
 
-%include "std_string.i"
-
 namespace FIFE {
 	class Log {
 		public:

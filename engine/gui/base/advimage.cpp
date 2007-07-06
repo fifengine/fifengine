@@ -22,6 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/bind.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -34,7 +35,7 @@
 #include "advimage.h"
 
 namespace gcn {
-	AdvImage::AdvImage() : FIFE::GCNImage() {
+	AdvImage::AdvImage() : FIFE::GCNImage(), m_animationlistener(0) {
 		cacheId = 0;
 	}
 	void AdvImage::loadFromCache(const size_t imageId) {
@@ -43,7 +44,7 @@ namespace gcn {
 	void AdvImage::loadFromFile(const std::string & filename) {
 		cacheId = FIFE::ImageCache::instance()->addImageFromFile(filename);
 	}
-	AdvImage::AdvImage(const std::string & filename) : FIFE::GCNImage() {
+	AdvImage::AdvImage(const std::string & filename): FIFE::GCNImage(), m_animationlistener(0) {
 		cacheId = FIFE::ImageCache::instance()->addImageFromFile(filename);
 	}
 
@@ -74,5 +75,26 @@ namespace gcn {
 		a->setDirection(forward);
 	}
 
+	void AdvImage::setAnimListener(ImageAnimationListener* animationlistener) {
+		m_animationlistener = animationlistener;
+		FIFE::Animation* a = getImageAsAnimation();
+		if (!a) {
+			return;
+		}
+		a->setOnEndCallback(boost::bind(&ImageAnimationListener::onAnimationEnd, animationlistener));
+ 	}
+
+	void AdvImage::removeAnimListener() {
+		m_animationlistener = 0;
+		FIFE::Animation* a = getImageAsAnimation();
+		if (!a) {
+			return;
+		}
+		a->setOnEndCallback(NULL);
+	}
+
+	bool AdvImage::isAnimation() {
+		return static_cast<bool>(getImageAsAnimation());
+	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

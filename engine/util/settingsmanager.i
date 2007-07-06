@@ -2,8 +2,6 @@
 %{
 #include "util/settingsmanager.h"
 %}
-%include "std_string.i"
-
 namespace FIFE {
 	class SettingsManager {
 	public:
