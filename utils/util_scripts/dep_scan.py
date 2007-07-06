@@ -9,8 +9,8 @@ DIR_DEPS_OUT = 'doc/dependencies/dirdeps'
 MODULE_DEPS_OUT = 'doc/dependencies/moduledeps'
 #SKIPPED_PROVIDERS = ['/util/', '/script/', '/solver/']
 #SKIPPED_USERS = ['/script/', '/audio/', 'engine.cpp', 'main.cpp', '/solver/', 'engine.h']
-SKIPPED_PROVIDERS = ['/util/', '/script/', '/input/']
-SKIPPED_USERS = ['engine.cpp', 'main.cpp', 'engine.h', '/script/', '/input/']
+SKIPPED_PROVIDERS = [] #'/util/', '/script/', '/input/']
+SKIPPED_USERS = [] #'engine.cpp', 'main.cpp', 'engine.h', '/script/', '/input/']
 
 reInc = re.compile('#include "(.*?)"')
 

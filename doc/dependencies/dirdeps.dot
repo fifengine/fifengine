@@ -23,8 +23,8 @@ subgraph cluster_2 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "solver"; "solver/micropather_solver"
-    label = "solver";
+    "script/gui"; "script"
+    label = "script";
 }
 subgraph cluster_3 {
     style=filled;
@@ -37,120 +37,228 @@ subgraph cluster_4 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "eventchannel/base"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/lua"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
-    label = "eventchannel";
+    "solver"; "solver/micropather_solver"
+    label = "solver";
 }
 subgraph cluster_5 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "engine"
+    label = "engine";
+}
+subgraph cluster_6 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "eventchannel/base"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/lua"; "eventchannel/source"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
+    label = "eventchannel";
+}
+subgraph cluster_7 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "loaders/fallout/map_loaders"; "loaders/native/map_loaders"; "loaders/native/video_loaders"; "loaders/fallout/video_loaders"; "loaders"
     label = "loaders";
 }
-subgraph cluster_6 {
+subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "util"; "util/gamestate"
+    "util"; "util/time"; "util/gamestate"; "util/time/lua"
     label = "util";
 }
-subgraph cluster_7 {
+subgraph cluster_9 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "video/movie"; "video"; "video/gui"; "video/renderbackends/opengl"; "video/renderbackends/sdl"
+    "video"; "video/movie"; "video/renderbackends/opengl"; "video/renderbackends/sdl"; "video/gui"
     label = "video";
 }
-subgraph cluster_8 {
+subgraph cluster_10 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "input"; "input/lua"
+    label = "input";
+}
+subgraph cluster_11 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "audio"; "audio/lua"
     label = "audio";
 }
-subgraph cluster_9 {
+subgraph cluster_12 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "vfs/zip"; "vfs/lua"; "vfs"; "vfs/raw"
     label = "vfs";
 }
+    "util/time" -> "util"
+    "util/gamestate" -> "util"
     "util/gamestate" -> "eventchannel"
+    "audio/lua" -> "util"
     "audio/lua" -> "audio"
+    "vfs/zip" -> "util"
     "vfs/zip" -> "vfs"
     "vfs/zip" -> "vfs/raw"
-    "video" -> "video"
-    "eventchannel/lua" -> "eventchannel/key"
+    "video/renderbackends/opengl" -> "util"
+    "video/renderbackends/opengl" -> "video/gui"
+    "video/renderbackends/opengl" -> "video"
+    "eventchannel/lua" -> "script"
     "eventchannel/lua" -> "eventchannel/base"
+    "eventchannel/lua" -> "eventchannel/mouse"
+    "eventchannel/lua" -> "eventchannel/key"
     "eventchannel/lua" -> "eventchannel/widget"
     "eventchannel/lua" -> "eventchannel/manager"
-    "eventchannel/lua" -> "eventchannel/mouse"
+    "script/gui" -> "video/gui"
+    "script/gui" -> "script"
+    "script/gui" -> "gui"
+    "script/gui" -> "util"
+    "script/gui" -> "video"
+    "script/gui" -> "eventchannel/source"
+    "script/gui" -> "eventchannel/widget"
     "map/geometries" -> "xml"
+    "map/geometries" -> "util"
+    "xml" -> "util"
     "xml" -> "xml/tinyxml"
+    "map/command" -> "util"
     "map/command" -> "map"
     "map/command" -> "video"
     "map/command" -> "map/structures"
     "map/command" -> "map/geometries"
+    "loaders/fallout/video_loaders" -> "util"
     "loaders/fallout/video_loaders" -> "loaders/fallout/map_loaders"
     "loaders/fallout/video_loaders" -> "video"
+    "script" -> "engine"
+    "script" -> "map"
+    "script" -> "util/gamestate"
+    "script" -> "eventchannel/widget"
+    "script" -> "map/lua"
+    "script" -> "gui"
+    "script" -> "util"
+    "script" -> "eventchannel/lua"
+    "script" -> "input"
+    "script" -> "video/movie"
+    "script" -> "util/time/lua"
+    "input/lua" -> "util"
+    "input/lua" -> "input"
     "solver/micropather_solver" -> "solver"
     "xml/tinyxml" -> "vfs"
     "xml/tinyxml" -> "vfs/raw"
+    "map/lua" -> "util"
     "map/lua" -> "map"
+    "map/lua" -> "util/time"
     "map/lua" -> "map/structures"
+    "map/lua" -> "script"
+    "vfs/raw" -> "util"
+    "input" -> "util"
+    "input" -> "eventchannel/sdl"
+    "loaders/native/video_loaders" -> "util"
     "loaders/native/video_loaders" -> "xml/tinyxml"
     "loaders/native/video_loaders" -> "video"
     "loaders/native/video_loaders" -> "vfs"
     "loaders/native/video_loaders" -> "vfs/raw"
+    "engine" -> "engine"
+    "engine" -> "vfs/zip"
+    "engine" -> "util/gamestate"
+    "engine" -> "audio"
+    "engine" -> "loaders/fallout/video_loaders"
+    "engine" -> "video/renderbackends/sdl"
+    "engine" -> "video/renderbackends/opengl"
+    "engine" -> "script"
+    "engine" -> "gui"
+    "engine" -> "video/movie"
+    "engine" -> "map/structures"
+    "engine" -> "util"
+    "engine" -> "map"
+    "engine" -> "video"
+    "engine" -> "input"
+    "engine" -> "util/time"
+    "engine" -> "loaders/native/video_loaders"
+    "engine" -> "vfs"
+    "engine" -> "eventchannel/manager"
     "map" -> "map"
+    "map" -> "util/gamestate"
     "map" -> "map/command"
+    "map" -> "script"
     "map" -> "gui"
     "map" -> "map/structures"
     "map" -> "eventchannel/mouse"
+    "map" -> "util"
     "map" -> "video"
     "map" -> "map/effects"
+    "map" -> "util/time"
+    "map" -> "input"
     "map" -> "loaders"
     "map" -> "vfs"
     "map" -> "map/geometries"
     "loaders/fallout/map_loaders" -> "xml"
+    "loaders/fallout/map_loaders" -> "util/time"
     "loaders/fallout/map_loaders" -> "map/structures"
     "loaders/fallout/map_loaders" -> "loaders"
+    "loaders/fallout/map_loaders" -> "util"
     "loaders/fallout/map_loaders" -> "xml/tinyxml"
     "loaders/fallout/map_loaders" -> "vfs/raw"
     "loaders/fallout/map_loaders" -> "video"
     "loaders/fallout/map_loaders" -> "vfs"
     "loaders/fallout/map_loaders" -> "map/geometries"
+    "util" -> "util"
     "util" -> "xml/tinyxml"
     "map/effects" -> "map"
+    "map/effects" -> "util/time"
+    "vfs/lua" -> "util"
     "vfs/lua" -> "vfs"
     "vfs/lua" -> "vfs/raw"
+    "video/gui" -> "util"
     "video/gui" -> "video/gui"
     "video/gui" -> "video"
-    "video/movie" -> "video"
-    "video/movie" -> "video/renderbackends/sdl"
+    "audio" -> "util"
+    "audio" -> "util/time"
+    "audio" -> "vfs"
+    "audio" -> "vfs/raw"
+    "video/renderbackends/sdl" -> "util"
     "video/renderbackends/sdl" -> "video/gui"
     "video/renderbackends/sdl" -> "video"
     "gui" -> "video/gui"
+    "gui" -> "input"
+    "gui" -> "script"
     "gui" -> "eventchannel/mouse"
+    "gui" -> "util"
     "gui" -> "eventchannel/key"
     "gui" -> "video"
     "gui" -> "vfs/raw"
+    "gui" -> "util/time"
     "gui" -> "vfs"
     "gui" -> "eventchannel/sdl"
+    "map/structures" -> "util"
     "map/structures" -> "loaders"
-    "map/structures" -> "video"
     "map/structures" -> "map/geometries"
+    "map/structures" -> "video"
+    "map/structures" -> "script"
     "loaders/native/map_loaders" -> "xml"
     "loaders/native/map_loaders" -> "map/structures"
     "loaders/native/map_loaders" -> "loaders"
+    "loaders/native/map_loaders" -> "util"
     "loaders/native/map_loaders" -> "xml/tinyxml"
     "loaders/native/map_loaders" -> "vfs/raw"
     "loaders/native/map_loaders" -> "video"
     "loaders/native/map_loaders" -> "vfs"
     "loaders/native/map_loaders" -> "map/geometries"
-    "video/renderbackends/opengl" -> "video/gui"
-    "video/renderbackends/opengl" -> "video"
-    "audio" -> "vfs"
-    "audio" -> "vfs/raw"
+    "video" -> "util"
+    "video" -> "util/time"
+    "video" -> "video"
+    "video/movie" -> "util"
+    "video/movie" -> "util/time"
+    "video/movie" -> "util/gamestate"
+    "video/movie" -> "video"
+    "video/movie" -> "video/renderbackends/sdl"
+    "vfs" -> "util"
     "vfs" -> "vfs/raw"
+    "eventchannel/manager" -> "util"
+    "util/time/lua" -> "util"
+    "util/time/lua" -> "util/time"
+    "util/time/lua" -> "script"
 }
