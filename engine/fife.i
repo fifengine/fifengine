@@ -20,5 +20,5 @@ namespace boost {
 %include "audio/audiomanager.i"
 %include "engine.i"
 %include "gui/guimanager.i"
-%include "gui/console.i"
+%include "gui/console/console.i"
 %include "gui/gui.i"

@@ -35,10 +35,10 @@
 #include "video/gui/gcnimageloader.h"
 #include "util/settingsmanager.h"
 #include "util/debugutils.h"
+#include "gui/console/console.h"
+#include "gui/fonts/font.h"
 
 #include "guimanager.h"
-#include "console.h"
-#include "font.h"
 
 
 namespace FIFE {

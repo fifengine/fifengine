@@ -36,7 +36,7 @@
 #include "util/debugutils.h"
 #include "util/time/timemanager.h"
 #include "audio/audiomanager.h"
-#include "gui/console.h"
+#include "gui/console/console.h"
 /*
 #include "loaders/native/video_loaders/complexanimation_provider.h"
 #include "loaders/fallout/video_loaders/frm_provider.h"

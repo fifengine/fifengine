@@ -33,7 +33,6 @@
 #include "util/time/timemanager.h"
 #include "util/log.h"
 
-#include "guimanager.h"
 #include "commandline.h"
 
 namespace FIFE {

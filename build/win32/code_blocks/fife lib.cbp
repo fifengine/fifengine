@@ -321,77 +321,87 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\aafont.cpp">
+		<Unit filename="..\..\..\engine\gui\console\commandline.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\aafont.h">
+		<Unit filename="..\..\..\engine\gui\console\commandline.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\advimage.cpp">
+		<Unit filename="..\..\..\engine\gui\console\console.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\advimage.h">
+		<Unit filename="..\..\..\engine\gui\console\console.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\commandline.cpp">
+		<Unit filename="..\..\..\engine\gui\fonts\aafont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\commandline.h">
+		<Unit filename="..\..\..\engine\gui\fonts\aafont.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\console.cpp">
+		<Unit filename="..\..\..\engine\gui\fonts\font.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\console.h">
+		<Unit filename="..\..\..\engine\gui\fonts\font.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\font.cpp">
+		<Unit filename="..\..\..\engine\gui\fonts\fontcache.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\font.h">
+		<Unit filename="..\..\..\engine\gui\fonts\fontcache.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\fontcache.cpp">
+		<Unit filename="..\..\..\engine\gui\fonts\guichanfont.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\fontcache.h">
+		<Unit filename="..\..\..\engine\gui\fonts\guichanfont.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\gui\fonts\sdlimagefont.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\gui\fonts\sdlimagefont.hpp">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\gui\fonts\sdltruetypefont.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="..\..\..\engine\gui\fonts\sdltruetypefont.hpp">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="..\..\..\engine\gui\fwd.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\gui\guichanfont.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\gui\guichanfont.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -407,41 +417,31 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\icon2.cpp">
+		<Unit filename="..\..\..\engine\gui\widgets\advimage.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\icon2.hpp">
+		<Unit filename="..\..\..\engine\gui\widgets\advimage.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\sdlimagefont.cpp">
+		<Unit filename="..\..\..\engine\gui\widgets\icon2.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\sdlimagefont.hpp">
+		<Unit filename="..\..\..\engine\gui\widgets\icon2.hpp">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\sdltruetypefont.cpp">
+		<Unit filename="..\..\..\engine\gui\widgets\twobutton.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="..\..\..\engine\gui\sdltruetypefont.hpp">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\gui\twobutton.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="..\..\..\engine\gui\twobutton.h">
+		<Unit filename="..\..\..\engine\gui\widgets\twobutton.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

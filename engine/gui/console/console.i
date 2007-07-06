@@ -1,6 +1,6 @@
 %module(directors="1") console
 %{
-#include "gui/console.h"
+#include "gui/console/console.h"
 %}
 
 namespace FIFE {

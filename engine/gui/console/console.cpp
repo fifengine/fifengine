@@ -37,8 +37,8 @@
 #include "util/time/timemanager.h"
 #include "util/log.h"
 #include "util/exception.h"
+#include "gui/guimanager.h"
 
-#include "guimanager.h"
 #include "commandline.h"
 #include "console.h"
 
