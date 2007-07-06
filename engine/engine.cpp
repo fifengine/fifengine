@@ -37,13 +37,11 @@
 #include "util/time/timemanager.h"
 #include "audio/audiomanager.h"
 #include "gui/console/console.h"
-/*
 #include "loaders/native/video_loaders/complexanimation_provider.h"
 #include "loaders/fallout/video_loaders/frm_provider.h"
 #include "loaders/native/video_loaders/animation_provider.h"
 #include "loaders/native/video_loaders/image_provider.h"
 #include "loaders/native/video_loaders/subimage_provider.h"
-*/
 #include "eventchannel/manager/eventmanager.h"
 #include "gui/guimanager.h"
 #include "video/imagecache.h"
@@ -139,7 +137,7 @@ namespace FIFE {
 #endif
 
 		m_imagecache = new ImageCache();
-/*
+
 		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
 		                                               video::loaders::FRMProvider,
 		                                               RenderAble::RT_IMAGE|RenderAble::RT_ANIMATION|RenderAble::RT_UNDEFINED >());
@@ -159,7 +157,7 @@ namespace FIFE {
 		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
 		                                               video::loaders::ImageProvider,
 		                                               RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED >());
-*/
+
 		new audio::Manager();
 		int volume = settings->read<int>("InitialVolume", 5);
 		if (volume > 10) {

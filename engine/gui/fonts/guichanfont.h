@@ -51,6 +51,7 @@ namespace FIFE {
 			 * @param glyphs the glyphs for Guichan format.
 			 */
 			GuichanImageFont(const std::string& filename, const std::string& glyphs);
+			~GuichanImageFont() {}
 	};
 
 }

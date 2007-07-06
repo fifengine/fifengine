@@ -62,6 +62,13 @@ print vfs.listDirectories('.')
 print vfs.readLines('fife_engine.py')
 print vfs.readBytes('fife_engine.py')
 
+print "Testing GUI"
+fonts = [fife.TTFont('content/fonts/FreeMono.ttf', 8), 
+         fife.ImageFont('content/fonts/rpgfont.png', ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"')]
+for f in fonts:
+	f.setColor(1,2,3)
+
+
 print "Testing audio"
 audiomanager = engine.getAudioManager()
 audiomanager.setAmbientSound('content/audio/music/maybe.ogg')
@@ -72,6 +79,7 @@ for i in xrange(20):
 print "Testing map"
 ctrl = fife.Control()
 #ctrl.addMapLoader(fife.XML())
+
 
 class MyExecuter(fife.ConsoleExecuter):
 	def __init__(self):

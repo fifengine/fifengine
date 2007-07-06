@@ -50,6 +50,8 @@ namespace FIFE {
 			 */
 			AAImageFont(const std::string& filename);
 
+			virtual ~AAImageFont() {}
+
 			/** Set the coloring of the AAF
 			 */
 			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
