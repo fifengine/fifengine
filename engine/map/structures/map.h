@@ -47,8 +47,6 @@ namespace FIFE { namespace map {
 
 	class Archetype;
 	
-	class ArchetypeLoaderBase;
-
 	class ObjectInfo;
 
 	class Map;
@@ -93,10 +91,6 @@ namespace FIFE { namespace map {
 			/** Get the maps 'name'
 			 */
 			const std::string& getMapName() const;
-
-			/** Load an archetype
-			 */
-			void loadArchetype(const std::string& type, const std::string& filename);
 
 			/** Add an archetype
 			 */
@@ -176,9 +170,6 @@ namespace FIFE { namespace map {
 			std::string m_mapname;
 			MapWeakPtr m_self;
 			static long m_count;
-
-			typedef std::map<std::string, ArchetypeLoaderBase*> type_atloaders;
-			type_atloaders m_atloaders;
 
 			typedef std::list<Archetype*> type_archetypes;
 			type_archetypes m_archetypes;

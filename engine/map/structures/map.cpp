@@ -31,7 +31,6 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/purge.h"
-#include "loaders/archetype_loader.h"
 #include "map/geometries/geometry.h"
 
 #include "elevation.h"
@@ -52,13 +51,10 @@ namespace FIFE { namespace map {
 	Map::Map() 
 		: AttributedClass("map") {
 		m_count += 1;
-		m_atloaders.insert(std::make_pair("XML",ArchetypeLoaderBase::createLoader("XML")));
 	}
 
 	Map::~Map() {
 		purge(m_archetypes);
-		// Use purge_map for deleting std::map values
-		purge_map(m_atloaders);
 		clearElevations();
 		m_count -= 1;
 	}
@@ -74,29 +70,16 @@ namespace FIFE { namespace map {
 		m_mapname = name;
 	}
 
-	void Map::loadArchetype(const std::string& type, const std::string& filename) {
-		// If it is already loaded, just return.
+	void Map::addArchetype(Archetype* archetype) {
+		// no duplicates
 		std::list<Archetype*>::iterator i = m_archetypes.begin();
 		for(; i != m_archetypes.end(); ++i) {
-			if( (*i)->getTypeName() == type && (*i)->getFilename() == filename ) {
+			if( (*i)->getTypeName() == archetype->getTypeName() && (*i)->getFilename() == archetype->getFilename() ) {
+				delete archetype;
 				return;
 			}
 		}
 
-		if(m_atloaders.find(type) == m_atloaders.end()) {
-			throw NotFound(type + " Archetype Loader not found.");
-		}
-
-		Archetype* at = m_atloaders[type]->load(filename, m_self);
-
-		// 'load' schould not return zero, rather throw a reasonable exception
-		assert(at);
-		assert(at->getTypeName() == type);
-
-		addArchetype(at);
-	}
-
-	void Map::addArchetype(Archetype* archetype) {
 		m_archetypes.push_back(archetype);
 	}
 

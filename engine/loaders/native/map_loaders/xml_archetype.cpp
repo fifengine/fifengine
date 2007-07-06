@@ -108,7 +108,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 				addArchetype(xmlat);
 			} else {
 				MapPtr map = m_map.lock();
-				map->loadArchetype(type, source);
+				map->addArchetype(new XMLArchetype(source, m_map));
 			}
 
 			e = e->NextSiblingElement("archetype");

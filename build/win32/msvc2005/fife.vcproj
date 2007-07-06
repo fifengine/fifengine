@@ -270,8 +270,6 @@
 			</Filter>
 		</Filter>
 		<Filter Name="loaders">
-			<File RelativePath="..\..\..\engine\loaders\archetype_loader.cpp"></File>
-			<File RelativePath="..\..\..\engine\loaders\archetype_loader.h"></File>
 			<Filter Name="fallout">
 				<Filter Name="map_loaders">
 					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\animatedpal.cpp"></File>

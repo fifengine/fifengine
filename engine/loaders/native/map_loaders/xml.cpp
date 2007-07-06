@@ -253,7 +253,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 				Archetype* xmlat = new XMLArchetype(e, m_map);	
 				m_map->addArchetype(xmlat);
 			} else {
-				m_map->loadArchetype(type, source);
+				m_map->addArchetype(new XMLArchetype(source, m_map));
 			}
 
 			e = e->NextSiblingElement("archetype");
