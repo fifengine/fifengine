@@ -260,7 +260,122 @@
 				<File RelativePath="..\..\..\engine\gui\widgets\twobutton.h"></File>
 			</Filter>
 		</Filter>
+		<Filter Name="loaders">
+			<Filter Name="fallout">
+				<Filter Name="map_loaders">
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\animatedpal.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\animatedpal.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\coloroverride.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\coloroverride.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\critlst.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\critlst.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\dat1.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\dat1.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\dat2.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\dat2.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\fallout.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\fallout.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\frm.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\frm.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\fwd.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\header.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\header.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\list.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\list.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\lzssdecoder.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\lzssdecoder.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\objectfactory.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\objectfactory.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\pal.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\pal.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\providerdat1.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\providerdat1.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\providerdat2.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\providerdat2.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat1.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat1.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat2.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat2.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\remove_all.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\remove_all.h"></File>
+				</Filter>
+				<Filter Name="video_loaders">
+					<File RelativePath="..\..\..\engine\loaders\fallout\video_loaders\frm_provider.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\fallout\video_loaders\frm_provider.h"></File>
+				</Filter>
+			</Filter>
+			<Filter Name="native">
+				<Filter Name="map_loaders">
+					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\fwd.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\prototype.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\prototype.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\xml.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\xml.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\xml_archetype.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\xml_archetype.h"></File>
+				</Filter>
+				<Filter Name="video_loaders">
+					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\animation_provider.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\animation_provider.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\complexanimation_provider.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\complexanimation_provider.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\image_provider.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\image_provider.h"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\subimage_provider.cpp"></File>
+					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\subimage_provider.h"></File>
+				</Filter>
+			</Filter>
+		</Filter>
 		<File RelativePath="..\..\..\engine\main.cpp"></File>
+		<Filter Name="map">
+			<File RelativePath="..\..\..\engine\map\camera.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\camera.h"></File>
+			<File RelativePath="..\..\..\engine\map\control.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\control.h"></File>
+			<Filter Name="effects">
+				<File RelativePath="..\..\..\engine\map\effects\fade.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\effects\fade.h"></File>
+				<File RelativePath="..\..\..\engine\map\effects\fwd.h"></File>
+				<File RelativePath="..\..\..\engine\map\effects\visualeffect.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\effects\visualeffect.h"></File>
+			</Filter>
+			<File RelativePath="..\..\..\engine\map\event.h"></File>
+			<File RelativePath="..\..\..\engine\map\fwd.h"></File>
+			<Filter Name="geometries">
+				<File RelativePath="..\..\..\engine\map\geometries\geometry.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\geometries\geometry.h"></File>
+				<File RelativePath="..\..\..\engine\map\geometries\gridgeometry.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\geometries\gridgeometry.h"></File>
+				<File RelativePath="..\..\..\engine\map\geometries\hexgeometry.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\geometries\hexgeometry.h"></File>
+			</Filter>
+			<File RelativePath="..\..\..\engine\map\map_loader.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\map_loader.h"></File>
+			<Filter Name="structures">
+				<File RelativePath="..\..\..\engine\map\structures\archetype.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\structures\archetype.h"></File>
+				<File RelativePath="..\..\..\engine\map\structures\elevation.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\structures\elevation.h"></File>
+				<File RelativePath="..\..\..\engine\map\structures\layer.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\structures\layer.h"></File>
+				<File RelativePath="..\..\..\engine\map\structures\location.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\structures\location.h"></File>
+				<File RelativePath="..\..\..\engine\map\structures\map.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\structures\map.h"></File>
+				<File RelativePath="..\..\..\engine\map\structures\object_list.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\structures\object_list.h"></File>
+				<File RelativePath="..\..\..\engine\map\structures\objectinfo.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\structures\objectinfo.h"></File>
+				<File RelativePath="..\..\..\engine\map\structures\selection.cpp"></File>
+				<File RelativePath="..\..\..\engine\map\structures\selection.h"></File>
+			</Filter>
+			<File RelativePath="..\..\..\engine\map\view.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\view.h"></File>
+			<File RelativePath="..\..\..\engine\map\visual.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\visual.h"></File>
+			<File RelativePath="..\..\..\engine\map\visualtree.cpp"></File>
+			<File RelativePath="..\..\..\engine\map\visualtree.h"></File>
+		</Filter>
 		<Filter Name="util">
 			<File RelativePath="..\..\..\engine\util\attributedclass.cpp"></File>
 			<File RelativePath="..\..\..\engine\util\attributedclass.h"></File>

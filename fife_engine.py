@@ -69,6 +69,10 @@ for i in xrange(20):
 	audiomanager.setVolume(float(i % 10) / 10)
 	time.sleep(0.1)
 
+print "Testing map"
+ctrl = fife.Control()
+#ctrl.addMapLoader(fife.XML())
+
 class MyExecuter(fife.ConsoleExecuter):
 	def __init__(self):
 		fife.ConsoleExecuter.__init__(self)
