@@ -36,11 +36,10 @@
 // Second block: files included from the same folder
 //
 #include "util/singleton.h"
-
-#include "../key/ec_ikeylistener.h"
-#include "../key/ec_ikey.h"
-#include "../ec_ieventcontroller.h"
-#include "../widget/ec_iwidgetlistener.h"
+#include "eventchannel/key/ec_ikeylistener.h"
+#include "eventchannel/key/ec_ikey.h"
+#include "eventchannel/ec_ieventcontroller.h"
+#include "eventchannel/widget/ec_iwidgetlistener.h"
 
 namespace FIFE {
 

@@ -29,11 +29,11 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "../key/ec_key.h"
-#include "../key/ec_keyevent.h"
-#include "../mouse/ec_mouseevent.h"
-#include "../widget/ec_widgetevent.h"
-#include "../command/ec_command.h"
+#include "eventchannel/key/ec_key.h"
+#include "eventchannel/key/ec_keyevent.h"
+#include "eventchannel/mouse/ec_mouseevent.h"
+#include "eventchannel/widget/ec_widgetevent.h"
+#include "eventchannel/command/ec_command.h"
 
 #include "eventmanager.h"
 

@@ -1,8 +1,10 @@
 import os, sys
-
+from utils.util_scripts.path import path as upath
 Import('env')
 
-our_config_name = 'SFConfig'
+joinpath = os.path.join
+_sep = os.path.sep
+enginepath = upath('.')
 
 def is_implfile(fname):
 	return fname.endswith('.cpp') or fname.endswith('.cxx')
@@ -10,164 +12,160 @@ def is_implfile(fname):
 def is_headerfile(fname):
 	return fname.endswith('.hpp') or fname.endswith('.h')
 
+def generate_swig_wrappers(interfacefiles):
+	swigoutdir = joinpath('generatedfiles', 'swigwrappers')
 
-def get_files(expected, path, names):
-	# Check if this folder is included for the current build
-	for (k, v) in expected.items():
-		if env[k] != v:
-			return []
+	def generate_language_specifics(lang):
+		print "   Generating language specific wrappers for " + lang
+		langoutdir = joinpath(swigoutdir, lang)
+		os.system('swig -c++ -%s fife.i' % (lang))
+		wrappers = enginepath.files('*_wrap*')
+		for wrapper in wrappers:
+			wrapper.move(langoutdir)
 
-	# It passes the filter, so use all cpp files.
-	return [os.path.join(path, x) for x in names if (
-		is_implfile(x) or is_headerfile(x))]
+	print "Running swig..."
+	inclusions = ['%module fife'] + ['%include ' + str(f) for f in interfacefiles]
+	open('fife.i', 'w').write('\n'.join(inclusions))
+	generate_language_specifics(env['script'])
+	os.remove('fife.i')
+	print "Swig completed"
 
-def get_filter(path, names):
-	if our_config_name not in names: return {'lite': 0}
+def remove_based_on_dir_filter(dirfilters, files):
+	abspaths = []
+	for pathstr in dirfilters:
+		abspaths.append(os.path.abspath(joinpath(*pathstr.split('/'))))
 
-	try:
-		x = file(os.path.join(path, our_config_name), 'ru')
-		return eval(x.read())
-	finally:
-		x.close()
+	result = []
+	for f in files:
+		filtered = False
+		for p in abspaths:
+			if str(f.abspath()).find(p) != -1:
+				filtered = True
+				break
+		if not filtered:
+			result.append(f)
+	return result
 
-# run swig
-print "Running swig"
-os.system('swig -c++ -python fife.i')
-print "Swig completed"
+def check_for_duplicate_files(files):
+	dupePaths = {}; dupes = []
+	for f in files:
+		fname = os.path.basename(f)
+		try:
+			dupePaths[fname].append(f)
+		except KeyError:
+			dupePaths[fname] = [f]
+	for fname, paths in dupePaths.items():
+		if len(paths) > 1:
+			dupes.append('%s -> %s' % (fname, ', '.join(paths)))
+	if dupes:
+		print "\nError found: All cpp file names must be unique in FIFE, the following were not:"
+		for l in dupes: print l
+		Exit(1)
 
-# Create the file list
-files = []
-for entry in os.walk('.'): #, False <-- for bottom-up. Do we want that?
-	path = entry[0]
-	if '.svn' in path: continue # skip versioning info folders
-	names = entry[2]
+def clean_generated_files():
+	print "Cleaning generated files ..."
+	for genfile in upath('generatedfiles').walkfiles():
+		genfile.remove()
+
+
+def generate_msvc_project(projectfiles):
+	def create_dict_tree(source_dict):
+		for f in source_dict.keys():
+			parts = f.split(os.path.sep, 1)
+			if len(parts) > 1:
+				try:
+					source_dict[parts[0]][parts[1]] = {}
+				except KeyError:
+					source_dict[parts[0]] = {}
+					source_dict[parts[0]][parts[1]] = {}
+				del source_dict[f]
+		for k, d in source_dict.items():
+			create_dict_tree(d)
+		return source_dict
 	
-	if 'SConscript' in names and path != '.': 
-		# Use the custom script for that folder - don't recurse current script!
-		files += SConscript(os.path.join(path, 'SConscript'))
-	else:
-		# Otherwise, conditionally use the folder. By default, use for non-lite build;
-		# a simple 'SConfig' file can override that.
-		files += get_files(get_filter(path, names), path, names)
-try:
-	files.remove(os.path.join('.', 'main.cpp'))
-except ValueError:
-	pass
+	def get_msvc_repr(d, tabcount=2, curpath=''):
+		retstr = []
+		for k in sorted(d.keys()):
+			newpath = os.path.join(curpath, k)
+			if len(d[k].keys()):
+				retstr.append(tabcount * '\t' + '<Filter Name="%s">' % k)
+				retstr.append(get_msvc_repr(d[k], tabcount+1, newpath))
+				retstr.append(tabcount * '\t' + '</Filter>')
+			else:
+				newpath = os.path.join('..', '..', '..', 'engine', newpath)
+				retstr.append(tabcount * '\t' + '<File RelativePath="%s"></File>' % newpath.replace('/','\\'))
+		return '\n'.join(retstr)
+			
+	msvcbuildpath = joinpath('..', 'build', 'win32', 'msvc2005')
+	vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1] for f in projectfiles]
+	xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
+	projtxt = open(joinpath(msvcbuildpath, 'fifeproj_template.xml'), 'r').read()
+	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
+	vcprojfilename = joinpath(msvcbuildpath, 'fife.vcproj')
+	open(vcprojfilename, 'w').write(projtxt)
+	print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(vcprojfilename)
 
-cppfiles = [f for f in files if is_implfile(f)]
-headerfiles = [f for f in files if is_headerfile(f)]
 
-# check that we don't have files having same names (bad for visual studio + static analysis)
-dupePaths = {}; dupes = []
-for f in cppfiles:
-	fname = os.path.basename(f)
-	try:
-		dupePaths[fname].append(f)
-	except KeyError:
-		dupePaths[fname] = [f]
-for fname, paths in dupePaths.items():
-	if len(paths) > 1:
-		dupes.append('%s -> %s' % (fname, ', '.join(paths)))
-if dupes:
-	print "\nError found: All cpp file names must be unique in FIFE, the following were not:"
-	for l in dupes: print l
-	Exit(1)
-
-# ------------- filter windows project file lists  ----------------
-# paths that should be skipped from generation
-PROJECT_SKIPPED_PATHS = ['/video/movie']
-
-_sep = os.path.sep
-PROJECT_SKIPPED_PATHS = [p.replace('/', _sep) for p in PROJECT_SKIPPED_PATHS]
-projectfiles = []
-for f in files:
-	if PROJECT_SKIPPED_PATHS:
-		for skippath in PROJECT_SKIPPED_PATHS:
-			if f.find(skippath) == -1:
-				projectfiles.append(f)
-	else:
-		projectfiles.append(f)
-projectfiles.sort()
-
-# ------------- msvc file list creation begin ----------------
-def create_dict_tree(source_dict):
-	for f in source_dict.keys():
-		parts = f.split(os.path.sep, 1)
-		if len(parts) > 1:
-			try:
-				source_dict[parts[0]][parts[1]] = {}
-			except KeyError:
-				source_dict[parts[0]] = {}
-				source_dict[parts[0]][parts[1]] = {}
-			del source_dict[f]
-	for k, d in source_dict.items():
-		create_dict_tree(d)
-	return source_dict
-
-def get_msvc_repr(d, tabcount=2, curpath=''):
-	retstr = []
-	for k in sorted(d.keys()):
-		newpath = os.path.join(curpath, k)
-		if len(d[k].keys()):
-			retstr.append(tabcount * '\t' + '<Filter Name="%s">' % k)
-			retstr.append(get_msvc_repr(d[k], tabcount+1, newpath))
-			retstr.append(tabcount * '\t' + '</Filter>')
+def generate_codeblocks_project(projectfiles):
+	codeblocksHeaderDef = \
+	'''		<Unit filename="..\..\..\engine\%s">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>'''
+	
+	codeblocksCppDef = \
+	'''		<Unit filename="..\..\..\engine\%s">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>'''
+	cbbuildpath = joinpath('..', 'build', 'win32', 'code_blocks')
+	xmlstr = []
+	for f in projectfiles:
+		newf = os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1]
+		newf = newf.replace('/', '\\')
+		if f in headerfiles:
+			xmlstr.append(codeblocksHeaderDef % newf)
 		else:
-			newpath = os.path.join('..', '..', '..', 'engine', newpath)
-			retstr.append(tabcount * '\t' + '<File RelativePath="%s"></File>' % newpath.replace('/','\\'))
-	return '\n'.join(retstr)
+			xmlstr.append(codeblocksCppDef % newf)
+	projtxt = open(joinpath(cbbuildpath, 'fifelib_template.xml'), 'r').read()
+	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', '\n'.join(xmlstr))
+	cbprojfilename = joinpath(cbbuildpath, 'fife lib.cbp')
+	open(cbprojfilename, 'w').write(projtxt)
+	print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(cbprojfilename)
 
-		
-_jp = os.path.join
-msvcbuildpath = _jp('..', 'build', 'win32', 'msvc2005')
-vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1] for f in projectfiles]
-xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
-projtxt = open(_jp(msvcbuildpath, 'fifeproj_template.xml'), 'r').read()
-projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
-vcprojfilename = _jp(msvcbuildpath, 'fife.vcproj')
-open(vcprojfilename, 'w').write(projtxt)
-print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(vcprojfilename)
-# ------------- msvc file list creation end ----------------
 
-# ------------- code::blocks file list creation begin ----------------
-codeblocksHeaderDef = \
-'''		<Unit filename="..\..\..\engine\%s">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>'''
+clean_generated_files()
+variated_dirs = eval(open(joinpath('config', 'variated_dirs'), 'r').read())
+filteredpaths = []
+for flag, paths in variated_dirs.items():
+	value = None
+	if flag.find('-') != -1:
+		flag, value = flag.split('-')
+	if (value and (not env[flag] == value)) or (not env[flag]):
+		filteredpaths.extend(paths)
 
-codeblocksCppDef = \
-'''		<Unit filename="..\..\..\engine\%s">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>'''
-cbbuildpath = _jp('..', 'build', 'win32', 'code_blocks')
-xmlstr = []
-for f in projectfiles:
-	newf = os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1]
-	newf = newf.replace('/', '\\')
-	if f in headerfiles:
-		xmlstr.append(codeblocksHeaderDef % newf)
-	else:
-		xmlstr.append(codeblocksCppDef % newf)
-projtxt = open(_jp(cbbuildpath, 'fifelib_template.xml'), 'r').read()
-projtxt = projtxt.replace('__FILE_INSERTION_POINT__', '\n'.join(xmlstr))
-cbprojfilename = _jp(cbbuildpath, 'fife lib.cbp')
-open(cbprojfilename, 'w').write(projtxt)
-print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(cbprojfilename)
-# ------------- code::blocks file list creation end ----------------
+if not env.GetOption('clean'):
+	interfacefiles = remove_based_on_dir_filter(filteredpaths, list(enginepath.walkfiles('*.i')))
+	generate_swig_wrappers(interfacefiles)
 
-env.Append(CPPPATH = ['#/engine'])
+allfiles = list(enginepath.walkfiles())
+headerfiles = [f for f in allfiles if is_headerfile(f)]
+implfiles = [f for f in allfiles if is_implfile(f)]
+
+if not env.GetOption('clean'):
+	filtered_prj_paths = eval(open(joinpath('config', 'removed_from_project_files'), 'r').read())
+	filtered_prj_paths = [joinpath(*p.split('/')) for p in filtered_prj_paths]
+	projectfiles = remove_based_on_dir_filter(filtered_prj_paths, headerfiles + implfiles)
+	projectfiles.sort()
+	
+	generate_msvc_project(projectfiles)
+	generate_codeblocks_project(projectfiles)
+
 if not env['projfiles']:
-	if env['lite']:
-		env.StaticLibrary('fifelite', cppfiles)
-	else:
-		if env['shared']:
-			flib = env.SharedLibrary('fife', cppfiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
-			env.InstallAs(['_fife.so'], [flib])
-		else:
-			env.StaticLibrary('fife', cppfiles)
-	
-# vim: set filetype=python :
+	print "Starting compilation"
+	env.Append(CPPPATH = ['#/engine'])
+	compilefiles = [str(f) for f in remove_based_on_dir_filter(filteredpaths, implfiles)]
+	flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
+	env.InstallAs(['generatedfiles/swigwrappers/%s/_fife.so' % env['script']], [flib])

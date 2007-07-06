@@ -217,8 +217,13 @@
 				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_widgetevent.h"></File>
 			</Filter>
 		</Filter>
-		<File RelativePath="..\..\..\engine\fife_wrap.cxx"></File>
-		<File RelativePath="..\..\..\engine\fife_wrap.h"></File>
+		<Filter Name="generatedfiles">
+			<Filter Name="swigwrappers">
+				<Filter Name="lua">
+					<File RelativePath="..\..\..\engine\generatedfiles\swigwrappers\lua\fife_wrap.cxx"></File>
+				</Filter>
+			</Filter>
+		</Filter>
 		<Filter Name="gui">
 			<Filter Name="console">
 				<File RelativePath="..\..\..\engine\gui\console\commandline.cpp"></File>
@@ -252,6 +257,7 @@
 				<File RelativePath="..\..\..\engine\gui\widgets\twobutton.h"></File>
 			</Filter>
 		</Filter>
+		<File RelativePath="..\..\..\engine\main.cpp"></File>
 		<Filter Name="util">
 			<File RelativePath="..\..\..\engine\util\attributedclass.cpp"></File>
 			<File RelativePath="..\..\..\engine\util\attributedclass.h"></File>
@@ -281,6 +287,7 @@
 			</Filter>
 		</Filter>
 		<Filter Name="vfs">
+			<File RelativePath="..\..\..\engine\vfs\fwd.h"></File>
 			<Filter Name="raw">
 				<File RelativePath="..\..\..\engine\vfs\raw\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\vfs\raw\rawdata.cpp"></File>
@@ -293,11 +300,25 @@
 				<File RelativePath="..\..\..\engine\vfs\raw\rawdatasource.h"></File>
 			</Filter>
 			<File RelativePath="..\..\..\engine\vfs\vfs.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfs.h"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfshostsystem.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfshostsystem.h"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssource.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfssource.h"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssourcefactory.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfssourcefactory.h"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.h"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfsutility.cpp"></File>
+			<File RelativePath="..\..\..\engine\vfs\vfsutility.h"></File>
+			<Filter Name="zip">
+				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.h"></File>
+			</Filter>
 		</Filter>
 		<Filter Name="video">
 			<File RelativePath="..\..\..\engine\video\action.h"></File>

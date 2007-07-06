@@ -29,6 +29,8 @@
 
 // Standard C++ library includes
 //
+#include <string>
+#include <sstream>
 
 // 3rd party library includes
 //
@@ -39,8 +41,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
+#include "eventchannel/source/ec_ieventsource.h"
+
 #include "ec_ievent.h"
-#include "../source/ec_ieventsource.h"
 
 
 namespace FIFE {

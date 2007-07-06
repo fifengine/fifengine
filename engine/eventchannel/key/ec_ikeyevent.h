@@ -33,8 +33,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
+#include "eventchannel/base/ec_iinputevent.h"
+
 #include "ec_ikey.h"
-#include "../base/ec_iinputevent.h"
 
 namespace FIFE {
 

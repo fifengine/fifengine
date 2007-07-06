@@ -1,8 +1,15 @@
 %module engine
 %{
+#include <boost/shared_ptr.hpp>
 #include "engine.h"
 %}
 
+namespace boost {
+	template<class T> class shared_ptr {
+	public:
+		T * operator-> () const;
+	};
+}
 
 namespace FIFE {
 
