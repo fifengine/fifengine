@@ -21,7 +21,6 @@ digraph "source tree" {
     "map" -> "script"
     "map" -> "gui"
     "map" -> "eventchannel"
-    "map" -> "loaders"
     "map" -> "util"
     "map" -> "video"
     "map" -> "input"
