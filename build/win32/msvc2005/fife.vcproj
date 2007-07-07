@@ -538,6 +538,14 @@
 			<File RelativePath="..\..\..\engine\vfs\vfssource.cpp"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssourcefactory.cpp"></File>
 			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
+			<Filter Name="zip">
+				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.h"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.cpp"></File>
+				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.h"></File>
+			</Filter>
 		</Filter>
 		<Filter Name="video">
 			<File RelativePath="..\..\..\engine\video\action.h"></File>

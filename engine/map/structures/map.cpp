@@ -85,7 +85,7 @@ namespace FIFE { namespace map {
 
 	void Map::loadPrototype(ObjectInfo* object, size_t proto_id) {
 		assert( object );
-		if( proto_id == 0 || proto_id >= m_protoid_map.size() ) {
+		if( proto_id >= m_protoid_map.size() ) {
 			return;
 		}
 
