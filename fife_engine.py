@@ -10,6 +10,8 @@ engine = fife.Engine()
 print "Testing settings manager"
 settings = engine.getSettingsManager()
 print "  RenderBackend = " + settings.read_string('RenderBackend', 'none defined')
+screenwidth = settings.read_int("ScreenWidth", 800)
+screenheight = settings.read_int("ScreenHeight", 600)
 
 print "Testing log"
 log = fife.Log.initialize(fife.Log.LEVEL_MAX, True, True)
@@ -63,10 +65,25 @@ print vfs.readLines('fife_engine.py')
 print vfs.readBytes('fife_engine.py')
 
 print "Testing GUI"
-fonts = [fife.TTFont('content/fonts/FreeMono.ttf', 8), 
+guimanager = engine.getGuiManager()
+fonts = [fife.TTFont('content/fonts/FreeMono.ttf', 14), 
          fife.ImageFont('content/fonts/rpgfont.png', ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"')]
 for f in fonts:
-	f.setColor(1,2,3)
+	f.setColor(255,20,20)
+container = fife.Container()
+guimanager.add(container)
+container.setSize(screenwidth, screenheight)
+container.setOpaque(False)
+label1 = fife.Label('This is a Truetype font')
+label1.setPosition(0, 70)
+label1.setFont(fonts[0])
+container.add(label1)
+label2 = fife.Label('This is a Image font')
+label2.setPosition(0, 100)
+label2.setFont(fonts[1])
+container.add(label2)
+labels = [label1, label2]
+
 
 
 print "Testing audio"
@@ -103,12 +120,15 @@ class MyExecuter(fife.ConsoleExecuter):
 		print "result = " + result
 		return result
 	
-guimanager = engine.getGuiManager()
 console = guimanager.getConsole()
 consoleexec = MyExecuter()
 console.setConsoleExecuter(consoleexec)
 
+
+i = 1
 while True:
 	engine.pump()
+	for l in labels: l.setX(i)
+	i = (i + 1) % 100
 	if consoleexec.quitRequested:
 		break
