@@ -124,6 +124,8 @@ def main():
 	engine.getGuiManager().getConsole().setConsoleExecuter(consoleexec)
 	gui = Gui()
 	gui.create_mainmenu()
+	ctrl = fife.Control()
+	ctrl.leaseMapLoader(fife.XML())
 	while True:
 		engine.pump()
 		if consoleexec.quitRequested:
@@ -131,3 +133,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+

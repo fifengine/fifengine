@@ -12,7 +12,7 @@ namespace FIFE { namespace map {
 			Control();
 			~Control();
 
-			void addMapLoader(MapLoader* loader);
+			void leaseMapLoader(MapLoader* loader);
 
 			void load(const std::string& filename);
       
