@@ -60,4 +60,9 @@ namespace FIFE {
 	public:
 		EventException(const std::string& s);
 	};
+	class GuiException : public Exception {
+	public:
+		GuiException(const std::string& s);
+	};
+
 }

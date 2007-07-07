@@ -42,8 +42,7 @@ namespace gcn {
 		adjustSize();
 		mCaption = "";
 	}
-	TwoButton::TwoButton(Image * up_file , Image *down_file, 
-			const char* caption)  : Button() {
+	TwoButton::TwoButton(Image * up_file , Image *down_file, const std::string& caption): Button() {
 		up = up_file;
 		assert(up!=NULL);
 		down = down_file;

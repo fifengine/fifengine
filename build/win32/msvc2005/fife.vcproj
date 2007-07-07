@@ -254,6 +254,8 @@
 			<File RelativePath="..\..\..\engine\gui\guimanager.cpp"></File>
 			<File RelativePath="..\..\..\engine\gui\guimanager.h"></File>
 			<Filter Name="widgets">
+				<File RelativePath="..\..\..\engine\gui\widgets\clicklabel.cpp"></File>
+				<File RelativePath="..\..\..\engine\gui\widgets\clicklabel.h"></File>
 				<File RelativePath="..\..\..\engine\gui\widgets\icon2.cpp"></File>
 				<File RelativePath="..\..\..\engine\gui\widgets\icon2.hpp"></File>
 				<File RelativePath="..\..\..\engine\gui\widgets\twobutton.cpp"></File>

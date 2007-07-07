@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUICHAN_ADDON_TWOBUTTON_H
-#define FIFE_GUICHAN_ADDON_TWOBUTTON_H
+#ifndef FIFE_GUI_WIDGETS_CLICKLABEL_H
+#define FIFE_GUI_WIDGETS_CLICKLABEL_H
 
 // Standard C++ library includes
 #include <string>
@@ -34,24 +34,13 @@
 // Second block: files included from the same folder
 
 namespace gcn {
-
-	class TwoButton : public Button {
-		public:
-			TwoButton(Image *up_image, Image *down_image);
-			TwoButton(Image *up_image, Image *down_image, const std::string& caption);
-			~TwoButton();
-			void draw(Graphics *graphics);
-			void adjustSize();
-			/*
-			bool isPressed() const;
-			void mousePress(int,int,int);
-			void mouseRelease(int,int,int);
-			*/
-		private:
-			Image *up;
-			Image *down;
+	class ClickLabel : public Button {
+		ClickLabel();
+		ClickLabel(const std::string& caption);
+		virtual ~ClickLabel();
+		virtual void setCaption(const std::string& caption);
+		virtual void draw(Graphics* graphics);
 	};
-
 }
 
 #endif

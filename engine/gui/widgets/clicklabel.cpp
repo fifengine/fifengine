@@ -19,40 +19,60 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUICHAN_ADDON_TWOBUTTON_H
-#define FIFE_GUICHAN_ADDON_TWOBUTTON_H
-
 // Standard C++ library includes
-#include <string>
+#include <cassert>
 
 // 3rd party library includes
-#include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/log.h"
+#include "util/exception.h"
+
+#include "clicklabel.h"
 
 namespace gcn {
+	ClickLabel::ClickLabel(): Button() {
+		setBorderSize(0);
+		adjustSize();
+	}
+	
+	ClickLabel::ClickLabel(const std::string& caption): Button(caption)  {
+		setBorderSize(0);
+		adjustSize();
+	}
+	
+	ClickLabel::~ClickLabel() {
+	}
+	
+	void ClickLabel::setCaption(const std::string& caption) {
+		Button::setCaption(caption);
+		adjustSize();
+	}
+	
+	void ClickLabel::draw(Graphics* graphics) {
+		int textX;
+		int textY = getHeight() / 2 - getFont()->getHeight() / 2;
 
-	class TwoButton : public Button {
-		public:
-			TwoButton(Image *up_image, Image *down_image);
-			TwoButton(Image *up_image, Image *down_image, const std::string& caption);
-			~TwoButton();
-			void draw(Graphics *graphics);
-			void adjustSize();
-			/*
-			bool isPressed() const;
-			void mousePress(int,int,int);
-			void mouseRelease(int,int,int);
-			*/
-		private:
-			Image *up;
-			Image *down;
-	};
+		switch (getAlignment())
+		{
+			case Graphics::LEFT:
+				textX = 0;
+				break;
+			case Graphics::CENTER:
+				textX = getWidth() / 2;
+				break;
+			case Graphics::RIGHT:
+				textX = getWidth();
+				break;
+			default:
+				throw FIFE::GuiException("Unknown alignment.");
+		}
 
+		graphics->setFont(getFont());
+		graphics->setColor(getForegroundColor());
+		graphics->drawText(getCaption(), textX, textY, getAlignment());
+	}
 }
-
-#endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

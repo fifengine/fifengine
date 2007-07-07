@@ -29,7 +29,7 @@
  *
  * Copyright (c) 2004, 2005 darkbits                        Js_./
  * Per Larsson a.k.a finalman                          _RqZ{a<^_aa
- * Olof Naessén a.k.a jansem/yakslem                _asww7!uY`>  )\a//
+ * Olof Naessï¿½n a.k.a jansem/yakslem                _asww7!uY`>  )\a//
  *                                                 _Qhm`] _f "'c  1!5m
  * Visit: http://guichan.darkbits.org             )Qk<P ` _: :+' .'  "{[
  *                                               .)j(] .d_/ '-(  P .   S
@@ -90,35 +90,36 @@
 
 namespace gcn
 {
-    /**
-     * An Icon for displaying images.
-     *
-     * \note Modified for FIFE.
-     */    
-    class Icon2 : public Widget
-    {
-    public:
-        /**
-         * Constructor.
-         *
-         * @param image an Image to display.
-         */
-        Icon2(Image* image);
-        
-        
-        // Inherited from Widget
-        
-        virtual void draw(Graphics* graphics);
+	/**
+	* An Icon for displaying images.
+	*
+	* \note Modified for FIFE.
+	*/    
+	class Icon2 : public Widget
+	{
+	public:
+		/**
+		* Constructor.
+		*
+		* @param image an Image to display.
+		*/
+		Icon2(Image* image);
+		virtual ~Icon2() {}
+		
+		
+		// Inherited from Widget
+		
+		virtual void draw(Graphics* graphics);
 
-        virtual void drawBorder(Graphics* graphics);
-        
-        // added for FIFE
-        void setImage(Image* image);
+		virtual void drawBorder(Graphics* graphics);
+		
+		// added for FIFE
+		void setImage(Image* image);
 
-        // changed from private to allow derived instance access
-    protected:
-        Image* mImage;        
-    };    
+		// changed from private to allow derived instance access
+	protected:
+		Image* mImage;
+	};
 }
 
 #endif // end GCN_ICON2_HPP
