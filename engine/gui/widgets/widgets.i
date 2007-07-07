@@ -73,12 +73,6 @@ namespace gcn {
 		virtual void draw(Graphics* graphics) = 0;
 	};
 
-/*	class BasicContainer: public Widget { 
-	public:
-        BasicContainer();
-        virtual ~BasicContainer();
-	};
-*/
 	%feature("notabstract") Container;
     class Container: public Widget {
     public:
