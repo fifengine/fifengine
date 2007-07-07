@@ -58,6 +58,9 @@ namespace FIFE {
 			 */
 			virtual ~Engine();
 
+			void initializePumping();
+			void finalizePumping();
+
 			/** Runs one cycle for the engine
 			 */
 			void pump();

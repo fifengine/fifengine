@@ -178,14 +178,26 @@ namespace FIFE {
 		m_guimanager->getConsole()->show();
 	}
 
-	void Engine::pump() {
+	void Engine::initializePumping() {
 		m_eventmanager->processEvents();
 		m_renderbackend->startFrame();
+	}
+
+	void Engine::pump() {
 		m_timemanager->update();
 		m_guimanager->turn();
 		m_renderbackend->endFrame();
 		m_imagecache->collect();
 		SDL_Delay(1);
+		m_eventmanager->processEvents();
+		m_renderbackend->startFrame();
+	}
+
+	void Engine::finalizePumping() {
+		m_timemanager->update();
+		m_guimanager->turn();
+		m_renderbackend->endFrame();
+		m_imagecache->collect();
 	}
 
 	audio::Manager* Engine::getAudioManager() {

@@ -26,6 +26,8 @@ namespace FIFE {
 		public:
 			Engine();
 			virtual ~Engine();
+			void initializePumping();
+			void finalizePumping();
 			void pump();
 
 			audio::Manager* getAudioManager();
