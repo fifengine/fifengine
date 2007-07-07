@@ -63,15 +63,12 @@ namespace map {
 			 */
 			~Control();
 
-			/** lease a map loader to Control
+			/** add a map loader to Control
 			 *
 			 * @note an appropriate map loader must be provided to Control
 			 * before load or save calls can be made.
-			 *
-			 * @note The caller retains ownership of loaders and their memory
-			 * management.
 			 */
-			void leaseMapLoader(MapLoader* loader);
+			void addMapLoader(MapLoader* loader);
 	
 			/** Load and set a map from a map file
 			 *  Does the equivalent to

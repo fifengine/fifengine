@@ -12,13 +12,14 @@ namespace FIFE { namespace map {
 			Control();
 			~Control();
 
-			void leaseMapLoader(MapLoader* loader);
+			void addMapLoader(MapLoader* loader);
 
 			void load(const std::string& filename);
       
 			void start();
 			void stop();
 			bool isRunning();
+			void turn();
 
 			size_t getCurrentElevation();
 			void setElevation(size_t);

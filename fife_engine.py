@@ -4,6 +4,8 @@ os.environ['PYTHONPATH'] = '.'
 import engine.fife as fife
 import time, os
 
+import viewgamestate as vgs
+
 engine = None
 
 def genpath(path):
@@ -124,13 +126,16 @@ def main():
 	engine.getGuiManager().getConsole().setConsoleExecuter(consoleexec)
 	gui = Gui()
 	gui.create_mainmenu()
-	ctrl = fife.Control()
-	ctrl.leaseMapLoader(fife.XML())
+	gamestate = vgs.ViewGameState()
+	gamestate.setMap("content/maps/official_map.xml")
+	gamestate.activate()
 	
 	engine.initializePumping()
 	while True:
 		engine.pump()
+		gamestate.turn()
 		if consoleexec.quitRequested:
+			gamestate.deactivate()
 			break
 	engine.finalizePumping()
 

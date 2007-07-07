@@ -73,6 +73,8 @@ namespace FIFE { namespace map {
 	Control::~Control() {
 		clearMap();
 
+		purge_map(m_loaders);
+
 		// Real cleanup after 'stop()'
 		std::set<Camera*>::iterator i(m_cameras.begin());
 		for(; i != m_cameras.end(); ++i)
@@ -83,7 +85,7 @@ namespace FIFE { namespace map {
 		Log("map_control") << "objects left alive: " << ObjectInfo::globalCount();
 	}
 
-	void Control::leaseMapLoader(MapLoader* loader) {
+	void Control::addMapLoader(MapLoader* loader) {
 		m_loaders.insert(std::pair<std::string,MapLoader*>(loader->getName(), loader));
 	}
 
