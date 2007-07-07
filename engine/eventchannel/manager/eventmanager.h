@@ -74,6 +74,8 @@ namespace FIFE {
 		void addWidgetListener(IWidgetListener* listener);
 		void removeWidgetListener(IWidgetListener* listener);
 		EventSourceType getEventSourceType();
+		void setNonConsumableKeys(const std::vector<int>& keys);
+		std::vector<int> getNonConsumableKeys();
 
 		void dispatchCommand(ICommand& command);
 
@@ -99,6 +101,7 @@ namespace FIFE {
 		std::vector<IMouseListener*> m_mouselisteners;
 		std::vector<ISdlEventListener*> m_sdleventlisteners;
 		std::vector<IWidgetListener*> m_widgetlisteners;
+		std::vector<int> m_nonconsumablekeys;
 		std::map<int, bool> m_keystatemap;
 		int m_mousestate;
 		IMouseEvent::MouseButtonType m_mostrecentbtn;

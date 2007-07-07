@@ -230,7 +230,7 @@ namespace FIFE {
 		// run the command
 		try {
 			if (m_consoleexec) {
-				std::string resp = m_consoleexec->onCommand(cmd);
+				std::string resp = m_consoleexec->onConsoleCommand(cmd);
 				println(resp);
 			} else {
 				std::cout << "ConsoleExecuter not bind, but command received: " << cmd.c_str() << std::endl;

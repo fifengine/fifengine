@@ -1,9 +1,12 @@
 %module(directors="1") eventchannel
 %{
+#include "eventchannel/base/ec_ievent.h"
+#include "eventchannel/base/ec_iinputevent.h"
 #include "eventchannel/command/ec_command.h"
 #include "eventchannel/command/ec_commandids.h"
 #include "eventchannel/command/ec_icommandlistener.h"
 #include "eventchannel/key/ec_key.h"
+#include "eventchannel/key/ec_ikeyevent.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeylistener.h"
 #include "eventchannel/source/ec_eventsourcetypes.h"
@@ -15,13 +18,15 @@
 #include "eventchannel/manager/eventmanager.h"
 %}
 
+%include "eventchannel/key/ec_ikey.h"
 %include "eventchannel/source/ec_eventsourcetypes.h"
 %include "eventchannel/command/ec_commandids.h"
-%include "eventchannel/key/ec_ikey.h"
-%include "eventchannel/key/ec_ikey.h"
+
+namespace std {
+   %template(IntVector) vector<int>;
+}
 
 namespace FIFE {
-
 	%feature("director") IEventSource;
 	class IEventSource {
 	public:
@@ -29,30 +34,49 @@ namespace FIFE {
 		virtual ~IEventSource();
 	};
 
+	class IEvent {
+	public:
+		virtual void consume() = 0;
+		virtual bool isConsumed() const = 0;
+		virtual IEventSource* getSource() = 0;
+		virtual int getTimeStamp() const = 0;
+		virtual std::string getDebugString() const = 0;
+		virtual const std::string& getName() const = 0;
+		virtual ~IEvent() {}
+	};
 
-	class ICommand {
+	class IInputEvent: public IEvent {
+	public:
+		virtual bool isAltPressed() const = 0;
+		virtual bool isControlPressed() const = 0;
+		virtual bool isMetaPressed() const = 0;
+		virtual bool isShiftPressed() const = 0;
+		virtual ~IInputEvent() {}
+	};
+
+	class ICommand: public IEvent {
 	public:
 		virtual CommandType getCommandType() = 0;
 		virtual int getCode() = 0;
 		virtual ~ICommand();
 	};
-	%feature("director") Command;
 	class Command: public ICommand {
 	public:
 		Command();
 		virtual ~Command();
+
 		CommandType getCommandType();
 		void setCommandType(CommandType type);
+
 		int getCode();
 		void setCode(int code);
+
 		virtual void consume();
 		virtual bool isConsumed() const;
 		virtual IEventSource* getSource();
 		virtual void setSource(IEventSource* source);
 		virtual int getTimeStamp() const;
 		virtual void setTimeStamp(int timestamp);
-		virtual const std::string& getName() const;
-		virtual std::string getDebugString() const;
 	};
 
 	%feature("director") ICommandListener;
@@ -62,7 +86,8 @@ namespace FIFE {
 		virtual ~ICommandListener() {}
 	};
 
-	class IKeyEvent {
+	class IKeyEvent: public IInputEvent  {
+	public:
 		enum KeyEventType {
 			UNKNOWN = -1,
 			PRESSED = 0,
@@ -73,28 +98,6 @@ namespace FIFE {
 		virtual const IKey& getKey() const = 0;
 		virtual ~IKeyEvent();
 	};
-	class KeyEvent: public IKeyEvent {
-	public:
-		KeyEvent();
-		virtual ~KeyEvent();
-		KeyEventType getType() const;
-		void setType(KeyEventType type);
-	
-		bool isNumericPad() const;
-		const IKey& getKey() const;
-		virtual bool isAltPressed() const;
-		virtual bool isControlPressed() const;
-		virtual bool isMetaPressed() const;
-		virtual bool isShiftPressed() const;
-
-		virtual void consume();
-		virtual bool isConsumed() const;
-		virtual IEventSource* getSource();
-		virtual int getTimeStamp() const;
-
-		virtual const std::string& getName() const;
-		virtual std::string getDebugString() const;
-	};
 
 	%feature("director") IKeyListener;
 	class IKeyListener {
@@ -104,7 +107,8 @@ namespace FIFE {
 		virtual ~IKeyListener();
 	};
 
-	class IMouseEvent {
+	class IMouseEvent: public IInputEvent {
+	public:
 		enum MouseEventType
 		{
 			UNKNOWN_EVENT = -1,
@@ -133,27 +137,6 @@ namespace FIFE {
 		virtual MouseButtonType getButton() const = 0;
 		virtual ~IMouseEvent();
 	};
-	class MouseEvent: public IMouseEvent {
-	public:
-		MouseEvent();
-		virtual ~MouseEvent();
-		MouseButtonType getButton() const;
-		MouseEventType getType() const;
-		int getX() const;
-		int getY() const;
-		virtual bool isAltPressed() const;
-		virtual bool isControlPressed() const;
-		virtual bool isMetaPressed() const;
-		virtual bool isShiftPressed() const;
-
-		virtual void consume();
-		virtual bool isConsumed() const;
-		virtual IEventSource* getSource();
-		virtual int getTimeStamp() const;
-
-		virtual const std::string& getName() const;
-		virtual std::string getDebugString() const;
-	};
 
 	%feature("director") IMouseListener;
 	class IMouseListener {
@@ -170,24 +153,10 @@ namespace FIFE {
 		virtual ~IMouseListener();
 	};
 
-	class IWidgetEvent {
+	class IWidgetEvent: public IEvent {
 	public:
 		virtual const std::string& getId() const = 0;
 		virtual ~IWidgetEvent();
-	};
-	class WidgetEvent: public IWidgetEvent {
-	public:
-		WidgetEvent();
-		~WidgetEvent();
-		const std::string& getId() const;
-
-		virtual void consume();
-		virtual bool isConsumed() const;
-		virtual IEventSource* getSource();
-		virtual int getTimeStamp() const;
-
-		virtual const std::string& getName() const;
-		virtual std::string getDebugString() const;
 	};
 
 	%feature("director") IWidgetListener;
@@ -211,6 +180,7 @@ namespace FIFE {
 		void removeWidgetListener(IWidgetListener* listener);
 		EventSourceType getEventSourceType();
 		void dispatchCommand(ICommand& command);
-		void processEvents();
+		void setNonConsumableKeys(const std::vector<int>& keys);
+		std::vector<int> getNonConsumableKeys();
 	};
 };

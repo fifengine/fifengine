@@ -22,15 +22,37 @@ class GenericListmodel(fife.ListModel):
 	def getElementAt(self, i):
 		return self.items[i]
 
-class ConsoleExecuter(fife.ConsoleExecuter):
+class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter):
 	def __init__(self):
+		eventmanager = engine.getEventManager()
+		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10])
+		fife.IKeyListener.__init__(self)
+		eventmanager.addKeyListener(self)
+		fife.ICommandListener.__init__(self)
+		eventmanager.addCommandListener(self)
+		fife.ConsoleExecuter.__init__(self)
+		engine.getGuiManager().getConsole().setConsoleExecuter(self)
 		fife.ConsoleExecuter.__init__(self)
 		self.quitRequested = False
-		
+
+	def keyPressed(self, event):
+		keyval = event.getKey().getValue()
+		if (keyval == fife.IKey.ESCAPE):
+			self.quitRequested = true
+		elif (keyval == fife.IKey.F10):
+			engine.getGuiManager().getConsole().toggleShowHide()
+
+	def keyReleased(self, event):
+		pass
+
+	def onCommand(self, command):
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.quitRequested = True
+
 	def onToolsClick(self):
 		print "In python, tools clicked"
 
-	def onCommand(self, command):
+	def onConsoleCommand(self, command):
 		result = "no result"
 		if command.lower() in ('quit', 'exit'):
 			self.quitRequested = True
@@ -41,6 +63,7 @@ class ConsoleExecuter(fife.ConsoleExecuter):
 		except:
 			pass
 		return result
+
 
 class Gui(fife.IWidgetListener):
 	def __init__(self):
@@ -85,6 +108,7 @@ class Gui(fife.IWidgetListener):
 		top.setSize(sx, sy)
 		top.setPosition(0, 0)
 		top.setTitleBarHeight(20)
+		top.setEnabled(False)
 		engine.getGuiManager().add(con)
 		self.lchooser_active = True
 	
@@ -117,13 +141,13 @@ class Gui(fife.IWidgetListener):
 		close_button.adjustSize()
 		close_button.setActionEventId('close_level_chooser')
 		con.add(close_button)
+		
 
 def main():
 	global engine
 	engine = fife.Engine()
 	engine.getAudioManager().setAmbientSound(genpath('content/audio/music/maybe.ogg'))
-	consoleexec = ConsoleExecuter()
-	engine.getGuiManager().getConsole().setConsoleExecuter(consoleexec)
+	controller = Controller()
 	gui = Gui()
 	gui.create_mainmenu()
 	gamestate = vgs.ViewGameState()
@@ -134,7 +158,7 @@ def main():
 	while True:
 		engine.pump()
 		gamestate.turn()
-		if consoleexec.quitRequested:
+		if controller.quitRequested:
 			gamestate.deactivate()
 			break
 	engine.finalizePumping()

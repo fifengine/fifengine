@@ -18,7 +18,7 @@ namespace FIFE {
 			/** Called when user has typed command to console and pressed enter
 			 * @return response from executer
 			 */
-			virtual std::string onCommand(const std::string& command) = 0;
+			virtual std::string onConsoleCommand(const std::string& command) = 0;
 	};
 
 	class Console {

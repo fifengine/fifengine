@@ -175,7 +175,6 @@ namespace FIFE {
 		FIFE::RenderBackend::instance()->createMainScreen(swidth, sheight, bitsPerPixel, fullscreen);
 		m_guimanager->init();
 		SDL_EnableUNICODE(1);
-		m_guimanager->getConsole()->show();
 	}
 
 	void Engine::initializePumping() {
