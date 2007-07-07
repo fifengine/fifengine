@@ -35,6 +35,7 @@
 
 namespace gcn {
 	class ClickLabel : public Button {
+	public:
 		ClickLabel();
 		ClickLabel(const std::string& caption);
 		virtual ~ClickLabel();

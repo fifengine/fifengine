@@ -1,104 +1,26 @@
 import os
 os.environ['PYTHONPATH'] = '.'
-print os.getenv('PYTHONPATH')
+
 import engine.fife as fife
-import time
+import time, os
 
-print "Creating engine"
-engine = fife.Engine()
+engine = None
 
-print "Testing settings manager"
-settings = engine.getSettingsManager()
-print "  RenderBackend = " + settings.read_string('RenderBackend', 'none defined')
-screenwidth = settings.read_int("ScreenWidth", 800)
-screenheight = settings.read_int("ScreenHeight", 600)
+def genpath(path):
+	return os.path.sep.join(path.split('/'))
 
-print "Testing log"
-log = fife.Log.initialize(fife.Log.LEVEL_MAX, True, True)
-fife.Log("Testing log...")
-
-
-print "Testing timers"
-class MyTimeEvent(fife.TimeEvent):
-	def __init__(self, period):
-		fife.TimeEvent.__init__(self, period)
-		self.counter = 0
-	
-	def updateEvent(self, curtime):
-		print "testing timer event... %d, %d" % (curtime, self.counter)
-		self.counter += 1
-
-timemanager = engine.getTimeManager()
-e = MyTimeEvent(100)
-timemanager.registerEvent(e)
-
-for i in xrange(10):
-	time.sleep(0.1)
-	timemanager.update()
-
-print "finishing"
-timemanager.unregisterEvent(e)
-
-eventmanager = engine.getEventManager()
-class MyEventListener(fife.ICommandListener):
+class GenericListmodel(fife.ListModel):
 	def __init__(self):
-		fife.ICommandListener.__init__(self)
-	
-	def onCommand(self, command):
-		print "received command with code %d" % command.getCode()		
+		fife.ListModel.__init__(self)
+		self.items = []
+		
+	def getNumberOfElements(self):
+		return len(self.items)
+		
+	def getElementAt(self, i):
+		return self.items[i]
 
-l = MyEventListener()
-eventmanager.addCommandListener(l)
-cmd = fife.Command()
-cmd.setCode(0)
-print "Sending commands..."
-for i in xrange(20):
-	eventmanager.dispatchCommand(cmd)
-	cmd.setCode(i)
-eventmanager.removeCommandListener(l)
-
-print "Testing VFS"
-vfs = fife.VFSUtility()
-print vfs.listFiles('.')
-print vfs.listDirectories('.')
-print vfs.readLines('fife_engine.py')
-print vfs.readBytes('fife_engine.py')
-
-print "Testing GUI"
-guimanager = engine.getGuiManager()
-fonts = [fife.TTFont('content/fonts/FreeMono.ttf', 14), 
-         fife.ImageFont('content/fonts/rpgfont.png', ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"')]
-for f in fonts:
-	f.setColor(255,20,20)
-container = fife.Container()
-guimanager.add(container)
-container.setSize(screenwidth, screenheight)
-container.setOpaque(False)
-label1 = fife.Label('This is a Truetype font')
-label1.setPosition(0, 70)
-label1.setFont(fonts[0])
-container.add(label1)
-label2 = fife.Label('This is a Image font')
-label2.setPosition(0, 100)
-label2.setFont(fonts[1])
-container.add(label2)
-labels = [label1, label2]
-
-
-
-print "Testing audio"
-audiomanager = engine.getAudioManager()
-audiomanager.setAmbientSound('content/audio/music/maybe.ogg')
-for i in xrange(20):
-	audiomanager.setVolume(float(i % 10) / 10)
-	time.sleep(0.1)
-
-print "Testing map"
-ctrl = fife.Control()
-#ctrl.addMapLoader(fife.XML())
-
-
-class MyExecuter(fife.ConsoleExecuter):
+class ConsoleExecuter(fife.ConsoleExecuter):
 	def __init__(self):
 		fife.ConsoleExecuter.__init__(self)
 		self.quitRequested = False
@@ -107,7 +29,6 @@ class MyExecuter(fife.ConsoleExecuter):
 		print "In python, tools clicked"
 
 	def onCommand(self, command):
-		print "In python, command %s received" % command
 		result = "no result"
 		if command.lower() in ('quit', 'exit'):
 			self.quitRequested = True
@@ -117,18 +38,96 @@ class MyExecuter(fife.ConsoleExecuter):
 			result = str(eval(command))
 		except:
 			pass
-		print "result = " + result
 		return result
+
+class Gui(fife.IWidgetListener):
+	def __init__(self):
+		fife.IWidgetListener.__init__(self)
+		engine.getEventManager().addWidgetListener(self)
+		self.level_list = GenericListmodel()
+
+	def onWidgetAction(self, event):
+		print event.getId()
 	
-console = guimanager.getConsole()
-consoleexec = MyExecuter()
-console.setConsoleExecuter(consoleexec)
+	def create_mainmenu(self):
+		small_font = fife.TTFont('content/fonts/FreeMono.ttf', 12)
+		small_font.thisown = 0
+		small_font.setColor(255, 255, 255)
+		sx = 330
+		sy = 400
+		listitems = fife.VFSUtility().readLines(genpath('content/etc/maps_custom_developers.txt'))
+		self.level_list.items = [i.strip() for i in listitems]
+		level_drop = fife.DropDown(self.level_list)
+		level_drop.setPosition(5, 45)
+		level_drop.setSize(sx - 140, 16)
+		level_drop.thisown = 0
+		dark_color = fife.Color(10, 20, 20)
+		medium_color = fife.Color(60, 70, 60)
+		level_drop.setBackgroundColor(dark_color)
+		level_drop.setBaseColor(medium_color)
+		level_drop.setFont(small_font)
+		
+		con = fife.Container()
+		con.thisown = 0
+		con.setSize(sx-2, sy-2)
+		con.setPosition(2, 2)
+		top = fife.Window('Choose a custom Map')
+		top.thisown = 0
+		con.add(top)
+		top.setFont(small_font)
+		top.setBaseColor(dark_color)
+		
+		top.setSize(sx, sy)
+		top.setPosition(0, 0)
+		top.setTitleBarHeight(20)
+		engine.getGuiManager().add(con)
+		self.lchooser_active = True
+	
+		con.setOpaque(False)
+		con.add(level_drop)
 
+		button = fife.Button('Load Map')
+		button.thisown = 0
+		button.setPosition(sx - 125, 45)
+		button.setBaseColor(medium_color)
+		button.setActionEventId('on_loadmap')
+		button.setSize(100,16)
+		button.setFont(small_font)
+		button.adjustSize()
+		con.add(button)
+		
+		button2 = fife.Button('Stress test')
+		button2.thisown = 0
+		button2.setPosition(sx - 125, 77)
+		button2.setBaseColor(medium_color)
+		button2.setActionEventId('on_loadmap')
+		button2.setSize(100,16)
+		button2.setFont(small_font)
+		button2.adjustSize()
+		con.add(button2)
+		
+		close_button = fife.Button('close chooser')
+		close_button.thisown = 0
+		close_button.setBaseColor(medium_color)
+		close_button.setPosition(sx - 125, 109)
+		close_button.setSize(100,16)
+		close_button.setFont(small_font)
+		close_button.adjustSize()
+		close_button.setActionEventId('close_level_chooser')
+		con.add(close_button)
 
-i = 1
-while True:
-	engine.pump()
-	for l in labels: l.setX(i)
-	i = (i + 1) % 100
-	if consoleexec.quitRequested:
-		break
+def main():
+	global engine
+	engine = fife.Engine()
+	engine.getAudioManager().setAmbientSound(genpath('content/audio/music/maybe.ogg'))
+	consoleexec = ConsoleExecuter()
+	engine.getGuiManager().getConsole().setConsoleExecuter(consoleexec)
+	gui = Gui()
+	gui.create_mainmenu()
+	while True:
+		engine.pump()
+		if consoleexec.quitRequested:
+			break
+
+if __name__ == '__main__':
+	main()

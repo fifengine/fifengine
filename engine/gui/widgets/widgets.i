@@ -10,6 +10,7 @@
 namespace gcn {
 	class Color;
 	class Font;
+	class Image;
 	class Widget {
 	public:
 		Widget();
@@ -63,7 +64,7 @@ namespace gcn {
 		virtual void moveToBottom(Widget* widget) { };
 		virtual void focusNext() { };
 		virtual void focusPrevious() { };
-	private:
+	protected:
 		virtual void draw(Graphics* graphics) = 0;
 	};
 	
@@ -93,9 +94,9 @@ namespace gcn {
 	};
 	
 	%feature("notabstract") CheckBox;
-	class CheckBox: public Widget {
+	class CheckBox {
+	public:
 		CheckBox();
-		CheckBox(const std::string &caption, bool marked=false);
 		virtual ~CheckBox() { }
 		virtual bool isMarked() const;
 		virtual void setMarked(bool marked);
@@ -119,6 +120,7 @@ namespace gcn {
 
 	%feature("notabstract") Button;
 	class Button: public Widget {
+	public:
 		Button();
 		Button(const std::string& caption);
 		virtual void setCaption(const std::string& caption);
@@ -129,8 +131,9 @@ namespace gcn {
 		virtual bool isPressed() const;
 	};
 
-	%feature("notabstract") Button;
+	%feature("notabstract") TwoButton;
 	class TwoButton: public Widget {
+	public:
 		TwoButton(Image *up_image, Image *down_image);
 		TwoButton(Image *up_image, Image *down_image, const char * caption);
 		~TwoButton();
@@ -142,6 +145,7 @@ namespace gcn {
 
 	%feature("notabstract") ScrollArea;
 	class ScrollArea: public Widget {
+	public:
 		ScrollArea();
 		ScrollArea(Widget *content);
 		ScrollArea(Widget *content, unsigned int hPolicy, unsigned int vPolicy);
@@ -178,8 +182,10 @@ namespace gcn {
 		};
 	};
 	
+	
 	%feature("notabstract") TextBox;
 	class TextBox: public Widget {
+	public:
 		TextBox();
 		TextBox(const std::string& text);
 		virtual void setText(const std::string& text);
@@ -213,6 +219,7 @@ namespace gcn {
 
 	%feature("notabstract") ListBox;
 	class ListBox: public Widget {
+	public:
 		ListBox();
 		ListBox(ListModel *listModel);
 		virtual ~ListBox() { }
@@ -227,6 +234,7 @@ namespace gcn {
 
 	%feature("notabstract") DropDown;
 	class DropDown: public Widget {
+	public:
 		DropDown(ListModel *listModel = NULL,
 		         ScrollArea *scrollArea = NULL,
 		         ListBox *listBox = NULL);
@@ -240,6 +248,7 @@ namespace gcn {
 
 	%feature("notabstract") RadioButton;
 	class RadioButton: public Widget {
+	public:
 		RadioButton();
 		RadioButton(const std::string &caption,
 					const std::string &group,
@@ -256,6 +265,7 @@ namespace gcn {
 
 	%feature("notabstract") Slider;
 	class Slider: public Widget {
+	public:
 		Slider(double scaleEnd = 1.0);
 		Slider(double scaleStart, double scaleEnd);
 		virtual ~Slider() { }
@@ -281,6 +291,7 @@ namespace gcn {
 
 	%feature("notabstract") Window;
 	class Window: public Container {
+	public:
 		Window();
 		Window(const std::string& caption);
 		virtual ~Window();
@@ -301,6 +312,7 @@ namespace gcn {
 
 	%feature("notabstract") ClickLabel;
 	class ClickLabel: public Button {
+	public:
 		ClickLabel();
 		ClickLabel(const std::string& caption);
 		virtual ~ClickLabel();
@@ -310,6 +322,7 @@ namespace gcn {
 	%feature("notabstract") Icon2;
 	%rename(Icon) Icon2;
 	class Icon2: public Widget {
+	public:
 		Icon2(Image* image);
 		virtual ~Icon2();
 		void setImage(Image* image);
