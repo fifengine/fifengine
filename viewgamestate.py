@@ -14,17 +14,19 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 
 		self.dx = 0
 		self.dy = 0
+		self.prevDragX = 0
+		self.prevDragY = 0
 
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
 		if (keyval == fife.IKey.LEFT):
-			self.dx = -10
+			self.dx = -30
 		elif (keyval == fife.IKey.RIGHT):
-			self.dx = 10
+			self.dx = 30
 		elif (keyval == fife.IKey.UP):
-			self.dy = -10
+			self.dy = -30
 		elif (keyval == fife.IKey.DOWN):
-			self.dy = 10
+			self.dy = 30
 
 	def keyReleased(self, event):
 		keyval = event.getKey().getValue()
@@ -47,6 +49,8 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 	
 	def mousePressed(self, evt):
 		print "mouse pressed, button = %d" % evt.getButton()
+		self.prevDragX = 0
+		self.prevDragY = 0
 	
 	def mouseReleased(self, evt):
 		pass
@@ -61,27 +65,15 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		print "mouse wheel down"
 	
 	def mouseMoved(self, evt):
-		x = evt.getX()
-		y = evt.getY()
-
-# NOTE: screen_width and screen_height aren't currently defined
-# in scripts. Also, this logic interacts oddly with the arrow
-# keys.
-#
-#		self.dx = 0
-#		self.dy = 0
-
-#		if (x < 20 and x > 0):
-#			self.dx = - 20
-#		elif (y < 20 and y > 0):
-#			self.dy = - 20
-#		elif (x > screen_width - 20 and x < screen_width):
-#			self.dx = 20
-#		elif (y > screen_height - 20 and y < screen_height):
-#			self.dy = 20
+		pass
 	
 	def mouseDragged(self, evt):
-		print "mouse drag %d, %d" % (evt.getX(), evt.getY())
+		if evt.getButton() == fife.IMouseEvent.MIDDLE:
+			if self.prevDragX and self.prevDragY:
+				self.dx = self.prevDragX - evt.getX()
+				self.dy = self.prevDragY - evt.getY()
+			self.prevDragX = evt.getX();
+			self.prevDragY = evt.getY();
 	
 	def setMap(self, path):
 		self.map = path
@@ -99,6 +91,7 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 
 	def turn(self):
 		self.cam.moveBy(fife.Point(self.dx, self.dy))
+		self.dx, self.dy = 0, 0
 		self.ctrl.turn()
 		self.cam.render()
 
