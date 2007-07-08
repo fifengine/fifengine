@@ -90,8 +90,9 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 			self.active = False
 
 	def turn(self):
-		self.cam.moveBy(fife.Point(self.dx, self.dy))
-		self.dx, self.dy = 0, 0
+		if self.dx or self.dy:
+			self.cam.moveBy(fife.Point(self.dx, self.dy))
+			self.dx, self.dy = 0, 0
 		self.ctrl.turn()
 		self.cam.render()
 

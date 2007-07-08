@@ -20,7 +20,7 @@ class GenericListmodel(fife.ListModel):
 	def getElementAt(self, i):
 		return self.items[i]
 
-STRESS_TEST_PERIOD = 3000
+STRESS_TEST_PERIOD = 500
 class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter, fife.IWidgetListener, fife.TimeEvent):
 	def __init__(self, gui, gamestate):
 		eventmanager = engine.getEventManager()
