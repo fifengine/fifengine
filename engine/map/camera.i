@@ -4,6 +4,7 @@
 %}
 
 %include "util/point.h"
+%include "util/rect.h"
 
 namespace FIFE { namespace map {
 
@@ -13,6 +14,8 @@ namespace FIFE { namespace map {
 		public:
 			Camera(Control* map_control);
 			~Control();
+
+			void setViewport(const Rect& viewport);
 
 			void moveTo(const Point& gridPosition);
 			void moveBy(const Point& delta);
