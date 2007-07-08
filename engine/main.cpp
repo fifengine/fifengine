@@ -119,7 +119,6 @@ int main(int argc, char* argv[]) {
 
 		// construct a mapview-gamestate; inactive by default
 		mapview = new FIFE::map::ViewGameState(em);
-		std::cout << "FOO" << std::endl;
 		mapview->addMapLoader(new FIFE::map::loaders::fallout::Fallout());
 		mapview->addMapLoader(new FIFE::map::loaders::xml::XML());
 		mapview->getMap(); // just to suppress the 'unused variable warning'
