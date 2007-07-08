@@ -20,7 +20,8 @@ class GenericListmodel(fife.ListModel):
 	def getElementAt(self, i):
 		return self.items[i]
 
-class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter, fife.IWidgetListener):
+STRESS_TEST_PERIOD = 3000
+class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter, fife.IWidgetListener, fife.TimeEvent):
 	def __init__(self, gui, gamestate):
 		eventmanager = engine.getEventManager()
 		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10, fife.IKey.F9])
@@ -33,9 +34,15 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 		fife.ConsoleExecuter.__init__(self)
 		engine.getGuiManager().getConsole().setConsoleExecuter(self)
 		fife.ConsoleExecuter.__init__(self)
+		fife.TimeEvent.__init__(self)
+		engine.getTimeManager().registerEvent(self)
+		
 		self.quitRequested = False
+		self.stressTestingOn = False
 		self.gui = gui
 		self.gamestate = gamestate
+		self.stressTestingMapIndex = 0
+		
 		eventmanager.addMouseListener(gamestate)
 		eventmanager.addKeyListener(gamestate)
 
@@ -70,13 +77,34 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 			pass
 		return result
 
+	def activateStressTesting(self, activate):
+		if activate:
+			self.stressTestingMapIndex = 0
+			self.setPeriod(STRESS_TEST_PERIOD)
+		else:
+			self.setPeriod(-1)
+		self.stressTestingOn = activate
+
+	
 	def onWidgetAction(self, event):
 		if event.getId() == 'close_level_chooser':
 			self.gui.panel.setVisible(False)
-		if event.getId() == 'on_loadmap':
+		elif event.getId() == 'on_loadmap':
+			self.activateStressTesting(False)
 			self.gamestate.deactivate()
 			self.gamestate.setMap(self.gui.get_selected_map())
 			self.gamestate.activate()
+		elif event.getId() == 'on_stresstest':
+			self.activateStressTesting(True)
+	
+	def updateEvent(self, time):
+		if self.stressTestingOn:
+			self.gamestate.deactivate()
+			ind = self.stressTestingMapIndex % self.gui.level_list.getNumberOfElements()
+			self.stressTestingMapIndex += 1
+			self.gamestate.setMap(self.gui.level_list.getElementAt(ind))
+			self.gamestate.activate()
+
 
 
 class Gui(object):

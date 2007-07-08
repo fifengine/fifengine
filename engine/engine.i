@@ -32,7 +32,6 @@ namespace FIFE {
 
 			audio::Manager* getAudioManager();
 			EventManager* getEventManager();
-			VFS* getVFS();
 			TimeManager* getTimeManager();
 			SettingsManager* getSettingsManager();
 			GUIManager* getGuiManager();
