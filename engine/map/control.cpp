@@ -28,10 +28,12 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "map/geometries/geometry.h"
+#include "map/structures/layer.h"
 #include "map/structures/elevation.h"
 #include "map/structures/objectinfo.h"
 #include "map/structures/map.h"
 #include "map/map_loader.h"
+#include "video/imagecache.h"
 #include "video/renderbackend.h"
 #include "util/exception.h"
 #include "util/log.h"
@@ -41,6 +43,7 @@
 #include "camera.h"
 #include "control.h"
 #include "view.h"
+#include "visual.h"
 
 namespace FIFE { namespace map {
 
@@ -153,7 +156,8 @@ namespace FIFE { namespace map {
 //		}
 //		m_runner->start();
 		m_isrunning = true;
-//		m_runner->activateElevation(m_elevation);
+
+		activateElevation(m_elevation);
 	}
 
 	void Control::setElevation(size_t elev) {
@@ -162,7 +166,6 @@ namespace FIFE { namespace map {
 		}
 		m_elevation = elev;
 		m_view->setMap(m_map, elev);
-//		m_runner->displayElevation(elev);
 
 		// Assure a default starting position is set
 		ElevationPtr current_elevation = m_view->getCurrentElevation();
@@ -181,7 +184,7 @@ namespace FIFE { namespace map {
 			return;
 		}
 
-//		m_runner->activateElevation(elev);
+		activateElevation(elev);
 	}
 
 	size_t Control::getCurrentElevation() const {
@@ -240,6 +243,43 @@ namespace FIFE { namespace map {
 		std::set<Camera*>::iterator i(m_cameras.begin());
 		for(; i != m_cameras.end(); ++i)
 			(*i)->reset();
+	}
+
+	struct display_objects {
+		View& view;
+		size_t& nvisuals;
+		size_t& nobjects;
+		display_objects(View& v, size_t& nv,size_t& no)
+			: view(v),nvisuals(nv),nobjects(no) {}
+
+		void operator()(LayerPtr l)      { l->forEachObject( display_objects(*this) ); }
+
+		void operator()(ObjectPtr object)  {
+			RenderableLocation loc(object->getVisualLocation());
+			size_t iid = ImageCache::instance()->addImageFromLocation(loc);
+			if( iid ) {
+				Visual* visual = new Visual(object);
+				visual->setRenderable(iid, loc.getType());
+				object->setVisualId( view.addVisual(visual) );
+				++nvisuals;
+
+				Debug("map_control")
+					<< "Adding Visual for object iid:" << iid
+					<< " rloc:" << loc.toString();
+			}
+			++nobjects;
+		}
+
+	};
+
+	void Control::activateElevation(size_t elevation_id) {
+    ElevationPtr elevation = m_map->getElevation(elevation_id);
+		size_t nv = 0, no = 0;
+		elevation->forEachLayer( display_objects (*m_view,nv,no) );
+
+		Log("map_control")
+			<< "Displaying " << nv << " visuals from "
+			<< no << " objects on elevation " << elevation_id;
 	}
 
 } } // FIFE::map

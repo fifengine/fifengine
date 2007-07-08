@@ -132,6 +132,9 @@ namespace map {
 			void removeCamera(Camera* camera);
 
 		protected:
+
+			void activateElevation(size_t elevation_id);
+
 			std::string m_map_filename;
 			MapPtr m_map;
 			View* m_view;
