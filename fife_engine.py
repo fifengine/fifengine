@@ -23,7 +23,7 @@ class GenericListmodel(fife.ListModel):
 class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter, fife.IWidgetListener):
 	def __init__(self, gui, gamestate):
 		eventmanager = engine.getEventManager()
-		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10])
+		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10, fife.IKey.F9])
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
 		fife.ICommandListener.__init__(self)
@@ -45,7 +45,9 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 			self.quitRequested = true
 		elif (keyval == fife.IKey.F10):
 			engine.getGuiManager().getConsole().toggleShowHide()
-
+		elif (keyval == fife.IKey.F9):
+			self.gui.panel.setVisible(not self.gui.panel.isVisible())
+			
 	def keyReleased(self, event):
 		pass
 
