@@ -115,16 +115,18 @@ int main(int argc, char* argv[]) {
 		FIFE::GUIManager* guimanager = FIFE::GUIManager::instance();
 		guimanager->init();
 
-		// it seems this *MUST* be done after setting the video mode!
-		SDL_EnableUNICODE(1);
-		initScripts(engine);
-
 		FIFE::EventManager& em = *FIFE::EventManager::instance();
+
 		// construct a mapview-gamestate; inactive by default
 		mapview = new FIFE::map::ViewGameState(em);
+		std::cout << "FOO" << std::endl;
 		mapview->addMapLoader(new FIFE::map::loaders::fallout::Fallout());
 		mapview->addMapLoader(new FIFE::map::loaders::xml::XML());
 		mapview->getMap(); // just to suppress the 'unused variable warning'
+
+		// it seems this *MUST* be done after setting the video mode!
+		SDL_EnableUNICODE(1);
+		initScripts(engine);
 
 #ifdef HAVE_MOVIE
 		video_view = new FIFE::VideoGameState(em);
