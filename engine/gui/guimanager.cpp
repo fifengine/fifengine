@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 #include <guichan/sdl/sdlinput.hpp>
@@ -37,18 +38,20 @@
 #include "util/debugutils.h"
 #include "gui/console/console.h"
 #include "gui/fonts/font.h"
+#include "eventchannel/widget/ec_widgetevent.h"
 
 #include "guimanager.h"
 
 
 namespace FIFE {
 
-	GUIManager::GUIManager() : 
+	GUIManager::GUIManager(IWidgetListener* widgetlistener) : 
 		m_gcn_gui(new gcn::Gui()), 
 		m_focushandler(0),
         m_gcn_topcontainer(new gcn::Container()), 
         m_gcn_imgloader(new GCNImageLoader()) , 
-        m_input(new gcn::SDLInput()) {
+        m_input(new gcn::SDLInput()),
+		m_widgetlistener(widgetlistener) {
 		m_font = 0;
 		m_console = 0;
 
@@ -136,11 +139,16 @@ namespace FIFE {
 		m_gcn_gui->draw();
 	}
 
+	void GUIManager::action(const gcn::ActionEvent & event) {
+		WidgetEvent wevt;
+		wevt.setId(event.getId());
+		m_widgetlistener->onWidgetAction(wevt);
+	}
+
 	void GUIManager::evaluateKeyEventConsumption(IKeyEvent& evt) {
 		gcn::Widget* w = m_focushandler->getFocused();
 		if (w) {
 			evt.consume();
-			//std::cout << "key event consumed" << std::endl;
 		}
 	}
 
@@ -148,7 +156,6 @@ namespace FIFE {
 		gcn::Widget* w = m_gcn_topcontainer->getWidgetAt(evt.getX(), evt.getY());
 		if (w && w->isVisible()) {
 			evt.consume();
-			//std::cout << "mouse event consumed" << std::endl;
 		}
 	}
 

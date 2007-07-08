@@ -108,7 +108,7 @@ namespace FIFE {
 #endif
 
 		m_eventmanager = new EventManager();
-		m_guimanager = new GUIManager();
+		m_guimanager = new GUIManager(m_eventmanager);
 		m_eventmanager->addSdlEventListener(m_guimanager);
 		// keep guimanager as the first key listener so that it can evaluate guichan hits
 		m_eventmanager->addKeyListener(m_guimanager);

@@ -11,6 +11,7 @@ namespace gcn {
 	class Color;
 	class Font;
 	class Image;
+	class ActionListener;
 	class Widget {
 	public:
 		Widget();
@@ -64,6 +65,7 @@ namespace gcn {
 		virtual void moveToBottom(Widget* widget) { };
 		virtual void focusNext() { };
 		virtual void focusPrevious() { };
+		virtual void addActionListener(ActionListener* actionListener);
 	protected:
 		virtual void draw(Graphics* graphics) = 0;
 	};
