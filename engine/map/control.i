@@ -21,7 +21,6 @@ namespace FIFE {
 			void start();
 			void stop();
 			bool isRunning();
-			void turn();
 
 			size_t getCurrentElevation();
 			void setElevation(size_t);

@@ -8,13 +8,15 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		self.cam = fife.Camera(self.ctrl)
 		self.active = False
 
-		self.xml_loader = fife.XML()
-		print "Adding map loader " + self.xml_loader.getName()
-		self.ctrl.addMapLoader(self.xml_loader)
+		xml_loader = fife.XML()
+		xml_loader.thisown = 0
+		print "Adding map loader " + xml_loader.getName()
+		self.ctrl.addMapLoader(xml_loader)
 		
-		self.fallout_loader = fife.Fallout()
-		print "Adding map loader " + self.fallout_loader.getName()
-		self.ctrl.addMapLoader(self.fallout_loader)
+		fallout_loader = fife.Fallout()
+		fallout_loader.thisown = 0
+		print "Adding map loader " + fallout_loader.getName()
+		self.ctrl.addMapLoader(fallout_loader)
 
 		self.dx = 0
 		self.dy = 0
@@ -97,6 +99,5 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		if self.dx or self.dy:
 			self.cam.moveBy(fife.Point(self.dx, self.dy))
 			self.dx, self.dy = 0, 0
-		self.ctrl.turn()
 		self.cam.render()
 

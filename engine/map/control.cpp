@@ -69,8 +69,6 @@ namespace FIFE { namespace map {
 			Point(16,12),             // TRANSFORM
 			Point(32,10),             // OFFSET
 			Geometry::ShiftXAxis));   // FLAGS: SHIFT AROUND X AXIS
-
-		registerCommands();
 	}
 
 	Control::~Control() {
@@ -138,8 +136,6 @@ namespace FIFE { namespace map {
 		m_view->setViewport(RenderBackend::instance()->getMainScreen());
 		std::string ruleset_file = m_settings->read<std::string>("Ruleset", 
 		                           "content/scripts/demos/example_ruleset.lua");
-//		m_runner->setRuleset(ScriptContainer::fromFile(ruleset_file));
-//		m_runner->initialize(m_map, m_view);
 		m_elevation = size_t(-1);
 		setElevation(m_map->get<long>("_START_ELEVATION", 0));
 	}
@@ -149,12 +145,6 @@ namespace FIFE { namespace map {
 			return;
 		}
 
-//		if (m_map->hasScript(Map::OnStartScript)) {
-//			Log("map_control") 
-//				<< "Executing: OnStartScript ";
-//			m_scriptengine->execute(m_map->getScript(Map::OnStartScript));
-//		}
-//		m_runner->start();
 		m_isrunning = true;
 
 		activateElevation(m_elevation);
@@ -193,7 +183,6 @@ namespace FIFE { namespace map {
 
 	void Control::stop() {
 		if (m_map && isRunning()) {
-	//		m_runner->stop();
 			m_isrunning = false;
 		}
 	}
@@ -211,12 +200,6 @@ namespace FIFE { namespace map {
 		return m_isrunning;
 	}
 
-	void Control::turn() {
-		if( isRunning() ) {
-	//		m_runner->turn();
-		}
-	}
-
 	MapPtr Control::getMap() {
 		return m_map;
 	}
@@ -231,12 +214,6 @@ namespace FIFE { namespace map {
 
 	void Control::removeCamera(Camera* camera) {
 		m_cameras.erase(camera);
-	}
-
-	void Control::registerCommands() {
-	//	m_runner->registerCommand(1, new command::SetVisual());
-//		m_runner->registerCommand(2, new command::StartMovement());
-//		m_runner->registerCommand(3, new command::EnqueueAction());
 	}
 
 	void Control::resetCameras() {

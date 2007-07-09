@@ -103,10 +103,6 @@ namespace map {
 			 */
 			bool isRunning() const;
 
-			/** Process events in the script environemnt.
-			 */
-			void turn();
-
 			/** Switch to another elevation
 			 */
 			void setElevation(size_t);
@@ -148,7 +144,6 @@ namespace map {
 			size_t m_elevation;
 
 			void resetCameras();
-			void registerCommands();
 	};
 
 } } // FIFE::map

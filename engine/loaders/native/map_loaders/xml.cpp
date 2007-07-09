@@ -207,35 +207,6 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			loadElevation(el2);
 			el2 = el2->NextSiblingElement("elevation");
 		}
-
-		// I'm sure this can be refactored into something nicer. --zahlman
-		el1 = el->FirstChildElement("run");
-		if (el1) {
-			el2 = el1->FirstChildElement("script");
-			if (el2) {
-				Log("xmlmap") << "DEBUG: run script";
-				const char * scriptname = el2->Attribute("source");
-				if (scriptname) {
-//					m_map->setScript(Map::OnStartScript,
-//					                 ScriptContainer::fromFile(scriptname));
-				} else {
-					throw Exception("Error: no 'source' attribute in 'script'");
-				}
-			} else {
-				el2 = el1->FirstChildElement("string");
-				if (el2) {
-					const char* cmd = el2->FirstChild()->Value();
-					if (cmd) {
-//						m_map->setScript(Map::OnStartScript,
-//						                 ScriptContainer::fromString(cmd));
-					} else {
-						throw Exception ("Error: no valid run->string command");
-					}
-				} else {
-					throw Exception("Error: neither 'string' nor 'script' child in 'run'");
-				}
-			}
-		}
 	}
 
 	void XML::loadArchetypes(TiXmlElement* e) {

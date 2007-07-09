@@ -152,10 +152,6 @@ namespace FIFE { namespace map {
 				std::for_each(m_elevations.begin(),m_elevations.end(),visitor);
 			}
 
-//			void setScript(ScriptType scripttype, const ScriptContainer&);
-//			const ScriptContainer& getScript(ScriptType scripttype);
-//			bool hasScript(ScriptType scripttype) const;
-
 			bool isValidLocation(const Location& location) const;
 
 			/** Get total number of maps
@@ -189,9 +185,6 @@ namespace FIFE { namespace map {
 
 			typedef std::vector<ElevationPtr> type_elevations;
 			type_elevations m_elevations;
-
-//			typedef std::map<ScriptType, ScriptContainer> type_scriptmap;
-//			type_scriptmap m_scripts;
 
 			Map(const Map& map);
 			Map& operator=(const Map& map);

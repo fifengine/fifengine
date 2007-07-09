@@ -13,7 +13,7 @@ namespace FIFE { namespace map {
 	class Camera {
 		public:
 			Camera(Control* map_control);
-			~Control();
+			~Camera();
 
 			void setViewport(const Rect& viewport);
 

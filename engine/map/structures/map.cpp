@@ -186,26 +186,7 @@ namespace FIFE { namespace map {
 		}
 		m_elevations.clear();
 	}
-/*
-	void Map::setScript(Map::ScriptType st, const ScriptContainer& script) {
-		m_scripts[st] = script;
-	}
 
-	bool Map::hasScript(Map::ScriptType st) const {
-		type_scriptmap::const_iterator it = m_scripts.find(st);
-		if (it == m_scripts.end()) {
-			return false;
-		}
-		if (it->second.value == "") {
-			return false;
-		}
-		return true;
-	}
-
-	const ScriptContainer& Map::getScript(Map::ScriptType st) {
-		return m_scripts[st];
-	}
-*/
 	bool Map::isValidLocation(const Location& location) const {
 		if (location.elevation >= m_elevations.size())
 			return false;
