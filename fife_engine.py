@@ -49,7 +49,7 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
 		if (keyval == fife.IKey.ESCAPE):
-			self.quitRequested = true
+			self.quitRequested = True
 		elif (keyval == fife.IKey.F10):
 			engine.getGuiManager().getConsole().toggleShowHide()
 		elif (keyval == fife.IKey.F9):
