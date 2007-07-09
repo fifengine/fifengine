@@ -7,10 +7,10 @@ def initEnvironment(env):
 
 def addExtras(context):
 	path = os.environ['_']
-	context.env.Append(CPPPATH = [path, path + '\\include', path + '\\include\\openal', path + '\\include\\sdl_image', path + '\\include\\zlib', path + '\\include\\\lua51', path + '\\include\\guichan', path + '\\include\\boost', path + '\\include\\libvorbis', path + '\\include\\sdl_ttf', path + '\\include\\sdl', path + '\\include\\png', path + '\\include\\gettext'])
-	context.env.Append(LIBPATH = [path + '\\static_libs'])
+	context.env.Append(CPPPATH = [path, path + '\\include', path + '\\include\\openal', path + '\\include\\sdl_image', path + '\\include\\zlib', path + '\\include\\\lua51', path + '\\include\\guichan', path + '\\include\\boost', path + '\\include\\libvorbis', path + '\\include\\sdl_ttf', path + '\\include\\sdl', path + '\\include\\png', path + '\\include\\gettext', path + '\\..\\applications\\python25\\include'])
+	context.env.Append(LIBPATH = [path + '\\static_libs', path + '\\..\\applications\\python25\\libs'])
 	
-	context.env.Append(LIBS = ['fife', 'mingw32', 'zlib', 'SDL_image', 'lua51', 'guichan', 'guichan_sdl', 'vorbis', 'ogg', 'vorbisfile', 'SDLmain', 'SDL', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'png', 'ws2_32', 'intl'])
+	context.env.Append(LIBS = ['fife', 'mingw32', 'zlib', 'SDL_image', 'lua51', 'guichan', 'guichan_sdl', 'vorbis', 'ogg', 'vorbisfile', 'SDLmain', 'SDL', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'png', 'ws2_32', 'intl', 'python25'])
 
 	if context.env['opengl']:
 		context.env.Append(CPPPATH = [path + '\\include\\opengl'])
@@ -21,4 +21,5 @@ def addExtras(context):
 		context.env.Append(LIBS = ['avformat-51', 'avcodec-51', 'avutil-49', 'swscale-0'])
 	
 	if context.env['zip']:
+		context.env.Append(CPPPATH = [path + '\\include\\minizip'])
 		context.env.Append(LIBS = ['minizip'])

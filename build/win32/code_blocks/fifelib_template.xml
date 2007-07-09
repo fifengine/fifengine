@@ -15,6 +15,7 @@
 				<Option deps_output=".deps"/>
 				<Option type="3"/>
 				<Option compiler="0"/>
+				<Option createDefFile="1"/>
 				<Compiler>
 					<Add directory="..\..\..\engine"/>
 					<Add directory="..\mingw\include\boost"/>
