@@ -1,5 +1,7 @@
 import engine.fife as fife
 
+MOVE_SMOOTHING_DECREASE = 2
+MAX_MOVE_SMOOTHING = 50
 class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 	def __init__(self):
 		fife.IKeyListener.__init__(self)
@@ -22,17 +24,20 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		self.dy = 0
 		self.prevDragX = 0
 		self.prevDragY = 0
+		self.moveSpeedX = 0
+		self.moveSpeedY = 0
+		self.dragging = False
 
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
 		if (keyval == fife.IKey.LEFT):
-			self.dx = -30
+			self.dx = -20
 		elif (keyval == fife.IKey.RIGHT):
-			self.dx = 30
+			self.dx = 20
 		elif (keyval == fife.IKey.UP):
-			self.dy = -30
+			self.dy = -20
 		elif (keyval == fife.IKey.DOWN):
-			self.dy = 30
+			self.dy = 20
 
 	def keyReleased(self, event):
 		keyval = event.getKey().getValue()
@@ -59,7 +64,8 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		self.prevDragY = 0
 	
 	def mouseReleased(self, evt):
-		pass
+		if evt.getButton() == fife.IMouseEvent.MIDDLE:
+			self.dragging = False
 	
 	def mouseClicked(self, evt):
 		pass
@@ -74,6 +80,7 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		pass
 	
 	def mouseDragged(self, evt):
+		self.dragging = True
 		if evt.getButton() == fife.IMouseEvent.MIDDLE:
 			if self.prevDragX and self.prevDragY:
 				self.dx = self.prevDragX - evt.getX()
@@ -95,9 +102,30 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 			self.ctrl.stop()
 			self.active = False
 
+	def calc_move_smoothing(self, val):
+		if val < 0:
+			if val < -MAX_MOVE_SMOOTHING:
+				val = -MAX_MOVE_SMOOTHING
+			val += MOVE_SMOOTHING_DECREASE
+			if val > 0: 
+				val = 0
+		else:
+			if val > MAX_MOVE_SMOOTHING:
+				val = MAX_MOVE_SMOOTHING
+			val -= MOVE_SMOOTHING_DECREASE
+			if val < 0: 
+				val = 0
+		return val
+	
 	def turn(self):
 		if self.dx or self.dy:
+			self.moveSpeedX, self.moveSpeedY = self.dx, self.dy
 			self.cam.moveBy(fife.Point(self.dx, self.dy))
 			self.dx, self.dy = 0, 0
+		else:
+			if not self.dragging and (self.moveSpeedX or self.moveSpeedY):
+				self.moveSpeedX = self.calc_move_smoothing(self.moveSpeedX)
+				self.moveSpeedY = self.calc_move_smoothing(self.moveSpeedY)
+				self.cam.moveBy(fife.Point(self.moveSpeedX, self.moveSpeedY))
 		self.cam.render()
 
