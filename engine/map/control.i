@@ -3,9 +3,11 @@
 #include "map/control.h"
 %}
 
-namespace FIFE { namespace map {
+namespace FIFE { 
+	class CannotOpenFile;
+	namespace map {
 
-  class MapLoader;
+	class MapLoader;
 
 	class Control {
 		public:
@@ -14,7 +16,7 @@ namespace FIFE { namespace map {
 
 			void addMapLoader(MapLoader* loader);
 
-			void load(const std::string& filename);
+			void load(const std::string& filename) throw(CannotOpenFile);
       
 			void start();
 			void stop();

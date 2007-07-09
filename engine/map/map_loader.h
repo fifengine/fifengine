@@ -35,12 +35,16 @@
 // Second block: files included from the same folder
 
 namespace FIFE { namespace map {
+	class Layer;
+	class Elevation;
+	class Map;
+	typedef boost::shared_ptr<Layer> LayerPtr;
+	typedef boost::shared_ptr<Elevation> ElevationPtr;
+	typedef boost::shared_ptr<Map> MapPtr;
+
 
 	class Archetype;
 
-	class Map;
-	typedef boost::shared_ptr<Map> MapPtr;
-	
 	class MapLoader {
 		public:
 

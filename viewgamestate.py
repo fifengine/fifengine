@@ -8,9 +8,13 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		self.cam = fife.Camera(self.ctrl)
 		self.active = False
 
-		xml_loader = fife.XML()
-		xml_loader.thisown = 0
-		self.ctrl.addMapLoader(xml_loader)
+		self.xml_loader = fife.XML()
+		print "Adding map loader " + self.xml_loader.getName()
+		self.ctrl.addMapLoader(self.xml_loader)
+		
+		self.fallout_loader = fife.Fallout()
+		print "Adding map loader " + self.fallout_loader.getName()
+		self.ctrl.addMapLoader(self.fallout_loader)
 
 		self.dx = 0
 		self.dy = 0

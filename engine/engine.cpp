@@ -54,6 +54,8 @@
 #ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
 #endif
+#include "loaders/fallout/map_loaders/providerdat2.h"
+#include "loaders/fallout/map_loaders/providerdat1.h"
 
 #include "engine.h"
 
@@ -91,6 +93,9 @@ namespace FIFE {
 	void Engine::init() {
 		FIFE::SettingsManager* settings = new SettingsManager();
 		settings->loadSettings(SETTINGS_FILE_NAME);
+		Log::initialize(static_cast<Log::type_log_level>(settings->read<int>("LogLevel", 0)),
+		                settings->read<bool>("LogToFile", false), 
+		                settings->read<bool>("LogToPromt", true));
 
 		// If failed to init SDL throw exception.
 		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
@@ -135,6 +140,8 @@ namespace FIFE {
 		// FIXME: Change all providers to be loaded here or even better in scripts
 		VFSSourceFactory::instance()->addProvider( new zip::ZipProvider() );
 #endif
+		VFSSourceFactory::instance()->addProvider(new map::loaders::fallout::ProviderDAT2());
+		VFSSourceFactory::instance()->addProvider(new map::loaders::fallout::ProviderDAT1());
 
 		m_imagecache = new ImageCache();
 
