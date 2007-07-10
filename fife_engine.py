@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os, time
 os.environ['PYTHONPATH'] = '.'
 
