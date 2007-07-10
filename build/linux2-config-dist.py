@@ -25,6 +25,7 @@ def addExtras(context):
 	
 	if context.env['opengl']:
 		context.env.Append(LIBS = ['GL', 'GLU'])
+		context.env.Append(LIBPATH = ['/usr/X11R6/lib'])
 		context.checkSimpleLib(['guichan_opengl'])
 	
 	if context.env['movie']:
