@@ -32,7 +32,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/time/timemanager.h"
-#include "video/renderbackend.h"
 #include "video/screen.h"
 #include "map/geometries/geometry.h"
 #include "map/structures/elevation.h"
@@ -53,7 +52,7 @@ namespace FIFE { namespace map {
 		m_timer.setInterval(50);
 		m_timer.setCallback( boost::bind( &Camera::update, this ) );
 
-		Screen* surface = RenderBackend::instance()->getMainScreen();
+		Screen* surface = m_control->getScreen();
 
 		int w = surface->getWidth();
 		int h = surface->getHeight();
@@ -164,7 +163,7 @@ namespace FIFE { namespace map {
 	void Camera::render() {
 		m_view->setXPos(m_position.x);
 		m_view->setYPos(m_position.y);
-		m_view->setViewport( RenderBackend::instance()->getMainScreen(), m_viewport );
+		m_view->setViewport(m_control->getScreen(), m_viewport );
 		m_view->render();
 	}
 

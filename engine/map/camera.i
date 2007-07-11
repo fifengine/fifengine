@@ -20,8 +20,6 @@ namespace FIFE { namespace map {
 			void moveTo(const Point& gridPosition);
 			void moveBy(const Point& delta);
 
-			void render();
-
 		private:
 	};
 }}

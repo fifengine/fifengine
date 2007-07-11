@@ -51,6 +51,7 @@ namespace FIFE { namespace map {
 		: m_map_filename(""),
 		m_map(),
 		m_view(new View()),
+		m_screen(RenderBackend::instance()->getMainScreen()),
 		m_settings(SettingsManager::instance()),
 		m_isrunning(false) {
 
@@ -133,7 +134,7 @@ namespace FIFE { namespace map {
 		m_map = map;
 
 		m_view->setMap(m_map, 0);
-		m_view->setViewport(RenderBackend::instance()->getMainScreen());
+		m_view->setViewport(m_screen);
 		std::string ruleset_file = m_settings->read<std::string>("Ruleset", 
 		                           "content/scripts/demos/example_ruleset.lua");
 		m_elevation = size_t(-1);
@@ -148,6 +149,14 @@ namespace FIFE { namespace map {
 		m_isrunning = true;
 
 		activateElevation(m_elevation);
+	}
+
+	void Control::update() {
+		if(isRunning()) {
+			std::set<Camera*>::iterator i(m_cameras.begin());
+			for(; i != m_cameras.end(); ++i)
+				(*i)->render();
+		}
 	}
 
 	void Control::setElevation(size_t elev) {
@@ -202,6 +211,10 @@ namespace FIFE { namespace map {
 
 	MapPtr Control::getMap() {
 		return m_map;
+	}
+
+	Screen* Control::getScreen() {
+		return m_screen;
 	}
 
 	View* Control::getView() {

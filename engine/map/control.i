@@ -19,11 +19,9 @@ namespace FIFE {
 			void load(const std::string& filename) throw(CannotOpenFile);
       
 			void start();
+			void update();
 			void stop();
 			bool isRunning();
-
-			size_t getCurrentElevation();
-			void setElevation(size_t);
 
 		private:
 	};

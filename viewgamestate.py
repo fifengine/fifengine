@@ -127,5 +127,5 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 				self.moveSpeedX = self.calc_move_smoothing(self.moveSpeedX)
 				self.moveSpeedY = self.calc_move_smoothing(self.moveSpeedY)
 				self.cam.moveBy(fife.Point(self.moveSpeedX, self.moveSpeedY))
-		self.cam.render()
+		self.ctrl.update()
 

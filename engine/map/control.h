@@ -37,6 +37,8 @@
 namespace FIFE { 
 	class SettingsManager;
 
+	class Screen;
+
 namespace map {
 
 	class Map;
@@ -91,9 +93,10 @@ namespace map {
 			/** Start a map - setting up script environment and rendering.
 			 */
 			void start();
-			/** Pause a map - suspend script environment, rendering can continue.
+
+			/** Update the map view
 			 */
-			void pause();
+			void update();
 
 			/** Stop a map - shuting down script environment and rendering.
 			 */
@@ -115,6 +118,10 @@ namespace map {
 			 */
 			View* getView();
 
+			/** Returns the screen (render target) used by this control
+			 */
+			Screen* getScreen();
+
 			/** Return the map operated by this control
 			 */
 			MapPtr getMap();
@@ -134,6 +141,7 @@ namespace map {
 			std::string m_map_filename;
 			MapPtr m_map;
 			View* m_view;
+			Screen* m_screen;
 			SettingsManager* m_settings;
 			std::set<Camera*> m_cameras;
 

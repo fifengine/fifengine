@@ -99,11 +99,6 @@ namespace FIFE { namespace map {
 			 */
 			void track(ObjectPtr object);
 
-			void update();
-
-			/** Render this camera's view on the map
-			 */
-			void render();
 		private:
 			LayerPtr m_layer;
 			View*  m_view;
@@ -118,9 +113,14 @@ namespace FIFE { namespace map {
 			friend class Control;
 			Control* m_control;
 
+			void update();
+
 			/** Reset Camera
 			 */
 			void reset();
+			/** Render this camera's view on the map
+			 */
+			void render();
 			/** Control deleted
 			 */
 			void controlDeleted();
