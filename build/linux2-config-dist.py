@@ -7,12 +7,13 @@ def addExtras(context):
 	context.env.Append(CPPPATH = ['/opt/include', 
 	                              '/usr/include/vorbis', 
 	                              '/usr/include/python2.4',
+	                              '/usr/include/python2.5',
 	                              '%s/ext/install/include' % context.env['SCONS_ROOT_PATH']])
 	context.env.Append(CPPPATH = [])	
 	
 	context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
 	context.checkSimpleLib(['openal'], 'AL/al.h')
-	context.checkSimpleLib(['python2.4'], 'python2.4/Python.h')
+	context.checkSimpleLib(['python2.4', 'python2.5'], ['python2.4/Python.h', 'python2.5/Python.h'])
 	if context.env['script'] == 'lua':
 		context.checkSimpleLib(['lua5.1', 'lua-5.1', 'lua'], 'lua.h')
 	context.checkSimpleLib(['SDL'], 'SDL.h')

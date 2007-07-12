@@ -19,6 +19,9 @@ class GenericListmodel(fife.ListModel):
 		return len(self.items)
 		
 	def getElementAt(self, i):
+		maxind = (len(self.items) - 1)
+		if i > maxind:
+			i = maxind
 		return self.items[i]
 
 STRESS_TEST_PERIOD = 500

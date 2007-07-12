@@ -7,10 +7,10 @@ ROOTDIRNAME = 'engine'
 FILE_DEPS_OUT = 'doc/dependencies/filedeps'
 DIR_DEPS_OUT = 'doc/dependencies/dirdeps'
 MODULE_DEPS_OUT = 'doc/dependencies/moduledeps'
-#SKIPPED_PROVIDERS = ['/util/', '/script/', '/solver/']
-#SKIPPED_USERS = ['/script/', '/audio/', 'engine.cpp', 'main.cpp', '/solver/', 'engine.h']
-SKIPPED_PROVIDERS = [] #['/util/']
-SKIPPED_USERS = [] #['engine.cpp', 'main.cpp', 'engine.h']
+#SKIPPED_PROVIDERS = ['/util/']
+#SKIPPED_USERS = ['/audio/', 'engine.cpp', 'main.cpp']
+SKIPPED_PROVIDERS = []
+SKIPPED_USERS = []
 
 reInc = re.compile('#include "(.*?)"')
 
@@ -125,7 +125,8 @@ def main():
 	out = []
 	for user, providers in moduleUser2provider.items():
 		for provider in providers:
-			out.append('    "' + user + '" -> "' + provider + '"')
+			if user != provider:
+				out.append('    "' + user + '" -> "' + provider + '"')
 	write_dot_file('%s.dot' % MODULE_DEPS_OUT, out)
 	os.system('dot -Tps %s.dot > %s.ps' % (MODULE_DEPS_OUT, MODULE_DEPS_OUT))
 	os.system('dot -Tpng %s.dot	 > %s.png' % (MODULE_DEPS_OUT, MODULE_DEPS_OUT))
@@ -136,7 +137,8 @@ def main():
 		out.append(get_cluster_str(len(out), subdirs, cluster))
 	for user, providers in dirUser2provider.items():
 		for provider in providers:
-			out.append('    "' + user + '" -> "' + provider + '"')
+			if user != provider:
+				out.append('    "' + user + '" -> "' + provider + '"')
 	write_dot_file('%s.dot' % DIR_DEPS_OUT, out)
 	os.system('dot -Tps %s.dot > %s.ps' % (DIR_DEPS_OUT, DIR_DEPS_OUT))
 	
@@ -144,7 +146,8 @@ def main():
 	out = []
 	for user, providers in file2inc.items():
 		for provider in providers:
-			out.append('    "' + user + '" -> "' + provider + '"')
+			if user != provider:
+				out.append('    "' + user + '" -> "' + provider + '"')
 	write_dot_file('%s.dot' % FILE_DEPS_OUT, out)
 	# os.system('dot -Tps %s.dot > %s.ps' % (MODULE_DEPS_OUT, MODULE_DEPS_OUT))
 	
