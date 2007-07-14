@@ -13,6 +13,7 @@ opts.Add(BoolOption('ext',  'Build external dependencies', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
 opts.Add(BoolOption('movie', 'Enable movie playback', 0))
 opts.Add(BoolOption('zip', 'Enable ZIP archive support', 0))
+opts.Add(BoolOption('perfexe', 'Build native perf test version of fife engine', 0))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
@@ -149,11 +150,11 @@ else:
 	
 	SConscript('engine/SConscript')
 	
-	env.Append(LIBS = ['fife'])
 	env.Append(LIBPATH = ['#/engine'])
 
-	enginefiles = ['engine/main.cpp']
-	env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
+	if env['perfexe']:
+		enginefiles = ['engine/main.cpp']
+		env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
 	
 	if env['testcases']:
 		SConscript('tests/unit_tests/SConscript')
