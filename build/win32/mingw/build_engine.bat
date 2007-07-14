@@ -3,12 +3,17 @@ set _=%CD%
 
 :: To avoid path collisions the following line was commented out and replaced with a slightly different version
 :: SET PATH=%Path%;%_%\applications\scons;%_%\applications\mingw\bin
-SET PATH=%_%\..\applications\scons;%_%\..\applications\mingw\bin
+SET PATH=%_%\..\applications\scons;%_%\..\applications\mingw\bin;..\applications\python25
 
 :: Goto TRUNK and call SCons
 cd \
-cd %_%\..\..\..\
+cd %_%\..\..\..
 scons debug=0 zip=1
+
+:: Delete old versions of _fife.pyd and rename the compiled fife.dll to _fife.pyd
+cd %_%\..\..\..\engine
+del _fife.pyd
+rename fife.dll _fife.pyd
 
 :: Return us to the directory we started from
 cd %_%
