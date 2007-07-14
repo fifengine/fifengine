@@ -49,6 +49,7 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 		
 		eventmanager.addMouseListener(gamestate)
 		eventmanager.addKeyListener(gamestate)
+		self.stressTestingCounter = 0
 
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
@@ -84,6 +85,7 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 	def activateStressTesting(self, activate):
 		if activate:
 			self.stressTestingMapIndex = 0
+			self.stressTestingCounter = 0
 			self.setPeriod(STRESS_TEST_PERIOD)
 		else:
 			self.setPeriod(-1)
@@ -106,6 +108,8 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 			ind = self.stressTestingMapIndex % self.gui.level_list.getNumberOfElements()
 			self.stressTestingMapIndex += 1
 			self.change_map(self.gui.level_list.getElementAt(ind))
+			self.stressTestingCounter += 1
+			print "Doing stress testing, %d maps loaded" % self.stressTestingCounter
 
 	def change_map(self, map):
 		try:
