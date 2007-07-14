@@ -18,7 +18,11 @@ def generate_swig_wrappers(interfacefiles):
 	def generate_language_specifics(lang):
 		print "   Generating language specific wrappers for " + lang
 		langoutdir = joinpath(swigoutdir, lang)
-		os.system('swig -c++ -%s fife.i' % (lang))
+		pipe = os.popen('swig -d++ -%s fife.i' % (lang))
+		if pipe.close():
+			print "\nError while running swig, stopped"
+			Exit(1)
+			
 		wrappers = enginepath.files('*_wrap*')
 		for wrapper in wrappers:
 			wrapper.move(langoutdir)
@@ -169,5 +173,5 @@ if not env['projfiles']:
 	env.Append(CPPPATH = ['#/engine'])
 	compilefiles = [str(f) for f in remove_based_on_dir_filter(filteredpaths, implfiles)]
 	flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
-	env.InstallAs(['generatedfiles/swigwrappers/%s/_fife.so' % env['script']], [flib])
-	env.InstallAs(['_fife.so'], [flib])
+	if sys.platform == 'linux2':
+		env.InstallAs(['_fife.so'], [flib])
