@@ -30,7 +30,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "map/geometries/geometry.h"
+#include "model/geometries/geometry.h"
 
 #include "layer.h"
 #include "selection.h"

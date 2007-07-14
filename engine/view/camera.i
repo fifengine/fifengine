@@ -1,6 +1,6 @@
 %module camera
 %{
-#include "map/camera.h"
+#include "view/camera.h"
 %}
 
 %include "util/point.h"

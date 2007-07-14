@@ -1,6 +1,6 @@
 %module(directors="1") maploader
 %{
-#include "map/map_loader.h"
+#include "model/map_loader.h"
 %}
 
 namespace FIFE { namespace map {

@@ -3,7 +3,7 @@
 #include "loaders/fallout/map_loaders/fallout.h"
 %}
 
-%include "map/map_loader.i"
+%include "model/map_loader.i"
 
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	class Fallout : public MapLoader {

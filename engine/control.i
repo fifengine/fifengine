@@ -1,6 +1,6 @@
 %module mapcontrol
 %{
-#include "map/control.h"
+#include "control.h"
 %}
 
 namespace FIFE { 

@@ -35,7 +35,7 @@
 #include "util/rect.h"
 #include "video/renderable.h"
 
-#include "structures/location.h"
+#include "model/structures/location.h"
 
 namespace FIFE {
 

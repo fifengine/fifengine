@@ -166,6 +166,8 @@
 			<File RelativePath="..\..\..\engine\audio\source.cpp"></File>
 			<File RelativePath="..\..\..\engine\audio\source.h"></File>
 		</Filter>
+		<File RelativePath="..\..\..\engine\control.cpp"></File>
+		<File RelativePath="..\..\..\engine\control.h"></File>
 		<File RelativePath="..\..\..\engine\engine.cpp"></File>
 		<File RelativePath="..\..\..\engine\engine.h"></File>
 		<Filter Name="eventchannel">
@@ -329,54 +331,35 @@
 			</Filter>
 		</Filter>
 		<File RelativePath="..\..\..\engine\main.cpp"></File>
-		<Filter Name="map">
-			<File RelativePath="..\..\..\engine\map\camera.cpp"></File>
-			<File RelativePath="..\..\..\engine\map\camera.h"></File>
-			<File RelativePath="..\..\..\engine\map\control.cpp"></File>
-			<File RelativePath="..\..\..\engine\map\control.h"></File>
-			<Filter Name="effects">
-				<File RelativePath="..\..\..\engine\map\effects\fade.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\effects\fade.h"></File>
-				<File RelativePath="..\..\..\engine\map\effects\fwd.h"></File>
-				<File RelativePath="..\..\..\engine\map\effects\visualeffect.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\effects\visualeffect.h"></File>
-			</Filter>
-			<File RelativePath="..\..\..\engine\map\event.h"></File>
-			<File RelativePath="..\..\..\engine\map\fwd.h"></File>
+		<Filter Name="model">
 			<Filter Name="geometries">
-				<File RelativePath="..\..\..\engine\map\geometries\geometry.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\geometries\geometry.h"></File>
-				<File RelativePath="..\..\..\engine\map\geometries\gridgeometry.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\geometries\gridgeometry.h"></File>
-				<File RelativePath="..\..\..\engine\map\geometries\hexgeometry.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\geometries\hexgeometry.h"></File>
+				<File RelativePath="..\..\..\engine\model\geometries\geometry.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\geometries\geometry.h"></File>
+				<File RelativePath="..\..\..\engine\model\geometries\gridgeometry.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\geometries\gridgeometry.h"></File>
+				<File RelativePath="..\..\..\engine\model\geometries\hexgeometry.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\geometries\hexgeometry.h"></File>
 			</Filter>
-			<File RelativePath="..\..\..\engine\map\map_loader.cpp"></File>
-			<File RelativePath="..\..\..\engine\map\map_loader.h"></File>
+			<File RelativePath="..\..\..\engine\model\map_loader.cpp"></File>
+			<File RelativePath="..\..\..\engine\model\map_loader.h"></File>
 			<Filter Name="structures">
-				<File RelativePath="..\..\..\engine\map\structures\archetype.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\structures\archetype.h"></File>
-				<File RelativePath="..\..\..\engine\map\structures\elevation.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\structures\elevation.h"></File>
-				<File RelativePath="..\..\..\engine\map\structures\layer.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\structures\layer.h"></File>
-				<File RelativePath="..\..\..\engine\map\structures\location.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\structures\location.h"></File>
-				<File RelativePath="..\..\..\engine\map\structures\map.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\structures\map.h"></File>
-				<File RelativePath="..\..\..\engine\map\structures\object_list.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\structures\object_list.h"></File>
-				<File RelativePath="..\..\..\engine\map\structures\objectinfo.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\structures\objectinfo.h"></File>
-				<File RelativePath="..\..\..\engine\map\structures\selection.cpp"></File>
-				<File RelativePath="..\..\..\engine\map\structures\selection.h"></File>
+				<File RelativePath="..\..\..\engine\model\structures\archetype.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\structures\archetype.h"></File>
+				<File RelativePath="..\..\..\engine\model\structures\elevation.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\structures\elevation.h"></File>
+				<File RelativePath="..\..\..\engine\model\structures\layer.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\structures\layer.h"></File>
+				<File RelativePath="..\..\..\engine\model\structures\location.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\structures\location.h"></File>
+				<File RelativePath="..\..\..\engine\model\structures\map.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\structures\map.h"></File>
+				<File RelativePath="..\..\..\engine\model\structures\object_list.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\structures\object_list.h"></File>
+				<File RelativePath="..\..\..\engine\model\structures\objectinfo.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\structures\objectinfo.h"></File>
+				<File RelativePath="..\..\..\engine\model\structures\selection.cpp"></File>
+				<File RelativePath="..\..\..\engine\model\structures\selection.h"></File>
 			</Filter>
-			<File RelativePath="..\..\..\engine\map\view.cpp"></File>
-			<File RelativePath="..\..\..\engine\map\view.h"></File>
-			<File RelativePath="..\..\..\engine\map\visual.cpp"></File>
-			<File RelativePath="..\..\..\engine\map\visual.h"></File>
-			<File RelativePath="..\..\..\engine\map\visualtree.cpp"></File>
-			<File RelativePath="..\..\..\engine\map\visualtree.h"></File>
 		</Filter>
 		<Filter Name="util">
 			<File RelativePath="..\..\..\engine\util\attributedclass.cpp"></File>
@@ -495,6 +478,23 @@
 			</Filter>
 			<File RelativePath="..\..\..\engine\video\screen.cpp"></File>
 			<File RelativePath="..\..\..\engine\video\screen.h"></File>
+		</Filter>
+		<Filter Name="view">
+			<File RelativePath="..\..\..\engine\view\camera.cpp"></File>
+			<File RelativePath="..\..\..\engine\view\camera.h"></File>
+			<Filter Name="effects">
+				<File RelativePath="..\..\..\engine\view\effects\fade.cpp"></File>
+				<File RelativePath="..\..\..\engine\view\effects\fade.h"></File>
+				<File RelativePath="..\..\..\engine\view\effects\fwd.h"></File>
+				<File RelativePath="..\..\..\engine\view\effects\visualeffect.cpp"></File>
+				<File RelativePath="..\..\..\engine\view\effects\visualeffect.h"></File>
+			</Filter>
+			<File RelativePath="..\..\..\engine\view\view.cpp"></File>
+			<File RelativePath="..\..\..\engine\view\view.h"></File>
+			<File RelativePath="..\..\..\engine\view\visual.cpp"></File>
+			<File RelativePath="..\..\..\engine\view\visual.h"></File>
+			<File RelativePath="..\..\..\engine\view\visualtree.cpp"></File>
+			<File RelativePath="..\..\..\engine\view\visualtree.h"></File>
 		</Filter>
 		<Filter Name="xml">
 			<Filter Name="tinyxml">

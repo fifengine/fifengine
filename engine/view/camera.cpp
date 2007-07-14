@@ -33,10 +33,10 @@
 // Second block: files included from the same folder
 #include "util/time/timemanager.h"
 #include "video/screen.h"
-#include "map/geometries/geometry.h"
-#include "map/structures/elevation.h"
-#include "map/structures/layer.h"
-#include "map/structures/objectinfo.h"
+#include "model/geometries/geometry.h"
+#include "model/structures/elevation.h"
+#include "model/structures/layer.h"
+#include "model/structures/objectinfo.h"
 
 #include "camera.h"
 #include "control.h"

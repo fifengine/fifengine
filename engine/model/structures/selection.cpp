@@ -32,7 +32,7 @@
 // Second block: files included from the same folder
 #include "video/imagecache.h"
 #include "util/rect.h"
-#include "map/geometries/geometry.h"
+#include "model/geometries/geometry.h"
 
 #include "layer.h"
 #include "selection.h"

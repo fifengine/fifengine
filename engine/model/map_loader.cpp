@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 
 #include "map_loader.h"
-#include "map/structures/map.h"
+#include "model/structures/map.h"
 
 namespace FIFE { namespace map {
 

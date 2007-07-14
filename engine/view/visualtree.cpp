@@ -34,7 +34,7 @@
 
 #include "util/log.h"
 #include "util/rect.h"
-#include "map/structures/objectinfo.h"
+#include "model/structures/objectinfo.h"
 
 namespace FIFE { namespace map {
 

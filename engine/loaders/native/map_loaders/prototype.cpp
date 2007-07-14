@@ -31,8 +31,8 @@
 #include "util/exception.h"
 #include "util/purge.h"
 #include "xml/xmlutil.h"
-#include "map/structures/objectinfo.h"
-#include "map/structures/map.h"
+#include "model/structures/objectinfo.h"
+#include "model/structures/map.h"
 
 #include "prototype.h"
 

@@ -31,7 +31,7 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/purge.h"
-#include "map/geometries/geometry.h"
+#include "model/geometries/geometry.h"
 
 #include "elevation.h"
 #include "layer.h"

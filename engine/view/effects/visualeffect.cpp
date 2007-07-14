@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "visualeffect.h"
 
-#include "map/visual.h"
+#include "view/visual.h"
 
 namespace FIFE { namespace map { namespace effect {
 

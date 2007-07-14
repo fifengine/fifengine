@@ -27,23 +27,23 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/geometries/geometry.h"
-#include "map/structures/layer.h"
-#include "map/structures/elevation.h"
-#include "map/structures/objectinfo.h"
-#include "map/structures/map.h"
-#include "map/map_loader.h"
+#include "model/geometries/geometry.h"
+#include "model/structures/layer.h"
+#include "model/structures/elevation.h"
+#include "model/structures/objectinfo.h"
+#include "model/structures/map.h"
+#include "model/map_loader.h"
 #include "video/imagecache.h"
 #include "video/renderbackend.h"
 #include "util/exception.h"
 #include "util/log.h"
 #include "util/purge.h"
 #include "util/settingsmanager.h"
+#include "view/camera.h"
+#include "view/view.h"
+#include "view/visual.h"
 
-#include "camera.h"
 #include "control.h"
-#include "view.h"
-#include "visual.h"
 
 namespace FIFE { namespace map {
 

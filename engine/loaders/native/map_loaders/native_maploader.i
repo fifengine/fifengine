@@ -3,7 +3,7 @@
 #include "loaders/native/map_loaders/xml.h"
 %}
 
-%include "map/map_loader.i"
+%include "model/map_loader.i"
 
 namespace FIFE { namespace map { namespace loaders { namespace xml {
 	class XML : public MapLoader {

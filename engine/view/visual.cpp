@@ -29,12 +29,12 @@
 // Second block: files included from the same folder
 #include "video/complexanimation.h"
 #include "video/renderable.h"
-#include "map/effects/visualeffect.h"
-#include "map/geometries/geometry.h"
+#include "view/effects/visualeffect.h"
 #include "util/debugutils.h"
 #include "video/imagecache.h"
-#include "map/structures/objectinfo.h"
-#include "map/structures/layer.h"
+#include "model/geometries/geometry.h"
+#include "model/structures/objectinfo.h"
+#include "model/structures/layer.h"
 
 #include "visual.h"
 
