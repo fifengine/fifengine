@@ -18,7 +18,7 @@ def generate_swig_wrappers(interfacefiles):
 	def generate_language_specifics(lang):
 		print "   Generating language specific wrappers for " + lang
 		langoutdir = joinpath(swigoutdir, lang)
-		pipe = os.popen('swig -d++ -%s fife.i' % (lang))
+		pipe = os.popen('swig -c++ -%s fife.i' % (lang))
 		if pipe.close():
 			print "\nError while running swig, stopped"
 			Exit(1)
