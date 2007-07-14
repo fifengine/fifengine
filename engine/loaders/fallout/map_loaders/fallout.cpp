@@ -107,6 +107,24 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 		MapPtr map = Map::create();
 		map->setMapName(m_header->getMapName());
+		
+		s_geometry_info tile_info(
+		Geometry::FalloutTileGeometry,
+			"RECTANGULAR",
+			Point(80,36),  // TILE SIZE
+			Point(48,24),  // TRANSFORM
+			Point(),       // OFFSET
+		0);            // FLAGS: NONE
+		map->registerGeometry(&tile_info);
+
+		s_geometry_info object_info(
+			Geometry::FalloutObjectGeometry,
+			"HEXAGONAL",
+			Point(32,16),             // TILESIZE
+			Point(16,12),             // TRANSFORM
+			Point(32,10),             // OFFSET
+			Geometry::ShiftXAxis);   // FLAGS: SHIFT AROUND X AXIS 
+		map->registerGeometry(&object_info);
 
 		loadTiles(map, file);
 		ignoreScripts(file);

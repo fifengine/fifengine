@@ -93,29 +93,6 @@ namespace FIFE { namespace map {
 			}
 		}
 
-		// load these geometries manually for Fallout backwards-compatibility; non-fallout
-		// map formats are free to override these.
-		if(map->getGeometryType(0) == 0) {
-			s_geometry_info tile_info(
-				Geometry::FalloutTileGeometry,
-				"RECTANGULAR",
-				Point(80,36),  // TILE SIZE
-				Point(48,24),  // TRANSFORM
-				Point(),       // OFFSET
-				0);            // FLAGS: NONE
-			map->registerGeometry(&tile_info);
-		}
-		if(map->getGeometryType(1) == 0) {
-			s_geometry_info object_info(
-				Geometry::FalloutObjectGeometry,
-				"HEXAGONAL",
-				Point(32,16),             // TILESIZE
-				Point(16,12),             // TRANSFORM
-				Point(32,10),             // OFFSET
-				Geometry::ShiftXAxis);   // FLAGS: SHIFT AROUND X AXIS 
-			map->registerGeometry(&object_info);
-		}
-
 		if(i == m_loaders.end()) {
 			Log("map::Map::load") << "no loader succeeded for " << filename << " :(";
 		}
