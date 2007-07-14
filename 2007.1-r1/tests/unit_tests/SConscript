@@ -1,0 +1,26 @@
+import glob
+
+Import('env')
+
+env = env.Copy()
+env.Append(CPPPATH = ['#/engine'])
+env.Append(LIBPATH = ['#/engine'])
+env.Append(LIBS = ['fife','boost_unit_test_framework'])
+
+# The test_all.py script relies on this specific layout.
+# Check it, if you change something here
+env.Program('test_settingsmanager', ['test_settingsmanager.cpp'])
+env.Program('test_rect', ['test_rect.cpp'])
+env.Program('test_geometry', ['test_geometry.cpp'])
+env.Program('test_events', ['test_events.cpp'])
+env.Program('test_objects', ['test_objects.cpp'])
+env.Program('test_map', ['test_map.cpp'])
+env.Program('test_mapcontrol', ['test_mapcontrol.cpp'])
+env.Program('test_luaref', ['test_luaref.cpp'])
+env.Program('test_dat1', ['test_dat1.cpp'])
+env.Program('test_dat2', ['test_dat2.cpp'])
+env.Program('test_zip', ['test_zip.cpp'])
+env.Program('test_imagecache', ['test_imagecache.cpp'])
+env.Program('test_eventchannel', ['test_eventchannel.cpp'])
+
+# vim: set filetype=python :

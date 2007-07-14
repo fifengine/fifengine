@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE CodeBlocks_project_file>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="1"/>
+	<Project>
+		<Option title="FIFE lib"/>
+		<Option makefile="Makefile"/>
+		<Option makefile_is_custom="0"/>
+		<Option compiler="0"/>
+		<Build>
+			<Target title="default">
+				<Option output="..\mingw\static_libs\libfife.a"/>
+				<Option working_dir=""/>
+				<Option object_output=".objs"/>
+				<Option deps_output=".deps"/>
+				<Option type="2"/>
+				<Option compiler="0"/>
+				<Option projectResourceIncludeDirsRelation="2"/>
+				<Compiler>
+					<Add directory="..\mingw\include"/>
+					<Add directory="..\mingw\include\boost"/>
+					<Add directory="..\mingw\include\gettext"/>
+					<Add directory="..\mingw\include\guichan"/>
+					<Add directory="..\mingw\include\libvorbis"/>
+					<Add directory="..\mingw\include\lua51"/>
+					<Add directory="..\mingw\include\minizip"/>
+					<Add directory="..\mingw\include\ogg"/>
+					<Add directory="..\mingw\include\openal"/>
+					<Add directory="..\mingw\include\opengl"/>
+					<Add directory="..\mingw\include\png"/>
+					<Add directory="..\mingw\include\sdl"/>
+					<Add directory="..\mingw\include\sdl_image"/>
+					<Add directory="..\mingw\include\sdl_ttf"/>
+					<Add directory="..\mingw\include\zlib"/>
+					<Add directory="..\..\..\engine"/>
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-O3"/>
+			<Add option="-Wall"/>
+			<Add option="-DHAVE_OPENGL"/>
+			<Add option="-DSCRIPTENGINE_LUA"/>
+			<Add option="-DHAVE_ZIP"/>
+		</Compiler>
+__FILE_INSERTION_POINT__
+	</Project>
+</CodeBlocks_project_file>

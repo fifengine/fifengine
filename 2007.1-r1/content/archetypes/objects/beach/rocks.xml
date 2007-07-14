@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>rocks.xml</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+	<archetypes>
+		<archetype type="XML">
+			<prototypes>
+				<prototype name="Rock:001">
+					<visual>
+						<image source="content/gfx/objects/beach/rock01.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Rock:002">
+					<visual>
+						<image source="content/gfx/objects/beach/rock02.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Rock:003">
+					<visual>
+						<image source="content/gfx/objects/beach/rock03.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Rock:004">
+					<visual>
+						<image source="content/gfx/objects/beach/rock04.png"/>
+					</visual>
+				</prototype>
+			</prototypes>
+		</archetype>
+	</archetypes>
+</map>

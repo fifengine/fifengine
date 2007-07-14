@@ -1,0 +1,66 @@
+<!--
+	This is an auto-generated XML file
+	defining the animation actions a
+	critter can perform.
+	
+	Generator: make_xml.py
+-->
+<complex-animation name="mamrat" geometry="1">
+	<!-- ACTION: IDLE FRAMES: 9 FPS: 8 -->
+	<action id="0" direction="255">
+		<animation src="art/critters/mamrataa.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="9"/>
+			<step number="0"/>
+			<partial-action action="0" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: WALK FRAMES: 8 FPS: 10 -->
+	<action id="1" direction="255">
+		<animation src="art/critters/mamratab.frm"/>
+		<motion distance="2"/>
+		<partial-action number="0">
+			<frames start="0" number="4"/>
+			<step number="0"/>
+			<partial-action action="1" number="1" direction="255"/>
+		</partial-action>
+		<partial-action number="1">
+			<frames start="4" number="4"/>
+			<step number="1"/>
+			<partial-action action="1" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: PUNCH FRAMES: 6 FPS: 10 -->
+	<action id="11" direction="255">
+		<animation src="art/critters/mamrataq.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="6"/>
+			<step number="0"/>
+			<partial-action action="11" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: DODGE FRAMES: 8 FPS: 10 -->
+	<action id="6" direction="255">
+		<animation src="art/critters/mamratan.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="8"/>
+			<step number="0"/>
+			<partial-action action="6" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+	<!-- ACTION: HITFRONT FRAMES: 5 FPS: 10 -->
+	<action id="7" direction="255">
+		<animation src="art/critters/mamratao.frm"/>
+		<partial-action number="0">
+			<frames start="0" number="5"/>
+			<step number="0"/>
+			<partial-action action="7" number="0" direction="255"/>
+		</partial-action>
+
+	</action>
+
+</complex-animation>

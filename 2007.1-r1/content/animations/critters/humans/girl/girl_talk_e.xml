@@ -1,0 +1,11 @@
+<animation delay="75" id="3211">
+	<frame source="content/gfx/critters/girl/talking_e0000.png" />
+	<frame source="content/gfx/critters/girl/talking_e0001.png" />
+	<frame source="content/gfx/critters/girl/talking_e0002.png" />
+	<frame source="content/gfx/critters/girl/talking_e0003.png" />
+	<frame source="content/gfx/critters/girl/talking_e0004.png" />
+	<frame source="content/gfx/critters/girl/talking_e0005.png" />
+	<frame source="content/gfx/critters/girl/talking_e0006.png" />
+	<frame source="content/gfx/critters/girl/talking_e0007.png" />
+	<frame source="content/gfx/critters/girl/talking_e0008.png" />
+</animation>

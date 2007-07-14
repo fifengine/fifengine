@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>mussel.xml</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+	<archetypes>
+		<archetype type="XML">
+			<prototypes>
+				<prototype name="Mussel:001">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel01.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:002">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel02.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:003">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel03.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:004">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel04.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:005">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel05.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:006">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel06.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:007">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel07.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:008">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel08.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:009">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel09.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:010">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel10.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:011">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel11.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:012">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel12.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Mussel:013">
+					<visual>
+						<image source="content/gfx/objects/beach/mussel13.png"/>
+					</visual>
+				</prototype>
+			</prototypes>
+		</archetype>
+	</archetypes>
+</map>

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<map>
+	<properties>
+		<name>deck_chair.xml</name>
+		<version>1</version>
+		<format>1</format>
+	</properties>
+	<archetypes>
+		<archetype type="XML">
+			<prototypes>
+				<prototype name="Deck_chair:001">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_001.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Deck_chair:002">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_002.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Deck_chair:003">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_003.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Deck_chair:004">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_004.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Deck_chair:005">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_005.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Deck_chair:006">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_006.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Deck_chair:007">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_007.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Deck_chair:008">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_008.png"/>
+					</visual>
+				</prototype>
+				<prototype name="Deck_chair:009">
+					<visual>
+						<image source="content/gfx/objects/beach/deck_chair_009.png"/>
+					</visual>
+				</prototype>
+			</prototypes>
+		</archetype>
+	</archetypes>
+</map>

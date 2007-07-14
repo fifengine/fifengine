@@ -1,0 +1,11 @@
+<animation delay="130" id="3125">
+	<frame source="content/gfx/critters/boy/cheering_s0000.png" />
+	<frame source="content/gfx/critters/boy/cheering_s0001.png" />
+	<frame source="content/gfx/critters/boy/cheering_s0002.png" />
+	<frame source="content/gfx/critters/boy/cheering_s0003.png" />
+	<frame source="content/gfx/critters/boy/cheering_s0004.png" />
+	<frame source="content/gfx/critters/boy/cheering_s0005.png" />
+	<frame source="content/gfx/critters/boy/cheering_s0006.png" />
+	<frame source="content/gfx/critters/boy/cheering_s0007.png" />
+	<frame source="content/gfx/critters/boy/cheering_s0008.png" />
+</animation>
