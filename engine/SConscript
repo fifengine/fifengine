@@ -6,6 +6,9 @@ joinpath = os.path.join
 _sep = os.path.sep
 enginepath = upath('.')
 
+if sys.platform == 'win32':
+	swigpath = os.environ['_SWIG'] + '\\'
+
 def is_implfile(fname):
 	return fname.endswith('.cpp') or fname.endswith('.cxx')
 
@@ -18,11 +21,14 @@ def generate_swig_wrappers(interfacefiles):
 	def generate_language_specifics(lang):
 		print "   Generating language specific wrappers for " + lang
 		langoutdir = joinpath(swigoutdir, lang)
-		pipe = os.popen('swig -c++ -%s fife.i' % (lang))
+		
+		if sys.platform != 'win32':
+			pipe = os.popen('swig -c++ -%s fife.i' % (lang))
+		else:
+			pipe = os.popen(swigpath +'swig -c++ -%s fife.i' % (lang))
 		if pipe.close():
 			print "\nError while running swig, stopped"
 			Exit(1)
-			
 		wrappers = enginepath.files('*_wrap*')
 		for wrapper in wrappers:
 			wrapper.move(langoutdir)
