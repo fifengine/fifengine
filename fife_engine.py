@@ -105,6 +105,8 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 			self.activateStressTesting(True)
 		elif event.getId() == 'on_loaderlist_change':
 			self.gui.load_level_dropdown()
+		elif event.getId() == 'on_show_console':
+			engine.getGuiManager().getConsole().toggleShowHide()
 	
 	def updateEvent(self, time):
 		if self.stressTestingOn:
@@ -188,24 +190,30 @@ class Gui(object):
 		self.load_level_dropdown()
 		self.level_drop.setSelected(0)
 		
+		BTN_SPACE = 32; BTN_Y = 85; BTN_X = sx - 155; BTN_SIZE = (100, 16)
 		loadbtn = fife.Button("Load Map (F8)")
-		self.configure_widget(loadbtn, pos=(sx - 155, 85), size=(100,16), basecol=medium_color, 
+		self.configure_widget(loadbtn, pos=(BTN_X, BTN_Y), size=BTN_SIZE, basecol=medium_color, 
 		                      font=small_font, evtid='on_loadmap', adjustsize=True)
 
 		stressbtn = fife.Button('Stress Test')
-		self.configure_widget(stressbtn, pos=(sx - 155, 117), size=(100,16), basecol=medium_color, 
+		self.configure_widget(stressbtn, pos=(BTN_X, BTN_Y + BTN_SPACE), size=BTN_SIZE, basecol=medium_color, 
 		                      font=small_font, evtid='on_stresstest', adjustsize=True)
 		
 		closebtn = fife.Button('Toggle chooser (F9)')
-		self.configure_widget(closebtn, pos=(sx - 155, 149), size=(100,16), basecol=medium_color, 
+		self.configure_widget(closebtn, pos=(BTN_X, BTN_Y + BTN_SPACE * 2), size=BTN_SIZE, basecol=medium_color, 
 		                      font=small_font, evtid='close_level_chooser', adjustsize=True)
 
+		consolebtn = fife.Button('Show console (F10)')
+		self.configure_widget(consolebtn, pos=(BTN_X, BTN_Y + BTN_SPACE * 3), size=BTN_SIZE, basecol=medium_color, 
+		                      font=small_font, evtid='on_show_console', adjustsize=True)
+		
 		self.msgarea = fife.TextBox("")
-		self.configure_widget(self.msgarea, pos=(5, sy - 200), size=(sx-10,200), font=small_font,
+		self.configure_widget(self.msgarea, pos=(5, BTN_Y + BTN_SPACE * 5), size=(sx-10,200), font=small_font,
 		                      bgcol=dark_color, fgcol=white)
 		
 		engine.getGuiManager().add(self.panel)
-		for w in (title, self.level_drop, self.loader_drop, loadbtn, stressbtn, closebtn, self.msgarea):
+		for w in (title, self.level_drop, self.loader_drop, loadbtn, 
+		          stressbtn, closebtn, consolebtn, self.msgarea):
 			self.panel.add(w)
 		
 
