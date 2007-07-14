@@ -150,6 +150,12 @@ namespace FIFE {
 			EventException(const std::string& s) : Exception ( "Event Exception: " +s) {};
 	};
 
+	/** Error related to gui functionality
+	 */
+	class GuiException : public Exception {
+		public:
+			GuiException(const std::string& s) : Exception ( "Gui Exception: " +s) {};
+	};
 
 }//FIFE
 

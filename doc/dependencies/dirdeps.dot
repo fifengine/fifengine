@@ -16,146 +16,87 @@ subgraph cluster_1 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "map"; "map/command"; "map/lua"; "map/structures"; "map/effects"; "map/geometries"
+    "map"; "map/structures"; "map/effects"; "map/geometries"
     label = "map";
 }
 subgraph cluster_2 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "script/gui"; "script"
-    label = "script";
-}
-subgraph cluster_3 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
-    "gui"
+    "gui/widgets"; "gui"; "gui/fonts"; "gui/console"; "gui/base"
     label = "gui";
 }
-subgraph cluster_4 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
-    "solver"; "solver/micropather_solver"
-    label = "solver";
-}
-subgraph cluster_5 {
+subgraph cluster_3 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "engine"
     label = "engine";
 }
-subgraph cluster_6 {
+subgraph cluster_4 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "eventchannel/base"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/lua"; "eventchannel/source"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
+    "eventchannel/base"; "eventchannel/command"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/source"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
     label = "eventchannel";
 }
-subgraph cluster_7 {
+subgraph cluster_5 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "loaders/fallout/map_loaders"; "loaders/native/map_loaders"; "loaders/native/video_loaders"; "loaders/fallout/video_loaders"
     label = "loaders";
 }
-subgraph cluster_8 {
+subgraph cluster_6 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "util"; "util/time"; "util/gamestate"; "util/time/lua"
+    "util"; "util/time"
     label = "util";
 }
-subgraph cluster_9 {
+subgraph cluster_7 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "video"; "video/movie"; "video/renderbackends/opengl"; "video/renderbackends/sdl"; "video/gui"
     label = "video";
 }
-subgraph cluster_10 {
+subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "input"; "input/lua"
-    label = "input";
-}
-subgraph cluster_11 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
-    "audio"; "audio/lua"
+    "audio"
     label = "audio";
 }
-subgraph cluster_12 {
+subgraph cluster_9 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "vfs/zip"; "vfs/lua"; "vfs"; "vfs/raw"
+    "vfs/zip"; "vfs"; "vfs/raw"
     label = "vfs";
 }
-    "util/time" -> "util"
-    "util/gamestate" -> "util"
-    "util/gamestate" -> "eventchannel"
-    "audio/lua" -> "util"
-    "audio/lua" -> "audio"
+    "eventchannel/command" -> "eventchannel/base"
+    "eventchannel/mouse" -> "eventchannel/base"
     "vfs/zip" -> "util"
     "vfs/zip" -> "vfs"
     "vfs/zip" -> "vfs/raw"
+    "eventchannel/key" -> "eventchannel/source"
+    "eventchannel/key" -> "eventchannel/base"
     "video/renderbackends/opengl" -> "util"
     "video/renderbackends/opengl" -> "video/gui"
     "video/renderbackends/opengl" -> "video"
-    "eventchannel/lua" -> "script"
-    "eventchannel/lua" -> "eventchannel/base"
-    "eventchannel/lua" -> "eventchannel/mouse"
-    "eventchannel/lua" -> "eventchannel/key"
-    "eventchannel/lua" -> "eventchannel/widget"
-    "eventchannel/lua" -> "eventchannel/manager"
-    "script/gui" -> "video/gui"
-    "script/gui" -> "script"
-    "script/gui" -> "gui"
-    "script/gui" -> "util"
-    "script/gui" -> "video"
-    "script/gui" -> "eventchannel/source"
-    "script/gui" -> "eventchannel/widget"
+    "gui/widgets" -> "util"
     "map/geometries" -> "xml"
     "map/geometries" -> "util"
     "xml" -> "util"
     "xml" -> "xml/tinyxml"
-    "map/command" -> "util"
-    "map/command" -> "map"
-    "map/command" -> "video"
-    "map/command" -> "map/structures"
-    "map/command" -> "map/geometries"
     "loaders/fallout/video_loaders" -> "util"
     "loaders/fallout/video_loaders" -> "loaders/fallout/map_loaders"
     "loaders/fallout/video_loaders" -> "video"
-    "script" -> "engine"
-    "script" -> "map"
-    "script" -> "util/gamestate"
-    "script" -> "eventchannel/widget"
-    "script" -> "map/lua"
-    "script" -> "gui"
-    "script" -> "util"
-    "script" -> "eventchannel/lua"
-    "script" -> "input"
-    "script" -> "video/movie"
-    "script" -> "util/time/lua"
-    "input/lua" -> "util"
-    "input/lua" -> "input"
-    "solver/micropather_solver" -> "solver"
     "xml/tinyxml" -> "vfs"
     "xml/tinyxml" -> "vfs/raw"
-    "map/lua" -> "util"
-    "map/lua" -> "map"
-    "map/lua" -> "util/time"
-    "map/lua" -> "map/structures"
-    "map/lua" -> "script"
     "vfs/raw" -> "util"
-    "input" -> "util"
-    "input" -> "eventchannel/sdl"
+    "util/time" -> "util"
     "loaders/native/video_loaders" -> "util"
     "loaders/native/video_loaders" -> "xml/tinyxml"
     "loaders/native/video_loaders" -> "video"
@@ -163,29 +104,19 @@ subgraph cluster_12 {
     "loaders/native/video_loaders" -> "vfs/raw"
     "engine" -> "engine"
     "engine" -> "vfs/zip"
-    "engine" -> "util/gamestate"
     "engine" -> "audio"
     "engine" -> "loaders/fallout/video_loaders"
     "engine" -> "video/renderbackends/sdl"
     "engine" -> "video/renderbackends/opengl"
-    "engine" -> "script"
-    "engine" -> "loaders/fallout/map_loaders"
     "engine" -> "gui"
-    "engine" -> "video/movie"
-    "engine" -> "map/structures"
+    "engine" -> "gui/console"
     "engine" -> "util"
-    "engine" -> "loaders/native/map_loaders"
     "engine" -> "video"
-    "engine" -> "map"
-    "engine" -> "input"
     "engine" -> "util/time"
     "engine" -> "loaders/native/video_loaders"
     "engine" -> "vfs"
     "engine" -> "eventchannel/manager"
     "map" -> "map"
-    "map" -> "util/gamestate"
-    "map" -> "map/command"
-    "map" -> "script"
     "map" -> "gui"
     "map" -> "map/structures"
     "map" -> "eventchannel/mouse"
@@ -193,9 +124,12 @@ subgraph cluster_12 {
     "map" -> "video"
     "map" -> "map/effects"
     "map" -> "util/time"
-    "map" -> "input"
-    "map" -> "vfs"
     "map" -> "map/geometries"
+    "gui/fonts" -> "util"
+    "gui/fonts" -> "video"
+    "gui/fonts" -> "vfs"
+    "gui/fonts" -> "util/time"
+    "gui/fonts" -> "vfs/raw"
     "loaders/fallout/map_loaders" -> "xml"
     "loaders/fallout/map_loaders" -> "map"
     "loaders/fallout/map_loaders" -> "map/structures"
@@ -207,15 +141,13 @@ subgraph cluster_12 {
     "loaders/fallout/map_loaders" -> "vfs"
     "loaders/fallout/map_loaders" -> "map/geometries"
     "util" -> "util"
-    "util" -> "xml/tinyxml"
+    "eventchannel/base" -> "eventchannel/source"
     "map/effects" -> "map"
     "map/effects" -> "util/time"
-    "vfs/lua" -> "util"
-    "vfs/lua" -> "vfs"
-    "vfs/lua" -> "vfs/raw"
     "video/gui" -> "util"
-    "video/gui" -> "video/gui"
     "video/gui" -> "video"
+    "video/gui" -> "video/gui"
+    "eventchannel/widget" -> "eventchannel/base"
     "audio" -> "util"
     "audio" -> "util/time"
     "audio" -> "vfs"
@@ -223,28 +155,30 @@ subgraph cluster_12 {
     "video/renderbackends/sdl" -> "util"
     "video/renderbackends/sdl" -> "video/gui"
     "video/renderbackends/sdl" -> "video"
+    "gui" -> "gui/fonts"
     "gui" -> "video/gui"
-    "gui" -> "input"
-    "gui" -> "script"
+    "gui" -> "gui/console"
     "gui" -> "eventchannel/mouse"
     "gui" -> "util"
     "gui" -> "eventchannel/key"
     "gui" -> "video"
-    "gui" -> "vfs/raw"
-    "gui" -> "util/time"
-    "gui" -> "vfs"
     "gui" -> "eventchannel/sdl"
+    "gui/base" -> "video"
+    "gui/base" -> "video/gui"
+    "gui/console" -> "util"
+    "gui/console" -> "util/time"
+    "gui/console" -> "gui"
+    "gui/console" -> "video"
     "map/structures" -> "util"
-    "map/structures" -> "map/geometries"
     "map/structures" -> "video"
-    "map/structures" -> "script"
+    "map/structures" -> "map/geometries"
     "loaders/native/map_loaders" -> "xml"
     "loaders/native/map_loaders" -> "map"
     "loaders/native/map_loaders" -> "map/structures"
     "loaders/native/map_loaders" -> "util"
-    "loaders/native/map_loaders" -> "xml/tinyxml"
-    "loaders/native/map_loaders" -> "vfs/raw"
     "loaders/native/map_loaders" -> "video"
+    "loaders/native/map_loaders" -> "vfs/raw"
+    "loaders/native/map_loaders" -> "xml/tinyxml"
     "loaders/native/map_loaders" -> "vfs"
     "loaders/native/map_loaders" -> "map/geometries"
     "video" -> "util"
@@ -252,13 +186,15 @@ subgraph cluster_12 {
     "video" -> "video"
     "video/movie" -> "util"
     "video/movie" -> "util/time"
-    "video/movie" -> "util/gamestate"
     "video/movie" -> "video"
     "video/movie" -> "video/renderbackends/sdl"
     "vfs" -> "util"
+    "vfs" -> "vfs"
     "vfs" -> "vfs/raw"
+    "eventchannel/manager" -> "eventchannel/command"
+    "eventchannel/manager" -> "eventchannel"
+    "eventchannel/manager" -> "eventchannel/mouse"
     "eventchannel/manager" -> "util"
-    "util/time/lua" -> "util"
-    "util/time/lua" -> "util/time"
-    "util/time/lua" -> "script"
+    "eventchannel/manager" -> "eventchannel/key"
+    "eventchannel/manager" -> "eventchannel/widget"
 }

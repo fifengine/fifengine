@@ -14,6 +14,27 @@
 		<!-- Load tile archetypes -->
 		<archetype type="XML" source="content/archetypes/tiles/chess_tiles.xml" />
 	</archetypes>
+
+	<!-- Chess.xml uses Fallout-likes geometries -->
+	<geometries>
+		<!-- TILE GEOMETRY -->
+		<geometry>
+			<id>0</id>
+			<type>RECTANGULAR</type>
+			<size><x>80</x><y>36</y></size>
+			<transform><x>48</x><y>24</y></transform>
+		</geometry>
+
+		<!-- OBJECT GEOMETRY -->
+		<geometry>
+			<id>1</id>
+			<type>HEXAGONAL</type>
+			<size><x>32</x><y>16</y></size>
+			<transform><x>16</x><y>12</y></transform>
+			<offset><x>32</x><y>10</y></offset>
+			<flags>1</flags>
+		</geometry>
+	</geometries>
 	
 	<elevation>
 		<properties>

@@ -20,31 +20,29 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-
 #include <SDL.h>
 #include <SDL_ttf.h>
-
-#ifdef HAVE_MOVIE
-#define INT64_C
-#define __STDC_CONSTANT_MACROS
-#include "util/fife_stdint.h"
-#include "ffmpeg/avformat.h"
-#endif
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/settingsmanager.h"
+#include "util/exception.h"
+#include "util/log.h"
+#include "util/debugutils.h"
+#include "util/time/timemanager.h"
 #include "audio/audiomanager.h"
-#include "gui/console.h"
-#include "input/events.h"
-#include "input/inputmanager.h"
+#include "gui/console/console.h"
+#include "loaders/native/video_loaders/complexanimation_provider.h"
+#include "loaders/fallout/video_loaders/frm_provider.h"
+#include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/image_provider.h"
+#include "loaders/native/video_loaders/subimage_provider.h"
 #include "eventchannel/manager/eventmanager.h"
-#include "script/luascript.h"
 #include "gui/guimanager.h"
 #include "video/imagecache.h"
 #include "video/renderbackend.h"
@@ -53,21 +51,11 @@
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
-#include "util/debugutils.h"
-#include "util/gamestate/gamestate.h"
-#include "util/gamestate/gamestatemanager.h"
-#include "util/time/timemanager.h"
-#include "util/exception.h"
-#include "util/log.h"
-#include "util/settingsmanager.h"
 #ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
 #endif
-#include "loaders/native/video_loaders/complexanimation_provider.h"
-#include "loaders/fallout/video_loaders/frm_provider.h"
-#include "loaders/native/video_loaders/animation_provider.h"
-#include "loaders/native/video_loaders/image_provider.h"
-#include "loaders/native/video_loaders/subimage_provider.h"
+#include "loaders/fallout/map_loaders/providerdat2.h"
+#include "loaders/fallout/map_loaders/providerdat1.h"
 
 #include "engine.h"
 
@@ -75,39 +63,39 @@ static const std::string SETTINGS_FILE_NAME = "fife.config";
 
 namespace FIFE {
 
-	Engine::Engine(int argc, char** argv) 
-		: m_run(false), m_makeScreenshot(false), m_avgframetime(0) {
-
-		for(int i = 1; i < argc;  ++i ) {
-			m_cmdline.push_back( argv[i] );
-		}
-
-		for(size_t i=0; i != m_cmdline.size(); ++i) {
-			if( !m_cmdline[i].empty() && m_cmdline[i][0] =='-' ) {
-				m_parsed_cmdline[ m_cmdline[i] ] = std::vector<std::string>();
-				for(size_t j=i+1; j != m_cmdline.size(); ++j) {
-					if( !m_cmdline[j].empty() && m_cmdline[j][0] =='-' ) {
-						break;
-					}
-					m_parsed_cmdline[ m_cmdline[i] ].push_back( m_cmdline[j] );
-					++i;
-				}
-			}
-		}
-
+	Engine::Engine() {
 		init();
 	}
 
 	Engine::~Engine() {
-		killSingletons();
+		delete audio::Manager::instance();
+
+		delete GUIManager::instance();
+
+		delete EventManager::instance();
+
+		RenderBackend::instance()->deinit();
+		delete RenderBackend::instance();
+		delete ImageCache::instance();
+
+		delete VFS::instance();
+		delete VFSSourceFactory::instance();
+
+		delete TimeManager::instance();
+		// DO override not pre-existing config.
+		SettingsManager::instance()->saveSettings(SETTINGS_FILE_NAME,true);
+		delete SettingsManager::instance();
+
 		TTF_Quit();
 		SDL_Quit();
 	}
 
-
 	void Engine::init() {
 		FIFE::SettingsManager* settings = new SettingsManager();
 		settings->loadSettings(SETTINGS_FILE_NAME);
+		Log::initialize(static_cast<Log::type_log_level>(settings->read<int>("LogLevel", 0)),
+		                settings->read<bool>("LogToFile", false), 
+		                settings->read<bool>("LogToPromt", true));
 
 		// If failed to init SDL throw exception.
 		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
@@ -124,66 +112,58 @@ namespace FIFE {
 		av_register_all();
 #endif
 
-		Log::parseCmdLine( m_parsed_cmdline );
-
-		EventManager* evm = new EventManager();
-		new input::Manager();
-		GUIManager* guimanager = new GUIManager();
-		evm->addSdlEventListener(guimanager);
+		m_eventmanager = new EventManager();
+		m_guimanager = new GUIManager(m_eventmanager);
+		m_eventmanager->addSdlEventListener(m_guimanager);
 		// keep guimanager as the first key listener so that it can evaluate guichan hits
-		evm->addKeyListener(guimanager);
+		m_eventmanager->addKeyListener(m_guimanager);
 		// keep guimanager as the first mouse listener so that it can evaluate guichan hits
-		evm->addMouseListener(guimanager);
-		evm->addSdlEventListener(input::Manager::instance());
+		m_eventmanager->addMouseListener(m_guimanager);
 
 		// Select the render backend.
 		std::string rbackend = settings->read<std::string>("RenderBackend", "SDL");
 		if (rbackend == "SDL") {
-			new RenderBackendSDL();
+			m_renderbackend = new RenderBackendSDL();
 			std::cout << "SDL Render backend created" << std::endl;
 		} else {
-			new RenderBackendOpenGL();
+			m_renderbackend = new RenderBackendOpenGL();
 			std::cout << "OpenGL Render backend created" << std::endl;
 		}
-		RenderBackend::instance()->init();
+		m_renderbackend->init();
 
-		new TimeManager();
+		m_timemanager = new TimeManager();
 		new VFSSourceFactory();
 		new VFS();
 
 		VFS::instance()->addSource(new VFSHostSystem());
-
 #ifdef HAVE_ZIP
-		// FIXME: Just for testing purposes. This code needs to be refactured to another place
-		// where general loader initialization is done.
-		//
-		// ADDENDUM: As you can see below, RenderableProviderConstructors are now being introduced
-		// in the same way. I think all these initializations will seem more natural once the
-		// extend branch is up and running and these are all being initialized by scripts. --jwt
+		// FIXME: Change all providers to be loaded here or even better in scripts
 		VFSSourceFactory::instance()->addProvider( new zip::ZipProvider() );
 #endif
+		VFSSourceFactory::instance()->addProvider(new map::loaders::fallout::ProviderDAT2());
+		VFSSourceFactory::instance()->addProvider(new map::loaders::fallout::ProviderDAT1());
 
-		new ImageCache();
-		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
-		                                                          video::loaders::FRMProvider,
-		                                                          RenderAble::RT_IMAGE|RenderAble::RT_ANIMATION|RenderAble::RT_UNDEFINED >());
+		m_imagecache = new ImageCache();
 
-		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
-		                                                          video::loaders::AnimationProvider,
-		                                                          RenderAble::RT_ANIMATION >());
+		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                               video::loaders::FRMProvider,
+		                                               RenderAble::RT_IMAGE|RenderAble::RT_ANIMATION|RenderAble::RT_UNDEFINED >());
 
-		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
-		                                                          video::loaders::ComplexAnimationProvider,
-		                                                          RenderAble::RT_COMPLEX_ANIMATION >());
+		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                               video::loaders::AnimationProvider,
+		                                               RenderAble::RT_ANIMATION >());
 
-		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
-		                                                          video::loaders::SubImageProvider,
-		                                                          RenderAble::RT_SUBIMAGE >());
+		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                               video::loaders::ComplexAnimationProvider,
+		                                               RenderAble::RT_COMPLEX_ANIMATION >());
 
-		ImageCache::instance()->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
-		                                                          video::loaders::ImageProvider,
-		                                                          RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED >());
+		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                               video::loaders::SubImageProvider,
+		                                               RenderAble::RT_SUBIMAGE >());
 
+		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
+		                                               video::loaders::ImageProvider,
+		                                               RenderAble::RT_IMAGE|RenderAble::RT_UNDEFINED >());
 
 		new audio::Manager();
 		int volume = settings->read<int>("InitialVolume", 5);
@@ -193,167 +173,61 @@ namespace FIFE {
 			volume = 0;
 		}
 		audio::Manager::instance()->setVolume(static_cast<float>(volume) / 10);
-		new GameStateManager();
-		new LuaScript(*evm);
-		LuaScript::instance()->init();
+
+		unsigned int swidth = settings->read("ScreenWidth", 800);
+		unsigned int sheight = settings->read("ScreenHeight", 600);
+		unsigned char bitsPerPixel = settings->read("BitsPerPixel", 0);
+		bool fullscreen = settings->read("FullScreen", false);
+
+		FIFE::RenderBackend::instance()->createMainScreen(swidth, sheight, bitsPerPixel, fullscreen);
+		m_guimanager->init();
+		SDL_EnableUNICODE(1);
 	}
 
-	void Engine::killSingletons() {
-		delete GameStateManager::instance();
-		delete LuaScript::instance();
-		delete audio::Manager::instance();
-		delete ImageCache::instance();
-		delete VFS::instance();
-		delete VFSSourceFactory::instance();
-		RenderBackend::instance()->deinit();
-		delete RenderBackend::instance();
-		delete GUIManager::instance();
-		delete input::Manager::instance();
-		delete EventManager::instance();
-		// DO override not pre-existing config.
-		SettingsManager::instance()->saveSettings(SETTINGS_FILE_NAME,true);
-		delete SettingsManager::instance();
-		delete TimeManager::instance();
+	void Engine::initializePumping() {
+		m_eventmanager->processEvents();
+		m_renderbackend->startFrame();
 	}
 
-	const std::vector<std::string>& Engine::getCommandLine() const {
-		return m_cmdline;
+	void Engine::pump() {
+		m_timemanager->update();
+		m_guimanager->turn();
+		m_renderbackend->endFrame();
+		m_imagecache->collect();
+		SDL_Delay(1);
+		m_eventmanager->processEvents();
+		m_renderbackend->startFrame();
 	}
 
-	const std::vector<std::string>& Engine::getCommandLine(const std::string& option) const {
-		static const std::vector<std::string> empty_vector;
-		// being const-correct without mutable:
-		if( m_parsed_cmdline.find(option) != m_parsed_cmdline.end() ) {
-			return m_parsed_cmdline.find( option )->second;
-		} else {
-			return empty_vector;
-		}
+	void Engine::finalizePumping() {
+		m_timemanager->update();
+		m_guimanager->turn();
+		m_renderbackend->endFrame();
+		m_imagecache->collect();
 	}
 
-
-	void Engine::start() {
-		LuaScript::instance()->callFunction("on_engine_start");
-		m_run = true;
-		mainLoop();
+	audio::Manager* Engine::getAudioManager() {
+		return audio::Manager::instance();
 	}
 
-	void Engine::stop() {
-		m_run = false;
+	EventManager* Engine::getEventManager() {
+		return EventManager::instance();
 	}
 
-	void Engine::handleEvent(int event) {
-		if (event == Event::QUIT_GAME) {
-			stop();
-		} else if (event == Event::MAKE_SCREENSHOT) {
-			m_makeScreenshot = true;
-		} else if (event == Event::GUI_TOGGLE_CONSOLE) {
-			GUIManager::instance()->getConsole()->toggleShowHide();
-		}
+	VFS* Engine::getVFS() {
+		return VFS::instance();
 	}
 
-	void Engine::makeScreenshot() {
-		static int counter = 1;
-
-		std::ostringstream fname;
-		boost::filesystem::path file(boost::filesystem::initial_path());
-
-		fname << "Screenshots/";
-
-		file = boost::filesystem::system_complete( 
-			boost::filesystem::path(fname.str().c_str(), boost::filesystem::native));
-
-		// Check if Screenshots directory is present, and if not create it.
-		if (!boost::filesystem::exists(file)) {
-			boost::filesystem::create_directory(file);
-		}
-
-		fname << "screenshot" << counter << ".bmp";
-		file = boost::filesystem::system_complete(
-			boost::filesystem::path(fname.str().c_str(), boost::filesystem::native));
-
-		while (boost::filesystem::exists(file)) {
-			counter++;
-
-			// Clear the stream.
-			fname.str("");
-
-			// We need to "re-insert" the counter integer that has been updated.
-			fname << "Screenshots/" << "screenshot" << counter << ".bmp";
-
-			// Then we must update the file var so that it is up-to-date with the fname var.
-			file = boost::filesystem::system_complete( 
-				boost::filesystem::path( fname.str().c_str(), boost::filesystem::native ) );
-		}
-		
-		// The current backend makes the screenshot.
-		RenderBackend::instance()->captureScreen(fname.str());
+	TimeManager* Engine::getTimeManager() {
+		return TimeManager::instance();
 	}
 
-
-	void Engine::mainLoop() {
-		int fpslimit =  SettingsManager::instance()->read<int>("FPSLimit",60);
-		if( fpslimit < 10 ) {
-			fpslimit = 10;
-		}
-		int frame_update_time = 1000 / fpslimit;
-
-		// Get instance variables.
-		GameStateManager* manager_gamestates = GameStateManager::instance();
-		input::Manager* manager_input = input::Manager::instance();
-		EventManager* evtmanager = EventManager::instance();
-		RenderBackend* rbackend = RenderBackend::instance();
-		GUIManager* manager_gui = GUIManager::instance();
-		TimeManager* manager_time = TimeManager::instance();
-
-		// Register self as eventlistener and push the ENGINE_CONTEXT.
-		manager_input->registerEventListener(input::Manager::ENGINE_CONTEXT, this);
-		//manager_input->pushContext(InputManager::ENGINE_CONTEXT);
-
-		// Main loop.
-		while (m_run) {
-			int32_t frame_start_time = SDL_GetTicks();
-			evtmanager->processEvents();
-
-			rbackend->startFrame();
-
-			manager_time->update();
-			manager_gamestates->turn();
-			manager_gui->turn();
-
-			rbackend->endFrame();
-
-			// Screenshots have to be made at this specific point in the 
-			// loop, otherwise the screen might just be blank.
-			if (m_makeScreenshot) {
-				m_makeScreenshot = false;
-				makeScreenshot();
-			}
-
-			ImageCache::instance()->collect();
-			m_avgframetime = manager_time->getAverageFrameTime();
-
-			int frame_sleep_time = frame_start_time + frame_update_time - SDL_GetTicks();
-			if (frame_sleep_time < 0) {
-				frame_sleep_time = 0; // Delay=0 means an OS yield.
-			}
-			SDL_Delay(frame_sleep_time);
-		}
-		LuaScript::instance()->callFunction("on_engine_stop");
-
-		// Unregister self from the input manager.
-		//manager_input->popContext(InputManager::ENGINE_CONTEXT);
-		manager_input->unregisterListener(this);
+	SettingsManager* Engine::getSettingsManager() {
+		return SettingsManager::instance();
 	}
 
-	double Engine::getAverageFrameTime( ) const {
-		return m_avgframetime;
-	}
-
-	void Engine::printStatistics() const {
-		std::cout
-			<< "FIFE is " << (m_run ? "RUNNING" : "STOPPED") << "\n";
-		TimeManager::instance()->printStatistics();
-		ImageCache::instance()->printStatistics();
+	GUIManager* Engine::getGuiManager() {
+		return m_guimanager;
 	}
 
 }//FIFE

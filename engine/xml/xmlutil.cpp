@@ -89,7 +89,6 @@ namespace FIFE { namespace xmlutil {
 		if( !e )
 			return;
 
-		t->stashXml(e); // quick and dirty hack; see attributedclass.h for details
 		ac_setter setter(t);
 		foreachElement(e, "param",setter);
 	}

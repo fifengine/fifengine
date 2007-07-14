@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "exception.h"
 
-namespace FIFE {
+namespace FIFE { 
 
 	Exception::Exception(const std::string& msg) : m_message(msg) {}
 

@@ -34,125 +34,54 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "input/listener.h"
-#include "util/singleton.h"
 
 namespace FIFE {
 
-	/** This is the engine kernel.
-	 *
-	 * This object is created by the client app using Engine::instance().
-	 * Its constructor and destructor create and destroy the various
-	 * engine system managers. Once the gamestate and other settings have
-	 * been properly initialised by the client code the client calls
-	 * start() to enter the main loop. The class gets registered as an input
-	 * listener when it enters the mainLoop() function.
-	 *
-	 */
-	class Engine : public DynamicSingleton<Engine>, public input::Listener {
+	namespace audio {
+		class Manager;
+	}
+	class RenderBackend;
+	class GUIManager;
+	class VFS;
+	class EventManager;
+	class TimeManager;
+	class ImageCache;
+	class SettingsManager;
+
+	class Engine {
 		public:
 			/** Constructor
 			 */
-			Engine(int argc, char** argv);
+			Engine();
+
 			/** Destructor
 			 */
 			virtual ~Engine();
 
+			void initializePumping();
+			void finalizePumping();
 
-			/** Enters the main loop.
-			 *
-			 * @see mainLoop()
+			/** Runs one cycle for the engine
 			 */
-			void start();
+			void pump();
 
-			/** Stops the main loop before its next frame.
-			 *
-			 * @see mainLoop()
-			 */
-			void stop();
-
-			/** Get the average time between frames in milliseconds.
-			 *
-			 * @return Average time between frames in milliseconds.
-			 * @see TimeManager::getAverageFrameTime()
-			 */
-			double getAverageFrameTime() const;
-
-			/** Print Engine Statistics
-			 *  Prints TimeManager and ImageCache statistics
-			 */
-			void printStatistics() const;
-
-			const std::vector<std::string>& getCommandLine() const;
-			const std::vector<std::string>& getCommandLine(const std::string& option) const;
-
-			/** Handles event.
-			 *
-			 * Specifically, this handles the QUIT_GAME, MAKE_SCREENSHOT and
-			 * GUI_TOGGLE_CONSOLE events.
-			 * On a MAKE_SCREENSHOT event it sets a flag that will
-			 * trigger a call to makeScreenshot() next frame in mainLoop().
-			 * On a QUIT_GAME event it will call stop().
-			 * On a GUI_TOGGLE_CONSOLE event it will call Console::toggleShowHide().
-			 *
-			 * @param event Event to be handled (only QUIT_GAME, MAKE_SCREENSHOT
-			 * or GUI_TOGGLE_CONSOLE events are handled).
-			 * @see stop(), makeScreenshot(), mainLoop(), Console::toggleShowHide()
-			 */
-			 virtual void handleEvent(int event);
+			audio::Manager* getAudioManager();
+			EventManager* getEventManager();
+			VFS* getVFS();
+			TimeManager* getTimeManager();
+			SettingsManager* getSettingsManager();
+			GUIManager* getGuiManager();
 
 		private:
-			// True if the mainLoop should keep running, false to stop it.
-			bool m_run;
-			// True if in the next turn a screenshot shall be made.
-			bool m_makeScreenshot;
-			// The average time between frames in milliseconds.
-			double m_avgframetime;
-			/// Command line
-			std::vector<std::string> m_cmdline;
-			std::map<std::string,std::vector<std::string> > m_parsed_cmdline;
-
-			/** Initialise Engine. Called by constructor.
-			 *
-			 * Initialises SDL, SDL_ttf, the render backend,
-			 * and creates the singletons.
-			 *
-			 * @bug SLD_EnableKeyRepeat call is duplicated in backend!
+			/** Initializes the engine
 			 */
 			void init();
 
-			/** The main game loop. Updates/renders gamestate/gui.
-			 * This is at the core of the engine functionality.
-			 *
-			 * It calls the following functions each turn:
-			 *
-			 * TimeManager::update()
-			 * RenderBackend::startFrame()
-			 * GameStateManager::turn()
-			 * InputManager::handleEvents()
-			 * GuiManager::turn()
-			 * RenderBackend::endFrame()
-			 * Possibly makeScreenshot()
-			 * ImageCache::collect()
-			 *
-			 * At the beginning it registers itself with the InputManager as
-			 * Listener to ENGINE_CONTEXT events.
-			 * At the end it unregisters itself from Input Events.
-			 * @note It does not push/pop the Engine Context, since game states may
-			 * be activated before entering mainLoop.
-			 *
-			 * The Loop is ended if someone calls Engine::stop(), which will
-			 * set a corresponding flag. 
-			 */
-			void mainLoop();
-
-			/** Makes a screenshot. Creates a proper filename and lets the backend do the rest.
-			 */
-			void makeScreenshot();
-
-			/** Deletes all the singletons used in the engine. Called by destructor.
-			 */
-			void killSingletons();
+			RenderBackend* m_renderbackend;
+			GUIManager* m_guimanager;
+			EventManager* m_eventmanager;
+			TimeManager* m_timemanager;
+			ImageCache* m_imagecache;
 	};
 
 }//FIFE

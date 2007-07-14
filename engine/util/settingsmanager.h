@@ -33,12 +33,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/singleton.h"
+#include "exception.h"
+#include "singleton.h"
 
 namespace FIFE {
 
-	class SettingsManager : public DynamicSingleton<SettingsManager> {
+	class SettingsManager: public DynamicSingleton<SettingsManager> {
 		public:
 			SettingsManager();
 			virtual ~SettingsManager();
@@ -55,12 +55,6 @@ namespace FIFE {
 			 */
 			void saveSettings(const std::string& settings_file_name, bool create_on_failure=false) const;
 
-			/** Get the name of current settings file.
-			 * 
-			 * @return The state's registration name.
-			 */
-			const std::string& getName() const;
-			
 			template <typename T> T read(const std::string& key, const T& def) {
 				type_settings::const_iterator i = m_settings.find(key);
 				if (i == m_settings.end()) {

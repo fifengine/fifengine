@@ -3,27 +3,26 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="1"/>
 	<Project>
-		<Option title="FIFE lib"/>
+		<Option title="libfife.dll"/>
 		<Option makefile="Makefile"/>
 		<Option makefile_is_custom="0"/>
 		<Option compiler="0"/>
 		<Build>
 			<Target title="default">
-				<Option output="..\mingw\static_libs\libfife.a"/>
-				<Option working_dir=""/>
+				<Option output="..\..\..\engine\_fife.pyd"/>
+				<Option working_dir="."/>
 				<Option object_output=".objs"/>
 				<Option deps_output=".deps"/>
-				<Option type="2"/>
+				<Option type="3"/>
 				<Option compiler="0"/>
-				<Option projectResourceIncludeDirsRelation="2"/>
+				<Option createDefFile="1"/>
 				<Compiler>
-					<Add directory="..\mingw\include"/>
+					<Add directory="..\..\..\engine"/>
 					<Add directory="..\mingw\include\boost"/>
 					<Add directory="..\mingw\include\gettext"/>
 					<Add directory="..\mingw\include\guichan"/>
 					<Add directory="..\mingw\include\libvorbis"/>
 					<Add directory="..\mingw\include\lua51"/>
-					<Add directory="..\mingw\include\minizip"/>
 					<Add directory="..\mingw\include\ogg"/>
 					<Add directory="..\mingw\include\openal"/>
 					<Add directory="..\mingw\include\opengl"/>
@@ -32,16 +31,39 @@
 					<Add directory="..\mingw\include\sdl_image"/>
 					<Add directory="..\mingw\include\sdl_ttf"/>
 					<Add directory="..\mingw\include\zlib"/>
-					<Add directory="..\..\..\engine"/>
+					<Add directory="..\mingw\include\minizip"/>
+					<Add directory="..\applications\python25\include"/>
 				</Compiler>
+				<Linker>
+					<Add library="..\applications\mingw\lib\libmingw32.a"/>
+					<Add library="..\mingw\static_libs\libzlib.a"/>
+					<Add library="..\mingw\static_libs\SDL_image.lib"/>
+					<Add library="..\mingw\static_libs\liblua51.a"/>
+					<Add library="..\mingw\static_libs\libguichan.a"/>
+					<Add library="..\mingw\static_libs\libguichan_sdl.a"/>
+					<Add library="..\mingw\static_libs\libvorbis.a"/>
+					<Add library="..\mingw\static_libs\libogg.a"/>
+					<Add library="..\mingw\static_libs\libvorbisfile.a"/>
+					<Add library="..\mingw\static_libs\libSDLmain.a"/>
+					<Add library="..\mingw\static_libs\libSDL.dll.a"/>
+					<Add library="..\mingw\static_libs\OpenAL32.lib"/>
+					<Add library="..\mingw\static_libs\SDL_ttf.lib"/>
+					<Add library="..\mingw\static_libs\libboost_filesystem.a"/>
+					<Add library="..\mingw\static_libs\libboost_regex.a"/>
+					<Add library="..\mingw\static_libs\libpng.a"/>
+					<Add library="..\mingw\static_libs\ws2_32.lib"/>
+					<Add library="..\mingw\static_libs\libguichan_opengl.a"/>
+					<Add library="..\mingw\static_libs\libopengl32.a"/>
+					<Add library="..\mingw\static_libs\libglu32.a"/>
+					<Add library="..\applications\mingw\lib\libwinmm.a"/>
+					<Add library="..\mingw\static_libs\libminizip.a"/>
+					<Add library="..\applications\python25\libs\libpython25.a"/>
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-O3"/>
 			<Add option="-Wall"/>
-			<Add option="-DHAVE_OPENGL"/>
-			<Add option="-DSCRIPTENGINE_LUA"/>
-			<Add option="-DHAVE_ZIP"/>
 		</Compiler>
 __FILE_INSERTION_POINT__
 	</Project>

@@ -160,10 +160,9 @@ namespace FIFE {
 			 */
 			static void setLogLevel(type_log_level log_level);
 		
+			static void initialize(type_log_level loglevel, bool logtofile, bool logtoprompt);
+
 		private:
-			/** Get the default log level from the setting file.
-			 */
-			static void initialize();
 
 			/** Prints the log string. Called by destructor.
 			 *

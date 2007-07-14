@@ -35,6 +35,12 @@
 
 namespace FIFE {
 
+	class TimerListener {
+		public:
+			virtual void onTimer() {};
+			virtual ~TimerListener() {}
+	};
+
 	/** Simple Timer class
 	 *
 	 *  This is a simple wrapper around the TimeEvent,
@@ -97,9 +103,15 @@ namespace FIFE {
 			 */
 			void setCallback(const type_callback& callback);
 
+			/** Set the listener that will be called
+			 */
+			void setListener(TimerListener* listener);
+
+
 		protected:
 			bool m_active;
 			type_callback m_callback;
+			TimerListener* m_listener;
 			void updateEvent(unsigned long);
 	};
 

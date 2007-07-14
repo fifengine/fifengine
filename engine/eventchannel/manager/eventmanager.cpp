@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 
@@ -29,11 +30,11 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
-#include "../key/ec_key.h"
-#include "../key/ec_keyevent.h"
-#include "../mouse/ec_mouseevent.h"
-#include "../widget/ec_widgetevent.h"
-#include "../command/ec_command.h"
+#include "eventchannel/key/ec_key.h"
+#include "eventchannel/key/ec_keyevent.h"
+#include "eventchannel/mouse/ec_mouseevent.h"
+#include "eventchannel/widget/ec_widgetevent.h"
+#include "eventchannel/command/ec_command.h"
 
 #include "eventmanager.h"
 
@@ -45,6 +46,7 @@ namespace FIFE {
 		m_mouselisteners(), 
 		m_sdleventlisteners(), 
 		m_widgetlisteners(),
+		m_nonconsumablekeys(),
 		m_keystatemap(),
 		m_mousestate(0),
 		m_mostrecentbtn(IMouseEvent::EMPTY)
@@ -269,6 +271,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchKeyEvent(IKeyEvent& evt) {
+		bool nonconsumablekey = false;
+		for (std::vector<int>::iterator it = m_nonconsumablekeys.begin(); 
+		     it != m_nonconsumablekeys.end(); ++it) {
+			if (*it == evt.getKey().getValue()) {
+				nonconsumablekey = true;
+				break;
+			}
+		}
+
 		std::vector<IKeyListener*>::iterator i = m_keylisteners.begin();
 		while (i != m_keylisteners.end()) {
 			switch (evt.getType()) {
@@ -281,7 +292,7 @@ namespace FIFE {
 				default:
 					break;
 			}
-			if (evt.isConsumed()) {
+			if ((!nonconsumablekey) && (evt.isConsumed())) {
 				break;
 			}
 			++i;
@@ -408,5 +419,13 @@ namespace FIFE {
 	
 	EventSourceType EventManager::getEventSourceType() {
 		return ES_ENGINE;
+	}
+
+	void EventManager::setNonConsumableKeys(const std::vector<int>& keys) {
+		m_nonconsumablekeys = keys;
+	}
+
+	std::vector<int> EventManager::getNonConsumableKeys() {
+		return m_nonconsumablekeys;
 	}
 }

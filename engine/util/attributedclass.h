@@ -39,8 +39,6 @@
 
 #include "util/debugutils.h"
 
-class TiXmlElement;
-
 namespace FIFE {
 
 	/** A Class with dynamically typed attributes
@@ -179,31 +177,11 @@ namespace FIFE {
 			 */
 			const std::string& className() const;
 
-// TODO:
-//			/** Return a lua representation
-//			 */
-//			virtual std::string toLua() const;
-//
-//			/** Return a xml representation
-//			 */
-//			virtual std::string toXml() const;
-
-			// quick hack; see note below regarding rawxml for more information
-			void stashXml(TiXmlElement* xml);
-			TiXmlElement* recoverXml();
-
 			/** Print debuging information
 			 */
 			void debugPrint() const;
 
 		private:
-			// TODO:
-			// needs reconsideration; xml metadata is hard to recover once it
-			// has been loaded into this class, so the raw xml is stored here.
-			// recovery is used primarily to save data to xml, and consequently
-			// any changes to loaded metadata will NOT be saved.
-			TiXmlElement* rawxml;
-
 			typedef std::map<type_attr_id,type_attr> type_attributes;
 			type_attributes m_attributes;
 			std::string m_className;
@@ -227,11 +205,6 @@ namespace FIFE {
 	inline
 	const std::string& AttributedClass::className() const {
 		return m_className;
-	}
-
-	inline
-	TiXmlElement* AttributedClass::recoverXml() {
-		return rawxml;
 	}
 
 }; //FIFE

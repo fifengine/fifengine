@@ -31,11 +31,11 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
-#include "map/structures/map.h"
-#include "map/structures/elevation.h"
-#include "map/structures/layer.h"
-#include "map/structures/objectinfo.h"
-#include "map/geometries/geometry.h"
+#include "model/structures/map.h"
+#include "model/structures/elevation.h"
+#include "model/structures/layer.h"
+#include "model/structures/objectinfo.h"
+#include "model/geometries/geometry.h"
 #include "xml/tinyxml/tinyxml.h"
 #include "xml/xmlutil.h"
 #include "util/debugutils.h"
@@ -181,7 +181,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if( geometry_element ) {
 			geometry_element = geometry_element->FirstChildElement("geometry");
 			while(geometry_element) {
-				Geometry::registerGeometry(s_geometry_info::load(geometry_element));
+				m_map->registerGeometry(&s_geometry_info::load(geometry_element));
 				geometry_element = geometry_element->NextSiblingElement("geometry");
 			}
 		}
@@ -206,35 +206,6 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		while (el2) {
 			loadElevation(el2);
 			el2 = el2->NextSiblingElement("elevation");
-		}
-
-		// I'm sure this can be refactored into something nicer. --zahlman
-		el1 = el->FirstChildElement("run");
-		if (el1) {
-			el2 = el1->FirstChildElement("script");
-			if (el2) {
-				Log("xmlmap") << "DEBUG: run script";
-				const char * scriptname = el2->Attribute("source");
-				if (scriptname) {
-					m_map->setScript(Map::OnStartScript,
-					                 ScriptContainer::fromFile(scriptname));
-				} else {
-					throw Exception("Error: no 'source' attribute in 'script'");
-				}
-			} else {
-				el2 = el1->FirstChildElement("string");
-				if (el2) {
-					const char* cmd = el2->FirstChild()->Value();
-					if (cmd) {
-						m_map->setScript(Map::OnStartScript,
-						                 ScriptContainer::fromString(cmd));
-					} else {
-						throw Exception ("Error: no valid run->string command");
-					}
-				} else {
-					throw Exception("Error: neither 'string' nor 'script' child in 'run'");
-				}
-			}
 		}
 	}
 
@@ -562,7 +533,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		}
 
 		// metadata
-		map->LinkEndChild(mapdata->recoverXml());
+//		map->LinkEndChild(mapdata->recoverXml());
 		
 		TiXmlElement* archetypes = new TiXmlElement("archetypes");
 		map->LinkEndChild(archetypes);
@@ -650,7 +621,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			refgrid->LinkEndChild(new TiXmlText(int_to_string(elevation->getReferenceLayer()->getLayerNumber())));
 		}
 
-		xml_elevation->LinkEndChild(elevation->recoverXml());
+//		xml_elevation->LinkEndChild(elevation->recoverXml());
 
 		for(size_t i = 0; i < elevation->getNumLayers(); ++i) {
 			xml_elevation->LinkEndChild(writeLayer(elevation->getLayer(i)));
@@ -682,7 +653,7 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 			geometry->LinkEndChild(new TiXmlText(int_to_string(layer->getGeometry()->getInfo().id)));
 		}
 
-		xml_layer->LinkEndChild(layer->recoverXml());
+//		xml_layer->LinkEndChild(layer->recoverXml());
 
 		if(layer->hasTiles()) {
 			TiXmlElement* data = new TiXmlElement("data");

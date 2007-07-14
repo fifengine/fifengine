@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 //
+#include <vector>
 
 // 3rd party library includes
 //
@@ -35,6 +36,7 @@
 //
 #include "command/ec_icommandcontroller.h"
 #include "command/ec_icommanddispatcher.h"
+#include "key/ec_ikey.h"
 #include "key/ec_ikeycontroller.h"
 #include "mouse/ec_imousecontroller.h"
 #include "sdl/ec_isdleventcontroller.h"
@@ -72,6 +74,8 @@ namespace FIFE {
 		virtual void addWidgetListener(IWidgetListener* listener) = 0;
 		virtual void removeWidgetListener(IWidgetListener* listener) = 0;
 		virtual EventSourceType getEventSourceType() = 0;
+		virtual void setNonConsumableKeys(const std::vector<int>& keys) = 0;
+		virtual std::vector<int> getNonConsumableKeys() = 0;
 
 		void dispatchCommand(ICommand& command) = 0;
 	};

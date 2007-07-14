@@ -30,11 +30,11 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 // XXX Do we really need all this?
-#include "map/structures/map.h"
-#include "map/structures/layer.h"
-#include "map/structures/objectinfo.h"
-#include "map/structures/elevation.h"
-#include "map/geometries/geometry.h"
+#include "model/structures/map.h"
+#include "model/structures/layer.h"
+#include "model/structures/objectinfo.h"
+#include "model/structures/elevation.h"
+#include "model/geometries/geometry.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfssourcefactory.h"
 #include "util/debugutils.h"
@@ -107,6 +107,24 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 		MapPtr map = Map::create();
 		map->setMapName(m_header->getMapName());
+		
+		s_geometry_info tile_info(
+		Geometry::FalloutTileGeometry,
+			"RECTANGULAR",
+			Point(80,36),  // TILE SIZE
+			Point(48,24),  // TRANSFORM
+			Point(),       // OFFSET
+		0);            // FLAGS: NONE
+		map->registerGeometry(&tile_info);
+
+		s_geometry_info object_info(
+			Geometry::FalloutObjectGeometry,
+			"HEXAGONAL",
+			Point(32,16),             // TILESIZE
+			Point(16,12),             // TRANSFORM
+			Point(32,10),             // OFFSET
+			Geometry::ShiftXAxis);   // FLAGS: SHIFT AROUND X AXIS 
+		map->registerGeometry(&object_info);
 
 		loadTiles(map, file);
 		ignoreScripts(file);

@@ -28,7 +28,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
-#include "xml/tinyxml/tinyxml.h"
 
 namespace FIFE {
 
@@ -58,10 +57,5 @@ namespace FIFE {
 		}
 		SDL_mutexV(m_mutex);
 	}
-
-	void AttributedClass::stashXml(TiXmlElement* xml) {
-		rawxml = static_cast<TiXmlElement*>(xml->Clone());
-	}
-
 }; //FIFE
 

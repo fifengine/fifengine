@@ -31,6 +31,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+// #include "guichan_addon/console.h"
 #include "util/log.h"
 #include "util/debugutils.h"
 #include "util/settingsmanager.h"
@@ -66,7 +67,6 @@ namespace FIFE {
 	}
 
 	void Log::parseCmdLine(const std::map<std::string,std::vector<std::string> >& args) {
-		initialize();
 
 		std::map<std::string, std::vector<std::string> >::const_iterator i(args.find("-debug"));
 		if( i == args.end() )
@@ -77,17 +77,11 @@ namespace FIFE {
 			Log::addVisibleType(*j);
 	}
 
-	void Log::initialize() {
-		int llt = SettingsManager::instance()->read<int>("LogLevel",int(LEVEL_LOG));
-		m_uselogfile = SettingsManager::instance()->read<bool>("LogToFile",false);
-		m_usestdout = SettingsManager::instance()->read<bool>("LogToPrompt",true);
-		if (llt < 0 || llt > int(LEVEL_MAX)) {
-			DEBUG_PRINT("log level from settings file is " << llt);
-			llt= std::min(std::max(0,llt),int(LEVEL_MAX));
-			SettingsManager::instance()->write<int>("LogLevel",llt);
-		};
-		m_logLevelTreshold = llt;
-		m_showall = (llt == int(LEVEL_MAX));
+	void Log::initialize(type_log_level loglevel, bool logtofile, bool logtoprompt) {
+		m_uselogfile = logtofile;
+		m_usestdout = logtoprompt;
+		m_logLevelTreshold = static_cast<int>(loglevel);
+		m_showall = (m_logLevelTreshold == int(LEVEL_MAX));
 	};
 
 	bool Log::isVisibleLogLevel(const type_log_level& log_level ) {

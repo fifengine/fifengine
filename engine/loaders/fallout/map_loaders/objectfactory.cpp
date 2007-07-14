@@ -28,8 +28,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/structures/map.h"
-#include "map/structures/objectinfo.h"
+#include "model/structures/map.h"
+#include "model/structures/objectinfo.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "util/settingsmanager.h"

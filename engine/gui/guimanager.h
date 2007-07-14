@@ -26,6 +26,7 @@
 #include <set>
 
 // 3rd party library includes
+#include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -35,6 +36,7 @@
 #include "eventchannel/sdl/ec_isdleventlistener.h"
 #include "eventchannel/mouse/ec_imouselistener.h"
 #include "eventchannel/key/ec_ikeylistener.h"
+#include "eventchannel/widget/ec_iwidgetlistener.h"
 
 namespace gcn {
 
@@ -63,11 +65,13 @@ namespace FIFE {
 		public DynamicSingleton<GUIManager>, 
 		public ISdlEventListener,
 		public IKeyListener,
-		public IMouseListener {
+		public IMouseListener,
+		public gcn::ActionListener
+		 {
 		public:
 			/** Constructor.
 			 */
-			GUIManager();
+			GUIManager(IWidgetListener* widgetListener);
 			/** Destructor.
 			 */
 			virtual ~GUIManager();
@@ -128,6 +132,10 @@ namespace FIFE {
 			 */
 			gcn::Font* getDefaultFont() { return m_font; };
 
+			/** Callback from guichan
+			 */
+			void action(const gcn::ActionEvent & event);
+
 			void onSdlEvent(SDL_Event& evt);
 			void keyPressed(IKeyEvent& evt) { evaluateKeyEventConsumption(evt); }
 			void keyReleased(IKeyEvent& evt) { evaluateKeyEventConsumption(evt); }
@@ -161,6 +169,8 @@ namespace FIFE {
 			gcn::Font     *m_font;
 			// Added widgets
 			std::set<gcn::Widget*> m_widgets;
+
+			IWidgetListener* m_widgetlistener;
 	};
 
 }

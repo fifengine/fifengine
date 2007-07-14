@@ -33,7 +33,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "../base/ec_event.h"
+#include "eventchannel/base/ec_event.h"
+
 #include "ec_icommand.h"
 #include "ec_commandids.h"
 
@@ -53,7 +54,7 @@ namespace FIFE {
 
         /** Destructor.
          */
-		~Command() {}
+		virtual ~Command() {}
 
 		CommandType getCommandType() { return m_commandtype; }
 		void setCommandType(CommandType type) { m_commandtype = type; }
