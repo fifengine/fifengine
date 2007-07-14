@@ -45,8 +45,10 @@ namespace FIFE { namespace map {
 	typedef boost::shared_ptr<Elevation> ElevationPtr;
 
 	class Archetype;
-	
+
 	class ObjectInfo;
+
+	struct s_geometry_info;
 
 	class Map;
 	typedef boost::shared_ptr<Map> MapPtr;
@@ -90,6 +92,14 @@ namespace FIFE { namespace map {
 			/** Get the maps 'name'
 			 */
 			const std::string& getMapName() const;
+
+			/** Register a geometry with this map
+			 */
+			void registerGeometry(s_geometry_info* info);
+
+			/** Get geometry data from its id
+			 */
+			s_geometry_info* getGeometryType(size_t id);
 
 			/** Add an archetype
 			 */
@@ -165,6 +175,9 @@ namespace FIFE { namespace map {
 			std::string m_mapname;
 			MapWeakPtr m_self;
 			static long m_count;
+
+			typedef std::map<size_t, s_geometry_info*> type_geometries;
+			type_geometries m_geometries;
 
 			typedef std::list<Archetype*> type_archetypes;
 			type_archetypes m_archetypes;

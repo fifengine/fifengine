@@ -452,6 +452,7 @@ namespace FIFE { namespace map {
 			std::vector<ObjectList> m_objects;
 
 			Point m_shift;
+			size_t m_geometry_id;
 			Geometry* m_geometry;
 			mutable SelectionPtr m_selection;
 

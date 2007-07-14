@@ -52,7 +52,8 @@ namespace FIFE { namespace map {
 		m_size(size),
 		m_global_alpha(255),
  		m_shift(),
-		m_geometry(Geometry::createGeometry(geometry,size)) {
+		m_geometry_id(geometry),
+		m_geometry(0) {
 
 		if( size.x <= 0 || size.y <= 0 ) {
 			throw NotSupported(std::string("invalid layer size:")
@@ -72,7 +73,6 @@ namespace FIFE { namespace map {
 // 		Log("layer") << "before clear() objects: " << ObjectInfo::globalCount();
 		m_all_objects.clear();
 		m_objects.clear();
-		delete m_geometry;
 		m_count -= 1;
 // 		Log("layer") << "after  clear() objects: " << ObjectInfo::globalCount();
 	}
@@ -90,6 +90,10 @@ namespace FIFE { namespace map {
 	}
 
 	Geometry* Layer::getGeometry() {
+		if(m_geometry)
+			return m_geometry;
+
+		m_geometry = Geometry::createGeometry(*getElevation()->getMap()->getGeometryType(m_geometry_id),m_size);
 		return m_geometry;
 	}
 

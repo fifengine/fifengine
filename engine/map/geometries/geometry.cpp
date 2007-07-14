@@ -45,7 +45,6 @@ namespace FIFE { namespace map {
 	// namespace, so that it doesn't clutter the "interface" header.
 	
 	namespace geometry_detail {
-		std::map<size_t,s_geometry_info> info_map;
 
 		// Free function helpers - we avoid adding to the 'private' section of the
 		// interface
@@ -81,36 +80,26 @@ namespace FIFE { namespace map {
 		}
 	}
 
-	Geometry* Geometry::createGeometry(size_t id, const Point& mapsize) {
-		std::map<size_t,s_geometry_info>::iterator i = geometry_detail::info_map.find(id);
-		if( i == geometry_detail::info_map.end() ) {
-			throw InvalidFormat(std::string("unknown geometry id: ")
-				+ boost::lexical_cast<std::string>(id));
-		}
-
+	Geometry* Geometry::createGeometry(const s_geometry_info& data, const Point& mapsize) {
 		Geometry* g = 0;
 
-		if( i->second.geometry == "HEXAGONAL" ) {
-			g = new HexGeometry(i->second, mapsize);
+		if(data.geometry == "HEXAGONAL") {
+			g = new HexGeometry(data, mapsize);
 		}
-		else if( i->second.geometry == "RECTANGULAR" ) {
-			g = new GridGeometry(i->second, mapsize);
+		else if(data.geometry == "RECTANGULAR") {
+			g = new GridGeometry(data, mapsize);
 		}
 		else {
 			throw InvalidFormat(std::string("unknown geometry: ")
-				+ boost::lexical_cast<std::string>(i->second.geometry));
+				+ boost::lexical_cast<std::string>(data.geometry));
 		}
 		
-		g->m_gid = id;
+		g->info = data;
 		return g;
 	}
 
-	void Geometry::registerGeometry(const s_geometry_info& g) {
-		geometry_detail::info_map[g.id] = g;
-	}
-	
 	const s_geometry_info& Geometry::getInfo() {
-		return geometry_detail::info_map[m_gid];
+		return info;
 	}
 
 	// Default implementations.

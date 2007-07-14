@@ -54,6 +54,7 @@ namespace FIFE { namespace map {
 	}
 
 	Map::~Map() {
+		purge_map(m_geometries);
 		purge(m_archetypes);
 		clearElevations();
 		m_count -= 1;
@@ -68,6 +69,14 @@ namespace FIFE { namespace map {
 	}
 	void Map::setMapName(const std::string& name) {
 		m_mapname = name;
+	}
+
+	void Map::registerGeometry(s_geometry_info* info) {
+		m_geometries[info->id] = new s_geometry_info(*info);
+	}
+
+	s_geometry_info* Map::getGeometryType(size_t id) {
+		return m_geometries[id];
 	}
 
 	void Map::addArchetype(Archetype* archetype) {

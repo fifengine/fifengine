@@ -85,8 +85,7 @@ namespace FIFE { namespace map {
 
 			virtual ~Geometry() {}
 
-			static Geometry* createGeometry(size_t id, const Point& mapsize);
-			static void registerGeometry(const s_geometry_info& info);
+			static Geometry* createGeometry(const s_geometry_info& data, const Point& mapsize);
 
 			/** Get the raw geometry data for this geometry; used to reconstitute
 			 *  an xml map file when saving. Maybe this method should be reconsidered?
@@ -140,7 +139,7 @@ namespace FIFE { namespace map {
 
 		private:
 
-			size_t m_gid; // global identifier used to reference this geometry by xml map data
+			s_geometry_info info;	
 	};
 
 
