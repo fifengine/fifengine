@@ -28,7 +28,7 @@ STRESS_TEST_PERIOD = 500
 class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter, fife.IWidgetListener, fife.TimeEvent):
 	def __init__(self, gui, gamestate):
 		eventmanager = engine.getEventManager()
-		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10, fife.IKey.F9])
+		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10, fife.IKey.F9, fife.IKey.F8])
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
 		fife.ICommandListener.__init__(self)
@@ -59,6 +59,9 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 			engine.getGuiManager().getConsole().toggleShowHide()
 		elif (keyval == fife.IKey.F9):
 			self.gui.panel.setVisible(not self.gui.panel.isVisible())
+		elif (keyval == fife.IKey.F8):
+			self.activateStressTesting(False)
+			self.change_map(self.gui.get_selected_level())
 			
 	def keyReleased(self, event):
 		pass
@@ -152,7 +155,7 @@ class Gui(object):
 		self.level_list.items = [i.strip() for i in levelitems]
 		
 	def show_message(self, msg):
-		self.msgarea.setText(msg)	
+		self.msgarea.setText(msg)
 	
 	def create_mainmenu(self):
 		small_font = fife.TTFont('content/fonts/FreeMono.ttf', 12)
@@ -185,7 +188,7 @@ class Gui(object):
 		self.load_level_dropdown()
 		self.level_drop.setSelected(0)
 		
-		loadbtn = fife.Button('Load Map')
+		loadbtn = fife.Button("Load Map (F8)")
 		self.configure_widget(loadbtn, pos=(sx - 155, 85), size=(100,16), basecol=medium_color, 
 		                      font=small_font, evtid='on_loadmap', adjustsize=True)
 
