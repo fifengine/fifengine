@@ -60,6 +60,9 @@ namespace FIFE {
 			 */
 			explicit Point(int x = 0, int y = 0);
 
+			~Point()
+			{}
+
 			/** Vector addition
 			 */
 			Point operator+(const Point& p) const;

@@ -33,6 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/point.h"
 
 namespace FIFE { 
 	class SettingsManager;
@@ -113,6 +114,10 @@ namespace map {
 			/** Get current elevation
 			 */
 			size_t getCurrentElevation() const;
+
+			/** Make a selection; returns the geometry coordinate of the selection
+			 */
+			Point select(const Point& mousept, size_t layer);
 
 			/** Return the map view used by this control
 			 */

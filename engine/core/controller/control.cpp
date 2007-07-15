@@ -193,6 +193,10 @@ namespace FIFE { namespace map {
 		return m_isrunning;
 	}
 
+	Point Control::select(const Point& mousept, size_t layer) {
+		return m_view->select(mousept.x, mousept.y, layer);
+	}
+
 	MapPtr Control::getMap() {
 		return m_map;
 	}

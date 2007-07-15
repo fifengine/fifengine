@@ -348,57 +348,18 @@ namespace FIFE { namespace map {
 		return m_elevation;
 	}
 
-
-	void View::mouseReleased(IMouseEvent& evt) {}
-	void View::mouseClicked(IMouseEvent& evt) {}
-	void View::mouseWheelMovedUp(IMouseEvent& evt) {}
-	void View::mouseWheelMovedDown(IMouseEvent& evt) {}
-	void View::mouseMoved(IMouseEvent& evt) {}
-	void View::mouseDragged(IMouseEvent& evt) {}
-
-	void View::mousePressed(IMouseEvent& evt) {
-		// Here's a big fat mark for deprecation
-		// This should probably be somewhere else,
-		// But right now it's handy for testing the viewing code
-		if (evt.isControlPressed() || (evt.getButton() == IMouseEvent::MIDDLE)) {
-			return;
-		}
-		Log(evt.getDebugString());
-		
-		int x = evt.getX();
- 		int y = evt.getY();
-
+	Point View::select(int x, int y, size_t layer_id) {
 		if( 0 == m_map ) {
-			Warn("mapview") << "Received mouse events while not initialized!";
-			return;
+			Warn("mapview") << "Received input before initialization!";
+			return Point(0,0);
 		}
 
-		std::stringstream ss;
-		if( m_elevation->getNumLayers() > 1 ) {
-			if( evt.getButton() == IMouseEvent::RIGHT) {
-				LayerPtr layer = m_elevation->getLayer(0);
-				Geometry *geometry = layer->getGeometry();
-				m_tilemask_pos = geometry->fromScreen(Point(x,y) + m_offset);
-				layer->getSelection()->select( m_tilemask_pos );
+		LayerPtr layer = m_elevation->getLayer(layer_id);
+		Geometry *geometry = layer->getGeometry();
+		Point position = geometry->fromScreen(Point(x,y) + m_offset);
+		layer->getSelection()->select(position);
 
-				Log("mapview") << "Selected tile Layer: " << m_tilemask_pos;
-				ss << "TILE: " << m_tilemask_pos.x << "." << m_tilemask_pos.y;
-				m_tilecoordinfo = ss.str();
-
-			} else {
-				LayerPtr layer = m_elevation->getLayer(1);
-				Geometry *geometry = layer->getGeometry();
-				// FIXME: I am not sure where exactly this offset comes from
-				// A rounding problem in map/defaultobjectgeometry.cpp ???
-				// Seems to work correctly for mouse selection, though -phoku
-				m_layer_pos = geometry->fromScreen(Point(x,y) + m_offset);
-				layer->getSelection()->select( m_layer_pos );
-
-				Log("mapview") << "Selected object layer: " << m_layer_pos;
-				ss << "OBJ: " << m_layer_pos.x << "." << m_layer_pos.y;
-				m_objcoordinfo = ss.str();
-			}
-		}
+		Log("mapview") << "Selected tile Layer: " << m_tilemask_pos;
 
 		Rect region(x-2,y-2,5,5);
 		region.x += m_offset.x;
@@ -420,7 +381,8 @@ namespace FIFE { namespace map {
 				visual->addEffect( new effect::Fade(visual,0,250) );
 // 			m_vtree->removeVisual( reflist[i] );
 		}
-		
+
+		return position;
 	}
 
 	void View::reset() {

@@ -59,7 +59,13 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		self.dy = 0
 	
 	def mousePressed(self, evt):
-		print "mouse pressed, button = %d" % evt.getButton()
+		if(evt.getButton() == 1):	
+			p = self.ctrl.select(fife.Point(evt.getX(), evt.getY()), 0)
+			print p.y
+			print "tile selected on layer 0 at location: %d %d" % (p.x, p.y)
+		elif(evt.getButton() == 2):
+			p = self.ctrl.select(fife.Point(evt.getX(), evt.getY()), 1)
+			print "tile selected on layer 1 at location: %d %d" % (p.x, p.y)
 		self.prevDragX = 0
 		self.prevDragY = 0
 	

@@ -3,6 +3,8 @@
 #include "controller/control.h"
 %}
 
+%include "util/point.h"
+
 namespace FIFE { 
 	class CannotOpenFile;
 	namespace map {
@@ -22,6 +24,8 @@ namespace FIFE {
 			void update();
 			void stop();
 			bool isRunning();
+
+			Point select(const Point& mousept, size_t layer);
 
 		private:
 	};

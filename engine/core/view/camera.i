@@ -6,6 +6,8 @@
 %include "util/point.h"
 %include "util/rect.h"
 
+typedef signed int int32_t;
+
 namespace FIFE { namespace map {
 
   class Control;
