@@ -1,4 +1,4 @@
-import engine.fife as fife
+import fife
 
 MOVE_SMOOTHING_DECREASE = 2
 MAX_MOVE_SMOOTHING = 50

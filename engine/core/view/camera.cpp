@@ -37,9 +37,9 @@
 #include "model/structures/elevation.h"
 #include "model/structures/layer.h"
 #include "model/structures/objectinfo.h"
+#include "controller/control.h"
 
 #include "camera.h"
-#include "control.h"
 #include "view.h"
 #include "visual.h"
 

@@ -1,7 +1,7 @@
 %module engine
 %{
 #include <boost/shared_ptr.hpp>
-#include "engine.h"
+#include "controller/engine.h"
 %}
 
 namespace boost {

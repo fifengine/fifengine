@@ -11,7 +11,6 @@ opts.Add(BoolOption('projfiles',  "Create IDE project files. If defined, won't b
 opts.Add(BoolOption('utils',  'Build utilities', 0))
 opts.Add(BoolOption('ext',  'Build external dependencies', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
-opts.Add(BoolOption('movie', 'Enable movie playback', 0))
 opts.Add(BoolOption('zip', 'Enable ZIP archive support', 0))
 opts.Add(BoolOption('perfexe', 'Build native perf test version of fife engine', 0))
 
@@ -139,9 +138,6 @@ else:
 	
 	if env['opengl']:
 		env.Append(CPPDEFINES = ['HAVE_OPENGL'])
-	
-	if env['movie']:
-		env.Append(CPPDEFINES = ['HAVE_MOVIE'])
 	
 	if env['zip']:
 		env.Append(CPPDEFINES = ['HAVE_ZIP'])

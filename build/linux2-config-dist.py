@@ -29,9 +29,5 @@ def addExtras(context):
 		context.env.Append(LIBPATH = ['/usr/X11R6/lib'])
 		context.checkSimpleLib(['guichan_opengl'])
 	
-	if context.env['movie']:
-		context.checkSimpleLib(['libavformat', 'avformat'], 'avformat.h')
-		context.checkSimpleLib(['libavcodec', 'avcodec'], 'avcodec.h')
-
 	if context.env['zip']:
 		context.checkSimpleLib(['minizip'])

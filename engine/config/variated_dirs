@@ -1,6 +1,6 @@
 {
-	'opengl': ['video/renderbackends/opengl/'],
-	'zip': ['vfs/zip/'],
-	'script-python': ['generatedfiles/swigwrappers/python'],
-	'script-lua': ['generatedfiles/swigwrappers/lua'],
+	'opengl': ['core/video/renderbackends/opengl/'],
+	'zip': ['core/vfs/zip/'],
+	'script-python': ['swigwrappers/python'],
+	'script-lua': ['swigwrappers/lua'],
 }

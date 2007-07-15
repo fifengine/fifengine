@@ -149,365 +149,366 @@
 	<References>
 	</References>
 	<Files>
-		<Filter Name="audio">
-			<File RelativePath="..\..\..\engine\audio\audiomanager.cpp"></File>
-			<File RelativePath="..\..\..\engine\audio\audiomanager.h"></File>
-			<File RelativePath="..\..\..\engine\audio\buffer.cpp"></File>
-			<File RelativePath="..\..\..\engine\audio\buffer.h"></File>
-			<File RelativePath="..\..\..\engine\audio\config.h"></File>
-			<File RelativePath="..\..\..\engine\audio\decoder.cpp"></File>
-			<File RelativePath="..\..\..\engine\audio\decoder.h"></File>
-			<File RelativePath="..\..\..\engine\audio\decoder_acm.cpp"></File>
-			<File RelativePath="..\..\..\engine\audio\decoder_acm.h"></File>
-			<File RelativePath="..\..\..\engine\audio\decoder_oggvorbis.cpp"></File>
-			<File RelativePath="..\..\..\engine\audio\decoder_oggvorbis.h"></File>
-			<File RelativePath="..\..\..\engine\audio\fife_openal.h"></File>
-			<File RelativePath="..\..\..\engine\audio\fwd.h"></File>
-			<File RelativePath="..\..\..\engine\audio\source.cpp"></File>
-			<File RelativePath="..\..\..\engine\audio\source.h"></File>
-		</Filter>
-		<File RelativePath="..\..\..\engine\control.cpp"></File>
-		<File RelativePath="..\..\..\engine\control.h"></File>
-		<File RelativePath="..\..\..\engine\engine.cpp"></File>
-		<File RelativePath="..\..\..\engine\engine.h"></File>
-		<Filter Name="eventchannel">
-			<Filter Name="base">
-				<File RelativePath="..\..\..\engine\eventchannel\base\ec_event.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\base\ec_ievent.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\base\ec_iinputevent.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\base\ec_inputevent.h"></File>
+		<Filter Name="core">
+			<Filter Name="audio">
+				<File RelativePath="..\..\..\engine\core\audio\audiomanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\audio\audiomanager.h"></File>
+				<File RelativePath="..\..\..\engine\core\audio\buffer.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\audio\buffer.h"></File>
+				<File RelativePath="..\..\..\engine\core\audio\config.h"></File>
+				<File RelativePath="..\..\..\engine\core\audio\decoder.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\audio\decoder.h"></File>
+				<File RelativePath="..\..\..\engine\core\audio\decoder_acm.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\audio\decoder_acm.h"></File>
+				<File RelativePath="..\..\..\engine\core\audio\decoder_oggvorbis.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\audio\decoder_oggvorbis.h"></File>
+				<File RelativePath="..\..\..\engine\core\audio\fife_openal.h"></File>
+				<File RelativePath="..\..\..\engine\core\audio\fwd.h"></File>
+				<File RelativePath="..\..\..\engine\core\audio\source.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\audio\source.h"></File>
 			</Filter>
-			<Filter Name="command">
-				<File RelativePath="..\..\..\engine\eventchannel\command\ec_command.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\command\ec_commandids.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommand.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommandcontroller.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommanddispatcher.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\command\ec_icommandlistener.h"></File>
+			<Filter Name="controller">
+				<File RelativePath="..\..\..\engine\core\controller\control.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\controller\control.h"></File>
+				<File RelativePath="..\..\..\engine\core\controller\engine.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\controller\engine.h"></File>
 			</Filter>
-			<File RelativePath="..\..\..\engine\eventchannel\ec_ieventcontroller.h"></File>
-			<Filter Name="key">
-				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikey.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeycontroller.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeyevent.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\key\ec_ikeylistener.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\key\ec_key.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\key\ec_keyevent.h"></File>
-			</Filter>
-			<Filter Name="manager">
-				<File RelativePath="..\..\..\engine\eventchannel\manager\eventmanager.cpp"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\manager\eventmanager.h"></File>
-			</Filter>
-			<Filter Name="mouse">
-				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imousecontroller.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imouseevent.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_imouselistener.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\mouse\ec_mouseevent.h"></File>
-			</Filter>
-			<Filter Name="sdl">
-				<File RelativePath="..\..\..\engine\eventchannel\sdl\ec_isdleventcontroller.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\sdl\ec_isdleventlistener.h"></File>
-			</Filter>
-			<Filter Name="source">
-				<File RelativePath="..\..\..\engine\eventchannel\source\ec_eventsourcetypes.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\source\ec_ieventsource.h"></File>
-			</Filter>
-			<Filter Name="widget">
-				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetcontroller.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetevent.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_iwidgetlistener.h"></File>
-				<File RelativePath="..\..\..\engine\eventchannel\widget\ec_widgetevent.h"></File>
-			</Filter>
-		</Filter>
-		<Filter Name="generatedfiles">
-			<Filter Name="swigwrappers">
-				<Filter Name="python">
-					<File RelativePath="..\..\..\engine\generatedfiles\swigwrappers\python\fife_wrap.cxx"></File>
-					<File RelativePath="..\..\..\engine\generatedfiles\swigwrappers\python\fife_wrap.h"></File>
+			<Filter Name="eventchannel">
+				<Filter Name="base">
+					<File RelativePath="..\..\..\engine\core\eventchannel\base\ec_event.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\base\ec_ievent.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\base\ec_iinputevent.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\base\ec_inputevent.h"></File>
 				</Filter>
-			</Filter>
-		</Filter>
-		<Filter Name="gui">
-			<Filter Name="base">
-				<File RelativePath="..\..\..\engine\gui\base\advimage.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\base\advimage.h"></File>
-			</Filter>
-			<Filter Name="console">
-				<File RelativePath="..\..\..\engine\gui\console\commandline.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\console\commandline.h"></File>
-				<File RelativePath="..\..\..\engine\gui\console\console.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\console\console.h"></File>
-			</Filter>
-			<Filter Name="fonts">
-				<File RelativePath="..\..\..\engine\gui\fonts\aafont.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\aafont.h"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\font.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\font.h"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\fontcache.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\fontcache.h"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\guichanfont.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\guichanfont.h"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\sdlimagefont.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\sdlimagefont.hpp"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\sdltruetypefont.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\fonts\sdltruetypefont.hpp"></File>
-			</Filter>
-			<File RelativePath="..\..\..\engine\gui\fwd.h"></File>
-			<File RelativePath="..\..\..\engine\gui\guimanager.cpp"></File>
-			<File RelativePath="..\..\..\engine\gui\guimanager.h"></File>
-			<Filter Name="widgets">
-				<File RelativePath="..\..\..\engine\gui\widgets\clicklabel.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\widgets\clicklabel.h"></File>
-				<File RelativePath="..\..\..\engine\gui\widgets\icon2.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\widgets\icon2.hpp"></File>
-				<File RelativePath="..\..\..\engine\gui\widgets\twobutton.cpp"></File>
-				<File RelativePath="..\..\..\engine\gui\widgets\twobutton.h"></File>
-			</Filter>
-		</Filter>
-		<Filter Name="loaders">
-			<Filter Name="fallout">
-				<Filter Name="map_loaders">
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\animatedpal.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\animatedpal.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\coloroverride.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\coloroverride.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\critlst.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\critlst.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\dat1.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\dat1.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\dat2.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\dat2.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\fallout.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\fallout.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\frm.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\frm.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\fwd.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\header.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\header.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\list.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\list.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\lzssdecoder.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\lzssdecoder.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\objectfactory.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\objectfactory.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\pal.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\pal.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\providerdat1.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\providerdat1.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\providerdat2.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\providerdat2.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat1.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat1.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat2.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\rawdatadat2.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\remove_all.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\map_loaders\remove_all.h"></File>
+				<Filter Name="command">
+					<File RelativePath="..\..\..\engine\core\eventchannel\command\ec_command.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\command\ec_commandids.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\command\ec_icommand.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\command\ec_icommandcontroller.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\command\ec_icommanddispatcher.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\command\ec_icommandlistener.h"></File>
 				</Filter>
-				<Filter Name="video_loaders">
-					<File RelativePath="..\..\..\engine\loaders\fallout\video_loaders\frm_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\fallout\video_loaders\frm_provider.h"></File>
+				<File RelativePath="..\..\..\engine\core\eventchannel\ec_ieventcontroller.h"></File>
+				<Filter Name="key">
+					<File RelativePath="..\..\..\engine\core\eventchannel\key\ec_ikey.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\key\ec_ikeycontroller.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\key\ec_ikeyevent.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\key\ec_ikeylistener.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\key\ec_key.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\key\ec_keyevent.h"></File>
 				</Filter>
-			</Filter>
-			<Filter Name="native">
-				<Filter Name="map_loaders">
-					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\fwd.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\prototype.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\prototype.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\xml.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\xml.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\xml_archetype.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\map_loaders\xml_archetype.h"></File>
+				<Filter Name="manager">
+					<File RelativePath="..\..\..\engine\core\eventchannel\manager\eventmanager.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\manager\eventmanager.h"></File>
 				</Filter>
-				<Filter Name="video_loaders">
-					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\animation_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\animation_provider.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\complexanimation_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\complexanimation_provider.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\image_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\image_provider.h"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\subimage_provider.cpp"></File>
-					<File RelativePath="..\..\..\engine\loaders\native\video_loaders\subimage_provider.h"></File>
-				</Filter>
-			</Filter>
-		</Filter>
-		<File RelativePath="..\..\..\engine\main.cpp"></File>
-		<Filter Name="model">
-			<Filter Name="geometries">
-				<File RelativePath="..\..\..\engine\model\geometries\geometry.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\geometries\geometry.h"></File>
-				<File RelativePath="..\..\..\engine\model\geometries\gridgeometry.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\geometries\gridgeometry.h"></File>
-				<File RelativePath="..\..\..\engine\model\geometries\hexgeometry.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\geometries\hexgeometry.h"></File>
-			</Filter>
-			<File RelativePath="..\..\..\engine\model\map_loader.cpp"></File>
-			<File RelativePath="..\..\..\engine\model\map_loader.h"></File>
-			<Filter Name="structures">
-				<File RelativePath="..\..\..\engine\model\structures\archetype.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\structures\archetype.h"></File>
-				<File RelativePath="..\..\..\engine\model\structures\elevation.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\structures\elevation.h"></File>
-				<File RelativePath="..\..\..\engine\model\structures\layer.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\structures\layer.h"></File>
-				<File RelativePath="..\..\..\engine\model\structures\location.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\structures\location.h"></File>
-				<File RelativePath="..\..\..\engine\model\structures\map.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\structures\map.h"></File>
-				<File RelativePath="..\..\..\engine\model\structures\object_list.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\structures\object_list.h"></File>
-				<File RelativePath="..\..\..\engine\model\structures\objectinfo.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\structures\objectinfo.h"></File>
-				<File RelativePath="..\..\..\engine\model\structures\selection.cpp"></File>
-				<File RelativePath="..\..\..\engine\model\structures\selection.h"></File>
-			</Filter>
-		</Filter>
-		<Filter Name="util">
-			<File RelativePath="..\..\..\engine\util\attributedclass.cpp"></File>
-			<File RelativePath="..\..\..\engine\util\attributedclass.h"></File>
-			<File RelativePath="..\..\..\engine\util\debugutils.h"></File>
-			<File RelativePath="..\..\..\engine\util\exception.cpp"></File>
-			<File RelativePath="..\..\..\engine\util\exception.h"></File>
-			<File RelativePath="..\..\..\engine\util\fife_math.h"></File>
-			<File RelativePath="..\..\..\engine\util\fife_stdint.h"></File>
-			<File RelativePath="..\..\..\engine\util\log.cpp"></File>
-			<File RelativePath="..\..\..\engine\util\log.h"></File>
-			<File RelativePath="..\..\..\engine\util\point.cpp"></File>
-			<File RelativePath="..\..\..\engine\util\point.h"></File>
-			<File RelativePath="..\..\..\engine\util\purge.h"></File>
-			<File RelativePath="..\..\..\engine\util\quadtree.h"></File>
-			<File RelativePath="..\..\..\engine\util\rect.cpp"></File>
-			<File RelativePath="..\..\..\engine\util\rect.h"></File>
-			<File RelativePath="..\..\..\engine\util\settingsmanager.cpp"></File>
-			<File RelativePath="..\..\..\engine\util\settingsmanager.h"></File>
-			<File RelativePath="..\..\..\engine\util\singleton.h"></File>
-			<Filter Name="time">
-				<File RelativePath="..\..\..\engine\util\time\timeevent.cpp"></File>
-				<File RelativePath="..\..\..\engine\util\time\timeevent.h"></File>
-				<File RelativePath="..\..\..\engine\util\time\timemanager.cpp"></File>
-				<File RelativePath="..\..\..\engine\util\time\timemanager.h"></File>
-				<File RelativePath="..\..\..\engine\util\time\timer.cpp"></File>
-				<File RelativePath="..\..\..\engine\util\time\timer.h"></File>
-			</Filter>
-		</Filter>
-		<Filter Name="vfs">
-			<File RelativePath="..\..\..\engine\vfs\fwd.h"></File>
-			<Filter Name="raw">
-				<File RelativePath="..\..\..\engine\vfs\raw\fwd.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\raw\rawdata.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\raw\rawdata.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\raw\rawdatafile.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\raw\rawdatafile.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\raw\rawdatamemsource.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\raw\rawdatamemsource.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\raw\rawdatasource.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\raw\rawdatasource.h"></File>
-			</Filter>
-			<File RelativePath="..\..\..\engine\vfs\vfs.cpp"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfs.h"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfshostsystem.cpp"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfshostsystem.h"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfssource.cpp"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfssource.h"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfssourcefactory.cpp"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfssourcefactory.h"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.cpp"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfssourceprovider.h"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfsutility.cpp"></File>
-			<File RelativePath="..\..\..\engine\vfs\vfsutility.h"></File>
-			<Filter Name="zip">
-				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipdata.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipprovider.h"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.cpp"></File>
-				<File RelativePath="..\..\..\engine\vfs\zip\zipsource.h"></File>
-			</Filter>
-		</Filter>
-		<Filter Name="video">
-			<File RelativePath="..\..\..\engine\video\action.h"></File>
-			<File RelativePath="..\..\..\engine\video\animation.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\animation.h"></File>
-			<File RelativePath="..\..\..\engine\video\complexanimation.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\complexanimation.h"></File>
-			<File RelativePath="..\..\..\engine\video\fwd.h"></File>
-			<Filter Name="gui">
-				<File RelativePath="..\..\..\engine\video\gui\fwd.h"></File>
-				<File RelativePath="..\..\..\engine\video\gui\gcnfifeimage.cpp"></File>
-				<File RelativePath="..\..\..\engine\video\gui\gcnfifeimage.h"></File>
-				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader.cpp"></File>
-				<File RelativePath="..\..\..\engine\video\gui\gcnimageloader.h"></File>
-			</Filter>
-			<File RelativePath="..\..\..\engine\video\image.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\image.h"></File>
-			<File RelativePath="..\..\..\engine\video\imagecache.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\imagecache.h"></File>
-			<File RelativePath="..\..\..\engine\video\partialaction.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\partialaction.h"></File>
-			<File RelativePath="..\..\..\engine\video\pixelbuffer.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\pixelbuffer.h"></File>
-			<File RelativePath="..\..\..\engine\video\renderable.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\renderable.h"></File>
-			<File RelativePath="..\..\..\engine\video\renderable_location.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\renderable_location.h"></File>
-			<File RelativePath="..\..\..\engine\video\renderable_provider.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\renderable_provider.h"></File>
-			<File RelativePath="..\..\..\engine\video\renderbackend.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\renderbackend.h"></File>
-			<Filter Name="renderbackends">
-				<Filter Name="opengl">
-					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\fife_opengl.h"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\fwd.h"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\glimage.cpp"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\glimage.h"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\glscreen.cpp"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\glscreen.h"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\renderbackendopengl.cpp"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\opengl\renderbackendopengl.h"></File>
+				<Filter Name="mouse">
+					<File RelativePath="..\..\..\engine\core\eventchannel\mouse\ec_imousecontroller.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\mouse\ec_imouseevent.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\mouse\ec_imouselistener.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\mouse\ec_mouseevent.h"></File>
 				</Filter>
 				<Filter Name="sdl">
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\fwd.h"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\renderbackendsdl.cpp"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\renderbackendsdl.h"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlblendingfunctions.cpp"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlblendingfunctions.h"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlimage.cpp"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlimage.h"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlscreen.cpp"></File>
-					<File RelativePath="..\..\..\engine\video\renderbackends\sdl\sdlscreen.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\sdl\ec_isdleventcontroller.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\sdl\ec_isdleventlistener.h"></File>
+				</Filter>
+				<Filter Name="source">
+					<File RelativePath="..\..\..\engine\core\eventchannel\source\ec_eventsourcetypes.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\source\ec_ieventsource.h"></File>
+				</Filter>
+				<Filter Name="widget">
+					<File RelativePath="..\..\..\engine\core\eventchannel\widget\ec_iwidgetcontroller.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\widget\ec_iwidgetevent.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\widget\ec_iwidgetlistener.h"></File>
+					<File RelativePath="..\..\..\engine\core\eventchannel\widget\ec_widgetevent.h"></File>
 				</Filter>
 			</Filter>
-			<File RelativePath="..\..\..\engine\video\screen.cpp"></File>
-			<File RelativePath="..\..\..\engine\video\screen.h"></File>
-		</Filter>
-		<Filter Name="view">
-			<File RelativePath="..\..\..\engine\view\camera.cpp"></File>
-			<File RelativePath="..\..\..\engine\view\camera.h"></File>
-			<Filter Name="effects">
-				<File RelativePath="..\..\..\engine\view\effects\fade.cpp"></File>
-				<File RelativePath="..\..\..\engine\view\effects\fade.h"></File>
-				<File RelativePath="..\..\..\engine\view\effects\fwd.h"></File>
-				<File RelativePath="..\..\..\engine\view\effects\visualeffect.cpp"></File>
-				<File RelativePath="..\..\..\engine\view\effects\visualeffect.h"></File>
+			<Filter Name="gui">
+				<Filter Name="base">
+					<File RelativePath="..\..\..\engine\core\gui\base\advimage.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\advimage.h"></File>
+				</Filter>
+				<Filter Name="console">
+					<File RelativePath="..\..\..\engine\core\gui\console\commandline.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\console\commandline.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\console\console.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\console\console.h"></File>
+				</Filter>
+				<Filter Name="fonts">
+					<File RelativePath="..\..\..\engine\core\gui\fonts\aafont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\aafont.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\font.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\font.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\guichanfont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\guichanfont.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\sdlimagefont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\sdlimagefont.hpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\sdltruetypefont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\sdltruetypefont.hpp"></File>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\gui\fwd.h"></File>
+				<File RelativePath="..\..\..\engine\core\gui\guimanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\gui\guimanager.h"></File>
+				<Filter Name="widgets">
+					<File RelativePath="..\..\..\engine\core\gui\widgets\clicklabel.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\clicklabel.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\icon2.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\icon2.hpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\twobutton.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\twobutton.h"></File>
+				</Filter>
 			</Filter>
-			<File RelativePath="..\..\..\engine\view\view.cpp"></File>
-			<File RelativePath="..\..\..\engine\view\view.h"></File>
-			<File RelativePath="..\..\..\engine\view\visual.cpp"></File>
-			<File RelativePath="..\..\..\engine\view\visual.h"></File>
-			<File RelativePath="..\..\..\engine\view\visualtree.cpp"></File>
-			<File RelativePath="..\..\..\engine\view\visualtree.h"></File>
-		</Filter>
-		<Filter Name="xml">
-			<Filter Name="tinyxml">
-				<File RelativePath="..\..\..\engine\xml\tinyxml\fwd.h"></File>
-				<File RelativePath="..\..\..\engine\xml\tinyxml\tinystr.cpp"></File>
-				<File RelativePath="..\..\..\engine\xml\tinyxml\tinystr.h"></File>
-				<File RelativePath="..\..\..\engine\xml\tinyxml\tinyxml.cpp"></File>
-				<File RelativePath="..\..\..\engine\xml\tinyxml\tinyxml.h"></File>
-				<File RelativePath="..\..\..\engine\xml\tinyxml\tinyxmlerror.cpp"></File>
-				<File RelativePath="..\..\..\engine\xml\tinyxml\tinyxmlparser.cpp"></File>
+			<Filter Name="loaders">
+				<Filter Name="fallout">
+					<Filter Name="map_loaders">
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\animatedpal.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\animatedpal.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\coloroverride.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\coloroverride.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\critlst.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\critlst.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\dat1.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\dat1.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\dat2.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\dat2.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\fallout.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\fallout.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\frm.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\frm.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\fwd.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\header.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\header.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\list.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\list.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\lzssdecoder.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\lzssdecoder.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\objectfactory.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\objectfactory.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\pal.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\pal.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\providerdat1.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\providerdat1.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\providerdat2.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\providerdat2.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat1.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat1.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat2.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat2.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\remove_all.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\remove_all.h"></File>
+					</Filter>
+					<Filter Name="video_loaders">
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\video_loaders\frm_provider.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\video_loaders\frm_provider.h"></File>
+					</Filter>
+				</Filter>
+				<Filter Name="native">
+					<Filter Name="map_loaders">
+						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\fwd.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\prototype.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\prototype.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml_archetype.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml_archetype.h"></File>
+					</Filter>
+					<Filter Name="video_loaders">
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\complexanimation_provider.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\complexanimation_provider.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.h"></File>
+					</Filter>
+				</Filter>
 			</Filter>
-			<File RelativePath="..\..\..\engine\xml\xmlutil.cpp"></File>
-			<File RelativePath="..\..\..\engine\xml\xmlutil.h"></File>
+			<Filter Name="model">
+				<Filter Name="geometries">
+					<File RelativePath="..\..\..\engine\core\model\geometries\geometry.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\geometries\geometry.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\geometries\gridgeometry.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\geometries\gridgeometry.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\geometries\hexgeometry.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\geometries\hexgeometry.h"></File>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\model\map_loader.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\model\map_loader.h"></File>
+				<Filter Name="structures">
+					<File RelativePath="..\..\..\engine\core\model\structures\archetype.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\archetype.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\elevation.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\elevation.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\layer.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\layer.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\location.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\location.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\map.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\map.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\object_list.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\object_list.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\objectinfo.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\objectinfo.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\selection.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\selection.h"></File>
+				</Filter>
+			</Filter>
+			<Filter Name="util">
+				<File RelativePath="..\..\..\engine\core\util\attributedclass.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\attributedclass.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\debugutils.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\exception.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\exception.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\fife_math.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\fife_stdint.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\log.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\log.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\point.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\point.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\purge.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\quadtree.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\rect.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\rect.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\settingsmanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\settingsmanager.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\singleton.h"></File>
+				<Filter Name="time">
+					<File RelativePath="..\..\..\engine\core\util\time\timeevent.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\util\time\timeevent.h"></File>
+					<File RelativePath="..\..\..\engine\core\util\time\timemanager.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\util\time\timemanager.h"></File>
+					<File RelativePath="..\..\..\engine\core\util\time\timer.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\util\time\timer.h"></File>
+				</Filter>
+			</Filter>
+			<Filter Name="vfs">
+				<File RelativePath="..\..\..\engine\core\vfs\fwd.h"></File>
+				<Filter Name="raw">
+					<File RelativePath="..\..\..\engine\core\vfs\raw\fwd.h"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdata.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdata.h"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdatafile.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdatafile.h"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdatamemsource.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdatamemsource.h"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdatasource.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdatasource.h"></File>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\vfs\vfs.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfs.h"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfshostsystem.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfshostsystem.h"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfssource.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfssource.h"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfssourcefactory.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfssourcefactory.h"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfssourceprovider.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfssourceprovider.h"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfsutility.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\vfs\vfsutility.h"></File>
+				<Filter Name="zip">
+					<File RelativePath="..\..\..\engine\core\vfs\zip\zipdata.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\zip\zipdata.h"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\zip\zipprovider.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\zip\zipprovider.h"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\zip\zipsource.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\vfs\zip\zipsource.h"></File>
+				</Filter>
+			</Filter>
+			<Filter Name="video">
+				<File RelativePath="..\..\..\engine\core\video\action.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\animation.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\animation.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\complexanimation.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\complexanimation.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\fwd.h"></File>
+				<Filter Name="gui">
+					<File RelativePath="..\..\..\engine\core\video\gui\fwd.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\gui\gcnfifeimage.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\gui\gcnfifeimage.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\gui\gcnimageloader.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\gui\gcnimageloader.h"></File>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\video\image.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\image.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\imagecache.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\imagecache.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\partialaction.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\partialaction.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\pixelbuffer.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\pixelbuffer.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable_location.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable_location.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable_provider.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable_provider.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderbackend.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderbackend.h"></File>
+				<Filter Name="renderbackends">
+					<Filter Name="opengl">
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\fife_opengl.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\fwd.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.h"></File>
+					</Filter>
+					<Filter Name="sdl">
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\fwd.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlscreen.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlscreen.h"></File>
+					</Filter>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\video\screen.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\screen.h"></File>
+			</Filter>
+			<Filter Name="view">
+				<File RelativePath="..\..\..\engine\core\view\camera.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\camera.h"></File>
+				<Filter Name="effects">
+					<File RelativePath="..\..\..\engine\core\view\effects\fade.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\view\effects\fade.h"></File>
+					<File RelativePath="..\..\..\engine\core\view\effects\fwd.h"></File>
+					<File RelativePath="..\..\..\engine\core\view\effects\visualeffect.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\view\effects\visualeffect.h"></File>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\view\view.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\view.h"></File>
+				<File RelativePath="..\..\..\engine\core\view\visual.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\visual.h"></File>
+				<File RelativePath="..\..\..\engine\core\view\visualtree.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\visualtree.h"></File>
+			</Filter>
+			<Filter Name="xml">
+				<Filter Name="tinyxml">
+					<File RelativePath="..\..\..\engine\core\xml\tinyxml\fwd.h"></File>
+					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinystr.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinystr.h"></File>
+					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinyxml.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinyxml.h"></File>
+					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinyxmlerror.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinyxmlparser.cpp"></File>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\xml\xmlutil.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\xml\xmlutil.h"></File>
+			</Filter>
+		</Filter>
+		<Filter Name="swigwrappers">
+			<Filter Name="python">
+				<File RelativePath="..\..\..\engine\swigwrappers\python\fife_wrap.cxx"></File>
+				<File RelativePath="..\..\..\engine\swigwrappers\python\fife_wrap.h"></File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

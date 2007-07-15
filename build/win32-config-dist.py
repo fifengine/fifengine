@@ -16,10 +16,6 @@ def addExtras(context):
 		context.env.Append(CPPPATH = [path + '\\include\\opengl'])
 		context.env.Append(LIBS = ['guichan_opengl', 'opengl32', 'glu32'])
 
-	if context.env['movie']:
-		#context.env.Append(CPPPATH = [path + '\\include\\ffmpeg'])
-		context.env.Append(LIBS = ['avformat-51', 'avcodec-51', 'avutil-49', 'swscale-0'])
-	
 	if context.env['zip']:
 		context.env.Append(CPPPATH = [path + '\\include\\minizip'])
 		context.env.Append(LIBS = ['minizip'])

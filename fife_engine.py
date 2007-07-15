@@ -1,8 +1,11 @@
 #!/usr/bin/python
-import os, time
-os.environ['PYTHONPATH'] = '.'
+import os, time, sys
 
-import engine.fife as fife
+_jp = os.path.sep.join
+sys.path.append(_jp(['.', 'engine', 'swigwrappers', 'python']))
+sys.path.append(_jp(['.', 'engine', 'extensions']))
+
+import fife
 import viewgamestate as vgs
 
 engine = None
