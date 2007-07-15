@@ -9,49 +9,49 @@ subgraph cluster_0 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "engine"
-    label = "engine";
-}
-subgraph cluster_1 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
     "xml"; "xml/tinyxml"
     label = "xml";
 }
-subgraph cluster_2 {
+subgraph cluster_1 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "gui/widgets"; "gui"; "gui/fonts"; "gui/console"; "gui/base"
     label = "gui";
 }
-subgraph cluster_3 {
+subgraph cluster_2 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "eventchannel/base"; "eventchannel/command"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/source"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
     label = "eventchannel";
 }
-subgraph cluster_4 {
+subgraph cluster_3 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "loaders/fallout/map_loaders"; "loaders/native/map_loaders"; "loaders/native/video_loaders"; "loaders/fallout/video_loaders"
     label = "loaders";
 }
-subgraph cluster_5 {
+subgraph cluster_4 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "util"; "util/time"
     label = "util";
 }
+subgraph cluster_5 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "controller"
+    label = "controller";
+}
 subgraph cluster_6 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "video"; "video/movie"; "video/renderbackends/opengl"; "video/renderbackends/sdl"; "video/gui"
+    "video"; "video/gui"; "video/renderbackends/opengl"; "video/renderbackends/sdl"
     label = "video";
 }
 subgraph cluster_7 {
@@ -89,15 +89,13 @@ subgraph cluster_10 {
     "vfs/zip" -> "vfs/raw"
     "eventchannel/key" -> "eventchannel/source"
     "eventchannel/key" -> "eventchannel/base"
-    "video/renderbackends/opengl" -> "util"
-    "video/renderbackends/opengl" -> "video/gui"
-    "video/renderbackends/opengl" -> "video"
+    "video" -> "util"
+    "video" -> "util/time"
     "gui/widgets" -> "util"
     "xml" -> "util"
     "xml" -> "xml/tinyxml"
-    "loaders/fallout/video_loaders" -> "util"
-    "loaders/fallout/video_loaders" -> "loaders/fallout/map_loaders"
-    "loaders/fallout/video_loaders" -> "video"
+    "video/gui" -> "util"
+    "video/gui" -> "video"
     "view/effects" -> "util/time"
     "view/effects" -> "view"
     "xml/tinyxml" -> "vfs"
@@ -105,56 +103,53 @@ subgraph cluster_10 {
     "vfs/raw" -> "util"
     "util/time" -> "util"
     "loaders/native/video_loaders" -> "util"
+    "loaders/native/video_loaders" -> "vfs"
     "loaders/native/video_loaders" -> "xml/tinyxml"
     "loaders/native/video_loaders" -> "video"
-    "loaders/native/video_loaders" -> "vfs"
     "loaders/native/video_loaders" -> "vfs/raw"
     "model/geometries" -> "util"
     "model/geometries" -> "xml"
-    "engine" -> "vfs/zip"
-    "engine" -> "audio"
-    "engine" -> "loaders/fallout/video_loaders"
-    "engine" -> "video/renderbackends/sdl"
-    "engine" -> "video/renderbackends/opengl"
-    "engine" -> "loaders/fallout/map_loaders"
-    "engine" -> "gui"
-    "engine" -> "gui/console"
-    "engine" -> "util"
-    "engine" -> "video"
-    "engine" -> "model/structures"
-    "engine" -> "util/time"
-    "engine" -> "model"
-    "engine" -> "loaders/native/video_loaders"
-    "engine" -> "vfs"
-    "engine" -> "eventchannel/manager"
-    "engine" -> "model/geometries"
-    "engine" -> "view"
     "gui/fonts" -> "util"
     "gui/fonts" -> "video"
     "gui/fonts" -> "vfs"
     "gui/fonts" -> "util/time"
     "gui/fonts" -> "vfs/raw"
     "loaders/fallout/map_loaders" -> "xml"
-    "loaders/fallout/map_loaders" -> "util/time"
     "loaders/fallout/map_loaders" -> "model/structures"
     "loaders/fallout/map_loaders" -> "util"
-    "loaders/fallout/map_loaders" -> "xml/tinyxml"
-    "loaders/fallout/map_loaders" -> "vfs/raw"
     "loaders/fallout/map_loaders" -> "video"
+    "loaders/fallout/map_loaders" -> "vfs/raw"
+    "loaders/fallout/map_loaders" -> "util/time"
     "loaders/fallout/map_loaders" -> "model"
+    "loaders/fallout/map_loaders" -> "xml/tinyxml"
     "loaders/fallout/map_loaders" -> "vfs"
     "loaders/fallout/map_loaders" -> "model/geometries"
     "model/structures" -> "util"
     "model/structures" -> "video"
     "model/structures" -> "model/geometries"
     "eventchannel/base" -> "eventchannel/source"
-    "video/gui" -> "util"
-    "video/gui" -> "video"
+    "controller" -> "vfs/zip"
+    "controller" -> "audio"
+    "controller" -> "loaders/fallout/video_loaders"
+    "controller" -> "video/renderbackends/sdl"
+    "controller" -> "video/renderbackends/opengl"
+    "controller" -> "loaders/fallout/map_loaders"
+    "controller" -> "gui"
+    "controller" -> "gui/console"
+    "controller" -> "util"
+    "controller" -> "video"
+    "controller" -> "model/structures"
+    "controller" -> "util/time"
+    "controller" -> "model"
+    "controller" -> "loaders/native/video_loaders"
+    "controller" -> "vfs"
+    "controller" -> "eventchannel/manager"
+    "controller" -> "model/geometries"
+    "controller" -> "view"
+    "loaders/fallout/video_loaders" -> "util"
+    "loaders/fallout/video_loaders" -> "loaders/fallout/map_loaders"
+    "loaders/fallout/video_loaders" -> "video"
     "eventchannel/widget" -> "eventchannel/base"
-    "audio" -> "util"
-    "audio" -> "util/time"
-    "audio" -> "vfs"
-    "audio" -> "vfs/raw"
     "video/renderbackends/sdl" -> "util"
     "video/renderbackends/sdl" -> "video/gui"
     "video/renderbackends/sdl" -> "video"
@@ -167,8 +162,8 @@ subgraph cluster_10 {
     "gui" -> "video"
     "gui" -> "eventchannel/widget"
     "gui" -> "eventchannel/sdl"
-    "gui/base" -> "video/gui"
     "gui/base" -> "video"
+    "gui/base" -> "video/gui"
     "gui/console" -> "util"
     "gui/console" -> "util/time"
     "gui/console" -> "gui"
@@ -176,19 +171,20 @@ subgraph cluster_10 {
     "loaders/native/map_loaders" -> "xml"
     "loaders/native/map_loaders" -> "model/structures"
     "loaders/native/map_loaders" -> "util"
-    "loaders/native/map_loaders" -> "xml/tinyxml"
-    "loaders/native/map_loaders" -> "vfs/raw"
     "loaders/native/map_loaders" -> "video"
+    "loaders/native/map_loaders" -> "vfs/raw"
+    "loaders/native/map_loaders" -> "xml/tinyxml"
     "loaders/native/map_loaders" -> "model"
     "loaders/native/map_loaders" -> "vfs"
     "loaders/native/map_loaders" -> "model/geometries"
-    "video" -> "util"
-    "video" -> "util/time"
+    "video/renderbackends/opengl" -> "util"
+    "video/renderbackends/opengl" -> "video/gui"
+    "video/renderbackends/opengl" -> "video"
     "model" -> "model/structures"
-    "video/movie" -> "util"
-    "video/movie" -> "util/time"
-    "video/movie" -> "video"
-    "video/movie" -> "video/renderbackends/sdl"
+    "audio" -> "util"
+    "audio" -> "util/time"
+    "audio" -> "vfs"
+    "audio" -> "vfs/raw"
     "vfs" -> "util"
     "vfs" -> "vfs/raw"
     "eventchannel/manager" -> "eventchannel/command"
@@ -197,12 +193,11 @@ subgraph cluster_10 {
     "eventchannel/manager" -> "util"
     "eventchannel/manager" -> "eventchannel/key"
     "eventchannel/manager" -> "eventchannel/widget"
-    "view" -> "engine"
     "view" -> "view/effects"
     "view" -> "gui"
     "view" -> "model/structures"
-    "view" -> "eventchannel/mouse"
     "view" -> "util"
+    "view" -> "controller"
     "view" -> "video"
     "view" -> "util/time"
     "view" -> "model/geometries"

@@ -3,7 +3,7 @@ import sys, re, os
 from path import path
 
 _S = os.path.sep
-ROOTDIRNAME = 'engine'
+ROOTDIRNAME = 'engine/core'
 FILE_DEPS_OUT = 'doc/dependencies/filedeps'
 DIR_DEPS_OUT = 'doc/dependencies/dirdeps'
 MODULE_DEPS_OUT = 'doc/dependencies/moduledeps'
