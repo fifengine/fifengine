@@ -1,6 +1,5 @@
 {
 	'opengl': ['video/renderbackends/opengl/'],
-	'movie': ['video/movie/'],
 	'zip': ['vfs/zip/'],
 	'script-python': ['generatedfiles/swigwrappers/python'],
 	'script-lua': ['generatedfiles/swigwrappers/lua'],

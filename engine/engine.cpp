@@ -108,10 +108,6 @@ namespace FIFE {
 
 		TTF_Init();
 
-#ifdef HAVE_MOVIE
-		av_register_all();
-#endif
-
 		m_eventmanager = new EventManager();
 		m_guimanager = new GUIManager(m_eventmanager);
 		m_eventmanager->addSdlEventListener(m_guimanager);
