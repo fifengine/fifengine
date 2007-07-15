@@ -12,9 +12,9 @@ cd %_%\..\..\..
 scons debug=0 zip=1
 
 :: Delete old versions of _fife.pyd and rename the compiled fife.dll to _fife.pyd
-cd %_%\..\..\..\engine
+cd %_%\..\..\..\engine\swigwrappers\python
 del _fife.pyd
-rename fife.dll _fife.pyd
+copy ..\..\fife.dll .\_fife.pyd
 
 :: Return us to the directory we started from
 cd %_%
