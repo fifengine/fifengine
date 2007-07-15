@@ -135,9 +135,8 @@ namespace map {
 			 */
 			void clearMap();
 
-			
-			void addCamera(Camera* camera);
-			void removeCamera(Camera* camera);
+			Camera* createCamera();
+			void deleteCamera(Camera* camera);
 
 		protected:
 
@@ -145,8 +144,8 @@ namespace map {
 
 			std::string m_map_filename;
 			MapPtr m_map;
-			View* m_view;
 			Screen* m_screen;
+			View* m_view;
 			SettingsManager* m_settings;
 			std::set<Camera*> m_cameras;
 

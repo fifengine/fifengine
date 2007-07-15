@@ -10,11 +10,10 @@ typedef signed int int32_t;
 
 namespace FIFE { namespace map {
 
-  class Control;
+  class View;
 
 	class Camera {
 		public:
-			Camera(Control* map_control);
 			~Camera();
 
 			void setViewport(const Rect& viewport);
@@ -23,5 +22,7 @@ namespace FIFE { namespace map {
 			void moveBy(const Point& delta);
 
 		private:
+			Camera(View* view);
+
 	};
 }}

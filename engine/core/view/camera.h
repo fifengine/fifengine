@@ -42,7 +42,6 @@ namespace FIFE { namespace map {
 	typedef boost::shared_ptr<Layer> LayerPtr;
 	class ObjectInfo;
 	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
-	class Control;
 
 	/** A Camera onto the MapView
 	 *
@@ -71,7 +70,7 @@ namespace FIFE { namespace map {
 			};
 
 		public:
-			Camera(Control* map_control);
+			Camera(View* view);
 			~Camera();
 
 			/** Set on screen viewport
@@ -99,6 +98,14 @@ namespace FIFE { namespace map {
 			 */
 			void track(ObjectPtr object);
 
+			/** Render this camera's view on the map
+			 */
+			void render();
+
+			/** Reset Camera
+			 */
+			void reset();
+
 		private:
 			LayerPtr m_layer;
 			View*  m_view;
@@ -110,20 +117,8 @@ namespace FIFE { namespace map {
 			int   m_mode;
 			Timer m_timer;
 
-			friend class Control;
-			Control* m_control;
-
 			void update();
 
-			/** Reset Camera
-			 */
-			void reset();
-			/** Render this camera's view on the map
-			 */
-			void render();
-			/** Control deleted
-			 */
-			void controlDeleted();
 	};
 } } //FIFE::map
 

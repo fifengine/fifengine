@@ -197,7 +197,6 @@ subgraph cluster_10 {
     "view" -> "gui"
     "view" -> "model/structures"
     "view" -> "util"
-    "view" -> "controller"
     "view" -> "video"
     "view" -> "util/time"
     "view" -> "model/geometries"

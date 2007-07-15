@@ -60,7 +60,6 @@ digraph "source tree" {
     "engine/core/vfs/raw/rawdatafile.cpp" -> "util/exception.h"
     "engine/core/vfs/raw/rawdatafile.cpp" -> "rawdatafile.h"
     "engine/core/view/camera.cpp" -> "view.h"
-    "engine/core/view/camera.cpp" -> "controller/control.h"
     "engine/core/view/camera.cpp" -> "video/screen.h"
     "engine/core/view/camera.cpp" -> "model/geometries/geometry.h"
     "engine/core/view/camera.cpp" -> "util/fife_math.h"

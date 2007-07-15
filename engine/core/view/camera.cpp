@@ -37,7 +37,6 @@
 #include "model/structures/elevation.h"
 #include "model/structures/layer.h"
 #include "model/structures/objectinfo.h"
-#include "controller/control.h"
 
 #include "camera.h"
 #include "view.h"
@@ -45,17 +44,13 @@
 
 namespace FIFE { namespace map {
 
-	Camera::Camera(Control* map_control) {
-		m_control = map_control;
-		m_control->addCamera(this);
-
+	Camera::Camera(View* view) {
+		m_view = view;
 		m_timer.setInterval(50);
 		m_timer.setCallback( boost::bind( &Camera::update, this ) );
 
-		Screen* surface = m_control->getScreen();
-
-		int w = surface->getWidth();
-		int h = surface->getHeight();
+		int w = m_view->getScreen()->getWidth();
+		int h = m_view->getScreen()->getHeight();
 
 		setViewport(Rect(0, 0, w, h));
 
@@ -63,9 +58,7 @@ namespace FIFE { namespace map {
 	}
 
 	Camera::~Camera() {
-		if( m_control ) {
-			m_control->removeCamera(this);
-		}
+		m_timer.stop();
 		m_tracked_object.reset();
 		m_layer.reset();
 	}
@@ -163,7 +156,7 @@ namespace FIFE { namespace map {
 	void Camera::render() {
 		m_view->setXPos(m_position.x);
 		m_view->setYPos(m_position.y);
-		m_view->setViewport(m_control->getScreen(), m_viewport );
+		m_view->setViewport(m_viewport);
 		m_view->render();
 	}
 
@@ -171,9 +164,7 @@ namespace FIFE { namespace map {
 		m_tracked_object.reset();
 		m_layer.reset();
 
-		assert( m_control );
 		m_timer.stop();
-		m_view = m_control->getView();
 		if (!m_view->getCurrentElevation()) {
 			m_position = Point();
 			m_mode = FREE;
@@ -182,13 +173,6 @@ namespace FIFE { namespace map {
 			m_position = Point(m_view->getXPos(),m_view->getYPos());
 			m_mode = FREE;
 		}
-	}
-
-	void Camera::controlDeleted() {
-		assert( m_control );
-		m_timer.stop();
-		m_layer.reset();
-		m_control = 0;
 	}
 
 	void Camera::setViewport(const Rect& viewport) {

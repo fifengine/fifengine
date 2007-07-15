@@ -70,25 +70,20 @@ namespace FIFE { namespace map {
 			/** Create a new empty View object.
 			 * Use @c setMap() to initialize to show a map.
 			 */
-			View();
+			View(Screen* surface);
 
 			/** Destructor
 			 * Does not cleanup Map object!
 			 */
 			~View();
 
-			/**   Set the surface where the map should be rendered
+			void setDefaultViewport();
+
+			/**   Set the area where the map should be rendered
 			 *
-			 * @param surface the surface to render at
 			 * @param rect mapview will render into this rect on surface
 			 */
-			void setViewport(Screen* surface, const Rect& rect);
-
-			/** Set the surface where the map should be rendered
-			 *
-			 * @param surface the surface render at
-			 */
-			void setViewport(Screen* surface);
+			void setViewport(const Rect& rect);
 
 			/** Set the map elevation to render
 			 *
@@ -163,6 +158,7 @@ namespace FIFE { namespace map {
 			 */
 			void toggleFadeOutEffect();
 
+			Screen* getScreen() { return m_surface; }
 
 			//////////////  NEW INTERFACE ///////////////////////
 

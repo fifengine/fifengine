@@ -54,10 +54,10 @@
 
 namespace FIFE { namespace map {
 
-	View::View() 
+	View::View(Screen* surface) 
 		:
 		m_vtree(new VisualTree()),
-		m_surface(0),
+		m_surface(surface),
 		m_rect(),
 		m_elevation(),
 		m_layer_pos(-1),
@@ -91,22 +91,14 @@ namespace FIFE { namespace map {
 		return *this;
 	}
 
-	void View::setViewport(Screen* surface) {
-		if( !surface ) {
-			// Here I assume that the call setViewport(0) in ViewGameState::deactivate()
-			// was made on purpose! -> Inhibit all calls in render()
-			m_surface = 0;
-			return;
-		}
+	void View::setDefaultViewport() {
+		int w = m_surface->getWidth();
+		int h = m_surface->getHeight();
 
-		int w = surface->getWidth();
-		int h = surface->getHeight();
-
-		setViewport(surface, Rect(w/4, h/4, w/2, h/2));
+		setViewport(Rect(w/4, h/4, w/2, h/2));
 	}
 
-	void View::setViewport(Screen* surface, const Rect& rect) {
-		m_surface = surface;
+	void View::setViewport(const Rect& rect) {
 		m_rect = rect;
 	}
 

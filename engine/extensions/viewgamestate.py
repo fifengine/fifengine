@@ -7,7 +7,7 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		fife.IKeyListener.__init__(self)
 		fife.IMouseListener.__init__(self)
 		self.ctrl = fife.Control()
-		self.cam = fife.Camera(self.ctrl)
+		self.cam = self.ctrl.createCamera()
 		self.active = False
 
 		xml_loader = fife.XML()

@@ -50,8 +50,8 @@ namespace FIFE { namespace map {
 	Control::Control() 
 		: m_map_filename(""),
 		m_map(),
-		m_view(new View()),
 		m_screen(RenderBackend::instance()->getMainScreen()),
+		m_view(new View(m_screen)),
 		m_settings(SettingsManager::instance()),
 		m_isrunning(false) {
 	}
@@ -64,7 +64,7 @@ namespace FIFE { namespace map {
 		// Real cleanup after 'stop()'
 		std::set<Camera*>::iterator i(m_cameras.begin());
 		for(; i != m_cameras.end(); ++i)
-			(*i)->controlDeleted();
+			delete *i;
 
 		delete m_view;
 
@@ -118,7 +118,7 @@ namespace FIFE { namespace map {
 		m_map = map;
 
 		m_view->setMap(m_map, 0);
-		m_view->setViewport(m_screen);
+		m_view->setDefaultViewport();
 		std::string ruleset_file = m_settings->read<std::string>("Ruleset", 
 		                           "content/scripts/demos/example_ruleset.lua");
 		m_elevation = size_t(-1);
@@ -209,12 +209,15 @@ namespace FIFE { namespace map {
 		return m_view;
 	}
 
-	void Control::addCamera(Camera* camera) {
+	Camera* Control::createCamera() {
+		Camera* camera = new Camera(m_view);
 		m_cameras.insert(camera);
+		return camera;
 	}
 
-	void Control::removeCamera(Camera* camera) {
+	void Control::deleteCamera(Camera* camera) {
 		m_cameras.erase(camera);
+		delete camera;
 	}
 
 	void Control::resetCameras() {

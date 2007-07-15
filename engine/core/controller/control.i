@@ -7,8 +7,10 @@
 
 namespace FIFE { 
 	class CannotOpenFile;
+
 	namespace map {
 
+	class Camera;
 	class MapLoader;
 
 	class Control {
@@ -26,6 +28,10 @@ namespace FIFE {
 			bool isRunning();
 
 			Point select(const Point& mousept, size_t layer);
+
+			Camera* createCamera();
+			void deleteCamera(Camera* camera);
+
 
 		private:
 	};

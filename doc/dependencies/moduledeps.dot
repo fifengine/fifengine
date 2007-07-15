@@ -33,9 +33,8 @@ digraph "source tree" {
     "audio" -> "util"
     "audio" -> "vfs"
     "vfs" -> "util"
-    "view" -> "gui"
     "view" -> "util"
-    "view" -> "controller"
-    "view" -> "video"
     "view" -> "model"
+    "view" -> "video"
+    "view" -> "gui"
 }
