@@ -100,6 +100,7 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		if not self.active:
 			self.active = True
 			self.ctrl.load(self.map)
+			self.walker = self.ctrl.createDynamicObject(1,fife.Point(5,5),"Critter:Beekeeper:Talk:S")
 			self.ctrl.start()
 
 	def deactivate(self):

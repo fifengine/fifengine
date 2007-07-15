@@ -4,6 +4,7 @@
 %}
 
 %include "util/point.h"
+%include "model/structures/objectinfo.i"
 
 namespace FIFE { 
 	class CannotOpenFile;
@@ -29,9 +30,10 @@ namespace FIFE {
 
 			Point select(const Point& mousept, size_t layer);
 
+			ObjectInfo* createDynamicObject(size_t layer, Point p, char* prototype);
+
 			Camera* createCamera();
 			void deleteCamera(Camera* camera);
-
 
 		private:
 	};

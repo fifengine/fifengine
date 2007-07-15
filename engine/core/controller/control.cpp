@@ -197,6 +197,19 @@ namespace FIFE { namespace map {
 		return m_view->select(mousept.x, mousept.y, layer);
 	}
 
+	ObjectInfo* Control::createDynamicObject(size_t layer, Point p, char* prototype) {
+		ObjectPtr object(ObjectInfo::create());
+
+		object->setLayer(layer);
+		m_map->getElevation(m_elevation)->getLayer(layer)->addObject(object);
+
+		object->loadPrototype(prototype);
+		object->setPosition(p);
+
+		object->debugPrint();
+		return get_pointer(object);
+	}
+
 	MapPtr Control::getMap() {
 		return m_map;
 	}

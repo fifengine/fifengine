@@ -47,6 +47,8 @@ namespace map {
 
 	class MapLoader;
 
+	class ObjectInfo;
+
 	class Camera;
 	class View;
 
@@ -118,6 +120,11 @@ namespace map {
 			/** Make a selection; returns the geometry coordinate of the selection
 			 */
 			Point select(const Point& mousept, size_t layer);
+
+			/** Create a script-controlled dynamic object on the specified
+			 * layer of the current elevation.
+			 */
+			ObjectInfo* createDynamicObject(size_t layer, Point p, char* prototype);
 
 			/** Return the map view used by this control
 			 */
