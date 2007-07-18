@@ -181,7 +181,8 @@ namespace FIFE { namespace map { namespace loaders { namespace xml {
 		if( geometry_element ) {
 			geometry_element = geometry_element->FirstChildElement("geometry");
 			while(geometry_element) {
-				m_map->registerGeometry(&s_geometry_info::load(geometry_element));
+				s_geometry_info ginf(s_geometry_info::load(geometry_element));
+				m_map->registerGeometry(&ginf);
 				geometry_element = geometry_element->NextSiblingElement("geometry");
 			}
 		}
