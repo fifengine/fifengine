@@ -38,6 +38,11 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 			self.dy = -20
 		elif (keyval == fife.IKey.DOWN):
 			self.dy = 20
+		elif (keyval == fife.IKey.TAB):
+			elevation = self.ctrl.getCurrentElevation() + 1
+			if (elevation >= self.ctrl.getNumElevations()):
+				elevation = 0
+			self.ctrl.setElevation(elevation)
 
 	def keyReleased(self, event):
 		keyval = event.getKey().getValue()

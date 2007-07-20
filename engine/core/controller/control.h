@@ -117,6 +117,10 @@ namespace map {
 			 */
 			size_t getCurrentElevation() const;
 
+			/** Get the number of elevations on the map
+			 */
+			size_t getNumElevations() const;
+
 			/** Make a selection; returns the geometry coordinate of the selection
 			 */
 			Point select(const Point& mousept, size_t layer);

@@ -174,6 +174,10 @@ namespace FIFE { namespace map {
 		return m_elevation;
 	}
 
+	size_t Control::getNumElevations() const {
+		return m_view->getNumElevations();
+	}
+
 	void Control::stop() {
 		if (m_map && isRunning()) {
 			m_isrunning = false;

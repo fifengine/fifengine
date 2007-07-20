@@ -30,6 +30,10 @@ namespace FIFE {
 
 			Point select(const Point& mousept, size_t layer);
 
+			size_t getCurrentElevation() const;
+			void setElevation(size_t);
+			size_t getNumElevations() const;
+
 			ObjectInfo* createDynamicObject(size_t layer, Point p, char* prototype);
 
 			Camera* createCamera();
