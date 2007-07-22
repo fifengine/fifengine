@@ -6,9 +6,15 @@
 
 namespace gcn {
 	class Widget;
+	class ActionEvent;
+	class ActionListener {
+	public:
+		virtual void action(const ActionEvent& actionEvent) = 0;
+	};
 }
 namespace FIFE {
 	class Console;
+	%feature("notabstract") GUIManager;
 	class GUIManager: public gcn::ActionListener {
 	public:
 		Console* getConsole();

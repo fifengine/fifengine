@@ -6,9 +6,6 @@ joinpath = os.path.join
 _sep = os.path.sep
 enginepath = upath('.')
 
-if sys.platform == 'win32':
-	swigpath = os.environ['_SWIG'] + '\\'
-
 def is_implfile(fname):
 	return fname.endswith('.cpp') or fname.endswith('.cxx')
 
@@ -19,13 +16,14 @@ def generate_swig_wrappers(interfacefiles):
 	swigoutdir = 'swigwrappers'
 
 	def generate_language_specifics(lang):
+		swigpath = ''
+		if sys.platform == 'win32':
+			swigpath = os.environ['_SWIG'] + '\\'
+
 		print "   Generating language specific wrappers for " + lang
 		langoutdir = joinpath(swigoutdir, lang)
 		
-		if sys.platform != 'win32':
-			pipe = os.popen('swig -c++ -%s -Icore fife.i' % (lang))
-		else:
-			pipe = os.popen(swigpath +'swig -c++ -%s -Icore fife.i' % (lang))
+		pipe = os.popen(swigpath +'swig -c++ -%s -Icore fife.i' % (lang))
 		if pipe.close():
 			print "\nError while running swig, stopped"
 			Exit(1)
@@ -77,6 +75,13 @@ def clean_generated_files():
 	for genfile in upath('swigwrappers').walkfiles():
 		if str(genfile.abspath()).find('.svn') == -1:
 			genfile.remove()
+
+	EXPLICIT_REMOVES = ('fife.i', 'fife.py', 'fife_wrap.cxx', 'fife_wrap.h')
+	for f in EXPLICIT_REMOVES:
+		try:
+			upath(f).remove()
+		except:
+			pass
 
 def generate_msvc_project(projectfiles):
 	def create_dict_tree(source_dict):
@@ -157,7 +162,13 @@ for flag, paths in variated_dirs.items():
 		filteredpaths.extend(paths)
 
 if not env.GetOption('clean'):
-	interfacefiles = remove_based_on_dir_filter(filteredpaths, list(enginepath.walkfiles('*.i')))
+	tmpfiles = remove_based_on_dir_filter(filteredpaths, list(enginepath.walkfiles('*.i')))
+	interfacefiles = []
+	for f in tmpfiles:
+		if f.startswith('.' + _sep):
+			interfacefiles.append(f[2:])
+		else:
+			interfacefiles.append(f)
 	generate_swig_wrappers(interfacefiles)
 
 allfiles = list(enginepath.walkfiles())

@@ -166,7 +166,7 @@
       <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
-      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*,*os,fife.log,*.so,*.pyc,__init__.py,tags,FIFE.kdevelop.pcs,Doxyfile</hidepatterns>
+      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*,*os,fife.log,*.so,*.pyc,__init__.py,tags,FIFE.kdevelop.pcs,Doxyfile,*~</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>
