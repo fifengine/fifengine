@@ -18,9 +18,9 @@ FIFE_SVN_DIR\trunk\ (if you want to compile trunk, otherwhise it needs to be ext
 
 4. Build files for each supported IDE / compiler can be found in the sub-directories of FIFE_SVN_DIR\build\win32\ (codeblocks, mingw, msvc2005)
 
-5. The final binary (fife_engine.exe) is automatically build too:
-FIFE_SVN_DIR\
+5. The final dynamic library (_fife.pyd) is automatically moved to:
+FIFE_SVN_DIR\engine
 
-6. Depending on the IDE / compiler you're using copy FIFE_SVN_DIR\build\win32\mingw\bin\*.* (for code::blocks, mingw) or FIFE_SVN_DIR\build\win32\msvc2005\bin\*.* (MSVC 2005) to FIFE_SVN_DIR\*.* (this ensures that all required DLLs are in place to work with FIFE)
+6. Depending on the IDE / compiler you're using copy FIFE_SVN_DIR\build\win32\mingw\bin\*.* (for code::blocks, mingw) or FIFE_SVN_DIR\build\win32\msvc2005\bin\*.* (MSVC 2005) to FIFE_SVN_DIR\*.* (this ensures that all required DLLs and batch files are in place to work with FIFE)
 
-7. You can now start your custom FIFE build via fife_engine.exe
+7. You can now start your custom FIFE build via pyFIFE.bat
