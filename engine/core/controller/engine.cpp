@@ -37,7 +37,6 @@
 #include "util/time/timemanager.h"
 #include "audio/audiomanager.h"
 #include "gui/console/console.h"
-#include "loaders/native/video_loaders/complexanimation_provider.h"
 #include "loaders/fallout/video_loaders/frm_provider.h"
 #include "loaders/native/video_loaders/animation_provider.h"
 #include "loaders/native/video_loaders/image_provider.h"
@@ -148,10 +147,6 @@ namespace FIFE {
 		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
 		                                               video::loaders::AnimationProvider,
 		                                               RenderAble::RT_ANIMATION >());
-
-		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
-		                                               video::loaders::ComplexAnimationProvider,
-		                                               RenderAble::RT_COMPLEX_ANIMATION >());
 
 		m_imagecache->addRenderableProviderConstructor(new RenderableProviderConstructorTempl<
 		                                               video::loaders::SubImageProvider,

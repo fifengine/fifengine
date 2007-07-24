@@ -316,8 +316,6 @@
 					<Filter Name="video_loaders">
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\complexanimation_provider.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\complexanimation_provider.h"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.h"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.cpp"></File>
@@ -418,11 +416,8 @@
 				</Filter>
 			</Filter>
 			<Filter Name="video">
-				<File RelativePath="..\..\..\engine\core\video\action.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\animation.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\animation.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\complexanimation.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\complexanimation.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\fwd.h"></File>
 				<Filter Name="gui">
 					<File RelativePath="..\..\..\engine\core\video\gui\fwd.h"></File>
@@ -435,8 +430,6 @@
 				<File RelativePath="..\..\..\engine\core\video\image.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\imagecache.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\imagecache.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\partialaction.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\partialaction.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\pixelbuffer.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\pixelbuffer.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\renderable.cpp"></File>

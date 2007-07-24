@@ -61,7 +61,7 @@ namespace FIFE {
 	 *	A:	Yes, as long it doesn't start a separate thread to do so.
 	 *
 	 *	Q:	Is the ImageCache suitable for statefull information,
-	 *		like Animations, ComplexAnimations?
+	 *		like Animations
 	 *	A:	In principle NO. The cache assures that there is only
 	 *		one RenderAble* associated with a unique resource
 	 *		location.

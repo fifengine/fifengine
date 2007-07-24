@@ -96,10 +96,6 @@ namespace FIFE {
 				extraInfo += boost::lexical_cast<std::string>(getDirection());
 				break;
 
-			case RenderAble::RT_COMPLEX_ANIMATION:
-				typeName = "Complex Animation";
-				break;
-
 			default:
 				typeName = "BUG? No known Renderable Type";
 				break;

@@ -47,21 +47,20 @@ namespace FIFE {
 	 * The RenderAble Class is used as a basis for handling any drawing operations of
 	 * loadable graphics. Use the ImageCache to load renderables. This encapsulates 
 	 * loading and creation of Graphics completely. The RenderAble class is then 
-	 * subclassed by Image, Animation and ComplexAnimation. The later are yet somewhat
-	 * incomplete.
+	 * subclassed by Image and Animation. The later are yet somewhat incomplete.
 	 *
 	 * The Image subclass itself is only a stub for subclasses belonging to the RenderBackend
 	 * That is, an Image is always either an SDLImage (thus basically a SDL surface) or and
 	 * GLImage (and thus basically a texture) -- this was all done to encapsulate the backend
 	 * as good as possible. Loading Classes/Functions will have to use calls into the backend
 	 * to create Images and thus automatically the correct type of Image (SDL,GL) is created.
-	 * Animations and ComplexAnimations are different, these are containers of Images and thus
+	 * Animations are different, these are containers of Images and thus
 	 * don't need any backend specific sub-class. Still it is good to have the as a subclass to
 	 * a renderable, since this means, they can be used like images, and so providing, for example
 	 * the possibility to have animations in the GUI without any extra code (that's the plan...)
 	 * 
 	 * @see RenderBackend
-	 * @see Image, Animation, ComplexAnimation
+	 * @see Image, Animation
 	 * @see ImageCache 
 	 */
 	class RenderAble {
@@ -70,7 +69,6 @@ namespace FIFE {
 				RT_UNDEFINED          = 1,
 				RT_IMAGE              = 2,
 				RT_ANIMATION          = 4,
-				RT_COMPLEX_ANIMATION  = 8,
 				RT_SUBIMAGE           = 16,
 				RT_ANY                = 31
 			} RenderableTypes;

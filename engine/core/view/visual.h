@@ -40,7 +40,6 @@
 namespace FIFE {
 
 	class Screen;
-	class ComplexAnimation;
 
 }
 
@@ -79,8 +78,6 @@ namespace FIFE { namespace map {
 			size_t getZValue() const { return m_zvalue; };
 			void setZValue(size_t z) { m_zvalue = z; };
 
-			ComplexAnimation* getComplexAnimation();
-
 			const Rect& getScreenBox() const { return m_screenbox; };
 
 			ObjectPtr getObject() { return m_moi; };
@@ -98,7 +95,6 @@ namespace FIFE { namespace map {
 			std::set<effect::Effect*> m_effects;
 
 			RenderAble::RenderableTypes m_renderableType;
-			ComplexAnimation* m_renderableCopy;
 
 			Rect m_screenbox;
 			Point m_position;
@@ -119,11 +115,6 @@ namespace FIFE { namespace map {
 // 	const Point& Visual::getPosition() const {
 // 		return m_grid_position;
 // 	}
-
-	inline
-	ComplexAnimation* Visual::getComplexAnimation() {
-		return m_renderableCopy;
-	}
 
 
 } } // FIFE::map

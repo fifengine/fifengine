@@ -27,7 +27,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/complexanimation.h"
 #include "video/renderable.h"
 #include "view/effects/visualeffect.h"
 #include "util/debugutils.h"
@@ -46,7 +45,6 @@ namespace FIFE { namespace map {
 		m_screenbox() {
 		m_alpha = 255;
 		m_moi = moi;
-		m_renderableCopy = 0;
 		m_zvalue = 0;
 		if( moi ) {
 			m_zvalue = moi->getZValue();
@@ -58,7 +56,6 @@ namespace FIFE { namespace map {
 		if( m_moi ) {
 			m_moi->setVisualId(0);
 		}
-		delete m_renderableCopy;
 		// We have to be careful here, as effects remove themselves.
 		while( !m_effects.empty() )
 			delete *m_effects.begin();
@@ -67,21 +64,6 @@ namespace FIFE { namespace map {
 	void Visual::setRenderable(size_t renderable, RenderAble::RenderableTypes type) {
 		m_renderable = renderable;
 		m_renderableType = type;
-
-		if( m_renderableCopy ) {
-			delete m_renderableCopy;
-			m_renderableCopy = 0;
-		}
-
-		if( type == RenderAble::RT_COMPLEX_ANIMATION ) {
-			RenderAble* r = ImageCache::instance()->getImage( renderable );
-			if( r->getType() !=  RenderAble::RT_COMPLEX_ANIMATION ) {
-				m_renderableType = r->getType();
-				return;
-			}
-			m_renderableCopy = dynamic_cast<ComplexAnimation*>(r);
-			m_renderableCopy = new ComplexAnimation(*m_renderableCopy);
-		}
 	}
 
 	void Visual::calculateScreenbox(RenderAble* r) {
@@ -112,32 +94,16 @@ namespace FIFE { namespace map {
 		m_position = geometry->toScreen( m_grid_position );
 		m_linearposition = m_grid_position.x + m_grid_position.y * m_layer->getSize().x;
 
-		if (m_renderableType == RenderAble::RT_COMPLEX_ANIMATION) {
-			ComplexAnimation* anim = dynamic_cast<ComplexAnimation*>(m_renderableCopy);
-
-			std::vector<Point> offsets;
-			for(size_t i = 0; i != geometry->getNumDirections(); ++i) {
-				offsets.push_back(geometry->directionToScreen(i));
-			}
-			anim->resetGeometry(offsets);
-			calculateScreenbox(anim);
-		} else { 
-			RenderAble* r = ImageCache::instance()->getImage( m_renderable );
-			calculateScreenbox(r);
-		}
+		RenderAble* r = ImageCache::instance()->getImage( m_renderable );
+		calculateScreenbox(r);
 
 		m_layer_num = m_layer->getLayerNumber();
 	}
 
 	void Visual::render(Screen* screen, const Point& shift, uint8_t alpha) {
 		Rect target;
-		RenderAble *r = m_renderableCopy;
-
-		if( !r ) {
-			r = ImageCache::instance()->getImage( m_renderable );
-		}// else {
+		RenderAble* r = ImageCache::instance()->getImage( m_renderable );
 		calculateScreenbox(r);
-		//}
 
 		target = Rect(
 			m_screenbox.x - shift.x,

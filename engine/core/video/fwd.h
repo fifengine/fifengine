@@ -1,6 +1,5 @@
 namespace FIFE {
 	class Animation;
-	class ComplexAnimation;
 	class Image;
 	class ImageCache;
 	class PartialAction;

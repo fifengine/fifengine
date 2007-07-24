@@ -289,7 +289,6 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	void ObjectFactory::loadCritterAnimation(const std::string& type, CritLST& lst,
 			const s_objectinfo& info, ObjectPtr obj) {
 		std::string path;
-		bool useXMLCritter = SettingsManager::instance()->read<bool>("UseXMLCritters",false);
 		uint32_t idx =  info.frm_pid & 0x00000fff;
 		uint32_t id1 = (info.frm_pid & 0x0000f000) >> 12;
 		uint32_t id2 = (info.frm_pid & 0x00ff0000) >> 16;
@@ -306,88 +305,76 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			Log("DEBUG") << "new critter id " << idx;
 		}
 
-		// New XML Critters can be toggled through
-		// a config value.
-		if (!useXMLCritter) {
-	
-			path = "art/" + type +"/" + lst.getProFile(idx);
-			//DEBUG_PRINT("Critter: idx: " << idx << " path:" << path);
-	
-			char tmpBuf[3] = {0, 0, 0};
-			if (id1 >= 0x0b) {
-				Log("mffalloutanimationfactory") << "ARGH";
-				return;
+		path = "art/" + type +"/" + lst.getProFile(idx);
+		//DEBUG_PRINT("Critter: idx: " << idx << " path:" << path);
+
+		char tmpBuf[3] = {0, 0, 0};
+		if (id1 >= 0x0b) {
+			Log("mffalloutanimationfactory") << "ARGH";
+			return;
+		}
+		if (id2 >= 0x26 && id2 <= 0x2f) {
+			tmpBuf[0] = char(id1) + 'c';
+			tmpBuf[1] = char(id2) + 0x3d;
+			path.append(tmpBuf);
+		}
+		else if (id2 == 0x24) {
+			path.append("ch");
+		}
+		else if (id2 == 0x25) {
+			path.append("cj");
+		}
+		else if (id2 >= 0x30) {
+			tmpBuf[0] = 'r';
+			tmpBuf[1] = char(id2) + 0x31;
+			path.append(tmpBuf);
+		}
+		else if (id2 >= 0x14) {
+			tmpBuf[0] = 'b';
+			tmpBuf[1] = char(id2) + 0x4d;
+			path.append(tmpBuf);
+		}
+		else if (id2 == 0x12) {
+			if (id1 == 0x01) {
+				path.append("dm");
 			}
-			if (id2 >= 0x26 && id2 <= 0x2f) {
-				tmpBuf[0] = char(id1) + 'c';
-				tmpBuf[1] = char(id2) + 0x3d;
-				path.append(tmpBuf);
-			}
-			else if (id2 == 0x24) {
-				path.append("ch");
-			}
-			else if (id2 == 0x25) {
-				path.append("cj");
-			}
-			else if (id2 >= 0x30) {
-				tmpBuf[0] = 'r';
-				tmpBuf[1] = char(id2) + 0x31;
-				path.append(tmpBuf);
-			}
-			else if (id2 >= 0x14) {
-				tmpBuf[0] = 'b';
-				tmpBuf[1] = char(id2) + 0x4d;
-				path.append(tmpBuf);
-			}
-			else if (id2 == 0x12) {
-				if (id1 == 0x01) {
-					path.append("dm");
-				}
-				else if (id1 == 0x04) {
-					path.append("gm");
-				}
-				else {
-					path.append("as");
-				}
-			}
-			else if (id2 == 0x0d) {
-				if (id1 > 0) {
-					tmpBuf[0] = char(id1) + 'c';
-					tmpBuf[1] = 'e';
-					path.append(tmpBuf);
-				}
-				else {
-					path.append("an");
-				}
+			else if (id1 == 0x04) {
+				path.append("gm");
 			}
 			else {
-				if (id2 <= 1 && id1 > 0) {
-					tmpBuf[0] = char(id1) + 'c';
-				}
-				else {
-					tmpBuf[0] = 'a';
-				}
-				tmpBuf[1] = char(id2) + 'a';
+				path.append("as");
+			}
+		}
+		else if (id2 == 0x0d) {
+			if (id1 > 0) {
+				tmpBuf[0] = char(id1) + 'c';
+				tmpBuf[1] = 'e';
 				path.append(tmpBuf);
 			}
-	
-			path.append(".fr");
-			if (!id3)
-				path.append("m");
-			else
-				path.append(boost::lexical_cast<std::string>(id3 - 1));
-
-			RenderableLocation loc(RenderAble::RT_ANIMATION, path);
-			loc.setDirection( info.orientation );
-			obj->setVisualLocation( loc );
-
-		} else {
-			// XML Critter path.
-			path = SettingsManager::instance()->read<std::string>("XMLCrittersBaseDirectory","content/animations/critters/fallout/");
-			path += lst.getProFile(idx);
-			path += ".xml";
-			obj->setVisualLocation( RenderableLocation(RenderAble::RT_COMPLEX_ANIMATION, path) );
+			else {
+				path.append("an");
+			}
 		}
+		else {
+			if (id2 <= 1 && id1 > 0) {
+				tmpBuf[0] = char(id1) + 'c';
+			}
+			else {
+				tmpBuf[0] = 'a';
+			}
+			tmpBuf[1] = char(id2) + 'a';
+			path.append(tmpBuf);
+		}
+
+		path.append(".fr");
+		if (!id3)
+			path.append("m");
+		else
+			path.append(boost::lexical_cast<std::string>(id3 - 1));
+
+		RenderableLocation loc(RenderAble::RT_ANIMATION, path);
+		loc.setDirection( info.orientation );
+		obj->setVisualLocation( loc );
 		obj->set<std::string>("_visual_path",path);
 		obj->set<size_t>(obj->OrientationParam,info.orientation);
 	}
