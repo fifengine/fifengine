@@ -127,12 +127,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\audio\source.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -437,12 +431,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\gui\guimanager.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -553,12 +541,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\header.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -664,12 +646,6 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\loaders\fallout\video_loaders\frm_provider.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\native\map_loaders\fwd.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
@@ -981,18 +957,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\vfs\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\vfs\raw\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\vfs\raw\rawdata.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -1133,18 +1097,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\video\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\gui\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\video\gui\gcnfifeimage.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -1241,12 +1193,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\opengl\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\video\renderbackends\opengl\glimage.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -1272,12 +1218,6 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\sdl\fwd.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
@@ -1353,12 +1293,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\view\effects\fwd.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\view\effects\visualeffect.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -1394,12 +1328,6 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\view\visualtree.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\xml\tinyxml\fwd.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

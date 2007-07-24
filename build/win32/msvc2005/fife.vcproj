@@ -163,7 +163,6 @@
 				<File RelativePath="..\..\..\engine\core\audio\decoder_oggvorbis.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\audio\decoder_oggvorbis.h"></File>
 				<File RelativePath="..\..\..\engine\core\audio\fife_openal.h"></File>
-				<File RelativePath="..\..\..\engine\core\audio\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\core\audio\source.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\audio\source.h"></File>
 			</Filter>
@@ -247,7 +246,6 @@
 					<File RelativePath="..\..\..\engine\core\gui\fonts\sdltruetypefont.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\sdltruetypefont.hpp"></File>
 				</Filter>
-				<File RelativePath="..\..\..\engine\core\gui\fwd.h"></File>
 				<File RelativePath="..\..\..\engine\core\gui\guimanager.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\gui\guimanager.h"></File>
 				<Filter Name="widgets">
@@ -276,7 +274,6 @@
 						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\fallout.h"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\frm.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\frm.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\fwd.h"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\header.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\header.h"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\list.cpp"></File>
@@ -305,7 +302,6 @@
 				</Filter>
 				<Filter Name="native">
 					<Filter Name="map_loaders">
-						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\fwd.h"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\prototype.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\prototype.h"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml.cpp"></File>
@@ -382,9 +378,7 @@
 				</Filter>
 			</Filter>
 			<Filter Name="vfs">
-				<File RelativePath="..\..\..\engine\core\vfs\fwd.h"></File>
 				<Filter Name="raw">
-					<File RelativePath="..\..\..\engine\core\vfs\raw\fwd.h"></File>
 					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdata.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdata.h"></File>
 					<File RelativePath="..\..\..\engine\core\vfs\raw\rawdatafile.cpp"></File>
@@ -418,9 +412,7 @@
 			<Filter Name="video">
 				<File RelativePath="..\..\..\engine\core\video\animation.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\animation.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\fwd.h"></File>
 				<Filter Name="gui">
-					<File RelativePath="..\..\..\engine\core\video\gui\fwd.h"></File>
 					<File RelativePath="..\..\..\engine\core\video\gui\gcnfifeimage.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\video\gui\gcnfifeimage.h"></File>
 					<File RelativePath="..\..\..\engine\core\video\gui\gcnimageloader.cpp"></File>
@@ -443,7 +435,6 @@
 				<Filter Name="renderbackends">
 					<Filter Name="opengl">
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\fife_opengl.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\fwd.h"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.h"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.cpp"></File>
@@ -452,7 +443,6 @@
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.h"></File>
 					</Filter>
 					<Filter Name="sdl">
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\fwd.h"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.h"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.cpp"></File>
@@ -472,7 +462,6 @@
 				<Filter Name="effects">
 					<File RelativePath="..\..\..\engine\core\view\effects\fade.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\view\effects\fade.h"></File>
-					<File RelativePath="..\..\..\engine\core\view\effects\fwd.h"></File>
 					<File RelativePath="..\..\..\engine\core\view\effects\visualeffect.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\view\effects\visualeffect.h"></File>
 				</Filter>
@@ -485,7 +474,6 @@
 			</Filter>
 			<Filter Name="xml">
 				<Filter Name="tinyxml">
-					<File RelativePath="..\..\..\engine\core\xml\tinyxml\fwd.h"></File>
 					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinystr.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinystr.h"></File>
 					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinyxml.cpp"></File>
