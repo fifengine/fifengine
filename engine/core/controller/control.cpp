@@ -175,7 +175,11 @@ namespace FIFE { namespace map {
 	}
 
 	size_t Control::getNumElevations() const {
-		return m_view->getNumElevations();
+		size_t elevnum = 0;
+		if (m_map) {
+			elevnum = m_view->getNumElevations();
+		}
+		return elevnum;
 	}
 
 	void Control::stop() {

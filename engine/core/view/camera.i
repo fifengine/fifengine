@@ -20,6 +20,7 @@ namespace FIFE { namespace map {
 
 			void moveTo(const Point& gridPosition);
 			void moveBy(const Point& delta);
+			Point getPosition();
 
 		private:
 			Camera(View* view);

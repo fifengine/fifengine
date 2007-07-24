@@ -90,6 +90,10 @@ namespace FIFE { namespace map {
 			 */
 			void jumpTo(const Point& gridPosition);
 
+			/** Get current position
+			 */
+			Point getPosition() { return m_position; }
+
 			/** Start tracking
 			 */
 			void track(size_t visualId);

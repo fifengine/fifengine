@@ -31,7 +31,7 @@ STRESS_TEST_PERIOD = 500
 class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter, fife.IWidgetListener, fife.TimeEvent):
 	def __init__(self, gui, gamestate):
 		eventmanager = engine.getEventManager()
-		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10, fife.IKey.F9, fife.IKey.F8])
+		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10, fife.IKey.F9, fife.IKey.F8, fife.IKey.TAB])
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
 		fife.ICommandListener.__init__(self)
@@ -53,7 +53,22 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 		eventmanager.addMouseListener(gamestate)
 		eventmanager.addKeyListener(gamestate)
 		self.stressTestingCounter = 0
+		self.statusChanged = True
 
+	def get_status(self):
+		statusmsg = self.gamestate.get_status()
+		if self.stressTestingOn:
+			statusmsg = ('STRESS TEST ONGOING (%d)...\n' % 
+				self.stressTestingCounter) + statusmsg
+		return statusmsg
+	
+	def reset_status(self):
+		self.statusChanged = False
+	
+	def status_changed(self):
+		return self.statusChanged or self.gamestate.status_changed()
+	
+	
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
 		if (keyval == fife.IKey.ESCAPE):
@@ -95,6 +110,7 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 			self.setPeriod(STRESS_TEST_PERIOD)
 		else:
 			self.setPeriod(-1)
+		self.statusChanged = True
 		self.stressTestingOn = activate
 
 	
@@ -105,7 +121,7 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 			self.activateStressTesting(False)
 			self.change_map(self.gui.get_selected_level())
 		elif event.getId() == 'on_stresstest':
-			self.activateStressTesting(True)
+			self.activateStressTesting(not self.stressTestingOn)
 		elif event.getId() == 'on_loaderlist_change':
 			self.gui.load_level_dropdown()
 		elif event.getId() == 'on_show_console':
@@ -124,7 +140,6 @@ class Controller(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter,
 			self.gamestate.deactivate()
 			self.gamestate.setMap(map)
 			self.gamestate.activate()
-			self.gui.show_message("Map %s loaded" % map)
 		except fife.CannotOpenFile:
 			self.gui.show_message("Selected map file not available")
 
@@ -141,6 +156,7 @@ class Gui(object):
 		                 evtid=None, adjustsize=False):
 		self.widgets.append(widget)
 		widget.setPosition(*pos)
+		widget.setFocusable(False)
 		widget.setSize(*size)
 		if bgcol: widget.setBackgroundColor(bgcol)
 		if fgcol: widget.setForegroundColor(bgcol)
@@ -198,7 +214,7 @@ class Gui(object):
 		self.configure_widget(loadbtn, pos=(BTN_X, BTN_Y), size=BTN_SIZE, basecol=medium_color, 
 		                      font=small_font, evtid='on_loadmap', adjustsize=True)
 
-		stressbtn = fife.Button('Stress Test')
+		stressbtn = fife.Button('Toggle Stress Test')
 		self.configure_widget(stressbtn, pos=(BTN_X, BTN_Y + BTN_SPACE), size=BTN_SIZE, basecol=medium_color, 
 		                      font=small_font, evtid='on_stresstest', adjustsize=True)
 		
@@ -233,11 +249,15 @@ def main():
 
 	engine.initializePumping()
 	while True:
+		
 		engine.pump()
 		gamestate.turn()
 		if controller.quitRequested:
 			gamestate.deactivate()
 			break
+		if controller.status_changed():
+			gui.show_message(controller.get_status())
+			controller.reset_status()
 	engine.finalizePumping()
 	
 	del controller

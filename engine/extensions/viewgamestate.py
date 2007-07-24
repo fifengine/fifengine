@@ -27,7 +27,27 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		self.moveSpeedX = 0
 		self.moveSpeedY = 0
 		self.dragging = False
+		self.mapStatus = 'No map loaded'
+		self.elevationStatus = 'No elevations available'
+		self.coord1Status = '0.0'
+		self.coord2Status = '0.0'
+		self.cameraStatus = '0.0'
+		self.statusChanged = True
 
+	def get_status(self):
+		return ''.join([
+			self.mapStatus, '\n',
+			self.elevationStatus, '\n',
+			'L0 sel: ', self.coord1Status, ', L1 sel: ', self.coord2Status, '\n',
+			'Camera: ', self.cameraStatus
+		])
+	
+	def reset_status(self):
+		self.statusChanged = False
+	
+	def status_changed(self):
+		return self.statusChanged
+	
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
 		if (keyval == fife.IKey.LEFT):
@@ -39,10 +59,19 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		elif (keyval == fife.IKey.DOWN):
 			self.dy = 20
 		elif (keyval == fife.IKey.TAB):
-			elevation = self.ctrl.getCurrentElevation() + 1
-			if (elevation >= self.ctrl.getNumElevations()):
-				elevation = 0
-			self.ctrl.setElevation(elevation)
+			elevCount = self.ctrl.getNumElevations()
+			self.elevationStatus = 'No elevations available'
+			self.coord1Status = '0.0'
+			self.coord2Status = '0.0'
+			self.statusChanged = True
+			if elevCount:
+				elevation = self.ctrl.getCurrentElevation() + 1
+				if (elevation >= elevCount):
+					elevation = 0
+				self.ctrl.setElevation(elevation)
+				self.elevationStatus = 'Elevation %d/%d selected' % (elevation+1, elevCount)
+
+
 
 	def keyReleased(self, event):
 		keyval = event.getKey().getValue()
@@ -66,10 +95,14 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 	def mousePressed(self, evt):
 		if(evt.getButton() == 1):	
 			p = self.ctrl.select(fife.Point(evt.getX(), evt.getY()), 0)
+			self.coord1Status = '%d.%d' % (p.x, p.y)
 			print "tile selected on layer 0 at location: %d %d" % (p.x, p.y)
+			self.statusChanged = True
 		elif(evt.getButton() == 2):
 			p = self.ctrl.select(fife.Point(evt.getX(), evt.getY()), 1)
+			self.coord2Status = '%d.%d' % (p.x, p.y)
 			print "tile selected on layer 1 at location: %d %d" % (p.x, p.y)
+			self.statusChanged = True
 		self.prevDragX = 0
 		self.prevDragY = 0
 	
@@ -105,6 +138,15 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		if not self.active:
 			self.active = True
 			self.ctrl.load(self.map)
+			self.mapStatus = 'Showing ' + self.map
+			self.elevationStatus = 'No elevations available'
+			elevCount = self.ctrl.getNumElevations()
+			if elevCount:
+				self.elevationStatus = 'Elevation %d/%d selected' % (
+					self.ctrl.getCurrentElevation()+1, elevCount)
+			self.coord1Status = '0.0'
+			self.coord2Status = '0.0'
+			self.statusChanged = True
 #			self.walker = self.ctrl.createDynamicObject(1,fife.Point(5,5),"Critter:Beekeeper:Talk:S")
 			self.ctrl.start()
 
@@ -132,11 +174,16 @@ class ViewGameState(fife.IKeyListener, fife.IMouseListener):
 		if self.dx or self.dy:
 			self.moveSpeedX, self.moveSpeedY = self.dx, self.dy
 			self.cam.moveBy(fife.Point(self.dx, self.dy))
+			self.statusChanged = True
 			self.dx, self.dy = 0, 0
 		else:
 			if not self.dragging and (self.moveSpeedX or self.moveSpeedY):
 				self.moveSpeedX = self.calc_move_smoothing(self.moveSpeedX)
 				self.moveSpeedY = self.calc_move_smoothing(self.moveSpeedY)
 				self.cam.moveBy(fife.Point(self.moveSpeedX, self.moveSpeedY))
+				self.statusChanged = True
+		if self.statusChanged:
+			pt = self.cam.getPosition()
+			self.cameraStatus = '%d.%d' % (pt.x, pt.y)
 		self.ctrl.update()
 
