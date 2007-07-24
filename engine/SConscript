@@ -18,7 +18,7 @@ def generate_swig_wrappers(interfacefiles):
 	def generate_language_specifics(lang):
 		swigpath = ''
 		if sys.platform == 'win32':
-			swigpath = os.environ['_SWIG'] + '\\'
+			swigpath = '"' + os.environ['_SWIG'] + '"\\'
 
 		print "   Generating language specific wrappers for " + lang
 		langoutdir = joinpath(swigoutdir, lang)

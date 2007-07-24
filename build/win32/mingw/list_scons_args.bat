@@ -10,7 +10,7 @@ del %_%\scons_args.txt
 
 :: Goto TRUNK and call SCons
 cd \
-cd %_%\..\..\..
+cd "%_%\..\..\.."
 scons -h >> "%_%\scons_args.txt" 2>&1
 
 :: Return us to the directory we started from

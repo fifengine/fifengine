@@ -4,7 +4,6 @@ import os, time, sys
 _jp = os.path.sep.join
 sys.path.append(os.path.abspath(_jp(['.', 'engine', 'swigwrappers', 'python'])))
 sys.path.append(os.path.abspath(_jp(['.', 'engine', 'extensions'])))
-print sys.path
 
 import fife
 import viewgamestate as vgs

@@ -7,17 +7,17 @@ SET _SWIG="%_%\..\applications\swigwin-1.3.31"
 SET PATH=%_%\..\applications\scons;%_%\..\applications\mingw\bin;..\applications\python25
 
 :: Delete engine_build_log.txt in case that it's still in place from a former compile sessions
-del %_%\engine_build_log.txt
+del "%_%\engine_build_log.txt"
 
 :: Goto TRUNK and call SCons
 cd \
-cd %_%\..\..\..
+cd "%_%\..\..\.."
 scons debug=0 zip=1 >> "%_%\engine_build_log.txt" 2>&1
 
 :: Delete old versions of _fife.pyd and rename the compiled fife.dll to _fife.pyd
-cd %_%\..\..\..\engine\swigwrappers\python
+cd "%_%\..\..\..\engine\swigwrappers\python"
 del _fife.pyd
-copy ..\..\fife.dll .\_fife.pyd
+copy "..\..\fife.dll" .\_fife.pyd
 
 :: Return us to the directory we started from
 cd %_%
