@@ -379,6 +379,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\util\pool.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\pool.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\util\purge.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
@@ -572,6 +582,16 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\vfs\zip\zipsource.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\renderablepool.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\renderablepool.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

@@ -227,6 +227,8 @@
 				<File RelativePath="..\..\..\engine\core\util\log.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\point.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\point.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\pool.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\pool.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\purge.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\quadtree.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\rect.cpp"></File>
@@ -274,6 +276,10 @@
 					<File RelativePath="..\..\..\engine\core\vfs\zip\zipsource.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\vfs\zip\zipsource.h"></File>
 				</Filter>
+			</Filter>
+			<Filter Name="video">
+				<File RelativePath="..\..\..\engine\core\video\renderablepool.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderablepool.h"></File>
 			</Filter>
 			<Filter Name="xml">
 				<Filter Name="tinyxml">
