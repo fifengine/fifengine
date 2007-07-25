@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RENDERABLE_POOL_H
-#define FIFE_RENDERABLE_POOL_H
+#ifndef FIFE_RESOURCE_LOCATION_H
+#define FIFE_RESOURCE_LOCATION_H
 
 // Standard C++ library includes
 
@@ -30,28 +30,34 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/pool.h"
 
 namespace FIFE {
 
-	class Renderable;
-
-	/**  Pool for holding renderable objects, like image or animation
+	/** Contains information about the Location of a Resource
+	 *
+	 *  This class is used to give ResoureProvider the information
+	 *  where to find the data. 
 	 */
-	class RenderablePool: public Pool<Renderable> {
+	class ResourceLocation {
 	public:
+
+		// LIFECYCLE
 		/** Default constructor.
 		 */
-		RenderablePool();
+		ResourceLocation(const std::string& filename): m_filename(filename) {}
 
 		/** Destructor.
 		 */
-		virtual ~RenderablePool();
+		~ResourceLocation();
 
-	protected:
+		/** Returns the filename.
+		 * @return The filename.
+		 */
+		std::string getFilename() const { return m_filename; };
+
 	private:
+		std::string m_filename;
 	};
-
 } //FIFE
 
 #endif

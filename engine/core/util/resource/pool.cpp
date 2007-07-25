@@ -19,13 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_POOL_H
-#define FIFE_POOL_H
-
 // Standard C++ library includes
-#include <map>
-#include <vector>
-#include <string>
 
 // 3rd party library includes
 
@@ -33,61 +27,76 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "pool.h"
+#include "resource_provider.h"
 
 namespace FIFE {
+	template <typename TResource> 
+	Pool<TResource>::Pool(): 
+		m_pooledobjs(),
+		m_entries(),
+		m_listeners(),
+		m_providers(),
+		m_curind(0)
+	{
+	}
+
+	template <typename TResource> 
+	Pool<TResource>::~Pool() {
+		clear();
+		typename std::vector<IResourceProvider<TResource>*>::iterator provider;
+		for (provider = m_providers.begin(); provider != m_providers.end(); provider++) {
+			delete (*provider);
+		}
+
+	}
+	
+	template <typename TResource> 
+	void Pool<TResource>::addResourceProvider(IResourceProvider<TResource>* provider) {
+		m_providers.push_back(provider);
+	}
+
+	template <typename TResource> 
+	int Pool<TResource>::addResourceFromLocation(const ResourceLocation& obj) {
+		return 0;
+	}
+
+	template <typename TResource> 
+	TResource& Pool<TResource>::get(int index) const {
+		return *(m_entries[index].resource);
+	}
+
+	template <typename TResource> 
+	void Pool<TResource>::clear() {
+		std::vector<PoolListener*>::iterator listener;
+		for (listener = m_listeners.begin(); listener != m_listeners.end(); listener++) {
+			(*listener)->poolCleared();
+		}
+
+		typename std::map<int, TResource*>::iterator obj;
+        	for (obj = m_pooledobjs.begin(); obj != m_pooledobjs.end(); ++obj) {
+			delete *(obj->second);
+ 		}
+
+		m_pooledobjs.clear();
+	}
+
+	template <typename TResource> 
+	void Pool<TResource>::addPoolListener(PoolListener* listener) {
+		m_listeners.push_back(listener);
+	}
+
+	template <typename TResource> 
+	void Pool<TResource>::removePoolListener(PoolListener* listener) {
+		std::vector<PoolListener*>::iterator i = m_listeners.begin();
+		while (i != m_listeners.end()) {
+			if ((*i) == listener) {
+				m_listeners.erase(i);
+				return;
+			}
+			++i;
+		}
+	}
 
 
-	class PoolListener {
-	public:
-		virtual void poolCleared() = 0;
-		virtual ~PoolListener() {};
-	};
-
-	/**  Pool is used to optimize memory usage for objects
-	 *
-	 * Pool guarantees that there is minimal amount of resources
-	 *   used in cases when it is would possible that multiple 
-	 *   instances of the same data would be loaded into the memory.
-	 */
-	template <typename T> class Pool {
-	public:
-		/** Default constructor.
-		 */
-		Pool();
-
-		/** Destructor.
-		 */
-		virtual ~Pool();
-
-		/** Adds new object into the pool, transfers the ownership to the pool
-		 */
-		virtual int add(T* obj);
-
-		/** Gets object from pool with given index
-		 */
-		virtual T& get(int index) const;
-
-		/** Clears pool from objects. Free's memory associated with 
-		 */
-		virtual void clear();
-
-		/** Adds pool listener.
-		 * Pool listeners get indications e.g. when ownerships of pooled
-		 * objects change.
-		 */
-		virtual void addPoolListener(PoolListener* listener);
-
-		/** Removes pool listener
-		 */
-		virtual void removePoolListener(PoolListener* listener);
-
-	protected:
-	private:
-		std::map<int, T*> m_pooledobjs;
-		std::vector<PoolListener*> m_listeners;
-		int m_curind;
-	};
-
-} // FIFE
-
-#endif
+}

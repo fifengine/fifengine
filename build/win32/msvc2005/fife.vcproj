@@ -227,12 +227,16 @@
 				<File RelativePath="..\..\..\engine\core\util\log.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\point.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\point.h"></File>
-				<File RelativePath="..\..\..\engine\core\util\pool.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\util\pool.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\purge.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\quadtree.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\rect.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\rect.h"></File>
+				<Filter Name="resource">
+					<File RelativePath="..\..\..\engine\core\util\resource\pool.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\util\resource\pool.h"></File>
+					<File RelativePath="..\..\..\engine\core\util\resource\resource_location.h"></File>
+					<File RelativePath="..\..\..\engine\core\util\resource\resource_provider.h"></File>
+				</Filter>
 				<File RelativePath="..\..\..\engine\core\util\settingsmanager.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\settingsmanager.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\singleton.h"></File>
