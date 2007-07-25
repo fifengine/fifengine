@@ -152,8 +152,8 @@ else:
 		enginefiles = ['engine/main.cpp']
 		env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
 	
-	if env['testcases']:
-		SConscript('tests/unit_tests/SConscript')
+	#if env['testcases']:
+	#	SConscript('tests/unit_tests/SConscript')
 
 	if env['utils']:
 		SConscript([str(p) for p in upath('utils').walkfiles('SConscript')])
