@@ -48,7 +48,7 @@ namespace FIFE {
 
 		/** Destructor.
 		 */
-		virtual ~ResourceLocation();
+		virtual ~ResourceLocation() {};
 
 		/** Returns the filename.
 		 * @return The filename.

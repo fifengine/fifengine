@@ -49,7 +49,7 @@ namespace FIFE {
 		public:
 			/** Destructor.
 			 */
-			virtual ~Screen();
+			virtual ~Screen() {};
 
 			/** Gets the width of the screen.
 			 *

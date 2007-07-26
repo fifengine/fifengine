@@ -58,13 +58,9 @@ namespace FIFE {
 	 */
 	class Renderable {
 		public:
-			/** Constructor.
-			 */
-			Renderable();
-
 			/** Destructor.
 			 */
-			virtual ~Renderable();
+			virtual ~Renderable() {};
 
 			/** Renders itself to the Screen at the rectangle rect.
 			 *

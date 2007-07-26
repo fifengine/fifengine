@@ -3,7 +3,7 @@ from utils.util_scripts.path import path as upath
 
 opts = Options('options.py', ARGUMENTS)
 opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations', 1))
-opts.Add(BoolOption('testcases',  'Build testcases in unit_tests', 0))
+opts.Add(BoolOption('tests',  'Build testcases in unit_tests', 0))
 opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
 opts.Add(EnumOption('script', 'Selects generated scripting language bindings', 'python', allowed_values=('python', 'lua')))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
@@ -152,8 +152,8 @@ else:
 		enginefiles = ['engine/main.cpp']
 		env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
 	
-	#if env['testcases']:
-	#	SConscript('tests/unit_tests/SConscript')
+	if env['tests']:
+		SConscript('tests/unit_tests/SConscript')
 
 	if env['utils']:
 		SConscript([str(p) for p in upath('utils').walkfiles('SConscript')])
