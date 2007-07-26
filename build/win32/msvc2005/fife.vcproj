@@ -223,6 +223,24 @@
 					</Filter>
 				</Filter>
 			</Filter>
+			<Filter Name="model">
+				<Filter Name="metamodel">
+					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.h"></File>
+					<Filter Name="geometries">
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\geometry.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\geometry.h"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\gridgeometry.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\gridgeometry.h"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\hexgeometry.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\hexgeometry.h"></File>
+					</Filter>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\prototype.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\prototype.h"></File>
+				</Filter>
+			</Filter>
 			<Filter Name="util">
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.h"></File>
