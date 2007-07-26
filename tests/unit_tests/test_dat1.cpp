@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
-#include "loaders/fallout/map_loaders/dat1.h"
+#include "loaders/fallout/model_loaders/dat1.h"
 #include "vfs/raw/rawdata.h"
 #include "util/log.h"
 #include "util/exception.h"
