@@ -4,6 +4,7 @@ from utils.util_scripts.path import path as upath
 opts = Options('options.py', ARGUMENTS)
 opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations', 1))
 opts.Add(BoolOption('tests',  'Build testcases in unit_tests', 0))
+opts.Add(BoolOption('noengine',  'Prevents building of engine, use e.g. for util/test tweaking', 0))
 opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
 opts.Add(EnumOption('script', 'Selects generated scripting language bindings', 'python', allowed_values=('python', 'lua')))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
@@ -144,7 +145,8 @@ else:
 
 	Export('env')
 	
-	SConscript('engine/SConscript')
+	if not env['noengine']:
+		SConscript('engine/SConscript')
 	
 	env.Append(LIBPATH = ['#/engine'])
 
