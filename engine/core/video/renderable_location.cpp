@@ -19,45 +19,39 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "renderable_location.h"
 
 namespace FIFE {
-
-	/** Contains information about the Location of a Resource
-	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
-	 */
-	class ResourceLocation {
-	public:
-
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
-
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
-
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
-
-	private:
-		std::string m_filename;
-	};
-} //FIFE
-
-#endif
+	RenderableLocation::RenderableLocation(const std::string& filename): 
+		ResourceLocation(filename),
+		m_xshift(0),
+		m_yshift(0) {
+	}
+	
+	void RenderableLocation::setXShift(int xshift) {
+		m_xshift = xshift;
+	}
+	
+	void RenderableLocation::setYShift(int yshift) {
+		m_yshift = yshift;
+	}
+	
+	int RenderableLocation::getXShift() const {
+		return m_xshift;
+	}
+	
+	int RenderableLocation::getYShift() const {
+		return m_yshift;
+	}
+	
+};//FIFE
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -19,45 +19,69 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
-
 // Standard C++ library includes
 
+// Platform specific includes
+
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "fife_opengl.h"
+#include "glscreen.h"
+
 
 namespace FIFE {
 
-	/** Contains information about the Location of a Resource
-	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
-	 */
-	class ResourceLocation {
-	public:
-
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
-
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
-
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
-
-	private:
-		std::string m_filename;
+	struct GLEnable {
+		GLenum m_flag;
+		GLboolean m_oldval;
+		GLEnable(GLenum flag) : m_flag(flag) { 
+			glGetBooleanv(flag, &m_oldval);
+			if (!m_oldval) {
+				glEnable(flag);
+			}
+		}
+		~GLEnable() { 
+			if (!m_oldval) {
+				glDisable(m_flag);
+			}
+		}
 	};
-} //FIFE
 
-#endif
+	struct GLDisable {
+		GLenum m_flag;
+		GLboolean m_oldval;
+		GLDisable(GLenum flag) : m_flag(flag) { 
+			glGetBooleanv(flag, &m_oldval);
+			if (m_oldval) {
+				glDisable(flag);
+			}
+		}
+		~GLDisable() { 
+			if (m_oldval) {
+				glEnable(m_flag);
+			}
+		}
+	};
+
+
+	GLScreen::GLScreen() {
+	}
+
+	GLScreen::~GLScreen() {
+	}
+
+	unsigned int GLScreen::getWidth() const {
+		return SDL_GetVideoSurface()->w;
+	}
+
+	unsigned int GLScreen::getHeight() const {
+		return SDL_GetVideoSurface()->h;
+	}
+
+}
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -19,45 +19,45 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/scoped_array.hpp>
+#include <SDL.h>
+#include <SDL_image.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/debugutils.h"
+#include "util/exception.h"
+#include "util/resource/resource_location.h"
+#include "vfs/raw/rawdata.h"
+#include "vfs/vfs.h"
+#include "video/renderbackend.h"
+#include "video/renderable_location.h"
 
-namespace FIFE {
+#include "image_provider.h"
 
-	/** Contains information about the Location of a Resource
-	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
-	 */
-	class ResourceLocation {
-	public:
+namespace FIFE { 
+	Image* createResource(const ResourceLocation& location) {
+		const std::string& filename = location.getFilename();
+		RawDataPtr data = VFS::instance()->open(filename);
+		size_t datalen = data->getDataLength();
+		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
+		data->readInto(darray.get(), datalen);
+		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
+		SDL_Surface* surface = IMG_Load_RW(rwops, false);
+		SDL_FreeRW(rwops);
+		if( !surface ) {
+			return 0;
+		}
 
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
-
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
-
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
-
-	private:
-		std::string m_filename;
+		Image* res = RenderBackend::instance()->createStaticImageFromSDL(surface);
+		const RenderableLocation& loc = dynamic_cast<const RenderableLocation&>(location);
+		res->setXShift(loc.getXShift());
+		res->setYShift(loc.getYShift());
+		return res;
 	};
-} //FIFE
-
-#endif
+}

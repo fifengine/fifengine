@@ -19,10 +19,38 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
+#ifndef FIFE_UTIL_FIFEGL_H
+#define FIFE_UTIL_FIFEGL_H
 
 // Standard C++ library includes
+
+// Platform specific includes
+// Linux
+#if defined( __unix__ )
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
+// Win32
+#if defined( WIN32 )
+// MSVC
+#if defined( _MSC_VER )
+#include <windows.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#undef DELETE
+// MinGW
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+#endif
+
+// Macintosh
+#if defined( __APPLE_CC__ )
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#endif
 
 // 3rd party library includes
 
@@ -30,34 +58,5 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-
-namespace FIFE {
-
-	/** Contains information about the Location of a Resource
-	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
-	 */
-	class ResourceLocation {
-	public:
-
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
-
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
-
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
-
-	private:
-		std::string m_filename;
-	};
-} //FIFE
 
 #endif

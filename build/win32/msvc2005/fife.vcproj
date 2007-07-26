@@ -215,6 +215,14 @@
 					<File RelativePath="..\..\..\engine\core\eventchannel\widget\ec_widgetevent.h"></File>
 				</Filter>
 			</Filter>
+			<Filter Name="loaders">
+				<Filter Name="native">
+					<Filter Name="video_loaders">
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.h"></File>
+					</Filter>
+				</Filter>
+			</Filter>
 			<Filter Name="util">
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.h"></File>
@@ -282,8 +290,37 @@
 				</Filter>
 			</Filter>
 			<Filter Name="video">
+				<File RelativePath="..\..\..\engine\core\video\image.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\image.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable_location.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderable_location.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\renderablepool.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\renderablepool.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderbackend.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\renderbackend.h"></File>
+				<Filter Name="renderbackends">
+					<Filter Name="opengl">
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\fife_opengl.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.h"></File>
+					</Filter>
+					<Filter Name="sdl">
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.h"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlscreen.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlscreen.h"></File>
+					</Filter>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\video\screen.h"></File>
 			</Filter>
 			<Filter Name="xml">
 				<Filter Name="tinyxml">

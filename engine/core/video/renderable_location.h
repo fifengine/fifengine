@@ -19,10 +19,12 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
+#ifndef FIFE_VIDEO_RENDERABLE_LOCATION_H
+#define FIFE_VIDEO_RENDERABLE_LOCATION_H
 
 // Standard C++ library includes
+#include <string>
+#include <map>
 
 // 3rd party library includes
 
@@ -30,34 +32,51 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/renderable.h"
+#include "util/resource/resource_location.h"
 
 namespace FIFE {
 
-	/** Contains information about the Location of a Resource
+	/** Contains information about the Location of a Renderable.
 	 *
-	 *  This class is used to give ResoureProvider the information
+	 *  This class is used to give ResourceProvider the information
 	 *  where to find the data. 
+	 *
 	 */
-	class ResourceLocation {
+	class RenderableLocation: public ResourceLocation {
 	public:
-
-		// LIFECYCLE
-		/** Default constructor.
+		/** Constructor.
 		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
+		RenderableLocation(const std::string& filename);
 
-		/** Destructor.
+		/** Sets the X shift of the Renderable.
+		 * @param xshift The X shift of the Renderable
 		 */
-		virtual ~ResourceLocation();
+		virtual void setXShift(int xshift);
 
-		/** Returns the filename.
-		 * @return The filename.
+		/** Sets the Y shift of the Renderable
+		 * @param yshift The Y shift of the Renderable
 		 */
-		std::string getFilename() const { return m_filename; };
+		virtual void setYShift(int yshift);
+
+		/** Gets the X shift of the Renderable
+		 * @return The X shift of the Renderable
+		 */
+		virtual int getXShift() const;
+
+		/** Gets the Y shift of the Renderable
+		 * @param yshift The Y shift of the Renderable
+		 */
+		virtual int getYShift() const;
 
 	private:
-		std::string m_filename;
-	};
-} //FIFE
+		// The X shift of the Image
+		unsigned int m_xshift;
+		// The Y shift of the Image
+		unsigned int m_yshift;
 
+	};
+
+}; //FIFE
 #endif
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

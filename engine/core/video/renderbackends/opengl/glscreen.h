@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
+#ifndef FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLSCREEN_H
+#define FIFE_VIDEO_RENDERBACKENDS_OPENGL_GLSCREEN_H
 
 // Standard C++ library includes
 
@@ -30,34 +30,41 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/screen.h"
 
 namespace FIFE {
 
-	/** Contains information about the Location of a Resource
+	/** OpenGL Screen surface.
 	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
+	 * Implements the main render target for the OpenGL backend.
+	 *
+	 * @see Screen
+	 * @see RenderBackendOpenGL
 	 */
-	class ResourceLocation {
-	public:
+	class GLScreen : public Screen {
+		public:
+			/** Creates a new GL screen.
+			 */
+			GLScreen();
+			
+			/** Destroys this GL screen.
+			 */
+			virtual ~GLScreen();
 
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
-
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
-
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
-
-	private:
-		std::string m_filename;
+			/** Returns the screen width.
+			 *
+			 * @return Width of the screen.
+			 */
+			virtual unsigned int getWidth() const;
+			
+			/** Returns the screen height.
+			 *
+			 * @return Height of the screen.
+			 */
+			virtual unsigned int getHeight() const;
 	};
-} //FIFE
+
+}
 
 #endif
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
+#ifndef FIFE_VIDEO_RENDERBACKENDS_SDL_RENDERBACKENDSDL_H
+#define FIFE_VIDEO_RENDERBACKENDS_SDL_RENDERBACKENDSDL_H
 
 // Standard C++ library includes
 
@@ -30,34 +30,74 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/renderbackend.h"
 
 namespace FIFE {
 
-	/** Contains information about the Location of a Resource
+	class SDLScreen;
+
+	/** The main class of the SDL-based renderer.
 	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
+	 * @see RenderBackend
 	 */
-	class ResourceLocation {
-	public:
+	class RenderBackendSDL : public RenderBackend {
+		public:
+			/** Simple constructor.
+			 *
+			 * @note Registers the renderbackend 'SDL' but does not yet create a screen.
+			 */
+			RenderBackendSDL();
 
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
+			/** Deletes the backend instance.
+			 */
+			virtual ~RenderBackendSDL();
 
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
+			/* Starts the frame.
+			 */
+			virtual void startFrame();
+			/* Ends the frame.
+			 */
+			virtual void endFrame();
+			
+			/** Initialises the SDL video subsystem.
+			 */
+			virtual void init();
 
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
+			/** Deletes the current screen and quits the SDL video subsystem.
+			 */
+			virtual void deinit();
 
-	private:
-		std::string m_filename;
+			/** Creates the internal screen and returns it as well.
+			 *
+			 * @note Use sensible values; fs means fullscreen.
+			 * @note bitsPerPixel = 0 causes autodetection of best supported mode.
+			 */
+			virtual Screen* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs);
+
+			/** Convenience wrapper around SDLImage.
+			 *
+			 * Creates an SDLImage instance from the specified data.
+			 * Takes ownership over the surface.
+			 * 
+			 * @see SDLImage
+			 */
+			virtual Image* createStaticImageFromSDL(SDL_Surface* surface);
+			
+			/** Returns the current screen.
+			 *
+			 * @note This may be NULL.
+			 */
+			virtual Screen* getMainScreen() const;
+
+			/** Makes a screenshot and saves it as a BMP file.
+			 */
+			virtual void captureScreen(const std::string& filename);
+		
+		private:
+			// SDL screen.
+			SDLScreen* m_screen;
 	};
-} //FIFE
+
+}
 
 #endif

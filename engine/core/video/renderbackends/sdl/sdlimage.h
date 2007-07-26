@@ -19,45 +19,65 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
+#ifndef FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
+#define FIFE_VIDEO_RENDERBACKENDS_SDL_SDLIMAGE_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL_video.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/image.h"
 
 namespace FIFE {
 
-	/** Contains information about the Location of a Resource
-	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
+	/** The SDL implementation of the @c Image base class.
 	 */
-	class ResourceLocation {
-	public:
+	class SDLImage : public Image {
+		public:
+			/** Contructor.
+			 *
+			 * Creates a new @c SDLImage from an SDL surface
+			 *
+			 * @note Takes ownership of the SDL Surface
+			 * @param surface The SDL surface from which to create the SDLImage.
+			 */
+			SDLImage(SDL_Surface* surface);
 
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
+			/** Destructor.
+			 *
+			 * Destroys the @c SDLImage and frees any associated memory.
+			 */
+			virtual ~SDLImage();
 
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
+			/** Renders the image on a @c SDLScreen with alpha blending.
+			 *
+			 * @param rect The rect of the image to render.
+			 * @param screen The screen on which to render the image.
+			 * @param alpha The level of transparency, opaque by default.
+			 */
+			virtual void render(const Rect& rect, Screen* screen, unsigned char alpha = 255);
 
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
+			/** Gets the width of the image.
+			 *
+			 * @return Width of the image.
+			 */
+			virtual unsigned int getWidth() const;
+			/** Gets the height of the image.
+			 *
+			 * @return Height of the image.
+			 */
+			virtual unsigned int getHeight() const;
 
-	private:
-		std::string m_filename;
+		private:
+			// Last alpha value this image was rendered with
+			Uint8 m_last_alpha;
 	};
-} //FIFE
+
+}
 
 #endif

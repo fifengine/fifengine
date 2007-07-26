@@ -19,45 +19,73 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
+#ifndef FIFE_VIDEO_RENDERBACKENDS_SDL_SDLSCREEN_H
+#define FIFE_VIDEO_RENDERBACKENDS_SDL_SDLSCREEN_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL_video.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/screen.h"
+
+namespace gcn {
+	class SDLGraphics;
+}
 
 namespace FIFE {
 
-	/** Contains information about the Location of a Resource
+	/** A SDL Screen Surface.
 	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
+	 * This is the main render target for the SDL renderbackend.
+	 *
+	 * This class implements the @c gcn::Graphics interface by containing a @c gcn::SDLGraphics instance
+	 * and proxying the calls to that instance.
 	 */
-	class ResourceLocation {
-	public:
+	class SDLScreen : public Screen {
+		public:
+			/** Constructor.
+			 *
+			 * Creates a new SDLScreen instance from a display surface.
+			 *
+			 * @param surface The surface that is the real rendering target.
+			 */
+			SDLScreen(SDL_Surface* surface);
 
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
+			/** Destructor.
+			 *
+			 * @note This doesn't delete the surface given in the constructor.
+			 */
+			virtual ~SDLScreen();
 
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
+			/** Gets the width of the screen.
+			 *
+			 * @return Width of the screen.
+			 */
+			virtual unsigned int getWidth() const;
+			/** Gets the height of the screen.
+			 *
+			 * @return Height of the screen.
+			 */
+			virtual unsigned int getHeight() const;
 
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
+			/** Returns a pointer to the contained SDL surface.
+			 *
+			 * @return A pointer to the SDL surface as set in the constructor.
+			 */
+			SDL_Surface* getSurface() const;
 
-	private:
-		std::string m_filename;
+
+		private:
+			// Screen.
+			SDL_Surface* m_screen;
+
 	};
-} //FIFE
+
+}
 
 #endif

@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURCE_LOCATION_H
-#define FIFE_RESOURCE_LOCATION_H
+#ifndef FIFE_VIDEO_RENDERBACKENDS_SDL_SDLBLENDINGFUNCTIONS_H
+#define FIFE_VIDEO_RENDERBACKENDS_SDL_SDLBLENDINGFUNCTIONS_H
 
 // Standard C++ library includes
 
@@ -33,31 +33,42 @@
 
 namespace FIFE {
 
-	/** Contains information about the Location of a Resource
-	 *
-	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
+	/** Blends one row of n pixels from src with n pixels of dst.
+ 	 *
+ 	 * @param src Source.
+ 	 * @param dst Destiny.
+ 	 * @param alpha Level of alphablending.
+ 	 * @param n Number of pixels.
+ 	 */
+	void SDL_BlendRow_RGBA8_to_RGBA8( const unsigned char* src, unsigned char* dst, unsigned int alpha, int n );
+
+	/** Blends one row of n pixels from src with n pixels of dst.
+ 	 *
+ 	 * @param src Source.
+ 	 * @param dst Destiny.
+ 	 * @param alpha Level of alphablending.
+ 	 * @param n Number of pixels.
 	 */
-	class ResourceLocation {
-	public:
+	void SDL_BlendRow_RGBA8_to_RGB8( const unsigned char* src, unsigned char* dst, unsigned int alpha, int n );
+	
+	/** Blends one row of n pixels from src with n pixels of dst.
+ 	 *
+ 	 * @param src Source.
+ 	 * @param dst Destiny.
+ 	 * @param alpha Level of alphablending.
+ 	 * @param n Number of pixels.
+ 	 */
+	void SDL_BlendRow_RGBA8_to_RGB565( const unsigned char* src, unsigned char* dst, unsigned int alpha, int n );
+	
+	/** Blends one row of n pixels from src with n pixels of dst.
+ 	 *
+ 	 * @param src Source.
+ 	 * @param dst Destiny.
+ 	 * @param alpha Level of alphablending.
+ 	 * @param n Number of pixels.
+ 	 */
+	void SDL_BlendRow_RGBA4_to_RGB565( const unsigned char* src, unsigned char* dst, unsigned int alpha, int n );
 
-		// LIFECYCLE
-		/** Default constructor.
-		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
-
-		/** Destructor.
-		 */
-		virtual ~ResourceLocation();
-
-		/** Returns the filename.
-		 * @return The filename.
-		 */
-		std::string getFilename() const { return m_filename; };
-
-	private:
-		std::string m_filename;
-	};
-} //FIFE
+}
 
 #endif
