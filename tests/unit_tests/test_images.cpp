@@ -39,10 +39,11 @@
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/raw/rawdata.h"
-#include "video/renderbackends/sdl/sdlimage.h"
-#include "video/renderbackends/sdl/renderbackendsdl.h"
-#include "video/renderbackends/sdl/sdlscreen.h"
 #include "video/renderable_location.h"
+#include "video/image.h"
+#include "video/screen.h"
+#include "video/renderbackends/sdl/renderbackendsdl.h"
+#include "video/renderbackends/opengl/renderbackendopengl.h"
 #include "loaders/native/video_loaders/image_provider.h"
 #include "util/exception.h"
 #include "util/log.h"
@@ -63,20 +64,16 @@ struct environment {
 		: settings(new SettingsManager()),
 		  timemanager(new TimeManager()),
 		  vfssources(new VFSSourceFactory()),
-		  vfs(new VFS()) {}
+		  vfs(new VFS()) {
+		Log::setLogLevel(Log::LEVEL_MAX);
+		VFS::instance()->addSource(new VFSHostSystem());
+			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
+				throw SDLException(SDL_GetError());
+			}
+		}
 };
 
-void test_sdlimage() {
-	Log::setLogLevel(Log::LEVEL_MAX);
-	environment env;
-	VFS::instance()->addSource(new VFSHostSystem());
-
-
-	if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
-		throw SDLException(SDL_GetError());
-	}
-
-	RenderBackendSDL renderbackend;
+void test_image(RenderBackend& renderbackend) {
 	renderbackend.init();
 	Screen* screen = renderbackend.createMainScreen(800, 600, 0, false);
 
@@ -92,11 +89,22 @@ void test_sdlimage() {
 	}	
 }
 
+void test_sdl_image() {
+	environment env;
+	RenderBackendSDL renderbackend;
+	test_image(renderbackend);
+}
+
+void test_ogl_image() {
+	environment env;
+	RenderBackendOpenGL renderbackend;
+	test_image(renderbackend);
+}
 
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Image Tests");
-
-	test->add( BOOST_TEST_CASE( &test_sdlimage ),0 );
+	test->add( BOOST_TEST_CASE( &test_sdl_image ),0 );
+	test->add( BOOST_TEST_CASE( &test_ogl_image ),0 );
 
 	return test;
 }
