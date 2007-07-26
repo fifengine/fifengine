@@ -45,7 +45,7 @@ namespace FIFE {
 
 
 	RenderBackendSDL::~RenderBackendSDL() {
-
+		deinit();
 	}
 
 	void RenderBackendSDL::init() {

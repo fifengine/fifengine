@@ -13,5 +13,6 @@ env.Append(LINKFLAGS=['-Wl,-rpath,../../ext/install/lib,-rpath,../../engine'])
 env.Program('testprog_rect', ['test_rect.cpp'])
 env.Program('testprog_dat1', ['test_dat1.cpp'])
 env.Program('testprog_dat2', ['test_dat2.cpp'])
+env.Program('testprog_images', ['test_images.cpp'])
 
 # vim: set filetype=python :

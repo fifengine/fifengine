@@ -38,7 +38,7 @@ namespace FIFE {
 	 */
 	template <typename TResource> class IResourceProvider {
 	public:
-		virtual ~IResourceProvider() = 0;
+		virtual ~IResourceProvider() {};
 
 		virtual TResource* createResource(const ResourceLocation& location) = 0;
 	};

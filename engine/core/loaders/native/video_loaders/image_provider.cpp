@@ -41,7 +41,7 @@
 #include "image_provider.h"
 
 namespace FIFE { 
-	Image* createResource(const ResourceLocation& location) {
+	Image* ImageProvider::createResource(const ResourceLocation& location) {
 		const std::string& filename = location.getFilename();
 		RawDataPtr data = VFS::instance()->open(filename);
 		size_t datalen = data->getDataLength();
