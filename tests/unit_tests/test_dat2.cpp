@@ -28,18 +28,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/map.h"
-#include "map/elevation.h"
-#include "map/layer.h"
-#include "map/objectinfo.h"
-#include "map/factory.h"
 #include "vfs/vfssourcefactory.h"
 #include "vfs/vfs.h"
 #include "util/settingsmanager.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
-#include "map/loaders/fallout/dat2.h"
+#include "loaders/fallout/map_loaders/dat2.h"
 #include "vfs/raw/rawdata.h"
 #include "util/log.h"
 #include "util/exception.h"
@@ -55,14 +50,12 @@ struct environment {
 	boost::shared_ptr<TimeManager> timemanager;
 	boost::shared_ptr<VFSSourceFactory> vfssources;
 	boost::shared_ptr<VFS> vfs;
-	boost::shared_ptr<Factory> factory;
 
 	environment()
 		: settings(new SettingsManager()),
 		  timemanager(new TimeManager()),
 		  vfssources(new VFSSourceFactory()),
-		  vfs(new VFS()),
-		  factory(new Factory()) {}
+		  vfs(new VFS()) {}
 };
 
 using boost::unit_test::test_suite;

@@ -321,51 +321,51 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\dat1.cpp">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\dat1.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\dat1.h">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\dat1.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\dat2.cpp">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\dat2.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\dat2.h">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\dat2.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\lzssdecoder.cpp">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\lzssdecoder.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\lzssdecoder.h">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\lzssdecoder.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\rawdatadat1.cpp">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat1.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\rawdatadat1.h">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat1.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\rawdatadat2.cpp">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat2.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\loaders\map_loaders\rawdatadat2.h">
+		<Unit filename="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat2.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
