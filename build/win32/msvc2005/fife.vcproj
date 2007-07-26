@@ -216,6 +216,18 @@
 				</Filter>
 			</Filter>
 			<Filter Name="loaders">
+				<Filter Name="map_loaders">
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\dat1.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\dat1.h"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\dat2.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\dat2.h"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\lzssdecoder.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\lzssdecoder.h"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\rawdatadat1.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\rawdatadat1.h"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\rawdatadat2.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\loaders\map_loaders\rawdatadat2.h"></File>
+				</Filter>
 				<Filter Name="native">
 					<Filter Name="video_loaders">
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.cpp"></File>
