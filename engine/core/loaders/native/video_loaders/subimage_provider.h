@@ -19,26 +19,31 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_VIDEO_LOADERS_SUBIMAGE_PROVIDER_H
+#define FIFE_VIDEO_LOADERS_SUBIMAGE_PROVIDER_H
+
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/lexical_cast.hpp>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "renderable_location.h"
+#include "util/rect.h"
+#include "util/resource/resource_provider.h"
+
 
 namespace FIFE {
-	RenderableLocation::RenderableLocation(const std::string& filename): 
-		ResourceLocation(filename),
-		m_xshift(0),
-		m_yshift(0),
-		m_width(0),
-		m_height(0),
-		m_parent_renderable(NULL) {
-	}
-	
-};//FIFE
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
+
+	/** ImageProvider for cropping another image */
+	class SubImageProvider : public IResourceProvider<Image> {
+	public:
+		SubImageProvider() {}
+		Image* createResource(const ResourceLocation& location);
+	};
+
+}
+
+#endif

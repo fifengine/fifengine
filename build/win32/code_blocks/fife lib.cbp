@@ -391,6 +391,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\model\metamodel\dataset.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>

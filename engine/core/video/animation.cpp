@@ -198,5 +198,8 @@ namespace FIFE {
 		return m_animateForward;
 	}
 
+	SDL_Surface* Animation::getSurface() {
+		return m_frames[m_currentFrame]->getSurface();
+	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

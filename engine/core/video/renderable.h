@@ -24,6 +24,9 @@
 
 // Standard C++ library includes
 
+// 3rd party library includes
+#include <SDL.h>
+
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
@@ -110,6 +113,10 @@ namespace FIFE {
 			 */
 			virtual int getYShift() const =0;
 
+			/** Get the surface used by this renderable
+			 * @return pointer to used surface
+			 */
+			virtual SDL_Surface* getSurface() = 0;
 	};
 }
 

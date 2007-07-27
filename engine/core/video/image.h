@@ -52,7 +52,7 @@ namespace FIFE {
 			/** Get the surface used by this image
 			 * @return pointer to used surface
 			 */
-			SDL_Surface* getSurface();
+			virtual SDL_Surface* getSurface();
 
 			/** Sets the X shift of the Image.
 			 * @param xshift The X shift of the Image.

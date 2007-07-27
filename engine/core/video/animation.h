@@ -155,6 +155,11 @@ namespace FIFE {
 		 */
 		bool isDirectionForward();
 
+		/** Get the surface used by this image
+		 * @return pointer to used surface
+		 */
+		virtual SDL_Surface* getSurface();
+
 	private:
 		/** Periodically updates the animation.
 		*/

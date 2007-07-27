@@ -236,6 +236,8 @@
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.h"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\image_provider.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.h"></File>
 					</Filter>
 				</Filter>
 			</Filter>

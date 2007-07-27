@@ -52,28 +52,53 @@ namespace FIFE {
 		/** Sets the X shift of the Renderable.
 		 * @param xshift The X shift of the Renderable
 		 */
-		virtual void setXShift(int xshift);
-
-		/** Sets the Y shift of the Renderable
-		 * @param yshift The Y shift of the Renderable
-		 */
-		virtual void setYShift(int yshift);
+		virtual void setXShift(int xshift) { m_xshift = xshift; }
 
 		/** Gets the X shift of the Renderable
 		 * @return The X shift of the Renderable
 		 */
-		virtual int getXShift() const;
+		virtual int getXShift() const { return m_xshift; }
+
+		/** Sets the Y shift of the Renderable
+		 * @param yshift The Y shift of the Renderable
+		 */
+		virtual void setYShift(int yshift) { m_yshift = yshift; }
 
 		/** Gets the Y shift of the Renderable
 		 * @param yshift The Y shift of the Renderable
 		 */
-		virtual int getYShift() const;
+		virtual int getYShift() const { return m_yshift; }
+
+		/** Sets the width of the Renderable. Used e.g. with subimages
+		 */
+		virtual void setWidth(unsigned int width) { m_width = width; }
+
+		/** Gets the width of the Renderable. Used e.g. with subimages
+		 */
+		virtual unsigned int getWidth() const { return m_width; }
+
+		/** Sets the height of the Renderable. Used e.g. with subimages
+		 */
+		virtual void setHeight(unsigned int height) { m_height = height; }
+
+		/** Gets the height of the Renderable. Used e.g. with subimages
+		 */
+		virtual unsigned int getHeight() const { return m_height; }
+
+		/** Sets the parent source of the Renderable. Used e.g. with subimages
+		 */
+		virtual void setParentSource(Renderable* renderable) { m_parent_renderable = renderable; }
+
+		/** Gets the parent source of the Renderable. Used e.g. with subimages
+		 */
+		virtual Renderable* getParentSource() const { return m_parent_renderable; }
 
 	private:
-		// The X shift of the Image
 		unsigned int m_xshift;
-		// The Y shift of the Image
 		unsigned int m_yshift;
+		unsigned int m_width;
+		unsigned int m_height;
+		Renderable* m_parent_renderable;
 
 	};
 

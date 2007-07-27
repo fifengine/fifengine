@@ -22,23 +22,46 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL.h>
 #include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "renderable_location.h"
+#include "video/image.h"
+#include "video/renderbackend.h"
+#include "video/renderable_location.h"
+#include "util/debugutils.h"
+#include "util/exception.h"
 
-namespace FIFE {
-	RenderableLocation::RenderableLocation(const std::string& filename): 
-		ResourceLocation(filename),
-		m_xshift(0),
-		m_yshift(0),
-		m_width(0),
-		m_height(0),
-		m_parent_renderable(NULL) {
-	}
+#include "subimage_provider.h"
+
+namespace FIFE { 
 	
-};//FIFE
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
+	Image* SubImageProvider::createResource(const ResourceLocation& location) {
+		const RenderableLocation* loc = dynamic_cast<const RenderableLocation*>(&location);
+		SDL_Surface* src = loc->getParentSource()->getSurface();
+		if (!src) {
+			return NULL;
+		}
+		SDL_Rect src_rect;
+		src_rect.x = loc->getXShift();
+		src_rect.y = loc->getYShift();
+		src_rect.w = loc->getWidth();
+		src_rect.h = loc->getHeight();
+
+		Debug("subimage_loader")
+			<< " rect:" << Rect(src_rect.x,src_rect.y,src_rect.w,src_rect.h);
+
+		uint32_t Amask = src->format->Amask ?  0x000000ff : 0;
+		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, src_rect.w,  src_rect.h, 32,
+		                                           0xff000000, 0x00ff0000, 0x0000ff00, Amask);
+		SDL_FillRect(result, NULL, 0);
+		SDL_SetAlpha(src,0,SDL_ALPHA_OPAQUE);
+		SDL_BlitSurface(src,&src_rect,result,0);
+
+		return RenderBackend::instance()->createStaticImageFromSDL(result);
+	};
+
+}
