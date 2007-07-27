@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
-#define FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
+#ifndef FIFE_VIDEO_LOADERS_ANIM_PROVIDER_H
+#define FIFE_VIDEO_LOADERS_ANIM_PROVIDER_H
 
 // Standard C++ library includes
 
@@ -34,13 +34,12 @@
 #include "util/resource/resource_provider.h"
 #include "video/image.h"
 
-namespace FIFE {
+namespace FIFE { 
 
-	/** ImageProvider for some basic formats like jpeg, png etc. */
-	class ImageProvider : public IResourceProvider<Image> {
+	class AnimationProvider : public IResourceProvider<Animation> {
 	public:
-		ImageProvider() {}
-		Image* createResource(const ResourceLocation& location);
+		AnimationProvider() {}
+		Animation* createResource(const ResourceLocation& location);
 	};
 
 }

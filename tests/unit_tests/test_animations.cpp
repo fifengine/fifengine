@@ -1,4 +1,4 @@
-/***************************************************************************
+	/***************************************************************************
 *   Copyright (C) 2005-2007 by the FIFE Team                              *
 *   fife-public@lists.sourceforge.net                                     *
 *   This file is part of FIFE.                                            *
@@ -40,18 +40,18 @@
 #include "vfs/vfshostsystem.h"
 #include "vfs/raw/rawdata.h"
 #include "video/renderable_location.h"
-#include "video/image.h"
+#include "video/animation.h"
 #include "video/screen.h"
 #include "video/renderbackends/sdl/renderbackendsdl.h"
 #include "video/renderbackends/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_provider.h"
+#include "loaders/native/video_loaders/animation_provider.h"
 #include "util/exception.h"
 #include "util/log.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;
 
-static const std::string IMAGE_FILE = "../../content/gfx/tiles/beach/beach_e1.png";
+static const std::string ANIM_FILE = "../data/crate_full_001.xml";
 
 // Environment
 struct environment {
@@ -73,47 +73,85 @@ struct environment {
 		}
 };
 
-void test_image(RenderBackend& renderbackend) {
-	renderbackend.init();
-	Screen* screen = renderbackend.createMainScreen(800, 600, 0, false);
+class AnimRoller: public AnimationListener {
+	void onAnimationEnd(Animation* animation) {
+		animation->setDirection(!animation->isDirectionForward());
+		animation->setActive(true);
+	}
+};
 
-	ImageProvider provider;
-	boost::scoped_ptr<Image> img(provider.createResource(RenderableLocation(IMAGE_FILE)));
-	
-	int h = img->getHeight();
-	int w = img->getWidth();
+class PositionedAnimation {
+public:
+	int x;
+	int y;
+	Animation* anim;
+	PositionedAnimation(int ax, int ay, Animation* aanim):  
+		x(ax), 
+		y(ay), 
+		anim(aanim) {
+		roller = new AnimRoller();
+		anim->setAnimationListener(roller);
+		anim->setActive(true);
+	}
+	~PositionedAnimation() { 
+		anim->setAnimationListener(NULL);
+		delete roller;
+		delete anim;
+	}
+private:
+	AnimRoller* roller;
+};
+
+void test_animation(RenderBackend& renderbackend) {
+	renderbackend.init();
+	const int W = 800;
+	const int H = 600;
+	Screen* screen = renderbackend.createMainScreen(W, H, 0, false);
+
+	std::vector<PositionedAnimation*> animations;
+	AnimationProvider provider;
+	boost::scoped_ptr<Animation> anim(provider.createResource(RenderableLocation(ANIM_FILE)));
+	int h = anim->getHeight();
+	int w = anim->getWidth();
+	for (int x = 0; x < (W - w); x+=w) {
+		for (int y = 0; y < (H - h); y+=h) {
+			Animation* a = provider.createResource(RenderableLocation(ANIM_FILE));
+			animations.push_back(new PositionedAnimation(x, y, a));
+		}
+	}
 	for (int i = 0; i < 400; i++) {
 		renderbackend.startFrame();
-		img->render(Rect(i, i, w, h), screen);
+		std::vector<PositionedAnimation*>::iterator i = animations.begin();
+		while (i != animations.end()) {
+			(*i)->anim->render(Rect((*i)->x, (*i)->y, w, h), screen);
+			i++;
+		}
+		TimeManager::instance()->update();
 		renderbackend.endFrame();
-	}	
-	for (int j = 0; j < 5; j++) {
-		for (int i = -20; i < 20; i++) {
-			renderbackend.startFrame();
-			img->setXShift(i);
-			img->setYShift(i);
-			img->render(Rect(200, 200, w, h), screen);
-			renderbackend.endFrame();
-		}	
+	}
+	std::vector<PositionedAnimation*>::iterator i = animations.begin();
+	while (i != animations.end()) {
+		delete *i;
+		i++;
 	}
 }
 
-void test_sdl_image() {
+void test_sdl() {
 	environment env;
 	RenderBackendSDL renderbackend;
-	test_image(renderbackend);
+	test_animation(renderbackend);
 }
 
-void test_ogl_image() {
+void test_ogl() {
 	environment env;
 	RenderBackendOpenGL renderbackend;
-	test_image(renderbackend);
+	test_animation(renderbackend);
 }
 
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Image Tests");
-	test->add( BOOST_TEST_CASE( &test_sdl_image ),0 );
-	test->add( BOOST_TEST_CASE( &test_ogl_image ),0 );
+	test->add( BOOST_TEST_CASE( &test_sdl ),0 );
+	test->add( BOOST_TEST_CASE( &test_ogl ),0 );
 
 	return test;
 }

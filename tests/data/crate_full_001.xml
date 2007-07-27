@@ -1,0 +1,18 @@
+<animation delay="100" id="2005">
+	<frame source="../../content/gfx/objects/crate/full_s_000.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0001.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0002.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0003.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0004.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0005.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0006.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0007.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0008.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0007.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0006.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0005.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0004.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0003.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0002.png" />
+	<frame source="../../content/gfx/objects/crate/full_s_0001.png" />
+</animation>

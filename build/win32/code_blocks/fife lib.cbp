@@ -371,6 +371,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\loaders\native\video_loaders\image_provider.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -714,6 +724,16 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\vfs\zip\zipsource.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\animation.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\animation.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

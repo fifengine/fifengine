@@ -78,9 +78,9 @@ namespace FIFE {
 			// The SDL Surface used.
 			SDL_Surface* m_surface;
 			// The X shift of the Image
-			unsigned int m_xshift;
+			int m_xshift;
 			// The Y shift of the Image
-			unsigned int m_yshift;
+			int m_yshift;
 	};
 
 }
