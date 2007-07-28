@@ -19,12 +19,10 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_ARCHETYPE_H
-#define FIFE_MAP_ARCHETYPE_H
+#ifndef FIFE_GEOMETRY_TYPE_H
+#define FIFE_GEOMETRY_TYPE_H
 
 // Standard C++ library includes
-#include <string>
-#include <vector>
 
 // 3rd party library includes
 
@@ -32,72 +30,42 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/point.h"
 
 namespace FIFE { namespace model {
 
-	class Object;
-
-	class Prototype;
-	class GeometryType;
-
-	class Dataset {
+	class GeometryType {
 		public:
 
-			Dataset(const std::string& type, const std::string& filename);
-			~Dataset();
+		GeometryType() {}
 
-			const std::string& getTypeName() const;
-			const std::string& getFilename() const;
+		GeometryType(size_t _id, const std::string& _g,
+		             const Point& _size,
+		             const Point& _transform,
+		             const Point& _offset,
+		             int _flags)
+			: id(_id), geometry(_g), size(_size), transform(_transform),
+			  offset(_offset), flags(_flags) {}
 
-			/** Add a (nested) dataset
-			 */
-			void addDataset(Dataset* dataset);
+		// id
+		size_t id;
 
-			/** Get a prototype from this dataset. Prototypes are looked for in
-			 * this dataset first, and if no match is found, the search is expanded
-			 * to any datasets nested within this dataset. Null is returned if no
-			 * match is found.
-			 *
-			 * @note Prototype objects are owned by the dataset, so don't delete
-			 * returned pointers!
-			 */
-			Prototype* getPrototype(const std::string& name);
+		// name of this geometry type
+		std::string geometry;
 
-			/** Get a geometry type from this dataset. GeometryTypes are looked for
-			 * in this dataset first, and if no match is found, the search is expanded
-			 * to any datasets nested within this dataset. Null is returned if no
-			 * match is found.
-			 *
-			 * @note GeometryType objects are owned by the dataset, so don't delete
-			 * returned pointers!
-			 */
-			GeometryType* getGeometryType(const std::string& name);
+		// base size
+		Point size;
 
-		private:
+		// topmost left border intersection point
+		Point transform;
 
-			// geometry definitions in this dataset
-			std::vector<GeometryType*> m_geometry_types;
+		// extra offset
+		Point offset;
 
-			// prototypes contained in this dataset
-			std::vector<Prototype*> m_prototypes;
+		int flags;
 
-			// nested datasets
-			std::vector<Dataset*> m_datasets;
-		
-			std::string m_typename;
-			std::string m_filename;
 	};
 
-	inline
-	const std::string& Dataset::getTypeName() const {
-		return m_typename;
-	}
-
-	inline
-	const std::string& Dataset::getFilename() const {
-		return m_filename;
-	}
-
-}}
+}}; //FIFE::model
 
 #endif

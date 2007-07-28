@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef	FIFE_MAP_GRIDGEOMETRY_H
-#define	FIFE_MAP_GRIDGEOMETRY_H
+#ifndef FIFE_OBJECT_H
+#define FIFE_OBJECT_H
 
 // Standard C++ library includes
 
@@ -30,42 +30,74 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "geometry.h"
+#include "location.h"
 
 namespace FIFE { namespace model {
-	class GridGeometry : public Geometry {
+
+	class View;
+
+	class Layer;
+
+	class Prototype;
+
+	/** Game Object Representation
+	 *
+	 *  An object is just an "instantiation" of a prototype at a Location. 
+	 */
+	class Object {
 		public:
-			GridGeometry(const s_geometry_info& g, const Point& mapsize);
-		
-			Point toScreen(const Point& gridPos) const;
-			Point fromScreen(const Point& screenPos) const;
 
-			size_t getNumDirections() const;
-			Point directionToGrid(size_t dir, const Point& at = Point()) const; 
+			/** Constructor
+			 */
+			Object(const Prototype* proto, const Location& location)
+				: m_proto(proto), m_location(location)
+			{ }
 
-			Point baseSize() const { return m_basesize; }
+			const Prototype* getPrototype();
 
-			const float* getAdjacentCosts() const;
+			void setPosition(const Point& p);
+
+			const Point& getPosition() const;
+			Layer* getLayer() const;
+			const Location& getLocation() const;
+
 		private:
-			// An offset translation (can't be represented in the transform).
-			Point m_offset;
-			
-			// The "tile size".
-			Point m_basesize;
+
+			const Prototype* m_proto;
+
+			Location m_location;
+
+			Object(const Object&);
+			Object& operator=(const Object&);
+
+			friend class Layer;
+	};
+
+	inline
+	const Prototype* Object::getPrototype() {
+		return m_proto;
+	}
+
+	inline
+	void Object::setPosition(const Point& p) {
+		m_location.position = p;
+	}
+
+	inline
+	const Point& Object::getPosition() const {
+		return m_location.position;
+	}
 	
-			// The matrix that transforms grid coordinates to screen coordinates.
-			int xdx, ydx, xdy, ydy;
-			// (Following the conventions of the old code)
-			// [ xdx  ydx ]
-			// [ xdy  ydy ]
-			
-			// The inverse is:
-			//      1      [  ydy -ydx ]
-			// determinant [ -xdy  xdx ]
-			// We cache a determinant value.
-			int determinant;
-	};	
-} } // namespace FIFE::model
+	inline
+	Layer* Object::getLayer() const {
+		return m_location.layer;
+	}
 
-#endif // FIFE_GRIDGEOMETRY_H
+	inline
+	const Location& Object::getLocation() const {
+		return m_location;
+	}
 
+} } // FIFE::model
+
+#endif

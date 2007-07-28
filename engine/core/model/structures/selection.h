@@ -19,85 +19,89 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_ARCHETYPE_H
-#define FIFE_MAP_ARCHETYPE_H
+#ifndef FIFE_MAP_SELECTION_H
+#define FIFE_MAP_SELECTION_H
 
 // Standard C++ library includes
-#include <string>
-#include <vector>
 
 // 3rd party library includes
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/point.h"
 
-namespace FIFE { namespace model {
+namespace FIFE { 
 
-	class Object;
+	class Screen;
 
-	class Prototype;
-	class GeometryType;
+	namespace model {
 
-	class Dataset {
+	class Layer;
+
+	class Selection {
+
 		public:
+			enum Mode {
+				SingleSelectionMode,
+				MultiSelectionMode
+			};
 
-			Dataset(const std::string& type, const std::string& filename);
-			~Dataset();
+			Selection(Layer* layer);
+			Selection(const Selection& selection);
 
-			const std::string& getTypeName() const;
-			const std::string& getFilename() const;
+			~Selection();
 
-			/** Add a (nested) dataset
+			/** Set the image to use for overlaying this selection on a map view
+			 *  You normally don't need to call this,
+			 *  as the Selection will read the overlay image from
+			 *  the map data
 			 */
-			void addDataset(Dataset* dataset);
+			void setImage(size_t imageid);
 
-			/** Get a prototype from this dataset. Prototypes are looked for in
-			 * this dataset first, and if no match is found, the search is expanded
-			 * to any datasets nested within this dataset. Null is returned if no
-			 * match is found.
-			 *
-			 * @note Prototype objects are owned by the dataset, so don't delete
-			 * returned pointers!
+			/** Set the current selection mode
 			 */
-			Prototype* getPrototype(const std::string& name);
+			void setMode(Mode mode);
 
-			/** Get a geometry type from this dataset. GeometryTypes are looked for
-			 * in this dataset first, and if no match is found, the search is expanded
-			 * to any datasets nested within this dataset. Null is returned if no
-			 * match is found.
-			 *
-			 * @note GeometryType objects are owned by the dataset, so don't delete
-			 * returned pointers!
+			/** Get the current selection mode
 			 */
-			GeometryType* getGeometryType(const std::string& name);
+			Mode getMode() const;
+
+			/** Select a specific point
+			 */
+			void select(const Point& p);
+
+			/** Un-Select a specific point
+			 */
+			void unselect(const Point& p);
+
+			/** Check whether a map coord is selected
+			 */
+			bool isSelected(const Point& p) const;
+
+			/** Clear all selected points
+			 */
+			void clearSelection();
+
+			/** Render this selection
+			 */
+			void render(Screen* screen, const Point& offset);
 
 		private:
+			Mode m_mode;
+			size_t m_imageid;
+			Layer* m_layer;
 
-			// geometry definitions in this dataset
-			std::vector<GeometryType*> m_geometry_types;
+			bool m_selected;
+			Point m_selection;
+			std::vector<Point> m_multiselection;
 
-			// prototypes contained in this dataset
-			std::vector<Prototype*> m_prototypes;
-
-			// nested datasets
-			std::vector<Dataset*> m_datasets;
-		
-			std::string m_typename;
-			std::string m_filename;
+			void initImageFromLayer();
 	};
 
-	inline
-	const std::string& Dataset::getTypeName() const {
-		return m_typename;
-	}
-
-	inline
-	const std::string& Dataset::getFilename() const {
-		return m_filename;
-	}
-
-}}
+} } //FIFE::model
 
 #endif

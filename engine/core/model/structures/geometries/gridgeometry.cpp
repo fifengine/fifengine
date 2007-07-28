@@ -32,6 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/log.h"
+#include "model/metamodel/geometry_type.h"
 
 #include "gridgeometry.h"
 
@@ -50,18 +51,18 @@ namespace FIFE { namespace model {
 		return 8;
 	}
 
-	GridGeometry::GridGeometry(const s_geometry_info& g, const Point& mapsize) {
-		m_basesize = g.size;
-		m_offset   = g.offset;
+	GridGeometry::GridGeometry(GeometryType* g, const Point& mapsize) {
+		m_basesize = g->size;
+		m_offset   = g->offset;
 		
-		xdx = g.transform.x;
-		ydy = g.transform.y;
+		xdx = g->transform.x;
+		ydy = g->transform.y;
 		xdy = ydy - m_basesize.y;
 		ydx = m_basesize.x - xdx;
 		determinant = xdx*ydy - xdy*ydx;
 		assert(determinant);
 
-		Log(g.geometry)
+		Log(g->geometry)
 			<< "[ " << xdx << ", " << ydx << "]"
 			<< "[ " << xdy << ", " << ydy << "]: "
 			<< "screenBoundingRect("<<Rect(0,0,mapsize.x,mapsize.y)<<") -> " 

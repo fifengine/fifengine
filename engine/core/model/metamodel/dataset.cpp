@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/purge.h"
-#include "model/metamodel/geometries/geometry.h"
+#include "model/metamodel/geometry_type.h"
 
 #include "dataset.h"
 #include "prototype.h"
@@ -68,18 +68,18 @@ namespace FIFE { namespace model {
 		return 0;
 	}
 
-	Geometry* Dataset::getGeometry(const std::string& name) {
+	GeometryType* Dataset::getGeometryType(const std::string& name) {
 
-		std::vector<Geometry*>::iterator it = m_geometries.begin();
-		for(; it != m_geometries.end(); ++it) {
-			if((*it)->getInfo().geometry == name)
+		std::vector<GeometryType*>::iterator it = m_geometry_types.begin();
+		for(; it != m_geometry_types.end(); ++it) {
+			if((*it)->geometry == name)
 				return *it;
 		}
 
-		Geometry* p = 0;
+		GeometryType* p = 0;
 		std::vector<Dataset*>::iterator jt = m_datasets.begin();
 		for(; jt != m_datasets.end(); ++jt) {
-			p = (*jt)->getGeometry(name);
+			p = (*jt)->getGeometryType(name);
 			if(p) {
 				return p;
 			}

@@ -21,17 +21,17 @@
 // Standard C++ library includes
 #include <algorithm>
 #include <cassert>
-#include <map>
 
 // 3rd party library includes
+#include "boost/lexical_cast.hpp"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "xml/xmlutil.h"
 
+#include "model/metamodel/geometry_type.h"
 #include "geometry.h"
 #include "hexgeometry.h"
 #include "gridgeometry.h"
@@ -80,26 +80,26 @@ namespace FIFE { namespace model {
 		}
 	}
 
-	Geometry* Geometry::createGeometry(const s_geometry_info& data, const Point& mapsize) {
+	Geometry* Geometry::createGeometry(GeometryType* type, const Point& mapsize) {
 		Geometry* g = 0;
 
-		if(data.geometry == "HEXAGONAL") {
-			g = new HexGeometry(data, mapsize);
+		if(type->geometry == "HEXAGONAL") {
+			g = new HexGeometry(type, mapsize);
 		}
-		else if(data.geometry == "RECTANGULAR") {
-			g = new GridGeometry(data, mapsize);
+		else if(type->geometry == "RECTANGULAR") {
+			g = new GridGeometry(type, mapsize);
 		}
 		else {
 			throw InvalidFormat(std::string("unknown geometry: ")
-				+ boost::lexical_cast<std::string>(data.geometry));
+				+ boost::lexical_cast<std::string>(type->geometry));
 		}
 		
-		g->info = data;
+		g->m_type = type;
 		return g;
 	}
 
-	const s_geometry_info& Geometry::getInfo() {
-		return info;
+	const GeometryType& Geometry::getType() {
+		return *m_type;
 	}
 
 	// Default implementations.
@@ -114,27 +114,6 @@ namespace FIFE { namespace model {
 
 	Rect Geometry::gridBoundingRect(const Rect& screenRect) const {
 		return geometry_detail::boundingRect(screenRect, *this, geometry_detail::FROM_SCREEN);
-	}
-
-
-	s_geometry_info s_geometry_info::load(TiXmlElement* e) {
-		s_geometry_info geometry;
-		
-		xmlutil::assertElement(e, "geometry" );
-		geometry.id       = xmlutil::queryElement<size_t>(e,"id");
-		geometry.geometry = xmlutil::queryElement<std::string>(e,"type");
-		if(geometry.geometry != "HEXAGONAL" && geometry.geometry != "RECTANGULAR") {
-			throw InvalidFormat("geometry has to have a type"
-			                    " of either HEXAGONAL or RECTANGULAR");
-		}
-
-		geometry.size = xmlutil::queryElement<Point>(e,"size");
-
-		geometry.transform = xmlutil::queryElement<Point>(e,"transform",geometry.size);
-		geometry.offset    = xmlutil::queryElement<Point>(e,"offset",Point());
-		geometry.flags     = xmlutil::queryElement<int>(e,"flags",0);
-
-		return geometry;
 	}
 
 } } // FIFE::model

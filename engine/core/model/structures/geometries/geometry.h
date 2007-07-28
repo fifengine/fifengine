@@ -33,40 +33,9 @@
 #include "util/point.h"
 #include "util/rect.h"
 
-class TiXmlElement;
-
 namespace FIFE { namespace model {
 
-	struct s_geometry_info {
-		s_geometry_info() {}
-
-		s_geometry_info(size_t _id, const std::string& _g,
-		                const Point& _size,
-		                const Point& _transform,
-		                const Point& _offset,
-		                int _flags)
-			: id(_id), geometry(_g), size(_size), transform(_transform),
-			  offset(_offset), flags(_flags) {}
-
-		static s_geometry_info load(TiXmlElement* e);
-
-		// id
-		size_t id;
-
-		// geometry class
-		std::string geometry;
-
-		// base size
-		Point size;
-
-		// topmost left border intersection point
-		Point transform;
-
-		// extra offset
-		Point offset;
-
-		int flags;
-	};
+	class GeometryType;
 
 	/** The Abstract base class of a tile geometry
 	 */
@@ -82,15 +51,14 @@ namespace FIFE { namespace model {
 				ShiftYAxis = 2
 			};
 
+			static Geometry* createGeometry(GeometryType* type, const Point& mapsize);
 
 			virtual ~Geometry() {}
-
-			static Geometry* createGeometry(const s_geometry_info& data, const Point& mapsize);
 
 			/** Get the raw geometry data for this geometry; used to reconstitute
 			 *  an xml map file when saving. Maybe this method should be reconsidered?
 			 */
-			const s_geometry_info& getInfo();
+			const GeometryType& getType();
 
 			/** Calculate screen position of the upper left corner of the grid 
 			 *  position
@@ -139,7 +107,7 @@ namespace FIFE { namespace model {
 
 		private:
 
-			s_geometry_info info;	
+			GeometryType* m_type;	
 	};
 
 

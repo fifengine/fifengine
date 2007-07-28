@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/debugutils.h"
+#include "model/metamodel/geometry_type.h"
 
 #include "hexgeometry.h"
 
@@ -51,21 +52,21 @@ namespace FIFE { namespace model {
 	const float hex_adjacent_costs[6] = { 1,1,1,1,1,1 };
 
 
-	HexGeometry::HexGeometry(const s_geometry_info& g, const Point& mapsize) {
-		m_basesize = g.size;
+	HexGeometry::HexGeometry(GeometryType* g, const Point& mapsize) {
+		m_basesize = g->size;
 		Point delta;
-		m_transform = g.transform;
+		m_transform = g->transform;
 
-		if( g.flags & Geometry::ShiftXAxis) {
+		if( g->flags & Geometry::ShiftXAxis) {
 			delta -= toScreen(Point(mapsize.x-1,0));
 		}
 
-		if( g.flags & 2) {
+		if( g->flags & 2) {
 			delta -= toScreen(Point(0,mapsize.y-1));
 		}
 
-		m_offset += delta + g.offset;
-		Log(g.geometry)
+		m_offset += delta + g->offset;
+		Log(g->geometry)
 			<< "screenBoundingRect("<<Rect(0,0,mapsize.x,mapsize.y)<<") -> " 
 			<< screenBoundingRect(Rect(0,0,mapsize.x,mapsize.y));
 	}

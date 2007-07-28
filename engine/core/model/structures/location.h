@@ -19,12 +19,11 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_ARCHETYPE_H
-#define FIFE_MAP_ARCHETYPE_H
+#ifndef FIFE_LOCATION_H
+#define FIFE_LOCATION_H
 
 // Standard C++ library includes
-#include <string>
-#include <vector>
+#include <iostream>
 
 // 3rd party library includes
 
@@ -32,72 +31,25 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/point.h"
 
 namespace FIFE { namespace model {
 
-	class Object;
+	class Elevation;
+	class Layer;
 
-	class Prototype;
-	class GeometryType;
-
-	class Dataset {
+	class Location {
 		public:
+			Location();
 
-			Dataset(const std::string& type, const std::string& filename);
-			~Dataset();
-
-			const std::string& getTypeName() const;
-			const std::string& getFilename() const;
-
-			/** Add a (nested) dataset
-			 */
-			void addDataset(Dataset* dataset);
-
-			/** Get a prototype from this dataset. Prototypes are looked for in
-			 * this dataset first, and if no match is found, the search is expanded
-			 * to any datasets nested within this dataset. Null is returned if no
-			 * match is found.
-			 *
-			 * @note Prototype objects are owned by the dataset, so don't delete
-			 * returned pointers!
-			 */
-			Prototype* getPrototype(const std::string& name);
-
-			/** Get a geometry type from this dataset. GeometryTypes are looked for
-			 * in this dataset first, and if no match is found, the search is expanded
-			 * to any datasets nested within this dataset. Null is returned if no
-			 * match is found.
-			 *
-			 * @note GeometryType objects are owned by the dataset, so don't delete
-			 * returned pointers!
-			 */
-			GeometryType* getGeometryType(const std::string& name);
-
-		private:
-
-			// geometry definitions in this dataset
-			std::vector<GeometryType*> m_geometry_types;
-
-			// prototypes contained in this dataset
-			std::vector<Prototype*> m_prototypes;
-
-			// nested datasets
-			std::vector<Dataset*> m_datasets;
-		
-			std::string m_typename;
-			std::string m_filename;
+			Elevation* elevation;
+			Layer* layer;
+			Point position;
 	};
 
-	inline
-	const std::string& Dataset::getTypeName() const {
-		return m_typename;
-	}
+	/** Print coords of the Loacation to a stream
+	 */
+	std::ostream& operator<<(std::ostream& os, const Location& loc);
 
-	inline
-	const std::string& Dataset::getFilename() const {
-		return m_filename;
-	}
-
-}}
-
-#endif
+} }
+#endif //FIFE_LOCATION_H
