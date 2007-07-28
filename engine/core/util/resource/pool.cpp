@@ -100,8 +100,22 @@ namespace FIFE {
 		return *res;
 	}
 
-	int Pool::getSize() {
-		return m_entries.size();
+	int Pool::getResourceCount(int status) {
+		int amount = 0;
+		std::vector<PoolEntry*>::iterator entry;
+		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
+			if (status & RES_LOADED) {
+				if ((*entry)->resource) {
+					amount++;
+				}
+			}
+			if (status & RES_NON_LOADED) {
+				if (!(*entry)->resource) {
+					amount++;
+				}
+			}
+		}
+		return amount;
 	}
 
 	void Pool::addPoolListener(IPoolListener* listener) {

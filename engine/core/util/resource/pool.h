@@ -51,6 +51,8 @@ namespace FIFE {
 		virtual ~IPoolListener() {};
 	};
 
+	enum { RES_LOADED = 0x01, RES_NON_LOADED  = 0x02};
+
 	/**  Pool is used to optimize memory usage for resources
 	 *
 	 * Pool guarantees that there is minimal amount of resources
@@ -81,9 +83,9 @@ namespace FIFE {
 		 */
 		virtual IPooledResource& get(unsigned int index);
 
-		/** Gets amount of resources in pool
+		/** Gets amount of resources in the pool with given status
 		 */
-		virtual int getSize();
+		virtual int getResourceCount(int status);
 
 		/** Clears pool from resources. Frees associated memory 
 		 */

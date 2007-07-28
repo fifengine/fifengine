@@ -95,9 +95,20 @@ void test_renderable_pool() {
 	pool.addResourceProvider(new SubImageProvider());
 	pool.addResourceProvider(new ImageProvider());
 	pool.addResourceProvider(new AnimationProvider());
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
+
 	pool.addResourceFromLocation(new RenderableLocation(IMAGE_FILE));
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
+
 	int animind = pool.addResourceFromLocation(new RenderableLocation(ANIM_FILE));
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
+
 	Animation& anim = dynamic_cast<Animation&>(pool.get(animind));
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 1);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
 	boost::scoped_ptr<AnimRoller> roller(new AnimRoller());
 	anim.setAnimationListener(&*roller);
 	anim.setActive(true);
@@ -113,9 +124,11 @@ void test_renderable_pool() {
 	location->setWidth(w);
 	location->setHeight(h);
 	std::cout << pool.addResourceFromLocation(location) << std::endl;
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 1);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
 
 	for (int k = 0; k < 3; k++) {
-		for (int j = 0, s = pool.getSize(); j < s; j++) {
+		for (int j = 0, s = pool.getResourceCount(RES_LOADED | RES_NON_LOADED); j < s; j++) {
 			std::cout << j << std::endl;
 			Renderable& r = dynamic_cast<Renderable&>(pool.get(j));
 			int h = r.getHeight();
@@ -127,7 +140,12 @@ void test_renderable_pool() {
 				TimeManager::instance()->update();
 			}
 		}
+		BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 3);
+		BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 	}
+	pool.clear();
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 }
 
 test_suite* init_unit_test_suite(int argc, char** const argv) {

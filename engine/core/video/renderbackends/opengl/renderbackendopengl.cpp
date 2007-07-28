@@ -24,9 +24,6 @@
 // Platform specific includes
 
 // 3rd party library includes
-#include <guichan/opengl.hpp>
-#include <guichan/sdl.hpp>
-#include <guichan.hpp>
 #include <SDL.h>
 
 // FIFE includes

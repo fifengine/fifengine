@@ -72,7 +72,7 @@ namespace FIFE {
 		~Animation();
 
 		/** Adds new frame into animation
-		 * @param image Pointer to Image. Does not transfer ownership
+		 * @param image Pointer to Image. Transfer the ownership
 		 */
 		void addFrame(Image* image);
 

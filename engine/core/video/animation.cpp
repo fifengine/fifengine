@@ -69,6 +69,11 @@ namespace FIFE {
 	
 	Animation::~Animation() {
 		setActive(false);
+		std::vector<Image*>::iterator i = m_frames.begin();
+		while (i != m_frames.end()) {
+			delete (*i);
+			i++;
+		}
 	}
 	
 	void Animation::addFrame(Image* image) {

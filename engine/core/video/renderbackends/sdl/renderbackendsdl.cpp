@@ -22,8 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <guichan/sdl.hpp>
-#include <guichan.hpp>
 #include <SDL.h>
 
 // FIFE includes
