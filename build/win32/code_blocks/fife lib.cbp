@@ -437,6 +437,12 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\model\model.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\model\structures\elevation.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -507,7 +513,7 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\structures\objectinfo.h">
+		<Unit filename="..\..\..\engine\core\model\structures\object.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

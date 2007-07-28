@@ -1,20 +1,20 @@
 %module objectinfo
 %{
-#include "model/structures/objectinfo.h"
+#include "model/structures/object.h"
 %}
 
 %include "util/point.h"
 
 namespace FIFE { namespace model {
 
-	class Object {
+	class Instance {
 		public:
-			~Object();
+			~Instance();
 
 			void setPosition(const Point& p);
 			const Point& getPosition() const;
 
 		private:
-			Object();
+			Instance();
 	};
 }}

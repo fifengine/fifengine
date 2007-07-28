@@ -36,7 +36,7 @@
 
 #include "layer.h"
 #include "selection.h"
-#include "objectinfo.h"
+#include "object.h"
 #include "elevation.h"
 #include "map.h"
 
@@ -87,25 +87,26 @@ namespace FIFE { namespace model {
 		return m_shift;
 	}
 	
-	bool Layer::hasObjects() const {
+	bool Layer::hasInstances() const {
 		return !m_objects.empty();
 	}
 
-	void Layer::addObject(Object* object) {
-		std::vector<Object*>::iterator it = m_objects.begin();
-		for(; it != m_objects.end(); ++it) {
-			// no duplicates
-			if(*it == object) return;
-		}
+	void Layer::addInstance(Prototype* object, const Point& p) {
+		if(!isValidPosition(p))
+			return;
 
-		object->m_location.layer = this;
-		m_objects.push_back(object);
+		Location l;
+		l.elevation = getElevation();
+		l.layer = this;
+		l.position = p;
+		m_objects.push_back(new Instance(object, l));
 	}
 
-	void Layer::removeObject(Object* object) {
-		std::vector<Object*>::iterator it = m_objects.begin();
+	void Layer::removeInstance(Instance* instance) {
+
+		std::vector<Instance*>::iterator it = m_objects.begin();
 		for(; it != m_objects.end(); ++it) {
-			if(*it == object) {
+			if(*it == instance) {
 				delete *it;
 				m_objects.erase(it);
 				break;
@@ -113,17 +114,17 @@ namespace FIFE { namespace model {
 		}
 	}
 
-	const std::vector<Object*>& Layer::getAllObjects() const {
+	const std::vector<Instance*>& Layer::getInstances() {
 		return m_objects;
 	}
 
-	void Layer::setObjectsVisible(bool vis) {
+	void Layer::setInstancesVisible(bool vis) {
 		m_objects_visibility = vis;
 	}
-	void Layer::toggleObjectsVisible() {
+	void Layer::toggleInstancesVisible() {
 		m_objects_visibility = !m_objects_visibility;
 	}
-	bool Layer::areObjectsVisible() const {
+	bool Layer::areInstancesVisible() const {
 		return m_objects_visibility;
 	}
 

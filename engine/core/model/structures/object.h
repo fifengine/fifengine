@@ -34,22 +34,19 @@
 
 namespace FIFE { namespace model {
 
-	class View;
-
 	class Layer;
 
 	class Prototype;
 
-	/** Game Object Representation
-	 *
-	 *  An object is just an "instantiation" of a prototype at a Location. 
+	/**
+	 *  An Instance is an "instantiation" of an Object at a Location. 
 	 */
-	class Object {
+	class Instance {
 		public:
 
 			/** Constructor
 			 */
-			Object(const Prototype* proto, const Location& location)
+			Instance(const Prototype* proto, const Location& location)
 				: m_proto(proto), m_location(location)
 			{ }
 
@@ -67,34 +64,34 @@ namespace FIFE { namespace model {
 
 			Location m_location;
 
-			Object(const Object&);
-			Object& operator=(const Object&);
+			Instance(const Instance&);
+			Instance& operator=(const Instance&);
 
 			friend class Layer;
 	};
 
 	inline
-	const Prototype* Object::getPrototype() {
+	const Prototype* Instance::getPrototype() {
 		return m_proto;
 	}
 
 	inline
-	void Object::setPosition(const Point& p) {
+	void Instance::setPosition(const Point& p) {
 		m_location.position = p;
 	}
 
 	inline
-	const Point& Object::getPosition() const {
+	const Point& Instance::getPosition() const {
 		return m_location.position;
 	}
 	
 	inline
-	Layer* Object::getLayer() const {
+	Layer* Instance::getLayer() const {
 		return m_location.layer;
 	}
 
 	inline
-	const Location& Object::getLocation() const {
+	const Location& Instance::getLocation() const {
 		return m_location;
 	}
 

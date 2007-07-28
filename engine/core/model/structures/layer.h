@@ -39,12 +39,12 @@
 namespace FIFE { namespace model {
 
 	class Elevation;
-	class Object;
-
+	class Instance;
 	class Selection;
-
-	class GeometryType;
 	class Geometry;
+
+	class Prototype;
+	class GeometryType;
 
 	/** A basic layer on a map elevation
 	 *
@@ -119,41 +119,40 @@ namespace FIFE { namespace model {
 			/** Check existance of objects on this layer
 			 *  @return True, if objects exist.
 			 */
-			bool hasObjects() const;
+			bool hasInstances() const;
 
-			/** Add an object at a specific position
-			 *  Does the equivalent to @c addObject( object, object->getPosition() )
+			/** Add an instance of an object at a specific position
 			 */
-			void addObject(Object* object);
+			void addInstance(Prototype* object, const Point& p);
 
-			/** Remove an object from the layer
+			/** Remove an instance from the layer
 			 */
-			void removeObject(Object* object);
+			void removeInstance(Instance* object);
 
-			/** Return a constant reference to the objects on this layer.
+			/** Get the list of instances on this layer
 			 */
-			const std::vector<Object*>& getAllObjects() const;
+			const std::vector<Instance*>& getInstances();
 
-			/** Apply a visitor to each object on this layer
+			/** Apply a visitor to each instance on this layer
 			 */
 			template<typename T>
-			void forEachObject(T visitor) {
+			void forEachInstance(T visitor) {
 				std::for_each(m_objects.begin(),m_objects.end(),visitor);
 			}
 
 			/** Set object visibility
 			 */
-			void setObjectsVisible(bool vis);
+			void setInstancesVisible(bool vis);
 
 			/** Toggle object visibility
 			 *  @see setObjectsVisible
 			 */
-			void toggleObjectsVisible();
+			void toggleInstancesVisible();
 
 			/** Check object visibility
 			 *  @see setObjectsVisible
 			 */
-			bool areObjectsVisible() const;
+			bool areInstancesVisible() const;
 
 			/** Check whether the grid lines shall be drawn
 			 *  Grid lines are drawn by setting an overlay
@@ -187,8 +186,8 @@ namespace FIFE { namespace model {
 			bool m_objects_visibility;
 			bool m_grid_overlay;
 
-			// all the objects on this layer
-			std::vector<Object*> m_objects;
+			// all the instances on this layer
+			std::vector<Instance*> m_objects;
 
 			Point m_shift;
 			Geometry* m_geometry;
