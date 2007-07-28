@@ -110,12 +110,13 @@ void test_animation(RenderBackend& renderbackend) {
 
 	std::vector<PositionedAnimation*> animations;
 	AnimationProvider provider;
-	boost::scoped_ptr<Animation> anim(provider.createResource(RenderableLocation(ANIM_FILE)));
+	Animation* a = dynamic_cast<Animation*>(provider.createResource(RenderableLocation(ANIM_FILE)));
+	boost::scoped_ptr<Animation> anim(a);
 	int h = anim->getHeight();
 	int w = anim->getWidth();
 	for (int x = 0; x < (W - w); x+=w) {
 		for (int y = 0; y < (H - h); y+=h) {
-			Animation* a = provider.createResource(RenderableLocation(ANIM_FILE));
+			a = dynamic_cast<Animation*>(provider.createResource(RenderableLocation(ANIM_FILE)));
 			animations.push_back(new PositionedAnimation(x, y, a));
 		}
 	}

@@ -33,6 +33,7 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "util/resource/resource_location.h"
+#include "util/resource/pooled_resource.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "video/renderbackend.h"
@@ -41,7 +42,7 @@
 #include "image_provider.h"
 
 namespace FIFE { 
-	Image* ImageProvider::createResource(const ResourceLocation& location) {
+	IPooledResource* ImageProvider::createResource(const ResourceLocation& location) {
 		const std::string& filename = location.getFilename();
 		RawDataPtr data = VFS::instance()->open(filename);
 		size_t datalen = data->getDataLength();

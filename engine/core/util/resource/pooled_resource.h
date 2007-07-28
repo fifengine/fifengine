@@ -19,29 +19,23 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
-#define FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
+#ifndef FIFE_POOLED_RESOURE_H
+#define FIFE_POOLED_RESOURE_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/resource_provider.h"
-#include "video/image.h"
 
 namespace FIFE {
-
-	/** ImageProvider for some basic formats like jpeg, png etc. */
-	class ImageProvider : public IResourceProvider {
+	class IPooledResource {
 	public:
-		ImageProvider() {}
-		IPooledResource* createResource(const ResourceLocation& location);
+		virtual ~IPooledResource() {};
 	};
-
 }
+
 #endif

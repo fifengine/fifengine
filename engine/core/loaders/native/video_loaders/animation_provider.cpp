@@ -35,6 +35,7 @@
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "util/purge.h"
+#include "util/resource/pooled_resource.h"
 #include "xml/tinyxml/tinyxml.h"
 
 #include "animation_provider.h"
@@ -42,7 +43,7 @@
 
 namespace FIFE {
 	
-	Animation* AnimationProvider::createResource(const ResourceLocation& location) {
+	IPooledResource* AnimationProvider::createResource(const ResourceLocation& location) {
 		const std::string& filename = location.getFilename();
 		TiXmlDocument doc(filename);
 
@@ -89,7 +90,7 @@ namespace FIFE {
 
 			ImageProvider image_loader;
 			RenderableLocation location(source);
-			Image* image = image_loader.createResource(location);
+			Image* image = dynamic_cast<Image*>(image_loader.createResource(location));
 			if (!image) {
 				purge( frames );
 				throw InvalidFormat(std::string("couldn't load image '") 

@@ -292,6 +292,7 @@
 				<Filter Name="resource">
 					<File RelativePath="..\..\..\engine\core\util\resource\pool.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\util\resource\pool.h"></File>
+					<File RelativePath="..\..\..\engine\core\util\resource\pooled_resource.h"></File>
 					<File RelativePath="..\..\..\engine\core\util\resource\resource_location.h"></File>
 					<File RelativePath="..\..\..\engine\core\util\resource\resource_provider.h"></File>
 				</Filter>

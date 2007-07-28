@@ -37,6 +37,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/time/timeevent.h"
+#include "util/resource/pooled_resource.h"
 
 #include "renderable.h"
 
@@ -60,7 +61,7 @@ namespace FIFE {
 	 * A container of Images, which are periodically changed.
 	 * @see Renderable
 	 */
-	class Animation : public Renderable {
+	class Animation : public Renderable, public IPooledResource {
 	public:
 		/** Constructor.
 		 */ 

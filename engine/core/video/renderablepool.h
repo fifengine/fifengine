@@ -31,6 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/resource/pool.h"
+#include "renderable.h"
 
 namespace FIFE {
 
@@ -38,7 +39,7 @@ namespace FIFE {
 
 	/**  Pool for holding renderable objects, like image or animation
 	 */
-	class RenderablePool: public Pool<Renderable> {
+	class RenderablePool: public Pool {
 	public:
 		/** Default constructor.
 		 */

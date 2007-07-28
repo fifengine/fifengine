@@ -30,4 +30,9 @@
 #include "renderablepool.h"
 
 namespace FIFE {
+	RenderablePool::RenderablePool(): Pool() {
+	}
+	
+	RenderablePool::~RenderablePool() {
+	}
 }

@@ -36,10 +36,10 @@
 
 namespace FIFE { 
 
-	class AnimationProvider : public IResourceProvider<Animation> {
+	class AnimationProvider : public IResourceProvider {
 	public:
 		AnimationProvider() {}
-		Animation* createResource(const ResourceLocation& location);
+		IPooledResource* createResource(const ResourceLocation& location);
 	};
 
 }

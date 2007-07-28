@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -32,6 +33,7 @@
 #include "video/image.h"
 #include "video/renderbackend.h"
 #include "video/renderable_location.h"
+#include "util/resource/pooled_resource.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
 
@@ -39,9 +41,15 @@
 
 namespace FIFE { 
 	
-	Image* SubImageProvider::createResource(const ResourceLocation& location) {
+	IPooledResource* SubImageProvider::createResource(const ResourceLocation& location) {
+		std::cout << "Filename: <" << location.getFilename() << ">\n";
 		const RenderableLocation* loc = dynamic_cast<const RenderableLocation*>(&location);
-		SDL_Surface* src = loc->getParentSource()->getSurface();
+		std::cout << "Filename2: <" << loc->getFilename() << ">\n";
+		Renderable* r = loc->getParentSource();
+		if (!r) {
+			throw NotFound("No parent source assigned, cannot provide subimage");
+		}
+		SDL_Surface* src = r->getSurface();
 		if (!src) {
 			return NULL;
 		}

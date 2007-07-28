@@ -27,12 +27,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/exception.h"
+#include "util/debugutils.h"
+
 #include "pool.h"
 #include "resource_provider.h"
 
 namespace FIFE {
-	template <typename TResource> 
-	Pool<TResource>::Pool(): 
+	Pool::Pool(): 
 		m_pooledobjs(),
 		m_entries(),
 		m_listeners(),
@@ -41,54 +43,73 @@ namespace FIFE {
 	{
 	}
 
-	template <typename TResource> 
-	Pool<TResource>::~Pool() {
+	Pool::~Pool() {
 		clear();
-		typename std::vector<IResourceProvider<TResource>*>::iterator provider;
+		std::vector<IResourceProvider*>::iterator provider;
 		for (provider = m_providers.begin(); provider != m_providers.end(); provider++) {
 			delete (*provider);
 		}
 
 	}
 	
-	template <typename TResource> 
-	void Pool<TResource>::addResourceProvider(IResourceProvider<TResource>* provider) {
-		m_providers.push_back(provider);
-	}
-
-	template <typename TResource> 
-	int Pool<TResource>::addResourceFromLocation(const ResourceLocation& obj) {
-		return 0;
-	}
-
-	template <typename TResource> 
-	TResource& Pool<TResource>::get(int index) const {
-		return *(m_entries[index].resource);
-	}
-
-	template <typename TResource> 
-	void Pool<TResource>::clear() {
-		std::vector<PoolListener*>::iterator listener;
+	void Pool::clear() {
+		std::vector<IPoolListener*>::iterator listener;
 		for (listener = m_listeners.begin(); listener != m_listeners.end(); listener++) {
 			(*listener)->poolCleared();
 		}
-
-		typename std::map<int, TResource*>::iterator obj;
-        	for (obj = m_pooledobjs.begin(); obj != m_pooledobjs.end(); ++obj) {
-			delete *(obj->second);
- 		}
-
 		m_pooledobjs.clear();
+		std::vector<PoolEntry*>::iterator entry;
+		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
+			delete (*entry);
+		}
+		m_entries.clear();
 	}
 
-	template <typename TResource> 
-	void Pool<TResource>::addPoolListener(PoolListener* listener) {
+	void Pool::addResourceProvider(IResourceProvider* provider) {
+		m_providers.push_back(provider);
+	}
+
+	int Pool::addResourceFromLocation(ResourceLocation* obj) {
+		PoolEntry* entry = new PoolEntry();
+		entry->location = obj;
+		m_entries.push_back(entry);
+		return m_entries.size() - 1;
+	}
+
+	IPooledResource& Pool::get(unsigned int index) {
+		if (index >= m_entries.size()) {
+			throw IndexOverflow( __FUNCTION__ );
+		}
+		IPooledResource* res = NULL;
+		PoolEntry* entry = m_entries[index];
+		if (entry->resource) {
+			res = entry->resource;
+		} else {
+			if (!entry->provider) {
+				findAndSetProvider(*entry);
+			}
+			if (entry->provider) {
+				entry->resource = entry->provider->createResource(*entry->location);
+				res = entry->resource;
+			} else {
+				throw NotFound( 
+					std::string("No suitable provider was found for resource ") +
+					entry->location->getFilename());
+			}
+		}
+		return *res;
+	}
+
+	int Pool::getSize() {
+		return m_entries.size();
+	}
+
+	void Pool::addPoolListener(IPoolListener* listener) {
 		m_listeners.push_back(listener);
 	}
 
-	template <typename TResource> 
-	void Pool<TResource>::removePoolListener(PoolListener* listener) {
-		std::vector<PoolListener*>::iterator i = m_listeners.begin();
+	void Pool::removePoolListener(IPoolListener* listener) {
+		std::vector<IPoolListener*>::iterator i = m_listeners.begin();
 		while (i != m_listeners.end()) {
 			if ((*i) == listener) {
 				m_listeners.erase(i);
@@ -98,5 +119,28 @@ namespace FIFE {
 		}
 	}
 
+	void Pool::findAndSetProvider(PoolEntry& entry) {
+		std::vector<IResourceProvider*>::iterator it = m_providers.begin();
+		std::vector<IResourceProvider*>::iterator end = m_providers.end();
+		if( it == end ) {
+			PANIC_PRINT( "no provider constructors given for resource pool");
+		}
+		for(; it != end; ++it) {
+			try {
+				entry.resource = (*it)->createResource(*entry.location);
+			} catch (...) {
+				continue;
+			}
 
+			if( !entry.resource )
+				continue;
+
+			entry.provider = *it;
+			return;
+		};
+	}
+
+	void Pool::printStatistics() {
+		std::cout << "Pool size = " << m_entries.size();
+	}
 }

@@ -26,6 +26,8 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <iostream>
+#include <assert.h>
 
 // 3rd party library includes
 
@@ -33,16 +35,20 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "pooled_resource.h"
 #include "resource_location.h"
 #include "resource_provider.h"
 
 namespace FIFE {
 
+	class IPooledResource;
 
-	class PoolListener {
+	/**  Clients of pool get notifications about pool events through this interface
+	 */
+	class IPoolListener {
 	public:
 		virtual void poolCleared() = 0;
-		virtual ~PoolListener() {};
+		virtual ~IPoolListener() {};
 	};
 
 	/**  Pool is used to optimize memory usage for resources
@@ -50,8 +56,9 @@ namespace FIFE {
 	 * Pool guarantees that there is minimal amount of resources
 	 *   used in cases when it is would possible that multiple 
 	 *   instances of the same data would be loaded into the memory.
+	 *   Pool is the owner for resources taking care of their deletion.
 	 */
-	template <typename TResource> class Pool {
+	class Pool {
 	public:
 		/** Default constructor.
 		 */
@@ -63,15 +70,20 @@ namespace FIFE {
 
 		/** Adds new resource provider. Transfers provider ownership to the pool
 		 */
-		virtual void addResourceProvider(IResourceProvider<TResource>* provider);
+		virtual void addResourceProvider(IResourceProvider* provider);
 
-		/** Adds new resource into the pool using the given location
+		/** Adds new resource into the pool using the given location.
+		 *   Transfers location ownership to the pool
 		 */
-		virtual int addResourceFromLocation(const ResourceLocation& obj);
+		virtual int addResourceFromLocation(ResourceLocation* obj);
 		
 		/** Gets resource from pool with given index
 		 */
-		virtual TResource& get(int index) const;
+		virtual IPooledResource& get(unsigned int index);
+
+		/** Gets amount of resources in pool
+		 */
+		virtual int getSize();
 
 		/** Clears pool from resources. Frees associated memory 
 		 */
@@ -81,11 +93,11 @@ namespace FIFE {
 		 * Pool listeners get indications e.g. when ownerships of pooled
 		 * resources change.
 		 */
-		virtual void addPoolListener(PoolListener* listener);
+		virtual void addPoolListener(IPoolListener* listener);
 
 		/** Removes pool listener
 		 */
-		virtual void removePoolListener(PoolListener* listener);
+		virtual void removePoolListener(IPoolListener* listener);
 
 		/** Prints the cache statistics to the standard output
 		 */
@@ -93,19 +105,28 @@ namespace FIFE {
 
 	protected:
 	private:
-		struct PoolEntry {
+		class PoolEntry {
+		public:
+			PoolEntry(): resource(0), location(0), provider(0) {}
+			~PoolEntry() {
+				delete location;
+				delete resource;
+			}
+
 			// Pointer to the resource that is loaded.
-			TResource* resource;
+			IPooledResource* resource;
 			// Location of the resource.
-			ResourceLocation location;
+			ResourceLocation* location;
 			// Resource loader.
-			IResourceProvider<TResource>* provider;
+			IResourceProvider* provider;
 		};
 
-		std::map<TResource*, int> m_pooledobjs;
-		std::vector<PoolEntry> m_entries;
-		std::vector<PoolListener*> m_listeners;
-		std::vector<IResourceProvider<TResource>*> m_providers;
+		void findAndSetProvider(PoolEntry& entry);
+
+		std::map<IPooledResource*, int> m_pooledobjs;
+		std::vector<PoolEntry*> m_entries;
+		std::vector<IPoolListener*> m_listeners;
+		std::vector<IResourceProvider*> m_providers;
 		int m_curind;
 	};
 

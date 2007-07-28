@@ -32,15 +32,14 @@
 // Second block: files included from the same folder
 
 namespace FIFE {
-	class ResourceLocation;
+	class IPooledResource;
 
 	/**  Interface for resource loaders
 	 */
-	template <typename TResource> class IResourceProvider {
+	class IResourceProvider {
 	public:
 		virtual ~IResourceProvider() {};
-
-		virtual TResource* createResource(const ResourceLocation& location) = 0;
+		virtual IPooledResource* createResource(const ResourceLocation& location) = 0;
 	};
 } //FIFE
 

@@ -41,6 +41,7 @@
 #include "vfs/raw/rawdata.h"
 #include "video/renderable_location.h"
 #include "video/image.h"
+#include "video/animation.h"
 #include "video/screen.h"
 #include "video/renderablepool.h"
 #include "video/renderbackends/sdl/renderbackendsdl.h"
@@ -56,7 +57,14 @@ using namespace FIFE;
 
 static const std::string IMAGE_FILE = "../../content/gfx/tiles/beach/beach_e1.png";
 static const std::string SUBIMAGE_FILE = "../../content/gfx/tiles/rpg_tiles_01.png";
+static const std::string ANIM_FILE = "../data/crate_full_001.xml";
 
+class AnimRoller: public AnimationListener {
+	void onAnimationEnd(Animation* animation) {
+		animation->setDirection(!animation->isDirectionForward());
+		animation->setActive(true);
+	}
+};
 // Environment
 struct environment {
 	boost::shared_ptr<SettingsManager> settings;
@@ -77,100 +85,53 @@ struct environment {
 		}
 };
 
-void test_image(RenderBackend& renderbackend) {
+void test_renderable_pool() {
+	environment env;
+	RenderBackendSDL renderbackend;
+
 	renderbackend.init();
 	Screen* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	RenderablePool pool;
+	pool.addResourceProvider(new SubImageProvider());
+	pool.addResourceProvider(new ImageProvider());
+	pool.addResourceProvider(new AnimationProvider());
+	pool.addResourceFromLocation(new RenderableLocation(IMAGE_FILE));
+	int animind = pool.addResourceFromLocation(new RenderableLocation(ANIM_FILE));
+	Animation& anim = dynamic_cast<Animation&>(pool.get(animind));
+	boost::scoped_ptr<AnimRoller> roller(new AnimRoller());
+	anim.setAnimationListener(&*roller);
+	anim.setActive(true);
 
-	ImageProvider provider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(RenderableLocation(IMAGE_FILE))));
-	
-	int h = img->getHeight();
-	int w = img->getWidth();
-	for (int i = 0; i < 400; i++) {
-		renderbackend.startFrame();
-		img->render(Rect(i, i, w, h), screen);
-		renderbackend.endFrame();
-	}	
-	for (int j = 0; j < 5; j++) {
-		for (int i = -20; i < 20; i++) {
-			renderbackend.startFrame();
-			img->setXShift(i);
-			img->setYShift(i);
-			img->render(Rect(200, 200, w, h), screen);
-			renderbackend.endFrame();
-		}	
-	}
-}
-
-void test_subimage(RenderBackend& renderbackend) {
-	renderbackend.init();
-	Screen* screen = renderbackend.createMainScreen(800, 600, 0, false);
-
+	RenderableLocation* location = new RenderableLocation(SUBIMAGE_FILE);
 	ImageProvider imgprovider;
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.createResource(RenderableLocation(SUBIMAGE_FILE))));
-
-	RenderableLocation location(SUBIMAGE_FILE);
-	location.setParentSource(&*img);
+	location->setParentSource(&*img);
 	int W = img->getWidth();
 	int w = W / 12;
 	int H = img->getHeight();
 	int h = H / 12;
-	location.setWidth(w);
-	location.setHeight(h);
-	std::vector<Image*> subimages;
+	location->setWidth(w);
+	location->setHeight(h);
+	std::cout << pool.addResourceFromLocation(location) << std::endl;
 
-	SubImageProvider subprovider;
-	for (int x = 0; x < (W - w); x+=w) {
-		for (int y = 0; y < (H - h); y+=h) {
-			location.setXShift(x);
-			location.setYShift(y);
-			Image* sub = dynamic_cast<Image*>(subprovider.createResource(location));
-			subimages.push_back(sub);
+	for (int k = 0; k < 3; k++) {
+		for (int j = 0, s = pool.getSize(); j < s; j++) {
+			std::cout << j << std::endl;
+			Renderable& r = dynamic_cast<Renderable&>(pool.get(j));
+			int h = r.getHeight();
+			int w = r.getWidth();
+			for (int i = 200; i > 0; i--) {
+				renderbackend.startFrame();
+				r.render(Rect(i, i, w, h), screen);
+				renderbackend.endFrame();
+				TimeManager::instance()->update();
+			}
 		}
 	}
-	
-	for (unsigned int i = 0; i < 400; i++) {
-		renderbackend.startFrame();
-		subimages[i / 40]->render(Rect(200, 200, w, h), screen);
-		renderbackend.endFrame();
-	}
-	std::vector<Image*>::iterator i = subimages.begin();
-	while (i != subimages.end()) {
-		delete *i;
-		i++;
-	}
-
 }
 
-void test_sdl_image() {
-	environment env;
-	RenderBackendSDL renderbackend;
-	test_image(renderbackend);
-}
-
-void test_ogl_image() {
-	environment env;
-	RenderBackendOpenGL renderbackend;
-	test_image(renderbackend);
-}
-
-void test_sdl_subimage() {
-	environment env;
-	RenderBackendSDL renderbackend;
-	test_subimage(renderbackend);
-}
-
-void test_ogl_subimage() {
-	environment env;
-	RenderBackendOpenGL renderbackend;
-	test_subimage(renderbackend);
-}
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Image Tests");
-	test->add( BOOST_TEST_CASE( &test_sdl_subimage ),0 );
-	test->add( BOOST_TEST_CASE( &test_ogl_subimage ),0 );
-	test->add( BOOST_TEST_CASE( &test_sdl_image ),0 );
-	test->add( BOOST_TEST_CASE( &test_ogl_image ),0 );
-
+	test->add( BOOST_TEST_CASE( &test_renderable_pool ),0 );
 	return test;
 }
