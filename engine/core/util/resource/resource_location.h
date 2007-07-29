@@ -55,6 +55,38 @@ namespace FIFE {
 		 */
 		std::string getFilename() const { return m_filename; };
 
+		/** Compares two ResourceLocations for equality.
+		 */
+		virtual bool operator ==(const ResourceLocation& loc) const {
+			if (m_filename.length() != loc.m_filename.length()) {
+				return false;
+			}
+			if (!std::equal(m_filename.rbegin(), m_filename.rend(), loc.m_filename.rbegin())) {
+				return false;
+			}
+			return true;
+		}
+
+		/** Compares two ResourceLocations
+		 *  This is needed as the locations should be stored in a \c std::map
+		 */
+		virtual bool operator <(const ResourceLocation& loc) const {
+			if (m_filename < loc.m_filename) {
+				return true;
+			}
+			if (m_filename != loc.m_filename) {
+				return false;
+			}
+			return true;
+		}
+
+		/** Creates copy of this location
+		 *  All derived classes must implement this and return their corresponding instance
+		 */
+		virtual ResourceLocation* clone() const {
+			return new ResourceLocation(m_filename);
+		}
+
 	private:
 		std::string m_filename;
 	};

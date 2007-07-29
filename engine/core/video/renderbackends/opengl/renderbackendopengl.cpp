@@ -121,7 +121,7 @@ namespace FIFE {
 
 		glEnable(GL_SCISSOR_TEST);
 
-		m_screen = new GLScreen();
+		m_screen = new GLScreen(screen);
 		return m_screen;
 	}
 

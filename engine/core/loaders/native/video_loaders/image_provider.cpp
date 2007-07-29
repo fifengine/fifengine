@@ -43,6 +43,8 @@
 
 namespace FIFE { 
 	IPooledResource* ImageProvider::createResource(const ResourceLocation& location) {
+		const RenderableLocation* loc = dynamic_cast<const RenderableLocation*>(&location);
+
 		const std::string& filename = location.getFilename();
 		RawDataPtr data = VFS::instance()->open(filename);
 		size_t datalen = data->getDataLength();
@@ -56,9 +58,10 @@ namespace FIFE {
 		}
 
 		Image* res = RenderBackend::instance()->createStaticImageFromSDL(surface);
-		const RenderableLocation& loc = dynamic_cast<const RenderableLocation&>(location);
-		res->setXShift(loc.getXShift());
-		res->setYShift(loc.getYShift());
+		if (loc) {
+			res->setXShift(loc->getXShift());
+			res->setYShift(loc->getYShift());
+		}
 		return res;
 	};
 }

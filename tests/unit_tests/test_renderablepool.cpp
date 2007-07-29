@@ -98,11 +98,14 @@ void test_renderable_pool() {
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 
-	pool.addResourceFromLocation(new RenderableLocation(IMAGE_FILE));
+	pool.addResourceFromLocation(RenderableLocation(IMAGE_FILE));
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
 
-	int animind = pool.addResourceFromLocation(new RenderableLocation(ANIM_FILE));
+	int animind = pool.addResourceFromLocation(RenderableLocation(ANIM_FILE));
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
+	BOOST_CHECK(animind == pool.addResourceFromLocation(RenderableLocation(ANIM_FILE)));
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
 
@@ -113,18 +116,25 @@ void test_renderable_pool() {
 	anim.setAnimationListener(&*roller);
 	anim.setActive(true);
 
-	RenderableLocation* location = new RenderableLocation(SUBIMAGE_FILE);
+	RenderableLocation location(SUBIMAGE_FILE);
 	ImageProvider imgprovider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.createResource(RenderableLocation(SUBIMAGE_FILE))));
-	location->setParentSource(&*img);
-	int W = img->getWidth();
-	int w = W / 12;
-	int H = img->getHeight();
-	int h = H / 12;
-	location->setWidth(w);
-	location->setHeight(h);
-	std::cout << pool.addResourceFromLocation(location) << std::endl;
+	int fullImgInd = pool.addResourceFromLocation(RenderableLocation(SUBIMAGE_FILE));
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 1);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
+
+	Image& img = dynamic_cast<Image&>(pool.get(fullImgInd));
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 2);
+	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
+
+	location.setParentSource(&img);
+	int W = img.getWidth();
+	int w = W / 12;
+	int H = img.getHeight();
+	int h = H / 12;
+	location.setWidth(w);
+	location.setHeight(h);
+	pool.addResourceFromLocation(location);
+	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 2);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
 
 	for (int k = 0; k < 3; k++) {
@@ -133,14 +143,14 @@ void test_renderable_pool() {
 			Renderable& r = dynamic_cast<Renderable&>(pool.get(j));
 			int h = r.getHeight();
 			int w = r.getWidth();
-			for (int i = 200; i > 0; i--) {
+			for (int i = 100; i > 0; i--) {
 				renderbackend.startFrame();
 				r.render(Rect(i, i, w, h), screen);
 				renderbackend.endFrame();
 				TimeManager::instance()->update();
 			}
 		}
-		BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 3);
+		BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 4);
 		BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 	}
 	pool.clear();

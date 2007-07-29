@@ -69,7 +69,7 @@ namespace FIFE {
 	};
 
 
-	GLScreen::GLScreen() {
+	GLScreen::GLScreen(SDL_Surface* surface): m_screen(surface) {
 	}
 
 	GLScreen::~GLScreen() {
@@ -81,6 +81,10 @@ namespace FIFE {
 
 	unsigned int GLScreen::getHeight() const {
 		return SDL_GetVideoSurface()->h;
+	}
+
+	SDL_Surface* GLScreen::getSurface() const {
+		return m_screen;
 	}
 
 }

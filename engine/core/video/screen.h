@@ -61,6 +61,12 @@ namespace FIFE {
 			 * @return Height of the screen.
 			 */
 			virtual unsigned int getHeight() const = 0;
+
+			/** Returns a pointer to the contained SDL surface.
+			 *
+			 * @return A pointer to the SDL surface
+			 */
+			SDL_Surface* getSurface() const;
 	};
 
 }

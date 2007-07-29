@@ -42,9 +42,10 @@
 namespace FIFE { 
 	
 	IPooledResource* SubImageProvider::createResource(const ResourceLocation& location) {
-		std::cout << "Filename: <" << location.getFilename() << ">\n";
 		const RenderableLocation* loc = dynamic_cast<const RenderableLocation*>(&location);
-		std::cout << "Filename2: <" << loc->getFilename() << ">\n";
+		if (!loc) {
+			throw InvalidConversion("Wrong location type given for subimage provider");
+		}
 		Renderable* r = loc->getParentSource();
 		if (!r) {
 			throw NotFound("No parent source assigned, cannot provide subimage");

@@ -35,7 +35,6 @@
 
 namespace FIFE {
 	Pool::Pool(): 
-		m_pooledobjs(),
 		m_entries(),
 		m_listeners(),
 		m_providers(),
@@ -57,7 +56,6 @@ namespace FIFE {
 		for (listener = m_listeners.begin(); listener != m_listeners.end(); listener++) {
 			(*listener)->poolCleared();
 		}
-		m_pooledobjs.clear();
 		std::vector<PoolEntry*>::iterator entry;
 		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
 			delete (*entry);
@@ -69,11 +67,26 @@ namespace FIFE {
 		m_providers.push_back(provider);
 	}
 
-	int Pool::addResourceFromLocation(ResourceLocation* obj) {
+	int Pool::addResourceFromLocation(const ResourceLocation& loc) {
+		std::vector<PoolEntry*>::iterator it = m_entries.begin();
+		int index = 0;
+		for (; it != m_entries.end(); it++) {
+			ResourceLocation* loc2 = (*it)->location;
+			if (*loc2 == loc) {
+				return index;
+			}
+			index++;
+		}
+		
 		PoolEntry* entry = new PoolEntry();
-		entry->location = obj;
+		entry->location = loc.clone();
 		m_entries.push_back(entry);
-		return m_entries.size() - 1;
+		index = m_entries.size();
+		return index - 1;
+	}
+
+	int Pool::addResourceFromFile(const std::string& filename) {
+		return addResourceFromLocation(ResourceLocation(filename));
 	}
 
 	IPooledResource& Pool::get(unsigned int index) {
@@ -87,15 +100,18 @@ namespace FIFE {
 		} else {
 			if (!entry->provider) {
 				findAndSetProvider(*entry);
-			}
-			if (entry->provider) {
-				entry->resource = entry->provider->createResource(*entry->location);
-				res = entry->resource;
 			} else {
-				throw NotFound( 
-					std::string("No suitable provider was found for resource ") +
-					entry->location->getFilename());
+				entry->resource = entry->provider->createResource(*entry->location);
 			}
+			if (!entry->provider) {
+				throw NotFound( std::string("No suitable provider was found for resource ") +
+				                entry->location->getFilename());
+			}
+			if (!entry->resource) {
+				throw NotFound( std::string("No provider was able to load the requested resource ") +
+				                entry->location->getFilename());
+			}
+			res = entry->resource;
 		}
 		return *res;
 	}

@@ -45,7 +45,7 @@ namespace FIFE {
 		public:
 			/** Creates a new GL screen.
 			 */
-			GLScreen();
+			GLScreen(SDL_Surface* surface);
 			
 			/** Destroys this GL screen.
 			 */
@@ -62,6 +62,17 @@ namespace FIFE {
 			 * @return Height of the screen.
 			 */
 			virtual unsigned int getHeight() const;
+
+			/** Returns a pointer to the contained SDL surface.
+			 *
+			 * @return A pointer to the SDL surface as set in the constructor.
+			 */
+			virtual SDL_Surface* getSurface() const;
+
+
+		private:
+			// Screen.
+			SDL_Surface* m_screen;
 	};
 
 }

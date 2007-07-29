@@ -72,7 +72,7 @@ namespace FIFE {
 		~Animation();
 
 		/** Adds new frame into animation
-		 * @param image Pointer to Image. Transfer the ownership
+		 * @param image Pointer to Image. Transfers the ownership
 		 */
 		void addFrame(Image* image);
 
@@ -98,8 +98,6 @@ namespace FIFE {
 		 * @param num Action frame.
 		 */
 		void setActionFrame(unsigned int num);
-
-		void render(const Rect&, Screen*, unsigned char alpha = 255);
 
 		/** Gets the width of the Animation.
 		 * @return The width of the Animation.
@@ -160,6 +158,8 @@ namespace FIFE {
 		 * @return pointer to used surface
 		 */
 		virtual SDL_Surface* getSurface();
+
+		void render(const Rect&, Screen*, unsigned char alpha = 255);
 
 	private:
 		/** Periodically updates the animation.

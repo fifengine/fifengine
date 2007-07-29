@@ -75,10 +75,20 @@ namespace FIFE {
 		virtual void addResourceProvider(IResourceProvider* provider);
 
 		/** Adds new resource into the pool using the given location.
-		 *   Transfers location ownership to the pool
+		 * @return The index of the resource in the pool.
 		 */
-		virtual int addResourceFromLocation(ResourceLocation* obj);
+		virtual int addResourceFromLocation(const ResourceLocation& loc);
 		
+		/** This is a convenience version of addResourceFromLocation().
+		 * It converts the filename into a ResourceLocation and then
+		 * calls addResourceFromLocation.
+		 *
+		 * @param filename The file to be loaded.
+		 * @return The index of the resource in the pool.
+		 */
+		virtual int addResourceFromFile(const std::string& filename);
+
+
 		/** Gets resource from pool with given index
 		 */
 		virtual IPooledResource& get(unsigned int index);
@@ -124,8 +134,6 @@ namespace FIFE {
 		};
 
 		void findAndSetProvider(PoolEntry& entry);
-
-		std::map<IPooledResource*, int> m_pooledobjs;
 		std::vector<PoolEntry*> m_entries;
 		std::vector<IPoolListener*> m_listeners;
 		std::vector<IResourceProvider*> m_providers;

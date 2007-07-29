@@ -93,13 +93,16 @@ namespace FIFE {
 		 */
 		virtual Renderable* getParentSource() const { return m_parent_renderable; }
 
+		virtual bool operator ==(const ResourceLocation& loc) const;
+		virtual bool operator <(const ResourceLocation& loc) const;
+		virtual ResourceLocation* clone() const;
+
 	private:
 		unsigned int m_xshift;
 		unsigned int m_yshift;
 		unsigned int m_width;
 		unsigned int m_height;
 		Renderable* m_parent_renderable;
-
 	};
 
 }; //FIFE
