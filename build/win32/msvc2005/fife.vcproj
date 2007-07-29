@@ -248,8 +248,7 @@
 					<File RelativePath="..\..\..\engine\core\model\metamodel\geometry_type.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\metamodel\prototype.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\metamodel\prototype.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\object.h"></File>
 				</Filter>
 				<File RelativePath="..\..\..\engine\core\model\model.h"></File>
 				<Filter Name="structures">
@@ -263,13 +262,13 @@
 						<File RelativePath="..\..\..\engine\core\model\structures\geometries\hexgeometry.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\model\structures\geometries\hexgeometry.h"></File>
 					</Filter>
+					<File RelativePath="..\..\..\engine\core\model\structures\instance.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\location.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\location.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\map.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\map.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\object.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\selection.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\selection.h"></File>
 				</Filter>

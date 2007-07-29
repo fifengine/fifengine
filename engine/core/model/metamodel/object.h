@@ -19,8 +19,11 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_PROTOTYPE_H
+#define FIFE_PROTOTYPE_H
+
 // Standard C++ library includes
-#include <cassert>
+#include <string>
 
 // 3rd party library includes
 
@@ -28,22 +31,40 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/purge.h"
-//#include "model/structures/objectinfo.h"
+#include "util/attributedclass.h"
 
-#include "prototype.h"
+namespace FIFE { namespace model { 
 
-namespace FIFE { namespace model {
+	/** Object class
+	 *
+	 * Objects describe the properties of objects. Objects may
+	 * contain information such as graphics, z-values, and and
+	 * other properties.
+	 *
+	 * Objects may inherit values from other objects. Objects 
+	 * may override the value of the Objects they use, but they
+	 * may not CHANGE an inherited object's values.
+	 *
+	 */
+	class Object : public AttributedClass {
+		public:
 
-	Object* Prototype::createInstance() {
-//		return new Object();
-		return 0;
-	}
+			Object()
+				: AttributedClass("Object")
+			{ }
 
-	const std::string& Prototype::getName() {
+			const std::string& getName();
+
+		private:
+
+			std::string m_name;
+	};
+
+	inline
+	const std::string& Object::getName() {
 		return m_name;
 	}
 
-}}
+}} //FIFE::model
+#endif
 

@@ -1,6 +1,6 @@
 %module objectinfo
 %{
-#include "model/structures/object.h"
+#include "model/structures/instance.h"
 %}
 
 %include "util/point.h"

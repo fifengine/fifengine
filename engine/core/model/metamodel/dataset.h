@@ -36,8 +36,6 @@
 namespace FIFE { namespace model {
 
 	class Object;
-
-	class Prototype;
 	class GeometryType;
 
 	class Dataset {
@@ -53,15 +51,15 @@ namespace FIFE { namespace model {
 			 */
 			void addDataset(Dataset* dataset);
 
-			/** Get a prototype from this dataset. Prototypes are looked for in
-			 * this dataset first, and if no match is found, the search is expanded
-			 * to any datasets nested within this dataset. Null is returned if no
-			 * match is found.
+			/** Get an object from this dataset. Objects are looked for in
+			 * this dataset first, and if no match is found, the search is
+			 * expanded to any datasets nested within this dataset. Null is
+			 * returned if no match is found.
 			 *
-			 * @note Prototype objects are owned by the dataset, so don't delete
+			 * @note Objects are owned by the dataset, so don't delete
 			 * returned pointers!
 			 */
-			Prototype* getPrototype(const std::string& name);
+			Object* getObject(const std::string& name);
 
 			/** Get a geometry type from this dataset. GeometryTypes are looked for
 			 * in this dataset first, and if no match is found, the search is expanded
@@ -79,7 +77,7 @@ namespace FIFE { namespace model {
 			std::vector<GeometryType*> m_geometry_types;
 
 			// prototypes contained in this dataset
-			std::vector<Prototype*> m_prototypes;
+			std::vector<Object*> m_prototypes;
 
 			// nested datasets
 			std::vector<Dataset*> m_datasets;

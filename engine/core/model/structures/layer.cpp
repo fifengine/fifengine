@@ -36,7 +36,7 @@
 
 #include "layer.h"
 #include "selection.h"
-#include "object.h"
+#include "instance.h"
 #include "elevation.h"
 #include "map.h"
 

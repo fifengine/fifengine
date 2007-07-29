@@ -31,7 +31,7 @@
 #include "model/metamodel/geometry_type.h"
 
 #include "dataset.h"
-#include "prototype.h"
+#include "object.h"
 
 namespace FIFE { namespace model {
 
@@ -48,18 +48,18 @@ namespace FIFE { namespace model {
 		m_datasets.push_back(dataset);
 	}
 
-	Prototype* Dataset::getPrototype(const std::string& name) {
+	Object* Dataset::getObject(const std::string& name) {
 
-		std::vector<Prototype*>::iterator it = m_prototypes.begin();
+		std::vector<Object*>::iterator it = m_prototypes.begin();
 		for(; it != m_prototypes.end(); ++it) {
 			if((*it)->getName() == name)
 				return *it;
 		}
 
-		Prototype* p = 0;
+		Object* p = 0;
 		std::vector<Dataset*>::iterator jt = m_datasets.begin();
 		for(; jt != m_datasets.end(); ++jt) {
-			p = (*jt)->getPrototype(name);
+			p = (*jt)->getObject(name);
 			if(p) {
 				return p;
 			}

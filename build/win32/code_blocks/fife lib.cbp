@@ -427,11 +427,7 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\prototype.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\prototype.h">
+		<Unit filename="..\..\..\engine\core\model\metamodel\object.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
@@ -483,6 +479,12 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\instance.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\model\structures\layer.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -508,12 +510,6 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\model\structures\map.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\model\structures\object.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
