@@ -68,14 +68,6 @@ namespace FIFE { namespace model {
 			 */
 			Map* getMap();
 
-			/** Set this elevation's name
-			 */
-			void setName(const std::string& name);
-
-			/** Get this elevation's name
-			 */
-			const std::string& getName() const;
-
 			/** Add a Layer at the top
 			 * The elevation now owns the Layer.
 			 * Increases num Layers by one.

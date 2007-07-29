@@ -32,22 +32,21 @@
 namespace FIFE {
 
 	AttributedClass::AttributedClass(const std::string& className) 
-		: m_className(className), m_mutex(SDL_CreateMutex()) { 
+		: m_className(className) { 
 	}
 
 	AttributedClass::AttributedClass(const AttributedClass& ac)
-		: m_className(ac.m_className), m_mutex(SDL_CreateMutex()) {
+		: m_className(ac.m_className) {
 		updateAttributes(&ac,true);
 	}
 
 	AttributedClass::~AttributedClass() {
-		SDL_DestroyMutex(m_mutex);
+
 	};
 
 	void AttributedClass::updateAttributes(const AttributedClass* attrObject, bool override) {
 		if( attrObject == 0 )
 			return;
-		SDL_mutexP(m_mutex);
 		type_attributes::const_iterator i(attrObject->m_attributes.begin());
 		type_attributes::const_iterator end(attrObject->m_attributes.end());
 		for(; i != end; ++i) {
@@ -55,7 +54,6 @@ namespace FIFE {
 				continue;
 			m_attributes[ i->first ] = i->second;
 		}
-		SDL_mutexV(m_mutex);
 	}
 }; //FIFE
 

@@ -66,14 +66,6 @@ namespace FIFE { namespace model {
 			 */
 			~Map();
 
-			/** Set the map's 'name'
-			 */
-			void setMapName(const std::string& name);
-
-			/** Get the map's 'name'
-			 */
-			const std::string& getMapName() const;
-
 			/** Use a Dataset
 			 */
 			void useDataset(Dataset* dataset);

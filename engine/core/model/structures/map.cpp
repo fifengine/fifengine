@@ -48,14 +48,6 @@ namespace FIFE { namespace model {
 		clearElevations();
 	}
 
-	const std::string& Map::getMapName() const {
-		return m_mapname;
-	}
-
-	void Map::setMapName(const std::string& name) {
-		m_mapname = name;
-	}
-
 	void Map::useDataset(Dataset* dataset) {
 		// no duplicates
 		std::vector<Dataset*>::iterator it = m_datasets.begin();
@@ -84,7 +76,7 @@ namespace FIFE { namespace model {
 	Elevation* Map::getElevation(const std::string& name) const {
 		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
 		for(; it != m_elevations.end(); ++it) {
-			if((*it)->getName() == name)
+			if((*it)->get<std::string>("Name") == name)
 				return *it;
 		}
 

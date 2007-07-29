@@ -28,7 +28,6 @@
 
 // 3rd party library includes
 #include <boost/variant.hpp>
-#include <SDL_mutex.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,7 +40,8 @@
 
 namespace FIFE {
 
-	/** A Class with dynamically typed attributes
+	/** A Class with dynamically typed attributes. These coorespond to
+	 * metadata attributes in the native xml map format.
 	 */
 	class AttributedClass {
 		public:
@@ -71,9 +71,7 @@ namespace FIFE {
 			 */
 			template<typename T>
 			void set(const type_attr_id& attr, const T& val) {
-				SDL_mutexP(m_mutex);
 				m_attributes[ attr ] = type_attr(val);
-				SDL_mutexV(m_mutex);
 			}
 
 			/** Get the value of an attribute
@@ -88,7 +86,6 @@ namespace FIFE {
 			 */
 			template<typename T>
 			T& get(const type_attr_id& attr, const T& def = T()) {
-				SDL_mutexP(m_mutex);
 				if( m_attributes.find(attr) == m_attributes.end() ) {
 // Uncomment this to see all default value creation of attributes.
 //
@@ -107,16 +104,13 @@ namespace FIFE {
 					m_attributes[ attr ] = type_attr(def);
 					val =	 boost::get<T>(&(m_attributes[ attr ]));
 				}
-				SDL_mutexV(m_mutex);
 				return *val;
 			}
 
 			/** Remove an attribute
 			 */
 			void del(const type_attr_id& attr) {
-				SDL_mutexP(m_mutex);
 				m_attributes.erase( attr );
-				SDL_mutexV(m_mutex);
 			}
 
 
@@ -135,15 +129,12 @@ namespace FIFE {
 			 */
 			template<typename T>
 			const T& get(const type_attr_id& id) const {
-				SDL_mutexP(m_mutex);
 				static const type_attr const_attr;
 				if( m_attributes.find(id) == m_attributes.end() ) {
-					SDL_mutexV(m_mutex);
 					return boost::get<T>(const_attr);
 				}
 
 				T* val = boost::get<T>(&(m_attributes[ id ]));
-				SDL_mutexV(m_mutex);
 				if( val == 0 ) {
 					Debug("attributed_class")
 						<< "type mismatch in " << className() 
@@ -185,7 +176,6 @@ namespace FIFE {
 			typedef std::map<type_attr_id,type_attr> type_attributes;
 			type_attributes m_attributes;
 			std::string m_className;
-			SDL_mutex* m_mutex;
 	};
 
 	/** A anonymous table of values.
@@ -196,9 +186,7 @@ namespace FIFE {
 
 	inline
 	bool AttributedClass::hasAttribute(const type_attr_id& attr) const {
-		SDL_mutexP(m_mutex);
 		bool found = m_attributes.find(attr) != m_attributes.end();
-		SDL_mutexV(m_mutex);
 		return found;
 	}
 

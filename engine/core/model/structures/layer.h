@@ -89,9 +89,6 @@ namespace FIFE { namespace model {
 			 */
 			~Layer();
 
-			const std::string& getName();
-			void setName(const std::string&);
-
 			/** Get the elevation this layer is contained in
 			 */
 			Elevation* getElevation();
@@ -205,16 +202,6 @@ namespace FIFE { namespace model {
 	inline
 	bool Layer::isValidPosition(int32_t x, int32_t y) const {
 		return x >= 0 && x < m_size.x && y >= 0 && y < m_size.y;
-	}
-
-	inline
-	const std::string& Layer::getName() {
-		return m_name;
-	}
-
-	inline
-	void Layer::setName(const std::string& name) {
-		m_name = name;
 	}
 
 } } // FIFE::model

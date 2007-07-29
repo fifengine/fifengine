@@ -52,13 +52,6 @@ namespace FIFE { namespace model {
 		return m_map;	
 	}
 
-	void Elevation::setName(const std::string& name) {
-		m_name = name;
-	}
-	const std::string& Elevation::getName() const {
-		return m_name;
-	}
-
 	size_t Elevation::getNumLayers() const {
 		return m_layers.size();
 	}
@@ -102,7 +95,7 @@ namespace FIFE { namespace model {
 	Layer* Elevation::getLayer(const std::string& name) const {
 		std::vector<Layer*>::const_iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
-			if((*it)->getName() == name)
+			if((*it)->get<std::string>("Name") == name)
 				return *it;
 		}
 
