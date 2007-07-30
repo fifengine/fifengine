@@ -221,14 +221,14 @@
 					<File RelativePath="..\..\..\engine\core\gui\base\gui_image.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\base\gui_imageloader.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\base\gui_imageloader.h"></File>
-				</Filter>
-				<Filter Name="opengl">
-					<File RelativePath="..\..\..\engine\core\gui\opengl\opengl_gui_graphics.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\opengl\opengl_gui_graphics.h"></File>
-				</Filter>
-				<Filter Name="sdl">
-					<File RelativePath="..\..\..\engine\core\gui\sdl\sdl_gui_graphics.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\sdl\sdl_gui_graphics.h"></File>
+					<Filter Name="opengl">
+						<File RelativePath="..\..\..\engine\core\gui\base\opengl\opengl_gui_graphics.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\gui\base\opengl\opengl_gui_graphics.h"></File>
+					</Filter>
+					<Filter Name="sdl">
+						<File RelativePath="..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.h"></File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter Name="loaders">

@@ -341,21 +341,21 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\opengl\opengl_gui_graphics.cpp">
+		<Unit filename="..\..\..\engine\core\gui\base\opengl\opengl_gui_graphics.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\opengl\opengl_gui_graphics.h">
+		<Unit filename="..\..\..\engine\core\gui\base\opengl\opengl_gui_graphics.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\sdl\sdl_gui_graphics.cpp">
+		<Unit filename="..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\sdl\sdl_gui_graphics.h">
+		<Unit filename="..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
