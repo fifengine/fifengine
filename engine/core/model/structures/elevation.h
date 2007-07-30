@@ -65,25 +65,21 @@ namespace FIFE { namespace model {
 			 */
 			void addLayer(Layer* layer);
 
-			/** Get a layer by its index
+			/** Remove a layer from the elevation
 			 */
-			Layer* getLayer(size_t) const;
+			void removeLayer(Layer*);
 
-			/** Get a layer by its name
+			/** Get a layer by a value. If multiple Layers match this
+			 * match, then an arbitrary matching layer is returned.
+			 * @param the field to search on
+			 * @param the value to be searched for in the field
 			 */
-			Layer* getLayer(const std::string& name) const;
+			template<typename T>
+			Layer* getLayer(const std::string& field, const T& value) const;
 
 			/** Get the overall number of layers
 			 */
 			size_t getNumLayers() const;
-
-			/** Insert a layer to the elevation
-			 */
-			void insertLayer(size_t index, Layer* layer);
-
-			/** Remove a layer from the elevation
-			 */
-			void removeLayer(size_t index);
 
 			/** Remove all layers from the elevation
 			 */
@@ -98,7 +94,7 @@ namespace FIFE { namespace model {
 
 			/** Set the 'reference' Layer
 			 */
-			void setReferenceLayer(size_t layer);
+			void setReferenceLayer(Layer* layer);
 
 			/** Get the 'reference' Layer
 			 */
@@ -122,7 +118,7 @@ namespace FIFE { namespace model {
 
 			int m_width;
 			int m_height;
-			size_t m_reference_layer;
+			Layer* m_reference_layer;
 
 			// Not copyable.
 			Elevation(const Elevation&);

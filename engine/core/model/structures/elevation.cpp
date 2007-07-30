@@ -68,58 +68,38 @@ namespace FIFE { namespace model {
 		m_layers.push_back(layer);
 	}
 
-	void Elevation::insertLayer(size_t index, Layer* layer) {
-		if(!layer) {
-			throw NotSupported("can't add empty layer");
-		}
-		if(layer->getElevation()) {
-			throw Duplicate("layer already contained in an elevation");
-		}
-
-		if( index >= getNumLayers() ) {
-			throw IndexOverflow(std::string("invalid layer number: ") +
-			                    boost::lexical_cast<std::string>(index));
-		}
-		m_layers.insert(m_layers.begin()+index,layer);
-		layer->m_elevation = this;
-	}
-
-	Layer* Elevation::getLayer(size_t index) const {
-		if( index >= getNumLayers() ) {
-			throw IndexOverflow(std::string("invalid layer number: ") +
-			                    boost::lexical_cast<std::string>(index));
-		}
-		return m_layers[index];
-	}
-
-	Layer* Elevation::getLayer(const std::string& name) const {
+	template<typename T>
+	Layer* Elevation::getLayer(const std::string& field, const T& value) const {
 		std::vector<Layer*>::const_iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
-			if((*it)->get<std::string>("Name") == name)
+			if((*it)->get<T>(field) == value)
 				return *it;
 		}
 
 		return 0;
 	}
 
-	void Elevation::removeLayer(size_t index) {
-		if( index >= getNumLayers() ) {
-			throw IndexOverflow(std::string("invalid layer number: ") +
-			                    boost::lexical_cast<std::string>(index));
+	void Elevation::removeLayer(Layer* layer) {
+		std::vector<Layer*>::iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			if((*it) == layer) {
+				delete *it;
+				m_layers.erase(it);
+				return ;
+			}
 		}
-		m_layers.erase(m_layers.begin()+index);
 	}
 
 	void Elevation::clearLayers() {
 		purge(m_layers);
 	}
 
-	void Elevation::setReferenceLayer(size_t layer) {
+	void Elevation::setReferenceLayer(Layer* layer) {
 		m_reference_layer = layer;
 	}
 
 	Layer* Elevation::getReferenceLayer() {
-		return getLayer(m_reference_layer);
+		return m_reference_layer;
 	}
 
 	Point Elevation::centerOfMass() {
