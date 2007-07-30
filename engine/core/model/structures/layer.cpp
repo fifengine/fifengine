@@ -91,15 +91,18 @@ namespace FIFE { namespace model {
 		return !m_objects.empty();
 	}
 
-	void Layer::addInstance(Object* object, const Point& p) {
+	Instance* Layer::addInstance(Object* object, const Point& p) {
 		if(!isValidPosition(p))
-			return;
+			return 0;
 
 		Location l;
 		l.elevation = getElevation();
 		l.layer = this;
 		l.position = p;
-		m_objects.push_back(new Instance(object, l));
+
+		Instance* instance = new Instance(object, l);
+		m_objects.push_back(instance);
+		return instance;
 	}
 
 	void Layer::removeInstance(Instance* instance) {

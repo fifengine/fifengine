@@ -40,6 +40,8 @@ namespace FIFE { namespace model {
 	class Layer;
 	class Map;
 
+	class GeometryType;
+
 	/** Contains a game level.
 	 * 
 	 * \invariant getLayer(index)->getLayerNumber() == index
@@ -59,18 +61,18 @@ namespace FIFE { namespace model {
 			 */
 			Map* getMap();
 
-			/** Add a Layer at the top
-			 * The elevation now owns the Layer.
-			 * Increases num Layers by one.
+			/** Add a Layer to this Elevation. Elevation owns
+			 * the returned pointer to the new Layer, so don't
+			 * delete it!
 			 */
-			void addLayer(Layer* layer);
+			Layer* addLayer(const Point& size, GeometryType* geometry);
 
 			/** Remove a layer from the elevation
 			 */
 			void removeLayer(Layer*);
 
 			/** Get a layer by a value. If multiple Layers match this
-			 * match, then an arbitrary matching layer is returned.
+			 * value, then an arbitrary matching layer is returned.
 			 * @param the field to search on
 			 * @param the value to be searched for in the field
 			 */

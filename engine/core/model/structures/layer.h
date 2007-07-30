@@ -116,7 +116,7 @@ namespace FIFE { namespace model {
 
 			/** Add an instance of an object at a specific position
 			 */
-			void addInstance(Object* object, const Point& p);
+			Instance* addInstance(Object* object, const Point& p);
 
 			/** Remove an instance from the layer
 			 */

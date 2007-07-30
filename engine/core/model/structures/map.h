@@ -70,31 +70,28 @@ namespace FIFE { namespace model {
 			 */
 			void useDataset(Dataset* dataset);
 
+			/** Add an elevation to this map, and get a pointer
+			 * to it; the returned pointer is owned by the Map
+			 * so don't delete it!
+			 */
+			Elevation* addElevation();
+			
+			/** Remove an elevation from this map
+			 */
+			void removeElevation(Elevation*);
+
+      /** Get an elevation by a value. If multiple Elevations
+			 * match this value, then an arbitrary matching elevations 
+			 * is returned.
+			 * @param the field to search on
+			 * @param the value to be searched for in the field
+			 */
+			template<typename T>
+			Elevation* getElevation(const std::string& field, const T& value) const;
+
 			/** Return the number of elevations on this map
 			 */
 			size_t getNumElevations() const;
-
-			/** Return the elevation with a given index.
-			 */
-			Elevation* getElevation(size_t index) const;
-
-			/** Return the elevation with the given name.
-			 */
-			Elevation* getElevation(const std::string& name) const;
-
-			/** Add an elevation to this map. This map will
-			 * assume ownership and deletion responsibilities
-			 * for this elevation.
-			 */
-			void addElevation(Elevation*);
-
-			/** Add an elevation to this map
-			 */
-			void insertElevation(size_t index, Elevation*);
-
-			/** Remove an elevation from this map
-			 */
-			void removeElevation(size_t index);
 
 			/** Remove all elevations from a map
 			 */

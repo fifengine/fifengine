@@ -60,64 +60,37 @@ namespace FIFE { namespace model {
 		m_datasets.push_back(dataset);
 	}
 
-	size_t Map::getNumElevations() const {
-		return m_elevations.size();
+	Elevation* Map::addElevation() {
+		Elevation* elevation = new Elevation();
+		elevation->m_map = this;
+		m_elevations.push_back(elevation);
+		return elevation;
 	}
-
-	Elevation* Map::getElevation(size_t index) const {
-		if (index >= getNumElevations()) {
-			throw IndexOverflow(std::string("invalid elevationlevel: ")
-			                    + boost::lexical_cast<std::string>(index));
+	
+	void Map::removeElevation(Elevation* elevation) {
+		std::vector<Elevation*>::iterator it = m_elevations.begin();
+		for(; it != m_elevations.end(); ++it) {
+			if(*it == elevation) {
+				delete *it;
+				m_elevations.erase(it);
+				return ;
+			}
 		}
-
-		return *(m_elevations.begin() + index);
 	}
 
-	Elevation* Map::getElevation(const std::string& name) const {
+	template<class T>
+	Elevation* Map::getElevation(const std::string& field, const T& value) const {
 		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
 		for(; it != m_elevations.end(); ++it) {
-			if((*it)->get<std::string>("Name") == name)
+			if((*it)->get<T>(field) == value)
 				return *it;
 		}
 
 		return 0;
 	}
 
-	void Map::addElevation(Elevation* elevation) {
-		if( !elevation ) {
-			throw NotSupported("can't add invalid elevation");
-		}
-		if( elevation->getMap() ) {
-			throw Duplicate("elevation already in a map");
-		}
-
-		elevation->m_map = this;
-		m_elevations.push_back(elevation);
-	}
-
-	void Map::insertElevation(size_t index, Elevation* elevation) {
-		if( !elevation ) {
-			throw NotSupported("can't add invalid elevation");
-		}
-		if( elevation->getMap() ) {
-			throw Duplicate("elevation already in a map");
-		}
-		if (index >= getNumElevations()) {
-			throw IndexOverflow(std::string("invalid elevationlevel: ")
-			                    + boost::lexical_cast<std::string>(index));
-		}
-
-		m_elevations.insert(m_elevations.begin() + index,elevation);
-		elevation->m_map = this;
-	}
-
-	void Map::removeElevation(size_t index) {
-		if (index >= getNumElevations()) {
-			throw IndexOverflow(std::string("invalid elevationlevel: ")
-			                    + boost::lexical_cast<std::string>(index));
-		}
-
-		m_elevations.erase(m_elevations.begin() + index);
+	size_t Map::getNumElevations() const {
+		return m_elevations.size();
 	}
 
 	void Map::clearElevations() {

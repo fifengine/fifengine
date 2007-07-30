@@ -56,16 +56,11 @@ namespace FIFE { namespace model {
 		return m_layers.size();
 	}
 
-	void Elevation::addLayer(Layer* layer) {
-		if( !layer ) {
-			throw NotSupported("can't add empty layer");
-		}
-		if( layer->getElevation() ) {
-			throw Duplicate("layer already contained in an elevation");
-		}
-
+	Layer* Elevation::addLayer(const Point& size, GeometryType* geometry) {
+		Layer* layer = new Layer(size, geometry);
 		layer->m_elevation = this;
 		m_layers.push_back(layer);
+		return layer;
 	}
 
 	template<typename T>
