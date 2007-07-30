@@ -43,7 +43,7 @@ namespace FIFE { namespace model {
 	class Selection;
 	class Geometry;
 
-	class Prototype;
+	class Object;
 	class GeometryType;
 
 	/** A basic layer on a map elevation
@@ -81,10 +81,6 @@ namespace FIFE { namespace model {
 	class Layer : public AttributedClass {
 		public:
 
-			/** Constructs a Layer instance
-			 */
-			Layer(const Point& size, GeometryType* geometry);
-
 			/** Destructs a Layer instance
 			 */
 			~Layer();
@@ -120,7 +116,7 @@ namespace FIFE { namespace model {
 
 			/** Add an instance of an object at a specific position
 			 */
-			void addInstance(Prototype* object, const Point& p);
+			void addInstance(Object* object, const Point& p);
 
 			/** Remove an instance from the layer
 			 */
@@ -129,6 +125,13 @@ namespace FIFE { namespace model {
 			/** Get the list of instances on this layer
 			 */
 			const std::vector<Instance*>& getInstances();
+
+			/** Get a list of instances on this layer with a value.
+			 * @param field the (string) field to search on
+			 * @param value the value to be found in the field
+			 */
+			template<typename T>
+			std::vector<Instance*> getInstances(const std::string& field, const T& value);
 
 			/** Apply a visitor to each instance on this layer
 			 */
@@ -173,6 +176,11 @@ namespace FIFE { namespace model {
 			bool isValidPosition(int32_t x,int32_t y) const;
 
 		protected:
+
+			/** Constructs a Layer instance (layers are constructed
+			 * by elevations).
+			 */
+			Layer(const Point& size, GeometryType* geometry);
 
 			std::string m_name;
 

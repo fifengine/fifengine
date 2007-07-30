@@ -265,7 +265,6 @@
 					<File RelativePath="..\..\..\engine\core\model\structures\instance.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\location.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\location.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\map.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\map.h"></File>

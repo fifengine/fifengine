@@ -36,7 +36,7 @@ namespace FIFE { namespace model {
 
 	class Layer;
 
-	class Prototype;
+	class Object;
 
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location. 
@@ -46,11 +46,11 @@ namespace FIFE { namespace model {
 
 			/** Constructor
 			 */
-			Instance(const Prototype* proto, const Location& location)
-				: m_proto(proto), m_location(location)
+			Instance(const Object* object, const Location& location)
+				: m_object(object), m_location(location)
 			{ }
 
-			const Prototype* getPrototype();
+			const Object* getObject();
 
 			void setPosition(const Point& p);
 
@@ -60,7 +60,7 @@ namespace FIFE { namespace model {
 
 		private:
 
-			const Prototype* m_proto;
+			const Object* m_object;
 
 			Location m_location;
 
@@ -71,8 +71,8 @@ namespace FIFE { namespace model {
 	};
 
 	inline
-	const Prototype* Instance::getPrototype() {
-		return m_proto;
+	const Object* Instance::getObject() {
+		return m_object;
 	}
 
 	inline

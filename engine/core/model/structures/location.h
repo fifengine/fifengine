@@ -40,16 +40,12 @@ namespace FIFE { namespace model {
 
 	class Location {
 		public:
-			Location();
+			Location() : elevation(0),layer(0),position(0,0) {}
 
 			Elevation* elevation;
 			Layer* layer;
 			Point position;
 	};
-
-	/** Print coords of the Loacation to a stream
-	 */
-	std::ostream& operator<<(std::ostream& os, const Location& loc);
 
 } }
 #endif //FIFE_LOCATION_H

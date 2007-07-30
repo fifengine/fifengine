@@ -37,7 +37,6 @@
 
 namespace FIFE { namespace model {
 
-	class ObjectInfo;
 	class Layer;
 	class Map;
 
@@ -52,17 +51,9 @@ namespace FIFE { namespace model {
 	class Elevation : public AttributedClass {
 		public:
 
-			/** Constructor
-			 */
-			Elevation();
-
 			/** Destructor
 			 */
 			~Elevation();
-
-			/** Set the map of this elevation
-			 */
-			void setMap();
 
 			/** Retrieve the map this elevation is contained in
 			 */
@@ -118,6 +109,10 @@ namespace FIFE { namespace model {
 			Point centerOfMass();
 
 		private:
+
+			/** Constructor (Elevations are created by Maps)
+			 */
+			Elevation();
 		
 			std::string m_name;
 
