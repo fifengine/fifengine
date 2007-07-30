@@ -62,6 +62,10 @@ namespace FIFE {
 	 */
 	class Pool {
 	public:
+		/** Indicates invalid index for pool
+		 */
+		static const int INVALID_ID = -1;
+
 		/** Default constructor.
 		 */
 		Pool();

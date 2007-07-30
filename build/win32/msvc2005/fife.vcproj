@@ -215,6 +215,22 @@
 					<File RelativePath="..\..\..\engine\core\eventchannel\widget\ec_widgetevent.h"></File>
 				</Filter>
 			</Filter>
+			<Filter Name="gui">
+				<Filter Name="base">
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_image.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_image.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_imageloader.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_imageloader.h"></File>
+				</Filter>
+				<Filter Name="opengl">
+					<File RelativePath="..\..\..\engine\core\gui\opengl\opengl_gui_graphics.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\opengl\opengl_gui_graphics.h"></File>
+				</Filter>
+				<Filter Name="sdl">
+					<File RelativePath="..\..\..\engine\core\gui\sdl\sdl_gui_graphics.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\sdl\sdl_gui_graphics.h"></File>
+				</Filter>
+			</Filter>
 			<Filter Name="loaders">
 				<Filter Name="fallout">
 					<Filter Name="model_loaders">
