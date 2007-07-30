@@ -32,7 +32,6 @@
 #include "util/log.h"
 
 #include "glimage.h"
-#include "glscreen.h"
 
 namespace FIFE {
 
@@ -59,15 +58,12 @@ namespace FIFE {
 		delete[] m_textureid;
 	}
 
-	void GLImage::render(const Rect& rect, Screen* screen, unsigned char alpha) {
+	void GLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
 		if( m_textureid == 0 ) {
 			generateTexture();
 		}
 
-		GLScreen* glscreen = dynamic_cast<GLScreen*>(screen);
-		assert(glscreen);
-
-		if (rect.right() < 0 || rect.x > static_cast<int>(screen->getWidth()) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->getHeight())) {
+		if (rect.right() < 0 || rect.x > static_cast<int>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->h)) {
 			return;
 		}
 

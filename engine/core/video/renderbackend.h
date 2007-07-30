@@ -29,6 +29,7 @@
 #include "util/fife_stdint.h"
 
 // 3rd party library includes
+#include <SDL.h>
 #include <SDL_video.h>
 
 // FIFE includes
@@ -39,7 +40,6 @@
 
 namespace FIFE {
 
-	class Screen;
 	class Image;
 
 	 /** Abstract interface for all the renderbackends. */
@@ -82,9 +82,9 @@ namespace FIFE {
 			 * @param height Height of the window.
 			 * @param bitsPerPixel Bits per pixel, 0 means autodetect.
 			 * @param fullscreen Use fullscreen mode?
-			 * @return The new Screen.
+			 * @return The new Screen SDL_Surface surface.
 			 */
-			virtual Screen* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen) = 0;
+			virtual SDL_Surface* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen) = 0;
 
 			/** Creates an Image suitable for this renderbackend.
 			 *
@@ -105,12 +105,22 @@ namespace FIFE {
 			 */
 			virtual Image* createStaticImageFromSDL(SDL_Surface* surface) = 0;
 
-			/** Gets the current MainScreen (the displaywindow).
-			 *
-			 * @return The mainscreen, or 0 if no mainscreen exists.
-			 * @see createMainScreen()
+			/** Returns a pointer to the main screen SDL surface.
+			 * @return A pointer to the main screen SDL surface, or 0 if no mainscreen exists.
 			 */
-			virtual Screen* getMainScreen() const = 0;
+			SDL_Surface* getScreenSurface() const { return m_screen; };
+
+			/** Gets the width of the screen.
+			 *
+			 * @return Width of the screen.
+			 */
+			unsigned int getScreenWidth() const { return m_screen->w; }
+
+			/** Gets the height of the screen.
+			 *
+			 * @return Height of the screen.
+			 */
+			unsigned int getScreenHeight() const { return m_screen->h; }
 
 			/** Creates a Screenshot and saves it to a file.
 			 *
@@ -118,10 +128,13 @@ namespace FIFE {
 			 */
 			virtual void captureScreen(const std::string& filename);
 			
+		protected:
 
+			SDL_Surface* m_screen;
 		private:
 			// The name of the renderbackend.
 			std::string m_name;
+			
 	};
 
 }

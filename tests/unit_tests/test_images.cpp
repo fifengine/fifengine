@@ -41,7 +41,6 @@
 #include "vfs/raw/rawdata.h"
 #include "video/renderable_location.h"
 #include "video/image.h"
-#include "video/screen.h"
 #include "video/renderablepool.h"
 #include "video/renderbackends/sdl/renderbackendsdl.h"
 #include "video/renderbackends/opengl/renderbackendopengl.h"
@@ -79,7 +78,7 @@ struct environment {
 
 void test_image(RenderBackend& renderbackend) {
 	renderbackend.init();
-	Screen* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
 
 	ImageProvider provider;
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(RenderableLocation(IMAGE_FILE))));
@@ -104,7 +103,7 @@ void test_image(RenderBackend& renderbackend) {
 
 void test_subimage(RenderBackend& renderbackend) {
 	renderbackend.init();
-	Screen* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
 
 	ImageProvider imgprovider;
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.createResource(RenderableLocation(SUBIMAGE_FILE))));

@@ -33,7 +33,6 @@
 
 #include "sdlblendingfunctions.h"
 #include "sdlimage.h"
-#include "sdlscreen.h"
 
 namespace FIFE {
 
@@ -184,19 +183,16 @@ namespace FIFE {
 		SDL_UnlockSurface( dst );
 	}
 
-	void SDLImage::render(const Rect& rect, Screen* screen, unsigned char alpha) {
+	void SDLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
 		if (alpha == 0) {
 			return;
 		}
 
-		SDLScreen* sdlscreen = dynamic_cast<SDLScreen*>(screen);
-		assert(sdlscreen);
-
-		if (rect.right() < 0 || rect.x > static_cast<int>(screen->getWidth()) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->getHeight())) {
+		if (rect.right() < 0 || rect.x > static_cast<int>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->h)) {
 			return;
 		}
 
-		SDL_Surface* surface = sdlscreen->getSurface();
+		SDL_Surface* surface = screen;
 		SDL_Rect r;
 		r.x = rect.x;
 		r.y = rect.y;

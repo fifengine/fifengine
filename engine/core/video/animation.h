@@ -159,7 +159,7 @@ namespace FIFE {
 		 */
 		virtual SDL_Surface* getSurface();
 
-		void render(const Rect&, Screen*, unsigned char alpha = 255);
+		void render(const Rect&, SDL_Surface*, unsigned char alpha = 255);
 
 	private:
 		/** Periodically updates the animation.

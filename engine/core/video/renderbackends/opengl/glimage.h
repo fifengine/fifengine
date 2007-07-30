@@ -72,7 +72,7 @@ namespace FIFE {
 			 * @param screen Screen to draw to.
 			 * @param alpha  Alpha-value for this frame; default is fully opaque.
 			 */
-			virtual void render(const Rect& rect, Screen* screen, unsigned char alpha = 255);
+			virtual void render(const Rect& rect, SDL_Surface* screen, unsigned char alpha = 255);
 			/** Returns the width of this image.
 			 *
 			 * @return Width of the image.

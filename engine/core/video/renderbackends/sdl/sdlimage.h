@@ -60,7 +60,7 @@ namespace FIFE {
 			 * @param screen The screen on which to render the image.
 			 * @param alpha The level of transparency, opaque by default.
 			 */
-			virtual void render(const Rect& rect, Screen* screen, unsigned char alpha = 255);
+			virtual void render(const Rect& rect, SDL_Surface* screen, unsigned char alpha = 255);
 
 			/** Gets the width of the image.
 			 *

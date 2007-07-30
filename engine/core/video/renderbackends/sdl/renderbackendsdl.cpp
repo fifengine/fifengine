@@ -33,11 +33,10 @@
 
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
-#include "sdlscreen.h"
 
 namespace FIFE {
 
-	RenderBackendSDL::RenderBackendSDL() : RenderBackend("SDL"), m_screen(0) {
+	RenderBackendSDL::RenderBackendSDL() : RenderBackend("SDL") {
 
 	}
 
@@ -54,12 +53,12 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::deinit() {
-		delete m_screen;
+		SDL_FreeSurface(m_screen);
 		m_screen = 0;
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	}
 
-	Screen* RenderBackendSDL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs) {
+	SDL_Surface* RenderBackendSDL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs) {
 		Uint32 flags = 0;
 		if (fs) {
 			flags |= SDL_FULLSCREEN;
@@ -108,29 +107,25 @@ namespace FIFE {
 			throw SDLException(SDL_GetError());
 		}
 
-		m_screen = new SDLScreen(screen);
+		m_screen = screen;
 		return m_screen;
 	}
 
 	void RenderBackendSDL::startFrame() {
-		SDL_FillRect(m_screen->getSurface(), 0, 0x00);
+		SDL_FillRect(m_screen, 0, 0x00);
 	}
 
 	void RenderBackendSDL::endFrame() {
-		SDL_Flip(m_screen->getSurface());
+		SDL_Flip(m_screen);
 	}	
 
 	Image* RenderBackendSDL::createStaticImageFromSDL(SDL_Surface* surface) {
 		return new SDLImage(surface);
 	}
 
-	Screen* RenderBackendSDL::getMainScreen() const {
-		return m_screen;
-	}
-
 	void RenderBackendSDL::captureScreen(const std::string& filename) {
-		if( m_screen && m_screen->getSurface() ) {
-			SDL_SaveBMP(m_screen->getSurface(),filename.c_str());
+		if( m_screen ) {
+ 			SDL_SaveBMP(m_screen,filename.c_str());
 		}
 	}
 }

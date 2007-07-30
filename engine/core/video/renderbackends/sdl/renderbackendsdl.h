@@ -34,8 +34,6 @@
 
 namespace FIFE {
 
-	class SDLScreen;
-
 	/** The main class of the SDL-based renderer.
 	 *
 	 * @see RenderBackend
@@ -72,7 +70,7 @@ namespace FIFE {
 			 * @note Use sensible values; fs means fullscreen.
 			 * @note bitsPerPixel = 0 causes autodetection of best supported mode.
 			 */
-			virtual Screen* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs);
+			virtual SDL_Surface* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs);
 
 			/** Convenience wrapper around SDLImage.
 			 *
@@ -83,19 +81,10 @@ namespace FIFE {
 			 */
 			virtual Image* createStaticImageFromSDL(SDL_Surface* surface);
 			
-			/** Returns the current screen.
-			 *
-			 * @note This may be NULL.
-			 */
-			virtual Screen* getMainScreen() const;
-
 			/** Makes a screenshot and saves it as a BMP file.
 			 */
 			virtual void captureScreen(const std::string& filename);
-		
-		private:
-			// SDL screen.
-			SDLScreen* m_screen;
+
 	};
 
 }

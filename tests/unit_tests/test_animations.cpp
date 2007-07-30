@@ -41,7 +41,6 @@
 #include "vfs/raw/rawdata.h"
 #include "video/renderable_location.h"
 #include "video/animation.h"
-#include "video/screen.h"
 #include "video/renderbackends/sdl/renderbackendsdl.h"
 #include "video/renderbackends/opengl/renderbackendopengl.h"
 #include "loaders/native/video_loaders/animation_provider.h"
@@ -106,7 +105,7 @@ void test_animation(RenderBackend& renderbackend) {
 	renderbackend.init();
 	const int W = 800;
 	const int H = 600;
-	Screen* screen = renderbackend.createMainScreen(W, H, 0, false);
+	SDL_Surface* screen = renderbackend.createMainScreen(W, H, 0, false);
 
 	std::vector<PositionedAnimation*> animations;
 	AnimationProvider provider;

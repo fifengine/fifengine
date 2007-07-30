@@ -42,7 +42,6 @@
 #include "video/renderable_location.h"
 #include "video/image.h"
 #include "video/animation.h"
-#include "video/screen.h"
 #include "video/renderablepool.h"
 #include "video/renderbackends/sdl/renderbackendsdl.h"
 #include "video/renderbackends/opengl/renderbackendopengl.h"
@@ -90,7 +89,7 @@ void test_renderable_pool() {
 	RenderBackendSDL renderbackend;
 
 	renderbackend.init();
-	Screen* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	RenderablePool pool;
 	pool.addResourceProvider(new SubImageProvider());
 	pool.addResourceProvider(new ImageProvider());

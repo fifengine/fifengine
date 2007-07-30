@@ -39,7 +39,6 @@
 
 namespace FIFE {
 
-	class Screen;
 	class Rect;
 
 	/** The Abstract Base Class for anything renderable.
@@ -72,7 +71,7 @@ namespace FIFE {
 			 * @param alpha The alpha value, with which to draw self.
 			 * @see RenderBackend, Screen
 			 */
-			virtual void render(const Rect& rect, Screen* screen, unsigned char alpha = 255) = 0;
+			virtual void render(const Rect& rect, SDL_Surface* screen, unsigned char alpha = 255) = 0;
 
 			/** Returns the @b maximum width occupied by this renderable.
 			 * This should return the maximum width that could be covered by the

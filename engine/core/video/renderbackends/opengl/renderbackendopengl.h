@@ -73,7 +73,7 @@ namespace FIFE {
 			 * @note bitsPerPixel = 0 causes autodetection of best supported mode.
 			 * @note Hardcoded flags: SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE | SDL_HWACCEL
 			 */
-			virtual Screen* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs);
+			virtual SDL_Surface* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs);
 			
 			/** Convenience wrapper around GLImage.
 			 *
@@ -83,18 +83,11 @@ namespace FIFE {
 			 */
 			virtual Image* createStaticImageFromSDL(SDL_Surface* surface);
 			
-			/** Returns the current screen.
-			 *
-			 * @note This may be NULL.
-			 */
-			virtual Screen* getMainScreen() const;
-			
 			/** Makes a screenshot and saves it as a BMP file.
 			 */
 			virtual void captureScreen(const std::string& filename);
+
 		private:
-			// OpenGL screen.
-			GLScreen* m_screen;
 			SDL_PixelFormat m_rgba_format;
 	};
 

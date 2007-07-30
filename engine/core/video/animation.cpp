@@ -101,7 +101,7 @@ namespace FIFE {
 		m_action_frame = num;
 	};
 
-	void Animation::render(const Rect& target, Screen *screen, unsigned char alpha) {
+	void Animation::render(const Rect& target, SDL_Surface *screen, unsigned char alpha) {
 		Renderable* img = m_frames[m_currentFrame];
 		Rect tmp(target);
 		tmp.x += img->getXShift();

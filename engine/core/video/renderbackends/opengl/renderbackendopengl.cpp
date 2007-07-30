@@ -32,12 +32,11 @@
 
 #include "fife_opengl.h"
 #include "glimage.h"
-#include "glscreen.h"
 #include "renderbackendopengl.h"
 
 namespace FIFE {
 
-	RenderBackendOpenGL::RenderBackendOpenGL() : RenderBackend("OpenGL"), m_screen(0){
+	RenderBackendOpenGL::RenderBackendOpenGL() : RenderBackend("OpenGL") {
 		// Get the pixelformat we want.
 		SDL_Surface* testsurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 1, 1, 32,
 				0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
@@ -48,7 +47,6 @@ namespace FIFE {
 
 
 	RenderBackendOpenGL::~RenderBackendOpenGL() {
-		delete m_screen;
 	}
 
 
@@ -61,14 +59,14 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::deinit() {
-		delete m_screen;
+		SDL_FreeSurface(m_screen);
 		m_screen = 0;
 
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	}
 
-	Screen* RenderBackendOpenGL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs) {
-		delete m_screen;
+	SDL_Surface* RenderBackendOpenGL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs) {
+		SDL_FreeSurface(m_screen);
 		m_screen = 0;
 
 		Uint32 flags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE | SDL_HWACCEL;
@@ -121,7 +119,7 @@ namespace FIFE {
 
 		glEnable(GL_SCISSOR_TEST);
 
-		m_screen = new GLScreen(screen);
+		m_screen = screen;
 		return m_screen;
 	}
 
@@ -164,13 +162,9 @@ namespace FIFE {
 		return image;
 	}
 
-	Screen* RenderBackendOpenGL::getMainScreen() const {
-		return m_screen;
-	}
-
 	void RenderBackendOpenGL::captureScreen(const std::string& filename) {
-		unsigned int swidth = getMainScreen()->getWidth();
-		unsigned int sheight = getMainScreen()->getHeight();
+		unsigned int swidth = getScreenWidth();
+		unsigned int sheight = getScreenHeight();
 
 		// We need unsigned char to avoid pointer alignment issues
 		uint8_t *pixels = new uint8_t[swidth * sheight * 3];

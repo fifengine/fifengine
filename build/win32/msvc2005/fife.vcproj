@@ -356,8 +356,6 @@
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\fife_opengl.h"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.h"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.h"></File>
 					</Filter>
@@ -368,11 +366,8 @@
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.h"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlscreen.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlscreen.h"></File>
 					</Filter>
 				</Filter>
-				<File RelativePath="..\..\..\engine\core\video\screen.h"></File>
 			</Filter>
 			<Filter Name="xml">
 				<Filter Name="tinyxml">

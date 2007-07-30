@@ -1,7 +1,7 @@
 <?xml version = '1.0'?>
 <kdevelop>
   <general>
-    <author></author>
+    <author/>
     <email>FIFEteam@fife.org</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevCustomProject</projectmanagement>
@@ -9,20 +9,20 @@
     <ignoreparts/>
     <projectdirectory>../../..</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
+    <description/>
     <projectname>FIFE</projectname>
-    <defaultencoding></defaultencoding>
+    <defaultencoding/>
   </general>
   <kdevcustomproject>
     <run>
       <mainprogram>build/linux/KDevelop//../../../tests/unit_tests/testprog_images</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
-      <globaldebugarguments></globaldebugarguments>
+      <globaldebugarguments/>
       <globalcwd>build/linux/KDevelop//../../../tests/unit_tests/</globalcwd>
       <useglobalprogram>false</useglobalprogram>
       <autoinstall>false</autoinstall>
@@ -37,9 +37,9 @@
       <numberofjobs>1</numberofjobs>
       <prio>0</prio>
       <dontact>false</dontact>
-      <makebin></makebin>
-      <defaulttarget></defaulttarget>
-      <makeoptions></makeoptions>
+      <makebin/>
+      <defaulttarget/>
+      <makeoptions/>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
@@ -48,12 +48,12 @@
   </kdevcustomproject>
   <kdevdebugger>
     <general>
-      <dbgshell></dbgshell>
+      <dbgshell/>
       <programargs/>
-      <gdbpath></gdbpath>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <gdbpath/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -158,7 +158,7 @@
       <designerpluginpaths/>
     </qt>
     <creategettersetter>
-      <prefixGet></prefixGet>
+      <prefixGet/>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
