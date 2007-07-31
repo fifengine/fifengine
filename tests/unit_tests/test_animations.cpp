@@ -149,7 +149,7 @@ void test_ogl() {
 }
 
 test_suite* init_unit_test_suite(int argc, char** const argv) {
-	test_suite* test = BOOST_TEST_SUITE("Image Tests");
+	test_suite* test = BOOST_TEST_SUITE("Animation Tests");
 	test->add( BOOST_TEST_CASE( &test_sdl ),0 );
 	test->add( BOOST_TEST_CASE( &test_ogl ),0 );
 

@@ -26,6 +26,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <SDL.h>
+#include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,7 +42,6 @@
 #include "vfs/raw/rawdata.h"
 #include "video/renderable_location.h"
 #include "video/image.h"
-#include "video/animation.h"
 #include "video/renderablepool.h"
 #include "video/renderbackends/sdl/renderbackendsdl.h"
 #include "video/renderbackends/opengl/renderbackendopengl.h"
@@ -50,20 +50,17 @@
 #include "loaders/native/video_loaders/animation_provider.h"
 #include "util/exception.h"
 #include "util/log.h"
+#include "gui/base/opengl/opengl_gui_graphics.h"
+#include "gui/base/sdl/sdl_gui_graphics.h"
+#include "gui/base/gui_image.h"
+#include "gui/base/gui_imageloader.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;
 
 static const std::string IMAGE_FILE = "../../content/gfx/tiles/beach/beach_e1.png";
 static const std::string SUBIMAGE_FILE = "../../content/gfx/tiles/rpg_tiles_01.png";
-static const std::string ANIM_FILE = "../data/crate_full_001.xml";
 
-class AnimRoller: public AnimationListener {
-	void onAnimationEnd(Animation* animation) {
-		animation->setDirection(!animation->isDirectionForward());
-		animation->setActive(true);
-	}
-};
 // Environment
 struct environment {
 	boost::shared_ptr<SettingsManager> settings;
@@ -84,81 +81,66 @@ struct environment {
 		}
 };
 
-void test_renderable_pool() {
-	environment env;
-	RenderBackendSDL renderbackend;
-
-	renderbackend.init();
-	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
-	RenderablePool pool;
+void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, RenderablePool& pool, SDL_Surface* screen) {
 	pool.addResourceProvider(new SubImageProvider());
 	pool.addResourceProvider(new ImageProvider());
 	pool.addResourceProvider(new AnimationProvider());
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 
-	pool.addResourceFromLocation(RenderableLocation(IMAGE_FILE));
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
 
-	int animind = pool.addResourceFromLocation(RenderableLocation(ANIM_FILE));
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
-	BOOST_CHECK(animind == pool.addResourceFromLocation(RenderableLocation(ANIM_FILE)));
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
+	GuiImageLoader imageloader(pool);
+	gcn::Image::setImageLoader(&imageloader);	
 
-	Animation& anim = dynamic_cast<Animation&>(pool.get(animind));
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 1);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
-	boost::scoped_ptr<AnimRoller> roller(new AnimRoller());
-	anim.setAnimationListener(&*roller);
-	anim.setActive(true);
+	gcn::Container* top = new gcn::Container();
+	top->setDimension(gcn::Rectangle(0, 0, 200, 300));
+	gcn::Gui* gui = new gcn::Gui();
+	gui->setGraphics(&graphics);
+	gui->setTop(top);
+	gcn::Label* label = new gcn::Label("Label");
+;	gcn::Image* guiimage = gcn::Image::load(IMAGE_FILE);
+	gcn::Icon* icon = new gcn::Icon(guiimage);
+ 
+	top->add(label, 10, 10);
+	top->add(icon, 10, 30);
 
-	RenderableLocation location(SUBIMAGE_FILE);
-	ImageProvider imgprovider;
-	int fullImgInd = pool.addResourceFromLocation(RenderableLocation(SUBIMAGE_FILE));
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 1);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
+	ImageProvider provider;
+	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(RenderableLocation(IMAGE_FILE))));
+	
+	int h = img->getHeight();
+	int w = img->getWidth();
+	for (int i = 0; i < 400; i++) {
+		renderbackend.startFrame();
+		img->render(Rect(i, i, w, h), screen);
+		gui->logic();
+		gui->draw();
+		renderbackend.endFrame();
+	}	
+}
 
-	Image& img = dynamic_cast<Image&>(pool.get(fullImgInd));
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 2);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
+void test_sdl_gui_image() {
+	environment env;
+	RenderBackendSDL renderbackend;
+	renderbackend.init();
+	RenderablePool pool;
+	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	SdlGuiGraphics graphics(pool);
+	graphics.setTarget(screen);
+	test_gui_image(renderbackend, graphics, pool, screen);
+}
 
-	location.setParentSource(&img);
-	int W = img.getWidth();
-	int w = W / 12;
-	int H = img.getHeight();
-	int h = H / 12;
-	location.setWidth(w);
-	location.setHeight(h);
-	pool.addResourceFromLocation(location);
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 2);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);
-
-	for (int k = 0; k < 3; k++) {
-		for (int j = 0, s = pool.getResourceCount(RES_LOADED | RES_NON_LOADED); j < s; j++) {
-			std::cout << j << std::endl;
-			Renderable& r = dynamic_cast<Renderable&>(pool.get(j));
-			int h = r.getHeight();
-			int w = r.getWidth();
-			for (int i = 100; i > 0; i--) {
-				renderbackend.startFrame();
-				r.render(Rect(i, i, w, h), screen);
-				renderbackend.endFrame();
-				TimeManager::instance()->update();
-			}
-		}
-		BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 4);
-		BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
-	}
-	pool.clear();
-	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
-	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
+void test_ogl_gui_image() {
+	environment env;
+	RenderBackendOpenGL renderbackend;
+	renderbackend.init();
+	RenderablePool pool;
+	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	OpenGLGuiGraphics graphics(pool);
+	test_gui_image(renderbackend, graphics, pool, screen);
 }
 
 test_suite* init_unit_test_suite(int argc, char** const argv) {
-	test_suite* test = BOOST_TEST_SUITE("Renderable Pool Tests");
-	test->add( BOOST_TEST_CASE( &test_renderable_pool ),0 );
+	test_suite* test = BOOST_TEST_SUITE("Gui Tests");
+	test->add( BOOST_TEST_CASE( &test_ogl_gui_image ),0 );
+	test->add( BOOST_TEST_CASE( &test_sdl_gui_image ),0 );
+
 	return test;
 }

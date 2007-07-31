@@ -50,7 +50,7 @@ namespace FIFE {
 
 	int GuiImage::getHeight() const {
 		Renderable& img = dynamic_cast<Renderable&>(m_pool->get(m_poolid));
-		return img.getWidth();
+		return img.getHeight();
 	}
 
 	gcn::Color GuiImage::getPixel(int x, int y) {

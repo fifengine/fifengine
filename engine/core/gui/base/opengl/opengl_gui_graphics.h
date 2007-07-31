@@ -42,6 +42,11 @@ namespace FIFE {
 		OpenGLGuiGraphics(RenderablePool& pool);
 		virtual void drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height);
 
+		virtual void drawText(const std::string& text, int x, int y, unsigned int alignment);
+		virtual void drawPoint(int x, int y);
+		virtual void drawLine(int x1, int y1, int x2, int y2);
+		virtual void drawRectangle(const gcn::Rectangle& rectangle);
+
 	private:
 		SDL_Surface* mTarget;
 		RenderablePool& m_pool;
