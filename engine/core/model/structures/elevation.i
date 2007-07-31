@@ -1,4 +1,4 @@
-%module layer
+%module model
 %{
 #include "model/structures/elevation.h"
 %}
@@ -23,7 +23,7 @@ namespace FIFE { namespace model {
 			template<typename T>
 			Layer* getLayer(const std::string& field, const T& value) const;
 			size_t getNumLayers() const;
-			clearLayers();
+			void clearLayers();
 
 			template<typename T>
 			void forEachLayer(T visitor); 

@@ -44,48 +44,54 @@ namespace FIFE { namespace model {
 		purge(m_datasets);
 	}
 
-	void Dataset::addDataset(Dataset* dataset) {
+	Dataset* Dataset::addDataset(const std::string& type, const std::string& filename) {
+		Dataset* dataset = new Dataset(type, filename);
 		m_datasets.push_back(dataset);
+		return dataset;
 	}
 
-	Object* Dataset::getObject(const std::string& name) {
+	Object* Dataset::addObject(const Object* inherited) {
+		Object* object = new Object(inherited);
+		m_objects.push_back(object);
+		return object;
+	}
 
-		std::vector<Object*>::iterator it = m_prototypes.begin();
-		for(; it != m_prototypes.end(); ++it) {
-			if((*it)->getName() == name)
-				return *it;
+	template<typename T>
+	std::list<Object*> Dataset::getObjects(const std::string& field, const T& value) const {
+
+		std::list<Object*> objects;
+
+		std::vector<Object*>::iterator it = m_objects.begin();
+		for(; it != m_objects.end(); ++it) {
+			if((*it)->get<T>(field) == value)
+				objects.push_back(*it);
 		}
 
-		Object* p = 0;
 		std::vector<Dataset*>::iterator jt = m_datasets.begin();
 		for(; jt != m_datasets.end(); ++jt) {
-			p = (*jt)->getObject(name);
-			if(p) {
-				return p;
-			}
+			objects.splice(objects.end(), (*jt)->getObjects<T>(field, value));
 		}
 
-		return 0;
+		return objects;
 	}
 
-	GeometryType* Dataset::getGeometryType(const std::string& name) {
+	template<typename T>
+	std::list<GeometryType*> Dataset::getGeometryTypes(const std::string& field, const T& value) const {
+
+		std::list<GeometryType*> gtypes;
 
 		std::vector<GeometryType*>::iterator it = m_geometry_types.begin();
 		for(; it != m_geometry_types.end(); ++it) {
-			if((*it)->geometry == name)
-				return *it;
+			if((*it)->get<T>(field) == value)
+				gtypes.push_back(*it);
 		}
 
-		GeometryType* p = 0;
 		std::vector<Dataset*>::iterator jt = m_datasets.begin();
 		for(; jt != m_datasets.end(); ++jt) {
-			p = (*jt)->getGeometryType(name);
-			if(p) {
-				return p;
-			}
+			gtypes.splice(gtypes.end(), (*jt)->getGeometryTypes<T>(field, value));
 		}
 
-		return 0;
+		return gtypes;
 	}
 
 }}

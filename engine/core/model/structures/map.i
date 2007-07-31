@@ -1,4 +1,4 @@
-%module layer
+%module model
 %{
 #include "model/structures/map.h"
 %}
@@ -23,12 +23,11 @@ namespace FIFE { namespace model {
 			template<typename T>
 			Elevation* getElevation(const std::string& field, const T& value) const;
 			size_t getNumElevations() const;
-			clearElevations();
+			void clearElevations();
 
 			template<typename T>
 			void forEachElevation(T visitor); 
 
 		private:
-			Elevation();
 	};
 }}

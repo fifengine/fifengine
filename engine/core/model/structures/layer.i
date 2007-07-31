@@ -1,4 +1,4 @@
-%module layer
+%module model
 %{
 #include "model/structures/layer.h"
 %}

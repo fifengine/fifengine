@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <vector>
+#include <list>
 
 // 3rd party library includes
 
@@ -35,6 +36,7 @@
 namespace FIFE { namespace model {
 
 	class Dataset;
+	class Object;
 
 	/**
 	 * A meta model is just a collection of datasets. Perhaps this class
@@ -48,7 +50,18 @@ namespace FIFE { namespace model {
 			 */
 			~MetaModel();
 
-			void addDataset(Dataset* dataset);
+			/** Add a new dataset to the metamodel
+			 *
+			 * @note MetaModel owns this dataset, so don't delete
+			 * the pointer it gives you!
+			 */
+			Dataset* addDataset(const std::string& type, const std::string& filename);
+
+			/** Gets a list of objects that with the given value
+			 * in the given field.
+			 */
+			template<typename T>
+			std::list<Object*> getObjects(const std::string& field, const T& value) const;
 
 		private:
 

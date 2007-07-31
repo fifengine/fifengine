@@ -35,35 +35,58 @@
 
 namespace FIFE { namespace model { 
 
+	class Dataset;
+
 	/** Object class
 	 *
 	 * Objects describe the properties of objects. Objects may
 	 * contain information such as graphics, z-values, and and
 	 * other properties.
 	 *
-	 * Objects may inherit values from other objects. Objects 
-	 * may override the value of the Objects they use, but they
-	 * may not CHANGE an inherited object's values.
+	 * Objects may inherit default values from another object.
 	 *
+	 * @note All public methods in this class override
+	 * AttributedClass: see that class for documentation of
+	 * these methods. The semantics of Object's overrides
+	 * differ only because they check for inherited values.
+	 *
+	 * @see AttributedClass in util/attributedclass.h
 	 */
 	class Object : public AttributedClass {
 		public:
 
-			Object()
-				: AttributedClass("Object")
+			~Object() 
 			{ }
+			
+			template<typename T>
+			const T& get(const std::string& field, const T& value = T()) const {
+				if(hasAttribute(field) || !m_inherited)
+					return AttributedClass::get<T>(field, value);
 
-			const std::string& getName();
+				return m_inherited->get<T>(field, value);
+			}
+
+			size_t getNumAttributes() const {
+				return AttributedClass::getNumAttributes() + m_inherited->getNumAttributes();
+			}
 
 		private:
 
-			std::string m_name;
-	};
+			/** An object may optionally inherit default attributes
+			 * from another object. This object may override these
+			 * defaults, but it may not CHANGE the inherited values.
+			 *
+			 * @see Dataset in model/metamodel/dataset.h for creation
+			 * of objects.
+			 */
+			Object(const Object* inherited)
+				: AttributedClass("Object"), m_inherited(inherited)
+			{ }
 
-	inline
-	const std::string& Object::getName() {
-		return m_name;
-	}
+			const Object* m_inherited;
+
+			friend class Dataset;
+	};
 
 }} //FIFE::model
 #endif

@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <string>
 #include <vector>
+#include <list>
 
 // 3rd party library includes
 
@@ -41,49 +42,61 @@ namespace FIFE { namespace model {
 	class Dataset {
 		public:
 
-			Dataset(const std::string& type, const std::string& filename);
 			~Dataset();
 
 			const std::string& getTypeName() const;
 			const std::string& getFilename() const;
 
 			/** Add a (nested) dataset
+			 *
+			 * @note This Dataset owns any datasets you add to it, so
+			 * don't delete the returned pointer!
 			 */
-			void addDataset(Dataset* dataset);
+			Dataset* addDataset(const std::string& type, const std::string& filename);
 
-			/** Get an object from this dataset. Objects are looked for in
-			 * this dataset first, and if no match is found, the search is
-			 * expanded to any datasets nested within this dataset. Null is
-			 * returned if no match is found.
+			/** Add an object to this dataset; objects may optionally inherit
+			 * values from other objects (see object.h for details).
+			 *
+			 * @note This object belongs to this dataset, so don't
+			 * delete the returned pointer!
+			 */
+			Object* addObject(const Object* inherited = 0);
+
+			/** Get objects from this dataset having the given value in the
+			 * given field.
 			 *
 			 * @note Objects are owned by the dataset, so don't delete
 			 * returned pointers!
 			 */
-			Object* getObject(const std::string& name);
+			template<typename T>
+			std::list<Object*> getObjects(const std::string& field, const T& value) const;
 
-			/** Get a geometry type from this dataset. GeometryTypes are looked for
-			 * in this dataset first, and if no match is found, the search is expanded
-			 * to any datasets nested within this dataset. Null is returned if no
-			 * match is found.
+			/** Get geometry types from this dataset having the given value in
+			 * the given field.
 			 *
 			 * @note GeometryType objects are owned by the dataset, so don't delete
 			 * returned pointers!
 			 */
-			GeometryType* getGeometryType(const std::string& name);
+			template<typename T>
+			std::list<GeometryType*> getGeometryTypes(const std::string& field, const T& value) const;
 
 		private:
+
+			Dataset(const std::string& type, const std::string& filename);
 
 			// geometry definitions in this dataset
 			std::vector<GeometryType*> m_geometry_types;
 
 			// prototypes contained in this dataset
-			std::vector<Object*> m_prototypes;
+			std::vector<Object*> m_objects;
 
 			// nested datasets
 			std::vector<Dataset*> m_datasets;
 		
 			std::string m_typename;
 			std::string m_filename;
+
+			friend class MetaModel;
 	};
 
 	inline
