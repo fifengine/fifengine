@@ -157,7 +157,7 @@ namespace FIFE {
 
 			/** Get number of attributes
 			 */
-			size_t getNumAttributes() const;
+			size_t getNumAttributes() const { return 0; }
 
 			/** Read attributes from another AttributedClass instance
 			 */
@@ -170,7 +170,7 @@ namespace FIFE {
 
 			/** Print debuging information
 			 */
-			void debugPrint() const;
+			void debugPrint() const {}
 
 		private:
 			typedef std::map<type_attr_id,type_attr> type_attributes;

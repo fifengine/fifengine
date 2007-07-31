@@ -7,9 +7,9 @@
 
 namespace FIFE { namespace model {
 
-  class Map;
-
-  class GeometryType;
+	class Map;
+	class Layer;
+	class GeometryType;
 
 	class Elevation {
 		public:
