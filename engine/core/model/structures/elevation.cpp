@@ -64,14 +64,16 @@ namespace FIFE { namespace model {
 	}
 
 	template<typename T>
-	Layer* Elevation::getLayer(const std::string& field, const T& value) const {
+	std::list<Layer*> Elevation::getLayers(const std::string& field, const T& value) const {
+		std::list<Layer*> matches;
+
 		std::vector<Layer*>::const_iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			if((*it)->get<T>(field) == value)
-				return *it;
+				matches.push_back(*it);
 		}
 
-		return 0;
+		return matches;
 	}
 
 	void Elevation::removeLayer(Layer* layer) {

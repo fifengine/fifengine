@@ -80,14 +80,13 @@ namespace FIFE { namespace model {
 			 */
 			void removeElevation(Elevation*);
 
-      /** Get an elevation by a value. If multiple Elevations
-			 * match this value, then an arbitrary matching elevations 
-			 * is returned.
+      /** Get a set of elevations by a value.
+			 *
 			 * @param the field to search on
 			 * @param the value to be searched for in the field
 			 */
 			template<typename T>
-			Elevation* getElevation(const std::string& field, const T& value) const;
+			std::list<Elevation*> getElevations(const std::string& field, const T& value) const;
 
 			/** Return the number of elevations on this map
 			 */
@@ -96,13 +95,6 @@ namespace FIFE { namespace model {
 			/** Remove all elevations from a map
 			 */
 			void clearElevations();
-
-			/** Apply a visitor to each elevation
-			 */
-			template<typename T>
-			void forEachElevation(T visitor) {
-				std::for_each(m_elevations.begin(),m_elevations.end(),visitor);
-			}
 
 		private:
 

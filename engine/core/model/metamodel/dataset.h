@@ -33,26 +33,24 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/attributedclass.h"
 
 namespace FIFE { namespace model {
 
 	class Object;
 	class GeometryType;
 
-	class Dataset {
+	class Dataset : public AttributedClass {
 		public:
 
 			~Dataset();
-
-			const std::string& getTypeName() const;
-			const std::string& getFilename() const;
 
 			/** Add a (nested) dataset
 			 *
 			 * @note This Dataset owns any datasets you add to it, so
 			 * don't delete the returned pointer!
 			 */
-			Dataset* addDataset(const std::string& type, const std::string& filename);
+			Dataset* addDataset();
 
 			/** Add an object to this dataset; objects may optionally inherit
 			 * values from other objects (see object.h for details).
@@ -82,7 +80,7 @@ namespace FIFE { namespace model {
 
 		private:
 
-			Dataset(const std::string& type, const std::string& filename);
+			Dataset();
 
 			// geometry definitions in this dataset
 			std::vector<GeometryType*> m_geometry_types;
@@ -93,21 +91,8 @@ namespace FIFE { namespace model {
 			// nested datasets
 			std::vector<Dataset*> m_datasets;
 		
-			std::string m_typename;
-			std::string m_filename;
-
 			friend class MetaModel;
 	};
-
-	inline
-	const std::string& Dataset::getTypeName() const {
-		return m_typename;
-	}
-
-	inline
-	const std::string& Dataset::getFilename() const {
-		return m_filename;
-	}
 
 }}
 

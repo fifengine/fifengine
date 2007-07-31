@@ -32,9 +32,6 @@ namespace FIFE { namespace model {
 			template<typename T>
 			std::vector<Instance*> getInstances(const std::string& field, const T& value);
 
-			template<typename T>
-			void forEachInstance(T visitor);
-
 			void setInstancesVisible(bool vis);
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;

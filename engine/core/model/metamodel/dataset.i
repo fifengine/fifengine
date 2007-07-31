@@ -10,10 +10,7 @@ namespace FIFE { namespace model {
 
 			~Dataset();
 
-			const std::string& getTypeName() const;
-			const std::string& getFilename() const;
-
-			Dataset* addDataset(const std::string& type, const std::string& filename);
+			Dataset* addDataset();
 
 			template<typename T>
 			std::list<Object*> getObjects(const std::string& field, const T& value) const;
@@ -23,6 +20,6 @@ namespace FIFE { namespace model {
 
 		private:
 
-			Dataset(const std::string& type, const std::string& filename);
+			Dataset();
 	};
 }}

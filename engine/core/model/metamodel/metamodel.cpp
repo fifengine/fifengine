@@ -38,8 +38,8 @@ namespace FIFE { namespace model {
 		purge(m_datasets);
 	}
 
-	Dataset* MetaModel::addDataset(const std::string& type, const std::string& filename) {
-		Dataset* dataset = new Dataset(type, filename);
+	Dataset* MetaModel::addDataset() {
+		Dataset* dataset = new Dataset();
 		m_datasets.push_back(dataset);
 		return dataset;
 	}

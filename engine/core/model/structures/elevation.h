@@ -71,13 +71,13 @@ namespace FIFE { namespace model {
 			 */
 			void removeLayer(Layer*);
 
-			/** Get a layer by a value. If multiple Layers match this
-			 * value, then an arbitrary matching layer is returned.
+			/** Get a set of layers by a value.
+			 *
 			 * @param the field to search on
 			 * @param the value to be searched for in the field
 			 */
 			template<typename T>
-			Layer* getLayer(const std::string& field, const T& value) const;
+			std::list<Layer*> getLayers(const std::string& field, const T& value) const;
 
 			/** Get the overall number of layers
 			 */
@@ -86,13 +86,6 @@ namespace FIFE { namespace model {
 			/** Remove all layers from the elevation
 			 */
 			void clearLayers();
-
-			/** Apply a visitor to each layer
-			 */
-			template<typename T>
-			void forEachLayer(T visitor) {
-				std::for_each(m_layers.begin(),m_layers.end(),visitor);
-			}
 
 			/** Set the 'reference' Layer
 			 */

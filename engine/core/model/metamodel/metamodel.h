@@ -55,7 +55,7 @@ namespace FIFE { namespace model {
 			 * @note MetaModel owns this dataset, so don't delete
 			 * the pointer it gives you!
 			 */
-			Dataset* addDataset(const std::string& type, const std::string& filename);
+			Dataset* addDataset();
 
 			/** Gets a list of objects that with the given value
 			 * in the given field.

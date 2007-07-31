@@ -133,13 +133,6 @@ namespace FIFE { namespace model {
 			template<typename T>
 			std::vector<Instance*> getInstances(const std::string& field, const T& value);
 
-			/** Apply a visitor to each instance on this layer
-			 */
-			template<typename T>
-			void forEachInstance(T visitor) {
-				std::for_each(m_objects.begin(),m_objects.end(),visitor);
-			}
-
 			/** Set object visibility
 			 */
 			void setInstancesVisible(bool vis);

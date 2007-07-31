@@ -21,12 +21,10 @@ namespace FIFE { namespace model {
 			void removeLayer(Layer* index);
 
 			template<typename T>
-			Layer* getLayer(const std::string& field, const T& value) const;
+			std::list<Layer*> getLayers(const std::string& field, const T& value) const;
+
 			size_t getNumLayers() const;
 			void clearLayers();
-
-			template<typename T>
-			void forEachLayer(T visitor); 
 
 			void setReferenceLayer(Layer* layer);
 			Layer* getReferenceLayer();

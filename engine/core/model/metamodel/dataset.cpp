@@ -35,8 +35,7 @@
 
 namespace FIFE { namespace model {
 
-	Dataset::Dataset(const std::string& type, const std::string& filename)
-		: m_typename(type), m_filename(filename)
+	Dataset::Dataset()
 	{
 	}
 
@@ -44,8 +43,8 @@ namespace FIFE { namespace model {
 		purge(m_datasets);
 	}
 
-	Dataset* Dataset::addDataset(const std::string& type, const std::string& filename) {
-		Dataset* dataset = new Dataset(type, filename);
+	Dataset* Dataset::addDataset() {
+		Dataset* dataset = new Dataset();
 		m_datasets.push_back(dataset);
 		return dataset;
 	}

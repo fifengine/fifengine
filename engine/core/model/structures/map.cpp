@@ -52,7 +52,7 @@ namespace FIFE { namespace model {
 		// no duplicates
 		std::vector<Dataset*>::iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
-			if((*it)->getTypeName() == dataset->getTypeName() && (*it)->getFilename() == dataset->getFilename()) {
+			if((*it) == dataset) {
 				return;
 			}
 		}
@@ -79,14 +79,16 @@ namespace FIFE { namespace model {
 	}
 
 	template<class T>
-	Elevation* Map::getElevation(const std::string& field, const T& value) const {
+	std::list<Elevation*> Map::getElevations(const std::string& field, const T& value) const {
+		std::list<Elevation*> matches;
+
 		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
 		for(; it != m_elevations.end(); ++it) {
 			if((*it)->get<T>(field) == value)
-				return *it;
+				matches.push_back(*it);
 		}
 
-		return 0;
+		return matches;
 	}
 
 	size_t Map::getNumElevations() const {

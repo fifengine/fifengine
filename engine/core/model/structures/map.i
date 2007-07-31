@@ -21,12 +21,10 @@ namespace FIFE { namespace model {
 			void removeElevation(Elevation*);
 
 			template<typename T>
-			Elevation* getElevation(const std::string& field, const T& value) const;
+			std::list<Elevation*> getElevations(const std::string& field, const T& value) const;
+
 			size_t getNumElevations() const;
 			void clearElevations();
-
-			template<typename T>
-			void forEachElevation(T visitor); 
 
 		private:
 	};
