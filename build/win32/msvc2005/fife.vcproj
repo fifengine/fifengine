@@ -230,6 +230,36 @@
 						<File RelativePath="..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.h"></File>
 					</Filter>
 				</Filter>
+				<Filter Name="console">
+					<File RelativePath="..\..\..\engine\core\gui\console\commandline.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\console\commandline.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\console\console.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\console\console.h"></File>
+				</Filter>
+				<Filter Name="fonts">
+					<File RelativePath="..\..\..\engine\core\gui\fonts\aafont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\aafont.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\font.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\font.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\guichanfont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\guichanfont.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\sdlimagefont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\sdlimagefont.hpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\sdltruetypefont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\sdltruetypefont.hpp"></File>
+				</Filter>
+				<File RelativePath="..\..\..\engine\core\gui\guimanager.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\gui\guimanager.h"></File>
+				<Filter Name="widgets">
+					<File RelativePath="..\..\..\engine\core\gui\widgets\clicklabel.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\clicklabel.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\icon2.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\icon2.hpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\twobutton.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\widgets\twobutton.h"></File>
+				</Filter>
 			</Filter>
 			<Filter Name="loaders">
 				<Filter Name="fallout">
