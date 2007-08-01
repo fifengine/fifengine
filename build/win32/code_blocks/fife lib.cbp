@@ -985,6 +985,32 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\video\opengl\fife_opengl.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\opengl\glimage.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\opengl\glimage.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\opengl\renderbackendopengl.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\opengl\renderbackendopengl.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\video\renderable.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
@@ -1021,57 +1047,31 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\opengl\fife_opengl.h">
+		<Unit filename="..\..\..\engine\core\video\sdl\renderbackendsdl.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\sdl\renderbackendsdl.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\opengl\glimage.cpp">
+		<Unit filename="..\..\..\engine\core\video\sdl\sdlblendingfunctions.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\opengl\glimage.h">
+		<Unit filename="..\..\..\engine\core\video\sdl\sdlblendingfunctions.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.cpp">
+		<Unit filename="..\..\..\engine\core\video\sdl\sdlimage.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.h">
+		<Unit filename="..\..\..\engine\core\video\sdl\sdlimage.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
