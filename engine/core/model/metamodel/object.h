@@ -60,14 +60,10 @@ namespace FIFE { namespace model {
 			
 			template<typename T>
 			const T& get(const std::string& field, const T& value = T()) const {
-				if(hasAttribute(field) || !m_inherited)
+				if(hasField(field) || !m_inherited)
 					return AttributedClass::get<T>(field, value);
 
 				return m_inherited->get<T>(field, value);
-			}
-
-			size_t getNumAttributes() const {
-				return AttributedClass::getNumAttributes() + m_inherited->getNumAttributes();
 			}
 
 		private:

@@ -3,7 +3,7 @@
 #include "model/metamodel/object.h"
 %}
 
-%include "util/attributedclass.h"
+%include "util/attributedclass.i"
 
 namespace FIFE { namespace model {
 
@@ -11,9 +11,6 @@ namespace FIFE { namespace model {
 		public:
 
 			~Object();
-
-			
-			
 
 		private:
 

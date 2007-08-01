@@ -3,13 +3,15 @@
 #include "model/structures/map.h"
 %}
 
+%include "util/attributedclass.i"
+
 namespace FIFE { namespace model {
 
   class Elevation;
 
   class Dataset;
 
-	class Map {
+	class Map : public AttributedClass {
 		public:
 
 			Map();

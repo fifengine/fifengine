@@ -47,12 +47,12 @@ namespace FIFE {
 	void AttributedClass::updateAttributes(const AttributedClass* attrObject, bool override) {
 		if( attrObject == 0 )
 			return;
-		type_attributes::const_iterator i(attrObject->m_attributes.begin());
-		type_attributes::const_iterator end(attrObject->m_attributes.end());
+		std::map<std::string,value_type>::const_iterator i(attrObject->m_fields.begin());
+		std::map<std::string,value_type>::const_iterator end(attrObject->m_fields.end());
 		for(; i != end; ++i) {
-			if( !override && m_attributes.find(i->first) != m_attributes.end() )
+			if( !override && m_fields.find(i->first) != m_fields.end() )
 				continue;
-			m_attributes[ i->first ] = i->second;
+			m_fields[i->first] = i->second;
 		}
 	}
 }; //FIFE

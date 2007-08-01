@@ -4,6 +4,7 @@
 %}
 
 %include "util/point.h"
+%include "util/attributedclass.i"
 
 namespace FIFE { namespace model {
 
@@ -11,7 +12,7 @@ namespace FIFE { namespace model {
 	class Layer;
 	class GeometryType;
 
-	class Elevation {
+	class Elevation : public AttributedClass {
 		public:
 			~Elevation();
 
