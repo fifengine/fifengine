@@ -36,12 +36,14 @@
 
 
 namespace FIFE {
+	class Image;
 
 	/** ImageProvider for cropping another image */
 	class SubImageProvider : public IResourceProvider {
 	public:
 		SubImageProvider() {}
 		IPooledResource* createResource(const ResourceLocation& location);
+		Image* createImage(const ResourceLocation& location);
 	};
 
 }

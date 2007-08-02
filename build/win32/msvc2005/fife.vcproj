@@ -388,8 +388,12 @@
 			<Filter Name="video">
 				<File RelativePath="..\..\..\engine\core\video\animation.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\animation.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\animationpool.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\image.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\image.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\image_location.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\image_location.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\imagepool.h"></File>
 				<Filter Name="opengl">
 					<File RelativePath="..\..\..\engine\core\video\opengl\fife_opengl.h"></File>
 					<File RelativePath="..\..\..\engine\core\video\opengl\glimage.cpp"></File>
@@ -397,11 +401,6 @@
 					<File RelativePath="..\..\..\engine\core\video\opengl\renderbackendopengl.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\video\opengl\renderbackendopengl.h"></File>
 				</Filter>
-				<File RelativePath="..\..\..\engine\core\video\renderable.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderable_location.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderable_location.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderablepool.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderablepool.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\renderbackend.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\renderbackend.h"></File>
 				<Filter Name="sdl">

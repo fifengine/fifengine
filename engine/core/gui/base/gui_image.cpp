@@ -27,7 +27,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/renderablepool.h"
+#include "video/imagepool.h"
 #include "util/debugutils.h"
 
 #include "gui_image.h"
@@ -36,20 +36,20 @@ namespace FIFE {
 	GuiImage::GuiImage(): gcn::Image(), m_poolid(Pool::INVALID_ID), m_pool(NULL) {
 	}
 
-	GuiImage::GuiImage(int id, RenderablePool& pool): gcn::Image(), m_poolid(id), m_pool(&pool) {
+	GuiImage::GuiImage(int id, ImagePool& pool): gcn::Image(), m_poolid(id), m_pool(&pool) {
 	} 
 
 	void GuiImage::free() {
-		// the renderablepool should do this; should we tell it?
+		// the imagepool should do this; should we tell it?
 	}
 
 	int GuiImage::getWidth() const {
-		Renderable& img = dynamic_cast<Renderable&>(m_pool->get(m_poolid));
+		Image& img = dynamic_cast<Image&>(m_pool->get(m_poolid));
 		return img.getWidth();
 	}
 
 	int GuiImage::getHeight() const {
-		Renderable& img = dynamic_cast<Renderable&>(m_pool->get(m_poolid));
+		Image& img = dynamic_cast<Image&>(m_pool->get(m_poolid));
 		return img.getHeight();
 	}
 

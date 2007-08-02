@@ -39,172 +39,78 @@
 
 namespace FIFE {
 
-	Animation::AnimationUpdater::AnimationUpdater(int period, Animation* anim): 
-		TimeEvent(period),
-		m_animation(anim) {
-		TimeManager::instance()->registerEvent(this);
-	}
-
-	Animation::AnimationUpdater::~AnimationUpdater() {
-		TimeManager::instance()->unregisterEvent(this);
-	}
-
-	void Animation::AnimationUpdater::updateEvent(unsigned long time) {
-		m_animation->setNextFrame();
-	}
-
 	Animation::Animation(): 
-		Renderable(),
-		m_updater(NULL),
-		m_listener(NULL),
-		m_frames(),
-		m_xshift(0),
-		m_yshift(0),
-		m_action_frame(0),
-		m_currentFrame(0),
-		m_frameDuration(0),
-		m_animateForward(true),
-		m_isActive(true) {
+		m_action_frame(-1),
+		m_animation_endtime(-1) {
 		}
 	
 	Animation::~Animation() {
-		setActive(false);
-		std::vector<Image*>::iterator i = m_frames.begin();
+		std::cout << ">>> in Animation destructor\n";
+		std::vector<FrameInfo>::const_iterator i(m_frames.begin());
 		while (i != m_frames.end()) {
-			delete (*i);
+			i->img->decRef();
 			i++;
 		}
 	}
 	
-	void Animation::addFrame(Image* image) {
-		m_frames.push_back(image);
-	}
+	void Animation::addFrame(Image* image, unsigned int duration) {
+		image->addRef();
 
-	void Animation::setFrameDuration(int length) {
-		m_frameDuration = length;
-	}
+		FrameInfo info;
+		info.index = m_frames.size();
+		info.duration = duration;
+		info.img = image;
+		m_frames.push_back(info);
 
-	void Animation::checkIndexOverflow(unsigned int index) {
-		if (index >= m_frames.size()) {
-			throw IndexOverflow(boost::lexical_cast<std::string>(index) + std::string(" >= animation size ") +
-					boost::lexical_cast<std::string>(m_frames.size()));
-		}
-	}
-
-	void Animation::setCurrentFrame(unsigned int num) {
-		checkIndexOverflow(num);
-		m_currentFrame = num;
-	}
-
-	void Animation::setActionFrame(unsigned int num) {
-		checkIndexOverflow(num);
-		m_action_frame = num;
-	};
-
-	void Animation::render(const Rect& target, SDL_Surface *screen, unsigned char alpha) {
-		Renderable* img = m_frames[m_currentFrame];
-		Rect tmp(target);
-		tmp.x += img->getXShift();
-		tmp.y += img->getYShift();
-		img->render(tmp, screen, alpha);
-	}
-
-	int Animation::getXShift() const {
-		return m_xshift;
-	}
-
-	int Animation::getYShift() const {
-		return m_yshift;
-	}
-
-	void Animation::setXShift(int xshift) {
-		m_xshift = xshift;
-	}
-
-	void Animation::setYShift(int yshift) {
-		m_yshift = yshift;
-	}
-
-	unsigned int Animation::getWidth() const {
-		return m_frames[m_currentFrame]->getWidth();
-	}
-	
-	unsigned int Animation::getHeight() const {
-		return m_frames[m_currentFrame]->getHeight();
-	}
-	
-	void Animation::setActive(bool active) {
-		m_isActive = active;
-		setTimerActive(active);
-	}
-	
-	void Animation::setDirection(bool forward) {
-		m_animateForward = forward;
-		if (forward) {
-			m_currentFrame = 0;
+		std::map<unsigned int, FrameInfo>::const_iterator i(m_framemap.end());
+		if (i == m_framemap.begin()) {
+			m_framemap[0] = info;
+			m_animation_endtime = duration;
 		} else {
-			m_currentFrame = m_frames.size() - 1;
+			--i;
+			unsigned int frametime = i->first + i->second.duration;
+			m_framemap[frametime] = info;
+			m_animation_endtime = frametime + duration;
 		}
+		
 	}
 
-	void Animation::setNextFrame() {
-		if (!m_isActive) {
- 			return;
+	int Animation::getFrameIndex(unsigned int timestamp) {
+		int val = -1;
+		if ((static_cast<int>(timestamp) < m_animation_endtime) && (m_animation_endtime > 0)) {
+			std::map<unsigned int, FrameInfo>::const_iterator i(m_framemap.lower_bound(timestamp));
+			val = i->second.index;
 		}
+		return val;
+	}
 
-		bool on_last_frame = true;
-		if (m_animateForward) {
-			if (m_currentFrame < m_frames.size() - 1) {
-				++m_currentFrame;
-				on_last_frame = false;
-			}
+	bool Animation::isValidIndex(int index) {
+		int size = m_frames.size();
+		if ((size == 0) || (index > (size - 1))) {
+			return false;
+		}
+		return true;
+	}
+
+	Image* Animation::getFrame(int index) {
+		if (isValidIndex(index)) {
+			return m_frames[index].img;
 		} else {
-			if (m_currentFrame > 0) {
-				--m_currentFrame;
-				on_last_frame = false;
-			}
-		}
-		if (on_last_frame && m_listener) {
-			setActive(false);
-			m_listener->onAnimationEnd(this);
+			return NULL;
 		}
 	}
 
-	void Animation::setTimerActive(bool active) {
-		if (active) {
-			if (!m_updater) {
-				m_updater = new AnimationUpdater(m_frameDuration, this);
-			}
+	int Animation::getFrameDuration(int index) {
+		if (isValidIndex(index)) {
+			return m_frames[index].duration;
 		} else {
-			if (m_updater) {
-				delete m_updater;
-				m_updater = NULL;
-			}
+			return -1;
 		}
-	}
-
-	int Animation::getFrameDuration() const {
-		return m_frameDuration;
 	}
 
 	unsigned int Animation::getNumFrames() const {
 		return m_frames.size();
 	}
 
-	void Animation::setAnimationListener(AnimationListener* listener) {
-		m_listener = listener;
-	}
-
-	bool Animation::getActive() {
-		return m_isActive;
-	}
-
-	bool Animation::isDirectionForward() {
-		return m_animateForward;
-	}
-
-	SDL_Surface* Animation::getSurface() {
-		return m_frames[m_currentFrame]->getSurface();
-	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

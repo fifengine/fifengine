@@ -35,6 +35,24 @@ namespace FIFE {
 	class IPooledResource {
 	public:
 		virtual ~IPooledResource() {};
+
+		/** Calling this method marks resource be used by some resource client.
+		 *  It adds one to resource counter that is kept up by the resource itself.
+		 *  When resource is about to be deleted (e.g. due to pooling algorithms), 
+		 *  reference counter is inspected. In case value is non-zero, resource 
+		 *  shouldn't be deleted.
+		 */
+		virtual void addRef() = 0;
+
+		/** Calling this method unmarks resource be used by a resource client.
+		 *  @see addRef
+		 */
+		virtual void decRef() = 0;
+
+		/** Gets the current reference count
+		 *  @see addRef
+		 */
+		virtual unsigned int getRefCount() = 0;
 	};
 }
 

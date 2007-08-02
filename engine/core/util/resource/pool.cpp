@@ -48,7 +48,6 @@ namespace FIFE {
 		for (provider = m_providers.begin(); provider != m_providers.end(); provider++) {
 			delete (*provider);
 		}
-
 	}
 	
 	void Pool::clear() {

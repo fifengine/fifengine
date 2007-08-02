@@ -31,19 +31,24 @@
 // Second block: files included from the same folder
 #include "video/animation.h"
 #include "video/image.h"
-#include "video/renderable_location.h"
+#include "video/imagepool.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "util/purge.h"
-#include "util/resource/pooled_resource.h"
 #include "xml/tinyxml/tinyxml.h"
 
 #include "animation_provider.h"
 #include "image_provider.h"
 
 namespace FIFE {
+
+	Animation* AnimationProvider::createAnimation(const ResourceLocation& location) {
+		return dynamic_cast<Animation*>(createResource(location));
+	}
 	
 	IPooledResource* AnimationProvider::createResource(const ResourceLocation& location) {
+		assert(m_pool);
+		
 		const std::string& filename = location.getFilename();
 		TiXmlDocument doc(filename);
 
@@ -61,15 +66,14 @@ namespace FIFE {
 			throw InvalidFormat("Error: could not switch to xml:element?");
 		}
 
-
-		int frameDelay = 0;
+		int common_frame_delay = 0;
 		int actionFrame = 0;
 		int xshift = 0;
 		int yshift = 0;
-		element->QueryIntAttribute("delay", &frameDelay);
+		element->QueryIntAttribute("delay", &common_frame_delay);
 		element->QueryIntAttribute("action", &actionFrame);
 
-		std::vector<Image*> frames;
+		Animation* animation = new Animation();
 		
 		TiXmlElement* frame_element = element->FirstChildElement("frame");
 		if (!frame_element) {
@@ -79,43 +83,41 @@ namespace FIFE {
 		while (frame_element) {
 			const char* source = frame_element->Attribute("source");
  			if( source == 0 ) {
-				purge( frames );
+				delete animation;
 				throw InvalidFormat("animation without <frame>s");
  			}
 
 			int x_off = 0;
 			int y_off = 0;
+			int frame_delay = -1;
 			frame_element->QueryIntAttribute("x_offset", &x_off);
 			frame_element->QueryIntAttribute("y_offset", &y_off);
+			frame_element->QueryIntAttribute("delay", &frame_delay);
 
-			ImageProvider image_loader;
-			RenderableLocation location(source);
-			Image* image = dynamic_cast<Image*>(image_loader.createResource(location));
-			if (!image) {
-				purge( frames );
+			Image* image = NULL;
+			try {
+				image = &m_pool->getImage(m_pool->addResourceFromFile(source));
+			} catch (NotFound) {
+				delete animation;
 				throw InvalidFormat(std::string("couldn't load image '") 
 				                    + source + "'");
 			}
 
 			image->setXShift(x_off);
 			image->setYShift(y_off);
-			
-			frames.push_back(image);
+			if (frame_delay >= 0) {
+				animation->addFrame(image, frame_delay);
+			} else {
+				animation->addFrame(image, common_frame_delay);
+			}
 			frame_element= frame_element->NextSiblingElement("frame");
 		}
 
-		Animation* animation = new Animation();
-		animation->setFrameDuration(frameDelay);
-		for (size_t i = 0; i < frames.size(); ++i) {
-			animation->addFrame(frames[i]);
-		}
+		
 		animation->setActionFrame(actionFrame);
-		animation->setCurrentFrame(0);
-		animation->setXShift(xshift);
-		animation->setYShift(yshift);
 		Debug("animation_loader")
 			<< "file: '" << filename
-			<< "' frames:" << frames.size();
+			<< "' frames:" << animation->getNumFrames();
 
 		return animation;
 	}

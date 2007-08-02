@@ -19,6 +19,9 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_IMAGE_POOL_H
+#define FIFE_IMAGE_POOL_H
+
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -27,78 +30,31 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "renderable_location.h"
+#include "image.h"
+
+#include "util/resource/pool.h"
 
 namespace FIFE {
-	RenderableLocation::RenderableLocation(const std::string& filename): 
-		ResourceLocation(filename),
-		m_xshift(0),
-		m_yshift(0),
-		m_width(0),
-		m_height(0),
-		m_parent_renderable(NULL) {
-	}
+	class Image;
 
-	bool RenderableLocation::operator ==(const ResourceLocation& loc) const {
-		if (!ResourceLocation::operator==(loc)) {
-			return false;
-		}
-		const RenderableLocation* r = dynamic_cast<const RenderableLocation*>(&loc);
-		if (!r) {
-			return true;
-		}
-		
-		if (m_xshift != r->m_xshift) {
-			return false;
-		}
-		if (m_yshift != r->m_yshift) {
-			return false;
-		}
-		if (m_width != r->m_width) {
-			return false;
-		}
-		if (m_height != r->m_height) {
-			return false;
-		}
-		if (m_parent_renderable != r->m_parent_renderable) {
-			return false;
-		}
- 		return true;
-	}
-
-	bool RenderableLocation::operator <(const ResourceLocation& loc) const {
-		if (!ResourceLocation::operator <(loc)) {
-			return false;
+	/**  Pool for holding images
+	 */
+	class ImagePool: public Pool {
+	public:
+		/** Default constructor.
+		 */
+		ImagePool(): Pool() {
 		}
 
-		const RenderableLocation* r = dynamic_cast<const RenderableLocation*>(&loc);
-		if (m_xshift < r->m_xshift) {
-			return false;
-		}
-		if (m_yshift < r->m_yshift) {
-			return false;
-		}
-		if (m_width < r->m_width) {
-			return false;
-		}
-		if (m_height < r->m_height) {
-			return false;
-		}
-		if (m_parent_renderable < r->m_parent_renderable) {
-			return false;
-		}
- 		return true;
-	}
+		/** Destructor.
+		 */
+		virtual ~ImagePool() {}
 
-	ResourceLocation* RenderableLocation::clone() const {
-		RenderableLocation* l = new RenderableLocation(getFilename());
-		l->m_xshift = m_xshift;
-		l->m_yshift = m_yshift;
-		l->m_width = m_width;
-		l->m_height = m_height;
-		l->m_parent_renderable = m_parent_renderable;
-		return l;
-	}
+		Image& getImage(unsigned int index)  {
+			return dynamic_cast<Image&>(get(index));
+		}
+	};
 
-};//FIFE
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
+} //FIFE
+
+#endif

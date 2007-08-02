@@ -20,6 +20,8 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <assert.h>
+#include <iostream>
 
 // 3rd party library includes
 
@@ -32,13 +34,15 @@
 namespace FIFE {
 
 	Image::Image(SDL_Surface* surface):
-		Renderable(),
 		m_surface(surface),
 		m_xshift(0), 
-		m_yshift(0) {}
+		m_yshift(0),
+		m_refcount(0) {}
 
 
 	Image::~Image() {
+		std::cout << ">>> in Image destructor, refs = " << m_refcount << "\n";
+		assert(m_refcount == 0);
 		if( m_surface ) {
 			SDL_FreeSurface(m_surface);
 		}

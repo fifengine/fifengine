@@ -35,11 +35,16 @@
 #include "video/image.h"
 
 namespace FIFE { 
+	class Animation;
+	class ImagePool;
 
 	class AnimationProvider : public IResourceProvider {
 	public:
-		AnimationProvider() {}
+		AnimationProvider(ImagePool* pool): m_pool(pool) {}
 		IPooledResource* createResource(const ResourceLocation& location);
+		Animation* createAnimation(const ResourceLocation& location);
+	private:
+		ImagePool* m_pool;
 	};
 
 }

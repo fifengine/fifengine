@@ -45,11 +45,11 @@ namespace FIFE {
 			virtual int getHeight() const;
 	};
 
-	class RenderablePool;
+	class ImagePool;
 	%rename(ImageFont) GuichanImageFont;
 	class GuichanImageFont: public FontBase {
 		public:
-			GuichanImageFont(const std::string& filename, const std::string& glyphs, RenderablePool& pool);
+			GuichanImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
 			virtual ~GuichanImageFont();
 			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
 			virtual int getWidth(const std::string& text) const;

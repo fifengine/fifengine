@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_RENDERABLE_POOL_H
-#define FIFE_RENDERABLE_POOL_H
+#ifndef FIFE_ANIMATION_POOL_H
+#define FIFE_ANIMATION_POOL_H
 
 // Standard C++ library includes
 
@@ -30,27 +30,29 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "animation.h"
+
 #include "util/resource/pool.h"
-#include "renderable.h"
 
 namespace FIFE {
+	class Animation;
 
-	class Renderable;
-
-	/**  Pool for holding renderable objects, like image or animation
+	/**  Pool for holding images
 	 */
-	class RenderablePool: public Pool {
+	class AnimationPool: public Pool {
 	public:
 		/** Default constructor.
 		 */
-		RenderablePool();
+		AnimationPool(): Pool() {
+		}
 
 		/** Destructor.
 		 */
-		virtual ~RenderablePool();
+		virtual ~AnimationPool() {}
 
-	protected:
-	private:
+		Animation& getAnimation(unsigned int index)  {
+			return dynamic_cast<Animation&>(get(index));
+		}
 	};
 
 } //FIFE

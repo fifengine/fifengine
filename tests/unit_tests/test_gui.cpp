@@ -40,9 +40,9 @@
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/raw/rawdata.h"
-#include "video/renderable_location.h"
+#include "video/image_location.h"
 #include "video/image.h"
-#include "video/renderablepool.h"
+#include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
 #include "loaders/native/video_loaders/image_provider.h"
@@ -81,11 +81,9 @@ struct environment {
 		}
 };
 
-void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, RenderablePool& pool, SDL_Surface* screen) {
+void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, ImagePool& pool, SDL_Surface* screen) {
 	pool.addResourceProvider(new SubImageProvider());
 	pool.addResourceProvider(new ImageProvider());
-	pool.addResourceProvider(new AnimationProvider());
-
 
 	GuiImageLoader imageloader(pool);
 	gcn::Image::setImageLoader(&imageloader);	
@@ -103,7 +101,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Rende
 	top->add(icon, 10, 30);
 
 	ImageProvider provider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(RenderableLocation(IMAGE_FILE))));
+	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(ImageLocation(IMAGE_FILE))));
 	
 	int h = img->getHeight();
 	int w = img->getWidth();
@@ -120,7 +118,7 @@ void test_sdl_gui_image() {
 	environment env;
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
-	RenderablePool pool;
+	ImagePool pool;
 	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	SdlGuiGraphics graphics(pool);
 	graphics.setTarget(screen);
@@ -131,7 +129,7 @@ void test_ogl_gui_image() {
 	environment env;
 	RenderBackendOpenGL renderbackend;
 	renderbackend.init();
-	RenderablePool pool;
+	ImagePool pool;
 	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	OpenGLGuiGraphics graphics(pool);
 	test_gui_image(renderbackend, graphics, pool, screen);

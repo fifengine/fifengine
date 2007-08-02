@@ -38,13 +38,13 @@
 #include "util/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-#include "video/renderablepool.h"
+#include "video/imagepool.h"
 
 #include "guichanfont.h"
 
 namespace FIFE {
 
-	GuichanImageFont::GuichanImageFont(const std::string& filename, const std::string& glyphs, RenderablePool& pool) 
+	GuichanImageFont::GuichanImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool) 
 		: SDLImageFont(), m_pool(pool) {
 
 		Log("guichan_image_font")

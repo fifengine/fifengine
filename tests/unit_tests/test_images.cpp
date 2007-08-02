@@ -39,9 +39,9 @@
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/raw/rawdata.h"
-#include "video/renderable_location.h"
+#include "video/image_location.h"
 #include "video/image.h"
-#include "video/renderablepool.h"
+#include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
 #include "loaders/native/video_loaders/image_provider.h"
@@ -81,7 +81,7 @@ void test_image(RenderBackend& renderbackend) {
 	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
 
 	ImageProvider provider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(RenderableLocation(IMAGE_FILE))));
+	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(ImageLocation(IMAGE_FILE))));
 	
 	int h = img->getHeight();
 	int w = img->getWidth();
@@ -106,9 +106,9 @@ void test_subimage(RenderBackend& renderbackend) {
 	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
 
 	ImageProvider imgprovider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.createResource(RenderableLocation(SUBIMAGE_FILE))));
+	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.createResource(ImageLocation(SUBIMAGE_FILE))));
 
-	RenderableLocation location(SUBIMAGE_FILE);
+	ImageLocation location(SUBIMAGE_FILE);
 	location.setParentSource(&*img);
 	int W = img->getWidth();
 	int w = W / 12;

@@ -37,7 +37,7 @@
 #include "sdlimagefont.hpp"
 
 namespace FIFE {
-	class RenderablePool;
+	class ImagePool;
 
 	/** Guichan Style Image font
 	 *
@@ -51,10 +51,10 @@ namespace FIFE {
 			 * @param filename the filename of the Image Font.
 			 * @param glyphs the glyphs for Guichan format.
 			 */
-			GuichanImageFont(const std::string& filename, const std::string& glyphs, RenderablePool& pool);
+			GuichanImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
 			~GuichanImageFont() {}
 		private:
-			RenderablePool& m_pool;
+			ImagePool& m_pool;
 	};
 
 }

@@ -52,7 +52,7 @@ namespace gcn {
 
 namespace FIFE {
 
-	class RenderablePool;
+	class ImagePool;
 	class GuiImageLoader;
 	class Console;
 	class IKeyEvent;
@@ -72,7 +72,7 @@ namespace FIFE {
 		public:
 			/** Constructor.
 			 */
-			GUIManager(IWidgetListener* widgetListener, RenderablePool& pool);
+			GUIManager(IWidgetListener* widgetListener, ImagePool& pool);
 			/** Destructor.
 			 */
 			virtual ~GUIManager();
@@ -176,8 +176,8 @@ namespace FIFE {
 
 			// instance whom to deliver widget events coming from guichan
 			IWidgetListener* m_widgetlistener;
-			// pool used for renderables
-			RenderablePool& m_pool;
+			// pool used for images
+			ImagePool& m_pool;
 	};
 
 }

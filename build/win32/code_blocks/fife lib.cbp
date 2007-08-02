@@ -975,11 +975,33 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\video\animationpool.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\video\image.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\video\image.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\image_location.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\image_location.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\imagepool.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
@@ -1006,32 +1028,6 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\video\opengl\renderbackendopengl.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderable.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderable_location.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderable_location.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderablepool.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\video\renderablepool.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

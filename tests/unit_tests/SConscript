@@ -16,6 +16,6 @@ env.Program('testprog_dat2', ['test_dat2.cpp'])
 env.Program('testprog_gui', ['test_gui.cpp'])
 env.Program('testprog_images', ['test_images.cpp'])
 env.Program('testprog_animations', ['test_animations.cpp'])
-env.Program('testprog_renderablepool', ['test_renderablepool.cpp'])
+env.Program('testprog_imagepool', ['test_imagepool.cpp'])
 
 # vim: set filetype=python :

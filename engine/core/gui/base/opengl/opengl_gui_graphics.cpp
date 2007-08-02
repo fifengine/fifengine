@@ -31,6 +31,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src dir
 #include "video/renderbackend.h"
+#include "video/image.h"
 #include "gui/base/gui_image.h"
 #include "util/rect.h"
 
@@ -69,7 +70,7 @@ namespace FIFE {
 		}
 	};
 
-	OpenGLGuiGraphics::OpenGLGuiGraphics(RenderablePool& pool): m_pool(pool) {
+	OpenGLGuiGraphics::OpenGLGuiGraphics(ImagePool& pool): m_pool(pool) {
 		mTarget = SDL_GetVideoSurface();
 		assert(mTarget);
 		setTargetPlane(mTarget->w, mTarget->h);
@@ -77,8 +78,8 @@ namespace FIFE {
 	}
 
 	void OpenGLGuiGraphics::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {
-		const GuiImage* g_img = static_cast<const GuiImage*>(image);
-		Renderable& fifeimg = dynamic_cast<Renderable&>(m_pool.get(g_img->getPoolId()));
+		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
+		Image& fifeimg = m_pool.getImage(g_img->getPoolId());
 		const gcn::ClipRectangle& clip = getCurrentClipArea();
 		Rect rect(dstX, dstY, width, height);
 		rect.x += clip.xOffset;

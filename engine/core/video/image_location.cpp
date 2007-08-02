@@ -27,12 +27,78 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "renderablepool.h"
+#include "image_location.h"
 
 namespace FIFE {
-	RenderablePool::RenderablePool(): Pool() {
+	ImageLocation::ImageLocation(const std::string& filename): 
+		ResourceLocation(filename),
+		m_xshift(0),
+		m_yshift(0),
+		m_width(0),
+		m_height(0),
+		m_parent_image(NULL) {
 	}
-	
-	RenderablePool::~RenderablePool() {
+
+	bool ImageLocation::operator ==(const ResourceLocation& loc) const {
+		if (!ResourceLocation::operator==(loc)) {
+			return false;
+		}
+		const ImageLocation* r = dynamic_cast<const ImageLocation*>(&loc);
+		if (!r) {
+			return true;
+		}
+		
+		if (m_xshift != r->m_xshift) {
+			return false;
+		}
+		if (m_yshift != r->m_yshift) {
+			return false;
+		}
+		if (m_width != r->m_width) {
+			return false;
+		}
+		if (m_height != r->m_height) {
+			return false;
+		}
+		if (m_parent_image != r->m_parent_image) {
+			return false;
+		}
+ 		return true;
 	}
-}
+
+	bool ImageLocation::operator <(const ResourceLocation& loc) const {
+		if (!ResourceLocation::operator <(loc)) {
+			return false;
+		}
+
+		const ImageLocation* r = dynamic_cast<const ImageLocation*>(&loc);
+		if (m_xshift < r->m_xshift) {
+			return false;
+		}
+		if (m_yshift < r->m_yshift) {
+			return false;
+		}
+		if (m_width < r->m_width) {
+			return false;
+		}
+		if (m_height < r->m_height) {
+			return false;
+		}
+		if (m_parent_image < r->m_parent_image) {
+			return false;
+		}
+ 		return true;
+	}
+
+	ResourceLocation* ImageLocation::clone() const {
+		ImageLocation* l = new ImageLocation(getFilename());
+		l->m_xshift = m_xshift;
+		l->m_yshift = m_yshift;
+		l->m_width = m_width;
+		l->m_height = m_height;
+		l->m_parent_image = m_parent_image;
+		return l;
+	}
+
+};//FIFE
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

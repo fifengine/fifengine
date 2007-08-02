@@ -35,12 +35,14 @@
 #include "video/image.h"
 
 namespace FIFE {
+	class Image;
 
 	/** ImageProvider for some basic formats like jpeg, png etc. */
 	class ImageProvider : public IResourceProvider {
 	public:
 		ImageProvider() {}
 		IPooledResource* createResource(const ResourceLocation& location);
+		Image* createImage(const ResourceLocation& location);
 	};
 
 }

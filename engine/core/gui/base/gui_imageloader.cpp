@@ -29,10 +29,10 @@
 // Second block: files included from the same folder
 
 #include "gui_imageloader.h"
-#include "video/renderablepool.h"
+#include "video/imagepool.h"
 
 namespace FIFE {
-	GuiImageLoader::GuiImageLoader(RenderablePool& pool): m_pool(pool) {
+	GuiImageLoader::GuiImageLoader(ImagePool& pool): m_pool(pool) {
 	}
 
 	gcn::Image* GuiImageLoader::load(const std::string& filename, bool convertToDisplayFormat) {

@@ -35,12 +35,12 @@
 
 
 namespace FIFE {
-	class RenderablePool;
+	class ImagePool;
 
 	class GuiImage : public gcn::Image {
 	public:
 		GuiImage();
-		GuiImage(int id, RenderablePool& pool);
+		GuiImage(int id, ImagePool& pool);
 		void free();
 		int getWidth() const;
 		int getHeight() const;
@@ -50,7 +50,7 @@ namespace FIFE {
 		int getPoolId() const { return m_poolid; }
 	protected:
 		int m_poolid;
-		RenderablePool* m_pool;
+		ImagePool* m_pool;
 	};
 }
 

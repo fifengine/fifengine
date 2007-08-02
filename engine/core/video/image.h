@@ -33,15 +33,12 @@
 // Second block: files included from the same folder
 #include "util/resource/pooled_resource.h"
 
-#include "renderable.h"
-
 namespace FIFE {
+	class Rect;
 
 	/** Base Class for Images.
-	 *
-	 * @see Renderable
 	 */
-	class Image : public Renderable, public IPooledResource {
+	class Image : public IPooledResource {
 		public:
 			/** Constructor.
 			 */
@@ -75,7 +72,30 @@ namespace FIFE {
 			 * @param yshift The Y shift of the Image.
 			 */
 			virtual int getYShift() const;
-		
+
+			/** Renders itself to the Screen at the rectangle rect.
+			 *
+			 * @param rect The position and clipping where to draw this image to.
+			 * @param screen The Screen as it is created by the RenderBackend. Draw self on this.
+			 * @param alpha The alpha value, with which to draw self.
+			 * @see RenderBackend, Screen
+			 */
+			virtual void render(const Rect& rect, SDL_Surface* screen, unsigned char alpha = 255) = 0;
+
+			/** Returns the @b maximum width occupied by this image.
+			 * This should return the maximum width that could be covered by the
+			 * image.
+			 */
+			virtual unsigned int getWidth() const = 0;
+
+			/** Returns the @b maximum height occupied by this image.
+			 */
+			virtual unsigned int getHeight() const = 0;
+
+			void addRef() { m_refcount++; };
+			void decRef() { m_refcount--; };
+			unsigned int getRefCount() { return m_refcount; };
+
 		protected:
 			// The SDL Surface used.
 			SDL_Surface* m_surface;
@@ -83,6 +103,8 @@ namespace FIFE {
 			int m_xshift;
 			// The Y shift of the Image
 			int m_yshift;
+			// Reference count of this image, used e.g. by animations
+			unsigned int m_refcount;
 	};
 
 }

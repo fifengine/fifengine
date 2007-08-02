@@ -28,16 +28,17 @@
 // First block: files included from the FIFE root src dir
 #include "gui/base/gui_image.h"
 #include "util/rect.h"
+#include "video/image.h"
 
 #include "sdl_gui_graphics.h"
 
 namespace FIFE {
-	SdlGuiGraphics::SdlGuiGraphics(RenderablePool& pool): m_pool(pool) {
+	SdlGuiGraphics::SdlGuiGraphics(ImagePool& pool): m_pool(pool) {
 	}
 
 	void SdlGuiGraphics::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {
-		const GuiImage* g_img = static_cast<const GuiImage*>(image);
-		Renderable& fifeimg = dynamic_cast<Renderable&>(m_pool.get(g_img->getPoolId()));
+		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
+		Image& fifeimg = m_pool.getImage(g_img->getPoolId());
 		const gcn::ClipRectangle& clip = getCurrentClipArea();
 		Rect rect(dstX, dstY, width, height);
 		rect.x += clip.xOffset;

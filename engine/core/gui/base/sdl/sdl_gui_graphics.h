@@ -30,7 +30,7 @@
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src dir
-#include "video/renderablepool.h"
+#include "video/imagepool.h"
 
 namespace FIFE {
 	/** Overrides Guichan Graphics to enable usage of normal fife images & related facilities
@@ -39,11 +39,11 @@ namespace FIFE {
 	public:
 		/** Constructor
 		 */
-		SdlGuiGraphics(RenderablePool& pool);
+		SdlGuiGraphics(ImagePool& pool);
 		virtual void drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height);
 
 	private:
-		RenderablePool& m_pool;
+		ImagePool& m_pool;
 	};
 }
 

@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_RENDERABLE_LOCATION_H
-#define FIFE_VIDEO_RENDERABLE_LOCATION_H
+#ifndef FIFE_VIDEO_IMAGE_LOCATION_H
+#define FIFE_VIDEO_IMAGE_LOCATION_H
 
 // Standard C++ library includes
 #include <string>
@@ -32,66 +32,66 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/renderable.h"
+#include "video/image.h"
 #include "util/resource/resource_location.h"
 
 namespace FIFE {
 
-	/** Contains information about the Location of a Renderable.
+	/** Contains information about the Location of a image.
 	 *
 	 *  This class is used to give ResourceProvider the information
 	 *  where to find the data. 
 	 *
 	 */
-	class RenderableLocation: public ResourceLocation {
+	class ImageLocation: public ResourceLocation {
 	public:
 		/** Constructor.
 		 */
-		RenderableLocation(const std::string& filename);
+		ImageLocation(const std::string& filename);
 
-		/** Sets the X shift of the Renderable.
-		 * @param xshift The X shift of the Renderable
+		/** Sets the X shift of the Image.
+		 * @param xshift The X shift of the Image
 		 */
 		virtual void setXShift(int xshift) { m_xshift = xshift; }
 
-		/** Gets the X shift of the Renderable
-		 * @return The X shift of the Renderable
+		/** Gets the X shift of the Image
+		 * @return The X shift of the Image
 		 */
 		virtual int getXShift() const { return m_xshift; }
 
-		/** Sets the Y shift of the Renderable
-		 * @param yshift The Y shift of the Renderable
+		/** Sets the Y shift of the Image
+		 * @param yshift The Y shift of the Image
 		 */
 		virtual void setYShift(int yshift) { m_yshift = yshift; }
 
-		/** Gets the Y shift of the Renderable
-		 * @param yshift The Y shift of the Renderable
+		/** Gets the Y shift of the Image
+		 * @param yshift The Y shift of the Image
 		 */
 		virtual int getYShift() const { return m_yshift; }
 
-		/** Sets the width of the Renderable. Used e.g. with subimages
+		/** Sets the width of the Image. Used e.g. with subimages
 		 */
 		virtual void setWidth(unsigned int width) { m_width = width; }
 
-		/** Gets the width of the Renderable. Used e.g. with subimages
+		/** Gets the width of the Image. Used e.g. with subimages
 		 */
 		virtual unsigned int getWidth() const { return m_width; }
 
-		/** Sets the height of the Renderable. Used e.g. with subimages
+		/** Sets the height of the Image. Used e.g. with subimages
 		 */
 		virtual void setHeight(unsigned int height) { m_height = height; }
 
-		/** Gets the height of the Renderable. Used e.g. with subimages
+		/** Gets the height of the Image. Used e.g. with subimages
 		 */
 		virtual unsigned int getHeight() const { return m_height; }
 
-		/** Sets the parent source of the Renderable. Used e.g. with subimages
+		/** Sets the parent source of the Image. Used e.g. with subimages
 		 */
-		virtual void setParentSource(Renderable* renderable) { m_parent_renderable = renderable; }
+		virtual void setParentSource(Image* image) { m_parent_image = image; }
 
-		/** Gets the parent source of the Renderable. Used e.g. with subimages
+		/** Gets the parent source of the Image. Used e.g. with subimages
 		 */
-		virtual Renderable* getParentSource() const { return m_parent_renderable; }
+		virtual Image* getParentSource() const { return m_parent_image; }
 
 		virtual bool operator ==(const ResourceLocation& loc) const;
 		virtual bool operator <(const ResourceLocation& loc) const;
@@ -102,7 +102,7 @@ namespace FIFE {
 		unsigned int m_yshift;
 		unsigned int m_width;
 		unsigned int m_height;
-		Renderable* m_parent_renderable;
+		Image* m_parent_image;
 	};
 
 }; //FIFE

@@ -39,11 +39,14 @@
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/raw/rawdata.h"
-#include "video/renderable_location.h"
+#include "video/image_location.h"
 #include "video/animation.h"
+#include "video/imagepool.h"
+#include "video/animationpool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
 #include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/image_provider.h"
 #include "util/exception.h"
 #include "util/log.h"
 
@@ -72,13 +75,6 @@ struct environment {
 		}
 };
 
-class AnimRoller: public AnimationListener {
-	void onAnimationEnd(Animation* animation) {
-		animation->setDirection(!animation->isDirectionForward());
-		animation->setActive(true);
-	}
-};
-
 class PositionedAnimation {
 public:
 	int x;
@@ -88,17 +84,9 @@ public:
 		x(ax), 
 		y(ay), 
 		anim(aanim) {
-		roller = new AnimRoller();
-		anim->setAnimationListener(roller);
-		anim->setActive(true);
 	}
 	~PositionedAnimation() { 
-		anim->setAnimationListener(NULL);
-		delete roller;
-		delete anim;
 	}
-private:
-	AnimRoller* roller;
 };
 
 void test_animation(RenderBackend& renderbackend) {
@@ -107,26 +95,39 @@ void test_animation(RenderBackend& renderbackend) {
 	const int H = 600;
 	SDL_Surface* screen = renderbackend.createMainScreen(W, H, 0, false);
 
+	ImagePool* imagepool = new ImagePool();
+	imagepool->addResourceProvider(new ImageProvider());
+
+	AnimationPool* animpool = new AnimationPool();
+	animpool->addResourceProvider(new AnimationProvider(imagepool));
+
+	Animation& anim = animpool->getAnimation(animpool->addResourceFromFile(ANIM_FILE));
+
+	int h = anim.getFrame(0)->getHeight();
+	int w = anim.getFrame(0)->getWidth();
+
 	std::vector<PositionedAnimation*> animations;
-	AnimationProvider provider;
-	Animation* a = dynamic_cast<Animation*>(provider.createResource(RenderableLocation(ANIM_FILE)));
-	boost::scoped_ptr<Animation> anim(a);
-	int h = anim->getHeight();
-	int w = anim->getWidth();
 	for (int x = 0; x < (W - w); x+=w) {
 		for (int y = 0; y < (H - h); y+=h) {
-			a = dynamic_cast<Animation*>(provider.createResource(RenderableLocation(ANIM_FILE)));
-			animations.push_back(new PositionedAnimation(x, y, a));
+			animations.push_back(new PositionedAnimation(x, y, &anim));
 		}
 	}
+	
+	int start_ticks = SDL_GetTicks();
 	for (int i = 0; i < 400; i++) {
 		renderbackend.startFrame();
 		std::vector<PositionedAnimation*>::iterator i = animations.begin();
 		while (i != animations.end()) {
-			(*i)->anim->render(Rect((*i)->x, (*i)->y, w, h), screen);
+			int frametime = SDL_GetTicks() - start_ticks;
+			Animation* a = (*i)->anim;
+			Image* frame = a->getFrame(a->getFrameIndex(frametime));
+			if (!frame) {
+				start_ticks = SDL_GetTicks();
+				continue;
+			}
+			frame->render(Rect((*i)->x, (*i)->y, w, h), screen);
 			i++;
 		}
-		TimeManager::instance()->update();
 		renderbackend.endFrame();
 	}
 	std::vector<PositionedAnimation*>::iterator i = animations.begin();
@@ -134,6 +135,8 @@ void test_animation(RenderBackend& renderbackend) {
 		delete *i;
 		i++;
 	}
+	delete animpool;
+	delete imagepool;
 }
 
 void test_sdl() {

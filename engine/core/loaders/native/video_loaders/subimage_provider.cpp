@@ -32,7 +32,7 @@
 // Second block: files included from the same folder
 #include "video/image.h"
 #include "video/renderbackend.h"
-#include "video/renderable_location.h"
+#include "video/image_location.h"
 #include "util/resource/pooled_resource.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
@@ -40,13 +40,16 @@
 #include "subimage_provider.h"
 
 namespace FIFE { 
+	Image* SubImageProvider::createImage(const ResourceLocation& location) {
+		return dynamic_cast<Image*>(createResource(location));
+	}
 	
 	IPooledResource* SubImageProvider::createResource(const ResourceLocation& location) {
-		const RenderableLocation* loc = dynamic_cast<const RenderableLocation*>(&location);
+		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
 		if (!loc) {
 			throw InvalidConversion("Wrong location type given for subimage provider");
 		}
-		Renderable* r = loc->getParentSource();
+		Image* r = loc->getParentSource();
 		if (!r) {
 			throw NotFound("No parent source assigned, cannot provide subimage");
 		}

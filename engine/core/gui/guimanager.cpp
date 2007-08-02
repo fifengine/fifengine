@@ -44,7 +44,7 @@
 
 namespace FIFE {
 
-	GUIManager::GUIManager(IWidgetListener* widgetlistener, RenderablePool& pool) : 
+	GUIManager::GUIManager(IWidgetListener* widgetlistener, ImagePool& pool) : 
 		m_gcn_gui(new gcn::Gui()), 
 		m_focushandler(0),
         	m_gcn_topcontainer(new gcn::Container()), 

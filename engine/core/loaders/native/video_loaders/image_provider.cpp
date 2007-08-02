@@ -37,13 +37,18 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "video/renderbackend.h"
-#include "video/renderable_location.h"
+#include "video/image_location.h"
 
 #include "image_provider.h"
 
 namespace FIFE { 
+	Image* ImageProvider::createImage(const ResourceLocation& location) {
+		return dynamic_cast<Image*>(createResource(location));
+	}
+
+
 	IPooledResource* ImageProvider::createResource(const ResourceLocation& location) {
-		const RenderableLocation* loc = dynamic_cast<const RenderableLocation*>(&location);
+		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
 
 		const std::string& filename = location.getFilename();
 		RawDataPtr data = VFS::instance()->open(filename);
