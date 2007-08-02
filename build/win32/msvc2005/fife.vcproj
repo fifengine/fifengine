@@ -368,6 +368,8 @@
 				<File RelativePath="..\..\..\engine\core\util\settingsmanager.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\settingsmanager.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\singleton.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\string_manip.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\string_manip.h"></File>
 				<Filter Name="time">
 					<File RelativePath="..\..\..\engine\core\util\time\timeevent.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\util\time\timeevent.h"></File>

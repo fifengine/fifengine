@@ -124,7 +124,6 @@ namespace FIFE {
 			type_sources m_sources;
 
 			void filterList(type_stringlist& list, const std::string& regex) const;
-			std::string lower(const std::string&) const;
 			VFSSource* getSourceForFile(const std::string& file) const;
 	};
 

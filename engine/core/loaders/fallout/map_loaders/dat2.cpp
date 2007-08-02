@@ -31,6 +31,7 @@
 #include "vfs/raw/rawdata.h"
 #include "util/exception.h"
 #include "util/log.h"
+#include "util/string_manip.h"
 
 #include "dat2.h"
 
@@ -105,12 +106,14 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 	}
 
 	RawData* DAT2::open(const std::string& file) const {
-		const RawDataDAT2::s_info& info = getInfo(file);
+		const std::string lc_file = lowercase_string(file);
+		const RawDataDAT2::s_info& info = getInfo(lc_file);
 		return new RawData(new RawDataDAT2(m_datpath, info));
 	}
 
 	bool DAT2::fileExists(const std::string& name) const {
-		return findFileEntry(name) != m_filelist.end();
+		const std::string lc_name = lowercase_string(name);
+		return findFileEntry(lc_name) != m_filelist.end();
 	}
 
 	const RawDataDAT2::s_info& DAT2::getInfo(const std::string& name) const {
@@ -204,3 +207,4 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		return list;
 	}
 } } } } // ~FIFE::map::loaders::fallout
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

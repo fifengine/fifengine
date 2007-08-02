@@ -74,24 +74,16 @@ namespace FIFE {
 	}
 
 	bool VFS::exists(const std::string& file) const {
-		return getSourceForFile(lower(file));
+		return getSourceForFile(file);
 	}
 
 	RawDataPtr VFS::open(const std::string& path) {
-		std::string lowerpath = lower(path);
-		VFSSource* source = getSourceForFile(lowerpath);
+		VFSSource* source = getSourceForFile(path);
 		if (!source)
 			throw NotFound(path);
 
-		RawDataPtr data(source->open(lowerpath));
+		RawDataPtr data(source->open(path));
 		return data;
-	}
-
-	std::string VFS::lower(const std::string& str) const {
-		std::string result;
-		result.resize(str.size());
-		std::transform(str.begin(), str.end(), result.begin(), tolower);
-		return result;
 	}
 
 	VFS::type_stringlist VFS::listFiles(const std::string& pathstr) const {
