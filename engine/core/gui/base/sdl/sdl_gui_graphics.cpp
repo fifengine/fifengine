@@ -38,6 +38,7 @@ namespace FIFE {
 
 	void SdlGuiGraphics::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {
 		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
+		assert(g_img);
 		Image& fifeimg = m_pool.getImage(g_img->getPoolId());
 		const gcn::ClipRectangle& clip = getCurrentClipArea();
 		Rect rect(dstX, dstY, width, height);

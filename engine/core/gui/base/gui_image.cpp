@@ -44,13 +44,11 @@ namespace FIFE {
 	}
 
 	int GuiImage::getWidth() const {
-		Image& img = dynamic_cast<Image&>(m_pool->get(m_poolid));
-		return img.getWidth();
+		return m_pool->getImage(m_poolid).getWidth();
 	}
 
 	int GuiImage::getHeight() const {
-		Image& img = dynamic_cast<Image&>(m_pool->get(m_poolid));
-		return img.getHeight();
+		return m_pool->getImage(m_poolid).getHeight();
 	}
 
 	gcn::Color GuiImage::getPixel(int x, int y) {
