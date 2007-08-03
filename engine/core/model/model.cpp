@@ -19,9 +19,6 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MODEL_H
-#define FIFE_MODEL_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -30,67 +27,64 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/purge.h"
+#include "model/metamodel/metamodel.h"
+#include "structures/map.h"
+
+#include "model.h"
 
 namespace FIFE { namespace model {
 
-	class Map;
+	Model::Model() {
+		m_meta = new MetaModel();
+	}
 
-	class MetaModel;
+	Model::~Model() {
+		purge(m_maps);
+		delete m_meta;
+	}
 
-	/**
-	 * A model is a facade for everything in the model.
-	 */
-	class Model {
-		public:
+	Map* Model::addMap() {
+		Map* map = new Map();
+		m_maps.push_back(map);
+		return map;
+	}
 
-			/** Constructor
-			 *
-			 */
-			Model();
+	void Model::removeMap(Map* map) {
+    std::vector<Map*>::iterator it = m_maps.begin();
+		for(; it != m_maps.end(); ++it) {
+			if(*it == map) {
+				delete *it;
+				m_maps.erase(it);
+				return ;
+			}
+		}
+	}
 
-			/** Destructor
-			 *
-			 */
-			~Model();
+	template<typename T>
+	std::list<Map*> Model::getMaps(const std::string& field, const T& value) const {
+    std::list<Map*> matches;
 
-      /** Add a map this model, and get a pointer to it.
-			 * The returned pointer is owned by the Model, so
-			 * don't delete it!
-			 */
-			Map* addMap();
+		std::vector<Map*>::const_iterator it = m_maps.begin();
+		for(; it != m_maps.end(); ++it) {
+			if((*it)->get<T>(field) == value)
+				matches.push_back(*it);
+		}
 
-			/** Remove a map from this model
-			 */
-			void removeMap(Map*);
+		return matches;
+	}
 
-			/** Get a set of maps by a value.
-			 *
-			 * @param the field to search on
-			 * @param the value to be searched for in the field
-			 */
-			template<typename T>
-			std::list<Map*> getMaps(const std::string& field, const T& value) const;
+	size_t Model::getNumMaps() const {
+		return m_maps.size();
+	}
 
-			/** Return the number of maps in this model
-			 */
-			size_t getNumMaps() const;
+	void Model::clearMaps() {
+		purge(m_maps);
+	}
 
-			/** Remove all elevations from a map
-			 */
-			void clearMaps();
+	MetaModel* Model::getMetaModel() {
+		return m_meta;
+	}
+	
+} } //FIFE::model
 
-			/** Get a pointer to the MetaModel associated with
-			 * this Model. The Model owns this pointer, so don't
-			 * delete it!
-			 */
-			MetaModel* getMetaModel();
-
-		private:
-
-			std::vector<Map*> m_maps;
-			
-			MetaModel* m_meta;
-	};
-
-}}; //FIFE::model
-#endif

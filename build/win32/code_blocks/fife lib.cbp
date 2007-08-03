@@ -593,6 +593,10 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\model\model.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\model\model.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>

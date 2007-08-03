@@ -296,6 +296,7 @@
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\object.h"></File>
 				</Filter>
+				<File RelativePath="..\..\..\engine\core\model\model.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\model\model.h"></File>
 				<Filter Name="structures">
 					<File RelativePath="..\..\..\engine\core\model\structures\elevation.cpp"></File>
