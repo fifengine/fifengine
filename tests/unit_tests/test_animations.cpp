@@ -120,7 +120,7 @@ void test_animation(RenderBackend& renderbackend) {
 		while (i != animations.end()) {
 			int frametime = SDL_GetTicks() - start_ticks;
 			Animation* a = (*i)->anim;
-			Image* frame = a->getFrame(a->getFrameIndex(frametime));
+			Image* frame = a->getFrameByTimestamp(frametime);
 			if (!frame) {
 				start_ticks = SDL_GetTicks();
 				continue;

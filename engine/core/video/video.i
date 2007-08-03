@@ -54,9 +54,9 @@ namespace FIFE {
 		Image* getFrameByTimestamp(unsigned int timestamp);
 		int getFrameDuration(int index);
 		unsigned int getNumFrames() const;
-		void setActionFrame(int num) { m_action_frame = num; }
-		int getActionFrame() { return m_action_frame; }
-		int getDuration() { return m_animation_endtime; }
+		void setActionFrame(int num);
+		int getActionFrame();
+		int getDuration();
 		void addRef();
 		void decRef();
 		unsigned int getRefCount();
@@ -83,8 +83,8 @@ namespace FIFE {
 	class RenderBackend {
 	public:
 		virtual ~RenderBackend();
-		unsigned int getScreenWidth() const { return m_screen->w; }
-		unsigned int getScreenHeight() const { return m_screen->h; }
+		unsigned int getScreenWidth() const;
+		unsigned int getScreenHeight() const;
 		virtual void captureScreen(const std::string& filename);
 	private:
 		RenderBackend(const std::string& name);
