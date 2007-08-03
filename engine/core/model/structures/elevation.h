@@ -65,7 +65,7 @@ namespace FIFE { namespace model {
 			 * the returned pointer to the new Layer, so don't
 			 * delete it!
 			 */
-			Layer* addLayer(const Point& size, GeometryType* geometry);
+			Layer* addLayer(GeometryType* geometry);
 
 			/** Remove a layer from the elevation
 			 */

@@ -48,6 +48,8 @@ namespace FIFE { namespace model {
 
 	/** A basic layer on a map elevation
 	 *
+	 * @bug These comments are very outdated!
+	 *
 	 *  This class represents a layer on the Map.
 	 *  This can be for example a Tile layer 
 	 *  as the roofs and floors of a fo2 map
@@ -89,10 +91,10 @@ namespace FIFE { namespace model {
 			 */
 			Elevation* getElevation();
 
-			/** Get the Geometry as set in the constructor
-			 *  @return a valid Geometry
+			/** Get the GeometryType as set in the constructor
+			 *  @return a valid GeometryType
 			 */
-			Geometry* getGeometry();
+			GeometryType* getGeometryType();
 
 			/** Get the size as set in the constructor
 			 *  @return the size in Layer coords
@@ -147,63 +149,26 @@ namespace FIFE { namespace model {
 			 */
 			bool areInstancesVisible() const;
 
-			/** Check whether the grid lines shall be drawn
-			 *  Grid lines are drawn by setting an overlay
-			 *  image, which is drawn over each tiles position
-			 */
-			bool isGridOverlayEnabled() const;
-			void setGridOverlayEnabled(bool e);
-			void toggleGridOverlayEnabled();
-
-			const Selection& getSelection();
-
-			/** Check whether a position is on the Layer
-			 * @param positon A Layer position to check
-			 * @return True, only if the position is on the Layer
-			 */ 
-			bool isValidPosition(const Point& pos) const;
- 
-			/** Check whether a position is on the Layer
-			 * @see isValidPosition
-			 */
-			bool isValidPosition(int32_t x,int32_t y) const;
-
 		protected:
 
 			/** Constructs a Layer instance (layers are constructed
 			 * by elevations).
 			 */
-			Layer(const Point& size, GeometryType* geometry);
-
-			std::string m_name;
+			Layer(GeometryType* geometry);
 
 			Elevation* m_elevation;
 
-			Point m_size;
-
 			bool m_objects_visibility;
-			bool m_grid_overlay;
 
 			// all the instances on this layer
 			std::vector<Instance*> m_objects;
 
-			Point m_shift;
-			Geometry* m_geometry;
+			GeometryType* m_geometry;
 
-			mutable Selection* m_selection;
+			Point m_shift;
 
 			friend class Elevation;
 	};
-
-	inline
-	bool Layer::isValidPosition(const Point& p) const {
-		return p.x >= 0 && p.x < m_size.x && p.y >= 0 && p.y < m_size.y;
-	}
-
-	inline
-	bool Layer::isValidPosition(int32_t x, int32_t y) const {
-		return x >= 0 && x < m_size.x && y >= 0 && y < m_size.y;
-	}
 
 } } // FIFE::model
 

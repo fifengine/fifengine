@@ -301,22 +301,12 @@
 				<Filter Name="structures">
 					<File RelativePath="..\..\..\engine\core\model\structures\elevation.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\elevation.h"></File>
-					<Filter Name="geometries">
-						<File RelativePath="..\..\..\engine\core\model\structures\geometries\geometry.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\model\structures\geometries\geometry.h"></File>
-						<File RelativePath="..\..\..\engine\core\model\structures\geometries\gridgeometry.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\model\structures\geometries\gridgeometry.h"></File>
-						<File RelativePath="..\..\..\engine\core\model\structures\geometries\hexgeometry.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\model\structures\geometries\hexgeometry.h"></File>
-					</Filter>
 					<File RelativePath="..\..\..\engine\core\model\structures\instance.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\location.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\map.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\map.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\selection.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\selection.h"></File>
 				</Filter>
 			</Filter>
 			<Filter Name="util">

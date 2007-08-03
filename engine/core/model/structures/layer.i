@@ -19,7 +19,6 @@ namespace FIFE { namespace model {
 
 			Elevation* getElevation();
 
-			const Point& getSize() const;
 			void setShift(const Point& shift);
 			const Point& getShift() const;
 
@@ -36,15 +35,6 @@ namespace FIFE { namespace model {
 			void setInstancesVisible(bool vis);
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;
-
-			bool isGridOverlayEnabled() const;
-			void setGridOverlayEnabled(bool);
-			void toggleGridOverlayEnabled();
-
-			const Selection& getSelection();
-
-			bool isValidPosition(const Point& pos) const;
-			bool isValidPosition(int32_t x,int32_t y) const;
 
 		private:
 			Layer();

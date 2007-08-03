@@ -18,7 +18,7 @@ namespace FIFE { namespace model {
 
 			Map* getMap();
 
-			Layer* addLayer(const Point& size, GeometryType* geometry);
+			Layer* addLayer(GeometryType* geometry);
 			void removeLayer(Layer* index);
 
 			template<typename T>

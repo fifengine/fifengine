@@ -31,31 +31,19 @@
 // Second block: files included from the same folder
 #include "util/exception.h"
 #include "util/purge.h"
-#include "model/metamodel/geometry_type.h"
-#include "model/structures/geometries/geometry.h"
 
 #include "layer.h"
-#include "selection.h"
 #include "instance.h"
 #include "elevation.h"
-#include "map.h"
 
 namespace FIFE { namespace model {
 
-	Layer::Layer(const Point& size, GeometryType* geometry)
+	Layer::Layer(GeometryType* geometry)
 		: AttributedClass("map_Layer"),
-		m_size(size),
+		m_geometry(geometry),
  		m_shift() {
 
-		m_geometry = Geometry::createGeometry(geometry, size);
-
-		if( size.x <= 0 || size.y <= 0 ) {
-			throw NotSupported(std::string("invalid layer size:")
-			                   +boost::lexical_cast<std::string>(size));
-		}
-
 		m_objects_visibility = true;
-		m_grid_overlay = false;
 
 		// set default attributes
 		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/outlines/tile_outline_fallout.png");
@@ -63,7 +51,6 @@ namespace FIFE { namespace model {
 	}
 
 	Layer::~Layer() {
-		delete m_geometry;
 		purge(m_objects);
 	}
 
@@ -71,11 +58,7 @@ namespace FIFE { namespace model {
 		return m_elevation;
 	}
 
-	const Point& Layer::getSize() const {
-		return m_size;
-	}
-
-	Geometry* Layer::getGeometry() {
+	GeometryType* Layer::getGeometryType() {
 		return m_geometry;
 	}
 
@@ -92,8 +75,6 @@ namespace FIFE { namespace model {
 	}
 
 	Instance* Layer::addInstance(Object* object, const Point& p) {
-		if(!isValidPosition(p))
-			return 0;
 
 		Location l;
 		l.elevation = getElevation();
@@ -142,23 +123,6 @@ namespace FIFE { namespace model {
 	}
 	bool Layer::areInstancesVisible() const {
 		return m_objects_visibility;
-	}
-
-	bool Layer::isGridOverlayEnabled() const {
-		return m_grid_overlay;
-	}
-	void Layer::setGridOverlayEnabled(bool e) {
-		m_grid_overlay = e;
-	}
-	void Layer::toggleGridOverlayEnabled() {
-		m_grid_overlay = !m_grid_overlay;
-	}
-
-	const Selection& Layer::getSelection() {
-		if(!m_selection) {
-			m_selection = new Selection(this);
-		}
-		return *m_selection;
 	}
 
 } } // FIFE::model
