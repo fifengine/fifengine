@@ -30,7 +30,6 @@
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src dir
-#include "video/renderbackend.h"
 #include "video/image.h"
 #include "gui/base/gui_image.h"
 #include "util/rect.h"

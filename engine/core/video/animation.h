@@ -80,6 +80,10 @@ namespace FIFE {
 		 */
 		Image* getFrame(int index);
 
+		/** Gets the frame that matches the given timestamp.
+		 */
+		Image* getFrameByTimestamp(unsigned int timestamp);
+
 		/** Gets the frame duration for given (indexed) frame. Returns negative value in case
 		 * of incorrect index
 		 */
@@ -101,6 +105,10 @@ namespace FIFE {
 		 * @see setActionFrame
 		 */
 		int getActionFrame() { return m_action_frame; }
+
+		/** Gets the total duration for the whole animation
+		 */
+		int getDuration() { return m_animation_endtime; }
 
 		void addRef() { m_refcount++; };
 		void decRef() { m_refcount--; };
