@@ -166,6 +166,10 @@
 				<File RelativePath="..\..\..\engine\core\audio\source.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\audio\source.h"></File>
 			</Filter>
+			<Filter Name="controller">
+				<File RelativePath="..\..\..\engine\core\controller\engine.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\controller\engine.h"></File>
+			</Filter>
 			<Filter Name="eventchannel">
 				<Filter Name="base">
 					<File RelativePath="..\..\..\engine\core\eventchannel\base\ec_event.h"></File>
