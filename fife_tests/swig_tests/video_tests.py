@@ -4,7 +4,7 @@ from __init__ import *
 class TestVideo(unittest.TestCase):
 	
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = fife.Engine(False)
 		
 	def testImagePool(self):
 		pool = self.engine.getImagePool()

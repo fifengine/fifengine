@@ -3,7 +3,7 @@ from __init__ import *
 
 class TestVfs(unittest.TestCase):
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = fife.Engine(True)
 		self.vfs = fife.VFSUtility()
 
 	def tearDown(self):

@@ -4,7 +4,7 @@ from __init__ import *
 class TestController(unittest.TestCase):
 	
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = fife.Engine(True)
 		
 	def tearDown(self):
 		del self.engine

@@ -120,7 +120,7 @@ void test_image_pool() {
 			Image& r = dynamic_cast<Image&>(pool.get(j));
 			int h = r.getHeight();
 			int w = r.getWidth();
-			for (int i = 100; i > 0; i--) {
+			for (int i = 100; i > 0; i-=2) {
 				renderbackend.startFrame();
 				r.render(Rect(i, i, w, h), screen);
 				renderbackend.endFrame();

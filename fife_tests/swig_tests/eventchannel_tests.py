@@ -11,7 +11,7 @@ class MyEventListener(fife.ICommandListener):
 class TestEventChannel(unittest.TestCase):
 	
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = fife.Engine(True)
 		self.eventmanager = self.engine.getEventManager()
 		
 	def tearDown(self):

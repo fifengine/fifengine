@@ -65,7 +65,7 @@ static const std::string SETTINGS_FILE_NAME = "fife.config";
 
 namespace FIFE {
 
-	Engine::Engine():
+	Engine::Engine(bool use_miniwindow):
 		m_renderbackend(0),
 		m_guimanager(0),
 		m_eventmanager(0),
@@ -76,7 +76,8 @@ namespace FIFE {
 		m_animpool(0),
 		m_vfs_sourcefactory(0),
 		m_vfs(0),
-		m_gui_graphics(0) {
+		m_gui_graphics(0),
+		m_use_miniwindow(use_miniwindow) {
 		init();
 	}
 
@@ -172,6 +173,10 @@ namespace FIFE {
 
 		unsigned int swidth = m_settingsmanager->read("ScreenWidth", 800);
 		unsigned int sheight = m_settingsmanager->read("ScreenHeight", 600);
+		if (m_use_miniwindow) {
+			swidth = 1;
+			sheight = 1;
+		}
 		unsigned char bitsPerPixel = m_settingsmanager->read("BitsPerPixel", 0);
 		bool fullscreen = m_settingsmanager->read("FullScreen", false);
 

@@ -58,7 +58,7 @@ namespace FIFE {
 		public:
 			/** Constructor
 			 */
-			Engine();
+			Engine(bool use_miniwindow=false);
 
 			/** Destructor
 			 */
@@ -95,6 +95,7 @@ namespace FIFE {
 			VFSSourceFactory* m_vfs_sourcefactory;
 			VFS* m_vfs;
 			gcn::Graphics* m_gui_graphics;
+			bool m_use_miniwindow;
 	};
 
 }//FIFE

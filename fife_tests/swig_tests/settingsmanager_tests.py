@@ -4,7 +4,7 @@ from __init__ import *
 class TestSettingsManager(unittest.TestCase):
 	
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = fife.Engine(True)
 		self.settings = self.engine.getSettingsManager()
 		
 	def tearDown(self):

@@ -13,7 +13,7 @@ class MyTimeEvent(fife.TimeEvent):
 
 class TestTimer(unittest.TestCase):
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = fife.Engine(True)
 		self.timemanager = self.engine.getTimeManager()
 
 	def tearDown(self):

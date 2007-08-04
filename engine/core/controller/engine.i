@@ -38,7 +38,7 @@ namespace FIFE {
 
 	class Engine {
 		public:
-			Engine();
+			Engine(bool use_miniwindow=false);
 			virtual ~Engine();
 			void initializePumping();
 			void finalizePumping();

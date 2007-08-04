@@ -85,7 +85,7 @@ void test_image(RenderBackend& renderbackend) {
 	
 	int h = img->getHeight();
 	int w = img->getWidth();
-	for (int i = 0; i < 400; i++) {
+	for (int i = 0; i < 200; i++) {
 		renderbackend.startFrame();
 		img->render(Rect(i, i, w, h), screen);
 		renderbackend.endFrame();
@@ -128,7 +128,7 @@ void test_subimage(RenderBackend& renderbackend) {
 		}
 	}
 	
-	for (unsigned int i = 0; i < 400; i++) {
+	for (unsigned int i = 0; i < 200; i++) {
 		renderbackend.startFrame();
 		subimages[i / 40]->render(Rect(200, 200, w, h), screen);
 		renderbackend.endFrame();
