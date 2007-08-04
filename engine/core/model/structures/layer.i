@@ -8,10 +8,10 @@
 
 namespace FIFE { namespace model {
 
-  class Elevation;
-  class Selection;
-
-  class Object;
+	class Elevation;
+	class Selection;
+	class Instance;
+	class Object;
 
 	class Layer : public AttributedClass {
 		public:
