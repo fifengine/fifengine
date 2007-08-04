@@ -5,7 +5,7 @@ from __init__ import *
 def run_and_get_results():
 	import os
 	
-	os.chdir(genpath('fife_tests/script_tests'))
+	os.chdir(genpath('fife_tests/swig_tests'))
 	pythonfilenames = [p for p in os.listdir(os.getcwd()) if len(p) > 3 and p[-3:] == '.py']
 	testmodulenames = [p[:-3] for p in pythonfilenames if p not in ('__init__.py', 'test_all.py')]
 	testmodules = [__import__(p) for p in testmodulenames]

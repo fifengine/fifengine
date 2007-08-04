@@ -17,7 +17,6 @@ class TestVfs(unittest.TestCase):
 		self.assert_(self.vfs.listDirectories('.'))
 	
 	def testReadLines(self):
-		print self.vfs.listFiles('.')
 		self.assert_(self.vfs.readLines('fife.config'))
 	
 	def testReadBytes(self):
