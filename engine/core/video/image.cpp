@@ -41,7 +41,6 @@ namespace FIFE {
 
 
 	Image::~Image() {
-		std::cout << ">>> in Image destructor, refs = " << m_refcount << "\n";
 		assert(m_refcount == 0);
 		if( m_surface ) {
 			SDL_FreeSurface(m_surface);

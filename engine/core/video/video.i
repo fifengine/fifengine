@@ -29,6 +29,8 @@
 %}
 
 namespace FIFE {
+	class Pool;
+
 	class Image {
 	public:
 		virtual ~Image();
@@ -64,7 +66,7 @@ namespace FIFE {
 		explicit Animation();
 	};
 
-	class ImagePool {
+	class ImagePool: public Pool {
 	public:
 		virtual ~ImagePool();
 		Image& getImage(unsigned int index);
@@ -72,7 +74,7 @@ namespace FIFE {
 		ImagePool();
 	};
 
-	class AnimationPool {
+	class AnimationPool: public Pool {
 	public:
 		virtual ~AnimationPool();
 		Animation& getAnimation(unsigned int index);

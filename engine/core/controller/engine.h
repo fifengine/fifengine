@@ -76,6 +76,8 @@ namespace FIFE {
 			TimeManager* getTimeManager() { return m_timemanager; }
 			SettingsManager* getSettingsManager() { return m_settingsmanager; }
 			GUIManager* getGuiManager() { return m_guimanager; }
+			ImagePool* getImagePool() { return m_imagepool; }
+			AnimationPool* getAnimationPool() { return m_animpool; }
 
 		private:
 			/** Initializes the engine

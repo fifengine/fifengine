@@ -33,6 +33,8 @@ namespace FIFE {
 	class TimeManager;
 	class SettingsManager;
 	class GUIManager;
+	class ImagePool;
+	class AnimationPool;
 
 	class Engine {
 		public:
@@ -47,5 +49,8 @@ namespace FIFE {
 			TimeManager* getTimeManager();
 			SettingsManager* getSettingsManager();
 			GUIManager* getGuiManager();
+			ImagePool* getImagePool();
+			AnimationPool* getAnimationPool();
+
 	};
 }
