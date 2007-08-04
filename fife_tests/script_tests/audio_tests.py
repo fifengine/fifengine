@@ -19,7 +19,7 @@ class TestAudio(unittest.TestCase):
 		self.audiomanager.setAmbientSound('content/audio/music/maybe.ogg')
 		for i in xrange(20):
 			self.audiomanager.setVolume(float(i % 10) / 10)
-			time.sleep(0.1)
+			time.sleep(0.05)
 
 TEST_CLASSES = [TestAudio]
 

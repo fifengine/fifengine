@@ -22,6 +22,7 @@
 %module(directors="1") vfs
 %{
 #include "vfs/vfsutility.h"
+#include "util/exception.h"
 %}
 
 typedef unsigned char uint8_t;
@@ -35,10 +36,10 @@ namespace FIFE {
 	public:
 		VFSUtility();
 		virtual ~VFSUtility();
-		std::vector<uint8_t> readBytes(const std::string& fname);
-		std::vector<std::string> readLines(const std::string& fname);
-		std::vector<std::string> listFiles(const std::string& path);
-		std::vector<std::string> listDirectories(const std::string& path);
+		std::vector<uint8_t> readBytes(const std::string& fname) throw(FIFE::NotFound);
+		std::vector<std::string> readLines(const std::string& fname) throw(FIFE::NotFound);
+		std::vector<std::string> listFiles(const std::string& path) throw(FIFE::NotFound);
+		std::vector<std::string> listDirectories(const std::string& path) throw(FIFE::NotFound);
 		bool addSource(const std::string& sname);
 	};
 }

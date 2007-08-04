@@ -156,7 +156,6 @@ namespace FIFE {
 
 		m_vfs->addSource(new VFSHostSystem());
 #ifdef HAVE_ZIP
-		// FIXME: Change all providers to be loaded here or even better in scripts
 		m_vfs_sourcefactory->addProvider( new zip::ZipProvider() );
 #endif
 		//m_vfs_sourcefactory->addProvider(new map::loaders::fallout::ProviderDAT2());

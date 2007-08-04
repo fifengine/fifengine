@@ -81,6 +81,7 @@ namespace FIFE {
 		virtual int getCode() = 0;
 		virtual ~ICommand();
 	};
+	%feature("notabstract") Command;
 	class Command: public ICommand {
 	public:
 		Command();
