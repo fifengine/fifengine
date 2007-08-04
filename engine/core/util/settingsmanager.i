@@ -5,7 +5,6 @@
 namespace FIFE {
 	class SettingsManager {
 	public:
-		SettingsManager();
 		virtual ~SettingsManager();
 		void loadSettings(const std::string& settings_file_name);
 		void saveSettings(const std::string& settings_file_name, bool create_on_failure=false) const;
@@ -19,5 +18,7 @@ namespace FIFE {
 		%template(write_int) write<int>;
 		%template(write_bool) write<bool>;
 		%template(write_string) write<std::string>;
+	private:
+		SettingsManager();
 	};
 }

@@ -139,13 +139,13 @@ namespace FIFE {
 		std::string rbackend = m_settingsmanager->read<std::string>("RenderBackend", "SDL");
 		if (rbackend == "SDL") {
 			m_renderbackend = new RenderBackendSDL();
-			std::cout << "SDL Render backend created" << std::endl;
+			Log("controller") << "SDL Render backend created";
 		} else {
 #ifdef HAVE_OPENGL
 			m_renderbackend = new RenderBackendOpenGL();
-			std::cout << "OpenGL Render backend created" << std::endl;
+			Log("controller") << "OpenGL Render backend created";
 #else
-			std::cout << "Tried to select OpenGL, even though it is not compiled into the engine" << std::endl;
+			Log("controller") << "Tried to select OpenGL, even though it is not compiled into the engine";
 #endif
 		}
 		m_renderbackend->init();
