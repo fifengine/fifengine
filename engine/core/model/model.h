@@ -23,6 +23,7 @@
 #define FIFE_MODEL_H
 
 // Standard C++ library includes
+#include <list>
 
 // 3rd party library includes
 
@@ -30,10 +31,9 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/structures/map.h"
 
 namespace FIFE { namespace model {
-
-	class Map;
 
 	class MetaModel;
 
@@ -63,13 +63,27 @@ namespace FIFE { namespace model {
 			 */
 			void removeMap(Map*);
 
+			/** Get all the maps in the model.
+			 */
+			std::list<Map*> getMaps() const;
+
 			/** Get a set of maps by a value.
 			 *
 			 * @param the field to search on
 			 * @param the value to be searched for in the field
 			 */
 			template<typename T>
-			std::list<Map*> getMaps(const std::string& field, const T& value) const;
+			std::list<Map*> getMaps(const std::string& field, const T& value) const {
+				std::list<Map*> matches;
+
+				std::vector<Map*>::const_iterator it = m_maps.begin();
+				for(; it != m_maps.end(); ++it) {
+					if((*it)->get<T>(field) == value)
+						matches.push_back(*it);
+				}
+
+				return matches;
+			}
 
 			/** Return the number of maps in this model
 			 */

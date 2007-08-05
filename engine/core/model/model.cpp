@@ -50,6 +50,17 @@ namespace FIFE { namespace model {
 		return map;
 	}
 
+	std::list<Map*> Model::getMaps() const {
+		std::list<Map*> lst;
+
+		std::vector<Map*>::const_iterator it = m_maps.begin();
+		for(; it != m_maps.end(); ++it) {
+			lst.push_back(*it);
+		}
+
+		return lst;
+	}
+
 	void Model::removeMap(Map* map) {
     std::vector<Map*>::iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
@@ -61,25 +72,13 @@ namespace FIFE { namespace model {
 		}
 	}
 
-	template<typename T>
-	std::list<Map*> Model::getMaps(const std::string& field, const T& value) const {
-    std::list<Map*> matches;
-
-		std::vector<Map*>::const_iterator it = m_maps.begin();
-		for(; it != m_maps.end(); ++it) {
-			if((*it)->get<T>(field) == value)
-				matches.push_back(*it);
-		}
-
-		return matches;
-	}
-
 	size_t Model::getNumMaps() const {
 		return m_maps.size();
 	}
 
 	void Model::clearMaps() {
 		purge(m_maps);
+		m_maps.clear();
 	}
 
 	MetaModel* Model::getMetaModel() {

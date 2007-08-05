@@ -3,9 +3,17 @@
 #include "model/model.h"
 %}
 
-namespace FIFE { namespace model {
+%include "std_list.i"
 
+namespace FIFE { namespace model {
   class Map;
+} }
+
+namespace std {
+  %template(MapList) list<FIFE::model::Map*>;
+}
+
+namespace FIFE { namespace model {
 
   class MetaModel;
 
@@ -18,8 +26,15 @@ namespace FIFE { namespace model {
 			Map* addMap();
 			void removeMap(Map*);
 
+			std::list<Map*> getMaps() const;
+
 			template<typename T>
 			std::list<Map*> getMaps(const std::string& field, const T& value) const;
+			%template(getMapsByBool) getMaps<bool>;
+			%template(getMapsByInt) getMaps<long>;
+			%template(getMapsByPoint) getMaps<Point>;
+			%template(getMapsByRect) getMaps<Rect>;
+			%template(getMapsByString) getMaps<std::string>;
 
 			size_t getNumMaps() const;
 			void clearMaps();
