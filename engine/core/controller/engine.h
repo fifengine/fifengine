@@ -78,6 +78,7 @@ namespace FIFE {
 			GUIManager* getGuiManager() { return m_guimanager; }
 			ImagePool* getImagePool() { return m_imagepool; }
 			AnimationPool* getAnimationPool() { return m_animpool; }
+			RenderBackend* getRenderBackend() { return m_renderbackend; }
 
 		private:
 			/** Initializes the engine

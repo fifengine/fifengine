@@ -20,7 +20,6 @@ class TestController(unittest.TestCase):
 		pass
 
 	def testPumping(self):
-		return
 		self.engine.initializePumping()
 		for i in xrange(10):
 			self.engine.pump()
