@@ -34,7 +34,7 @@
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
-#include "loaders/fallout/model_loaders/dat2.h"
+#include "loaders/fallout/vfs_loaders/dat2.h"
 #include "vfs/raw/rawdata.h"
 #include "util/log.h"
 #include "util/exception.h"

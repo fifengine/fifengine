@@ -11,7 +11,7 @@ class TestGui(unittest.TestCase):
 	def tearDown(self):
 		del self.engine
 	
-	def testGui(self):
+	def testFonts(self):
 		fonts = [fife.TTFont('content/fonts/FreeMono.ttf', 14), 
 			fife.ImageFont('content/fonts/rpgfont.png', 
 			               ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"',

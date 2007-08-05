@@ -267,17 +267,17 @@
 			</Filter>
 			<Filter Name="loaders">
 				<Filter Name="fallout">
-					<Filter Name="model_loaders">
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\dat1.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\dat1.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\dat2.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\dat2.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\lzssdecoder.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\lzssdecoder.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\rawdatadat1.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\rawdatadat1.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\rawdatadat2.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\model_loaders\rawdatadat2.h"></File>
+					<Filter Name="vfs_loaders">
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat1.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat1.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat2.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat2.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\lzssdecoder.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\lzssdecoder.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat1.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat1.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat2.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat2.h"></File>
 					</Filter>
 				</Filter>
 				<Filter Name="native">
