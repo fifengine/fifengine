@@ -32,6 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "dataset.h"
 
 namespace FIFE { namespace model {
 
@@ -61,7 +62,17 @@ namespace FIFE { namespace model {
 			 * in the given field.
 			 */
 			template<typename T>
-			std::list<Object*> getObjects(const std::string& field, const T& value) const;
+			std::list<Object*> getObjects(const std::string& field, const T& value) const {
+				std::list<Object*> objects;
+
+				std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+				for(; it != m_datasets.end(); ++it) {
+					objects.splice(objects.end(), (*it)->getObjects(field, value));
+				}
+
+				return objects;
+			}
+
 
 		private:
 

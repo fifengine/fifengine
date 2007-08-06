@@ -46,6 +46,9 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(len(map_query), 0)
 		self.assertEqual(self.model.getNumMaps(), 0)
 
+	def testMetaModel(self):
+		dat1 = self.metamodel.addDataset()
+
 TEST_CLASSES = [TestModel]
 
 if __name__ == '__main__':

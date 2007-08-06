@@ -44,17 +44,5 @@ namespace FIFE { namespace model {
 		return dataset;
 	}
 
-	template<typename T>
-	std::list<Object*> MetaModel::getObjects(const std::string& field, const T& value) const {
-		std::list<Object*> objects;
-
-		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
-		for(; it != m_datasets.end(); ++it) {
-			objects.splice(objects.end(), (*it)->getObjects(field, value));
-		}
-
-		return objects;
-	}
-
 }}; //FIFE::model
 
