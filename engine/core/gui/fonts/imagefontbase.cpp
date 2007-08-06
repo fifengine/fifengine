@@ -41,7 +41,7 @@
 #include "video/image.h"
 #include "video/renderbackend.h"
 
-#include "imagefont.h"
+#include "imagefontbase.h"
 
 namespace FIFE {
 

@@ -245,8 +245,8 @@
 					<File RelativePath="..\..\..\engine\core\gui\fonts\fontbase.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefont.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefont.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefontbase.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefontbase.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\subimagefont.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\subimagefont.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\truetypefont.cpp"></File>

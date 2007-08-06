@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_FONTS_IMAGEFONT_H
-#define FIFE_GUI_FONTS_IMAGEFONT_H
+#ifndef FIFE_GUI_FONTS_IMAGEFONTBASE_H
+#define FIFE_GUI_FONTS_IMAGEFONTBASE_H
 
 // Standard C++ library includes
 #include <map>

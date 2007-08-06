@@ -411,11 +411,11 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\imagefont.cpp">
+		<Unit filename="..\..\..\engine\core\gui\fonts\imagefontbase.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\imagefont.h">
+		<Unit filename="..\..\..\engine\core\gui\fonts\imagefontbase.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
