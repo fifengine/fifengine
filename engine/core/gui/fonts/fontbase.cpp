@@ -19,79 +19,96 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_FONTS_FONTCACHE_H
-#define FIFE_GUI_FONTS_FONTCACHE_H
-
 // Standard C++ library includes
-#include <list>
-#include <string>
 
 // Platform specific includes
 
 // 3rd party library includes
-#include <SDL.h>
+#include <boost/filesystem/convenience.hpp>
+#include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/time/timer.h"
+#include "util/rect.h"
+#include "util/exception.h"
+#include "video/image.h"
+#include "video/renderbackend.h"
 
-struct SDL_Surface;
+#include "fontbase.h"
+
 namespace FIFE {
-	class FontBase;
-	class Image;
 
-	/** Generic cache for rendered text
-	 *  Caches a number of Images with text, as rendered by a Font.
-	 *  Makes sure no more than a maximum number of strings is cached at a time.
-	 *  Automatically removes cached strings not used for a minute.
-	 *  Doesn't use resources (apart from a minimum) if not used after a while.
-	 *
-	 *  @todo Should probably use a @c std::map instead of a @c std::list
-	 */
-	class FontCache {
-		public:
-			/** Constructor
-			 *  Constructs a cache with a maximum of cacheSize entries
-			 */
-			FontCache(size_t cacheSize = 200);
+	FontBase::FontBase() : gcn::Font(), m_cache() {
+		mRowSpacing = 0;
+		mGlyphSpacing = 0;
+		m_antiAlias = true;
+	}
 
-			/** Destructor
-			 */
-			~FontCache();
+	void FontBase::setRowSpacing(int spacing) {
+		mRowSpacing = spacing;
+	}
 
-			/** Get a cache string image
-			 */
-			Image* getRenderedText( FontBase* fontbase, const std::string& text);
+	int FontBase::getRowSpacing() const {
+		return mRowSpacing;
+	}
 
-			/** Add a cache string image
-			 */
-			void addRenderedText( FontBase* fontbase, const std::string& text, Image* image);
+	void FontBase::setGlyphSpacing(int spacing) {
+		mGlyphSpacing = spacing;
+	}
 
-			/** Remove entries not used since a minute
-			 *  Is a timer callback.
-			 */
-			void removeOldEntries();
+	int FontBase::getGlyphSpacing() const {
+		return mGlyphSpacing;
+	}
 
-		protected:
-			typedef struct {
-				std::string text;
-				SDL_Color color;
-				bool antialias;
-				int glyph_spacing;
-				int row_spacing;
-				uint32_t timestamp;
+	void FontBase::setAntiAlias(bool antiAlias) {
+		m_antiAlias = antiAlias;
+	}
 
-				Image* image;
-			} s_cache_entry;
+	bool FontBase::isAntiAlias() {
+		return m_antiAlias;
+	}
 
-			typedef std::list<s_cache_entry> type_cache;
-			type_cache m_cache;
-			size_t m_cacheSize;
-			size_t m_cacheMaxSize;
+	SDL_Color FontBase::getColor() const {
+		return mColor;
+	}
 
-			Timer m_collectTimer;
-	};
+	void FontBase::drawString(gcn::Graphics* graphics, const std::string& text, const int x, const int y) {
+		if (text == "") {
+			return;
+		}
+
+		int yoffset = getRowSpacing() / 2;
+
+		const gcn::ClipRectangle& clip = graphics->getCurrentClipArea();
+		FIFE::Rect rect;
+		rect.x = x + clip.xOffset;
+		rect.y = y + clip.yOffset + yoffset;
+		rect.w = getWidth(text);
+		rect.h = getHeight();
+
+		if (!rect.intersects(Rect(clip.x,clip.y,clip.width,clip.height)) ) {
+			return;
+		}
+
+		FIFE::Image* image = m_cache.getRenderedText( this, text );
+		if (image == 0) {
+			SDL_Surface* textSurface = renderString(text);
+			image = RenderBackend::instance()->createStaticImageFromSDL(textSurface);
+			m_cache.addRenderedText( this, text, image );
+		}
+
+		image->render(rect, RenderBackend::instance()->getScreenSurface());
+	}
+
+	int FontBase::getStringIndexAt(const std::string &text, int x) {
+		for (int i = 0; i < static_cast<int>(text.size()); ++i) {
+			if (getWidth(text.substr(0,i)) > x) {
+				return i-1;
+			}
+		}
+		return text.length();
+	}
+
 }
-#endif

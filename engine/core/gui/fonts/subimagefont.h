@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUICHAN_ADDON_GUICHANFONT_H
-#define FIFE_GUICHAN_ADDON_GUICHANFONT_H
+#ifndef FIFE_GUI_FONTS_SUBIMAGEFONT_H
+#define FIFE_GUI_FONTS_SUBIMAGEFONT_H
 
 // Standard C++ library includes
 #include <string>
@@ -34,16 +34,15 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "sdlimagefont.hpp"
+#include "imagefont.h"
 
 namespace FIFE {
 	class ImagePool;
 
-	/** Guichan Style Image font
-	 *
-	 *  Can read any of: http://guichan.sourceforge.net/imagefontcollection.shtml
+	/** Imagefont that is able to read glyphs from single image sheet, see e.g.
+	 *  guichan imagefontcollection (google for it)
 	 */
-	class GuichanImageFont : public SDLImageFont {
+	class SubImageFont: public ImageFontBase {
 		public:
 			/**
 			 * Constructor.
@@ -51,8 +50,8 @@ namespace FIFE {
 			 * @param filename the filename of the Image Font.
 			 * @param glyphs the glyphs for Guichan format.
 			 */
-			GuichanImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
-			~GuichanImageFont() {}
+			SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
+			~SubImageFont() {}
 		private:
 			ImagePool& m_pool;
 	};

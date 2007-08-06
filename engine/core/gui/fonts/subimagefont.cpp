@@ -40,12 +40,12 @@
 #include "video/renderbackend.h"
 #include "video/imagepool.h"
 
-#include "guichanfont.h"
+#include "subimagefont.h"
 
 namespace FIFE {
 
-	GuichanImageFont::GuichanImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool) 
-		: SDLImageFont(), m_pool(pool) {
+	SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool) 
+		: ImageFontBase(), m_pool(pool) {
 
 		Log("guichan_image_font")
 			<< " loading " << filename << " glyphs " << glyphs;

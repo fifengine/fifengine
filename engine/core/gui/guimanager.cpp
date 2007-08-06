@@ -36,7 +36,7 @@
 #include "util/settingsmanager.h"
 #include "util/debugutils.h"
 #include "gui/console/console.h"
-#include "gui/fonts/font.h"
+#include "gui/fonts/fontbase.h"
 #include "eventchannel/widget/ec_widgetevent.h"
 
 #include "guimanager.h"

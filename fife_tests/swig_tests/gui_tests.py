@@ -13,7 +13,7 @@ class TestGui(unittest.TestCase):
 	
 	def testFonts(self):
 		fonts = [fife.TTFont('content/fonts/FreeMono.ttf', 14), 
-			fife.ImageFont('content/fonts/rpgfont.png', 
+			fife.SubImageFont('content/fonts/rpgfont.png', 
 			               ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"',
 				       self.engine.getImagePool())]
 		for f in fonts:

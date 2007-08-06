@@ -35,7 +35,7 @@
 #include "util/time/timemanager.h"
 #include "util/log.h"
 
-#include "font.h"
+#include "fontbase.h"
 #include "fontcache.h"
 
 namespace FIFE {

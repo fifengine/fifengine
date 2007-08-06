@@ -21,94 +21,64 @@
 
 // Standard C++ library includes
 
-// Platform specific includes
-
 // 3rd party library includes
-#include <boost/filesystem/convenience.hpp>
-#include <guichan.hpp>
+#include <guichan/exception.hpp>
+#include <guichan/image.hpp>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/rect.h"
 #include "util/exception.h"
+#include "util/log.h"
+#include "util/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 
-#include "font.h"
+#include "truetypefont.h"
 
 namespace FIFE {
 
-	FontBase::FontBase() : gcn::Font(), m_cache() {
-		mRowSpacing = 0;
-		mGlyphSpacing = 0;
-		m_antiAlias = true;
-	}
+	TrueTypeFont::TrueTypeFont(const std::string& filename, int size)
+		: FIFE::FontBase() {
+		mFilename = filename;
+		mFont = NULL;
 
-	void FontBase::setRowSpacing(int spacing) {
-		mRowSpacing = spacing;
-	}
+		mFont = TTF_OpenFont(filename.c_str(), size);
 
-	int FontBase::getRowSpacing() const {
-		return mRowSpacing;
-	}
-
-	void FontBase::setGlyphSpacing(int spacing) {
-		mGlyphSpacing = spacing;
-	}
-
-	int FontBase::getGlyphSpacing() const {
-		return mGlyphSpacing;
-	}
-
-	void FontBase::setAntiAlias(bool antiAlias) {
-		m_antiAlias = antiAlias;
-	}
-
-	bool FontBase::isAntiAlias() {
-		return m_antiAlias;
-	}
-
-	SDL_Color FontBase::getColor() const {
-		return mColor;
-	}
-
-	void FontBase::drawString(gcn::Graphics* graphics, const std::string& text, const int x, const int y) {
-		if (text == "") {
-			return;
+		if (mFont == NULL) {
+			throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
 		}
-
-		int yoffset = getRowSpacing() / 2;
-
-		const gcn::ClipRectangle& clip = graphics->getCurrentClipArea();
-		FIFE::Rect rect;
-		rect.x = x + clip.xOffset;
-		rect.y = y + clip.yOffset + yoffset;
-		rect.w = getWidth(text);
-		rect.h = getHeight();
-
-		if (!rect.intersects(Rect(clip.x,clip.y,clip.width,clip.height)) ) {
-			return;
-		}
-
-		FIFE::Image* image = m_cache.getRenderedText( this, text );
-		if (image == 0) {
-			SDL_Surface* textSurface = renderString(text);
-			image = RenderBackend::instance()->createStaticImageFromSDL(textSurface);
-			m_cache.addRenderedText( this, text, image );
-		}
-
-		image->render(rect, RenderBackend::instance()->getScreenSurface());
+		mColor.r = mColor.g = mColor.b = 255;
 	}
 
-	int FontBase::getStringIndexAt(const std::string &text, int x) {
-		for (int i = 0; i < static_cast<int>(text.size()); ++i) {
-			if (getWidth(text.substr(0,i)) > x) {
-				return i-1;
-			}
-		}
-		return text.length();
+	TrueTypeFont::~TrueTypeFont() {
+		TTF_CloseFont(mFont);
 	}
 
+	int TrueTypeFont::getWidth(const std::string& text) const {
+		int w, h;
+		TTF_SizeText(mFont, text.c_str(), &w, &h);
+
+		return w;
+	}
+
+	int TrueTypeFont::getHeight() const {
+		return TTF_FontHeight(mFont) + getRowSpacing();
+	}
+
+	SDL_Surface* TrueTypeFont::renderString(const std::string& text) {
+		if (m_antiAlias) {
+			return TTF_RenderText_Blended(mFont, text.c_str(), mColor);
+		} else {
+			return TTF_RenderText_Solid(mFont, text.c_str(), mColor);
+		}
+	}
+
+	void TrueTypeFont::setColor(Uint8 r, Uint8 g, Uint8 b) {
+		mColor.r = r;
+		mColor.g = g;
+		mColor.b = b;
+	}
 }

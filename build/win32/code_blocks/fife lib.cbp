@@ -391,21 +391,11 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\aafont.cpp">
+		<Unit filename="..\..\..\engine\core\gui\fonts\fontbase.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\aafont.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\font.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\font.h">
+		<Unit filename="..\..\..\engine\core\gui\fonts\fontbase.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
@@ -421,31 +411,31 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\guichanfont.cpp">
+		<Unit filename="..\..\..\engine\core\gui\fonts\imagefont.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\guichanfont.h">
+		<Unit filename="..\..\..\engine\core\gui\fonts\imagefont.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\sdlimagefont.cpp">
+		<Unit filename="..\..\..\engine\core\gui\fonts\subimagefont.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\sdlimagefont.hpp">
+		<Unit filename="..\..\..\engine\core\gui\fonts\subimagefont.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\sdltruetypefont.cpp">
+		<Unit filename="..\..\..\engine\core\gui\fonts\truetypefont.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\sdltruetypefont.hpp">
+		<Unit filename="..\..\..\engine\core\gui\fonts\truetypefont.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

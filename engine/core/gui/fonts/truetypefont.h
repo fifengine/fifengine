@@ -19,47 +19,76 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module(directors="1") fonts
-%{
-#include "gui/fonts/truetypefont.h"
-#include "gui/fonts/subimagefont.h"
+#ifndef FIFE_GUI_FONTS_TRUETYPEFONT_H
+#define FIFE_GUI_FONTS_TRUETYPEFONT_H
 
-%}
-typedef unsigned char Uint8;
+// Standard C++ library includes
+#include <map>
+#include <string>
 
-namespace gcn {
-	class Font
-	{
-	public:
-		virtual ~Font(){ }
-		virtual int getWidth(const std::string& text) const = 0;
-		virtual int getHeight() const = 0;
-	};
-}
+// 3rd party library includes
+#include <guichan/font.hpp>
+#include <guichan/graphics.hpp>
+#include <guichan/image.hpp>
+#include <guichan/platform.hpp>
+#include <SDL_ttf.h>
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "fontbase.h"
 
 namespace FIFE {
-	class FontBase: public gcn::Font {
-	public:
-		virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;
-	};
 
-	%rename(TTFont) TrueTypeFont;
-	class TrueTypeFont: public FIFE::FontBase {
-	public:
-		TrueTypeFont(const std::string& filename, int size);
-		virtual ~TrueTypeFont();
-		virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
-		virtual int getWidth(const std::string& text) const;
-		virtual int getHeight() const;
-	};
-
-	class ImagePool;
-	class SubImageFont: public FontBase {
+	/**
+	 * SDL True Type Font implementation of Font. It uses the SDL_ttf library
+	 * to display True Type Fonts with SDL.
+	 *
+	 * NOTE: You must initialize the SDL_ttf library before using this
+	 *       class. Also, remember to call the SDL_ttf libraries quit
+	 *       function.
+	 *
+	 * Original author of this class is Walluce Pinkham. Some modifications
+	 * made by the Guichan team, and additonal modifications by the FIFE team.
+	 */
+	class TrueTypeFont: public FontBase {
 		public:
-			SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
-			virtual ~SubImageFont();
-			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+
+			/**
+			 * Constructor.
+			 *
+			 * @param filename the filename of the True Type Font.
+			 * @param size the size the font should be in.
+			 */
+			TrueTypeFont(const std::string& filename, int size);
+
+			/**
+			 * Destructor.
+			 */
+			virtual ~TrueTypeFont();
+
+			// Inherited from Font
+
 			virtual int getWidth(const std::string& text) const;
+
 			virtual int getHeight() const;
+
+
+			virtual SDL_Surface *renderString(const std::string& text);
+
+			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+
+		protected:
+			TTF_Font *mFont;
+
+			int mHeight;
+			int mGlyphSpacing;
+			int mRowSpacing;
+
+			std::string mFilename;
+			bool mAntiAlias;
 	};
 }
+
+#endif // end GCN_SDLTRUETYPEFONT_HPP

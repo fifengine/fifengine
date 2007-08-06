@@ -19,14 +19,12 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUICHAN_ADDON_AAFONT_H
-#define FIFE_GUICHAN_ADDON_AAFONT_H
+#ifndef FIFE_GUI_FONTS_IMAGEFONT_H
+#define FIFE_GUI_FONTS_IMAGEFONT_H
 
 // Standard C++ library includes
+#include <map>
 #include <string>
-
-// Platform specific includes
-#include "util/fife_stdint.h"
 
 // 3rd party library includes
 
@@ -34,32 +32,66 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "sdlimagefont.hpp"
+#include "util/point.h"
+
+#include "fontbase.h"
 
 namespace FIFE {
 
-	/**  AA Style Image font (used in fallout)
-	 *   See http://www.teamx.ru/eng/files/docs/index.shtml
+	/** ImageFont base class
+	 *
+	 *  Just set the glyphs/placeholder in any derived class and the rendering
+	 *  is handled by this class. Also frees all glyph surfaces on destruction.
 	 */
-	class AAImageFont : public SDLImageFont {
+	class ImageFontBase: public FontBase {
 		public:
+
 			/**
 			 * Constructor.
-			 *
-			 * @param filename the filename of the Image Font.
 			 */
-			AAImageFont(const std::string& filename);
+			ImageFontBase();
 
-			virtual ~AAImageFont() {}
-
-			/** Set the coloring of the AAF
+			/**
+			 * Destructor.
 			 */
+			virtual ~ImageFontBase();
+
+			/** Get the width in pixels a given text would occupy
+			 *  @param text The text that should be measured.
+			 */
+			virtual int getWidth(const std::string& text) const;
+
+			/** Get the height in pixels a text line would occupy
+			 */
+			virtual int getHeight() const;
+
+			virtual SDL_Surface *renderString(const std::string& text);
 			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
 
 		protected:
-			SDL_Color m_aaf_palette[10];
-	};
+			// A glyph (visible character) 
+			typedef struct {
+				// The offset of the glyph relative to the top-left corner.
+				Point offset;
+				// The glyphs image 
+				// should be with SDL_SRCALPHA off, so that it's just copied over.
+				SDL_Surface* surface;
+			} s_glyph;
 
+			typedef std::map<int,s_glyph> type_glyphs;
+			type_glyphs m_glyphs;
+
+			// The glyph used, when the real glyph is not found
+			// Should default to '?'
+			s_glyph m_placeholder;
+
+			int mHeight;
+			int mGlyphSpacing;
+			int mRowSpacing;
+
+			std::string mFilename;
+			bool mAntiAlias;
+	};
 }
 
-#endif
+#endif // end GCN_SDLTRUETYPEFONT_HPP
