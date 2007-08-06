@@ -32,9 +32,9 @@ def run_and_get_results():
 		print '\n===== Failed C++ Tests ====='
 		for prog in failed:
 			print prog
-		else:
-			print '\n========================'
-			print 'All C++ unit tests run without failure\n'
+	else:
+		print '\n========================'
+		print 'All C++ unit tests run without failure\n'
 		
 	return failed
 		
