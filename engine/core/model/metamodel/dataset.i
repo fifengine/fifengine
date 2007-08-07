@@ -17,13 +17,31 @@ namespace FIFE { namespace model {
 
 			Dataset* addDataset();
 
-			Object* addObject(const Object* inherited = 0);
+			Object* addObject(Object* inherited = 0);
 
 			template<typename T>
-			std::list<Object*> getObjects(const std::string& field, const T& value) const;
+			std::list<Dataset*> getDatasets(const std::string& field, const T& value);
+			%template(getDatasetsByBool) getDatasets<bool>;
+			%template(getDatasetsByInt) getDatasets<long>;
+			%template(getDatasetsByRect) getDatasets<Rect>;
+			%template(getDatasetsByPoint) getDatasets<Point>;
+			%template(getDatasetsByString) getDatasets<std::string>;
 
 			template<typename T>
-			std::list<GeometryType*> getGeometryTypes(const std::string& field, const T& value) const;
+			std::list<Object*> getObjects(const std::string& field, const T& value);
+			%template(getObjectsByBool) getObjects<bool>;
+			%template(getObjectsByInt) getObjects<long>;
+			%template(getObjectsByRect) getObjects<Rect>;
+			%template(getObjectsByPoint) getObjects<Point>;
+			%template(getObjectsByString) getObjects<std::string>;
+
+			template<typename T>
+			std::list<GeometryType*> getGeometryTypes(const std::string& field, const T& value);
+			%template(getGeometryTypesByBool) get<bool>;
+			%template(getGeometryTypesByInt) get<long>;
+			%template(getGeometryTypesByRect) get<Rect>;
+			%template(getGeometryTypesByPoint) get<Point>;
+			%template(getGeometryTypesByString) get<std::string>;
 
 		private:
 

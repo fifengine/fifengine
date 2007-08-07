@@ -45,10 +45,11 @@ namespace FIFE { namespace model {
 	 *
 	 * Objects may inherit default values from another object.
 	 *
-	 * @note All public methods in this class override
-	 * AttributedClass: see that class for documentation of
-	 * these methods. The semantics of Object's overrides
-	 * differ only because they check for inherited values.
+	 * @note oget redefines AttributedClass's notion of get,
+	 * forwarding requests for undefined fields to the inherited
+	 * object. It must be a separate function since templates
+	 * can't be virtual. C++ sucks. A better name than "oget"
+	 * would be welcome.
 	 *
 	 * @see AttributedClass in util/attributedclass.h
 	 */
@@ -59,11 +60,11 @@ namespace FIFE { namespace model {
 			{ }
 			
 			template<typename T>
-			const T& get(const std::string& field, const T& value = T()) const {
+			const T& oget(const std::string& field) {
 				if(hasField(field) || !m_inherited)
-					return AttributedClass::get<T>(field, value);
+					return get<T>(field);
 
-				return m_inherited->get<T>(field, value);
+				return m_inherited->oget<T>(field);
 			}
 
 		private:
@@ -75,11 +76,11 @@ namespace FIFE { namespace model {
 			 * @see Dataset in model/metamodel/dataset.h for creation
 			 * of objects.
 			 */
-			Object(const Object* inherited)
+			Object(Object* inherited)
 				: AttributedClass("Object"), m_inherited(inherited)
 			{ }
 
-			const Object* m_inherited;
+			Object* m_inherited;
 
 			friend class Dataset;
 	};

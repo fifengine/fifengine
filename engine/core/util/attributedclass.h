@@ -76,41 +76,6 @@ namespace FIFE {
 
 			/** Get the value of a field.
 			 *
-			 *  If the field does not exist or there is a type mismatch,
-			 *  it is overwritten with the given default value.
-			 *
-			 *  @param field The field to be retrieved.
-			 *  @param default_val The value to be used if the field does
-			 *  not exist.
-			 *  @return The value of the field or a const ref
-			 *  to a default value.
-			 */
-			template<typename T>
-			T& get(const std::string& field, const T& default_val = T()) {
-				if(m_fields.find(field) == m_fields.end()) {
-// Uncomment this to see all default value creation of attributes.
-//
-// 					Debug("attributed_class")
-// 						<< "creating field for " << field;
-
-					m_fields[field] = value_type(default_val);
-				}
-
-				T* value = boost::get<T>(&(m_fields[field]));
-				if(value == 0) {
-					Debug("attributed_class") 
-						<< "type mismatch in "  << className() 
-						<< " field: " << field;
-
-					m_fields[field] = value_type(default_val);
-					value = boost::get<T>(&(m_fields[field]));
-				}
-				return *value;
-			}
-
-			/** Get the value of a field.
-			 *
-			 *  This is the const version of the above function.
 			 *  If an attribute is requested, that does not exist
 			 *  or a type mismatch occures, a static default value
 			 *  is returned.
@@ -120,7 +85,7 @@ namespace FIFE {
 			 *  to a default value.
 			 */
 			template<typename T>
-			const T& get(const std::string& field) const {
+			const T& get(const std::string& field) {
 				static const value_type const_value;
 				if(m_fields.find(field) == m_fields.end()) {
 					return boost::get<T>(const_value);

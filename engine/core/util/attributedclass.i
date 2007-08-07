@@ -15,7 +15,7 @@ namespace FIFE {
 			~AttributedClass();
 
 			template<typename T>
-			const T& get(const std::string& field, const T& value = T());
+			const T& get(const std::string& field);
 			%template(get_bool) get<bool>;
 			%template(get_int) get<long>;
 			%template(getPoint) get<Point>;

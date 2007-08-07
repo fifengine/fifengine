@@ -12,6 +12,14 @@ namespace FIFE { namespace model {
 
 			~Object();
 
+			template<typename T>
+			const T& oget(const std::string& field);
+			%template(oget_bool) oget<bool>;
+			%template(oget_int) oget<long>;
+			%template(ogetPoint) oget<Point>;
+			%template(ogetRect) oget<Rect>;
+			%template(oget_string) oget<std::string>;
+
 		private:
 
 			Object(const Object* inherited);

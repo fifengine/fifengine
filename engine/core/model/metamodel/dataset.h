@@ -35,6 +35,9 @@
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
 
+#include "object.h"
+#include "geometry_type.h"
+
 namespace FIFE { namespace model {
 
 	class Object;
@@ -58,7 +61,32 @@ namespace FIFE { namespace model {
 			 * @note This object belongs to this dataset, so don't
 			 * delete the returned pointer!
 			 */
-			Object* addObject(const Object* inherited = 0);
+			Object* addObject(Object* inherited = 0);
+
+			/** Get datasets from this dataset having the given value in the
+			 * given field.
+			 *
+			 * @note These datasets are owned by this dataset, so don't delete
+			 * returned pointers!
+			 */
+			template<typename T>
+			std::list<Dataset*> getDatasets(const std::string& field, const T& value) {
+				std::list<Dataset*> datasets;
+
+				std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+				for(; it != m_datasets.end(); ++it) {
+					if((*it)->get<T>(field) == value)
+						datasets.push_back(*it);
+				}
+
+				std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
+				for(; jt != m_datasets.end(); ++jt) {
+					std::list<Dataset*> tmp = (*jt)->getDatasets<T>(field, value);
+					datasets.splice(datasets.end(), tmp);
+				}
+
+				return datasets;
+			}
 
 			/** Get objects from this dataset having the given value in the
 			 * given field.
@@ -67,7 +95,23 @@ namespace FIFE { namespace model {
 			 * returned pointers!
 			 */
 			template<typename T>
-			std::list<Object*> getObjects(const std::string& field, const T& value) const;
+			std::list<Object*> getObjects(const std::string& field, const T& value) {
+				std::list<Object*> objects;
+
+				std::vector<Object*>::const_iterator it = m_objects.begin();
+				for(; it != m_objects.end(); ++it) {
+					if((*it)->oget<T>(field) == value)
+						objects.push_back(*it);
+				}
+
+				std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
+				for(; jt != m_datasets.end(); ++jt) {
+					std::list<Object*> tmp = (*jt)->getObjects<T>(field, value);
+					objects.splice(objects.end(), tmp);
+				}
+
+				return objects;
+			}
 
 			/** Get geometry types from this dataset having the given value in
 			 * the given field.
@@ -76,7 +120,23 @@ namespace FIFE { namespace model {
 			 * returned pointers!
 			 */
 			template<typename T>
-			std::list<GeometryType*> getGeometryTypes(const std::string& field, const T& value) const;
+			std::list<GeometryType*> getGeometryTypes(const std::string& field, const T& value) {
+
+				std::list<GeometryType*> gtypes;
+
+				std::vector<GeometryType*>::iterator it = m_geometry_types.begin();
+				for(; it != m_geometry_types.end(); ++it) {
+					if((*it)->get<T>(field) == value)
+						gtypes.push_back(*it);
+				}
+
+				std::vector<Dataset*>::iterator jt = m_datasets.begin();
+				for(; jt != m_datasets.end(); ++jt) {
+					gtypes.splice(gtypes.end(), (*jt)->getGeometryTypes<T>(field, value));
+				}
+
+				return gtypes;
+			}
 
 		private:
 

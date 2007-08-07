@@ -49,48 +49,10 @@ namespace FIFE { namespace model {
 		return dataset;
 	}
 
-	Object* Dataset::addObject(const Object* inherited) {
+	Object* Dataset::addObject(Object* inherited) {
 		Object* object = new Object(inherited);
 		m_objects.push_back(object);
 		return object;
-	}
-
-	template<typename T>
-	std::list<Object*> Dataset::getObjects(const std::string& field, const T& value) const {
-
-		std::list<Object*> objects;
-
-		std::vector<Object*>::iterator it = m_objects.begin();
-		for(; it != m_objects.end(); ++it) {
-			if((*it)->get<T>(field) == value)
-				objects.push_back(*it);
-		}
-
-		std::vector<Dataset*>::iterator jt = m_datasets.begin();
-		for(; jt != m_datasets.end(); ++jt) {
-			objects.splice(objects.end(), (*jt)->getObjects<T>(field, value));
-		}
-
-		return objects;
-	}
-
-	template<typename T>
-	std::list<GeometryType*> Dataset::getGeometryTypes(const std::string& field, const T& value) const {
-
-		std::list<GeometryType*> gtypes;
-
-		std::vector<GeometryType*>::iterator it = m_geometry_types.begin();
-		for(; it != m_geometry_types.end(); ++it) {
-			if((*it)->get<T>(field) == value)
-				gtypes.push_back(*it);
-		}
-
-		std::vector<Dataset*>::iterator jt = m_datasets.begin();
-		for(; jt != m_datasets.end(); ++jt) {
-			gtypes.splice(gtypes.end(), (*jt)->getGeometryTypes<T>(field, value));
-		}
-
-		return gtypes;
 	}
 
 }}
