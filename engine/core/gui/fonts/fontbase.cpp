@@ -40,7 +40,7 @@
 
 namespace FIFE {
 
-	FontBase::FontBase() : gcn::Font(), m_cache() {
+	FontBase::FontBase() : gcn::Font(), m_pool() {
 		mRowSpacing = 0;
 		mGlyphSpacing = 0;
 		m_antiAlias = true;
@@ -92,11 +92,11 @@ namespace FIFE {
 			return;
 		}
 
-		FIFE::Image* image = m_cache.getRenderedText( this, text );
+		FIFE::Image* image = m_pool.getRenderedText( this, text );
 		if (image == 0) {
 			SDL_Surface* textSurface = renderString(text);
 			image = RenderBackend::instance()->createStaticImageFromSDL(textSurface);
-			m_cache.addRenderedText( this, text, image );
+			m_pool.addRenderedText( this, text, image );
 		}
 
 		image->render(rect, RenderBackend::instance()->getScreenSurface());

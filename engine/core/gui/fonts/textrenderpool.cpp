@@ -36,30 +36,30 @@
 #include "util/log.h"
 
 #include "fontbase.h"
-#include "fontcache.h"
+#include "textrenderpool.h"
 
 namespace FIFE {
 
-	FontCache::FontCache(size_t cacheSize) {
-		m_cacheMaxSize = cacheSize;
-		m_cacheSize = 0;
+	TextRenderPool::TextRenderPool(size_t poolSize) {
+		m_poolMaxSize = poolSize;
+		m_poolSize = 0;
 
 		m_collectTimer.setInterval( 1000 * 60 );
-		m_collectTimer.setCallback( boost::bind( &FontCache::removeOldEntries, this) );
+		m_collectTimer.setCallback( boost::bind( &TextRenderPool::removeOldEntries, this) );
 	}
 
-	FontCache::~FontCache() {
-		type_cache::iterator it= m_cache.begin();
-		for(;it != m_cache.end(); ++it) {
+	TextRenderPool::~TextRenderPool() {
+		type_pool::iterator it= m_pool.begin();
+		for(;it != m_pool.end(); ++it) {
 			delete it->image;
 		}
 	}
 
-	Image* FontCache::getRenderedText( FontBase* fontbase, const std::string& text) {
+	Image* TextRenderPool::getRenderedText( FontBase* fontbase, const std::string& text) {
 		SDL_Color c = fontbase->getColor();
 
-		type_cache::iterator it= m_cache.begin();
-		for(;it != m_cache.end(); ++it) {
+		type_pool::iterator it= m_pool.begin();
+		for(;it != m_pool.end(); ++it) {
 			if( it->antialias != fontbase->isAntiAlias() )
 				continue;
 
@@ -77,17 +77,17 @@ namespace FIFE {
 
 			// Stay sorted after access time
 			it->timestamp = TimeManager::instance()->getTime();
-			m_cache.push_front( *it );
-			m_cache.erase( it );
+			m_pool.push_front( *it );
+			m_pool.erase( it );
 
-			return m_cache.front().image;
+			return m_pool.front().image;
 		}
 		return 0;
 	}
 
-	void FontCache::addRenderedText( FontBase* fontbase,const std::string& text, Image* image) {
+	void TextRenderPool::addRenderedText( FontBase* fontbase,const std::string& text, Image* image) {
 		// Construct a entry and add it.
-		s_cache_entry centry;
+		s_pool_entry centry;
 		centry.antialias = fontbase->isAntiAlias();
 		centry.glyph_spacing = fontbase->getGlyphSpacing();
 		centry.row_spacing = fontbase->getRowSpacing();
@@ -95,49 +95,49 @@ namespace FIFE {
 		centry.color = fontbase->getColor();
 		centry.image = image;
 		centry.timestamp = TimeManager::instance()->getTime();
-		m_cache.push_front( centry );
+		m_pool.push_front( centry );
 
 		// Some minimal amount of entries -> start collection timer
-		// Don't have a timer active if only _some_ text is cached.
-		if( m_cacheSize >= m_cacheMaxSize/10 )
+		// Don't have a timer active if only _some_ text is pooled.
+		if( m_poolSize >= m_poolMaxSize/10 )
 			m_collectTimer.start();
 
-		// Maintain max cache size
-		if( m_cacheSize < m_cacheMaxSize ) {
-			m_cacheSize++;
+		// Maintain max pool size
+		if( m_poolSize < m_poolMaxSize ) {
+			m_poolSize++;
 			return;
 		} else {
-			delete m_cache.back().image;
-			m_cache.pop_back();
+			delete m_pool.back().image;
+			m_pool.pop_back();
 		}
 	}
 
-	void FontCache::removeOldEntries() {
-// 		Log("fontcache")
-// 			<< "Removing old entries from cache "
-// 			<< " now: " << m_cacheSize
-// 			<< " max: " << m_cacheMaxSize;
+	void TextRenderPool::removeOldEntries() {
+// 		Log("textrenderpool")
+// 			<< "Removing old entries from pool "
+// 			<< " now: " << m_poolSize
+// 			<< " max: " << m_poolMaxSize;
 
-		type_cache::iterator tmp,it = m_cache.begin();
+		type_pool::iterator tmp,it = m_pool.begin();
 		uint32_t now = TimeManager::instance()->getTime();
-		for(;it != m_cache.end(); ++it) {
+		for(;it != m_pool.end(); ++it) {
 			if( (now - it->timestamp) > 1000*60 ) {
 				tmp = it;
 				++tmp;
 				delete it->image;
-				m_cache.erase(it);
-				--m_cacheSize;
+				m_pool.erase(it);
+				--m_poolSize;
 				it = tmp;
 			}
 		}
 
-// 		Log("fontcache")
-// 			<< "Removing old entries from cache (DONE) "
-// 			<< " now: " << m_cacheSize
-// 			<< " max: " << m_cacheMaxSize;
+// 		Log("textrenderpool")
+// 			<< "Removing old entries from pool (DONE) "
+// 			<< " now: " << m_poolSize
+// 			<< " max: " << m_poolMaxSize;
 
 		// Stop if nothing can grow old =)
-		if( m_cacheSize == 0 )
+		if( m_poolSize == 0 )
 			m_collectTimer.stop();
 	}
 }

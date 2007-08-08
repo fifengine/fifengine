@@ -243,12 +243,12 @@
 				<Filter Name="fonts">
 					<File RelativePath="..\..\..\engine\core\gui\fonts\fontbase.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\fontbase.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefontbase.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefontbase.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\subimagefont.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\subimagefont.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\textrenderpool.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\textrenderpool.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\truetypefont.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\fonts\truetypefont.h"></File>
 				</Filter>

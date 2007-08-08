@@ -36,14 +36,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "fontcache.h"
+#include "textrenderpool.h"
 
 struct SDL_Surface;
 namespace FIFE {
 
 	/** Abstract Font Base Class
-	 *  Uses a cache for rendered strings.
-	 *  @see FontCache
+	 *  Uses a pool for rendered strings.
+	 *  @see TextRenderPool
 	 */
 	class FontBase : public gcn::Font {
 		public:
@@ -98,7 +98,7 @@ namespace FIFE {
 
 			/** Render a string to a SDL surface
 			 *  Overwrite this method, in your font implementation.
-			 *  The rsulting SDL surface is cached, so it's not that time critical.
+			 *  The rsulting SDL surface is pooled, so it's not that time critical.
 			 */
 			virtual SDL_Surface* renderString(const std::string& text) = 0;
 
@@ -111,7 +111,7 @@ namespace FIFE {
 			SDL_Color getColor() const;
 
 		protected:
-			FontCache m_cache;
+			TextRenderPool m_pool;
 
 			SDL_Color mColor;
 			int mGlyphSpacing;

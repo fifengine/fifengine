@@ -401,16 +401,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\fontcache.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\gui\fonts\fontcache.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\gui\fonts\imagefontbase.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -426,6 +416,16 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\gui\fonts\subimagefont.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\fonts\textrenderpool.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\fonts\textrenderpool.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

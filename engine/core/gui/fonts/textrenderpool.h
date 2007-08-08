@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_FONTS_FONTCACHE_H
-#define FIFE_GUI_FONTS_FONTCACHE_H
+#ifndef FIFE_GUI_FONTS_TEXTRENDERPOOL_H
+#define FIFE_GUI_FONTS_TEXTRENDERPOOL_H
 
 // Standard C++ library includes
 #include <list>
@@ -42,30 +42,30 @@ namespace FIFE {
 	class FontBase;
 	class Image;
 
-	/** Generic cache for rendered text
+	/** Generic pool for rendered text
 	 *  Caches a number of Images with text, as rendered by a Font.
-	 *  Makes sure no more than a maximum number of strings is cached at a time.
-	 *  Automatically removes cached strings not used for a minute.
+	 *  Makes sure no more than a maximum number of strings is pooled at a time.
+	 *  Automatically removes pooled strings not used for a minute.
 	 *  Doesn't use resources (apart from a minimum) if not used after a while.
 	 *
 	 *  @todo Should probably use a @c std::map instead of a @c std::list
 	 */
-	class FontCache {
+	class TextRenderPool {
 		public:
 			/** Constructor
-			 *  Constructs a cache with a maximum of cacheSize entries
+			 *  Constructs a pool with a maximum of poolSize entries
 			 */
-			FontCache(size_t cacheSize = 200);
+			TextRenderPool(size_t poolSize = 200);
 
 			/** Destructor
 			 */
-			~FontCache();
+			~TextRenderPool();
 
-			/** Get a cache string image
+			/** Get a string image
 			 */
 			Image* getRenderedText( FontBase* fontbase, const std::string& text);
 
-			/** Add a cache string image
+			/** Add a string image
 			 */
 			void addRenderedText( FontBase* fontbase, const std::string& text, Image* image);
 
@@ -84,12 +84,12 @@ namespace FIFE {
 				uint32_t timestamp;
 
 				Image* image;
-			} s_cache_entry;
+			} s_pool_entry;
 
-			typedef std::list<s_cache_entry> type_cache;
-			type_cache m_cache;
-			size_t m_cacheSize;
-			size_t m_cacheMaxSize;
+			typedef std::list<s_pool_entry> type_pool;
+			type_pool m_pool;
+			size_t m_poolSize;
+			size_t m_poolMaxSize;
 
 			Timer m_collectTimer;
 	};
