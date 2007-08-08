@@ -41,6 +41,8 @@ namespace FIFE { namespace model {
 
 	Dataset::~Dataset() {
 		purge(m_datasets);
+		purge(m_objects);
+		purge(m_geometry_types);
 	}
 
 	Dataset* Dataset::addDataset() {
@@ -53,6 +55,12 @@ namespace FIFE { namespace model {
 		Object* object = new Object(inherited);
 		m_objects.push_back(object);
 		return object;
+	}
+
+	GeometryType* Dataset::addGeometryType() {
+		GeometryType* gtype = new GeometryType();
+		m_geometry_types.push_back(gtype);
+		return gtype;
 	}
 
 }}

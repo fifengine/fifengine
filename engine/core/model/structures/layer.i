@@ -3,8 +3,18 @@
 #include "model/structures/layer.h"
 %}
 
+%include "std_vector.i"
+
 %include "util/point.h"
 %include "util/attributedclass.i"
+
+namespace FIFE { namespace model {
+  class Instance;
+} }
+
+namespace std {
+  %template(InstanceVector) vector<FIFE::model::Instance*>;
+}
 
 namespace FIFE { namespace model {
 
@@ -31,6 +41,11 @@ namespace FIFE { namespace model {
 
 			template<typename T>
 			std::vector<Instance*> getInstances(const std::string& field, const T& value);
+			%template(getInstancesByBool) getInstances<bool>;
+			%template(getInstancesByInt) getInstances<long>;
+			%template(getInstancesByRect) getInstances<Rect>;
+			%template(getInstancesByPoint) getInstances<Point>;
+			%template(getInstancesByString) getInstances<std::string>;
 
 			void setInstancesVisible(bool vis);
 			void toggleInstancesVisible();

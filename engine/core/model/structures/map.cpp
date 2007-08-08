@@ -78,25 +78,13 @@ namespace FIFE { namespace model {
 		}
 	}
 
-	template<class T>
-	std::list<Elevation*> Map::getElevations(const std::string& field, const T& value) const {
-		std::list<Elevation*> matches;
-
-		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
-		for(; it != m_elevations.end(); ++it) {
-			if((*it)->get<T>(field) == value)
-				matches.push_back(*it);
-		}
-
-		return matches;
-	}
-
 	size_t Map::getNumElevations() const {
 		return m_elevations.size();
 	}
 
 	void Map::clearElevations() {
 		purge(m_elevations);
+		m_elevations.clear();
 	}
 
 } } //FIFE::model

@@ -102,19 +102,6 @@ namespace FIFE { namespace model {
 		return m_objects;
 	}
 
-	template<typename T>
-	std::vector<Instance*> Layer::getInstances(const std::string& field, const T& value) {
-		std::vector<Instance*> matches;
-
-		std::vector<Instance*>::iterator it = m_objects.begin();
-		for(; it != m_objects.end(); ++it) {
-			if((*it)->get<T>(field, value))
-				matches.push_back(*it);	
-		}
-
-		return matches;
-	}
-
 	void Layer::setInstancesVisible(bool vis) {
 		m_objects_visibility = vis;
 	}
@@ -125,4 +112,4 @@ namespace FIFE { namespace model {
 		return m_objects_visibility;
 	}
 
-} } // FIFE::model
+ } } // FIFE::model

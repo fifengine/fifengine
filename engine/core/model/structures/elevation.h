@@ -35,6 +35,8 @@
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
 
+#include "layer.h"
+
 namespace FIFE { namespace model {
 
 	class Layer;
@@ -77,7 +79,18 @@ namespace FIFE { namespace model {
 			 * @param the value to be searched for in the field
 			 */
 			template<typename T>
-			std::list<Layer*> getLayers(const std::string& field, const T& value) const;
+			std::list<Layer*> getLayers(const std::string& field, const T& value) const {
+				std::list<Layer*> matches;
+
+				std::vector<Layer*>::const_iterator it = m_layers.begin();
+				for(; it != m_layers.end(); ++it) {
+					if((*it)->get<T>(field) == value)
+						matches.push_back(*it);
+				}
+
+				return matches;
+			}
+
 
 			/** Get the overall number of layers
 			 */
@@ -88,6 +101,7 @@ namespace FIFE { namespace model {
 			void clearLayers();
 
 			/** Set the 'reference' Layer
+			 * @note Is this actually used? --jwt
 			 */
 			void setReferenceLayer(Layer* layer);
 

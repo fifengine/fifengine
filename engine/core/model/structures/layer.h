@@ -35,11 +35,13 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 #include "util/attributedclass.h"
+#include "model/metamodel/object.h"
+
+#include "instance.h"
 
 namespace FIFE { namespace model {
 
 	class Elevation;
-	class Instance;
 	class Selection;
 	class Geometry;
 
@@ -133,7 +135,17 @@ namespace FIFE { namespace model {
 			 * @param value the value to be found in the field
 			 */
 			template<typename T>
-			std::vector<Instance*> getInstances(const std::string& field, const T& value);
+			std::vector<Instance*> getInstances(const std::string& field, const T& value) {
+				std::vector<Instance*> matches;
+
+				std::vector<Instance*>::iterator it = m_objects.begin();
+				for(; it != m_objects.end(); ++it) {
+					if((*it)->get<T>(field) == value)
+						matches.push_back(*it);	
+				}
+
+				return matches;
+			}
 
 			/** Set object visibility
 			 */

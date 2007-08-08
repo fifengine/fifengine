@@ -35,6 +35,7 @@
 #include "util/attributedclass.h"
 
 #include "location.h"
+#include "elevation.h"
 
 namespace FIFE { namespace model {
 
@@ -86,7 +87,17 @@ namespace FIFE { namespace model {
 			 * @param the value to be searched for in the field
 			 */
 			template<typename T>
-			std::list<Elevation*> getElevations(const std::string& field, const T& value) const;
+			std::list<Elevation*> getElevations(const std::string& field, const T& value) const {
+				std::list<Elevation*> matches;
+
+				std::vector<Elevation*>::const_iterator it = m_elevations.begin();
+				for(; it != m_elevations.end(); ++it) {
+					if((*it)->get<T>(field) == value)
+						matches.push_back(*it);
+				}
+
+				return matches;
+			}
 
 			/** Return the number of elevations on this map
 			 */

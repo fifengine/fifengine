@@ -19,6 +19,8 @@ namespace FIFE { namespace model {
 
 			Object* addObject(Object* inherited = 0);
 
+			GeometryType* addGeometryType();
+
 			template<typename T>
 			std::list<Dataset*> getDatasets(const std::string& field, const T& value);
 			%template(getDatasetsByBool) getDatasets<bool>;
@@ -37,11 +39,11 @@ namespace FIFE { namespace model {
 
 			template<typename T>
 			std::list<GeometryType*> getGeometryTypes(const std::string& field, const T& value);
-			%template(getGeometryTypesByBool) get<bool>;
-			%template(getGeometryTypesByInt) get<long>;
-			%template(getGeometryTypesByRect) get<Rect>;
-			%template(getGeometryTypesByPoint) get<Point>;
-			%template(getGeometryTypesByString) get<std::string>;
+			%template(getGeometryTypesByBool) getGeometryTypes<bool>;
+			%template(getGeometryTypesByInt) getGeometryTypes<long>;
+			%template(getGeometryTypesByRect) getGeometryTypes<Rect>;
+			%template(getGeometryTypesByPoint) getGeometryTypes<Point>;
+			%template(getGeometryTypesByString) getGeometryTypes<std::string>;
 
 		private:
 

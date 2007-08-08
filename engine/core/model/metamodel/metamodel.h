@@ -89,13 +89,29 @@ namespace FIFE { namespace model {
 
 				std::vector<Dataset*>::const_iterator it = m_datasets.begin();
 				for(; it != m_datasets.end(); ++it) {
-					std::list<Object*> tmp = (*it)->getObjects(field, value);
+					std::list<Object*> tmp = (*it)->getObjects<T>(field, value);
 					objects.splice(objects.end(), tmp);
 				}
 
 				return objects;
 			}
 
+			/** Get geometry types that have the given value in
+			 * the given field.
+			 */
+			template<typename T>
+			std::list<GeometryType*> getGeometryTypes(const std::string& field, const T& value) {
+
+				std::list<GeometryType*> gtypes;
+
+				std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+				for(; it != m_datasets.end(); ++it) {
+					std::list<GeometryType*> tmp = (*it)->getGeometryTypes<T>(field, value);
+					gtypes.splice(gtypes.end(), tmp);
+				}
+
+				return gtypes;
+			}
 
 		private:
 

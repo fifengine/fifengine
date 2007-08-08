@@ -3,13 +3,22 @@
 #include "model/structures/elevation.h"
 %}
 
+%include "std_list.i"
+
 %include "util/point.h"
 %include "util/attributedclass.i"
 
 namespace FIFE { namespace model {
+  class Layer;
+} }
+
+namespace std {
+  %template(LayerList) list<FIFE::model::Layer*>;
+}
+
+namespace FIFE { namespace model {
 
 	class Map;
-	class Layer;
 	class GeometryType;
 
 	class Elevation : public AttributedClass {
@@ -23,6 +32,11 @@ namespace FIFE { namespace model {
 
 			template<typename T>
 			std::list<Layer*> getLayers(const std::string& field, const T& value) const;
+			%template(getLayersByBool) getLayers<bool>;
+			%template(getLayersByInt) getLayers<long>;
+			%template(getLayersByPoint) getLayers<Point>;
+			%template(getLayersByRect) getLayers<Rect>;
+			%template(getLayersByString) getLayers<std::string>;
 
 			size_t getNumLayers() const;
 			void clearLayers();

@@ -46,6 +46,86 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(len(map_query), 0)
 		self.assertEqual(self.model.getNumMaps(), 0)
 
+	def testMaps(self):
+		map = self.model.addMap()
+		map.set_string("Name", "MyMap")
+
+		elev1 = map.addElevation()
+		elev2 = map.addElevation()
+
+		elev1.set_string("Name", "Elev1")
+		elev2.set_string("Name", "Elev2")
+
+		self.assertEqual(elev1.get_string("Name"), "Elev1")
+		self.assertEqual(elev2.get_string("Name"), "Elev2")
+
+		query = map.getElevationsByString("Name", "Elev1")
+		self.assertEqual(len(query), 1)
+
+		query = map.getElevationsByString("Name", "Elev2")
+		self.assertEqual(len(query), 1)
+
+		self.assertEqual(map.getNumElevations(), 2)
+
+		map.clearElevations()
+		self.assertEqual(map.getNumElevations(), 0)
+
+	def testElevations(self):
+		map = self.model.addMap()
+		elev = map.addElevation()
+		elev.set_string("Name", "MyElevation")
+
+		#self.assertEqual(elev.getMap(), map)
+		self.assertEqual(elev.getNumLayers(), 0)
+
+		dat = self.metamodel.addDataset()
+		geom = dat.addGeometryType()
+
+		layer1 = elev.addLayer(geom)
+		layer2 = elev.addLayer(geom)
+
+		layer1.set_string("Name", "Layer1")
+		layer2.set_string("Name", "Layer2")
+
+		self.assertEqual(layer1.get_string("Name"), "Layer1")
+		self.assertEqual(layer2.get_string("Name"), "Layer2")
+
+		self.assertEqual(len(elev.getLayersByString("Name", "Layer1")), 1)
+
+		self.assertEqual(elev.getNumLayers(), 2)
+		elev.removeLayer(layer2)
+		self.assertEqual(elev.getNumLayers(), 1)
+		elev.clearLayers()
+		self.assertEqual(elev.getNumLayers(), 0)
+
+	def testLayers(self):
+		map = self.model.addMap()
+		elev = map.addElevation()
+
+		dat = self.metamodel.addDataset()
+		geom = dat.addGeometryType()
+		obj1 = dat.addObject()
+		obj1.set_string("Name", "MyHero")
+		obj2 = dat.addObject()
+		obj2.set_string("Name", "Goon")
+
+		layer = elev.addLayer(geom)
+
+		self.assertEqual(layer.hasInstances(), 0)
+		#self.assertEqual(layer.getElevation(), elev)
+
+		inst = layer.addInstance(obj1, fife.Point(4,4))
+		layer.addInstance(obj2, fife.Point(5,6))
+		layer.addInstance(obj2, fife.Point(5,4))
+		
+		query = layer.getInstancesByString("Name", "Goon")
+		self.assertEqual(len(query), 2)
+		self.assertEqual(len(layer.getInstances()), 3)
+
+		self.assertEqual(query[0].get_string("Name"), "Goon")
+		self.assertEqual(inst.getPosition(), fife.Point(4,4))
+		
+
 	def testMetaModel(self):
 		dat1 = self.metamodel.addDataset()
 		dat2 = self.metamodel.addDataset()

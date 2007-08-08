@@ -15,10 +15,16 @@ namespace FIFE { namespace model {
 	class Instance {
 		public:
 
-			Instance(const Object* object, const Location& location);
+			Instance(Object* object, const Location& location);
 			~Instance();
 
-			const Object* getObject();
+			template<typename T>
+			const T& get(const std::string& field);
+			%template(get_bool) get<bool>;
+			%template(get_int) get<long>;
+			%template(get_Rect) get<Rect>;
+			%template(get_Point) get<Point>;
+			%template(get_string) get<std::string>;
 
 			void setPosition(const Point& p);
 

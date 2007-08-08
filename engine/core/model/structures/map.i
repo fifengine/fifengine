@@ -3,7 +3,17 @@
 #include "model/structures/map.h"
 %}
 
+%include "std_list.i"
+
 %include "util/attributedclass.i"
+
+namespace FIFE { namespace model {
+  class Elevation;
+} }
+
+namespace std {
+  %template(ElevationList) list<FIFE::model::Elevation*>;
+}
 
 namespace FIFE { namespace model {
 
@@ -24,6 +34,11 @@ namespace FIFE { namespace model {
 
 			template<typename T>
 			std::list<Elevation*> getElevations(const std::string& field, const T& value) const;
+			%template(getElevationsByBool) getElevations<bool>;
+			%template(getElevationsByInt) getElevations<long>;
+			%template(getElevationsByRect) getElevations<Rect>;
+			%template(getElevationsByPoint) getElevations<Point>;
+			%template(getElevationsByString) getElevations<std::string>;
 
 			size_t getNumElevations() const;
 			void clearElevations();

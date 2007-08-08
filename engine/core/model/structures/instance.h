@@ -30,13 +30,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/metamodel/object.h"
+
 #include "location.h"
 
 namespace FIFE { namespace model {
 
 	class Layer;
-
-	class Object;
 
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location. 
@@ -46,11 +46,16 @@ namespace FIFE { namespace model {
 
 			/** Constructor
 			 */
-			Instance(const Object* object, const Location& location)
+			Instance(Object* object, const Location& location)
 				: m_object(object), m_location(location)
 			{ }
 
-			const Object* getObject();
+			Object* getObject();
+
+			template<typename T>
+			const T& get(const std::string& field) {
+				return m_object->oget<T>(field);
+			}
 
 			void setPosition(const Point& p);
 
@@ -60,7 +65,7 @@ namespace FIFE { namespace model {
 
 		private:
 
-			const Object* m_object;
+			Object* m_object;
 
 			Location m_location;
 
@@ -71,7 +76,7 @@ namespace FIFE { namespace model {
 	};
 
 	inline
-	const Object* Instance::getObject() {
+	Object* Instance::getObject() {
 		return m_object;
 	}
 

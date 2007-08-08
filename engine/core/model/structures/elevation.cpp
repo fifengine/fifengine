@@ -63,19 +63,6 @@ namespace FIFE { namespace model {
 		return layer;
 	}
 
-	template<typename T>
-	std::list<Layer*> Elevation::getLayers(const std::string& field, const T& value) const {
-		std::list<Layer*> matches;
-
-		std::vector<Layer*>::const_iterator it = m_layers.begin();
-		for(; it != m_layers.end(); ++it) {
-			if((*it)->get<T>(field) == value)
-				matches.push_back(*it);
-		}
-
-		return matches;
-	}
-
 	void Elevation::removeLayer(Layer* layer) {
 		std::vector<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
@@ -89,6 +76,7 @@ namespace FIFE { namespace model {
 
 	void Elevation::clearLayers() {
 		purge(m_layers);
+		m_layers.clear();
 	}
 
 	void Elevation::setReferenceLayer(Layer* layer) {

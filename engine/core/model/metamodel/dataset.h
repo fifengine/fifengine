@@ -63,6 +63,13 @@ namespace FIFE { namespace model {
 			 */
 			Object* addObject(Object* inherited = 0);
 
+			/** Add a GeometryType to this dataset.
+			 *
+			 * @note This GeometryType belongs to this dataset, so don't
+			 * delete the returned pointer!
+			 */
+			GeometryType* addGeometryType();
+
 			/** Get datasets from this dataset having the given value in the
 			 * given field.
 			 *
@@ -132,7 +139,8 @@ namespace FIFE { namespace model {
 
 				std::vector<Dataset*>::iterator jt = m_datasets.begin();
 				for(; jt != m_datasets.end(); ++jt) {
-					gtypes.splice(gtypes.end(), (*jt)->getGeometryTypes<T>(field, value));
+					std::list<GeometryType*> tmp = (*jt)->getGeometryTypes<T>(field, value);
+					gtypes.splice(gtypes.end(), tmp);
 				}
 
 				return gtypes;
