@@ -12,7 +12,10 @@ class Shape(object):
 		self.tilting = 0
 		self.zoomval = 70
 		self.center_pt = center_pt
-		self.angles = [2 * math.pi * (s / float(sidecount)) for s in xrange(sidecount-1)]
+		startangle = 0
+		if sidecount == 6:
+			startangle = math.pi / 6.0
+		self.angles = [startangle + 2 * math.pi * (s / float(sidecount)) for s in xrange(sidecount-1)]
 		shape_pts = [(0,0,0)]
 		maxy, miny = 0, 0
 		for a in self.angles:
@@ -31,9 +34,9 @@ class Shape(object):
 			for x,y in ((1,0), (1,1), (0,1), (-1,1), (-1,0), (-1,-1), (0,-1), (1,-1)):
 				reflections.append([(pt[0]+x, pt[1]+y, 0) for pt in self.shape_pts])
 		elif sides == 6:
-			H = math.cos(math.pi/6.0)
-			W = math.sin(math.pi/6.0)
-			for x,y in ((1+W,-H), (1+W,H), (0,2*H), (-1-W,H), (-1-W,-H)):
+			W = math.cos(math.pi/6.0)
+			H = math.sin(math.pi/6.0)
+			for x,y in ((2*W,0), (W,1+H), (-W,1+H), (-2*W,0), (-W,-1-H)):
 				reflections.append([(pt[0]+x, pt[1]+y, 0) for pt in self.shape_pts])
 		return reflections
 	
