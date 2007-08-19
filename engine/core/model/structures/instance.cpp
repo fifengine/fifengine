@@ -22,6 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -29,23 +30,70 @@
 // Second block: files included from the same folder
 #include "util/debugutils.h"
 #include "util/exception.h"
+#include "model/metamodel/abstractpather.h"
 
 #include "instance.h"
 
 namespace FIFE { namespace model {
+	class ActionInfo {
+	public:
+		ActionInfo(AbstractPather* pather): 
+			m_action(0), 
+			m_target(NULL), 
+			m_speed(0), 
+			m_anim_index(-1), 
+			m_frame_index(-1),
+			m_action_start_time(SDL_GetTicks()),
+			m_nextnode(),
+			m_pather_session_id(-1),
+			m_pather(pather) {}
+
+		~ActionInfo() {
+			delete m_target;
+		}
+
+		unsigned int currentTime() {
+			return SDL_GetTicks() - m_action_start_time;
+		}
+
+		const Location& getNextNode(const Location& curpos) {
+			assert(m_target && m_pather);
+			m_pather_session_id = m_pather->getNextNode(curpos, 
+			                      *m_target, m_nextnode, m_pather_session_id);
+			return m_nextnode;
+		}
+
+		// Current action, owned by object
+		Action* m_action;
+		// target location for ongoing movement
+		Location* m_target;
+		// current movement speed
+		float m_speed;
+		// current animation index (handle to animation pool)
+		int m_anim_index;
+		// current frame index in current action
+		int m_frame_index;
+		// action start time (ticks)
+		unsigned long m_action_start_time;
+		// movement node
+		Location m_nextnode;
+		// session id for pather
+		int m_pather_session_id;
+		// pather
+		AbstractPather* m_pather;
+
+	};
+
 	Instance::Instance(Object* object, const Location& location):
 		m_object(object), 
 		m_location(location),
-		m_action(NULL),
-		m_target(NULL),
-		m_speed(0),
-		m_anim_index(-1),
-		m_frame_index(-1),
+		m_static_img_ind(-1),
+		m_actioninfo(NULL),
 		m_listeners(NULL) {
 	}
 
 	Instance::~Instance() {
-		delete m_target;
+		delete m_actioninfo;
 		delete m_listeners;
 	}
 
@@ -72,11 +120,23 @@ namespace FIFE { namespace model {
 	}
 
 	void Instance::act(const std::string& action_name, const Location target, const float speed) {
+		act(action_name);
+		m_actioninfo->m_target = new Location(target);
+		m_actioninfo->m_speed = speed;
 	}
 
 	void Instance::act(const std::string& action_name) {
+		assert(m_object);
+		delete m_actioninfo;
+		m_actioninfo = new ActionInfo(m_object->getPather());
+		m_actioninfo->m_action = m_object->getAction(action_name);
+		if (!m_actioninfo->m_action) {
+			throw NotFound(std::string("action ") + action_name + " not found");
+		}
 	}
 
 	void Instance::update() {
+		assert(m_actioninfo);
+		const Location& nextnode = m_actioninfo->getNextNode(m_location);
 	}
 }}

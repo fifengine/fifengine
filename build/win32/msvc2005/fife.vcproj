@@ -291,6 +291,7 @@
 			</Filter>
 			<Filter Name="model">
 				<Filter Name="metamodel">
+					<File RelativePath="..\..\..\engine\core\model\metamodel\abstractpather.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\action.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\action.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.cpp"></File>

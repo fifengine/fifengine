@@ -81,7 +81,7 @@ namespace FIFE { namespace model {
 			 */
 			void removeElevation(Elevation*);
 
-      /** Get a set of elevations by a value.
+			/** Get a set of elevations by a value.
 			 *
 			 * @param the field to search on
 			 * @param the value to be searched for in the field

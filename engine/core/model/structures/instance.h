@@ -40,6 +40,7 @@ namespace FIFE { namespace model {
 	class Layer;
 	class Action;
 	class Instance;
+	class ActionInfo;
 
 	class InstanceListener {
 	public:
@@ -114,16 +115,10 @@ namespace FIFE { namespace model {
 			Object* m_object;
 			// current location
 			Location m_location;
-			// Current action, owned by object
-			Action* m_action;
-			// target location for ongoing movement
-			Location* m_target;
-			// current movement speed
-			float m_speed;
-			// current animation index (handle to animation pool)
-			int m_anim_index;
-			// current frame index in current action
-			int m_frame_index;
+			// static image index, optimization e.g. for tiles
+			int m_static_img_ind;
+			// action information, allocated when actions are bind
+			ActionInfo* m_actioninfo;
 			// instance listeners. Not allocated right away to save space
 			std::vector<InstanceListener*>* m_listeners;
 

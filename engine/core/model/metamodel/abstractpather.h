@@ -19,6 +19,9 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_MODEL_ABSTRACTPATHER_H
+#define FIFE_MODEL_ABSTRACTPATHER_H
+
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -27,46 +30,36 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "object.h"
-#include "action.h"
-#include "abstractpather.h"
 
+namespace FIFE { namespace model {
+	class Map;
+	class Location;
 
-namespace FIFE { namespace model { 
-	Object::Object(Object* inherited):
-		AttributedClass("Object"),
-		m_inherited(inherited),
-		m_actions(NULL),
-		m_pather(NULL)	{ }
+	class AbstractPather {
+	public:
+		virtual ~AbstractPather();
 
+		/** Sets map for pather to use
+		 */
+		virtual void setMap(Map* map) = 0;
 
-	Action* Object::addAction(const std::string& action_name) {
-		if (!m_actions) {
-			m_actions = new std::map<std::string, Action*>;
-		}
-		Action* a = getAction(action_name);
-		if (!a) {
-			a = new Action();
-			(*m_actions)[action_name] = a;
-		}
-		return a;
-	}
-
-	Action* Object::getAction(const std::string& action_name) {
-		std::map<std::string, Action*>::const_iterator i;
-		if (m_actions) {
-			i = m_actions->find(action_name);
-		}
-		if ((!m_actions) || (i == m_actions->end())) {
-			if (m_inherited) {
-				return m_inherited->getAction(action_name);
-			}
-			return NULL;
-		}
-		return i->second;
-	}
-
-	void Object::setPather(AbstractPather* pather) {
-		m_pather = pather;
-	}
+		/** Gets next node from pathfinder
+		 * Model will call this function periodically when instances are
+		 * moving on map. Pather must return next nodes in 
+		 * such pace that model always knows where to instances should be moved.
+		 * Possible node chains are stored in pather side. Pather must be 
+		 * able to store multiple chains for multiple simultaneous paths
+		 *
+		 * @param curpos Current position of the movement
+		 * @param target Target of the movement
+		 * @param nextnode node where to move next (returned by pather)
+		 * @param session_id pather does pathfinding in increments.
+		 *   Further increments are bind to previous ones with given session_id
+		 * @return session_id to use with further calls
+		 */
+		virtual int getNextNode(const Location& curpos, const Location& target, 
+		                        Location& nextnode, const int session_id=-1) = 0;
+	};
 }}
+
+#endif

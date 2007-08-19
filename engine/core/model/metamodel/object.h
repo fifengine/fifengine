@@ -38,6 +38,7 @@ namespace FIFE { namespace model {
 
 	class Dataset;
 	class Action;
+	class AbstractPather;
 
 	/** Object class
 	 *
@@ -79,6 +80,14 @@ namespace FIFE { namespace model {
 			 */
 			Action* getAction(const std::string& action_name);
 
+			/** Sets pather used by instances created out of this object
+			 */
+			void setPather(AbstractPather* pather);
+
+			/** Gets associated pather
+			 */
+			AbstractPather* getPather() { return m_pather; }
+
 		private:
 
 			/** An object may optionally inherit default attributes
@@ -88,12 +97,11 @@ namespace FIFE { namespace model {
 			 * @see Dataset in model/metamodel/dataset.h for creation
 			 * of objects.
 			 */
-			Object(Object* inherited)
-				: AttributedClass("Object"), m_inherited(inherited)
-			{ }
+			Object(Object* inherited);
 
 			Object* m_inherited;
-			std::map<std::string, Action*> m_actions;
+			std::map<std::string, Action*>* m_actions;
+			AbstractPather* m_pather;
 			friend class Dataset;
 	};
 
