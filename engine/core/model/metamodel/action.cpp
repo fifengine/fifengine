@@ -76,7 +76,7 @@ namespace FIFE { namespace model {
 				return m_animations.begin()->second;
 			}
 			// wrapped value (last)
-			return u->second;
+			return tmp->second;
 		}
 
 		// value in the middle...

@@ -188,59 +188,71 @@ class TestActions(unittest.TestCase, fife.InstanceListener):
 		self.runaction.addAnimation(0, 0)
 		self.runaction.addAnimation(270, 3)
 		self.runaction.addAnimation(180, 2)
+		self.walkaction = self.obj1.addAction("walk")
+		self.walkaction.addAnimation(70, 1)
+		self.walkaction.addAnimation(200, 2)
+		self.walkaction.addAnimation(320, 3)
 
 	def OnActionFinished(self, instance, action):
 		self.finishedInstance = instance
 		self.finishedAction = action
 	
-	def testAngle89(self):
+	def testRunAngle89(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(89), 1)
 	
-	def testAngle90(self):
+	def testRunAngle90(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(90), 1)
 	
-	def testAngle91(self):
+	def testRunAngle91(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(91), 1)
 	
-	def testAngle135(self):
+	def testRunAngle135(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(135), 2)
 	
-	def testAngle134(self):
+	def testRunAngle134(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(134), 1)
 	
-	def testAngle136(self):
+	def testRunAngle136(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(136), 2)
 	
-	def testAngle0(self):
+	def testRunAngle0(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(0), 0)
 	
-	def testAngle40(self):
+	def testRunAngle40(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(40), 0)
 	
-	def testAngle45(self):
+	def testRunAngle45(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(45), 1)
 	
-	def testAngle270(self):
+	def testRunAngle270(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(270), 3)
 
-	def testAngle269(self):
+	def testRunAngle269(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(269), 3)
 	
-	def testAngle271(self):
+	def testRunAngle271(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(271), 3)
 	
-	def testAngle314(self):
+	def testRunAngle314(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(314), 3)
 	
-	def testAngle359(self):
+	def testRunAngle359(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(359), 0)
 	
-	def testAngle400(self):
+	def testRunAngle400(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(400), 0)
 	
-	def testAngle451(self):
+	def testRunAngle451(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(451), 1)
 	
+	def testWalkAngle0(self):
+		self.assertEqual(self.walkaction.getAnimationIndexByAngle(0), 3)
+
+	def testWalkAngle60(self):
+		self.assertEqual(self.walkaction.getAnimationIndexByAngle(60), 1)
+
+	def testWalkAngle199(self):
+		self.assertEqual(self.walkaction.getAnimationIndexByAngle(199), 2)
 
 TEST_CLASSES = [TestModel, TestActions]
 
