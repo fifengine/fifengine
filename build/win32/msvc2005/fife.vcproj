@@ -291,6 +291,8 @@
 			</Filter>
 			<Filter Name="model">
 				<Filter Name="metamodel">
+					<File RelativePath="..\..\..\engine\core\model\metamodel\action.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\action.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\geometry_type.h"></File>
@@ -303,6 +305,7 @@
 				<Filter Name="structures">
 					<File RelativePath="..\..\..\engine\core\model\structures\elevation.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\elevation.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\instance.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\instance.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.h"></File>

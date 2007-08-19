@@ -20,8 +20,6 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <assert.h>
-#include <iostream>
 
 // 3rd party library includes
 
@@ -29,42 +27,44 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "image.h"
+#include "util/debugutils.h"
+#include "util/exception.h"
 
-namespace FIFE {
+#include "action.h"
 
-	Image::Image(SDL_Surface* surface):
-		m_surface(surface),
-		m_xshift(0), 
-		m_yshift(0),
-		m_refcount(0) {}
+namespace FIFE { namespace model {
+	Action::Action():
+	m_animations() {
+	}
 
+	Action::~Action() {
+	}
 
-	Image::~Image() {
-		assert(m_refcount == 0);
-		if( m_surface ) {
-			SDL_FreeSurface(m_surface);
+	int Action::getAnimationIndexByAngle(unsigned int angle) {
+		if (m_animations.size() == 0) {
+			return -1;
 		}
+		if (m_animations.size() == 1) {
+			m_animations.begin()->second;
+		}
+
+		t_animmap::const_iterator l(m_animations.lower_bound(angle));
+		if (l == m_animations.end()) {
+			return (--l)->second;
+		}
+		t_animmap::const_iterator u(m_animations.upper_bound(angle));
+		if (u == m_animations.begin()) {
+			return u->second;
+		}
+		unsigned int ud = u->first - angle;
+		unsigned int ld = angle - l->first;
+		if (ud >= ld) {
+			return u->second;
+		}
+		return l->second;
 	}
 
-	SDL_Surface* Image::getSurface() { 
-		return m_surface; 
+	void Action::addAnimation(unsigned int angle, int animation_index) {
+		m_animations[angle % 360] = animation_index;
 	}
-
-	void Image::setXShift(int xshift) {
-		m_xshift = xshift;
-	}
-
-	void Image::setYShift(int yshift) {
-		m_yshift = yshift;
-	}
-
-	int Image::getXShift() const {
-		return m_xshift;
-	}
-
-	int Image::getYShift() const {
-		return m_yshift;
-	}
-}
-
+}}

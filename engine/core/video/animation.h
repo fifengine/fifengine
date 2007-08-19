@@ -106,6 +106,21 @@ namespace FIFE {
 		 */
 		int getActionFrame() { return m_action_frame; }
 
+		/** Animation direction tells how this animation is associated
+		 * with movement when played starting from frame 0
+		 * E.g. in walking animation there should be direction assigned so
+		 * that engine can choose the correct animation when characters are
+		 * moved around the map area
+		 * @param direction direction to set
+		 */
+		void setDirection(unsigned int direction);
+
+		/** Gets the animation direction
+		 * @see setDirection
+		 * @return direction for this animation
+		 */
+		unsigned int getDirection() { return m_direction; }
+
 		/** Gets the total duration for the whole animation
 		 */
 		int getDuration() { return m_animation_endtime; }
@@ -138,6 +153,8 @@ namespace FIFE {
 		int m_animation_endtime;
 		// Reference count of this animation
 		unsigned int m_refcount;
+		// Direction for this animation
+		unsigned int m_direction;
 
 	};
 

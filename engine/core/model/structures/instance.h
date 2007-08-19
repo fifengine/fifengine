@@ -23,6 +23,7 @@
 #define FIFE_OBJECT_H
 
 // Standard C++ library includes
+#include <vector>
 
 // 3rd party library includes
 
@@ -37,68 +38,98 @@
 namespace FIFE { namespace model {
 
 	class Layer;
+	class Action;
+	class Instance;
+
+	class InstanceListener {
+	public:
+		virtual ~InstanceListener();
+		virtual void OnActionFinished(Instance* instance, Action* action) = 0;
+	};
+
+
 
 	/**
-	 *  An Instance is an "instantiation" of an Object at a Location. 
+	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
 	class Instance {
 		public:
 
 			/** Constructor
 			 */
-			Instance(Object* object, const Location& location)
-				: m_object(object), m_location(location)
-			{ }
+			Instance(Object* object, const Location& location);
 
-			Object* getObject();
+			/** Destructor
+			 */
+			virtual ~Instance();
 
+			/** Gets object where this instance is instantiated from
+			 */
+			Object* getObject() { return m_object; }
+
+			/** Gets associated metadata field with given field name
+ 			 */
 			template<typename T>
-			const T& get(const std::string& field) {
-				return m_object->oget<T>(field);
-			}
+			const T& get(const std::string& field) { return m_object->oget<T>(field); }
 
-			void setPosition(const Point& p);
+			/** Sets instance position to p
+ 			 */
+			void setPosition(const Point& p) { m_location.position = p; }
 
-			const Point& getPosition() const;
-			Layer* getLayer() const;
-			const Location& getLocation() const;
+			/** Gets current instance position
+ 			 */
+			const Point& getPosition() const { return m_location.position; }
+
+			/** Gets current layer where instance is located
+ 			 */
+			Layer* getLayer() const { return m_location.layer; }
+
+			/** Gets current location of instance
+ 			 */
+			const Location& getLocation() const { return m_location; }
+
+			/** Adds new instance listener
+ 			 */
+			void addListener(InstanceListener* listener);
+
+			/** Removes associated instance listener
+ 			 */
+			void removeListener(InstanceListener* listener);
+
+			/** Performs given named action to the instance. While performing the action
+			 *  moves instance to given target with given speed
+ 			 */
+			void act(const std::string& action_name, const Location target, const float speed);
+
+			/** Performs given named action to the instance. Performs no movement
+ 			 */
+			void act(const std::string& action_name);
+
+			/** Updates the instance related to current action
+ 			 */
+			void update();
 
 		private:
-
+			// object where instantiated from
 			Object* m_object;
-
+			// current location
 			Location m_location;
+			// Current action, owned by object
+			Action* m_action;
+			// target location for ongoing movement
+			Location* m_target;
+			// current movement speed
+			float m_speed;
+			// current animation index (handle to animation pool)
+			int m_anim_index;
+			// current frame index in current action
+			int m_frame_index;
+			// instance listeners. Not allocated right away to save space
+			std::vector<InstanceListener*>* m_listeners;
 
 			Instance(const Instance&);
 			Instance& operator=(const Instance&);
-
-			friend class Layer;
 	};
-
-	inline
-	Object* Instance::getObject() {
-		return m_object;
-	}
-
-	inline
-	void Instance::setPosition(const Point& p) {
-		m_location.position = p;
-	}
-
-	inline
-	const Point& Instance::getPosition() const {
-		return m_location.position;
-	}
-	
-	inline
-	Layer* Instance::getLayer() const {
-		return m_location.layer;
-	}
-
-	inline
-	const Location& Instance::getLocation() const {
-		return m_location;
-	}
 
 } } // FIFE::model
 

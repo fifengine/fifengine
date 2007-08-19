@@ -51,27 +51,26 @@ namespace FIFE {
 			/** Get the surface used by this image
 			 * @return pointer to used surface
 			 */
-			virtual SDL_Surface* getSurface();
+			SDL_Surface* getSurface();
 
 			/** Sets the X shift of the Image.
 			 * @param xshift The X shift of the Image.
 			 */
-			virtual void setXShift(int xshift);
-
-			/** Sets the Y shift of the Image.
-			 * @param yshift The Y shift of the Image.
-			 */
-			virtual void setYShift(int yshift);
+			void setXShift(int xshift);
 
 			/** Gets the X shift of the Image.
 			 * @return The X shift of the Image.
 			 */
-			virtual int getXShift() const;
+			int getXShift() const;
 
-			/** Gets the Y shift of the Image.
+			/** Sets the Y shift of the Image.
 			 * @param yshift The Y shift of the Image.
 			 */
-			virtual int getYShift() const;
+			void setYShift(int yshift);
+
+			/** Gets the Y shift of the Image.
+			 */
+			int getYShift() const;
 
 			/** Renders itself to the Screen at the rectangle rect.
 			 *

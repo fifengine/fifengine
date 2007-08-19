@@ -41,7 +41,8 @@ namespace FIFE {
 
 	Animation::Animation(): 
 		m_action_frame(-1),
-		m_animation_endtime(-1) {
+		m_animation_endtime(-1),
+		m_direction(0) {
 		}
 	
 	Animation::~Animation() {
@@ -116,5 +117,8 @@ namespace FIFE {
 		return m_frames.size();
 	}
 
+	void Animation::setDirection(unsigned int direction) {
+		m_direction = direction % 360;
+	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -19,9 +19,13 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_MODEL_METAMODEL_ACTION_H
+#define FIFE_MODEL_METAMODEL_ACTION_H
+
 // Standard C++ library includes
-#include <assert.h>
-#include <iostream>
+#include <string>
+#include <vector>
+#include <list>
 
 // 3rd party library includes
 
@@ -29,42 +33,32 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "image.h"
+#include "util/attributedclass.h"
 
-namespace FIFE {
+namespace FIFE { namespace model {
 
-	Image::Image(SDL_Surface* surface):
-		m_surface(surface),
-		m_xshift(0), 
-		m_yshift(0),
-		m_refcount(0) {}
+	class Action : public AttributedClass {
+		public:
+			virtual ~Action();
 
+			/** Gets index to animation closest to given angle
+			 * @return animation index, -1 if no animations available
+			 */
+			int getAnimationIndexByAngle(unsigned int angle);
 
-	Image::~Image() {
-		assert(m_refcount == 0);
-		if( m_surface ) {
-			SDL_FreeSurface(m_surface);
-		}
-	}
+			/** Adds new animation with given angle (degrees)
+			 */
+			void addAnimation(unsigned int angle, int animation_index);
 
-	SDL_Surface* Image::getSurface() { 
-		return m_surface; 
-	}
+		private:
+			Action();
 
-	void Image::setXShift(int xshift) {
-		m_xshift = xshift;
-	}
+			typedef std::map<unsigned int, int> t_animmap;
+			// animations associated with this action (handles to pool)
+			//   mapping = direction -> animation
+			t_animmap m_animations;
+	};
 
-	void Image::setYShift(int yshift) {
-		m_yshift = yshift;
-	}
+}}
 
-	int Image::getXShift() const {
-		return m_xshift;
-	}
-
-	int Image::getYShift() const {
-		return m_yshift;
-	}
-}
-
+#endif

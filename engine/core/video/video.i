@@ -34,10 +34,10 @@ namespace FIFE {
 	class Image {
 	public:
 		virtual ~Image();
-		virtual void setXShift(int xshift);
-		virtual void setYShift(int yshift);
-		virtual int getXShift() const;
-		virtual int getYShift() const;
+		void setXShift(int xshift);
+		void setYShift(int yshift);
+		int getXShift() const;
+		int getYShift() const;
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
 		void addRef();
@@ -58,6 +58,8 @@ namespace FIFE {
 		unsigned int getNumFrames() const;
 		void setActionFrame(int num);
 		int getActionFrame();
+		void setDirection(unsigned int direction);
+		unsigned int getDirection();
 		int getDuration();
 		void addRef();
 		void decRef();
