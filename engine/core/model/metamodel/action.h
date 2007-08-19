@@ -52,10 +52,10 @@ namespace FIFE { namespace model {
 			void addAnimation(unsigned int angle, int animation_index);
 
 		private:
-			typedef std::map<unsigned int, int> t_animmap;
+			typedef std::map<unsigned int, int> type_animmap;
 			// animations associated with this action (handles to pool)
 			//   mapping = direction -> animation
-			t_animmap m_animations;
+			type_animmap m_animations;
 	};
 
 }}

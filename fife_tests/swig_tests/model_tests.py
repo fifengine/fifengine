@@ -125,7 +125,6 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(query[0].get_string("Name"), "Goon")
 		self.assertEqual(inst.getPosition(), fife.Point(4,4))
 		
-
 	def testMetaModel(self):
 		dat1 = self.metamodel.addDataset()
 		dat2 = self.metamodel.addDataset()
@@ -170,8 +169,80 @@ class TestModel(unittest.TestCase):
 		obj = meta_query[0]
 		self.assertEqual(obj.oget_string("Type"), "Inanimate")
 
+class TestActions(unittest.TestCase, fife.InstanceListener):
+	
+	def setUp(self):
+		self.model = fife.Model()
+		self.metamodel = self.model.getMetaModel()
+		map = self.model.addMap()
+		elev = map.addElevation()
 
-TEST_CLASSES = [TestModel]
+		dat = self.metamodel.addDataset()
+		geom = dat.addGeometryType()
+		self.layer = elev.addLayer(geom)
+		self.obj1 = dat.addObject()
+		self.obj1.set_string("Name", "MyHero")
+
+		self.runaction = self.obj1.addAction("run")
+		self.runaction.addAnimation(90, 1)
+		self.runaction.addAnimation(0, 0)
+		self.runaction.addAnimation(270, 3)
+		self.runaction.addAnimation(180, 2)
+
+	def OnActionFinished(self, instance, action):
+		self.finishedInstance = instance
+		self.finishedAction = action
+	
+	def testAngle89(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(89), 1)
+	
+	def testAngle90(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(90), 1)
+	
+	def testAngle91(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(91), 1)
+	
+	def testAngle135(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(135), 2)
+	
+	def testAngle134(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(134), 1)
+	
+	def testAngle136(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(136), 2)
+	
+	def testAngle0(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(0), 0)
+	
+	def testAngle40(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(40), 0)
+	
+	def testAngle45(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(45), 1)
+	
+	def testAngle270(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(270), 3)
+
+	def testAngle269(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(269), 3)
+	
+	def testAngle271(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(271), 3)
+	
+	def testAngle314(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(314), 3)
+	
+	def testAngle359(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(359), 0)
+	
+	def testAngle400(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(400), 0)
+	
+	def testAngle451(self):
+		self.assertEqual(self.runaction.getAnimationIndexByAngle(451), 1)
+	
+
+TEST_CLASSES = [TestModel, TestActions]
 
 if __name__ == '__main__':
     unittest.main()

@@ -43,7 +43,7 @@ namespace FIFE { namespace model {
 
 	Action* Object::getAction(const std::string& action_name) {
 		std::map<std::string, Action*>::const_iterator i = m_actions.find(action_name);
-		if (i != m_actions.end()) {
+		if (i == m_actions.end()) {
 			if (m_inherited) {
 				return m_inherited->getAction(action_name);
 			}

@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 
@@ -33,35 +34,62 @@
 #include "action.h"
 
 namespace FIFE { namespace model {
-	Action::Action():
-	m_animations() {
+	Action::Action() {
 	}
 
 	Action::~Action() {
 	}
 
 	int Action::getAnimationIndexByAngle(unsigned int angle) {
+		int wangle = angle % 360;
+
 		if (m_animations.size() == 0) {
 			return -1;
 		}
 		if (m_animations.size() == 1) {
-			m_animations.begin()->second;
+			return m_animations.begin()->second;
 		}
 
-		t_animmap::const_iterator l(m_animations.lower_bound(angle));
-		if (l == m_animations.end()) {
-			return (--l)->second;
+		type_animmap::const_iterator u(m_animations.upper_bound(wangle));
+		type_animmap::const_iterator tmp;
+
+		// take care of the forward wrapping case
+		if (u == m_animations.end()) {
+			int ud = wangle - (--u)->first;
+			int ld = 360 - wangle + m_animations.begin()->first;
+			if (ud > ld) {
+				// wrapped value (first)
+				return m_animations.begin()->second;
+			}
+			// non-wrapped value
+			return u->second;
 		}
-		t_animmap::const_iterator u(m_animations.upper_bound(angle));
+
+		// take care of the backward wrapping case
 		if (u == m_animations.begin()) {
+			tmp = m_animations.end();
+			tmp--;
+			int ld = u->first - wangle;
+			int ud = 360 - tmp->first + wangle;
+			if (ud > ld) {
+				// non-wrapped value (first)
+				return m_animations.begin()->second;
+			}
+			// wrapped value (last)
 			return u->second;
 		}
-		unsigned int ud = u->first - angle;
-		unsigned int ld = angle - l->first;
-		if (ud >= ld) {
-			return u->second;
+
+		// value in the middle...
+		int ud = u->first - wangle;
+		int ui = u->second;
+		u--;
+		int ld = wangle - u->first;
+		int li = u->second;
+
+		if (ud <= ld) {
+			return ui;
 		}
-		return l->second;
+		return li;
 	}
 
 	void Action::addAnimation(unsigned int angle, int animation_index) {

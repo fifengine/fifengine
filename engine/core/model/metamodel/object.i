@@ -7,6 +7,8 @@
 
 namespace FIFE { namespace model {
 
+	class Action;
+
 	class Object : public AttributedClass {
 		public:
 
@@ -19,6 +21,9 @@ namespace FIFE { namespace model {
 			%template(ogetPoint) oget<Point>;
 			%template(ogetRect) oget<Rect>;
 			%template(oget_string) oget<std::string>;
+
+			Action* addAction(const std::string& action_name);
+			Action* getAction(const std::string& action_name);
 
 		private:
 
