@@ -39,6 +39,7 @@ namespace FIFE { namespace model {
 
 	class Action : public AttributedClass {
 		public:
+			Action();
 			virtual ~Action();
 
 			/** Gets index to animation closest to given angle
@@ -51,8 +52,6 @@ namespace FIFE { namespace model {
 			void addAnimation(unsigned int angle, int animation_index);
 
 		private:
-			Action();
-
 			typedef std::map<unsigned int, int> t_animmap;
 			// animations associated with this action (handles to pool)
 			//   mapping = direction -> animation

@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <map>
 
 // 3rd party library includes
 
@@ -36,6 +37,7 @@
 namespace FIFE { namespace model { 
 
 	class Dataset;
+	class Action;
 
 	/** Object class
 	 *
@@ -67,6 +69,16 @@ namespace FIFE { namespace model {
 				return m_inherited->oget<T>(field);
 			}
 
+			/** Adds new action with given name. In case there is action already
+			 *  with given name, returns it instead of new object
+			 *  Action instances are managed by object
+			 */
+			Action* addAction(const std::string& action_name);
+
+			/** Gets action with given name. If not found, returns NULL
+			 */
+			Action* getAction(const std::string& action_name);
+
 		private:
 
 			/** An object may optionally inherit default attributes
@@ -81,7 +93,7 @@ namespace FIFE { namespace model {
 			{ }
 
 			Object* m_inherited;
-
+			std::map<std::string, Action*> m_actions;
 			friend class Dataset;
 	};
 

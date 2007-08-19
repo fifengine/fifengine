@@ -597,6 +597,10 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\object.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\model\metamodel\object.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>

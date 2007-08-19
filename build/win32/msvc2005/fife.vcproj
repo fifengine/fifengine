@@ -298,6 +298,7 @@
 					<File RelativePath="..\..\..\engine\core\model\metamodel\geometry_type.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\object.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\object.h"></File>
 				</Filter>
 				<File RelativePath="..\..\..\engine\core\model\model.cpp"></File>

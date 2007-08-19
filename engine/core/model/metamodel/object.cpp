@@ -27,56 +27,28 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
-#include "util/exception.h"
+#include "object.h"
+#include "action.h"
 
-#include "instance.h"
 
-namespace FIFE { namespace model {
-	Instance::Instance(Object* object, const Location& location):
-		m_object(object), 
-		m_location(location),
-		m_action(NULL),
-		m_target(NULL),
-		m_speed(0),
-		m_anim_index(-1),
-		m_frame_index(-1),
-		m_listeners(NULL) {
-	}
-
-	Instance::~Instance() {
-		delete m_target;
-		delete m_listeners;
-	}
-
-	void Instance::addListener(InstanceListener* listener) {
-		if (!m_listeners) {
-			m_listeners = new std::vector<InstanceListener*>();
+namespace FIFE { namespace model { 
+	Action* Object::addAction(const std::string& action_name) {
+		Action* a = getAction(action_name);
+		if (!a) {
+			a = new Action();
+			m_actions[action_name] = a;
 		}
-		m_listeners->push_back(listener);
+		return a;
 	}
 
-	void Instance::removeListener(InstanceListener* listener) {
-		if (!m_listeners) {
-			return;
-		}
-		std::vector<InstanceListener*>::iterator i = m_listeners->begin();
-		while (i != m_listeners->end()) {
-			if ((*i) == listener) {
-				m_listeners->erase(i);
-				return;
+	Action* Object::getAction(const std::string& action_name) {
+		std::map<std::string, Action*>::const_iterator i = m_actions.find(action_name);
+		if (i != m_actions.end()) {
+			if (m_inherited) {
+				return m_inherited->getAction(action_name);
 			}
-			++i;
+			return NULL;
 		}
-		Log("Instance") << "Cannot remove unknown listener";
-	}
-
-	void Instance::act(const std::string& action_name, const Location target, const float speed) {
-	}
-
-	void Instance::act(const std::string& action_name) {
-	}
-
-	void Instance::update() {
+		return i->second;
 	}
 }}

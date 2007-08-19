@@ -8,9 +8,16 @@
 
 namespace FIFE { namespace model {
 
-  class Layer;
+	class Layer;
+	class Action;
+	class Object;
+	class Instance;
 
-  class Object;
+	class InstanceListener {
+	public:
+		virtual ~InstanceListener();
+		virtual void OnActionFinished(Instance* instance, Action* action) = 0;
+	};
 
 	class Instance {
 		public:
@@ -31,6 +38,12 @@ namespace FIFE { namespace model {
 			const Point& getPosition() const;
 			Layer* getLayer() const;
 			const Location& getLocation() const;
+
+			void addListener(InstanceListener* listener);
+
+			void removeListener(InstanceListener* listener);
+			void act(const std::string& action_name, const Location target, const float speed);
+			void act(const std::string& action_name);
 
 		private:
 	};
