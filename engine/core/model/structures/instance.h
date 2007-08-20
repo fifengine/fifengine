@@ -44,7 +44,7 @@ namespace FIFE { namespace model {
 
 	class InstanceListener {
 	public:
-		virtual ~InstanceListener();
+		virtual ~InstanceListener() {};
 		virtual void OnActionFinished(Instance* instance, Action* action) = 0;
 	};
 
@@ -124,6 +124,7 @@ namespace FIFE { namespace model {
 
 			Instance(const Instance&);
 			Instance& operator=(const Instance&);
+			void finalizeAction();
 	};
 
 } } // FIFE::model

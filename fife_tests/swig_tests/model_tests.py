@@ -180,6 +180,10 @@ class TestActions(unittest.TestCase, fife.InstanceListener):
 		dat = self.metamodel.addDataset()
 		geom = dat.addGeometryType()
 		self.layer = elev.addLayer(geom)
+		self.location = fife.Location()
+		self.location.layer = self.layer
+		self.location.elevation = elev
+		
 		self.obj1 = dat.addObject()
 		self.obj1.set_string("Name", "MyHero")
 
@@ -193,10 +197,6 @@ class TestActions(unittest.TestCase, fife.InstanceListener):
 		self.walkaction.addAnimation(200, 2)
 		self.walkaction.addAnimation(320, 3)
 
-	def OnActionFinished(self, instance, action):
-		self.finishedInstance = instance
-		self.finishedAction = action
-	
 	def testRunAngle89(self):
 		self.assertEqual(self.runaction.getAnimationIndexByAngle(89), 1)
 	
@@ -253,6 +253,16 @@ class TestActions(unittest.TestCase, fife.InstanceListener):
 
 	def testWalkAngle199(self):
 		self.assertEqual(self.walkaction.getAnimationIndexByAngle(199), 2)
+
+	def OnActionFinished(self, instance, action):
+		self.finishedInstance = instance
+		self.finishedAction = action
+	
+	def testActivity(self):
+		inst = self.layer.addInstance(self.obj1, fife.Point(4,4))
+		#inst.addListener(self)
+		self.location.position = fife.Point(10,10)
+		inst.act('run', self.location, 5.0)
 
 TEST_CLASSES = [TestModel, TestActions]
 

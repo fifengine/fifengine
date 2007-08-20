@@ -44,6 +44,7 @@ namespace FIFE { namespace model {
 			m_anim_index(-1), 
 			m_frame_index(-1),
 			m_action_start_time(SDL_GetTicks()),
+			m_nodeoffset(0,0),
 			m_nextnode(),
 			m_pather_session_id(-1),
 			m_pather(pather) {}
@@ -56,10 +57,11 @@ namespace FIFE { namespace model {
 			return SDL_GetTicks() - m_action_start_time;
 		}
 
-		const Location& getNextNode(const Location& curpos) {
+		Location& getNextNode(const Location& startloc) {
 			assert(m_target && m_pather);
-			m_pather_session_id = m_pather->getNextNode(curpos, 
+			m_pather_session_id = m_pather->getNextNode(startloc, 
 			                      *m_target, m_nextnode, m_pather_session_id);
+			// no subcell calculations / speed taken into account at this point yet...
 			return m_nextnode;
 		}
 
@@ -75,13 +77,14 @@ namespace FIFE { namespace model {
 		int m_frame_index;
 		// action start time (ticks)
 		unsigned long m_action_start_time;
+		// offset caused by the movement in relation to current cell centerpoint
+		Point m_nodeoffset;
 		// movement node
 		Location m_nextnode;
 		// session id for pather
 		int m_pather_session_id;
 		// pather
 		AbstractPather* m_pather;
-
 	};
 
 	Instance::Instance(Object* object, const Location& location):
@@ -137,6 +140,31 @@ namespace FIFE { namespace model {
 
 	void Instance::update() {
 		assert(m_actioninfo);
-		const Location& nextnode = m_actioninfo->getNextNode(m_location);
+		if (m_actioninfo->m_target) {
+			Location& nextnode = m_actioninfo->getNextNode(m_location);
+			if (m_location == nextnode) {
+				finalizeAction();
+			}
+			else {
+				m_location = nextnode;
+			}
+		}
+		else {
+			// just for testing at this point...
+			finalizeAction();
+		}
+	}
+
+	void Instance::finalizeAction() {
+		assert(m_actioninfo);
+
+		Action* action = m_actioninfo->m_action;
+		delete m_actioninfo;
+		m_actioninfo = NULL;
+
+		std::vector<InstanceListener*>::iterator i = m_listeners->begin();
+		while (i != m_listeners->end()) {
+			(*i)->OnActionFinished(this, action);
+		}
 	}
 }}

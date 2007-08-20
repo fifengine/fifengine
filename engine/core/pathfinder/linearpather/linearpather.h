@@ -19,11 +19,10 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_LOCATION_H
-#define FIFE_LOCATION_H
+#ifndef FIFE_PATHFINDER_LINEAR_H
+#define FIFE_PATHFINDER_LINEAR_H
 
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
 
@@ -31,27 +30,26 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/point.h"
+#include "model/structures/location.h"
+#include "model/structures/map.h"
+#include "model/metamodel/abstractpather.h"
 
 namespace FIFE { namespace model {
 
-	class Elevation;
-	class Layer;
-
-	class Location {
+		/** Naive pathfinder implementation
+		*/
+		class LinearPather: public FIFE::model::AbstractPather {
 		public:
-			Location() : elevation(0),layer(0),position(0,0) {}
+			LinearPather() {}
+	
+			virtual ~LinearPather() {}
+	
+			virtual void setMap(Map* map) {}
+	
+			virtual int getNextNode(const Location& curpos, const Location& target, 
+						Location& nextnode, const int session_id=-1);
+	
+		};
+}}
 
-			Elevation* elevation;
-			Layer* layer;
-			Point position;
-
-			bool operator==(const Location& loc) const {
-				return ((elevation == loc.elevation) &&
-				        (layer == loc.layer) &&
-			                (position == loc.position));
-			}
-	};
-
-} }
-#endif //FIFE_LOCATION_H
+#endif

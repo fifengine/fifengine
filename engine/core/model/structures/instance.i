@@ -1,4 +1,4 @@
-%module objectinfo
+%module(directors="1") objectinfo
 %{
 #include "model/structures/instance.h"
 %}
@@ -13,6 +13,7 @@ namespace FIFE { namespace model {
 	class Object;
 	class Instance;
 
+	%feature("director") InstanceListener;
 	class InstanceListener {
 	public:
 		virtual ~InstanceListener();
@@ -34,14 +35,14 @@ namespace FIFE { namespace model {
 			%template(get_string) get<std::string>;
 
 			void setPosition(const Point& p);
-
 			const Point& getPosition() const;
+
 			Layer* getLayer() const;
 			const Location& getLocation() const;
 
 			void addListener(InstanceListener* listener);
-
 			void removeListener(InstanceListener* listener);
+
 			void act(const std::string& action_name, const Location target, const float speed);
 			void act(const std::string& action_name);
 

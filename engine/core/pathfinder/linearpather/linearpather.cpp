@@ -19,11 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_LOCATION_H
-#define FIFE_LOCATION_H
-
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
 
@@ -31,27 +27,33 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/point.h"
+#include "linearpather.h"
 
 namespace FIFE { namespace model {
+	int LinearPather::getNextNode(const Location& curpos, const Location& target,
+	                                      Location& nextnode, const int session_id) {
+		assert(curpos.elevation == target.elevation);
+		assert(curpos.layer == target.layer);
 
-	class Elevation;
-	class Layer;
+		int dx = target.position.x - curpos.position.x;
+		int dy = target.position.y - curpos.position.y;
 
-	class Location {
-		public:
-			Location() : elevation(0),layer(0),position(0,0) {}
+		nextnode.elevation = curpos.elevation;
+		nextnode.layer = curpos.layer;
 
-			Elevation* elevation;
-			Layer* layer;
-			Point position;
-
-			bool operator==(const Location& loc) const {
-				return ((elevation == loc.elevation) &&
-				        (layer == loc.layer) &&
-			                (position == loc.position));
-			}
-	};
-
-} }
-#endif //FIFE_LOCATION_H
+		Point& p = nextnode.position;
+		if (dx > 0) {
+			p.x = curpos.position.x + 1;
+		}
+		if (dx < 0) {
+			p.x = curpos.position.x - 1;
+		}
+		if (dy > 0) {
+			p.y = curpos.position.y + 1;
+		}
+		if (dy < 0) {
+			p.y = curpos.position.y - 1;
+		}
+		return session_id;
+	}
+}}

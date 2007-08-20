@@ -316,6 +316,12 @@
 					<File RelativePath="..\..\..\engine\core\model\structures\map.h"></File>
 				</Filter>
 			</Filter>
+			<Filter Name="pathfinder">
+				<Filter Name="linearpather">
+					<File RelativePath="..\..\..\engine\core\pathfinder\linearpather\linearpather.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\pathfinder\linearpather\linearpather.h"></File>
+				</Filter>
+			</Filter>
 			<Filter Name="util">
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.h"></File>

@@ -37,7 +37,7 @@ namespace FIFE { namespace model {
 
 	class AbstractPather {
 	public:
-		virtual ~AbstractPather();
+		virtual ~AbstractPather() {};
 
 		/** Sets map for pather to use
 		 */
