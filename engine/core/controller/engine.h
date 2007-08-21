@@ -53,6 +53,9 @@ namespace FIFE {
 	class ImagePool;
 	class AnimationPool;
 	class SettingsManager;
+	namespace model {
+		class Model;
+	}
 
 	class Engine {
 		public:
@@ -79,6 +82,7 @@ namespace FIFE {
 			ImagePool* getImagePool() { return m_imagepool; }
 			AnimationPool* getAnimationPool() { return m_animpool; }
 			RenderBackend* getRenderBackend() { return m_renderbackend; }
+			model::Model* getModel() { return m_model; }
 
 		private:
 			/** Initializes the engine
@@ -95,6 +99,7 @@ namespace FIFE {
 			AnimationPool* m_animpool;
 			VFSSourceFactory* m_vfs_sourcefactory;
 			VFS* m_vfs;
+			model::Model* m_model;
 			gcn::Graphics* m_gui_graphics;
 			bool m_use_miniwindow;
 	};

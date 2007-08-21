@@ -113,6 +113,10 @@ namespace FIFE { namespace model {
 			 */
 			Point centerOfMass();
 
+			/** Called periodically to update events on elevation
+			 */
+			void update();
+
 		private:
 
 			/** Constructor (Elevations are created by Maps)

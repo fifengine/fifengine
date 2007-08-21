@@ -99,6 +99,10 @@ namespace FIFE { namespace model {
 			 */
 			MetaModel* getMetaModel();
 
+			/** Called periodically to update events on model
+			 */
+			void update();
+
 		private:
 
 			std::vector<Map*> m_maps;

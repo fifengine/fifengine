@@ -62,7 +62,7 @@ namespace FIFE { namespace model {
 	}
 
 	void Model::removeMap(Map* map) {
-    std::vector<Map*>::iterator it = m_maps.begin();
+		std::vector<Map*>::iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
 			if(*it == map) {
 				delete *it;
@@ -83,6 +83,13 @@ namespace FIFE { namespace model {
 
 	MetaModel* Model::getMetaModel() {
 		return m_meta;
+	}
+
+	void Model::update() {
+		std::vector<Map*>::iterator it = m_maps.begin();
+		for(; it != m_maps.end(); ++it) {
+			(*it)->update();
+		}
 	}
 	
 } } //FIFE::model

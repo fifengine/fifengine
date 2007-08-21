@@ -43,7 +43,7 @@ namespace FIFE { namespace model {
 		m_geometry(geometry),
  		m_shift() {
 
-		m_objects_visibility = true;
+		m_instances_visibility = true;
 
 		// set default attributes
 		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/outlines/tile_outline_fallout.png");
@@ -51,7 +51,7 @@ namespace FIFE { namespace model {
 	}
 
 	Layer::~Layer() {
-		purge(m_objects);
+		purge(m_instances);
 	}
 
 	Elevation* Layer::getElevation() {
@@ -71,7 +71,7 @@ namespace FIFE { namespace model {
 	}
 	
 	bool Layer::hasInstances() const {
-		return !m_objects.empty();
+		return !m_instances.empty();
 	}
 
 	Instance* Layer::addInstance(Object* object, const Point& p) {
@@ -82,34 +82,40 @@ namespace FIFE { namespace model {
 		l.position = p;
 
 		Instance* instance = new Instance(object, l);
-		m_objects.push_back(instance);
+		m_instances.push_back(instance);
 		return instance;
 	}
 
 	void Layer::removeInstance(Instance* instance) {
-
-		std::vector<Instance*>::iterator it = m_objects.begin();
-		for(; it != m_objects.end(); ++it) {
+		std::vector<Instance*>::iterator it = m_instances.begin();
+		for(; it != m_instances.end(); ++it) {
 			if(*it == instance) {
 				delete *it;
-				m_objects.erase(it);
+				m_instances.erase(it);
 				break;
 			}
 		}
 	}
 
 	const std::vector<Instance*>& Layer::getInstances() {
-		return m_objects;
+		return m_instances;
 	}
 
 	void Layer::setInstancesVisible(bool vis) {
-		m_objects_visibility = vis;
+		m_instances_visibility = vis;
 	}
 	void Layer::toggleInstancesVisible() {
-		m_objects_visibility = !m_objects_visibility;
+		m_instances_visibility = !m_instances_visibility;
 	}
 	bool Layer::areInstancesVisible() const {
-		return m_objects_visibility;
+		return m_instances_visibility;
+	}
+
+	void Layer::update() {
+		std::vector<Instance*>::iterator it = m_instances.begin();
+		for(; it != m_instances.end(); ++it) {
+			(*it)->update();
+		}
 	}
 
  } } // FIFE::model

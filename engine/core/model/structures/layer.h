@@ -138,8 +138,8 @@ namespace FIFE { namespace model {
 			std::vector<Instance*> getInstances(const std::string& field, const T& value) {
 				std::vector<Instance*> matches;
 
-				std::vector<Instance*>::iterator it = m_objects.begin();
-				for(; it != m_objects.end(); ++it) {
+				std::vector<Instance*>::iterator it = m_instances.begin();
+				for(; it != m_instances.end(); ++it) {
 					if((*it)->get<T>(field) == value)
 						matches.push_back(*it);	
 				}
@@ -161,6 +161,10 @@ namespace FIFE { namespace model {
 			 */
 			bool areInstancesVisible() const;
 
+			/** Called periodically to update events on layer
+			 */
+			void update();
+
 		protected:
 
 			/** Constructs a Layer instance (layers are constructed
@@ -170,10 +174,10 @@ namespace FIFE { namespace model {
 
 			Elevation* m_elevation;
 
-			bool m_objects_visibility;
+			bool m_instances_visibility;
 
 			// all the instances on this layer
-			std::vector<Instance*> m_objects;
+			std::vector<Instance*> m_instances;
 
 			GeometryType* m_geometry;
 

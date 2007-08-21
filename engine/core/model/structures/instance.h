@@ -106,7 +106,7 @@ namespace FIFE { namespace model {
  			 */
 			void act(const std::string& action_name);
 
-			/** Updates the instance related to current action
+			/** Updates the instance related to the current action
  			 */
 			void update();
 

@@ -129,4 +129,12 @@ namespace FIFE { namespace model {
 		return  p; */
 	}
 
+	void Elevation::update() {
+		std::vector<Layer*>::iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			(*it)->update();
+		}
+	}
+
+
 } } //FIFE::model

@@ -38,7 +38,7 @@ namespace FIFE { namespace model {
 
 		/** Naive pathfinder implementation
 		*/
-		class LinearPather: public FIFE::model::AbstractPather {
+		class LinearPather: public AbstractPather {
 		public:
 			LinearPather() {}
 	

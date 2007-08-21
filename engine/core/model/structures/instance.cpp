@@ -139,7 +139,9 @@ namespace FIFE { namespace model {
 	}
 
 	void Instance::update() {
-		assert(m_actioninfo);
+		if (!m_actioninfo) {
+			return;
+		}
 		if (m_actioninfo->m_target) {
 			Location& nextnode = m_actioninfo->getNextNode(m_location);
 			if (m_location == nextnode) {

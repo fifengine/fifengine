@@ -107,6 +107,10 @@ namespace FIFE { namespace model {
 			 */
 			void clearElevations();
 
+			/** Called periodically to update events on map
+			 */
+			void update();
+
 		private:
 
 			std::string m_mapname;

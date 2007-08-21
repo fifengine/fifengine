@@ -59,6 +59,7 @@
 #include "loaders/native/video_loaders/animation_provider.h"
 //#include "loaders/fallout/model_loaders/dat1.h"
 //#include "loaders/fallout/model_loaders/dat2.h"
+#include "model/model.h"
 #include "engine.h"
 
 static const std::string SETTINGS_FILE_NAME = "fife.config";
@@ -76,12 +77,14 @@ namespace FIFE {
 		m_animpool(0),
 		m_vfs_sourcefactory(0),
 		m_vfs(0),
+		m_model(0),
 		m_gui_graphics(0),
 		m_use_miniwindow(use_miniwindow) {
 		init();
 	}
 
 	Engine::~Engine() {
+		delete m_model;
 		delete m_audiomanager;
 		delete m_guimanager;
 		delete m_gui_graphics;
@@ -188,6 +191,8 @@ namespace FIFE {
 #endif
 		m_guimanager->init(m_gui_graphics, swidth, sheight);
 		SDL_EnableUNICODE(1);
+
+		m_model = new model::Model();
 	}
 
 	void Engine::initializePumping() {
@@ -197,6 +202,7 @@ namespace FIFE {
 
 	void Engine::pump() {
 		m_timemanager->update();
+		m_model->update();
 		m_guimanager->turn();
 		m_renderbackend->endFrame();
 		SDL_Delay(1);

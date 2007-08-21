@@ -87,5 +87,12 @@ namespace FIFE { namespace model {
 		m_elevations.clear();
 	}
 
+	void Map::update() {
+		std::vector<Elevation*>::iterator it = m_elevations.begin();
+		for(; it != m_elevations.end(); ++it) {
+			(*it)->update();
+		}
+	}
+
 } } //FIFE::model
 

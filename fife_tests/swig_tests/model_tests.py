@@ -169,8 +169,17 @@ class TestModel(unittest.TestCase):
 		obj = meta_query[0]
 		self.assertEqual(obj.oget_string("Type"), "Inanimate")
 
-class TestActions(unittest.TestCase, fife.InstanceListener):
-	
+class InstanceListener(fife.InstanceListener):
+	def __init__(self):
+		fife.InstanceListener.__init__(self)
+		self.finished = False
+
+	def OnActionFinished(self, instance, action):
+		self.finishedInstance = instance
+		self.finishedAction = action
+
+
+class TestActions(unittest.TestCase, ):
 	def setUp(self):
 		self.model = fife.Model()
 		self.metamodel = self.model.getMetaModel()
@@ -254,13 +263,10 @@ class TestActions(unittest.TestCase, fife.InstanceListener):
 	def testWalkAngle199(self):
 		self.assertEqual(self.walkaction.getAnimationIndexByAngle(199), 2)
 
-	def OnActionFinished(self, instance, action):
-		self.finishedInstance = instance
-		self.finishedAction = action
-	
 	def testActivity(self):
 		inst = self.layer.addInstance(self.obj1, fife.Point(4,4))
-		#inst.addListener(self)
+		l = InstanceListener()
+		inst.addListener(l)
 		self.location.position = fife.Point(10,10)
 		inst.act('run', self.location, 5.0)
 
