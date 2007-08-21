@@ -34,14 +34,15 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
+#include "model/metamodel/geometries/geometry.h"
 
 #include "object.h"
-#include "geometry_type.h"
+
 
 namespace FIFE { namespace model {
 
 	class Object;
-	class GeometryType;
+	class Geometry;
 
 	class Dataset : public AttributedClass {
 		public:
@@ -70,13 +71,6 @@ namespace FIFE { namespace model {
 			 * delete the returned pointer!
 			 */
 			Object* addObject(Object* inherited = 0);
-
-			/** Add a GeometryType to this dataset.
-			 *
-			 * @note This GeometryType belongs to this dataset, so don't
-			 * delete the returned pointer!
-			 */
-			GeometryType* addGeometryType();
 
 			/** Get datasets from this dataset having the given value in the
 			 * given field.
@@ -128,36 +122,7 @@ namespace FIFE { namespace model {
 				return objects;
 			}
 
-			/** Get geometry types from this dataset having the given value in
-			 * the given field.
-			 *
-			 * @note GeometryType objects are owned by the dataset, so don't delete
-			 * returned pointers!
-			 */
-			template<typename T>
-			std::list<GeometryType*> getGeometryTypes(const std::string& field, const T& value) {
-
-				std::list<GeometryType*> gtypes;
-
-				std::vector<GeometryType*>::iterator it = m_geometry_types.begin();
-				for(; it != m_geometry_types.end(); ++it) {
-					if((*it)->get<T>(field) == value)
-						gtypes.push_back(*it);
-				}
-
-				std::vector<Dataset*>::iterator jt = m_datasets.begin();
-				for(; jt != m_datasets.end(); ++jt) {
-					std::list<GeometryType*> tmp = (*jt)->getGeometryTypes<T>(field, value);
-					gtypes.splice(gtypes.end(), tmp);
-				}
-
-				return gtypes;
-			}
-
 		private:
-
-			// geometry definitions in this dataset
-			std::vector<GeometryType*> m_geometry_types;
 
 			// prototypes contained in this dataset
 			std::vector<Object*> m_objects;

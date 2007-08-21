@@ -38,7 +38,7 @@
 
 namespace FIFE { namespace model {
 
-	Layer::Layer(Elevation* elevation, GeometryType* geometry)
+	Layer::Layer(Elevation* elevation, Geometry* geometry)
 		: AttributedClass("map_Layer"),
 		m_elevation(elevation),
 		m_geometry(geometry),
@@ -59,7 +59,7 @@ namespace FIFE { namespace model {
 		return m_elevation;
 	}
 
-	GeometryType* Layer::getGeometryType() {
+	Geometry* Layer::getGeometry() {
 		return m_geometry;
 	}
 

@@ -40,7 +40,6 @@ namespace FIFE { namespace model {
 			void clearMaps();
 
 			MetaModel* getMetaModel();
-
-		private:
+			void update();
 	};
 }}

@@ -46,7 +46,7 @@ namespace FIFE { namespace model {
 	class Geometry;
 
 	class Object;
-	class GeometryType;
+
 
 	/** A basic layer on a map elevation
 	 *
@@ -88,7 +88,7 @@ namespace FIFE { namespace model {
 			 * Elevations are created by calling addLayer from elevation, thus
 			 * this method should really be called only by elevation or test code
 			 */
-			Layer(Elevation* elevation, GeometryType* geometry);
+			Layer(Elevation* elevation, Geometry* geometry);
 
 			/** Destructs a Layer instance
 			 */
@@ -98,10 +98,10 @@ namespace FIFE { namespace model {
 			 */
 			Elevation* getElevation();
 
-			/** Get the GeometryType as set in the constructor
-			 *  @return a valid GeometryType
+			/** Get the Geometry as set in the constructor
+			 *  @return a valid Geometry
 			 */
-			GeometryType* getGeometryType();
+			Geometry* getGeometry();
 
 			/** Get the size as set in the constructor
 			 *  @return the size in Layer coords
@@ -178,7 +178,7 @@ namespace FIFE { namespace model {
 			// all the instances on this layer
 			std::vector<Instance*> m_instances;
 
-			GeometryType* m_geometry;
+			Geometry* m_geometry;
 
 			Point m_shift;
 	};

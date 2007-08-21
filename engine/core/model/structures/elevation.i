@@ -19,15 +19,16 @@ namespace std {
 namespace FIFE { namespace model {
 
 	class Map;
-	class GeometryType;
+	class Geometry;
 
 	class Elevation : public AttributedClass {
 		public:
+			Elevation(Map* map=NULL);
 			~Elevation();
 
 			Map* getMap();
 
-			Layer* addLayer(GeometryType* geometry);
+			Layer* addLayer(Geometry* geometry);
 			void removeLayer(Layer* index);
 
 			template<typename T>
@@ -45,8 +46,6 @@ namespace FIFE { namespace model {
 			Layer* getReferenceLayer();
 
 			Point centerOfMass();
-
-		private:
-			Elevation();
+			void update();
 	};
 }}

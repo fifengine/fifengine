@@ -57,7 +57,7 @@ namespace FIFE { namespace model {
 		return m_layers.size();
 	}
 
-	Layer* Elevation::addLayer(GeometryType* geometry) {
+	Layer* Elevation::addLayer(Geometry* geometry) {
 		Layer* layer = new Layer(this, geometry);
 		m_layers.push_back(layer);
 		return layer;

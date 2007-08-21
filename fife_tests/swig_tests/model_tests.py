@@ -79,7 +79,7 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(elev.getNumLayers(), 0)
 
 		dat = self.metamodel.addDataset()
-		geom = dat.addGeometryType()
+		geom = fife.SquareGeometry()
 
 		layer1 = elev.addLayer(geom)
 		layer2 = elev.addLayer(geom)
@@ -103,7 +103,7 @@ class TestModel(unittest.TestCase):
 		elev = map.addElevation()
 
 		dat = self.metamodel.addDataset()
-		geom = dat.addGeometryType()
+		geom = fife.SquareGeometry()
 		obj1 = dat.addObject()
 		obj1.set_string("Name", "MyHero")
 		obj2 = dat.addObject()
@@ -169,39 +169,14 @@ class TestModel(unittest.TestCase):
 		obj = meta_query[0]
 		self.assertEqual(obj.oget_string("Type"), "Inanimate")
 
-class InstanceListener(fife.InstanceListener):
-	def __init__(self):
-		fife.InstanceListener.__init__(self)
-		self.finished = False
-
-	def OnActionFinished(self, instance, action):
-		self.finishedInstance = instance
-		self.finishedAction = action
-
-
-class TestActions(unittest.TestCase, ):
+class TestActionAngles(unittest.TestCase):
 	def setUp(self):
-		self.model = fife.Model()
-		self.metamodel = self.model.getMetaModel()
-		map = self.model.addMap()
-		elev = map.addElevation()
-
-		dat = self.metamodel.addDataset()
-		geom = dat.addGeometryType()
-		self.layer = elev.addLayer(geom)
-		self.location = fife.Location()
-		self.location.layer = self.layer
-		self.location.elevation = elev
-		
-		self.obj1 = dat.addObject()
-		self.obj1.set_string("Name", "MyHero")
-
-		self.runaction = self.obj1.addAction("run")
+		self.runaction = fife.Action()
 		self.runaction.addAnimation(90, 1)
 		self.runaction.addAnimation(0, 0)
 		self.runaction.addAnimation(270, 3)
 		self.runaction.addAnimation(180, 2)
-		self.walkaction = self.obj1.addAction("walk")
+		self.walkaction = fife.Action()
 		self.walkaction.addAnimation(70, 1)
 		self.walkaction.addAnimation(200, 2)
 		self.walkaction.addAnimation(320, 3)
@@ -263,14 +238,49 @@ class TestActions(unittest.TestCase, ):
 	def testWalkAngle199(self):
 		self.assertEqual(self.walkaction.getAnimationIndexByAngle(199), 2)
 
-	def testActivity(self):
-		inst = self.layer.addInstance(self.obj1, fife.Point(4,4))
-		l = InstanceListener()
-		inst.addListener(l)
-		self.location.position = fife.Point(10,10)
-		inst.act('run', self.location, 5.0)
+class InstanceListener(fife.InstanceListener):
+	def __init__(self):
+		fife.InstanceListener.__init__(self)
+		self.finished = False
 
-TEST_CLASSES = [TestModel, TestActions]
+	def OnActionFinished(self, instance, action):
+		self.finishedInstance = instance
+		self.finishedAction = action
+		self.finished = True
+
+class ActivityTests(unittest.TestCase):
+	def setUp(self):
+		geom = fife.HexGeometry()
+		elev = fife.Elevation()
+		self.layer = elev.addLayer(geom)
+		
+		self.target = fife.Location()
+		self.target.layer = self.layer
+		self.target.elevation = elev
+		self.target.position = fife.Point(10,10)
+		
+		self.obj = fife.Object()
+		self.pather = fife.LinearPather()
+		self.obj.setPather(self.pather)
+		self.inst = self.layer.addInstance(self.obj, fife.Point(4,4))
+		self.action = self.obj.addAction('run')
+		self.action.addAnimation(0, 1)
+		self.listener = InstanceListener()
+		self.inst.addListener(self.listener)
+		
+	def testMovingAction(self):
+		self.inst.act('run', self.target, 0.5)
+		for i in xrange(30):
+			self.inst.update()
+		self.assert_(self.listener.finished)
+
+	def testNonMovingAction(self):
+		self.inst.act('run')
+		self.inst.update()
+		self.assert_(self.listener.finished)
+
+
+TEST_CLASSES = [TestModel, TestActionAngles, ActivityTests]
 
 if __name__ == '__main__':
     unittest.main()

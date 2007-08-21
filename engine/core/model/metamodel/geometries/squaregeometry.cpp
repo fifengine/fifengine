@@ -19,9 +19,6 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GEOMETRY_TYPE_H
-#define FIFE_GEOMETRY_TYPE_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -30,43 +27,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/attributedclass.h"
-#include "util/point.h"
+#include "squaregeometry.h"
 
 namespace FIFE { namespace model {
+	SquareGeometry::SquareGeometry(): Geometry() {
+	}
 
-	class GeometryType : public AttributedClass {
-		public:
-
-		GeometryType() {}
-
-		GeometryType(size_t _id, const std::string& _g,
-		             const Point& _size,
-		             const Point& _transform,
-		             const Point& _offset,
-		             int _flags)
-			: id(_id), geometry(_g), size(_size), transform(_transform),
-			  offset(_offset), flags(_flags) {}
-
-		// id
-		size_t id;
-
-		// name of this geometry type
-		std::string geometry;
-
-		// base size
-		Point size;
-
-		// topmost left border intersection point
-		Point transform;
-
-		// extra offset
-		Point offset;
-
-		int flags;
-
-	};
-
-}}; //FIFE::model
-
-#endif
+	SquareGeometry::~SquareGeometry() {
+	}
+}}

@@ -22,7 +22,6 @@ namespace FIFE { namespace model {
 
 	class Instance {
 		public:
-
 			Instance(Object* object, const Location& location);
 			~Instance();
 
@@ -45,6 +44,8 @@ namespace FIFE { namespace model {
 
 			void act(const std::string& action_name, const Location target, const float speed);
 			void act(const std::string& action_name);
+
+			void update();
 
 		private:
 	};

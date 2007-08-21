@@ -43,6 +43,6 @@ namespace FIFE { namespace model {
 			size_t getNumElevations() const;
 			void clearElevations();
 
-		private:
+			void update();
 	};
 }}

@@ -296,7 +296,14 @@
 					<File RelativePath="..\..\..\engine\core\model\metamodel\action.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\metamodel\geometry_type.h"></File>
+					<Filter Name="geometries">
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\geometry.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\geometry.h"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\hexgeometry.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\hexgeometry.h"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\squaregeometry.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\geometries\squaregeometry.h"></File>
+					</Filter>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\object.cpp"></File>

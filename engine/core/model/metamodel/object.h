@@ -68,7 +68,7 @@ namespace FIFE { namespace model {
 			 * @see Dataset in model/metamodel/dataset.h for creation
 			 * of objects.
 			 */
-			Object(Object* inherited);
+			Object(Object* inherited=NULL);
 
 			/** Destructor
 			 */

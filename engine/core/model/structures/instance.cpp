@@ -167,6 +167,7 @@ namespace FIFE { namespace model {
 		std::vector<InstanceListener*>::iterator i = m_listeners->begin();
 		while (i != m_listeners->end()) {
 			(*i)->OnActionFinished(this, action);
+			++i;
 		}
 	}
 }}

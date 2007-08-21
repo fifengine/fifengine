@@ -27,33 +27,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/purge.h"
-#include "model/metamodel/geometries/geometry.h"
-
-#include "dataset.h"
-#include "object.h"
+#include "hexgeometry.h"
 
 namespace FIFE { namespace model {
-
-	Dataset::Dataset()
-	{
+	HexGeometry::HexGeometry(): Geometry() {
 	}
 
-	Dataset::~Dataset() {
-		purge(m_datasets);
-		purge(m_objects);
+	HexGeometry::~HexGeometry() {
 	}
-
-	Dataset* Dataset::addDataset() {
-		Dataset* dataset = new Dataset();
-		m_datasets.push_back(dataset);
-		return dataset;
-	}
-
-	Object* Dataset::addObject(Object* inherited) {
-		Object* object = new Object(inherited);
-		m_objects.push_back(object);
-		return object;
-	}
-
 }}

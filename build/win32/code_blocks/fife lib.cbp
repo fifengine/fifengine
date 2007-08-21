@@ -587,7 +587,31 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\geometry_type.h">
+		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\geometry.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\geometry.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\hexgeometry.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\hexgeometry.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\squaregeometry.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\squaregeometry.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

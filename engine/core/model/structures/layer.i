@@ -25,6 +25,7 @@ namespace FIFE { namespace model {
 
 	class Layer : public AttributedClass {
 		public:
+			Layer(Elevation* elevation, Geometry* geometry);
 			~Layer();
 
 			Elevation* getElevation();
@@ -51,7 +52,6 @@ namespace FIFE { namespace model {
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;
 
-		private:
-			Layer();
+			void update();
 	};
 }}

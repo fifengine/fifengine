@@ -8,10 +8,11 @@
 namespace FIFE { namespace model {
 
 	class Action;
+	class AbstractPather;
 
 	class Object : public AttributedClass {
 		public:
-
+			Object(Object* inherited=NULL);
 			~Object();
 
 			template<typename T>
@@ -25,8 +26,7 @@ namespace FIFE { namespace model {
 			Action* addAction(const std::string& action_name);
 			Action* getAction(const std::string& action_name);
 
-		private:
-
-			Object(const Object* inherited);
+			void setPather(AbstractPather* pather);
+			AbstractPather* getPather();
 	};
 }}
