@@ -53,7 +53,7 @@ namespace FIFE { namespace model {
 			 */
 			~Model();
 
-      /** Add a map this model, and get a pointer to it.
+      			/** Add a map this model, and get a pointer to it.
 			 * The returned pointer is owned by the Model, so
 			 * don't delete it!
 			 */

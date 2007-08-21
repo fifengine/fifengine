@@ -60,6 +60,8 @@ namespace FIFE { namespace model {
 		public:
 
 			/** Construct a map
+			 * To add map to model, one should call Model::addMap (otherwise
+			 * map is not registered with the engine properly)
 			 */
 			Map();
 
@@ -121,8 +123,6 @@ namespace FIFE { namespace model {
 
 			Map(const Map& map);
 			Map& operator=(const Map& map);
-
-			friend class MapLoader;
 	};
 
 } } //FIFE::model

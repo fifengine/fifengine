@@ -61,8 +61,7 @@ namespace FIFE { namespace model {
 	}
 
 	Elevation* Map::addElevation() {
-		Elevation* elevation = new Elevation();
-		elevation->m_map = this;
+		Elevation* elevation = new Elevation(this);
 		m_elevations.push_back(elevation);
 		return elevation;
 	}

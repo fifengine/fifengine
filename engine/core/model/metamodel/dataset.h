@@ -46,6 +46,14 @@ namespace FIFE { namespace model {
 	class Dataset : public AttributedClass {
 		public:
 
+			/** Constructor
+			 * Datasets are created by calling addDataset from metamodel, thus
+			 * this method should really be called only by metamodel or test code
+			 */
+			Dataset();
+
+			/** Destructor
+			 */
 			~Dataset();
 
 			/** Add a (nested) dataset
@@ -148,8 +156,6 @@ namespace FIFE { namespace model {
 
 		private:
 
-			Dataset();
-
 			// geometry definitions in this dataset
 			std::vector<GeometryType*> m_geometry_types;
 
@@ -158,8 +164,6 @@ namespace FIFE { namespace model {
 
 			// nested datasets
 			std::vector<Dataset*> m_datasets;
-		
-			friend class MetaModel;
 	};
 
 }}

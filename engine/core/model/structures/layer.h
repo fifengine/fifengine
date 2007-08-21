@@ -84,6 +84,11 @@ namespace FIFE { namespace model {
 	 */
 	class Layer : public AttributedClass {
 		public:
+			/** Constructor
+			 * Elevations are created by calling addLayer from elevation, thus
+			 * this method should really be called only by elevation or test code
+			 */
+			Layer(Elevation* elevation, GeometryType* geometry);
 
 			/** Destructs a Layer instance
 			 */
@@ -166,12 +171,6 @@ namespace FIFE { namespace model {
 			void update();
 
 		protected:
-
-			/** Constructs a Layer instance (layers are constructed
-			 * by elevations).
-			 */
-			Layer(GeometryType* geometry);
-
 			Elevation* m_elevation;
 
 			bool m_instances_visibility;
@@ -182,8 +181,6 @@ namespace FIFE { namespace model {
 			GeometryType* m_geometry;
 
 			Point m_shift;
-
-			friend class Elevation;
 	};
 
 } } // FIFE::model

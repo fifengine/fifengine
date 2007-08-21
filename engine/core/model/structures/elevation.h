@@ -54,6 +54,11 @@ namespace FIFE { namespace model {
 	 */
 	class Elevation : public AttributedClass {
 		public:
+			/** Constructor
+			 * Elevations are created by calling addElevation from map, thus
+			 * this method should really be called only by map or test code
+			 */
+			Elevation(Map* map=NULL);
 
 			/** Destructor
 			 */
@@ -118,11 +123,6 @@ namespace FIFE { namespace model {
 			void update();
 
 		private:
-
-			/** Constructor (Elevations are created by Maps)
-			 */
-			Elevation();
-		
 			std::string m_name;
 
 			Map* m_map;
@@ -136,8 +136,6 @@ namespace FIFE { namespace model {
 			// Not copyable.
 			Elevation(const Elevation&);
 			Elevation& operator=(const Elevation&);
-
-			friend class Map;
 	};
 
 } } //FIFE::model

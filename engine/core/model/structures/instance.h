@@ -57,6 +57,8 @@ namespace FIFE { namespace model {
 		public:
 
 			/** Constructor
+			 * Instances are created by calling addInstance from layer, thus
+			 * this method should really be called only by layer or test code
 			 */
 			Instance(Object* object, const Location& location);
 

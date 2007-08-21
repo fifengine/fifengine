@@ -39,7 +39,14 @@ namespace FIFE { namespace model {
 
 	class Action : public AttributedClass {
 		public:
+			/** Constructor
+			 * Actions are created by calling addAction from object, thus
+			 * this method should really be called only by object or test code
+			 */
 			Action();
+
+			/** Destructor
+			 */
 			virtual ~Action();
 
 			/** Gets index to animation closest to given angle

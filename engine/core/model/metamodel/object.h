@@ -58,9 +58,21 @@ namespace FIFE { namespace model {
 	 */
 	class Object : public AttributedClass {
 		public:
+			/** Constructor
+			 * An object may optionally inherit default attributes
+			 * from another object. This object may override these
+			 * defaults, but it may not CHANGE the inherited values.
+			 *
+			 * Obejct are created by calling addObject from dataset, thus
+			 * this method should really be called only by dataset or test code
+			 * @see Dataset in model/metamodel/dataset.h for creation
+			 * of objects.
+			 */
+			Object(Object* inherited);
 
-			~Object() 
-			{ }
+			/** Destructor
+			 */
+			~Object() { }
 			
 			template<typename T>
 			const T& oget(const std::string& field) {
@@ -89,20 +101,9 @@ namespace FIFE { namespace model {
 			AbstractPather* getPather() { return m_pather; }
 
 		private:
-
-			/** An object may optionally inherit default attributes
-			 * from another object. This object may override these
-			 * defaults, but it may not CHANGE the inherited values.
-			 *
-			 * @see Dataset in model/metamodel/dataset.h for creation
-			 * of objects.
-			 */
-			Object(Object* inherited);
-
 			Object* m_inherited;
 			std::map<std::string, Action*>* m_actions;
 			AbstractPather* m_pather;
-			friend class Dataset;
 	};
 
 }} //FIFE::model
