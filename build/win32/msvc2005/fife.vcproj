@@ -423,6 +423,16 @@
 					<File RelativePath="..\..\..\engine\core\video\sdl\sdlimage.h"></File>
 				</Filter>
 			</Filter>
+			<Filter Name="view">
+				<File RelativePath="..\..\..\engine\core\view\camera.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\camera.h"></File>
+				<File RelativePath="..\..\..\engine\core\view\view.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\view.h"></File>
+				<File RelativePath="..\..\..\engine\core\view\visual.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\visual.h"></File>
+				<File RelativePath="..\..\..\engine\core\view\visualtree.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\visualtree.h"></File>
+			</Filter>
 			<Filter Name="xml">
 				<Filter Name="tinyxml">
 					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinystr.cpp"></File>

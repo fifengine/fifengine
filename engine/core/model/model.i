@@ -14,8 +14,7 @@ namespace std {
 }
 
 namespace FIFE { namespace model {
-
-  class MetaModel;
+	class MetaModel;
 
 	class Model {
 		public:

@@ -128,15 +128,26 @@ namespace FIFE { namespace model {
 			 */
 			const double getYShift() const { return m_yshift; }
 
-			/** Set the geometry scale
-			 *  @param shift The scale of geometry
+			/** Set the geometry scaling
+			 *  @param scale The scale of geometry
 			 */
 			void setScale(const double scale) { m_scale = scale; }
 
-			/** Get the geometry scale
+			/** Get the geometry scaling
 			 *  @return The scale of geometry
 			 */
 			const double getScale() const { return m_scale; }
+
+			/** Set the layer rotation
+			 *  @param rotation The rotation of the layer
+			 */
+			void setRotation(const double rotation) { m_rotation = rotation; }
+
+			/** Get the layer rotation
+			 *  @return rotation The rotation of the layer
+			 */
+			const double getRotation() const { return m_rotation; }
+
 
 			/** Check existance of objects on this layer
 			 *  @return True, if objects exist.
@@ -199,12 +210,10 @@ namespace FIFE { namespace model {
 			std::vector<Instance*> m_instances;
 
 			Geometry* m_geometry;
-
 			double m_xshift;
-
 			double m_yshift;
-
 			double m_scale;
+			double m_rotation;
 	};
 
 } } // FIFE::model

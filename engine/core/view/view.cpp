@@ -19,94 +19,50 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_ENGINE_H
-#define FIFE_ENGINE_H
-
 // Standard C++ library includes
-#include <map>
-#include <string>
-#include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-
-namespace gcn {
-	class Graphics;
-}
+#include "view.h"
+#include "camera.h"
 
 namespace FIFE {
-
-	namespace audio {
-		class Manager;
-	}
-	class RenderBackend;
-	class GUIManager;
-	class VFS;
-	class VFSSourceFactory;
-	class EventManager;
-	class TimeManager;
-	class ImagePool;
-	class AnimationPool;
-	class SettingsManager;
-	class View;
-	namespace model {
-		class Model;
+	View::View(SDL_Surface* screen):
+		m_cameras() {
 	}
 
-	class Engine {
-		public:
-			/** Constructor
-			 */
-			Engine(bool use_miniwindow=false);
+	View::~View() {
+	}
 
-			/** Destructor
-			 */
-			virtual ~Engine();
+	Camera* View::addCamera(double tilt, double rotation, double zoom) {
+		Camera* cam = new Camera(this);
+		cam->setTilt(tilt);
+		cam->setRotation(rotation);
+		cam->setZoom(zoom);
+		m_cameras.push_back(cam);
+		return cam;
+	}
 
-			void initializePumping();
-			void finalizePumping();
+	void View::removeCamera(Camera* camera) {
+		std::vector<Camera*>::iterator it = m_cameras.begin();
+		for(; it != m_cameras.end(); ++it) {
+			if((*it) == camera) {
+				delete *it;
+				m_cameras.erase(it);
+				return;
+			}
+		}
+	}
+	
+	void View::update() {
+		std::vector<Camera*>::iterator it = m_cameras.begin();
+		for(; it != m_cameras.end(); ++it) {
+			(*it)->update();
+		}
+	}
+}
 
-			/** Runs one cycle for the engine
-			 */
-			void pump();
-
-			audio::Manager* getAudioManager() { return m_audiomanager; }
-			EventManager* getEventManager() { return m_eventmanager; }
-			TimeManager* getTimeManager() { return m_timemanager; }
-			SettingsManager* getSettingsManager() { return m_settingsmanager; }
-			GUIManager* getGuiManager() { return m_guimanager; }
-			ImagePool* getImagePool() { return m_imagepool; }
-			AnimationPool* getAnimationPool() { return m_animpool; }
-			RenderBackend* getRenderBackend() { return m_renderbackend; }
-			model::Model* getModel() { return m_model; }
-			View* getView() { return m_view; }
-
-		private:
-			/** Initializes the engine
-			 */
-			void init();
-
-			RenderBackend* m_renderbackend;
-			GUIManager* m_guimanager;
-			EventManager* m_eventmanager;
-			audio::Manager* m_audiomanager;
-			TimeManager* m_timemanager;
-			SettingsManager* m_settingsmanager;
-			ImagePool* m_imagepool;
-			AnimationPool* m_animpool;
-			VFSSourceFactory* m_vfs_sourcefactory;
-			VFS* m_vfs;
-			model::Model* m_model;
-			gcn::Graphics* m_gui_graphics;
-			View* m_view;
-			bool m_use_miniwindow;
-	};
-
-}//FIFE
-
-#endif
