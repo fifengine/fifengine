@@ -37,6 +37,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/singleton.h"
+#include "util/point.h"
 
 namespace FIFE {
 
@@ -127,6 +128,10 @@ namespace FIFE {
 			 * @see Engine::makeScreenshot()
 			 */
 			virtual void captureScreen(const std::string& filename);
+
+			/** Draws line between given point with given color (rgb)
+			 */
+			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
 			
 		protected:
 

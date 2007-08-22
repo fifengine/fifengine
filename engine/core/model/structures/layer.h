@@ -108,15 +108,35 @@ namespace FIFE { namespace model {
 			 */
 			const Point& getSize() const;
 
-			/** Set the screen coord shift
-			 *  @param shift The new shift in screen coords
+			/** Set the geometry x shift 
+			 *  @param shift The shift in elevation coords
 			 */
-			void setShift(const Point& shift);
+			void setXShift(const double& xshift) { m_xshift = xshift; }
 
-			/** Get the screen coord shift
-			 *  @return The shift in screen coords
+			/** Get the geometry x shift 
+			 *  @return The x shift in elevation coords
 			 */
-			const Point& getShift() const;
+			const double getXShift() const { return m_xshift; }
+
+			/** Set the geometry y shift 
+			 *  @param shift The shift in elevation coords
+			 */
+			void setYShift(const double yshift) { m_yshift = yshift; }
+
+			/** Get the geometry x shift 
+			 *  @return The x shift in elevation coords
+			 */
+			const double getYShift() const { return m_yshift; }
+
+			/** Set the geometry scale
+			 *  @param shift The scale of geometry
+			 */
+			void setScale(const double scale) { m_scale = scale; }
+
+			/** Get the geometry scale
+			 *  @return The scale of geometry
+			 */
+			const double getScale() const { return m_scale; }
 
 			/** Check existance of objects on this layer
 			 *  @return True, if objects exist.
@@ -180,7 +200,11 @@ namespace FIFE { namespace model {
 
 			Geometry* m_geometry;
 
-			Point m_shift;
+			double m_xshift;
+
+			double m_yshift;
+
+			double m_scale;
 	};
 
 } } // FIFE::model

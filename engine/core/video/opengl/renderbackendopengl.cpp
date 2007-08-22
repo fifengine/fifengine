@@ -119,6 +119,10 @@ namespace FIFE {
 
 		glEnable(GL_SCISSOR_TEST);
 
+		glPointSize(1.0);
+		glLineWidth(1.0);
+
+
 		m_screen = screen;
 		return m_screen;
 	}
@@ -201,5 +205,16 @@ namespace FIFE {
 		// Clear memory
 		delete []pixels;
 		SDL_FreeSurface( image );
+	}
+
+	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+		glBegin(GL_LINES);
+		glVertex3f(p1.x+0.5f, p1.y+0.5f, 0);
+		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
+		glEnd();
+	
+		glBegin(GL_POINTS);
+		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
+		glEnd();
 	}
 }

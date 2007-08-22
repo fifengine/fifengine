@@ -85,6 +85,9 @@ namespace FIFE {
 			 */
 			virtual void captureScreen(const std::string& filename);
 
+			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
+		private:
+			inline void putPixel(int x, int y, int r, int g, int b);
 	};
 
 }

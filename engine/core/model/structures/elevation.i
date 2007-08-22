@@ -42,10 +42,6 @@ namespace FIFE { namespace model {
 			size_t getNumLayers() const;
 			void clearLayers();
 
-			void setReferenceLayer(Layer* layer);
-			Layer* getReferenceLayer();
-
-			Point centerOfMass();
 			void update();
 	};
 }}

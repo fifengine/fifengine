@@ -30,6 +30,7 @@
 
 namespace FIFE {
 	class Pool;
+	class Point;
 
 	class Image {
 	public:
@@ -90,6 +91,7 @@ namespace FIFE {
 		unsigned int getScreenWidth() const;
 		unsigned int getScreenHeight() const;
 		virtual void captureScreen(const std::string& filename);
+		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
 	private:
 		RenderBackend(const std::string& name);
 	};

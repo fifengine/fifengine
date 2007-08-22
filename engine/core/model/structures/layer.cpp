@@ -42,13 +42,11 @@ namespace FIFE { namespace model {
 		: AttributedClass("map_Layer"),
 		m_elevation(elevation),
 		m_geometry(geometry),
- 		m_shift() {
+		m_xshift(0),
+ 		m_yshift(0),
+		m_scale(1) {
 
 		m_instances_visibility = true;
-
-		// set default attributes
-		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/outlines/tile_outline_fallout.png");
-
 	}
 
 	Layer::~Layer() {
@@ -63,14 +61,6 @@ namespace FIFE { namespace model {
 		return m_geometry;
 	}
 
-	void Layer::setShift(const Point& shift) {
-		m_shift = shift;
-	}
-
-	const Point& Layer::getShift() const {
-		return m_shift;
-	}
-	
 	bool Layer::hasInstances() const {
 		return !m_instances.empty();
 	}

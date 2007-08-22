@@ -105,18 +105,11 @@ namespace FIFE { namespace model {
 			 */
 			void clearLayers();
 
-			/** Set the 'reference' Layer
-			 * @note Is this actually used? --jwt
+			/** Maps coordinate from one layer to another
+			 * 
 			 */
-			void setReferenceLayer(Layer* layer);
-
-			/** Get the 'reference' Layer
-			 */
-			Layer* getReferenceLayer();
-
-			/** Try to calculate a valid nice starting position
-			 */
-			Point centerOfMass();
+			void getMatchingCoords(const Point& coord_to_map, const Layer* from_layer, 
+				const Layer* to_layer, std::vector<Point>& matching_coords) const;
 
 			/** Called periodically to update events on elevation
 			 */

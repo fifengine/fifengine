@@ -30,8 +30,12 @@ namespace FIFE { namespace model {
 
 			Elevation* getElevation();
 
-			void setShift(const Point& shift);
-			const Point& getShift() const;
+			void setXShift(const double& xshift);
+			const double getXShift() const;
+			void setYShift(const double yshift);
+			const double getYShift() const;
+			void setScale(const double scale);
+			const double getScale() const;
 
 			bool hasInstances() const;
 

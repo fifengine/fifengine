@@ -79,56 +79,6 @@ namespace FIFE { namespace model {
 		m_layers.clear();
 	}
 
-	void Elevation::setReferenceLayer(Layer* layer) {
-		m_reference_layer = layer;
-	}
-
-	Layer* Elevation::getReferenceLayer() {
-		return m_reference_layer;
-	}
-
-	Point Elevation::centerOfMass() {
-		// TODO: this logic needs to be reconsidered now that there
-		// isn't a distinction between tiles and objects
-		
-		return Point(0,0);
-/*		size_t n = 0;
-		Point p;
-
-		// Sanity checks.
-		Layer* ref_layer = getReferenceLayer();
-		if( !ref_layer )
-			return p;
-
-		Geometry* ref_geo = ref_layer->getGeometry();
-		if( ref_geo == 0 )
-			return p;
-
-
-		std::vector<Layer*>::iterator end = m_layers.end();
-		for (std::vector<Layer*>::iterator i = m_layers.begin(); i != end; ++i) {
-			Point pos;
-			Geometry *geo = (*i)->getGeometry();
-
-			if( !(*i)->hasTiles() ) {
-				continue;
-			}
-
-			for(pos.x=0; pos.x != (*i)->getSize().x; ++pos.x) {
-				for(pos.y=0; pos.y != (*i)->getSize().y; ++pos.y) {
-					if( (*i)->getTileImage(pos) ) {
-						p += ref_geo->fromScreen(geo->toScreen(pos));
-						++n;
-					}
-				}
-			}
-		}
-
-		if( n > 0 )
-			return p/n;
-		return  p; */
-	}
-
 	void Elevation::update() {
 		std::vector<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {

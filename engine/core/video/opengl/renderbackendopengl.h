@@ -87,6 +87,9 @@ namespace FIFE {
 			 */
 			virtual void captureScreen(const std::string& filename);
 
+
+			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
+
 		private:
 			SDL_PixelFormat m_rgba_format;
 	};
