@@ -36,8 +36,16 @@
 namespace FIFE { namespace model {
 	class SquareGeometry: public Geometry {
 	public:
-		SquareGeometry();
+		SquareGeometry(bool diagonals_accessible=false);
 		virtual ~SquareGeometry();
+
+		const std::string getName();
+		const bool isAccessible(const Point& curpos, const Point& target);
+		const float getAdjacentCost(const Point& curpos, const Point& target);
+
+	private:
+		const bool isAccessibleDiagonal(const Point& curpos, const Point& target);
+		bool m_diagonals_accessible;
 	};
 }}
 

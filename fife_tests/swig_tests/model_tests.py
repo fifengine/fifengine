@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from __init__ import *
+import math
 
 class TestModel(unittest.TestCase):
 	
@@ -279,8 +280,101 @@ class ActivityTests(unittest.TestCase):
 		self.inst.update()
 		self.assert_(self.listener.finished)
 
+class GeometryTests(unittest.TestCase):
+	def _testgeom(self, geom, curpos, access, cost):
+		for k, v in access.items():
+			self.assertEqual(geom.isAccessible(fife.Point(*curpos), fife.Point(*k)), v)
+		for k, v in cost.items():
+			self.assertEqual(int(10000 * geom.getAdjacentCost(fife.Point(*curpos), fife.Point(*k))), 
+			                 int(10000 * v))
+		
+		curpos = fife.Point(*curpos)
+		accessiblepts = fife.PointVector()
+		geom.getAccessibleCoordinates(curpos, accessiblepts)
+		costpts = [fife.Point(*pt) for pt in cost.keys()]
+		for pt in costpts:
+			self.assert_(pt in accessiblepts)
+		for pt in accessiblepts:
+			self.assert_(pt in costpts)
 
-TEST_CLASSES = [TestModel, TestActionAngles, ActivityTests]
+	
+	def testHexGeometry(self):
+		geom = fife.HexGeometry()
+		curpos = (1,1)
+		access = {
+			(0,0): True,
+			(0,1): True,
+			(0,2): False,
+			(1,0): True,
+			(1,1): True,
+			(1,2): True,
+			(2,0): False,
+			(2,1): True,
+			(2,2): True,
+		}
+		cost = {
+			(0,0): 1,
+			(0,1): 1,
+			(1,0): 1,
+			(1,1): 0,
+			(1,2): 1,
+			(2,1): 1,
+			(2,2): 1,
+		}
+		self._testgeom(geom, curpos, access, cost)
+	
+	def testSquareGeometry(self):
+		geom = fife.SquareGeometry()
+		curpos = (1,1)
+		access = {
+			(0,0): False,
+			(0,1): True,
+			(0,2): False,
+			(1,0): True,
+			(1,1): True,
+			(1,2): True,
+			(2,0): False,
+			(2,1): True,
+			(2,2): False,
+		}
+		cost = {
+			(0,1): 1,
+			(1,0): 1,
+			(1,1): 0,
+			(1,2): 1,
+			(2,1): 1,
+		}
+		self._testgeom(geom, curpos, access, cost)
+
+	def testDiagSquareGeometry(self):
+		geom = fife.SquareGeometry(True)
+		curpos = (1,1)
+		access = {
+			(0,0): True,
+			(0,1): True,
+			(0,2): True,
+			(1,0): True,
+			(1,1): True,
+			(1,2): True,
+			(2,0): True,
+			(2,1): True,
+			(2,2): True,
+		}
+		cost = {
+			(0,0): math.sqrt(2),
+			(0,1): 1,
+			(0,2): math.sqrt(2),
+			(1,0): 1,
+			(1,1): 0,
+			(1,2): 1,
+			(2,0): math.sqrt(2),
+			(2,1): 1,
+			(2,2): math.sqrt(2),
+		}
+		self._testgeom(geom, curpos, access, cost)
+
+
+TEST_CLASSES = [TestModel, TestActionAngles, ActivityTests, GeometryTests]
 
 if __name__ == '__main__':
     unittest.main()

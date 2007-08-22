@@ -38,6 +38,10 @@ namespace FIFE { namespace model {
 	public:
 		HexGeometry();
 		virtual ~HexGeometry();
+
+		const bool isAccessible(const Point& curpos, const Point& target);
+		const std::string getName() { return "Hex geometry"; }
+		const float getAdjacentCost(const Point& curpos, const Point& target);
 	};
 }}
 

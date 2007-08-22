@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <assert.h>
 
 // 3rd party library includes
 
@@ -34,5 +35,33 @@ namespace FIFE { namespace model {
 	}
 
 	HexGeometry::~HexGeometry() {
+	}
+
+	const bool HexGeometry::isAccessible(const Point& curpos, const Point& target) {
+		if (curpos == target)
+			return true;
+		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
+			return true;
+		if ((curpos.x == target.x) && (curpos.y + 1 == target.y))
+			return true;
+		if ((curpos.x + 1 == target.x) && (curpos.y == target.y))
+			return true;
+		if ((curpos.x - 1 == target.x) && (curpos.y == target.y))
+			return true;
+
+		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
+			return true;
+		if ((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y))
+			return true;
+
+		return false;
+	}
+
+	const float HexGeometry::getAdjacentCost(const Point& curpos, const Point& target) {
+		assert(isAccessible(curpos, target));
+		if (curpos == target) {
+			return 0;
+		}
+		return 1;
 	}
 }}

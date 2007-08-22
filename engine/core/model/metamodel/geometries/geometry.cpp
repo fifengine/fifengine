@@ -35,4 +35,19 @@ namespace FIFE { namespace model {
 
 	Geometry::~Geometry() {
 	}
+
+	void Geometry::getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates) {
+		coordinates.clear();
+		for (int x = curpos.x - 1; x <= curpos.x + 1; x++) {
+			for (int y = curpos.y - 1; y <= curpos.y + 1; y++) {
+				Point pt;
+				pt.x = x;
+				pt.y = y;
+				if (isAccessible(curpos, pt)) {
+					coordinates.push_back(pt);
+				}
+			}
+		}
+	}
+
 }}

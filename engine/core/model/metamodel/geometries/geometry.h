@@ -23,6 +23,7 @@
 #define FIFE_MODEL_GEOMETRIES_GEOMETRY_H
 
 // Standard C++ library includes
+#include <vector>
 
 // 3rd party library includes
 
@@ -30,12 +31,18 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/point.h"
 
 namespace FIFE { namespace model {
 	class Geometry {
 	public:
  		Geometry();
 		virtual ~Geometry();
+
+		void getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates);
+		virtual const std::string getName() = 0;
+		virtual const bool isAccessible(const Point& curpos, const Point& target) = 0;
+		virtual const float getAdjacentCost(const Point& curpos, const Point& target) = 0;
 	};
 
 }}
