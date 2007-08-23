@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<map>
-	
+<map format=1>
+
 	<metadata>
 		<param type="text" name="Name">official_map.xml</param>
 		<param type="id" name="Version">1</param>
@@ -8,8 +8,6 @@
 		<param type="text" name="Author">barra</param>
 		<param type="id" name="_START_ELEVATION">1</param>
 	</metadata>
-
-	<format>1</format>
 
 	<!-- Load inst dataset s -->
 	<dataset type="XML" source="content/archetypes/insts/example_map_tiles.xml" />
@@ -46,12 +44,13 @@
 	<dataset type="XML" source="content/archetypes/critters/humans/girl.xml" />
 
 	<elevation>
-		<param name="_START_POSITION" type="Point"><x>6</x><y>7</y></param>
+
+		<metadata>
+			<param name="_START_POSITION" type="Point"><x>6</x><y>7</y></param>
+		</metadata>
 
 		<!-- TILE LAYER -->
-		<layer>
-			<size><x>25</x><y>25</y></size>
-			<geometry>default_grid</geometry>
+		<layer geometry="default_grid">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE" type="text">content/gfx/insts/outlines/tile_outline_diamond_126_96.png</param>
@@ -238,14 +237,12 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer>
+		<layer geometry="small_grid">
+
 			<metadata>
 				<param name="_OVERLAY_IMAGE" type="text">content/gfx/insts/outlines/object_outline_diamond_32_24.png</param>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
 			</metadata>
-
-			<size><x>100</x><y>105</y></size>
-			<geometry>default_grid_geometry</geometry>
 
 			<instances>
 				<i o="Beach_ball:001" x="76" y="41" />
