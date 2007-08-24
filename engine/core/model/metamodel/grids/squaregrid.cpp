@@ -28,16 +28,20 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "hexgeometry.h"
+#include "util/fife_math.h"
+
+#include "squaregrid.h"
 
 namespace FIFE { namespace model {
-	HexGeometry::HexGeometry(): Geometry() {
+	SquareGrid::SquareGrid(bool diagonals_accessible): 
+		CellGrid(),
+		m_diagonals_accessible(diagonals_accessible) {
 	}
 
-	HexGeometry::~HexGeometry() {
+	SquareGrid::~SquareGrid() {
 	}
 
-	const bool HexGeometry::isAccessible(const Point& curpos, const Point& target) {
+	const bool SquareGrid::isAccessible(const Point& curpos, const Point& target) {
 		if (curpos == target)
 			return true;
 		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
@@ -49,19 +53,41 @@ namespace FIFE { namespace model {
 		if ((curpos.x - 1 == target.x) && (curpos.y == target.y))
 			return true;
 
-		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y))
-			return true;
+		if (m_diagonals_accessible) {
+			return isAccessibleDiagonal(curpos, target);
+		}
 
 		return false;
 	}
 
-	const float HexGeometry::getAdjacentCost(const Point& curpos, const Point& target) {
+	const bool SquareGrid::isAccessibleDiagonal(const Point& curpos, const Point& target) {
+		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
+			return true;
+		if ((curpos.x - 1 == target.x) && (curpos.y + 1 == target.y))
+			return true;
+		if ((curpos.x + 1 == target.x) && (curpos.y - 1 == target.y))
+			return true;
+		if ((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y))
+			return true;
+		return false;
+	}
+
+	const float SquareGrid::getAdjacentCost(const Point& curpos, const Point& target) {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
 		}
+		if (isAccessibleDiagonal(curpos, target)) {
+			return M_SQRT2;
+		}
 		return 1;
 	}
+
+	const std::string SquareGrid::getName() {
+		if (m_diagonals_accessible) {
+			return "Square Grid";
+		}
+		return "Square Grid with diagonal access";
+	}
+
 }}

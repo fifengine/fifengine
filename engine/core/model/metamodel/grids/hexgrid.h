@@ -19,11 +19,10 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MODEL_GEOMETRIES_GEOMETRY_H
-#define FIFE_MODEL_GEOMETRIES_GEOMETRY_H
+#ifndef FIFE_MODEL_GRIDS_HEXGRID_H
+#define FIFE_MODEL_GRIDS_HEXGRID_H
 
 // Standard C++ library includes
-#include <vector>
 
 // 3rd party library includes
 
@@ -31,20 +30,18 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/point.h"
+#include "cellgrid.h"
 
 namespace FIFE { namespace model {
-	class Geometry {
+	class HexGrid: public CellGrid {
 	public:
- 		Geometry();
-		virtual ~Geometry();
+		HexGrid();
+		virtual ~HexGrid();
 
-		void getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates);
-		virtual const std::string getName() = 0;
-		virtual const bool isAccessible(const Point& curpos, const Point& target) = 0;
-		virtual const float getAdjacentCost(const Point& curpos, const Point& target) = 0;
+		const bool isAccessible(const Point& curpos, const Point& target);
+		const std::string getName() { return "Hex Grid"; }
+		const float getAdjacentCost(const Point& curpos, const Point& target);
 	};
-
 }}
 
 #endif

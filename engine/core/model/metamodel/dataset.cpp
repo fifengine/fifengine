@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/purge.h"
-#include "model/metamodel/geometries/geometry.h"
+#include "model/metamodel/grids/cellgrid.h"
 
 #include "dataset.h"
 #include "object.h"

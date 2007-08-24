@@ -19,10 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MODEL_GEOMETRIES_SQUAREGEOMETRY_H
-#define FIFE_MODEL_GEOMETRIES_SQUAREGEOMETRY_H
-
 // Standard C++ library includes
+#include <assert.h>
 
 // 3rd party library includes
 
@@ -30,23 +28,40 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "geometry.h"
-
+#include "hexgrid.h"
 
 namespace FIFE { namespace model {
-	class SquareGeometry: public Geometry {
-	public:
-		SquareGeometry(bool diagonals_accessible=false);
-		virtual ~SquareGeometry();
+	HexGrid::HexGrid(): CellGrid() {
+	}
 
-		const std::string getName();
-		const bool isAccessible(const Point& curpos, const Point& target);
-		const float getAdjacentCost(const Point& curpos, const Point& target);
+	HexGrid::~HexGrid() {
+	}
 
-	private:
-		const bool isAccessibleDiagonal(const Point& curpos, const Point& target);
-		bool m_diagonals_accessible;
-	};
+	const bool HexGrid::isAccessible(const Point& curpos, const Point& target) {
+		if (curpos == target)
+			return true;
+		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
+			return true;
+		if ((curpos.x == target.x) && (curpos.y + 1 == target.y))
+			return true;
+		if ((curpos.x + 1 == target.x) && (curpos.y == target.y))
+			return true;
+		if ((curpos.x - 1 == target.x) && (curpos.y == target.y))
+			return true;
+
+		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
+			return true;
+		if ((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y))
+			return true;
+
+		return false;
+	}
+
+	const float HexGrid::getAdjacentCost(const Point& curpos, const Point& target) {
+		assert(isAccessible(curpos, target));
+		if (curpos == target) {
+			return 0;
+		}
+		return 1;
+	}
 }}
-
-#endif

@@ -587,31 +587,31 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\geometry.cpp">
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\cellgrid.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\geometry.h">
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\cellgrid.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\hexgeometry.cpp">
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\hexgrid.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\hexgeometry.h">
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\hexgrid.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\squaregeometry.cpp">
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\squaregrid.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\model\metamodel\geometries\squaregeometry.h">
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\squaregrid.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

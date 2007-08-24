@@ -1,8 +1,8 @@
 %module model
 %{
-#include "model/metamodel/geometries/geometry.h"
-#include "model/metamodel/geometries/hexgeometry.h"
-#include "model/metamodel/geometries/squaregeometry.h"
+#include "model/metamodel/grids/cellgrid.h"
+#include "model/metamodel/grids/hexgrid.h"
+#include "model/metamodel/grids/squaregrid.h"
 #include "util/point.h"
 %}
 
@@ -13,10 +13,10 @@ namespace std {
 }
 
 namespace FIFE { namespace model {
-	class Geometry {
+	class CellGrid {
 	public:
-		Geometry();
-		virtual ~Geometry();
+		CellGrid();
+		virtual ~CellGrid();
 
 		void getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates);
 		virtual const std::string getName() = 0;
@@ -24,19 +24,19 @@ namespace FIFE { namespace model {
 		virtual const float getAdjacentCost(const Point& curpos, const Point& target) = 0;
 	};
 
-	class HexGeometry: public Geometry {
+	class HexGrid: public CellGrid {
 	public:
-		HexGeometry();
-		virtual ~HexGeometry();
+		HexGrid();
+		virtual ~HexGrid();
 		virtual const std::string getName();
 		virtual const bool isAccessible(const Point& curpos, const Point& target);
 		virtual const float getAdjacentCost(const Point& curpos, const Point& target);
 	};
 
-	class SquareGeometry: public Geometry {
+	class SquareGrid: public CellGrid {
 	public:
-		SquareGeometry(bool diagonals_accessible=false);
-		virtual ~SquareGeometry();
+		SquareGrid(bool diagonals_accessible=false);
+		virtual ~SquareGrid();
 		virtual const std::string getName();
 		virtual const bool isAccessible(const Point& curpos, const Point& target);
 		virtual const float getAdjacentCost(const Point& curpos, const Point& target);

@@ -27,16 +27,16 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "geometry.h"
+#include "cellgrid.h"
 
 namespace FIFE { namespace model {
-	Geometry::Geometry() {
+	CellGrid::CellGrid() {
 	}
 
-	Geometry::~Geometry() {
+	CellGrid::~CellGrid() {
 	}
 
-	void Geometry::getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates) {
+	void CellGrid::getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates) {
 		coordinates.clear();
 		for (int x = curpos.x - 1; x <= curpos.x + 1; x++) {
 			for (int y = curpos.y - 1; y <= curpos.y + 1; y++) {

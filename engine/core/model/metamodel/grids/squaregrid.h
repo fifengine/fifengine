@@ -19,8 +19,10 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_MODEL_GRIDS_SQUAREGRID_H
+#define FIFE_MODEL_GRIDS_SQUAREGRID_H
+
 // Standard C++ library includes
-#include <assert.h>
 
 // 3rd party library includes
 
@@ -28,66 +30,22 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/fife_math.h"
-
-#include "squaregeometry.h"
+#include "cellgrid.h"
 
 namespace FIFE { namespace model {
-	SquareGeometry::SquareGeometry(bool diagonals_accessible): 
-		Geometry(),
-		m_diagonals_accessible(diagonals_accessible) {
-	}
+	class SquareGrid: public CellGrid {
+	public:
+		SquareGrid(bool diagonals_accessible=false);
+		virtual ~SquareGrid();
 
-	SquareGeometry::~SquareGeometry() {
-	}
+		const std::string getName();
+		const bool isAccessible(const Point& curpos, const Point& target);
+		const float getAdjacentCost(const Point& curpos, const Point& target);
 
-	const bool SquareGeometry::isAccessible(const Point& curpos, const Point& target) {
-		if (curpos == target)
-			return true;
-		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x == target.x) && (curpos.y + 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y == target.y))
-			return true;
-		if ((curpos.x - 1 == target.x) && (curpos.y == target.y))
-			return true;
-
-		if (m_diagonals_accessible) {
-			return isAccessibleDiagonal(curpos, target);
-		}
-
-		return false;
-	}
-
-	const bool SquareGeometry::isAccessibleDiagonal(const Point& curpos, const Point& target) {
-		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x - 1 == target.x) && (curpos.y + 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y))
-			return true;
-		return false;
-	}
-
-	const float SquareGeometry::getAdjacentCost(const Point& curpos, const Point& target) {
-		assert(isAccessible(curpos, target));
-		if (curpos == target) {
-			return 0;
-		}
-		if (isAccessibleDiagonal(curpos, target)) {
-			return M_SQRT2;
-		}
-		return 1;
-	}
-
-	const std::string SquareGeometry::getName() {
-		if (m_diagonals_accessible) {
-			return "Square geometry";
-		}
-		return "Square geometry with diagonal access";
-	}
-
+	private:
+		const bool isAccessibleDiagonal(const Point& curpos, const Point& target);
+		bool m_diagonals_accessible;
+	};
 }}
+
+#endif
