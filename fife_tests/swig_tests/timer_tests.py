@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from __init__ import *
+from swig_test_utils import *
 import time
 
 class MyTimeEvent(fife.TimeEvent):
