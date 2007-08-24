@@ -87,7 +87,7 @@ namespace FIFE {
 
 	bool Animation::isValidIndex(int index) {
 		int size = m_frames.size();
-		if ((size == 0) || (index > (size - 1))) {
+		if ((size == 0) || (index > (size - 1)) || (index < 0)) {
 			return false;
 		}
 		return true;
@@ -102,11 +102,7 @@ namespace FIFE {
 	}
 
 	Image* Animation::getFrameByTimestamp(unsigned int timestamp) {
-		int index = getFrameIndex(timestamp);
-		if( index > 0 ) {
-			return getFrame(index);
-		}
-		return 0;
+		return getFrame(getFrameIndex(timestamp));
 	}
 
 	int Animation::getFrameDuration(int index) {
