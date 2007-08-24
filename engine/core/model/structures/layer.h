@@ -43,8 +43,7 @@ namespace FIFE { namespace model {
 
 	class Elevation;
 	class Selection;
-	class Geometry;
-
+	class CellGrid;
 	class Object;
 
 
@@ -62,9 +61,9 @@ namespace FIFE { namespace model {
 	 *  a first "setTileGID".
  	 *  
 	 *  The most important features of this class are
-	 *  "geometry", "shift" and "size":
+	 *  "cellgrid", "shift" and "size":
 	 *
-	 *  The geometry is used to position objects on this
+	 *  The cellgrid is used to position objects on this
 	 *  Layer and the Tiles too.
 	 *
 	 *  The shift is added to all screen coords and
@@ -88,7 +87,7 @@ namespace FIFE { namespace model {
 			 * Elevations are created by calling addLayer from elevation, thus
 			 * this method should really be called only by elevation or test code
 			 */
-			Layer(Elevation* elevation, Geometry* geometry);
+			Layer(Elevation* elevation, CellGrid* grid);
 
 			/** Destructs a Layer instance
 			 */
@@ -96,58 +95,17 @@ namespace FIFE { namespace model {
 
 			/** Get the elevation this layer is contained in
 			 */
-			Elevation* getElevation();
+			Elevation* getElevation() { return m_elevation; }
 
-			/** Get the Geometry as set in the constructor
-			 *  @return a valid Geometry
+			/** Get the Cellgrid as set in the constructor
+			 *  @return a valid cellgrid
 			 */
-			Geometry* getGeometry();
+			CellGrid* getCellGrid() { return m_grid; }
 
 			/** Get the size as set in the constructor
 			 *  @return the size in Layer coords
 			 */
 			const Point& getSize() const;
-
-			/** Set the geometry x shift 
-			 *  @param shift The shift in elevation coords
-			 */
-			void setXShift(const double& xshift) { m_xshift = xshift; }
-
-			/** Get the geometry x shift 
-			 *  @return The x shift in elevation coords
-			 */
-			const double getXShift() const { return m_xshift; }
-
-			/** Set the geometry y shift 
-			 *  @param shift The shift in elevation coords
-			 */
-			void setYShift(const double yshift) { m_yshift = yshift; }
-
-			/** Get the geometry x shift 
-			 *  @return The x shift in elevation coords
-			 */
-			const double getYShift() const { return m_yshift; }
-
-			/** Set the geometry scaling
-			 *  @param scale The scale of geometry
-			 */
-			void setScale(const double scale) { m_scale = scale; }
-
-			/** Get the geometry scaling
-			 *  @return The scale of geometry
-			 */
-			const double getScale() const { return m_scale; }
-
-			/** Set the layer rotation
-			 *  @param rotation The rotation of the layer
-			 */
-			void setRotation(const double rotation) { m_rotation = rotation; }
-
-			/** Get the layer rotation
-			 *  @return rotation The rotation of the layer
-			 */
-			const double getRotation() const { return m_rotation; }
-
 
 			/** Check existance of objects on this layer
 			 *  @return True, if objects exist.
@@ -195,7 +153,7 @@ namespace FIFE { namespace model {
 			/** Check object visibility
 			 *  @see setObjectsVisible
 			 */
-			bool areInstancesVisible() const;
+			bool areInstancesVisible() const { return m_instances_visibility; }
 
 			/** Called periodically to update events on layer
 			 */
@@ -209,11 +167,7 @@ namespace FIFE { namespace model {
 			// all the instances on this layer
 			std::vector<Instance*> m_instances;
 
-			Geometry* m_geometry;
-			double m_xshift;
-			double m_yshift;
-			double m_scale;
-			double m_rotation;
+			CellGrid* m_grid;
 	};
 
 } } // FIFE::model

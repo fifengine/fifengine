@@ -30,7 +30,11 @@
 #include "cellgrid.h"
 
 namespace FIFE { namespace model {
-	CellGrid::CellGrid() {
+	CellGrid::CellGrid():
+		m_xshift(0),
+		m_yshift(0),
+		m_scale(1),
+		m_rotation(0) {
 	}
 
 	CellGrid::~CellGrid() {

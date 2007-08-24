@@ -15,13 +15,20 @@ namespace std {
 namespace FIFE { namespace model {
 	class CellGrid {
 	public:
-		CellGrid();
+ 		CellGrid();
 		virtual ~CellGrid();
-
 		void getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates);
 		virtual const std::string getName() = 0;
 		virtual const bool isAccessible(const Point& curpos, const Point& target) = 0;
 		virtual const float getAdjacentCost(const Point& curpos, const Point& target) = 0;
+		void setXShift(const double& xshift);
+		const double getXShift() const;
+		void setYShift(const double yshift);
+		const double getYShift() const;
+		void setScale(const double scale);
+		const double getScale() const;
+		void setRotation(const double rotation);
+		const double getRotation() const;
 	};
 
 	class HexGrid: public CellGrid {

@@ -80,10 +80,10 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(elev.getNumLayers(), 0)
 
 		dat = self.metamodel.addDataset()
-		geom = fife.SquareGeometry()
+		grid = fife.SquareGrid()
 
-		layer1 = elev.addLayer(geom)
-		layer2 = elev.addLayer(geom)
+		layer1 = elev.addLayer(grid)
+		layer2 = elev.addLayer(grid)
 
 		layer1.set_string("Name", "Layer1")
 		layer2.set_string("Name", "Layer2")
@@ -104,13 +104,13 @@ class TestModel(unittest.TestCase):
 		elev = map.addElevation()
 
 		dat = self.metamodel.addDataset()
-		geom = fife.SquareGeometry()
+		grid = fife.SquareGrid()
 		obj1 = dat.addObject()
 		obj1.set_string("Name", "MyHero")
 		obj2 = dat.addObject()
 		obj2.set_string("Name", "Goon")
 
-		layer = elev.addLayer(geom)
+		layer = elev.addLayer(grid)
 
 		self.assertEqual(layer.hasInstances(), 0)
 		#self.assertEqual(layer.getElevation(), elev)
@@ -251,9 +251,9 @@ class InstanceListener(fife.InstanceListener):
 
 class ActivityTests(unittest.TestCase):
 	def setUp(self):
-		geom = fife.HexGeometry()
+		grid = fife.HexGrid()
 		elev = fife.Elevation()
-		self.layer = elev.addLayer(geom)
+		self.layer = elev.addLayer(grid)
 		
 		self.target = fife.Location()
 		self.target.layer = self.layer
@@ -280,17 +280,17 @@ class ActivityTests(unittest.TestCase):
 		self.inst.update()
 		self.assert_(self.listener.finished)
 
-class GeometryTests(unittest.TestCase):
-	def _testgeom(self, geom, curpos, access, cost):
+class GridTests(unittest.TestCase):
+	def _testgrid(self, grid, curpos, access, cost):
 		for k, v in access.items():
-			self.assertEqual(geom.isAccessible(fife.Point(*curpos), fife.Point(*k)), v)
+			self.assertEqual(grid.isAccessible(fife.Point(*curpos), fife.Point(*k)), v)
 		for k, v in cost.items():
-			self.assertEqual(int(10000 * geom.getAdjacentCost(fife.Point(*curpos), fife.Point(*k))), 
+			self.assertEqual(int(10000 * grid.getAdjacentCost(fife.Point(*curpos), fife.Point(*k))), 
 			                 int(10000 * v))
 		
 		curpos = fife.Point(*curpos)
 		accessiblepts = fife.PointVector()
-		geom.getAccessibleCoordinates(curpos, accessiblepts)
+		grid.getAccessibleCoordinates(curpos, accessiblepts)
 		costpts = [fife.Point(*pt) for pt in cost.keys()]
 		for pt in costpts:
 			self.assert_(pt in accessiblepts)
@@ -298,8 +298,8 @@ class GeometryTests(unittest.TestCase):
 			self.assert_(pt in costpts)
 
 	
-	def testHexGeometry(self):
-		geom = fife.HexGeometry()
+	def testHexGrid(self):
+		grid = fife.HexGrid()
 		curpos = (1,1)
 		access = {
 			(0,0): True,
@@ -321,10 +321,10 @@ class GeometryTests(unittest.TestCase):
 			(2,1): 1,
 			(2,2): 1,
 		}
-		self._testgeom(geom, curpos, access, cost)
+		self._testgrid(grid, curpos, access, cost)
 	
-	def testSquareGeometry(self):
-		geom = fife.SquareGeometry()
+	def testSquareGrid(self):
+		grid = fife.SquareGrid()
 		curpos = (1,1)
 		access = {
 			(0,0): False,
@@ -344,10 +344,10 @@ class GeometryTests(unittest.TestCase):
 			(1,2): 1,
 			(2,1): 1,
 		}
-		self._testgeom(geom, curpos, access, cost)
+		self._testgrid(grid, curpos, access, cost)
 
-	def testDiagSquareGeometry(self):
-		geom = fife.SquareGeometry(True)
+	def testDiagSquareGrid(self):
+		grid = fife.SquareGrid(True)
 		curpos = (1,1)
 		access = {
 			(0,0): True,
@@ -371,10 +371,10 @@ class GeometryTests(unittest.TestCase):
 			(2,1): 1,
 			(2,2): math.sqrt(2),
 		}
-		self._testgeom(geom, curpos, access, cost)
+		self._testgrid(grid, curpos, access, cost)
 
 
-TEST_CLASSES = [TestModel, TestActionAngles, ActivityTests, GeometryTests]
+TEST_CLASSES = [TestModel, TestActionAngles, ActivityTests, GridTests]
 
 if __name__ == '__main__':
     unittest.main()

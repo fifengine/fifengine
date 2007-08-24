@@ -38,28 +38,15 @@
 
 namespace FIFE { namespace model {
 
-	Layer::Layer(Elevation* elevation, Geometry* geometry)
+	Layer::Layer(Elevation* elevation, CellGrid* grid)
 		: AttributedClass("map_Layer"),
 		m_elevation(elevation),
-		m_geometry(geometry),
-		m_xshift(0),
- 		m_yshift(0),
-		m_scale(1),
-		m_rotation(0) {
-
-		m_instances_visibility = true;
+		m_instances_visibility(true),
+		m_grid(grid) {
 	}
 
 	Layer::~Layer() {
 		purge(m_instances);
-	}
-
-	Elevation* Layer::getElevation() {
-		return m_elevation;
-	}
-
-	Geometry* Layer::getGeometry() {
-		return m_geometry;
 	}
 
 	bool Layer::hasInstances() const {
@@ -98,9 +85,6 @@ namespace FIFE { namespace model {
 	}
 	void Layer::toggleInstancesVisible() {
 		m_instances_visibility = !m_instances_visibility;
-	}
-	bool Layer::areInstancesVisible() const {
-		return m_instances_visibility;
 	}
 
 	void Layer::update() {

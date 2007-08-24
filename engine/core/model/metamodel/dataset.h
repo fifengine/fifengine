@@ -42,7 +42,7 @@
 namespace FIFE { namespace model {
 
 	class Object;
-	class Geometry;
+	class CellGrid;
 
 	class Dataset : public AttributedClass {
 		public:

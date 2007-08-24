@@ -25,23 +25,13 @@ namespace FIFE { namespace model {
 
 	class Layer : public AttributedClass {
 		public:
-			Layer(Elevation* elevation, Geometry* geometry);
+			Layer(Elevation* elevation, CellGrid* geometry);
 			~Layer();
 
 			Elevation* getElevation();
-
-			void setXShift(const double& xshift);
-			const double getXShift() const;
-			void setYShift(const double yshift);
-			const double getYShift() const;
-			void setScale(const double scale);
-			const double getScale() const;
-
 			bool hasInstances() const;
-
 			Instance* addInstance(Object* object, const Point& p);
 			void removeInstance(Instance* object);
-
 			const std::vector<Instance*>& getInstances();
 
 			template<typename T>

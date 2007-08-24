@@ -41,8 +41,7 @@ namespace FIFE { namespace model {
 
 	class Layer;
 	class Map;
-
-	class GeometryType;
+	class CellGrid;
 
 	/** Contains a game level.
 	 * 
@@ -72,7 +71,7 @@ namespace FIFE { namespace model {
 			 * the returned pointer to the new Layer, so don't
 			 * delete it!
 			 */
-			Layer* addLayer(Geometry* geometry);
+			Layer* addLayer(CellGrid* grid);
 
 			/** Remove a layer from the elevation
 			 */
