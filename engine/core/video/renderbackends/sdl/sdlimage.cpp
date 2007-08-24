@@ -30,6 +30,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/rect.h"
+#include "util/log.h"
+#include "util/settingsmanager.h"
 #include "video/pixelbuffer.h"
 
 #include "sdlblendingfunctions.h"
@@ -38,7 +40,7 @@
 
 namespace FIFE {
 
-	SDLImage::SDLImage(SDL_Surface* surface) : m_surface(0), m_last_alpha(255) {
+	SDLImage::SDLImage(SDL_Surface* surface) : m_surface(0), m_last_alpha(255),m_optimize_alpha(false) {
 		setPixelBuffer( new PixelBuffer(surface) );
 	}
 
@@ -230,8 +232,13 @@ namespace FIFE {
 			SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, 255);
 			m_surface = SDL_DisplayFormat(m_surface);
 		} else {
-			SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
-			m_surface = SDL_DisplayFormatAlpha(m_surface);
+			m_optimize_alpha &= SettingsManager::instance()->read<bool>("SDLRemoveFakeAlpha",true);
+			if (m_optimize_alpha) {
+				m_surface = optimize(m_surface);
+			} else {
+				SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
+				m_surface = SDL_DisplayFormatAlpha(m_surface);
+			}
 		}
 
 		m_pixelbuffer.reset();
@@ -252,5 +259,205 @@ namespace FIFE {
 			return m_pixelbuffer->getSurface()->h;
 		}
 	}
+
+	void SDLImage::setAlphaOptimizerEnabled(bool optimize) {
+		m_optimize_alpha = optimize;
+	}
+
+	SDL_Surface* SDLImage::optimize(SDL_Surface* src) {
+		// The algorithm is originally by "Tim Goya" <tuxdev103@gmail.com>
+		// Few modifications and adaptions by the FIFE team.
+		//
+		// It tries to determine whether an image with a alpha channel
+		// actually uses that. Often PNGs contains an alpha channels
+		// as they don't provide a colorkey feature(?) - so to speed
+		// up SDL rendering we try to remove the alpha channel.
+
+		// As a reminder: src->format->Amask != 0 here
+
+		int transparent = 0;
+		int opaque = 0;
+		int semitransparent = 0;
+		int alphasum = 0;
+		int alphasquaresum = 0;
+		bool colors[(1 << 12)];
+		memset(colors, 0, (1 << 12) * sizeof(bool));
+	
+		int bpp = src->format->BytesPerPixel;
+		if(SDL_MUSTLOCK(src)) {
+			SDL_LockSurface(src);
+		}
+		/*	In the first pass through we calculate avg(alpha), avg(alpha^2)
+			and the number of semitransparent pixels.
+			We also try to find a useable color.
+		*/
+		for(int y = 0;y < src->h;y++) {
+			for(int x = 0;x < src->w;x++) {
+				Uint8 *pixel = (Uint8 *) src->pixels + y * src->pitch + x * bpp;
+				Uint32 mapped = 0;
+				switch(bpp) {
+					case 1:
+						mapped = *pixel;
+						break;
+					case 2:
+						mapped = *(Uint16 *)pixel;
+						break;
+					case 3:
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+						mapped |= pixel[0] << 16;
+						mapped |= pixel[1] << 8;
+						mapped |= pixel[2] << 0;
+#else
+						mapped |= pixel[0] << 0;
+						mapped |= pixel[1] << 8;
+						mapped |= pixel[2] << 16;
+#endif
+						break;
+					case 4:
+						mapped = *(Uint32 *)pixel;
+						break;
+				}
+				Uint8 red, green, blue, alpha;
+				SDL_GetRGBA(mapped, src->format, &red, &green, &blue, &alpha);
+				if(alpha < 16) {
+					transparent++;
+				} else if (alpha > 240) {
+					opaque++;
+					alphasum += alpha;
+					alphasquaresum += alpha*alpha;
+				} else {
+					semitransparent++;
+					alphasum += alpha;
+					alphasquaresum += alpha*alpha;
+				}
+				colors[((red & 0xf0) << 4) | (green & 0xf0) | ((blue & 0xf0) >> 4)] = true;
+			}
+		}
+		int avgalpha = (opaque + semitransparent) ? alphasum / (opaque + semitransparent) : 0;
+		int alphavariance = 0;
+
+		if(SDL_MUSTLOCK(src)) {
+			SDL_UnlockSurface(src);
+		}
+		alphasquaresum /= (opaque + semitransparent) ? (opaque + semitransparent) : 1;
+		alphavariance = alphasquaresum - avgalpha*avgalpha;
+		if(semitransparent > ((transparent + opaque + semitransparent) / 8) 
+		   && alphavariance > 16) {
+// 			Debug("sdlimage")
+// 				<< "Trying to alpha-optimize image. FAILED: real alpha usage. "
+// 				<< " alphavariance=" << alphavariance
+// 				<< " total=" << (transparent + opaque + semitransparent)
+// 				<< " semitransparent=" << semitransparent
+// 				<< "(" << (float(semitransparent)/(transparent + opaque + semitransparent))
+// 				<< ")";
+			return SDL_DisplayFormatAlpha(src);
+		}
+
+		// check availability of a suitable color as colorkey
+		int keycolor = -1;
+		for(int i = 0;i < (1 << 12);i++) {
+			if(!colors[i]) {
+				keycolor = i;
+				break;
+			}
+		}
+		if(keycolor == -1) {
+// 			Debug("sdlimage")
+// 				<< "Trying to alpha-optimize image. FAILED: no free color";
+			return SDL_DisplayFormatAlpha(src);
+		}
+
+		SDL_Surface *dst = SDL_CreateRGBSurface(src->flags & ~(SDL_SRCALPHA), src->w, src->h,
+		                                        src->format->BitsPerPixel,
+		                                        src->format->Rmask,  src->format->Gmask,
+		                                        src->format->Bmask, 0);
+		bpp = dst->format->BytesPerPixel;
+		Uint32 key = SDL_MapRGB(dst->format,
+		                        (((keycolor & 0xf00) >> 4) | 0xf),
+		                        ((keycolor & 0xf0) | 0xf),
+		                        (((keycolor & 0xf) << 4) | 0xf));
+		if(SDL_MUSTLOCK(src)) {
+			SDL_LockSurface(src);
+		}
+		if(SDL_MUSTLOCK(dst)) {
+			SDL_LockSurface(dst);
+		}
+		for(int y = 0;y < dst->h;y++) {
+			for(int x = 0;x < dst->w;x++) {
+				Uint8 *srcpixel = (Uint8 *) src->pixels + y * src->pitch + x * bpp;
+				Uint8 *dstpixel = (Uint8 *) dst->pixels + y * dst->pitch + x * bpp;
+				Uint32 mapped = 0;
+				switch(bpp) {
+					case 1:
+						mapped = *srcpixel;
+						break;
+					case 2:
+						mapped = *(Uint16 *)srcpixel;
+						break;
+					case 3:
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+						mapped |= srcpixel[0] << 16;
+						mapped |= srcpixel[1] << 8;
+						mapped |= srcpixel[2] << 0;
+#else
+						mapped |= srcpixel[0] << 0;
+						mapped |= srcpixel[1] << 8;
+						mapped |= srcpixel[2] << 16;
+#endif
+						break;
+					case 4:
+						mapped = *(Uint32 *)srcpixel;
+						break;
+				}
+				Uint8 red, green, blue, alpha;
+				SDL_GetRGBA(mapped, src->format, &red, &green, &blue, &alpha);
+				if(alpha < (avgalpha / 4))
+				{
+					mapped = key;
+				}
+				else
+				{
+					mapped = SDL_MapRGB(dst->format, red, green, blue);
+				}
+				switch(bpp) {
+					case 1:
+						*dstpixel = mapped;
+						break;
+					case 2:
+						*(Uint16 *)dstpixel = mapped;
+						break;
+					case 3:
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+						dstpixel[0] = (mapped >> 16) & 0xff;
+						dstpixel[1] = (mapped >> 8) & 0xff;
+						dstpixel[2] = (mapped >> 0) & 0xff;
+#else
+						dstpixel[0] = (mapped >> 0) & 0xff;
+						dstpixel[1] = (mapped >> 8) & 0xff;
+						dstpixel[2] = (mapped >> 16) & 0xff;
+#endif
+						break;
+					case 4:
+						*(Uint32 *)dstpixel = mapped;
+						break;
+				}
+			}
+		}
+		if(SDL_MUSTLOCK(dst)) {
+			SDL_UnlockSurface(dst);
+		}
+		if(SDL_MUSTLOCK(src)) {
+			SDL_UnlockSurface(src);
+		}
+		if(avgalpha < 240) {
+			SDL_SetAlpha(dst, SDL_SRCALPHA | SDL_RLEACCEL, avgalpha);
+		}
+		SDL_SetColorKey(dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, key);
+		SDL_Surface *convert = SDL_DisplayFormat(dst);
+		SDL_FreeSurface(dst);
+// 		Debug("sdlimage")
+// 			<< "Trying to alpha-optimize image. SUCCESS: colorkey is " << key;
+		return convert;
+	} // end optimize
 
 }

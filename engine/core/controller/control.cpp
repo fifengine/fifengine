@@ -22,6 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -136,11 +137,16 @@ namespace FIFE { namespace map {
 	}
 
 	void Control::update() {
+		// Uncomment these lines if you want to
+		// test the preformance of rendering alone.
+		
+		//unsigned long ticks = SDL_GetTicks();
 		if(isRunning()) {
 			std::set<Camera*>::iterator i(m_cameras.begin());
 			for(; i != m_cameras.end(); ++i)
 				(*i)->render();
 		}
+		//Debug("map_control") << "Rendering camera views took: " << SDL_GetTicks() - ticks;
 	}
 
 	void Control::setElevation(size_t elev) {

@@ -34,6 +34,7 @@
 #include "vfs/vfs.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
+#include "video/renderbackends/sdl/sdlimage.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
 
@@ -63,9 +64,14 @@ namespace FIFE { namespace video { namespace loaders {
 		if (location.hasExtension(RenderableLocation::Y))
 			res->setYShift(boost::lexical_cast<int>(location.getExtension(RenderableLocation::Y)));
 
-		// FIXME: If Amask != 0 we should check if the alpha channel
-		//        is actually used.
-		
+		// As (most) images are pngs with alpha channel,
+		// which might actually be better of as colorkeyed
+		// images we try to optimize away fake alpha channels.
+		SDLImage* sdlimage = dynamic_cast<SDLImage*>(res);
+		if( sdlimage ) {
+			sdlimage->setAlphaOptimizerEnabled(true);
+		}
+
 		return res;
 	};
 } } }
