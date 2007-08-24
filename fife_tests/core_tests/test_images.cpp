@@ -54,6 +54,7 @@ using boost::unit_test::test_suite;
 using namespace FIFE;
 
 static const std::string IMAGE_FILE = "../../content/gfx/tiles/beach/beach_e1.png";
+static const std::string ALPHA_IMAGE_FILE = "../data/alpha_fidgit.png";
 static const std::string SUBIMAGE_FILE = "../../content/gfx/tiles/rpg_tiles_01.png";
 
 // Environment
@@ -141,6 +142,36 @@ void test_subimage(RenderBackend& renderbackend) {
 
 }
 
+void test_sdl_alphaoptimize() {
+	environment env;
+	RenderBackendSDL renderbackend;
+	renderbackend.init();
+	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	env.settings->write<bool>("SDLRemoveFakeAlpha",true);
+	
+	ImageProvider provider;
+	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(ImageLocation(IMAGE_FILE))));
+
+	boost::scoped_ptr<Image> alpha_img(dynamic_cast<Image*>(provider.createResource(ImageLocation(ALPHA_IMAGE_FILE))));
+
+	int h0 = img->getHeight();
+	int w0 = img->getWidth();
+	
+	int h1 = alpha_img->getHeight();
+	int w1 = alpha_img->getWidth();
+	for(int i=0; i != 200; ++i) {
+		renderbackend.startFrame();
+		img->render(Rect(i, i, w0, h0), screen);
+		alpha_img->render(Rect(i, i, w1, h1), screen);
+		alpha_img->render(Rect(i, h0+i, w1, h1), screen);
+		img->render(Rect(i, h0+i, w0, h0), screen);
+		renderbackend.endFrame();
+	}
+	
+	BOOST_CHECK(img->getSurface()->format->Amask == 0);
+	BOOST_CHECK(alpha_img->getSurface()->format->Amask != 0);
+}
+
 void test_sdl_image() {
 	environment env;
 	RenderBackendSDL renderbackend;
@@ -170,6 +201,7 @@ test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test->add( BOOST_TEST_CASE( &test_ogl_subimage ),0 );
 	test->add( BOOST_TEST_CASE( &test_sdl_image ),0 );
 	test->add( BOOST_TEST_CASE( &test_ogl_image ),0 );
+	test->add( BOOST_TEST_CASE( &test_sdl_alphaoptimize ),0 );
 
 	return test;
 }

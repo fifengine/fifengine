@@ -73,9 +73,28 @@ namespace FIFE {
 			 */
 			virtual unsigned int getHeight() const;
 
+			/** Enable or disable the alpha 'optimizing' code
+			 *
+			 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
+			 */
+			virtual void setAlphaOptimizerEnabled(bool optimize);
+
 		private:
-			// Last alpha value this image was rendered with
+			// Call this before rendering
+			void finalize();
+			/** SDL Alpha Optimizer
+			 * This tries to convert an image with a fake alpha channel
+			 * to an RGB image when the channel can be reasonably be replaced
+			 * by an colorkey.
+			 */
+			SDL_Surface* optimize(SDL_Surface* surface);
+
+			// SDLSurface used to create the SDLImage.
 			Uint8 m_last_alpha;
+			// Is the surface already optimized for rendering
+			bool m_finalized;
+			// Wether to try to optimize alpha out ...
+			bool m_optimize_alpha;
 	};
 
 }

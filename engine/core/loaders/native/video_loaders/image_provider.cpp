@@ -67,6 +67,7 @@ namespace FIFE {
 			res->setXShift(loc->getXShift());
 			res->setYShift(loc->getYShift());
 		}
+		res->setAlphaOptimizerEnabled(true);
 		return res;
 	};
 }

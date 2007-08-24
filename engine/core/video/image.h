@@ -91,6 +91,13 @@ namespace FIFE {
 			 */
 			virtual unsigned int getHeight() const = 0;
 
+			/** Enable or disable the alpha 'optimizing' code
+			 *
+			 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
+			 * Only implemented by and useful for the SDL backend at the moment.
+			 */
+			virtual void setAlphaOptimizerEnabled(bool) {};
+
 			void addRef() { m_refcount++; };
 			void decRef() { m_refcount--; };
 			unsigned int getRefCount() { return m_refcount; };
