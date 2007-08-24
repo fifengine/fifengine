@@ -102,7 +102,11 @@ namespace FIFE {
 	}
 
 	Image* Animation::getFrameByTimestamp(unsigned int timestamp) {
-		return getFrame(getFrameIndex(timestamp));
+		int index = getFrameIndex(timestamp);
+		if( index > 0 ) {
+			return getFrame(index);
+		}
+		return 0;
 	}
 
 	int Animation::getFrameDuration(int index) {
