@@ -37,13 +37,17 @@ def run_core_tests(progs):
 	os.chdir(prevdir)
 	return errors, failures
 
-def run_test_modules(modules):
+def get_dynamic_imports(modules):
 	imported = []
 	for module in modules:
 		m = __import__(module)
 		for part in module.split('.')[1:]:
 			m = getattr(m, part)
 		imported.append(m)
+	return imported
+		
+def run_test_modules(modules):
+	imported = get_dynamic_imports(modules)
 	suites = []
 	for m in imported:
 		try:
@@ -55,6 +59,21 @@ def run_test_modules(modules):
 	runner = unittest.TextTestRunner(verbosity=2)
 	result = runner.run(mastersuite)
 	return [e[1] for e in result.errors], [f[1] for f in result.failures]
+		
+def run_analyzers(modules):
+	errors = []
+	imported = get_dynamic_imports(modules)
+	for m in imported:
+		analyzefn = None
+		try:
+			analyzefn = m.__dict__['_ANALYZE_FN_']
+		except (KeyError):
+			pass
+		if analyzefn:
+			error = analyzefn()
+			if error:
+				errors.append(error)
+	return errors
 	
 def run_all(tests):
 	def print_errors(txt, errs):
@@ -65,14 +84,18 @@ def run_all(tests):
 		
 	core_errors, core_failures = run_core_tests(tests['core'])
 	swig_errors, swig_failures = run_test_modules(tests['swig'])
+	analyzer_errors = run_analyzers(tests['analyzer'])
+	
 	print 80 * '='
 	errorsfound = False
+	
 	if core_errors or core_failures:
 		print_errors('Errors in core tests', core_errors)
 		print_errors('Failures in core tests', core_failures)
 		errorsfound = True
 	else:
 		print 'No Core errors found'
+	
 	if swig_errors or swig_failures:
 		print_errors('Errors in SWIG tests', swig_errors)
 		print_errors('Failures in SWIG tests', swig_failures)
@@ -80,11 +103,17 @@ def run_all(tests):
 	else:
 		print 'No SWIG errors found'
 	
+	if analyzer_errors:
+		print_errors('Errors in Analyzers', analyzer_errors)
+		errorsfound = True
+	else:
+		print 'No Analyzer errors found'
+	
 	print 80 * '='	
 	if errorsfound:
-		print 'Looks like there is some errors in the code, svn commit is probably not a good idea yet...'
+		print 'Looks like there are some errors in the code, svn commit is probably not a good idea yet...'
 	else:
-		print 'All tests run succesfully!'
+		print 'All tests ran succesfully!'
 	print ''
 	
 def quit(dummy):
@@ -108,7 +137,12 @@ def run(automatic):
 	tests[index] = ('SWIG tests', 'all', swig_tests, run_test_modules)	
 	index += 1
 		
-	alltests = {'core': core_tests, 'swig': swig_tests}
+	analyzers = resolve_test_modules(genpath('fife_tests/analyzers'))
+	for t in analyzers:
+		tests[index] = ('Analyzers', t, [t], run_analyzers)
+		index += 1
+	
+	alltests = {'core': core_tests, 'swig': swig_tests, 'analyzer': analyzers}
 	tests[index] = ('Other', 'Run all tests', alltests, run_all)
 	tests[index+1] = ('Other', 'Cancel and quit', None, quit)
 

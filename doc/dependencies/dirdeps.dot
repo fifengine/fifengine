@@ -16,65 +16,83 @@ subgraph cluster_1 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
+    "pathfinder/linearpather"
+    label = "pathfinder";
+}
+subgraph cluster_2 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
     "gui/fonts"; "gui"; "gui/base"; "gui/console"; "gui/base/opengl"; "gui/base/sdl"; "gui/widgets"
     label = "gui";
 }
-subgraph cluster_2 {
+subgraph cluster_3 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "eventchannel/base"; "eventchannel/command"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/source"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
     label = "eventchannel";
 }
-subgraph cluster_3 {
+subgraph cluster_4 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "loaders/native/video_loaders"; "loaders/fallout/model_loaders"
+    "loaders/fallout/vfs_loaders"; "loaders/native/video_loaders"
     label = "loaders";
 }
-subgraph cluster_4 {
+subgraph cluster_5 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "util"; "util/time"; "util/resource"
     label = "util";
 }
-subgraph cluster_5 {
+subgraph cluster_6 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "controller"
     label = "controller";
 }
-subgraph cluster_6 {
+subgraph cluster_7 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "video/opengl"; "video"; "video/sdl"
     label = "video";
 }
-subgraph cluster_7 {
+subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "model"; "model/structures"; "model/metamodel"
+    "model"; "model/metamodel/grids"; "model/structures"; "model/metamodel"
     label = "model";
 }
-subgraph cluster_8 {
+subgraph cluster_9 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "audio"
     label = "audio";
 }
-subgraph cluster_9 {
+subgraph cluster_10 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "vfs/zip"; "vfs"; "vfs/raw"
     label = "vfs";
 }
+subgraph cluster_11 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "view"
+    label = "view";
+}
+    "loaders/fallout/vfs_loaders" -> "util"
+    "loaders/fallout/vfs_loaders" -> "util/time"
+    "loaders/fallout/vfs_loaders" -> "vfs"
+    "loaders/fallout/vfs_loaders" -> "vfs/raw"
     "eventchannel/command" -> "eventchannel/base"
     "eventchannel/mouse" -> "eventchannel/base"
     "vfs/zip" -> "util"
@@ -88,12 +106,15 @@ subgraph cluster_9 {
     "video/sdl" -> "util"
     "video/sdl" -> "video"
     "model/metamodel" -> "util"
+    "model/metamodel" -> "model/metamodel/grids"
     "gui/widgets" -> "util"
+    "xml/tinyxml" -> "vfs"
+    "xml/tinyxml" -> "vfs/raw"
     "util/resource" -> "util"
     "xml" -> "util"
     "xml" -> "xml/tinyxml"
-    "xml/tinyxml" -> "vfs"
-    "xml/tinyxml" -> "vfs/raw"
+    "pathfinder/linearpather" -> "model/structures"
+    "pathfinder/linearpather" -> "model/metamodel"
     "vfs/raw" -> "util"
     "util/time" -> "util"
     "loaders/native/video_loaders" -> "util"
@@ -103,14 +124,11 @@ subgraph cluster_9 {
     "loaders/native/video_loaders" -> "vfs"
     "loaders/native/video_loaders" -> "util/resource"
     "gui/fonts" -> "util"
+    "gui/fonts" -> "util/time"
     "gui/fonts" -> "video"
     "gui/fonts" -> "vfs"
-    "gui/fonts" -> "util/time"
     "gui/fonts" -> "vfs/raw"
-    "loaders/fallout/model_loaders" -> "util"
-    "loaders/fallout/model_loaders" -> "util/time"
-    "loaders/fallout/model_loaders" -> "vfs"
-    "loaders/fallout/model_loaders" -> "vfs/raw"
+    "model/metamodel/grids" -> "util"
     "model/structures" -> "util"
     "model/structures" -> "model/metamodel"
     "eventchannel/base" -> "eventchannel/source"
@@ -125,9 +143,11 @@ subgraph cluster_9 {
     "controller" -> "video/sdl"
     "controller" -> "video/opengl"
     "controller" -> "util/time"
+    "controller" -> "model"
     "controller" -> "loaders/native/video_loaders"
     "controller" -> "vfs"
     "controller" -> "eventchannel/manager"
+    "controller" -> "view"
     "eventchannel/widget" -> "eventchannel/base"
     "gui" -> "gui/fonts"
     "gui" -> "gui/base"
@@ -153,6 +173,7 @@ subgraph cluster_9 {
     "video/opengl" -> "util"
     "video/opengl" -> "video"
     "model" -> "util"
+    "model" -> "model/structures"
     "model" -> "model/metamodel"
     "audio" -> "util"
     "audio" -> "util/time"
