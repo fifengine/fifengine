@@ -7,8 +7,10 @@ Installation / build process
 1. Check out the latest engine sources from SVN:
 Repository URL: https://svn1.cvsdude.com/fife/engine/trunk
 
-2. Get the latest compile SDK for Win32 from the FIFE wiki:
+2.1 Get the latest compile SDK for Win32 from the FIFE wiki:
 http://wiki.fifengine.de/index.php?title=Download_section#Compile_SDKs
+2.2 Get ActivePython 2.5 and install it to a location of your choice:
+http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.1.1-win32-x86.msi
 
 3. Extraction process
 3.1 Extract the content of the compile SDK to:
