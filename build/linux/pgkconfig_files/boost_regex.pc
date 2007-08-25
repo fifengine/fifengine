@@ -12,8 +12,8 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
-Name: Guichan
-Description: A GUI library
+Name: Boost Regex
+Description: 
 Version: 0.6
 Requires: 
 Libs: -L${libdir} -lboost_regex
