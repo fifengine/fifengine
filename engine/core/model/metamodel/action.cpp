@@ -34,7 +34,7 @@
 #include "action.h"
 
 namespace FIFE { namespace model {
-	Action::Action() {
+	Action::Action(): m_duration(0) {
 	}
 
 	Action::~Action() {

@@ -22,8 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -88,9 +87,10 @@ namespace FIFE { namespace model {
 	}
 
 	void Layer::update() {
+		unsigned int curticks = SDL_GetTicks();
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
-			(*it)->update();
+			(*it)->update(curticks);
 		}
 	}
 

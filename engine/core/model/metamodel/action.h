@@ -58,11 +58,22 @@ namespace FIFE { namespace model {
 			 */
 			void addAnimation(unsigned int angle, int animation_index);
 
+			/** Sets the duration for this action
+			 */
+			void setDuration(unsigned int duration) { m_duration = duration; }
+
+			/** Gets the duration of this action
+			 */
+			unsigned int getDuration() { return m_duration; }
+
+
 		private:
 			typedef std::map<unsigned int, int> type_animmap;
 			// animations associated with this action (handles to pool)
 			//   mapping = direction -> animation
 			type_animmap m_animations;
+			// duration of the action
+			unsigned int m_duration;
 	};
 
 }}

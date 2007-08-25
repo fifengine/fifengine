@@ -66,6 +66,9 @@ namespace FIFE {
 		return x == p.x && y == p.y;
 	}
 
+	bool Point::operator!=(const Point& p) const {
+		return !(x == p.x && y == p.y);
+	}
 
 	std::ostream& operator<<(std::ostream& os, const Point& p) {
 		return os << "(" << p.x << "," << p.y << ")";

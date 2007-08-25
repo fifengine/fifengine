@@ -57,7 +57,7 @@ namespace FIFE { namespace model {
 		 *   Further increments are bind to previous ones with given session_id
 		 * @return session_id to use with further calls
 		 */
-		virtual int getNextNode(const Location& curpos, const Location& target, 
+		virtual int getNextCell(const Location& curpos, const Location& target, 
 		                        Location& nextnode, const int session_id=-1) = 0;
 	};
 }}

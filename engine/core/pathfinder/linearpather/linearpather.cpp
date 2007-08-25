@@ -30,7 +30,7 @@
 #include "linearpather.h"
 
 namespace FIFE { namespace model {
-	int LinearPather::getNextNode(const Location& curpos, const Location& target,
+	int LinearPather::getNextCell(const Location& curpos, const Location& target,
 	                                      Location& nextnode, const int session_id) {
 		assert(curpos.elevation == target.elevation);
 		assert(curpos.layer == target.layer);

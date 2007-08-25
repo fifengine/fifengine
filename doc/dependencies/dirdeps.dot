@@ -165,6 +165,7 @@ subgraph cluster_11 {
     "model/metamodel" -> "util"
     "model/metamodel/grids" -> "util"
     "model/structures" -> "model/metamodel"
+    "model/structures" -> "model/metamodel/grids"
     "model/structures" -> "util"
     "pathfinder/linearpather" -> "model/metamodel"
     "pathfinder/linearpather" -> "model/structures"

@@ -86,6 +86,10 @@ namespace FIFE {
 			 */
 			bool operator==(const Point& p) const;
 
+			/** Equality comparision
+			 */
+			bool operator!=(const Point& p) const;
+
 			/** Return length
 			 */
 			uint32_t length() const;
