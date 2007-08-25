@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../include;../include/SDL;../include/lua51;../../../../engine"
+				AdditionalIncludeDirectories="..\..\..\engine;..\..\..\engine\core;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis;.\include\minizip;.\include\python"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
