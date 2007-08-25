@@ -133,7 +133,7 @@ namespace FIFE {
 		m_animpool = new AnimationPool();
 		m_imagepool->addResourceProvider(new SubImageProvider());
 		m_imagepool->addResourceProvider(new ImageProvider());
-		m_imagepool->addResourceProvider(new AnimationProvider(m_imagepool));
+		m_animpool->addResourceProvider(new AnimationProvider(m_imagepool));
 
 		m_guimanager = new GUIManager(m_eventmanager, *m_imagepool);
 		m_eventmanager->addSdlEventListener(m_guimanager);
@@ -152,7 +152,8 @@ namespace FIFE {
 			m_renderbackend = new RenderBackendOpenGL();
 			Log("controller") << "OpenGL Render backend created";
 #else
-			Log("controller") << "Tried to select OpenGL, even though it is not compiled into the engine";
+			m_renderbackend = new RenderBackendSDL();
+			Log("controller") << "Tried to select OpenGL, even though it is not compiled into the engine. Falling back to SDL Render backend";
 #endif
 		}
 		m_renderbackend->init();

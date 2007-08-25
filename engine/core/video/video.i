@@ -26,6 +26,7 @@
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
+#include "util/exception.h"
 %}
 
 namespace FIFE {
@@ -72,7 +73,7 @@ namespace FIFE {
 	class ImagePool: public Pool {
 	public:
 		virtual ~ImagePool();
-		Image& getImage(unsigned int index);
+		Image& getImage(unsigned int index) throw(NotFound);
 	private:
 		ImagePool();
 	};
@@ -80,7 +81,7 @@ namespace FIFE {
 	class AnimationPool: public Pool {
 	public:
 		virtual ~AnimationPool();
-		Animation& getAnimation(unsigned int index);
+		Animation& getAnimation(unsigned int index) throw(NotFound);
 	private:
 		AnimationPool();
 	};

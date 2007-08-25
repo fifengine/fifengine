@@ -20,6 +20,11 @@ class TestVideo(unittest.TestCase):
 		self.assertEqual(pool.getResourceCount(fife.RES_LOADED), 1)
 		self.assertEqual(pool.getResourceCount(fife.RES_NON_LOADED), 0)
 
+	def testImagePoolFail(self):
+		pool = self.engine.getImagePool()
+		id = pool.addResourceFromFile('bogus_image.png')
+		self.assertRaises(fife.NotFound,pool.getImage,id)
+
 	def testDrawLine(self):
 		points = (
 			(1,1), (50,20), (20,50), (200,500), (500,200), (100,200),
