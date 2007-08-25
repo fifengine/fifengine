@@ -265,6 +265,7 @@ class ActivityTests(unittest.TestCase):
 		self.inst = self.layer.addInstance(self.obj, fife.Point(4,4))
 		self.action = self.obj.addAction('run')
 		self.action.addAnimation(0, 1)
+		self.action.thisown = 0
 		self.listener = InstanceListener()
 		self.inst.addListener(self.listener)
 		

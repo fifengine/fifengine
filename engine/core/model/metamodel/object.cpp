@@ -39,6 +39,16 @@ namespace FIFE { namespace model {
 		m_actions(NULL),
 		m_pather(NULL)	{ }
 
+	Object::~Object() {
+		if (m_actions) {
+			std::map<std::string, Action*>::const_iterator i(m_actions->begin());
+			while (i != m_actions->end()) {
+				delete i->second;
+				++i;
+			}
+			delete m_actions;
+		}
+	}
 
 	Action* Object::addAction(const std::string& action_name) {
 		if (!m_actions) {

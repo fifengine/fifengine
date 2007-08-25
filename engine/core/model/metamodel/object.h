@@ -72,7 +72,7 @@ namespace FIFE { namespace model {
 
 			/** Destructor
 			 */
-			~Object() { }
+			~Object();
 			
 			template<typename T>
 			const T& oget(const std::string& field) {
