@@ -27,7 +27,7 @@ def resolve_test_modules(directory):
 	
 def run_core_tests(progs):
 	prevdir = os.getcwd()
-	os.chdir(genpath('fife_tests/core_tests'))
+	os.chdir(genpath('tests/core_tests'))
 	
 	errors, failures = [], []
 	for prog in progs:
@@ -123,21 +123,21 @@ def run(automatic):
 	index = 0
 	tests = {}
 	
-	core_tests = resolve_test_progs(genpath('fife_tests/core_tests/SConscript'))
+	core_tests = resolve_test_progs(genpath('tests/core_tests/SConscript'))
 	for t in core_tests:
 		tests[index] = ('Core tests', t, [t], run_core_tests)
 		index += 1
 	tests[index] = ('Core tests', 'all', core_tests, run_core_tests)	
 	index += 1
 	
-	swig_tests = resolve_test_modules(genpath('fife_tests/swig_tests'))
+	swig_tests = resolve_test_modules(genpath('tests/swig_tests'))
 	for t in swig_tests:
 		tests[index] = ('SWIG tests', t, [t], run_test_modules)
 		index += 1
 	tests[index] = ('SWIG tests', 'all', swig_tests, run_test_modules)	
 	index += 1
 		
-	analyzers = resolve_test_modules(genpath('fife_tests/analyzers'))
+	analyzers = resolve_test_modules(genpath('tests/analyzers'))
 	for t in analyzers:
 		tests[index] = ('Analyzers', t, [t], run_analyzers)
 		index += 1
