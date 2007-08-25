@@ -29,7 +29,7 @@ class TestPool(unittest.TestCase):
 		pool = self.engine.getAnimationPool()
 		self.assert_(pool)
 		self.assert_(pool.getResourceCount(fife.RES_LOADED) == 0)
-		id = pool.addResourceFromFile('content/animations/critters/animals/wolf.xml')
+		id = pool.addResourceFromFile('content/animations/critters/animals/wolf_walk_sw.xml')
 		self.assertEqual(pool.getResourceCount(fife.RES_LOADED), 0)
 		self.assertEqual(pool.getResourceCount(fife.RES_NON_LOADED), 1)
 		animation = pool.getAnimation(id)

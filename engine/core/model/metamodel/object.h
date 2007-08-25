@@ -63,7 +63,7 @@ namespace FIFE { namespace model {
 			 * from another object. This object may override these
 			 * defaults, but it may not CHANGE the inherited values.
 			 *
-			 * Obejct are created by calling addObject from dataset, thus
+			 * Objects are created by calling addObject from dataset, thus
 			 * this method should really be called only by dataset or test code
 			 * @see Dataset in model/metamodel/dataset.h for creation
 			 * of objects.
