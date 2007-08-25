@@ -143,7 +143,6 @@ def get_cluster_str(ind, elements, label):
 	a('}')
 	return '\n'.join(lines)
 
-
 def analyze(write_postscript=False):
 	root = path(ROOTDIRNAME)
 	headers = list(root.walkfiles('*.h'))
@@ -160,8 +159,8 @@ def analyze(write_postscript=False):
 	# write module dep graph
 	out = []
 	illegalModuleDeps = []
-	for user, providers in moduleUser2provider.items():
-		for provider in providers:
+	for user, providers in sorted(moduleUser2provider.items()):
+		for provider in sorted(providers):
 			if user != provider:
 				out.append('    "' + user + '" -> "' + provider + '"')
 				msg = check_dep_error(ALLOWED_MODULE_DEPS, user, provider)
@@ -174,10 +173,10 @@ def analyze(write_postscript=False):
 	
 	# write dir dep graph
 	out = []
-	for cluster, subdirs in dirclusters.items():
-		out.append(get_cluster_str(len(out), subdirs, cluster))
-	for user, providers in dirUser2provider.items():
-		for provider in providers:
+	for cluster, subdirs in sorted(dirclusters.items()):
+		out.append(get_cluster_str(len(out), sorted(subdirs), cluster))
+	for user, providers in sorted(dirUser2provider.items()):
+		for provider in sorted(providers):
 			if user != provider:
 				out.append('    "' + user + '" -> "' + provider + '"')
 	write_dot_file('%s.dot' % DIR_DEPS_OUT, out)
@@ -186,8 +185,8 @@ def analyze(write_postscript=False):
 	
 	# write file dep graph
 	out = []
-	for user, providers in file2inc.items():
-		for provider in providers:
+	for user, providers in sorted(file2inc.items()):
+		for provider in sorted(providers):
 			if user != provider:
 				out.append('    "' + user + '" -> "' + provider + '"')
 	write_dot_file('%s.dot' % FILE_DEPS_OUT, out)
