@@ -95,8 +95,12 @@ namespace FIFE {
 
 		m_renderbackend->deinit();
 		delete m_renderbackend;
-		delete m_imagepool;
+
+		// Note the dependancy between image and animation pools
+		// as animations reference images they have to be deleted
+		// before clearing the image pool.
 		delete m_animpool;
+		delete m_imagepool;
 
 		delete m_vfs;
 		delete m_vfs_sourcefactory;

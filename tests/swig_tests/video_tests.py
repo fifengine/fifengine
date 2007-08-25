@@ -25,6 +25,22 @@ class TestVideo(unittest.TestCase):
 		id = pool.addResourceFromFile('bogus_image.png')
 		self.assertRaises(fife.NotFound,pool.getImage,id)
 
+	def testAnimationPool(self):
+		pool = self.engine.getAnimationPool()
+		self.assert_(pool)
+		self.assert_(pool.getResourceCount(fife.RES_LOADED) == 0)
+		id = pool.addResourceFromFile('content/animations/critters/animals/wolf.xml')
+		self.assertEqual(pool.getResourceCount(fife.RES_LOADED), 0)
+		self.assertEqual(pool.getResourceCount(fife.RES_NON_LOADED), 1)
+		animation = pool.getAnimation(id)
+		self.assertEqual(pool.getResourceCount(fife.RES_LOADED), 1)
+		self.assertEqual(pool.getResourceCount(fife.RES_NON_LOADED), 0)
+
+	def testAnimationPoolFail(self):
+		pool = self.engine.getAnimationPool()
+		id = pool.addResourceFromFile('bogus_animation.xml')
+		self.assertRaises(fife.NotFound,pool.getAnimation,id)
+
 	def testDrawLine(self):
 		points = (
 			(1,1), (50,20), (20,50), (200,500), (500,200), (100,200),
