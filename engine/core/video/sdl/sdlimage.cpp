@@ -314,7 +314,10 @@ namespace FIFE {
 					alphasum += alpha;
 					alphasquaresum += alpha*alpha;
 				}
-				colors[((red & 0xf0) << 4) | (green & 0xf0) | ((blue & 0xf0) >> 4)] = true;
+				// mark the color as used.
+				if( alpha != 0 ) {
+					colors[((red & 0xf0) << 4) | (green & 0xf0) | ((blue & 0xf0) >> 4)] = true;
+				}
 			}
 		}
 		int avgalpha = (opaque + semitransparent) ? alphasum / (opaque + semitransparent) : 0;
@@ -351,7 +354,8 @@ namespace FIFE {
 			return SDL_DisplayFormatAlpha(src);
 		}
 
-		SDL_Surface *dst = SDL_CreateRGBSurface(src->flags & ~(SDL_SRCALPHA), src->w, src->h,
+		SDL_Surface *dst = SDL_CreateRGBSurface(src->flags & ~(SDL_SRCALPHA) | SDL_SWSURFACE,
+		                                        src->w, src->h,
 		                                        src->format->BitsPerPixel,
 		                                        src->format->Rmask,  src->format->Gmask,
 		                                        src->format->Bmask, 0);
