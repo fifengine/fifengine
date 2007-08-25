@@ -81,6 +81,14 @@ namespace FIFE {
 			 */
 			virtual void render(const Rect& rect, SDL_Surface* screen, unsigned char alpha = 255) = 0;
 
+			/** Renders itself to the main screen at the rectangle rect.
+			 * Convenience function
+			 * @param rect The position and clipping where to draw this image to.
+			 * @param alpha The alpha value, with which to draw self.
+			 * @see RenderBackend, Screen
+			 */
+			void render(const Rect& rect, unsigned char alpha = 255);
+
 			/** Returns the @b maximum width occupied by this image.
 			 * This should return the maximum width that could be covered by the
 			 * image.

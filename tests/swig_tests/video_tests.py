@@ -9,6 +9,24 @@ class TestVideo(unittest.TestCase):
 	def tearDown(self):
 		del self.engine
 
+	def testSimpleAnimation(self):
+		pool = self.engine.getAnimationPool()
+		id = pool.addResourceFromFile('content/animations/critters/animals/wolf.xml')
+		animation = pool.getAnimation(id)
+		self.engine.initializePumping()
+		backend = self.engine.getRenderBackend()
+		gettime = self.engine.getTimeManager().getTime
+		starttime = gettime()
+		for i in xrange(100):
+			image = animation.getFrameByTimestamp(gettime() - starttime)
+			if not image:
+				image = animation.getFrame(0)
+				starttime = gettime()
+			image.render(fife.Rect(0,0,image.getWidth(),image.getHeight()),255)
+			self.engine.pump()
+		self.engine.finalizePumping()
+
+
 	def testDrawLine(self):
 		points = (
 			(1,1), (50,20), (20,50), (200,500), (500,200), (100,200),

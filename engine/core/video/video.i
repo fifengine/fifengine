@@ -42,6 +42,7 @@ namespace FIFE {
 		int getYShift() const;
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
+		void render(const Rect& rect, unsigned char alpha=255);
 		void addRef();
 		void decRef();
 		unsigned int getRefCount();

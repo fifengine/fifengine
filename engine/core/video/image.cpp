@@ -66,5 +66,10 @@ namespace FIFE {
 	int Image::getYShift() const {
 		return m_yshift;
 	}
+
+	void Image::render(const Rect& rect, unsigned char alpha) {
+		render(rect,SDL_GetVideoSurface(),alpha);
+	}
+
 }
 
