@@ -1,5 +1,8 @@
 #!/usr/bin/python
 import sys, re, os
+
+if '.' not in sys.path:
+	sys.path.append('.')
 from utils.util_scripts.path import path
 
 # the following dictionary defines the allowed dependencies checked while testing
