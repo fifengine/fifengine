@@ -29,6 +29,9 @@
 #include "util/exception.h"
 %}
 
+%include "util/point.h"
+%include "util/rect.h"
+
 namespace FIFE {
 	class Pool;
 	class Point;
@@ -74,7 +77,7 @@ namespace FIFE {
 	class ImagePool: public Pool {
 	public:
 		virtual ~ImagePool();
-		Image& getImage(unsigned int index) throw(NotFound);
+		Image& getImage(unsigned int index) throw(FIFE::NotFound);
 	private:
 		ImagePool();
 	};
@@ -82,7 +85,7 @@ namespace FIFE {
 	class AnimationPool: public Pool {
 	public:
 		virtual ~AnimationPool();
-		Animation& getAnimation(unsigned int index) throw(NotFound);
+		Animation& getAnimation(unsigned int index) throw(FIFE::NotFound);
 	private:
 		AnimationPool();
 	};
