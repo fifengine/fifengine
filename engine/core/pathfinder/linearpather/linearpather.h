@@ -36,20 +36,19 @@
 
 namespace FIFE { namespace model {
 
-		/** Naive pathfinder implementation
-		*/
-		class LinearPather: public AbstractPather {
-		public:
-			LinearPather() {}
-	
-			virtual ~LinearPather() {}
-	
-			virtual void setMap(Map* map) {}
-	
-			virtual int getNextCell(const Location& curpos, const Location& target, 
-						Location& nextnode, const int session_id=-1);
-	
-		};
+	/** Naive pathfinder implementation
+	*/
+	class LinearPather: public AbstractPather {
+	public:
+		LinearPather() {}
+
+		virtual ~LinearPather() {}
+
+		virtual void setMap(Map* map) {}
+
+		virtual int getNextCells(const Location& curpos, const Location& target, 
+					std::vector<Location>& nextnodes, const int session_id=-1);
+	};
 }}
 
 #endif

@@ -40,54 +40,67 @@
 namespace FIFE { namespace model {
 	class ActionInfo {
 	public:
-		ActionInfo(AbstractPather* pather): 
+		ActionInfo(AbstractPather* pather, const Point& curpos): 
 			m_action(0), 
-			m_nextcell(),
-			m_offsetsource(),
-			m_offsettarget(),
+			m_nextcells(),
+			m_offsetsource(curpos),
+			m_offsettarget(curpos),
 			m_offset_distance(0),
 			m_target(NULL), 
 			m_speed(0), 
 			m_repeating(false),
+			m_static_direction(),
 			m_action_start_time(SDL_GetTicks()),
+			m_prev_call_time(m_action_start_time),
 			m_pather_session_id(-1),
 			m_pather(pather) {}
 
 		~ActionInfo() {
-			delete m_target;
+			resetTarget();
 		}
 
 		unsigned int currentTime() {
 			return SDL_GetTicks() - m_action_start_time;
 		}
 
-		Location& getNextCell(const Location& startloc) {
+		std::vector<Location>& getNextCells(const Location& startloc) {
 			assert(m_target && m_pather);
-			m_pather_session_id = m_pather->getNextCell(startloc, 
-			                      *m_target, m_nextcell, m_pather_session_id);
-			return m_nextcell;
+			m_pather_session_id = m_pather->getNextCells(startloc, 
+			                      *m_target, m_nextcells, m_pather_session_id);
+			return m_nextcells;
+		}
+
+		void resetTarget() {
+			delete m_target;
+			m_target = NULL;
 		}
 
 		// Current action, owned by object
 		Action* m_action;
-		// Cell where instance should be moved next
-		Location m_nextcell;
+		// Cells where instance should be moved next
+		std::vector<Location> m_nextcells;
 		// Instances move gradually from one cell to next. When this happens, instance
 		// is offsetted from offset source towards offset target
 		Point m_offsetsource;
 		Point m_offsettarget;
-		// distance of offset. Relative to layer coordinates
+		// distance from m_offsetsource. Relative to layer coordinates
 		double m_offset_distance;
+		// current offset starting from source
+		double m_cur_offset;
 		// target location for ongoing movement
 		Location* m_target;
 		// current movement speed
-		float m_speed;
+		double m_speed;
 		// should action be repeated? used only for non-moving actions, moving ones repeat until movement is finished
 		bool m_repeating;
 		// In case of non-moving action, this is the direction where instance should be facing
 		Point m_static_direction;
 		// action start time (ticks)
 		unsigned int m_action_start_time;
+		// ticks since last call
+		unsigned int m_prev_call_time;
+		// current time for action processing (set by Instance::update)
+		unsigned int m_cur_time;
 		// session id for pather
 		int m_pather_session_id;
 		// pather
@@ -99,6 +112,7 @@ namespace FIFE { namespace model {
 		m_location(location),
 		m_static_img_ind(-1),
 		m_actioninfo(NULL),
+		m_pending_actioninfo(NULL),
 		m_listeners(NULL) {
 	}
 
@@ -129,29 +143,164 @@ namespace FIFE { namespace model {
 		Log("Instance") << "Cannot remove unknown listener";
 	}
 
-	void Instance::initalizeAction(const std::string& action_name) {
+	ActionInfo* Instance::initalizeAction(const std::string& action_name) {
 		assert(m_object);
-		delete m_actioninfo;
-		m_actioninfo = new ActionInfo(m_object->getPather());
-		m_actioninfo->m_action = m_object->getAction(action_name);
-		if (!m_actioninfo->m_action) {
+		bool pend_action = (m_actioninfo && m_actioninfo->m_target);
+		ActionInfo** info_to_use = &m_actioninfo;
+		if (!pend_action) {
 			delete m_actioninfo;
 			m_actioninfo = NULL;
+		} else {
+			info_to_use = &m_pending_actioninfo;
+		}
+		delete m_pending_actioninfo;
+		m_pending_actioninfo = NULL;
+
+		(*info_to_use) = new ActionInfo(m_object->getPather(), m_location.position);
+		(*info_to_use)->m_action = m_object->getAction(action_name);
+		if (!(*info_to_use)->m_action) {
+			delete (*info_to_use);
+			(*info_to_use) = NULL;
 			throw NotFound(std::string("action ") + action_name + " not found");
 		}
+		return (*info_to_use);
 	}
 
-	void Instance::act(const std::string& action_name, const Location& target, const float speed) {
-		initalizeAction(action_name);
-		assert(m_actioninfo);
-		m_actioninfo->m_target = new Location(target);
-		m_actioninfo->m_speed = speed;
+	void Instance::act(const std::string& action_name, const Location& target, const double speed) {
+		ActionInfo* a = initalizeAction(action_name);
+		a->m_target = new Location(target);
+		a->m_speed = speed;
 	}
 
 	void Instance::act(const std::string& action_name, const Point& direction, bool repeating) {
-		initalizeAction(action_name);
-		m_actioninfo->m_repeating = repeating;
-		m_actioninfo->m_static_direction = direction;
+		ActionInfo* a = initalizeAction(action_name);
+		a->m_repeating = repeating;
+		a->m_static_direction = direction;
+	}
+
+	/**
+	 * The following subcell movement rules apply in CellGrid space
+	 * - If instance is in the cell center
+	 *    - If instance is asked to move
+	 *       - Move towards next cell using given speed (start subcell movement)
+	 *    - Else
+	 *       - Stay in the current location
+	 * - Else If instance is still in the originating cell but not in its center
+	 *    - If instance is asked to stop
+	 *       - Move towards the center of current cell
+	 *    - Else If current subcell target is the same as current movement target
+	 *       - Move towards the center of target cell
+	 *    - Else (current subcell target is different than current movement target)
+	 *       - Move towards the center of current cell
+	 * - Else (instance has arrived to the area of next cell, but not in its center yet)
+	 *    - If instance is asked to stop
+	 *       - Move towards the center of current cell
+	 *    - Else If current subcell target is the same as current movement target
+	 *       - Move towards the center of current cell
+	 *    - Else If current subcell target is different than movement target
+	 *       - Move towards the center of current cell
+	 * Same rules should apply also in case of speeds exceeding single cell distances
+	 * As seen from action, rules can be simplified but listed for completeness
+	 */
+	bool Instance::move() {
+		bool finished = false;
+		if (m_actioninfo->m_offset_distance == 0) {
+			if (m_pending_actioninfo) {
+				// take care of stopping
+				m_actioninfo->m_offsetsource = m_location.position;
+				m_actioninfo->m_offsettarget = m_location.position;
+				m_actioninfo->m_cur_offset = 0;
+				m_actioninfo->m_nextcells.clear();
+				m_actioninfo->resetTarget();
+				finished = true;
+			} else {
+				calcMovement();
+			}
+		} else if (m_location.position == m_actioninfo->m_offsetsource) {
+			if (m_pending_actioninfo) {
+				// switch the movement direction to return to the center point
+				Point tmp = m_actioninfo->m_offsetsource;
+				m_actioninfo->m_offsetsource = m_actioninfo->m_offsettarget;
+				m_actioninfo->m_offsettarget = tmp;
+				m_actioninfo->m_cur_offset = m_actioninfo->m_offset_distance - m_actioninfo->m_cur_offset;
+				m_actioninfo->m_nextcells.clear();
+				m_actioninfo->m_target->position = m_location.position;
+			} 
+			calcMovement();
+		} else {
+			calcMovement();
+		}
+		return finished;
+	}
+
+
+	void Instance::calcMovement() {
+		m_actioninfo->getNextCells(m_location);
+
+		CellGrid* cg              = m_location.layer->getCellGrid();
+		unsigned int timedelta    = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
+		double distance_to_travel = (static_cast<float>(timedelta) / 1000.0) * m_actioninfo->m_speed;
+		double dist_to_first_cell = m_actioninfo->m_offset_distance - m_actioninfo->m_cur_offset;
+		double cumul_dist         = dist_to_first_cell;
+		Point* prev               = &m_actioninfo->m_offsetsource;
+		Point* next               = &m_actioninfo->m_offsettarget;
+		double next_offset_dist   = m_actioninfo->m_offset_distance;
+		bool moved                = false;
+
+		// cumulate distance based on cell distances (cells returned from pathfinder)
+		// take offset cases into consideration. There might be offsets before and
+		// after centerpoints of each cell
+		std::vector<Location>::iterator i = m_actioninfo->m_nextcells.begin();
+		while (i != m_actioninfo->m_nextcells.end()) {
+			if (cumul_dist > distance_to_travel) {
+				// if cell boundary has changed
+				if (prev != &m_actioninfo->m_offsetsource) {
+					m_actioninfo->m_offsetsource = *prev;
+					m_actioninfo->m_offsettarget = *next;
+					m_actioninfo->m_offset_distance = next_offset_dist;
+					double distance_to_last_cell = cumul_dist - dist_to_first_cell - distance_to_travel;
+					m_actioninfo->m_cur_offset = next_offset_dist - distance_to_last_cell;
+					if (m_actioninfo->m_cur_offset > (m_actioninfo->m_offset_distance / 2)) {
+						m_location.position = m_actioninfo->m_offsettarget;
+					} else {
+						m_location.position = m_actioninfo->m_offsetsource;
+					}
+				}
+				// still between same cells
+				else {
+					m_actioninfo->m_cur_offset = m_actioninfo->m_cur_offset + distance_to_travel;
+				}
+				moved = true;
+				break;
+			}
+			prev = next;
+			next = &(*i).position;
+			next_offset_dist = cg->getAdjacentCost(*prev, *next);
+			cumul_dist += next_offset_dist;
+			++i;
+		}
+		if (!moved) {
+			// two reasons to get there. 1) speed was so large that pathfinder
+			// didn't have time to calculate. In that case go to last cell
+			// received from pather. 2) there were no cells received from pathfinder,
+			// meaning that we already are in the correct cell. Proceed towards the centerpoint
+			if (m_actioninfo->m_nextcells.size() > 0) {
+				m_actioninfo->m_offsetsource = m_actioninfo->m_nextcells.back().position;
+				m_actioninfo->m_offsettarget = m_actioninfo->m_offsetsource;
+				m_actioninfo->m_offset_distance = 0;
+				m_actioninfo->m_cur_offset = 0;
+				m_location.position = m_actioninfo->m_offsetsource;
+			} else {
+				m_actioninfo->m_cur_offset = m_actioninfo->m_cur_offset + distance_to_travel;
+				if (m_actioninfo->m_offset_distance < m_actioninfo->m_cur_offset) {
+					m_actioninfo->m_offsetsource = m_location.position;
+					m_actioninfo->m_offsettarget = m_location.position;
+					m_actioninfo->m_offset_distance = 0;
+					m_actioninfo->m_cur_offset = 0;
+				}
+			}
+		}
+		
 	}
 
 	void Instance::update(unsigned int curticks) {
@@ -161,33 +310,16 @@ namespace FIFE { namespace model {
 		if (curticks == 0) {
 			curticks = SDL_GetTicks();
 		}
-		// work in progress...
-		if (m_actioninfo->m_target) {
-			Location& nextcell = m_actioninfo->getNextCell(m_location);
-			if ((m_location == nextcell) && (m_actioninfo->m_offset_distance == 0)) {
-				finalizeAction();
-			} else {
-				CellGrid* cg = m_location.layer->getCellGrid();
-				float speed = m_actioninfo->m_speed;
-				float offset = m_actioninfo->m_offset_distance;
+		m_actioninfo->m_cur_time = curticks;
 
-				// we are still moving towards current cell center point
-				if (m_actioninfo->m_offsetsource != m_location.position) {
-					float cur_dist = cg->getAdjacentCost(m_actioninfo->m_offsetsource, m_location.position);
-					// case where we will still not reach the center point
-					if ((offset + speed) < cur_dist) {
-						m_actioninfo->m_offset_distance += speed;
-					}
-					// case where we will reach exactly the center point or go beyond
-					else {
-						m_actioninfo->m_offset_distance = (offset + speed) - cur_dist;
-						m_actioninfo->m_offsetsource = m_location.position;
-						m_actioninfo->m_offsettarget = nextcell.position;
-					}
-				}
-				// we are moving between current cell center point towards next cell
-				else {
-				}
+		if (m_actioninfo->m_target) {
+			bool movement_finished = move();
+			if (movement_finished) {
+				finalizeAction();
+			}
+			if (m_pending_actioninfo) {
+				m_actioninfo = m_pending_actioninfo;
+				m_pending_actioninfo = NULL;
 			}
 		}
 		else {
@@ -199,6 +331,7 @@ namespace FIFE { namespace model {
 				}
 			}
 		}
+		m_actioninfo->m_prev_call_time = curticks;
 	}
 
 	void Instance::finalizeAction() {
@@ -222,16 +355,16 @@ namespace FIFE { namespace model {
 		return NULL;
 	}
 
-	float Instance::getMovementSpeed() {
+	double Instance::getMovementSpeed() {
 		if (m_actioninfo) {
 			return m_actioninfo->m_speed;
 		}
 		return 0;
 	}
 
-	Location* Instance::getNextCell() {
+	std::vector<Location>* Instance::getNextCells() {
 		if (m_actioninfo) {
-			return &m_actioninfo->m_nextcell;
+			return &m_actioninfo->m_nextcells;
 		}
 		return NULL;
 	}

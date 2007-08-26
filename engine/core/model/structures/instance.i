@@ -33,13 +33,13 @@ namespace FIFE { namespace model {
 			void removeListener(InstanceListener* listener);
 			Action* getCurrentAction();
 			float getMovementSpeed();
-			Location* getNextCell();
+			std::vector<Location>* getNextCells();
 			Point getOffsetSource();
 			Point getOffsetTarget();
 			double getOffsetDistance();
 			Point getStaticDirection();
 			int getActionRuntime();
-			void act(const std::string& action_name, const Location& target, const float speed);
+			void act(const std::string& action_name, const Location& target, const double speed);
 			void act(const std::string& action_name, const Point& direction, bool repeating=false);
 			void update(unsigned int curticks=0);
 

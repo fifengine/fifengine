@@ -111,13 +111,13 @@ namespace FIFE { namespace model {
 			 *  otherwise returns 0
 			 * @return instance speed. Value 1 means distance 1 in layer coordinates / second
  			 */
-			float getMovementSpeed();
+			double getMovementSpeed();
 
-			/** Gets the cell where instance is about to be moved next
+			/** Gets the cells where instance is about to be moved next
 			 *  using this info with current location gives the direction of instance during movement
-			 * @return next cell of movement. In case of no movement, returns NULL
+			 * @return next cells of movement. In case of no movement, returns NULL
  			 */
-			Location* getNextCell();
+			std::vector<Location>* getNextCells();
 
 			/** 
 			 *  Instances move gradually from one cell to next. When this happens, instance
@@ -162,7 +162,7 @@ namespace FIFE { namespace model {
 			 *  @param target place where to move this instance
 			 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
  			 */
-			void act(const std::string& action_name, const Location& target, const float speed);
+			void act(const std::string& action_name, const Location& target, const double speed);
 
 			/** Performs given named action to the instance. Performs no movement
 			 *  @param action_name name of the action
@@ -185,13 +185,21 @@ namespace FIFE { namespace model {
 			int m_static_img_ind;
 			// action information, allocated when actions are bind
 			ActionInfo* m_actioninfo;
+			// action information, for pending action. In case objects are moved
+			// and some other action comes on top of that, movement must be finalized
+			// in such way that instances are stopped to the cell center point
+			ActionInfo* m_pending_actioninfo;
 			// instance listeners. Not allocated right away to save space
 			std::vector<InstanceListener*>* m_listeners;
 
 			Instance(const Instance&);
 			Instance& operator=(const Instance&);
 			void finalizeAction();
-			void initalizeAction(const std::string& action_name);
+			ActionInfo* initalizeAction(const std::string& action_name);
+			// Moves instance. Returns true if finished
+			bool move();
+			// Calculates movement based current location and speed
+			void calcMovement();
 	};
 
 } } // FIFE::model
