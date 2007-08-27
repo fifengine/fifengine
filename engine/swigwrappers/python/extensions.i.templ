@@ -1,0 +1,31 @@
+%extend FIFE::Point {
+	int getX() { return $self->x; }
+	int getY() { return $self->y; }
+	void setX(int _x) { $self->x = _x; }
+	void setY(int _y) { $self->y = _y; }
+	
+	std::string __str__() {
+		std::stringstream str;
+		str << "Point" << *$self;
+		return  str.str();
+	}
+};
+
+%extend FIFE::Rect {
+	int getX() { return $self->x; }
+	int getY() { return $self->y; }
+	void setX(int _x) { $self->x = _x; }
+	void setY(int _y) { $self->y = _y; }
+
+	int getW() { return $self->w; }
+	int getH() { return $self->h; }
+	void setW(int _w) { $self->w = _w; }
+	void setH(int _h) { $self->h = _h; }
+
+	std::string __str__() {
+		std::stringstream str;
+		str << "Rect" << *$self;
+		return  str.str();
+	}
+};
+
