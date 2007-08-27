@@ -37,9 +37,10 @@ class AnimationTests(unittest.TestCase):
 		getAnimation = self.engine.animationPool.getAnimation
 		self.inst.act('walk', self.target, 0.5)
 		self.engine.initializePumping()
-		
 		backend = self.engine.renderBackend
 		for i in xrange(360/2):
+			if self.inst.position == self.target.position:
+				break
 			self.inst.update()
 			action = self.inst.currentAction
 			angle = i*2 #uh. where do i look?

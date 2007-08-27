@@ -154,7 +154,7 @@ namespace FIFE {
 			UNKNOWN_BUTTON = 8
 		};
 		virtual int getX() const = 0;
-        virtual int getY() const = 0;
+		virtual int getY() const = 0;
 		virtual MouseEventType getType() const = 0;
 		virtual MouseButtonType getButton() const = 0;
 		virtual ~IMouseEvent();

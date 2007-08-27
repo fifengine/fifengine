@@ -16,6 +16,8 @@ conveniences:
   * fife.Instance
   * fife.Image
   * fife.Animation
+  * fife.Point
+  * fife.Rect
 
 """
 
@@ -23,7 +25,8 @@ __all__ = ()
 
 fife.Exception.__str__ = fife.Exception.getMessage
 
-classes = [ fife.Engine, fife.Instance, fife.Point, fife.Image, fife.Animation ]
+classes = [ fife.Engine, fife.Instance, fife.Point, fife.Rect, fife.Image, fife.Animation,
+ fife.RenderBackend, fife.IEvent, fife.Command, fife.Widget, fife.Label, fife.Container ]
 
 def createProperties():
 	""" Autocreate properties for getXYZ/setXYZ functions.
@@ -45,16 +48,38 @@ def createProperties():
 			#print func, e
 			return False
 	
-	getter = re.compile(r"^get[A-Z]")
+	def getNames(name):
+		for prefix in ('get', 'is', 'are'):
+			if name.startswith(prefix):
+				new_name = name[len(prefix):]
+				break
+		settername   = 'set' + new_name
+		propertyname = new_name[0].lower() + new_name[1:]
+		return settername, propertyname
+		
+	getter = re.compile(r"^(get|are|is)[A-Z]")
 	for class_ in classes:
 		methods = [(name,attr) for name,attr in class_.__dict__.items()
-						if isSimpleGetter(attr) ]
+		                       if isSimpleGetter(attr) ]
+		setmethods = [(name,attr) for name,attr in class_.__dict__.items() if callable(attr)]
 		getters = []
 		for name,method in methods:
 			if getter.match(name):
-				settername = 'set' + name[3:]
-				propertyname = name[3].lower() + name[4:] 
-				setter = dict(methods).get(settername,None)
-				setattr(class_,propertyname, property(method, setter))
+				getters.append((name,method))
+				settername, propertyname = getNames(name)
+				setter = dict(setmethods).get(settername,None)
+				#print name, settername, "--->",propertyname,'(',method,',',setter,')'
+				setattr(class_,propertyname,property(method,setter))
+		if not getters: continue
+		
+		# We need to override the swig setattr function
+		# to get properties to work.
+		class_._getters = set([name for name,method in getters])
+		def _setattr_wrapper_(self,*args):
+			if name in class_._getters:
+				object.__setattr__(self,*args)
+			else:
+				class_.__setattr__(self,*args)
+		class_.__setattr__ = _setattr_wrapper_
 
 createProperties()
