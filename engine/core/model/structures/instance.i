@@ -3,8 +3,8 @@
 #include "model/structures/instance.h"
 %}
 
-%include "util/point.h"
-%include "location.h"
+%include "util/point.i"
+%include "location.i"
 
 namespace FIFE { namespace model {
 

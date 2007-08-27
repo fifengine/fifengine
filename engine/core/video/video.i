@@ -29,8 +29,8 @@
 #include "util/exception.h"
 %}
 
-%include "util/point.h"
-%include "util/rect.h"
+#include "util/point.i"
+#include "util/rect.i"
 
 namespace FIFE {
 	class Pool;

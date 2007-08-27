@@ -3,10 +3,9 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/grids/hexgrid.h"
 #include "model/metamodel/grids/squaregrid.h"
-#include "util/point.h"
 %}
 
-%include "util/point.h"
+%include "util/point.i"
 
 namespace std {
 	%template(PointVector) vector<FIFE::Point>;

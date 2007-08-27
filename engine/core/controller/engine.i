@@ -20,7 +20,6 @@
  ***************************************************************************/
 %module engine
 %{
-#include <boost/shared_ptr.hpp>
 #include "controller/engine.h"
 %}
 

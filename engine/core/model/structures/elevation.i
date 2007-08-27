@@ -5,7 +5,7 @@
 
 %include "std_list.i"
 
-%include "util/point.h"
+%include "util/point.i"
 %include "util/attributedclass.i"
 
 namespace FIFE { namespace model {

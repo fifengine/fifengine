@@ -1,9 +1,11 @@
 %module util 
 %{
 #include "util/attributedclass.h"
+#include "util/point.h"
+#include "util/rect.h"
 %}
 
-%include "util/point.h"
+%include "util/point.i"
 %include "util/rect.h"
 
 namespace FIFE {

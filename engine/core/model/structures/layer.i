@@ -5,7 +5,7 @@
 
 %include "std_vector.i"
 
-%include "util/point.h"
+%include "util/point.i"
 %include "util/attributedclass.i"
 
 namespace FIFE { namespace model {
@@ -22,6 +22,7 @@ namespace FIFE { namespace model {
 	class Selection;
 	class Instance;
 	class Object;
+	class CellGrid;
 
 	class Layer : public AttributedClass {
 		public:
