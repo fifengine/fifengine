@@ -15,6 +15,7 @@ conveniences:
   * fife.Engine
   * fife.Instance
   * fife.Image
+  * fife.Animation
 
 """
 
@@ -22,7 +23,7 @@ __all__ = ()
 
 fife.Exception.__str__ = fife.Exception.getMessage
 
-classes = [ fife.Engine, fife.Instance, fife.Image ]
+classes = [ fife.Engine, fife.Instance, fife.Image, fife.Animation ]
 
 def createProperties():
 	""" Autocreate properties for getXYZ/setXYZ functions.

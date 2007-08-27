@@ -195,6 +195,7 @@ namespace FIFE { namespace model {
 			Instance(const Instance&);
 			Instance& operator=(const Instance&);
 			void finalizeAction();
+			// Initialize a new action (either pending or current) and return the info for it.
 			ActionInfo* initalizeAction(const std::string& action_name);
 			// Moves instance. Returns true if finished
 			bool move();

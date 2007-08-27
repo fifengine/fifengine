@@ -38,13 +38,14 @@ class AnimationTests(unittest.TestCase):
 		self.inst.act('walk', self.target, 0.5)
 		self.engine.initializePumping()
 		
-		backend = self.engine.getRenderBackend()
-		for i in xrange(100):
+		backend = self.engine.renderBackend
+		for i in xrange(360/2):
 			self.inst.update()
 			action = self.inst.currentAction
-			angle = i #uh. where do i look?
+			angle = i*2 #uh. where do i look?
 			animation = getAnimation( action.getAnimationIndexByAngle(angle) )
-			image = animation.getFrameByTimestamp( self.inst.actionRuntime )
+			timestamp = self.inst.actionRuntime % animation.duration
+			image = animation.getFrameByTimestamp( timestamp )
 			if image:
 				image.render(fife.Rect(0,0,image.width,image.height),255)
 			self.engine.pump()
