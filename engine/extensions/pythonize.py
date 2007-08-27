@@ -13,6 +13,7 @@ conveniences:
 * FIFE Exceptions print their message.
 * Automatic property generation for:
   * fife.Engine
+  * fife.Instance
 
 """
 
@@ -20,7 +21,7 @@ __all__ = ()
 
 fife.Exception.__str__ = fife.Exception.getMessage
 
-classes = [ fife.Engine ]
+classes = [ fife.Engine, fife.Instance ]
 
 def createProperties():
 	""" Autocreate properties for getXYZ/setXYZ functions.

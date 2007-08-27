@@ -34,6 +34,12 @@ namespace FIFE { namespace model {
 	                               std::vector<Location>& nextnodes, const int session_id) {
 		assert(curpos.elevation == target.elevation);
 		assert(curpos.layer == target.layer);
+		
+		// Finished? -> return empty vector.
+		if(curpos.position == target.position) {
+			nextnodes.clear();
+			return session_id;
+		}
 
 		int dx = target.position.x - curpos.position.x;
 		int dy = target.position.y - curpos.position.y;
@@ -41,19 +47,20 @@ namespace FIFE { namespace model {
 		Location nextnode;
 		nextnode.elevation = curpos.elevation;
 		nextnode.layer = curpos.layer;
+		nextnode.position = curpos.position;
 
 		Point& p = nextnode.position;
 		if (dx > 0) {
-			p.x = curpos.position.x + 1;
+			p.x += 1;
 		}
 		if (dx < 0) {
-			p.x = curpos.position.x - 1;
+			p.x -= 1;
 		}
 		if (dy > 0) {
-			p.y = curpos.position.y + 1;
+			p.y += 1;
 		}
 		if (dy < 0) {
-			p.y = curpos.position.y - 1;
+			p.y -= 1;
 		}
 		nextnodes.clear();
 		nextnodes.push_back(nextnode);
