@@ -10,5 +10,8 @@ namespace FIFE { namespace model {
 	public:
 		LinearPather();
 		virtual ~LinearPather();
+		virtual void setMap(Map* map); 
+		virtual int getNextCells(const Location& curpos, const Location& target,  
+		                         std::vector<Location>& nextnodes, const int session_id=-1);
 	};
 }}

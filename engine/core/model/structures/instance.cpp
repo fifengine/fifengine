@@ -331,7 +331,9 @@ namespace FIFE { namespace model {
 				}
 			}
 		}
-		m_actioninfo->m_prev_call_time = curticks;
+		if( m_actioninfo ) {
+			m_actioninfo->m_prev_call_time = curticks;
+		}
 	}
 
 	void Instance::finalizeAction() {
