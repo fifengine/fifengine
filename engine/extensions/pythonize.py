@@ -24,9 +24,12 @@ conveniences:
 __all__ = ()
 
 fife.Exception.__str__ = fife.Exception.getMessage
+def _Color2Str(c):
+	return 'Color(%s)' % ','.join(map(str,(c.r,c.g,c.b,c.a)))
+fife.Color.__str__ = _Color2Str
 
 classes = [ fife.Engine, fife.Instance, fife.Point, fife.Rect, fife.Image, fife.Animation,
- fife.RenderBackend, fife.IEvent, fife.Command, fife.Widget, fife.Label, fife.Container ]
+ fife.RenderBackend, fife.IEvent, fife.Command, fife.Container ]
 
 def createProperties():
 	""" Autocreate properties for getXYZ/setXYZ functions.

@@ -29,10 +29,26 @@
 
 
 namespace gcn {
-	class Color;
 	class Font;
 	class Image;
 	class ActionListener;
+	
+	class Color {
+	public:
+		Color();
+		Color(int color);
+		Color(int r, int g, int b, int a = 255);
+		Color operator+(const Color& color) const;
+		Color operator-(const Color& color) const;
+		Color operator*(float value) const;
+		bool operator==(const Color& color) const;
+		bool operator!=(const Color& color) const;
+		int r;
+		int g;
+		int b;
+		int a;
+	};
+	
 	class Widget {
 	public:
 		Widget();
@@ -117,10 +133,10 @@ namespace gcn {
 	};
 	
 	%feature("notabstract") CheckBox;
-	class CheckBox {
+	class CheckBox: public Widget {
 	public:
 		CheckBox();
-		virtual ~CheckBox() { }
+		virtual ~CheckBox();
 		virtual bool isMarked() const;
 		virtual void setMarked(bool marked);
 		virtual const std::string &getCaption() const;

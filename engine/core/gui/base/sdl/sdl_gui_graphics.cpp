@@ -22,6 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -34,6 +35,7 @@
 
 namespace FIFE {
 	SdlGuiGraphics::SdlGuiGraphics(ImagePool& pool): m_pool(pool) {
+		setTarget(SDL_GetVideoSurface());
 	}
 
 	void SdlGuiGraphics::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {

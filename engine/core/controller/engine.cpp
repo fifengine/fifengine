@@ -157,6 +157,8 @@ namespace FIFE {
 			Log("controller") << "OpenGL Render backend created";
 #else
 			m_renderbackend = new RenderBackendSDL();
+			// Remember  the choice so we pick the right graphics class.
+			rbackend = "SDL";
 			Log("controller") << "Tried to select OpenGL, even though it is not compiled into the engine. Falling back to SDL Render backend";
 #endif
 		}
@@ -193,10 +195,13 @@ namespace FIFE {
 
 		m_renderbackend->createMainScreen(swidth, sheight, bitsPerPixel, fullscreen);
 #ifdef HAVE_OPENGL
-		m_gui_graphics = new OpenGLGuiGraphics(*m_imagepool);
-#else
-		m_gui_graphics = new SDLGuiGraphics(*m_imagepool);
+		if( rbackend != "SDL" ) {
+			m_gui_graphics = new OpenGLGuiGraphics(*m_imagepool);
+		}
 #endif
+		if( rbackend == "SDL" ) {
+			m_gui_graphics = new SdlGuiGraphics(*m_imagepool);
+		}
 		m_guimanager->init(m_gui_graphics, swidth, sheight);
 		SDL_EnableUNICODE(1);
 
