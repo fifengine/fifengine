@@ -149,6 +149,10 @@ namespace FIFE { namespace model {
 			 *         (getNextCell() != NULL)
 			 */
 			Point getStaticDirection();
+			
+			/** Return the current orientation in degrees
+			 */
+			int getOrientation() const;
 
 			/** Gets the time in milliseconds how long action has been active
 			 *  In case there is no current action, returns -1
@@ -175,12 +179,14 @@ namespace FIFE { namespace model {
 			 * @param curticks current tick count of the system
  			 */
 			void update(unsigned int curticks=0);
-
+			
 		private:
 			// object where instantiated from
 			Object* m_object;
 			// current location
 			Location m_location;
+			// current orientation
+			int m_orientation;
 			// static image index, optimization e.g. for tiles
 			int m_static_img_ind;
 			// action information, allocated when actions are bind

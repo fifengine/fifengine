@@ -53,7 +53,7 @@ namespace FIFE { namespace model {
 
 		/** Name of the cellgrid
 		 */
-		virtual const std::string getName() = 0;
+		virtual const std::string& getName() const = 0;
 
 		/** Tells if given target point is accessible from curpos
 		 *  only cells adjacent to curpos are considered in the evaluation
@@ -61,7 +61,7 @@ namespace FIFE { namespace model {
 		 *  @param target target coordinate to check
 		 *  @return true, if target is accessible from curpos, false otherwise
 		 */
-		virtual const bool isAccessible(const Point& curpos, const Point& target) = 0;
+		virtual bool isAccessible(const Point& curpos, const Point& target) = 0;
 
 		/** Returns *distance* const from curpos to target point
 		 *  only cells adjacent to curpos are considered in the evaluation
@@ -69,7 +69,14 @@ namespace FIFE { namespace model {
 		 *  @param target target coordinate to check
 		 *  @return distance cost from curpos to target
 		 */
-		virtual const float getAdjacentCost(const Point& curpos, const Point& target) = 0;
+		virtual float getAdjacentCost(const Point& curpos, const Point& target) = 0;
+
+		/** Return the angle between to points on the grid
+		 *  @param curpos position (coordinates) to evaluate
+		 *  @param target target coordinate to check
+		 *  @return angle between curpos and target
+		 */
+		virtual float getAngleBetween(const Point& curpos, const Point& target) = 0;
 
 		/** Set the cellgrid x shift 
 		 *  @param shift The shift in elevation coords

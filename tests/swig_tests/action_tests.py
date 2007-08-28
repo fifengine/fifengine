@@ -16,7 +16,7 @@ class AnimationTests(unittest.TestCase):
 		self.target = fife.Location()
 		self.target.layer = self.layer
 		self.target.elevation = elev
-		self.target.position = fife.Point(9,9)
+		self.target.position = fife.Point(19,9)
 		
 		self.obj = fife.Object()
 		self.pather = fife.LinearPather()
@@ -35,15 +35,15 @@ class AnimationTests(unittest.TestCase):
 
 	def testWalkingAction(self):
 		getAnimation = self.engine.animationPool.getAnimation
-		self.inst.act('walk', self.target, 0.5)
+		self.inst.act('walk', self.target, 0.05)
 		self.engine.initializePumping()
 		backend = self.engine.renderBackend
-		for i in xrange(360/2):
+		for i in xrange(360):
 			if self.inst.position == self.target.position:
 				break
 			self.inst.update()
 			action = self.inst.currentAction
-			angle = i*2 #uh. where do i look?
+			angle = self.inst.orientation
 			animation = getAnimation( action.getAnimationIndexByAngle(angle) )
 			timestamp = self.inst.actionRuntime % animation.duration
 			image = animation.getFrameByTimestamp( timestamp )

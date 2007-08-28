@@ -37,7 +37,7 @@ namespace FIFE { namespace model {
 	HexGrid::~HexGrid() {
 	}
 
-	const bool HexGrid::isAccessible(const Point& curpos, const Point& target) {
+	bool HexGrid::isAccessible(const Point& curpos, const Point& target) {
 		if (curpos == target)
 			return true;
 		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
@@ -57,11 +57,21 @@ namespace FIFE { namespace model {
 		return false;
 	}
 
-	const float HexGrid::getAdjacentCost(const Point& curpos, const Point& target) {
+	float HexGrid::getAdjacentCost(const Point& curpos, const Point& target) {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
 		}
 		return 1;
 	}
+	
+	float HexGrid::getAngleBetween(const Point& curpos, const Point& target) {
+		// FIXME: Missing calculation.
+		return 0.0;
+	}
+	
+	const std::string& HexGrid::getName() const {
+		static std::string hexGrid("Hex Grid");
+		return hexGrid;
+  	}
 }}

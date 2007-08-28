@@ -38,9 +38,10 @@ namespace FIFE { namespace model {
 		HexGrid();
 		virtual ~HexGrid();
 
-		const bool isAccessible(const Point& curpos, const Point& target);
-		const std::string getName() { return "Hex Grid"; }
-		const float getAdjacentCost(const Point& curpos, const Point& target);
+		bool isAccessible(const Point& curpos, const Point& target);
+		const std::string& getName() const;
+		float getAdjacentCost(const Point& curpos, const Point& target);
+		float getAngleBetween(const Point& curpos, const Point& target);
 	};
 }}
 

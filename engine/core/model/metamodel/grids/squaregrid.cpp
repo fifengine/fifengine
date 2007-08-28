@@ -41,7 +41,7 @@ namespace FIFE { namespace model {
 	SquareGrid::~SquareGrid() {
 	}
 
-	const bool SquareGrid::isAccessible(const Point& curpos, const Point& target) {
+	bool SquareGrid::isAccessible(const Point& curpos, const Point& target) {
 		if (curpos == target)
 			return true;
 		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
@@ -60,7 +60,7 @@ namespace FIFE { namespace model {
 		return false;
 	}
 
-	const bool SquareGrid::isAccessibleDiagonal(const Point& curpos, const Point& target) {
+	bool SquareGrid::isAccessibleDiagonal(const Point& curpos, const Point& target) {
 		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
 			return true;
 		if ((curpos.x - 1 == target.x) && (curpos.y + 1 == target.y))
@@ -72,7 +72,7 @@ namespace FIFE { namespace model {
 		return false;
 	}
 
-	const float SquareGrid::getAdjacentCost(const Point& curpos, const Point& target) {
+	float SquareGrid::getAdjacentCost(const Point& curpos, const Point& target) {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
@@ -83,11 +83,20 @@ namespace FIFE { namespace model {
 		return 1;
 	}
 
-	const std::string SquareGrid::getName() {
+	const std::string& SquareGrid::getName() const {
+		static std::string  squareGrid("Square Grid");
+		static std::string  squareGridDiagonal("Square Grid with diagonal access");
 		if (m_diagonals_accessible) {
-			return "Square Grid";
+			return squareGrid;
 		}
-		return "Square Grid with diagonal access";
+		return squareGridDiagonal;
+	}
+	
+	float SquareGrid::getAngleBetween(const Point& curpos, const Point& target) {
+		const float factor = 180./M_PI;
+		float dx = float(target.x - curpos.x);
+		float dy = float(target.y - curpos.y);
+		return atan2f(dx,dy)*factor;
 	}
 
 }}

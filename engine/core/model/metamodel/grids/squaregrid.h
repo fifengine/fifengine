@@ -38,12 +38,13 @@ namespace FIFE { namespace model {
 		SquareGrid(bool diagonals_accessible=false);
 		virtual ~SquareGrid();
 
-		const std::string getName();
-		const bool isAccessible(const Point& curpos, const Point& target);
-		const float getAdjacentCost(const Point& curpos, const Point& target);
+		const std::string& getName() const;
+		bool isAccessible(const Point& curpos, const Point& target);
+		float getAdjacentCost(const Point& curpos, const Point& target);
+		float getAngleBetween(const Point& curpos, const Point& target);
 
 	private:
-		const bool isAccessibleDiagonal(const Point& curpos, const Point& target);
+		bool isAccessibleDiagonal(const Point& curpos, const Point& target);
 		bool m_diagonals_accessible;
 	};
 }}

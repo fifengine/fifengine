@@ -43,12 +43,12 @@ def createProperties():
 			return False
 		try:
 			argspec = getargspec(func)
-			return not (argspec[0] and any(argspec[2:]))
+			return not (argspec[0] or any(argspec[2:]))
 		except TypeError, e:
 			#print func, e
 			return False
 	
-	def getNames(name):
+	def createNames(name):
 		for prefix in ('get', 'is', 'are'):
 			if name.startswith(prefix):
 				new_name = name[len(prefix):]
@@ -66,7 +66,7 @@ def createProperties():
 		for name,method in methods:
 			if getter.match(name):
 				getters.append((name,method))
-				settername, propertyname = getNames(name)
+				settername, propertyname = createNames(name)
 				setter = dict(setmethods).get(settername,None)
 				#print name, settername, "--->",propertyname,'(',method,',',setter,')'
 				setattr(class_,propertyname,property(method,setter))
@@ -74,9 +74,9 @@ def createProperties():
 		
 		# We need to override the swig setattr function
 		# to get properties to work.
-		class_._getters = set([name for name,method in getters])
+		class_._property_names = set([name for name,method in getters])
 		def _setattr_wrapper_(self,*args):
-			if name in class_._getters:
+			if name in class_._property_names:
 				object.__setattr__(self,*args)
 			else:
 				class_.__setattr__(self,*args)

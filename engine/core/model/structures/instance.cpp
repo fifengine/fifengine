@@ -110,6 +110,7 @@ namespace FIFE { namespace model {
 	Instance::Instance(Object* object, const Location& location):
 		m_object(object), 
 		m_location(location),
+		m_orientation(0),
 		m_static_img_ind(-1),
 		m_actioninfo(NULL),
 		m_pending_actioninfo(NULL),
@@ -176,6 +177,10 @@ namespace FIFE { namespace model {
 		ActionInfo* a = initalizeAction(action_name);
 		a->m_repeating = repeating;
 		a->m_static_direction = direction;
+		if( direction != m_location.position ) {
+			CellGrid* grid = m_location.layer->getCellGrid();
+			m_orientation = int(grid->getAngleBetween(m_location.position, direction));
+		}
 	}
 
 	/**
@@ -276,6 +281,7 @@ namespace FIFE { namespace model {
 			prev = next;
 			next = &(*i).position;
 			next_offset_dist = cg->getAdjacentCost(*prev, *next);
+			m_orientation = int(cg->getAngleBetween(*prev,*next));
 			cumul_dist += next_offset_dist;
 			++i;
 		}
@@ -397,6 +403,10 @@ namespace FIFE { namespace model {
 			return m_actioninfo->m_static_direction;
 		}
 		return m_location.position;
+	}
+
+	int Instance::getOrientation() const {
+		return m_orientation;
 	}
 
 	int Instance::getActionRuntime() {
