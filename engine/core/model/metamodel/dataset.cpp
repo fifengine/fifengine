@@ -50,8 +50,8 @@ namespace FIFE { namespace model {
 		return dataset;
 	}
 
-	Object* Dataset::addObject(Object* inherited) {
-		Object* object = new Object(inherited);
+	Object* Dataset::addObject(const std::string& identifier, Object* inherited) {
+		Object* object = new Object(identifier, inherited);
 		m_objects.push_back(object);
 		return object;
 	}

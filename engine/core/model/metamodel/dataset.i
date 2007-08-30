@@ -17,7 +17,7 @@ namespace FIFE { namespace model {
 
 			Dataset* addDataset();
 
-			Object* addObject(Object* inherited = 0);
+			Object* addObject(const std::string& identifier, Object* inherited = 0);
 
 			template<typename T>
 			std::list<Dataset*> getDatasets(const std::string& field, const T& value);

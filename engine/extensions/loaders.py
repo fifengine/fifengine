@@ -52,10 +52,34 @@ class ModelLoader(saxutils.DefaultHandler):
 				assert 0, "Datasets can only be declared at the top level, or in a <map> or <dataset> section."
 
 		elif (name == 'object'):
-			pass
+			if(self.state == self.SDataset):
+				self.state = self.SObject
+
+				id = 0
+				parent = 0
+				for attrName in attrs.keys():
+					if (attrName == "id"):
+						id = attrs.get(attrName)
+					if (attrName == "parent"):
+						query = self.metamodel.getObjectsByString("id", attrs.get(attrName))[0]
+						assert len(query) == 1, "0 or multiple objects with same identifier found."
+						parent = query[0]
+
+				assert id, "Objects must be given an identifier (id) field."
+
+				self.dataset.addObject(id, parent)
+
+			else:
+				assert 0, "Objects can only be declared in a <dataset> section."
 
 		elif (name == 'action'):
-			pass
+			if(self.state == self.SDataset):
+				self.state = self.SAction
+
+				# TODO: load actions
+
+			else:
+				assert 0, "Actions can only be declared in a <dataset> section."
 
 		elif (name == 'elevation'):
 			if (self.state == self.SMap):
@@ -125,9 +149,10 @@ class ModelLoader(saxutils.DefaultHandler):
 					objectID = attrs.get("o")
 				assert objectID, "No object specified."
 
-				# TODO: look up the correct object based on thisobjectID
-				#in available datasets, accounting for namespaces.
-				# object = lookup(objectID)
+				# We seem to need a unicode -> string conversion here...
+				query = self.metamodel.getObjectsByString("id", str(objectID))
+				assert len(query) == 1, "0 or multiple objects with same identifier found."
+				object = query[0]
 
 				x = attrs.get("x")
 				y = attrs.get("y")
@@ -135,7 +160,7 @@ class ModelLoader(saxutils.DefaultHandler):
 				x = x if x else self.x + 1
 				y = y if y else self.y
 
-				# self.layer.addInstance(object, fife.Point(x,y))
+				self.layer.addInstance(object, fife.Point(x,y))
 
 			else:
 				assert 0, "Instances can only be declared in an <instances> section."

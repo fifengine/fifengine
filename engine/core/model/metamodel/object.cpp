@@ -33,11 +33,12 @@
 
 
 namespace FIFE { namespace model { 
-	Object::Object(Object* inherited):
+	Object::Object(const std::string& identifier, Object* inherited):
 		AttributedClass("Object"),
 		m_inherited(inherited),
 		m_actions(NULL),
-		m_pather(NULL)	{ }
+		m_pather(NULL),
+		m_id(identifier) { }
 
 	Object::~Object() {
 		if (m_actions) {
@@ -48,6 +49,10 @@ namespace FIFE { namespace model {
 			}
 			delete m_actions;
 		}
+	}
+
+	const std::string& Object::getId() const {
+		return m_id;
 	}
 
 	Action* Object::addAction(const std::string& action_name) {

@@ -18,7 +18,7 @@ class AnimationTests(unittest.TestCase):
 		self.target.elevation = elev
 		self.target.position = fife.Point(19,9)
 		
-		self.obj = fife.Object()
+		self.obj = fife.Object("0")
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
 		self.action = self.obj.addAction('walk')

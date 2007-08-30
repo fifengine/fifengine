@@ -12,7 +12,7 @@ namespace FIFE { namespace model {
 
 	class Object : public AttributedClass {
 		public:
-			Object(Object* inherited=NULL);
+			Object(const std::string& identifier, Object* inherited=NULL);
 			~Object();
 
 			template<typename T>
@@ -22,6 +22,8 @@ namespace FIFE { namespace model {
 			%template(ogetPoint) oget<Point>;
 			%template(ogetRect) oget<Rect>;
 			%template(oget_string) oget<std::string>;
+
+			const std::string& getId() const;
 
 			Action* addAction(const std::string& action_name);
 			Action* getAction(const std::string& action_name);

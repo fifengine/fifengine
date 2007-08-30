@@ -104,10 +104,13 @@ class TestModel(unittest.TestCase):
 
 		dat = self.metamodel.addDataset()
 		grid = fife.SquareGrid()
-		obj1 = dat.addObject()
+		obj1 = dat.addObject("0")
 		obj1.set_string("Name", "MyHero")
-		obj2 = dat.addObject()
+		obj2 = dat.addObject("1")
 		obj2.set_string("Name", "Goon")
+
+		self.assertEqual(obj1.oget_string("id"), "0")
+		self.assertEqual(obj2.oget_string("id"), "1")
 
 		layer = elev.addLayer(grid)
 
@@ -143,9 +146,9 @@ class TestModel(unittest.TestCase):
 	def testDatasets(self):
 		dat = self.metamodel.addDataset()
 
-		obj1 = dat.addObject()
-		obj2 = dat.addObject()
-		obj3 = dat.addObject()
+		obj1 = dat.addObject("1")
+		obj2 = dat.addObject("2")
+		obj3 = dat.addObject("3")
 
 		obj1.set_string("Name", "MyHero")
 		obj1.set_int("Hitpoints", 100)

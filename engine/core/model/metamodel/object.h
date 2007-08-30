@@ -68,7 +68,7 @@ namespace FIFE { namespace model {
 			 * @see Dataset in model/metamodel/dataset.h for creation
 			 * of objects.
 			 */
-			Object(Object* inherited=NULL);
+			Object(const std::string& identifier, Object* inherited=NULL);
 
 			/** Destructor
 			 */
@@ -76,11 +76,16 @@ namespace FIFE { namespace model {
 			
 			template<typename T>
 			const T& oget(const std::string& field) {
+				
 				if(hasField(field) || !m_inherited)
 					return get<T>(field);
 
 				return m_inherited->oget<T>(field);
 			}
+
+			/** Get the (string) identifier associated with this object
+			 */
+			const std::string& getId() const;
 
 			/** Adds new action with given name. In case there is action already
 			 *  with given name, returns it instead of new object
@@ -104,7 +109,24 @@ namespace FIFE { namespace model {
 			Object* m_inherited;
 			std::map<std::string, Action*>* m_actions;
 			AbstractPather* m_pather;
+			std::string m_id;
 	};
+
+	template <>
+	inline
+	const std::string& Object::oget<std::string>(const std::string& field) {
+		if(field == "id")
+			return m_id;
+
+		if(field == "parent")
+			return m_inherited->getId();
+
+		if(hasField(field) || !m_inherited)
+			return get<std::string>(field);
+
+		return m_inherited->oget<std::string>(field);
+	}
+
 
 }} //FIFE::model
 #endif

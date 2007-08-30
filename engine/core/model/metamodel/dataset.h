@@ -70,7 +70,7 @@ namespace FIFE { namespace model {
 			 * @note This object belongs to this dataset, so don't
 			 * delete the returned pointer!
 			 */
-			Object* addObject(Object* inherited = 0);
+			Object* addObject(const std::string& identifier, Object* inherited = 0);
 
 			/** Get datasets from this dataset having the given value in the
 			 * given field.
