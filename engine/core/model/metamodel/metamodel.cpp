@@ -32,7 +32,7 @@
 #include "metamodel.h"
 #include "dataset.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	MetaModel::~MetaModel() {
 		purge(m_datasets);
@@ -44,5 +44,5 @@ namespace FIFE { namespace model {
 		return dataset;
 	}
 
-}}; //FIFE::model
+}; //FIFE
 

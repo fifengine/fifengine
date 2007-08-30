@@ -32,7 +32,7 @@
 // Second block: files included from the same folder
 #include "cellgrid.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	class HexGrid: public CellGrid {
 	public:
 		HexGrid();
@@ -43,6 +43,6 @@ namespace FIFE { namespace model {
 		float getAdjacentCost(const Point& curpos, const Point& target);
 		float getAngleBetween(const Point& curpos, const Point& target);
 	};
-}}
+}
 
 #endif

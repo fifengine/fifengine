@@ -38,7 +38,7 @@
 #include "layer.h"
 #include "map.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	Map::Map() 
 		: AttributedClass("Map") {
@@ -93,5 +93,5 @@ namespace FIFE { namespace model {
 		}
 	}
 
-} } //FIFE::model
+} //FIFE
 

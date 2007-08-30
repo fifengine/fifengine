@@ -8,15 +8,15 @@
 %include "util/point.i"
 %include "util/attributedclass.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
   class Layer;
-} }
-
-namespace std {
-  %template(LayerList) list<FIFE::model::Layer*>;
 }
 
-namespace FIFE { namespace model {
+namespace std {
+  %template(LayerList) list<FIFE::Layer*>;
+}
+
+namespace FIFE {
 
 	class Map;
 	class Geometry;
@@ -44,4 +44,4 @@ namespace FIFE { namespace model {
 
 			void update();
 	};
-}}
+}

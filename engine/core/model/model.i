@@ -5,15 +5,15 @@
 
 %include "std_list.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
   class Map;
-} }
-
-namespace std {
-  %template(MapList) list<FIFE::model::Map*>;
 }
 
-namespace FIFE { namespace model {
+namespace std {
+  %template(MapList) list<FIFE::Map*>;
+}
+
+namespace FIFE {
 	class MetaModel;
 
 	class Model {
@@ -41,4 +41,4 @@ namespace FIFE { namespace model {
 			MetaModel* getMetaModel();
 			void update();
 	};
-}}
+}

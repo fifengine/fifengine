@@ -32,7 +32,7 @@
 
 #include "squaregrid.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	SquareGrid::SquareGrid(bool diagonals_accessible): 
 		CellGrid(),
 		m_diagonals_accessible(diagonals_accessible) {
@@ -99,4 +99,4 @@ namespace FIFE { namespace model {
 		return atan2f(dx,dy)*factor;
 	}
 
-}}
+}

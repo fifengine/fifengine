@@ -30,37 +30,81 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-
+#include "model/structures/location.h"
+#include "util/rect.h"
 
 namespace FIFE {
-	class View;
-
 	class Camera {
 	public:
 		/** Constructor
-		 * Cameras are bind to a view that takes care also for drawing them
-		 * therefore this method should really be called only from view
-		 * or test code
+		 * Camera needs to be added to the view. If not done so, it is not rendered.
 		 */
-		Camera(View* view);
+		Camera();
+
+		/** Destructor
+		 */
 		~Camera();
 
+		/** Sets tilt for the camera. 
+		 * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
+		 * @param tilt tilt for the camera
+		 */
 		void setTilt(double tilt) { m_tilt = tilt; }
-		double getTilt() { return m_tilt; }
 
+		/** Gets camera tilt
+		 * @return tilt of camera
+		 */ 
+		double getTilt() const { return m_tilt; }
+
+		/** Sets rotation for the camera. 
+		 * Rotation can be visualized by thinking camera that rotates around an object 
+		 * that it is rendering
+		 * @param rotation rotation for the camera
+		 */
 		void setRotation(double rotation) { m_rotation = rotation; }
-		double getRotation() { return m_rotation; }
 
+		/** Gets camera rotation
+		 * @return rotation of the camera
+		 */ 
+		double getRotation() const { return m_rotation; }
+
+		/** Sets zoom for the camera. 
+		 * @param zoom zoom for the camera
+		 */
 		void setZoom(double zoom) { m_zoom = zoom; }
-		double getZoom() { return m_zoom; }
 
-		void update();
+		/** Gets camera zoom
+		 * @return zoom of the camera
+		 */ 
+		double getZoom() const { return m_zoom; }
+
+		/** Sets the location for camera
+		 * @param location location (center point) to render
+		 */ 
+		void setLocation(const Location& location) { m_location = location; }
+
+		/** Gets the location camera is rendering
+		 * @return camera location
+		 */ 
+		const Location& getLocation() const { return m_location; }
+
+		/** Sets the viewport for camera
+		 * viewport is rectangle inside the view where camera renders
+		 * @param viewport area for camera render
+		 */ 
+		void setViewPort(const Rect& viewport) { m_viewport = viewport; }
+
+		/** Gets the viewport for camera
+		 * @return camera viewport
+		 */ 
+		const Rect& getViewPort() const { return m_viewport; }
 
 	private:
-		View* m_view;
 		double m_tilt;
 		double m_rotation;
 		double m_zoom;
+		Location m_location;
+		Rect m_viewport;
 	};
 
 }

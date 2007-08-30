@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	class CellGrid {
 	public:
 		/** Constructor
@@ -124,6 +124,6 @@ namespace FIFE { namespace model {
 		double m_scale;
 		double m_rotation;
 	};
-}}
+}
 
 #endif

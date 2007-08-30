@@ -37,7 +37,7 @@
 
 #include "instance.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	class ActionInfo {
 	public:
 		ActionInfo(AbstractPather* pather, const Point& curpos): 
@@ -415,4 +415,4 @@ namespace FIFE { namespace model {
 		}
 		return -1;
 	}
-}}
+}

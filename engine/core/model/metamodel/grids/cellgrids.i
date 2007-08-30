@@ -11,7 +11,7 @@ namespace std {
 	%template(PointVector) vector<FIFE::Point>;
 }
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	class CellGrid {
 	public:
  		CellGrid();
@@ -47,4 +47,4 @@ namespace FIFE { namespace model {
 		virtual bool isAccessible(const Point& curpos, const Point& target);
 		virtual float getAdjacentCost(const Point& curpos, const Point& target);
 	};
-}}
+}

@@ -5,7 +5,7 @@
 
 %include "util/attributedclass.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Action : public AttributedClass {
 		public:
@@ -14,4 +14,4 @@ namespace FIFE { namespace model {
 			int getAnimationIndexByAngle(unsigned int angle);
 			void addAnimation(unsigned int angle, int animation_index);
 	};
-}}
+}

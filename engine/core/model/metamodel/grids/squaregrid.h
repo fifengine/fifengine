@@ -32,7 +32,7 @@
 // Second block: files included from the same folder
 #include "cellgrid.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	class SquareGrid: public CellGrid {
 	public:
 		SquareGrid(bool diagonals_accessible=false);
@@ -47,6 +47,6 @@ namespace FIFE { namespace model {
 		bool isAccessibleDiagonal(const Point& curpos, const Point& target);
 		bool m_diagonals_accessible;
 	};
-}}
+}
 
 #endif

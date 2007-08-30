@@ -33,7 +33,7 @@
 
 #include "action.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	Action::Action(): m_duration(0) {
 	}
 
@@ -95,4 +95,4 @@ namespace FIFE { namespace model {
 	void Action::addAnimation(unsigned int angle, int animation_index) {
 		m_animations[angle % 360] = animation_index;
 	}
-}}
+}

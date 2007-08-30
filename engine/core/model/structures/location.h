@@ -33,8 +33,7 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 
-namespace FIFE { namespace model {
-
+namespace FIFE {
 	class Elevation;
 	class Layer;
 
@@ -53,5 +52,5 @@ namespace FIFE { namespace model {
 			}
 	};
 
-} }
+}
 #endif //FIFE_LOCATION_H

@@ -36,16 +36,36 @@
 
 namespace FIFE {
 	class Camera;
+	class RenderBackend;
 
 	class View {
 	public:
-		View(SDL_Surface* screen);
+		/** Constructor
+		 * @param renderbackend to use
+		 */
+		View(RenderBackend* renderbackend);
+
+		/** Destructor
+		 */
 		~View();
-		Camera* addCamera(double tilt=0, double rotation=0, double zoom=1);
+
+		/** Adds new camera on view. Ownership is transferred to the view.
+		 * After addition, camera gets rendered by the view
+		 */
+		void addCamera(Camera* camera);
+
+		/** Removes given camera from view. Ownership is taken away from the view
+		 */
 		void removeCamera(Camera* camera);
+
+		/** Causes view to render all cameras
+		 */
 		void update();
+
 	private:
+		// list of cameras managed by the view
 		std::vector<Camera*> m_cameras;
+		RenderBackend* m_renderbackend;
 	};
 
 }

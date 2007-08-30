@@ -205,8 +205,8 @@ namespace FIFE {
 		m_guimanager->init(m_gui_graphics, swidth, sheight);
 		SDL_EnableUNICODE(1);
 
-		m_model = new model::Model();
-		m_view = new View(m_renderbackend->getScreenSurface());
+		m_model = new Model();
+		m_view = new View(m_renderbackend);
 	}
 
 	void Engine::initializePumping() {

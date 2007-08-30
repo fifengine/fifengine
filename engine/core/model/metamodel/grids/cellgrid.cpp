@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "cellgrid.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	CellGrid::CellGrid():
 		m_xshift(0),
 		m_yshift(0),
@@ -54,4 +54,4 @@ namespace FIFE { namespace model {
 		}
 	}
 
-}}
+}

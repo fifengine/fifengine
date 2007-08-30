@@ -7,15 +7,15 @@
 
 %include "util/attributedclass.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
   class Elevation;
-} }
-
-namespace std {
-  %template(ElevationList) list<FIFE::model::Elevation*>;
 }
 
-namespace FIFE { namespace model {
+namespace std {
+  %template(ElevationList) list<FIFE::Elevation*>;
+}
+
+namespace FIFE {
 
   class Elevation;
 
@@ -45,4 +45,4 @@ namespace FIFE { namespace model {
 
 			void update();
 	};
-}}
+}

@@ -31,7 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	class Map;
 	class Location;
 
@@ -61,6 +61,6 @@ namespace FIFE { namespace model {
 		virtual int getNextCells(const Location& curpos, const Location& target, 
 		                         std::vector<Location>& nextnodes, const int session_id=-1) = 0;
 	};
-}}
+}
 
 #endif

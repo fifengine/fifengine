@@ -29,6 +29,9 @@ digraph "source tree" {
     "pathfinder" -> "model"
     "vfs" -> "util"
     "video" -> "util"
+    "view" -> "model"
+    "view" -> "util"
+    "view" -> "video"
     "xml" -> "util"
     "xml" -> "vfs"
 }

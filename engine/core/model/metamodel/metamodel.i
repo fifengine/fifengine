@@ -5,17 +5,17 @@
 
 %include "std_list.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	class Object;
 	class Dataset;
-} }
-
-namespace std {
-	%template(ObjectList) list<FIFE::model::Object*>;
-	%template(DatasetList) list<FIFE::model::Dataset*>;
 }
 
-namespace FIFE { namespace model {
+namespace std {
+	%template(ObjectList) list<FIFE::Object*>;
+	%template(DatasetList) list<FIFE::Dataset*>;
+}
+
+namespace FIFE {
 
 	class MetaModel {
 		public:
@@ -43,4 +43,4 @@ namespace FIFE { namespace model {
 
 		private:
 	};
-}}
+}

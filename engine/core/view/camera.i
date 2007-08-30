@@ -1,29 +1,22 @@
-%module view
+%module camera
 %{
-#include "view/view.h"
 #include "view/camera.h"
 %}
 
 namespace FIFE {
-	class View {
-	public:
-		~View();
-	private:
-		View(SDL_Screen* screen);
-	};
-
 	class Camera {
 	public:
-		Camera(View* View);
+		Camera();
 		~Camera();
-
 		void setTilt(double tilt);
-		double getTilt();
-
+		double getTilt() const;
 		void setRotation(double rotation);
-		double getRotation();
-
+		double getRotation() const;
 		void setZoom(double zoom);
-		double getZoom();
+		double getZoom() const;
+		void setLocation(Location location);
+		const Location& getLocation() const;
+		void setViewPort(const Rect& viewport);
+		const Rect& getViewPort() const;
 	};
 }

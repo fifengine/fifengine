@@ -35,7 +35,7 @@
 
 #include "location.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Layer;
 	class Action;
@@ -209,6 +209,6 @@ namespace FIFE { namespace model {
 			void calcMovement();
 	};
 
-} } // FIFE::model
+} // FIFE
 
 #endif

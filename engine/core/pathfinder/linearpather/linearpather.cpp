@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "linearpather.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	int LinearPather::getNextCells(const Location& curpos, const Location& target, 
 	                               std::vector<Location>& nextnodes, const int session_id) {
 		assert(curpos.elevation == target.elevation);
@@ -66,4 +66,4 @@ namespace FIFE { namespace model {
 		nextnodes.push_back(nextnode);
 		return session_id;
 	}
-}}
+}

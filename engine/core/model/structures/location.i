@@ -1,6 +1,6 @@
 #include "util/point.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Elevation;
 	class Layer;
@@ -16,4 +16,4 @@ namespace FIFE { namespace model {
 			bool operator==(const Location& loc) const;
 	};
 
-} }
+}

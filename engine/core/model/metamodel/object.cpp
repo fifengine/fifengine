@@ -32,7 +32,7 @@
 #include "abstractpather.h"
 
 
-namespace FIFE { namespace model { 
+namespace FIFE {
 	Object::Object(const std::string& identifier, Object* inherited):
 		AttributedClass("Object"),
 		m_inherited(inherited),
@@ -84,4 +84,4 @@ namespace FIFE { namespace model {
 	void Object::setPather(AbstractPather* pather) {
 		m_pather = pather;
 	}
-}}
+}

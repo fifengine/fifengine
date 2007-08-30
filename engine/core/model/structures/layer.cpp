@@ -35,7 +35,7 @@
 #include "instance.h"
 #include "elevation.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	Layer::Layer(Elevation* elevation, CellGrid* grid)
 		: AttributedClass("map_Layer"),
@@ -94,4 +94,4 @@ namespace FIFE { namespace model {
 		}
 	}
 
- } } // FIFE::model
+} // FIFE

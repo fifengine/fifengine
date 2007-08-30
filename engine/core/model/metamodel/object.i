@@ -5,7 +5,7 @@
 
 %include "util/attributedclass.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Action;
 	class AbstractPather;
@@ -31,4 +31,4 @@ namespace FIFE { namespace model {
 			void setPather(AbstractPather* pather);
 			AbstractPather* getPather();
 	};
-}}
+}

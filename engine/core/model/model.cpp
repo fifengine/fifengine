@@ -33,7 +33,7 @@
 
 #include "model.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	Model::Model() {
 		m_meta = new MetaModel();
@@ -92,5 +92,5 @@ namespace FIFE { namespace model {
 		}
 	}
 	
-} } //FIFE::model
+} //FIFE
 

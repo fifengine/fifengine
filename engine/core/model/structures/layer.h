@@ -39,7 +39,7 @@
 
 #include "instance.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Elevation;
 	class Selection;
@@ -170,6 +170,6 @@ namespace FIFE { namespace model {
 			CellGrid* m_grid;
 	};
 
-} } // FIFE::model
+} // FIFE
 
 #endif

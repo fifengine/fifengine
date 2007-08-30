@@ -35,7 +35,7 @@
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Action : public AttributedClass {
 		public:
@@ -76,6 +76,6 @@ namespace FIFE { namespace model {
 			unsigned int m_duration;
 	};
 
-}}
+}
 
 #endif

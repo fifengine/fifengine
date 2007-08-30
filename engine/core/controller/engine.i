@@ -35,6 +35,7 @@ namespace FIFE {
 	class ImagePool;
 	class AnimationPool;
 	class RenderBackend;
+	class View;
 
 	class Engine {
 		public:
@@ -52,6 +53,7 @@ namespace FIFE {
 			ImagePool* getImagePool();
 			AnimationPool* getAnimationPool();
 			RenderBackend* getRenderBackend();
+			View* getView();
 
 	};
 }

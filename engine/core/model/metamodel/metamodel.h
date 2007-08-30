@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "dataset.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Dataset;
 	class Object;
@@ -101,5 +101,5 @@ namespace FIFE { namespace model {
 			std::vector<Dataset*> m_datasets;	
 	};
 
-}}; //FIFE::model
+}; //FIFE
 #endif

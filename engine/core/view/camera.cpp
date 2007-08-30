@@ -31,16 +31,14 @@
 #include "view.h"
 
 namespace FIFE {
-	Camera::Camera(View* view):
-		m_view(view),
+	Camera::Camera():
 		m_tilt(0),
 		m_rotation(0),
-		m_zoom(1) {
+		m_zoom(1),
+		m_location(),
+		m_viewport() {
 	}
 
 	Camera::~Camera() {
-	}
-
-	void Camera::update() {
 	}
 }

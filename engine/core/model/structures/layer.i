@@ -8,15 +8,15 @@
 %include "util/point.i"
 %include "util/attributedclass.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
   class Instance;
-} }
-
-namespace std {
-  %template(InstanceVector) vector<FIFE::model::Instance*>;
 }
 
-namespace FIFE { namespace model {
+namespace std {
+  %template(InstanceVector) vector<FIFE::Instance*>;
+}
+
+namespace FIFE {
 
 	class Elevation;
 	class Selection;
@@ -49,4 +49,4 @@ namespace FIFE { namespace model {
 
 			void update();
 	};
-}}
+}

@@ -37,7 +37,7 @@
 #include "location.h"
 #include "elevation.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Elevation;
 
@@ -125,7 +125,7 @@ namespace FIFE { namespace model {
 			Map& operator=(const Map& map);
 	};
 
-} } //FIFE::model
+} //FIFE
 
 #endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

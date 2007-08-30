@@ -5,7 +5,7 @@
 
 %include "util/attributedclass.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Object;
 
@@ -39,4 +39,4 @@ namespace FIFE { namespace model {
 
 			Dataset();
 	};
-}}
+}

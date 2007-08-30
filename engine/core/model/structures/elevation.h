@@ -37,7 +37,7 @@
 
 #include "layer.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Layer;
 	class Map;
@@ -130,7 +130,7 @@ namespace FIFE { namespace model {
 			Elevation& operator=(const Elevation&);
 	};
 
-} } //FIFE::model
+} //FIFE
 
 #endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

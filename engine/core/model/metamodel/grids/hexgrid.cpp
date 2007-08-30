@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "hexgrid.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 	HexGrid::HexGrid(): CellGrid() {
 	}
 
@@ -74,4 +74,4 @@ namespace FIFE { namespace model {
 		static std::string hexGrid("Hex Grid");
 		return hexGrid;
   	}
-}}
+}

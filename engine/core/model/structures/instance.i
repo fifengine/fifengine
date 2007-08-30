@@ -6,7 +6,7 @@
 %include "util/point.i"
 %include "location.i"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Layer;
 	class Action;
@@ -53,4 +53,4 @@ namespace FIFE { namespace model {
 			%template(get_string) get<std::string>;
 	};
 
-}}
+}

@@ -33,7 +33,7 @@
 #include "dataset.h"
 #include "object.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	Dataset::Dataset()
 	{
@@ -56,4 +56,4 @@ namespace FIFE { namespace model {
 		return object;
 	}
 
-}}
+}

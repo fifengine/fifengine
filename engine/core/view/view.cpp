@@ -27,31 +27,33 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/renderbackend.h"
+
 #include "view.h"
 #include "camera.h"
 
 namespace FIFE {
-	View::View(SDL_Surface* screen):
-		m_cameras() {
+	View::View(RenderBackend* renderbackend):
+		m_cameras(),
+		m_renderbackend(renderbackend) {
 	}
 
 	View::~View() {
+		std::vector<Camera*>::iterator it = m_cameras.begin();
+		for(; it != m_cameras.end(); ++it) {
+			delete *it;
+		}
+		m_cameras.clear();
 	}
 
-	Camera* View::addCamera(double tilt, double rotation, double zoom) {
-		Camera* cam = new Camera(this);
-		cam->setTilt(tilt);
-		cam->setRotation(rotation);
-		cam->setZoom(zoom);
-		m_cameras.push_back(cam);
-		return cam;
+	void View::addCamera(Camera* camera) {
+		m_cameras.push_back(camera);
 	}
 
 	void View::removeCamera(Camera* camera) {
 		std::vector<Camera*>::iterator it = m_cameras.begin();
 		for(; it != m_cameras.end(); ++it) {
 			if((*it) == camera) {
-				delete *it;
 				m_cameras.erase(it);
 				return;
 			}
@@ -61,7 +63,9 @@ namespace FIFE {
 	void View::update() {
 		std::vector<Camera*>::iterator it = m_cameras.begin();
 		for(; it != m_cameras.end(); ++it) {
-			(*it)->update();
+			Camera* cam = (*it);
+			m_renderbackend->drawLine(Point(1,1), Point(100,100), 50, 50, 50);
+			
 		}
 	}
 }

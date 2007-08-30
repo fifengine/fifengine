@@ -26,7 +26,7 @@
 %}
 
 namespace FIFE {
-	class GuiImage : public gcn::Image {
+	class GuiImage {
 	public:
 		GuiImage();
 		GuiImage(int id, ImagePool& pool);

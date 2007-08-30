@@ -34,7 +34,7 @@
 #include "model/structures/map.h"
 #include "model/metamodel/abstractpather.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	/** Naive pathfinder implementation
 	*/
@@ -49,6 +49,6 @@ namespace FIFE { namespace model {
 		virtual int getNextCells(const Location& curpos, const Location& target, 
 					std::vector<Location>& nextnodes, const int session_id=-1);
 	};
-}}
+}
 
 #endif

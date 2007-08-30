@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "model/structures/map.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class MetaModel;
 
@@ -110,5 +110,5 @@ namespace FIFE { namespace model {
 			MetaModel* m_meta;
 	};
 
-}}; //FIFE::model
+}; //FIFE
 #endif

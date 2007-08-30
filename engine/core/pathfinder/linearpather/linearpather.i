@@ -5,7 +5,7 @@
 %}
 
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class AbstractPather {
 	public:
@@ -24,4 +24,4 @@ namespace FIFE { namespace model {
 		virtual int getNextCells(const Location& curpos, const Location& target,  
 		                         std::vector<Location>& nextnodes, const int session_id=-1);
 	};
-}}
+}

@@ -39,7 +39,7 @@
 #include "object.h"
 
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	class Object;
 	class CellGrid;
@@ -131,6 +131,6 @@ namespace FIFE { namespace model {
 			std::vector<Dataset*> m_datasets;
 	};
 
-}}
+}
 
 #endif

@@ -37,7 +37,7 @@
 #include "map.h"
 #include "layer.h"
 
-namespace FIFE { namespace model {
+namespace FIFE {
 
 	Elevation::Elevation(Map* map) 
 		: AttributedClass("map_elevation"),
@@ -87,4 +87,4 @@ namespace FIFE { namespace model {
 	}
 
 
-} } //FIFE::model
+} //FIFE
