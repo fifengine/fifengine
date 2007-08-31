@@ -10,13 +10,14 @@
 	</metadata>
 
 	<!-- Load tile object datasets -->
-	<dataset type="XML" source="content/archetypes/insts/example_map_tiles.xml" />
+	<dataset type="XML" source="content/archetypes/tiles/new_official_map_tiles.xml" />
 
 	<!-- Load object datasets -->
 	<!-- Generic insts -->
-	<dataset type="XML" source="content/archetypes/insts/generic/generic.xml" />
+	<!-- <dataset type="XML" source="content/archetypes/insts/generic/generic.xml" /> -->
 
 	<!-- Map specific object -->
+	<!--
 	<dataset type="XML" source="content/archetypes/insts/beach/beach_ball.xml" />
 	<dataset type="XML" source="content/archetypes/insts/beach/box.xml" />
 	<dataset type="XML" source="content/archetypes/insts/beach/deck_chair.xml" />
@@ -37,11 +38,14 @@
 	<dataset type="XML" source="content/archetypes/insts/trees/tree.xml" />
 
 	<dataset type="XML" source="content/archetypes/insts/animated_objects/crate.xml" />
+	-->
 
 	<!-- Load NPC datasets -->
+	<!--
 	<dataset type="XML" source="content/archetypes/critters/humans/beekeeper.xml" />
 	<dataset type="XML" source="content/archetypes/critters/humans/boy.xml" />
 	<dataset type="XML" source="content/archetypes/critters/humans/girl.xml" />
+	-->
 
 	<elevation>
 
@@ -237,6 +241,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
+		<!--
 		<layer grid_type="square">
 
 			<metadata>
@@ -661,8 +666,9 @@
 				<i o="Sunshade:001" x="66" y="75" />
 				<i o="Sunshade:003" x="70" y="72" />
 				<i o="Sunshade:004" x="70" y="76" />
-
+-->
 				<!-- NORTH EAST BORDER TREES -->
+<!--
 				<i o="Tree:007" x="44" y="4" />
 				<i o="Tree:007" x="47" y="4" />
 				<i o="Tree:008" x="50" y="4" />
@@ -1111,5 +1117,6 @@
 				<i o="Tree:007" x="61" y="90" />
 			</instances>
 		</layer>
+	-->	
 	</elevation>
 </map>

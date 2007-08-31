@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<dataset type="Embedded" format="1.0">
+	<metadata>
+		<param type="text" name="Name">example_map_tiles.xml</param>
+		<param type="id" name="Version">1</param>
+	</metadata>
+
+	<!-- Ground tiles -->
+	<object id="15001">
+		<!-- <image source="content/gfx/tiles/ground/earth_1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15002">
+		<!-- <image source="content/gfx/tiles/ground/earth_2.png" singletile="1" /> -->
+	</object>
+
+	<object id="15003">
+		<!-- <image source="content/gfx/tiles/ground/earth_3.png" singletile="1" /> -->
+	</object>
+
+	<object id="15004">
+		<!-- <image source="content/gfx/tiles/ground/earth_4.png" singletile="1" /> -->
+	</object>
+
+	<object id="15005">
+		<!-- <image source="content/gfx/tiles/ground/earth_5.png" singletile="1" /> -->
+	</object>
+
+	<object id="15006">
+		<!-- <image source="content/gfx/tiles/ground/sand_1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15007">
+		<!-- <image source="content/gfx/tiles/ground/sand_2.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles North -->
+	<object id="15101">
+		<!-- <image source="content/gfx/tiles/beach/beach_n1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15102">
+		<!-- <image source="content/gfx/tiles/beach/beach_n2.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles North-East" -->
+	<object id="15111">
+		<!-- <image source="content/gfx/tiles/beach/beach_ne1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15112">
+		<!-- <image source="content/gfx/tiles/beach/beach_ne2.png" singletile="1" /> -->
+	</object>
+
+	<object id="15113">
+		<!-- <image source="content/gfx/tiles/beach/beach_ne3.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles East" -->
+	<object id="15121">
+		<!-- <image source="content/gfx/tiles/beach/beach_e1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15122">
+		<!-- <image source="content/gfx/tiles/beach/beach_e2.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles South-East -->
+	<object id="15131">
+		<!-- <image source="content/gfx/tiles/beach/beach_se1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15132">
+		<!-- <image source="content/gfx/tiles/beach/beach_se2.png" singletile="1" /> -->
+	</object>
+
+	<object id="15133">
+		<!-- <image source="content/gfx/tiles/beach/beach_se3.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles South -->
+	<object id="15141">
+		<!-- <image source="content/gfx/tiles/beach/beach_s1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15142">
+		<!-- <image source="content/gfx/tiles/beach/beach_s2.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles South-West" -->
+	<object id="15151">
+		<!-- <image source="content/gfx/tiles/beach/beach_sw1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15152">
+		<!-- <image source="content/gfx/tiles/beach/beach_sw2.png" singletile="1" /> -->
+	</object>
+
+	<object id="15153">
+		<!-- <image source="content/gfx/tiles/beach/beach_sw3.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles West" -->
+	<object id="15161">
+		<!-- <image source="content/gfx/tiles/beach/beach_w1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15162">
+		<!-- <image source="content/gfx/tiles/beach/beach_w2.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles North-West -->
+	<object id="15171">
+		<!-- <image source="content/gfx/tiles/beach/beach_nw1.png" singletile="1" /> -->
+	</object>
+
+	<object id="15172">
+		<!-- <image source="content/gfx/tiles/beach/beach_nw2.png" singletile="1" /> -->
+	</object>
+
+	<object id="15173">
+		<!-- <image source="content/gfx/tiles/beach/beach_nw3.png" singletile="1" /> -->
+	</object>
+
+	<!-- Beach tiles special" -->
+	<object id="15181">
+		<!-- <image source="content/gfx/tiles/beach/beach_special_ne.png" singletile="1" /> -->
+	</object>
+
+	<object id="15182">
+		<!-- <image source="content/gfx/tiles/beach/beach_special_se.png" singletile="1" /> -->
+	</object>
+
+	<object id="15183">
+		<!-- <image source="content/gfx/tiles/beach/beach_special_sw.png" singletile="1" /> -->
+	</object>
+
+	<object id="15184">
+		<!-- <image source="content/gfx/tiles/beach/beach_special_nw.png" singletile="1" /> -->
+	</object>
+
+	<!-- Water -->
+	<object id="15201">
+		<!-- <image source="content/gfx/tiles/beach/water.png" singletile="1" /> -->
+	</object>
+
+</dataset>

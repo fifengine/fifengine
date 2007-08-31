@@ -4,18 +4,36 @@ from xml.sax import saxutils
 import fife
 
 class ModelLoader(saxutils.DefaultHandler):
-	def __init__(self):
+
+	def __init__(self, model, state = 0, datastate = 0):
 		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SObject, self.SAction = range(9)
 
-		self.model = fife.Model()	
-		self.metamodel = fife.MetaModel()
-		self.state = self.SModel
+		self.model = model
+		self.model.thisown = 0
+		self.metamodel = self.model.getMetaModel()
+		self.model.thisown = 0
+
+		if (state):
+			self.state = state
+			if (state == self.SMap):
+				self.map = datastate
+				self.map.thisown = 0
+			elif (state == self.SDataset):
+				self.dataset = datastate
+				self.dataset.thisown = 0
+			else:
+				assert 0, "Invalid initialization state."
+		else:
+			self.state = self.SModel
+
 		self.stack = [ self.SModel ] 
+		self.datastack = [ ]
 
 	def startElement(self, name, attrs):
 		if (name == 'map'):
 			if (self.state == self.SModel):
 				self.map = self.model.addMap()	
+				self.map.thisown = 0
 				self.state = self.SMap
 				for attrName in attrs.keys():
 					if(attrName == "format"):
@@ -42,9 +60,52 @@ class ModelLoader(saxutils.DefaultHandler):
 
 		elif (name == 'dataset'):
 			if (self.state == self.SMap) or (self.state == self.SModel) or (self.state == self.SDataset):
-				self.dataset = self.metamodel.addDataset()
-				if (self.state == self.SMap):
-					self.map.useDataset(self.dataset)
+				type = 0
+				source = 0
+				for attrName in attrs.keys():
+					if (attrName == "type"):
+						type = attrs.get(attrName)
+					elif (attrName == "source"):
+						source = attrs.get(attrName)
+
+				assert type, "Dataset declared with no type attribute."
+
+				if (type == "XML"):
+					assert source, "External dataset declared with no source."
+					parser = make_parser()
+
+					handler = 0
+					if (self.state == self.SMap):
+						handler = ModelLoader(self.model, self.SMap, self.map)
+					elif (self.state == self.SDataset):
+						handler = ModelLoader(self.model, self.SDataset, self.dataset)
+					else:
+						handler = ModelLoader(self.model)
+
+					assert handler, "Corrupt XML state."
+
+					parser.setContentHandler(handler)
+					parser.parse(open("../../" + source))
+
+				elif (type == "Embedded"):
+					if (self.state == self.SModel):
+						self.dataset = self.metamodel.addDataset()
+						self.dataset.thisown = 0
+					elif (self.state == self.SMap):
+						self.dataset = self.metamodel.addDataset()
+						self.dataset.thisown = 0
+						self.map.useDataset(self.dataset)
+						
+						query = self.metamodel.getObjectsByString("blah", "blah") # DEBUG
+
+					elif (self.state == self.SDataset):
+						self.datastack.append(self.dataset)
+						self.dataset = self.dataset.addDataset()
+						self.dataset.thisown = 0
+
+				else:
+					assert 0, "Invalid dataset type attribute. Datasets must be of type XML or Embedded."
+
 				self.stack.append(self.state)
 				self.state = self.SDataset
 
@@ -61,13 +122,19 @@ class ModelLoader(saxutils.DefaultHandler):
 					if (attrName == "id"):
 						id = attrs.get(attrName)
 					if (attrName == "parent"):
-						query = self.metamodel.getObjectsByString("id", attrs.get(attrName))[0]
-						assert len(query) == 1, "0 or multiple objects with same identifier found."
+						query = self.metamodel.getObjectsByString("id", str(attrs.get(attrName)))[0]
+						assert len(query) != 0, "0 objects objects with this identifier found."
+						assert len(query) == 1, "Multiple objects with this identifier found."
 						parent = query[0]
 
 				assert id, "Objects must be given an identifier (id) field."
 
-				self.dataset.addObject(id, parent)
+				if (parent):
+					object = self.dataset.addObject(str(id), str(parent))
+					object.thisown = 0
+				else:
+					object = self.dataset.addObject(str(id))
+					object.thisown = 0
 
 			else:
 				assert 0, "Objects can only be declared in a <dataset> section."
@@ -84,10 +151,10 @@ class ModelLoader(saxutils.DefaultHandler):
 		elif (name == 'elevation'):
 			if (self.state == self.SMap):
 				self.elevation = self.map.addElevation()
+				self.elevation.thisown = 0
 				self.state = self.SElevation
 
 			else:
-				print self.state
 				assert 0, "Elevations can only be declared in a <map> section."
 
 		elif (name == 'layer'):
@@ -127,6 +194,7 @@ class ModelLoader(saxutils.DefaultHandler):
 				cellgrid.setYShift(y_offset)
 
 				self.layer = self.elevation.addLayer(cellgrid)
+				self.layer.thisown = 0
 				self.state = self.SLayer
 
 			else:
@@ -151,14 +219,26 @@ class ModelLoader(saxutils.DefaultHandler):
 
 				# We seem to need a unicode -> string conversion here...
 				query = self.metamodel.getObjectsByString("id", str(objectID))
-				assert len(query) == 1, "0 or multiple objects with same identifier found."
+				assert len(query) != 0, "0 objects objects with this identifier found."
+				assert len(query) == 1, "Multiple objects with this identifier found."
 				object = query[0]
+				object.thisown = 0
 
 				x = attrs.get("x")
 				y = attrs.get("y")
 
-				x = x if x else self.x + 1
-				y = y if y else self.y
+				if (x):
+					x = int(x)
+					self.x = x
+				else:
+					self.x = self.x + 1
+					x = self.x
+
+				if (y):
+					y = int(y)
+					self.y = y
+				else:
+					y = self.y
 
 				self.layer.addInstance(object, fife.Point(x,y))
 
@@ -171,6 +251,12 @@ class ModelLoader(saxutils.DefaultHandler):
 
 		if (name == 'dataset'):
 			self.state = self.stack.pop()
+			if (self.state == self.SDataset):
+				assert len(self.datastack) > 0, "Corrupted dataset stack."
+				self.dataset = self.datastack.pop()
+
+		if (name == 'object' or name == 'action'):
+			self.state = self.SDataset
 
 		if (name == 'map'):
 			self.state = self.SModel
@@ -184,11 +270,13 @@ class ModelLoader(saxutils.DefaultHandler):
 		elif (name == 'instances'):
 			self.state = self.SLayer
 
+model = fife.Model()
+
 parser = make_parser()
-handler = ModelLoader()
+handler = ModelLoader(model)
 parser.setContentHandler(handler)
 
-def loadModelFile(path):
-	parser.parse(open(path))
+def loadMapFile(path):
+	parser.parse(open("../../" + path))
 
-parser.parse(open("/home/jwt/fife/engine/engine/branches/active/metamodel/content/maps/new_official_map.xml"))
+loadMapFile("content/maps/new_official_map.xml")

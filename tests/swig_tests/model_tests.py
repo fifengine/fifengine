@@ -161,6 +161,10 @@ class TestModel(unittest.TestCase):
 		obj3.set_string("Name", "Box")
 		obj3.set_string("Type", "Inanimate")
 
+		meta_query = self.metamodel.getObjectsByString("id", "1")
+		self.assertEqual(len(meta_query), 1)
+		self.assertEqual(meta_query[0].oget_string("Name"), "MyHero")
+
 		meta_query = self.metamodel.getObjectsByString("Name", "MyHero")
 		self.assertEqual(len(meta_query), 1)
 		self.assertEqual(meta_query[0].oget_string("Name"), "MyHero")
