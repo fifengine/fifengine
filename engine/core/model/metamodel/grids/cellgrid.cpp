@@ -28,8 +28,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/matrix.h"
-
 #include "cellgrid.h"
 
 namespace FIFE {
@@ -58,13 +56,17 @@ namespace FIFE {
 	}
 
 	DoublePoint CellGrid::toElevationCoords(DoublePoint layer_coords) {
-		assert(1);
-		return DoublePoint(0,0);
+		return m_matrix * layer_coords;
 	}
 
 	DoublePoint CellGrid::toLayerCoords(DoublePoint elevation_coord) {
-		assert(1);
-		return DoublePoint(0,0);
+		return m_inverse_matrix * elevation_coord;
 	}
 
+	void CellGrid::updateMatrices() {
+		m_matrix.loadRotate(M_PI/180*m_rotation, 0.0, 0.0, 1.0);
+		m_matrix.applyScale(m_scale, m_scale, 1);
+		m_matrix.applyTranslate(m_xshift, m_yshift, 0);
+		m_inverse_matrix = m_matrix.inverse();
+	}
 }

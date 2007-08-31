@@ -28,6 +28,7 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <assert.h>
 
 // Platform specific includes
 #include "fife_math.h"
@@ -50,7 +51,59 @@ namespace FIFE {
 	class Matrix {
 	public:
     		Matrix() {}
+		Matrix(const Matrix& mat) { 
+			memmove(m, mat.m, 16*sizeof(T)); 
+		}
 		~Matrix() {}
+
+		/** Adjoint method inverse, constant time inversion implementation
+		 */
+		Matrix inverse() const {
+			Matrix ret(adjoint());
+		
+			T determinant = m0*ret[0] + m1*ret[4] + m2*ret[8] + m3*ret[12];
+			assert(determinant!=0 && "Singular matrix has no inverse");
+		
+			ret/=determinant;
+			return ret;
+		}
+
+		/** Divide this matrix by a scalar
+		 */
+		inline Matrix& operator/= (T val) { 
+			for(register unsigned i = 0; i < 16; ++i) 
+				m[i] /= val; 
+			return *this; 
+		}
+
+		/** Get the adjoint matrix
+		 */
+		Matrix adjoint() const
+		{
+			Matrix ret;
+		
+			ret[0] = cofactorm0();
+			ret[1] = -cofactorm4();
+			ret[2] = cofactorm8();
+			ret[3] = -cofactorm12();
+		
+			ret[4] = -cofactorm1();
+			ret[5] = cofactorm5();
+			ret[6] = -cofactorm9();
+			ret[7] = cofactorm13();
+		
+			ret[8] = cofactorm2();
+			ret[9] = -cofactorm6();
+			ret[10] = cofactorm10();
+			ret[11] = -cofactorm14();
+		
+			ret[12] = -cofactorm3();
+			ret[13] = cofactorm7();
+			ret[14] = -cofactorm11();
+			ret[15] = cofactorm15();
+		
+			return ret;
+		}
 
 
 		/** Make this a rotation matrix
@@ -131,7 +184,49 @@ namespace FIFE {
 			return ret;
 		}
 
+		/** Transform given 2D point using this matrix
+		 */
+		inline PointType2D<T> operator* (const PointType2D<T>& vec) {
+			PointType3D<T> vec3d;
+			vec3d.x = vec.x;
+			vec3d.y = vec.y;
+			vec3d.z = 0;
+			vec3d = operator*(vec3d);
+			PointType2D<T> vec2d;
+			vec2d.x = vec3d.x;
+			vec2d.y = vec3d.y;
+			return vec2d;
+		}
+
+		/** Direct access to the matrix elements, just remember they are in column major format!!
+		 */
+		inline T& operator[] (int ind) { 
+			assert(ind > -1 && ind < 16); 
+			return m[ind]; 
+		}
+
+
 	private:
+		#define cofactor_maker(f1,mj1,mi1, f2,mj2,mi2, f3,mj3,mi3) \
+		f1*(mj1*mi1-mj2*mi3) + f2*(mj2*mi2-mj3*mi1) + f3*(mj3*mi3-mj1*mi2)
+
+		inline T cofactorm0() const { return cofactor_maker(m5,m10,m15, m6,m11,m13, m7,m9,m14); }
+		inline T cofactorm1() const { return cofactor_maker(m6,m11,m12, m7,m8,m14, m4,m10,m15); }
+		inline T cofactorm2() const { return cofactor_maker(m7,m8,m13, m4,m9,m15, m5,m11,m12); }
+		inline T cofactorm3() const { return cofactor_maker(m4,m9,m14, m5,m10,m12, m6,m8,m13); }
+		inline T cofactorm4() const { return cofactor_maker(m9,m14,m3, m10,m15,m1, m11,m13,m2); }
+		inline T cofactorm5() const { return cofactor_maker(m10,m15,m0, m11,m12,m2, m8,m14,m3); }
+		inline T cofactorm6() const { return cofactor_maker(m11,m12,m1, m8,m13,m3, m9,m15,m0); }
+		inline T cofactorm7() const { return cofactor_maker(m8,m13,m2, m9,m14,m0, m10,m12,m1); }
+		inline T cofactorm8() const { return cofactor_maker(m13,m2,m7, m14,m3,m5, m15,m1,m6); }
+		inline T cofactorm9() const { return cofactor_maker(m14,m13,m4, m15,m0,m6, m12,m2,m7); }
+		inline T cofactorm10() const { return cofactor_maker(m15,m0,m5, m12,m1,m7, m13,m3,m4); }
+		inline T cofactorm11() const { return cofactor_maker(m12,m1,m6, m13,m2,m4, m14,m0,m5); }
+		inline T cofactorm12() const { return cofactor_maker(m1,m6,m11, m2,m7,m9, m3,m5,m10); }
+		inline T cofactorm13() const { return cofactor_maker(m2,m7,m8, m3,m4,m10, m10,m6,m11); }
+		inline T cofactorm14() const { return cofactor_maker(m3,m4,m9, m0,m5,m11, m1,m7,m8); }
+		inline T cofactorm15() const { return cofactor_maker(m0,m5,m10, m1,m6,m8, m2,m4,m9); }
+
 		union {
 			T m[16];
 			struct {

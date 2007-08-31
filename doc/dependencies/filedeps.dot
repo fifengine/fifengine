@@ -291,7 +291,7 @@ digraph "source tree" {
     "engine/core/model/metamodel/dataset.h" -> "object.h"
     "engine/core/model/metamodel/dataset.h" -> "util/attributedclass.h"
     "engine/core/model/metamodel/grids/cellgrid.cpp" -> "cellgrid.h"
-    "engine/core/model/metamodel/grids/cellgrid.cpp" -> "util/matrix.h"
+    "engine/core/model/metamodel/grids/cellgrid.h" -> "util/matrix.h"
     "engine/core/model/metamodel/grids/cellgrid.h" -> "util/point.h"
     "engine/core/model/metamodel/grids/hexgrid.cpp" -> "hexgrid.h"
     "engine/core/model/metamodel/grids/hexgrid.h" -> "cellgrid.h"

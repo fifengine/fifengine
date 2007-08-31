@@ -32,6 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/point.h"
+#include "util/matrix.h"
 
 namespace FIFE {
 	class CellGrid {
@@ -98,7 +99,10 @@ namespace FIFE {
 		/** Set the cellgrid x shift 
 		 *  @param shift The shift in elevation coords
 		 */
-		void setXShift(const double& xshift) { m_xshift = xshift; }
+		void setXShift(const double& xshift) { 
+			m_xshift = xshift; 
+			updateMatrices();
+		}
 
 		/** Get the cellgrid x shift 
 		 *  @return The x shift
@@ -108,7 +112,10 @@ namespace FIFE {
 		/** Set the cellgrid y shift 
 		 *  @param shift The shift in elevation coords
 		 */
-		void setYShift(const double yshift) { m_yshift = yshift; }
+		void setYShift(const double yshift) {
+			m_yshift = yshift; 
+			updateMatrices();
+		}
 
 		/** Get the cellgrid x shift 
 		 *  @return The x shift in elevation coords
@@ -118,7 +125,10 @@ namespace FIFE {
 		/** Set the cellgrid scaling
 		 *  @param scale The scale of cellgrid
 		 */
-		void setScale(const double scale) { m_scale = scale; }
+		void setScale(const double scale) { 
+			m_scale = scale;
+			updateMatrices();
+		}
 
 		/** Get the cellgrid scaling
 		 *  @return The scale of cellgrid
@@ -128,7 +138,10 @@ namespace FIFE {
 		/** Set the cellgrid rotation
 		 *  @param rotation The rotation of the cellgrid
 		 */
-		void setRotation(const double rotation) { m_rotation = rotation; }
+		void setRotation(const double rotation) { 
+			m_rotation = rotation; 
+			updateMatrices();
+		}
 
 		/** Get the cellgrid rotation
 		 *  @return rotation The rotation of the cellgrid
@@ -136,6 +149,10 @@ namespace FIFE {
 		const double getRotation() const { return m_rotation; }
 
 	protected:
+		void updateMatrices();
+
+		DoubleMatrix m_matrix;
+		DoubleMatrix m_inverse_matrix;
 		double m_xshift;
 		double m_yshift;
 		double m_scale;

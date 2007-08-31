@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <assert.h>
 
 // Platform specific includes
 #include "fife_math.h"
@@ -45,13 +46,12 @@ namespace FIFE {
 	 */
 	template <typename T> class PointType2D {
 	public:
-		/** The X coordinate.
-		 */
-		T x;
-
-		/** The Y coordinate
-		 */
-		T y;
+		union {
+			T val[2];
+			struct {
+				T x,y;
+			};
+		};
 
 		/** Constructor
 		 *
@@ -119,6 +119,11 @@ namespace FIFE {
 			sq = x*x + y*y;
 			return static_cast<T>(sqrt(sq));
 		}
+
+		inline T& operator[] (int ind) { 
+			assert(ind > -1 && ind < 2);
+			return val[ind];
+		}
 	};
 
 	/** Print coords of the Point to a stream
@@ -143,17 +148,12 @@ namespace FIFE {
 	 */
 	template <typename T> class PointType3D {
 	public:
-		/** The X coordinate.
-		 */
-		T x;
-
-		/** The Y coordinate
-		 */
-		T y;
-
-		/** The Z coordinate.
-		 */
-		T z;
+		union {
+			T val[3];
+			struct {
+				T x,y,z;
+			};
+		};
 
 		/** Constructor
 		 *
@@ -222,6 +222,11 @@ namespace FIFE {
 			double sq;
 			sq = x*x + y*y + z*z;
 			return static_cast<T>(sqrt(sq));
+		}
+
+		inline T& operator[] (int ind) { 
+			assert(ind > -1 && ind < 3); 
+			return val[ind]; 
 		}
 	};
 
