@@ -360,6 +360,8 @@ digraph "source tree" {
     "engine/core/util/log.cpp" -> "util/debugutils.h"
     "engine/core/util/log.cpp" -> "util/log.h"
     "engine/core/util/log.cpp" -> "util/settingsmanager.h"
+    "engine/core/util/matrix.h" -> "fife_math.h"
+    "engine/core/util/matrix.h" -> "fife_stdint.h"
     "engine/core/util/point.h" -> "fife_math.h"
     "engine/core/util/point.h" -> "fife_stdint.h"
     "engine/core/util/quadtree.h" -> "rect.h"

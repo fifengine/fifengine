@@ -92,13 +92,6 @@ namespace FIFE {
 		return squareGridDiagonal;
 	}
 	
-	float SquareGrid::getAngleBetween(const Point& curpos, const Point& target) {
-		const float factor = 180./M_PI;
-		float dx = float(target.x - curpos.x);
-		float dy = float(target.y - curpos.y);
-		return atan2f(dx,dy)*factor;
-	}
-
 	DoublePoint SquareGrid::getOffset(const Point& curpos, const Point& target, double distance) {
 		assert(1);
 		return DoublePoint(0,0);

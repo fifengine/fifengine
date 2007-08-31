@@ -19,7 +19,15 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_UTIL_MATRIX_H
+#define FIFE_UTIL_MATRIX_H
+
 // Standard C++ library includes
+#include <iostream>
+
+// Platform specific includes
+#include "fife_math.h"
+#include "fife_stdint.h"
 
 // 3rd party library includes
 
@@ -27,37 +35,15 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "cellgrid.h"
 
 namespace FIFE {
-	CellGrid::CellGrid():
-		m_xshift(0),
-		m_yshift(0),
-		m_scale(1),
-		m_rotation(0) {
-	}
 
-	CellGrid::~CellGrid() {
-	}
+	class Matrix {
+	public:
+		double matrix [4][4];
 
-	void CellGrid::getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates) {
-		coordinates.clear();
-		for (int x = curpos.x - 1; x <= curpos.x + 1; x++) {
-			for (int y = curpos.y - 1; y <= curpos.y + 1; y++) {
-				Point pt;
-				pt.x = x;
-				pt.y = y;
-				if (isAccessible(curpos, pt)) {
-					coordinates.push_back(pt);
-				}
-			}
-		}
-	}
+		
 
-	DoublePoint CellGrid::toElevationCoords(DoublePoint layer_coords) {
-	}
-
-	DoublePoint CellGrid::toLayerCoords(DoublePoint elevation_coord) {
 	}
 
 }

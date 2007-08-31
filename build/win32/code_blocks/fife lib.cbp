@@ -751,6 +751,12 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\util\matrix.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\util\point.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>

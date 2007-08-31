@@ -71,13 +71,6 @@ namespace FIFE {
 		 */
 		virtual float getAdjacentCost(const Point& curpos, const Point& target) = 0;
 
-		/** Return the angle between to points on the grid
-		 *  @param curpos position (coordinates) to evaluate
-		 *  @param target target coordinate to check
-		 *  @return angle between curpos and target
-		 */
-		virtual float getAngleBetween(const Point& curpos, const Point& target) = 0;
-
 		/** Return the offset based on given cells and the distance
 		 *  @param curpos position (coordinates) to evaluate
 		 *  @param target target coordinate to check
@@ -91,6 +84,16 @@ namespace FIFE {
 		 *  @return count of sides for a single cell
 		 */
 		virtual unsigned int getCellSideCount() const = 0;
+
+		/** Transforms given point from layer coordinates to elevation coordinates
+		 *  @return point in elevation coordinates
+		 */
+		virtual DoublePoint toElevationCoords(DoublePoint layer_coords);
+
+		/** Transforms given point from elevation coordinates to layer coordinates
+		 *  @return point in layer coordinates
+		 */
+		virtual DoublePoint toLayerCoords(DoublePoint elevation_coord);
 
 		/** Set the cellgrid x shift 
 		 *  @param shift The shift in elevation coords

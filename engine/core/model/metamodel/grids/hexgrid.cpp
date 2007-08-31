@@ -65,11 +65,6 @@ namespace FIFE {
 		return 1;
 	}
 	
-	float HexGrid::getAngleBetween(const Point& curpos, const Point& target) {
-		assert(1);
-		return 0.0;
-	}
-	
 	const std::string& HexGrid::getName() const {
 		static std::string hexGrid("Hex Grid");
 		return hexGrid;
