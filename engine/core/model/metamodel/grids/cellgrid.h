@@ -78,6 +78,20 @@ namespace FIFE {
 		 */
 		virtual float getAngleBetween(const Point& curpos, const Point& target) = 0;
 
+		/** Return the offset based on given cells and the distance
+		 *  @param curpos position (coordinates) to evaluate
+		 *  @param target target coordinate to check
+		 *  @param distance distance traveled from curpos to target
+		 *  @return offset
+		 */
+		virtual DoublePoint getOffset(const Point& curpos, const Point& target, double distance) = 0;
+
+
+		/** Gets the count of sides for a single cell
+		 *  @return count of sides for a single cell
+		 */
+		virtual unsigned int getCellSideCount() const = 0;
+
 		/** Set the cellgrid x shift 
 		 *  @param shift The shift in elevation coords
 		 */

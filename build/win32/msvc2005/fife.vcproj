@@ -339,7 +339,6 @@
 				<File RelativePath="..\..\..\engine\core\util\fife_stdint.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\log.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\log.h"></File>
-				<File RelativePath="..\..\..\engine\core\util\point.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\point.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\purge.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\quadtree.h"></File>

@@ -66,7 +66,7 @@ namespace FIFE {
 	}
 	
 	float HexGrid::getAngleBetween(const Point& curpos, const Point& target) {
-		// FIXME: Missing calculation.
+		assert(1);
 		return 0.0;
 	}
 	
@@ -74,4 +74,9 @@ namespace FIFE {
 		static std::string hexGrid("Hex Grid");
 		return hexGrid;
   	}
+
+	DoublePoint HexGrid::getOffset(const Point& curpos, const Point& target, double distance) {
+		assert(1);
+		return DoublePoint(0,0);
+	}
 }

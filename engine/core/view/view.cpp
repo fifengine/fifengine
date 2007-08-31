@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
+#include "util/fife_math.h"
 
 #include "view.h"
 #include "camera.h"
@@ -60,10 +61,51 @@ namespace FIFE {
 		}
 	}
 	
+/**
+INITIAL PSEUDO CODE FOR UPDATES
+
+def update():
+	for camera in cameras:
+		for layer in elevation:
+			drawLayer(layer, camera)
+			
+
+def drawLayer(layer, camera):
+	cellgrid = layer.getCellGrid()
+	for instance in layer:
+		image = None
+		action = instance.getCurrentAction()
+		if action:
+
+			# !!! resolve angle based on camera, layer and instance orientations
+			angle = ...
+
+			animationid = action.getAnimationIndexByAngle(angle)
+			image = animationpool.getAnimation(animationid).getFrameByTimestamp(instance.action_runtime)
+		else:
+			image = imagepool.getImage(instance.getStaticImageId())
+
+		if image:
+			logical_position = DoublePoint(instance.getLocation().position)
+			offset_distance = instance.getOffsetDistance()
+			if offset_distance:
+				logical_position = cellgrid.getOffset(position , instance.getFacingCell(), offset_distance)
+			
+			# !!! resolve screen coordinates based on camera and layer orienation/zoom + instance position
+			coords = ...
+
+			r = Rect(coords.x, coords.y, image.getWidth() * zoom, image.getHeight() * zoom)
+			image.render(r)
+
+*/	
+
+
 	void View::update() {
 		std::vector<Camera*>::iterator it = m_cameras.begin();
 		for(; it != m_cameras.end(); ++it) {
 			Camera* cam = (*it);
+			const Location& loc = cam->getLocation();
+
 			m_renderbackend->drawLine(Point(1,1), Point(100,100), 50, 50, 50);
 			
 		}

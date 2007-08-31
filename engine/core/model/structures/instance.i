@@ -37,8 +37,6 @@ namespace FIFE {
 			Point getOffsetSource();
 			Point getOffsetTarget();
 			double getOffsetDistance();
-			Point getStaticDirection();
-			int getOrientation() const;
 			int getActionRuntime();
 			void act(const std::string& action_name, const Location& target, const double speed);
 			void act(const std::string& action_name, const Point& direction, bool repeating=false);

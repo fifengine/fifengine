@@ -28,7 +28,12 @@ namespace FIFE {
 			Action* addAction(const std::string& action_name);
 			Action* getAction(const std::string& action_name);
 
+			int getStaticImageId();
+			void setStaticImageId(int img_id);
+
 			void setPather(AbstractPather* pather);
 			AbstractPather* getPather();
+
+			Object* getInherited();
 	};
 }

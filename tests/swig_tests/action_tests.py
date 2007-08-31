@@ -43,7 +43,7 @@ class AnimationTests(unittest.TestCase):
 				break
 			self.inst.update()
 			action = self.inst.currentAction
-			angle = self.inst.orientation
+			angle = 0 #self.inst.orientation
 			animation = getAnimation( action.getAnimationIndexByAngle(angle) )
 			timestamp = self.inst.actionRuntime % animation.duration
 			image = animation.getFrameByTimestamp( timestamp )

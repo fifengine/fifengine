@@ -38,7 +38,9 @@ namespace FIFE {
 		m_inherited(inherited),
 		m_actions(NULL),
 		m_pather(NULL),
-		m_id(identifier) { }
+		m_id(identifier),
+		m_static_img_id(-1) {
+	}
 
 	Object::~Object() {
 		if (m_actions) {

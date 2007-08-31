@@ -99,12 +99,14 @@ namespace FIFE {
 		 */ 
 		const Rect& getViewPort() const { return m_viewport; }
 
+
 	private:
 		double m_tilt;
 		double m_rotation;
 		double m_zoom;
 		Location m_location;
 		Rect m_viewport;
+		bool m_view_updated;
 	};
 
 }

@@ -41,64 +41,94 @@ namespace FIFE {
 	/** A Point
 	 *
 	 * This is a small helper class to aid in 2d vector arithmetics.
-	 * @note Currently we are using @b int as value, maybe using a fixed
-	 * size type is more appropiate, since then the value range is obvious.
 	 * @see Rect
 	 */
-	class Point {
+	template <typename T> class PointType {
 		public:
 			/** The X coordinate.
 			 */
-			int32_t x;
+			T x;
 			/** The Y coordinate
 			 */
-			int32_t y;
+			T y;
 
 			/** Constructor
 			 *
 			 * Creates a with 0 as default values.
 			 */
-			explicit Point(int x = 0, int y = 0);
+			explicit PointType(T _x = 0, T _y = 0): x(_x), y(_y) {
+			}
 
 			/** Vector addition
 			 */
-			Point operator+(const Point& p) const;
+			PointType<T> operator+(const PointType<T>& p) const {
+				return PointType<T>(x + p.x, y + p.y);
+			}
+
 			/** Vector substraction
 			 */
-			Point operator-(const Point& p) const;
+			PointType<T> operator-(const PointType<T>& p) const {
+				return PointType<T>(x - p.x, y - p.y);
+			}
 
 			/** Vector inplace addition
 			 */
-			Point& operator+=(const Point& p);
+			PointType<T>& operator+=(const PointType<T>& p) {
+				x += p.x;
+				y += p.y;
+				return *this;
+			}
+
 			/** Vector inplace substraction
 			 */
-			Point& operator-=(const Point& p);
+			PointType<T>& operator-=(const PointType<T>& p) {
+				x -= p.x;
+				y -= p.y;
+				return *this;
+			}
 
-			/** Scalar multiplikation with an integer value
+			/** Scalar multiplication with an integer value
 			 */
-			Point operator*(const long& i) const;
+			PointType<T> operator*(const long& i) const {
+				return PointType<T>(x * i, y * i);
+			}
 
 			/** Scalar division with an integer value
 			 */
-			Point operator/(const long& i) const;
+			PointType<T> operator/(const long& i) const {
+				return PointType<T>(x / i, y / i);
+			}
 
 			/** Equality comparision
 			 */
-			bool operator==(const Point& p) const;
+			bool operator==(const PointType<T>& p) const {
+				return x == p.x && y == p.y;
+			}
 
 			/** Equality comparision
 			 */
-			bool operator!=(const Point& p) const;
+			bool operator!=(const PointType<T>& p) const {
+				return !(x == p.x && y == p.y);
+			}
 
 			/** Return length
 			 */
-			uint32_t length() const;
+			T length() const {
+				double sq;
+				sq = x*x + y*y;
+				return static_cast<T>(sqrt(sq) + 0.5);
+			}
 	};
 
 	/** Print coords of the Point to a stream
 	 */
-	std::ostream& operator<<(std::ostream& os, const Point& p);
+	template<typename T>
+	std::ostream& operator<<(std::ostream& os, const PointType<T>& p) {
+		return os << "(" << p.x << "," << p.y << ")";
+	}
 
+	typedef PointType<int> Point;
+	typedef PointType<double> DoublePoint;
 }
 
 #endif

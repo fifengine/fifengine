@@ -105,11 +105,29 @@ namespace FIFE {
 			 */
 			AbstractPather* getPather() { return m_pather; }
 
+			/** Returns an index to visual representation of object
+			 * useful as an optimization for non-action instances
+			 * and e.g. editor toolbox visulizations
+			 */
+			int getStaticImageId() { return m_static_img_id; }
+			
+			/** Sets an index to visual representation of instance.
+			 * @see getStaticImageId
+			 */
+			void setStaticImageId(int img_id) { m_static_img_id = img_id; }
+
+			/** Gets an object where this object was inherited from
+			 * @see inherited object
+			 */
+			Object* getInherited() { return m_inherited; }
+
+
 		private:
 			Object* m_inherited;
 			std::map<std::string, Action*>* m_actions;
 			AbstractPather* m_pather;
 			std::string m_id;
+			int m_static_img_id;
 	};
 
 	template <>

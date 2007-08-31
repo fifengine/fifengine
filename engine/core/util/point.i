@@ -4,52 +4,27 @@
 
 namespace FIFE {
 
-	class Point {
-		public:
-			%immutable;
-			int32_t x;
-			int32_t y;
-			%mutable;
-			
-			explicit Point(int x = 0, int y = 0);
-
-			/** Vector addition
-			 */
-			Point operator+(const Point& p) const;
-			/** Vector substraction
-			 */
-			Point operator-(const Point& p) const;
-
-			/** Vector inplace addition
-			 */
-			Point& operator+=(const Point& p);
-			/** Vector inplace substraction
-			 */
-			Point& operator-=(const Point& p);
-
-			/** Scalar multiplikation with an integer value
-			 */
-			Point operator*(const long& i) const;
-
-			/** Scalar division with an integer value
-			 */
-			Point operator/(const long& i) const;
-
-			/** Equality comparision
-			 */
-			bool operator==(const Point& p) const;
-
-			/** Equality comparision
-			 */
-			bool operator!=(const Point& p) const;
-
-			/** Return length
-			 */
-			uint32_t length() const;
+	template <typename T> class PointType {
+	public:
+		T x;
+		T y;
+		explicit PointType(T _x = 0, T _y = 0);
+		PointType<T> operator+(const PointType<T>& p) const;
+		PointType<T> operator-(const PointType<T>& p) const;
+		PointType<T>& operator+=(const PointType<T>& p);
+		PointType<T>& operator-=(const PointType<T>& p);
+		PointType<T> operator*(const long& i) const;
+		PointType<T> operator/(const long& i) const;
+		bool operator==(const PointType<T>& p) const;
+		bool operator!=(const PointType<T>& p) const;
+		T length() const;
 	};
+	template<typename T>
+	std::ostream& operator<<(std::ostream& os, const PointType<T>& p);
 
-	/** Print coords of the Point to a stream
-	 */
-	std::ostream& operator<<(std::ostream& os, const Point& p);
+	typedef PointType<int> Point;
+	typedef PointType<double> DoublePoint;
 
+	%template(Point) PointType<int>;
+	%template(DoublePoint) PointType<double>;
 }

@@ -20,6 +20,7 @@ namespace FIFE {
 		virtual const std::string& getName() = 0;
 		virtual bool isAccessible(const Point& curpos, const Point& target) = 0;
 		virtual float getAdjacentCost(const Point& curpos, const Point& target) = 0;
+		virtual unsigned int getCellSideCount() const = 0;
 		void setXShift(const double& xshift);
 		const double getXShift() const;
 		void setYShift(const double yshift);
@@ -37,6 +38,7 @@ namespace FIFE {
 		virtual const std::string& getName();
 		virtual bool isAccessible(const Point& curpos, const Point& target);
 		virtual float getAdjacentCost(const Point& curpos, const Point& target);
+		unsigned int getCellSideCount() const;
 	};
 
 	class SquareGrid: public CellGrid {
@@ -46,5 +48,6 @@ namespace FIFE {
 		virtual const std::string& getName();
 		virtual bool isAccessible(const Point& curpos, const Point& target);
 		virtual float getAdjacentCost(const Point& curpos, const Point& target);
+		unsigned int getCellSideCount() const;
 	};
 }

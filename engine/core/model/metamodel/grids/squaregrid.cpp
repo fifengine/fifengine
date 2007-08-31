@@ -99,4 +99,8 @@ namespace FIFE {
 		return atan2f(dx,dy)*factor;
 	}
 
+	DoublePoint SquareGrid::getOffset(const Point& curpos, const Point& target, double distance) {
+		assert(1);
+		return DoublePoint(0,0);
+	}
 }

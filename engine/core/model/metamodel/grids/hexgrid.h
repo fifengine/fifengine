@@ -42,6 +42,8 @@ namespace FIFE {
 		const std::string& getName() const;
 		float getAdjacentCost(const Point& curpos, const Point& target);
 		float getAngleBetween(const Point& curpos, const Point& target);
+		unsigned int getCellSideCount() const { return 6; }
+		DoublePoint getOffset(const Point& curpos, const Point& target, double distance);
 	};
 }
 

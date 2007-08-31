@@ -37,6 +37,9 @@
 
 #include "instance.h"
 
+const int STATIC_IMAGE_NOT_INITIALIZED = -2;
+const int STATIC_IMAGE_NOT_FOUND = -1;
+
 namespace FIFE {
 	class ActionInfo {
 	public:
@@ -49,10 +52,10 @@ namespace FIFE {
 			m_target(NULL), 
 			m_speed(0), 
 			m_repeating(false),
-			m_static_direction(),
+			m_facingcell(curpos),
 			m_action_start_time(SDL_GetTicks()),
 			m_prev_call_time(m_action_start_time),
-			m_pather_session_id(-1),
+			m_pather_session_id(STATIC_IMAGE_NOT_INITIALIZED),
 			m_pather(pather) {}
 
 		~ActionInfo() {
@@ -93,8 +96,8 @@ namespace FIFE {
 		double m_speed;
 		// should action be repeated? used only for non-moving actions, moving ones repeat until movement is finished
 		bool m_repeating;
-		// In case of non-moving action, this is the direction where instance should be facing
-		Point m_static_direction;
+		// this is the direction where instance should be facing
+		Point m_facingcell;
 		// action start time (ticks)
 		unsigned int m_action_start_time;
 		// ticks since last call
@@ -110,9 +113,8 @@ namespace FIFE {
 	Instance::Instance(Object* object, const Location& location):
 		m_object(object), 
 		m_location(location),
-		m_orientation(0),
-		m_static_img_ind(-1),
 		m_actioninfo(NULL),
+		m_cached_static_img_id(-1),
 		m_pending_actioninfo(NULL),
 		m_listeners(NULL) {
 	}
@@ -176,11 +178,7 @@ namespace FIFE {
 	void Instance::act(const std::string& action_name, const Point& direction, bool repeating) {
 		ActionInfo* a = initalizeAction(action_name);
 		a->m_repeating = repeating;
-		a->m_static_direction = direction;
-		if( direction != m_location.position ) {
-			CellGrid* grid = m_location.layer->getCellGrid();
-			m_orientation = int(grid->getAngleBetween(m_location.position, direction));
-		}
+		a->m_facingcell = direction;
 	}
 
 	/**
@@ -281,7 +279,7 @@ namespace FIFE {
 			prev = next;
 			next = &(*i).position;
 			next_offset_dist = cg->getAdjacentCost(*prev, *next);
-			m_orientation = int(cg->getAngleBetween(*prev,*next));
+			m_actioninfo->m_facingcell = *next;
 			cumul_dist += next_offset_dist;
 			++i;
 		}
@@ -398,15 +396,11 @@ namespace FIFE {
 		return 0;
 	}
 
-	Point Instance::getStaticDirection() {
+	Point Instance::getFacingCell() {
 		if (m_actioninfo) {
-			return m_actioninfo->m_static_direction;
+			return m_actioninfo->m_facingcell;
 		}
 		return m_location.position;
-	}
-
-	int Instance::getOrientation() const {
-		return m_orientation;
 	}
 
 	int Instance::getActionRuntime() {
@@ -414,5 +408,20 @@ namespace FIFE {
 			return SDL_GetTicks() - m_actioninfo->m_action_start_time;
 		}
 		return -1;
+	}
+
+	int Instance::getStaticImageId() {
+		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
+			return m_cached_static_img_id;
+		}
+		Object* o = m_object;
+		m_cached_static_img_id = STATIC_IMAGE_NOT_FOUND;
+		while (o != NULL) {
+			m_cached_static_img_id = o->getStaticImageId();
+			if (m_cached_static_img_id != STATIC_IMAGE_NOT_FOUND) {
+				return m_cached_static_img_id;
+			}
+		}
+		return m_cached_static_img_id;
 	}
 }

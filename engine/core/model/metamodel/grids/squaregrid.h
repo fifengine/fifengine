@@ -42,6 +42,8 @@ namespace FIFE {
 		bool isAccessible(const Point& curpos, const Point& target);
 		float getAdjacentCost(const Point& curpos, const Point& target);
 		float getAngleBetween(const Point& curpos, const Point& target);
+		unsigned int getCellSideCount() const { return 4; }
+		DoublePoint getOffset(const Point& curpos, const Point& target, double distance);
 
 	private:
 		bool isAccessibleDiagonal(const Point& curpos, const Point& target);

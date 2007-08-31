@@ -141,18 +141,13 @@ namespace FIFE {
 			 */
 			double getOffsetDistance();
 
-			/** Returns the direction where instance is heading in case there is no movement
+			/** Returns the direction where instance is heading
 			 * @see getNextCell
 			 * @see getOffsetCell
 			 * @see getOffsetDistance
-			 * @return the direction of instance. Value is not valid in case instance is moving
-			 *         (getNextCell() != NULL)
+			 * @return the direction of instance.
 			 */
-			Point getStaticDirection();
-			
-			/** Return the current orientation in degrees
-			 */
-			int getOrientation() const;
+			Point getFacingCell();
 
 			/** Gets the time in milliseconds how long action has been active
 			 *  In case there is no current action, returns -1
@@ -175,6 +170,11 @@ namespace FIFE {
  			 */
 			void act(const std::string& action_name, const Point& direction, bool repeating=false);
 
+			/** Returns an index to visual representation of the instance
+			 * @see Object::getStaticImageId
+			 */
+			int getStaticImageId();
+
 			/** Updates the instance related to the current action
 			 * @param curticks current tick count of the system
  			 */
@@ -185,12 +185,10 @@ namespace FIFE {
 			Object* m_object;
 			// current location
 			Location m_location;
-			// current orientation
-			int m_orientation;
-			// static image index, optimization e.g. for tiles
-			int m_static_img_ind;
 			// action information, allocated when actions are bind
 			ActionInfo* m_actioninfo;
+			// static image that is read from object. Used for fast access when drawing images
+			int m_cached_static_img_id;
 			// action information, for pending action. In case objects are moved
 			// and some other action comes on top of that, movement must be finalized
 			// in such way that instances are stopped to the cell center point
