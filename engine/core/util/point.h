@@ -220,8 +220,7 @@ namespace FIFE {
 		 */
 		T length() const {
 			double sq;
-			sq = (x*x + y*y);
-			sq = sq*sq + z*z;
+			sq = x*x + y*y + z*z;
 			return static_cast<T>(sqrt(sq));
 		}
 	};
