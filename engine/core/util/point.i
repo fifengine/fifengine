@@ -15,8 +15,6 @@ namespace FIFE {
 		PointType2D<T>& operator-=(const PointType2D<T>& p);
 		PointType2D<T> operator*(const long& i) const;
 		PointType2D<T> operator/(const long& i) const;
-		PointType2D<T> operator*(const double& i) const;
-		PointType2D<T> operator/(const double& i) const;
 		bool operator==(const PointType2D<T>& p) const;
 		bool operator!=(const PointType2D<T>& p) const;
 		T length() const;
@@ -46,8 +44,6 @@ namespace FIFE {
 		PointType3D<T>& operator-=(const PointType3D<T>& p);
 		PointType3D<T> operator*(const long& i) const;
 		PointType3D<T> operator/(const long& i) const;
-		PointType3D<T> operator*(const double& i) const;
-		PointType3D<T> operator/(const double& i) const;
 		bool operator==(const PointType3D<T>& p) const;
 		bool operator!=(const PointType3D<T>& p) const;
 		T length() const;

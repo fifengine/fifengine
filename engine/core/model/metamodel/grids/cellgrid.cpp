@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <assert.h>
 
 // 3rd party library includes
 
@@ -27,6 +28,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/matrix.h"
+
 #include "cellgrid.h"
 
 namespace FIFE {
@@ -55,9 +58,13 @@ namespace FIFE {
 	}
 
 	DoublePoint CellGrid::toElevationCoords(DoublePoint layer_coords) {
+		assert(1);
+		return DoublePoint(0,0);
 	}
 
 	DoublePoint CellGrid::toLayerCoords(DoublePoint elevation_coord) {
+		assert(1);
+		return DoublePoint(0,0);
 	}
 
 }

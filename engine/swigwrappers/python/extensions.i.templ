@@ -1,8 +1,23 @@
-%extend FIFE::PointType {
+%extend FIFE::PointType2D {
 	int getX() { return $self->x; }
 	int getY() { return $self->y; }
 	void setX(int _x) { $self->x = _x; }
 	void setY(int _y) { $self->y = _y; }
+	
+	std::string __str__() {
+		std::stringstream str;
+		str << "Point" << *$self;
+		return  str.str();
+	}
+};
+
+%extend FIFE::PointType3D {
+	int getX() { return $self->x; }
+	int getY() { return $self->y; }
+	int getZ() { return $self->z; }
+	void setX(int _x) { $self->x = _x; }
+	void setY(int _y) { $self->y = _y; }
+	void setZ(int _y) { $self->z = _z; }
 	
 	std::string __str__() {
 		std::stringstream str;
