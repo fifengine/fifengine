@@ -23,7 +23,16 @@ def resolve_test_progs(sconscript_filename):
 def resolve_test_modules(directory):
 	pythonfilenames = [p for p in os.listdir(directory) if len(p) > 3 and p[-3:] == '.py']
 	modname = directory.replace(os.path.sep, '.') + '.'
-	return [modname + p[:-3] for p in pythonfilenames if p not in ('__init__.py', 'test_all.py')]
+	modules = []
+	skipped_filenames = ('_test_utils.py', '__init__.py', 'test_all.py')
+	for p in pythonfilenames:
+		skip = False
+		for s in skipped_filenames:
+			if p.find(s) != -1:
+				skip = True
+		if not skip:
+			modules.append(modname + p[:-3])
+	return modules
 	
 def run_core_tests(progs):
 	prevdir = os.getcwd()
@@ -137,6 +146,13 @@ def run(automatic, selected_cases):
 	tests[index] = ('SWIG tests', 'all', swig_tests, run_test_modules)	
 	index += 1
 		
+	extension_tests = resolve_test_modules(genpath('tests/extension_tests'))
+	for t in extension_tests:
+		tests[index] = ('Extension tests', t, [t], run_test_modules)
+		index += 1
+	tests[index] = ('Extension tests', 'all', extension_tests, run_test_modules)	
+	index += 1
+
 	analyzers = resolve_test_modules(genpath('tests/analyzers'))
 	for t in analyzers:
 		tests[index] = ('Analyzers', t, [t], run_analyzers)
@@ -183,9 +199,12 @@ def run(automatic, selected_cases):
 		run_all(alltests)
 
 def main():
-	usage = 'usage: %prog [options]\n' + \
+	usage = 'usage: %prog [options] [args]\n' + \
 		'Runs programs that test fife functionality. It is recommended that you run\n' + \
-		'these tests always before svn commit\n'
+		'these tests always before svn commit\n' + \
+		'you can give a list of test ids as arguments to the script. This is useful' + \
+		'when running same tests over and over again with little changes. Available test ids' + \
+		'can be seen from interactive menu (run script without any parameters)'
 	parser = optparse.OptionParser(usage)
 	parser.add_option("-a", "--automatic",
 			action="store_true", dest="automatic", default=False,

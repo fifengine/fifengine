@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from swig_test_utils import *
+from extension_test_utils import *
 from loaders import *
 
 print "blah"
