@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 
@@ -75,40 +76,65 @@ namespace FIFE {
 	}
 	
 	void View::updateCamera(Camera* camera) {
+		std::cout << "In View::updateCamera\n";
 		const Location& loc = camera->getLocation();
 		Elevation* elev = loc.elevation;
+		if (!elev) {
+			std::cout << "No elevation found, exiting\n";
+			return;
+		}
+		std::cout << "Getting layers...\n";
 		const std::vector<Layer*>& layers = elev->getLayers();
 		std::vector<Layer*>::const_iterator layer_it = layers.begin();
 		while (layer_it != layers.end()) {
+			std::cout << "Iterating layer...\n";
 			Layer* layer = (*layer_it);
 			CellGrid* cg = layer->getCellGrid();
+			if (!cg) {
+				std::cout << "No cellgrid assigned to layer...\n";
+				++layer_it;
+			}
+			std::cout << "Getting instance...\n";
 			const std::vector<Instance*>& instances = layer->getInstances();
 			std::vector<Instance*>::const_iterator instance_it = instances.begin();
 			while (instance_it != instances.end()) {
+				std::cout << "Iterating instances...\n";
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
 				DoublePoint elevpos = cg->toElevationCoords(intPt2doublePt(instance->getPosition()));
+				std::cout << "Instance layer position = " << instance->getPosition() << "\n";
+				std::cout << "Instance elevation position = " << elevpos << "\n";
 				Action* action = instance->getCurrentAction();
 				if (action) {
+					std::cout << "Instance has action\n";
 					DoublePoint elevface = cg->toElevationCoords(intPt2doublePt(instance->getFacingCell()));
 					float dx = static_cast<float>(elevface.x - elevpos.x);
 					float dy = static_cast<float>(elevface.y - elevpos.y);
 					int angle = static_cast<int>(atan2f(dx,dy)*180.0/M_PI);
+					std::cout << "Got angle " << angle << " for animation\n";
 					int animation_id = action->getAnimationIndexByAngle(angle);
 					Animation& animation = m_animationpool->getAnimation(animation_id);
 					image = animation.getFrameByTimestamp(instance->getActionRuntime());
 				} else {
-					image = &m_imagepool->getImage(instance->getStaticImageId());
+					int imageid = instance->getStaticImageId();
+					std::cout << "Instance does not have action, using static image with id " << imageid << "\n";
+					image = &m_imagepool->getImage(imageid);
 				}
 				if (image) {
+					std::cout << "Instance has image to render\n";
 					double offset_dist = instance->getOffsetDistance();
+					std::cout << "Instance offset distance = " << offset_dist << "\n";
 					DoublePoint exact_pos = elevpos;
 					if (offset_dist > 0) {
 						exact_pos = cg->getOffset(instance->getPosition(), 
 						                          instance->getOffsetTarget(), 
 						                          offset_dist);
 					}
-					Point drawpt = camera->toScreenCoords(cg->toElevationCoords(exact_pos));
+					std::cout << "Instance exact position in layer = " << exact_pos << "\n";
+					DoublePoint exact_elevpos = cg->toElevationCoords(exact_pos);
+					std::cout << "Instance exact position in elevation  = " << exact_elevpos << "\n";
+					Point drawpt = camera->toScreenCoords(exact_elevpos);
+					std::cout << "Instance exact position in screen = " << drawpt << "\n";
 					int w = image->getWidth();
 					int h = image->getHeight();
 					drawpt.x -= w / 2;
@@ -119,6 +145,9 @@ namespace FIFE {
 					if (r.intersects(camera->getViewPort())) {
 						image->render(r);
 					}
+				}
+				else {
+					std::cout << "Instance does not have image to render\n";
 				}
 				++instance_it;
 			}

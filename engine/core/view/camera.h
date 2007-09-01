@@ -35,6 +35,12 @@
 #include "util/rect.h"
 
 namespace FIFE {
+
+	/** Camera describes properties of a view port shown in the main screen
+	 *  Main screen can have multiple cameras active simultanously
+	 *  Different cameras can have different properties, like location
+	 *  to shoot, zoom or tilt
+	 */
 	class Camera {
 	public:
 		/** Constructor

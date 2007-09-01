@@ -55,7 +55,7 @@ namespace FIFE {
 			m_facingcell(curpos),
 			m_action_start_time(SDL_GetTicks()),
 			m_prev_call_time(m_action_start_time),
-			m_pather_session_id(STATIC_IMAGE_NOT_INITIALIZED),
+			m_pather_session_id(-1),
 			m_pather(pather) {}
 
 		~ActionInfo() {
@@ -114,7 +114,7 @@ namespace FIFE {
 		m_object(object), 
 		m_location(location),
 		m_actioninfo(NULL),
-		m_cached_static_img_id(-1),
+		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
 		m_pending_actioninfo(NULL),
 		m_listeners(NULL) {
 	}

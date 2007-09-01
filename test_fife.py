@@ -119,7 +119,7 @@ def run_all(tests):
 def quit(dummy):
 	sys.exit(0)
 
-def run(automatic):
+def run(automatic, selected_cases):
 	index = 0
 	tests = {}
 	
@@ -146,7 +146,7 @@ def run(automatic):
 	tests[index] = ('Other', 'Run all tests', alltests, run_all)
 	tests[index+1] = ('Other', 'Cancel and quit', None, quit)
 
-	if not automatic:
+	if (not automatic) and (not selected_cases):
 		selection = None
 		while True:
 			print 'Select test module to run:'
@@ -169,6 +169,16 @@ def run(automatic):
 				continue
 		header, name, params, fn = tests[selection]
 		fn(params)
+	elif (selected_cases):
+		for case in selected_cases:
+			try:
+				caseid = int(case)
+				if (caseid < 0) or (caseid > max(tests.keys())):
+					raise ValueError
+				header, name, params, fn = tests[caseid]
+				fn(params)
+			except ValueError:
+				print 'No test case with value %s found' % case
 	else:
 		run_all(alltests)
 
@@ -181,7 +191,7 @@ def main():
 			action="store_true", dest="automatic", default=False,
 			help="In case selected, runs all the tests automatically")
 	options, args = parser.parse_args()
-	run(options.automatic)
+	run(options.automatic, args)
 	
 	
 	

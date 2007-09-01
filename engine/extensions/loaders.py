@@ -1,9 +1,9 @@
 from xml.sax import make_parser 
-from xml.sax import saxutils
+from xml.sax import saxutils, handler
 
 import fife
 
-class ModelLoader(saxutils.DefaultHandler):
+class ModelLoader(handler.ContentHandler):
 
 	def __init__(self, model, state = 0, datastate = 0):
 		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SObject, self.SAction = range(9)
