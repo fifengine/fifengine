@@ -184,6 +184,8 @@ subgraph cluster_11 {
     "video/opengl" -> "video"
     "video/sdl" -> "util"
     "video/sdl" -> "video"
+    "view" -> "model/metamodel"
+    "view" -> "model/metamodel/grids"
     "view" -> "model/structures"
     "view" -> "util"
     "view" -> "video"

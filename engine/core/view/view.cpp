@@ -28,15 +28,28 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
+#include "video/image.h"
+#include "video/imagepool.h"
+#include "video/animation.h"
+#include "video/animationpool.h"
+
 #include "util/fife_math.h"
+#include "model/metamodel/grids/cellgrid.h"
+#include "model/metamodel/action.h"
+#include "model/structures/elevation.h"
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
+#include "model/structures/location.h"
 
 #include "view.h"
 #include "camera.h"
 
 namespace FIFE {
-	View::View(RenderBackend* renderbackend):
+	View::View(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool):
 		m_cameras(),
-		m_renderbackend(renderbackend) {
+		m_renderbackend(renderbackend),
+		m_imagepool(imagepool),
+		m_animationpool(animpool) {
 	}
 
 	View::~View() {
@@ -61,53 +74,62 @@ namespace FIFE {
 		}
 	}
 	
-/**
-INITIAL PSEUDO CODE FOR UPDATES
-
-def update():
-	for camera in cameras:
-		for layer in elevation:
-			drawLayer(layer, camera)
-			
-
-def drawLayer(layer, camera):
-	cellgrid = layer.getCellGrid()
-	for instance in layer:
-		image = None
-		action = instance.getCurrentAction()
-		if action:
-
-			# !!! resolve angle based on camera, layer and instance orientations
-			angle = ...
-
-			animationid = action.getAnimationIndexByAngle(angle)
-			image = animationpool.getAnimation(animationid).getFrameByTimestamp(instance.action_runtime)
-		else:
-			image = imagepool.getImage(instance.getStaticImageId())
-
-		if image:
-			logical_position = DoublePoint(instance.getLocation().position)
-			offset_distance = instance.getOffsetDistance()
-			if offset_distance:
-				logical_position = cellgrid.getOffset(position , instance.getFacingCell(), offset_distance)
-			
-			# !!! resolve screen coordinates based on camera and layer orienation/zoom + instance position
-			coords = ...
-
-			r = Rect(coords.x, coords.y, image.getWidth() * zoom, image.getHeight() * zoom)
-			image.render(r)
-
-*/	
-
+	void View::updateCamera(Camera* camera) {
+		const Location& loc = camera->getLocation();
+		Elevation* elev = loc.elevation;
+		const std::vector<Layer*>& layers = elev->getLayers();
+		std::vector<Layer*>::const_iterator layer_it = layers.begin();
+		while (layer_it != layers.end()) {
+			Layer* layer = (*layer_it);
+			CellGrid* cg = layer->getCellGrid();
+			const std::vector<Instance*>& instances = layer->getInstances();
+			std::vector<Instance*>::const_iterator instance_it = instances.begin();
+			while (instance_it != instances.end()) {
+				Instance* instance = (*instance_it);
+				Image* image = NULL;
+				DoublePoint elevpos = cg->toElevationCoords(intPt2doublePt(instance->getPosition()));
+				Action* action = instance->getCurrentAction();
+				if (action) {
+					DoublePoint elevface = cg->toElevationCoords(intPt2doublePt(instance->getFacingCell()));
+					float dx = static_cast<float>(elevface.x - elevpos.x);
+					float dy = static_cast<float>(elevface.y - elevpos.y);
+					int angle = static_cast<int>(atan2f(dx,dy)*180.0/M_PI);
+					int animation_id = action->getAnimationIndexByAngle(angle);
+					Animation& animation = m_animationpool->getAnimation(animation_id);
+					image = animation.getFrameByTimestamp(instance->getActionRuntime());
+				} else {
+					image = &m_imagepool->getImage(instance->getStaticImageId());
+				}
+				if (image) {
+					double offset_dist = instance->getOffsetDistance();
+					DoublePoint exact_pos = elevpos;
+					if (offset_dist > 0) {
+						exact_pos = cg->getOffset(instance->getPosition(), 
+						                          instance->getOffsetTarget(), 
+						                          offset_dist);
+					}
+					Point drawpt = camera->toScreenCoords(cg->toElevationCoords(exact_pos));
+					int w = image->getWidth();
+					int h = image->getHeight();
+					drawpt.x -= w / 2;
+					drawpt.x += image->getXShift();
+					drawpt.y -= h / 2;
+					drawpt.y += image->getYShift();
+					Rect r = Rect(drawpt.x, drawpt.y, w, h);
+					if (r.intersects(camera->getViewPort())) {
+						image->render(r);
+					}
+				}
+				++instance_it;
+			}
+			++layer_it;
+		}
+	}
 
 	void View::update() {
 		std::vector<Camera*>::iterator it = m_cameras.begin();
 		for(; it != m_cameras.end(); ++it) {
-			Camera* cam = (*it);
-			const Location& loc = cam->getLocation();
-
-			m_renderbackend->drawLine(Point(1,1), Point(100,100), 50, 50, 50);
-			
+			updateCamera(*it);
 		}
 	}
 }

@@ -31,6 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/structures/location.h"
+#include "util/matrix.h"
 #include "util/rect.h"
 
 namespace FIFE {
@@ -43,13 +44,16 @@ namespace FIFE {
 
 		/** Destructor
 		 */
-		~Camera();
+		virtual ~Camera();
 
 		/** Sets tilt for the camera. 
 		 * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
 		 * @param tilt tilt for the camera
 		 */
-		void setTilt(double tilt) { m_tilt = tilt; }
+		void setTilt(double tilt) {
+			m_tilt = tilt;
+			updateMatrices();
+		}
 
 		/** Gets camera tilt
 		 * @return tilt of camera
@@ -61,7 +65,10 @@ namespace FIFE {
 		 * that it is rendering
 		 * @param rotation rotation for the camera
 		 */
-		void setRotation(double rotation) { m_rotation = rotation; }
+		void setRotation(double rotation) {
+			m_rotation = rotation;
+			updateMatrices();
+		}
 
 		/** Gets camera rotation
 		 * @return rotation of the camera
@@ -71,7 +78,10 @@ namespace FIFE {
 		/** Sets zoom for the camera. 
 		 * @param zoom zoom for the camera
 		 */
-		void setZoom(double zoom) { m_zoom = zoom; }
+		void setZoom(double zoom) {
+			m_zoom = zoom;
+			updateMatrices();
+		}
 
 		/** Gets camera zoom
 		 * @return zoom of the camera
@@ -81,7 +91,10 @@ namespace FIFE {
 		/** Sets the location for camera
 		 * @param location location (center point) to render
 		 */ 
-		void setLocation(const Location& location) { m_location = location; }
+		void setLocation(const Location& location) { 
+			m_location = location;
+			updateMatrices();
+		}
 
 		/** Gets the location camera is rendering
 		 * @return camera location
@@ -99,8 +112,22 @@ namespace FIFE {
 		 */ 
 		const Rect& getViewPort() const { return m_viewport; }
 
+		/** Transforms given point from screen coordinates to elevation coordinates
+		 *  @return point in elevation coordinates
+		 */
+		DoublePoint toElevationCoords(Point screen_coords);
+
+		/** Transforms given point from elevation coordinates to screen coordinates
+		 *  @return point in screen coordinates
+		 */
+		Point toScreenCoords(DoublePoint elevation_coords);
+
 
 	private:
+		void updateMatrices();
+
+		DoubleMatrix m_matrix;
+		DoubleMatrix m_inverse_matrix;
 		double m_tilt;
 		double m_rotation;
 		double m_zoom;
@@ -108,6 +135,5 @@ namespace FIFE {
 		Rect m_viewport;
 		bool m_view_updated;
 	};
-
 }
 #endif

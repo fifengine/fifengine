@@ -206,7 +206,7 @@ namespace FIFE {
 		SDL_EnableUNICODE(1);
 
 		m_model = new Model();
-		m_view = new View(m_renderbackend);
+		m_view = new View(m_renderbackend, m_imagepool, m_animpool);
 	}
 
 	void Engine::initializePumping() {

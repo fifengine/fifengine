@@ -95,6 +95,9 @@ namespace FIFE {
 				return matches;
 			}
 
+			/** Get all layers
+			 */
+			const std::vector<Layer*>& getLayers() { return m_layers; }
 
 			/** Get the overall number of layers
 			 */

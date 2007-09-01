@@ -32,6 +32,8 @@
 
 namespace FIFE {
 	Camera::Camera():
+		m_matrix(),
+		m_inverse_matrix(),
 		m_tilt(0),
 		m_rotation(0),
 		m_zoom(1),
@@ -40,5 +42,21 @@ namespace FIFE {
 	}
 
 	Camera::~Camera() {
+	}
+
+	void Camera::updateMatrices() {
+		m_matrix.loadRotate(M_PI/180*m_rotation, 0.0, 0.0, 1.0);
+		m_matrix.applyRotate(M_PI/180*m_tilt, 1.0, 0.0, 0.0);
+		m_matrix.applyScale(m_zoom, m_zoom, 1);
+		m_matrix.applyTranslate(m_location.position.x, m_location.position.y, 0);
+		m_inverse_matrix = m_matrix.inverse();
+	}
+
+	DoublePoint Camera::toElevationCoords(Point screen_coords) {
+		return m_matrix * intPt2doublePt(screen_coords);
+	}
+
+	Point Camera::toScreenCoords(DoublePoint elevation_coords) {
+		return doublePt2intPt(m_inverse_matrix * elevation_coords);
 	}
 }

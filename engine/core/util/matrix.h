@@ -205,6 +205,34 @@ namespace FIFE {
 			return m[ind]; 
 		}
 
+		/** Apply the matrix dot product to this matrix
+		 */
+		inline Matrix& mult3by3(const Matrix& mat) {
+			Matrix temp(*this);
+			m0 = temp.m0*mat.m0+temp.m4*mat.m1+temp.m8*mat.m2;
+			m4 = temp.m0*mat.m4+temp.m4*mat.m5+temp.m8*mat.m6;
+			m8 = temp.m0*mat.m8+temp.m4*mat.m9+temp.m8*mat.m10;
+		
+			m1 = temp.m1*mat.m0+temp.m5*mat.m1+temp.m9*mat.m2;
+			m5 = temp.m1*mat.m4+temp.m5*mat.m5+temp.m9*mat.m6;
+			m9 = temp.m1*mat.m8+temp.m5*mat.m9+temp.m9*mat.m10;
+		
+			m2 = temp.m2*mat.m0+temp.m6*mat.m1+temp.m10*mat.m2;
+			m6 = temp.m2*mat.m4+temp.m6*mat.m5+temp.m10*mat.m6;
+			m10 = temp.m2*mat.m8+temp.m6*mat.m9+temp.m10*mat.m10;
+		
+			m3 = temp.m3*mat.m0+temp.m7*mat.m1+temp.m11*mat.m2;
+			m7 = temp.m3*mat.m4+temp.m7*mat.m5+temp.m11*mat.m6;
+			m11 = temp.m3*mat.m8+temp.m7*mat.m9+temp.m11*mat.m10;
+			return *this;
+		}
+
+		inline Matrix& applyRotate(T angle, T x, T y, T z) {
+			static Matrix temp;
+			temp.loadRotate(angle,x,y,z);
+			return mult3by3(temp);
+		}
+
 
 	private:
 		#define cofactor_maker(f1,mj1,mi1, f2,mj2,mi2, f3,mj3,mi3) \

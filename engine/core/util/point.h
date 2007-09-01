@@ -240,6 +240,35 @@ namespace FIFE {
 	typedef PointType3D<int> Point3D;
 	typedef PointType3D<int> IntPoint3D;
 	typedef PointType3D<double> DoublePoint3D;
+
+	/** Convert from 2D double point to 2D int point
+	 */
+	inline IntPoint2D doublePt2intPt(DoublePoint2D pt) {
+		IntPoint2D tmp(static_cast<int>(pt.x), static_cast<int>(pt.y));
+		return tmp;
+	}
+
+	/** Convert from 3D double point to 3D int point
+	 */
+	inline IntPoint3D doublePt2intPt(DoublePoint3D pt) {
+		IntPoint3D tmp(static_cast<int>(pt.x), static_cast<int>(pt.y), static_cast<int>(pt.z));
+		return tmp;
+	}
+
+	/** Convert from 2D int point to 2D double point
+	 */
+	inline DoublePoint2D intPt2doublePt(IntPoint2D pt) {
+		DoublePoint2D tmp(static_cast<double>(pt.x), static_cast<double>(pt.y));
+		return tmp;
+	}
+
+	/** Convert from 3D int point to 3D double point
+	 */
+	inline DoublePoint3D intPt2doublePt(IntPoint3D pt) {
+		DoublePoint3D tmp(static_cast<double>(pt.x), static_cast<double>(pt.y), static_cast<double>(pt.z));
+		return tmp;
+	}
+
 }
 
 #endif

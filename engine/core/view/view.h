@@ -37,13 +37,17 @@
 namespace FIFE {
 	class Camera;
 	class RenderBackend;
+	class ImagePool;
+	class AnimationPool;
 
 	class View {
 	public:
 		/** Constructor
 		 * @param renderbackend to use
+		 * @param imagepool image pool where from fetch images
+		 * @param animpool animation pool where from fetch images
 		 */
-		View(RenderBackend* renderbackend);
+		View(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 
 		/** Destructor
 		 */
@@ -63,9 +67,13 @@ namespace FIFE {
 		void update();
 
 	private:
+		void updateCamera(Camera* camera);
+		
 		// list of cameras managed by the view
 		std::vector<Camera*> m_cameras;
 		RenderBackend* m_renderbackend;
+		ImagePool* m_imagepool;
+		AnimationPool* m_animationpool;
 	};
 
 }
