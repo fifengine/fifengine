@@ -83,15 +83,11 @@ namespace FIFE {
 				return m_inherited->oget<T>(field);
 			}
 
-			/** Get the (string) identifier associated with this object
-			 */
-			const std::string& getId() const;
-
 			/** Adds new action with given name. In case there is action already
 			 *  with given name, returns it instead of new object
 			 *  Action instances are managed by object
 			 */
-			Action* addAction(const std::string& action_name);
+			Action* addAction(const std::string& identifier, const std::string& action_name);
 
 			/** Gets action with given name. If not found, returns NULL
 			 */
@@ -126,18 +122,15 @@ namespace FIFE {
 			Object* m_inherited;
 			std::map<std::string, Action*>* m_actions;
 			AbstractPather* m_pather;
-			std::string m_id;
 			int m_static_img_id;
 	};
 
 	template <>
 	inline
 	const std::string& Object::oget<std::string>(const std::string& field) {
-		if(field == "id")
-			return m_id;
 
 		if(field == "parent")
-			return m_inherited->getId();
+			return m_inherited->Id();
 
 		if(hasField(field) || !m_inherited)
 			return get<std::string>(field);

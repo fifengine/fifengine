@@ -58,7 +58,7 @@ namespace FIFE {
 			 *
 			 *  @param class_name The class name of the inheriting class
 			 */
-			AttributedClass(const std::string& class_name = "Table");
+			AttributedClass(const std::string& identifier, const std::string& class_name = "Table");
 
 			AttributedClass(const AttributedClass& ac);
 
@@ -66,6 +66,10 @@ namespace FIFE {
 			 *
 			 */
 			~AttributedClass();
+
+      /** Get the (string) identifier associated with this object
+			 */
+			const std::string& Id() const;
 
 			/** Set the value of a field.
 			 */
@@ -134,6 +138,7 @@ namespace FIFE {
 		private:
 			std::map<std::string,value_type> m_fields;
 
+			std::string m_id;
 			std::string m_className;
 	};
 
@@ -143,8 +148,33 @@ namespace FIFE {
 
 // Inline Functions
 
+	template <>
+	inline
+	const std::string& AttributedClass::get<std::string>(const std::string& field) {
+		if(field == "id")
+			return m_id;
+
+		static const value_type const_value;
+		if(m_fields.find(field) == m_fields.end()) {
+			return boost::get<std::string>(const_value);
+		}
+
+		std::string* value = boost::get<std::string>(&(m_fields[field]));
+		if(value == 0) {
+			Debug("attributed_class")
+				<< "type mismatch in " << className() 
+				<< " field: " << field;
+
+			return boost::get<std::string>(const_value);
+		}
+		return *value;
+	}
+
 	inline
 	bool AttributedClass::hasField(const std::string& field) const {
+		if(field == "id")
+			return true;
+
 		bool found = m_fields.find(field) != m_fields.end();
 		return found;
 	}

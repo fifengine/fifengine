@@ -52,12 +52,12 @@ namespace FIFE {
 			 *
 			 */
 			~Model();
-
-      			/** Add a map this model, and get a pointer to it.
+			
+			/** Add a map this model, and get a pointer to it.
 			 * The returned pointer is owned by the Model, so
 			 * don't delete it!
 			 */
-			Map* addMap();
+			Map* addMap(const std::string& identifier);
 
 			/** Remove a map from this model
 			 */

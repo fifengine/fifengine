@@ -12,10 +12,10 @@ namespace FIFE {
 	class Dataset : public AttributedClass {
 		public:
 
-			Dataset();
+			Dataset(const std::string& identifier);
 			~Dataset();
 
-			Dataset* addDataset();
+			Dataset* addDataset(const std::string& identifier);
 
 			Object* addObject(const std::string& identifier, Object* inherited = 0);
 

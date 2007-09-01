@@ -4,7 +4,7 @@ from swig_test_utils import *
 class TestAttributedClass(unittest.TestCase):
 	
 	def setUp(self):
-		self.c = fife.AttributedClass('Attributedclass for testing')
+		self.c = fife.AttributedClass('Attributedclass for testing', 'Table')
 
 	def testBools(self):
 		c = self.c

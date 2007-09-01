@@ -35,7 +35,8 @@
 
 namespace FIFE {
 
-	Dataset::Dataset()
+	Dataset::Dataset(const std::string& identifier)
+		: AttributedClass(identifier)
 	{
 	}
 
@@ -44,8 +45,8 @@ namespace FIFE {
 		purge(m_objects);
 	}
 
-	Dataset* Dataset::addDataset() {
-		Dataset* dataset = new Dataset();
+	Dataset* Dataset::addDataset(const std::string& identifier) {
+		Dataset* dataset = new Dataset(identifier);
 		m_datasets.push_back(dataset);
 		return dataset;
 	}

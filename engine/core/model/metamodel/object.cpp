@@ -34,11 +34,10 @@
 
 namespace FIFE {
 	Object::Object(const std::string& identifier, Object* inherited):
-		AttributedClass("Object"),
+		AttributedClass(identifier, "Object"),
 		m_inherited(inherited),
 		m_actions(NULL),
 		m_pather(NULL),
-		m_id(identifier),
 		m_static_img_id(-1) {
 	}
 
@@ -53,17 +52,13 @@ namespace FIFE {
 		}
 	}
 
-	const std::string& Object::getId() const {
-		return m_id;
-	}
-
-	Action* Object::addAction(const std::string& action_name) {
+	Action* Object::addAction(const std::string& identifier, const std::string& action_name) {
 		if (!m_actions) {
 			m_actions = new std::map<std::string, Action*>;
 		}
 		Action* a = getAction(action_name);
 		if (!a) {
-			a = new Action();
+			a = new Action(identifier);
 			(*m_actions)[action_name] = a;
 		}
 		return a;

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<dataset type="Embedded" format="1.0">
+<dataset id="OfficialMapTiles" type="Embedded" format="1.0">
 	<metadata>
 		<param type="text" name="Name">example_map_tiles.xml</param>
 		<param type="id" name="Version">1</param>

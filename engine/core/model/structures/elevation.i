@@ -23,12 +23,12 @@ namespace FIFE {
 
 	class Elevation : public AttributedClass {
 		public:
-			Elevation(Map* map=NULL);
+			Elevation(const std::string& identifier, Map* map=NULL);
 			~Elevation();
 
 			Map* getMap();
 
-			Layer* addLayer(CellGrid* grid);
+			Layer* addLayer(const std::string& identifier, CellGrid* grid);
 			void removeLayer(Layer* index);
 
 			template<typename T>

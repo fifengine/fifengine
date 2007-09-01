@@ -34,7 +34,9 @@
 #include "action.h"
 
 namespace FIFE {
-	Action::Action(): m_duration(0) {
+	Action::Action(const std::string& identifier)
+		: AttributedClass(identifier),
+		m_duration(0) {
 	}
 
 	Action::~Action() {

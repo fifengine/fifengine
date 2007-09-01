@@ -63,7 +63,7 @@ namespace FIFE {
 			 * To add map to model, one should call Model::addMap (otherwise
 			 * map is not registered with the engine properly)
 			 */
-			Map();
+			Map(const std::string& identifier);
 
 			/** Destructor
 			 */
@@ -77,7 +77,7 @@ namespace FIFE {
 			 * to it; the returned pointer is owned by the Map
 			 * so don't delete it!
 			 */
-			Elevation* addElevation();
+			Elevation* addElevation(const std::string& identifier);
 			
 			/** Remove an elevation from this map
 			 */

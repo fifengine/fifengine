@@ -23,7 +23,7 @@ namespace FIFE {
 			MetaModel();
 			~MetaModel();
 
-			Dataset* addDataset();
+			Dataset* addDataset(const std::string& identifier);
 
 			template<typename T>
 			std::list<Dataset*> getDatasets(const std::string& field, const T& value);

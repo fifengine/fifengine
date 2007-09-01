@@ -5,10 +5,10 @@ class TestView(unittest.TestCase):
 	
 	def setUp(self):
 		self.engine = fife.Engine()
-		map = self.engine.getModel().addMap()
-		elev = map.addElevation()
+		map = self.engine.getModel().addMap("map001")
+		elev = map.addElevation("elevation001")
 		
-		dat = self.engine.getModel().getMetaModel().addDataset()
+		dat = self.engine.getModel().getMetaModel().addDataset("dataset001")
 		self.grid = fife.SquareGrid()
 		pool = self.engine.getImagePool()
 		
@@ -23,7 +23,7 @@ class TestView(unittest.TestCase):
 		img = pool.getImage(imgid)
 		self.screen_cell_w = img.getWidth()
 		
-		layer = elev.addLayer(self.grid)
+		layer = elev.addLayer("layer001", self.grid)
 		layer.addInstance(obj1, fife.Point(0,0))
 		layer.addInstance(obj2, fife.Point(1,1))
 		layer.addInstance(obj2, fife.Point(2,2))

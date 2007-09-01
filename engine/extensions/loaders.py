@@ -32,12 +32,18 @@ class ModelLoader(handler.ContentHandler):
 	def startElement(self, name, attrs):
 		if (name == 'map'):
 			if (self.state == self.SModel):
-				self.map = self.model.addMap()	
-				self.map.thisown = 0
-				self.state = self.SMap
+				id = 0
 				for attrName in attrs.keys():
 					if(attrName == "format"):
 						assert attrs.get(attrName) == "1.0", "Bad map format."
+					if(attrName == "id"):
+						id = attrs.get(attrName)
+
+				assert id, "Map declared without an identifier."
+
+				self.map = self.model.addMap(str(id))
+				self.map.thisown = 0
+				self.state = self.SMap
 
 			else:
 				assert 0, "A <map> can only be declared at the top level"
@@ -62,11 +68,14 @@ class ModelLoader(handler.ContentHandler):
 			if (self.state == self.SMap) or (self.state == self.SModel) or (self.state == self.SDataset):
 				type = 0
 				source = 0
+				id = 0
 				for attrName in attrs.keys():
 					if (attrName == "type"):
 						type = attrs.get(attrName)
 					elif (attrName == "source"):
 						source = attrs.get(attrName)
+					elif (attrName == "id"):
+						id = attrs.get(attrName)
 
 				assert type, "Dataset declared with no type attribute."
 
@@ -88,19 +97,19 @@ class ModelLoader(handler.ContentHandler):
 					parser.parse(open(source))
 
 				elif (type == "Embedded"):
+					assert id, "Dataset declared without an identifier."
 					if (self.state == self.SModel):
-						self.dataset = self.metamodel.addDataset()
+						self.dataset = self.metamodel.addDataset(str(id))
 						self.dataset.thisown = 0
+
 					elif (self.state == self.SMap):
-						self.dataset = self.metamodel.addDataset()
+						self.dataset = self.metamodel.addDataset(str(id))
 						self.dataset.thisown = 0
 						self.map.useDataset(self.dataset)
 						
-						query = self.metamodel.getObjectsByString("blah", "blah") # DEBUG
-
 					elif (self.state == self.SDataset):
 						self.datastack.append(self.dataset)
-						self.dataset = self.dataset.addDataset()
+						self.dataset = self.dataset.addDataset(str(id))
 						self.dataset.thisown = 0
 
 				else:
@@ -150,7 +159,15 @@ class ModelLoader(handler.ContentHandler):
 
 		elif (name == 'elevation'):
 			if (self.state == self.SMap):
-				self.elevation = self.map.addElevation()
+
+				id = 0
+				for attrName in attrs.keys():
+					if (attrName == "id"):
+						id = attrs.get(attrName)
+
+				assert id, "Elevation declared without an identifier."
+
+				self.elevation = self.map.addElevation(str(id))
 				self.elevation.thisown = 0
 				self.state = self.SElevation
 
@@ -159,6 +176,8 @@ class ModelLoader(handler.ContentHandler):
 
 		elif (name == 'layer'):
 			if (self.state == self.SElevation):
+
+				id = 0
 				cellgrid = 0
 				scaling = 1.0
 				rotation = 0.0
@@ -186,14 +205,18 @@ class ModelLoader(handler.ContentHandler):
 					elif (attrName == "y_offset"):
 						y_offset = eval(attrs.get(attrName))
 
+					elif (attrName == "id"):
+						id = attrs.get(attrName)
+
 				assert cellgrid, "No grid type defined for this layer."
+				assert id, "Layer declared with no identifier."
 
 				cellgrid.setRotation(rotation)
 				cellgrid.setScale(scaling)
 				cellgrid.setXShift(x_offset)
 				cellgrid.setYShift(y_offset)
 
-				self.layer = self.elevation.addLayer(cellgrid)
+				self.layer = self.elevation.addLayer(str(id), cellgrid)
 				self.layer.thisown = 0
 				self.state = self.SLayer
 

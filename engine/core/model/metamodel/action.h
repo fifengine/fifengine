@@ -43,7 +43,7 @@ namespace FIFE {
 			 * Actions are created by calling addAction from object, thus
 			 * this method should really be called only by object or test code
 			 */
-			Action();
+			Action(const std::string& identifier);
 
 			/** Destructor
 			 */

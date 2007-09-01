@@ -87,7 +87,7 @@ namespace FIFE {
 			 * Elevations are created by calling addLayer from elevation, thus
 			 * this method should really be called only by elevation or test code
 			 */
-			Layer(Elevation* elevation, CellGrid* grid);
+			Layer(const std::string& identifier, Elevation* elevation, CellGrid* grid);
 
 			/** Destructs a Layer instance
 			 */

@@ -51,7 +51,7 @@ namespace FIFE {
 			 * Datasets are created by calling addDataset from metamodel, thus
 			 * this method should really be called only by metamodel or test code
 			 */
-			Dataset();
+			Dataset(const std::string& identifier);
 
 			/** Destructor
 			 */
@@ -62,7 +62,7 @@ namespace FIFE {
 			 * @note This Dataset owns any datasets you add to it, so
 			 * don't delete the returned pointer!
 			 */
-			Dataset* addDataset();
+			Dataset* addDataset(const std::string& identifier);
 
 			/** Add an object to this dataset; objects may optionally inherit
 			 * values from other objects (see object.h for details).

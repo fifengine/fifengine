@@ -13,8 +13,10 @@ namespace FIFE {
 	class AttributedClass {
 		public:
 
-			AttributedClass(const std::string& class_name);
+			AttributedClass(const std::string& identifier, const std::string& class_name);
 			~AttributedClass();
+
+			const std::string& Id() const;
 
 			template<typename T>
 			const T& get(const std::string& field);

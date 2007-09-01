@@ -57,7 +57,7 @@ namespace FIFE {
 			 * Elevations are created by calling addElevation from map, thus
 			 * this method should really be called only by map or test code
 			 */
-			Elevation(Map* map=NULL);
+			Elevation(const std::string& identifier, Map* map=NULL);
 
 			/** Destructor
 			 */
@@ -71,7 +71,7 @@ namespace FIFE {
 			 * the returned pointer to the new Layer, so don't
 			 * delete it!
 			 */
-			Layer* addLayer(CellGrid* grid);
+			Layer* addLayer(const std::string& identifier, CellGrid* grid);
 
 			/** Remove a layer from the elevation
 			 */

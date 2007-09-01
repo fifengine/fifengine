@@ -9,8 +9,8 @@ class TestModel(unittest.TestCase):
 		self.metamodel = self.model.getMetaModel()
 
 	def testModel(self):
-		map1 = self.model.addMap()
-		map2 = self.model.addMap()
+		map1 = self.model.addMap("map001")
+		map2 = self.model.addMap("map002")
 		
 		map1.set_string("Name", "Map1")
 		map2.set_string("Name", "Map2")
@@ -34,8 +34,8 @@ class TestModel(unittest.TestCase):
 		map_query = self.model.getMaps()
 		self.assertEqual(len(map_query), 1)
 
-		self.model.addMap()
-		self.model.addMap()
+		self.model.addMap("map003")
+		self.model.addMap("map004")
 		
 		map_query = self.model.getMaps()
 		self.assertEqual(len(map_query), 3)
@@ -47,11 +47,11 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(self.model.getNumMaps(), 0)
 
 	def testMaps(self):
-		map = self.model.addMap()
+		map = self.model.addMap("map005")
 		map.set_string("Name", "MyMap")
 
-		elev1 = map.addElevation()
-		elev2 = map.addElevation()
+		elev1 = map.addElevation("elevation001")
+		elev2 = map.addElevation("elevation002")
 
 		elev1.set_string("Name", "Elev1")
 		elev2.set_string("Name", "Elev2")
@@ -71,18 +71,18 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(map.getNumElevations(), 0)
 
 	def testElevations(self):
-		map = self.model.addMap()
-		elev = map.addElevation()
+		map = self.model.addMap("map006")
+		elev = map.addElevation("elevation003")
 		elev.set_string("Name", "MyElevation")
 
 		#self.assertEqual(elev.getMap(), map)
 		self.assertEqual(elev.getNumLayers(), 0)
 
-		dat = self.metamodel.addDataset()
+		dat = self.metamodel.addDataset("dataset001")
 		grid = fife.SquareGrid()
 
-		layer1 = elev.addLayer(grid)
-		layer2 = elev.addLayer(grid)
+		layer1 = elev.addLayer("layer001", grid)
+		layer2 = elev.addLayer("layer002", grid)
 
 		layer1.set_string("Name", "Layer1")
 		layer2.set_string("Name", "Layer2")
@@ -99,20 +99,20 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(elev.getNumLayers(), 0)
 
 	def testLayers(self):
-		map = self.model.addMap()
-		elev = map.addElevation()
+		map = self.model.addMap("map007")
+		elev = map.addElevation("elevation004")
 
-		dat = self.metamodel.addDataset()
+		dat = self.metamodel.addDataset("dataset002")
 		grid = fife.SquareGrid()
-		obj1 = dat.addObject("0")
+		obj1 = dat.addObject("object001")
 		obj1.set_string("Name", "MyHero")
-		obj2 = dat.addObject("1")
+		obj2 = dat.addObject("object002")
 		obj2.set_string("Name", "Goon")
 
-		self.assertEqual(obj1.oget_string("id"), "0")
-		self.assertEqual(obj2.oget_string("id"), "1")
+		self.assertEqual(obj1.oget_string("id"), "object001")
+		self.assertEqual(obj2.oget_string("id"), "object002")
 
-		layer = elev.addLayer(grid)
+		layer = elev.addLayer("layer003", grid)
 
 		self.assertEqual(layer.hasInstances(), 0)
 		#self.assertEqual(layer.getElevation(), elev)
@@ -129,8 +129,8 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(inst.getPosition(), fife.Point(4,4))
 		
 	def testMetaModel(self):
-		dat1 = self.metamodel.addDataset()
-		dat2 = self.metamodel.addDataset()
+		dat1 = self.metamodel.addDataset("dataset003")
+		dat2 = self.metamodel.addDataset("dataset004")
 		dat1.set_string("Name", "Dat1")
 		dat2.set_string("Name", "Dat2")
 
@@ -144,7 +144,7 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(len(meta_query), 1)
 
 	def testDatasets(self):
-		dat = self.metamodel.addDataset()
+		dat = self.metamodel.addDataset("dataset005")
 
 		obj1 = dat.addObject("1")
 		obj2 = dat.addObject("2")
@@ -178,12 +178,12 @@ class TestModel(unittest.TestCase):
 
 class TestActionAngles(unittest.TestCase):
 	def setUp(self):
-		self.runaction = fife.Action()
+		self.runaction = fife.Action("action001")
 		self.runaction.addAnimation(90, 1)
 		self.runaction.addAnimation(0, 0)
 		self.runaction.addAnimation(270, 3)
 		self.runaction.addAnimation(180, 2)
-		self.walkaction = fife.Action()
+		self.walkaction = fife.Action("action002")
 		self.walkaction.addAnimation(70, 1)
 		self.walkaction.addAnimation(200, 2)
 		self.walkaction.addAnimation(320, 3)
@@ -258,19 +258,19 @@ class InstanceListener(fife.InstanceListener):
 class ActivityTests(unittest.TestCase):
 	def setUp(self):
 		grid = fife.HexGrid()
-		elev = fife.Elevation()
-		self.layer = elev.addLayer(grid)
+		elev = fife.Elevation("elevation010")
+		self.layer = elev.addLayer("layer010", grid)
 		
 		self.target = fife.Location()
 		self.target.layer = self.layer
 		self.target.elevation = elev
 		self.target.position = fife.Point(10,10)
 		
-		self.obj = fife.Object()
+		self.obj = fife.Object("object010")
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
 		self.inst = self.layer.addInstance(self.obj, fife.Point(4,4))
-		self.action = self.obj.addAction('run')
+		self.action = self.obj.addAction('action010', 'run')
 		self.action.addAnimation(0, 1)
 		self.action.thisown = 0
 		self.listener = InstanceListener()

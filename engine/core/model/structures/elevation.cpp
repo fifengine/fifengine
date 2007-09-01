@@ -39,8 +39,8 @@
 
 namespace FIFE {
 
-	Elevation::Elevation(Map* map) 
-		: AttributedClass("map_elevation"),
+	Elevation::Elevation(const std::string& identifier, Map* map) 
+		: AttributedClass(identifier, "map_elevation"),
 		m_map(map),
 		m_reference_layer(0) {
 	}
@@ -57,8 +57,8 @@ namespace FIFE {
 		return m_layers.size();
 	}
 
-	Layer* Elevation::addLayer(CellGrid* grid) {
-		Layer* layer = new Layer(this, grid);
+	Layer* Elevation::addLayer(const std::string& identifier, CellGrid* grid) {
+		Layer* layer = new Layer(identifier, this, grid);
 		m_layers.push_back(layer);
 		return layer;
 	}

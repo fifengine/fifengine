@@ -22,7 +22,7 @@ namespace FIFE {
 			Model();
 			~Model();
 
-			Map* addMap();
+			Map* addMap(const std::string& identifier);
 			void removeMap(Map*);
 
 			std::list<Map*> getMaps() const;

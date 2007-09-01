@@ -26,7 +26,7 @@ namespace FIFE {
 
 	class Layer : public AttributedClass {
 		public:
-			Layer(Elevation* elevation, CellGrid* geometry);
+			Layer(const std::string& identifier, Elevation* elevation, CellGrid* geometry);
 			~Layer();
 
 			Elevation* getElevation();

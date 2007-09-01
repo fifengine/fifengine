@@ -10,18 +10,18 @@ class AnimationTests(unittest.TestCase):
 
 		self.engine = fife.Engine()
 		self.grid = fife.SquareGrid(True)
-		elev = fife.Elevation()
-		self.layer = elev.addLayer(self.grid)
+		elev = fife.Elevation("Elevation001")
+		self.layer = elev.addLayer("Layer001", self.grid)
 		
 		self.target = fife.Location()
 		self.target.layer = self.layer
 		self.target.elevation = elev
 		self.target.position = fife.Point(19,9)
 		
-		self.obj = fife.Object("0")
+		self.obj = fife.Object("object001")
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
-		self.action = self.obj.addAction('walk')
+		self.action = self.obj.addAction('action001', 'walk')
 		self.action.thisown = 0
 		addResource = self.engine.animationPool.addResourceFromFile
 		for index, direction in enumerate(dirnames):
@@ -34,7 +34,9 @@ class AnimationTests(unittest.TestCase):
 		del self.engine
 
 	def testWalkingAction(self):
+		print 'test1'
 		getAnimation = self.engine.animationPool.getAnimation
+		print 'test2'
 		self.inst.act('walk', self.target, 0.05)
 		self.engine.initializePumping()
 		backend = self.engine.renderBackend

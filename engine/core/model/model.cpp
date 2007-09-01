@@ -44,8 +44,8 @@ namespace FIFE {
 		delete m_meta;
 	}
 
-	Map* Model::addMap() {
-		Map* map = new Map();
+	Map* Model::addMap(const std::string& identifier) {
+		Map* map = new Map(identifier);
 		m_maps.push_back(map);
 		return map;
 	}

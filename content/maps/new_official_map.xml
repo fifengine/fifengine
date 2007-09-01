@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<map format="1.0">
+<map id="OfficialMap" format="1.0">
 
 	<metadata>
 		<param type="text" name="Name">official_map.xml</param>
@@ -47,14 +47,14 @@
 	<dataset type="XML" source="content/archetypes/critters/humans/girl.xml" />
 	-->
 
-	<elevation>
+	<elevation id="OfficialMapElevation">
 
 		<metadata>
 			<param name="_START_POSITION" type="Point"><x>6</x><y>7</y></param>
 		</metadata>
 
 		<!-- TILE LAYER -->
-		<layer grid_type="square" scaling=".25">
+		<layer id="OfficialMapTileLayer" grid_type="square" scaling=".25">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE" type="text">content/gfx/insts/outlines/tile_outline_diamond_126_96.png</param>

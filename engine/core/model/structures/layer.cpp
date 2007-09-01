@@ -37,8 +37,8 @@
 
 namespace FIFE {
 
-	Layer::Layer(Elevation* elevation, CellGrid* grid)
-		: AttributedClass("map_Layer"),
+	Layer::Layer(const std::string& identifier, Elevation* elevation, CellGrid* grid)
+		: AttributedClass(identifier, "map_Layer"),
 		m_elevation(elevation),
 		m_instances_visibility(true),
 		m_grid(grid) {

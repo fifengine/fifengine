@@ -24,12 +24,12 @@ namespace FIFE {
 	class Map : public AttributedClass {
 		public:
 
-			Map();
+			Map(const std::string& identifier);
 			~Map();
 
 			void useDataset(Dataset* dataset);
 
-			Elevation* addElevation();
+			Elevation* addElevation(const std::string& identifier);
 			void removeElevation(Elevation*);
 
 			template<typename T>

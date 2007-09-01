@@ -31,8 +31,9 @@
 
 namespace FIFE {
 
-	AttributedClass::AttributedClass(const std::string& className) 
-		: m_className(className) { 
+	AttributedClass::AttributedClass(const std::string& identifier, const std::string& className) 
+		: m_id(identifier),
+		m_className(className) { 
 	}
 
 	AttributedClass::AttributedClass(const AttributedClass& ac)
@@ -43,6 +44,10 @@ namespace FIFE {
 	AttributedClass::~AttributedClass() {
 
 	};
+
+	const std::string& AttributedClass::Id() const {
+		return m_id;
+	}
 
 	void AttributedClass::updateAttributes(const AttributedClass* attrObject, bool override) {
 		if( attrObject == 0 )

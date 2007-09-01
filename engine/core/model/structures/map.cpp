@@ -40,8 +40,8 @@
 
 namespace FIFE {
 
-	Map::Map() 
-		: AttributedClass("Map") {
+	Map::Map(const std::string& identifier) 
+		: AttributedClass(identifier, "Map") {
 	}
 
 	Map::~Map() {
@@ -60,8 +60,8 @@ namespace FIFE {
 		m_datasets.push_back(dataset);
 	}
 
-	Elevation* Map::addElevation() {
-		Elevation* elevation = new Elevation(this);
+	Elevation* Map::addElevation(const std::string& identifier) {
+		Elevation* elevation = new Elevation(identifier, this);
 		m_elevations.push_back(elevation);
 		return elevation;
 	}
