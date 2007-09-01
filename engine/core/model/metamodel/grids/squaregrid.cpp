@@ -105,4 +105,14 @@ namespace FIFE {
 	DoublePoint SquareGrid::toExactLayerCoords(const DoublePoint& elevation_coord) {
 		return m_inverse_matrix * elevation_coord;
 	}
+
+	void SquareGrid::getVertices(std::vector<DoublePoint>& vtx, const Point& cell) {
+		vtx.clear();
+		double x = static_cast<double>(cell.x);
+		double y = static_cast<double>(cell.y);
+		vtx.push_back(DoublePoint(x-0.5, y-0.5));
+		vtx.push_back(DoublePoint(x+0.5, y-0.5));
+		vtx.push_back(DoublePoint(x+0.5, y+0.5));
+		vtx.push_back(DoublePoint(x-0.5, y+0.5));
+	}
 }

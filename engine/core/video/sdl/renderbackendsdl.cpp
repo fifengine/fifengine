@@ -132,6 +132,9 @@ namespace FIFE {
 
 	inline void RenderBackendSDL::putPixel(int x, int y, int r, int g, int b)
 	{
+		if ((x < 0) || (x >= m_screen->w) || (y < 0) || (y >= m_screen->h)) {
+			return;
+		}
 		int bpp = m_screen->format->BytesPerPixel;
 		SDL_LockSurface(m_screen);
 		Uint8 *p = (Uint8 *)m_screen->pixels + y * m_screen->pitch + x * bpp;

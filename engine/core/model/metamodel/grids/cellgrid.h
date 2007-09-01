@@ -106,6 +106,12 @@ namespace FIFE {
 		 */
 		virtual DoublePoint toExactLayerCoords(const DoublePoint& elevation_coord) = 0;
 
+		/** Fills given point vector with vertices from selected cell
+		 *  @param vtx vertices for given cell
+		 *  @param cell cell to get vertices from
+		 */
+		virtual void getVertices(std::vector<DoublePoint>& vtx, const Point& cell) = 0;
+
 		/** Set the cellgrid x shift 
 		 *  @param shift The shift in elevation coords
 		 */

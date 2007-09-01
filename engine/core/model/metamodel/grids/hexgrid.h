@@ -45,6 +45,7 @@ namespace FIFE {
 		DoublePoint getOffset(const Point& curpos, const Point& target, double distance);
 		DoublePoint toElevationCoords(const DoublePoint& layer_coords);
 		DoublePoint toExactLayerCoords(const DoublePoint& elevation_coord);
+		void getVertices(std::vector<DoublePoint>& vtx, const Point& cell);
 	};
 }
 

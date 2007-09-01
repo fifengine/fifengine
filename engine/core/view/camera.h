@@ -86,6 +86,10 @@ namespace FIFE {
 		 */
 		void setZoom(double zoom) {
 			m_zoom = zoom;
+			if (m_zoom < 0.001) {
+				m_zoom = 0.001;
+			}
+
 			updateMatrices();
 		}
 

@@ -84,4 +84,8 @@ namespace FIFE {
 		assert(1);
 		return m_inverse_matrix * elevation_coord;
 	}
+
+	void HexGrid::getVertices(std::vector<DoublePoint>& vtx, const Point& cell) {
+		assert(1);
+	}
 }

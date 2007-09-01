@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from swig_test_utils import *
+import time
 
 class TestView(unittest.TestCase):
 	
@@ -12,26 +13,23 @@ class TestView(unittest.TestCase):
 		self.grid = fife.SquareGrid()
 		pool = self.engine.getImagePool()
 		
-		obj1 = dat.addObject("0")
+		self.obj1 = dat.addObject("0")
 		imgid = pool.addResourceFromFile('content/gfx/objects/mushroom/mushroom_007.png')
-		obj1.setStaticImageId(imgid)
+		self.obj1.setStaticImageId(imgid)
 		
-		obj2 = dat.addObject("1")
+		self.obj2 = dat.addObject("1")
 		imgid = pool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
-		obj2.setStaticImageId(imgid)
+		self.obj2.setStaticImageId(imgid)
 		
 		img = pool.getImage(imgid)
 		self.screen_cell_w = img.getWidth()
 		
-		layer = elev.addLayer("layer001", self.grid)
-		layer.addInstance(obj1, fife.Point(0,0))
-		layer.addInstance(obj2, fife.Point(1,1))
-		layer.addInstance(obj2, fife.Point(2,2))
+		self.layer = elev.addLayer("layer001", self.grid)
 		
 		self.camloc = fife.Location()
 		self.camloc.elevation = elev
-		self.camloc.layer = layer
-		self.camloc.position = fife.Point(0,0)
+		self.camloc.layer = self.layer
+		self.camloc.position = fife.Point(-2,-2)
 
 		
 	def tearDown(self):
@@ -39,9 +37,9 @@ class TestView(unittest.TestCase):
 
 	def testCamera(self):
 		cam = fife.Camera()
-		cam.setScreenCellWidth(60)
+		cam.setScreenCellWidth(int(self.screen_cell_w/1.41))
 		cam.setRotation(45)
-		cam.setTilt(45)
+		cam.setTilt(40)
 		cam.setLocation(self.camloc)
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
@@ -49,22 +47,35 @@ class TestView(unittest.TestCase):
 		self.engine.getView().addCamera(cam)
 		self.engine.initializePumping()
 		
-		self.camloc.position.x -= 300
-		self.camloc.position.y -= 300
-		cam.setLocation(self.camloc)
-		outpt = cam.toScreenCoords(fife.DoublePoint(1,1))
-		print "1,1 = %d, %d" % (outpt.x, outpt.y)
-		outpt = cam.toScreenCoords(fife.DoublePoint(1,200))
-		print "1,2 = %d, %d" % (outpt.x, outpt.y)
+		for y in xrange(4):
+			for x in xrange(4):
+				self.layer.addInstance(self.obj2, fife.Point(x,y))
+				self.engine.pump()
+				time.sleep(0.01)
+		self.layer.addInstance(self.obj1, fife.Point(0,0))
+		self.layer.addInstance(self.obj1, fife.Point(2,1))
 		
-		for i in xrange(400):
-			cam.setRotation(cam.getRotation() + 80)
-			cam.setZoom(cam.getZoom() + 0.004)
-			self.camloc.position.x += 1
-			cam.setLocation(self.camloc)
-			#cam.setTilt(cam.getTilt() + 1)
-			#print "current rotation " + str(cam.getRotation())
-			
+		for i in xrange(120):
+			if i > 20 and i < 30:
+				cam.setRotation(cam.getRotation() + 1)
+			elif i > 30 and i < 40:
+				cam.setRotation(cam.getRotation() - 1)
+			elif i > 40 and i < 50:
+				if i % 2 == 0:
+					self.camloc.position.x += 1
+				cam.setLocation(self.camloc)
+			elif i > 50 and i < 60:
+				if i % 2 == 0:
+					self.camloc.position.x -= 1
+				cam.setLocation(self.camloc)
+			elif i > 60 and i < 70:
+				cam.setTilt(cam.getTilt() + 1)
+			elif i > 70 and i < 80:
+				cam.setTilt(cam.getTilt() - 1)
+			elif i > 80 and i < 90:	
+				cam.setZoom(cam.getZoom() - 0.010)
+			elif i > 90 and i < 100:	
+				cam.setZoom(cam.getZoom() + 0.010)
 			self.engine.pump()
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)

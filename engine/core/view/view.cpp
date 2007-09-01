@@ -128,6 +128,7 @@ namespace FIFE {
 					std::cout << "Instance exact position in elevation  = " << exact_elevpos << "\n";
 					Point drawpt = camera->toScreenCoords(exact_elevpos);
 					std::cout << "Instance exact position in screen = " << drawpt << "\n";
+
 					int w = image->getWidth();
 					int h = image->getHeight();
 					drawpt.x -= w / 2;
@@ -142,6 +143,22 @@ namespace FIFE {
 					} else {
 						std::cout << "Instance is not visible in viewport, skipping\n";
 					}
+
+					// draw grid for testing purposes
+					std::vector<DoublePoint> vertices;
+					cg->getVertices(vertices, instance->getPosition());
+					std::vector<DoublePoint>::const_iterator it = vertices.begin();
+					Point firstpt = camera->toScreenCoords(cg->toElevationCoords(*it));
+					Point pt1(firstpt.x, firstpt.y);
+					Point pt2;
+					++it;
+					while (it != vertices.end()) {
+						pt2 = camera->toScreenCoords(cg->toElevationCoords(*it));
+						m_renderbackend->drawLine(pt1, pt2, 0, 255, 0);
+						pt1 = pt2;
+						++it;
+					}
+					m_renderbackend->drawLine(pt2, firstpt, 0, 255, 0);
 				}
 				else {
 					std::cout << "Instance does not have image to render\n";
