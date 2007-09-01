@@ -24,14 +24,14 @@ class TestView(unittest.TestCase):
 		self.screen_cell_w = img.getWidth()
 		
 		layer = elev.addLayer(self.grid)
-		layer.addInstance(obj1, fife.Point(4,4))
-		layer.addInstance(obj2, fife.Point(5,6))
-		layer.addInstance(obj2, fife.Point(5,4))
+		layer.addInstance(obj1, fife.Point(0,0))
+		layer.addInstance(obj2, fife.Point(1,1))
+		layer.addInstance(obj2, fife.Point(2,2))
 		
 		self.camloc = fife.Location()
 		self.camloc.elevation = elev
 		self.camloc.layer = layer
-		self.camloc.position = fife.Point(5,5)
+		self.camloc.position = fife.Point(0,0)
 
 		
 	def tearDown(self):
@@ -39,7 +39,7 @@ class TestView(unittest.TestCase):
 
 	def testCamera(self):
 		cam = fife.Camera()
-		cam.setScreenCellWidth(self.screen_cell_w)
+		cam.setScreenCellWidth(60)
 		cam.setRotation(45)
 		cam.setTilt(45)
 		cam.setLocation(self.camloc)
@@ -52,15 +52,24 @@ class TestView(unittest.TestCase):
 		self.camloc.position.x -= 300
 		self.camloc.position.y -= 300
 		cam.setLocation(self.camloc)
+		outpt = cam.toScreenCoords(fife.DoublePoint(1,1))
+		print "1,1 = %d, %d" % (outpt.x, outpt.y)
+		outpt = cam.toScreenCoords(fife.DoublePoint(1,200))
+		print "1,2 = %d, %d" % (outpt.x, outpt.y)
 		
-		for i in xrange(200):
-			cam.setTilt(cam.getTilt() + 1)
-			print "------------------------------------------> " + str(cam.getTilt())
+		for i in xrange(400):
+			cam.setRotation(cam.getRotation() + 80)
+			cam.setZoom(cam.getZoom() + 0.004)
+			self.camloc.position.x += 1
+			cam.setLocation(self.camloc)
+			#cam.setTilt(cam.getTilt() + 1)
+			#print "current rotation " + str(cam.getRotation())
 			
 			self.engine.pump()
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)
 	
+		
 
 TEST_CLASSES = [TestView]
 

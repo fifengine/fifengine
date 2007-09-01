@@ -50,11 +50,12 @@ namespace FIFE {
 	}
 
 	void Camera::updateMatrices() {
-		double cell_w_multip = static_cast<double>(m_screen_cell_width);
+		double scale = 1.0 / (m_zoom * static_cast<double>(m_screen_cell_width));
 		m_matrix.loadRotate(M_PI/180*m_rotation, 0.0, 0.0, 1.0);
+		std::cout << "...applying matrix rotation " << M_PI/180*m_rotation << std::endl;
 		m_matrix.applyRotate(M_PI/180*m_tilt, 1.0, 0.0, 0.0);
-		std::cout << "____________ applying rotation (tilt) " << M_PI/180*m_tilt << std::endl;
-		m_matrix.applyScale(m_zoom*cell_w_multip, m_zoom*cell_w_multip, 1);
+		std::cout << "...applying matrix scale " << scale << std::endl;
+		m_matrix.applyScale(scale, scale, 1);
 		if (m_location.layer) {
 			CellGrid* cg = m_location.layer->getCellGrid();
 			if (cg) {
@@ -70,7 +71,7 @@ namespace FIFE {
 	}
 
 	Point Camera::toScreenCoords(DoublePoint elevation_coords) {
-		std::cout << "Camera::toScreenCoords:" << m_matrix;
+		//std::cout << "Camera::toScreenCoords:" << m_matrix;
 		return doublePt2intPt(m_inverse_matrix * elevation_coords);
 	}
 

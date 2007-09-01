@@ -213,7 +213,7 @@ namespace FIFE {
 			PointType3D<T> vec3d;
 			vec3d.x = vec.x;
 			vec3d.y = vec.y;
-			vec3d.z = 0;
+			vec3d.z = 1;
 			vec3d = operator*(vec3d);
 			PointType2D<T> vec2d;
 			vec2d.x = vec3d.x;
