@@ -89,12 +89,22 @@ namespace FIFE {
 		/** Transforms given point from layer coordinates to elevation coordinates
 		 *  @return point in elevation coordinates
 		 */
-		virtual DoublePoint toElevationCoords(DoublePoint layer_coords);
+		DoublePoint toElevationCoords(const Point& layer_coords);
 
 		/** Transforms given point from elevation coordinates to layer coordinates
 		 *  @return point in layer coordinates
 		 */
-		virtual DoublePoint toLayerCoords(DoublePoint elevation_coord);
+		Point toLayerCoords(const DoublePoint& elevation_coord);
+
+		/** Transforms given point from layer coordinates to elevation coordinates
+		 *  @return point in elevation coordinates
+		 */
+		virtual DoublePoint toElevationCoords(const DoublePoint& layer_coords) = 0;
+
+		/** Transforms given point from elevation coordinates to layer coordinates
+		 *  @return point in layer coordinates
+		 */
+		virtual DoublePoint toExactLayerCoords(const DoublePoint& elevation_coord) = 0;
 
 		/** Set the cellgrid x shift 
 		 *  @param shift The shift in elevation coords

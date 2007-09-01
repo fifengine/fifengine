@@ -34,9 +34,7 @@ namespace FIFE {
 			Action* getCurrentAction();
 			float getMovementSpeed();
 			std::vector<Location>* getNextCells();
-			Point getOffsetSource();
-			Point getOffsetTarget();
-			double getOffsetDistance();
+			DoublePoint getExactPosition();
 			int getActionRuntime();
 			void act(const std::string& action_name, const Location& target, const double speed);
 			void act(const std::string& action_name, const Point& direction, bool repeating=false);

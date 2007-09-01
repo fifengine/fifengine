@@ -101,14 +101,13 @@ namespace FIFE {
 				std::cout << "Iterating instances...\n";
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
-				DoublePoint layerpos = intPt2doublePt(instance->getPosition());
-				DoublePoint elevpos = cg->toElevationCoords(layerpos);
+				DoublePoint elevpos = cg->toElevationCoords(instance->getPosition());
 				std::cout << "Instance layer position = " << instance->getPosition() << "\n";
 				std::cout << "Instance elevation position = " << elevpos << "\n";
 				Action* action = instance->getCurrentAction();
 				if (action) {
 					std::cout << "Instance has action\n";
-					DoublePoint elevface = cg->toElevationCoords(intPt2doublePt(instance->getFacingCell()));
+					DoublePoint elevface = cg->toElevationCoords(instance->getFacingCell());
 					float dx = static_cast<float>(elevface.x - elevpos.x);
 					float dy = static_cast<float>(elevface.y - elevpos.y);
 					int angle = static_cast<int>(atan2f(dx,dy)*180.0/M_PI);
@@ -123,14 +122,7 @@ namespace FIFE {
 				}
 				if (image) {
 					std::cout << "Instance has image to render\n";
-					double offset_dist = instance->getOffsetDistance();
-					std::cout << "Instance offset distance = " << offset_dist << "\n";
-					DoublePoint exact_pos = layerpos;
-					if (offset_dist > 0) {
-						exact_pos = cg->getOffset(instance->getPosition(), 
-						                          instance->getOffsetTarget(), 
-						                          offset_dist);
-					}
+					DoublePoint exact_pos = instance->getExactPosition();
 					std::cout << "Instance exact position in layer = " << exact_pos << "\n";
 					DoublePoint exact_elevpos = cg->toElevationCoords(exact_pos);
 					std::cout << "Instance exact position in elevation  = " << exact_elevpos << "\n";

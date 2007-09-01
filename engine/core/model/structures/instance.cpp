@@ -375,27 +375,6 @@ namespace FIFE {
 		return NULL;
 	}
 
-	Point Instance::getOffsetSource() {
-		if (m_actioninfo) {
-			return m_actioninfo->m_offsetsource;
-		}
-		return m_location.position;
-	}
-
-	Point Instance::getOffsetTarget() {
-		if (m_actioninfo) {
-			return m_actioninfo->m_offsettarget;
-		}
-		return m_location.position;
-	}
-
-	double Instance::getOffsetDistance() {
-		if (m_actioninfo) {
-			return m_actioninfo->m_offset_distance;
-		}
-		return 0;
-	}
-
 	Point Instance::getFacingCell() {
 		if (m_actioninfo) {
 			return m_actioninfo->m_facingcell;
@@ -423,5 +402,19 @@ namespace FIFE {
 			}
 		}
 		return m_cached_static_img_id;
+	}
+
+	DoublePoint Instance::getExactPosition() {
+		if (m_actioninfo) {
+			if (m_actioninfo->m_offset_distance > 0) {
+				assert(m_location.layer);
+				CellGrid* cg = m_location.layer->getCellGrid();
+				assert(cg);
+				return cg->getOffset(m_actioninfo->m_offsetsource, 
+						     m_actioninfo->m_offsettarget, 
+						     m_actioninfo->m_offset_distance);
+			} 
+		}
+		return intPt2doublePt(m_location.position);
 	}
 }

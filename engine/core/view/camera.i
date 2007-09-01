@@ -18,5 +18,6 @@ namespace FIFE {
 		const Location& getLocation() const;
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
+		void setScreenCellWidth(unsigned int width);
 	};
 }

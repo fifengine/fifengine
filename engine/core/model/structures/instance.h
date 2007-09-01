@@ -119,27 +119,10 @@ namespace FIFE {
  			 */
 			std::vector<Location>* getNextCells();
 
-			/** 
-			 *  Instances move gradually from one cell to next. When this happens, instance
-			 *  is offsetted from offset source cell towards offset target cell
-			 * @return coordinates for cell where instance is offsetted from
-			 * @see getOffsetTarget
-			 * @see getOffsetDistance
- 			 */
-			Point getOffsetSource();
-
-			/** 
-			 * @return coordinates for cell where instance is offsetted towards
-			 * @see getOffsetSource
-			 * @see getOffsetDistance
- 			 */
-			Point getOffsetTarget();
-
-			/** Gets the distance of cell offset
-			 * @see getOffsetCell
-			 * @return distance of offset. Relative to layer coordinates
+			/** Returns the exact position of this instance taking offsets into account
+			 * @return exact position
 			 */
-			double getOffsetDistance();
+			DoublePoint getExactPosition();
 
 			/** Returns the direction where instance is heading
 			 * @see getNextCell

@@ -94,6 +94,11 @@ namespace FIFE {
 		 */ 
 		double getZoom() const { return m_zoom; }
 
+		void setScreenCellWidth(unsigned int width) { 
+			m_screen_cell_width = width;
+			updateMatrices();
+		}
+
 		/** Sets the location for camera
 		 * @param location location (center point) to render
 		 */ 
@@ -128,7 +133,6 @@ namespace FIFE {
 		 */
 		Point toScreenCoords(DoublePoint elevation_coords);
 
-
 	private:
 		void updateMatrices();
 
@@ -140,6 +144,7 @@ namespace FIFE {
 		Location m_location;
 		Rect m_viewport;
 		bool m_view_updated;
+		unsigned int m_screen_cell_width;
 	};
 }
 #endif

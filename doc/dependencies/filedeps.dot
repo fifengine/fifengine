@@ -492,6 +492,8 @@ digraph "source tree" {
     "engine/core/video/sdl/sdlimage.cpp" -> "util/settingsmanager.h"
     "engine/core/video/sdl/sdlimage.h" -> "video/image.h"
     "engine/core/view/camera.cpp" -> "camera.h"
+    "engine/core/view/camera.cpp" -> "model/metamodel/grids/cellgrid.h"
+    "engine/core/view/camera.cpp" -> "model/structures/layer.h"
     "engine/core/view/camera.cpp" -> "view.h"
     "engine/core/view/camera.h" -> "model/structures/location.h"
     "engine/core/view/camera.h" -> "util/matrix.h"

@@ -21,6 +21,7 @@
 
 // Standard C++ library includes
 #include <assert.h>
+#include <iostream>
 
 // 3rd party library includes
 
@@ -95,5 +96,13 @@ namespace FIFE {
 	DoublePoint SquareGrid::getOffset(const Point& curpos, const Point& target, double distance) {
 		assert(1);
 		return DoublePoint(0,0);
+	}
+
+	DoublePoint SquareGrid::toElevationCoords(const DoublePoint& layer_coords) {
+		return m_matrix * layer_coords;
+	}
+
+	DoublePoint SquareGrid::toExactLayerCoords(const DoublePoint& elevation_coord) {
+		return m_inverse_matrix * elevation_coord;
 	}
 }

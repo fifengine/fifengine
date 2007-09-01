@@ -58,18 +58,18 @@ namespace FIFE {
 		}
 	}
 
-	DoublePoint CellGrid::toElevationCoords(DoublePoint layer_coords) {
-		return m_matrix * layer_coords;
-	}
-
-	DoublePoint CellGrid::toLayerCoords(DoublePoint elevation_coord) {
-		return m_inverse_matrix * elevation_coord;
-	}
-
 	void CellGrid::updateMatrices() {
 		//m_matrix.loadRotate(M_PI/180*m_rotation, 0.0, 0.0, 1.0);
 		//m_matrix.applyScale(m_scale, m_scale, 1);
 		m_matrix.loadTranslate(m_xshift, m_yshift, 0);
 		m_inverse_matrix = m_matrix.inverse();
+	}
+
+	Point CellGrid::toLayerCoords(const DoublePoint& elevation_coord) {
+		return doublePt2intPt(toExactLayerCoords(elevation_coord));
+	}
+
+	DoublePoint CellGrid::toElevationCoords(const Point& layer_coords) {
+		return toElevationCoords(intPt2doublePt(layer_coords));
 	}
 }

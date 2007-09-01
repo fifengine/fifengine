@@ -14,13 +14,14 @@ class TestView(unittest.TestCase):
 		
 		obj1 = dat.addObject("0")
 		imgid = pool.addResourceFromFile('content/gfx/objects/mushroom/mushroom_007.png')
-		print imgid
 		obj1.setStaticImageId(imgid)
 		
 		obj2 = dat.addObject("1")
 		imgid = pool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
-		print imgid
 		obj2.setStaticImageId(imgid)
+		
+		img = pool.getImage(imgid)
+		self.screen_cell_w = img.getWidth()
 		
 		layer = elev.addLayer(self.grid)
 		layer.addInstance(obj1, fife.Point(4,4))
@@ -38,14 +39,24 @@ class TestView(unittest.TestCase):
 
 	def testCamera(self):
 		cam = fife.Camera()
+		cam.setScreenCellWidth(self.screen_cell_w)
+		cam.setRotation(45)
+		cam.setTilt(45)
 		cam.setLocation(self.camloc)
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
 		cam.setViewPort(viewport)
 		self.engine.getView().addCamera(cam)
-		cam
 		self.engine.initializePumping()
-		for i in xrange(100):
+		
+		self.camloc.position.x -= 300
+		self.camloc.position.y -= 300
+		cam.setLocation(self.camloc)
+		
+		for i in xrange(200):
+			cam.setTilt(cam.getTilt() + 1)
+			print "------------------------------------------> " + str(cam.getTilt())
+			
 			self.engine.pump()
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)
