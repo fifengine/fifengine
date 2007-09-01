@@ -85,7 +85,7 @@ class ModelLoader(saxutils.DefaultHandler):
 					assert handler, "Corrupt XML state."
 
 					parser.setContentHandler(handler)
-					parser.parse(open("../../" + source))
+					parser.parse(open(source))
 
 				elif (type == "Embedded"):
 					if (self.state == self.SModel):
@@ -270,13 +270,10 @@ class ModelLoader(saxutils.DefaultHandler):
 		elif (name == 'instances'):
 			self.state = self.SLayer
 
-model = fife.Model()
+def loadMapFile(path, model):
+	parser = make_parser()
+	handler = ModelLoader(model)
+	parser.setContentHandler(handler)
 
-parser = make_parser()
-handler = ModelLoader(model)
-parser.setContentHandler(handler)
+	parser.parse(open(path))
 
-def loadMapFile(path):
-	parser.parse(open("../../" + path))
-
-loadMapFile("content/maps/new_official_map.xml")
