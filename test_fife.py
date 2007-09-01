@@ -93,6 +93,7 @@ def run_all(tests):
 		
 	core_errors, core_failures = run_core_tests(tests['core'])
 	swig_errors, swig_failures = run_test_modules(tests['swig'])
+	ext_errors, ext_failures = run_test_modules(tests['ext'])
 	analyzer_errors = run_analyzers(tests['analyzer'])
 	
 	print 80 * '='
@@ -112,6 +113,13 @@ def run_all(tests):
 	else:
 		print 'No SWIG errors found'
 	
+	if swig_errors or swig_failures:
+		print_errors('Errors in extensions tests', swig_errors)
+		print_errors('Failures in extensions tests', swig_failures)
+		errorsfound = True
+	else:
+		print 'No Extensions errors found'
+
 	if analyzer_errors:
 		print_errors('Errors in Analyzers', analyzer_errors)
 		errorsfound = True
@@ -158,7 +166,7 @@ def run(automatic, selected_cases):
 		tests[index] = ('Analyzers', t, [t], run_analyzers)
 		index += 1
 	
-	alltests = {'core': core_tests, 'swig': swig_tests, 'analyzer': analyzers}
+	alltests = {'core': core_tests, 'swig': swig_tests, 'ext': extension_tests, 'analyzer': analyzers}
 	tests[index] = ('Other', 'Run all tests', alltests, run_all)
 	tests[index+1] = ('Other', 'Cancel and quit', None, quit)
 
