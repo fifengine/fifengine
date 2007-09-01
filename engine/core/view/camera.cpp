@@ -39,16 +39,17 @@ namespace FIFE {
 		m_zoom(1),
 		m_location(),
 		m_viewport() {
+		updateMatrices();
 	}
 
 	Camera::~Camera() {
 	}
 
 	void Camera::updateMatrices() {
-		m_matrix.loadRotate(M_PI/180*m_rotation, 0.0, 0.0, 1.0);
-		m_matrix.applyRotate(M_PI/180*m_tilt, 1.0, 0.0, 0.0);
-		m_matrix.applyScale(m_zoom, m_zoom, 1);
-		m_matrix.applyTranslate(m_location.position.x, m_location.position.y, 0);
+		//m_matrix.loadRotate(M_PI/180*m_rotation, 0.0, 0.0, 1.0);
+		//m_matrix.applyRotate(M_PI/180*m_tilt, 1.0, 0.0, 0.0);
+		//m_matrix.applyScale(m_zoom, m_zoom, 1);
+		m_matrix.loadTranslate(-m_location.position.x, -m_location.position.y, 0);
 		m_inverse_matrix = m_matrix.inverse();
 	}
 

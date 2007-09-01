@@ -101,7 +101,8 @@ namespace FIFE {
 				std::cout << "Iterating instances...\n";
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
-				DoublePoint elevpos = cg->toElevationCoords(intPt2doublePt(instance->getPosition()));
+				DoublePoint layerpos = intPt2doublePt(instance->getPosition());
+				DoublePoint elevpos = cg->toElevationCoords(layerpos);
 				std::cout << "Instance layer position = " << instance->getPosition() << "\n";
 				std::cout << "Instance elevation position = " << elevpos << "\n";
 				Action* action = instance->getCurrentAction();
@@ -124,7 +125,7 @@ namespace FIFE {
 					std::cout << "Instance has image to render\n";
 					double offset_dist = instance->getOffsetDistance();
 					std::cout << "Instance offset distance = " << offset_dist << "\n";
-					DoublePoint exact_pos = elevpos;
+					DoublePoint exact_pos = layerpos;
 					if (offset_dist > 0) {
 						exact_pos = cg->getOffset(instance->getPosition(), 
 						                          instance->getOffsetTarget(), 
@@ -142,8 +143,12 @@ namespace FIFE {
 					drawpt.y -= h / 2;
 					drawpt.y += image->getYShift();
 					Rect r = Rect(drawpt.x, drawpt.y, w, h);
+					std::cout << "image(" << r << "), viewport (" << camera->getViewPort() << ")\n";
 					if (r.intersects(camera->getViewPort())) {
+						std::cout << "Instance is visible in viewport, rendering\n";
 						image->render(r);
+					} else {
+						std::cout << "Instance is not visible in viewport, skipping\n";
 					}
 				}
 				else {

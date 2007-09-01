@@ -151,6 +151,17 @@ namespace FIFE {
 			return *this;
 		}
 
+		/** Make this a scale matrix
+		 */
+		inline Matrix& loadScale(T x, T y, T z = 1) {
+			m0 = x;   m4 = 0;   m8  = 0;  m12 = 0;
+			m1 = 0;   m5 = y;   m9  = 0;  m13 = 0;
+			m2 = 0;   m6 = 0;   m10 = z;  m14 = 0;
+			m3 = 0;   m7 = 0;   m11 = 0;  m15 = 1;
+			
+			return *this;
+		}
+
 		/** Apply translation into this matrix
 		 */
 		inline Matrix& applyTranslate(T x, T y, T z) {
@@ -159,6 +170,18 @@ namespace FIFE {
 			m14 += m2*x + m6*y + m10*z;
 			return *this;
 		}
+
+		/** Make this a translation matrix
+		 */
+		inline Matrix& loadTranslate(T x, T y, T z) {
+			m0 = 1;   m4 = 0;   m8  = 0;  m12 = x;
+			m1 = 0;   m5 = 1;   m9  = 0;  m13 = y;
+			m2 = 0;   m6 = 0;   m10 = 1;  m14 = z;
+			m3 = 0;   m7 = 0;   m11 = 0;  m15 = 1;
+		
+			return *this;
+		}
+
 
 		/** Transform given point using this matrix
 		 */

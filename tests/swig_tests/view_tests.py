@@ -39,10 +39,13 @@ class TestView(unittest.TestCase):
 	def testCamera(self):
 		cam = fife.Camera()
 		cam.setLocation(self.camloc)
+		rb = self.engine.getRenderBackend()
+		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
+		cam.setViewPort(viewport)
 		self.engine.getView().addCamera(cam)
 		cam
 		self.engine.initializePumping()
-		for i in xrange(3):
+		for i in xrange(100):
 			self.engine.pump()
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)
