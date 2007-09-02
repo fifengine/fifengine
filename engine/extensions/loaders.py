@@ -165,7 +165,7 @@ class ModelLoader(handler.ContentHandler):
 						direction = attrs.get(attrName)
 
 				id = self.pool.addResourceFromFile(str(source))	
-				self.object.setStaticImageId(id)
+				self.object.addStaticImage(0, id)
 
 				assert source, "Image declared with no source location."	
 

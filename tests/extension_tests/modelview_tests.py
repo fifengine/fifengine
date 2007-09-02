@@ -23,8 +23,9 @@ class TestLoaders(unittest.TestCase):
 		self.layer = self.elevation.getLayersByString("id", "OfficialMapTileLayer")[0]
 		self.layer.thisown = 0
 
-		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().getStaticImageId())
+		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().getStaticImageIndexByAngle(0))
 		self.screen_cell_w = img.getWidth()
+		self.screen_cell_h = img.getHeight()
 
 		self.camloc = fife.Location()
 		self.camloc.elevation = self.elevation
@@ -37,7 +38,7 @@ class TestLoaders(unittest.TestCase):
 	def testModelView(self):
 
 		cam = fife.Camera()
-		cam.setScreenCellWidth(int(self.screen_cell_w/1.41))
+		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		cam.setRotation(45)
 		cam.setTilt(40)
 		cam.setLocation(self.camloc)
