@@ -19,8 +19,11 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_ANGLES_H
+#define FIFE_ANGLES_H
+
 // Standard C++ library includes
-#include <iostream>
+#include <map>
 
 // 3rd party library includes
 
@@ -28,26 +31,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
-#include "util/exception.h"
-
-#include "action.h"
 
 namespace FIFE {
-	Action::Action(const std::string& identifier)
-		: AttributedClass(identifier),
-		m_animations(),
-		m_duration(0) {
-	}
-
-	Action::~Action() {
-	}
-
-	int Action::getAnimationIndexByAngle(unsigned int angle) {
-		return getIndexByAngle(angle, m_animations);
-	}
-
-	void Action::addAnimation(unsigned int angle, int animation_index) {
-		m_animations[angle % 360] = animation_index;
-	}
+	typedef std::map<unsigned int, int> type_angle2id;
+	
+	/** Returns id for given angle from angle2id map
+	 * in case there are no elements in the map, negative value is returned
+	 */
+	int getIndexByAngle(unsigned int angle, const type_angle2id& angle2id);
 }
+
+#endif

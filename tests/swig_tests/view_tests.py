@@ -15,11 +15,11 @@ class TestView(unittest.TestCase):
 		
 		self.obj1 = dat.addObject("0")
 		imgid = pool.addResourceFromFile('content/gfx/objects/mushroom/mushroom_007.png')
-		self.obj1.setStaticImageId(imgid)
+		self.obj1.addStaticImage(0, imgid)
 		
 		self.obj2 = dat.addObject("1")
 		imgid = pool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
-		self.obj2.setStaticImageId(imgid)
+		self.obj2.addStaticImage(0, imgid)
 		
 		img = pool.getImage(imgid)
 		self.screen_cell_w = img.getWidth()

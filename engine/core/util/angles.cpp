@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
 
@@ -28,26 +27,58 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
-#include "util/exception.h"
-
-#include "action.h"
+#include "angles.h"
 
 namespace FIFE {
-	Action::Action(const std::string& identifier)
-		: AttributedClass(identifier),
-		m_animations(),
-		m_duration(0) {
-	}
+	int getIndexByAngle(unsigned int angle, const type_angle2id& angle2id) {
+		int wangle = angle % 360;
 
-	Action::~Action() {
-	}
+		if (angle2id.size() == 0) {
+			return -1;
+		}
+		if (angle2id.size() == 1) {
+			return angle2id.begin()->second;
+		}
 
-	int Action::getAnimationIndexByAngle(unsigned int angle) {
-		return getIndexByAngle(angle, m_animations);
-	}
+		type_angle2id::const_iterator u(angle2id.upper_bound(wangle));
+		type_angle2id::const_iterator tmp;
 
-	void Action::addAnimation(unsigned int angle, int animation_index) {
-		m_animations[angle % 360] = animation_index;
+		// take care of the forward wrapping case
+		if (u == angle2id.end()) {
+			int ud = wangle - (--u)->first;
+			int ld = 360 - wangle + angle2id.begin()->first;
+			if (ud > ld) {
+				// wrapped value (first)
+				return angle2id.begin()->second;
+			}
+			// non-wrapped value
+			return u->second;
+		}
+
+		// take care of the backward wrapping case
+		if (u == angle2id.begin()) {
+			tmp = angle2id.end();
+			tmp--;
+			int ld = u->first - wangle;
+			int ud = 360 - tmp->first + wangle;
+			if (ud > ld) {
+				// non-wrapped value (first)
+				return angle2id.begin()->second;
+			}
+			// wrapped value (last)
+			return tmp->second;
+		}
+
+		// value in the middle...
+		int ud = u->first - wangle;
+		int ui = u->second;
+		u--;
+		int ld = wangle - u->first;
+		int li = u->second;
+
+		if (ud <= ld) {
+			return ui;
+		}
+		return li;
 	}
 }

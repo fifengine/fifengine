@@ -330,6 +330,8 @@
 				</Filter>
 			</Filter>
 			<Filter Name="util">
+				<File RelativePath="..\..\..\engine\core\util\angles.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\angles.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\debugutils.h"></File>

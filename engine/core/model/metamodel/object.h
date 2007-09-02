@@ -33,6 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
+#include "util/angles.h"
 
 namespace FIFE {
 
@@ -101,16 +102,21 @@ namespace FIFE {
 			 */
 			AbstractPather* getPather() { return m_pather; }
 
-			/** Returns an index to visual representation of object
-			 * useful as an optimization for non-action instances
-			 * and e.g. editor toolbox visulizations
+			/** Adds new static image with given angle (degrees)
+			 * Static images are used in case there are no actions active in the instance
+			 * There can be several static images for different angles, that are used in
+			 * case view / layer is rotated
+			 * In case there are no exact matches for current view angles, closest one is used
+			 * @param angle angle for image. 0 degrees starts from right and turns counter-clockwise
+			 *              (normal math notation)
+			 * @param image_index index of image to use for given degress
 			 */
-			int getStaticImageId() { return m_static_img_id; }
+			void addStaticImage(unsigned int angle, int image_index);
 			
-			/** Sets an index to visual representation of instance.
-			 * @see getStaticImageId
+			/** Returns closest matching static image for given angle
+			 * @return id for static image
 			 */
-			void setStaticImageId(int img_id) { m_static_img_id = img_id; }
+			int getStaticImageIndexByAngle(unsigned int angle);
 
 			/** Gets an object where this object was inherited from
 			 * @see inherited object
@@ -121,6 +127,8 @@ namespace FIFE {
 		private:
 			Object* m_inherited;
 			std::map<std::string, Action*>* m_actions;
+			type_angle2id m_angle2img;
+					
 			AbstractPather* m_pather;
 			int m_static_img_id;
 	};

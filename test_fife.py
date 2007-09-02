@@ -114,8 +114,8 @@ def run_all(tests):
 		print 'No SWIG errors found'
 	
 	if swig_errors or swig_failures:
-		print_errors('Errors in extensions tests', swig_errors)
-		print_errors('Failures in extensions tests', swig_failures)
+		print_errors('Errors in extensions tests', ext_errors)
+		print_errors('Failures in extensions tests', ext_failures)
 		errorsfound = True
 	else:
 		print 'No Extensions errors found'

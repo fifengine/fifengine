@@ -153,10 +153,11 @@ namespace FIFE {
  			 */
 			void act(const std::string& action_name, const Point& direction, bool repeating=false);
 
-			/** Returns an index to visual representation of the instance
-			 * @see Object::getStaticImageId
+			/** Returns closest matching static image for given angle
+			 * @return id for static image
+			 * @see Object::getStaticImageIndexByAngle
 			 */
-			int getStaticImageId();
+			int getStaticImageIndexByAngle(unsigned int angle);
 
 			/** Updates the instance related to the current action
 			 * @param curticks current tick count of the system
@@ -172,6 +173,7 @@ namespace FIFE {
 			ActionInfo* m_actioninfo;
 			// static image that is read from object. Used for fast access when drawing images
 			int m_cached_static_img_id;
+			int m_cached_static_img_angle;
 			// action information, for pending action. In case objects are moved
 			// and some other action comes on top of that, movement must be finalized
 			// in such way that instances are stopped to the cell center point

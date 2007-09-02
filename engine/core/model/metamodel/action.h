@@ -34,6 +34,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
+#include "util/angles.h"
 
 namespace FIFE {
 
@@ -68,10 +69,9 @@ namespace FIFE {
 
 
 		private:
-			typedef std::map<unsigned int, int> type_animmap;
 			// animations associated with this action (handles to pool)
 			//   mapping = direction -> animation
-			type_animmap m_animations;
+			type_angle2id m_animations;
 			// duration of the action
 			unsigned int m_duration;
 	};

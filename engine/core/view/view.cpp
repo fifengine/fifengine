@@ -116,7 +116,8 @@ namespace FIFE {
 					Animation& animation = m_animationpool->getAnimation(animation_id);
 					image = animation.getFrameByTimestamp(instance->getActionRuntime());
 				} else {
-					int imageid = instance->getStaticImageId();
+					int static_rotation = static_cast<int>(cg->getRotation() + camera->getRotation());
+					int imageid = instance->getStaticImageIndexByAngle(static_rotation);
 					std::cout << "Instance does not have action, using static image with id " << imageid << "\n";
 					image = &m_imagepool->getImage(imageid);
 				}

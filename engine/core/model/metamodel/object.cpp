@@ -37,6 +37,7 @@ namespace FIFE {
 		AttributedClass(identifier, "Object"),
 		m_inherited(inherited),
 		m_actions(NULL),
+		m_angle2img(),
 		m_pather(NULL),
 		m_static_img_id(-1) {
 	}
@@ -81,4 +82,13 @@ namespace FIFE {
 	void Object::setPather(AbstractPather* pather) {
 		m_pather = pather;
 	}
+	
+	void Object::addStaticImage(unsigned int angle, int image_index) {
+		m_angle2img[angle % 360] = image_index;
+	}
+			
+	int Object::getStaticImageIndexByAngle(unsigned int angle) {
+		return getIndexByAngle(angle, m_angle2img);
+	}
+	
 }

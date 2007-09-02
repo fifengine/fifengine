@@ -26,8 +26,8 @@ namespace FIFE {
 			Action* addAction(const std::string& identifier, const std::string& action_name);
 			Action* getAction(const std::string& action_name);
 
-			int getStaticImageId();
-			void setStaticImageId(int img_id);
+			void addStaticImage(unsigned int angle, int image_index);
+			int getStaticImageIndexByAngle(unsigned int angle);
 
 			void setPather(AbstractPather* pather);
 			AbstractPather* getPather();

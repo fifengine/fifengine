@@ -115,6 +115,7 @@ namespace FIFE {
 		m_location(location),
 		m_actioninfo(NULL),
 		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
+		m_cached_static_img_angle(0),
 		m_pending_actioninfo(NULL),
 		m_listeners(NULL) {
 	}
@@ -389,14 +390,17 @@ namespace FIFE {
 		return -1;
 	}
 
-	int Instance::getStaticImageId() {
+	int Instance::getStaticImageIndexByAngle(unsigned int angle) {
+		if (static_cast<int>(angle) != m_cached_static_img_angle) {
+			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
+		}
 		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
 			return m_cached_static_img_id;
 		}
 		Object* o = m_object;
 		m_cached_static_img_id = STATIC_IMAGE_NOT_FOUND;
 		while (o != NULL) {
-			m_cached_static_img_id = o->getStaticImageId();
+			m_cached_static_img_id = o->getStaticImageIndexByAngle(angle);
 			if (m_cached_static_img_id != STATIC_IMAGE_NOT_FOUND) {
 				return m_cached_static_img_id;
 			}
