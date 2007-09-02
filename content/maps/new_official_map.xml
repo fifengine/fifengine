@@ -10,41 +10,43 @@
 	</metadata>
 
 	<!-- Load tile object datasets -->
-	<dataset type="XML" source="content/archetypes/tiles/new_official_map_tiles.xml" />
+	<dataset type="XML" source="content/datasets/tiles/new_official_map_tiles.xml" />
 
 	<!-- Load object datasets -->
 	<!-- Generic insts -->
-	<!-- <dataset type="XML" source="content/archetypes/insts/generic/generic.xml" /> -->
+	<dataset type="XML" source="content/datasets/objects/generic/generic.xml" />
 
 	<!-- Map specific object -->
+	<dataset type="XML" source="content/datasets/objects/beach/beach_ball.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/box.xml" />
+
 	<!--
-	<dataset type="XML" source="content/archetypes/insts/beach/beach_ball.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/box.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/deck_chair.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/extinguisher.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/life_belt.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/mussel.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/plant.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/pool.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/quay.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/rocks.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/root.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/skull.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/starfish.xml" />
-	<dataset type="XML" source="content/archetypes/insts/beach/sunshade.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/deck_chair.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/extinguisher.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/life_belt.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/mussel.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/plant.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/pool.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/quay.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/rocks.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/root.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/skull.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/starfish.xml" />
+	<dataset type="XML" source="content/datasets/insts/beach/sunshade.xml" />
 
-	<dataset type="XML" source="content/archetypes/insts/bushes/bush.xml" />
-	<dataset type="XML" source="content/archetypes/insts/mushroom/mushroom.xml" />
-	<dataset type="XML" source="content/archetypes/insts/trees/tree.xml" />
-
-	<dataset type="XML" source="content/archetypes/insts/animated_objects/crate.xml" />
+	<dataset type="XML" source="content/datasets/insts/bushes/bush.xml" />
+	<dataset type="XML" source="content/datasets/insts/mushroom/mushroom.xml" />
+	-->
+	<dataset type="XML" source="content/datasets/objects/trees/tree.xml" />
+<!--
+	<dataset type="XML" source="content/datasets/insts/animated_objects/crate.xml" />
 	-->
 
 	<!-- Load NPC datasets -->
 	<!--
-	<dataset type="XML" source="content/archetypes/critters/humans/beekeeper.xml" />
-	<dataset type="XML" source="content/archetypes/critters/humans/boy.xml" />
-	<dataset type="XML" source="content/archetypes/critters/humans/girl.xml" />
+	<dataset type="XML" source="content/datasets/critters/humans/beekeeper.xml" />
+	<dataset type="XML" source="content/datasets/critters/humans/boy.xml" />
+	<dataset type="XML" source="content/datasets/critters/humans/girl.xml" />
 	-->
 
 	<elevation id="OfficialMapElevation">
@@ -54,7 +56,7 @@
 		</metadata>
 
 		<!-- TILE LAYER -->
-		<layer id="OfficialMapTileLayer" grid_type="square" scaling=".25">
+		<layer id="OfficialMapTileLayer" grid_type="square" scaling="1.0">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE" type="text">content/gfx/insts/outlines/tile_outline_diamond_126_96.png</param>
@@ -241,8 +243,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<!--
-		<layer grid_type="square">
+		<layer id="OfficialMapObjectLayer" grid_type="square" scaling="0.25">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE" type="text">content/gfx/insts/outlines/object_outline_diamond_32_24.png</param>
@@ -295,7 +296,7 @@
 				<i o="Box:009" x="64" y="46" />
 				<i o="Box:001" x="70" y="46" />
 				<i o="Box:004" x="80" y="46" />
-
+<!--
 				<i o="Bush:092" x="11" y="38" />
 				<i o="Bush:097" x="12" y="37" />
 				<i o="Bush:097" x="13" y="22" />
@@ -668,7 +669,7 @@
 				<i o="Sunshade:004" x="70" y="76" />
 -->
 				<!-- NORTH EAST BORDER TREES -->
-<!--
+
 				<i o="Tree:007" x="44" y="4" />
 				<i o="Tree:007" x="47" y="4" />
 				<i o="Tree:008" x="50" y="4" />
@@ -1117,6 +1118,5 @@
 				<i o="Tree:007" x="61" y="90" />
 			</instances>
 		</layer>
-	-->	
 	</elevation>
 </map>

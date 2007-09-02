@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<dataset id="Tree" type="Embedded" format="1.0">
+	<object id="Tree:001">
+		<image source="content/gfx/objects/trees/tree_001.png"/>
+	</object>
+
+	<object id="Tree:002">
+		<image source="content/gfx/objects/trees/tree_002.png"/>
+	</object>
+
+	<object id="Tree:003">
+		<image source="content/gfx/objects/trees/tree_003.png"/>
+	</object>
+
+	<object id="Tree:004">
+		<image source="content/gfx/objects/trees/tree_004.png"/>
+	</object>
+
+	<object id="Tree:005">
+		<image source="content/gfx/objects/trees/tree_005.png"/>
+	</object>
+
+	<object id="Tree:006">
+		<image source="content/gfx/objects/trees/tree_006.png"/>
+	</object>
+
+	<object id="Tree:007">
+		<image source="content/gfx/objects/trees/tree_007.png"/>
+	</object>
+
+	<object id="Tree:008">
+		<image source="content/gfx/objects/trees/tree_008.png"/>
+	</object>
+
+	<object id="Tree:009">
+		<image source="content/gfx/objects/trees/tree_009.png"/>
+	</object>
+
+	<object id="Tree:010">
+		<image source="content/gfx/objects/trees/tree_010.png"/>
+	</object>
+
+	<object id="Tree:011">
+		<image source="content/gfx/objects/trees/tree_011.png"/>
+	</object>
+
+	<object id="Tree:012">
+		<image source="content/gfx/objects/trees/tree_012.png"/>
+	</object>
+
+	<object id="Tree:013">
+		<image source="content/gfx/objects/trees/tree_013.png"/>
+	</object>
+
+	<object id="Tree:014">
+		<image source="content/gfx/objects/trees/tree_014.png"/>
+	</object>
+
+	<object id="Tree:015">
+		<image source="content/gfx/objects/trees/tree_015.png"/>
+	</object>
+
+	<object id="Tree:016">
+		<image source="content/gfx/objects/trees/tree_016.png"/>
+	</object>
+
+	<object id="Tree:017">
+		<image source="content/gfx/objects/trees/tree_017.png"/>
+	</object>
+
+	<object id="Tree:018">
+		<image source="content/gfx/objects/trees/tree_018.png"/>
+	</object>
+
+	<object id="Tree:019">
+		<image source="content/gfx/objects/trees/tree_019.png"/>
+	</object>
+
+	<object id="Tree:020">
+		<image source="content/gfx/objects/trees/tree_020.png"/>
+	</object>
+
+	<object id="Tree:021">
+		<image source="content/gfx/objects/trees/tree_021.png"/>
+	</object>
+
+	<object id="Tree:022">
+		<image source="content/gfx/objects/beach/tree01.png"/>
+	</object>
+
+	<object id="Tree:023">
+		<image source="content/gfx/objects/beach/tree02.png"/>
+	</object>
+
+	<object id="Tree:024">
+		<image source="content/gfx/objects/beach/tree03.png"/>
+	</object>
+
+	<object id="Tree:025">
+		<image source="content/gfx/objects/vegetation/sassafras_1_aa.png"
+			x_offset="-4" y_offset="5"/>
+	</object>
+</dataset>

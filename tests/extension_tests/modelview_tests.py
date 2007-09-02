@@ -30,7 +30,7 @@ class TestLoaders(unittest.TestCase):
 		self.camloc = fife.Location()
 		self.camloc.elevation = self.elevation
 		self.camloc.layer = self.layer
-		self.camloc.position = fife.Point(-2,-2)
+		self.camloc.position = fife.Point(0,0)
 
 	def tearDown(self):
 		del self.engine
