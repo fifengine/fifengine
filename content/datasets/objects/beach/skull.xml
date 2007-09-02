@@ -1,29 +1,14 @@
 <?xml version="1.0"?>
-<map>
-	<properties>
-		<name>skull.xml</name>
-		<version>1</version>
-		<format>1</format>
-	</properties>
-	<archetypes>
-		<archetype type="XML">
-			<prototypes>
-				<prototype name="Skull:001">
-					<visual>
-						<image source="content/gfx/objects/beach/skull01.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Skull:002">
-					<visual>
-						<image source="content/gfx/objects/beach/skull02.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Skull:003">
-					<visual>
-						<image source="content/gfx/objects/beach/skull03.png"/>
-					</visual>
-				</prototype>
-			</prototypes>
-		</archetype>
-	</archetypes>
-</map>
+<dataset id="Skull" type="Embedded" format="1.0">
+	<object id="Skull:001">
+		<image source="content/gfx/objects/beach/skull01.png"/>
+	</object>
+
+	<object id="Skull:002">
+		<image source="content/gfx/objects/beach/skull02.png"/>
+	</object>
+
+	<object id="Skull:003">
+		<image source="content/gfx/objects/beach/skull03.png"/>
+	</object>
+</dataset>

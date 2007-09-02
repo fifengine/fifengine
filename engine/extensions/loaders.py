@@ -125,7 +125,7 @@ class ModelLoader(handler.ContentHandler):
 					if (attrName == "id"):
 						id = attrs.get(attrName)
 					elif (attrName == "parent"):
-						query = self.metamodel.getObjectsByString("id", str(attrs.get(attrName)))[0]
+						query = self.metamodel.getObjectsByString("id", str(attrs.get(attrName)))
 						assert len(query) != 0, "0 objects objects with this identifier found."
 						assert len(query) == 1, "Multiple objects with this identifier found."
 						parent = query[0]
@@ -133,7 +133,7 @@ class ModelLoader(handler.ContentHandler):
 				assert id, "Objects must be given an identifier (id) field."
 
 				if (parent):
-					self.object = self.dataset.addObject(str(id), str(parent))
+					self.object = self.dataset.addObject(str(id), parent)
 				else:
 					self.object = self.dataset.addObject(str(id))
 

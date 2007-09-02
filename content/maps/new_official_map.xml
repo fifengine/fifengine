@@ -14,31 +14,29 @@
 
 	<!-- Load object datasets -->
 	<!-- Generic insts -->
-	<dataset type="XML" source="content/datasets/objects/generic/generic.xml" />
+	<dataset type="XML" source="content/datasets/objects/generic/generic.xml" /> 
 
 	<!-- Map specific object -->
 	<dataset type="XML" source="content/datasets/objects/beach/beach_ball.xml" />
 	<dataset type="XML" source="content/datasets/objects/beach/box.xml" />
 
-	<!--
-	<dataset type="XML" source="content/datasets/insts/beach/deck_chair.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/extinguisher.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/life_belt.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/mussel.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/plant.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/pool.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/quay.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/rocks.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/root.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/skull.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/starfish.xml" />
-	<dataset type="XML" source="content/datasets/insts/beach/sunshade.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/deck_chair.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/extinguisher.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/life_belt.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/mussel.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/plant.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/pool.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/quay.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/rocks.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/root.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/skull.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/starfish.xml" />
+	<dataset type="XML" source="content/datasets/objects/beach/sunshade.xml" />
 
-	<dataset type="XML" source="content/datasets/insts/bushes/bush.xml" />
-	<dataset type="XML" source="content/datasets/insts/mushroom/mushroom.xml" />
-	-->
+	<dataset type="XML" source="content/datasets/objects/bushes/bush.xml" />
+	<dataset type="XML" source="content/datasets/objects/mushroom/mushroom.xml" />
 	<dataset type="XML" source="content/datasets/objects/trees/tree.xml" />
-<!--
+	<!--
 	<dataset type="XML" source="content/datasets/insts/animated_objects/crate.xml" />
 	-->
 
@@ -296,7 +294,7 @@
 				<i o="Box:009" x="64" y="46" />
 				<i o="Box:001" x="70" y="46" />
 				<i o="Box:004" x="80" y="46" />
-<!--
+
 				<i o="Bush:092" x="11" y="38" />
 				<i o="Bush:097" x="12" y="37" />
 				<i o="Bush:097" x="13" y="22" />
@@ -361,6 +359,7 @@
 
 				<i o="Bush:032" x="67" y="46" />
 
+<!--
 				<i o="Crate:HalfOpen:Full:003" x="13" y="33" />
 				<i o="Crate:Empty:001" x="17" y="35" />
 
@@ -401,7 +400,7 @@
 				<i o="Critter:Girl:Talk:NW" x="81" y="77" />
 				<i o="Critter:Boy:Talk:NW" x="83" y="77" />
 				<i o="Critter:Boy:Kicking:SW" x="86" y="82" />
-
+-->
 				<i o="Deck_chair:006" x="34" y="72" />
 				<i o="Deck_chair:006" x="37" y="72" />
 				<i o="Deck_chair:008" x="40" y="72" />

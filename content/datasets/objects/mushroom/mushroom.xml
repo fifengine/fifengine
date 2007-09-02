@@ -1,104 +1,74 @@
 <?xml version="1.0"?>
-<map>
-	<properties>
-		<name>mushroom.xml</name>
-		<version>1</version>
-		<format>1</format>
-	</properties>
-	<archetypes>
-		<archetype type="XML">
-			<prototypes>
-				<prototype name="Mushroom:001">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_001.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:002">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_002.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:003">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_003.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:004">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_004.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:005">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_005.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:006">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_006.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:007">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_007.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:008">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_008.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:009">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_009.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:010">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_010.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:011">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_011.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:012">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_012.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:013">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_013.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:014">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_014.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:015">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_015.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:016">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_016.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:017">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_017.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Mushroom:018">
-					<visual>
-						<image source="content/gfx/objects/mushroom/mushroom_018.png"/>
-					</visual>
-				</prototype>
-			</prototypes>
-		</archetype>
-	</archetypes>
-</map>
+<dataset id="Mushroom" type="Embedded" format="1.0">
+	<object id="Mushroom:001">
+		<image source="content/gfx/objects/mushroom/mushroom_001.png"/>
+	</object>
+
+	<object id="Mushroom:002">
+		<image source="content/gfx/objects/mushroom/mushroom_002.png"/>
+	</object>
+
+	<object id="Mushroom:003">
+		<image source="content/gfx/objects/mushroom/mushroom_003.png"/>
+	</object>
+
+	<object id="Mushroom:004">
+		<image source="content/gfx/objects/mushroom/mushroom_004.png"/>
+	</object>
+
+	<object id="Mushroom:005">
+		<image source="content/gfx/objects/mushroom/mushroom_005.png"/>
+	</object>
+	
+	<object id="Mushroom:006">
+		<image source="content/gfx/objects/mushroom/mushroom_006.png"/>
+	</object>
+
+	<object id="Mushroom:007">
+		<image source="content/gfx/objects/mushroom/mushroom_007.png"/>
+	</object>
+
+	<object id="Mushroom:008">
+		<image source="content/gfx/objects/mushroom/mushroom_008.png"/>
+	</object>
+
+	<object id="Mushroom:009">
+		<image source="content/gfx/objects/mushroom/mushroom_009.png"/>
+	</object>
+
+	<object id="Mushroom:010">
+		<image source="content/gfx/objects/mushroom/mushroom_010.png"/>
+	</object>
+
+	<object id="Mushroom:011">
+		<image source="content/gfx/objects/mushroom/mushroom_011.png"/>
+	</object>
+
+	<object id="Mushroom:012">
+		<image source="content/gfx/objects/mushroom/mushroom_012.png"/>
+	</object>
+
+	<object id="Mushroom:013">
+		<image source="content/gfx/objects/mushroom/mushroom_013.png"/>
+	</object>
+
+	<object id="Mushroom:014">
+		<image source="content/gfx/objects/mushroom/mushroom_014.png"/>
+	</object>
+
+	<object id="Mushroom:015">
+		<image source="content/gfx/objects/mushroom/mushroom_015.png"/>
+	</object>
+
+	<object id="Mushroom:016">
+		<image source="content/gfx/objects/mushroom/mushroom_016.png"/>
+	</object>
+
+	<object id="Mushroom:017">
+		<image source="content/gfx/objects/mushroom/mushroom_017.png"/>
+	</object>
+
+	<object id="Mushroom:018">
+		<image source="content/gfx/objects/mushroom/mushroom_018.png"/>
+	</object>
+</dataset>

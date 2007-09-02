@@ -1,61 +1,40 @@
 <?xml version="1.0"?>
-<map>
-	<properties>
-		<name>life_belt.xml</name>
-		<version>1</version>
-		<format>1</format>
-	</properties>
-	<archetypes>
-		<archetype type="XML">
-			<prototypes>
-				<prototype name="Life_belt:001">
-					<zvalue>3</zvalue>
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_001.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Life_belt:002">
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_002.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Life_belt:003">
-					<zvalue>3</zvalue>
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_003.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Life_belt:004">
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_004.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Life_belt:005">
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_005.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Life_belt:006">
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_006.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Life_belt:007">
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_007.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Life_belt:008">
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_008.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Life_belt:009">
-					<visual>
-						<image source="content/gfx/objects/beach/life_belt_009.png"/>
-					</visual>
-				</prototype>
-			</prototypes>
-		</archetype>
-	</archetypes>
-</map>
+<dataset id="Lifebelt" type="Embedded" format="1.0">
+	<object id="Life_belt:001">
+		<zvalue>3</zvalue>
+		<image source="content/gfx/objects/beach/life_belt_001.png"/>
+	</object>
+
+	<object id="Life_belt:002">
+		<image source="content/gfx/objects/beach/life_belt_002.png"/>
+	</object>
+
+	<object id="Life_belt:003">
+		<zvalue>3</zvalue>
+		<image source="content/gfx/objects/beach/life_belt_003.png"/>
+	</object>
+
+	<object id="Life_belt:004">
+		<image source="content/gfx/objects/beach/life_belt_004.png"/>
+	</object>
+
+	<object id="Life_belt:005">
+		<image source="content/gfx/objects/beach/life_belt_005.png"/>
+	</object>
+
+	<object id="Life_belt:006">
+		<image source="content/gfx/objects/beach/life_belt_006.png"/>
+	</object>
+
+	<object id="Life_belt:007">
+		<image source="content/gfx/objects/beach/life_belt_007.png"/>
+	</object>
+
+	<object id="Life_belt:008">
+		<image source="content/gfx/objects/beach/life_belt_008.png"/>
+	</object>
+
+	<object id="Life_belt:009">
+		<image source="content/gfx/objects/beach/life_belt_009.png"/>
+	</object>
+</dataset>

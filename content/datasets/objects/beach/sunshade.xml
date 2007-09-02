@@ -1,36 +1,20 @@
 <?xml version="1.0"?>
-<map>
-	<properties>
-		<name>sunshade.xml</name>
-		<version>1</version>
-		<format>1</format>
-	</properties>
-	<archetypes>
-		<archetype type="XML">
-			<prototypes>
-				<prototype name="Sunshade:001">
-					<visual>
-						<image source="content/gfx/objects/beach/sunshade_001.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Sunshade:002">
-					<visual>
-						<image source="content/gfx/objects/beach/sunshade_002.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Sunshade:003">
-					<zvalue>3</zvalue>
-					<visual>
-						<image source="content/gfx/objects/beach/sunshade_003.png"/>
-					</visual>
-				</prototype>
-				<prototype name="Sunshade:004">
-					<zvalue>3</zvalue>
-					<visual>
-						<image source="content/gfx/objects/beach/sunshade_004.png"/>
-					</visual>
-				</prototype>
-			</prototypes>
-		</archetype>
-	</archetypes>
-</map>
+<dataset id="Sunshade" type="Embedded" format="1.0">
+	<object id="Sunshade:001">
+		<image source="content/gfx/objects/beach/sunshade_001.png"/>
+	</object>
+
+	<object id="Sunshade:002">
+		<image source="content/gfx/objects/beach/sunshade_002.png"/>
+	</object>
+
+	<object id="Sunshade:003">
+		<zvalue>3</zvalue>
+		<image source="content/gfx/objects/beach/sunshade_003.png"/>
+	</object>
+
+	<object id="Sunshade:004">
+		<zvalue>3</zvalue>
+		<image source="content/gfx/objects/beach/sunshade_004.png"/>
+	</object>
+</dataset>
