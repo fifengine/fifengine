@@ -9,24 +9,16 @@ class ModelLoader(handler.ContentHandler):
 		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SObject, self.SAction = range(9)
 
 		self.engine = engine
-		self.engine.thisown = 0
-
 		self.model = self.engine.getModel()
-		self.model.thisown = 0
 		self.metamodel = self.model.getMetaModel()
-		self.model.thisown = 0
-
 		self.pool = self.engine.getImagePool()
-		self.pool.thisown = 0
 
 		if (state):
 			self.state = state
 			if (state == self.SMap):
 				self.map = datastate
-				self.map.thisown = 0
 			elif (state == self.SDataset):
 				self.dataset = datastate
-				self.dataset.thisown = 0
 			else:
 				assert 0, "Invalid initialization state."
 		else:
@@ -48,7 +40,6 @@ class ModelLoader(handler.ContentHandler):
 				assert id, "Map declared without an identifier."
 
 				self.map = self.model.addMap(str(id))
-				self.map.thisown = 0
 				self.state = self.SMap
 
 			else:
@@ -106,17 +97,14 @@ class ModelLoader(handler.ContentHandler):
 					assert id, "Dataset declared without an identifier."
 					if (self.state == self.SModel):
 						self.dataset = self.metamodel.addDataset(str(id))
-						self.dataset.thisown = 0
 
 					elif (self.state == self.SMap):
 						self.dataset = self.metamodel.addDataset(str(id))
-						self.dataset.thisown = 0
 						self.map.useDataset(self.dataset)
 						
 					elif (self.state == self.SDataset):
 						self.datastack.append(self.dataset)
 						self.dataset = self.dataset.addDataset(str(id))
-						self.dataset.thisown = 0
 
 				else:
 					assert 0, "Invalid dataset type attribute. Datasets must be of type XML or Embedded."
@@ -146,10 +134,8 @@ class ModelLoader(handler.ContentHandler):
 
 				if (parent):
 					self.object = self.dataset.addObject(str(id), str(parent))
-					self.object.thisown = 0
 				else:
 					self.object = self.dataset.addObject(str(id))
-					self.object.thisown = 0
 
 			else:
 				assert 0, "Objects can only be declared in a <dataset> section."
@@ -192,7 +178,6 @@ class ModelLoader(handler.ContentHandler):
 				assert id, "Elevation declared without an identifier."
 
 				self.elevation = self.map.addElevation(str(id))
-				self.elevation.thisown = 0
 				self.state = self.SElevation
 
 			else:
@@ -241,7 +226,6 @@ class ModelLoader(handler.ContentHandler):
 				cellgrid.setYShift(y_offset)
 
 				self.layer = self.elevation.addLayer(str(id), cellgrid)
-				self.layer.thisown = 0
 				self.state = self.SLayer
 
 			else:
@@ -269,7 +253,6 @@ class ModelLoader(handler.ContentHandler):
 				assert len(query) != 0, "0 objects objects with this identifier found."
 				assert len(query) == 1, "Multiple objects with this identifier found."
 				object = query[0]
-				object.thisown = 0
 
 				x = attrs.get("x")
 				y = attrs.get("y")
@@ -323,4 +306,5 @@ def loadMapFile(path, engine):
 	parser.setContentHandler(handler)
 
 	parser.parse(open(path))
+	del handler
 

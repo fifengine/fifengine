@@ -76,59 +76,59 @@ namespace FIFE {
 	}
 	
 	void View::updateCamera(Camera* camera) {
-		std::cout << "In View::updateCamera\n";
+		//std::cout << "In View::updateCamera\n";
 		const Location& loc = camera->getLocation();
 		Elevation* elev = loc.elevation;
 		if (!elev) {
-			std::cout << "No elevation found, exiting\n";
+			//std::cout << "No elevation found, exiting\n";
 			return;
 		}
-		std::cout << "Getting layers...\n";
+		//std::cout << "Getting layers...\n";
 		const std::vector<Layer*>& layers = elev->getLayers();
 		std::vector<Layer*>::const_iterator layer_it = layers.begin();
 		while (layer_it != layers.end()) {
-			std::cout << "Iterating layer...\n";
+			//std::cout << "Iterating layer...\n";
 			Layer* layer = (*layer_it);
 			CellGrid* cg = layer->getCellGrid();
 			if (!cg) {
-				std::cout << "No cellgrid assigned to layer...\n";
+				//std::cout << "No cellgrid assigned to layer...\n";
 				++layer_it;
 			}
-			std::cout << "Getting instance...\n";
+			//std::cout << "Getting instance...\n";
 			const std::vector<Instance*>& instances = layer->getInstances();
 			std::vector<Instance*>::const_iterator instance_it = instances.begin();
 			while (instance_it != instances.end()) {
-				std::cout << "Iterating instances...\n";
+				//std::cout << "Iterating instances...\n";
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
 				DoublePoint elevpos = cg->toElevationCoords(instance->getPosition());
-				std::cout << "Instance layer position = " << instance->getPosition() << "\n";
-				std::cout << "Instance elevation position = " << elevpos << "\n";
+				//std::cout << "Instance layer position = " << instance->getPosition() << "\n";
+				//std::cout << "Instance elevation position = " << elevpos << "\n";
 				Action* action = instance->getCurrentAction();
 				if (action) {
-					std::cout << "Instance has action\n";
+					//std::cout << "Instance has action\n";
 					DoublePoint elevface = cg->toElevationCoords(instance->getFacingCell());
 					float dx = static_cast<float>(elevface.x - elevpos.x);
 					float dy = static_cast<float>(elevface.y - elevpos.y);
 					int angle = static_cast<int>(atan2f(dx,dy)*180.0/M_PI);
-					std::cout << "Got angle " << angle << " for animation\n";
+					//std::cout << "Got angle " << angle << " for animation\n";
 					int animation_id = action->getAnimationIndexByAngle(angle);
 					Animation& animation = m_animationpool->getAnimation(animation_id);
 					image = animation.getFrameByTimestamp(instance->getActionRuntime());
 				} else {
 					int static_rotation = static_cast<int>(cg->getRotation() + camera->getRotation());
 					int imageid = instance->getStaticImageIndexByAngle(static_rotation);
-					std::cout << "Instance does not have action, using static image with id " << imageid << "\n";
+					//std::cout << "Instance does not have action, using static image with id " << imageid << "\n";
 					image = &m_imagepool->getImage(imageid);
 				}
 				if (image) {
-					std::cout << "Instance has image to render\n";
+					//std::cout << "Instance has image to render\n";
 					DoublePoint exact_pos = instance->getExactPosition();
-					std::cout << "Instance exact position in layer = " << exact_pos << "\n";
+					//std::cout << "Instance exact position in layer = " << exact_pos << "\n";
 					DoublePoint exact_elevpos = cg->toElevationCoords(exact_pos);
-					std::cout << "Instance exact position in elevation  = " << exact_elevpos << "\n";
+					//std::cout << "Instance exact position in elevation  = " << exact_elevpos << "\n";
 					Point drawpt = camera->toScreenCoords(exact_elevpos);
-					std::cout << "Instance exact position in screen = " << drawpt << "\n";
+					//std::cout << "Instance exact position in screen = " << drawpt << "\n";
 
 					int w = image->getWidth();
 					int h = image->getHeight();
@@ -137,12 +137,12 @@ namespace FIFE {
 					drawpt.y -= h / 2;
 					drawpt.y += image->getYShift();
 					Rect r = Rect(drawpt.x, drawpt.y, w, h);
-					std::cout << "image(" << r << "), viewport (" << camera->getViewPort() << ")\n";
+					//std::cout << "image(" << r << "), viewport (" << camera->getViewPort() << ")\n";
 					if (r.intersects(camera->getViewPort())) {
-						std::cout << "Instance is visible in viewport, rendering\n";
+						//std::cout << "Instance is visible in viewport, rendering\n";
 						image->render(r);
 					} else {
-						std::cout << "Instance is not visible in viewport, skipping\n";
+						//std::cout << "Instance is not visible in viewport, skipping\n";
 					}
 
 					// draw grid for testing purposes
@@ -162,7 +162,7 @@ namespace FIFE {
 					m_renderbackend->drawLine(pt2, firstpt, 0, 255, 0);
 				}
 				else {
-					std::cout << "Instance does not have image to render\n";
+					//std::cout << "Instance does not have image to render\n";
 				}
 				++instance_it;
 			}

@@ -111,10 +111,12 @@ namespace FIFE {
 		double sw = static_cast<double>(m_screen_cell_width);
 		double sh = static_cast<double>(m_screen_cell_height);
 		m_reference_scale = static_cast<double>(m_screen_cell_width) / (x2 - x1);
+		/*
 		std::cout << "\n>>>>>>>> Camera::updateReferenceScale\n";
 		std::cout << "   tilt=" << m_tilt << " rot=" << m_rotation << "\n";
 		std::cout << "   x1=" << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2 << \
 		             " ratio=" << (x2-x1)/(y2-y1);
 		std::cout << "   imgw=" << sw << " imgh=" << sh << " ratio=" << sw/sh << "\n";
+		*/
 	}
 }
