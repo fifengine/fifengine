@@ -5,13 +5,19 @@ import fife
 
 class ModelLoader(handler.ContentHandler):
 
-	def __init__(self, model, state = 0, datastate = 0):
+	def __init__(self, engine, state = 0, datastate = 0):
 		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SObject, self.SAction = range(9)
 
-		self.model = model
+		self.engine = engine
+		self.engine.thisown = 0
+
+		self.model = self.engine.getModel()
 		self.model.thisown = 0
 		self.metamodel = self.model.getMetaModel()
 		self.model.thisown = 0
+
+		self.pool = self.engine.getImagePool()
+		self.pool.thisown = 0
 
 		if (state):
 			self.state = state
@@ -85,7 +91,7 @@ class ModelLoader(handler.ContentHandler):
 
 					handler = 0
 					if (self.state == self.SMap):
-						handler = ModelLoader(self.model, self.SMap, self.map)
+						handler = ModelLoader(self.engine, self.SMap, self.map)
 					elif (self.state == self.SDataset):
 						handler = ModelLoader(self.model, self.SDataset, self.dataset)
 					else:
@@ -122,7 +128,7 @@ class ModelLoader(handler.ContentHandler):
 				assert 0, "Datasets can only be declared at the top level, or in a <map> or <dataset> section."
 
 		elif (name == 'object'):
-			if(self.state == self.SDataset):
+			if (self.state == self.SDataset):
 				self.state = self.SObject
 
 				id = 0
@@ -130,7 +136,7 @@ class ModelLoader(handler.ContentHandler):
 				for attrName in attrs.keys():
 					if (attrName == "id"):
 						id = attrs.get(attrName)
-					if (attrName == "parent"):
+					elif (attrName == "parent"):
 						query = self.metamodel.getObjectsByString("id", str(attrs.get(attrName)))[0]
 						assert len(query) != 0, "0 objects objects with this identifier found."
 						assert len(query) == 1, "Multiple objects with this identifier found."
@@ -139,17 +145,35 @@ class ModelLoader(handler.ContentHandler):
 				assert id, "Objects must be given an identifier (id) field."
 
 				if (parent):
-					object = self.dataset.addObject(str(id), str(parent))
-					object.thisown = 0
+					self.object = self.dataset.addObject(str(id), str(parent))
+					self.object.thisown = 0
 				else:
-					object = self.dataset.addObject(str(id))
-					object.thisown = 0
+					self.object = self.dataset.addObject(str(id))
+					self.object.thisown = 0
 
 			else:
 				assert 0, "Objects can only be declared in a <dataset> section."
 
+		elif (name == 'image'):
+			if (self.state == self.SObject):
+				source = 0
+				direction = 0
+				for attrName in attrs.keys():
+					if (attrName == "source"):
+						source = attrs.get(attrName)
+					elif (attrName == "direction"):
+						direction = attrs.get(attrName)
+
+				id = self.pool.addResourceFromFile(str(source))	
+				self.object.setStaticImageId(id)
+
+				assert source, "Image declared with no source location."	
+
+			else:
+				assert 0, "<image> tags can only be declared in an <object> section."
+
 		elif (name == 'action'):
-			if(self.state == self.SDataset):
+			if (self.state == self.SDataset):
 				self.state = self.SAction
 
 				# TODO: load actions
@@ -293,9 +317,9 @@ class ModelLoader(handler.ContentHandler):
 		elif (name == 'instances'):
 			self.state = self.SLayer
 
-def loadMapFile(path, model):
+def loadMapFile(path, engine):
 	parser = make_parser()
-	handler = ModelLoader(model)
+	handler = ModelLoader(engine)
 	parser.setContentHandler(handler)
 
 	parser.parse(open(path))

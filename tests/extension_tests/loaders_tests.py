@@ -5,14 +5,18 @@ from loaders import *
 class TestLoaders(unittest.TestCase):
 
 	def setUp(self):
-		self.model = fife.Model()
+		self.engine = fife.Engine()
+		self.model = self.engine.getModel()
 		self.model.thisown = 0
 		self.metamodel = self.model.getMetaModel()
 		self.metamodel.thisown = 0
 
+	def tearDown(self):
+		del self.engine
+
 	def testLoading(self):
 
-		loadMapFile("content/maps/new_official_map.xml", self.model)
+		loadMapFile("content/maps/new_official_map.xml", self.engine)
 
 		query = self.metamodel.getObjectsByString("id", "15001")
 		self.assertEqual(len(query), 1)
@@ -41,7 +45,6 @@ class TestLoaders(unittest.TestCase):
 
 		#for inst in instances:
 		#	print inst.getPosition().x, " ", inst.getPosition().y, " ", inst.getObject().get_string("id")
-
 
 TEST_CLASSES = [TestLoaders]
 
