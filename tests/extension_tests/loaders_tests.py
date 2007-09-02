@@ -2,8 +2,6 @@
 from extension_test_utils import *
 from loaders import *
 
-print "blah"
-
 class TestLoaders(unittest.TestCase):
 
 	def setUp(self):
@@ -21,6 +19,28 @@ class TestLoaders(unittest.TestCase):
 
 		query = self.metamodel.getObjectsByString("id", "15201")
 		self.assertEqual(len(query), 1)
+
+		query = self.model.getMapsByString("id", "OfficialMap")
+		self.assertEqual(len(query), 1)
+		self.map = query[0]
+		self.map.thisown = 0
+
+		query = self.map.getElevationsByString("id", "OfficialMapElevation")
+		self.assertEqual(len(query), 1)
+		self.elevation = query[0]
+		self.elevation.thisown = 0
+
+		query = self.elevation.getLayersByString("id", "OfficialMapTileLayer")
+		self.assertEqual(len(query), 1)
+		self.layer = query[0]
+		self.layer.thisown = 0
+
+		self.assertEqual(self.layer.hasInstances(), True)
+
+		instances = self.layer.getInstances()
+
+		#for inst in instances:
+		#	print inst.getPosition().x, " ", inst.getPosition().y, " ", inst.getObject().get_string("id")
 
 
 TEST_CLASSES = [TestLoaders]
