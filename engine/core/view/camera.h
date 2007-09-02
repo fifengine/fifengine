@@ -58,6 +58,7 @@ namespace FIFE {
 		 */
 		void setTilt(double tilt) {
 			m_tilt = tilt;
+			updateReferenceScale();
 			updateMatrices();
 		}
 
@@ -73,6 +74,7 @@ namespace FIFE {
 		 */
 		void setRotation(double rotation) {
 			m_rotation = rotation;
+			updateReferenceScale();
 			updateMatrices();
 		}
 
@@ -98,8 +100,10 @@ namespace FIFE {
 		 */ 
 		double getZoom() const { return m_zoom; }
 
-		void setScreenCellWidth(unsigned int width) { 
+		void setCellImageDimensions(unsigned int width, unsigned int height) { 
 			m_screen_cell_width = width;
+			m_screen_cell_height = height;
+			updateReferenceScale();
 			updateMatrices();
 		}
 
@@ -108,6 +112,7 @@ namespace FIFE {
 		 */ 
 		void setLocation(const Location& location) { 
 			m_location = location;
+			updateReferenceScale();
 			updateMatrices();
 		}
 
@@ -139,6 +144,7 @@ namespace FIFE {
 
 	private:
 		void updateMatrices();
+		void updateReferenceScale();
 
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
@@ -149,6 +155,8 @@ namespace FIFE {
 		Rect m_viewport;
 		bool m_view_updated;
 		unsigned int m_screen_cell_width;
+		unsigned int m_screen_cell_height;
+		double m_reference_scale;
 	};
 }
 #endif

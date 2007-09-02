@@ -18,7 +18,7 @@ namespace FIFE {
 		const Location& getLocation() const;
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
-		void setScreenCellWidth(unsigned int width);
+		void setCellImageDimensions(unsigned int width, unsigned int height);
 		Point toScreenCoords(DoublePoint elevation_coords);
 	};
 }

@@ -23,6 +23,7 @@ class TestView(unittest.TestCase):
 		
 		img = pool.getImage(imgid)
 		self.screen_cell_w = img.getWidth()
+		self.screen_cell_h = img.getHeight()
 		
 		self.layer = elev.addLayer("layer001", self.grid)
 		
@@ -37,7 +38,7 @@ class TestView(unittest.TestCase):
 
 	def testCamera(self):
 		cam = fife.Camera()
-		cam.setScreenCellWidth(int(self.screen_cell_w/1.41))
+		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		cam.setRotation(45)
 		cam.setTilt(40)
 		cam.setLocation(self.camloc)
@@ -73,10 +74,11 @@ class TestView(unittest.TestCase):
 			elif i > 70 and i < 80:
 				cam.setTilt(cam.getTilt() - 1)
 			elif i > 80 and i < 90:	
-				cam.setZoom(cam.getZoom() - 0.010)
-			elif i > 90 and i < 100:	
 				cam.setZoom(cam.getZoom() + 0.010)
+			elif i > 90 and i < 100:	
+				cam.setZoom(cam.getZoom() - 0.010)
 			self.engine.pump()
+			time.sleep(0.05)
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)
 	

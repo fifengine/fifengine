@@ -33,6 +33,7 @@
 #include "camera.h"
 #include "view.h"
 
+
 namespace FIFE {
 	Camera::Camera():
 		m_matrix(),
@@ -42,7 +43,9 @@ namespace FIFE {
 		m_zoom(1),
 		m_location(),
 		m_viewport(),
-		m_screen_cell_width(1) {
+		m_screen_cell_width(1),
+		m_screen_cell_height(1),
+		m_reference_scale(1) {
 		updateMatrices();
 	}
 
@@ -59,8 +62,8 @@ namespace FIFE {
 				m_matrix.applyTranslate(pt.x, pt.y, 0);
 			}
 		}
-		double scale = 1.0 / (m_zoom * static_cast<double>(m_screen_cell_width));
-		m_matrix.applyScale(scale, scale, 1);
+		double scale = 1.0 / (m_zoom * m_reference_scale);
+		m_matrix.applyScale(scale, scale, scale);
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
@@ -73,4 +76,45 @@ namespace FIFE {
 		return doublePt2intPt(m_inverse_matrix * elevation_coords);
 	}
 
+	void Camera::updateReferenceScale() {
+		CellGrid* cg = NULL;
+		if (m_location.layer) {
+			cg = m_location.layer->getCellGrid();
+		}
+		if (!cg) {
+			return;
+		}
+		
+		Point cell(0,0);
+		std::vector<DoublePoint> vertices;
+		cg->getVertices(vertices, cell);
+		
+		DoubleMatrix mtx;
+		mtx.loadRotate(m_rotation, 0.0, 0.0, 1.0);
+		mtx.applyRotate(m_tilt, 1.0, 0.0, 0.0);
+		mtx = mtx.inverse();
+		double x1, x2, y1, y2;
+		for (unsigned int i = 0; i < vertices.size(); i++) {
+			vertices[i] = cg->toElevationCoords(vertices[i]);
+			vertices[i] = mtx * vertices[i];
+			if (i == 0) {
+				x1 = x2 = vertices[0].x;
+				y1 = y2 = vertices[0].y;
+			}
+			else {
+				x1 = std::min(vertices[i].x, x1);
+				x2 = std::max(vertices[i].x, x2);
+				y1 = std::min(vertices[i].y, y1);
+				y2 = std::max(vertices[i].y, y2);
+			}
+		}
+		double sw = static_cast<double>(m_screen_cell_width);
+		double sh = static_cast<double>(m_screen_cell_height);
+		m_reference_scale = static_cast<double>(m_screen_cell_width) / (x2 - x1);
+		std::cout << "\n>>>>>>>> Camera::updateReferenceScale\n";
+		std::cout << "   tilt=" << m_tilt << " rot=" << m_rotation << "\n";
+		std::cout << "   x1=" << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2 << \
+		             " ratio=" << (x2-x1)/(y2-y1);
+		std::cout << "   imgw=" << sw << " imgh=" << sh << " ratio=" << sw/sh << "\n";
+	}
 }
