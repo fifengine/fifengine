@@ -677,6 +677,10 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\location.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\model\structures\location.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>

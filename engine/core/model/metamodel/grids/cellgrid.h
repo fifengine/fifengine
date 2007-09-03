@@ -80,7 +80,6 @@ namespace FIFE {
 		 */
 		virtual DoublePoint getOffset(const Point& curpos, const Point& target, double distance) = 0;
 
-
 		/** Gets the count of sides for a single cell
 		 *  @return count of sides for a single cell
 		 */
@@ -89,22 +88,22 @@ namespace FIFE {
 		/** Transforms given point from layer coordinates to elevation coordinates
 		 *  @return point in elevation coordinates
 		 */
-		DoublePoint toElevationCoords(const Point& layer_coords);
-
-		/** Transforms given point from elevation coordinates to layer coordinates
-		 *  @return point in layer coordinates
-		 */
-		Point toLayerCoords(const DoublePoint& elevation_coord);
+		DoublePoint toElevationCoordinates(const Point& layer_coords);
 
 		/** Transforms given point from layer coordinates to elevation coordinates
 		 *  @return point in elevation coordinates
 		 */
-		virtual DoublePoint toElevationCoords(const DoublePoint& layer_coords) = 0;
+		virtual DoublePoint toElevationCoordinates(const DoublePoint& layer_coords) = 0;
+		
+		/** Transforms given point from elevation coordinates to layer coordinates
+		 *  @return point in layer coordinates
+		 */
+		virtual Point toLayerCoordinates(const DoublePoint& elevation_coord) = 0;
 
 		/** Transforms given point from elevation coordinates to layer coordinates
 		 *  @return point in layer coordinates
 		 */
-		virtual DoublePoint toExactLayerCoords(const DoublePoint& elevation_coord) = 0;
+		virtual DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord) = 0;
 
 		/** Fills given point vector with vertices from selected cell
 		 *  @param vtx vertices for given cell

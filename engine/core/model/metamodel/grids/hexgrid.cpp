@@ -75,16 +75,21 @@ namespace FIFE {
 		return DoublePoint(0,0);
 	}
 
-	DoublePoint HexGrid::toElevationCoords(const DoublePoint& layer_coords) {
+	DoublePoint HexGrid::toElevationCoordinates(const DoublePoint& layer_coords) {
 		assert(1);
 		return m_matrix * layer_coords;
 	}
 
-	DoublePoint HexGrid::toExactLayerCoords(const DoublePoint& elevation_coord) {
+	DoublePoint HexGrid::toExactLayerCoordinates(const DoublePoint& elevation_coord) {
 		assert(1);
 		return m_inverse_matrix * elevation_coord;
 	}
 
+	Point HexGrid::toLayerCoordinates(const DoublePoint& elevation_coord) {
+		assert(1);
+		return Point(0,0);
+	}
+	
 	void HexGrid::getVertices(std::vector<DoublePoint>& vtx, const Point& cell) {
 		assert(1);
 	}

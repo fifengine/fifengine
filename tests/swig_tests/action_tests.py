@@ -14,8 +14,7 @@ class AnimationTests(unittest.TestCase):
 		self.layer = elev.addLayer("Layer001", self.grid)
 		
 		self.target = fife.Location()
-		self.target.layer = self.layer
-		self.target.elevation = elev
+		self.target.setLayer(self.layer)
 		self.target.position = fife.Point(19,9)
 		
 		self.obj = fife.Object("object001")
@@ -41,7 +40,9 @@ class AnimationTests(unittest.TestCase):
 		self.engine.initializePumping()
 		backend = self.engine.renderBackend
 		for i in xrange(360):
-			if self.inst.position == self.target.position:
+			self.inst.getLocation().getLayerCoordinates()
+			self.target.getLayerCoordinates()
+			if self.inst.getLocation().getLayerCoordinates() == self.target.getLayerCoordinates():
 				break
 			self.inst.update()
 			action = self.inst.currentAction

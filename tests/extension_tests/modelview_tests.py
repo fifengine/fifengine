@@ -21,9 +21,8 @@ class TestModelView(unittest.TestCase):
 		self.screen_cell_h = img.getHeight()
 
 		self.camloc = fife.Location()
-		self.camloc.elevation = self.elevation
-		self.camloc.layer = self.layer
-		self.camloc.position = fife.Point(0,0)
+		self.camloc.setLayer(self.layer)
+		self.camloc.setLayerCoordinates(fife.Point(0,0))
 
 	def tearDown(self):
 		del self.engine

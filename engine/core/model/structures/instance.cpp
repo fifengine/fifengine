@@ -160,7 +160,7 @@ namespace FIFE {
 		delete m_pending_actioninfo;
 		m_pending_actioninfo = NULL;
 
-		(*info_to_use) = new ActionInfo(m_object->getPather(), m_location.position);
+		(*info_to_use) = new ActionInfo(m_object->getPather(), m_location.getLayerCoordinates());
 		(*info_to_use)->m_action = m_object->getAction(action_name);
 		if (!(*info_to_use)->m_action) {
 			delete (*info_to_use);
@@ -208,11 +208,12 @@ namespace FIFE {
 	 */
 	bool Instance::move() {
 		bool finished = false;
+		Point curpos = m_location.getLayerCoordinates();
 		if (m_actioninfo->m_offset_distance == 0) {
 			if (m_pending_actioninfo) {
 				// take care of stopping
-				m_actioninfo->m_offsetsource = m_location.position;
-				m_actioninfo->m_offsettarget = m_location.position;
+				m_actioninfo->m_offsetsource = curpos;
+				m_actioninfo->m_offsettarget = curpos;
 				m_actioninfo->m_cur_offset = 0;
 				m_actioninfo->m_nextcells.clear();
 				m_actioninfo->resetTarget();
@@ -220,7 +221,7 @@ namespace FIFE {
 			} else {
 				calcMovement();
 			}
-		} else if (m_location.position == m_actioninfo->m_offsetsource) {
+		} else if (curpos == m_actioninfo->m_offsetsource) {
 			if (m_pending_actioninfo) {
 				// switch the movement direction to return to the center point
 				Point tmp = m_actioninfo->m_offsetsource;
@@ -228,7 +229,7 @@ namespace FIFE {
 				m_actioninfo->m_offsettarget = tmp;
 				m_actioninfo->m_cur_offset = m_actioninfo->m_offset_distance - m_actioninfo->m_cur_offset;
 				m_actioninfo->m_nextcells.clear();
-				m_actioninfo->m_target->position = m_location.position;
+				m_actioninfo->m_target->setLayerCoordinates(curpos);
 			} 
 			calcMovement();
 		} else {
@@ -241,13 +242,13 @@ namespace FIFE {
 	void Instance::calcMovement() {
 		m_actioninfo->getNextCells(m_location);
 
-		CellGrid* cg              = m_location.layer->getCellGrid();
+		CellGrid* cg              = m_location.getLayer()->getCellGrid();
 		unsigned int timedelta    = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
 		double distance_to_travel = (static_cast<float>(timedelta) / 1000.0) * m_actioninfo->m_speed;
 		double dist_to_first_cell = m_actioninfo->m_offset_distance - m_actioninfo->m_cur_offset;
 		double cumul_dist         = dist_to_first_cell;
-		Point* prev               = &m_actioninfo->m_offsetsource;
-		Point* next               = &m_actioninfo->m_offsettarget;
+		Point prev                = m_actioninfo->m_offsetsource;
+		Point next                = m_actioninfo->m_offsettarget;
 		double next_offset_dist   = m_actioninfo->m_offset_distance;
 		bool moved                = false;
 
@@ -258,16 +259,16 @@ namespace FIFE {
 		while (i != m_actioninfo->m_nextcells.end()) {
 			if (cumul_dist > distance_to_travel) {
 				// if cell boundary has changed
-				if (prev != &m_actioninfo->m_offsetsource) {
-					m_actioninfo->m_offsetsource = *prev;
-					m_actioninfo->m_offsettarget = *next;
+				if (prev != m_actioninfo->m_offsetsource) {
+					m_actioninfo->m_offsetsource = prev;
+					m_actioninfo->m_offsettarget = next;
 					m_actioninfo->m_offset_distance = next_offset_dist;
 					double distance_to_last_cell = cumul_dist - dist_to_first_cell - distance_to_travel;
 					m_actioninfo->m_cur_offset = next_offset_dist - distance_to_last_cell;
 					if (m_actioninfo->m_cur_offset > (m_actioninfo->m_offset_distance / 2)) {
-						m_location.position = m_actioninfo->m_offsettarget;
+						m_location.setLayerCoordinates(m_actioninfo->m_offsettarget);
 					} else {
-						m_location.position = m_actioninfo->m_offsetsource;
+						m_location.setLayerCoordinates(m_actioninfo->m_offsetsource);
 					}
 				}
 				// still between same cells
@@ -278,9 +279,9 @@ namespace FIFE {
 				break;
 			}
 			prev = next;
-			next = &(*i).position;
-			next_offset_dist = cg->getAdjacentCost(*prev, *next);
-			m_actioninfo->m_facingcell = *next;
+			next = (*i).getLayerCoordinates();
+			next_offset_dist = cg->getAdjacentCost(prev, next);
+			m_actioninfo->m_facingcell = next;
 			cumul_dist += next_offset_dist;
 			++i;
 		}
@@ -290,16 +291,16 @@ namespace FIFE {
 			// received from pather. 2) there were no cells received from pathfinder,
 			// meaning that we already are in the correct cell. Proceed towards the centerpoint
 			if (m_actioninfo->m_nextcells.size() > 0) {
-				m_actioninfo->m_offsetsource = m_actioninfo->m_nextcells.back().position;
+				m_actioninfo->m_offsetsource = m_actioninfo->m_nextcells.back().getLayerCoordinates();
 				m_actioninfo->m_offsettarget = m_actioninfo->m_offsetsource;
 				m_actioninfo->m_offset_distance = 0;
 				m_actioninfo->m_cur_offset = 0;
-				m_location.position = m_actioninfo->m_offsetsource;
+				m_location.setLayerCoordinates(m_actioninfo->m_offsetsource);
 			} else {
 				m_actioninfo->m_cur_offset = m_actioninfo->m_cur_offset + distance_to_travel;
 				if (m_actioninfo->m_offset_distance < m_actioninfo->m_cur_offset) {
-					m_actioninfo->m_offsetsource = m_location.position;
-					m_actioninfo->m_offsettarget = m_location.position;
+					m_actioninfo->m_offsetsource = m_location.getLayerCoordinates();
+					m_actioninfo->m_offsettarget = m_location.getLayerCoordinates();
 					m_actioninfo->m_offset_distance = 0;
 					m_actioninfo->m_cur_offset = 0;
 				}
@@ -380,7 +381,7 @@ namespace FIFE {
 		if (m_actioninfo) {
 			return m_actioninfo->m_facingcell;
 		}
-		return m_location.position;
+		return m_location.getLayerCoordinates();
 	}
 
 	int Instance::getActionRuntime() {
@@ -411,14 +412,14 @@ namespace FIFE {
 	DoublePoint Instance::getExactPosition() {
 		if (m_actioninfo) {
 			if (m_actioninfo->m_offset_distance > 0) {
-				assert(m_location.layer);
-				CellGrid* cg = m_location.layer->getCellGrid();
+				assert(m_location.getLayer());
+				CellGrid* cg = m_location.getLayer()->getCellGrid();
 				assert(cg);
 				return cg->getOffset(m_actioninfo->m_offsetsource, 
 						     m_actioninfo->m_offsettarget, 
 						     m_actioninfo->m_offset_distance);
 			} 
 		}
-		return intPt2doublePt(m_location.position);
+		return intPt2doublePt(m_location.getLayerCoordinates());
 	}
 }

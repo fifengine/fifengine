@@ -24,11 +24,9 @@ namespace FIFE {
 		public:
 			Instance(Object* object, const Location& location);
 			virtual ~Instance();
-			Object* getObject() { return m_object; }
-			void setPosition(const Point& p) { m_location.position = p; }
-			const Point& getPosition() const { return m_location.position; }
-			Layer* getLayer() const { return m_location.layer; }
-			const Location& getLocation() const { return m_location; }
+			Object* getObject();
+			void setLocation(const Location& loc);
+			const Location& getLocation() const;
 			void addListener(InstanceListener* listener);
 			void removeListener(InstanceListener* listener);
 			Action* getCurrentAction();

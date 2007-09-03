@@ -135,12 +135,12 @@ namespace FIFE {
 		/** Transforms given point from screen coordinates to elevation coordinates
 		 *  @return point in elevation coordinates
 		 */
-		DoublePoint toElevationCoords(Point screen_coords);
+		DoublePoint toElevationCoordinates(Point screen_coords);
 
 		/** Transforms given point from elevation coordinates to screen coordinates
 		 *  @return point in screen coordinates
 		 */
-		Point toScreenCoords(DoublePoint elevation_coords);
+		Point toScreenCoordinates(DoublePoint elevation_coords);
 
 	private:
 		void updateMatrices();

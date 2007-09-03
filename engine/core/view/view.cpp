@@ -78,7 +78,7 @@ namespace FIFE {
 	void View::updateCamera(Camera* camera) {
 		//std::cout << "In View::updateCamera\n";
 		const Location& loc = camera->getLocation();
-		Elevation* elev = loc.elevation;
+		Elevation* elev = loc.getElevation();
 		if (!elev) {
 			//std::cout << "No elevation found, exiting\n";
 			return;
@@ -101,13 +101,13 @@ namespace FIFE {
 				//std::cout << "Iterating instances...\n";
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
-				DoublePoint elevpos = cg->toElevationCoords(instance->getPosition());
-				//std::cout << "Instance layer position = " << instance->getPosition() << "\n";
+				DoublePoint elevpos = instance->getLocation().getElevationCoordinates();
+				//std::cout << "Instance layer coordinates = " << instance->getCoordinates() << "\n";
 				//std::cout << "Instance elevation position = " << elevpos << "\n";
 				Action* action = instance->getCurrentAction();
 				if (action) {
 					//std::cout << "Instance has action\n";
-					DoublePoint elevface = cg->toElevationCoords(instance->getFacingCell());
+					DoublePoint elevface = cg->toElevationCoordinates(instance->getFacingCell());
 					float dx = static_cast<float>(elevface.x - elevpos.x);
 					float dy = static_cast<float>(elevface.y - elevpos.y);
 					int angle = static_cast<int>(atan2f(dx,dy)*180.0/M_PI);
@@ -125,9 +125,9 @@ namespace FIFE {
 					//std::cout << "Instance has image to render\n";
 					DoublePoint exact_pos = instance->getExactPosition();
 					//std::cout << "Instance exact position in layer = " << exact_pos << "\n";
-					DoublePoint exact_elevpos = cg->toElevationCoords(exact_pos);
+					DoublePoint exact_elevpos = cg->toElevationCoordinates(exact_pos);
 					//std::cout << "Instance exact position in elevation  = " << exact_elevpos << "\n";
-					Point drawpt = camera->toScreenCoords(exact_elevpos);
+					Point drawpt = camera->toScreenCoordinates(exact_elevpos);
 					//std::cout << "Instance exact position in screen = " << drawpt << "\n";
 
 					int w = image->getWidth();
@@ -147,14 +147,14 @@ namespace FIFE {
 
 					// draw grid for testing purposes
 					std::vector<DoublePoint> vertices;
-					cg->getVertices(vertices, instance->getPosition());
+					cg->getVertices(vertices, instance->getLocation().getLayerCoordinates());
 					std::vector<DoublePoint>::const_iterator it = vertices.begin();
-					Point firstpt = camera->toScreenCoords(cg->toElevationCoords(*it));
+					Point firstpt = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
 					Point pt1(firstpt.x, firstpt.y);
 					Point pt2;
 					++it;
 					while (it != vertices.end()) {
-						pt2 = camera->toScreenCoords(cg->toElevationCoords(*it));
+						pt2 = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
 						m_renderbackend->drawLine(pt1, pt2, 0, 255, 0);
 						pt1 = pt2;
 						++it;

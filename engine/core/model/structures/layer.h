@@ -95,17 +95,12 @@ namespace FIFE {
 
 			/** Get the elevation this layer is contained in
 			 */
-			Elevation* getElevation() { return m_elevation; }
+			Elevation* getElevation() const { return m_elevation; }
 
 			/** Get the Cellgrid as set in the constructor
 			 *  @return a valid cellgrid
 			 */
-			CellGrid* getCellGrid() { return m_grid; }
-
-			/** Get the size as set in the constructor
-			 *  @return the size in Layer coords
-			 */
-			const Point& getSize() const;
+			CellGrid* getCellGrid() const { return m_grid; }
 
 			/** Check existance of objects on this layer
 			 *  @return True, if objects exist.

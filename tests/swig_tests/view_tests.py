@@ -28,9 +28,8 @@ class TestView(unittest.TestCase):
 		self.layer = elev.addLayer("layer001", self.grid)
 		
 		self.camloc = fife.Location()
-		self.camloc.elevation = elev
-		self.camloc.layer = self.layer
-		self.camloc.position = fife.Point(-2,-2)
+		self.camloc.setLayer(self.layer)
+		self.camloc.setLayerCoordinates(fife.Point(-2,-2))
 
 		
 	def tearDown(self):
@@ -63,11 +62,15 @@ class TestView(unittest.TestCase):
 				cam.setRotation(cam.getRotation() - 1)
 			elif i > 40 and i < 50:
 				if i % 2 == 0:
-					self.camloc.position.x += 1
+					c = self.camloc.getLayerCoordinates()
+					c.x += 1
+					c = self.camloc.setLayerCoordinates(c)
 				cam.setLocation(self.camloc)
 			elif i > 50 and i < 60:
 				if i % 2 == 0:
-					self.camloc.position.x -= 1
+					c = self.camloc.getLayerCoordinates()
+					c.x -= 1
+					c = self.camloc.setLayerCoordinates(c)
 				cam.setLocation(self.camloc)
 			elif i > 60 and i < 70:
 				cam.setTilt(cam.getTilt() + 1)

@@ -55,10 +55,10 @@ namespace FIFE {
 	void Camera::updateMatrices() {
 		m_matrix.loadRotate(m_rotation, 0.0, 0.0, 1.0);
 		m_matrix.applyRotate(m_tilt, 1.0, 0.0, 0.0);
-		if (m_location.layer) {
-			CellGrid* cg = m_location.layer->getCellGrid();
+		if (m_location.getLayer()) {
+			CellGrid* cg = m_location.getLayer()->getCellGrid();
 			if (cg) {
-				DoublePoint pt = cg->toElevationCoords(m_location.position);
+				DoublePoint pt = m_location.getElevationCoordinates();
 				m_matrix.applyTranslate(pt.x, pt.y, 0);
 			}
 		}
@@ -67,19 +67,19 @@ namespace FIFE {
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
-	DoublePoint Camera::toElevationCoords(Point screen_coords) {
+	DoublePoint Camera::toElevationCoordinates(Point screen_coords) {
 		return m_matrix * intPt2doublePt(screen_coords);
 	}
 
-	Point Camera::toScreenCoords(DoublePoint elevation_coords) {
+	Point Camera::toScreenCoordinates(DoublePoint elevation_coords) {
 		//std::cout << "Camera::toScreenCoords:" << m_matrix;
 		return doublePt2intPt(m_inverse_matrix * elevation_coords);
 	}
 
 	void Camera::updateReferenceScale() {
 		CellGrid* cg = NULL;
-		if (m_location.layer) {
-			cg = m_location.layer->getCellGrid();
+		if (m_location.getLayer()) {
+			cg = m_location.getLayer()->getCellGrid();
 		}
 		if (!cg) {
 			return;
@@ -95,7 +95,7 @@ namespace FIFE {
 		mtx = mtx.inverse();
 		double x1, x2, y1, y2;
 		for (unsigned int i = 0; i < vertices.size(); i++) {
-			vertices[i] = cg->toElevationCoords(vertices[i]);
+			vertices[i] = cg->toElevationCoordinates(vertices[i]);
 			vertices[i] = mtx * vertices[i];
 			if (i == 0) {
 				x1 = x2 = vertices[0].x;
@@ -108,10 +108,10 @@ namespace FIFE {
 				y2 = std::max(vertices[i].y, y2);
 			}
 		}
-		double sw = static_cast<double>(m_screen_cell_width);
-		double sh = static_cast<double>(m_screen_cell_height);
 		m_reference_scale = static_cast<double>(m_screen_cell_width) / (x2 - x1);
 		/*
+		double sw = static_cast<double>(m_screen_cell_width);
+		double sh = static_cast<double>(m_screen_cell_height);
 		std::cout << "\n>>>>>>>> Camera::updateReferenceScale\n";
 		std::cout << "   tilt=" << m_tilt << " rot=" << m_rotation << "\n";
 		std::cout << "   x1=" << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2 << \

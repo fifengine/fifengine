@@ -32,24 +32,23 @@
 namespace FIFE {
 	int LinearPather::getNextCells(const Location& curpos, const Location& target, 
 	                               std::vector<Location>& nextnodes, const int session_id) {
-		assert(curpos.elevation == target.elevation);
-		assert(curpos.layer == target.layer);
+		assert(curpos.getElevation() == target.getElevation());
+		assert(curpos.getLayer() == target.getLayer());
+		
+		Point curpt = curpos.getLayerCoordinates();
+		Point tgtpt = target.getLayerCoordinates();
 		
 		// Finished? -> return empty vector.
-		if(curpos.position == target.position) {
+		if (curpt == tgtpt) {
 			nextnodes.clear();
 			return session_id;
 		}
 
-		int dx = target.position.x - curpos.position.x;
-		int dy = target.position.y - curpos.position.y;
+		int dx = tgtpt.x - curpt.x;
+		int dy = tgtpt.y - curpt.y;
 
-		Location nextnode;
-		nextnode.elevation = curpos.elevation;
-		nextnode.layer = curpos.layer;
-		nextnode.position = curpos.position;
-
-		Point& p = nextnode.position;
+		Location nextnode(curpos);
+		Point p = nextnode.getLayerCoordinates();
 		if (dx > 0) {
 			p.x += 1;
 		}

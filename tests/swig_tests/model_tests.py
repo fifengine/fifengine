@@ -126,7 +126,11 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(len(layer.getInstances()), 3)
 
 		self.assertEqual(query[0].get_string("Name"), "Goon")
-		self.assertEqual(inst.getPosition(), fife.Point(4,4))
+		p1 = fife.Point(4,4)
+		print p1.x, p1.y
+		p2 = inst.getLocation().getLayerCoordinates()
+		print p2.x, p2.y
+		self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.Point(4,4))
 		
 	def testMetaModel(self):
 		dat1 = self.metamodel.addDataset("dataset003")
@@ -262,9 +266,8 @@ class ActivityTests(unittest.TestCase):
 		self.layer = elev.addLayer("layer010", grid)
 		
 		self.target = fife.Location()
-		self.target.layer = self.layer
-		self.target.elevation = elev
-		self.target.position = fife.Point(10,10)
+		self.target.setLayer(self.layer)
+		self.target.setPosition(fife.Point(10,10))
 		
 		self.obj = fife.Object("object010")
 		self.pather = fife.LinearPather()

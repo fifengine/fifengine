@@ -98,14 +98,29 @@ namespace FIFE {
 		return DoublePoint(0,0);
 	}
 
-	DoublePoint SquareGrid::toElevationCoords(const DoublePoint& layer_coords) {
+	DoublePoint SquareGrid::toElevationCoordinates(const DoublePoint& layer_coords) {
 		return m_matrix * layer_coords;
 	}
 
-	DoublePoint SquareGrid::toExactLayerCoords(const DoublePoint& elevation_coord) {
+	DoublePoint SquareGrid::toExactLayerCoordinates(const DoublePoint& elevation_coord) {
 		return m_inverse_matrix * elevation_coord;
 	}
 
+	Point SquareGrid::toLayerCoordinates(const DoublePoint& elevation_coord) {
+		Point result;
+		result.x = static_cast<int>(floor(elevation_coord.x));
+		result.y = static_cast<int>(floor(elevation_coord.y));
+		
+		if ((elevation_coord.x - static_cast<double>(result.x)) > 0.5) {
+			result.x++;
+		}
+		if ((elevation_coord.y - static_cast<double>(result.y)) > 0.5) {
+			result.y++;
+		}
+		
+		return result;
+	}
+	
 	void SquareGrid::getVertices(std::vector<DoublePoint>& vtx, const Point& cell) {
 		vtx.clear();
 		double x = static_cast<double>(cell.x);

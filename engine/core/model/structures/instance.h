@@ -75,17 +75,7 @@ namespace FIFE {
 			template<typename T>
 			const T& get(const std::string& field) { return m_object->oget<T>(field); }
 
-			/** Sets instance position to p
- 			 */
-			void setPosition(const Point& p) { m_location.position = p; }
-
-			/** Gets current instance position
- 			 */
-			const Point& getPosition() const { return m_location.position; }
-
-			/** Gets current layer where instance is located
- 			 */
-			Layer* getLayer() const { return m_location.layer; }
+			void setLocation(const Location& loc) { m_location = loc; }
 
 			/** Gets current location of instance
  			 */

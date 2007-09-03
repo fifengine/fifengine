@@ -32,25 +32,99 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/point.h"
+#include "util/exception.h"
 
 namespace FIFE {
 	class Elevation;
 	class Layer;
 
 	class Location {
-		public:
-			Location() : elevation(0),layer(0),position(0,0) {}
-
-			Elevation* elevation;
-			Layer* layer;
-			Point position;
-
-			bool operator==(const Location& loc) const {
-				return ((elevation == loc.elevation) &&
-				        (layer == loc.layer) &&
-			                (position == loc.position));
-			}
+	public:
+		/** Default constructor
+		 */
+		Location();
+		
+		/** Copy constructor
+		 */
+		Location(const Location& loc);
+		
+		/** Destructor
+		 */
+		~Location();
+		
+		/** Resets location (so that layer and coordinate information becomes invalid)
+		 */
+		void reset();
+		
+		/** Compares two locations together
+		 */
+		bool operator==(const Location& loc) const;
+		
+		/** Gets the elevation where this location is pointing to
+		 * @note this information is fetched from the set layer
+		 * @return elevation where this location is pointing to, NULL in case its invalid
+		 */
+		Elevation* getElevation() const;
+		
+		/** Sets layer where this location is pointing to
+		 *  @param layer layer to set
+		 */
+		void setLayer(Layer* layer);
+		
+		/** Gets the layer where this location is pointing to
+		 * @return layer where this location is pointing to, NULL in case its invalid
+		 */
+		Layer* getLayer() const;
+		
+		/** Sets precise layer coordinates to this location
+		 *  @throws NotSet in the following cases:
+		 *     - layer is not set (NULL)
+		 *     - layer does not have cellgrid assigned
+		 *  @param coordinates coordinates to set
+		 */
+		void setLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
+		
+		/** Sets "cell precise" layer coordinates to this location
+		 *  @throws NotSet in the following cases:
+		 *     - layer is not set (NULL)
+		 *     - layer does not have cellgrid assigned
+		 * @see setLayerCoordinates(const DoublePoint& coordinates)
+		 */
+		void setLayerCoordinates(const Point& coordinates) throw(NotSet);
+		
+		/** Sets elevation coordinates to this location
+		 *  @param coordinates coordinates to set
+		 */
+		void setElevationCoordinates(const DoublePoint& coordinates);
+		
+		/** Gets exact layer coordinates set to this location
+		 *  @throws NotSet in the following cases:
+		 *     - layer is not set (NULL)
+		 *     - layer does not have cellgrid assigned
+		 * @return exact layer coordinates
+		 */
+		DoublePoint getExactLayerCoordinates() const throw(NotSet);
+		
+		/** Gets cell precision layer coordinates set to this location
+		 * @see getExactLayerCoordinates
+		 */
+		Point getLayerCoordinates() const throw(NotSet);
+		
+		/** Gets elevation coordinates set to this location
+		 * @return elevation coordinates
+		 */
+		DoublePoint getElevationCoordinates() const;
+	
+		/** Tells if location is valid
+		 * Location is valid if:
+		 *   - layer is set
+		 *   - layer has cellgrid
+		 */
+		bool isValid() const;
+		
+	private:		
+		Layer* m_layer;
+		DoublePoint m_elevation_coords;
 	};
-
 }
 #endif //FIFE_LOCATION_H

@@ -55,9 +55,8 @@ namespace FIFE {
 	Instance* Layer::addInstance(Object* object, const Point& p) {
 
 		Location l;
-		l.elevation = getElevation();
-		l.layer = this;
-		l.position = p;
+		l.setLayer(this);
+		l.setLayerCoordinates(p);
 
 		Instance* instance = new Instance(object, l);
 		m_instances.push_back(instance);

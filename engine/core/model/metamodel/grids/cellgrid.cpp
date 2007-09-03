@@ -65,11 +65,7 @@ namespace FIFE {
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
-	Point CellGrid::toLayerCoords(const DoublePoint& elevation_coord) {
-		return doublePt2intPt(toExactLayerCoords(elevation_coord));
-	}
-
-	DoublePoint CellGrid::toElevationCoords(const Point& layer_coords) {
-		return toElevationCoords(intPt2doublePt(layer_coords));
+	DoublePoint CellGrid::toElevationCoordinates(const Point& layer_coords) {
+		return toElevationCoordinates(intPt2doublePt(layer_coords));
 	}
 }
