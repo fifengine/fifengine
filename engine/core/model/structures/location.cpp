@@ -138,4 +138,9 @@ namespace FIFE {
 		DoublePoint pt  = getExactLayerCoordinates();
 		return sqrt(pt.x*pt.x + pt.y*pt.y);
 	}
+	
+	std::ostream& operator<<(std::ostream& os, const Location& l) {
+		DoublePoint p = l.getExactLayerCoordinates();
+		return os << "x=" << p.x << ", y=" << p.y;
+	}	
 }

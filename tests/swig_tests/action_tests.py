@@ -2,37 +2,45 @@
 from swig_test_utils import *
 import pythonize
 
-class AnimationTests(unittest.TestCase):
+class ActionTests(unittest.TestCase):
 	def setUp(self):
 		template = 'content/animations/critters/animals/wolf_walk_%s.xml'
-		dirnames = ['n','ne','e','se','s','sw','w','nw']
+		dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
 		files = map(lambda dirname: template % dirname, dirnames)
 
 		self.engine = fife.Engine()
+		_map = self.engine.getModel().addMap("map001")
+		elev = _map.addElevation("elevation001")
+		
 		self.grid = fife.SquareGrid(True)
-		elev = fife.Elevation("Elevation001")
 		self.layer = elev.addLayer("Layer001", self.grid)
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.layer)
-		self.target.position = fife.Point(19,9)
+		self.target.setLayerCoordinates(fife.Point(4,4))
 		
 		self.obj = fife.Object("object001")
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
 		self.action = self.obj.addAction('action001', 'walk')
-		self.action.thisown = 0
 		addResource = self.engine.animationPool.addResourceFromFile
 		for index, direction in enumerate(dirnames):
 			degree = 45 * index
 			self.action.addAnimation(degree, addResource(files[index]))
 
-		self.inst = self.layer.addInstance(self.obj, fife.Point(4,4))
-
+		self.ground = fife.Object("ground")
+		imgid = self.engine.imagePool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
+		self.ground.addStaticImage(0, imgid)
+		self.ground.img = self.engine.getImagePool().getImage(imgid)
+		for y in xrange(4,10):
+			for x in xrange(4,10):
+				self.layer.addInstance(self.ground, fife.Point(x,y))
+		self.inst = self.layer.addInstance(self.obj, fife.Point(4,8))
+			
 	def tearDown(self):
 		del self.engine
 
-	def testWalkingAction(self):
+	def _testWalkingAction(self):
 		print 'test1'
 		getAnimation = self.engine.animationPool.getAnimation
 		print 'test2'
@@ -55,7 +63,35 @@ class AnimationTests(unittest.TestCase):
 			self.engine.pump()
 		self.engine.finalizePumping()
 
-TEST_CLASSES = [AnimationTests]
+	def testWalkAround(self):
+		camloc = fife.Location()
+		camloc.setLayer(self.layer)
+		camloc.setLayerCoordinates(fife.Point(5,-2))
+		
+		cam = fife.Camera()
+		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
+		cam.setRotation(45)
+		cam.setTilt(40)
+		cam.setLocation(camloc)
+		rb = self.engine.getRenderBackend()
+		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
+		cam.setViewPort(viewport)
+		self.engine.getView().addCamera(cam)
+		
+		self.engine.initializePumping()
+		self.inst.act('walk', self.target, 1)
+		for i in xrange(300):
+			self.engine.pump()
+			cam.setRotation(cam.getRotation() + 0.01)
+			if i == 150:
+				self.target.setLayerCoordinates(fife.Point(10,10))
+				self.inst.act('walk', self.target, 1)
+		self.engine.finalizePumping()
+		self.engine.getView().removeCamera(cam)
+
+		
+
+TEST_CLASSES = [ActionTests]
 
 if __name__ == '__main__':
     unittest.main()

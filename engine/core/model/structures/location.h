@@ -140,5 +140,11 @@ namespace FIFE {
 		Layer* m_layer;
 		DoublePoint m_elevation_coords;
 	};
+	
+	/** Stream output operator.
+	 *
+	 * Useful for debugging purposes
+	 */
+	std::ostream& operator<<(std::ostream&, const Location&);
 }
 #endif //FIFE_LOCATION_H

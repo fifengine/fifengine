@@ -55,6 +55,7 @@ namespace FIFE {
 		if (dy < 0) {
 			p.y -= 1;
 		}
+		nextnode.setLayerCoordinates(p);
 		nextlocations.clear();
 		nextlocations.push_back(nextnode);
 		return session_id;

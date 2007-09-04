@@ -102,24 +102,29 @@ namespace FIFE {
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
 				DoublePoint elevpos = instance->getLocation().getElevationCoordinates();
-				//std::cout << "Instance layer coordinates = " << instance->getCoordinates() << "\n";
+				//std::cout << "Instance layer coordinates = " << instance->getLocation().getLayerCoordinates() << "\n";
 				//std::cout << "Instance elevation position = " << elevpos << "\n";
 				Action* action = instance->getCurrentAction();
+				//std::cout << "Fetched potential action\n";
 				if (action) {
 					//std::cout << "Instance has action\n";
-					DoublePoint elevface = instance->getFacingCell().getElevationCoordinates();
+					DoublePoint elevface = instance->getFacingLocation().getElevationCoordinates();
 					float dx = static_cast<float>(elevface.x - elevpos.x);
 					float dy = static_cast<float>(elevface.y - elevpos.y);
 					int angle = static_cast<int>(atan2f(dx,dy)*180.0/M_PI);
 					//std::cout << "Got angle " << angle << " for animation\n";
 					int animation_id = action->getAnimationIndexByAngle(angle);
 					Animation& animation = m_animationpool->getAnimation(animation_id);
-					image = animation.getFrameByTimestamp(instance->getActionRuntime());
+					int animtime = instance->getActionRuntime() % animation.getDuration();
+					image = animation.getFrameByTimestamp(animtime);
 				} else {
+					//std::cout << "No action\n";
 					int static_rotation = static_cast<int>(cg->getRotation() + camera->getRotation());
 					int imageid = instance->getStaticImageIndexByAngle(static_rotation);
 					//std::cout << "Instance does not have action, using static image with id " << imageid << "\n";
-					image = &m_imagepool->getImage(imageid);
+					if (imageid >= 0) {
+						image = &m_imagepool->getImage(imageid);
+					}
 				}
 				if (image) {
 					DoublePoint exact_elevpos = instance->getLocation().getElevationCoordinates();
@@ -157,7 +162,7 @@ namespace FIFE {
 					m_renderbackend->drawLine(pt2, firstpt, 0, 255, 0);
 				}
 				else {
-					//std::cout << "Instance does not have image to render\n";
+					std::cout << "Instance does not have image to render\n";
 				}
 				++instance_it;
 			}

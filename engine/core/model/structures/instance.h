@@ -118,7 +118,7 @@ namespace FIFE {
 			/** Returns the direction where instance is heading
 			 * @return the direction of instance.
 			 */
-			const Location& getFacingCell() const;
+			const Location& getFacingLocation() const;
 
 			/** Gets the time in milliseconds how long action has been active
 			 *  In case there is no current action, returns -1
