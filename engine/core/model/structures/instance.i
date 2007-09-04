@@ -27,15 +27,17 @@ namespace FIFE {
 			Object* getObject();
 			void setLocation(const Location& loc);
 			const Location& getLocation() const;
+			const Location& getTargetLocation() const;
 			void addListener(InstanceListener* listener);
 			void removeListener(InstanceListener* listener);
-			Action* getCurrentAction();
-			float getMovementSpeed();
-			std::vector<Location>* getNextCells();
-			DoublePoint getExactPosition();
-			int getActionRuntime();
+			Action* getCurrentAction() const;
+			double getMovementSpeed() const;
+			std::vector<Location>* getNextLocations() const;
+			const Location& getFacingCell() const;
+			int getActionRuntime() const;
 			void act(const std::string& action_name, const Location& target, const double speed);
-			void act(const std::string& action_name, const Point& direction, bool repeating=false);
+			void act(const std::string& action_name, const Location& direction, bool repeating=false);
+			int getStaticImageIndexByAngle(unsigned int angle);
 			void update(unsigned int curticks=0);
 
 			template<typename T>

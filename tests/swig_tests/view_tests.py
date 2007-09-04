@@ -62,15 +62,15 @@ class TestView(unittest.TestCase):
 				cam.setRotation(cam.getRotation() - 1)
 			elif i > 40 and i < 50:
 				if i % 2 == 0:
-					c = self.camloc.getLayerCoordinates()
-					c.x += 1
-					c = self.camloc.setLayerCoordinates(c)
+					c = self.camloc.getExactLayerCoordinates()
+					c.x += 0.1
+					c = self.camloc.setExactLayerCoordinates(c)
 				cam.setLocation(self.camloc)
 			elif i > 50 and i < 60:
 				if i % 2 == 0:
-					c = self.camloc.getLayerCoordinates()
-					c.x -= 1
-					c = self.camloc.setLayerCoordinates(c)
+					c = self.camloc.getExactLayerCoordinates()
+					c.x -= 0.1
+					c = self.camloc.setExactLayerCoordinates(c)
 				cam.setLocation(self.camloc)
 			elif i > 60 and i < 70:
 				cam.setTilt(cam.getTilt() + 1)

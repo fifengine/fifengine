@@ -11,17 +11,17 @@ namespace FIFE {
 	public:
 		AbstractPather();
 		virtual ~AbstractPather();
-		virtual void setMap(Map* map) = 0; 
-		virtual int getNextCells(const Location& curpos, const Location& target,  
-		                         std::vector<Location>& nextnodes, const int session_id=-1) = 0;
+		virtual void setMap(Map* map) = 0;
+		virtual int getNextLocations(const Location& curpos, const Location& target, 
+					     std::vector<Location>& nextlocations, const int session_id) = 0;
 	};
 	
 	class LinearPather: public AbstractPather {
 	public:
 		LinearPather();
 		virtual ~LinearPather();
-		virtual void setMap(Map* map); 
-		virtual int getNextCells(const Location& curpos, const Location& target,  
-		                         std::vector<Location>& nextnodes, const int session_id=-1);
+		virtual void setMap(Map* map);
+		virtual int getNextLocations(const Location& curpos, const Location& target, 
+					     std::vector<Location>& nextlocations, const int session_id);
 	};
 }

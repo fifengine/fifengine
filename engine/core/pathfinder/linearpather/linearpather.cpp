@@ -30,19 +30,13 @@
 #include "linearpather.h"
 
 namespace FIFE {
-	int LinearPather::getNextCells(const Location& curpos, const Location& target, 
-	                               std::vector<Location>& nextnodes, const int session_id) {
+	int LinearPather::getNextLocations(const Location& curpos, const Location& target, 
+                                           std::vector<Location>& nextlocations, const int session_id) {
 		assert(curpos.getElevation() == target.getElevation());
 		assert(curpos.getLayer() == target.getLayer());
 		
 		Point curpt = curpos.getLayerCoordinates();
 		Point tgtpt = target.getLayerCoordinates();
-		
-		// Finished? -> return empty vector.
-		if (curpt == tgtpt) {
-			nextnodes.clear();
-			return session_id;
-		}
 
 		int dx = tgtpt.x - curpt.x;
 		int dy = tgtpt.y - curpt.y;
@@ -61,8 +55,8 @@ namespace FIFE {
 		if (dy < 0) {
 			p.y -= 1;
 		}
-		nextnodes.clear();
-		nextnodes.push_back(nextnode);
+		nextlocations.clear();
+		nextlocations.push_back(nextnode);
 		return session_id;
 	}
 }

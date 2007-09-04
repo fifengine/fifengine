@@ -17,16 +17,18 @@ namespace FIFE {
 		Location(const Location& loc);
 		~Location();
 		void reset();
+		Location& operator=(const Location& rhs) const;
 		bool operator==(const Location& loc) const;
 		Elevation* getElevation() const;
 		void setLayer(Layer* layer);
 		Layer* getLayer() const;
-		void setLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
+		void setExactLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
 		void setLayerCoordinates(const Point& coordinates) throw(NotSet);
 		void setElevationCoordinates(const DoublePoint& coordinates);
 		DoublePoint getExactLayerCoordinates() const throw(NotSet);
 		Point getLayerCoordinates() const throw(NotSet);
 		DoublePoint getElevationCoordinates() const;
-		bool isValid() const;	
+		bool isValid() const;
+		double getCellOffsetDistance() const;
 	};
 }

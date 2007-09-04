@@ -56,9 +56,17 @@ namespace FIFE {
 		 */
 		void reset();
 		
-		/** Compares two locations together
+		/** Assignment operator
+		 */
+		Location& operator=(const Location& rhs);
+		
+		/** Compares equality of two locations
 		 */
 		bool operator==(const Location& loc) const;
+		
+		/** Compares unequality of two locations
+		 */
+		bool operator!=(const Location& loc) const;
 		
 		/** Gets the elevation where this location is pointing to
 		 * @note this information is fetched from the set layer
@@ -82,7 +90,7 @@ namespace FIFE {
 		 *     - layer does not have cellgrid assigned
 		 *  @param coordinates coordinates to set
 		 */
-		void setLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
+		void setExactLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
 		
 		/** Sets "cell precise" layer coordinates to this location
 		 *  @throws NotSet in the following cases:
@@ -115,6 +123,12 @@ namespace FIFE {
 		 */
 		DoublePoint getElevationCoordinates() const;
 	
+		/** Gets offset distance from cell center
+		 * @return offset distance
+		 */
+		double getCellOffsetDistance() const;
+		
+		
 		/** Tells if location is valid
 		 * Location is valid if:
 		 *   - layer is set

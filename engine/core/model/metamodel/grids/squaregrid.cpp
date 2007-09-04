@@ -85,8 +85,8 @@ namespace FIFE {
 	}
 
 	const std::string& SquareGrid::getName() const {
-		static std::string  squareGrid("Square Grid");
-		static std::string  squareGridDiagonal("Square Grid with diagonal access");
+		static std::string squareGrid("Square Grid");
+		static std::string squareGridDiagonal("Square Grid with diagonal access");
 		if (m_diagonals_accessible) {
 			return squareGrid;
 		}
@@ -107,14 +107,15 @@ namespace FIFE {
 	}
 
 	Point SquareGrid::toLayerCoordinates(const DoublePoint& elevation_coord) {
+		DoublePoint dblpt = toExactLayerCoordinates(elevation_coord);
 		Point result;
-		result.x = static_cast<int>(floor(elevation_coord.x));
-		result.y = static_cast<int>(floor(elevation_coord.y));
+		result.x = static_cast<int>(floor(dblpt.x));
+		result.y = static_cast<int>(floor(dblpt.y));
 		
-		if ((elevation_coord.x - static_cast<double>(result.x)) > 0.5) {
+		if ((dblpt.x - static_cast<double>(result.x)) > 0.5) {
 			result.x++;
 		}
-		if ((elevation_coord.y - static_cast<double>(result.y)) > 0.5) {
+		if ((dblpt.y - static_cast<double>(result.y)) > 0.5) {
 			result.y++;
 		}
 		

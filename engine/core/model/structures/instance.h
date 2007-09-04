@@ -78,9 +78,15 @@ namespace FIFE {
 			void setLocation(const Location& loc) { m_location = loc; }
 
 			/** Gets current location of instance
+			 *  @return current location
  			 */
 			const Location& getLocation() const { return m_location; }
 
+			/** Gets movement target in case instance is moving. In case not, returns current location
+			 *  @return Movement target location
+			 */
+			const Location& getTargetLocation() const;
+			
 			/** Adds new instance listener
 			 * @param listener to add
  			 */
@@ -95,38 +101,30 @@ namespace FIFE {
 			 *  the instance's object, so don't delete it!
 			 * @return current action, NULL in case there is none
  			 */
-			Action* getCurrentAction();
+			Action* getCurrentAction() const;
 
 			/** Gets the speed in case instance is moving
 			 *  otherwise returns 0
 			 * @return instance speed. Value 1 means distance 1 in layer coordinates / second
  			 */
-			double getMovementSpeed();
+			double getMovementSpeed() const;
 
-			/** Gets the cells where instance is about to be moved next
+			/** Gets the locations where instance is about to be moved next
 			 *  using this info with current location gives the direction of instance during movement
-			 * @return next cells of movement. In case of no movement, returns NULL
+			 * @return next locations of movement. In case of no movement, returns NULL
  			 */
-			std::vector<Location>* getNextCells();
-
-			/** Returns the exact position of this instance taking offsets into account
-			 * @return exact position
-			 */
-			DoublePoint getExactPosition();
+			std::vector<Location>* getNextLocations() const;
 
 			/** Returns the direction where instance is heading
-			 * @see getNextCell
-			 * @see getOffsetCell
-			 * @see getOffsetDistance
 			 * @return the direction of instance.
 			 */
-			Point getFacingCell();
+			const Location& getFacingCell() const;
 
 			/** Gets the time in milliseconds how long action has been active
 			 *  In case there is no current action, returns -1
 			 * @return action runtime
  			 */
-			int getActionRuntime();
+			int getActionRuntime() const;
 
 			/** Performs given named action to the instance. While performing the action
 			 *  moves instance to given target with given speed
@@ -141,7 +139,7 @@ namespace FIFE {
 			 *  @param direction coordinates for cell towards instance is heading to when performing the action
 			 *  @param repeating in case true, keeps repeating this action
  			 */
-			void act(const std::string& action_name, const Point& direction, bool repeating=false);
+			void act(const std::string& action_name, const Location& direction, bool repeating=false);
 
 			/** Returns closest matching static image for given angle
 			 * @return id for static image
@@ -173,6 +171,7 @@ namespace FIFE {
 
 			Instance(const Instance&);
 			Instance& operator=(const Instance&);
+			// Finalize current action
 			void finalizeAction();
 			// Initialize a new action (either pending or current) and return the info for it.
 			ActionInfo* initalizeAction(const std::string& action_name);

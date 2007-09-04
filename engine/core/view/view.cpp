@@ -107,7 +107,7 @@ namespace FIFE {
 				Action* action = instance->getCurrentAction();
 				if (action) {
 					//std::cout << "Instance has action\n";
-					DoublePoint elevface = cg->toElevationCoordinates(instance->getFacingCell());
+					DoublePoint elevface = instance->getFacingCell().getElevationCoordinates();
 					float dx = static_cast<float>(elevface.x - elevpos.x);
 					float dy = static_cast<float>(elevface.y - elevpos.y);
 					int angle = static_cast<int>(atan2f(dx,dy)*180.0/M_PI);
@@ -122,13 +122,8 @@ namespace FIFE {
 					image = &m_imagepool->getImage(imageid);
 				}
 				if (image) {
-					//std::cout << "Instance has image to render\n";
-					DoublePoint exact_pos = instance->getExactPosition();
-					//std::cout << "Instance exact position in layer = " << exact_pos << "\n";
-					DoublePoint exact_elevpos = cg->toElevationCoordinates(exact_pos);
-					//std::cout << "Instance exact position in elevation  = " << exact_elevpos << "\n";
+					DoublePoint exact_elevpos = instance->getLocation().getElevationCoordinates();
 					Point drawpt = camera->toScreenCoordinates(exact_elevpos);
-					//std::cout << "Instance exact position in screen = " << drawpt << "\n";
 
 					int w = image->getWidth();
 					int h = image->getHeight();

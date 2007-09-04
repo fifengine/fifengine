@@ -46,8 +46,8 @@ namespace FIFE {
 
 		virtual void setMap(Map* map) {}
 
-		virtual int getNextCells(const Location& curpos, const Location& target, 
-					std::vector<Location>& nextnodes, const int session_id=-1);
+		virtual int getNextLocations(const Location& curpos, const Location& target, 
+					     std::vector<Location>& nextlocations, const int session_id=-1);		
 	};
 }
 

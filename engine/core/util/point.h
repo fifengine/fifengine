@@ -90,13 +90,13 @@ namespace FIFE {
 
 		/** Scalar multiplication with an integer value
 		 */
-		PointType2D<T> operator*(const long& i) const {
+		PointType2D<T> operator*(const T& i) const {
 			return PointType2D<T>(x * i, y * i);
 		}
 
 		/** Scalar division with an integer value
 		 */
-		PointType2D<T> operator/(const long& i) const {
+		PointType2D<T> operator/(const T& i) const {
 			return PointType2D<T>(x / i, y / i);
 		}
 
@@ -194,13 +194,13 @@ namespace FIFE {
 
 		/** Scalar multiplication with an integer value
 		 */
-		PointType3D<T> operator*(const long& i) const {
+		PointType3D<T> operator*(const T& i) const {
 			return PointType3D<T>(x * i, y * i, z * i);
 		}
 
 		/** Scalar division with an integer value
 		 */
-		PointType3D<T> operator/(const long& i) const {
+		PointType3D<T> operator/(const T& i) const {
 			return PointType3D<T>(x / i, y / i, z / i);
 		}
 

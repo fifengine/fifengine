@@ -60,10 +60,21 @@ namespace FIFE {
 		m_layer = NULL;
 	}
 	
+	Location& Location::operator=(const Location& rhs) {
+		m_layer = rhs.m_layer;
+		m_elevation_coords.x = rhs.m_elevation_coords.x;
+		m_elevation_coords.y = rhs.m_elevation_coords.y;
+		return *this;
+	}
+	
 	bool Location::operator==(const Location& loc) const {
 		return ((m_layer == loc.m_layer) && (m_elevation_coords == loc.m_elevation_coords));
 	}
 		
+	bool Location::operator!=(const Location& loc) const {
+		return !(*this == loc);
+	}
+	
 	Elevation* Location::getElevation() const {
 		if (!m_layer) {
 			return NULL;
@@ -80,7 +91,7 @@ namespace FIFE {
 		return m_layer;
 	}
 	
-	void Location::setLayerCoordinates(const DoublePoint& coordinates) throw(NotSet) {
+	void Location::setExactLayerCoordinates(const DoublePoint& coordinates) throw(NotSet) {
 		if (!isValid()) {
 			throw NotSet(INVALID_LAYER_SET);
 		}
@@ -121,5 +132,10 @@ namespace FIFE {
 	
 	bool Location::isValid() const {
 		return (m_layer && m_layer->getCellGrid());
+	}
+	
+	double Location::getCellOffsetDistance() const {
+		DoublePoint pt  = getExactLayerCoordinates();
+		return sqrt(pt.x*pt.x + pt.y*pt.y);
 	}
 }

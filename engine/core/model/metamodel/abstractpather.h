@@ -43,23 +43,23 @@ namespace FIFE {
 		 */
 		virtual void setMap(Map* map) = 0;
 
-		/** Gets next nodes from pathfinder
+		/** Gets next locations from pathfinder
 		 * Model will call this function periodically when instances are
-		 * moving on map. Pather must return next nodes in 
+		 * moving on map. Pather must return next locations in 
 		 * such pace that model always knows where to instances should be moved.
 		 * Pather must be able to store multiple chains for multiple simultaneous paths
 		 * (coming from multiple instances)
 		 *
-		 * @param curpos Current position of the movement
+		 * @param curpos Current locations of the movement
 		 * @param target Target of the movement. This must be always on same layer as curpos
-		 * @param nextnodes nodes where to move next (returned by pather). In case
-		 *                  called when already at target, returns empty list
+		 * @param nextnodes locations where to move next (returned by pather). In case
+		 *                  called when already at target, returns the target cell
 		 * @param session_id pather does pathfinding in increments.
 		 *   Further increments are bind to previous ones with given session_id
 		 * @return session_id to use with further calls
 		 */
-		virtual int getNextCells(const Location& curpos, const Location& target, 
-		                         std::vector<Location>& nextnodes, const int session_id=-1) = 0;
+		virtual int getNextLocations(const Location& curpos, const Location& target, 
+		                             std::vector<Location>& nextlocations, const int session_id=-1) = 0;
 	};
 }
 
