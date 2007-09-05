@@ -184,7 +184,8 @@ namespace FIFE {
 			// Movement must be finalized on the center of a cell
 			
 			// if we are in the center of the cell, stop
-			if (m_location.getCellOffsetDistance() == 0) {
+			std::cout << "Cell offset distance = " << m_location.getCellOffsetDistance() << "\n";
+			if (m_location.getCellOffsetDistance() < 0.1) {
 				std::cout << "in the center of the cell\n";
 				m_actioninfo->m_nextlocations.clear();
 				m_actioninfo->resetTarget();
@@ -197,6 +198,7 @@ namespace FIFE {
 				Point pt = m_location.getLayerCoordinates();
 				m_actioninfo->m_target->setLayerCoordinates(pt);
 				m_actioninfo->m_nextlocations.clear();
+				m_actioninfo->m_nextlocations.push_back(*m_actioninfo->m_target);
 			}
 		}
 		// still doing the same movement, get next locations from pather
@@ -206,18 +208,21 @@ namespace FIFE {
 		}
 		// calculate next locations
 		calcMovement();
-		m_actioninfo->m_facinglocation = *m_actioninfo->m_target;
 		return false;
 	}
 
 
 	void Instance::calcMovement() {
+		// what's the timeslice for this movement
 		unsigned int timedelta    = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
+		// how far we can travel
 		double distance_to_travel = (static_cast<float>(timedelta) / 1000.0) * m_actioninfo->m_speed;
+		// location to iterate based on pather locations + speed
 		DoublePoint iter_loc      = m_location.getExactLayerCoordinates();
+		// to calculate traveled distance
 		double cumul_dist         = 0;
 		std::cout << "calculating movement, dist to travel " << distance_to_travel << "\n";
-		std::cout << "current location = " << m_location;
+		std::cout << "current location = " << m_location << "\n";
 		
 		
 		// cumulate distance based on cell distances (cells returned from pathfinder)
@@ -236,7 +241,7 @@ namespace FIFE {
 				std::cout << "cannot reach the next cell...\n";
 				// calculate next location using available distance
 				iter_loc = iter_loc + (diff * (dist_left / dist_to_next_cell));
-				cumul_dist += dist_left / dist_to_next_cell;
+				cumul_dist += dist_left;
 			}
 			// otherwise iterate to the next cell center point
 			else {
@@ -245,7 +250,9 @@ namespace FIFE {
 				cumul_dist += dist_to_next_cell;
 				std::cout << "iter_loc = " << nextcell << ", cumul_dist = " << cumul_dist << "\n";
 			}
+			m_actioninfo->m_facinglocation = (*i);
 			++i;
+			std::cout << "path finder node end, cumul_dist=" << cumul_dist << "\n";
 		}
 		// move to point where iteration got us
 		m_location.setExactLayerCoordinates(iter_loc);
@@ -294,7 +301,7 @@ namespace FIFE {
 				}
 			}
 		}
-		if( m_actioninfo ) {
+		if (m_actioninfo) {
 			m_actioninfo->m_prev_call_time = curticks;
 		}
 	}
@@ -307,10 +314,12 @@ namespace FIFE {
 		delete m_actioninfo;
 		m_actioninfo = NULL;
 
-		std::vector<InstanceListener*>::iterator i = m_listeners->begin();
-		while (i != m_listeners->end()) {
-			(*i)->OnActionFinished(this, action);
-			++i;
+		if (m_listeners) {
+			std::vector<InstanceListener*>::iterator i = m_listeners->begin();
+			while (i != m_listeners->end()) {
+				(*i)->OnActionFinished(this, action);
+				++i;
+			}
 		}
 	}
 

@@ -78,7 +78,7 @@ namespace FIFE {
 
 	int Animation::getFrameIndex(unsigned int timestamp) {
 		int val = -1;
-		if ((static_cast<int>(timestamp) < m_animation_endtime) && (m_animation_endtime > 0)) {
+		if ((static_cast<int>(timestamp) <= m_animation_endtime) && (m_animation_endtime > 0)) {
 			std::map<unsigned int, FrameInfo>::const_iterator i(m_framemap.lower_bound(timestamp));
 			val = i->second.index;
 		}

@@ -113,17 +113,11 @@ namespace FIFE {
 	}
 	
 	DoublePoint Location::getExactLayerCoordinates() const throw(NotSet) {
-		if (!isValid()) {
-			throw NotSet(INVALID_LAYER_GET);
-		}
-		return m_layer->getCellGrid()->toExactLayerCoordinates(m_elevation_coords);
+		return getExactLayerCoordinates(m_layer);
 	}
 	
 	Point Location::getLayerCoordinates() const throw(NotSet) {
-		if (!isValid()) {
-			throw NotSet(INVALID_LAYER_GET);
-		}
-		return m_layer->getCellGrid()->toLayerCoordinates(m_elevation_coords);
+		return getLayerCoordinates(m_layer);
 	}
 	
 	DoublePoint Location::getElevationCoordinates() const {
@@ -131,16 +125,36 @@ namespace FIFE {
 	}
 	
 	bool Location::isValid() const {
-		return (m_layer && m_layer->getCellGrid());
+		return isValid(m_layer);
+	}
+	
+	bool Location::isValid(const Layer* layer) const {
+		return (layer && layer->getCellGrid());
+	}
+	
+	DoublePoint Location::getExactLayerCoordinates(const Layer* layer) const throw(NotSet) {
+		if (!isValid(layer)) {
+			throw NotSet(INVALID_LAYER_GET);
+		}
+		return layer->getCellGrid()->toExactLayerCoordinates(m_elevation_coords);
+	}
+	
+	Point Location::getLayerCoordinates(const Layer* layer) const throw(NotSet) {
+		if (!isValid(layer)) {
+			throw NotSet(INVALID_LAYER_GET);
+		}
+		return layer->getCellGrid()->toLayerCoordinates(m_elevation_coords);
 	}
 	
 	double Location::getCellOffsetDistance() const {
 		DoublePoint pt  = getExactLayerCoordinates();
-		return sqrt(pt.x*pt.x + pt.y*pt.y);
+		double dx = pt.x - static_cast<double>(static_cast<int>(pt.x));
+		double dy = pt.y - static_cast<double>(static_cast<int>(pt.y));
+		return sqrt(dx*dx + dy*dy);
 	}
 	
 	std::ostream& operator<<(std::ostream& os, const Location& l) {
 		DoublePoint p = l.getExactLayerCoordinates();
 		return os << "x=" << p.x << ", y=" << p.y;
-	}	
+	}
 }

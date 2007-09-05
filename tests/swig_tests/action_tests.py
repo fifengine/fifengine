@@ -17,7 +17,7 @@ class ActionTests(unittest.TestCase):
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.layer)
-		self.target.setLayerCoordinates(fife.Point(4,4))
+		self.target.setLayerCoordinates(fife.Point(2,2))
 		
 		self.obj = fife.Object("object001")
 		self.pather = fife.LinearPather()
@@ -32,10 +32,10 @@ class ActionTests(unittest.TestCase):
 		imgid = self.engine.imagePool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
 		self.ground.addStaticImage(0, imgid)
 		self.ground.img = self.engine.getImagePool().getImage(imgid)
-		for y in xrange(4,10):
-			for x in xrange(4,10):
+		for y in xrange(-2,3):
+			for x in xrange(-2,3):
 				self.layer.addInstance(self.ground, fife.Point(x,y))
-		self.inst = self.layer.addInstance(self.obj, fife.Point(4,8))
+		self.inst = self.layer.addInstance(self.obj, fife.Point(-2,-2))
 			
 	def tearDown(self):
 		del self.engine
@@ -66,7 +66,7 @@ class ActionTests(unittest.TestCase):
 	def testWalkAround(self):
 		camloc = fife.Location()
 		camloc.setLayer(self.layer)
-		camloc.setLayerCoordinates(fife.Point(5,-2))
+		camloc.setLayerCoordinates(fife.Point(0,0))
 		
 		cam = fife.Camera()
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
@@ -79,12 +79,22 @@ class ActionTests(unittest.TestCase):
 		self.engine.getView().addCamera(cam)
 		
 		self.engine.initializePumping()
-		self.inst.act('walk', self.target, 2)
-		for i in xrange(300):
+		self.inst.act('walk', self.target, 0.9)
+		for i in xrange(400):
 			self.engine.pump()
-			if i == 150:
-				self.target.setLayerCoordinates(fife.Point(10,10))
-				self.inst.act('walk', self.target, 1)
+			#cam.setRotation(cam.getRotation()+0.2)
+			#cam.setTilt(cam.getTilt()+0.5)
+			if i == 100:
+				self.target.setLayerCoordinates(fife.Point(2,-2))
+				self.inst.act('walk', self.target, 0.7)
+			if i == 200:
+				self.target.setLayerCoordinates(fife.Point(-1, -2))
+				self.inst.act('walk', self.target, 0.9)
+			if i == 200:
+				self.target.setLayerCoordinates(fife.Point(0, 2))
+				self.inst.act('walk', self.target, 0.9)
+		
+		
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)
 

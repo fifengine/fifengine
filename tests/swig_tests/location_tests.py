@@ -1,6 +1,8 @@
 #!/usr/bin/python
 from swig_test_utils import *
 
+P = fife.Point
+D = fife.DoublePoint
 class TestLocation(unittest.TestCase):
 	def setUp(self):
 		self.squaregrid1 = fife.SquareGrid()
@@ -12,46 +14,50 @@ class TestLocation(unittest.TestCase):
 		self.loc2 = fife.Location()
 		self.loc2.setLayer(self.layer2)
 	
-	def print_pt(self, pt):
-		print pt.x, pt.y
+	def testBasicMapping(self):
+		self.loc1.setLayerCoordinates(P(5,5))
+		pt = self.loc1.getLayerCoordinates()
+		self.assertEqual(pt, P(5,5))
+		pt = self.loc1.getExactLayerCoordinates()
+		self.assertEqual(pt, D(5,5))
+		pt = self.loc1.getElevationCoordinates()
+		self.assertEqual(pt, D(5,5))
+		pt = self.loc1.getLayerCoordinates(self.layer2)
+		self.assertEqual(pt, P(5,5))
+		pt = self.loc1.getExactLayerCoordinates(self.layer2)
+		self.assertEqual(pt, D(5,5))
 	
-	def testSquareGrid(self):
-		self.squaregrid2.setScale(0.25)
-		self.loc1.setLayerCoordinates(fife.Point(1,1))
+	def testSquareGridScale(self):
+		self.squaregrid2.setScale(0.2)
+		self.loc1.setLayerCoordinates(P(3,3))
+		pt = self.loc1.getLayerCoordinates(self.layer2)
+		self.assertEqual(pt, P(15,15))
+		pt = self.loc1.getExactLayerCoordinates(self.layer2)
+		self.assertEqual(pt, D(15,15))
 		
-		loc1_in_elev = self.loc1.getElevationCoordinates()
-		loc1_in_layer2 = self.squaregrid2.toLayerCoordinates(loc1_in_elev)
-		self.assertEqual(loc1_in_layer2.x, 4)
-		self.assertEqual(loc1_in_layer2.y, 4)
-		
-		self.squaregrid2.setRotation(90)
-		loc1_in_layer2 = self.squaregrid2.toLayerCoordinates(loc1_in_elev)
-		self.assertEqual(loc1_in_layer2.x, 4)
-		self.assertEqual(loc1_in_layer2.y, -4)
-		
-		self.squaregrid2.setRotation(180)
-		loc1_in_layer2 = self.squaregrid2.toLayerCoordinates(loc1_in_elev)
-		self.assertEqual(loc1_in_layer2.x, -4)
-		self.assertEqual(loc1_in_layer2.y, -4)
+	def testSquareGridRotation(self):
+		self.squaregrid1.setRotation(90)
+		self.loc1.setLayerCoordinates(P(3,3))
+		pt = self.loc1.getElevationCoordinates()
+		self.assertEqual(pt, D(3,-3))
 
-		self.squaregrid2.setXShift(2)
-		loc1_in_layer2 = self.squaregrid2.toLayerCoordinates(loc1_in_elev)
-		self.assertEqual(loc1_in_layer2.x, 4)
-		self.assertEqual(loc1_in_layer2.y, -4)
+	def testSquareGridShifts(self):
+		self.squaregrid1.setXShift(-3)
+		self.squaregrid1.setYShift(-3)
+		self.loc1.setLayerCoordinates(P(3,3))
+		pt = self.loc1.getElevationCoordinates()
+		self.assertEqual(pt, D(0,0))
 
-		self.squaregrid2.setYShift(2)
-		loc1_in_layer2 = self.squaregrid2.toLayerCoordinates(loc1_in_elev)
-		self.assertEqual(loc1_in_layer2.x, 4)
-		self.assertEqual(loc1_in_layer2.y, 4)
-		
-		self.squaregrid2.setScale(1)
-		self.squaregrid2.setXShift(0)
-		self.squaregrid2.setYShift(0)
-		self.squaregrid2.setRotation(0)
-		loc1_in_elev = self.loc1.getElevationCoordinates()
-		loc1_in_layer2 = self.squaregrid2.toLayerCoordinates(loc1_in_elev)
-		self.assertEqual(loc1_in_layer2, self.loc1.getLayerCoordinates())
-
+	def testSquareCombinations(self):
+		# correct order in combinations = scale, rotate, translate
+		self.squaregrid1.setXShift(2)
+		self.squaregrid1.setYShift(2)
+		self.squaregrid1.setRotation(90)
+		self.squaregrid1.setScale(5)
+		self.loc1.setLayerCoordinates(P(1,1))
+		pt = self.loc1.getElevationCoordinates()
+		self.assert_(6.999 < pt.x < 7.001)
+		self.assert_(-2.999 > pt.y > -3.001)
 
 TEST_CLASSES = [TestLocation]
 

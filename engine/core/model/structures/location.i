@@ -26,7 +26,9 @@ namespace FIFE {
 		void setLayerCoordinates(const Point& coordinates) throw(NotSet);
 		void setElevationCoordinates(const DoublePoint& coordinates);
 		DoublePoint getExactLayerCoordinates() const throw(NotSet);
+		DoublePoint getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
 		Point getLayerCoordinates() const throw(NotSet);
+		Point getLayerCoordinates(const Layer* layer) const throw(NotSet);
 		DoublePoint getElevationCoordinates() const;
 		bool isValid() const;
 		double getCellOffsetDistance() const;

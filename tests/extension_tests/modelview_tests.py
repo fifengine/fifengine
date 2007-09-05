@@ -22,7 +22,7 @@ class TestModelView(unittest.TestCase):
 
 		self.camloc = fife.Location()
 		self.camloc.setLayer(self.layer)
-		self.camloc.setLayerCoordinates(fife.Point(0,0))
+		self.camloc.setLayerCoordinates(fife.Point(5,0))
 
 	def tearDown(self):
 		del self.engine
@@ -41,9 +41,13 @@ class TestModelView(unittest.TestCase):
 		cam.thisown = 0
 		self.engine.initializePumping()
 
-		for count in range(25):
+		for count in range(20):
 			self.engine.pump()
-			time.sleep(0.01)
+			time.sleep(0.3)
+			c = self.camloc.getExactLayerCoordinates()
+			c.x += 0.5
+			c = self.camloc.setExactLayerCoordinates(c)			
+			cam.setLocation(self.camloc)
 			
 		self.engine.finalizePumping()
 

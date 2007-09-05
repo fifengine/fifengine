@@ -29,7 +29,7 @@ class TestView(unittest.TestCase):
 		
 		self.camloc = fife.Location()
 		self.camloc.setLayer(self.layer)
-		self.camloc.setLayerCoordinates(fife.Point(-2,-2))
+		self.camloc.setExactLayerCoordinates(fife.DoublePoint(2,0))
 
 		
 	def tearDown(self):

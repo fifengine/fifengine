@@ -134,12 +134,7 @@ namespace FIFE {
 	}
 
 	typedef PointType2D<int> Point;
-	typedef PointType2D<int> IntPoint;
 	typedef PointType2D<double> DoublePoint;
-	typedef PointType2D<int> IntPoint2D;
-	typedef PointType2D<double> DoublePoint2D;
-
-
 
 	/** A 3D Point
 	 *
@@ -238,33 +233,32 @@ namespace FIFE {
 	}
 
 	typedef PointType3D<int> Point3D;
-	typedef PointType3D<int> IntPoint3D;
 	typedef PointType3D<double> DoublePoint3D;
 
 	/** Convert from 2D double point to 2D int point
 	 */
-	inline IntPoint2D doublePt2intPt(DoublePoint2D pt) {
-		IntPoint2D tmp(static_cast<int>(pt.x), static_cast<int>(pt.y));
+	inline Point doublePt2intPt(DoublePoint pt) {
+		Point tmp(static_cast<int>(pt.x), static_cast<int>(pt.y));
 		return tmp;
 	}
 
 	/** Convert from 3D double point to 3D int point
 	 */
-	inline IntPoint3D doublePt2intPt(DoublePoint3D pt) {
-		IntPoint3D tmp(static_cast<int>(pt.x), static_cast<int>(pt.y), static_cast<int>(pt.z));
+	inline Point3D doublePt2intPt(DoublePoint3D pt) {
+		Point3D tmp(static_cast<int>(pt.x), static_cast<int>(pt.y), static_cast<int>(pt.z));
 		return tmp;
 	}
 
 	/** Convert from 2D int point to 2D double point
 	 */
-	inline DoublePoint2D intPt2doublePt(IntPoint2D pt) {
-		DoublePoint2D tmp(static_cast<double>(pt.x), static_cast<double>(pt.y));
+	inline DoublePoint intPt2doublePt(Point pt) {
+		DoublePoint tmp(static_cast<double>(pt.x), static_cast<double>(pt.y));
 		return tmp;
 	}
 
 	/** Convert from 3D int point to 3D double point
 	 */
-	inline DoublePoint3D intPt2doublePt(IntPoint3D pt) {
+	inline DoublePoint3D intPt2doublePt(Point3D pt) {
 		DoublePoint3D tmp(static_cast<double>(pt.x), static_cast<double>(pt.y), static_cast<double>(pt.z));
 		return tmp;
 	}

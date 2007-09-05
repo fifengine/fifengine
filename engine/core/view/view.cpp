@@ -102,17 +102,35 @@ namespace FIFE {
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
 				DoublePoint elevpos = instance->getLocation().getElevationCoordinates();
-				//std::cout << "Instance layer coordinates = " << instance->getLocation().getLayerCoordinates() << "\n";
-				//std::cout << "Instance elevation position = " << elevpos << "\n";
+				Point campos = camera->toScreenCoordinates(elevpos);
+				
+				std::cout << "Instance layer coordinates = " << instance->getLocation().getLayerCoordinates() << "\n";
+				std::cout << "Instance elevation position = " << elevpos << "\n";
+				std::cout << "Instance camera position = " << campos << "\n";
+				
 				Action* action = instance->getCurrentAction();
 				//std::cout << "Fetched potential action\n";
 				if (action) {
 					//std::cout << "Instance has action\n";
 					DoublePoint elevface = instance->getFacingLocation().getElevationCoordinates();
-					float dx = static_cast<float>(elevface.x - elevpos.x);
-					float dy = static_cast<float>(elevface.y - elevpos.y);
-					int angle = static_cast<int>(atan2f(dx,dy)*180.0/M_PI);
-					//std::cout << "Got angle " << angle << " for animation\n";
+					Point camface = camera->toScreenCoordinates(elevface);
+					float dx = static_cast<float>(camface.x - campos.x);
+					float dy = static_cast<float>(camface.y - campos.y);
+					int angle = static_cast<int>(atan2f(dy,dx)*(180.0/M_PI));
+					if (dx < 0) {
+						angle = 180 - angle;
+					} else {
+						if (dy > 0) {
+							angle = 360 - angle;
+						}
+					}
+						
+					
+					std::cout << "Instance facing position = " << instance->getFacingLocation().getLayerCoordinates() << "\n";
+					std::cout << "Instance elev facing position = " << elevface << "\n";
+					std::cout << "Instance cam facing position = " << camface << "\n";
+					std::cout << "Calculated angle = " << angle << "\n";
+					
 					int animation_id = action->getAnimationIndexByAngle(angle);
 					Animation& animation = m_animationpool->getAnimation(animation_id);
 					int animtime = instance->getActionRuntime() % animation.getDuration();

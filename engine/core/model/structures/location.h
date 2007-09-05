@@ -92,19 +92,6 @@ namespace FIFE {
 		 */
 		void setExactLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
 		
-		/** Sets "cell precise" layer coordinates to this location
-		 *  @throws NotSet in the following cases:
-		 *     - layer is not set (NULL)
-		 *     - layer does not have cellgrid assigned
-		 * @see setLayerCoordinates(const DoublePoint& coordinates)
-		 */
-		void setLayerCoordinates(const Point& coordinates) throw(NotSet);
-		
-		/** Sets elevation coordinates to this location
-		 *  @param coordinates coordinates to set
-		 */
-		void setElevationCoordinates(const DoublePoint& coordinates);
-		
 		/** Gets exact layer coordinates set to this location
 		 *  @throws NotSet in the following cases:
 		 *     - layer is not set (NULL)
@@ -113,21 +100,46 @@ namespace FIFE {
 		 */
 		DoublePoint getExactLayerCoordinates() const throw(NotSet);
 		
+		/** Sets "cell precise" layer coordinates to this location
+		 *  @throws NotSet in the following cases:
+		 *     - layer is not set (NULL)
+		 *     - layer does not have cellgrid assigned
+		 * @see setLayerCoordinates(const DoublePoint& coordinates)
+		 */
+		void setLayerCoordinates(const Point& coordinates) throw(NotSet);
+		
 		/** Gets cell precision layer coordinates set to this location
-		 * @see getExactLayerCoordinates
+		 * @see getExactLayerCoordinates()
 		 */
 		Point getLayerCoordinates() const throw(NotSet);
+		
+		/** Sets elevation coordinates to this location
+		 *  @param coordinates coordinates to set
+		 */
+		void setElevationCoordinates(const DoublePoint& coordinates);
 		
 		/** Gets elevation coordinates set to this location
 		 * @return elevation coordinates
 		 */
 		DoublePoint getElevationCoordinates() const;
+		
+		/** Gets exact layer coordinates of this location mapped on given layer
+		 *  @throws NotSet in the following cases:
+		 *     - given layer is not set (NULL)
+		 *     - given layer does not have cellgrid assigned
+		 * @return exact layer coordinates
+		 */
+		DoublePoint getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
+		
+		/** Gets cell precision layer coordinates of this location mapped on given layer
+		 * @see getExactLayerCoordinates(const Layer* layer)
+		 */
+		Point getLayerCoordinates(const Layer* layer) const throw(NotSet);
 	
 		/** Gets offset distance from cell center
 		 * @return offset distance
 		 */
 		double getCellOffsetDistance() const;
-		
 		
 		/** Tells if location is valid
 		 * Location is valid if:
@@ -136,7 +148,9 @@ namespace FIFE {
 		 */
 		bool isValid() const;
 		
-	private:		
+	private:
+		bool isValid(const Layer* layer) const;
+		
 		Layer* m_layer;
 		DoublePoint m_elevation_coords;
 	};

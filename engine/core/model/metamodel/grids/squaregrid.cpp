@@ -99,11 +99,11 @@ namespace FIFE {
 	}
 
 	DoublePoint SquareGrid::toElevationCoordinates(const DoublePoint& layer_coords) {
-		return m_matrix * layer_coords;
+		return m_inverse_matrix * layer_coords;
 	}
 
 	DoublePoint SquareGrid::toExactLayerCoordinates(const DoublePoint& elevation_coord) {
-		return m_inverse_matrix * elevation_coord;
+		return m_matrix * elevation_coord;
 	}
 
 	Point SquareGrid::toLayerCoordinates(const DoublePoint& elevation_coord) {
