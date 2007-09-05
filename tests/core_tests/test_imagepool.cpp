@@ -22,6 +22,8 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
