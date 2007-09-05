@@ -79,10 +79,9 @@ class ActionTests(unittest.TestCase):
 		self.engine.getView().addCamera(cam)
 		
 		self.engine.initializePumping()
-		self.inst.act('walk', self.target, 1)
+		self.inst.act('walk', self.target, 2)
 		for i in xrange(300):
 			self.engine.pump()
-			cam.setRotation(cam.getRotation() + 0.01)
 			if i == 150:
 				self.target.setLayerCoordinates(fife.Point(10,10))
 				self.inst.act('walk', self.target, 1)

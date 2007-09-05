@@ -194,7 +194,8 @@ namespace FIFE {
 			// movement stops asap
 			else {
 				std::cout << "not in the center of the cell\n";
-				*m_actioninfo->m_target = m_location;
+				Point pt = m_location.getLayerCoordinates();
+				m_actioninfo->m_target->setLayerCoordinates(pt);
 				m_actioninfo->m_nextlocations.clear();
 			}
 		}
