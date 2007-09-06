@@ -30,8 +30,8 @@
 #include "angles.h"
 
 namespace FIFE {
-	int getIndexByAngle(unsigned int angle, const type_angle2id& angle2id) {
-		int wangle = angle % 360;
+	int getIndexByAngle(int angle, const type_angle2id& angle2id) {
+		int wangle = (360 + angle) % 360;
 
 		if (angle2id.size() == 0) {
 			return -1;

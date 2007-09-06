@@ -17,7 +17,6 @@ class ActionTests(unittest.TestCase):
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.layer)
-		self.target.setLayerCoordinates(fife.Point(2,2))
 		
 		self.obj = fife.Object("object001")
 		self.pather = fife.LinearPather()
@@ -79,21 +78,23 @@ class ActionTests(unittest.TestCase):
 		self.engine.getView().addCamera(cam)
 		
 		self.engine.initializePumping()
+
+		self.target.setLayerCoordinates(fife.Point(2,-2))	
 		self.inst.act('walk', self.target, 0.9)
-		for i in xrange(400):
-			self.engine.pump()
-			#cam.setRotation(cam.getRotation()+0.2)
-			#cam.setTilt(cam.getTilt()+0.5)
-			if i == 100:
-				self.target.setLayerCoordinates(fife.Point(2,-2))
-				self.inst.act('walk', self.target, 0.7)
-			if i == 200:
-				self.target.setLayerCoordinates(fife.Point(-1, -2))
-				self.inst.act('walk', self.target, 0.9)
-			if i == 200:
-				self.target.setLayerCoordinates(fife.Point(0, 2))
-				self.inst.act('walk', self.target, 0.9)
-		
+		targets = (
+			(2,0), (2,-1), (2,-2), (1,-2),
+			(0,-2), (-1,-2), (-2,-2), (-2,-1),
+			(-2,0), (-2,1), (-2,2), (-1,2),
+			(0,2), (1,2), (2,2), (2,1))
+		for target in targets:
+			print "============> in 0,0"
+			l = self.inst.getLocation()
+			l.setLayerCoordinates(fife.Point(0,0))
+			self.inst.setLocation(l)
+			self.target.setLayerCoordinates(fife.Point(*target))
+			self.inst.act('walk', self.target, 0.9)
+			for i in xrange(100):
+				self.engine.pump()
 		
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)

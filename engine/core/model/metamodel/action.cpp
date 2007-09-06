@@ -43,7 +43,7 @@ namespace FIFE {
 	Action::~Action() {
 	}
 
-	int Action::getAnimationIndexByAngle(unsigned int angle) {
+	int Action::getAnimationIndexByAngle(int angle) {
 		return getIndexByAngle(angle, m_animations);
 	}
 

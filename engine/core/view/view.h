@@ -68,6 +68,7 @@ namespace FIFE {
 
 	private:
 		void updateCamera(Camera* camera);
+		int getAngleBetween(const Location& loc1, const Location& loc2, Camera& cam);
 		
 		// list of cameras managed by the view
 		std::vector<Camera*> m_cameras;

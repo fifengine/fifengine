@@ -38,7 +38,7 @@ namespace FIFE {
 	/** Returns id for given angle from angle2id map
 	 * in case there are no elements in the map, negative value is returned
 	 */
-	int getIndexByAngle(unsigned int angle, const type_angle2id& angle2id);
+	int getIndexByAngle(int angle, const type_angle2id& angle2id);
 }
 
 #endif

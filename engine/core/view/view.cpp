@@ -75,6 +75,21 @@ namespace FIFE {
 		}
 	}
 	
+	int View::getAngleBetween(const Location& loc1, const Location& loc2, Camera& cam) {
+		Point pt1 = cam.toScreenCoordinates(loc1.getElevationCoordinates());
+		Point pt2 = cam.toScreenCoordinates(loc2.getElevationCoordinates());
+		double dy = pt2.y - pt1.y;
+		double dx = pt2.x - pt1.x;
+		
+		int angle = static_cast<int>(atan2(dy,dx)*(180.0/M_PI));
+		std::cout << "-> angle, pt1=" << pt1 << ", pt2=" << pt2 << ", angle=" << angle << "\n";		
+		if (dy > 0) {
+			return 360 - angle;
+		} else {
+			return -angle;
+		}
+	}
+	
 	void View::updateCamera(Camera* camera) {
 		//std::cout << "In View::updateCamera\n";
 		const Location& loc = camera->getLocation();
@@ -103,34 +118,20 @@ namespace FIFE {
 				Image* image = NULL;
 				DoublePoint elevpos = instance->getLocation().getElevationCoordinates();
 				Point campos = camera->toScreenCoordinates(elevpos);
-				
+				/*
 				std::cout << "Instance layer coordinates = " << instance->getLocation().getLayerCoordinates() << "\n";
 				std::cout << "Instance elevation position = " << elevpos << "\n";
 				std::cout << "Instance camera position = " << campos << "\n";
-				
+				*/
 				Action* action = instance->getCurrentAction();
 				//std::cout << "Fetched potential action\n";
 				if (action) {
 					//std::cout << "Instance has action\n";
-					DoublePoint elevface = instance->getFacingLocation().getElevationCoordinates();
-					Point camface = camera->toScreenCoordinates(elevface);
-					float dx = static_cast<float>(camface.x - campos.x);
-					float dy = static_cast<float>(camface.y - campos.y);
-					int angle = static_cast<int>(atan2f(dy,dx)*(180.0/M_PI));
-					if (dx < 0) {
-						angle = 180 - angle;
-					} else {
-						if (dy > 0) {
-							angle = 360 - angle;
-						}
-					}
-						
-					
-					std::cout << "Instance facing position = " << instance->getFacingLocation().getLayerCoordinates() << "\n";
-					std::cout << "Instance elev facing position = " << elevface << "\n";
-					std::cout << "Instance cam facing position = " << camface << "\n";
-					std::cout << "Calculated angle = " << angle << "\n";
-					
+					//std::cout << "Instance facing position = " << instance->getFacingLocation().getLayerCoordinates() << "\n";
+					//std::cout << "Instance elev facing position = " << elevface << "\n";
+					//std::cout << "Instance cam facing position = " << camface << "\n";
+					//std::cout << "Calculated angle = " << angle << "\n";
+					int angle = getAngleBetween(instance->getLocation(), instance->getFacingLocation(), *camera);
 					int animation_id = action->getAnimationIndexByAngle(angle);
 					Animation& animation = m_animationpool->getAnimation(animation_id);
 					int animtime = instance->getActionRuntime() % animation.getDuration();

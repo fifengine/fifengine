@@ -53,7 +53,7 @@ namespace FIFE {
 			/** Gets index to animation closest to given angle
 			 * @return animation index, -1 if no animations available
 			 */
-			int getAnimationIndexByAngle(unsigned int angle);
+			int getAnimationIndexByAngle(int angle);
 
 			/** Adds new animation with given angle (degrees)
 			 */
