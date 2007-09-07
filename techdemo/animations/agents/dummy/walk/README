@@ -1,1 +1,8 @@
 A naked male human animated (49 frames) for a walkcycle in all 6 directions of the hexcells.
+
+0 = "W to O"
+60 = "SW to NO"
+120 = "SO to NW"
+180 = "O to W"
+240 = "NO to SW"
+300 = "NW to SO"
