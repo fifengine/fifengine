@@ -1,4 +1,4 @@
-<animation delay="90" id="2004">
+<animation delay="50" id="2004">
 	<frame source="techdemo/animations/agents/dummy/walk/180/001.png" />
 	<frame source="techdemo/animations/agents/dummy/walk/180/003.png" />
 	<frame source="techdemo/animations/agents/dummy/walk/180/005.png" />
