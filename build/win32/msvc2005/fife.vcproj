@@ -324,6 +324,7 @@
 					<File RelativePath="..\..\..\engine\core\model\structures\map.h"></File>
 				</Filter>
 			</Filter>
+			<File RelativePath="..\..\..\engine\core\modules.h"></File>
 			<Filter Name="pathfinder">
 				<Filter Name="linearpather">
 					<File RelativePath="..\..\..\engine\core\pathfinder\linearpather\linearpather.cpp"></File>
@@ -342,6 +343,8 @@
 				<File RelativePath="..\..\..\engine\core\util\fife_stdint.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\log.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\log.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\logger.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\logger.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\matrix.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\point.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\purge.h"></File>

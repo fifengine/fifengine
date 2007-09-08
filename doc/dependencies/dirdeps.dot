@@ -23,66 +23,73 @@ subgraph cluster_2 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
+    "engine/core"
+    label = "engine";
+}
+subgraph cluster_3 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
     "eventchannel"; "eventchannel/base"; "eventchannel/command"; "eventchannel/key"; "eventchannel/manager"; "eventchannel/mouse"; "eventchannel/sdl"; "eventchannel/source"; "eventchannel/widget"
     label = "eventchannel";
 }
-subgraph cluster_3 {
+subgraph cluster_4 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "gui"; "gui/base"; "gui/base/opengl"; "gui/base/sdl"; "gui/console"; "gui/fonts"; "gui/widgets"
     label = "gui";
 }
-subgraph cluster_4 {
+subgraph cluster_5 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "loaders/fallout/vfs_loaders"; "loaders/native/video_loaders"
     label = "loaders";
 }
-subgraph cluster_5 {
+subgraph cluster_6 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "model"; "model/metamodel"; "model/metamodel/grids"; "model/structures"
     label = "model";
 }
-subgraph cluster_6 {
+subgraph cluster_7 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "pathfinder/linearpather"
     label = "pathfinder";
 }
-subgraph cluster_7 {
+subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "util"; "util/resource"; "util/time"
     label = "util";
 }
-subgraph cluster_8 {
+subgraph cluster_9 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "vfs"; "vfs/raw"; "vfs/zip"
     label = "vfs";
 }
-subgraph cluster_9 {
+subgraph cluster_10 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "video"; "video/opengl"; "video/sdl"
     label = "video";
 }
-subgraph cluster_10 {
+subgraph cluster_11 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "view"
     label = "view";
 }
-subgraph cluster_11 {
+subgraph cluster_12 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
@@ -169,6 +176,7 @@ subgraph cluster_11 {
     "model/structures" -> "util"
     "pathfinder/linearpather" -> "model/metamodel"
     "pathfinder/linearpather" -> "model/structures"
+    "util" -> "engine/core"
     "util/resource" -> "util"
     "util/time" -> "util"
     "vfs" -> "util"

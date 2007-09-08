@@ -16,7 +16,7 @@ ALLOWED_MODULE_DEPS = {
 	'loaders': ('video', 'vfs', 'xml', 'util', 'view', 'model'),
 	'view': ('model', 'video', 'util', 'audio'),
 	'audio': ('util', 'vfs'),
-	'util': [],
+	'util': ['engine'],
 	'vfs': ('util',),
 	'xml': ('vfs', 'util'),
 	'pathfinder': ('util', 'model'),

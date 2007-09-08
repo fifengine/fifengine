@@ -16,6 +16,9 @@ class World(object):
 	def __init__(self):
 		self.engine = fife.Engine()
 		self.reactor = InstanceReactor()
+		logman = self.engine.getLogManager()
+		logman.setLogToPromt(True)
+		logman.addVisibleModule(fife.LM_INSTANCE);
 		
 	def __del__(self):
 		self.engine.getView().removeCamera(self.camera)
@@ -69,13 +72,13 @@ class World(object):
 	def run(self):
 		self.engine.initializePumping()
 		self.target.setLayerCoordinates(fife.Point(1,0))
-		self.dummy.act('walk', self.target, 0.2)
+		self.dummy.act('walk', self.target, 0.3)
 		
 		for i in xrange(1000):
 			self.engine.pump()
 			if i == 200:
 				self.target.setLayerCoordinates(fife.Point(-1,0))
-				self.dummy.act('walk', self.target, 0.2)
+				self.dummy.act('walk', self.target, 0.3)
 		
 		self.engine.finalizePumping()
 

@@ -32,6 +32,7 @@
 // Second block: files included from the same folder
 #include "util/settingsmanager.h"
 #include "util/exception.h"
+#include "util/logger.h"
 #include "util/log.h"
 #include "util/debugutils.h"
 #include "util/time/timemanager.h"
@@ -81,6 +82,7 @@ namespace FIFE {
 		m_model(0),
 		m_gui_graphics(0),
 		m_view(0),
+		m_logmanager(0),
 		m_use_miniwindow(use_miniwindow) {
 		init();
 	}
@@ -115,6 +117,7 @@ namespace FIFE {
 	}
 
 	void Engine::init() {
+		m_logmanager = LogManager::instance();
 		m_settingsmanager = new SettingsManager();
 		m_settingsmanager->loadSettings(SETTINGS_FILE_NAME);
 		Log::initialize(static_cast<Log::type_log_level>(

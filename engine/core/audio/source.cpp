@@ -28,12 +28,15 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/time/timemanager.h"
-#include "util/log.h"
+#include "util/logger.h"
 
 #include "audiomanager.h"
 #include "source.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE { 
+	static Logger _log(LM_AUDIO);
+
+	namespace audio {
 	Source::Source() : m_source(0), m_bufferp() { 
 		TimeManager::instance()->registerEvent(this);
 		setPeriod(-1);
@@ -54,8 +57,7 @@ namespace FIFE { namespace audio {
 	
 	void Source::enable() {
 		if (m_bufferp->isStreaming()) {
-			Log("AudioSystem") << "Streaming is experimental for now.";
-
+			FL_DBG(_log, "Streaming is experimental for now");
 			setPeriod(5000);
 
 			// Queuing the first buffers
@@ -65,7 +67,7 @@ namespace FIFE { namespace audio {
 			}
 
 			if (AL_NO_ERROR != alGetError()) {
-				Warn("AudioSystem") << "Couldn't queue buffers";
+				FL_WARN(_log, "Couldn't queue buffers");
 				return;
 			}
 		} else {

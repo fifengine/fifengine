@@ -697,6 +697,12 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\modules.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\pathfinder\linearpather\linearpather.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -760,6 +766,16 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\util\log.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\logger.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\logger.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

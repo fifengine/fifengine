@@ -55,6 +55,7 @@ namespace FIFE {
 	class SettingsManager;
 	class View;
 	class Model;
+	class LogManager;
 
 	class Engine {
 		public:
@@ -83,6 +84,7 @@ namespace FIFE {
 			RenderBackend* getRenderBackend() { return m_renderbackend; }
 			Model* getModel() { return m_model; }
 			View* getView() { return m_view; }
+			LogManager* getLogManager() { return m_logmanager; }
 
 		private:
 			/** Initializes the engine
@@ -102,6 +104,7 @@ namespace FIFE {
 			Model* m_model;
 			gcn::Graphics* m_gui_graphics;
 			View* m_view;
+			LogManager* m_logmanager;
 			bool m_use_miniwindow;
 	};
 

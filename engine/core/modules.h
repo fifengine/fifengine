@@ -16,47 +16,64 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-%module engine
-%{
-#include "controller/engine.h"
-%}
 
-namespace FIFE {
+#ifndef FIFE_MODULES_H
+#define FIFE_MODULES_H
 
-	namespace audio {
-		class Manager;
-	}
-	class EventManager;
-	class TimeManager;
-	class SettingsManager;
-	class GUIManager;
-	class ImagePool;
-	class AnimationPool;
-	class RenderBackend;
-	class View;
-	class Model;
-	class LogManager;
+// Standard C++ library includes
 
-	class Engine {
-	public:
-		Engine(bool use_miniwindow=false);
-		virtual ~Engine();
-		void initializePumping();
-		void finalizePumping();
-		void pump();
+// 3rd party library includes
 
-		audio::Manager* getAudioManager();
-		EventManager* getEventManager();
-		TimeManager* getTimeManager();
-		SettingsManager* getSettingsManager();
-		GUIManager* getGuiManager();
-		ImagePool* getImagePool();
-		AnimationPool* getAnimationPool();
-		RenderBackend* getRenderBackend();
-		View* getView();
-		Model* getModel();
-		LogManager* getLogManager();
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+
+enum logmodule_t {
+	LM_CORE = -1,
+	LM_AUDIO,
+	LM_CONTROLLER,
+	LM_EVTCHANNEL,
+	LM_GUI,
+	LM_LOADERS,
+	LM_MODEL,
+	LM_STRUCTURES,
+	LM_INSTANCE,
+	LM_LOCATION,
+	LM_METAMODEL,
+	LM_PATHFINDER,
+	LM_UTIL,
+	LM_VFS,
+	LM_VIDEO,
+	LM_VIEW,
+	LM_CAMERA,
+	LM_VIEWVIEW,
+	LM_XML,
+	LM_MODULE_MAX // sentinel
+};
+
+#define MODULE_INFO_RELATIONSHIPS \
+	ModuleInfo moduleInfos[] = { \
+		{LM_AUDIO, LM_CORE, "Audio"}, \
+		{LM_CONTROLLER, LM_CORE, "Controller"}, \
+		{LM_EVTCHANNEL, LM_CORE, "Event Channel"}, \
+		{LM_GUI, LM_CORE, "GUI"}, \
+		{LM_LOADERS, LM_CORE, "Loaders"}, \
+		{LM_MODEL, LM_CORE, "Model"}, \
+		{LM_STRUCTURES, LM_MODEL, "Structures"}, \
+		{LM_INSTANCE, LM_STRUCTURES, "Instance"}, \
+		{LM_LOCATION, LM_STRUCTURES, "Location"}, \
+		{LM_METAMODEL, LM_MODEL, "Metamodel"}, \
+		{LM_PATHFINDER, LM_CORE, "Pathfinder"}, \
+		{LM_UTIL, LM_CORE, "Util"}, \
+		{LM_VFS, LM_CORE, "VFS"}, \
+		{LM_VIDEO, LM_CORE, "Video" }, \
+		{LM_VIEW, LM_CORE, "View"}, \
+		{LM_CAMERA, LM_VIEW, "Camera"}, \
+		{LM_VIEWVIEW, LM_VIEW, "View::View"}, \
+		{LM_XML, LM_CORE, "XML"} \
 	};
-}
+
+#endif

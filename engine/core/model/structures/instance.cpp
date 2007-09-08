@@ -29,6 +29,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/logger.h"
 #include "util/debugutils.h"
 #include "util/exception.h"
 #include "model/metamodel/grids/cellgrid.h"
@@ -42,6 +43,8 @@ const int STATIC_IMAGE_NOT_INITIALIZED = -2;
 const int STATIC_IMAGE_NOT_FOUND = -1;
 
 namespace FIFE {
+	static Logger _log(LM_INSTANCE);
+	
 	class ActionInfo {
 	public:
 		ActionInfo(AbstractPather* pather, const Location& curloc): 
@@ -66,7 +69,7 @@ namespace FIFE {
 
 		std::vector<Location>& getNextLocations(const Location& startloc) {
 			assert(m_target && m_pather);
-			std::cout << "getting next locs from pather, loc = " << startloc << " tgt = " << *m_target << "\n";
+			FL_DBG(_log, LMsg("getting next locs from pather, loc=") << startloc << " tgt=" << *m_target);
 			m_pather_session_id = m_pather->getNextLocations(startloc, 
 					*m_target, m_nextlocations, m_pather_session_id);
 			return m_nextlocations;
@@ -165,8 +168,8 @@ namespace FIFE {
 		ActionInfo* a = initalizeAction(action_name);
 		a->m_target = new Location(target);
 		a->m_speed = speed;
-		std::cout << "starting action " <<  action_name << " to " << target << " with speed " << speed <<"\n";		
-		std::cout << "m_target " <<  *a->m_target << "\n";
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " to " << target << " with speed " << speed);
+		FL_DBG(_log, LMsg("m_target ") <<  *a->m_target);
 	}
 
 	void Instance::act(const std::string& action_name, const Location& direction, bool repeating) {
@@ -176,17 +179,17 @@ namespace FIFE {
 	}
 
 	bool Instance::move() {
-		std::cout << "moving...\n";
+		FL_DBG(_log, "Moving...");
 		
 		// in case we have a request to do something else
 		if (m_pending_actioninfo) {
-			std::cout << "some other action is pending\n";
+			FL_DBG(_log, "some other action is pending");
 			// Movement must be finalized on the center of a cell
 			
 			// if we are in the center of the cell, stop
-			std::cout << "Cell offset distance = " << m_location.getCellOffsetDistance() << "\n";
+			FL_DBG(_log, LMsg("Cell offset distance = ") << m_location.getCellOffsetDistance());
 			if (m_location.getCellOffsetDistance() < 0.1) {
-				std::cout << "in the center of the cell\n";
+				FL_DBG(_log, "in the center of the cell");
 				m_actioninfo->m_nextlocations.clear();
 				m_actioninfo->resetTarget();
 				return true;
@@ -194,7 +197,7 @@ namespace FIFE {
 			// otherwise set the movement target to be the current cell so that 
 			// movement stops asap
 			else {
-				std::cout << "not in the center of the cell\n";
+				FL_DBG(_log, "not in the center of the cell");
 				Point pt = m_location.getLayerCoordinates();
 				m_actioninfo->m_target->setLayerCoordinates(pt);
 				m_actioninfo->m_nextlocations.clear();
@@ -203,7 +206,7 @@ namespace FIFE {
 		}
 		// still doing the same movement, get next locations from pather
 		else {
-			std::cout << "still moving, getting locations from pather\n";
+			FL_DBG(_log, "still moving, getting locations from pather");
 			m_actioninfo->getNextLocations(m_location);
 		}
 		// calculate next locations
@@ -221,46 +224,45 @@ namespace FIFE {
 		DoublePoint iter_loc      = m_location.getExactLayerCoordinates();
 		// to calculate traveled distance
 		double cumul_dist         = 0;
-		std::cout << "calculating movement, dist to travel " << distance_to_travel << "\n";
-		std::cout << "current location = " << m_location << "\n";
-		
+		FL_DBG(_log, LMsg("calculating movement, dist to travel ") << distance_to_travel);
+		FL_DBG(_log, LMsg("current location = ") << m_location);
 		
 		// cumulate distance based on cell distances (cells returned from pathfinder)
 		std::vector<Location>::iterator i = m_actioninfo->m_nextlocations.begin();
 		while (i != m_actioninfo->m_nextlocations.end()) {
-			std::cout << "next location from pather...\n";
+			FL_DBG(_log, "next location from pather...");
 			DoublePoint nextcell = (*i).getExactLayerCoordinates();
-			std::cout << "next coordinates = " << nextcell << "\n";
+			FL_DBG(_log, LMsg("next coordinates = ") << nextcell);
 			DoublePoint diff = nextcell - iter_loc;
 			double dist_to_next_cell = diff.length();
 			double dist_left = distance_to_travel - cumul_dist;
-			std::cout << "diff = " << diff << ", dist_to_next = " << dist_to_next_cell << ", dist_left=" << dist_left<<"\n";
+			FL_DBG(_log, LMsg("diff = ") << diff << ", dist_to_next = " << dist_to_next_cell << ", dist_left=" << dist_left);
 			
 			// if we cannot reach the next cell...
 			if (dist_left < dist_to_next_cell) {
-				std::cout << "cannot reach the next cell...\n";
+				FL_DBG(_log, "cannot reach the next cell...");
 				// calculate next location using available distance
 				iter_loc = iter_loc + (diff * (dist_left / dist_to_next_cell));
 				cumul_dist += dist_left;
 			}
 			// otherwise iterate to the next cell center point
 			else {
-				std::cout << "cell reached, go to the center...\n";
+				FL_DBG(_log, "cell reached, go to the center...");
 				iter_loc = nextcell;
 				cumul_dist += dist_to_next_cell;
-				std::cout << "iter_loc = " << nextcell << ", cumul_dist = " << cumul_dist << "\n";
+				FL_DBG(_log, LMsg("iter_loc = ") << nextcell << ", cumul_dist = " << cumul_dist);
 			}
 			m_actioninfo->m_facinglocation = (*i);
 			++i;
-			std::cout << "path finder node end, cumul_dist=" << cumul_dist << "\n";
+			FL_DBG(_log, LMsg("path finder node end, cumul_dist=") << cumul_dist);
 		}
 		// move to point where iteration got us
 		m_location.setExactLayerCoordinates(iter_loc);
-		std::cout << "moving to next point : " << m_location << "\n";
+		FL_DBG(_log, LMsg("moving to next point : ") << m_location);
 		
 		// if there is still "speed" left from traveling
 		if ((distance_to_travel - cumul_dist) > 0) {
-			std::cout << "still speed left\n";
+			FL_DBG(_log, "still speed left");
 			// if we are not in the target cell, pather cannot keep up
 			if (*(m_actioninfo->m_target) != m_location) {
 				std::cout << "pather cannot keep up\n";
@@ -277,13 +279,13 @@ namespace FIFE {
 			curticks = SDL_GetTicks();
 		}
 		m_actioninfo->m_cur_time = curticks;
-		std::cout << "updating instance, ticks = " << curticks << "\n";
+		FL_DBG(_log, LMsg("updating instance, ticks = ") << curticks);
 
 		if (m_actioninfo->m_target) {
-			std::cout << "action contains target for movement\n";
+			FL_DBG(_log, "action contains target for movement");
 			bool movement_finished = move();
 			if (movement_finished) {
-				std::cout << "movement finished\n";
+				FL_DBG(_log, "movement finished");
 				finalizeAction();
 				if (m_pending_actioninfo) {
 					m_actioninfo = m_pending_actioninfo;
@@ -292,7 +294,7 @@ namespace FIFE {
 			}
 		}
 		else {
-			std::cout << "action does not contain target for movement\n";
+			FL_DBG(_log, "action does not contain target for movement");
 			if ((curticks - m_actioninfo->m_action_start_time) >= m_actioninfo->m_action->getDuration()) {
 				if (m_actioninfo->m_repeating) {
 					m_actioninfo->m_action_start_time = curticks;
@@ -307,7 +309,7 @@ namespace FIFE {
 	}
 
 	void Instance::finalizeAction() {
-		std::cout << "finalizing action\n";
+		FL_DBG(_log, "finalizing action");
 		assert(m_actioninfo);
 
 		Action* action = m_actioninfo->m_action;

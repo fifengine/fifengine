@@ -18,45 +18,46 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
-%module engine
+
+%module logger
 %{
-#include "controller/engine.h"
+#include "util/logger.h"
 %}
+%include "modules.h"
 
 namespace FIFE {
-
-	namespace audio {
-		class Manager;
-	}
-	class EventManager;
-	class TimeManager;
-	class SettingsManager;
-	class GUIManager;
-	class ImagePool;
-	class AnimationPool;
-	class RenderBackend;
-	class View;
-	class Model;
-	class LogManager;
-
-	class Engine {
+	class LogManager {
 	public:
-		Engine(bool use_miniwindow=false);
-		virtual ~Engine();
-		void initializePumping();
-		void finalizePumping();
-		void pump();
-
-		audio::Manager* getAudioManager();
-		EventManager* getEventManager();
-		TimeManager* getTimeManager();
-		SettingsManager* getSettingsManager();
-		GUIManager* getGuiManager();
-		ImagePool* getImagePool();
-		AnimationPool* getAnimationPool();
-		RenderBackend* getRenderBackend();
-		View* getView();
-		Model* getModel();
-		LogManager* getLogManager();
+		enum LogLevel {	
+			LEVEL_DEBUG = 0,
+			LEVEL_LOG   = 1,
+			LEVEL_WARN  = 2,
+   			LEVEL_ERROR = 3
+		};
+		~LogManager();
+		
+		void setLevelFilter(LogLevel level);
+		LogLevel getLevelFilter();
+		
+		void addVisibleModule(logmodule_t module);
+		void removeVisibleModule(logmodule_t module);
+		
+		void setLogToPromt(bool log_to_promt);
+		bool isLoggingToPromt();
+		
+		void setLogToFile(bool logtofile);
+		bool isLoggingToFile();
+		
+		bool isEnabled(logmodule_t module);
+		
+	private:
+		LogManager();
+	};
+	
+	class Logger {
+	public:
+		Logger(logmodule_t module);
+		~Logger();
+		void log(LogManager::LogLevel level, const std::string& msg);
 	};
 }
