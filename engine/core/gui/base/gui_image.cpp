@@ -28,11 +28,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/imagepool.h"
-#include "util/debugutils.h"
+#include "util/logger.h"
 
 #include "gui_image.h"
 
 namespace FIFE {
+	static Logger _log(LM_GUI);
+
 	GuiImage::GuiImage(): gcn::Image(), m_poolid(Pool::INVALID_ID), m_pool(NULL) {
 	}
 
@@ -52,12 +54,12 @@ namespace FIFE {
 	}
 
 	gcn::Color GuiImage::getPixel(int x, int y) {
-		PANIC_PRINT("not implemented");
+		FL_PANIC(_log, "GuiImage::getPixel, not implemented");
 		return gcn::Color();
 	}
 
 	void GuiImage::putPixel(int x, int y, const gcn::Color& color) {
-		PANIC_PRINT("not implemented");
+		FL_PANIC(_log, "GuiImage::putPixel, not implemented");
 	}
 
 	void GuiImage::convertToDisplayFormat() {

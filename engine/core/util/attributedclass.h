@@ -35,8 +35,7 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 #include "util/rect.h"
-
-#include "util/debugutils.h"
+#include "util/logger.h"
 
 namespace FIFE {
 
@@ -67,7 +66,7 @@ namespace FIFE {
 			 */
 			~AttributedClass();
 
-      /** Get the (string) identifier associated with this object
+			/** Get the (string) identifier associated with this object
 			 */
 			const std::string& Id() const;
 
@@ -97,9 +96,10 @@ namespace FIFE {
 
 				T* value = boost::get<T>(&(m_fields[field]));
 				if(value == 0) {
-					Debug("attributed_class")
+					Logger _log(LM_UTIL);
+					FL_WARN(_log, LMsg("attributed_class")
 						<< "type mismatch in " << className() 
-						<< " field: " << field;
+						<< " field: " << field);
 
 					return boost::get<T>(const_value);
 				}
@@ -146,7 +146,7 @@ namespace FIFE {
 	 */
 	typedef AttributedClass Table;
 
-// Inline Functions
+	// Inline Functions
 
 	template <>
 	inline
@@ -161,9 +161,10 @@ namespace FIFE {
 
 		std::string* value = boost::get<std::string>(&(m_fields[field]));
 		if(value == 0) {
-			Debug("attributed_class")
+			Logger _log(LM_UTIL);
+			FL_WARN(_log, LMsg("attributed_class")
 				<< "type mismatch in " << className() 
-				<< " field: " << field;
+				<< " field: " << field);
 
 			return boost::get<std::string>(const_value);
 		}

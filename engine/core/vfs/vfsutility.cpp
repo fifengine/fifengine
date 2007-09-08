@@ -37,10 +37,13 @@
 #include "vfs/vfssourcefactory.h"
 #include "vfs/vfshostsystem.h"
 #include "util/exception.h"
+#include "util/logger.h"
 
 #include "vfsutility.h"
 
 namespace FIFE {
+	static Logger _log(LM_VFS);
+	
 	VFSUtility::VFSUtility() {
 	}
 
@@ -95,7 +98,7 @@ namespace FIFE {
 			VFS::instance()->addSource(src);
 			return true;
 		} else {
-			Warn("VFSUtility") << "Invalid source: " << sname;
+			FL_WARN(_log, LMsg("Invalid source: ") << sname);
 			return false;
 		}
 	}

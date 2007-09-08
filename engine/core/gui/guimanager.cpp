@@ -31,10 +31,10 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/logger.h"
 #include "video/renderbackend.h"
 #include "gui/base/gui_imageloader.h"
 #include "util/settingsmanager.h"
-#include "util/debugutils.h"
 #include "gui/console/console.h"
 #include "gui/fonts/fontbase.h"
 #include "eventchannel/widget/ec_widgetevent.h"
@@ -43,6 +43,7 @@
 
 
 namespace FIFE {
+	static Logger _log(LM_GUI);
 
 	GUIManager::GUIManager(IWidgetListener* widgetlistener, ImagePool& pool) : 
 		m_gcn_gui(new gcn::Gui()), 
@@ -75,8 +76,7 @@ namespace FIFE {
 	void GUIManager::onSdlEvent(SDL_Event& evt) {
 		gcn::SDLInput *input = dynamic_cast<gcn::SDLInput*>(m_gcn_gui->getInput());
 		if (!input) {
-			Warn("GUIManager")
-				<< "GuichanGUI->getInput == 0 ... discarding events!";
+			FL_WARN(_log, "GUIManager, GuichanGUI->getInput == 0 ... discarding events!");
 			return;
 		}
 		input->pushInput(evt);

@@ -28,7 +28,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/log.h"
 
 #include "twobutton.h"
 
@@ -91,17 +90,5 @@ namespace gcn {
 		setWidth(up->getWidth());
 		setHeight(up->getHeight());
 	}
-	/*
-	bool TwoButton::isPressed() const
-	{
-		//FIFE::Log("twobutton") << "has mouse: " << int(hasMouse()) << " mMouseDown " << mMouseDown << " mKeyDown " << mKeyDown;
-		return (hasMouse() && mMouseDown) || mKeyDown;
-	}
-	void TwoButton::mousePress(int x, int y, int button) {
-		FIFE::Log("twobutton") << "mouse press " << x<<"," << y << " " << button;
-	}
-	void TwoButton::mouseRelease(int x, int y, int button) {
-		FIFE::Log("twobutton") << "mouse release " << x<<"," << y << " " << button;
-	}*/
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

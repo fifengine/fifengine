@@ -28,11 +28,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
 #include "util/exception.h"
+#include "util/logger.h"
 #include "util/settingsmanager.h"
 
 namespace FIFE {
+	static Logger _log(LM_UTIL);
 
 	SettingsManager::SettingsManager() : 
 		m_settings(),
@@ -45,7 +46,7 @@ namespace FIFE {
 	void SettingsManager::loadSettings(const std::string& settings_file_name) {
 		std::ifstream settings(settings_file_name.c_str());
 		if (!settings) {
-			Log() << "no settingsfile (" << settings_file_name << ") found";
+			FL_WARN(_log, LMsg("no settingsfile (") << settings_file_name << ") found");
 			return;
 		}
 

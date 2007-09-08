@@ -30,7 +30,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "util/log.h"
+#include "util/logger.h"
 
 #include "config.h"
 #include "decoder.h"
@@ -44,6 +44,7 @@
  */
 
 namespace FIFE { namespace audio {
+	static Logger _log(LM_AUDIO);
 
 	typedef ::boost::shared_ptr<Decoder> type_decptr;
 
@@ -68,9 +69,7 @@ namespace FIFE { namespace audio {
 		try {
 			m_bgsound->loadFile(name);
 		} catch( NotFound& ) {
-			// VFS already warns ... why?
-			Warn("audio_manager")
-				<< "Ambient music file " << name << " not found.";
+			FL_WARN(_log, LMsg("Ambient music file ") << name << " not found.");
 			delete m_bgsound;
 			m_bgsound = 0;
 			return; // NOTE It might be cleaner to re-throw the exception here.
@@ -98,9 +97,7 @@ namespace FIFE { namespace audio {
 		// new Buffer.
 		type_decptr ad(Decoder::create(name));
 		if (!ad) {
-			Warn("audio_manager") 
-				<< "Unknown music format: " 
-				<< name;
+			FL_WARN(_log, LMsg("Unknown music format: ") << name);
 			return type_bufptr();
 		}
 
@@ -117,8 +114,7 @@ namespace FIFE { namespace audio {
 	Manager::Manager() : m_sound_disabled(false), m_bgsound(0), 
 	                     m_context(NULL), m_device(alcOpenDevice(NULL)) {
 		if (!m_device) {
-			Warn("audio_manager") 
-				<< "Error: could not open audio device - disabling sound!";
+			FL_ERR(_log, "could not open audio device - disabling sound!");
 			m_sound_disabled = true;
 			return;
 		}

@@ -34,12 +34,14 @@
 #include "video/renderbackend.h"
 #include "video/image_location.h"
 #include "util/resource/pooled_resource.h"
-#include "util/debugutils.h"
 #include "util/exception.h"
+#include "util/logger.h"
 
 #include "subimage_provider.h"
 
 namespace FIFE { 
+	static Logger _log(LM_NATIVE_LOADERS);
+	
 	Image* SubImageProvider::createImage(const ResourceLocation& location) {
 		return dynamic_cast<Image*>(createResource(location));
 	}
@@ -63,8 +65,8 @@ namespace FIFE {
 		src_rect.w = loc->getWidth();
 		src_rect.h = loc->getHeight();
 
-		Debug("subimage_loader")
-			<< " rect:" << Rect(src_rect.x,src_rect.y,src_rect.w,src_rect.h);
+		FL_DBG(_log, LMsg("subimage_loader")
+			<< " rect:" << Rect(src_rect.x,src_rect.y,src_rect.w,src_rect.h));
 
 		uint32_t Amask = src->format->Amask ?  0x000000ff : 0;
 		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, src_rect.w,  src_rect.h, 32,

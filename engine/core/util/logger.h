@@ -59,6 +59,21 @@
 
 namespace FIFE {
 	
+	/** Helper for printing a pointer
+	 *
+	 * This is a helper structure that allows printing any kind of pointer
+	 * on (hopefully) any platform in hex, kind of like the %p format
+	 * string of printf.
+	 *
+	 * The mechanism is used by calling something like:
+	 *  somestream << pprint(ptr);
+	 **/
+	struct pprint {
+		void* p;
+		pprint( void* _p ) : p(_p) {}
+	};
+	
+	
 	class LMsg {
 	public:
 		LMsg(const std::string& msg=""): str(msg) {}
@@ -129,5 +144,26 @@ namespace FIFE {
 		logmodule_t m_module;
 	};
 }
+
+namespace std {
+	/** Print a pprint object to an ostream.
+	 *
+	 * This is pure Stroustrup, overloading the ostream operator<< to print
+	 * a formatted pointer from a pprint object to an ostream.
+	 *
+	 * \param s output stream
+	 * \param p pointer to print
+	 * \return reference to the modified stream
+	 * */
+	template <class Ch, class Tr>
+	basic_ostream<Ch,Tr>& operator<<( basic_ostream<Ch,Tr>& s, const FIFE::pprint& p ) {
+		s << "0x"
+			<< hex << setw( 2*sizeof(void*) ) << setfill('0')
+			<< reinterpret_cast<unsigned long>( p.p );
+
+		return s;
+	}
+}
+
 
 #endif

@@ -31,7 +31,6 @@
 // Second block: files included from the same folder
 #include "util/time/timeevent.h"
 #include "util/time/timemanager.h"
-#include "util/log.h"
 
 #include "commandline.h"
 
@@ -71,7 +70,6 @@ namespace FIFE {
 
 	void CommandLine::keyPressed(gcn::KeyEvent &keyEvent) {
 		gcn::Key key = keyEvent.getKey();
-		//Log("command_line") << key.getValue();
 
 		if (key.getValue() == Key::LEFT && mCaretPosition > 0)
 		{

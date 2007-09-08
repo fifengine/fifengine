@@ -30,7 +30,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/logger.h"
-#include "util/debugutils.h"
 #include "util/exception.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/abstractpather.h"
@@ -138,7 +137,7 @@ namespace FIFE {
 			}
 			++i;
 		}
-		Log("Instance") << "Cannot remove unknown listener";
+		FL_WARN(_log, "Cannot remove unknown listener");
 	}
 
 	ActionInfo* Instance::initalizeAction(const std::string& action_name) {

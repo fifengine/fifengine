@@ -28,7 +28,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
 #include "util/exception.h"
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
@@ -211,7 +210,6 @@ namespace FIFE {
 			}
 			++i;
 		}
-		Log("EventManager") << "Cannot remove unknown listener";
 	}
 
 	template<typename T>

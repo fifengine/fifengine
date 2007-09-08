@@ -29,12 +29,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "util/log.h"
+#include "util/logger.h"
 
 #include "rawdata.h"
 
 namespace FIFE {
-
+	static Logger _log(LM_VFS);
+	
 	RawData::RawData(RawDataSource* datasource) : m_datasource(datasource), m_index_current(0) {
 
 	}
@@ -65,7 +66,7 @@ namespace FIFE {
 
 	void RawData::readInto(uint8_t* buffer, size_t len) {
 		if (m_index_current + len > getDataLength()) {
-			Log("RawData") << m_index_current << " : " << len << " : " << getDataLength();
+			FL_LOG(_log, LMsg("RawData") << m_index_current << " : " << len << " : " << getDataLength());
 			throw IndexOverflow(__FUNCTION__);
 		}
 
@@ -123,7 +124,7 @@ namespace FIFE {
 		if (endian == 2) {
 			uint32_t value = 0x01;
 			endian = reinterpret_cast<uint8_t*>(&value)[0];
-			Log("RawData") << "we are on a " << (endian == 1 ? "little endian" : "big endian") << " machine";
+			FL_LOG(_log, LMsg("RawData") << "we are on a " << (endian == 1 ? "little endian" : "big endian") << " machine");
 		}
 
 		return endian == 1;

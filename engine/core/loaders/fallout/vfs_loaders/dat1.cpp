@@ -29,24 +29,25 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "util/exception.h"
-#include "util/log.h"
+#include "util/logger.h"
 
 #include "dat1.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
+	static Logger _log(LM_FO_LOADERS);
 
 	DAT1::DAT1(const std::string& file) : m_datpath(file), m_data(VFS::instance()->open(file))  {
-		Log("MFFalloutDAT1") 
+		FL_LOG(_log, LMsg("MFFalloutDAT1") 
 			<< "loading: " << file 
-			<< " filesize: " << m_data->getDataLength();
+			<< " filesize: " << m_data->getDataLength());
 
 		m_data->setIndex(0);
 
 		const uint32_t dircount = m_data->read32Big();
 		m_data->moveIndex(4*3);
 
-		Log("MFFalloutDAT1") 
-			<< "number of directories " << dircount;
+		FL_LOG(_log, LMsg("MFFalloutDAT1") 
+			<< "number of directories " << dircount);
 
 		// Sanity check. Each dir entry needs min. 16 bytes.
 		if( dircount*16 > m_data->getDataLength() ) {

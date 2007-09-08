@@ -33,8 +33,7 @@
 #include "util/settingsmanager.h"
 #include "util/exception.h"
 #include "util/logger.h"
-#include "util/log.h"
-#include "util/debugutils.h"
+#include "util/logger.h"
 #include "util/time/timemanager.h"
 #include "audio/audiomanager.h"
 #include "gui/console/console.h"
@@ -67,6 +66,7 @@
 static const std::string SETTINGS_FILE_NAME = "fife.config";
 
 namespace FIFE {
+	static Logger _log(LM_CONTROLLER);
 
 	Engine::Engine(bool use_miniwindow):
 		m_renderbackend(0),
@@ -120,10 +120,6 @@ namespace FIFE {
 		m_logmanager = LogManager::instance();
 		m_settingsmanager = new SettingsManager();
 		m_settingsmanager->loadSettings(SETTINGS_FILE_NAME);
-		Log::initialize(static_cast<Log::type_log_level>(
-		                m_settingsmanager->read<int>("LogLevel", 0)),
-		                m_settingsmanager->read<bool>("LogToFile", false), 
-		                m_settingsmanager->read<bool>("LogToPromt", true));
 
 		// If failed to init SDL throw exception.
 		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
@@ -153,16 +149,16 @@ namespace FIFE {
 		std::string rbackend = m_settingsmanager->read<std::string>("RenderBackend", "SDL");
 		if (rbackend == "SDL") {
 			m_renderbackend = new RenderBackendSDL();
-			Log("controller") << "SDL Render backend created";
+			FL_LOG(_log, "SDL Render backend created");
 		} else {
 #ifdef HAVE_OPENGL
 			m_renderbackend = new RenderBackendOpenGL();
-			Log("controller") << "OpenGL Render backend created";
+			FL_LOG(_log, "OpenGL Render backend created");
 #else
 			m_renderbackend = new RenderBackendSDL();
 			// Remember  the choice so we pick the right graphics class.
 			rbackend = "SDL";
-			Log("controller") << "Tried to select OpenGL, even though it is not compiled into the engine. Falling back to SDL Render backend";
+			FL_WARN(_log, "Tried to select OpenGL, even though it is not compiled into the engine. Falling back to SDL Render backend");
 #endif
 		}
 		m_renderbackend->init();

@@ -30,26 +30,27 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "util/exception.h"
-#include "util/log.h"
+#include "util/logger.h"
 
 #include "dat2.h"
 
 namespace FIFE { namespace map { namespace loaders { namespace fallout {
+	static Logger _log(LM_FO_LOADERS);
 
 	DAT2::DAT2(const std::string& file) 
 		: m_datpath(file), m_data(VFS::instance()->open(file)), m_filelist() {
 
-		Log("MFFalloutDAT2") 
+		FL_LOG(_log, LMsg("MFFalloutDAT2") 
 			<< "loading: " << file 
-			<< " filesize: " << m_data->getDataLength();
+			<< " filesize: " << m_data->getDataLength());
 
 		m_data->setIndex(m_data->getDataLength() - 8);
 		uint32_t fileListLength = m_data->read32Little();
 		uint32_t archiveSize = m_data->read32Little();
 
-		Log("MFFalloutDAT2") 
+		FL_LOG(_log, LMsg("MFFalloutDAT2") 
 			<< "FileListLength: " << fileListLength 
-			<< " ArchiveSize: " << archiveSize;
+			<< " ArchiveSize: " << archiveSize);
 
 		if (archiveSize != m_data->getDataLength())
 			throw InvalidFormat("size mismatch");
@@ -58,7 +59,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		m_filecount = m_data->read32Little();
 		m_currentIndex = m_data->getCurrentIndex();
 
-		Log("MFFalloutDAT2") << "FileCount: " << m_filecount;
+		FL_LOG(_log, LMsg("MFFalloutDAT2 FileCount: ") << m_filecount);
 
 		// Do not read the complete file list at startup.
 		// Instead read a chunk each frame.
@@ -98,8 +99,7 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 		// Finally log on completion and stop the timer.
 		if( m_filecount == 0 ) {
-			Log("MFFalloutDAT2")
-				<< "All file entries in '" << m_datpath << "' loaded.";
+			FL_LOG(_log, LMsg("MFFalloutDAT2, All file entries in '") << m_datpath << "' loaded.");
 			m_timer.stop();
 		}
 	}
@@ -139,9 +139,9 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		// We might have another chance to find the file
 		// if the number of file entries not zero.
 		if ( m_filecount && i == m_filelist.end()) {
-			Log("MFFalloutDAT2")
+			FL_LOG(_log, LMsg("MFFalloutDAT2")
 				<< "Missing '" << name
-				<< "' in partially(" << m_filecount <<") loaded "<< m_datpath;
+				<< "' in partially(" << m_filecount <<") loaded "<< m_datpath);
 			while( m_filecount && i == m_filelist.end()) {
 				readFileEntry();
 				i = m_filelist.find(name);

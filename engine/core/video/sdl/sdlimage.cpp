@@ -29,7 +29,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/log.h"
+#include "util/logger.h"
 #include "util/rect.h"
 #include "util/settingsmanager.h"
 
@@ -37,6 +37,7 @@
 #include "sdlimage.h"
 
 namespace FIFE {
+	static Logger _log(LM_VIDEO);
 
 	SDLImage::SDLImage(SDL_Surface* surface): 
 		Image(surface),
@@ -330,13 +331,13 @@ namespace FIFE {
 		alphavariance = alphasquaresum - avgalpha*avgalpha;
 		if(semitransparent > ((transparent + opaque + semitransparent) / 8) 
 		   && alphavariance > 16) {
-			Debug("sdlimage")
+			FL_DBG(_log, LMsg("sdlimage")
 				<< "Trying to alpha-optimize image. FAILED: real alpha usage. "
 				<< " alphavariance=" << alphavariance
 				<< " total=" << (transparent + opaque + semitransparent)
 				<< " semitransparent=" << semitransparent
 				<< "(" << (float(semitransparent)/(transparent + opaque + semitransparent))
-				<< ")";
+				<< ")");
 			return SDL_DisplayFormatAlpha(src);
 		}
 
@@ -349,8 +350,7 @@ namespace FIFE {
 			}
 		}
 		if(keycolor == -1) {
-			Debug("sdlimage")
-				<< "Trying to alpha-optimize image. FAILED: no free color";
+			FL_DBG(_log, LMsg("sdlimage") << "Trying to alpha-optimize image. FAILED: no free color");
 			return SDL_DisplayFormatAlpha(src);
 		}
 
@@ -440,8 +440,8 @@ namespace FIFE {
 		SDL_SetColorKey(dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, key);
 		SDL_Surface *convert = SDL_DisplayFormat(dst);
 		SDL_FreeSurface(dst);
-		Debug("sdlimage")
-			<< "Trying to alpha-optimize image. SUCCESS: colorkey is " << key;
+		FL_DBG(_log, LMsg("sdlimage ")
+			<< "Trying to alpha-optimize image. SUCCESS: colorkey is " << key);
 		return convert;
 	} // end optimize
 }

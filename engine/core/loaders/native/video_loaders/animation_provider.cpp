@@ -32,7 +32,7 @@
 #include "video/animation.h"
 #include "video/image.h"
 #include "video/imagepool.h"
-#include "util/debugutils.h"
+#include "util/logger.h"
 #include "util/exception.h"
 #include "util/purge.h"
 #include "xml/tinyxml/tinyxml.h"
@@ -41,6 +41,7 @@
 #include "image_provider.h"
 
 namespace FIFE {
+	static Logger _log(LM_NATIVE_LOADERS);
 
 	Animation* AnimationProvider::createAnimation(const ResourceLocation& location) {
 		return dynamic_cast<Animation*>(createResource(location));
@@ -115,9 +116,9 @@ namespace FIFE {
 
 		
 		animation->setActionFrame(actionFrame);
-		Debug("animation_loader")
+		FL_DBG(_log, LMsg("animation_loader")
 			<< "file: '" << filename
-			<< "' frames:" << animation->getNumFrames();
+			<< "' frames:" << animation->getNumFrames());
 
 		return animation;
 	}

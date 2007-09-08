@@ -29,13 +29,14 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "util/log.h"
 #include "util/fife_math.h"
+#include "util/logger.h"
 
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
 
 namespace FIFE {
+	static Logger _log(LM_VIDEO);
 
 	RenderBackendSDL::RenderBackendSDL() : RenderBackend("SDL") {
 
@@ -97,10 +98,9 @@ namespace FIFE {
 			}
 			screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
 		}
-
-		Log("RenderBackendSDL")
+		FL_LOG(_log, LMsg("RenderBackendSDL")
 			<< "Videomode " << width << "x" << height
-			<< " at " << int(screen->format->BitsPerPixel) << " bpp";
+			<< " at " << int(screen->format->BitsPerPixel) << " bpp");
 
 		SDL_WM_SetCaption("FIFE", NULL);
 

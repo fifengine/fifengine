@@ -336,13 +336,10 @@
 				<File RelativePath="..\..\..\engine\core\util\angles.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.h"></File>
-				<File RelativePath="..\..\..\engine\core\util\debugutils.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\exception.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\exception.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\fife_math.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\fife_stdint.h"></File>
-				<File RelativePath="..\..\..\engine\core\util\log.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\util\log.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\logger.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\logger.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\matrix.h"></File>

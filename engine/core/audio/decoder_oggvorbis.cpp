@@ -27,11 +27,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/log.h"
+#include "util/logger.h"
 
 #include "decoder_oggvorbis.h"
 
 namespace FIFE { namespace audio {
+
+	static Logger _log(LM_AUDIO);
 
 	namespace OGG_detail {
 		static size_t read(void *ptr, size_t size, size_t nmemb, void *datasource) {
@@ -54,13 +56,11 @@ namespace FIFE { namespace audio {
 					(*rdp).moveIndex(offset);
 					break;
 				case SEEK_END:
-					Debug("decoder_ogg")
-						<< "Seek_END: " << offset;
+					FL_DBG(_log, LMsg("decoder_ogg") << "Seek_END: " << offset);
 					(*rdp).setIndex( (*rdp).getDataLength() -1 + offset);
 					break;
 				default:
-					Debug("decoder_ogg") // or Warn?
-						<< "Error in seek_ogg";
+					FL_ERR(_log, "decoder_ogg, Error in seek_ogg");
 			}
 			return -1;
 		}
@@ -95,15 +95,13 @@ namespace FIFE { namespace audio {
 			OGG_detail::read, OGG_detail::seek, OGG_detail::close, OGG_detail::tell
 		};
 		if (0 > ov_open_callbacks(&m_file, &m_ovf, 0, 0, ocb)) {
-			Warn("decoder_ogg")
-				<< "Error opening OggVorbis file";
+			FL_ERR(_log, "decoder_ogg, Error opening OggVorbis file");
 			return;
 		}
 		
 		vorbis_info *vi = ov_info(&m_ovf, -1);
 		if (!vi) {
-			Warn("decoder_ogg")
-				<< "Error fetching oggvorbis info";
+			FL_ERR(_log, "decoder_ogg, Error fetching oggvorbis info");
 			return;
 		}
 		
@@ -132,9 +130,8 @@ namespace FIFE { namespace audio {
 			// If the loop ended because with a nonzero ret
 			char buf;
 			if (0 < ov_read(&m_ovf, &buf, 1, 0, 2, 1, &stream)) {
-				Warn("decoder_ogg")
-					<< "Warn: We guessed the wrong length of the decoded"
-					<< "OggVorbis stream. Please report to the FIFE team!";
+				FL_WARN(_log, LMsg("decoder_ogg, We guessed the wrong ") <<
+					"length of the decoded OggVorbis stream. Please report to the FIFE team!");
 			} else {
 				ret = 0;
 			}

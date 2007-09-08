@@ -28,13 +28,14 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "util/log.h"
+#include "util/logger.h"
 
 #include "vfssourcefactory.h"
 #include "vfssourceprovider.h"
 
 namespace FIFE {
-
+	static Logger _log(LM_VFS);
+	
 	VFSSourceFactory::VFSSourceFactory() {}
 
 	VFSSourceFactory::~VFSSourceFactory() {
@@ -51,12 +52,12 @@ namespace FIFE {
 
 	void VFSSourceFactory::addProvider(VFSSourceProvider* provider) {
 		m_providers.push_back(provider);
-		Log("VFSSourceFactory") << "new provider: " << provider->getName();
+		FL_LOG(_log, LMsg("new provider: ") << provider->getName());
 	}
 
 	VFSSource* VFSSourceFactory::createSource(const std::string& file) const {
 		if( m_usedfiles.count(file) ) {
-			Warn("VFSSourceFactory") << file << " is already used as VFS source)";
+			FL_WARN(_log, LMsg(file) << " is already used as VFS source");
 			return 0;
 		}
 
@@ -71,15 +72,15 @@ namespace FIFE {
 				m_usedfiles.insert(file);
 				return source;
 			} catch(const Exception& ex) {
-				Log("VFSSourceFactory") << provider->getName() << " thought it could load " << file << " but didn't succeed (" << ex.getMessage() << ")";
+				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << file << " but didn't succeed (" << ex.getMessage() << ")");
 				continue;
 			} catch(...) {
-				Log("VFSSourceFactory") << provider->getName() << " thought it could load " << file << " but didn't succeed (unkown exception)";
+				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << file << " but didn't succeed (unkown exception)");
 				continue;
 			}
 		}
 
-		Log("VFSSourceFactory") << "no provider for " << file << " found";
+		FL_WARN(_log, LMsg("no provider for ") << file << " found");
 		return 0;
 	}
 }

@@ -20,6 +20,8 @@
 ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
+#include <iomanip>
 
 // 3rd party library includes
 #define BOOST_TEST_DYN_LINK
@@ -38,7 +40,6 @@
 #include "vfs/vfshostsystem.h"
 #include "loaders/fallout/vfs_loaders/dat2.h"
 #include "vfs/raw/rawdata.h"
-#include "util/log.h"
 #include "util/exception.h"
 
 
@@ -70,7 +71,6 @@ static const std::string RAW_FILE = "../data/test.map";
 void test_decoder() {
 	environment env;
 
-	Log::setLogLevel(Log::LEVEL_MAX);
 	VFS* vfs = VFS::instance();
 	vfs->addSource(new VFSHostSystem());
 

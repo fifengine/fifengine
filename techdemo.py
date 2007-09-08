@@ -18,7 +18,8 @@ class World(object):
 		self.reactor = InstanceReactor()
 		logman = self.engine.getLogManager()
 		logman.setLogToPromt(True)
-		logman.addVisibleModule(fife.LM_INSTANCE);
+		logman.addVisibleModule(fife.LM_VIDEO);
+		logman.addVisibleModule(fife.LM_CAMERA);
 		
 	def __del__(self):
 		self.engine.getView().removeCamera(self.camera)

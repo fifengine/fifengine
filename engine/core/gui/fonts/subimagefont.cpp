@@ -32,9 +32,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
 #include "util/exception.h"
-#include "util/log.h"
+#include "util/logger.h"
 #include "util/rect.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
@@ -43,12 +42,12 @@
 #include "subimagefont.h"
 
 namespace FIFE {
+	static Logger _log(LM_GUI);
 
 	SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool) 
 		: ImageFontBase(), m_pool(pool) {
 
-		Log("guichan_image_font")
-			<< " loading " << filename << " glyphs " << glyphs;
+		FL_LOG(_log, LMsg("guichan_image_font, loading ") << filename << " glyphs " << glyphs);
 
 		int image_id = m_pool.addResourceFromFile(filename);
 		Image& img = dynamic_cast<Image&>(m_pool.get(image_id));
@@ -83,11 +82,11 @@ namespace FIFE {
 			++x;
 		uint32_t colorkey = pixels[x];
 
-		Debug("image_font")
+		FL_DBG(_log, LMsg("image_font")
 			<< " glyph separator is " 
 			<< pprint(reinterpret_cast<void*>(separator))
 			<< " transparent color is " 
-			<< pprint(reinterpret_cast<void*>(colorkey));
+			<< pprint(reinterpret_cast<void*>(colorkey)));
 
 		// Disable alpha blending, so that we use colorkeying
 		SDL_SetAlpha(surface,0,255);

@@ -733,12 +733,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\util\debugutils.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\util\exception.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -756,16 +750,6 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\util\fife_stdint.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\util\log.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\util\log.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

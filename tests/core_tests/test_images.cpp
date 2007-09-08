@@ -50,7 +50,6 @@
 #include "loaders/native/video_loaders/subimage_provider.h"
 #include "loaders/native/video_loaders/animation_provider.h"
 #include "util/exception.h"
-#include "util/log.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;
@@ -71,7 +70,6 @@ struct environment {
 		  timemanager(new TimeManager()),
 		  vfssources(new VFSSourceFactory()),
 		  vfs(new VFS()) {
-		Log::setLogLevel(Log::LEVEL_MAX);
 		VFS::instance()->addSource(new VFSHostSystem());
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 				throw SDLException(SDL_GetError());

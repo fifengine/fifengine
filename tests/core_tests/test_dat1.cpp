@@ -20,6 +20,8 @@
 ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
+#include <iomanip>
 
 // 3rd party library includes
 #define BOOST_TEST_DYN_LINK
@@ -34,7 +36,6 @@
 #include "vfs/vfshostsystem.h"
 #include "loaders/fallout/vfs_loaders/dat1.h"
 #include "vfs/raw/rawdata.h"
-#include "util/log.h"
 #include "util/exception.h"
 
 using boost::unit_test::test_suite;
@@ -45,7 +46,6 @@ static const std::string COMPRESSED_FILE = "../data/dat1vfstest.dat";
 static const std::string RAW_FILE = "../data/test.map";
 
 void test_decoder() {
-	Log::setLogLevel(Log::LEVEL_MAX);
 	boost::shared_ptr<VFS> vfs(new VFS());
 	vfs->addSource(new VFSHostSystem());
 

@@ -33,7 +33,6 @@
 // Second block: files included from the same folder
 #include "video/image.h"
 #include "util/time/timemanager.h"
-#include "util/log.h"
 
 #include "fontbase.h"
 #include "textrenderpool.h"
@@ -113,10 +112,6 @@ namespace FIFE {
 	}
 
 	void TextRenderPool::removeOldEntries() {
-// 		Log("textrenderpool")
-// 			<< "Removing old entries from pool "
-// 			<< " now: " << m_poolSize
-// 			<< " max: " << m_poolMaxSize;
 
 		type_pool::iterator tmp,it = m_pool.begin();
 		uint32_t now = TimeManager::instance()->getTime();
@@ -130,11 +125,6 @@ namespace FIFE {
 				it = tmp;
 			}
 		}
-
-// 		Log("textrenderpool")
-// 			<< "Removing old entries from pool (DONE) "
-// 			<< " now: " << m_poolSize
-// 			<< " max: " << m_poolMaxSize;
 
 		// Stop if nothing can grow old =)
 		if( m_poolSize == 0 )
