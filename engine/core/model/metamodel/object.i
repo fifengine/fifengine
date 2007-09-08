@@ -23,8 +23,8 @@ namespace FIFE {
 			%template(ogetRect) oget<Rect>;
 			%template(oget_string) oget<std::string>;
 
-			Action* addAction(const std::string& identifier, const std::string& action_name);
-			Action* getAction(const std::string& action_name);
+			Action* addAction(const std::string& identifier);
+			Action* getAction(const std::string& identifier);
 
 			void addStaticImage(unsigned int angle, int image_index);
 			int getStaticImageIndexByAngle(unsigned int angle);

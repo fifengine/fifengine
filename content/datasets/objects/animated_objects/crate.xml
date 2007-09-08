@@ -1,127 +1,100 @@
 <?xml version="1.0"?>
-<map>
-	<properties>
-		<name>crate.xml</name>
-		<version>1</version>
-		<format>1</format>
-	</properties>
-	<archetypes>
-		<archetype type="XML">
-			<prototypes>
-				<!-- Animations -->
-				<prototype name="Crate:Empty:001">
-					<visual>
-						<animation source="content/animations/objects/crate/crate_empty_001.xml" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Empty:002">
-					<visual>
-						<animation source="content/animations/objects/crate/crate_empty_002.xml" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Empty:003">
-					<visual>
-						<animation source="content/animations/objects/crate/crate_empty_003.xml" />
-					</visual>
-				</prototype>
+<dataset id="Crate" type="Embedded" format="1.0">
+	<!-- Animations -->
+	<object id="Crate:Empty:001">
+		<action id="default">
+			<animation source="content/animations/objects/crate/crate_empty_001.xml" />
+		</action>
+	</object>
 
-				<prototype name="Crate:Full:001">
-					<visual>
-						<animation source="content/animations/objects/crate/crate_full_001.xml" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Full:002">
-					<visual>
-						<animation source="content/animations/objects/crate/crate_full_002.xml" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Full:003">
-					<visual>
-						<animation source="content/animations/objects/crate/crate_full_003.xml" />
-					</visual>
-				</prototype>
+	<object id="Crate:Empty:002">
+		<action id="default">
+			<animation source="content/animations/objects/crate/crate_empty_002.xml" />
+		</action>
+	</object>
 
-				<!-- Static images -->
-				<prototype name="Crate:Closed:001">
-					<visual>
-						<image source="content/gfx/objects/crate/closed_1.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Closed:002">
-					<visual>
-						<image source="content/gfx/objects/crate/closed_2.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Closed:003">
-					<visual>
-						<image source="content/gfx/objects/crate/closed_3.png" />
-					</visual>
-				</prototype>
+	<object id="Crate:Empty:003">
+		<action id="default">
+			<animation source="content/animations/objects/crate/crate_empty_003.xml" />
+		</action>
+	</object>
 
-				<prototype name="Crate:HalfOpen:Empty:001">
-					<visual>
-						<image source="content/gfx/objects/crate/halfopen_empty_1.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:HalfOpen:Empty:002">
-					<visual>
-						<image source="content/gfx/objects/crate/halfopen_empty_2.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:HalfOpen:Empty:003">
-					<visual>
-						<image source="content/gfx/objects/crate/halfopen_empty_3.png" />
-					</visual>
-				</prototype>
+	<object id="Crate:Full:001">
+		<action id="default">
+			<animation source="content/animations/objects/crate/crate_full_001.xml" />
+		</action>
+	</object>
+	
+	<object id="Crate:Full:002">
+		<action id="default">
+			<animation source="content/animations/objects/crate/crate_full_002.xml" />
+		</action>
+	</object>
 
-				<prototype name="Crate:HalfOpen:Full:001">
-					<visual>
-						<image source="content/gfx/objects/crate/halfopen_full_1.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:HalfOpen:Full:002">
-					<visual>
-						<image source="content/gfx/objects/crate/halfopen_full_2.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:HalfOpen:Full:003">
-					<visual>
-						<image source="content/gfx/objects/crate/halfopen_full_3.png" />
-					</visual>
-				</prototype>
+	<object id="Crate:Full:003">
+		<action id="default">
+			<animation source="content/animations/objects/crate/crate_full_003.xml" />
+		</action>
+	</object>
 
-				<prototype name="Crate:Open:Empty:001">
-					<visual>
-						<image source="content/gfx/objects/crate/open_empty_1.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Open:Empty:002">
-					<visual>
-						<image source="content/gfx/objects/crate/open_empty_2.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Open:Empty:003">
-					<visual>
-						<image source="content/gfx/objects/crate/open_empty_3.png" />
-					</visual>
-				</prototype>
+	<!-- Static images -->
+	<object id="Crate:Closed:001">
+		<image source="content/gfx/objects/crate/closed_1.png" />
+	</object>
 
-				<prototype name="Crate:Open:Full:001">
-					<visual>
-						<image source="content/gfx/objects/crate/open_full_1.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Open:Full:002">
-					<visual>
-						<image source="content/gfx/objects/crate/open_full_2.png" />
-					</visual>
-				</prototype>
-				<prototype name="Crate:Open:Full:003">
-					<visual>
-						<image source="content/gfx/objects/crate/open_full_3.png" />
-					</visual>
-				</prototype>
-			</prototypes>
-		</archetype>
-	</archetypes>
-</map>
+	<object id="Crate:Closed:002">
+		<image source="content/gfx/objects/crate/closed_2.png" />
+	</object>
+
+	<object id="Crate:Closed:003">
+		<image source="content/gfx/objects/crate/closed_3.png" />
+	</object>
+
+	<object id="Crate:HalfOpen:Empty:001">
+		<image source="content/gfx/objects/crate/halfopen_empty_1.png" />
+	</object>
+
+	<object id="Crate:HalfOpen:Empty:002">
+		<image source="content/gfx/objects/crate/halfopen_empty_2.png" />
+	</object>
+
+	<object id="Crate:HalfOpen:Empty:003">
+		<image source="content/gfx/objects/crate/halfopen_empty_3.png" />
+	</object>
+
+	<object id="Crate:HalfOpen:Full:001">
+		<image source="content/gfx/objects/crate/halfopen_full_1.png" />
+	</object>
+
+	<object id="Crate:HalfOpen:Full:002">
+		<image source="content/gfx/objects/crate/halfopen_full_2.png" />
+	</object>
+
+	<object id="Crate:HalfOpen:Full:003">
+		<image source="content/gfx/objects/crate/halfopen_full_3.png" />
+	</object>
+
+	<object id="Crate:Open:Empty:001">
+		<image source="content/gfx/objects/crate/open_empty_1.png" />
+	</object>
+
+	<object id="Crate:Open:Empty:002">
+		<image source="content/gfx/objects/crate/open_empty_2.png" />
+	</object>
+
+	<object id="Crate:Open:Empty:003">
+		<image source="content/gfx/objects/crate/open_empty_3.png" />
+	</object>
+
+	<object id="Crate:Open:Full:001">
+		<image source="content/gfx/objects/crate/open_full_1.png" />
+	</object>
+
+	<object id="Crate:Open:Full:002">
+		<image source="content/gfx/objects/crate/open_full_2.png" />
+	</object>
+
+	<object id="Crate:Open:Full:003">
+		<image source="content/gfx/objects/crate/open_full_3.png" />
+	</object>
+</dataset>

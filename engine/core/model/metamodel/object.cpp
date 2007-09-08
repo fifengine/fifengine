@@ -53,26 +53,26 @@ namespace FIFE {
 		}
 	}
 
-	Action* Object::addAction(const std::string& identifier, const std::string& action_name) {
+	Action* Object::addAction(const std::string& identifier) {
 		if (!m_actions) {
 			m_actions = new std::map<std::string, Action*>;
 		}
-		Action* a = getAction(action_name);
+		Action* a = getAction(identifier);
 		if (!a) {
 			a = new Action(identifier);
-			(*m_actions)[action_name] = a;
+			(*m_actions)[identifier] = a;
 		}
 		return a;
 	}
 
-	Action* Object::getAction(const std::string& action_name) {
+	Action* Object::getAction(const std::string& identifier) {
 		std::map<std::string, Action*>::const_iterator i;
 		if (m_actions) {
-			i = m_actions->find(action_name);
+			i = m_actions->find(identifier);
 		}
 		if ((!m_actions) || (i == m_actions->end())) {
 			if (m_inherited) {
-				return m_inherited->getAction(action_name);
+				return m_inherited->getAction(identifier);
 			}
 			return NULL;
 		}

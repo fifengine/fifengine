@@ -21,7 +21,7 @@ class ActionTests(unittest.TestCase):
 		self.obj = fife.Object("object001")
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
-		self.action = self.obj.addAction('action001', 'walk')
+		self.action = self.obj.addAction('walk')
 		addResource = self.engine.animationPool.addResourceFromFile
 		for index, direction in enumerate(dirnames):
 			degree = 45 * index

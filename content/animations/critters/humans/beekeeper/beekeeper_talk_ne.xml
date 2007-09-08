@@ -1,11 +1,11 @@
 <animation delay="100" id="3013">
-	<frame source="content/gfx/critters/beekeeper/talking_ne0000.png" />
-	<frame source="content/gfx/critters/beekeeper/talking_ne0001.png" />
-	<frame source="content/gfx/critters/beekeeper/talking_ne0002.png" />
-	<frame source="content/gfx/critters/beekeeper/talking_ne0003.png" />
-	<frame source="content/gfx/critters/beekeeper/talking_ne0004.png" />
-	<frame source="content/gfx/critters/beekeeper/talking_ne0005.png" />
-	<frame source="content/gfx/critters/beekeeper/talking_ne0006.png" />
-	<frame source="content/gfx/critters/beekeeper/talking_ne0007.png" />
-	<frame source="content/gfx/critters/beekeeper/talking_ne0008.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0000.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0001.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0002.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0003.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0004.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0005.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0006.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0007.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_ne0008.png" />
 </animation>

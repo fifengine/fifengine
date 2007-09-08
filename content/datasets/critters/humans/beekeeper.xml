@@ -1,59 +1,20 @@
 <?xml version="1.0"?>
-<map>
-	<properties>
-		<name>Beekeeper critter archetype</name>
-		<version>1</version>
-		<format>1</format>
-	</properties>
-	<archetypes>
-		<archetype type="XML">
-			<prototypes>
-				<prototype name="Critter:Beekeeper:Rotate">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_rotate.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Beekeeper:Talk:N">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_n.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Beekeeper:Talk:NE">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_ne.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Beekeeper:Talk:E">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_e.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Beekeeper:Talk:SE">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_se.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Beekeeper:Talk:S">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_s.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Beekeeper:Talk:SW">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_sw.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Beekeeper:Talk:W">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_w.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Beekeeper:Talk:NW">
-					<visual>
-						<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_nw.xml"/>
-					</visual>
-				</prototype>
-			</prototypes>
-		</archetype>
-	</archetypes>
-</map>
+<!-- Note, this file needs to be updated to collect all the animations in one object (with varying 'direction' value) -->
+<dataset id="Beekeeper" type="Embedded" format="1.0">
+	<object id="Beekeeper">
+		<action id="default">
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_rotate.xml"/>
+		</action>
+
+		<action id="walk">
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_n.xml" direction='90' />
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_ne.xml" direction='45' />
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_e.xml" direction='0' />
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_se.xml" direction='315' />
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_s.xml" direction='270' />
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_sw.xml" direction='225' />
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_w.xml" direction = '180' />
+			<animation source="content/animations/critters/humans/beekeeper/beekeeper_talk_nw.xml" direction= '135' />
+		</action>
+	</object>
+</dataset>

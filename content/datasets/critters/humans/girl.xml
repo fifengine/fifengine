@@ -1,59 +1,19 @@
 <?xml version="1.0"?>
-<map>
-	<properties>
-		<name>Girl critter archetype</name>
-		<version>1</version>
-		<format>1</format>
-	</properties>
-	<archetypes>
-		<archetype type="XML">
-			<prototypes>
-				<prototype name="Critter:Girl:Rotate">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_rotate.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Girl:Talk:N">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_talk_n.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Girl:Talk:NE">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_talk_ne.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Girl:Talk:E">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_talk_e.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Girl:Talk:SE">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_talk_se.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Girl:Talk:S">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_talk_s.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Girl:Talk:SW">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_talk_sw.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Girl:Talk:W">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_talk_w.xml"/>
-					</visual>
-				</prototype>
-				<prototype name="Critter:Girl:Talk:NW">
-					<visual>
-						<animation source="content/animations/critters/humans/girl/girl_talk_nw.xml"/>
-					</visual>
-				</prototype>
-			</prototypes>
-		</archetype>
-	</archetypes>
-</map>
+<dataset id="Girl" type="Embedded" format="1.0">
+	<object id="Girl">
+		<action id="default">
+			<animation source="content/animations/critters/humans/girl/girl_rotate.xml" />
+		</action>
+
+		<action id="talk">
+			<animation source="content/animations/critters/humans/girl/girl_talk_n.xml" direction='90' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_ne.xml" direction='45' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_e.xml" direction='0' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_se.xml" direction='315' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_s.xml" direction='270' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_sw.xml" direction='225' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_w.xml" direction='180' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_nw.xml" direction='135' />
+		</action>
+	</object>
+</dataset>

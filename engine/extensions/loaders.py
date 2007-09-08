@@ -12,6 +12,7 @@ class ModelLoader(handler.ContentHandler):
 		self.model = self.engine.getModel()
 		self.metamodel = self.model.getMetaModel()
 		self.pool = self.engine.getImagePool()
+		self.anim_pool = self.engine.getAnimationPool()
 
 		if (state):
 			self.state = state
@@ -26,6 +27,11 @@ class ModelLoader(handler.ContentHandler):
 
 		self.stack = [ self.SModel ] 
 		self.datastack = [ ]
+
+		# big hack! address how pathfinders are declared etc, etc.
+		self.pather = fife.LinearPather()
+		self.pather.thisown = 0
+
 
 	def startElement(self, name, attrs):
 		if (name == 'map'):
@@ -150,22 +156,47 @@ class ModelLoader(handler.ContentHandler):
 					elif (attrName == "direction"):
 						direction = attrs.get(attrName)
 
+				assert source, "Image declared with no source location."	
+
 				id = self.pool.addResourceFromFile(str(source))	
 				self.object.addStaticImage(0, id)
-
-				assert source, "Image declared with no source location."	
 
 			else:
 				assert 0, "<image> tags can only be declared in an <object> section."
 
 		elif (name == 'action'):
-			if (self.state == self.SDataset):
+			if (self.state == self.SObject):
 				self.state = self.SAction
 
-				# TODO: load actions
+				id = 0
+				for attrName in attrs.keys():
+					if (attrName == "id"):
+						id = attrs.get(attrName)
+
+				assert id, "Actions must be given an identifier (id) field."
+
+				self.action = self.object.addAction(str(id))
 
 			else:
-				assert 0, "Actions can only be declared in a <dataset> section."
+				assert 0, "Actions can only be declared in an <object> section."
+
+		elif (name == 'animation'):
+			if (self.state == self.SAction):
+				source = 0
+				direction = 0
+				for attrName in attrs.keys():
+					if (attrName == "direction"):
+						direction = attrs.get(attrName)
+					elif (attrName == "source"):
+						source = attrs.get(attrName)
+			
+				assert source, "Animation declared with no source location."
+
+				animation = self.anim_pool.addResourceFromFile(str(source))
+				self.action.addAnimation(int(direction), animation)
+
+			else:
+				assert 0, "Animations must be declared in an <action> section."
 
 		elif (name == 'elevation'):
 			if (self.state == self.SMap):
@@ -270,7 +301,15 @@ class ModelLoader(handler.ContentHandler):
 				else:
 					y = self.y
 
-				self.layer.addInstance(object, fife.Point(x,y))
+				inst = self.layer.addInstance(object, fife.Point(x,y))
+				
+				if (object.getAction("default")):
+					object.setPather(self.pather)
+
+					# TODO: more sensible default direction?
+					target = fife.Location()
+					target.setLayer(self.layer)
+					inst.act("default", target, True)
 
 			else:
 				assert 0, "Instances can only be declared in an <instances> section."
@@ -279,16 +318,19 @@ class ModelLoader(handler.ContentHandler):
 		if (name == 'metadata'):
 			self.state = self.stack.pop()
 
-		if (name == 'dataset'):
+		elif (name == 'dataset'):
 			self.state = self.stack.pop()
 			if (self.state == self.SDataset):
 				assert len(self.datastack) > 0, "Corrupted dataset stack."
 				self.dataset = self.datastack.pop()
 
-		if (name == 'object' or name == 'action'):
+		elif (name == 'object'):
 			self.state = self.SDataset
 
-		if (name == 'map'):
+		elif (name == 'action'):
+			self.state = self.SObject
+
+		elif (name == 'map'):
 			self.state = self.SModel
 
 		elif (name == 'elevation'):

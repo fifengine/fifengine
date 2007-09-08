@@ -1,29 +1,6 @@
 <?xml version="1.0"?>
-<map>
-	<properties>
-		<name>wolf.xml</name>
-		<version>1</version>
-		<format>1</format>
-	</properties>
-	<archetypes>
-		<archetype type="XML">
-			<prototypes>
-				<prototype name="Animal">
-					<param name="name" type="text">Animal</param>
-					<!-- dynamic does currently not work correctly
-					     as the way rulesets work rely on some
-					     params like "visual" "type" "orientation". 
-					     it is read and used though.                -->
-				
-					<!--dynamic/-->
-				</prototype>
-				<prototype name="Animals:Wolf">
-					<prototype name="Animal"/>
-					<visual>
-						<animation source="content/animations/critters/animals/wolf.xml"/>
-					</visual>
-				</prototype>
-			</prototypes>
-		</archetype>
-	</archetypes>
-</map>
+<dataset id="Wolf" type="Embedded" format="1.0">
+	<object name="Animals:Wolf">
+		<animation source="content/animations/critters/animals/wolf.xml"/>
+	</object>
+</dataset>

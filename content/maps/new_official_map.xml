@@ -13,7 +13,7 @@
 	<dataset type="XML" source="content/datasets/tiles/new_official_map_tiles.xml" />
 
 	<!-- Load object datasets -->
-	<!-- Generic insts -->
+	<!-- Generic objects -->
 	<dataset type="XML" source="content/datasets/objects/generic/generic.xml" /> 
 
 	<!-- Map specific object -->
@@ -36,16 +36,12 @@
 	<dataset type="XML" source="content/datasets/objects/bushes/bush.xml" />
 	<dataset type="XML" source="content/datasets/objects/mushroom/mushroom.xml" />
 	<dataset type="XML" source="content/datasets/objects/trees/tree.xml" />
-	<!--
-	<dataset type="XML" source="content/datasets/insts/animated_objects/crate.xml" />
-	-->
+	<dataset type="XML" source="content/datasets/objects/animated_objects/crate.xml" />
 
 	<!-- Load NPC datasets -->
-	<!--
 	<dataset type="XML" source="content/datasets/critters/humans/beekeeper.xml" />
 	<dataset type="XML" source="content/datasets/critters/humans/boy.xml" />
 	<dataset type="XML" source="content/datasets/critters/humans/girl.xml" />
-	-->
 
 	<elevation id="OfficialMapElevation">
 
@@ -359,48 +355,48 @@
 
 				<i o="Bush:032" x="67" y="46" />
 
-<!--
 				<i o="Crate:HalfOpen:Full:003" x="13" y="33" />
 				<i o="Crate:Empty:001" x="17" y="35" />
 
 				<i o="Crate:HalfOpen:Full:001" x="72" y="86" />
-				
-				<i o="Critter:Beekeeper:Talk:SE" x="13" y="31" />
-				<i o="Critter:Beekeeper:Talk:NW" x="13" y="35" />
 
-				<i o="Critter:Beekeeper:Talk:S" x="42" y="39" />
-				<i o="Critter:Girl:Talk:W" x="42" y="42" />
+				<i o="Beekeeper" x="13" y="31" />
+				<i o="Beekeeper" x="13" y="35" />
 
-				<i o="Critter:Beekeeper:Talk:NE" x="34" y="91" />
-				<i o="Critter:Boy:Cheering:SE" x="37" y="89" />
-				<i o="Critter:Girl:Talk:NW" x="37" y="94" />
-				<i o="Critter:Beekeeper:Talk:SW" x="39" y="91" />
+				<i o="Beekeeper" x="42" y="39" />
 
-				<i o="Critter:Boy:Kicking:E" x="48" y="87" />
-				<i o="Critter:Girl:Talk:W" x="49" y="88" />
+				<i o="Girl" x="42" y="42" />
 
-				<i o="Critter:Boy:Cheering:SE" x="55" y="81" />
+				<i o="Beekeeper" x="34" y="91" />
+				<i o="Boy" x="37" y="89" />
+				<i o="Girl" x="37" y="94" />
+				<i o="Beekeeper" x="39" y="91" />
 
-				<i o="Critter:Beekeeper:Talk:S" x="57" y="76" />
-				<i o="Critter:Beekeeper:Talk:W" x="58" y="87" />
+				<i o="Boy" x="48" y="87" />
+				<i o="Girl" x="49" y="88" />
 
-				<i o="Critter:Boy:Talk:NE" x="66" y="43" />
-				<i o="Critter:Boy:Cheering:SW" x="68" y="43" />
-				<i o="Critter:Girl:Talk:NW" x="67" y="88" />
+				<i o="Boy" x="55" y="81" />
 
-				<i o="Critter:Beekeeper:Talk:SE" x="72" y="92" />
-				<i o="Critter:Beekeeper:Talk:W" x="74" y="95" />
+				<i o="Beekeeper" x="57" y="76" />
+				<i o="Beekeeper" x="58" y="87" />
 
-				<i o="Critter:Boy:Talk:N" x="77" y="42" />
-				<i o="Critter:Girl:Talk:SE" x="79" y="39" />
+				<i o="Boy" x="66" y="43" />
+				<i o="Boy" x="68" y="43" />
+				<i o="Girl" x="67" y="88" />
 
-				<i o="Critter:Beekeeper:Talk:SE" x="82" y="75" />
-				<i o="Critter:Beekeeper:Talk:W" x="80" y="42" />
-				<i o="Critter:Boy:Cheering:NE" x="80" y="82" />
-				<i o="Critter:Girl:Talk:NW" x="81" y="77" />
-				<i o="Critter:Boy:Talk:NW" x="83" y="77" />
-				<i o="Critter:Boy:Kicking:SW" x="86" y="82" />
--->
+				<i o="Beekeeper" x="72" y="92" />
+				<i o="Beekeeper" x="74" y="95" />
+
+				<i o="Boy" x="77" y="42" />
+				<i o="Girl" x="79" y="39" />
+
+				<i o="Beekeeper" x="82" y="75" />
+				<i o="Beekeeper" x="80" y="42" />
+				<i o="Boy" x="80" y="82" />
+				<i o="Girl" x="81" y="77" />
+				<i o="Boy" x="83" y="77" />
+				<i o="Boy" x="86" y="82" />
+
 				<i o="Deck_chair:006" x="34" y="72" />
 				<i o="Deck_chair:006" x="37" y="72" />
 				<i o="Deck_chair:008" x="40" y="72" />

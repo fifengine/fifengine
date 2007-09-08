@@ -84,15 +84,15 @@ namespace FIFE {
 				return m_inherited->oget<T>(field);
 			}
 
-			/** Adds new action with given name. In case there is action already
-			 *  with given name, returns it instead of new object
+			/** Adds new action with given id. In case there is action already
+			 *  with given id, returns it instead of new object
 			 *  Action instances are managed by object
 			 */
-			Action* addAction(const std::string& identifier, const std::string& action_name);
+			Action* addAction(const std::string& identifier);
 
-			/** Gets action with given name. If not found, returns NULL
+			/** Gets action with given id. If not found, returns NULL
 			 */
-			Action* getAction(const std::string& action_name);
+			Action* getAction(const std::string& identifier);
 
 			/** Sets pather used by instances created out of this object
 			 */
