@@ -29,12 +29,15 @@
 // Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/layer.h"
+#include "util/logger.h"
 
 #include "camera.h"
 #include "view.h"
 
 
 namespace FIFE {
+	static Logger _log(LM_CAMERA);
+	
 	Camera::Camera():
 		m_matrix(),
 		m_inverse_matrix(),
@@ -113,14 +116,10 @@ namespace FIFE {
 			}
 		}
 		m_reference_scale = static_cast<double>(m_screen_cell_width) / (x2 - x1);
-		/*
-		double sw = static_cast<double>(m_screen_cell_width);
-		double sh = static_cast<double>(m_screen_cell_height);
-		std::cout << "\n>>>>>>>> Camera::updateReferenceScale\n";
-		std::cout << "   tilt=" << m_tilt << " rot=" << m_rotation << "\n";
-		std::cout << "   x1=" << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2 << \
-		             " ratio=" << (x2-x1)/(y2-y1);
-		std::cout << "   imgw=" << sw << " imgh=" << sh << " ratio=" << sw/sh << "\n";
-		*/
+		
+		FL_DBG(_log, "Updating reference scale");
+		FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
+		FL_DBG(_log, LMsg("   x1=") << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2);
+		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 }

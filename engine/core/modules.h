@@ -46,6 +46,7 @@ enum logmodule_t {
 	LM_METAMODEL,
 	LM_PATHFINDER,
 	LM_UTIL,
+	LM_POOL,
 	LM_VFS,
 	LM_VIDEO,
 	LM_VIEW,
@@ -70,6 +71,7 @@ enum logmodule_t {
 		  {LM_METAMODEL, LM_MODEL, "Metamodel"}, \
 		{LM_PATHFINDER, LM_CORE, "Pathfinder"}, \
 		{LM_UTIL, LM_CORE, "Util"}, \
+		  {LM_POOL, LM_UTIL, "Pool"}, \
 		{LM_VFS, LM_CORE, "VFS"}, \
 		{LM_VIDEO, LM_CORE, "Video" }, \
 		{LM_VIEW, LM_CORE, "View"}, \

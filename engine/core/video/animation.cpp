@@ -46,7 +46,6 @@ namespace FIFE {
 		}
 	
 	Animation::~Animation() {
-		std::cout << ">>> in Animation destructor\n";
 		std::vector<FrameInfo>::const_iterator i(m_frames.begin());
 		while (i != m_frames.end()) {
 			i->img->decRef();

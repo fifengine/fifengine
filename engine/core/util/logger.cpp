@@ -60,7 +60,7 @@ namespace FIFE {
 	}
 	
 	void Logger::log(LogManager::LogLevel level, const LMsg& msg) {
-		LogManager::instance()->log(level, m_module, msg.m_logstring);
+		LogManager::instance()->log(level, m_module, msg.str);
 	}
 	
 	LogManager* LogManager::instance() {
@@ -82,11 +82,34 @@ namespace FIFE {
 		if (!isEnabled(module)) {
 			return;
 		}
+		std::string lvlstr = "";
+		switch (level) {
+			case LEVEL_DEBUG: lvlstr = "dbg";
+			break;
+			
+			case LEVEL_LOG: lvlstr = "log";
+			break;
+			
+			case LEVEL_WARN: lvlstr = "warn";
+			break;
+			
+			case LEVEL_ERROR: lvlstr = "error";
+			break;
+			
+			case LEVEL_PANIC: lvlstr = "panic";
+			break;
+			
+			default: lvlstr = "error";
+			break;
+		}
 		if (m_logtoprompt) {
-			std::cout << moduleInfos[module].name << ": " << msg << std::endl;
+			std::cout << moduleInfos[module].name << ": " << lvlstr << ": " << msg << std::endl;
 		}
 		if (m_logtofile) {
-			*m_logfile << moduleInfos[module].name << ": " << msg << std::endl;
+			*m_logfile << moduleInfos[module].name << ": " << lvlstr << ": " << msg << std::endl;
+		}
+		if (level == LEVEL_PANIC) {
+			abort();
 		}
 	}
 	

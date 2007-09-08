@@ -48,28 +48,30 @@
 #define FL_LOG(logger, msg) logger.log(LogManager::LEVEL_LOG, msg)
 #define FL_WARN(logger, msg) logger.log(LogManager::LEVEL_WARN, msg)
 #define FL_ERR(logger, msg) logger.log(LogManager::LEVEL_ERROR, msg)
+#define FL_PANIC(logger, msg) logger.log(LogManager::LEVEL_PANIC, msg)
 #else
 #define FL_DBG(logger, msg)
 #define FL_LOG(logger, msg)
 #define FL_WARN(logger, msg)
 #define FL_ERR(logger, msg)
+#define FL_PANIC(logger, msg)
 #endif
 
 namespace FIFE {
 	
 	class LMsg {
 	public:
-		LMsg(const std::string& msg=""): m_logstring(msg) {}
+		LMsg(const std::string& msg=""): str(msg) {}
 		~LMsg() {}
 		
 		template <typename T> LMsg& operator<<(const T& t) {
 			std::ostringstream stream;
 			stream << t;
-			m_logstring += stream.str();
+			str += stream.str();
 			return *this;
 		}
 		
-		std::string m_logstring;
+		std::string str;
 	};
 	
 	class LogManager {
@@ -78,7 +80,8 @@ namespace FIFE {
 			LEVEL_DEBUG = 0,
 			LEVEL_LOG   = 1,
 			LEVEL_WARN  = 2,
-   			LEVEL_ERROR = 3
+   			LEVEL_ERROR = 3,
+   			LEVEL_PANIC = 4
 		};
 		
 		static LogManager* instance();

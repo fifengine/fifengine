@@ -28,12 +28,14 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "util/debugutils.h"
+#include "util/logger.h"
 
 #include "pool.h"
 #include "resource_provider.h"
 
 namespace FIFE {
+	static Logger _log(LM_POOL);
+	
 	Pool::Pool(): 
 		m_entries(),
 		m_listeners(),
@@ -103,12 +105,16 @@ namespace FIFE {
 				entry->resource = entry->provider->createResource(*entry->location);
 			}
 			if (!entry->provider) {
-				throw NotFound( std::string("No suitable provider was found for resource ") +
-				                entry->location->getFilename());
+				LMsg msg("No suitable provider was found for resource ");
+				msg << entry->location->getFilename();
+				FL_ERR(_log, msg);
+				throw NotFound(msg.str);
 			}
 			if (!entry->resource) {
-				throw NotFound( std::string("No provider was able to load the requested resource ") +
-				                entry->location->getFilename());
+				LMsg msg("No provider was able to load the requested resource ");
+				msg << entry->location->getFilename();
+				FL_ERR(_log, msg);
+				throw NotFound(msg.str);
 			}
 			res = entry->resource;
 		}
@@ -152,7 +158,7 @@ namespace FIFE {
 		std::vector<IResourceProvider*>::iterator it = m_providers.begin();
 		std::vector<IResourceProvider*>::iterator end = m_providers.end();
 		if( it == end ) {
-			PANIC_PRINT( "no provider constructors given for resource pool");
+			FL_PANIC(_log, "no provider constructors given for resource pool");
 		}
 		for(; it != end; ++it) {
 			try {
@@ -170,6 +176,6 @@ namespace FIFE {
 	}
 
 	void Pool::printStatistics() {
-		std::cout << "Pool size = " << m_entries.size();
+		FL_LOG(_log, LMsg("Pool size =") << m_entries.size());
 	}
 }

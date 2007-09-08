@@ -77,7 +77,6 @@ namespace FIFE {
 		for (VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
 			target.push_back(*i);
 		}
-		std::cout << "listing files, target size = " << target.size() << std::endl;
 		return target;
 	}
 

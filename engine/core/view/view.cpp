@@ -101,7 +101,6 @@ namespace FIFE {
 			FL_DBG(_log, "No elevation found, exiting");
 			return;
 		}
-		//std::cout << "Getting layers...\n";
 		const std::vector<Layer*>& layers = elev->getLayers();
 		std::vector<Layer*>::const_iterator layer_it = layers.begin();
 		while (layer_it != layers.end()) {
