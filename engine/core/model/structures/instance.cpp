@@ -265,7 +265,7 @@ namespace FIFE {
 			FL_DBG(_log, "still speed left");
 			// if we are not in the target cell, pather cannot keep up
 			if (*(m_actioninfo->m_target) != m_location) {
-				std::cout << "pather cannot keep up\n";
+				FL_WARN(_log, "pather cannot keep up");
 			}
 			// otherwise we are finished the movement
 		}

@@ -35,6 +35,7 @@
 #include "video/animationpool.h"
 
 #include "util/fife_math.h"
+#include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
 #include "model/structures/elevation.h"
@@ -46,6 +47,8 @@
 #include "camera.h"
 
 namespace FIFE {
+	static Logger _log(LM_VIEWVIEW);
+	
 	View::View(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool):
 		m_cameras(),
 		m_renderbackend(renderbackend),
@@ -82,7 +85,7 @@ namespace FIFE {
 		double dx = pt2.x - pt1.x;
 		
 		int angle = static_cast<int>(atan2(dy,dx)*(180.0/M_PI));
-		std::cout << "-> angle, pt1=" << pt1 << ", pt2=" << pt2 << ", angle=" << angle << "\n";		
+		FL_DBG(_log, LMsg("-> angle, pt1=") << pt1 << ", pt2=" << pt2 << ", angle=" << angle);
 		if (dy > 0) {
 			return 360 - angle;
 		} else {
@@ -91,56 +94,54 @@ namespace FIFE {
 	}
 	
 	void View::updateCamera(Camera* camera) {
-		//std::cout << "In View::updateCamera\n";
+		FL_DBG(_log, "In View::updateCamera");
 		const Location& loc = camera->getLocation();
 		Elevation* elev = loc.getElevation();
 		if (!elev) {
-			//std::cout << "No elevation found, exiting\n";
+			FL_DBG(_log, "No elevation found, exiting");
 			return;
 		}
 		//std::cout << "Getting layers...\n";
 		const std::vector<Layer*>& layers = elev->getLayers();
 		std::vector<Layer*>::const_iterator layer_it = layers.begin();
 		while (layer_it != layers.end()) {
-			//std::cout << "Iterating layer...\n";
+			FL_DBG(_log, "Iterating layer...");
 			Layer* layer = (*layer_it);
 			CellGrid* cg = layer->getCellGrid();
 			if (!cg) {
-				//std::cout << "No cellgrid assigned to layer...\n";
+				FL_DBG(_log, "No cellgrid assigned to layer...");
 				++layer_it;
 			}
-			//std::cout << "Getting instance...\n";
+			FL_DBG(_log, "Getting instance...");
 			const std::vector<Instance*>& instances = layer->getInstances();
 			std::vector<Instance*>::const_iterator instance_it = instances.begin();
 			while (instance_it != instances.end()) {
-				//std::cout << "Iterating instances...\n";
+				FL_DBG(_log, "Iterating instances...");
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
 				DoublePoint elevpos = instance->getLocation().getElevationCoordinates();
 				Point campos = camera->toScreenCoordinates(elevpos);
-				/*
-				std::cout << "Instance layer coordinates = " << instance->getLocation().getLayerCoordinates() << "\n";
-				std::cout << "Instance elevation position = " << elevpos << "\n";
-				std::cout << "Instance camera position = " << campos << "\n";
-				*/
+				
+				FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocation().getLayerCoordinates());
+				FL_DBG(_log, LMsg("Instance elevation position = ") << elevpos);
+				FL_DBG(_log, LMsg("Instance camera position = ") << campos);
+				
 				Action* action = instance->getCurrentAction();
-				//std::cout << "Fetched potential action\n";
 				if (action) {
-					//std::cout << "Instance has action\n";
-					//std::cout << "Instance facing position = " << instance->getFacingLocation().getLayerCoordinates() << "\n";
-					//std::cout << "Instance elev facing position = " << elevface << "\n";
-					//std::cout << "Instance cam facing position = " << camface << "\n";
-					//std::cout << "Calculated angle = " << angle << "\n";
+					const Location& facing_loc = instance->getFacingLocation();
+					FL_DBG(_log, "Instance has action");
 					int angle = getAngleBetween(instance->getLocation(), instance->getFacingLocation(), *camera);
 					int animation_id = action->getAnimationIndexByAngle(angle);
 					Animation& animation = m_animationpool->getAnimation(animation_id);
 					int animtime = instance->getActionRuntime() % animation.getDuration();
 					image = animation.getFrameByTimestamp(animtime);
+					FL_DBG(_log, LMsg("Instance facing location = ") << facing_loc);
+					FL_DBG(_log, LMsg("Calculated angle = ") << angle);
 				} else {
-					//std::cout << "No action\n";
+					FL_DBG(_log, "No action");
 					int static_rotation = static_cast<int>(cg->getRotation() + camera->getRotation());
 					int imageid = instance->getStaticImageIndexByAngle(static_rotation);
-					//std::cout << "Instance does not have action, using static image with id " << imageid << "\n";
+					FL_DBG(_log, LMsg("Instance does not have action, using static image with id ") << imageid);
 					if (imageid >= 0) {
 						image = &m_imagepool->getImage(imageid);
 					}
@@ -156,12 +157,12 @@ namespace FIFE {
 					drawpt.y -= h / 2;
 					drawpt.y += image->getYShift();
 					Rect r = Rect(drawpt.x, drawpt.y, w, h);
-					//std::cout << "image(" << r << "), viewport (" << camera->getViewPort() << ")\n";
+					FL_DBG(_log, LMsg("image(") << r << "), viewport (" << camera->getViewPort());
 					if (r.intersects(camera->getViewPort())) {
-						//std::cout << "Instance is visible in viewport, rendering\n";
+						FL_DBG(_log, "Instance is visible in viewport, rendering");
 						image->render(r);
 					} else {
-						//std::cout << "Instance is not visible in viewport, skipping\n";
+						FL_DBG(_log, "Instance is not visible in viewport, skipping");
 					}
 
 					// draw grid for testing purposes
@@ -181,7 +182,7 @@ namespace FIFE {
 					m_renderbackend->drawLine(pt2, firstpt, 0, 255, 0);
 				}
 				else {
-					std::cout << "Instance does not have image to render\n";
+					FL_DBG(_log, "Instance does not have image to render");
 				}
 				++instance_it;
 			}

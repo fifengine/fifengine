@@ -37,6 +37,7 @@ enum logmodule_t {
 	LM_CONTROLLER,
 	LM_EVTCHANNEL,
 	LM_GUI,
+	LM_CONSOLE,
 	LM_LOADERS,
 	LM_MODEL,
 	LM_STRUCTURES,
@@ -60,19 +61,20 @@ enum logmodule_t {
 		{LM_CONTROLLER, LM_CORE, "Controller"}, \
 		{LM_EVTCHANNEL, LM_CORE, "Event Channel"}, \
 		{LM_GUI, LM_CORE, "GUI"}, \
+		  {LM_CONSOLE, LM_GUI, "Console"}, \
 		{LM_LOADERS, LM_CORE, "Loaders"}, \
 		{LM_MODEL, LM_CORE, "Model"}, \
-		{LM_STRUCTURES, LM_MODEL, "Structures"}, \
-		{LM_INSTANCE, LM_STRUCTURES, "Instance"}, \
-		{LM_LOCATION, LM_STRUCTURES, "Location"}, \
-		{LM_METAMODEL, LM_MODEL, "Metamodel"}, \
+		  {LM_STRUCTURES, LM_MODEL, "Structures"}, \
+		    {LM_INSTANCE, LM_STRUCTURES, "Instance"}, \
+		    {LM_LOCATION, LM_STRUCTURES, "Location"}, \
+		  {LM_METAMODEL, LM_MODEL, "Metamodel"}, \
 		{LM_PATHFINDER, LM_CORE, "Pathfinder"}, \
 		{LM_UTIL, LM_CORE, "Util"}, \
 		{LM_VFS, LM_CORE, "VFS"}, \
 		{LM_VIDEO, LM_CORE, "Video" }, \
 		{LM_VIEW, LM_CORE, "View"}, \
-		{LM_CAMERA, LM_VIEW, "Camera"}, \
-		{LM_VIEWVIEW, LM_VIEW, "View::View"}, \
+		  {LM_CAMERA, LM_VIEW, "Camera"}, \
+		  {LM_VIEWVIEW, LM_VIEW, "View::View"}, \
 		{LM_XML, LM_CORE, "XML"} \
 	};
 
