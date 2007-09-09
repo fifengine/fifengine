@@ -1,0 +1,16 @@
+Import('env')
+
+FILESLIST = [ 'animation.cpp', 'image.cpp', 'rect.cpp', 'renderable_location.cpp', 
+              'renderbackend.cpp', 'screen.cpp', 'complexanimation.cpp', 'point.cpp',
+              'renderable.cpp', 'renderable_provider.cpp', 'rendermanager.cpp' ]
+
+objlist = []
+
+for file in FILESLIST:
+	objlist += env.Object(file)
+
+objlist += SConscript('gui/SConscript') + SConscript('renderbackends/SConscript')
+
+Return('objlist')
+
+# vim: set filetype=python :

@@ -1,0 +1,10 @@
+Import('env')
+
+FILESLIST = [ 'gcnimageloader.cpp', 'guimanager.cpp' ]
+
+objlist = []
+
+for file in FILESLIST:
+	objlist += env.Object(file)
+
+Return('objlist')

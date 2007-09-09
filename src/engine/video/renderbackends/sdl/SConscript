@@ -1,0 +1,12 @@
+Import('env')
+
+FILESLIST = [ 'renderbackendsdl.cpp', 'sdlimage.cpp', 'sdlscreen.cpp', 'sdlblendingfunctions.cpp' ]
+
+objlist = []
+
+for file in FILESLIST:
+	objlist += env.Object(file)
+
+Return('objlist')
+
+# vim: set filetype=python :
