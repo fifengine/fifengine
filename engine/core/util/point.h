@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <assert.h>
 
 // Platform specific includes
 #include "fife_math.h"
@@ -38,62 +39,229 @@
 
 namespace FIFE {
 
-	/** A Point
+	/** A 2D Point
 	 *
 	 * This is a small helper class to aid in 2d vector arithmetics.
-	 * @note Currently we are using @b int as value, maybe using a fixed
-	 * size type is more appropiate, since then the value range is obvious.
 	 * @see Rect
 	 */
-	class Point {
-		public:
-			/** The X coordinate.
-			 */
-			int32_t x;
-			/** The Y coordinate
-			 */
-			int32_t y;
+	template <typename T> class PointType2D {
+	public:
+		union {
+			T val[2];
+			struct {
+				T x,y;
+			};
+		};
 
-			/** Constructor
-			 *
-			 * Creates a with 0 as default values.
-			 */
-			explicit Point(int x = 0, int y = 0);
+		/** Constructor
+		 *
+		 * Creates a with 0 as default values.
+		 */
+		explicit PointType2D(T _x = 0, T _y = 0): x(_x), y(_y) {
+		}
 
-			/** Vector addition
-			 */
-			Point operator+(const Point& p) const;
-			/** Vector substraction
-			 */
-			Point operator-(const Point& p) const;
+		/** Vector addition
+		 */
+		PointType2D<T> operator+(const PointType2D<T>& p) const {
+			return PointType2D<T>(x + p.x, y + p.y);
+		}
 
-			/** Vector inplace addition
-			 */
-			Point& operator+=(const Point& p);
-			/** Vector inplace substraction
-			 */
-			Point& operator-=(const Point& p);
+		/** Vector substraction
+		 */
+		PointType2D<T> operator-(const PointType2D<T>& p) const {
+			return PointType2D<T>(x - p.x, y - p.y);
+		}
 
-			/** Scalar multiplikation with an integer value
-			 */
-			Point operator*(const long& i) const;
+		/** Vector inplace addition
+		 */
+		PointType2D<T>& operator+=(const PointType2D<T>& p) {
+			x += p.x;
+			y += p.y;
+			return *this;
+		}
 
-			/** Scalar division with an integer value
-			 */
-			Point operator/(const long& i) const;
+		/** Vector inplace substraction
+		 */
+		PointType2D<T>& operator-=(const PointType2D<T>& p) {
+			x -= p.x;
+			y -= p.y;
+			return *this;
+		}
 
-			/** Equality comparision
-			 */
-			bool operator==(const Point& p) const;
+		/** Scalar multiplication with an integer value
+		 */
+		PointType2D<T> operator*(const T& i) const {
+			return PointType2D<T>(x * i, y * i);
+		}
 
-			/** Return length
-			 */
-			uint32_t length() const;
+		/** Scalar division with an integer value
+		 */
+		PointType2D<T> operator/(const T& i) const {
+			return PointType2D<T>(x / i, y / i);
+		}
+
+		/** Equality comparision
+		 */
+		bool operator==(const PointType2D<T>& p) const {
+			return x == p.x && y == p.y;
+		}
+
+		/** Equality comparision
+		 */
+		bool operator!=(const PointType2D<T>& p) const {
+			return !(x == p.x && y == p.y);
+		}
+
+		/** Return length
+		 */
+		T length() const {
+			double sq;
+			sq = x*x + y*y;
+			return static_cast<T>(sqrt(sq));
+		}
+
+		inline T& operator[] (int ind) { 
+			assert(ind > -1 && ind < 2);
+			return val[ind];
+		}
 	};
 
 	/** Print coords of the Point to a stream
 	 */
-	std::ostream& operator<<(std::ostream& os, const Point& p);
+	template<typename T>
+	std::ostream& operator<<(std::ostream& os, const PointType2D<T>& p) {
+		return os << "(" << p.x << "," << p.y << ")";
+	}
+
+	typedef PointType2D<int> Point;
+	typedef PointType2D<double> DoublePoint;
+
+	/** A 3D Point
+	 *
+	 * This is a small helper class to aid in 3d vector arithmetics.
+	 * @see Rect
+	 */
+	template <typename T> class PointType3D {
+	public:
+		union {
+			T val[3];
+			struct {
+				T x,y,z;
+			};
+		};
+
+		/** Constructor
+		 *
+		 * Creates a with 0 as default values.
+		 */
+		explicit PointType3D(T _x = 0, T _y = 0, T _z = 0): x(_x), y(_y), z(_z) {
+		}
+
+		/** Vector addition
+		 */
+		PointType3D<T> operator+(const PointType3D<T>& p) const {
+			return PointType3D<T>(x + p.x, y + p.y, z + p.z);
+		}
+
+		/** Vector substraction
+		 */
+		PointType3D<T> operator-(const PointType3D<T>& p) const {
+			return PointType3D<T>(x - p.x, y - p.y, z - p.z);
+		}
+
+		/** Vector inplace addition
+		 */
+		PointType3D<T>& operator+=(const PointType3D<T>& p) {
+			x += p.x;
+			y += p.y;
+			z += p.z;
+			return *this;
+		}
+
+		/** Vector inplace substraction
+		 */
+		PointType3D<T>& operator-=(const PointType3D<T>& p) {
+			x -= p.x;
+			y -= p.y;
+			z -= p.z;
+			return *this;
+		}
+
+		/** Scalar multiplication with an integer value
+		 */
+		PointType3D<T> operator*(const T& i) const {
+			return PointType3D<T>(x * i, y * i, z * i);
+		}
+
+		/** Scalar division with an integer value
+		 */
+		PointType3D<T> operator/(const T& i) const {
+			return PointType3D<T>(x / i, y / i, z / i);
+		}
+
+		/** Equality comparision
+		 */
+		bool operator==(const PointType3D<T>& p) const {
+			return x == p.x && y == p.y && z == p.z;
+		}
+
+		/** Equality comparision
+		 */
+		bool operator!=(const PointType3D<T>& p) const {
+			return !(x == p.x && y == p.y && z == p.z);
+		}
+
+		/** Return length
+		 */
+		T length() const {
+			double sq;
+			sq = x*x + y*y + z*z;
+			return static_cast<T>(sqrt(sq));
+		}
+
+		inline T& operator[] (int ind) { 
+			assert(ind > -1 && ind < 3); 
+			return val[ind]; 
+		}
+	};
+
+	/** Print coords of the Point to a stream
+	 */
+	template<typename T>
+	std::ostream& operator<<(std::ostream& os, const PointType3D<T>& p) {
+		return os << "(" << p.x << "," << p.y << "," << p.z << ")";
+	}
+
+	typedef PointType3D<int> Point3D;
+	typedef PointType3D<double> DoublePoint3D;
+
+	/** Convert from 2D double point to 2D int point
+	 */
+	inline Point doublePt2intPt(DoublePoint pt) {
+		Point tmp(static_cast<int>(pt.x), static_cast<int>(pt.y));
+		return tmp;
+	}
+
+	/** Convert from 3D double point to 3D int point
+	 */
+	inline Point3D doublePt2intPt(DoublePoint3D pt) {
+		Point3D tmp(static_cast<int>(pt.x), static_cast<int>(pt.y), static_cast<int>(pt.z));
+		return tmp;
+	}
+
+	/** Convert from 2D int point to 2D double point
+	 */
+	inline DoublePoint intPt2doublePt(Point pt) {
+		DoublePoint tmp(static_cast<double>(pt.x), static_cast<double>(pt.y));
+		return tmp;
+	}
+
+	/** Convert from 3D int point to 3D double point
+	 */
+	inline DoublePoint3D intPt2doublePt(Point3D pt) {
+		DoublePoint3D tmp(static_cast<double>(pt.x), static_cast<double>(pt.y), static_cast<double>(pt.z));
+		return tmp;
+	}
 
 }
 

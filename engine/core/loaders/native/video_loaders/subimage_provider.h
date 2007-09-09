@@ -32,20 +32,20 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/rect.h"
-#include "video/renderable_provider.h"
+#include "util/resource/resource_provider.h"
 
-namespace FIFE { namespace video { namespace loaders {
+
+namespace FIFE {
+	class Image;
 
 	/** ImageProvider for cropping another image */
-	class SubImageProvider : public RenderableProvider {
-		public:
-			SubImageProvider(const RenderableLocation& location)
-				: RenderableProvider(location) {}
-
-			RenderAble* createRenderable();
-
-		protected:
+	class SubImageProvider : public IResourceProvider {
+	public:
+		SubImageProvider() {}
+		IPooledResource* createResource(const ResourceLocation& location);
+		Image* createImage(const ResourceLocation& location);
 	};
 
-} } }
+}
+
 #endif

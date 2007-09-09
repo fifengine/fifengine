@@ -48,7 +48,6 @@
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "engine.h"
-#include "util/debugutils.h"
 #include "util/exception.h"
 #include "util/settingsmanager.h"
 

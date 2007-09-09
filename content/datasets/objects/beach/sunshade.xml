@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<dataset id="Sunshade" type="Embedded" format="1.0">
+	<object id="Sunshade:001">
+		<image source="content/gfx/objects/beach/sunshade_001.png"/>
+	</object>
+
+	<object id="Sunshade:002">
+		<image source="content/gfx/objects/beach/sunshade_002.png"/>
+	</object>
+
+	<object id="Sunshade:003">
+		<zvalue>3</zvalue>
+		<image source="content/gfx/objects/beach/sunshade_003.png"/>
+	</object>
+
+	<object id="Sunshade:004">
+		<zvalue>3</zvalue>
+		<image source="content/gfx/objects/beach/sunshade_004.png"/>
+	</object>
+</dataset>

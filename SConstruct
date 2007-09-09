@@ -3,7 +3,8 @@ from utils.util_scripts.path import path as upath
 
 opts = Options('options.py', ARGUMENTS)
 opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations', 1))
-opts.Add(BoolOption('testcases',  'Build testcases in unit_tests', 0))
+opts.Add(BoolOption('tests',  'Build testcases in unit_tests', 0))
+opts.Add(BoolOption('noengine',  'Prevents building of engine, use e.g. for util/test tweaking', 0))
 opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
 opts.Add(EnumOption('script', 'Selects generated scripting language bindings', 'python', allowed_values=('python', 'lua')))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
@@ -13,6 +14,7 @@ opts.Add(BoolOption('ext',  'Build external dependencies', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
 opts.Add(BoolOption('zip', 'Enable ZIP archive support', 0))
 opts.Add(BoolOption('perfexe', 'Build native perf test version of fife engine', 0))
+opts.Add(BoolOption('log', 'Enables logging for the engine', 1))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
@@ -142,9 +144,13 @@ else:
 	if env['zip']:
 		env.Append(CPPDEFINES = ['HAVE_ZIP'])
 
+	if env['log']:
+		env.Append(CPPDEFINES = ['LOG_ENABLED'])
+	
 	Export('env')
 	
-	SConscript('engine/SConscript')
+	if not env['noengine']:
+		SConscript('engine/SConscript')
 	
 	env.Append(LIBPATH = ['#/engine'])
 
@@ -152,8 +158,8 @@ else:
 		enginefiles = ['engine/main.cpp']
 		env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
 	
-	if env['testcases']:
-		SConscript('tests/unit_tests/SConscript')
+	if env['tests']:
+		SConscript('tests/core_tests/SConscript')
 
 	if env['utils']:
 		SConscript([str(p) for p in upath('utils').walkfiles('SConscript')])

@@ -1,50 +1,149 @@
-<?xml version="1.0" encoding="windows-1252"?>
-<VisualStudioProject ProjectType="Visual C++" Version="8,00" Name="libfife" ProjectGUID="{96025707-5759-400D-80E5-A1E94C8A79A2}" RootNamespace="fife_trunk_core" Keyword="Win32Proj">
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="libfife"
+	ProjectGUID="{96025707-5759-400D-80E5-A1E94C8A79A2}"
+	RootNamespace="fife_trunk_core"
+	Keyword="Win32Proj"
+	>
 	<Platforms>
-		<Platform Name="Win32"/>
+		<Platform
+			Name="Win32"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
-		<Configuration Name="Debug|Win32" OutputDirectory=".\static_libs\" IntermediateDirectory="$(ConfigurationName)" ConfigurationType="2" CharacterSet="1">
-			<Tool Name="VCPreBuildEventTool"/>
-			<Tool Name="VCCustomBuildTool"/>
-			<Tool Name="VCXMLDataGeneratorTool"/>
-			<Tool Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\engine;..\..\..\engine\core;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis;.\include\minizip;.\include\python" PreprocessorDefinitions="WIN32;_DEBUG;_LIB;HAVE_OPENGL;SCRIPTENGINE_LUA;GUICHAN_VERSION=6;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="3" Detect64BitPortabilityProblems="true" DebugInformationFormat="4"/>
-			<Tool Name="VCManagedResourceCompilerTool"/>
-			<Tool Name="VCResourceCompilerTool"/>
-			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalDependencies="glu32.lib guichan_opengld.lib guichan_sdld.lib guichand.lib lua51.lib minizip.lib ogg_static_d.lib openal32.lib opengl32.lib sdl.lib SDL_image.lib SDL_ttf.lib vorbis_static_d.lib vorbisfile_static_d.lib zlib.lib" AdditionalLibraryDirectories=".\static_libs;.\static_libs\python"/>
-			<Tool Name="VCALinkTool"/>
-			<Tool Name="VCManifestTool"/>
-			<Tool Name="VCXDCMakeTool"/>
-			<Tool Name="VCBscMakeTool"/>
-			<Tool Name="VCFxCopTool"/>
-			<Tool Name="VCAppVerifierTool"/>
-			<Tool Name="VCWebDeploymentTool"/>
-			<Tool Name="VCPostBuildEventTool"/>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\static_libs\"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\..\..\engine;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;HAVE_OPENGL;SCRIPTENGINE_LUA;GUICHAN_VERSION=6;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalDependencies="guichan_opengl_d.lib guichan_sdl_d.lib guichan_d.lib lua51.lib ogg_static_d.lib sdl.lib SDL_image.lib SDL_ttf.lib vorbis_static_d.lib vorbisfile_static_d.lib zlib.lib"
+				OutputFile="$(OutDir)\$(ProjectName)_d.lib"
+				AdditionalLibraryDirectories=".\static_libs"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
-		<Configuration Name="Release|Win32" OutputDirectory=".\static_libs" IntermediateDirectory="$(ConfigurationName)" ConfigurationType="2" CharacterSet="1" WholeProgramOptimization="1">
-			<Tool Name="VCPreBuildEventTool"/>
-			<Tool Name="VCCustomBuildTool"/>
-			<Tool Name="VCXMLDataGeneratorTool"/>
-			<Tool Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" WholeProgramOptimization="false" AdditionalIncludeDirectories="..\..\..\engine;..\..\..\engine\core;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis;.\include\minizip;.\include\python" PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_OPENGL;SCRIPTENGINE_LUA;GUICHAN_VERSION=6;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="3" Detect64BitPortabilityProblems="true" DebugInformationFormat="3"/>
-			<Tool Name="VCManagedResourceCompilerTool"/>
-			<Tool Name="VCResourceCompilerTool"/>
-			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLinkerTool" AdditionalDependencies="glu32.lib guichan_opengl.lib guichan_sdl.lib guichan.lib lua51.lib minizip.lib ogg_static.lib openal32.lib opengl32.lib sdl.lib sdlmain.lib SDL_image.lib SDL_ttf.lib vorbis_static.lib vorbisfile_static.lib zlib.lib" AdditionalLibraryDirectories=".\static_libs;.\static_libs\python"/>
-			<Tool Name="VCALinkTool"/>
-			<Tool Name="VCManifestTool"/>
-			<Tool Name="VCXDCMakeTool"/>
-			<Tool Name="VCBscMakeTool"/>
-			<Tool Name="VCFxCopTool"/>
-			<Tool Name="VCAppVerifierTool"/>
-			<Tool Name="VCWebDeploymentTool"/>
-			<Tool Name="VCPostBuildEventTool"/>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\static_libs"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				WholeProgramOptimization="false"
+				AdditionalIncludeDirectories="..\..\..\engine;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_OPENGL;SCRIPTENGINE_LUA;GUICHAN_VERSION=6;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalDependencies="guichan_opengl.lib guichan_sdl.lib guichan.lib lua51.lib ogg_static.lib sdl.lib sdlmain.lib SDL_image.lib SDL_ttf.lib vorbis_static.lib vorbisfile_static.lib zlib.lib"
+				  AdditionalLibraryDirectories=".\static_libs"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -68,8 +167,6 @@
 				<File RelativePath="..\..\..\engine\core\audio\source.h"></File>
 			</Filter>
 			<Filter Name="controller">
-				<File RelativePath="..\..\..\engine\core\controller\control.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\controller\control.h"></File>
 				<File RelativePath="..\..\..\engine\core\controller\engine.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\controller\engine.h"></File>
 			</Filter>
@@ -124,8 +221,18 @@
 			</Filter>
 			<Filter Name="gui">
 				<Filter Name="base">
-					<File RelativePath="..\..\..\engine\core\gui\base\advimage.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\base\advimage.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_image.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_image.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_imageloader.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_imageloader.h"></File>
+					<Filter Name="opengl">
+						<File RelativePath="..\..\..\engine\core\gui\base\opengl\opengl_gui_graphics.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\gui\base\opengl\opengl_gui_graphics.h"></File>
+					</Filter>
+					<Filter Name="sdl">
+						<File RelativePath="..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.h"></File>
+					</Filter>
 				</Filter>
 				<Filter Name="console">
 					<File RelativePath="..\..\..\engine\core\gui\console\commandline.cpp"></File>
@@ -134,18 +241,16 @@
 					<File RelativePath="..\..\..\engine\core\gui\console\console.h"></File>
 				</Filter>
 				<Filter Name="fonts">
-					<File RelativePath="..\..\..\engine\core\gui\fonts\aafont.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\aafont.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\font.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\font.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\fontcache.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\guichanfont.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\guichanfont.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\sdlimagefont.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\sdlimagefont.hpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\sdltruetypefont.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\sdltruetypefont.hpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\fontbase.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\fontbase.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefontbase.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefontbase.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\subimagefont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\subimagefont.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\textrenderpool.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\textrenderpool.h"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\truetypefont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\fonts\truetypefont.h"></File>
 				</Filter>
 				<File RelativePath="..\..\..\engine\core\gui\guimanager.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\gui\guimanager.h"></File>
@@ -160,56 +265,20 @@
 			</Filter>
 			<Filter Name="loaders">
 				<Filter Name="fallout">
-					<Filter Name="map_loaders">
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\animatedpal.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\animatedpal.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\coloroverride.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\coloroverride.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\critlst.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\critlst.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\dat1.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\dat1.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\dat2.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\dat2.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\fallout.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\fallout.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\frm.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\frm.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\header.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\header.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\list.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\list.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\lzssdecoder.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\lzssdecoder.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\objectfactory.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\objectfactory.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\pal.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\pal.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\providerdat1.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\providerdat1.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\providerdat2.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\providerdat2.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat1.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat1.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat2.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\rawdatadat2.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\remove_all.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\map_loaders\remove_all.h"></File>
-					</Filter>
-					<Filter Name="video_loaders">
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\video_loaders\frm_provider.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\fallout\video_loaders\frm_provider.h"></File>
+					<Filter Name="vfs_loaders">
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat1.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat1.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat2.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat2.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\lzssdecoder.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\lzssdecoder.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat1.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat1.h"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat2.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat2.h"></File>
 					</Filter>
 				</Filter>
 				<Filter Name="native">
-					<Filter Name="map_loaders">
-						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\prototype.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\prototype.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml.h"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml_archetype.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\loaders\native\map_loaders\xml_archetype.h"></File>
-					</Filter>
 					<Filter Name="video_loaders">
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.cpp"></File>
 						<File RelativePath="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.h"></File>
@@ -221,56 +290,74 @@
 				</Filter>
 			</Filter>
 			<Filter Name="model">
-				<Filter Name="geometries">
-					<File RelativePath="..\..\..\engine\core\model\geometries\geometry.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\geometries\geometry.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\geometries\gridgeometry.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\geometries\gridgeometry.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\geometries\hexgeometry.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\geometries\hexgeometry.h"></File>
+				<Filter Name="metamodel">
+					<File RelativePath="..\..\..\engine\core\model\metamodel\abstractpather.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\action.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\action.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\dataset.h"></File>
+					<Filter Name="grids">
+						<File RelativePath="..\..\..\engine\core\model\metamodel\grids\cellgrid.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\grids\cellgrid.h"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\grids\hexgrid.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\grids\hexgrid.h"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\grids\squaregrid.cpp"></File>
+						<File RelativePath="..\..\..\engine\core\model\metamodel\grids\squaregrid.h"></File>
+					</Filter>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\object.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\object.h"></File>
 				</Filter>
-				<File RelativePath="..\..\..\engine\core\model\map_loader.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\model\map_loader.h"></File>
+				<File RelativePath="..\..\..\engine\core\model\model.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\model\model.h"></File>
 				<Filter Name="structures">
-					<File RelativePath="..\..\..\engine\core\model\structures\archetype.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\archetype.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\elevation.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\elevation.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\instance.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\model\structures\instance.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\layer.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\location.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\location.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\map.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\structures\map.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\object_list.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\object_list.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\objectinfo.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\objectinfo.h"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\selection.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\model\structures\selection.h"></File>
+				</Filter>
+			</Filter>
+			<File RelativePath="..\..\..\engine\core\modules.h"></File>
+			<Filter Name="pathfinder">
+				<Filter Name="linearpather">
+					<File RelativePath="..\..\..\engine\core\pathfinder\linearpather\linearpather.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\pathfinder\linearpather\linearpather.h"></File>
 				</Filter>
 			</Filter>
 			<Filter Name="util">
+				<File RelativePath="..\..\..\engine\core\util\angles.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\angles.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\attributedclass.h"></File>
-				<File RelativePath="..\..\..\engine\core\util\debugutils.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\exception.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\exception.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\fife_math.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\fife_stdint.h"></File>
-				<File RelativePath="..\..\..\engine\core\util\log.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\util\log.h"></File>
-				<File RelativePath="..\..\..\engine\core\util\point.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\logger.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\logger.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\matrix.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\point.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\purge.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\quadtree.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\rect.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\rect.h"></File>
+				<Filter Name="resource">
+					<File RelativePath="..\..\..\engine\core\util\resource\pool.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\util\resource\pool.h"></File>
+					<File RelativePath="..\..\..\engine\core\util\resource\pooled_resource.h"></File>
+					<File RelativePath="..\..\..\engine\core\util\resource\resource_location.h"></File>
+					<File RelativePath="..\..\..\engine\core\util\resource\resource_provider.h"></File>
+				</Filter>
 				<File RelativePath="..\..\..\engine\core\util\settingsmanager.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\settingsmanager.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\singleton.h"></File>
-				<File RelativePath="..\..\..\engine\core\util\string_manip.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\util\string_manip.h"></File>
 				<Filter Name="time">
 					<File RelativePath="..\..\..\engine\core\util\time\timeevent.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\util\time\timeevent.h"></File>
@@ -315,63 +402,35 @@
 			<Filter Name="video">
 				<File RelativePath="..\..\..\engine\core\video\animation.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\animation.h"></File>
-				<Filter Name="gui">
-					<File RelativePath="..\..\..\engine\core\video\gui\gcnfifeimage.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\video\gui\gcnfifeimage.h"></File>
-					<File RelativePath="..\..\..\engine\core\video\gui\gcnimageloader.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\video\gui\gcnimageloader.h"></File>
-				</Filter>
+				<File RelativePath="..\..\..\engine\core\video\animationpool.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\image.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\image.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\imagecache.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\imagecache.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\pixelbuffer.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\pixelbuffer.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderable.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderable.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderable_location.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderable_location.h"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderable_provider.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\renderable_provider.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\image_location.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\video\image_location.h"></File>
+				<File RelativePath="..\..\..\engine\core\video\imagepool.h"></File>
+				<Filter Name="opengl">
+					<File RelativePath="..\..\..\engine\core\video\opengl\fife_opengl.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\opengl\glimage.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\opengl\glimage.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\opengl\renderbackendopengl.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\opengl\renderbackendopengl.h"></File>
+				</Filter>
 				<File RelativePath="..\..\..\engine\core\video\renderbackend.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\renderbackend.h"></File>
-				<Filter Name="renderbackends">
-					<Filter Name="opengl">
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\fife_opengl.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glimage.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\glscreen.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\opengl\renderbackendopengl.h"></File>
-					</Filter>
-					<Filter Name="sdl">
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\renderbackendsdl.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlblendingfunctions.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlimage.h"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlscreen.cpp"></File>
-						<File RelativePath="..\..\..\engine\core\video\renderbackends\sdl\sdlscreen.h"></File>
-					</Filter>
+				<Filter Name="sdl">
+					<File RelativePath="..\..\..\engine\core\video\sdl\renderbackendsdl.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\sdl\renderbackendsdl.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\sdl\sdlblendingfunctions.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\sdl\sdlblendingfunctions.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\sdl\sdlimage.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\sdl\sdlimage.h"></File>
 				</Filter>
-				<File RelativePath="..\..\..\engine\core\video\screen.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\video\screen.h"></File>
 			</Filter>
 			<Filter Name="view">
 				<File RelativePath="..\..\..\engine\core\view\camera.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\view\camera.h"></File>
-				<Filter Name="effects">
-					<File RelativePath="..\..\..\engine\core\view\effects\fade.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\view\effects\fade.h"></File>
-					<File RelativePath="..\..\..\engine\core\view\effects\visualeffect.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\view\effects\visualeffect.h"></File>
-				</Filter>
 				<File RelativePath="..\..\..\engine\core\view\view.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\view\view.h"></File>
-				<File RelativePath="..\..\..\engine\core\view\visual.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\view\visual.h"></File>
 				<File RelativePath="..\..\..\engine\core\view\visualtree.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\view\visualtree.h"></File>
 			</Filter>

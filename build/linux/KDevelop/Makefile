@@ -1,4 +1,4 @@
 FIFE:
-	cd ../../.. && scons testcases=yes
+	cd ../../.. && scons -Q tests=yes
 clean:
 	cd ../../.. && scons --clean

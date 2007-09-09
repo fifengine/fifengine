@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOCATION_H
-#define FIFE_MAP_LOCATION_H
+#ifndef FIFE_LOCATION_H
+#define FIFE_LOCATION_H
 
 // Standard C++ library includes
 #include <iostream>
@@ -32,20 +32,133 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/point.h"
+#include "util/exception.h"
 
-namespace FIFE { namespace map {
+namespace FIFE {
+	class Elevation;
+	class Layer;
+
 	class Location {
-		public:
-			Location();
-
-			size_t elevation;
-			size_t layer;
-			Point position;
+	public:
+		/** Default constructor
+		 */
+		Location();
+		
+		/** Copy constructor
+		 */
+		Location(const Location& loc);
+		
+		/** Destructor
+		 */
+		~Location();
+		
+		/** Resets location (so that layer and coordinate information becomes invalid)
+		 */
+		void reset();
+		
+		/** Assignment operator
+		 */
+		Location& operator=(const Location& rhs);
+		
+		/** Compares equality of two locations
+		 */
+		bool operator==(const Location& loc) const;
+		
+		/** Compares unequality of two locations
+		 */
+		bool operator!=(const Location& loc) const;
+		
+		/** Gets the elevation where this location is pointing to
+		 * @note this information is fetched from the set layer
+		 * @return elevation where this location is pointing to, NULL in case its invalid
+		 */
+		Elevation* getElevation() const;
+		
+		/** Sets layer where this location is pointing to
+		 *  @param layer layer to set
+		 */
+		void setLayer(Layer* layer);
+		
+		/** Gets the layer where this location is pointing to
+		 * @return layer where this location is pointing to, NULL in case its invalid
+		 */
+		Layer* getLayer() const;
+		
+		/** Sets precise layer coordinates to this location
+		 *  @throws NotSet in the following cases:
+		 *     - layer is not set (NULL)
+		 *     - layer does not have cellgrid assigned
+		 *  @param coordinates coordinates to set
+		 */
+		void setExactLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
+		
+		/** Gets exact layer coordinates set to this location
+		 *  @throws NotSet in the following cases:
+		 *     - layer is not set (NULL)
+		 *     - layer does not have cellgrid assigned
+		 * @return exact layer coordinates
+		 */
+		DoublePoint getExactLayerCoordinates() const throw(NotSet);
+		
+		/** Sets "cell precise" layer coordinates to this location
+		 *  @throws NotSet in the following cases:
+		 *     - layer is not set (NULL)
+		 *     - layer does not have cellgrid assigned
+		 * @see setLayerCoordinates(const DoublePoint& coordinates)
+		 */
+		void setLayerCoordinates(const Point& coordinates) throw(NotSet);
+		
+		/** Gets cell precision layer coordinates set to this location
+		 * @see getExactLayerCoordinates()
+		 */
+		Point getLayerCoordinates() const throw(NotSet);
+		
+		/** Sets elevation coordinates to this location
+		 *  @param coordinates coordinates to set
+		 */
+		void setElevationCoordinates(const DoublePoint& coordinates);
+		
+		/** Gets elevation coordinates set to this location
+		 * @return elevation coordinates
+		 */
+		DoublePoint getElevationCoordinates() const;
+		
+		/** Gets exact layer coordinates of this location mapped on given layer
+		 *  @throws NotSet in the following cases:
+		 *     - given layer is not set (NULL)
+		 *     - given layer does not have cellgrid assigned
+		 * @return exact layer coordinates
+		 */
+		DoublePoint getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
+		
+		/** Gets cell precision layer coordinates of this location mapped on given layer
+		 * @see getExactLayerCoordinates(const Layer* layer)
+		 */
+		Point getLayerCoordinates(const Layer* layer) const throw(NotSet);
+	
+		/** Gets offset distance from cell center
+		 * @return offset distance
+		 */
+		double getCellOffsetDistance() const;
+		
+		/** Tells if location is valid
+		 * Location is valid if:
+		 *   - layer is set
+		 *   - layer has cellgrid
+		 */
+		bool isValid() const;
+		
+	private:
+		bool isValid(const Layer* layer) const;
+		
+		Layer* m_layer;
+		DoublePoint m_elevation_coords;
 	};
-
-	/** Print coords of the Loacation to a stream
+	
+	/** Stream output operator.
+	 *
+	 * Useful for debugging purposes
 	 */
-	std::ostream& operator<<(std::ostream& os, const Location& loc);
-
-} }
-#endif //FIFE_MAPLOCATION_H
+	std::ostream& operator<<(std::ostream&, const Location&);
+}
+#endif //FIFE_LOCATION_H

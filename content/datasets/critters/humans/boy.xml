@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<dataset id="Boy" type="Embedded" format="1.0">
+	<object id="Boy">
+		<action id="default">
+			<animation source="content/animations/critters/humans/boy/boy_rotate.xml"/>
+		</action>
+
+		<action id="talk">
+			<animation source="content/animations/critters/humans/boy/boy_talk_n.xml" direction='90' />
+			<animation source="content/animations/critters/humans/boy/boy_talk_ne.xml" direction='45' />
+			<animation source="content/animations/critters/humans/boy/boy_talk_e.xml" direction='0' />
+			<animation source="content/animations/critters/humans/boy/boy_talk_se.xml" direction='315' />
+			<animation source="content/animations/critters/humans/boy/boy_talk_s.xml" direction='270' />
+			<animation source="content/animations/critters/humans/boy/boy_talk_sw.xml" direction='225' />
+			<animation source="content/animations/critters/humans/boy/boy_talk_w.xml" direction='180' />
+			<animation source="content/animations/critters/humans/boy/boy_talk_nw.xml" direction='135' />
+		</action>
+
+		<action id="cheer">
+			<animation source="content/animations/critters/humans/boy/boy_cheering_n.xml" direction='90' />
+			<animation source="content/animations/critters/humans/boy/boy_cheering_ne.xml" direction='45' />
+			<animation source="content/animations/critters/humans/boy/boy_cheering_e.xml" direction='0' />
+			<animation source="content/animations/critters/humans/boy/boy_cheering_se.xml" direction='315' />
+			<animation source="content/animations/critters/humans/boy/boy_cheering_s.xml" direction='270' />
+			<animation source="content/animations/critters/humans/boy/boy_cheering_sw.xml" direction='225' />
+			<animation source="content/animations/critters/humans/boy/boy_cheering_w.xml" direction='180' />
+			<animation source="content/animations/critters/humans/boy/boy_cheering_nw.xml" direction='135' />
+		</action>
+
+		<action id="kick">
+			<animation source="content/animations/critters/humans/boy/boy_kicking_n.xml" direction='90' />
+			<animation source="content/animations/critters/humans/boy/boy_kicking_ne.xml" direction='45' />
+			<animation source="content/animations/critters/humans/boy/boy_kicking_e.xml" direction='0' />
+			<animation source="content/animations/critters/humans/boy/boy_kicking_se.xml" direction='315' />
+			<animation source="content/animations/critters/humans/boy/boy_kicking_s.xml" direction='270' />
+			<animation source="content/animations/critters/humans/boy/boy_kicking_sw.xml" direction='225' />
+			<animation source="content/animations/critters/humans/boy/boy_kicking_w.xml" direction='180' />
+			<animation source="content/animations/critters/humans/boy/boy_kicking_nw.xml" direction='135' />
+		</action>
+	</object>
+</dataset>

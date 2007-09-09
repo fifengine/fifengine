@@ -22,161 +22,104 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/bind.hpp>
-
-// Platform specific includes
-#include "util/fife_math.h"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/time/timemanager.h"
-#include "video/screen.h"
-#include "model/geometries/geometry.h"
-#include "model/structures/elevation.h"
+#include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/layer.h"
-#include "model/structures/objectinfo.h"
+#include "util/logger.h"
 
 #include "camera.h"
 #include "view.h"
-#include "visual.h"
 
-namespace FIFE { namespace map {
 
-	Camera::Camera(View* view) {
-		m_view = view;
-		m_timer.setInterval(50);
-		m_timer.setCallback( boost::bind( &Camera::update, this ) );
-
-		int w = m_view->getScreen()->getWidth();
-		int h = m_view->getScreen()->getHeight();
-
-		setViewport(Rect(0, 0, w, h));
-
-		reset();
+namespace FIFE {
+	static Logger _log(LM_CAMERA);
+	
+	Camera::Camera():
+		m_matrix(),
+		m_inverse_matrix(),
+		m_tilt(0),
+		m_rotation(0),
+		m_zoom(1),
+		m_location(),
+		m_viewport(),
+		m_screen_cell_width(1),
+		m_screen_cell_height(1),
+		m_reference_scale(1) {
+		updateMatrices();
 	}
 
 	Camera::~Camera() {
-		m_timer.stop();
-		m_tracked_object.reset();
-		m_layer.reset();
 	}
 
-	void Camera::update() {
-		switch(m_mode) {
-			case TRACKING:
-			{
-				if( m_tracked_object ) {
-					m_tracked_visual = m_tracked_object->getVisualId();
-				}
-				if( !m_view || !m_view->isValidVisualId(m_tracked_visual) )
-					return;
-		
-				Visual* visual = m_view->getVisual(m_tracked_visual);
-		
-				Rect screen_box = visual->getScreenBox();
-				m_next_position = Point(screen_box.x + screen_box.w/2,
-				                        screen_box.y + screen_box.h/2);
+	void Camera::updateMatrices() {
+		double scale = 1.0 / (m_zoom * m_reference_scale);
+		m_matrix.loadScale(scale, scale, scale);
+		m_matrix.applyRotate(m_rotation, 0.0, 0.0, 1.0);
+		m_matrix.applyRotate(m_tilt, 1.0, 0.0, 0.0);
+		if (m_location.getLayer()) {
+			CellGrid* cg = m_location.getLayer()->getCellGrid();
+			if (cg) {
+				DoublePoint pt = m_location.getElevationCoordinates();
+				m_matrix.applyTranslate(pt.x  * m_reference_scale, pt.y * m_reference_scale, 0);
 			}
-			// FALL THROUGH
-
-			case MOVING:
-			{
-				Point dist = m_next_position - m_position;
-				
-				uint32_t length = dist.length();
-				if (length < 50) {
-					m_timer.stop();
-					return;
-				}
-				
-				Debug("map_camera") 
-					<< "Zooming from " << m_position
-					<< " to " << m_next_position
-					<< " by " << (dist*50) / length;
-				
-				m_position += (dist*50) / length;
-			}
-			break;
-	
-			case FREE:
-			break;
-	
 		}
+		m_inverse_matrix = m_matrix.inverse();
 	}
 
-	void Camera::track( size_t visualId ) {
-		m_tracked_object.reset();
-		m_tracked_visual = visualId;
-		m_timer.start();
-		m_mode = TRACKING;
+	DoublePoint Camera::toElevationCoordinates(Point screen_coords) {
+		screen_coords.x -= m_viewport.w / 2;
+		screen_coords.y += m_viewport.h / 2;
+		return m_matrix * intPt2doublePt(screen_coords);
 	}
 
-	void Camera::track( ObjectPtr object ) {
-		m_tracked_object = object;
-		m_timer.start();
-		m_mode = TRACKING;
+	Point Camera::toScreenCoordinates(DoublePoint elevation_coords) {
+		Point pt = doublePt2intPt(m_inverse_matrix * elevation_coords);
+		pt.x += m_viewport.w / 2;
+		pt.y += m_viewport.h / 2;
+		return pt;
 	}
 
-	void Camera::moveBy(const Point& delta) {
-		m_tracked_object.reset();
-		m_position += delta;
-		m_timer.stop();
-		m_mode = FREE;
-	}
-
-	void Camera::jumpTo(const Point& position) {
-		m_tracked_object.reset();
-		if( !m_layer )
-			return;
-
-		Point offset = Point(m_viewport.w, m_viewport.h) / 2;
-		m_position = m_layer->getGeometry()->toScreen(position) - offset;
-
-		m_timer.stop();
-		m_mode = FREE;
-	}
-
-	void Camera::moveTo(const Point& position) {
-		m_tracked_object.reset();
-		if (!m_layer) {
+	void Camera::updateReferenceScale() {
+		CellGrid* cg = NULL;
+		if (m_location.getLayer()) {
+			cg = m_location.getLayer()->getCellGrid();
+		}
+		if (!cg) {
 			return;
 		}
-		// center on screen
-		Point offset = Point(m_viewport.w, m_viewport.h) / 2;
-		m_next_position = m_layer->getGeometry()->toScreen(position) - offset;
-		m_timer.start();
-
-		Debug("map_camera") 
-			<< "Setting Next position:" << m_next_position;
-		m_mode = MOVING;
-	}
-
-	void Camera::render() {
-		m_view->setXPos(m_position.x);
-		m_view->setYPos(m_position.y);
-		m_view->setViewport(m_viewport);
-		m_view->render();
-	}
-
-	void Camera::reset() {
-		m_tracked_object.reset();
-		m_layer.reset();
-
-		m_timer.stop();
-		if (!m_view->getCurrentElevation()) {
-			m_position = Point();
-			m_mode = FREE;
-		} else {
-			m_layer = m_view->getCurrentElevation()->getReferenceLayer();
-			m_position = Point(m_view->getXPos(),m_view->getYPos());
-			m_mode = FREE;
+		
+		Point cell(0,0);
+		std::vector<DoublePoint> vertices;
+		cg->getVertices(vertices, cell);
+		
+		DoubleMatrix mtx;
+		mtx.loadRotate(m_rotation, 0.0, 0.0, 1.0);
+		mtx.applyRotate(m_tilt, 1.0, 0.0, 0.0);
+		mtx = mtx.inverse();
+		double x1, x2, y1, y2;
+		for (unsigned int i = 0; i < vertices.size(); i++) {
+			vertices[i] = cg->toElevationCoordinates(vertices[i]);
+			vertices[i] = mtx * vertices[i];
+			if (i == 0) {
+				x1 = x2 = vertices[0].x;
+				y1 = y2 = vertices[0].y;
+			}
+			else {
+				x1 = std::min(vertices[i].x, x1);
+				x2 = std::max(vertices[i].x, x2);
+				y1 = std::min(vertices[i].y, y1);
+				y2 = std::max(vertices[i].y, y2);
+			}
 		}
+		m_reference_scale = static_cast<double>(m_screen_cell_width) / (x2 - x1);
+		
+		FL_DBG(_log, "Updating reference scale");
+		FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
+		FL_DBG(_log, LMsg("   x1=") << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2);
+		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
-
-	void Camera::setViewport(const Rect& viewport) {
-		m_viewport = viewport;
-	}
-
-} } // FIFE::map
+}

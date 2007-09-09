@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<dataset id="Girl" type="Embedded" format="1.0">
+	<object id="Girl">
+		<action id="default">
+			<animation source="content/animations/critters/humans/girl/girl_rotate.xml" />
+		</action>
+
+		<action id="talk">
+			<animation source="content/animations/critters/humans/girl/girl_talk_n.xml" direction='90' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_ne.xml" direction='45' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_e.xml" direction='0' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_se.xml" direction='315' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_s.xml" direction='270' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_sw.xml" direction='225' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_w.xml" direction='180' />
+			<animation source="content/animations/critters/humans/girl/girl_talk_nw.xml" direction='135' />
+		</action>
+	</object>
+</dataset>

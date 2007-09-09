@@ -29,6 +29,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/logger.h"
 #include "vfs/raw/rawdata.h"
 
 #include "decoder_acm.h"
@@ -45,7 +46,8 @@
  * Adapted for ACMStream.DLL by Valery V. Anisimovsky (samael@avn.mccme.ru)
  */
 namespace FIFE { namespace audio { 
-	
+	static Logger _log(LM_AUDIO);
+		
 	namespace ACM_detail {
 		const uint32_t BUFF_SIZE=0x10000;
 		typedef ::boost::shared_ptr<FIFE::RawData> RawDataPtr;
@@ -837,7 +839,7 @@ namespace FIFE { namespace audio {
 		decodePart(guessedLength()); // implicitly sets m_datasize to actual size
 		
 		if (m_datasize != guessedLength()) {
-			std::cerr << "Warn: We guessed the wrong length of the decoded ACM stream. Please report to the FIFE team!" << std::endl;
+			FL_WARN(_log, "ACMDecoder, We guessed the wrong length of the decoded ACM stream. Please report to the FIFE team!");
 			return false;
 		}
 		

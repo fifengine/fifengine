@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<dataset id="Starfish" type="Embedded" format="1.0">
+	<object id="Starfish:001">
+		<image source="content/gfx/objects/beach/starfish01.png"/>
+	</object>
+
+	<object id="Starfish:002">
+		<image source="content/gfx/objects/beach/starfish02.png"/>
+	</object>
+
+	<object id="Starfish:003">
+		<image source="content/gfx/objects/beach/starfish03.png"/>
+	</object>
+
+	<object id="Starfish:004">
+		<image source="content/gfx/objects/beach/starfish04.png"/>
+	</object>
+</dataset>

@@ -55,7 +55,7 @@
 			</properties>
 			
 			<data>
-				<tile gid="10004" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" />
+				<tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" />
 				<tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" /><tile gid="10003" />
 
 				<tile gid="10003" /><tile gid="10001" /><tile gid="10002" /><tile gid="10001" /><tile gid="10002" />

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<dataset id="Box" type="Embedded" format="1.0">
+	<object id="Box:001">
+		<image source="content/gfx/objects/beach/box_001.png"/>
+	</object>
+
+	<object id="Box:002">
+		<image source="content/gfx/objects/beach/box_002.png"/>
+	</object>
+
+	<object id="Box:003">
+		<image source="content/gfx/objects/beach/box_003.png"/>
+	</object>
+
+	<object id="Box:004">
+		<image source="content/gfx/objects/beach/box_004.png"/>
+	</object>
+
+	<object id="Box:005">
+		<image source="content/gfx/objects/beach/box_005.png"/>
+	</object>
+
+	<object id="Box:006">
+		<image source="content/gfx/objects/beach/box_006.png"/>
+	</object>
+				
+	<object id="Box:007">
+		<image source="content/gfx/objects/beach/box_007.png"/>
+	</object>
+
+	<object id="Box:008">
+		<image source="content/gfx/objects/beach/box_008.png"/>
+	</object>
+
+	<object id="Box:009">
+		<image source="content/gfx/objects/beach/box_009.png"/>
+	</object>
+
+	<object id="Box:010">
+		<image source="content/gfx/objects/beach/box_010.png"/>
+	</object>
+
+	<object id="Box:011">
+		<image source="content/gfx/objects/beach/box_011.png"/>
+	</object>
+
+	<object id="Box:012">
+		<image source="content/gfx/objects/beach/box_012.png"/>
+	</object>
+</dataset>

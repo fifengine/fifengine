@@ -22,262 +22,75 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/exception.h"
-#include "model/geometries/geometry.h"
+#include "util/purge.h"
 
 #include "layer.h"
-#include "selection.h"
+#include "instance.h"
 #include "elevation.h"
-#include "map.h"
 
-namespace FIFE { namespace map {
+namespace FIFE {
 
-	long Layer::m_count = 0;
-
-	LayerPtr Layer::create(const Point& size, size_t geometry) {
-		LayerPtr layer(new Layer(size,geometry));
-		layer->m_self = layer;
-		return layer;
-	}
-
-	Layer::Layer(const Point& size, size_t geometry)
-		: AttributedClass("map_Layer"),
-		m_size(size),
-		m_global_alpha(255),
- 		m_shift(),
-		m_geometry_id(geometry),
-		m_geometry(0) {
-
-		if( size.x <= 0 || size.y <= 0 ) {
-			throw NotSupported(std::string("invalid layer size:")
-			                   +boost::lexical_cast<std::string>(size));
-		}
-
-		m_tiles_visibility = m_objects_visibility = true;
-		m_grid_overlay = false;
-
-		// set default attributes
-		set<std::string>("_OVERLAY_IMAGE","content/gfx/tiles/outlines/tile_outline_fallout.png");
-
-		m_count += 1;
+	Layer::Layer(const std::string& identifier, Elevation* elevation, CellGrid* grid)
+		: AttributedClass(identifier, "map_Layer"),
+		m_elevation(elevation),
+		m_instances_visibility(true),
+		m_grid(grid) {
 	}
 
 	Layer::~Layer() {
-// 		Log("layer") << "before clear() objects: " << ObjectInfo::globalCount();
-		m_all_objects.clear();
-		m_objects.clear();
-		m_count -= 1;
-// 		Log("layer") << "after  clear() objects: " << ObjectInfo::globalCount();
+		purge(m_instances);
 	}
 
-	long Layer::globalCount() {
-		return m_count;
+	bool Layer::hasInstances() const {
+		return !m_instances.empty();
 	}
 
-	ElevationPtr Layer::getElevation() {
-		return m_elevation.lock();
+	Instance* Layer::addInstance(Object* object, const Point& p) {
+
+		Location l;
+		l.setLayer(this);
+		l.setLayerCoordinates(p);
+
+		Instance* instance = new Instance(object, l);
+		m_instances.push_back(instance);
+		return instance;
 	}
 
-	const Point& Layer::getSize() const {
-		return m_size;
-	}
-
-	Geometry* Layer::getGeometry() {
-		if(m_geometry)
-			return m_geometry;
-
-		m_geometry = Geometry::createGeometry(*getElevation()->getMap()->getGeometryType(m_geometry_id),m_size);
-		return m_geometry;
-	}
-
-	void Layer::setShift(const Point& shift) {
-		m_shift = shift;
-	}
-
-	const Point& Layer::getShift() const {
-		return m_shift;
-	}
-	
-	bool Layer::hasObjects() const {
-		return !m_objects.empty();
-	}
-
-	void Layer::addObject(ObjectPtr object) {
-		addObjectAt( object, object->getPosition() );
-	}
-
-	void Layer::addObjectAt(ObjectPtr object, int32_t x,int32_t y) {
-		addObjectAt( object, Point(x,y) );
-	}
-
-	void Layer::addObjectAt(ObjectPtr object, const Point& p) {
-		if( !hasObjects() ) {
-			m_objects.resize(m_size.y * m_size.x);
+	void Layer::removeInstance(Instance* instance) {
+		std::vector<Instance*>::iterator it = m_instances.begin();
+		for(; it != m_instances.end(); ++it) {
+			if(*it == instance) {
+				delete *it;
+				m_instances.erase(it);
+				break;
+			}
 		}
-		ObjectList& object_list = m_objects.at(p.x + p.y * m_size.x);
-		if( object_list.empty() ) {
-			object_list.setRemoveCallback( boost::bind( &Layer::removeObject, this, _1 ) );
-			object_list.setInsertCallback( boost::bind( &Layer::insertedObject,this,_1, p));
+	}
+
+	const std::vector<Instance*>& Layer::getInstances() {
+		return m_instances;
+	}
+
+	void Layer::setInstancesVisible(bool vis) {
+		m_instances_visibility = vis;
+	}
+	void Layer::toggleInstancesVisible() {
+		m_instances_visibility = !m_instances_visibility;
+	}
+
+	void Layer::update() {
+		unsigned int curticks = SDL_GetTicks();
+		std::vector<Instance*>::iterator it = m_instances.begin();
+		for(; it != m_instances.end(); ++it) {
+			(*it)->update(curticks);
 		}
-		object_list.append( object );
 	}
 
-	void Layer::removeObject(ObjectPtr object) {
-		// FIXME This is VERY inefficient
-		// the resetOwner and the getObjectsAt().erase
-		// might trigger a call to this function AGAIN!
-		if( !object ) {
-			return;
-		}
-		if( !m_all_objects.contains( object ) ) {
-			return;
-		}
-		m_all_objects.erase(object);
-		getObjectsAt( object->getPosition() ).erase( object );
-		object->resetOwner();
-	}
-
-	void Layer::insertedObject(ObjectPtr object, const Point& p) {
-		object->setOwner( m_self.lock() );
-		object->setPosition( p );
-		m_all_objects.append(object);
-	}
-
-	ObjectList& Layer::getObjectsAt(int32_t x,int32_t y) {
-		return getObjectsAt(Point(x,y));
-	}
-
-	const ObjectList& Layer::getObjectsAt(int32_t x,int32_t y) const {
-		return getObjectsAt(Point(x,y));
-	}
-
-	ObjectList& Layer::getObjectsAt(const Point& p) {
-		if( hasObjects() ) {
-			m_objects.resize(m_size.y * m_size.x);
-		}
-
-		ObjectList& object_list = m_objects.at(p.x + p.y * m_size.x);
-		if( object_list.empty() ) {
-			object_list.setRemoveCallback( boost::bind( &Layer::removeObject, this, _1 ) );
-			object_list.setInsertCallback( boost::bind( &Layer::insertedObject,this,_1,p));
-		}
-		return object_list;
-	}
-
-	const ObjectList& Layer::getObjectsAt(const Point& p) const {
-		static ObjectList objects;
-		if( hasObjects() ) {
-			return m_objects.at(p.x + p.y * m_size.x);
-		}
-		return objects;
-	}
-
-	const ObjectList& Layer::getAllObjects() const {
-		return m_all_objects;
-	}
-
-	void Layer::setTileGID(const Point& p, size_t id) {
-		if(m_tilegids.empty()) {
-			m_tilegids.resize(m_size.x * m_size.y);
-		}
-		if(!isValidPosition(p)) {
-			return;
-		}
-		m_tilegids[p.x + p.y * m_size.x] = id;
-		setTileImage(p.x, p.y, getElevation()->getMap()->getTileImageId(id));
-	}
-  void Layer::setTileGID(int32_t x, int32_t y, size_t id) {
-		setTileGID(Point(x,y),id);
-  }
-
-	void Layer::setTileImage(const Point& p, size_t id) {
-		if (m_tiles.empty()) {
-			m_tiles.resize(m_size.x * m_size.y);
-		}
-		if (!isValidPosition(p)) {
-			return;
-		}
-		m_tiles[p.x + p.y * m_size.x] = id;
-	}
-	void Layer::setTileImage(int32_t x, int32_t y, size_t id) {
-		setTileImage(Point(x,y),id);
-	}
-
-	bool Layer::hasTiles() const {
-		return !m_tiles.empty();
-	}
-
-	void Layer::setTilesVisible(bool vis) {
-		m_tiles_visibility = vis;
-	}
-	void Layer::toggleTilesVisible() {
-		m_tiles_visibility = !m_tiles_visibility;
-	}
-	bool Layer::areTilesVisible() const {
-		return m_tiles_visibility;
-	}
-
-	void Layer::setObjectsVisible(bool vis) {
-		m_objects_visibility = vis;
-	}
-	void Layer::toggleObjectsVisible() {
-		m_objects_visibility = !m_objects_visibility;
-	}
-	bool Layer::areObjectsVisible() const {
-		return m_objects_visibility;
-	}
-
-	uint8_t Layer::getGlobalAlpha() const {
-		return m_global_alpha;
-	}
-
-	void Layer::setGlobalAlpha(uint8_t alpha) {
-		m_global_alpha = alpha;
-	}
-
-	void Layer::addToGlobalAlpha(int delta) {
-		m_global_alpha = std::min(255, std::max(0, m_global_alpha + delta));
-	}
-
-	bool Layer::isGridOverlayEnabled() const {
-		return m_grid_overlay;
-	}
-	void Layer::setGridOverlayEnabled(bool e) {
-		m_grid_overlay = e;
-	}
-	void Layer::toggleGridOverlayEnabled() {
-		m_grid_overlay = !m_grid_overlay;
-	}
-
-	struct Layer_clear_visitor : public boost::static_visitor<> {
-		void operator()(std::vector<long>& v)  const { v.clear(); }
-		void operator()(std::vector<bool>& v)  const { v.clear(); }
-		void operator()(std::vector<float>& v) const { v.clear(); }
-	};
-
-	void Layer::removeParam(uint8_t param_id) {
-		boost::apply_visitor( Layer_clear_visitor(), m_paramLayers.at(param_id) );
-		m_param_freelist.push_back( param_id );
-
-		type_paramnames_reverse::iterator it;
-		it = m_paramnames_reverse.find( param_id );
-
-		m_paramnames.erase( it->second );
-		m_paramnames_reverse.erase( it );
-	}
-
-	SelectionPtr Layer::getSelection() const {
-		if( !m_selection ) {
-			m_selection = SelectionPtr( new Selection(m_self) );
-		}
-		return m_selection;
-	}
-
-} } // FIFE::map
+} // FIFE

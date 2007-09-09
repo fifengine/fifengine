@@ -33,9 +33,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "video/screen.h"
 #include "util/time/timemanager.h"
-#include "util/log.h"
+#include "util/logger.h"
 #include "util/exception.h"
 #include "gui/guimanager.h"
 
@@ -44,6 +43,7 @@
 
 namespace FIFE {
 	const unsigned  Console::m_maxOutputRows = 50;
+	static Logger _log(LM_CONSOLE);
 
 	Console::Console() 
 		: gcn::Container(),
@@ -55,12 +55,12 @@ namespace FIFE {
 		m_button(new gcn::Button("Tools"))
 		{
 		
-		Screen *screen = RenderBackend::instance()->getMainScreen();
+		SDL_Surface *screen = RenderBackend::instance()->getScreenSurface();
 		assert(screen);
 
 		int w, h, b, input_h, bbar_h, button_w;
-		w = screen->getWidth()*4/5;
-		h = screen->getHeight()*4/5;
+		w = screen->w*4/5;
+		h = screen->h*4/5;
 		b = 0;
 		input_h = getFont()->getHeight();
 		bbar_h = input_h;
@@ -71,7 +71,7 @@ namespace FIFE {
 		gcn::Color dark(50,60,50,0xff);
 
 		setSize(w, h);
-		setPosition((screen->getWidth() - w) / 2,-h);//(screen->getHeight() - h) / 2);
+		setPosition((screen->w - w) / 2,-h);
 		setBorderSize(0);
 
 		setForegroundColor(white);
@@ -220,7 +220,7 @@ namespace FIFE {
 	}
 
 	void Console::execute(std::string cmd) {
-// 		Log("Console") << "EXECUTE";
+ 		FL_DBG(_log, LMsg("in execute with command ") << cmd);
 		if (cmd.empty())
 			return;
 
@@ -233,11 +233,11 @@ namespace FIFE {
 				std::string resp = m_consoleexec->onConsoleCommand(cmd);
 				println(resp);
 			} else {
-				std::cout << "ConsoleExecuter not bind, but command received: " << cmd.c_str() << std::endl;
+				FL_WARN(_log, LMsg("ConsoleExecuter not bind, but command received: ") << cmd.c_str());
 			}
 		}
 		catch (FIFE::Exception & e) {
-			Debug("Console") << "Caught exception: " << e.getMessage();
+			FL_WARN(_log, LMsg("Console caught exception: ") << e.getMessage());
 			println(e.getMessage());
 		}
 	}
@@ -276,7 +276,7 @@ namespace FIFE {
 		if (m_consoleexec) {
 			m_consoleexec->onToolsClick();
 		} else {
-			std::cout << "ConsoleExecuter not bind, but tools button clicked" << std::endl;
+			FL_WARN(_log, "ConsoleExecuter not bind, but tools button clicked");
 		}
 	}
 

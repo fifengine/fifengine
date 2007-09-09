@@ -52,7 +52,8 @@ namespace gcn {
 
 namespace FIFE {
 
-	class GCNImageLoader;
+	class ImagePool;
+	class GuiImageLoader;
 	class Console;
 	class IKeyEvent;
 	class IMouseEvent;
@@ -71,7 +72,7 @@ namespace FIFE {
 		public:
 			/** Constructor.
 			 */
-			GUIManager(IWidgetListener* widgetListener);
+			GUIManager(IWidgetListener* widgetListener, ImagePool& pool);
 			/** Destructor.
 			 */
 			virtual ~GUIManager();
@@ -88,8 +89,11 @@ namespace FIFE {
 			 */
 			void turn();
 			/** Inits the GUI Manager.
+			 * @param graphics backend specific grapchics object to use
+			 * @param screenWidth width for the gui top container
+			 * @param screenHeight height for the gui top container
 			 */
-			void init();
+			void init(gcn::Graphics* graphics, int screenWidth, int screenHeight);
 			/** Resizes the top container.
 			 *
 			 * @param x The new starting X coordinate.
@@ -160,7 +164,7 @@ namespace FIFE {
 			// The top container of the GUI.
 			gcn::Container* m_gcn_topcontainer;
 			// The imageloader.
-			GCNImageLoader* m_gcn_imgloader;
+			GuiImageLoader* m_imgloader;
 			// The input controller.
 			gcn::SDLInput *m_input;
 			// The console.
@@ -170,7 +174,10 @@ namespace FIFE {
 			// Added widgets
 			std::set<gcn::Widget*> m_widgets;
 
+			// instance whom to deliver widget events coming from guichan
 			IWidgetListener* m_widgetlistener;
+			// pool used for images
+			ImagePool& m_pool;
 	};
 
 }

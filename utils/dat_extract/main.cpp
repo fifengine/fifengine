@@ -25,6 +25,7 @@
 #include <string>
 
 // Platform dependent includes
+#include <iostream>
 #ifndef __WIN32
 #include <libgen.h>
 #else
@@ -42,10 +43,8 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
-#include "util/debugutils.h"
 #include "engine.h"
 #include "util/exception.h"
-#include "util/log.h"
 #include "util/settingsmanager.h"
 
 using namespace FIFE;
@@ -86,17 +85,17 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (src_file.length() == 0) {
-		Warn(argv[0]) << "Invalid DAT source file"; 
+		std::cout << "Invalid DAT source file"; 
 		print_usage(argv[0], 1);
 	}
 
 	if (target_file.length() == 0) {
-		Warn(argv[0]) << "Invalid target file to extract";
+		std::cout << "Invalid target file to extract";
 		print_usage(argv[0], 1);
 	}
 
 	if (!(fo_format == 1 || fo_format == 2)) {
-		Warn(argv[0]) << "Unknown format " << fo_format;
+		std::cout << "Unknown format " << fo_format;
 		print_usage(argv[0], 1);
 	}
 

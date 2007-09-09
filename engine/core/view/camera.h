@@ -19,111 +19,144 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_CAMERA_H
-#define FIFE_MAP_CAMERA_H
+#ifndef FIFE_VIEW_CAMERA_H
+#define FIFE_VIEW_CAMERA_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/point.h"
+#include "model/structures/location.h"
+#include "util/matrix.h"
 #include "util/rect.h"
-#include "util/time/timer.h"
 
-namespace FIFE { namespace map {
+namespace FIFE {
 
-	class View;
-	class Layer;
-	typedef boost::shared_ptr<Layer> LayerPtr;
-	class ObjectInfo;
-	typedef boost::shared_ptr<ObjectInfo> ObjectPtr;
-
-	/** A Camera onto the MapView
-	 *
-	 *  This class is responsible for smoothly scrolling
-	 *  to positions of interest.
-	 *  Currently it just lineary moves to the designated
-	 *  positon in the coordinates of the 'reference' grid
-	 *  of the current elevation.
-	 * 
-	 *  In the long run, this class shall be responsible for
-	 *  setting the viewport of the mapview alone.
-	 *  With following modes of operation:
-	 *  * Free Camera
-	 *  * Tracking a critters movement.
-	 *  * Zoom to different location
-	 *
-	 *  I can imagine this being put to good use for
-	 *  story telling.
+	/** Camera describes properties of a view port shown in the main screen
+	 *  Main screen can have multiple cameras active simultanously
+	 *  Different cameras can have different properties, like location
+	 *  to shoot, zoom or tilt
 	 */
 	class Camera {
-			/// Internal camera motion mode.
-			enum {
-				MOVING   = 1,
-				FREE     = 2,
-				TRACKING = 3
-			};
+	public:
+		/** Constructor
+		 * Camera needs to be added to the view. If not done so, it is not rendered.
+		 */
+		Camera();
 
-		public:
-			Camera(View* view);
-			~Camera();
+		/** Destructor
+		 */
+		virtual ~Camera();
 
-			/** Set on screen viewport
-			 */
-			void setViewport(const Rect& viewport);
+		/** Sets tilt for the camera. 
+		 * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
+		 * @param tilt tilt for the camera
+		 */
+		void setTilt(double tilt) {
+			m_tilt = tilt;
+			updateReferenceScale();
+			updateMatrices();
+		}
 
-			/** Start zooming to a specific positon.
-			 * Switches to mode MOVING
-			 */
-			void moveTo(const Point& gridPosition);
+		/** Gets camera tilt
+		 * @return tilt of camera
+		 */ 
+		double getTilt() const { return m_tilt; }
 
-			/** Move (FREE) Camera by delta pixels
-			 */
-			void moveBy(const Point& delta);
+		/** Sets rotation for the camera. 
+		 * Rotation can be visualized by thinking camera that rotates around an object 
+		 * that it is rendering
+		 * @param rotation rotation for the camera
+		 */
+		void setRotation(double rotation) {
+			m_rotation = rotation;
+			updateReferenceScale();
+			updateMatrices();
+		}
 
-			/** Move (FREE) Camera to grid pos
-			 */
-			void jumpTo(const Point& gridPosition);
+		/** Gets camera rotation
+		 * @return rotation of the camera
+		 */ 
+		double getRotation() const { return m_rotation; }
 
-			/** Get current position
-			 */
-			Point getPosition() { return m_position; }
+		/** Sets zoom for the camera. 
+		 * @param zoom zoom for the camera
+		 */
+		void setZoom(double zoom) {
+			m_zoom = zoom;
+			if (m_zoom < 0.001) {
+				m_zoom = 0.001;
+			}
 
-			/** Start tracking
-			 */
-			void track(size_t visualId);
+			updateMatrices();
+		}
 
-			/** Start tracking
-			 */
-			void track(ObjectPtr object);
+		/** Gets camera zoom
+		 * @return zoom of the camera
+		 */ 
+		double getZoom() const { return m_zoom; }
 
-			/** Render this camera's view on the map
-			 */
-			void render();
+		void setCellImageDimensions(unsigned int width, unsigned int height) { 
+			m_screen_cell_width = width;
+			m_screen_cell_height = height;
+			updateReferenceScale();
+			updateMatrices();
+		}
 
-			/** Reset Camera
-			 */
-			void reset();
+		/** Sets the location for camera
+		 * @param location location (center point) to render
+		 */ 
+		void setLocation(const Location& location) { 
+			m_location = location;
+			updateReferenceScale();
+			updateMatrices();
+		}
 
-		private:
-			LayerPtr m_layer;
-			View*  m_view;
-			Point m_position;
-			Point m_next_position;
-			size_t m_tracked_visual;
-			ObjectPtr m_tracked_object;
-			Rect  m_viewport;
-			int   m_mode;
-			Timer m_timer;
+		/** Gets the location camera is rendering
+		 * @return camera location
+		 */ 
+		const Location& getLocation() const { return m_location; }
 
-			void update();
+		/** Sets the viewport for camera
+		 * viewport is rectangle inside the view where camera renders
+		 * @param viewport area for camera render
+		 */ 
+		void setViewPort(const Rect& viewport) { m_viewport = viewport; }
 
+		/** Gets the viewport for camera
+		 * @return camera viewport
+		 */ 
+		const Rect& getViewPort() const { return m_viewport; }
+
+		/** Transforms given point from screen coordinates to elevation coordinates
+		 *  @return point in elevation coordinates
+		 */
+		DoublePoint toElevationCoordinates(Point screen_coords);
+
+		/** Transforms given point from elevation coordinates to screen coordinates
+		 *  @return point in screen coordinates
+		 */
+		Point toScreenCoordinates(DoublePoint elevation_coords);
+
+	private:
+		void updateMatrices();
+		void updateReferenceScale();
+
+		DoubleMatrix m_matrix;
+		DoubleMatrix m_inverse_matrix;
+		double m_tilt;
+		double m_rotation;
+		double m_zoom;
+		Location m_location;
+		Rect m_viewport;
+		bool m_view_updated;
+		unsigned int m_screen_cell_width;
+		unsigned int m_screen_cell_height;
+		double m_reference_scale;
 	};
-} } //FIFE::map
-
+}
 #endif

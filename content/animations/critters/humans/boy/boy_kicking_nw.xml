@@ -1,11 +1,11 @@
 <animation delay="130" id="3134">
-	<frame source="content/gfx/critters/boy/kicking_nw0000.png" />
-	<frame source="content/gfx/critters/boy/kicking_nw0001.png" />
-	<frame source="content/gfx/critters/boy/kicking_nw0002.png" />
-	<frame source="content/gfx/critters/boy/kicking_nw0003.png" />
-	<frame source="content/gfx/critters/boy/kicking_nw0004.png" />
-	<frame source="content/gfx/critters/boy/kicking_nw0005.png" />
-	<frame source="content/gfx/critters/boy/kicking_nw0006.png" />
-	<frame source="content/gfx/critters/boy/kicking_nw0007.png" />
-	<frame source="content/gfx/critters/boy/kicking_nw0008.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0000.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0001.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0002.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0003.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0004.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0005.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0006.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0007.png" />
+	<frame source="content/gfx/agents/boy/kicking_nw0008.png" />
 </animation>

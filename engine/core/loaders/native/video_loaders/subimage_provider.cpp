@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -30,37 +31,43 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/image.h"
-#include "video/pixelbuffer.h"
 #include "video/renderbackend.h"
-#include "util/debugutils.h"
+#include "video/image_location.h"
+#include "util/resource/pooled_resource.h"
 #include "util/exception.h"
-#include "video/imagecache.h"
+#include "util/logger.h"
 
 #include "subimage_provider.h"
 
-namespace FIFE { namespace video { namespace loaders {
+namespace FIFE { 
+	static Logger _log(LM_NATIVE_LOADERS);
 	
-	RenderAble* SubImageProvider::createRenderable() {
-		RenderableLocation loc(getLocation());
-		SDL_Rect src_rect;
-
-		size_t imageid = boost::lexical_cast<size_t>(loc.getExtension(RenderableLocation::IMAGE_ID));
-
-		src_rect.x = boost::lexical_cast<int>(loc.getExtension(RenderableLocation::X));
-		src_rect.y = boost::lexical_cast<int>(loc.getExtension(RenderableLocation::Y));
-		src_rect.w = boost::lexical_cast<int>(loc.getExtension(RenderableLocation::W));
-		src_rect.h = boost::lexical_cast<int>(loc.getExtension(RenderableLocation::H));
-
-		PixelBufferPtr pixelbuffer = ImageCache::instance()->getPixelBuffer(imageid);
-		if( !pixelbuffer ) {
-			return 0;
+	Image* SubImageProvider::createImage(const ResourceLocation& location) {
+		return dynamic_cast<Image*>(createResource(location));
+	}
+	
+	IPooledResource* SubImageProvider::createResource(const ResourceLocation& location) {
+		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
+		if (!loc) {
+			throw InvalidConversion("Wrong location type given for subimage provider");
 		}
+		Image* r = loc->getParentSource();
+		if (!r) {
+			throw NotFound("No parent source assigned, cannot provide subimage");
+		}
+		SDL_Surface* src = r->getSurface();
+		if (!src) {
+			return NULL;
+		}
+		SDL_Rect src_rect;
+		src_rect.x = loc->getXShift();
+		src_rect.y = loc->getYShift();
+		src_rect.w = loc->getWidth();
+		src_rect.h = loc->getHeight();
 
-		Debug("subimage_loader")
-			<< "iid:" << imageid 
-			<< " rect:" << Rect(src_rect.x,src_rect.y,src_rect.w,src_rect.h);
+		FL_DBG(_log, LMsg("subimage_loader")
+			<< " rect:" << Rect(src_rect.x,src_rect.y,src_rect.w,src_rect.h));
 
-		SDL_Surface* src = pixelbuffer->getSurface();
 		uint32_t Amask = src->format->Amask ?  0x000000ff : 0;
 		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, src_rect.w,  src_rect.h, 32,
 		                                           0xff000000, 0x00ff0000, 0x0000ff00, Amask);
@@ -71,4 +78,4 @@ namespace FIFE { namespace video { namespace loaders {
 		return RenderBackend::instance()->createStaticImageFromSDL(result);
 	};
 
-} } }
+}

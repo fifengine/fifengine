@@ -20,6 +20,8 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <assert.h>
+#include <iostream>
 
 // 3rd party library includes
 
@@ -28,40 +30,46 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "image.h"
-#include "pixelbuffer.h"
 
 namespace FIFE {
 
-	Image::Image():RenderAble(RT_IMAGE), m_xshift(0), m_yshift(0) {}
+	Image::Image(SDL_Surface* surface):
+		m_surface(surface),
+		m_xshift(0), 
+		m_yshift(0),
+		m_refcount(0) {}
 
 
-	Image::~Image() {}
-
-	PixelBufferPtr Image::getPixelBuffer() {
-		if( m_pixelbuffer ) {
-			return m_pixelbuffer;
-		} else {
-			// TODO Does this work for m_pixelbuffer_weakref==0 ?
-			return m_pixelbuffer_weakref.lock();
+	Image::~Image() {
+		assert(m_refcount == 0);
+		if( m_surface ) {
+			SDL_FreeSurface(m_surface);
 		}
 	}
 
-	void Image::setPixelBuffer(PixelBuffer* pixelbuffer) {
-		m_pixelbuffer = PixelBufferPtr(pixelbuffer);
-		m_pixelbuffer_weakref = boost::weak_ptr<PixelBuffer>(m_pixelbuffer);
+	SDL_Surface* Image::getSurface() { 
+		return m_surface; 
 	}
 
 	void Image::setXShift(int xshift) {
 		m_xshift = xshift;
-	};
+	}
+
 	void Image::setYShift(int yshift) {
 		m_yshift = yshift;
-	};
+	}
+
 	int Image::getXShift() const {
 		return m_xshift;
-	};
+	}
+
 	int Image::getYShift() const {
 		return m_yshift;
-	};
+	}
+
+	void Image::render(const Rect& rect, unsigned char alpha) {
+		render(rect,SDL_GetVideoSurface(),alpha);
+	}
+
 }
 

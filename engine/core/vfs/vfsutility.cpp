@@ -37,10 +37,13 @@
 #include "vfs/vfssourcefactory.h"
 #include "vfs/vfshostsystem.h"
 #include "util/exception.h"
+#include "util/logger.h"
 
 #include "vfsutility.h"
 
 namespace FIFE {
+	static Logger _log(LM_VFS);
+	
 	VFSUtility::VFSUtility() {
 	}
 
@@ -77,7 +80,6 @@ namespace FIFE {
 		for (VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
 			target.push_back(*i);
 		}
-		std::cout << "listing files, target size = " << target.size() << std::endl;
 		return target;
 	}
 
@@ -96,7 +98,7 @@ namespace FIFE {
 			VFS::instance()->addSource(src);
 			return true;
 		} else {
-			Warn("VFSUtility") << "Invalid source: " << sname;
+			FL_WARN(_log, LMsg("Invalid source: ") << sname);
 			return false;
 		}
 	}

@@ -23,13 +23,10 @@
 #define FIFE_MAP_MAP_H
 
 // Standard C++ library includes
-#include <map>
 #include <string>
 #include <vector>
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -38,21 +35,13 @@
 #include "util/attributedclass.h"
 
 #include "location.h"
+#include "elevation.h"
 
-namespace FIFE { namespace map {
+namespace FIFE {
 
 	class Elevation;
-	typedef boost::shared_ptr<Elevation> ElevationPtr;
 
-	class Archetype;
-
-	class ObjectInfo;
-
-	struct s_geometry_info;
-
-	class Map;
-	typedef boost::shared_ptr<Map> MapPtr;
-	typedef boost::weak_ptr<Map> MapWeakPtr;
+	class Dataset;
 
 	/** A container of \c Elevation(s).
 	 *
@@ -63,149 +52,80 @@ namespace FIFE { namespace map {
 	 * levels in one file (to switch between some level w/o loading).
 	 * This has nothing to do with height-levels.
 	 *
-	 * Anyway, this class doesn't do anything important...
-	 *
 	 * @see MapElevation
 	 * @see MapView
 	 * @see MapLoader
 	 */
 	class Map : public AttributedClass {
 		public:
-			typedef enum {
-				OnStartScript     = 1,
-				OnStopScript      = 2,
-				OnElevationChange = 3
-			} ScriptType;
 
-			/** Construct an (empty) map
+			/** Construct a map
+			 * To add map to model, one should call Model::addMap (otherwise
+			 * map is not registered with the engine properly)
 			 */
-			static MapPtr create();
+			Map(const std::string& identifier);
 
 			/** Destructor
 			 */
 			~Map();
 
-			/** Set the maps 'name'
+			/** Use a Dataset
 			 */
-			void setMapName(const std::string& name);
+			void useDataset(Dataset* dataset);
 
-			/** Get the maps 'name'
+			/** Add an elevation to this map, and get a pointer
+			 * to it; the returned pointer is owned by the Map
+			 * so don't delete it!
 			 */
-			const std::string& getMapName() const;
+			Elevation* addElevation(const std::string& identifier);
+			
+			/** Remove an elevation from this map
+			 */
+			void removeElevation(Elevation*);
 
-			/** Register a geometry with this map
+			/** Get a set of elevations by a value.
+			 *
+			 * @param the field to search on
+			 * @param the value to be searched for in the field
 			 */
-			void registerGeometry(s_geometry_info* info);
+			template<typename T>
+			std::list<Elevation*> getElevations(const std::string& field, const T& value) const {
+				std::list<Elevation*> matches;
 
-			/** Get geometry data from its id
-			 */
-			s_geometry_info* getGeometryType(size_t id);
+				std::vector<Elevation*>::const_iterator it = m_elevations.begin();
+				for(; it != m_elevations.end(); ++it) {
+					if((*it)->get<T>(field) == value)
+						matches.push_back(*it);
+				}
 
-			/** Add an archetype
-			 */
-			void addArchetype(Archetype* archetype);
-
-			/** Load a prototype
-			 */
-			void loadPrototype(ObjectInfo* object, size_t proto_id);
-
-			/** Add a prototype
-			 */
-			size_t addPrototype(Archetype* at, const std::string& proto_name);
-
-			/** Map type to an internal id
-			 */
-			size_t getPrototypeId(const std::string& type) const;
-
-			/** Map internal id to type name
-			 */
-			const std::string& getPrototypeName(size_t proto_id) const;
-
-			/** Add a tile
-			 * @param tileid the identifier used by the tile in a map file
-			 * @param imageid the identifier used by the video image cache for this tile
-			 */
-			void addTile(size_t tileid, size_t imageid);
-
-			/** Get ImageCache ID for tile with tile id
-			 */
-			size_t getTileImageId(size_t tile_id) const;
+				return matches;
+			}
 
 			/** Return the number of elevations on this map
 			 */
 			size_t getNumElevations() const;
 
-			/** Return the elevation with a given index
-			 */
-			ElevationPtr getElevation(size_t index) const;
-
-			/** Add an elevation to this map
-			 */
-			void addElevation(ElevationPtr);
-
-			/** Add an elevation to this map
-			 */
-			void insertElevation(size_t index, ElevationPtr);
-
-			/** Remove an elevation from this map
-			 */
-			void removeElevation(size_t index);
-
 			/** Remove all elevations from a map
 			 */
 			void clearElevations();
 
-			/** Apply a visitor to each elevation
+			/** Called periodically to update events on map
 			 */
-			template<typename T>
-			void forEachElevation(T visitor) {
-				std::for_each(m_elevations.begin(),m_elevations.end(),visitor);
-			}
+			void update();
 
-			bool isValidLocation(const Location& location) const;
-
-			/** Get total number of maps
-			 */
-			static long globalCount();
 		private:
-			/** Construct a map
-			 */
-			Map();
 
 			std::string m_mapname;
-			MapWeakPtr m_self;
-			static long m_count;
 
-			typedef std::map<size_t, s_geometry_info*> type_geometries;
-			type_geometries m_geometries;
+			std::vector<Dataset*> m_datasets;
 
-			typedef std::list<Archetype*> type_archetypes;
-			type_archetypes m_archetypes;
-
-			typedef std::map<size_t,size_t> type_tileids;
-			type_tileids m_tileids;
-
-			typedef std::map<std::string,size_t> type_protoname_map;
-
-			struct s_proto {
-				type_protoname_map::iterator name_iterator;
-				Archetype* archetype;
-			};
-
-			typedef std::vector<s_proto> type_protoid_map;
-			type_protoname_map m_protoname_map;
-			type_protoid_map   m_protoid_map;
-
-			typedef std::vector<ElevationPtr> type_elevations;
-			type_elevations m_elevations;
+			std::vector<Elevation*> m_elevations;
 
 			Map(const Map& map);
 			Map& operator=(const Map& map);
-
-			friend class MapLoader;
 	};
 
-} } //FIFE::map
+} //FIFE
 
 #endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

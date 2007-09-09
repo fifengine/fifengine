@@ -79,6 +79,13 @@ namespace FIFE {
 			NotFound(const std::string& msg) : Exception("NotFound: " + msg) {}
 	};
 
+	/** Something was not set correctly
+	 */
+	class NotSet : public Exception {
+		public:
+			NotSet(const std::string& msg) : Exception("NotSet: " + msg) {}
+	};
+	
 	/** Someone tried to access a non-existing element.
 	 */
 	class IndexOverflow : public Exception {

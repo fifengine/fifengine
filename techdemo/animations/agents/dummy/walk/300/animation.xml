@@ -1,0 +1,27 @@
+<animation delay="50" id="2006">
+	<frame source="techdemo/animations/agents/dummy/walk/300/001.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/003.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/005.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/007.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/009.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/011.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/013.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/015.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/017.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/019.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/021.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/023.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/025.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/027.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/029.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/031.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/033.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/035.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/037.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/039.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/041.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/043.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/045.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/047.png" />
+	<frame source="techdemo/animations/agents/dummy/walk/300/049.png" />
+</animation>

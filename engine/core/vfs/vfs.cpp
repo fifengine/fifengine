@@ -32,12 +32,14 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "util/exception.h"
-#include "util/log.h"
+#include "util/logger.h"
 
 #include "vfs.h"
 #include "vfssource.h"
 
 namespace FIFE {
+	static Logger _log(LM_VFS);
+
 
 	VFS::VFS() : m_sources() {}
 
@@ -66,7 +68,7 @@ namespace FIFE {
 		type_sources::const_iterator i = std::find_if(m_sources.begin(), m_sources.end(),
 		                                 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), file));
 		if (i == m_sources.end()) {
-			Log("VFS") << "no source for " << file << " found";
+			FL_WARN(_log, LMsg("no source for ") << file << " found");
 			return 0;
 		}
 
@@ -74,16 +76,24 @@ namespace FIFE {
 	}
 
 	bool VFS::exists(const std::string& file) const {
-		return getSourceForFile(file);
+		return getSourceForFile(lower(file));
 	}
 
 	RawDataPtr VFS::open(const std::string& path) {
-		VFSSource* source = getSourceForFile(path);
+		std::string lowerpath = lower(path);
+		VFSSource* source = getSourceForFile(lowerpath);
 		if (!source)
 			throw NotFound(path);
 
-		RawDataPtr data(source->open(path));
+		RawDataPtr data(source->open(lowerpath));
 		return data;
+	}
+
+	std::string VFS::lower(const std::string& str) const {
+		std::string result;
+		result.resize(str.size());
+		std::transform(str.begin(), str.end(), result.begin(), tolower);
+		return result;
 	}
 
 	VFS::type_stringlist VFS::listFiles(const std::string& pathstr) const {

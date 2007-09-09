@@ -30,13 +30,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
+#include "util/logger.h"
 
 #include "timeevent.h"
 #include "timemanager.h"
 
 namespace FIFE {
-
+	static Logger _log(LM_UTIL);
+	
 	TimeManager::TimeManager() {
 		m_current_time	= SDL_GetTicks();
 		m_time_delta	= 1;
@@ -87,7 +88,6 @@ namespace FIFE {
 				return;
 			}
 		}
-// 		PANIC_PRINT("Trying to unregister a event, that is not registered.");
 	}
 
 	unsigned long TimeManager::getTime() const {
@@ -103,8 +103,7 @@ namespace FIFE {
 	}
 
 	void TimeManager::printStatistics() const {
-		std::cout 
-			<< "Timers:   " << m_events_list.size() << "\n";
+		FL_LOG(_log, LMsg("Timers: ") << m_events_list.size());
 	}
 
 } //FIFE

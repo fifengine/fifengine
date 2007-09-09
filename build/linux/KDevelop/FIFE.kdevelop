@@ -11,16 +11,22 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
     <projectname>FIFE</projectname>
+    <defaultencoding/>
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>../../../fife_engine</mainprogram>
+      <mainprogram>build/linux/KDevelop//../../../tests/unit_tests/testprog_images</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
+      <globaldebugarguments/>
+      <globalcwd>build/linux/KDevelop//../../../tests/unit_tests/</globalcwd>
+      <useglobalprogram>false</useglobalprogram>
+      <autoinstall>false</autoinstall>
+      <autokdesu>false</autokdesu>
     </run>
     <build>
       <buildtool>make</buildtool>
@@ -159,6 +165,11 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <splitheadersource>
+      <enabled>false</enabled>
+      <synchronize>true</synchronize>
+      <orientation>Vertical</orientation>
+    </splitheadersource>
   </kdevcppsupport>
   <kdevfileview>
     <groups>
@@ -166,7 +177,7 @@
       <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
-      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*,*os,fife.log,*.so,*.pyc,__init__.py,tags,FIFE.kdevelop.pcs,Doxyfile,*~</hidepatterns>
+      <hidepatterns>*.o,*.lo,CVS,*.*~,*.a,*kdevelop.filelist*,*os,fife.log,*.so,*.pyc,tags,FIFE.kdevelop.pcs,Doxyfile,*~,testprog_*</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>

@@ -31,11 +31,13 @@
 
 namespace FIFE {
 	
-	RenderBackend::RenderBackend(const std::string& name) : m_name(name) {
+	RenderBackend::RenderBackend(const std::string& name) : m_screen(0), m_name(name) {
 	}
 
 
 	RenderBackend::~RenderBackend() {
+		SDL_FreeSurface(m_screen);
+		m_screen = 0;
 	}
 
 	const std::string& RenderBackend::getName() const {

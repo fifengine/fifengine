@@ -9,195 +9,196 @@ subgraph cluster_0 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "xml"; "xml/tinyxml"
-    label = "xml";
+    "audio"
+    label = "audio";
 }
 subgraph cluster_1 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
-    "gui/widgets"; "gui"; "gui/fonts"; "gui/console"; "gui/base"
-    label = "gui";
-}
-subgraph cluster_2 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
-    "eventchannel/base"; "eventchannel/command"; "eventchannel"; "eventchannel/mouse"; "eventchannel/key"; "eventchannel/source"; "eventchannel/widget"; "eventchannel/manager"; "eventchannel/sdl"
-    label = "eventchannel";
-}
-subgraph cluster_3 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
-    "loaders/fallout/map_loaders"; "loaders/native/map_loaders"; "loaders/native/video_loaders"; "loaders/fallout/video_loaders"
-    label = "loaders";
-}
-subgraph cluster_4 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
-    "util"; "util/time"
-    label = "util";
-}
-subgraph cluster_5 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
     "controller"
     label = "controller";
 }
+subgraph cluster_2 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "engine/core"
+    label = "engine";
+}
+subgraph cluster_3 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "eventchannel"; "eventchannel/base"; "eventchannel/command"; "eventchannel/key"; "eventchannel/manager"; "eventchannel/mouse"; "eventchannel/sdl"; "eventchannel/source"; "eventchannel/widget"
+    label = "eventchannel";
+}
+subgraph cluster_4 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "gui"; "gui/base"; "gui/base/opengl"; "gui/base/sdl"; "gui/console"; "gui/fonts"; "gui/widgets"
+    label = "gui";
+}
+subgraph cluster_5 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "loaders/fallout/vfs_loaders"; "loaders/native/video_loaders"
+    label = "loaders";
+}
 subgraph cluster_6 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "video"; "video/gui"; "video/renderbackends/opengl"; "video/renderbackends/sdl"
-    label = "video";
+    "model"; "model/metamodel"; "model/metamodel/grids"; "model/structures"
+    label = "model";
 }
 subgraph cluster_7 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "model"; "model/structures"; "model/geometries"
-    label = "model";
+    "pathfinder/linearpather"
+    label = "pathfinder";
 }
 subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "audio"
-    label = "audio";
+    "util"; "util/resource"; "util/time"
+    label = "util";
 }
 subgraph cluster_9 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "vfs/zip"; "vfs"; "vfs/raw"
+    "vfs"; "vfs/raw"; "vfs/zip"
     label = "vfs";
 }
 subgraph cluster_10 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "view/effects"; "view"
+    "video"; "video/opengl"; "video/sdl"
+    label = "video";
+}
+subgraph cluster_11 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "view"
     label = "view";
 }
-    "eventchannel/command" -> "eventchannel/base"
-    "eventchannel/mouse" -> "eventchannel/base"
-    "vfs/zip" -> "util"
-    "vfs/zip" -> "vfs"
-    "vfs/zip" -> "vfs/raw"
-    "eventchannel/key" -> "eventchannel/source"
-    "eventchannel/key" -> "eventchannel/base"
-    "video" -> "util"
-    "video" -> "util/time"
-    "gui/widgets" -> "util"
-    "xml" -> "util"
-    "xml" -> "xml/tinyxml"
-    "video/gui" -> "util"
-    "video/gui" -> "video"
-    "view/effects" -> "util/time"
-    "view/effects" -> "view"
-    "xml/tinyxml" -> "vfs"
-    "xml/tinyxml" -> "vfs/raw"
-    "vfs/raw" -> "util"
-    "util/time" -> "util"
-    "loaders/native/video_loaders" -> "util"
-    "loaders/native/video_loaders" -> "vfs"
-    "loaders/native/video_loaders" -> "xml/tinyxml"
-    "loaders/native/video_loaders" -> "video"
-    "loaders/native/video_loaders" -> "vfs/raw"
-    "model/geometries" -> "util"
-    "model/geometries" -> "xml"
-    "gui/fonts" -> "util"
-    "gui/fonts" -> "video"
-    "gui/fonts" -> "vfs"
-    "gui/fonts" -> "util/time"
-    "gui/fonts" -> "vfs/raw"
-    "loaders/fallout/map_loaders" -> "xml"
-    "loaders/fallout/map_loaders" -> "model/structures"
-    "loaders/fallout/map_loaders" -> "util"
-    "loaders/fallout/map_loaders" -> "video"
-    "loaders/fallout/map_loaders" -> "vfs/raw"
-    "loaders/fallout/map_loaders" -> "util/time"
-    "loaders/fallout/map_loaders" -> "model"
-    "loaders/fallout/map_loaders" -> "xml/tinyxml"
-    "loaders/fallout/map_loaders" -> "vfs"
-    "loaders/fallout/map_loaders" -> "model/geometries"
-    "model/structures" -> "util"
-    "model/structures" -> "video"
-    "model/structures" -> "model/geometries"
-    "eventchannel/base" -> "eventchannel/source"
-    "controller" -> "vfs/zip"
-    "controller" -> "audio"
-    "controller" -> "loaders/fallout/video_loaders"
-    "controller" -> "video/renderbackends/sdl"
-    "controller" -> "video/renderbackends/opengl"
-    "controller" -> "loaders/fallout/map_loaders"
-    "controller" -> "gui"
-    "controller" -> "gui/console"
-    "controller" -> "util"
-    "controller" -> "video"
-    "controller" -> "model/structures"
-    "controller" -> "util/time"
-    "controller" -> "model"
-    "controller" -> "loaders/native/video_loaders"
-    "controller" -> "vfs"
-    "controller" -> "eventchannel/manager"
-    "controller" -> "model/geometries"
-    "controller" -> "view"
-    "loaders/fallout/video_loaders" -> "util"
-    "loaders/fallout/video_loaders" -> "loaders/fallout/map_loaders"
-    "loaders/fallout/video_loaders" -> "video"
-    "eventchannel/widget" -> "eventchannel/base"
-    "video/renderbackends/sdl" -> "util"
-    "video/renderbackends/sdl" -> "video/gui"
-    "video/renderbackends/sdl" -> "video"
-    "gui" -> "gui/fonts"
-    "gui" -> "video/gui"
-    "gui" -> "gui/console"
-    "gui" -> "eventchannel/mouse"
-    "gui" -> "util"
-    "gui" -> "eventchannel/key"
-    "gui" -> "video"
-    "gui" -> "eventchannel/widget"
-    "gui" -> "eventchannel/sdl"
-    "gui/base" -> "video"
-    "gui/base" -> "video/gui"
-    "gui/console" -> "util"
-    "gui/console" -> "util/time"
-    "gui/console" -> "gui"
-    "gui/console" -> "video"
-    "loaders/native/map_loaders" -> "xml"
-    "loaders/native/map_loaders" -> "model/structures"
-    "loaders/native/map_loaders" -> "util"
-    "loaders/native/map_loaders" -> "video"
-    "loaders/native/map_loaders" -> "vfs/raw"
-    "loaders/native/map_loaders" -> "xml/tinyxml"
-    "loaders/native/map_loaders" -> "model"
-    "loaders/native/map_loaders" -> "vfs"
-    "loaders/native/map_loaders" -> "model/geometries"
-    "video/renderbackends/opengl" -> "util"
-    "video/renderbackends/opengl" -> "video/gui"
-    "video/renderbackends/opengl" -> "video"
-    "model" -> "model/structures"
+subgraph cluster_12 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    "xml"; "xml/tinyxml"
+    label = "xml";
+}
     "audio" -> "util"
     "audio" -> "util/time"
     "audio" -> "vfs"
     "audio" -> "vfs/raw"
+    "controller" -> "audio"
+    "controller" -> "eventchannel/manager"
+    "controller" -> "gui"
+    "controller" -> "gui/base/opengl"
+    "controller" -> "gui/base/sdl"
+    "controller" -> "gui/console"
+    "controller" -> "loaders/native/video_loaders"
+    "controller" -> "model"
+    "controller" -> "util"
+    "controller" -> "util/time"
+    "controller" -> "vfs"
+    "controller" -> "vfs/zip"
+    "controller" -> "video"
+    "controller" -> "video/opengl"
+    "controller" -> "video/sdl"
+    "controller" -> "view"
+    "eventchannel/base" -> "eventchannel/source"
+    "eventchannel/command" -> "eventchannel/base"
+    "eventchannel/key" -> "eventchannel/base"
+    "eventchannel/key" -> "eventchannel/source"
+    "eventchannel/manager" -> "eventchannel"
+    "eventchannel/manager" -> "eventchannel/command"
+    "eventchannel/manager" -> "eventchannel/key"
+    "eventchannel/manager" -> "eventchannel/mouse"
+    "eventchannel/manager" -> "eventchannel/widget"
+    "eventchannel/manager" -> "util"
+    "eventchannel/mouse" -> "eventchannel/base"
+    "eventchannel/widget" -> "eventchannel/base"
+    "gui" -> "eventchannel/key"
+    "gui" -> "eventchannel/mouse"
+    "gui" -> "eventchannel/sdl"
+    "gui" -> "eventchannel/widget"
+    "gui" -> "gui/base"
+    "gui" -> "gui/console"
+    "gui" -> "gui/fonts"
+    "gui" -> "util"
+    "gui" -> "video"
+    "gui/base" -> "util"
+    "gui/base" -> "video"
+    "gui/base/opengl" -> "gui/base"
+    "gui/base/opengl" -> "util"
+    "gui/base/opengl" -> "video"
+    "gui/base/sdl" -> "gui/base"
+    "gui/base/sdl" -> "util"
+    "gui/base/sdl" -> "video"
+    "gui/console" -> "gui"
+    "gui/console" -> "util"
+    "gui/console" -> "util/time"
+    "gui/console" -> "video"
+    "gui/fonts" -> "util"
+    "gui/fonts" -> "util/time"
+    "gui/fonts" -> "vfs"
+    "gui/fonts" -> "vfs/raw"
+    "gui/fonts" -> "video"
+    "gui/widgets" -> "util"
+    "loaders/fallout/vfs_loaders" -> "util"
+    "loaders/fallout/vfs_loaders" -> "util/time"
+    "loaders/fallout/vfs_loaders" -> "vfs"
+    "loaders/fallout/vfs_loaders" -> "vfs/raw"
+    "loaders/native/video_loaders" -> "util"
+    "loaders/native/video_loaders" -> "util/resource"
+    "loaders/native/video_loaders" -> "vfs"
+    "loaders/native/video_loaders" -> "vfs/raw"
+    "loaders/native/video_loaders" -> "video"
+    "loaders/native/video_loaders" -> "xml/tinyxml"
+    "model" -> "model/metamodel"
+    "model" -> "model/structures"
+    "model" -> "util"
+    "model/metamodel" -> "model/metamodel/grids"
+    "model/metamodel" -> "util"
+    "model/metamodel/grids" -> "util"
+    "model/structures" -> "model/metamodel"
+    "model/structures" -> "model/metamodel/grids"
+    "model/structures" -> "util"
+    "pathfinder/linearpather" -> "model/metamodel"
+    "pathfinder/linearpather" -> "model/structures"
+    "util" -> "engine/core"
+    "util/resource" -> "util"
+    "util/time" -> "util"
     "vfs" -> "util"
     "vfs" -> "vfs/raw"
-    "eventchannel/manager" -> "eventchannel/command"
-    "eventchannel/manager" -> "eventchannel"
-    "eventchannel/manager" -> "eventchannel/mouse"
-    "eventchannel/manager" -> "util"
-    "eventchannel/manager" -> "eventchannel/key"
-    "eventchannel/manager" -> "eventchannel/widget"
-    "view" -> "view/effects"
-    "view" -> "gui"
+    "vfs/raw" -> "util"
+    "vfs/zip" -> "util"
+    "vfs/zip" -> "vfs"
+    "vfs/zip" -> "vfs/raw"
+    "video" -> "util"
+    "video" -> "util/resource"
+    "video" -> "util/time"
+    "video/opengl" -> "util"
+    "video/opengl" -> "video"
+    "video/sdl" -> "util"
+    "video/sdl" -> "video"
+    "view" -> "model/metamodel"
+    "view" -> "model/metamodel/grids"
     "view" -> "model/structures"
     "view" -> "util"
     "view" -> "video"
-    "view" -> "util/time"
-    "view" -> "model/geometries"
+    "xml" -> "util"
+    "xml" -> "xml/tinyxml"
+    "xml/tinyxml" -> "vfs"
+    "xml/tinyxml" -> "vfs/raw"
 }

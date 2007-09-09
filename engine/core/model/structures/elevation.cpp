@@ -29,151 +29,61 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/debugutils.h"
 #include "util/purge.h"
 #include "util/exception.h"
-#include "model/geometries/geometry.h"
 
 #include "elevation.h"
+#include "map.h"
 #include "layer.h"
 
-namespace FIFE { namespace map {
+namespace FIFE {
 
-	long Elevation::m_count = 0;
-
-	ElevationPtr Elevation::create() {
-		ElevationPtr elevation(new Elevation);
-		elevation->m_self = elevation;
-		return elevation;
-	}
-
-	Elevation::Elevation() 
-		: AttributedClass("map_elevation"),
+	Elevation::Elevation(const std::string& identifier, Map* map) 
+		: AttributedClass(identifier, "map_elevation"),
+		m_map(map),
 		m_reference_layer(0) {
-		m_count += 1;
 	}
 
 	Elevation::~Elevation() {
-		m_count -= 1;
+
 	}
 
-	MapPtr Elevation::getMap() {
-		return m_map.lock();
-	}
-
-	long Elevation::globalCount() {
-		return m_count;
+	Map* Elevation::getMap() {
+		return m_map;	
 	}
 
 	size_t Elevation::getNumLayers() const {
 		return m_layers.size();
 	}
 
-	void Elevation::addLayer(LayerPtr layer) {
-		if( !layer ) {
-			throw NotSupported("can't add empty layer");
-		}
-		if( layer->getElevation() ) {
-			throw Duplicate("layer already contained in an elevation");
-		}
-
-		layer->m_layer_num = m_layers.size();
-		layer->m_elevation = m_self;
+	Layer* Elevation::addLayer(const std::string& identifier, CellGrid* grid) {
+		Layer* layer = new Layer(identifier, this, grid);
 		m_layers.push_back(layer);
+		return layer;
 	}
 
-	LayerPtr Elevation::getLayer(size_t index) {
-		if( index >= getNumLayers() ) {
-			throw IndexOverflow(std::string("invalid layer number: ") +
-			                    boost::lexical_cast<std::string>(index));
+	void Elevation::removeLayer(Layer* layer) {
+		std::vector<Layer*>::iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			if((*it) == layer) {
+				delete *it;
+				m_layers.erase(it);
+				return ;
+			}
 		}
-		return m_layers[index];
-	}
-
-	void Elevation::insertLayer(size_t index, LayerPtr layer) {
-		if( !layer ) {
-			throw NotSupported("can't add empty layer");
-		}
-		if( layer->getElevation() ) {
-			throw Duplicate("layer already contained in an elevation");
-		}
-
-		if( index >= getNumLayers() ) {
-			throw IndexOverflow(std::string("invalid layer number: ") +
-			                    boost::lexical_cast<std::string>(index));
-		}
-		m_layers.insert(m_layers.begin()+index,layer);
-		layer->m_elevation = m_self;
-		resetLayerNumbers();
-	}
-
-	void Elevation::removeLayer(size_t index) {
-		if( index >= getNumLayers() ) {
-			throw IndexOverflow(std::string("invalid layer number: ") +
-			                    boost::lexical_cast<std::string>(index));
-		}
-		m_layers[index]->m_elevation.reset();
-		m_layers.erase(m_layers.begin()+index);
-		resetLayerNumbers();
 	}
 
 	void Elevation::clearLayers() {
-		for(size_t i = 0; i!= getNumLayers(); ++i) {
-			m_layers[i]->m_elevation.reset();
-		}
+		purge(m_layers);
 		m_layers.clear();
 	}
 
-	void Elevation::resetLayerNumbers() {
-		for(size_t i=0; i!=m_layers.size(); ++i) {
-			m_layers[i]->m_layer_num = i;
+	void Elevation::update() {
+		std::vector<Layer*>::iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			(*it)->update();
 		}
 	}
 
-	void Elevation::setReferenceLayer(size_t layer) {
-		m_reference_layer = layer;
-	}
 
-	LayerPtr Elevation::getReferenceLayer() {
-		return getLayer(m_reference_layer);
-	}
-
-	Point Elevation::centerOfMass() {
-		size_t n = 0;
-		Point p;
-
-		// Sanity checks.
-		LayerPtr ref_layer = getReferenceLayer();
-		if( !ref_layer )
-			return p;
-
-		Geometry* ref_geo = ref_layer->getGeometry();
-		if( ref_geo == 0 )
-			return p;
-
-
-		type_layers::iterator end = m_layers.end();
-		for (type_layers::iterator i = m_layers.begin(); i != end; ++i) {
-			Point pos;
-			Geometry *geo = (*i)->getGeometry();
-
-			if( !(*i)->hasTiles() ) {
-				continue;
-			}
-
-			for(pos.x=0; pos.x != (*i)->getSize().x; ++pos.x) {
-				for(pos.y=0; pos.y != (*i)->getSize().y; ++pos.y) {
-					if( (*i)->getTileImage(pos) ) {
-						p += ref_geo->fromScreen(geo->toScreen(pos));
-						++n;
-					}
-				}
-			}
-		}
-
-		if( n > 0 )
-			return p/n;
-		return  p;
-	}
-
-} } //FIFE::map
+} //FIFE

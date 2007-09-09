@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<dataset id="Walls" type="Embedded" format="1.0">
+	<object id="Wall:1">
+		<image source="content/gfx/walls/concrete/wall1.png"/>
+	</object>
+
+	<object id="Wall:2">
+		<image source="content/gfx/walls/concrete/wall2.png"/>
+	</object>
+
+	<object id="Wall:3">
+		<image source="content/gfx/walls/concrete/wall3.png"/>
+	</object>
+
+	<object id="Wall:4">
+		<image source="content/gfx/walls/concrete/wall4.png"/>
+	</object>
+
+	<object id="Wall:5">
+		<image source="content/gfx/walls/concrete/wall5.png"/>
+	</object>
+</dataset>

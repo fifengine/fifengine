@@ -19,17 +19,15 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_ELEVATION_H
-#define FIFE_MAP_ELEVATION_H
+#ifndef FIFE_ELEVATION_H
+#define FIFE_ELEVATION_H
 
 // Standard C++ library includes
 #include <algorithm>
-#include <list>
 #include <vector>
+#include <string>
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -37,24 +35,16 @@
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
 
-namespace FIFE { namespace map {
+#include "layer.h"
 
-	class ObjectInfo;
+namespace FIFE {
+
 	class Layer;
-	typedef boost::shared_ptr<Layer> LayerPtr;
-
-	class Elevation;
-	typedef boost::shared_ptr<Elevation> ElevationPtr;
-	typedef boost::weak_ptr<Elevation> ElevationWeakPtr;
-
 	class Map;
-	typedef boost::shared_ptr<Map> MapPtr;
-	typedef boost::weak_ptr<Map> MapWeakPtr;
+	class CellGrid;
 
 	/** Contains a game level.
 	 * 
-	 * Tiles are only graphics and they are on a separate Layer.
-	 *
 	 * \invariant getLayer(index)->getLayerNumber() == index
 	 * \invariant elevation->addLayer(layer); layer->getElevation() == elevation
 	 * \invariant elevation->insertLayer(index,layer); layer->getElevation() == elevation
@@ -63,10 +53,11 @@ namespace FIFE { namespace map {
 	 */
 	class Elevation : public AttributedClass {
 		public:
-
-			/** Constructs a elevation instance
+			/** Constructor
+			 * Elevations are created by calling addElevation from map, thus
+			 * this method should really be called only by map or test code
 			 */
-			static ElevationPtr create();
+			Elevation(const std::string& identifier, Map* map=NULL);
 
 			/** Destructor
 			 */
@@ -74,82 +65,74 @@ namespace FIFE { namespace map {
 
 			/** Retrieve the map this elevation is contained in
 			 */
-			MapPtr getMap();
+			Map* getMap();
 
-			/** Add a Layer at the top
-			 * The elevation now owns the Layer.
-			 * Increases num Layers by one.
+			/** Add a Layer to this Elevation. Elevation owns
+			 * the returned pointer to the new Layer, so don't
+			 * delete it!
 			 */
-			void addLayer(LayerPtr layer);
+			Layer* addLayer(const std::string& identifier, CellGrid* grid);
 
-			/** Get a layer by its index
+			/** Remove a layer from the elevation
 			 */
-			LayerPtr getLayer(size_t);
+			void removeLayer(Layer*);
+
+			/** Get a set of layers by a value.
+			 *
+			 * @param the field to search on
+			 * @param the value to be searched for in the field
+			 */
+			template<typename T>
+			std::list<Layer*> getLayers(const std::string& field, const T& value) const {
+				std::list<Layer*> matches;
+
+				std::vector<Layer*>::const_iterator it = m_layers.begin();
+				for(; it != m_layers.end(); ++it) {
+					if((*it)->get<T>(field) == value)
+						matches.push_back(*it);
+				}
+
+				return matches;
+			}
+
+			/** Get all layers
+			 */
+			const std::vector<Layer*>& getLayers() { return m_layers; }
 
 			/** Get the overall number of layers
 			 */
 			size_t getNumLayers() const;
 
-			/** Insert a layer to the elevation
-			 */
-			void insertLayer(size_t index, LayerPtr layer);
-
-			/** Remove a layer from the elevation
-			 */
-			void removeLayer(size_t index);
-
 			/** Remove all layers from the elevation
 			 */
 			void clearLayers();
 
-			/** Apply a visitor to each layer
+			/** Maps coordinate from one layer to another
 			 */
-			template<typename T>
-			void forEachLayer(T visitor) {
-				std::for_each(m_layers.begin(),m_layers.end(),visitor);
-			}
+			void getMatchingCoordinates(const Point& coord_to_map, const Layer* from_layer, 
+				const Layer* to_layer, std::vector<Point>& matching_coords) const;
 
-			/** Set the 'reference' Layer
+			/** Called periodically to update events on elevation
 			 */
-			void setReferenceLayer(size_t layer);
+			void update();
 
-			/** Get the 'reference' Layer
-			 */
-			LayerPtr getReferenceLayer();
-
-			/** Try to calculate a valid nice starting position
-			 */
-			Point centerOfMass();
-
-			/** Get total number of elevations
-			 */
-			static long globalCount();
 		private:
-			/** Constructor
-			 */
-			Elevation();
+			std::string m_name;
 
-			void resetLayerNumbers();
+			Map* m_map;
 
-			ElevationWeakPtr m_self;
-			MapWeakPtr m_map;
-			static long m_count;
-
-			typedef std::vector<LayerPtr> type_layers;
-			type_layers m_layers;
+			std::vector<Layer*> m_layers;
 
 			int m_width;
 			int m_height;
-			size_t m_reference_layer;
+			Layer* m_reference_layer;
 
 			// Not copyable.
 			Elevation(const Elevation&);
 			Elevation& operator=(const Elevation&);
-
-			friend class Map;
 	};
 
-} } //FIFE::map
+} //FIFE
 
 #endif
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

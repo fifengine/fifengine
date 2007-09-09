@@ -1,0 +1,8 @@
+A naked male human animated (25 frames) for a walkcycle in all 6 directions of the hexcells. The directories are named after the direction of the animation in the polar coordinate system.
+ 
+0 (degrees) = west to east
+60 (degrees) = southwest to northeast
+120 (degrees) = southeast to northwest
+180 (degrees) = east to west
+240 (degrees) = northeast to southwest
+300 (degrees) = northwest to southeast

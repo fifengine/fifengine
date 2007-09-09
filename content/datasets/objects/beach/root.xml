@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<dataset id="Root" type="Embedded" format="1.0">
+	<object id="Root:001">
+		<image source="content/gfx/objects/beach/root01.png"/>
+	</object>
+
+	<object id="Root:002">
+		<image source="content/gfx/objects/beach/root02.png"/>
+	</object>
+
+	<object id="Root:003">
+		<image source="content/gfx/objects/beach/root03.png"/>
+	</object>
+
+	<object id="Root:004">
+		<image source="content/gfx/objects/beach/root04.png"/>
+	</object>
+
+	<object id="Root:005">
+		<image source="content/gfx/objects/beach/root05.png"/>
+	</object>
+</dataset>

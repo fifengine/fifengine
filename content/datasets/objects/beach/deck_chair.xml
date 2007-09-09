@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<dataset id="Deckchair" type="Embedded" format="1.0">
+	<object id="Deck_chair:001">
+		<image source="content/gfx/objects/beach/deck_chair_001.png"/>
+	</object>
+
+	<object id="Deck_chair:002">
+		<image source="content/gfx/objects/beach/deck_chair_002.png"/>
+	</object>
+
+	<object id="Deck_chair:003">
+		<image source="content/gfx/objects/beach/deck_chair_003.png"/>
+	</object>
+
+	<object id="Deck_chair:004">
+		<image source="content/gfx/objects/beach/deck_chair_004.png"/>
+	</object>
+
+	<object id="Deck_chair:005">
+		<image source="content/gfx/objects/beach/deck_chair_005.png"/>
+	</object>
+
+	<object id="Deck_chair:006">
+		<image source="content/gfx/objects/beach/deck_chair_006.png"/>
+	</object>
+
+	<object id="Deck_chair:007">
+		<image source="content/gfx/objects/beach/deck_chair_007.png"/>
+	</object>
+
+	<object id="Deck_chair:008">
+		<image source="content/gfx/objects/beach/deck_chair_008.png"/>
+	</object>
+
+	<object id="Deck_chair:009">
+		<image source="content/gfx/objects/beach/deck_chair_009.png"/>
+	</object>
+
+</dataset>

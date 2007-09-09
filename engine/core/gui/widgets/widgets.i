@@ -1,3 +1,24 @@
+/***************************************************************************
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   fife-public@lists.sourceforge.net                                     *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or modify          *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
+ ***************************************************************************/
+
 %module(directors="1") widgets
 %{
 #include <guichan.hpp>
@@ -8,10 +29,26 @@
 
 
 namespace gcn {
-	class Color;
 	class Font;
 	class Image;
 	class ActionListener;
+	
+	class Color {
+	public:
+		Color();
+		Color(int color);
+		Color(int r, int g, int b, int a = 255);
+		Color operator+(const Color& color) const;
+		Color operator-(const Color& color) const;
+		Color operator*(float value) const;
+		bool operator==(const Color& color) const;
+		bool operator!=(const Color& color) const;
+		int r;
+		int g;
+		int b;
+		int a;
+	};
+	
 	class Widget {
 	public:
 		Widget();
@@ -96,10 +133,10 @@ namespace gcn {
 	};
 	
 	%feature("notabstract") CheckBox;
-	class CheckBox {
+	class CheckBox: public Widget {
 	public:
 		CheckBox();
-		virtual ~CheckBox() { }
+		virtual ~CheckBox();
 		virtual bool isMarked() const;
 		virtual void setMarked(bool marked);
 		virtual const std::string &getCaption() const;

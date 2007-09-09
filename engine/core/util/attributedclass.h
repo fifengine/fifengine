@@ -28,7 +28,6 @@
 
 // 3rd party library includes
 #include <boost/variant.hpp>
-#include <SDL_mutex.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -36,18 +35,18 @@
 // Second block: files included from the same folder
 #include "util/point.h"
 #include "util/rect.h"
-
-#include "util/debugutils.h"
+#include "util/logger.h"
 
 namespace FIFE {
 
-	/** A Class with dynamically typed attributes
+	/** A class with dynamically typed fields. These correspond to
+	 * metadata attributes in the native xml map format.
 	 */
 	class AttributedClass {
 		public:
-			typedef std::string type_attr_id;
+
 			// Use boost::any instead?
-			typedef boost::variant<bool,long,size_t,Point,Rect,std::string> type_attr;
+			typedef boost::variant<bool,long,size_t,Point,Rect,std::string> value_type;
 
 		public:
 			/** Create a new attributed class instance
@@ -58,7 +57,7 @@ namespace FIFE {
 			 *
 			 *  @param class_name The class name of the inheriting class
 			 */
-			AttributedClass(const type_attr_id& class_name = "Table");
+			AttributedClass(const std::string& identifier, const std::string& class_name = "Table");
 
 			AttributedClass(const AttributedClass& ac);
 
@@ -67,108 +66,63 @@ namespace FIFE {
 			 */
 			~AttributedClass();
 
-			/** Set the value of an attribute
+			/** Get the (string) identifier associated with this object
+			 */
+			const std::string& Id() const;
+
+			/** Set the value of a field.
 			 */
 			template<typename T>
-			void set(const type_attr_id& attr, const T& val) {
-				SDL_mutexP(m_mutex);
-				m_attributes[ attr ] = type_attr(val);
-				SDL_mutexV(m_mutex);
+			void set(const std::string& field, const T& value) {
+				m_fields[field] = value_type(value);
 			}
 
-			/** Get the value of an attribute
+			/** Get the value of a field.
 			 *
-			 *  Get a value for an attribute with an default value
-			 *  If the attribute is not set already or in the case of
-			 *  an type mismatch it is overwritten with the default value.
-			 *
-			 *  @param id Id of the attribute
-			 *  @return The value of the attribute or a const ref
-			 *  to a default value.
-			 */
-			template<typename T>
-			T& get(const type_attr_id& attr, const T& def = T()) {
-				SDL_mutexP(m_mutex);
-				if( m_attributes.find(attr) == m_attributes.end() ) {
-// Uncomment this to see all default value creation of attributes.
-//
-// 					Debug("attributed_class")
-// 						<< "creating attr for " << attr;
-
-					m_attributes[ attr ] = type_attr(def);
-				}
-
-				T* val = boost::get<T>(&(m_attributes[ attr ]));
-				if( val == 0 ) {
-					Debug("attributed_class") 
-						<< "type mismatch in "  << className() 
-						<< " attr: " << attr;
-
-					m_attributes[ attr ] = type_attr(def);
-					val =	 boost::get<T>(&(m_attributes[ attr ]));
-				}
-				SDL_mutexV(m_mutex);
-				return *val;
-			}
-
-			/** Remove an attribute
-			 */
-			void del(const type_attr_id& attr) {
-				SDL_mutexP(m_mutex);
-				m_attributes.erase( attr );
-				SDL_mutexV(m_mutex);
-			}
-
-
-			/** Get the value of an attribute
-			 *
-			 *  This is the const version of the above function,
-			 *  thus does not change the objects state.
 			 *  If an attribute is requested, that does not exist
 			 *  or a type mismatch occures, a static default value
-			 *  is returned, which is okay, since it is a const
-			 *  reference.
+			 *  is returned.
 			 *
-			 *  @param id Id of the attribute
-			 *  @return The value of the attribute or a const ref
+			 *  @param field The field to be retrieved.
+			 *  @return The value of the field or a const ref
 			 *  to a default value.
 			 */
 			template<typename T>
-			const T& get(const type_attr_id& id) const {
-				SDL_mutexP(m_mutex);
-				static const type_attr const_attr;
-				if( m_attributes.find(id) == m_attributes.end() ) {
-					SDL_mutexV(m_mutex);
-					return boost::get<T>(const_attr);
+			const T& get(const std::string& field) {
+				static const value_type const_value;
+				if(m_fields.find(field) == m_fields.end()) {
+					return boost::get<T>(const_value);
 				}
 
-				T* val = boost::get<T>(&(m_attributes[ id ]));
-				SDL_mutexV(m_mutex);
-				if( val == 0 ) {
-					Debug("attributed_class")
+				T* value = boost::get<T>(&(m_fields[field]));
+				if(value == 0) {
+					Logger _log(LM_UTIL);
+					FL_WARN(_log, LMsg("attributed_class")
 						<< "type mismatch in " << className() 
-						<< " attr: " << id;
+						<< " field: " << field);
 
-					return boost::get<T>(const_attr);
+					return boost::get<T>(const_value);
 				}
-				return *val;
+				return *value;
 			}
 
-			const std::type_info& getTypeInfo(const type_attr_id& id)  {
-				return m_attributes[ id ].type();
+			/** Remove a field.
+			 */
+			void remove(const std::string& field) {
+				m_fields.erase(field);
 			}
 
-			/** Check whether an attribute exists
-			 *  @param id Id of the attriute to check
-			 *  @return True, if the attribute was set already
-			 */
-			bool hasAttribute(const type_attr_id& id) const;
+			const std::type_info& getTypeInfo(const std::string& field)  {
+				return m_fields[field].type();
+			}
 
-			/** Get number of attributes
+			/** Check whether a field exists
+			 *  @param field The field to check
+			 *  @return True if the field has been set
 			 */
-			size_t getNumAttributes() const;
+			bool hasField(const std::string& field) const;
 
-			/** Read attributes from another AttributedClass instance
+			/** Read fields from another AttributedClass instance (DEPRECATED?)
 			 */
 			void updateAttributes(const AttributedClass* attrObject, bool override = true);
 
@@ -179,26 +133,50 @@ namespace FIFE {
 
 			/** Print debuging information
 			 */
-			void debugPrint() const;
+			void debugPrint() const {}
 
 		private:
-			typedef std::map<type_attr_id,type_attr> type_attributes;
-			type_attributes m_attributes;
+			std::map<std::string,value_type> m_fields;
+
+			std::string m_id;
 			std::string m_className;
-			SDL_mutex* m_mutex;
 	};
 
 	/** A anonymous table of values.
 	 */
 	typedef AttributedClass Table;
 
-// Inline Functions
+	// Inline Functions
+
+	template <>
+	inline
+	const std::string& AttributedClass::get<std::string>(const std::string& field) {
+		if(field == "id")
+			return m_id;
+
+		static const value_type const_value;
+		if(m_fields.find(field) == m_fields.end()) {
+			return boost::get<std::string>(const_value);
+		}
+
+		std::string* value = boost::get<std::string>(&(m_fields[field]));
+		if(value == 0) {
+			Logger _log(LM_UTIL);
+			FL_WARN(_log, LMsg("attributed_class")
+				<< "type mismatch in " << className() 
+				<< " field: " << field);
+
+			return boost::get<std::string>(const_value);
+		}
+		return *value;
+	}
 
 	inline
-	bool AttributedClass::hasAttribute(const type_attr_id& attr) const {
-		SDL_mutexP(m_mutex);
-		bool found = m_attributes.find(attr) != m_attributes.end();
-		SDL_mutexV(m_mutex);
+	bool AttributedClass::hasField(const std::string& field) const {
+		if(field == "id")
+			return true;
+
+		bool found = m_fields.find(field) != m_fields.end();
 		return found;
 	}
 

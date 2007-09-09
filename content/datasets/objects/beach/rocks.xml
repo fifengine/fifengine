@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<dataset id="Rocks" type="Embedded" format="1.0">
+	<object id="Rock:001">
+		<image source="content/gfx/objects/beach/rock01.png"/>
+	</object>
+
+	<object id="Rock:002">
+		<image source="content/gfx/objects/beach/rock02.png"/>
+	</object>
+
+	<object id="Rock:003">
+		<image source="content/gfx/objects/beach/rock03.png"/>
+	</object>
+	<object id="Rock:004">
+		<image source="content/gfx/objects/beach/rock04.png"/>
+	</object>
+</dataset>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<dataset id="Mussel" type="Embedded" format="1.0">
+	<object id="Mussel:001">
+		<image source="content/gfx/objects/beach/mussel01.png"/>
+	</object>
+	<object id="Mussel:002">
+		<image source="content/gfx/objects/beach/mussel02.png"/>
+	</object>
+	<object id="Mussel:003">
+		<image source="content/gfx/objects/beach/mussel03.png"/>
+	</object>
+	<object id="Mussel:004">
+		<image source="content/gfx/objects/beach/mussel04.png"/>
+	</object>
+	<object id="Mussel:005">
+		<image source="content/gfx/objects/beach/mussel05.png"/>
+	</object>
+	<object id="Mussel:006">
+		<image source="content/gfx/objects/beach/mussel06.png"/>
+	</object>
+	<object id="Mussel:007">
+		<image source="content/gfx/objects/beach/mussel07.png"/>
+	</object>
+	<object id="Mussel:008">
+		<image source="content/gfx/objects/beach/mussel08.png"/>
+	</object>
+	<object id="Mussel:009">
+		<image source="content/gfx/objects/beach/mussel09.png"/>
+	</object>
+	<object id="Mussel:010">
+		<image source="content/gfx/objects/beach/mussel10.png"/>
+	</object>
+	<object id="Mussel:011">
+		<image source="content/gfx/objects/beach/mussel11.png"/>
+	</object>
+	<object id="Mussel:012">
+		<image source="content/gfx/objects/beach/mussel12.png"/>
+	</object>
+	<object id="Mussel:013">
+		<image source="content/gfx/objects/beach/mussel13.png"/>
+	</object>
+</dataset>

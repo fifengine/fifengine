@@ -13,15 +13,24 @@ def is_headerfile(fname):
 	return fname.endswith('.hpp') or fname.endswith('.h')
 
 def generate_swig_wrappers(interfacefiles):
+	from string import Template
 	swigoutdir = 'swigwrappers'
 
 	def generate_language_specifics(lang):
+		
 		swigpath = ''
 		if sys.platform == 'win32':
 			swigpath = '"' + os.environ['_SWIG'] + '"\\'
 
 		print "   Generating language specific wrappers for " + lang
+		
 		langoutdir = joinpath(swigoutdir, lang)
+		templatefile = joinpath(langoutdir,"fife.i.templ")
+		
+		template = Template(open(templatefile).read())
+		inclusions = sorted(['%include ' + str(f) for f in interfacefiles])
+		inclusions = '\n'.join(inclusions)
+		open('fife.i', 'w').write(template.substitute(inclusions=inclusions))
 		
 		pipe = os.popen(swigpath +'swig -c++ -%s -Icore fife.i' % (lang))
 		if pipe.close():
@@ -32,9 +41,6 @@ def generate_swig_wrappers(interfacefiles):
 			wrapper.move(langoutdir)
 
 	print "Running swig..."
-	inclusions = ['%module fife', '%include "std_string.i"', '%include "std_vector.i"'] + \
-                 ['%include ' + str(f) for f in interfacefiles]
-	open('fife.i', 'w').write('\n'.join(inclusions))
 	generate_language_specifics(env['script'])
 	print "Swig completed"
 
@@ -73,8 +79,11 @@ def check_for_duplicate_files(files):
 def clean_generated_files():
 	print "Cleaning generated files ..."
 	for genfile in upath('swigwrappers').walkfiles():
-		if str(genfile.abspath()).find('.svn') == -1:
-			genfile.remove()
+		if str(genfile.abspath()).find('.svn') != -1:
+			continue
+		if genfile.endswith('.i.templ'):
+			continue
+		genfile.remove()
 
 	EXPLICIT_REMOVES = ('fife.i', 'fife.py', 'fife_wrap.cxx', 'fife_wrap.h')
 	for f in EXPLICIT_REMOVES:
@@ -190,4 +199,4 @@ if not env['projfiles']:
 	compilefiles = [str(f) for f in remove_based_on_dir_filter(filteredpaths, implfiles)]
 	flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
 	if sys.platform == 'linux2':
-		env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Move('$TARGET', '$SOURCE')])
+		env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Copy('$TARGET', '$SOURCE')])

@@ -31,15 +31,12 @@
 #include "util/fife_stdint.h"
 
 // 3rd party library includes
-#include <boost/function.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/time/timeevent.h"
-
-#include "renderable.h"
+#include "util/resource/pooled_resource.h"
 
 namespace FIFE {
 
@@ -47,213 +44,118 @@ namespace FIFE {
 
 	/** Animation.
 	 *
-	 * A container of Images, which are periodically changed.
-	 *
-	 * @note We maybe need to have 3 different kinds of Animation(s)
-	 * One for continuous scenery, one for doors (flipping direction)
-	 * and one that is triggered some time but doesn't flip direction.
-	 * @warning The Animation takes Ownership of it's contained Images.
-	 * @see RenderAble
+	 * A container of Images describing an animation. Animation itself does 
+	 * not take care of animating the images. Instead it contains images
+	 * having associated timestamps. It is the responsibility of the 
+	 * animation user to query frames based on current timestamp and show
+	 * returned images on screen.
 	 */
-	class Animation : public RenderAble {
-	private:
-		/** Periodically updates all animations.
-		 *
-		 * Every frame this object gets updated by TimeManager.
-		 * It then calls the first updateList function for the
-		 * first Animation in the linked list which then calls
-		 * the rest.
-		 *
-		 * @see TimeEvent, TimeManager, Animation
-		 */
-		class Updater: public TimeEvent { // Why is this public?
-		public:
-			/** Default constructor.
-			 */
-			Updater();
-
-			/** Destructor.
-			 */
-			virtual ~Updater();
-
-			/** Called by TimeManager. Updates all animations.
-			 *
-			 * @param time The current time in milliseconds.
-			 */
-			virtual void updateEvent(unsigned long time);
-		};
+	class Animation: public IPooledResource {
 	public:
 		/** Constructor.
-		 *
-		 * Creates a new Animation which can hold numFrames.
-		 *
-		 * @param numFrames The number of frames this Animation may contain.
-		 * @note The first Animation created @b implicitly creates an Updater object.
-		 * @b All existing Animations are updated each turn.
-		 * @bug There is no way to have the same Animation twice in different states.
 		 */ 
-		explicit Animation(size_t numFrames);
+		explicit Animation();
 
-		/** Destructor.
-		 * 
-		 * Removes the Animation from the updateList and deletes its contained Images.
-		 *
-		 * @see updateList(), Animation
+		/** Destructor. Decreases the reference count of all referred images.
 		 */
 		~Animation();
 
-		/** Sets the frame.
-		 *
-		 * @param num Frame.
-		 * @param image Pointer to Image.
+		/** Adds new frame into animation
+		 * Frames must be added starting from first frame. Increases the reference
+		 * count of the given image.
+		 * @param image Pointer to Image. Does not transfer the ownership
+		 * @param duration Duration for given frame in the animation
 		 */
-		void setFrame(size_t num, Image* image);
+		void addFrame(Image* image, unsigned int duration);
 
-		/** Sets the frame duration.
-		 *
-		 * @param lenght Frame duration.
+		/** Get the frame index that matches given timestamp. In case there is no exact match,
+		 * correct frame is calculated. E.g. if there are frames for timestamps 50 and 100
+		 * and frame for 75 is asked, frame associated with value 50 is given back.
+		 * In case the timestamp is past the sequence, negative value is returned
+		 * @see addFrame
 		 */
-		void setFrameDuration(uint32_t length);
+		int getFrameIndex(unsigned int timestamp);
 
-		/** Gets the frame duration
-		 *
+		/** Gets the frame that matches the given index. If no matches found, returns NULL
 		 */
-		uint32_t getFrameDuration() const;
+		Image* getFrame(int index);
 
-		/** Get number of frames
-		 *
+		/** Gets the frame that matches the given timestamp.
 		 */
-		size_t getNumFrames() const;
+		Image* getFrameByTimestamp(unsigned int timestamp);
 
-		/** Sets the current frame.
-		 *
-		 * @param num Current frame.
+		/** Gets the frame duration for given (indexed) frame. Returns negative value in case
+		 * of incorrect index
 		 */
-		void setCurrentFrame(size_t num);
+		int getFrameDuration(int index);
 
-		/** Sets the action frame.
-		 *
-		 * @param num Action frame.
+		/** Get the number of frames
 		 */
-		void setActionFrame(size_t num);
+		unsigned int getNumFrames() const;
 
-		void update( uint32_t nowTicks);
-		/*
-				void render(SDL_Rect *target, SDL_Surface *screen);
-				void render(SDL_Rect *target, SDL_Surface *screen, Uint8 alpha);
-				*/
-
-		/** Called by Updater.
-		 *
-		 * Calls the current objects update() function and then
-		 * calls the updateList() function for the next animation
-		 * in the list.
-		 *
-		 * @param time The current time in milliseconds.
+		/** Sets the action frame. Action frame is the frame when the related
+		 * action actually happens. E.g. in case of punch animation, action frame is
+		 * the frame when punch hits the target. In case there is no associated
+		 * action frame, value is negative
+		 * @param num index of the action frame.
 		 */
-		void updateList(unsigned long time);
+		void setActionFrame(int num) { m_action_frame = num; }
 
-		void render(const Rect&, Screen*, unsigned char alpha = 255);
-		/** Gets the width of the Animation.
-		 *
-		 * @return The width of the Animation.
+		/** Gets the action frame.
+		 * @see setActionFrame
 		 */
-		virtual unsigned int getWidth() const;
-		/** Gets the height of the Animation.
-		 *
-		 * @return The height of the Animation.
-		 */
-		virtual unsigned int getHeight() const;
-		/** Gets the current frame of the Animation.
-		 *
-		 * @return The current frame of the Animation.
-		 */
-		Image* getCurrentFrame();
+		int getActionFrame() { return m_action_frame; }
 
-		/** Sets the X shift of the Animation.
-		 *
-		 * @param xshift The X shift of the Animation.
+		/** Animation direction tells how this animation is associated
+		 * with movement when played starting from frame 0
+		 * E.g. in walking animation there should be direction assigned so
+		 * that engine can choose the correct animation when characters are
+		 * moved around the map area
+		 * @param direction direction to set
 		 */
-		virtual void setXShift(int xshift);
-		/** Sets the Y shift of the Animation.
-		 *
-		 * @param yshift The Y shift of the Animation.
+		void setDirection(unsigned int direction);
+
+		/** Gets the animation direction
+		 * @see setDirection
+		 * @return direction for this animation
 		 */
-		virtual void setYShift(int yshift);
-		/** Gets the X shift of the Animation.
-		 *
-		 * @return The X shift of the Animation.
+		unsigned int getDirection() { return m_direction; }
+
+		/** Gets the total duration for the whole animation
 		 */
-		virtual int getXShift() const;
-		/** Gets the Y shift of the Animation.
-		 *
-		 * @return The Y shift of the Animation.
-		 */
-		virtual int getYShift() const;
+		int getDuration() { return m_animation_endtime; }
 
-		/** Sets a callback when the end of the Animation is reached.
-		 *
-		 * @param f Function to be executed when the animation finishes.
-		 */
-		void setOnEndCallback(boost::function0<void> f);
-		/** Sets the Image as active or not.
-		 *
-		 * @param active Is the Animation active?
-		 */
-		void setIsActive(bool active);
-		/** Sets the direction of the Animation.
-		 *
-		 * @param forward Direction of the Animation.
-		 */
-		void setDirection(bool forward);
+		void addRef() { m_refcount++; };
+		void decRef() { m_refcount--; };
+		unsigned int getRefCount() { return m_refcount; };
 
-		/** Get one single frame
-		 * @param frame The frame to return
-		 */
-		RenderAble* getFrame(int frame);
-
-
-	protected:
-		// Frames that compose the Animation.
-		std::vector<Image*> frames;
-/*
-		std::vector<int16_t> m_shifts_x;
-		std::vector<int16_t> m_shifts_y;
-*/
-
-		// X shift of the Animation.
-		int16_t m_xshift;
-		// Y shift of the Animation.
-		int16_t m_yshift;
-		// Action frame of the Animation.
-		size_t m_action_frame;
-
-		// Current frame of the Animation.
-		size_t m_currentFrame;
-		// Frame duration.
-		uint32_t m_frameDuration;
-		uint32_t m_frameChangedAt;
-		void flipFrame();
-
-		bool m_canSwitchDirection;
-		bool m_animateForward;
-		bool m_isActive;
-
-		// Pointers for the previous and next items in the animation linked list.
-		Animation* m_next_animation;
-		Animation* m_previous_animation;
-
-		// Updater to automate animation updating. Gets created and deleted by
-		// the constructor and destructor as necessary.
-		// This needs to be static; otherwise only the originally first 
-		// Animation could delete the updater.
-		static Updater* m_updater;
 
 	private:
-		// Pointer to the beginning of the linked list of animations.
-		static Animation* m_first_animation;
-		// Function to be executed on the end of the Animation.
-		boost::function0<void> m_onAnimationEnd;
+		/** Contains information about one animation frame (duration + frame index + frame pointer)
+		 */
+		struct FrameInfo {
+			unsigned int index;
+			unsigned int duration;
+			Image* img;
+		};
+
+		/** Checks for animation frame index overflows
+		 */
+		bool isValidIndex(int index);
+
+		// Map of timestamp + associated frame
+		std::map<unsigned int, FrameInfo> m_framemap;
+		// vector of frames for fast indexed access
+		std::vector<FrameInfo> m_frames;
+		// Action frame of the Animation.
+		int m_action_frame;
+		// time when animation ends (zero based)
+		int m_animation_endtime;
+		// Reference count of this animation
+		unsigned int m_refcount;
+		// Direction for this animation
+		unsigned int m_direction;
+
 	};
 
 

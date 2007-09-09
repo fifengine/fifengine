@@ -1,11 +1,11 @@
 <animation delay="130" id="3111">
-	<frame source="content/gfx/critters/boy/talking_e0000.png" />
-	<frame source="content/gfx/critters/boy/talking_e0001.png" />
-	<frame source="content/gfx/critters/boy/talking_e0002.png" />
-	<frame source="content/gfx/critters/boy/talking_e0003.png" />
-	<frame source="content/gfx/critters/boy/talking_e0004.png" />
-	<frame source="content/gfx/critters/boy/talking_e0005.png" />
-	<frame source="content/gfx/critters/boy/talking_e0006.png" />
-	<frame source="content/gfx/critters/boy/talking_e0007.png" />
-	<frame source="content/gfx/critters/boy/talking_e0008.png" />
+	<frame source="content/gfx/agents/boy/talking_e0000.png" />
+	<frame source="content/gfx/agents/boy/talking_e0001.png" />
+	<frame source="content/gfx/agents/boy/talking_e0002.png" />
+	<frame source="content/gfx/agents/boy/talking_e0003.png" />
+	<frame source="content/gfx/agents/boy/talking_e0004.png" />
+	<frame source="content/gfx/agents/boy/talking_e0005.png" />
+	<frame source="content/gfx/agents/boy/talking_e0006.png" />
+	<frame source="content/gfx/agents/boy/talking_e0007.png" />
+	<frame source="content/gfx/agents/boy/talking_e0008.png" />
 </animation>

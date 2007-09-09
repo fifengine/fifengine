@@ -30,21 +30,25 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/exception.h"
+#include "util/resource/resource_location.h"
+#include "util/resource/pooled_resource.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
-#include "video/image.h"
 #include "video/renderbackend.h"
-#include "video/renderbackends/sdl/sdlimage.h"
-#include "util/debugutils.h"
-#include "util/exception.h"
+#include "video/image_location.h"
 
 #include "image_provider.h"
 
-namespace FIFE { namespace video { namespace loaders {
-	
-	RenderAble* ImageProvider::createRenderable() {
+namespace FIFE { 
+	Image* ImageProvider::createImage(const ResourceLocation& location) {
+		return dynamic_cast<Image*>(createResource(location));
+	}
 
-	const RenderableLocation & location = getLocation();
+
+	IPooledResource* ImageProvider::createResource(const ResourceLocation& location) {
+		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
+
 		const std::string& filename = location.getFilename();
 		RawDataPtr data = VFS::instance()->open(filename);
 		size_t datalen = data->getDataLength();
@@ -57,21 +61,12 @@ namespace FIFE { namespace video { namespace loaders {
 			return 0;
 		}
 
-		RenderAble * res = RenderBackend::instance()->createStaticImageFromSDL(surface);
-
-		if (location.hasExtension(RenderableLocation::X))
-			res->setXShift(boost::lexical_cast<int>(location.getExtension(RenderableLocation::X)));
-		if (location.hasExtension(RenderableLocation::Y))
-			res->setYShift(boost::lexical_cast<int>(location.getExtension(RenderableLocation::Y)));
-
-		// As (most) images are pngs with alpha channel,
-		// which might actually be better of as colorkeyed
-		// images we try to optimize away fake alpha channels.
-		SDLImage* sdlimage = dynamic_cast<SDLImage*>(res);
-		if( sdlimage ) {
-			sdlimage->setAlphaOptimizerEnabled(true);
+		Image* res = RenderBackend::instance()->createStaticImageFromSDL(surface);
+		if (loc) {
+			res->setXShift(loc->getXShift());
+			res->setYShift(loc->getYShift());
 		}
-
+		res->setAlphaOptimizerEnabled(true);
 		return res;
 	};
-} } }
+}

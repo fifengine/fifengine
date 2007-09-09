@@ -31,27 +31,28 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/logger.h"
 #include "video/renderbackend.h"
-#include "video/screen.h"
-#include "video/gui/gcnimageloader.h"
+#include "gui/base/gui_imageloader.h"
 #include "util/settingsmanager.h"
-#include "util/debugutils.h"
 #include "gui/console/console.h"
-#include "gui/fonts/font.h"
+#include "gui/fonts/fontbase.h"
 #include "eventchannel/widget/ec_widgetevent.h"
 
 #include "guimanager.h"
 
 
 namespace FIFE {
+	static Logger _log(LM_GUI);
 
-	GUIManager::GUIManager(IWidgetListener* widgetlistener) : 
+	GUIManager::GUIManager(IWidgetListener* widgetlistener, ImagePool& pool) : 
 		m_gcn_gui(new gcn::Gui()), 
 		m_focushandler(0),
-        m_gcn_topcontainer(new gcn::Container()), 
-        m_gcn_imgloader(new GCNImageLoader()) , 
-        m_input(new gcn::SDLInput()),
-		m_widgetlistener(widgetlistener) {
+        	m_gcn_topcontainer(new gcn::Container()), 
+        	m_imgloader(new GuiImageLoader(pool)) , 
+        	m_input(new gcn::SDLInput()),
+		m_widgetlistener(widgetlistener),
+		m_pool(pool) {
 		m_font = 0;
 		m_console = 0;
 
@@ -59,14 +60,14 @@ namespace FIFE {
 		m_gcn_topcontainer->setOpaque(false);
 		m_gcn_gui->setInput(m_input);
 
-		gcn::Image::setImageLoader(m_gcn_imgloader);
+		gcn::Image::setImageLoader(m_imgloader);
 		m_focushandler = m_gcn_topcontainer->_getFocusHandler();
 	}
 
 	GUIManager::~GUIManager() {
 		delete m_console;
 		delete m_gcn_topcontainer;
-		delete m_gcn_imgloader;
+		delete m_imgloader;
 		delete m_input;
 		delete m_gcn_gui;
 		delete m_font;
@@ -75,8 +76,7 @@ namespace FIFE {
 	void GUIManager::onSdlEvent(SDL_Event& evt) {
 		gcn::SDLInput *input = dynamic_cast<gcn::SDLInput*>(m_gcn_gui->getInput());
 		if (!input) {
-			Warn("GUIManager")
-				<< "GuichanGUI->getInput == 0 ... discarding events!";
+			FL_WARN(_log, "GUIManager, GuichanGUI->getInput == 0 ... discarding events!");
 			return;
 		}
 		input->pushInput(evt);
@@ -104,26 +104,10 @@ namespace FIFE {
 		}
 	}
 
-	void GUIManager::init() {
-		Screen* screen = RenderBackend::instance()->getMainScreen();
-		m_gcn_gui->setGraphics(screen);
-		resizeTopContainer(0, 0, screen->getWidth(), screen->getHeight());
-
-		SettingsManager* settings = SettingsManager::instance();
-		std::string fontfile = settings->read<std::string>("GUIFont", "content/fonts/FreeMono.ttf");
-		unsigned int fontsize = settings->read<unsigned int>("GUIFontSize", 16);
-		std::string glyphs = settings->read<std::string>("GUIFontGlyphs",
-			" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-			".,!?-+/:();%`'*#=[]");
-		m_font = FontBase::load(fontfile, fontsize,glyphs);
-		gcn::Widget::setGlobalFont(m_font);
-
+	void GUIManager::init(gcn::Graphics* graphics, int screenWidth, int screenHeight) {
+		m_gcn_gui->setGraphics(graphics);
+		resizeTopContainer(0, 0, screenWidth, screenHeight);
 		m_console = new Console();
-
-// 		gcn::Icon* testicon = new gcn::Icon(new gcn::Image("art/intrface/about.frm"));
-// 		testicon->setPosition(screen->getWidth() -  testicon->getWidth() - 10, 10);
-// 		add(testicon);
-
 	}
 
 	void GUIManager::setGlobalFont(gcn::Font* font) {

@@ -35,6 +35,10 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+namespace gcn {
+	class Graphics;
+}
+
 namespace FIFE {
 
 	namespace audio {
@@ -43,16 +47,21 @@ namespace FIFE {
 	class RenderBackend;
 	class GUIManager;
 	class VFS;
+	class VFSSourceFactory;
 	class EventManager;
 	class TimeManager;
-	class ImageCache;
+	class ImagePool;
+	class AnimationPool;
 	class SettingsManager;
+	class View;
+	class Model;
+	class LogManager;
 
 	class Engine {
 		public:
 			/** Constructor
 			 */
-			Engine();
+			Engine(bool use_miniwindow=false);
 
 			/** Destructor
 			 */
@@ -65,12 +74,17 @@ namespace FIFE {
 			 */
 			void pump();
 
-			audio::Manager* getAudioManager();
-			EventManager* getEventManager();
-			VFS* getVFS();
-			TimeManager* getTimeManager();
-			SettingsManager* getSettingsManager();
-			GUIManager* getGuiManager();
+			audio::Manager* getAudioManager() { return m_audiomanager; }
+			EventManager* getEventManager() { return m_eventmanager; }
+			TimeManager* getTimeManager() { return m_timemanager; }
+			SettingsManager* getSettingsManager() { return m_settingsmanager; }
+			GUIManager* getGuiManager() { return m_guimanager; }
+			ImagePool* getImagePool() { return m_imagepool; }
+			AnimationPool* getAnimationPool() { return m_animpool; }
+			RenderBackend* getRenderBackend() { return m_renderbackend; }
+			Model* getModel() { return m_model; }
+			View* getView() { return m_view; }
+			LogManager* getLogManager() { return m_logmanager; }
 
 		private:
 			/** Initializes the engine
@@ -80,8 +94,18 @@ namespace FIFE {
 			RenderBackend* m_renderbackend;
 			GUIManager* m_guimanager;
 			EventManager* m_eventmanager;
+			audio::Manager* m_audiomanager;
 			TimeManager* m_timemanager;
-			ImageCache* m_imagecache;
+			SettingsManager* m_settingsmanager;
+			ImagePool* m_imagepool;
+			AnimationPool* m_animpool;
+			VFSSourceFactory* m_vfs_sourcefactory;
+			VFS* m_vfs;
+			Model* m_model;
+			gcn::Graphics* m_gui_graphics;
+			View* m_view;
+			LogManager* m_logmanager;
+			bool m_use_miniwindow;
 	};
 
 }//FIFE

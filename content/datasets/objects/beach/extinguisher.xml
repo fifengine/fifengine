@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<dataset id="Extinguisher" type="Embedded" format="1.0">
+	<object id="Extinguisher:001">
+		<image source="content/gfx/objects/beach/extinguisher_001.png"/>
+	</object>
+
+	<object id="Extinguisher:002">
+		<image source="content/gfx/objects/beach/extinguisher_002.png"/>
+	</object>
+
+	<object id="Extinguisher:003">
+		<image source="content/gfx/objects/beach/extinguisher_003.png"/>
+	</object>
+</dataset>

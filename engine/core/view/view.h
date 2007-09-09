@@ -19,216 +19,63 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_VIEW_H
-#define FIFE_MAP_VIEW_H
+#ifndef FIFE_VIEW_VIEW_H
+#define FIFE_VIEW_VIEW_H
 
 // Standard C++ library includes
-#include <cstddef>
-#include <list>
-#include <map>
-#include <string>
 #include <vector>
 
 // 3rd party library includes
-#include <boost/shared_ptr.hpp>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/point.h"
-#include "util/rect.h"
+
 
 namespace FIFE {
-
-	class Screen;
-
-}
-
-namespace FIFE { namespace map {
-
-	class Map;
-	typedef boost::shared_ptr<Map> MapPtr;
-
 	class Camera;
+	class RenderBackend;
+	class ImagePool;
+	class AnimationPool;
 
-	class Elevation;
-	typedef boost::shared_ptr<Elevation> ElevationPtr;
-
-	class Layer;
-	typedef boost::shared_ptr<Layer> LayerPtr;
-	class Visual;
-	class VisualTree;
-
-	class Geometry;
-
-	/** Renders a map to a surface 
-	 */
 	class View {
-		public:
+	public:
+		/** Constructor
+		 * @param renderbackend to use
+		 * @param imagepool image pool where from fetch images
+		 * @param animpool animation pool where from fetch images
+		 */
+		View(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 
-			/** Create a new empty View object.
-			 * Use @c setMap() to initialize to show a map.
-			 */
-			View(Screen* surface);
+		/** Destructor
+		 */
+		~View();
 
-			/** Destructor
-			 * Does not cleanup Map object!
-			 */
-			~View();
+		/** Adds new camera on view. Ownership is transferred to the view.
+		 * After addition, camera gets rendered by the view
+		 */
+		void addCamera(Camera* camera);
 
-			void setDefaultViewport();
+		/** Removes given camera from view. Ownership is taken away from the view
+		 */
+		void removeCamera(Camera* camera);
 
-			/**   Set the area where the map should be rendered
-			 *
-			 * @param rect mapview will render into this rect on surface
-			 */
-			void setViewport(const Rect& rect);
+		/** Causes view to render all cameras
+		 */
+		void update();
 
-			/** Set the map elevation to render
-			 *
-			 * @param elevation the mapelevation to render
-			 */
-			void setMap(MapPtr map, size_t elev);
-
-			/** Renders the map */
-			void render();
-
-			/** Set the current x-position
-			 *
-			 * Set the X-pos of the map. ATM in tiles, but this will change
-			 * once the whole class gets optimized and ready to use.
-			 * @param pos new x position
-			 */
-			void setXPos(unsigned int pos);
-
-			/** Set the current y-position
-			 *
-			 * Set the Y-pos of the map. ATM in tiles, but this will change
-			 * once the whole class gets optimized and ready to use.
-			 * @param pos new y position
-			 */
-			void setYPos(unsigned int pos);
-
-			/** Return the current xpos
-			 *
-			 * @return current xpos
-			 * @see setXPos
-			 */
-			int getXPos() const;
-
-			/** Return the current ypos
-			 *
-			 * @return current ypos
-			 * @see setYPos
-			 */
-			int getYPos() const;
-
-
-			/** Get current elevation id
-			 */
-			size_t getElevationNum() const;
-
-			/** Get total number of elevations
-			 */
-			size_t getNumElevations() const;
-
-			/** Set the current elevation id
-			 */
-			void setElevationNum(size_t);
-
-			/** Get the current elevation
-			 */
-			ElevationPtr getCurrentElevation() const;
-
-			/** Make a selection; returns the geometry coordinate
-			 * of the selection.
-			 */
-			Point select(int x, int y, size_t layer_id);
-
-			/** Set the overlay image for the hex grid selection
-			 */
-			void loadOverlayImage(const std::string& filename);
-
-			/** Toggles coordinate info from upper left corner
-			 */
-			void toggleCoordInfoEnabled();
-
-			/** Toggles a fadeout effect for mouse-selected objects
-			 */
-			void toggleFadeOutEffect();
-
-			Screen* getScreen() { return m_surface; }
-
-			//////////////  NEW INTERFACE ///////////////////////
-
-			size_t addVisual( Visual* visual );
-			void removeVisual( size_t vidualId );
-			Visual* getVisual(size_t id);
-
-			bool isValidVisualId(size_t id) const;
-
-			void notifyVisualChanged(size_t visualId);
-
-			/** Clean up internal state
-			 */
-			void reset();
-
-		private:
-			/// The helper class for handling Visuals
-			VisualTree* m_vtree;
-
-			/// The screen surface
-			Screen* m_surface;
-			Rect m_rect;
-
-			/// Current Map
-			MapPtr m_map;
-			/// Current elevation
-			ElevationPtr m_elevation;
-
-			/// Current elevation id
-			size_t m_elevation_id;
-
-			/// Current screen offset for rendering
-			Point m_offset;
-
-			/// Current position for the mouseclick overlay
-			Point m_layer_pos;
-			Point m_tilemask_pos;
-			/// Images for grid overlay 
-			size_t m_layer_id;
-			size_t m_tilemask;
-			
-			/// Coordinate information shown on screen
-			bool m_coordinfo;
-			std::string m_tilecoordinfo;
-			std::string m_objcoordinfo;
-
-			/// Objects fadeout on mouse-selection
-			bool m_fadeout;
-
-			void renderTiles(LayerPtr layer);
-			void renderGridOverlay(LayerPtr grid);
-
-			void renderVisuals(size_t);
-
-			void renderLayerOverlay(LayerPtr grid, const Point& pos);
-
-			void elevationChange();
-			void clearVisuals();
-
-			/// Utility Function
-			size_t getGridOverlayImageId(LayerPtr grid);
-
-			/// Prevent copy construction
-			View(const View&);
-			View& operator=(const View&);
-
-			friend class Camera;
+	private:
+		void updateCamera(Camera* camera);
+		int getAngleBetween(const Location& loc1, const Location& loc2, Camera& cam);
+		
+		// list of cameras managed by the view
+		std::vector<Camera*> m_cameras;
+		RenderBackend* m_renderbackend;
+		ImagePool* m_imagepool;
+		AnimationPool* m_animationpool;
 	};
 
-} } //FIFE::map
-
+}
 #endif
-/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
