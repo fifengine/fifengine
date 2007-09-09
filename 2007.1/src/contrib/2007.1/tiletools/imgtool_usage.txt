@@ -1,0 +1,32 @@
+ [ options ] (--create $out | --edit $out) --mask $mask 
+                        --first $input --second $input
+
+A specialised image manipulation program with two basic modes:
+* Take a rectangle image with size of $mask from $input image and blit
+  it into $out, working on those pixels where the mask is white. Bits
+  corresponding to blackness in the mask will be set to invisible
+  (alpha = 0) in the output.
+* Take two rectangles of size of $mask from two input images and blit
+  them into $out; if a mask pixel is 0, the dest pixel is set to black
+  with alpha=0, if a mask pixel is 128, the corresponding pixel from
+  --second $input is used, while mask pixel 255 uses the colour from 
+  --first $input (both times alpha set to 255).
+
+Notes:
+* Input images should have 24 bits (== NO ALPHA), at least after
+  loading with IMG_Load(...).
+* The mask images need to be 8 bit grayscale.
+* The output is always 32 bit png; this images needs to be of a certain
+  dimension: w has to be a multiple of 80 and h a multiple of 36!
+  These numbers come from the f2 tile size (and thus the $mask images),
+  but aren't hardcoded beyond the default values (160x72).
+
+ If you use --create $out and can specify (both!) --width and --height.
+* You can specify into which --row and --column to blit (in $out) using
+  steps of size of $mask.
+* You can specify offsets (--xoff, --yoff) into the $input image; the
+  defaults are 0, 0.
+
+  If you use two input images, strange things may happen is they are
+  not of the same size; probably even stranger when using offsets
+  (haven't tried this so far)...
