@@ -1,0 +1,16 @@
+Import('env')
+
+# Add to CPPPATH so that #include of audio headers will automatically
+# reach into the appropriate subfolder. This is a bit of a hack; we should
+# be able to get some #define symbol that corresponds to env['audio'] and
+# use it to include conditionally instead - possibly making wrapper headers
+# in this folder
+if env['audio']:
+	env.Append(CPPPATH = ['#src/engine/audio/openal'])
+else:
+	env.Append(CPPPATH = ['#src/engine/audio/devnull'])
+
+objs = [] # there are no files locally; all are in subfolders.
+Return('objs')
+
+# vim: set filetype=python :
