@@ -1,0 +1,131 @@
+==========================
+FIFE 2006.0-r1 pre-alpha release (based on FIFE SVN rev. 299)
+==========================
+
+
+Intention of this release:
+==========================
+This is the last FIFE release based on the "core" branch. Future releases will use the "core-render" code which is a abstracted and cleaned up version of "core".
+
+It's important to us that you understand that these first releases are just some developer builds of FIFE and do only represent a small part of what FIFE will be in the future. You should test the current performance with the SDL software and the OpenGL hardware renderer and report back problems and errors you encountered while testing FIFE.
+
+You can post problems in the help section of our forums:
+http://www.fifengine.de/module-pnForum-viewforum-forum-7.phtml
+
+Thanks for your support.
+
+Important changes 2006.0 >> 2006.0-r1
+==========================
+* Console access with Lua commands
+* Animation shifts are less "bumpy" (still not as good as in Fallout)
+* Object / animation support for XMLmaps
+* Palette animation support added
+* m_surface == NULL bug fixed
+* Choseable loglevel from settings file & console
+* Better code documentation
+* ACM sound format support
+* Set volume / mute functions for the audio manager
+* New abstracted renderer
+* A LOT of small fixes :-)
+==========================
+
+For a complete changelog visit:
+https://mirror1.cvsdude.com/trac/fife/engine/timeline
+
+What works:
+==========================
+* Loading Fallout 1 .dat archives
+* Loading Fallout 2 .dat archives
+* Override .dat files by using unpacked local files (first useful 'modding' feature)
+* Load Fallout 1 .map files
+* Load Fallout 2 .map files
+* Choose resolutions from 640 * 480 up to 1920 * 1440
+* Choose between SDL software rendering and OpenGL hardware accelerated rendering
+* Play your favourite song as .ogg or .acm background music
+* Map scrolling with the arrow keys
+* Cycle through map elevations (-> e)
+* Toggle roof tiles on / off (-> r)
+* Toggle objects on / off (-> o)
+* Toggle FPS counter on / off (-> f)
+* Toggle alphablending for roof tiles on / off (-> a) **
+* Increase (-> s) and decrease (-> x) the degree of alphablending **
+* Hardware gamma control to increase (-> +) or decrease (-> -) brightness
+* Ingame console for tweaking and testing (-> F10)
+* First basic critter animations (still a bit buggy)
+* Palette animations for Fallout .pal files
+
+(** features are just available if you use the OpenGL renderer)
+
+
+What does not work:
+==========================
+* No transparency for windows, force fields, nightkins, etc.
+* No user interaction at all (okay, scrolling works ^^)
+* No graphical user interface (we're working on it ;-))
+* All the rest that worked with Fallout :-p
+
+
+Custom settings
+===========================
+* FIFE uses a file called "fife.settings" to give the user control about some engine aspects
+* Here is a commented sample settings file:
+
+<--------------------------
+BackgroundMusic=./content/audio/music/maybe.ogg	// Path to background music (path to ogg or acm file)
+BitsPerPixel=32						// Bit depth: 16/32
+DoubleBuffer=1						// Double buffering: 0/1
+FontFile=./content/etc/fonts/FreeMono.ttf		// Path to the .ttf file used for font rendering
+FullScreen=0						// Fullscreen mode: 0/1
+GUIFont=./content/etc/fonts/FreeMono.ttf		// Path to the .ttf file used for GUI font rendering
+GUIFontFormat= abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789	// Charset; don't screw this
+GUIFontSize=15						// Size of the rendered font
+GlobalGammaLevel=1					// Hardware gamma level
+LightingLevel=4						// Fallout brightness modifier: 1-4
+OpenGL=1							// OpenGL mode: 1 == OpenGL, 0 == SDL
+PreferHWSurface=0						// Use HW surfaces for rendering: 0/1
+RoofAlpha=125						// Degree of alpha blending for roof tiles: 0-255
+ScreenHeight=768						// Screen height: 480-1440
+ScreenWidth=1024						// Screen width: 640-1920
+-------------------------->
+
+* Customize your "settings"-file to fit your needs and save the changes afterwards
+
+
+Working with Fallout 1 maps:
+==========================
+* Copy the "master.dat" & "critter.dat" from your Fallout 1 install to your FIFE install directory
+* Choose a mapname from maps_fo1.txt (located in the FIFE install dir)
+* Edit the "FIFE.bat" and replace the mapname with wanted map
+* Start "FIFE.bat"
+
+
+Working with Fallout 2 maps:
+==========================
+* Copy the "master.dat" & "critter.dat" from your Fallout 2 install to your FIFE install directory
+* Choose a mapname from maps_fo2.txt (located in the FIFE install dir)
+* Edit the "FIFE.bat" and replace the mapname with wanted map
+* Start "FIFE.bat"
+
+
+Working with XML maps:
+==========================
+FIFE supports a (temporary) own map format so you can test the engine without having one of the Fallout games installed. The used graphics for these new maps are released under GPL and are just temporary versions. Feel free to provide us your gfx skills so we can create a high quality free FIFE map that will be featured in the next release
+
+* Choose a mapname from maps_xml.txt (located in the FIFE install dir)
+* Edit the "FIFE.bat" and replace the mapname with wanted map
+* Start "FIFE.bat"
+
+
+FIFE searching for new members:
+==========================
+Last but not not least FIFE is always searching for new members that want to support the project by contributing. If you think that FIFE is worth being supported you can apply to the following positions:
+* Coder: C++ knowledge, cross platform coding experience, no Fallout knowledge needed (but being a Fallout fan doesn't hurt :-))
+* Gfx artist: create banners, wallpapers, concept sketches, tiles, objects or critters (chose your favourite one)
+* Mac developer: maintain the Mac port, supply patches for Mac, test FIFE under Macintosh and create binary releases for Mac
+* Wiki maintainer: work on the wiki section and keep it up to date
+* Creative person: you want to contribute but you don't fit into these categories? No problem! Just contact us and we're sure that we find a good job for you :-)
+
+Contact the FIFE team under 'mvBarracuda@web.de', subject: 'FIFE team' if you want to to apply.
+
+
+The FIFE Team, January 2006
