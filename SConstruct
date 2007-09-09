@@ -14,6 +14,7 @@ opts.Add(BoolOption('ext',  'Build external dependencies', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
 opts.Add(BoolOption('zip', 'Enable ZIP archive support', 0))
 opts.Add(BoolOption('perfexe', 'Build native perf test version of fife engine', 0))
+opts.Add(BoolOption('log', 'Enables logging for the engine', 1))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
@@ -143,6 +144,9 @@ else:
 	if env['zip']:
 		env.Append(CPPDEFINES = ['HAVE_ZIP'])
 
+	if env['log']:
+		env.Append(CPPDEFINES = ['LOG_ENABLED'])
+	
 	Export('env')
 	
 	if not env['noengine']:

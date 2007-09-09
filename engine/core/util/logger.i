@@ -25,7 +25,13 @@
 %}
 %include "modules.h"
 
+namespace std {
+	%template(moduleVector) std::vector<logmodule_t>;
+};
+
 namespace FIFE {
+	
+	
 	class LogManager {
 	public:
 		enum LogLevel {	
@@ -41,14 +47,15 @@ namespace FIFE {
 		
 		void addVisibleModule(logmodule_t module);
 		void removeVisibleModule(logmodule_t module);
+		void clearVisibleModules();
+		bool isVisible(logmodule_t module);
 		
-		void setLogToPromt(bool log_to_promt);
-		bool isLoggingToPromt();
+		void setLogToPrompt(bool log_to_promt);
+		bool isLoggingToPrompt();
 		
 		void setLogToFile(bool logtofile);
 		bool isLoggingToFile();
-		
-		bool isEnabled(logmodule_t module);
+		std::string getModuleName(logmodule_t module);
 		
 	private:
 		LogManager();

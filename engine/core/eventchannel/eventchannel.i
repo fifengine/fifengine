@@ -44,7 +44,7 @@
 %include "eventchannel/command/ec_commandids.h"
 
 namespace std {
-   %template(IntVector) vector<int>;
+	%template(IntVector) vector<int>;
 }
 
 namespace FIFE {

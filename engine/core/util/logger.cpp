@@ -40,7 +40,7 @@
 struct ModuleInfo {
 	logmodule_t module;
 	logmodule_t parent;
-	char* name;
+	std::string name;
 };
 MODULE_INFO_RELATIONSHIPS
 // end
@@ -79,7 +79,7 @@ namespace FIFE {
 		if (level < m_level) {
 			return;
 		}
-		if (!isEnabled(module)) {
+		if (!isVisible(module)) {
 			return;
 		}
 		std::string lvlstr = "";
@@ -122,7 +122,8 @@ namespace FIFE {
 	}
 
 	void LogManager::addVisibleModule(logmodule_t module) {
- 		int ind = static_cast<int>(module); 		
+		validateModule(module);
+ 		int ind = static_cast<int>(module);
  		m_modules[ind] = true;
  		if (moduleInfos[ind].parent != LM_CORE) {
   			addVisibleModule(moduleInfos[ind].parent);
@@ -130,14 +131,21 @@ namespace FIFE {
 	}
 	
 	void LogManager::removeVisibleModule(logmodule_t module) {
+		validateModule(module);
 		m_modules[module] = false;
 	}
+	
+	void LogManager::clearVisibleModules() {
+		for (int i = 0; i < LM_MODULE_MAX; i++) {
+			m_modules[i] = false;
+		}
+	}
 
-	void LogManager::setLogToPromt(bool log_to_promt) {
+	void LogManager::setLogToPrompt(bool log_to_promt) {
 		m_logtoprompt = log_to_promt;
 	}
 	
-	bool LogManager::isLoggingToPromt() {
+	bool LogManager::isLoggingToPrompt() {
 		return m_logtoprompt;
 	}
 	
@@ -149,12 +157,12 @@ namespace FIFE {
 		return m_logtofile;
 	}
 	
-	bool LogManager::isEnabled(logmodule_t module) {
+	bool LogManager::isVisible(logmodule_t module) {
 		if (!m_modules[module]) {
 			return false;
 		}
 		if (moduleInfos[module].parent != LM_CORE) {
- 			return isEnabled(moduleInfos[module].parent);
+ 			return isVisible(moduleInfos[module].parent);
 		}
 		return true;
 	}
@@ -167,8 +175,13 @@ namespace FIFE {
 		validateModuleDescription(LM_CORE);
 		m_flowtracefile = new std::ofstream("fife_flow.log");
 		m_logfile = new std::ofstream("fife.log");
-		for (int i = 0; i < LM_MODULE_MAX; i++) {
-			m_modules[i] = false;
+		clearVisibleModules();
+	}
+	
+	void LogManager::validateModule(logmodule_t m) {
+		if ((m <= LM_CORE) || (m >= LM_MODULE_MAX)) {
+			std::cout << "Invalid module received in LogManager: " << m << ", aborting\n";
+			abort();
 		}
 	}
 	
@@ -192,5 +205,9 @@ namespace FIFE {
 				throw InvalidFormat("Log module definition hierachy contains cycles");
 			}
 		}
+	}
+	
+	std::string LogManager::getModuleName(logmodule_t module) {
+		return moduleInfos[module].name;
 	}
 }

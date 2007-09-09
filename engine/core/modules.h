@@ -31,6 +31,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+/** Modules available for logging
+ */
 enum logmodule_t {
 	LM_CORE = -1,
 	LM_AUDIO,
@@ -58,6 +60,9 @@ enum logmodule_t {
 	LM_MODULE_MAX // sentinel
 };
 
+/** Module hierarchy definition + display strings
+ * format = module, module parent, module display name
+ */
 #define MODULE_INFO_RELATIONSHIPS \
 	ModuleInfo moduleInfos[] = { \
 		{LM_AUDIO, LM_CORE, "Audio"}, \

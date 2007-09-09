@@ -6,7 +6,7 @@ for p in _paths:
 	if p not in sys.path:
 		sys.path.append(os.path.sep.join(p.split('/')))
 
-import fife
+import fife, fifelog
 
 class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
@@ -17,9 +17,8 @@ class World(object):
 		self.engine = fife.Engine()
 		self.reactor = InstanceReactor()
 		logman = self.engine.getLogManager()
-		logman.setLogToPromt(True)
-		logman.addVisibleModule(fife.LM_VIDEO);
-		logman.addVisibleModule(fife.LM_CAMERA);
+		self.log = fifelog.LogManager(self.engine)
+		self.log.setVisibleModules('camera', 'instance')
 		
 	def __del__(self):
 		self.engine.getView().removeCamera(self.camera)
