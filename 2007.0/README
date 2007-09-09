@@ -1,8 +1,0 @@
-[FIXME]
-We should try to find a release manager who keeps the docs up to date and publishes releases on sourceforge. I've replaced Chris old text with this one as it was heavily outdated.
-
-We'll need the following information in our future README:
-* Compiling on various platforms
-* Installing FIFE on various platforms
-* Feel free to add
-[/FIXME]

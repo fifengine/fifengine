@@ -1,8 +1,0 @@
-
-SConscript([
-						'guichan_addon/SConscript',
-						'engine/SConscript',
-            'testproject/SConscript'
-					])
-
-# vim: set filetype=python :

@@ -1,6 +1,0 @@
-Import('env')
-
-objlist = [ env.Object('sdltruetypefont.cpp'), env.Object('twobutton.cpp'), env.Object('console.cpp'),
-            env.Object('icon2.cpp'), env.Object('advimage.cpp') ]
-
-Return('objlist')

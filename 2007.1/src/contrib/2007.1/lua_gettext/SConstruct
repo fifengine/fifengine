@@ -1,7 +1,0 @@
-env = Environment(CC = 'gcc',
-                  CCFLAGS = '-O2')
-
-env.Append(CCFLAGS = ['-I/usr/include/lua50'])
-
-#env.StaticLibrary('lua_i18n', ['lua_i18n.c'])
-env.SharedLibrary('lua_i18n', ['lua_i18n.c'])
