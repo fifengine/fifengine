@@ -237,7 +237,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="OfficialMapObjectLayer" grid_type="square" scaling="0.25">
+		<layer id="OfficialMapObjectLayer" grid_type="square" scaling="0.25" x_offset="0.8" y_offset="-1.6">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE" type="text">content/gfx/insts/outlines/object_outline_diamond_32_24.png</param>
@@ -662,7 +662,7 @@
 				<i o="Sunshade:001" x="66" y="75" />
 				<i o="Sunshade:003" x="70" y="72" />
 				<i o="Sunshade:004" x="70" y="76" />
--->
+
 				<!-- NORTH EAST BORDER TREES -->
 
 				<i o="Tree:007" x="44" y="4" />
