@@ -45,7 +45,7 @@ class World(object):
 	def create_dummy(self):
 		self.dummyObj = fife.Object("dummy")
 		self.dummyObj.setPather(self.pather)
-		a = self.dummyObj.addAction('dummy:walk', 'walk')	
+		a = self.dummyObj.addAction('dummy:walk')
 		
 		path = 'techdemo/animations/agents/dummy/walk/'
 		angles = sorted([p for p in os.listdir(path) if re.search(r'\d+', p)])
@@ -73,13 +73,13 @@ class World(object):
 	def run(self):
 		self.engine.initializePumping()
 		self.target.setLayerCoordinates(fife.Point(1,0))
-		self.dummy.act('walk', self.target, 0.3)
+		self.dummy.act('dummy:walk', self.target, 0.3)
 		
 		for i in xrange(1000):
 			self.engine.pump()
 			if i == 200:
 				self.target.setLayerCoordinates(fife.Point(-1,0))
-				self.dummy.act('walk', self.target, 0.3)
+				self.dummy.act('dummy:walk', self.target, 0.3)
 		
 		self.engine.finalizePumping()
 
