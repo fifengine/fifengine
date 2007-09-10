@@ -12,6 +12,38 @@ class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
 		pass
 
+class MyMouseListener(fife.IMouseListener):
+	def __init__(self):
+		fife.IMouseListener.__init__(self)
+		self.target = fife.Point(0,0)
+		self.update = False	
+		self.pressed = False
+
+	def mousePressed(self, evt):
+		self.update = False
+		self.pressed = True
+		self.target = fife.Point(evt.getX(), evt.getY())
+
+	def mouseReleased(self, evt):
+		self.pressed = False
+		self.update = True
+
+	def mouseEntered(self, evt):
+		pass
+	def mouseExited(self, evt):
+		pass
+	def mouseClicked(self, evt):
+		pass
+	def mouseWheelMovedUp(self, evt):
+		pass
+	def mouseWheelMovedDown(self, evt):
+		pass
+	def mouseMoved(self, evt):
+		pass
+	def mouseDragged(self, evt):
+		pass
+
+
 class World(object):
 	def __init__(self):
 		self.engine = fife.Engine()
@@ -19,6 +51,7 @@ class World(object):
 		logman = self.engine.getLogManager()
 		self.log = fifelog.LogManager(self.engine)
 		self.log.setVisibleModules('camera', 'instance')
+		self.eventmanager = self.engine.getEventManager()
 		
 	def __del__(self):
 		self.engine.getView().removeCamera(self.camera)
@@ -70,17 +103,25 @@ class World(object):
 		self.engine.getView().addCamera(self.camera)
 	
 	def run(self):
+		l = MyMouseListener()
+		self.eventmanager.addMouseListener(l)
 		self.engine.initializePumping()
 		self.target.setLayerCoordinates(fife.Point(1,0))
 		self.dummy.act('dummy:walk', self.target, 0.3)
-		
+
 		for i in xrange(1000):
 			self.engine.pump()
-			if i == 200:
-				self.target.setLayerCoordinates(fife.Point(-1,0))
-				self.dummy.act('dummy:walk', self.target, 0.3)
-		
+#			if i == 200:
+#				self.target.setLayerCoordinates(fife.Point(-1,0))
+#				self.dummy.act('dummy:walk', self.target, 0.3)
+			if (l.update == True):
+				l.update = False
+				self.target.setElevationCoordinates(self.camera.toElevationCoordinates(l.target))
+				#print self.target.getLayerCoordinates()
+				self.dummy.act('dummy:walk', self.target, 1.0)
+
 		self.engine.finalizePumping()
+		self.eventmanager.removeMouseListener(l)
 
 
 if __name__ == '__main__':

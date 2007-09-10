@@ -62,6 +62,7 @@ class ModelLoader(handler.ContentHandler):
 
 		elif (name == 'param'):
 			if (self.state == self.SMetadata):
+				# TODO: actually load in metadata!
 				pass
 
 			else:
