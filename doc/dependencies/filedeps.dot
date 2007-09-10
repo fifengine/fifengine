@@ -283,6 +283,8 @@ digraph "source tree" {
     "engine/core/model/metamodel/grids/cellgrid.h" -> "util/matrix.h"
     "engine/core/model/metamodel/grids/cellgrid.h" -> "util/point.h"
     "engine/core/model/metamodel/grids/hexgrid.cpp" -> "hexgrid.h"
+    "engine/core/model/metamodel/grids/hexgrid.cpp" -> "util/fife_math.h"
+    "engine/core/model/metamodel/grids/hexgrid.cpp" -> "util/logger.h"
     "engine/core/model/metamodel/grids/hexgrid.h" -> "cellgrid.h"
     "engine/core/model/metamodel/grids/squaregrid.cpp" -> "squaregrid.h"
     "engine/core/model/metamodel/grids/squaregrid.cpp" -> "util/fife_math.h"

@@ -93,11 +93,6 @@ namespace FIFE {
 		return squareGridDiagonal;
 	}
 	
-	DoublePoint SquareGrid::getOffset(const Point& curpos, const Point& target, double distance) {
-		assert(1);
-		return DoublePoint(0,0);
-	}
-
 	DoublePoint SquareGrid::toElevationCoordinates(const DoublePoint& layer_coords) {
 		return m_inverse_matrix * layer_coords;
 	}

@@ -48,6 +48,7 @@ enum logmodule_t {
 	LM_INSTANCE,
 	LM_LOCATION,
 	LM_METAMODEL,
+	LM_HEXGRID,
 	LM_PATHFINDER,
 	LM_UTIL,
 	LM_POOL,
@@ -78,6 +79,7 @@ enum logmodule_t {
 		    {LM_INSTANCE, LM_STRUCTURES, "Instance"}, \
 		    {LM_LOCATION, LM_STRUCTURES, "Location"}, \
 		  {LM_METAMODEL, LM_MODEL, "Metamodel"}, \
+		    {LM_HEXGRID, LM_METAMODEL, "Hexgrid"}, \
 		{LM_PATHFINDER, LM_CORE, "Pathfinder"}, \
 		{LM_UTIL, LM_CORE, "Util"}, \
 		  {LM_POOL, LM_UTIL, "Pool"}, \

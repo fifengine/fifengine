@@ -72,14 +72,6 @@ namespace FIFE {
 		 */
 		virtual float getAdjacentCost(const Point& curpos, const Point& target) = 0;
 
-		/** Return the offset based on given cells and the distance
-		 *  @param curpos position (coordinates) to evaluate
-		 *  @param target target coordinate to check
-		 *  @param distance distance traveled from curpos to target
-		 *  @return offset
-		 */
-		virtual DoublePoint getOffset(const Point& curpos, const Point& target, double distance) = 0;
-
 		/** Gets the count of sides for a single cell
 		 *  @return count of sides for a single cell
 		 */
@@ -165,6 +157,7 @@ namespace FIFE {
 
 	protected:
 		void updateMatrices();
+		bool ptInTriangle(const DoublePoint& pt, const DoublePoint& pt1, const DoublePoint& pt2, const DoublePoint& pt3);
 
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
@@ -172,6 +165,8 @@ namespace FIFE {
 		double m_yshift;
 		double m_scale;
 		double m_rotation;
+	private:
+		int orientation(const DoublePoint& pt, const DoublePoint& pt1, const DoublePoint& pt2);	
 	};
 }
 

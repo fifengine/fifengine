@@ -42,11 +42,12 @@ namespace FIFE {
 		const std::string& getName() const;
 		float getAdjacentCost(const Point& curpos, const Point& target);
 		unsigned int getCellSideCount() const { return 6; }
-		DoublePoint getOffset(const Point& curpos, const Point& target, double distance);
 		DoublePoint toElevationCoordinates(const DoublePoint& layer_coords);
 		Point toLayerCoordinates(const DoublePoint& elevation_coord);
 		DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord);
 		void getVertices(std::vector<DoublePoint>& vtx, const Point& cell);
+	private:
+		double getXOffsetMultiplier(double y);
 	};
 }
 

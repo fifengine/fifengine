@@ -69,4 +69,21 @@ namespace FIFE {
 	DoublePoint CellGrid::toElevationCoordinates(const Point& layer_coords) {
 		return toElevationCoordinates(intPt2doublePt(layer_coords));
 	}
+	
+	int CellGrid::orientation(const DoublePoint& pt, const DoublePoint& pt1, const DoublePoint& pt2) {
+		double o = (pt2.x - pt1.x) * (pt.y - pt1.y) - (pt.x - pt1.x) * (pt2.y - pt1.y);
+		if (o > 0.0) {
+			return 1;
+		} else if (o < 0.0) {
+			return -1;
+		}
+		return 0;
+	}
+	
+	bool CellGrid::ptInTriangle(const DoublePoint& pt, const DoublePoint& pt1, const DoublePoint& pt2, const DoublePoint& pt3) {
+		double o1 = orientation(pt1, pt2, pt);
+		double o2 = orientation(pt2, pt3, pt);
+		double o3 = orientation(pt3, pt1, pt);
+		return (o1 == o2) && (o2 == o3);
+	}
 }

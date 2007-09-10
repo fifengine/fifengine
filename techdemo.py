@@ -50,7 +50,7 @@ class World(object):
 		self.reactor = InstanceReactor()
 		logman = self.engine.getLogManager()
 		self.log = fifelog.LogManager(self.engine)
-		self.log.setVisibleModules('camera', 'instance')
+		self.log.setVisibleModules('hexgrid')
 		self.eventmanager = self.engine.getEventManager()
 		
 	def __del__(self):
@@ -59,10 +59,13 @@ class World(object):
 	def create_world(self):
 		_map = self.engine.getModel().addMap("map")
 		elev = _map.addElevation("elevation1")
-		self.grid = fife.SquareGrid(True)
-		self.layer = elev.addLayer("elevation1:ground", self.grid)
+		self.squaregrid = fife.SquareGrid(True)
+		self.hexgrid = fife.HexGrid()
+		self.tilelayer = elev.addLayer("elevation1:ground", self.squaregrid)
+		#self.instlayer = elev.addLayer("elevation1:move", self.hexgrid)
+		self.instlayer = elev.addLayer("elevation1:move", self.squaregrid)
 		self.target = fife.Location()
-		self.target.setLayer(self.layer)
+		self.target.setLayer(self.instlayer)
 		self.pather = fife.LinearPather()
 		
 	def create_stage(self):
@@ -72,7 +75,7 @@ class World(object):
 		self.ground.addStaticImage(0, imgid)
 		for y in xrange(-2,3):
 			for x in xrange(-2,3):
-				self.layer.addInstance(self.ground, fife.Point(x,y))
+				self.tilelayer.addInstance(self.ground, fife.Point(x,y))
 	
 	def create_dummy(self):
 		self.dummyObj = fife.Object("dummy")
@@ -84,12 +87,12 @@ class World(object):
 		for angle in angles:
 			animid = self.engine.getAnimationPool().addResourceFromFile(path + angle + '/animation.xml')
 			a.addAnimation(int(angle), animid)
-		self.dummy = self.layer.addInstance(self.dummyObj, fife.Point(0,0))
+		self.dummy = self.instlayer.addInstance(self.dummyObj, fife.Point(0,0))
 		self.dummy.addListener(self.reactor)
 		
 	def adjust_views(self):
 		camloc = fife.Location()
-		camloc.setLayer(self.layer)
+		camloc.setLayer(self.tilelayer)
 		camloc.setLayerCoordinates(fife.Point(0,0))
 		
 		self.camera = fife.Camera()

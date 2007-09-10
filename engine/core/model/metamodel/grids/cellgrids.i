@@ -20,7 +20,6 @@ namespace FIFE {
 		virtual const std::string& getName() const = 0;
 		virtual bool isAccessible(const Point& curpos, const Point& target) = 0;
 		virtual float getAdjacentCost(const Point& curpos, const Point& target) = 0;
-		virtual DoublePoint getOffset(const Point& curpos, const Point& target, double distance) = 0;
 		virtual unsigned int getCellSideCount() const = 0;
 		DoublePoint toElevationCoordinates(const Point& layer_coords);
 		virtual DoublePoint toElevationCoordinates(const DoublePoint& layer_coords) = 0;
@@ -46,7 +45,6 @@ namespace FIFE {
 		const std::string& getName() const;
 		float getAdjacentCost(const Point& curpos, const Point& target);
 		unsigned int getCellSideCount() const { return 6; }
-		DoublePoint getOffset(const Point& curpos, const Point& target, double distance);
 		DoublePoint toElevationCoordinates(const DoublePoint& layer_coords);
 		Point toLayerCoordinates(const DoublePoint& elevation_coord);
 		DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord);
@@ -62,7 +60,6 @@ namespace FIFE {
 		bool isAccessible(const Point& curpos, const Point& target);
 		float getAdjacentCost(const Point& curpos, const Point& target);
 		unsigned int getCellSideCount() const { return 4; }
-		DoublePoint getOffset(const Point& curpos, const Point& target, double distance);
 		DoublePoint toElevationCoordinates(const DoublePoint& layer_coords);
 		Point toLayerCoordinates(const DoublePoint& elevation_coord);
 		DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord);
