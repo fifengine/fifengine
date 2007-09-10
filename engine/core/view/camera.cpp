@@ -72,7 +72,7 @@ namespace FIFE {
 
 	DoublePoint Camera::toElevationCoordinates(Point screen_coords) {
 		screen_coords.x -= m_viewport.w / 2;
-		screen_coords.y += m_viewport.h / 2;
+		screen_coords.y -= m_viewport.h / 2;
 		return m_matrix * intPt2doublePt(screen_coords);
 	}
 
