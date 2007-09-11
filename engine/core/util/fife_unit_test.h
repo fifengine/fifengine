@@ -19,76 +19,22 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-// Standard C++ library includes
-#include <ctime>
-#include <vector> 
+#ifndef FIFE_UTIL_FIFE_UNIT_TEST_H
+#define FIFE_UTIL_FIFE_UNIT_TEST_H
 
-// Platform specific includes
-#include "util/fife_unit_test.h"
+// Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/version.hpp>
+#if BOOST_VERSION < 103400
+	#define BOOST_TEST_DYN_LINK
+	#define BOOST_TEST_MAIN
+#endif
+#include <boost/test/unit_test.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/rect.h"
 
-using boost::unit_test::test_suite;
-using namespace FIFE;
-
-void rectangle_intersection() {
-	Rect a(0,0,10,10);
-
-	std::vector<Rect> do_intersect;
-#define ADD_RECT(x,y,w,h) do_intersect.push_back( Rect(x,y,w,h) )
-
-	ADD_RECT(5,5,10,10);
-	ADD_RECT(-5,5,10,10);
-	ADD_RECT(-5,-5,10,10);
-	ADD_RECT(5,-5,10,10);
-
-	ADD_RECT(-5,5,20,1);
-	ADD_RECT(-5,5,10,1);
-
-	ADD_RECT(5,-5,1,20);
-	ADD_RECT(5,-5,1,10);
-
-	ADD_RECT(5,5,3,3);
-	
-	ADD_RECT(-5,-5,30,30);
-
-	for(size_t i=0; i<do_intersect.size(); ++i) {
-		BOOST_CHECK(a.intersects(do_intersect[i]));
-		BOOST_CHECK(do_intersect[i].intersects(a));
-	}	
-
-	std::vector<Rect> dont_intersect;
-
-#undef ADD_RECT
-#define ADD_RECT(x,y,w,h) dont_intersect.push_back( Rect(x,y,w,h) )
-
-	ADD_RECT(-5,-5,4,4);
-	ADD_RECT(-5,-5,40,4);
-	ADD_RECT(-5,-5,4,40);
-	ADD_RECT(-5,-5,4,4);
-
-	ADD_RECT(15,15,4,4);
-	ADD_RECT(15,15,40,4);
-	ADD_RECT(15,15,4,40);
-
-	for(size_t i=0; i<dont_intersect.size(); ++i) {
-		BOOST_CHECK(!a.intersects(dont_intersect[i]));
-		BOOST_CHECK(!dont_intersect[i].intersects(a));
-	}	
-
-}
-
-
-test_suite* init_unit_test_suite(int argc, char** const argv) {
-	test_suite* test = BOOST_TEST_SUITE("Rectangle Tests");
-
-	test->add( BOOST_TEST_CASE( &rectangle_intersection ),0 );
-
-	return test;
-}
+#endif
