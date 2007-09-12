@@ -47,7 +47,7 @@ namespace FIFE {
 		DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord);
 		void getVertices(std::vector<DoublePoint>& vtx, const Point& cell);
 	private:
-		double getXOffsetMultiplier(double y);
+		double getXZigzagOffset(double y);
 	};
 }
 
