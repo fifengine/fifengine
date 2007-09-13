@@ -19,37 +19,12 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_UTIL_FIFE_MATH_H
-#define FIFE_UTIL_FIFE_MATH_H
+#include "realtimesearch.h"
 
-// Standard C++ library includes
-#include <cmath>
+namespace FIFE {
+	std::vector<Location> RealTimeSearch::updateSearch() {
+		//TODO: Finish this function. The actual algorithm will go inside of this function.
 
-// Platform specific includes 
-
-// 3rd party library includes
-
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-
-
-// Sort out the missing round function in MSVC:
-#if defined( WIN32 ) && defined( _MSC_VER )
-inline double round(const double x) {
-	return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); 
+		return std::vector<Location>();
+	}
 }
-#endif
-
-#ifndef ABS
-#define ABS(x) ((x)<0?-(x):(x))
-
-#endif
-
-#ifndef M_PI
-#define M_PI        3.14159265358979323846
-
-#endif
-
-#endif // FIFE_UTIL_FIFE_MATH_H

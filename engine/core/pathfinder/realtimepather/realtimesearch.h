@@ -19,37 +19,25 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_UTIL_FIFE_MATH_H
-#define FIFE_UTIL_FIFE_MATH_H
+#ifndef FIFE_PATHFINDER_REALTIMESEARCH
+#define FIFE_PATHFINDER_REALTIMESEARCH
 
-// Standard C++ library includes
-#include <cmath>
+#include "pathfinder/search.h"
 
-// Platform specific includes 
+namespace FIFE {
 
-// 3rd party library includes
+	class Map;
 
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+	class RealTimeSearch : public Search {
+	public:
+		RealTimeSearch(int session_id, AbstractPather* pather) : Search(session_id, pather) {
+		}
 
+		virtual std::vector<Location> updateSearch();
+	private:
+		//TODO: Add pathfinding related stuff.
+	};
 
-// Sort out the missing round function in MSVC:
-#if defined( WIN32 ) && defined( _MSC_VER )
-inline double round(const double x) {
-	return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); 
 }
-#endif
-
-#ifndef ABS
-#define ABS(x) ((x)<0?-(x):(x))
 
 #endif
-
-#ifndef M_PI
-#define M_PI        3.14159265358979323846
-
-#endif
-
-#endif // FIFE_UTIL_FIFE_MATH_H

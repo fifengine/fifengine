@@ -19,37 +19,58 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_UTIL_FIFE_MATH_H
-#define FIFE_UTIL_FIFE_MATH_H
+#ifndef FIFE_PATHFINDER_SEARCH
+#define FIFE_PATHFINDER_SEARCH
 
-// Standard C++ library includes
-#include <cmath>
+#include <vector>
 
-// Platform specific includes 
+#include "model/structures/location.h"
 
-// 3rd party library includes
+namespace FIFE {
 
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+	class AbstractPather;
 
+	/** A base class that all searches must derive from.
+	 *
+	 */
+	class Search {
+	public:
+		/** Constructor.
+		 *
+		 */
+		Search(int session_id, AbstractPather* pather) : m_sessionId(session_id), m_pather(pather) {
+		}
 
-// Sort out the missing round function in MSVC:
-#if defined( WIN32 ) && defined( _MSC_VER )
-inline double round(const double x) {
-	return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); 
+		/** Retrieves the session id.
+		 *
+		 * @return The searches session id in the pather.
+		 */
+		int getSessionId() const {
+			return m_sessionId;
+		}
+
+		/** Retrieves the pather.
+		 *
+		 * @return A pointer to the abstract pather which
+		 */
+		AbstractPather* getPather() const {
+			return m_pather;
+		}
+
+		/** Updates the search and returns the next part of the path or the entire path if the
+		 * algorithm is offline.
+		 *
+		 * @return A vector of Location objects representing the path.
+		 */
+		virtual std::vector<Location> updateSearch() = 0;
+	private:
+		//An integer containing the session id for this search.
+		int m_sessionId;
+
+		//A pointer to the pather that owns this search.
+		AbstractPather* m_pather;
+	};
+
 }
-#endif
-
-#ifndef ABS
-#define ABS(x) ((x)<0?-(x):(x))
 
 #endif
-
-#ifndef M_PI
-#define M_PI        3.14159265358979323846
-
-#endif
-
-#endif // FIFE_UTIL_FIFE_MATH_H

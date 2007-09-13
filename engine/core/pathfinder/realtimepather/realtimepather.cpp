@@ -19,37 +19,26 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_UTIL_FIFE_MATH_H
-#define FIFE_UTIL_FIFE_MATH_H
+#include "realtimepather.h"
 
-// Standard C++ library includes
-#include <cmath>
+namespace FIFE {
 
-// Platform specific includes 
+	void RealTimePather::setMap(Map* map) {
 
-// 3rd party library includes
+		if(!map) {
+			return;
+		}
 
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+		//TODO: Put some additional error checking here. 
 
+		m_map = map;
+	}
 
-// Sort out the missing round function in MSVC:
-#if defined( WIN32 ) && defined( _MSC_VER )
-inline double round(const double x) {
-	return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); 
+	int RealTimePather::getNextLocations(const Location& curPos, const Location& target, 
+		std::vector<Location>& nextLocations, const int session_id) {
+			//TODO: Finish this function. This function will simply locate the search with the given
+			//session id and then update it and return the given path. If no session with given id exists
+			//create a new one.
+			return -1;
+	}
 }
-#endif
-
-#ifndef ABS
-#define ABS(x) ((x)<0?-(x):(x))
-
-#endif
-
-#ifndef M_PI
-#define M_PI        3.14159265358979323846
-
-#endif
-
-#endif // FIFE_UTIL_FIFE_MATH_H

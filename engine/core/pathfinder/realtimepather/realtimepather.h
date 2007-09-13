@@ -19,37 +19,57 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_UTIL_FIFE_MATH_H
-#define FIFE_UTIL_FIFE_MATH_H
+#ifndef FIFE_PATHFINDER_REALTIME
+#define FIFE_PATHFINDER_REALTIME
 
-// Standard C++ library includes
-#include <cmath>
+#include <map>
+#include <vector>
 
-// Platform specific includes 
+#include "model/structures/location.h"
+#include "model/structures/map.h"
+#include "model/metamodel/abstractpather.h"
 
-// 3rd party library includes
+namespace FIFE {
 
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
+	class Search;
 
+	class RealTimePather : public AbstractPather {
+	public:
+		RealTimePather() { }
 
-// Sort out the missing round function in MSVC:
-#if defined( WIN32 ) && defined( _MSC_VER )
-inline double round(const double x) {
-	return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); 
+		/** Sets the map that will be used for the search.
+		 *
+		 * @param map A pointer to the map to be used. 
+		 */
+		virtual void setMap(Map* map);
+
+		/** Retrieves the next locations in the search.
+		 *
+		 * @param curPos A reference to the current location of the requester.
+		 * @param target A reference to the target destination of the requester. 
+		 * @param nextLocations A reference to a vector that will be filled with
+		 *                      intermediate locations. 
+		 * @param session_id An integer value representing the session to use, -1
+		 *                   is the default value and is used to start a new session. 
+		 * @return The session id of the new session. 
+		 */
+		virtual int getNextLocations(const Location& curPos, const Location& target, 
+			std::vector<Location>& nextLocations, const int session_id = -1);
+
+	private:
+		typedef std::map<int, Search*> SessionMap;
+
+		//The map the search is running on.
+		Map*	   m_map;
+
+		//A map of currently running sessions (searches).
+		SessionMap m_sessions;
+
+		//The next free session id.
+		int m_nextfreeId;
+
+	};
+
 }
-#endif
-
-#ifndef ABS
-#define ABS(x) ((x)<0?-(x):(x))
 
 #endif
-
-#ifndef M_PI
-#define M_PI        3.14159265358979323846
-
-#endif
-
-#endif // FIFE_UTIL_FIFE_MATH_H
