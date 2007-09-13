@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "realtimepather.h"
+#include "pathfinder/search.h"
 
 namespace FIFE {
 
