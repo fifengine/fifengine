@@ -28,9 +28,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/logger.h"
+
 #include "cellgrid.h"
 
 namespace FIFE {
+	static Logger _log(LM_CELLGRID);
+
 	CellGrid::CellGrid():
 		m_matrix(),
 		m_inverse_matrix(),
@@ -84,6 +88,8 @@ namespace FIFE {
 		double o1 = orientation(pt1, pt2, pt);
 		double o2 = orientation(pt2, pt3, pt);
 		double o3 = orientation(pt3, pt1, pt);
-		return (o1 == o2) && (o2 == o3);
+		bool result = (o1 == o2) && (o2 == o3);
+		FL_DBG(_log, LMsg("ptInTriangle, pt=") << pt << " pt1=" << pt1 << " pt2=" << pt2 << " pt3=" << pt3 << " in=" << result);
+		return result;
 	}
 }

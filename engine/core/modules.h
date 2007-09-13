@@ -48,6 +48,8 @@ enum logmodule_t {
 	LM_INSTANCE,
 	LM_LOCATION,
 	LM_METAMODEL,
+	LM_CELLGRID,
+	LM_SQUAREGRID,
 	LM_HEXGRID,
 	LM_PATHFINDER,
 	LM_UTIL,
@@ -79,6 +81,8 @@ enum logmodule_t {
 		    {LM_INSTANCE, LM_STRUCTURES, "Instance"}, \
 		    {LM_LOCATION, LM_STRUCTURES, "Location"}, \
 		  {LM_METAMODEL, LM_MODEL, "Metamodel"}, \
+		    {LM_CELLGRID, LM_METAMODEL, "Cellgrid"}, \
+		    {LM_SQUAREGRID, LM_METAMODEL, "Squaregrid"}, \
 		    {LM_HEXGRID, LM_METAMODEL, "Hexgrid"}, \
 		{LM_PATHFINDER, LM_CORE, "Pathfinder"}, \
 		{LM_UTIL, LM_CORE, "Util"}, \

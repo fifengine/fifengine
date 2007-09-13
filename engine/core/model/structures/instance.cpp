@@ -218,7 +218,7 @@ namespace FIFE {
 		// what's the timeslice for this movement
 		unsigned int timedelta    = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
 		// how far we can travel
-		double distance_to_travel = (static_cast<float>(timedelta) / 1000.0) * m_actioninfo->m_speed;
+		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * m_actioninfo->m_speed;
 		// location to iterate based on pather locations + speed
 		DoublePoint iter_loc      = m_location.getExactLayerCoordinates();
 		// to calculate traveled distance

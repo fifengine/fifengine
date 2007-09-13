@@ -41,6 +41,7 @@ namespace FIFE {
 	static const double HEX_TO_CORNER = 0.5 / cos(M_PI / 6);
 	static const double HEX_EDGE_HALF = HEX_TO_CORNER * sin(M_PI / 6);
 	static const double VERTICAL_MULTIP = sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
+	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
 
 	HexGrid::HexGrid(): CellGrid() {
 		FL_DBG(_log, "Constructing new HexGrid");
@@ -117,83 +118,110 @@ namespace FIFE {
 	}
 
 	Point HexGrid::toLayerCoordinates(const DoublePoint& elevation_coord) {
-		FL_DBG(_log, LMsg("Converting elev coords ") << elevation_coord << " to int layer coords...");
+		FL_DBG(_log, LMsg("==============\nConverting elev coords ") << elevation_coord << " to int layer coords...");
 		DoublePoint elc = m_inverse_matrix * elevation_coord;
+		elc.y *= VERTICAL_MULTIP_INV;
 		DoublePoint lc = DoublePoint(floor(elc.x), floor(elc.y));
 		double dx = elc.x - lc.x;
 		double dy = elc.y - lc.y;
 		int x = static_cast<int>(lc.x);
 		int y = static_cast<int>(lc.y);
+		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
+		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
 		Point result;
-		// in even rows
+		
 		if ((y % 2) == 0) {
-			// in lower rect area
+			FL_DBG(_log, "In even row");
 			if ((1 - dy) < HEX_EDGE_HALF) {
-				result = Point(x+1, y+1);
+				FL_DBG(_log, "In lower rect area");
+				result = Point(x, y+1);
 			} 
-			// in upper rect area
 			else if (dy < HEX_EDGE_HALF) {
-				// right
+				FL_DBG(_log, "In upper rect area");
 				if (dx > 0.5) {
+					FL_DBG(_log, "...on right");
 					result = Point(x+1, y);
 				} 
-				// left
 				else {
+					FL_DBG(_log, "...on left");
 					result = Point(x, y);
 				}
 			} 
 			// in middle triangle area
 			else {
-				// in left triangles
+				FL_DBG(_log, "In middle triangle area");
 				if (dx < 0.5) {
-					if (ptInTriangle(DoublePoint(0, HEX_EDGE_HALF), DoublePoint(0, 1-HEX_EDGE_HALF), 
-					                DoublePoint(0.5, HEX_EDGE_HALF), DoublePoint(dx, dy))) {
+					FL_DBG(_log, "In left triangles");
+					if (ptInTriangle(DoublePoint(dx, dy),
+					                 DoublePoint(0, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 DoublePoint(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 DoublePoint(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
+					                 )) {
+						FL_DBG(_log, "..upper part");
 						result = Point(x, y);
 					} else {
+						FL_DBG(_log, "..lower part");
 						result = Point(x, y+1);
 					}
 				} else {
-					if (ptInTriangle(DoublePoint(1, HEX_EDGE_HALF), DoublePoint(1, 1-HEX_EDGE_HALF), 
-					                DoublePoint(0.5, HEX_EDGE_HALF), DoublePoint(dx, dy))) {
+					FL_DBG(_log, "In right triangles");
+					if (ptInTriangle(DoublePoint(dx, dy),
+					                 DoublePoint(1, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 DoublePoint(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 DoublePoint(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
+					                 )) {
+						FL_DBG(_log, "..upper part");
 						result = Point(x+1, y);
 					} else {
+						FL_DBG(_log, "..lower part");
 						result = Point(x, y+1);
 					}
 				}
 			}		
 		} 
-		// in uneven rows
 		else {
-			// in upper rect area
+			FL_DBG(_log, "In uneven row");
 			if (dy < HEX_EDGE_HALF) {
+				FL_DBG(_log, "In upper rect area");
 				result = Point(x, y);
 			} 
-			// in lower rect area
 			else if ((1 - dy) < HEX_EDGE_HALF) {
-				// right
+				FL_DBG(_log, "In lower rect area");
 				if (dx > 0.5) {
+					FL_DBG(_log, "...on right");
 					result = Point(x+1, y+1);
 				} 
-				// left
 				else {
+					FL_DBG(_log, "...on left");
 					result = Point(x, y+1);
 				}
 			} 
-			// in middle triangle area
 			else {
-				// in left triangles
+				FL_DBG(_log, "In middle triangle area");
 				if (dx < 0.5) {
-					if (ptInTriangle(DoublePoint(0, HEX_EDGE_HALF), DoublePoint(0, 1-HEX_EDGE_HALF), 
-					                DoublePoint(0.5, 1-HEX_EDGE_HALF), DoublePoint(dx, dy))) {
+					FL_DBG(_log, "In left triangles");
+					if (ptInTriangle(DoublePoint(dx, dy),
+					                 DoublePoint(0, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 DoublePoint(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
+					                 DoublePoint(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
+					                 )) {
+						FL_DBG(_log, "..lower part");
 						result = Point(x, y+1);
 					} else {
+						FL_DBG(_log, "..upper part");
 						result = Point(x, y);
 					}
 				} else {
-					if (ptInTriangle(DoublePoint(1, HEX_EDGE_HALF), DoublePoint(1, 1-HEX_EDGE_HALF), 
-					                DoublePoint(0.5, 1-HEX_EDGE_HALF), DoublePoint(dx, dy))) {
+					FL_DBG(_log, "In right triangles");
+					if (ptInTriangle(DoublePoint(dx, dy),
+					                 DoublePoint(1, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 DoublePoint(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 DoublePoint(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
+					                 )) {
+					        FL_DBG(_log, "..lower part");
 						result = Point(x+1, y+1);
 					} else {
+						FL_DBG(_log, "..upper part");
 						result = Point(x, y);
 					}
 				}
@@ -209,7 +237,6 @@ namespace FIFE {
 		double x = static_cast<double>(cell.x);
 		double y = static_cast<double>(cell.y);
 		double horiz_shift = 0;
-		double vert_shift = 1 / VERTICAL_MULTIP;
 		if (cell.y % 2 != 0) {
 			horiz_shift = HEX_TO_EDGE;
 			FL_DBG(_log, "on uneven row");
@@ -218,27 +245,27 @@ namespace FIFE {
 		
 		#define ADD_PT(_x, _y) vtx.push_back(DoublePoint(_x, _y));
 		// FL_DBG(_log, LMsg("Added point ") << _x << ", " << _y)
-		ty = y - vert_shift * HEX_EDGE_HALF;
+		ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
 		
-		ty = y - vert_shift * HEX_TO_CORNER;
+		ty = y - VERTICAL_MULTIP_INV * HEX_TO_CORNER;
 		tx = x - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
 		
-		ty = y - vert_shift * HEX_EDGE_HALF;
+		ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
 		
-		ty = y + vert_shift * HEX_EDGE_HALF;
+		ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
 		
-		ty = y + vert_shift * HEX_TO_CORNER;
+		ty = y + VERTICAL_MULTIP_INV * HEX_TO_CORNER;
 		tx = x - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
 		
-		ty = y + vert_shift * HEX_EDGE_HALF;
+		ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
 	}

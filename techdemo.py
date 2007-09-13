@@ -62,8 +62,8 @@ class World(object):
 		self.squaregrid = fife.SquareGrid(True)
 		self.hexgrid = fife.HexGrid()
 		self.tilelayer = elev.addLayer("elevation1:ground", self.squaregrid)
-		#self.instlayer = elev.addLayer("elevation1:move", self.hexgrid)
-		self.instlayer = elev.addLayer("elevation1:move", self.squaregrid)
+		self.instlayer = elev.addLayer("elevation1:move", self.hexgrid)
+		#self.instlayer = elev.addLayer("elevation1:move", self.squaregrid)
 		self.target = fife.Location()
 		self.target.setLayer(self.instlayer)
 		self.pather = fife.LinearPather()
@@ -112,7 +112,7 @@ class World(object):
 		self.target.setLayerCoordinates(fife.Point(1,0))
 		self.dummy.act('dummy:walk', self.target, 0.3)
 
-		for i in xrange(1000):
+		for i in xrange(5000):
 			self.engine.pump()
 #			if i == 200:
 #				self.target.setLayerCoordinates(fife.Point(-1,0))

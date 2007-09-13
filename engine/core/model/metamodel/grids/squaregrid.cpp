@@ -30,10 +30,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/fife_math.h"
+#include "util/logger.h"
 
 #include "squaregrid.h"
 
 namespace FIFE {
+	static Logger _log(LM_SQUAREGRID);
+
 	SquareGrid::SquareGrid(bool diagonals_accessible): 
 		CellGrid(),
 		m_diagonals_accessible(diagonals_accessible) {

@@ -67,7 +67,7 @@ class TestLocation(unittest.TestCase):
 		self.loc1.setLayerCoordinates(P(1,1))
 		pt = self.loc1.getElevationCoordinates()
 		self.assert_(is_near(pt.x, 7.0))
-		self.assert_(is_near(pt.y, 3.0))
+		self.assert_(is_near(pt.y, -3.0))
 
 class TestHexGrid(unittest.TestCase):
 	def setUp(self):
@@ -81,17 +81,69 @@ class TestHexGrid(unittest.TestCase):
 		self.loc2.setLayer(self.square_layer1)
 		self.engine = fife.Engine()
 		self.log = fifelog.LogManager(self.engine)
-		self.log.setVisibleModules('hexgrid')
+		#self.log.setVisibleModules('hexgrid', 'cellgrid')
 
 	def tearDown(self):
 		del self.engine
-	
-	def _testHexGrid(self):
-		pass
+		del self.log
 
+	def testHexGrid0row(self):
+		self.loc1.setElevationCoordinates(D(-2,0))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-2,0))
+		
+		self.loc1.setElevationCoordinates(D(-1,0))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-1,0))
+		
+		self.loc1.setElevationCoordinates(D(0,0))
+		self.assert_(self.loc1.getLayerCoordinates() == P(0,0))
 
+		self.loc1.setElevationCoordinates(D(1,0))
+		self.assert_(self.loc1.getLayerCoordinates() == P(1,0))
 
-TEST_CLASSES = [TestHexGrid]
+		self.loc1.setElevationCoordinates(D(2,0))
+		self.assert_(self.loc1.getLayerCoordinates() == P(2,0))
+
+	def testHexGrid1row(self):
+		self.loc1.setElevationCoordinates(D(-1.1,1))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-2,1))
+		
+		self.loc1.setElevationCoordinates(D(-0.5,1))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-1,1))
+		
+		self.loc1.setElevationCoordinates(D(-0.1,1))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-1,1))
+		
+		self.loc1.setElevationCoordinates(D(0.1,1))
+		self.assert_(self.loc1.getLayerCoordinates() == P(0,1))
+
+	def testHexGridm1row(self):
+		self.loc1.setElevationCoordinates(D(-1.1,-1))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-2,-1))
+		
+		self.loc1.setElevationCoordinates(D(-0.5,-1))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-1,-1))
+		
+		self.loc1.setElevationCoordinates(D(-0.1,-1))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-1,-1))
+		
+		self.loc1.setElevationCoordinates(D(0.1,-1))
+		self.assert_(self.loc1.getLayerCoordinates() == P(0,-1))
+
+	def testEdgeHits(self):
+		self.loc1.setElevationCoordinates(D(0.5,0.5))
+		self.assert_(self.loc1.getLayerCoordinates() == P(0,1))
+		
+		self.loc1.setElevationCoordinates(D(0.1,0.4))
+		#print "______''___" + str(self.loc1.getLayerCoordinates())
+		self.assert_(self.loc1.getLayerCoordinates() == P(0,0))
+		
+		self.loc1.setElevationCoordinates(D(0.1,-0.4))
+		self.assert_(self.loc1.getLayerCoordinates() == P(0,0))
+
+		self.loc1.setElevationCoordinates(D(-0.5,-0.5))
+		self.assert_(self.loc1.getLayerCoordinates() == P(-1,-1))
+
+TEST_CLASSES = [TestHexGrid, TestLocation]
 
 if __name__ == '__main__':
     unittest.main()

@@ -58,7 +58,7 @@ subgraph cluster_7 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "pathfinder/linearpather"
+    "pathfinder"; "pathfinder/linearpather"; "pathfinder/realtimepather"
     label = "pathfinder";
 }
 subgraph cluster_8 {
@@ -174,8 +174,12 @@ subgraph cluster_12 {
     "model/structures" -> "model/metamodel"
     "model/structures" -> "model/metamodel/grids"
     "model/structures" -> "util"
+    "pathfinder" -> "model/structures"
     "pathfinder/linearpather" -> "model/metamodel"
     "pathfinder/linearpather" -> "model/structures"
+    "pathfinder/realtimepather" -> "model/metamodel"
+    "pathfinder/realtimepather" -> "model/structures"
+    "pathfinder/realtimepather" -> "pathfinder"
     "util" -> "engine/core"
     "util/resource" -> "util"
     "util/time" -> "util"
