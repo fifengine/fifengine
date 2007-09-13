@@ -27,8 +27,8 @@
 #define FIFE_UTIL_MATRIX_H
 
 // Standard C++ library includes
+#include <cassert>
 #include <iostream>
-#include <assert.h>
 
 // Platform specific includes
 #include "fife_math.h"
