@@ -57,18 +57,25 @@ namespace FIFE {
 			return m_pather;
 		}
 
+		bool isFinished() const {
+			return m_isFinished;
+		}
+
 		/** Updates the search and returns the next part of the path or the entire path if the
 		 * algorithm is offline.
 		 *
 		 * @return A vector of Location objects representing the path.
 		 */
 		virtual std::vector<Location> updateSearch() = 0;
-	private:
+	protected:
 		//An integer containing the session id for this search.
 		int m_sessionId;
 
 		//A pointer to the pather that owns this search.
 		AbstractPather* m_pather;
+
+		//A boolean that should be set when the search has finished running.
+		bool m_isFinished;
 	};
 
 }
