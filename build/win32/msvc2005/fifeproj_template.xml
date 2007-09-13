@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\engine;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
+				AdditionalIncludeDirectories="..\..\..\engine\core;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;HAVE_OPENGL;SCRIPTENGINE_LUA;GUICHAN_VERSION=6;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -107,7 +107,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\engine;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
+				AdditionalIncludeDirectories="..\..\..\engine\core;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_OPENGL;SCRIPTENGINE_LUA;GUICHAN_VERSION=6;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
