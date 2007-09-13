@@ -39,6 +39,31 @@ namespace FIFE {
 			//TODO: Finish this function. This function will simply locate the search with the given
 			//session id and then update it and return the given path. If no session with given id exists
 			//create a new one.
+			
+			if(session_id != -1) {
+				//search session map for id.
+				SessionMap::iterator i = m_sessions.find(session_id);
+
+				if( i != m_sessions.end() ) {
+					//update search.
+					nextLocations = i->second->updateSearch();
+
+					//If the search has finished terminate the session.
+					if(i->second->isFinished()) {
+
+						m_sessions.erase(i);
+
+						return -1;
+
+					}
+
+					return session_id;
+				}
+			}
+
+			//TODO: Finish this function.
+
+
 			return -1;
 	}
 }
