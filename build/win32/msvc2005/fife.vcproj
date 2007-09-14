@@ -238,6 +238,8 @@
 					<File RelativePath="..\..\..\engine\core\pathfinder\realtimepather\realtimsearch.cpp"></File>
 				</Filter>
 				<File RelativePath="..\..\..\engine\core\pathfinder\search.h"></File>
+				<File RelativePath="..\..\..\engine\core\pathfinder\searchspace.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\pathfinder\searchspace.h"></File>
 			</Filter>
 			<Filter Name="util">
 				<File RelativePath="..\..\..\engine\core\util\angles.cpp"></File>

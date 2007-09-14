@@ -739,6 +739,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\pathfinder\searchspace.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\pathfinder\searchspace.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\util\angles.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>

@@ -37,6 +37,9 @@ namespace FIFE {
 			//TODO: Finish this function. This function will simply locate the search with the given
 			//session id and then update it and return the given path. If no session with given id exists
 			//create a new one.
+			if(curPos == target) {
+				return -1;
+			}
 			if(session_id != -1) {
 				//search session map for id.
 				SessionMap::iterator i = m_sessions.find(session_id);
@@ -54,7 +57,7 @@ namespace FIFE {
 				}
 			}
 			int newSessionId = m_nextFreeSessionId++;
-			SessionMap::value_type newSession(newSessionId, new RealTimeSearch(session_id, curPos, target, this));
+			SessionMap::value_type newSession(newSessionId, new RealTimeSearch(newSessionId, curPos, target, this));
 			m_sessions.insert(newSession);
 			return newSessionId;
 	}

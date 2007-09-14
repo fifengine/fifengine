@@ -28,6 +28,10 @@ namespace FIFE {
 
 	class Map;
 
+	/** RealTimeSearch using A*
+	 *
+	 * For now this class uses offline A*, however eventually this will be switched over to RTA*.
+	 */
 	class RealTimeSearch : public Search {
 	public:
 		RealTimeSearch(int session_id, const Location& from, const Location& to, AbstractPather* pather) 
@@ -36,7 +40,12 @@ namespace FIFE {
 
 		virtual std::vector<Location> updateSearch();
 	private:
-		//TODO: Add pathfinding related stuff.
+		//The shortest path tree.
+		std::vector<int> m_spt;
+		//The search frontier.
+		std::vector<int> m_sf;
+
+		//TODO: Add more pathfinding related stuff.
 	};
 
 }
