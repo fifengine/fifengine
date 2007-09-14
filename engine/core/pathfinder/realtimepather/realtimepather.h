@@ -27,7 +27,7 @@
 
 #include "model/structures/location.h"
 #include "model/structures/map.h"
-#include "pathfinder/abstractpather.h"
+#include "model/metamodel/abstractpather.h"
 
 namespace FIFE {
 
