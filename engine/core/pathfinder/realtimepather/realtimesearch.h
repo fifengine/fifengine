@@ -30,7 +30,8 @@ namespace FIFE {
 
 	class RealTimeSearch : public Search {
 	public:
-		RealTimeSearch(int session_id, AbstractPather* pather) : Search(session_id, pather) {
+		RealTimeSearch(int session_id, const Location& from, const Location& to, AbstractPather* pather) 
+			: Search(session_id, from, to, pather) {
 		}
 
 		virtual std::vector<Location> updateSearch();

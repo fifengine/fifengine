@@ -35,7 +35,7 @@ namespace FIFE {
 
 	class RealTimePather : public AbstractPather {
 	public:
-		RealTimePather() { }
+		RealTimePather() : m_map(0), m_nextFreeSessionId(0) { }
 
 		/** Sets the map that will be used for the search.
 		 *
@@ -56,6 +56,16 @@ namespace FIFE {
 		virtual int getNextLocations(const Location& curPos, const Location& target, 
 			std::vector<Location>& nextLocations, const int session_id = -1);
 
+		/** Cancels a given session.
+		 *
+		 * This function is called when (for instance) the user changes their mind about
+		 * a destination while the agent is already moving, the old session needs to be
+		 * cancelled and a new one created. 
+		 * 
+		 * @param session_id The id of the session to cancel.
+		 * @return A boolean to signify whether the session was successfully found and cancelled.
+		 */
+		virtual bool cancelSession(const int session_id);
 	private:
 		typedef std::map<int, Search*> SessionMap;
 
@@ -66,7 +76,7 @@ namespace FIFE {
 		SessionMap m_sessions;
 
 		//The next free session id.
-		int m_nextfreeId;
+		int m_nextFreeSessionId;
 
 	};
 

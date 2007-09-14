@@ -47,7 +47,9 @@ namespace FIFE {
 		virtual void setMap(Map* map) {}
 
 		virtual int getNextLocations(const Location& curpos, const Location& target, 
-					     std::vector<Location>& nextlocations, const int session_id=-1);		
+					     std::vector<Location>& nextlocations, const int session_id=-1);
+
+		virtual bool cancelSession(const int session_id) { return false; }
 	};
 }
 

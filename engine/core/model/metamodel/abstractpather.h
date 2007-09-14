@@ -60,6 +60,12 @@ namespace FIFE {
 		 */
 		virtual int getNextLocations(const Location& curpos, const Location& target, 
 		                             std::vector<Location>& nextlocations, const int session_id=-1) = 0;
+
+		/** Cancels the given session.
+		 *
+		 * @param session_id The id of the session to cancel.
+		 */
+		virtual bool cancelSession(const int session_id) = 0;
 	};
 }
 

@@ -35,10 +35,23 @@ namespace FIFE {
 	 */
 	class Search {
 	public:
-		/** Constructor.
+		/** An enumeration of the different status the search can be in.
 		 *
 		 */
-		Search(int session_id, AbstractPather* pather) : m_sessionId(session_id), m_pather(pather) {
+		enum SearchStatus {
+			search_status_failed = -2,
+			search_status_complete = -1,
+			search_status_incomplete 
+		};
+		/** Constructor.
+		 *
+		 * @param session_id The id in the pather that references this session.
+		 * @param from The location where the search should be started from.
+		 * @param to The location where the search should finish.
+		 * @param pather A pointer to the pather controlling this session.
+		 */
+		Search(int session_id, const Location& from, const Location& to, AbstractPather* pather) 
+			: m_sessionId(session_id), m_pather(pather), m_status(search_status_incomplete) {
 		}
 
 		/** Retrieves the session id.
@@ -57,8 +70,12 @@ namespace FIFE {
 			return m_pather;
 		}
 
-		bool isFinished() const {
-			return m_isFinished;
+		/** A small function which returns the current status of the search.
+		 *
+		 * @return An integer value representing the status, which is enumerated by this class.
+		 */
+		int getSearchStatus() const {
+			return m_status;
 		}
 
 		/** Updates the search and returns the next part of the path or the entire path if the
@@ -68,14 +85,20 @@ namespace FIFE {
 		 */
 		virtual std::vector<Location> updateSearch() = 0;
 	protected:
+		//A location object representing where the search started.
+		Location		m_to; 
+
+		//A location object representing where the search ended.
+		Location		m_from;
+
 		//An integer containing the session id for this search.
-		int m_sessionId;
+		int				m_sessionId;
 
 		//A pointer to the pather that owns this search.
 		AbstractPather* m_pather;
 
-		//A boolean that should be set when the search has finished running.
-		bool m_isFinished;
+		//An enumeration of the searches current status.
+		SearchStatus	m_status;
 	};
 
 }
