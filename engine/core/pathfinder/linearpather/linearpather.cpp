@@ -35,14 +35,14 @@ namespace FIFE {
 		assert(curpos.getElevation() == target.getElevation());
 		assert(curpos.getLayer() == target.getLayer());
 		
-		Point curpt = curpos.getLayerCoordinates();
-		Point tgtpt = target.getLayerCoordinates();
+		ModelCoordinate curpt = curpos.getLayerCoordinates();
+		ModelCoordinate tgtpt = target.getLayerCoordinates();
 
 		int dx = tgtpt.x - curpt.x;
 		int dy = tgtpt.y - curpt.y;
 
 		Location nextnode(curpos);
-		Point p = nextnode.getLayerCoordinates();
+		ModelCoordinate p = nextnode.getLayerCoordinates();
 		if (dx > 0) {
 			p.x += 1;
 		}

@@ -33,8 +33,8 @@ class ActionTests(unittest.TestCase):
 		self.ground.img = self.engine.getImagePool().getImage(imgid)
 		for y in xrange(-2,3):
 			for x in xrange(-2,3):
-				self.layer.addInstance(self.ground, fife.Point(x,y))
-		self.inst = self.layer.addInstance(self.obj, fife.Point(-2,-2))
+				self.layer.addInstance(self.ground, fife.ModelCoordinate(x,y))
+		self.inst = self.layer.addInstance(self.obj, fife.ModelCoordinate(-2,-2))
 			
 	def tearDown(self):
 		del self.engine
@@ -65,7 +65,7 @@ class ActionTests(unittest.TestCase):
 	def testWalkAround(self):
 		camloc = fife.Location()
 		camloc.setLayer(self.layer)
-		camloc.setLayerCoordinates(fife.Point(0,0))
+		camloc.setLayerCoordinates(fife.ModelCoordinate(0,0))
 		
 		cam = fife.Camera()
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
@@ -79,7 +79,7 @@ class ActionTests(unittest.TestCase):
 		
 		self.engine.initializePumping()
 
-		self.target.setLayerCoordinates(fife.Point(2,-2))	
+		self.target.setLayerCoordinates(fife.ModelCoordinate(2,-2))	
 		self.inst.act('walk', self.target, 0.9)
 		targets = (
 			(2,0), (2,-1), (2,-2), (1,-2),
@@ -89,11 +89,11 @@ class ActionTests(unittest.TestCase):
 		for target in targets:
 			print "============> in 0,0"
 			l = self.inst.getLocation()
-			l.setLayerCoordinates(fife.Point(0,0))
+			l.setLayerCoordinates(fife.ModelCoordinate(0,0))
 			self.inst.setLocation(l)
-			self.target.setLayerCoordinates(fife.Point(*target))
+			self.target.setLayerCoordinates(fife.ModelCoordinate(*target))
 			self.inst.act('walk', self.target, 0.9)
-			for i in xrange(100):
+			for i in xrange(10):
 				self.engine.pump()
 		
 		self.engine.finalizePumping()

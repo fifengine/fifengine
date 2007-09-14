@@ -36,6 +36,8 @@
 
 namespace FIFE {
 
+	typedef Point3D ScreenPoint;
+
 	/** Camera describes properties of a view port shown in the main screen
 	 *  Main screen can have multiple cameras active simultanously
 	 *  Different cameras can have different properties, like location
@@ -135,12 +137,12 @@ namespace FIFE {
 		/** Transforms given point from screen coordinates to elevation coordinates
 		 *  @return point in elevation coordinates
 		 */
-		DoublePoint toElevationCoordinates(Point screen_coords);
+		ExactModelCoordinate toElevationCoordinates(ScreenPoint screen_coords);
 
 		/** Transforms given point from elevation coordinates to screen coordinates
 		 *  @return point in screen coordinates
 		 */
-		Point toScreenCoordinates(DoublePoint elevation_coords);
+		ScreenPoint toScreenCoordinates(ExactModelCoordinate elevation_coords);
 
 	private:
 		void updateMatrices();

@@ -33,7 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/point.h"
+#include "model/metamodel/modelcoords.h"
 #include "util/attributedclass.h"
 #include "model/metamodel/object.h"
 
@@ -109,7 +109,7 @@ namespace FIFE {
 
 			/** Add an instance of an object at a specific position
 			 */
-			Instance* addInstance(Object* object, const Point& p);
+			Instance* addInstance(Object* object, const ModelCoordinate& p);
 
 			/** Remove an instance from the layer
 			 */

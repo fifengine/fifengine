@@ -22,7 +22,7 @@ class TestModelView(unittest.TestCase):
 
 		self.camloc = fife.Location()
 		self.camloc.setLayer(self.layer)
-		self.camloc.setLayerCoordinates(fife.Point(5,0))
+		self.camloc.setLayerCoordinates(fife.ModelCoordinate(5,0))
 
 	def tearDown(self):
 		del self.engine

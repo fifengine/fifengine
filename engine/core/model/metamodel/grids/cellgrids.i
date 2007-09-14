@@ -5,10 +5,10 @@
 #include "model/metamodel/grids/squaregrid.h"
 %}
 
-%include "util/point.i"
+%include "model/metamodel/modelcoords.i"
 
 namespace std {
-	%template(PointVector) vector<FIFE::Point>;
+	%template(ModelCoordinateVector) vector<FIFE::ModelCoordinate>;
 }
 
 namespace FIFE {
@@ -16,16 +16,16 @@ namespace FIFE {
 	public:
 		CellGrid();
 		virtual ~CellGrid();
-		void getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates);
+		void getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates);
 		virtual const std::string& getName() const = 0;
-		virtual bool isAccessible(const Point& curpos, const Point& target) = 0;
-		virtual float getAdjacentCost(const Point& curpos, const Point& target) = 0;
+		virtual bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
+		virtual float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 		virtual unsigned int getCellSideCount() const = 0;
-		DoublePoint toElevationCoordinates(const Point& layer_coords);
-		virtual DoublePoint toElevationCoordinates(const DoublePoint& layer_coords) = 0;
-		virtual Point toLayerCoordinates(const DoublePoint& elevation_coord) = 0;
-		virtual DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord) = 0;
-		virtual void getVertices(std::vector<DoublePoint>& vtx, const Point& cell) = 0;
+		ExactModelCoordinate toElevationCoordinates(const ModelCoordinate& layer_coords);
+		virtual ExactModelCoordinate toElevationCoordinates(const ExactModelCoordinate& layer_coords) = 0;
+		virtual ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& elevation_coord) = 0;
+		virtual ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord) = 0;
+		virtual void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) = 0;
 		void setXShift(const double& xshift);
 		const double getXShift() const;
 		void setYShift(const double yshift);
@@ -41,14 +41,14 @@ namespace FIFE {
 		HexGrid();
 		virtual ~HexGrid();
 
-		bool isAccessible(const Point& curpos, const Point& target);
+		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		const std::string& getName() const;
-		float getAdjacentCost(const Point& curpos, const Point& target);
+		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		unsigned int getCellSideCount() const { return 6; }
-		DoublePoint toElevationCoordinates(const DoublePoint& layer_coords);
-		Point toLayerCoordinates(const DoublePoint& elevation_coord);
-		DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord);
-		void getVertices(std::vector<DoublePoint>& vtx, const Point& cell);
+		ExactModelCoordinate toElevationCoordinates(const ExactModelCoordinate& layer_coords);
+		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& elevation_coord);
+		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord);
+		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
 	};
 
 	class SquareGrid: public CellGrid {
@@ -57,12 +57,12 @@ namespace FIFE {
 		virtual ~SquareGrid();
 
 		const std::string& getName() const;
-		bool isAccessible(const Point& curpos, const Point& target);
-		float getAdjacentCost(const Point& curpos, const Point& target);
+		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
+		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		unsigned int getCellSideCount() const { return 4; }
-		DoublePoint toElevationCoordinates(const DoublePoint& layer_coords);
-		Point toLayerCoordinates(const DoublePoint& elevation_coord);
-		DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord);
-		void getVertices(std::vector<DoublePoint>& vtx, const Point& cell);
+		ExactModelCoordinate toElevationCoordinates(const ExactModelCoordinate& layer_coords);
+		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& elevation_coord);
+		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord);
+		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
 	};
 }

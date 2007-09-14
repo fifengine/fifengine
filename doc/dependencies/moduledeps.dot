@@ -27,6 +27,7 @@ digraph "source tree" {
     "loaders" -> "xml"
     "model" -> "util"
     "pathfinder" -> "model"
+    "pathfinder" -> "util"
     "util" -> "engine"
     "vfs" -> "util"
     "video" -> "util"

@@ -19,55 +19,22 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_PATHFINDER_SEARCHSPACE
-#define FIFE_PATHFINDER_SEARCHSPACE
+#ifndef FIFE_MODELCOORDS_H
+#define FIFE_MODELCOORDS_H
 
-#include "model/structures/location.h"
+// Standard C++ library includes
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "util/point.h"
 
 namespace FIFE {
-
-	class SearchSpace {
-	public:
-		SearchSpace(const int upperX, const int upperY, const int lowerX, const int lowerY);
-
-		int getUpperX() const {
-			return m_upperX;
-		}
-
-		int getUpperY() const {
-			return m_upperY;
-		}
-
-		int getLowerX() const {
-			return m_lowerX;
-		}
-
-		int getLowerY() const {
-			return m_lowerY;
-		}
-
-		int getWidth() const { 
-			return m_upperX - m_lowerX;
-		}
-
-		int getHeight() const {
-			return m_upperY - m_lowerY;
-		}
-
-		bool isInSearchSpace(const Location& location) const;
-
-		Location translateToSearchSpace(const Location& location) const;
-	private:
-		//The boundries of the search space.
-		int m_upperX;
-		int m_upperY;
-		int m_lowerX;
-		int m_lowerY;
-
-		//TODO: Expand this to include elevation information.
-	};
-
+	typedef DoublePoint3D ExactModelCoordinate;
+	typedef Point3D ModelCoordinate;
 }
-
 
 #endif

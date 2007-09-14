@@ -117,20 +117,20 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(layer.hasInstances(), 0)
 		#self.assertEqual(layer.getElevation(), elev)
 
-		inst = layer.addInstance(obj1, fife.Point(4,4))
-		layer.addInstance(obj2, fife.Point(5,6))
-		layer.addInstance(obj2, fife.Point(5,4))
+		inst = layer.addInstance(obj1, fife.ModelCoordinate(4,4))
+		layer.addInstance(obj2, fife.ModelCoordinate(5,6))
+		layer.addInstance(obj2, fife.ModelCoordinate(5,4))
 		
 		query = layer.getInstancesByString("Name", "Goon")
 		self.assertEqual(len(query), 2)
 		self.assertEqual(len(layer.getInstances()), 3)
 
 		self.assertEqual(query[0].get_string("Name"), "Goon")
-		p1 = fife.Point(4,4)
+		p1 = fife.ModelCoordinate(4,4)
 		print p1.x, p1.y
 		p2 = inst.getLocation().getLayerCoordinates()
 		print p2.x, p2.y
-		self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.Point(4,4))
+		self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4,4))
 		
 	def testMetaModel(self):
 		dat1 = self.metamodel.addDataset("dataset003")
@@ -267,12 +267,12 @@ class ActivityTests(unittest.TestCase):
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.layer)
-		self.target.setPosition(fife.Point(10,10))
+		self.target.setPosition(fife.ModelCoordinate(10,10))
 		
 		self.obj = fife.Object("object010")
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
-		self.inst = self.layer.addInstance(self.obj, fife.Point(4,4))
+		self.inst = self.layer.addInstance(self.obj, fife.ModelCoordinate(4,4))
 		self.action = self.obj.addAction('action010', 'run')
 		self.action.addAnimation(0, 1)
 		self.action.thisown = 0
@@ -286,22 +286,22 @@ class ActivityTests(unittest.TestCase):
 		self.assert_(self.listener.finished)
 
 	def testNonMovingAction(self):
-		self.inst.act('run', fife.Point(0,0))
+		self.inst.act('run', fife.ModelCoordinate(0,0))
 		self.inst.update()
 		self.assert_(self.listener.finished)
 
 class GridTests(unittest.TestCase):
 	def _testgrid(self, grid, curpos, access, cost):
 		for k, v in access.items():
-			self.assertEqual(grid.isAccessible(fife.Point(*curpos), fife.Point(*k)), v)
+			self.assertEqual(grid.isAccessible(fife.ModelCoordinate(*curpos), fife.ModelCoordinate(*k)), v)
 		for k, v in cost.items():
-			self.assertEqual(int(10000 * grid.getAdjacentCost(fife.Point(*curpos), fife.Point(*k))), 
+			self.assertEqual(int(10000 * grid.getAdjacentCost(fife.ModelCoordinate(*curpos), fife.ModelCoordinate(*k))), 
 			                 int(10000 * v))
 		
-		curpos = fife.Point(*curpos)
-		accessiblepts = fife.PointVector()
+		curpos = fife.ModelCoordinate(*curpos)
+		accessiblepts = fife.ModelCoordinateVector()
 		grid.getAccessibleCoordinates(curpos, accessiblepts)
-		costpts = [fife.Point(*pt) for pt in cost.keys()]
+		costpts = [fife.ModelCoordinate(*pt) for pt in cost.keys()]
 		for pt in costpts:
 			self.assert_(pt in accessiblepts)
 		for pt in accessiblepts:

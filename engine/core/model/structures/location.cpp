@@ -91,36 +91,36 @@ namespace FIFE {
 		return m_layer;
 	}
 	
-	void Location::setExactLayerCoordinates(const DoublePoint& coordinates) throw(NotSet) {
+	void Location::setExactLayerCoordinates(const ExactModelCoordinate& coordinates) throw(NotSet) {
 		if (!isValid()) {
 			throw NotSet(INVALID_LAYER_SET);
 		}
 		m_elevation_coords = m_layer->getCellGrid()->toElevationCoordinates(coordinates);
 	}
 	
-	void Location::setLayerCoordinates(const Point& coordinates) throw(NotSet) {
+	void Location::setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet) {
 		if (!isValid()) {
 			throw NotSet(INVALID_LAYER_SET);
 		}
 		m_elevation_coords = m_layer->getCellGrid()->toElevationCoordinates(coordinates);
 	}
 	
-	void Location::setElevationCoordinates(const DoublePoint& coordinates) {
+	void Location::setElevationCoordinates(const ExactModelCoordinate& coordinates) {
 		if (!isValid()) {
 			throw NotSet(INVALID_LAYER_SET);
 		}
 		m_elevation_coords = coordinates;
 	}
 	
-	DoublePoint Location::getExactLayerCoordinates() const throw(NotSet) {
+	ExactModelCoordinate Location::getExactLayerCoordinates() const throw(NotSet) {
 		return getExactLayerCoordinates(m_layer);
 	}
 	
-	Point Location::getLayerCoordinates() const throw(NotSet) {
+	ModelCoordinate Location::getLayerCoordinates() const throw(NotSet) {
 		return getLayerCoordinates(m_layer);
 	}
 	
-	DoublePoint Location::getElevationCoordinates() const {
+	ExactModelCoordinate Location::getElevationCoordinates() const {
 		return m_elevation_coords;
 	}
 	
@@ -132,14 +132,14 @@ namespace FIFE {
 		return (layer && layer->getCellGrid());
 	}
 	
-	DoublePoint Location::getExactLayerCoordinates(const Layer* layer) const throw(NotSet) {
+	ExactModelCoordinate Location::getExactLayerCoordinates(const Layer* layer) const throw(NotSet) {
 		if (!isValid(layer)) {
 			throw NotSet(INVALID_LAYER_GET);
 		}
 		return layer->getCellGrid()->toExactLayerCoordinates(m_elevation_coords);
 	}
 	
-	Point Location::getLayerCoordinates(const Layer* layer) const throw(NotSet) {
+	ModelCoordinate Location::getLayerCoordinates(const Layer* layer) const throw(NotSet) {
 		if (!isValid(layer)) {
 			throw NotSet(INVALID_LAYER_GET);
 		}
@@ -147,14 +147,14 @@ namespace FIFE {
 	}
 	
 	double Location::getCellOffsetDistance() const {
-		DoublePoint pt  = getExactLayerCoordinates();
+		ExactModelCoordinate pt  = getExactLayerCoordinates();
 		double dx = pt.x - static_cast<double>(static_cast<int>(pt.x));
 		double dy = pt.y - static_cast<double>(static_cast<int>(pt.y));
 		return sqrt(dx*dx + dy*dy);
 	}
 	
 	std::ostream& operator<<(std::ostream& os, const Location& l) {
-		DoublePoint p = l.getExactLayerCoordinates();
+		ExactModelCoordinate p = l.getExactLayerCoordinates();
 		return os << "x=" << p.x << ", y=" << p.y;
 	}
 }

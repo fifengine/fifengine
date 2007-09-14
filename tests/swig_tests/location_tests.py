@@ -2,8 +2,8 @@
 from swig_test_utils import *
 import fifelog
 
-P = fife.Point
-D = fife.DoublePoint
+P = fife.ModelCoordinate
+D = fife.ExactModelCoordinate
 
 NEAR_TRESHOLD = 0.001
 def is_near(x, y):

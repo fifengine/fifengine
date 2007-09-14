@@ -38,14 +38,14 @@ namespace FIFE {
 		HexGrid();
 		virtual ~HexGrid();
 
-		bool isAccessible(const Point& curpos, const Point& target);
+		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		const std::string& getName() const;
-		float getAdjacentCost(const Point& curpos, const Point& target);
+		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		unsigned int getCellSideCount() const { return 6; }
-		DoublePoint toElevationCoordinates(const DoublePoint& layer_coords);
-		Point toLayerCoordinates(const DoublePoint& elevation_coord);
-		DoublePoint toExactLayerCoordinates(const DoublePoint& elevation_coord);
-		void getVertices(std::vector<DoublePoint>& vtx, const Point& cell);
+		ExactModelCoordinate toElevationCoordinates(const ExactModelCoordinate& layer_coords);
+		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& elevation_coord);
+		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord);
+		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
 	private:
 		double getXZigzagOffset(double y);
 	};

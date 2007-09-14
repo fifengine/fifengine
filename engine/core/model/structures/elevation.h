@@ -109,8 +109,8 @@ namespace FIFE {
 
 			/** Maps coordinate from one layer to another
 			 */
-			void getMatchingCoordinates(const Point& coord_to_map, const Layer* from_layer, 
-				const Layer* to_layer, std::vector<Point>& matching_coords) const;
+			void getMatchingCoordinates(const ModelCoordinate& coord_to_map, const Layer* from_layer, 
+				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
 
 			/** Called periodically to update events on elevation
 			 */

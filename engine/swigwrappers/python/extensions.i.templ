@@ -26,7 +26,22 @@ namespace FIFE {
 		}
 	};
 	
+	%extend PointType3D<int> {
+		std::string __str__() {
+			std::stringstream str;
+			str << "Point3D" << *$self;
+			return  str.str();
+		}
+	};
 	
+	%extend PointType3D<double> {
+		std::string __str__() {
+			std::stringstream str;
+			str << "DoublePoint3D" << *$self;
+			return  str.str();
+		}
+	};
+		
 	%extend Rect {
 		int getX() { return $self->x; }
 		int getY() { return $self->y; }

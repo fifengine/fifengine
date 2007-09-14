@@ -207,20 +207,6 @@ namespace FIFE {
 			return ret;
 		}
 
-		/** Transform given 2D point using this matrix
-		 */
-		inline PointType2D<T> operator* (const PointType2D<T>& vec) {
-			PointType3D<T> vec3d;
-			vec3d.x = vec.x;
-			vec3d.y = vec.y;
-			vec3d.z = 1;
-			vec3d = operator*(vec3d);
-			PointType2D<T> vec2d;
-			vec2d.x = vec3d.x;
-			vec2d.y = vec3d.y;
-			return vec2d;
-		}
-
 		/** Direct access to the matrix elements, just remember they are in column major format!!
 		 */
 		inline T& operator[] (int ind) { 

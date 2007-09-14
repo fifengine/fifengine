@@ -45,7 +45,7 @@ namespace FIFE {
 	SquareGrid::~SquareGrid() {
 	}
 
-	bool SquareGrid::isAccessible(const Point& curpos, const Point& target) {
+	bool SquareGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) {
 		if (curpos == target)
 			return true;
 		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
@@ -64,7 +64,7 @@ namespace FIFE {
 		return false;
 	}
 
-	bool SquareGrid::isAccessibleDiagonal(const Point& curpos, const Point& target) {
+	bool SquareGrid::isAccessibleDiagonal(const ModelCoordinate& curpos, const ModelCoordinate& target) {
 		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
 			return true;
 		if ((curpos.x - 1 == target.x) && (curpos.y + 1 == target.y))
@@ -76,7 +76,7 @@ namespace FIFE {
 		return false;
 	}
 
-	float SquareGrid::getAdjacentCost(const Point& curpos, const Point& target) {
+	float SquareGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
@@ -96,17 +96,17 @@ namespace FIFE {
 		return squareGridDiagonal;
 	}
 	
-	DoublePoint SquareGrid::toElevationCoordinates(const DoublePoint& layer_coords) {
+	ExactModelCoordinate SquareGrid::toElevationCoordinates(const ExactModelCoordinate& layer_coords) {
 		return m_inverse_matrix * layer_coords;
 	}
 
-	DoublePoint SquareGrid::toExactLayerCoordinates(const DoublePoint& elevation_coord) {
+	ExactModelCoordinate SquareGrid::toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
 		return m_matrix * elevation_coord;
 	}
 
-	Point SquareGrid::toLayerCoordinates(const DoublePoint& elevation_coord) {
-		DoublePoint dblpt = toExactLayerCoordinates(elevation_coord);
-		Point result;
+	ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
+		ExactModelCoordinate dblpt = toExactLayerCoordinates(elevation_coord);
+		ModelCoordinate result;
 		result.x = static_cast<int>(floor(dblpt.x));
 		result.y = static_cast<int>(floor(dblpt.y));
 		
@@ -120,13 +120,13 @@ namespace FIFE {
 		return result;
 	}
 	
-	void SquareGrid::getVertices(std::vector<DoublePoint>& vtx, const Point& cell) {
+	void SquareGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) {
 		vtx.clear();
 		double x = static_cast<double>(cell.x);
 		double y = static_cast<double>(cell.y);
-		vtx.push_back(DoublePoint(x-0.5, y-0.5));
-		vtx.push_back(DoublePoint(x+0.5, y-0.5));
-		vtx.push_back(DoublePoint(x+0.5, y+0.5));
-		vtx.push_back(DoublePoint(x-0.5, y+0.5));
+		vtx.push_back(ExactModelCoordinate(x-0.5, y-0.5));
+		vtx.push_back(ExactModelCoordinate(x+0.5, y-0.5));
+		vtx.push_back(ExactModelCoordinate(x+0.5, y+0.5));
+		vtx.push_back(ExactModelCoordinate(x-0.5, y+0.5));
 	}
 }

@@ -8,8 +8,8 @@ namespace FIFE {
 	class Elevation;
 	class Layer;
 	class NotSet;
-	class Point;
-	class DoublePoint;
+	class ModelCoordinate;
+	class ExactModelCoordinate;
 
 	class Location {
 	public:
@@ -22,14 +22,14 @@ namespace FIFE {
 		Elevation* getElevation() const;
 		void setLayer(Layer* layer);
 		Layer* getLayer() const;
-		void setExactLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
-		void setLayerCoordinates(const Point& coordinates) throw(NotSet);
-		void setElevationCoordinates(const DoublePoint& coordinates);
-		DoublePoint getExactLayerCoordinates() const throw(NotSet);
-		DoublePoint getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
-		Point getLayerCoordinates() const throw(NotSet);
-		Point getLayerCoordinates(const Layer* layer) const throw(NotSet);
-		DoublePoint getElevationCoordinates() const;
+		void setExactLayerCoordinates(const ExactModelCoordinate& coordinates) throw(NotSet);
+		void setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet);
+		void setElevationCoordinates(const ExactModelCoordinate& coordinates);
+		ExactModelCoordinate getExactLayerCoordinates() const throw(NotSet);
+		ExactModelCoordinate getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
+		ModelCoordinate getLayerCoordinates() const throw(NotSet);
+		ModelCoordinate getLayerCoordinates(const Layer* layer) const throw(NotSet);
+		ExactModelCoordinate getElevationCoordinates() const;
 		bool isValid() const;
 		double getCellOffsetDistance() const;
 	};

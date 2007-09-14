@@ -327,7 +327,7 @@ class ModelLoader(handler.ContentHandler):
 				else:
 					y = self.y
 
-				inst = self.layer.addInstance(object, fife.Point(x,y))
+				inst = self.layer.addInstance(object, fife.ModelCoordinate(x,y))
 				
 				if (object.getAction("default")):
 					object.setPather(self.pather)

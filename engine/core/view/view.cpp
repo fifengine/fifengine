@@ -79,8 +79,8 @@ namespace FIFE {
 	}
 	
 	int View::getAngleBetween(const Location& loc1, const Location& loc2, Camera& cam) {
-		Point pt1 = cam.toScreenCoordinates(loc1.getElevationCoordinates());
-		Point pt2 = cam.toScreenCoordinates(loc2.getElevationCoordinates());
+		ScreenPoint pt1 = cam.toScreenCoordinates(loc1.getElevationCoordinates());
+		ScreenPoint pt2 = cam.toScreenCoordinates(loc2.getElevationCoordinates());
 		double dy = pt2.y - pt1.y;
 		double dx = pt2.x - pt1.x;
 		
@@ -118,8 +118,8 @@ namespace FIFE {
 				FL_DBG(_log, "Iterating instances...");
 				Instance* instance = (*instance_it);
 				Image* image = NULL;
-				DoublePoint elevpos = instance->getLocation().getElevationCoordinates();
-				Point campos = camera->toScreenCoordinates(elevpos);
+				ExactModelCoordinate elevpos = instance->getLocation().getElevationCoordinates();
+				ScreenPoint campos = camera->toScreenCoordinates(elevpos);
 				
 				FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocation().getLayerCoordinates());
 				FL_DBG(_log, LMsg("Instance elevation position = ") << elevpos);
@@ -146,8 +146,8 @@ namespace FIFE {
 					}
 				}
 				if (image) {
-					DoublePoint exact_elevpos = instance->getLocation().getElevationCoordinates();
-					Point drawpt = camera->toScreenCoordinates(exact_elevpos);
+					ExactModelCoordinate exact_elevpos = instance->getLocation().getElevationCoordinates();
+					ScreenPoint drawpt = camera->toScreenCoordinates(exact_elevpos);
 
 					int w = image->getWidth();
 					int h = image->getHeight();
@@ -165,20 +165,21 @@ namespace FIFE {
 					}
 
 					// draw grid for testing purposes
-					std::vector<DoublePoint> vertices;
+					std::vector<ExactModelCoordinate> vertices;
 					cg->getVertices(vertices, instance->getLocation().getLayerCoordinates());
-					std::vector<DoublePoint>::const_iterator it = vertices.begin();
-					Point firstpt = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
+					std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+					ScreenPoint firstpt = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
 					Point pt1(firstpt.x, firstpt.y);
 					Point pt2;
 					++it;
 					while (it != vertices.end()) {
-						pt2 = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
+						ScreenPoint pts = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
+						pt2.x = pts.x; pt2.y = pts.y;
 						m_renderbackend->drawLine(pt1, pt2, 0, 255, 0);
 						pt1 = pt2;
 						++it;
 					}
-					m_renderbackend->drawLine(pt2, firstpt, 0, 255, 0);
+					m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), 0, 255, 0);
 				}
 				else {
 					FL_DBG(_log, "Instance does not have image to render");

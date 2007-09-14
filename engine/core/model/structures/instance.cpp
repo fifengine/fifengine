@@ -197,7 +197,7 @@ namespace FIFE {
 			// movement stops asap
 			else {
 				FL_DBG(_log, "not in the center of the cell");
-				Point pt = m_location.getLayerCoordinates();
+				ModelCoordinate pt = m_location.getLayerCoordinates();
 				m_actioninfo->m_target->setLayerCoordinates(pt);
 				m_actioninfo->m_nextlocations.clear();
 				m_actioninfo->m_nextlocations.push_back(*m_actioninfo->m_target);
@@ -220,7 +220,7 @@ namespace FIFE {
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * m_actioninfo->m_speed;
 		// location to iterate based on pather locations + speed
-		DoublePoint iter_loc      = m_location.getExactLayerCoordinates();
+		ExactModelCoordinate iter_loc      = m_location.getExactLayerCoordinates();
 		// to calculate traveled distance
 		double cumul_dist         = 0;
 		FL_DBG(_log, LMsg("calculating movement, dist to travel ") << distance_to_travel);
@@ -230,9 +230,9 @@ namespace FIFE {
 		std::vector<Location>::iterator i = m_actioninfo->m_nextlocations.begin();
 		while (i != m_actioninfo->m_nextlocations.end()) {
 			FL_DBG(_log, "next location from pather...");
-			DoublePoint nextcell = (*i).getExactLayerCoordinates();
+			ExactModelCoordinate nextcell = (*i).getExactLayerCoordinates();
 			FL_DBG(_log, LMsg("next coordinates = ") << nextcell);
-			DoublePoint diff = nextcell - iter_loc;
+			ExactModelCoordinate diff = nextcell - iter_loc;
 			double dist_to_next_cell = diff.length();
 			double dist_left = distance_to_travel - cumul_dist;
 			FL_DBG(_log, LMsg("diff = ") << diff << ", dist_to_next = " << dist_to_next_cell << ", dist_left=" << dist_left);

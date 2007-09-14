@@ -29,7 +29,7 @@ namespace FIFE {
 	}
 
 	bool SearchSpace::isInSearchSpace(const Location& location) const {
-		Point coordinates = location.getLayerCoordinates();
+		ModelCoordinate coordinates = location.getLayerCoordinates();
 		if(coordinates.x > m_lowerX && coordinates.x < m_upperX 
 			&& coordinates.y > m_lowerY && coordinates.x < m_upperY) {
 				return true;
@@ -38,7 +38,7 @@ namespace FIFE {
 	}
 
 	Location SearchSpace::translateToSearchSpace(const Location& location) const {
-		Point coordinates = location.getLayerCoordinates();
+		ModelCoordinate coordinates = location.getLayerCoordinates();
 		coordinates.x -= m_lowerX;
 		coordinates.y -= m_lowerY;
 		Location xtrnsfrmdLocal(location);

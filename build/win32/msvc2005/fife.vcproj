@@ -207,6 +207,7 @@
 					</Filter>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\metamodel.h"></File>
+					<File RelativePath="..\..\..\engine\core\model\metamodel\modelcoords.h"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\object.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\model\metamodel\object.h"></File>
 				</Filter>

@@ -52,7 +52,7 @@ namespace FIFE {
 		return !m_instances.empty();
 	}
 
-	Instance* Layer::addInstance(Object* object, const Point& p) {
+	Instance* Layer::addInstance(Object* object, const ModelCoordinate& p) {
 
 		Location l;
 		l.setLayer(this);

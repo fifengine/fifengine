@@ -55,7 +55,7 @@ namespace FIFE {
 	HexGrid::~HexGrid() {
 	}
 
-	bool HexGrid::isAccessible(const Point& curpos, const Point& target) {
+	bool HexGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) {
 		if (curpos == target)
 			return true;
 		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
@@ -75,7 +75,7 @@ namespace FIFE {
 		return false;
 	}
 
-	float HexGrid::getAdjacentCost(const Point& curpos, const Point& target) {
+	float HexGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
@@ -100,51 +100,51 @@ namespace FIFE {
 		return HEX_TO_EDGE * offset;
 	}
 	
-	DoublePoint HexGrid::toElevationCoordinates(const DoublePoint& layer_coords) {
-		DoublePoint tranformed_coords(layer_coords);
+	ExactModelCoordinate HexGrid::toElevationCoordinates(const ExactModelCoordinate& layer_coords) {
+		ExactModelCoordinate tranformed_coords(layer_coords);
 		tranformed_coords.x += getXZigzagOffset(layer_coords.y);
 		tranformed_coords.y *= VERTICAL_MULTIP;
-		DoublePoint result = m_matrix * tranformed_coords;
+		ExactModelCoordinate result = m_matrix * tranformed_coords;
 		FL_DBG(_log, LMsg("layercoords ") << layer_coords << " converted to elev: " << result);
 		return result;
 	}
 
-	DoublePoint HexGrid::toExactLayerCoordinates(const DoublePoint& elevation_coord) {
-		DoublePoint layer_coords = m_inverse_matrix * elevation_coord;
+	ExactModelCoordinate HexGrid::toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
+		ExactModelCoordinate layer_coords = m_inverse_matrix * elevation_coord;
 		layer_coords.y /= VERTICAL_MULTIP;
 		layer_coords.x -= getXZigzagOffset(layer_coords.y);
 		FL_DBG(_log, LMsg("elevcoords ") << elevation_coord << " converted to layer: " << layer_coords);
 		return layer_coords;
 	}
 
-	Point HexGrid::toLayerCoordinates(const DoublePoint& elevation_coord) {
+	ModelCoordinate HexGrid::toLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
 		FL_DBG(_log, LMsg("==============\nConverting elev coords ") << elevation_coord << " to int layer coords...");
-		DoublePoint elc = m_inverse_matrix * elevation_coord;
+		ExactModelCoordinate elc = m_inverse_matrix * elevation_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
-		DoublePoint lc = DoublePoint(floor(elc.x), floor(elc.y));
+		ExactModelCoordinate lc = ExactModelCoordinate(floor(elc.x), floor(elc.y));
 		double dx = elc.x - lc.x;
 		double dy = elc.y - lc.y;
 		int x = static_cast<int>(lc.x);
 		int y = static_cast<int>(lc.y);
 		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
 		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
-		Point result;
+		ModelCoordinate result;
 		
 		if ((y % 2) == 0) {
 			FL_DBG(_log, "In even row");
 			if ((1 - dy) < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In lower rect area");
-				result = Point(x, y+1);
+				result = ModelCoordinate(x, y+1);
 			} 
 			else if (dy < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In upper rect area");
 				if (dx > 0.5) {
 					FL_DBG(_log, "...on right");
-					result = Point(x+1, y);
+					result = ModelCoordinate(x+1, y);
 				} 
 				else {
 					FL_DBG(_log, "...on left");
-					result = Point(x, y);
+					result = ModelCoordinate(x, y);
 				}
 			} 
 			// in middle triangle area
@@ -152,29 +152,29 @@ namespace FIFE {
 				FL_DBG(_log, "In middle triangle area");
 				if (dx < 0.5) {
 					FL_DBG(_log, "In left triangles");
-					if (ptInTriangle(DoublePoint(dx, dy),
-					                 DoublePoint(0, VERTICAL_MULTIP * HEX_EDGE_HALF), 
-					                 DoublePoint(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
-					                 DoublePoint(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
+					if (ptInTriangle(ExactModelCoordinate(dx, dy),
+					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
 					                 )) {
 						FL_DBG(_log, "..upper part");
-						result = Point(x, y);
+						result = ModelCoordinate(x, y);
 					} else {
 						FL_DBG(_log, "..lower part");
-						result = Point(x, y+1);
+						result = ModelCoordinate(x, y+1);
 					}
 				} else {
 					FL_DBG(_log, "In right triangles");
-					if (ptInTriangle(DoublePoint(dx, dy),
-					                 DoublePoint(1, VERTICAL_MULTIP * HEX_EDGE_HALF), 
-					                 DoublePoint(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
-					                 DoublePoint(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
+					if (ptInTriangle(ExactModelCoordinate(dx, dy),
+					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
 					                 )) {
 						FL_DBG(_log, "..upper part");
-						result = Point(x+1, y);
+						result = ModelCoordinate(x+1, y);
 					} else {
 						FL_DBG(_log, "..lower part");
-						result = Point(x, y+1);
+						result = ModelCoordinate(x, y+1);
 					}
 				}
 			}		
@@ -183,46 +183,46 @@ namespace FIFE {
 			FL_DBG(_log, "In uneven row");
 			if (dy < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In upper rect area");
-				result = Point(x, y);
+				result = ModelCoordinate(x, y);
 			} 
 			else if ((1 - dy) < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In lower rect area");
 				if (dx > 0.5) {
 					FL_DBG(_log, "...on right");
-					result = Point(x+1, y+1);
+					result = ModelCoordinate(x+1, y+1);
 				} 
 				else {
 					FL_DBG(_log, "...on left");
-					result = Point(x, y+1);
+					result = ModelCoordinate(x, y+1);
 				}
 			} 
 			else {
 				FL_DBG(_log, "In middle triangle area");
 				if (dx < 0.5) {
 					FL_DBG(_log, "In left triangles");
-					if (ptInTriangle(DoublePoint(dx, dy),
-					                 DoublePoint(0, VERTICAL_MULTIP * HEX_EDGE_HALF), 
-					                 DoublePoint(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
-					                 DoublePoint(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
+					if (ptInTriangle(ExactModelCoordinate(dx, dy),
+					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
+					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
 					                 )) {
 						FL_DBG(_log, "..lower part");
-						result = Point(x, y+1);
+						result = ModelCoordinate(x, y+1);
 					} else {
 						FL_DBG(_log, "..upper part");
-						result = Point(x, y);
+						result = ModelCoordinate(x, y);
 					}
 				} else {
 					FL_DBG(_log, "In right triangles");
-					if (ptInTriangle(DoublePoint(dx, dy),
-					                 DoublePoint(1, VERTICAL_MULTIP * HEX_EDGE_HALF), 
-					                 DoublePoint(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
-					                 DoublePoint(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
+					if (ptInTriangle(ExactModelCoordinate(dx, dy),
+					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
 					                 )) {
 					        FL_DBG(_log, "..lower part");
-						result = Point(x+1, y+1);
+						result = ModelCoordinate(x+1, y+1);
 					} else {
 						FL_DBG(_log, "..upper part");
-						result = Point(x, y);
+						result = ModelCoordinate(x, y);
 					}
 				}
 			}
@@ -231,7 +231,7 @@ namespace FIFE {
 		return result;
 	}
 
-	void HexGrid::getVertices(std::vector<DoublePoint>& vtx, const Point& cell) {
+	void HexGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) {
 		FL_DBG(_log, LMsg("===============\ngetting vertices for ") << cell);
 		vtx.clear();
 		double x = static_cast<double>(cell.x);
@@ -243,7 +243,7 @@ namespace FIFE {
 		}
 		double tx, ty;
 		
-		#define ADD_PT(_x, _y) vtx.push_back(DoublePoint(_x, _y));
+		#define ADD_PT(_x, _y) vtx.push_back(ExactModelCoordinate(_x, _y));
 		// FL_DBG(_log, LMsg("Added point ") << _x << ", " << _y)
 		ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;

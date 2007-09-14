@@ -5,6 +5,7 @@
 
 %include "std_list.i"
 
+%include "model/metamodel/modelcoords.i"
 %include "util/point.i"
 %include "util/attributedclass.i"
 

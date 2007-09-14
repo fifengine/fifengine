@@ -3,6 +3,7 @@
 #include "model/structures/instance.h"
 %}
 
+%include "model/metamodel/modelcoords.i"
 %include "util/point.i"
 %include "location.i"
 

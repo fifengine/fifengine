@@ -15,14 +15,14 @@ class InstanceReactor(fife.InstanceListener):
 class MyMouseListener(fife.IMouseListener):
 	def __init__(self):
 		fife.IMouseListener.__init__(self)
-		self.target = fife.Point(0,0)
+		self.target = fife.ScreenPoint(0,0)
 		self.update = False	
 		self.pressed = False
 
 	def mousePressed(self, evt):
 		self.update = False
 		self.pressed = True
-		self.target = fife.Point(evt.getX(), evt.getY())
+		self.target = fife.ScreenPoint(evt.getX(), evt.getY())
 
 	def mouseReleased(self, evt):
 		self.pressed = False
@@ -75,8 +75,8 @@ class World(object):
 		self.squaregrid = fife.SquareGrid(True)
 		self.hexgrid = fife.HexGrid()
 		self.tilelayer = elev.addLayer("elevation1:ground", self.squaregrid)
-		self.instlayer = elev.addLayer("elevation1:move", self.hexgrid)
-		#self.instlayer = elev.addLayer("elevation1:move", self.squaregrid)
+		#self.instlayer = elev.addLayer("elevation1:move", self.hexgrid)
+		self.instlayer = elev.addLayer("elevation1:move", self.squaregrid)
 		self.target = fife.Location()
 		self.target.setLayer(self.instlayer)
 		self.pather = fife.LinearPather()
@@ -88,7 +88,7 @@ class World(object):
 		self.ground.addStaticImage(0, imgid)
 		for y in xrange(-2,3):
 			for x in xrange(-2,3):
-				self.tilelayer.addInstance(self.ground, fife.Point(x,y))
+				self.tilelayer.addInstance(self.ground, fife.ModelCoordinate(x,y))
 	
 	def create_dummy(self):
 		self.dummyObj = fife.Object("dummy")
@@ -100,13 +100,13 @@ class World(object):
 		for angle in angles:
 			animid = self.engine.getAnimationPool().addResourceFromFile(path + angle + '/animation.xml')
 			a.addAnimation(int(angle), animid)
-		self.dummy = self.instlayer.addInstance(self.dummyObj, fife.Point(0,0))
+		self.dummy = self.instlayer.addInstance(self.dummyObj, fife.ModelCoordinate(0,0))
 		self.dummy.addListener(self.reactor)
 		
 	def adjust_views(self):
 		camloc = fife.Location()
 		camloc.setLayer(self.tilelayer)
-		camloc.setLayerCoordinates(fife.Point(0,0))
+		camloc.setLayerCoordinates(fife.ModelCoordinate(0,0))
 		
 		self.camera = fife.Camera()
 		self.camera.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
@@ -124,15 +124,26 @@ class World(object):
 		self.eventmanager.addMouseListener(l)
 		self.eventmanager.addKeyListener(k)
 		self.engine.initializePumping()
-		self.target.setLayerCoordinates(fife.Point(1,0))
+		self.target.setLayerCoordinates(fife.ModelCoordinate(1,0))
 		self.dummy.act('dummy:walk', self.target, 0.3)
 
 		while True:
 			self.engine.pump()
 			if (l.update == True):
 				l.update = False
-				self.target.setElevationCoordinates(self.camera.toElevationCoordinates(l.target))
-				#print self.target.getLayerCoordinates()
+				
+				print "===================================================="
+				print "screen coordinates = " + str(l.target)
+				
+				ec = self.camera.toElevationCoordinates(l.target)
+				print "elevation coordinates = " + str(ec)
+				
+				print "back to screen = " + str(self.camera.toScreenCoordinates(ec))
+				
+				self.target.setElevationCoordinates(ec)
+				print "layer coordinates = " + str(self.target.getLayerCoordinates())
+				
+				
 				self.dummy.act('dummy:walk', self.target, 1.0)
 			if (k.quitRequested):
 				break

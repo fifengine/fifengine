@@ -29,7 +29,7 @@ class TestView(unittest.TestCase):
 		
 		self.camloc = fife.Location()
 		self.camloc.setLayer(self.layer)
-		self.camloc.setExactLayerCoordinates(fife.DoublePoint(2,0))
+		self.camloc.setExactLayerCoordinates(fife.ExactModelCoordinate(2,0))
 
 		
 	def tearDown(self):
@@ -49,11 +49,11 @@ class TestView(unittest.TestCase):
 		
 		for y in xrange(4):
 			for x in xrange(4):
-				self.layer.addInstance(self.obj2, fife.Point(x,y))
+				self.layer.addInstance(self.obj2, fife.ModelCoordinate(x,y))
 				self.engine.pump()
 				time.sleep(0.01)
-		self.layer.addInstance(self.obj1, fife.Point(0,0))
-		self.layer.addInstance(self.obj1, fife.Point(2,1))
+		self.layer.addInstance(self.obj1, fife.ModelCoordinate(0,0))
+		self.layer.addInstance(self.obj1, fife.ModelCoordinate(2,1))
 		
 		for i in xrange(120):
 			if i > 20 and i < 30:

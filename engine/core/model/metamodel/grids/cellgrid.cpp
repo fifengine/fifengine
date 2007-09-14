@@ -48,11 +48,11 @@ namespace FIFE {
 	CellGrid::~CellGrid() {
 	}
 
-	void CellGrid::getAccessibleCoordinates(const Point& curpos, std::vector<Point>& coordinates) {
+	void CellGrid::getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates) {
 		coordinates.clear();
 		for (int x = curpos.x - 1; x <= curpos.x + 1; x++) {
 			for (int y = curpos.y - 1; y <= curpos.y + 1; y++) {
-				Point pt;
+				ModelCoordinate pt;
 				pt.x = x;
 				pt.y = y;
 				if (isAccessible(curpos, pt)) {
@@ -70,11 +70,11 @@ namespace FIFE {
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
-	DoublePoint CellGrid::toElevationCoordinates(const Point& layer_coords) {
+	ExactModelCoordinate CellGrid::toElevationCoordinates(const ModelCoordinate& layer_coords) {
 		return toElevationCoordinates(intPt2doublePt(layer_coords));
 	}
 	
-	int CellGrid::orientation(const DoublePoint& pt, const DoublePoint& pt1, const DoublePoint& pt2) {
+	int CellGrid::orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2) {
 		double o = (pt2.x - pt1.x) * (pt.y - pt1.y) - (pt.x - pt1.x) * (pt2.y - pt1.y);
 		if (o > 0.0) {
 			return 1;
@@ -84,7 +84,7 @@ namespace FIFE {
 		return 0;
 	}
 	
-	bool CellGrid::ptInTriangle(const DoublePoint& pt, const DoublePoint& pt1, const DoublePoint& pt2, const DoublePoint& pt3) {
+	bool CellGrid::ptInTriangle(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2, const ExactModelCoordinate& pt3) {
 		double o1 = orientation(pt1, pt2, pt);
 		double o2 = orientation(pt2, pt3, pt);
 		double o3 = orientation(pt3, pt1, pt);

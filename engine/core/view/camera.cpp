@@ -57,27 +57,27 @@ namespace FIFE {
 
 	void Camera::updateMatrices() {
 		double scale = 1.0 / (m_zoom * m_reference_scale);
-		m_matrix.loadScale(scale, scale, scale);
+		m_matrix.loadScale(scale, scale, 1);
 		m_matrix.applyRotate(m_rotation, 0.0, 0.0, 1.0);
 		m_matrix.applyRotate(m_tilt, 1.0, 0.0, 0.0);
 		if (m_location.getLayer()) {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
 			if (cg) {
-				DoublePoint pt = m_location.getElevationCoordinates();
+				ExactModelCoordinate pt = m_location.getElevationCoordinates();
 				m_matrix.applyTranslate(pt.x  * m_reference_scale, pt.y * m_reference_scale, 0);
 			}
 		}
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
-	DoublePoint Camera::toElevationCoordinates(Point screen_coords) {
+	ExactModelCoordinate Camera::toElevationCoordinates(ScreenPoint screen_coords) {
 		screen_coords.x -= m_viewport.w / 2;
 		screen_coords.y -= m_viewport.h / 2;
 		return m_matrix * intPt2doublePt(screen_coords);
 	}
 
-	Point Camera::toScreenCoordinates(DoublePoint elevation_coords) {
-		Point pt = doublePt2intPt(m_inverse_matrix * elevation_coords);
+	ScreenPoint Camera::toScreenCoordinates(ExactModelCoordinate elevation_coords) {
+		ScreenPoint pt = doublePt2intPt(m_inverse_matrix * elevation_coords);
 		pt.x += m_viewport.w / 2;
 		pt.y += m_viewport.h / 2;
 		return pt;
@@ -92,8 +92,8 @@ namespace FIFE {
 			return;
 		}
 		
-		Point cell(0,0);
-		std::vector<DoublePoint> vertices;
+		ModelCoordinate cell(0,0);
+		std::vector<ExactModelCoordinate> vertices;
 		cg->getVertices(vertices, cell);
 		
 		DoubleMatrix mtx;

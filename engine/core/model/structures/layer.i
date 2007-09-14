@@ -5,6 +5,7 @@
 
 %include "std_vector.i"
 
+%include "model/metamodel/modelcoords.i"
 %include "util/point.i"
 %include "util/attributedclass.i"
 
@@ -31,7 +32,7 @@ namespace FIFE {
 
 			Elevation* getElevation();
 			bool hasInstances() const;
-			Instance* addInstance(Object* object, const Point& p);
+			Instance* addInstance(Object* object, const ModelCoordinate& p);
 			void removeInstance(Instance* object);
 			const std::vector<Instance*>& getInstances();
 

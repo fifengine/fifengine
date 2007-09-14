@@ -31,7 +31,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/point.h"
+#include "model/metamodel/modelcoords.h"
 #include "util/exception.h"
 
 namespace FIFE {
@@ -90,7 +90,7 @@ namespace FIFE {
 		 *     - layer does not have cellgrid assigned
 		 *  @param coordinates coordinates to set
 		 */
-		void setExactLayerCoordinates(const DoublePoint& coordinates) throw(NotSet);
+		void setExactLayerCoordinates(const ExactModelCoordinate& coordinates) throw(NotSet);
 		
 		/** Gets exact layer coordinates set to this location
 		 *  @throws NotSet in the following cases:
@@ -98,30 +98,30 @@ namespace FIFE {
 		 *     - layer does not have cellgrid assigned
 		 * @return exact layer coordinates
 		 */
-		DoublePoint getExactLayerCoordinates() const throw(NotSet);
+		ExactModelCoordinate getExactLayerCoordinates() const throw(NotSet);
 		
 		/** Sets "cell precise" layer coordinates to this location
 		 *  @throws NotSet in the following cases:
 		 *     - layer is not set (NULL)
 		 *     - layer does not have cellgrid assigned
-		 * @see setLayerCoordinates(const DoublePoint& coordinates)
+		 * @see setLayerCoordinates(const ExactModelCoordinate& coordinates)
 		 */
-		void setLayerCoordinates(const Point& coordinates) throw(NotSet);
+		void setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet);
 		
 		/** Gets cell precision layer coordinates set to this location
 		 * @see getExactLayerCoordinates()
 		 */
-		Point getLayerCoordinates() const throw(NotSet);
+		ModelCoordinate getLayerCoordinates() const throw(NotSet);
 		
 		/** Sets elevation coordinates to this location
 		 *  @param coordinates coordinates to set
 		 */
-		void setElevationCoordinates(const DoublePoint& coordinates);
+		void setElevationCoordinates(const ExactModelCoordinate& coordinates);
 		
 		/** Gets elevation coordinates set to this location
 		 * @return elevation coordinates
 		 */
-		DoublePoint getElevationCoordinates() const;
+		ExactModelCoordinate getElevationCoordinates() const;
 		
 		/** Gets exact layer coordinates of this location mapped on given layer
 		 *  @throws NotSet in the following cases:
@@ -129,12 +129,12 @@ namespace FIFE {
 		 *     - given layer does not have cellgrid assigned
 		 * @return exact layer coordinates
 		 */
-		DoublePoint getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
+		ExactModelCoordinate getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
 		
 		/** Gets cell precision layer coordinates of this location mapped on given layer
 		 * @see getExactLayerCoordinates(const Layer* layer)
 		 */
-		Point getLayerCoordinates(const Layer* layer) const throw(NotSet);
+		ModelCoordinate getLayerCoordinates(const Layer* layer) const throw(NotSet);
 	
 		/** Gets offset distance from cell center
 		 * @return offset distance
@@ -152,7 +152,7 @@ namespace FIFE {
 		bool isValid(const Layer* layer) const;
 		
 		Layer* m_layer;
-		DoublePoint m_elevation_coords;
+		ExactModelCoordinate m_elevation_coords;
 	};
 	
 	/** Stream output operator.

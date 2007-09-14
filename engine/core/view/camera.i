@@ -4,6 +4,9 @@
 %}
 
 namespace FIFE {
+	typedef Point3D ScreenPoint;
+	%template(ScreenPoint) PointType3D<int>;
+	
 	class Camera {
 	public:
 		Camera();
@@ -19,7 +22,7 @@ namespace FIFE {
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
 		void setCellImageDimensions(unsigned int width, unsigned int height);
-		Point toScreenCoordinates(DoublePoint elevation_coords);
-		DoublePoint toElevationCoordinates(Point screen_coords);
+		ScreenPoint toScreenCoordinates(ExactModelCoordinate elevation_coords);
+		ExactModelCoordinate toElevationCoordinates(ScreenPoint screen_coords);
 	};
 }
