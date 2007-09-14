@@ -28,6 +28,8 @@ class ModelLoader(handler.ContentHandler):
 		self.stack = [ self.SModel ] 
 		self.datastack = [ ]
 
+		self.chars = ""
+
 		# big hack! address how pathfinders are declared etc, etc.
 		self.pather = fife.LinearPather()
 		self.pather.thisown = 0
@@ -54,6 +56,20 @@ class ModelLoader(handler.ContentHandler):
 		elif (name == 'metadata'):
 			if (self.state == self.SMap) or (self.state == self.SElevation) or (self.state == self.SLayer) or (self.state == self.SDataset)\
 				or (self.state == self.SObject) or (self.state == self.SAction):
+
+				if (self.state == self.SMap):
+					self.datastack.append(self.map)
+				elif (self.state == self.SElevation):
+					self.datastack.append(self.elevation)
+				elif (self.state == self.SLayer):
+					self.datastack.append(self.layer)
+				elif (self.state == self.SDataset):
+					self.datastack.append(self.dataset)
+				elif (self.state == self.SObject):
+					self.datastack.append(self.object)
+				elif (self.state == self.SAction):
+					self.datastack.append(self.action)
+
 				self.stack.append(self.state)
 				self.state = self.SMetadata
 
@@ -62,8 +78,17 @@ class ModelLoader(handler.ContentHandler):
 
 		elif (name == 'param'):
 			if (self.state == self.SMetadata):
-				# TODO: actually load in metadata!
-				pass
+
+				self.param_name = 0
+				self.param_type = 0
+				for attrName in attrs.keys():
+					if (attrName == "name"):
+						self.param_name = attrs.get(attrName)
+					if (attrName == "type"):
+						self.param_type = attrs.get(attrName)
+
+				assert self.param_type, "Metadata must have an associated type."
+				assert self.param_name, "Metadata fields must be given a name."
 
 			else:
 				assert 0, "Parameters found outside the <metadata> section."
@@ -315,9 +340,26 @@ class ModelLoader(handler.ContentHandler):
 			else:
 				assert 0, "Instances can only be declared in an <instances> section."
 
+	def characters(self, ch):
+		self.chars += ch
+
 	def endElement(self, name):
 		if (name == 'metadata'):
 			self.state = self.stack.pop()
+
+		if (name == 'param'):
+			if (self.param_type == "id"):
+				assert len(self.datastack) > 0
+				self.datastack[len(self.datastack) - 1].set_int(str(self.param_name), int(self.chars))
+
+			elif (self.param_type == "text"):
+				assert len(self.datastack) > 0
+				self.datastack[len(self.datastack) - 1].set_string(str(self.param_name), str(self.chars).strip())
+
+			elif (type == "Point"):
+				print "Points are not yet supported."
+
+			self.chars = ""
 
 		elif (name == 'dataset'):
 			self.state = self.stack.pop()

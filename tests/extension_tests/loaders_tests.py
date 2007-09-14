@@ -25,6 +25,10 @@ class TestLoaders(unittest.TestCase):
 		self.assertEqual(len(query), 1)
 		self.map = query[0]
 
+#		self.assertEqual(self.map.get_string("Name"), "official_map.xml")
+		self.assertEqual(self.map.get_int("Version"), 1)
+		self.assertEqual(self.map.get_string("Author"), "barra")
+
 		query = self.map.getElevationsByString("id", "OfficialMapElevation")
 		self.assertEqual(len(query), 1)
 		self.elevation = query[0]
@@ -37,8 +41,6 @@ class TestLoaders(unittest.TestCase):
 
 		instances = self.layer.getInstances()
 
-		#for inst in instances:
-		#	print inst.getPosition().x, " ", inst.getPosition().y, " ", inst.getObject().get_string("id")
 
 TEST_CLASSES = [TestLoaders]
 
