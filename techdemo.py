@@ -43,6 +43,19 @@ class MyMouseListener(fife.IMouseListener):
 	def mouseDragged(self, evt):
 		pass
 
+class MyKeyListener(fife.IKeyListener):
+	def __init__(self):
+		fife.IKeyListener.__init__(self)
+		self.quitRequested = False
+		
+	def keyPressed(self, evt):
+		keyval = evt.getKey().getValue()
+		if keyval == fife.IKey.ESCAPE:
+			self.quitRequested = True
+	
+	def keyReleased(self, evt):
+		pass
+
 
 class World(object):
 	def __init__(self):
@@ -50,7 +63,7 @@ class World(object):
 		self.reactor = InstanceReactor()
 		logman = self.engine.getLogManager()
 		self.log = fifelog.LogManager(self.engine)
-		self.log.setVisibleModules('hexgrid')
+		#self.log.setVisibleModules('hexgrid')
 		self.eventmanager = self.engine.getEventManager()
 		
 	def __del__(self):
@@ -107,21 +120,22 @@ class World(object):
 	
 	def run(self):
 		l = MyMouseListener()
+		k = MyKeyListener()
 		self.eventmanager.addMouseListener(l)
+		self.eventmanager.addKeyListener(k)
 		self.engine.initializePumping()
 		self.target.setLayerCoordinates(fife.Point(1,0))
 		self.dummy.act('dummy:walk', self.target, 0.3)
 
-		for i in xrange(5000):
+		while True:
 			self.engine.pump()
-#			if i == 200:
-#				self.target.setLayerCoordinates(fife.Point(-1,0))
-#				self.dummy.act('dummy:walk', self.target, 0.3)
 			if (l.update == True):
 				l.update = False
 				self.target.setElevationCoordinates(self.camera.toElevationCoordinates(l.target))
 				#print self.target.getLayerCoordinates()
 				self.dummy.act('dummy:walk', self.target, 1.0)
+			if (k.quitRequested):
+				break
 
 		self.engine.finalizePumping()
 		self.eventmanager.removeMouseListener(l)
