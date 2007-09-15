@@ -21,8 +21,13 @@
 
 #include "realtimepather.h"
 #include "realtimesearch.h"
+#include "pathfinder/searchspace.h"
 
 namespace FIFE {
+
+	void RealTimePather::calculateSearchSpace() {
+		//TODO: Finish this function.
+	}
 
 	void RealTimePather::setMap(Map* map) {
 		if(!map) {
@@ -57,9 +62,12 @@ namespace FIFE {
 				}
 			}
 			int newSessionId = m_nextFreeSessionId++;
-			SessionMap::value_type newSession(newSessionId, new RealTimeSearch(newSessionId, curPos, target, this));
-			m_sessions.insert(newSession);
-			return newSessionId;
+			if(m_searchspace->isInSearchSpace(curPos) && m_searchspace->isInSearchSpace(target)) {
+				SessionMap::value_type newSession(newSessionId, new RealTimeSearch(newSessionId, curPos, target, this));
+				m_sessions.insert(newSession);
+				return newSessionId;
+			}
+			return -1;
 	}
 
 	bool RealTimePather::cancelSession(const int session_id) {

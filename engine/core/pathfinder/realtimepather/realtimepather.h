@@ -32,10 +32,11 @@
 namespace FIFE {
 
 	class Search;
+	class SearchSpace;
 
 	class RealTimePather : public AbstractPather {
 	public:
-		RealTimePather() : m_map(0), m_nextFreeSessionId(0) { }
+		RealTimePather() : m_map(0), m_nextFreeSessionId(0), m_searchspace(0) { }
 
 		/** Sets the map that will be used for the search.
 		 *
@@ -66,18 +67,33 @@ namespace FIFE {
 		 * @return A boolean to signify whether the session was successfully found and cancelled.
 		 */
 		virtual bool cancelSession(const int session_id);
+
+		/** Retrieves the search space.
+		 *
+		 * @return A pointer to the search space.
+		 */
+		SearchSpace* getSearchSpace() const {
+			return m_searchspace;
+		}
 	private:
 		typedef std::map<int, Search*> SessionMap;
 
+		/** Calculates the search space.
+		 *
+		 */
+		void calculateSearchSpace();
+
 		//The map the search is running on.
-		Map*	   m_map;
+		Map*	     m_map;
 
 		//A map of currently running sessions (searches).
-		SessionMap m_sessions;
+		SessionMap	 m_sessions;
+
+		//The search space that this pather operates on.
+		SearchSpace* m_searchspace;
 
 		//The next free session id.
-		int m_nextFreeSessionId;
-
+		int          m_nextFreeSessionId;
 	};
 
 }
