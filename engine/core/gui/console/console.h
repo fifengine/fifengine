@@ -129,6 +129,10 @@ namespace FIFE {
 			 */
 			void removeConsoleExecuter();
 
+			/** Layouts the console to match e.g. font changes
+			 */
+			void reLayout();
+
 		private:
 
 			bool m_isAttached;

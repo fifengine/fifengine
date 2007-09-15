@@ -54,10 +54,35 @@ namespace FIFE {
 		m_label(new gcn::Label()),
 		m_button(new gcn::Button("Tools"))
 		{
-		
+		reLayout();
+
+		add(m_scrollarea);
+		add(m_textfield);
+		add(m_label);
+		add(m_button);
+
+		setOpaque(true);
+
+		m_textfield->setCallback( std::bind1st( std::mem_fun(&Console::execute), this) );
+		m_prompt = "-- ";
+
+		m_isAttached = false;
+
+		m_fpsTimer.setInterval(500);
+		m_fpsTimer.setCallback( boost::bind(&Console::updateCaption, this) );
+
+		m_hiding = true;
+
+		m_animationTimer.setInterval(20);
+		m_animationTimer.setCallback( boost::bind(&Console::updateAnimation, this) );
+
+		m_button->addActionListener(this);
+	}
+
+	void Console::reLayout() {
 		SDL_Surface *screen = RenderBackend::instance()->getScreenSurface();
 		assert(screen);
-
+		
 		int w, h, b, input_h, bbar_h, button_w;
 		w = screen->w*4/5;
 		h = screen->h*4/5;
@@ -109,30 +134,8 @@ namespace FIFE {
 		m_button->setBackgroundColor(black);
 		m_button->setBaseColor(dark);
 
-
-		add(m_scrollarea);
-		add(m_textfield);
-		add(m_label);
-		add(m_button);
-
-		setOpaque(true);
-
-		m_textfield->setCallback( std::bind1st( std::mem_fun(&Console::execute), this) );
-		m_prompt = "-- ";
-
-		m_isAttached = false;
-
-		m_fpsTimer.setInterval(500);
-		m_fpsTimer.setCallback( boost::bind(&Console::updateCaption, this) );
-
 		m_hiddenPos = -h;
-		m_hiding = true;
 		m_animationDelta = h/6;
-
-		m_animationTimer.setInterval(20);
-		m_animationTimer.setCallback( boost::bind(&Console::updateAnimation, this) );
-
-		m_button->addActionListener(this);
 	}
 
 	Console::~Console() {

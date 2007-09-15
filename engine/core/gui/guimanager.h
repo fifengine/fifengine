@@ -117,24 +117,24 @@ namespace FIFE {
 			 * @return The top container.
 			 */
 			gcn::Container* getTopContainer() { return m_gcn_topcontainer; }
+			
 			/** Gets the console.
 			 *
 			 * @return The console.
 			 */
 			Console* getConsole() { return m_console; };
 
-			/** Set the default global font
-			 * \param font A gcn::Font or NULL
-			 * If NULL is given as parameter, the default font from the
-			 * config file is taken.
+			/** Set the global font
 			 */
 			void setGlobalFont(gcn::Font* font);
-
-			/** Gets default font
-			 *
-			 * @return Default font.
+			
+			/** Gets font with given properties. Note that font will be owned by guimanager
 			 */
-			gcn::Font* getDefaultFont() { return m_font; };
+			gcn::Font* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
+
+			/** Releases given font.
+			 */
+			void releaseFont(gcn::Font* font);
 
 			/** Callback from guichan
 			 */
@@ -169,8 +169,8 @@ namespace FIFE {
 			gcn::SDLInput *m_input;
 			// The console.
 			Console       *m_console;
-			// The standard font
-			gcn::Font     *m_font;
+			// The fonts used
+			std::vector<gcn::Font*> m_fonts;
 			// Added widgets
 			std::set<gcn::Widget*> m_widgets;
 

@@ -23,6 +23,7 @@
 #include <iostream>
 
 // 3rd party library includes
+#include <boost/filesystem/convenience.hpp>
 #include <guichan/sdl/sdlinput.hpp>
 #include <guichan/focushandler.hpp>
 #include <guichan.hpp>
@@ -37,6 +38,8 @@
 #include "util/settingsmanager.h"
 #include "gui/console/console.h"
 #include "gui/fonts/fontbase.h"
+#include "gui/fonts/truetypefont.h"
+#include "gui/fonts/subimagefont.h"
 #include "eventchannel/widget/ec_widgetevent.h"
 
 #include "guimanager.h"
@@ -51,11 +54,11 @@ namespace FIFE {
         	m_gcn_topcontainer(new gcn::Container()), 
         	m_imgloader(new GuiImageLoader(pool)) , 
         	m_input(new gcn::SDLInput()),
+        	m_console(0),
+        	m_fonts(),
 		m_widgetlistener(widgetlistener),
 		m_pool(pool) {
-		m_font = 0;
-		m_console = 0;
-
+		
 		m_gcn_gui->setTop(m_gcn_topcontainer);
 		m_gcn_topcontainer->setOpaque(false);
 		m_gcn_gui->setInput(m_input);
@@ -70,7 +73,11 @@ namespace FIFE {
 		delete m_imgloader;
 		delete m_input;
 		delete m_gcn_gui;
-		delete m_font;
+		std::vector<gcn::Font*>::iterator i = m_fonts.begin();
+		while (i != m_fonts.end()) {
+			delete *i;
+			++i;
+		}
 	}
 
 	void GUIManager::onSdlEvent(SDL_Event& evt) {
@@ -110,12 +117,28 @@ namespace FIFE {
 		m_console = new Console();
 	}
 
+	gcn::Font* GUIManager::createFont(const std::string& path, unsigned int size, const std::string& glyphs) {
+		if( boost::filesystem::extension(path) == ".ttf" ) {
+			return new TrueTypeFont(path, size);
+		} 
+		return new SubImageFont(path, glyphs, m_pool);
+	}
+
+	void GUIManager::releaseFont(gcn::Font* font) {
+		std::vector<gcn::Font*>::iterator i = m_fonts.begin();
+		while (i != m_fonts.end()) {
+			if ((*i) == font) {
+				m_fonts.erase(i);
+				delete font;
+				return;
+			}
+			++i;
+		}	
+	}
+
 	void GUIManager::setGlobalFont(gcn::Font* font) {
-		if( font == 0) {
-			gcn::Widget::setGlobalFont(m_font);
-		} else {
-			gcn::Widget::setGlobalFont(font);
-		}
+		gcn::Widget::setGlobalFont(font);
+		m_console->reLayout();
 	}
 
 	void GUIManager::turn() {

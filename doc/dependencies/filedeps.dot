@@ -191,6 +191,8 @@ digraph "source tree" {
     "engine/core/gui/guimanager.cpp" -> "gui/base/gui_imageloader.h"
     "engine/core/gui/guimanager.cpp" -> "gui/console/console.h"
     "engine/core/gui/guimanager.cpp" -> "gui/fonts/fontbase.h"
+    "engine/core/gui/guimanager.cpp" -> "gui/fonts/subimagefont.h"
+    "engine/core/gui/guimanager.cpp" -> "gui/fonts/truetypefont.h"
     "engine/core/gui/guimanager.cpp" -> "guimanager.h"
     "engine/core/gui/guimanager.cpp" -> "util/logger.h"
     "engine/core/gui/guimanager.cpp" -> "util/settingsmanager.h"

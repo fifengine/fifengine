@@ -12,22 +12,30 @@ class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
 		pass
 
-class MyMouseListener(fife.IMouseListener):
-	def __init__(self):
+class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, fife.ConsoleExecuter):
+	def __init__(self, world):
+		self.world = world
+		engine = world.engine
+		eventmanager = engine.getEventManager()
+		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10, fife.IKey.F9, fife.IKey.F8, fife.IKey.TAB])
+		fife.IKeyListener.__init__(self)
+		eventmanager.addKeyListener(self)
+		fife.ICommandListener.__init__(self)
+		eventmanager.addCommandListener(self)
 		fife.IMouseListener.__init__(self)
-		self.target = fife.ScreenPoint(0,0)
-		self.update = False	
-		self.pressed = False
+		eventmanager.addMouseListener(self)
+		fife.ConsoleExecuter.__init__(self)
+		engine.getGuiManager().getConsole().setConsoleExecuter(self)
+		
+		self.engine = engine		
+		self.quitRequested = False
+		self.newTarget = None
 
 	def mousePressed(self, evt):
-		self.update = False
-		self.pressed = True
-		self.target = fife.ScreenPoint(evt.getX(), evt.getY())
+		self.newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
 
 	def mouseReleased(self, evt):
-		self.pressed = False
-		self.update = True
-
+		pass
 	def mouseEntered(self, evt):
 		pass
 	def mouseExited(self, evt):
@@ -43,19 +51,36 @@ class MyMouseListener(fife.IMouseListener):
 	def mouseDragged(self, evt):
 		pass
 
-class MyKeyListener(fife.IKeyListener):
-	def __init__(self):
-		fife.IKeyListener.__init__(self)
-		self.quitRequested = False
-		
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
-		if keyval == fife.IKey.ESCAPE:
-			self.quitRequested = True
+		if (keyval == fife.IKey.ESCAPE):
+			self.quitRequested = True		
+		elif (keyval == fife.IKey.F10):
+			self.engine.getGuiManager().getConsole().toggleShowHide()
+	
 	
 	def keyReleased(self, evt):
 		pass
 
+	def onCommand(self, command):
+		self.quitRequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
+
+	def onToolsClick(self):
+		print "No tools set up yet"
+	
+	def onConsoleCommand(self, command):
+		result = "no result"
+		if command.lower() in ('quit', 'exit'):
+			self.quitRequested = True
+			return "quitting"
+		
+		try:
+			result = str(eval(command))
+		except:
+			pass
+		return result	
+
+		
 
 class World(object):
 	def __init__(self):
@@ -65,6 +90,11 @@ class World(object):
 		self.log = fifelog.LogManager(self.engine)
 		#self.log.setVisibleModules('hexgrid')
 		self.eventmanager = self.engine.getEventManager()
+		
+		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
+		         ".,!?-+/:();%`'*#=[]"
+		font = self.engine.getGuiManager().createFont('content/fonts/FreeMono.ttf', 16, glyphs)
+		self.engine.getGuiManager().setGlobalFont(font)
 		
 	def __del__(self):
 		self.engine.getView().removeCamera(self.camera)
@@ -119,23 +149,19 @@ class World(object):
 		self.engine.getView().addCamera(self.camera)
 	
 	def run(self):
-		l = MyMouseListener()
-		k = MyKeyListener()
-		self.eventmanager.addMouseListener(l)
-		self.eventmanager.addKeyListener(k)
+		evtlistener = MyEventListener(self)
 		self.engine.initializePumping()
 		self.target.setLayerCoordinates(fife.ModelCoordinate(1,0))
 		self.dummy.act('dummy:walk', self.target, 0.3)
 
 		while True:
 			self.engine.pump()
-			if (l.update == True):
-				l.update = False
+			if (evtlistener.newTarget):
 				
 				print "===================================================="
-				print "screen coordinates = " + str(l.target)
+				print "screen coordinates = " + str(evtlistener.newTarget)
 				
-				ec = self.camera.toElevationCoordinates(l.target)
+				ec = self.camera.toElevationCoordinates(evtlistener.newTarget)
 				print "elevation coordinates = " + str(ec)
 				
 				print "back to screen = " + str(self.camera.toScreenCoordinates(ec))
@@ -143,13 +169,14 @@ class World(object):
 				self.target.setElevationCoordinates(ec)
 				print "layer coordinates = " + str(self.target.getLayerCoordinates())
 				
-				
 				self.dummy.act('dummy:walk', self.target, 1.0)
-			if (k.quitRequested):
+				
+				evtlistener.newTarget = None
+			
+			if (evtlistener.quitRequested):
 				break
 
 		self.engine.finalizePumping()
-		self.eventmanager.removeMouseListener(l)
 
 
 if __name__ == '__main__':
