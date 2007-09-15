@@ -57,7 +57,7 @@ namespace FIFE {
 
 	void Camera::updateMatrices() {
 		double scale = 1.0 / (m_zoom * m_reference_scale);
-		m_matrix.loadScale(scale, scale, 1);
+		m_matrix.loadScale(scale, scale, scale);
 		m_matrix.applyRotate(m_rotation, 0.0, 0.0, 1.0);
 		m_matrix.applyRotate(m_tilt, 1.0, 0.0, 0.0);
 		if (m_location.getLayer()) {
