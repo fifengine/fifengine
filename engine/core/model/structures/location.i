@@ -11,6 +11,9 @@ namespace FIFE {
 	class ModelCoordinate;
 	class ExactModelCoordinate;
 
+	// for some reason swig ignores operator= and gives warning. Ignore this for now
+	%ignore Location::operator=;
+
 	class Location {
 	public:
 		Location();

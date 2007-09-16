@@ -93,7 +93,7 @@ class World(object):
 		
 		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
 		         ".,!?-+/:();%`'*#=[]"
-		font = self.engine.getGuiManager().createFont('content/fonts/FreeMono.ttf', 16, glyphs)
+		font = self.engine.getGuiManager().createFont('content/fonts/FreeMono.ttf', 12, glyphs)
 		self.engine.getGuiManager().setGlobalFont(font)
 		
 	def __del__(self):

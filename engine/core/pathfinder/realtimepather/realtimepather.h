@@ -36,7 +36,7 @@ namespace FIFE {
 
 	class RealTimePather : public AbstractPather {
 	public:
-		RealTimePather() : m_map(0), m_nextFreeSessionId(0), m_searchspace(0) { }
+		RealTimePather() : m_map(0), m_searchspace(0), m_nextFreeSessionId(0) { }
 
 		/** Sets the map that will be used for the search.
 		 *

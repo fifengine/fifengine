@@ -54,6 +54,8 @@ namespace FIFE {
 			: m_sessionId(session_id), m_pather(pather), m_status(search_status_incomplete) {
 		}
 
+		virtual ~Search() {}
+
 		/** Retrieves the session id.
 		 *
 		 * @return The searches session id in the pather.
