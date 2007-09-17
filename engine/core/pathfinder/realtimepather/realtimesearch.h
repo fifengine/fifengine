@@ -23,6 +23,7 @@
 #define FIFE_PATHFINDER_REALTIMESEARCH
 
 #include "pathfinder/search.h"
+#include "util/priorityqueue.h"
 
 namespace FIFE {
 
@@ -44,8 +45,10 @@ namespace FIFE {
 		std::vector<int> m_spt;
 		//The search frontier.
 		std::vector<int> m_sf;
-
-		//TODO: Add more pathfinding related stuff.
+		//A table to hold the costs.
+		std::vector<double> m_gCosts;
+		//priority queue to hold nodes on the sf in order. 
+		PriorityQueue<int, double> m_sortedfrontier;
 	};
 
 }
