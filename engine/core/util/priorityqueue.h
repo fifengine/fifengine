@@ -22,8 +22,8 @@
 #ifndef FIFE_SOLVER_INDEXEDPQ_H
 #define FIFE_SOLVER_INDEXEDPQ_H
 
+#include <cassert>
 #include <list>
-#include <assert.h>
 
 namespace FIFE {
 
