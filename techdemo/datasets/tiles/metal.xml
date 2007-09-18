@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<dataset id="MetalTiles" type="Embedded" format="1.0">
+	<metadata>
+		<param type="text" name="Name">metal.xml</param>
+		<param type="id" name="Version">1</param>
+	</metadata>
+
+	<!-- Ground tiles -->
+	<object id="20001">
+		<image source="techdemo/gfx/tiles/ground/dotted_metal.png" direction="0" />
+	</object>
+
+</dataset>

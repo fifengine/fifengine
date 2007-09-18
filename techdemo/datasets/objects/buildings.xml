@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<dataset id="Buildings" type="Embedded" format="1.0">
+	<object id="Hospital:e01">
+		<image source="techdemo/gfx/objects/buildings/hospital_e01.png"/>
+	</object>
+
+	<object id="Station:e01">
+		<image source="content/gfx/objects/buildings/station_e01.png"/>
+	</object>
+</dataset>

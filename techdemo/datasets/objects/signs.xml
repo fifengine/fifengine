@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<dataset id="Signs" type="Embedded" format="1.0">
+	<object id="WildBarracuda:Sign">
+		<image source="techdemo/gfx/objects/signs/wb-bar_blue.png"/>
+	</object>
+
+</dataset>

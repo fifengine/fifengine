@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<map id="TechdemoMap" format="1.0">
+
+	<metadata>
+		<param type="text" name="Name">city1.xml</param>
+		<param type="id" name="Version">1</param>
+		<param type="text" name="Comment">Official FIFE 2007.2 techdemo map. Some demonstration and some fun for modders, not more, not less :-)</param>
+		<param type="text" name="Author">chewie</param>
+		<param type="id" name="_START_ELEVATION">1</param>
+	</metadata>
+
+	<!-- Load tile object datasets -->
+	<!-- street & city underground -->
+	<dataset type="XML" source="techdemo/datasets/tiles/metal.xml" />
+	<dataset type="XML" source="techdemo/datasets/tiles/asphalt.xml" />
+	<dataset type="XML" source="techdemo/datasets/tiles/enviroment.xml" />
+
+	<!-- Load object datasets -->
+	<!-- Buildings -->
+	<dataset type="XML" source="techdemo/datasets/objects/buildings.xml" /> 
+	<!-- Signs -->
+	<dataset type="XML" source="techdemo/datasets/objects/signs.xml" /> 
+
+	<!-- Map specific object -->
+
+	<!-- Load agent datasets -->
+	
+	<dataset type="XML" source="techdemo/datasets/critters/humans/gunner.xml" />
+
+	<elevation id="TechdemoMapElevation">
+
+		<metadata>
+			<param name="_START_POSITION" type="Point"><x>4</x><y>7</y></param>
+		</metadata>
+
+		<!-- TILE LAYER -->
+		<layer id="TechdemoMapTileLayer" grid_type="square" scaling="4.0">
+
+			<metadata>
+				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
+			</metadata>
+
+			<instances>
+				<!-- TILE DATA -->
+			<!-- COLUMN 0 -->
+				<i o="20001" x="0" y="-1" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="21001" /><i o="21001" /><i o="21001" /><i o="20001" /><i o="21001" />
+				<i o="20001" x="0" y="0" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="21001" /><i o="21001" /><i o="21001" /><i o="20001" /><i o="21001" />
+				<i o="20001" x="0" y="1" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="21001" /><i o="21001" /><i o="21001" /><i o="20001" /><i o="21001" />
+				<i o="20001" x="0" y="2" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" />
+				<i o="20001" x="0" y="3" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" />			
+				<i o="20001" x="0" y="4" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" />				
+				<i o="20001" x="0" y="5" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="21001" /><i o="21001" /><i o="21001" /><i o="20001" /><i o="21001" />				
+				<i o="20001" x="0" y="6" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="21001" /><i o="22001" /><i o="21001" /><i o="20001" /><i o="21001" />				
+				<i o="20001" x="0" y="7" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="21001" /><i o="21001" /><i o="21001" /><i o="20001" /><i o="21001" />				
+				<i o="20001" x="0" y="8" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" />				
+				<i o="20001" x="0" y="9" />
+					<i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" /><i o="20001" />				
+			</instances>		
+		</layer>
+
+		<!-- OBJECT LAYER -->
+		<layer id="TechdemoMapObjectLayer" grid_type="square" scaling="0.25" x_offset="0.8" y_offset="-1.6">
+
+			<metadata>
+				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>5</x><y>0</y></param>
+			</metadata>
+
+			<instances>
+<!--
+				<i o="Hospital:e01" x="85" y="40" />
+-->
+				<i o="WildBarracuda:Sign" x="81" y="15" />
+
+				<i o="Gunner:static01" x="85" y="30" />				
+				<i o="Gunner:static01" x="87" y="31" />				
+				<i o="Gunner:static01" x="81" y="33" />				
+				<i o="Gunner:static01" x="79" y="36" />	
+				<i o="Gunner:static01" x="90" y="35" />	
+
+			</instances>
+		</layer>
+	</elevation>
+</map>

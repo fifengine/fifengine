@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<map id="TechdemoTestMap" format="1.0">
+
+	<metadata>
+		<param type="text" name="Name">test.xml</param>
+		<param type="id" name="Version">1</param>
+		<param type="text" name="Comment">Techdemo testmap</param>
+		<param type="text" name="Author">chewie</param>
+		<param type="id" name="_START_ELEVATION">1</param>
+	</metadata>
+
+	<dataset id="TechdemoMapTiles" type="Embedded" format="1.0">
+		<object id="50001">	
+				<image source="techdemo/gfx/tiles/ground/asphalt_200x100.png" singletile="1" />
+		</object>
+		<object id="60001">
+				<image source="techdemo/gfx/tiles/ground/stone_200x100.png" singletile="1" />
+		</object>
+		<object id="70001">
+				<image source="techdemo/gfx/tiles/ground/stone2_200x100.png" singletile="1" />
+		</object>
+	</dataset>
+	
+	<elevation id="TechdemoMapElevation">
+		<!--
+		<metadata>
+			<param name="_START_POSITION" type="Point"><x>3</x><y>3</y></param>
+		</metadata>
+		-->
+
+		<!-- TILE LAYER -->
+		<layer id="TechdemoTileLayer" grid_type="square" scaling="1.5">
+
+			<metadata>
+				<!-- <param name="_OVERLAY_IMAGE" type="text">content/gfx/gfx/tiles/outline320x144.png</param> -->
+				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
+			</metadata>
+
+			<instances>
+				<!-- COLUMN 0 -->
+				<i o="50001" x="0" y="0" /><i o="50001" /><i o="50001" /><i o="50001" /><i o="50001" /><i o="50001" /><i o="50001" /><i o="50001" /><i o="50001" />
+
+				<!-- COLUMN 1 -->
+				<i o="60001" x="0" y="1" /><i o="60001" /><i o="60001" /><i o="60001" /><i o="60001" /><i o="60001" /><i o="60001" /><i o="60001" /><i o="60001" />
+
+				<!-- COLUMN 2 -->
+				<i o="70001" x="0" y="2" /><i o="70001" /><i o="70001" /><i o="70001" /><i o="70001" /><i o="70001" /><i o="70001" /><i o="70001" /><i o="70001" />
+			</instances>		
+		</layer>
+
+	</elevation>	
+</map>

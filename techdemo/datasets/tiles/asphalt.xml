@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<dataset id="AsphaltTiles" type="Embedded" format="1.0">
+	<metadata>
+		<param type="text" name="Name">asphalt.xml</param>
+		<param type="id" name="Version">1</param>
+	</metadata>
+
+	<!-- Ground tiles -->
+	<object id="21001">
+		<image source="techdemo/gfx/tiles/ground/asphalt_light.png" direction="0" />
+	</object>
+	<object id="21002"> <!-- rot = 60 tilt = 35 -->
+		<image source="techdemo/gfx/tiles/ground/debug.png" direction="0" />
+	</object>
+
+</dataset>
