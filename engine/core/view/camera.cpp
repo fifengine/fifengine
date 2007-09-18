@@ -73,11 +73,23 @@ namespace FIFE {
 	ExactModelCoordinate Camera::toElevationCoordinates(ScreenPoint screen_coords) {
 		screen_coords.x -= m_viewport.w / 2;
 		screen_coords.y -= m_viewport.h / 2;
-		return m_matrix * intPt2doublePt(screen_coords);
+		ExactModelCoordinate p = m_matrix * intPt2doublePt(screen_coords);
+		if (p.y > 0) {
+			p.y = sqrt(p.z*p.z + p.y*p.y) / cos(m_tilt * (M_PI / 180.0));
+		}
+		else {
+			p.y = -sqrt(p.z*p.z + p.y*p.y) / cos(m_tilt * (M_PI / 180.0));
+		}
+		return p;
 	}
 
 	ScreenPoint Camera::toScreenCoordinates(ExactModelCoordinate elevation_coords) {
-		ScreenPoint pt = doublePt2intPt(m_inverse_matrix * elevation_coords);
+		ExactModelCoordinate p = elevation_coords;
+		// The math seems good to me, but this projection inversion
+		// seems to break things. Even more surprising: commenting it
+		// out makes things work! No complaints I guess... --jwt
+		//p.y = sqrt(p.y*p.y*cos(m_tilt)*cos(m_tilt) - p.z*p.z);
+		ScreenPoint pt = doublePt2intPt(m_inverse_matrix * p);
 		pt.x += m_viewport.w / 2;
 		pt.y += m_viewport.h / 2;
 		return pt;

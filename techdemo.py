@@ -140,8 +140,12 @@ class World(object):
 		
 		self.camera = fife.Camera()
 		self.camera.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
-		self.camera.setRotation(45)
-		self.camera.setTilt(40)
+		#self.camera.setRotation(45)
+		#self.camera.setTilt(40)
+
+		self.camera.setRotation(0)
+		self.camera.setTilt(45)
+
 		self.camera.setLocation(camloc)
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
