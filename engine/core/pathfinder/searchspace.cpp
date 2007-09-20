@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 #include "searchspace.h"
-#include "util/point.h"
 
 namespace FIFE {
 
@@ -37,12 +36,23 @@ namespace FIFE {
 		return false;
 	}
 
-	Location SearchSpace::translateToSearchSpace(const Location& location) const {
-		ModelCoordinate coordinates = location.getLayerCoordinates();
-		coordinates.x -= m_lowerX;
-		coordinates.y -= m_lowerY;
-		Location xtrnsfrmdLocal(location);
-		xtrnsfrmdLocal.setLayerCoordinates(coordinates);
-		return xtrnsfrmdLocal;
+	ModelCoordinate SearchSpace::translateCoordsToSearchSpace(const ModelCoordinate& coords) const {
+		ModelCoordinate newcoords;
+		newcoords.x = coords.x - m_lowerX;
+		newcoords.y = coords.y - m_lowerY;
+		return newcoords;
+	}
+
+	int SearchSpace::convertCoordToInt(const ModelCoordinate& coord) const {
+		ModelCoordinate newcoords = translateCoordsToSearchSpace(coord);
+		return newcoords.x + (newcoords.y * getWidth());
+	}
+
+	ModelCoordinate SearchSpace::convertIntToCoord(const int cell) const {
+		ModelCoordinate coord;
+		int width = getWidth();
+		coord.x = (cell % width) + m_lowerX;
+		coord.y = (cell / width) + m_lowerY;
+		return coord;
 	}
 }

@@ -251,6 +251,26 @@ void FIFE::PriorityQueue<index_type, priority_type>::orderUp(ElementListIt i) {
 
 }
 
+template<class index_type, class priority_type>
+void FIFE::PriorityQueue<index_type, priority_type>::orderUp(const value_type& val)
+{
+	for(ElementListIt it = m_elements.begin(); it != m_elements.end(); ++it)
+	{
+		assert(val.first != it->first);
+
+		if(val.second < it->second)
+		{
+			assert(val.first != it->first);
+
+			m_elements.insert(it, val);
+
+			return;
+		}
+	}
+
+	m_elements.push_back(val);
+}
+
 template<typename index_type, typename priority_type>
 void FIFE::PriorityQueue<index_type, priority_type>::orderDown(ElementListIt i) {
 

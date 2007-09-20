@@ -50,10 +50,13 @@ namespace FIFE {
 		 * @param to The location where the search should finish.
 		 * @param pather A pointer to the pather controlling this session.
 		 */
-		Search(int session_id, const Location& from, const Location& to, AbstractPather* pather) 
+		Search(const int session_id, const Location& from, const Location& to, AbstractPather* pather) 
 			: m_sessionId(session_id), m_pather(pather), m_status(search_status_incomplete) {
 		}
 
+		/** Destructor.
+		 *
+		 */
 		virtual ~Search() {}
 
 		/** Retrieves the session id.
@@ -80,6 +83,7 @@ namespace FIFE {
 			return m_status;
 		}
 
+
 		/** Updates the search and returns the next part of the path or the entire path if the
 		 * algorithm is offline.
 		 *
@@ -87,6 +91,15 @@ namespace FIFE {
 		 */
 		virtual std::vector<Location> updateSearch() = 0;
 	protected:
+
+		/** Sets the current status of the search.
+		 *
+		 * @param status The status to set.
+		 */
+		void setSearchStatus(const SearchStatus status) {
+			m_status = status;
+		}
+
 		//A location object representing where the search started.
 		Location		m_to; 
 

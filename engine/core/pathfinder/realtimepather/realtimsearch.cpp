@@ -20,11 +20,63 @@
  ***************************************************************************/
 
 #include "realtimesearch.h"
+#include "realtimepather.h"
+#include "pathfinder/searchspace.h"
+#include "model/structures/layer.h"
+#include "model/metamodel/grids/cellgrid.h"
 
 namespace FIFE {
-	std::vector<Location> RealTimeSearch::updateSearch() {
-		//TODO: Finish this function. The actual algorithm will go inside of this function.
+	RealTimeSearch::RealTimeSearch(const int session_id, const Location& from, const Location& to, AbstractPather* pather)
+	: Search(session_id, from, to, pather) {
+		//Store the search space here for ease of use.
+		m_searchspace = ((RealTimePather*)pather)->getSearchSpace();
+	}
 
+	//TODO: Tidy up this function.
+	std::vector<Location> RealTimeSearch::updateSearch() {
+		//TODO: Finish this function. The actual algorithm will go inside of this function. Needs
+		//cleaning up, a bit ugly as it stands.
+		if(m_sortedfrontier.empty()) {
+			setSearchStatus(search_status_failed);
+			return std::vector<Location>();
+		}
+		PriorityQueue<int, float>::value_type topvalue = m_sortedfrontier.getPriorityElement();
+		m_sortedfrontier.popElement();
+		int next = topvalue.first;
+		m_spt[next] = m_sf[next];
+		ModelCoordinate destCoord = m_to.getLayerCoordinates();
+		int destcoordInt = m_searchspace->convertCoordToInt(destCoord);
+		if(destcoordInt == next) {
+			m_status = search_status_complete;
+			//TODO: calculate the complete path.
+			return std::vector<Location>();
+		}
+		//use destination layer for getting the cell coordinates for now, this should be moved
+		//into search space.
+		ModelCoordinate nextCoord = m_searchspace->convertIntToCoord(next);
+		std::vector<ModelCoordinate> adjacents;
+		m_to.getLayer()->getCellGrid()->getAccessibleCoordinates(nextCoord, adjacents);
+		for(std::vector<ModelCoordinate>::iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
+			//first determine if coordinate is in search space.
+			//UGLY :(
+			Location loc = m_to;
+			loc.setLayerCoordinates((*i));
+			if(m_searchspace->isInSearchSpace(loc)) {
+				float hCost = (float)((destCoord.x - i->x) + (destCoord.y - i->y));
+				float gCost = m_gCosts[next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
+				int adjacentInt = m_searchspace->convertCoordToInt((*i));
+				if(m_sf[adjacentInt] == -1) {
+					m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(adjacentInt, gCost + hCost));
+					m_gCosts[adjacentInt] = gCost;
+					m_sf[adjacentInt] = next;
+				}
+				else if(gCost < m_gCosts[adjacentInt] && m_spt[adjacentInt] == -1) {
+					m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
+					m_gCosts[adjacentInt] = gCost;
+					m_sf[adjacentInt] = next;
+				}
+			}
+		}
 		return std::vector<Location>();
 	}
 }

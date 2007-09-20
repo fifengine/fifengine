@@ -54,9 +54,25 @@ namespace FIFE {
 			return m_upperY - m_lowerY;
 		}
 
+		/**
+		 *
+		 */
 		bool isInSearchSpace(const Location& location) const;
 
-		Location translateToSearchSpace(const Location& location) const;
+		/**
+		 *
+		 */
+		ModelCoordinate translateCoordsToSearchSpace(const ModelCoordinate& coords) const;
+
+		/**
+		 *
+		 */
+		int convertCoordToInt(const ModelCoordinate& coord) const;
+
+		/**
+		 *
+		 */
+		ModelCoordinate convertIntToCoord(const int cell) const;
 	private:
 		//The boundries of the search space.
 		int m_upperX;
