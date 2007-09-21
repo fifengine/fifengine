@@ -19,6 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#include <algorithm>
 #include "realtimesearch.h"
 #include "realtimepather.h"
 #include "pathfinder/searchspace.h"
@@ -48,8 +49,7 @@ namespace FIFE {
 		int destcoordInt = m_searchspace->convertCoordToInt(destCoord);
 		if(destcoordInt == next) {
 			m_status = search_status_complete;
-			//TODO: calculate the complete path.
-			return std::vector<Location>();
+			return calcPath();
 		}
 		//use destination layer for getting the cell coordinates for now, this should be moved
 		//into search space.
@@ -78,5 +78,21 @@ namespace FIFE {
 			}
 		}
 		return std::vector<Location>();
+	}
+
+	//TODO: This function needs cleaning up to.
+	std::vector<Location> RealTimeSearch::calcPath() {
+		int current = m_searchspace->convertCoordToInt(m_to.getLayerCoordinates());
+		int end = m_searchspace->convertCoordToInt(m_from.getLayerCoordinates());
+		std::vector<Location> path;
+		path.push_back(m_to);
+		while(current != end) {
+			current = m_spt[current];
+			Location newnode(m_to);
+			newnode.setLayerCoordinates(m_searchspace->convertIntToCoord(current));
+			path.push_back(newnode);
+		}
+		std::reverse(path.begin(), path.end());
+		return path;
 	}
 }

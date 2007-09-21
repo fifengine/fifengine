@@ -100,6 +100,8 @@ namespace FIFE {
 			m_status = status;
 		}
 
+		virtual std::vector<Location> calcPath() = 0;
+
 		//A location object representing where the search started.
 		Location		m_to; 
 

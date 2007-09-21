@@ -40,6 +40,7 @@ namespace FIFE {
 
 		virtual std::vector<Location> updateSearch();
 	private:
+		virtual std::vector<Location> calcPath();
 		//A pointer to the search space for ease of use.
 		SearchSpace*              m_searchspace;
 		//The shortest path tree.
