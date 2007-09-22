@@ -5,6 +5,7 @@
 # enables
 #	* map loading
 #	* agent "gunner" on loaded map
+#	* map scrolling
 #
 # changes
 #	* agent speed is now 0.5
@@ -35,7 +36,17 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.world = world
 		engine = world.engine
 		eventmanager = engine.getEventManager()
-		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE, fife.IKey.F10, fife.IKey.F9, fife.IKey.F8, fife.IKey.TAB])
+		eventmanager.setNonConsumableKeys([
+			fife.IKey.ESCAPE,
+			fife.IKey.F10,
+			fife.IKey.F9,
+			fife.IKey.F8,
+			fife.IKey.TAB,
+			fife.IKey.LEFT,
+			fife.IKey.RIGHT,
+			fife.IKey.UP,
+			fife.IKey.DOWN])
+		
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
 		fife.ICommandListener.__init__(self)
@@ -48,6 +59,12 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.engine = engine		
 		self.quitRequested = False
 		self.newTarget = None
+		
+		# scroll support
+		self.ScrollLeft = False
+		self.ScrollRight = False
+		self.ScrollUp = False
+		self.ScrollDown = False
 
 	def mousePressed(self, evt):
 		self.newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
@@ -75,7 +92,18 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 			self.quitRequested = True		
 		elif (keyval == fife.IKey.F10):
 			self.engine.getGuiManager().getConsole().toggleShowHide()
-	
+		elif (keyval == fife.IKey.LEFT):
+			#print "camera: left"
+			self.ScrollLeft = True
+		elif (keyval == fife.IKey.RIGHT):
+			#print "camera: right"
+			self.ScrollRight = True
+		elif (keyval == fife.IKey.UP):
+			#print "camera: up"
+			self.ScrollUp = True
+		elif (keyval == fife.IKey.DOWN):
+			#print "camera: down"
+			self.ScrollDown = True
 	
 	def keyReleased(self, evt):
 		pass
@@ -148,9 +176,9 @@ class World(object):
 		self.dummy.addListener(self.reactor)
 		
 	def adjust_views(self):
-		camloc = fife.Location()
-		camloc.setLayer(self.layer)
-		camloc.setLayerCoordinates(fife.ModelCoordinate(5,0))
+		self.camloc = fife.Location()
+		self.camloc.setLayer(self.layer)
+		self.camloc.setLayerCoordinates(fife.ModelCoordinate(6,0))
 		
 		self.camera = fife.Camera()
 		self.camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
@@ -158,7 +186,7 @@ class World(object):
 		self.camera.setRotation(35)
 		self.camera.setTilt(60)
 
-		self.camera.setLocation(camloc)
+		self.camera.setLocation(self.camloc)
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
 		self.camera.setViewPort(viewport)
@@ -169,8 +197,13 @@ class World(object):
 		self.engine.initializePumping()
 		self.target.setLayerCoordinates(fife.ModelCoordinate(1,0))
 		self.dummy.act('dummy:walk', self.target, 0.5)
+		
+		# map scrolling
+		scroll_modifier = 0.2
 
 		while True:
+			cam_scroll = self.camloc.getExactLayerCoordinates()
+			
 			self.engine.pump()
 			if (evtlistener.newTarget):
 				
@@ -191,6 +224,23 @@ class World(object):
 			
 			if (evtlistener.quitRequested):
 				break
+
+			# scroll the map with cursor keys
+			if (evtlistener.ScrollLeft):
+				cam_scroll.x -= scroll_modifier
+				evtlistener.ScrollLeft = False
+			elif (evtlistener.ScrollRight):
+				cam_scroll.x += scroll_modifier
+				evtlistener.ScrollRight = False
+			elif (evtlistener.ScrollUp):
+				cam_scroll.y -= scroll_modifier
+				evtlistener.ScrollUp = False
+			elif (evtlistener.ScrollDown):
+				cam_scroll.y += scroll_modifier
+				evtlistener.ScrollDown = False				
+				
+			cam_scroll = self.camloc.setExactLayerCoordinates(cam_scroll)			
+			self.camera.setLocation(self.camloc)
 
 		self.engine.finalizePumping()
 
