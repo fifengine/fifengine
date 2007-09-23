@@ -106,6 +106,7 @@ namespace FIFE {
 	Instance::Instance(Object* object, const Location& location):
 		m_object(object), 
 		m_location(location),
+		m_stackpos(0),
 		m_actioninfo(NULL),
 		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
 		m_cached_static_img_angle(0),

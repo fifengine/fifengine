@@ -19,69 +19,42 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIEW_VIEW_H
-#define FIFE_VIEW_VIEW_H
+#ifndef FIFE_CAMERAZONERENDERER_H
+#define FIFE_CAMERAZONERENDERER_H
 
 // Standard C++ library includes
-#include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-
+#include "view/abstractrenderer.h"
 
 namespace FIFE {
-	class Camera;
 	class RenderBackend;
 	class ImagePool;
-	class AnimationPool;
-	class AbstractRenderer;
 
-	class View {
+	class CameraZoneRenderer: public AbstractRenderer {
 	public:
-		/** Constructor
+		/** constructor.
+		 * @param renderbackend to use
+		 * @param imagepool image pool where from fetch images
 		 */
-		View();
-
-		/** Destructor
-		 */
-		~View();
-
-		/** Adds new renderer on the view. Ownership is transferred to the view.
-		 * After addition, renderer is active for all cameras
-		 */
-		void addRenderer(AbstractRenderer* renderer);
+		CameraZoneRenderer(RenderBackend* renderbackend, ImagePool* imagepool);
 		
-		/** Removes given renderer from the view. Ownership is taken away from the view
+		/** Destructor.
 		 */
-		void removeRenderer(AbstractRenderer* renderer);
+		virtual ~CameraZoneRenderer();
 		
-		/** Adds new camera on view. Ownership is transferred to the view.
-		 * After addition, camera gets rendered by the added renderers
-		 */
-		void addCamera(Camera* camera);
-
-		/** Removes given camera from the view. Ownership is taken away from the view
-		 */
-		void removeCamera(Camera* camera);
-
-		/** Causes view to render all cameras
-		 */
-		void update();
+		void render(Camera* camera, Layer* layer, stackpos2instances_t* instance_stack, int stackpos);
 
 	private:
-		// list of cameras managed by the view
-		std::vector<Camera*> m_cameras;
 		RenderBackend* m_renderbackend;
 		ImagePool* m_imagepool;
-		AnimationPool* m_animationpool;
-		// list of renderers managed by the view
-		std::vector<AbstractRenderer*> m_renderers;
 	};
 
 }
+
 #endif

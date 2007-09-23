@@ -86,7 +86,7 @@ subgraph cluster_11 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "view"
+    "view"; "view/renderers"
     label = "view";
 }
 subgraph cluster_12 {
@@ -116,6 +116,7 @@ subgraph cluster_12 {
     "controller" -> "video/opengl"
     "controller" -> "video/sdl"
     "controller" -> "view"
+    "controller" -> "view/renderers"
     "eventchannel/base" -> "eventchannel/source"
     "eventchannel/command" -> "eventchannel/base"
     "eventchannel/key" -> "eventchannel/base"
@@ -204,6 +205,12 @@ subgraph cluster_12 {
     "view" -> "model/structures"
     "view" -> "util"
     "view" -> "video"
+    "view/renderers" -> "model/metamodel"
+    "view/renderers" -> "model/metamodel/grids"
+    "view/renderers" -> "model/structures"
+    "view/renderers" -> "util"
+    "view/renderers" -> "video"
+    "view/renderers" -> "view"
     "xml" -> "util"
     "xml" -> "xml/tinyxml"
     "xml/tinyxml" -> "vfs"

@@ -45,24 +45,43 @@
 #include "model/structures/location.h"
 
 #include "view.h"
+#include "abstractrenderer.h"
 #include "camera.h"
 
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 	
-	View::View(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool):
+	View::View():
 		m_cameras(),
-		m_renderbackend(renderbackend),
-		m_imagepool(imagepool),
-		m_animationpool(animpool) {
+		m_renderers() {
 	}
 
 	View::~View() {
-		std::vector<Camera*>::iterator it = m_cameras.begin();
-		for(; it != m_cameras.end(); ++it) {
-			delete *it;
+		std::vector<Camera*>::iterator cam_it = m_cameras.begin();
+		for(; cam_it != m_cameras.end(); ++cam_it) {
+			delete *cam_it;
 		}
 		m_cameras.clear();
+		
+		std::vector<AbstractRenderer*>::iterator r_it = m_renderers.begin();
+		for(; r_it != m_renderers.end(); ++r_it) {
+			delete *r_it;
+		}
+		m_renderers.clear();
+	}
+
+	void View::addRenderer(AbstractRenderer* renderer) {
+		m_renderers.push_back(renderer);
+	}
+
+	void View::removeRenderer(AbstractRenderer* renderer) {
+		std::vector<AbstractRenderer*>::iterator it = m_renderers.begin();
+		for(; it != m_renderers.end(); ++it) {
+			if((*it) == renderer) {
+				m_renderers.erase(it);
+				return;
+			}
+		}
 	}
 
 	void View::addCamera(Camera* camera) {
@@ -79,187 +98,42 @@ namespace FIFE {
 		}
 	}
 	
-	int View::getAngleBetween(const Location& loc1, const Location& loc2, Camera& cam) {
-		ScreenPoint pt1 = cam.toScreenCoordinates(loc1.getElevationCoordinates());
-		ScreenPoint pt2 = cam.toScreenCoordinates(loc2.getElevationCoordinates());
-		double dy = pt2.y - pt1.y;
-		double dx = pt2.x - pt1.x;
-		
-		int angle = static_cast<int>(atan2(dy,dx)*(180.0/M_PI));
-		FL_DBG(_log, LMsg("-> angle, pt1=") << pt1 << ", pt2=" << pt2 << ", angle=" << angle);
-		if (dy > 0) {
-			return 360 - angle;
-		} else {
-			return -angle;
-		}
-	}
-	
-	#define SHOW_CAMERA_ZONES
-	
-	#ifdef SHOW_CAMERA_ZONES
-	// This is a HACK to see what grid the camera see when transforming from screen 
-	// coord to elevation coords.
-	static Image* zone_image = 0;
-	#endif
-	
-	void View::updateCamera(Camera* camera) {
-		FL_DBG(_log, "In View::updateCamera");
-		const Location& loc = camera->getLocation();
-		Elevation* elev = loc.getElevation();
-		if (!elev) {
-			FL_DBG(_log, "No elevation found, exiting");
-			return;
-		}
-		const std::vector<Layer*>& layers = elev->getLayers();
-		std::vector<Layer*>::const_iterator layer_it = layers.begin();
-		while (layer_it != layers.end()) {
-			FL_DBG(_log, "Iterating layer...");
-			Layer* layer = (*layer_it);
-			CellGrid* cg = layer->getCellGrid();
-			if (!cg) {
-				FL_DBG(_log, "No cellgrid assigned to layer...");
-				++layer_it;
-			}
-			FL_DBG(_log, "Getting instance...");
-			const std::vector<Instance*>& instances = layer->getInstances();
-			std::vector<Instance*>::const_iterator instance_it = instances.begin();
-			while (instance_it != instances.end()) {
-				FL_DBG(_log, "Iterating instances...");
-				Instance* instance = (*instance_it);
-				Image* image = NULL;
-				ExactModelCoordinate elevpos = instance->getLocation().getElevationCoordinates();
-				ScreenPoint campos = camera->toScreenCoordinates(elevpos);
-				
-				FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocation().getLayerCoordinates());
-				FL_DBG(_log, LMsg("Instance elevation position = ") << elevpos);
-				FL_DBG(_log, LMsg("Instance camera position = ") << campos);
-				
-				Action* action = instance->getCurrentAction();
-				if (action) {
-					const Location& facing_loc = instance->getFacingLocation();
-					FL_DBG(_log, "Instance has action");
-					int angle = getAngleBetween(instance->getLocation(), instance->getFacingLocation(), *camera);
-					int animation_id = action->getAnimationIndexByAngle(angle);
-					Animation& animation = m_animationpool->getAnimation(animation_id);
-					int animtime = instance->getActionRuntime() % animation.getDuration();
-					image = animation.getFrameByTimestamp(animtime);
-					FL_DBG(_log, LMsg("Instance facing location = ") << facing_loc);
-					FL_DBG(_log, LMsg("Calculated angle = ") << angle);
-				} else {
-					FL_DBG(_log, "No action");
-					int static_rotation = static_cast<int>(cg->getRotation() + camera->getRotation());
-					int imageid = instance->getStaticImageIndexByAngle(static_rotation);
-					FL_DBG(_log, LMsg("Instance does not have action, using static image with id ") << imageid);
-					if (imageid >= 0) {
-						image = &m_imagepool->getImage(imageid);
-					}
-				}
-				if (image) {
-					ExactModelCoordinate exact_elevpos = instance->getLocation().getElevationCoordinates();
-					ScreenPoint drawpt = camera->toScreenCoordinates(exact_elevpos);
-
-					int w = image->getWidth();
-					int h = image->getHeight();
-					drawpt.x -= w / 2;
-					drawpt.x += image->getXShift();
-					drawpt.y -= h / 2;
-					drawpt.y += image->getYShift();
-					Rect r = Rect(drawpt.x, drawpt.y, w, h);
-					FL_DBG(_log, LMsg("image(") << r << "), viewport (" << camera->getViewPort());
-					if (r.intersects(camera->getViewPort())) {
-						FL_DBG(_log, "Instance is visible in viewport, rendering");
-						image->render(r);
-					} else {
-						FL_DBG(_log, "Instance is not visible in viewport, skipping");
-					}
-
-					// draw grid for testing purposes
-					std::vector<ExactModelCoordinate> vertices;
-					cg->getVertices(vertices, instance->getLocation().getLayerCoordinates());
-					std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-					ScreenPoint firstpt = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
-					Point pt1(firstpt.x, firstpt.y);
-					Point pt2;
-					++it;
-					while (it != vertices.end()) {
-						ScreenPoint pts = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
-						pt2.x = pts.x; pt2.y = pts.y;
-						m_renderbackend->drawLine(pt1, pt2, 0, 255, 0);
-						pt1 = pt2;
-						++it;
-					}
-					m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), 0, 255, 0);
-				}
-				else {
-					FL_DBG(_log, "Instance does not have image to render");
-				}
-				++instance_it;
-			}
-			
-			#ifdef SHOW_CAMERA_ZONES
-			// draw this layer's grid as the camera sees it
-			Rect rect = camera->getViewPort();
-			if (zone_image == 0) {
-				// build zone image
-				int dataSize = rect.w * rect.h;
-				
-				// initally all pixels are transparent
-				uint32_t* data = new uint32_t[dataSize];
-				uint32_t* end = data + dataSize;
-				
-				#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-					uint32_t empty_pixel = 0;//0xff << 24;
-					uint32_t edge_pixel = 0xff << 16 | 0xff << 24;
-				#else
-					uint32_t empty_pixel = 0;//0xff;
-					uint32_t edge_pixel = 0xff << 8 | 0xff;
-				#endif
-				
-				std::fill(data, end, empty_pixel);
-		
-				// go from screen coords to grid coords (layer coords)
-				// Search through pixel space, drawing pixels at boundaries
-				ModelCoordinate prevLayerCoord;
-				for (int y = 0; y < rect.h; y++) {
-					for (int x = 0; x < rect.w; x++) {
-						ExactModelCoordinate elevCoord = camera->toElevationCoordinates(ScreenPoint(x, y));
-						ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
-						
-						if (prevLayerCoord != layerCoord) {
-							data[x + rect.w * y] = edge_pixel;
-						}
-						prevLayerCoord = layerCoord;
-					}
-				}
-				
-				
-				for (int x = 0; x < rect.w; x++) {
-					for (int y = 0; y < rect.h; y++) {
-						ExactModelCoordinate elevCoord = camera->toElevationCoordinates(ScreenPoint(x, y));
-						ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
-						
-						if (prevLayerCoord != layerCoord) {
-							data[x + rect.w * y] = edge_pixel;
-						}
-						prevLayerCoord = layerCoord;
-					}
-				}	
-				
-				zone_image =  m_renderbackend->createStaticImageFromRGBA((uint8_t*) data, rect.w, rect.h);
-				delete data;
-			}
-			
-			zone_image->render(rect);
-			#endif
-			
-			++layer_it;
-		}
-	}
-
 	void View::update() {
-		std::vector<Camera*>::iterator it = m_cameras.begin();
-		for(; it != m_cameras.end(); ++it) {
-			updateCamera(*it);
+		FL_DBG(_log, "In View::update");
+		
+		// update each camera
+		std::vector<Camera*>::iterator cam_it = m_cameras.begin();
+		for(; cam_it != m_cameras.end(); ++cam_it) {
+			const Location& loc = (*cam_it)->getLocation();
+			Elevation* elev = loc.getElevation();
+			if (!elev) {
+				FL_ERR(_log, "No elevation for camera found");
+				continue;
+			}
+			
+			// update each layer
+			const std::vector<Layer*>& layers = elev->getLayers();
+			std::vector<Layer*>::const_iterator layer_it = layers.begin();
+			for (;layer_it != layers.end(); ++layer_it) {
+			
+				// sort instances on layer based on stack position. done only once
+				//  here instead passing it to each renderer
+				const std::vector<Instance*>& instances = (*layer_it)->getInstances();
+				std::vector<Instance*>::const_iterator instance_it = instances.begin();
+				stackpos2instances_t stacked_instances;
+				for (;instance_it != instances.end(); ++instance_it) {
+					stacked_instances[(*instance_it)->getStackPosition()].push_back(*instance_it);
+				}
+			
+				// asks renderers to draw the layer using made stack ordering
+				stackpos2instances_t::iterator stack_it = stacked_instances.begin();
+				for (;stack_it != stacked_instances.end(); ++stack_it) {
+					std::vector<AbstractRenderer*>::iterator rend_it = m_renderers.begin();
+					for(; rend_it != m_renderers.end(); ++rend_it) {
+						(*rend_it)->render(*cam_it, *layer_it, &stacked_instances, stack_it->first);
+					}
+				}
+			}
 		}
 	}
 }

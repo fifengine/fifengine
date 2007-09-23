@@ -61,6 +61,9 @@
 //#include "loaders/fallout/model_loaders/dat2.h"
 #include "model/model.h"
 #include "view/view.h"
+#include "view/renderers/camerazonerenderer.h"
+#include "view/renderers/gridrenderer.h"
+#include "view/renderers/instancerenderer.h"
 #include "engine.h"
 
 static const std::string SETTINGS_FILE_NAME = "fife.config";
@@ -205,7 +208,14 @@ namespace FIFE {
 		SDL_EnableUNICODE(1);
 
 		m_model = new Model();
-		m_view = new View(m_renderbackend, m_imagepool, m_animpool);
+		m_view = new View();
+#ifdef RENDER_CAMZONES
+		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, m_imagepool));
+#endif
+#ifdef RENDER_GRID
+		m_view->addRenderer(new GridRenderer(m_renderbackend));
+#endif
+		m_view->addRenderer(new InstanceRenderer(m_renderbackend, m_imagepool, m_animpool));
 	}
 
 	void Engine::initializePumping() {

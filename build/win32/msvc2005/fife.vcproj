@@ -340,8 +340,17 @@
 				</Filter>
 			</Filter>
 			<Filter Name="view">
+				<File RelativePath="..\..\..\engine\core\view\abstractrenderer.h"></File>
 				<File RelativePath="..\..\..\engine\core\view\camera.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\view\camera.h"></File>
+				<Filter Name="renderers">
+					<File RelativePath="..\..\..\engine\core\view\renderers\camerazonerenderer.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\view\renderers\camerazonerenderer.h"></File>
+					<File RelativePath="..\..\..\engine\core\view\renderers\gridrenderer.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\view\renderers\gridrenderer.h"></File>
+					<File RelativePath="..\..\..\engine\core\view\renderers\instancerenderer.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\view\renderers\instancerenderer.h"></File>
+				</Filter>
 				<File RelativePath="..\..\..\engine\core\view\view.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\view\view.h"></File>
 				<File RelativePath="..\..\..\engine\core\view\visualtree.cpp"></File>

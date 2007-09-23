@@ -19,69 +19,70 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIEW_VIEW_H
-#define FIFE_VIEW_VIEW_H
-
 // Standard C++ library includes
-#include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "video/renderbackend.h"
+#include "util/logger.h"
+
+#include "util/fife_math.h"
+#include "util/logger.h"
+#include "model/metamodel/grids/cellgrid.h"
+#include "model/structures/elevation.h"
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
+#include "model/structures/location.h"
+
+#include "view/camera.h"
+#include "gridrenderer.h"
 
 
 namespace FIFE {
-	class Camera;
-	class RenderBackend;
-	class ImagePool;
-	class AnimationPool;
-	class AbstractRenderer;
-
-	class View {
-	public:
-		/** Constructor
-		 */
-		View();
-
-		/** Destructor
-		 */
-		~View();
-
-		/** Adds new renderer on the view. Ownership is transferred to the view.
-		 * After addition, renderer is active for all cameras
-		 */
-		void addRenderer(AbstractRenderer* renderer);
+	static Logger _log(LM_VIEWVIEW);
+	
+	GridRenderer::GridRenderer(RenderBackend* renderbackend):
+		m_renderbackend(renderbackend) {
+	}
+	
+	GridRenderer::~GridRenderer() {
+	}
+	
+	void GridRenderer::render(Camera* camera, Layer* layer, stackpos2instances_t* instance_stack, int stackpos) {
+		if (stackpos != 0) {
+			return;
+		}
 		
-		/** Removes given renderer from the view. Ownership is taken away from the view
-		 */
-		void removeRenderer(AbstractRenderer* renderer);
+		CellGrid* cg = layer->getCellGrid();
+		if (!cg) {
+			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
+			return;
+		}
 		
-		/** Adds new camera on view. Ownership is transferred to the view.
-		 * After addition, camera gets rendered by the added renderers
-		 */
-		void addCamera(Camera* camera);
-
-		/** Removes given camera from the view. Ownership is taken away from the view
-		 */
-		void removeCamera(Camera* camera);
-
-		/** Causes view to render all cameras
-		 */
-		void update();
-
-	private:
-		// list of cameras managed by the view
-		std::vector<Camera*> m_cameras;
-		RenderBackend* m_renderbackend;
-		ImagePool* m_imagepool;
-		AnimationPool* m_animationpool;
-		// list of renderers managed by the view
-		std::vector<AbstractRenderer*> m_renderers;
-	};
-
+		stackpos2instances_t::const_iterator i = instance_stack->find(stackpos);
+		const std::vector<Instance*>& instances = i->second;
+		std::vector<Instance*>::const_iterator instance_it = instances.begin();
+		for (;instance_it != instances.end(); ++instance_it) {
+			Instance* instance = *instance_it;
+			std::vector<ExactModelCoordinate> vertices;
+			cg->getVertices(vertices, instance->getLocation().getLayerCoordinates());
+			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+			ScreenPoint firstpt = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
+			Point pt1(firstpt.x, firstpt.y);
+			Point pt2;
+			++it;
+			while (it != vertices.end()) {
+				ScreenPoint pts = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
+				pt2.x = pts.x; pt2.y = pts.y;
+				m_renderbackend->drawLine(pt1, pt2, 0, 255, 0);
+				pt1 = pt2;
+				++it;
+			}
+			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), 0, 255, 0);
+		}
+	}
 }
-#endif

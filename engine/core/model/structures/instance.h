@@ -75,12 +75,27 @@ namespace FIFE {
 			template<typename T>
 			const T& get(const std::string& field) { return m_object->oget<T>(field); }
 
+			/** Sets location of the instance
+			 *  @param loc new location
+ 			 */
 			void setLocation(const Location& loc) { m_location = loc; }
 
 			/** Gets current location of instance
 			 *  @return current location
  			 */
 			const Location& getLocation() const { return m_location; }
+			
+			/** Sets stack position of the instance
+			 *  Stack position is used to define the order in which instances residing
+			 *  in the same location are drawn
+			 *  @param loc new stack position
+ 			 */
+			void setStackPosition(int stackpos) { m_stackpos = stackpos; }
+			
+			/** Gets current stack position of instance
+			 *  @return current stack position
+ 			 */
+			int getStackPosition() { return m_stackpos; }
 
 			/** Gets movement target in case instance is moving. In case not, returns current location
 			 *  @return Movement target location
@@ -157,6 +172,8 @@ namespace FIFE {
 			Object* m_object;
 			// current location
 			Location m_location;
+			// stack position defines the order used when drawing images on same location
+			int m_stackpos;
 			// action information, allocated when actions are bind
 			ActionInfo* m_actioninfo;
 			// static image that is read from object. Used for fast access when drawing images

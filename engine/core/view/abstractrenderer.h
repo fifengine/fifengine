@@ -19,69 +19,43 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIEW_VIEW_H
-#define FIFE_VIEW_VIEW_H
+#ifndef FIFE_ABSTRACTRENDERER_H
+#define FIFE_ABSTRACTRENDERER_H
 
 // Standard C++ library includes
+#include <map>
 #include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-
 namespace FIFE {
 	class Camera;
-	class RenderBackend;
-	class ImagePool;
-	class AnimationPool;
-	class AbstractRenderer;
-
-	class View {
+	class Layer;
+	class Instance;
+	typedef std::map<int, std::vector<Instance*> > stackpos2instances_t;
+	
+	class AbstractRenderer {
 	public:
-		/** Constructor
-		 */
-		View();
-
-		/** Destructor
-		 */
-		~View();
-
-		/** Adds new renderer on the view. Ownership is transferred to the view.
-		 * After addition, renderer is active for all cameras
-		 */
-		void addRenderer(AbstractRenderer* renderer);
+		virtual ~AbstractRenderer() {};
 		
-		/** Removes given renderer from the view. Ownership is taken away from the view
+		/** This method is called by the view to ask renderer to draw its rendering aspect based on
+		 * given parameters. Renderers receive non-clipped instance stack since there is no
+		 * way to know which information is relevant for the renderer. E.g. effect renderer
+		 * might need to know offscreen instance locations to be able to draw radiation coming from
+		 * some instance not visible on the screen.
+		 *
+		 * @param cam camera view to draw
+		 * @param cam current layer to be rendered
+		 * @param instance_stack instances on the current layer ordered by stack position
+		 * @param stack_pos current stack position
 		 */
-		void removeRenderer(AbstractRenderer* renderer);
-		
-		/** Adds new camera on view. Ownership is transferred to the view.
-		 * After addition, camera gets rendered by the added renderers
-		 */
-		void addCamera(Camera* camera);
-
-		/** Removes given camera from the view. Ownership is taken away from the view
-		 */
-		void removeCamera(Camera* camera);
-
-		/** Causes view to render all cameras
-		 */
-		void update();
-
-	private:
-		// list of cameras managed by the view
-		std::vector<Camera*> m_cameras;
-		RenderBackend* m_renderbackend;
-		ImagePool* m_imagepool;
-		AnimationPool* m_animationpool;
-		// list of renderers managed by the view
-		std::vector<AbstractRenderer*> m_renderers;
+		virtual void render(Camera* cam, Layer* layer, stackpos2instances_t* instance_stack, int stackpos) = 0;
 	};
-
 }
+
 #endif

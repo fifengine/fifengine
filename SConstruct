@@ -16,6 +16,9 @@ opts.Add(BoolOption('zip', 'Enable ZIP archive support', 0))
 opts.Add(BoolOption('perfexe', 'Build native perf test version of fife engine', 0))
 opts.Add(BoolOption('log', 'Enables logging for the engine', 1))
 
+opts.Add(BoolOption('rend_camzone', 'Enables camera zone renderer', 0))
+opts.Add(BoolOption('rend_grid', 'Enables grid renderer', 0))
+
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
 rootp = env['SCONS_ROOT_PATH']
@@ -135,14 +138,16 @@ else:
 		env.Append(CPPFLAGS = ['-pg'])
 		env.Append(LINKFLAGS = ['-pg'])
 	
-	if env['opengl']:
-		env.Append(CPPDEFINES = ['HAVE_OPENGL'])
-	
-	if env['zip']:
-		env.Append(CPPDEFINES = ['HAVE_ZIP'])
-
-	if env['log']:
-		env.Append(CPPDEFINES = ['LOG_ENABLED'])
+	definemap = {
+		'opengl': 'HAVE_OPENGL',
+		'zip': 'HAVE_ZIP',
+		'log': 'LOG_ENABLED',
+		'rend_camzone': 'RENDER_CAMZONES',
+		'rend_grid': 'RENDER_GRID',
+	}
+	for k, v in definemap.items():
+		if env[k]:
+			env.Append(CPPDEFINES = [v])
 	
 	Export('env')
 	
