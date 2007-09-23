@@ -29,6 +29,8 @@ namespace FIFE {
 			void setLocation(const Location& loc);
 			const Location& getLocation() const;
 			const Location& getTargetLocation() const;
+			void setStackPosition(int stackpos);
+			int getStackPosition();
 			void addListener(InstanceListener* listener);
 			void removeListener(InstanceListener* listener);
 			Action* getCurrentAction() const;
