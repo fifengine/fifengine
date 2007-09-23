@@ -74,81 +74,26 @@ namespace FIFE {
 		screen_coords.x -= m_viewport.w / 2;
 		screen_coords.y -= m_viewport.h / 2;
 		ExactModelCoordinate p = m_matrix * intPt2doublePt(screen_coords);
-/* Works for when rotation = 0, tilt non-zero
-		if (p.y > 0) {
-			p.y = sqrt(p.z*p.z + p.y*p.y) / cos(m_tilt * (M_PI / 180.0));
-		}
-		else {
-			p.y = -sqrt(p.z*p.z + p.y*p.y) / cos(m_tilt * (M_PI / 180.0));
-		}
-*/
 
-// Attempt to generalize previous solution for rotation non-zero; failure
-/*		double ProjY = p.z / sin(m_tilt * (M_PI / 180.0));
-		double Magnitude = ProjY / cos(m_tilt * (M_PI / 180.0));
-		if (Magnitude < 0)
-			Magnitude = -Magnitude;
-
-		double ProjX = p.x * tan(m_rotation * (M_PI / 180.0));
-		double Adjust = ProjX / cos(m_rotation * (M_PI / 180.0));
-		if (Adjust < 0)
-			Adjust = -Adjust;
-
-		double AMag = Magnitude - Adjust;
-		if (AMag < 0)
-			AMag = -AMag;
-
-		if (p.y < 0)
-			p.y = -AMag * cos(m_rotation * (M_PI / 180.0));
-		else
-			p.y = AMag * cos(m_rotation * (M_PI / 180.0));
-
-		if (p.x < 0)
-			p.x -= AMag * sin(m_rotation * (M_PI / 180.0));
-		else
-			p.x += AMag * sin(m_rotation * (M_PI / 180.0));
-*/
-
-/* Same as prior solution, trying to cut down on floating-point error; still fails
-		double Magnitude = (2*p.z) / sin(2*m_tilt * (M_PI / 180.0));
-		
-		double tmp = sin(m_rotation * (M_PI / 180.0));
-		double Adjust = (p.x*tmp) / (1 - tmp*tmp);
-
-		p.y = (Magnitude - Adjust) * cos(m_rotation * (M_PI / 180.0));
-		p.x = (Magnitude - Adjust) * sin(m_rotation * (M_PI / 180.0)) + p.x;
-*/
-
-/* Based on a pattern I noticed when rotation=45, tilt=45. Works of for that setup but not much else.
-		double diff = -p.z / (2 * sin(m_tilt));
-		p.x += diff;
-		p.y -= diff;
-*/
-
-		// vector approach
-//		double c = p.z / (cos(m_rotation * (M_PI / 180.0)) * cos(-m_tilt * (M_PI / 180.0)));
-//		p.x -= c * (sin(-m_tilt * (M_PI / 180.0)) * sin(m_rotation * (M_PI / 180.0)));
-//		p.y -= c * (cos(m_rotation * (M_PI / 180.0)) * sin(-m_tilt * (M_PI / 180.0)));
+// Uncomment this to do a projection
+//		p.x -= p.z * tan(-m_tilt * (M_PI / 180.0)) * tan(-m_rotation * (M_PI / 180.0));
+//		p.y -= p.z * tan(-m_tilt * (M_PI / 180.0));
 //		p.z = 0;
-
-		double sintheta = sin(-m_tilt * (M_PI / 180.0));
-		double costheta = cos(-m_tilt * (M_PI / 180.0));
-		double sinphi = sin(-m_rotation * (M_PI / 180.0));
-		double cosphi = cos(-m_rotation * (M_PI / 180.0));
-		double c = p.z / (cosphi * costheta);
-		p.x -= c * (sintheta * sinphi);
-		p.y -= c * (sintheta * cosphi);
-		p.z = 0;
 
 		return p;
 	}
 
 	ScreenPoint Camera::toScreenCoordinates(ExactModelCoordinate elevation_coords) {
 		ExactModelCoordinate p = elevation_coords;
-		// The math seems good to me, but this projection inversion
-		// seems to break things. Even more surprising: commenting it
-		// out makes things work! No complaints I guess... --jwt
-		//p.y = sqrt(p.y*p.y*cos(m_tilt)*cos(m_tilt) - p.z*p.z);
+
+// Uncomment this to do an inverse projection
+//		DoublePoint3D u = DoublePoint3D(sin(-m_rotation * (M_PI / 180.0))*sin(-m_tilt * (M_PI / 180.0)),
+//		                                cos(-m_rotation * (M_PI / 180.0))*sin(-m_tilt * (M_PI / 180.0)),
+//																		cos(-m_rotation * (M_PI / 180.0))*sin(-m_tilt * (M_PI / 180.0)));
+//		double t = (p.x * u.x + p.y * u.y) / (u.length() * u.length());
+
+//		p += u * t;
+
 		ScreenPoint pt = doublePt2intPt(m_inverse_matrix * p);
 		pt.x += m_viewport.w / 2;
 		pt.y += m_viewport.h / 2;
