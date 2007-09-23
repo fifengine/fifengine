@@ -104,9 +104,6 @@ elif env['docs']:
 	os.system('doxygen ' + _jp('doc', 'doxygen', 'doxyfile'))
 	print "doxygen documentation created succesfully"
 
-	print "generating directory dependency graph"
-	os.system('python ' + _jp('utils', 'util_scripts', 'dep_scan.py'))
-	print "directory dependency graph created succesfully"
 elif env['ext']:
 	Export('env')
 	SConscript('ext/SConscript')

@@ -82,7 +82,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = engine content/scripts
+INPUT                  = engine/core engine/extensions
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \
