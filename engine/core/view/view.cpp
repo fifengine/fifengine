@@ -21,6 +21,7 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <algorithm>
 
 // 3rd party library includes
 
@@ -92,6 +93,14 @@ namespace FIFE {
 			return -angle;
 		}
 	}
+	
+	#define SHOW_CAMERA_ZONES
+	
+	#ifdef SHOW_CAMERA_ZONES
+	// This is a HACK to see what grid the camera see when transforming from screen 
+	// coord to elevation coords.
+	static Image* zone_image = 0;
+	#endif
 	
 	void View::updateCamera(Camera* camera) {
 		FL_DBG(_log, "In View::updateCamera");
@@ -186,6 +195,63 @@ namespace FIFE {
 				}
 				++instance_it;
 			}
+			
+			#ifdef SHOW_CAMERA_ZONES
+			// draw this layer's grid as the camera sees it
+			Rect rect = camera->getViewPort();
+			if (zone_image == 0) {
+				// build zone image
+				int dataSize = rect.w * rect.h;
+				
+				// initally all pixels are transparent
+				uint32_t* data = new uint32_t[dataSize];
+				uint32_t* end = data + dataSize;
+				
+				#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+					uint32_t empty_pixel = 0;//0xff << 24;
+					uint32_t edge_pixel = 0xff << 16 | 0xff << 24;
+				#else
+					uint32_t empty_pixel = 0;//0xff;
+					uint32_t edge_pixel = 0xff << 8 | 0xff;
+				#endif
+				
+				std::fill(data, end, empty_pixel);
+		
+				// go from screen coords to grid coords (layer coords)
+				// Search through pixel space, drawing pixels at boundaries
+				ModelCoordinate prevLayerCoord;
+				for (int y = 0; y < rect.h; y++) {
+					for (int x = 0; x < rect.w; x++) {
+						ExactModelCoordinate elevCoord = camera->toElevationCoordinates(ScreenPoint(x, y));
+						ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
+						
+						if (prevLayerCoord != layerCoord) {
+							data[x + rect.w * y] = edge_pixel;
+						}
+						prevLayerCoord = layerCoord;
+					}
+				}
+				
+				
+				for (int x = 0; x < rect.w; x++) {
+					for (int y = 0; y < rect.h; y++) {
+						ExactModelCoordinate elevCoord = camera->toElevationCoordinates(ScreenPoint(x, y));
+						ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
+						
+						if (prevLayerCoord != layerCoord) {
+							data[x + rect.w * y] = edge_pixel;
+						}
+						prevLayerCoord = layerCoord;
+					}
+				}	
+				
+				zone_image =  m_renderbackend->createStaticImageFromRGBA((uint8_t*) data, rect.w, rect.h);
+				delete data;
+			}
+			
+			zone_image->render(rect);
+			#endif
+			
 			++layer_it;
 		}
 	}
