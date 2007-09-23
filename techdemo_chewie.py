@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # merged techdemo.py from jasoka / jwt with my own:
 # 

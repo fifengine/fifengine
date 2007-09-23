@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from extension_test_utils import *
 from loaders import *
 import time

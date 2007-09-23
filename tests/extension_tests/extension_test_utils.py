@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os, sys, unittest
 
 def genpath(somepath):

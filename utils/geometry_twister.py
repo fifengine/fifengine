@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import Tkinter as TK
 import math, time
 
