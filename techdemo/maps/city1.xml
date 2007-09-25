@@ -28,7 +28,7 @@
 		</metadata>
 
 		<!-- TILE LAYER -->
-		<layer id="TechdemoMapTileLayer" grid_type="square" scaling="0">
+		<layer id="TechdemoMapTileLayer" grid_type="square" scaling="4.0">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
