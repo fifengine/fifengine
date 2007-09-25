@@ -7,9 +7,54 @@
 
 	<!-- Ground tiles -->
 	<object id="21001">
+		<image source="techdemo/gfx/tiles/ground/concrete.png" direction="0" />
+	</object>
+		<object id="21010">
+			<image source="techdemo/gfx/tiles/ground/concrete_pavement_bottom.png" direction="0" />
+		</object>
+		<object id="21011">
+			<image source="techdemo/gfx/tiles/ground/concrete_pavement_top.png" direction="0" />
+		</object>
+<!--	
+	<object id="21002">
+		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_up_end.png" direction="0" />			
+	</object>
+	<object id="21003">
+		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_down_end.png" direction="0" />			
+	</object>	
+	<object id="21004">
+		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_top_down.png" direction="0" />			
+	</object>
+	<object id="21005">
+		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_left_right.png" direction="0" />			
+	</object>
+	<object id="21006">
+		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_left_top.png" direction="0" />			
+	</object>	
+	
+	<object id="21007">
+		<image source="techdemo/gfx/tiles/ground/concrete_kerb_top.png" direction="0" />
+	</object>	
+		
+	<object id="21040">
+		<image source="techdemo/gfx/tiles/ground/asphalt_dottedplate_down_end.png" direction="0" />			
+	</object>
+	
+	<object id="21050">
 		<image source="techdemo/gfx/tiles/ground/asphalt_light.png" direction="0" />
 	</object>
-	<object id="21002"> <!-- rot = 60 tilt = 35 -->
+-->
+	<object id="21080">
+		<image source="techdemo/gfx/tiles/ground/asphalt_street.png" direction="0" />
+	</object>
+		<object id="21081">
+			<image source="techdemo/gfx/tiles/ground/asphalt_street_line_bottom.png" direction="0" />
+		</object>	
+		<object id="21082">
+			<image source="techdemo/gfx/tiles/ground/asphalt_street_line_top.png" direction="0" />
+		</object>	
+				
+	<object id="21999"> <!-- rot = 60 tilt = 35 -->
 		<image source="techdemo/gfx/tiles/ground/debug.png" direction="0" />
 	</object>
 
