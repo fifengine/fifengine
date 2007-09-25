@@ -73,27 +73,13 @@ namespace FIFE {
 	ExactModelCoordinate Camera::toElevationCoordinates(ScreenPoint screen_coords) {
 		screen_coords.x -= m_viewport.w / 2;
 		screen_coords.y -= m_viewport.h / 2;
+		screen_coords.z = static_cast<int>(-tan(m_tilt * (M_PI / 180.0)) * screen_coords.y);
 		ExactModelCoordinate p = m_matrix * intPt2doublePt(screen_coords);
-
-// Uncomment this to do a projection
-//		p.x -= p.z * tan(-m_tilt * (M_PI / 180.0)) * tan(-m_rotation * (M_PI / 180.0));
-//		p.y -= p.z * tan(-m_tilt * (M_PI / 180.0));
-//		p.z = 0;
-
 		return p;
 	}
 
 	ScreenPoint Camera::toScreenCoordinates(ExactModelCoordinate elevation_coords) {
 		ExactModelCoordinate p = elevation_coords;
-
-// Uncomment this to do an inverse projection
-//		DoublePoint3D u = DoublePoint3D(sin(-m_rotation * (M_PI / 180.0))*sin(-m_tilt * (M_PI / 180.0)),
-//		                                cos(-m_rotation * (M_PI / 180.0))*sin(-m_tilt * (M_PI / 180.0)),
-//																		cos(-m_rotation * (M_PI / 180.0))*sin(-m_tilt * (M_PI / 180.0)));
-//		double t = (p.x * u.x + p.y * u.y) / (u.length() * u.length());
-
-//		p += u * t;
-
 		ScreenPoint pt = doublePt2intPt(m_inverse_matrix * p);
 		pt.x += m_viewport.w / 2;
 		pt.y += m_viewport.h / 2;
