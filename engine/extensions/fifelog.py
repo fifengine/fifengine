@@ -13,12 +13,22 @@ class LogManager(object):
 		self.name2mod = dict([(v.lower(), k) for k, v in self.mod2name.items()])
 	
 	def addVisibleModules(self, *names):
-		for m in names:
-			self.lm.addVisibleModule(self.name2mod[m.lower()])
+		names = [n.lower() for n in names]
+		if 'all' in names:
+			for k in self.mod2name.keys():
+				self.lm.addVisibleModule(k)
+		else:
+			for m in names:
+				self.lm.addVisibleModule(self.name2mod[m])
 		
 	def removeVisibleModules(self, *names):
-		for m in names:
-			self.lm.removeVisibleModule(self.name2mod[m.lower()])
+		names = [n.lower() for n in names]
+		if 'all' in names:
+			for k in self.mod2name.keys():
+				self.lm.removeVisibleModule(k)
+		else:
+			for m in names:
+				self.lm.removeVisibleModule(self.name2mod[m])
 		
 	def getVisibleModules(self):
 		mods = []

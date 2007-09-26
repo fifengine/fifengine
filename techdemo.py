@@ -88,7 +88,7 @@ class World(object):
 		self.reactor = InstanceReactor()
 		logman = self.engine.getLogManager()
 		self.log = fifelog.LogManager(self.engine)
-		#self.log.setVisibleModules('hexgrid')
+		#self.log.setVisibleModules('all')
 		self.eventmanager = self.engine.getEventManager()
 		
 		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
