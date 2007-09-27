@@ -73,7 +73,15 @@ namespace FIFE {
 	ExactModelCoordinate Camera::toElevationCoordinates(ScreenPoint screen_coords) {
 		screen_coords.x -= m_viewport.w / 2;
 		screen_coords.y -= m_viewport.h / 2;
-		screen_coords.z = static_cast<int>(-tan(m_tilt * (M_PI / 180.0)) * screen_coords.y);
+		
+		double dy = 0;
+		dy += screen_coords.y;
+		ExactModelCoordinate pt = m_location.getElevationCoordinates();
+		pt.y = 0;
+		pt.x = 0;
+		dy -= toScreenCoordinates(pt).y - m_viewport.h / 2;
+		
+		screen_coords.z = static_cast<int>(-tan(m_tilt * (M_PI / 180.0)) * dy);
 		ExactModelCoordinate p = m_matrix * intPt2doublePt(screen_coords);
 		return p;
 	}
