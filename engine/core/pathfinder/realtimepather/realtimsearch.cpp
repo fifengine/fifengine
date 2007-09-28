@@ -89,7 +89,9 @@ namespace FIFE {
 		while(current != end) {
 			current = m_spt[current];
 			Location newnode(m_to);
-			newnode.setLayerCoordinates(m_searchspace->convertIntToCoord(current));
+			ModelCoordinate currentCoord = m_searchspace->convertIntToCoord(current);
+			newnode.setLayerCoordinates(currentCoord);
+			newnode.setExactLayerCoordinates(intPt2doublePt(currentCoord);
 			path.push_back(newnode);
 		}
 		std::reverse(path.begin(), path.end());
