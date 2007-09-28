@@ -1,5 +1,5 @@
 {
-	'opengl': ['core/video/renderbackends/opengl/', 'core/gui/base/opengl/'],
+	'opengl': ['core/video/opengl/', 'core/gui/base/opengl/'],
 	'zip': ['core/vfs/zip/'],
 	'script-python': ['swigwrappers/python'],
 	'script-lua': ['swigwrappers/lua'],
