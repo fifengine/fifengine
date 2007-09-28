@@ -26,9 +26,11 @@
 
 namespace FIFE {
 
+	class Layer;
+
 	class SearchSpace {
 	public:
-		SearchSpace(const int upperX, const int upperY, const int lowerX, const int lowerY);
+		SearchSpace(Layer* layer);
 
 		int getUpperX() const {
 			return m_upperX;
@@ -54,6 +56,9 @@ namespace FIFE {
 			return m_upperY - m_lowerY;
 		}
 
+		Layer* getLayer() const {
+			return m_layer;
+		}
 		/**
 		 *
 		 */
@@ -80,7 +85,7 @@ namespace FIFE {
 		int m_lowerX;
 		int m_lowerY;
 
-		//TODO: Expand this to include elevation information.
+		Layer* m_layer;
 	};
 
 }

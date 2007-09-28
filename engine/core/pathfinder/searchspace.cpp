@@ -19,15 +19,48 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#include <limits>
+
 #include "searchspace.h"
+#include "model/structures/layer.h"
+#include "model/structures/instance.h"
 
 namespace FIFE {
 
-	SearchSpace::SearchSpace(const int upperX, const int upperY, const int lowerX, const int lowerY) 
-	:m_upperX(upperX), m_upperY(upperY), m_lowerX(lowerX), m_lowerY(lowerY) {
+	SearchSpace::SearchSpace(Layer* layer) 
+	: m_layer(layer), m_lowerX(0), m_lowerY(0), m_upperX(0), m_upperY(0) {
+		//Loop through all instances, should we really be doing this in the constructor?
+		const std::vector<Instance*>& instances = m_layer->getInstances();
+		//Set all search space limits to + and - infinity respectively.
+		m_lowerX = std::numeric_limits<int>::infinity();
+		m_lowerY = std::numeric_limits<int>::infinity();
+		m_upperX = -std::numeric_limits<int>::infinity();
+		m_upperY = -std::numeric_limits<int>::infinity();
+		//Iterate through all instances and formulate the search space.
+		for(std::vector<Instance*>::const_iterator i = instances.begin();
+			i != instances.end();
+			++i) 
+		{
+			Location loc = (*i)->getLocation();
+			ModelCoordinate coord = loc.getLayerCoordinates();
+			if(coord.x < m_lowerX) {
+				m_lowerX = coord.x;
+			} else if(coord.x > m_upperX) {
+				m_upperX = coord.x;
+			}
+
+			if(coord.y < m_lowerY) {
+				m_lowerY = coord.y;
+			} else if(coord.y > m_upperY) {
+				m_upperY = coord.y;
+			}
+		}
 	}
 
 	bool SearchSpace::isInSearchSpace(const Location& location) const {
+		if(location.getLayer() != m_layer) {
+			return false;
+		}
 		ModelCoordinate coordinates = location.getLayerCoordinates();
 		if(coordinates.x > m_lowerX && coordinates.x < m_upperX 
 			&& coordinates.y > m_lowerY && coordinates.x < m_upperY) {

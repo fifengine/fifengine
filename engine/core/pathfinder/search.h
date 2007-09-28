@@ -28,7 +28,7 @@
 
 namespace FIFE {
 
-	class AbstractPather;
+	class SearchSpace;
 
 	/** A base class that all searches must derive from.
 	 *
@@ -50,8 +50,8 @@ namespace FIFE {
 		 * @param to The location where the search should finish.
 		 * @param pather A pointer to the pather controlling this session.
 		 */
-		Search(const int session_id, const Location& from, const Location& to, AbstractPather* pather) 
-			: m_sessionId(session_id), m_pather(pather), m_status(search_status_incomplete) {
+		Search(const int session_id, const Location& from, const Location& to, SearchSpace* pather) 
+			: m_sessionId(session_id), m_searchspace(pather), m_status(search_status_incomplete) {
 		}
 
 		/** Destructor.
@@ -71,8 +71,8 @@ namespace FIFE {
 		 *
 		 * @return A pointer to the abstract pather which
 		 */
-		AbstractPather* getPather() const {
-			return m_pather;
+		SearchSpace* getSearchSpace() const {
+			return m_searchspace;
 		}
 
 		/** A small function which returns the current status of the search.
@@ -112,7 +112,7 @@ namespace FIFE {
 		int				m_sessionId;
 
 		//A pointer to the pather that owns this search.
-		AbstractPather* m_pather;
+		SearchSpace*    m_searchspace;
 
 		//An enumeration of the searches current status.
 		SearchStatus	m_status;

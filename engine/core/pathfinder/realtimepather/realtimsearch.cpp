@@ -27,16 +27,12 @@
 #include "model/metamodel/grids/cellgrid.h"
 
 namespace FIFE {
-	RealTimeSearch::RealTimeSearch(const int session_id, const Location& from, const Location& to, AbstractPather* pather)
-	: Search(session_id, from, to, pather) {
-		//Store the search space here for ease of use.
-		m_searchspace = ((RealTimePather*)pather)->getSearchSpace();
+	RealTimeSearch::RealTimeSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
+	: Search(session_id, from, to, searchSpace) {
 	}
 
 	//TODO: Tidy up this function.
 	std::vector<Location> RealTimeSearch::updateSearch() {
-		//TODO: Finish this function. The actual algorithm will go inside of this function. Needs
-		//cleaning up, a bit ugly as it stands.
 		if(m_sortedfrontier.empty()) {
 			setSearchStatus(search_status_failed);
 			return std::vector<Location>();
@@ -80,7 +76,7 @@ namespace FIFE {
 		return std::vector<Location>();
 	}
 
-	//TODO: This function needs cleaning up to.
+	//TODO: This function needs cleaning up too.
 	std::vector<Location> RealTimeSearch::calcPath() {
 		int current = m_searchspace->convertCoordToInt(m_to.getLayerCoordinates());
 		int end = m_searchspace->convertCoordToInt(m_from.getLayerCoordinates());
@@ -91,7 +87,7 @@ namespace FIFE {
 			Location newnode(m_to);
 			ModelCoordinate currentCoord = m_searchspace->convertIntToCoord(current);
 			newnode.setLayerCoordinates(currentCoord);
-			newnode.setExactLayerCoordinates(intPt2doublePt(currentCoord);
+			newnode.setExactLayerCoordinates(intPt2doublePt(currentCoord));
 			path.push_back(newnode);
 		}
 		std::reverse(path.begin(), path.end());

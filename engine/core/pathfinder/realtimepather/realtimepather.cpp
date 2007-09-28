@@ -24,27 +24,20 @@
 #include "pathfinder/searchspace.h"
 
 namespace FIFE {
-
-	void RealTimePather::calculateSearchSpace() {
-		//TODO: Finish this function.
-	}
-
 	void RealTimePather::setMap(Map* map) {
 		if(!map) {
 			return;
 		}
-		//TODO: Put some additional error checking here. 
 		m_map = map;
 	}
 
 	int RealTimePather::getNextLocations(const Location& curPos, const Location& target, 
 		std::vector<Location>& nextLocations, const int session_id) {
-			//TODO: Finish this function. This function will simply locate the search with the given
-			//session id and then update it and return the given path. If no session with given id exists
-			//create a new one.
+			//Make sure that we're not navigating to the same tile.
 			if(curPos == target) {
 				return -1;
 			}
+			//A session_id was passed in, therefore the path search has already begun.
 			if(session_id != -1) {
 				//search session map for id.
 				SessionMap::iterator i = m_sessions.find(session_id);
@@ -56,14 +49,28 @@ namespace FIFE {
 					if(search_status == Search::search_status_complete || search_status == Search::search_status_failed ) {
 						delete i->second;
 						m_sessions.erase(i);
-						return search_status;
+						return -1; //Search is complete, return -1.
 					}
 					return session_id;
 				}
 			}
+			//First get the layer
+			if(curPos.getLayer() != target.getLayer()) {
+				//Don't allow cross layer movement (for now).
+				return -1;
+			}
+			//Search for the layer in the searchspace map.
+			SearchSpaceMap::iterator i = m_searchspaces.find(curPos.getLayer());
+			if(i == m_searchspaces.end()) {
+				//This layer has never been searched before so create a searchspace.
+				SearchSpace* newSpace = new SearchSpace(curPos.getLayer());
+				i = m_searchspaces.insert(SearchSpaceMap::value_type(curPos.getLayer(), newSpace)).first;
+				
+			}
+			//Create a new session.
 			int newSessionId = m_nextFreeSessionId++;
-			if(m_searchspace->isInSearchSpace(curPos) && m_searchspace->isInSearchSpace(target)) {
-				SessionMap::value_type newSession(newSessionId, new RealTimeSearch(newSessionId, curPos, target, this));
+			if(i->second->isInSearchSpace(curPos) && i->second->isInSearchSpace(target)) {
+				SessionMap::value_type newSession(newSessionId, new RealTimeSearch(newSessionId, curPos, target, i->second));
 				m_sessions.insert(newSession);
 				return newSessionId;
 			}

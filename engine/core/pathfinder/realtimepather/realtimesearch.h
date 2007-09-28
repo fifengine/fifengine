@@ -36,13 +36,11 @@ namespace FIFE {
 	 */
 	class RealTimeSearch : public Search {
 	public:
-		RealTimeSearch(const int session_id, const Location& from, const Location& to, AbstractPather* pather);
+		RealTimeSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
 
 		virtual std::vector<Location> updateSearch();
 	private:
 		virtual std::vector<Location> calcPath();
-		//A pointer to the search space for ease of use.
-		SearchSpace*              m_searchspace;
 		//The shortest path tree.
 		std::vector<int>          m_spt;
 		//The search frontier.
