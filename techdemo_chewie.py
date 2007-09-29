@@ -133,19 +133,37 @@ class World(object):
 		logman = self.engine.getLogManager()
 		self.log = fifelog.LogManager(self.engine)
 		#self.log.setVisibleModules('hexgrid')
+
 		self.eventmanager = self.engine.getEventManager()
-		
-		
+		self.renderbackend = self.engine.getRenderBackend()	
 		self.model = self.engine.getModel()
 		self.metamodel = self.model.getMetaModel()
 		
-		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
-		         ".,!?-+/:();%`'*#=[]"
-		font = self.engine.getGuiManager().createFont('content/fonts/FreeMono.ttf', 12, glyphs)
-		self.engine.getGuiManager().setGlobalFont(font)
+
 		
 	def __del__(self):
 		self.engine.getView().removeCamera(self.camera)
+
+	def gui(self):
+		self.guimanager = self.engine.getGuiManager()
+		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
+		         ".,!?-+/:();%`'*#=[]"
+		font = self.guimanager.createFont('content/fonts/FreeMono.ttf', 12, glyphs)
+
+		self.guimanager.setGlobalFont(font)
+		#font.setColor(255,20,20)
+		
+		container = fife.Container()
+		container.setSize(self.renderbackend.getScreenWidth(), 
+		                  self.renderbackend.getScreenHeight())
+		container.setOpaque(True)
+		self.guimanager.add(container)
+		label1 = fife.Label('FIFE 2007.2 techdemo')
+		label1.setPosition(0, 0)
+		label1.setFont(font)
+		container.add(label1)
+
+		labels = [label1]		
 		
 	def create_world(self):
 		loadMapFile("techdemo/maps/city1.xml", self.engine)
@@ -163,6 +181,8 @@ class World(object):
 		self.pather = fife.LinearPather()
 		
 	def create_dummy(self):
+		# replace this method with something like: metamodel.getObejctsByString('id', 'agent_gunner')
+		
 		self.dummyObj = fife.Object("dummy")
 		self.dummyObj.setPather(self.pather)
 		a = self.dummyObj.addAction('dummy:walk')
@@ -187,11 +207,10 @@ class World(object):
 		self.camera.setTilt(60)
 
 		self.camera.setLocation(self.camloc)
-		rb = self.engine.getRenderBackend()
-		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
+		viewport = fife.Rect(0, 0, self.renderbackend.getScreenWidth(), self.renderbackend.getScreenHeight())
 		self.camera.setViewPort(viewport)
 		self.engine.getView().addCamera(self.camera)
-	
+			
 	def run(self):
 		evtlistener = MyEventListener(self)
 		self.engine.initializePumping()
@@ -199,7 +218,7 @@ class World(object):
 		self.dummy.act('dummy:walk', self.target, 0.5)
 		
 		# map scrolling
-		scroll_modifier = 0.2
+		scroll_modifier = 0.1
 
 		while True:
 			cam_scroll = self.camloc.getExactLayerCoordinates()
@@ -247,6 +266,7 @@ class World(object):
 
 if __name__ == '__main__':
 	w = World()
+	w.gui()
 	w.create_world()
 	w.create_dummy()
 	w.adjust_views()

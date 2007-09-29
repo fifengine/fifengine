@@ -1,0 +1,54 @@
+<animation delay="150" id="3008">
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0002.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0003.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0004.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0005.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0006.png" x_offset="0" y_offset="0" />		
+			<frame source="techdemo/animations/vehicles/train/0007.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0008.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0009.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0010.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0011.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0012.png" x_offset="0" y_offset="0" />			
+			<frame source="techdemo/animations/vehicles/train/0013.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0014.png" x_offset="0" y_offset="0" />			
+			<frame source="techdemo/animations/vehicles/train/0015.png" x_offset="0" y_offset="0" />	
+			<frame source="techdemo/animations/vehicles/train/0016.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<!-- idle -->
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0017.png" x_offset="0" y_offset="0" />			
+			<!-- revert -->						
+			<frame source="techdemo/animations/vehicles/train/0016.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0015.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0014.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0013.png" x_offset="0" y_offset="0" />		
+			<frame source="techdemo/animations/vehicles/train/0012.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0011.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0010.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0009.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0008.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0007.png" x_offset="0" y_offset="0" />			
+			<frame source="techdemo/animations/vehicles/train/0006.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0004.png" x_offset="0" y_offset="0" />			
+			<frame source="techdemo/animations/vehicles/train/0003.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0002.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />
+			<!-- idle -->
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />	
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />
+			<frame source="techdemo/animations/vehicles/train/0001.png" x_offset="0" y_offset="0" />						
+</animation>

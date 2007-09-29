@@ -15,7 +15,7 @@
 		<object id="21011">
 			<image source="techdemo/gfx/tiles/ground/concrete_pavement_top.png" direction="0" />
 		</object>
-<!--	
+	
 	<object id="21002">
 		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_up_end.png" direction="0" />			
 	</object>
@@ -43,7 +43,7 @@
 	<object id="21050">
 		<image source="techdemo/gfx/tiles/ground/asphalt_light.png" direction="0" />
 	</object>
--->
+
 	<object id="21080">
 		<image source="techdemo/gfx/tiles/ground/asphalt_street.png" direction="0" />
 	</object>
