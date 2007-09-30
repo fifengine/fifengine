@@ -11,5 +11,9 @@ cd \
 cd "%_%\..\..\..\"
 scons -c
 
+:: Delete _fife.pyd
+cd "%_%\..\..\..\engine\swigwrappers\python"
+del _fife.pyd
+
 :: Return us to the directory we started from
 cd %_%

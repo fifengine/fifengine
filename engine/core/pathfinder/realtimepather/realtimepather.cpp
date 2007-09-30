@@ -19,9 +19,18 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+// Standard C++ library includes
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "pathfinder/searchspace.h"
+
 #include "realtimepather.h"
 #include "realtimesearch.h"
-#include "pathfinder/searchspace.h"
 
 namespace FIFE {
 	void RealTimePather::setMap(Map* map) {

@@ -19,12 +19,21 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+// Standard C++ library includes
 #include <algorithm>
-#include "realtimesearch.h"
-#include "realtimepather.h"
-#include "pathfinder/searchspace.h"
-#include "model/structures/layer.h"
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
+#include "model/structures/layer.h"
+#include "pathfinder/searchspace.h"
+
+#include "realtimepather.h"
+#include "realtimesearch.h"
 
 namespace FIFE {
 	RealTimeSearch::RealTimeSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)

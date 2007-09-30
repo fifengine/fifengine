@@ -19,11 +19,19 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+// Standard C++ library includes
 #include <limits>
 
-#include "searchspace.h"
-#include "model/structures/layer.h"
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "model/structures/instance.h"
+#include "model/structures/layer.h"
+
+#include "searchspace.h"
 
 namespace FIFE {
 
