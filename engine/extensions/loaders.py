@@ -335,7 +335,7 @@ class ModelLoader(handler.ContentHandler):
 					# TODO: more sensible default direction?
 					target = fife.Location()
 					target.setLayer(self.layer)
-					inst.act("default", target, True)
+					inst.act("default", target, 0)
 
 			else:
 				assert 0, "Instances can only be declared in an <instances> section."
