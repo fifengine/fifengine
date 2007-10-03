@@ -36,7 +36,7 @@
 namespace FIFE {
 
 	SearchSpace::SearchSpace(Layer* layer) 
-	: m_layer(layer), m_lowerX(0), m_lowerY(0), m_upperX(0), m_upperY(0) {
+	: m_upperX(0), m_upperY(0), m_lowerX(0), m_lowerY(0), m_layer(layer) {
 		//Loop through all instances, should we really be doing this in the constructor?
 		const std::vector<Instance*>& instances = m_layer->getInstances();
 		//Set all search space limits to + and - infinity respectively.

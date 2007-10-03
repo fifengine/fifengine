@@ -44,12 +44,11 @@ class TestModelView(unittest.TestCase):
 		for count in range(200):
 			self.engine.pump()
 			time.sleep(0.03)
-			if count % 10 == 0:
-				c = self.camloc.getExactLayerCoordinates()
-				c.x += 0.5
-				c = self.camloc.setExactLayerCoordinates(c)			
+			c = self.camloc.getExactLayerCoordinates()
+			c.x += 0.05
+			c = self.camloc.setExactLayerCoordinates(c)			
 			cam.setLocation(self.camloc)
-			
+
 		self.engine.finalizePumping()
 
 TEST_CLASSES = [TestModelView]

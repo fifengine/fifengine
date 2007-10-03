@@ -434,9 +434,13 @@ namespace FIFE {
 		if(SDL_MUSTLOCK(src)) {
 			SDL_UnlockSurface(src);
 		}
-		if(avgalpha < 240) {
-			SDL_SetAlpha(dst, SDL_SRCALPHA | SDL_RLEACCEL, avgalpha);
-		}
+		// Using the per surface alpha value does not
+		// work out for mostly transparent pixels.
+		// Thus disabling the part here - this needs a
+		// more complex refactoring.
+		// if(avgalpha < 240) {
+		//	SDL_SetAlpha(dst, SDL_SRCALPHA | SDL_RLEACCEL, avgalpha);
+		//}
 		SDL_SetColorKey(dst, SDL_SRCCOLORKEY | SDL_RLEACCEL, key);
 		SDL_Surface *convert = SDL_DisplayFormat(dst);
 		SDL_FreeSurface(dst);
