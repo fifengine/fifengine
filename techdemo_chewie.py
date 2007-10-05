@@ -138,6 +138,7 @@ class World(object):
 		self.renderbackend = self.engine.getRenderBackend()	
 		self.model = self.engine.getModel()
 		self.metamodel = self.model.getMetaModel()
+		self.camera = None
 		
 
 		
@@ -153,18 +154,16 @@ class World(object):
 		self.guimanager.setGlobalFont(font)
 		#font.setColor(255,20,20)
 		
-		container = fife.Container()
-		container.setSize(self.renderbackend.getScreenWidth(), 
-		                  self.renderbackend.getScreenHeight())
-		container.setOpaque(True)
-		self.guimanager.add(container)
-		label1 = fife.Label('FIFE 2007.2 techdemo')
-		label1.setPosition(0, 0)
-		label1.setFont(font)
-		container.add(label1)
+		self.container = fife.Container()
+		self.container.setOpaque(True)
+		self.guimanager.add(self.container)
+		self.label1 = fife.Label('FIFE 2007.2 techdemo')
+		self.label1.setPosition(0, 0)
+		self.label1.setFont(font)
+		self.container.add(self.label1)
+		self.container.setSize(self.label1.getWidth(), self.label1.getHeight())
 
-		labels = [label1]		
-		
+
 	def create_world(self):
 		loadMapFile("techdemo/maps/city1.xml", self.engine)
 	
