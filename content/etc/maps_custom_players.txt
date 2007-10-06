@@ -1,0 +1,4 @@
+content/maps/official_map.xml
+content/maps/chess.xml
+content/maps/scratch.xml
+content/maps/top_down.xml

@@ -1,0 +1,4 @@
+# Add VFS Sources here.
+content/master.dat
+content/critter.dat
+content/archives/testmap.zip
