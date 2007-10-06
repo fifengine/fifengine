@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../../../tests/unit_tests/"
+			OutputDirectory="../../../../tests/core_tests/"
 			IntermediateDirectory="$(ConfigurationName)/$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\engine;..\..\..\engine\core;.\include;.\include\guichan;.\include\lua51;.\include\openal;.\include\SDL;.\include\zlib;.\include\vorbis;.\include\minizip;.\include\python"
+				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\include;..\include\guichan;..\include\lua51;..\include\openal;..\include\SDL;..\include\zlib;..\include\vorbis;..\include\minizip;..\include\python"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -98,7 +98,7 @@
 	</References>
 	<Files>
 	  <File
-			RelativePath="..\..\..\..\tests\unit_tests\__INSERT_NAME_HERE__.cpp"
+			RelativePath="..\..\..\..\tests\core_tests\__INSERT_NAME_HERE__.cpp"
 			>
 		</File>
 	</Files>
