@@ -13,16 +13,17 @@ def main (from_path, to_path):
 	for file in files:
 		if (file[-4:] == ".cpp"):
 			guidlist.append(writeProject(file[0:-4], to_path))
-			filelist.append(file[0:-4])
+			filelist.append(file[0:-4].replace("test_", "testprog_"))
 
 	writeSolution(to_path, filelist, guidlist)
 
 def writeProject(file, to_path):
 	infile = open("test_vcproj_template.xml", "r")
-	outfile = open(to_path + "/" + file + ".vcproj", "w")
+	outfile = open(to_path + "/" + file.replace("test_", "testprog_") + ".vcproj", "w")
 	text = infile.read()
 	guid = pythoncom.CreateGuid()
-	text = text.replace("__INSERT_NAME_HERE__", file)
+	text = text.replace("__INSERT_NAME_HERE__", file.replace("test_", "testprog_"))
+	text = text.replace("__INSERT_FILENAME_HERE__", file)
 	text = text.replace("__INSERT_GUID_HERE__", str(guid))
 	outfile.write(text)
 	return str(guid)
@@ -48,21 +49,21 @@ def writeSolution(to_path, namelist, guidlist):
 
 	solution.write("Global\n")
 	solution.write("	GlobalSection(SolutionConfigurationPlatforms) = preSolution\n")
-	solution.write("		Debug|Win32 = Debug|Win32\n")
-	solution.write("		Release|Win32 = Release|Win32\n")
+	solution.write("		Debug_static|Win32 = Debug_static|Win32\n")
+	solution.write("		Release_static|Win32 = Release_static|Win32\n")
 	solution.write("	EndGlobalSection\n")
 	solution.write("	GlobalSection(ProjectConfigurationPlatforms) = postSolution\n")
 
-	solution.write("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Debug|Win32.ActiveCfg = Debug|Win32\n")
-	solution.write("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Debug|Win32.Build.0 = Debug|Win32\n")
-	solution.write("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Release|Win32.ActiveCfg = Release|Win32\n")
-	solution.write("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Release|Win32.Build.0 = Release|Win32\n")
+	solution.write("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Debug_static|Win32.ActiveCfg = Debug_static|Win32\n")
+	solution.write("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Debug_static|Win32.Build.0 = Debug_static|Win32\n")
+	solution.write("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Release_static|Win32.ActiveCfg = Release_static|Win32\n")
+	solution.write("		{96025707-5759-400D-80E5-A1E94C8A79A2}.Release_static|Win32.Build.0 = Release_static|Win32\n")
   
 	for guid in guidlist:
-		solution.write("		" + guid + ".Debug|Win32.ActiveCfg = Debug|Win32\n")
-		solution.write("		" + guid + ".Debug|Win32.Build.0 = Debug|Win32\n")
-		solution.write("		" + guid + ".Release|Win32.ActiveCfg = Release|Win32\n")
-		solution.write("		" + guid + ".Release|Win32.Build.0 = Release|Win32\n")
+		solution.write("		" + guid + ".Debug|Win32.ActiveCfg = Debug_static|Win32\n")
+		solution.write("		" + guid + ".Debug|Win32.Build.0 = Debug_static|Win32\n")
+		solution.write("		" + guid + ".Release|Win32.ActiveCfg = Release_static|Win32\n")
+		solution.write("		" + guid + ".Release|Win32.Build.0 = Release_static|Win32\n")
 
 	solution.write("	EndGlobalSection\n")
 	solution.write("	GlobalSection(SolutionProperties) = preSolution\n")
