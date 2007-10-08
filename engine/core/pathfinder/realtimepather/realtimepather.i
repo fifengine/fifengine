@@ -19,7 +19,7 @@ namespace FIFE {
 	class RealTimePather : public AbstractPather {
 	public:
 		RealTimePather();
-		virtual ~LinearPather();
+		virtual ~RealTimePather();
 		virtual void setMap(Map* map);
 		virtual int getNextLocations(const Location& curpos, const Location& target, 
 					     std::vector<Location>& nextlocations, const int session_id);
