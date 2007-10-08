@@ -86,6 +86,11 @@ namespace FIFE {
 		 *
 		 */
 		ModelCoordinate convertIntToCoord(const int cell) const;
+
+		/**
+		 *
+		 */
+		int getMaxIndex() const;
 	private:
 		//The boundries of the search space.
 		int m_upperX;

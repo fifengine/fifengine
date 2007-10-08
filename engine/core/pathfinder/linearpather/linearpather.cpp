@@ -29,12 +29,15 @@
 // Second block: files included from the same folder
 #include "linearpather.h"
 
+#include "util/logger.h"
+
 namespace FIFE {
 	int LinearPather::getNextLocations(const Location& curpos, const Location& target, 
-                                           std::vector<Location>& nextlocations, const int session_id) {
+                                           std::vector<Location>& nextlocations, const int session_id) {									 
 		assert(curpos.getElevation() == target.getElevation());
 		assert(curpos.getLayer() == target.getLayer());
-		
+		return -1;
+
 		ModelCoordinate curpt = curpos.getLayerCoordinates();
 		ModelCoordinate tgtpt = target.getLayerCoordinates();
 

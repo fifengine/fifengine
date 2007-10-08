@@ -40,10 +40,10 @@ namespace FIFE {
 		//Loop through all instances, should we really be doing this in the constructor?
 		const std::vector<Instance*>& instances = m_layer->getInstances();
 		//Set all search space limits to + and - infinity respectively.
-		m_lowerX = std::numeric_limits<int>::infinity();
-		m_lowerY = std::numeric_limits<int>::infinity();
-		m_upperX = -std::numeric_limits<int>::infinity();
-		m_upperY = -std::numeric_limits<int>::infinity();
+		m_lowerX = instances.front()->getLocation().getLayerCoordinates().x;
+		m_lowerY = instances.front()->getLocation().getLayerCoordinates().y;
+		m_upperX = instances.front()->getLocation().getLayerCoordinates().x;
+		m_upperY = instances.front()->getLocation().getLayerCoordinates().y;
 		//Iterate through all instances and formulate the search space.
 		for(std::vector<Instance*>::const_iterator i = instances.begin();
 			i != instances.end();
@@ -70,8 +70,8 @@ namespace FIFE {
 			return false;
 		}
 		ModelCoordinate coordinates = location.getLayerCoordinates();
-		if(coordinates.x > m_lowerX && coordinates.x < m_upperX 
-			&& coordinates.y > m_lowerY && coordinates.x < m_upperY) {
+		if(coordinates.x >= m_lowerX && coordinates.x <= m_upperX 
+			&& coordinates.y >= m_lowerY && coordinates.y <= m_upperY) {
 				return true;
 		}
 		return false;
@@ -95,5 +95,12 @@ namespace FIFE {
 		coord.x = (cell % width) + m_lowerX;
 		coord.y = (cell / width) + m_lowerY;
 		return coord;
+	}
+
+	int SearchSpace::getMaxIndex() const {
+
+		//max index = w * h.
+		int max_index = getWidth() + (getWidth() * (m_upperY - m_lowerY));
+		return max_index;
 	}
 }

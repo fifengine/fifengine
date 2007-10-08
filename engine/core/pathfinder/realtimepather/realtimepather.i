@@ -14,6 +14,8 @@ namespace FIFE {
 		virtual void setMap(Map* map) = 0;
 		virtual int getNextLocations(const Location& curpos, const Location& target, 
 					     std::vector<Location>& nextlocations, const int session_id) = 0;
+		virtual void resetTicks() = 0;
+					 
 	};
 	
 	class RealTimePather : public AbstractPather {
@@ -23,5 +25,6 @@ namespace FIFE {
 		virtual void setMap(Map* map);
 		virtual int getNextLocations(const Location& curpos, const Location& target, 
 					     std::vector<Location>& nextlocations, const int session_id);
+		virtual void resetTicks();
 	};
 }

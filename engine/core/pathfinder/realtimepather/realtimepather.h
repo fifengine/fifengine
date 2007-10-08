@@ -46,7 +46,9 @@ namespace FIFE {
 		/** Constructor.
 		 *
 		 */
-		RealTimePather() : m_map(0), m_nextFreeSessionId(0) { }
+		RealTimePather() : m_map(0), m_nextFreeSessionId(0), m_maxticks(100) {
+			m_ticksleft = m_maxticks;
+		}
 		/** Sets the map that will be used for the search.
 		 *
 		 * @param map A pointer to the map to be used. 
@@ -76,6 +78,11 @@ namespace FIFE {
 		 * @return A boolean to signify whether the session was successfully found and cancelled.
 		 */
 		virtual bool cancelSession(const int session_id);
+
+		/**
+		 *
+		 */
+		virtual void resetTicks() { m_ticksleft = m_maxticks; }
 	private:
 		typedef std::map<int, Search*> SessionMap;
 		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;
@@ -91,6 +98,12 @@ namespace FIFE {
 
 		//The next free session id.
 		int            m_nextFreeSessionId;
+
+		//The amount of ticks left for updating.
+		int			   m_ticksleft;
+
+		//The maximum number of ticks allowed.
+		int			   m_maxticks;
 	};
 
 }

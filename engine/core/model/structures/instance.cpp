@@ -69,8 +69,10 @@ namespace FIFE {
 		std::vector<Location>& getNextLocations(const Location& startloc) {
 			assert(m_target && m_pather);
 			FL_DBG(_log, LMsg("getting next locs from pather, loc=") << startloc << " tgt=" << *m_target);
-			m_pather_session_id = m_pather->getNextLocations(startloc, 
-					*m_target, m_nextlocations, m_pather_session_id);
+			if(m_nextlocations.empty()) {
+				m_pather_session_id = m_pather->getNextLocations(startloc, 
+						*m_target, m_nextlocations, m_pather_session_id);
+			}
 			return m_nextlocations;
 		}
 
@@ -237,7 +239,8 @@ namespace FIFE {
 			double dist_to_next_cell = diff.length();
 			double dist_left = distance_to_travel - cumul_dist;
 			FL_DBG(_log, LMsg("diff = ") << diff << ", dist_to_next = " << dist_to_next_cell << ", dist_left=" << dist_left);
-			
+			Location nextLoc = (*i);
+			m_actioninfo->m_facinglocation = nextLoc;
 			// if we cannot reach the next cell...
 			if (dist_left < dist_to_next_cell) {
 				FL_DBG(_log, "cannot reach the next cell...");
@@ -251,8 +254,9 @@ namespace FIFE {
 				iter_loc = nextcell;
 				cumul_dist += dist_to_next_cell;
 				FL_DBG(_log, LMsg("iter_loc = ") << nextcell << ", cumul_dist = " << cumul_dist);
+				i = m_actioninfo->m_nextlocations.erase(i);
+				continue;
 			}
-			m_actioninfo->m_facinglocation = (*i);
 			++i;
 			FL_DBG(_log, LMsg("path finder node end, cumul_dist=") << cumul_dist);
 		}

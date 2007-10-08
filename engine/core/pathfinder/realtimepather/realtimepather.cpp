@@ -32,6 +32,8 @@
 #include "realtimepather.h"
 #include "realtimesearch.h"
 
+#include "util/logger.h"
+
 namespace FIFE {
 	void RealTimePather::setMap(Map* map) {
 		if(!map) {
@@ -52,13 +54,16 @@ namespace FIFE {
 				SessionMap::iterator i = m_sessions.find(session_id);
 				if( i != m_sessions.end() ) {
 					//update search.
-					nextLocations = i->second->updateSearch();
-					//If the search has finished terminate the session.
-					int search_status = i->second->getSearchStatus();
-					if(search_status == Search::search_status_complete || search_status == Search::search_status_failed ) {
-						delete i->second;
-						m_sessions.erase(i);
-						return -1; //Search is complete, return -1.
+					while(m_ticksleft) {
+						nextLocations = i->second->updateSearch();
+						//If the search has finished terminate the session.
+						int search_status = i->second->getSearchStatus();
+						if(search_status == Search::search_status_complete || search_status == Search::search_status_failed ) {
+							delete i->second;
+							m_sessions.erase(i);
+							return -1; //Search is complete, return -1.
+						}
+						--m_ticksleft;
 					}
 					return session_id;
 				}
@@ -74,7 +79,7 @@ namespace FIFE {
 				//This layer has never been searched before so create a searchspace.
 				SearchSpace* newSpace = new SearchSpace(curPos.getLayer());
 				i = m_searchspaces.insert(SearchSpaceMap::value_type(curPos.getLayer(), newSpace)).first;
-				
+
 			}
 			//Create a new session.
 			int newSessionId = m_nextFreeSessionId++;

@@ -38,6 +38,12 @@
 namespace FIFE {
 	RealTimeSearch::RealTimeSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
 	: Search(session_id, from, to, searchSpace) {
+		int coord = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
+		int max_index = m_searchspace->getMaxIndex();
+		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(coord, 1.0f));
+		m_spt.resize(max_index + 1, -1);
+		m_sf.resize(max_index + 1, -1);
+		m_gCosts.resize(max_index + 1);
 	}
 
 	//TODO: Tidy up this function.

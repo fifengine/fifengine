@@ -66,6 +66,11 @@ namespace FIFE {
 		 * @param session_id The id of the session to cancel.
 		 */
 		virtual bool cancelSession(const int session_id) = 0;
+
+		/**
+		 *
+		 */
+		virtual void resetTicks() = 0;
 	};
 }
 

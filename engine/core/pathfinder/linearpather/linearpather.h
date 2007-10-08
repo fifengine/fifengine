@@ -50,6 +50,8 @@ namespace FIFE {
 					     std::vector<Location>& nextlocations, const int session_id=-1);
 
 		virtual bool cancelSession(const int session_id) { return false; }
+
+		virtual void resetTicks() { }
 	};
 }
 

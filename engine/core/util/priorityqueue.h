@@ -175,16 +175,12 @@ namespace FIFE {
 
 template<typename index_type, typename priority_type>
 void FIFE::PriorityQueue<index_type, priority_type>::pushElement(const value_type& element) {
-	
-	int compare_res = compare(element, m_elements.front());
-
-	if(empty() || compare_res > 0) {
-		m_elements.push_back(element);
+	if(empty()) {
+		m_elements.push_front(element);
 	}
 	else {
 		orderUp(element);
 	}
-
 }
 
 template<typename index_type, typename priority_type>
@@ -254,15 +250,15 @@ void FIFE::PriorityQueue<index_type, priority_type>::orderUp(ElementListIt i) {
 template<class index_type, class priority_type>
 void FIFE::PriorityQueue<index_type, priority_type>::orderUp(const value_type& val)
 {
-	for(ElementListIt it = m_elements.begin(); it != m_elements.end(); ++it)
+	for(ElementListIt i = m_elements.begin(); i != m_elements.end(); ++i)
 	{
-		assert(val.first != it->first);
+		assert(val.first != i->first);
 
-		if(val.second < it->second)
+		if(compare(val, (*i)) > 0)
 		{
-			assert(val.first != it->first);
+			assert(val.first != i->first);
 
-			m_elements.insert(it, val);
+			m_elements.insert(i, val);
 
 			return;
 		}
