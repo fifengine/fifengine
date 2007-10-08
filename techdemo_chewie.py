@@ -149,7 +149,7 @@ class World(object):
 		self.guimanager = self.engine.getGuiManager()
 		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
 		         ".,!?-+/:();%`'*#=[]"
-		font = self.guimanager.createFont('content/fonts/FreeMono.ttf', 12, glyphs)
+		font = self.guimanager.createFont('techdemo/fonts/samanata.ttf', 12, glyphs)
 
 		self.guimanager.setGlobalFont(font)
 		#font.setColor(255,20,20)
@@ -158,10 +158,26 @@ class World(object):
 		self.container.setOpaque(True)
 		self.guimanager.add(self.container)
 		self.label1 = fife.Label('FIFE 2007.2 techdemo')
-		self.label1.setPosition(0, 0)
+		self.label1.setPosition(1, 0)
 		self.label1.setFont(font)
 		self.container.add(self.label1)
-		self.container.setSize(self.label1.getWidth(), self.label1.getHeight())
+		self.container.setSize(self.label1.getWidth() + 2, self.label1.getHeight() + 2)
+		self.container.setPosition(2,2)
+		
+		self.container2 = fife.Container()
+		self.container2.setOpaque(True)
+		self.guimanager.add(self.container2)
+		self.button1 = fife.Button('Quit')
+		self.button1.adjustSize()
+		self.button1.setPosition(1, 0)
+		self.button1.setFont(font)
+		self.button2 = fife.Button('?')
+		self.button2.setPosition(self.button1.getWidth() + 10, 0)
+		self.button2.setFont(font)
+		self.container2.add(self.button1)
+		self.container2.add(self.button2)		
+		self.container2.setSize(self.button1.getWidth() + self.button2.getWidth() + 10, self.button1.getHeight())
+		self.container2.setPosition(1,28)
 
 
 	def create_world(self):
@@ -170,7 +186,7 @@ class World(object):
 		self.map = self.model.getMapsByString("id", "TechdemoMap")[0]
 		self.elevation = self.map.getElevationsByString("id", "TechdemoMapElevation")[0]
 		self.layer = self.elevation.getLayersByString("id", "TechdemoMapTileLayer")[0]
-
+		
 		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().getStaticImageIndexByAngle(0))
 		self.screen_cell_w = img.getWidth()
 		self.screen_cell_h = img.getHeight()
@@ -191,7 +207,7 @@ class World(object):
 		for angle in angles:
 			animid = self.engine.getAnimationPool().addResourceFromFile(path + angle + '/animation.xml')
 			a.addAnimation(int(angle), animid)
-		self.dummy = self.layer.addInstance(self.dummyObj, fife.ModelCoordinate(5,0))
+		self.dummy = self.layer.addInstance(self.dummyObj, fife.ModelCoordinate(2,8))
 		self.dummy.addListener(self.reactor)
 		
 	def adjust_views(self):
@@ -213,7 +229,9 @@ class World(object):
 	def run(self):
 		evtlistener = MyEventListener(self)
 		self.engine.initializePumping()
-		self.target.setLayerCoordinates(fife.ModelCoordinate(1,0))
+		
+		# no movement at start
+		self.target.setLayerCoordinates(fife.ModelCoordinate(2,8))
 		self.dummy.act('dummy:walk', self.target, 0.5)
 		
 		# map scrolling

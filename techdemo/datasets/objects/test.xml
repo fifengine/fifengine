@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<dataset id="Test" type="Embedded" format="1.0">
+	<object id="WildBarracuda:Sign">
+		<image source="techdemo/gfx/objects/signs/wb-bar_blue.png"/>
+	</object>
+	<object id="WildBarracuda:Bar">
+		<image source="techdemo/gfx/objects/buildings/wb_bar_e01.png" />
+	</object>
+	
+	<object id="Rubbish_newspaper" >
+		<image source="techdemo/gfx/objects/rubbish/rubbish_newspaper.png" />
+	</object>
+	<object id="Rubbish_newspaper60" >
+		<image source="techdemo/gfx/objects/rubbish/rubbish_newspaper_60.png" />
+	</object>
+
+</dataset>
