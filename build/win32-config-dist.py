@@ -10,7 +10,7 @@ def addExtras(context):
 	context.env.Append(CPPPATH = [path, path + '\\include', path + '\\include\\openal', path + '\\include\\sdl_image', path + '\\include\\zlib', path + '\\include\\guichan', path + '\\include\\boost', path + '\\include\\libvorbis', path + '\\include\\sdl_ttf', path + '\\include\\sdl', path + '\\include\\png', path + '\\include\\python'])
 	context.env.Append(LIBPATH = [path + '\\static_libs', path + '\\static_libs\\python'])
 	
-	context.env.Append(LIBS = ['guichan_sdl', 'guichan', 'mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'SDL_image', 'SDLmain', 'SDL', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'png', 'python25'])
+	context.env.Append(LIBS = ['guichan_sdl', 'guichan', 'mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'png', 'python25'])
 
 	if context.env['opengl']:
 		context.env.Append(CPPPATH = [path + '\\include\\opengl'])

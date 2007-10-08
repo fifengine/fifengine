@@ -4,7 +4,7 @@ import pythonize
 
 class ActionTests(unittest.TestCase):
 	def setUp(self):
-		template = 'content/animations/critters/animals/wolf_walk_%s.xml'
+		template = 'content/animations/agents/animals/wolf_walk_%s.xml'
 		dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
 		files = map(lambda dirname: template % dirname, dirnames)
 

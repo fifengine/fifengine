@@ -39,9 +39,9 @@
 	<dataset type="XML" source="content/datasets/objects/animated_objects/crate.xml" />
 
 	<!-- Load NPC datasets -->
-	<dataset type="XML" source="content/datasets/critters/humans/beekeeper.xml" />
-	<dataset type="XML" source="content/datasets/critters/humans/boy.xml" />
-	<dataset type="XML" source="content/datasets/critters/humans/girl.xml" />
+	<dataset type="XML" source="content/datasets/agents/humans/beekeeper.xml" />
+	<dataset type="XML" source="content/datasets/agents/humans/boy.xml" />
+	<dataset type="XML" source="content/datasets/agents/humans/girl.xml" />
 
 	<elevation id="OfficialMapElevation">
 

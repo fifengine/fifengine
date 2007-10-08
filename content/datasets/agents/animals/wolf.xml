@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<dataset id="Wolf" type="Embedded" format="1.0">
+	<object name="Animals:Wolf">
+		<animation source="content/animations/agents/animals/wolf.xml"/>
+	</object>
+</dataset>

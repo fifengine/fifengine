@@ -23,7 +23,7 @@
 
 	<!-- Load agent datasets -->
 	<dataset type="XML" source="techdemo/datasets/objects/vehicles.xml" />
-	<dataset type="XML" source="techdemo/datasets/critters/humans/gunner.xml" />
+	<dataset type="XML" source="techdemo/datasets/agents/humans/gunner.xml" />
 
 	<elevation id="TechdemoMapElevation">
 
