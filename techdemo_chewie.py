@@ -31,7 +31,8 @@ class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
 		pass
 
-class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, fife.ConsoleExecuter):
+class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
+	              fife.ConsoleExecuter, fife.IWidgetListener):
 	def __init__(self, world):
 		self.world = world
 		engine = world.engine
@@ -55,6 +56,8 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		eventmanager.addMouseListener(self)
 		fife.ConsoleExecuter.__init__(self)
 		engine.getGuiManager().getConsole().setConsoleExecuter(self)
+		fife.IWidgetListener.__init__(self)
+		eventmanager.addWidgetListener(self)
 		
 		self.engine = engine		
 		self.quitRequested = False
@@ -124,14 +127,21 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 			result = str(eval(command))
 		except:
 			pass
-		return result	
+		return result
+	
+	def onWidgetAction(self, evt):
+		evtid = evt.getId()
+		if evtid == 'WidgetEvtQuit':
+			self.quitRequested = True
+		if evtid == 'WidgetEvtAbout':
+			print "This is the zero & fife 2007.2 techdemo"
 
 class World(object):
 	def __init__(self):
 		self.engine = fife.Engine()
 		self.reactor = InstanceReactor()
 		logman = self.engine.getLogManager()
-		self.log = fifelog.LogManager(self.engine)
+		self.log = fifelog.LogManager(self.engine, promptlog=True, filelog=False)
 		#self.log.setVisibleModules('hexgrid')
 
 		self.eventmanager = self.engine.getEventManager()
@@ -168,10 +178,14 @@ class World(object):
 		self.container2.setOpaque(True)
 		self.guimanager.add(self.container2)
 		self.button1 = fife.Button('Quit')
+		self.button1.setActionEventId('WidgetEvtQuit')
+		self.button1.addActionListener(self.engine.getGuiManager())
 		self.button1.adjustSize()
 		self.button1.setPosition(1, 0)
 		self.button1.setFont(font)
 		self.button2 = fife.Button('?')
+		self.button2.setActionEventId('WidgetEvtAbout')
+		self.button2.addActionListener(self.engine.getGuiManager())
 		self.button2.setPosition(self.button1.getWidth() + 10, 0)
 		self.button2.setFont(font)
 		self.container2.add(self.button1)
