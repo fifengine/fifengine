@@ -91,6 +91,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
+		keystr = evt.getKey().getAsString().lower()
 		if (keyval == fife.IKey.ESCAPE):
 			self.quitRequested = True		
 		elif (keyval == fife.IKey.F10):
@@ -107,6 +108,8 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		elif (keyval == fife.IKey.DOWN):
 			#print "camera: down"
 			self.ScrollDown = True
+		elif (keystr == 'p'):
+			self.engine.getRenderBackend().captureScreen('techdemo.png')
 	
 	def keyReleased(self, evt):
 		pass
