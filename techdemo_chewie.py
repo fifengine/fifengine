@@ -109,7 +109,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 			#print "camera: down"
 			self.ScrollDown = True
 		elif (keystr == 'p'):
-			self.engine.getRenderBackend().captureScreen('techdemo.png')
+			self.engine.getRenderBackend().captureScreen('techdemo.bmp')
 	
 	def keyReleased(self, evt):
 		pass
