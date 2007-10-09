@@ -257,6 +257,8 @@ class World(object):
 		
 		self.agentObj = fife.Object("agent")
 		self.agentObj.setPather(self.pather)
+		
+		self.agentObj.addStaticImage(0, self.engine.getImagePool().addResourceFromFile('techdemo/animations/agents/gunner/gunner_static.png'))
 		a = self.agentObj.addAction('agent:walk')
 		
 		path = 'techdemo/animations/agents/gunner/walk/'
@@ -288,10 +290,6 @@ class World(object):
 	def run(self):
 		evtlistener = MyEventListener(self)
 		self.engine.initializePumping()
-		
-		# no movement at start
-		self.target.setLayerCoordinates(fife.ModelCoordinate(4,1))
-		self.agent.act('agent:walk', self.target, 0.5)
 		
 		# map scrolling
 		scroll_modifier = 0.1

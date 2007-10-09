@@ -209,9 +209,16 @@ namespace FIFE {
 			FL_DBG(_log, "still moving, getting locations from pather");
 			m_actioninfo->getNextLocations(m_location);
 		}
-		// calculate next locations
-		calcMovement();
-		return false;
+		
+		if ((m_location.getLayerCoordinates() == m_actioninfo->m_target->getLayerCoordinates()) && (m_location.getCellOffsetDistance() < 0.1)) {
+			// we're done moving
+			return true;
+		}
+		else {
+			// calculate next locations
+			calcMovement();
+			return false;
+		}
 	}
 
 
