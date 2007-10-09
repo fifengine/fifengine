@@ -154,7 +154,7 @@ namespace FIFE {
 			 *  @param direction coordinates for cell towards instance is heading to when performing the action
 			 *  @param repeating in case true, keeps repeating this action
  			 */
-			void act(const std::string& action_name, const Location& direction, bool repeating=false);
+			void act_here(const std::string& action_name, const Location& direction, bool repeating=false);
 
 			/** Returns closest matching static image for given angle
 			 * @return id for static image

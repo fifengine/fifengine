@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <map>
 #include <string>
+#include <vector>
 
 // 3rd party library includes
 #include <boost/variant.hpp>
@@ -70,6 +71,10 @@ namespace FIFE {
 			 */
 			const std::string& Id() const;
 
+			/** List the fields contained in this archetype
+			 */
+			std::vector<std::string> listFields() const;
+
 			/** Set the value of a field.
 			 */
 			template<typename T>
@@ -114,6 +119,21 @@ namespace FIFE {
 
 			const std::type_info& getTypeInfo(const std::string& field)  {
 				return m_fields[field].type();
+			}
+
+			std::string getTypeName(const std::string& field) {
+				static value_type idtype = value_type(long(0));
+				static value_type texttype = value_type(std::string(""));
+
+				std::string name = m_fields[field].type().name();
+
+				if(name == idtype.type().name())
+					return "id";
+
+				if(name == texttype.type().name())
+					return "text";
+
+				return name;
 			}
 
 			/** Check whether a field exists

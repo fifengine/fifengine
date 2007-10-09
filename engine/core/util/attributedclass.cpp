@@ -49,6 +49,17 @@ namespace FIFE {
 		return m_id;
 	}
 
+	std::vector<std::string> AttributedClass::listFields() const {
+		std::vector<std::string> list;
+
+		std::map<std::string,value_type>::const_iterator i = m_fields.begin();
+		for(; i != m_fields.end(); ++i) {
+			list.push_back(i->first);
+		}
+
+		return list;
+	}
+
 	void AttributedClass::updateAttributes(const AttributedClass* attrObject, bool override) {
 		if( attrObject == 0 )
 			return;

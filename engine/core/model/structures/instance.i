@@ -39,7 +39,7 @@ namespace FIFE {
 			const Location& getFacingLocation() const;
 			int getActionRuntime() const;
 			void act(const std::string& action_name, const Location& target, const double speed);
-			void act(const std::string& action_name, const Location& direction, bool repeating=false);
+			void act_here(const std::string& action_name, const Location& direction, bool repeating=false);
 			int getStaticImageIndexByAngle(unsigned int angle);
 			void update(unsigned int curticks=0);
 

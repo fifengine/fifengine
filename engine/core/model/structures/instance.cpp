@@ -172,7 +172,7 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("m_target ") <<  *a->m_target);
 	}
 
-	void Instance::act(const std::string& action_name, const Location& direction, bool repeating) {
+	void Instance::act_here(const std::string& action_name, const Location& direction, bool repeating) {
 		ActionInfo* a = initalizeAction(action_name);
 		a->m_repeating = repeating;
 		a->m_facinglocation = direction;

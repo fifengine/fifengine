@@ -179,6 +179,7 @@ subgraph cluster_12 {
     "pathfinder" -> "model/structures"
     "pathfinder/linearpather" -> "model/metamodel"
     "pathfinder/linearpather" -> "model/structures"
+    "pathfinder/linearpather" -> "util"
     "pathfinder/realtimepather" -> "model/metamodel"
     "pathfinder/realtimepather" -> "model/metamodel/grids"
     "pathfinder/realtimepather" -> "model/structures"

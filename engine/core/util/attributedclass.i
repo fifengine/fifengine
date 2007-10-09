@@ -8,6 +8,10 @@
 %include "util/point.i"
 %include "util/rect.h"
 
+namespace std {
+	%template(vectors) vector<std::string>;
+};
+
 namespace FIFE {
 
 	class AttributedClass {
@@ -17,6 +21,8 @@ namespace FIFE {
 			~AttributedClass();
 
 			const std::string& Id() const;
+
+			std::vector<std::string> listFields() const;
 
 			template<typename T>
 			const T& get(const std::string& field);
@@ -37,6 +43,7 @@ namespace FIFE {
 			void remove(const std::string& field);
 
 			bool hasField(const std::string& field);
+			std::string getTypeName(const std::string& field);
 
 		private:
 	};
