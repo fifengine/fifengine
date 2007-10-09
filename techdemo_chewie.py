@@ -68,6 +68,9 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.ScrollRight = False
 		self.ScrollUp = False
 		self.ScrollDown = False
+		
+		# gui
+		self.showInfo = False
 
 	def mousePressed(self, evt):
 		self.newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
@@ -137,7 +140,11 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		if evtid == 'WidgetEvtQuit':
 			self.quitRequested = True
 		if evtid == 'WidgetEvtAbout':
-			print "This is the zero & fife 2007.2 techdemo"
+			if self.showInfo:
+				self.showInfo = False
+			else:
+				self.showInfo = True
+			#print "This is the zero & fife 2007.2 techdemo"
 
 class World(object):
 	def __init__(self):
@@ -167,6 +174,7 @@ class World(object):
 		self.guimanager.setGlobalFont(font)
 		#font.setColor(255,20,20)
 		
+		# say hello version :)
 		self.container = fife.Container()
 		self.container.setOpaque(True)
 		self.guimanager.add(self.container)
@@ -176,7 +184,37 @@ class World(object):
 		self.container.add(self.label1)
 		self.container.setSize(self.label1.getWidth() + 2, self.label1.getHeight() + 2)
 		self.container.setPosition(2,2)
+
+		# prepare the container for info box
+		self.container_info = fife.Container()
+		self.container_info.setOpaque(True)
+		self.container_info.setSize(self.renderbackend.getScreenWidth() - 2 * 200, self.renderbackend.getScreenHeight() - 2 * 100)
+		self.container_info.setPosition(200, 100)
+		self.container_info.setVisible(True)
+		#self.container_info.setBackgroundColor(fife.Color(40,40,40))
+
+		# pack container into guimanager
+		self.guimanager.add(self.container_info)
+				
+		# header
+		self.label_info = fife.Label('Info-Box')
+		self.label_info.setPosition(10, 10)
+		self.label_info.setSize(self.renderbackend.getScreenWidth() - 2 * 210, 20)
+		#self.label_info.setBackgroundColor(fife.Color(10,10,10,0))
+		self.label_info.setFont(font)
 		
+		# text
+		self.text_info = fife.TextBox()
+		self.text_info.setPosition(10,50)
+		self.text_info.setText("Welcome to the FIFE Techdemo, Release 2007.2\n\nKeybindings:\n--------------\n- P = Make screenshot\n- LEFT = Move camera left\n- RIGHT = Move camera right\n- UP = Move camera up\n- DOWN = Move camera down\n- ESC = Quit techdemo\n- LMT = Move agent around\n\n\nHave fun,\n The FIFE and Zero-Projekt teams")
+		self.text_info.setOpaque(False)
+		self.text_info.setBorderSize(0)
+		
+		# pack widgets into container	
+		self.container_info.add(self.label_info)
+		self.container_info.add(self.text_info)
+
+		# 2 buttons		
 		self.container2 = fife.Container()
 		self.container2.setOpaque(True)
 		self.guimanager.add(self.container2)
@@ -291,6 +329,13 @@ class World(object):
 			elif (evtlistener.ScrollDown):
 				cam_scroll.y += scroll_modifier
 				evtlistener.ScrollDown = False				
+
+			# show info container
+			if (evtlistener.showInfo):
+				self.container_info.setVisible(True)
+			else:
+				evtlistener.showInfo = False
+				self.container_info.setVisible(False)
 				
 			cam_scroll = self.camloc.setExactLayerCoordinates(cam_scroll)			
 			self.camera.setLocation(self.camloc)

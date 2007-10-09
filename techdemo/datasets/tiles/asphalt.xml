@@ -31,11 +31,10 @@
 	<object id="21006">
 		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_left_top.png" direction="0" />			
 	</object>	
-	
 	<object id="21007">
-		<image source="techdemo/gfx/tiles/ground/concrete_kerb_top.png" direction="0" />
-	</object>	
-		
+		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_right_bottom.png" direction="0" />			
+	</object>
+			
 	<object id="21040">
 		<image source="techdemo/gfx/tiles/ground/asphalt_dottedplate_down_end.png" direction="0" />			
 	</object>
