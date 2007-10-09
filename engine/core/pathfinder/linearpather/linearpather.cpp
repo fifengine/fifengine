@@ -36,7 +36,6 @@ namespace FIFE {
                                            std::vector<Location>& nextlocations, const int session_id) {									 
 		assert(curpos.getElevation() == target.getElevation());
 		assert(curpos.getLayer() == target.getLayer());
-		return -1;
 
 		ModelCoordinate curpt = curpos.getLayerCoordinates();
 		ModelCoordinate tgtpt = target.getLayerCoordinates();
