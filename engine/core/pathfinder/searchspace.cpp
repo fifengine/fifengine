@@ -100,7 +100,7 @@ namespace FIFE {
 	int SearchSpace::getMaxIndex() const {
 
 		//max index = w * h.
-		int max_index = getWidth() + (getWidth() * (m_upperY - m_lowerY));
+		int max_index = getWidth() + (getWidth() * getHeight());
 		return max_index;
 	}
 }

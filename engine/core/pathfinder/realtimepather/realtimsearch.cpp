@@ -39,11 +39,12 @@ namespace FIFE {
 	RealTimeSearch::RealTimeSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
 	: Search(session_id, from, to, searchSpace) {
 		int coord = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
+		int dest = m_searchspace->convertCoordToInt(to.getLayerCoordinates());
 		int max_index = m_searchspace->getMaxIndex();
-		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(coord, 1.0f));
+		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(coord, 0.0f));
 		m_spt.resize(max_index + 1, -1);
 		m_sf.resize(max_index + 1, -1);
-		m_gCosts.resize(max_index + 1);
+		m_gCosts.resize(max_index + 1, 0.0f);
 	}
 
 	//TODO: Tidy up this function.
@@ -66,10 +67,9 @@ namespace FIFE {
 		//into search space.
 		ModelCoordinate nextCoord = m_searchspace->convertIntToCoord(next);
 		std::vector<ModelCoordinate> adjacents;
-		m_to.getLayer()->getCellGrid()->getAccessibleCoordinates(nextCoord, adjacents);
+		m_searchspace->getLayer()->getCellGrid()->getAccessibleCoordinates(nextCoord, adjacents);
 		for(std::vector<ModelCoordinate>::iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
 			//first determine if coordinate is in search space.
-			//UGLY :(
 			Location loc = m_to;
 			loc.setLayerCoordinates((*i));
 			if(m_searchspace->isInSearchSpace(loc)) {

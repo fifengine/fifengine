@@ -57,11 +57,12 @@ namespace FIFE {
 		}
 
 		int getWidth() const { 
-			return m_upperX - m_lowerX;
+			//1 is added to make it inclusive of the first cell.
+			return (m_upperX - m_lowerX) + 1;
 		}
 
 		int getHeight() const {
-			return m_upperY - m_lowerY;
+			return (m_upperY - m_lowerY) + 1;
 		}
 
 		Layer* getLayer() const {

@@ -45,7 +45,8 @@ namespace FIFE {
 	int RealTimePather::getNextLocations(const Location& curPos, const Location& target, 
 		std::vector<Location>& nextLocations, const int session_id) {
 			//Make sure that we're not navigating to the same tile.
-			if(curPos == target) {
+			if((curPos.getLayerCoordinates() == target.getLayerCoordinates()) &&
+				curPos.getLayer() == target.getLayer()) {
 				return -1;
 			}
 			//A session_id was passed in, therefore the path search has already begun.
