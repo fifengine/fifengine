@@ -304,17 +304,17 @@ int FIFE::PriorityQueue<index_type, priority_type>::compare(const value_type& a,
 	
 	if(m_ordering == Descending) {
 
-		if(a > b) {
+		if(a.second > b.second) {
 			return 1;
-		} else if(b > a) {
+		} else if(b.second > a.second) {
 			return -1;
 		}
 
 	} else {
 
-		if(a < b) {
+		if(a.second < b.second) {
 			return 1;
-		} else if(b < a) {
+		} else if(b.second < a.second) {
 			return -1;
 		}
 	}

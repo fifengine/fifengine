@@ -73,7 +73,7 @@ namespace FIFE {
 			Location loc = m_to;
 			loc.setLayerCoordinates((*i));
 			if(m_searchspace->isInSearchSpace(loc)) {
-				float hCost = (float)((destCoord.x - i->x) + (destCoord.y - i->y));
+				float hCost = abs((float)((destCoord.x - i->x) + (destCoord.y - i->y)) * 0.01f);
 				float gCost = m_gCosts[next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				int adjacentInt = m_searchspace->convertCoordToInt((*i));
 				if(m_sf[adjacentInt] == -1) {
@@ -86,7 +86,7 @@ namespace FIFE {
 					m_gCosts[adjacentInt] = gCost;
 					m_sf[adjacentInt] = next;
 				}
-			}
+			} 
 		}
 		return std::vector<Location>();
 	}
