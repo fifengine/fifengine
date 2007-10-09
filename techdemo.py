@@ -203,8 +203,8 @@ class World(object):
 		
 		# text
 		self.text_info = fife.TextBox()
-		self.text_info.setPosition(10,50)
-		self.text_info.setText("Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:\n--------------\n- P = Make screenshot\n- LEFT = Move camera left\n- RIGHT = Move camera right\n- UP = Move camera up\n- DOWN = Move camera down\n- ESC = Quit techdemo\n- LMB = Move agent around\n\n\nHave fun,\nThe FIFE and Zero-Projekt teams\n\nhttp://www.zero-projekt.net\nhttp://www.fifengine.de")
+		self.text_info.setPosition(10,40)
+		self.text_info.setText("Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:\n--------------\n- P = Make screenshot\n- LEFT = Move camera left\n- RIGHT = Move camera right\n- UP = Move camera up\n- DOWN = Move camera down\n- ESC = Quit techdemo\n- LMB = Move agent around\n\n\nHave fun,\nThe FIFE and Zero-Projekt teams\n        http://www.zero-projekt.net\n        http://www.fifengine.de")
 		self.text_info.setOpaque(False)
 		self.text_info.setBorderSize(0)
 		
@@ -252,13 +252,14 @@ class World(object):
 		self.target.setLayer(self.agent_layer)
 		self.pather = fife.LinearPather()
 		
-	def create_dummy(self):
+	def create_agent(self):
 		# replace this method with something like: metamodel.getObjectsByString('id', 'agent_gunner')
 		
 		self.agentObj = fife.Object("agent")
 		self.agentObj.setPather(self.pather)
 		
-		self.agentObj.addStaticImage(0, self.engine.getImagePool().addResourceFromFile('techdemo/animations/agents/gunner/gunner_static.png'))
+		self.agentObj.addStaticImage(0, self.engine.getImagePool().addResourceFromFile('techdemo/animations/agents/gunner/walk/0/001.png'))
+	
 		a = self.agentObj.addAction('agent:walk')
 		
 		path = 'techdemo/animations/agents/gunner/walk/'
@@ -268,13 +269,13 @@ class World(object):
 			a.addAnimation(int(angle), animid)
 			
 		# add agent to the workaround layer
-		self.agent = self.agent_layer.addInstance(self.agentObj, fife.ModelCoordinate(4,1))
+		self.agent = self.agent_layer.addInstance(self.agentObj, fife.ModelCoordinate(5,1))
 		self.agent.addListener(self.reactor)
 		
 	def adjust_views(self):
 		self.camloc = fife.Location()
 		self.camloc.setLayer(self.layer)
-		self.camloc.setLayerCoordinates(fife.ModelCoordinate(4,-1))
+		self.camloc.setLayerCoordinates(fife.ModelCoordinate(5,-1))
 		
 		self.camera = fife.Camera()
 		self.camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
@@ -290,6 +291,10 @@ class World(object):
 	def run(self):
 		evtlistener = MyEventListener(self)
 		self.engine.initializePumping()
+		
+		# no movement at start
+		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
+		self.agent.act('agent:walk', self.target, 0.5)
 		
 		# map scrolling
 		scroll_modifier = 0.1
@@ -349,7 +354,7 @@ if __name__ == '__main__':
 	w = World()
 	w.gui()
 	w.create_world()
-	w.create_dummy()
+	w.create_agent()
 	w.adjust_views()
 	w.run()
 	

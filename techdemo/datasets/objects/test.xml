@@ -13,7 +13,11 @@
 	<object id="Townhouse:Fassade">
 		<image source="techdemo/gfx/objects/buildings/townhouse_fake.png" />
 	</object>
-		
+	
+	<object id="Street:Pile">
+		<image source="techdemo/gfx/objects/signs/pile.png" />
+	</object>		
+	
 	<object id="Rubbish_newspaper" >
 		<image source="techdemo/gfx/objects/rubbish/rubbish_newspaper.png" />
 	</object>
