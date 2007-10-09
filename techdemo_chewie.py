@@ -160,8 +160,6 @@ class World(object):
 		self.metamodel = self.model.getMetaModel()
 		self.camera = None
 		
-
-		
 	def __del__(self):
 		self.engine.getView().removeCamera(self.camera)
 
@@ -242,33 +240,39 @@ class World(object):
 		self.elevation = self.map.getElevationsByString("id", "TechdemoMapElevation")[0]
 		self.layer = self.elevation.getLayersByString("id", "TechdemoMapTileLayer")[0]
 		
+		# little workaround to show the agent above mapobjects
+		self.agent_layer = self.elevation.getLayersByString("id", "TechdemoAgentLayer")[0]
+		
 		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().getStaticImageIndexByAngle(0))
 		self.screen_cell_w = img.getWidth()
 		self.screen_cell_h = img.getHeight()
 		
 		self.target = fife.Location()
-		self.target.setLayer(self.layer)
+		
+		self.target.setLayer(self.agent_layer)
 		self.pather = fife.LinearPather()
 		
 	def create_dummy(self):
-		# replace this method with something like: metamodel.getObejctsByString('id', 'agent_gunner')
+		# replace this method with something like: metamodel.getObjectsByString('id', 'agent_gunner')
 		
-		self.dummyObj = fife.Object("dummy")
-		self.dummyObj.setPather(self.pather)
-		a = self.dummyObj.addAction('dummy:walk')
+		self.agentObj = fife.Object("agent")
+		self.agentObj.setPather(self.pather)
+		a = self.agentObj.addAction('agent:walk')
 		
 		path = 'techdemo/animations/agents/gunner/walk/'
 		angles = sorted([p for p in os.listdir(path) if re.search(r'\d+', p)])
 		for angle in angles:
 			animid = self.engine.getAnimationPool().addResourceFromFile(path + angle + '/animation.xml')
 			a.addAnimation(int(angle), animid)
-		self.dummy = self.layer.addInstance(self.dummyObj, fife.ModelCoordinate(2,8))
-		self.dummy.addListener(self.reactor)
+			
+		# add agent to the workaround layer
+		self.agent = self.agent_layer.addInstance(self.agentObj, fife.ModelCoordinate(4,1))
+		self.agent.addListener(self.reactor)
 		
 	def adjust_views(self):
 		self.camloc = fife.Location()
 		self.camloc.setLayer(self.layer)
-		self.camloc.setLayerCoordinates(fife.ModelCoordinate(6,0))
+		self.camloc.setLayerCoordinates(fife.ModelCoordinate(4,-1))
 		
 		self.camera = fife.Camera()
 		self.camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
@@ -286,8 +290,8 @@ class World(object):
 		self.engine.initializePumping()
 		
 		# no movement at start
-		self.target.setLayerCoordinates(fife.ModelCoordinate(2,8))
-		self.dummy.act('dummy:walk', self.target, 0.5)
+		self.target.setLayerCoordinates(fife.ModelCoordinate(4,1))
+		self.agent.act('agent:walk', self.target, 0.5)
 		
 		# map scrolling
 		scroll_modifier = 0.1
@@ -309,7 +313,7 @@ class World(object):
 				self.target.setElevationCoordinates(ec)
 				print "layer coordinates = " + str(self.target.getLayerCoordinates())
 				
-				self.dummy.act('dummy:walk', self.target, 0.5)
+				self.agent.act('agent:walk', self.target, 0.5)
 				
 				evtlistener.newTarget = None
 			
