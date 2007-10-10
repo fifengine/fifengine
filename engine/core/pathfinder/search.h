@@ -58,8 +58,8 @@ namespace FIFE {
 		 * @param pather A pointer to the pather controlling this session.
 		 */
 		Search(const int session_id, const Location& from, const Location& to, SearchSpace* searchspace) 
-			: m_sessionId(session_id), m_searchspace(searchspace), m_status(search_status_incomplete), 
-		      m_to(to), m_from(from) {
+			: m_to(to), m_from(from), m_sessionId(session_id), m_searchspace(searchspace),
+			m_status(search_status_incomplete) {
 		}
 
 		/** Destructor.

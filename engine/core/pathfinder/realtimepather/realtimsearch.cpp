@@ -31,6 +31,7 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/layer.h"
 #include "pathfinder/searchspace.h"
+#include "util/fife_math.h"
 
 #include "realtimepather.h"
 #include "realtimesearch.h"
@@ -39,7 +40,7 @@ namespace FIFE {
 	RealTimeSearch::RealTimeSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
 	: Search(session_id, from, to, searchSpace) {
 		int coord = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
-		int dest = m_searchspace->convertCoordToInt(to.getLayerCoordinates());
+		//int dest = m_searchspace->convertCoordToInt(to.getLayerCoordinates());
 		int max_index = m_searchspace->getMaxIndex();
 		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(coord, 0.0f));
 		m_spt.resize(max_index + 1, -1);
@@ -73,7 +74,7 @@ namespace FIFE {
 			Location loc = m_to;
 			loc.setLayerCoordinates((*i));
 			if(m_searchspace->isInSearchSpace(loc)) {
-				float hCost = abs((float)((destCoord.x - i->x) + (destCoord.y - i->y)) * 0.01f);
+				float hCost = fabs((float)((destCoord.x - i->x) + (destCoord.y - i->y)) * 0.01f);
 				float gCost = m_gCosts[next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				int adjacentInt = m_searchspace->convertCoordToInt((*i));
 				if(m_sf[adjacentInt] == -1) {

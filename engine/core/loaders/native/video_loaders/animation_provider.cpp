@@ -69,8 +69,6 @@ namespace FIFE {
 
 		int common_frame_delay = 0;
 		int actionFrame = 0;
-		int xshift = 0;
-		int yshift = 0;
 		element->QueryIntAttribute("delay", &common_frame_delay);
 		element->QueryIntAttribute("action", &actionFrame);
 
