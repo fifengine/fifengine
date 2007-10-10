@@ -372,6 +372,7 @@ digraph "source tree" {
     "engine/core/pathfinder/realtimepather/realtimsearch.cpp" -> "pathfinder/searchspace.h"
     "engine/core/pathfinder/realtimepather/realtimsearch.cpp" -> "realtimepather.h"
     "engine/core/pathfinder/realtimepather/realtimsearch.cpp" -> "realtimesearch.h"
+    "engine/core/pathfinder/realtimepather/realtimsearch.cpp" -> "util/fife_math.h"
     "engine/core/pathfinder/search.h" -> "model/structures/location.h"
     "engine/core/pathfinder/searchspace.cpp" -> "model/structures/instance.h"
     "engine/core/pathfinder/searchspace.cpp" -> "model/structures/layer.h"

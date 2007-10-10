@@ -1,30 +1,15 @@
 %module pather
 %{
 #include "pathfinder/realtimepather/realtimepather.h"
-#include "model/metamodel/abstractpather.h"
 %}
 
+%include "model/metamodel/abstractpather.i"
 
 namespace FIFE {
-
-	class AbstractPather {
-	public:
-		AbstractPather();
-		virtual ~AbstractPather();
-		virtual void setMap(Map* map) = 0;
-		virtual int getNextLocations(const Location& curpos, const Location& target, 
-					     std::vector<Location>& nextlocations, const int session_id) = 0;
-		virtual void resetTicks() = 0;
-					 
-	};
-	
+	%feature("notabstract") RealTimePather;
 	class RealTimePather : public AbstractPather {
 	public:
 		RealTimePather();
 		virtual ~RealTimePather();
-		virtual void setMap(Map* map);
-		virtual int getNextLocations(const Location& curpos, const Location& target, 
-					     std::vector<Location>& nextlocations, const int session_id);
-		virtual void resetTicks();
 	};
 }

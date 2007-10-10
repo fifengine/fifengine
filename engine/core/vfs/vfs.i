@@ -27,8 +27,7 @@
 
 typedef unsigned char uint8_t;
 namespace std {
-   %template(vectors) vector<std::string>;
-   %template(vectoru) vector<uint8_t>;
+	%template(vectoru) vector<uint8_t>;
 };
 
 namespace FIFE {

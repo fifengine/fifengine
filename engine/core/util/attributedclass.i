@@ -8,10 +8,6 @@
 %include "util/point.i"
 %include "util/rect.h"
 
-namespace std {
-	%template(vectors) vector<std::string>;
-};
-
 namespace FIFE {
 
 	class AttributedClass {
