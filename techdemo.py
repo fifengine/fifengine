@@ -251,7 +251,7 @@ class World(object):
 		
 		self.target.setLayer(self.agent_layer)
 		self.pather = fife.LinearPather()
-		
+
 	def create_agent(self):
 		# replace this method with something like: metamodel.getObjectsByString('id', 'agent_gunner')
 		
@@ -287,6 +287,13 @@ class World(object):
 		viewport = fife.Rect(0, 0, self.renderbackend.getScreenWidth(), self.renderbackend.getScreenHeight())
 		self.camera.setViewPort(viewport)
 		self.engine.getView().addCamera(self.camera)
+
+	def create_background_music(self):
+		# set up the audio engine
+		self.audiomanager = self.engine.getAudioManager()
+
+		# play track as background music
+		self.audiomanager.setAmbientSound('techdemo/audio/music/lagerhalle5.ogg')
 			
 	def run(self):
 		evtlistener = MyEventListener(self)
@@ -356,6 +363,7 @@ if __name__ == '__main__':
 	w.create_world()
 	w.create_agent()
 	w.adjust_views()
+	w.create_background_music()
 	w.run()
 	
 
