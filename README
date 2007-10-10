@@ -1,50 +1,51 @@
-=== Introduction ===
-Welcome to the official FIFE 2007.2 release README. The final release is based on SVN revision 1710.
+== Introduction ==
+Welcome to the official FIFE 2007.2 release README. The final release is based on SVN revision 1714.
 
-=== Important changes since the 2007.1 release ===
+== Important changes since the 2007.1 release ==
 * Removed the rather difficult to maintain lunar.h bindings in favour of SWIG (http://www.swig.org).
-* Replaced the Lua scripting support with Python. Now the main loop runs in the scripting language. For the 2007.1 release the main loop still ran in the engine side and the lua library was embedded into the engine. By utilizing SWIG game creators can add Lua support back to the engine again if they have the need for it.
+* Replaced the Lua scripting support with Python. Now the main loop runs in the scripting language. For the 2007.1 release the main loop still ran in the engine side and the Lua library was embedded into the engine. By utilizing SWIG game creators can add Lua support back to the engine again if they have the need for it.
 * Metamodel refactoring. This resulted in a better engine structure and a decreased number of dependencies between the engine modules. Furthermore bi-directional dependencies were removed completely.
 * Improved engine modularity. Our aim is that you can cherry-pick specific engine modules of FIFE and just use the ones you really need for your game.
-* Pathfinding integration. Exchangable backends so you can already replaced the currently rather simple linear pather with a more sophisticated system.
-* New 3d geometry system. Support for rotation, tilt & zoom.
+* Pathfinding integration. Exchangable backends so you can already replace the currently rather simple linear pather with a more sophisticated system.
+* New 3d geometry system. Camera supports now tilt, rotation and zoom. Geometries are affected by camera adjustments, but in addition to that, layers can contain separate scale and rotation.
 * New event channel module. Scripts have full access to mouse, keyboard & widget input.
-* New MVC architecture pattern. The whole engine has been refactored to follow a model - view - controller pattern.
+* New MVC architecture pattern. The whole engine has been refactored to follow a model - view - controller pattern. This leads to a cleaner engine module hierarchy compared to the engine design that was used before.
 * Improved action-based animation system.
 * A techdemo to give game creators a starting point. This is a common undertaking of the Zero-Projekt team (http://www.zero-projekt.net) and FIFE.
 
-=== Features ===
+== Features ==
 * A complete list of the features that FIFE offers can be found at the project wiki:
 http://wiki.fifengine.de/index.php?title=Engine_features
 
-=== License ===
+== License ==
 The source code (*.cpp, *.h & *.py) is licensed under GPL 2.0 or newer. The techdemo content is licensed under Creative Commons Attribution-Share Alike 3.0:
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 http://creativecommons.org/licenses/by-sa/3.0/
 
 Directories with content that is not licensed under the Creative Commons Attribution-Share Alike 3.0 feature a separate LICENSE file that states the origin of the content, the author and the actual license it was published under.
 
-=== Building FIFE ===
-==== Dependencies ====
+== Building FIFE ==
+=== Dependencies ===
 A list of all dependencies (including accurate version numbers) that you'll need to obtain to build FIFE on your platform can be found at the project wiki:
 http://wiki.fifengine.de/index.php?title=Build_dependencies
 
-==== General notes ====
+=== General notes ===
 FIFE utilizes the SCons (http://www.scons.org) build system. Here is a quick list of scons commands that can be important for building FIFE on your platform:
-* 'scons' will build FIFE.
+* 'scons ext=1' will build the FIFE dependencies Guichan (http://guichan.sourceforge.net/) and minizip (http://www.winimage.com/zLibDll/minizip.html) from bundled source. Use this if you do not have these libraries, or have the wrong version.
 * 'scons -h' will list additional compile options.
+* 'scons' will build FIFE.
+* 'scons tests=1' will build FIFE and the boost unit tests (needed for test_fife.py).
 * 'scons -c' clears any compiled objects (= scons equivalent of 'make clean').
-* 'scons ext=1' will build FIFE but also Guichan (http://guichan.sourceforge.net/) and minizip (http://www.winimage.com/zLibDll/minizip.html) from bundled source. Use this if you do not have these libraries, or have the wrong version.
 
 Platform specific details how to build FIFE can be found down below.
 
-==== Linux ====
+=== Linux ===
 Detailed information how to build FIFE on Linux-based distributions can be found at the project wiki:
 http://wiki.fifengine.de/index.php?title=Linux_compile_guide
 
 After FIFE has been built successfully move into the <FIFE directory> and run: python techdemo.py
 
-==== Mac ====
+=== Mac ===
 Detailed information how to build FIFE on linux-based distributions can be found at the project wiki:
 http://wiki.fifengine.de/index.php?title=Mac_compile_guide
 
@@ -52,28 +53,33 @@ Caution: the Mac compile guide is currently (2007/10/10) outdated. We'll try to 
 
 After FIFE has been built successfully move into the <FIFE directory> and run: python techdemo.py
 
-==== Win32 ====
+=== Win32 ===
 The Win32 package ships with precompiled binaries. Simply unpack the package to location of your choice. After that you'll need to install ActivePython 2.5 to run the techdemo:
 http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.1.1-win32-x86.msi
 
 Move into the <FIFE directory> and start the techdemo.py script. You can simply double-click with your mouse on it. It should be automatically associated with the Python interpreter after installing ActivePython.
 
-=== Known issues ===
+== Configuring FIFE ==
+The engine creates a file called "fife.config" if it's not in place yet. You can customize FIFE by editing this file. A detailed guide about the FIFE config file can be found at the project wiki:
+http://wiki.fifengine.de/index.php?title=Fife.config
+
+== Known issues ==
 * The player character does currently walk over all map objects, even over the walls of the bar building. There are a couple of reasons for this:
 *# We didn't have the time to split up the bar building into several smaller graphics; ATM the whole bar is still one huge monolithic image. We ran out of time in the end and decided to simply leave it this way for the release.
 *# Collision / blocking of map instances hasn't been implemented yet.
 * The background music is currently just played once. The audio module that ships with this release is lacking a lot of functionality; among other things looping for audio tracks. We're already working on a new audio module that will offer game creators much more audio-related features for their games. But unfortunately this new audio module is not ready yet. We hope to bundle it with the 2007.3 release.
 * Pathfinding is still pretty simple. E.g. if you click on a position of the map the player character will move to the currently closest node first and walk to the aim node after that. In cases where the aim node lies in a different direction than the currently closest node, the player character will move away from the aim first and start walking towards it after it has reached the currently closest node.
+* The shadows of the agents are just black instead of semi-transparent for the SDL renderer. We didn't have the time to fix this issue before the release. Open your fife.config and set SDLRemoveFakeAlpha to 0 to work around this for now.
 * Win32 users tend to suffer from problems with the OpenAL drivers. If you don't hear the background music playing while running the techdemo, run oalinst.exe that ships with the Win32 package. This is the latest OpenAL driver for Win32.
 * The boost unit tests are broken on Win32. We plan to address this issue but we're lacking active Win32 developers to look into these kind of problems as the vast majority of the active developers is set on Linux. If you would like to help out with Win32-related issues please contact us at our IRC channel:
 http://wiki.fifengine.de/index.php?title=IRC
 
-=== Feedback ===
+== Feedback ==
 We appreciate every kind of feedback concerning the release, the project in general and the bundled techdemo. Feedback is a great way to help us to improve FIFE. If you would like to get in contact with us and provide feedback you can either visit our IRC channel or our forums:
 http://wiki.fifengine.de/index.php?title=IRC
 http://www.fifengine.de/module-pnForum-viewforum-forum-6.phtml
 
-=== Signature ===
+== Signature ==
 Have fun with the release and let us know what you think about it!
 -- The FIFE and the Zero-Projekt team.
 
