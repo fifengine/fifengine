@@ -44,17 +44,17 @@
 #include "source.h"
 #include "fife_openal.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 
 	/** This class manages the base audio system.
 	 */
-	class Manager : public DynamicSingleton<Manager> {
+	class AudioManager : public DynamicSingleton<AudioManager> {
 		public:
 			/** Initialises the audio system.
 			 */
-			Manager();
+			AudioManager();
 			
-			~Manager() {
+			~AudioManager() {
 				delete m_bgsound; // added this (zahlman)
 				//m_bufvec.clear(); <-- useless. Won't delete pointed-at things,
 				//and the vector destructor will clean up the vector's memory anyway.
@@ -133,5 +133,5 @@ namespace FIFE { namespace audio {
 
 			static float m_savedvolume;
 	};
-} } //FIFE::audio
+} //FIFE
 #endif

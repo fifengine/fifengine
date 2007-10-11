@@ -31,7 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 
 	// The max. length of a decoded audio data 
 	// for which streaming is not used.
@@ -43,6 +43,6 @@ namespace FIFE { namespace audio {
 	// The length of one buffer.
 	const unsigned int BUFFER_LEN = 1 << 20;
 
-} }
+}
 
 #endif

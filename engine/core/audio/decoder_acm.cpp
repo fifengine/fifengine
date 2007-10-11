@@ -45,7 +45,7 @@
  *
  * Adapted for ACMStream.DLL by Valery V. Anisimovsky (samael@avn.mccme.ru)
  */
-namespace FIFE { namespace audio { 
+namespace FIFE {
 	static Logger _log(LM_AUDIO);
 		
 	namespace ACM_detail {
@@ -890,4 +890,4 @@ namespace FIFE { namespace audio {
 		}
 		return false;
 	}
-} } // namespace FIFE::audio
+} // namespace FIFE

@@ -37,7 +37,7 @@
 // Second block: files included from the same folder
 #include "fife_openal.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 	
 	class Decoder;
 	typedef ::boost::shared_ptr<Decoder> type_decptr;
@@ -99,6 +99,6 @@ namespace FIFE { namespace audio {
 
 	typedef ::boost::shared_ptr<Buffer> type_bufptr;
 
-} } // namespace FIFE::audio
+} // namespace FIFE
 
 #endif /*AUDIOBUFFER_H_*/

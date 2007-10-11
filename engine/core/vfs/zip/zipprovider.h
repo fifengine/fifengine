@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "vfs/vfssourceprovider.h"
 
-namespace FIFE { namespace zip {
+namespace FIFE {
 	/**  A VFS provider for Zip archives.
 	 *
 	 * @see FIFE::VFSSourceProvider
@@ -46,7 +46,6 @@ namespace FIFE { namespace zip {
 		bool isReadable(const std::string& file) const;
 		VFSSource* createSource(const std::string& file) const;
 	};
-} //zip
 } //FIFE
 
 #endif

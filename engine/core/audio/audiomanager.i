@@ -24,14 +24,13 @@
 #include "audio/audiomanager.h"
 %}
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 
-	%rename(AudioManager) Manager;
-	class Manager {
+	class AudioManager {
 		public:
-			Manager();
-			~Manager();
+			AudioManager();
+			~AudioManager();
 			void setAmbientSound(const std::string &file);
 			static void setVolume(float vol);
 	};
-}}
+}

@@ -36,7 +36,7 @@
 
 #include "decoder.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 	
 	typedef ::boost::shared_ptr<RawData> RawDataPtr;
 	
@@ -73,5 +73,5 @@ namespace FIFE { namespace audio {
 			int8_t *m_data;
 			uint32_t m_datasize;
 	};
-} } // namespace FIFE::audio
+} // namespace FIFE
 #endif

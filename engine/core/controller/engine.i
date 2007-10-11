@@ -47,7 +47,7 @@ namespace FIFE {
 		void finalizePumping();
 		void pump();
 
-		audio::Manager* getAudioManager();
+		AudioManager* getAudioManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
 		SettingsManager* getSettingsManager();

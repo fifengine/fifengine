@@ -34,7 +34,7 @@
 #include "zipprovider.h"
 #include "zipsource.h"
 
-namespace FIFE { namespace zip {
+namespace FIFE {
 	bool ZipProvider::isReadable(const std::string& file) const {
 		// File name must have a .zip extension:
 		// TODO: Case sensitive?
@@ -58,4 +58,4 @@ namespace FIFE { namespace zip {
 		else
 			throw Exception("File " + file + " is not readable.");
 	}
-}}
+}

@@ -172,12 +172,12 @@ namespace FIFE {
 
 		m_vfs->addSource(new VFSHostSystem());
 #ifdef HAVE_ZIP
-		m_vfs_sourcefactory->addProvider( new zip::ZipProvider() );
+		m_vfs_sourcefactory->addProvider( new ZipProvider() );
 #endif
-		//m_vfs_sourcefactory->addProvider(new map::loaders::fallout::ProviderDAT2());
-		//m_vfs_sourcefactory->addProvider(new map::loaders::fallout::ProviderDAT1());
+		//m_vfs_sourcefactory->addProvider(ProviderDAT2());
+		//m_vfs_sourcefactory->addProvider(ProviderDAT1());
 
-		m_audiomanager = new audio::Manager();
+		m_audiomanager = new AudioManager();
 		int volume = m_settingsmanager->read<int>("InitialVolume", 5);
 		if (volume > 10) {
 			volume = 10;

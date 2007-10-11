@@ -30,7 +30,7 @@
 #include "buffer.h"
 #include "decoder.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 
 	namespace buffer_detail {
 
@@ -138,4 +138,4 @@ namespace FIFE { namespace audio {
 		}
 	}
 
-} } // namespace FIFE::audio
+} // namespace FIFE

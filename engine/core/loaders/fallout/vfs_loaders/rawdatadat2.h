@@ -38,7 +38,7 @@
 
 #include "rawdatadat2.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace fallout {
+namespace FIFE {
 
 	/** A subclass of RawDataMemSource, that fills itself with a FALLOUT1 .DAT file entry
 	 * @see MFFalloutDAT2
@@ -62,5 +62,5 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			 */
 			RawDataDAT2(const std::string& datfile, const s_info& info);
 	};
-} } } }
+}
 #endif

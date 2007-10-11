@@ -31,7 +31,7 @@
 
 #include "zipdata.h"
 
-namespace FIFE { namespace zip {
+namespace FIFE {
 	ZipData::ZipData(const std::string& zip_file, const std::string& file) {
 		m_file = unzOpen(zip_file.c_str());
 
@@ -67,4 +67,4 @@ namespace FIFE { namespace zip {
 		if (error < 0)
 			throw Exception("minizip error " + error);
 	}
-}}
+}

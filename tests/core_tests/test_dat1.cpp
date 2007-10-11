@@ -39,7 +39,6 @@
 #include "util/exception.h"
 
 using boost::unit_test::test_suite;
-using namespace FIFE::map::loaders::fallout;
 using namespace FIFE;
 
 static const std::string COMPRESSED_FILE = "../data/dat1vfstest.dat";

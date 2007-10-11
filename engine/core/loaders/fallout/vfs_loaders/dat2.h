@@ -43,10 +43,7 @@
 
 namespace FIFE {
 	class RawData;
-}
-
-namespace FIFE { namespace map { namespace loaders { namespace fallout {
-
+	
 	/** VFSource for the Fallout2 DAT file format
 	 *
 	 *  Implements a kind of lazy initializing, by reading the file list
@@ -105,6 +102,6 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			DAT2& operator=(const DAT2&);
 	};
 
-} } } } // FIFE::map::loaders::fallout
+} // FIFE
 
 #endif

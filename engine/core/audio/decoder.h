@@ -37,7 +37,7 @@
 #include "config.h"
 #include "fife_openal.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 
 	/** The base class for the different audio decoder.
 	 */
@@ -115,6 +115,6 @@ namespace FIFE { namespace audio {
 			uint32_t m_samplerate;
 	};
 
-} }
+}
 
 #endif

@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "vfs/vfssource.h"
 
-namespace FIFE { namespace zip {
+namespace FIFE {
 	/**  Implements a Zip archive file source.
 	 *
 	 * @see FIFE::VFSSource
@@ -58,7 +58,7 @@ namespace FIFE { namespace zip {
 		struct zip_data_t;
 		struct zip_data_t* m_data;
 	};
-} //zip
+
 } //FIFE
 
 #endif

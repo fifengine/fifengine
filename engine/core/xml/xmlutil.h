@@ -40,10 +40,6 @@
 
 namespace FIFE {
 	class AttributedClass;
-}
-
-namespace FIFE { namespace xmlutil {
-
 	void loadMetadata(TiXmlElement* e, AttributedClass* t);
 	void assertElement(TiXmlElement* e, const std::string& element);
 
@@ -138,5 +134,5 @@ namespace FIFE { namespace xmlutil {
 	}
 
 
-} }
+}
 #endif

@@ -34,7 +34,7 @@
 #include "decoder_acm.h"
 #include "decoder_oggvorbis.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 
 	Decoder* Decoder::create(const std::string &filename) {
 		RawDataPtr rdptr(VFS::instance()->open(filename));
@@ -51,4 +51,4 @@ namespace FIFE { namespace audio {
 		return 0;
 	}
 	
-} }
+}

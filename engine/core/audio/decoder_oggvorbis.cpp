@@ -31,7 +31,7 @@
 
 #include "decoder_oggvorbis.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 
 	static Logger _log(LM_AUDIO);
 
@@ -151,4 +151,4 @@ namespace FIFE { namespace audio {
 	uint32_t OggVorbisDecoder::guessedLength() { 
 		return ov_pcm_total(&m_ovf, -1) * 4;
 	}
-} } // FIFE::audio
+} // FIFE

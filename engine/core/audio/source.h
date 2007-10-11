@@ -39,7 +39,7 @@
 #include "buffer.h"
 #include "fife_openal.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 
 	class Buffer;
 	
@@ -121,6 +121,6 @@ namespace FIFE { namespace audio {
 			// The number of finished buffers
 			ALint m_bufsdone;
 	};
-} } //FIFE::audio
+} //FIFE
 
 #endif /*AUDIOSOURCE_H_*/

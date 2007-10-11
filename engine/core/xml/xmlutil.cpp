@@ -32,7 +32,7 @@
 
 #include "xmlutil.h"
 
-namespace FIFE { namespace xmlutil {
+namespace FIFE {
 
 	struct ac_setter {
 		AttributedClass* t;
@@ -102,4 +102,4 @@ namespace FIFE { namespace xmlutil {
 			throw InvalidFormat(std::string("no '") + element + "' element: " + e->Value());
 	}
 
-}}
+}

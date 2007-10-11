@@ -36,7 +36,7 @@
 #include "zipsource.h"
 #include "zipdata.h"
 
-namespace FIFE { namespace zip {
+namespace FIFE {
 	typedef std::list<std::string> file_list_t;
 	typedef file_list_t::iterator file_list_iter_t;
 
@@ -177,4 +177,4 @@ namespace FIFE { namespace zip {
 		}
 		return result;
 	}
-}}
+}

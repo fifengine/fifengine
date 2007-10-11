@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdatasource.h"
 
-namespace FIFE { namespace zip {
+namespace FIFE {
 	class ZipData : public RawDataSource {
 	public:
 		virtual ~ZipData();
@@ -59,7 +59,7 @@ namespace FIFE { namespace zip {
 		unzFile m_file;
 		unsigned int m_size;
 	};
-} //zip
+
 } //FIFE
 
 #endif

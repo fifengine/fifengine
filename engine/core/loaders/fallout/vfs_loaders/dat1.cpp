@@ -33,7 +33,7 @@
 
 #include "dat1.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace fallout {
+namespace FIFE {
 	static Logger _log(LM_FO_LOADERS);
 
 	DAT1::DAT1(const std::string& file) : m_datpath(file), m_data(VFS::instance()->open(file))  {
@@ -149,4 +149,4 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 
 		return list;
 	}
-} } } } // ~FIFE::map::loaders::fallout
+} // FIFE

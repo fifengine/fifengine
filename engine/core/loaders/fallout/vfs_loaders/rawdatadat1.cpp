@@ -33,7 +33,7 @@
 #include "lzssdecoder.h"
 #include "rawdatadat1.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace fallout {
+namespace FIFE {
 
 	RawDataDAT1::RawDataDAT1(const std::string& datfile, const s_info& info) : 
 		RawDataMemSource(info.unpackedLength) {
@@ -47,4 +47,4 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		} else
 			input->readInto(getRawData(), getSize());
 	}
-} } } } // FIFE::map::loaders::fallout
+} // FIFE

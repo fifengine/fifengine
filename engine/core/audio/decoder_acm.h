@@ -36,7 +36,7 @@
 
 #include "decoder.h"
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 	
 	namespace ACM_detail {
 		class Unpacker;
@@ -71,6 +71,6 @@ namespace FIFE { namespace audio {
 			uint8_t *m_data;
 			uint32_t m_datasize, m_gsize;	
 	};
-} }
+}
 
 #endif

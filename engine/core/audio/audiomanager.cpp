@@ -43,12 +43,12 @@
  * -Remove the exception from the constructor. IIRC stro doesn't like them
  */
 
-namespace FIFE { namespace audio {
+namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
 	typedef ::boost::shared_ptr<Decoder> type_decptr;
 
-	void Manager::setAmbientSound(const std::string &name) {
+	void AudioManager::setAmbientSound(const std::string &name) {
 		if (m_sound_disabled) {
 			return;
 		}
@@ -77,7 +77,7 @@ namespace FIFE { namespace audio {
 		m_bgsound->enable();
 	}
 
-	type_bufptr Manager::getBufferFromFile(const std::string &name) {
+	type_bufptr AudioManager::getBufferFromFile(const std::string &name) {
 		// Check if we have a buffer with this file already
 		type_bufvec::const_iterator end = m_bufvec.end();
 		for (type_bufvec::iterator i = m_bufvec.begin(); i != end; ++i) {
@@ -109,9 +109,9 @@ namespace FIFE { namespace audio {
 		return asp;
 	}
 
-	float Manager::m_savedvolume = 1.0;
+	float AudioManager::m_savedvolume = 1.0;
 
-	Manager::Manager() : m_sound_disabled(false), m_bgsound(0), 
+	AudioManager::AudioManager() : m_sound_disabled(false), m_bgsound(0), 
 	                     m_context(NULL), m_device(alcOpenDevice(NULL)) {
 		if (!m_device) {
 			FL_ERR(_log, "could not open audio device - disabling sound!");
@@ -135,4 +135,4 @@ namespace FIFE { namespace audio {
 
 		changeListenerOrientation(1.0, 0.0);
 	}
-} } //FIFE::audio
+} //FIFE

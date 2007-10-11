@@ -36,7 +36,7 @@
 
 #include "rawdatadat1.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace fallout {
+namespace FIFE {
 
 	/** VFSource for the Fallout1 DAT file format.
 	 */
@@ -81,6 +81,6 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 			DAT1& operator=(const DAT1&);
 	};
 
-} } } } // FIFE::map::loaders::fallout
+} // FIFE
 
 #endif

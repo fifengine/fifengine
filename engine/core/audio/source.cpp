@@ -36,7 +36,6 @@
 namespace FIFE { 
 	static Logger _log(LM_AUDIO);
 
-	namespace audio {
 	Source::Source() : m_source(0), m_bufferp() { 
 		TimeManager::instance()->registerEvent(this);
 		setPeriod(-1);
@@ -78,7 +77,7 @@ namespace FIFE {
 	
 	bool Source::loadFile(const std::string &name) {
 		disable();
-		m_bufferp = Manager::instance()->getBufferFromFile(name);
+		m_bufferp = AudioManager::instance()->getBufferFromFile(name);
 		return m_bufferp;	
 	}
 	
@@ -99,4 +98,4 @@ namespace FIFE {
 			m_bufsdone = procs;
 		}
 	}
-} } //FIFE::audio
+} //FIFE

@@ -74,7 +74,7 @@ namespace FIFE {
 			 */
 			void pump();
 
-			audio::Manager* getAudioManager() { return m_audiomanager; }
+			AudioManager* getAudioManager() { return m_audiomanager; }
 			EventManager* getEventManager() { return m_eventmanager; }
 			TimeManager* getTimeManager() { return m_timemanager; }
 			SettingsManager* getSettingsManager() { return m_settingsmanager; }
@@ -94,7 +94,7 @@ namespace FIFE {
 			RenderBackend* m_renderbackend;
 			GUIManager* m_guimanager;
 			EventManager* m_eventmanager;
-			audio::Manager* m_audiomanager;
+			AudioManager* m_audiomanager;
 			TimeManager* m_timemanager;
 			SettingsManager* m_settingsmanager;
 			ImagePool* m_imagepool;

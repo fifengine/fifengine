@@ -36,7 +36,7 @@
 
 #include "rawdatadat2.h"
 
-namespace FIFE { namespace map { namespace loaders { namespace fallout {
+namespace FIFE {
 
 	RawDataDAT2::RawDataDAT2(const std::string& datfile, const s_info& info) :
 		RawDataMemSource(info.unpackedLength) {
@@ -57,4 +57,4 @@ namespace FIFE { namespace map { namespace loaders { namespace fallout {
 		}
 	}
 
-} } } }
+}
