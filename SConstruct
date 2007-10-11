@@ -12,8 +12,7 @@ opts.Add(BoolOption('projfiles',  "Create IDE project files. If defined, won't b
 opts.Add(BoolOption('utils',  'Build utilities', 0))
 opts.Add(BoolOption('ext',  'Build external dependencies', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
-opts.Add(BoolOption('zip', 'Enable ZIP archive support', 0))
-opts.Add(BoolOption('perfexe', 'Build native perf test version of fife engine', 0))
+opts.Add(BoolOption('zip', 'Enable ZIP archive support', 1))
 opts.Add(BoolOption('log', 'Enables logging for the engine', 1))
 
 opts.Add(BoolOption('rend_camzone', 'Enables camera zone renderer', 0))
@@ -156,10 +155,6 @@ else:
 	
 	env.Append(LIBPATH = ['#/engine'])
 
-	if env['perfexe']:
-		enginefiles = ['engine/main.cpp']
-		env.Program('fife_engine', enginefiles, LINKFLAGS=['-Wl,-rpath,engine,-rpath,ext/install/lib'])
-	
 	if env['tests']:
 		SConscript('tests/core_tests/SConscript')
 
