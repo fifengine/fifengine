@@ -1,5 +1,5 @@
 CC=cc
-CFLAGS=-O
+CFLAGS=-O -fPIC
 LDFLAGS=--shared -lz
 prefix=/usr
 libdir=$(prefix)/lib
