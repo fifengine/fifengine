@@ -32,6 +32,7 @@ namespace FIFE {
 			Layer* addLayer(const std::string& identifier, CellGrid* grid);
 			void removeLayer(Layer* index);
 
+			std::list<Layer*> getLayers() const;
 			template<typename T>
 			std::list<Layer*> getLayers(const std::string& field, const T& value) const;
 			%template(getLayersByBool) getLayers<bool>;

@@ -98,13 +98,82 @@ class ModelSaver:
 		self.endElement('metadata')
 
 	def write_datasets(self, parent):
-		pass
+		for set in parent.getDatasets():
+			attr_vals = {
+				(None, 'type'): 'XML',
+				(None, 'source'): set.getSource(),
+			}
+			attr_names = {
+				(None, 'type'): 'type',
+				(None, 'name'): 'name',
+			}
+			attrs = AttributesNSImpl(attr_vals, attr_names)
+			self.file.write(self.indent_level)
+			self.xmlout.startElementNS((None, 'dataset'), 'dataset', attrs)
+			self.xmlout.endElementNS((None, 'dataset'), 'dataset')
+			self.file.write('\n')
 
 	def write_elevations(self, map):
-		pass
+		for elev in map.getElevations():
+			attr_vals = {
+				(None, 'id'): elev.Id(),
+			}
+			attr_names = {
+				(None, 'id'): 'id',
+			}
+			attrs = AttributesNSImpl(attr_vals, attr_names)
+			self.startElement('elevation', attrs)
+			self.write_metadata(elev)
+			self.write_layers(elev)
+			self.endElement('elevation')
 
 	def write_layers(self, elevation):
-		pass
+		for layer in elevation.getLayers():
+			cellgrid = layer.getCellGrid()
+			attr_vals = {
+				(None, 'id'): layer.Id(),
+				(None, 'grid_type'): cellgrid.getType(),
+				(None, 'scaling'): str(cellgrid.getScale()),
+				(None, 'rotation'): str(cellgrid.getRotation()),
+				(None, 'x_offset'): str(cellgrid.getXShift()),
+				(None, 'y_offset'): str(cellgrid.getYShift()),
+			}
+			attr_names = {
+				(None, 'id'): 'id',
+				(None, 'grid_type'): 'grid_type',
+				(None, 'scaling'): 'scaling',
+				(None, 'rotation'): 'rotation',
+				(None, 'x_offset'): 'x_offset',
+				(None, 'y_offset'): 'y_offset',
+			}
+			attrs = AttributesNSImpl(attr_vals, attr_names)
+			self.startElement('layer', attrs)
+			self.write_metadata(layer)
+			self.write_instances(layer)
+			self.endElement('layer')
+
+	def write_instances(self, layer):
+		attrs = AttributesNSImpl({}, {})
+		self.startElement('instances',  attrs)
+		for inst in layer.getInstances():
+			position = inst.getLocation().getLayerCoordinates()
+			attr_vals = {
+				(None, 'o'): inst.getObject().Id(),
+				(None, 'x'): str(position.x),
+				(None, 'y'): str(position.y),
+			}
+			attr_names = {
+				(None, 'o'): 'o',
+				(None, 'x'): 'x',
+				(None, 'y'): 'y',
+			}
+			attrs = AttributesNSImpl(attr_vals, attr_names)
+			self.file.write(self.indent_level)
+			self.xmlout.startElementNS((None, 'i'), 'i', attrs)
+			self.xmlout.endElementNS((None, 'i'), 'i')
+			self.file.write('\n')
+
+		self.endElement('instances')
 
 	def flush(self):
 		self.xmlout.endDocument()

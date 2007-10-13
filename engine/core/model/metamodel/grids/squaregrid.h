@@ -38,6 +38,7 @@ namespace FIFE {
 		SquareGrid(bool diagonals_accessible=false);
 		virtual ~SquareGrid();
 
+		const std::string& getType() const;
 		const std::string& getName() const;
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);

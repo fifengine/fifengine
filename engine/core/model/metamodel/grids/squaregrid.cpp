@@ -87,6 +87,11 @@ namespace FIFE {
 		return 1;
 	}
 
+	const std::string& SquareGrid::getType() const {
+		static std::string type("square");
+		return type;
+	}
+
 	const std::string& SquareGrid::getName() const {
 		static std::string squareGrid("Square Grid");
 		static std::string squareGridDiagonal("Square Grid with diagonal access");

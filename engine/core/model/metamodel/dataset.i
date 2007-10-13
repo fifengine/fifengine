@@ -15,10 +15,15 @@ namespace FIFE {
 			Dataset(const std::string& identifier);
 			~Dataset();
 
+			void setSource(const std::string& src);
+			const std::string& getSource();
+
 			Dataset* addDataset(const std::string& identifier);
 
 			Object* addObject(const std::string& identifier, Object* inherited = 0);
 
+			std::list<Dataset*> getDatasets();
+			std::list<Dataset*> getDatasetsRec();
 			template<typename T>
 			std::list<Dataset*> getDatasets(const std::string& field, const T& value);
 			%template(getDatasetsByBool) getDatasets<bool>;

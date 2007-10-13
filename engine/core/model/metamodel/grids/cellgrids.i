@@ -17,6 +17,7 @@ namespace FIFE {
 		CellGrid();
 		virtual ~CellGrid();
 		void getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates);
+		virtual const std::string& getType() const = 0;
 		virtual const std::string& getName() const = 0;
 		virtual bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 		virtual float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
@@ -42,6 +43,7 @@ namespace FIFE {
 		virtual ~HexGrid();
 
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
+		const std::string& getType() const;
 		const std::string& getName() const;
 		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		unsigned int getCellSideCount() const { return 6; }
@@ -56,6 +58,7 @@ namespace FIFE {
 		SquareGrid(bool diagonals_accessible=false);
 		virtual ~SquareGrid();
 
+		const std::string& getType() const;
 		const std::string& getName() const;
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);

@@ -73,6 +73,15 @@ namespace FIFE {
 			 */
 			void useDataset(Dataset* dataset);
 
+			/** Get the datasets used by this map.
+			 */
+			std::list<Dataset*> getDatasets();
+
+			/** Get the datasets used by this map, and recursively get any
+			 * datasets referred to by these datasets.
+			 */
+			std::list<Dataset*>  getDatasetsRec();
+
 			/** Add an elevation to this map, and get a pointer
 			 * to it; the returned pointer is owned by the Map
 			 * so don't delete it!
@@ -82,6 +91,10 @@ namespace FIFE {
 			/** Remove an elevation from this map
 			 */
 			void removeElevation(Elevation*);
+
+			/** Get the elevations on this map.
+			 */
+			std::list<Elevation*> getElevations() const;
 
 			/** Get a set of elevations by a value.
 			 *

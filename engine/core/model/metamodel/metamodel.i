@@ -25,6 +25,7 @@ namespace FIFE {
 
 			Dataset* addDataset(const std::string& identifier);
 
+			std::list<Dataset*> getDatasets();
 			template<typename T>
 			std::list<Dataset*> getDatasets(const std::string& field, const T& value);
 			%template(getDatasetsByBool) getDatasets<bool>;

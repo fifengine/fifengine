@@ -5,7 +5,7 @@ import fife
 
 class ModelLoader(handler.ContentHandler):
 
-	def __init__(self, engine, state = 0, datastate = 0):
+	def __init__(self, engine, source, state = 0, datastate = 0):
 		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SObject, self.SAction = range(9)
 
 		self.engine = engine
@@ -13,6 +13,8 @@ class ModelLoader(handler.ContentHandler):
 		self.metamodel = self.model.getMetaModel()
 		self.pool = self.engine.getImagePool()
 		self.anim_pool = self.engine.getAnimationPool()
+
+		self.source = source
 
 		if (state):
 			self.state = state
@@ -114,11 +116,11 @@ class ModelLoader(handler.ContentHandler):
 
 					handler = 0
 					if (self.state == self.SMap):
-						handler = ModelLoader(self.engine, self.SMap, self.map)
+						handler = ModelLoader(self.engine, source, self.SMap, self.map)
 					elif (self.state == self.SDataset):
-						handler = ModelLoader(self.model, self.SDataset, self.dataset)
+						handler = ModelLoader(self.model, source, self.SDataset, self.dataset)
 					else:
-						handler = ModelLoader(self.model)
+						handler = ModelLoader(self.model, source)
 
 					assert handler, "Corrupt XML state."
 
@@ -137,6 +139,8 @@ class ModelLoader(handler.ContentHandler):
 					elif (self.state == self.SDataset):
 						self.datastack.append(self.dataset)
 						self.dataset = self.dataset.addDataset(str(id))
+
+					self.dataset.setSource(str(self.source))
 
 				else:
 					assert 0, "Invalid dataset type attribute. Datasets must be of type XML or Embedded."
@@ -386,7 +390,7 @@ class ModelLoader(handler.ContentHandler):
 
 def loadMapFile(path, engine):
 	parser = make_parser()
-	handler = ModelLoader(engine)
+	handler = ModelLoader(engine, path)
 	parser.setContentHandler(handler)
 
 	parser.parse(open(path))

@@ -28,10 +28,13 @@ namespace FIFE {
 			~Map();
 
 			void useDataset(Dataset* dataset);
+			std::list<Dataset*> getDatasets();
+			std::list<Dataset*> getDatasetsRec();
 
 			Elevation* addElevation(const std::string& identifier);
 			void removeElevation(Elevation*);
 
+			std::list<Elevation*> getElevations() const;
 			template<typename T>
 			std::list<Elevation*> getElevations(const std::string& field, const T& value) const;
 			%template(getElevationsByBool) getElevations<bool>;

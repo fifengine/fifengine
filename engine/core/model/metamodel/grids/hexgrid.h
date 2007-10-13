@@ -39,6 +39,7 @@ namespace FIFE {
 		virtual ~HexGrid();
 
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
+		const std::string& getType() const;
 		const std::string& getName() const;
 		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		unsigned int getCellSideCount() const { return 6; }

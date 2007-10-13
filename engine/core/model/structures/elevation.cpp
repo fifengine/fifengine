@@ -52,6 +52,17 @@ namespace FIFE {
 		return m_map;	
 	}
 
+	std::list<Layer*> Elevation::getLayers() const {
+		std::list<Layer*> layers;
+
+		std::vector<Layer*>::const_iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			layers.push_back(*it);
+		}
+
+		return layers;
+	}
+
 	size_t Elevation::getNumLayers() const {
 		return m_layers.size();
 	}

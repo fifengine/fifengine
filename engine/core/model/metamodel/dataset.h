@@ -57,6 +57,19 @@ namespace FIFE {
 			 */
 			~Dataset();
 
+			/** Set this dataset's source xml filepath.
+			 */
+			void setSource(const std::string src) {
+				source = src;
+			}
+
+			/** Get this dataset's source xml file (path). Null if no such file
+			 * exists.
+			 */
+			const std::string& getSource() {
+				return source;
+			}
+
 			/** Add a (nested) dataset
 			 *
 			 * @note This Dataset owns any datasets you add to it, so
@@ -71,6 +84,18 @@ namespace FIFE {
 			 * delete the returned pointer!
 			 */
 			Object* addObject(const std::string& identifier, Object* inherited = 0);
+
+			/** Get the datasets contained in this dataset.
+			 * @note These datasets are owned by this dataset, so don't delete
+			 * returned pointers!
+			 */
+			std::list<Dataset*> getDatasets();
+
+			/** Get the datasets contained in this dataset. Recursive.
+			 * @note These datasets are owned by this dataset, so don't delete
+			 * returned pointers!
+			 */
+			std::list<Dataset*> getDatasetsRec();
 
 			/** Get datasets from this dataset having the given value in the
 			 * given field.
@@ -129,6 +154,9 @@ namespace FIFE {
 
 			// nested datasets
 			std::vector<Dataset*> m_datasets;
+
+			// source xml file
+			std::string source;
 	};
 
 }

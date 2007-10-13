@@ -52,7 +52,11 @@ namespace FIFE {
 		 */
 		void getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates);
 
-		/** Name of the cellgrid
+		/** Type of cellgrid
+		 */
+		virtual const std::string& getType() const = 0;
+
+		/** Name of the cellgrid (DEPRECATED? -jwt)
 		 */
 		virtual const std::string& getName() const = 0;
 

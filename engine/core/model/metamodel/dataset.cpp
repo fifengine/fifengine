@@ -57,4 +57,28 @@ namespace FIFE {
 		return object;
 	}
 
+	std::list<Dataset*> Dataset::getDatasets() {
+		std::list<Dataset*> datasets;
+
+		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		for(; it != m_datasets.end(); ++it) {
+			datasets.push_back(*it);
+		}
+
+		return datasets;
+	}
+
+	std::list<Dataset*> Dataset::getDatasetsRec() {
+		std::list<Dataset*> datasets;
+
+		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		for(; it != m_datasets.end(); ++it) {
+			std::list<Dataset*> tmp = (*it)->getDatasets();
+			datasets.splice(datasets.end(), tmp);
+			datasets.push_back(*it);
+		}
+
+		return datasets;
+	}
+
 }

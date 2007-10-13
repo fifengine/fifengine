@@ -6,6 +6,7 @@
 %include "std_vector.i"
 
 %include "model/metamodel/modelcoords.i"
+%include "model/metamodel/grids/cellgrids.i"
 %include "util/point.i"
 %include "util/attributedclass.i"
 
@@ -29,6 +30,8 @@ namespace FIFE {
 		public:
 			Layer(const std::string& identifier, Elevation* elevation, CellGrid* geometry);
 			~Layer();
+
+			CellGrid* getCellGrid() const { return m_grid; }
 
 			Elevation* getElevation();
 			bool hasInstances() const;

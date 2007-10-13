@@ -59,6 +59,41 @@ namespace FIFE {
 		m_datasets.push_back(dataset);
 	}
 
+	std::list<Dataset*> Map::getDatasets() {
+		std::list<Dataset*> datasets;
+
+		std::vector<Dataset*>::iterator it = m_datasets.begin();
+		for(; it != m_datasets.end(); ++it) {
+			datasets.push_back(*it);	
+		}
+
+		return datasets;
+	}
+
+	std::list<Dataset*> Map::getDatasetsRec() {
+		std::list<Dataset*> datasets;
+
+		std::vector<Dataset*>::iterator it = m_datasets.begin();
+		for(; it != m_datasets.end(); ++it) {
+			std::list<Dataset*> tmp = (*it)->getDatasetsRec();
+			datasets.splice(datasets.end(), tmp);
+			datasets.push_back(*it);
+		}
+
+		return datasets;
+	}
+
+	std::list<Elevation*> Map::getElevations() const {
+		std::list<Elevation*> elevs;
+								
+		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
+		for(; it != m_elevations.end(); ++it) {
+			elevs.push_back(*it);
+		}
+																								
+		return elevs;
+	}
+
 	Elevation* Map::addElevation(const std::string& identifier) {
 		Elevation* elevation = new Elevation(identifier, this);
 		m_elevations.push_back(elevation);

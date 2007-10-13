@@ -58,8 +58,12 @@ namespace FIFE {
 			 */
 			Dataset* addDataset(const std::string& identifier);
 
+			/** Gets the list of datasets in the metamodel. Recursive.
+			 */
+			std::list<Dataset*> getDatasets();
+
 			/** Gets a list of datasets that with the given value
-			 * in the given field.
+			 * in the given field. Recursive.
 			 */
 			template<typename T>
 			std::list<Dataset*> getDatasets(const std::string& field, const T& value) {
@@ -81,7 +85,7 @@ namespace FIFE {
 			}
 
 			/** Gets a list of objects that with the given value
-			 * in the given field.
+			 * in the given field. Recursive.
 			 */
 			template<typename T>
 			std::list<Object*> getObjects(const std::string& field, const T& value) {

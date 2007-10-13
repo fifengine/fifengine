@@ -77,6 +77,10 @@ namespace FIFE {
 			 */
 			void removeLayer(Layer*);
 
+			/** Get the layers on this elevation.
+			 */
+			std::list<Layer*> getLayers() const;
+
 			/** Get a set of layers by a value.
 			 *
 			 * @param the field to search on

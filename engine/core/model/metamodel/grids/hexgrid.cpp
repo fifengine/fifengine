@@ -82,6 +82,11 @@ namespace FIFE {
 		}
 		return 1;
 	}
+
+	const std::string& HexGrid::getType() const {
+		static std::string type("hexagonal");
+		return type;
+	}
 	
 	const std::string& HexGrid::getName() const {
 		static std::string hexGrid("Hex Grid");
