@@ -173,6 +173,8 @@ class ModelLoader(handler.ContentHandler):
 				else:
 					self.object = self.dataset.addObject(str(id))
 
+				self.object.setPather(self.pather)
+
 			else:
 				assert 0, "Objects can only be declared in a <dataset> section."
 
@@ -334,8 +336,6 @@ class ModelLoader(handler.ContentHandler):
 				inst = self.layer.addInstance(object, fife.ModelCoordinate(x,y))
 				
 				if (object.getAction("default")):
-					object.setPather(self.pather)
-
 					target = fife.Location()
 					target.setLayer(self.layer)
 					inst.act_here("default", target, True)

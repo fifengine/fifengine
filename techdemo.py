@@ -12,6 +12,8 @@ import fife, fifelog
 sys.path.append("./engine/extensions")
 from loaders import *
 
+from savers import saveMapFile
+
 class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
 		pass
@@ -218,8 +220,8 @@ class World(object):
 		self.container2.setPosition(1,28)
 
 
-	def create_world(self):
-		loadMapFile("techdemo/maps/city1.xml", self.engine)
+	def create_world(self, path):
+		loadMapFile(path, self.engine)
 	
 		self.map = self.model.getMapsByString("id", "TechdemoMap")[0]
 		self.elevation = self.map.getElevationsByString("id", "TechdemoMapElevation")[0]
@@ -235,6 +237,9 @@ class World(object):
 		self.target = fife.Location()
 		self.target.setLayer(self.agent_layer)
 		self.pather = fife.LinearPather()
+
+	def save_world(self, path):
+		saveMapFile(path, self.engine, self.map)
 
 	def create_agent(self):
 		# first attempt to use datasets for the agent
@@ -270,7 +275,8 @@ class World(object):
 		
 		# no movement at start
 		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
-		self.agent.act('walk', self.target, 0.5)
+		self.agent.act_here('walk', self.target, True)
+
 		
 		# map scrolling
 		scroll_modifier = 0.1
@@ -329,10 +335,10 @@ class World(object):
 if __name__ == '__main__':
 	w = World()
 	w.gui()
-	w.create_world()
+	w.create_world("techdemo/maps/city1.xml")
 	w.create_agent()
 	w.adjust_views()
 	w.create_background_music()
 	w.run()
-	
+	w.save_world("techdemo/maps/savefile.xml")	
 
