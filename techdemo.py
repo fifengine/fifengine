@@ -1,20 +1,5 @@
 #!/usr/bin/env python
 
-# merged techdemo.py from jasoka / jwt with my own:
-# 
-# enables
-#	* map loading
-#	* agent "gunner" on loaded map
-#	* map scrolling
-#
-# changes
-#	* agent speed is now 0.5
-#	* agent & cam start at 5/0
-#
-# breaks
-#	* nothing (so far)
-#
-# chewie
 import sys, os, re
 
 _paths = ('engine/swigwrappers/python', 'engine/extensions')
@@ -248,28 +233,12 @@ class World(object):
 		self.screen_cell_h = img.getHeight()
 		
 		self.target = fife.Location()
-		
 		self.target.setLayer(self.agent_layer)
 		self.pather = fife.LinearPather()
 
 	def create_agent(self):
-		# replace this method with something like: metamodel.getObjectsByString('id', 'agent_gunner')
-		
-		self.agentObj = fife.Object("agent")
-		self.agentObj.setPather(self.pather)
-		
-		self.agentObj.addStaticImage(0, self.engine.getImagePool().addResourceFromFile('techdemo/animations/agents/gunner/walk/0/001.png'))
-	
-		a = self.agentObj.addAction('agent:walk')
-		
-		path = 'techdemo/animations/agents/gunner/walk/'
-		angles = sorted([p for p in os.listdir(path) if re.search(r'\d+', p)])
-		for angle in angles:
-			animid = self.engine.getAnimationPool().addResourceFromFile(path + angle + '/animation.xml')
-			a.addAnimation(int(angle), animid)
-			
-		# add agent to the workaround layer
-		self.agent = self.agent_layer.addInstance(self.agentObj, fife.ModelCoordinate(5,1))
+		# first attempt to use datasets for the agent
+		self.agent = self.agent_layer.getInstancesByString('id', 'PC')[0]
 		self.agent.addListener(self.reactor)
 		
 	def adjust_views(self):
@@ -301,7 +270,7 @@ class World(object):
 		
 		# no movement at start
 		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
-		self.agent.act('agent:walk', self.target, 0.5)
+		self.agent.act('walk', self.target, 0.5)
 		
 		# map scrolling
 		scroll_modifier = 0.1
@@ -323,7 +292,7 @@ class World(object):
 				self.target.setElevationCoordinates(ec)
 				print "layer coordinates = " + str(self.target.getLayerCoordinates())
 				
-				self.agent.act('agent:walk', self.target, 0.5)
+				self.agent.act('walk', self.target, 0.5)
 				
 				evtlistener.newTarget = None
 			

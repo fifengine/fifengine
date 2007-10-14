@@ -87,12 +87,13 @@
 
 				<i o="Townhouse:Fassade" x="15" y="-3" />
 
+<!--
 				<i o="SecurityBot" x="22" y="8" />
+-->
 				
 				<i o="Rubbish_newspaper" x="3" y="6" />
 				<i o="Rubbish_newspaper60" x="2" y="7" />	
-							
-				<i o="Gunner:static0" x="7" y="7" />				
+
 				<i o="Gunner:static60" x="8" y="8" />				
 				<i o="Gunner:static300" x="5" y="7" />	
 				<i o="Gunner:static180" x="9" y="8" />	
@@ -115,7 +116,7 @@
 			</metadata>	
 			
 			<instances>
-			
+				<i o="PC" x="5" y="1"/>
 			</instances>	
 		</layer>
 	</elevation>
