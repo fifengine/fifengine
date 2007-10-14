@@ -6,20 +6,23 @@ def initEnvironment(env):
     return env
 
 def addExtras(context):
-    context.env.Append(LINKFLAGS='-framework OpenAL')
-    context.env.Append(LINKFLAGS='-framework Cocoa')
-    context.env.Append(LINKFLAGS='-framework CoreFoundation')
-    context.env.Append(LINKFLAGS='-framework OpenGL')
-    context.env.Append(LINKFLAGS='-framework SDL')
-    context.env.Append(LINKFLAGS='-framework SDL_image')
-    context.env.Append(LINKFLAGS='-framework SDL_ttf')
+    context.env.Append(LIBPATH = ['/System/Library'])
+    context.env.Append(SHLINKFLAGS='-framework OpenAL')
+    context.env.Append(SHLINKFLAGS='-framework Cocoa')
+    context.env.Append(SHLINKFLAGS='-framework CoreFoundation')
+    context.env.Append(SHLINKFLAGS='-framework OpenGL')
+    context.env.Append(SHLINKFLAGS='-framework SDL')
+    context.env.Append(SHLINKFLAGS='-framework SDL_image')
+    context.env.Append(SHLINKFLAGS='-framework SDL_ttf')
+    context.env.Append(SHLINKFLAGS='-framework Python')
 
     include_dirs = ['/opt/local/include', '/usr/local/include', '/sw/include', '/Library/Frameworks/SDL.framework/Headers',
         '/Library/Frameworks/SDL_image.framework/Headers', '/Library/Frameworks/SDL_ttf.framework/Headers', '/usr/local/include/boost-1_33_1',
-        '/System/Library/Frameworks/OpenAL.framework/Headers', '/usr/local/include/vorbis']
+        '/System/Library/Frameworks/OpenAL.framework/Headers', '/usr/local/include/vorbis', '/opt/local/include/vorbis/', 
+	'/opt/local/include/python2.5']
     context.env.Append(CPPPATH = include_dirs)
 
-    lib_dirs = ['/usr/local/lib', '/sw/lib']
+    lib_dirs = ['/opt/local/lib','/usr/local/lib', '/sw/lib']
     context.env.Append(LIBPATH = lib_dirs)
 
     context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')

@@ -66,6 +66,15 @@
 #include "view/renderers/instancerenderer.h"
 #include "engine.h"
 
+#ifdef USE_COCOA
+#include <dlfcn.h>
+
+int main(int argc, char **argv)
+{
+    return 0;
+}
+#endif
+
 static const std::string SETTINGS_FILE_NAME = "fife.config";
 
 namespace FIFE {
@@ -87,6 +96,16 @@ namespace FIFE {
 		m_view(0),
 		m_logmanager(0),
 		m_use_miniwindow(use_miniwindow) {
+
+#ifdef USE_COCOA
+		// The next lines ensure that Cocoa is initialzed correctly.
+		// This is needed for SDL to function properly on MAC OS X.
+		void* cocoa_lib; 
+		cocoa_lib = dlopen( "/System/Library/Frameworks/Cocoa.framework/Cocoa", RTLD_LAZY ); 
+		void (*nsappload)(void); 
+		nsappload = (void(*)()) dlsym( cocoa_lib, "NSApplicationLoad"); 
+		nsappload(); 
+#endif
 		init();
 	}
 

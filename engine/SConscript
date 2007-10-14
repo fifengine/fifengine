@@ -7,7 +7,7 @@ _sep = os.path.sep
 enginepath = upath('.')
 
 def is_implfile(fname):
-	return fname.endswith('.cpp') or fname.endswith('.cxx')
+	return fname.endswith('.cpp') or fname.endswith('.cxx') or fname.endswith('.m')
 
 def is_headerfile(fname):
 	return fname.endswith('.hpp') or fname.endswith('.h')
@@ -197,6 +197,6 @@ if not env['projfiles']:
 	print "Starting compilation"
 	env.Append(CPPPATH = ['#/engine/core', '#/engine/swigwrappers'])
 	compilefiles = [str(f) for f in remove_based_on_dir_filter(filteredpaths, implfiles)]
-	flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
+	flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl'])
 	if sys.platform == 'linux2':
 		env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Copy('$TARGET', '$SOURCE')])

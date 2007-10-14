@@ -5,8 +5,13 @@ Import('env')
 env = env.Copy()
 env.Append(CPPPATH = ['#/engine/core'])
 env.Append(LIBPATH = ['#/engine/core'])
+env.Append(LIBPATH = ['/System/Library'])
+env.Append(LINKFLAGS='-framework SDL')
+env.Append(LINKFLAGS='-framework SDL_image')
+env.Append(LINKFLAGS='-framework SDL_ttf')
+
 env.Append(LIBS = ['libfife','boost_unit_test_framework'])
-env.Append(LINKFLAGS=['-Wl,-rpath,../../ext/install/lib,-rpath,../../engine'])
+env.Append(LINKFLAGS=['-Wl'])
 
 # The test_all.py script relies on this specific layout.
 # Check it, if you change something here

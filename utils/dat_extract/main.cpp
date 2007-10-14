@@ -38,12 +38,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "map/loaders/fallout/dat1.h"
-#include "map/loaders/fallout/dat2.h"
+#include "loaders/fallout/vfs_loaders/dat1.h"
+#include "loaders/fallout/vfs_loaders/dat2.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
-#include "engine.h"
+#include "controller/engine.h"
 #include "util/exception.h"
 #include "util/settingsmanager.h"
 
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 
 	char *argv_fake[1] = {argv[0]};
 	try {
-		engine = new Engine(0, argv_fake);
+		engine = new Engine(true);
 	}
 
 	catch (const Exception& exception) {
