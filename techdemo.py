@@ -191,7 +191,7 @@ class World(object):
 		# text
 		self.text_info = fife.TextBox()
 		self.text_info.setPosition(10,40)
-		self.text_info.setText("Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:\n--------------\n- P = Make screenshot\n- LEFT = Move camera left\n- RIGHT = Move camera right\n- UP = Move camera up\n- DOWN = Move camera down\n- ESC = Quit techdemo\n- LMB = Move agent around\n\n\nHave fun,\nThe FIFE and Zero-Projekt teams\n        http://www.zero-projekt.net\n        http://www.fifengine.de")
+		self.text_info.setText("Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:\n--------------\n- P = Make screenshot\n- LEFT = Move camera left\n- RIGHT = Move camera right\n- UP = Move camera up\n- DOWN = Move camera down\n- F10 = Toggle console on / off\n- ESC = Quit techdemo\n- LMB = Move agent around\n\n\nHave fun,\nThe FIFE and Zero-Projekt teams\n        http://www.zero-projekt.net\n        http://www.fifengine.de")
 		self.text_info.setOpaque(False)
 		self.text_info.setBorderSize(0)
 		
