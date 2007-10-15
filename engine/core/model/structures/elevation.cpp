@@ -45,7 +45,7 @@ namespace FIFE {
 	}
 
 	Elevation::~Elevation() {
-
+		clearLayers();
 	}
 
 	Map* Elevation::getMap() {

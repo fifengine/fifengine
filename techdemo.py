@@ -1,23 +1,41 @@
 #!/usr/bin/env python
 
 import sys, os, re
-
 _paths = ('engine/swigwrappers/python', 'engine/extensions')
 for p in _paths:
 	if p not in sys.path:
 		sys.path.append(os.path.sep.join(p.split('/')))
 
 import fife, fifelog
-
-sys.path.append("./engine/extensions")
 from loaders import *
-
 from savers import saveMapFile
+
+
+INFO_TEXT = '''
+Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:
+--------------
+- P = Make screenshot
+- LEFT = Move camera left
+- RIGHT = Move camera right
+- UP = Move camera up
+- DOWN = Move camera down
+- F10 = Toggle console on / off
+- ESC = Quit techdemo
+- LMB = Move agent around
+
+
+Have fun,
+The FIFE and Zero-Projekt teams
+        http://www.zero-projekt.net
+	http://www.fifengine.de
+'''
+
 
 class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
 		pass
 
+SCROLL_MODIFIER = 0.1
 class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
 	              fife.ConsoleExecuter, fife.IWidgetListener):
 	def __init__(self, world):
@@ -51,10 +69,8 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.newTarget = None
 		
 		# scroll support
-		self.ScrollLeft = False
-		self.ScrollRight = False
-		self.ScrollUp = False
-		self.ScrollDown = False
+		self.horizscroll = 0
+		self.vertscroll = 0
 		
 		# gui
 		self.showInfo = False
@@ -87,17 +103,13 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		elif (keyval == fife.IKey.F10):
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 		elif (keyval == fife.IKey.LEFT):
-			#print "camera: left"
-			self.ScrollLeft = True
+			self.horizscroll -= SCROLL_MODIFIER
 		elif (keyval == fife.IKey.RIGHT):
-			#print "camera: right"
-			self.ScrollRight = True
+			self.horizscroll += SCROLL_MODIFIER
 		elif (keyval == fife.IKey.UP):
-			#print "camera: up"
-			self.ScrollUp = True
+			self.vertscroll -= SCROLL_MODIFIER
 		elif (keyval == fife.IKey.DOWN):
-			#print "camera: down"
-			self.ScrollDown = True
+			self.vertscroll += SCROLL_MODIFIER
 		elif (keystr == 'p'):
 			self.engine.getRenderBackend().captureScreen('techdemo.bmp')
 	
@@ -131,94 +143,106 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 				self.showInfo = False
 			else:
 				self.showInfo = True
-			#print "This is the zero & fife 2007.2 techdemo"
+
+class Gui(object):
+	def __init__(self, engine):
+		self.engine = engine		
+		self.guimanager = self.engine.getGuiManager()
+		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
+		         ".,!?-+/:();%`'*#=[]"
+		self.font = self.guimanager.createFont('techdemo/fonts/samanata.ttf', 12, glyphs)
+		self.guimanager.setGlobalFont(self.font)
+		self.widgets = []
+		self.infoVisible = False
+		self.renderbackend = self.engine.getRenderBackend()
+		self.create_panel()
+		self.create_infoscreen()
+
+	# to prevent mem problems in current codebase and shorten the code length
+	def register_widget(self, w, container):
+		self.widgets.append(w)
+		container.add(w)
+	
+	def create_panel(self):
+		container = fife.Container()
+		container.setOpaque(True)
+		self.register_widget(container, self.guimanager)
+		
+		label1 = fife.Label('FIFE 2007.2 techdemo')
+		label1.setPosition(1, 0)
+		label1.setFont(self.font)
+		self.register_widget(label1, container)
+		
+		container.setSize(label1.getWidth() + 2, label1.getHeight() + 2)
+		container.setPosition(2,2)
+		
+		container2 = fife.Container()
+		container2.setOpaque(True)
+		self.register_widget(container2, self.guimanager)
+
+		button1 = fife.Button('Quit')
+		button1.setActionEventId('WidgetEvtQuit')
+		button1.addActionListener(self.engine.getGuiManager())
+		button1.adjustSize()
+		button1.setPosition(1, 0)
+		button1.setFont(self.font)
+		self.register_widget(button1, container2)
+		button2 = fife.Button('?')
+		button2.setActionEventId('WidgetEvtAbout')
+		button2.addActionListener(self.engine.getGuiManager())
+		button2.setPosition(button1.getWidth() + 10, 0)
+		button2.setFont(self.font)
+		self.register_widget(button2, container2)
+		container2.setSize(button1.getWidth() + button2.getWidth() + 10, button1.getHeight())
+		container2.setPosition(1,28)
+		
+		container.setVisible(True)
+		container2.setVisible(True)
+	
+	def create_infoscreen(self):
+		self.container_info = fife.Container()
+		self.container_info.setOpaque(True)
+		self.container_info.setSize(self.renderbackend.getScreenWidth() - 2 * 200, self.renderbackend.getScreenHeight() - 2 * 100)
+		self.container_info.setPosition(200, 100)
+		self.register_widget(self.container_info, self.guimanager)
+
+		label_info = fife.Label('Information box')
+		label_info.setPosition(10, 10)
+		label_info.setSize(self.renderbackend.getScreenWidth() - 2 * 210, 20)
+		label_info.setFont(self.font)
+		self.register_widget(label_info, self.container_info)
+		
+		# text
+		text_info = fife.TextBox()
+		text_info.setPosition(10,40)
+		text_info.setText(INFO_TEXT)
+		text_info.setOpaque(False)
+		text_info.setBorderSize(0)
+		self.register_widget(text_info, self.container_info)
+		self.container_info.setVisible(False)
+				
+	def show_info(self, show):
+		if show != self.infoVisible:
+			self.container_info.setVisible(show)
+			self.infoVisible = show
 
 class World(object):
-	def __init__(self):
-		self.engine = fife.Engine()
+	def __init__(self, engine, gui):
+		self.engine = engine
+		self.renderbackend = self.engine.getRenderBackend()
 		self.reactor = InstanceReactor()
 		logman = self.engine.getLogManager()
 		self.log = fifelog.LogManager(self.engine, promptlog=True, filelog=False)
 		#self.log.setVisibleModules('hexgrid')
 
 		self.eventmanager = self.engine.getEventManager()
-		self.renderbackend = self.engine.getRenderBackend()	
 		self.model = self.engine.getModel()
 		self.metamodel = self.model.getMetaModel()
 		self.camera = None
+		self.gui = gui
 		
 	def __del__(self):
 		self.engine.getView().removeCamera(self.camera)
-
-	def gui(self):
-		self.guimanager = self.engine.getGuiManager()
-		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
-		         ".,!?-+/:();%`'*#=[]"
-		font = self.guimanager.createFont('techdemo/fonts/samanata.ttf', 12, glyphs)
-
-		self.guimanager.setGlobalFont(font)
-		#font.setColor(255,20,20)
-		
-		# say hello version :)
-		self.container = fife.Container()
-		self.container.setOpaque(True)
-		self.guimanager.add(self.container)
-		self.label1 = fife.Label('FIFE 2007.2 techdemo')
-		self.label1.setPosition(1, 0)
-		self.label1.setFont(font)
-		self.container.add(self.label1)
-		self.container.setSize(self.label1.getWidth() + 2, self.label1.getHeight() + 2)
-		self.container.setPosition(2,2)
-
-		# prepare the container for info box
-		self.container_info = fife.Container()
-		self.container_info.setOpaque(True)
-		self.container_info.setSize(self.renderbackend.getScreenWidth() - 2 * 200, self.renderbackend.getScreenHeight() - 2 * 100)
-		self.container_info.setPosition(200, 100)
-		self.container_info.setVisible(True)
-		#self.container_info.setBackgroundColor(fife.Color(40,40,40))
-
-		# pack container into guimanager
-		self.guimanager.add(self.container_info)
-				
-		# header
-		self.label_info = fife.Label('Information box')
-		self.label_info.setPosition(10, 10)
-		self.label_info.setSize(self.renderbackend.getScreenWidth() - 2 * 210, 20)
-		#self.label_info.setBackgroundColor(fife.Color(10,10,10,0))
-		self.label_info.setFont(font)
-		
-		# text
-		self.text_info = fife.TextBox()
-		self.text_info.setPosition(10,40)
-		self.text_info.setText("Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:\n--------------\n- P = Make screenshot\n- LEFT = Move camera left\n- RIGHT = Move camera right\n- UP = Move camera up\n- DOWN = Move camera down\n- F10 = Toggle console on / off\n- ESC = Quit techdemo\n- LMB = Move agent around\n\n\nHave fun,\nThe FIFE and Zero-Projekt teams\n        http://www.zero-projekt.net\n        http://www.fifengine.de")
-		self.text_info.setOpaque(False)
-		self.text_info.setBorderSize(0)
-		
-		# pack widgets into container	
-		self.container_info.add(self.label_info)
-		self.container_info.add(self.text_info)
-
-		# 2 buttons		
-		self.container2 = fife.Container()
-		self.container2.setOpaque(True)
-		self.guimanager.add(self.container2)
-		self.button1 = fife.Button('Quit')
-		self.button1.setActionEventId('WidgetEvtQuit')
-		self.button1.addActionListener(self.engine.getGuiManager())
-		self.button1.adjustSize()
-		self.button1.setPosition(1, 0)
-		self.button1.setFont(font)
-		self.button2 = fife.Button('?')
-		self.button2.setActionEventId('WidgetEvtAbout')
-		self.button2.addActionListener(self.engine.getGuiManager())
-		self.button2.setPosition(self.button1.getWidth() + 10, 0)
-		self.button2.setFont(font)
-		self.container2.add(self.button1)
-		self.container2.add(self.button2)		
-		self.container2.setSize(self.button1.getWidth() + self.button2.getWidth() + 10, self.button1.getHeight())
-		self.container2.setPosition(1,28)
-
 
 	def create_world(self, path):
 		loadMapFile(path, self.engine)
@@ -236,15 +260,12 @@ class World(object):
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.agent_layer)
-		self.pather = fife.LinearPather()
 
-	def save_world(self, path):
-		saveMapFile(path, self.engine, self.map)
-
-	def create_agent(self):
-		# first attempt to use datasets for the agent
 		self.agent = self.agent_layer.getInstancesByString('id', 'PC')[0]
 		self.agent.addListener(self.reactor)
+	
+	def save_world(self, path):
+		saveMapFile(path, self.engine, self.map)
 		
 	def adjust_views(self):
 		self.camloc = fife.Location()
@@ -278,67 +299,41 @@ class World(object):
 		self.agent.act_here('walk', self.target, True)
 
 		
-		# map scrolling
-		scroll_modifier = 0.1
-
 		while True:
-			cam_scroll = self.camloc.getExactLayerCoordinates()
-			
 			self.engine.pump()
+			
+			# agent movement
 			if (evtlistener.newTarget):
-				
-				print "===================================================="
-				print "screen coordinates = " + str(evtlistener.newTarget)
-				
 				ec = self.camera.toElevationCoordinates(evtlistener.newTarget)
-				print "elevation coordinates = " + str(ec)
-				
-				print "back to screen = " + str(self.camera.toScreenCoordinates(ec))
-				
 				self.target.setElevationCoordinates(ec)
-				print "layer coordinates = " + str(self.target.getLayerCoordinates())
-				
 				self.agent.act('walk', self.target, 0.5)
-				
 				evtlistener.newTarget = None
 			
 			if (evtlistener.quitRequested):
 				break
 
 			# scroll the map with cursor keys
-			if (evtlistener.ScrollLeft):
-				cam_scroll.x -= scroll_modifier
-				evtlistener.ScrollLeft = False
-			elif (evtlistener.ScrollRight):
-				cam_scroll.x += scroll_modifier
-				evtlistener.ScrollRight = False
-			elif (evtlistener.ScrollUp):
-				cam_scroll.y -= scroll_modifier
-				evtlistener.ScrollUp = False
-			elif (evtlistener.ScrollDown):
-				cam_scroll.y += scroll_modifier
-				evtlistener.ScrollDown = False				
+			if (evtlistener.horizscroll or evtlistener.vertscroll):
+				cam_scroll = self.camloc.getExactLayerCoordinates()
+				cam_scroll.x += evtlistener.horizscroll
+				cam_scroll.y += evtlistener.vertscroll
+				cam_scroll = self.camloc.setExactLayerCoordinates(cam_scroll)
+				self.camera.setLocation(self.camloc)
+				evtlistener.horizscroll = evtlistener.vertscroll = 0
 
-			# show info container
-			if (evtlistener.showInfo):
-				self.container_info.setVisible(True)
-			else:
-				evtlistener.showInfo = False
-				self.container_info.setVisible(False)
+			self.gui.show_info(evtlistener.showInfo)
 				
-			cam_scroll = self.camloc.setExactLayerCoordinates(cam_scroll)			
-			self.camera.setLocation(self.camloc)
-
 		self.engine.finalizePumping()
 
 
 if __name__ == '__main__':
-	w = World()
-	w.gui()
+	engine = fife.Engine()
+	gui = Gui(engine)
+	w = World(engine, gui)
+
 	w.create_world("techdemo/maps/city1.xml")
-	w.create_agent()
 	w.adjust_views()
 	w.create_background_music()
 	w.run()
-	w.save_world("techdemo/maps/savefile.xml")	
+	w.save_world("techdemo/maps/savefile.xml")
 
