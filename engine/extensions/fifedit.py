@@ -33,7 +33,6 @@ class FIFEdit(fife.IWidgetListener, object):
 
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
-		print evtid
 		if evtid == 'LoadMapDialog':
 			self.mapwnd.setVisible(not self.mapwnd.isVisible())
 
@@ -49,12 +48,15 @@ class FIFEdit(fife.IWidgetListener, object):
 		elif evtid == 'LoadMapEvt':
 			mapfilename = self.map_list[self.level_drop.getSelected()]
 			print 'loading: ' + mapfilename
-			self.map = loadMapFile(mapfilename)
-			print 'loaded'
+			self.map = loadMapFile(mapfilename, self.engine)
+			self.mapwnd.setVisible(False)
 
 		elif evtid == 'SaveMapEvt':
 			if(self.map):
-				saveMapFile(self.path_box.getText(), self.engine, self.map)
+				mapfilename = self.path_box.getText()
+				print 'saving: ' + mapfilename
+				saveMapFile(mapfilename, self.engine, self.map)
+				self.savewnd.setVisible(False)
 			else:
 				print 'No map available to save.'
 		else:
@@ -149,7 +151,6 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.path_box = fife.TextBox('Replace this with the path/filename')
 		self.path_box.setPosition(5, 10)
 		self.path_box.setSize(sx - 150, 16)
-		self.path_box.setBackgroundColor(fife.Color(0,0,0))
 		self.register_widget(self.path_box, self.savewnd)
 
 		savebtn = fife.Button("Save Map")
