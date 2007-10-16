@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/purge.h"
+#include "util/memory.h"
 #include "model/metamodel/metamodel.h"
 #include "structures/map.h"
 

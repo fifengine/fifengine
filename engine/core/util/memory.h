@@ -23,6 +23,8 @@
 
 // Standard C++ library includes
 #include <vector>
+#include <list>
+#include <map>
 
 // Platform specific includes
 
@@ -33,6 +35,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "exception.h"
+#include "purge.h"
 
 namespace FIFE {
 	class IManagedItem;
@@ -63,7 +66,7 @@ namespace FIFE {
 	};
 	
 	template<typename T>
-	inline void addMemoryManagedItem(std::vector<T*>& container, IManagedItem* item) {
+	inline void _checkMemoryManagedItem(IManagedItem* item) {
 		if (item->getMemoryManager()) {
 			throw Duplicate("Tried to add already managed item to container");
 		}
@@ -71,12 +74,33 @@ namespace FIFE {
 		if (!downcast_item) {
 			throw InvalidConversion("Tried to add managed item with incorrect type");
 		}
-		container.push_back(downcast_item);
+	}	
+	
+	template<typename T>
+	inline void addMemoryManagedItem(std::vector<T*>& container, IManagedItem* item) {
+		_checkMemoryManagedItem<T>(item);
+		container.push_back(dynamic_cast<T*>(item));
 	}
 	
 	template<typename T>
-	inline void removeMemoryManagedItem(std::vector<T*>& container, IManagedItem* item) {
-		typename std::vector<T*>::iterator it = container.begin();
+	inline void addMemoryManagedItem(std::list<T*>& container, IManagedItem* item) {
+		_checkMemoryManagedItem<T>(item);
+		container.push_back(dynamic_cast<T*>(item));
+	}
+	
+	template<typename Key, typename T>
+	inline void addMemoryManagedItem(std::map<Key, T*>& container, const Key& kval, IManagedItem* item) {
+		_checkMemoryManagedItem<T>(item);
+		typename std::map<Key, T*>::iterator i = container.find(kval);
+		if( i != container.end() ) {
+			throw Duplicate("Tried to add managed item to map underneath existing key value");
+		}
+		container[kval] = dynamic_cast<T*>(item);
+	}
+	
+	template<typename Container>
+	inline void _removeMemoryManagedItem(Container& container, IManagedItem* item) {
+		typename Container::iterator it = container.begin();
 		for (; it != container.end(); ++it) {
 			if(*it == item) {
 				container.erase(it);
@@ -86,12 +110,35 @@ namespace FIFE {
 	}
 	
 	template<typename T>
+	inline void removeMemoryManagedItem(std::vector<T*>& container, IManagedItem* item) {
+		_removeMemoryManagedItem<std::vector<T*> >(container, item);
+	}
+	
+	template<typename T>
+	inline void removeMemoryManagedItem(std::list<T*>& container, IManagedItem* item) {
+		_removeMemoryManagedItem<std::list<T*> >(container, item);
+	}
+	
+	template<typename Key, typename T>
+	inline void removeMemoryManagedItem(std::map<Key, T*>& container, IManagedItem* item) {
+		_removeMemoryManagedItem<std::map<Key, T*> >(container, item);
+	}
+	
+	template<typename T>
 	inline void purgeMemoryManagedItems(std::vector<T*>& container) {
-		typename std::vector<T*>::iterator i;
-		for (i = container.begin(); i != container.end(); i++) {
-			delete *i;
-			*i = 0;
-		}
+		purge< std::vector<T*> >(container);
+		container.clear();
+	}
+	
+	template<typename T>
+	inline void purgeMemoryManagedItems(std::list<T*>& container) {
+		purge< std::list<T*> >(container);
+		container.clear();
+	}
+	
+	template<typename Key, typename T>
+	inline void purgeMemoryManagedItems(std::map<Key, T*>& container) {
+		purge_map< std::map<Key, T*> >(container);
 		container.clear();
 	}
 }
