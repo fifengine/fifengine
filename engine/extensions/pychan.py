@@ -569,9 +569,9 @@ class ScrollArea(_widget):
 		self.content.width = max(self.content.width,self.width-5)
 		self.content.height = max(self.content.height,self.height-5)
 
-from xml.sax import saxutils
+from xml.sax import saxutils, handler
 
-class _GuiLoader(object,saxutils.DefaultHandler):
+class _GuiLoader(object, handler.ContentHandler):
 	def __init__(self):
 		super(_GuiLoader,self).__init__()
 		self.root = None

@@ -18,6 +18,7 @@ class FIFEdit(fife.IWidgetListener, object):
 		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
 		         ".,!?-+/:();%`'*#=[]"
 		self.font = self.guimanager.createFont('techdemo/fonts/samanata.ttf', 12, glyphs)
+		self.font.setColor(0, 0, 0)
 		self.guimanager.setGlobalFont(self.font)
 		self.widgets = []
 
@@ -25,7 +26,7 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.screenwidth = engine.getRenderBackend().getScreenWidth()
 
 		self.map_list = GenericListmodel()
-		self.map_list.items = ['content/maps/new_official_map.xml', 'techdemo/maps/city1.xml'] # TODO: this shouldn't be hardcoded
+		self.map_list.extend(['content/maps/new_official_map.xml', 'techdemo/maps/city1.xml']) # TODO: this shouldn't be hardcoded
 
 		self.create_mainpanel()
 		self.create_mapdialogs()
@@ -46,8 +47,10 @@ class FIFEdit(fife.IWidgetListener, object):
 			print 'Not implemented yet.'
 
 		elif evtid == 'LoadMapEvt':
-			print 'loading: ' + str(self.level_drop.getSelected())
-			self.map = loadMapFile(self.map_list[self.level_drop.getSelected()])
+			mapfilename = self.map_list[self.level_drop.getSelected()]
+			print 'loading: ' + mapfilename
+			self.map = loadMapFile(mapfilename)
+			print 'loaded'
 
 		elif evtid == 'SaveMapEvt':
 			if(self.map):

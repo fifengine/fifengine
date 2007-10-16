@@ -18,12 +18,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
-
-#ifndef FIFE_MODEL_H
-#define FIFE_MODEL_H
+#ifndef FIFE_UTIL_MEMORY_H
+#define FIFE_UTIL_MEMORY_H
 
 // Standard C++ library includes
-#include <list>
+#include <vector>
+
+// Platform specific includes
 
 // 3rd party library includes
 
@@ -31,86 +32,68 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/memory.h"
-
-#include "model/structures/map.h"
+#include "exception.h"
 
 namespace FIFE {
-
-	class MetaModel;
-
-	/**
-	 * A model is a facade for everything in the model.
-	 */
-	class Model {
-		public:
-
-			/** Constructor
-			 *
-			 */
-			Model();
-
-			/** Destructor
-			 *
-			 */
-			~Model();
-			
-			/** Add a map this model, and get a pointer to it.
-			 * The returned pointer is owned by the Model, so
-			 * don't delete it!
-			 */
-			Map* addMap(const std::string& identifier);
-
-			/** Remove a map from this model
-			 */
-			void removeMap(Map*);
-
-			/** Get all the maps in the model.
-			 */
-			std::list<Map*> getMaps() const;
-
-			/** Get a set of maps by a value.
-			 *
-			 * @param the field to search on
-			 * @param the value to be searched for in the field
-			 */
-			template<typename T>
-			std::list<Map*> getMaps(const std::string& field, const T& value) const {
-				std::list<Map*> matches;
-
-				std::vector<Map*>::const_iterator it = m_maps.begin();
-				for(; it != m_maps.end(); ++it) {
-					if((*it)->get<T>(field) == value)
-						matches.push_back(*it);
-				}
-
-				return matches;
-			}
-
-			/** Return the number of maps in this model
-			 */
-			size_t getNumMaps() const;
-
-			/** Remove all elevations from a map
-			 */
-			void clearMaps();
-
-			/** Get a pointer to the MetaModel associated with
-			 * this Model. The Model owns this pointer, so don't
-			 * delete it!
-			 */
-			MetaModel* getMetaModel();
-
-			/** Called periodically to update events on model
-			 */
-			void update();
-
-		private:
-
-			std::vector<Map*> m_maps;
-			
-			MetaModel* m_meta;
+	class IManagedItem;
+	
+	class IMemoryManager {
+	public:
+		virtual ~IMemoryManager() {}
+		
+		/** Adds new item underneath memory management of this manager
+		 * @param item item to add 
+		 */
+		virtual void addManagedItem(IManagedItem* item) = 0;
+		
+		/** Removes item underneath memory management of this manager
+		 * @param item item to remove
+		 */
+		virtual void removeManagedItem(IManagedItem* item) = 0;
 	};
 
-}; //FIFE
+	class IManagedItem {
+	public:
+		virtual ~IManagedItem() {}
+		
+		/** Returns the memory manager assigned for this item
+		 * @return manager managing this item, NULL if none
+		 */
+		virtual IMemoryManager* getMemoryManager() = 0;
+	};
+	
+	template<typename T>
+	inline void addMemoryManagedItem(std::vector<T*>& container, IManagedItem* item) {
+		if (item->getMemoryManager()) {
+			throw Duplicate("Tried to add already managed item to container");
+		}
+		T* downcast_item = dynamic_cast<T*>(item);
+		if (!downcast_item) {
+			throw InvalidConversion("Tried to add managed item with incorrect type");
+		}
+		container.push_back(downcast_item);
+	}
+	
+	template<typename T>
+	inline void removeMemoryManagedItem(std::vector<T*>& container, IManagedItem* item) {
+		typename std::vector<T*>::iterator it = container.begin();
+		for (; it != container.end(); ++it) {
+			if(*it == item) {
+				container.erase(it);
+				return;
+			}
+		}
+	}
+	
+	template<typename T>
+	inline void purgeMemoryManagedItems(std::vector<T*>& container) {
+		typename std::vector<T*>::iterator i;
+		for (i = container.begin(); i != container.end(); i++) {
+			delete *i;
+			*i = 0;
+		}
+		container.clear();
+	}
+}
+
 #endif

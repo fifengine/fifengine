@@ -57,6 +57,7 @@ namespace FIFE {
 	class Console;
 	class IKeyEvent;
 	class IMouseEvent;
+	class FontBase;
 
 	/* GUI Manager.
 	 *
@@ -130,7 +131,7 @@ namespace FIFE {
 			
 			/** Gets font with given properties. Note that font will be owned by guimanager
 			 */
-			gcn::Font* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
+			FontBase* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
 
 			/** Releases given font.
 			 */

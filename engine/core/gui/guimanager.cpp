@@ -117,7 +117,7 @@ namespace FIFE {
 		m_console = new Console();
 	}
 
-	gcn::Font* GUIManager::createFont(const std::string& path, unsigned int size, const std::string& glyphs) {
+	FontBase* GUIManager::createFont(const std::string& path, unsigned int size, const std::string& glyphs) {
 		if( boost::filesystem::extension(path) == ".ttf" ) {
 			return new TrueTypeFont(path, size);
 		} 
