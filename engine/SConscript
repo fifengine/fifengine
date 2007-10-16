@@ -197,6 +197,9 @@ if not env['projfiles']:
 	print "Starting compilation"
 	env.Append(CPPPATH = ['#/engine/core', '#/engine/swigwrappers'])
 	compilefiles = [str(f) for f in remove_based_on_dir_filter(filteredpaths, implfiles)]
-	flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
+        if sys.platform == 'darwin':
+	        flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl'])
+        else:
+                flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
 	if sys.platform == 'linux2':
 		env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Copy('$TARGET', '$SOURCE')])
