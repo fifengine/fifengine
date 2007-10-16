@@ -36,9 +36,12 @@ class ModelLoader(handler.ContentHandler):
 		self.pather = fife.LinearPather()
 		self.pather.thisown = 0
 
+		self.construct = False 
 
 	def startElement(self, name, attrs):
 		if (name == 'map'):
+			assert self.construct == False, "Multiple maps/datasets declared in the same file."
+			self.construct = True 
 			if (self.state == self.SModel):
 				id = 0
 				for attrName in attrs.keys():
@@ -128,6 +131,9 @@ class ModelLoader(handler.ContentHandler):
 					parser.parse(open(source))
 
 				elif (type == "Embedded"):
+					assert self.construct == False, "Multiple maps/datasets declared in the same file."
+					self.construct = True
+
 					assert id, "Dataset declared without an identifier."
 					if (self.state == self.SModel):
 						self.dataset = self.metamodel.addDataset(str(id))
@@ -394,5 +400,5 @@ def loadMapFile(path, engine):
 	parser.setContentHandler(handler)
 
 	parser.parse(open(path))
-	del handler
 
+	return handler.map

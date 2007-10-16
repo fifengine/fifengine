@@ -7,9 +7,10 @@ for p in _paths:
 		sys.path.append(os.path.sep.join(p.split('/')))
 
 import fife, fifelog
-from loaders import *
+from loaders import loadMapFile
 from savers import saveMapFile
 
+from fifedit import *
 
 INFO_TEXT = '''
 Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:
@@ -245,9 +246,8 @@ class World(object):
 		self.engine.getView().removeCamera(self.camera)
 
 	def create_world(self, path):
-		loadMapFile(path, self.engine)
+		self.map = loadMapFile(path, self.engine)
 	
-		self.map = self.model.getMapsByString("id", "TechdemoMap")[0]
 		self.elevation = self.map.getElevationsByString("id", "TechdemoMapElevation")[0]
 		self.layer = self.elevation.getLayersByString("id", "TechdemoMapTileLayer")[0]
 		
@@ -330,6 +330,8 @@ if __name__ == '__main__':
 	engine = fife.Engine()
 	gui = Gui(engine)
 	w = World(engine, gui)
+
+	e = FIFEdit(engine)
 
 	w.create_world("techdemo/maps/city1.xml")
 	w.adjust_views()
