@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/purge.h"
+#include "util/exception.h"
 
 #include "metamodel.h"
 #include "dataset.h"
@@ -39,6 +40,12 @@ namespace FIFE {
 	}
 
 	Dataset* MetaModel::addDataset(const std::string& identifier) {
+		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		for(; it != m_datasets.end(); ++it) {
+			if(identifier == (*it)->Id())
+				throw NameClash("Dataset identifer " + identifier + " has multiple occurances in Metamodel.");
+		}
+
 		Dataset* dataset = new Dataset(identifier);
 		m_datasets.push_back(dataset);
 		return dataset;

@@ -31,6 +31,7 @@
 #include "util/memory.h"
 #include "model/metamodel/metamodel.h"
 #include "structures/map.h"
+#include "util/exception.h"
 
 #include "model.h"
 
@@ -46,6 +47,12 @@ namespace FIFE {
 	}
 
 	Map* Model::addMap(const std::string& identifier) {
+		std::vector<Map*>::const_iterator it = m_maps.begin();
+		for(; it != m_maps.end(); ++it) {
+			if(identifier == (*it)->Id())
+				throw NameClash("Map identifer " + identifier + " has multiple occurances in Model.");
+		}
+
 		Map* map = new Map(identifier);
 		m_maps.push_back(map);
 		return map;

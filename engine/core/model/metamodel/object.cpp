@@ -27,10 +27,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/exception.h"
+
 #include "object.h"
 #include "action.h"
 #include "abstractpather.h"
-
 
 namespace FIFE {
 	Object::Object(const std::string& identifier, Object* inherited):
@@ -57,6 +58,13 @@ namespace FIFE {
 		if (!m_actions) {
 			m_actions = new std::map<std::string, Action*>;
 		}
+
+		std::map<std::string, Action*>::const_iterator it = m_actions->begin();
+		for(; it != m_actions->end(); ++it) {
+			if(identifier == it->second->Id())
+				throw NameClash("Action identifer " + identifier + " has multiple occurances in Object: " + Id() + ".");
+		}
+
 		Action* a = getAction(identifier);
 		if (!a) {
 			a = new Action(identifier);

@@ -95,6 +95,12 @@ namespace FIFE {
 	}
 
 	Elevation* Map::addElevation(const std::string& identifier) {
+		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
+		for(; it != m_elevations.end(); ++it) {
+			if(identifier == (*it)->Id())
+				throw NameClash("Elevation identifer " + identifier + " has multiple occurances in Map: " + Id() + ".");
+		}
+
 		Elevation* elevation = new Elevation(identifier, this);
 		m_elevations.push_back(elevation);
 		return elevation;

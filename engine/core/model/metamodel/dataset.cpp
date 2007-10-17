@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #include "util/purge.h"
 #include "model/metamodel/grids/cellgrid.h"
+#include "util/exception.h"
 
 #include "dataset.h"
 #include "object.h"
@@ -46,12 +47,24 @@ namespace FIFE {
 	}
 
 	Dataset* Dataset::addDataset(const std::string& identifier) {
+		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		for(; it != m_datasets.end(); ++it) {
+			if(identifier == (*it)->Id())
+				throw NameClash("Dataset identifer " + identifier + " has multiple occurances in Dataset: " + Id() + ".");
+		}
+
 		Dataset* dataset = new Dataset(identifier);
 		m_datasets.push_back(dataset);
 		return dataset;
 	}
 
 	Object* Dataset::addObject(const std::string& identifier, Object* inherited) {
+		std::vector<Object*>::const_iterator it = m_objects.begin();
+		for(; it != m_objects.end(); ++it) {
+			if(identifier == (*it)->Id())
+				throw NameClash("Object identifer " + identifier + " has multiple occurances in Dataset: " + Id() + ".");
+		}
+
 		Object* object = new Object(identifier, inherited);
 		m_objects.push_back(object);
 		return object;

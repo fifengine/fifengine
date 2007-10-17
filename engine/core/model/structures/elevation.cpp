@@ -68,6 +68,12 @@ namespace FIFE {
 	}
 
 	Layer* Elevation::addLayer(const std::string& identifier, CellGrid* grid) {
+		std::vector<Layer*>::const_iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			if(identifier == (*it)->Id())
+				throw NameClash("Layer identifer " + identifier + " has multiple occurances in Elevation: " + Id() + ".");
+		}
+
 		Layer* layer = new Layer(identifier, this, grid);
 		m_layers.push_back(layer);
 		return layer;
