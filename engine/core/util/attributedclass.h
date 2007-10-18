@@ -170,6 +170,17 @@ namespace FIFE {
 
 	template <>
 	inline
+	void AttributedClass::set<std::string>(const std::string& field, const std::string& value) {
+		if(field == "id") {
+			m_id = value;
+			return ;
+		}
+
+		m_fields[field] = value_type(value);
+	}
+
+	template <>
+	inline
 	const std::string& AttributedClass::get<std::string>(const std::string& field) {
 		if(field == "id")
 			return m_id;

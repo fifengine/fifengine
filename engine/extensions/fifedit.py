@@ -50,11 +50,13 @@ class FIFEdit(fife.IWidgetListener, object):
 			print 'loading: ' + mapfilename
 			self.map = loadMapFile(mapfilename, self.engine)
 			self.mapwnd.setVisible(False)
+			self.create_mapedit()
 
 		elif evtid == 'SaveMapEvt':
 			if(self.map):
 				mapfilename = self.path_box.getText()
 				print 'saving: ' + mapfilename
+				self.save_mapmetadata()
 				saveMapFile(mapfilename, self.engine, self.map)
 				self.savewnd.setVisible(False)
 			else:
@@ -143,7 +145,7 @@ class FIFEdit(fife.IWidgetListener, object):
 
 		self.savewnd = fife.Window('Choose file to save to')
 		self.savewnd.setTitleBarHeight(20)
-		self.savewnd.setPosition(100,100)
+		self.savewnd.setPosition(100,200)
 		self.savewnd.setSize(sx, sy)
 		self.savewnd.setVisible(False)
 		self.register_widget(self.savewnd, self.guimanager) 
@@ -160,4 +162,63 @@ class FIFEdit(fife.IWidgetListener, object):
 		savebtn.setActionEventId('SaveMapEvt')
 		savebtn.addActionListener(self.guimanager)
 		self.register_widget(savebtn, self.savewnd)
+	
+	def create_mapedit(self):
+		assert self.map
+
+		sx,sy = 500,300
+
+		self.mapedit = fife.Window('Map Property Editor:')
+		self.mapedit.setTitleBarHeight(20)
+		self.mapedit.setPosition(100,300)
+		self.mapedit.setSize(sx,sy)
+		self.mapedit.setVisible(True)
+		self.register_widget(self.mapedit, self.guimanager)
+
+		dy = 0
+
+		mapid_label = fife.Label('Map Identifier: ')
+		mapid_label.setPosition(1, 1)
+		mapid_label.setFont(self.font)
+		self.register_widget(mapid_label, self.mapedit)
+
+		self.mapid_box = fife.TextBox(self.map.Id())
+		self.mapid_box.setPosition(1 + mapid_label.getWidth() + 1, 1)
+		self.register_widget(self.mapid_box, self.mapedit)
+
+		dy = 1 + self.mapid_box.getHeight() + 1
+
+		list = self.map.listFields()
+		self.mapmetaboxes = []
+		for i in range(0, len(list)):
+			label = fife.Label(list[i])
+			label.setPosition(1, dy)
+			self.register_widget(label, self.mapedit)
+
+			textbox = 0
+
+			type = self.map.getTypeName(list[i])
+			if (type == 'id'):
+				textbox = fife.TextBox(str(self.map.get_int(list[i])))
+
+			elif (type == 'text'):
+				textbox = fife.TextBox(self.map.get_string(list[i]))
+
+			else:
+				textbox = fife.TextBox("Error: unsupported type.")
+
+			textbox.setPosition(1 + label.getWidth() + 1, dy)
+			self.register_widget(textbox, self.mapedit)
+			self.mapmetaboxes.append((list[i], type, textbox))
+
+			dy += textbox.getHeight() + 1
+
+	def save_mapmetadata(self):
+		self.map.set_string('id', self.mapid_box.getText())
+		
+		for i in range(0, len(self.mapmetaboxes)):
+			if (self.mapmetaboxes[i][1] == 'id'):
+				self.map.set_int(self.mapmetaboxes[i][0], int(self.mapmetaboxes[i][2].getText()))
+			elif (self.mapmetaboxes[i][1] == 'text'):
+				self.map.set_string(self.mapmetaboxes[i][0], self.mapmetaboxes[i][2].getText())
 
