@@ -5,13 +5,14 @@ Import('env')
 env = env.Copy()
 env.Append(CPPPATH = ['#/engine/core'])
 env.Append(LIBPATH = ['#/engine/core'])
-env.Append(LIBPATH = ['/System/Library'])
-env.Append(LINKFLAGS='-framework SDL')
-env.Append(LINKFLAGS='-framework SDL_image')
-env.Append(LINKFLAGS='-framework SDL_ttf')
 
 env.Append(LIBS = ['libfife','boost_unit_test_framework'])
+
 if sys.platform == 'darwin':
+	env.Append(LIBPATH = ['/System/Library'])
+	env.Append(LINKFLAGS='-framework SDL')
+	env.Append(LINKFLAGS='-framework SDL_image')
+	env.Append(LINKFLAGS='-framework SDL_ttf')
         env.Append(LINKFLAGS=['-Wl'])
 else:
         env.Append(LINKFLAGS=['-Wl,-rpath,../../ext/install/lib,-rpath,../../engine'])
