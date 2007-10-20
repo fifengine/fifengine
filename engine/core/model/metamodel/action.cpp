@@ -35,18 +35,11 @@
 namespace FIFE {
 	Action::Action(const std::string& identifier)
 		: AttributedClass(identifier),
-		m_animations(),
-		m_duration(0) {
+		m_duration(0),
+		m_visual(NULL) {
 	}
 
 	Action::~Action() {
-	}
-
-	int Action::getAnimationIndexByAngle(int angle) {
-		return getIndexByAngle(angle, m_animations);
-	}
-
-	void Action::addAnimation(unsigned int angle, int animation_index) {
-		m_animations[angle % 360] = animation_index;
+		delete m_visual;
 	}
 }

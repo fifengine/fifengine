@@ -16,7 +16,8 @@ class TestModelView(unittest.TestCase):
 		self.elevation = self.map.getElevationsByString("id", "OfficialMapElevation")[0]
 		self.layer = self.elevation.getLayersByString("id", "OfficialMapTileLayer")[0]
 
-		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().getStaticImageIndexByAngle(0))
+		imgid = self.layer.getInstances()[0].getObject().get2dGfxVisual().getStaticImageIndexByAngle(0)
+		img = self.engine.getImagePool().getImage(imgid)
 		self.screen_cell_w = img.getWidth()
 		self.screen_cell_h = img.getHeight()
 

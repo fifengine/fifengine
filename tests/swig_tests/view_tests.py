@@ -14,12 +14,14 @@ class TestView(unittest.TestCase):
 		pool = self.engine.getImagePool()
 		
 		self.obj1 = dat.addObject("0")
+		fife.ObjectVisual.create(self.obj1)
 		imgid = pool.addResourceFromFile('content/gfx/objects/mushroom/mushroom_007.png')
-		self.obj1.addStaticImage(0, imgid)
+		self.obj1.get2dGfxVisual().addStaticImage(0, imgid)
 		
 		self.obj2 = dat.addObject("1")
+		fife.ObjectVisual.create(self.obj2)
 		imgid = pool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
-		self.obj2.addStaticImage(0, imgid)
+		self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
 		
 		img = pool.getImage(imgid)
 		self.screen_cell_w = img.getWidth()
@@ -49,11 +51,14 @@ class TestView(unittest.TestCase):
 		
 		for y in xrange(4):
 			for x in xrange(4):
-				self.layer.addInstance(self.obj2, fife.ModelCoordinate(x,y))
+				i = self.layer.addInstance(self.obj2, fife.ModelCoordinate(x,y))
+				fife.InstanceVisual.create(i)
 				self.engine.pump()
 				time.sleep(0.01)
-		self.layer.addInstance(self.obj1, fife.ModelCoordinate(0,0))
-		self.layer.addInstance(self.obj1, fife.ModelCoordinate(2,1))
+		i = self.layer.addInstance(self.obj1, fife.ModelCoordinate(0,0))
+		fife.InstanceVisual.create(i)
+		i = self.layer.addInstance(self.obj1, fife.ModelCoordinate(2,1))
+		fife.InstanceVisual.create(i)
 		
 		for i in xrange(120):
 			if i > 20 and i < 30:

@@ -38,9 +38,6 @@
 
 #include "instance.h"
 
-const int STATIC_IMAGE_NOT_INITIALIZED = -2;
-const int STATIC_IMAGE_NOT_FOUND = -1;
-
 namespace FIFE {
 	static Logger _log(LM_INSTANCE);
 	
@@ -106,17 +103,16 @@ namespace FIFE {
 	Instance::Instance(Object* object, const Location& location):
 		m_object(object), 
 		m_location(location),
-		m_stackpos(0),
 		m_actioninfo(NULL),
-		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
-		m_cached_static_img_angle(0),
 		m_pending_actioninfo(NULL),
-		m_listeners(NULL) {
+		m_listeners(NULL),
+		m_visual(NULL) {
 	}
 
 	Instance::~Instance() {
 		delete m_actioninfo;
 		delete m_listeners;
+		delete m_visual;
 	}
 
 	void Instance::addListener(InstanceListener* listener) {
@@ -372,17 +368,5 @@ namespace FIFE {
 			return SDL_GetTicks() - m_actioninfo->m_action_start_time;
 		}
 		return -1;
-	}
-
-	int Instance::getStaticImageIndexByAngle(unsigned int angle) {
-		if (static_cast<int>(angle) != m_cached_static_img_angle) {
-			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
-		}
-		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
-			return m_cached_static_img_id;
-		}
-		m_cached_static_img_id = m_object->getStaticImageIndexByAngle(angle);
- 		m_cached_static_img_angle = angle;
-		return m_cached_static_img_id;
 	}
 }

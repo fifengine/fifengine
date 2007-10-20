@@ -4,14 +4,15 @@
 %}
 
 %include "util/attributedclass.i"
+%include "model/metamodel/abstractvisual.i"
 
 namespace FIFE {
 
 	class Action : public AttributedClass {
-		public:
-			Action(const std::string& identifier);
-			virtual ~Action();
-			int getAnimationIndexByAngle(unsigned int angle);
-			void addAnimation(unsigned int angle, int animation_index);
+	public:
+		Action(const std::string& identifier);
+		virtual ~Action();
+		void setVisual(AbstractVisual* visual);
+		template<typename T> T* getVisual();
 	};
 }

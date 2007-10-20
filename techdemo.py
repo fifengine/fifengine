@@ -254,7 +254,7 @@ class World(object):
 		# little workaround to show the agent above mapobjects
 		self.agent_layer = self.elevation.getLayersByString("id", "TechdemoAgentLayer")[0]
 		
-		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().getStaticImageIndexByAngle(0))
+		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().get2dGfxVisual().getStaticImageIndexByAngle(0))
 		self.screen_cell_w = img.getWidth()
 		self.screen_cell_h = img.getHeight()
 		

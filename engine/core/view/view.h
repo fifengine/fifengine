@@ -40,6 +40,9 @@ namespace FIFE {
 	class ImagePool;
 	class AnimationPool;
 	class AbstractRenderer;
+	class Instance;
+	class Object;
+	class Action;
 
 	class View {
 	public:

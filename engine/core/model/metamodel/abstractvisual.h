@@ -19,13 +19,10 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MODEL_METAMODEL_ACTION_H
-#define FIFE_MODEL_METAMODEL_ACTION_H
+#ifndef FIFE_MODEL_ABSTRACTVISUAL_H
+#define FIFE_MODEL_ABSTRACTVISUAL_H
 
 // Standard C++ library includes
-#include <string>
-#include <vector>
-#include <list>
 
 // 3rd party library includes
 
@@ -33,49 +30,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/attributedclass.h"
-#include "util/angles.h"
-
-#include "abstractvisual.h"
 
 namespace FIFE {
-
-	class Action : public AttributedClass {
+	class AbstractVisual {
 	public:
-		/** Constructor
-		 * Actions are created by calling addAction from object, thus
-		 * this method should really be called only by object or test code
-		 */
-		Action(const std::string& identifier);
-
-		/** Destructor
-		 */
-		virtual ~Action();
-
-		/** Sets the duration for this action
-		 */
-		void setDuration(unsigned int duration) { m_duration = duration; }
-
-		/** Gets the duration of this action
-		 */
-		unsigned int getDuration() { return m_duration; }
-
-		/** Sets visualization to be used. Transfers ownership.
-		 */
-		void setVisual(AbstractVisual* visual) { m_visual = visual; }
-		
-		/** Gets used visualization
-		 */
-		template<typename T> T* getVisual() { return reinterpret_cast<T*>(m_visual); }
-
-
-	private:
-		// duration of the action
-		unsigned int m_duration;
-		// visualization for action
-		AbstractVisual* m_visual;
+		virtual ~AbstractVisual() {};
 	};
-
 }
 
 #endif

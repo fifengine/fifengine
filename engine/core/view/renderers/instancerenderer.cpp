@@ -44,6 +44,7 @@
 #include "model/structures/location.h"
 
 #include "view/camera.h"
+#include "view/visual.h"
 #include "instancerenderer.h"
 
 
@@ -102,7 +103,7 @@ namespace FIFE {
 				const Location& facing_loc = instance->getFacingLocation();
 				FL_DBG(_log, "Instance has action");
 				int angle = getAngleBetween(instance->getLocation(), instance->getFacingLocation(), *camera);
-				int animation_id = action->getAnimationIndexByAngle(angle);
+				int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
 				Animation& animation = m_animationpool->getAnimation(animation_id);
 				int animtime = instance->getActionRuntime() % animation.getDuration();
 				image = animation.getFrameByTimestamp(animtime);
@@ -111,7 +112,7 @@ namespace FIFE {
 			} else {
 				FL_DBG(_log, "No action");
 				int static_rotation = static_cast<int>(cg->getRotation() + camera->getRotation());
-				int imageid = instance->getStaticImageIndexByAngle(static_rotation);
+				int imageid = instance->getVisual<InstanceVisual>()->getStaticImageIndexByAngle(static_rotation);
 				FL_DBG(_log, LMsg("Instance does not have action, using static image with id ") << imageid);
 				if (imageid >= 0) {
 					image = &m_imagepool->getImage(imageid);

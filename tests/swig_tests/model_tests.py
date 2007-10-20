@@ -183,71 +183,73 @@ class TestModel(unittest.TestCase):
 class TestActionAngles(unittest.TestCase):
 	def setUp(self):
 		self.runaction = fife.Action("action001")
-		self.runaction.addAnimation(90, 1)
-		self.runaction.addAnimation(0, 0)
-		self.runaction.addAnimation(270, 3)
-		self.runaction.addAnimation(180, 2)
+		fife.ActionVisual.create(self.runaction)
+		self.runaction.get2dGfxVisual().addAnimation(90, 1)
+		self.runaction.get2dGfxVisual().addAnimation(0, 0)
+		self.runaction.get2dGfxVisual().addAnimation(270, 3)
+		self.runaction.get2dGfxVisual().addAnimation(180, 2)
 		self.walkaction = fife.Action("action002")
-		self.walkaction.addAnimation(70, 1)
-		self.walkaction.addAnimation(200, 2)
-		self.walkaction.addAnimation(320, 3)
+		fife.ActionVisual.create(self.walkaction)
+		self.walkaction.get2dGfxVisual().addAnimation(70, 1)
+		self.walkaction.get2dGfxVisual().addAnimation(200, 2)
+		self.walkaction.get2dGfxVisual().addAnimation(320, 3)
 
 	def testRunAngle89(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(89), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(89), 1)
 	
 	def testRunAngle90(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(90), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(90), 1)
 	
 	def testRunAngle91(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(91), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(91), 1)
 	
 	def testRunAngle135(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(135), 2)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(135), 2)
 	
 	def testRunAngle134(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(134), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(134), 1)
 	
 	def testRunAngle136(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(136), 2)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(136), 2)
 	
 	def testRunAngle0(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(0), 0)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(0), 0)
 	
 	def testRunAngle40(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(40), 0)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(40), 0)
 	
 	def testRunAngle45(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(45), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(45), 1)
 	
 	def testRunAngle270(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(270), 3)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(270), 3)
 
 	def testRunAngle269(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(269), 3)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(269), 3)
 	
 	def testRunAngle271(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(271), 3)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(271), 3)
 	
 	def testRunAngle314(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(314), 3)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(314), 3)
 	
 	def testRunAngle359(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(359), 0)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(359), 0)
 	
 	def testRunAngle400(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(400), 0)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(400), 0)
 	
 	def testRunAngle451(self):
-		self.assertEqual(self.runaction.getAnimationIndexByAngle(451), 1)
+		self.assertEqual(self.runaction.get2dGfxVisual().getAnimationIndexByAngle(451), 1)
 	
 	def testWalkAngle0(self):
-		self.assertEqual(self.walkaction.getAnimationIndexByAngle(0), 3)
+		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationIndexByAngle(0), 3)
 
 	def testWalkAngle60(self):
-		self.assertEqual(self.walkaction.getAnimationIndexByAngle(60), 1)
+		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationIndexByAngle(60), 1)
 
 	def testWalkAngle199(self):
-		self.assertEqual(self.walkaction.getAnimationIndexByAngle(199), 2)
+		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationIndexByAngle(199), 2)
 
 class InstanceListener(fife.InstanceListener):
 	def __init__(self):

@@ -180,6 +180,7 @@ class ModelLoader(handler.ContentHandler):
 					self.object = self.dataset.addObject(str(id))
 
 				self.object.setPather(self.pather)
+				fife.ObjectVisual.create(self.object)
 
 			else:
 				assert 0, "Objects can only be declared in a <dataset> section."
@@ -197,7 +198,7 @@ class ModelLoader(handler.ContentHandler):
 				assert source, "Image declared with no source location."	
 
 				id = self.pool.addResourceFromFile(str(source))	
-				self.object.addStaticImage(0, id)
+				self.object.get2dGfxVisual().addStaticImage(0, id)
 
 			else:
 				assert 0, "<image> tags can only be declared in an <object> section."
@@ -214,6 +215,7 @@ class ModelLoader(handler.ContentHandler):
 				assert id, "Actions must be given an identifier (id) field."
 
 				self.action = self.object.addAction(str(id))
+				fife.ActionVisual.create(self.action)
 
 			else:
 				assert 0, "Actions can only be declared in an <object> section."
@@ -231,7 +233,7 @@ class ModelLoader(handler.ContentHandler):
 				assert source, "Animation declared with no source location."
 
 				animation = self.anim_pool.addResourceFromFile(str(source))
-				self.action.addAnimation(int(direction), animation)
+				self.action.get2dGfxVisual().addAnimation(int(direction), animation)
 
 			else:
 				assert 0, "Animations must be declared in an <action> section."
@@ -340,6 +342,7 @@ class ModelLoader(handler.ContentHandler):
 					y = self.y
 
 				inst = self.layer.addInstance(object, fife.ModelCoordinate(x,y))
+				fife.InstanceVisual.create(inst)
 				
 				if (object.getAction("default")):
 					target = fife.Location()

@@ -47,6 +47,7 @@
 #include "view.h"
 #include "abstractrenderer.h"
 #include "camera.h"
+#include "visual.h"
 
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
@@ -122,7 +123,7 @@ namespace FIFE {
 				std::vector<Instance*>::const_iterator instance_it = instances.begin();
 				stackpos2instances_t stacked_instances;
 				for (;instance_it != instances.end(); ++instance_it) {
-					stacked_instances[(*instance_it)->getStackPosition()].push_back(*instance_it);
+					stacked_instances[(*instance_it)->getVisual<InstanceVisual>()->getStackPosition()].push_back(*instance_it);
 				}
 			
 				// asks renderers to draw the layer using made stack ordering

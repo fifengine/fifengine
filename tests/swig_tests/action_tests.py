@@ -19,22 +19,27 @@ class ActionTests(unittest.TestCase):
 		self.target.setLayer(self.layer)
 		
 		self.obj = fife.Object("object001")
+		fife.ObjectVisual.create(self.obj)
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
 		self.action = self.obj.addAction('walk')
+		fife.ActionVisual.create(self.action)
 		addResource = self.engine.animationPool.addResourceFromFile
 		for index, direction in enumerate(dirnames):
 			degree = 45 * index
-			self.action.addAnimation(degree, addResource(files[index]))
+			self.action.get2dGfxVisual().addAnimation(degree, addResource(files[index]))
 
 		self.ground = fife.Object("ground")
 		imgid = self.engine.imagePool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
-		self.ground.addStaticImage(0, imgid)
+		fife.ObjectVisual.create(self.ground)
+		self.ground.get2dGfxVisual().addStaticImage(0, imgid)		
 		self.ground.img = self.engine.getImagePool().getImage(imgid)
 		for y in xrange(-2,3):
 			for x in xrange(-2,3):
-				self.layer.addInstance(self.ground, fife.ModelCoordinate(x,y))
+				inst = self.layer.addInstance(self.ground, fife.ModelCoordinate(x,y))
+				fife.InstanceVisual.create(inst)
 		self.inst = self.layer.addInstance(self.obj, fife.ModelCoordinate(-2,-2))
+		fife.InstanceVisual.create(self.inst)
 			
 	def tearDown(self):
 		del self.engine
