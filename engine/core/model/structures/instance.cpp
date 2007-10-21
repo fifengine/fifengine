@@ -31,6 +31,7 @@
 // Second block: files included from the same folder
 #include "util/logger.h"
 #include "util/exception.h"
+#include "util/fife_math.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/abstractpather.h"
 #include "model/metamodel/action.h"
@@ -45,30 +46,23 @@ namespace FIFE {
 	public:
 		ActionInfo(AbstractPather* pather, const Location& curloc): 
 			m_action(0), 
-			m_nextlocations(),
 			m_target(NULL), 
 			m_speed(0), 
 			m_repeating(false),
-			m_facinglocation(curloc),
 			m_action_start_time(SDL_GetTicks()),
 			m_prev_call_time(m_action_start_time),
 			m_pather_session_id(-1),
 			m_pather(pather) {}
 
 		~ActionInfo() {
+			if (m_pather_session_id == -1) {
+				m_pather->cancelSession(m_pather_session_id);
+			}
 			resetTarget();
 		}
 
 		unsigned int currentTime() {
 			return SDL_GetTicks() - m_action_start_time;
-		}
-
-		std::vector<Location>& getNextLocations(const Location& startloc) {
-			assert(m_target && m_pather);
-			FL_DBG(_log, LMsg("getting next locs from pather, loc=") << startloc << " tgt=" << *m_target);
-			m_pather_session_id = m_pather->getNextLocations(startloc, 
-					*m_target, m_nextlocations, m_pather_session_id);
-			return m_nextlocations;
 		}
 
 		void resetTarget() {
@@ -78,16 +72,12 @@ namespace FIFE {
 
 		// Current action, owned by object
 		Action* m_action;
-		// Cells where instance should be moved next
-		std::vector<Location> m_nextlocations;
 		// target location for ongoing movement
 		Location* m_target;
 		// current movement speed
 		double m_speed;
 		// should action be repeated? used only for non-moving actions, moving ones repeat until movement is finished
 		bool m_repeating;
-		// this is the direction where instance should be facing
-		Location m_facinglocation;
 		// action start time (ticks)
 		unsigned int m_action_start_time;
 		// ticks since last call
@@ -103,8 +93,8 @@ namespace FIFE {
 	Instance::Instance(Object* object, const Location& location):
 		m_object(object), 
 		m_location(location),
+		m_facinglocation(NULL),
 		m_actioninfo(NULL),
-		m_pending_actioninfo(NULL),
 		m_listeners(NULL),
 		m_visual(NULL) {
 	}
@@ -113,6 +103,7 @@ namespace FIFE {
 		delete m_actioninfo;
 		delete m_listeners;
 		delete m_visual;
+		delete m_facinglocation;
 	}
 
 	void Instance::addListener(InstanceListener* listener) {
@@ -137,141 +128,62 @@ namespace FIFE {
 		FL_WARN(_log, "Cannot remove unknown listener");
 	}
 
-	ActionInfo* Instance::initalizeAction(const std::string& action_name) {
+	void Instance::initalizeAction(const std::string& action_name) {
 		assert(m_object);
-		bool pend_action = (m_actioninfo && m_actioninfo->m_target);
-		ActionInfo** info_to_use = &m_actioninfo;
-		if (!pend_action) {
+		if (m_actioninfo) {
 			delete m_actioninfo;
 			m_actioninfo = NULL;
-		} else {
-			info_to_use = &m_pending_actioninfo;
 		}
-		delete m_pending_actioninfo;
-		m_pending_actioninfo = NULL;
-
-		(*info_to_use) = new ActionInfo(m_object->getPather(), m_location);
-		(*info_to_use)->m_action = m_object->getAction(action_name);
-		if (!(*info_to_use)->m_action) {
-			delete (*info_to_use);
-			(*info_to_use) = NULL;
+		m_actioninfo = new ActionInfo(m_object->getPather(), m_location);
+		m_actioninfo->m_action = m_object->getAction(action_name);
+		if (!m_actioninfo->m_action) {
+			delete m_actioninfo;
+			m_actioninfo = NULL;
 			throw NotFound(std::string("action ") + action_name + " not found");
-		}
-		return (*info_to_use);
+		}		
 	}
 
 	void Instance::act(const std::string& action_name, const Location& target, const double speed) {
-		ActionInfo* a = initalizeAction(action_name);
-		a->m_target = new Location(target);
-		a->m_speed = speed;
-		FL_DBG(_log, LMsg("starting action ") <<  action_name << " to " << target << " with speed " << speed);
-		FL_DBG(_log, LMsg("m_target ") <<  *a->m_target);
+		initalizeAction(action_name);
+		m_actioninfo->m_target = new Location(target);
+		m_actioninfo->m_speed = speed;
+		setFacingLocation(target);
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << target << " with speed " << speed);
 	}
 
 	void Instance::act_here(const std::string& action_name, const Location& direction, bool repeating) {
-		ActionInfo* a = initalizeAction(action_name);
-		a->m_repeating = repeating;
-		a->m_facinglocation = direction;
+		initalizeAction(action_name);
+		m_actioninfo->m_repeating = repeating;
+		setFacingLocation(direction);
+	}
+
+	void Instance::setFacingLocation(const Location& loc) {
+		if (!m_facinglocation) {
+			m_facinglocation = new Location(loc);
+		} else {
+			*m_facinglocation = loc;
+		}
 	}
 
 	bool Instance::move() {
 		FL_DBG(_log, "Moving...");
-		
-		// in case we have a request to do something else
-		if (m_pending_actioninfo) {
-			FL_DBG(_log, "some other action is pending");
-			// Movement must be finalized on the center of a cell
-			
-			// if we are in the center of the cell, stop
-			FL_DBG(_log, LMsg("Cell offset distance = ") << m_location.getCellOffsetDistance());
-			if (m_location.getCellOffsetDistance() < 0.1) {
-				FL_DBG(_log, "in the center of the cell");
-				m_actioninfo->m_nextlocations.clear();
-				m_actioninfo->resetTarget();
-				return true;
-			} 
-			// otherwise set the movement target to be the current cell so that 
-			// movement stops asap
-			else {
-				FL_DBG(_log, "not in the center of the cell");
-				ModelCoordinate pt = m_location.getLayerCoordinates();
-				m_actioninfo->m_target->setLayerCoordinates(pt);
-				m_actioninfo->m_nextlocations.clear();
-				m_actioninfo->m_nextlocations.push_back(*m_actioninfo->m_target);
-			}
-		}
-		// still doing the same movement, get next locations from pather
-		else {
-			FL_DBG(_log, "still moving, getting locations from pather");
-			m_actioninfo->getNextLocations(m_location);
-		}
-		
-		if ((m_location.getLayerCoordinates() == m_actioninfo->m_target->getLayerCoordinates()) && (m_location.getCellOffsetDistance() < 0.1)) {
-			// we're done moving
-			return true;
-		}
-		else {
-			// calculate next locations
-			calcMovement();
-			return false;
-		}
-	}
-
-
-	void Instance::calcMovement() {
-		// what's the timeslice for this movement
-		unsigned int timedelta    = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
+		// timeslice for this movement
+		unsigned int timedelta  = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
+		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << m_actioninfo->m_prev_call_time);
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * m_actioninfo->m_speed;
-		// location to iterate based on pather locations + speed
-		ExactModelCoordinate iter_loc      = m_location.getExactLayerCoordinates();
-		// to calculate traveled distance
-		double cumul_dist         = 0;
-		FL_DBG(_log, LMsg("calculating movement, dist to travel ") << distance_to_travel);
-		FL_DBG(_log, LMsg("current location = ") << m_location);
-		
-		// cumulate distance based on cell distances (cells returned from pathfinder)
-		std::vector<Location>::iterator i = m_actioninfo->m_nextlocations.begin();
-		while (i != m_actioninfo->m_nextlocations.end()) {
-			FL_DBG(_log, "next location from pather...");
-			ExactModelCoordinate nextcell = (*i).getExactLayerCoordinates();
-			FL_DBG(_log, LMsg("next coordinates = ") << nextcell);
-			ExactModelCoordinate diff = nextcell - iter_loc;
-			double dist_to_next_cell = diff.length();
-			double dist_left = distance_to_travel - cumul_dist;
-			FL_DBG(_log, LMsg("diff = ") << diff << ", dist_to_next = " << dist_to_next_cell << ", dist_left=" << dist_left);
-			
-			// if we cannot reach the next cell...
-			if (dist_left < dist_to_next_cell) {
-				FL_DBG(_log, "cannot reach the next cell...");
-				// calculate next location using available distance
-				iter_loc = iter_loc + (diff * (dist_left / dist_to_next_cell));
-				cumul_dist += dist_left;
-			}
-			// otherwise iterate to the next cell center point
-			else {
-				FL_DBG(_log, "cell reached, go to the center...");
-				iter_loc = nextcell;
-				cumul_dist += dist_to_next_cell;
-				FL_DBG(_log, LMsg("iter_loc = ") << nextcell << ", cumul_dist = " << cumul_dist);
-			}
-			m_actioninfo->m_facinglocation = (*i);
-			++i;
-			FL_DBG(_log, LMsg("path finder node end, cumul_dist=") << cumul_dist);
-		}
-		// move to point where iteration got us
-		m_location.setExactLayerCoordinates(iter_loc);
-		FL_DBG(_log, LMsg("moving to next point : ") << m_location);
-		
-		// if there is still "speed" left from traveling
-		if ((distance_to_travel - cumul_dist) > 0) {
-			FL_DBG(_log, "still speed left");
-			// if we are not in the target cell, pather cannot keep up
-			if (*(m_actioninfo->m_target) != m_location) {
-				FL_WARN(_log, "pather cannot keep up");
-			}
-			// otherwise we are finished the movement
-		}
+		FL_DBG(_log, LMsg("dist ") <<  distance_to_travel);
+				
+		Location nextLocation = m_location;
+		m_actioninfo->m_pather_session_id = m_actioninfo->m_pather->getNextLocation(
+			m_location, *m_actioninfo->m_target,
+			distance_to_travel, nextLocation, *m_facinglocation,
+			m_actioninfo->m_pather_session_id);
+		m_location = nextLocation;
+		ExactModelCoordinate a = nextLocation.getElevationCoordinates();
+		ExactModelCoordinate b = m_actioninfo->m_target->getElevationCoordinates();
+		// return if we are close enough to target to stop
+		return ((ABS(a.x - b.x) < 0.1) && (ABS(a.y - b.y) < 0.1));
 	}
 
 	void Instance::update(unsigned int curticks) {
@@ -290,10 +202,6 @@ namespace FIFE {
 			if (movement_finished) {
 				FL_DBG(_log, "movement finished");
 				finalizeAction();
-				if (m_pending_actioninfo) {
-					m_actioninfo = m_pending_actioninfo;
-					m_pending_actioninfo = NULL;
-				}
 			}
 		}
 		else {
@@ -349,16 +257,9 @@ namespace FIFE {
 		return 0;
 	}
 
-	std::vector<Location>* Instance::getNextLocations() const {
-		if (m_actioninfo) {
-			return &m_actioninfo->m_nextlocations;
-		}
-		return NULL;
-	}
-
 	const Location& Instance::getFacingLocation() const {
-		if (m_actioninfo) {
-			return m_actioninfo->m_facinglocation;
+		if (m_facinglocation) {
+			return *m_facinglocation;
 		}
 		return m_location;
 	}

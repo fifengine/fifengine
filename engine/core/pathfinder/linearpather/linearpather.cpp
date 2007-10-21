@@ -32,34 +32,46 @@
 #include "util/logger.h"
 
 namespace FIFE {
-	int LinearPather::getNextLocations(const Location& curpos, const Location& target, 
-                                           std::vector<Location>& nextlocations, const int session_id) {									 
-		assert(curpos.getElevation() == target.getElevation());
-		assert(curpos.getLayer() == target.getLayer());
-
-		ModelCoordinate curpt = curpos.getLayerCoordinates();
-		ModelCoordinate tgtpt = target.getLayerCoordinates();
-
-		int dx = tgtpt.x - curpt.x;
-		int dy = tgtpt.y - curpt.y;
-
-		Location nextnode(curpos);
-		ModelCoordinate p = nextnode.getLayerCoordinates();
-		if (dx > 0) {
-			p.x += 1;
+	static Logger _log(LM_PATHFINDER);
+	
+	int LinearPather::getNextLocation(const Location& curloc, const Location& target,
+		                            const double& distance_to_travel, Location& nextLocation,
+		                            Location& facingLocation, const int session_id) {
+		int cur_session_id = session_id;
+		if (cur_session_id < 0) {
+			cur_session_id = m_session_counter++;
+			
+			// extrapolate next location for this session
+			ExactModelCoordinate cur_pos = curloc.getElevationCoordinates();
+			ExactModelCoordinate fac_pos = target.getElevationCoordinates();
+			fac_pos.x = fac_pos.x + (fac_pos.x - cur_pos.x);
+			fac_pos.y = fac_pos.y + (fac_pos.y - cur_pos.y);
+			facingLocation = target;
+			facingLocation.setElevationCoordinates(fac_pos);
+			m_session2face[cur_session_id] = facingLocation;
+			FL_DBG(_log, LMsg("storing new facing loc ") <<  facingLocation);
+		} else {
+			FL_DBG(_log, LMsg("getting old facing loc ") <<  facingLocation);
+			facingLocation = m_session2face[cur_session_id];
 		}
-		if (dx < 0) {
-			p.x -= 1;
+		
+		FL_DBG(_log, LMsg("curloc ") <<  curloc << ", target " << target << ", dist2travel " << distance_to_travel);
+		assert(curloc.getElevation() == target.getElevation());
+		assert(curloc.getLayer() == target.getLayer());
+		ExactModelCoordinate cur_pos = curloc.getExactLayerCoordinates();
+		ExactModelCoordinate target_pos = target.getExactLayerCoordinates();
+		double dx = target_pos.x - cur_pos.x;
+		double dy = target_pos.y - cur_pos.y;
+		double dist = sqrt(dx*dx + dy*dy);
+		FL_DBG(_log, LMsg("distance from cur to target = ") << dist);
+		
+		nextLocation = target;
+		if (dist > distance_to_travel) {
+			cur_pos.x += dx * (distance_to_travel / dist);
+			cur_pos.y += dy * (distance_to_travel / dist);
+			nextLocation.setExactLayerCoordinates(cur_pos);
 		}
-		if (dy > 0) {
-			p.y += 1;
-		}
-		if (dy < 0) {
-			p.y -= 1;
-		}
-		nextnode.setLayerCoordinates(p);
-		nextlocations.clear();
-		nextlocations.push_back(nextnode);
-		return session_id;
+		
+		return cur_session_id;
 	}
 }

@@ -112,12 +112,6 @@ namespace FIFE {
 		 */
 		double getMovementSpeed() const;
 
-		/** Gets the locations where instance is about to be moved next
-		 *  using this info with current location gives the direction of instance during movement
-		 * @return next locations of movement. In case of no movement, returns NULL
-		 */
-		std::vector<Location>* getNextLocations() const;
-
 		/** Returns the direction where instance is heading
 		 * @return the direction of instance.
 		 */
@@ -162,27 +156,27 @@ namespace FIFE {
 		Object* m_object;
 		// current location
 		Location m_location;
+		// current facing location. Just a pointer to save space e.g. on tiles
+		Location* m_facinglocation;
 		// action information, allocated when actions are bind
 		ActionInfo* m_actioninfo;
-		// action information, for pending action. In case objects are moved
-		// and some other action comes on top of that, movement must be finalized
-		// in such way that instances are stopped to the cell center point
-		ActionInfo* m_pending_actioninfo;
 		// instance listeners. Not allocated right away to save space
 		std::vector<InstanceListener*>* m_listeners;
+		// instance visualization
 		AbstractVisual* m_visual;
 		
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);
 		// Finalize current action
 		void finalizeAction();
-		// Initialize a new action (either pending or current) and return the info for it.
-		ActionInfo* initalizeAction(const std::string& action_name);
+		// Initialize action for use
+		void initalizeAction(const std::string& action_name);
 		// Moves instance. Returns true if finished
 		bool move();
 		// Calculates movement based current location and speed
 		void calcMovement();
-		// visualization for action
+		// set facing location for instance
+		void setFacingLocation(const Location& loc);
 	};
 
 } // FIFE

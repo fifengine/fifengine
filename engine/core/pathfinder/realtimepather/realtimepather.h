@@ -49,40 +49,15 @@ namespace FIFE {
 		RealTimePather() : m_map(0), m_nextFreeSessionId(0), m_maxticks(100) {
 			m_ticksleft = m_maxticks;
 		}
-		/** Sets the map that will be used for the search.
-		 *
-		 * @param map A pointer to the map to be used. 
-		 */
-		virtual void setMap(Map* map);
+		
+		void setMap(Map* map);
+		int getNextLocation(const Location& curloc, const Location& target, 
+		                    const double& distance_to_travel, Location& nextLocation,
+		                    Location& facingLocation, const int session_id=-1);
 
-		/** Retrieves the next locations in the search.
-		 *
-		 * @param curPos A reference to the current location of the requester.
-		 * @param target A reference to the target destination of the requester. 
-		 * @param nextLocations A reference to a vector that will be filled with
-		 *                      intermediate locations. 
-		 * @param session_id An integer value representing the session to use, -1
-		 *                   is the default value and is used to start a new session. 
-		 * @return The session id of the new session. 
-		 */
-		virtual int getNextLocations(const Location& curPos, const Location& target, 
-			std::vector<Location>& nextLocations, const int session_id = -1);
-
-		/** Cancels a given session.
-		 *
-		 * This function is called when (for instance) the user changes their mind about
-		 * a destination while the agent is already moving, the old session needs to be
-		 * cancelled and a new one created. 
-		 * 
-		 * @param session_id The id of the session to cancel.
-		 * @return A boolean to signify whether the session was successfully found and cancelled.
-		 */
-		virtual bool cancelSession(const int session_id);
-
-		/**
-		 *
-		 */
+		bool cancelSession(const int session_id);
 		virtual void resetTicks() { m_ticksleft = m_maxticks; }
+		
 	private:
 		typedef std::map<int, Search*> SessionMap;
 		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;

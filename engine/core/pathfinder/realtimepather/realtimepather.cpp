@@ -42,6 +42,16 @@ namespace FIFE {
 		m_map = map;
 	}
 
+	int RealTimePather::getNextLocation(const Location& curloc, const Location& target, 
+				const double& distance_to_travel, Location& nextLocation,
+				Location& facingLocation, const int session_id) {
+		// NOTE: this change naturally broke mortiz's current pather. However
+		// the change should allow more flexible implementation
+		// sorry for that mortiz :-/
+		return -1;
+	}
+	
+	/*
 	int RealTimePather::getNextLocations(const Location& curPos, const Location& target, 
 		std::vector<Location>& nextLocations, const int session_id) {
 			//Make sure that we're not navigating to the same tile.
@@ -91,7 +101,7 @@ namespace FIFE {
 			}
 			return -1;
 	}
-
+	*/
 	bool RealTimePather::cancelSession(const int session_id) {
 		if(session_id >= 0) {
 			SessionMap::iterator i = m_sessions.find(session_id);

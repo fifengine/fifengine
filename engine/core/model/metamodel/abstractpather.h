@@ -43,27 +43,33 @@ namespace FIFE {
 		 */
 		virtual void setMap(Map* map) = 0;
 
-		/** Gets next locations from pathfinder
-		 * Model will call this function periodically when instances are
-		 * moving on map. Pather must return next locations in 
-		 * such pace that model always knows where to instances should be moved.
-		 * Pather must be able to store multiple chains for multiple simultaneous paths
+		/** Gets next location from pathfinder
+		 * Model will call this function periodically when instances should
+		 * move on map. Pather must return next location where instance should be moved.
+		 * Pather must be able to store multiple sessions for multiple simultaneous searches
 		 * (coming from multiple instances)
 		 *
-		 * @param curpos Current locations of the movement
+		 * @param curloc Current location
 		 * @param target Target of the movement. This must be always on same layer as curpos
-		 * @param nextnodes locations where to move next (returned by pather). In case
-		 *                  called when already at target, returns the target cell
-		 * @param session_id pather does pathfinding in increments.
+		 * @param distance_to_travel  Distance how far caller can travel (in layer units)
+		 * @param nextLocation next location returned by the pather
+		 * @param facingLocation next facing location returned by the pather
+		 * @param session_id pather can do pathfinding in increments.
 		 *   Further increments are bind to previous ones with given session_id
 		 * @return session_id to use with further calls
 		 */
-		virtual int getNextLocations(const Location& curpos, const Location& target, 
-		                             std::vector<Location>& nextlocations, const int session_id=-1) = 0;
-
-		/** Cancels the given session.
+		virtual int getNextLocation(const Location& curloc, const Location& target, 
+		                            const double& distance_to_travel, Location& nextLocation,
+		                            Location& facingLocation, const int session_id=-1) = 0;
+		
+		/** Cancels a given session.
 		 *
+		 * This function is called when (for instance) the user changes their mind about
+		 * a destination while the agent is already moving, the old session needs to be
+		 * cancelled and a new one created. 
+		 * 
 		 * @param session_id The id of the session to cancel.
+		 * @return A boolean to signify whether the session was successfully found and cancelled.
 		 */
 		virtual bool cancelSession(const int session_id) = 0;
 

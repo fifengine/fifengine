@@ -198,7 +198,7 @@ class ModelLoader(handler.ContentHandler):
 				assert source, "Image declared with no source location."	
 
 				id = self.pool.addResourceFromFile(str(source))	
-				self.object.get2dGfxVisual().addStaticImage(0, id)
+				self.object.get2dGfxVisual().addStaticImage(int(direction), id)
 
 			else:
 				assert 0, "<image> tags can only be declared in an <object> section."

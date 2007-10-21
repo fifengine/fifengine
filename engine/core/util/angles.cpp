@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <iostream>
 
 // 3rd party library includes
 

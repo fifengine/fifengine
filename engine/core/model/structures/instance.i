@@ -34,7 +34,6 @@ namespace FIFE {
 		void removeListener(InstanceListener* listener);
 		Action* getCurrentAction() const;
 		double getMovementSpeed() const;
-		std::vector<Location>* getNextLocations() const;
 		const Location& getFacingLocation() const;
 		int getActionRuntime() const;
 		void act(const std::string& action_name, const Location& target, const double speed);

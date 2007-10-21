@@ -34,7 +34,7 @@ The FIFE and Zero-Projekt teams
 
 class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
-		pass
+		instance.act_here('idle', instance.getFacingLocation(), True)
 
 SCROLL_MODIFIER = 0.1
 class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
@@ -234,7 +234,7 @@ class World(object):
 		self.reactor = InstanceReactor()
 		logman = self.engine.getLogManager()
 		self.log = fifelog.LogManager(self.engine, promptlog=True, filelog=False)
-		#self.log.setVisibleModules('hexgrid')
+		#self.log.setVisibleModules('instance', 'view', 'pool', 'View::View')
 
 		self.eventmanager = self.engine.getEventManager()
 		self.model = self.engine.getModel()
@@ -261,9 +261,6 @@ class World(object):
 		self.target = fife.Location()
 		self.target.setLayer(self.agent_layer)
 
-		self.agent = self.agent_layer.getInstancesByString('id', 'PC')[0]
-		self.agent.addListener(self.reactor)
-	
 	def save_world(self, path):
 		saveMapFile(path, self.engine, self.map)
 		
@@ -296,7 +293,12 @@ class World(object):
 		
 		# no movement at start
 		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
-		self.agent.act_here('walk', self.target, True)
+		
+		self.agent = self.agent_layer.getInstancesByString('id', 'PC')[0]
+		self.agent.addListener(self.reactor)
+		self.agent.act_here('idle', self.target, True)
+		for g in self.agent_layer.getInstancesByString('id', 'Gunner'):
+			g.act_here('idle', self.target, True)
 
 		
 		while True:

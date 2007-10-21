@@ -92,6 +92,7 @@ namespace FIFE {
 
 	IPooledResource& Pool::get(unsigned int index) {
 		if (index >= m_entries.size()) {
+			FL_ERR(_log, LMsg("Tried to get with index ") << index << ", only " << m_entries.size() << " items in pool");
 			throw IndexOverflow( __FUNCTION__ );
 		}
 		IPooledResource* res = NULL;

@@ -330,6 +330,7 @@ digraph "source tree" {
     "engine/core/model/structures/instance.cpp" -> "model/metamodel/grids/cellgrid.h"
     "engine/core/model/structures/instance.cpp" -> "model/structures/layer.h"
     "engine/core/model/structures/instance.cpp" -> "util/exception.h"
+    "engine/core/model/structures/instance.cpp" -> "util/fife_math.h"
     "engine/core/model/structures/instance.cpp" -> "util/logger.h"
     "engine/core/model/structures/instance.h" -> "location.h"
     "engine/core/model/structures/instance.h" -> "model/metamodel/abstractvisual.h"

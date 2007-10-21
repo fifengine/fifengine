@@ -23,6 +23,7 @@
 #define FIFE_PATHFINDER_LINEAR_H
 
 // Standard C++ library includes
+#include <map>
 
 // 3rd party library includes
 
@@ -40,19 +41,28 @@ namespace FIFE {
 	*/
 	class LinearPather: public AbstractPather {
 	public:
-		LinearPather() {}
+		LinearPather(): m_session_counter(0) {}
 
 		virtual ~LinearPather() {}
 
-		virtual void setMap(Map* map) {}
+		void setMap(Map* map) {}
 
-		virtual int getNextLocations(const Location& curpos, const Location& target, 
-					     std::vector<Location>& nextlocations, const int session_id=-1);
+		int getNextLocation(const Location& curloc, const Location& target, 
+		                    const double& speed, Location& nextLocation,
+		                    Location& facingLocation, const int session_id=-1);
+		
+		bool cancelSession(const int session_id) { 
+			m_session2face.erase(session_id);
+			return true; 
+		}
 
-		virtual bool cancelSession(const int session_id) { return false; }
-
-		virtual void resetTicks() { }
+		void resetTicks() { }
+	
+	private:
+		std::map< int, Location > m_session2face;
+		unsigned int m_session_counter;
 	};
 }
 
 #endif
+
