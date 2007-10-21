@@ -2,6 +2,7 @@ import os, sys
 from utils.util_scripts.path import path as upath
 
 opts = Options('options.py', ARGUMENTS)
+opts.Add(PathOption('PREFIX', 'Directory to install under', '/usr'))
 opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations', 1))
 opts.Add(BoolOption('tests',  'Build testcases in unit_tests', 0))
 opts.Add(BoolOption('noengine',  'Prevents building of engine, use e.g. for util/test tweaking', 0))
@@ -160,5 +161,14 @@ else:
 
 	if env['utils']:
 		SConscript([str(p) for p in upath('utils').walkfiles('SConscript')])
+
+	# techdemo installation
+	if sys.platform == 'linux2':
+		source = [str(f) for f in upath('techdemo').walkfiles() if str(f).find('.svn') == -1]
+		target = map(lambda x: '$PREFIX/share/games/fife-'+x, source)
+		env.InstallAs(target, source)
+		env.InstallAs('$PREFIX/bin/fife-techdemo', 'techdemo.py')
+	
+		env.Alias('install', '$PREFIX')
 
 # vim: set filetype=python: 
