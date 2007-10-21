@@ -326,6 +326,7 @@ class ModelLoader(handler.ContentHandler):
 
 				x = attrs.get("x")
 				y = attrs.get("y")
+				stackpos = attrs.get("stackpos")
 
 				if (x):
 					x = int(x)
@@ -339,9 +340,11 @@ class ModelLoader(handler.ContentHandler):
 					self.y = y
 				else:
 					y = self.y
-
+				
 				inst = self.layer.addInstance(object, fife.ModelCoordinate(x,y))
 				fife.InstanceVisual.create(inst)
+				if (stackpos):
+					inst.get2dGfxVisual().setStackPosition(int(stackpos))
 				
 				if (object.getAction("default")):
 					target = fife.Location()
