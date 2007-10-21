@@ -9,12 +9,12 @@
 	<object id="21001">
 		<image source="techdemo/gfx/tiles/ground/concrete.png" direction="0" />
 	</object>
-		<object id="21010">
-			<image source="techdemo/gfx/tiles/ground/concrete_pavement_bottom.png" direction="0" />
-		</object>
-		<object id="21011">
-			<image source="techdemo/gfx/tiles/ground/concrete_pavement_top.png" direction="0" />
-		</object>
+	<object id="21010">
+		<image source="techdemo/gfx/tiles/ground/concrete_pavement_bottom.png" direction="0" />
+	</object>
+	<object id="21011">
+		<image source="techdemo/gfx/tiles/ground/concrete_pavement_top.png" direction="0" />
+	</object>
 	
 	<object id="21002">
 		<image source="techdemo/gfx/tiles/ground/concrete_dottedplate_up_end.png" direction="0" />			

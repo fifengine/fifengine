@@ -9,7 +9,7 @@ SET PATH=%_%\applications\scons;%_%\applications\mingw\bin;\applications\python2
 :: Goto TRUNK and call SCons
 cd \
 cd %_%\..\..\
-scons projfiles=1
+scons projectfiles_only=1
 
 :: Return us to the directory we started from
 cd %_%
