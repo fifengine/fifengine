@@ -2,7 +2,6 @@ import os, sys
 from utils.util_scripts.path import path as upath
 
 opts = Options('options.py', ARGUMENTS)
-opts.Add(PathOption('PREFIX', 'Directory to install under', '/usr'))
 opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations', 1))
 opts.Add(BoolOption('tests',  'Build testcases in unit_tests', 0))
 opts.Add(BoolOption('noengine',  'Prevents building of engine, use e.g. for util/test tweaking', 0))
@@ -18,6 +17,10 @@ opts.Add(BoolOption('log', 'Enables logging for the engine', 1))
 
 opts.Add(BoolOption('rend_camzone', 'Enables camera zone renderer', 0))
 opts.Add(BoolOption('rend_grid', 'Enables grid renderer', 0))
+
+# Platform-specific prefix directories
+if sys.platform == 'linux2':
+	opts.Add(PathOption('PREFIX', 'Directory to install under', '/usr'))
 
 env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
 env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
@@ -165,7 +168,7 @@ else:
 	# techdemo installation
 	if sys.platform == 'linux2':
 		source = [str(f) for f in upath('techdemo').walkfiles() if str(f).find('.svn') == -1]
-		target = map(lambda x: '$PREFIX/share/games/fife-'+x, source)
+		target = map(lambda x: '$PREFIX/share/games/fife/'+x, source)
 		env.InstallAs(target, source)
 		env.InstallAs('$PREFIX/bin/fife-techdemo', 'techdemo.py')
 	
