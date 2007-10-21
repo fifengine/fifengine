@@ -51,7 +51,7 @@ namespace FIFE {
 		 */
 		virtual ~InstanceRenderer();
 		
-		void render(Camera* camera, Layer* layer, stackpos2instances_t* instance_stack, int stackpos);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos);
 
 	private:
 		int getAngleBetween(const Location& loc1, const Location& loc2, Camera& cam);

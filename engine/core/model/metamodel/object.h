@@ -111,7 +111,7 @@ namespace FIFE {
 		
 		/** Gets used visualization
 		 */
-		template<typename T> T* getVisual() { return reinterpret_cast<T*>(m_visual); }
+		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
 
 	private:
 		Object* m_inherited;

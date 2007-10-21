@@ -57,7 +57,7 @@ namespace FIFE {
 	
 	static Image* zone_image = 0;
 	
-	void CameraZoneRenderer::render(Camera* camera, Layer* layer, stackpos2instances_t* instance_stack, int stackpos) {
+	void CameraZoneRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) {
 		if (stackpos != 0) {
 			return;
 		}
@@ -68,7 +68,7 @@ namespace FIFE {
 			return;
 		}
 		// draw this layer's grid as the camera sees it
-		Rect rect = camera->getViewPort();
+		Rect rect = cam->getViewPort();
 		if (zone_image == 0) {
 			// build zone image
 			int dataSize = rect.w * rect.h;
@@ -92,7 +92,7 @@ namespace FIFE {
 			ModelCoordinate prevLayerCoord;
 			for (int y = 0; y < rect.h; y++) {
 				for (int x = 0; x < rect.w; x++) {
-					ExactModelCoordinate elevCoord = camera->toElevationCoordinates(ScreenPoint(x, y));
+					ExactModelCoordinate elevCoord = cam->toElevationCoordinates(ScreenPoint(x, y));
 					ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
 					
 					if (prevLayerCoord != layerCoord) {
@@ -105,7 +105,7 @@ namespace FIFE {
 			
 			for (int x = 0; x < rect.w; x++) {
 				for (int y = 0; y < rect.h; y++) {
-					ExactModelCoordinate elevCoord = camera->toElevationCoordinates(ScreenPoint(x, y));
+					ExactModelCoordinate elevCoord = cam->toElevationCoordinates(ScreenPoint(x, y));
 					ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
 					
 					if (prevLayerCoord != layerCoord) {

@@ -32,6 +32,6 @@ namespace FIFE {
 
 		Object* getInherited();
 		void setVisual(AbstractVisual* visual);
-		template<typename T> T* getVisual();
+		template<typename T> T* getVisual() const;
 	};
 }

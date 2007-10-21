@@ -48,6 +48,6 @@ namespace FIFE {
 		%template(get_Point) get<Point>;
 		%template(get_string) get<std::string>;
 		void setVisual(AbstractVisual* visual);
-		template<typename T> T* getVisual();
+		template<typename T> T* getVisual() const;
 	};
 }

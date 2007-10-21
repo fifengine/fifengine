@@ -31,6 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/metamodel/abstractvisual.h"
+#include "view/camera.h"
 
 namespace FIFE {
 	class Object;
@@ -139,6 +140,20 @@ namespace FIFE {
 		 */
 		int getStaticImageIndexByAngle(unsigned int angle);
 		
+		/** Sets current camera coordinate for the instance. 
+		 *  Value is basically cached so that it needs to be computed only once
+		 */
+		void setCameraCoordinate(ScreenPoint screenpoint) {
+			m_screenpoint = screenpoint;
+		}
+		
+		/** Gets current camera coordinate for the instance. 
+		 *  @see setCameraCoordinate
+		 */
+		ScreenPoint getCameraCoordinate() const {
+			return m_screenpoint;
+		}
+		
 
 	private:
 		/** Constructor
@@ -148,7 +163,8 @@ namespace FIFE {
 		Instance* m_instance;
 		// static image that is read from object. Used for fast access when drawing images
 		int m_cached_static_img_id;
-		int m_cached_static_img_angle;		
+		int m_cached_static_img_angle;
+		ScreenPoint m_screenpoint;
 	};
 	
 	class ActionVisual: public Visual2DGfx {

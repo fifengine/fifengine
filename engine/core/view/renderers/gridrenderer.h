@@ -46,7 +46,7 @@ namespace FIFE {
 		 */
 		virtual ~GridRenderer();
 		
-		void render(Camera* camera, Layer* layer, stackpos2instances_t* instance_stack, int stackpos);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos);
 
 	private:
 		RenderBackend* m_renderbackend;

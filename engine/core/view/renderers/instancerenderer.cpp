@@ -76,7 +76,7 @@ namespace FIFE {
 		}
 	}
 	
-	void InstanceRenderer::render(Camera* camera, Layer* layer, stackpos2instances_t* instance_stack, int stackpos) {
+	void InstanceRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) {
 		FL_DBG(_log, "Iterating layer...");
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
@@ -84,15 +84,18 @@ namespace FIFE {
 			return;
 		}
 
-		stackpos2instances_t::const_iterator i = instance_stack->find(stackpos);
-		const std::vector<Instance*>& instances = i->second;
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it);
+			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+			if (visual->getStackPosition() != stackpos) {
+				continue;
+			}
+			
 			Image* image = NULL;
 			ExactModelCoordinate elevpos = instance->getLocation().getElevationCoordinates();
-			ScreenPoint campos = camera->toScreenCoordinates(elevpos);
+			ScreenPoint campos = cam->toScreenCoordinates(elevpos);
 			
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocation().getLayerCoordinates());
 			FL_DBG(_log, LMsg("Instance elevation position = ") << elevpos);
@@ -100,7 +103,7 @@ namespace FIFE {
 			
 			Action* action = instance->getCurrentAction();
 			const Location& facing_loc = instance->getFacingLocation();
-			int angle = getAngleBetween(instance->getLocation(), instance->getFacingLocation(), *camera);
+			int angle = getAngleBetween(instance->getLocation(), instance->getFacingLocation(), *cam);
 			FL_DBG(_log, LMsg("Rendering instance with angle ") << angle);
 			if (action) {
 				FL_DBG(_log, "Instance has action");
@@ -112,7 +115,7 @@ namespace FIFE {
 				FL_DBG(_log, LMsg("Calculated angle = ") << angle);
 			} else {
 				FL_DBG(_log, "No action");
-				int imageid = instance->getVisual<InstanceVisual>()->getStaticImageIndexByAngle(angle);
+				int imageid = visual->getStaticImageIndexByAngle(angle);
 				FL_DBG(_log, LMsg("Instance does not have action, using static image with id ") << imageid);
 				if (imageid >= 0) {
 					image = &m_imagepool->getImage(imageid);
@@ -120,7 +123,7 @@ namespace FIFE {
 			}
 			if (image) {
 				ExactModelCoordinate exact_elevpos = instance->getLocation().getElevationCoordinates();
-				ScreenPoint drawpt = camera->toScreenCoordinates(exact_elevpos);
+				ScreenPoint drawpt = cam->toScreenCoordinates(exact_elevpos);
 
 				int w = image->getWidth();
 				int h = image->getHeight();
@@ -129,8 +132,8 @@ namespace FIFE {
 				drawpt.y -= h / 2;
 				drawpt.y += image->getYShift();
 				Rect r = Rect(drawpt.x, drawpt.y, w, h);
-				FL_DBG(_log, LMsg("image(") << r << "), viewport (" << camera->getViewPort());
-				if (r.intersects(camera->getViewPort())) {
+				FL_DBG(_log, LMsg("image(") << r << "), viewport (" << cam->getViewPort());
+				if (r.intersects(cam->getViewPort())) {
 					FL_DBG(_log, "Instance is visible in viewport, rendering");
 					image->render(r);
 				} else {

@@ -596,6 +596,7 @@ digraph "source tree" {
     "engine/core/view/visual.cpp" -> "util/logger.h"
     "engine/core/view/visual.cpp" -> "visual.h"
     "engine/core/view/visual.h" -> "model/metamodel/abstractvisual.h"
+    "engine/core/view/visual.h" -> "view/camera.h"
     "engine/core/xml/tinyxml/tinystr.cpp" -> "tinystr.h"
     "engine/core/xml/tinyxml/tinyxml.cpp" -> "tinyxml.h"
     "engine/core/xml/tinyxml/tinyxml.cpp" -> "vfs/raw/rawdata.h"

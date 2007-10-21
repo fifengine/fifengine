@@ -37,7 +37,6 @@ namespace FIFE {
 	class Camera;
 	class Layer;
 	class Instance;
-	typedef std::map<int, std::vector<Instance*> > stackpos2instances_t;
 	
 	class AbstractRenderer {
 	public:
@@ -51,10 +50,10 @@ namespace FIFE {
 		 *
 		 * @param cam camera view to draw
 		 * @param cam current layer to be rendered
-		 * @param instance_stack instances on the current layer ordered by stack position
+		 * @param instances instances on the current layer
 		 * @param stack_pos current stack position
 		 */
-		virtual void render(Camera* cam, Layer* layer, stackpos2instances_t* instance_stack, int stackpos) = 0;
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) = 0;
 	};
 }
 

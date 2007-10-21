@@ -52,7 +52,7 @@ namespace FIFE {
 	GridRenderer::~GridRenderer() {
 	}
 	
-	void GridRenderer::render(Camera* camera, Layer* layer, stackpos2instances_t* instance_stack, int stackpos) {
+	void GridRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) {
 		if (stackpos != 0) {
 			return;
 		}
@@ -63,20 +63,18 @@ namespace FIFE {
 			return;
 		}
 		
-		stackpos2instances_t::const_iterator i = instance_stack->find(stackpos);
-		const std::vector<Instance*>& instances = i->second;
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = *instance_it;
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, instance->getLocation().getLayerCoordinates());
 			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-			ScreenPoint firstpt = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
+			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toElevationCoordinates(*it));
 			Point pt1(firstpt.x, firstpt.y);
 			Point pt2;
 			++it;
 			while (it != vertices.end()) {
-				ScreenPoint pts = camera->toScreenCoordinates(cg->toElevationCoordinates(*it));
+				ScreenPoint pts = cam->toScreenCoordinates(cg->toElevationCoordinates(*it));
 				pt2.x = pts.x; pt2.y = pts.y;
 				m_renderbackend->drawLine(pt1, pt2, 0, 255, 0);
 				pt1 = pt2;

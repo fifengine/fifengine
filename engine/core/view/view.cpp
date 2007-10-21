@@ -22,6 +22,7 @@
 // Standard C++ library includes
 #include <iostream>
 #include <algorithm>
+#include <set>
 
 // 3rd party library includes
 
@@ -99,6 +100,16 @@ namespace FIFE {
 		}
 	}
 	
+	bool instanceDistanceSort(const Instance* lhs, const Instance* rhs) {
+		return (lhs->getVisual<InstanceVisual>()->getCameraCoordinate().z <
+		        rhs->getVisual<InstanceVisual>()->getCameraCoordinate().z);
+	}
+	
+	bool instanceStackSort(const Instance* lhs, const Instance* rhs) {
+		return (lhs->getVisual<InstanceVisual>()->getStackPosition() <
+		        rhs->getVisual<InstanceVisual>()->getStackPosition());
+	}
+		
 	void View::update() {
 		FL_DBG(_log, "In View::update");
 		
@@ -117,21 +128,27 @@ namespace FIFE {
 			std::vector<Layer*>::const_iterator layer_it = layers.begin();
 			for (;layer_it != layers.end(); ++layer_it) {
 			
-				// sort instances on layer based on stack position. done only once
+				// sort instances on layer based on stack position + camera distance. done only once
 				//  here instead passing it to each renderer
-				const std::vector<Instance*>& instances = (*layer_it)->getInstances();
+				std::set<int> stack_positions;				
+				std::vector<Instance*> instances((*layer_it)->getInstances());
 				std::vector<Instance*>::const_iterator instance_it = instances.begin();
-				stackpos2instances_t stacked_instances;
 				for (;instance_it != instances.end(); ++instance_it) {
-					stacked_instances[(*instance_it)->getVisual<InstanceVisual>()->getStackPosition()].push_back(*instance_it);
+					Instance* instance = *instance_it;
+					InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+					ExactModelCoordinate c = instance->getLocation().getElevationCoordinates();
+					visual->setCameraCoordinate((*cam_it)->toScreenCoordinates(c));
+					stack_positions.insert(visual->getStackPosition());
 				}
-			
-				// asks renderers to draw the layer using made stack ordering
-				stackpos2instances_t::iterator stack_it = stacked_instances.begin();
-				for (;stack_it != stacked_instances.end(); ++stack_it) {
+				std::sort(instances.begin(), instances.end(), instanceDistanceSort);
+				std::sort(instances.begin(), instances.end(), instanceStackSort);
+				
+				// asks renderers to draw the layer
+				std::set<int>::const_iterator stack_it = stack_positions.begin();
+				for (;stack_it != stack_positions.end(); ++stack_it) {
 					std::vector<AbstractRenderer*>::iterator rend_it = m_renderers.begin();
 					for(; rend_it != m_renderers.end(); ++rend_it) {
-						(*rend_it)->render(*cam_it, *layer_it, &stacked_instances, stack_it->first);
+						(*rend_it)->render(*cam_it, *layer_it, instances, *stack_it);
 					}
 				}
 			}
