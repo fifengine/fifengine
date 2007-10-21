@@ -8,7 +8,8 @@ opts.Add(BoolOption('noengine',  'Prevents building of engine, use e.g. for util
 opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
 opts.Add(EnumOption('script', 'Selects generated scripting language bindings', 'python', allowed_values=('python', 'lua')))
 opts.Add(BoolOption('profile', 'Build with profiling information', 0))
-opts.Add(BoolOption('projfiles',  "Create IDE project files. If defined, won't build code", 0))
+opts.Add(BoolOption('projectfiles_only',  "Creates IDE project files only. If defined, won't build code. " +
+                    "Note that normal builds generate these files also automatically.", 0))
 opts.Add(BoolOption('utils',  'Build utilities', 0))
 opts.Add(BoolOption('ext',  'Build external dependencies', 0))
 opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
@@ -95,7 +96,7 @@ def checkSimpleLib(context, liblist, header = '', lang = 'c', required = 1):
 
 	return False
 
-if env['projfiles']:
+if env['projectfiles_only']:
 	Export('env')
 	SConscript(['engine/SConscript'])
 elif env['docs']:

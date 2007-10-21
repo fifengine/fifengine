@@ -201,17 +201,17 @@ def generate_all_project_files():
 if not env.GetOption('clean'): 
 	generate_all_project_files()
 
-	if not env['projfiles']:
-		env.Append(CPPPATH = ['#/engine/core', '#/engine/swigwrappers'])
-		compilefiles = [str(f) for f in remove_based_on_dir_filter(filteredpaths, implfiles)]
-		compilefiles.append('./swigwrappers/%s/fife_wrap.cxx' % env['script'])
-		if sys.platform == 'linux2':
-			env.Replace(SHLIBPREFIX = '_')
-		if sys.platform == 'darwin':
-			flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl'])
-		else:
-			flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
-		if sys.platform == 'linux2':
-			env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Copy('$TARGET', '$SOURCE')])
-			env.Install('$PREFIX/lib/python2.5/site-packages/fife', flib)
-			env.Install('$PREFIX/lib/python2.5/site-packages/fife', [str(f) for f in extensionfiles])
+if not env['projectfiles_only']:
+	env.Append(CPPPATH = ['#/engine/core', '#/engine/swigwrappers'])
+	compilefiles = [str(f) for f in remove_based_on_dir_filter(filteredpaths, implfiles)]
+	compilefiles.append('./swigwrappers/%s/fife_wrap.cxx' % env['script'])
+	if sys.platform == 'linux2':
+		env.Replace(SHLIBPREFIX = '_')
+	if sys.platform == 'darwin':
+		flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl'])
+	else:
+		flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
+	if sys.platform == 'linux2':
+		env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Copy('$TARGET', '$SOURCE')])
+		env.Install('$PREFIX/lib/python2.5/site-packages/fife', flib)
+		env.Install('$PREFIX/lib/python2.5/site-packages/fife', [str(f) for f in extensionfiles])
