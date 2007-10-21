@@ -15,25 +15,25 @@ class TestLoaders(unittest.TestCase):
 	def testLoading(self):
 		loadMapFile("content/maps/new_official_map.xml", self.engine)
 
-		query = self.metamodel.getObjectsByString("id", "15001")
+		query = self.metamodel.getObjects("id", "15001")
 		self.assertEqual(len(query), 1)
 
-		query = self.metamodel.getObjectsByString("id", "15201")
+		query = self.metamodel.getObjects("id", "15201")
 		self.assertEqual(len(query), 1)
 
-		query = self.model.getMapsByString("id", "OfficialMap")
+		query = self.model.getMaps("id", "OfficialMap")
 		self.assertEqual(len(query), 1)
 		self.map = query[0]
 
-#		self.assertEqual(self.map.get_string("Name"), "official_map.xml")
-		self.assertEqual(self.map.get_int("Version"), 1)
-		self.assertEqual(self.map.get_string("Author"), "barra")
+#		self.assertEqual(self.map.get("Name"), "official_map.xml")
+		self.assertEqual(self.map.get("Version"), '1')
+		self.assertEqual(self.map.get("Author"), "barra")
 
-		query = self.map.getElevationsByString("id", "OfficialMapElevation")
+		query = self.map.getElevations("id", "OfficialMapElevation")
 		self.assertEqual(len(query), 1)
 		self.elevation = query[0]
 
-		query = self.elevation.getLayersByString("id", "OfficialMapTileLayer")
+		query = self.elevation.getLayers("id", "OfficialMapTileLayer")
 		self.assertEqual(len(query), 1)
 		self.layer = query[0]
 

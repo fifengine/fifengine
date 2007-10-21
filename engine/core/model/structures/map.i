@@ -35,13 +35,7 @@ namespace FIFE {
 			void removeElevation(Elevation*);
 
 			std::list<Elevation*> getElevations() const;
-			template<typename T>
-			std::list<Elevation*> getElevations(const std::string& field, const T& value) const;
-			%template(getElevationsByBool) getElevations<bool>;
-			%template(getElevationsByInt) getElevations<long>;
-			%template(getElevationsByRect) getElevations<Rect>;
-			%template(getElevationsByPoint) getElevations<Point>;
-			%template(getElevationsByString) getElevations<std::string>;
+			std::list<Elevation*> getElevations(const std::string& field, const std::string& value) const;
 
 			size_t getNumElevations() const;
 			void clearElevations();

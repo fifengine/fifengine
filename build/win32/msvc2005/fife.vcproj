@@ -406,8 +406,6 @@
 					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinyxmlerror.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\xml\tinyxml\tinyxmlparser.cpp"></File>
 				</Filter>
-				<File RelativePath="..\..\..\engine\core\xml\xmlutil.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\xml\xmlutil.h"></File>
 			</Filter>
 		</Filter>
 		<Filter Name="swigwrappers">

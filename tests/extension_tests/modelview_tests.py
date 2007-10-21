@@ -12,9 +12,9 @@ class TestModelView(unittest.TestCase):
 
 		loadMapFile("content/maps/new_official_map.xml", self.engine)
 	
-		self.map = self.model.getMapsByString("id", "OfficialMap")[0]
-		self.elevation = self.map.getElevationsByString("id", "OfficialMapElevation")[0]
-		self.layer = self.elevation.getLayersByString("id", "OfficialMapTileLayer")[0]
+		self.map = self.model.getMaps("id", "OfficialMap")[0]
+		self.elevation = self.map.getElevations("id", "OfficialMapElevation")[0]
+		self.layer = self.elevation.getLayers("id", "OfficialMapTileLayer")[0]
 
 		imgid = self.layer.getInstances()[0].getObject().get2dGfxVisual().getStaticImageIndexByAngle(0)
 		img = self.engine.getImagePool().getImage(imgid)

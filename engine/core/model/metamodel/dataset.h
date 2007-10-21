@@ -103,24 +103,7 @@ namespace FIFE {
 			 * @note These datasets are owned by this dataset, so don't delete
 			 * returned pointers!
 			 */
-			template<typename T>
-			std::list<Dataset*> getDatasets(const std::string& field, const T& value) {
-				std::list<Dataset*> datasets;
-
-				std::vector<Dataset*>::const_iterator it = m_datasets.begin();
-				for(; it != m_datasets.end(); ++it) {
-					if((*it)->get<T>(field) == value)
-						datasets.push_back(*it);
-				}
-
-				std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
-				for(; jt != m_datasets.end(); ++jt) {
-					std::list<Dataset*> tmp = (*jt)->getDatasets<T>(field, value);
-					datasets.splice(datasets.end(), tmp);
-				}
-
-				return datasets;
-			}
+			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
 			/** Get objects from this dataset having the given value in the
 			 * given field.
@@ -128,24 +111,7 @@ namespace FIFE {
 			 * @note Objects are owned by the dataset, so don't delete
 			 * returned pointers!
 			 */
-			template<typename T>
-			std::list<Object*> getObjects(const std::string& field, const T& value) {
-				std::list<Object*> objects;
-
-				std::vector<Object*>::const_iterator it = m_objects.begin();
-				for(; it != m_objects.end(); ++it) {
-					if((*it)->oget<T>(field) == value)
-						objects.push_back(*it);
-				}
-
-				std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
-				for(; jt != m_datasets.end(); ++jt) {
-					std::list<Object*> tmp = (*jt)->getObjects<T>(field, value);
-					objects.splice(objects.end(), tmp);
-				}
-
-				return objects;
-			}
+			std::list<Object*> getObjects(const std::string& field, const std::string& value);
 
 		private:
 

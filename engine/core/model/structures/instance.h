@@ -72,8 +72,7 @@ namespace FIFE {
 
 		/** Gets associated metadata field with given field name
 		 */
-		template<typename T>
-		const T& get(const std::string& field) { return m_object->oget<T>(field); }
+		const std::string& get(const std::string& field) { return m_object->get(field); }
 
 		/** Sets location of the instance
 		 *  @param loc new location

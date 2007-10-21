@@ -73,24 +73,17 @@ class ModelSaver:
 		list = parent.listFields()
 
 		for i in range(0, len(list)):
-			type = parent.getTypeName(list[i])
-
 			attr_vals = {
-				(None, 'type'): type,
 				(None, 'name'): list[i],
 			}
 			attr_names = {
-				(None, 'type'): 'type',
 				(None, 'name'): 'name',
 			}
 			attrs = AttributesNSImpl(attr_vals, attr_names)
 			self.file.write(self.indent_level)
 			self.xmlout.startElementNS((None, 'param'), 'param', attrs)
 
-			if (type == 'id'):
-				self.xmlout.characters(str(parent.get_int(list[i])))
-			elif (type == 'text'):
-				self.xmlout.characters(parent.get_string(list[i]))
+			self.xmlout.characters(parent.get(list[i]))
 
 			self.xmlout.endElementNS((None, 'param'), 'param')
 			self.file.write('\n')

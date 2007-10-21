@@ -40,7 +40,7 @@
 namespace FIFE {
 
 	Map::Map(const std::string& identifier) 
-		: AttributedClass(identifier, "Map") {
+		: AttributedClass(identifier) {
 	}
 
 	Map::~Map() {
@@ -93,6 +93,19 @@ namespace FIFE {
 																								
 		return elevs;
 	}
+
+	std::list<Elevation*> Map::getElevations(const std::string& field, const std::string& value) const {
+		std::list<Elevation*> matches;
+
+		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
+		for(; it != m_elevations.end(); ++it) {
+			if((*it)->get(field) == value)
+				matches.push_back(*it);
+		}
+
+		return matches;
+	}
+
 
 	Elevation* Map::addElevation(const std::string& identifier) {
 		std::vector<Elevation*>::const_iterator it = m_elevations.begin();

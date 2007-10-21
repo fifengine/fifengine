@@ -37,7 +37,7 @@
 namespace FIFE {
 
 	Layer::Layer(const std::string& identifier, Elevation* elevation, CellGrid* grid)
-		: AttributedClass(identifier, "map_Layer"),
+		: AttributedClass(identifier),
 		m_elevation(elevation),
 		m_instances_visibility(true),
 		m_grid(grid) {
@@ -74,6 +74,18 @@ namespace FIFE {
 
 	const std::vector<Instance*>& Layer::getInstances() {
 		return m_instances;
+	}
+
+	std::vector<Instance*> Layer::getInstances(const std::string& field, const std::string& value) {
+		std::vector<Instance*> matches;
+
+		std::vector<Instance*>::iterator it = m_instances.begin();
+		for(; it != m_instances.end(); ++it) {
+			if((*it)->get(field) == value)
+				matches.push_back(*it);	
+		}
+
+		return matches;
 	}
 
 	void Layer::setInstancesVisible(bool vis) {

@@ -47,12 +47,6 @@ namespace FIFE {
 	 * Objects describe the properties of objects.
 	 * Objects may inherit default values from another object.
 	 *
-	 * @note oget redefines AttributedClass's notion of get,
-	 * forwarding requests for undefined fields to the inherited
-	 * object. It must be a separate function since templates
-	 * can't be virtual. C++ sucks. A better name than "oget"
-	 * would be welcome.
-	 *
 	 * @see AttributedClass in util/attributedclass.h
 	 */
 	class Object : public AttributedClass {
@@ -73,14 +67,7 @@ namespace FIFE {
 		 */
 		~Object();
 		
-		template<typename T>
-		const T& oget(const std::string& field) {
-			
-			if(hasField(field) || !m_inherited)
-				return get<T>(field);
-
-			return m_inherited->oget<T>(field);
-		}
+		const std::string& get(const std::string& field);
 
 		/** Adds new action with given id. In case there is action already
 		 *  with given id, returns it instead of new object
@@ -119,20 +106,6 @@ namespace FIFE {
 		AbstractPather* m_pather;
 		AbstractVisual* m_visual;
 	};
-
-	template <>
-	inline
-	const std::string& Object::oget<std::string>(const std::string& field) {
-
-		if(field == "parent")
-			return m_inherited->Id();
-
-		if(hasField(field) || !m_inherited)
-			return get<std::string>(field);
-
-		return m_inherited->oget<std::string>(field);
-	}
-
 
 } //FIFE
 #endif

@@ -33,13 +33,7 @@ namespace FIFE {
 			void removeLayer(Layer* index);
 
 			std::list<Layer*> getLayers() const;
-			template<typename T>
-			std::list<Layer*> getLayers(const std::string& field, const T& value) const;
-			%template(getLayersByBool) getLayers<bool>;
-			%template(getLayersByInt) getLayers<long>;
-			%template(getLayersByPoint) getLayers<Point>;
-			%template(getLayersByRect) getLayers<Rect>;
-			%template(getLayersByString) getLayers<std::string>;
+			std::list<Layer*> getLayers(const std::string& field, const std::string& value) const;
 
 			size_t getNumLayers() const;
 			void clearLayers();

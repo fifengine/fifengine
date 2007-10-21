@@ -85,14 +85,10 @@ class ModelLoader(handler.ContentHandler):
 			if (self.state == self.SMetadata):
 
 				self.param_name = 0
-				self.param_type = 0
 				for attrName in attrs.keys():
 					if (attrName == "name"):
 						self.param_name = attrs.get(attrName)
-					if (attrName == "type"):
-						self.param_type = attrs.get(attrName)
 
-				assert self.param_type, "Metadata must have an associated type."
 				assert self.param_name, "Metadata fields must be given a name."
 
 			else:
@@ -167,7 +163,7 @@ class ModelLoader(handler.ContentHandler):
 					if (attrName == "id"):
 						id = attrs.get(attrName)
 					elif (attrName == "parent"):
-						query = self.metamodel.getObjectsByString("id", str(attrs.get(attrName)))
+						query = self.metamodel.getObjects("id", str(attrs.get(attrName)))
 						assert len(query) != 0, "0 objects objects with this identifier found."
 						assert len(query) == 1, "Multiple objects with this identifier found."
 						parent = query[0]
@@ -320,7 +316,7 @@ class ModelLoader(handler.ContentHandler):
 				assert objectID, "No object specified."
 
 				# We seem to need a unicode -> string conversion here...
-				query = self.metamodel.getObjectsByString("id", str(objectID))
+				query = self.metamodel.getObjects("id", str(objectID))
 				assert len(query) != 0, "0 objects objects with this identifier found."
 				assert len(query) == 1, "Multiple objects with this identifier found."
 				object = query[0]
@@ -360,16 +356,8 @@ class ModelLoader(handler.ContentHandler):
 			self.state = self.stack.pop()
 
 		if (name == 'param'):
-			if (self.param_type == "id"):
-				assert len(self.datastack) > 0
-				self.datastack[len(self.datastack) - 1].set_int(str(self.param_name), int(self.chars))
-
-			elif (self.param_type == "text"):
-				assert len(self.datastack) > 0
-				self.datastack[len(self.datastack) - 1].set_string(str(self.param_name), str(self.chars).strip())
-
-			elif (type == "Point"):
-				print "Points are not yet supported."
+			assert len(self.datastack) > 0
+			self.datastack[len(self.datastack) - 1].set(str(self.param_name), str(self.chars).strip())
 
 			self.chars = ""
 

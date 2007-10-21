@@ -248,11 +248,11 @@ class World(object):
 	def create_world(self, path):
 		self.map = loadMapFile(path, self.engine)
 	
-		self.elevation = self.map.getElevationsByString("id", "TechdemoMapElevation")[0]
-		self.layer = self.elevation.getLayersByString("id", "TechdemoMapTileLayer")[0]
+		self.elevation = self.map.getElevations("id", "TechdemoMapElevation")[0]
+		self.layer = self.elevation.getLayers("id", "TechdemoMapTileLayer")[0]
 		
 		# little workaround to show the agent above mapobjects
-		self.agent_layer = self.elevation.getLayersByString("id", "TechdemoAgentLayer")[0]
+		self.agent_layer = self.elevation.getLayers("id", "TechdemoAgentLayer")[0]
 		
 		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().get2dGfxVisual().getStaticImageIndexByAngle(0))
 		self.screen_cell_w = img.getWidth()
@@ -294,10 +294,10 @@ class World(object):
 		# no movement at start
 		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
 		
-		self.agent = self.agent_layer.getInstancesByString('id', 'PC')[0]
+		self.agent = self.agent_layer.getInstances('id', 'PC')[0]
 		self.agent.addListener(self.reactor)
 		self.agent.act_here('idle', self.target, True)
-		for g in self.agent_layer.getInstancesByString('id', 'Gunner'):
+		for g in self.agent_layer.getInstances('id', 'Gunner'):
 			g.act_here('idle', self.target, True)
 
 		

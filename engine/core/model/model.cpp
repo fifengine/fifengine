@@ -69,6 +69,18 @@ namespace FIFE {
 		return lst;
 	}
 
+	std::list<Map*> Model::getMaps(const std::string& field, const std::string& value) const {
+		std::list<Map*> matches;
+
+		std::vector<Map*>::const_iterator it = m_maps.begin();
+		for(; it != m_maps.end(); ++it) {
+			if((*it)->get(field) == value)
+				matches.push_back(*it);
+		}
+
+		return matches;
+	}
+
 	void Model::removeMap(Map* map) {
 		std::vector<Map*>::iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {

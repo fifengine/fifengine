@@ -93,7 +93,7 @@ subgraph cluster_12 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "xml"; "xml/tinyxml"
+    "xml/tinyxml"
     label = "xml";
 }
     "audio" -> "util"
@@ -212,8 +212,6 @@ subgraph cluster_12 {
     "view/renderers" -> "util"
     "view/renderers" -> "video"
     "view/renderers" -> "view"
-    "xml" -> "util"
-    "xml" -> "xml/tinyxml"
     "xml/tinyxml" -> "vfs"
     "xml/tinyxml" -> "vfs/raw"
 }

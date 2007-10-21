@@ -39,7 +39,7 @@
 namespace FIFE {
 
 	Elevation::Elevation(const std::string& identifier, Map* map) 
-		: AttributedClass(identifier, "map_elevation"),
+		: AttributedClass(identifier),
 		m_map(map),
 		m_reference_layer(0) {
 	}
@@ -61,6 +61,18 @@ namespace FIFE {
 		}
 
 		return layers;
+	}
+
+	std::list<Layer*> Elevation::getLayers(const std::string& field, const std::string& value) const {
+		std::list<Layer*> matches;
+
+		std::vector<Layer*>::const_iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			if((*it)->get(field) == value)
+				matches.push_back(*it);
+		}
+
+		return matches;
 	}
 
 	size_t Elevation::getNumLayers() const {

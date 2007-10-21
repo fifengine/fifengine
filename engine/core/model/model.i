@@ -26,14 +26,7 @@ namespace FIFE {
 			void removeMap(Map*);
 
 			std::list<Map*> getMaps() const;
-
-			template<typename T>
-			std::list<Map*> getMaps(const std::string& field, const T& value) const;
-			%template(getMapsByBool) getMaps<bool>;
-			%template(getMapsByInt) getMaps<long>;
-			%template(getMapsByPoint) getMaps<Point>;
-			%template(getMapsByRect) getMaps<Rect>;
-			%template(getMapsByString) getMaps<std::string>;
+			std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
 
 			size_t getNumMaps() const;
 			void clearMaps();

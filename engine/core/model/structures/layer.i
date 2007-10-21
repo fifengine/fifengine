@@ -37,15 +37,9 @@ namespace FIFE {
 			bool hasInstances() const;
 			Instance* addInstance(Object* object, const ModelCoordinate& p);
 			void removeInstance(Instance* object);
-			const std::vector<Instance*>& getInstances();
 
-			template<typename T>
-			std::vector<Instance*> getInstances(const std::string& field, const T& value);
-			%template(getInstancesByBool) getInstances<bool>;
-			%template(getInstancesByInt) getInstances<long>;
-			%template(getInstancesByRect) getInstances<Rect>;
-			%template(getInstancesByPoint) getInstances<Point>;
-			%template(getInstancesByString) getInstances<std::string>;
+			const std::vector<Instance*>& getInstances();
+			std::vector<Instance*> getInstances(const std::string& field, const std::string& value);
 
 			void setInstancesVisible(bool vis);
 			void toggleInstancesVisible();

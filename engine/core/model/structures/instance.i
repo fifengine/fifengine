@@ -40,13 +40,7 @@ namespace FIFE {
 		void act_here(const std::string& action_name, const Location& direction, bool repeating=false);
 		void update(unsigned int curticks=0);
 
-		template<typename T>
-		const T& get(const std::string& field);
-		%template(get_bool) get<bool>;
-		%template(get_int) get<long>;
-		%template(get_Rect) get<Rect>;
-		%template(get_Point) get<Point>;
-		%template(get_string) get<std::string>;
+		const std::string& get(const std::string& field);
 		void setVisual(AbstractVisual* visual);
 		template<typename T> T* getVisual() const;
 	};

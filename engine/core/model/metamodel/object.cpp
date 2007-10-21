@@ -35,7 +35,7 @@
 
 namespace FIFE {
 	Object::Object(const std::string& identifier, Object* inherited):
-		AttributedClass(identifier, "Object"),
+		AttributedClass(identifier),
 		m_inherited(inherited),
 		m_actions(NULL),
 		m_pather(NULL),
@@ -52,6 +52,28 @@ namespace FIFE {
 			delete m_actions;
 		}
 		delete m_visual;
+	}
+
+	const std::string& Object::get(const std::string& field) {
+		static std::string null = "";
+
+		if(field == "parent") {
+			if(m_inherited) {
+				return m_inherited->Id();
+			}
+			else {
+				return null;
+			}
+		}
+
+		const std::string& s = AttributedClass::get(field);
+		if(s != "")
+			return s;
+
+		if(m_inherited)
+			return m_inherited->get(field);
+
+		return null;
 	}
 
 	Action* Object::addAction(const std::string& identifier) {

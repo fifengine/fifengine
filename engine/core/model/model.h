@@ -72,18 +72,7 @@ namespace FIFE {
 			 * @param the field to search on
 			 * @param the value to be searched for in the field
 			 */
-			template<typename T>
-			std::list<Map*> getMaps(const std::string& field, const T& value) const {
-				std::list<Map*> matches;
-
-				std::vector<Map*>::const_iterator it = m_maps.begin();
-				for(; it != m_maps.end(); ++it) {
-					if((*it)->get<T>(field) == value)
-						matches.push_back(*it);
-				}
-
-				return matches;
-			}
+			std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
 
 			/** Return the number of maps in this model
 			 */

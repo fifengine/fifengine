@@ -24,21 +24,9 @@ namespace FIFE {
 
 			std::list<Dataset*> getDatasets();
 			std::list<Dataset*> getDatasetsRec();
-			template<typename T>
-			std::list<Dataset*> getDatasets(const std::string& field, const T& value);
-			%template(getDatasetsByBool) getDatasets<bool>;
-			%template(getDatasetsByInt) getDatasets<long>;
-			%template(getDatasetsByRect) getDatasets<Rect>;
-			%template(getDatasetsByPoint) getDatasets<Point>;
-			%template(getDatasetsByString) getDatasets<std::string>;
+			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
-			template<typename T>
-			std::list<Object*> getObjects(const std::string& field, const T& value);
-			%template(getObjectsByBool) getObjects<bool>;
-			%template(getObjectsByInt) getObjects<long>;
-			%template(getObjectsByRect) getObjects<Rect>;
-			%template(getObjectsByPoint) getObjects<Point>;
-			%template(getObjectsByString) getObjects<std::string>;
+			std::list<Object*> getObjects(const std::string& field, const std::string& value);
 
 		private:
 

@@ -65,40 +65,12 @@ namespace FIFE {
 			/** Gets a list of datasets that with the given value
 			 * in the given field. Recursive.
 			 */
-			template<typename T>
-			std::list<Dataset*> getDatasets(const std::string& field, const T& value) {
-				std::list<Dataset*> datasets;
-
-				std::vector<Dataset*>::const_iterator it = m_datasets.begin();
-				for(; it != m_datasets.end(); ++it) {
-					if((*it)->get<T>(field) == value)
-						datasets.push_back(*it);
-				}
-
-				std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
-				for(; jt != m_datasets.end(); ++jt) {
-					std::list<Dataset*> tmp = (*jt)->getDatasets<T>(field, value);
-					datasets.splice(datasets.end(), tmp);
-				}
-
-				return datasets;
-			}
+			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
 			/** Gets a list of objects that with the given value
 			 * in the given field. Recursive.
 			 */
-			template<typename T>
-			std::list<Object*> getObjects(const std::string& field, const T& value) {
-				std::list<Object*> objects;
-
-				std::vector<Dataset*>::const_iterator it = m_datasets.begin();
-				for(; it != m_datasets.end(); ++it) {
-					std::list<Object*> tmp = (*it)->getObjects<T>(field, value);
-					objects.splice(objects.end(), tmp);
-				}
-
-				return objects;
-			}
+			std::list<Object*> getObjects(const std::string& field, const std::string& value);
 
 		private:
 

@@ -202,22 +202,12 @@ class FIFEdit(fife.IWidgetListener, object):
 			label.setPosition(1, dy)
 			self.register_widget(label, self.mapedit)
 
-			textfield = 0
-
-			type = self.map.getTypeName(list[i])
-			if (type == 'id'):
-				textfield = fife.TextField(str(self.map.get_int(list[i])))
-
-			elif (type == 'text'):
-				textfield = fife.TextField(self.map.get_string(list[i]))
-
-			else:
-				textfield = fife.TextField('Error: unsupported type.')
+			textfield = fife.TextField(self.map.get(list[i]))
 
 			textfield.setWidth(300)
 			textfield.setPosition(1 + label.getWidth() + 1, dy)
 			self.register_widget(textfield, self.mapedit)
-			self.map_metafields.append((list[i], type, textfield))
+			self.map_metafields.append((list[i], textfield))
 
 			dy += textfield.getHeight() + 1
 
@@ -229,12 +219,9 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.register_widget(datbutton, self.mapedit)
 
 	def save_mapmetadata(self):
-		self.map.set_string('id', self.mapid_field.getText())
+		self.map.set('id', self.mapid_field.getText())
 		for i in range(0, len(self.map_metafields)):
-			if (self.map_metafields[i][1] == 'id'):
-				self.map.set_int(self.map_metafields[i][0], int(self.map_metafields[i][2].getText()))
-			elif (self.map_metafields[i][1] == 'text'):
-				self.map.set_string(self.map_metafields[i][0], self.map_metafields[i][2].getText())
+			self.map.set(self.map_metafields[i][0], self.map_metafields[i][1].getText())
 
 	def create_mapdataset_edit(self):
 		self.map_datwnd = fife.Window('Edit map dataset inclusions:')

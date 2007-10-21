@@ -12,16 +12,16 @@ class TestModel(unittest.TestCase):
 		map1 = self.model.addMap("map001")
 		map2 = self.model.addMap("map002")
 		
-		map1.set_string("Name", "Map1")
-		map2.set_string("Name", "Map2")
+		map1.set("Name", "Map1")
+		map2.set("Name", "Map2")
 		
-		self.assertEqual(map1.get_string("Name"), "Map1")
-		self.assertEqual(map2.get_string("Name"), "Map2")
+		self.assertEqual(map1.get("Name"), "Map1")
+		self.assertEqual(map2.get("Name"), "Map2")
 
-		map_query = self.model.getMapsByString("Name", "Map1")
+		map_query = self.model.getMaps("Name", "Map1")
 		self.assertEqual(len(map_query), 1)
 
-		map_query = self.model.getMapsByString("Name", "Map2")
+		map_query = self.model.getMaps("Name", "Map2")
 		self.assertEqual(len(map_query), 1)
 
 		map_query = self.model.getMaps()
@@ -48,21 +48,21 @@ class TestModel(unittest.TestCase):
 
 	def testMaps(self):
 		map = self.model.addMap("map005")
-		map.set_string("Name", "MyMap")
+		map.set("Name", "MyMap")
 
 		elev1 = map.addElevation("elevation001")
 		elev2 = map.addElevation("elevation002")
 
-		elev1.set_string("Name", "Elev1")
-		elev2.set_string("Name", "Elev2")
+		elev1.set("Name", "Elev1")
+		elev2.set("Name", "Elev2")
 
-		self.assertEqual(elev1.get_string("Name"), "Elev1")
-		self.assertEqual(elev2.get_string("Name"), "Elev2")
+		self.assertEqual(elev1.get("Name"), "Elev1")
+		self.assertEqual(elev2.get("Name"), "Elev2")
 
-		query = map.getElevationsByString("Name", "Elev1")
+		query = map.getElevations("Name", "Elev1")
 		self.assertEqual(len(query), 1)
 
-		query = map.getElevationsByString("Name", "Elev2")
+		query = map.getElevations("Name", "Elev2")
 		self.assertEqual(len(query), 1)
 
 		self.assertEqual(map.getNumElevations(), 2)
@@ -73,7 +73,7 @@ class TestModel(unittest.TestCase):
 	def testElevations(self):
 		map = self.model.addMap("map006")
 		elev = map.addElevation("elevation003")
-		elev.set_string("Name", "MyElevation")
+		elev.set("Name", "MyElevation")
 
 		#self.assertEqual(elev.getMap(), map)
 		self.assertEqual(elev.getNumLayers(), 0)
@@ -84,13 +84,13 @@ class TestModel(unittest.TestCase):
 		layer1 = elev.addLayer("layer001", grid)
 		layer2 = elev.addLayer("layer002", grid)
 
-		layer1.set_string("Name", "Layer1")
-		layer2.set_string("Name", "Layer2")
+		layer1.set("Name", "Layer1")
+		layer2.set("Name", "Layer2")
 
-		self.assertEqual(layer1.get_string("Name"), "Layer1")
-		self.assertEqual(layer2.get_string("Name"), "Layer2")
+		self.assertEqual(layer1.get("Name"), "Layer1")
+		self.assertEqual(layer2.get("Name"), "Layer2")
 
-		self.assertEqual(len(elev.getLayersByString("Name", "Layer1")), 1)
+		self.assertEqual(len(elev.getLayers("Name", "Layer1")), 1)
 
 		self.assertEqual(elev.getNumLayers(), 2)
 		elev.removeLayer(layer2)
@@ -105,12 +105,12 @@ class TestModel(unittest.TestCase):
 		dat = self.metamodel.addDataset("dataset002")
 		grid = fife.SquareGrid()
 		obj1 = dat.addObject("object001")
-		obj1.set_string("Name", "MyHero")
+		obj1.set("Name", "MyHero")
 		obj2 = dat.addObject("object002")
-		obj2.set_string("Name", "Goon")
+		obj2.set("Name", "Goon")
 
-		self.assertEqual(obj1.oget_string("id"), "object001")
-		self.assertEqual(obj2.oget_string("id"), "object002")
+		self.assertEqual(obj1.get("id"), "object001")
+		self.assertEqual(obj2.get("id"), "object002")
 
 		layer = elev.addLayer("layer003", grid)
 
@@ -121,11 +121,11 @@ class TestModel(unittest.TestCase):
 		layer.addInstance(obj2, fife.ModelCoordinate(5,6))
 		layer.addInstance(obj2, fife.ModelCoordinate(5,4))
 		
-		query = layer.getInstancesByString("Name", "Goon")
+		query = layer.getInstances("Name", "Goon")
 		self.assertEqual(len(query), 2)
 		self.assertEqual(len(layer.getInstances()), 3)
 
-		self.assertEqual(query[0].get_string("Name"), "Goon")
+		self.assertEqual(query[0].get("Name"), "Goon")
 		p1 = fife.ModelCoordinate(4,4)
 		print p1.x, p1.y
 		p2 = inst.getLocation().getLayerCoordinates()
@@ -135,16 +135,16 @@ class TestModel(unittest.TestCase):
 	def testMetaModel(self):
 		dat1 = self.metamodel.addDataset("dataset003")
 		dat2 = self.metamodel.addDataset("dataset004")
-		dat1.set_string("Name", "Dat1")
-		dat2.set_string("Name", "Dat2")
+		dat1.set("Name", "Dat1")
+		dat2.set("Name", "Dat2")
 
-		self.assertEqual(dat1.get_string("Name"), "Dat1")
-		self.assertEqual(dat2.get_string("Name"), "Dat2")
+		self.assertEqual(dat1.get("Name"), "Dat1")
+		self.assertEqual(dat2.get("Name"), "Dat2")
 
-		meta_query = self.metamodel.getDatasetsByString("Name", "Dat1")
+		meta_query = self.metamodel.getDatasets("Name", "Dat1")
 		self.assertEqual(len(meta_query), 1)
 
-		meta_query = self.metamodel.getDatasetsByString("Name", "Dat2")
+		meta_query = self.metamodel.getDatasets("Name", "Dat2")
 		self.assertEqual(len(meta_query), 1)
 
 	def testDatasets(self):
@@ -154,31 +154,31 @@ class TestModel(unittest.TestCase):
 		obj2 = dat.addObject("2")
 		obj3 = dat.addObject("3")
 
-		obj1.set_string("Name", "MyHero")
-		obj1.set_int("Hitpoints", 100)
-		obj1.set_string("Type", "Humanoid")
+		obj1.set("Name", "MyHero")
+		obj1.set("Hitpoints", '100')
+		obj1.set("Type", "Humanoid")
 
-		obj2.set_string("Name", "Zombie")
-		obj2.set_int("Hitpoints", 40)
-		obj2.set_string("Type", "Humanoid")
+		obj2.set("Name", "Zombie")
+		obj2.set("Hitpoints", '40')
+		obj2.set("Type", "Humanoid")
 
-		obj3.set_string("Name", "Box")
-		obj3.set_string("Type", "Inanimate")
+		obj3.set("Name", "Box")
+		obj3.set("Type", "Inanimate")
 
-		meta_query = self.metamodel.getObjectsByString("id", "1")
+		meta_query = self.metamodel.getObjects("id", "1")
 		self.assertEqual(len(meta_query), 1)
-		self.assertEqual(meta_query[0].oget_string("Name"), "MyHero")
+		self.assertEqual(meta_query[0].get("Name"), "MyHero")
 
-		meta_query = self.metamodel.getObjectsByString("Name", "MyHero")
+		meta_query = self.metamodel.getObjects("Name", "MyHero")
 		self.assertEqual(len(meta_query), 1)
-		self.assertEqual(meta_query[0].oget_string("Name"), "MyHero")
+		self.assertEqual(meta_query[0].get("Name"), "MyHero")
 		
-		meta_query = self.metamodel.getObjectsByString("Type", "Humanoid")
+		meta_query = self.metamodel.getObjects("Type", "Humanoid")
 		self.assertEqual(len(meta_query), 2)
 
-		meta_query = self.metamodel.getObjectsByString("Name", "Box")
+		meta_query = self.metamodel.getObjects("Name", "Box")
 		obj = meta_query[0]
-		self.assertEqual(obj.oget_string("Type"), "Inanimate")
+		self.assertEqual(obj.get("Type"), "Inanimate")
 
 class TestActionAngles(unittest.TestCase):
 	def setUp(self):

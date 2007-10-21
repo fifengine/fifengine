@@ -123,18 +123,7 @@ namespace FIFE {
 			 * @param field the (string) field to search on
 			 * @param value the value to be found in the field
 			 */
-			template<typename T>
-			std::vector<Instance*> getInstances(const std::string& field, const T& value) {
-				std::vector<Instance*> matches;
-
-				std::vector<Instance*>::iterator it = m_instances.begin();
-				for(; it != m_instances.end(); ++it) {
-					if((*it)->get<T>(field) == value)
-						matches.push_back(*it);	
-				}
-
-				return matches;
-			}
+			std::vector<Instance*> getInstances(const std::string& field, const std::string& value);
 
 			/** Set object visibility
 			 */

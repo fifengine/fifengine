@@ -64,5 +64,35 @@ namespace FIFE {
 		return datasets;
 	}
 
+	std::list<Dataset*> MetaModel::getDatasets(const std::string& field, const std::string& value) {
+		std::list<Dataset*> datasets;
+
+		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		for(; it != m_datasets.end(); ++it) {
+			if((*it)->get(field) == value)
+				datasets.push_back(*it);
+		}
+
+		std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
+		for(; jt != m_datasets.end(); ++jt) {
+			std::list<Dataset*> tmp = (*jt)->getDatasets(field, value);
+			datasets.splice(datasets.end(), tmp);
+		}
+
+		return datasets;
+	}
+
+	std::list<Object*> MetaModel::getObjects(const std::string& field, const std::string& value) {
+		std::list<Object*> objects;
+
+		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		for(; it != m_datasets.end(); ++it) {
+			std::list<Object*> tmp = (*it)->getObjects(field, value);
+			objects.splice(objects.end(), tmp);
+		}
+
+		return objects;
+	}
+
 }; //FIFE
 

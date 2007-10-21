@@ -16,13 +16,7 @@ namespace FIFE {
 		Object(const std::string& identifier, Object* inherited=NULL);
 		~Object();
 
-		template<typename T>
-		const T& oget(const std::string& field);
-		%template(oget_bool) oget<bool>;
-		%template(oget_int) oget<long>;
-		%template(ogetPoint) oget<Point>;
-		%template(ogetRect) oget<Rect>;
-		%template(oget_string) oget<std::string>;
+		const std::string& get(const std::string& field);
 
 		Action* addAction(const std::string& identifier);
 		Action* getAction(const std::string& identifier);

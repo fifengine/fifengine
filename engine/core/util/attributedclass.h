@@ -28,26 +28,18 @@
 #include <vector>
 
 // 3rd party library includes
-#include <boost/variant.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/point.h"
-#include "util/rect.h"
 #include "util/logger.h"
 
 namespace FIFE {
 
-	/** A class with dynamically typed fields. These correspond to
-	 * metadata attributes in the native xml map format.
+	/** Base for classes with metadata attributes.
 	 */
 	class AttributedClass {
-		public:
-
-			// Use boost::any instead?
-			typedef boost::variant<bool,long,size_t,Point,Rect,std::string> value_type;
 
 		public:
 			/** Create a new attributed class instance
@@ -56,16 +48,14 @@ namespace FIFE {
 			 *
 			 *  This constructor reflects this.
 			 *
-			 *  @param class_name The class name of the inheriting class
+			 *  @param identifier A string identifier for this object
 			 */
-			AttributedClass(const std::string& identifier, const std::string& class_name = "Table");
-
-			AttributedClass(const AttributedClass& ac);
+			AttributedClass(const std::string& identifier);
 
 			/** Destructor
 			 *
 			 */
-			~AttributedClass();
+			virtual ~AttributedClass();
 
 			/** Get the (string) identifier associated with this object
 			 */
@@ -77,144 +67,26 @@ namespace FIFE {
 
 			/** Set the value of a field.
 			 */
-			template<typename T>
-			void set(const std::string& field, const T& value) {
-				m_fields[field] = value_type(value);
-			}
+			void set(const std::string& field, const std::string& value);
 
 			/** Get the value of a field.
 			 *
 			 *  If an attribute is requested, that does not exist
-			 *  or a type mismatch occures, a static default value
-			 *  is returned.
+			 *  the empty string is returned.
 			 *
 			 *  @param field The field to be retrieved.
-			 *  @return The value of the field or a const ref
-			 *  to a default value.
 			 */
-			template<typename T>
-			const T& get(const std::string& field) {
-				static const value_type const_value;
-				if(m_fields.find(field) == m_fields.end()) {
-					return boost::get<T>(const_value);
-				}
-
-				T* value = boost::get<T>(&(m_fields[field]));
-				if(value == 0) {
-					Logger _log(LM_UTIL);
-					FL_WARN(_log, LMsg("attributed_class")
-						<< "type mismatch in " << className() 
-						<< " field: " << field);
-
-					return boost::get<T>(const_value);
-				}
-				return *value;
-			}
+			virtual const std::string& get(const std::string& field);
 
 			/** Remove a field.
 			 */
-			void remove(const std::string& field) {
-				m_fields.erase(field);
-			}
-
-			const std::type_info& getTypeInfo(const std::string& field)  {
-				return m_fields[field].type();
-			}
-
-			std::string getTypeName(const std::string& field) {
-				static value_type idtype = value_type(long(0));
-				static value_type texttype = value_type(std::string(""));
-
-				std::string name = m_fields[field].type().name();
-
-				if(name == idtype.type().name())
-					return "id";
-
-				if(name == texttype.type().name())
-					return "text";
-
-				return name;
-			}
-
-			/** Check whether a field exists
-			 *  @param field The field to check
-			 *  @return True if the field has been set
-			 */
-			bool hasField(const std::string& field) const;
-
-			/** Read fields from another AttributedClass instance (DEPRECATED?)
-			 */
-			void updateAttributes(const AttributedClass* attrObject, bool override = true);
-
-			/** Get class name of the inheriting class
-			 * Poor mans rtti
-			 */
-			const std::string& className() const;
-
-			/** Print debuging information
-			 */
-			void debugPrint() const {}
+			void remove(const std::string& field);
 
 		private:
-			std::map<std::string,value_type> m_fields;
+			std::map<std::string,std::string> m_fields;
 
 			std::string m_id;
-			std::string m_className;
 	};
-
-	/** A anonymous table of values.
-	 */
-	typedef AttributedClass Table;
-
-	// Inline Functions
-
-	template <>
-	inline
-	void AttributedClass::set<std::string>(const std::string& field, const std::string& value) {
-		if(field == "id") {
-			m_id = value;
-			return ;
-		}
-
-		m_fields[field] = value_type(value);
-	}
-
-	template <>
-	inline
-	const std::string& AttributedClass::get<std::string>(const std::string& field) {
-		if(field == "id")
-			return m_id;
-
-		static const value_type const_value;
-		if(m_fields.find(field) == m_fields.end()) {
-			return boost::get<std::string>(const_value);
-		}
-
-		std::string* value = boost::get<std::string>(&(m_fields[field]));
-		if(value == 0) {
-			Logger _log(LM_UTIL);
-			FL_WARN(_log, LMsg("attributed_class")
-				<< "type mismatch in " << className() 
-				<< " field: " << field);
-
-			return boost::get<std::string>(const_value);
-		}
-		return *value;
-	}
-
-	inline
-	bool AttributedClass::hasField(const std::string& field) const {
-		if(field == "id")
-			return true;
-
-		bool found = m_fields.find(field) != m_fields.end();
-		return found;
-	}
-
-	inline
-	const std::string& AttributedClass::className() const {
-		return m_className;
-	}
 
 }; //FIFE
 #endif

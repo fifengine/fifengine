@@ -31,19 +31,12 @@
 
 namespace FIFE {
 
-	AttributedClass::AttributedClass(const std::string& identifier, const std::string& className) 
-		: m_id(identifier),
-		m_className(className) { 
-	}
-
-	AttributedClass::AttributedClass(const AttributedClass& ac)
-		: m_className(ac.m_className) {
-		updateAttributes(&ac,true);
+	AttributedClass::AttributedClass(const std::string& identifier) 
+		: m_id(identifier) { 
 	}
 
 	AttributedClass::~AttributedClass() {
-
-	};
+	}
 
 	const std::string& AttributedClass::Id() const {
 		return m_id;
@@ -52,7 +45,7 @@ namespace FIFE {
 	std::vector<std::string> AttributedClass::listFields() const {
 		std::vector<std::string> list;
 
-		std::map<std::string,value_type>::const_iterator i = m_fields.begin();
+		std::map<std::string,std::string>::const_iterator i = m_fields.begin();
 		for(; i != m_fields.end(); ++i) {
 			list.push_back(i->first);
 		}
@@ -60,16 +53,31 @@ namespace FIFE {
 		return list;
 	}
 
-	void AttributedClass::updateAttributes(const AttributedClass* attrObject, bool override) {
-		if( attrObject == 0 )
-			return;
-		std::map<std::string,value_type>::const_iterator i(attrObject->m_fields.begin());
-		std::map<std::string,value_type>::const_iterator end(attrObject->m_fields.end());
-		for(; i != end; ++i) {
-			if( !override && m_fields.find(i->first) != m_fields.end() )
-				continue;
-			m_fields[i->first] = i->second;
+	void AttributedClass::set(const std::string& field, const std::string& value) {
+		if(field == "id") {
+			m_id = value;
+			return ;
 		}
+
+		m_fields[field] = value;
 	}
+
+	const std::string& AttributedClass::get(const std::string& field) {
+		static std::string null = "";
+		
+		if(field == "id")
+			return m_id;
+
+		if(m_fields.find(field) == m_fields.end()) {
+			return null;
+		}
+
+		return m_fields[field];
+	}
+
+	void AttributedClass::remove(const std::string& field) {
+		m_fields.erase(field);
+	}
+
 }; //FIFE
 
