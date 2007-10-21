@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <dataset id="Test" type="Embedded" format="1.0">
-	<object id="WildBarracuda:Sign">
-		<image source="techdemo/gfx/objects/signs/wb-bar_blue.png"/>
+	<object id="WildBarracuda:Sign" blocking="1">
+		<image source="techdemo/gfx/objects/signs/wb-bar_blue.png" yshift="-90" xshift="-20" />
 	</object>
 	<object id="WildBarracuda:Bar">
 		<image source="techdemo/gfx/objects/buildings/wb_bar_e01.png" />

@@ -110,7 +110,7 @@
 			</metadata>	
 			
 			<instances>
-				<i o="WildBarracuda:Sign" x="3" y="5"/>	
+				<i o="WildBarracuda:Sign" x="3" y="6"/>	
 				<i o="Gunner" x="8" y="8" />
 				<i o="Gunner" x="5" y="7" />	
 				<i o="Gunner" x="9" y="8" />	

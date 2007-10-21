@@ -300,7 +300,6 @@ class World(object):
 		for g in self.agent_layer.getInstances('id', 'Gunner'):
 			g.act_here('idle', self.target, True)
 
-		
 		while True:
 			self.engine.pump()
 			

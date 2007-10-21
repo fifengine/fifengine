@@ -170,7 +170,6 @@ class ModelLoader(handler.ContentHandler):
 						pather = self.model.getPather(attrs.get(attrName))
 					if not pather:
 						pather = self.model.getPather("LinearPather")
-
 				assert id, "Objects must be given an identifier (id) field."
 
 				if (parent):
@@ -188,16 +187,25 @@ class ModelLoader(handler.ContentHandler):
 			if (self.state == self.SObject):
 				source = 0
 				direction = 0
+				xshift = 0
+				yshift = 0
 				for attrName in attrs.keys():
 					if (attrName == "source"):
 						source = attrs.get(attrName)
 					elif (attrName == "direction"):
 						direction = attrs.get(attrName)
-
+					elif (attrName == "xshift"):
+						xshift = int(attrs.get(attrName))
+					elif (attrName == "yshift"):
+						yshift = int(attrs.get(attrName))
 				assert source, "Image declared with no source location."	
 
 				id = self.pool.addResourceFromFile(str(source))	
 				self.object.get2dGfxVisual().addStaticImage(int(direction), id)
+				if (xshift or yshift):
+					img = self.pool.getImage(id)
+					img.setXShift(xshift)
+					img.setYShift(yshift)
 
 			else:
 				assert 0, "<image> tags can only be declared in an <object> section."
