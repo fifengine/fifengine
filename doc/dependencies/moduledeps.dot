@@ -12,6 +12,7 @@ digraph "source tree" {
     "controller" -> "gui"
     "controller" -> "loaders"
     "controller" -> "model"
+    "controller" -> "pathfinder"
     "controller" -> "util"
     "controller" -> "vfs"
     "controller" -> "video"

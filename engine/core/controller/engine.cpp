@@ -60,6 +60,9 @@
 //#include "loaders/fallout/model_loaders/dat1.h"
 //#include "loaders/fallout/model_loaders/dat2.h"
 #include "model/model.h"
+#include "pathfinder/linearpather/linearpather.h"
+#include "pathfinder/realtimepather/realtimepather.h"
+
 #include "view/view.h"
 #include "view/renderers/camerazonerenderer.h"
 #include "view/renderers/gridrenderer.h"
@@ -227,6 +230,9 @@ namespace FIFE {
 		SDL_EnableUNICODE(1);
 
 		m_model = new Model();
+		m_model->addPather(new LinearPather());
+		m_model->addPather(new RealTimePather());
+		
 		m_view = new View();
 #ifdef RENDER_CAMZONES
 		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, m_imagepool));

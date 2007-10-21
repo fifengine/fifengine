@@ -108,6 +108,8 @@ subgraph cluster_12 {
     "controller" -> "gui/console"
     "controller" -> "loaders/native/video_loaders"
     "controller" -> "model"
+    "controller" -> "pathfinder/linearpather"
+    "controller" -> "pathfinder/realtimepather"
     "controller" -> "util"
     "controller" -> "util/time"
     "controller" -> "vfs"

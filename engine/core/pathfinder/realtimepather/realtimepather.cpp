@@ -42,9 +42,9 @@ namespace FIFE {
 		m_map = map;
 	}
 
-	int RealTimePather::getNextLocation(const Location& curloc, const Location& target, 
-				const double& distance_to_travel, Location& nextLocation,
-				Location& facingLocation, const int session_id) {
+	int RealTimePather::getNextLocation(const Instance* instance, const Location& target, 
+				double distance_to_travel, Location& nextLocation,
+				Location& facingLocation, int session_id) {
 		// NOTE: this change naturally broke mortiz's current pather. However
 		// the change should allow more flexible implementation
 		// sorry for that mortiz :-/

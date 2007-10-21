@@ -176,7 +176,7 @@ namespace FIFE {
 				
 		Location nextLocation = m_location;
 		m_actioninfo->m_pather_session_id = m_actioninfo->m_pather->getNextLocation(
-			m_location, *m_actioninfo->m_target,
+			this, *m_actioninfo->m_target,
 			distance_to_travel, nextLocation, *m_facinglocation,
 			m_actioninfo->m_pather_session_id);
 		m_location = nextLocation;

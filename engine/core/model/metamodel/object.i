@@ -27,5 +27,8 @@ namespace FIFE {
 		Object* getInherited();
 		void setVisual(AbstractVisual* visual);
 		template<typename T> T* getVisual() const;
+		
+		void setBlocking(bool blocking);
+		bool isBlocking();
 	};
 }

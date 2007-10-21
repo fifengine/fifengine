@@ -15,23 +15,25 @@ namespace std {
 
 namespace FIFE {
 	class MetaModel;
+	class AbstractPather;
 
 	class Model {
-		public:
+	public:
 
-			Model();
-			~Model();
+		Model();
+		~Model();
 
-			Map* addMap(const std::string& identifier);
-			void removeMap(Map*);
+		Map* addMap(const std::string& identifier);
+		void removeMap(Map*);
 
-			std::list<Map*> getMaps() const;
-			std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
+		std::list<Map*> getMaps() const;
+		std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
 
-			size_t getNumMaps() const;
-			void clearMaps();
+		size_t getNumMaps() const;
+		void clearMaps();
 
-			MetaModel* getMetaModel();
-			void update();
+		MetaModel* getMetaModel();
+		void update();
+		AbstractPather* getPather(const std::string& pathername);
 	};
 }

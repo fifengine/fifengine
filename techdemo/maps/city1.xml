@@ -83,8 +83,6 @@
 
 			<instances>
 				<i o="WildBarracuda:Bar" x="5" y="1" />
-				<i o="WildBarracuda:Sign" x="3" y="5"/>
-
 				<i o="Townhouse:Fassade" x="15" y="-3" />
 
 <!--
@@ -112,7 +110,8 @@
 			</metadata>	
 			
 			<instances>
-				<i o="Gunner" x="8" y="8" />				
+				<i o="WildBarracuda:Sign" x="3" y="5"/>	
+				<i o="Gunner" x="8" y="8" />
 				<i o="Gunner" x="5" y="7" />	
 				<i o="Gunner" x="9" y="8" />	
 				

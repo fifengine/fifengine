@@ -41,62 +41,70 @@ namespace FIFE {
 	 * A model is a facade for everything in the model.
 	 */
 	class Model {
-		public:
+	public:
 
-			/** Constructor
-			 *
-			 */
-			Model();
+		/** Constructor
+		 *
+		 */
+		Model();
 
-			/** Destructor
-			 *
-			 */
-			~Model();
-			
-			/** Add a map this model, and get a pointer to it.
-			 * The returned pointer is owned by the Model, so
-			 * don't delete it!
-			 */
-			Map* addMap(const std::string& identifier);
+		/** Destructor
+		 *
+		 */
+		~Model();
+		
+		/** Add a map this model, and get a pointer to it.
+		 * The returned pointer is owned by the Model, so
+		 * don't delete it!
+		 */
+		Map* addMap(const std::string& identifier);
 
-			/** Remove a map from this model
-			 */
-			void removeMap(Map*);
+		/** Remove a map from this model
+		 */
+		void removeMap(Map*);
 
-			/** Get all the maps in the model.
-			 */
-			std::list<Map*> getMaps() const;
+		/** Get all the maps in the model.
+		 */
+		std::list<Map*> getMaps() const;
 
-			/** Get a set of maps by a value.
-			 *
-			 * @param the field to search on
-			 * @param the value to be searched for in the field
-			 */
-			std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
+		/** Get a set of maps by a value.
+		 *
+		 * @param the field to search on
+		 * @param the value to be searched for in the field
+		 */
+		std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
 
-			/** Return the number of maps in this model
-			 */
-			size_t getNumMaps() const;
+		/** Return the number of maps in this model
+		 */
+		size_t getNumMaps() const;
 
-			/** Remove all elevations from a map
-			 */
-			void clearMaps();
+		/** Remove all elevations from a map
+		 */
+		void clearMaps();
 
-			/** Get a pointer to the MetaModel associated with
-			 * this Model. The Model owns this pointer, so don't
-			 * delete it!
-			 */
-			MetaModel* getMetaModel();
+		/** Get a pointer to the MetaModel associated with
+		 * this Model. The Model owns this pointer, so don't
+		 * delete it!
+		 */
+		MetaModel* getMetaModel();
 
-			/** Called periodically to update events on model
-			 */
-			void update();
+		/** Adds pather to model. Moves ownership to model
+		 */
+		void addPather(AbstractPather* pather);
+		
+		/** Returns pather corresponding given name. If none found, returns NULL
+		 */
+		AbstractPather* getPather(const std::string& pathername);
+		
+		/** Called periodically to update events on model
+		 */
+		void update();
 
-		private:
+	private:
 
-			std::vector<Map*> m_maps;
-			
-			MetaModel* m_meta;
+		std::vector<Map*> m_maps;
+		std::vector<AbstractPather*> m_pathers;
+		MetaModel* m_meta;
 	};
 
 }; //FIFE

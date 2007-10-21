@@ -99,10 +99,20 @@ namespace FIFE {
 		/** Gets used visualization
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
+		
+		/** Sets if object blocks movement
+		 */
+		void setBlocking(bool blocking) { m_blocking = blocking; }
 
+		/** Gets if object blocks movement
+		 */
+		bool isBlocking();
+	
+	
 	private:
 		Object* m_inherited;
 		std::map<std::string, Action*>* m_actions;
+		bool m_blocking;
 		AbstractPather* m_pather;
 		AbstractVisual* m_visual;
 	};

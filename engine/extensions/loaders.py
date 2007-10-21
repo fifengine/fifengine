@@ -31,11 +31,6 @@ class ModelLoader(handler.ContentHandler):
 		self.datastack = [ ]
 
 		self.chars = ""
-
-		# big hack! address how pathfinders are declared etc, etc.
-		self.pather = fife.LinearPather()
-		self.pather.thisown = 0
-
 		self.construct = False 
 
 	def startElement(self, name, attrs):
@@ -159,6 +154,8 @@ class ModelLoader(handler.ContentHandler):
 
 				id = 0
 				parent = 0
+				blocking = 0
+				pather = None
 				for attrName in attrs.keys():
 					if (attrName == "id"):
 						id = attrs.get(attrName)
@@ -167,6 +164,12 @@ class ModelLoader(handler.ContentHandler):
 						assert len(query) != 0, "0 objects objects with this identifier found."
 						assert len(query) == 1, "Multiple objects with this identifier found."
 						parent = query[0]
+					elif (attrName == "blocking"):
+						blocking = int(attrs.get(attrName))
+					elif (attrName == "pather"):
+						pather = self.model.getPather(attrs.get(attrName))
+					if not pather:
+						pather = self.model.getPather("LinearPather")
 
 				assert id, "Objects must be given an identifier (id) field."
 
@@ -174,8 +177,8 @@ class ModelLoader(handler.ContentHandler):
 					self.object = self.dataset.addObject(str(id), parent)
 				else:
 					self.object = self.dataset.addObject(str(id))
-
-				self.object.setPather(self.pather)
+				self.object.setBlocking(blocking)
+				self.object.setPather(pather)
 				fife.ObjectVisual.create(self.object)
 
 			else:

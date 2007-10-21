@@ -10,5 +10,6 @@ namespace FIFE {
 	public:
 		LinearPather();
 		virtual ~LinearPather();
+		std::string getName() const;
 	};
 }

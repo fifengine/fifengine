@@ -34,14 +34,11 @@
 namespace FIFE {
 	class Map;
 	class Location;
+	class Instance;
 
 	class AbstractPather {
 	public:
 		virtual ~AbstractPather() {};
-
-		/** Sets map for pather to use
-		 */
-		virtual void setMap(Map* map) = 0;
 
 		/** Gets next location from pathfinder
 		 * Model will call this function periodically when instances should
@@ -49,7 +46,7 @@ namespace FIFE {
 		 * Pather must be able to store multiple sessions for multiple simultaneous searches
 		 * (coming from multiple instances)
 		 *
-		 * @param curloc Current location
+		 * @param instance Instance making the call
 		 * @param target Target of the movement. This must be always on same layer as curpos
 		 * @param distance_to_travel  Distance how far caller can travel (in layer units)
 		 * @param nextLocation next location returned by the pather
@@ -58,9 +55,9 @@ namespace FIFE {
 		 *   Further increments are bind to previous ones with given session_id
 		 * @return session_id to use with further calls
 		 */
-		virtual int getNextLocation(const Location& curloc, const Location& target, 
-		                            const double& distance_to_travel, Location& nextLocation,
-		                            Location& facingLocation, const int session_id=-1) = 0;
+		virtual int getNextLocation(const Instance* instance, const Location& target, 
+		                            double distance_to_travel, Location& nextLocation,
+		                            Location& facingLocation, int session_id=-1) = 0;
 		
 		/** Cancels a given session.
 		 *
@@ -73,10 +70,9 @@ namespace FIFE {
 		 */
 		virtual bool cancelSession(const int session_id) = 0;
 
-		/**
-		 *
+		/** Gets the name of this pather
 		 */
-		virtual void resetTicks() = 0;
+		virtual std::string getName() const = 0;
 	};
 }
 

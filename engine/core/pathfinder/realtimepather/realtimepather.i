@@ -11,5 +11,6 @@ namespace FIFE {
 	public:
 		RealTimePather();
 		virtual ~RealTimePather();
+		std::string getName() const;
 	};
 }

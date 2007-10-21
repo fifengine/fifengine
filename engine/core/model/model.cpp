@@ -30,6 +30,7 @@
 #include "util/purge.h"
 #include "util/memory.h"
 #include "model/metamodel/metamodel.h"
+#include "model/metamodel/abstractpather.h"
 #include "structures/map.h"
 #include "util/exception.h"
 
@@ -43,6 +44,7 @@ namespace FIFE {
 
 	Model::~Model() {
 		purge(m_maps);
+		purge(m_pathers);
 		delete m_meta;
 	}
 
@@ -58,6 +60,20 @@ namespace FIFE {
 		return map;
 	}
 
+	void Model::addPather(AbstractPather* pather) {
+		m_pathers.push_back(pather);
+	}
+	
+	AbstractPather* Model::getPather(const std::string& pathername) {
+		std::vector<AbstractPather*>::const_iterator it = m_pathers.begin();
+		for(; it != m_pathers.end(); ++it) {
+			if ((*it)->getName() == pathername) {
+				return *it;
+			}
+		}
+		return NULL;
+	}
+	
 	std::list<Map*> Model::getMaps() const {
 		std::list<Map*> lst;
 

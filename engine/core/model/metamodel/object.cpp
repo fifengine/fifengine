@@ -38,6 +38,7 @@ namespace FIFE {
 		AttributedClass(identifier),
 		m_inherited(inherited),
 		m_actions(NULL),
+		m_blocking(false),
 		m_pather(NULL),
 		m_visual(NULL) {
 	}
@@ -111,5 +112,15 @@ namespace FIFE {
 
 	void Object::setPather(AbstractPather* pather) {
 		m_pather = pather;
+	}
+	
+	bool Object::isBlocking() {
+		if (m_blocking) {
+			return true;
+		}
+		if (m_inherited) {
+			return m_inherited->isBlocking();
+		}
+		return false;
 	}
 }

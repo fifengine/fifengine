@@ -8,7 +8,7 @@ from utils.util_scripts.path import path
 # the following dictionary defines the allowed dependencies checked while testing
 # format = user -> providers
 ALLOWED_MODULE_DEPS = {
-	'controller': ('model', 'eventchannel', 'gui', 'video', 'loaders', 'view', 'audio', 'util', 'vfs'),
+	'controller': ('model', 'eventchannel', 'gui', 'video', 'loaders', 'view', 'audio', 'util', 'vfs', 'pathfinder'),
 	'model': ('util',),
 	'eventchannel': ('util',),
 	'gui': ('eventchannel', 'util', 'video', 'vfs'),

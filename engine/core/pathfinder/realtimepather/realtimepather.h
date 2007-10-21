@@ -51,12 +51,14 @@ namespace FIFE {
 		}
 		
 		void setMap(Map* map);
-		int getNextLocation(const Location& curloc, const Location& target, 
-		                    const double& distance_to_travel, Location& nextLocation,
-		                    Location& facingLocation, const int session_id=-1);
+		int getNextLocation(const Instance* instance, const Location& target, 
+		                    double distance_to_travel, Location& nextLocation,
+		                    Location& facingLocation, int session_id=-1);
 
 		bool cancelSession(const int session_id);
-		virtual void resetTicks() { m_ticksleft = m_maxticks; }
+		std::string getName() const { return "RealTimePather"; };
+		
+		void resetTicks() { m_ticksleft = m_maxticks; }
 		
 	private:
 		typedef std::map<int, Search*> SessionMap;

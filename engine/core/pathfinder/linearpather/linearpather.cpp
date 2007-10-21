@@ -34,14 +34,19 @@
 namespace FIFE {
 	static Logger _log(LM_PATHFINDER);
 	
-	int LinearPather::getNextLocation(const Location& curloc, const Location& target,
-		                            const double& distance_to_travel, Location& nextLocation,
-		                            Location& facingLocation, const int session_id) {
+	int LinearPather::getNextLocation(const Instance* instance, const Location& target,
+		                            double distance_to_travel, Location& nextLocation,
+		                            Location& facingLocation, int session_id) {
+		Location curloc = instance->getLocation();
+		assert(curloc.getElevation() == target.getElevation());
+		assert(curloc.getLayer() == target.getLayer());
+		m_map = curloc.getElevation()->getMap();
+		
 		int cur_session_id = session_id;
 		if (cur_session_id < 0) {
 			cur_session_id = m_session_counter++;
 			
-			// extrapolate next location for this session
+			// extrapolate facing location for this session
 			ExactModelCoordinate cur_pos = curloc.getElevationCoordinates();
 			ExactModelCoordinate fac_pos = target.getElevationCoordinates();
 			fac_pos.x = fac_pos.x + (fac_pos.x - cur_pos.x);
@@ -56,8 +61,6 @@ namespace FIFE {
 		}
 		
 		FL_DBG(_log, LMsg("curloc ") <<  curloc << ", target " << target << ", dist2travel " << distance_to_travel);
-		assert(curloc.getElevation() == target.getElevation());
-		assert(curloc.getLayer() == target.getLayer());
 		ExactModelCoordinate cur_pos = curloc.getExactLayerCoordinates();
 		ExactModelCoordinate target_pos = target.getExactLayerCoordinates();
 		double dx = target_pos.x - cur_pos.x;
@@ -65,13 +68,31 @@ namespace FIFE {
 		double dist = sqrt(dx*dx + dy*dy);
 		FL_DBG(_log, LMsg("distance from cur to target = ") << dist);
 		
-		nextLocation = target;
-		if (dist > distance_to_travel) {
-			cur_pos.x += dx * (distance_to_travel / dist);
-			cur_pos.y += dy * (distance_to_travel / dist);
-			nextLocation.setExactLayerCoordinates(cur_pos);
+		// calculate where current position evolves with movement
+		if (distance_to_travel > dist) {
+			distance_to_travel = dist;
 		}
+		cur_pos.x += dx * (distance_to_travel / dist);
+		cur_pos.y += dy * (distance_to_travel / dist);
+		nextLocation.setExactLayerCoordinates(cur_pos);
+		FL_DBG(_log, LMsg("in case not blocking, could move to ") << nextLocation);
 		
+		// check if we have collisions and if we do, keep instance on current location
+		ModelCoordinate nextCellcoord = nextLocation.getLayerCoordinates();
+		const std::vector<Instance*>& instances = target.getLayer()->getInstances();
+		std::vector<Instance*>::const_iterator instance_it = instances.begin();
+		for (;instance_it != instances.end(); ++instance_it) {
+			Instance* i = (*instance_it);
+			if ((i == instance) || (!i->getObject()->isBlocking())) {
+				continue;
+			}
+			ModelCoordinate c = i->getLocation().getLayerCoordinates();
+			if ((c.x == nextCellcoord.x) && (c.y == nextCellcoord.y)) {
+				FL_DBG(_log, LMsg("Found blocking instance from planned cell ") << nextLocation);
+				nextLocation = curloc;
+				break;
+			}
+		}
 		return cur_session_id;
 	}
 }

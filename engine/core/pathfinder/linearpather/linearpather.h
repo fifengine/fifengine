@@ -41,26 +41,25 @@ namespace FIFE {
 	*/
 	class LinearPather: public AbstractPather {
 	public:
-		LinearPather(): m_session_counter(0) {}
+		LinearPather(): m_session_counter(0), m_map(NULL) {}
 
 		virtual ~LinearPather() {}
 
-		void setMap(Map* map) {}
-
-		int getNextLocation(const Location& curloc, const Location& target, 
-		                    const double& speed, Location& nextLocation,
-		                    Location& facingLocation, const int session_id=-1);
+		int getNextLocation(const Instance* instance, const Location& target, 
+		                    double speed, Location& nextLocation,
+		                    Location& facingLocation, int session_id=-1);
 		
 		bool cancelSession(const int session_id) { 
 			m_session2face.erase(session_id);
 			return true; 
 		}
 
-		void resetTicks() { }
+		std::string getName() const { return "LinearPather"; }
 	
 	private:
 		std::map< int, Location > m_session2face;
 		unsigned int m_session_counter;
+		Map* m_map;
 	};
 }
 
