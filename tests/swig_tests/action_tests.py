@@ -72,7 +72,7 @@ class ActionTests(unittest.TestCase):
 		camloc.setLayer(self.layer)
 		camloc.setLayerCoordinates(fife.ModelCoordinate(0,0))
 		
-		cam = fife.Camera()
+		cam = self.engine.getView().addCamera()
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
 		cam.setRotation(45)
 		cam.setTilt(40)
@@ -80,7 +80,7 @@ class ActionTests(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
 		cam.setViewPort(viewport)
-		self.engine.getView().addCamera(cam)
+		self.engine.getView().resetRenderers()
 		
 		self.engine.initializePumping()
 

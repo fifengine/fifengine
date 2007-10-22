@@ -379,9 +379,10 @@
 				</Filter>
 			</Filter>
 			<Filter Name="view">
-				<File RelativePath="..\..\..\engine\core\view\abstractrenderer.h"></File>
 				<File RelativePath="..\..\..\engine\core\view\camera.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\view\camera.h"></File>
+				<File RelativePath="..\..\..\engine\core\view\rendererbase.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\view\rendererbase.h"></File>
 				<Filter Name="renderers">
 					<File RelativePath="..\..\..\engine\core\view\renderers\camerazonerenderer.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\view\renderers\camerazonerenderer.h"></File>

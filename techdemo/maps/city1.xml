@@ -92,13 +92,6 @@
 				<i o="Rubbish_newspaper" x="3" y="6" />
 				<i o="Rubbish_newspaper60" x="2" y="7" />	
 
-				<i o="Street:Pile" x="1" y="9" />
-				<i o="Street:Pile" x="3" y="9" />
-				<i o="Street:Pile" x="5" y="9" />				
-				<i o="Street:Pile" x="7" y="9" />				
-				<i o="Street:Pile" x="9" y="9" />				
-				<i o="Street:Pile" x="11" y="9" />				
-				
 			</instances>
 		</layer>
 		
@@ -116,6 +109,12 @@
 				<i o="Gunner" x="9" y="8" />	
 				
 				<i o="PC" x="5" y="1"/>
+				<i o="Street:Pile" x="1" y="9" />
+				<i o="Street:Pile" x="3" y="9" />
+				<i o="Street:Pile" x="5" y="9" />
+				<i o="Street:Pile" x="7" y="9" />
+				<i o="Street:Pile" x="9" y="9" />
+				<i o="Street:Pile" x="11" y="9" />			
 			</instances>	
 		</layer>
 	</elevation>

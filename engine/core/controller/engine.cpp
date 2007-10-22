@@ -234,12 +234,8 @@ namespace FIFE {
 		m_model->addPather(new RoutePather());
 		
 		m_view = new View();
-#ifdef RENDER_CAMZONES
 		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, m_imagepool));
-#endif
-#ifdef RENDER_GRID
 		m_view->addRenderer(new GridRenderer(m_renderbackend));
-#endif
 		m_view->addRenderer(new InstanceRenderer(m_renderbackend, m_imagepool, m_animpool));
 	}
 

@@ -30,13 +30,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "view/abstractrenderer.h"
+#include "view/rendererbase.h"
 
 namespace FIFE {
 	class RenderBackend;
 	class ImagePool;
 
-	class CameraZoneRenderer: public AbstractRenderer {
+	class CameraZoneRenderer: public RendererBase {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
@@ -49,10 +49,16 @@ namespace FIFE {
 		virtual ~CameraZoneRenderer();
 		
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos);
+		
+		std::string getName() { return "CameraZoneRenderer"; }
+		
+		void setEnabled(bool enabled);
+		
 
 	private:
 		RenderBackend* m_renderbackend;
 		ImagePool* m_imagepool;
+		Image* m_zone_image;
 	};
 
 }

@@ -4,11 +4,14 @@
 %}
 
 namespace FIFE {
+	class RendererBase;
 	class View {
 	public:
 		~View();
-		void addCamera(Camera* camera);
+		Camera* addCamera();
 		void removeCamera(Camera* camera);
+		RendererBase* getRenderer(const std::string& name);
+		void resetRenderers();
 	private:
 		View(RenderBackend* renderbackend);	
 	};

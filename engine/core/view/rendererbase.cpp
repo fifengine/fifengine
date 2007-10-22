@@ -19,81 +19,72 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIEW_VIEW_H
-#define FIFE_VIEW_VIEW_H
-
 // Standard C++ library includes
-#include <list>
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "model/structures/layer.h"
+#include "model/structures/elevation.h"
+#include "util/logger.h"
 #include "rendererbase.h"
 
 namespace FIFE {
-	class Camera;
-	class RenderBackend;
-	class ImagePool;
-	class AnimationPool;
-	class Instance;
-	class Object;
-	class Action;
-
-	class View: public RendererListener {
-	public:
-		/** Constructor
-		 */
-		View();
-
-		/** Destructor
-		 */
-		~View();
-
-		/** Adds new renderer on the view. Ownership is transferred to the view.
-		 * After addition, renderer is active for all cameras
-		 */
-		void addRenderer(RendererBase* renderer);
+	static Logger _log(LM_VIEW);
+	
+	RendererBase::RendererBase(): 
+		m_enabled(false), 
+		m_pipeline_position(DEFAULT_RENDERER_POSITION),
+		m_listener(NULL) {
+	}
+	
+	void RendererBase::setPipelinePosition(int position) { 
+		if (position !=m_pipeline_position) { 
+			m_pipeline_position = position; 
+			if (m_listener) {
+				m_listener->onRendererPipelinePositionChanged(this);
+			}
+		}
+	}
+	
+	void RendererBase::setEnabled(bool enabled) { 
+		if (m_enabled != enabled) {
+			m_enabled = enabled;
+			if (m_listener) {
+				m_listener->onRendererEnabledChanged(this);
+			}
+		}
+	}
+	
+	void RendererBase::addActiveLayer(Layer* layer) {
+		if (std::find(m_active_layers.begin(), m_active_layers.end(), layer) == m_active_layers.end()) {
+			m_active_layers.push_back(layer);
+		}
+	}
+	
+	void RendererBase::removeActiveLayer(Layer* layer) {
+		m_active_layers.remove(layer);
+	}
+	
+	void RendererBase::clearActiveLayers() {
+		m_active_layers.clear();
+	}
+	
+	bool RendererBase::isActivedLayer(Layer* layer) {
+		return std::find(m_active_layers.begin(), m_active_layers.end(), layer) != m_active_layers.end();
+	}
+	
+	void RendererBase::activateAllLayers(Elevation* elevation) {
+		clearActiveLayers();
 		
-		/** Gets renderer with given name
-		 */
-		RendererBase* getRenderer(const std::string& name);
-		
-		/** Adds new camera on view. 
-		 *  After creation, camera gets rendered by the added renderers
-		 */
-		Camera* addCamera();
-
-		/** Removes given camera from the view.
-		 */
-		void removeCamera(Camera* camera);
-
-		/** resets active layer information to be reseted on all renderers.
-		 *  View fetches all layers from cameras and activate them on each renderer.
-		 */
-		void resetRenderers();
-		
-		/** Causes view to render all cameras
-		 */
-		void update();
-		
-		void onRendererPipelinePositionChanged(RendererBase* renderer);
-		void onRendererEnabledChanged(RendererBase* renderer);
-		
-
-	private:
-		// list of cameras managed by the view
-		std::vector<Camera*> m_cameras;
-		RenderBackend* m_renderbackend;
-		ImagePool* m_imagepool;
-		AnimationPool* m_animationpool;
-		// list of renderers managed by the view
-		std::map<std::string, RendererBase*> m_renderers;
-		std::list<RendererBase*> m_pipeline;
-	};
-
+		const std::vector<Layer*>& tmp = elevation->getLayers();
+		std::vector<Layer*>::const_iterator it = tmp.begin();
+		for (; it != tmp.end(); ++it) {
+			addActiveLayer(*it);
+		}
+	}
+	
 }
-#endif

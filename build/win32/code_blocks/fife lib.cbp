@@ -1176,17 +1176,21 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\view\abstractrenderer.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\view\camera.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\view\camera.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\rendererbase.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\rendererbase.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

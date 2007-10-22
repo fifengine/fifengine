@@ -55,7 +55,8 @@ namespace FIFE {
 		m_renderbackend(renderbackend),
 		m_imagepool(imagepool),
 		m_animationpool(animpool) {
-	
+		setPipelinePosition(1);
+		setEnabled(true);
 	}
 	
 	InstanceRenderer::~InstanceRenderer() {

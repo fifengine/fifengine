@@ -68,7 +68,8 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.engine = engine		
 		self.quitRequested = False
 		self.newTarget = None
-		
+		self.showTileOutline = False
+				
 		# scroll support
 		self.horizscroll = 0
 		self.vertscroll = 0
@@ -113,6 +114,8 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 			self.vertscroll += SCROLL_MODIFIER
 		elif (keystr == 'p'):
 			self.engine.getRenderBackend().captureScreen('techdemo.bmp')
+		elif (keystr == 't'):
+			self.showTileOutline = not self.showTileOutline
 	
 	def keyReleased(self, evt):
 		pass
@@ -241,10 +244,8 @@ class World(object):
 		self.metamodel = self.model.getMetaModel()
 		self.camera = None
 		self.gui = gui
+		self.view = self.engine.getView()
 		
-	def __del__(self):
-		self.engine.getView().removeCamera(self.camera)
-
 	def create_world(self, path):
 		self.map = loadMapFile(path, self.engine)
 	
@@ -269,7 +270,7 @@ class World(object):
 		self.camloc.setLayer(self.layer)
 		self.camloc.setLayerCoordinates(fife.ModelCoordinate(5,-1))
 		
-		self.camera = fife.Camera()
+		self.camera = self.view.addCamera()
 		self.camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 
 		self.camera.setRotation(35)
@@ -278,7 +279,8 @@ class World(object):
 		self.camera.setLocation(self.camloc)
 		viewport = fife.Rect(0, 0, self.renderbackend.getScreenWidth(), self.renderbackend.getScreenHeight())
 		self.camera.setViewPort(viewport)
-		self.engine.getView().addCamera(self.camera)
+		self.view.resetRenderers()
+		
 
 	def create_background_music(self):
 		# set up the audio engine
@@ -300,6 +302,7 @@ class World(object):
 		for g in self.agent_layer.getInstances('id', 'Gunner'):
 			g.act_here('idle', self.target, True)
 
+		showTileOutline = False
 		while True:
 			self.engine.pump()
 			
@@ -323,6 +326,10 @@ class World(object):
 				evtlistener.horizscroll = evtlistener.vertscroll = 0
 
 			self.gui.show_info(evtlistener.showInfo)
+			
+			if showTileOutline != evtlistener.showTileOutline:
+				self.view.getRenderer('GridRenderer').setEnabled(evtlistener.showTileOutline)
+				showTileOutline = evtlistener.showTileOutline
 				
 		self.engine.finalizePumping()
 

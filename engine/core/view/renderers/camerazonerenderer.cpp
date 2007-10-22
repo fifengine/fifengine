@@ -49,13 +49,17 @@ namespace FIFE {
 	
 	CameraZoneRenderer::CameraZoneRenderer(RenderBackend* renderbackend, ImagePool* imagepool):
 		m_renderbackend(renderbackend),
-		m_imagepool(imagepool) {
+		m_imagepool(imagepool),
+		m_zone_image(NULL) {
+		setPipelinePosition(2);
+		setEnabled(false);
 	}
 	
 	CameraZoneRenderer::~CameraZoneRenderer() {
+		delete m_zone_image;
 	}
 	
-	static Image* zone_image = 0;
+	
 	
 	void CameraZoneRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) {
 		if (stackpos != 0) {
@@ -69,7 +73,7 @@ namespace FIFE {
 		}
 		// draw this layer's grid as the camera sees it
 		Rect rect = cam->getViewPort();
-		if (zone_image == 0) {
+		if (!m_zone_image) {
 			// build zone image
 			int dataSize = rect.w * rect.h;
 			
@@ -115,9 +119,16 @@ namespace FIFE {
 				}
 			}	
 			
-			zone_image =  m_renderbackend->createStaticImageFromRGBA((uint8_t*) data, rect.w, rect.h);
+			m_zone_image =  m_renderbackend->createStaticImageFromRGBA((uint8_t*) data, rect.w, rect.h);
 			delete data;
 		}
-		zone_image->render(rect);
+		m_zone_image->render(rect);
+	}
+	
+	void CameraZoneRenderer::setEnabled(bool enabled) {
+		if (!enabled) {
+			delete m_zone_image;
+			m_zone_image = NULL;
+		}
 	}
 }

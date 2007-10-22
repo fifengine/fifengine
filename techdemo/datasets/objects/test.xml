@@ -14,7 +14,7 @@
 		<image source="techdemo/gfx/objects/buildings/townhouse_fake.png" />
 	</object>
 	
-	<object id="Street:Pile">
+	<object id="Street:Pile" blocking="1">
 		<image source="techdemo/gfx/objects/signs/pile.png" />
 	</object>		
 	

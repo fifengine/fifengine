@@ -38,7 +38,7 @@ class TestView(unittest.TestCase):
 		del self.engine
 
 	def testCamera(self):
-		cam = fife.Camera()
+		cam = self.engine.getView().addCamera()
 		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		cam.setRotation(45)
 		cam.setTilt(40)
@@ -46,7 +46,8 @@ class TestView(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
 		cam.setViewPort(viewport)
-		self.engine.getView().addCamera(cam)
+		self.engine.getView().resetRenderers()
+		
 		self.engine.initializePumping()
 		
 		for y in xrange(4):

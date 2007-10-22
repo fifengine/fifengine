@@ -47,16 +47,14 @@ namespace FIFE {
 	
 	GridRenderer::GridRenderer(RenderBackend* renderbackend):
 		m_renderbackend(renderbackend) {
+		setPipelinePosition(0);
+		setEnabled(false);
 	}
 	
 	GridRenderer::~GridRenderer() {
 	}
 	
 	void GridRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) {
-		if (stackpos != 0) {
-			return;
-		}
-		
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");

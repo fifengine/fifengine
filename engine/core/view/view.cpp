@@ -46,7 +46,6 @@
 #include "model/structures/location.h"
 
 #include "view.h"
-#include "abstractrenderer.h"
 #include "camera.h"
 #include "visual.h"
 
@@ -55,7 +54,8 @@ namespace FIFE {
 	
 	View::View():
 		m_cameras(),
-		m_renderers() {
+		m_renderers(),
+		m_pipeline() {
 	}
 
 	View::~View() {
@@ -65,38 +65,55 @@ namespace FIFE {
 		}
 		m_cameras.clear();
 		
-		std::vector<AbstractRenderer*>::iterator r_it = m_renderers.begin();
+		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
 		for(; r_it != m_renderers.end(); ++r_it) {
-			delete *r_it;
+			delete r_it->second;
 		}
 		m_renderers.clear();
 	}
 
-	void View::addRenderer(AbstractRenderer* renderer) {
-		m_renderers.push_back(renderer);
+	bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs) {
+		return (lhs->getPipelinePosition() < rhs->getPipelinePosition());
 	}
-
-	void View::removeRenderer(AbstractRenderer* renderer) {
-		std::vector<AbstractRenderer*>::iterator it = m_renderers.begin();
-		for(; it != m_renderers.end(); ++it) {
-			if((*it) == renderer) {
-				m_renderers.erase(it);
-				return;
-			}
+	
+	void View::addRenderer(RendererBase* renderer) {
+		renderer->setRendererListener(this);
+		m_renderers[renderer->getName()] = renderer;
+		if (renderer->isEnabled()) {
+			m_pipeline.push_back(renderer);
+		}
+		m_pipeline.sort(pipelineSort);
+	}
+	
+	void View::onRendererPipelinePositionChanged(RendererBase* renderer) {
+		m_pipeline.sort(pipelineSort);
+	}
+	
+	void View::onRendererEnabledChanged(RendererBase* renderer) {
+		assert(m_renderers[renderer->getName()]);
+		if (renderer->isEnabled()) {
+			//std::cout << "Enabling renderer " << renderer->getName() << "\n";
+			m_pipeline.push_back(renderer);
+		} else {
+			m_pipeline.remove(renderer);
 		}
 	}
 
-	void View::addCamera(Camera* camera) {
-		m_cameras.push_back(camera);
+
+	RendererBase* View::getRenderer(const std::string& name) {
+		return m_renderers[name];
+	}
+
+	Camera* View::addCamera() {
+		Camera* cam = new Camera();
+		m_cameras.push_back(cam);
+		return cam;
 	}
 
 	void View::removeCamera(Camera* camera) {
-		std::vector<Camera*>::iterator it = m_cameras.begin();
-		for(; it != m_cameras.end(); ++it) {
-			if((*it) == camera) {
-				m_cameras.erase(it);
-				return;
-			}
+		std::vector<Camera*>::iterator it = std::find(m_cameras.begin(), m_cameras.end(), camera);
+		if (it != m_cameras.end()) {
+			m_cameras.erase(it);
 		}
 	}
 	
@@ -110,6 +127,17 @@ namespace FIFE {
 		        rhs->getVisual<InstanceVisual>()->getStackPosition());
 	}
 		
+	void View::resetRenderers() {
+		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
+		for(; r_it != m_renderers.end(); ++r_it) {
+			std::vector<Camera*>::iterator cam_it = m_cameras.begin();
+			for(; cam_it != m_cameras.end(); ++cam_it) {
+				const Location& loc = (*cam_it)->getLocation();
+				r_it->second->activateAllLayers(loc.getElevation());
+			}
+		}
+	}
+	
 	void View::update() {
 		FL_DBG(_log, "In View::update");
 		
@@ -122,7 +150,7 @@ namespace FIFE {
 				FL_ERR(_log, "No elevation for camera found");
 				continue;
 			}
-			
+			//std::cout << "Drawing camera" << "\n";
 			// update each layer
 			const std::vector<Layer*>& layers = elev->getLayers();
 			std::vector<Layer*>::const_iterator layer_it = layers.begin();
@@ -130,7 +158,7 @@ namespace FIFE {
 			
 				// sort instances on layer based on stack position + camera distance. done only once
 				//  here instead passing it to each renderer
-				std::set<int> stack_positions;				
+				std::set<int> stack_positions;
 				std::vector<Instance*> instances((*layer_it)->getInstances());
 				std::vector<Instance*>::const_iterator instance_it = instances.begin();
 				for (;instance_it != instances.end(); ++instance_it) {
@@ -143,13 +171,19 @@ namespace FIFE {
 				std::sort(instances.begin(), instances.end(), instanceDistanceSort);
 				std::sort(instances.begin(), instances.end(), instanceStackSort);
 				
+				//std::cout << "  Drawing layer " << (*layer_it)->Id() << "\n";
 				// asks renderers to draw the layer
 				std::set<int>::const_iterator stack_it = stack_positions.begin();
 				for (;stack_it != stack_positions.end(); ++stack_it) {
-					std::vector<AbstractRenderer*>::iterator rend_it = m_renderers.begin();
-					for(; rend_it != m_renderers.end(); ++rend_it) {
-						(*rend_it)->render(*cam_it, *layer_it, instances, *stack_it);
+					//std::cout << "    stackpos " << *stack_it << "\n";
+					std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+					for(; r_it != m_pipeline.end(); ++r_it) {
+						if ((*r_it)->isActivedLayer(*layer_it)) {
+							//std::cout << "      Drawing " << (*r_it)->getName() << "\n";
+							(*r_it)->render(*cam_it, *layer_it, instances, *stack_it);
+						}
 					}
+
 				}
 			}
 		}
