@@ -61,7 +61,7 @@
 //#include "loaders/fallout/model_loaders/dat2.h"
 #include "model/model.h"
 #include "pathfinder/linearpather/linearpather.h"
-#include "pathfinder/realtimepather/realtimepather.h"
+#include "pathfinder/routepather/routepather.h"
 
 #include "view/view.h"
 #include "view/renderers/camerazonerenderer.h"
@@ -231,7 +231,7 @@ namespace FIFE {
 
 		m_model = new Model();
 		m_model->addPather(new LinearPather());
-		m_model->addPather(new RealTimePather());
+		m_model->addPather(new RoutePather());
 		
 		m_view = new View();
 #ifdef RENDER_CAMZONES

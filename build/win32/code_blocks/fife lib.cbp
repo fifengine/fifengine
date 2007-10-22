@@ -724,24 +724,24 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\pathfinder\realtimepather\realtimepather.cpp">
+		<Unit filename="..\..\..\engine\core\pathfinder\routepather\routepather.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\pathfinder\realtimepather\realtimepather.h">
+		<Unit filename="..\..\..\engine\core\pathfinder\routepather\routepather.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\pathfinder\realtimepather\realtimesearch.h">
+		<Unit filename="..\..\..\engine\core\pathfinder\routepather\routepathersearch.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\pathfinder\routepather\routepathersearch.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\pathfinder\realtimepather\realtimsearch.cpp">
-				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\pathfinder\search.h">

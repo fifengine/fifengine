@@ -270,11 +270,11 @@
 					<File RelativePath="..\..\..\engine\core\pathfinder\linearpather\linearpather.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\pathfinder\linearpather\linearpather.h"></File>
 				</Filter>
-				<Filter Name="realtimepather">
-					<File RelativePath="..\..\..\engine\core\pathfinder\realtimepather\realtimepather.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\pathfinder\realtimepather\realtimepather.h"></File>
-					<File RelativePath="..\..\..\engine\core\pathfinder\realtimepather\realtimesearch.h"></File>
-					<File RelativePath="..\..\..\engine\core\pathfinder\realtimepather\realtimsearch.cpp"></File>
+				<Filter Name="routepather">
+					<File RelativePath="..\..\..\engine\core\pathfinder\routepather\routepather.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\pathfinder\routepather\routepather.h"></File>
+					<File RelativePath="..\..\..\engine\core\pathfinder\routepather\routepathersearch.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\pathfinder\routepather\routepathersearch.h"></File>
 				</Filter>
 				<File RelativePath="..\..\..\engine\core\pathfinder\search.h"></File>
 				<File RelativePath="..\..\..\engine\core\pathfinder\searchspace.cpp"></File>
