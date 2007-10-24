@@ -205,8 +205,6 @@ if not env['projectfiles_only']:
 	env.Append(CPPPATH = ['#/engine/core', '#/engine/swigwrappers'])
 	compilefiles = [str(f) for f in remove_based_on_dir_filter(filteredpaths, implfiles)]
 	compilefiles.append('./swigwrappers/%s/fife_wrap.cxx' % env['script'])
-	if sys.platform == 'linux2':
-		env.Replace(SHLIBPREFIX = '_')
 	if sys.platform == 'darwin':
 		flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl'])
 	else:
