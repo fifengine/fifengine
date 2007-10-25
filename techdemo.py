@@ -242,7 +242,6 @@ class World(object):
 		self.eventmanager = self.engine.getEventManager()
 		self.model = self.engine.getModel()
 		self.metamodel = self.model.getMetaModel()
-		self.camera = None
 		self.gui = gui
 		self.view = self.engine.getView()
 		
@@ -261,24 +260,32 @@ class World(object):
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.agent_layer)
+		
+		self.cameras = {}
 
 	def save_world(self, path):
 		saveMapFile(path, self.engine, self.map)
 		
-	def adjust_views(self):
-		self.camloc = fife.Location()
-		self.camloc.setLayer(self.layer)
-		self.camloc.setLayerCoordinates(fife.ModelCoordinate(5,-1))
+	def _create_camera(self, name, coordinate, viewport):
+		camera = self.view.addCamera()
+		camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
+		camera.setRotation(35)
+		camera.setTilt(60)
+
+		camloc = fife.Location()
+		camloc.setLayer(self.layer)
+		camloc.setLayerCoordinates(fife.ModelCoordinate(*coordinate))
+		camera.setLocation(camloc)
 		
-		self.camera = self.view.addCamera()
-		self.camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
-
-		self.camera.setRotation(35)
-		self.camera.setTilt(60)
-
-		self.camera.setLocation(self.camloc)
-		viewport = fife.Rect(0, 0, self.renderbackend.getScreenWidth(), self.renderbackend.getScreenHeight())
-		self.camera.setViewPort(viewport)
+		camera.setViewPort(fife.Rect(*[int(c) for c in viewport]))
+		self.cameras[name] = camera
+		
+	
+	def adjust_views(self):
+		W = self.renderbackend.getScreenWidth()
+		H = self.renderbackend.getScreenHeight()
+		self._create_camera('main', (5,-1), (0, 0, W, H))
+		self._create_camera('small', (6,1), (W*0.6, H*0.01, W*0.39, H*0.36))
 		self.view.resetRenderers()
 		
 
@@ -290,6 +297,7 @@ class World(object):
 		self.audiomanager.setAmbientSound('techdemo/audio/music/lagerhalle5.ogg')
 			
 	def run(self):
+		camloc = fife.Location()
 		evtlistener = MyEventListener(self)
 		self.engine.initializePumping()
 		
@@ -303,12 +311,15 @@ class World(object):
 			g.act_here('idle', self.target, True)
 
 		showTileOutline = False
+		smallcamx = self.cameras['small'].getLocation().getExactLayerCoordinates().x
+		initial_camx = smallcamx
+		cam_to_right = True
 		while True:
 			self.engine.pump()
 			
 			# agent movement
 			if (evtlistener.newTarget):
-				ec = self.camera.toElevationCoordinates(evtlistener.newTarget)
+				ec = self.cameras['main'].toElevationCoordinates(evtlistener.newTarget)
 				self.target.setElevationCoordinates(ec)
 				self.agent.act('walk', self.target, 0.5)
 				evtlistener.newTarget = None
@@ -318,12 +329,26 @@ class World(object):
 
 			# scroll the map with cursor keys
 			if (evtlistener.horizscroll or evtlistener.vertscroll):
-				cam_scroll = self.camloc.getExactLayerCoordinates()
+				loc = self.cameras['main'].getLocation()
+				cam_scroll = loc.getExactLayerCoordinates()
 				cam_scroll.x += evtlistener.horizscroll
 				cam_scroll.y += evtlistener.vertscroll
-				cam_scroll = self.camloc.setExactLayerCoordinates(cam_scroll)
-				self.camera.setLocation(self.camloc)
+				cam_scroll = loc.setExactLayerCoordinates(cam_scroll)
+				self.cameras['main'].setLocation(loc)
 				evtlistener.horizscroll = evtlistener.vertscroll = 0
+
+			smallcam_loc = self.cameras['small'].getLocation()
+			c = smallcam_loc.getExactLayerCoordinates()
+			if cam_to_right:
+				smallcamx = c.x = c.x+0.01
+				if smallcamx > initial_camx+2:
+					cam_to_right = False
+			else:
+				smallcamx = c.x = c.x-0.01
+				if smallcamx < initial_camx-2:
+					cam_to_right = True
+			smallcam_loc.setExactLayerCoordinates(c)
+			self.cameras['small'].setLocation(smallcam_loc)
 
 			self.gui.show_info(evtlistener.showInfo)
 			

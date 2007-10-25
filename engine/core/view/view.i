@@ -13,6 +13,6 @@ namespace FIFE {
 		RendererBase* getRenderer(const std::string& name);
 		void resetRenderers();
 	private:
-		View(RenderBackend* renderbackend);	
+		View(RenderBackend* renderbackend);
 	};
 }

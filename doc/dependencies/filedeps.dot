@@ -510,6 +510,7 @@ digraph "source tree" {
     "engine/core/video/renderbackend.cpp" -> "renderbackend.h"
     "engine/core/video/renderbackend.h" -> "util/fife_stdint.h"
     "engine/core/video/renderbackend.h" -> "util/point.h"
+    "engine/core/video/renderbackend.h" -> "util/rect.h"
     "engine/core/video/renderbackend.h" -> "util/singleton.h"
     "engine/core/video/sdl/renderbackendsdl.cpp" -> "renderbackendsdl.h"
     "engine/core/video/sdl/renderbackendsdl.cpp" -> "sdlimage.h"

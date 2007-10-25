@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <stack>
 
 // Platform specific includes
 #include "util/fife_stdint.h"
@@ -38,6 +39,7 @@
 // Second block: files included from the same folder
 #include "util/singleton.h"
 #include "util/point.h"
+#include "util/rect.h"
 
 namespace FIFE {
 
@@ -117,6 +119,12 @@ namespace FIFE {
 			 */
 			unsigned int getScreenWidth() const { return m_screen->w; }
 
+			/** Gets the area of the screen
+			 *
+			 * @return Screen area in rect
+			 */
+			const Rect& getScreenArea();
+				
 			/** Gets the height of the screen.
 			 *
 			 * @return Height of the screen.
@@ -133,13 +141,41 @@ namespace FIFE {
 			 */
 			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
 			
-		protected:
+			/** Pushes clip area to clip stack
+			 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
+			 *  note that previous items in stack do not affect the latest area pushed
+			 */
+			void pushClipArea(const Rect& cliparea);
+			
+			/** Pops clip area from clip stack
+			 *  @see pushClipArea
+			 */
+			void popClipArea();
+			
+			/** Gets the current clip area
+			 *  @see pushClipArea
+			 */
+			const Rect& getClipArea() const;
 
+			
+		protected:
+			/** Sets given clip area to render backend
+			 *  @see pushClipArea
+			 */
+			virtual void setClipArea(const Rect& cliparea) = 0;
+			
+			/** Clears any possible clip areas
+			 *  @see pushClipArea
+			 */
+			virtual void clearClipArea();
+			
 			SDL_Surface* m_screen;
+			
 		private:
+			Rect m_screenarea;
 			// The name of the renderbackend.
 			std::string m_name;
-			
+			std::stack<Rect> m_clipstack;
 	};
 
 }

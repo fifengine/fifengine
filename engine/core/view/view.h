@@ -47,7 +47,7 @@ namespace FIFE {
 	public:
 		/** Constructor
 		 */
-		View();
+		View(RenderBackend* renderbackend);
 
 		/** Destructor
 		 */
@@ -88,8 +88,6 @@ namespace FIFE {
 		// list of cameras managed by the view
 		std::vector<Camera*> m_cameras;
 		RenderBackend* m_renderbackend;
-		ImagePool* m_imagepool;
-		AnimationPool* m_animationpool;
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;

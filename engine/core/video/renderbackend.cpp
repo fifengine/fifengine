@@ -31,7 +31,11 @@
 
 namespace FIFE {
 	
-	RenderBackend::RenderBackend(const std::string& name) : m_screen(0), m_name(name) {
+	RenderBackend::RenderBackend(const std::string& name): 
+		m_screen(0),
+		m_screenarea(),
+		m_name(name),
+		m_clipstack() {
 	}
 
 
@@ -59,5 +63,38 @@ namespace FIFE {
 
 	void RenderBackend::captureScreen(const std::string& filename) {
 		// Dummy Implementation.
+	}
+	
+	void RenderBackend::pushClipArea(const Rect& cliparea) {
+		m_clipstack.push(cliparea);
+		setClipArea(cliparea);
+        }
+	
+	void RenderBackend::popClipArea() {
+		assert(!m_clipstack.empty());
+		m_clipstack.pop();
+		if (m_clipstack.empty()) {
+			clearClipArea();
+		} else {
+			setClipArea(m_clipstack.top());
+		}
+	}
+	
+	const Rect& RenderBackend::getScreenArea() {
+		m_screenarea.w = getScreenWidth();
+		m_screenarea.h = getScreenHeight();
+		return m_screenarea;
+	}
+	
+	const Rect& RenderBackend::getClipArea() const {
+		if (m_clipstack.empty()) {
+			return m_clipstack.top();
+		} else {
+			return m_screenarea;
+		}
+	}
+	
+	void RenderBackend::clearClipArea() {
+		setClipArea(m_screenarea);
 	}
 }

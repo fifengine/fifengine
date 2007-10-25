@@ -262,4 +262,12 @@ namespace FIFE {
 		}
 	}
 
+	void RenderBackendSDL::setClipArea(const Rect& cliparea) {
+		SDL_Rect rect;
+		rect.x = cliparea.x;
+		rect.y = cliparea.y;
+		rect.w = cliparea.w;
+		rect.h = cliparea.h;
+		SDL_SetClipRect(m_screen, &rect);
+	}
 }

@@ -52,8 +52,9 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 	
-	View::View():
+	View::View(RenderBackend* renderbackend):
 		m_cameras(),
+		m_renderbackend(renderbackend),
 		m_renderers(),
 		m_pipeline() {
 	}
@@ -152,6 +153,8 @@ namespace FIFE {
 			}
 			//std::cout << "Drawing camera" << "\n";
 			// update each layer
+			m_renderbackend->pushClipArea((*cam_it)->getViewPort());
+			
 			const std::vector<Layer*>& layers = elev->getLayers();
 			std::vector<Layer*>::const_iterator layer_it = layers.begin();
 			for (;layer_it != layers.end(); ++layer_it) {
@@ -186,6 +189,7 @@ namespace FIFE {
 
 				}
 			}
+			m_renderbackend->popClipArea();
 		}
 	}
 }

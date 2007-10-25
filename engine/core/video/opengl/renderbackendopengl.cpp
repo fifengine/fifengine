@@ -216,4 +216,8 @@ namespace FIFE {
 		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
 		glEnd();
 	}
+	
+	void RenderBackendOpenGL::setClipArea(const Rect& cliparea) {
+	        glScissor(cliparea.x, getScreenHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
+	}
 }
