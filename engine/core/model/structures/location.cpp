@@ -83,7 +83,6 @@ namespace FIFE {
 	}
 		
 	void Location::setLayer(Layer* layer) {
-		reset();
 		m_layer = layer;
 	}
 	
