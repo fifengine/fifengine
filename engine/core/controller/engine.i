@@ -30,7 +30,6 @@ namespace FIFE {
 	}
 	class EventManager;
 	class TimeManager;
-	class SettingsManager;
 	class GUIManager;
 	class ImagePool;
 	class AnimationPool;
@@ -38,19 +37,53 @@ namespace FIFE {
 	class View;
 	class Model;
 	class LogManager;
+	class GuiFont;
 
+	class EngineSettings {
+	public:
+		~EngineSettings();
+		void validate() const throw(FIFE::NotSet);
+		void setBitsPerPixel(unsigned int bitsperpixel) throw(FIFE::NotSupported);
+		unsigned int getBitsPerPixel() const;
+		std::vector<unsigned int> getPossibleBitsPerPixel() const;
+		void setFullScreen(bool fullscreen);
+		bool isFullScreen() const;
+		void setInitialVolume(unsigned int volume) throw(FIFE::NotSupported);
+		unsigned int getInitialVolume() const;
+		unsigned int getMaxVolume() const;
+		void setRenderBackend(const std::string& renderbackend) throw(FIFE::NotSupported);
+		const std::string getRenderBackend() const;
+		std::vector<std::string> getPossibleRenderBackends();
+		void setSDLRemoveFakeAlpha(bool sldremovefakealpha);
+		bool isSDLRemoveFakeAlpha(bool sldremovefakealpha) const;
+		void setScreenWidth(unsigned int screenwidth);
+		unsigned int getScreenWidth() const;
+		void setScreenHeight(unsigned int screenheight);
+		unsigned int getScreenHeight() const;
+		void setDefaultFontPath(const std::string& defaultfontpath) throw(FIFE::NotFound);
+		std::string getDefaultFontPath() const;
+		void setDefaultFontSize(const unsigned int defaultfontsize);
+		unsigned int getDefaultFontSize() const;
+		void setDefaultFontGlyphs(const std::string& defaultfontglyphs);
+		std::string getDefaultFontGlyphs() const;
+	private:
+		EngineSettings();
+	};	
+	
 	class Engine {
 	public:
-		Engine(bool use_miniwindow=false);
+		Engine();
 		virtual ~Engine();
 		void initializePumping();
 		void finalizePumping();
 		void pump();
 
+		EngineSettings& getSettings();
+		void init() throw(FIFE::NotSet);
+
 		AudioManager* getAudioManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
-		SettingsManager* getSettingsManager();
 		GUIManager* getGuiManager();
 		ImagePool* getImagePool();
 		AnimationPool* getAnimationPool();
@@ -58,5 +91,6 @@ namespace FIFE {
 		View* getView();
 		Model* getModel();
 		LogManager* getLogManager();
+		GuiFont* getDefaultFont();
 	};
 }

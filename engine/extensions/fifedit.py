@@ -8,6 +8,7 @@ class FIFEdit(fife.IWidgetListener, object):
 
 	def __init__(self, engine):
 		self.engine = engine
+		self.font = engine.getDefaultFont()
 		self.eventmanager = engine.getEventManager()
 		self.map = 0
 
@@ -15,11 +16,6 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.eventmanager.addWidgetListener(self)
 
 		self.guimanager = engine.getGuiManager()
-		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
-		         ".,!?-+/:();%`'*#=[]"
-		self.font = self.guimanager.createFont('techdemo/fonts/samanata.ttf', 12, glyphs)
-		self.font.setColor(0, 0, 0)
-		self.guimanager.setGlobalFont(self.font)
 		self.widgets = []
 
 		self.screenheight = engine.getRenderBackend().getScreenHeight()

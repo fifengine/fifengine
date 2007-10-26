@@ -36,7 +36,6 @@
 #include "vfs/vfssourcefactory.h"
 #include "vfs/vfs.h"
 #include "util/rect.h"
-#include "util/settingsmanager.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
@@ -60,14 +59,12 @@ static const std::string SUBIMAGE_FILE = "../../content/gfx/tiles/rpg_tiles_01.p
 
 // Environment
 struct environment {
-	boost::shared_ptr<SettingsManager> settings;
 	boost::shared_ptr<TimeManager> timemanager;
 	boost::shared_ptr<VFSSourceFactory> vfssources;
 	boost::shared_ptr<VFS> vfs;
 
 	environment()
-		: settings(new SettingsManager()),
-		  timemanager(new TimeManager()),
+		: timemanager(new TimeManager()),
 		  vfssources(new VFSSourceFactory()),
 		  vfs(new VFS()) {
 		VFS::instance()->addSource(new VFSHostSystem());
@@ -146,8 +143,8 @@ void test_sdl_alphaoptimize() {
 	environment env;
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
+	renderbackend.setRemoveFakeAlpha(true);
 	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
-	env.settings->write<bool>("SDLRemoveFakeAlpha",true);
 	
 	ImageProvider provider;
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(ImageLocation(IMAGE_FILE))));

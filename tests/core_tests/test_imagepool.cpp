@@ -38,7 +38,6 @@
 #include "vfs/vfssourcefactory.h"
 #include "vfs/vfs.h"
 #include "util/rect.h"
-#include "util/settingsmanager.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfshostsystem.h"
@@ -62,14 +61,12 @@ static const std::string ANIM_FILE = "../data/crate_full_001.xml";
 
 // Environment
 struct environment {
-	boost::shared_ptr<SettingsManager> settings;
 	boost::shared_ptr<TimeManager> timemanager;
 	boost::shared_ptr<VFSSourceFactory> vfssources;
 	boost::shared_ptr<VFS> vfs;
 
 	environment()
-		: settings(new SettingsManager()),
-		  timemanager(new TimeManager()),
+		: timemanager(new TimeManager()),
 		  vfssources(new VFSSourceFactory()),
 		  vfs(new VFS()) {
 		VFS::instance()->addSource(new VFSHostSystem());

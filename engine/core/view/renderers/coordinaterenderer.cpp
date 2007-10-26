@@ -30,6 +30,7 @@
 #include "video/renderbackend.h"
 #include "video/image.h"
 #include "video/imagepool.h"
+#include "video/fonts/abstractfont.h"
 #include "util/logger.h"
 
 #include "util/fife_math.h"
@@ -49,12 +50,12 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 	
-	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, ImagePool* imagepool):
+	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font):
 		m_renderbackend(renderbackend),
-		m_imagepool(imagepool),
 		m_layer_area(),
 		m_tmploc(),
-		m_c() {
+		m_c(),
+		m_font(font) {
 		setPipelinePosition(2);
 		setEnabled(false);
 	}
@@ -91,6 +92,7 @@ namespace FIFE {
 		adjustLayerArea();
 		
 		Rect cv = cam->getViewPort();
+		Rect r = Rect();
 		for (int x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
 			for (int y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
 				ModelCoordinate mc(x, y);
@@ -98,7 +100,14 @@ namespace FIFE {
 				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getElevationCoordinates());
 				if ((drawpt.x >= cv.x) || (drawpt.x <= cv.w) || 
 				    (drawpt.y >= cv.y) || (drawpt.y <= cv.h)) {
-					;
+					std::stringstream ss;
+					ss << mc.x << ":" << mc.y;
+					Image * img = m_font->getAsImage(ss.str());
+					r.x = drawpt.x;
+					r.y = drawpt.y;
+					r.w = img->getWidth();
+					r.w = img->getHeight();
+					img->render(r);
 				}
 				
 			}

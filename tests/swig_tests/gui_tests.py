@@ -4,7 +4,7 @@ from swig_test_utils import *
 class TestGui(unittest.TestCase):
 	
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = getEngine()
 		self.guimanager = self.engine.getGuiManager()
 		self.renderbackend = self.engine.getRenderBackend()
 

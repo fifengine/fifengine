@@ -3,7 +3,7 @@ from swig_test_utils import *
 
 class TestVfs(unittest.TestCase):
 	def setUp(self):
-		self.engine = fife.Engine(True)
+		self.engine = getEngine(True)
 		self.vfs = fife.VFSUtility()
 
 	def tearDown(self):
@@ -17,10 +17,10 @@ class TestVfs(unittest.TestCase):
 		self.assert_(self.vfs.listDirectories('.'))
 	
 	def testReadLines(self):
-		self.assert_(self.vfs.readLines('fife.config'))
+		self.assert_(self.vfs.readLines('test_fife.py'))
 	
 	def testReadBytes(self):
-		self.assert_(self.vfs.readBytes('fife.config'))
+		self.assert_(self.vfs.readBytes('test_fife.py'))
 
 TEST_CLASSES = [TestVfs]
 

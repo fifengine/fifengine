@@ -4,7 +4,7 @@ from swig_test_utils import *
 class TestVideo(unittest.TestCase):
 	
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = getEngine()
 		
 	def tearDown(self):
 		del self.engine

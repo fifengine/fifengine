@@ -5,7 +5,7 @@ import time
 class TestView(unittest.TestCase):
 	
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = getEngine()
 		map = self.engine.getModel().addMap("map001")
 		elev = map.addElevation("elevation001")
 		

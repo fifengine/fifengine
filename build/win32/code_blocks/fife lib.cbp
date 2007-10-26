@@ -146,6 +146,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\controller\enginesettings.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\controller\enginesettings.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\eventchannel\base\ec_event.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
@@ -847,16 +857,6 @@
 				<Option target="default"/>
 			</Unit>
 		<Unit filename="..\..\..\engine\core\util\resource\resource_provider.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\util\settingsmanager.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\util\settingsmanager.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

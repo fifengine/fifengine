@@ -36,6 +36,7 @@
 namespace FIFE {
 	class RenderBackend;
 	class ImagePool;
+	class AbstractFont;
 
 	class CoordinateRenderer: public RendererBase {
 	public:
@@ -43,7 +44,7 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 * @param imagepool image pool where from fetch images
 		 */
-		CoordinateRenderer(RenderBackend* renderbackend, ImagePool* imagepool);
+		CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font);
 		
 		/** Destructor.
 		 */
@@ -57,10 +58,10 @@ namespace FIFE {
 		void adjustLayerArea();
 	
 		RenderBackend* m_renderbackend;
-		ImagePool* m_imagepool;
 		Rect m_layer_area;
 		Location m_tmploc;
 		ExactModelCoordinate m_c;
+		AbstractFont* m_font;
 	};
 
 }

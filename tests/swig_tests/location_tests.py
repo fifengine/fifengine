@@ -79,7 +79,7 @@ class TestHexGrid(unittest.TestCase):
 		self.loc1.setLayer(self.hex_layer1)
 		self.loc2 = fife.Location()
 		self.loc2.setLayer(self.square_layer1)
-		self.engine = fife.Engine()
+		self.engine = getEngine(True)
 		self.log = fifelog.LogManager(self.engine)
 		#self.log.setVisibleModules('hexgrid', 'cellgrid')
 

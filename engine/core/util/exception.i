@@ -41,6 +41,10 @@ namespace FIFE {
 	public:
 		NotFound(const std::string& msg);
 	};
+	class NotSet : public Exception {
+	public:
+		NotSet(const std::string& msg);
+	};
 	class IndexOverflow : public Exception {
 	public:
 		IndexOverflow(const std::string& s);

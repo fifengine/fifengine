@@ -35,7 +35,6 @@
 
 
 namespace FIFE {
-	class FontBase;
 	class gcn::Graphics;
 
 	class GuiFont : public gcn::Font, public AbstractFont {

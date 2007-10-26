@@ -127,7 +127,7 @@ namespace FIFE {
 
 			/** Set the global font
 			 */
-			void setGlobalFont(GuiFont* font);
+			void setDefaultFont(GuiFont* font);
 			
 			/** Gets font with given properties. Note that font will be owned by guimanager
 			 */

@@ -8,7 +8,7 @@ class ActionTests(unittest.TestCase):
 		dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
 		files = map(lambda dirname: template % dirname, dirnames)
 
-		self.engine = fife.Engine()
+		self.engine = getEngine()
 		_map = self.engine.getModel().addMap("map001")
 		elev = _map.addElevation("elevation001")
 		

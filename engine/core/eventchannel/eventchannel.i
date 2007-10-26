@@ -43,10 +43,6 @@
 %include "eventchannel/source/ec_eventsourcetypes.h"
 %include "eventchannel/command/ec_commandids.h"
 
-namespace std {
-	%template(IntVector) vector<int>;
-}
-
 namespace FIFE {
 	%feature("director") IEventSource;
 	class IEventSource {

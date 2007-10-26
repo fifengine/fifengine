@@ -6,7 +6,7 @@ import time
 class TestModelView(unittest.TestCase):
 
 	def setUp(self):
-		self.engine = fife.Engine()
+		self.engine = getEngine()
 		self.model = self.engine.getModel()
 		self.metamodel = self.model.getMetaModel()
 

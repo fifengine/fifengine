@@ -107,6 +107,8 @@
 			<Filter Name="controller">
 				<File RelativePath="..\..\..\engine\core\controller\engine.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\controller\engine.h"></File>
+				<File RelativePath="..\..\..\engine\core\controller\enginesettings.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\controller\enginesettings.h"></File>
 			</Filter>
 			<Filter Name="eventchannel">
 				<Filter Name="base">
@@ -297,8 +299,6 @@
 					<File RelativePath="..\..\..\engine\core\util\resource\resource_location.h"></File>
 					<File RelativePath="..\..\..\engine\core\util\resource\resource_provider.h"></File>
 				</Filter>
-				<File RelativePath="..\..\..\engine\core\util\settingsmanager.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\util\settingsmanager.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\singleton.h"></File>
 				<Filter Name="time">
 					<File RelativePath="..\..\..\engine\core\util\time\timeevent.cpp"></File>

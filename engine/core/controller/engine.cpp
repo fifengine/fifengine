@@ -30,7 +30,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/settingsmanager.h"
 #include "util/exception.h"
 #include "util/logger.h"
 #include "util/logger.h"
@@ -53,7 +52,9 @@
 #include "gui/base/opengl/opengl_gui_graphics.h"
 #endif
 #include "gui/base/sdl/sdl_gui_graphics.h"
+#include "gui/base/gui_font.h"
 #include "video/sdl/renderbackendsdl.h"
+#include "video/fonts/abstractfont.h"
 #include "loaders/native/video_loaders/subimage_provider.h"
 #include "loaders/native/video_loaders/image_provider.h"
 #include "loaders/native/video_loaders/animation_provider.h"
@@ -67,6 +68,7 @@
 #include "view/renderers/camerazonerenderer.h"
 #include "view/renderers/gridrenderer.h"
 #include "view/renderers/instancerenderer.h"
+#include "view/renderers/coordinaterenderer.h"
 #include "engine.h"
 
 #ifdef USE_COCOA
@@ -78,18 +80,15 @@ int main(int argc, char **argv)
 }
 #endif
 
-static const std::string SETTINGS_FILE_NAME = "fife.config";
-
 namespace FIFE {
 	static Logger _log(LM_CONTROLLER);
 
-	Engine::Engine(bool use_miniwindow):
+	Engine::Engine():
 		m_renderbackend(0),
 		m_guimanager(0),
 		m_eventmanager(0),
 		m_audiomanager(0),
 		m_timemanager(0),
-		m_settingsmanager(0),
 		m_imagepool(0),
 		m_animpool(0),
 		m_vfs_sourcefactory(0),
@@ -98,8 +97,7 @@ namespace FIFE {
 		m_gui_graphics(0),
 		m_view(0),
 		m_logmanager(0),
-		m_use_miniwindow(use_miniwindow) {
-
+		m_settings() {
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
 		// This is needed for SDL to function properly on MAC OS X.
@@ -109,43 +107,40 @@ namespace FIFE {
 		nsappload = (void(*)()) dlsym( cocoa_lib, "NSApplicationLoad"); 
 		nsappload(); 
 #endif
-		init();
+		preInit();
+	}
+	
+	EngineSettings& Engine::getSettings() {
+		return m_settings;
 	}
 
-	Engine::~Engine() {
-		delete m_view;
-		delete m_model;
-		delete m_audiomanager;
-		delete m_guimanager;
-		delete m_gui_graphics;
-		delete m_eventmanager;
-
-		m_renderbackend->deinit();
-		delete m_renderbackend;
-
-		// Note the dependancy between image and animation pools
-		// as animations reference images they have to be deleted
-		// before clearing the image pool.
-		delete m_animpool;
-		delete m_imagepool;
-
-		delete m_vfs;
-		delete m_vfs_sourcefactory;
-
-		delete m_timemanager;
-		// DO override not pre-existing config.
-		m_settingsmanager->saveSettings(SETTINGS_FILE_NAME,true);
-		delete m_settingsmanager;
-
-		TTF_Quit();
-		SDL_Quit();
-	}
-
-	void Engine::init() {
+	void Engine::preInit() {
 		m_logmanager = LogManager::instance();
-		m_settingsmanager = new SettingsManager();
-		m_settingsmanager->loadSettings(SETTINGS_FILE_NAME);
 
+		FL_LOG(_log, "================== Engine pre-init start =================");
+		m_timemanager = new TimeManager();
+		FL_LOG(_log, "Time manager created");
+		
+		FL_LOG(_log, "Creating VFS");
+		m_vfs_sourcefactory = new VFSSourceFactory();
+		m_vfs = new VFS();
+
+		FL_LOG(_log, "Adding host system to VFS");
+		m_vfs->addSource(new VFSHostSystem());
+#ifdef HAVE_ZIP
+		FL_LOG(_log, "Adding zip provider to VFS");
+		m_vfs_sourcefactory->addProvider( new ZipProvider() );
+#endif
+		//m_vfs_sourcefactory->addProvider(ProviderDAT2());
+		//m_vfs_sourcefactory->addProvider(ProviderDAT1());
+		FL_LOG(_log, "Engine pre-init done");
+	}
+
+	void Engine::init() throw(NotSet) {
+		FL_LOG(_log, "Engine initialize start");
+		m_settings.validate();
+		FL_LOG(_log, "Engine settings validated");
+		
 		// If failed to init SDL throw exception.
 		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 			throw SDLException(SDL_GetError());
@@ -155,23 +150,18 @@ namespace FIFE {
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 		TTF_Init();
 
+		FL_LOG(_log, "Creating event manager");
 		m_eventmanager = new EventManager();
 
+		FL_LOG(_log, "Creating pools");
 		m_imagepool = new ImagePool();
 		m_animpool = new AnimationPool();
 		m_imagepool->addResourceProvider(new SubImageProvider());
 		m_imagepool->addResourceProvider(new ImageProvider());
 		m_animpool->addResourceProvider(new AnimationProvider(m_imagepool));
 
-		m_guimanager = new GUIManager(m_eventmanager, *m_imagepool);
-		m_eventmanager->addSdlEventListener(m_guimanager);
-		// keep guimanager as the first key listener so that it can evaluate guichan hits
-		m_eventmanager->addKeyListener(m_guimanager);
-		// keep guimanager as the first mouse listener so that it can evaluate guichan hits
-		m_eventmanager->addMouseListener(m_guimanager);
-
-		// Select the render backend.
-		std::string rbackend = m_settingsmanager->read<std::string>("RenderBackend", "SDL");
+		FL_LOG(_log, "Creating render backend");
+		const std::string& rbackend = m_settings.getRenderBackend();
 		if (rbackend == "SDL") {
 			m_renderbackend = new RenderBackendSDL();
 			FL_LOG(_log, "SDL Render backend created");
@@ -186,38 +176,17 @@ namespace FIFE {
 			FL_WARN(_log, "Tried to select OpenGL, even though it is not compiled into the engine. Falling back to SDL Render backend");
 #endif
 		}
+		FL_LOG(_log, "Initializing render backend");
 		m_renderbackend->init();
 
-		m_timemanager = new TimeManager();
-		m_vfs_sourcefactory = new VFSSourceFactory();
-		m_vfs = new VFS();
+		FL_LOG(_log, "Creating main screen");
+		m_renderbackend->createMainScreen(
+			m_settings.getScreenWidth(), 
+			m_settings.getScreenHeight(), 
+			static_cast<unsigned char>(m_settings.getBitsPerPixel()),
+			m_settings.isFullScreen());
+		FL_LOG(_log, "Main screen created");
 
-		m_vfs->addSource(new VFSHostSystem());
-#ifdef HAVE_ZIP
-		m_vfs_sourcefactory->addProvider( new ZipProvider() );
-#endif
-		//m_vfs_sourcefactory->addProvider(ProviderDAT2());
-		//m_vfs_sourcefactory->addProvider(ProviderDAT1());
-
-		m_audiomanager = new AudioManager();
-		int volume = m_settingsmanager->read<int>("InitialVolume", 5);
-		if (volume > 10) {
-			volume = 10;
-		} else if (volume < 0) {
-			volume = 0;
-		}
-		m_audiomanager->setVolume(static_cast<float>(volume) / 10);
-
-		unsigned int swidth = m_settingsmanager->read("ScreenWidth", 800);
-		unsigned int sheight = m_settingsmanager->read("ScreenHeight", 600);
-		if (m_use_miniwindow) {
-			swidth = 1;
-			sheight = 1;
-		}
-		unsigned char bitsPerPixel = m_settingsmanager->read("BitsPerPixel", 0);
-		bool fullscreen = m_settingsmanager->read("FullScreen", false);
-
-		m_renderbackend->createMainScreen(swidth, sheight, bitsPerPixel, fullscreen);
 #ifdef HAVE_OPENGL
 		if( rbackend != "SDL" ) {
 			m_gui_graphics = new OpenGLGuiGraphics(*m_imagepool);
@@ -226,19 +195,76 @@ namespace FIFE {
 		if( rbackend == "SDL" ) {
 			m_gui_graphics = new SdlGuiGraphics(*m_imagepool);
 		}
-		m_guimanager->init(m_gui_graphics, swidth, sheight);
+		FL_LOG(_log, "Constructing GUI manager");
+		m_guimanager = new GUIManager(m_eventmanager, *m_imagepool);
+		m_eventmanager->addSdlEventListener(m_guimanager);
+		// keep guimanager as the first key listener so that it can evaluate guichan hits
+		m_eventmanager->addKeyListener(m_guimanager);
+		// keep guimanager as the first mouse listener so that it can evaluate guichan hits
+		m_eventmanager->addMouseListener(m_guimanager);
+		FL_LOG(_log, "Events bind to GUI manager");
+		
+		FL_LOG(_log, "Creating default font");
+		m_defaultfont = m_guimanager->createFont(
+			m_settings.getDefaultFontPath(),
+			m_settings.getDefaultFontSize(),
+			m_settings.getDefaultFontGlyphs());
+		FL_LOG(_log, "Setting default font to GUI manager");
+		m_guimanager->setDefaultFont(m_defaultfont);
+		
+		FL_LOG(_log, "Initializing GUI manager");
+		m_guimanager->init(m_gui_graphics, m_settings.getScreenWidth(), m_settings.getScreenHeight());
+		FL_LOG(_log, "GUI manager initialized");
 		SDL_EnableUNICODE(1);
+		
+		FL_LOG(_log, "Creating audio manager");
+		m_audiomanager = new AudioManager();
+		m_audiomanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
+		FL_LOG(_log, "Creating model");
 		m_model = new Model();
+		FL_LOG(_log, "Adding pathers to model");
 		m_model->addPather(new LinearPather());
 		m_model->addPather(new RoutePather());
 		
+		FL_LOG(_log, "Creating view");
 		m_view = new View(m_renderbackend);
+		FL_LOG(_log, "Creating renderers to view");
 		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, m_imagepool));
 		m_view->addRenderer(new GridRenderer(m_renderbackend));
 		m_view->addRenderer(new InstanceRenderer(m_renderbackend, m_imagepool, m_animpool));
+		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		FL_LOG(_log, "Engine intialized");
 	}
 
+	Engine::~Engine() {
+		FL_LOG(_log, "Destructing engine");
+		delete m_view;
+		delete m_model;
+		delete m_audiomanager;
+		delete m_guimanager;
+		delete m_gui_graphics;
+
+		m_renderbackend->deinit();
+		delete m_renderbackend;
+
+		// Note the dependancy between image and animation pools
+		// as animations reference images they have to be deleted
+		// before clearing the image pool.
+		delete m_animpool;
+		delete m_imagepool;
+		delete m_eventmanager;
+		
+		delete m_vfs;
+		delete m_vfs_sourcefactory;
+
+		delete m_timemanager;
+
+		TTF_Quit();
+		SDL_Quit();
+		FL_LOG(_log, "================== Engine destructed ==================");
+		//delete m_logmanager;
+	}
 	void Engine::initializePumping() {
 		m_eventmanager->processEvents();
 		m_renderbackend->startFrame();

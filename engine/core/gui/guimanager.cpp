@@ -36,7 +36,6 @@
 #include "video/renderbackend.h"
 #include "gui/base/gui_imageloader.h"
 #include "gui/base/gui_font.h"
-#include "util/settingsmanager.h"
 #include "gui/console/console.h"
 #include "video/fonts/fontbase.h"
 #include "video/fonts/truetypefont.h"
@@ -144,9 +143,11 @@ namespace FIFE {
 		}	
 	}
 
-	void GUIManager::setGlobalFont(GuiFont* font) {
+	void GUIManager::setDefaultFont(GuiFont* font) {
 		gcn::Widget::setGlobalFont(font);
-		m_console->reLayout();
+		if (m_console) {
+			m_console->reLayout();
+		}
 	}
 
 	void GUIManager::turn() {

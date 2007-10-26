@@ -5,11 +5,11 @@ import time
 class TestAudio(unittest.TestCase):
 	
 	def setUp(self):
-		self.engine = fife.Engine(True)
+		self.engine = getEngine(True)
 		self.audiomanager = self.engine.getAudioManager()
 
 	def tearDown(self):
-		del self.engine	
+		del self.engine
 	
 	def testOggStart(self):
 		self.audiomanager.setAmbientSound('tests/data/audiotest1.ogg')

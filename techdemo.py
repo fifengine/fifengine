@@ -7,6 +7,7 @@ for p in _paths:
 		sys.path.append(os.path.sep.join(p.split('/')))
 
 import fife, fifelog
+import techdemo_settings as TDS
 from loaders import loadMapFile
 from savers import saveMapFile
 
@@ -150,12 +151,9 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 
 class Gui(object):
 	def __init__(self, engine):
-		self.engine = engine		
+		self.engine = engine
+		self.font = engine.getDefaultFont()
 		self.guimanager = self.engine.getGuiManager()
-		glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + \
-		         ".,!?-+/:();%`'*#=[]"
-		self.font = self.guimanager.createFont('techdemo/fonts/samanata.ttf', 12, glyphs)
-		self.guimanager.setGlobalFont(self.font)
 		self.widgets = []
 		self.infoVisible = False
 		self.renderbackend = self.engine.getRenderBackend()
@@ -357,9 +355,24 @@ class World(object):
 
 
 if __name__ == '__main__':
-	engine = fife.Engine()	
-	log = fifelog.LogManager(engine, promptlog=True, filelog=False)
-	#log.setVisibleModules('all')
+	engine = fife.Engine()
+	log = fifelog.LogManager(engine, TDS.LogToPrompt, TDS.LogToFile)
+	if TDS.LogModules:
+		log.setVisibleModules('all')
+	
+	s = engine.getSettings()
+	s.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
+			".,!?-+/:();%`'*#=[]")
+	s.setDefaultFontPath('techdemo/fonts/samanata.ttf')
+	s.setDefaultFontSize(12)
+	s.setBitsPerPixel(TDS.BitsPerPixel)
+	s.setFullScreen(TDS.FullScreen)
+	s.setInitialVolume(TDS.InitialVolume)
+	s.setRenderBackend(TDS.RenderBackend)
+	s.setSDLRemoveFakeAlpha(TDS.SDLRemoveFakeAlpha)
+	s.setScreenWidth(TDS.ScreenWidth)
+	s.setScreenHeight(TDS.ScreenHeight)
+	engine.init()
 	
 	gui = Gui(engine)
 	w = World(engine, gui)
@@ -368,7 +381,8 @@ if __name__ == '__main__':
 
 	w.create_world("techdemo/maps/city1.xml")
 	w.adjust_views()
-	w.create_background_music()
+	if TDS.PlaySounds:
+		w.create_background_music()
 	w.run()
 	w.save_world("techdemo/maps/savefile.xml")
 

@@ -38,7 +38,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
-	RenderBackendSDL::RenderBackendSDL() : RenderBackend("SDL") {
+	RenderBackendSDL::RenderBackendSDL() : RenderBackend("SDL"), m_removefakealpha(true) {
 
 	}
 

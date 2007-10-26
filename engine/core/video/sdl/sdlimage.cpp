@@ -31,8 +31,8 @@
 // Second block: files included from the same folder
 #include "util/logger.h"
 #include "util/rect.h"
-#include "util/settingsmanager.h"
 
+#include "renderbackendsdl.h"
 #include "sdlblendingfunctions.h"
 #include "sdlimage.h"
 
@@ -235,7 +235,8 @@ namespace FIFE {
 			SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, 255);
 			m_surface = SDL_DisplayFormat(m_surface);
 		} else {
-			m_optimize_alpha &= SettingsManager::instance()->read<bool>("SDLRemoveFakeAlpha",true);
+			RenderBackendSDL* be = static_cast<RenderBackendSDL*>(RenderBackend::instance());
+			m_optimize_alpha &= be->isRemoveFakeAlpha();
 			if( m_optimize_alpha ) {
 				m_surface = optimize(m_surface);
 			} else  {
