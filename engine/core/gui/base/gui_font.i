@@ -19,34 +19,50 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module guimanager
+%module guifont
 %{
-#include <guichan.hpp>
-#include "gui/guimanager.h"
+#include <guichan/font.hpp>
+#include "gui/base/gui_font.h"
+#include "video/fonts/abstractfont.h"
 %}
 
+%include "video/fonts/fonts.i"
+
+typedef unsigned char Uint8;
+
 namespace gcn {
-	class Widget;
-	class ActionEvent;
-	class ActionListener {
+	class Graphics;
+	class Font
+	{
 	public:
-		virtual void action(const ActionEvent& actionEvent) = 0;
+		virtual ~Font(){ }
+		virtual int getWidth(const std::string& text) const = 0;
+		virtual int getHeight() const = 0;
 	};
 }
+
 namespace FIFE {
-	class Console;
+	class Image;
 	
-	%feature("notabstract") GUIManager;
-	class GUIManager: public gcn::ActionListener {
+	%feature("notabstract") GuiFont;
+	class GuiFont : public gcn::Font, public AbstractFont {
 	public:
-		Console* getConsole();
-		void add(gcn::Widget* widget);
-		void remove(gcn::Widget* widget);
-		void setGlobalFont(GuiFont* font);
-		GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
-		void releaseFont(GuiFont* font);
+		GuiFont(AbstractFont* font);
+		virtual ~GuiFont();
 		
-	private:
-		GUIManager(IWidgetListener* widgetListener);
+		int getStringIndexAt(const std::string& text, int x);
+		void drawString(gcn::Graphics* graphics, const std::string& text, int x, int y);
+
+		void setRowSpacing (int spacing);
+		int getRowSpacing() const;
+		void setGlyphSpacing(int spacing);
+		int getGlyphSpacing() const;
+		void setAntiAlias(bool antiAlias);
+		bool isAntiAlias();
+		Image* getAsImage(const std::string& text);
+		void setColor(uint8_t r,uint8_t g,uint8_t b);
+		SDL_Color getColor() const;
+		int getWidth(const std::string& text) const;
+		int getHeight() const;
 	};
 }

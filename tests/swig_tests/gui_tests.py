@@ -12,10 +12,13 @@ class TestGui(unittest.TestCase):
 		del self.engine
 	
 	def testFonts(self):
-		fonts = [fife.TTFont('content/fonts/FreeMono.ttf', 14), 
-			fife.SubImageFont('content/fonts/rpgfont.png', 
-			               ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"',
-				       self.engine.getImagePool())]
+		ttffont = fife.TTFont('content/fonts/FreeMono.ttf', 14)
+		ttffont.thisown = 0
+		subimagefont = fife.SubImageFont('content/fonts/rpgfont.png', 
+			       ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"',
+				self.engine.getImagePool())
+		subimagefont.thisown = 0
+		fonts = [fife.GuiFont(ttffont), fife.GuiFont(subimagefont)]
 		for f in fonts:
 			f.setColor(255,20,20)
 		container = fife.Container()

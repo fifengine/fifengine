@@ -19,14 +19,12 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_FONTS_SUBIMAGEFONT_H
-#define FIFE_GUI_FONTS_SUBIMAGEFONT_H
+#ifndef FIFE_FONTS_IMAGEFONTBASE_H
+#define FIFE_FONTS_IMAGEFONTBASE_H
 
 // Standard C++ library includes
+#include <map>
 #include <string>
-
-// Platform specific includes
-#include "util/fife_stdint.h"
 
 // 3rd party library includes
 
@@ -34,28 +32,66 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "imagefontbase.h"
+#include "util/point.h"
+
+#include "fontbase.h"
 
 namespace FIFE {
-	class ImagePool;
 
-	/** Imagefont that is able to read glyphs from single image sheet, see e.g.
-	 *  guichan imagefontcollection (google for it)
+	/** ImageFont base class
+	 *
+	 *  Just set the glyphs/placeholder in any derived class and the rendering
+	 *  is handled by this class. Also frees all glyph surfaces on destruction.
 	 */
-	class SubImageFont: public ImageFontBase {
+	class ImageFontBase: public FontBase {
 		public:
+
 			/**
 			 * Constructor.
-			 *
-			 * @param filename the filename of the Image Font.
-			 * @param glyphs the glyphs for Guichan format.
 			 */
-			SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
-			~SubImageFont() {}
-		private:
-			ImagePool& m_pool;
-	};
+			ImageFontBase();
 
+			/**
+			 * Destructor.
+			 */
+			virtual ~ImageFontBase();
+
+			/** Get the width in pixels a given text would occupy
+			 *  @param text The text that should be measured.
+			 */
+			virtual int getWidth(const std::string& text) const;
+
+			/** Get the height in pixels a text line would occupy
+			 */
+			virtual int getHeight() const;
+
+			virtual SDL_Surface *renderString(const std::string& text);
+			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+
+		protected:
+			// A glyph (visible character) 
+			typedef struct {
+				// The offset of the glyph relative to the top-left corner.
+				Point offset;
+				// The glyphs image 
+				// should be with SDL_SRCALPHA off, so that it's just copied over.
+				SDL_Surface* surface;
+			} s_glyph;
+
+			typedef std::map<int,s_glyph> type_glyphs;
+			type_glyphs m_glyphs;
+
+			// The glyph used, when the real glyph is not found
+			// Should default to '?'
+			s_glyph m_placeholder;
+
+			int mHeight;
+			int mGlyphSpacing;
+			int mRowSpacing;
+
+			std::string mFilename;
+			bool mAntiAlias;
+	};
 }
 
-#endif
+#endif // end GCN_SDLTRUETYPEFONT_HPP

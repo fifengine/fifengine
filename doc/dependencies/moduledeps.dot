@@ -20,7 +20,6 @@ digraph "source tree" {
     "eventchannel" -> "util"
     "gui" -> "eventchannel"
     "gui" -> "util"
-    "gui" -> "vfs"
     "gui" -> "video"
     "loaders" -> "util"
     "loaders" -> "vfs"

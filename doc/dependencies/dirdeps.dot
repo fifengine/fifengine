@@ -37,7 +37,7 @@ subgraph cluster_4 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "gui"; "gui/base"; "gui/base/opengl"; "gui/base/sdl"; "gui/console"; "gui/fonts"; "gui/widgets"
+    "gui"; "gui/base"; "gui/base/opengl"; "gui/base/sdl"; "gui/console"; "gui/widgets"
     label = "gui";
 }
 subgraph cluster_5 {
@@ -79,7 +79,7 @@ subgraph cluster_10 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "video"; "video/opengl"; "video/sdl"
+    "video"; "video/fonts"; "video/opengl"; "video/sdl"
     label = "video";
 }
 subgraph cluster_11 {
@@ -137,11 +137,12 @@ subgraph cluster_12 {
     "gui" -> "eventchannel/widget"
     "gui" -> "gui/base"
     "gui" -> "gui/console"
-    "gui" -> "gui/fonts"
     "gui" -> "util"
     "gui" -> "video"
+    "gui" -> "video/fonts"
     "gui/base" -> "util"
     "gui/base" -> "video"
+    "gui/base" -> "video/fonts"
     "gui/base/opengl" -> "gui/base"
     "gui/base/opengl" -> "util"
     "gui/base/opengl" -> "video"
@@ -152,11 +153,6 @@ subgraph cluster_12 {
     "gui/console" -> "util"
     "gui/console" -> "util/time"
     "gui/console" -> "video"
-    "gui/fonts" -> "util"
-    "gui/fonts" -> "util/time"
-    "gui/fonts" -> "vfs"
-    "gui/fonts" -> "vfs/raw"
-    "gui/fonts" -> "video"
     "gui/widgets" -> "util"
     "loaders/fallout/vfs_loaders" -> "util"
     "loaders/fallout/vfs_loaders" -> "util/time"
@@ -199,6 +195,9 @@ subgraph cluster_12 {
     "video" -> "util"
     "video" -> "util/resource"
     "video" -> "util/time"
+    "video/fonts" -> "util"
+    "video/fonts" -> "util/time"
+    "video/fonts" -> "video"
     "video/opengl" -> "util"
     "video/opengl" -> "video"
     "video/sdl" -> "util"

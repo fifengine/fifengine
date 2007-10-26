@@ -19,34 +19,56 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module guimanager
+%module(directors="1") fonts
 %{
-#include <guichan.hpp>
-#include "gui/guimanager.h"
-%}
+#include "video/fonts/abstractfont.h"
+#include "video/fonts/fontbase.h"
+#include "video/fonts/truetypefont.h"
+#include "video/fonts/subimagefont.h"
 
-namespace gcn {
-	class Widget;
-	class ActionEvent;
-	class ActionListener {
-	public:
-		virtual void action(const ActionEvent& actionEvent) = 0;
-	};
-}
+%}
+typedef unsigned char Uint8;
+
 namespace FIFE {
-	class Console;
-	
-	%feature("notabstract") GUIManager;
-	class GUIManager: public gcn::ActionListener {
+	class AbstractFont {
 	public:
-		Console* getConsole();
-		void add(gcn::Widget* widget);
-		void remove(gcn::Widget* widget);
-		void setGlobalFont(GuiFont* font);
-		GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
-		void releaseFont(GuiFont* font);
-		
-	private:
-		GUIManager(IWidgetListener* widgetListener);
+		virtual ~AbstractFont();
+		virtual void setRowSpacing (int spacing) = 0;
+		virtual int getRowSpacing() const = 0;
+		virtual void setGlyphSpacing(int spacing) = 0;
+		virtual int getGlyphSpacing() const = 0;
+		virtual void setAntiAlias(bool antiAlias) = 0;
+		virtual bool isAntiAlias() = 0;
+		virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;
+		virtual SDL_Color getColor() const = 0;
+		virtual int getWidth(const std::string& text) const = 0;
+		virtual int getHeight() const = 0;
+	};
+
+	class FontBase: public AbstractFont {
+	public:
+		virtual ~FontBase(){ }
+	};
+
+	%feature("notabstract") TrueTypeFont;
+	%rename(TTFont) TrueTypeFont;
+	class TrueTypeFont: public FontBase {
+	public:
+		TrueTypeFont(const std::string& filename, int size);
+		virtual ~TrueTypeFont();
+		virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+		virtual int getWidth(const std::string& text) const;
+		virtual int getHeight() const;
+	};
+
+	class ImagePool;
+	%feature("notabstract") SubImageFont;
+	class SubImageFont: public FontBase {
+	public:
+		SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
+		virtual ~SubImageFont();
+		virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+		virtual int getWidth(const std::string& text) const;
+		virtual int getHeight() const;
 	};
 }

@@ -19,76 +19,79 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_FONTS_TRUETYPEFONT_H
-#define FIFE_GUI_FONTS_TRUETYPEFONT_H
+#ifndef FIFE_FONTS_TEXTRENDERPOOL_H
+#define FIFE_FONTS_TEXTRENDERPOOL_H
 
 // Standard C++ library includes
-#include <map>
+#include <list>
 #include <string>
 
+// Platform specific includes
+
 // 3rd party library includes
-#include <guichan/font.hpp>
-#include <guichan/graphics.hpp>
-#include <guichan/image.hpp>
-#include <guichan/platform.hpp>
-#include <SDL_ttf.h>
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "fontbase.h"
+#include "util/time/timer.h"
 
+struct SDL_Surface;
 namespace FIFE {
+	class FontBase;
+	class Image;
 
-	/**
-	 * SDL True Type Font implementation of Font. It uses the SDL_ttf library
-	 * to display True Type Fonts with SDL.
+	/** Generic pool for rendered text
+	 *  Caches a number of Images with text, as rendered by a Font.
+	 *  Makes sure no more than a maximum number of strings is pooled at a time.
+	 *  Automatically removes pooled strings not used for a minute.
+	 *  Doesn't use resources (apart from a minimum) if not used after a while.
 	 *
-	 * NOTE: You must initialize the SDL_ttf library before using this
-	 *       class. Also, remember to call the SDL_ttf libraries quit
-	 *       function.
-	 *
-	 * Original author of this class is Walluce Pinkham. Some modifications
-	 * made by the Guichan team, and additonal modifications by the FIFE team.
+	 *  @todo Should probably use a @c std::map instead of a @c std::list
 	 */
-	class TrueTypeFont: public FontBase {
+	class TextRenderPool {
 		public:
-
-			/**
-			 * Constructor.
-			 *
-			 * @param filename the filename of the True Type Font.
-			 * @param size the size the font should be in.
+			/** Constructor
+			 *  Constructs a pool with a maximum of poolSize entries
 			 */
-			TrueTypeFont(const std::string& filename, int size);
+			TextRenderPool(size_t poolSize = 200);
 
-			/**
-			 * Destructor.
+			/** Destructor
 			 */
-			virtual ~TrueTypeFont();
+			~TextRenderPool();
 
-			// Inherited from Font
+			/** Get a string image
+			 */
+			Image* getRenderedText( FontBase* fontbase, const std::string& text);
 
-			virtual int getWidth(const std::string& text) const;
+			/** Add a string image
+			 */
+			void addRenderedText( FontBase* fontbase, const std::string& text, Image* image);
 
-			virtual int getHeight() const;
-
-
-			virtual SDL_Surface *renderString(const std::string& text);
-
-			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+			/** Remove entries not used since a minute
+			 *  Is a timer callback.
+			 */
+			void removeOldEntries();
 
 		protected:
-			TTF_Font *mFont;
+			typedef struct {
+				std::string text;
+				SDL_Color color;
+				bool antialias;
+				int glyph_spacing;
+				int row_spacing;
+				uint32_t timestamp;
 
-			int mHeight;
-			int mGlyphSpacing;
-			int mRowSpacing;
+				Image* image;
+			} s_pool_entry;
 
-			std::string mFilename;
-			bool mAntiAlias;
+			typedef std::list<s_pool_entry> type_pool;
+			type_pool m_pool;
+			size_t m_poolSize;
+			size_t m_poolMaxSize;
+
+			Timer m_collectTimer;
 	};
 }
-
-#endif // end GCN_SDLTRUETYPEFONT_HPP
+#endif

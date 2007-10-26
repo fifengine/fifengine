@@ -44,7 +44,6 @@ namespace gcn {
 	class Container;
 	class Widget;
 	class SDLInput;
-	class Font;
 	class FocusHandler;
 
 }
@@ -57,7 +56,8 @@ namespace FIFE {
 	class Console;
 	class IKeyEvent;
 	class IMouseEvent;
-	class FontBase;
+	class AbstractFont;
+	class GuiFont;
 
 	/* GUI Manager.
 	 *
@@ -127,15 +127,15 @@ namespace FIFE {
 
 			/** Set the global font
 			 */
-			void setGlobalFont(gcn::Font* font);
+			void setGlobalFont(GuiFont* font);
 			
 			/** Gets font with given properties. Note that font will be owned by guimanager
 			 */
-			FontBase* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
+			GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
 
 			/** Releases given font.
 			 */
-			void releaseFont(gcn::Font* font);
+			void releaseFont(GuiFont* font);
 
 			/** Callback from guichan
 			 */
@@ -171,7 +171,7 @@ namespace FIFE {
 			// The console.
 			Console       *m_console;
 			// The fonts used
-			std::vector<gcn::Font*> m_fonts;
+			std::vector<GuiFont*> m_fonts;
 			// Added widgets
 			std::set<gcn::Widget*> m_widgets;
 

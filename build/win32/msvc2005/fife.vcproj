@@ -159,6 +159,8 @@
 			</Filter>
 			<Filter Name="gui">
 				<Filter Name="base">
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_font.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\gui\base\gui_font.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\base\gui_image.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\base\gui_image.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\base\gui_imageloader.cpp"></File>
@@ -177,18 +179,6 @@
 					<File RelativePath="..\..\..\engine\core\gui\console\commandline.h"></File>
 					<File RelativePath="..\..\..\engine\core\gui\console\console.cpp"></File>
 					<File RelativePath="..\..\..\engine\core\gui\console\console.h"></File>
-				</Filter>
-				<Filter Name="fonts">
-					<File RelativePath="..\..\..\engine\core\gui\fonts\fontbase.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\fontbase.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefontbase.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\imagefontbase.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\subimagefont.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\subimagefont.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\textrenderpool.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\textrenderpool.h"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\truetypefont.cpp"></File>
-					<File RelativePath="..\..\..\engine\core\gui\fonts\truetypefont.h"></File>
 				</Filter>
 				<File RelativePath="..\..\..\engine\core\gui\guimanager.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\gui\guimanager.h"></File>
@@ -355,6 +345,19 @@
 				<File RelativePath="..\..\..\engine\core\video\animation.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\animation.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\animationpool.h"></File>
+				<Filter Name="fonts">
+					<File RelativePath="..\..\..\engine\core\video\fonts\abstractfont.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\fontbase.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\fontbase.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\imagefontbase.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\imagefontbase.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\subimagefont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\subimagefont.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\textrenderpool.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\textrenderpool.h"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\truetypefont.cpp"></File>
+					<File RelativePath="..\..\..\engine\core\video\fonts\truetypefont.h"></File>
+				</Filter>
 				<File RelativePath="..\..\..\engine\core\video\image.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\video\image.h"></File>
 				<File RelativePath="..\..\..\engine\core\video\image_location.cpp"></File>

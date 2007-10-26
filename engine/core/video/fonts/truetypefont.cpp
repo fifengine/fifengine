@@ -19,34 +19,63 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module guimanager
-%{
-#include <guichan.hpp>
-#include "gui/guimanager.h"
-%}
+// Standard C++ library includes
 
-namespace gcn {
-	class Widget;
-	class ActionEvent;
-	class ActionListener {
-	public:
-		virtual void action(const ActionEvent& actionEvent) = 0;
-	};
-}
+// 3rd party library includes
+#include <SDL.h>
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "util/exception.h"
+#include "util/rect.h"
+#include "video/image.h"
+#include "video/renderbackend.h"
+
+#include "truetypefont.h"
+
 namespace FIFE {
-	class Console;
-	
-	%feature("notabstract") GUIManager;
-	class GUIManager: public gcn::ActionListener {
-	public:
-		Console* getConsole();
-		void add(gcn::Widget* widget);
-		void remove(gcn::Widget* widget);
-		void setGlobalFont(GuiFont* font);
-		GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
-		void releaseFont(GuiFont* font);
-		
-	private:
-		GUIManager(IWidgetListener* widgetListener);
-	};
+
+	TrueTypeFont::TrueTypeFont(const std::string& filename, int size)
+		: FIFE::FontBase() {
+		mFilename = filename;
+		mFont = NULL;
+
+		mFont = TTF_OpenFont(filename.c_str(), size);
+
+		if (mFont == NULL) {
+			throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
+		}
+		mColor.r = mColor.g = mColor.b = 255;
+	}
+
+	TrueTypeFont::~TrueTypeFont() {
+		TTF_CloseFont(mFont);
+	}
+
+	int TrueTypeFont::getWidth(const std::string& text) const {
+		int w, h;
+		TTF_SizeText(mFont, text.c_str(), &w, &h);
+
+		return w;
+	}
+
+	int TrueTypeFont::getHeight() const {
+		return TTF_FontHeight(mFont) + getRowSpacing();
+	}
+
+	SDL_Surface* TrueTypeFont::renderString(const std::string& text) {
+		if (m_antiAlias) {
+			return TTF_RenderText_Blended(mFont, text.c_str(), mColor);
+		} else {
+			return TTF_RenderText_Solid(mFont, text.c_str(), mColor);
+		}
+	}
+
+	void TrueTypeFont::setColor(Uint8 r, Uint8 g, Uint8 b) {
+		mColor.r = r;
+		mColor.g = g;
+		mColor.b = b;
+	}
 }

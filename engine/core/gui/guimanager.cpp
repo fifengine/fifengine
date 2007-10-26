@@ -35,11 +35,12 @@
 #include "util/logger.h"
 #include "video/renderbackend.h"
 #include "gui/base/gui_imageloader.h"
+#include "gui/base/gui_font.h"
 #include "util/settingsmanager.h"
 #include "gui/console/console.h"
-#include "gui/fonts/fontbase.h"
-#include "gui/fonts/truetypefont.h"
-#include "gui/fonts/subimagefont.h"
+#include "video/fonts/fontbase.h"
+#include "video/fonts/truetypefont.h"
+#include "video/fonts/subimagefont.h"
 #include "eventchannel/widget/ec_widgetevent.h"
 
 #include "guimanager.h"
@@ -73,7 +74,7 @@ namespace FIFE {
 		delete m_imgloader;
 		delete m_input;
 		delete m_gcn_gui;
-		std::vector<gcn::Font*>::iterator i = m_fonts.begin();
+		std::vector<GuiFont*>::iterator i = m_fonts.begin();
 		while (i != m_fonts.end()) {
 			delete *i;
 			++i;
@@ -117,15 +118,22 @@ namespace FIFE {
 		m_console = new Console();
 	}
 
-	FontBase* GUIManager::createFont(const std::string& path, unsigned int size, const std::string& glyphs) {
+	GuiFont* GUIManager::createFont(const std::string& path, unsigned int size, const std::string& glyphs) {
+		AbstractFont* font = NULL;
+		GuiFont* guifont = NULL;
 		if( boost::filesystem::extension(path) == ".ttf" ) {
-			return new TrueTypeFont(path, size);
-		} 
-		return new SubImageFont(path, glyphs, m_pool);
+			font = new TrueTypeFont(path, size);
+		} else {
+			font = new SubImageFont(path, glyphs, m_pool);
+		}
+		guifont = new GuiFont(font);
+		
+		m_fonts.push_back(guifont);
+		return guifont;
 	}
 
-	void GUIManager::releaseFont(gcn::Font* font) {
-		std::vector<gcn::Font*>::iterator i = m_fonts.begin();
+	void GUIManager::releaseFont(GuiFont* font) {
+		std::vector<GuiFont*>::iterator i = m_fonts.begin();
 		while (i != m_fonts.end()) {
 			if ((*i) == font) {
 				m_fonts.erase(i);
@@ -136,7 +144,7 @@ namespace FIFE {
 		}	
 	}
 
-	void GUIManager::setGlobalFont(gcn::Font* font) {
+	void GUIManager::setGlobalFont(GuiFont* font) {
 		gcn::Widget::setGlobalFont(font);
 		m_console->reLayout();
 	}

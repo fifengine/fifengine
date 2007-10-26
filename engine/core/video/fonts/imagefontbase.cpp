@@ -19,79 +19,93 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_FONTS_TEXTRENDERPOOL_H
-#define FIFE_GUI_FONTS_TEXTRENDERPOOL_H
-
 // Standard C++ library includes
-#include <list>
-#include <string>
-
-// Platform specific includes
+#include <algorithm>
 
 // 3rd party library includes
+#include <boost/filesystem/convenience.hpp>
+#include <boost/scoped_array.hpp>
 #include <SDL.h>
+#include <SDL_image.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/time/timer.h"
+#include "util/exception.h"
+#include "util/rect.h"
+#include "video/image.h"
+#include "video/renderbackend.h"
 
-struct SDL_Surface;
+#include "imagefontbase.h"
+
 namespace FIFE {
-	class FontBase;
-	class Image;
 
-	/** Generic pool for rendered text
-	 *  Caches a number of Images with text, as rendered by a Font.
-	 *  Makes sure no more than a maximum number of strings is pooled at a time.
-	 *  Automatically removes pooled strings not used for a minute.
-	 *  Doesn't use resources (apart from a minimum) if not used after a while.
-	 *
-	 *  @todo Should probably use a @c std::map instead of a @c std::list
-	 */
-	class TextRenderPool {
-		public:
-			/** Constructor
-			 *  Constructs a pool with a maximum of poolSize entries
-			 */
-			TextRenderPool(size_t poolSize = 200);
+	ImageFontBase::ImageFontBase() : FontBase() {
+	}
 
-			/** Destructor
-			 */
-			~TextRenderPool();
+	ImageFontBase::~ImageFontBase() {
+		type_glyphs::iterator i = m_glyphs.begin();
+		for(; i != m_glyphs.end(); ++i) {
+			SDL_FreeSurface(i->second.surface);
+		}
+		
+	}
 
-			/** Get a string image
-			 */
-			Image* getRenderedText( FontBase* fontbase, const std::string& text);
+	int ImageFontBase::getWidth(const std::string& text) const {
+		int w = 0;
 
-			/** Add a string image
-			 */
-			void addRenderedText( FontBase* fontbase, const std::string& text, Image* image);
+		for(size_t i=0; i!= text.size(); ++i) {
+			type_glyphs::const_iterator it = m_glyphs.find( text[i] );
 
-			/** Remove entries not used since a minute
-			 *  Is a timer callback.
-			 */
-			void removeOldEntries();
+			if( it != m_glyphs.end() ) {
+				w += it->second.surface->w + getGlyphSpacing();
+				continue;
+			}
 
-		protected:
-			typedef struct {
-				std::string text;
-				SDL_Color color;
-				bool antialias;
-				int glyph_spacing;
-				int row_spacing;
-				uint32_t timestamp;
+			if( m_placeholder.surface ) {
+				w += m_placeholder.surface->w + getGlyphSpacing();
+			}
+		}
+		return w;
+	}
 
-				Image* image;
-			} s_pool_entry;
+	int ImageFontBase::getHeight() const {
+		return mHeight;
+	}
 
-			typedef std::list<s_pool_entry> type_pool;
-			type_pool m_pool;
-			size_t m_poolSize;
-			size_t m_poolMaxSize;
+	SDL_Surface *ImageFontBase::renderString(const std::string& text) {
+		SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			getWidth(text),getHeight(),32,
+			0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
 
-			Timer m_collectTimer;
-	};
+		SDL_FillRect(surface,0,0x00000000);
+
+		SDL_Rect dst;
+		dst.x = dst.y = 0;
+		s_glyph *glyph = 0;
+
+		for(size_t i=0; i!= text.size(); ++i) {
+			type_glyphs::iterator it = m_glyphs.find( text[i] );
+
+			if( it == m_glyphs.end() ) {
+				if( !m_placeholder.surface ) {
+					continue;
+				}
+				glyph = &m_placeholder;
+			} else {
+				glyph = &(it->second);
+			}
+			dst.y  = glyph->offset.y;
+			dst.x += glyph->offset.x;
+
+			SDL_BlitSurface(glyph->surface,0,surface,&dst);
+			dst.x += glyph->surface->w + getGlyphSpacing();
+		}
+
+		return surface;
+	}
+
+	void ImageFontBase::setColor(Uint8 r, Uint8 g, Uint8 b) {
+	}
 }
-#endif

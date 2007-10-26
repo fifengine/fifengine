@@ -19,65 +19,98 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_ABSTRACT_FONT_H
+#define FIFE_ABSTRACT_FONT_H
+
 // Standard C++ library includes
+#include <string>
+
+// Platform specific includes
 
 // 3rd party library includes
-#include <guichan/exception.hpp>
-#include <guichan/image.hpp>
 #include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/rect.h"
-#include "video/image.h"
-#include "video/renderbackend.h"
-
-#include "truetypefont.h"
 
 namespace FIFE {
+	class Image;
 
-	TrueTypeFont::TrueTypeFont(const std::string& filename, int size)
-		: FIFE::FontBase() {
-		mFilename = filename;
-		mFont = NULL;
+	/** Pure abstract Font interface
+	 */
+	class AbstractFont {
+	public:
+		virtual ~AbstractFont() {}
 
-		mFont = TTF_OpenFont(filename.c_str(), size);
+		/**
+		 * Sets the spacing between rows in pixels. Default is 0 pixels.
+		 * The spacing can be negative.
+		 *
+		 * @param spacing the spacing in pixels.
+		 */
+		virtual void setRowSpacing (int spacing) = 0;
 
-		if (mFont == NULL) {
-			throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
-		}
-		mColor.r = mColor.g = mColor.b = 255;
-	}
+		/**
+		 * Gets the spacing between rows in pixels.
+		 *
+		 * @return the spacing.
+		 */
+		virtual int getRowSpacing() const = 0;
 
-	TrueTypeFont::~TrueTypeFont() {
-		TTF_CloseFont(mFont);
-	}
+		/**
+		 * Sets the spacing between letters in pixels. Default is 0 pixels.
+		 * The spacing can be negative.
+		 *
+		 * @param spacing the spacing in pixels.
+		 */
+		virtual void setGlyphSpacing(int spacing) = 0;
 
-	int TrueTypeFont::getWidth(const std::string& text) const {
-		int w, h;
-		TTF_SizeText(mFont, text.c_str(), &w, &h);
+		/**
+		 * Gets the spacing between letters in pixels.
+		 *
+		 * @return the spacing.
+		 */
+		virtual int getGlyphSpacing() const = 0;
 
-		return w;
-	}
+		/**
+		 * Sets the use of anti aliasing..
+		 *
+		 * @param antaAlias true for use of antia aliasing.
+		 */
+		virtual void setAntiAlias(bool antiAlias) = 0;
 
-	int TrueTypeFont::getHeight() const {
-		return TTF_FontHeight(mFont) + getRowSpacing();
-	}
+		/**
+		 * Checks if anti aliasing is used.
+		 *
+		 * @return true if anti aliasing is used.
+		 */
+		virtual bool isAntiAlias() = 0;
 
-	SDL_Surface* TrueTypeFont::renderString(const std::string& text) {
-		if (m_antiAlias) {
-			return TTF_RenderText_Blended(mFont, text.c_str(), mColor);
-		} else {
-			return TTF_RenderText_Solid(mFont, text.c_str(), mColor);
-		}
-	}
+		virtual int getStringIndexAt(const std::string &text, int x) = 0;
 
-	void TrueTypeFont::setColor(Uint8 r, Uint8 g, Uint8 b) {
-		mColor.r = r;
-		mColor.g = g;
-		mColor.b = b;
-	}
+		/** Gets given text as Image
+		 *  The rsulting image is pooled, so it's not that time critical
+		 */
+		virtual Image* getAsImage(const std::string& text) = 0;
+
+		/** Set the color the text should be rendered in
+		 */
+		virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;
+
+		/** Get the color the text was rendered in
+		 */
+		virtual SDL_Color getColor() const = 0;
+		
+		/** gets width of given text
+		 */
+		virtual int getWidth(const std::string& text) const = 0;
+		
+		/** gets height of this font
+		 */
+		virtual int getHeight() const = 0;
+	};
 }
+
+#endif
