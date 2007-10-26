@@ -130,7 +130,7 @@ namespace FIFE {
 	 */
 	template<typename T>
 	std::ostream& operator<<(std::ostream& os, const PointType2D<T>& p) {
-		return os << "(" << p.x << "," << p.y << ")";
+		return os << "(" << p.x << ":" << p.y << ")";
 	}
 
 	typedef PointType2D<int> Point;
@@ -229,7 +229,7 @@ namespace FIFE {
 	 */
 	template<typename T>
 	std::ostream& operator<<(std::ostream& os, const PointType3D<T>& p) {
-		return os << "(" << p.x << "," << p.y << "," << p.z << ")";
+		return os << "(" << p.x << ":" << p.y << ":" << p.z << ")";
 	}
 
 	typedef PointType3D<int> Point3D;

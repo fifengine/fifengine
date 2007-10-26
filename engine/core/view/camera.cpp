@@ -48,7 +48,8 @@ namespace FIFE {
 		m_viewport(),
 		m_screen_cell_width(1),
 		m_screen_cell_height(1),
-		m_reference_scale(1) {
+		m_reference_scale(1),
+		m_enabled(true) {
 		updateMatrices();
 	}
 

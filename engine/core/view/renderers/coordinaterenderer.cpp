@@ -82,31 +82,31 @@ namespace FIFE {
 		m_layer_area.h = MIN_COORD;
 		
 		m_tmploc.setLayer(layer);
-		m_c = cam->toElevationCoordinates(ScreenPoint(0, 0));
+		Rect cv = cam->getViewPort();
+		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x, cv.y));
 		adjustLayerArea();
-		m_c = cam->toElevationCoordinates(ScreenPoint(m_renderbackend->getScreenWidth(), 0));
+		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x+cv.w, cv.y));
 		adjustLayerArea();
-		m_c = cam->toElevationCoordinates(ScreenPoint(0, m_renderbackend->getScreenHeight()));
+		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x, cv.y+cv.h));
 		adjustLayerArea();
-		m_c = cam->toElevationCoordinates(ScreenPoint(m_renderbackend->getScreenWidth(), m_renderbackend->getScreenHeight()));
+		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h));
 		adjustLayerArea();
 		
-		Rect cv = cam->getViewPort();
 		Rect r = Rect();
 		for (int x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
 			for (int y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
 				ModelCoordinate mc(x, y);
 				m_tmploc.setLayerCoordinates(mc);
 				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getElevationCoordinates());
-				if ((drawpt.x >= cv.x) || (drawpt.x <= cv.w) || 
-				    (drawpt.y >= cv.y) || (drawpt.y <= cv.h)) {
+				if ((drawpt.x >= cv.x) && (drawpt.x <= cv.w) &&
+				    (drawpt.y >= cv.y) && (drawpt.y <= cv.h)) {
 					std::stringstream ss;
 					ss << mc.x << ":" << mc.y;
 					Image * img = m_font->getAsImage(ss.str());
 					r.x = drawpt.x;
 					r.y = drawpt.y;
 					r.w = img->getWidth();
-					r.w = img->getHeight();
+					r.h = img->getHeight();
 					img->render(r);
 				}
 				

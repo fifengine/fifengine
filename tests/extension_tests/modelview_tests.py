@@ -41,11 +41,11 @@ class TestModelView(unittest.TestCase):
 		self.engine.getView().resetRenderers()
 		self.engine.initializePumping()
 
-		for count in range(200):
+		for count in range(10):
 			self.engine.pump()
-			time.sleep(0.03)
+			#time.sleep(0.03)
 			c = self.camloc.getExactLayerCoordinates()
-			c.x += 0.05
+			c.x += 0.50
 			c = self.camloc.setExactLayerCoordinates(c)			
 			cam.setLocation(self.camloc)
 

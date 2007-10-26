@@ -51,7 +51,7 @@ namespace FIFE {
 		m_renderbackend(renderbackend),
 		m_imagepool(imagepool),
 		m_zone_image(NULL) {
-		setPipelinePosition(2);
+		setPipelinePosition(3);
 		setEnabled(false);
 	}
 	

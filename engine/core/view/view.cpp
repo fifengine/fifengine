@@ -145,6 +145,10 @@ namespace FIFE {
 		// update each camera
 		std::vector<Camera*>::iterator cam_it = m_cameras.begin();
 		for(; cam_it != m_cameras.end(); ++cam_it) {
+			if (!(*cam_it)->isEnabled()) {
+				continue;
+			}
+		
 			const Location& loc = (*cam_it)->getLocation();
 			Elevation* elev = loc.getElevation();
 			if (!elev) {

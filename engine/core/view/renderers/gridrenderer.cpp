@@ -61,6 +61,7 @@ namespace FIFE {
 			return;
 		}
 		
+		Rect cv = cam->getViewPort();
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = *instance_it;
@@ -71,12 +72,36 @@ namespace FIFE {
 			Point pt1(firstpt.x, firstpt.y);
 			Point pt2;
 			++it;
-			while (it != vertices.end()) {
+			for (; it != vertices.end(); it++) {
 				ScreenPoint pts = cam->toScreenCoordinates(cg->toElevationCoordinates(*it));
 				pt2.x = pts.x; pt2.y = pts.y;
-				m_renderbackend->drawLine(pt1, pt2, 0, 255, 0);
+				Point cpt1 = pt1;
+				Point cpt2 = pt2;
+				/* FIXME: limit grid drawing to current camera view port
+				   code below does not do it, but may act as a starting point
+				   
+				int cvx2 = cv.x+cv.w;
+				int cvy2 = cv.y+cv.h;
+				
+				if (((pt1.x < cv.x) && (pt2.x < cv.x)) ||
+				    ((pt1.x > cvx2) && (pt2.x > cvx2)) ||
+				    ((pt1.y < cv.y) && (pt2.y < cv.y)) ||
+				    ((pt1.y > cvy2) && (pt2.y > cvy2))) {
+				    pt1 = pt2;
+				    continue;
+				}
+				
+				if (cpt1.x < cv.x) cpt1.x = cv.x;
+				if (cpt2.x < cv.x) cpt2.x = cv.x;
+				if (cpt1.y < cv.y) cpt1.y = cv.y;
+				if (cpt2.y < cv.y) cpt2.y = cv.y;
+				if (cpt1.x > cvx2) cpt1.x = cvx2;
+				if (cpt2.x > cvx2) cpt2.x = cvx2;
+				if (cpt1.y > cvy2) cpt1.y = cvy2;
+				if (cpt2.y > cvy2) cpt2.y = cvy2;
+				*/
+				m_renderbackend->drawLine(cpt1, cpt2, 0, 255, 0);
 				pt1 = pt2;
-				++it;
 			}
 			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), 0, 255, 0);
 		}

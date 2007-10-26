@@ -24,5 +24,8 @@ namespace FIFE {
 		void setCellImageDimensions(unsigned int width, unsigned int height);
 		ScreenPoint toScreenCoordinates(ExactModelCoordinate elevation_coords);
 		ExactModelCoordinate toElevationCoordinates(ScreenPoint screen_coords);
+		void setEnabled(bool enabled);
+		bool isEnabled();
+		
 	};
 }

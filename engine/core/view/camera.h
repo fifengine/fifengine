@@ -143,6 +143,14 @@ namespace FIFE {
 		 *  @return point in screen coordinates
 		 */
 		ScreenPoint toScreenCoordinates(ExactModelCoordinate elevation_coords);
+		
+		/** Sets camera enabled / disabled
+		 */
+		void setEnabled(bool enabled) { m_enabled = enabled; }
+		
+		/** Gets if camera is enabled / disabled
+		 */
+		bool isEnabled() { return m_enabled; }
 
 	private:
 		void updateMatrices();
@@ -159,6 +167,7 @@ namespace FIFE {
 		unsigned int m_screen_cell_width;
 		unsigned int m_screen_cell_height;
 		double m_reference_scale;
+		bool m_enabled;
 	};
 }
 #endif
