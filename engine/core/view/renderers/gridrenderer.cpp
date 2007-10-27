@@ -54,7 +54,7 @@ namespace FIFE {
 	GridRenderer::~GridRenderer() {
 	}
 	
-	void GridRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) {
+	void GridRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");

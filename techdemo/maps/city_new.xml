@@ -75,7 +75,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" scaling="3">
+		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" scaling="3" rotation="35">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>

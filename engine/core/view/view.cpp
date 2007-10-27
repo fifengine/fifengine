@@ -93,7 +93,7 @@ namespace FIFE {
 	void View::onRendererEnabledChanged(RendererBase* renderer) {
 		assert(m_renderers[renderer->getName()]);
 		if (renderer->isEnabled()) {
-			//std::cout << "Enabling renderer " << renderer->getName() << "\n";
+			FL_LOG(_log, LMsg("Enabling renderer ") << renderer->getName());
 			m_pipeline.push_back(renderer);
 		} else {
 			m_pipeline.remove(renderer);
@@ -165,7 +165,6 @@ namespace FIFE {
 			
 				// sort instances on layer based on stack position + camera distance. done only once
 				//  here instead passing it to each renderer
-				std::set<int> stack_positions;
 				std::vector<Instance*> instances((*layer_it)->getInstances());
 				std::vector<Instance*>::const_iterator instance_it = instances.begin();
 				for (;instance_it != instances.end(); ++instance_it) {
@@ -173,24 +172,15 @@ namespace FIFE {
 					InstanceVisual* visual = instance->getVisual<InstanceVisual>();
 					ExactModelCoordinate c = instance->getLocation().getElevationCoordinates();
 					visual->setCameraCoordinate((*cam_it)->toScreenCoordinates(c));
-					stack_positions.insert(visual->getStackPosition());
 				}
-				std::sort(instances.begin(), instances.end(), instanceDistanceSort);
-				std::sort(instances.begin(), instances.end(), instanceStackSort);
+				std::stable_sort(instances.begin(), instances.end(), instanceStackSort);
+				std::stable_sort(instances.begin(), instances.end(), instanceDistanceSort);
 				
-				//std::cout << "  Drawing layer " << (*layer_it)->Id() << "\n";
-				// asks renderers to draw the layer
-				std::set<int>::const_iterator stack_it = stack_positions.begin();
-				for (;stack_it != stack_positions.end(); ++stack_it) {
-					//std::cout << "    stackpos " << *stack_it << "\n";
-					std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
-					for(; r_it != m_pipeline.end(); ++r_it) {
-						if ((*r_it)->isActivedLayer(*layer_it)) {
-							//std::cout << "      Drawing " << (*r_it)->getName() << "\n";
-							(*r_it)->render(*cam_it, *layer_it, instances, *stack_it);
-						}
+				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+				for(; r_it != m_pipeline.end(); ++r_it) {
+					if ((*r_it)->isActivedLayer(*layer_it)) {
+						(*r_it)->render(*cam_it, *layer_it, instances);
 					}
-
 				}
 			}
 			m_renderbackend->popClipArea();

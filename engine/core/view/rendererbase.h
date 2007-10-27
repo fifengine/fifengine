@@ -82,10 +82,9 @@ namespace FIFE {
 		 * @param cam camera view to draw
 		 * @param cam current layer to be rendered
 		 * @param instances instances on the current layer
-		 * @param stack_pos current stack position
 		 * @ see setPipelinePosition
 		 */
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) = 0;
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) = 0;
 		
 		/** Name of the renderer
 		 */

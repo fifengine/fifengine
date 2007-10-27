@@ -77,7 +77,7 @@ namespace FIFE {
 		}
 	}
 	
-	void InstanceRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) {
+	void InstanceRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
 		FL_DBG(_log, "Iterating layer...");
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
@@ -90,9 +90,6 @@ namespace FIFE {
 			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it);
 			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
-			if (visual->getStackPosition() != stackpos) {
-				continue;
-			}
 			
 			Image* image = NULL;
 			ExactModelCoordinate elevpos = instance->getLocation().getElevationCoordinates();

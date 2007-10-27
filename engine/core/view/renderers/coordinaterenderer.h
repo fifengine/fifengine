@@ -50,7 +50,7 @@ namespace FIFE {
 		 */
 		virtual ~CoordinateRenderer();
 		
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
 		
 		std::string getName() { return "CoordinateRenderer"; }
 

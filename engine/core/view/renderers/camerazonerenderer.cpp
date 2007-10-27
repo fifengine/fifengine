@@ -61,11 +61,7 @@ namespace FIFE {
 	
 	
 	
-	void CameraZoneRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, int stackpos) {
-		if (stackpos != 0) {
-			return;
-		}
-		
+	void CameraZoneRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw camera zones");
