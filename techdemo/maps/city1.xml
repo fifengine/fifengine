@@ -32,7 +32,7 @@
 		</metadata>
 
 		<!-- TILE LAYER -->
-		<layer id="TechdemoMapTileLayer" grid_type="square" scaling="0.4">
+		<layer id="TechdemoMapTileLayer" grid_type="square" scaling="2.5">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
@@ -75,7 +75,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="TechdemoMapObjectLayer" grid_type="square" scaling="0.4">
+		<layer id="TechdemoMapObjectLayer" grid_type="square" scaling="2.5">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>5</x><y>0</y></param>
@@ -96,7 +96,7 @@
 		</layer>
 		
 		<!-- Agentlayer (to fake z-pos)-->
-		<layer id="TechdemoAgentLayer" grid_type="square" scaling="0.4">
+		<layer id="TechdemoAgentLayer" grid_type="square" scaling="2.5">
 		
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>5</x><y>0</y></param>

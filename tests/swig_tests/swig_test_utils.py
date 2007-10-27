@@ -14,7 +14,7 @@ import fife, fifelog
 def getEngine(minimized=False):
 	e = fife.Engine()
 	log = fifelog.LogManager(e, promptlog=False, filelog=True)
-	log.setVisibleModules('all')
+	#log.setVisibleModules('all')
 	s = e.getSettings()
 	s.setDefaultFontPath('tests/data/FreeMono.ttf')
 	s.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
