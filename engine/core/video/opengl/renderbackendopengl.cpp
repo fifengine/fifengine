@@ -207,11 +207,12 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+	        glColor4ub(r, g, b, 255);
 		glBegin(GL_LINES);
 		glVertex3f(p1.x+0.5f, p1.y+0.5f, 0);
 		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
 		glEnd();
-	
+
 		glBegin(GL_POINTS);
 		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
 		glEnd();

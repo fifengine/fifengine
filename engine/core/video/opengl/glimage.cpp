@@ -80,6 +80,7 @@ namespace FIFE {
 		/// setting transparency for whole primitive:
 		glColor4ub( 255, 255, 255, alpha );
 
+		glEnable(GL_TEXTURE_2D);
 		for (unsigned int i = 0; i < m_cols; ++i) {
 			for (unsigned int j = 0; j < m_rows; ++j) {
 				glBindTexture(GL_TEXTURE_2D, m_textureid[j*m_cols + i]);
@@ -125,6 +126,7 @@ namespace FIFE {
 				glEnd();
 			}
 		}
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	unsigned int GLImage::getWidth() const {
