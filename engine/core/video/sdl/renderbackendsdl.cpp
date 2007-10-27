@@ -269,5 +269,6 @@ namespace FIFE {
 		rect.w = cliparea.w;
 		rect.h = cliparea.h;
 		SDL_SetClipRect(m_screen, &rect);
+		SDL_FillRect(m_screen, &rect, 0x00);
 	}
 }
