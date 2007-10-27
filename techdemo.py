@@ -31,8 +31,9 @@ Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:
 
 Have fun,
 The FIFE and Zero-Projekt teams
-        http://www.zero-projekt.net
-	http://www.fifengine.de
+
+http://www.zero-projekt.net
+http://www.fifengine.de
 '''
 
 

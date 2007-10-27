@@ -17,6 +17,7 @@
 
 	<!-- Load object datasets -->
 	<dataset type="XML" source="techdemo/datasets/objects/test.xml" />
+	<dataset type="XML" source="techdemo/datasets/objects/signs.xml" />
 	
 	<!-- Map specific object -->
 	<dataset type="XML" source="techdemo/datasets/objects/bar.xml" />
@@ -92,35 +93,38 @@
 				<i o="Gunner" x="9" y="8" />
 				-->
 
-				<i o="Bar:Foundation_wall" x="15" y="5" stackpos="-10" />
+				<!-- <i o="Bar:Foundation_wall" x="14" y="-6" /> -->
 
 				<i o="Rubbish_newspaper" x="9" y="23" />
 				<i o="Rubbish_newspaper" x="9" y="24" />
 				<i o="Rubbish_newspaper60" x="9" y="24" />
 				<i o="Rubbish_newspaper" x="10" y="24" />
 				<i o="Rubbish_newspaper60" x="10" y="23" />
-				
-				<i o="Street:Pile" x="0" y="31" />
-				<i o="Street:Pile" x="5" y="31" />
-				<i o="Street:Pile" x="10" y="31" />
-				<i o="Street:Pile" x="15" y="31" />
-				<i o="Street:Pile" x="20" y="31" />
-				<i o="Street:Pile" x="25" y="31" />
-				<i o="Street:Pile" x="30" y="31" />
+	
+				<i o="Street:Pile" x="16" y="25" />
+				<i o="Street:Pile" x="21" y="21" />
+				<i o="Street:Pile" x="26" y="17" />
+				<i o="Street:Pile" x="31" y="13" />
+				<i o="Street:Pile" x="36" y="9" />
+				<i o="Street:Pile" x="41" y="5" />
 
-				<i o="Street:Pile" x="0" y="45" />
-				<i o="Street:Pile" x="5" y="45" />
-				<i o="Street:Pile" x="10" y="45" />
-				<i o="Street:Pile" x="15" y="45" />
-				<i o="Street:Pile" x="20" y="45" />
-				<i o="Street:Pile" x="25" y="45" />
-				<i o="Street:Pile" x="30" y="45" />
+				<i o="Street:Pile" x="23" y="36" />
+				<i o="Street:Pile" x="28" y="32" />
+				<i o="Street:Pile" x="33" y="28" />
+				<i o="Street:Pile" x="38" y="24" />
+				<i o="Street:Pile" x="43" y="20" />
+				<i o="Street:Pile" x="48" y="16" />
+
+				<i o="Bar:Wall:1" x="11" y="6" />
+				<i o="Bar:Wall:11" x="9" y="-17" />
+				<i o="Bar:Wall:12" x="6" y="-11" />
+				<i o="Bar:Wall:14" x="4" y="0" />
 
 				<i o="PC" x="0" y="29"/>
 
-				<i o="WildBarracuda:Sign" x="9" y="19"/>
+				<i o="WildBarracuda:Sign" x="17" y="10"/>
 
-				<i o="Townhouse:Fassade" x="45" y="-10" />
+				<i o="Townhouse:Fassade" x="32" y="-38" />
 			</instances>
 		</layer>
 	</elevation>
