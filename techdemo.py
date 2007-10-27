@@ -72,8 +72,8 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.engine = engine		
 		self.quitRequested = False
 		self.newTarget = None
-		self.showTileOutline = False
-		self.showCoordinates = False
+		self.showTileOutline = TDS.TestCameraPlacement or TDS.TestCameraPlacementRotation
+		self.showCoordinates = TDS.TestCameraPlacement or TDS.TestCameraPlacementRotation
 		self.showSecondCamera = False
 				
 		# scroll support
@@ -288,7 +288,10 @@ class World(object):
 	def adjust_views(self):
 		W = self.renderbackend.getScreenWidth()
 		H = self.renderbackend.getScreenHeight()
-		self._create_camera('main', (5,-1), (0, 0, W, H))
+		maincoords = (5, -1)
+		if TDS.TestCameraPlacementRotation:
+			maincoords = (1, 1)
+		self._create_camera('main', maincoords, (0, 0, W, H))
 		self._create_camera('small', (6,1), (W*0.6, H*0.01, W*0.39, H*0.36))
 		self.view.resetRenderers()
 		
@@ -314,9 +317,9 @@ class World(object):
 		for g in self.agent_layer.getInstances('id', 'Gunner'):
 			g.act_here('idle', self.target, True)
 
-		showTileOutline = evtlistener.showTileOutline
-		showCoordinates = evtlistener.showCoordinates
-		showSecondCamera = evtlistener.showSecondCamera
+		showTileOutline = not evtlistener.showTileOutline
+		showCoordinates = not evtlistener.showCoordinates
+		showSecondCamera = not evtlistener.showSecondCamera
 		
 		smallcamx = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		initial_camx = smallcamx
@@ -324,6 +327,21 @@ class World(object):
 		self.cameras['small'].setEnabled(showSecondCamera)
 				
 		while True:
+			if showTileOutline != evtlistener.showTileOutline:
+				self.view.getRenderer('GridRenderer').setEnabled(evtlistener.showTileOutline)
+				showTileOutline = evtlistener.showTileOutline
+				
+			if showCoordinates != evtlistener.showCoordinates:
+				renderer = self.view.getRenderer('CoordinateRenderer')
+				showCoordinates = evtlistener.showCoordinates
+				renderer.setEnabled(showCoordinates)
+				
+			if showSecondCamera != evtlistener.showSecondCamera:
+				showSecondCamera = evtlistener.showSecondCamera
+				self.cameras['small'].setEnabled(showSecondCamera)
+				
+			if TDS.TestCameraPlacementRotation:
+				self.cameras['main'].setRotation(self.cameras['main'].getRotation()+0.5)
 			self.engine.pump()
 			
 			# agent movement
@@ -342,8 +360,10 @@ class World(object):
 				cam_scroll = loc.getExactLayerCoordinates()
 				cam_scroll.x += evtlistener.horizscroll
 				cam_scroll.y += evtlistener.vertscroll
-				cam_scroll = loc.setExactLayerCoordinates(cam_scroll)
+				loc.setExactLayerCoordinates(cam_scroll)
 				self.cameras['main'].setLocation(loc)
+				if TDS.TestCameraPlacement:
+					print "camera thinks being in position ", cam_scroll.x, ", ", cam_scroll.y
 				evtlistener.horizscroll = evtlistener.vertscroll = 0
 
 			smallcam_loc = self.cameras['small'].getLocation()
@@ -362,19 +382,6 @@ class World(object):
 
 			self.gui.show_info(evtlistener.showInfo)
 			
-			if showTileOutline != evtlistener.showTileOutline:
-				self.view.getRenderer('GridRenderer').setEnabled(evtlistener.showTileOutline)
-				showTileOutline = evtlistener.showTileOutline
-				
-			if showCoordinates != evtlistener.showCoordinates:
-				renderer = self.view.getRenderer('CoordinateRenderer')
-				showCoordinates = evtlistener.showCoordinates
-				renderer.setEnabled(showCoordinates)
-				
-			if showSecondCamera != evtlistener.showSecondCamera:
-				showSecondCamera = evtlistener.showSecondCamera
-				self.cameras['small'].setEnabled(showSecondCamera)
-				
 		self.engine.finalizePumping()
 
 

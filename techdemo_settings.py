@@ -10,3 +10,8 @@ ScreenHeight       = 600
 LogModules         = []
 LogToPrompt        = 1
 LogToFile          = 0
+
+
+# test settings
+TestCameraPlacement = 0
+TestCameraPlacementRotation = 0
