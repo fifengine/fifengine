@@ -83,29 +83,44 @@
 
 			<instances>
 				<!--
-				<i o="WildBarracuda:Bar" x="5" y="1" />
-				<i o="Townhouse:Fassade" x="15" y="-3" />
-
-
 				<i o="SecurityBot" x="22" y="8" />
 				
-				<i o="Rubbish_newspaper" x="3" y="6" />
-				<i o="Rubbish_newspaper60" x="2" y="7" />
+				<i o="WildBarracuda:Bar" x="5" y="1" />
 
-				<i o="WildBarracuda:Sign" x="3" y="6"/>	
 				<i o="Gunner" x="8" y="8" />
 				<i o="Gunner" x="5" y="7" />	
-				<i o="Gunner" x="9" y="8" />	
-				
-				
-				<i o="Street:Pile" x="1" y="9" />
-				<i o="Street:Pile" x="3" y="9" />
-				<i o="Street:Pile" x="5" y="9" />
-				<i o="Street:Pile" x="7" y="9" />
-				<i o="Street:Pile" x="9" y="9" />
-				<i o="Street:Pile" x="11" y="9" />
+				<i o="Gunner" x="9" y="8" />
 				-->
-				<i o="PC" x="5" y="1"/>
+
+				<i o="Bar:Foundation_wall" x="15" y="5" stackpos="-10" />
+
+				<i o="Rubbish_newspaper" x="9" y="23" />
+				<i o="Rubbish_newspaper" x="9" y="24" />
+				<i o="Rubbish_newspaper60" x="9" y="24" />
+				<i o="Rubbish_newspaper" x="10" y="24" />
+				<i o="Rubbish_newspaper60" x="10" y="23" />
+				
+				<i o="Street:Pile" x="0" y="31" />
+				<i o="Street:Pile" x="5" y="31" />
+				<i o="Street:Pile" x="10" y="31" />
+				<i o="Street:Pile" x="15" y="31" />
+				<i o="Street:Pile" x="20" y="31" />
+				<i o="Street:Pile" x="25" y="31" />
+				<i o="Street:Pile" x="30" y="31" />
+
+				<i o="Street:Pile" x="0" y="45" />
+				<i o="Street:Pile" x="5" y="45" />
+				<i o="Street:Pile" x="10" y="45" />
+				<i o="Street:Pile" x="15" y="45" />
+				<i o="Street:Pile" x="20" y="45" />
+				<i o="Street:Pile" x="25" y="45" />
+				<i o="Street:Pile" x="30" y="45" />
+
+				<i o="PC" x="0" y="29"/>
+
+				<i o="WildBarracuda:Sign" x="9" y="19"/>
+
+				<i o="Townhouse:Fassade" x="45" y="-10" />
 			</instances>
 		</layer>
 	</elevation>
