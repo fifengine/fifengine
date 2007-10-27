@@ -255,8 +255,7 @@ class World(object):
 		self.elevation = self.map.getElevations("id", "TechdemoMapElevation")[0]
 		self.layer = self.elevation.getLayers("id", "TechdemoMapTileLayer")[0]
 		
-		# little workaround to show the agent above mapobjects
-		self.agent_layer = self.elevation.getLayers("id", "TechdemoAgentLayer")[0]
+		self.agent_layer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
 		
 		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().get2dGfxVisual().getStaticImageIndexByAngle(0))
 		self.screen_cell_w = img.getWidth()
@@ -410,7 +409,7 @@ if __name__ == '__main__':
 
 	e = FIFEdit(engine)
 
-	w.create_world("techdemo/maps/city1.xml")
+	w.create_world("techdemo/maps/city_new.xml")
 	w.adjust_views()
 	if TDS.PlaySounds:
 		w.create_background_music()

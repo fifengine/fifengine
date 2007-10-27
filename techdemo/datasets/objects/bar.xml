@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<dataset id="Bar" type="Embedded" format="1.0">
+	<object id="Bar:Billard_table">
+		<image source="techdemo/gfx/objects/bar/billard-table.png"/>
+	</object>
+	<object id="Bar:Column">
+		<image source="techdemo/gfx/objects/bar/column.png"/>
+	</object>
+	<object id="Bar:Counter">
+		<image source="techdemo/gfx/objects/bar/counter.png"/>
+	</object>
+	<object id="Bar:Counter:Chair">
+		<image source="techdemo/gfx/objects/bar/counter-chair.png"/>
+	</object>
+	<object id="Bar:Counter:Plant:Small">
+		<image source="techdemo/gfx/objects/bar/counter-plant-small.png"/>
+	</object>
+	<object id="Bar:Entrance:Door">
+		<image source="techdemo/gfx/objects/bar/entrance-door.png"/>
+	</object>
+	<object id="Bar:Entrance:Steps">
+		<image source="techdemo/gfx/objects/bar/entrance-steps.png"/>
+	</object>
+	<object id="Bar:Floor">
+		<image source="techdemo/gfx/objects/bar/floor.png"/>
+	</object>
+	<object id="Bar:Foundation_wall">
+		<image source="techdemo/gfx/objects/bar/foundation_wall.png"/>
+	</object>
+	<object id="Bar:Landing">
+		<image source="techdemo/gfx/objects/bar/landing.png"/>
+	</object>
+	<object id="Bar:Piano">
+		<image source="techdemo/gfx/objects/bar/piano.png"/>
+	</object>
+	<object id="Bar:Plant:Big:1">
+		<image source="techdemo/gfx/objects/bar/plant_big_1.png"/>
+	</object>
+	<object id="Bar:Plant:Big:2">
+		<image source="techdemo/gfx/objects/bar/plant_big_2.png"/>
+	</object>
+	<object id="Bar:Plant:Big:3">
+		<image source="techdemo/gfx/objects/bar/plant_big_3.png"/>
+	</object>
+	<object id="Bar:Plant:Big:4">
+		<image source="techdemo/gfx/objects/bar/plant_big_4.png"/>
+	</object>
+	<object id="Bar:Racks">
+		<image source="techdemo/gfx/objects/bar/racks.png"/>
+	</object>
+	<object id="Bar:Table:1">
+		<image source="techdemo/gfx/objects/bar/table_1.png"/>
+	</object>
+	<object id="Bar:Table:2">
+		<image source="techdemo/gfx/objects/bar/table_2.png"/>
+	</object>
+	<object id="Bar:Table:3">
+		<image source="techdemo/gfx/objects/bar/table_3.png"/>
+	</object>
+	<object id="Bar:Stairs:Upwards">
+		<image source="techdemo/gfx/objects/bar/up-stairs.png"/>
+	</object>
+	<object id="Bar:Wall:1">
+		<image source="techdemo/gfx/objects/bar/wall01.png"/>
+	</object>
+	<object id="Bar:Wall:2">
+		<image source="techdemo/gfx/objects/bar/wall02.png"/>
+	</object>
+	<object id="Bar:Wall:3">
+		<image source="techdemo/gfx/objects/bar/wall03.png"/>
+	</object>
+	<object id="Bar:Wall:4">
+		<image source="techdemo/gfx/objects/bar/wall04.png"/>
+	</object>
+	<object id="Bar:Wall:5">
+		<image source="techdemo/gfx/objects/bar/wall05.png"/>
+	</object>
+	<object id="Bar:Wall:6">
+		<image source="techdemo/gfx/objects/bar/wall06.png"/>
+	</object>
+	<object id="Bar:Wall:7">
+		<image source="techdemo/gfx/objects/bar/wall07.png"/>
+	</object>
+	<object id="Bar:Wall:8">
+		<image source="techdemo/gfx/objects/bar/wall08.png"/>
+	</object>
+	<object id="Bar:Wall:9">
+		<image source="techdemo/gfx/objects/bar/wall09.png"/>
+	</object>
+	<object id="Bar:Wall:10">
+		<image source="techdemo/gfx/objects/bar/wall10.png"/>
+	</object>
+	<object id="Bar:Wall:11">
+		<image source="techdemo/gfx/objects/bar/wall11.png"/>
+	</object>
+	<object id="Bar:Wall:12">
+		<image source="techdemo/gfx/objects/bar/wall12.png"/>
+	</object>
+	<object id="Bar:Wall:13">
+		<image source="techdemo/gfx/objects/bar/wall13.png"/>
+	</object>
+	<object id="Bar:Wall:14">
+		<image source="techdemo/gfx/objects/bar/wall14.png"/>
+	</object>
+</dataset>

@@ -2,10 +2,10 @@
 <map id="TechdemoMap" format="1.0">
 
 	<metadata>
-		<param type="text" name="Name">city1.xml</param>
+		<param type="text" name="Name">city_new.xml</param>
 		<param type="id" name="Version">1</param>
-		<param type="text" name="Comment">Official FIFE 2007.2 techdemo map. Some demonstration and some fun for modders, not more, not less :-)</param>
-		<param type="text" name="Author">chewie</param>
+		<param type="text" name="Comment">Upcoming 2007.3 techdemo map.</param>
+		<param type="text" name="Author">Zero-Projekt and FIFE team</param>
 		<param type="id" name="_START_ELEVATION">1</param>
 	</metadata>
 
@@ -16,10 +16,10 @@
 	<dataset type="XML" source="techdemo/datasets/tiles/enviroment.xml" />
 
 	<!-- Load object datasets -->
-	<!-- test.xml -->
 	<dataset type="XML" source="techdemo/datasets/objects/test.xml" />
 	
 	<!-- Map specific object -->
+	<dataset type="XML" source="techdemo/datasets/objects/bar.xml" />
 
 	<!-- Load agent datasets -->
 	<dataset type="XML" source="techdemo/datasets/objects/vehicles.xml" />
@@ -75,7 +75,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" scaling="1">
+		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" scaling="3">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>

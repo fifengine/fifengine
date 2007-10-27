@@ -1310,6 +1310,16 @@
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\swigwrappers\python\fife_wrap.cxx">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\swigwrappers\python\fife_wrap.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
