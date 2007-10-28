@@ -14,7 +14,8 @@ from savers import saveMapFile
 from fifedit import *
 
 INFO_TEXT = '''
-Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:
+Welcome to the FIFE techdemo, release 2007.2\n\n
+Keybindings:
 --------------
 - P = Make screenshot
 - LEFT = Move camera left
@@ -26,12 +27,10 @@ Welcome to the FIFE techdemo, release 2007.2\n\nKeybindings:
 - LMB = Move agent around
 - T = Toggles grid on / off
 - C = Toggles coordinates on / off
-- S = Second camera on / off
-
-
+- R = Reload map (useful for map editing)
+- S = Second camera on / off\n\n
 Have fun,
-The FIFE and Zero-Projekt teams
-
+The FIFE and Zero-Projekt teams\n
 http://www.zero-projekt.net
 http://www.fifengine.de
 '''

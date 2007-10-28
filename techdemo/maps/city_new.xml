@@ -115,18 +115,19 @@
 				<i o="Street:Pile" x="43" y="20" />
 				<i o="Street:Pile" x="48" y="16" />
 
-				<i o="Bar:Wall:1" x="11" y="6" />
-				<i o="Bar:Wall:2" x="16" y="6" />
-				<i o="Bar:Wall:7" x="25" y="-1" />
-				<i o="Bar:Wall:8" x="26" y="-5" />
-				<i o="Bar:Wall:9" x="27" y="-8" />
-				<i o="Bar:Wall:10" x="24" y="-17" />
-				<i o="Bar:Wall:11" x="9" y="-17" />
-				<i o="Bar:Wall:12" x="6" y="-11" />
-				<i o="Bar:Wall:13" x="4" y="-7" />
-				<i o="Bar:Wall:14" x="4" y="0" />
+				<i o="Bar:Wall:1" x="11" y="10" />
+				<i o="Bar:Wall:2" x="16" y="8" />
+				<i o="Bar:Wall:3" x="18" y="-4" />
+				<i o="Bar:Wall:7" x="25" y="1" />
+				<i o="Bar:Wall:8" x="26" y="-3" />
+				<i o="Bar:Wall:9" x="27" y="-7" />
+				<i o="Bar:Wall:10" x="24" y="-15" />
+				<i o="Bar:Wall:11" x="9" y="-14" />
+				<i o="Bar:Wall:12" x="6" y="-9" />
+				<i o="Bar:Wall:13" x="4" y="-5" />
+				<i o="Bar:Wall:14" x="3" y="1" />
 
-				<i o="PC" x="0" y="29"/>
+				<i o="PC" x="14" y="-5"/>
 
 				<i o="WildBarracuda:Sign" x="17" y="10"/>
 
