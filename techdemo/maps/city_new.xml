@@ -95,9 +95,9 @@
 
 				<!-- <i o="Bar:Foundation_wall" x="14" y="-6" /> -->
 
-				<i o="Rubbish_newspaper" x="9" y="23" />
-				<i o="Rubbish_newspaper" x="9" y="24" />
-				<i o="Rubbish_newspaper60" x="9" y="24" />
+				<i o="Rubbish_newspaper" x="17" y="12" />
+				<i o="Rubbish_newspaper" x="18" y="12" />
+				<i o="Rubbish_newspaper60" x="17" y="12" />
 				<i o="Rubbish_newspaper" x="10" y="24" />
 				<i o="Rubbish_newspaper60" x="10" y="23" />
 	
@@ -116,8 +116,14 @@
 				<i o="Street:Pile" x="48" y="16" />
 
 				<i o="Bar:Wall:1" x="11" y="6" />
+				<i o="Bar:Wall:2" x="16" y="6" />
+				<i o="Bar:Wall:7" x="25" y="-1" />
+				<i o="Bar:Wall:8" x="26" y="-5" />
+				<i o="Bar:Wall:9" x="27" y="-8" />
+				<i o="Bar:Wall:10" x="24" y="-17" />
 				<i o="Bar:Wall:11" x="9" y="-17" />
 				<i o="Bar:Wall:12" x="6" y="-11" />
+				<i o="Bar:Wall:13" x="4" y="-7" />
 				<i o="Bar:Wall:14" x="4" y="0" />
 
 				<i o="PC" x="0" y="29"/>
