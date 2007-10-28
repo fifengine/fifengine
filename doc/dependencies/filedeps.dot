@@ -338,6 +338,7 @@ digraph "source tree" {
     "engine/core/model/structures/map.h" -> "location.h"
     "engine/core/model/structures/map.h" -> "util/attributedclass.h"
     "engine/core/pathfinder/linearpather/linearpather.cpp" -> "linearpather.h"
+    "engine/core/pathfinder/linearpather/linearpather.cpp" -> "model/metamodel/grids/cellgrid.h"
     "engine/core/pathfinder/linearpather/linearpather.cpp" -> "util/logger.h"
     "engine/core/pathfinder/linearpather/linearpather.h" -> "model/metamodel/abstractpather.h"
     "engine/core/pathfinder/linearpather/linearpather.h" -> "model/structures/location.h"

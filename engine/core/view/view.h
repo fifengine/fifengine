@@ -71,6 +71,10 @@ namespace FIFE {
 		 */
 		void removeCamera(Camera* camera);
 
+		/** Clears all cameras from view
+		 */
+		void clearCameras();
+		
 		/** resets active layer information to be reseted on all renderers.
 		 *  View fetches all layers from cameras and activate them on each renderer.
 		 */

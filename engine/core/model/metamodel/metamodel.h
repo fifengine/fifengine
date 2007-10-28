@@ -71,6 +71,10 @@ namespace FIFE {
 			 * in the given field. Recursive.
 			 */
 			std::list<Object*> getObjects(const std::string& field, const std::string& value);
+			
+			/** Clears all datasets from metamodel
+			 */
+			void clearDatasets();
 
 		private:
 

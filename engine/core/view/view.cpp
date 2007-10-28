@@ -60,17 +60,21 @@ namespace FIFE {
 	}
 
 	View::~View() {
-		std::vector<Camera*>::iterator cam_it = m_cameras.begin();
-		for(; cam_it != m_cameras.end(); ++cam_it) {
-			delete *cam_it;
-		}
-		m_cameras.clear();
+		clearCameras();
 		
 		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
 		for(; r_it != m_renderers.end(); ++r_it) {
 			delete r_it->second;
 		}
 		m_renderers.clear();
+	}
+
+	void View::clearCameras() {
+		std::vector<Camera*>::iterator cam_it = m_cameras.begin();
+		for(; cam_it != m_cameras.end(); ++cam_it) {
+			delete *cam_it;
+		}
+		m_cameras.clear();
 	}
 
 	bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs) {

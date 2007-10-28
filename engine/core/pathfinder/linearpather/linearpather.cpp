@@ -27,9 +27,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/logger.h"
+#include "model/metamodel/grids/cellgrid.h"
+
 #include "linearpather.h"
 
-#include "util/logger.h"
+
 
 namespace FIFE {
 	static Logger _log(LM_PATHFINDER);
@@ -39,6 +42,11 @@ namespace FIFE {
 		                            Location& facingLocation, int session_id) {
 		Location curloc = instance->getLocation();
 		assert(curloc.getElevation() == target.getElevation());
+		Layer* layer = curloc.getLayer();
+		assert(layer == target.getLayer());
+		CellGrid* cg = layer->getCellGrid();
+		assert(layer == target.getLayer());
+		
 		assert(curloc.getLayer() == target.getLayer());
 		m_map = curloc.getElevation()->getMap();
 		
@@ -59,13 +67,12 @@ namespace FIFE {
 			FL_DBG(_log, LMsg("getting old facing loc ") <<  facingLocation);
 			facingLocation = m_session2face[cur_session_id];
 		}
-		
 		FL_DBG(_log, LMsg("curloc ") <<  curloc << ", target " << target << ", dist2travel " << distance_to_travel);
-		ExactModelCoordinate cur_pos = curloc.getExactLayerCoordinates();
-		ExactModelCoordinate target_pos = target.getExactLayerCoordinates();
+		ExactModelCoordinate cur_pos = curloc.getElevationCoordinates();
+		ExactModelCoordinate target_pos = target.getElevationCoordinates();
 		double dx = target_pos.x - cur_pos.x;
 		double dy = target_pos.y - cur_pos.y;
-		double dist = sqrt(dx*dx + dy*dy);
+		double dist = sqrt(dx*dx + dy*dy) / cg->getScale();
 		FL_DBG(_log, LMsg("distance from cur to target = ") << dist);
 		
 		// calculate where current position evolves with movement
@@ -74,7 +81,7 @@ namespace FIFE {
 		}
 		cur_pos.x += dx * (distance_to_travel / dist);
 		cur_pos.y += dy * (distance_to_travel / dist);
-		nextLocation.setExactLayerCoordinates(cur_pos);
+		nextLocation.setElevationCoordinates(cur_pos);
 		FL_DBG(_log, LMsg("in case not blocking, could move to ") << nextLocation);
 		
 		// check if we have collisions and if we do, keep instance on current location

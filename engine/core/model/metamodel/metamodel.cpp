@@ -36,7 +36,12 @@
 namespace FIFE {
 
 	MetaModel::~MetaModel() {
+		clearDatasets();
+	}
+
+	void MetaModel::clearDatasets() {
 		purge(m_datasets);
+		m_datasets.clear();
 	}
 
 	Dataset* MetaModel::addDataset(const std::string& identifier) {

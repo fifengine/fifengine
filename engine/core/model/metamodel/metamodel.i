@@ -29,6 +29,7 @@ namespace FIFE {
 			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
 			std::list<Object*> getObjects(const std::string& field, const std::string& value);
+			void clearDatasets();
 
 		private:
 	};
