@@ -18,6 +18,7 @@ class FIFEdit(fife.IWidgetListener, object):
 
 		self.guimanager = engine.getGuiManager()
 		self.widgets = []
+		self.images = []
 
 		self.screenheight = engine.getRenderBackend().getScreenHeight()
 		self.screenwidth = engine.getRenderBackend().getScreenWidth()
@@ -276,7 +277,7 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.register_widget(addbutton, self.map_datwnd)
 		
 	def create_datedit(self, dataset):
-		sx, sy = 100, 500
+		sx, sy = 200, 500
 
 		self.datedit = fife.Window('Dataset Editor:')
 		self.datedit.setTitleBarHeight(20)
@@ -285,21 +286,25 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.datedit.setVisible(True)
 		self.register_widget(self.datedit, self.guimanager)
 
+		#scrollarea = fife.ScrollArea()
+		#scrollarea.setContent(self.datedit)
+		#self.register_widget(scrollarea, self.guimanager)
+
 		dy = 0
 
 		dat = self.engine.getModel().getMetaModel().getDatasets('id', dataset)[0]
 		for object in dat.getObjects():
 			visual = object.get2dGfxVisual()
 			index = visual.getStaticImageIndexByAngle(0)
-			print 'index = ' + str(index)
 			if (index == -1):
 				print 'object missing static image'
 				continue
 
 			image = fife.GuiImage(index, self.engine.getImagePool())
-			print 'creating icon...'
-			icon = fife.Icon2(image)
-			print 'icon created!'
+			icon = fife.Icon(image)
 			icon.setPosition(1, 1 + dy)
+			icon.setSize(image.getWidth(),image.getHeight())
+			icon.setVisible(True)
+			self.register_widget(icon, self.datedit)
+			self.images.append(image)
 			dy = 1 + dy + icon.getHeight()
-			print object.Id()

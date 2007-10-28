@@ -4,8 +4,8 @@ InitialVolume      = 5
 PlaySounds         = 1
 RenderBackend      = "OpenGL"
 SDLRemoveFakeAlpha = 1
-ScreenWidth        = 800
-ScreenHeight       = 600
+ScreenWidth        = 1024
+ScreenHeight       = 768
 
 LogModules         = []
 LogToPrompt        = 1
