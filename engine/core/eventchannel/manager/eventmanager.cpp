@@ -39,11 +39,11 @@
 
 namespace FIFE {
 
-	EventManager::EventManager(): 
-		m_commandlisteners(), 
+	EventManager::EventManager():
+		m_commandlisteners(),
 		m_keylisteners(),
-		m_mouselisteners(), 
-		m_sdleventlisteners(), 
+		m_mouselisteners(),
+		m_sdleventlisteners(),
 		m_widgetlisteners(),
 		m_nonconsumablekeys(),
 		m_keystatemap(),
@@ -75,6 +75,16 @@ namespace FIFE {
 					mouseevt.setButton(IMouseEvent::UNKNOWN_BUTTON);
 					break;
 			}
+
+
+			if (sdlevt.type == SDL_MOUSEBUTTONUP ) {
+
+				mouseevt.setType(IMouseEvent::RELEASED);
+
+			} else {
+				mouseevt.setType(IMouseEvent::PRESSED);
+			}
+
 			switch (sdlevt.button.button) {
 				case SDL_BUTTON_WHEELDOWN:
 					mouseevt.setType(IMouseEvent::WHEEL_MOVED_DOWN);
@@ -84,11 +94,6 @@ namespace FIFE {
 					break;
 				default:
 					break;
-			}
-			if (sdlevt.type == SDL_MOUSEBUTTONUP) {
-				mouseevt.setType(IMouseEvent::RELEASED);
-			} else {
-				mouseevt.setType(IMouseEvent::PRESSED);
 			}
 		}
 		if ((mouseevt.getType() == IMouseEvent::MOVED) && m_mousestate) {
@@ -115,7 +120,7 @@ namespace FIFE {
 		SDL_keysym keysym = sdlevt.key.keysym;
 		IKey::KeyType value = IKey::INVALID_KEY;
 		std::string repr("");
-		
+
 		if (keysym.unicode < 255) {
 			value = static_cast<IKey::KeyType>(keysym.unicode);
 			repr.push_back(value);
@@ -270,7 +275,7 @@ namespace FIFE {
 
 	void EventManager::dispatchKeyEvent(IKeyEvent& evt) {
 		bool nonconsumablekey = false;
-		for (std::vector<int>::iterator it = m_nonconsumablekeys.begin(); 
+		for (std::vector<int>::iterator it = m_nonconsumablekeys.begin();
 		     it != m_nonconsumablekeys.end(); ++it) {
 			if (*it == evt.getKey().getValue()) {
 				nonconsumablekey = true;
@@ -365,7 +370,7 @@ namespace FIFE {
 				break;
 			}
 			++i;
-		}	
+		}
 	}
 
 	void EventManager::onWidgetAction(IWidgetEvent& evt) {
@@ -414,7 +419,7 @@ namespace FIFE {
 			dispatchSdlEvent(event);
 		}
 	}
-	
+
 	EventSourceType EventManager::getEventSourceType() {
 		return ES_ENGINE;
 	}
