@@ -25,7 +25,7 @@
 		<image source="techdemo/gfx/objects/buildings/bar/floor.png" />
 	</object>
 	<object id="Bar:Foundation_wall">
-		<image source="techdemo/gfx/objects/buildings/bar/foundation_wall.png" xshift="7" />
+		<image source="techdemo/gfx/objects/buildings/bar/foundation_wall.png" x_offset="7" />
 	</object>
 	<object id="Bar:Landing">
 		<image source="techdemo/gfx/objects/buildings/bar/landing.png" />
@@ -61,10 +61,10 @@
 		<image source="techdemo/gfx/objects/buildings/bar/up-stairs.png" />
 	</object>
 	<object id="Bar:Wall:1">
-		<image source="techdemo/gfx/objects/buildings/bar/wall01.png" xshift="6" yshift="27" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall01.png" x_offset="6" y_offset="27" />
 	</object>
 	<object id="Bar:Wall:2">
-		<image source="techdemo/gfx/objects/buildings/bar/wall02.png" xshift="24" yshift="-5" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall02.png" x_offset="24" y_offset="-5" />
 	</object>
 	<object id="Bar:Wall:3">
 		<image source="techdemo/gfx/objects/buildings/bar/wall03.png" />
@@ -79,27 +79,27 @@
 		<image source="techdemo/gfx/objects/buildings/bar/wall06.png" />
 	</object>
 	<object id="Bar:Wall:7">
-		<image source="techdemo/gfx/objects/buildings/bar/wall07.png" xshift="-1" yshift="-10" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall07.png" x_offset="-1" y_offset="-10" />
 	</object>
 	<object id="Bar:Wall:8">
-		<image source="techdemo/gfx/objects/buildings/bar/wall08.png" xshift="15" yshift="-11" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall08.png" x_offset="15" y_offset="-11" />
 	</object>
 	<object id="Bar:Wall:9">
-		<image source="techdemo/gfx/objects/buildings/bar/wall09.png" xshift="13" yshift="-15" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall09.png" x_offset="13" y_offset="-15" />
 	</object>
 	<object id="Bar:Wall:10">
-		<image source="techdemo/gfx/objects/buildings/bar/wall10.png" xshift="-1" yshift="-11" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall10.png" x_offset="-1" y_offset="-11" />
 	</object>
 	<object id="Bar:Wall:11">
-		<image source="techdemo/gfx/objects/buildings/bar/wall11.png" xshift="5" yshift="10" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall11.png" x_offset="5" y_offset="10" />
 	</object>
 	<object id="Bar:Wall:12">
-		<image source="techdemo/gfx/objects/buildings/bar/wall12.png" xshift="-9" yshift="0" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall12.png" x_offset="-9" y_offset="0" />
 	</object>
 	<object id="Bar:Wall:13">
-		<image source="techdemo/gfx/objects/buildings/bar/wall13.png" xshift="2" yshift="-4" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall13.png" x_offset="2" y_offset="-4" />
 	</object>
 	<object id="Bar:Wall:14">
-		<image source="techdemo/gfx/objects/buildings/bar/wall14.png" xshift="-10" yshift="-15" />
+		<image source="techdemo/gfx/objects/buildings/bar/wall14.png" x_offset="-10" y_offset="-15" />
 	</object>
 </dataset>

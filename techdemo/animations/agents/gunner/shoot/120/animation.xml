@@ -1,4 +1,4 @@
-<animation delay="50" id="2042">
+<animation delay="50" id="2042" y_offset="-30">
 	<frame source="techdemo/animations/agents/gunner/shoot/120/001.png" />
 	<frame source="techdemo/animations/agents/gunner/shoot/120/002.png" />
 	<frame source="techdemo/animations/agents/gunner/shoot/120/003.png" />

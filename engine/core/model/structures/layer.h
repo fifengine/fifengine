@@ -111,6 +111,10 @@ namespace FIFE {
 			 */
 			Instance* addInstance(Object* object, const ModelCoordinate& p);
 
+			/** Add an instance of an object at a specific position
+			 */
+			Instance* addInstance(Object* object, const ExactModelCoordinate& p);
+						
 			/** Remove an instance from the layer
 			 */
 			void removeInstance(Instance* object);

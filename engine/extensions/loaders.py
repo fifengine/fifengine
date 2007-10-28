@@ -187,25 +187,25 @@ class ModelLoader(handler.ContentHandler):
 			if (self.state == self.SObject):
 				source = 0
 				direction = 0
-				xshift = 0
-				yshift = 0
+				x_offset = 0
+				y_offset = 0
 				for attrName in attrs.keys():
 					if (attrName == "source"):
 						source = attrs.get(attrName)
 					elif (attrName == "direction"):
 						direction = attrs.get(attrName)
-					elif (attrName == "xshift"):
-						xshift = int(attrs.get(attrName))
-					elif (attrName == "yshift"):
-						yshift = int(attrs.get(attrName))
+					elif (attrName == "x_offset"):
+						x_offset = int(attrs.get(attrName))
+					elif (attrName == "y_offset"):
+						y_offset = int(attrs.get(attrName))
 				assert source, "Image declared with no source location."	
 
 				id = self.pool.addResourceFromFile(str(source))	
 				self.object.get2dGfxVisual().addStaticImage(int(direction), id)
-				if (xshift or yshift):
+				if (x_offset or y_offset):
 					img = self.pool.getImage(id)
-					img.setXShift(xshift)
-					img.setYShift(yshift)
+					img.setXShift(x_offset)
+					img.setYShift(y_offset)
 
 			else:
 				assert 0, "<image> tags can only be declared in an <object> section."
@@ -334,22 +334,28 @@ class ModelLoader(handler.ContentHandler):
 
 				x = attrs.get("x")
 				y = attrs.get("y")
+				z = attrs.get("z")
 				stackpos = attrs.get("stackpos")
 
 				if (x):
-					x = int(x)
+					x = float(x)
 					self.x = x
 				else:
 					self.x = self.x + 1
 					x = self.x
 
 				if (y):
-					y = int(y)
+					y = float(y)
 					self.y = y
 				else:
 					y = self.y
 				
-				inst = self.layer.addInstance(object, fife.ModelCoordinate(x,y))
+				if (z):
+					z = float(z)
+				else:
+					z = 0
+				
+				inst = self.layer.addInstance(object, fife.ExactModelCoordinate(x,y,z))
 				fife.InstanceVisual.create(inst)
 				if (stackpos):
 					inst.get2dGfxVisual().setStackPosition(int(stackpos))

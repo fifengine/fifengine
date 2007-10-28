@@ -47,6 +47,7 @@ namespace FIFE {
 		return dynamic_cast<Animation*>(createResource(location));
 	}
 	
+	const int INITIAL_OFFSET = -9999999;
 	IPooledResource* AnimationProvider::createResource(const ResourceLocation& location) {
 		assert(m_pool);
 		
@@ -69,8 +70,12 @@ namespace FIFE {
 
 		int common_frame_delay = 0;
 		int actionFrame = 0;
+		int x_offset = 0;
+		int y_offset = 0;
 		element->QueryIntAttribute("delay", &common_frame_delay);
 		element->QueryIntAttribute("action", &actionFrame);
+		element->QueryIntAttribute("x_offset", &x_offset);
+		element->QueryIntAttribute("y_offset", &y_offset);
 
 		Animation* animation = new Animation();
 		
@@ -86,11 +91,11 @@ namespace FIFE {
 				throw InvalidFormat("animation without <frame>s");
  			}
 
-			int x_off = 0;
-			int y_off = 0;
+			int frame_x_offset = INITIAL_OFFSET;
+			int frame_y_offset = INITIAL_OFFSET;
 			int frame_delay = -1;
-			frame_element->QueryIntAttribute("x_offset", &x_off);
-			frame_element->QueryIntAttribute("y_offset", &y_off);
+			frame_element->QueryIntAttribute("x_offset", &frame_x_offset);
+			frame_element->QueryIntAttribute("y_offset", &frame_y_offset);
 			frame_element->QueryIntAttribute("delay", &frame_delay);
 
 			Image* image = NULL;
@@ -102,8 +107,16 @@ namespace FIFE {
 				                    + source + "'");
 			}
 
-			image->setXShift(x_off);
-			image->setYShift(y_off);
+			if (frame_x_offset != INITIAL_OFFSET) {
+				image->setXShift(frame_x_offset);
+			} else {
+				image->setXShift(x_offset);
+			}
+			if (frame_y_offset != INITIAL_OFFSET) {
+				image->setYShift(frame_y_offset);
+			} else {
+				image->setYShift(y_offset);
+			}
 			if (frame_delay >= 0) {
 				animation->addFrame(image, frame_delay);
 			} else {
@@ -112,7 +125,6 @@ namespace FIFE {
 			frame_element= frame_element->NextSiblingElement("frame");
 		}
 
-		
 		animation->setActionFrame(actionFrame);
 		FL_DBG(_log, LMsg("animation_loader")
 			<< "file: '" << filename
