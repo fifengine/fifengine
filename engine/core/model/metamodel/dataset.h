@@ -105,6 +105,10 @@ namespace FIFE {
 			 */
 			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
+			/* Get all the objects in this dataset
+			 */
+			std::list<Object*> getObjects();
+
 			/** Get objects from this dataset having the given value in the
 			 * given field.
 			 *
