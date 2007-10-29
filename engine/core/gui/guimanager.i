@@ -19,7 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module guimanager
+%module fife
 %{
 #include <guichan.hpp>
 #include "gui/guimanager.h"

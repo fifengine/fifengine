@@ -1,4 +1,4 @@
-%module model
+%module fife
 %{
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/grids/hexgrid.h"

@@ -19,14 +19,14 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module(directors="1") widgets
+%module fife
 %{
 #include <guichan/image.hpp>
 #include "gui/base/gui_image.h"
 %}
 
 namespace FIFE {
-	class GuiImage : public gcn::Image {
+	class GuiImage: public gcn::Image {
 	public:
 		GuiImage();
 		GuiImage(int id, ImagePool& pool);

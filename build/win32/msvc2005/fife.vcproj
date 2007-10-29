@@ -400,8 +400,6 @@
 				<File RelativePath="..\..\..\engine\core\view\view.h"></File>
 				<File RelativePath="..\..\..\engine\core\view\visual.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\view\visual.h"></File>
-				<File RelativePath="..\..\..\engine\core\view\visualtree.cpp"></File>
-				<File RelativePath="..\..\..\engine\core\view\visualtree.h"></File>
 			</Filter>
 			<Filter Name="xml">
 				<Filter Name="tinyxml">

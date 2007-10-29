@@ -1,4 +1,4 @@
-%module pather
+%module fife
 %{
 #include "pathfinder/routepather/routepather.h"
 %}

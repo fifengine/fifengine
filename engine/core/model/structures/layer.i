@@ -1,4 +1,4 @@
-%module model
+%module fife
 %{
 #include "model/structures/layer.h"
 %}

@@ -1,4 +1,4 @@
-%module timemanager
+%module fife
 %{
 #include "util/time/timemanager.h"
 %}

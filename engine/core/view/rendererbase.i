@@ -1,4 +1,4 @@
-%module view
+%module fife
 %{
 #include "view/rendererbase.h"
 %}

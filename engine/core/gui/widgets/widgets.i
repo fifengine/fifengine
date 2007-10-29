@@ -19,7 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module(directors="1") widgets
+%module fife
 %{
 #include <guichan.hpp>
 #include "gui/widgets/twobutton.h"

@@ -1,4 +1,4 @@
-%module util 
+%module fife
 %{
 #include "util/attributedclass.h"
 #include "util/point.h"

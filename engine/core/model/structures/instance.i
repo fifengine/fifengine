@@ -1,4 +1,4 @@
-%module(directors="1") objectinfo
+%module fife
 %{
 #include "model/structures/instance.h"
 %}

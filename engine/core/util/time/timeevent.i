@@ -1,4 +1,4 @@
-%module(directors="1") timer
+%module fife
 %{
 #include "util/time/timeevent.h"
 %}

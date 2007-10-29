@@ -19,7 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module guifont
+%module fife
 %{
 #include <guichan/font.hpp>
 #include "gui/base/gui_font.h"

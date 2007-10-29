@@ -19,7 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module(directors="1") fonts
+%module fife
 %{
 #include "video/fonts/abstractfont.h"
 #include "video/fonts/fontbase.h"

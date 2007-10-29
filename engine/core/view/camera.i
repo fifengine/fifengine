@@ -1,4 +1,4 @@
-%module camera
+%module fife
 %{
 #include "view/camera.h"
 %}

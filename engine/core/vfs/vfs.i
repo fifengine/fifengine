@@ -19,7 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-%module(directors="1") vfs
+%module fife
 %{
 #include "vfs/vfsutility.h"
 #include "util/exception.h"
