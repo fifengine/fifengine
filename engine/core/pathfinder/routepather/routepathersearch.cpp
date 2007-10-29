@@ -48,10 +48,10 @@ namespace FIFE {
 	}
 
 	//TODO: Tidy up this function.
-	std::vector<Location> RoutePatherSearch::updateSearch() {
+	void RoutePatherSearch::updateSearch() {
 		if(m_sortedfrontier.empty()) {
 			setSearchStatus(search_status_failed);
-			return std::vector<Location>();
+			return;
 		}
 		PriorityQueue<int, float>::value_type topvalue = m_sortedfrontier.getPriorityElement();
 		m_sortedfrontier.popElement();
@@ -60,8 +60,8 @@ namespace FIFE {
 		ModelCoordinate destCoord = m_to.getLayerCoordinates();
 		int destcoordInt = m_searchspace->convertCoordToInt(destCoord);
 		if(destcoordInt == next) {
-			m_status = search_status_complete;
-			return calcPath();
+			setSearchStatus(search_status_complete);
+			return;
 		}
 		//use destination layer for getting the cell coordinates for now, this should be moved
 		//into search space.
@@ -88,14 +88,13 @@ namespace FIFE {
 				}
 			} 
 		}
-		return std::vector<Location>();
 	}
 
 	//TODO: This function needs cleaning up too.
-	std::vector<Location> RoutePatherSearch::calcPath() {
+	RoutePatherSearch::Path RoutePatherSearch::calcPath() {
 		int current = m_searchspace->convertCoordToInt(m_to.getLayerCoordinates());
 		int end = m_searchspace->convertCoordToInt(m_from.getLayerCoordinates());
-		std::vector<Location> path;
+		Path path;
 		path.push_back(m_to);
 		while(current != end) {
 			current = m_spt[current];
@@ -103,9 +102,8 @@ namespace FIFE {
 			ModelCoordinate currentCoord = m_searchspace->convertIntToCoord(current);
 			newnode.setLayerCoordinates(currentCoord);
 			newnode.setExactLayerCoordinates(intPt2doublePt(currentCoord));
-			path.push_back(newnode);
+			path.push_front(newnode);
 		}
-		std::reverse(path.begin(), path.end());
 		return path;
 	}
 }

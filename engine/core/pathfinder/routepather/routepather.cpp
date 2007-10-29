@@ -27,12 +27,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include <cassert>
+
 #include "pathfinder/searchspace.h"
 
 #include "routepather.h"
 #include "routepathersearch.h"
-
-#include "util/logger.h"
 
 namespace FIFE {
 	void RoutePather::setMap(Map* map) {
@@ -45,63 +45,76 @@ namespace FIFE {
 	int RoutePather::getNextLocation(const Instance* instance, const Location& target, 
 				double distance_to_travel, Location& nextLocation,
 				Location& facingLocation, int session_id) {
-		// NOTE: this change naturally broke mortiz's current pather. However
-		// the change should allow more flexible implementation
-		// sorry for that mortiz :-/
-		return -1;
-	}
-	
-	/*
-	int RoutePather::getNextLocations(const Location& curPos, const Location& target, 
-		std::vector<Location>& nextLocations, const int session_id) {
-			//Make sure that we're not navigating to the same tile.
-			if((curPos.getLayerCoordinates() == target.getLayerCoordinates()) &&
-				curPos.getLayer() == target.getLayer()) {
-				return -1;
-			}
-			//A session_id was passed in, therefore the path search has already begun.
-			if(session_id != -1) {
-				//search session map for id.
-				SessionMap::iterator i = m_sessions.find(session_id);
-				if( i != m_sessions.end() ) {
-					//update search.
-					while(m_ticksleft) {
-						nextLocations = i->second->updateSearch();
-						//If the search has finished terminate the session.
-						int search_status = i->second->getSearchStatus();
-						if(search_status == Search::search_status_complete || search_status == Search::search_status_failed ) {
-							delete i->second;
-							m_sessions.erase(i);
-							return -1; //Search is complete, return -1.
-						}
-						--m_ticksleft;
-					}
+		assert(instance);
+		assert(instance->getLocation().getLayer() == target.getLayer());
+		if(session_id != -1) {
+			//This means we're updating a session.
+			SessionMap::iterator i = m_sessions.find(session_id);
+			if(i != m_sessions.end()) {
+				i->second->updateSearch();
+				if(i->second->getSearchStatus() == Search::search_status_complete) {
+					Path newPath = i->second->calcPath();
+					m_paths.insert(PathMap::value_type(session_id, newPath));
+					m_sessions.erase(i);
 					return session_id;
+				} else if(i->second->getSearchStatus() == Search::search_status_failed) {
+					m_sessions.erase(i);
+					return -1;
+				}
+			} else {
+				//Check to see if this session is in the movement phase.
+				PathMap::iterator j = m_paths.find(session_id);
+				if(j != m_paths.end()) {
+					if(j->second.empty()) {
+						m_paths.erase(j);
+						return -1;
+					} else {
+						followPath(instance, j->second, distance_to_travel, nextLocation, facingLocation);
+						return session_id;
+					}
 				}
 			}
-			//First get the layer
-			if(curPos.getLayer() != target.getLayer()) {
-				//Don't allow cross layer movement (for now).
-				return -1;
-			}
-			//Search for the layer in the searchspace map.
-			SearchSpaceMap::iterator i = m_searchspaces.find(curPos.getLayer());
-			if(i == m_searchspaces.end()) {
-				//This layer has never been searched before so create a searchspace.
-				SearchSpace* newSpace = new SearchSpace(curPos.getLayer());
-				i = m_searchspaces.insert(SearchSpaceMap::value_type(curPos.getLayer(), newSpace)).first;
-
-			}
-			//Create a new session.
-			int newSessionId = m_nextFreeSessionId++;
-			if(i->second->isInSearchSpace(curPos) && i->second->isInSearchSpace(target)) {
-				SessionMap::value_type newSession(newSessionId, new RoutePatherSearch(newSessionId, curPos, target, i->second));
-				m_sessions.insert(newSession);
-				return newSessionId;
-			}
+		}
+		//TODO: Create a new session.
+		if((instance->getLocation().getLayer() != target.getLayer()) || (instance->getLocation().getLayerCoordinates() ==
+			target.getLayerCoordinates())) {
 			return -1;
+		}
+		SearchSpaceMap::iterator i = m_searchspaces.find(target.getLayer());
+		if(i == m_searchspaces.end()) {
+			SearchSpace* newSearchSpace = new SearchSpace(target.getLayer());
+			i = m_searchspaces.insert(SearchSpaceMap::value_type(target.getLayer(), newSearchSpace)).first;
+		}
+		session_id = m_nextFreeSessionId++;
+		RoutePatherSearch* newSearch = new RoutePatherSearch(session_id, instance->getLocation(), target, i->second);
+		m_sessions.insert(SessionMap::value_type(session_id, newSearch));
+		return session_id;
 	}
-	*/
+
+	void RoutePather::followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation) {
+		//First check to see if we're at the location at the front of the path.
+		if(path.front().getExactLayerCoordinates() == instance->getLocation().getExactLayerCoordinates()) {
+			//If we are remove it.
+			path.pop_front();
+			if(path.empty()) {
+				return;
+			}
+		} 
+
+		nextLocation = instance->getLocation();
+		facingLocation = path.front();
+		DoublePoint3D desiredVelocity = path.front().getExactLayerCoordinates() - nextLocation.getExactLayerCoordinates();
+		double length = desiredVelocity.length();
+		if(length != 0) {
+			//Make sure we don't go over the target location.
+			if(speed < length) {
+				desiredVelocity = (desiredVelocity / length) * speed;
+				nextLocation.setExactLayerCoordinates(nextLocation.getExactLayerCoordinates() + desiredVelocity);
+				nextLocation.setLayerCoordinates(FIFE::doublePt2intPt(nextLocation.getExactLayerCoordinates()));
+			} 
+		}
+	}
+	
 	bool RoutePather::cancelSession(const int session_id) {
 		if(session_id >= 0) {
 			SessionMap::iterator i = m_sessions.find(session_id);

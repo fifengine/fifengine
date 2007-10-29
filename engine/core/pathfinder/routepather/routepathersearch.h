@@ -46,9 +46,10 @@ namespace FIFE {
 	public:
 		RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
 
-		virtual std::vector<Location> updateSearch();
+		virtual void updateSearch();
+
+		virtual Path calcPath();
 	private:
-		virtual std::vector<Location> calcPath();
 		//The shortest path tree.
 		std::vector<int>          m_spt;
 		//The search frontier.

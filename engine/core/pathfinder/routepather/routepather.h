@@ -40,6 +40,7 @@ namespace FIFE {
 
 	class Search;
 	class SearchSpace;
+	class RoutePatherSearch;
 
 	class RoutePather : public AbstractPather {
 	public:
@@ -61,14 +62,24 @@ namespace FIFE {
 		void resetTicks() { m_ticksleft = m_maxticks; }
 		
 	private:
+		typedef std::list<Location> Path;
 		typedef std::map<int, Search*> SessionMap;
+		typedef std::map<int, Path> PathMap;
 		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;
+
+		/**
+		 *
+		 */
+		void followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation);
 
 		//The map the search is running on.
 		Map*	       m_map;
 
 		//A map of currently running sessions (searches).
 		SessionMap	   m_sessions;
+
+		//Calculated paths for the movement phase.
+		PathMap		   m_paths;
 
 		//A map of searchspaces.
 		SearchSpaceMap m_searchspaces; 
