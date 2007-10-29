@@ -141,13 +141,50 @@
 				<i o="Bar:Floor" x="14" y="-5" stackpos="0" />
 				-->
 
-				<i o="PC" x="17" y="14" stackpos="10" />
+				<i o="PC" x="25" y="7" stackpos="10" />
 
 				<i o="WildBarracuda:Sign" x="16" y="11"/>
 
 				<i o="Townhouse:Fassade" x="32" y="-11" />
 
-				<!-- Walk blockers North-east border -->				
+				<!-- Movement angle helpers -->
+				<i o="Hex:Highlight" x="20" y="-3" />
+				<i o="Hex:Highlight" x="21" y="-2" />
+				<i o="Hex:Highlight" x="21" y="-1" />
+				<i o="Hex:Highlight" x="22" y="0" />
+				<i o="Hex:Highlight" x="22" y="1" />
+				<i o="Hex:Highlight" x="23" y="2" />
+				<i o="Hex:Highlight" x="23" y="3" />
+				<i o="Hex:Highlight" x="24" y="4" />
+				<i o="Hex:Highlight" x="24" y="5" />
+				<i o="Hex:Highlight" x="25" y="6" />
+
+				<i o="Hex:Highlight" x="20" y="17" />
+				<i o="Hex:Highlight" x="21" y="16" />
+				<i o="Hex:Highlight" x="21" y="15" />
+				<i o="Hex:Highlight" x="22" y="14" />
+				<i o="Hex:Highlight" x="22" y="13" />
+				<i o="Hex:Highlight" x="23" y="12" />
+				<i o="Hex:Highlight" x="23" y="11" />
+				<i o="Hex:Highlight" x="24" y="10" />
+				<i o="Hex:Highlight" x="24" y="9" />
+				<i o="Hex:Highlight" x="25" y="8" />
+
+				<i o="Hex:Highlight" x="25" y="7" />
+
+				<i o="Hex:Highlight" x="26" y="7" />
+				<i o="Hex:Highlight" x="27" y="7" />
+				<i o="Hex:Highlight" x="28" y="7" />
+				<i o="Hex:Highlight" x="29" y="7" />
+				<i o="Hex:Highlight" x="30" y="7" />
+				<i o="Hex:Highlight" x="31" y="7" />
+				<i o="Hex:Highlight" x="32" y="7" />
+				<i o="Hex:Highlight" x="33" y="7" />
+				<i o="Hex:Highlight" x="34" y="7" />
+				<i o="Hex:Highlight" x="35" y="7" />
+
+				<!-- Walk blockers North-east border -->
+				<!--				
 				<i o="Hex:Blocker" x="27" y="-22" />
 				<i o="Hex:Blocker" x="27" y="-21" />
 				<i o="Hex:Blocker" x="28" y="-20" />
@@ -194,8 +231,10 @@
 				<i o="Hex:Blocker" x="49" y="18" />
 				<i o="Hex:Blocker" x="49" y="19" />
 				<i o="Hex:Blocker" x="50" y="20" />
+				-->
 
 				<!-- Walk blockers South-east border -->
+				<!--
 				<i o="Hex:Blocker" x="49" y="21" />
 				<i o="Hex:Blocker" x="49" y="22" />
 				<i o="Hex:Blocker" x="48" y="22" />
@@ -238,8 +277,10 @@
 				<i o="Hex:Blocker" x="20" y="41" />
 				<i o="Hex:Blocker" x="19" y="41" />
 				<i o="Hex:Blocker" x="19" y="42" />
+				-->
 
 				<!-- Walk blockers South-west border -->
+				<!--
 				<i o="Hex:Blocker" x="18" y="41" />
 				<i o="Hex:Blocker" x="18" y="40" />
 				<i o="Hex:Blocker" x="17" y="39" />
@@ -285,8 +326,10 @@
 				<i o="Hex:Blocker" x="-3" y="-1" />
 				<i o="Hex:Blocker" x="-3" y="-2" />
 				<i o="Hex:Blocker" x="-4" y="-3" />
+				-->
 
 				<!-- Walk blockers North-west border -->
+				<!--
 				<i o="Hex:Blocker" x="-3" y="-4" />
 				<i o="Hex:Blocker" x="-3" y="-5" />
 				<i o="Hex:Blocker" x="-2" y="-5" />
@@ -327,6 +370,7 @@
 				<i o="Hex:Blocker" x="24" y="-23" />
 				<i o="Hex:Blocker" x="25" y="-23" />
 				<i o="Hex:Blocker" x="26" y="-23" />
+				-->
 			</instances>
 		</layer>
 	</elevation>
