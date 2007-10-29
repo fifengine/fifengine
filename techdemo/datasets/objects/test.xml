@@ -8,7 +8,7 @@
 	</object>	
 	
 	<object id="Townhouse:Fassade">
-		<image source="techdemo/gfx/objects/buildings/townhouse_fake.png" />
+		<image source="techdemo/gfx/objects/buildings/townhouse_fake.png" x_offset="27" y_offset="-565" />
 	</object>
 	
 	<object id="Street:Pile" blocking="1">

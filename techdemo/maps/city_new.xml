@@ -77,7 +77,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" scaling="0.333" rotation="35">
+		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" scaling="0.333" rotation="30">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
@@ -96,6 +96,7 @@
 
 				<!-- <i o="Bar:Foundation_wall" x="14" y="-6" /> -->
 
+				<!--
 				<i o="Rubbish_newspaper" x="17" y="12" />
 				<i o="Rubbish_newspaper" x="18" y="12" />
 				<i o="Rubbish_newspaper60" x="17" y="12" />
@@ -116,7 +117,6 @@
 				<i o="Street:Pile" x="43" y="20" />
 				<i o="Street:Pile" x="48" y="16" />
 				
-				<!-- Bar walls -->
 				<i o="Bar:Wall:1" x="11" y="10" stackpos="10" />
 				<i o="Bar:Wall:2" x="16" y="8" stackpos="10" />
 				<i o="Bar:Wall:3" x="17" y="3" stackpos="10" />
@@ -131,18 +131,202 @@
 				<i o="Bar:Wall:12" x="6" y="-9" stackpos="10" />
 				<i o="Bar:Wall:13" x="4" y="-5" stackpos="10" />
 				<i o="Bar:Wall:14" x="3" y="1" stackpos="10" />
-
+				-->
+				
+				<!--
 				<i o="Bar:Entrance:Steps" x="19" y="3" stackpos="-10" />
 
 				<i o="Bar:Entrance:Door" x="19" y="3" stackpos="10" />
 
 				<i o="Bar:Floor" x="14" y="-5" stackpos="0" />
+				-->
 
-				<i o="PC" x="14" y="-5" stackpos="10" />
+				<i o="PC" x="17" y="14" stackpos="10" />
 
-				<i o="WildBarracuda:Sign" x="17" y="10"/>
+				<i o="WildBarracuda:Sign" x="16" y="11"/>
 
-				<i o="Townhouse:Fassade" x="32" y="-38" />
+				<i o="Townhouse:Fassade" x="32" y="-11" />
+
+				<!-- Walk blockers North-east border -->				
+				<i o="Hex:Blocker" x="27" y="-22" />
+				<i o="Hex:Blocker" x="27" y="-21" />
+				<i o="Hex:Blocker" x="28" y="-20" />
+				<i o="Hex:Blocker" x="28" y="-19" />
+				<i o="Hex:Blocker" x="29" y="-18" />
+				<i o="Hex:Blocker" x="29" y="-17" />
+				<i o="Hex:Blocker" x="30" y="-16" />
+				<i o="Hex:Blocker" x="30" y="-15" />
+				<i o="Hex:Blocker" x="31" y="-14" />
+				<i o="Hex:Blocker" x="31" y="-13" />
+				<i o="Hex:Blocker" x="32" y="-12" />
+				<i o="Hex:Blocker" x="32" y="-11" />
+				<i o="Hex:Blocker" x="33" y="-10" />
+				<i o="Hex:Blocker" x="33" y="-9" />
+				<i o="Hex:Blocker" x="34" y="-8" />
+				<i o="Hex:Blocker" x="34" y="-7" />
+				<i o="Hex:Blocker" x="35" y="-6" />
+				<i o="Hex:Blocker" x="35" y="-5" />
+				<i o="Hex:Blocker" x="36" y="-4" />
+				<i o="Hex:Blocker" x="36" y="-3" />
+				<i o="Hex:Blocker" x="37" y="-2" />
+				<i o="Hex:Blocker" x="37" y="-1" />
+				<i o="Hex:Blocker" x="38" y="0" />
+				<i o="Hex:Blocker" x="38" y="1" />
+				<i o="Hex:Blocker" x="39" y="2" />
+				<i o="Hex:Blocker" x="39" y="3" />
+				<i o="Hex:Blocker" x="40" y="4" />
+				<i o="Hex:Blocker" x="40" y="5" />
+				<i o="Hex:Blocker" x="41" y="6" />
+				<i o="Hex:Blocker" x="41" y="7" />
+				<i o="Hex:Blocker" x="42" y="6" />
+				<i o="Hex:Blocker" x="43" y="6" />
+				<i o="Hex:Blocker" x="43" y="7" />
+				<i o="Hex:Blocker" x="44" y="8" />
+				<i o="Hex:Blocker" x="44" y="9" />
+				<i o="Hex:Blocker" x="45" y="10" />
+				<i o="Hex:Blocker" x="45" y="11" />
+				<i o="Hex:Blocker" x="46" y="12" />
+				<i o="Hex:Blocker" x="46" y="13" />
+				<i o="Hex:Blocker" x="47" y="14" />
+				<i o="Hex:Blocker" x="47" y="15" />
+				<i o="Hex:Blocker" x="48" y="16" />
+				<i o="Hex:Blocker" x="48" y="17" />
+				<i o="Hex:Blocker" x="49" y="18" />
+				<i o="Hex:Blocker" x="49" y="19" />
+				<i o="Hex:Blocker" x="50" y="20" />
+
+				<!-- Walk blockers South-east border -->
+				<i o="Hex:Blocker" x="49" y="21" />
+				<i o="Hex:Blocker" x="49" y="22" />
+				<i o="Hex:Blocker" x="48" y="22" />
+				<i o="Hex:Blocker" x="47" y="23" />
+				<i o="Hex:Blocker" x="46" y="23" />
+				<i o="Hex:Blocker" x="46" y="24" />
+				<i o="Hex:Blocker" x="45" y="24" />
+				<i o="Hex:Blocker" x="44" y="25" />
+				<i o="Hex:Blocker" x="43" y="25" />
+				<i o="Hex:Blocker" x="43" y="26" />
+				<i o="Hex:Blocker" x="42" y="26" />
+				<i o="Hex:Blocker" x="41" y="27" />
+				<i o="Hex:Blocker" x="40" y="27" />
+				<i o="Hex:Blocker" x="40" y="28" />
+				<i o="Hex:Blocker" x="39" y="28" />
+				<i o="Hex:Blocker" x="38" y="29" />
+				<i o="Hex:Blocker" x="37" y="29" />
+				<i o="Hex:Blocker" x="37" y="30" />
+				<i o="Hex:Blocker" x="36" y="30" />
+				<i o="Hex:Blocker" x="35" y="31" />
+				<i o="Hex:Blocker" x="34" y="31" />
+				<i o="Hex:Blocker" x="34" y="32" />
+				<i o="Hex:Blocker" x="33" y="32" />
+				<i o="Hex:Blocker" x="32" y="33" />
+				<i o="Hex:Blocker" x="31" y="33" />
+				<i o="Hex:Blocker" x="31" y="34" />
+				<i o="Hex:Blocker" x="30" y="34" />
+				<i o="Hex:Blocker" x="29" y="35" />
+				<i o="Hex:Blocker" x="28" y="35" />
+				<i o="Hex:Blocker" x="28" y="36" />
+				<i o="Hex:Blocker" x="27" y="36" />
+				<i o="Hex:Blocker" x="26" y="37" />
+				<i o="Hex:Blocker" x="25" y="37" />
+				<i o="Hex:Blocker" x="25" y="38" />
+				<i o="Hex:Blocker" x="24" y="38" />
+				<i o="Hex:Blocker" x="23" y="39" />
+				<i o="Hex:Blocker" x="22" y="39" />
+				<i o="Hex:Blocker" x="22" y="40" />
+				<i o="Hex:Blocker" x="21" y="40" />
+				<i o="Hex:Blocker" x="20" y="41" />
+				<i o="Hex:Blocker" x="19" y="41" />
+				<i o="Hex:Blocker" x="19" y="42" />
+
+				<!-- Walk blockers South-west border -->
+				<i o="Hex:Blocker" x="18" y="41" />
+				<i o="Hex:Blocker" x="18" y="40" />
+				<i o="Hex:Blocker" x="17" y="39" />
+				<i o="Hex:Blocker" x="17" y="38" />
+				<i o="Hex:Blocker" x="16" y="37" />
+				<i o="Hex:Blocker" x="16" y="36" />
+				<i o="Hex:Blocker" x="15" y="35" />
+				<i o="Hex:Blocker" x="15" y="34" />
+				<i o="Hex:Blocker" x="14" y="33" />
+				<i o="Hex:Blocker" x="14" y="32" />
+				<i o="Hex:Blocker" x="13" y="31" />
+				<i o="Hex:Blocker" x="13" y="30" />
+				<i o="Hex:Blocker" x="12" y="29" />
+				<i o="Hex:Blocker" x="12" y="28" />
+				<i o="Hex:Blocker" x="11" y="27" />
+				<i o="Hex:Blocker" x="11" y="26" />
+				<i o="Hex:Blocker" x="10" y="25" />
+				<i o="Hex:Blocker" x="10" y="24" />
+				<i o="Hex:Blocker" x="9" y="23" />
+				<i o="Hex:Blocker" x="9" y="22" />
+				<i o="Hex:Blocker" x="8" y="21" />
+				<i o="Hex:Blocker" x="8" y="20" />
+				<i o="Hex:Blocker" x="7" y="19" />
+				<i o="Hex:Blocker" x="7" y="18" />
+				<i o="Hex:Blocker" x="6" y="17" />
+				<i o="Hex:Blocker" x="6" y="16" />
+				<i o="Hex:Blocker" x="5" y="15" />
+				<i o="Hex:Blocker" x="5" y="14" />
+				<i o="Hex:Blocker" x="4" y="13" />
+				<i o="Hex:Blocker" x="4" y="12" />
+				<i o="Hex:Blocker" x="3" y="11" />
+				<i o="Hex:Blocker" x="3" y="10" />
+				<i o="Hex:Blocker" x="2" y="9" />
+				<i o="Hex:Blocker" x="2" y="8" />
+				<i o="Hex:Blocker" x="1" y="7" />
+				<i o="Hex:Blocker" x="1" y="6" />
+				<i o="Hex:Blocker" x="0" y="5" />
+				<i o="Hex:Blocker" x="0" y="4" />
+				<i o="Hex:Blocker" x="-1" y="3" />
+				<i o="Hex:Blocker" x="-1" y="2" />
+				<i o="Hex:Blocker" x="-2" y="1" />
+				<i o="Hex:Blocker" x="-2" y="0" />
+				<i o="Hex:Blocker" x="-3" y="-1" />
+				<i o="Hex:Blocker" x="-3" y="-2" />
+				<i o="Hex:Blocker" x="-4" y="-3" />
+
+				<!-- Walk blockers North-west border -->
+				<i o="Hex:Blocker" x="-3" y="-4" />
+				<i o="Hex:Blocker" x="-3" y="-5" />
+				<i o="Hex:Blocker" x="-2" y="-5" />
+				<i o="Hex:Blocker" x="-1" y="-6" />
+				<i o="Hex:Blocker" x="0" y="-6" />
+				<i o="Hex:Blocker" x="0" y="-7" />
+				<i o="Hex:Blocker" x="1" y="-7" />
+				<i o="Hex:Blocker" x="2" y="-8" />
+				<i o="Hex:Blocker" x="3" y="-8" />
+				<i o="Hex:Blocker" x="3" y="-9" />
+				<i o="Hex:Blocker" x="4" y="-9" />
+				<i o="Hex:Blocker" x="5" y="-10" />
+				<i o="Hex:Blocker" x="6" y="-10" />
+				<i o="Hex:Blocker" x="6" y="-11" />
+				<i o="Hex:Blocker" x="7" y="-11" />
+				<i o="Hex:Blocker" x="8" y="-12" />
+				<i o="Hex:Blocker" x="9" y="-12" />
+				<i o="Hex:Blocker" x="9" y="-13" />
+				<i o="Hex:Blocker" x="10" y="-13" />
+				<i o="Hex:Blocker" x="11" y="-14" />
+				<i o="Hex:Blocker" x="12" y="-14" />
+				<i o="Hex:Blocker" x="12" y="-15" />
+				<i o="Hex:Blocker" x="13" y="-15" />
+				<i o="Hex:Blocker" x="14" y="-16" />
+				<i o="Hex:Blocker" x="15" y="-16" />
+				<i o="Hex:Blocker" x="15" y="-17" />
+				<i o="Hex:Blocker" x="16" y="-17" />
+				<i o="Hex:Blocker" x="17" y="-18" />
+				<i o="Hex:Blocker" x="18" y="-18" />
+				<i o="Hex:Blocker" x="18" y="-19" />
+				<i o="Hex:Blocker" x="19" y="-19" />
+				<i o="Hex:Blocker" x="20" y="-20" />
+				<i o="Hex:Blocker" x="21" y="-20" />
+				<i o="Hex:Blocker" x="21" y="-21" />
+				<i o="Hex:Blocker" x="22" y="-21" />
+				<i o="Hex:Blocker" x="23" y="-22" />
+				<i o="Hex:Blocker" x="24" y="-22" />
+				<i o="Hex:Blocker" x="24" y="-23" />
+				<i o="Hex:Blocker" x="25" y="-23" />
+				<i o="Hex:Blocker" x="26" y="-23" />
 			</instances>
 		</layer>
 	</elevation>
