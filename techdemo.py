@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 
 import sys, os, re
+
+def _jp(path):
+	return os.path.sep.join(path.split('/'))
+
 _paths = ('engine/swigwrappers/python', 'engine/extensions')
 for p in _paths:
 	if p not in sys.path:
-		sys.path.append(os.path.sep.join(p.split('/')))
+		sys.path.append(_jp(p))
 
 import fife, fifelog
 import techdemo_settings as TDS
@@ -12,29 +16,6 @@ from loaders import loadMapFile
 from savers import saveMapFile
 
 from fifedit import *
-
-INFO_TEXT = '''
-Welcome to the FIFE techdemo, release 2007.2\n\n
-Keybindings:
---------------
-- P = Make screenshot
-- LEFT = Move camera left
-- RIGHT = Move camera right
-- UP = Move camera up
-- DOWN = Move camera down
-- F10 = Toggle console on / off
-- ESC = Quit techdemo
-- LMB = Move agent around
-- T = Toggles grid on / off
-- C = Toggles coordinates on / off
-- R = Reload map (useful for map editing)
-- S = Second camera on / off\n\n
-Have fun,
-The FIFE and Zero-Projekt teams\n
-http://www.zero-projekt.net
-http://www.fifengine.de
-'''
-
 
 class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
@@ -229,7 +210,7 @@ class Gui(object):
 		# text
 		text_info = fife.TextBox()
 		text_info.setPosition(10,40)
-		text_info.setText(INFO_TEXT)
+		text_info.setText(open(_jp('techdemo/infotext.txt'), 'r').read())
 		text_info.setOpaque(False)
 		text_info.setBorderSize(0)
 		self.register_widget(text_info, self.container_info)
