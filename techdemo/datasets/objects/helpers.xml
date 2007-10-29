@@ -4,6 +4,9 @@
 		<image source="techdemo/gfx/objects/helpers/hex_cell.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Hex:Highlight" blocking="0">
-		<image source="techdemo/gfx/objects/helpers/hex_cell_2.png" x_offset="0" y_offset="0" />
+		<image source="techdemo/gfx/objects/helpers/hex_cell_3.png" x_offset="0" y_offset="0" />
+	</object>
+	<object id="Hex:Fill" blocking="0">
+		<image source="techdemo/gfx/objects/helpers/hex_cell_3.png" x_offset="0" y_offset="0" />
 	</object>
 </dataset>
