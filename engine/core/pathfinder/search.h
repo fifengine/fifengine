@@ -47,8 +47,8 @@ namespace FIFE {
 		 *
 		 */
 		enum SearchStatus {
-			search_status_failed = -2,
-			search_status_complete = -1,
+			search_status_failed,
+			search_status_complete,
 			search_status_incomplete 
 		};
 		/** Constructor.

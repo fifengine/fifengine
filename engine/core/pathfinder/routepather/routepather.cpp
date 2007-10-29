@@ -29,6 +29,8 @@
 // Second block: files included from the same folder
 #include <cassert>
 
+#include "model/metamodel/grids/cellgrid.h"
+
 #include "pathfinder/searchspace.h"
 
 #include "routepather.h"
@@ -56,11 +58,11 @@ namespace FIFE {
 					Path newPath = i->second->calcPath();
 					m_paths.insert(PathMap::value_type(session_id, newPath));
 					m_sessions.erase(i);
-					return session_id;
 				} else if(i->second->getSearchStatus() == Search::search_status_failed) {
 					m_sessions.erase(i);
 					return -1;
 				}
+				return session_id;
 			} else {
 				//Check to see if this session is in the movement phase.
 				PathMap::iterator j = m_paths.find(session_id);
@@ -75,7 +77,6 @@ namespace FIFE {
 				}
 			}
 		}
-		//TODO: Create a new session.
 		if((instance->getLocation().getLayer() != target.getLayer()) || (instance->getLocation().getLayerCoordinates() ==
 			target.getLayerCoordinates())) {
 			return -1;
@@ -92,27 +93,24 @@ namespace FIFE {
 	}
 
 	void RoutePather::followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation) {
-		//First check to see if we're at the location at the front of the path.
-		if(path.front().getExactLayerCoordinates() == instance->getLocation().getExactLayerCoordinates()) {
-			//If we are remove it.
-			path.pop_front();
-			if(path.empty()) {
-				return;
-			}
-		} 
-
+		ExactModelCoordinate instancePos = instance->getLocation().getExactLayerCoordinates();
+		ExactModelCoordinate nextWayPoint = path.front().getExactLayerCoordinates();
+		DoublePoint3D direction = nextWayPoint - instancePos;
+		double length = direction.length();
 		nextLocation = instance->getLocation();
-		facingLocation = path.front();
-		DoublePoint3D desiredVelocity = path.front().getExactLayerCoordinates() - nextLocation.getExactLayerCoordinates();
-		double length = desiredVelocity.length();
-		if(length != 0) {
-			//Make sure we don't go over the target location.
-			if(speed < length) {
-				desiredVelocity = (desiredVelocity / length) * speed;
-				nextLocation.setExactLayerCoordinates(nextLocation.getExactLayerCoordinates() + desiredVelocity);
-				nextLocation.setLayerCoordinates(FIFE::doublePt2intPt(nextLocation.getExactLayerCoordinates()));
-			} 
+
+		if(speed > length) {
+			nextLocation.setLayerCoordinates(path.front().getLayerCoordinates());
+			nextLocation.setExactLayerCoordinates(nextWayPoint);
+			path.pop_front();
+		} else {
+			DoublePoint3D movementVector = (direction / length) * speed;
+			ExactModelCoordinate newPosition = instancePos + movementVector;
+			nextLocation.setExactLayerCoordinates(newPosition);
 		}
+
+		facingLocation.setExactLayerCoordinates(path.front().getExactLayerCoordinates());
+		facingLocation.setLayerCoordinates(path.front().getLayerCoordinates());
 	}
 	
 	bool RoutePather::cancelSession(const int session_id) {

@@ -37,9 +37,8 @@
 
 namespace FIFE {
 	RoutePatherSearch::RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
-	: Search(session_id, from, to, searchSpace) {
+		: Search(session_id, from, to, searchSpace) {
 		int coord = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
-		//int dest = m_searchspace->convertCoordToInt(to.getLayerCoordinates());
 		int max_index = m_searchspace->getMaxIndex();
 		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(coord, 0.0f));
 		m_spt.resize(max_index + 1, -1);
@@ -73,9 +72,15 @@ namespace FIFE {
 			Location loc = m_to;
 			loc.setLayerCoordinates((*i));
 			if(m_searchspace->isInSearchSpace(loc)) {
-				float hCost = fabs((float)((destCoord.x - i->x) + (destCoord.y - i->y)) * 0.01f);
-				float gCost = m_gCosts[next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				int adjacentInt = m_searchspace->convertCoordToInt((*i));
+				//Don't check cell we're currently in.
+				if(adjacentInt == next) {
+					continue;
+				}
+				float hCost =   ((destCoord.x - i->x) * (destCoord.x - i->x)) +
+					            ((destCoord.y - i->y) * (destCoord.y - i->y)) +
+							    ((destCoord.x - i->x) * (destCoord.y - i->y));
+				float gCost = m_gCosts[next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				if(m_sf[adjacentInt] == -1) {
 					m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(adjacentInt, gCost + hCost));
 					m_gCosts[adjacentInt] = gCost;
