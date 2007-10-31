@@ -412,12 +412,6 @@
 				</Filter>
 			</Filter>
 		</Filter>
-		<Filter Name="swigwrappers">
-			<Filter Name="python">
-				<File RelativePath="..\..\..\engine\swigwrappers\python\fife_wrap.cxx"></File>
-				<File RelativePath="..\..\..\engine\swigwrappers\python\fife_wrap.h"></File>
-			</Filter>
-		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
