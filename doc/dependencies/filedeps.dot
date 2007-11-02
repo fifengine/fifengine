@@ -346,7 +346,6 @@ digraph "source tree" {
     "engine/core/pathfinder/routepather/routepather.cpp" -> "pathfinder/searchspace.h"
     "engine/core/pathfinder/routepather/routepather.cpp" -> "routepather.h"
     "engine/core/pathfinder/routepather/routepather.cpp" -> "routepathersearch.h"
-    "engine/core/pathfinder/routepather/routepather.cpp" -> "util/logger.h"
     "engine/core/pathfinder/routepather/routepather.h" -> "model/metamodel/abstractpather.h"
     "engine/core/pathfinder/routepather/routepather.h" -> "model/structures/location.h"
     "engine/core/pathfinder/routepather/routepather.h" -> "model/structures/map.h"

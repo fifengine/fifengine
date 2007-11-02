@@ -309,6 +309,7 @@ class World(object):
 		self.agent = self.agent_layer.getInstances('id', 'PC')[0]
 		self.agent.addListener(self.reactor)
 		self.agent.act_here('idle', self.target, True)
+		self.agentcoords = self.target.getElevationCoordinates()
 		for g in self.agent_layer.getInstances('id', 'Gunner'):
 			g.act_here('idle', self.target, True)
 	
@@ -344,7 +345,7 @@ class World(object):
 		initial_camx = smallcamx
 		cam_to_right = True
 		self.cameras['small'].setEnabled(showSecondCamera)
-				
+		
 		while True:
 			if showTileOutline != evtlistener.showTileOutline:
 				self.view.getRenderer('GridRenderer').setEnabled(evtlistener.showTileOutline)
@@ -394,6 +395,14 @@ class World(object):
 				camloc.setExactLayerCoordinates(camcoords)
 				self.cameras['main'].setLocation(camloc)
 
+			agentcoords = self.agent.getLocation().getElevationCoordinates()
+			if not ((self.agentcoords.x == agentcoords.x) and (self.agentcoords.y == agentcoords.y)):
+				loc = self.cameras['main'].getLocation()
+				loc.setElevationCoordinates(agentcoords)
+				self.cameras['main'].setLocation(loc)
+				self.agentcoords.x = agentcoords.x
+				self.agentcoords.y = agentcoords.y
+			
 			# scroll the map with cursor keys
 			if (evtlistener.horizscroll or evtlistener.vertscroll):
 				loc = self.cameras['main'].getLocation()
