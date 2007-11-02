@@ -648,6 +648,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\instancetree.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\instancetree.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\engine\core\model\structures\layer.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -1298,6 +1308,16 @@
 			</Unit>
 		<Unit filename="..\..\..\engine\core\xml\tinyxml\tinyxmlparser.cpp">
 				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\swigwrappers\python\fife_wrap.cxx">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\swigwrappers\python\fife_wrap.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
 		<Extensions>
