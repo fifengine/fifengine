@@ -109,13 +109,13 @@ namespace FIFE {
 		ExactModelCoordinate tranformed_coords(layer_coords);
 		tranformed_coords.x += getXZigzagOffset(layer_coords.y);
 		tranformed_coords.y *= VERTICAL_MULTIP;
-		ExactModelCoordinate result = m_matrix * tranformed_coords;
+		ExactModelCoordinate result = m_inverse_matrix * tranformed_coords;
 		FL_DBG(_log, LMsg("layercoords ") << layer_coords << " converted to elev: " << result);
 		return result;
 	}
 
 	ExactModelCoordinate HexGrid::toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
-		ExactModelCoordinate layer_coords = m_inverse_matrix * elevation_coord;
+		ExactModelCoordinate layer_coords = m_matrix * elevation_coord;
 		layer_coords.y /= VERTICAL_MULTIP;
 		layer_coords.x -= getXZigzagOffset(layer_coords.y);
 		FL_DBG(_log, LMsg("elevcoords ") << elevation_coord << " converted to layer: " << layer_coords);
@@ -124,7 +124,7 @@ namespace FIFE {
 
 	ModelCoordinate HexGrid::toLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
 		FL_DBG(_log, LMsg("==============\nConverting elev coords ") << elevation_coord << " to int layer coords...");
-		ExactModelCoordinate elc = m_inverse_matrix * elevation_coord;
+		ExactModelCoordinate elc = m_matrix * elevation_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
 		ExactModelCoordinate lc = ExactModelCoordinate(floor(elc.x), floor(elc.y));
 		double dx = elc.x - lc.x;

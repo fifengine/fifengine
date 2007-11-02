@@ -47,7 +47,7 @@ namespace FIFE {
 	Location::Location(const Location& loc) {
 		reset();
 		m_layer = loc.m_layer;
-		m_elevation_coords = loc.m_elevation_coords;
+		m_exact_layer_coords = loc.m_exact_layer_coords;
 	}
 	
 	Location::~Location() {
@@ -55,20 +55,20 @@ namespace FIFE {
 	}
 	
 	void Location::reset() {
-		m_elevation_coords.x = 0;
-		m_elevation_coords.y = 0;
+		m_exact_layer_coords.x = 0;
+		m_exact_layer_coords.y = 0;
 		m_layer = NULL;
 	}
 	
 	Location& Location::operator=(const Location& rhs) {
 		m_layer = rhs.m_layer;
-		m_elevation_coords.x = rhs.m_elevation_coords.x;
-		m_elevation_coords.y = rhs.m_elevation_coords.y;
+		m_exact_layer_coords.x = rhs.m_exact_layer_coords.x;
+		m_exact_layer_coords.y = rhs.m_exact_layer_coords.y;
 		return *this;
 	}
 	
 	bool Location::operator==(const Location& loc) const {
-		return ((m_layer == loc.m_layer) && (m_elevation_coords == loc.m_elevation_coords));
+		return ((m_layer == loc.m_layer) && (m_exact_layer_coords == loc.m_exact_layer_coords));
 	}
 		
 	bool Location::operator!=(const Location& loc) const {
@@ -94,25 +94,22 @@ namespace FIFE {
 		if (!isValid()) {
 			throw NotSet(INVALID_LAYER_SET);
 		}
-		m_elevation_coords = m_layer->getCellGrid()->toElevationCoordinates(coordinates);
+		m_exact_layer_coords = coordinates;
 	}
 	
 	void Location::setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet) {
-		if (!isValid()) {
-			throw NotSet(INVALID_LAYER_SET);
-		}
-		m_elevation_coords = m_layer->getCellGrid()->toElevationCoordinates(coordinates);
+		setExactLayerCoordinates(intPt2doublePt(coordinates));
 	}
 	
 	void Location::setElevationCoordinates(const ExactModelCoordinate& coordinates) {
 		if (!isValid()) {
 			throw NotSet(INVALID_LAYER_SET);
 		}
-		m_elevation_coords = coordinates;
+		m_exact_layer_coords = m_layer->getCellGrid()->toExactLayerCoordinates(coordinates);
 	}
 	
 	ExactModelCoordinate Location::getExactLayerCoordinates() const throw(NotSet) {
-		return getExactLayerCoordinates(m_layer);
+		return m_exact_layer_coords;
 	}
 	
 	ModelCoordinate Location::getLayerCoordinates() const throw(NotSet) {
@@ -120,7 +117,7 @@ namespace FIFE {
 	}
 	
 	ExactModelCoordinate Location::getElevationCoordinates() const {
-		return m_elevation_coords;
+		return m_layer->getCellGrid()->toElevationCoordinates(m_exact_layer_coords);
 	}
 	
 	bool Location::isValid() const {
@@ -132,21 +129,20 @@ namespace FIFE {
 	}
 	
 	ExactModelCoordinate Location::getExactLayerCoordinates(const Layer* layer) const throw(NotSet) {
-		if (!isValid(layer)) {
-			throw NotSet(INVALID_LAYER_GET);
-		}
-		return layer->getCellGrid()->toExactLayerCoordinates(m_elevation_coords);
+		return m_exact_layer_coords;
 	}
 	
 	ModelCoordinate Location::getLayerCoordinates(const Layer* layer) const throw(NotSet) {
 		if (!isValid(layer)) {
 			throw NotSet(INVALID_LAYER_GET);
 		}
-		return layer->getCellGrid()->toLayerCoordinates(m_elevation_coords);
+		CellGrid* cg1 = m_layer->getCellGrid();
+		CellGrid* cg2 = layer->getCellGrid();
+		return cg2->toLayerCoordinates(cg1->toElevationCoordinates(m_exact_layer_coords));
 	}
 	
 	double Location::getCellOffsetDistance() const {
-		ExactModelCoordinate pt  = getExactLayerCoordinates();
+		const ExactModelCoordinate& pt  = m_exact_layer_coords;
 		double dx = pt.x - static_cast<double>(static_cast<int>(pt.x));
 		double dy = pt.y - static_cast<double>(static_cast<int>(pt.y));
 		return sqrt(dx*dx + dy*dy);

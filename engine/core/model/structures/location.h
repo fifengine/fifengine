@@ -152,7 +152,7 @@ namespace FIFE {
 		bool isValid(const Layer* layer) const;
 		
 		Layer* m_layer;
-		ExactModelCoordinate m_elevation_coords;
+		ExactModelCoordinate m_exact_layer_coords;
 	};
 	
 	/** Stream output operator.
