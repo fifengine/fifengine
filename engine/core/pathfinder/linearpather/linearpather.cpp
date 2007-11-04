@@ -70,9 +70,9 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("curloc ") <<  curloc << ", target " << target << ", dist2travel " << distance_to_travel);
 		ExactModelCoordinate cur_pos = curloc.getElevationCoordinates();
 		ExactModelCoordinate target_pos = target.getElevationCoordinates();
-		double dx = target_pos.x - cur_pos.x;
-		double dy = target_pos.y - cur_pos.y;
-		double dist = sqrt(dx*dx + dy*dy) / cg->getScale();
+		double dx = (target_pos.x - cur_pos.x) * cg->getXScale();
+		double dy = (target_pos.y - cur_pos.y) * cg->getYScale();
+		double dist = sqrt(dx*dx + dy*dy);
 		FL_DBG(_log, LMsg("distance from cur to target = ") << dist);
 		
 		// calculate where current position evolves with movement

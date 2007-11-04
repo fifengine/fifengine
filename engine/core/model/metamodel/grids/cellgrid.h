@@ -133,19 +133,32 @@ namespace FIFE {
 		 */
 		const double getYShift() const { return m_yshift; }
 
-		/** Set the cellgrid scaling
-		 *  @param scale The scale of cellgrid
+		/** Set the cellgrid x-scaling
+		 *  @param scale The x-scale of cellgrid
 		 */
-		void setScale(const double scale) { 
-			m_scale = scale;
+		void setXScale(const double scale) { 
+			m_xscale = scale;
 			updateMatrices();
 		}
 
-		/** Get the cellgrid scaling
-		 *  @return The scale of cellgrid
+		/** Set the cellgrid y-scaling
+		 *  @param scale The y-scale of cellgrid
 		 */
-		const double getScale() const { return m_scale; }
+		void setYScale(const double scale) { 
+			m_yscale = scale;
+			updateMatrices();
+		}
+		
+		/** Get the cellgrid x-scaling
+		 *  @return The x-scale of cellgrid
+		 */
+		const double getXScale() const { return m_xscale; }
 
+		/** Get the cellgrid y-scaling
+		 *  @return The y-scale of cellgrid
+		 */
+		const double getYScale() const { return m_yscale; }
+		
 		/** Set the cellgrid rotation
 		 *  @param rotation The rotation of the cellgrid
 		 */
@@ -167,7 +180,8 @@ namespace FIFE {
 		DoubleMatrix m_inverse_matrix;
 		double m_xshift;
 		double m_yshift;
-		double m_scale;
+		double m_xscale;
+		double m_yscale;
 		double m_rotation;
 	private:
 		int orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2);	

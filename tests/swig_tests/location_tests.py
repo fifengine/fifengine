@@ -38,7 +38,8 @@ class TestLocation(unittest.TestCase):
 		self.assertEqual(pt, D(5,5))
 	
 	def testSquareGridScale(self):
-		self.squaregrid2.setScale(5)
+		self.squaregrid2.setXScale(5)
+		self.squaregrid2.setYScale(5)
 		self.loc1.setLayerCoordinates(P(5,5))
 		pt = self.loc1.getLayerCoordinates(self.layer2)
 		self.assertEqual(pt, P(1,1))
@@ -63,7 +64,8 @@ class TestLocation(unittest.TestCase):
 		self.squaregrid1.setXShift(2)
 		self.squaregrid1.setYShift(2)
 		self.squaregrid1.setRotation(90)
-		self.squaregrid1.setScale(5)
+		self.squaregrid1.setXScale(5)
+		self.squaregrid1.setYScale(5)
 		self.loc1.setLayerCoordinates(P(1,1))
 		pt = self.loc1.getElevationCoordinates()
 		self.assert_(is_near(pt.x, 7))

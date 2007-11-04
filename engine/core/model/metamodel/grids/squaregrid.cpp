@@ -82,9 +82,12 @@ namespace FIFE {
 			return 0;
 		}
 		if (isAccessibleDiagonal(curpos, target)) {
-			return M_SQRT2;
+			return sqrt(m_xscale*m_xscale + m_yscale*m_yscale);
 		}
-		return 1;
+		if (curpos.x == target.x) {
+			return m_xscale;
+		}
+		return m_yscale;
 	}
 
 	const std::string& SquareGrid::getType() const {

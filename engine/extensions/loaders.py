@@ -266,7 +266,8 @@ class ModelLoader(handler.ContentHandler):
 
 				id = 0
 				cellgrid = 0
-				scaling = 1.0
+				x_scale = 1.0
+				y_scale = 1.0
 				rotation = 0.0
 				x_offset = 0.0
 				y_offset = 0.0
@@ -280,9 +281,12 @@ class ModelLoader(handler.ContentHandler):
 							cellgrid = fife.HexGrid()
 							cellgrid.thisown = 0
 
-					elif (attrName == "scaling"):
-						scaling = eval(attrs.get(attrName))
+					elif (attrName == "x_scale"):
+						x_scale = eval(attrs.get(attrName))
 
+					elif (attrName == "y_scale"):
+						y_scale = eval(attrs.get(attrName))
+					
 					elif (attrName == "rotation"):
 						rotation = eval(attrs.get(attrName))
 
@@ -299,7 +303,8 @@ class ModelLoader(handler.ContentHandler):
 				assert id, "Layer declared with no identifier."
 
 				cellgrid.setRotation(rotation)
-				cellgrid.setScale(scaling)
+				cellgrid.setXScale(x_scale)
+				cellgrid.setYScale(y_scale)
 				cellgrid.setXShift(x_offset)
 				cellgrid.setYShift(y_offset)
 

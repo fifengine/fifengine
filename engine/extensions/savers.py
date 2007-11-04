@@ -126,7 +126,8 @@ class ModelSaver:
 			attr_vals = {
 				(None, 'id'): layer.Id(),
 				(None, 'grid_type'): cellgrid.getType(),
-				(None, 'scaling'): str(cellgrid.getScale()),
+				(None, 'x_scale'): str(cellgrid.getXScale()),
+				(None, 'y_scale'): str(cellgrid.getYScale()),
 				(None, 'rotation'): str(cellgrid.getRotation()),
 				(None, 'x_offset'): str(cellgrid.getXShift()),
 				(None, 'y_offset'): str(cellgrid.getYShift()),

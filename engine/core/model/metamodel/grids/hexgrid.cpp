@@ -79,8 +79,13 @@ namespace FIFE {
 		assert(isAccessible(curpos, target));
 		if (curpos == target) {
 			return 0;
+		} else if (curpos.y == target.y) {
+			return m_xscale;
+		} else {
+			double a = VERTICAL_MULTIP * m_yscale;
+			double b = HEX_TO_EDGE * m_xscale;
+			return sqrt((a * a) + (b * b));
 		}
-		return 1;
 	}
 
 	const std::string& HexGrid::getType() const {

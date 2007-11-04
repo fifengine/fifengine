@@ -31,8 +31,10 @@ namespace FIFE {
 		const double getXShift() const;
 		void setYShift(const double yshift);
 		const double getYShift() const;
-		void setScale(const double scale);
-		const double getScale() const;
+		void setXScale(const double scale);
+		void setYScale(const double scale);
+		const double getXScale() const;
+		const double getYScale() const;
 		void setRotation(const double rotation);
 		const double getRotation() const;
 	};

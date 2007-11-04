@@ -34,7 +34,7 @@
 		</metadata>
 
 		<!-- TILE LAYER -->
-		<layer id="TechdemoMapTileLayer" grid_type="square" scaling="1">
+		<layer id="TechdemoMapTileLayer" grid_type="square" x_scale="1" y_scale="1">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
@@ -77,7 +77,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" scaling="0.25" rotation="-30">
+		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" y_offset="0.1" x_scale="0.25" y_scale="0.25" rotation="-30">
 
 			<metadata>
 				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
