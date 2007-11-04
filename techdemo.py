@@ -100,7 +100,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		elif self._shiftdown:
 			self.shift_scrollwheelvalue += 0.01
 		else:
-			self.scrollwheelvalue += 1
+			self.scrollwheelvalue += 0.1
 			
 		
 	def mouseWheelMovedDown(self, evt):
@@ -109,7 +109,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		elif self._shiftdown:
 			self.shift_scrollwheelvalue -= 0.01
 		else:
-			self.scrollwheelvalue -= 1
+			self.scrollwheelvalue -= 0.1
 	
 	def mouseMoved(self, evt):
 		pass
@@ -417,6 +417,7 @@ class World(object):
 				camloc = self.cameras['main'].getLocation()
 				camloc.setExactLayerCoordinates(camcoords)
 				self.cameras['main'].setLocation(camloc)
+				evtlistener.scrollwheelvalue = self.scrollwheelvalue
 
 			agentcoords = self.agent.getLocation().getElevationCoordinates()
 			if not ((self.agentcoords.x == agentcoords.x) and (self.agentcoords.y == agentcoords.y)):
