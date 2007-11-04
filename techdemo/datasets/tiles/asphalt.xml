@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <dataset id="AsphaltTiles" type="Embedded" format="1.0">
 	<metadata>
-		<param type="text" name="Name">asphalt.xml</param>
-		<param type="id" name="Version">1</param>
+		<param name="Name" value="asphalt.xml" />
+		<param name="Version" value="1" />
 	</metadata>
 
 	<!-- Ground tiles -->

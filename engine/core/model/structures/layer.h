@@ -109,11 +109,11 @@ namespace FIFE {
 
 			/** Add an instance of an object at a specific position
 			 */
-			Instance* addInstance(Object* object, const ModelCoordinate& p);
+			Instance* addInstance(Object* object, const ModelCoordinate& p, const std::string& id="");
 
 			/** Add an instance of an object at a specific position
 			 */
-			Instance* addInstance(Object* object, const ExactModelCoordinate& p);
+			Instance* addInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
 						
 			/** Remove an instance from the layer
 			 */

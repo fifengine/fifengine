@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <dataset id="EnviromentTiles" type="Embedded" format="1.0">
 	<metadata>
-		<param type="text" name="Name">enviroment.xml</param>
-		<param type="id" name="Version">1</param>
-	</metadata>
+		<param name="Name" value="enviroment.xml" />
+		<param name="Version" value="1" />
+	</metadata>	
 
 	<!-- Ground tiles -->
 	<object id="22001">

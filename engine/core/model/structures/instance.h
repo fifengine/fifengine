@@ -53,14 +53,14 @@ namespace FIFE {
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
-	class Instance {
+	class Instance : public AttributedClass {
 	public:
 
 		/** Constructor
 		 * Instances are created by calling addInstance from layer, thus
 		 * this method should really be called only by layer or test code
 		 */
-		Instance(Object* object, const Location& location);
+		Instance(Object* object, const Location& location, const std::string& identifier="");
 
 		/** Destructor
 		 */
@@ -69,10 +69,6 @@ namespace FIFE {
 		/** Gets object where this instance is instantiated from
 		 */
 		Object* getObject() { return m_object; }
-
-		/** Gets associated metadata field with given field name
-		 */
-		const std::string& get(const std::string& field) { return m_object->get(field); }
 
 		/** Sets location of the instance
 		 *  @param loc new location
@@ -149,6 +145,9 @@ namespace FIFE {
 		/** Gets used visualization
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
+		
+		std::vector<std::string> listFields() const;
+		const std::string& get(const std::string& field);
 
 	private:
 		// object where instantiated from

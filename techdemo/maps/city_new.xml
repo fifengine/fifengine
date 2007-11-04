@@ -2,11 +2,10 @@
 <map id="TechdemoMap" format="1.0">
 
 	<metadata>
-		<param type="text" name="Name">city_new.xml</param>
-		<param type="id" name="Version">1</param>
-		<param type="text" name="Comment">Upcoming 2007.3 techdemo map.</param>
-		<param type="text" name="Author">Zero-Projekt and FIFE team</param>
-		<param type="id" name="_START_ELEVATION">1</param>
+		<param name="Name" value="city_new.xml" />
+		<param name="Version" value="1" />
+		<param name="Comment" value="Upcoming 2007.3 techdemo map." />
+		<param name="Author" value="Zero-Projekt and FIFE team" />
 	</metadata>
 
 	<!-- Load tile object datasets -->
@@ -28,18 +27,8 @@
 	<dataset type="XML" source="techdemo/datasets/agents/humans/gunner.xml" />
 
 	<elevation id="TechdemoMapElevation">
-
-		<metadata>
-			<param name="_START_POSITION" type="Point"><x>4</x><y>7</y></param>
-		</metadata>
-
 		<!-- TILE LAYER -->
 		<layer id="TechdemoMapTileLayer" grid_type="square" x_scale="1" y_scale="1">
-
-			<metadata>
-				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
-			</metadata>
-
 			<instances>
 				<!-- tile layer has x=11 and y=15 tiles -->
 				<i o="21001" x="0" y="-1" />
@@ -78,11 +67,6 @@
 
 		<!-- OBJECT LAYER -->
 		<layer id="TechdemoMapObjectLayer" grid_type="hexagonal" y_offset="0.1" x_scale="0.25" y_scale="0.25" rotation="-30">
-
-			<metadata>
-				<param name="_OVERLAY_IMAGE_OFFSET" type="Point"><x>0</x><y>0</y></param>
-			</metadata>
-
 			<instances>
 				<!--
 				<i o="SecurityBot" x="22" y="8" />
@@ -141,7 +125,17 @@
 				<i o="Bar:Floor" x="14" y="-5" stackpos="0" />
 				-->
 
-				<i o="PC" x="22" y="25" stackpos="10" />
+				<i o="PC" x="22" y="25" stackpos="10" id="agent">
+					<metadata>
+						<param name="name" value="MyHero"/>
+						<param name="story">
+							Here is some text representing the story behind our hero.
+							...and still some more text.
+						</param>
+					</metadata>
+				</i>
+					
+				
 
 				<i o="WildBarracuda:Sign" x="16" y="11"/>
 

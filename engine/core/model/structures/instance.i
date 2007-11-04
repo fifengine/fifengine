@@ -22,9 +22,9 @@ namespace FIFE {
 		virtual void OnActionFinished(Instance* instance, Action* action) = 0;
 	};
 
-	class Instance {
+	class Instance : public AttributedClass {
 	public:
-		Instance(Object* object, const Location& location);
+		Instance(Object* object, const Location& location, const std::string& identifier="");
 		virtual ~Instance();
 		Object* getObject();
 		void setLocation(const Location& loc);
@@ -40,7 +40,6 @@ namespace FIFE {
 		void act_here(const std::string& action_name, const Location& direction, bool repeating=false);
 		void update(unsigned int curticks=0);
 
-		const std::string& get(const std::string& field);
 		void setVisual(AbstractVisual* visual);
 		template<typename T> T* getVisual() const;
 	};

@@ -51,22 +51,22 @@ namespace FIFE {
 		return !m_instances.empty();
 	}
 
-	Instance* Layer::addInstance(Object* object, const ModelCoordinate& p) {
+	Instance* Layer::addInstance(Object* object, const ModelCoordinate& p, const std::string& id) {
 		Location l;
 		l.setLayer(this);
 		l.setLayerCoordinates(p);
 
-		Instance* instance = new Instance(object, l);
+		Instance* instance = new Instance(object, l, id);
 		m_instances.push_back(instance);
 		return instance;
 	}
 
-	Instance* Layer::addInstance(Object* object, const ExactModelCoordinate& p) {
+	Instance* Layer::addInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
 		Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
 
-		Instance* instance = new Instance(object, l);
+		Instance* instance = new Instance(object, l, id);
 		m_instances.push_back(instance);
 		return instance;
 	}
@@ -92,7 +92,7 @@ namespace FIFE {
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
 			if((*it)->get(field) == value)
-				matches.push_back(*it);	
+				matches.push_back(*it);
 		}
 
 		return matches;

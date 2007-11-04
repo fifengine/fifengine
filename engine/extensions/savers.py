@@ -155,17 +155,29 @@ class ModelSaver:
 				(None, 'o'): inst.getObject().Id(),
 				(None, 'x'): str(position.x),
 				(None, 'y'): str(position.y),
+				(None, 'z'): str(position.z),
 			}
 			attr_names = {
 				(None, 'o'): 'o',
 				(None, 'x'): 'x',
 				(None, 'y'): 'y',
+				(None, 'z'): 'z',
 			}
+			instId = inst.Id()
+			if instId:
+				print "hipo", instId
+				attr_vals[(None, 'id')] = inst.Id()
+				attr_names[(None, 'id')] = 'id'
 			attrs = AttributesNSImpl(attr_vals, attr_names)
-			self.file.write(self.indent_level)
-			self.xmlout.startElementNS((None, 'i'), 'i', attrs)
-			self.xmlout.endElementNS((None, 'i'), 'i')
-			self.file.write('\n')
+			if not inst.listFields():
+				self.file.write(self.indent_level)
+				self.xmlout.startElementNS((None, 'i'), 'i', attrs)
+				self.xmlout.endElementNS((None, 'i'), 'i')
+				self.file.write('\n')
+			else:
+				self.startElement('i', attrs)
+				self.write_metadata(inst)
+				self.endElement('i')
 
 		self.endElement('instances')
 

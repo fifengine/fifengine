@@ -6,7 +6,7 @@ import fife
 class ModelLoader(handler.ContentHandler):
 
 	def __init__(self, engine, source, state = 0, datastate = 0):
-		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SObject, self.SAction = range(9)
+		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SInstance, self.SObject, self.SAction = range(10)
 
 		self.engine = engine
 		self.model = self.engine.getModel()
@@ -54,8 +54,8 @@ class ModelLoader(handler.ContentHandler):
 				assert 0, "A <map> can only be declared at the top level"
 
 		elif (name == 'metadata'):
-			if (self.state == self.SMap) or (self.state == self.SElevation) or (self.state == self.SLayer) or (self.state == self.SDataset)\
-				or (self.state == self.SObject) or (self.state == self.SAction):
+			if self.state in (self.SMap, self.SElevation, self.SLayer, self.SDataset,
+				self.SObject, self.SAction, self.SInstance):
 
 				if (self.state == self.SMap):
 					self.datastack.append(self.map)
@@ -69,23 +69,31 @@ class ModelLoader(handler.ContentHandler):
 					self.datastack.append(self.object)
 				elif (self.state == self.SAction):
 					self.datastack.append(self.action)
+				elif (self.state == self.SInstance):
+					self.datastack.append(self.instance)
 
 				self.stack.append(self.state)
 				self.state = self.SMetadata
 
 			else:
-				assert 0, "Metadata can only be declared in a <map>, <elevation>, or <layer> section."
+				assert 0, "Metadata defined in unsupported section"
 
 		elif (name == 'param'):
 			if (self.state == self.SMetadata):
 
-				self.param_name = 0
+				self.param_name = ''
+				self.value = ''
 				for attrName in attrs.keys():
-					if (attrName == "name"):
-						self.param_name = attrs.get(attrName)
-
-				assert self.param_name, "Metadata fields must be given a name."
-
+					if attrName == "name":
+						self.param_name = str(attrs.get(attrName))
+					if attrName == "value":
+						self.value = str(attrs.get(attrName))
+				
+				if not (self.param_name):
+					print self.datastack
+					print "Metadata fields must be given a name"
+					assert False
+				
 			else:
 				assert 0, "Parameters found outside the <metadata> section."
 
@@ -322,8 +330,10 @@ class ModelLoader(handler.ContentHandler):
 			else:
 				assert 0, "An <instances> section can only be declared in a <layer> section."
 
-		elif (name == 'i' or name == 'inst' or name == 'instance'):
+		elif (name in ('i', 'inst', 'instance')):
 			if (self.state == self.SInstances):
+				self.state = self.SInstance
+				
 				objectID = attrs.get("object")
 				if (not objectID):
 					objectID = attrs.get("obj")
@@ -341,6 +351,7 @@ class ModelLoader(handler.ContentHandler):
 				y = attrs.get("y")
 				z = attrs.get("z")
 				stackpos = attrs.get("stackpos")
+				id = attrs.get("id")
 
 				if (x):
 					x = float(x)
@@ -360,7 +371,12 @@ class ModelLoader(handler.ContentHandler):
 				else:
 					z = 0
 				
-				inst = self.layer.addInstance(object, fife.ExactModelCoordinate(x,y,z))
+				if not (id):
+					id = ''
+				else:
+					id = str(id)
+				
+				inst = self.layer.addInstance(object, fife.ExactModelCoordinate(x,y,z), id)
 				fife.InstanceVisual.create(inst)
 				if (stackpos):
 					inst.get2dGfxVisual().setStackPosition(int(stackpos))
@@ -369,6 +385,7 @@ class ModelLoader(handler.ContentHandler):
 					target = fife.Location()
 					target.setLayer(self.layer)
 					inst.act_here("default", target, True)
+				self.instance = inst
 
 			else:
 				assert 0, "Instances can only be declared in an <instances> section."
@@ -382,7 +399,10 @@ class ModelLoader(handler.ContentHandler):
 
 		if (name == 'param'):
 			assert len(self.datastack) > 0
-			self.datastack[len(self.datastack) - 1].set(str(self.param_name), str(self.chars).strip())
+			if self.value:
+				self.datastack[-1].set(self.param_name, self.value)
+			else:
+				self.datastack[-1].set(self.param_name, str(self.chars).strip())
 
 			self.chars = ""
 
@@ -409,6 +429,10 @@ class ModelLoader(handler.ContentHandler):
 
 		elif (name == 'instances'):
 			self.state = self.SLayer
+
+		elif (name in ('i', 'inst', 'instance')):
+			self.state = self.SInstances
+
 
 def loadMapFile(path, engine):
 	parser = make_parser()

@@ -58,7 +58,6 @@ namespace FIFE {
 			m_id = value;
 			return ;
 		}
-
 		m_fields[field] = value;
 	}
 

@@ -63,11 +63,11 @@ namespace FIFE {
 
 			/** List the fields contained in this archetype
 			 */
-			std::vector<std::string> listFields() const;
+			virtual std::vector<std::string> listFields() const;
 
 			/** Set the value of a field.
 			 */
-			void set(const std::string& field, const std::string& value);
+			virtual void set(const std::string& field, const std::string& value);
 
 			/** Get the value of a field.
 			 *

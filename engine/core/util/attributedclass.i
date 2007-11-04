@@ -18,9 +18,9 @@ namespace FIFE {
 
 			const std::string& Id() const;
 
-			std::vector<std::string> listFields() const;
-			const std::string& get(const std::string& field);
-			void set(const std::string& field, const std::string& value);
+			virtual std::vector<std::string> listFields() const;
+			virtual const std::string& get(const std::string& field);
+			virtual void set(const std::string& field, const std::string& value);
 			void remove(const std::string& field);
 
 		private:

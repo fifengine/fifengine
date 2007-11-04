@@ -90,8 +90,9 @@ namespace FIFE {
 		AbstractPather* m_pather;
 	};
 
-	Instance::Instance(Object* object, const Location& location):
-		m_object(object), 
+	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
+		AttributedClass(identifier),
+		m_object(object),
 		m_location(location),
 		m_facinglocation(NULL),
 		m_actioninfo(NULL),
@@ -269,5 +270,20 @@ namespace FIFE {
 			return SDL_GetTicks() - m_actioninfo->m_action_start_time;
 		}
 		return -1;
+	}
+	
+	std::vector<std::string> Instance::listFields() const {
+		std::vector<std::string> ifields = AttributedClass::listFields();
+		std::vector<std::string> ofields = m_object->listFields();
+		ifields.insert(ifields.end (), ofields.begin(), ofields.end());
+		return ifields;
+	}
+	
+	const std::string& Instance::get(const std::string& field) {
+		const std::string& value = AttributedClass::get(field);
+		if (value != "") {
+			return value;
+		}
+		return m_object->get(field);
 	}
 }

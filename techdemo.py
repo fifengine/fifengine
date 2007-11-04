@@ -299,6 +299,17 @@ class World(object):
 		
 		self.scrollwheelvalue = self.elevation.getLayers("id", TDS.TestRotationLayerName)[0].getCellGrid().getRotation()
 
+		# no movement at start
+		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
+		
+		self.agent = self.agent_layer.getInstances('name', 'MyHero')[0]
+		self.agent.addListener(self.reactor)
+		self.agent.act_here('idle', self.target, True)
+		self.agentcoords = self.target.getElevationCoordinates()
+		for g in self.agent_layer.getInstances('id', 'Gunner'):
+			g.act_here('idle', self.target, True)
+
+
 	def save_world(self, path):
 		saveMapFile(path, self.engine, self.map)
 		
@@ -314,16 +325,6 @@ class World(object):
 		camera.setViewPort(fife.Rect(*[int(c) for c in viewport]))
 		camera.setLocation(camloc)		
 		self.cameras[name] = camera
-		
-		# no movement at start
-		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
-		
-		self.agent = self.agent_layer.getInstances('id', 'PC')[0]
-		self.agent.addListener(self.reactor)
-		self.agent.act_here('idle', self.target, True)
-		self.agentcoords = self.target.getElevationCoordinates()
-		for g in self.agent_layer.getInstances('id', 'Gunner'):
-			g.act_here('idle', self.target, True)
 	
 	def adjust_views(self):
 		W = self.renderbackend.getScreenWidth()
