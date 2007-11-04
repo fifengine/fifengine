@@ -336,7 +336,8 @@ class World(object):
 		self.shift_scrollwheelvalue = self.cameras['main'].getZoom()
 		
 		renderer = self.view.getRenderer('CoordinateRenderer')
-		renderer.removeActiveLayer(self.elevation.getLayers("id", TDS.CoordinateLayerName)[0])
+		renderer.clearActiveLayers()
+		renderer.addActiveLayer(self.elevation.getLayers("id", TDS.CoordinateLayerName)[0])
 
 	def create_background_music(self):
 		# set up the audio engine
