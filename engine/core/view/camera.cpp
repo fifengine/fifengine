@@ -57,7 +57,7 @@ namespace FIFE {
 	}
 
 	void Camera::updateMatrices() {
-		double scale = 1.0 / (m_zoom * m_reference_scale);
+		double scale = 1.0 / m_reference_scale;
 		m_matrix.loadScale(scale, scale, scale);
 		if (m_location.getLayer()) {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
@@ -66,6 +66,8 @@ namespace FIFE {
 				m_matrix.applyTranslate(pt.x  * m_reference_scale, pt.y * m_reference_scale, 0);
 			}
 		}
+		scale = 1.0 / m_zoom;
+		m_matrix.applyScale(scale, scale, scale);
 		m_matrix.applyRotate(m_rotation, 0.0, 0.0, 1.0);
 		m_matrix.applyRotate(m_tilt, 1.0, 0.0, 0.0);
 		m_inverse_matrix = m_matrix.inverse();

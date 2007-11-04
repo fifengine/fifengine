@@ -97,7 +97,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 	def mouseWheelMovedUp(self, evt):
 		if self._ctrldown:
 			self.ctrl_scrollwheelvalue += 1
-		if self._shiftdown:
+		elif self._shiftdown:
 			self.shift_scrollwheelvalue += 0.01
 		else:
 			self.scrollwheelvalue += 1
@@ -106,7 +106,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 	def mouseWheelMovedDown(self, evt):
 		if self._ctrldown:
 			self.ctrl_scrollwheelvalue -= 1
-		if self._shiftdown:
+		elif self._shiftdown:
 			self.shift_scrollwheelvalue -= 0.01
 		else:
 			self.scrollwheelvalue -= 1
@@ -379,16 +379,18 @@ class World(object):
 			if self.ctrl_scrollwheelvalue != evtlistener.ctrl_scrollwheelvalue:
 				self.ctrl_scrollwheelvalue = evtlistener.ctrl_scrollwheelvalue
 				self.cameras['main'].setRotation(self.ctrl_scrollwheelvalue)
-				print self.ctrl_scrollwheelvalue
+				print "camera rotation " + str(self.ctrl_scrollwheelvalue)
 			
 			if self.shift_scrollwheelvalue != evtlistener.shift_scrollwheelvalue:
 				self.shift_scrollwheelvalue = evtlistener.shift_scrollwheelvalue
 				self.cameras['main'].setZoom(self.shift_scrollwheelvalue)
+				print "camera zoom " + str(self.shift_scrollwheelvalue)
 			
 			if self.scrollwheelvalue != evtlistener.scrollwheelvalue:
 				self.scrollwheelvalue = evtlistener.scrollwheelvalue
 				l = self.elevation.getLayers("id", TDS.TestRotationLayerName)[0]
 				l.getCellGrid().setRotation(self.scrollwheelvalue)
+				print "cell grid rotation " + str(self.scrollwheelvalue)
 			
 			self.engine.pump()
 			
