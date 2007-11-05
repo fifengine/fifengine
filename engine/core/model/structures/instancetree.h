@@ -22,7 +22,7 @@
 #ifndef FIFE_INSTANCETREE_H
 #define FIFE_INSTANCETREE_H
 
-#include <vector>
+#include <list>
 
 #include "util/quadtree.h"
 #include "model/metamodel/modelcoords.h"
@@ -33,6 +33,8 @@ namespace FIFE {
 
 	class InstanceTree {
 	public:
+		typedef std::list<Instance*> InstanceList;
+		
 		/** Constructor
 		 *
 		 */
@@ -41,7 +43,7 @@ namespace FIFE {
 		/** Destructor
 		 *
 		 */
-		~InstanceTree(void);
+		virtual ~InstanceTree(void);
 
 		/** Adds an instance to the quad tree.
 		 *
@@ -50,7 +52,7 @@ namespace FIFE {
 		 *
 		 * @param instance A pointer to the instance to add.
 		 */
-		void addInstance(const Instance* instance);
+		bool addInstance(Instance* instance);
 
 		/** Removes an instance from the quad tree.
 		 *
@@ -58,7 +60,7 @@ namespace FIFE {
 		 *
 		 * @param instance A pointer to the instance to find and remove.
 		 */
-		void removeInstance(const Instance* instance);
+		bool removeInstance(Instance* instance);
 
 		/** Find all instances in a given area.
 		 * 
@@ -68,12 +70,28 @@ namespace FIFE {
 		 * @param point A ModelCoordinate representing the upper left part of the search area.
 		 * @param w The width of the search area in Model Units.
 		 * @param h The height of the search area in Model Units.
-		 * @return A vector containing all instances within that space.
+		 * @param lst vector reference that will be filled with all instances within that space.
+		 * @return A boolean to signify whether the instance container was found.
 		 */
-		std::vector<Instance*> findAreaInstances(const ModelCoordinate& point, int w, int h);
+		bool getInstanceList(const ModelCoordinate& point, int w, int h, InstanceList& lst);
 	private:
+		typedef QuadTree< InstanceList > InstanceQuadTree;
+		typedef InstanceQuadTree::Node InstanceTreeNode;
+		
+		/** Find all instances in a given area.
+		 * 
+		 * Takes a box as an area then returns a vector filled with all instances that intersect
+		 * with that box.
+		 *
+		 * @param point A ModelCoordinate representing the upper left part of the search area.
+		 * @param w The width of the search area in Model Units.
+		 * @param h The height of the search area in Model Units.
+		 * @return A vector pointer to a vector of the contents of the node.
+		 */
+		InstanceList* getInstanceList(const ModelCoordinate& point, int w, int h);
+		
 		// The quadtree containing instances.
-		QuadTree<Instance*> m_tree;
+		InstanceQuadTree m_tree;
 	};
 
 }

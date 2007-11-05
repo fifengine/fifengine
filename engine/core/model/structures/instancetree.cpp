@@ -31,14 +31,63 @@ namespace FIFE {
 	InstanceTree::~InstanceTree(void) {
 	}
 
-	void InstanceTree::addInstance(const Instance* instance) {
+	bool InstanceTree::addInstance(Instance* instance) {
+
+		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
+		InstanceList* lst = getInstanceList(coords, 1, 1);
+
+		if(lst == 0) {
+			return false;
+		}
+		lst->push_back(instance);
+
+		return true;
 	}
 
-	void InstanceTree::removeInstance(const Instance* instance) {
+	bool InstanceTree::removeInstance(Instance* instance) {
+
+		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
+		InstanceList* lst = getInstanceList(coords, 1, 1);
+
+		if(lst == 0) {
+			return false;
+		}
+
+		for(InstanceList::iterator i = lst->begin(); i != lst->end(); ++i) {
+
+			if((*i) == instance) {
+				lst->erase(i);
+				return true;
+			}
+		}
+
+		return false;
+
 	}
 
-	std::vector<Instance*> InstanceTree::findAreaInstances(const ModelCoordinate& point, int w, int h) {
-		return std::vector<Instance*>();
+	bool InstanceTree::getInstanceList(const ModelCoordinate& point, int w, int h, InstanceTree::InstanceList& lst) {
+
+		InstanceList* lstptr = getInstanceList(point, w, h);
+
+		if(lstptr == 0) {
+			return false;
+		}
+
+		lst = *lstptr;
+
+		return true;
+	}
+
+	InstanceTree::InstanceList* InstanceTree::getInstanceList(const ModelCoordinate& point, int w, int h) {
+		//Do it based on the model coordinates. Should we use model coordinates or
+		//exact model coordinates?
+		InstanceTreeNode* node = m_tree.find_container(point.x, point.y, 1, 1);
+
+		if(!node) {
+			return 0;
+		}
+
+		return &node->data();
 	}
 
 }
