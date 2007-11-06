@@ -15,5 +15,6 @@ CoordinateLayerName = "TechdemoMapObjectLayer"
 
 # test settings
 TestCameraPlacement = 0
-TestRotationLayerName = "TechdemoMapObjectLayer"
-#TestRotationLayerName = "TechdemoMapTileLayer"
+TestRotationLayerName = "TechdemoMapObjectLayer" # or "TechdemoMapTileLayer"
+TestAgentSpeed      = 0.5
+

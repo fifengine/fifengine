@@ -400,7 +400,7 @@ class World(object):
 			if evtlistener.newTarget:
 				ec = self.cameras['main'].toElevationCoordinates(evtlistener.newTarget)
 				self.target.setElevationCoordinates(ec)
-				self.agent.act('walk', self.target, 0.5)
+				self.agent.act('walk', self.target, TDS.TestAgentSpeed)
 				evtlistener.newTarget = None
 			
 			if evtlistener.quitRequested:

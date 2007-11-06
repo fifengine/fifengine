@@ -64,9 +64,9 @@ namespace FIFE {
 	}
 
 	void CellGrid::updateMatrices() {
-		m_matrix.loadScale(1 / m_xscale, 1 / m_yscale, 1);
+		m_matrix.loadTranslate(-m_xshift, -m_yshift, 0);
 		m_matrix.applyRotate(m_rotation, 0.0, 0.0, 1.0);
-		m_matrix.applyTranslate(-m_xshift, -m_yshift, 0);
+		m_matrix.applyScale(1 / m_xscale, 1 / m_yscale, 1);
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
