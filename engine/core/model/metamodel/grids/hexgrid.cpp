@@ -56,23 +56,62 @@ namespace FIFE {
 	}
 
 	bool HexGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) {
-		if (curpos == target)
-			return true;
-		if ((curpos.x == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x == target.x) && (curpos.y + 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y == target.y))
-			return true;
-		if ((curpos.x - 1 == target.x) && (curpos.y == target.y))
-			return true;
 
-		if ((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y))
-			return true;
-		if ((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y))
-			return true;
+		if(curpos.y % 2) {
+
+			if((curpos.x == target.x) && (curpos.y - 1 == target.y)) {
+				return true;
+			}
+
+			if((curpos.x + 1 == target.x) && (curpos.y - 1 == target.y)) {
+				return true;
+			}
+
+			if((curpos.x + 1 == target.x) && (curpos.y == target.y)) {
+				return true;
+			}
+
+			if((curpos.x + 1 == target.x) && (curpos.y + 1 == target.y)) {
+				return true;
+			}
+
+			if((curpos.x == target.x) && (curpos.y + 1 == target.y)) {
+				return true;
+			}
+
+			if((curpos.x - 1 == target.x) && (curpos.y == target.y)) {
+				return true;
+			}
+
+		} else {
+
+			if((curpos.x - 1 == target.x) && (curpos.y - 1 == target.y)) {
+				return true;
+			}
+
+			if((curpos.x == target.x) && (curpos.y - 1 == target.y)) {
+				return true;
+			}
+
+			if((curpos.x + 1 == target.x) && (curpos.y == target.y)) {
+				return true;
+			}
+
+			if((curpos.x  == target.x) && (curpos.y + 1 == target.y)) {
+				return true;
+			}
+
+			if((curpos.x - 1 == target.x) && (curpos.y + 1 == target.y)) {
+				return true;
+			}
+
+			if((curpos.x - 1 == target.x) && (curpos.y == target.y)) {
+				return true;
+			}
+		}
 
 		return false;
+
 	}
 
 	float HexGrid::getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) {

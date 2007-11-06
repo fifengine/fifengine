@@ -56,8 +56,11 @@ namespace FIFE {
 	void RoutePatherSearch::updateSearch() {
 
 		if(m_sortedfrontier.empty()) {
+
 			setSearchStatus(search_status_failed);
+
 			return;
+
 		}
 
 		PriorityQueue<int, float>::value_type topvalue = m_sortedfrontier.getPriorityElement();
@@ -110,7 +113,7 @@ namespace FIFE {
 					            ((destCoord.y - i->y) * (destCoord.y - i->y)) +
 							    ((destCoord.x - i->x) * (destCoord.y - i->y));
 
-				float gCost =   m_gCosts[next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
+				float gCost = m_gCosts[next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 
 				if(m_sf[adjacentInt] == -1) {
 
