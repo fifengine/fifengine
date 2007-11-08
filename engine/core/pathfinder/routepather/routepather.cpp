@@ -93,24 +93,31 @@ namespace FIFE {
 	}
 
 	void RoutePather::followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation) {
+
 		ExactModelCoordinate instancePos = instance->getLocation().getExactLayerCoordinates();
 		ExactModelCoordinate nextWayPoint = path.front().getExactLayerCoordinates();
 		DoublePoint3D direction = nextWayPoint - instancePos;
 		double length = direction.length();
+
+		direction = (direction / length) * speed;
+
 		nextLocation = instance->getLocation();
 
 		if(speed > length) {
+
 			nextLocation.setLayerCoordinates(path.front().getLayerCoordinates());
+
 			nextLocation.setExactLayerCoordinates(nextWayPoint);
+
 			path.pop_front();
+		
+			facingLocation = path.front();
+
 		} else {
-			DoublePoint3D movementVector = (direction / length) * speed;
-			ExactModelCoordinate newPosition = instancePos + movementVector;
-			nextLocation.setExactLayerCoordinates(newPosition);
+
+			nextLocation.setExactLayerCoordinates(instancePos + direction);
 		}
 
-		facingLocation.setExactLayerCoordinates(path.front().getExactLayerCoordinates());
-		facingLocation.setLayerCoordinates(path.front().getLayerCoordinates());
 	}
 	
 	bool RoutePather::cancelSession(const int session_id) {
