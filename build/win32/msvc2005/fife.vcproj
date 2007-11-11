@@ -284,6 +284,8 @@
 				<File RelativePath="..\..\..\engine\core\util\fife_math.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\fife_stdint.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\fife_unit_test.h"></File>
+				<File RelativePath="..\..\..\engine\core\util\fifeclass.cpp"></File>
+				<File RelativePath="..\..\..\engine\core\util\fifeclass.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\logger.cpp"></File>
 				<File RelativePath="..\..\..\engine\core\util\logger.h"></File>
 				<File RelativePath="..\..\..\engine\core\util\matrix.h"></File>

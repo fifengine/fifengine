@@ -33,13 +33,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/logger.h"
+#include "logger.h"
+#include "fifeclass.h"
 
 namespace FIFE {
 
 	/** Base for classes with metadata attributes.
 	 */
-	class AttributedClass {
+	class AttributedClass: public FifeClass {
 
 		public:
 			/** Create a new attributed class instance

@@ -19,6 +19,9 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_CLASS_H
+#define FIFE_CLASS_H
+
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -27,56 +30,28 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/attributedclass.h"
 
 namespace FIFE {
 
-	AttributedClass::AttributedClass(const std::string& identifier) 
-		: FifeClass(), m_id(identifier) { 
-	}
+	typedef unsigned int fifeid_t;
 
-	AttributedClass::~AttributedClass() {
-	}
-
-	const std::string& AttributedClass::Id() const {
-		return m_id;
-	}
-
-	std::vector<std::string> AttributedClass::listFields() const {
-		std::vector<std::string> list;
-
-		std::map<std::string,std::string>::const_iterator i = m_fields.begin();
-		for(; i != m_fields.end(); ++i) {
-			list.push_back(i->first);
-		}
-
-		return list;
-	}
-
-	void AttributedClass::set(const std::string& field, const std::string& value) {
-		if(field == "id") {
-			m_id = value;
-			return ;
-		}
-		m_fields[field] = value;
-	}
-
-	const std::string& AttributedClass::get(const std::string& field) {
-		static std::string null = "";
+	/** Base class for all fife classes
+	 * Used e.g. to track instances over swig conversion
+	 */
+	class FifeClass {
+	public:
+		FifeClass(): m_fifeid(m_curid++) { }
 		
-		if(field == "id")
-			return m_id;
-
-		if(m_fields.find(field) == m_fields.end()) {
-			return null;
+		virtual ~FifeClass() {}
+		
+		fifeid_t getFifeId() {
+			return m_fifeid;
 		}
+		
+	private:
+		fifeid_t m_fifeid;
+		static fifeid_t m_curid;
+	};
+}
 
-		return m_fields[field];
-	}
-
-	void AttributedClass::remove(const std::string& field) {
-		m_fields.erase(field);
-	}
-
-}; //FIFE
-
+#endif
