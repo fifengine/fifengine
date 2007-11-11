@@ -12,6 +12,26 @@ namespace std {
 	%template(BoolVector) vector<bool>;
 };
 
+%feature("director:except") {
+	if ($$error != NULL) {
+		throw Swig::DirectorMethodException();
+	}
+}
+
+%exception {
+	try {
+		$$action
+	}
+	catch (Swig::DirectorException &_e) {
+		std::cerr << _e.getMessage() << std::endl;
+		SWIG_fail;
+	} catch (FIFE::Exception& _e) {
+		std::stringstream str;
+		str << "Catched FIFE exception, message = " << _e.getMessage();
+		SWIG_Python_Raise(SWIG_NewPointerObj((new FIFE::Exception(static_cast< const FIFE::Exception& >(_e))),SWIGTYPE_p_FIFE__Exception,SWIG_POINTER_OWN), str.str(), SWIGTYPE_p_FIFE__Exception); SWIG_fail;
+	}
+}
+
 $inclusions
 
 %include engine/swigwrappers/python/extensions.i.templ
