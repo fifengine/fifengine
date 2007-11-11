@@ -31,6 +31,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/fifeclass.h"
+
 #include "model/structures/map.h"
 
 namespace FIFE {
@@ -40,7 +42,7 @@ namespace FIFE {
 	/**
 	 * A model is a facade for everything in the model.
 	 */
-	class Model {
+	class Model: public FifeClass {
 	public:
 
 		/** Constructor

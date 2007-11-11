@@ -17,7 +17,7 @@ namespace FIFE {
 	class MetaModel;
 	class AbstractPather;
 
-	class Model {
+	class Model: public FifeClass {
 	public:
 
 		Model();

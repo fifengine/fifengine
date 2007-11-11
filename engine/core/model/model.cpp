@@ -38,8 +38,9 @@
 
 namespace FIFE {
 
-	Model::Model() {
-		m_meta = new MetaModel();
+	Model::Model(): 
+		FifeClass(), 
+		m_meta(new MetaModel()) {
 	}
 
 	Model::~Model() {

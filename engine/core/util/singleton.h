@@ -33,6 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "fifeclass.h"
 
 namespace FIFE {
 
@@ -40,7 +41,7 @@ namespace FIFE {
 	 *
 	 * @see DynamicSingleton
 	 */
-	template <typename T> class StaticSingleton {
+	template <typename T> class StaticSingleton: public FifeClass {
 		public:
 
 			static T* instance() {
@@ -50,14 +51,14 @@ namespace FIFE {
 
 		protected:
 
-			StaticSingleton() {
+			StaticSingleton(): FifeClass() {
 			}
 
 			virtual ~StaticSingleton() {
 			}
 
 		private:
-			StaticSingleton(const StaticSingleton<T>&) {}
+			StaticSingleton(const StaticSingleton<T>&): FifeClass() {}
 			StaticSingleton<T>& operator=(const StaticSingleton<T>&) {
 				return this;
 			}
@@ -78,14 +79,14 @@ namespace FIFE {
 	 * @see StaticSingleton
 	 * @see Engine
 	 */
-	template <typename T> class DynamicSingleton {
+	template <typename T> class DynamicSingleton: public FifeClass {
 		public:
 			static T* instance() {
 				assert(m_instance);
 				return m_instance;
 			}
 
-			DynamicSingleton() {
+			DynamicSingleton(): FifeClass() {
 				assert(!m_instance);
 				m_instance = static_cast<T*>(this);
 			}
@@ -97,7 +98,7 @@ namespace FIFE {
 		private:
 			static T* m_instance;
 
-			DynamicSingleton(const DynamicSingleton<T>&) {};
+			DynamicSingleton(const DynamicSingleton<T>&): FifeClass() {};
 			DynamicSingleton<T&> operator=(const DynamicSingleton<T>&) {};
 
 	};

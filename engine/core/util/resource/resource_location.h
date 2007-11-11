@@ -30,6 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/fifeclass.h"
 
 namespace FIFE {
 
@@ -38,13 +39,13 @@ namespace FIFE {
 	 *  This class is used to give ResoureProvider the information
 	 *  where to find the data. 
 	 */
-	class ResourceLocation {
+	class ResourceLocation: public FifeClass {
 	public:
 
 		// LIFECYCLE
 		/** Default constructor.
 		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
+		ResourceLocation(const std::string& filename): FifeClass(), m_filename(filename) {}
 
 		/** Destructor.
 		 */

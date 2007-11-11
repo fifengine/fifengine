@@ -36,9 +36,9 @@
 namespace FIFE {
 
 	class TimerListener {
-		public:
-			virtual void onTimer() {};
-			virtual ~TimerListener() {}
+	public:
+		virtual void onTimer() = 0;
+		virtual ~TimerListener() {}
 	};
 
 	/** Simple Timer class
@@ -66,53 +66,60 @@ namespace FIFE {
 	 *  @see Console
 	 */
 	class Timer : protected TimeEvent {
-		public:
-			typedef boost::function0<void> type_callback;
+	public:
+		typedef boost::function0<void> type_callback;
 
-			/** Default constructor.
-			 *  Constructs an idle timer, use @see setInterval and @see setCallback
-			 *  to set it up for use.
-			 */
-			Timer();
-	
-			/** Destructor.
-			 *  Stops and destroys the timer.
-			 */
-			virtual ~Timer(); 
-	
-			/** Set the interval in milliseconds
-			 *  @param msec The interval
-			 *  If you use an intervall 0 the timer will fire every frame.
-			 */
-			void setInterval(unsigned long msec);
+		/** Default constructor.
+		 *
+		 *  Constructs an idle timer, use @see setInterval and @see setCallback
+		 *  to set it up for use.
+		 */
+		Timer();
 
-			/** Start the timer
-			 * Without calling this function, nothing will happen.
-			 * It is save to call this more than once.
-			 */
-			void start();
+		/** Destructor.
+		 *
+		 *  Stops and destroys the timer.
+		 */
+		virtual ~Timer(); 
 
-			/** Stop the timer
-			 *  Stops execution of the callback
-			 *  It is save to call this more than once.
-			 */
-			void stop();
+		/** Set the interval in milliseconds
+		 *
+		 *  @param msec The interval
+		 *  If you use an intervall 0 the timer will fire every frame.
+		 */
+		void setInterval(unsigned long msec);
 
-			/** Set the callback that will be called
-			 *  @param callback A @c boost::function0 returning void
-			 */
-			void setCallback(const type_callback& callback);
+		/** Start the timer
+		 *
+		 * Without calling this function, nothing will happen.
+		 * It is save to call this more than once.
+		 */
+		void start();
 
-			/** Set the listener that will be called
-			 */
-			void setListener(TimerListener* listener);
+		/** Stop the timer
+		 *
+		 *  Stops execution of the callback
+		 *  It is save to call this more than once.
+		 */
+		void stop();
+
+		/** Set the callback that will be called
+		 *
+		 *  @param callback A @c boost::function0 returning void
+		 */
+		void setCallback(const type_callback& callback);
+
+		/** Set the listener that will be called
+		 *
+		 */
+		void setListener(TimerListener* listener);
 
 
-		protected:
-			bool m_active;
-			type_callback m_callback;
-			TimerListener* m_listener;
-			void updateEvent(unsigned long);
+	protected:
+		bool m_active;
+		type_callback m_callback;
+		TimerListener* m_listener;
+		void updateEvent(unsigned long);
 	};
 
 }//FIFE

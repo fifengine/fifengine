@@ -31,7 +31,7 @@
 
 namespace FIFE { 
 
-	Exception::Exception(const std::string& msg) : m_message(msg) {}
+	Exception::Exception(const std::string& msg): FifeClass(), m_message(msg) {}
 
 	Exception::~Exception() {}
 

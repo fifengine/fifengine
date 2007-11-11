@@ -30,6 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/fifeclass.h"
 
 namespace FIFE {
 
@@ -44,16 +45,16 @@ namespace FIFE {
 	*  
 	* @see TimeManager
 	*/
-    class TimeEvent {
-    public:    
+	class TimeEvent: public FifeClass {
+	public:
 		/** Default constructor.
 		 *
 		 * @param period The period of the event. See class description.
 		 */
 		TimeEvent(int period = -1);
-    
-    
+		
 		/** Destructor.
+		 *
 		 */
 		virtual ~TimeEvent(); 
 

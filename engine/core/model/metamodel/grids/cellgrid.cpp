@@ -36,6 +36,7 @@ namespace FIFE {
 	static Logger _log(LM_CELLGRID);
 
 	CellGrid::CellGrid():
+		FifeClass(),
 		m_matrix(),
 		m_inverse_matrix(),
 		m_xshift(0),

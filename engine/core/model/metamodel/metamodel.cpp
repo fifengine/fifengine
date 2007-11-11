@@ -34,7 +34,10 @@
 #include "dataset.h"
 
 namespace FIFE {
-
+	
+	MetaModel::MetaModel(): FifeClass() {
+	}
+	
 	MetaModel::~MetaModel() {
 		clearDatasets();
 	}

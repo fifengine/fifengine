@@ -31,36 +31,33 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/fifeclass.h"
 
 namespace FIFE {
 
 	/** Exception base class.
-	 *
 	 * All other exceptions derived from this merely adjust the error string
 	 * to be slightly more specific.
 	 */
-	class Exception {
-		public:
-			/** Constructor. 
-			 *
-			 * @param txt The error mesage to be stored.
-			 */
-			Exception(const std::string& txt);
+	class Exception: public FifeClass {
+	public:
+		/** Constructor. 
+		 * @param txt The error mesage to be stored.
+		 */
+		Exception(const std::string& txt);
 
-			/** Destructor. 
-			 */
-			virtual ~Exception();
+		/** Destructor. 
+		 */
+		virtual ~Exception();
 
-			/** Returns the error message.
-			 *
-			 * @return The error message.
-			 */
-			const std::string& getMessage() const;
+		/** Returns the error message.
+		 * @return The error message.
+		 */
+		const std::string& getMessage() const;
 
-		private:
-			// The error string.
-			std::string m_message;
-
+	private:
+		// The error string.
+		std::string m_message;
 	};
 
 	// Common exceptions.

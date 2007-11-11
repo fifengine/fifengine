@@ -25,7 +25,7 @@
 %}
 
 namespace FIFE {
-	class Exception {
+	class Exception: public FifeClass {
 	public:
 		Exception(const std::string& txt);
 		virtual ~Exception();

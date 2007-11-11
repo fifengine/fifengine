@@ -37,7 +37,7 @@ namespace FIFE {
 
 	enum { RES_LOADED = 0x01, RES_NON_LOADED  = 0x02};
 
-	class Pool {
+	class Pool: public FifeClass {
 	public:
 		static const int INVALID_ID = -1;
 		virtual ~Pool();

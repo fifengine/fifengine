@@ -33,9 +33,10 @@
 // Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 #include "util/matrix.h"
+#include "util/fifeclass.h"
 
 namespace FIFE {
-	class CellGrid {
+	class CellGrid: public FifeClass {
 	public:
 		/** Constructor
 		 */

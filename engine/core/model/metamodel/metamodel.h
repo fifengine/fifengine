@@ -32,6 +32,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/fifeclass.h"
+
 #include "dataset.h"
 
 namespace FIFE {
@@ -43,42 +45,46 @@ namespace FIFE {
 	 * A meta model is just a collection of datasets. Perhaps this class
 	 * will eventually have more responsibilities.
 	 */
-	class MetaModel {
-		public:
+	class MetaModel: public FifeClass {
+	public:
+		/** Constructor
+		 *
+		 */
+		MetaModel();
+		
+		/** Destructor
+		 *
+		 */
+		~MetaModel();
 
-			/** Destructor
-			 *
-			 */
-			~MetaModel();
+		/** Add a new dataset to the metamodel
+		 *
+		 * @note MetaModel owns this dataset, so don't delete
+		 * the pointer it gives you!
+		 */
+		Dataset* addDataset(const std::string& identifier);
 
-			/** Add a new dataset to the metamodel
-			 *
-			 * @note MetaModel owns this dataset, so don't delete
-			 * the pointer it gives you!
-			 */
-			Dataset* addDataset(const std::string& identifier);
+		/** Gets the list of datasets in the metamodel. Recursive.
+		 */
+		std::list<Dataset*> getDatasets();
 
-			/** Gets the list of datasets in the metamodel. Recursive.
-			 */
-			std::list<Dataset*> getDatasets();
+		/** Gets a list of datasets that with the given value
+		 * in the given field. Recursive.
+		 */
+		std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
-			/** Gets a list of datasets that with the given value
-			 * in the given field. Recursive.
-			 */
-			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
+		/** Gets a list of objects that with the given value
+		 * in the given field. Recursive.
+		 */
+		std::list<Object*> getObjects(const std::string& field, const std::string& value);
+		
+		/** Clears all datasets from metamodel
+		 */
+		void clearDatasets();
 
-			/** Gets a list of objects that with the given value
-			 * in the given field. Recursive.
-			 */
-			std::list<Object*> getObjects(const std::string& field, const std::string& value);
-			
-			/** Clears all datasets from metamodel
-			 */
-			void clearDatasets();
+	private:
 
-		private:
-
-			std::vector<Dataset*> m_datasets;	
+		std::vector<Dataset*> m_datasets;	
 	};
 
 }; //FIFE

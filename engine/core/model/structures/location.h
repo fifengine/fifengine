@@ -33,12 +33,13 @@
 // Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
 #include "util/exception.h"
+#include "util/fifeclass.h"
 
 namespace FIFE {
 	class Elevation;
 	class Layer;
 
-	class Location {
+	class Location: public FifeClass {
 	public:
 		/** Default constructor
 		 */

@@ -22,7 +22,15 @@
 #ifndef FIFE_INSTANCETREE_H
 #define FIFE_INSTANCETREE_H
 
+// Standard C++ library includes
 #include <list>
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src
+#include "util/fifeclass.h"
 
 #include "util/quadtree.h"
 #include "model/metamodel/modelcoords.h"
@@ -31,19 +39,19 @@ namespace FIFE {
 
 	class Instance;
 
-	class InstanceTree {
+	class InstanceTree: public FifeClass {
 	public:
 		typedef std::list<Instance*> InstanceList;
 		
 		/** Constructor
 		 *
 		 */
-		InstanceTree(void);
+		InstanceTree();
 
 		/** Destructor
 		 *
 		 */
-		virtual ~InstanceTree(void);
+		virtual ~InstanceTree();
 
 		/** Adds an instance to the quad tree.
 		 *
@@ -74,6 +82,7 @@ namespace FIFE {
 		 * @return A boolean to signify whether the instance container was found.
 		 */
 		bool getInstanceList(const ModelCoordinate& point, int w, int h, InstanceList& lst);
+	
 	private:
 		typedef QuadTree< InstanceList > InstanceQuadTree;
 		typedef InstanceQuadTree::Node InstanceTreeNode;

@@ -40,7 +40,7 @@ namespace FIFE {
 	static std::string INVALID_LAYER_SET = "Cannot set layer coordinates, given layer is not initialized properly";
 	static std::string INVALID_LAYER_GET = "Cannot get layer coordinates, layer is not initialized properly";
 	
-	Location::Location() {
+	Location::Location(): FifeClass() {
 		reset();
 	}
 

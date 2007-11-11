@@ -37,7 +37,7 @@ namespace FIFE {
 
 	class TimeEvent;
 
-	/** Time Manager.  
+	/** Time Manager
 	 *
 	 * This class is in charge of storing the current time,
 	 * average frame time, as well as controlling periodic events.
@@ -47,67 +47,65 @@ namespace FIFE {
 	 * @see TimeEvent
 	 */
 	class TimeManager : public DynamicSingleton<TimeManager> {
-		public:
-			/** Default constructor.
-			 */
-			TimeManager();
+	public:
+		/** Default constructor.
+		 */
+		TimeManager();
 
-			/** Destructor.
-			 */
-			virtual ~TimeManager();
+		/** Destructor.
+		 */
+		virtual ~TimeManager();
 
-			/** Called once a frame and updates the timer objects and events.
-			 */
-			void update();
+		/** Called once a frame and updates the timer objects and events.
+		 */
+		void update();
 
-			/** Adds a TimeEvent.
-			 *
-			 * The event will be updated regularly, depending on its settings.
-			 * 
-			 * @param event The TimeEvent object to be added.
-			 */
-			void registerEvent(TimeEvent* event);
+		/** Adds a TimeEvent.
+		 *
+		 * The event will be updated regularly, depending on its settings.
+		 * @param event The TimeEvent object to be added.
+		 */
+		void registerEvent(TimeEvent* event);
 
-			/** Removes a TimeEvent.
-			 *
-			 * Removes an event from the list. It will not be deleted.
-			 * 
-			 * @param event The TimeEvent object to be removed.
-			 */
-			void unregisterEvent(TimeEvent* event);
+		/** Removes a TimeEvent.
+		 *
+		 * Removes an event from the list. It will not be deleted.
+		 * @param event The TimeEvent object to be removed.
+		 */
+		void unregisterEvent(TimeEvent* event);
 
-			/** Get the time.
-			 * 
-			 * @return The time in milliseconds.
-			 */
-			unsigned long getTime() const;
+		/** Get the time.
+		 *
+		 * @return The time in milliseconds.
+		 */
+		unsigned long getTime() const;
 
-			/** Get the time since the last frame.
-			 * 
-			 * @return Time since last frame in milliseconds.
-			 */
-			unsigned long getTimeDelta() const;
+		/** Get the time since the last frame.
+		 *
+		 * @return Time since last frame in milliseconds.
+		 */
+		unsigned long getTimeDelta() const;
 
-			/** Gets average frame time.
-			 * 
-			 * @return Average frame time in milliseconds.
-			 */
-			double getAverageFrameTime() const;
+		/** Gets average frame time
+		 *
+		 * @return Average frame time in milliseconds.
+		 */
+		double getAverageFrameTime() const;
 
-			/** Prints Timer statistics
-			 */
-			void printStatistics() const;
+		/** Prints Timer statistics
+		 */
+		void printStatistics() const;
 
-		private:
-			/// Current time in milliseconds.
-			unsigned long m_current_time;
-			/// Time since last frame in milliseconds.
-			unsigned long m_time_delta;
-			/// Average frame time in milliseconds.
-			double m_average_frame_time;
+	private:
+		/// Current time in milliseconds.
+		unsigned long m_current_time;
+		/// Time since last frame in milliseconds.
+		unsigned long m_time_delta;
+		/// Average frame time in milliseconds.
+		double m_average_frame_time;
 
-			/// List of active TimeEvents.
-			std::vector<TimeEvent*> m_events_list;
+		/// List of active TimeEvents.
+		std::vector<TimeEvent*> m_events_list;
         };
 
 }//FIFE

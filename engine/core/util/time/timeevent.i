@@ -1,11 +1,12 @@
 %module fife
 %{
 #include "util/time/timeevent.h"
+#include "util/fifeclass.h"
 %}
 
 namespace FIFE {
 	%feature("director") TimeEvent;
-	class TimeEvent {
+	class TimeEvent: public FifeClass {
 	public:
 		TimeEvent(int period = -1);
 		virtual ~TimeEvent();

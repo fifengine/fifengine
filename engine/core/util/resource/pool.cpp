@@ -37,6 +37,7 @@ namespace FIFE {
 	static Logger _log(LM_POOL);
 	
 	Pool::Pool(): 
+		FifeClass(),
 		m_entries(),
 		m_listeners(),
 		m_providers(),

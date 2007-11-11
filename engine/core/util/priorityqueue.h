@@ -68,13 +68,13 @@ namespace FIFE {
 		void pushElement(const value_type& element);
 		
 		/** Pops the element with the highest priority from the queue.
-		 *  
+		 *
 		 * Removes and deletes the highest priority element.
 		 */
 		void popElement(void);
 
 		/** Changes the priority of an element.
-		 * 
+		 *
 		 * Locates the element with the given index and changes it's priority to the given
 		 * priority, it then re-orders the priority queue to take account of this new information.
 		 *

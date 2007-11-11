@@ -14,7 +14,7 @@ namespace FIFE {
 	// for some reason swig ignores operator= and gives warning. Ignore this for now
 	%ignore Location::operator=;
 
-	class Location {
+	class Location: public FifeClass {
 	public:
 		Location();
 		Location(const Location& loc);
