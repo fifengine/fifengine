@@ -45,6 +45,7 @@ namespace FIFE {
 		m_mouselisteners(),
 		m_sdleventlisteners(),
 		m_widgetlisteners(),
+		m_pending_widgetlisteners(),
 		m_nonconsumablekeys(),
 		m_keystatemap(),
 		m_mousestate(0),
@@ -255,7 +256,7 @@ namespace FIFE {
 	}
 
 	void EventManager::addWidgetListener(IWidgetListener* listener) {
-		addListener<IWidgetListener*>(m_widgetlisteners, listener);
+		addListener<IWidgetListener*>(m_pending_widgetlisteners, listener);
 	}
 
 	void EventManager::removeWidgetListener(IWidgetListener* listener) {
@@ -263,6 +264,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchCommand(ICommand& command) {
+		if(!m_pending_commandlisteners.empty()) {
+			std::vector<ICommandListener*>::iterator i = m_pending_commandlisteners.begin();
+			while (i != m_pending_commandlisteners.end()) {
+				m_commandlisteners.push_back(*i);
+				++i;
+			}
+			m_pending_commandlisteners.clear();
+		}
+
 		std::vector<ICommandListener*>::iterator i = m_commandlisteners.begin();
 		while (i != m_commandlisteners.end()) {
 			(*i)->onCommand(command);
@@ -281,6 +291,15 @@ namespace FIFE {
 				nonconsumablekey = true;
 				break;
 			}
+		}
+
+		if(!m_pending_keylisteners.empty()) {
+			std::vector<IKeyListener*>::iterator i = m_pending_keylisteners.begin();
+			while (i != m_pending_keylisteners.end()) {
+				m_keylisteners.push_back(*i);
+				++i;
+			}
+			m_pending_keylisteners.clear();
 		}
 
 		std::vector<IKeyListener*>::iterator i = m_keylisteners.begin();
@@ -315,6 +334,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchMouseEvent(IMouseEvent& evt) {
+		if(!m_pending_mouselisteners.empty()) {
+			std::vector<IMouseListener*>::iterator i = m_pending_mouselisteners.begin();
+			while (i != m_pending_mouselisteners.end()) {
+				m_mouselisteners.push_back(*i);
+				++i;
+			}
+			m_pending_mouselisteners.clear();
+		}
+
 		std::vector<IMouseListener*>::iterator i = m_mouselisteners.begin();
 		while (i != m_mouselisteners.end()) {
 			switch (evt.getType()) {
@@ -355,6 +383,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchSdlEvent(SDL_Event& evt) {
+		if(!m_pending_sdleventlisteners.empty()) {
+			std::vector<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners.begin();
+			while(i != m_pending_sdleventlisteners.end()) {
+				m_sdleventlisteners.push_back(*i);
+				++i;
+			}
+			m_pending_sdleventlisteners.clear();
+		}
+
 		std::vector<ISdlEventListener*>::iterator i = m_sdleventlisteners.begin();
 		while (i != m_sdleventlisteners.end()) {
 			(*i)->onSdlEvent(evt);
@@ -363,6 +400,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchWidgetEvent(IWidgetEvent& evt) {
+		if(!m_pending_widgetlisteners.empty()) {
+			std::vector<IWidgetListener*>::iterator i = m_pending_widgetlisteners.begin();
+			while (i != m_pending_widgetlisteners.end()) {
+				m_widgetlisteners.push_back(*i);
+				++i;
+			}
+			m_pending_widgetlisteners.clear();
+		}
+
 		std::vector<IWidgetListener*>::iterator i = m_widgetlisteners.begin();
 		while (i != m_widgetlisteners.end()) {
 			(*i)->onWidgetAction(evt);

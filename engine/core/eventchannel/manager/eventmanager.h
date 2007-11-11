@@ -97,10 +97,20 @@ namespace FIFE {
 		void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt);
 
 		std::vector<ICommandListener*> m_commandlisteners;
+		std::vector<ICommandListener*> m_pending_commandlisteners;
+
 		std::vector<IKeyListener*> m_keylisteners;
+		std::vector<IKeyListener*> m_pending_keylisteners;
+
 		std::vector<IMouseListener*> m_mouselisteners;
+		std::vector<IMouseListener*> m_pending_mouselisteners;
+
 		std::vector<ISdlEventListener*> m_sdleventlisteners;
+		std::vector<ISdlEventListener*> m_pending_sdleventlisteners;
+
 		std::vector<IWidgetListener*> m_widgetlisteners;
+		std::vector<IWidgetListener*> m_pending_widgetlisteners;
+
 		std::vector<int> m_nonconsumablekeys;
 		std::map<int, bool> m_keystatemap;
 		int m_mousestate;

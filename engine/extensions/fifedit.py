@@ -66,9 +66,6 @@ class FIFEdit(fife.IWidgetListener, object):
 		elif evtid == 'EditDataset':
 			self.create_datedit(self.dataset_list[self.dataset_drop.getSelected()])
 
-		else:
-			print "Uncaught gui event: " + evtid
-
 	def register_widget(self, w, container):
 		self.widgets.append(w)
 		container.add(w)
@@ -277,34 +274,111 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.register_widget(addbutton, self.map_datwnd)
 		
 	def create_datedit(self, dataset):
-		sx, sy = 200, 500
+		query = self.engine.getModel().getMetaModel().getDatasets('id', dataset)
+		assert len(query) > 0, 'Reference to non-existent dataset.'
+		dat = query[0]
+		datedit = DatasetEditor(self.eventmanager, self.guimanager, self.engine.getImagePool(), dat)
+		self.register_widget(datedit, self.guimanager)
 
-		self.datedit = fife.Window('Dataset Editor:')
-		self.datedit.setTitleBarHeight(20)
-		self.datedit.setSize(sx,sy)
-		self.datedit.setPosition(0,100)
-		self.datedit.setVisible(True)
-		self.register_widget(self.datedit, self.guimanager)
+
+class Form(fife.IWidgetListener, fife.Window):
+
+	def __init__(self, event_manager, gui_manager, caption, position, size):
+		self.eventmanager = event_manager
+		fife.IWidgetListener.__init__(self)
+		self.eventmanager.addWidgetListener(self)
+
+		self.guimanager = gui_manager
+
+		fife.Window.__init__(self, caption)
+		self.setTitleBarHeight(20)
+		self.setPosition(position[0], position[1])
+		self.setSize(size[0], size[1])
+		self.setVisible(True)
+
+		self.widgets = []
+
+		clbutton = fife.Button('Close')
+		clbutton.setActionEventId('CloseEvt')
+		clbutton.addActionListener(self.guimanager)
+		clbutton.adjustSize()
+		clbutton.setPosition(self.getWidth() - clbutton.getWidth() - 5, 5)
+		self.register_widget(clbutton, self)
+
+	def register_widget(self, w, container):
+		self.widgets.append(w)
+		container.add(w)
+
+	def onWidgetAction(self, evt):
+		evtid = evt.getId()
+		if evtid == 'CloseEvt':
+			print 'closing not yet implemented'
+
+class DatasetEditor(Form):
+
+	def __init__(self, event_manager, gui_manager, imagepool, dataset):
+		self.size = (400, 200) 
+		self.position = (0, 100)
+
+		Form.__init__(self, event_manager, gui_manager, 'Dataset Editor:' , self.position, self.size)
+		self.dataset = dataset
+		self.imagepool = imagepool
 
 		#scrollarea = fife.ScrollArea()
 		#scrollarea.setContent(self.datedit)
 		#self.register_widget(scrollarea, self.guimanager)
 
-		dy = 0
+		self.objects = self.dataset.getObjects()
 
-		dat = self.engine.getModel().getMetaModel().getDatasets('id', dataset)[0]
-		for object in dat.getObjects():
-			visual = object.get2dGfxVisual()
-			index = visual.getStaticImageIndexByAngle(0)
-			if (index == -1):
-				print 'object missing static image'
-				continue
+		self.object_list = GenericListmodel()
+		self.object_list.extend([object.Id() for object in self.objects])
 
-			image = fife.GuiImage(index, self.engine.getImagePool())
-			icon = fife.Icon(image)
-			icon.setPosition(1, 1 + dy)
-			icon.setSize(image.getWidth(),image.getHeight())
-			icon.setVisible(True)
-			self.register_widget(icon, self.datedit)
-			self.images.append(image)
-			dy = 1 + dy + icon.getHeight()
+		self.object_drop = fife.DropDown(self.object_list)
+		self.object_drop.setSelected(0)
+		print 'Default object selection: ' + str(self.object_drop.getSelected())
+		self.object_drop.setPosition(5, 5)
+		self.object_drop.setSize(250, 16)
+		self.object_drop.setActionEventId('ObjectSelect')
+		self.object_drop.addActionListener(self.guimanager)
+		self.register_widget(self.object_drop, self)
+
+		self.icon = 0
+
+		self.refresh_preview()
+
+	def refresh_preview(self):
+		visual = self.objects[self.object_drop.getSelected()].get2dGfxVisual()
+		index = visual.getStaticImageIndexByAngle(0)
+		if (index == -1):
+			print 'object missing static image'
+		else:
+			self.preview = fife.GuiImage(index, self.imagepool)
+			if (not self.icon):
+				self.icon = fife.Icon(self.preview)
+				self.icon.setPosition(10, 5 + self.object_drop.getHeight() + 5)
+				self.register_widget(self.icon, self)
+			else:
+				self.icon.setImage(self.preview)
+
+			self.icon.setSize(self.preview.getWidth(),self.preview.getHeight())
+
+##		button = fife.Button('select')
+##		button.setActionEventId('ObjectSelect')
+##		button.addActionListener(self.guimanager)
+##		button.adjustSize()
+##		button.setPosition(1 + icon.getWidth(), icon.getY())
+##		self.register_widget(button, self)
+
+##		button2 = fife.Button('delete')
+##		button2.setActionEventId('ObjectDelete')
+##		button2.addActionListener(self.guimanager)
+##		button2.adjustSize()
+##		button2.setPosition(1 + icon.getWidth(), icon.getY() + button.getHeight())
+##		self.register_widget(button2, self)
+
+	def onWidgetAction(self, evt):
+		evtid = evt.getId()
+		if evtid == 'ObjectSelect':
+			self.refresh_preview()
+		else:
+			Form.onWidgetAction(self, evt)
