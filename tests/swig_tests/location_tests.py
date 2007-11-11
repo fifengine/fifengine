@@ -60,7 +60,7 @@ class TestLocation(unittest.TestCase):
 		self.assertEqual(pt, D(0,0))
 
 	def testSquareCombinations(self):
-		# correct order in combinations = scale, rotate, translate
+		# correct order in combinations = translate, rotate, scale
 		self.squaregrid1.setXShift(2)
 		self.squaregrid1.setYShift(2)
 		self.squaregrid1.setRotation(90)
@@ -68,8 +68,8 @@ class TestLocation(unittest.TestCase):
 		self.squaregrid1.setYScale(5)
 		self.loc1.setLayerCoordinates(P(1,1))
 		pt = self.loc1.getElevationCoordinates()
-		self.assert_(is_near(pt.x, 7))
-		self.assert_(is_near(pt.y, -3))
+		self.assert_(is_near(pt.x, 15))
+		self.assert_(is_near(pt.y, -15))
 
 class TestHexGrid(unittest.TestCase):
 	def setUp(self):

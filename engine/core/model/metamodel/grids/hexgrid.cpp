@@ -56,6 +56,9 @@ namespace FIFE {
 	}
 
 	bool HexGrid::isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) {
+		if (curpos == target) {
+			return true;
+		}
 
 		if(curpos.y % 2) {
 

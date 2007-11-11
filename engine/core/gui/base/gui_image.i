@@ -25,7 +25,21 @@
 #include "gui/base/gui_image.h"
 %}
 
+%rename(GcnImage) gcn::Image;
+namespace gcn {
+	class Image
+	{
+	public:
+		Image();
+		virtual ~Image();
+		static Image* load(const std::string& filename, bool convertToDisplayFormat = true);
+		virtual int getWidth() const = 0;
+		virtual int getHeight() const = 0;
+	};
+}
+
 namespace FIFE {
+
 	class GuiImage: public gcn::Image {
 	public:
 		GuiImage();

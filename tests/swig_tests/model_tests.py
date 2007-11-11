@@ -295,6 +295,7 @@ class ActivityTests(unittest.TestCase):
 class GridTests(unittest.TestCase):
 	def _testgrid(self, grid, curpos, access, cost):
 		for k, v in access.items():
+			print k, v
 			self.assertEqual(grid.isAccessible(fife.ModelCoordinate(*curpos), fife.ModelCoordinate(*k)), v)
 		for k, v in cost.items():
 			self.assertEqual(int(10000 * grid.getAdjacentCost(fife.ModelCoordinate(*curpos), fife.ModelCoordinate(*k))), 
@@ -314,22 +315,22 @@ class GridTests(unittest.TestCase):
 		grid = fife.HexGrid()
 		curpos = (1,1)
 		access = {
-			(0,0): True,
+			(0,0): False,
 			(0,1): True,
 			(0,2): False,
 			(1,0): True,
 			(1,1): True,
 			(1,2): True,
-			(2,0): False,
+			(2,0): True,
 			(2,1): True,
 			(2,2): True,
 		}
 		cost = {
-			(0,0): 1,
 			(0,1): 1,
 			(1,0): 1,
 			(1,1): 0,
 			(1,2): 1,
+			(2,0): 1,
 			(2,1): 1,
 			(2,2): 1,
 		}

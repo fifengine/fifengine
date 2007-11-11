@@ -165,7 +165,6 @@ class ModelSaver:
 			}
 			instId = inst.Id()
 			if instId:
-				print "hipo", instId
 				attr_vals[(None, 'id')] = inst.Id()
 				attr_names[(None, 'id')] = 'id'
 			attrs = AttributesNSImpl(attr_vals, attr_names)
