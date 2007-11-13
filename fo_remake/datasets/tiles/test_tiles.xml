@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<dataset id="TestTiles" type="Embedded" format="1.0">
+	<metadata>
+		<param name="Name" value="test_tiles.xml" />
+		<param name="Version" value="1" />
+	</metadata>
+	<object id="Tiles:Test:Block">
+		<image source="fo_remake/gfx/tiles/testing/block.png" direction="0" />
+	</object>
+</dataset>
