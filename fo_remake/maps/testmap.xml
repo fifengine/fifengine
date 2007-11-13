@@ -21,16 +21,16 @@
 		<!-- TILE LAYER -->
 		<layer id="TechdemoMapTileLayer" grid_type="square" x_scale="1" y_scale="1">
 			<instances>
-				<i o="Tiles:Test:Block" x="0" y="0" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="1" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="2" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="3" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="4" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
+				<i o="Tiles:Test:Blue_white_tiles" x="0" y="0" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" />
+				<i o="Tiles:Test:Blue_white_tiles" x="0" y="1" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:blue_white_tiles_broken" /><i o="Tiles:Test:Blue_white_tiles" />
+				<i o="Tiles:Test:Blue_white_tiles" x="0" y="2" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" />
+				<i o="Tiles:Test:Blue_white_tiles" x="0" y="3" /><i o="Tiles:Test:blue_white_tiles_broken" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" />
+				<i o="Tiles:Test:Blue_white_tiles" x="0" y="4" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" /><i o="Tiles:Test:Blue_white_tiles" />
 			</instances>		
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="TechdemoMapObjectLayer" grid_type="square" x_offset="-2" y_offset="-2" x_scale="0.25" y_scale="0.25" rotation="0">
+		<layer id="TechdemoMapObjectLayer" grid_type="square" x_offset="-1.5" y_offset="-1.5" x_scale="0.25" y_scale="0.25" rotation="0">
 			<instances>
 				<i o="PC" x="0" y="0" id="agent">
 					<metadata>
