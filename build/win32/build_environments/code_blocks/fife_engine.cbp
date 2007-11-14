@@ -1,0 +1,1324 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="_fife.pyd" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="..\..\..\..\engine\swigwrappers\python\_fife.pyd" prefix_auto="0" extension_auto="0" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-DHAVE_OPENGL" />
+					<Add option="-DHAVE_ZIP" />
+					<Add option="-DLOG_ENABLED" />
+					<Add directory="..\..\..\..\engine" />
+					<Add directory="..\..\..\..\engine\core" />
+					<Add directory="..\..\includes\mingw\boost_1_33_1" />
+					<Add directory="..\..\includes\mingw\libguichan" />
+					<Add directory="..\..\includes\mingw\libminizip" />
+					<Add directory="..\..\includes\mingw\libogg" />
+					<Add directory="..\..\includes\mingw\libvorbis" />
+					<Add directory="..\..\includes\mingw\openal" />
+					<Add directory="..\..\includes\mingw\python25" />
+					<Add directory="..\..\includes\mingw\sdl" />
+					<Add directory="..\..\includes\mingw\sdl_image" />
+					<Add directory="..\..\includes\mingw\sdl_ttf" />
+					<Add directory="..\..\includes\mingw\zlib" />
+				</Compiler>
+				<Linker>
+					<Add library="..\..\static_libs\mingw\libminizip.a" />
+					<Add library="..\..\static_libs\mingw\libguichan_opengl.a" />
+					<Add library="..\..\static_libs\mingw\libguichan_sdl.a" />
+					<Add library="..\..\static_libs\mingw\libguichan.a" />
+					<Add library="..\..\applications\mingw\lib\libmingw32.a" />
+					<Add library="..\..\static_libs\mingw\libzlib.a" />
+					<Add library="..\..\static_libs\mingw\libvorbis.a" />
+					<Add library="..\..\static_libs\mingw\libogg.a" />
+					<Add library="..\..\static_libs\mingw\libvorbisfile.a" />
+					<Add library="..\..\static_libs\mingw\SDL_image.lib" />
+					<Add library="..\..\static_libs\mingw\libSDLmain.a" />
+					<Add library="..\..\static_libs\mingw\libSDL.dll.a" />
+					<Add library="..\..\static_libs\mingw\OpenAL32.lib" />
+					<Add library="..\..\static_libs\mingw\SDL_ttf.lib" />
+					<Add library="..\..\static_libs\mingw\libboost_filesystem.a" />
+					<Add library="..\..\static_libs\mingw\libboost_regex.a" />
+					<Add library="..\..\applications\mingw\lib\libopengl32.a" />
+					<Add library="..\..\applications\mingw\lib\libglu32.a" />
+					<Add library="..\..\static_libs\mingw\python25\libpython25.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="default;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-O3" />
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="..\..\..\..\engine\core\audio\audiomanager.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\audiomanager.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\buffer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\buffer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\config.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\decoder.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\decoder.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\decoder_acm.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\decoder_acm.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\decoder_oggvorbis.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\decoder_oggvorbis.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\fife_openal.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\source.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\source.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\controller\engine.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\controller\engine.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\controller\enginesettings.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\controller\enginesettings.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\base\ec_event.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\base\ec_ievent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\base\ec_iinputevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\base\ec_inputevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\command\ec_command.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\command\ec_commandids.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\command\ec_icommand.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\command\ec_icommandcontroller.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\command\ec_icommanddispatcher.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\command\ec_icommandlistener.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\ec_ieventcontroller.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\key\ec_ikey.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\key\ec_ikeycontroller.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\key\ec_ikeyevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\key\ec_ikeylistener.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\key\ec_key.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\key\ec_keyevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\eventchannel\manager\eventmanager.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\manager\eventmanager.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\mouse\ec_imousecontroller.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\mouse\ec_imouseevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\mouse\ec_imouselistener.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\mouse\ec_mouseevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\sdl\ec_isdleventcontroller.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\sdl\ec_isdleventlistener.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\source\ec_eventsourcetypes.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\source\ec_ieventsource.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\widget\ec_iwidgetcontroller.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\widget\ec_iwidgetevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\widget\ec_iwidgetlistener.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\eventchannel\widget\ec_widgetevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\base\gui_font.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\base\gui_font.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\base\gui_image.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\base\gui_image.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\base\gui_imageloader.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\base\gui_imageloader.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\base\opengl\opengl_gui_graphics.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\base\opengl\opengl_gui_graphics.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\base\sdl\sdl_gui_graphics.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\console\commandline.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\console\commandline.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\console\console.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\console\console.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\guimanager.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\guimanager.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\widgets\clicklabel.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\widgets\clicklabel.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\widgets\icon2.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\widgets\icon2.hpp">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\gui\widgets\twobutton.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\gui\widgets\twobutton.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\loaders\fallout\vfs_loaders\dat1.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat1.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\loaders\fallout\vfs_loaders\dat2.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\fallout\vfs_loaders\dat2.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\loaders\fallout\vfs_loaders\lzssdecoder.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\fallout\vfs_loaders\lzssdecoder.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat1.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat1.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat2.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\fallout\vfs_loaders\rawdatadat2.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\loaders\native\video_loaders\animation_provider.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\native\video_loaders\animation_provider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\loaders\native\video_loaders\image_provider.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\native\video_loaders\image_provider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\loaders\native\video_loaders\subimage_provider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\abstractpather.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\abstractvisual.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\metamodel\action.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\action.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\metamodel\dataset.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\dataset.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\metamodel\grids\cellgrid.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\cellgrid.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\metamodel\grids\hexgrid.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\hexgrid.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\metamodel\grids\squaregrid.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\grids\squaregrid.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\metamodel\metamodel.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\metamodel.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\modelcoords.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\metamodel\object.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\metamodel\object.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\model.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\model.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\structures\elevation.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\elevation.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\structures\instance.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\instance.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\structures\instancetree.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\instancetree.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\structures\layer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\layer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\structures\location.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\location.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\model\structures\map.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\model\structures\map.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\modules.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\pathfinder\linearpather\linearpather.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\pathfinder\linearpather\linearpather.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\pathfinder\routepather\routepather.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\pathfinder\routepather\routepather.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\pathfinder\routepather\routepathersearch.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\pathfinder\routepather\routepathersearch.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\pathfinder\search.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\pathfinder\searchspace.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\pathfinder\searchspace.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\angles.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\angles.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\attributedclass.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\attributedclass.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\exception.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\exception.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\fife_math.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\fife_stdint.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\fife_unit_test.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\fifeclass.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\fifeclass.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\logger.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\logger.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\matrix.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\memory.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\point.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\priorityqueue.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\purge.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\quadtree.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\rect.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\rect.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\resource\pool.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\resource\pool.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\resource\pooled_resource.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\resource\resource_location.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\resource\resource_provider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\singleton.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\time\timeevent.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\time\timeevent.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\time\timemanager.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\time\timemanager.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\util\time\timer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\util\time\timer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\raw\rawdata.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\raw\rawdata.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\raw\rawdatafile.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\raw\rawdatafile.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\raw\rawdatamemsource.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\raw\rawdatamemsource.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\raw\rawdatasource.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\raw\rawdatasource.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\vfs.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\vfs.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\vfshostsystem.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\vfshostsystem.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\vfssource.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\vfssource.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\vfssourcefactory.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\vfssourcefactory.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\vfssourceprovider.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\vfssourceprovider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\vfsutility.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\vfsutility.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\zip\zipdata.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\zip\zipdata.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\zip\zipprovider.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\zip\zipprovider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\zip\zipsource.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\zip\zipsource.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\animation.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\animation.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\animationpool.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\fonts\abstractfont.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\fonts\fontbase.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\fonts\fontbase.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\fonts\imagefontbase.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\fonts\imagefontbase.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\fonts\subimagefont.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\fonts\subimagefont.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\fonts\textrenderpool.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\fonts\textrenderpool.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\fonts\truetypefont.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\fonts\truetypefont.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\image.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\image.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\image_location.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\image_location.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\imagepool.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\opengl\fife_opengl.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\opengl\glimage.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\opengl\glimage.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\opengl\renderbackendopengl.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\opengl\renderbackendopengl.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\renderbackend.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\renderbackend.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\sdl\renderbackendsdl.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\sdl\renderbackendsdl.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\sdl\sdlblendingfunctions.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\sdl\sdlblendingfunctions.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\video\sdl\sdlimage.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\video\sdl\sdlimage.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\camera.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\camera.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\rendererbase.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\rendererbase.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\renderers\camerazonerenderer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\renderers\camerazonerenderer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\renderers\coordinaterenderer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\renderers\coordinaterenderer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\renderers\gridrenderer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\renderers\gridrenderer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\renderers\instancerenderer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\renderers\instancerenderer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\view.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\view.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\visual.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\visual.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\xml\tinyxml\tinystr.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\xml\tinyxml\tinystr.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\xml\tinyxml\tinyxml.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\xml\tinyxml\tinyxml.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\xml\tinyxml\tinyxmlerror.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\xml\tinyxml\tinyxmlparser.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -118,14 +118,14 @@ def generate_msvc_project(projectfiles):
 				retstr.append(get_msvc_repr(d[k], tabcount+1, newpath))
 				retstr.append(tabcount * '\t' + '</Filter>')
 			else:
-				newpath = os.path.join('..', '..', '..', 'engine', newpath)
+				newpath = os.path.join('..', '..', '..', '..', 'engine', newpath)
 				retstr.append(tabcount * '\t' + '<File RelativePath="%s"></File>' % newpath.replace('/','\\'))
 		return '\n'.join(retstr)
 			
-	msvcbuildpath = joinpath('..', 'build', 'win32', 'msvc2005')
+	msvcbuildpath = joinpath('..', 'build', 'win32', 'build_environments', 'visual_studio_8')
 	vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1] for f in projectfiles]
 	xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
-	projtxt = open(joinpath(msvcbuildpath, 'fifeproj_template.xml'), 'r').read()
+	projtxt = open(joinpath(msvcbuildpath, 'engine_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
 	vcprojfilename = joinpath(msvcbuildpath, 'fife.vcproj')
 	open(vcprojfilename, 'w').write(projtxt)
@@ -142,11 +142,11 @@ def generate_codeblocks_project(projectfiles):
 			</Unit>'''
 	
 	codeblocksCppDef = \
-	'''		<Unit filename="..\..\..\engine\%s">
+	'''		<Unit filename="..\..\..\..\engine\%s">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>'''
-	cbbuildpath = joinpath('..', 'build', 'win32', 'code_blocks')
+	cbbuildpath = joinpath('..', 'build', 'win32', 'build_environments', 'code_blocks')
 	xmlstr = []
 	for f in projectfiles:
 		newf = os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1]
@@ -155,9 +155,9 @@ def generate_codeblocks_project(projectfiles):
 			xmlstr.append(codeblocksHeaderDef % newf)
 		else:
 			xmlstr.append(codeblocksCppDef % newf)
-	projtxt = open(joinpath(cbbuildpath, 'fifelib_template.xml'), 'r').read()
+	projtxt = open(joinpath(cbbuildpath, 'engine_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', '\n'.join(xmlstr))
-	cbprojfilename = joinpath(cbbuildpath, 'fife lib.cbp')
+	cbprojfilename = joinpath(cbbuildpath, 'fife_engine.cbp')
 	open(cbprojfilename, 'w').write(projtxt)
 	print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(cbprojfilename)
 
