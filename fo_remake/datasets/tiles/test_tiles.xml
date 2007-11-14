@@ -7,10 +7,21 @@
 	<object id="Tiles:Test:Block">
 		<image source="fo_remake/gfx/tiles/testing/block.png" direction="0" />
 	</object>
-	<object id="Tiles:Test:Blue_white_tiles">
-		<image source="fo_remake/gfx/tiles/testing/blue_white_tiles.png" direction="0" />
+	<object id="Tiles:Test:panel_001">
+		<image source="fo_remake/gfx/tiles/testing/panel_001.png" direction="0" />
 	</object>
-	<object id="Tiles:Test:blue_white_tiles_broken">
-		<image source="fo_remake/gfx/tiles/testing/blue_white_tiles_broken.png" direction="0" />
+	<object id="Tiles:Test:panel_002">
+		<image source="fo_remake/gfx/tiles/testing/panel_002.png" direction="0" />
 	</object>
+	<object id="Tiles:Test:panel_003">
+		<image source="fo_remake/gfx/tiles/testing/panel_003.png" direction="0" />
+	</object>
+	<object id="Tiles:Test:classic_tile_001">
+		<image source="fo_remake/gfx/tiles/testing/classic_tile_001.png" direction="0" />
+	</object>
+	<object id="Tiles:Test:classic_tile_002">
+		<image source="fo_remake/gfx/tiles/testing/classic_tile_002.png" direction="0" />
+	</object>
+
+
 </dataset>
