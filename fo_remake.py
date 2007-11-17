@@ -485,7 +485,7 @@ if __name__ == '__main__':
 
 	e = FIFEdit(engine)
 
-	w.create_world("fo_remake/maps/testmap.xml")
+	w.create_world("fo_remake/maps/z_order_test.xml")
 	w.adjust_views()
 	if TDS.PlaySounds:
 		w.create_background_music()
