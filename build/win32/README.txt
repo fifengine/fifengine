@@ -16,13 +16,13 @@ http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.1.1-w
 3.1 Extract the content of the compile SDK to:
 <FIFE>\build\win32\
 3.2 Check if there is an <FIFE>\build\win32\applications folder; if it's in place, you know that you extracted the SDK into the correct location. One possible issue is that you've checked out the whole engine SVN repository instead of just trunk. In this case extract the compile SDK to:
-<FIFE>\trunk\ (if you want to compile trunk, otherwhise it needs to be extracted to the branch that you want to compile)
+<FIFE>\trunk\build\win32 (if you want to compile trunk, otherwhise it needs to be extracted into the build\win32 directory of the branch that you want to compile)
 
-4. Build files for each supported IDE / compiler can be found in the sub-directories of <FIFE>\build\win32\build_environments (code_blocks, mingw, msvc2005)
+4. Build files for each supported IDE can be found in the sub-directories of <FIFE>\build\win32\build_environments (code_blocks, scons, visual_studio_8)
 
 5. The final dynamic library (_fife.pyd) is automatically moved to:
 <FIFE>\engine
 
-6. Depending on the IDE / compiler you're using you'll need to copy <FIFE>\build\win32\binaries\mingw\*.* (in case you built FIFE with code::blocks or scons) or <FIFE>\build\win32\binaries\msvc2005\*.* (MSVC 2005) to <FIFE>\*.* (this ensures that all required DLLs are in place to work with FIFE)
+6. Depending on the IDE you're using you'll need to copy <FIFE>\build\win32\binaries\mingw\*.* (in case you built FIFE with code::blocks or scons) or <FIFE>\build\win32\binaries\msvc2005\*.* (MSVC 2005) to <FIFE>\*.* (this ensures that all required DLLs are in place to work with FIFE)
 
 7. You can now start your custom FIFE build by launching fo_remake.py & techdemo.py
