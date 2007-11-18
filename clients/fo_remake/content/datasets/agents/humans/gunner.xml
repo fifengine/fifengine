@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- Note, this file needs to be updated to collect all the animations in one object (with varying 'direction' value) -->
+<dataset id="Gunner" type="Embedded" format="1.0">
+	<object id="Gunner" blocking="1">
+		<action id="idle">
+			<animation source="content/animations/agents/gunner/idle/anim000.xml" direction='0' />
+			<animation source="content/animations/agents/gunner/idle/anim060.xml" direction='60' />
+			<animation source="content/animations/agents/gunner/idle/anim120.xml" direction='120' />
+			<animation source="content/animations/agents/gunner/idle/anim180.xml" direction='180' />
+			<animation source="content/animations/agents/gunner/idle/anim240.xml" direction='240' />
+			<animation source="content/animations/agents/gunner/idle/anim300.xml" direction='300' />
+		</action>
+
+		<action id="walk">
+			<animation source="content/animations/agents/gunner/walk/0/animation.xml" direction='0' />
+			<animation source="content/animations/agents/gunner/walk/60/animation.xml" direction='60' />
+			<animation source="content/animations/agents/gunner/walk/120/animation.xml" direction='120' />
+			<animation source="content/animations/agents/gunner/walk/180/animation.xml" direction='180' />
+			<animation source="content/animations/agents/gunner/walk/240/animation.xml" direction='240' />
+			<animation source="content/animations/agents/gunner/walk/300/animation.xml" direction='300' />
+		</action>
+	</object>
+
+	<!-- looks like inheritance is not supported at this point, duplicating for now... -->
+	<object id="PC" blocking="1">
+		<action id="idle">
+			<animation source="content/animations/agents/gunner/idle/anim000.xml" direction='0' />
+			<animation source="content/animations/agents/gunner/idle/anim060.xml" direction='60' />
+			<animation source="content/animations/agents/gunner/idle/anim120.xml" direction='120' />
+			<animation source="content/animations/agents/gunner/idle/anim180.xml" direction='180' />
+			<animation source="content/animations/agents/gunner/idle/anim240.xml" direction='240' />
+			<animation source="content/animations/agents/gunner/idle/anim300.xml" direction='300' />
+		</action>
+
+		<action id="walk">
+			<animation source="content/animations/agents/gunner/walk/0/animation.xml" direction='0' />
+			<animation source="content/animations/agents/gunner/walk/60/animation.xml" direction='60' />
+			<animation source="content/animations/agents/gunner/walk/120/animation.xml" direction='120' />
+			<animation source="content/animations/agents/gunner/walk/180/animation.xml" direction='180' />
+			<animation source="content/animations/agents/gunner/walk/240/animation.xml" direction='240' />
+			<animation source="content/animations/agents/gunner/walk/300/animation.xml" direction='300' />
+		</action>
+	</object>
+</dataset>

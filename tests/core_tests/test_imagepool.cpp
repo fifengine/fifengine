@@ -55,8 +55,8 @@
 using boost::unit_test::test_suite;
 using namespace FIFE;
 
-static const std::string IMAGE_FILE = "../../content/gfx/tiles/beach/beach_e1.png";
-static const std::string SUBIMAGE_FILE = "../../content/gfx/tiles/rpg_tiles_01.png";
+static const std::string IMAGE_FILE = "../data/beach_e1.png";
+static const std::string SUBIMAGE_FILE = "../data/rpg_tiles_01.png";
 static const std::string ANIM_FILE = "../data/crate_full_001.xml";
 
 // Environment

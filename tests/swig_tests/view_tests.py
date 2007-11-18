@@ -15,12 +15,12 @@ class TestView(unittest.TestCase):
 		
 		self.obj1 = dat.addObject("0")
 		fife.ObjectVisual.create(self.obj1)
-		imgid = pool.addResourceFromFile('content/gfx/objects/mushroom/mushroom_007.png')
+		imgid = pool.addResourceFromFile('tests/data/mushroom_007.png')
 		self.obj1.get2dGfxVisual().addStaticImage(0, imgid)
 		
 		self.obj2 = dat.addObject("1")
 		fife.ObjectVisual.create(self.obj2)
-		imgid = pool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
+		imgid = pool.addResourceFromFile('tests/data/earth_1.png')
 		self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
 		
 		img = pool.getImage(imgid)

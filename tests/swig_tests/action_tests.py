@@ -4,7 +4,7 @@ import pythonize
 
 class ActionTests(unittest.TestCase):
 	def setUp(self):
-		template = 'content/animations/agents/animals/wolf_walk_%s.xml'
+		template = 'tests/data/wolf_walk/wolf_walk_%s.xml'
 		dirnames = ['e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se']
 		files = map(lambda dirname: template % dirname, dirnames)
 
@@ -30,7 +30,7 @@ class ActionTests(unittest.TestCase):
 			self.action.get2dGfxVisual().addAnimation(degree, addResource(files[index]))
 
 		self.ground = fife.Object("ground")
-		imgid = self.engine.imagePool.addResourceFromFile('content/gfx/tiles/ground/earth_1.png')
+		imgid = self.engine.imagePool.addResourceFromFile('tests/data/earth_1.png')
 		fife.ObjectVisual.create(self.ground)
 		self.ground.get2dGfxVisual().addStaticImage(0, imgid)		
 		self.ground.img = self.engine.getImagePool().getImage(imgid)

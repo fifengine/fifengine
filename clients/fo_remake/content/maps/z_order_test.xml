@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<map id="TechdemoMap" format="1.0">
+
+	<metadata>
+		<param name="Name" value="z_order_test.xml" />
+		<param name="Version" value="1" />
+		<param name="Comment" value="z-order test." />
+		<param name="Author" value="FIFE" />
+	</metadata>
+
+	<!-- Load tiles -->
+	<dataset type="XML" source="content/datasets/tiles/test_tiles.xml" />
+
+	<!-- Load agent datasets -->
+	<dataset type="XML" source="content/datasets/agents/humans/gunner.xml" />
+
+	<elevation id="TechdemoMapElevation">
+		<!-- TILE LAYER -->
+		<layer id="TechdemoMapTileLayer" grid_type="square" x_scale="1" y_scale="1">
+			<instances>
+				<i o="Tiles:Test:Block" x="0" y="0" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
+				<i o="Tiles:Test:Block" x="0" y="1" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
+				<i o="Tiles:Test:Block" x="0" y="2" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
+			</instances>		
+		</layer>
+
+		<!-- OBJECT LAYER -->
+		<layer id="TechdemoMapObjectLayer" grid_type="square" x_offset="-1.5" y_offset="-1.5" x_scale="0.25" y_scale="0.25" rotation="0">
+			<instances>
+				<i o="PC" x="0" y="0" id="agent">
+					<metadata>
+						<param name="name" value="MyHero"/>
+						<param name="story">
+							Here is some text representing the story behind our hero.
+							...and still some more text.
+						</param>
+					</metadata>
+				</i>
+			</instances>
+		</layer>
+	</elevation>
+</map>

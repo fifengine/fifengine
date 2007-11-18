@@ -11,7 +11,7 @@ class TestVideo(unittest.TestCase):
 
 	def testSimpleAnimation(self):
 		pool = self.engine.getAnimationPool()
-		id = pool.addResourceFromFile('content/animations/agents/animals/wolf_walk_sw.xml')
+		id = pool.addResourceFromFile('tests/data/wolf_walk/wolf_walk_sw.xml')
 		animation = pool.getAnimation(id)
 		self.engine.initializePumping()
 		backend = self.engine.getRenderBackend()

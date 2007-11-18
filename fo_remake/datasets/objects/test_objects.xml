@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<dataset id="Helpers" type="Embedded" format="1.0">
-	<object id="Object:Invisible" blocking="0">
-		<image source="fo_remake/gfx/objects/helpers/invisible_object.png" x_offset="0" y_offset="0" />
-	</object>
-</dataset>

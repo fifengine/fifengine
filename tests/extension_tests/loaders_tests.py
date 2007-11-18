@@ -42,7 +42,9 @@ class TestLoaders(unittest.TestCase):
 		instances = self.layer.getInstances()
 
 
-TEST_CLASSES = [TestLoaders]
+# removed from test set now due to switch to new directory structure -> content moved to clients
+# to be considered if this should be taken into use again
+TEST_CLASSES = []
 
 if __name__ == '__main__':
 	    unittest.main()

@@ -12,9 +12,9 @@ class TestGui(unittest.TestCase):
 		del self.engine
 	
 	def testFonts(self):
-		ttffont = fife.TTFont('content/fonts/FreeMono.ttf', 14)
+		ttffont = fife.TTFont('tests/data/FreeMono.ttf', 14)
 		ttffont.thisown = 0
-		subimagefont = fife.SubImageFont('content/fonts/rpgfont.png', 
+		subimagefont = fife.SubImageFont('tests/data/rpgfont.png', 
 			       ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"',
 				self.engine.getImagePool())
 		subimagefont.thisown = 0

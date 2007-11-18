@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- Note, this file needs to be updated to collect all the animations in one object (with varying 'direction' value) -->
+<dataset id="Vehicles" type="Embedded" format="1.0">
+	<object id="Train">
+		<action id="default">
+			<animation source="content/animations/vehicles/train/animation.xml" />					
+		</action>
+		
+		<!--
+		<action id="walk">
+			<animation source="" direction='0' />
+		</action>
+		-->
+		
+	</object>
+
+	<object id="SecurityBot">
+		<action id="idle"> <!-- idle -->
+			<animation source="content/animations/vehicles/security_bot/idle/animation.xml" />
+		</action>
+		<action id="default">
+			<animation source="content/animations/vehicles/security_bot/walk/animation.xml" />
+		</action>
+	</object>
+</dataset>

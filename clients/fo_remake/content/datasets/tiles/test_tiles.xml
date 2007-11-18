@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<dataset id="TestTiles" type="Embedded" format="1.0">
+	<metadata>
+		<param name="Name" value="test_tiles.xml" />
+		<param name="Version" value="1" />
+	</metadata>
+	<object id="Tiles:Test:Block">
+		<image source="content/gfx/tiles/testing/block.png" direction="0" />
+	</object>
+	<object id="Tiles:Test:panel_001">
+		<image source="content/gfx/tiles/testing/panel_001.png" direction="0" />
+	</object>
+	<object id="Tiles:Test:panel_002">
+		<image source="content/gfx/tiles/testing/panel_002.png" direction="0" />
+	</object>
+	<object id="Tiles:Test:panel_003">
+		<image source="content/gfx/tiles/testing/panel_003.png" direction="0" />
+	</object>
+	<object id="Tiles:Test:classic_tile_001">
+		<image source="content/gfx/tiles/testing/classic_tile_001.png" direction="0" />
+	</object>
+	<object id="Tiles:Test:classic_tile_002">
+		<image source="content/gfx/tiles/testing/classic_tile_002.png" direction="0" />
+	</object>
+
+
+</dataset>

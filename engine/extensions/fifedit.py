@@ -24,7 +24,7 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.screenwidth = engine.getRenderBackend().getScreenWidth()
 
 		self.map_list = GenericListmodel()
-		self.map_list.extend(['content/maps/new_official_map.xml', 'techdemo/maps/city1.xml']) # TODO: this shouldn't be hardcoded
+		#self.map_list.extend(['content/maps/new_official_map.xml', 'techdemo/maps/city1.xml']) # TODO: this shouldn't be hardcoded
 
 		self.create_mainpanel()
 		self.create_mapdialogs()
