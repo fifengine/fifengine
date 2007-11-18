@@ -1,0 +1,6 @@
+color.lo color.o: color.cpp ../include/guichan/color.hpp \
+  ../include/guichan/platform.hpp
+
+../include/guichan/color.hpp:
+
+../include/guichan/platform.hpp:

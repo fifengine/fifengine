@@ -1,0 +1,6 @@
+event.lo event.o: event.cpp ../include/guichan/event.hpp \
+  ../include/guichan/platform.hpp
+
+../include/guichan/event.hpp:
+
+../include/guichan/platform.hpp:

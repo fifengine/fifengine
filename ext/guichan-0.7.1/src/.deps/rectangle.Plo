@@ -1,0 +1,6 @@
+rectangle.lo rectangle.o: rectangle.cpp ../include/guichan/rectangle.hpp \
+  ../include/guichan/platform.hpp
+
+../include/guichan/rectangle.hpp:
+
+../include/guichan/platform.hpp:

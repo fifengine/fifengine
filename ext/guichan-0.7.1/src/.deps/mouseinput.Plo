@@ -1,0 +1,6 @@
+mouseinput.lo mouseinput.o: mouseinput.cpp \
+  ../include/guichan/mouseinput.hpp ../include/guichan/platform.hpp
+
+../include/guichan/mouseinput.hpp:
+
+../include/guichan/platform.hpp:
