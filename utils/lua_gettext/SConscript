@@ -1,6 +1,0 @@
-Import('env')
-env = env.Copy()
-env.Replace(CC = 'gcc', CCFLAGS = '-O2', CPPFLAGS = ['-Wall'])
-env.SharedLibrary('lua_i18n', ['lua_i18n.c'])
-	
-# vim: set filetype=python :
