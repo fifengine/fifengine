@@ -23,6 +23,6 @@ http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.1.1-w
 5. The final dynamic library (_fife.pyd) is automatically moved to:
 <FIFE>\engine
 
-6. Depending on the IDE you're using you'll need to copy <FIFE>\build\win32\binaries\mingw\*.* (in case you built FIFE with code::blocks or scons) or <FIFE>\build\win32\binaries\msvc2005\*.* (MSVC 2005) to <FIFE>\*.* (this ensures that all required DLLs are in place to work with FIFE)
+6. Depending on the IDE you have utilized for building FIFE you either need to run <FIFE>\build\win32\update_dlls_mingw.bat (in case you built FIFE with code::blocks or scons) or <FIFE>\build\win32\update_dlls_msvc2005.bat (Visual Studio 2005).
 
-7. You can now start your custom FIFE build by launching fo_remake.py & techdemo.py
+7. You can now start your custom FIFE build by launching fo_remake.py & techdemo.py that reside in the subdirectories of <FIFE>\clients.
