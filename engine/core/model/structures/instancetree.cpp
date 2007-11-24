@@ -42,20 +42,16 @@ namespace FIFE {
 	}
 
 	bool InstanceTree::addInstance(Instance* instance) {
-
 		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
 		InstanceList* lst = getInstanceList(coords, 1, 1);
-
 		if(lst == 0) {
 			return false;
 		}
 		lst->push_back(instance);
-
 		return true;
 	}
 
 	bool InstanceTree::removeInstance(Instance* instance) {
-
 		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
 		InstanceList* lst = getInstanceList(coords, 1, 1);
 
@@ -76,23 +72,18 @@ namespace FIFE {
 	}
 
 	bool InstanceTree::getInstanceList(const ModelCoordinate& point, int w, int h, InstanceTree::InstanceList& lst) {
-
 		InstanceList* lstptr = getInstanceList(point, w, h);
-
 		if(lstptr == 0) {
 			return false;
 		}
-
 		lst = *lstptr;
-
 		return true;
 	}
 
 	InstanceTree::InstanceList* InstanceTree::getInstanceList(const ModelCoordinate& point, int w, int h) {
 		//Do it based on the model coordinates. Should we use model coordinates or
 		//exact model coordinates?
-		InstanceTreeNode* node = m_tree.find_container(point.x, point.y, 1, 1);
-
+		InstanceTreeNode* node = m_tree.find_container(point.x, point.y, w, h);
 		if(!node) {
 			return 0;
 		}

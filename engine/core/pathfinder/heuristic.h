@@ -19,52 +19,37 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_PATHFINDER_ROUTEPATHERSEARCH
-#define FIFE_PATHFINDER_ROUTEPATHERSEARCH
+#ifndef FIFE_PATHFINDER_HEURISTIC_H
+#define FIFE_PATHFINDER_HEURISTIC_H
 
-// Standard C++ library includes
+#include <string>
 
-// 3rd party library includes
-
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "pathfinder/search.h"
-#include "util/priorityqueue.h"
+#include "model/metamodel/modelcoords.h"
+#include "util/Singleton.h"
 
 namespace FIFE {
-
-	class Map;
-	class SearchSpace;
-	class Heuristic;
-
-	/** RoutePatherSearch using A*
-	 *
-	 * For now this class uses offline A*, however eventually this will be switched over to RTA*.
-	 */
-	class RoutePatherSearch : public Search {
+	class Heuristic {
 	public:
-		RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
+		virtual ~Heuristic(void) { }
 
-		virtual void updateSearch();
+		virtual float calculate(const ModelCoordinate& current, const ModelCoordinate& dest) = 0;
 
-		virtual Path calcPath();
-
-		static bool cellBlocked(const Location& loc);
-	private:
-		//The class to use to calculate the heuristic value.
-		Heuristic*                m_heuristic;
-		//The shortest path tree.
-		std::vector<int>          m_spt;
-		//The search frontier.
-		std::vector<int>	      m_sf;
-		//A table to hold the costs.
-		std::vector<float>		  m_gCosts;
-		//priority queue to hold nodes on the sf in order. 
-		PriorityQueue<int, float> m_sortedfrontier;
+		static Heuristic* getHeuristic(const std::string& cellgridType);
 	};
 
+	class SquareGridHeuristic : public Heuristic, public StaticSingleton<SquareGridHeuristic>  {	
+	public:
+		virtual float calculate(const ModelCoordinate& current, const ModelCoordinate& dest);
+	private:
+		SINGLEFRIEND(SquareGridHeuristic);
+	};
+
+	class HexGridHeuristic : public Heuristic, public StaticSingleton<HexGridHeuristic> {
+	public:
+		virtual float calculate(const ModelCoordinate& current, const ModelCoordinate& dest);
+	private:
+		SINGLEFRIEND(HexGridHeuristic);
+	};
 }
 
 #endif

@@ -19,52 +19,45 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_PATHFINDER_ROUTEPATHERSEARCH
-#define FIFE_PATHFINDER_ROUTEPATHERSEARCH
+#include <cmath>
 
-// Standard C++ library includes
+#include "heuristic.h"
 
-// 3rd party library includes
+namespace FIFE
+{
+	Heuristic* Heuristic::getHeuristic(const std::string& cellgridType)
+	{
+		if(cellgridType == "square") {
+			return SquareGridHeuristic::instance();
+		}
 
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "pathfinder/search.h"
-#include "util/priorityqueue.h"
+		if(cellgridType == "hexagonal") {
+			return HexGridHeuristic::instance();
+		}
 
-namespace FIFE {
+		return 0;
+	}
 
-	class Map;
-	class SearchSpace;
-	class Heuristic;
+	SquareGridHeuristic::SquareGridHeuristic(void) {
+	}
 
-	/** RoutePatherSearch using A*
-	 *
-	 * For now this class uses offline A*, however eventually this will be switched over to RTA*.
-	 */
-	class RoutePatherSearch : public Search {
-	public:
-		RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
+	SquareGridHeuristic::~SquareGridHeuristic(void) {
+	}
 
-		virtual void updateSearch();
+	float SquareGridHeuristic::calculate(const ModelCoordinate& current, const ModelCoordinate& dest) {
+		return (float)(abs(dest.x - current.x) + abs(dest.y - current.y));
+	}
 
-		virtual Path calcPath();
+	HexGridHeuristic::HexGridHeuristic(void) {
+	}
 
-		static bool cellBlocked(const Location& loc);
-	private:
-		//The class to use to calculate the heuristic value.
-		Heuristic*                m_heuristic;
-		//The shortest path tree.
-		std::vector<int>          m_spt;
-		//The search frontier.
-		std::vector<int>	      m_sf;
-		//A table to hold the costs.
-		std::vector<float>		  m_gCosts;
-		//priority queue to hold nodes on the sf in order. 
-		PriorityQueue<int, float> m_sortedfrontier;
-	};
+	HexGridHeuristic::~HexGridHeuristic(void) {
+	}
 
+	float HexGridHeuristic::calculate(const ModelCoordinate& current, const ModelCoordinate& dest) {
+		float cost = (float)(((dest.x - current.x) * (dest.x - current.x)) +
+					 ((dest.y - current.y) * (dest.y - current.y)) +
+					 ((dest.x - current.x) * (dest.y - current.y)));
+		return cost;
+	}
 }
-
-#endif

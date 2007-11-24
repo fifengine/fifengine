@@ -177,7 +177,7 @@ class ModelLoader(handler.ContentHandler):
 					elif (attrName == "pather"):
 						pather = self.model.getPather(attrs.get(attrName))
 					if not pather:
-						pather = self.model.getPather("LinearPather")
+						pather = self.model.getPather("RoutePather")
 				assert id, "Objects must be given an identifier (id) field."
 
 				if (parent):

@@ -36,6 +36,7 @@
 #include "model/metamodel/abstractpather.h"
 #include "model/metamodel/action.h"
 #include "model/structures/layer.h"
+#include "model/structures/instancetree.h"
 
 #include "instance.h"
 
@@ -180,11 +181,16 @@ namespace FIFE {
 			this, *m_actioninfo->m_target,
 			distance_to_travel, nextLocation, *m_facinglocation,
 			m_actioninfo->m_pather_session_id);
+		m_location.getLayer()->getInstanceTree()->removeInstance(this);
 		m_location = nextLocation;
 		ExactModelCoordinate a = nextLocation.getElevationCoordinates();
 		ExactModelCoordinate b = m_actioninfo->m_target->getElevationCoordinates();
+		m_location.getLayer()->getInstanceTree()->addInstance(this);
 		// return if we are close enough to target to stop
-		return ((ABS(a.x - b.x) < 0.1) && (ABS(a.y - b.y) < 0.1));
+		if(m_actioninfo->m_pather_session_id == -1) {
+			return true;
+		} 
+		return false;
 	}
 
 	void Instance::update(unsigned int curticks) {

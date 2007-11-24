@@ -33,6 +33,7 @@
 #include "layer.h"
 #include "instance.h"
 #include "elevation.h"
+#include "instancetree.h"
 
 namespace FIFE {
 
@@ -40,7 +41,8 @@ namespace FIFE {
 		: AttributedClass(identifier),
 		m_elevation(elevation),
 		m_instances_visibility(true),
-		m_grid(grid) {
+		m_grid(grid),
+		m_instanceTree(new InstanceTree()) {
 	}
 
 	Layer::~Layer() {
@@ -58,6 +60,7 @@ namespace FIFE {
 
 		Instance* instance = new Instance(object, l, id);
 		m_instances.push_back(instance);
+		m_instanceTree->addInstance(instance);
 		return instance;
 	}
 
@@ -68,6 +71,7 @@ namespace FIFE {
 
 		Instance* instance = new Instance(object, l, id);
 		m_instances.push_back(instance);
+		m_instanceTree->addInstance(instance);
 		return instance;
 	}
 	

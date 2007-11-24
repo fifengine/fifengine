@@ -78,7 +78,7 @@ namespace FIFE {
 			}
 		}
 		if((instance->getLocation().getLayer() != target.getLayer()) || (instance->getLocation().getLayerCoordinates() ==
-			target.getLayerCoordinates())) {
+			target.getLayerCoordinates()) || RoutePatherSearch::cellBlocked(target)) {
 			return -1;
 		}
 		SearchSpaceMap::iterator i = m_searchspaces.find(target.getLayer());
@@ -86,38 +86,44 @@ namespace FIFE {
 			SearchSpace* newSearchSpace = new SearchSpace(target.getLayer());
 			i = m_searchspaces.insert(SearchSpaceMap::value_type(target.getLayer(), newSearchSpace)).first;
 		}
-		session_id = m_nextFreeSessionId++;
-		RoutePatherSearch* newSearch = new RoutePatherSearch(session_id, instance->getLocation(), target, i->second);
-		m_sessions.insert(SessionMap::value_type(session_id, newSearch));
+		if(i->second->isInSearchSpace(target)) {
+			session_id = m_nextFreeSessionId++;
+			RoutePatherSearch* newSearch = new RoutePatherSearch(session_id, instance->getLocation(), target, i->second);
+			m_sessions.insert(SessionMap::value_type(session_id, newSearch));
+		}
 		return session_id;
 	}
 
 	void RoutePather::followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation) {
-
-		ExactModelCoordinate instancePos = instance->getLocation().getExactLayerCoordinates();
-		ExactModelCoordinate nextWayPoint = path.front().getExactLayerCoordinates();
-		DoublePoint3D direction = nextWayPoint - instancePos;
-		double length = direction.length();
-
-		direction = (direction / length) * speed;
-
-		nextLocation = instance->getLocation();
-
-		if(speed > length) {
-
-			nextLocation.setLayerCoordinates(path.front().getLayerCoordinates());
-
-			nextLocation.setExactLayerCoordinates(nextWayPoint);
-
-			path.pop_front();
-		
-			facingLocation = path.front();
-
-		} else {
-
-			nextLocation.setExactLayerCoordinates(instancePos + direction);
+		Location instanceLoc = instance->getLocation();
+		ExactModelCoordinate instancePos = instanceLoc.getElevationCoordinates();
+		ExactModelCoordinate facingPos = path.front().getElevationCoordinates();
+		facingPos.x = facingPos.x + (facingPos.x - instancePos.x);
+		facingPos.y = facingPos.y + (facingPos.y - instancePos.y);
+		facingLocation = path.front();
+		facingLocation.setElevationCoordinates(facingPos);
+		ExactModelCoordinate targetPos = path.front().getElevationCoordinates();
+		CellGrid* grid = instanceLoc.getLayer()->getCellGrid();
+		double dx = (targetPos.x - instancePos.x) * grid->getXScale();
+		double dy = (targetPos.y - instancePos.y) * grid->getYScale();
+		double distance = sqrt(dx * dx + dy * dy);
+		bool pop = false;
+		if(speed > distance) {
+			speed = distance;
+			pop = true;
 		}
-
+		if(distance != 0)
+		{
+			instancePos.x += (dx / distance) * speed;
+			instancePos.y += (dy / distance) * speed;
+		} else {
+			pop = true;
+		}
+		nextLocation.setElevationCoordinates(instancePos);
+		if(pop)
+		{
+			path.pop_front();
+		}
 	}
 	
 	bool RoutePather::cancelSession(const int session_id) {

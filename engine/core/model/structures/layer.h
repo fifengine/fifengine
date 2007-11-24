@@ -45,6 +45,7 @@ namespace FIFE {
 	class Selection;
 	class CellGrid;
 	class Object;
+	class InstanceTree;
 
 
 	/** A basic layer on a map elevation
@@ -102,6 +103,11 @@ namespace FIFE {
 			 */
 			CellGrid* getCellGrid() const { return m_grid; }
 
+			/** Get the instance tree. 
+		     * @return this layers instance tree.
+			 */
+			InstanceTree* getInstanceTree(void) const { return m_instanceTree; }
+
 			/** Check existance of objects on this layer
 			 *  @return True, if objects exist.
 			 */
@@ -154,6 +160,9 @@ namespace FIFE {
 
 			// all the instances on this layer
 			std::vector<Instance*> m_instances;
+	
+			//The instance tree
+			InstanceTree* m_instanceTree;
 
 			CellGrid* m_grid;
 	};

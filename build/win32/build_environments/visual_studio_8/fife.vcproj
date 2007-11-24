@@ -260,6 +260,8 @@
 			</Filter>
 			<File RelativePath="..\..\..\..\engine\core\modules.h"></File>
 			<Filter Name="pathfinder">
+				<File RelativePath="..\..\..\..\engine\core\pathfinder\heuristic.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\pathfinder\heuristic.h"></File>
 				<Filter Name="linearpather">
 					<File RelativePath="..\..\..\..\engine\core\pathfinder\linearpather\linearpather.cpp"></File>
 					<File RelativePath="..\..\..\..\engine\core\pathfinder\linearpather\linearpather.h"></File>
@@ -414,6 +416,12 @@
 					<File RelativePath="..\..\..\..\engine\core\xml\tinyxml\tinyxmlerror.cpp"></File>
 					<File RelativePath="..\..\..\..\engine\core\xml\tinyxml\tinyxmlparser.cpp"></File>
 				</Filter>
+			</Filter>
+		</Filter>
+		<Filter Name="swigwrappers">
+			<Filter Name="python">
+				<File RelativePath="..\..\..\..\engine\swigwrappers\python\fife_wrap.cxx"></File>
+				<File RelativePath="..\..\..\..\engine\swigwrappers\python\fife_wrap.h"></File>
 			</Filter>
 		</Filter>
 	</Files>

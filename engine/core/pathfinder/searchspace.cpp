@@ -51,15 +51,20 @@ namespace FIFE {
 		{
 			Location loc = (*i)->getLocation();
 			ModelCoordinate coord = loc.getLayerCoordinates();
+
 			if(coord.x < m_lowerX) {
 				m_lowerX = coord.x;
-			} else if(coord.x > m_upperX) {
+			}
+			
+			if(coord.x > m_upperX) {
 				m_upperX = coord.x;
 			}
 
 			if(coord.y < m_lowerY) {
 				m_lowerY = coord.y;
-			} else if(coord.y > m_upperY) {
+			}
+			
+			if(coord.y > m_upperY) {
 				m_upperY = coord.y;
 			}
 		}
@@ -74,6 +79,7 @@ namespace FIFE {
 			&& coordinates.y >= m_lowerY && coordinates.y <= m_upperY) {
 				return true;
 		}
+		printf("coordinate: (%d, %d), lower: (%d, %d), upper: (%d, %d)\n", coordinates.x, coordinates.y, m_lowerX, m_lowerY, m_upperX, m_upperY);
 		return false;
 	}
 

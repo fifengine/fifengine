@@ -100,6 +100,10 @@ namespace FIFE {
 				break;
 			}
 		}
+		//We're there
+		if((ABS(cur_pos.x - target_pos.x) < 0.1) && (ABS(cur_pos.y - target_pos.y) < 0.1)) {
+			return -1;
+		}
 		return cur_session_id;
 	}
 }
