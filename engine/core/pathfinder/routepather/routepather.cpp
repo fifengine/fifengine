@@ -133,6 +133,12 @@ namespace FIFE {
 				delete i->second;
 				m_sessions.erase(i);
 				return true;
+			} else {
+				PathMap::iterator i = m_paths.find(session_id);
+				if(i != m_paths.end()) {
+					m_paths.erase(i);
+					return true;
+				}
 			}
 		}
 		return false;

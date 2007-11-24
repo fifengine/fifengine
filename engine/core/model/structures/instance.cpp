@@ -56,7 +56,7 @@ namespace FIFE {
 			m_pather(pather) {}
 
 		~ActionInfo() {
-			if (m_pather_session_id == -1) {
+			if (m_pather_session_id != -1) {
 				m_pather->cancelSession(m_pather_session_id);
 			}
 			resetTarget();
