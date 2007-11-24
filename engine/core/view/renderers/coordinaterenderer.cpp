@@ -92,10 +92,6 @@ namespace FIFE {
 		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h));
 		adjustLayerArea();
 
-		Point p(0.5,0.5);
-
-		m_renderbackend->drawPoint(p, 255,255,255);
-
 		Rect r = Rect();
 
 		for (int x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
