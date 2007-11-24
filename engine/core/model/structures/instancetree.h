@@ -84,7 +84,7 @@ namespace FIFE {
 		bool getInstanceList(const ModelCoordinate& point, int w, int h, InstanceList& lst);
 	
 	private:
-		typedef QuadTree< InstanceList, 1 > InstanceQuadTree;
+		typedef QuadTree< InstanceList, 4 > InstanceQuadTree;
 		typedef InstanceQuadTree::Node InstanceTreeNode;
 		
 		/** Find all instances in a given area.
