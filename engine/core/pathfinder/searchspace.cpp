@@ -79,7 +79,6 @@ namespace FIFE {
 			&& coordinates.y >= m_lowerY && coordinates.y <= m_upperY) {
 				return true;
 		}
-		printf("coordinate: (%d, %d), lower: (%d, %d), upper: (%d, %d)\n", coordinates.x, coordinates.y, m_lowerX, m_lowerY, m_upperX, m_upperY);
 		return false;
 	}
 
