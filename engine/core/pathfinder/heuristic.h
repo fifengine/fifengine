@@ -22,10 +22,17 @@
 #ifndef FIFE_PATHFINDER_HEURISTIC_H
 #define FIFE_PATHFINDER_HEURISTIC_H
 
+// Standard C++ library includes
 #include <string>
 
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
-#include "util/Singleton.h"
+#include "util/singleton.h"
 
 namespace FIFE {
 	class Heuristic {
@@ -40,6 +47,7 @@ namespace FIFE {
 	class SquareGridHeuristic : public Heuristic, public StaticSingleton<SquareGridHeuristic>  {	
 	public:
 		virtual float calculate(const ModelCoordinate& current, const ModelCoordinate& dest);
+	
 	private:
 		SINGLEFRIEND(SquareGridHeuristic);
 	};
@@ -47,9 +55,12 @@ namespace FIFE {
 	class HexGridHeuristic : public Heuristic, public StaticSingleton<HexGridHeuristic> {
 	public:
 		virtual float calculate(const ModelCoordinate& current, const ModelCoordinate& dest);
+	
 	private:
 		SINGLEFRIEND(HexGridHeuristic);
 	};
+
 }
 
 #endif
+/* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

@@ -19,14 +19,20 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+// Standard C++ library includes
 #include <cmath>
 
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
 #include "heuristic.h"
 
-namespace FIFE
-{
-	Heuristic* Heuristic::getHeuristic(const std::string& cellgridType)
-	{
+namespace FIFE {
+
+	Heuristic* Heuristic::getHeuristic(const std::string& cellgridType) {
 		if(cellgridType == "square") {
 			return SquareGridHeuristic::instance();
 		}
