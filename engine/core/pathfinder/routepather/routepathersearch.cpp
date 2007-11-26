@@ -102,7 +102,10 @@ namespace FIFE {
 		int current = m_searchspace->convertCoordToInt(m_to.getLayerCoordinates());
 		int end = m_searchspace->convertCoordToInt(m_from.getLayerCoordinates());
 		Path path;
-		path.push_back(m_to);
+		//This assures that the agent always steps into the center of the cell.
+		Location to(m_to);
+		to.setExactLayerCoordinates(FIFE::intPt2doublePt(to.getLayerCoordinates()));
+		path.push_back(to);
 		while(current != end) {
 			current = m_spt[current];
 			Location newnode;
@@ -111,6 +114,7 @@ namespace FIFE {
 			newnode.setLayerCoordinates(currentCoord);
 			path.push_front(newnode);
 		}
+		path.pop_front();
 		return path;
 	}
 

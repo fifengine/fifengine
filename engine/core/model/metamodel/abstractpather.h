@@ -36,6 +36,13 @@ namespace FIFE {
 	class Location;
 	class Instance;
 
+	enum 
+	{
+		HIGH_PRIORITY,
+		MEDIUM_PRIORITY,
+		LOW_PRIORITY
+	};
+
 	class AbstractPather {
 	public:
 		virtual ~AbstractPather() {};
@@ -53,11 +60,22 @@ namespace FIFE {
 		 * @param facingLocation next facing location returned by the pather
 		 * @param session_id pather can do pathfinding in increments.
 		 *   Further increments are bind to previous ones with given session_id
+		 * @param priority The priority to assign to search (high are pushed to the front of the queue).
 		 * @return session_id to use with further calls
 		 */
 		virtual int getNextLocation(const Instance* instance, const Location& target, 
 		                            double distance_to_travel, Location& nextLocation,
-		                            Location& facingLocation, int session_id=-1) = 0;
+		                            Location& facingLocation, int session_id=-1, 
+									int priority = MEDIUM_PRIORITY) = 0;
+
+		/** Updates the pather (should it need updating).
+		 *
+		 * The update method is called by the model. Pathfinders which require per loop updating
+		 * (in the case of pathfinders which implement A* for instance) should use this method
+		 * as an oppurtunity to update the search. Generally the method should be constrained to
+		 * a maximum amount of search updating to prevent this method from stalling the application.
+		 */
+		virtual void update() = 0;
 		
 		/** Cancels a given session.
 		 *

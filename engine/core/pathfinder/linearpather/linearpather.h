@@ -47,7 +47,10 @@ namespace FIFE {
 
 		int getNextLocation(const Instance* instance, const Location& target, 
 		                    double speed, Location& nextLocation,
-		                    Location& facingLocation, int session_id=-1);
+							Location& facingLocation, int session_id=-1, 
+							int priority = MEDIUM_PRIORITY);
+
+		void update() { }
 		
 		bool cancelSession(const int session_id) { 
 			m_session2face.erase(session_id);

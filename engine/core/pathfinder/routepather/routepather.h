@@ -35,6 +35,7 @@
 #include "model/metamodel/abstractpather.h"
 #include "model/structures/location.h"
 #include "model/structures/map.h"
+#include "util/priorityqueue.h"
 
 namespace FIFE {
 
@@ -48,22 +49,21 @@ namespace FIFE {
 		 *
 		 */
 		RoutePather() : m_map(0), m_nextFreeSessionId(0), m_maxticks(100) {
-			m_ticksleft = m_maxticks;
 		}
 		
 		void setMap(Map* map);
 		int getNextLocation(const Instance* instance, const Location& target, 
 		                    double distance_to_travel, Location& nextLocation,
-		                    Location& facingLocation, int session_id=-1);
+		                    Location& facingLocation, int session_id=-1, 
+							int priority = MEDIUM_PRIORITY);
+		void update();
 
 		bool cancelSession(const int session_id);
-		std::string getName() const { return "RoutePather"; };
-		
-		void resetTicks() { m_ticksleft = m_maxticks; }
-		
+		std::string getName() const { return "RoutePather"; };		
 	private:
 		typedef std::list<Location> Path;
-		typedef std::map<int, Search*> SessionMap;
+		typedef PriorityQueue<Search*, int> SessionQueue;
+		typedef std::list<int> SessionList;
 		typedef std::map<int, Path> PathMap;
 		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;
 
@@ -72,11 +72,29 @@ namespace FIFE {
 		 */
 		void followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation);
 
+		/**
+		 *
+		 */
+		void addSessionId(const int sessionId);
+
+		/**
+		 *
+		 */
+		bool sessionIdValid(const int sessionId);
+
+		/**
+		 *
+		 */
+		bool invalidateSessionId(const int sessionId);
+
 		//The map the search is running on.
 		Map*	       m_map;
 
 		//A map of currently running sessions (searches).
-		SessionMap	   m_sessions;
+		SessionQueue   m_sessions;
+
+		//A list of session ids that have been registered.
+		SessionList    m_registeredSessionIds;
 
 		//Calculated paths for the movement phase.
 		PathMap		   m_paths;
@@ -86,9 +104,6 @@ namespace FIFE {
 
 		//The next free session id.
 		int            m_nextFreeSessionId;
-
-		//The amount of ticks left for updating.
-		int			   m_ticksleft;
 
 		//The maximum number of ticks allowed.
 		int			   m_maxticks;

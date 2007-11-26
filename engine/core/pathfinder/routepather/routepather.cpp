@@ -46,39 +46,27 @@ namespace FIFE {
 
 	int RoutePather::getNextLocation(const Instance* instance, const Location& target, 
 				double distance_to_travel, Location& nextLocation,
-				Location& facingLocation, int session_id) {
+				Location& facingLocation, int session_id, int priority) {
 		assert(instance);
 		assert(instance->getLocation().getLayer() == target.getLayer());
 		if(session_id != -1) {
-			//This means we're updating a session.
-			SessionMap::iterator i = m_sessions.find(session_id);
-			if(i != m_sessions.end()) {
-				i->second->updateSearch();
-				if(i->second->getSearchStatus() == Search::search_status_complete) {
-					Path newPath = i->second->calcPath();
-					m_paths.insert(PathMap::value_type(session_id, newPath));
-					m_sessions.erase(i);
-				} else if(i->second->getSearchStatus() == Search::search_status_failed) {
-					m_sessions.erase(i);
+			PathMap::iterator j = m_paths.find(session_id);
+			if(j != m_paths.end()) {
+				if(j->second.empty()) {
+					m_paths.erase(j);
 					return -1;
+				} else {
+					followPath(instance, j->second, distance_to_travel, nextLocation, facingLocation);
+					return session_id;
 				}
-				return session_id;
 			} else {
-				//Check to see if this session is in the movement phase.
-				PathMap::iterator j = m_paths.find(session_id);
-				if(j != m_paths.end()) {
-					if(j->second.empty()) {
-						m_paths.erase(j);
-						return -1;
-					} else {
-						followPath(instance, j->second, distance_to_travel, nextLocation, facingLocation);
-						return session_id;
-					}
+				if(!sessionIdValid(session_id)) {
+					//Session id is invalid.
+					return -1;
 				}
 			}
 		}
-		if((instance->getLocation().getLayer() != target.getLayer()) || (instance->getLocation().getLayerCoordinates() ==
-			target.getLayerCoordinates()) || RoutePatherSearch::cellBlocked(target)) {
+		if((instance->getLocation().getLayer() != target.getLayer() || RoutePatherSearch::cellBlocked(target))) {
 			return -1;
 		}
 		SearchSpaceMap::iterator i = m_searchspaces.find(target.getLayer());
@@ -89,9 +77,37 @@ namespace FIFE {
 		if(i->second->isInSearchSpace(target)) {
 			session_id = m_nextFreeSessionId++;
 			RoutePatherSearch* newSearch = new RoutePatherSearch(session_id, instance->getLocation(), target, i->second);
-			m_sessions.insert(SessionMap::value_type(session_id, newSearch));
+			m_sessions.pushElement(SessionQueue::value_type(newSearch, priority));
+			addSessionId(session_id);
 		}
 		return session_id;
+	}
+
+	void RoutePather::update() {
+		int ticksleft = m_maxticks;
+		while(ticksleft >= 0) {
+			if(m_sessions.empty()) {
+				break;
+			}
+			Search* priority_session = m_sessions.getPriorityElement().first;
+			if(!sessionIdValid(priority_session->getSessionId())) {
+				delete priority_session;
+				m_sessions.popElement();
+				continue;
+			}
+			priority_session->updateSearch();
+			if(priority_session->getSearchStatus() == Search::search_status_complete) {
+				Path newPath = priority_session->calcPath();
+				m_paths.insert(PathMap::value_type(priority_session->getSessionId(), newPath));
+				invalidateSessionId(priority_session->getSessionId());
+				delete priority_session;
+				m_sessions.popElement();
+			} else if(priority_session->getSearchStatus() == Search::search_status_failed) {
+				delete priority_session;
+				m_sessions.popElement();
+			}
+			--ticksleft;
+		}
 	}
 
 	void RoutePather::followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation) {
@@ -128,18 +144,40 @@ namespace FIFE {
 	
 	bool RoutePather::cancelSession(const int session_id) {
 		if(session_id >= 0) {
-			SessionMap::iterator i = m_sessions.find(session_id);
-			if(i != m_sessions.end()) {
-				delete i->second;
-				m_sessions.erase(i);
+			PathMap::iterator i = m_paths.find(session_id);
+			if(i != m_paths.end()) {
+				m_paths.erase(i);
 				return true;
 			} else {
-				PathMap::iterator i = m_paths.find(session_id);
-				if(i != m_paths.end()) {
-					m_paths.erase(i);
+				invalidateSessionId(session_id);
+			}
+		}
+		return false;
+	}
+
+	void RoutePather::addSessionId(const int sessionId) {
+		m_registeredSessionIds.push_back(sessionId);
+	}
+
+	bool RoutePather::sessionIdValid(const int sessionId) {
+		for(SessionList::const_iterator i = m_registeredSessionIds.begin();
+			i != m_registeredSessionIds.end();
+			++i) {
+				if((*i) == sessionId) {
 					return true;
 				}
-			}
+		}
+		return false;
+	}
+
+	bool RoutePather::invalidateSessionId(const int sessionId) {
+		for(SessionList::iterator i = m_registeredSessionIds.begin();
+			i != m_registeredSessionIds.end();
+			++i) {
+				if((*i) == sessionId) {
+					m_registeredSessionIds.erase(i);
+					return true;
+				}
 		}
 		return false;
 	}

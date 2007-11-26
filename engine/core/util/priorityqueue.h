@@ -106,6 +106,7 @@ namespace FIFE {
 
 		/** Determines whether the queue is currently empty.
 		 *
+		 * @return true if it is empty, false otherwise.
 		 */
 		bool empty(void) const {
 			return m_elements.empty();

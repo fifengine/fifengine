@@ -39,7 +39,7 @@ namespace FIFE {
 	
 	int LinearPather::getNextLocation(const Instance* instance, const Location& target,
 		                            double distance_to_travel, Location& nextLocation,
-		                            Location& facingLocation, int session_id) {
+		                            Location& facingLocation, int session_id, int priority) {
 		Location curloc = instance->getLocation();
 		assert(curloc.getElevation() == target.getElevation());
 		Layer* layer = curloc.getLayer();

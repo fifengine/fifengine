@@ -127,6 +127,10 @@ namespace FIFE {
 		for(; it != m_maps.end(); ++it) {
 			(*it)->update();
 		}
+		std::vector<AbstractPather*>::iterator jt = m_pathers.begin();
+		for(; jt != m_pathers.end(); ++jt) {
+			(*jt)->update();
+		}
 	}
 	
 } //FIFE
