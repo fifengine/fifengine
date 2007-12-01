@@ -39,6 +39,7 @@ namespace FIFE {
 		m_inherited(inherited),
 		m_actions(NULL),
 		m_blocking(false),
+		m_static(false),
 		m_pather(NULL),
 		m_visual(NULL) {
 	}
@@ -123,4 +124,14 @@ namespace FIFE {
 		}
 		return false;
 	}
+	
+	bool Object::isStatic() {
+		if (m_static) {
+			return true;
+		}
+		if (m_inherited) {
+			return m_inherited->isStatic();
+		}
+		return false;
+	}	
 }

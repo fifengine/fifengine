@@ -30,5 +30,8 @@ namespace FIFE {
 		
 		void setBlocking(bool blocking);
 		bool isBlocking();
+		
+		void setStatic(bool stat);
+		bool isStatic();
 	};
 }

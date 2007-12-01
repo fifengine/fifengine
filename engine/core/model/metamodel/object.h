@@ -108,11 +108,20 @@ namespace FIFE {
 		 */
 		bool isBlocking();
 	
+		/** Set to true, if object is such that it doesn't move
+		 */
+		void setStatic(bool stat) { m_static = stat; }
+
+		/** Gets if object moves
+		 */
+		bool isStatic();
+	
 	
 	private:
 		Object* m_inherited;
 		std::map<std::string, Action*>* m_actions;
 		bool m_blocking;
+		bool m_static;
 		AbstractPather* m_pather;
 		AbstractVisual* m_visual;
 	};

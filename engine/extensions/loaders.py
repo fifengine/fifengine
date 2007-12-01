@@ -163,6 +163,7 @@ class ModelLoader(handler.ContentHandler):
 				id = 0
 				parent = 0
 				blocking = 0
+				static = 0
 				pather = None
 				for attrName in attrs.keys():
 					if (attrName == "id"):
@@ -174,6 +175,8 @@ class ModelLoader(handler.ContentHandler):
 						parent = query[0]
 					elif (attrName == "blocking"):
 						blocking = int(attrs.get(attrName))
+					elif (attrName == "static"):
+						static = int(attrs.get(attrName))
 					elif (attrName == "pather"):
 						pather = self.model.getPather(attrs.get(attrName))
 					if not pather:
@@ -185,6 +188,7 @@ class ModelLoader(handler.ContentHandler):
 				else:
 					self.object = self.dataset.createObject(str(id))
 				self.object.setBlocking(blocking)
+				self.object.setStatic(static)
 				self.object.setPather(pather)
 				fife.ObjectVisual.create(self.object)
 
