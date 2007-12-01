@@ -1,9 +1,0 @@
-cliprectangle.lo cliprectangle.o: cliprectangle.cpp \
-  ../include/guichan/cliprectangle.hpp ../include/guichan/rectangle.hpp \
-  ../include/guichan/platform.hpp
-
-../include/guichan/cliprectangle.hpp:
-
-../include/guichan/rectangle.hpp:
-
-../include/guichan/platform.hpp:

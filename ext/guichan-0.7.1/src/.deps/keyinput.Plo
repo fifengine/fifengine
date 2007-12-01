@@ -1,8 +1,0 @@
-keyinput.lo keyinput.o: keyinput.cpp ../include/guichan/keyinput.hpp \
-  ../include/guichan/key.hpp ../include/guichan/platform.hpp
-
-../include/guichan/keyinput.hpp:
-
-../include/guichan/key.hpp:
-
-../include/guichan/platform.hpp:
