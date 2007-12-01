@@ -9,11 +9,11 @@ class ActionTests(unittest.TestCase):
 		files = map(lambda dirname: template % dirname, dirnames)
 
 		self.engine = getEngine()
-		_map = self.engine.getModel().addMap("map001")
-		elev = _map.addElevation("elevation001")
+		_map = self.engine.getModel().createMap("map001")
+		elev = _map.createElevation("elevation001")
 		
 		self.grid = fife.SquareGrid(True)
-		self.layer = elev.addLayer("Layer001", self.grid)
+		self.layer = elev.createLayer("Layer001", self.grid)
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.layer)
@@ -22,7 +22,7 @@ class ActionTests(unittest.TestCase):
 		fife.ObjectVisual.create(self.obj)
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
-		self.action = self.obj.addAction('walk')
+		self.action = self.obj.createAction('walk')
 		fife.ActionVisual.create(self.action)
 		addResource = self.engine.animationPool.addResourceFromFile
 		for index, direction in enumerate(dirnames):
@@ -36,9 +36,9 @@ class ActionTests(unittest.TestCase):
 		self.ground.img = self.engine.getImagePool().getImage(imgid)
 		for y in xrange(-2,3):
 			for x in xrange(-2,3):
-				inst = self.layer.addInstance(self.ground, fife.ModelCoordinate(x,y))
+				inst = self.layer.createInstance(self.ground, fife.ModelCoordinate(x,y))
 				fife.InstanceVisual.create(inst)
-		self.inst = self.layer.addInstance(self.obj, fife.ModelCoordinate(-2,-2))
+		self.inst = self.layer.createInstance(self.obj, fife.ModelCoordinate(-2,-2))
 		fife.InstanceVisual.create(self.inst)
 			
 	def tearDown(self):

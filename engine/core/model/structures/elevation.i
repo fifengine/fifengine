@@ -29,14 +29,14 @@ namespace FIFE {
 
 			Map* getMap();
 
-			Layer* addLayer(const std::string& identifier, CellGrid* grid);
-			void removeLayer(Layer* index);
+			Layer* createLayer(const std::string& identifier, CellGrid* grid);
+			void deleteLayer(Layer* index);
 
 			std::list<Layer*> getLayers() const;
 			std::list<Layer*> getLayers(const std::string& field, const std::string& value) const;
 
 			size_t getNumLayers() const;
-			void clearLayers();
+			void deleteLayers();
 
 			void update();
 	};

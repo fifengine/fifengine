@@ -69,9 +69,9 @@ namespace FIFE {
 			 */
 			~Map();
 
-			/** Use a Dataset
+			/** Adds dataset into map. Does not transfer ownership
 			 */
-			void useDataset(Dataset* dataset);
+			void addDataset(Dataset* dataset);
 
 			/** Get the datasets used by this map.
 			 */
@@ -86,11 +86,11 @@ namespace FIFE {
 			 * to it; the returned pointer is owned by the Map
 			 * so don't delete it!
 			 */
-			Elevation* addElevation(const std::string& identifier);
+			Elevation* createElevation(const std::string& identifier);
 			
 			/** Remove an elevation from this map
 			 */
-			void removeElevation(Elevation*);
+			void deleteElevation(Elevation*);
 
 			/** Get the elevations on this map.
 			 */
@@ -109,7 +109,7 @@ namespace FIFE {
 
 			/** Remove all elevations from a map
 			 */
-			void clearElevations();
+			void deleteElevations();
 
 			/** Called periodically to update events on map
 			 */

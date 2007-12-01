@@ -77,7 +77,7 @@ namespace FIFE {
 		return null;
 	}
 
-	Action* Object::addAction(const std::string& identifier) {
+	Action* Object::createAction(const std::string& identifier) {
 		if (!m_actions) {
 			m_actions = new std::map<std::string, Action*>;
 		}

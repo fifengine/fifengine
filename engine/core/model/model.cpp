@@ -49,7 +49,7 @@ namespace FIFE {
 		delete m_meta;
 	}
 
-	Map* Model::addMap(const std::string& identifier) {
+	Map* Model::createMap(const std::string& identifier) {
 		std::vector<Map*>::const_iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
 			if(identifier == (*it)->Id())
@@ -61,7 +61,7 @@ namespace FIFE {
 		return map;
 	}
 
-	void Model::addPather(AbstractPather* pather) {
+	void Model::adoptPather(AbstractPather* pather) {
 		m_pathers.push_back(pather);
 	}
 	
@@ -98,7 +98,7 @@ namespace FIFE {
 		return matches;
 	}
 
-	void Model::removeMap(Map* map) {
+	void Model::deleteMap(Map* map) {
 		std::vector<Map*>::iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
 			if(*it == map) {
@@ -113,7 +113,7 @@ namespace FIFE {
 		return m_maps.size();
 	}
 
-	void Model::clearMaps() {
+	void Model::deleteMaps() {
 		purge(m_maps);
 		m_maps.clear();
 	}

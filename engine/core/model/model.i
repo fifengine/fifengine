@@ -23,14 +23,14 @@ namespace FIFE {
 		Model();
 		~Model();
 
-		Map* addMap(const std::string& identifier);
-		void removeMap(Map*);
+		Map* createMap(const std::string& identifier);
+		void deleteMap(Map*);
 
 		std::list<Map*> getMaps() const;
 		std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
 
 		size_t getNumMaps() const;
-		void clearMaps();
+		void deleteMaps();
 
 		MetaModel* getMetaModel();
 		void update();

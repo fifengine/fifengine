@@ -75,7 +75,7 @@ namespace FIFE {
 			 * @note This Dataset owns any datasets you add to it, so
 			 * don't delete the returned pointer!
 			 */
-			Dataset* addDataset(const std::string& identifier);
+			Dataset* createDataset(const std::string& identifier);
 
 			/** Add an object to this dataset; objects may optionally inherit
 			 * values from other objects (see object.h for details).
@@ -83,7 +83,7 @@ namespace FIFE {
 			 * @note This object belongs to this dataset, so don't
 			 * delete the returned pointer!
 			 */
-			Object* addObject(const std::string& identifier, Object* inherited = 0);
+			Object* createObject(const std::string& identifier, Object* inherited = 0);
 
 			/** Get the datasets contained in this dataset.
 			 * @note These datasets are owned by this dataset, so don't delete

@@ -104,7 +104,7 @@ namespace FIFE {
 			CellGrid* getCellGrid() const { return m_grid; }
 
 			/** Get the instance tree. 
-		     * @return this layers instance tree.
+			 * @return this layers instance tree.
 			 */
 			InstanceTree* getInstanceTree(void) const { return m_instanceTree; }
 
@@ -115,15 +115,15 @@ namespace FIFE {
 
 			/** Add an instance of an object at a specific position
 			 */
-			Instance* addInstance(Object* object, const ModelCoordinate& p, const std::string& id="");
+			Instance* createInstance(Object* object, const ModelCoordinate& p, const std::string& id="");
 
 			/** Add an instance of an object at a specific position
 			 */
-			Instance* addInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
+			Instance* createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
 						
 			/** Remove an instance from the layer
 			 */
-			void removeInstance(Instance* object);
+			void deleteInstance(Instance* object);
 
 			/** Get the list of instances on this layer
 			 */

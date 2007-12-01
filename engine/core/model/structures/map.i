@@ -27,18 +27,18 @@ namespace FIFE {
 			Map(const std::string& identifier);
 			~Map();
 
-			void useDataset(Dataset* dataset);
+			void addDataset(Dataset* dataset);
 			std::list<Dataset*> getDatasets();
 			std::list<Dataset*> getDatasetsRec();
 
-			Elevation* addElevation(const std::string& identifier);
-			void removeElevation(Elevation*);
+			Elevation* createElevation(const std::string& identifier);
+			void deleteElevation(Elevation*);
 
 			std::list<Elevation*> getElevations() const;
 			std::list<Elevation*> getElevations(const std::string& field, const std::string& value) const;
 
 			size_t getNumElevations() const;
-			void clearElevations();
+			void deleteElevations();
 
 			void update();
 	};

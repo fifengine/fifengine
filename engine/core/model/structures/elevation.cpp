@@ -45,7 +45,7 @@ namespace FIFE {
 	}
 
 	Elevation::~Elevation() {
-		clearLayers();
+		deleteLayers();
 	}
 
 	Map* Elevation::getMap() {
@@ -79,7 +79,7 @@ namespace FIFE {
 		return m_layers.size();
 	}
 
-	Layer* Elevation::addLayer(const std::string& identifier, CellGrid* grid) {
+	Layer* Elevation::createLayer(const std::string& identifier, CellGrid* grid) {
 		std::vector<Layer*>::const_iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			if(identifier == (*it)->Id())
@@ -91,7 +91,7 @@ namespace FIFE {
 		return layer;
 	}
 
-	void Elevation::removeLayer(Layer* layer) {
+	void Elevation::deleteLayer(Layer* layer) {
 		std::vector<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			if((*it) == layer) {
@@ -102,7 +102,7 @@ namespace FIFE {
 		}
 	}
 
-	void Elevation::clearLayers() {
+	void Elevation::deleteLayers() {
 		purge(m_layers);
 		m_layers.clear();
 	}

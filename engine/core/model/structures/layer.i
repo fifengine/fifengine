@@ -35,9 +35,9 @@ namespace FIFE {
 
 			Elevation* getElevation();
 			bool hasInstances() const;
-			Instance* addInstance(Object* object, const ModelCoordinate& p, const std::string& id="");
-			Instance* addInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
-			void removeInstance(Instance* object);
+			Instance* createInstance(Object* object, const ModelCoordinate& p, const std::string& id="");
+			Instance* createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
+			void deleteInstance(Instance* object);
 
 			const std::vector<Instance*>& getInstances();
 			std::vector<Instance*> getInstances(const std::string& field, const std::string& value);

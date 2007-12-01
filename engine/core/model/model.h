@@ -59,11 +59,11 @@ namespace FIFE {
 		 * The returned pointer is owned by the Model, so
 		 * don't delete it!
 		 */
-		Map* addMap(const std::string& identifier);
+		Map* createMap(const std::string& identifier);
 
 		/** Remove a map from this model
 		 */
-		void removeMap(Map*);
+		void deleteMap(Map*);
 
 		/** Get all the maps in the model.
 		 */
@@ -82,7 +82,7 @@ namespace FIFE {
 
 		/** Remove all elevations from a map
 		 */
-		void clearMaps();
+		void deleteMaps();
 
 		/** Get a pointer to the MetaModel associated with
 		 * this Model. The Model owns this pointer, so don't
@@ -92,7 +92,7 @@ namespace FIFE {
 
 		/** Adds pather to model. Moves ownership to model
 		 */
-		void addPather(AbstractPather* pather);
+		void adoptPather(AbstractPather* pather);
 		
 		/** Returns pather corresponding given name. If none found, returns NULL
 		 */

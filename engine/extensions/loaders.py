@@ -47,7 +47,7 @@ class ModelLoader(handler.ContentHandler):
 
 				assert id, "Map declared without an identifier."
 
-				self.map = self.model.addMap(str(id))
+				self.map = self.model.createMap(str(id))
 				self.state = self.SMap
 
 			else:
@@ -135,15 +135,15 @@ class ModelLoader(handler.ContentHandler):
 
 					assert id, "Dataset declared without an identifier."
 					if (self.state == self.SModel):
-						self.dataset = self.metamodel.addDataset(str(id))
+						self.dataset = self.metamodel.createDataset(str(id))
 
 					elif (self.state == self.SMap):
-						self.dataset = self.metamodel.addDataset(str(id))
-						self.map.useDataset(self.dataset)
+						self.dataset = self.metamodel.createDataset(str(id))
+						self.map.addDataset(self.dataset)
 						
 					elif (self.state == self.SDataset):
 						self.datastack.append(self.dataset)
-						self.dataset = self.dataset.addDataset(str(id))
+						self.dataset = self.dataset.createDataset(str(id))
 
 					self.dataset.setSource(str(self.source))
 
@@ -181,9 +181,9 @@ class ModelLoader(handler.ContentHandler):
 				assert id, "Objects must be given an identifier (id) field."
 
 				if (parent):
-					self.object = self.dataset.addObject(str(id), parent)
+					self.object = self.dataset.createObject(str(id), parent)
 				else:
-					self.object = self.dataset.addObject(str(id))
+					self.object = self.dataset.createObject(str(id))
 				self.object.setBlocking(blocking)
 				self.object.setPather(pather)
 				fife.ObjectVisual.create(self.object)
@@ -229,7 +229,7 @@ class ModelLoader(handler.ContentHandler):
 
 				assert id, "Actions must be given an identifier (id) field."
 
-				self.action = self.object.addAction(str(id))
+				self.action = self.object.createAction(str(id))
 				fife.ActionVisual.create(self.action)
 
 			else:
@@ -263,7 +263,7 @@ class ModelLoader(handler.ContentHandler):
 
 				assert id, "Elevation declared without an identifier."
 
-				self.elevation = self.map.addElevation(str(id))
+				self.elevation = self.map.createElevation(str(id))
 				self.state = self.SElevation
 
 			else:
@@ -316,7 +316,7 @@ class ModelLoader(handler.ContentHandler):
 				cellgrid.setXShift(x_offset)
 				cellgrid.setYShift(y_offset)
 
-				self.layer = self.elevation.addLayer(str(id), cellgrid)
+				self.layer = self.elevation.createLayer(str(id), cellgrid)
 				self.state = self.SLayer
 
 			else:
@@ -376,7 +376,7 @@ class ModelLoader(handler.ContentHandler):
 				else:
 					id = str(id)
 				
-				inst = self.layer.addInstance(object, fife.ExactModelCoordinate(x,y,z), id)
+				inst = self.layer.createInstance(object, fife.ExactModelCoordinate(x,y,z), id)
 				fife.InstanceVisual.create(inst)
 				if (stackpos):
 					inst.get2dGfxVisual().setStackPosition(int(stackpos))

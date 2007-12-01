@@ -73,7 +73,7 @@ namespace FIFE {
 		 *  with given id, returns it instead of new object
 		 *  Action instances are managed by object
 		 */
-		Action* addAction(const std::string& identifier);
+		Action* createAction(const std::string& identifier);
 
 		/** Gets action with given id. If not found, returns NULL
 		 */
@@ -94,7 +94,7 @@ namespace FIFE {
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
-		void setVisual(AbstractVisual* visual) { m_visual = visual; }
+		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
 		
 		/** Gets used visualization
 		 */

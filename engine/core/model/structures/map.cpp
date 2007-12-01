@@ -44,10 +44,10 @@ namespace FIFE {
 	}
 
 	Map::~Map() {
-		clearElevations();
+		deleteElevations();
 	}
 
-	void Map::useDataset(Dataset* dataset) {
+	void Map::addDataset(Dataset* dataset) {
 		// no duplicates
 		std::vector<Dataset*>::iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
@@ -90,7 +90,7 @@ namespace FIFE {
 		for(; it != m_elevations.end(); ++it) {
 			elevs.push_back(*it);
 		}
-																								
+		
 		return elevs;
 	}
 
@@ -107,7 +107,7 @@ namespace FIFE {
 	}
 
 
-	Elevation* Map::addElevation(const std::string& identifier) {
+	Elevation* Map::createElevation(const std::string& identifier) {
 		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
 		for(; it != m_elevations.end(); ++it) {
 			if(identifier == (*it)->Id())
@@ -119,7 +119,7 @@ namespace FIFE {
 		return elevation;
 	}
 	
-	void Map::removeElevation(Elevation* elevation) {
+	void Map::deleteElevation(Elevation* elevation) {
 		std::vector<Elevation*>::iterator it = m_elevations.begin();
 		for(; it != m_elevations.end(); ++it) {
 			if(*it == elevation) {
@@ -134,7 +134,7 @@ namespace FIFE {
 		return m_elevations.size();
 	}
 
-	void Map::clearElevations() {
+	void Map::deleteElevations() {
 		purge(m_elevations);
 		m_elevations.clear();
 	}

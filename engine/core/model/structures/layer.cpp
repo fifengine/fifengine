@@ -54,7 +54,7 @@ namespace FIFE {
 		return !m_instances.empty();
 	}
 
-	Instance* Layer::addInstance(Object* object, const ModelCoordinate& p, const std::string& id) {
+	Instance* Layer::createInstance(Object* object, const ModelCoordinate& p, const std::string& id) {
 		Location l;
 		l.setLayer(this);
 		l.setLayerCoordinates(p);
@@ -65,7 +65,7 @@ namespace FIFE {
 		return instance;
 	}
 
-	Instance* Layer::addInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
+	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
 		Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
@@ -76,7 +76,7 @@ namespace FIFE {
 		return instance;
 	}
 	
-	void Layer::removeInstance(Instance* instance) {
+	void Layer::deleteInstance(Instance* instance) {
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
 			if(*it == instance) {

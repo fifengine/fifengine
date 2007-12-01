@@ -62,7 +62,7 @@ namespace FIFE {
 		 * @note MetaModel owns this dataset, so don't delete
 		 * the pointer it gives you!
 		 */
-		Dataset* addDataset(const std::string& identifier);
+		Dataset* createDataset(const std::string& identifier);
 
 		/** Gets the list of datasets in the metamodel. Recursive.
 		 */
@@ -80,7 +80,7 @@ namespace FIFE {
 		
 		/** Clears all datasets from metamodel
 		 */
-		void clearDatasets();
+		void deleteDatasets();
 
 	private:
 

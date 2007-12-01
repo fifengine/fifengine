@@ -6,19 +6,19 @@ class TestView(unittest.TestCase):
 	
 	def setUp(self):
 		self.engine = getEngine()
-		map = self.engine.getModel().addMap("map001")
-		elev = map.addElevation("elevation001")
+		map = self.engine.getModel().createMap("map001")
+		elev = map.createElevation("elevation001")
 		
-		dat = self.engine.getModel().getMetaModel().addDataset("dataset001")
+		dat = self.engine.getModel().getMetaModel().createDataset("dataset001")
 		self.grid = fife.SquareGrid()
 		pool = self.engine.getImagePool()
 		
-		self.obj1 = dat.addObject("0")
+		self.obj1 = dat.createObject("0")
 		fife.ObjectVisual.create(self.obj1)
 		imgid = pool.addResourceFromFile('tests/data/mushroom_007.png')
 		self.obj1.get2dGfxVisual().addStaticImage(0, imgid)
 		
-		self.obj2 = dat.addObject("1")
+		self.obj2 = dat.createObject("1")
 		fife.ObjectVisual.create(self.obj2)
 		imgid = pool.addResourceFromFile('tests/data/earth_1.png')
 		self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
@@ -27,7 +27,7 @@ class TestView(unittest.TestCase):
 		self.screen_cell_w = img.getWidth()
 		self.screen_cell_h = img.getHeight()
 		
-		self.layer = elev.addLayer("layer001", self.grid)
+		self.layer = elev.createLayer("layer001", self.grid)
 		
 		self.camloc = fife.Location()
 		self.camloc.setLayer(self.layer)
@@ -52,13 +52,13 @@ class TestView(unittest.TestCase):
 		
 		for y in xrange(4):
 			for x in xrange(4):
-				i = self.layer.addInstance(self.obj2, fife.ModelCoordinate(x,y))
+				i = self.layer.createInstance(self.obj2, fife.ModelCoordinate(x,y))
 				fife.InstanceVisual.create(i)
 				self.engine.pump()
 				time.sleep(0.01)
-		i = self.layer.addInstance(self.obj1, fife.ModelCoordinate(0,0))
+		i = self.layer.createInstance(self.obj1, fife.ModelCoordinate(0,0))
 		fife.InstanceVisual.create(i)
-		i = self.layer.addInstance(self.obj1, fife.ModelCoordinate(2,1))
+		i = self.layer.createInstance(self.obj1, fife.ModelCoordinate(2,1))
 		fife.InstanceVisual.create(i)
 		
 		for i in xrange(120):

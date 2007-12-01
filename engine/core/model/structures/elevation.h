@@ -71,11 +71,11 @@ namespace FIFE {
 			 * the returned pointer to the new Layer, so don't
 			 * delete it!
 			 */
-			Layer* addLayer(const std::string& identifier, CellGrid* grid);
+			Layer* createLayer(const std::string& identifier, CellGrid* grid);
 
-			/** Remove a layer from the elevation
+			/** Delete a layer from the elevation
 			 */
-			void removeLayer(Layer*);
+			void deleteLayer(Layer*);
 
 			/** Get the layers on this elevation.
 			 */
@@ -96,9 +96,9 @@ namespace FIFE {
 			 */
 			size_t getNumLayers() const;
 
-			/** Remove all layers from the elevation
+			/** Delete all layers from the elevation
 			 */
-			void clearLayers();
+			void deleteLayers();
 
 			/** Maps coordinate from one layer to another
 			 */

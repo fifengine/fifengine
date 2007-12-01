@@ -224,8 +224,8 @@ namespace FIFE {
 		FL_LOG(_log, "Creating model");
 		m_model = new Model();
 		FL_LOG(_log, "Adding pathers to model");
-		m_model->addPather(new LinearPather());
-		m_model->addPather(new RoutePather());
+		m_model->adoptPather(new LinearPather());
+		m_model->adoptPather(new RoutePather());
 		
 		FL_LOG(_log, "Creating view");
 		m_view = new View(m_renderbackend);

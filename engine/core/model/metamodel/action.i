@@ -12,7 +12,7 @@ namespace FIFE {
 	public:
 		Action(const std::string& identifier);
 		virtual ~Action();
-		void setVisual(AbstractVisual* visual);
+		void adoptVisual(AbstractVisual* visual);
 		template<typename T> T* getVisual() const;
 	};
 }

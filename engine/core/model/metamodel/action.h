@@ -62,7 +62,7 @@ namespace FIFE {
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
-		void setVisual(AbstractVisual* visual) { m_visual = visual; }
+		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
 		
 		/** Gets used visualization
 		 */

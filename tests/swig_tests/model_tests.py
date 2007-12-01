@@ -9,8 +9,8 @@ class TestModel(unittest.TestCase):
 		self.metamodel = self.model.getMetaModel()
 
 	def testModel(self):
-		map1 = self.model.addMap("map001")
-		map2 = self.model.addMap("map002")
+		map1 = self.model.createMap("map001")
+		map2 = self.model.createMap("map002")
 		
 		map1.set("Name", "Map1")
 		map2.set("Name", "Map2")
@@ -29,29 +29,29 @@ class TestModel(unittest.TestCase):
 
 		self.assertEqual(len(map_query), self.model.getNumMaps())
 
-		self.model.removeMap(map2)
+		self.model.deleteMap(map2)
 
 		map_query = self.model.getMaps()
 		self.assertEqual(len(map_query), 1)
 
-		self.model.addMap("map003")
-		self.model.addMap("map004")
+		self.model.createMap("map003")
+		self.model.createMap("map004")
 		
 		map_query = self.model.getMaps()
 		self.assertEqual(len(map_query), 3)
 		self.assertEqual(self.model.getNumMaps(), 3)
 		
-		self.model.clearMaps()
+		self.model.deleteMaps()
 		map_query = self.model.getMaps()
 		self.assertEqual(len(map_query), 0)
 		self.assertEqual(self.model.getNumMaps(), 0)
 
 	def testMaps(self):
-		map = self.model.addMap("map005")
+		map = self.model.createMap("map005")
 		map.set("Name", "MyMap")
 
-		elev1 = map.addElevation("elevation001")
-		elev2 = map.addElevation("elevation002")
+		elev1 = map.createElevation("elevation001")
+		elev2 = map.createElevation("elevation002")
 
 		elev1.set("Name", "Elev1")
 		elev2.set("Name", "Elev2")
@@ -67,22 +67,22 @@ class TestModel(unittest.TestCase):
 
 		self.assertEqual(map.getNumElevations(), 2)
 
-		map.clearElevations()
+		map.deleteElevations()
 		self.assertEqual(map.getNumElevations(), 0)
 
 	def testElevations(self):
-		map = self.model.addMap("map006")
-		elev = map.addElevation("elevation003")
+		map = self.model.createMap("map006")
+		elev = map.createElevation("elevation003")
 		elev.set("Name", "MyElevation")
 
 		#self.assertEqual(elev.getMap(), map)
 		self.assertEqual(elev.getNumLayers(), 0)
 
-		dat = self.metamodel.addDataset("dataset001")
+		dat = self.metamodel.createDataset("dataset001")
 		grid = fife.SquareGrid()
 
-		layer1 = elev.addLayer("layer001", grid)
-		layer2 = elev.addLayer("layer002", grid)
+		layer1 = elev.createLayer("layer001", grid)
+		layer2 = elev.createLayer("layer002", grid)
 
 		layer1.set("Name", "Layer1")
 		layer2.set("Name", "Layer2")
@@ -93,33 +93,33 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(len(elev.getLayers("Name", "Layer1")), 1)
 
 		self.assertEqual(elev.getNumLayers(), 2)
-		elev.removeLayer(layer2)
+		elev.deleteLayer(layer2)
 		self.assertEqual(elev.getNumLayers(), 1)
-		elev.clearLayers()
+		elev.deleteLayers()
 		self.assertEqual(elev.getNumLayers(), 0)
 
 	def testLayers(self):
-		map = self.model.addMap("map007")
-		elev = map.addElevation("elevation004")
+		map = self.model.createMap("map007")
+		elev = map.createElevation("elevation004")
 
-		dat = self.metamodel.addDataset("dataset002")
+		dat = self.metamodel.createDataset("dataset002")
 		grid = fife.SquareGrid()
-		obj1 = dat.addObject("object001")
+		obj1 = dat.createObject("object001")
 		obj1.set("Name", "MyHero")
-		obj2 = dat.addObject("object002")
+		obj2 = dat.createObject("object002")
 		obj2.set("Name", "Goon")
 
 		self.assertEqual(obj1.get("id"), "object001")
 		self.assertEqual(obj2.get("id"), "object002")
 
-		layer = elev.addLayer("layer003", grid)
+		layer = elev.createLayer("layer003", grid)
 
 		self.assertEqual(layer.hasInstances(), 0)
 		#self.assertEqual(layer.getElevation(), elev)
 
-		inst = layer.addInstance(obj1, fife.ModelCoordinate(4,4))
-		layer.addInstance(obj2, fife.ModelCoordinate(5,6))
-		layer.addInstance(obj2, fife.ModelCoordinate(5,4))
+		inst = layer.createInstance(obj1, fife.ModelCoordinate(4,4))
+		layer.createInstance(obj2, fife.ModelCoordinate(5,6))
+		layer.createInstance(obj2, fife.ModelCoordinate(5,4))
 		
 		query = layer.getInstances("Name", "Goon")
 		self.assertEqual(len(query), 2)
@@ -133,8 +133,8 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4,4))
 		
 	def testMetaModel(self):
-		dat1 = self.metamodel.addDataset("dataset003")
-		dat2 = self.metamodel.addDataset("dataset004")
+		dat1 = self.metamodel.createDataset("dataset003")
+		dat2 = self.metamodel.createDataset("dataset004")
 		dat1.set("Name", "Dat1")
 		dat2.set("Name", "Dat2")
 
@@ -148,11 +148,11 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(len(meta_query), 1)
 
 	def testDatasets(self):
-		dat = self.metamodel.addDataset("dataset005")
+		dat = self.metamodel.createDataset("dataset005")
 
-		obj1 = dat.addObject("1")
-		obj2 = dat.addObject("2")
-		obj3 = dat.addObject("3")
+		obj1 = dat.createObject("1")
+		obj2 = dat.createObject("2")
+		obj3 = dat.createObject("3")
 
 		obj1.set("Name", "MyHero")
 		obj1.set("Hitpoints", '100')

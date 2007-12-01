@@ -58,7 +58,7 @@ namespace FIFE {
 			throw Duplicate("Object already contains visualization");
 		}
 		ObjectVisual* v = new ObjectVisual();
-		object->setVisual(v);
+		object->adoptVisual(v);
 		return v;
 	}
 	
@@ -113,7 +113,7 @@ namespace FIFE {
 			throw Duplicate("Action already contains visualization");
 		}
 		ActionVisual* v = new ActionVisual();
-		action->setVisual(v);
+		action->adoptVisual(v);
 		return v;
 	}
 	

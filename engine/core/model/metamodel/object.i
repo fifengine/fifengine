@@ -18,14 +18,14 @@ namespace FIFE {
 
 		const std::string& get(const std::string& field);
 
-		Action* addAction(const std::string& identifier);
+		Action* createAction(const std::string& identifier);
 		Action* getAction(const std::string& identifier);
 
 		void setPather(AbstractPather* pather);
 		AbstractPather* getPather();
 
 		Object* getInherited();
-		void setVisual(AbstractVisual* visual);
+		void adoptVisual(AbstractVisual* visual);
 		template<typename T> T* getVisual() const;
 		
 		void setBlocking(bool blocking);

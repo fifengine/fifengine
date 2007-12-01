@@ -46,7 +46,7 @@ namespace FIFE {
 		purge(m_objects);
 	}
 
-	Dataset* Dataset::addDataset(const std::string& identifier) {
+	Dataset* Dataset::createDataset(const std::string& identifier) {
 		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
 			if(identifier == (*it)->Id())
@@ -58,7 +58,7 @@ namespace FIFE {
 		return dataset;
 	}
 
-	Object* Dataset::addObject(const std::string& identifier, Object* inherited) {
+	Object* Dataset::createObject(const std::string& identifier, Object* inherited) {
 		std::vector<Object*>::const_iterator it = m_objects.begin();
 		for(; it != m_objects.end(); ++it) {
 			if(identifier == (*it)->Id())
