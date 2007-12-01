@@ -35,133 +35,99 @@
 #include "view.h"
 
 
-namespace FIFE
-{
-    static Logger _log(LM_CAMERA);
+namespace FIFE {
+	static Logger _log(LM_CAMERA);
+	
+	Camera::Camera():
+		m_matrix(),
+		m_inverse_matrix(),
+		m_tilt(0),
+		m_rotation(0),
+		m_zoom(1),
+		m_location(),
+		m_viewport(),
+		m_screen_cell_width(1),
+		m_screen_cell_height(1),
+		m_reference_scale(1),
+		m_enabled(true) {
+		updateMatrices();
+	}
 
-    Camera::Camera():
-            m_matrix(),
-            m_inverse_matrix(),
-            m_tilt(0),
-            m_rotation(0),
-            m_zoom(1),
-            m_location(),
-            m_viewport(),
-            m_screen_cell_width(1),
-            m_screen_cell_height(1),
-            m_reference_scale(1),
-            m_enabled(true)
-    {
+	Camera::~Camera() {
+	}
 
-        updateMatrices();
+	void Camera::updateMatrices() {
+		double scale = 1.0 / m_reference_scale;
+		m_matrix.loadScale(scale, scale, scale);
+		if (m_location.getLayer()) {
+			CellGrid* cg = m_location.getLayer()->getCellGrid();
+			if (cg) {
+				ExactModelCoordinate pt = m_location.getElevationCoordinates();
+				m_matrix.applyTranslate(pt.x  * m_reference_scale, pt.y * m_reference_scale, 0);
+			}
+		}
+		scale = 1.0 / m_zoom;
+		m_matrix.applyScale(scale, scale, scale);
+		m_matrix.applyRotate(m_rotation, 0.0, 0.0, 1.0);
+		m_matrix.applyRotate(m_tilt, 1.0, 0.0, 0.0);
+		m_inverse_matrix = m_matrix.inverse();
+	}
 
-    }
+	ExactModelCoordinate Camera::toElevationCoordinates(ScreenPoint screen_coords) {
+		double dy = screen_coords.y - toScreenCoordinates(m_location.getElevationCoordinates()).y;
 
-    Camera::~Camera()
-    {
-    }
+		screen_coords.x -= m_viewport.w / 2;
+		screen_coords.y -= m_viewport.h / 2;
+		screen_coords.z = static_cast<int>(-tan(m_tilt * (M_PI / 180.0)) * dy);
 
-    /** Update the camera transformation matrix T with requested values.
-     *  The requests are done using these functions :
-     * setLocation
-     * setRotation
-     * setTilt
-     *
-     * Transformation sequence is done as below:
-     * 1) Translation to the camera Location
-     * 2) Scaling to a zoom level
-     * 3) Rotation around the z-axis ( Rotation )
-     * 4) Rotation around the x-axis ( Tilt )
+		return m_matrix * intPt2doublePt(screen_coords);
+	}
 
-     * Since tilting is done after
-     */
+	ScreenPoint Camera::toScreenCoordinates(ExactModelCoordinate elevation_coords) {
+		ExactModelCoordinate p = elevation_coords;
+		ScreenPoint pt = doublePt2intPt(m_inverse_matrix * p);
+		pt.x += m_viewport.w / 2;
+		pt.y += m_viewport.h / 2;
+		return pt;
+	}
 
-    void Camera::updateMatrices()
-    {
-
-        double scale =   m_reference_scale;
-        m_matrix.loadScale(scale, scale, scale);
-        std::cout << "scale1: " << scale << "\n" << m_matrix << std::endl;
-        if (m_location.getLayer())
-        {
-            CellGrid* cg = m_location.getLayer()->getCellGrid();
-            if (cg)
-            {
-                ExactModelCoordinate pt = m_location.getElevationCoordinates();
-                m_matrix.applyTranslate( -pt.x *m_reference_scale, -pt.y *m_reference_scale, 0);
-            }
-        }
-
-        scale = m_zoom;
-        m_matrix.applyScale(scale, scale, scale);
-        m_matrix.applyRotate(m_rotation, 0.0, 0.0, 1.0);
-        m_matrix.applyRotate(m_tilt, 1.0, 0.0, 0.0);
-        m_inverse_matrix = m_matrix.inverse();
-    }
-
-    ExactModelCoordinate Camera::toElevationCoordinates(ScreenPoint screen_coords)
-    {
-        double dy = screen_coords.y - toScreenCoordinates(m_location.getElevationCoordinates()).y;
-
-        screen_coords.x -= m_viewport.w / 2;
-        screen_coords.y -= m_viewport.h / 2;
-        screen_coords.z = static_cast<int>(tan(m_tilt * (M_PI / 180.0)) * dy);
-
-        return m_inverse_matrix  * intPt2doublePt(screen_coords);
-    }
-
-    ScreenPoint Camera::toScreenCoordinates(ExactModelCoordinate elevation_coords)
-    {
-        ExactModelCoordinate p = elevation_coords;
-        ScreenPoint pt =  doublePt2intPt(   m_matrix * p );
-        pt.x += m_viewport.w / 2;
-        pt.y += m_viewport.h / 2;
-        return pt;
-    }
-
-    void Camera::updateReferenceScale()
-    {
-        CellGrid* cg = NULL;
-        if (m_location.getLayer())
-        {
-            cg = m_location.getLayer()->getCellGrid();
-        }
-        if (!cg)
-        {
-            return;
-        }
-
-        ModelCoordinate cell(0,0);
-        std::vector<ExactModelCoordinate> vertices;
-        cg->getVertices(vertices, cell);
-
-        DoubleMatrix mtx;
-        mtx.loadRotate(m_rotation, 0.0, 0.0, 1.0);
-        mtx.applyRotate(m_tilt, 1.0, 0.0, 0.0);
-        mtx = mtx.inverse();
-        double x1, x2, y1, y2;
-        for (unsigned int i = 0; i < vertices.size(); i++)
-        {
-            vertices[i] = cg->toElevationCoordinates(vertices[i]);
-            vertices[i] = mtx * vertices[i]; // rotate the vertices by m_rotation and m_tilt
-            if (i == 0)
-            {
-                x1 = x2 = vertices[0].x; // the first vertex
-                y1 = y2 = vertices[0].y;
-            }
-            else
-            {
-                x1 = std::min(vertices[i].x, x1);
-                x2 = std::max(vertices[i].x, x2);
-                y1 = std::min(vertices[i].y, y1);
-                y2 = std::max(vertices[i].y, y2);
-            }
-        }
-        m_reference_scale = static_cast<double>(m_screen_cell_width) / (x2 - x1);
-
-        FL_DBG(_log, "Updating reference scale");
-        FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
-        FL_DBG(_log, LMsg("   x1=") << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2);
-        FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
-    }
+	void Camera::updateReferenceScale() {
+		CellGrid* cg = NULL;
+		if (m_location.getLayer()) {
+			cg = m_location.getLayer()->getCellGrid();
+		}
+		if (!cg) {
+			return;
+		}
+		
+		ModelCoordinate cell(0,0);
+		std::vector<ExactModelCoordinate> vertices;
+		cg->getVertices(vertices, cell);
+		
+		DoubleMatrix mtx;
+		mtx.loadRotate(m_rotation, 0.0, 0.0, 1.0);
+		mtx.applyRotate(m_tilt, 1.0, 0.0, 0.0);
+		mtx = mtx.inverse();
+		double x1, x2, y1, y2;
+		for (unsigned int i = 0; i < vertices.size(); i++) {
+			vertices[i] = cg->toElevationCoordinates(vertices[i]);
+			vertices[i] = mtx * vertices[i];
+			if (i == 0) {
+				x1 = x2 = vertices[0].x;
+				y1 = y2 = vertices[0].y;
+			}
+			else {
+				x1 = std::min(vertices[i].x, x1);
+				x2 = std::max(vertices[i].x, x2);
+				y1 = std::min(vertices[i].y, y1);
+				y2 = std::max(vertices[i].y, y2);
+			}
+		}
+		m_reference_scale = static_cast<double>(m_screen_cell_width) / (x2 - x1);
+		
+		FL_DBG(_log, "Updating reference scale");
+		FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
+		FL_DBG(_log, LMsg("   x1=") << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2);
+		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
+	}
 }

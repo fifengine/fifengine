@@ -49,21 +49,21 @@
 
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
-
+	
 	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font):
-			m_renderbackend(renderbackend),
-			m_layer_area(),
-			m_tmploc(),
-			m_c(),
-			m_font(font) {
+		m_renderbackend(renderbackend),
+		m_layer_area(),
+		m_tmploc(),
+		m_c(),
+		m_font(font) {
 		setPipelinePosition(2);
 		setEnabled(false);
 	}
-
+	
 	CoordinateRenderer::~CoordinateRenderer() {
 	}
-
-
+	
+	
 	void CoordinateRenderer::adjustLayerArea() {
 		m_tmploc.setElevationCoordinates(m_c);
 		ModelCoordinate c = m_tmploc.getLayerCoordinates();
@@ -72,7 +72,7 @@ namespace FIFE {
 		m_layer_area.y = std::min(c.y, m_layer_area.y);
 		m_layer_area.h = std::max(c.y, m_layer_area.h);
 	}
-
+	
 	const int MIN_COORD = -9999999;
 	const int MAX_COORD = 9999999;
 	void CoordinateRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
@@ -80,7 +80,7 @@ namespace FIFE {
 		m_layer_area.y = MAX_COORD;
 		m_layer_area.w = MIN_COORD;
 		m_layer_area.h = MIN_COORD;
-
+		
 		m_tmploc.setLayer(layer);
 		Rect cv = cam->getViewPort();
 		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x, cv.y));
@@ -91,41 +91,25 @@ namespace FIFE {
 		adjustLayerArea();
 		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h));
 		adjustLayerArea();
-
+		
 		Rect r = Rect();
-
 		for (int x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
 			for (int y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
 				ModelCoordinate mc(x, y);
 				m_tmploc.setLayerCoordinates(mc);
 				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getElevationCoordinates());
-
 				if ((drawpt.x >= cv.x) && (drawpt.x <= cv.w) &&
-					(drawpt.y >= cv.y) && (drawpt.y <= cv.h)) {
-					std::stringstream ss1 , ss2, ss3;
-
-					//format is Screen/Model
-					ss1 <<drawpt.x <<"/"<<mc.x;
-					ss2 << drawpt.y <<"/"<<mc.y;
-					ss3 << drawpt.z <<"/"<<mc.z;
-
-					Image * imgx = m_font->getAsImage(ss1.str());
-					Image * imgy = m_font->getAsImage(ss2.str());
-					Image * imgz = m_font->getAsImage(ss3.str());
-
-					m_font->setColor(255,255,255);
+				    (drawpt.y >= cv.y) && (drawpt.y <= cv.h)) {
+					std::stringstream ss;
+					ss << mc.x << ":" << mc.y;
+					Image * img = m_font->getAsImage(ss.str());
 					r.x = drawpt.x;
 					r.y = drawpt.y;
-					r.w = imgx->getWidth();
-					r.h = imgy->getHeight();
-
-					Rect a(r.x, r.y+10, r.w, r.h) ,b (r.x, r.y+20, r.w, r.h); // skip down for line #2 & #3
-
-					imgx->render(r); // line #1
-					imgy->render(  a ); //line #2
-					imgz->render( b  ); //line #3
+					r.w = img->getWidth();
+					r.h = img->getHeight();
+					img->render(r);
 				}
-
+				
 			}
 		}
 	}
