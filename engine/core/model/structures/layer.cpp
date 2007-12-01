@@ -41,12 +41,13 @@ namespace FIFE {
 		: AttributedClass(identifier),
 		m_elevation(elevation),
 		m_instances_visibility(true),
-		m_grid(grid),
-		m_instanceTree(new InstanceTree()) {
+		m_instanceTree(new InstanceTree()),
+		m_grid(grid) {
 	}
 
 	Layer::~Layer() {
 		purge(m_instances);
+		delete m_instanceTree;
 	}
 
 	bool Layer::hasInstances() const {
@@ -81,6 +82,7 @@ namespace FIFE {
 			if(*it == instance) {
 				delete *it;
 				m_instances.erase(it);
+				m_instanceTree->removeInstance(*it);
 				break;
 			}
 		}
