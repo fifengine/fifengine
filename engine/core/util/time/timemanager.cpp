@@ -36,25 +36,30 @@
 #include "timemanager.h"
 
 namespace FIFE {
+	static const unsigned long UNDEFINED_TIME_DELTA = 999999;
 	static Logger _log(LM_UTIL);
 	
-	TimeManager::TimeManager() {
-		m_current_time	= SDL_GetTicks();
-		m_time_delta	= 1;
-		m_average_frame_time = 0;
+	TimeManager::TimeManager():
+		m_current_time (0),
+		m_time_delta(UNDEFINED_TIME_DELTA),
+		m_average_frame_time(0) {
 	}
 
 	TimeManager::~TimeManager() {
 	}
 
 	void TimeManager::update() {
-		// Set new current time, time delta and framerate.
+		// if first update...
+		double avg_multiplier = 0.95;
+		if (m_current_time == 0) {
+			m_current_time = SDL_GetTicks();
+			avg_multiplier = 0;
+		}
 		m_time_delta = m_current_time;
 		m_current_time = SDL_GetTicks();
 		m_time_delta = m_current_time - m_time_delta;
-
-		double alpha = .985;
-		m_average_frame_time = m_average_frame_time*alpha + double(m_time_delta)*(1.-alpha);
+		m_average_frame_time = m_average_frame_time * avg_multiplier +
+			double(m_time_delta) * (1.0 - avg_multiplier);
 
 		// Update live events.
 		//
