@@ -4,7 +4,7 @@ SET _SWIG="%_%\applications\swigwin-1.3.31"
 
 :: To avoid path collisions the following line was commented out and replaced with a slightly different version
 :: SET PATH=%Path%;%_%\applications\scons;%_%\applications\mingw\bin
-SET PATH=%_%\applications\scons;%_%\applications\mingw\bin
+SET PATH=%Path%;%_%\applications\scons;%_%\applications\mingw\bin
 
 :: Delete doxygen_log.txt in case that it's still in place from a former compile sessions
 del %_%\doxygen_log.txt
