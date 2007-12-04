@@ -66,6 +66,8 @@ namespace FIFE {
 		virtual bool isConsumed() const { return m_isconsumed; }
 		virtual IEventSource* getSource() { return m_eventsource; }
 		virtual void setSource(IEventSource* source) { m_eventsource = source; }
+		virtual gcn::Widget* getSourceWidget() { return m_sourcewidget; }
+		virtual void setSourceWidget(gcn::Widget* widget) { m_sourcewidget = widget; }
 		virtual int getTimeStamp() const { return m_timestamp; }
 		virtual void setTimeStamp(int timestamp ) { m_timestamp = timestamp; }
 
@@ -94,6 +96,7 @@ namespace FIFE {
 	private:
 		bool m_isconsumed;
 		IEventSource* m_eventsource;
+		gcn::Widget* m_sourcewidget;
 		int m_timestamp;
 	};
 

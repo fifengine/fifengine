@@ -40,6 +40,10 @@
 // Second block: files included from the same folder
 //
 
+namespace gcn {
+	class Widget;
+}
+
 namespace FIFE {
 	class IEventSource;
 
@@ -60,6 +64,11 @@ namespace FIFE {
 		/** Gets the source of the event.
 		 */
 		virtual IEventSource* getSource() = 0;
+
+		/** Get the source of the (widget) event. Null for non-widget.
+		 * This is a bit of a hack.
+		 */
+		virtual gcn::Widget* getSourceWidget() = 0;
 
 		/** Gets the timestamp of the event
 		 */

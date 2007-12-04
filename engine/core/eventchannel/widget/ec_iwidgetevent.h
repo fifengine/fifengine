@@ -35,6 +35,10 @@
 //
 #include "eventchannel/base/ec_ievent.h"
 
+namespace gcn {
+	class Widget;
+}
+
 namespace FIFE {
 
 	/**  Interface for widget events
@@ -47,7 +51,7 @@ namespace FIFE {
 		 * @return the id of the event.
 		 */
 		virtual const std::string& getId() const = 0;
-
+		
 		virtual ~IWidgetEvent() {}
 	};
 

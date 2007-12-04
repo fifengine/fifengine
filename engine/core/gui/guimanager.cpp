@@ -158,6 +158,7 @@ namespace FIFE {
 	void GUIManager::action(const gcn::ActionEvent & event) {
 		WidgetEvent wevt;
 		wevt.setId(event.getId());
+		wevt.setSourceWidget(event.getSource());
 		m_widgetlistener->onWidgetAction(wevt);
 	}
 

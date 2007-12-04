@@ -24,7 +24,12 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.screenwidth = engine.getRenderBackend().getScreenWidth()
 
 		self.map_list = GenericListmodel()
-		#self.map_list.extend(['content/maps/new_official_map.xml', 'techdemo/maps/city1.xml']) # TODO: this shouldn't be hardcoded
+		# TODO: this shouldn't be hardcoded
+		self.map_list.extend(['../island_demo/content/maps/new_official_map.xml'])
+
+		self.guiroot = Container(self.guimanager)
+
+		bb = ButtonBox(self.eventmanager, self.guimanager, self.guiroot, 'test', 'select an option:', 'ok', 'quit')
 
 		self.create_mainpanel()
 		self.create_mapdialogs()
@@ -280,15 +285,26 @@ class FIFEdit(fife.IWidgetListener, object):
 		datedit = DatasetEditor(self.eventmanager, self.guimanager, self.engine.getImagePool(), dat)
 		self.register_widget(datedit, self.guimanager)
 
+class Container:
+	def __init__(self, guimanager):
+		self.guimanager = guimanager
+		self.widgets = []
 
-class Form(fife.IWidgetListener, fife.Window):
+	def add_widget(self, w):
+		self.widgets.append(w)
+		self.guimanager.add(w)
 
-	def __init__(self, event_manager, gui_manager, caption, position, size):
+	def remove_widget(self, w):
+		self.guimanager.remove(w)
+#TODO: removing final reference (destroying) the widget results in segfault. So for now, old gui
+# elements just hang around in the sytem.
+#		self.widgets.remove(w)
+
+class Dialog(fife.IWidgetListener, fife.Window, Container):
+	def __init__(self, event_manager, guimanager, parent, caption, position, size):
 		self.eventmanager = event_manager
 		fife.IWidgetListener.__init__(self)
 		self.eventmanager.addWidgetListener(self)
-
-		self.guimanager = gui_manager
 
 		fife.Window.__init__(self, caption)
 		self.setTitleBarHeight(20)
@@ -296,27 +312,84 @@ class Form(fife.IWidgetListener, fife.Window):
 		self.setSize(size[0], size[1])
 		self.setVisible(True)
 
-		self.widgets = []
+		Container.__init__(self, guimanager)
+		self.parent = parent
+		self.parent.add_widget(self)
 
-		clbutton = fife.Button('Close')
-		clbutton.setActionEventId('CloseEvt')
-		clbutton.addActionListener(self.guimanager)
-		clbutton.adjustSize()
-		clbutton.setPosition(self.getWidth() - clbutton.getWidth() - 5, 5)
-		self.register_widget(clbutton, self)
+	def __del__(self):
+		for child in self.widgets:
+			self.remove_widget(child)
+		self.eventmanager.removeWidgetListener(self)
+		print 'deleting'
 
-	def register_widget(self, w, container):
+	def add_widget(self, w):
 		self.widgets.append(w)
-		container.add(w)
+		self.add(w)
+
+	def remove_widget(self, w):
+		self.remove(w)
+#TODO: removing final reference (destroying) the widget results in segfault. So for now, old gui
+# elements just hang around in the sytem.
+#		self.widgets.remove(w)
+
+	def onWidgetAction(self, evt):
+		pass
+
+class Form(Dialog):
+	def __init__(self, event_manager, gui_manager, parent, caption, position, size):
+		Dialog.__init__(self, event_manager, gui_manager, parent, caption, position, size)
+
+		self.clbutton = fife.Button('Close')
+		self.clbutton.setActionEventId('CloseEvt')
+		self.clbutton.addActionListener(self.guimanager)
+		self.clbutton.adjustSize()
+		self.clbutton.setPosition(self.getWidth() - self.clbutton.getWidth() - 5, 5)
 
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
 		if evtid == 'CloseEvt':
-			print 'closing not yet implemented'
+			if(evt.getSourceWidget().this == self.clbutton.this):
+				print 'closing not yet implemented; but soon!'
+
+class ButtonBox(Dialog):
+	def __init__(self, event_manager, gui_manager, parent, caption, prompt, optionA, optionB):
+		self.size = (200, 100)
+		self.position = (300,300)
+
+		Dialog.__init__(self, event_manager, gui_manager, parent, caption, self.position, self.size)
+
+		label = fife.Label(prompt + ':')
+		label.setPosition(5, 5)
+		#label.setFont(self.font)
+		label.adjustSize()
+		self.add_widget(label)
+
+		self.buttonA = fife.Button(optionA)
+		self.buttonA.setActionEventId('optionA')
+		self.buttonA.addActionListener(self.guimanager)
+		self.buttonA.setSize(50,25)
+		self.buttonA.setPosition(45, 5 + label.getHeight() + 5)
+		self.add_widget(self.buttonA)
+
+		self.buttonB = fife.Button(optionB)
+		self.buttonB.setActionEventId('optionB')
+		self.buttonB.addActionListener(self.guimanager)
+		self.buttonB.setSize(50, 25)
+		self.buttonB.setPosition(100, self.buttonA.getY())
+		self.add_widget(self.buttonB)
+
+	def onWidgetAction(self, evt):
+		evtid = evt.getId()
+		src = evt.getSourceWidget()
+		if src.this == self.buttonA.this or src.this == self.buttonB.this:
+			if evtid == 'optionA':
+				print 'First option selected'
+			elif evtid == 'optionB':
+				print 'Second option selected'
+			self.parent.remove_widget(self)
 
 class DatasetEditor(Form):
-
-	def __init__(self, event_manager, gui_manager, imagepool, dataset):
+	def __init__(self, event_manager, gui_manager, parent, imagepool, dataset):
 		self.size = (400, 200) 
 		self.position = (0, 100)
 
@@ -326,7 +399,6 @@ class DatasetEditor(Form):
 
 		#scrollarea = fife.ScrollArea()
 		#scrollarea.setContent(self.datedit)
-		#self.register_widget(scrollarea, self.guimanager)
 
 		self.objects = self.dataset.getObjects()
 
@@ -340,7 +412,6 @@ class DatasetEditor(Form):
 		self.object_drop.setSize(250, 16)
 		self.object_drop.setActionEventId('ObjectSelect')
 		self.object_drop.addActionListener(self.guimanager)
-		self.register_widget(self.object_drop, self)
 
 		self.icon = 0
 
@@ -356,7 +427,6 @@ class DatasetEditor(Form):
 			if (not self.icon):
 				self.icon = fife.Icon(self.preview)
 				self.icon.setPosition(10, 5 + self.object_drop.getHeight() + 5)
-				self.register_widget(self.icon, self)
 			else:
 				self.icon.setImage(self.preview)
 
@@ -367,14 +437,12 @@ class DatasetEditor(Form):
 ##		button.addActionListener(self.guimanager)
 ##		button.adjustSize()
 ##		button.setPosition(1 + icon.getWidth(), icon.getY())
-##		self.register_widget(button, self)
 
 ##		button2 = fife.Button('delete')
 ##		button2.setActionEventId('ObjectDelete')
 ##		button2.addActionListener(self.guimanager)
 ##		button2.adjustSize()
 ##		button2.setPosition(1 + icon.getWidth(), icon.getY() + button.getHeight())
-##		self.register_widget(button2, self)
 
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
