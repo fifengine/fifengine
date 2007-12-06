@@ -11,6 +11,8 @@
 	<!-- Load tiles -->
 	<dataset type="XML" source="content/datasets/tiles/test_tiles.xml" />
 
+	<dataset type="XML" source="content/datasets/objects/test_objects.xml" />
+
 	<!-- Load agent datasets -->
 	<dataset type="XML" source="content/datasets/agents/humans/gunner.xml" />
 
@@ -36,6 +38,10 @@
 						</param>
 					</metadata>
 				</i>
+				<i o="Object:Invisible" x="-10" y="-10" />
+				<i o="Object:Invisible" x="-10" y="20" />
+				<i o="Object:Invisible" x="20" y="-10" />
+				<i o="Object:Invisible" x="20" y="20" />
 			</instances>
 		</layer>
 	</elevation>
