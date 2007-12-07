@@ -412,7 +412,7 @@ class World(object):
 				evtlistener.reloadRequested = False
 				self.model.deleteMaps()
 				self.metamodel.deleteDatasets()
-				self.create_world("content/maps/testmap.xml")
+				self.create_world("content/maps/z_order_test.xml")
 				self.view.clearCameras()
 				self.adjust_views()
 				self.cameras['small'].setEnabled(showSecondCamera)
