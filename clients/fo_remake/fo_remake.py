@@ -22,6 +22,7 @@ class InstanceReactor(fife.InstanceListener):
 		instance.act_here('idle', instance.getFacingLocation(), True)
 
 SCROLL_MODIFIER = 0.1
+MAPFILE = 'content/maps/z_order_test.xml'
 class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
 	              fife.ConsoleExecuter, fife.IWidgetListener):
 	def __init__(self, world):
@@ -412,7 +413,7 @@ class World(object):
 				evtlistener.reloadRequested = False
 				self.model.deleteMaps()
 				self.metamodel.deleteDatasets()
-				self.create_world("content/maps/z_order_test.xml")
+				self.create_world(MAPFILE)
 				self.view.clearCameras()
 				self.adjust_views()
 				self.cameras['small'].setEnabled(showSecondCamera)
@@ -483,9 +484,10 @@ if __name__ == '__main__':
 	gui = Gui(engine)
 	w = World(engine, gui)
 
-	e = FIFEdit(engine)
+	e = FIFEdit(engine, [MAPFILE])
+	e.show()
 
-	w.create_world("content/maps/z_order_test.xml")
+	w.create_world(MAPFILE)
 	w.adjust_views()
 	if TDS.PlaySounds:
 		w.create_background_music()

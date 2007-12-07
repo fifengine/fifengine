@@ -21,7 +21,9 @@ class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
 		instance.act_here('idle', instance.getFacingLocation(), True)
 
+
 SCROLL_MODIFIER = 0.1
+MAPFILE = 'content/maps/new_official_map.xml'
 class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
 	              fife.ConsoleExecuter, fife.IWidgetListener):
 	def __init__(self, world):
@@ -54,6 +56,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.quitRequested = False
 		self.newTarget = None
 		self.showTileOutline = True
+		self.showEditor = False
 		self.showCoordinates = False
 		self.showSecondCamera = False
 		self.reloadRequested = False
@@ -145,6 +148,8 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 			self.showSecondCamera = not self.showSecondCamera
 		elif keystr == 'r':
 			self.reloadRequested = True
+		elif keystr == 'e':
+			self.showEditor = True
 		elif keyval in (fife.IKey.LEFT_CONTROL, fife.IKey.RIGHT_CONTROL):
 			self._ctrldown = True
 		elif keyval in (fife.IKey.LEFT_SHIFT, fife.IKey.RIGHT_SHIFT):
@@ -358,6 +363,7 @@ class World(object):
 		showTileOutline = not evtlistener.showTileOutline
 		showCoordinates = not evtlistener.showCoordinates
 		showSecondCamera = not evtlistener.showSecondCamera
+		editorShown = False
 		
 		smallcamx = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		initial_camx = smallcamx
@@ -410,9 +416,9 @@ class World(object):
 			if evtlistener.reloadRequested:
 				camcoords = self.cameras['main'].getLocation().getExactLayerCoordinates()
 				evtlistener.reloadRequested = False
-				self.model.clearMaps()
-				self.metamodel.clearDatasets()
-				self.create_world("content/maps/new_official_map.xml")
+				self.model.deleteMaps()
+				self.metamodel.deleteDatasets()
+				self.create_world(MAPFILE)
 				self.view.clearCameras()
 				self.adjust_views()
 				self.cameras['small'].setEnabled(showSecondCamera)
@@ -420,7 +426,13 @@ class World(object):
 				camloc.setExactLayerCoordinates(camcoords)
 				self.cameras['main'].setLocation(camloc)
 				evtlistener.scrollwheelvalue = self.scrollwheelvalue
+				print 'reloaded'
 
+			if evtlistener.showEditor and not editorShown:
+				e = FIFEdit(engine, [MAPFILE])
+				e.show()
+				editorShown = True
+				
 			# agentcoords = self.agent.getLocation().getElevationCoordinates()
 			# if not ((self.agentcoords.x == agentcoords.x) and (self.agentcoords.y == agentcoords.y)):
 			#	loc = self.cameras['main'].getLocation()
@@ -483,9 +495,7 @@ if __name__ == '__main__':
 	gui = Gui(engine)
 	w = World(engine, gui)
 
-	e = FIFEdit(engine)
-
-	w.create_world("content/maps/new_official_map.xml")
+	w.create_world(MAPFILE)
 	w.adjust_views()
 	if TDS.PlaySounds:
 		w.create_background_music()

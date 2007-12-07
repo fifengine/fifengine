@@ -6,7 +6,7 @@ from pychan import *
 
 class FIFEdit(fife.IWidgetListener, object):
 
-	def __init__(self, engine):
+	def __init__(self, engine, maplist):
 		self.engine = engine
 		self.font = engine.getDefaultFont()
 		self.font.setColor(0,0,0)
@@ -25,15 +25,19 @@ class FIFEdit(fife.IWidgetListener, object):
 
 		self.map_list = GenericListmodel()
 		# TODO: this shouldn't be hardcoded
-		self.map_list.extend(['../island_demo/content/maps/new_official_map.xml'])
+		self.map_list.extend(maplist)
 
 		self.guiroot = Container(self.guimanager)
 
-		bb = ButtonBox(self.eventmanager, self.guimanager, self.guiroot, 'test', 'select an option:', 'ok', 'quit')
+		#bb = ButtonBox(self.eventmanager, self.guimanager, self.guiroot, 'test', 'select an option:', 'ok', 'quit')
 
+	def show(self):
 		self.create_mainpanel()
 		self.create_mapdialogs()
-
+	
+	def hide(self):
+		pass
+	
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
 		if evtid == 'LoadMapDialog':
