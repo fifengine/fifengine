@@ -316,8 +316,8 @@ class World(object):
 	def _create_camera(self, name, coordinate, viewport):
 		camera = self.view.addCamera()
 		camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
-		camera.setRotation(35)
-		camera.setTilt(60)
+		camera.setRotation(45)
+		camera.setTilt(40)
 
 		camloc = fife.Location()
 		camloc.setLayer(self.layer)
@@ -441,9 +441,9 @@ class World(object):
 					print "camera thinks being in position ", cam_scroll.x, ", ", cam_scroll.y
 				evtlistener.horizscroll = evtlistener.vertscroll = 0
 
-			smallcam_loc = self.cameras['small'].getLocation()
-			c = smallcam_loc.getExactLayerCoordinates()
 			if showSecondCamera:
+				smallcam_loc = self.cameras['small'].getLocation()
+				c = smallcam_loc.getExactLayerCoordinates()
 				if cam_to_right:
 					smallcamx = c.x = c.x+0.01
 					if smallcamx > initial_camx+2:
