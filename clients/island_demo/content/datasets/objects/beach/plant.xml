@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <dataset id="Plant" type="Embedded" format="1.0">
-	<object id="Plant:001">
+	<object id="Plant:001" blocking="1" static="1">
 		<image source="content/gfx/objects/beach/plant01.png"/>
 	</object>
-	<object id="Plant:002">
+	<object id="Plant:002" blocking="1" static="1">
 		<image source="content/gfx/objects/beach/plant02.png"/>
 	</object>
 </dataset>

@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <dataset id="Rocks" type="Embedded" format="1.0">
-	<object id="Rock:001">
+	<object id="Rock:001" static="1" blocking="1">
 		<image source="content/gfx/objects/beach/rock01.png"/>
 	</object>
 
-	<object id="Rock:002">
+	<object id="Rock:002" static="1" blocking="1">
 		<image source="content/gfx/objects/beach/rock02.png"/>
 	</object>
 
-	<object id="Rock:003">
+	<object id="Rock:003" static="1" blocking="1">
 		<image source="content/gfx/objects/beach/rock03.png"/>
 	</object>
-	<object id="Rock:004">
+	<object id="Rock:004" static="1" blocking="1">
 		<image source="content/gfx/objects/beach/rock04.png"/>
 	</object>
 </dataset>

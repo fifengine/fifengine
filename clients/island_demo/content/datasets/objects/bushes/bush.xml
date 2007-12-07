@@ -1,494 +1,494 @@
 <?xml version="1.0"?>
 <dataset id="Bushes" type="Embedded" format="1.0">
-	<object id="Bush:001">
+	<object id="Bush:001" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_001.png"/>
 	</object>
 
-	<object id="Bush:002">
+	<object id="Bush:002" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_002.png"/>
 	</object>
 	
-	<object id="Bush:003">
+	<object id="Bush:003" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_003.png"/>
 	</object>
 
-	<object id="Bush:004">
+	<object id="Bush:004" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_004.png"/>
 	</object>
 	
-	<object id="Bush:005">
+	<object id="Bush:005" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_005.png"/>
 	</object>
 
-	<object id="Bush:006">
+	<object id="Bush:006" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_006.png"/>
 	</object>
 	
-	<object id="Bush:007">
+	<object id="Bush:007" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_007.png"/>
 	</object>
 
-	<object id="Bush:008">
+	<object id="Bush:008" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_008.png"/>
 	</object>
 	
-	<object id="Bush:009">
+	<object id="Bush:009" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_009.png"/>
 	</object>
 
-	<object id="Bush:010">
+	<object id="Bush:010" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_010.png"/>
 	</object>
 
-	<object id="Bush:011">
+	<object id="Bush:011" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_011.png"/>
 	</object>
 
-	<object id="Bush:012">
+	<object id="Bush:012" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_012.png"/>
 	</object>
 
-	<object id="Bush:013">
+	<object id="Bush:013" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_013.png"/>
 	</object>
 
-	<object id="Bush:014">
+	<object id="Bush:014" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_014.png"/>
 	</object>
 
-	<object id="Bush:015">
+	<object id="Bush:015" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_015.png"/>
 	</object>
 
-	<object id="Bush:016">
+	<object id="Bush:016" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_016.png"/>
 	</object>
 
-	<object id="Bush:017">
+	<object id="Bush:017" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_017.png"/>
 	</object>
 
-	<object id="Bush:018">
+	<object id="Bush:018" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_018.png"/>
 	</object>
 
-	<object id="Bush:019">
+	<object id="Bush:019" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_019.png"/>
 	</object>
 
-	<object id="Bush:020">
+	<object id="Bush:020" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_020.png"/>
 	</object>
 
-	<object id="Bush:021">
+	<object id="Bush:021" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_021.png"/>
 	</object>
 
-	<object id="Bush:022">
+	<object id="Bush:022" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_022.png"/>
 	</object>
 
-	<object id="Bush:023">
+	<object id="Bush:023" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_023.png"/>
 	</object>
 
-	<object id="Bush:024">
+	<object id="Bush:024" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_024.png"/>
 	</object>
 
-	<object id="Bush:025">
+	<object id="Bush:025" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_025.png"/>
 	</object>
 
-	<object id="Bush:026">
+	<object id="Bush:026" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_026.png"/>
 	</object>
 
-	<object id="Bush:027">
+	<object id="Bush:027" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_027.png"/>
 	</object>
 
-	<object id="Bush:028">
+	<object id="Bush:028" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_028.png"/>
 	</object>
 
-	<object id="Bush:029">
+	<object id="Bush:029" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_029.png"/>
 	</object>
 
-	<object id="Bush:030">
+	<object id="Bush:030" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_030.png"/>
 	</object>
 
-	<object id="Bush:031">
+	<object id="Bush:031" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_031.png"/>
 	</object>
 	
-	<object id="Bush:032">
+	<object id="Bush:032" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_032.png"/>
 	</object>
 
-	<object id="Bush:033">
+	<object id="Bush:033" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_033.png"/>
 	</object>
 
-	<object id="Bush:034">
+	<object id="Bush:034" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_034.png"/>
 	</object>
 
-	<object id="Bush:035">
+	<object id="Bush:035" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_035.png"/>
 	</object>
 
-	<object id="Bush:036">
+	<object id="Bush:036" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_036.png"/>
 	</object>
 
-	<object id="Bush:037">
+	<object id="Bush:037" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_037.png"/>
 	</object>
 
-	<object id="Bush:038">
+	<object id="Bush:038" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_038.png"/>
 	</object>
 
-	<object id="Bush:039">
+	<object id="Bush:039" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_039.png"/>
 	</object>
 
-	<object id="Bush:040">
+	<object id="Bush:040" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_040.png"/>
 	</object>
 
-	<object id="Bush:041">
+	<object id="Bush:041" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_041.png"/>
 	</object>
 
-	<object id="Bush:042">
+	<object id="Bush:042" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_042.png"/>
 	</object>
 
-	<object id="Bush:043">
+	<object id="Bush:043" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_043.png"/>
 	</object>
 
-	<object id="Bush:044">
+	<object id="Bush:044" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_044.png"/>
 	</object>
 
-	<object id="Bush:045">
+	<object id="Bush:045" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_045.png"/>
 	</object>
 	
-	<object id="Bush:046">
+	<object id="Bush:046" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_046.png"/>
 	</object>
 
-	<object id="Bush:047">
+	<object id="Bush:047" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_047.png"/>
 	</object>
 
-	<object id="Bush:048">
+	<object id="Bush:048" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_048.png"/>
 	</object>
 
-	<object id="Bush:049">
+	<object id="Bush:049" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_049.png"/>
 	</object>
 
-	<object id="Bush:050">
+	<object id="Bush:050" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_050.png"/>
 	</object>
 
-	<object id="Bush:051">
+	<object id="Bush:051" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_051.png"/>
 	</object>
 
-	<object id="Bush:052">
+	<object id="Bush:052" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_052.png"/>
 	</object>
 
-	<object id="Bush:053">
+	<object id="Bush:053" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_053.png"/>
 	</object>
 
-	<object id="Bush:054">
+	<object id="Bush:054" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_054.png"/>
 	</object>
 
-	<object id="Bush:055">
+	<object id="Bush:055" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_055.png"/>
 	</object>
 
-	<object id="Bush:056">
+	<object id="Bush:056" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_056.png"/>
 	</object>
 
-	<object id="Bush:057">
+	<object id="Bush:057" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_057.png"/>
 	</object>
 
-	<object id="Bush:058">
+	<object id="Bush:058" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_058.png"/>
 	</object>
 
-	<object id="Bush:059">
+	<object id="Bush:059" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_059.png"/>
 	</object>
 
-	<object id="Bush:060">
+	<object id="Bush:060" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_060.png"/>
 	</object>
 
-	<object id="Bush:061">
+	<object id="Bush:061" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_061.png"/>
 	</object>
 
-	<object id="Bush:062">
+	<object id="Bush:062" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_062.png"/>
 	</object>
 
-	<object id="Bush:063">
+	<object id="Bush:063" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_063.png"/>
 	</object>
 
-	<object id="Bush:064">
+	<object id="Bush:064" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_064.png"/>
 	</object>
 
-	<object id="Bush:065">
+	<object id="Bush:065" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_065.png"/>
 	</object>
 
-	<object id="Bush:066">
+	<object id="Bush:066" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_066.png"/>
 	</object>
 
-	<object id="Bush:067">
+	<object id="Bush:067" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_067.png"/>
 	</object>
 
-	<object id="Bush:068">
+	<object id="Bush:068" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_068.png"/>
 	</object>
 
-	<object id="Bush:069">
+	<object id="Bush:069" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_069.png"/>
 	</object>
 
-	<object id="Bush:070">
+	<object id="Bush:070" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_070.png"/>
 	</object>
 
-	<object id="Bush:071">
+	<object id="Bush:071" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_071.png"/>
 	</object>
 
-	<object id="Bush:072">
+	<object id="Bush:072" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_072.png"/>
 	</object>
 
-	<object id="Bush:073">
+	<object id="Bush:073" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_073.png"/>
 	</object>
 
-	<object id="Bush:074">
+	<object id="Bush:074" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_074.png"/>
 	</object>
 
-	<object id="Bush:075">
+	<object id="Bush:075" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_075.png"/>
 	</object>
 	
-	<object id="Bush:076">
+	<object id="Bush:076" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_076.png"/>
 	</object>
 
-	<object id="Bush:077">
+	<object id="Bush:077" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_077.png"/>
 	</object>
 
-	<object id="Bush:078">
+	<object id="Bush:078" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_078.png"/>
 	</object>
 
-	<object id="Bush:079">
+	<object id="Bush:079" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_079.png"/>
 	</object>
 
-	<object id="Bush:080">
+	<object id="Bush:080" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_080.png"/>
 	</object>
 
-	<object id="Bush:081">
+	<object id="Bush:081" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_081.png"/>
 	</object>
 
-	<object id="Bush:082">
+	<object id="Bush:082" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_082.png"/>
 	</object>
 
-	<object id="Bush:083">
+	<object id="Bush:083" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_083.png"/>
 	</object>
 
-	<object id="Bush:084">
+	<object id="Bush:084" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_084.png"/>
 	</object>
 
-	<object id="Bush:085">
+	<object id="Bush:085" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_085.png"/>
 	</object>
 
-	<object id="Bush:086">
+	<object id="Bush:086" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_086.png"/>
 	</object>
 
-	<object id="Bush:087">
+	<object id="Bush:087" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_087.png"/>
 	</object>
 
-	<object id="Bush:088">
+	<object id="Bush:088" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_088.png"/>
 	</object>
 
-	<object id="Bush:089">
+	<object id="Bush:089" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_089.png"/>
 	</object>
 
-	<object id="Bush:090">
+	<object id="Bush:090" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_090.png"/>
 	</object>
 
-	<object id="Bush:091">
+	<object id="Bush:091" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_091.png"/>
 	</object>
 
-	<object id="Bush:092">
+	<object id="Bush:092" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_092.png"/>
 	</object>
 
-	<object id="Bush:093">
+	<object id="Bush:093" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_093.png"/>
 	</object>
 
-	<object id="Bush:094">
+	<object id="Bush:094" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_094.png"/>
 	</object>
 
-	<object id="Bush:095">
+	<object id="Bush:095" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_095.png"/>
 	</object>
 
-	<object id="Bush:096">
+	<object id="Bush:096" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_096.png"/>
 	</object>
 
-	<object id="Bush:097">
+	<object id="Bush:097" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_097.png"/>
 	</object>
 
-	<object id="Bush:098">
+	<object id="Bush:098" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_098.png"/>
 	</object>
 
-	<object id="Bush:099">
+	<object id="Bush:099" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_099.png"/>
 	</object>
 
-	<object id="Bush:100">
+	<object id="Bush:100" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_100.png"/>
 	</object>
 
-	<object id="Bush:101">
+	<object id="Bush:101" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_101.png"/>
 	</object>
 
-	<object id="Bush:102">
+	<object id="Bush:102" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_102.png"/>
 	</object>
 
-	<object id="Bush:103">
+	<object id="Bush:103" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_103.png"/>
 	</object>
 
-	<object id="Bush:104">
+	<object id="Bush:104" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_104.png"/>
 	</object>
 
-	<object id="Bush:105">
+	<object id="Bush:105" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_105.png"/>
 	</object>
 
-	<object id="Bush:106">
+	<object id="Bush:106" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_106.png"/>
 	</object>
 
-	<object id="Bush:107">
+	<object id="Bush:107" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_107.png"/>
 	</object>
 
-	<object id="Bush:108">
+	<object id="Bush:108" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_108.png"/>
 	</object>
 
-	<object id="Bush:109">
+	<object id="Bush:109" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_109.png"/>
 	</object>
 
-	<object id="Bush:110">
+	<object id="Bush:110" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_110.png"/>
 	</object>
 
-	<object id="Bush:111">
+	<object id="Bush:111" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_111.png"/>
 	</object>
 
-	<object id="Bush:112">
+	<object id="Bush:112" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_112.png"/>
 	</object>
 
-	<object id="Bush:113">
+	<object id="Bush:113" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_113.png"/>
 	</object>
 
-	<object id="Bush:114">
+	<object id="Bush:114" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_114.png"/>
 	</object>
 
-	<object id="Bush:115">
+	<object id="Bush:115" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_115.png"/>
 	</object>
 
-	<object id="Bush:116">
+	<object id="Bush:116" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_116.png"/>
 	</object>
 
-	<object id="Bush:117">
+	<object id="Bush:117" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_117.png"/>
 	</object>
 
-	<object id="Bush:118">
+	<object id="Bush:118" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_118.png"/>
 	</object>
 
-	<object id="Bush:119">
+	<object id="Bush:119" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_119.png"/>
 	</object>
 
-	<object id="Bush:120">
+	<object id="Bush:120" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_120.png"/>
 	</object>
 
-	<object id="Bush:121">
+	<object id="Bush:121" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_121.png"/>
 	</object>
 
-	<object id="Bush:122">
+	<object id="Bush:122" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_122.png"/>
 	</object>
 
-	<object id="Bush:123">
+	<object id="Bush:123" static="1" blocking="1">
 		<image source="content/gfx/objects/bushes/bush_123.png"/>
 	</object>
 </dataset>

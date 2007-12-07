@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <dataset id="Skull" type="Embedded" format="1.0">
-	<object id="Skull:001">
+	<object id="Skull:001" static="1" blocking="1">
 		<image source="content/gfx/objects/beach/skull01.png"/>
 	</object>
 
-	<object id="Skull:002">
+	<object id="Skull:002" static="1" blocking="1">
 		<image source="content/gfx/objects/beach/skull02.png"/>
 	</object>
 
-	<object id="Skull:003">
+	<object id="Skull:003" static="1" blocking="1">
 		<image source="content/gfx/objects/beach/skull03.png"/>
 	</object>
 </dataset>
