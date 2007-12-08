@@ -25,9 +25,7 @@
 
 namespace FIFE {
 
-	namespace audio {
-		class Manager;
-	}
+	class SoundManager;
 	class EventManager;
 	class TimeManager;
 	class GUIManager;
@@ -81,7 +79,7 @@ namespace FIFE {
 		EngineSettings& getSettings();
 		void init() throw(FIFE::NotSet);
 
-		AudioManager* getAudioManager();
+		SoundManager* getSoundManager();
 		EventManager* getEventManager();
 		TimeManager* getTimeManager();
 		GUIManager* getGuiManager();

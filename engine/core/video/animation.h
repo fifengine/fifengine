@@ -125,11 +125,6 @@ namespace FIFE {
 		 */
 		int getDuration() { return m_animation_endtime; }
 
-		void addRef() { m_refcount++; };
-		void decRef() { m_refcount--; };
-		unsigned int getRefCount() { return m_refcount; };
-
-
 	private:
 		/** Contains information about one animation frame (duration + frame index + frame pointer)
 		 */
@@ -151,14 +146,10 @@ namespace FIFE {
 		int m_action_frame;
 		// time when animation ends (zero based)
 		int m_animation_endtime;
-		// Reference count of this animation
-		unsigned int m_refcount;
 		// Direction for this animation
 		unsigned int m_direction;
 
 	};
-
-
 }
 
 #endif

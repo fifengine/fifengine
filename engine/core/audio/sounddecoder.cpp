@@ -21,6 +21,8 @@
 
 // Standard C++ library includes
 
+// Platform specific includes
+
 // 3rd party library includes
 
 // FIFE includes
@@ -29,26 +31,30 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
+#include "util/logger.h"
+#include "util/exception.h"
 
-#include "decoder.h"
-#include "decoder_acm.h"
-#include "decoder_oggvorbis.h"
+#include "sounddecoder_wav.h"
+#include "sounddecoder_ogg.h"
 
 namespace FIFE {
+	static Logger _log(LM_AUDIO);
 
-	Decoder* Decoder::create(const std::string &filename) {
+	SoundDecoder* SoundDecoder::create(const std::string& filename) {
 		RawDataPtr rdptr(VFS::instance()->open(filename));
-// 		if (!rdptr) { return 0; }
 		
-		if (OggVorbisDecoder::isOggVorbisFile(rdptr)) {
-			return new OggVorbisDecoder(rdptr);
+		SoundDecoder* ptr;
+		if (filename.find(".wav") != std::string::npos) {
+			ptr = new SoundDecoderWav(rdptr);
+			
+		} else if(filename.find(".ogg") != std::string::npos) {
+			ptr = new SoundDecoderOgg(rdptr);
+			
+		} else {
+			FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << filename << "\"!");
+			throw Exception("No appropriate audio-decoder available");
 		}
 		
-		if (ACMDecoder::isACMFile(rdptr)) {
-			return new ACMDecoder(rdptr, filename);
-		}
-		
-		return 0;
-	}
-	
+		return ptr;
+	}	
 }

@@ -42,9 +42,7 @@ namespace gcn {
 
 namespace FIFE {
 
-	namespace audio {
-		class Manager;
-	}
+	class SoundManager;
 	class RenderBackend;
 	class GUIManager;
 	class VFS;
@@ -83,7 +81,7 @@ namespace FIFE {
 		 */
 		void pump();
 
-		AudioManager* getAudioManager() { return m_audiomanager; }
+		SoundManager* getSoundManager() { return m_soundmanager; }
 		EventManager* getEventManager() { return m_eventmanager; }
 		TimeManager* getTimeManager() { return m_timemanager; }
 		GUIManager* getGuiManager() { return m_guimanager; }
@@ -101,7 +99,7 @@ namespace FIFE {
 		RenderBackend* m_renderbackend;
 		GUIManager* m_guimanager;
 		EventManager* m_eventmanager;
-		AudioManager* m_audiomanager;
+		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
 		ImagePool* m_imagepool;
 		AnimationPool* m_animpool;

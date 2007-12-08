@@ -343,10 +343,14 @@ class World(object):
 
 	def create_background_music(self):
 		# set up the audio engine
-		self.audiomanager = self.engine.getAudioManager()
+		self.soundmanager = self.engine.getSoundManager()
+		self.soundmanager.init()
 
 		# play track as background music
-		self.audiomanager.setAmbientSound('content/audio/music/lagerhalle5.ogg')
+		emitter = self.soundmanager.createEmitter()
+		emitter.load('content/audio/music/lagerhalle5.ogg')
+		emitter.setLooping(True)
+		emitter.play()
 			
 	def run(self):
 		camloc = fife.Location()

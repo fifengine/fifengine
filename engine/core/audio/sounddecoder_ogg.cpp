@@ -21,6 +21,8 @@
 
 // Standard C++ library includes
 
+// Platform specific includes
+
 // 3rd party library includes
 
 // FIFE includes
@@ -28,14 +30,16 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/logger.h"
+#include "util/exception.h"
 
-#include "decoder_oggvorbis.h"
+#include "sounddecoder_ogg.h"
 
 namespace FIFE {
-
 	static Logger _log(LM_AUDIO);
-
-	namespace OGG_detail {
+	
+	/* OggVorbis Callback functions
+	 */
+	namespace OGG_cb {
 		static size_t read(void *ptr, size_t size, size_t nmemb, void *datasource) {
 			RawDataPtr rdp = *(reinterpret_cast<RawDataPtr *>(datasource));
 			size_t restlen = rdp->getDataLength()-rdp->getCurrentIndex();
@@ -51,16 +55,13 @@ namespace FIFE {
 			switch (whence) {
 				case SEEK_SET:
 					(*rdp).setIndex(offset);
-					break;
+					return 0;
 				case SEEK_CUR:
 					(*rdp).moveIndex(offset);
-					break;
+					return 0;
 				case SEEK_END:
-					FL_DBG(_log, LMsg("decoder_ogg") << "Seek_END: " << offset);
 					(*rdp).setIndex( (*rdp).getDataLength() -1 + offset);
-					break;
-				default:
-					FL_ERR(_log, "decoder_ogg, Error in seek_ogg");
+					return 0;
 			}
 			return -1;
 		}
@@ -73,82 +74,61 @@ namespace FIFE {
 		}
 	}
 
-	bool OggVorbisDecoder::isOggVorbisFile(RawDataPtr rdp) {
-		ov_callbacks ocb = { 
-			OGG_detail::read, OGG_detail::seek, 
-			OGG_detail::close, OGG_detail::tell
-		};
-		OggVorbis_File ovf;
-		if (0 == ov_test_callbacks(&rdp, &ovf, 0, 0, ocb)) {
-			rdp->setIndex(0);
-			ov_clear(&ovf);
-			return true;
-		}
-		rdp->setIndex(0);
-		return false;
-	}
-
-	OggVorbisDecoder::OggVorbisDecoder(RawDataPtr rdp) : 
-		Decoder(), m_file(rdp), m_ovf(), m_data(0), m_datasize(0) {
-		// FIXME: throw exceptions?
+	SoundDecoderOgg::SoundDecoderOgg(RawDataPtr rdp) : m_file(rdp) {
+							
 		ov_callbacks ocb = {
-			OGG_detail::read, OGG_detail::seek, OGG_detail::close, OGG_detail::tell
+			OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell
 		};
+		
 		if (0 > ov_open_callbacks(&m_file, &m_ovf, 0, 0, ocb)) {
-			FL_ERR(_log, "decoder_ogg, Error opening OggVorbis file");
-			return;
+			throw InvalidFormat("Error opening OggVorbis file");
 		}
+		
 		
 		vorbis_info *vi = ov_info(&m_ovf, -1);
 		if (!vi) {
-			FL_ERR(_log, "decoder_ogg, Error fetching oggvorbis info");
-			return;
+			throw InvalidFormat("Error fetching OggVorbis info");
+		}
+		
+		if (!ov_seekable(&m_ovf)) {
+			throw InvalidFormat("OggVorbis file has to be seekable");
 		}
 		
 		m_isstereo = vi->channels == 2;
 		m_samplerate = vi->rate;
+		m_is8bit = false;
+		m_declength = (m_isstereo ? 2 : 1) * 2 * ov_pcm_total(&m_ovf, -1);
+		m_datasize = 0;
+		m_data = NULL;
 	}
 	
-	bool OggVorbisDecoder::decodeHelper(uint32_t len, int& stream, int& ret) {
-		delete[] m_data;
-		m_data = new int8_t[len];
+	bool SoundDecoderOgg::decode(unsigned long length) {
+		int stream = 0;
+		int ret = 0;
+		
+		// release buffer and allocate new memory
+		releaseBuffer();
+		m_data = new char[length];
+		
+		// decode the stream
 		m_datasize = 0;
 		do {
-			ret = ov_read(&m_ovf, reinterpret_cast<char *>(&m_data[m_datasize]), 
-			              len-m_datasize, 0, 2, 1, &stream);
+			ret = ov_read(&m_ovf, m_data + m_datasize, 
+			              length-m_datasize, 0, 2, 1, &stream);            
 			if (ret > 0) {
 				m_datasize += ret;
 			}
-		} while (len-m_datasize > 0 && ret > 0);
-		return (len-m_datasize == 0 && ret != 0);
+			
+		} while (length-m_datasize > 0 && ret > 0);
+		
+		return m_datasize == 0;
 	}
 	
-	bool OggVorbisDecoder::decodeAll() {
-		int stream = 0, ret;
-
-		if (decodeHelper(guessedLength(), stream, ret)) {
-			// If the loop ended because with a nonzero ret
-			char buf;
-			if (0 < ov_read(&m_ovf, &buf, 1, 0, 2, 1, &stream)) {
-				FL_WARN(_log, LMsg("decoder_ogg, We guessed the wrong ") <<
-					"length of the decoded OggVorbis stream. Please report to the FIFE team!");
-			} else {
-				ret = 0;
-			}
+	bool SoundDecoderOgg::setCursor(unsigned long pos) {
+		
+		if (ov_pcm_seek(&m_ovf, pos / ((m_isstereo ? 2 : 1) * 2)) == 0) {
+			return true;
 		}
-
-		return ret == 0;
+		return false;
 	}
-
-	uint32_t OggVorbisDecoder::decodePart(uint32_t len) {
-		int stream = 0, ret;
-		
-		decodeHelper(len, stream, ret); // ignore return value
-		
-		return m_datasize;
-	}
-
-	uint32_t OggVorbisDecoder::guessedLength() { 
-		return ov_pcm_total(&m_ovf, -1) * 4;
-	}
-} // FIFE
+}

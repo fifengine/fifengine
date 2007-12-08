@@ -50,4 +50,10 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+#ifdef LOG_ENABLED
+#define CHECK_OPENAL_LOG(logger, msg) if (AL_NO_ERROR != alGetError()) { logger.log(LogManager::LEVEL_ERROR, msg);}
+#endif
+
+#define CHECK_OPENAL_EXCEPTION(msg) if (AL_NO_ERROR != alGetError()) { throw Exception(msg); }
+
 #endif

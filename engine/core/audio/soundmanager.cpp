@@ -20,119 +20,90 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <cstdio>
+
+// Platform specific includes
 
 // 3rd party library includes
-#include <vorbisfile.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
+#include "vfs/raw/rawdata.h"
+#include "vfs/vfs.h"
 #include "util/logger.h"
+#include "util/exception.h"
 
-#include "config.h"
-#include "decoder.h"
-#include "audiomanager.h"
+#include "audio/fife_openal.h"
 
-/* Changelog:
- * -Try to use Log more often
- * 
- * ToDo:
- * -Remove the exception from the constructor. IIRC stro doesn't like them
- */
+#include "soundmanager.h"
+#include "soundemitter.h"
+#include "soundclippool.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	typedef ::boost::shared_ptr<Decoder> type_decptr;
-
-	void AudioManager::setAmbientSound(const std::string &name) {
-		if (m_sound_disabled) {
-			return;
-		}
-
-		// Turn the background music off
-		if (name == "") {
-			delete m_bgsound;
-			m_bgsound = 0;
-			return;
-		}
-		
-		if (!m_bgsound) {
-			m_bgsound = new Source();
-			m_bgsound->setPosition(0.0, 0.0);
-			m_bgsound->playLoop();
-		}
-
-		try {
-			m_bgsound->loadFile(name);
-		} catch( NotFound& ) {
-			FL_WARN(_log, LMsg("Ambient music file ") << name << " not found.");
-			delete m_bgsound;
-			m_bgsound = 0;
-			return; // NOTE It might be cleaner to re-throw the exception here.
-		}
-		m_bgsound->enable();
+	SoundManager::SoundManager() : m_context(0),
+				       m_device(0),
+				       m_mutevol(0),
+							 m_volume(1.0) {
+		// add provider to the pool
+		m_pool.addResourceProvider(new SoundClipProvider());
 	}
 
-	type_bufptr AudioManager::getBufferFromFile(const std::string &name) {
-		// Check if we have a buffer with this file already
-		type_bufvec::const_iterator end = m_bufvec.end();
-		for (type_bufvec::iterator i = m_bufvec.begin(); i != end; ++i) {
-			type_bufptr locked = i->lock();
-			if (locked) {
-				if (locked->m_name == name) {
-					if (locked->isStreaming()) // We cannot reuse a streaming Buffer
-						continue;
-					return locked;
-				}
-			} else {
-				m_bufvec.erase(i);
+	SoundManager::~SoundManager() {
+		
+		// free all soundemitters
+		std::vector<SoundEmitter*>::iterator it;
+		for (it = m_emittervec.begin(); it != m_emittervec.end(); ++it) {
+			if ((*it) != NULL) {
+				delete (*it);
 			}
 		}
-
-		// The file is either not reusable or not in memory. We have to create a
-		// new Buffer.
-		type_decptr ad(Decoder::create(name));
-		if (!ad) {
-			FL_WARN(_log, LMsg("Unknown music format: ") << name);
-			return type_bufptr();
-		}
-
-		type_bufptr asp;
-		asp.reset(Buffer::create(name, ad));
-
-		m_bufvec.push_back(::boost::weak_ptr<Buffer>(asp));
-
-		return asp;
+		
+		m_emittervec.clear();
+		alcDestroyContext(m_context);
+		alcCloseDevice(m_device);
 	}
 
-	float AudioManager::m_savedvolume = 1.0;
+	void SoundManager::init() {
+		m_device = alcOpenDevice(NULL);
 
-	AudioManager::AudioManager() : m_sound_disabled(false), m_bgsound(0), 
-	                     m_context(NULL), m_device(alcOpenDevice(NULL)) {
 		if (!m_device) {
-			FL_ERR(_log, "could not open audio device - disabling sound!");
-			m_sound_disabled = true;
-			return;
+			throw Exception("could not open audio device!");
 		}
-
+		
 		m_context = alcCreateContext(m_device, NULL);
-
 		if (alcGetError(m_device) != ALC_NO_ERROR || !m_context) {
-			// Error
 			throw Exception("Couldn't create audio context");
 		}
-
 		alcMakeContextCurrent(m_context);
-
 		if (alcGetError(m_device) != ALC_NO_ERROR) {
-			// Error
 			throw Exception("Couldn't change current audio context");
 		}
 
-		changeListenerOrientation(1.0, 0.0);
+		// set listener position
+		alListener3f(AL_POSITION, 0.0, 0.0, 0.0);
+		ALfloat vec1[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+		alListenerfv(AL_ORIENTATION, vec1);
+
+		// set volume
+		alListenerf(AL_GAIN, m_volume);
+	}
+
+	SoundEmitter* SoundManager::getEmitter(unsigned int emitterid) {
+		return m_emittervec.at(emitterid);
+	}
+
+	SoundEmitter* SoundManager::createEmitter() {
+		SoundEmitter* ptr = new SoundEmitter(m_emittervec.size()-1);
+		m_emittervec.push_back(ptr);
+		return ptr;
+	}
+
+	void SoundManager::releaseEmitter(unsigned int emitterid) {
+		SoundEmitter** ptr = &m_emittervec.at(emitterid);
+		delete *ptr;
+		*ptr = NULL;
 	}
 } //FIFE

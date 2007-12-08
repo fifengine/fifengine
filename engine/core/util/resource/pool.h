@@ -94,10 +94,23 @@ namespace FIFE {
 		 */
 		virtual int addResourceFromFile(const std::string& filename);
 
-
 		/** Gets resource from pool with given index
+		 * 
+		 * @param inc Specifies weither this call will increase the ref counter
 		 */
-		virtual IPooledResource& get(unsigned int index);
+		virtual IPooledResource& get(unsigned int index, bool inc = false);
+		
+		/** Gets resource index from pool with given filename
+		 * The resource will be created if it is not in the pool
+		 */
+		virtual unsigned int getIndex(const std::string& filename);
+
+		/** Removes the resource from pool if reference counter is null
+		 * 
+		 * @param dec Specifies weither the ref counter will be decreased
+		 * before checking
+		 */
+		virtual void release(unsigned int index, bool dec = false);
 
 		/** Gets amount of resources in the pool with given status
 		 */

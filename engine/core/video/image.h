@@ -106,10 +106,6 @@ namespace FIFE {
 			 */
 			virtual void setAlphaOptimizerEnabled(bool) {};
 
-			void addRef() { m_refcount++; };
-			void decRef() { m_refcount--; };
-			unsigned int getRefCount() { return m_refcount; };
-
 		protected:
 			// The SDL Surface used.
 			SDL_Surface* m_surface;
@@ -117,8 +113,6 @@ namespace FIFE {
 			int m_xshift;
 			// The Y shift of the Image
 			int m_yshift;
-			// Reference count of this image, used e.g. by animations
-			unsigned int m_refcount;
 	};
 
 }

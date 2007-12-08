@@ -23,6 +23,7 @@
 #define FIFE_POOLED_RESOURE_H
 
 // Standard C++ library includes
+#include <assert.h>
 
 // 3rd party library includes
 
@@ -34,7 +35,9 @@
 namespace FIFE {
 	class IPooledResource {
 	public:
-		virtual ~IPooledResource() {};
+		IPooledResource() : m_refcount(0) {};
+
+		virtual ~IPooledResource() { assert(m_refcount == 0); };
 
 		/** Calling this method marks resource be used by some resource client.
 		 *  It adds one to resource counter that is kept up by the resource itself.
@@ -42,17 +45,19 @@ namespace FIFE {
 		 *  reference counter is inspected. In case value is non-zero, resource 
 		 *  shouldn't be deleted.
 		 */
-		virtual void addRef() = 0;
+		virtual void addRef() { m_refcount++; };
 
 		/** Calling this method unmarks resource be used by a resource client.
 		 *  @see addRef
 		 */
-		virtual void decRef() = 0;
+		virtual void decRef() { m_refcount--; };
 
 		/** Gets the current reference count
 		 *  @see addRef
 		 */
-		virtual unsigned int getRefCount() = 0;
+		virtual unsigned int getRefCount() { return m_refcount; };
+	protected:
+		unsigned int m_refcount;
 	};
 }
 

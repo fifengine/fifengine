@@ -34,7 +34,7 @@
 #include "util/logger.h"
 #include "util/logger.h"
 #include "util/time/timemanager.h"
-#include "audio/audiomanager.h"
+#include "audio/soundmanager.h"
 #include "gui/console/console.h"
 #include "gui/guimanager.h"
 #include "vfs/vfs.h"
@@ -87,7 +87,7 @@ namespace FIFE {
 		m_renderbackend(0),
 		m_guimanager(0),
 		m_eventmanager(0),
-		m_audiomanager(0),
+		m_soundmanager(0),
 		m_timemanager(0),
 		m_imagepool(0),
 		m_animpool(0),
@@ -217,9 +217,9 @@ namespace FIFE {
 		FL_LOG(_log, "GUI manager initialized");
 		SDL_EnableUNICODE(1);
 		
-		FL_LOG(_log, "Creating audio manager");
-		m_audiomanager = new AudioManager();
-		m_audiomanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
+		FL_LOG(_log, "Creating sound manager");
+		m_soundmanager = new SoundManager();
+		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
 		FL_LOG(_log, "Creating model");
 		m_model = new Model();
@@ -241,7 +241,7 @@ namespace FIFE {
 		FL_LOG(_log, "Destructing engine");
 		delete m_view;
 		delete m_model;
-		delete m_audiomanager;
+		delete m_soundmanager;
 		delete m_guimanager;
 		delete m_gui_graphics;
 

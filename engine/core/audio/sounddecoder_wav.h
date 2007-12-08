@@ -19,7 +19,12 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_SOUNDDECODER_WAV_H
+#define FIFE_SOUNDDECODER_WAV_H
+
 // Standard C++ library includes
+
+// Platform specific includes
 
 // 3rd party library includes
 
@@ -27,75 +32,73 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/time/timemanager.h"
-#include "util/logger.h"
+#include "vfs/raw/rawdata.h"
 
-#include "audiomanager.h"
-#include "source.h"
+#include "sounddecoder.h"
 
-namespace FIFE { 
-	static Logger _log(LM_AUDIO);
-
-	Source::Source() : m_source(0), m_bufferp() { 
-		TimeManager::instance()->registerEvent(this);
-		setPeriod(-1);
-		alGenSources(1, &m_source); 
-	}
+namespace FIFE {
 	
-	Source::~Source() {
-		setPeriod(-1);
-		TimeManager::instance()->unregisterEvent(this);
-	
-		disable();
+	/* The SoundDecoder class for wav-files
+	 * Most of the code is from the Allacrost Audio Engine
+	 */
+	class SoundDecoderWav : public SoundDecoder {
+	public:
 		
-		// Release all buffers
-		alSourcei(m_source, AL_BUFFER, AL_NONE);
+		SoundDecoderWav(RawDataPtr file);
 		
-		alDeleteSources(1, &m_source);
-	}
-	
-	void Source::enable() {
-		if (m_bufferp->isStreaming()) {
-			FL_DBG(_log, "Streaming is experimental for now");
-			setPeriod(5000);
-
-			// Queuing the first buffers
-			for (int i = 0; i < m_bufferp->countBuffers(); ++i) {
-				ALuint buf = m_bufferp->acquireBuffer();
-				alSourceQueueBuffers(m_source, 1, &buf);
-			}
-
-			if (AL_NO_ERROR != alGetError()) {
-				FL_WARN(_log, "Couldn't queue buffers");
-				return;
-			}
-		} else {
-			alSourcei(m_source, AL_BUFFER, m_bufferp->acquireBuffer());
+		~SoundDecoderWav() {
+			releaseBuffer();
 		}
-		alSourcePlay(m_source); 
-	}
-	
-	bool Source::loadFile(const std::string &name) {
-		disable();
-		m_bufferp = AudioManager::instance()->getBufferFromFile(name);
-		return m_bufferp;	
-	}
-	
-	void Source::updateEvent(unsigned long time) {
-		ALint procs;
-		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &procs);
-		if (procs > m_bufsdone) {
-			ALuint buf = m_bufferp->releaseBuffer();
-			ALuint buf2;
-			alSourceUnqueueBuffers(m_source, 1, &buf2);
-			m_bufferp->fillBuffer();
-			buf = m_bufferp->acquireBuffer();
-			alSourceQueueBuffers(m_source, 1, &buf);
-			if (m_bufferp->isEOF()) {
-				setPeriod(-1);
-			}
-		} else {
-			m_bufsdone = procs;
+		
+		/** Returns the decoded length of the file in bytes
+		 */
+		unsigned long getDecodedLength() {
+			return m_declength;
 		}
-	}
-} //FIFE
+		
+		/** Sets the current position in the file (in bytes)
+		 *
+		 * @return 0 (False), if the positioning was successful
+		 */
+		bool setCursor(unsigned long pos);
+		
+		/** Request the decoding of the next part of the stream.
+		 *
+		 * @param length The length of the decoded part
+		 * @return 0 (False), if decoding was successful
+		 */
+		bool decode(unsigned long length);
+		
+		/** Returns the next decoded buffer.
+		 *
+		 * The length of the buffer is returned by getBufferSize().
+		 */
+		void *getBuffer() {
+			return m_data;
+		}
+		
+		/** Returns the byte-size of the buffer returned by getBuffer().
+		 */
+		unsigned long getBufferSize() {
+			return m_datasize;
+		}
+		
+		/** Releases the buffer returned by getBuffer()
+		 */
+		void releaseBuffer() {
+			if (m_data != NULL) {
+				delete[] m_data;
+				m_data = NULL;
+			}
+		}
+		
+	private:
+		unsigned long	m_beginning;
+		unsigned long	m_declength;
+		unsigned long	m_datasize;
+		char*					m_data;
+		RawDataPtr		m_file;
+	};
+}
+	
+#endif

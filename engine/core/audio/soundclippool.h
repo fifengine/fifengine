@@ -18,11 +18,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
-
-#ifndef FIFE_AUDIO_CONFIG_H
-#define FIFE_AUDIO_CONFIG_H
+ 
+#ifndef FIFE_SOUNDCLIPPOOL_H_
+#define FIFE_SOUNDCLIPPOOL_H_
 
 // Standard C++ library includes
+
+// Platform specific includes
 
 // 3rd party library includes
 
@@ -30,19 +32,38 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/resource/pool.h"
+
+#include "soundclip.h"
 
 namespace FIFE {
-
-	// The max. length of a decoded audio data 
-	// for which streaming is not used.
-	const unsigned int MAX_KEEP_IN_MEM = 1 << 21; 
 	
-	// The number of buffers used for streaming.
-	const short BUFFER_NUM = 3;
+	/** SoundProvider-class (creates SoundClip/decoder from location)
+	 */
+	class SoundClipProvider : public IResourceProvider {
+	public:
+		IPooledResource* createResource(const ResourceLocation& location) {
+			return new SoundClip(SoundDecoder::create(location.getFilename()));
+		}
+	};
 	
-	// The length of one buffer.
-	const unsigned int BUFFER_LEN = 1 << 20;
-
+	/**  Pool for holding sound clips
+	 */
+	class SoundClipPool: public Pool {
+	public:
+		/** Default constructor.
+		 */
+		SoundClipPool(): Pool() {
+		}
+	
+		/** Destructor.
+		 */
+	   virtual ~SoundClipPool() {}
+	
+		SoundClip& getSoundClip(unsigned int index)  {
+			return dynamic_cast<SoundClip&>(get(index));
+		}
+	};
 }
 
 #endif

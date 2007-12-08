@@ -19,58 +19,45 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_AUDIO_DECODER_ACM_H
-#define FIFE_AUDIO_DECODER_ACM_H
-
-// Standard C++ library includes
-#include <string>
-
-// 3rd party library includes
-#include <boost/shared_ptr.hpp>
-
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "vfs/raw/rawdata.h"
-
-#include "decoder.h"
+%module soundemitter
+%{
+#include "audio/soundemitter.h"
+%}
 
 namespace FIFE {
-	
-	namespace ACM_detail {
-		class Unpacker;
-	}
 
-	typedef ::boost::shared_ptr<RawData> RawDataPtr;
+	enum SoundPositionType {
+		SD_SAMPLE_POS,
+		SD_TIME_POS,
+		SD_BYTE_POS
+	};
 	
-	/** The decoder class for the Fallout own audio format ACM.
-	 * 
-	 * This is just a wrapper class for the actual decoding code in 
-	 * ACM_detail::Unpacker (in audiodecoder_acm.cpp). .
-	 */
-	class ACMDecoder : public Decoder {
-		public:
-			ACMDecoder(RawDataPtr, const std::string& name="");
-			~ACMDecoder();
-
-			bool decodeAll();
-			uint32_t decodePart(uint32_t);
-			void *getBuffer() { return m_data; }
-			uint32_t getBufferSize() { return m_datasize; }
-			
-			static bool isACMFile(RawDataPtr);
-			
-		protected:
-			uint32_t guessedLength();
-			
-		private:
-			static bool decideChannels(const std::string &);
+	class SoundEmitter {
+	public:
+		SoundEmitter(unsigned int uid);
+		~SoundEmitter();
 		
-			ACM_detail::Unpacker *m_acm;
-			uint8_t *m_data;
-			uint32_t m_datasize, m_gsize;	
+		unsigned int getID();
+		
+		bool load(const std::string &filename);
+		void reset(bool defaultall = false);
+		
+		void play();
+		void pause();
+		void stop();
+		
+		void setLooping(bool loop);
+		void setPositioning(bool relative);
+		void setPosition(float x, float y, float z);
+		void setVelocity(float x, float y, float z);
+		void setGain(float gain);
+		float getGain();
+		
+		bool isStereo();
+		short getBitResolution();
+		unsigned long getSampleRate();
+		
+		void setCursor(SoundPositionType type, float value);
+		float getCursor(SoundPositionType type);
 	};
 }
-
-#endif

@@ -36,12 +36,11 @@ namespace FIFE {
 	Image::Image(SDL_Surface* surface):
 		m_surface(surface),
 		m_xshift(0), 
-		m_yshift(0),
-		m_refcount(0) {}
+		m_yshift(0) {}
 
 
 	Image::~Image() {
-		assert(m_refcount == 0);
+		//assert(m_refcount == 0);
 		if( m_surface ) {
 			SDL_FreeSurface(m_surface);
 		}

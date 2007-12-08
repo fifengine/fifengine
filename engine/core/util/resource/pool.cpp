@@ -91,7 +91,7 @@ namespace FIFE {
 		return addResourceFromLocation(ResourceLocation(filename));
 	}
 
-	IPooledResource& Pool::get(unsigned int index) {
+	IPooledResource& Pool::get(unsigned int index, bool inc) {
 		if (index >= m_entries.size()) {
 			FL_ERR(_log, LMsg("Tried to get with index ") << index << ", only " << m_entries.size() << " items in pool");
 			throw IndexOverflow( __FUNCTION__ );
@@ -120,7 +120,46 @@ namespace FIFE {
 			}
 			res = entry->resource;
 		}
+		if (inc) {
+			res->addRef();
+		}
 		return *res;
+	}
+	
+	unsigned int Pool::getIndex(const std::string& filename) {
+		std::vector<PoolEntry*>::iterator it = m_entries.begin();
+		int index = 0;
+		
+		// look for the appropriate entry
+		for (; it != m_entries.end(); it++) {
+			
+				if ((*it)->location->getFilename() == filename) {
+					return index;
+				}
+			index++;
+		}
+		
+		// create resource
+		return addResourceFromFile(filename);
+	}
+
+	void Pool::release(unsigned int index, bool dec) {
+		if (index >= m_entries.size()) {
+			throw IndexOverflow( __FUNCTION__ );
+		}
+
+		IPooledResource* res = NULL;
+		PoolEntry* entry = m_entries[index];
+		if (entry->resource) {
+			res = entry->resource;
+			if (dec) {
+				res->decRef();
+			}
+			if(res->getRefCount() == 0) {
+				delete entry->resource;
+				entry->resource = 0;
+			}
+		}
 	}
 
 	int Pool::getResourceCount(int status) {
@@ -165,7 +204,8 @@ namespace FIFE {
 		for(; it != end; ++it) {
 			try {
 				entry.resource = (*it)->createResource(*entry.location);
-			} catch (...) {
+			} catch (Exception e) {
+				FL_ERR(_log, e.getMessage());
 				continue;
 			}
 
