@@ -2,10 +2,10 @@
 <map id="OfficialMap" format="1.0">
 
 	<metadata>
-		<param type="text" name="Name">official_map.xml</param>
+		<param type="text" name="Name">new_official_map.xml</param>
 		<param type="id" name="Version">1</param>
-		<param type="text" name="Comment">Official FIFE 2007.1 example map. Some testing fun for modders, not more, not less :-)</param>
-		<param type="text" name="Author">barra</param>
+		<param type="text" name="Comment">Official FIFE 2007.3 example map.</param>
+		<param type="text" name="Author">FIFE team</param>
 		<param type="id" name="_START_ELEVATION">1</param>
 	</metadata>
 
@@ -50,7 +50,7 @@
 		</metadata>
 
 		<!-- TILE LAYER -->
-		<layer id="TechdemoMapTileLayer" grid_type="square" scaling="1.0">
+		<layer id="TechdemoMapTileLayer" grid_type="square" x_scale="1.0" y_scale="1.0">
 
 			<instances>
 				<i o="15201" x="0" y="0" /><i o="15201" /><i o="15201" /><i o="15201" /><i o="15201" />
@@ -206,7 +206,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="TechdemoMapObjectLayer" grid_type="square" x_scale="0.25" y_scale="0.25" x_offset="0.8" y_offset="-1.6">
+		<layer id="TechdemoMapObjectLayer" grid_type="square" x_scale="0.25" y_scale_="0.25" x_offset="3" y_offset="-6">
 
 			<instances>
 				<i o="Beach_ball:001" x="76" y="41" />

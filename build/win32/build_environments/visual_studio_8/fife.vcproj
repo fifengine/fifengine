@@ -89,20 +89,21 @@
 	<Files>
 		<Filter Name="core">
 			<Filter Name="audio">
-				<File RelativePath="..\..\..\..\engine\core\audio\audiomanager.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\audiomanager.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\buffer.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\buffer.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\config.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\decoder.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\decoder.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\decoder_acm.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\decoder_acm.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\decoder_oggvorbis.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\decoder_oggvorbis.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\audio\fife_openal.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\source.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\source.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\soundclip.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\soundclip.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\soundclippool.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\soundconfig.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder_ogg.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder_ogg.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder_wav.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder_wav.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\soundemitter.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\soundemitter.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\soundmanager.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\audio\soundmanager.h"></File>
 			</Filter>
 			<Filter Name="controller">
 				<File RelativePath="..\..\..\..\engine\core\controller\engine.cpp"></File>

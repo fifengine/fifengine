@@ -59,73 +59,79 @@
 			<Add option="-O3" />
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="..\..\..\..\engine\core\audio\audiomanager.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\audiomanager.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\..\engine\core\audio\buffer.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\buffer.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\config.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\..\engine\core\audio\decoder.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\decoder.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\..\engine\core\audio\decoder_acm.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\decoder_acm.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\..\engine\core\audio\decoder_oggvorbis.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\decoder_oggvorbis.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\engine\core\audio\fife_openal.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\..\engine\core\audio\source.cpp">
+		<Unit filename="..\..\..\..\engine\core\audio\soundclip.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\source.h">
+		<Unit filename="..\..\..\engine\core\audio\soundclip.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\soundclippool.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\soundconfig.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\sounddecoder.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\sounddecoder.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\sounddecoder_ogg.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\sounddecoder_ogg.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\sounddecoder_wav.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\sounddecoder_wav.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\soundemitter.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\soundemitter.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\..\engine\core\audio\soundmanager.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\audio\soundmanager.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>
