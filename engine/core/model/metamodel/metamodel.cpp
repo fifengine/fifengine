@@ -51,7 +51,7 @@ namespace FIFE {
 		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
 			if(identifier == (*it)->Id())
-				throw NameClash("Dataset identifer " + identifier + " has multiple occurances in Metamodel.");
+				throw NameClash(identifier);
 		}
 
 		Dataset* dataset = new Dataset(identifier);

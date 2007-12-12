@@ -53,7 +53,7 @@ namespace FIFE {
 		std::vector<Map*>::const_iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
 			if(identifier == (*it)->Id())
-				throw NameClash("Map identifer " + identifier + " has multiple occurances in Model.");
+				throw NameClash(identifier);
 		}
 
 		Map* map = new Map(identifier);

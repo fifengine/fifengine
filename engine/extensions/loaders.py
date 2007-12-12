@@ -3,6 +3,8 @@ from xml.sax import saxutils, handler
 
 import fife
 
+import sys
+
 class ModelLoader(handler.ContentHandler):
 
 	def __init__(self, engine, source, state = 0, datastate = 0):
@@ -47,7 +49,13 @@ class ModelLoader(handler.ContentHandler):
 
 				assert id, "Map declared without an identifier."
 
-				self.map = self.model.createMap(str(id))
+				try:
+					self.map = self.model.createMap(str(id))
+				except fife.Exception, e: # NameClash appears as general fife.Exception; any ideas?
+					print e.getMessage()
+					print str(id) + ' already exists... ignoring'
+					self.map = self.model.getMaps('id', str(id))[0]
+
 				self.state = self.SMap
 
 			else:
@@ -132,18 +140,26 @@ class ModelLoader(handler.ContentHandler):
 				elif (type == "Embedded"):
 					assert self.construct == False, "Multiple maps/datasets declared in the same file."
 					self.construct = True
-
+	
 					assert id, "Dataset declared without an identifier."
+
+					try:
+						dataset = self.metamodel.createDataset(str(id))
+					except fife.Exception, e:
+						print e.getMessage()
+						print str(id) + ' already exists... ignoring'
+						dataset = self.metamodel.getDatasets('id', str(id))[0]
+
 					if (self.state == self.SModel):
-						self.dataset = self.metamodel.createDataset(str(id))
+						self.dataset = dataset
 
 					elif (self.state == self.SMap):
-						self.dataset = self.metamodel.createDataset(str(id))
+						self.dataset = dataset
 						self.map.addDataset(self.dataset)
 						
 					elif (self.state == self.SDataset):
 						self.datastack.append(self.dataset)
-						self.dataset = self.dataset.createDataset(str(id))
+						self.dataset = dataset
 
 					self.dataset.setSource(str(self.source))
 
@@ -184,13 +200,25 @@ class ModelLoader(handler.ContentHandler):
 				assert id, "Objects must be given an identifier (id) field."
 
 				if (parent):
-					self.object = self.dataset.createObject(str(id), parent)
+					try:
+						self.object = self.dataset.createObject(str(id), parent)
+						fife.ObjectVisual.create(self.object)
+					except fife.Exception, e:
+						print e.getMessage()
+						print str(id) + ' already exists... ignoring'
+						self.object = self.dataset.getObjects('id', str(id))[0]
 				else:
-					self.object = self.dataset.createObject(str(id))
+					try:
+						self.object = self.dataset.createObject(str(id))
+						fife.ObjectVisual.create(self.object)
+					except fife.Exception, e:
+						print e.getMessage()
+						print str(id) + ' already exists... ignoring'
+						self.object = self.dataset.getObjects('id', str(id))[0]
+
 				self.object.setBlocking(blocking)
 				self.object.setStatic(static)
 				self.object.setPather(pather)
-				fife.ObjectVisual.create(self.object)
 
 			else:
 				assert 0, "Objects can only be declared in a <dataset> section."
@@ -233,8 +261,13 @@ class ModelLoader(handler.ContentHandler):
 
 				assert id, "Actions must be given an identifier (id) field."
 
-				self.action = self.object.createAction(str(id))
-				fife.ActionVisual.create(self.action)
+				try:
+					self.action = self.object.createAction(str(id))
+					fife.ActionVisual.create(self.action)
+				except fife.Exception, e:
+					print e.getMessage()
+					print str(id) + ' already exists... ignoring'
+					self.action = self.object.getAction(str(id))
 
 			else:
 				assert 0, "Actions can only be declared in an <object> section."
@@ -267,7 +300,13 @@ class ModelLoader(handler.ContentHandler):
 
 				assert id, "Elevation declared without an identifier."
 
-				self.elevation = self.map.createElevation(str(id))
+				try:
+					self.elevation = self.map.createElevation(str(id))
+				except fife.Exception, e:
+					print e.getMessage()
+					print str(id) + ' already exists... ignoring'
+					self.elevation = self.map.getElevations('id', str(id))[0]
+
 				self.state = self.SElevation
 
 			else:
@@ -320,7 +359,13 @@ class ModelLoader(handler.ContentHandler):
 				cellgrid.setXShift(x_offset)
 				cellgrid.setYShift(y_offset)
 
-				self.layer = self.elevation.createLayer(str(id), cellgrid)
+				try:
+					self.layer = self.elevation.createLayer(str(id), cellgrid)
+				except fife.Exception, e:
+					print e.getMessage()
+					print str(id) + ' already exists... ignoring'
+					self.layer = self.elevation.getLayers('id', str(id))[0]
+
 				self.state = self.SLayer
 
 			else:

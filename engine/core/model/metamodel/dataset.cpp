@@ -50,7 +50,7 @@ namespace FIFE {
 		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
 			if(identifier == (*it)->Id())
-				throw NameClash("Dataset identifer " + identifier + " has multiple occurances in Dataset: " + Id() + ".");
+				throw NameClash(identifier);
 		}
 
 		Dataset* dataset = new Dataset(identifier);
@@ -62,7 +62,7 @@ namespace FIFE {
 		std::vector<Object*>::const_iterator it = m_objects.begin();
 		for(; it != m_objects.end(); ++it) {
 			if(identifier == (*it)->Id())
-				throw NameClash("Object identifer " + identifier + " has multiple occurances in Dataset: " + Id() + ".");
+				throw NameClash(identifier);
 		}
 
 		Object* object = new Object(identifier, inherited);

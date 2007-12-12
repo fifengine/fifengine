@@ -24,7 +24,6 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.screenwidth = engine.getRenderBackend().getScreenWidth()
 
 		self.map_list = GenericListmodel()
-		# TODO: this shouldn't be hardcoded
 		self.map_list.extend(maplist)
 
 		self.guiroot = Container(self.guimanager)
@@ -55,6 +54,7 @@ class FIFEdit(fife.IWidgetListener, object):
 		elif evtid == 'LoadMapEvt':
 			mapfilename = self.map_list[self.level_drop.getSelected()]
 			print 'loading: ' + mapfilename
+
 			self.map = loadMapFile(mapfilename, self.engine)
 			self.mapwnd.setVisible(False)
 			self.create_mapedit()
@@ -286,7 +286,7 @@ class FIFEdit(fife.IWidgetListener, object):
 		query = self.engine.getModel().getMetaModel().getDatasets('id', dataset)
 		assert len(query) > 0, 'Reference to non-existent dataset.'
 		dat = query[0]
-		datedit = DatasetEditor(self.eventmanager, self.guimanager, self.engine.getImagePool(), dat)
+		datedit = DatasetEditor(self.eventmanager, self.guimanager, self.guiroot, self.engine.getImagePool(), dat)
 		self.register_widget(datedit, self.guimanager)
 
 class Container:
@@ -332,9 +332,7 @@ class Dialog(fife.IWidgetListener, fife.Window, Container):
 
 	def remove_widget(self, w):
 		self.remove(w)
-#TODO: removing final reference (destroying) the widget results in segfault. So for now, old gui
-# elements just hang around in the sytem.
-#		self.widgets.remove(w)
+		self.widgets.remove(w)
 
 	def onWidgetAction(self, evt):
 		pass
@@ -348,12 +346,13 @@ class Form(Dialog):
 		self.clbutton.addActionListener(self.guimanager)
 		self.clbutton.adjustSize()
 		self.clbutton.setPosition(self.getWidth() - self.clbutton.getWidth() - 5, 5)
+		self.add_widget(self.clbutton)
 
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
 		if evtid == 'CloseEvt':
 			if(evt.getSourceWidget().this == self.clbutton.this):
-				print 'closing not yet implemented; but soon!'
+				self.parent.remove_widget(self)
 
 class ButtonBox(Dialog):
 	def __init__(self, event_manager, gui_manager, parent, caption, prompt, optionA, optionB):
@@ -397,7 +396,7 @@ class DatasetEditor(Form):
 		self.size = (400, 200) 
 		self.position = (0, 100)
 
-		Form.__init__(self, event_manager, gui_manager, 'Dataset Editor:' , self.position, self.size)
+		Form.__init__(self, event_manager, gui_manager, parent, 'Dataset Editor:' , self.position, self.size)
 		self.dataset = dataset
 		self.imagepool = imagepool
 
@@ -416,6 +415,7 @@ class DatasetEditor(Form):
 		self.object_drop.setSize(250, 16)
 		self.object_drop.setActionEventId('ObjectSelect')
 		self.object_drop.addActionListener(self.guimanager)
+		self.add_widget(self.object_drop)
 
 		self.icon = 0
 
@@ -431,22 +431,11 @@ class DatasetEditor(Form):
 			if (not self.icon):
 				self.icon = fife.Icon(self.preview)
 				self.icon.setPosition(10, 5 + self.object_drop.getHeight() + 5)
+				self.add_widget(self.icon)
 			else:
 				self.icon.setImage(self.preview)
 
 			self.icon.setSize(self.preview.getWidth(),self.preview.getHeight())
-
-##		button = fife.Button('select')
-##		button.setActionEventId('ObjectSelect')
-##		button.addActionListener(self.guimanager)
-##		button.adjustSize()
-##		button.setPosition(1 + icon.getWidth(), icon.getY())
-
-##		button2 = fife.Button('delete')
-##		button2.setActionEventId('ObjectDelete')
-##		button2.addActionListener(self.guimanager)
-##		button2.adjustSize()
-##		button2.setPosition(1 + icon.getWidth(), icon.getY() + button.getHeight())
 
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()

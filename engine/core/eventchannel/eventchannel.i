@@ -95,7 +95,7 @@ namespace FIFE {
 		virtual IEventSource* getSource();
 		virtual void setSource(IEventSource* source);
 		virtual gcn::Widget* getSourceWidget();
-		virtual setSourceWidget(gcn::Widget* widget);
+		virtual void setSourceWidget(gcn::Widget* widget);
 		virtual int getTimeStamp() const;
 		virtual void setTimeStamp(int timestamp);
 	};

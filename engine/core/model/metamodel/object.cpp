@@ -86,7 +86,7 @@ namespace FIFE {
 		std::map<std::string, Action*>::const_iterator it = m_actions->begin();
 		for(; it != m_actions->end(); ++it) {
 			if(identifier == it->second->Id())
-				throw NameClash("Action identifer " + identifier + " has multiple occurances in Object: " + Id() + ".");
+				throw NameClash(identifier);
 		}
 
 		Action* a = getAction(identifier);
