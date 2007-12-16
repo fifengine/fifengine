@@ -4,6 +4,48 @@ from savers import saveMapFile
 
 from pychan import *
 
+class InputListener(fife.IMouseListener, fife.IKeyListener):
+
+	def __init__(self, eventmanager, callback):
+		self.eventmanager = eventmanager
+
+		fife.IMouseListener.__init__(self)
+		self.eventmanager.addMouseListener(self)
+
+		fife.IKeyListener.__init__(self)
+		self.eventmanager.addKeyListener(self)
+
+		self.callback = callback
+
+		self.newTarget = None
+
+	def mousePressed(self, evt):
+		self.newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
+		self.callback()
+
+	def mouseReleased(self, evt):
+		pass
+	def mouseEntered(self, evt):
+		pass
+	def mouseExited(self, evt):
+		pass
+	def mouseClicked(self, evt):
+		pass
+	def mouseWheelMovedUp(self, evt):
+		pass
+	def mouseWheelMovedDown(self, evt):
+		pass
+	def mouseMoved(self, evt):
+		pass
+	def mouseDragged(self, evt):
+		pass
+
+	def keyPressed(self, evt):
+		pass
+	def keyReleased(self, evt):
+		pass
+
+
 class FIFEdit(fife.IWidgetListener, object):
 
 	def __init__(self, engine, maplist):
@@ -30,12 +72,34 @@ class FIFEdit(fife.IWidgetListener, object):
 
 		#bb = ButtonBox(self.eventmanager, self.guimanager, self.guiroot, 'test', 'select an option:', 'ok', 'quit')
 
+		self.camera = 0
+		self.edit_layer = 0
+		self.edit_object = 0
+		self.datedit = 0
+
+		self.inputlistener = InputListener(self.eventmanager, self.input)
+
 	def show(self):
 		self.create_mainpanel()
 		self.create_mapdialogs()
 	
 	def hide(self):
 		pass
+
+	def input(self):
+		if self.inputlistener.newTarget and self.camera:
+			ec = self.camera.toElevationCoordinates(self.inputlistener.newTarget)
+			self.inputlistener.newTarget = None
+			if (not self.edit_layer):
+				self.edit_layer = self.camera.getLocation().getLayer()
+			cg = self.edit_layer.getCellGrid()
+			lc = cg.toLayerCoordinates(ec)
+			print lc
+			if self.datedit:
+				print 'hi'
+				inst = self.edit_layer.createInstance(self.datedit.getSelectedObject(), lc)
+				fife.InstanceVisual.create(inst)
+				print 'bi'
 	
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
@@ -286,8 +350,12 @@ class FIFEdit(fife.IWidgetListener, object):
 		query = self.engine.getModel().getMetaModel().getDatasets('id', dataset)
 		assert len(query) > 0, 'Reference to non-existent dataset.'
 		dat = query[0]
-		datedit = DatasetEditor(self.eventmanager, self.guimanager, self.guiroot, self.engine.getImagePool(), dat)
-		self.register_widget(datedit, self.guimanager)
+		if(self.datedit):
+			self.guiroot.remove_widget(self.datedit)
+		self.datedit = DatasetEditor(self.eventmanager, self.guimanager, self.guiroot, self.engine.getImagePool(), dat)
+
+	def edit_camview(self, camera):
+		self.camera = camera
 
 class Container:
 	def __init__(self, guimanager):
@@ -420,6 +488,9 @@ class DatasetEditor(Form):
 		self.icon = 0
 
 		self.refresh_preview()
+
+	def getSelectedObject(self):
+		return self.objects[self.object_drop.getSelected()]
 
 	def refresh_preview(self):
 		visual = self.objects[self.object_drop.getSelected()].get2dGfxVisual()
