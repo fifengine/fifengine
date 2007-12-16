@@ -18,6 +18,7 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 		self.callback = callback
 
 		self.newTarget = None
+		self.editmode = False
 
 	def mousePressed(self, evt):
 		self.newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
@@ -41,7 +42,14 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 		pass
 
 	def keyPressed(self, evt):
-		pass
+		keyval = evt.getKey().getValue()
+		if keyval == fife.IKey.F1:
+			self.editmode = not self.editmode
+			if(self.editmode):
+				print 'FIFEdit in edit mode'
+			else:
+				print 'FIFEdit leaving edit mode'
+
 	def keyReleased(self, evt):
 		pass
 
@@ -87,19 +95,15 @@ class FIFEdit(fife.IWidgetListener, object):
 		pass
 
 	def input(self):
-		if self.inputlistener.newTarget and self.camera:
+		if self.inputlistener.editmode and self.inputlistener.newTarget and self.camera:
 			ec = self.camera.toElevationCoordinates(self.inputlistener.newTarget)
 			self.inputlistener.newTarget = None
 			if (not self.edit_layer):
 				self.edit_layer = self.camera.getLocation().getLayer()
-			cg = self.edit_layer.getCellGrid()
-			lc = cg.toLayerCoordinates(ec)
-			print lc
+			lc = self.edit_layer.getCellGrid().toLayerCoordinates(ec)
 			if self.datedit:
-				print 'hi'
 				inst = self.edit_layer.createInstance(self.datedit.getSelectedObject(), lc)
 				fife.InstanceVisual.create(inst)
-				print 'bi'
 	
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
