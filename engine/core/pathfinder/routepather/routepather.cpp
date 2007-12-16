@@ -69,14 +69,14 @@ namespace FIFE {
 		if((instance->getLocation().getLayer() != target.getLayer() || RoutePatherSearch::cellBlocked(target))) {
 			return -1;
 		}
-		SearchSpaceMap::iterator i = m_searchspaces.find(target.getLayer());
-		if(i == m_searchspaces.end()) {
-			SearchSpace* newSearchSpace = new SearchSpace(target.getLayer());
-			i = m_searchspaces.insert(SearchSpaceMap::value_type(target.getLayer(), newSearchSpace)).first;
+		SearchSpace* searchspace = getSearchSpace(target.getLayer());
+		if(!searchspace) {
+			searchspace = new SearchSpace(target.getLayer());
+			addSearchSpace(searchspace);
 		}
-		if(i->second->isInSearchSpace(target)) {
+		if(searchspace->isInSearchSpace(target)) {
 			session_id = m_nextFreeSessionId++;
-			RoutePatherSearch* newSearch = new RoutePatherSearch(session_id, instance->getLocation(), target, i->second);
+			RoutePatherSearch* newSearch = new RoutePatherSearch(session_id, instance->getLocation(), target, searchspace);
 			m_sessions.pushElement(SessionQueue::value_type(newSearch, priority));
 			addSessionId(session_id);
 		}
@@ -180,5 +180,19 @@ namespace FIFE {
 				}
 		}
 		return false;
+	}
+
+	bool RoutePather::addSearchSpace(SearchSpace* search_space) {
+		std::pair<SearchSpaceMap::iterator, bool> res = m_searchspaces.insert(SearchSpaceMap::value_type(search_space->getLayer(), search_space));
+		
+		return res.second;
+	}
+
+	SearchSpace* RoutePather::getSearchSpace(Layer * const layer) {
+		SearchSpaceMap::iterator i = m_searchspaces.find(layer);
+		if(i == m_searchspaces.end()) {
+			return 0;
+		}
+		return i->second;
 	}
 }

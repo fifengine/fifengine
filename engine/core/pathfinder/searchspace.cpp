@@ -30,6 +30,7 @@
 // Second block: files included from the same folder
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
+#include "model/structures/elevation.h"
 
 #include "searchspace.h"
 
@@ -37,35 +38,45 @@ namespace FIFE {
 
 	SearchSpace::SearchSpace(Layer* layer) 
 	: m_upperX(0), m_upperY(0), m_lowerX(0), m_lowerY(0), m_layer(layer) {
-		//Loop through all instances, should we really be doing this in the constructor?
-		const std::vector<Instance*>& instances = m_layer->getInstances();
-		//Set all search space limits to + and - infinity respectively.
-		m_lowerX = instances.front()->getLocation().getLayerCoordinates().x;
-		m_lowerY = instances.front()->getLocation().getLayerCoordinates().y;
-		m_upperX = instances.front()->getLocation().getLayerCoordinates().x;
-		m_upperY = instances.front()->getLocation().getLayerCoordinates().y;
-		//Iterate through all instances and formulate the search space.
-		for(std::vector<Instance*>::const_iterator i = instances.begin();
-			i != instances.end();
-			++i) 
+		Elevation* elevation = layer->getElevation();
+		const std::vector<Layer*>& layers = elevation->getLayers();
+		bool initialized = false;
+		for(std::vector<Layer*>::const_iterator i = layers.begin();
+			i != layers.end();
+			++i)
 		{
-			Location loc = (*i)->getLocation();
-			ModelCoordinate coord = loc.getLayerCoordinates();
+			//Loop through all instances, should we really be doing this in the constructor?
+			const std::vector<Instance*>& instances = (*i)->getInstances();
+			//Set all search space limits to + and - infinity respectively.
+			if(!initialized) {
+				m_lowerX = instances.front()->getLocation().getLayerCoordinates(layer).x;
+				m_lowerY = instances.front()->getLocation().getLayerCoordinates(layer).y;
+				m_upperX = instances.front()->getLocation().getLayerCoordinates(layer).x;
+				m_upperY = instances.front()->getLocation().getLayerCoordinates(layer).y;
+				initialized = true;
+			}
+			//Iterate through all instances and formulate the search space.
+			for(std::vector<Instance*>::const_iterator j = instances.begin();
+				j != instances.end();
+				++j) 
+			{
+				ModelCoordinate coord = (*j)->getLocation().getLayerCoordinates(layer);
 
-			if(coord.x < m_lowerX) {
-				m_lowerX = coord.x;
-			}
-			
-			if(coord.x > m_upperX) {
-				m_upperX = coord.x;
-			}
+				if(coord.x < m_lowerX) {
+					m_lowerX = coord.x;
+				}
+				
+				if(coord.x > m_upperX) {
+					m_upperX = coord.x;
+				}
 
-			if(coord.y < m_lowerY) {
-				m_lowerY = coord.y;
-			}
-			
-			if(coord.y > m_upperY) {
-				m_upperY = coord.y;
+				if(coord.y < m_lowerY) {
+					m_lowerY = coord.y;
+				}
+				
+				if(coord.y > m_upperY) {
+					m_upperY = coord.y;
+				}
 			}
 		}
 	}

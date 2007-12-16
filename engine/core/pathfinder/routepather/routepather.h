@@ -56,9 +56,39 @@ namespace FIFE {
 		                    double distance_to_travel, Location& nextLocation,
 		                    Location& facingLocation, int session_id=-1, 
 							int priority = MEDIUM_PRIORITY);
+
+		/** Updates the route pather.
+		 *
+		 * Advances the active search by so many time steps. If the search
+		 * completes then this function pops it from the active session list and
+		 * continues updating the next session until it runs out of time.
+		 */
 		void update();
 
+		/** Cancels a session.
+		 *
+		 * Cancels a route pather session. Determines if it is an active session
+		 * or not and acts accordingly. 
+		 *
+		 * @param session_id The id of the session to cancel.
+		 * @return True if the session could be canceled false otherwise.
+		 */
 		bool cancelSession(const int session_id);
+
+		/** Adds a search space to the route pather.
+		 *
+		 * @param search_space A pointer to the search space to add.
+		 * @return a boolean signifying whether the search space was correctly added or not.
+		 */
+		bool addSearchSpace(SearchSpace* search_space);
+
+		/** Retrieves a searchspace associated with the given layer.
+		 *
+		 * @param A pointer to the search space
+		 * @return A pointer to the search space if it could be found, 0 otherwise.
+		 */
+		SearchSpace* getSearchSpace(Layer * const layer);
+
 		std::string getName() const { return "RoutePather"; };		
 	private:
 		typedef std::list<Location> Path;
@@ -66,24 +96,40 @@ namespace FIFE {
 		typedef std::list<int> SessionList;
 		typedef std::map<int, Path> PathMap;
 		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;
-
-		/**
+		/** Makes the instance follow the given path.
 		 *
+		 * Calculates the next position the instance should move to given the 
+		 * the instance's speed. 
+		 *
+		 * @param instance A pointer to the instance to move.
+		 * @param speed The speed to move the instance.
+		 * @param nextLocation An out variable which will store the instances next location.
+		 * @param facingLocation An out variable which will store the instances facing location.
 		 */
 		void followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation);
 
-		/**
+		/** Adds a session id to the session map.
 		 *
+		 * Stores the given session id in the session map.
+		 *
+		 * @param sessionId The session id to store.
 		 */
 		void addSessionId(const int sessionId);
 
-		/**
+
+		/** Determines if the given session Id is valid.
 		 *
+		 * Searches the session list to determine if a search with the given session id
+		 * has been registered.
+		 * 
+		 * @return true if one has, false otherwise.
 		 */
 		bool sessionIdValid(const int sessionId);
 
-		/**
+		/** Removes a session id from the session map.
 		 *
+		 * @param sessionId The session id to remove.
+		 * @return True if the sessionId could be removed, false otherwise.
 		 */
 		bool invalidateSessionId(const int sessionId);
 
