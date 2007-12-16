@@ -80,6 +80,9 @@ class FIFEdit(fife.IWidgetListener, object):
 
 		#bb = ButtonBox(self.eventmanager, self.guimanager, self.guiroot, 'test', 'select an option:', 'ok', 'quit')
 
+		self.map_edit = 0
+		self.map_datedit = 0
+
 		self.camera = 0
 		self.edit_layer = 0
 		self.edit_object = 0
@@ -138,10 +141,11 @@ class FIFEdit(fife.IWidgetListener, object):
 				print 'No map available to save.'
 
 		elif evtid == 'EditMapDatasets':
-			self.map_datwnd.setVisible(not self.map_datwnd.isVisible())
+			self.create_mapdataset_edit()
 
 		elif evtid == 'EditDataset':
-			self.create_datedit(self.dataset_list[self.dataset_drop.getSelected()])
+			if(self.map_datedit):
+				self.create_datedit(self.map_datedit.dataset_list[self.map_datedit.dataset_drop.getSelected()])
 
 	def register_widget(self, w, container):
 		self.widgets.append(w)
@@ -244,54 +248,10 @@ class FIFEdit(fife.IWidgetListener, object):
 	
 	def create_mapedit(self):
 		assert self.map
-
-		self.create_mapdataset_edit()
-
-		sx,sy = 500,300
-
-		self.mapedit = fife.Window('Map Property Editor:')
-		self.mapedit.setTitleBarHeight(20)
-		self.mapedit.setPosition(100,300)
-		self.mapedit.setSize(sx,sy)
-		self.mapedit.setVisible(True)
-		self.register_widget(self.mapedit, self.guimanager)
-
-		dy = 0
-
-		mapid_label = fife.Label('Map Identifier: ')
-		mapid_label.setPosition(1, 1)
-		mapid_label.setFont(self.font)
-		self.register_widget(mapid_label, self.mapedit)
-
-		self.mapid_field = fife.TextField(self.map.Id())
-		self.mapid_field.setPosition(1 + mapid_label.getWidth() + 1, 1)
-		self.mapid_field.setWidth(300)
-		self.register_widget(self.mapid_field, self.mapedit)
-
-		dy = 1 + self.mapid_field.getHeight() + 1
-
-		list = self.map.listFields()
-		self.map_metafields = []
-		for i in range(0, len(list)):
-			label = fife.Label(list[i])
-			label.setPosition(1, dy)
-			self.register_widget(label, self.mapedit)
-
-			textfield = fife.TextField(self.map.get(list[i]))
-
-			textfield.setWidth(300)
-			textfield.setPosition(1 + label.getWidth() + 1, dy)
-			self.register_widget(textfield, self.mapedit)
-			self.map_metafields.append((list[i], textfield))
-
-			dy += textfield.getHeight() + 1
-
-		datbutton = fife.Button('Dataset Inclusions')
-		datbutton.setActionEventId('EditMapDatasets')
-		datbutton.addActionListener(self.guimanager)
-		datbutton.adjustSize()
-		datbutton.setPosition(1, sy - 55)
-		self.register_widget(datbutton, self.mapedit)
+		
+		if self.map_edit:
+			self.guiroot.remove_widget(self.map_edit)
+		self.mapedit = MapEdit(self.eventmanager, self.guimanager, self.guiroot, self.engine.getImagePool(), self.map)
 
 	def save_mapmetadata(self):
 		self.map.set('id', self.mapid_field.getText())
@@ -299,56 +259,11 @@ class FIFEdit(fife.IWidgetListener, object):
 			self.map.set(self.map_metafields[i][0], self.map_metafields[i][1].getText())
 
 	def create_mapdataset_edit(self):
-		sx,sy = 500, 200
+		assert self.map
 
-		self.map_datwnd = fife.Window('Edit map dataset inclusions:')
-		self.map_datwnd.setTitleBarHeight(20)
-		self.map_datwnd.setPosition(400,100)
-		self.map_datwnd.setSize(sx, sy)
-		self.map_datwnd.setVisible(False)
-		self.register_widget(self.map_datwnd, self.guimanager) 
-
-		self.dataset_list = GenericListmodel()
-		self.dataset_list.extend([dat.Id() for dat in self.map.getDatasets()])
-		self.dataset_drop = fife.DropDown(self.dataset_list)
-		self.dataset_drop.setSelected(0)
-		self.dataset_drop.setPosition(5, 10)
-		self.dataset_drop.setSize(sx - 150, 16)
-		self.dataset_drop.setActionEventId('DatasetListEvt')
-		self.dataset_drop.addActionListener(self.guimanager)
-		self.register_widget(self.dataset_drop, self.map_datwnd)
-
-		editbutton = fife.Button('Edit')
-		editbutton.setActionEventId('EditDataset')
-		editbutton.addActionListener(self.guimanager)
-		editbutton.adjustSize()
-		editbutton.setPosition(sx - editbutton.getWidth() - 10, 10)
-		self.register_widget(editbutton, self.map_datwnd)
-
-		rmbutton = fife.Button('Remove')
-		rmbutton.setActionEventId('RemoveMapDataset')
-		rmbutton.addActionListener(self.guimanager)
-		rmbutton.adjustSize()
-		rmbutton.setPosition(sx - rmbutton.getWidth() - 10, 10 + editbutton.getHeight())
-		self.register_widget(rmbutton, self.map_datwnd)
-
-		add_label = fife.Label('Add new dataset: ')
-		add_label.setPosition(5, 10 + editbutton.getHeight() + rmbutton.getHeight())
-		add_label.setFont(self.font)
-		add_label.adjustSize()
-		self.register_widget(add_label, self.map_datwnd)
-
-		self.datasetadd_field = fife.TextField()
-		self.datasetadd_field.setPosition(5 + add_label.getWidth() + 1, 10 + editbutton.getHeight() + rmbutton.getHeight())
-		self.datasetadd_field.setWidth(250)
-		self.register_widget(self.datasetadd_field, self.map_datwnd)
-
-		addbutton = fife.Button('Add')
-		addbutton.setActionEventId('AddMapDataset')
-		addbutton.addActionListener(self.guimanager)
-		addbutton.adjustSize()
-		addbutton.setPosition(sx - addbutton.getWidth() - 10, 10 + editbutton.getHeight() + rmbutton.getHeight())
-		self.register_widget(addbutton, self.map_datwnd)
+		if self.map_datedit:
+			self.guiroot.remove_widget(self.map_datedit)
+		self.map_datedit = MapDatasetEditor(self.eventmanager, self.guimanager, self.guiroot, self.engine.getImagePool(), self.map)
 		
 	def create_datedit(self, dataset):
 		query = self.engine.getModel().getMetaModel().getDatasets('id', dataset)
@@ -417,7 +332,7 @@ class Form(Dialog):
 		self.clbutton.setActionEventId('CloseEvt')
 		self.clbutton.addActionListener(self.guimanager)
 		self.clbutton.adjustSize()
-		self.clbutton.setPosition(self.getWidth() - self.clbutton.getWidth() - 5, 5)
+		self.clbutton.setPosition(self.getWidth() - self.clbutton.getWidth() - 5, self.getHeight() - self.clbutton.getHeight() - 20)
 		self.add_widget(self.clbutton)
 
 	def onWidgetAction(self, evt):
@@ -435,7 +350,6 @@ class ButtonBox(Dialog):
 
 		label = fife.Label(prompt + ':')
 		label.setPosition(5, 5)
-		#label.setFont(self.font)
 		label.adjustSize()
 		self.add_widget(label)
 
@@ -471,9 +385,6 @@ class DatasetEditor(Form):
 		Form.__init__(self, event_manager, gui_manager, parent, 'Dataset Editor:' , self.position, self.size)
 		self.dataset = dataset
 		self.imagepool = imagepool
-
-		#scrollarea = fife.ScrollArea()
-		#scrollarea.setContent(self.datedit)
 
 		self.objects = self.dataset.getObjects()
 
@@ -518,3 +429,101 @@ class DatasetEditor(Form):
 			self.refresh_preview()
 		else:
 			Form.onWidgetAction(self, evt)
+
+class MapEdit(Form):
+	def __init__(self, event_manager, gui_manager, parent, imagepool, map):
+		self.size = (500, 300)
+		self.position = (100,300)
+
+		Form.__init__(self, event_manager, gui_manager, parent, map.Id() + ' Property Editor', self.position, self.size)
+
+		self.map = map
+
+		dy = 0
+
+		mapid_label = fife.Label('Map Identifier: ')
+		mapid_label.setPosition(1, 1)
+		self.add_widget(mapid_label)
+
+		self.mapid_field = fife.TextField(self.map.Id())
+		self.mapid_field.setPosition(1 + mapid_label.getWidth() + 1, 1)
+		self.mapid_field.setWidth(300)
+		self.add_widget(self.mapid_field)
+
+		dy = 1 + self.mapid_field.getHeight() + 1
+
+		list = self.map.listFields()
+		self.map_metafields = []
+		for i in range(0, len(list)):
+			label = fife.Label(list[i])
+			label.setPosition(1, dy)
+			self.add_widget(label)
+
+			textfield = fife.TextField(self.map.get(list[i]))
+
+			textfield.setWidth(300)
+			textfield.setPosition(1 + label.getWidth() + 1, dy)
+			self.add_widget(textfield)
+			self.map_metafields.append((list[i], textfield))
+
+			dy += textfield.getHeight() + 1
+
+		datbutton = fife.Button('Dataset Inclusions')
+		datbutton.setActionEventId('EditMapDatasets')
+		datbutton.addActionListener(self.guimanager)
+		datbutton.adjustSize()
+		datbutton.setPosition(1, self.size[1] - 55)
+		self.add_widget(datbutton)
+
+
+
+class MapDatasetEditor(Form):
+	def __init__(self, event_manager, gui_manager, parent, imagepool, map):
+		self.size = (500,200)
+		self.position = (400,100)
+		
+		Form.__init__(self, event_manager, gui_manager, parent, 'Edit ' + map.Id() + ' dataset inclusions:' , self.position, self.size)
+
+		self.map = map
+
+		self.dataset_list = GenericListmodel()
+		self.dataset_list.extend([dat.Id() for dat in self.map.getDatasets()])
+		self.dataset_drop = fife.DropDown(self.dataset_list)
+		self.dataset_drop.setSelected(0)
+		self.dataset_drop.setPosition(5, 10)
+		self.dataset_drop.setSize(self.size[0] - 150, 16)
+		self.dataset_drop.setActionEventId('DatasetListEvt')
+		self.dataset_drop.addActionListener(self.guimanager)
+		self.add_widget(self.dataset_drop)
+
+		editbutton = fife.Button('Edit')
+		editbutton.setActionEventId('EditDataset')
+		editbutton.addActionListener(self.guimanager)
+		editbutton.adjustSize()
+		editbutton.setPosition(self.size[0] - editbutton.getWidth() - 10, 10)
+		self.add_widget(editbutton)
+
+		rmbutton = fife.Button('Remove')
+		rmbutton.setActionEventId('RemoveMapDataset')
+		rmbutton.addActionListener(self.guimanager)
+		rmbutton.adjustSize()
+		rmbutton.setPosition(self.size[0] - rmbutton.getWidth() - 10, 10 + editbutton.getHeight())
+		self.add_widget(rmbutton)
+
+		add_label = fife.Label('Add new dataset: ')
+		add_label.setPosition(5, 10 + editbutton.getHeight() + rmbutton.getHeight())
+		add_label.adjustSize()
+		self.add_widget(add_label)
+
+		self.datasetadd_field = fife.TextField()
+		self.datasetadd_field.setPosition(5 + add_label.getWidth() + 1, 10 + editbutton.getHeight() + rmbutton.getHeight())
+		self.datasetadd_field.setWidth(250)
+		self.add_widget(self.datasetadd_field)
+
+		addbutton = fife.Button('Add')
+		addbutton.setActionEventId('AddMapDataset')
+		addbutton.addActionListener(self.guimanager)
+		addbutton.adjustSize()
+		addbutton.setPosition(self.size[0] - addbutton.getWidth() - 10, 10 + editbutton.getHeight() + rmbutton.getHeight())
+		self.add_widget(addbutton)
+
