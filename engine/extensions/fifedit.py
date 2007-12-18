@@ -20,6 +20,8 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 		self.newTarget = None
 		self.editmode = False
 
+		self.togglehide = False
+
 	def mousePressed(self, evt):
 		self.newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
 		self.callback()
@@ -49,6 +51,9 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 				print 'FIFEdit in edit mode'
 			else:
 				print 'FIFEdit leaving edit mode'
+		elif keyval == fife.IKey.F2:
+			self.togglehide = True
+			self.callback()
 
 	def keyReleased(self, evt):
 		pass
@@ -107,6 +112,9 @@ class FIFEdit(fife.IWidgetListener, object):
 			if self.datedit:
 				inst = self.edit_layer.createInstance(self.datedit.getSelectedObject(), lc)
 				fife.InstanceVisual.create(inst)
+		elif self.inputlistener.togglehide:
+			self.guiroot.togglehide()
+			self.inputlistener.togglehide = False
 	
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
@@ -280,6 +288,10 @@ class Container:
 	def __init__(self, guimanager):
 		self.guimanager = guimanager
 		self.widgets = []
+
+	def togglehide(self):
+		for child in self.widgets:
+			child.setVisible(not child.isVisible())
 
 	def add_widget(self, w):
 		self.widgets.append(w)
