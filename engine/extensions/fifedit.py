@@ -56,6 +56,9 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 		elif keystr == 'x':
 			self.delete_inst = True
 			self.callback()
+		elif keystr == 'l':
+			self.show_layers = True
+			self.callback()
 
 	def keyReleased(self, evt):
 		pass
@@ -96,6 +99,8 @@ class FIFEdit(fife.IWidgetListener, object):
 
 		self.selection = 0
 
+		self.layerselect = 0
+
 		self.inputlistener = InputListener(self.eventmanager, self.input)
 
 	def show(self):
@@ -130,6 +135,10 @@ class FIFEdit(fife.IWidgetListener, object):
 			for inst in instlist:
 				self.edit_layer.deleteInstance(inst)
 			self.inputlistener.delete_inst = False
+
+		elif self.inputlistener.show_layers:
+			self.create_layerselect(self.camera.getLocation().getElevation())
+			self.inputlistener.show_layers = False
 	
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
@@ -167,6 +176,11 @@ class FIFEdit(fife.IWidgetListener, object):
 		elif evtid == 'EditDataset':
 			if(self.map_datedit):
 				self.create_datedit(self.map_datedit.dataset_list[self.map_datedit.dataset_drop.getSelected()])
+
+		elif evtid == 'SelectLayer':
+			if(self.layerselect):
+				print 'hi'
+				self.edit_layer = self.layerselect.getLayer()
 
 	def register_widget(self, w, container):
 		self.widgets.append(w)
@@ -293,6 +307,11 @@ class FIFEdit(fife.IWidgetListener, object):
 		if(self.datedit):
 			self.guiroot.remove_widget(self.datedit)
 		self.datedit = DatasetEditor(self.eventmanager, self.guimanager, self.guiroot, self.engine.getImagePool(), dat)
+
+	def create_layerselect(self, elevation):
+		if(self.layerselect):
+			self.guiroot.remove_widget(self.layerselect)
+		self.layerselect = LayerSelect(self.eventmanager, self.guimanager, self.guiroot, elevation)
 
 	def edit_camview(self, camera):
 		self.camera = camera
@@ -552,3 +571,31 @@ class MapDatasetEditor(Form):
 		addbutton.setPosition(self.size[0] - addbutton.getWidth() - 10, 10 + editbutton.getHeight() + rmbutton.getHeight())
 		self.add_widget(addbutton)
 
+class LayerSelect(Form):
+	def __init__(self, event_manager, gui_manager, parent, elevation):
+		self.size = (400,100)
+		self.position = (400,100)
+		
+		Form.__init__(self, event_manager, gui_manager, parent, 'Select ' + elevation.Id() + ' layer:' , self.position, self.size)
+
+		self.elevation = elevation
+
+		self.layer_list = GenericListmodel()
+		self.layer_list.extend([layer.Id() for layer in self.elevation.getLayers()])
+		self.layer_drop = fife.DropDown(self.layer_list)
+		self.layer_drop.setSelected(0)
+		self.layer_drop.setPosition(5, 10)
+		self.layer_drop.setSize(self.size[0] - 150, 16)
+		self.layer_drop.setActionEventId('LayerListEvt')
+		self.layer_drop.addActionListener(self.guimanager)
+		self.add_widget(self.layer_drop)
+
+		button = fife.Button('Select')
+		button.setActionEventId('SelectLayer')
+		button.addActionListener(self.guimanager)
+		button.adjustSize()
+		button.setPosition(self.size[0] - button.getWidth() - 10, 10)
+		self.add_widget(button)
+
+	def getLayer(self):
+		return self.elevation.getLayers('id', self.layer_list[self.layer_drop.getSelected()])[0]
