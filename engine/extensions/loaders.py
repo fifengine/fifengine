@@ -53,7 +53,9 @@ class ModelLoader(handler.ContentHandler):
 					self.map = self.model.createMap(str(id))
 				except fife.Exception, e: # NameClash appears as general fife.Exception; any ideas?
 					print e.getMessage()
-					print str(id) + ' already exists... ignoring'
+					print 'The map ' + str(id) + ' already exists! Replacing it.'
+				#	self.model.deleteMap(self.model.getMaps('id', str(id))[0])
+				#	self.map = self.model.createMap(str(id))
 					self.map = self.model.getMaps('id', str(id))[0]
 
 				self.state = self.SMap
@@ -147,7 +149,7 @@ class ModelLoader(handler.ContentHandler):
 						dataset = self.metamodel.createDataset(str(id))
 					except fife.Exception, e:
 						print e.getMessage()
-						print str(id) + ' already exists... ignoring'
+						print 'The dataset ' + str(id) + ' already exists! Using existing dataset.'
 						dataset = self.metamodel.getDatasets('id', str(id))[0]
 
 					if (self.state == self.SModel):
@@ -205,7 +207,7 @@ class ModelLoader(handler.ContentHandler):
 						fife.ObjectVisual.create(self.object)
 					except fife.Exception, e:
 						print e.getMessage()
-						print str(id) + ' already exists... ignoring'
+						print 'The object ' + str(id) + ' already exists! Using existing object definition.'
 						self.object = self.dataset.getObjects('id', str(id))[0]
 				else:
 					try:
@@ -213,7 +215,7 @@ class ModelLoader(handler.ContentHandler):
 						fife.ObjectVisual.create(self.object)
 					except fife.Exception, e:
 						print e.getMessage()
-						print str(id) + ' already exists... ignoring'
+						print 'The object ' + str(id) + ' already exists! Using existing object definition.'
 						self.object = self.dataset.getObjects('id', str(id))[0]
 
 				self.object.setBlocking(blocking)
@@ -266,7 +268,7 @@ class ModelLoader(handler.ContentHandler):
 					fife.ActionVisual.create(self.action)
 				except fife.Exception, e:
 					print e.getMessage()
-					print str(id) + ' already exists... ignoring'
+					print 'The action ' + str(id) + ' already exists! Using existing action definition.'
 					self.action = self.object.getAction(str(id))
 
 			else:
@@ -304,7 +306,9 @@ class ModelLoader(handler.ContentHandler):
 					self.elevation = self.map.createElevation(str(id))
 				except fife.Exception, e:
 					print e.getMessage()
-					print str(id) + ' already exists... ignoring'
+					print 'The elevation ' + str(id) + ' already exists! Replacing it.'
+					#self.map.deleteElevation(self.map.getElevations('id', str(id))[0])
+					#self.elevation = self.map.createElevation(str(id))
 					self.elevation = self.map.getElevations('id', str(id))[0]
 
 				self.state = self.SElevation
@@ -363,7 +367,9 @@ class ModelLoader(handler.ContentHandler):
 					self.layer = self.elevation.createLayer(str(id), cellgrid)
 				except fife.Exception, e:
 					print e.getMessage()
-					print str(id) + ' already exists... ignoring'
+					print 'The layer ' + str(id) + ' already exists! Replacing it.'
+					#self.elevation.deleteLayer(self.elevation.getLayers('id', str(id))[0])
+					#self.layer = self.elevation.createLayer(str(id), cellgrid)
 					self.layer = self.elevation.getLayers('id', str(id))[0]
 
 				self.state = self.SLayer

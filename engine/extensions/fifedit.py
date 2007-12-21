@@ -18,7 +18,8 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 		self.callback = callback
 
 		self.newTarget = None
-		self.editmode = False
+		self.make_inst = False
+		self.delete_inst = False
 
 		self.togglehide = False
 
@@ -45,14 +46,15 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
-		if keyval == fife.IKey.F1:
-			self.editmode = not self.editmode
-			if(self.editmode):
-				print 'FIFEdit in edit mode'
-			else:
-				print 'FIFEdit leaving edit mode'
-		elif keyval == fife.IKey.F2:
+		keystr = evt.getKey().getAsString().lower()
+		if keyval == fife.IKey.F2:
 			self.togglehide = True
+			self.callback()
+		elif keystr == 'm':
+			self.make_inst = True
+			self.callback()
+		elif keystr == 'x':
+			self.delete_inst = True
 			self.callback()
 
 	def keyReleased(self, evt):
@@ -79,7 +81,6 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.screenwidth = engine.getRenderBackend().getScreenWidth()
 
 		self.map_list = GenericListmodel()
-		self.map_list.extend(maplist)
 
 		self.guiroot = Container(self.guimanager)
 
@@ -93,6 +94,8 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.edit_object = 0
 		self.datedit = 0
 
+		self.selection = 0
+
 		self.inputlistener = InputListener(self.eventmanager, self.input)
 
 	def show(self):
@@ -103,22 +106,35 @@ class FIFEdit(fife.IWidgetListener, object):
 		pass
 
 	def input(self):
-		if self.inputlistener.editmode and self.inputlistener.newTarget and self.camera:
+		if (not self.edit_layer):
+			self.edit_layer = self.camera.getLocation().getLayer()
+
+		if self.inputlistener.newTarget and self.camera:
 			ec = self.camera.toElevationCoordinates(self.inputlistener.newTarget)
+			self.selection = self.edit_layer.getCellGrid().toLayerCoordinates(ec)
 			self.inputlistener.newTarget = None
-			if (not self.edit_layer):
-				self.edit_layer = self.camera.getLocation().getLayer()
-			lc = self.edit_layer.getCellGrid().toLayerCoordinates(ec)
-			if self.datedit:
-				inst = self.edit_layer.createInstance(self.datedit.getSelectedObject(), lc)
-				fife.InstanceVisual.create(inst)
+			print 'Selection is: (' + str(self.selection.x) + ',' + str(self.selection.y) + ')'
+
 		elif self.inputlistener.togglehide:
 			self.guiroot.togglehide()
 			self.inputlistener.togglehide = False
+
+		elif self.inputlistener.make_inst:
+			inst = self.edit_layer.createInstance(self.datedit.getSelectedObject(), self.selection)
+			fife.InstanceVisual.create(inst)	
+			self.inputlistener.make_inst = False
+
+		elif self.inputlistener.delete_inst:
+			instlist = self.edit_layer.getInstances('loc', str(self.selection.x) + ',' + str(self.selection.y))
+			print [inst.getObject().Id() for inst in instlist]
+			for inst in instlist:
+				self.edit_layer.deleteInstance(inst)
+			self.inputlistener.delete_inst = False
 	
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
 		if evtid == 'LoadMapDialog':
+			self.map_list.extend([map.Id() for map in self.engine.getModel().getMaps()])
 			self.mapwnd.setVisible(not self.mapwnd.isVisible())
 
 		elif evtid == 'SaveMapDialog':
@@ -131,10 +147,7 @@ class FIFEdit(fife.IWidgetListener, object):
 			print 'Not implemented yet.'
 
 		elif evtid == 'LoadMapEvt':
-			mapfilename = self.map_list[self.level_drop.getSelected()]
-			print 'loading: ' + mapfilename
-
-			self.map = loadMapFile(mapfilename, self.engine)
+			self.map = self.engine.getModel().getMaps('id', self.map_list[self.level_drop.getSelected()])[0]
 			self.mapwnd.setVisible(False)
 			self.create_mapedit()
 
