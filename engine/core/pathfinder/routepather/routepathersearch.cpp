@@ -50,7 +50,6 @@ namespace FIFE {
 		m_heuristic = Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType());
 	}
 
-	//TODO: Tidy up this function.
 	void RoutePatherSearch::updateSearch() {
 		if(m_sortedfrontier.empty()) {
 			setSearchStatus(search_status_failed);

@@ -139,6 +139,13 @@ namespace FIFE {
 			 */
 			void setInstancesVisible(bool vis);
 
+			/** Retrieves the minimum/maximum coordinates of instances on the layer.
+			 * @param min A reference to a ModelCoordinate that will hold the minimum coordinate.
+			 * @param max A reference to a ModelCoordinate that will hold the maximum coordinate.
+			 * @param layer A pointer to another layer that can be used to cast coordinates bettween layers.
+			 */
+			void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = 0) const;
+
 			/** Toggle object visibility
 			 *  @see setObjectsVisible
 			 */

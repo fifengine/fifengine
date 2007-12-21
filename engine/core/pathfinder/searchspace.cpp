@@ -38,47 +38,36 @@ namespace FIFE {
 
 	SearchSpace::SearchSpace(Layer* layer) 
 	: m_upperX(0), m_upperY(0), m_lowerX(0), m_lowerY(0), m_layer(layer) {
+		
 		Elevation* elevation = layer->getElevation();
 		const std::vector<Layer*>& layers = elevation->getLayers();
-		bool initialized = false;
+		ModelCoordinate min, max;
+		layer->getMinMaxCoordinates(min, max);
+
 		for(std::vector<Layer*>::const_iterator i = layers.begin();
 			i != layers.end();
-			++i)
-		{
-			//Loop through all instances, should we really be doing this in the constructor?
-			const std::vector<Instance*>& instances = (*i)->getInstances();
-			//Set all search space limits to + and - infinity respectively.
-			if(!initialized) {
-				m_lowerX = instances.front()->getLocation().getLayerCoordinates(layer).x;
-				m_lowerY = instances.front()->getLocation().getLayerCoordinates(layer).y;
-				m_upperX = instances.front()->getLocation().getLayerCoordinates(layer).x;
-				m_upperY = instances.front()->getLocation().getLayerCoordinates(layer).y;
-				initialized = true;
+			++i) {
+
+			ModelCoordinate newMin, newMax;
+			(*i)->getMinMaxCoordinates(newMin, newMax, layer);
+
+			if(newMin.x < min.x) {
+				min.x = newMin.x;
+			} else if(newMax.x > max.x) {
+				max.x = newMax.x;
 			}
-			//Iterate through all instances and formulate the search space.
-			for(std::vector<Instance*>::const_iterator j = instances.begin();
-				j != instances.end();
-				++j) 
-			{
-				ModelCoordinate coord = (*j)->getLocation().getLayerCoordinates(layer);
 
-				if(coord.x < m_lowerX) {
-					m_lowerX = coord.x;
-				}
-				
-				if(coord.x > m_upperX) {
-					m_upperX = coord.x;
-				}
-
-				if(coord.y < m_lowerY) {
-					m_lowerY = coord.y;
-				}
-				
-				if(coord.y > m_upperY) {
-					m_upperY = coord.y;
-				}
+			if(newMin.y < min.y) {
+				min.y = newMin.y;
+			} else if(newMax.y > max.y) {
+				max.x = newMax.x;
 			}
 		}
+
+		m_upperX = max.x;
+		m_upperY = max.y;
+		m_lowerX = min.x;
+		m_lowerY = min.y;
 	}
 
 	bool SearchSpace::isInSearchSpace(const Location& location) const {

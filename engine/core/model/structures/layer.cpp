@@ -104,6 +104,39 @@ namespace FIFE {
 		return matches;
 	}
 
+	void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const {
+		
+		if(layer == 0) {
+			layer = this;
+		}
+		
+		min = m_instances.front()->getLocation().getLayerCoordinates(layer);
+		max = min;
+
+		for(std::vector<Instance*>::const_iterator i = m_instances.begin();
+			i != m_instances.end();
+			++i) {
+
+			ModelCoordinate coord = (*i)->getLocation().getLayerCoordinates(layer);
+
+			if(coord.x < min.x) {
+				min.x = coord.x;
+			}
+			
+			if(coord.x > max.x) {
+				max.x = coord.x;
+			}
+
+			if(coord.y < min.y) {
+				min.y = coord.y;
+			}
+			
+			if(coord.y > max.y) {
+				max.y = coord.y;
+			}
+		}
+	}
+
 	void Layer::setInstancesVisible(bool vis) {
 		m_instances_visibility = vis;
 	}
