@@ -289,9 +289,9 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.mapedit = MapEdit(self.eventmanager, self.guimanager, self.guiroot, self.engine.getImagePool(), self.map)
 
 	def save_mapmetadata(self):
-		self.map.set('id', self.mapid_field.getText())
-		for i in range(0, len(self.map_metafields)):
-			self.map.set(self.map_metafields[i][0], self.map_metafields[i][1].getText())
+		self.map.set('id', self.mapedit.mapid_field.getText())
+		for i in range(0, len(self.mapedit.map_metafields)):
+			self.map.set(self.mapedit.map_metafields[i][0], self.mapedit.map_metafields[i][1].getText())
 
 	def create_mapdataset_edit(self):
 		assert self.map
