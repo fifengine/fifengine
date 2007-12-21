@@ -42,7 +42,6 @@ namespace FIFE {
 		Elevation* elevation = layer->getElevation();
 		const std::vector<Layer*>& layers = elevation->getLayers();
 		ModelCoordinate min, max;
-		layer->getMinMaxCoordinates(min, max);
 
 		for(std::vector<Layer*>::const_iterator i = layers.begin();
 			i != layers.end();
@@ -53,14 +52,18 @@ namespace FIFE {
 
 			if(newMin.x < min.x) {
 				min.x = newMin.x;
-			} else if(newMax.x > max.x) {
+			} 
+			
+			if(newMax.x > max.x) {
 				max.x = newMax.x;
 			}
 
 			if(newMin.y < min.y) {
 				min.y = newMin.y;
-			} else if(newMax.y > max.y) {
-				max.x = newMax.x;
+			}
+			
+			if(newMax.y > max.y) {
+				max.y = newMax.y;
 			}
 		}
 
