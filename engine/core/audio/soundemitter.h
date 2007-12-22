@@ -88,6 +88,10 @@ namespace FIFE {
 		 * @param defaultall If set to true, emitter position, velocity, gain and type will be set to the default values
 		 */
 		void reset(bool defaultall = false);
+
+		/** Releases the emitter
+		 */
+		void release();
 		
 		/** Sets the playing mode
 		 */

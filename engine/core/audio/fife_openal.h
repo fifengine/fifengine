@@ -51,7 +51,9 @@
 // Second block: files included from the same folder
 
 #ifdef LOG_ENABLED
-#define CHECK_OPENAL_LOG(logger, msg) if (AL_NO_ERROR != alGetError()) { logger.log(LogManager::LEVEL_ERROR, msg);}
+#define CHECK_OPENAL_LOG(logger, level, msg) if (AL_NO_ERROR != alGetError()) { logger.log(level, msg);}
+
+#define CHECK_OPENAL_LOG_DETAIL(logger, level, msg) {ALenum error; error = alGetError(); if (AL_NO_ERROR != error) { logger.log(level, LMsg() << msg << ", Error#: " << error);}}
 #endif
 
 #define CHECK_OPENAL_EXCEPTION(msg) if (AL_NO_ERROR != alGetError()) { throw Exception(msg); }

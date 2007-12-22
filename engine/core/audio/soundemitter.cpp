@@ -40,7 +40,8 @@ namespace FIFE {
 	
 	SoundEmitter::SoundEmitter(unsigned int uid) : m_source(0), m_soundclip(NULL), m_soundclipid(0), m_streamid(0),
 															m_emitterid(uid), m_loop(false) {
-				
+			
+			FL_WARN(_log, LMsg() << "huhu: " << m_emitterid);
 			TimeManager::instance()->registerEvent(this);
 			setPeriod(-1);
 			alGenSources(1, &m_source);
@@ -81,6 +82,10 @@ namespace FIFE {
 			}
 		}
 	}
+
+	void SoundEmitter::release() {
+		SoundManager::instance()->releaseEmitter(m_emitterid);
+	}
 	
 	bool SoundEmitter::load(const std::string &filename) {
 		reset();
@@ -105,7 +110,7 @@ namespace FIFE {
 			alSourcei(m_source, AL_LOOPING, AL_FALSE);
 		}
 
-		CHECK_OPENAL_LOG(_log, "Could not queue buffers");
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "Could not queue buffers");
 		return true;
 	}
 	

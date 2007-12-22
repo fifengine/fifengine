@@ -41,6 +41,7 @@ namespace FIFE {
 		
 		bool load(const std::string &filename);
 		void reset(bool defaultall = false);
+		void release();
 		
 		void play();
 		void pause();
