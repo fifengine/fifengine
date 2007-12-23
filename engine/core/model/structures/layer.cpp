@@ -80,9 +80,9 @@ namespace FIFE {
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
 			if(*it == instance) {
+				m_instanceTree->removeInstance(*it);
 				delete *it;
 				m_instances.erase(it);
-				m_instanceTree->removeInstance(*it);
 				break;
 			}
 		}
