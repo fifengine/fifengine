@@ -4,6 +4,8 @@ from savers import saveMapFile
 
 from pychan import *
 
+import os
+
 class InputListener(fife.IMouseListener, fife.IKeyListener):
 
 	def __init__(self, eventmanager, callback):
@@ -20,6 +22,8 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 		self.newTarget = None
 		self.make_inst = False
 		self.delete_inst = False
+		self.show_layers = False
+		self.open_file = False
 
 		self.togglehide = False
 
@@ -58,6 +62,9 @@ class InputListener(fife.IMouseListener, fife.IKeyListener):
 			self.callback()
 		elif keystr == 'l':
 			self.show_layers = True
+			self.callback()
+		elif keystr == 'o':
+			self.open_file = True
 			self.callback()
 
 	def keyReleased(self, evt):
@@ -100,6 +107,7 @@ class FIFEdit(fife.IWidgetListener, object):
 		self.selection = 0
 
 		self.layerselect = 0
+		self.filebrowser = 0
 
 		self.inputlistener = InputListener(self.eventmanager, self.input)
 
@@ -139,6 +147,10 @@ class FIFEdit(fife.IWidgetListener, object):
 		elif self.inputlistener.show_layers:
 			self.create_layerselect(self.camera.getLocation().getElevation())
 			self.inputlistener.show_layers = False
+
+		elif self.inputlistener.open_file:
+			self.create_filebrowser('/home/jwt/fife/trunk/clients/techdemo')
+			self.inputlistener.open_file = False
 	
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
@@ -312,6 +324,11 @@ class FIFEdit(fife.IWidgetListener, object):
 		if(self.layerselect):
 			self.guiroot.remove_widget(self.layerselect)
 		self.layerselect = LayerSelect(self.eventmanager, self.guimanager, self.guiroot, elevation)
+
+	def create_filebrowser(self, path):
+		if(self.filebrowser):
+			self.guiroot.remove_widget(self.filebrowser)
+		self.filebrowser = FileBrowser(self.eventmanager, self.guimanager, self.guiroot, path)
 
 	def edit_camview(self, camera):
 		self.camera = camera
@@ -599,3 +616,65 @@ class LayerSelect(Form):
 
 	def getLayer(self):
 		return self.elevation.getLayers('id', self.layer_list[self.layer_drop.getSelected()])[0]
+
+class FileBrowser(Form):
+
+	def __init__(self, event_manager, gui_manager, parent, path):
+		self.size = (400,400)
+		self.position = (300,100)
+
+		Form.__init__(self, event_manager, gui_manager, parent, 'File Browser', self.position, self.size)
+
+		self.path = path
+
+		self.dir_list = GenericListmodel('..')
+		self.dir_list.extend([dir for dir in os.listdir(self.path) if not os.path.isfile(os.path.join(self.path,dir))])
+
+		self.dir_box = fife.ListBox(self.dir_list)
+		self.dir_box.setSelected(0)
+		self.dir_box.setPosition(5,5)
+		self.dir_box.setSize(150,400)
+		self.dir_box.setActionEventId('ChangeDirectory')
+		self.dir_box.addActionListener(self.guimanager)
+		self.add_widget(self.dir_box)
+
+		self.file_list = GenericListmodel()
+		self.file_list.extend([file for file in os.listdir(self.path) if os.path.isfile(os.path.join(self.path,file))])
+
+		self.file_box = fife.ListBox(self.file_list)
+		self.file_box.setSelected(0)
+		self.file_box.setPosition(5 + self.dir_box.getWidth() + 5,5)
+		self.file_box.setSize(150,400)
+		self.file_box.setActionEventId('SelectFile')
+		self.file_box.addActionListener(self.guimanager)
+		self.add_widget(self.file_box)
+
+	def onWidgetAction(self, evt):
+		evtid = evt.getId()
+		if evtid == 'ChangeDirectory' and (evt.getSourceWidget().this == self.dir_box.this):
+			if(self.dir_list[self.dir_box.getSelected()] == '..'):
+				lst = self.path.split('/')
+				if(len(lst) > 2):
+					lst.pop()
+					self.path = '/'.join(lst)	
+				else:
+					self.path = '/'
+			else:
+				lst = self.path.split('/')
+				lst.append(self.dir_list[self.dir_box.getSelected()])
+				self.path = '/'.join(lst)
+				
+			self.dir_list = GenericListmodel('..')
+			self.dir_list.extend([dir for dir in os.listdir(self.path) if not os.path.isfile(os.path.join(self.path,dir))])
+			self.dir_box.setListModel(self.dir_list)
+			self.dir_box.setSelected(0)
+
+			self.file_list = GenericListmodel()
+			self.file_list.extend([file for file in os.listdir(self.path) if os.path.isfile(os.path.join(self.path,file))])
+			self.file_box.setListModel(self.file_list)
+			self.file_box.setSelected(0)
+		elif evtid == 'SelectFile' and (evt.getSourceWidget().this == self.file_box.this):
+			print 'Selected file: ' + self.file_list[self.file_box.getSelected()]
+		else:
+			Form.onWidgetAction(self, evt)
+
