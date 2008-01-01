@@ -328,7 +328,7 @@ class FIFEdit(fife.IWidgetListener, object):
 	def create_filebrowser(self, path):
 		if(self.filebrowser):
 			self.guiroot.remove_widget(self.filebrowser)
-		self.filebrowser = FileBrowser(self.eventmanager, self.guimanager, self.guiroot, path)
+		self.filebrowser = MapBrowser(self.engine, self.eventmanager, self.guimanager, self.guiroot, path)
 
 	def edit_camview(self, camera):
 		self.camera = camera
@@ -678,3 +678,18 @@ class FileBrowser(Form):
 		else:
 			Form.onWidgetAction(self, evt)
 
+class MapBrowser(FileBrowser):
+	def __init__(self, engine, event_manager, gui_manager, parent, path):
+		self.engine = engine
+		FileBrowser.__init__(self, event_manager, gui_manager, parent, path)
+
+	def onWidgetAction(self, evt):
+		evtid = evt.getId()
+		if evtid == 'SelectFile' and (evt.getSourceWidget().this == self.file_box.this):
+			# assumes the root/content/map directory structure
+			content = self.path.split('/')
+			content.pop()
+			content.pop()
+			loadMapFile('/'.join([self.path, self.file_list[self.file_box.getSelected()]]), self.engine, '/'.join(content))
+		else:
+			FileBrowser.onWidgetAction(self, evt)

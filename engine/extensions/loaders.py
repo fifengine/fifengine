@@ -1,13 +1,16 @@
+# Maploader for FIFE's native xml format.
+# See the documentation for loadMapFile at the bottom of this file for use. 
+
 from xml.sax import make_parser 
 from xml.sax import saxutils, handler
 
 import fife
 
-import sys
+import os
 
 class ModelLoader(handler.ContentHandler):
 
-	def __init__(self, engine, source, state = 0, datastate = 0):
+	def __init__(self, engine, source, content, state = 0, datastate = 0):
 		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SInstance, self.SObject, self.SAction = range(10)
 
 		self.engine = engine
@@ -17,6 +20,7 @@ class ModelLoader(handler.ContentHandler):
 		self.anim_pool = self.engine.getAnimationPool()
 
 		self.source = source
+		self.content_path = content
 
 		if (state):
 			self.state = state
@@ -126,13 +130,16 @@ class ModelLoader(handler.ContentHandler):
 					assert source, "External dataset declared with no source."
 					parser = make_parser()
 
+					if self.content_path:
+						source = '/'.join([self.content_path, source])
+
 					handler = 0
 					if (self.state == self.SMap):
-						handler = ModelLoader(self.engine, source, self.SMap, self.map)
+						handler = ModelLoader(self.engine, source, self.content_path, self.SMap, self.map)
 					elif (self.state == self.SDataset):
-						handler = ModelLoader(self.model, source, self.SDataset, self.dataset)
+						handler = ModelLoader(self.model, source, self.content_path, self.SDataset, self.dataset)
 					else:
-						handler = ModelLoader(self.model, source)
+						handler = ModelLoader(self.model, source, self.content_path)
 
 					assert handler, "Corrupt XML state."
 
@@ -242,6 +249,9 @@ class ModelLoader(handler.ContentHandler):
 						y_offset = int(attrs.get(attrName))
 				assert source, "Image declared with no source location."	
 
+				if self.content_path:
+					source = '/'.join([self.content_path, source])
+
 				id = self.pool.addResourceFromFile(str(source))	
 				self.object.get2dGfxVisual().addStaticImage(int(direction), id)
 				if (x_offset or y_offset):
@@ -285,6 +295,9 @@ class ModelLoader(handler.ContentHandler):
 						source = attrs.get(attrName)
 			
 				assert source, "Animation declared with no source location."
+
+				if self.content_path:
+					source = '/'.join([self.content_path, source])
 
 				animation = self.anim_pool.addResourceFromFile(str(source))
 				self.action.get2dGfxVisual().addAnimation(int(direction), animation)
@@ -489,9 +502,17 @@ class ModelLoader(handler.ContentHandler):
 			self.state = self.SInstances
 
 
-def loadMapFile(path, engine):
+# This is the entire of the loading API. Just call this function to load a map.
+#   path - the path of the map to load
+#   engine - a reference to the engine
+#   content - (optional) reference to the content path. This is sometimes needed
+#     with more complicated/non-standard paths. (This is a bit of a hack that
+#     should probably be addressed in a more uniform way.--jwt)
+def loadMapFile(path, engine, content = ''):
 	parser = make_parser()
-	handler = ModelLoader(engine, path)
+	print path
+	print content
+	handler = ModelLoader(engine, path, content)
 	parser.setContentHandler(handler)
 
 	parser.parse(open(path))
