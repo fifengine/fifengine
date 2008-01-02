@@ -119,7 +119,7 @@ class FIFEdit(fife.IWidgetListener, object):
 		pass
 
 	def input(self):
-		if (not self.edit_layer):
+		if (not self.edit_layer and self.camera):
 			self.edit_layer = self.camera.getLocation().getLayer()
 
 		if self.inputlistener.newTarget and self.camera:
@@ -144,12 +144,12 @@ class FIFEdit(fife.IWidgetListener, object):
 				self.edit_layer.deleteInstance(inst)
 			self.inputlistener.delete_inst = False
 
-		elif self.inputlistener.show_layers:
+		elif self.inputlistener.show_layers and self.camera:
 			self.create_layerselect(self.camera.getLocation().getElevation())
 			self.inputlistener.show_layers = False
 
 		elif self.inputlistener.open_file:
-			self.create_filebrowser('/home/jwt/fife/trunk/clients/techdemo')
+			self.create_filebrowser('../../clients/techdemo')
 			self.inputlistener.open_file = False
 	
 	def onWidgetAction(self, evt):
