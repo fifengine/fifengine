@@ -1,0 +1,18 @@
+This is the standalone FIFE editor, release 2008.0
+
+Keybindings:
+--------------
+- P = Make screenshot
+- LEFT = Move camera left
+- RIGHT = Move camera right
+- UP = Move camera up
+- DOWN = Move camera down
+- F10 = Toggle console on / off
+- ESC = Quit techdemo
+- T = Toggles grid on / off
+- C = Toggles coordinates on / off
+- R = Reload map (useful for map editing)
+- S = Second camera on / off
+
+
+http://www.fifengine.de
