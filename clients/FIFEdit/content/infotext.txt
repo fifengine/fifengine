@@ -11,8 +11,13 @@ Keybindings:
 - ESC = Quit techdemo
 - T = Toggles grid on / off
 - C = Toggles coordinates on / off
-- R = Reload map (useful for map editing)
-- S = Second camera on / off
 
+- O = Open the map loader dialog
+- V = Open the map visualizer dialog
+- M = Make a new instance on the map with
+      current object selection at current
+      mouse selection.
+- X = Remove instances at current mouse
+      selection. 
 
 http://www.fifengine.de

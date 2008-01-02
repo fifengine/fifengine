@@ -11,6 +11,3 @@ LogModules          = []#['hexgrid']
 LogToPrompt         = 1
 LogToFile           = 0
 
-# test settings
-TestCameraPlacement = 0
-

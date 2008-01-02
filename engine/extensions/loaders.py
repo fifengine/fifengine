@@ -510,8 +510,6 @@ class ModelLoader(handler.ContentHandler):
 #     should probably be addressed in a more uniform way.--jwt)
 def loadMapFile(path, engine, content = ''):
 	parser = make_parser()
-	print path
-	print content
 	handler = ModelLoader(engine, path, content)
 	parser.setContentHandler(handler)
 

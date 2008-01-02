@@ -55,8 +55,6 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.newTarget = None
 		self.showTileOutline = True
 		self.showCoordinates = False
-		self.showSecondCamera = False
-		self.reloadRequested = False
 		self.scrollwheelvalue = 0
 		self.ctrl_scrollwheelvalue = 0
 		self.shift_scrollwheelvalue = 0
@@ -143,10 +141,6 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 			self.showTileOutline = not self.showTileOutline
 		elif keystr == 'c':
 			self.showCoordinates = not self.showCoordinates
-		elif keystr == 's':
-			self.showSecondCamera = not self.showSecondCamera
-		elif keystr == 'r':
-			self.reloadRequested = True
 		elif keystr == 'v':
 			self.selectview = True
 		elif keyval in (fife.IKey.LEFT_CONTROL, fife.IKey.RIGHT_CONTROL):
@@ -377,14 +371,14 @@ class World(object):
 				self.editor.edit_camview(self.camera)
 				evtlistener.newMapView = False
 
-##		if showTileOutline != evtlistener.showTileOutline:
-##			self.view.getRenderer('GridRenderer').setEnabled(evtlistener.showTileOutline)
-##			showTileOutline = evtlistener.showTileOutline
-##		
-##		if showCoordinates != evtlistener.showCoordinates:
-##			renderer = self.view.getRenderer('CoordinateRenderer')
-##			showCoordinates = evtlistener.showCoordinates
-##			renderer.setEnabled(showCoordinates)
+			if showTileOutline != evtlistener.showTileOutline:
+				self.view.getRenderer('GridRenderer').setEnabled(evtlistener.showTileOutline)
+				showTileOutline = evtlistener.showTileOutline
+		
+			if showCoordinates != evtlistener.showCoordinates:
+				renderer = self.view.getRenderer('CoordinateRenderer')
+				showCoordinates = evtlistener.showCoordinates
+				renderer.setEnabled(showCoordinates)
 ##		
 ##		if self.ctrl_scrollwheelvalue != evtlistener.ctrl_scrollwheelvalue:
 ##			self.ctrl_scrollwheelvalue = evtlistener.ctrl_scrollwheelvalue
@@ -407,28 +401,6 @@ class World(object):
 			if evtlistener.quitRequested:
 				break
 		
-##		if evtlistener.reloadRequested:
-##			camcoords = self.cameras['main'].getLocation().getExactLayerCoordinates()
-##			evtlistener.reloadRequested = False
-##			self.model.deleteMaps()
-##			self.metamodel.deleteDatasets()
-##			self.create_world(MAPFILE)
-##			self.view.clearCameras()
-##			self.adjust_views()
-##			self.cameras['small'].setEnabled(showSecondCamera)
-##			camloc = self.cameras['main'].getLocation()
-##			camloc.setExactLayerCoordinates(camcoords)
-##			self.cameras['main'].setLocation(camloc)
-##			evtlistener.scrollwheelvalue = self.scrollwheelvalue
-
-##		agentcoords = self.agent.getLocation().getElevationCoordinates()
-##		if not ((self.agentcoords.x == agentcoords.x) and (self.agentcoords.y == agentcoords.y)):
-##			loc = self.cameras['main'].getLocation()
-##			loc.setElevationCoordinates(agentcoords)
-##			self.cameras['main'].setLocation(loc)
-##			self.agentcoords.x = agentcoords.x
-##			self.agentcoords.y = agentcoords.y
-##		
 			# scroll the map with cursor keys
 			if (evtlistener.horizscroll or evtlistener.vertscroll):
 				loc = self.camera.getLocation()

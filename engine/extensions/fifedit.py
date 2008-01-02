@@ -168,9 +168,10 @@ class FIFEdit(fife.IWidgetListener, object):
 			print 'Not implemented yet.'
 
 		elif evtid == 'LoadMapEvt':
-			self.map = self.engine.getModel().getMaps('id', self.map_list[self.level_drop.getSelected()])[0]
-			self.mapwnd.setVisible(False)
-			self.create_mapedit()
+			if(len(self.map_list) > 0):
+				self.map = self.engine.getModel().getMaps('id', self.map_list[self.level_drop.getSelected()])[0]
+				self.mapwnd.setVisible(False)
+				self.create_mapedit()
 
 		elif evtid == 'SaveMapEvt':
 			if(self.map):
@@ -205,7 +206,7 @@ class FIFEdit(fife.IWidgetListener, object):
 
 		panel_width = 0
 		
-		label1 = fife.Label('FIFEdit 2007.3')
+		label1 = fife.Label('FIFEdit 2008.0')
 		label1.setPosition(1, 0)
 		label1.setFont(self.font)
 		self.register_widget(label1, panel)
@@ -393,7 +394,7 @@ class Form(Dialog):
 		self.clbutton.setActionEventId('CloseEvt')
 		self.clbutton.addActionListener(self.guimanager)
 		self.clbutton.adjustSize()
-		self.clbutton.setPosition(self.getWidth() - self.clbutton.getWidth() - 5, self.getHeight() - self.clbutton.getHeight() - 20)
+		self.clbutton.setPosition(self.getWidth() - self.clbutton.getWidth() - 7, self.getHeight() - self.clbutton.getHeight() - 25)
 		self.add_widget(self.clbutton)
 
 	def onWidgetAction(self, evt):
@@ -630,9 +631,14 @@ class FileBrowser(Form):
 		self.dir_list = GenericListmodel('..')
 		self.dir_list.extend([dir for dir in os.listdir(self.path) if not os.path.isfile(os.path.join(self.path,dir))])
 
+		dir_label = fife.Label('Directories: ')
+		dir_label.setPosition(5, 5)
+		dir_label.adjustSize()
+		self.add_widget(dir_label)
+
 		self.dir_box = fife.ListBox(self.dir_list)
 		self.dir_box.setSelected(0)
-		self.dir_box.setPosition(5,5)
+		self.dir_box.setPosition(5,5 + dir_label.getHeight())
 		self.dir_box.setSize(150,400)
 		self.dir_box.setActionEventId('ChangeDirectory')
 		self.dir_box.addActionListener(self.guimanager)
@@ -641,13 +647,25 @@ class FileBrowser(Form):
 		self.file_list = GenericListmodel()
 		self.file_list.extend([file for file in os.listdir(self.path) if os.path.isfile(os.path.join(self.path,file))])
 
+		file_label = fife.Label('Files: ')
+		file_label.setPosition(5 + self.dir_box.getWidth() + 5, 5)
+		file_label.adjustSize()
+		self.add_widget(file_label)
+
 		self.file_box = fife.ListBox(self.file_list)
 		self.file_box.setSelected(0)
-		self.file_box.setPosition(5 + self.dir_box.getWidth() + 5,5)
+		self.file_box.setPosition(5 + self.dir_box.getWidth() + 5,5 + file_label.getHeight())
 		self.file_box.setSize(150,400)
 		self.file_box.setActionEventId('SelectFile')
 		self.file_box.addActionListener(self.guimanager)
 		self.add_widget(self.file_box)
+
+		self.button = fife.Button('Load')
+		self.button.setActionEventId('LoadSelectedMap')
+		self.button.addActionListener(self.guimanager)
+		self.button.adjustSize()
+		self.button.setPosition(5 + self.dir_box.getWidth() + 5 + self.file_box.getWidth() + 5, self.file_box.getY())
+		self.add_widget(self.button)
 
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
@@ -675,6 +693,8 @@ class FileBrowser(Form):
 			self.file_box.setSelected(0)
 		elif evtid == 'SelectFile' and (evt.getSourceWidget().this == self.file_box.this):
 			print 'Selected file: ' + self.file_list[self.file_box.getSelected()]
+		elif evtid == 'LoadSelectedMap' and (evt.getSourceWidget().this == self.button.this):
+			print 'Loading map file ' + self.file_list[self.file_box.getSelected()]
 		else:
 			Form.onWidgetAction(self, evt)
 
@@ -685,7 +705,7 @@ class MapBrowser(FileBrowser):
 
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
-		if evtid == 'SelectFile' and (evt.getSourceWidget().this == self.file_box.this):
+		if evtid == 'LoadSelectedMap' and (evt.getSourceWidget().this == self.button.this):
 			# assumes the root/content/map directory structure
 			content = self.path.split('/')
 			content.pop()
