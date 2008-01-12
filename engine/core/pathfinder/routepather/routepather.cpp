@@ -66,7 +66,7 @@ namespace FIFE {
 				}
 			}
 		}
-		if((instance->getLocation().getLayer() != target.getLayer() || RoutePatherSearch::cellBlocked(target))) {
+		if((instance->getLocation().getLayer() != target.getLayer() || target.getLayer()->cellContainsBlockingInstance(target.getLayerCoordinates()))) {
 			return -1;
 		}
 		SearchSpace* searchspace = getSearchSpace(target.getLayer());

@@ -77,7 +77,7 @@ namespace FIFE {
 			loc.setLayerCoordinates((*i));
 			int adjacentInt = m_searchspace->convertCoordToInt((*i));
 			if(m_searchspace->isInSearchSpace(loc)) {
-				if(adjacentInt == next || cellBlocked(loc)) {
+				if(adjacentInt == next || loc.getLayer()->cellContainsBlockingInstance(loc.getLayerCoordinates())) {
 					continue;
 				}
 
@@ -115,17 +115,5 @@ namespace FIFE {
 		}
 		path.pop_front();
 		return path;
-	}
-
-	bool RoutePatherSearch::cellBlocked(const Location& loc) {
-		std::list<Instance*> adjacentInstances;
-		loc.getLayer()->getInstanceTree()->getInstanceList(loc.getLayerCoordinates(), 1, 1, adjacentInstances);
-		bool blockingInstance = false;
-		for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
-			if((*j)->getObject()->isBlocking()  && (*j)->getLocation().getLayerCoordinates() == loc.getLayerCoordinates()) {
-				blockingInstance = true;
-			}
-		}
-		return blockingInstance;
 	}
 }

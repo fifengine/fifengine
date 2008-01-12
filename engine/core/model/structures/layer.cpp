@@ -165,6 +165,18 @@ namespace FIFE {
 		m_instances_visibility = !m_instances_visibility;
 	}
 
+	bool Layer::cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate) {
+		std::list<Instance*> adjacentInstances;
+		m_instanceTree->getInstanceList(cellCoordinate, 1, 1, adjacentInstances);
+		bool blockingInstance = false;
+		for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
+			if((*j)->getObject()->isBlocking()  && (*j)->getLocation().getLayerCoordinates() == cellCoordinate) {
+				blockingInstance = true;
+			}
+		}
+		return blockingInstance;
+	}
+
 	void Layer::update() {
 		unsigned int curticks = SDL_GetTicks();
 		std::vector<Instance*>::iterator it = m_instances.begin();

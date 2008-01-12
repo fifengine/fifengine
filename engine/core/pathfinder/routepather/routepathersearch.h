@@ -50,8 +50,6 @@ namespace FIFE {
 		virtual void updateSearch();
 
 		virtual Path calcPath();
-
-		static bool cellBlocked(const Location& loc);
 	private:
 		//The class to use to calculate the heuristic value.
 		Heuristic*                m_heuristic;

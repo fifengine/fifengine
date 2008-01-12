@@ -68,28 +68,49 @@ namespace FIFE {
 		Layer* getLayer() const {
 			return m_layer;
 		}
-		/**
+
+		/** Determines whether the given location is within the searchspace.
 		 *
+		 * Tests the equality of the layers and then tests to see whether the coordinates
+		 * lie within the search space.
+		 *
+		 * @param location The location to test.
+		 * @return True if it is in the search space, false otherwise.
 		 */
 		bool isInSearchSpace(const Location& location) const;
 
-		/**
+		/** Translates coordinates into the search space.
 		 *
+		 * given a coordinate this function returns that coordinate in relation to the
+		 * search space origin.
+		 *
+		 * @param coords The coordinate to translate.
+		 * @return The translated coordinate.
 		 */
 		ModelCoordinate translateCoordsToSearchSpace(const ModelCoordinate& coords) const;
 
-		/**
+		/** Converts a coordinate into a unique integer id.
 		 *
+		 * Takes a model coordinate and based on the coordinate returns a unique identifier.
+		 *
+		 * @param coord The model coord to get the integer of.
+		 * @return The unique identifier.
 		 */
 		int convertCoordToInt(const ModelCoordinate& coord) const;
 
-		/**
+		/** Converts an integer to a ModelCoordinate.
 		 *
+		 * Converts an integer that represents a cell in the search space into the
+		 * actual ModelCoordinate representing it's physical location.
+		 *
+		 * @param cell An integer of the cell to get the coordinate of.
+		 * @return The model coordinate in question.
 		 */
 		ModelCoordinate convertIntToCoord(const int cell) const;
 
-		/**
-		 *
+		/** Returns the maximum index on the layer.
+		 * Returns the maximum indexible coordinate on the search space.
+		 * @return The maximum indexible coordinate.
 		 */
 		int getMaxIndex() const;
 	private:
@@ -99,6 +120,7 @@ namespace FIFE {
 		int m_lowerX;
 		int m_lowerY;
 
+		//The layer of the search space.
 		Layer* m_layer;
 	};
 

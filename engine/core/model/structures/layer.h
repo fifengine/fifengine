@@ -146,6 +146,13 @@ namespace FIFE {
 			 */
 			void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = 0) const;
 
+			/** Determines if a given cell on the layer contains a blocking instance
+			 *
+			 * @param cellCoordinate A const reference to a model coordinate of the cell in question.
+			 * @return A boolean, true if it is blocked false otherwise.
+			 */
+			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
+
 			/** Toggle object visibility
 			 *  @see setObjectsVisible
 			 */
