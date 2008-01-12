@@ -6,8 +6,6 @@ from xml.sax import saxutils, handler
 
 import fife
 
-import os
-
 class ModelLoader(handler.ContentHandler):
 
 	def __init__(self, engine, source, content, state = 0, datastate = 0):
@@ -203,7 +201,7 @@ class ModelLoader(handler.ContentHandler):
 					elif (attrName == "static"):
 						static = int(attrs.get(attrName))
 					elif (attrName == "pather"):
-						pather = self.model.getPather(attrs.get(attrName))
+						pather = self.model.getPather( str(attrs.get(attrName))  )
 					if not pather:
 						pather = self.model.getPather("RoutePather")
 				assert id, "Objects must be given an identifier (id) field."
