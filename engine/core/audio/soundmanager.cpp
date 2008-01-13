@@ -52,7 +52,7 @@ namespace FIFE {
 	}
 
 	SoundManager::~SoundManager() {
-		
+
 		// free all soundemitters
 		std::vector<SoundEmitter*>::iterator it;
 		for (it = m_emittervec.begin(); it != m_emittervec.end(); ++it) {
@@ -60,9 +60,11 @@ namespace FIFE {
 				delete (*it);
 			}
 		}
-		
+
 		m_emittervec.clear();
 		alcDestroyContext(m_context);
+
+		if(m_device)
 		alcCloseDevice(m_device);
 	}
 
@@ -72,7 +74,7 @@ namespace FIFE {
 		if (!m_device) {
 			throw Exception("could not open audio device!");
 		}
-		
+
 		m_context = alcCreateContext(m_device, NULL);
 		if (alcGetError(m_device) != ALC_NO_ERROR || !m_context) {
 			throw Exception("Couldn't create audio context");
