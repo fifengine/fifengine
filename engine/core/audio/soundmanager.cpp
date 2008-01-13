@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2008 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -33,7 +33,6 @@
 #include "vfs/vfs.h"
 #include "util/logger.h"
 #include "util/exception.h"
-
 #include "audio/fife_openal.h"
 
 #include "soundmanager.h"
@@ -64,8 +63,9 @@ namespace FIFE {
 		m_emittervec.clear();
 		alcDestroyContext(m_context);
 
-		if(m_device)
-		alcCloseDevice(m_device);
+		if (m_device) {
+			alcCloseDevice(m_device);
+		}
 	}
 
 	void SoundManager::init() {
