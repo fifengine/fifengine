@@ -76,7 +76,7 @@ class FIFEdit(fife.IWidgetListener, object):
 	def __init__(self, engine, maplist):
 		self.engine = engine
 		self.font = engine.getDefaultFont()
-		self.font.setColor(0,0,0)
+		self.font.setColor(255,0,0)
 		self.eventmanager = engine.getEventManager()
 		self.map = 0
 
