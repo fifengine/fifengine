@@ -36,6 +36,7 @@ namespace FIFE {
 	class Model;
 	class LogManager;
 	class GuiFont;
+	class VFS;
 
 	class EngineSettings {
 	public:
@@ -90,5 +91,6 @@ namespace FIFE {
 		Model* getModel();
 		LogManager* getLogManager();
 		GuiFont* getDefaultFont();
+		VFS* getVFS();
 	};
 }

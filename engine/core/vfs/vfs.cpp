@@ -41,7 +41,7 @@ namespace FIFE {
 	static Logger _log(LM_VFS);
 
 
-	VFS::VFS() : m_sources() {}
+	VFS::VFS() : m_sources(), m_root("./") {}
 
 	VFS::~VFS() {
 		cleanup();
@@ -65,28 +65,45 @@ namespace FIFE {
 	}
 	
 	VFSSource* VFS::getSourceForFile(const std::string& file) const {
+		std::string lowerpath = m_root + lower(file);
 		type_sources::const_iterator i = std::find_if(m_sources.begin(), m_sources.end(),
-		                                 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), file));
+		                                 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), lowerpath));
 		if (i == m_sources.end()) {
-			FL_WARN(_log, LMsg("no source for ") << file << " found");
+			FL_WARN(_log, LMsg("no source for ") << lowerpath << " found");
 			return 0;
 		}
 
 		return *i;
 	}
 
+	void VFS::setRootDir(const std::string& path) {
+		m_root = lower(path);
+	}
+	const std::string& VFS::getRootDir() {
+		return m_root;
+	}
+
 	bool VFS::exists(const std::string& file) const {
-		return getSourceForFile(lower(file));
+		return getSourceForFile(m_root + lower(file));
 	}
 
 	RawDataPtr VFS::open(const std::string& path) {
-		std::string lowerpath = lower(path);
+		std::string lowerpath = m_root + lower(path);
 		VFSSource* source = getSourceForFile(lowerpath);
 		if (!source)
 			throw NotFound(path);
 
 		RawDataPtr data(source->open(lowerpath));
 		return data;
+	}
+
+	RawData* VFS::openNEW(const std::string& path) {
+		std::string lowerpath = m_root + lower(path);
+		VFSSource* source = getSourceForFile(lowerpath);
+		if (!source)
+			throw NotFound(path);
+
+		return source->open(lowerpath);
 	}
 
 	std::string VFS::lower(const std::string& str) const {
@@ -97,35 +114,58 @@ namespace FIFE {
 	}
 
 	VFS::type_stringlist VFS::listFiles(const std::string& pathstr) const {
+		std::string lowerpath = m_root + lower(pathstr);
 		VFS::type_stringlist list;
 		type_sources::const_iterator end = m_sources.end();
 		for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
-			type_stringlist sourcelist = (*i)->listFiles(pathstr);
+			type_stringlist sourcelist = (*i)->listFiles(lowerpath);
 			list.insert(sourcelist.begin(), sourcelist.end());
 		}
 
 		return list;
 	}
 
+	std::vector<std::string> VFS::listFilesNEW(const std::string& path) const {
+		std::string lowerpath = m_root + lower(path);
+		std::vector<std::string> target;
+		VFS::type_stringlist files = VFS::instance()->listFiles(lowerpath);
+		for (VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
+			target.push_back(*i);
+		}
+		return target;
+	}
+
 	VFS::type_stringlist VFS::listFiles(const std::string& path, const std::string& filterregex) const {
-		VFS::type_stringlist list = listFiles(path);
+		std::string lowerpath = m_root + lower(path);
+		VFS::type_stringlist list = listFiles(lowerpath);
 		filterList(list, filterregex);
 		return list;
 	}
 
 	VFS::type_stringlist VFS::listDirectories(const std::string& pathstr) const {
+		std::string lowerpath = m_root + lower(pathstr);
 		VFS::type_stringlist list;
 		type_sources::const_iterator end = m_sources.end();
 		for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
-			type_stringlist sourcelist = (*i)->listDirectories(pathstr);
+			type_stringlist sourcelist = (*i)->listDirectories(lowerpath);
 			list.insert(sourcelist.begin(), sourcelist.end());
 		}
 
 		return list;
 	}
 
+	std::vector<std::string> VFS::listDirectoriesNEW(const std::string& path) const {
+		std::string lowerpath = m_root + lower(path);
+		std::vector<std::string> target;
+		type_stringlist files = listDirectories(lowerpath);
+		for (VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
+			target.push_back(*i);
+		}
+		return target;
+	}
+
 	VFS::type_stringlist VFS::listDirectories(const std::string& path, const std::string& filterregex) const {
-		VFS::type_stringlist list = listDirectories(path);
+		VFS::type_stringlist list = listDirectories(m_root + lower(path));
 		filterList(list, filterregex);
 		return list;
 	}

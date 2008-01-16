@@ -21,6 +21,8 @@
 
 // Standard C++ library includes
 #include <algorithm>
+#include <vector>
+#include <string>
 
 // 3rd party library includes
 
@@ -44,6 +46,27 @@ namespace FIFE {
 		delete m_datasource;
 	}
 
+	std::vector<uint8_t> RawData::getDataInBytes() {
+		std::vector<uint8_t> target;
+		uint32_t size = getDataLength();
+		uint8_t* array = new uint8_t[size];
+		readInto(array, size);
+		for (uint32_t i = 0; i < size; i++) {
+			target.push_back(array[i]);
+		}
+		delete array;
+		return target;
+	}
+
+	std::vector<std::string> RawData::getDataInLines() {
+		std::vector<std::string> target;
+
+		std::string line;
+		while (getLine(line)) {
+			target.push_back(line);
+		}
+		return target;
+	}
 
 	unsigned int RawData::getDataLength() const {
 		return m_datasource->getSize();

@@ -1019,16 +1019,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\..\engine\core\vfs\vfsutility.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\vfs\vfsutility.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\..\engine\core\vfs\zip\zipdata.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>

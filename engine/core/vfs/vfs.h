@@ -69,6 +69,11 @@ namespace FIFE {
 
 			/** remove a VFSSource */
 			void removeSource(VFSSource* source);
+
+			/** Set a root directory for this filesystem, not necessarily the root directory of the drive.
+			 */
+			void setRootDir(const std::string& path);
+			const std::string& getRootDir();
 			
 			/** Check if the given file exists
 			 *
@@ -85,12 +90,21 @@ namespace FIFE {
 			 */
 			RawDataPtr open(const std::string& path);
 
+			/** Open a file
+			 *
+			 * @param path the file to open
+			 * @return the opened file; delete this when done.
+			 * @throws NotFound if the file cannot be found
+			 */
+      RawData* openNEW(const std::string& path);
+
 			/** Get a filelist of the given directory
 			 *
 			 * @param path the directory
 			 * @return the filelist
 			 */
 			type_stringlist listFiles(const std::string& path) const;
+			std::vector<std::string> listFilesNEW(const std::string& path) const;
 
 			/** List the files of a given directory matching a regex
 			 *
@@ -103,13 +117,13 @@ namespace FIFE {
 			 */
 			type_stringlist listFiles(const std::string& path, const std::string& filterregex) const;
 
-
 			/** Get a directorylist of the given directory
 			 *
 			 * @param path the directory
 			 * @return the directorylist
 			 */
 			type_stringlist listDirectories(const std::string& path) const;
+			std::vector<std::string> listDirectoriesNEW(const std::string& path) const;
 
 			/** List the subdirectorys of a given directory matching a regex
 			 *
@@ -122,6 +136,8 @@ namespace FIFE {
 		private:
 			typedef std::vector<VFSSource*> type_sources;
 			type_sources m_sources;
+
+			std::string m_root;
 
 			void filterList(type_stringlist& list, const std::string& regex) const;
 			std::string lower(const std::string&) const;

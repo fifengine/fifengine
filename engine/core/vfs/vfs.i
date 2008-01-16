@@ -21,9 +21,11 @@
 
 %module fife
 %{
-#include "vfs/vfsutility.h"
 #include "util/exception.h"
+#include "vfs/vfs.h"
 %}
+
+%include "vfs/raw/rawdata.i"
 
 typedef unsigned char uint8_t;
 namespace std {
@@ -31,14 +33,22 @@ namespace std {
 };
 
 namespace FIFE {
-	class VFSUtility {
+	class VFS {
 	public:
-		VFSUtility();
-		virtual ~VFSUtility();
-		std::vector<uint8_t> readBytes(const std::string& fname) throw(FIFE::NotFound);
-		std::vector<std::string> readLines(const std::string& fname) throw(FIFE::NotFound);
-		std::vector<std::string> listFiles(const std::string& path) throw(FIFE::NotFound);
-		std::vector<std::string> listDirectories(const std::string& path) throw(FIFE::NotFound);
-		bool addSource(const std::string& sname);
+
+		VFS();
+		virtual ~VFS();
+
+		void setRootDir(const std::string& path);
+		const std::string& getRootDir();
+
+		void cleanup();
+
+		bool exists(const std::string& file) const;
+		RawData* openNEW(const std::string& path);
+
+		std::vector<std::string> listFilesNEW(const std::string& path) const;
+		std::vector<std::string> listDirectoriesNEW(const std::string& path) const;
 	};
 }
+

@@ -337,8 +337,6 @@
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssourcefactory.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssourceprovider.cpp"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssourceprovider.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\vfs\vfsutility.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\vfs\vfsutility.h"></File>
 				<Filter Name="zip">
 					<File RelativePath="..\..\..\..\engine\core\vfs\zip\zipdata.cpp"></File>
 					<File RelativePath="..\..\..\..\engine\core\vfs\zip\zipdata.h"></File>

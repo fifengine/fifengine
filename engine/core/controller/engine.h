@@ -55,6 +55,7 @@ namespace FIFE {
 	class Model;
 	class LogManager;
 	class GuiFont;
+	class VFS;
 
 	class Engine {
 	public:
@@ -92,6 +93,7 @@ namespace FIFE {
 		View* getView() { return m_view; }
 		LogManager* getLogManager() { return m_logmanager; }
 		GuiFont* getDefaultFont() { return m_defaultfont; }
+		VFS* getVFS() { return m_vfs; }
 
 	private:
 		void preInit();

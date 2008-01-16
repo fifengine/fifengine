@@ -1,26 +1,33 @@
 #!/usr/bin/env python
 from swig_test_utils import *
 
+import sys
+
 class TestVfs(unittest.TestCase):
 	def setUp(self):
 		self.engine = getEngine(True)
-		self.vfs = fife.VFSUtility()
+		self.vfs = self.engine.getVFS()
 
 	def tearDown(self):
-		del self.vfs
 		del self.engine
 	
 	def testListFiles(self):
-		self.assert_(self.vfs.listFiles('.'))
+		self.vfs.listFilesNEW('.')
+		self.assert_(self.vfs.listFilesNEW('.'))
 	
 	def testListDirs(self):
-		self.assert_(self.vfs.listDirectories('.'))
+		print self.vfs.listDirectoriesNEW('.')
+		self.assert_(self.vfs.listDirectoriesNEW('.'))
 	
 	def testReadLines(self):
-		self.assert_(self.vfs.readLines('test_fife.py'))
+		data = self.vfs.openNEW('test_fife.py')
+		self.assert_(data.getDataInLines())
+		del data
 	
 	def testReadBytes(self):
-		self.assert_(self.vfs.readBytes('test_fife.py'))
+		data = self.vfs.openNEW('test_fife.py')
+		self.assert_(data.getDataInBytes())
+		del data
 
 TEST_CLASSES = [TestVfs]
 

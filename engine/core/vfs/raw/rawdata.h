@@ -50,6 +50,15 @@ namespace FIFE {
 			RawData(RawDataSource* datasource);
 			virtual ~RawData();
 
+			/** get the data as a vector of bytes
+			 */
+			std::vector<uint8_t> getDataInBytes();
+
+			/** get the data in distinct lines
+			 */
+			std::vector<std::string> getDataInLines();
+
+
 			/** get the complete datalength
 			 *
 			 * @return the complete datalength
