@@ -2,151 +2,151 @@
 <dataset id="Hibernator" type="Embedded" format="1.0">
 	<!-- Hibernator misc. graphics -->
 	<object id="Object:Hibernator:Misc:001" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_destroyed_SE.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_destroyed_SE.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:002" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_destroyed_SW.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_destroyed_SW.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:003" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_destroyed_with_skeleton_SE.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_destroyed_with_skeleton_SE.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:004" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_destroyed_with_skeleton_SW.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_destroyed_with_skeleton_SW.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:005" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_empty_SE.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_empty_SE.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:006" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_empty_SW.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_empty_SW.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:007" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_female_lying_A_blood_SE.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_female_lying_A_blood_SE.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:008" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_female_lying_A_blood_SW.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_female_lying_A_blood_SW.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:009" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_female_lying_A_E.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_female_lying_A_E.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:010" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_female_lying_A_S.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_female_lying_A_S.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:011" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_female_lying_A_SE.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_female_lying_A_SE.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:012" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_female_lying_A_SW.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_female_lying_A_SW.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:013" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_female_lying_A_SE.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_female_lying_A_SE.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:014" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_female_lying_A_W.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_female_lying_A_W.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:015" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_male_lying_blood_E.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_male_lying_blood_E.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:016" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_male_lying_blood_SE.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_male_lying_blood_SE.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:017" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_male_lying_blood_SW.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_male_lying_blood_SW.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:018" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_male_lying_blood_W.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_male_lying_blood_W.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:019" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_male_lying_SE.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_male_lying_SE.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Misc:020" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibanator_misc\hibernator_male_lying_SW.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibanator_misc/hibernator_male_lying_SW.png" x_offset="0" y_offset="0" />
 	</object>
 
 	<!-- Hibernator female graphics -->
 	<object id="Object:Hibernator:Female:001" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SE\hibernator0000.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SE/hibernator0000.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:002" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SE\hibernator0001.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SE/hibernator0001.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:003" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SE\hibernator0002.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SE/hibernator0002.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:004" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SE\hibernator0003.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SE/hibernator0003.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:005" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SE\hibernator0004.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SE/hibernator0004.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:006" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SE\hibernator0005.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SE/hibernator0005.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:007" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SE\hibernator0006.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SE/hibernator0006.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:008" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SW\hibernator0000.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SW/hibernator0000.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:009" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SW\hibernator0001.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SW/hibernator0001.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:010" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SW\hibernator0002.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SW/hibernator0002.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:011" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SW\hibernator0003.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SW/hibernator0003.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:012" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SW\hibernator0004.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SW/hibernator0004.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:013" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SW\hibernator0005.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SW/hibernator0005.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Female:014" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_female_SW\hibernator0006.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_female_SW/hibernator0006.png" x_offset="0" y_offset="0" />
 	</object>
 
 	<!-- Hibernator male graphics -->
 	<object id="Object:Hibernator:Male:001" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SE\hibernator0000.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SE/hibernator0000.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:002" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SE\hibernator0001.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SE/hibernator0001.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:003" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SE\hibernator0002.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SE/hibernator0002.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:004" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SE\hibernator0003.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SE/hibernator0003.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:005" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SE\hibernator0004.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SE/hibernator0004.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:006" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SE\hibernator0005.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SE/hibernator0005.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:007" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SE\hibernator0006.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SE/hibernator0006.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:008" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SW\hibernator0000.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SW/hibernator0000.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:009" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SW\hibernator0001.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SW/hibernator0001.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:010" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SW\hibernator0002.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SW/hibernator0002.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:011" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SW\hibernator0003.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SW/hibernator0003.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:012" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SW\hibernator0004.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SW/hibernator0004.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:013" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SW\hibernator0005.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SW/hibernator0005.png" x_offset="0" y_offset="0" />
 	</object>
 	<object id="Object:Hibernator:Male:014" blocking="0">
-		<image source="content\gfx\objects\hibernator\hibernator_male_SW\hibernator0006.png" x_offset="0" y_offset="0" />
+		<image source="content/gfx/objects/hibernator/hibernator_male_SW/hibernator0006.png" x_offset="0" y_offset="0" />
 	</object>
 </dataset>

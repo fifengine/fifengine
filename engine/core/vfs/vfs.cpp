@@ -78,6 +78,8 @@ namespace FIFE {
 
 	void VFS::setRootDir(const std::string& path) {
 		m_root = lower(path);
+		if(!m_root.empty() && *(m_root.end() - 1) != '/')
+			m_root.append(1,'/');
 	}
 	const std::string& VFS::getRootDir() {
 		return m_root;
@@ -89,6 +91,8 @@ namespace FIFE {
 
 	RawDataPtr VFS::open(const std::string& path) {
 		std::string lowerpath = m_root + lower(path);
+		FL_DBG(_log, LMsg("Opening: ") << lowerpath);
+
 		VFSSource* source = getSourceForFile(lowerpath);
 		if (!source)
 			throw NotFound(path);
@@ -99,6 +103,8 @@ namespace FIFE {
 
 	RawData* VFS::openNEW(const std::string& path) {
 		std::string lowerpath = m_root + lower(path);
+		FL_DBG(_log, LMsg("Opening: ") << lowerpath);
+
 		VFSSource* source = getSourceForFile(lowerpath);
 		if (!source)
 			throw NotFound(path);

@@ -396,7 +396,11 @@ class World(object):
 ##			l.getCellGrid().setRotation(self.scrollwheelvalue)
 ##			print "cell grid rotation " + str(self.scrollwheelvalue)
 	
-			self.engine.pump()
+			try:
+				self.engine.pump()
+			except fife.Exception, e:
+				print e.getMessage()
+				break
 		
 			if evtlistener.quitRequested:
 				break
@@ -413,7 +417,11 @@ class World(object):
 
 			self.gui.show_info(evtlistener.showInfo)
 		
-			self.engine.finalizePumping()
+			try:
+				self.engine.finalizePumping()
+			except fife.Exception, e:
+				print e.getMessage()
+				break
 
 
 if __name__ == '__main__':

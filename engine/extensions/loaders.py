@@ -247,15 +247,18 @@ class ModelLoader(handler.ContentHandler):
 						y_offset = int(attrs.get(attrName))
 				assert source, "Image declared with no source location."	
 
-				if self.content_path:
-					source = '/'.join([self.content_path, source])
+#				if self.content_path:
+#					source = '/'.join([self.content_path, source])
 
-				id = self.pool.addResourceFromFile(str(source))	
-				self.object.get2dGfxVisual().addStaticImage(int(direction), id)
-				if (x_offset or y_offset):
-					img = self.pool.getImage(id)
-					img.setXShift(x_offset)
-					img.setYShift(y_offset)
+				try:
+					id = self.pool.addResourceFromFile(str(source))	
+					self.object.get2dGfxVisual().addStaticImage(int(direction), id)
+					if (x_offset or y_offset):
+						img = self.pool.getImage(id)
+						img.setXShift(x_offset)
+						img.setYShift(y_offset)
+				except fife.Exception,e:
+					print e.getMessage()
 
 			else:
 				assert 0, "<image> tags can only be declared in an <object> section."
@@ -294,11 +297,14 @@ class ModelLoader(handler.ContentHandler):
 			
 				assert source, "Animation declared with no source location."
 
-				if self.content_path:
-					source = '/'.join([self.content_path, source])
+#				if self.content_path:
+#					source = '/'.join([self.content_path, source])
 
-				animation = self.anim_pool.addResourceFromFile(str(source))
-				self.action.get2dGfxVisual().addAnimation(int(direction), animation)
+				try:
+					animation = self.anim_pool.addResourceFromFile(str(source))
+					self.action.get2dGfxVisual().addAnimation(int(direction), animation)
+				except fife.Exception,e:
+					print e.getMessage()
 
 			else:
 				assert 0, "Animations must be declared in an <action> section."
@@ -510,6 +516,10 @@ def loadMapFile(path, engine, content = ''):
 	parser = make_parser()
 	handler = ModelLoader(engine, path, content)
 	parser.setContentHandler(handler)
+
+	# I'm not sure if this solution is robust enough, but it works for now.
+	print 'Content directory is: ' + content
+	engine.getVFS().setRootDir(content)
 
 	parser.parse(open(path))
 

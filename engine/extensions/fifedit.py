@@ -259,7 +259,6 @@ class FIFEdit(fife.IWidgetListener, object):
 
 		self.level_drop = fife.DropDown(self.map_list)
 		self.level_drop.setSelected(0)
-		print 'Default level selection: ' + str(self.level_drop.getSelected())
 		self.level_drop.setPosition(5, 10)
 		self.level_drop.setSize(sx - 150, 16)
 		self.level_drop.setActionEventId('LoaderListEvt')
