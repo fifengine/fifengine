@@ -13,6 +13,7 @@
 
 	<!-- Load objects -->
 	<dataset type="XML" source="content/datasets/objects/test_objects.xml" />
+	<dataset type="XML" source="content/datasets/objects/hibernator.xml" />
 
 	<!-- Load agent datasets -->
 	<dataset type="XML" source="content/datasets/agents/humans/gunner.xml" />
@@ -21,16 +22,16 @@
 		<!-- TILE LAYER -->
 		<layer id="TechdemoMapTileLayer" grid_type="square" x_scale="1" y_scale="1">
 			<instances>
-				<i o="Tiles:Test:panel_001" x="0" y="0" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:panel_003" x="0" y="1" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:panel_001" x="0" y="2" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:panel_001" x="0" y="3" /><i o="Tiles:Test:panel_002" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_003" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:panel_001" x="0" y="4" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="5" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="6" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="7" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="8" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
-				<i o="Tiles:Test:Block" x="0" y="9" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" /><i o="Tiles:Test:Block" />
+				<i o="Tiles:Test:panel_001" x="0" y="0" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_003" x="0" y="1" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_001" x="0" y="2" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_001" x="0" y="3" /><i o="Tiles:Test:panel_002" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_003" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_001" x="0" y="4" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_001" x="0" y="5" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_001" x="0" y="6" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_001" x="0" y="7" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_001" x="0" y="8" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
+				<i o="Tiles:Test:panel_001" x="0" y="9" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" /><i o="Tiles:Test:panel_001" />
 			</instances>		
 		</layer>
 
@@ -46,6 +47,59 @@
 						</param>
 					</metadata>
 				</i>
+				<i o="Object:Hibernator:Misc:001" x="1" y="2" />
+				<i o="Object:Hibernator:Misc:002" x="6" y="2" />
+				<i o="Object:Hibernator:Misc:003" x="11" y="2" />
+				<i o="Object:Hibernator:Misc:004" x="16" y="2" />
+				<i o="Object:Hibernator:Misc:005" x="21" y="2" />
+				<i o="Object:Hibernator:Misc:006" x="26" y="2" />
+				<i o="Object:Hibernator:Misc:007" x="31" y="2" />
+				<i o="Object:Hibernator:Misc:008" x="36" y="2" />
+
+				<i o="Object:Hibernator:Male:014" x="1" y="9" />
+				<i o="Object:Hibernator:Misc:009" x="6" y="9" />
+				<i o="Object:Hibernator:Misc:010" x="11" y="9" />
+				<i o="Object:Hibernator:Misc:011" x="16" y="9" />
+				<i o="Object:Hibernator:Misc:012" x="21" y="9" />
+				<i o="Object:Hibernator:Misc:013" x="26" y="9" />
+				<i o="Object:Hibernator:Misc:014" x="31" y="9" />
+				<i o="Object:Hibernator:Misc:015" x="36" y="9" />
+
+				<i o="Object:Hibernator:Misc:016" x="1" y="16" />
+				<i o="Object:Hibernator:Misc:017" x="6" y="16" />
+				<i o="Object:Hibernator:Misc:018" x="11" y="16" />
+				<i o="Object:Hibernator:Misc:019" x="16" y="16" />
+				<i o="Object:Hibernator:Misc:020" x="21" y="16" />
+				<i o="Object:Hibernator:Female:001" x="26" y="16" />
+				<i o="Object:Hibernator:Female:002" x="31" y="16" />
+				<i o="Object:Hibernator:Female:003" x="36" y="16" />
+
+				<i o="Object:Hibernator:Female:004" x="1" y="23" />
+				<i o="Object:Hibernator:Female:005" x="6" y="23" />
+				<i o="Object:Hibernator:Female:006" x="11" y="23" />
+				<i o="Object:Hibernator:Female:007" x="16" y="23" />
+				<i o="Object:Hibernator:Female:008" x="21" y="23" />
+				<i o="Object:Hibernator:Female:009" x="26" y="23" />
+				<i o="Object:Hibernator:Female:010" x="31" y="23" />
+				<i o="Object:Hibernator:Female:011" x="36" y="23" />
+
+				<i o="Object:Hibernator:Female:012" x="1" y="30" />
+				<i o="Object:Hibernator:Female:013" x="6" y="30" />
+				<i o="Object:Hibernator:Female:014" x="11" y="30" />
+				<i o="Object:Hibernator:Male:001" x="16" y="30" />
+				<i o="Object:Hibernator:Male:002" x="21" y="30" />
+				<i o="Object:Hibernator:Male:003" x="26" y="30" />
+				<i o="Object:Hibernator:Male:004" x="31" y="30" />
+				<i o="Object:Hibernator:Male:005" x="36" y="30" />
+
+				<i o="Object:Hibernator:Male:006" x="1" y="37" />
+				<i o="Object:Hibernator:Male:007" x="6" y="37" />
+				<i o="Object:Hibernator:Male:008" x="11" y="37" />
+				<i o="Object:Hibernator:Male:009" x="16" y="37" />
+				<i o="Object:Hibernator:Male:010" x="21" y="37" />
+				<i o="Object:Hibernator:Male:011" x="26" y="37" />
+				<i o="Object:Hibernator:Male:012" x="31" y="37" />
+				<i o="Object:Hibernator:Male:013" x="36" y="37" />
 			</instances>
 		</layer>
 	</elevation>

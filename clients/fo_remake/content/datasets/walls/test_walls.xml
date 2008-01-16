@@ -5,7 +5,7 @@
 		<param name="Version" value="1" />
 	</metadata>
 	<object id="Walls:Test:wall180">
-		<image source="content/gfx/walls/testing/wall180.png" direction="0" />
+		<image source="content/gfx/walls/testing/wall180.png" direction="0" x_offset="0" y_offset="-48" />
 	</object>
 
 </dataset>

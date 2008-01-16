@@ -39,23 +39,29 @@
 						</param>
 					</metadata>
 				</i>
+				<!--
 				<i o="Object:Invisible" x="-10" y="-10" />
 				<i o="Object:Invisible" x="-10" y="20" />
 				<i o="Object:Invisible" x="20" y="-10" />
 				<i o="Object:Invisible" x="20" y="20" />
+				-->
+				
+				<!--
+				<i o="Object:Tube" x="15" y="15" />
+				-->
 
-				<i o="Walls:Test:wall180" x="0" y="-2" />
-				<i o="Walls:Test:wall180" x="0" y="-1" />
-				<i o="Walls:Test:wall180" x="0" y="0" />
-				<i o="Walls:Test:wall180" x="0" y="1" />
-				<i o="Walls:Test:wall180" x="0" y="2" />
-				<i o="Walls:Test:wall180" x="0" y="3" />
-				<i o="Walls:Test:wall180" x="0" y="4" />
-				<i o="Walls:Test:wall180" x="0" y="5" />
-				<i o="Walls:Test:wall180" x="0" y="6" />
-				<i o="Walls:Test:wall180" x="0" y="7" />
-				<i o="Walls:Test:wall180" x="0" y="8" />
-				<i o="Walls:Test:wall180" x="0" y="9" />
+				<i o="Walls:Test:wall180" x="6" y="0" />
+				<i o="Walls:Test:wall180" x="6" y="1" />
+				<i o="Walls:Test:wall180" x="6" y="2" />
+				<i o="Walls:Test:wall180" x="6" y="3" />
+				<i o="Walls:Test:wall180" x="6" y="4" />
+				<i o="Walls:Test:wall180" x="6" y="5" />
+				<i o="Walls:Test:wall180" x="6" y="6" />
+				<i o="Walls:Test:wall180" x="6" y="7" />
+				<i o="Walls:Test:wall180" x="6" y="8" />
+				<i o="Walls:Test:wall180" x="6" y="9" />
+				<i o="Walls:Test:wall180" x="6" y="10" />
+				<i o="Walls:Test:wall180" x="6" y="11" />
 			</instances>
 		</layer>
 	</elevation>
