@@ -99,6 +99,7 @@ namespace FIFE {
 		if (renderer->isEnabled()) {
 			FL_LOG(_log, LMsg("Enabling renderer ") << renderer->getName());
 			m_pipeline.push_back(renderer);
+			m_pipeline.sort(pipelineSort);
 		} else {
 			m_pipeline.remove(renderer);
 		}
