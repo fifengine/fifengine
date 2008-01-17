@@ -60,6 +60,7 @@ enum logmodule_t {
 	LM_CAMERA,
 	LM_VIEWVIEW,
 	LM_XML,
+	LM_EXCEPTION,
 	LM_MODULE_MAX // sentinel
 };
 
@@ -92,7 +93,8 @@ enum logmodule_t {
 		{LM_VIEW, LM_CORE, "View"}, \
 		  {LM_CAMERA, LM_VIEW, "Camera"}, \
 		  {LM_VIEWVIEW, LM_VIEW, "View::View"}, \
-		{LM_XML, LM_CORE, "XML"} \
+		{LM_XML, LM_CORE, "XML"}, \
+		{LM_EXCEPTION, LM_CORE, "Exception"} \
 	};
 
 #endif

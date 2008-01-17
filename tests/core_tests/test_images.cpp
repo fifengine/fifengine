@@ -169,29 +169,47 @@ void test_sdl_alphaoptimize() {
 	BOOST_CHECK(alpha_img->getSurface()->format->Amask != 0);
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_sdl_image() {
+#else
+BOOST_AUTO_TEST_CASE( SDL_image_test ) {
+#endif
 	environment env;
 	RenderBackendSDL renderbackend;
 	test_image(renderbackend);
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_ogl_image() {
+#else
+BOOST_AUTO_TEST_CASE( OGL_image_test ) {
+#endif
 	environment env;
 	RenderBackendOpenGL renderbackend;
 	test_image(renderbackend);
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_sdl_subimage() {
+#else
+BOOST_AUTO_TEST_CASE( SDL_subimage_test ) {
+#endif
 	environment env;
 	RenderBackendSDL renderbackend;
 	test_subimage(renderbackend);
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_ogl_subimage() {
+#else
+BOOST_AUTO_TEST_CASE( OGL_subimage_test ) {
+#endif
 	environment env;
 	RenderBackendOpenGL renderbackend;
 	test_subimage(renderbackend);
 }
+
+#ifdef FIFE_BOOST_VERSION_103300
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Image Tests");
 	test->add( BOOST_TEST_CASE( &test_sdl_subimage ),0 );
@@ -202,3 +220,4 @@ test_suite* init_unit_test_suite(int argc, char** const argv) {
 
 	return test;
 }
+#endif

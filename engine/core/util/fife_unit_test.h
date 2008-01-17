@@ -26,10 +26,13 @@
 
 // 3rd party library includes
 #include <boost/version.hpp>
-#if BOOST_VERSION < 103400
+#if BOOST_VERSION > 103400
 	#define BOOST_TEST_DYN_LINK
 	#define BOOST_TEST_MAIN
+#else
+    #define FIFE_BOOST_VERSION_103300
 #endif
+
 #include <boost/test/unit_test.hpp>
 
 // FIFE includes

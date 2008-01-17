@@ -210,8 +210,7 @@ namespace FIFE {
 				FL_DBG(_log, "movement finished");
 				finalizeAction();
 			}
-		}
-		else {
+		} else {
 			FL_DBG(_log, "action does not contain target for movement");
 			if ((curticks - m_actioninfo->m_action_start_time) >= m_actioninfo->m_action->getDuration()) {
 				if (m_actioninfo->m_repeating) {
@@ -251,12 +250,12 @@ namespace FIFE {
 	}
 
 	const Location& Instance::getTargetLocation() const {
-		if (m_actioninfo) {
+		if ( m_actioninfo && m_actioninfo->m_target ) {
 			return *m_actioninfo->m_target;
 		}
 		return m_location;
-	}	
-	
+	}
+
 	double Instance::getMovementSpeed() const {
 		if (m_actioninfo) {
 			return m_actioninfo->m_speed;

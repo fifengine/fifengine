@@ -44,23 +44,90 @@
 
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
-	
+
 	GridRenderer::GridRenderer(RenderBackend* renderbackend):
 		m_renderbackend(renderbackend) {
 		setPipelinePosition(0);
 		setEnabled(false);
 	}
-	
+
 	GridRenderer::~GridRenderer() {
 	}
-	
+
 	void GridRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
 			return;
 		}
-		
+//
+//
+//		//render elev_coord box
+//		//draw front quad
+//		// 1,1,1
+//		//1,-1,1
+//		//-1,-1,1
+//		//-1,1,1
+		Point a,b,c,d;
+
+
+		ScreenPoint copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,1) );
+		ScreenPoint copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,1) );
+		Point coptt1(copt1.x,copt1.y);
+		Point coptt2(copt2.x,copt2.y);
+		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
+		a = coptt1;
+
+		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,1) );
+		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,1) );
+		coptt1 = Point(copt1.x,copt1.y);
+		coptt2 = Point(copt2.x,copt2.y);
+		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
+		b = coptt1;
+
+		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,1) );
+		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,1) );
+		coptt1 = Point(copt1.x,copt1.y);
+		coptt2 = Point(copt2.x,copt2.y);
+		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
+		c = coptt1;
+
+		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,1) );
+		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,1) );
+		coptt1 = Point(copt1.x,copt1.y);
+		coptt2 = Point(copt2.x,copt2.y);
+		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 20);
+		d = coptt1;
+
+		m_renderbackend->drawQuad(a,b,c,d,15, 15, 200);
+//
+//
+//		//draw back quad
+		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,-1) );
+		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,-1) );
+		coptt1 = Point(copt1.x,copt1.y);
+		coptt2 = Point(copt2.x,copt2.y);
+		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
+
+		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,-1) );
+		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,-1) );
+		coptt1 = Point(copt1.x,copt1.y);
+		coptt2 = Point(copt2.x,copt2.y);
+		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
+
+		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,-1) );
+		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,-1) );
+		coptt1 = Point(copt1.x,copt1.y);
+		coptt2 = Point(copt2.x,copt2.y);
+		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
+
+		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,-1) );
+		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,-1) );
+		coptt1 = Point(copt1.x,copt1.y);
+		coptt2 = Point(copt2.x,copt2.y);
+		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
+
+
 		Rect cv = cam->getViewPort();
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {

@@ -9,7 +9,7 @@ namespace FIFE {
 	
 	class Camera {
 	public:
-		Camera();
+		Camera(Layer* layer,Rect viewport, ExactModelCoordinate emc);
 		~Camera();
 		void setTilt(double tilt);
 		double getTilt() const;

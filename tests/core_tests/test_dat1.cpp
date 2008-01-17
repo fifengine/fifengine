@@ -44,7 +44,11 @@ using namespace FIFE;
 static const std::string COMPRESSED_FILE = "../data/dat1vfstest.dat";
 static const std::string RAW_FILE = "../data/test.map";
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_decoder() {
+#else
+BOOST_AUTO_TEST_CASE( DAT1_test ) {
+#endif
 	boost::shared_ptr<VFS> vfs(new VFS());
 	vfs->addSource(new VFSHostSystem());
 
@@ -97,8 +101,10 @@ void test_decoder() {
 	delete[] d_comp;
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("DAT1 tests");
 	test->add(BOOST_TEST_CASE(&test_decoder), 0);
 	return test;
 }
+#endif

@@ -28,23 +28,23 @@ class TestView(unittest.TestCase):
 		self.screen_cell_h = img.getHeight()
 		
 		self.layer = elev.createLayer("layer001", self.grid)
+
+		self.camcoord = fife.ExactModelCoordinate(2,0)
 		
-		self.camloc = fife.Location()
-		self.camloc.setLayer(self.layer)
-		self.camloc.setExactLayerCoordinates(fife.ExactModelCoordinate(2,0))
 
 		
 	def tearDown(self):
 		del self.engine
 
 	def testCamera(self):
-		cam = self.engine.getView().addCamera()
+		rb = self.engine.getRenderBackend()
+		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
+
+		cam = self.engine.getView().addCamera(self.layer, viewport, self.camcoord )
 		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		cam.setRotation(45)
 		cam.setTilt(40)
-		cam.setLocation(self.camloc)
-		rb = self.engine.getRenderBackend()
-		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
+		
 		cam.setViewPort(viewport)
 		self.engine.getView().resetRenderers()
 		
@@ -68,16 +68,14 @@ class TestView(unittest.TestCase):
 				cam.setRotation(cam.getRotation() - 1)
 			elif i > 40 and i < 50:
 				if i % 2 == 0:
-					c = self.camloc.getExactLayerCoordinates()
+					c = cam.getLocation().getExactLayerCoordinates()
 					c.x += 0.1
-					c = self.camloc.setExactLayerCoordinates(c)
-				cam.setLocation(self.camloc)
+					c = cam.getLocation().setExactLayerCoordinates(c)
 			elif i > 50 and i < 60:
 				if i % 2 == 0:
-					c = self.camloc.getExactLayerCoordinates()
+					c = cam.getLocation().getExactLayerCoordinates()
 					c.x -= 0.1
-					c = self.camloc.setExactLayerCoordinates(c)
-				cam.setLocation(self.camloc)
+					c = cam.getLocation().setExactLayerCoordinates(c)
 			elif i > 60 and i < 70:
 				cam.setTilt(cam.getTilt() + 1)
 			elif i > 70 and i < 80:

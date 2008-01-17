@@ -10,11 +10,17 @@ class TestController(unittest.TestCase):
 		del self.engine
 		
 	def testInstances(self):
-		self.assert_(self.engine.getAudioManager())
+		print "\nTest SoundManager"
+		self.assert_(self.engine.getSoundManager())
+		print "Test EventManager"
 		self.assert_(self.engine.getEventManager())
+		print "Test TimeManager"
 		self.assert_(self.engine.getTimeManager())
+		print "Test GuiManager"
 		self.assert_(self.engine.getGuiManager())
+		print "Test ImagePool"		
 		self.assert_(self.engine.getImagePool())
+		print "Test AnimationPool"
 		self.assert_(self.engine.getAnimationPool())
 		pass
 

@@ -50,7 +50,7 @@ namespace FIFE {
 		public:
 			/** Constructor.
 			 *
-			 * @param name The name of the new renderbackend.				
+			 * @param name The name of the new renderbackend.
 			 */
 			RenderBackend(const std::string& name);
 			/** Destructor.
@@ -124,7 +124,7 @@ namespace FIFE {
 			 * @return Screen area in rect
 			 */
 			const Rect& getScreenArea();
-				
+
 			/** Gets the height of the screen.
 			 *
 			 * @return Height of the screen.
@@ -140,37 +140,38 @@ namespace FIFE {
 			/** Draws line between given point with given color (rgb)
 			 */
 			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
-			
+			virtual void drawQuad(const Point& p1, const Point& p2, const Point& p2, const Point& p3,  int r, int g, int b) =0;
+
 			/** Pushes clip area to clip stack
 			 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
 			 *  note that previous items in stack do not affect the latest area pushed
 			 */
 			void pushClipArea(const Rect& cliparea);
-			
+
 			/** Pops clip area from clip stack
 			 *  @see pushClipArea
 			 */
 			void popClipArea();
-			
+
 			/** Gets the current clip area
 			 *  @see pushClipArea
 			 */
 			const Rect& getClipArea() const;
 
-			
+
 		protected:
 			/** Sets given clip area to render backend
 			 *  @see pushClipArea
 			 */
 			virtual void setClipArea(const Rect& cliparea) = 0;
-			
+
 			/** Clears any possible clip areas
 			 *  @see pushClipArea
 			 */
 			virtual void clearClipArea();
-			
+
 			SDL_Surface* m_screen;
-			
+
 		private:
 			Rect m_screenarea;
 			// The name of the renderbackend.

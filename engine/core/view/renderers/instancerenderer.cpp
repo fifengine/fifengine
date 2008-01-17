@@ -58,25 +58,11 @@ namespace FIFE {
 		setPipelinePosition(1);
 		setEnabled(true);
 	}
-	
+
 	InstanceRenderer::~InstanceRenderer() {
 	}
-	
-	int InstanceRenderer::getAngleBetween(const Location& loc1, const Location& loc2, Camera& cam) {
-		ScreenPoint pt1 = cam.toScreenCoordinates(loc1.getElevationCoordinates());
-		ScreenPoint pt2 = cam.toScreenCoordinates(loc2.getElevationCoordinates());
-		double dy = pt2.y - pt1.y;
-		double dx = pt2.x - pt1.x;
-		
-		int angle = static_cast<int>(atan2(dy,dx)*(180.0/M_PI));
-		FL_DBG(_log, LMsg("-> angle, pt1=") << pt1 << ", pt2=" << pt2 << ", angle=" << angle);
-		if (dy > 0) {
-			return 360 - angle;
-		} else {
-			return -angle;
-		}
-	}
-	
+
+
 	void InstanceRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
 		FL_DBG(_log, "Iterating layer...");
 		CellGrid* cg = layer->getCellGrid();
@@ -90,18 +76,18 @@ namespace FIFE {
 			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it);
 			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
-			
+
 			Image* image = NULL;
 			ExactModelCoordinate elevpos = instance->getLocation().getElevationCoordinates();
 			ScreenPoint campos = cam->toScreenCoordinates(elevpos);
-			
+
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocation().getLayerCoordinates());
 			FL_DBG(_log, LMsg("Instance elevation position = ") << elevpos);
 			FL_DBG(_log, LMsg("Instance camera position = ") << campos);
-			
+
 			Action* action = instance->getCurrentAction();
 			const Location& facing_loc = instance->getFacingLocation();
-			int angle = getAngleBetween(instance->getLocation(), instance->getFacingLocation(), *cam);
+			int angle = cam->getAngleBetween(instance->getLocation(), facing_loc);
 			FL_DBG(_log, LMsg("Rendering instance with angle ") << angle);
 			if (action) {
 				FL_DBG(_log, "Instance has action");
@@ -121,7 +107,7 @@ namespace FIFE {
 			}
 			if (image) {
 				ExactModelCoordinate exact_elevpos = instance->getLocation().getElevationCoordinates();
-				ScreenPoint drawpt = cam->toScreenCoordinates(exact_elevpos);
+				ScreenPoint drawpt = cam->toScreenCoordinates( exact_elevpos );
 
 				int w = image->getWidth();
 				int h = image->getHeight();
@@ -131,17 +117,13 @@ namespace FIFE {
 				drawpt.y += image->getYShift();
 				Rect r = Rect(drawpt.x, drawpt.y, w, h);
 				FL_DBG(_log, LMsg("image(") << r << "), viewport (" << cam->getViewPort());
-				if (r.intersects(cam->getViewPort())) {
 					FL_DBG(_log, "Instance is visible in viewport, rendering");
 					image->render(r);
-				} else {
-					FL_DBG(_log, "Instance is not visible in viewport, skipping");
-				}
 			}
 			else {
 				FL_DBG(_log, "Instance does not have image to render");
 			}
 		}
-	
+
 	}
 }

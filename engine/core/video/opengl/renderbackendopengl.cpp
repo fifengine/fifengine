@@ -217,7 +217,17 @@ namespace FIFE {
 		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
 		glEnd();
 	}
-	
+
+	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+	        glColor4ub(r, g, b, 165);
+		glBegin(GL_QUADS);
+		glVertex3f(p1.x, p1.y, 0);
+		glVertex3f(p2.x, p2.y, 0);
+		glVertex3f(p3.x, p3.y, 0);
+		glVertex3f(p4.x, p4.y, 0);
+		glEnd();
+	}
+
 	void RenderBackendOpenGL::setClipArea(const Rect& cliparea) {
 	        glScissor(cliparea.x, getScreenHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
 	        glClear(GL_COLOR_BUFFER_BIT);

@@ -46,17 +46,16 @@ namespace FIFE {
 		 * @param animpool animation pool where from fetch images
 		 */
 		InstanceRenderer(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		
+
 		/** Destructor.
 		 */
 		virtual ~InstanceRenderer();
-		
+
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
-		
+
 		std::string getName() { return "InstanceRenderer"; }
 
 	private:
-		int getAngleBetween(const Location& loc1, const Location& loc2, Camera& cam);
 		RenderBackend* m_renderbackend;
 		ImagePool* m_imagepool;
 		AnimationPool* m_animationpool;

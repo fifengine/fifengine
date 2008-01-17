@@ -68,18 +68,15 @@ class ActionTests(unittest.TestCase):
 		self.engine.finalizePumping()
 
 	def testWalkAround(self):
-		camloc = fife.Location()
-		camloc.setLayer(self.layer)
-		camloc.setLayerCoordinates(fife.ModelCoordinate(0,0))
+
+		rb = self.engine.getRenderBackend()
+		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
 		
-		cam = self.engine.getView().addCamera()
+		cam = self.engine.getView().addCamera(self.layer, viewport, fife.ExactModelCoordinate(0,0) )
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
 		cam.setRotation(45)
 		cam.setTilt(40)
-		cam.setLocation(camloc)
-		rb = self.engine.getRenderBackend()
-		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
-		cam.setViewPort(viewport)
+		
 		self.engine.getView().resetRenderers()
 		
 		self.engine.initializePumping()

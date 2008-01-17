@@ -57,15 +57,15 @@ namespace FIFE {
 		 * After addition, renderer is active for all cameras
 		 */
 		void addRenderer(RendererBase* renderer);
-		
+
 		/** Gets renderer with given name
 		 */
 		RendererBase* getRenderer(const std::string& name);
-		
-		/** Adds new camera on view. 
+
+		/** Adds new camera on view.
 		 *  After creation, camera gets rendered by the added renderers
 		 */
-		Camera* addCamera();
+		Camera* addCamera(Layer *layer, Rect viewport, ExactModelCoordinate emc);
 
 		/** Removes given camera from the view.
 		 */
@@ -74,19 +74,19 @@ namespace FIFE {
 		/** Clears all cameras from view
 		 */
 		void clearCameras();
-		
+
 		/** resets active layer information to be reseted on all renderers.
 		 *  View fetches all layers from cameras and activate them on each renderer.
 		 */
 		void resetRenderers();
-		
+
 		/** Causes view to render all cameras
 		 */
-		void update();
-		
+		void update(ImagePool*,AnimationPool*);
+
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 		void onRendererEnabledChanged(RendererBase* renderer);
-		
+
 
 	private:
 		// list of cameras managed by the view

@@ -76,7 +76,11 @@ struct environment {
 		}
 };
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_image_pool() {
+#else
+BOOST_AUTO_TEST_CASE( ImagePool_test ) {
+#endif
 	environment env;
 	RenderBackendSDL renderbackend;
 
@@ -134,8 +138,10 @@ void test_image_pool() {
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Image Pool Tests");
 	test->add( BOOST_TEST_CASE( &test_image_pool ),0 );
 	return test;
 }
+#endif

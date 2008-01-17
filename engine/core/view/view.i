@@ -8,7 +8,7 @@ namespace FIFE {
 	class View {
 	public:
 		~View();
-		Camera* addCamera();
+		Camera* addCamera(Layer* layr,Rect viewport, ExactModelCoordinate emc);
 		void removeCamera(Camera* camera);
 		void clearCameras();
 		RendererBase* getRenderer(const std::string& name);

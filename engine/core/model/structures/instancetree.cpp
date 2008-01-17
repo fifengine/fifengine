@@ -84,11 +84,21 @@ namespace FIFE {
 		//Do it based on the model coordinates. Should we use model coordinates or
 		//exact model coordinates?
 		InstanceTreeNode* node = m_tree.find_container(point.x, point.y, w, h);
-		if(!node) {
+		if (!node) {
 			return 0;
 		}
 
 		return &node->data();
 	}
 
+	InstanceTree::InstanceList* InstanceTree::getInstanceList(const Rect& rect) {
+		//Do it based on the model coordinates. Should we use model coordinates or
+		//exact model coordinates?
+		InstanceTreeNode* node = m_tree.find_container(rect.x, rect.y, rect.w, rect.h);
+		if (!node) {
+			return 0;
+		}
+
+		return &node->data();
+	}
 }

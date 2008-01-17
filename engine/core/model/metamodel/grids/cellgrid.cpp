@@ -65,16 +65,16 @@ namespace FIFE {
 	}
 
 	void CellGrid::updateMatrices() {
-		m_matrix.loadTranslate(-m_xshift, -m_yshift, 0);
-		m_matrix.applyRotate(m_rotation, 0.0, 0.0, 1.0);
-		m_matrix.applyScale(1 / m_xscale, 1 / m_yscale, 1);
+		m_matrix.loadRotate(m_rotation, 0.0, 0.0, 1.0);
+		m_matrix.applyScale(m_xscale,m_yscale, 1);
+		m_matrix.applyTranslate(m_xshift, m_yshift, 0);
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
 	ExactModelCoordinate CellGrid::toElevationCoordinates(const ModelCoordinate& layer_coords) {
 		return toElevationCoordinates(intPt2doublePt(layer_coords));
 	}
-	
+
 	int CellGrid::orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2) {
 		double o = (pt2.x - pt1.x) * (pt.y - pt1.y) - (pt.x - pt1.x) * (pt2.y - pt1.y);
 		if (o > 0.0) {

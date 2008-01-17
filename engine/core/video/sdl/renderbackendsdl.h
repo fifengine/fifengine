@@ -56,7 +56,7 @@ namespace FIFE {
 			/* Ends the frame.
 			 */
 			virtual void endFrame();
-			
+
 			/** Initialises the SDL video subsystem.
 			 */
 			virtual void init();
@@ -76,29 +76,31 @@ namespace FIFE {
 			 *
 			 * Creates an SDLImage instance from the specified data.
 			 * Takes ownership over the surface.
-			 * 
+			 *
 			 * @see SDLImage
 			 */
 			virtual Image* createStaticImageFromSDL(SDL_Surface* surface);
-			
+
 			/** Makes a screenshot and saves it as a BMP file.
 			 */
 			virtual void captureScreen(const std::string& filename);
 
+			virtual void drawPoint(const Point& p1, int r, int g, int b){}
 			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-			
+			virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
+
 			/** Removes fake alpha from images
 			 */
 			void setRemoveFakeAlpha(bool removefakealpha) { m_removefakealpha = removefakealpha; }
-			
+
 			/** True, if fake alpha is removed from images
 			 */
 			bool isRemoveFakeAlpha() { return m_removefakealpha; }
-		
+
 		protected:
 			void setClipArea(const Rect& cliparea);
 
-		
+
 		private:
 			inline void putPixel(int x, int y, int r, int g, int b);
 			bool m_removefakealpha;

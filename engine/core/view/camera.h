@@ -48,91 +48,66 @@ namespace FIFE {
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
 		 */
-		Camera();
+		Camera(Layer *layer, Rect viewport, ExactModelCoordinate emc);
 
 		/** Destructor
 		 */
 		virtual ~Camera();
 
-		/** Sets tilt for the camera. 
+		/** Sets tilt for the camera.
 		 * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
 		 * @param tilt tilt for the camera
 		 */
-		void setTilt(double tilt) {
-			m_tilt = tilt;
-			updateReferenceScale();
-			updateMatrices();
-		}
+		void setTilt(double tilt);
 
 		/** Gets camera tilt
 		 * @return tilt of camera
-		 */ 
-		double getTilt() const { return m_tilt; }
+		 */
+		double getTilt() const;
 
-		/** Sets rotation for the camera. 
-		 * Rotation can be visualized by thinking camera that rotates around an object 
+		/** Sets rotation for the camera.
+		 * Rotation can be visualized by thinking camera that rotates around an object
 		 * that it is rendering
 		 * @param rotation rotation for the camera
 		 */
-		void setRotation(double rotation) {
-			m_rotation = rotation;
-			updateReferenceScale();
-			updateMatrices();
-		}
+		void setRotation(double rotation);
 
 		/** Gets camera rotation
 		 * @return rotation of the camera
-		 */ 
-		double getRotation() const { return m_rotation; }
+		 */
+		double getRotation() const;
 
-		/** Sets zoom for the camera. 
+		/** Sets zoom for the camera.
 		 * @param zoom zoom for the camera
 		 */
-		void setZoom(double zoom) {
-			m_zoom = zoom;
-			if (m_zoom < 0.001) {
-				m_zoom = 0.001;
-			}
-
-			updateMatrices();
-		}
+		void setZoom(double zoom);
 
 		/** Gets camera zoom
 		 * @return zoom of the camera
-		 */ 
-		double getZoom() const { return m_zoom; }
+		 */
+		double getZoom() const;
 
-		void setCellImageDimensions(unsigned int width, unsigned int height) { 
-			m_screen_cell_width = width;
-			m_screen_cell_height = height;
-			updateReferenceScale();
-			updateMatrices();
-		}
-
+		void setCellImageDimensions(unsigned int width, unsigned int height);
 		/** Sets the location for camera
 		 * @param location location (center point) to render
-		 */ 
-		void setLocation(const Location& location) { 
-			m_location = location;
-			updateReferenceScale();
-			updateMatrices();
-		}
+		 */
+		void setLocation(const Location& location);
 
 		/** Gets the location camera is rendering
 		 * @return camera location
-		 */ 
-		const Location& getLocation() const { return m_location; }
+		 */
+		const Location& getLocation() const;
 
 		/** Sets the viewport for camera
 		 * viewport is rectangle inside the view where camera renders
 		 * @param viewport area for camera render
-		 */ 
-		void setViewPort(const Rect& viewport) { m_viewport = viewport; }
+		 */
+		void setViewPort(const Rect& viewport);
 
 		/** Gets the viewport for camera
 		 * @return camera viewport
-		 */ 
-		const Rect& getViewPort() const { return m_viewport; }
+		 */
+		const Rect& getViewPort() const;
 
 		/** Transforms given point from screen coordinates to elevation coordinates
 		 *  @return point in elevation coordinates
@@ -143,14 +118,15 @@ namespace FIFE {
 		 *  @return point in screen coordinates
 		 */
 		ScreenPoint toScreenCoordinates(ExactModelCoordinate elevation_coords);
-		
+
 		/** Sets camera enabled / disabled
 		 */
-		void setEnabled(bool enabled) { m_enabled = enabled; }
-		
+		void setEnabled(bool enabled);
+
 		/** Gets if camera is enabled / disabled
 		 */
-		bool isEnabled() { return m_enabled; }
+		bool isEnabled();
+		int getAngleBetween(const Location& loc1, const Location& loc2);
 
 	private:
 		void updateMatrices();

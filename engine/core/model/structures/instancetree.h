@@ -99,7 +99,8 @@ namespace FIFE {
 		 * @return A vector pointer to a vector of the contents of the node.
 		 */
 		InstanceList* getInstanceList(const ModelCoordinate& point, int w, int h);
-		
+		InstanceList* getInstanceList(const Rect& rect);
+
 		// The quadtree containing instances.
 		InstanceQuadTree m_tree;
 	};

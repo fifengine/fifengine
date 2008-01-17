@@ -111,7 +111,11 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 	}	
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_sdl_gui_image() {
+#else
+BOOST_AUTO_TEST_CASE( SDL_gui_test ) {
+#endif
 	environment env;
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
@@ -122,7 +126,12 @@ void test_sdl_gui_image() {
 	test_gui_image(renderbackend, graphics, pool, screen);
 }
 
+
+#ifdef FIFE_BOOST_VERSION_103300
 void test_ogl_gui_image() {
+#else
+BOOST_AUTO_TEST_CASE( OGL_gui_test ) {
+#endif
 	environment env;
 	RenderBackendOpenGL renderbackend;
 	renderbackend.init();
@@ -132,6 +141,7 @@ void test_ogl_gui_image() {
 	test_gui_image(renderbackend, graphics, pool, screen);
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Gui Tests");
 	test->add( BOOST_TEST_CASE( &test_ogl_gui_image ),0 );
@@ -139,3 +149,4 @@ test_suite* init_unit_test_suite(int argc, char** const argv) {
 
 	return test;
 }
+#endif

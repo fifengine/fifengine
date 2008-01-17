@@ -101,7 +101,8 @@ namespace FIFE {
 				if ((drawpt.x >= cv.x) && (drawpt.x <= cv.w) &&
 				    (drawpt.y >= cv.y) && (drawpt.y <= cv.h)) {
 					std::stringstream ss;
-					ss << mc.x << ":" << mc.y;
+					ss << drawpt.z;
+					m_font->setColor(255,255,255);
 					Image * img = m_font->getAsImage(ss.str());
 					r.x = drawpt.x;
 					r.y = drawpt.y;

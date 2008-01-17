@@ -103,13 +103,13 @@ namespace FIFE {
 		}
 		return squareGridDiagonal;
 	}
-	
+
 	ExactModelCoordinate SquareGrid::toElevationCoordinates(const ExactModelCoordinate& layer_coords) {
-		return m_inverse_matrix * layer_coords;
+		return m_matrix * layer_coords;
 	}
 
 	ExactModelCoordinate SquareGrid::toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
-		return m_matrix * elevation_coord;
+		return m_inverse_matrix * elevation_coord;
 	}
 
 	ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& elevation_coord) {

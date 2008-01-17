@@ -137,18 +137,27 @@ void test_animation(RenderBackend& renderbackend) {
 	delete imagepool;
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_sdl() {
+#else
+BOOST_AUTO_TEST_CASE( SDL_animtest ) {
+#endif
 	environment env;
 	RenderBackendSDL renderbackend;
 	test_animation(renderbackend);
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 void test_ogl() {
+#else
+BOOST_AUTO_TEST_CASE( OGL_animtest ) {
+#endif
 	environment env;
 	RenderBackendOpenGL renderbackend;
 	test_animation(renderbackend);
 }
 
+#ifdef FIFE_BOOST_VERSION_103300
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Animation Tests");
 	test->add( BOOST_TEST_CASE( &test_sdl ),0 );
@@ -156,3 +165,4 @@ test_suite* init_unit_test_suite(int argc, char** const argv) {
 
 	return test;
 }
+#endif

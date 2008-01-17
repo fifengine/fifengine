@@ -27,11 +27,16 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "logger.h"
 #include "exception.h"
 
-namespace FIFE { 
 
-	Exception::Exception(const std::string& msg): FifeClass(), m_message(msg) {}
+namespace FIFE {
+static Logger _log(LM_EXCEPTION);
+
+	Exception::Exception(const std::string& msg): FifeClass(), m_message(msg) {
+		FL_WARN(_log, LMsg() << getMessage());
+		}
 
 	Exception::~Exception() {}
 

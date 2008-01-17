@@ -37,7 +37,11 @@
 using boost::unit_test::test_suite;
 using namespace FIFE;
 
+#ifdef FIFE_BOOST_VERSION_103300
 void rectangle_intersection() {
+#else
+BOOST_AUTO_TEST_CASE( Rectangle_test ) {
+#endif
 	Rect a(0,0,10,10);
 
 	std::vector<Rect> do_intersect;
@@ -84,7 +88,7 @@ void rectangle_intersection() {
 
 }
 
-
+#ifdef FIFE_BOOST_VERSION_103300
 test_suite* init_unit_test_suite(int argc, char** const argv) {
 	test_suite* test = BOOST_TEST_SUITE("Rectangle Tests");
 
@@ -92,3 +96,4 @@ test_suite* init_unit_test_suite(int argc, char** const argv) {
 
 	return test;
 }
+#endif
