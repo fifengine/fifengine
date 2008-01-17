@@ -140,7 +140,7 @@ namespace FIFE {
 			/** Draws line between given point with given color (rgb)
 			 */
 			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
-			virtual void drawQuad(const Point& p1, const Point& p2, const Point& p2, const Point& p3,  int r, int g, int b) =0;
+			virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3,  int r, int g, int b) =0;
 
 			/** Pushes clip area to clip stack
 			 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
