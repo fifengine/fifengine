@@ -44,24 +44,24 @@
 
 /** Logs given message with log level "debug" using given logger instance
  */
-#define FL_DBG(logger, msg) logger.log(LogManager::LEVEL_DEBUG, msg)
+#define FL_DBG(logger, msg) do { if (LogManager::instance()->isVisible(logger.getModule())) logger.log(LogManager::LEVEL_DEBUG, msg); } while(0)
 
 /** Logs given message with log level "log" using given logger instance
  */
-#define FL_LOG(logger, msg) logger.log(LogManager::LEVEL_LOG, msg)
+#define FL_LOG(logger, msg) do { if (LogManager::instance()->isVisible(logger.getModule())) logger.log(LogManager::LEVEL_LOG, msg); } while(0)
 
 /** Logs given message with log level "warning" using given logger instance
  */
-#define FL_WARN(logger, msg) logger.log(LogManager::LEVEL_WARN, msg)
+#define FL_WARN(logger, msg) do { if (LogManager::instance()->isVisible(logger.getModule())) logger.log(LogManager::LEVEL_WARN, msg); } while(0)
 
 /** Logs given message with log level "error" using given logger instance
  */
-#define FL_ERR(logger, msg) logger.log(LogManager::LEVEL_ERROR, msg)
+#define FL_ERR(logger, msg) do { if (LogManager::instance()->isVisible(logger.getModule())) logger.log(LogManager::LEVEL_ERROR, msg); } while(0)
 
 /** Logs given message with log level "pacic" using given logger instance. 
  * Causes also program to abort
  */
-#define FL_PANIC(logger, msg) logger.log(LogManager::LEVEL_PANIC, msg)
+#define FL_PANIC(logger, msg) do { if (LogManager::instance()->isVisible(logger.getModule())) logger.log(LogManager::LEVEL_PANIC, msg); } while(0)
 
 #else
 // empty definitions in case logs are turned off for speed
@@ -225,6 +225,11 @@ namespace FIFE {
 		 * Message is wrapped into LMsg instance for easy formatting
 		 */
 		void log(LogManager::LogLevel level, const LMsg& msg);
+		
+		/** gets module where this logger is associated to
+		 */
+		logmodule_t getModule() const { return m_module; }
+		
 	private:
 		logmodule_t m_module;
 	};
