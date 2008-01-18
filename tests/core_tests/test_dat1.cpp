@@ -59,12 +59,12 @@ BOOST_AUTO_TEST_CASE( DAT1_test ) {
 
 	vfs->addSource(new DAT1(COMPRESSED_FILE));
 
-	if ((!vfs->exists(RAW_FILE)) || (!vfs->exists("dat1vfstest.map"))) {
+	if ((!vfs->exists(RAW_FILE)) || (!vfs->exists(COMPRESSED_FILE))) {
 		BOOST_ERROR("Test files not found");
 	}
 
 	RawDataPtr fraw = vfs->open(RAW_FILE);
-	RawDataPtr fcomp = vfs->open("dat1vfstest.map");
+	RawDataPtr fcomp = vfs->open(COMPRESSED_FILE);
 
 	if (fraw->getDataLength() != fcomp->getDataLength()) {
 		std::cout << "raw length = " << fraw->getDataLength() \

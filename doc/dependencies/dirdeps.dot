@@ -97,6 +97,7 @@ subgraph cluster_12 {
     label = "xml";
 }
     "audio" -> "util"
+    "audio" -> "util/resource"
     "audio" -> "util/time"
     "audio" -> "vfs"
     "audio" -> "vfs/raw"

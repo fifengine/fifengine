@@ -34,7 +34,7 @@ class TestAudio(unittest.TestCase):
 		sound.play()
 		time.sleep(30);
 
-TEST_CLASSES = [TestAudio]
+TEST_CLASSES = []
 
 if __name__ == '__main__':
     unittest.main()

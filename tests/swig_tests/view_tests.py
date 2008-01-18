@@ -40,7 +40,7 @@ class TestView(unittest.TestCase):
 		rb = self.engine.getRenderBackend()
 		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
 
-		cam = self.engine.getView().addCamera(self.layer, viewport, self.camcoord )
+		cam = self.engine.getView().addCamera("foo", self.layer, viewport, self.camcoord )
 		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		cam.setRotation(45)
 		cam.setTilt(40)
