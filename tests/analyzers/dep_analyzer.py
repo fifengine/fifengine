@@ -197,7 +197,8 @@ def analyze(write_postscript=False):
 	#for f, file2inc
 	result = '\n'.join(illegalModuleDeps)
 	if not result:
-		print "no dependency analyzer errors found"
+		result = "no dependency analyzer errors found"
+	print result
 
 _ANALYZE_FN_ = analyze
 
