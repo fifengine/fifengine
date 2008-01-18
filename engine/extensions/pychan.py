@@ -20,6 +20,8 @@ TODO
  - Wrap missing widgets: RadioButton, Slider
  - Documentation
  - Add support for 'Spacers' in layouts (some)
+ - Add dialog.execute()
+ - Add messageBox(text)
  - Easier Font handling.
 
 BUGS
@@ -89,8 +91,8 @@ Very often a dialogs text fields, labels and listboxes have to be filled with da
 after the creation of the dialog. This can be a tiresome process.
 After a dialog has executed, B{other} attributes have to be read out again,
 this to can be tiresome. PyChan simplifies both processes. But it treats them as three
-processes. One is setting the data that will never be read out again - called B{initial data}
-- the text of a checkbox or the list of a listBox are good examples. The second is setting the
+processes. One is setting the data that will never be read out again - called B{initial data} -
+the text of a checkbox or the list of a listBox are good examples. The second is setting the
 data that is mutable by the user and may be read out again - for example the state of a checkbox
 or the selected index in a list. The third and final process is collection of the user-mutable data::
   guiElement.distributeInitialData({
@@ -624,7 +626,22 @@ class _widget(object):
 ### Containers + Layout code ###
 
 class Container(_widget,fife.Container):
-	""" Basic Container Class """
+	"""
+	This is the basic container class. It provides space in which child widgets can
+	be position via the position attribute. If you want to use the layout engine,
+	you have to use derived containers with vertical or horizontal orientation
+	(L{VBox} or L{HBox})
+	
+	New Attributes
+	==============
+	
+	  - padding - Integer: Not used in the Container class istelf, distance between child widgets.
+	  - background_image - Set this to a GuiImage or a resource location (simply a filename).
+	    The image will be tiled over the background area.
+	  - opaque - Boolean: Whether the background should be drawn at all. Set this to False
+	    to make the widget transparent.
+	  - children - Just contains the list of contained child widgets. Do NOT modify.
+	"""
 	def __init__(self,padding=5,margins=(5,5),_real_widget=None, **kwargs):
 		self.real_widget = _real_widget or fife.Container()
 		self.children = []
@@ -635,6 +652,9 @@ class Container(_widget,fife.Container):
 		super(Container,self).__init__(**kwargs)
 
 	def add(self, *widgets):
+		"""
+		Adds a child widget to the container.
+		"""
 		for widget in widgets:
 			self.children.append(widget)
 			self.real_widget.add(widget.real_widget)
@@ -787,6 +807,9 @@ class LayoutBase(object):
 
 
 class VBoxLayoutMixin(LayoutBase):
+	"""
+	A mixin class for a vertical layout. Do not use directly.
+	"""
 	def __init__(self,**kwargs):
 		super(VBoxLayoutMixin,self).__init__(**kwargs)
 
@@ -818,6 +841,9 @@ class VBoxLayoutMixin(LayoutBase):
 	def ydelta(self,widget):return widget.height + self.padding
 
 class HBoxLayoutMixin(LayoutBase):
+	"""
+	A mixin class for a horizontal layout. Do not use directly.
+	"""
 	def __init__(self,**kwargs):
 		super(HBoxLayoutMixin,self).__init__(**kwargs)
 
@@ -850,17 +876,43 @@ class HBoxLayoutMixin(LayoutBase):
 
 
 class VBox(VBoxLayoutMixin,Container):
+	"""
+	A vertically aligned box - for containement of child widgets.
+	
+	Widgets added to this container widget, will layout on top of each other.
+	Also the minimal width of the container will be the maximum of the minimal
+	widths of the contained widgets.
+	
+	The default alignment is to the top. This can be changed by adding a Spacer
+	to the widget at any point (but only one!). The spacer will expand, so that
+	widgets above the spacer are aligned to the top, while widgets below the spacer
+	are aligned to the bottom.
+	"""
 	def __init__(self,padding=5,**kwargs):
 		super(VBox,self).__init__(**kwargs)
 		self.padding = padding
 
 
 class HBox(HBoxLayoutMixin,Container):
+	"""
+	A horizontally aligned box - for containement of child widgets.
+	
+	Please see L{VBox} for details - just change the directions :-).
+	"""	
 	def __init__(self,padding=5,**kwargs):
 		super(HBox,self).__init__(**kwargs)
 		self.padding = padding
 
 class Window(VBoxLayoutMixin,Container):
+	"""
+	A L{VBox} with a draggable title bar aka a window
+	
+	New Attributes
+	==============
+	
+	  - title: The Caption of the window
+	  - titlebar_height: The height of the window title bar
+	"""
 	def __init__(self,title="title",titlebar_height=0,**kwargs):
 		super(Window,self).__init__(_real_widget = fife.Window(), **kwargs)
 		if titlebar_height == 0:
@@ -888,6 +940,20 @@ class Window(VBoxLayoutMixin,Container):
 ### Basic Widgets ###
 
 class _basicTextWidget(_widget):
+	"""
+	The base class for widgets which display a string - L{Label},L{ClickLabel},L{Button}, etc.
+	Do not use directly.
+	
+	New Attributes
+	==============
+	
+	  - text: The text (depends on actual widget)
+	
+	Data
+	====
+	
+	The text can be set via the L{distributeInitialData} method.
+	"""
 	def __init__(self, text = "",**kwargs):
 		self.margins = (5,5)
 		self.text = text
@@ -906,22 +972,46 @@ class _basicTextWidget(_widget):
 		self.width = self.font.getWidth(self.text) + self.margins[0]*2
 
 class Label(_basicTextWidget):
+	"""
+	A basic label - displaying a string.
+	"""
 	def __init__(self,**kwargs):
 		self.real_widget = fife.Label("")
 		super(Label,self).__init__(**kwargs)
 
 class ClickLabel(_basicTextWidget):
+	"""
+	A basic label - displaying a string.
+	
+	Only difference to L{Label} is that this will generate an event,
+	if clicked - just like a HTML link.
+	"""
 	def __init__(self,**kwargs):
 		self.real_widget = fife.ClickLabel("")
 		super(ClickLabel,self).__init__(**kwargs)
 
 class Button(_basicTextWidget):
+	"""
+	A basic push button.
+	"""
 	def __init__(self,**kwargs):
 		self.real_widget = fife.Button("")
 		super(Button,self).__init__(**kwargs)
 
 
 class CheckBox(_basicTextWidget):
+	"""
+	A basic checkbox.
+	
+	New Attributes
+	==============
+	
+	  - marked: Boolean value, whether the checkbox is checked or not.
+	
+	Data
+	====
+	The marked status can be read and set via L{distributeData} and L{collectData}
+	"""
 	def __init__(self,**kwargs):
 		self.real_widget = fife.CheckBox()
 		super(CheckBox,self).__init__(**kwargs)
@@ -938,6 +1028,10 @@ class CheckBox(_basicTextWidget):
 	marked = property(_isMarked,_setMarked)
 
 class GenericListmodel(fife.ListModel,list):
+	"""
+	A wrapper for the exported list model to behave more like a Python list.
+	Don't use directly.
+	"""
 	def __init__(self,*args):
 		super(GenericListmodel,self).__init__()
 		map(self.append,args)
