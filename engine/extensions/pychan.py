@@ -63,6 +63,9 @@ def _mungeText(text):
 class InitializationError(Exception):
 	pass
 
+class RuntimeError(Exception):
+	pass
+
 def _InitCheckOrFail(check,message):
 	if not check: raise InitializationError(message)
 
@@ -96,6 +99,7 @@ class _Manager(fife.IWidgetListener, fife.TimeEvent):
 		self.styles['default'] = {
 			'default' : {
 				'border_size': 1,
+				'margins': (0,0),
 				'base_color' : fife.Color(0,0,100),
 				'foreground_color' : fife.Color(255,255,255),
 				'background_color' : fife.Color(0,0,0),
@@ -125,6 +129,7 @@ class _Manager(fife.IWidgetListener, fife.TimeEvent):
 			},
 			Window : {
 				'border_size': 1,
+				'margins': (5,5),
 #				'background_image' : 'lambda/gfx/alumox.jpg'
 			},
 			(Container,HBox,VBox) : {
@@ -256,7 +261,10 @@ class _widget(object):
 
 	def mapEvents(self,d):
 		for name,func in d.items():
-			self.findChild(name=name).capture( func )
+			widget = self.findChild(name=name)
+			if not widget:
+				raise RuntimeError("No widget with the name: %s" % name)
+			widget.capture( func )
 
 
 	def resizeToContent(self,recurse = True):
@@ -267,13 +275,13 @@ class _widget(object):
 
 	def _recursiveResizeToContent(self):
 		def _callResizeToContent(widget):
-			print "RTC:",widget
+			#print "RTC:",widget
 			widget.resizeToContent()
 		self._deepApply(_callResizeToContent)
 
 	def _recursiveExpandContent(self):
 		def _callExpandContent(widget):
-			print "ETC:",widget
+			#print "ETC:",widget
 			widget.expandContent()
 		self._deepApply(_callExpandContent)
 
@@ -645,7 +653,9 @@ class GenericListmodel(fife.ListModel,list):
 	def __init__(self,*args):
 		super(GenericListmodel,self).__init__()
 		map(self.append,args)
-		
+	def clear(self):
+		while len(self):
+			self.pop()
 	def getNumberOfElements(self):
 		return len(self)
 		
@@ -655,9 +665,44 @@ class GenericListmodel(fife.ListModel,list):
 
 class ListBox(_widget):
 	def __init__(self,items=[],**kwargs):
-		self.items = GenericListmodel(*items)
-		self.real_widget = fife.ListBox(self.items)
+		self._items = GenericListmodel(*items)
+		self.real_widget = fife.ListBox(self._items)
 		super(ListBox,self).__init__(**kwargs)
+
+	def resizeToContent(self,recurse=True):
+		# We append a minimum value, so max() does not bail out,
+		# if no items are in the list
+		_item_widths = map(self.font.getWidth,map(str,self._items)) + [0]
+		max_w = max(_item_widths)
+		self.width = max_w
+		self.height = (self.font.getHeight() + 2) * len(self._items)
+
+	def _getItems(self): return self._items
+	def _setItems(self,items):
+		# Note we cannot use real_widget.setListModel
+		# for some reason ???
+		
+		# Also self assignment can kill you
+		if id(items) != id(self._items):
+			self._items.clear()
+			self._items.extend(items)
+
+	items = property(_getItems,_setItems)
+
+	def _getSelected(self): return self.real_widget.getSelected()
+	def _setSelected(self,index): self.real_widget.setSelected(index)
+	selected = property(_getSelected,_setSelected)
+	def _getSelectedItem(self):
+		if 0 <= self.selected < len(self._items):
+			return self._items[self.selected]
+		return None
+	selected_item = property(_getSelectedItem)
+
+class DropDown(_widget):
+	def __init__(self,items=[],**kwargs):
+		self.items = GenericListmodel(*items)
+		self.real_widget = fife.DropDown(self.items)
+		super(DropDown,self).__init__(**kwargs)
 
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
@@ -675,7 +720,7 @@ class ListBox(_widget):
 			return self.items[self.selected]
 		return None
 	selected_item = property(_getSelectedItem)
-	
+
 class TextBox(_widget):
 	def __init__(self,text="",filename = "", **kwargs):
 		self.real_widget = fife.TextBox()
@@ -688,7 +733,7 @@ class TextBox(_widget):
 		self._filename = filename
 		if not filename: return
 		try:
-			self.text = _mungeText(open(filename).read())
+			self.text = open(filename).read()
 		except Exception, e:
 			self.text = str(e)
 	filename = property(_getFileName, _loadFromFile)
@@ -698,6 +743,24 @@ class TextBox(_widget):
 		max_w = max(map(self.font.getWidth,rows))
 		self.width = max_w
 		self.height = (self.font.getHeight() + 2) * self.real_widget.getNumberOfRows()
+	def _getText(self): return self.real_widget.getText()
+	def _setText(self,text): self.real_widget.setText(_mungeText(text))
+	text = property(_getText,_setText)
+
+	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
+	def _getOpaque(self): return self.real_widget.isOpaque()
+	opaque = property(_getOpaque,_setOpaque)
+
+class TextField(_widget):
+	def __init__(self,text="", **kwargs):
+		self.real_widget = fife.TextField()
+		self.text = text
+		super(TextField,self).__init__(**kwargs)
+
+	def resizeToContent(self,recurse=True):
+		max_w = self.font.getWidth(self.text)
+		self.width = max_w
+		self.height = (self.font.getHeight() + 2)
 	def _getText(self): return self.real_widget.getText()
 	def _setText(self,text): self.real_widget.setText(text)
 	text = property(_getText,_setText)

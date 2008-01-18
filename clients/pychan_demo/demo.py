@@ -151,10 +151,15 @@ class PyChanExample(object):
 	
 	def start(self):
 		self.widget = pychan.loadXML(self.xmlFile)
+		self.widget.mapEvents({
+			'closeButton':self.stop,
+			'okButton'   :self.stop
+		})
 		self.widget.show()
 
 	def stop(self):
-		self.widget.hide()
+		if self.widget:
+			self.widget.hide()
 		self.widget = None
 
 class DemoApplication(Application):
@@ -169,9 +174,10 @@ class DemoApplication(Application):
 			'selectButton' : self.selectExample
 		})
 
+		from mapwidgets import MapProperties
 		self.examples = {
 			'Load Map' : PyChanExample('content/gui/loadmap.xml'),
-			'Map Properties' : PyChanExample('content/gui/mapproperty.xml')
+			'Map Properties' : MapProperties()
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items += self.examples.keys()

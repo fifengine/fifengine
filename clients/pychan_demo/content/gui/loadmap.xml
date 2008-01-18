@@ -4,7 +4,7 @@
 			<ListBox name="mapList" min_size="100,100" />
 		</ScrollArea>
 		<VBox>
-			<Button name="selectButton" text="Load Map"/>
+			<Button name="okButton" text="Load Map"/>
 			<Button name="closeButton" text="Cancel"/>
 		</VBox>
 	</HBox>
