@@ -1,42 +1,104 @@
 # coding: utf-8
 
-import fife, pythonize
+"""\
+Pythonic Guichan Wrapper - PyChan
+=================================
 
-__doc__="""\
-Simple Guichan Wrapper
 Very unfinished.
 
-Features:
-* Simpler Interface
-* Automagic background tiling (WIP)
-* Very Basic Layout Engine
-* Very Basic XML Format support
-* Basic Styling support
+Features
+--------
+ - Simpler Interface
+ - Automagic background tiling (WIP)
+ - Very Basic Layout Engine
+ - Very Basic XML Format support
+ - Basic Styling support
 
-TODO:
-* Completion of above features
-* Wrap missing widgets: RadioButton, Slider
-* Documentation
-* Add support for 'Spacers' in layouts (some)
-* Easier Font handling.
+TODO
+----
+ - Completion of above features
+ - Wrap missing widgets: RadioButton, Slider
+ - Documentation
+ - Add support for 'Spacers' in layouts (some)
+ - Easier Font handling.
 
-BUGS:
-* Fonts are just engine.getDefaultFont()
-* DropDown size is calculate wrong
+BUGS
+----
+ - Fonts are just engine.getDefaultFont()
+ - DropDown size is calculate wrong
 
-Problems:
-* Reference counting problems again *sigh*
-* ... and thus possible leaks.
-* Fails sometimes without an error message.
-* High amount of code reuse -> Complex code
-* Needs at least new style classes and other goodies.
-* Documentation!
+Problems
+--------
+ - Reference counting problems again -sigh-
+ - ... and thus possible leaks.
+ - Fails sometimes without an error message.
+ - High amount of code reuse -> Complex code
+ - Needs at least new style classes and other goodies.
+ - Documentation!
+
+How to use
+==========
+
+At its core you only need a few functions.
+After setting up FIFE you need to initalize
+pychan. After that you can load a GUI from an
+XML file.
+::
+   import pychan
+   pychan.init(fifeEngine)
+   guiElement = pychan.loadXML("contents/gui/myform.xml")
+
+The resulting guiElement can be shown and hidden with the
+obvious C{show} and C{hide} methods.
+
+To get a specific widget you have to give it a name in the XML
+definition and use that to extract the widget from the returned
+GUI element.
+::
+   okButton = guiElement.findChild(name="okButton")
+   myInput = guiElement.findChild(name="myInput")
+
+The data is extracted and set via direct attribute access.
+These are using the python property technique to hide
+behind the scenes manipulations. Please keep in mind that
+the Layout engine and the exact way the widgets are displayed
+is somewhat limited.
+::
+   myInput.text = "Blahblah"
+   myList.items = ["1","2"]
+   guiElement.position = (80,90)
+
+A dialog without an OK button would be futile - so here's how
+you hook widget events to function calls. Every widget
+has a C{capture} method, which will directly call the passed
+function when an widget event occurs. As a convenience a
+C{mapEvents} function will batch the C{findChild} and
+C{capture} calls in an obvious way.
+::
+   myButton.capture( application.quit )
+   guiElement.mapEvents({
+      'okButton' : self.applyAndClose,
+      'closeButton':  guiElement.hide
+   })
 
 """
+
+__all__ = [
+	'loadXML',
+	'init',
+	'manager'
+]
+
+import fife, pythonize
 
 ### Functools ###
 
 def applyOnlySuitable(func,**kwargs):
+	"""
+	This nifty little function takes another function and applies it to a dictionary of
+	keyword arguments. If the supplied function does not expect one or more of the
+	keyword arguments, these are silently discarded. The result of the application is returned.
+	"""
 	if hasattr(func,'im_func'):
 		code = func.im_func.func_code
 		varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
@@ -69,9 +131,9 @@ class RuntimeError(Exception):
 def _InitCheckOrFail(check,message):
 	if not check: raise InitializationError(message)
 
-class _Manager(fife.IWidgetListener, fife.TimeEvent):
+class Manager(fife.IWidgetListener, fife.TimeEvent):
 	def __init__(self, engine, debug = False):
-		super(_Manager,self).__init__()
+		super(Manager,self).__init__()
 		self.engine = engine
 		self.debug = debug
 
@@ -177,13 +239,14 @@ class _Manager(fife.IWidgetListener, fife.TimeEvent):
 
 manager = None
 def init(engine,debug=False):
-	""" init( FifeEngine, debug = False )
-	
+	"""
 	This has to be called before any other pychan methods can be used.
 	It sets up a manager object which is available under pychan.manager.
+	
+	@param engine: The FIFE engine object.
 	"""
 	global manager
-	manager = _Manager(engine,debug)
+	manager = Manager(engine,debug)
 
 ### Widget/Container Base Classes ###
 
@@ -202,7 +265,8 @@ class _widget(object):
 		#self.resizeToContent()
 	
 	def match(self,**kwargs):
-		""" Matches the widget against a list of key-value pairs.
+		"""
+		Matches the widget against a list of key-value pairs.
 		Only if all keys are attributes and their value is the same it returns True.
 		"""
 		for k,v in kwargs.items():
@@ -461,6 +525,22 @@ class Container(_widget,fife.Container):
 AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
 
 class LayoutBase(object):
+	"""
+	This class is at the core of the layout engine. The two MixIn classes L{VBoxMixIn}
+	and L{HBoxMixIn} specialise on this by reimplementing the C{resizeToContent} and
+	the C{expandContent} methods.
+	
+	At the core the layout engine works in two passes:
+	
+	Before a root widget loaded by the XML code is shown, its resizeToContent method
+	is called recursively (walking the widget containment relation in post order).
+	This shrinks all HBoxes and VBoxes to their minimum heigt and width.
+	After that the expandContent method is called recursively in the same order,
+	which will re-align the widgets if there is space left AND if a Spacer is contained.
+	
+	Inside bare Container instances (without a Layout MixIn) absolute positioning
+	can be used.
+	"""
 	def __init__(self,align = (AlignLeft,AlignTop), **kwargs):
 		self.align = align
 		self.spacer = None
@@ -921,6 +1001,41 @@ class _GuiLoader(object, handler.ContentHandler):
 			self.root = self.root._parent or self.root
 
 def loadXML(file):
+	"""
+	Loads a PyChan XML file and generates a widget from it.
+	
+	The XML format is very dynamic, in the sense, that the actual allowed tags and attributes
+	depend on the PyChan code and names in this file.
+	
+	So when a tag C{Button} is encountered, an instance of class Button will be generated,
+	and added to the parent object.
+	All attributes will then be parsed and then set in the following way:
+	
+	position,size,min_size,max_size,margins - These are assumed to be comma separated tuples
+	of integers.
+	
+	foreground_color,base_color,background_color - These are assumed to be triples of comma
+	separated integers.
+	
+	opaque,border_size,padding - These are assumed to be simple integers.
+	
+	All other attributes are set verbatim as strings on the generated instance.
+	
+	In short::
+		<VBox>
+			<Button text="X" min_size="20,20" base_color="255,0,0" border_size="2" />
+		</VBox>
+	
+	This result in the following code executed::
+	
+		vbox = VBox(parent=None)
+		button = Button(parent=vbox)
+		button.text = "X"
+		button.min_size = (20,20)
+		button.base_color = (255,0,0)
+		button.border_size = 2
+		vboc.add( button )
+	"""
 	from xml.sax import parse
 	loader = _GuiLoader()
 	parse(file,loader)
