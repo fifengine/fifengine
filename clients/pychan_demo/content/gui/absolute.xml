@@ -1,0 +1,8 @@
+<Container position="100,100" size="300,200" 
+	   base_color="255,0,0"
+	   background_image="content/gui/stripe.png"
+	   border_size="2">
+	<Label text="Absolute values work." position="20,20" base_color="0,0,0,0" />
+	<Label text="It's tiresome, though." position="20,40" base_color="0,0,0,0" />
+	<Button name="closeButton" text="Ok" position="160,150" base_color="255,0,0" />
+</Container>

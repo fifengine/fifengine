@@ -15,14 +15,14 @@ Features:
 
 TODO:
 * Completion of above features
-* Wrap missing widgets: DropDown, RadioButton, Slider, TextField
+* Wrap missing widgets: RadioButton, Slider
 * Documentation
-* Add support for 'Spacers' in layouts
+* Add support for 'Spacers' in layouts (some)
 * Easier Font handling.
 
 BUGS:
-* Padding is not applied.
 * Fonts are just engine.getDefaultFont()
+* DropDown size is calculate wrong
 
 Problems:
 * Reference counting problems again *sigh*
@@ -259,12 +259,13 @@ class _widget(object):
 			return children[0]
 		return None
 
-	def mapEvents(self,d):
+	def mapEvents(self,d,ignoreMissing = False):
 		for name,func in d.items():
 			widget = self.findChild(name=name)
-			if not widget:
+			if widget:
+				widget.capture( func )
+			elif not ignoreMissing:
 				raise RuntimeError("No widget with the name: %s" % name)
-			widget.capture( func )
 
 
 	def resizeToContent(self,recurse = True):
@@ -466,6 +467,8 @@ class LayoutBase(object):
 		super(LayoutBase,self).__init__(**kwargs)
 
 	def addSpacer(self,spacer):
+		if self.spacer:
+			raise RuntimeException("Already a Spacer in %s!" % str(self))
 		self.spacer = spacer
 		spacer.index = len(self.children)
 
@@ -537,6 +540,11 @@ class VBoxLayoutMixin(LayoutBase):
 			widget.y = y
 			widget.width = max_w
 			y += widget.height + self.padding
+		
+		#Add the padding for the spacer.
+		if self.spacer:
+			y += self.padding
+
 		self.height = y + self.margins[1] - self.padding
 		self.width = max_w + 2*x
 		self.childarea = max_w, y - self.padding - self.margins[1]
@@ -563,6 +571,11 @@ class HBoxLayoutMixin(LayoutBase):
 			widget.y = y
 			widget.height = max_h
 			x += widget.width + self.padding
+		
+		#Add the padding for the spacer.
+		if self.spacer:
+			x += self.padding
+
 		self.width = x + self.margins[0] - self.padding
 		self.height = max_h + 2*y
 		self.childarea = x - self.margins[0] - self.padding, max_h
@@ -768,7 +781,6 @@ class TextField(_widget):
 	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque,_setOpaque)
-
 
 
 class ScrollArea(_widget):

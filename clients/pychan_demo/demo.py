@@ -151,10 +151,11 @@ class PyChanExample(object):
 	
 	def start(self):
 		self.widget = pychan.loadXML(self.xmlFile)
-		self.widget.mapEvents({
+		eventMap = {
 			'closeButton':self.stop,
 			'okButton'   :self.stop
-		})
+		}
+		self.widget.mapEvents(eventMap, ignoreMissing = True)
 		self.widget.show()
 
 	def stop(self):
@@ -169,15 +170,17 @@ class DemoApplication(Application):
 		pychan.init(self.engine,debug=True)
 		self.gui = pychan.loadXML('content/gui/all_widgets.xml')
 		
-		self.gui.mapEvents({
+		eventMap = {
 			'closeButton'  : self.quit,
 			'selectButton' : self.selectExample
-		})
+		}
+		self.gui.mapEvents(eventMap)
 
 		from mapwidgets import MapProperties
 		self.examples = {
 			'Load Map' : PyChanExample('content/gui/loadmap.xml'),
-			'Map Properties' : MapProperties()
+			'Map Properties' : MapProperties(),
+			'Absolute' : PyChanExample('content/gui/absolute.xml')
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items += self.examples.keys()
