@@ -333,6 +333,53 @@ class ModelLoader(handler.ContentHandler):
 			else:
 				assert 0, "Elevations can only be declared in a <map> section."
 
+		elif (name == 'camera'):
+			if (self.state == self.SElevation):
+
+				id = 0
+				zoom = 1
+				tilt = 0
+				rotation = 0
+				ref_layer_id = 0
+				ref_cell_width = 0
+				ref_cell_height = 0
+				viewport = 0
+				for attrName in attrs.keys():
+					if (attrName == 'id'):
+						id = attrs.get(attrName)
+					elif (attrName == 'zoom'):
+						zoom = attrs.get(attrName)
+					elif (attrName == 'tilt'):
+						tilt = attrs.get(attrName)
+					elif (attrName == 'rotation'):
+						rotation = attrs.get(attrName)
+					elif (attrName == 'ref_layer_id'):
+						ref_layer_id = attrs.get(attrName)
+					elif (attrName == 'ref_cell_width'):
+						ref_cell_width = attrs.get(attrName)
+					elif (attrName == 'ref_cell_height'):
+						ref_cell_height = attrs.get(attrName)
+					elif (attrName == 'viewport'):
+						viewport = attrs.get(attrName)
+
+				assert id, "Cameras must have an id."
+				assert viewport, "Camera declared without a viewport."
+				assert ref_layer_id, "Camera declared with no reference layer."
+				assert ref_cell_width and ref_cell_height, "Camera declared without refence cell dimensions"
+
+				try:
+					camera = self.engine.getView().addCamera(str(id), self.elevation.getLayers('id', str(ref_layer_id))[0],fife.Rect(*[int(c) for c in viewport.split(',')]),fife.ExactModelCoordinate(0,0,0))
+
+					camera.setCellImageDimensions(int(ref_cell_width), int(ref_cell_height))
+					camera.setRotation(float(rotation))
+					camera.setTilt(float(tilt))
+					camera.setZoom(float(zoom))
+				except fife.Exception, e:
+					print e.getMessage()
+
+			else:
+				assert 0, "Cameras can only be declared in an <elevation> section."
+
 		elif (name == 'layer'):
 			if (self.state == self.SElevation):
 
@@ -518,7 +565,6 @@ def loadMapFile(path, engine, content = ''):
 	parser.setContentHandler(handler)
 
 	# I'm not sure if this solution is robust enough, but it works for now.
-	print 'Content directory is: ' + content
 	engine.getVFS().setRootDir(content)
 
 	parser.parse(open(path))

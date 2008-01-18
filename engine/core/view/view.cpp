@@ -110,10 +110,22 @@ namespace FIFE {
 		return m_renderers[name];
 	}
 
-	Camera* View::addCamera(Layer *layer, Rect viewport, ExactModelCoordinate emc) {
-		Camera* cam = new Camera(layer, viewport,emc);
+	Camera* View::addCamera(const std::string& id, Layer *layer, Rect viewport, ExactModelCoordinate emc) {
+		if (getCamera(id))
+			throw NameClash("Duplicate camera id registered.");
+
+		Camera* cam = new Camera(id, layer, viewport,emc);
 		m_cameras.push_back(cam);
 		return cam;
+	}
+
+	Camera* View::getCamera(const std::string& id) {
+		std::vector<Camera*>::iterator it = m_cameras.begin();
+		for (; it != m_cameras.end(); ++it) {
+			if ((*it)->getId() == id)
+				return *it;
+		}
+		return 0;
 	}
 
 	void View::removeCamera(Camera* camera) {

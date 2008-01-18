@@ -65,7 +65,11 @@ namespace FIFE {
 		/** Adds new camera on view.
 		 *  After creation, camera gets rendered by the added renderers
 		 */
-		Camera* addCamera(Layer *layer, Rect viewport, ExactModelCoordinate emc);
+		Camera* addCamera(const std::string& id, Layer *layer, Rect viewport, ExactModelCoordinate emc);
+
+		/** Get a camera by its identifier.
+ 		 */
+		Camera* getCamera(const std::string& id);
 
 		/** Removes given camera from the view.
 		 */

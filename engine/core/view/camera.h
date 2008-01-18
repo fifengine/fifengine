@@ -23,6 +23,7 @@
 #define FIFE_VIEW_CAMERA_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -48,11 +49,15 @@ namespace FIFE {
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
 		 */
-		Camera(Layer *layer, Rect viewport, ExactModelCoordinate emc);
+		Camera(const std::string& id, Layer *layer, Rect viewport, ExactModelCoordinate emc);
 
 		/** Destructor
 		 */
 		virtual ~Camera();
+
+		/** Gets the identifier for this camera.
+		 */
+		const std::string& getId() { return m_id; }
 
 		/** Sets tilt for the camera.
 		 * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
@@ -129,6 +134,8 @@ namespace FIFE {
 		int getAngleBetween(const Location& loc1, const Location& loc2);
 
 	private:
+		std::string m_id;
+
 		void updateMatrices();
 		void updateReferenceScale();
 

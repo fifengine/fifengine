@@ -9,8 +9,9 @@ namespace FIFE {
 	
 	class Camera {
 	public:
-		Camera(Layer* layer,Rect viewport, ExactModelCoordinate emc);
+		Camera(const std::string& id, Layer* layer,Rect viewport, ExactModelCoordinate emc);
 		~Camera();
+		const std::string& getId();
 		void setTilt(double tilt);
 		double getTilt() const;
 		void setRotation(double rotation);

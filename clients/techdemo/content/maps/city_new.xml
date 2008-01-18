@@ -402,5 +402,7 @@
 				-->
 			</instances>
 		</layer>
+
+		<camera id='default' zoom='1' tilt='-60' rotation='35' ref_layer_id='TechdemoMapTileLayer' ref_cell_width='230' ref_cell_height='116' viewport='0,0,1024,768' />
 	</elevation>
 </map>

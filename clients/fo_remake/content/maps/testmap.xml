@@ -102,5 +102,8 @@
 				<i o="Object:Hibernator:Male:013" x="36" y="37" />
 			</instances>
 		</layer>
+
+		<camera id='default' zoom='1' tilt='-60' rotation='45' ref_layer_id='TechdemoMapTileLayer' ref_cell_width='180' ref_cell_height='180' viewport='0,0,1024,768' />
+
 	</elevation>
 </map>

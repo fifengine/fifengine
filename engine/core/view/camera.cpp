@@ -38,7 +38,8 @@
 namespace FIFE {
 	static Logger _log(LM_CAMERA);
 
-	Camera::Camera(Layer *layer, Rect viewport, ExactModelCoordinate emc):
+	Camera::Camera(const std::string& id, Layer *layer, Rect viewport, ExactModelCoordinate emc):
+			m_id(id),
 			m_matrix(),
 			m_inverse_matrix(),
 			m_tilt(0),

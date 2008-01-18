@@ -347,7 +347,7 @@ class World(object):
 		
 	def _create_camera(self, name, coordinate, viewport):
 		emc = fife.ExactModelCoordinate(coordinate[0],coordinate[1],0)
-		camera = self.view.addCamera(self.layer,fife.Rect(*[int(c) for c in viewport]),emc)
+		camera = self.view.addCamera(name, self.layer,fife.Rect(*[int(c) for c in viewport]),emc)
 		camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		camera.setRotation(45)
 		camera.setTilt(-42)

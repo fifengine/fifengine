@@ -317,27 +317,22 @@ class World(object):
 		self.camera = 0
 
 	def _set_camera(self, coordinate, viewport):
-		# TODO: this is completely FUBAR. Fix it.
-		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().get2dGfxVisual().getStaticImageIndexByAngle(0))
-		self.screen_cell_w = img.getWidth()
-		self.screen_cell_h = img.getHeight()
-		self.camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
-		self.camera.setRotation(35)
-		self.camera.setTilt(60)
+		self.camera = self.view.getCamera('default')
+
+		assert self.camera, "No camera view found for this map."
 
 		camloc = fife.Location()
 		camloc.setLayer(self.layer)
-		camloc.setLayerCoordinates(fife.ModelCoordinate(*coordinate))
-		self.camera.setViewPort(fife.Rect(*[int(c) for c in viewport]))
 		self.camera.setLocation(camloc)		
+
+		self.camera.setViewPort(fife.Rect(*[int(c) for c in viewport]))
+		self.camera.setLocation(camloc)
 
 	def adjust_views(self):
 		W = self.renderbackend.getScreenWidth()
 		H = self.renderbackend.getScreenHeight()
 		maincoords = (1, 1)
 
-		if (not self.camera):
-			self.camera = self.view.addCamera()
 		self._set_camera(maincoords, (0, 0, W, H))
 		self.view.resetRenderers()
 		self.ctrl_scrollwheelvalue = self.camera.getRotation()
