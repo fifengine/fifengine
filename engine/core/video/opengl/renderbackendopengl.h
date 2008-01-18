@@ -88,7 +88,7 @@ namespace FIFE {
 			virtual void captureScreen(const std::string& filename);
 
 			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-			virtual void drawQuad(const Point& p1, const Point& p2, const Point& p2, const Point& p3,  int r, int g, int b);
+			virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 
 		protected:
 			void setClipArea(const Rect& cliparea);
