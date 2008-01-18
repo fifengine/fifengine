@@ -530,7 +530,7 @@ if __name__ == '__main__':
 	s = engine.getSettings()
 	s.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
 			".,!?-+/:();%`'*#=[]")
-	s.setDefaultFontPath('content/fonts/FreeMono.ttf')
+	s.setDefaultFontPath('content/fonts/samanata.ttf')
 	s.setDefaultFontSize(12)
 	s.setBitsPerPixel(TDS.BitsPerPixel)
 	s.setFullScreen(TDS.FullScreen)
