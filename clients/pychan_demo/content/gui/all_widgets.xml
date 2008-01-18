@@ -1,9 +1,15 @@
-<Window title="This is a demo window." size="600,400">
-	<HBox>
-		<TextBox text="Something can be typed here."/>
-		<VBox>
-			<Button text="I'm a button, click me"/>
-			<Button text="I could be the 'Close' button."/>
-		</VBox>
-	</HBox>
+<Window title="This is a demo window." min_size="600,400" border_size="2">
+	<VBox border_size="0">
+		<Label text="XML 'Source' code:"/>
+		<ScrollArea size="600,200">
+			<TextBox filename="content/gui/all_widgets.xml"/>
+		</ScrollArea>
+		<ClickLabel text="Credits:"/>
+		<ListBox name="authors" min_size="600,100" />
+		<CheckBox text="I want to contribute!"/>
+		<Button text="You guys rock!"/>
+		<HBox>
+			<Button name="closeButton" text="I could be the 'Close' button."/>
+		</HBox>
+	</VBox>
 </Window>

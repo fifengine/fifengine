@@ -18,9 +18,10 @@ import settings
 import pychan
 
 class EventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, fife.ConsoleExecuter, fife.IWidgetListener):
-	def __init__(self, engine):
-		self.engine = engine
-		eventmanager = engine.getEventManager()
+	def __init__(self, app):
+		self.app = app
+		self.engine = app.engine
+		eventmanager = self.engine.getEventManager()
 		eventmanager.setNonConsumableKeys([
 			fife.IKey.ESCAPE,
 			fife.IKey.F10,
@@ -39,7 +40,7 @@ class EventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListene
 		fife.IMouseListener.__init__(self)
 		eventmanager.addMouseListener(self)
 		fife.ConsoleExecuter.__init__(self)
-		engine.getGuiManager().getConsole().setConsoleExecuter(self)
+		self.engine.getGuiManager().getConsole().setConsoleExecuter(self)
 		fife.IWidgetListener.__init__(self)
 		eventmanager.addWidgetListener(self)
 		self.quitRequested = False
@@ -74,7 +75,7 @@ class EventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListene
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		if keyval == fife.IKey.ESCAPE:
-			self.quitRequested = True
+			self.app.quit()
 	
 	def keyReleased(self, evt):
 		pass
@@ -98,7 +99,7 @@ class EventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListene
 		return result
 	
 	def onWidgetAction(self, evt):
-		pass
+		print "Widget action %s" % str(evt.getId())
 
 
 
@@ -122,11 +123,12 @@ class Application(object):
 		engineSetting.setScreenHeight(settings.ScreenHeight)
 	
 		engine.init()
+		self.quitRequested = False
 
 	def run(self):
-		eventListener = EventListener(self.engine)
+		eventListener = EventListener(self)
 		self.engine.initializePumping()
-		while not eventListener.quitRequested:
+		while not self.quitRequested:
 			try:
 				self.engine.pump()
 			except fife.Exception, e:
@@ -138,11 +140,17 @@ class Application(object):
 				print e.getMessage()
 				break
 
+	def quit(self):
+		self.quitRequested = True
 
 if __name__ == '__main__':
 	app = Application()
+	
+	# Pychan specific code is here!
 	pychan.init(app.engine)
 	gui = pychan.loadXML('content/gui/all_widgets.xml')
+	gui.findChild(name='closeButton').capture( app.quit )
+	gui.findChild(name='authors').items += ['chris','skybound','ismarc','jwt','barra','some other guys']
 	gui.show()
 	
 	app.run()

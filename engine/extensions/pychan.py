@@ -19,6 +19,10 @@ TODO:
 * Add support for 'Spacers' in layouts
 * Easier Font handling.
 
+BUGS:
+* Padding is not applied.
+* Fonts are just engine.getDefaultFont()
+
 Problems:
 * Reference counting problems again *sigh*
 * ... and thus possible leaks.
@@ -46,7 +50,12 @@ def applyOnlySuitable(func,**kwargs):
 		if name not in varnames:
 			del kwargs[name]
 	return func(**kwargs)
-	
+		
+
+# Text munging befor adding it to TextBoxes
+
+def _mungeText(text):
+	return text.replace('\t',"    ")
 
 ### Initialisation ###
 
@@ -96,7 +105,7 @@ class _Manager(fife.IWidgetListener, fife.TimeEvent):
 				'base_color' : fife.Color(0,0,100),
 				'foreground_color' : fife.Color(0,0,100),
 			},
-			Checkbox : {
+			CheckBox : {
 				'border_size': 0,
 				'background_color' : fife.Color(0,0,0,0),
 			},
@@ -179,11 +188,6 @@ class _widget(object):
 		self._visible = False
 		manager.stylize(self,kwargs.get('style','default'),**kwargs)
 		
-		try:
-			self._event_id = "%s(name=%s,id=%d)" % (str(self.__class__),name,id(self))
-			self.real_widget.setActionEventId(self._event_id)
-			self.real_widget.addActionListener(manager.guimanager)
-		except AttributeError: pass
 		self.resizeToContent()
 
 	def capture(self, callback):
@@ -278,6 +282,16 @@ class _widget(object):
 			color = fife.Color(*color)
 		self.real_widget.setForegroundColor(color)
 	foreground_color = property(_getForegroundColor,_setForegroundColor)
+	
+	def _getName(self): return self._name
+	def _setName(self,name):
+		self._name = name
+		try:
+			self._event_id = "%s(name=%s,id=%d)" % (str(self.__class__),name,id(self))
+			self.real_widget.setActionEventId(self._event_id)
+			self.real_widget.addActionListener(manager.guimanager)
+		except AttributeError: pass
+	name = property(_getName,_setName)
 
 	x = property(_getX,_setX)
 	y = property(_getY,_setY)
@@ -316,6 +330,10 @@ class Container(_widget,fife.Container):
 		return max(widget.height for widget in self.children)
 
 	def findChildren(self,**kwargs):
+		""" Find all contained child widgets by attribute values.
+		
+		closeButtons = root_widget.findChildren(name='close')
+		"""
 		children = []
 		for widget in self.children:
 			add = True
@@ -327,6 +345,17 @@ class Container(_widget,fife.Container):
 		for widget in self.children:
 			children += widget.findChildren(**kwargs)
 		return children
+
+	def findChild(self,**kwargs):
+		""" Find the first contained child widgets by attribute values.
+		
+		closeButton = root_widget.findChild(name='close')
+		"""
+		# For now we use an inefficient impl. to share the code.
+		children = self.findChildren(**kwargs)
+		if children:
+			return children[0]
+		return None
 
 	def beforeShow(self):
 		self.resizeToContent()
@@ -356,6 +385,10 @@ class Container(_widget,fife.Container):
 	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque,_setOpaque)
+
+	#def _setPadding(self,padding): self.real_widget.setPadding(padding)
+	#def _getPadding(self): return self.real_widget.isPadding()
+	#padding = property(_getPadding,_setPadding)
 
 AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
 
@@ -501,10 +534,10 @@ class Button(_basicTextWidget):
 		self.real_widget = fife.Button("")
 		super(Button,self).__init__(**kwargs)
 
-class Checkbox(_basicTextWidget):
+class CheckBox(_basicTextWidget):
 	def __init__(self,**kwargs):
 		self.real_widget = fife.CheckBox()
-		super(Checkbox,self).__init__(**kwargs)
+		super(CheckBox,self).__init__(**kwargs)
 
 class GenericListmodel(fife.ListModel,list):
 	def __init__(self,*args):
@@ -525,7 +558,10 @@ class ListBox(_widget):
 		super(ListBox,self).__init__(**kwargs)
 
 	def resizeToContent(self,recurse=True):
-		max_w = max(map(self.font.getWidth,map(str,self.items)))
+		# We append a minimum value, so max() does not bail out,
+		# if no items are in the list
+		_item_widths = map(self.font.getWidth,map(str,self.items)) + [0]
+		max_w = max(_item_widths)
 		self.width = max_w
 		self.height = (self.font.getHeight() + 2) * len(self.items)
 
@@ -539,10 +575,21 @@ class ListBox(_widget):
 	selected_item = property(_getSelectedItem)
 	
 class TextBox(_widget):
-	def __init__(self,text="",**kwargs):
+	def __init__(self,text="",filename = "", **kwargs):
 		self.real_widget = fife.TextBox()
 		self.text = text
+		self.filename = filename
 		super(TextBox,self).__init__(**kwargs)
+
+	def _getFileName(self): return self._filename
+	def _loadFromFile(self,filename):
+		self._filename = filename
+		if not filename: return
+		try:
+			self.text = _mungeText(open(filename).read())
+		except Exception, e:
+			self.text = str(e)
+	filename = property(_getFileName, _loadFromFile)
 
 	def resizeToContent(self,recurse=True):
 		rows = [self.real_widget.getTextRow(i) for i in range(self.real_widget.getNumberOfRows())]
@@ -577,6 +624,7 @@ class ScrollArea(_widget):
 			self.content.resizeToContent(recurse=True)
 		self.content.width = max(self.content.width,self.width-5)
 		self.content.height = max(self.content.height,self.height-5)
+
 
 from xml.sax import saxutils, handler
 
