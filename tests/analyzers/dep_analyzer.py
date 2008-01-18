@@ -195,9 +195,11 @@ def analyze(write_postscript=False):
 	# write raw dep info
 	#out = []
 	#for f, file2inc
-	return '\n'.join(illegalModuleDeps)
+	result = '\n'.join(illegalModuleDeps)
+	if not result:
+		print "no dependency analyzer errors found"
 
 _ANALYZE_FN_ = analyze
 
 if __name__ == '__main__':
-	print analyze(True)
+	analyze(True)
