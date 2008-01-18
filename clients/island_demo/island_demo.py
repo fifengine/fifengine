@@ -128,8 +128,10 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		pass
 	def mouseDragged(self, evt):
 		if self._ctrldown:
-			self.horizscroll = (self._dragx - evt.getX()) / 100.0
-			self.vertscroll = (self._dragy - evt.getY()) / 100.0
+			self.horizscroll = self.vertscroll = 1
+			self.horizscrolldir = -((self._dragx - evt.getX()) / 10.0)
+			self.vertscrolldir = -((self._dragy - evt.getY()) / 10.0)
+
 			self._dragx = evt.getX()
 			self._dragy = evt.getY()
 
