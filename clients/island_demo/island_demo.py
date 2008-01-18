@@ -201,6 +201,10 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		if command.lower() in ('quit', 'exit'):
 			self.quitRequested = True
 			return "quitting"
+
+		if command.lower() in ( 'help', 'help()' ):
+			self.engine.getGuiManager().getConsole().println( open( 'content/infotext.txt', 'r' ).read() )
+			return "-- End of help --"
 		
 		try:
 			result = str(eval(command))
