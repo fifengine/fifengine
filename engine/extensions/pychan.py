@@ -42,7 +42,8 @@ How to use
 At its core you only need a few functions.
 After setting up FIFE you need to initalize
 pychan. After that you can load a GUI from an
-XML file.
+XML file. Please see the documentation of L{loadXML}
+for the details of the XML format
 ::
    import pychan
    pychan.init(fifeEngine)
@@ -80,6 +81,37 @@ C{capture} calls in an obvious way.
       'okButton' : self.applyAndClose,
       'closeButton':  guiElement.hide
    })
+
+Widget hierachy
+===============
+
+Every widget can be contained in another container widget like L{Window}, L{VBox},
+L{HBox}, L{Container} or L{ScrollArea}. Container widgets can contain any number
+of widgets. Thus we have a tree like structure of the widgets - which finally makes
+up the window or frame that is placed on the screen.
+
+In PyChan widgets are supposed to be manipulated via the root of this hierachy,
+so that the actual layout can be changed in the XML files without hassle.
+It can be compared to how HTML works.
+
+These bits and pieces connect things up::
+ -  name - A (hopefully) unique name in the widget hierachy
+ -  findChildren - The accessor method to find widgets by name or any other attribute.
+ -  _parent - The parent widget in the widget hierachy
+ -  _deepApply - The method used to walk over the widget hierachy. You have to reimplement
+   this in case you want to provide custom widgets.
+
+Wrapping machinery
+==================
+
+The wrapping mechanism works be redirecting attribute access to the _widget
+derived classes to a C{real_widget} member variable which in turn is an instance
+of the SWIG wrapped Guichan widget.
+
+To ensure the real widget has already been constructed, when the wrapping machinery
+is already in use, this has to be the first attribute to set in the constructors.
+This leads to a reversed construction sequence as the super classes constructor
+has to be invoked I{after} the subclass specific construction has taken place.
 
 """
 
@@ -224,10 +256,11 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 		return fife.GuiImage(self.engine.imagePool.addResourceFromFile(filename),self.engine.imagePool)
 
 	def defaultWidgetAction(self,event):
-		print "Event(%s) received." % event.getId()
+		if self.debug:
+			print "Event(%s) received." % event.getId()
 
 	def onWidgetAction(self, event):
-		print event.getId(),self.widgetEvents
+		#print event.getId(),self.widgetEvents
 		for handler in self.widgetEvents.get( event.getId(), [self.defaultWidgetAction] ):
 			try:
 				handler( event )
@@ -251,6 +284,10 @@ def init(engine,debug=False):
 ### Widget/Container Base Classes ###
 
 class _widget(object):
+	"""
+	This is the common widget base class, which provides most of the wrapping
+	functionality.
+	"""
 	def __init__(self,parent = None, name = '_unnamed_',
 			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),**kwargs):
 		
@@ -262,7 +299,6 @@ class _widget(object):
 		self.size = size
 		self._visible = False
 		manager.stylize(self,kwargs.get('style','default'),**kwargs)
-		#self.resizeToContent()
 	
 	def match(self,**kwargs):
 		"""
@@ -275,29 +311,53 @@ class _widget(object):
 		return True
 
 	def capture(self, callback):
+		"""
+		Add a callback to be executed when the widget event occurs on this widget.
+		"""
 		def captured_f(event):
 			applyOnlySuitable(callback,event=event,widget=self)
 		manager.widgetEvents.setdefault(self._event_id,[]).append(captured_f)
 
 	def show(self):
+		"""
+		Show the widget and all contained widgets.
+		"""
+		if self._visible: return
 		self.beforeShow()
 		self.adaptLayout()
 		manager.show(self)
 		self._visible = True
 
 	def hide(self):
+		"""
+		Hide the widget and all contained widgets.
+		"""
+		if not self._visible: return
 		manager.hide(self)
 		self.afterHide()
 		self._visible = False
 	
 	def adaptLayout(self):
+		"""
+		Execute the Layout engine. Automatically called by L{show}.
+		"""
 		self._recursiveResizeToContent()
 		self._recursiveExpandContent()
 	
 	def beforeShow(self):
+		"""
+		This method is called just before the widget is shown.
+		You can override this in derived widgets to add finalization
+		behaviour.
+		"""
 		pass
 
 	def afterHide(self):
+		"""
+		This method is called just before the widget is hidden.
+		You can override this in derived widgets to add finalization
+		behaviour.
+		"""
 		pass
 
 	def findChildren(self,**kwargs):
@@ -323,8 +383,16 @@ class _widget(object):
 			return children[0]
 		return None
 
-	def mapEvents(self,d,ignoreMissing = False):
-		for name,func in d.items():
+	def mapEvents(self,eventMap,ignoreMissing = False):
+		"""
+		Convenience function to map widget events to functions
+		in a batch.
+		
+		@param eventMap: A dictionary with widget names as keys and callbacks as values.
+		@param ignoreMissing: Normally this method raises an RuntimeError, when a widget
+		can not be found - this behaviour can be overriden by passing True here.
+		"""
+		for name,func in eventMap.items():
 			widget = self.findChild(name=name)
 			if widget:
 				widget.capture( func )
@@ -351,6 +419,9 @@ class _widget(object):
 		self._deepApply(_callExpandContent)
 
 	def _deepApply(self,visitorFunc):
+		"""
+		Recursively apply a callable to all contained widgets and then the widget itself.
+		"""
 		visitorFunc(self)
 
 	def sizeChanged(self):
@@ -1011,13 +1082,11 @@ def loadXML(file):
 	and added to the parent object.
 	All attributes will then be parsed and then set in the following way:
 	
-	position,size,min_size,max_size,margins - These are assumed to be comma separated tuples
-	of integers.
-	
-	foreground_color,base_color,background_color - These are assumed to be triples of comma
-	separated integers.
-	
-	opaque,border_size,padding - These are assumed to be simple integers.
+	  - position,size,min_size,max_size,margins - These are assumed to be comma separated tuples
+	    of integers.
+	  - foreground_color,base_color,background_color - These are assumed to be triples of comma
+	    separated integers.
+	  - opaque,border_size,padding - These are assumed to be simple integers.
 	
 	All other attributes are set verbatim as strings on the generated instance.
 	
