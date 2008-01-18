@@ -382,7 +382,7 @@ class World(object):
 
 		# play track as background music
 		emitter = self.soundmanager.createEmitter()
-		emitter.load('../techdemo/content/audio/music/lagerhalle5.ogg')
+		emitter.load('content/audio/music/lagerhalle5.ogg')
 		emitter.setLooping(True)
 		emitter.play()
 			
