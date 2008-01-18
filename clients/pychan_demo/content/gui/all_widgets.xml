@@ -1,0 +1,9 @@
+<Window title="This is a demo window." size="600,400">
+	<HBox>
+		<TextBox text="Something can be typed here."/>
+		<VBox>
+			<Button text="I'm a button, click me"/>
+			<Button text="I could be the 'Close' button."/>
+		</VBox>
+	</HBox>
+</Window>

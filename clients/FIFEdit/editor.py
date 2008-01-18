@@ -265,33 +265,33 @@ class Gui(object):
 			self.infoVisible = show
 
 class MapViewSelect(Form):
-  def __init__(self, event_manager, gui_manager, parent, model):
-    self.size = (400,100)
-    self.position = (400,100)
-
-    Form.__init__(self, event_manager, gui_manager, parent, 'Select a map:' , self.position, self.size)
-
-    self.model = model
-
-    self.map_list = GenericListmodel()
-    self.map_list.extend([map.Id() for map in self.model.getMaps()])
-    self.map_drop = fife.DropDown(self.map_list)
-    self.map_drop.setSelected(0)
-    self.map_drop.setPosition(5, 10)
-    self.map_drop.setSize(self.size[0] - 150, 16)
-    self.map_drop.setActionEventId('MapListEvt')
-    self.map_drop.addActionListener(self.guimanager)
-    self.add_widget(self.map_drop)
-
-    button = fife.Button('Select')
-    button.setActionEventId('SelectMap')
-    button.addActionListener(self.guimanager)
-    button.adjustSize()
-    button.setPosition(self.size[0] - button.getWidth() - 10, 10)
-    self.add_widget(button)
-
-  def getMap(self):
-    return self.model.getMaps('id', self.map_list[self.map_drop.getSelected()])[0]
+	def __init__(self, event_manager, gui_manager, parent, model):
+		self.size = (400,100)
+		self.position = (400,100)
+		
+		Form.__init__(self, event_manager, gui_manager, parent, 'Select a map:' , self.position, self.size)
+		
+		self.model = model
+		
+		self.map_list = GenericListmodel()
+		self.map_list.extend([map.Id() for map in self.model.getMaps()])
+		self.map_drop = fife.DropDown(self.map_list)
+		self.map_drop.setSelected(0)
+		self.map_drop.setPosition(5, 10)
+		self.map_drop.setSize(self.size[0] - 150, 16)
+		self.map_drop.setActionEventId('MapListEvt')
+		self.map_drop.addActionListener(self.guimanager)
+		self.add_widget(self.map_drop)
+		
+		button = fife.Button('Select')
+		button.setActionEventId('SelectMap')
+		button.addActionListener(self.guimanager)
+		button.adjustSize()
+		button.setPosition(self.size[0] - button.getWidth() - 10, 10)
+		self.add_widget(button)
+	
+	def getMap(self):
+		return self.model.getMaps('id', self.map_list[self.map_drop.getSelected()])[0]
 
 
 class World(object):

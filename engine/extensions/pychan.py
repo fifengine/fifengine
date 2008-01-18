@@ -50,12 +50,21 @@ def applyOnlySuitable(func,**kwargs):
 
 ### Initialisation ###
 
+class InitializationError(Exception):
+	pass
+
+def _InitCheckOrFail(check,message):
+	if not check: raise InitializationError(message)
+
 class _Manager(fife.IWidgetListener, fife.TimeEvent):
 	def __init__(self, engine):
 		super(_Manager,self).__init__()
-		
-		self.guimanager = engine.guiManager
 		self.engine = engine
+
+		_InitCheckOrFail(self.engine.getEventManager(),"No event manager installed.")
+		_InitCheckOrFail(self.engine.getGuiManager(),"No GUI manager installed.")
+		
+		self.guimanager = engine.getGuiManager()
 		self.initFont()
 		self.initStyles()
 		self.widgetEvents = {}
@@ -68,8 +77,8 @@ class _Manager(fife.IWidgetListener, fife.TimeEvent):
 
 	def initFont(self):
 		glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
-		self.imagefont = fife.SubImageFont('content/fonts/rpgfont.png',glyphs,self.engine.imagePool)
-		self.font = fife.TTFont("content/fonts/FreeMono.ttf",20)
+		self.imagefont = self.engine.getDefaultFont()
+		self.font = self.engine.getDefaultFont()
 
 	def initStyles(self):
 		self.styles = {}
@@ -571,6 +580,9 @@ class ScrollArea(_widget):
 
 from xml.sax import saxutils, handler
 
+class GuiXMLError(Exception):
+	pass
+
 class _GuiLoader(object, handler.ContentHandler):
 	def __init__(self):
 		super(_GuiLoader,self).__init__()
@@ -578,14 +590,19 @@ class _GuiLoader(object, handler.ContentHandler):
 		self.indent = ""
 		self.stack = []
 		
+	def _toIntList(self,s):
+		try:
+			return tuple(map(int,str(s).split(',')))
+		except:
+			raise GuiXMLError("Expected an comma separated list of integers.")
+
 	def _parseAttr(self,attr):
-		def _toIntList(s): return tuple(map(int,str(s).split(',')))
 		name, value = attr
 		name = str(name)
 		if name in ('position','size','min_size','max_size','margins'):
-			value = _toIntList(value)
+			value = self._toIntList(value)
 		elif name in ('foreground_color','base_color','background_color'):
-			value = _toIntList(value)
+			value = self._toIntList(value)
 		elif name in ('opaque','border_size','padding'):
 			value = int(value)
 		else:
@@ -597,9 +614,16 @@ class _GuiLoader(object, handler.ContentHandler):
 		tag = "<%s " % name + " ".join(attrstrings) + ">"
 		print self.indent + tag
 
+	def _resolveTag(self,name):
+		""" Resolve a XML Tag to a PyChan GUI class. """
+		cls = globals().get(name,None)
+		if cls is None:
+			raise GuiXMLError("Unknown GUI Element: %s" % name)
+		return cls
+
 	def startElement(self, name, attrs):
 		self._printTag(name,attrs)
-		cls = globals().get(name,None)
+		cls = self._resolveTag(name)
 		if issubclass(cls,_widget):
 			self.stack.append('gui_element')
 			self._createInstance(cls,name,attrs)
@@ -618,7 +642,8 @@ class _GuiLoader(object, handler.ContentHandler):
 			elif hasattr(self.root,'content'):
 				self.root.content = obj
 			else:
-				print "*** unknown containment relation :-("
+				if self.root is not None:
+					print "*** unknown containment relation :-("
 		except:
 			pass
 		self.root = obj
