@@ -25,16 +25,14 @@ TODO
 BUGS
 ----
  - Fonts are just engine.getDefaultFont()
- - DropDown size is calculate wrong
 
 Problems
 --------
  - Reference counting problems again -sigh-
  - ... and thus possible leaks.
- - Fails sometimes without an error message.
  - High amount of code reuse -> Complex code
  - Needs at least new style classes and other goodies.
- - Documentation!
+ - Even More Documentation!
 
 How to use
 ==========
@@ -81,6 +79,26 @@ C{capture} calls in an obvious way.
       'okButton' : self.applyAndClose,
       'closeButton':  guiElement.hide
    })
+
+Data distribution and collection
+================================
+
+Very often a dialogs text fields, labels and listboxes have to be filled with data
+after the creation of the dialog. This can be a tiresome process.
+After a dialog has executed, B{other} attributes have to be read out again,
+this to can be tiresome. PyChan simplifies both processes::
+  guiElement.distributeData({
+  	'myListBox' : choices,
+  	'myLabel' : map.name,
+  	'myTextField' : map.description
+  })
+  # ... process dialog.
+  data = guiElement.collectData(['myListBox','myTextField'])
+  map.description = data['myTextField']
+  print "You selected:",data['myListBox'],", good choice!"
+
+Note how the collection of the list box data does not retrieve the
+elements.
 
 Widget hierachy
 ===============
@@ -150,18 +168,24 @@ def applyOnlySuitable(func,**kwargs):
 # Text munging befor adding it to TextBoxes
 
 def _mungeText(text):
-	return text.replace('\t',"    ")
+	"""
+	This function is applied to all text set on widgets, currently only replacing tabs with four spaces.
+	"""
+	return text.replace('\t'," "*4)
 
 ### Initialisation ###
 
 class InitializationError(Exception):
+	"""
+	Exception raised during the initialization.
+	"""
 	pass
 
 class RuntimeError(Exception):
+	"""
+	Exception raised during the run time - for example caused by a missing name attribute in a XML file.
+	"""
 	pass
-
-def _InitCheckOrFail(check,message):
-	if not check: raise InitializationError(message)
 
 class Manager(fife.IWidgetListener, fife.TimeEvent):
 	def __init__(self, engine, debug = False):
@@ -169,8 +193,10 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 		self.engine = engine
 		self.debug = debug
 
-		_InitCheckOrFail(self.engine.getEventManager(),"No event manager installed.")
-		_InitCheckOrFail(self.engine.getGuiManager(),"No GUI manager installed.")
+		if not self.engine.getEventManager():
+			raise InitializationError("No event manager installed.")
+		if not self.engine.getGuiManager():
+			raise InitializationError("No GUI manager installed.")
 		
 		self.guimanager = engine.getGuiManager()
 		self.initFont()
@@ -298,6 +324,10 @@ class _widget(object):
 		self.max_size = max_size
 		self.size = size
 		self._visible = False
+		
+		self.accepts_data = False
+		self.delivers_data = False
+
 		manager.stylize(self,kwargs.get('style','default'),**kwargs)
 	
 	def match(self,**kwargs):
@@ -399,6 +429,67 @@ class _widget(object):
 			elif not ignoreMissing:
 				raise RuntimeError("No widget with the name: %s" % name)
 
+	def setData(self,data):
+		if not self.accepts_data:
+			raise RuntimeError("Trying to set data on a widget that does not accept data.")
+		self._realSetData(data)
+
+	def getData(self):
+		if not self.delivers_data:
+			raise RuntimeError("Trying to retrieve data from a widget that does not deliver data.")
+		return self._realGetData()
+
+	def distributeData(self,dataMap):
+		"""
+		Distribute data from a dictionary over the widgets in the hierachy
+		using the keys as names and the values as the data (which is set via L{setData}).
+		If more than one widget matches - the data is set on ALL matching widgets.
+		By default a missing widget is just ignored.
+		
+		Use it like this::
+		  guiElement.distributeData({
+		       'myTextField' : 'Hello World!',
+		       'myListBox' : ["1","2","3"]
+		  })
+		
+		IMPORTANT WARNING
+		=================
+		
+		Delivery and collection of data are not idempotent.
+		You can deliver a LIST to a LISTBOX but you collect the SELECTED ITEM.
+		
+		"""
+		for name,data in dataMap.items():
+			widgetList = self.findChildren(name = name)
+			for widget in widgetList:
+				widget.setData(data)
+
+	def collectData(self,widgetNames):
+		"""
+		Collect data from a widget hierachy by names.
+		This can only handle UNIQUE widget names (in the hierachy)
+		and will raise a RuntimeError if the number of matching widgets
+		is not equal to one.
+		
+		Usage::
+		  data = guiElement.collectData(['myTextField','myListBox'])
+		  print "You entered:",data['myTextField']," and selected ",data['myListBox']
+		
+		IMPORTANT WARNING
+		=================
+		
+		Delivery and collection of data are not idempotent.
+		You can deliver a LIST to a LISTBOX but you collect the SELECTED ITEM.
+		
+		"""
+		dataMap = {}
+		for name in widgetNames:
+			widgetList = self.findChildren(name = name)
+			if len(widgetList) != 1:
+				raise RuntimeError("CollectData can only handle widgets with unique names.")
+			
+			dataMap[name] = widget.getData()
+		return dataMap
 
 	def resizeToContent(self,recurse = True):
 		pass
@@ -784,6 +875,12 @@ class _basicTextWidget(_widget):
 		self.margins = (5,5)
 		self.text = text
 		super(_basicTextWidget,self).__init__(**kwargs)
+		
+		# Prepare Data collection framework
+		self.accepts_data = True
+		self._realSetData = self._setText
+
+		self.delivers_data = False
 
 	def _getText(self): return self.real_widget.getCaption()
 	def _setText(self,text): self.real_widget.setCaption(text)
@@ -808,10 +905,21 @@ class Button(_basicTextWidget):
 		self.real_widget = fife.Button("")
 		super(Button,self).__init__(**kwargs)
 
+
 class CheckBox(_basicTextWidget):
 	def __init__(self,**kwargs):
 		self.real_widget = fife.CheckBox()
 		super(CheckBox,self).__init__(**kwargs)
+
+		# Prepare Data collection framework
+		self.accepts_data = True
+		self.delivers_data = True
+		self._realGetData = self._isMarked
+		self._realSetData = self._setMarked
+	
+	def _isMarked(self): return self.real_widget.isMarked()
+	def _setMarked(self,mark): self.real_widget.setMarked(mark)
+	marked = property(_isMarked,_setMarked)
 
 class GenericListmodel(fife.ListModel,list):
 	def __init__(self,*args):
@@ -832,6 +940,13 @@ class ListBox(_widget):
 		self._items = GenericListmodel(*items)
 		self.real_widget = fife.ListBox(self._items)
 		super(ListBox,self).__init__(**kwargs)
+
+		# Prepare Data collection framework
+		self.accepts_data = True
+		self._realSetData = self._setItems
+		
+		self.delivers_data = True
+		self._realGetData = self._getSelectedItem
 
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
@@ -864,24 +979,42 @@ class ListBox(_widget):
 
 class DropDown(_widget):
 	def __init__(self,items=[],**kwargs):
-		self.items = GenericListmodel(*items)
-		self.real_widget = fife.DropDown(self.items)
+		self._items = GenericListmodel(*items)
+		self.real_widget = fife.DropDown(self._items)
 		super(DropDown,self).__init__(**kwargs)
+
+		# Prepare Data collection framework
+		self.accepts_data = True
+		self._realSetData = self._setItems
+		
+		self.delivers_data = True
+		self._realGetData = self._getSelectedItem
 
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
 		# if no items are in the list
-		_item_widths = map(self.font.getWidth,map(str,self.items)) + [0]
+		_item_widths = map(self.font.getWidth,map(str,self._items)) + [self.font.getHeight()]
 		max_w = max(_item_widths)
 		self.width = max_w
-		self.height = (self.font.getHeight() + 2) * len(self.items)
+		self.height = (self.font.getHeight() + 2)
 
+	def _getItems(self): return self._items
+	def _setItems(self,items):
+		# Note we cannot use real_widget.setListModel
+		# for some reason ???
+		
+		# Also self assignment can kill you
+		if id(items) != id(self._items):
+			self._items.clear()
+			self._items.extend(items)
+	items = property(_getItems,_setItems)
+	
 	def _getSelected(self): return self.real_widget.getSelected()
 	def _setSelected(self,index): self.real_widget.setSelected(index)
 	selected = property(_getSelected,_setSelected)
 	def _getSelectedItem(self):
-		if 0 <= self.selected < len(self.items):
-			return self.items[self.selected]
+		if 0 <= self.selected < len(self._items):
+			return self._items[self.selected]
 		return None
 	selected_item = property(_getSelectedItem)
 
@@ -891,6 +1024,12 @@ class TextBox(_widget):
 		self.text = text
 		self.filename = filename
 		super(TextBox,self).__init__(**kwargs)
+
+		# Prepare Data collection framework
+		self.accepts_data = True
+		self.delivers_data = True
+		self._realGetData = self._getText
+		self._realSetData = self._setText
 
 	def _getFileName(self): return self._filename
 	def _loadFromFile(self,filename):
@@ -920,6 +1059,12 @@ class TextField(_widget):
 		self.real_widget = fife.TextField()
 		self.text = text
 		super(TextField,self).__init__(**kwargs)
+
+		# Prepare Data collection framework
+		self.accepts_data = True
+		self.delivers_data = True
+		self._realGetData = self._getText
+		self._realSetData = self._setText
 
 	def resizeToContent(self,recurse=True):
 		max_w = self.font.getWidth(self.text)
@@ -983,6 +1128,9 @@ class Spacer(object):
 from xml.sax import saxutils, handler
 
 class GuiXMLError(Exception):
+	"""
+	An error that occured during parsing an XML file.
+	"""
 	pass
 
 class _GuiLoader(object, handler.ContentHandler):
