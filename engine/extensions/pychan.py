@@ -80,25 +80,30 @@ C{capture} calls in an obvious way.
       'closeButton':  guiElement.hide
    })
 
-Data distribution and collection
-================================
+Initialization, data distribution and collection
+================================================
+
+Note: This is an untested feature ...
 
 Very often a dialogs text fields, labels and listboxes have to be filled with data
 after the creation of the dialog. This can be a tiresome process.
 After a dialog has executed, B{other} attributes have to be read out again,
-this to can be tiresome. PyChan simplifies both processes::
-  guiElement.distributeData({
+this to can be tiresome. PyChan simplifies both processes. But it treats them as three
+processes. One is setting the data that will never be read out again - called B{initial data}
+- the text of a checkbox or the list of a listBox are good examples. The second is setting the
+data that is mutable by the user and may be read out again - for example the state of a checkbox
+or the selected index in a list. The third and final process is collection of the user-mutable data::
+  guiElement.distributeInitialData({
   	'myListBox' : choices,
   	'myLabel' : map.name,
+  })
+  guiElement.distributeData({
   	'myTextField' : map.description
   })
   # ... process dialog.
   data = guiElement.collectData(['myListBox','myTextField'])
   map.description = data['myTextField']
   print "You selected:",data['myListBox'],", good choice!"
-
-Note how the collection of the list box data does not retrieve the
-elements.
 
 Widget hierachy
 ===============
@@ -326,7 +331,7 @@ class _widget(object):
 		self._visible = False
 		
 		self.accepts_data = False
-		self.delivers_data = False
+		self.accepts_initial_data = False
 
 		manager.stylize(self,kwargs.get('style','default'),**kwargs)
 	
@@ -429,22 +434,45 @@ class _widget(object):
 			elif not ignoreMissing:
 				raise RuntimeError("No widget with the name: %s" % name)
 
+	def setInitialData(self,data):
+		if not self.accepts_initial_data:
+			raise RuntimeError("Trying to set data on a widget that does not accept initial data.")
+		self._realSetInitialData(data)
+	
 	def setData(self,data):
 		if not self.accepts_data:
 			raise RuntimeError("Trying to set data on a widget that does not accept data.")
 		self._realSetData(data)
 
 	def getData(self):
-		if not self.delivers_data:
-			raise RuntimeError("Trying to retrieve data from a widget that does not deliver data.")
+		if not self.accepts_data:
+			raise RuntimeError("Trying to retrieve data from a widget that does not accept data.")
 		return self._realGetData()
 
+	def distributeInitialData(self,initialDataMap):
+		"""
+		Distribute B{initial} (not mutable by the user) data from a dictionary over the widgets in the hierachy
+		using the keys as names and the values as the data (which is set via L{setInitialData}).
+		If more than one widget matches - the data is set on ALL matching widgets.
+		By default a missing widget is just ignored.
+		
+		Use it like this::
+		  guiElement.distributeInitialData({
+		       'myTextField' : 'Hello World!',
+		       'myListBox' : ["1","2","3"]
+		  })
+		
+		"""
+		for name,data in dataMap.items():
+			widgetList = self.findChildren(name = name)
+			for widget in widgetList:
+				widget.setInitialData(data)
+	
 	def distributeData(self,dataMap):
 		"""
 		Distribute data from a dictionary over the widgets in the hierachy
 		using the keys as names and the values as the data (which is set via L{setData}).
-		If more than one widget matches - the data is set on ALL matching widgets.
-		By default a missing widget is just ignored.
+		This will only accept unique matches.
 		
 		Use it like this::
 		  guiElement.distributeData({
@@ -452,17 +480,12 @@ class _widget(object):
 		       'myListBox' : ["1","2","3"]
 		  })
 		
-		IMPORTANT WARNING
-		=================
-		
-		Delivery and collection of data are not idempotent.
-		You can deliver a LIST to a LISTBOX but you collect the SELECTED ITEM.
-		
 		"""
 		for name,data in dataMap.items():
 			widgetList = self.findChildren(name = name)
-			for widget in widgetList:
-				widget.setData(data)
+			if len(widgetList) != 1:
+				raise RuntimeError("DistributeData can only handle widgets with unique names.")
+			widgetList[0].setData(data)
 
 	def collectData(self,widgetNames):
 		"""
@@ -475,12 +498,6 @@ class _widget(object):
 		  data = guiElement.collectData(['myTextField','myListBox'])
 		  print "You entered:",data['myTextField']," and selected ",data['myListBox']
 		
-		IMPORTANT WARNING
-		=================
-		
-		Delivery and collection of data are not idempotent.
-		You can deliver a LIST to a LISTBOX but you collect the SELECTED ITEM.
-		
 		"""
 		dataMap = {}
 		for name in widgetNames:
@@ -488,7 +505,7 @@ class _widget(object):
 			if len(widgetList) != 1:
 				raise RuntimeError("CollectData can only handle widgets with unique names.")
 			
-			dataMap[name] = widget.getData()
+			dataMap[name] = widgetList[0].getData()
 		return dataMap
 
 	def resizeToContent(self,recurse = True):
@@ -877,10 +894,8 @@ class _basicTextWidget(_widget):
 		super(_basicTextWidget,self).__init__(**kwargs)
 		
 		# Prepare Data collection framework
-		self.accepts_data = True
-		self._realSetData = self._setText
-
-		self.delivers_data = False
+		self.accepts_initial_data = True
+		self._realSetInitialData = self._setText
 
 	def _getText(self): return self.real_widget.getCaption()
 	def _setText(self,text): self.real_widget.setCaption(text)
@@ -913,9 +928,10 @@ class CheckBox(_basicTextWidget):
 
 		# Prepare Data collection framework
 		self.accepts_data = True
-		self.delivers_data = True
 		self._realGetData = self._isMarked
 		self._realSetData = self._setMarked
+		
+		# Initial data stuff inherited.
 	
 	def _isMarked(self): return self.real_widget.isMarked()
 	def _setMarked(self,mark): self.real_widget.setMarked(mark)
@@ -942,11 +958,12 @@ class ListBox(_widget):
 		super(ListBox,self).__init__(**kwargs)
 
 		# Prepare Data collection framework
-		self.accepts_data = True
-		self._realSetData = self._setItems
+		self.accepts_initial_data = True
+		self._realSetInitialData = self._setItems
 		
-		self.delivers_data = True
-		self._realGetData = self._getSelectedItem
+		self.accepts_data = True
+		self._realSetData = self._setSelected
+		self._realGetData = self._getSelected
 
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
@@ -984,11 +1001,12 @@ class DropDown(_widget):
 		super(DropDown,self).__init__(**kwargs)
 
 		# Prepare Data collection framework
-		self.accepts_data = True
-		self._realSetData = self._setItems
+		self.accepts_initial_data = True
+		self._realSetInitialData = self._setItems
 		
-		self.delivers_data = True
-		self._realGetData = self._getSelectedItem
+		self.accepts_data = True
+		self._realSetData = self._setSelected
+		self._realGetData = self._getSelected
 
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
@@ -1027,9 +1045,10 @@ class TextBox(_widget):
 
 		# Prepare Data collection framework
 		self.accepts_data = True
-		self.delivers_data = True
-		self._realGetData = self._getText
+		self.accepts_inital_data = True
+		self._realSetInitialData = self._setText
 		self._realSetData = self._setText
+		self._realGetData = self._getText
 
 	def _getFileName(self): return self._filename
 	def _loadFromFile(self,filename):
@@ -1062,9 +1081,10 @@ class TextField(_widget):
 
 		# Prepare Data collection framework
 		self.accepts_data = True
-		self.delivers_data = True
-		self._realGetData = self._getText
+		self.accepts_inital_data = True
+		self._realSetInitialData = self._setText
 		self._realSetData = self._setText
+		self._realGetData = self._getText
 
 	def resizeToContent(self,recurse=True):
 		max_w = self.font.getWidth(self.text)
