@@ -8,11 +8,13 @@ Very unfinished.
 
 Features:
 * Simpler Interface
+* Automagic background tiling (WIP)
 * Very Basic Layout Engine
 * Very Basic XML Format support
 * Basic Styling support
 
 TODO:
+* Fix tiling code
 * Completion of above features
 * Wrap missing widgets
 * Documentation
@@ -66,9 +68,10 @@ def _InitCheckOrFail(check,message):
 	if not check: raise InitializationError(message)
 
 class _Manager(fife.IWidgetListener, fife.TimeEvent):
-	def __init__(self, engine):
+	def __init__(self, engine, debug = False):
 		super(_Manager,self).__init__()
 		self.engine = engine
+		self.debug = debug
 
 		_InitCheckOrFail(self.engine.getEventManager(),"No event manager installed.")
 		_InitCheckOrFail(self.engine.getGuiManager(),"No GUI manager installed.")
@@ -169,9 +172,14 @@ class _Manager(fife.IWidgetListener, fife.TimeEvent):
 
 
 manager = None
-def init(engine):
+def init(engine,debug=False):
+	""" init( FifeEngine, debug = False )
+	
+	This has to be called before any other pychan methods can be used.
+	It sets up a manager object which is available under pychan.manager.
+	"""
 	global manager
-	manager = _Manager(engine)
+	manager = _Manager(engine,debug)
 
 ### Widget/Container Base Classes ###
 
@@ -225,6 +233,7 @@ class _widget(object):
 			self.width, self.height = size.x, size.y
 		else:
 			self.width, self.height = size
+		self.sizeChanged()
 
 	def _getSize(self):
 		return self.width, self.height
@@ -305,6 +314,7 @@ class _widget(object):
 ### Containers + Layout code ###
 
 class Container(_widget,fife.Container):
+	""" Basic Container Class """
 	def __init__(self,padding=5,margins=(5,5),_real_widget=None, **kwargs):
 		self.real_widget = _real_widget or fife.Container()
 		self.children = []
@@ -359,26 +369,38 @@ class Container(_widget,fife.Container):
 
 	def beforeShow(self):
 		self.resizeToContent()
-		background = getattr(self,'_background',None)
+		self.background_image = self.background_image # Reassign to init tiling
+		background = getattr(self,'_background',[])
 		if background:
-			background.requestMoveToBottom()
+			for bg in background: bg.requestMoveToBottom()
 
 	def setBackgroundImage(self,image):
 		self._background = getattr(self,'_background',None)
 		if image is None:
 			self._background_image = image
 			if self._background is not None:
-				self.real_widget.remove(self._background)
+				map(self.real_widget.remove,self._background)
 			return
 
 		if not isinstance(image, fife.GuiImage):
 			image = manager.loadImage(image)
 		self._background_image = image
 		if self._background is not None:
-			self.real_widget.remove(self._background)
-		self._background = fife.Icon(image)
-		self._background.setPosition(0,0)
-		self.real_widget.add(self._background)
+			map(self.real_widget.remove,self._background)
+		
+		# Now tile the background over the widget
+		self._background = []
+		icon = fife.Icon(image)
+		x, w = 0, image.getWidth()
+		while x < self.width:
+			y, h = 0, image.getHeight()
+			while y < self.height:
+				icon = fife.Icon(image)
+				icon.setPosition(x,y)
+				self._background.append(icon)
+				y += h
+			x += w
+		map(self.real_widget.add,self._background)
 	def getBackgroundImage(self): return self._background_image
 	background_image = property(getBackgroundImage,setBackgroundImage)
 
@@ -658,6 +680,7 @@ class _GuiLoader(object, handler.ContentHandler):
 		return (name,value)
 
 	def _printTag(self,name,attrs):
+		if not manager.debug: return
 		attrstrings = map(lambda t: '%s="%s"' % tuple(map(str,t)),attrs.items())
 		tag = "<%s " % name + " ".join(attrstrings) + ">"
 		print self.indent + tag
@@ -698,7 +721,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def endElement(self, name):
 		self.indent = self.indent[:-4]
-		print self.indent + "</%s>" % name
+		if manager.debug: print self.indent + "</%s>" % name
 		if self.stack.pop() == 'gui_element':
 			self.root = self.root._parent or self.root
 
