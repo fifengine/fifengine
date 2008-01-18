@@ -431,7 +431,6 @@ class Container(_widget,fife.Container):
 			self._background_image = image
 			map(self.real_widget.remove,self._background)
 			self._background = []
-			return
 
 		# Background generation is done in _resetTiling
 
@@ -492,25 +491,29 @@ class LayoutBase(object):
 
 	def _expandWidthSpacer(self):
 		x = self.border_size + self.margins[0]
-		print self,self.width
-		for index,widget in enumerate(self.children):
-			print index,x,"->",
-			if index == self.spacer.index:
-				x = self.width - x
-			print index,x
+		xdelta = map(self.xdelta,self.children)
+		
+		for widget in self.children[:self.spacer.index]:
 			widget.x = x
-			x += self.xdelta(widget)
+			x += xdelta.pop(0)
+		
+		x = self.width - sum(xdelta) - self.border_size - self.margins[0]
+		for widget in self.children[self.spacer.index:]:
+			widget.x = x
+			x += xdelta.pop(0)
 
 	def _expandHeightSpacer(self):
 		y = self.border_size + self.margins[1]
-		print self,self.height
-		for index,widget in enumerate(self.children):
-			print index,y,"->",
-			if index == self.spacer.index:
-				y = self.height - y
-			print index,y
+		ydelta = map(self.ydelta,self.children)
+		
+		for widget in self.children[:self.spacer.index]:
 			widget.y = y
-			y += self.ydelta(widget)
+			y += ydelta.pop(0)
+		
+		y = self.height - sum(ydelta) - self.border_size - self.margins[1]
+		for widget in self.children[self.spacer.index:]:
+			widget.y = y
+			y += ydelta.pop(0)
 
 
 class VBoxLayoutMixin(LayoutBase):
