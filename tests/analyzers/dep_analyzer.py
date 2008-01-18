@@ -23,10 +23,10 @@ ALLOWED_MODULE_DEPS = {
 }
 
 _S = os.path.sep
-ROOTDIRNAME = 'engine/core'
-FILE_DEPS_OUT = 'doc/dependencies/filedeps'
-DIR_DEPS_OUT = 'doc/dependencies/dirdeps'
-MODULE_DEPS_OUT = 'doc/dependencies/moduledeps'
+ROOTDIRNAME = 'engine%score' % _S
+FILE_DEPS_OUT = 'doc%sdependencies%sfiledeps' % (_S, _S)
+DIR_DEPS_OUT = 'doc%sdependencies%sdirdeps' % (_S, _S)
+MODULE_DEPS_OUT = 'doc%sdependencies%smoduledeps' % (_S, _S)
 SKIPPED_PROVIDERS = []
 SKIPPED_USERS = []
 
