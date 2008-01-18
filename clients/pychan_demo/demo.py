@@ -143,14 +143,50 @@ class Application(object):
 	def quit(self):
 		self.quitRequested = True
 
+# Pychan specific code is here!
+class PyChanExample(object):
+	def __init__(self,xmlFile):
+		self.xmlFile = xmlFile
+		self.widget = None
+	
+	def start(self):
+		self.widget = pychan.loadXML(self.xmlFile)
+		self.widget.show()
+
+	def stop(self):
+		self.widget.hide()
+		self.widget = None
+
+class DemoApplication(Application):
+	def __init__(self):
+		super(DemoApplication,self).__init__()
+		
+		pychan.init(self.engine,debug=True)
+		self.gui = pychan.loadXML('content/gui/all_widgets.xml')
+		
+		self.gui.mapEvents({
+			'closeButton'  : self.quit,
+			'selectButton' : self.selectExample
+		})
+
+		self.examples = {
+			'Load Map' : PyChanExample('content/gui/loadmap.xml'),
+			'Map Properties' : PyChanExample('content/gui/mapproperty.xml')
+		}
+		self.demoList = self.gui.findChild(name='demoList')
+		self.demoList.items += self.examples.keys()
+		self.gui.show()
+		
+		self.currentExample = None
+
+	def selectExample(self):
+		if self.demoList.selected_item is None: return
+		print "selected",self.demoList.selected_item
+		if self.currentExample: self.currentExample.stop()
+		self.currentExample = self.examples[self.demoList.selected_item]
+		self.gui.findChild(name="xmlSource").text = open(self.currentExample.xmlFile).read()
+		self.currentExample.start()
+
 if __name__ == '__main__':
-	app = Application()
-	
-	# Pychan specific code is here!
-	pychan.init(app.engine,debug=True)
-	gui = pychan.loadXML('content/gui/all_widgets.xml')
-	gui.findChild(name='closeButton').capture( app.quit )
-	gui.findChild(name='demoList').items += ['PyChan Demo']
-	gui.show()
-	
+	app = DemoApplication()
 	app.run()

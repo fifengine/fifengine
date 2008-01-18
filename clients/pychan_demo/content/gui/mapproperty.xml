@@ -1,0 +1,8 @@
+<Window title="Load Map">
+	<HBox>
+		<VBox>
+			<Button name="okButton" text="Ok"/>
+			<Button name="closeButton" text="Cancel"/>
+		</VBox>
+	</HBox>
+</Window>

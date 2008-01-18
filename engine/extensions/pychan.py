@@ -254,6 +254,10 @@ class _widget(object):
 			return children[0]
 		return None
 
+	def mapEvents(self,d):
+		for name,func in d.items():
+			self.findChild(name=name).capture( func )
+
 
 	def resizeToContent(self,recurse = True):
 		pass
@@ -444,10 +448,6 @@ class Container(_widget,fife.Container):
 	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque,_setOpaque)
-
-	#def _setPadding(self,padding): self.real_widget.setPadding(padding)
-	#def _getPadding(self): return self.real_widget.isPadding()
-	#padding = property(_getPadding,_setPadding)
 
 AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
 
@@ -735,6 +735,16 @@ class ScrollArea(_widget):
 # Spacer
 
 class Spacer(object):
+	""" A spacer represents expandable 'whitespace' in the GUI.
+	
+	In a XML file you can get this by adding a <Spacer /> inside a VBox or
+	HBox element (Windows implicitly are VBox elements).
+	
+	The effect is, that elements before the spacer will be left (top)
+	and elements after the spacer will be right (bottom) aligned.
+	
+	There can only be one spacer in VBox (HBox).
+	"""
 	def __init__(self,parent=None,**kwargs):
 		self._parent = parent
 

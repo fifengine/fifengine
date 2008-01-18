@@ -1,0 +1,11 @@
+<Window title="Load Map">
+	<HBox>
+		<ScrollArea size="200,200">
+			<ListBox name="mapList" min_size="100,100" />
+		</ScrollArea>
+		<VBox>
+			<Button name="selectButton" text="Load Map"/>
+			<Button name="closeButton" text="Cancel"/>
+		</VBox>
+	</HBox>
+</Window>
