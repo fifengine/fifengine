@@ -194,8 +194,7 @@ class _widget(object):
 		self.size = size
 		self._visible = False
 		manager.stylize(self,kwargs.get('style','default'),**kwargs)
-		
-		self.resizeToContent()
+		#self.resizeToContent()
 	
 	def match(self,**kwargs):
 		""" Matches the widget against a list of key-value pairs.
@@ -213,6 +212,7 @@ class _widget(object):
 
 	def show(self):
 		self.beforeShow()
+		self.adaptLayout()
 		manager.show(self)
 		self._visible = True
 
@@ -221,27 +221,73 @@ class _widget(object):
 		self.afterHide()
 		self._visible = False
 	
-	def beforeShow(self): pass
-	def afterHide(self): pass
+	def adaptLayout(self):
+		self._recursiveResizeToContent()
+		self._recursiveExpandContent()
 	
+	def beforeShow(self):
+		pass
+
+	def afterHide(self):
+		pass
+
 	def findChildren(self,**kwargs):
-		return []
+		""" Find all contained child widgets by attribute values.
+		
+		closeButtons = root_widget.findChildren(name='close')
+		"""
+
+		children = []
+		def _childCollector(widget):
+			if widget.match(**kwargs):
+				children.append(widget)
+		self._deepApply(_childCollector)
+		return children
+
+	def findChild(self,**kwargs):
+		""" Find the first contained child widgets by attribute values.
+		
+		closeButton = root_widget.findChild(name='close')
+		"""
+		children = self.findChildren(**kwargs)
+		if children:
+			return children[0]
+		return None
+
 
 	def resizeToContent(self,recurse = True):
 		pass
+
+	def expandContent(self,recurse = True):
+		pass
+
+	def _recursiveResizeToContent(self):
+		def _callResizeToContent(widget):
+			print "RTC:",widget
+			widget.resizeToContent()
+		self._deepApply(_callResizeToContent)
+
+	def _recursiveExpandContent(self):
+		def _callExpandContent(widget):
+			print "ETC:",widget
+			widget.expandContent()
+		self._deepApply(_callExpandContent)
+
+	def _deepApply(self,visitorFunc):
+		visitorFunc(self)
 
 	def sizeChanged(self):
 		if self._parent:
 			self._parent.sizeChanged()
 		else:
-			self.resizeToContent()
+			self.adaptLayout()
 
 	def _setSize(self,size):
 		if isinstance(size,fife.Point):
 			self.width, self.height = size.x, size.y
 		else:
 			self.width, self.height = size
-		self.sizeChanged()
+		#self.sizeChanged()
 
 	def _getSize(self):
 		return self.width, self.height
@@ -337,14 +383,6 @@ class Container(_widget,fife.Container):
 			self.children.append(widget)
 			self.real_widget.add(widget.real_widget)
 
-	def _recursiveResizeToContent(self):
-		for widget in self.children:
-			getattr(widget,'resizeToContent',lambda *args: None)()
-
-	def _recursiveExpandContent(self):
-		for widget in self.children:
-			getattr(widget,'expandContent',lambda *args: None)()
-
 	def getMaxChildrenWidth(self):
 		if not self.children: return 0
 		return max(widget.width for widget in self.children)
@@ -353,32 +391,12 @@ class Container(_widget,fife.Container):
 		if not self.children: return 0
 		return max(widget.height for widget in self.children)
 
-	def findChildren(self,**kwargs):
-		""" Find all contained child widgets by attribute values.
-		
-		closeButtons = root_widget.findChildren(name='close')
-		"""
-		children = []
-		for widget in self.children:
-			if widget.match(**kwargs):
-				children.append(widget)
-		for widget in self.children:
-			children += widget.findChildren(**kwargs)
-		return children
-
-	def findChild(self,**kwargs):
-		""" Find the first contained child widgets by attribute values.
-		
-		closeButton = root_widget.findChild(name='close')
-		"""
-		# For now we use an inefficient impl. to share the code.
-		children = self.findChildren(**kwargs)
-		if children:
-			return children[0]
-		return None
+	def _deepApply(self,visitorFunc):
+		for child in self.children:
+			child._deepApply(visitorFunc)
+		visitorFunc(self)
 
 	def beforeShow(self):
-		self.resizeToContent()
 		self._resetTiling()
 
 	def _resetTiling(self):
@@ -500,7 +518,6 @@ class VBoxLayoutMixin(LayoutBase):
 		super(VBoxLayoutMixin,self).__init__(**kwargs)
 
 	def resizeToContent(self, recurse = True):
-		if recurse: self._recursiveResizeToContent()
 		max_w = self.getMaxChildrenWidth()
 		x = self.margins[0] + self.border_size
 		y = self.margins[1] + self.border_size
@@ -515,7 +532,6 @@ class VBoxLayoutMixin(LayoutBase):
 
 		self._adjustHeight()
 		self._adjustWidth()
-		if recurse: self._recursiveExpandContent()
 
 	def expandContent(self):
 		if self.spacer:
@@ -528,7 +544,6 @@ class HBoxLayoutMixin(LayoutBase):
 		super(HBoxLayoutMixin,self).__init__(**kwargs)
 
 	def resizeToContent(self, recurse = True):
-		if recurse: self._recursiveResizeToContent()
 		max_h = self.getMaxChildrenHeight()
 		x = self.margins[0] + self.border_size
 		y = self.margins[1] + self.border_size
@@ -543,7 +558,6 @@ class HBoxLayoutMixin(LayoutBase):
 		
 		self._adjustHeight()
 		self._adjustWidth()
-		if recurse: self._recursiveExpandContent()
 
 	def expandContent(self):
 		if self.spacer:
@@ -703,19 +717,9 @@ class ScrollArea(_widget):
 	def _getContent(self): return self._content
 	content = property(_getContent,_setContent)
 
-	def findChildren(self,**kwargs):
-		""" Find all contained child widgets by attribute values.
-		
-		closeButtons = root_widget.findChildren(name='close')
-		"""
-		children = []
-		if self._content and self._content.match(**kwargs):
-			children.append(self._content)
-			children += self._content.findChildren(**kwargs)
-		return children
-
-	def beforeShow(self):
-		self.resizeToContent()
+	def _deepApply(self,visitorFunc):
+		if self._content: visitorFunc(self._content)
+		visitorFunc(self)
 
 	def resizeToContent(self,recurse=True):
 		if self._content is None: return
