@@ -147,7 +147,7 @@ if __name__ == '__main__':
 	app = Application()
 	
 	# Pychan specific code is here!
-	pychan.init(app.engine)
+	pychan.init(app.engine,debug=True)
 	gui = pychan.loadXML('content/gui/all_widgets.xml')
 	gui.findChild(name='closeButton').capture( app.quit )
 	gui.findChild(name='demoList').items += ['PyChan Demo']

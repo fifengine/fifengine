@@ -14,9 +14,8 @@ Features:
 * Basic Styling support
 
 TODO:
-* Fix tiling code
 * Completion of above features
-* Wrap missing widgets
+* Wrap missing widgets: DropDown, RadioButton, Slider, TextField
 * Documentation
 * Add support for 'Spacers' in layouts
 * Easier Font handling.
@@ -342,6 +341,10 @@ class Container(_widget,fife.Container):
 		for widget in self.children:
 			getattr(widget,'resizeToContent',lambda *args: None)()
 
+	def _recursiveExpandContent(self):
+		for widget in self.children:
+			getattr(widget,'expandContent',lambda *args: None)()
+
 	def getMaxChildrenWidth(self):
 		if not self.children: return 0
 		return max(widget.width for widget in self.children)
@@ -434,12 +437,18 @@ AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
 class LayoutBase(object):
 	def __init__(self,align = (AlignLeft,AlignTop), **kwargs):
 		self.align = align
+		self.spacer = None
 		super(LayoutBase,self).__init__(**kwargs)
+
+	def addSpacer(self,spacer):
+		self.spacer = spacer
+		spacer.index = len(self.children)
 
 	def xdelta(self,widget):return 0
 	def ydelta(self,widget):return 0
 
 	def _adjustHeight(self):
+		
 		if self.align[1] == AlignTop:return #dy = 0
 		if self.align[1] == AlignBottom:
 			y = self.height - self.childarea[1] - self.border_size - self.margins[1]
@@ -449,7 +458,11 @@ class LayoutBase(object):
 			widget.y = y
 			y += self.ydelta(widget)
 
+	def _adjustHeightWithSpacer(self):
+		pass
+
 	def _adjustWidth(self):
+
 		if self.align[0] == AlignLeft:return #dx = 0
 		if self.align[0] == AlignRight:
 			x = self.width - self.childarea[0] - self.border_size - self.margins[0]
@@ -458,6 +471,29 @@ class LayoutBase(object):
 		for widget in self.children:
 			widget.x = x
 			x += self.xdelta(widget)
+
+	def _expandWidthSpacer(self):
+		x = self.border_size + self.margins[0]
+		print self,self.width
+		for index,widget in enumerate(self.children):
+			print index,x,"->",
+			if index == self.spacer.index:
+				x = self.width - x
+			print index,x
+			widget.x = x
+			x += self.xdelta(widget)
+
+	def _expandHeightSpacer(self):
+		y = self.border_size + self.margins[1]
+		print self,self.height
+		for index,widget in enumerate(self.children):
+			print index,y,"->",
+			if index == self.spacer.index:
+				y = self.height - y
+			print index,y
+			widget.y = y
+			y += self.ydelta(widget)
+
 
 class VBoxLayoutMixin(LayoutBase):
 	def __init__(self,**kwargs):
@@ -476,9 +512,14 @@ class VBoxLayoutMixin(LayoutBase):
 		self.height = y + self.margins[1] - self.padding
 		self.width = max_w + 2*x
 		self.childarea = max_w, y - self.padding - self.margins[1]
-		
+
 		self._adjustHeight()
 		self._adjustWidth()
+		if recurse: self._recursiveExpandContent()
+
+	def expandContent(self):
+		if self.spacer:
+			self._expandHeightSpacer()
 
 	def ydelta(self,widget):return widget.height + self.padding
 
@@ -502,7 +543,12 @@ class HBoxLayoutMixin(LayoutBase):
 		
 		self._adjustHeight()
 		self._adjustWidth()
-		
+		if recurse: self._recursiveExpandContent()
+
+	def expandContent(self):
+		if self.spacer:
+			self._expandWidthSpacer()
+
 	def xdelta(self,widget):return widget.width + self.padding
 
 
@@ -668,6 +714,9 @@ class ScrollArea(_widget):
 			children += self._content.findChildren(**kwargs)
 		return children
 
+	def beforeShow(self):
+		self.resizeToContent()
+
 	def resizeToContent(self,recurse=True):
 		if self._content is None: return
 		if recurse:
@@ -675,6 +724,18 @@ class ScrollArea(_widget):
 		self.content.width = max(self.content.width,self.width-5)
 		self.content.height = max(self.content.height,self.height-5)
 
+
+# Spacer
+
+class Spacer(object):
+	def __init__(self,parent=None,**kwargs):
+		self._parent = parent
+
+	def sizeChanged(self):
+		pass
+
+
+# XML Loader
 
 from xml.sax import saxutils, handler
 
@@ -715,6 +776,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _resolveTag(self,name):
 		""" Resolve a XML Tag to a PyChan GUI class. """
+		#FIXME Using globals is a __QUICK HACK__
 		cls = globals().get(name,None)
 		if cls is None:
 			raise GuiXMLError("Unknown GUI Element: %s" % name)
@@ -726,6 +788,9 @@ class _GuiLoader(object, handler.ContentHandler):
 		if issubclass(cls,_widget):
 			self.stack.append('gui_element')
 			self._createInstance(cls,name,attrs)
+		elif cls == Spacer:
+			self.stack.append('spacer')
+			self._createSpacer(cls,name,attrs)
 		else:
 			self.stack.append('unknown')
 		self.indent += " "*4
@@ -735,22 +800,32 @@ class _GuiLoader(object, handler.ContentHandler):
 		obj = cls(parent=self.root)
 		for k,v in attrs:
 			setattr(obj,k,v)
-		try:
-			if hasattr(self.root,'add'):
-				self.root.add(obj)
-			elif hasattr(self.root,'content'):
-				self.root.content = obj
-			else:
-				if self.root is not None:
-					raise GuiXMLError("*** unknown containment relation :-(")
-		except:
-			pass
+			
+		if hasattr(self.root,'add'):
+			self.root.add(obj)
+		elif hasattr(self.root,'content'):
+			self.root.content = obj
+		else:
+			if self.root is not None:
+				raise GuiXMLError("*** unknown containment relation :-(")
+		self.root = obj
+	
+	def _createSpacer(self,cls,name,attrs):
+		attrs = map(self._parseAttr,attrs.items())
+		obj = cls(parent=self.root)
+		for k,v in attrs:
+			setattr(obj,k,v)
+			
+		if hasattr(self.root,'add'):
+			self.root.addSpacer(obj)
+		else:
+			raise GuiXMLError("A spacer needs to be added to a container widget!")
 		self.root = obj
 
 	def endElement(self, name):
 		self.indent = self.indent[:-4]
 		if manager.debug: print self.indent + "</%s>" % name
-		if self.stack.pop() == 'gui_element':
+		if self.stack.pop() in ('gui_element','spacer'):
 			self.root = self.root._parent or self.root
 
 def loadXML(file):
