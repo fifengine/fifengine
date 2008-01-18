@@ -42,6 +42,7 @@ def add_to_dictset(d, key, val):
 unknown_modules = []
 def check_dep_error(allowed_deps, user, provider):
 	global unknown_modules
+
 	msg = ''
 	try:
 		if not provider in allowed_deps[user]:
@@ -72,7 +73,8 @@ def get_file2inc(sources):
 				continue
 			m = reInc.search(line)
 			if m:
-				add_to_dictset(file2inc, f, m.group(1))
+				add_to_dictset(file2inc, f, m.group(1).replace( '/', _S ))
+
 	return file2inc
 
 def fill_dep_infos(file2inc, fileUser2provider, dirUser2provider, moduleUser2provider, unknownIncludes, dirclusters):
@@ -91,7 +93,7 @@ def fill_dep_infos(file2inc, fileUser2provider, dirUser2provider, moduleUser2pro
 			user = str(f.dirname()).replace(ROOTDIRNAME + _S, '')
 			header = path((f.dirname() / path(i)).abspath().split(ROOTDIRNAME + _S)[1])
 			if not header.isfile():
-				header = path(ROOTDIRNAME) / path(i)
+				header = path(ROOTDIRNAME) + _S + path(i)
 				if not header.isfile():
 					add_to_dictset(unknownIncludes, str(f), str(i))
 					continue
