@@ -197,6 +197,15 @@ class _widget(object):
 		manager.stylize(self,kwargs.get('style','default'),**kwargs)
 		
 		self.resizeToContent()
+	
+	def match(self,**kwargs):
+		""" Matches the widget against a list of key-value pairs.
+		Only if all keys are attributes and their value is the same it returns True.
+		"""
+		for k,v in kwargs.items():
+			if v != getattr(self,k,None):
+				return False
+		return True
 
 	def capture(self, callback):
 		def captured_f(event):
@@ -320,6 +329,8 @@ class Container(_widget,fife.Container):
 		self.children = []
 		self.margins = margins
 		self.padding = padding
+		self._background = []
+		self._background_image = None
 		super(Container,self).__init__(**kwargs)
 
 	def add(self, *widgets):
@@ -346,12 +357,8 @@ class Container(_widget,fife.Container):
 		"""
 		children = []
 		for widget in self.children:
-			add = True
-			for k,v in kwargs.items():
-				if v != getattr(widget,k,None):
-					add = False
-					break
-			if add: children.append(widget)
+			if widget.match(**kwargs):
+				children.append(widget)
 		for widget in self.children:
 			children += widget.findChildren(**kwargs)
 		return children
@@ -369,31 +376,24 @@ class Container(_widget,fife.Container):
 
 	def beforeShow(self):
 		self.resizeToContent()
-		self.background_image = self.background_image # Reassign to init tiling
-		background = getattr(self,'_background',[])
-		if background:
-			for bg in background: bg.requestMoveToBottom()
+		self._resetTiling()
 
-	def setBackgroundImage(self,image):
-		self._background = getattr(self,'_background',None)
+	def _resetTiling(self):
+		image = self._background_image
 		if image is None:
-			self._background_image = image
-			if self._background is not None:
-				map(self.real_widget.remove,self._background)
 			return
+		
+		back_w,back_h = self.width, self.height
+		image_w, image_h = image.getWidth(), image.getHeight()
 
-		if not isinstance(image, fife.GuiImage):
-			image = manager.loadImage(image)
-		self._background_image = image
-		if self._background is not None:
-			map(self.real_widget.remove,self._background)
+		map(self.real_widget.remove,self._background)
 		
 		# Now tile the background over the widget
 		self._background = []
 		icon = fife.Icon(image)
-		x, w = 0, image.getWidth()
-		while x < self.width:
-			y, h = 0, image.getHeight()
+		x, w = 0, image_w
+		while x < back_w:
+			y, h = 0, image_h
 			while y < self.height:
 				icon = fife.Icon(image)
 				icon.setPosition(x,y)
@@ -401,6 +401,23 @@ class Container(_widget,fife.Container):
 				y += h
 			x += w
 		map(self.real_widget.add,self._background)
+		for tile in self._background:
+			tile.requestMoveToBottom()
+
+	def setBackgroundImage(self,image):
+		self._background = getattr(self,'_background',None)
+		if image is None:
+			self._background_image = image
+			map(self.real_widget.remove,self._background)
+			self._background = []
+			return
+
+		# Background generation is done in _resetTiling
+
+		if not isinstance(image, fife.GuiImage):
+			image = manager.loadImage(image)
+		self._background_image = image
+	
 	def getBackgroundImage(self): return self._background_image
 	background_image = property(getBackgroundImage,setBackgroundImage)
 
@@ -640,6 +657,17 @@ class ScrollArea(_widget):
 	def _getContent(self): return self._content
 	content = property(_getContent,_setContent)
 
+	def findChildren(self,**kwargs):
+		""" Find all contained child widgets by attribute values.
+		
+		closeButtons = root_widget.findChildren(name='close')
+		"""
+		children = []
+		if self._content and self._content.match(**kwargs):
+			children.append(self._content)
+			children += self._content.findChildren(**kwargs)
+		return children
+
 	def resizeToContent(self,recurse=True):
 		if self._content is None: return
 		if recurse:
@@ -714,7 +742,7 @@ class _GuiLoader(object, handler.ContentHandler):
 				self.root.content = obj
 			else:
 				if self.root is not None:
-					print "*** unknown containment relation :-("
+					raise GuiXMLError("*** unknown containment relation :-(")
 		except:
 			pass
 		self.root = obj

@@ -150,7 +150,7 @@ if __name__ == '__main__':
 	pychan.init(app.engine)
 	gui = pychan.loadXML('content/gui/all_widgets.xml')
 	gui.findChild(name='closeButton').capture( app.quit )
-	gui.findChild(name='authors').items += ['chris','skybound','ismarc','jwt','barra','some other guys']
+	gui.findChild(name='demoList').items += ['PyChan Demo']
 	gui.show()
 	
 	app.run()
