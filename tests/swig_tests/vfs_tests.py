@@ -20,12 +20,12 @@ class TestVfs(unittest.TestCase):
 		self.assert_(self.vfs.listDirectoriesNEW('.'))
 	
 	def testReadLines(self):
-		data = self.vfs.openNEW('test_fife.py')
+		data = self.vfs.open('test_fife.py')
 		self.assert_(data.getDataInLines())
 		del data
 	
 	def testReadBytes(self):
-		data = self.vfs.openNEW('test_fife.py')
+		data = self.vfs.open('test_fife.py')
 		self.assert_(data.getDataInBytes())
 		del data
 

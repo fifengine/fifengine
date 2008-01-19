@@ -45,7 +45,7 @@ namespace FIFE {
 		void cleanup();
 
 		bool exists(const std::string& file) const;
-		RawData* openNEW(const std::string& path);
+		RawData* open(const std::string& path);
 
 		std::vector<std::string> listFilesNEW(const std::string& path) const;
 		std::vector<std::string> listDirectoriesNEW(const std::string& path) const;
