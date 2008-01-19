@@ -12,12 +12,12 @@ class TestVfs(unittest.TestCase):
 		del self.engine
 	
 	def testListFiles(self):
-		self.vfs.listFilesNEW('.')
-		self.assert_(self.vfs.listFilesNEW('.'))
+		self.vfs.listFiles('.')
+		self.assert_(self.vfs.listFiles('.'))
 	
 	def testListDirs(self):
-		print self.vfs.listDirectoriesNEW('.')
-		self.assert_(self.vfs.listDirectoriesNEW('.'))
+		print self.vfs.listDirectories('.')
+		self.assert_(self.vfs.listDirectories('.'))
 	
 	def testReadLines(self):
 		data = self.vfs.open('test_fife.py')
