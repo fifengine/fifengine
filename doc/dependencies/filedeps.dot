@@ -165,6 +165,7 @@ digraph "source tree" {
     "engine/core/gui/console/commandline.h" -> "util/time/timer.h"
     "engine/core/gui/console/console.cpp" -> "commandline.h"
     "engine/core/gui/console/console.cpp" -> "console.h"
+    "engine/core/gui/console/console.cpp" -> "gui/base/gui_font.h"
     "engine/core/gui/console/console.cpp" -> "gui/guimanager.h"
     "engine/core/gui/console/console.cpp" -> "util/exception.h"
     "engine/core/gui/console/console.cpp" -> "util/logger.h"

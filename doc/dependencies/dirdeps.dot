@@ -153,6 +153,7 @@ subgraph cluster_12 {
     "gui/base/sdl" -> "util"
     "gui/base/sdl" -> "video"
     "gui/console" -> "gui"
+    "gui/console" -> "gui/base"
     "gui/console" -> "util"
     "gui/console" -> "util/time"
     "gui/console" -> "video"

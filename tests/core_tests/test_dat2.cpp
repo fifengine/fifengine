@@ -84,8 +84,8 @@ BOOST_AUTO_TEST_CASE( OGL_animtest ) {
 		BOOST_ERROR("Test files not found");
 	}
 
-	RawDataPtr fraw = vfs->open(RAW_FILE);
-	RawDataPtr fcomp = vfs->open(COMPRESSED_FILE);
+	RawData* fraw = vfs->open(RAW_FILE);
+	RawData* fcomp = vfs->open(COMPRESSED_FILE);
 
 	if (fraw->getDataLength() != fcomp->getDataLength()) {
 		std::cout << "raw length = " << fraw->getDataLength() \
@@ -120,6 +120,8 @@ BOOST_AUTO_TEST_CASE( OGL_animtest ) {
 	std::cout << "scanning finished" << std::endl;
 	delete[] d_raw;
 	delete[] d_comp;
+	delete fraw;
+	delete fcomp;
 }
 
 #ifdef FIFE_BOOST_VERSION_103300
