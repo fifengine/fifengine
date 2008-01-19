@@ -98,10 +98,10 @@ namespace FIFE {
 				ModelCoordinate mc(x, y);
 				m_tmploc.setLayerCoordinates(mc);
 				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getElevationCoordinates());
-				if ((drawpt.x >= cv.x) && (drawpt.x <= cv.w) &&
-				    (drawpt.y >= cv.y) && (drawpt.y <= cv.h)) {
+				if ((drawpt.x >= cv.x) && (drawpt.x <= cv.x + cv.w) &&
+				    (drawpt.y >= cv.y) && (drawpt.y <= cv.y + cv.h)) {
 					std::stringstream ss;
-					ss << drawpt.z;
+					ss << mc.x <<","<< mc.y;
 					m_font->setColor(255,255,255);
 					Image * img = m_font->getAsImage(ss.str());
 					r.x = drawpt.x;

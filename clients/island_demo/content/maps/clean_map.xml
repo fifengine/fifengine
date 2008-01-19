@@ -206,7 +206,7 @@
 		</layer>
 
 		<!-- OBJECT LAYER -->
-		<layer id="TechdemoMapObjectLayer" grid_type="square" x_scale="1.0" y_scale="1.0" x_offset="0.75" y_offset="-1.45">
+		<layer id="TechdemoMapObjectLayer" grid_type="square" x_scale="1.0" y_scale="1.0" x_offset="0" y_offset="0">
 
 			<instances>
 				<igroup z_offset="0.1">
