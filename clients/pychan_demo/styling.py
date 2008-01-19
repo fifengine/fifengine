@@ -19,8 +19,6 @@ import pychan
 
 from demo import PyChanExample
 
-from pychan import Button,CheckBox,Label,ClickLabel,ListBox,Window,Container,HBox,VBox
-
 STYLES= {
 'redzone': {
 	'default' : {
@@ -30,34 +28,34 @@ STYLES= {
 		'foreground_color' : fife.Color(255,255,255),
 		'background_color' : fife.Color(128,0,0),
 	},
-	Button : {
+	'Button' : {
 		'border_size': 2,
 		'margins' : (10,5),
 		'base_color' : fife.Color(0,0,100),
 		'foreground_color' : fife.Color(0,0,100),
 	},
-	CheckBox : {
+	'CheckBox' : {
 		'border_size': 2,
 		'background_color' : fife.Color(0,0,0,0),
 	},
-	Label : {
+	'Label' : {
 		'border_size': 2,
 		'base_color' : fife.Color(0,0,100),
 	},
-	ClickLabel : {
+	'ClickLabel' : {
 		'border_size': 2,
 		'base_color' : fife.Color(0,0,100),
 	},
-	ListBox : {
+	'ListBox' : {
 		'border_size': 2,
 		'base_color' : fife.Color(0,0,100),
 	},
-	Window : {
+	'Window' : {
 		'border_size': 5,
 		'margins': (5,5),
 		'background_image' : 'content/gui/stripe.png',
 	},
-	(Container,HBox,VBox) : {
+	('Container','HBox','VBox') : {
 		'border_size': 0,
 		'opaque' : False
 	}

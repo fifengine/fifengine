@@ -146,11 +146,11 @@ has to be invoked I{after} the subclass specific construction has taken place.
 
 """
 
-#__all__ = [
-	#'loadXML',
-	#'init',
-	#'manager'
-#]
+__all__ = [
+	'loadXML',
+	'init',
+	'manager'
+]
 
 import fife, pythonize
 
@@ -280,6 +280,8 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 		}
 
 	def addStyle(self,name,style):
+		style = self._remapStyleKeys(style)
+		
 		for k,v in self.styles['default'].items():
 			style[k] = style.get(k,v)
 		self.styles[name] = style
@@ -292,12 +294,33 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 		
 		cls = widget.__class__
 		for applicable,specstyle in style.items():
-			if not isinstance(applicable,type(())):
+			if not isinstance(applicable,tuple):
 				applicable = (applicable,)
 			if cls in applicable:
 				for k,v in specstyle.items():
 					v = kwargs.get(k,v)
 					setattr(widget,k,v)
+
+	def _remapStyleKeys(self,style):
+		# Remap class names, create copy:
+		def _toClass(class_):
+			if class_ == "default":
+				return class_
+			
+			if type(class_) == type(Widget) and issubclass(class_,Widget):
+				return class_
+			if not WIDGETS.has_key(str(class_)):
+				raise InitializationError("Can't resolve %s to a widget class." % repr(class_))
+			return WIDGETS[str(class_)]
+		
+		style_copy = {}
+		for k,v in style.items():
+			if isinstance(k,tuple):
+				new_k = tuple(map(_toClass,k))
+			else:
+				new_k = _toClass(k)
+			style_copy[new_k] = v
+		return style_copy
 
 	def loadImage(self,filename):
 		return fife.GuiImage(self.engine.imagePool.addResourceFromFile(filename),self.engine.imagePool)
@@ -1441,8 +1464,9 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _resolveTag(self,name):
 		""" Resolve a XML Tag to a PyChan GUI class. """
-		#FIXME Using globals is a __QUICK HACK__
-		cls = globals().get(name,None)
+		cls = WIDGETS.get(name,None)
+		if cls is None and name == "Spacer":
+			cls = Spacer
 		if cls is None:
 			raise GuiXMLError("Unknown GUI Element: %s" % name)
 		return cls
@@ -1531,3 +1555,29 @@ def loadXML(file):
 	loader = _GuiLoader()
 	parse(file,loader)
 	return loader.root
+
+# Global Widget Class registry
+
+WIDGETS = {
+	# Containers
+	"Container" : Container,
+	"Window" : Window,
+	"VBox" : VBox,
+	"HBox" : HBox,
+	"ScrollArea" :ScrollArea,
+	
+	# Simple Widgets
+	"Label" : Label,
+	"ClickLabel" : ClickLabel,
+	
+	# Button Widgets
+	"Button" : Button,
+	"CheckBox" : CheckBox,
+	
+	#Complexer Widgets / Text io
+	"TextField" : TextField,
+	"TextBox" : TextBox,
+	"ListBox" : ListBox,
+	"DropDown" : DropDown
+}
+
