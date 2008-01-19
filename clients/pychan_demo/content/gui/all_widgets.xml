@@ -6,6 +6,7 @@
 			</ScrollArea>
 			<VBox margins="0,0">
 				<Label text=" Select one example from the listbox and press 'Start Example'"/>
+				<Label text=" You can also execute this script with an Gui XML file as argument."/>
 				<HBox margins="0,0">
 					<Button text="XML code"/>
 				</HBox>

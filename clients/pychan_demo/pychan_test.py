@@ -209,6 +209,21 @@ class DemoApplication(Application):
 		self.creditsWidget.distributeData({ 'creditText' : open("../../doc/AUTHORS").read() })
 		self.creditsWidget.show()
 
+class TestXMLApplication(Application):
+	"""
+	Test Application. Run the pychan_test.py file
+	with the XML file you want to load as argument.
+	"""
+	def __init__(self,xmlfile):
+		super(TestXMLApplication,self).__init__()
+		pychan.init(self.engine,debug=True)
+		self.widget = pychan.loadXML(xmlfile)
+		self.widget.show()
+
 if __name__ == '__main__':
-	app = DemoApplication()
+	import sys
+	if len(sys.argv) == 2:
+		app = TestXMLApplication(sys.argv[1])
+	else:
+		app = DemoApplication()
 	app.run()

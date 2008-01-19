@@ -101,8 +101,6 @@ Other important places to look for information:
 Initialization, data distribution and collection
 ================================================
 
-Note: This is an untested feature ...
-
 Very often a dialogs text fields, labels and listboxes have to be filled with data
 after the creation of the dialog. This can be a tiresome process.
 After a dialog has executed, B{other} attributes have to be read out again,
@@ -122,6 +120,58 @@ or the selected index in a list. The third and final process is collection of th
   data = guiElement.collectData(['myListBox','myTextField'])
   map.description = data['myTextField']
   print "You selected:",data['myListBox'],", good choice!"
+
+Styling and font handling
+=========================
+
+Note: These features are B{work in progress} and likely to change.
+
+A style is a set of rules for matching widgets and a set of attributes
+applied to them after creation. The attributes can be any of the given
+attributes. Matching happens currently only by the widget class name
+itself.
+
+As an example the following style - written as a python data structure -
+will set the border size of all labels to 10::
+  style = {
+      'ListBox' : { # Matches all listboxes
+           'border_size : 10 # After creation call  lisbox.border_size = 10
+      }
+  }
+
+As a convenience you can use the string B{default} to match all widget
+classes and thus - for example apply a common font::
+  style = {
+     'default' : {
+          'font' : 'console_small'
+     }
+  }
+
+The font is set via a string identifier pulled from a font definition
+in a PyChan configuration file. You have to load these by calling
+L{Manager.loadFonts} in your startup code::
+   import pychan
+   pychan.init( fifeEngine )
+   pychan.manager.loadFonts( "content/fonts/console.fontdef" )
+
+The font definition files are in the following format::
+	[Font/FIRST_FONT_NAME]
+	
+	type: truetype
+	source: path/to/font.ttf
+	# The font size in point
+	size: 30
+	
+	[Font/SECOND_FONT_NAME]
+	
+	type: truetype
+	source: content/fonts/samanata.ttf
+	size: 8
+	
+	# And so on.
+
+I hope the example is clear enough ...
+
 
 Widget hierachy
 ===============
@@ -231,29 +281,50 @@ class Manager(fife.IWidgetListener):
 			raise InitializationError("No GUI manager installed.")
 		
 		self.guimanager = engine.getGuiManager()
-		self.initFont()
-		self.initStyles()
+		self.fonts = {}
+		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
+		self.fonts['default'] = self.engine.getDefaultFont()
+		
+		self.styles = {}
+		self.styles['default'] = DEFAULT_STYLE
+		
 		self.widgetEvents = {}
 		self.engine.getEventManager().addWidgetListener(self)
 
 	def show(self,widget):
+		"""
+		Shows a widget on screen. Used by L{Widget.show} - do not use directly.
+		"""
+		if widget.position_technique == "automatic":
+			w,h = self.engine.getSettings().getScreenWidth(), self.engine.getSettings().getScreenHeight()
+			widget.position = (w-widget.width)/2,(h-widget.height)/2
 		self.guimanager.add( widget.real_widget )
+
 	def hide(self,widget):
+		"""
+		Hides a widget again. Used by L{Widget.hide} - do not use directly.
+		"""
 		self.guimanager.remove( widget.real_widget )
 
-	def initFont(self):
-		self.fonts = {}
-		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
-		self.fonts['default'] = self.engine.getDefaultFont()
-
 	def getFont(self,name):
+		"""
+		Returns a GuiFont identified by its name.
+		
+		@param name: A string identifier from the font definitions in pychans config files.
+		"""
 		font = self.fonts.get(name)
-		print name,font
 		return getattr(font,"font",font)
 
 	def addFont(self,font):
+		"""
+		Add a font to the font registry. It's not necessary to call this directly.
+		But it expects a L{Font} instance and throws an L{InitializationError}
+		otherwise.
+		
+		@param font: A L{Font} instance.
+		"""
 		if not isinstance(font,Font):
-			raise RuntimeError("PyChan Manager expected a Font instance, not %s." % repr(font))
+			raise InitializationError("PyChan Manager expected a Font instance, not %s." % repr(font))
 		self.fonts[font.name] = font
 
 	def loadFonts(self,filename):
@@ -262,42 +333,6 @@ class Manager(fife.IWidgetListener):
 		"""
 		for font in Font.loadFromFile(filename):
 			self.addFont(font)
-
-	def initStyles(self):
-		self.styles = {}
-		self.styles['default'] = {
-			'default' : {
-				'border_size': 1,
-				'margins': (0,0),
-				'base_color' : fife.Color(0,0,100),
-				'foreground_color' : fife.Color(255,255,255),
-				'background_color' : fife.Color(0,0,0),
-			},
-			Button : {
-				'border_size': 0,
-				'margins' : (10,5),
-			},
-			CheckBox : {
-				'border_size': 0,
-			},
-			Label : {
-				'border_size': 0,
-			},
-			ClickLabel : {
-				'border_size': 0,
-			},
-			ListBox : {
-				'border_size': 0,
-			},
-			Window : {
-				'border_size': 1,
-				'margins': (5,5),
-			},
-			(Container,HBox,VBox) : {
-				'border_size': 0,
-				'opaque' : False
-			}
-		}
 
 	def addStyle(self,name,style):
 		style = self._remapStyleKeys(style)
@@ -435,6 +470,9 @@ class Widget(object):
 	  - foreground_color: Color
 	  - font: String: This should identify a font that was loaded via L{Manager.loadFonts} before.
 	  - border_size: Integer: The size of the border in pixels.
+	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
+	  results in new windows being centered on screen (for now).
+	  If it is set to "explicit" the position attribute will not be touched.
 
 	Convenience Attributes
 	======================
@@ -465,7 +503,7 @@ class Widget(object):
 		self.min_size = min_size
 		self.max_size = max_size
 		self.size = size
-		
+		self.position_technique = "explicit"
 		self._visible = False
 		self.font = 'default'
 		
@@ -743,7 +781,7 @@ class Widget(object):
 	def _getPosition(self):
 		return self.x, self.y
 
-	def _setX(self,x): self.real_widget.setX(x)
+	def _setX(self,x):self.real_widget.setX(x)
 	def _getX(self): return self.real_widget.getX()
 	def _setY(self,y): self.real_widget.setY(y)
 	def _getY(self): return self.real_widget.getY()
@@ -1113,6 +1151,10 @@ class Window(VBoxLayoutMixin,Container):
 			titlebar_height = self.real_font.getHeight() + 4
 		self.titlebar_height = titlebar_height
 		self.title = title
+
+		# Override explicit positioning
+		self.position_technique = "automatic"
+
 
 	def _getTitle(self): return self.real_widget.getCaption()
 	def _setTitle(self,text): self.real_widget.setCaption(text)
@@ -1658,4 +1700,40 @@ WIDGETS = {
 	"TextBox" : TextBox,
 	"ListBox" : ListBox,
 	"DropDown" : DropDown
+}
+
+# Default Widget style.
+
+DEFAULT_STYLE = {
+	'default' : {
+		'border_size': 1,
+		'margins': (0,0),
+		'base_color' : fife.Color(0,0,100),
+		'foreground_color' : fife.Color(255,255,255),
+		'background_color' : fife.Color(0,0,0),
+	},
+	Button : {
+		'border_size': 0,
+		'margins' : (10,5),
+	},
+	CheckBox : {
+		'border_size': 0,
+	},
+	Label : {
+		'border_size': 0,
+	},
+	ClickLabel : {
+		'border_size': 0,
+	},
+	ListBox : {
+		'border_size': 0,
+	},
+	Window : {
+		'border_size': 1,
+		'margins': (5,5),
+	},
+	(Container,HBox,VBox) : {
+		'border_size': 0,
+		'opaque' : False
+	}
 }
