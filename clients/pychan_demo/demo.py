@@ -178,10 +178,13 @@ class DemoApplication(Application):
 		self.gui.mapEvents(eventMap)
 
 		from mapwidgets import MapProperties
+		from styling import StylingExample
+		
 		self.examples = {
 			'Load Map' : PyChanExample('content/gui/loadmap.xml'),
 			'Map Properties' : MapProperties(),
-			'Absolute' : PyChanExample('content/gui/absolute.xml')
+			'Absolute' : PyChanExample('content/gui/absolute.xml'),
+			'Styling' : StylingExample()
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items += self.examples.keys()

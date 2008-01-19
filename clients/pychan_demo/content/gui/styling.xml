@@ -1,0 +1,11 @@
+<Window title="Styling">
+	<Label text="These guys contributed to FIFE. Man!" />
+	<ScrollArea size="400,400">
+		<ListBox name="styleList"/>
+	</ScrollArea>
+	<HBox>
+		<Spacer />
+		<Button name="testStyle" text="Test Style"/>
+		<Button name="closeButton" text="Close"/>
+	</HBox>
+</Window>

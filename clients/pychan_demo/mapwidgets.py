@@ -32,6 +32,6 @@ class MapProperties(PyChanExample):
 			'Name:' : 'MAP_NAME',
 			'Author:' : 'Jack Someone'
 		}
-		self.widget.findChild(name='propertyList').items = map(str,self.properties.items())
+		self.widget.distributeInitialData({ 'propertyList' : map(str,self.properties.items())})
 		self.widget.show()
 

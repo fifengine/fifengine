@@ -146,11 +146,11 @@ has to be invoked I{after} the subclass specific construction has taken place.
 
 """
 
-__all__ = [
-	'loadXML',
-	'init',
-	'manager'
-]
+#__all__ = [
+	#'loadXML',
+	#'init',
+	#'manager'
+#]
 
 import fife, pythonize
 
@@ -280,7 +280,7 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 		}
 
 	def addStyle(self,name,style):
-		for k,v in self.styles['default']:
+		for k,v in self.styles['default'].items():
 			style[k] = style.get(k,v)
 		self.styles[name] = style
 
@@ -538,7 +538,7 @@ class Widget(object):
 		  })
 		
 		"""
-		for name,data in dataMap.items():
+		for name,data in initialDataMap.items():
 			widgetList = self.findChildren(name = name)
 			for widget in widgetList:
 				widget.setInitialData(data)
