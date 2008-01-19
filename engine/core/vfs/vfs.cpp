@@ -89,19 +89,7 @@ namespace FIFE {
 		return getSourceForFile(m_root + lower(file));
 	}
 
-	RawDataPtr VFS::open(const std::string& path) {
-		std::string lowerpath = m_root + lower(path);
-		FL_DBG(_log, LMsg("Opening: ") << lowerpath);
-
-		VFSSource* source = getSourceForFile(lowerpath);
-		if (!source)
-			throw NotFound(path);
-
-		RawDataPtr data(source->open(lowerpath));
-		return data;
-	}
-
-	RawData* VFS::openNEW(const std::string& path) {
+	RawData* VFS::open(const std::string& path) {
 		std::string lowerpath = m_root + lower(path);
 		FL_DBG(_log, LMsg("Opening: ") << lowerpath);
 

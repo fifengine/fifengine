@@ -24,6 +24,7 @@
 
 // 3rd party library includes
 #include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <zlib.h>
 
 // FIFE includes
@@ -41,7 +42,7 @@ namespace FIFE {
 	RawDataDAT2::RawDataDAT2(const std::string& datfile, const s_info& info) :
 		RawDataMemSource(info.unpackedLength) {
 
-		RawDataPtr input = VFS::instance()->open(datfile);
+		boost::scoped_ptr<RawData> input (VFS::instance()->open(datfile));
 		input->setIndex(info.offset);
 
 		if (info.type == 1) { // compressed

@@ -180,14 +180,14 @@ namespace FIFE {
 
 	class IndexSaver {
 		public:
-			IndexSaver(RawDataPtr d) : m_rd(d), m_index(m_rd->getCurrentIndex()) {}
+			IndexSaver(RawData* d) : m_rd(d), m_index(m_rd->getCurrentIndex()) {}
 
 			~IndexSaver() {
 				m_rd->setIndex(m_index);
 			}
 
 		private:
-			RawDataPtr m_rd;
+			RawData* m_rd;
 			unsigned int m_index;
 
 			IndexSaver(const IndexSaver&);

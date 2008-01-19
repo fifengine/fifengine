@@ -37,7 +37,7 @@
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundDecoderWav::SoundDecoderWav(RawDataPtr ptr) {
+	SoundDecoderWav::SoundDecoderWav(RawData* ptr) {
 		unsigned long 	tmp;
 		uint8_t 		buffer[4];
 		m_declength = 0;
@@ -142,7 +142,7 @@ namespace FIFE {
 		memcpy(&m_declength, buffer, 4);
 
 		m_beginning = ptr->getCurrentIndex();
-		m_file = ptr;
+		m_file.reset(ptr);
 	}
 
 	bool SoundDecoderWav::decode(unsigned long length) {

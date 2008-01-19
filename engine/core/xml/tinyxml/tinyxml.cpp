@@ -29,6 +29,8 @@ distribution.
 #include <sstream>
 #endif
 
+#include <boost/scoped_ptr.hpp>
+
 #include "vfs/vfs.h"
 #include "vfs/raw/rawdata.h"
 
@@ -975,8 +977,8 @@ bool TiXmlDocument::LoadFile( const char* filename, TiXmlEncoding encoding )
 
 	// reading in binary mode so that tinyxml can normalize the EOL
 	//FILE* file = fopen( value.c_str (), "rb" );	
-  FIFE::VFS* vfs_handle = FIFE::VFS::instance();
-  FIFE::RawDataPtr file = vfs_handle->open( value);
+	FIFE::VFS* vfs_handle = FIFE::VFS::instance();
+	boost::scoped_ptr<FIFE::RawData> file (vfs_handle->open( value));
 
 	if ( file != NULL )
 	{

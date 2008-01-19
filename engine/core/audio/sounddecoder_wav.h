@@ -27,6 +27,7 @@
 // Platform specific includes
 
 // 3rd party library includes
+#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -44,7 +45,7 @@ namespace FIFE {
 	class SoundDecoderWav : public SoundDecoder {
 	public:
 		
-		SoundDecoderWav(RawDataPtr file);
+		SoundDecoderWav(RawData* file);
 		
 		~SoundDecoderWav() {
 			releaseBuffer();
@@ -97,7 +98,7 @@ namespace FIFE {
 		unsigned long	m_declength;
 		unsigned long	m_datasize;
 		char*					m_data;
-		RawDataPtr		m_file;
+		boost::scoped_ptr<RawData>	m_file;
 	};
 }
 	

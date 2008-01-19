@@ -28,6 +28,7 @@
 
 // 3rd party library includes
 #include <vorbisfile.h>
+#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,7 +42,7 @@ namespace FIFE {
 	class SoundDecoderOgg : public SoundDecoder {
 	public:
 		
-		SoundDecoderOgg(RawDataPtr ptr);
+		SoundDecoderOgg(RawData* ptr);
 		
 		~SoundDecoderOgg() {
 			releaseBuffer();
@@ -90,7 +91,7 @@ namespace FIFE {
 		}
 		
 	private:
-		RawDataPtr 			m_file;
+		boost::scoped_ptr<RawData> 	m_file;
 		unsigned long		m_declength;
 		unsigned long		m_datasize;
 		char*						m_data;

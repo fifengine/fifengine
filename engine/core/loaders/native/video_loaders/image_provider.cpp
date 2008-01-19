@@ -23,6 +23,7 @@
 
 // 3rd party library includes
 #include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -50,7 +51,7 @@ namespace FIFE {
 		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
 
 		const std::string& filename = location.getFilename();
-		RawDataPtr data = VFS::instance()->open(filename);
+		boost::scoped_ptr<RawData> data (VFS::instance()->open(filename));
 		size_t datalen = data->getDataLength();
 		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
 		data->readInto(darray.get(), datalen);

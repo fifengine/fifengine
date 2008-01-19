@@ -51,7 +51,7 @@ namespace FIFE {
 			 * @param output The memory location to write to
 			 * @param outputsize The size of the memory location in byte
 			 */
-			void decode(RawDataPtr input, uint8_t* output, const uint32_t outputsize);
+			void decode(RawData* input, uint8_t* output, const uint32_t outputsize);
 
 		private:
 			uint32_t m_outlen;

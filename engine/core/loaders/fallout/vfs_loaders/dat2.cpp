@@ -79,7 +79,7 @@ namespace FIFE {
 		m_filecount -= load_per_cycle;
 
 		// Save the old index in an exception save way.
-		IndexSaver isaver(m_data);
+		IndexSaver isaver(m_data.get());
 
 		// Move index to file list and read the entries.
 		m_data->setIndex(m_currentIndex);

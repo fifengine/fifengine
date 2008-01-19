@@ -85,18 +85,10 @@ namespace FIFE {
 			/** Open a file
 			 *
 			 * @param path the file to open
-			 * @return the opened file (note: dont delete this - it's referenced count and will be deleted automatically)
-			 * @throws NotFound if the file cannot be found
-			 */
-			RawDataPtr open(const std::string& path);
-
-			/** Open a file
-			 *
-			 * @param path the file to open
 			 * @return the opened file; delete this when done.
 			 * @throws NotFound if the file cannot be found
 			 */
-      RawData* openNEW(const std::string& path);
+			RawData* open(const std::string& path);
 
 			/** Get a filelist of the given directory
 			 *

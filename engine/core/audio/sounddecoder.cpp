@@ -24,6 +24,7 @@
 // Platform specific includes
 
 // 3rd party library includes
+#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -41,7 +42,7 @@ namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
 	SoundDecoder* SoundDecoder::create(const std::string& filename) {
-		RawDataPtr rdptr(VFS::instance()->open(filename));
+		RawData* rdptr = VFS::instance()->open(filename);
 		
 		SoundDecoder* ptr;
 		if (filename.find(".wav") != std::string::npos) {

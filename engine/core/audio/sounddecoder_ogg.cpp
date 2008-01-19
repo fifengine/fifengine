@@ -41,7 +41,7 @@ namespace FIFE {
 	 */
 	namespace OGG_cb {
 		static size_t read(void *ptr, size_t size, size_t nmemb, void *datasource) {
-			RawDataPtr rdp = *(reinterpret_cast<RawDataPtr *>(datasource));
+			RawData* rdp = reinterpret_cast<RawData*>(datasource);
 			size_t restlen = rdp->getDataLength()-rdp->getCurrentIndex();
 			size_t len = (restlen<=size*nmemb)?restlen:size*nmemb;
 			if (len) {
@@ -51,7 +51,7 @@ namespace FIFE {
 		}
 
 		static int seek(void *datasource, ogg_int64_t offset, int whence) {
-			RawDataPtr rdp = *(reinterpret_cast<RawDataPtr *>(datasource));
+			RawData* rdp = reinterpret_cast<RawData*>(datasource);
 			switch (whence) {
 				case SEEK_SET:
 					(*rdp).setIndex(offset);
@@ -69,18 +69,18 @@ namespace FIFE {
 		static int close(void *datasource) { return 0; }
 		
 		static long tell(void *datasource) {
-			RawDataPtr rdp = *(reinterpret_cast<RawDataPtr *>(datasource));
+			RawData* rdp = reinterpret_cast<RawData*>(datasource);
 			return (*rdp).getCurrentIndex();
 		}
 	}
 
-	SoundDecoderOgg::SoundDecoderOgg(RawDataPtr rdp) : m_file(rdp) {
+	SoundDecoderOgg::SoundDecoderOgg(RawData* rdp) : m_file(rdp) {
 							
 		ov_callbacks ocb = {
 			OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell
 		};
 		
-		if (0 > ov_open_callbacks(&m_file, &m_ovf, 0, 0, ocb)) {
+		if (0 > ov_open_callbacks(m_file.get(), &m_ovf, 0, 0, ocb)) {
 			throw InvalidFormat("Error opening OggVorbis file");
 		}
 		
