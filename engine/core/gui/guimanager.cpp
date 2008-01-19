@@ -118,12 +118,27 @@ namespace FIFE {
 	}
 
 	GuiFont* GUIManager::createFont(const std::string& path, unsigned int size, const std::string& glyphs) {
+		std::string fontpath = path;
+		std::string fontglyphs = glyphs;
+		int fontsize = size;
+
+		// Set default settings if necessary
+		if(fontpath == "") {
+			fontpath = m_fontpath;
+		}
+		if(fontsize == 0) {
+			fontsize = m_fontsize;
+		}
+		if(fontglyphs == "") {
+			fontglyphs = m_fontglyphs;
+		}
+
 		AbstractFont* font = NULL;
 		GuiFont* guifont = NULL;
-		if( boost::filesystem::extension(path) == ".ttf" ) {
-			font = new TrueTypeFont(path, size);
+		if( boost::filesystem::extension(fontpath) == ".ttf" ) {
+			font = new TrueTypeFont(fontpath, fontsize);
 		} else {
-			font = new SubImageFont(path, glyphs, m_pool);
+			font = new SubImageFont(fontpath, fontglyphs, m_pool);
 		}
 		guifont = new GuiFont(font);
 		
@@ -143,11 +158,18 @@ namespace FIFE {
 		}	
 	}
 
-	void GUIManager::setDefaultFont(GuiFont* font) {
-		gcn::Widget::setGlobalFont(font);
+	GuiFont* GUIManager::setDefaultFont(const std::string& path, unsigned int size, const std::string& glyphs) {
+		m_fontpath = path;
+		m_fontsize = size;
+		m_fontglyphs = glyphs;
+
+		GuiFont* defaultfont = createFont();
+		gcn::Widget::setGlobalFont(defaultfont);
 		if (m_console) {
 			m_console->reLayout();
 		}
+
+		return defaultfont;
 	}
 
 	void GUIManager::turn() {

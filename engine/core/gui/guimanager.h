@@ -125,13 +125,13 @@ namespace FIFE {
 			 */
 			Console* getConsole() { return m_console; };
 
-			/** Set the global font
+			/** Set the global font properties.
 			 */
-			void setDefaultFont(GuiFont* font);
+			GuiFont* setDefaultFont(const std::string& path, unsigned int size, const std::string& glyphs);
 			
 			/** Gets font with given properties. Note that font will be owned by guimanager
 			 */
-			GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
+			GuiFont* createFont(const std::string& path = "", unsigned int size = 0, const std::string& glyphs = "");
 
 			/** Releases given font.
 			 */
@@ -179,6 +179,11 @@ namespace FIFE {
 			IWidgetListener* m_widgetlistener;
 			// pool used for images
 			ImagePool& m_pool;
+
+			// default font settings
+			std::string m_fontpath;
+			std::string m_fontglyphs;
+			int m_fontsize;
 	};
 
 }

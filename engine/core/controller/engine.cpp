@@ -205,12 +205,10 @@ namespace FIFE {
 		FL_LOG(_log, "Events bind to GUI manager");
 
 		FL_LOG(_log, "Creating default font");
-		m_defaultfont = m_guimanager->createFont(
+		m_defaultfont = m_guimanager->setDefaultFont(
 			m_settings.getDefaultFontPath(),
 			m_settings.getDefaultFontSize(),
 			m_settings.getDefaultFontGlyphs());
-		FL_LOG(_log, "Setting default font to GUI manager");
-		m_guimanager->setDefaultFont(m_defaultfont);
 
 		FL_LOG(_log, "Initializing GUI manager");
 		m_guimanager->init(m_gui_graphics, m_settings.getScreenWidth(), m_settings.getScreenHeight());
