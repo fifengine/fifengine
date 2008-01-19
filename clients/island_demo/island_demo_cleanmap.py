@@ -23,7 +23,7 @@ class InstanceReactor(fife.InstanceListener):
 
 
 SCROLL_MODIFIER = 0.1
-MAPFILE = 'content/maps/new_official_map.xml'
+MAPFILE = 'content/maps/clean_map.xml'
 class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
 	              fife.ConsoleExecuter, fife.IWidgetListener):
 	def __init__(self, world):
