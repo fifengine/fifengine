@@ -101,15 +101,15 @@ namespace FIFE {
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
 		// This is needed for SDL to function properly on MAC OS X.
-		void* cocoa_lib; 
-		cocoa_lib = dlopen( "/System/Library/Frameworks/Cocoa.framework/Cocoa", RTLD_LAZY ); 
-		void (*nsappload)(void); 
-		nsappload = (void(*)()) dlsym( cocoa_lib, "NSApplicationLoad"); 
-		nsappload(); 
+		void* cocoa_lib;
+		cocoa_lib = dlopen( "/System/Library/Frameworks/Cocoa.framework/Cocoa", RTLD_LAZY );
+		void (*nsappload)(void);
+		nsappload = (void(*)()) dlsym( cocoa_lib, "NSApplicationLoad");
+		nsappload();
 #endif
 		preInit();
 	}
-	
+
 	EngineSettings& Engine::getSettings() {
 		return m_settings;
 	}
@@ -120,7 +120,7 @@ namespace FIFE {
 		FL_LOG(_log, "================== Engine pre-init start =================");
 		m_timemanager = new TimeManager();
 		FL_LOG(_log, "Time manager created");
-		
+
 		FL_LOG(_log, "Creating VFS");
 		m_vfs_sourcefactory = new VFSSourceFactory();
 		m_vfs = new VFS();
@@ -140,9 +140,9 @@ namespace FIFE {
 		FL_LOG(_log, "Engine initialize start");
 		m_settings.validate();
 		FL_LOG(_log, "Engine settings validated");
-		
+
 		// If failed to init SDL throw exception.
-		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
+		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
 			throw SDLException(SDL_GetError());
 		}
 
@@ -181,8 +181,8 @@ namespace FIFE {
 
 		FL_LOG(_log, "Creating main screen");
 		m_renderbackend->createMainScreen(
-			m_settings.getScreenWidth(), 
-			m_settings.getScreenHeight(), 
+			m_settings.getScreenWidth(),
+			m_settings.getScreenHeight(),
 			static_cast<unsigned char>(m_settings.getBitsPerPixel()),
 			m_settings.isFullScreen());
 		FL_LOG(_log, "Main screen created");
@@ -203,7 +203,7 @@ namespace FIFE {
 		// keep guimanager as the first mouse listener so that it can evaluate guichan hits
 		m_eventmanager->addMouseListener(m_guimanager);
 		FL_LOG(_log, "Events bind to GUI manager");
-		
+
 		FL_LOG(_log, "Creating default font");
 		m_defaultfont = m_guimanager->createFont(
 			m_settings.getDefaultFontPath(),
@@ -211,12 +211,12 @@ namespace FIFE {
 			m_settings.getDefaultFontGlyphs());
 		FL_LOG(_log, "Setting default font to GUI manager");
 		m_guimanager->setDefaultFont(m_defaultfont);
-		
+
 		FL_LOG(_log, "Initializing GUI manager");
 		m_guimanager->init(m_gui_graphics, m_settings.getScreenWidth(), m_settings.getScreenHeight());
 		FL_LOG(_log, "GUI manager initialized");
 		SDL_EnableUNICODE(1);
-		
+
 		FL_LOG(_log, "Creating sound manager");
 		m_soundmanager = new SoundManager();
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
@@ -226,14 +226,14 @@ namespace FIFE {
 		FL_LOG(_log, "Adding pathers to model");
 		m_model->adoptPather(new LinearPather());
 		m_model->adoptPather(new RoutePather());
-		
+
 		FL_LOG(_log, "Creating view");
 		m_view = new View(m_renderbackend);
 		FL_LOG(_log, "Creating renderers to view");
-		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, m_imagepool));
-		m_view->addRenderer(new GridRenderer(m_renderbackend));
-		m_view->addRenderer(new InstanceRenderer(m_renderbackend, m_imagepool, m_animpool));
-		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, m_imagepool, 0));
+		m_view->addRenderer(new InstanceRenderer(m_renderbackend, m_imagepool, m_animpool, 1));
+		m_view->addRenderer(new GridRenderer(m_renderbackend, 2));
+		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont), 3));
 		FL_LOG(_log, "Engine intialized");
 	}
 
@@ -254,7 +254,7 @@ namespace FIFE {
 		delete m_animpool;
 		delete m_imagepool;
 		delete m_eventmanager;
-		
+
 		delete m_vfs;
 		delete m_vfs_sourcefactory;
 

@@ -44,19 +44,19 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 * @param imagepool image pool where from fetch images
 		 */
-		CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font);
-		
+		CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font, int position);
+
 		/** Destructor.
 		 */
 		virtual ~CoordinateRenderer();
-		
+
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
-		
+
 		std::string getName() { return "CoordinateRenderer"; }
 
 	private:
 		void adjustLayerArea();
-	
+
 		RenderBackend* m_renderbackend;
 		Rect m_layer_area;
 		Location m_tmploc;

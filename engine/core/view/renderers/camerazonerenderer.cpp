@@ -46,21 +46,21 @@
 
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
-	
-	CameraZoneRenderer::CameraZoneRenderer(RenderBackend* renderbackend, ImagePool* imagepool):
+
+	CameraZoneRenderer::CameraZoneRenderer(RenderBackend* renderbackend, ImagePool* imagepool,int position):
 		m_renderbackend(renderbackend),
 		m_imagepool(imagepool),
 		m_zone_image(NULL) {
-		setPipelinePosition(3);
+		setPipelinePosition(position);
 		setEnabled(false);
 	}
-	
+
 	CameraZoneRenderer::~CameraZoneRenderer() {
 		delete m_zone_image;
 	}
-	
-	
-	
+
+
+
 	void CameraZoneRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
@@ -72,11 +72,11 @@ namespace FIFE {
 		if (!m_zone_image) {
 			// build zone image
 			int dataSize = rect.w * rect.h;
-			
+
 			// initally all pixels are transparent
 			uint32_t* data = new uint32_t[dataSize];
 			uint32_t* end = data + dataSize;
-			
+
 			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 				uint32_t empty_pixel = 0;//0xff << 24;
 				uint32_t edge_pixel = 0xff << 16 | 0xff << 24;
@@ -84,9 +84,9 @@ namespace FIFE {
 				uint32_t empty_pixel = 0;//0xff;
 				uint32_t edge_pixel = 0xff << 8 | 0xff;
 			#endif
-			
+
 			std::fill(data, end, empty_pixel);
-	
+
 			// go from screen coords to grid coords (layer coords)
 			// Search through pixel space, drawing pixels at boundaries
 			ModelCoordinate prevLayerCoord;
@@ -94,33 +94,33 @@ namespace FIFE {
 				for (int x = 0; x < rect.w; x++) {
 					ExactModelCoordinate elevCoord = cam->toElevationCoordinates(ScreenPoint(x, y));
 					ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
-					
+
 					if (prevLayerCoord != layerCoord) {
 						data[x + rect.w * y] = edge_pixel;
 					}
 					prevLayerCoord = layerCoord;
 				}
 			}
-			
-			
+
+
 			for (int x = 0; x < rect.w; x++) {
 				for (int y = 0; y < rect.h; y++) {
 					ExactModelCoordinate elevCoord = cam->toElevationCoordinates(ScreenPoint(x, y));
 					ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
-					
+
 					if (prevLayerCoord != layerCoord) {
 						data[x + rect.w * y] = edge_pixel;
 					}
 					prevLayerCoord = layerCoord;
 				}
-			}	
-			
+			}
+
 			m_zone_image =  m_renderbackend->createStaticImageFromRGBA((uint8_t*) data, rect.w, rect.h);
 			delete data;
 		}
 		m_zone_image->render(rect);
 	}
-	
+
 	void CameraZoneRenderer::setEnabled(bool enabled) {
 		if (!enabled) {
 			delete m_zone_image;

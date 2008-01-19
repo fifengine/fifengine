@@ -42,18 +42,18 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 * @param imagepool image pool where from fetch images
 		 */
-		CameraZoneRenderer(RenderBackend* renderbackend, ImagePool* imagepool);
-		
+		CameraZoneRenderer(RenderBackend* renderbackend, ImagePool* imagepool,int position);
+
 		/** Destructor.
 		 */
 		virtual ~CameraZoneRenderer();
-		
+
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
-		
+
 		std::string getName() { return "CameraZoneRenderer"; }
-		
+
 		void setEnabled(bool enabled);
-		
+
 
 	private:
 		RenderBackend* m_renderbackend;

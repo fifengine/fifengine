@@ -49,21 +49,21 @@
 
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
-	
-	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font):
+
+	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font, int position):
 		m_renderbackend(renderbackend),
 		m_layer_area(),
 		m_tmploc(),
 		m_c(),
 		m_font(font) {
-		setPipelinePosition(2);
+		setPipelinePosition(position);
 		setEnabled(false);
 	}
-	
+
 	CoordinateRenderer::~CoordinateRenderer() {
 	}
-	
-	
+
+
 	void CoordinateRenderer::adjustLayerArea() {
 		m_tmploc.setElevationCoordinates(m_c);
 		ModelCoordinate c = m_tmploc.getLayerCoordinates();
@@ -72,7 +72,7 @@ namespace FIFE {
 		m_layer_area.y = std::min(c.y, m_layer_area.y);
 		m_layer_area.h = std::max(c.y, m_layer_area.h);
 	}
-	
+
 	const int MIN_COORD = -9999999;
 	const int MAX_COORD = 9999999;
 	void CoordinateRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
@@ -80,7 +80,7 @@ namespace FIFE {
 		m_layer_area.y = MAX_COORD;
 		m_layer_area.w = MIN_COORD;
 		m_layer_area.h = MIN_COORD;
-		
+
 		m_tmploc.setLayer(layer);
 		Rect cv = cam->getViewPort();
 		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x, cv.y));
@@ -91,7 +91,7 @@ namespace FIFE {
 		adjustLayerArea();
 		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h));
 		adjustLayerArea();
-		
+
 		Rect r = Rect();
 		for (int x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
 			for (int y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
@@ -110,7 +110,7 @@ namespace FIFE {
 					r.h = img->getHeight();
 					img->render(r);
 				}
-				
+
 			}
 		}
 	}

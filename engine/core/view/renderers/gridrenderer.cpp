@@ -45,9 +45,9 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	GridRenderer::GridRenderer(RenderBackend* renderbackend):
+	GridRenderer::GridRenderer(RenderBackend* renderbackend, int position):
 		m_renderbackend(renderbackend) {
-		setPipelinePosition(0);
+		setPipelinePosition(position);
 		setEnabled(false);
 	}
 
@@ -146,10 +146,10 @@ namespace FIFE {
 				Point cpt2 = pt2;
 				/* FIXME: limit grid drawing to current camera view port
 				   code below does not do it, but may act as a starting point
-				   
+
 				int cvx2 = cv.x+cv.w;
 				int cvy2 = cv.y+cv.h;
-				
+
 				if (((pt1.x < cv.x) && (pt2.x < cv.x)) ||
 				    ((pt1.x > cvx2) && (pt2.x > cvx2)) ||
 				    ((pt1.y < cv.y) && (pt2.y < cv.y)) ||
@@ -157,7 +157,7 @@ namespace FIFE {
 				    pt1 = pt2;
 				    continue;
 				}
-				
+
 				if (cpt1.x < cv.x) cpt1.x = cv.x;
 				if (cpt2.x < cv.x) cpt2.x = cv.x;
 				if (cpt1.y < cv.y) cpt1.y = cv.y;

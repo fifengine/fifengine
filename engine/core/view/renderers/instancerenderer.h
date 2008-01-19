@@ -37,7 +37,7 @@ namespace FIFE {
 	class RenderBackend;
 	class ImagePool;
 	class AnimationPool;
-	
+
 	class InstanceRenderer: public RendererBase {
 	public:
 		/** constructor.
@@ -45,7 +45,7 @@ namespace FIFE {
 		 * @param imagepool image pool where from fetch images
 		 * @param animpool animation pool where from fetch images
 		 */
-		InstanceRenderer(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
+		InstanceRenderer(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool, int position);
 
 		/** Destructor.
 		 */

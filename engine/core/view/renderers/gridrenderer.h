@@ -40,14 +40,14 @@ namespace FIFE {
 		/** constructor.
 		 * @param renderbackend to use
 		 */
-		GridRenderer(RenderBackend* renderbackend);
-		
+		GridRenderer(RenderBackend* renderbackend, int position);
+
 		/** Destructor.
 		 */
 		virtual ~GridRenderer();
-		
+
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
-		
+
 		std::string getName() { return "GridRenderer"; }
 
 	private:
