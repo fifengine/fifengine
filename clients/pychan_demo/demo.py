@@ -171,6 +171,7 @@ class DemoApplication(Application):
 		self.gui = pychan.loadXML('content/gui/all_widgets.xml')
 		
 		eventMap = {
+			'creditsLink'  : self.showCredits,
 			'closeButton'  : self.quit,
 			'selectButton' : self.selectExample
 		}
@@ -187,6 +188,7 @@ class DemoApplication(Application):
 		self.gui.show()
 		
 		self.currentExample = None
+		self.creditsWidget = None
 
 	def selectExample(self):
 		if self.demoList.selected_item is None: return
@@ -195,6 +197,14 @@ class DemoApplication(Application):
 		self.currentExample = self.examples[self.demoList.selected_item]
 		self.gui.findChild(name="xmlSource").text = open(self.currentExample.xmlFile).read()
 		self.currentExample.start()
+	def showCredits(self):
+		if self.creditsWidget:
+			self.creditsWidget.show()
+			return
+		self.creditsWidget = pychan.loadXML('content/gui/credits.xml')
+		self.creditsWidget.mapEvents({ 'okButton' : self.creditsWidget.hide })
+		self.creditsWidget.distributeData({ 'creditText' : open("../../doc/AUTHORS").read() })
+		self.creditsWidget.show()
 
 if __name__ == '__main__':
 	app = DemoApplication()
