@@ -13,21 +13,27 @@ Features
  - Very Basic Layout Engine
  - Automagic background tiling (WIP)
  - Basic Styling support.
+ - Simple Font Handling
 
 TODO
 ----
+ - Documentation ( Allways not enough :-( )
  - Completion of above features
  - Wrap missing widgets: RadioButton, Slider
- - Easier Font handling.
- - Documentation
+ - Easier Font handling. (WIP)
  - Add support for fixed size 'Spacers'
  - Add dialog.execute()
  - Add messageBox(text)
 
+ - Implement StackWidget
+ - Then implement TabWidget
+
+ - GridLayout
+ - Table
+
 BUGS
 ----
- - Font settings are not heeded by most Widgets.
- - Spurious segfault at exit of Demo Application.
+ - It just looks ugly.
 
 Problems
 --------
@@ -213,7 +219,7 @@ class RuntimeError(PyChanException):
 	"""
 	pass
 
-class Manager(fife.IWidgetListener, fife.TimeEvent):
+class Manager(fife.IWidgetListener):
 	def __init__(self, engine, debug = False):
 		super(Manager,self).__init__()
 		self.engine = engine
@@ -270,29 +276,22 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 			Button : {
 				'border_size': 0,
 				'margins' : (10,5),
-				'base_color' : fife.Color(0,0,100),
-				'foreground_color' : fife.Color(0,0,100),
 			},
 			CheckBox : {
 				'border_size': 0,
-				'background_color' : fife.Color(0,0,0,0),
 			},
 			Label : {
 				'border_size': 0,
-				'base_color' : fife.Color(0,0,100),
 			},
 			ClickLabel : {
 				'border_size': 0,
-				'base_color' : fife.Color(0,0,100),
 			},
 			ListBox : {
 				'border_size': 0,
-				'base_color' : fife.Color(0,0,100),
 			},
 			Window : {
 				'border_size': 1,
 				'margins': (5,5),
-#				'background_image' : 'lambda/gfx/alumox.jpg'
 			},
 			(Container,HBox,VBox) : {
 				'border_size': 0,
@@ -434,7 +433,7 @@ class Widget(object):
 	  - base_color: Color
 	  - background_color: Color
 	  - foreground_color: Color
-	  - font: String: This should identify a font that was loaded via L{loadFonts} before.
+	  - font: String: This should identify a font that was loaded via L{Manager.loadFonts} before.
 	  - border_size: Integer: The size of the border in pixels.
 
 	Convenience Attributes
@@ -457,7 +456,8 @@ class Widget(object):
 
 	"""
 	def __init__(self,parent = None, name = '_unnamed_',
-			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),**kwargs):
+			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
+			style = None, **kwargs):
 		
 		assert( hasattr(self,'real_widget') )
 		self._parent = parent
@@ -472,7 +472,13 @@ class Widget(object):
 		self.accepts_data = False
 		self.accepts_initial_data = False
 
-		manager.stylize(self,kwargs.get('style','default'),**kwargs)
+		# Inherit style
+		if style is None and parent:
+			style = parent.style
+		self.style = style or "default"
+		
+		# Not needed as attrib assignment will trigger manager.stylize call
+		#manager.stylize(self,self.style)
 	
 	def match(self,**kwargs):
 		"""
@@ -795,6 +801,12 @@ class Widget(object):
 			self.real_widget.addActionListener(manager.guimanager)
 		except AttributeError: pass
 	name = property(_getName,_setName)
+
+	def _getStyle(self): return self._style
+	def _setStyle(self,style):
+		self._style = style
+		manager.stylize(self,style)
+	style = property(_getStyle,_setStyle)
 
 	x = property(_getX,_setX)
 	y = property(_getY,_setY)

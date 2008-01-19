@@ -68,7 +68,16 @@ STYLES= {
 		'border_size': 0,
 		'opaque' : False
 	}
-	}
+	},
+	'greenzone' : { 
+		'default' : {
+			'base_color': fife.Color(80,200,80) ,
+			'background_color': fife.Color(200,250,200),
+			},
+		'ListBox' : {
+			'font' : 'samanata_large'
+			}
+		}
 }
 
 class StylingExample(PyChanExample):
