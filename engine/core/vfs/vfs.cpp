@@ -107,67 +107,47 @@ namespace FIFE {
 		return result;
 	}
 
-	VFS::type_stringlist VFS::listFiles(const std::string& pathstr) const {
+	std::vector<std::string> VFS::listFiles(const std::string& pathstr) const {
 		std::string lowerpath = m_root + lower(pathstr);
-		VFS::type_stringlist list;
+		std::vector<std::string> list;
 		type_sources::const_iterator end = m_sources.end();
 		for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
-			type_stringlist sourcelist = (*i)->listFiles(lowerpath);
-			list.insert(sourcelist.begin(), sourcelist.end());
+			std::vector<std::string> sourcelist = (*i)->listFiles(lowerpath);
+			list.insert(list.begin(), sourcelist.begin(), sourcelist.end());
 		}
 
 		return list;
 	}
 
-	std::vector<std::string> VFS::listFilesNEW(const std::string& path) const {
+	std::vector<std::string> VFS::listFiles(const std::string& path, const std::string& filterregex) const {
 		std::string lowerpath = m_root + lower(path);
-		std::vector<std::string> target;
-		VFS::type_stringlist files = VFS::instance()->listFiles(lowerpath);
-		for (VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
-			target.push_back(*i);
-		}
-		return target;
-	}
-
-	VFS::type_stringlist VFS::listFiles(const std::string& path, const std::string& filterregex) const {
-		std::string lowerpath = m_root + lower(path);
-		VFS::type_stringlist list = listFiles(lowerpath);
+		std::vector<std::string> list = listFiles(lowerpath);
 		filterList(list, filterregex);
 		return list;
 	}
 
-	VFS::type_stringlist VFS::listDirectories(const std::string& pathstr) const {
+	std::vector<std::string> VFS::listDirectories(const std::string& pathstr) const {
 		std::string lowerpath = m_root + lower(pathstr);
-		VFS::type_stringlist list;
+		std::vector<std::string> list;
 		type_sources::const_iterator end = m_sources.end();
 		for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
-			type_stringlist sourcelist = (*i)->listDirectories(lowerpath);
-			list.insert(sourcelist.begin(), sourcelist.end());
+			std::vector<std::string> sourcelist = (*i)->listDirectories(lowerpath);
+			list.insert(list.begin(), sourcelist.begin(), sourcelist.end());
 		}
 
 		return list;
 	}
 
-	std::vector<std::string> VFS::listDirectoriesNEW(const std::string& path) const {
-		std::string lowerpath = m_root + lower(path);
-		std::vector<std::string> target;
-		type_stringlist files = listDirectories(lowerpath);
-		for (VFS::type_stringlist::iterator i = files.begin(); i != files.end(); ++i) {
-			target.push_back(*i);
-		}
-		return target;
-	}
-
-	VFS::type_stringlist VFS::listDirectories(const std::string& path, const std::string& filterregex) const {
-		VFS::type_stringlist list = listDirectories(m_root + lower(path));
+	std::vector<std::string> VFS::listDirectories(const std::string& path, const std::string& filterregex) const {
+		std::vector<std::string> list = listDirectories(m_root + lower(path));
 		filterList(list, filterregex);
 		return list;
 	}
 
-	void VFS::filterList(type_stringlist& list, const std::string& fregex) const {
+	void VFS::filterList(std::vector<std::string>& list, const std::string& fregex) const {
 		boost::regex regex(fregex);
-		type_stringlist::iterator end = list.end();
-		for (type_stringlist::iterator i = list.begin(); i != end;) {
+		std::vector<std::string>::iterator end = list.end();
+		for (std::vector<std::string>::iterator i = list.begin(); i != end;) {
 			boost::cmatch match;
 			if (!boost::regex_match((*i).c_str(), match, regex))
 				list.erase(i++);

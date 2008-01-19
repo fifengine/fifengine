@@ -74,8 +74,8 @@ namespace FIFE {
 			 */
 			const RawDataDAT2::s_info& getInfo(const std::string& name) const;
 
-			VFS::type_stringlist listFiles(const std::string& pathstr) const;
-			VFS::type_stringlist listDirectories(const std::string& pathstr) const;
+			std::vector<std::string> listFiles(const std::string& pathstr) const;
+			std::vector<std::string> listDirectories(const std::string& pathstr) const;
 
 		private:
 			std::string m_datpath;
@@ -96,7 +96,7 @@ namespace FIFE {
 			/// find a file entry
 			type_filelist::const_iterator findFileEntry(const std::string& name) const;
 
-			VFS::type_stringlist list(const std::string& pathstr, bool dirs) const;
+			std::vector<std::string> list(const std::string& pathstr, bool dirs) const;
 
 			// Not copyable
 			DAT2(const DAT2&);

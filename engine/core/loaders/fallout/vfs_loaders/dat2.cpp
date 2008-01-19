@@ -151,16 +151,16 @@ namespace FIFE {
 	}
 
 
-	VFS::type_stringlist DAT2::listFiles(const std::string& pathstr) const {
+	std::vector<std::string> DAT2::listFiles(const std::string& pathstr) const {
 		return list(pathstr, false);
 	}
 
-	VFS::type_stringlist DAT2::listDirectories(const std::string& pathstr) const {
+	std::vector<std::string> DAT2::listDirectories(const std::string& pathstr) const {
 		return list(pathstr, true);
 	}
 
-	VFS::type_stringlist DAT2::list(const std::string& pathstr, bool dirs) const {
-		VFS::type_stringlist list;
+	std::vector<std::string> DAT2::list(const std::string& pathstr, bool dirs) const {
+		std::vector<std::string> list;
 		std::string path = pathstr;
 
 		// Force loading the complete file entries
@@ -196,7 +196,7 @@ namespace FIFE {
 				}
 
 				if (isdir == dirs) {
-					list.insert(cleanedfile);
+					list.push_back(cleanedfile);
 				}
 			}
 		}

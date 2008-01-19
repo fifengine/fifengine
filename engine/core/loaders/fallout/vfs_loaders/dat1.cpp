@@ -104,16 +104,16 @@ namespace FIFE {
 		return i->second;
 	}
 
-	VFS::type_stringlist DAT1::listFiles(const std::string& pathstr) const {
+	std::vector<std::string> DAT1::listFiles(const std::string& pathstr) const {
 		return list(pathstr, false);
 	}
 
-	VFS::type_stringlist DAT1::listDirectories(const std::string& pathstr) const {
+	std::vector<std::string> DAT1::listDirectories(const std::string& pathstr) const {
 		return list(pathstr, true);
 	}
 
-	VFS::type_stringlist DAT1::list(const std::string& pathstr, bool dirs) const {
-		VFS::type_stringlist list;
+	std::vector<std::string> DAT1::list(const std::string& pathstr, bool dirs) const {
+		std::vector<std::string> list;
 		std::string path = pathstr;
 
 		// Normalize the path
@@ -142,7 +142,7 @@ namespace FIFE {
 				}
 
 				if (isdir == dirs) {
-					list.insert(cleanedfile);
+					list.push_back(cleanedfile);
 				}
 			}
 		}

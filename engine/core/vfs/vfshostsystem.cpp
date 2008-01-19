@@ -58,16 +58,16 @@ namespace FIFE {
 		return new RawData(new RawDataFile(file));
 	}
 
-	VFS::type_stringlist VFSHostSystem::listFiles(const std::string& pathstr) const {
+	std::vector<std::string> VFSHostSystem::listFiles(const std::string& pathstr) const {
 		return list(pathstr, false);
 	}
 
-	VFS::type_stringlist VFSHostSystem::listDirectories(const std::string& path) const {
+	std::vector<std::string> VFSHostSystem::listDirectories(const std::string& path) const {
 		return list(path, true);
 	}
 
-	VFS::type_stringlist VFSHostSystem::list(const std::string& pathstr, bool directorys) const {
-		VFS::type_stringlist list;
+	std::vector<std::string> VFSHostSystem::list(const std::string& pathstr, bool directorys) const {
+		std::vector<std::string> list;
 		bfs::path path(pathstr);
 		if (!bfs::exists(path) || !bfs::is_directory(path))
 			return list;
@@ -77,7 +77,7 @@ namespace FIFE {
 			if (bfs::is_directory(*i) != directorys)
 				continue;
 
-			list.insert(i->leaf());
+			list.push_back(i->leaf());
 		}
 
 		return list;

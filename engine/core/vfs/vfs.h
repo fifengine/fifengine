@@ -39,7 +39,6 @@
 namespace FIFE {
 
 	class RawData;
-	typedef ::boost::shared_ptr<RawData> RawDataPtr;
 
 	class VFSSource;
 	/** the main VFS (virtual file system) class
@@ -51,8 +50,6 @@ namespace FIFE {
 	 */
 	class VFS : public DynamicSingleton<VFS> {
 		public:
-			typedef std::set<std::string> type_stringlist;
-
 			/** Constructor
 			 * Called by the Engine on startup. Never create one yourself.
 			 */
@@ -95,8 +92,7 @@ namespace FIFE {
 			 * @param path the directory
 			 * @return the filelist
 			 */
-			type_stringlist listFiles(const std::string& path) const;
-			std::vector<std::string> listFilesNEW(const std::string& path) const;
+			std::vector<std::string> listFiles(const std::string& path) const;
 
 			/** List the files of a given directory matching a regex
 			 *
@@ -107,15 +103,14 @@ namespace FIFE {
 			 * @param filterregex the regex the files have to match
 			 * @return the filelist
 			 */
-			type_stringlist listFiles(const std::string& path, const std::string& filterregex) const;
+			std::vector<std::string> listFiles(const std::string& path, const std::string& filterregex) const;
 
 			/** Get a directorylist of the given directory
 			 *
 			 * @param path the directory
 			 * @return the directorylist
 			 */
-			type_stringlist listDirectories(const std::string& path) const;
-			std::vector<std::string> listDirectoriesNEW(const std::string& path) const;
+			std::vector<std::string> listDirectories(const std::string& path) const;
 
 			/** List the subdirectorys of a given directory matching a regex
 			 *
@@ -123,7 +118,7 @@ namespace FIFE {
 			 * @param filterregex the regex the files have to match
 			 * @return the filelist
 			 */
-			type_stringlist listDirectories(const std::string& path, const std::string& filterregex) const;
+			std::vector<std::string> listDirectories(const std::string& path, const std::string& filterregex) const;
 
 		private:
 			typedef std::vector<VFSSource*> type_sources;
@@ -131,7 +126,7 @@ namespace FIFE {
 
 			std::string m_root;
 
-			void filterList(type_stringlist& list, const std::string& regex) const;
+			void filterList(std::vector<std::string>& list, const std::string& regex) const;
 			std::string lower(const std::string&) const;
 			VFSSource* getSourceForFile(const std::string& file) const;
 	};

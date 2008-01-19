@@ -66,17 +66,17 @@ namespace FIFE {
 			 * @return A string list of filenames
 			 * Will return an empty list on \b any error
 			 */
-			VFS::type_stringlist listFiles(const std::string& path) const;
+			std::vector<std::string> listFiles(const std::string& path) const;
 
 			/** List directories in a directory
 			 * @param path The directory to list the directories in
 			 * @return A string list of directories
 			 * Will return an empty list on \b any error
 			 */
-			VFS::type_stringlist listDirectories(const std::string& path) const;
+			std::vector<std::string> listDirectories(const std::string& path) const;
 
 		private:
-			VFS::type_stringlist list(const std::string& path, bool directorys) const;
+			std::vector<std::string> list(const std::string& path, bool directorys) const;
 
 	};
 

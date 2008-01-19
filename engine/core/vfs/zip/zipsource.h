@@ -49,8 +49,8 @@ namespace FIFE {
 		// threads at the same time.
 		bool fileExists(const std::string& file) const;
 		RawData* open(const std::string& file) const;
-		VFS::type_stringlist listFiles(const std::string& path) const;
-		VFS::type_stringlist listDirectories(const std::string& path) const;
+		std::vector<std::string> listFiles(const std::string& path) const;
+		std::vector<std::string> listDirectories(const std::string& path) const;
 
 	private:
 		// PImpl pattern, so the users of this header don't need to know
