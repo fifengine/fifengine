@@ -27,12 +27,14 @@ STYLES= {
 		'base_color' : fife.Color(255,0,100),
 		'foreground_color' : fife.Color(255,255,255),
 		'background_color' : fife.Color(128,0,0),
+		'font' : 'samanata_large'
 	},
 	'Button' : {
 		'border_size': 2,
 		'margins' : (10,5),
 		'base_color' : fife.Color(0,0,100),
 		'foreground_color' : fife.Color(0,0,100),
+		'font' : 'samanata_large'
 	},
 	'CheckBox' : {
 		'border_size': 2,
@@ -41,19 +43,23 @@ STYLES= {
 	'Label' : {
 		'border_size': 2,
 		'base_color' : fife.Color(0,0,100),
+		'font' : 'samanata_large'
 	},
 	'ClickLabel' : {
 		'border_size': 2,
 		'base_color' : fife.Color(0,0,100),
+		'font' : 'samanata_large'
 	},
 	'ListBox' : {
 		'border_size': 2,
 		'base_color' : fife.Color(0,0,100),
+		'font' : 'samanata_large'
 	},
 	'Window' : {
 		'border_size': 5,
 		'margins': (5,5),
 		'background_image' : 'content/gui/stripe.png',
+		'font' : 'samanata_large'
 	},
 	('Container','HBox','VBox') : {
 		'border_size': 0,
@@ -69,6 +75,8 @@ class StylingExample(PyChanExample):
 		self.styles = ['default'] + STYLES.keys()
 		for name,style in STYLES.items():
 			pychan.manager.addStyle(name,style)
+
+		pychan.manager.addFont("content/fonts/samanata.fontdef")
 
 	def start(self):
 		self.styledCredits = None

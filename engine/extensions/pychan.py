@@ -148,6 +148,7 @@ has to be invoked I{after} the subclass specific construction has taken place.
 
 __all__ = [
 	'loadXML',
+	'loadFont',
 	'init',
 	'manager'
 ]
@@ -231,9 +232,18 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 		self.guimanager.remove( widget.real_widget )
 
 	def initFont(self):
-		glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
-		self.imagefont = self.engine.getDefaultFont()
-		self.font = self.engine.getDefaultFont()
+		self.fonts = {}
+		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
+		self.fonts['default'] = self.engine.getDefaultFont()
+
+	def getFont(self,name):
+		font = self.fonts.get(name)
+		print name,font
+		return getattr(font,"font",font)
+
+	def addFont(self,filename):
+		font = Font(filename)
+		self.fonts[font.name] = font
 
 	def initStyles(self):
 		self.styles = {}
@@ -244,7 +254,6 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 				'base_color' : fife.Color(0,0,100),
 				'foreground_color' : fife.Color(255,255,255),
 				'background_color' : fife.Color(0,0,0),
-				'font' : self.font
 			},
 			Button : {
 				'border_size': 0,
@@ -409,7 +418,9 @@ class Widget(object):
 		self.min_size = min_size
 		self.max_size = max_size
 		self.size = size
+		
 		self._visible = False
+		self.font = 'default'
 		
 		self.accepts_data = False
 		self.accepts_initial_data = False
@@ -689,8 +700,12 @@ class Widget(object):
 
 	def _getHeight(self): return self.real_widget.getHeight()
 
-	def _setFont(self, font): self.real_widget.setFont(font)
-	def _getFont(self): return self.real_widget.getFont()
+	def _setFont(self, font):
+		self._font = font
+		self.real_font = manager.getFont(font)
+		self.real_widget.setFont(self.real_font)
+	def _getFont(self):
+		return self._font
 
 	def _getBorderSize(self): return self.real_widget.getBorderSize()
 	def _setBorderSize(self,size): self.real_widget.setBorderSize(size)
@@ -1028,7 +1043,7 @@ class Window(VBoxLayoutMixin,Container):
 	def __init__(self,title="title",titlebar_height=0,**kwargs):
 		super(Window,self).__init__(_real_widget = fife.Window(), **kwargs)
 		if titlebar_height == 0:
-			titlebar_height = self.font.getHeight() + 4
+			titlebar_height = self.real_font.getHeight() + 4
 		self.titlebar_height = titlebar_height
 		self.title = title
 
@@ -1080,8 +1095,8 @@ class BasicTextWidget(Widget):
 	text = property(_getText,_setText)
 
 	def resizeToContent(self, recurse = True):
-		self.height = self.font.getHeight() + self.margins[1]*2
-		self.width = self.font.getWidth(self.text) + self.margins[0]*2
+		self.height = self.real_font.getHeight() + self.margins[1]*2
+		self.width = self.real_font.getWidth(self.text) + self.margins[0]*2
 
 class Label(BasicTextWidget):
 	"""
@@ -1192,10 +1207,10 @@ class ListBox(Widget):
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
 		# if no items are in the list
-		_item_widths = map(self.font.getWidth,map(str,self._items)) + [0]
+		_item_widths = map(self.real_font.getWidth,map(str,self._items)) + [0]
 		max_w = max(_item_widths)
 		self.width = max_w
-		self.height = (self.font.getHeight() + 2) * len(self._items)
+		self.height = (self.real_font.getHeight() + 2) * len(self._items)
 
 	def _getItems(self): return self._items
 	def _setItems(self,items):
@@ -1252,10 +1267,10 @@ class DropDown(Widget):
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
 		# if no items are in the list
-		_item_widths = map(self.font.getWidth,map(str,self._items)) + [self.font.getHeight()]
+		_item_widths = map(self.real_font.getWidth,map(str,self._items)) + [self.real_font.getHeight()]
 		max_w = max(_item_widths)
 		self.width = max_w
-		self.height = (self.font.getHeight() + 2)
+		self.height = (self.real_font.getHeight() + 2)
 
 	def _getItems(self): return self._items
 	def _setItems(self,items):
@@ -1317,9 +1332,9 @@ class TextBox(Widget):
 
 	def resizeToContent(self,recurse=True):
 		rows = [self.real_widget.getTextRow(i) for i in range(self.real_widget.getNumberOfRows())]
-		max_w = max(map(self.font.getWidth,rows))
+		max_w = max(map(self.real_font.getWidth,rows))
 		self.width = max_w
-		self.height = (self.font.getHeight() + 2) * self.real_widget.getNumberOfRows()
+		self.height = (self.real_font.getHeight() + 2) * self.real_widget.getNumberOfRows()
 
 	def _getText(self): return self.real_widget.getText()
 	def _setText(self,text): self.real_widget.setText(_mungeText(text))
@@ -1355,9 +1370,9 @@ class TextField(Widget):
 		self._realGetData = self._getText
 
 	def resizeToContent(self,recurse=True):
-		max_w = self.font.getWidth(self.text)
+		max_w = self.real_font.getWidth(self.text)
 		self.width = max_w
-		self.height = (self.font.getHeight() + 2)
+		self.height = (self.real_font.getHeight() + 2)
 	def _getText(self): return self.real_widget.getText()
 	def _setText(self,text): self.real_widget.setText(text)
 	text = property(_getText,_setText)
@@ -1415,9 +1430,6 @@ class Spacer(object):
 	"""
 	def __init__(self,parent=None,**kwargs):
 		self._parent = parent
-
-	def sizeChanged(self):
-		pass
 
 
 # XML Loader
@@ -1581,3 +1593,21 @@ WIDGETS = {
 	"DropDown" : DropDown
 }
 
+class Font(object):
+	def __init__(self,filename):
+		import ConfigParser
+		
+		self.real_font = None
+		
+		fontdef = ConfigParser.ConfigParser()
+		fontdef.read(filename)
+		font_section = "font"
+		self.name = fontdef.get(font_section,"name")
+		self.typename = fontdef.get(font_section,"type")
+		self.source = fontdef.get(font_section,"source")
+		self.size = fontdef.getint(font_section,"size")
+
+		if self.typename == "truetype":
+			self.real_font = fife.TTFont(self.source,self.size)
+
+		self.font = fife.GuiFont(self.real_font)
