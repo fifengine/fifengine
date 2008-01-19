@@ -37,6 +37,7 @@
 namespace FIFE {
 
 	class CommandLine;
+	class GuiFont;
 
 	/**
 	* Console executer is listener interface for console activity
@@ -133,20 +134,23 @@ namespace FIFE {
 			 */
 			void reLayout();
 
+			/** Sets the font used for the input and output areas
+			 */
+			void setIOFont(GuiFont* font);
+
 		private:
 
 			bool m_isAttached;
 			ConsoleExecuter* m_consoleexec;
 			
-			CommandLine*      m_textfield;
+			CommandLine*      m_input;
 			gcn::TextBox*     m_output;
-			gcn::ScrollArea*  m_scrollarea;
-			gcn::Label*       m_label;
-			gcn::Button*      m_button;
+			gcn::ScrollArea*  m_outputscrollarea;
+			gcn::Label*       m_status;
+			gcn::Button*      m_toolsbutton;
 			static const unsigned m_maxOutputRows;
 
 			std::string m_prompt;
-
 
 			int m_hiddenPos;
 			int m_animationDelta;

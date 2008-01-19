@@ -37,6 +37,7 @@
 #include "util/logger.h"
 #include "util/exception.h"
 #include "gui/guimanager.h"
+#include "gui/base/gui_font.h"
 
 #include "commandline.h"
 #include "console.h"
@@ -48,22 +49,22 @@ namespace FIFE {
 	Console::Console() 
 		: gcn::Container(),
 		m_consoleexec(0),
-		m_textfield(new CommandLine()),
+		m_input(new CommandLine()),
 		m_output(new gcn::TextBox("")),
-		m_scrollarea(new gcn::ScrollArea(m_output)),
-		m_label(new gcn::Label()),
-		m_button(new gcn::Button("Tools"))
+		m_outputscrollarea(new gcn::ScrollArea(m_output)),
+		m_status(new gcn::Label()),
+		m_toolsbutton(new gcn::Button("Tools"))
 		{
 		reLayout();
 
-		add(m_scrollarea);
-		add(m_textfield);
-		add(m_label);
-		add(m_button);
+		add(m_outputscrollarea);
+		add(m_input);
+		add(m_status);
+		add(m_toolsbutton);
 
 		setOpaque(true);
 
-		m_textfield->setCallback( std::bind1st( std::mem_fun(&Console::execute), this) );
+		m_input->setCallback( std::bind1st( std::mem_fun(&Console::execute), this) );
 		m_prompt = "-- ";
 
 		m_isAttached = false;
@@ -76,7 +77,11 @@ namespace FIFE {
 		m_animationTimer.setInterval(20);
 		m_animationTimer.setCallback( boost::bind(&Console::updateAnimation, this) );
 
-		m_button->addActionListener(this);
+		m_toolsbutton->addActionListener(this);
+
+		GuiFont* font = GUIManager::instance()->createFont();
+		font->setColor(255,255,255);
+		setIOFont(font);
 	}
 
 	void Console::reLayout() {
@@ -103,36 +108,35 @@ namespace FIFE {
 		setBackgroundColor(black);
 		setBaseColor(dark);
 
-
 		setSize(w, h);
 
-		m_scrollarea->setSize(w - 2*b, h - input_h - 3*b - bbar_h);
-		m_scrollarea->setPosition(b,0);
+		m_outputscrollarea->setSize(w - 2*b, h - input_h - 3*b - bbar_h);
+		m_outputscrollarea->setPosition(b,0);
 
-		m_textfield->setPosition(b, h - input_h - b - bbar_h);
-		m_textfield->setSize(w - 2*b, input_h);
+		m_input->setPosition(b, h - input_h - b - bbar_h);
+		m_input->setSize(w - 2*b, input_h);
 
-		m_label->setPosition(b, h - b - bbar_h);
-		m_label->setSize(w - 2*b, bbar_h);
+		m_status->setPosition(b, h - b - bbar_h);
+		m_status->setSize(w - 2*b, bbar_h);
 
-		m_button->setPosition(w - button_w, h - b - bbar_h);
-		m_button->setSize(button_w, bbar_h);
+		m_toolsbutton->setPosition(w - button_w, h - b - bbar_h);
+		m_toolsbutton->setSize(button_w, bbar_h);
 
 		m_output->setBackgroundColor(black);
 		m_output->setFocusable(false);
 
-		m_scrollarea->setBackgroundColor(black);
-		m_scrollarea->setBaseColor(dark);
+		m_outputscrollarea->setBackgroundColor(black);
+		m_outputscrollarea->setBaseColor(dark);
 
-		m_textfield->setForegroundColor(white);
-		m_textfield->setBackgroundColor(black);
+		m_input->setForegroundColor(white);
+		m_input->setBackgroundColor(black);
 
-		m_label->setForegroundColor(white);
-		m_label->setBackgroundColor(black);
+		m_status->setForegroundColor(white);
+		m_status->setBackgroundColor(black);
 
-		m_button->setForegroundColor(white);
-		m_button->setBackgroundColor(black);
-		m_button->setBaseColor(dark);
+		m_toolsbutton->setForegroundColor(white);
+		m_toolsbutton->setBackgroundColor(black);
+		m_toolsbutton->setBaseColor(dark);
 
 		m_hiddenPos = -h;
 		m_animationDelta = h/6;
@@ -141,22 +145,22 @@ namespace FIFE {
 	Console::~Console() {
 		doHide();
 		
-		remove(m_textfield);
-		remove(m_scrollarea);
-		remove(m_label);
+		remove(m_input);
+		remove(m_outputscrollarea);
+		remove(m_status);
 
 		delete m_output;
-		delete m_textfield;
-		delete m_scrollarea;
-		delete m_label;
-		delete m_button;
+		delete m_input;
+		delete m_outputscrollarea;
+		delete m_status;
+		delete m_toolsbutton;
 	}
 
 	void Console::updateCaption() {
 		std::string caption = "FIFE Console - FPS: ";
 		float fps = 1e3/double(TimeManager::instance()->getAverageFrameTime());
 		caption += boost::lexical_cast<std::string>(fps);
-		m_label->setCaption( caption );
+		m_status->setCaption( caption );
 	}
 
 	void Console::updateAnimation() {
@@ -187,7 +191,7 @@ namespace FIFE {
 		GUIManager::instance()->add(this);
 		GUIManager::instance()->getTopContainer()->moveToTop(this);
 		// Assure the input field is focused when shown.
-		m_textfield->requestFocus();
+		m_input->requestFocus();
 
 		m_fpsTimer.start();
 	}
@@ -272,7 +276,7 @@ namespace FIFE {
 
 		// Assure the new text is visible
 		gcn::Rectangle rect(0,m_output->getHeight(),0,0);
-		m_scrollarea->showWidgetPart(m_output,rect);
+		m_outputscrollarea->showWidgetPart(m_output,rect);
 	}
 
 	void Console::action(const gcn::ActionEvent & event) {
@@ -289,6 +293,11 @@ namespace FIFE {
 
 	void Console::removeConsoleExecuter() {
 		m_consoleexec = NULL;
+	}
+
+	void Console::setIOFont(GuiFont* font) {
+		m_input->setFont(font);
+		m_output->setFont(font);
 	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
