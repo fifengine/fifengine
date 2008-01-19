@@ -123,13 +123,13 @@ These bits and pieces connect things up::
  -  name - A (hopefully) unique name in the widget hierachy
  -  findChildren - The accessor method to find widgets by name or any other attribute.
  -  _parent - The parent widget in the widget hierachy
- -  _deepApply - The method used to walk over the widget hierachy. You have to reimplement
+ -  deepApply - The method used to walk over the widget hierachy. You have to reimplement
    this in case you want to provide custom widgets.
 
 Wrapping machinery
 ==================
 
-The wrapping mechanism works be redirecting attribute access to the _widget
+The wrapping mechanism works be redirecting attribute access to the Widget
 derived classes to a C{real_widget} member variable which in turn is an instance
 of the SWIG wrapped Guichan widget.
 
@@ -182,13 +182,20 @@ def _mungeText(text):
 
 ### Initialisation ###
 
-class InitializationError(Exception):
+class PyChanException(Exception):
+	"""
+	Base exception class for PyChan.
+	All exceptions raised by PyChan derive from this.
+	"""
+	pass
+
+class InitializationError(PyChanException):
 	"""
 	Exception raised during the initialization.
 	"""
 	pass
 
-class RuntimeError(Exception):
+class RuntimeError(PyChanException):
 	"""
 	Exception raised during the run time - for example caused by a missing name attribute in a XML file.
 	"""
@@ -316,7 +323,7 @@ def init(engine,debug=False):
 
 ### Widget/Container Base Classes ###
 
-class _widget(object):
+class Widget(object):
 	"""
 	This is the common widget base class, which provides most of the wrapping
 	functionality.
@@ -377,6 +384,8 @@ class _widget(object):
 	def adaptLayout(self):
 		"""
 		Execute the Layout engine. Automatically called by L{show}.
+		In case you want to relayout a visible widget, you have to call this function
+		on the root widget.
 		"""
 		self._recursiveResizeToContent()
 		self._recursiveExpandContent()
@@ -398,7 +407,8 @@ class _widget(object):
 		pass
 
 	def findChildren(self,**kwargs):
-		""" Find all contained child widgets by attribute values.
+		"""
+		Find all contained child widgets by attribute values.
 		
 		closeButtons = root_widget.findChildren(name='close')
 		"""
@@ -407,7 +417,7 @@ class _widget(object):
 		def _childCollector(widget):
 			if widget.match(**kwargs):
 				children.append(widget)
-		self._deepApply(_childCollector)
+		self.deepApply(_childCollector)
 		return children
 
 	def findChild(self,**kwargs):
@@ -437,16 +447,30 @@ class _widget(object):
 				raise RuntimeError("No widget with the name: %s" % name)
 
 	def setInitialData(self,data):
+		"""
+		Set the initial data on a widget, what this means depends on the Widget.
+		In case the widget does not accept initial data, a L{RuntimeError} is thrown.
+		"""
 		if not self.accepts_initial_data:
 			raise RuntimeError("Trying to set data on a widget that does not accept initial data.")
 		self._realSetInitialData(data)
 	
 	def setData(self,data):
+		"""
+		Set the user-mutable data on a widget, what this means depends on the Widget.
+		In case the widget does not accept data, a L{RuntimeError} is thrown.
+		This is inverse to L{getData}.
+		"""
 		if not self.accepts_data:
 			raise RuntimeError("Trying to set data on a widget that does not accept data.")
 		self._realSetData(data)
 
 	def getData(self):
+		"""
+		Get the user-mutable data of a widget, what this means depends on the Widget.
+		In case the widget does not have user mutable data, a L{RuntimeError} is thrown.
+		This is inverse to L{setData}.
+		"""
 		if not self.accepts_data:
 			raise RuntimeError("Trying to retrieve data from a widget that does not accept data.")
 		return self._realGetData()
@@ -511,24 +535,40 @@ class _widget(object):
 		return dataMap
 
 	def resizeToContent(self,recurse = True):
+		"""
+		Try to shrink the widget, so that it fits closely around its content.
+		Do not call directly.
+		"""
 		pass
 
 	def expandContent(self,recurse = True):
+		"""
+		Try to expand any spacer in the widget within the current size.
+		Do not call directly.
+		"""
 		pass
 
 	def _recursiveResizeToContent(self):
+		"""
+		Recursively call L{resizeToContent}. Uses L{deepApply}.
+		Do not call directly.
+		"""
 		def _callResizeToContent(widget):
 			#print "RTC:",widget
 			widget.resizeToContent()
-		self._deepApply(_callResizeToContent)
+		self.deepApply(_callResizeToContent)
 
 	def _recursiveExpandContent(self):
+		"""
+		Recursively call L{expandContent}. Uses L{deepApply}.
+		Do not call directly.
+		"""
 		def _callExpandContent(widget):
 			#print "ETC:",widget
 			widget.expandContent()
-		self._deepApply(_callExpandContent)
+		self.deepApply(_callExpandContent)
 
-	def _deepApply(self,visitorFunc):
+	def deepApply(self,visitorFunc):
 		"""
 		Recursively apply a callable to all contained widgets and then the widget itself.
 		"""
@@ -625,7 +665,7 @@ class _widget(object):
 
 ### Containers + Layout code ###
 
-class Container(_widget,fife.Container):
+class Container(Widget,fife.Container):
 	"""
 	This is the basic container class. It provides space in which child widgets can
 	be position via the position attribute. If you want to use the layout engine,
@@ -667,9 +707,9 @@ class Container(_widget,fife.Container):
 		if not self.children: return 0
 		return max(widget.height for widget in self.children)
 
-	def _deepApply(self,visitorFunc):
+	def deepApply(self,visitorFunc):
 		for child in self.children:
-			child._deepApply(visitorFunc)
+			child.deepApply(visitorFunc)
 		visitorFunc(self)
 
 	def beforeShow(self):
@@ -939,7 +979,7 @@ class Window(VBoxLayoutMixin,Container):
 
 ### Basic Widgets ###
 
-class _basicTextWidget(_widget):
+class BasicTextWidget(Widget):
 	"""
 	The base class for widgets which display a string - L{Label},L{ClickLabel},L{Button}, etc.
 	Do not use directly.
@@ -957,7 +997,7 @@ class _basicTextWidget(_widget):
 	def __init__(self, text = "",**kwargs):
 		self.margins = (5,5)
 		self.text = text
-		super(_basicTextWidget,self).__init__(**kwargs)
+		super(BasicTextWidget,self).__init__(**kwargs)
 		
 		# Prepare Data collection framework
 		self.accepts_initial_data = True
@@ -971,7 +1011,7 @@ class _basicTextWidget(_widget):
 		self.height = self.font.getHeight() + self.margins[1]*2
 		self.width = self.font.getWidth(self.text) + self.margins[0]*2
 
-class Label(_basicTextWidget):
+class Label(BasicTextWidget):
 	"""
 	A basic label - displaying a string.
 	"""
@@ -979,7 +1019,7 @@ class Label(_basicTextWidget):
 		self.real_widget = fife.Label("")
 		super(Label,self).__init__(**kwargs)
 
-class ClickLabel(_basicTextWidget):
+class ClickLabel(BasicTextWidget):
 	"""
 	A basic label - displaying a string.
 	
@@ -990,7 +1030,7 @@ class ClickLabel(_basicTextWidget):
 		self.real_widget = fife.ClickLabel("")
 		super(ClickLabel,self).__init__(**kwargs)
 
-class Button(_basicTextWidget):
+class Button(BasicTextWidget):
 	"""
 	A basic push button.
 	"""
@@ -999,7 +1039,7 @@ class Button(_basicTextWidget):
 		super(Button,self).__init__(**kwargs)
 
 
-class CheckBox(_basicTextWidget):
+class CheckBox(BasicTextWidget):
 	"""
 	A basic checkbox.
 	
@@ -1045,7 +1085,25 @@ class GenericListmodel(fife.ListModel,list):
 		i = max(0,min(i,len(self) - 1))
 		return str(self[i])
 
-class ListBox(_widget):
+class ListBox(Widget):
+	"""
+	A basic list box widget for displaying lists of strings. It makes most sense to wrap
+	this into a L{ScrollArea}.
+	
+	New Attributes
+	==============
+	
+	  - items: A List of strings. This can be treated like an ordinary python list.
+	    but only strings are allowed.
+	  - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
+	    A negative value indicates, that no item is selected.
+	  - selected_item: The selected string itself, or C{None} - if no string is selected.
+	
+	Data
+	====
+	The selected attribute can be read and set via L{distributeData} and L{collectData}.
+	The list items can be set via L{distributeInitialData}.
+	"""
 	def __init__(self,items=[],**kwargs):
 		self._items = GenericListmodel(*items)
 		self.real_widget = fife.ListBox(self._items)
@@ -1088,7 +1146,24 @@ class ListBox(_widget):
 		return None
 	selected_item = property(_getSelectedItem)
 
-class DropDown(_widget):
+class DropDown(Widget):
+	"""
+	A dropdown or combo box widget for selecting lists of strings.
+	
+	New Attributes
+	==============
+	
+	  - items: A List of strings. This can be treated like an ordinary python list.
+	    but only strings are allowed.
+	  - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
+	    A negative value indicates, that no item is selected.
+	  - selected_item: The selected string itself, or C{None} - if no string is selected.
+	
+	Data
+	====
+	The selected attribute can be read and set via L{distributeData} and L{collectData}.
+	The list items can be set via L{distributeInitialData}.
+	"""
 	def __init__(self,items=[],**kwargs):
 		self._items = GenericListmodel(*items)
 		self.real_widget = fife.DropDown(self._items)
@@ -1130,7 +1205,21 @@ class DropDown(_widget):
 		return None
 	selected_item = property(_getSelectedItem)
 
-class TextBox(_widget):
+class TextBox(Widget):
+	"""
+	An editable B{multiline} text edit widget.
+	
+	New Attributes
+	==============
+	
+	  - text: The text in the TextBox.
+	  - filename: A write-only attribute - assigning a filename will cause the widget to load it's text from it.
+	
+	Data
+	====
+	The text can be read and set via L{distributeData} and L{collectData}.
+	"""
+
 	def __init__(self,text="",filename = "", **kwargs):
 		self.real_widget = fife.TextBox()
 		self.text = text
@@ -1139,7 +1228,7 @@ class TextBox(_widget):
 
 		# Prepare Data collection framework
 		self.accepts_data = True
-		self.accepts_inital_data = True
+		self.accepts_inital_data = False # Would make sense in a way ...
 		self._realSetInitialData = self._setText
 		self._realSetData = self._setText
 		self._realGetData = self._getText
@@ -1159,6 +1248,7 @@ class TextBox(_widget):
 		max_w = max(map(self.font.getWidth,rows))
 		self.width = max_w
 		self.height = (self.font.getHeight() + 2) * self.real_widget.getNumberOfRows()
+
 	def _getText(self): return self.real_widget.getText()
 	def _setText(self,text): self.real_widget.setText(_mungeText(text))
 	text = property(_getText,_setText)
@@ -1167,7 +1257,19 @@ class TextBox(_widget):
 	def _getOpaque(self): return self.real_widget.isOpaque()
 	opaque = property(_getOpaque,_setOpaque)
 
-class TextField(_widget):
+class TextField(Widget):
+	"""
+	An editable B{single line} text edit widget.
+	
+	New Attributes
+	==============
+	
+	  - text: The text in the TextBox.
+	
+	Data
+	====
+	The text can be read and set via L{distributeData} and L{collectData}.
+	"""
 	def __init__(self,text="", **kwargs):
 		self.real_widget = fife.TextField()
 		self.text = text
@@ -1193,7 +1295,16 @@ class TextField(_widget):
 	opaque = property(_getOpaque,_setOpaque)
 
 
-class ScrollArea(_widget):
+class ScrollArea(Widget):
+	"""
+	A wrapper around another (content) widget.
+	
+	New Attributes
+	==============
+	
+	  - content: The wrapped widget.
+	
+	"""
 	def __init__(self,**kwargs):
 		self.real_widget = fife.ScrollArea()
 		self._content = None
@@ -1205,7 +1316,7 @@ class ScrollArea(_widget):
 	def _getContent(self): return self._content
 	content = property(_getContent,_setContent)
 
-	def _deepApply(self,visitorFunc):
+	def deepApply(self,visitorFunc):
 		if self._content: visitorFunc(self._content)
 		visitorFunc(self)
 
@@ -1241,7 +1352,7 @@ class Spacer(object):
 
 from xml.sax import saxutils, handler
 
-class GuiXMLError(Exception):
+class GuiXMLError(PyChanException):
 	"""
 	An error that occured during parsing an XML file.
 	"""
@@ -1290,7 +1401,7 @@ class _GuiLoader(object, handler.ContentHandler):
 	def startElement(self, name, attrs):
 		self._printTag(name,attrs)
 		cls = self._resolveTag(name)
-		if issubclass(cls,_widget):
+		if issubclass(cls,Widget):
 			self.stack.append('gui_element')
 			self._createInstance(cls,name,attrs)
 		elif cls == Spacer:
