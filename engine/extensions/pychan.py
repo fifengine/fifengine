@@ -4,25 +4,25 @@
 Pythonic Guichan Wrapper - PyChan
 =================================
 
-Very unfinished.
+Alpha state.
 
 Features
 --------
  - Simpler Interface
- - Automagic background tiling (WIP)
- - Very Basic Layout Engine
  - Very Basic XML Format support
- - Basic Styling support
+ - Very Basic Layout Engine
+ - Automagic background tiling (WIP)
+ - Basic Styling support.
 
 TODO
 ----
  - Completion of above features
  - Wrap missing widgets: RadioButton, Slider
+ - Easier Font handling.
  - Documentation
- - Add support for 'Spacers' in layouts (some)
+ - Add support for fixed size 'Spacers'
  - Add dialog.execute()
  - Add messageBox(text)
- - Easier Font handling.
 
 BUGS
 ----
@@ -31,10 +31,10 @@ BUGS
 Problems
 --------
  - Reference counting problems again -sigh-
- - ... and thus possible leaks.
+ ... and thus possible leaks.
  - High amount of code reuse -> Complex code
  - Needs at least new style classes and other goodies.
- - Even More Documentation!
+ - Missing documentation on Styling, ScrollArea ...
 
 How to use
 ==========
@@ -81,6 +81,12 @@ C{capture} calls in an obvious way.
       'okButton' : self.applyAndClose,
       'closeButton':  guiElement.hide
    })
+
+Other important places to look for information:
+  - L{Widget} - Attributes explained.
+  - L{loadXML} - Explain the XML format.
+  - L{LayoutBase} - Working of the layout engine.
+
 
 Initialization, data distribution and collection
 ================================================
@@ -155,6 +161,7 @@ def applyOnlySuitable(func,**kwargs):
 	This nifty little function takes another function and applies it to a dictionary of
 	keyword arguments. If the supplied function does not expect one or more of the
 	keyword arguments, these are silently discarded. The result of the application is returned.
+	This is useful to pass information to callbacks without enforcing a particular signature.
 	"""
 	if hasattr(func,'im_func'):
 		code = func.im_func.func_code
@@ -327,6 +334,48 @@ class Widget(object):
 	"""
 	This is the common widget base class, which provides most of the wrapping
 	functionality.
+	
+	Attributes
+	==========
+	
+	Widgets are manipulated (mostly) through attributes - and these can all be set by XML attributes.
+	Derived widgets will have other attributes. Please see their B{New Attributes} sections. The types of the
+	attributes are pretty straightforward, but note that Position and Color attribute types will also accept
+	C{fife.Point} and C{fife.Color} values.
+	
+	  - name: String: The identification of the widget, most useful if it is unique within a given widget hiarachy.
+	  This is used to find widgets by L{mapEvents},L{distributeInitialData},L{distributeData} and L{collectData}.
+	  - position: Position: The position relative to the parent widget - or on screen, if this is the root widget.
+	  - size: Position: The real size of the widget (including border and margins). Usually you do not need to set this.
+	  A notable exception is the L{ScrollArea}.
+	  - min_size: Position: The minimal size this widget is allowed to have. This is enforced through the accessor methods
+	  of the actual size attribute.
+	  - max_size: Position: The maximal size this widget is allowed to have. This is enforced through the accessor methods
+	  of the actual size attribute.
+	  - base_color: Color
+	  - background_color: Color
+	  - foreground_color: Color
+	  - font: Font (B{Likely to change in future versions.})
+	  - border_size: Integer: The size of the border in pixels.
+
+	Convenience Attributes
+	======================
+	
+	These attributes are convenience/shorthand versions of above mentioned attributes and assignment will reflect
+	the associated attributes values. E.g. the following is equivalent::
+	   # Set X position, leave Y alone
+	   widget.x = 10
+	   # Same here
+	   posi = widget.position
+	   widget.position = (10, posi[1])
+
+	Here they are.
+
+	   - x: Integer: The horizontal part of the position attribute.
+	   - y: Integer: The vertical part of the position attribute.
+	   - width: Integer: The horizontal part of the size attribute.
+	   - height: Integer: The vertical part of the size attribute.
+
 	"""
 	def __init__(self,parent = None, name = '_unnamed_',
 			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),**kwargs):
@@ -1476,7 +1525,7 @@ def loadXML(file):
 		button.min_size = (20,20)
 		button.base_color = (255,0,0)
 		button.border_size = 2
-		vboc.add( button )
+		vbox.add( button )
 	"""
 	from xml.sax import parse
 	loader = _GuiLoader()
