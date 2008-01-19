@@ -9,7 +9,7 @@ import fife
 class ModelLoader(handler.ContentHandler):
 
 	def __init__(self, engine, source, content, state = 0, datastate = 0):
-		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SInstance, self.SObject, self.SAction = range(10)
+		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SInstance, self.SObject, self.SAction, self.SInstanceGroup = range(11)
 
 		self.engine = engine
 		self.model = self.engine.getModel()
@@ -441,6 +441,19 @@ class ModelLoader(handler.ContentHandler):
 			else:
 				assert 0, "Layers can only be declared in an <elevation> section."
 
+		elif( name in ( 'igroup', 'instancegroup' )):
+			if( self.state != self.SInstances ):
+				assert 0, 'An <instancegroup> section can only be declared in an <instances> section.'
+
+			self.group_x = self.group_y = self.group_z = 0;
+
+			(x, y, z) = (attrs.get( 'x_offset' ), attrs.get( 'y_offset' ), attrs.get( 'z_offset' ))
+			if( x ): self.group_x = float( x )
+			if( y ): self.group_y = self.y = float( y )
+			if( z ): self.group_z = float( z )
+
+			self.state = self.SInstanceGroup
+
 		elif (name == 'instances'):
 			if (self.state == self.SLayer):
 				self.state = self.SInstances
@@ -450,9 +463,10 @@ class ModelLoader(handler.ContentHandler):
 				assert 0, "An <instances> section can only be declared in a <layer> section."
 
 		elif (name in ('i', 'inst', 'instance')):
-			if (self.state == self.SInstances):
+			if (self.state in ( self.SInstances, self.SInstanceGroup )):
+				self.oldstate = self.state
 				self.state = self.SInstance
-				
+
 				objectID = attrs.get("object")
 				if (not objectID):
 					objectID = attrs.get("obj")
@@ -466,6 +480,10 @@ class ModelLoader(handler.ContentHandler):
 				assert len(query) == 1, "Multiple objects with this identifier found."
 				object = query[0]
 
+				px = py = pz = 0.0;
+				if( self.oldstate == self.SInstanceGroup ):
+					(px, py, pz) = (self.group_x, self.group_y, self.group_z)
+
 				x = attrs.get("x")
 				y = attrs.get("y")
 				z = attrs.get("z")
@@ -473,22 +491,22 @@ class ModelLoader(handler.ContentHandler):
 				id = attrs.get("id")
 
 				if (x):
-					x = float(x)
+					x = float(x) + px
 					self.x = x
 				else:
 					self.x = self.x + 1
 					x = self.x
 
 				if (y):
-					y = float(y)
+					y = float(y) + py
 					self.y = y
 				else:
 					y = self.y
 				
 				if (z):
-					z = float(z)
+					z = float(z) + pz
 				else:
-					z = 0
+					z = pz
 				
 				if not (id):
 					id = ''
@@ -505,7 +523,6 @@ class ModelLoader(handler.ContentHandler):
 					target.setLayer(self.layer)
 					inst.act_here("default", target, True)
 				self.instance = inst
-
 			else:
 				assert 0, "Instances can only be declared in an <instances> section."
 
@@ -546,11 +563,14 @@ class ModelLoader(handler.ContentHandler):
 		elif (name == 'layer'):
 			self.state = self.SElevation
 
+		elif( name in ( 'igroup', 'instancegroup' )):
+			self.state = self.SInstances
+
 		elif (name == 'instances'):
 			self.state = self.SLayer
 
 		elif (name in ('i', 'inst', 'instance')):
-			self.state = self.SInstances
+			self.state = self.oldstate
 
 
 # This is the entire of the loading API. Just call this function to load a map.
