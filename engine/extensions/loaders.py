@@ -20,6 +20,9 @@ class ModelLoader(handler.ContentHandler):
 		self.source = source
 		self.content_path = content
 
+		self.groups_history = []
+		self.group_x = self.group_y = self.group_z = 0
+
 		if (state):
 			self.state = state
 			if (state == self.SMap):
@@ -442,16 +445,29 @@ class ModelLoader(handler.ContentHandler):
 				assert 0, "Layers can only be declared in an <elevation> section."
 
 		elif( name in ( 'igroup', 'instancegroup' )):
-			if( self.state != self.SInstances ):
-				assert 0, 'An <instancegroup> section can only be declared in an <instances> section.'
-
-			self.group_x = self.group_y = self.group_z = 0;
+			if( self.state not in (self.SInstances, self.SInstanceGroup)):
+				assert 0, 'An <instancegroup> section can only be declared in an <instances> or <instancegroup> section.'
 
 			(x, y, z) = (attrs.get( 'x_offset' ), attrs.get( 'y_offset' ), attrs.get( 'z_offset' ))
-			if( x ): self.group_x = float( x )
-			if( y ): self.group_y = self.y = float( y )
-			if( z ): self.group_z = float( z )
+			if( x ):
+				x = float( x )
+				self.group_x += x
+			else:
+				x = 0.0
+			if( y ):
+				y = float( y )
+				self.group_y += y
+				self.y += y
+			else:
+				y = 0.0
+			if( z ):
+				z = float( z )
+				self.group_z += z
+			else:
+				z = 0.0
 
+			# Add these instancegroup properties to historylist.
+			self.groups_history += [( x, y, z )]
 			self.state = self.SInstanceGroup
 
 		elif (name == 'instances'):
@@ -480,7 +496,7 @@ class ModelLoader(handler.ContentHandler):
 				assert len(query) == 1, "Multiple objects with this identifier found."
 				object = query[0]
 
-				px = py = pz = 0.0;
+				px = py = pz = 0.0
 				if( self.oldstate == self.SInstanceGroup ):
 					(px, py, pz) = (self.group_x, self.group_y, self.group_z)
 
@@ -564,7 +580,14 @@ class ModelLoader(handler.ContentHandler):
 			self.state = self.SElevation
 
 		elif( name in ( 'igroup', 'instancegroup' )):
-			self.state = self.SInstances
+			(x, y, z) = self.groups_history[-1]
+			del self.groups_history[-1]
+			self.group_x -= x
+			self.group_y -= y
+			self.group_z -= z
+
+			if( not len( self.groups_history )):
+				self.state = self.SInstances
 
 		elif (name == 'instances'):
 			self.state = self.SLayer

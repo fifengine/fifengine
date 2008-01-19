@@ -233,15 +233,15 @@
 					<i o="Tree:009" x="59" y="4" />
 					<i o="Tree:024" x="12" y="29" />-->
 
-					<i o="Girl" x="2" y="7.6" />
+					<i o="Girl" x="3" y="7.6" />
 				</igroup>
 
 				<!--<i o="Pool:001" x="74" y="39" />
 				<i o="Quay:036" x="35" y="15" />-->
-				<i o="Quay:026" x="2" y="6" />
-				<i o="Quay:026" x="2" y="7" />
-				<i o="Quay:026" x="2" y="8" />
-				<i o="Quay:026" x="2" y="9" />
+				<i o="Quay:026" x="3" y="6" />
+				<i o="Quay:026" x="3" y="7" />
+				<i o="Quay:026" x="3" y="8" />
+				<i o="Quay:026" x="3" y="9" />
 			</instances>
 		</layer>
 
