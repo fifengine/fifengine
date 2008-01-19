@@ -61,6 +61,9 @@ STYLES= {
 		'background_image' : 'content/gui/stripe.png',
 		'font' : 'samanata_large'
 	},
+	'TextBox' : {
+		'font' : 'samanata_small'
+	},
 	('Container','HBox','VBox') : {
 		'border_size': 0,
 		'opaque' : False
@@ -76,7 +79,7 @@ class StylingExample(PyChanExample):
 		for name,style in STYLES.items():
 			pychan.manager.addStyle(name,style)
 
-		pychan.manager.addFont("content/fonts/samanata.fontdef")
+		pychan.manager.loadFonts("content/fonts/samanata.fontdef")
 
 	def start(self):
 		self.styledCredits = None

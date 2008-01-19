@@ -26,7 +26,8 @@ TODO
 
 BUGS
 ----
- - Fonts are just engine.getDefaultFont()
+ - Font settings are not heeded by most Widgets.
+ - Spurious segfault at exit of Demo Application.
 
 Problems
 --------
@@ -34,7 +35,10 @@ Problems
  ... and thus possible leaks.
  - High amount of code reuse -> Complex code
  - Needs at least new style classes and other goodies.
- - Missing documentation on Styling, ScrollArea ...
+ - Missing documentation on:
+     - Styling
+     - ScrollArea
+     - Fonts
 
 How to use
 ==========
@@ -241,9 +245,17 @@ class Manager(fife.IWidgetListener, fife.TimeEvent):
 		print name,font
 		return getattr(font,"font",font)
 
-	def addFont(self,filename):
-		font = Font(filename)
+	def addFont(self,font):
+		if not isinstance(font,Font):
+			raise RuntimeError("PyChan Manager expected a Font instance, not %s." % repr(font))
 		self.fonts[font.name] = font
+
+	def loadFonts(self,filename):
+		"""
+		Load fonts from a config file. These are then available via their name.
+		"""
+		for font in Font.loadFromFile(filename):
+			self.addFont(font)
 
 	def initStyles(self):
 		self.styles = {}
@@ -360,6 +372,43 @@ def init(engine,debug=False):
 	global manager
 	manager = Manager(engine,debug)
 
+# Font handling
+
+class Font(object):
+	def __init__(self,name,get):
+		self.real_font = None
+		self.name = name
+		self.typename = get("type")
+		self.source = get("source")
+
+		if self.typename == "truetype":
+			self.size = int(get("size"))
+			self.real_font = fife.TTFont(self.source,self.size)
+
+		if self.real_font is None:
+			raise InitializationError("Could not load font %s" % name)
+
+		self.font = fife.GuiFont(self.real_font)
+
+	@staticmethod
+	def loadFromFile(filename):
+		"""
+		Static method to load font definitions out of a PyChan config file.
+		"""
+		import ConfigParser
+		
+		fontdef = ConfigParser.ConfigParser()
+		fontdef.read(filename)
+		
+		sections = [section for section in fontdef.sections() if section.startswith("Font/")]
+	
+		fonts = []
+		for section in sections:
+			name = section[5:]
+			_get = lambda name: fontdef.get(section,name)
+			fonts.append( Font(name,_get) )
+		return fonts
+
 ### Widget/Container Base Classes ###
 
 class Widget(object):
@@ -387,7 +436,7 @@ class Widget(object):
 	  - base_color: Color
 	  - background_color: Color
 	  - foreground_color: Color
-	  - font: Font (B{Likely to change in future versions.})
+	  - font: String: This should identify a font that was loaded via L{loadFonts} before.
 	  - border_size: Integer: The size of the border in pixels.
 
 	Convenience Attributes
@@ -852,8 +901,8 @@ AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
 
 class LayoutBase(object):
 	"""
-	This class is at the core of the layout engine. The two MixIn classes L{VBoxMixIn}
-	and L{HBoxMixIn} specialise on this by reimplementing the C{resizeToContent} and
+	This class is at the core of the layout engine. The two MixIn classes L{VBoxLayoutMixin}
+	and L{HBoxLayoutMixin} specialise on this by reimplementing the C{resizeToContent} and
 	the C{expandContent} methods.
 	
 	At the core the layout engine works in two passes:
@@ -1592,22 +1641,3 @@ WIDGETS = {
 	"ListBox" : ListBox,
 	"DropDown" : DropDown
 }
-
-class Font(object):
-	def __init__(self,filename):
-		import ConfigParser
-		
-		self.real_font = None
-		
-		fontdef = ConfigParser.ConfigParser()
-		fontdef.read(filename)
-		font_section = "font"
-		self.name = fontdef.get(font_section,"name")
-		self.typename = fontdef.get(font_section,"type")
-		self.source = fontdef.get(font_section,"source")
-		self.size = fontdef.getint(font_section,"size")
-
-		if self.typename == "truetype":
-			self.real_font = fife.TTFont(self.source,self.size)
-
-		self.font = fife.GuiFont(self.real_font)

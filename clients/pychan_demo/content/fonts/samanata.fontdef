@@ -1,6 +1,11 @@
-[font]
-name: samanata_large
+[Font/samanata_large]
+
 type: truetype
 source: content/fonts/samanata.ttf
 size: 30
 
+[Font/samanata_small]
+
+type: truetype
+source: content/fonts/samanata.ttf
+size: 8
