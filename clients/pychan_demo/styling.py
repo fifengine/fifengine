@@ -99,6 +99,6 @@ class StylingExample(PyChanExample):
 		if self.styledCredits:
 			self.styledCredits.hide()
 		self.styledCredits = pychan.loadXML('content/gui/credits.xml')
-		pychan.manager.stylize(self.styledCredits,style)
+		self.styledCredits.stylize(style)
 		self.styledCredits.mapEvents({'okButton':self.styledCredits.hide})
 		self.styledCredits.show()

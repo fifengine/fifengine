@@ -376,19 +376,17 @@ def init(engine,debug=False):
 
 class Font(object):
 	def __init__(self,name,get):
-		self.real_font = None
+		self.font = None
 		self.name = name
 		self.typename = get("type")
 		self.source = get("source")
 
 		if self.typename == "truetype":
 			self.size = int(get("size"))
-			self.real_font = fife.TTFont(self.source,self.size)
+			self.font = manager.guimanager.createFont(self.source,self.size,"")
 
-		if self.real_font is None:
+		if self.font is None:
 			raise InitializationError("Could not load font %s" % name)
-
-		self.font = fife.GuiFont(self.real_font)
 
 	@staticmethod
 	def loadFromFile(filename):
@@ -665,6 +663,14 @@ class Widget(object):
 			
 			dataMap[name] = widgetList[0].getData()
 		return dataMap
+
+	def stylize(self,style,**kwargs):
+		"""
+		Recursively apply a style to all widgets.
+		"""
+		def _restyle(widget):
+			manager.stylize(widget,style,**kwargs)
+		self.deepApply(_restyle)
 
 	def resizeToContent(self,recurse = True):
 		"""
