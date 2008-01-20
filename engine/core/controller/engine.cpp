@@ -39,7 +39,7 @@
 #include "gui/guimanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
-#include "vfs/vfssourcefactory.h"
+#include "vfs/directoryprovider.h"
 #ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
 #endif
@@ -91,7 +91,6 @@ namespace FIFE {
 		m_timemanager(0),
 		m_imagepool(0),
 		m_animpool(0),
-		m_vfs_sourcefactory(0),
 		m_vfs(0),
 		m_model(0),
 		m_gui_graphics(0),
@@ -122,17 +121,17 @@ namespace FIFE {
 		FL_LOG(_log, "Time manager created");
 
 		FL_LOG(_log, "Creating VFS");
-		m_vfs_sourcefactory = new VFSSourceFactory();
 		m_vfs = new VFS();
 
 		FL_LOG(_log, "Adding root directory to VFS");
 		m_vfs->addSource(new VFSDirectory());
+		m_vfs->addProvider( new DirectoryProvider() );
 #ifdef HAVE_ZIP
 		FL_LOG(_log, "Adding zip provider to VFS");
-		m_vfs_sourcefactory->addProvider( new ZipProvider() );
+		m_vfs->addProvider( new ZipProvider() );
 #endif
-		//m_vfs_sourcefactory->addProvider(ProviderDAT2());
-		//m_vfs_sourcefactory->addProvider(ProviderDAT1());
+		//m_vfs->addProvider(ProviderDAT2());
+		//m_vfs->addProvider(ProviderDAT1());
 		FL_LOG(_log, "Engine pre-init done");
 	}
 
@@ -254,7 +253,6 @@ namespace FIFE {
 		delete m_eventmanager;
 
 		delete m_vfs;
-		delete m_vfs_sourcefactory;
 
 		delete m_timemanager;
 

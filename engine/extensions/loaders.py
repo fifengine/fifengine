@@ -599,16 +599,13 @@ class ModelLoader(handler.ContentHandler):
 # This is the entire of the loading API. Just call this function to load a map.
 #   path - the path of the map to load
 #   engine - a reference to the engine
-#   content - (optional) reference to the content path. This is sometimes needed
-#     with more complicated/non-standard paths. (This is a bit of a hack that
-#     should probably be addressed in a more uniform way.--jwt)
+#   content - (optional) reference to the content path.
 def loadMapFile(path, engine, content = ''):
 	parser = make_parser()
 	handler = ModelLoader(engine, path, content)
 	parser.setContentHandler(handler)
 
-	# I'm not sure if this solution is robust enough, but it works for now.
-	engine.getVFS().setRootDir(content)
+	engine.getVFS().addNewSource(content)
 
 	parser.parse(open(path))
 

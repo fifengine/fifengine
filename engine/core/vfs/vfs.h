@@ -40,7 +40,9 @@ namespace FIFE {
 
 	class RawData;
 
+	class VFSSourceProvider;
 	class VFSSource;
+
 	/** the main VFS (virtual file system) class
 	 *
 	 * The VFS is intended to provide transparent and portable access to files.
@@ -61,17 +63,34 @@ namespace FIFE {
 
 			void cleanup();
 
+			/** add new VFSSourceProvider
+			 *
+			 * @NOTE VFS assumes ownership over the given provider - so don't do anything with it
+			 * after you call this function, especialy don't delete it!
+			 * @param provider the new provider
+			 */
+			void addProvider(VFSSourceProvider* provider);
+
+			/** tries to create a new VFSSource for the given file
+			 *
+			 * all currently known VFSSourceProviders are tried until one succeeds - if no provider succeeds 0 is returned
+			 * @param file the archive-file
+			 * @return the new VFSSource or 0 if no provider was succesfull or the file was already used as source
+			 */
+			VFSSource* createSource(const std::string& path) const;
+
+			/** create a new Source and add it to VFS
+			 * @see VFSSource* createSource(const std::string& file) const
+			 */
+			void addNewSource(const std::string& path);
+
+
 			/** Add a new VFSSource */
 			void addSource(VFSSource* source);
 
 			/** remove a VFSSource */
 			void removeSource(VFSSource* source);
 
-			/** Set a root directory for this filesystem, not necessarily the root directory of the drive.
-			 */
-			void setRootDir(const std::string& path);
-			const std::string& getRootDir();
-			
 			/** Check if the given file exists
 			 *
 			 * @param file the filename
@@ -121,10 +140,14 @@ namespace FIFE {
 			std::vector<std::string> listDirectories(const std::string& path, const std::string& filterregex) const;
 
 		private:
+			typedef std::vector<VFSSourceProvider*> type_providers;
+			type_providers m_providers;
+
 			typedef std::vector<VFSSource*> type_sources;
 			type_sources m_sources;
 
-			std::string m_root;
+			typedef std::set<std::string> type_usedfiles;
+			mutable type_usedfiles m_usedfiles;
 
 			void filterList(std::vector<std::string>& list, const std::string& regex) const;
 			std::string lower(const std::string&) const;

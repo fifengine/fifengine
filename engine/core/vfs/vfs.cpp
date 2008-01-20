@@ -36,12 +36,13 @@
 
 #include "vfs.h"
 #include "vfssource.h"
+#include "vfssourceprovider.h"
 
 namespace FIFE {
 	static Logger _log(LM_VFS);
 
 
-	VFS::VFS() : m_sources(), m_root("./") {}
+	VFS::VFS() : m_sources() {}
 
 	VFS::~VFS() {
 		cleanup();
@@ -52,7 +53,56 @@ namespace FIFE {
 		type_sources::const_iterator end = sources.end();
 		for (type_sources::iterator i = sources.begin(); i != end; ++i)
 			delete *i;
+
+		type_providers::const_iterator end2 = m_providers.end();
+		for (type_providers::iterator j = m_providers.begin(); j != end2; ++j)
+			delete *j;
+
+		m_providers.clear();
 	}
+
+	void VFS::addProvider(VFSSourceProvider* provider) {
+		m_providers.push_back(provider);
+		FL_LOG(_log, LMsg("new provider: ") << provider->getName());
+	}
+
+	VFSSource* VFS::createSource(const std::string& path) const {
+		if( m_usedfiles.count(path) ) {
+			FL_WARN(_log, LMsg(path) << " is already used as VFS source");
+			return 0;
+		}
+
+		type_providers::const_iterator end = m_providers.end();
+		for (type_providers::const_iterator i = m_providers.begin(); i != end; ++i) {
+			const VFSSourceProvider* provider = *i;
+			if (!provider->isReadable(path))
+				continue;
+
+			try {
+				VFSSource* source = provider->createSource(path);
+				m_usedfiles.insert(path);
+				return source;
+			} catch(const Exception& ex) {
+				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (" << ex.getMessage() << ")");
+				continue;
+			} catch(...) {
+				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (unkown exception)");
+				continue;
+			}
+		}
+
+		FL_WARN(_log, LMsg("no provider for ") << path << " found");
+		return 0;
+	}
+
+	void VFS::addNewSource(const std::string& path) {
+    VFSSource* source = createSource(path);
+    if (source) {
+      addSource(source);
+    } else {
+      FL_WARN(_log, LMsg("Failed to add new VFS source: ") << path);
+    }
+  }
 
 	void VFS::addSource(VFSSource* source) {
 		m_sources.push_back(source);
@@ -65,7 +115,7 @@ namespace FIFE {
 	}
 	
 	VFSSource* VFS::getSourceForFile(const std::string& file) const {
-		std::string lowerpath = m_root + lower(file);
+		std::string lowerpath = lower(file);
 		type_sources::const_iterator i = std::find_if(m_sources.begin(), m_sources.end(),
 		                                 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), lowerpath));
 		if (i == m_sources.end()) {
@@ -76,21 +126,12 @@ namespace FIFE {
 		return *i;
 	}
 
-	void VFS::setRootDir(const std::string& path) {
-		m_root = lower(path);
-		if(!m_root.empty() && *(m_root.end() - 1) != '/')
-			m_root.append(1,'/');
-	}
-	const std::string& VFS::getRootDir() {
-		return m_root;
-	}
-
 	bool VFS::exists(const std::string& file) const {
-		return getSourceForFile(m_root + lower(file));
+		return getSourceForFile(lower(file));
 	}
 
 	RawData* VFS::open(const std::string& path) {
-		std::string lowerpath = m_root + lower(path);
+		std::string lowerpath = lower(path);
 		FL_DBG(_log, LMsg("Opening: ") << lowerpath);
 
 		VFSSource* source = getSourceForFile(lowerpath);
@@ -108,7 +149,7 @@ namespace FIFE {
 	}
 
 	std::vector<std::string> VFS::listFiles(const std::string& pathstr) const {
-		std::string lowerpath = m_root + lower(pathstr);
+		std::string lowerpath = lower(pathstr);
 		std::vector<std::string> list;
 		type_sources::const_iterator end = m_sources.end();
 		for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
@@ -120,14 +161,14 @@ namespace FIFE {
 	}
 
 	std::vector<std::string> VFS::listFiles(const std::string& path, const std::string& filterregex) const {
-		std::string lowerpath = m_root + lower(path);
+		std::string lowerpath = lower(path);
 		std::vector<std::string> list = listFiles(lowerpath);
 		filterList(list, filterregex);
 		return list;
 	}
 
 	std::vector<std::string> VFS::listDirectories(const std::string& pathstr) const {
-		std::string lowerpath = m_root + lower(pathstr);
+		std::string lowerpath = lower(pathstr);
 		std::vector<std::string> list;
 		type_sources::const_iterator end = m_sources.end();
 		for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
@@ -139,7 +180,7 @@ namespace FIFE {
 	}
 
 	std::vector<std::string> VFS::listDirectories(const std::string& path, const std::string& filterregex) const {
-		std::vector<std::string> list = listDirectories(m_root + lower(path));
+		std::vector<std::string> list = listDirectories(lower(path));
 		filterList(list, filterregex);
 		return list;
 	}

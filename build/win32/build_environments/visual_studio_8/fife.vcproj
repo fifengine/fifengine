@@ -347,8 +347,6 @@
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfsdirectory.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssource.cpp"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssource.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\vfs\vfssourcefactory.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\vfs\vfssourcefactory.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssourceprovider.cpp"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssourceprovider.h"></File>
 				<Filter Name="zip">

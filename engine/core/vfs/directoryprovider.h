@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VFS_VFSHOSTPROVIDER_H
-#define FIFE_VFS_VFSHOSTPROVIDER_H
+#ifndef FIFE_VFS_DIRECTORYPROVIDER_H
+#define FIFE_VFS_DIRECTORYPROVIDER_H
 
 // Standard C++ library includes
 #include <string>

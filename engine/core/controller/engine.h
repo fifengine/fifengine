@@ -105,7 +105,6 @@ namespace FIFE {
 		TimeManager* m_timemanager;
 		ImagePool* m_imagepool;
 		AnimationPool* m_animpool;
-		VFSSourceFactory* m_vfs_sourcefactory;
 		VFS* m_vfs;
 		Model* m_model;
 		gcn::Graphics* m_gui_graphics;

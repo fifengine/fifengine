@@ -34,7 +34,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/vfssourcefactory.h"
 #include "vfs/vfs.h"
 #include "util/rect.h"
 #include "util/time/timemanager.h"
@@ -64,12 +63,10 @@ static const std::string SUBIMAGE_FILE = "../data/rpg_tiles_01.png";
 // Environment
 struct environment {
 	boost::shared_ptr<TimeManager> timemanager;
-	boost::shared_ptr<VFSSourceFactory> vfssources;
 	boost::shared_ptr<VFS> vfs;
 
 	environment()
 		: timemanager(new TimeManager()),
-		  vfssources(new VFSSourceFactory()),
 		  vfs(new VFS()) {
 		VFS::instance()->addSource(new VFSDirectory());
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	

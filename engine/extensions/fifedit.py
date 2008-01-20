@@ -527,6 +527,6 @@ class MapBrowser(FileBrowser):
 			content = self.path.split('/')
 			content.pop()
 			content.pop()
-			loadMapFile('/'.join([self.path, self.file_list[self.file_box.getSelected()]]), self.engine, '/'.join(content))
+			loadMapFile('/'.join([self.path, self.file_list[self.file_box.getSelected()]]), self.engine, '/'.join(content) + '/')
 		else:
 			FileBrowser.onWidgetAction(self, evt)

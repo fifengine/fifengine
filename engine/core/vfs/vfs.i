@@ -39,10 +39,9 @@ namespace FIFE {
 		VFS();
 		virtual ~VFS();
 
-		void setRootDir(const std::string& path);
-		const std::string& getRootDir();
-
 		void cleanup();
+
+		void addNewSource(const std::string& path);
 
 		bool exists(const std::string& file) const;
 		RawData* open(const std::string& path);

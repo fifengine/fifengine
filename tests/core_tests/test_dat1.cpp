@@ -51,7 +51,6 @@ BOOST_AUTO_TEST_CASE( DAT1_test ) {
 #endif
 	boost::shared_ptr<VFS> vfs(new VFS());
 	vfs->addSource(new VFSDirectory());
-	vfs->setRootDir("");
 
 	if ((!vfs->exists(COMPRESSED_FILE))) {
 		BOOST_ERROR("Test source " << COMPRESSED_FILE << " not found");

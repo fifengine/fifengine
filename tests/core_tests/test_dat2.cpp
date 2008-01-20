@@ -32,7 +32,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/vfssourcefactory.h"
 #include "vfs/vfs.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
@@ -48,12 +47,10 @@ using namespace FIFE;
 // Environment
 struct environment {
 	boost::shared_ptr<TimeManager> timemanager;
-	boost::shared_ptr<VFSSourceFactory> vfssources;
 	boost::shared_ptr<VFS> vfs;
 
 	environment()
 		: timemanager(new TimeManager()),
-		  vfssources(new VFSSourceFactory()),
 		  vfs(new VFS()) {}
 };
 
@@ -72,7 +69,6 @@ BOOST_AUTO_TEST_CASE( OGL_animtest ) {
 
 	VFS* vfs = VFS::instance();
 	vfs->addSource(new VFSDirectory());
-	vfs->setRootDir("");
 
 	if ((!vfs->exists(COMPRESSED_FILE))) {
 		BOOST_ERROR("Test source " << COMPRESSED_FILE << " not found");
