@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 // 3rd party library includes

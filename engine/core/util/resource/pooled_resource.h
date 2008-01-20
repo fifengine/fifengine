@@ -23,7 +23,7 @@
 #define FIFE_POOLED_RESOURE_H
 
 // Standard C++ library includes
-#include <assert.h>
+#include <cassert>
 
 // 3rd party library includes
 

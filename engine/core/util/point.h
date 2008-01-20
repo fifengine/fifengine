@@ -24,7 +24,7 @@
 
 // Standard C++ library includes
 #include <iostream>
-#include <assert.h>
+#include <cassert>
 
 // Platform specific includes
 #include "fife_math.h"
