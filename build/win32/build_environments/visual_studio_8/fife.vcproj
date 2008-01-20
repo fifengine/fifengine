@@ -329,6 +329,8 @@
 				</Filter>
 			</Filter>
 			<Filter Name="vfs">
+				<File RelativePath="..\..\..\..\engine\core\vfs\directoryprovider.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\vfs\directoryprovider.h"></File>
 				<Filter Name="raw">
 					<File RelativePath="..\..\..\..\engine\core\vfs\raw\rawdata.cpp"></File>
 					<File RelativePath="..\..\..\..\engine\core\vfs\raw\rawdata.h"></File>
@@ -341,8 +343,8 @@
 				</Filter>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfs.cpp"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfs.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\vfs\vfsfilesystem.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\vfs\vfsfilesystem.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\vfs\vfsdirectory.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\vfs\vfsdirectory.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssource.cpp"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssource.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\vfs\vfssourcefactory.cpp"></File>

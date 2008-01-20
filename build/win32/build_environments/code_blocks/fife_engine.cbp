@@ -929,6 +929,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\..\engine\core\vfs\directoryprovider.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\vfs\directoryprovider.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\..\engine\core\vfs\raw\rawdata.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
@@ -979,11 +989,11 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\..\engine\core\vfs\vfsfilesystem.cpp">
+		<Unit filename="..\..\..\..\engine\core\vfs\vfsdirectory.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\engine\core\vfs\vfsfilesystem.h">
+		<Unit filename="..\..\..\engine\core\vfs\vfsdirectory.h">
 				<Option compilerVar=""/>
 				<Option compile="0"/>
 				<Option link="0"/>

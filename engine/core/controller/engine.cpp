@@ -38,7 +38,7 @@
 #include "gui/console/console.h"
 #include "gui/guimanager.h"
 #include "vfs/vfs.h"
-#include "vfs/vfsfilesystem.h"
+#include "vfs/vfsdirectory.h"
 #include "vfs/vfssourcefactory.h"
 #ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
@@ -125,8 +125,8 @@ namespace FIFE {
 		m_vfs_sourcefactory = new VFSSourceFactory();
 		m_vfs = new VFS();
 
-		FL_LOG(_log, "Adding local file system to VFS");
-		m_vfs->addSource(new VFSFileSystem());
+		FL_LOG(_log, "Adding root directory to VFS");
+		m_vfs->addSource(new VFSDirectory());
 #ifdef HAVE_ZIP
 		FL_LOG(_log, "Adding zip provider to VFS");
 		m_vfs_sourcefactory->addProvider( new ZipProvider() );

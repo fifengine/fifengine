@@ -39,7 +39,7 @@
 #include "util/rect.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
-#include "vfs/vfshostsystem.h"
+#include "vfs/vfsdirectory.h"
 #include "vfs/raw/rawdata.h"
 #include "video/image_location.h"
 #include "video/image.h"
@@ -71,7 +71,7 @@ struct environment {
 		: timemanager(new TimeManager()),
 		  vfssources(new VFSSourceFactory()),
 		  vfs(new VFS()) {
-		VFS::instance()->addSource(new VFSHostSystem());
+		VFS::instance()->addSource(new VFSDirectory());
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 				throw SDLException(SDL_GetError());
 			}

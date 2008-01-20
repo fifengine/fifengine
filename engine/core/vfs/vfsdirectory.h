@@ -41,16 +41,16 @@ namespace FIFE {
 	 * This also means you have to use slashes as directory
 	 * separators.
 	 */
-	class VFSFileSystem : public VFSSource {
+	class VFSDirectory : public VFSSource {
 		public:
 			/** Constructor
 			 * Creates the given file system's VFS Source, Uses boost_filesystem to
 			 * achieve Plattform independancy.
 			 */
-			VFSFileSystem(const std::string& root = "./");
+			VFSDirectory(const std::string& root = "./");
 			/** Destructor
 			 */
-			virtual ~VFSFileSystem();
+			virtual ~VFSDirectory();
 
 			/** Tests whether a file can be opened.
 			 * @param filename The file to test.

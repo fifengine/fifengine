@@ -36,7 +36,7 @@
 #include "vfs/vfs.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
-#include "vfs/vfshostsystem.h"
+#include "vfs/vfsdirectory.h"
 #include "loaders/fallout/vfs_loaders/dat2.h"
 #include "vfs/raw/rawdata.h"
 #include "util/exception.h"
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE( OGL_animtest ) {
 	environment env;
 
 	VFS* vfs = VFS::instance();
-	vfs->addSource(new VFSHostSystem());
+	vfs->addSource(new VFSDirectory());
 	vfs->setRootDir("");
 
 	if ((!vfs->exists(COMPRESSED_FILE))) {
