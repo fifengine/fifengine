@@ -19,67 +19,70 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_VFS_VFSHOSTSYSTEM_H
+#define FIFE_VFS_VFSHOSTSYSTEM_H
+
 // Standard C++ library includes
-#include <fstream>
 
 // 3rd party library includes
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/raw/rawdata.h"
-#include "vfs/raw/rawdatafile.h"
+#include "vfssource.h"
 
-#include "vfshostsystem.h"
-
-namespace bfs = boost::filesystem;
 namespace FIFE {
 
-	VFSHostSystem::VFSHostSystem() {
-	}
+	/** The most basic VFSSource for "normal" filesystems.
+	 * For example, '/' or './tests/data'.
+	 *
+	 * Uses boost_filesystem to achieve Plattform independancy.
+	 * This also means you have to use slashes as directory
+	 * separators.
+	 */
+	class VFSFileSystem : public VFSSource {
+		public:
+			/** Constructor
+			 * Creates the given file system's VFS Source, Uses boost_filesystem to
+			 * achieve Plattform independancy.
+			 */
+			VFSFileSystem(const std::string& root = "./");
+			/** Destructor
+			 */
+			virtual ~VFSFileSystem();
 
+			/** Tests whether a file can be opened.
+			 * @param filename The file to test.
+			 * @return True, if the file filename can be opened.
+			 */
+			virtual bool fileExists(const std::string& filename) const;
+			/** Opens a file.
+			 * @param filename The file to open.
+			 */
+			virtual RawData* open(const std::string& filename) const;
 
-	VFSHostSystem::~VFSHostSystem() {
-	}
+			/** List files in a directory
+			 * @param path The directory to list the files in
+			 * @return A string list of filenames
+			 * Will return an empty list on \b any error
+			 */
+			std::vector<std::string> listFiles(const std::string& path) const;
 
+			/** List directories in a directory
+			 * @param path The directory to list the directories in
+			 * @return A string list of directories
+			 * Will return an empty list on \b any error
+			 */
+			std::vector<std::string> listDirectories(const std::string& path) const;
 
-	bool VFSHostSystem::fileExists(const std::string& name) const {
-		std::ifstream file(name.c_str());
-		if (file)
-			return true;
+		private:
+			std::string m_root;
 
-		return false;
-	}
+			std::vector<std::string> list(const std::string& path, bool directorys) const;
 
-	RawData* VFSHostSystem::open(const std::string& file) const {
-		return new RawData(new RawDataFile(file));
-	}
+	};
 
-	std::vector<std::string> VFSHostSystem::listFiles(const std::string& pathstr) const {
-		return list(pathstr, false);
-	}
-
-	std::vector<std::string> VFSHostSystem::listDirectories(const std::string& path) const {
-		return list(path, true);
-	}
-
-	std::vector<std::string> VFSHostSystem::list(const std::string& pathstr, bool directorys) const {
-		std::vector<std::string> list;
-		bfs::path path(pathstr);
-		if (!bfs::exists(path) || !bfs::is_directory(path))
-			return list;
-
-		bfs::directory_iterator end;
-		for (bfs::directory_iterator i(path); i != end; ++i) {
-			if (bfs::is_directory(*i) != directorys)
-				continue;
-
-			list.push_back(i->leaf());
-		}
-
-		return list;
-	}
 }
+
+#endif

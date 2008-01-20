@@ -72,6 +72,7 @@ BOOST_AUTO_TEST_CASE( OGL_animtest ) {
 
 	VFS* vfs = VFS::instance();
 	vfs->addSource(new VFSHostSystem());
+	vfs->setRootDir("");
 
 	if ((!vfs->exists(COMPRESSED_FILE))) {
 		BOOST_ERROR("Test source " << COMPRESSED_FILE << " not found");
@@ -80,12 +81,12 @@ BOOST_AUTO_TEST_CASE( OGL_animtest ) {
 
 	vfs->addSource(new DAT2(COMPRESSED_FILE));
 
-	if ((!vfs->exists(RAW_FILE)) || (!vfs->exists(COMPRESSED_FILE))) {
+	if ((!vfs->exists(RAW_FILE)) || (!vfs->exists("dat2vfstest.map"))) {
 		BOOST_ERROR("Test files not found");
 	}
 
 	RawData* fraw = vfs->open(RAW_FILE);
-	RawData* fcomp = vfs->open(COMPRESSED_FILE);
+	RawData* fcomp = vfs->open("dat2vfstest.map");
 
 	if (fraw->getDataLength() != fcomp->getDataLength()) {
 		std::cout << "raw length = " << fraw->getDataLength() \

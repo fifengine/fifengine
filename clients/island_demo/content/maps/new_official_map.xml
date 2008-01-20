@@ -1083,7 +1083,7 @@
 			</instances>
 		</layer>
 
-		<camera id='default' zoom='1' tilt='-42' rotation='45' ref_layer_id='TechdemoMapTileLayer' ref_cell_width='96' ref_cell_height='126' viewport='0,0,1024,768' />
+		<camera id='default' zoom='1' tilt='-42' rotation='45' ref_layer_id='TechdemoMapTileLayer' ref_cell_width='126' ref_cell_height='96' viewport='0,0,1024,768' />
 
 	</elevation>
 </map>

@@ -149,7 +149,7 @@ class FIFEdit(fife.IWidgetListener, object):
 			self.inputlistener.show_layers = False
 
 		elif self.inputlistener.open_file:
-			self.create_filebrowser('../../clients/techdemo')
+			self.create_filebrowser('../')
 			self.inputlistener.open_file = False
 	
 	def onWidgetAction(self, evt):
