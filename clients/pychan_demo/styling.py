@@ -88,7 +88,7 @@ class StylingExample(PyChanExample):
 		for name,style in STYLES.items():
 			pychan.manager.addStyle(name,style)
 
-		pychan.manager.loadFonts("content/fonts/samanata.fontdef")
+		pychan.loadFonts("content/fonts/samanata.fontdef")
 
 	def start(self):
 		self.styledCredits = None

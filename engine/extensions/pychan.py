@@ -20,7 +20,7 @@ TODO
  - Documentation ( Allways not enough :-( )
  - Completion of above features
  - Wrap missing widgets: RadioButton, Slider
- - Easier Font handling. (WIP)
+ - Handle Image Fonts
  - Add support for fixed size 'Spacers'
  - Add dialog.execute()
  - Add messageBox(text)
@@ -33,6 +33,7 @@ TODO
 
 BUGS
 ----
+ - Font.glyph_spacing is rendered incorrectly.
  - It just looks ugly.
 
 Problems
@@ -149,10 +150,10 @@ classes and thus - for example apply a common font::
 
 The font is set via a string identifier pulled from a font definition
 in a PyChan configuration file. You have to load these by calling
-L{Manager.loadFonts} in your startup code::
+L{loadFonts} in your startup code::
    import pychan
    pychan.init( fifeEngine )
-   pychan.manager.loadFonts( "content/fonts/console.fontdef" )
+   pychan.loadFonts( "content/fonts/console.fontdef" )
 
 The font definition files are in the following format::
 	[Font/FIRST_FONT_NAME]
@@ -170,7 +171,12 @@ The font definition files are in the following format::
 	
 	# And so on.
 
-I hope the example is clear enough ...
+I hope the example is clear enough ... Other options you can set:
+
+  - color: A list of comma separated integers from 0 to 255. White (255,255,255) by default.
+  - antialias: Zero or one - enable or disable antialialising. Enabled by default.
+  - row_spacing: Extra height per row. Default is 0.
+  - glyph_spacing: Extra space per glyph. Default is 0. B{Currently buggy in the engine!}
 
 
 Widget hierachy
@@ -208,7 +214,7 @@ has to be invoked I{after} the subclass specific construction has taken place.
 
 __all__ = [
 	'loadXML',
-	'loadFont',
+	'loadFonts',
 	'init',
 	'manager'
 ]
@@ -327,13 +333,6 @@ class Manager(fife.IWidgetListener):
 			raise InitializationError("PyChan Manager expected a Font instance, not %s." % repr(font))
 		self.fonts[font.name] = font
 
-	def loadFonts(self,filename):
-		"""
-		Load fonts from a config file. These are then available via their name.
-		"""
-		for font in Font.loadFromFile(filename):
-			self.addFont(font)
-
 	def addStyle(self,name,style):
 		style = self._remapStyleKeys(style)
 		
@@ -414,13 +413,25 @@ class Font(object):
 		self.name = name
 		self.typename = get("type")
 		self.source = get("source")
+		self.row_spacing = int(get("row_spacing",0))
+		self.glyph_spacing = int(get("glyph_spacing",0))
 
 		if self.typename == "truetype":
 			self.size = int(get("size"))
+			self.antialias = int(get("antialias",1))
+			self.color = map(int,get("color","255,255,255").split(','))
 			self.font = manager.guimanager.createFont(self.source,self.size,"")
+			
+			if self.font is None:
+				raise InitializationError("Could not load font %s" % name)
 
-		if self.font is None:
-			raise InitializationError("Could not load font %s" % name)
+			self.font.setAntiAlias(self.antialias)
+			self.font.setColor(*self.color)
+		else:
+			raise InitializationError("Unsupported font type %s" % self.typename)
+		
+		self.font.setRowSpacing( self.row_spacing )
+		self.font.setGlyphSpacing( self.glyph_spacing )
 
 	@staticmethod
 	def loadFromFile(filename):
@@ -437,7 +448,10 @@ class Font(object):
 		fonts = []
 		for section in sections:
 			name = section[5:]
-			_get = lambda name: fontdef.get(section,name)
+			def _get(name,default=None):
+				if fontdef.has_option(section,name):
+					return fontdef.get(section,name)
+				return default
 			fonts.append( Font(name,_get) )
 		return fonts
 
@@ -1676,6 +1690,14 @@ def loadXML(file):
 	loader = _GuiLoader()
 	parse(file,loader)
 	return loader.root
+
+def loadFonts(filename):
+	"""
+	Load fonts from a config file. These are then available via their name.
+	"""
+	for font in Font.loadFromFile(filename):
+		manager.addFont(font)
+
 
 # Global Widget Class registry
 
