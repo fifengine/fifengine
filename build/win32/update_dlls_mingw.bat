@@ -1,3 +1,5 @@
+ren .\binaries\mingw\zlib.dll zlib1.dll
+
 del .\..\..\*.dll
 del .\..\..\clients\FIFEdit\*.dll
 del .\..\..\clients\fo_remake\*.dll
