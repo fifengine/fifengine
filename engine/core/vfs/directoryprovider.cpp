@@ -40,7 +40,7 @@ namespace FIFE {
 		// this is a directory. Better idea: split the path on the '/' token and
 		// recursively check for membership in VFS::ListDirectories. C++ doesn't
 		// seem to have built in string splitting though. --jwt
-		if(*(path.end() - 1) != '/')
+		if(path.empty() || *(path.end() - 1) != '/')
 			return false;
 
 		return true;

@@ -605,7 +605,8 @@ def loadMapFile(path, engine, content = ''):
 	handler = ModelLoader(engine, path, content)
 	parser.setContentHandler(handler)
 
-	engine.getVFS().addNewSource(content)
+	if content != '':
+		engine.getVFS().addNewSource(content)
 
 	parser.parse(open(path))
 
