@@ -29,7 +29,7 @@
  *
  * Copyright (c) 2004, 2005 darkbits                        Js_./
  * Per Larsson a.k.a finalman                          _RqZ{a<^_aa
- * Olof Naessén a.k.a jansem/yakslem                _asww7!uY`>  )\a//
+ * Olof Naessï¿½n a.k.a jansem/yakslem                _asww7!uY`>  )\a//
  *                                                 _Qhm`] _f "'c  1!5m
  * Visit: http://guichan.darkbits.org             )Qk<P ` _: :+' .'  "{[
  *                                               .)j(] .d_/ '-(  P .   S
@@ -95,13 +95,16 @@ namespace gcn
     Icon2::Icon2(Image* image)
     {
         mImage = image;
-        setHeight(image->getHeight());
-        setWidth(image->getWidth());
+        if( mImage ) {
+            setHeight(image->getHeight());
+            setWidth(image->getWidth());
+        }
     }
 
     void Icon2::draw(Graphics* graphics)
     {
-        graphics->drawImage(mImage, 0, 0);
+        if ( mImage )
+            graphics->drawImage(mImage, 0, 0);
 
     }
 
@@ -130,7 +133,11 @@ namespace gcn
     }
 
     void Icon2::setImage(Image* image) {
-      mImage = image;
+        mImage = image;
+        if( mImage ) {
+            setHeight(image->getHeight());
+            setWidth(image->getWidth());
+        }
     }
 
 }

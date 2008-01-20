@@ -482,7 +482,7 @@ class Widget(object):
 	  - base_color: Color
 	  - background_color: Color
 	  - foreground_color: Color
-	  - font: String: This should identify a font that was loaded via L{Manager.loadFonts} before.
+	  - font: String: This should identify a font that was loaded via L{loadFonts} before.
 	  - border_size: Integer: The size of the border in pixels.
 	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
 	  results in new windows being centered on screen (for now).
@@ -1229,6 +1229,27 @@ class Label(BasicTextWidget):
 		self.real_widget = fife.Label("")
 		super(Label,self).__init__(**kwargs)
 
+class Icon(Widget):
+	"""
+	An image icon.
+	
+	New Attributes
+	==============
+	
+	  - source: The source location of the Image.
+	"""
+	def __init__(self,source="",**kwargs):
+		self.real_widget = fife.Icon(None)
+		super(Icon,self).__init__(**kwargs)
+
+	def _setSource(self,source):
+		self._source = source
+		self._image = manager.loadImage(source)
+		self.real_widget.setImage( self._image )
+                print self._image,self.real_widget.getWidth(),self.real_widget.getWidth()
+	def _getSource(self): return self._source
+	source = property(_getSource,_setSource)
+
 class ClickLabel(BasicTextWidget):
 	"""
 	A basic label - displaying a string.
@@ -1710,6 +1731,7 @@ WIDGETS = {
 	"ScrollArea" :ScrollArea,
 	
 	# Simple Widgets
+	"Icon" : Icon,
 	"Label" : Label,
 	"ClickLabel" : ClickLabel,
 	
