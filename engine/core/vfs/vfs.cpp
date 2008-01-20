@@ -96,13 +96,13 @@ namespace FIFE {
 	}
 
 	void VFS::addNewSource(const std::string& path) {
-    VFSSource* source = createSource(path);
-    if (source) {
-      addSource(source);
-    } else {
-      FL_WARN(_log, LMsg("Failed to add new VFS source: ") << path);
-    }
-  }
+		VFSSource* source = createSource(path);
+		if (source) {
+			addSource(source);
+		} else {
+			FL_WARN(_log, LMsg("Failed to add new VFS source: ") << path);
+		}
+	}
 
 	void VFS::addSource(VFSSource* source) {
 		m_sources.push_back(source);
