@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/layer.h"
+#include "model/structures/instancetree.h"
 #include "util/logger.h"
 
 #include "camera.h"
@@ -213,7 +214,6 @@ namespace FIFE {
 	}
 
 	ExactModelCoordinate Camera::toElevationCoordinates(ScreenPoint screen_coords) {
-
 		screen_coords.x -= m_viewport.w / 2;
 		screen_coords.y -= m_viewport.h / 2;
 
@@ -264,5 +264,13 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
 		FL_DBG(_log, LMsg("   x1=") << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2);
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
+	}
+	
+	void Camera::getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances) {
+		instances.clear();
+		ExactModelCoordinate ece = toElevationCoordinates(screen_coords);
+		ModelCoordinate ecl = layer.getCellGrid()->toLayerCoordinates(ece);
+		InstanceTree* itree = layer.getInstanceTree();
+		itree->getInstanceList(ecl, 1, 1, instances);
 	}
 }

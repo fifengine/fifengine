@@ -38,6 +38,7 @@
 namespace FIFE {
 
 	typedef Point3D ScreenPoint;
+	class Layer;
 
 	/** Camera describes properties of a view port shown in the main screen
 	 *  Main screen can have multiple cameras active simultanously
@@ -131,7 +132,18 @@ namespace FIFE {
 		/** Gets if camera is enabled / disabled
 		 */
 		bool isEnabled();
+		
+		/** Gets angle of vector defined by given locations and camera properties (e.g. rotation)
+		 *  @return angle in polar coordinates
+		 */
 		int getAngleBetween(const Location& loc1, const Location& loc2);
+		
+		/** Returns instances that match given screen coordinate
+		 * @param screen_coords screen coordinates to be used for hit search
+		 * @param layer layer to use for search
+		 * @param instances list of instances that is filled based on hit test results
+		 */
+		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
 
 	private:
 		std::string m_id;

@@ -44,3 +44,9 @@ namespace FIFE {
 		template<typename T> T* getVisual() const;
 	};
 }
+
+namespace std {
+	%template(InstanceVector) vector<FIFE::Instance*>;
+	%template(InstanceList) list<FIFE::Instance*>;	
+}
+

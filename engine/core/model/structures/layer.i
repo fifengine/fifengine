@@ -11,14 +11,6 @@
 %include "util/attributedclass.i"
 
 namespace FIFE {
-  class Instance;
-}
-
-namespace std {
-  %template(InstanceVector) vector<FIFE::Instance*>;
-}
-
-namespace FIFE {
 
 	class Elevation;
 	class Selection;

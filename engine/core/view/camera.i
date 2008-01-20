@@ -3,10 +3,12 @@
 #include "view/camera.h"
 %}
 
+
 namespace FIFE {
 	typedef Point3D ScreenPoint;
 	%template(ScreenPoint) PointType3D<int>;
 	
+	%apply std::list<Instance*> &OUTPUT { std::list<Instance*>& instances };
 	class Camera {
 	public:
 		Camera(const std::string& id, Layer* layer,Rect viewport, ExactModelCoordinate emc);
@@ -28,5 +30,9 @@ namespace FIFE {
 		void setEnabled(bool enabled);
 		bool isEnabled();
 		
+		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
 	};
+	%clear std::list<Instance*>& instances;
 }
+
+%clear InstanceLst& instances;

@@ -126,7 +126,7 @@ class FIFEdit(fife.IWidgetListener, object):
 			ec = self.camera.toElevationCoordinates(self.inputlistener.newTarget)
 			self.selection = self.edit_layer.getCellGrid().toLayerCoordinates(ec)
 			self.inputlistener.newTarget = None
-			print 'Selection is: (' + str(self.selection.x) + ',' + str(self.selection.y) + ')'
+			print 'From Editor: Selection is: (' + str(self.selection.x) + ',' + str(self.selection.y) + ')'
 
 		elif self.inputlistener.togglehide:
 			self.guiroot.togglehide()

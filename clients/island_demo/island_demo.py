@@ -444,7 +444,11 @@ class World(object):
 			self.engine.pump()
 			
 			# agent movement
-			#if evtlistener.newTarget:
+			if evtlistener.newTarget:
+				objlayer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
+				instances = self.cameras['main'].getMatchingInstances(evtlistener.newTarget, objlayer)
+				print ', '.join(['instance "%s" from obj "%s"' % (i.Id(), i.getObject().Id()) for i in instances])
+				evtlistener.newTarget = None
 			#	dy = -(evtlistener.newTarget.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getElevationCoordinates()).y)
 			#	evtlistener.newTarget.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
 			#	target_elevcoord = self.cameras['main'].toElevationCoordinates(evtlistener.newTarget)
