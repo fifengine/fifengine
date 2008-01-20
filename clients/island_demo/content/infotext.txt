@@ -1,5 +1,4 @@
-Welcome to the FIFE techdemo, release 2007.2
-
+Welcome to the FIFE island_demo, release 2008.0
 
 Keybindings:
 --------------
@@ -15,10 +14,11 @@ Keybindings:
 - C = Toggles coordinates on / off
 - R = Reload map (useful for map editing)
 - S = Second camera on / off
-
+- SHIFT + mouse wheel = Adjust camera zoom
+- CTRL + mouse wheel = Adjust camera rotation
+- ALT + mouse wheel = Adjust camera tilt
 
 Have fun,
-The FIFE and Zero-Projekt teams
+The FIFE team
 
-http://www.zero-projekt.net
 http://www.fifengine.de
