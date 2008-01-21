@@ -1,461 +1,18 @@
-# coding: utf-8
-
-"""\
-Pythonic Guichan Wrapper - PyChan
-=================================
-
-Alpha state.
-
-Features
---------
- - Simpler Interface
- - Very Basic XML Format support
- - Very Basic Layout Engine
- - Automagic background tiling (WIP)
- - Basic Styling support.
- - Simple Font Handling
-
-TODO
-----
- - Documentation ( Allways not enough :-( )
- - Completion of above features
- - Wrap missing widgets: RadioButton, Slider
- - Handle Image Fonts
- - Add support for fixed size 'Spacers'
- - Add dialog.execute()
- - Add messageBox(text)
-
- - Implement StackWidget
- - Then implement TabWidget
-
- - GridLayout
- - Table
-
-BUGS
-----
- - Font.glyph_spacing is rendered incorrectly.
- - It just looks ugly.
-
-Problems
---------
- - Reference counting problems again -sigh-
- ... and thus possible leaks.
- - High amount of code reuse -> Complex code
- - Needs at least new style classes and other goodies.
- - Missing documentation on:
-     - Styling
-     - ScrollArea
-     - Fonts
-
-How to use
-==========
-
-At its core you only need a few functions.
-After setting up FIFE you need to initalize
-pychan. After that you can load a GUI from an
-XML file. Please see the documentation of L{loadXML}
-for the details of the XML format
-::
-   import pychan
-   pychan.init(fifeEngine)
-   guiElement = pychan.loadXML("contents/gui/myform.xml")
-
-The resulting guiElement can be shown and hidden with the
-obvious C{show} and C{hide} methods.
-
-To get a specific widget you have to give it a name in the XML
-definition and use that to extract the widget from the returned
-GUI element.
-::
-   okButton = guiElement.findChild(name="okButton")
-   myInput = guiElement.findChild(name="myInput")
-
-The data is extracted and set via direct attribute access.
-These are using the python property technique to hide
-behind the scenes manipulations. Please keep in mind that
-the Layout engine and the exact way the widgets are displayed
-is somewhat limited.
-::
-   myInput.text = "Blahblah"
-   myList.items = ["1","2"]
-   guiElement.position = (80,90)
-
-A dialog without an OK button would be futile - so here's how
-you hook widget events to function calls. Every widget
-has a C{capture} method, which will directly call the passed
-function when an widget event occurs. As a convenience a
-C{mapEvents} function will batch the C{findChild} and
-C{capture} calls in an obvious way.
-::
-   myButton.capture( application.quit )
-   guiElement.mapEvents({
-      'okButton' : self.applyAndClose,
-      'closeButton':  guiElement.hide
-   })
-
-Other important places to look for information:
-  - L{Widget} - Attributes explained.
-  - L{loadXML} - Explain the XML format.
-  - L{LayoutBase} - Working of the layout engine.
-
-
-Initialization, data distribution and collection
-================================================
-
-Very often a dialogs text fields, labels and listboxes have to be filled with data
-after the creation of the dialog. This can be a tiresome process.
-After a dialog has executed, B{other} attributes have to be read out again,
-this to can be tiresome. PyChan simplifies both processes. But it treats them as three
-processes. One is setting the data that will never be read out again - called B{initial data} -
-the text of a checkbox or the list of a listBox are good examples. The second is setting the
-data that is mutable by the user and may be read out again - for example the state of a checkbox
-or the selected index in a list. The third and final process is collection of the user-mutable data::
-  guiElement.distributeInitialData({
-  	'myListBox' : choices,
-  	'myLabel' : map.name,
-  })
-  guiElement.distributeData({
-  	'myTextField' : map.description
-  })
-  # ... process dialog.
-  data = guiElement.collectData(['myListBox','myTextField'])
-  map.description = data['myTextField']
-  print "You selected:",data['myListBox'],", good choice!"
-
-Styling and font handling
-=========================
-
-Note: These features are B{work in progress} and likely to change.
-
-A style is a set of rules for matching widgets and a set of attributes
-applied to them after creation. The attributes can be any of the given
-attributes. Matching happens currently only by the widget class name
-itself.
-
-As an example the following style - written as a python data structure -
-will set the border size of all labels to 10::
-  style = {
-      'ListBox' : { # Matches all listboxes
-           'border_size : 10 # After creation call  lisbox.border_size = 10
-      }
-  }
-
-As a convenience you can use the string B{default} to match all widget
-classes and thus - for example apply a common font::
-  style = {
-     'default' : {
-          'font' : 'console_small'
-     }
-  }
-
-The font is set via a string identifier pulled from a font definition
-in a PyChan configuration file. You have to load these by calling
-L{loadFonts} in your startup code::
-   import pychan
-   pychan.init( fifeEngine )
-   pychan.loadFonts( "content/fonts/console.fontdef" )
-
-The font definition files are in the following format::
-	[Font/FIRST_FONT_NAME]
-	
-	type: truetype
-	source: path/to/font.ttf
-	# The font size in point
-	size: 30
-	
-	[Font/SECOND_FONT_NAME]
-	
-	type: truetype
-	source: content/fonts/samanata.ttf
-	size: 8
-	
-	# And so on.
-
-I hope the example is clear enough ... Other options you can set:
-
-  - color: A list of comma separated integers from 0 to 255. White (255,255,255) by default.
-  - antialias: Zero or one - enable or disable antialialising. Enabled by default.
-  - row_spacing: Extra height per row. Default is 0.
-  - glyph_spacing: Extra space per glyph. Default is 0. B{Currently buggy in the engine!}
-
-
-Widget hierachy
-===============
-
-Every widget can be contained in another container widget like L{Window}, L{VBox},
-L{HBox}, L{Container} or L{ScrollArea}. Container widgets can contain any number
-of widgets. Thus we have a tree like structure of the widgets - which finally makes
-up the window or frame that is placed on the screen.
-
-In PyChan widgets are supposed to be manipulated via the root of this hierachy,
-so that the actual layout can be changed in the XML files without hassle.
-It can be compared to how HTML works.
-
-These bits and pieces connect things up::
- -  name - A (hopefully) unique name in the widget hierachy
- -  findChildren - The accessor method to find widgets by name or any other attribute.
- -  _parent - The parent widget in the widget hierachy
- -  deepApply - The method used to walk over the widget hierachy. You have to reimplement
-   this in case you want to provide custom widgets.
-
-Wrapping machinery
-==================
-
-The wrapping mechanism works be redirecting attribute access to the Widget
-derived classes to a C{real_widget} member variable which in turn is an instance
-of the SWIG wrapped Guichan widget.
-
-To ensure the real widget has already been constructed, when the wrapping machinery
-is already in use, this has to be the first attribute to set in the constructors.
-This leads to a reversed construction sequence as the super classes constructor
-has to be invoked I{after} the subclass specific construction has taken place.
-
-"""
-
-__all__ = [
-	'loadXML',
-	'loadFonts',
-	'init',
-	'manager'
-]
+### Widget/Container Base Classes ###
 
 import fife, pythonize
+import tools
+from exceptions import *
 
-### Functools ###
-
-def applyOnlySuitable(func,**kwargs):
-	"""
-	This nifty little function takes another function and applies it to a dictionary of
-	keyword arguments. If the supplied function does not expect one or more of the
-	keyword arguments, these are silently discarded. The result of the application is returned.
-	This is useful to pass information to callbacks without enforcing a particular signature.
-	"""
-	if hasattr(func,'im_func'):
-		code = func.im_func.func_code
-		varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
-	else:
-		code = func.func_code
-		varnames = code.co_varnames[0:code.co_argcount]
-
-	#http://docs.python.org/lib/inspect-types.html
-	if code.co_flags & 8:
-		return func(**kwargs)
-	for name,value in kwargs.items():
-		if name not in varnames:
-			del kwargs[name]
-	return func(**kwargs)
-		
-
-# Text munging befor adding it to TextBoxes
+def get_manager():
+    import pychan
+    return pychan.manager
 
 def _mungeText(text):
 	"""
 	This function is applied to all text set on widgets, currently only replacing tabs with four spaces.
 	"""
 	return text.replace('\t'," "*4)
-
-### Initialisation ###
-
-class PyChanException(Exception):
-	"""
-	Base exception class for PyChan.
-	All exceptions raised by PyChan derive from this.
-	"""
-	pass
-
-class InitializationError(PyChanException):
-	"""
-	Exception raised during the initialization.
-	"""
-	pass
-
-class RuntimeError(PyChanException):
-	"""
-	Exception raised during the run time - for example caused by a missing name attribute in a XML file.
-	"""
-	pass
-
-class Manager(fife.IWidgetListener):
-	def __init__(self, engine, debug = False):
-		super(Manager,self).__init__()
-		self.engine = engine
-		self.debug = debug
-
-		if not self.engine.getEventManager():
-			raise InitializationError("No event manager installed.")
-		if not self.engine.getGuiManager():
-			raise InitializationError("No GUI manager installed.")
-		
-		self.guimanager = engine.getGuiManager()
-		self.fonts = {}
-		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
-		self.fonts['default'] = self.engine.getDefaultFont()
-		
-		self.styles = {}
-		self.styles['default'] = DEFAULT_STYLE
-		
-		self.widgetEvents = {}
-		self.engine.getEventManager().addWidgetListener(self)
-
-	def show(self,widget):
-		"""
-		Shows a widget on screen. Used by L{Widget.show} - do not use directly.
-		"""
-		if widget.position_technique == "automatic":
-			w,h = self.engine.getSettings().getScreenWidth(), self.engine.getSettings().getScreenHeight()
-			widget.position = (w-widget.width)/2,(h-widget.height)/2
-		self.guimanager.add( widget.real_widget )
-
-	def hide(self,widget):
-		"""
-		Hides a widget again. Used by L{Widget.hide} - do not use directly.
-		"""
-		self.guimanager.remove( widget.real_widget )
-
-	def getFont(self,name):
-		"""
-		Returns a GuiFont identified by its name.
-		
-		@param name: A string identifier from the font definitions in pychans config files.
-		"""
-		font = self.fonts.get(name)
-		return getattr(font,"font",font)
-
-	def addFont(self,font):
-		"""
-		Add a font to the font registry. It's not necessary to call this directly.
-		But it expects a L{Font} instance and throws an L{InitializationError}
-		otherwise.
-		
-		@param font: A L{Font} instance.
-		"""
-		if not isinstance(font,Font):
-			raise InitializationError("PyChan Manager expected a Font instance, not %s." % repr(font))
-		self.fonts[font.name] = font
-
-	def addStyle(self,name,style):
-		style = self._remapStyleKeys(style)
-		
-		for k,v in self.styles['default'].items():
-			style[k] = style.get(k,v)
-		self.styles[name] = style
-
-	def stylize(self,widget, style, **kwargs):
-		style = self.styles[style]
-		for k,v in style.get('default',{}).items():
-			v = kwargs.get(k,v)
-			setattr(widget,k,v)
-		
-		cls = widget.__class__
-		for applicable,specstyle in style.items():
-			if not isinstance(applicable,tuple):
-				applicable = (applicable,)
-			if cls in applicable:
-				for k,v in specstyle.items():
-					v = kwargs.get(k,v)
-					setattr(widget,k,v)
-
-	def _remapStyleKeys(self,style):
-		# Remap class names, create copy:
-		def _toClass(class_):
-			if class_ == "default":
-				return class_
-			
-			if type(class_) == type(Widget) and issubclass(class_,Widget):
-				return class_
-			if not WIDGETS.has_key(str(class_)):
-				raise InitializationError("Can't resolve %s to a widget class." % repr(class_))
-			return WIDGETS[str(class_)]
-		
-		style_copy = {}
-		for k,v in style.items():
-			if isinstance(k,tuple):
-				new_k = tuple(map(_toClass,k))
-			else:
-				new_k = _toClass(k)
-			style_copy[new_k] = v
-		return style_copy
-
-	def loadImage(self,filename):
-		return fife.GuiImage(self.engine.imagePool.addResourceFromFile(filename),self.engine.imagePool)
-
-	def defaultWidgetAction(self,event):
-		if self.debug:
-			print "Event(%s) received." % event.getId()
-
-	def onWidgetAction(self, event):
-		#print event.getId(),self.widgetEvents
-		for handler in self.widgetEvents.get( event.getId(), [self.defaultWidgetAction] ):
-			try:
-				handler( event )
-			except Exception, e:
-				print "*** Error in event callback for ",event.getId()
-				import traceback
-				traceback.print_exc()
-
-
-manager = None
-def init(engine,debug=False):
-	"""
-	This has to be called before any other pychan methods can be used.
-	It sets up a manager object which is available under pychan.manager.
-	
-	@param engine: The FIFE engine object.
-	"""
-	global manager
-	manager = Manager(engine,debug)
-
-# Font handling
-
-class Font(object):
-	def __init__(self,name,get):
-		self.font = None
-		self.name = name
-		self.typename = get("type")
-		self.source = get("source")
-		self.row_spacing = int(get("row_spacing",0))
-		self.glyph_spacing = int(get("glyph_spacing",0))
-
-		if self.typename == "truetype":
-			self.size = int(get("size"))
-			self.antialias = int(get("antialias",1))
-			self.color = map(int,get("color","255,255,255").split(','))
-			self.font = manager.guimanager.createFont(self.source,self.size,"")
-			
-			if self.font is None:
-				raise InitializationError("Could not load font %s" % name)
-
-			self.font.setAntiAlias(self.antialias)
-			self.font.setColor(*self.color)
-		else:
-			raise InitializationError("Unsupported font type %s" % self.typename)
-		
-		self.font.setRowSpacing( self.row_spacing )
-		self.font.setGlyphSpacing( self.glyph_spacing )
-
-	@staticmethod
-	def loadFromFile(filename):
-		"""
-		Static method to load font definitions out of a PyChan config file.
-		"""
-		import ConfigParser
-		
-		fontdef = ConfigParser.ConfigParser()
-		fontdef.read(filename)
-		
-		sections = [section for section in fontdef.sections() if section.startswith("Font/")]
-	
-		fonts = []
-		for section in sections:
-			name = section[5:]
-			def _get(name,default=None):
-				if fontdef.has_option(section,name):
-					return fontdef.get(section,name)
-				return default
-			fonts.append( Font(name,_get) )
-		return fonts
-
-### Widget/Container Base Classes ###
 
 class Widget(object):
 	"""
@@ -547,8 +104,8 @@ class Widget(object):
 		Add a callback to be executed when the widget event occurs on this widget.
 		"""
 		def captured_f(event):
-			applyOnlySuitable(callback,event=event,widget=self)
-		manager.widgetEvents.setdefault(self._event_id,[]).append(captured_f)
+			tools.applyOnlySuitable(callback,event=event,widget=self)
+		get_manager().widgetEvents.setdefault(self._event_id,[]).append(captured_f)
 
 	def show(self):
 		"""
@@ -557,7 +114,7 @@ class Widget(object):
 		if self._visible: return
 		self.beforeShow()
 		self.adaptLayout()
-		manager.show(self)
+		get_manager().show(self)
 		self._visible = True
 
 	def hide(self):
@@ -565,7 +122,7 @@ class Widget(object):
 		Hide the widget and all contained widgets.
 		"""
 		if not self._visible: return
-		manager.hide(self)
+		get_manager().hide(self)
 		self.afterHide()
 		self._visible = False
 	
@@ -727,7 +284,7 @@ class Widget(object):
 		Recursively apply a style to all widgets.
 		"""
 		def _restyle(widget):
-			manager.stylize(widget,style,**kwargs)
+			get_manager().stylize(widget,style,**kwargs)
 		self.deepApply(_restyle)
 
 	def resizeToContent(self,recurse = True):
@@ -815,7 +372,7 @@ class Widget(object):
 
 	def _setFont(self, font):
 		self._font = font
-		self.real_font = manager.getFont(font)
+		self.real_font = get_manager().getFont(font)
 		self.real_widget.setFont(self.real_font)
 	def _getFont(self):
 		return self._font
@@ -850,14 +407,14 @@ class Widget(object):
 		try:
 			self._event_id = "%s(name=%s,id=%d)" % (str(self.__class__),name,id(self))
 			self.real_widget.setActionEventId(self._event_id)
-			self.real_widget.addActionListener(manager.guimanager)
+			self.real_widget.addActionListener(get_manager().guimanager)
 		except AttributeError: pass
 	name = property(_getName,_setName)
 
 	def _getStyle(self): return self._style
 	def _setStyle(self,style):
 		self._style = style
-		manager.stylize(self,style)
+		get_manager().stylize(self,style)
 	style = property(_getStyle,_setStyle)
 
 	x = property(_getX,_setX)
@@ -957,7 +514,7 @@ class Container(Widget,fife.Container):
 		# Background generation is done in _resetTiling
 
 		if not isinstance(image, fife.GuiImage):
-			image = manager.loadImage(image)
+			image = get_manager().loadImage(image)
 		self._background_image = image
 	
 	def getBackgroundImage(self): return self._background_image
@@ -1244,7 +801,7 @@ class Icon(Widget):
 
 	def _setSource(self,source):
 		self._source = source
-		self._image = manager.loadImage(source)
+		self._image = get_manager().loadImage(source)
 		self.real_widget.setImage( self._image )
                 print self._image,self.real_widget.getWidth(),self.real_widget.getWidth()
 	def _getSource(self): return self._source
@@ -1526,6 +1083,8 @@ class TextField(Widget):
 	opaque = property(_getOpaque,_setOpaque)
 
 
+# coding: utf-8
+
 class ScrollArea(Widget):
 	"""
 	A wrapper around another (content) widget.
@@ -1575,151 +1134,6 @@ class Spacer(object):
 	def __init__(self,parent=None,**kwargs):
 		self._parent = parent
 
-
-# XML Loader
-
-from xml.sax import saxutils, handler
-
-class GuiXMLError(PyChanException):
-	"""
-	An error that occured during parsing an XML file.
-	"""
-	pass
-
-class _GuiLoader(object, handler.ContentHandler):
-	def __init__(self):
-		super(_GuiLoader,self).__init__()
-		self.root = None
-		self.indent = ""
-		self.stack = []
-		
-	def _toIntList(self,s):
-		try:
-			return tuple(map(int,str(s).split(',')))
-		except:
-			raise GuiXMLError("Expected an comma separated list of integers.")
-
-	def _parseAttr(self,attr):
-		name, value = attr
-		name = str(name)
-		if name in ('position','size','min_size','max_size','margins'):
-			value = self._toIntList(value)
-		elif name in ('foreground_color','base_color','background_color'):
-			value = self._toIntList(value)
-		elif name in ('opaque','border_size','padding'):
-			value = int(value)
-		else:
-			value = str(value)
-		return (name,value)
-
-	def _printTag(self,name,attrs):
-		if not manager.debug: return
-		attrstrings = map(lambda t: '%s="%s"' % tuple(map(str,t)),attrs.items())
-		tag = "<%s " % name + " ".join(attrstrings) + ">"
-		print self.indent + tag
-
-	def _resolveTag(self,name):
-		""" Resolve a XML Tag to a PyChan GUI class. """
-		cls = WIDGETS.get(name,None)
-		if cls is None and name == "Spacer":
-			cls = Spacer
-		if cls is None:
-			raise GuiXMLError("Unknown GUI Element: %s" % name)
-		return cls
-
-	def startElement(self, name, attrs):
-		self._printTag(name,attrs)
-		cls = self._resolveTag(name)
-		if issubclass(cls,Widget):
-			self.stack.append('gui_element')
-			self._createInstance(cls,name,attrs)
-		elif cls == Spacer:
-			self.stack.append('spacer')
-			self._createSpacer(cls,name,attrs)
-		else:
-			self.stack.append('unknown')
-		self.indent += " "*4
-
-	def _createInstance(self,cls,name,attrs):
-		attrs = map(self._parseAttr,attrs.items())
-		obj = cls(parent=self.root)
-		for k,v in attrs:
-			setattr(obj,k,v)
-			
-		if hasattr(self.root,'add'):
-			self.root.add(obj)
-		elif hasattr(self.root,'content'):
-			self.root.content = obj
-		else:
-			if self.root is not None:
-				raise GuiXMLError("*** unknown containment relation :-(")
-		self.root = obj
-	
-	def _createSpacer(self,cls,name,attrs):
-		attrs = map(self._parseAttr,attrs.items())
-		obj = cls(parent=self.root)
-		for k,v in attrs:
-			setattr(obj,k,v)
-			
-		if hasattr(self.root,'add'):
-			self.root.addSpacer(obj)
-		else:
-			raise GuiXMLError("A spacer needs to be added to a container widget!")
-		self.root = obj
-
-	def endElement(self, name):
-		self.indent = self.indent[:-4]
-		if manager.debug: print self.indent + "</%s>" % name
-		if self.stack.pop() in ('gui_element','spacer'):
-			self.root = self.root._parent or self.root
-
-def loadXML(file):
-	"""
-	Loads a PyChan XML file and generates a widget from it.
-	
-	The XML format is very dynamic, in the sense, that the actual allowed tags and attributes
-	depend on the PyChan code and names in this file.
-	
-	So when a tag C{Button} is encountered, an instance of class Button will be generated,
-	and added to the parent object.
-	All attributes will then be parsed and then set in the following way:
-	
-	  - position,size,min_size,max_size,margins - These are assumed to be comma separated tuples
-	    of integers.
-	  - foreground_color,base_color,background_color - These are assumed to be triples of comma
-	    separated integers.
-	  - opaque,border_size,padding - These are assumed to be simple integers.
-	
-	All other attributes are set verbatim as strings on the generated instance.
-	
-	In short::
-		<VBox>
-			<Button text="X" min_size="20,20" base_color="255,0,0" border_size="2" />
-		</VBox>
-	
-	This result in the following code executed::
-	
-		vbox = VBox(parent=None)
-		button = Button(parent=vbox)
-		button.text = "X"
-		button.min_size = (20,20)
-		button.base_color = (255,0,0)
-		button.border_size = 2
-		vbox.add( button )
-	"""
-	from xml.sax import parse
-	loader = _GuiLoader()
-	parse(file,loader)
-	return loader.root
-
-def loadFonts(filename):
-	"""
-	Load fonts from a config file. These are then available via their name.
-	"""
-	for font in Font.loadFromFile(filename):
-		manager.addFont(font)
-
-
 # Global Widget Class registry
 
 WIDGETS = {
@@ -1744,40 +1158,4 @@ WIDGETS = {
 	"TextBox" : TextBox,
 	"ListBox" : ListBox,
 	"DropDown" : DropDown
-}
-
-# Default Widget style.
-
-DEFAULT_STYLE = {
-	'default' : {
-		'border_size': 1,
-		'margins': (0,0),
-		'base_color' : fife.Color(0,0,100),
-		'foreground_color' : fife.Color(255,255,255),
-		'background_color' : fife.Color(0,0,0),
-	},
-	Button : {
-		'border_size': 0,
-		'margins' : (10,5),
-	},
-	CheckBox : {
-		'border_size': 0,
-	},
-	Label : {
-		'border_size': 0,
-	},
-	ClickLabel : {
-		'border_size': 0,
-	},
-	ListBox : {
-		'border_size': 0,
-	},
-	Window : {
-		'border_size': 1,
-		'margins': (5,5),
-	},
-	(Container,HBox,VBox) : {
-		'border_size': 0,
-		'opaque' : False
-	}
 }
