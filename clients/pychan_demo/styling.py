@@ -102,6 +102,11 @@ class StylingExample(PyChanExample):
 		})
 		self.widget.show()
 
+	def stop(self):
+		super(StylingExample,self).stop()
+		if self.styledCredits:
+			self.styledCredits.hide()
+
 	def testStyle(self):
 		# Hm in this case the collectData IFACE  is pretty rediciulous :-( but it needs a test!
 		style = self.styles[self.widget.collectData(['styleList'])['styleList']]
