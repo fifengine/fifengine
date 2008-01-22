@@ -186,8 +186,6 @@ class ModelSaver:
 		cameralist = self.engine.getView().getCameras()
 
 		for cam in cameralist:
-			print 'Inspecting cam %s for elev %s...' % (cam.getId(), elev.Id())
-
 			if cam.getLocation().getElevation().Id() == elev.Id():
 				celldimensions = cam.getCellImageDimensions()
 				viewport = cam.getViewPort();
