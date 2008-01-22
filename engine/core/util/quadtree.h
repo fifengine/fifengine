@@ -35,6 +35,8 @@
 
 namespace FIFE {
 
+/** QuadTree Node
+ */
 template<typename DataType, int MinimumSize = 128>
 class QuadNode {
 	protected:
@@ -44,6 +46,12 @@ class QuadNode {
 		DataType m_data;
 
 	public:
+		/** Create a new QuadNode 
+		 *  @param parent The parent QuadNode this node is contained in or null.
+		 *  @param x The X position of this QuadNode.
+		 *  @param y The Y position of this QuadNode.
+		 *  @param size The width and height of this QuadNode.
+		 */
 		QuadNode(QuadNode* parent, int x, int y, int size) 
 			: m_parent(parent),m_x(x),m_y(y),m_size(size),m_data() {
 			m_nodes[0] = m_nodes[1] = m_nodes[2] = m_nodes[3] = 0L;
@@ -56,11 +64,31 @@ class QuadNode {
 			delete m_nodes[3];
 		}
 
+		/** Find a container node for a given rectangle.
+		 *  This guarantees to return a Node with the following
+		 *  properties:
+		 *  1.) The node contains the rectangle (as defined by the contains
+		 *  function). 2.) All subnodes can not contain the rectangle or it has the MinimumSize.
+		 *  3.) In case these properties can only be fulfilled by extending the tree upwards,
+		 *  that is by creating a new root node - this function will return null.
+		 *
+		 *  This function will extend the tree automatically so that this guarantee
+		 *  can be fulfilled.
+		 */
 		QuadNode* find_container(int x, int y, int w, int h);
 		QuadNode* find_container(const Rect& rect) {
 			return find_container(rect.x,rect.y,rect.w,rect.h);
 		}
 
+		/** Apply a visitor recursively to the QuadTree
+		 * A visitor is an object which has a @c visit method which
+		 * takes as parameters a pointer to a @c QuadNode and an integer.
+		 * The integer is the depth of the given node.
+		 * If the method returns @c true it is applied recursivly to all
+		 * existing subnodes with a depth increased by one.
+		 * The application happens in Z order (top left, top right, bottom
+		 * left and finally bottom right).
+		 */
 		template<typename Visitor>
 		void apply_visitor(Visitor& visitor, int d = 0) {
 			if( !visitor.visit(this, d) )
@@ -71,41 +99,93 @@ class QuadNode {
 			if( m_nodes[3] ) m_nodes[3]->apply_visitor(visitor, d + 1);
 		}
 
+		/** Return the X position of the node.
+		 */
 		int x() const { return m_x; };
+
+		/** Return the Y position of the node.
+		 */
 		int y() const { return m_y; };
+
+		/** Return the size (width and height) of the node.
+		 */
 		int size() const { return m_size; };
+
+		/** Return a reference to the data of the node.
+		 */
 		DataType& data() { return m_data; };
 		
-
+		/** Check whether a rectangle is contained in the node.
+		 * A rectangle is contained in a node, iff:
+		 * @code
+		 *    x >= x() and x + w < x() + size() and y >= y() and y + h < y() + size()
+		 * @endcode
+		 * That is the top and left borders are inclusive, but the right and bottom
+		 * borders are exclusive.
+		 */
 		bool contains(int x, int y, int w, int h) const;
 
-		// DEBUGGING
+		/// Expand the subnodes - only needed for debugging/profiling worst cases.
 		void splice();
+
+		/** Return the parent node
+		 */
 		QuadNode* parent() { return m_parent; };
+
+		/** Create a new parent node for a rectangle
+		 *  This will create a new parent node end expand the tree so that
+		 *  the given rectangle will eventually be contained after enough calls
+		 *  of this function.
+		 */
 		QuadNode* create_parent(int x, int y, int w, int h);
 	protected:
 		int  subnode(int x, int y, int w, int h) const;
 };
 
+/** Dynamic QuadTree
+ *  A space partitioning tree automatically expanding to adjust
+ *  to any object size put into the data structure.
+ */
 template<typename DataType, int MinimumSize = 128>
 class QuadTree {
 	public:
 		typedef QuadNode<DataType,MinimumSize> Node;
 
-		QuadTree(int x = 0, int y = 0, int s = MinimumSize) {
-			assert(s>1);
-			m_cursor = m_root = new Node(0L,x,y,s);
+		/** Create a new QuadTree
+		 *  @param x The X position of the starting node.
+		 *  @param y The Y position of the starting node.
+		 *  @param starting_size The width and height of the starting node.
+		 */
+		QuadTree(int x = 0, int y = 0, int starting_size = MinimumSize) {
+			assert(starting_size>1);
+			m_cursor = m_root = new Node(0L,x,y,starting_size);
 		}
+
 		~QuadTree() {
 			assert( m_root->parent() == 0 );
 			delete m_root;
 		}
 
+		/** Find a container node for a given rectangle.
+		 *  This guarantees to return a Node with the following
+		 *  properties:
+		 *  1.) The node contains the rectangle (as defined by the contains
+		 *  function). 2.) All subnodes can not contain the rectangle or it has the MinimumSize.
+		 *  This function will extend the tree automatically so that this guarantee
+		 *  can be fulfilled.
+		 *  This function is optimized for sequential access. This means accessing different rectangles
+		 *  that are 'near' to each other will be fast.
+		 *  @warning If you put different sized objects in (for example) lists in the quadnode,
+		 *  the returned node will @b not contain all objects which might intersect with the given
+		 *  rectangle.
+		 */
 		Node* find_container(int x, int y, int w, int h);
 		Node* find_container(const Rect& rect) {
 			return find_container(rect.x,rect.y,rect.w,rect.h);
 		}
 
+		/** Apply a visitor recursively to the QuadTree
+		 */
 		template<typename Visitor>
 		Visitor& apply_visitor(Visitor& visitor) {
 			m_root->apply_visitor(visitor,0);
