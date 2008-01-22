@@ -324,6 +324,8 @@ class World(object):
 		self.elevation = self.map.getElevations("id", "TechdemoMapElevation")[0]
 		self.layer = self.elevation.getLayers("id", "TechdemoMapTileLayer")[0]
 		
+		self.view.getRenderer('QuadTreeRenderer').setEnabled(True)
+
 		#self.agent_layer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
 		
 		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().get2dGfxVisual().getStaticImageIndexByAngle(0))

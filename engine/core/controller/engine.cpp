@@ -208,7 +208,6 @@ namespace FIFE {
 			m_settings.getDefaultFontPath(),
 			m_settings.getDefaultFontSize(),
 			m_settings.getDefaultFontGlyphs());
-
 		FL_LOG(_log, "Initializing GUI manager");
 		m_guimanager->init(m_gui_graphics, m_settings.getScreenWidth(), m_settings.getScreenHeight());
 		FL_LOG(_log, "GUI manager initialized");
@@ -230,7 +229,8 @@ namespace FIFE {
 		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, m_imagepool, 0));
 		m_view->addRenderer(new InstanceRenderer(m_renderbackend, m_imagepool, m_animpool, 1));
 		m_view->addRenderer(new GridRenderer(m_renderbackend, 2));
-		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont), 3));
+		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 3));
+		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont), 4));
 		FL_LOG(_log, "Engine intialized");
 	}
 
