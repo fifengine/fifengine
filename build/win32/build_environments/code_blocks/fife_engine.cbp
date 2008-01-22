@@ -1273,6 +1273,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\renderers\quadtreerenderer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\renderers\quadtreerenderer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\..\engine\core\view\view.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>

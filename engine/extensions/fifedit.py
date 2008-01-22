@@ -2,7 +2,7 @@ import fife
 from loaders import loadMapFile
 from savers import saveMapFile
 
-from widgets import *
+from extra_widgets import *
 
 import os
 
