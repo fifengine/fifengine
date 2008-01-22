@@ -25,6 +25,7 @@
 // 3rd party library includes
 #include <boost/functional.hpp>
 #include <boost/regex.hpp>
+#include <boost/algorithm/string.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -130,6 +131,28 @@ namespace FIFE {
 		return getSourceForFile(lower(file));
 	}
 
+	bool VFS::isDirectory(const std::string& path) const {
+		std::vector<std::string> tokens;
+		// Add a slash in case there isn't one in the string
+		boost::algorithm::split(tokens, path + "/", boost::algorithm::is_any_of("/"));
+
+		std::string currentpath = "/";
+		std::vector<std::string>::const_iterator token=tokens.begin();
+		while(token != tokens.end()) {
+			if(*token != "") {
+				if (VFS::instance()->listDirectories(currentpath, *token).size() == 0) {
+					return false;
+				}
+				else {
+					currentpath += *token + "/";
+				}
+			}
+			token++;
+		}
+
+		return true;
+	}
+
 	RawData* VFS::open(const std::string& path) {
 		std::string lowerpath = lower(path);
 		FL_DBG(_log, LMsg("Opening: ") << lowerpath);
@@ -163,8 +186,7 @@ namespace FIFE {
 	std::vector<std::string> VFS::listFiles(const std::string& path, const std::string& filterregex) const {
 		std::string lowerpath = lower(path);
 		std::vector<std::string> list = listFiles(lowerpath);
-		filterList(list, filterregex);
-		return list;
+		return filterList(list, filterregex);
 	}
 
 	std::vector<std::string> VFS::listDirectories(const std::string& pathstr) const {
@@ -181,20 +203,20 @@ namespace FIFE {
 
 	std::vector<std::string> VFS::listDirectories(const std::string& path, const std::string& filterregex) const {
 		std::vector<std::string> list = listDirectories(lower(path));
-		filterList(list, filterregex);
-		return list;
+		return filterList(list, filterregex);
 	}
 
-	void VFS::filterList(std::vector<std::string>& list, const std::string& fregex) const {
+	std::vector<std::string> VFS::filterList(const std::vector<std::string>& list, const std::string& fregex) const {
+		std::vector<std::string> results;
 		boost::regex regex(fregex);
-		std::vector<std::string>::iterator end = list.end();
-		for (std::vector<std::string>::iterator i = list.begin(); i != end;) {
+		std::vector<std::string>::const_iterator end = list.end();
+		for (std::vector<std::string>::const_iterator i = list.begin(); i != end;) {
 			boost::cmatch match;
-			if (!boost::regex_match((*i).c_str(), match, regex))
-				list.erase(i++);
-			else
-				++i;
+			if (boost::regex_match((*i).c_str(), match, regex)) {
+				results.push_back(*i);
+			}
+			++i;
 		}
-
+		return results;
 	}
 }

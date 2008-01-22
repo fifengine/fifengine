@@ -98,6 +98,13 @@ namespace FIFE {
 			 */
 			bool exists(const std::string& file) const;
 
+			/** Check if the given path is a directory
+			 *
+			 * @param path to check
+			 * @return true if it is a directory, false if not
+			 */
+			bool isDirectory(const std::string& path) const;
+
 			/** Open a file
 			 *
 			 * @param path the file to open
@@ -149,7 +156,7 @@ namespace FIFE {
 			typedef std::set<std::string> type_usedfiles;
 			mutable type_usedfiles m_usedfiles;
 
-			void filterList(std::vector<std::string>& list, const std::string& regex) const;
+			std::vector<std::string> filterList(const std::vector<std::string>& list, const std::string& fregex) const;
 			std::string lower(const std::string&) const;
 			VFSSource* getSourceForFile(const std::string& file) const;
 	};

@@ -66,11 +66,29 @@ namespace FIFE {
 	}
 
 	std::vector<std::string> VFSDirectory::listFiles(const std::string& path) const {
-		return list(m_root + path, false);
+		std::string dir = m_root;
+		// Avoid double slashes
+		if(path[0] == '/' && m_root[m_root.size()-1] == '/') {
+			dir.append(path.substr(1));
+		}
+		else {
+			dir.append(path);
+		}
+
+		return list(dir, false);
 	}
 
 	std::vector<std::string> VFSDirectory::listDirectories(const std::string& path) const {
-		return list(m_root + path, true);
+		std::string dir = m_root;
+		// Avoid double slashes
+		if(path[0] == '/' && m_root[m_root.size()-1] == '/') {
+			dir.append(path.substr(1));
+		}
+		else {
+			dir.append(path);
+		}
+
+		return list(dir, true);
 	}
 
 	std::vector<std::string> VFSDirectory::list(const std::string& path, bool directorys) const {

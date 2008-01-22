@@ -36,14 +36,7 @@
 
 namespace FIFE {
 	bool DirectoryProvider::isReadable(const std::string& path) const {
-		// TODO: Checking for a trailing slash isn't a very good test for whether
-		// this is a directory. Better idea: split the path on the '/' token and
-		// recursively check for membership in VFS::ListDirectories. C++ doesn't
-		// seem to have built in string splitting though. --jwt
-		if(path.empty() || *(path.end() - 1) != '/')
-			return false;
-
-		return true;
+		return VFS::instance()->isDirectory(path);
 	}
 
 	FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path) const {
