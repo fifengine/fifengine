@@ -268,9 +268,12 @@ namespace FIFE {
 	
 	void Camera::getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
-		ExactModelCoordinate ece = toElevationCoordinates(screen_coords);
+		ScreenPoint pt(screen_coords);
+		int dy = -(pt.y - toScreenCoordinates(getLocation().getElevationCoordinates()).y);
+		pt.z = (int)(tan(getTilt()* (M_PI / 180.0)) * dy);
+		ExactModelCoordinate ece = toElevationCoordinates(pt);
 		ModelCoordinate ecl = layer.getCellGrid()->toLayerCoordinates(ece);
 		InstanceTree* itree = layer.getInstanceTree();
-		itree->getInstanceList(ecl, 1, 1, instances);
+		itree->getInstanceList(ecl, 0, 0, instances);
 	}
 }

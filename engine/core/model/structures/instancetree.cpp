@@ -43,7 +43,7 @@ namespace FIFE {
 
 	bool InstanceTree::addInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
-		InstanceList* lst = getInstanceList(coords, 1, 1);
+		InstanceList* lst = getInstanceList(coords, 0, 0);
 		if(lst == 0) {
 			return false;
 		}

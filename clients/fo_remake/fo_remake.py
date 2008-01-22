@@ -368,6 +368,11 @@ class World(object):
 		renderer.clearActiveLayers()
 		renderer.addActiveLayer(self.elevation.getLayers("id", TDS.CoordinateLayerName)[0])
 
+		renderer = self.view.getRenderer('QuadTreeRenderer')
+		renderer.setEnabled(True)
+		renderer.clearActiveLayers()
+		renderer.addActiveLayer(self.elevation.getLayers("id", TDS.QuadTreeLayerName)[0])
+
 	def create_background_music(self):
 		# set up the audio engine
 		self.soundmanager = self.engine.getSoundManager()

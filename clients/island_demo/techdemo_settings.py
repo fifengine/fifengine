@@ -12,6 +12,7 @@ LogToPrompt         = 1
 LogToFile           = 0
 
 CoordinateLayerName = "TechdemoMapObjectLayer"
+QuadTreeLayerName = "TechdemoMapObjectLayer"
 
 # test settings
 TestCameraPlacement = 0

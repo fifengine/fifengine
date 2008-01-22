@@ -54,8 +54,6 @@ namespace FIFE {
 	}
 
 	QuadTreeRenderer::~QuadTreeRenderer() {	}
-	static int minpt;
-	static int maxpt;
 	RenderVisitor::RenderVisitor(RenderBackend * rb, Layer * layer, Camera *camera) {
 
 		m_renderbackend = rb;
@@ -78,16 +76,14 @@ namespace FIFE {
 		CellGrid *cg = m_layer->getCellGrid(); ///we have checked for null pointer in  quadtreerenderer::render().. no need to check again
 
 
-		ExactModelCoordinate emc= cg->toElevationCoordinates(ExactModelCoordinate( x-0.5,y-0.5) );//0.5 for each cell's half-width
+		ExactModelCoordinate emc= cg->toElevationCoordinates(ExactModelCoordinate( x,y) );//0.5 for each cell's half-width
 		ScreenPoint scrpt1 =m_camera->toScreenCoordinates( emc );
-		emc= cg->toElevationCoordinates(ExactModelCoordinate( x-0.5,y+size-1-0.5) );// this size usage is wrong.. me thinks
+		emc= cg->toElevationCoordinates(ExactModelCoordinate( x,y+size) );// this size usage is wrong.. me thinks
 		ScreenPoint scrpt2 =m_camera->toScreenCoordinates( emc );
-		emc= cg->toElevationCoordinates(ExactModelCoordinate( x+size-1-0.5,y-0.5) );
+		emc= cg->toElevationCoordinates(ExactModelCoordinate( x+size,y) );
 		ScreenPoint scrpt3 =m_camera->toScreenCoordinates( emc );
-		emc= cg->toElevationCoordinates(ExactModelCoordinate( x+size-1-0.5,y+size-1-0.5) );
+		emc= cg->toElevationCoordinates(ExactModelCoordinate( x+size,y+size) );
 		ScreenPoint scrpt4 =m_camera->toScreenCoordinates( emc );
-		minpt =std::min(minpt,scrpt1.x);
-		maxpt =std::max(maxpt,scrpt1.x);
 
 		m_renderbackend->drawLine( Point(scrpt1.x,scrpt1.y) , Point(scrpt2.x,scrpt2.y), 255, 0, 0);
 		m_renderbackend->drawLine(Point(scrpt1.x,scrpt1.y), Point(scrpt3.x,scrpt3.y), 255, 0, 0);
@@ -99,8 +95,6 @@ namespace FIFE {
 
 
 	void QuadTreeRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
-		minpt =0;
-		maxpt =0;
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
@@ -108,10 +102,9 @@ namespace FIFE {
 		}
 		InstanceTree * itree = layer->getInstanceTree();
 
-		static RenderVisitor VIPguess(m_renderbackend, layer,cam);
+		RenderVisitor VIPguess(m_renderbackend, layer,cam);
 
 		itree->m_tree.apply_visitor( VIPguess );
-		std::cout << "max: " << maxpt << "\n";
 	}
 
 }
