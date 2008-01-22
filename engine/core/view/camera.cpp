@@ -155,6 +155,10 @@ namespace FIFE {
 		updateMatrices();
 	}
 
+  Point Camera::getCellImageDimensions() {
+    return Point( m_screen_cell_width, m_screen_cell_height );
+  }
+
 	/** Gets the location camera is rendering
 	 * @return camera location
 	 */

@@ -71,6 +71,11 @@ namespace FIFE {
  		 */
 		Camera* getCamera(const std::string& id);
 
+		/** Get a list containing all cameras.
+		 * @return std::list<Camera*>& Cameralist
+		 */
+		std::vector<Camera*>& getCameras() { return m_cameras; }
+
 		/** Removes given camera from the view.
 		 */
 		void removeCamera(Camera* camera);

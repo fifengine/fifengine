@@ -118,6 +118,7 @@ class ModelSaver:
 			self.startElement('elevation', attrs)
 			self.write_metadata(elev)
 			self.write_layers(elev)
+			self.write_camera(elev)
 			self.endElement('elevation')
 
 	def write_layers(self, elevation):
@@ -179,6 +180,45 @@ class ModelSaver:
 				self.endElement('i')
 
 		self.endElement('instances')
+
+	# Save the linked camera of an elevation.
+	def write_camera( self, elev ):
+		cameralist = self.engine.getView().getCameras()
+
+		for cam in cameralist:
+			print 'Inspecting cam %s for elev %s...' % (cam.getId(), elev.Id())
+
+			if cam.getLocation().getElevation().Id() == elev.Id():
+				celldimensions = cam.getCellImageDimensions()
+				viewport = cam.getViewPort();
+
+				attr_names = {
+						(None, 'id'): 'id',
+						(None, 'zoom'): 'zoom',
+						(None, 'tilt'): 'tile',
+						(None, 'rotation'): 'rotation',
+						(None, 'ref_layer_id'): 'ref_layer_id',
+						(None, 'ref_cell_width'): 'ref_cell_width',
+						(None, 'ref_cell_height'): 'ref_cell_height',
+						(None, 'viewport'): 'viewport',
+				}
+
+				attr_vals = {
+					(None, 'id'): cam.getId(),
+					(None, 'zoom'): str( cam.getZoom()),
+					(None, 'tilt'): str( cam.getTilt()),
+					(None, 'rotation'): str( cam.getRotation()),
+					(None, 'ref_layer_id'): cam.getLocation().getLayer().Id(),
+					(None, 'ref_cell_width'): str( celldimensions.x ),
+					(None, 'ref_cell_height'): str( celldimensions.y ),
+					(None, 'viewport'): '%d,%d,%d,%d' % (viewport.x, viewport.y, viewport.w, viewport.h),
+				}
+
+				attrs = AttributesNSImpl( attr_vals, attr_names )
+				self.startElement( 'camera', attrs );
+				self.endElement( 'camera' );
+
+				return
 
 	def flush(self):
 		self.xmlout.endDocument()

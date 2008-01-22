@@ -3,7 +3,6 @@
 #include "view/camera.h"
 %}
 
-
 namespace FIFE {
 	typedef Point3D ScreenPoint;
 	%template(ScreenPoint) PointType3D<int>;
@@ -25,6 +24,7 @@ namespace FIFE {
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
 		void setCellImageDimensions(unsigned int width, unsigned int height);
+    Point getCellImageDimensions();
 		ScreenPoint toScreenCoordinates(ExactModelCoordinate elevation_coords);
 		ExactModelCoordinate toElevationCoordinates(ScreenPoint screen_coords);
 		void setEnabled(bool enabled);
