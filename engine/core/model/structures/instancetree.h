@@ -42,7 +42,7 @@ namespace FIFE {
 	class InstanceTree: public FifeClass {
 	public:
 		typedef std::list<Instance*> InstanceList;
-		
+
 		/** Constructor
 		 *
 		 */
@@ -56,7 +56,7 @@ namespace FIFE {
 		/** Adds an instance to the quad tree.
 		 *
 		 * Adds an instance to the quad tree based upon it's location on the layer and it's
-		 * area. 
+		 * area.
 		 *
 		 * @param instance A pointer to the instance to add.
 		 */
@@ -71,7 +71,7 @@ namespace FIFE {
 		bool removeInstance(Instance* instance);
 
 		/** Find all instances in a given area.
-		 * 
+		 *
 		 * Takes a box as an area then returns a vector filled with all instances that intersect
 		 * with that box.
 		 *
@@ -82,14 +82,17 @@ namespace FIFE {
 		 * @return A boolean to signify whether the instance container was found.
 		 */
 		bool getInstanceList(const ModelCoordinate& point, int w, int h, InstanceList& lst);
-	
-	private:
 		static const int kTreeDepth = 2;
 		typedef QuadTree< InstanceList, kTreeDepth > InstanceQuadTree;
+		InstanceQuadTree m_tree;
+
+	private:
+
+
 		typedef InstanceQuadTree::Node InstanceTreeNode;
-		
+
 		/** Find all instances in a given area.
-		 * 
+		 *
 		 * Takes a box as an area then returns a vector filled with all instances that intersect
 		 * with that box.
 		 *
@@ -102,7 +105,7 @@ namespace FIFE {
 		InstanceList* getInstanceList(const Rect& rect);
 
 		// The quadtree containing instances.
-		InstanceQuadTree m_tree;
+
 	};
 
 }

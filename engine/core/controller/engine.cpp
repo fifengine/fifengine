@@ -66,6 +66,7 @@
 
 #include "view/view.h"
 #include "view/renderers/camerazonerenderer.h"
+#include "view/renderers/quadtreerenderer.h"
 #include "view/renderers/gridrenderer.h"
 #include "view/renderers/instancerenderer.h"
 #include "view/renderers/coordinaterenderer.h"
