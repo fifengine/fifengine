@@ -16,6 +16,28 @@
 			<animation source="content/animations/agents/humans/boy/boy_talk_nw.xml" direction='135' />
 		</action>
 
+		<action id="walk">
+			<animation source="content/animations/agents/humans/boy/boy_walk_n.xml" direction='90' />
+			<animation source="content/animations/agents/humans/boy/boy_walk_ne.xml" direction='45' />
+			<animation source="content/animations/agents/humans/boy/boy_walk_e.xml" direction='0' />
+			<animation source="content/animations/agents/humans/boy/boy_walk_se.xml" direction='315' />
+			<animation source="content/animations/agents/humans/boy/boy_walk_s.xml" direction='270' />
+			<animation source="content/animations/agents/humans/boy/boy_walk_sw.xml" direction='225' />
+			<animation source="content/animations/agents/humans/boy/boy_walk_w.xml" direction='180' />
+			<animation source="content/animations/agents/humans/boy/boy_walk_nw.xml" direction='135' />
+		</action>
+
+		<action id="run">
+			<animation source="content/animations/agents/humans/boy/boy_run_n.xml" direction='90' />
+			<animation source="content/animations/agents/humans/boy/boy_run_ne.xml" direction='45' />
+			<animation source="content/animations/agents/humans/boy/boy_run_e.xml" direction='0' />
+			<animation source="content/animations/agents/humans/boy/boy_run_se.xml" direction='315' />
+			<animation source="content/animations/agents/humans/boy/boy_run_s.xml" direction='270' />
+			<animation source="content/animations/agents/humans/boy/boy_run_sw.xml" direction='225' />
+			<animation source="content/animations/agents/humans/boy/boy_run_w.xml" direction='180' />
+			<animation source="content/animations/agents/humans/boy/boy_run_nw.xml" direction='135' />
+		</action>
+
 		<action id="cheer">
 			<animation source="content/animations/agents/humans/boy/boy_cheering_n.xml" direction='90' />
 			<animation source="content/animations/agents/humans/boy/boy_cheering_ne.xml" direction='45' />

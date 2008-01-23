@@ -502,8 +502,12 @@
 				<i o="Beekeeper" x="42" y="39" />
 
 				<i o="Girl" x="42" y="42" />
-
 				<i o="Beekeeper" x="34" y="91" />
+				<i o="Boy" x="0" y="0" >
+					<metadata>
+						<param name="name" value="PC"/>
+					</metadata>
+				</i>
 				<i o="Boy" x="37" y="89" />
 				<i o="Girl" x="37" y="94" />
 				<i o="Beekeeper" x="39" y="91" />
