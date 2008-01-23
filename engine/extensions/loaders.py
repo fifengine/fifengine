@@ -461,8 +461,10 @@ class ModelLoader(handler.ContentHandler):
 
 			(x, y, z, id) = (attrs.get( 'x_offset' ), attrs.get( 'y_offset' ), attrs.get( 'z_offset' ), attrs.get( 'id' ))
 
-			if( not name ):
-				assert 0, '<igroup> must have an ID attribute.'
+			if( not id ):
+				id = ''
+			else:
+				id = str( id )
 
 			if( x ):
 				x = float( x )
@@ -486,7 +488,7 @@ class ModelLoader(handler.ContentHandler):
 			else:
 				lastgroup = None
 
-			group = self.layer.getGroupManager().createGroup( fife.InstanceGroup( str( id ), fife.DoublePoint3D( x, y, z )))
+			group = self.layer.getGroupManager().createGroup( fife.InstanceGroup( id, fife.DoublePoint3D( x, y, z )))
 			if not lastgroup:
 				self.layer.getGroupManager().addGroup( group )
 			else:
