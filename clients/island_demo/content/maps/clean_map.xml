@@ -209,7 +209,7 @@
 		<layer id="TechdemoMapObjectLayer" grid_type="square" x_scale="1.0" y_scale="1.0" x_offset="0" y_offset="0">
 
 			<instances>
-				<igroup z_offset="0.1">
+				<igroup id="GirlGroup" z_offset="0.1">
 					<!--<i o="Beach_ball:001" x="76" y="41" />
 					<i o="Beach_ball:002" x="77" y="40" />
 					<i o="Beach_ball:003" x="79" y="40" />
@@ -233,15 +233,19 @@
 					<i o="Tree:009" x="59" y="4" />
 					<i o="Tree:024" x="12" y="29" />-->
 
-					<i o="Girl" x="3" y="7.6" />
+					<i o="Girl" id="Girlie" x="3" y="7.6" />
 				</igroup>
 
 				<!--<i o="Pool:001" x="74" y="39" />
 				<i o="Quay:036" x="35" y="15" />-->
-				<i o="Quay:026" x="3" y="6" />
-				<i o="Quay:026" x="3" y="7" />
-				<i o="Quay:026" x="3" y="8" />
-				<i o="Quay:026" x="3" y="9" />
+				<igroup id="Toplevel">
+					<i o="Quay:026" id="TL_Quay" x="3" y="6" />
+					<igroup id="Level1">
+						<i o="Quay:026" id="LoveQuay" x="3" y="7" />
+						<i o="Quay:026" id="HateQuay" x="3" y="8" />
+					</igroup>
+					<i o="Quay:026" id="AssQuay" x="3" y="9" />
+				</igroup>
 			</instances>
 		</layer>
 

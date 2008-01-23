@@ -40,6 +40,17 @@ class ModelLoader(handler.ContentHandler):
 		self.chars = ""
 		self.construct = False 
 
+	#def debugGroupShit( self, group, indentlvl = 1 ):
+	#	indentstr = indentlvl * '  '
+
+	#	print indentstr + group.Id()
+
+	#	for member in group.getMembers():
+	#		print '%s|- %s' % (indentstr, member.Id())
+
+	#	for grp in group.getGroups():
+	#		self.debugGroupShit( grp, indentlvl + 1 )
+
 	def startElement(self, name, attrs):
 		if (name == 'map'):
 			assert self.construct == False, "Multiple maps/datasets declared in the same file."
@@ -448,7 +459,11 @@ class ModelLoader(handler.ContentHandler):
 			if( self.state not in (self.SInstances, self.SInstanceGroup)):
 				assert 0, 'An <instancegroup> section can only be declared in an <instances> or <instancegroup> section.'
 
-			(x, y, z) = (attrs.get( 'x_offset' ), attrs.get( 'y_offset' ), attrs.get( 'z_offset' ))
+			(x, y, z, id) = (attrs.get( 'x_offset' ), attrs.get( 'y_offset' ), attrs.get( 'z_offset' ), attrs.get( 'id' ))
+
+			if( not name ):
+				assert 0, '<igroup> must have an ID attribute.'
+
 			if( x ):
 				x = float( x )
 				self.group_x += x
@@ -466,8 +481,19 @@ class ModelLoader(handler.ContentHandler):
 			else:
 				z = 0.0
 
+			if len( self.groups_history ):
+				(lx, ly, lz, lastgroup) = self.groups_history[-1]
+			else:
+				lastgroup = None
+
+			group = self.layer.getGroupManager().createGroup( fife.InstanceGroup( str( id ), fife.DoublePoint3D( x, y, z )))
+			if not lastgroup:
+				self.layer.getGroupManager().addGroup( group )
+			else:
+				lastgroup.addGroup( group )
+
 			# Add these instancegroup properties to historylist.
-			self.groups_history += [( x, y, z )]
+			self.groups_history += [( x, y, z, group )]
 			self.state = self.SInstanceGroup
 
 		elif (name == 'instances'):
@@ -539,6 +565,10 @@ class ModelLoader(handler.ContentHandler):
 					target.setLayer(self.layer)
 					inst.act_here("default", target, True)
 				self.instance = inst
+
+				if len( self.groups_history ):
+					(x, y, z, grp) = self.groups_history[-1]
+					grp.addInstance( inst )
 			else:
 				assert 0, "Instances can only be declared in an <instances> section."
 
@@ -572,6 +602,9 @@ class ModelLoader(handler.ContentHandler):
 
 		elif (name == 'map'):
 			self.state = self.SModel
+			#for grp in self.layer.getGroupManager().getGroups():
+			#	self.debugGroupShit( grp )
+
 
 		elif (name == 'elevation'):
 			self.state = self.SMap
@@ -580,7 +613,7 @@ class ModelLoader(handler.ContentHandler):
 			self.state = self.SElevation
 
 		elif( name in ( 'igroup', 'instancegroup' )):
-			(x, y, z) = self.groups_history[-1]
+			(x, y, z, group) = self.groups_history[-1]
 			del self.groups_history[-1]
 			self.group_x -= x
 			self.group_y -= y
@@ -597,9 +630,9 @@ class ModelLoader(handler.ContentHandler):
 
 
 # This is the entire of the loading API. Just call this function to load a map.
-#   path - the path of the map to load
-#   engine - a reference to the engine
-#   content - (optional) reference to the content path.
+#		path - the path of the map to load
+#		engine - a reference to the engine
+#		content - (optional) reference to the content path.
 def loadMapFile(path, engine, content = ''):
 	parser = make_parser()
 	handler = ModelLoader(engine, path, content)

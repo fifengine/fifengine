@@ -34,6 +34,7 @@
 #include "instance.h"
 #include "elevation.h"
 #include "instancetree.h"
+#include "instancegroup.h"
 
 namespace FIFE {
 
@@ -42,12 +43,14 @@ namespace FIFE {
 		m_elevation(elevation),
 		m_instances_visibility(true),
 		m_instanceTree(new InstanceTree()),
+    m_groupmanager( new InstanceGroupManager ),
 		m_grid(grid) {
 	}
 
 	Layer::~Layer() {
 		purge(m_instances);
 		delete m_instanceTree;
+    delete m_groupmanager;
 	}
 
 	bool Layer::hasInstances() const {

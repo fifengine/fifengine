@@ -46,6 +46,7 @@ namespace FIFE {
 	class CellGrid;
 	class Object;
 	class InstanceTree;
+  class InstanceGroupManager;
 
 
 	/** A basic layer on a map elevation
@@ -167,6 +168,10 @@ namespace FIFE {
 			 */
 			void update();
 
+      /** Gets the instancegroup manager
+       */
+      InstanceGroupManager* getGroupManager() { return m_groupmanager; }
+
 		protected:
 			Elevation* m_elevation;
 
@@ -177,6 +182,9 @@ namespace FIFE {
 	
 			//The instance tree
 			InstanceTree* m_instanceTree;
+
+      // Instancegroup manager
+      InstanceGroupManager *m_groupmanager;
 
 			CellGrid* m_grid;
 	};
