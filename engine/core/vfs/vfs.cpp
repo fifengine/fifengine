@@ -68,7 +68,7 @@ namespace FIFE {
 	}
 
 	VFSSource* VFS::createSource(const std::string& path) const {
-		if( m_usedfiles.count(path) ) {
+		if ( m_usedfiles.count(path) ) {
 			FL_WARN(_log, LMsg(path) << " is already used as VFS source");
 			return 0;
 		}
@@ -83,10 +83,10 @@ namespace FIFE {
 				VFSSource* source = provider->createSource(path);
 				m_usedfiles.insert(path);
 				return source;
-			} catch(const Exception& ex) {
+			} catch (const Exception& ex) {
 				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (" << ex.getMessage() << ")");
 				continue;
-			} catch(...) {
+			} catch (...) {
 				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (unkown exception)");
 				continue;
 			}
@@ -114,11 +114,11 @@ namespace FIFE {
 		if (i != m_sources.end())
 			m_sources.erase(i);
 	}
-	
+
 	VFSSource* VFS::getSourceForFile(const std::string& file) const {
 		std::string lowerpath = lower(file);
 		type_sources::const_iterator i = std::find_if(m_sources.begin(), m_sources.end(),
-		                                 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), lowerpath));
+										 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), lowerpath));
 		if (i == m_sources.end()) {
 			FL_WARN(_log, LMsg("no source for ") << lowerpath << " found");
 			return 0;
@@ -134,16 +134,16 @@ namespace FIFE {
 	bool VFS::isDirectory(const std::string& path) const {
 		std::vector<std::string> tokens;
 		// Add a slash in case there isn't one in the string
-		boost::algorithm::split(tokens, path + "/", boost::algorithm::is_any_of("/"));
+		const std::string newpath = path + "/";
+		boost::algorithm::split(tokens, newpath, boost::algorithm::is_any_of("/"));
 
 		std::string currentpath = "/";
 		std::vector<std::string>::const_iterator token=tokens.begin();
-		while(token != tokens.end()) {
-			if(*token != "") {
+		while (token != tokens.end()) {
+			if (*token != "") {
 				if (VFS::instance()->listDirectories(currentpath, *token).size() == 0) {
 					return false;
-				}
-				else {
+				} else {
 					currentpath += *token + "/";
 				}
 			}
