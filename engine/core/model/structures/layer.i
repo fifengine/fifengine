@@ -17,7 +17,6 @@ namespace FIFE {
 	class Instance;
 	class Object;
 	class CellGrid;
-	class InstanceGroupManager;
 
 	class Layer : public AttributedClass {
 		public:
@@ -40,7 +39,5 @@ namespace FIFE {
 			bool areInstancesVisible() const;
 
 			void update();
-
-			InstanceGroupManager* getGroupManager();
 	};
 }
