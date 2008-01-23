@@ -1,0 +1,10 @@
+<animation delay="130" id="3118">
+	<frame source="content/gfx/agents/boy/running_w0000.png" />
+	<frame source="content/gfx/agents/boy/running_w0001.png" />
+	<frame source="content/gfx/agents/boy/running_w0002.png" />
+	<frame source="content/gfx/agents/boy/running_w0003.png" />
+	<frame source="content/gfx/agents/boy/running_w0004.png" />
+	<frame source="content/gfx/agents/boy/running_w0005.png" />
+	<frame source="content/gfx/agents/boy/running_w0006.png" />
+	<frame source="content/gfx/agents/boy/running_w0007.png" />
+</animation>
