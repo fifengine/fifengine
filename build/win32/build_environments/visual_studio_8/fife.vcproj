@@ -261,8 +261,6 @@
 					<File RelativePath="..\..\..\..\engine\core\model\structures\elevation.h"></File>
 					<File RelativePath="..\..\..\..\engine\core\model\structures\instance.cpp"></File>
 					<File RelativePath="..\..\..\..\engine\core\model\structures\instance.h"></File>
-					<File RelativePath="..\..\..\..\engine\core\model\structures\instancegroup.cpp"></File>
-					<File RelativePath="..\..\..\..\engine\core\model\structures\instancegroup.h"></File>
 					<File RelativePath="..\..\..\..\engine\core\model\structures\instancetree.cpp"></File>
 					<File RelativePath="..\..\..\..\engine\core\model\structures\instancetree.h"></File>
 					<File RelativePath="..\..\..\..\engine\core\model\structures\layer.cpp"></File>

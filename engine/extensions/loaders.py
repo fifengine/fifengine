@@ -618,8 +618,14 @@ class ModelLoader(handler.ContentHandler):
 	def finish_object(self):
 		self.state = self.SDataset
 
+	def finish_image(self):
+		pass
+
 	def finish_action(self):
 		self.state = self.SObject
+
+	def finish_animation(self):
+		pass
 
 	def finish_map(self):
 		self.state = self.SModel
@@ -628,6 +634,9 @@ class ModelLoader(handler.ContentHandler):
 
 	def finish_elevation(self):
 		self.state = self.SMap
+
+	def finish_camera(self):
+		pass
 
 	def finish_layer(self):
 		self.state = self.SElevation
