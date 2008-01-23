@@ -18,13 +18,35 @@ from savers import saveMapFile
 from fifedit import *
 
 class InstanceReactor(fife.InstanceListener):
-	def __init__(self, evtlistener):
+	def __init__(self, evtlistener, world):
 		fife.InstanceListener.__init__(self)
 		self.evtlistener = evtlistener
+		self.world = world
+
 	def OnActionFinished(self, instance, action):
 		instance.act_here('default', instance.getFacingLocation(), True)
 		self.evtlistener.PCrun = False
 		print "running reset"
+
+		elevcoords = instance.getLocation().getElevationCoordinates()		
+		agentscreen = self.world.cameras['main'].toScreenCoordinates( elevcoords )
+		camlocation = self.world.cameras['main'].getLocation()
+		camcoords = camlocation.getElevationCoordinates()
+
+		print 'Agent screen: %d, %d' % (agentscreen.x, agentscreen.y)
+		print 'Camlocation: %d, %d' % (camcoords.x, camcoords.y)
+
+		movecam = 0
+		if agentscreen.x > TDS.ScreenWidth - 150 or agentscreen.x < 150:
+			camcoords.x = elevcoords.x
+			movecam = 1
+		if agentscreen.y > TDS.ScreenHeight - 150 or agentscreen.y < 150:
+			camcoords.y = elevcoords.y
+			movecam = 1
+		
+		if movecam:
+			camlocation.setElevationCoordinates( camcoords )
+			self.world.cameras['main'].setLocation( camlocation )
 
 SCROLL_MODIFIER = 0.1
 MAPFILE = 'content/maps/new_official_map.xml'
@@ -106,12 +128,13 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 				self._dragy = evt.getY()
 				self.horizscroll = 0
 				self.vertscroll = 0
+
 	def mouseReleased(self, evt):
 		self._dragx = 0
 		self._dragy = 0
 		self.horizscroll = 0
 		self.vertscroll = 0
-		if (evt.getButton() == fife.IMouseEvent.LEFT ):
+		if (evt.getButton() == fife.IMouseEvent.LEFT and not self._ctrldown ):
 			if self._shiftdown:
 				self.PCrun = True
 				print "running"
@@ -378,7 +401,7 @@ class World(object):
 		self.engine = engine
 		self.renderbackend = self.engine.getRenderBackend()
 		self.evtlistener = MyEventListener(self)
-		self.reactor = InstanceReactor(self.evtlistener)
+		self.reactor = InstanceReactor(self.evtlistener, self)
 
 		self.eventmanager = self.engine.getEventManager()
 		self.model = self.engine.getModel()
