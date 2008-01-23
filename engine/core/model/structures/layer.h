@@ -1,22 +1,22 @@
 /***************************************************************************
- *	 Copyright (C) 2005-2007 by the FIFE Team															 *
- *	 fife-public@lists.sourceforge.net																		 *
- *	 This file is part of FIFE.																						 *
- *																																				 *
- *	 FIFE is free software; you can redistribute it and/or modify					 *
- *	 it under the terms of the GNU General Public License as published by  *
- *	 the Free Software Foundation; either version 2 of the License, or		 *
- *	 (at your option) any later version.																	 *
- *																																				 *
- *	 This program is distributed in the hope that it will be useful,			 *
- *	 but WITHOUT ANY WARRANTY; without even the implied warranty of				 *
- *	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				 *
- *	 GNU General Public License for more details.													 *
- *																																				 *
- *	 You should have received a copy of the GNU General Public License		 *
- *	 along with this program; if not, write to the												 *
- *	 Free Software Foundation, Inc.,																			 *
- *	 51 Franklin St, Fifth Floor, Boston, MA	02110-1301	USA							 *
+ *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   fife-public@lists.sourceforge.net                                     *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or modify          *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
 #ifndef FIFE_LAYER_H
@@ -53,35 +53,35 @@ namespace FIFE {
 	 *
 	 * @bug These comments are very outdated!
 	 *
-	 *	This class represents a layer on the Map.
-	 *	This can be for example a Tile layer 
-	 *	as the roofs and floors of a fo2 map
-	 *	but can also just contain "objects"
-	 *	on Layer coords.
+	 * This class represents a layer on the Map.
+	 * This can be for example a Tile layer 
+	 * as the roofs and floors of a fo2 map
+	 * but can also just contain "objects"
+	 * on Layer coords.
 	 * 
-	 *	The tiles are *not* allways created only on
-	 *	a first "setTileGID".
-	 *	
-	 *	The most important features of this class are
-	 *	"cellgrid", "shift" and "size":
+	 * The tiles are *not* allways created only on
+	 * a first "setTileGID".
+	 * 
+	 * The most important features of this class are
+	 * "cellgrid", "shift" and "size":
 	 *
-	 *	The cellgrid is used to position objects on this
-	 *	Layer and the Tiles too.
+	 * The cellgrid is used to position objects on this
+	 * Layer and the Tiles too.
 	 *
-	 *	The shift is added to all screen coords and
-	 *	will create the illusion of a height-difference :-)
+	 * The shift is added to all screen coords and
+	 * will create the illusion of a height-difference :-)
 	 *
-	 *	The size simply is the maximum allowd size in Layer
-	 *	coords this Layer covers.
-	 *	
-	 *	@bug The parameter code is untested, be warned.
-	 *	@bug setTileGID and setParam behave differently on invalid positions.
+	 * The size simply is the maximum allowd size in Layer
+	 * coords this Layer covers.
+	 * 
+	 * @bug The parameter code is untested, be warned.
+	 * @bug setTileGID and setParam behave differently on invalid positions.
 	 *
-	 *	Attributes: 
-	 *	
-	 *	Future:
-	 *		Connections between Layers to walk through (Elevators...)
-	 *	Grouping of Layers (These Layers are roofs ... etc)
+	 * Attributes: 
+	 * 
+	 * Future:
+	 * 	Connections between Layers to walk through (Elevators...)
+	 * Grouping of Layers (These Layers are roofs ... etc)
 	 */
 	class Layer : public AttributedClass {
 		public:
@@ -100,7 +100,7 @@ namespace FIFE {
 			Elevation* getElevation() const { return m_elevation; }
 
 			/** Get the Cellgrid as set in the constructor
-			 *	@return a valid cellgrid
+			 * @return a valid cellgrid
 			 */
 			CellGrid* getCellGrid() const { return m_grid; }
 
@@ -110,7 +110,7 @@ namespace FIFE {
 			InstanceTree* getInstanceTree(void) const { return m_instanceTree; }
 
 			/** Check existance of objects on this layer
-			 *	@return True, if objects exist.
+			 * @return True, if objects exist.
 			 */
 			bool hasInstances() const;
 
@@ -155,12 +155,12 @@ namespace FIFE {
 			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
 
 			/** Toggle object visibility
-			 *	@see setObjectsVisible
+			 * @see setObjectsVisible
 			 */
 			void toggleInstancesVisible();
 
 			/** Check object visibility
-			 *	@see setObjectsVisible
+			 * @see setObjectsVisible
 			 */
 			bool areInstancesVisible() const { return m_instances_visibility; }
 
