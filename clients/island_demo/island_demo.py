@@ -18,12 +18,17 @@ from savers import saveMapFile
 from fifedit import *
 
 class InstanceReactor(fife.InstanceListener):
+	def __init__(self, evtlistener):
+		fife.InstanceListener.__init__(self)
+		self.evtlistener = evtlistener
 	def OnActionFinished(self, instance, action):
-		instance.act_here('idle', instance.getFacingLocation(), True)
-
+		instance.act_here('default', instance.getFacingLocation(), True)
+		self.evtlistener.PCrun = False
+		print "running reset"
 
 SCROLL_MODIFIER = 0.1
 MAPFILE = 'content/maps/new_official_map.xml'
+
 class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
 	              fife.ConsoleExecuter, fife.IWidgetListener):
 	def __init__(self, world):
@@ -55,6 +60,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.engine = engine		
 		self.quitRequested = False
 		self.newTarget = None
+		self.PCrun = False
 		self.showTileOutline = True
 		self.showEditor = False
 		self.showCoordinates = False
@@ -78,22 +84,40 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self._altdown = False
 		self._dragx = 0
 		self._dragy = 0
+
+		self.InstanceUI=None
 		
 
 	def mousePressed(self, evt):
-		if self._ctrldown:
-			self._dragx = evt.getX()
-			self._dragy = evt.getY()
-			self.horizscroll = 0
-			self.vertscroll = 0
-		else:
-			self.newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
-
+		if(self.InstanceUI):
+			self.world.gui.delete_instancemenu(self.InstanceUI)
+			self.InstanceUI = None
+		if(evt.getButton() == fife.IMouseEvent.RIGHT ):
+			print 'right click'
+			objlayer = self.world.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
+			screen_coord = fife.ScreenPoint(evt.getX(),evt.getY())
+			instances = self.world.cameras['main'].getMatchingInstances( screen_coord , objlayer)
+			self.InstanceUI = self.world.gui.create_instancemenu( screen_coord , instances  )
+			# check for what's in our clickzone
+			
+		elif (evt.getButton() == fife.IMouseEvent.LEFT ):
+			if self._ctrldown:
+				self._dragx = evt.getX()
+				self._dragy = evt.getY()
+				self.horizscroll = 0
+				self.vertscroll = 0
 	def mouseReleased(self, evt):
 		self._dragx = 0
 		self._dragy = 0
 		self.horizscroll = 0
 		self.vertscroll = 0
+		if (evt.getButton() == fife.IMouseEvent.LEFT ):
+			if self._shiftdown:
+				self.PCrun = True
+				print "running"
+			else:
+				print "walking"
+			self.newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
 	
 	def mouseEntered(self, evt):
 		pass
@@ -192,6 +216,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 
 	def onCommand(self, command):
 		self.quitRequested = (command.getCommandType() == fife.CMD_QUIT_GAME)
+		print "cmd quit"
 
 	def onToolsClick(self):
 		print "No tools set up yet"
@@ -215,7 +240,10 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()
 		if evtid == 'WidgetEvtQuit':
-			self.quitRequested = True
+			cmd = fife.Command()
+			cmd.setSource(evt.getSource())
+			cmd.setCommandType(fife.CMD_QUIT_GAME)
+			self.engine.getEventManager().dispatchCommand( cmd );
 		if evtid == 'WidgetEvtAbout':
 			if self.showInfo:
 				self.showInfo = False
@@ -237,6 +265,50 @@ class Gui(object):
 	def register_widget(self, w, container):
 		self.widgets.append(w)
 		container.add(w)
+
+	def delete_instancemenu(self,instancemenu):
+		#self.widgets.remove()
+		self.guimanager.remove(instancemenu)
+	def create_instancemenu(self,screen_coord,intancelist):
+		container = fife.Container()
+		container.setOpaque(True)
+		container.setPosition(screen_coord.x,screen_coord.y)		
+		self.register_widget(container, self.guimanager)
+				
+		label1 = fife.Label('InstanceMenu')
+		label1.setPosition(1, 0)
+		label1.setFont(self.font)
+		self.register_widget(label1, container)
+
+		container2 = fife.Container()
+		container2.setOpaque(True)
+		container2.setPosition(1, label1.getHeight())
+		self.register_widget(container2, container)
+
+		img = fife.GcnImage.load("content/gfx/gui/talking_mouth.png")
+		imgbtn1 = fife.TwoButton(img,img,'Talk')
+		imgbtn1.setPosition(1, 0)
+		imgbtn1.setFont(self.font)
+		self.register_widget(imgbtn1, container2)
+
+		img = fife.GcnImage.load("content/gfx/gui/eye.png")
+		imgbtn2 = fife.TwoButton(img,img,'Look')
+		imgbtn2.setPosition(1,imgbtn1.getHeight()+ 1)
+		imgbtn2.setFont(self.font)
+		self.register_widget(imgbtn2, container2)
+
+		container2.setSize(imgbtn1.getWidth() + 2, imgbtn1.getHeight() + imgbtn2.getHeight() + 2)
+		container.setSize(container2.getWidth() + 2, container2.getHeight() + label1.getHeight() + 2)
+		
+		label1.setVisible(True)
+		imgbtn1.setVisible(True)
+		imgbtn2.setVisible(True)
+
+		container.setVisible(True)
+		container2.setVisible(True)
+
+		return container
+	
 	
 	def create_panel(self):
 		container = fife.Container()
@@ -305,7 +377,8 @@ class World(object):
 	def __init__(self, engine, gui):
 		self.engine = engine
 		self.renderbackend = self.engine.getRenderBackend()
-		self.reactor = InstanceReactor()
+		self.evtlistener = MyEventListener(self)
+		self.reactor = InstanceReactor(self.evtlistener)
 
 		self.eventmanager = self.engine.getEventManager()
 		self.model = self.engine.getModel()
@@ -324,28 +397,26 @@ class World(object):
 		self.elevation = self.map.getElevations("id", "TechdemoMapElevation")[0]
 		self.layer = self.elevation.getLayers("id", "TechdemoMapTileLayer")[0]
 		
-		#self.agent_layer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
+		self.agent_layer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
 		
 		img = self.engine.getImagePool().getImage(self.layer.getInstances()[0].getObject().get2dGfxVisual().getStaticImageIndexByAngle(0))
 		self.screen_cell_w = img.getWidth()
 		self.screen_cell_h = img.getHeight()
 		
-		#self.target = fife.Location()
-		#self.target.setLayer(self.agent_layer)
+		self.target = fife.Location()
+		self.target.setLayer(self.agent_layer)
 		
 		self.cameras = {}
 		
 		self.scrollwheelvalue = self.elevation.getLayers("id", TDS.TestRotationLayerName)[0].getCellGrid().getRotation()
 
 		# no movement at start
-		#self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
+		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
 		
-		#self.agent = self.agent_layer.getInstances('name', 'MyHero')[0]
-		#self.agent.addListener(self.reactor)
-		#self.agent.act_here('idle', self.target, True)
-		#self.agentcoords = self.target.getElevationCoordinates()
-		#for g in self.agent_layer.getInstances('id', 'Gunner'):
-		#	g.act_here('idle', self.target, True)
+		self.agent = self.agent_layer.getInstances('name', 'PC')[0]
+		self.agent.addListener(self.reactor)
+		self.agent.act_here('default', self.target, True)
+		self.agentcoords = self.target.getElevationCoordinates()
 
 
 	def save_world(self, path):
@@ -393,7 +464,7 @@ class World(object):
 			
 	def run(self):
 		camloc = fife.Location()
-		evtlistener = MyEventListener(self)
+		evtlistener = self.evtlistener
 		evtlistener.scrollwheelvalue = self.scrollwheelvalue
 		evtlistener.ctrl_scrollwheelvalue = self.ctrl_scrollwheelvalue
 		evtlistener.alt_scrollwheelvalue = self.alt_scrollwheelvalue
@@ -453,15 +524,17 @@ class World(object):
 				objlayer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
 				instances = self.cameras['main'].getMatchingInstances(evtlistener.newTarget, objlayer)
 				print ', '.join(['instance "%s" from obj "%s"' % (i.Id(), i.getObject().Id()) for i in instances])
+				dy = -(evtlistener.newTarget.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getElevationCoordinates()).y)
+				evtlistener.newTarget.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
+				target_elevcoord = self.cameras['main'].toElevationCoordinates(evtlistener.newTarget)
+				target_elevcoord.z = 0
+				self.target.setElevationCoordinates(target_elevcoord)
+
+				if evtlistener.PCrun:				
+					self.agent.act('run', self.target, TDS.TestAgentSpeed)
+				else:
+					self.agent.act('walk', self.target, 4*TDS.TestAgentSpeed)
 				evtlistener.newTarget = None
-			#	dy = -(evtlistener.newTarget.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getElevationCoordinates()).y)
-			#	evtlistener.newTarget.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
-			#	target_elevcoord = self.cameras['main'].toElevationCoordinates(evtlistener.newTarget)
-			#	target_elevcoord.z = 0
-			#	self.target.setElevationCoordinates(target_elevcoord)
-			#	
-			#	self.agent.act('walk', self.target, TDS.TestAgentSpeed)
-			#	evtlistener.newTarget = None
 			
 			if evtlistener.quitRequested:
 				break
