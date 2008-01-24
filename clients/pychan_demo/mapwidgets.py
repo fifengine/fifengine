@@ -17,7 +17,7 @@ import settings
 
 import pychan
 
-from demo import PyChanExample
+from pychan_test import PyChanExample
 
 class MapProperties(PyChanExample):
 	def __init__(self):
