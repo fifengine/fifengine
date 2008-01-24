@@ -518,7 +518,7 @@ class LayerSelect(Form):
 class MapBrowser(FileBrowser):
 	def __init__(self, engine, event_manager, gui_manager, parent, path):
 		self.engine = engine
-		FileBrowser.__init__(self, event_manager, gui_manager, parent, path)
+		FileBrowser.__init__(self, event_manager, gui_manager, parent, path, lambda f: f.split('.')[-1] == 'xml')
 
 	def onWidgetAction(self, evt):
 		evtid = evt.getId()

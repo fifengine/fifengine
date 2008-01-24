@@ -138,9 +138,11 @@ class ButtonBox(Dialog):
 class FileBrowser(Form):
 
 	# path - default path to open the browser with
-	def __init__(self, event_manager, gui_manager, parent, path):
+	def __init__(self, event_manager, gui_manager, parent, path, filefilter = lambda f: True):
 		self.size = (400,400)
 		self.position = (300,100)
+
+		self.filefilter = filefilter
 
 		Form.__init__(self, event_manager, gui_manager, parent, 'File Browser', self.position, self.size)
 
@@ -206,7 +208,8 @@ class FileBrowser(Form):
 			self.dir_box.setSelected(0)
 
 			self.file_list = GenericListmodel()
-			self.file_list.extend([file for file in os.listdir(self.path) if os.path.isfile(os.path.join(self.path,file))])
+			self.file_list.extend([file for file in os.listdir(self.path) if os.path.isfile(os.path.join(self.path,file)) and self.filefilter(file)])
+
 			self.file_box.setListModel(self.file_list)
 			self.file_box.setSelected(0)
 		elif evtid == 'SelectFile' and (evt.getSourceWidget().this == self.file_box.this):
