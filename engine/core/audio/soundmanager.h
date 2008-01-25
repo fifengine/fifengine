@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2008 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -116,15 +116,21 @@ namespace FIFE {
 		SoundClipPool& getSoundClipPool() {
 			return m_pool;
 		}
+
+		/** Returns true if audio module is active
+		 */
+		bool isActive() {
+			return m_device != NULL;
+		}
 		
 	private:
 	
-		std::vector<SoundEmitter*> m_emittervec; // emitter-vector
-		ALCcontext*		m_context; 	// OpenAL context
-		ALCdevice*		m_device; 	// OpenAL device
-		SoundClipPool m_pool;
-		float					m_mutevol; 	// volume before mute() was called
-		float					m_volume;		// volume to support setVolume-calls before initialization
+		std::vector<SoundEmitter*> m_emittervec;	// emitter-vector
+		ALCcontext*						m_context; 		// OpenAL context
+		ALCdevice*						m_device; 		// OpenAL device
+		SoundClipPool					m_pool;
+		float								m_mutevol;		// volume before mute() was called
+		float								m_volume;		// volume to support setVolume-calls before initialization
 	};
 }
 #endif

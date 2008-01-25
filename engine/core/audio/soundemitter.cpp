@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2008 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -40,6 +40,9 @@ namespace FIFE {
 	
 	SoundEmitter::SoundEmitter(unsigned int uid) : m_source(0), m_soundclip(NULL), m_soundclipid(0), m_streamid(0),
 															m_emitterid(uid), m_loop(false) {
+		if (!SoundManager::instance()->isActive()) {
+			return;
+		}
 
 		TimeManager::instance()->registerEvent(this);
 		setPeriod(-1);
@@ -47,6 +50,10 @@ namespace FIFE {
 	}
 		
 	SoundEmitter::~SoundEmitter() {
+		if (!SoundManager::instance()->isActive()) {
+			return;
+		}
+
 		setPeriod(-1);
 		TimeManager::instance()->unregisterEvent(this);
 		reset();
@@ -87,6 +94,9 @@ namespace FIFE {
 	}
 	
 	bool SoundEmitter::load(const std::string &filename) {
+		if (!SoundManager::instance()->isActive()) {
+			return false;
+		}
 		reset();
 		
 		// get the soundclip
@@ -109,7 +119,7 @@ namespace FIFE {
 			alSourcei(m_source, AL_LOOPING, AL_FALSE);
 		}
 
-		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "Could not queue buffers");
+		CHECK_OPENAL_LOG_DETAIL(_log, LogManager::LEVEL_ERROR, "Could not queue buffers");
 		return true;
 	}
 	

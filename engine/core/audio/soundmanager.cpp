@@ -61,9 +61,9 @@ namespace FIFE {
 		}
 
 		m_emittervec.clear();
-		alcDestroyContext(m_context);
 
 		if (m_device) {
+			alcDestroyContext(m_context);
 			alcCloseDevice(m_device);
 		}
 	}
@@ -71,17 +71,24 @@ namespace FIFE {
 	void SoundManager::init() {
 		m_device = alcOpenDevice(NULL);
 
-		if (!m_device) {
-			throw Exception("could not open audio device!");
+		if (!m_device || alcGetError(m_device) != ALC_NO_ERROR) {
+			FL_ERR(_log, LMsg() << "Could not open audio device - deactivating audio module");
+			m_device = NULL;
+			return;
 		}
 
 		m_context = alcCreateContext(m_device, NULL);
-		if (alcGetError(m_device) != ALC_NO_ERROR || !m_context) {
-			throw Exception("Couldn't create audio context");
+		if (!m_context || alcGetError(m_device) != ALC_NO_ERROR) {
+			FL_ERR(_log, LMsg() << "Couldn't create audio context - deactivating audio module");
+			m_device = NULL;
+			return;
 		}
+
 		alcMakeContextCurrent(m_context);
 		if (alcGetError(m_device) != ALC_NO_ERROR) {
-			throw Exception("Couldn't change current audio context");
+			FL_ERR(_log, LMsg() << "Couldn't change current audio context - deactivating audio module");
+			m_device = NULL;
+			return;
 		}
 
 		// set listener position
