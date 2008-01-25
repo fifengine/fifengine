@@ -39,8 +39,9 @@ namespace FIFE {
 	class CellGrid: public FifeClass {
 	public:
 		/** Constructor
+		 *  @param allow_diagonals if true, cellgrid allows diagonal access
 		 */
- 		CellGrid();
+ 		CellGrid(bool allow_diagonals=false);
 
 		/** Destructor
 		 */
@@ -184,6 +185,8 @@ namespace FIFE {
 		double m_xscale;
 		double m_yscale;
 		double m_rotation;
+		bool m_allow_diagonals;
+		
 	private:
 		int orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2);	
 	};

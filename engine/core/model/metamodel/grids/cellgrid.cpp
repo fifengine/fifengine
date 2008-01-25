@@ -35,7 +35,7 @@
 namespace FIFE {
 	static Logger _log(LM_CELLGRID);
 
-	CellGrid::CellGrid():
+	CellGrid::CellGrid(bool allow_diagonals):
 		FifeClass(),
 		m_matrix(),
 		m_inverse_matrix(),
@@ -43,7 +43,8 @@ namespace FIFE {
 		m_yshift(0),
 		m_xscale(1),
 		m_yscale(1),
-		m_rotation(0) {
+		m_rotation(0),
+		m_allow_diagonals(allow_diagonals) {
 		updateMatrices();
 	}
 

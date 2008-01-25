@@ -37,9 +37,8 @@
 namespace FIFE {
 	static Logger _log(LM_SQUAREGRID);
 
-	SquareGrid::SquareGrid(bool diagonals_accessible): 
-		CellGrid(),
-		m_diagonals_accessible(diagonals_accessible) {
+	SquareGrid::SquareGrid(bool allow_diagonals): 
+		CellGrid(allow_diagonals) {
 	}
 
 	SquareGrid::~SquareGrid() {
@@ -57,7 +56,7 @@ namespace FIFE {
 		if ((curpos.x - 1 == target.x) && (curpos.y == target.y))
 			return true;
 
-		if (m_diagonals_accessible) {
+		if (m_allow_diagonals) {
 			return isAccessibleDiagonal(curpos, target);
 		}
 
@@ -97,11 +96,7 @@ namespace FIFE {
 
 	const std::string& SquareGrid::getName() const {
 		static std::string squareGrid("Square Grid");
-		static std::string squareGridDiagonal("Square Grid with diagonal access");
-		if (m_diagonals_accessible) {
-			return squareGrid;
-		}
-		return squareGridDiagonal;
+		return squareGrid;
 	}
 
 	ExactModelCoordinate SquareGrid::toElevationCoordinates(const ExactModelCoordinate& layer_coords) {

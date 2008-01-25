@@ -440,11 +440,11 @@ class ModelLoader(handler.ContentHandler):
 						
 			assert grid_type, "No grid type defined for this layer."
 			
+			allow_diagonals = pathing == "cell_edges_and_diagonals"
 			if grid_type == "square":
-				allow_diagonals = pathing == "cell_edges_and_diagonals"
 				cellgrid = fife.SquareGrid(allow_diagonals)
 			else:
-				cellgrid = fife.HexGrid()
+				cellgrid = fife.HexGrid(allow_diagonals)
 			cellgrid.thisown = 0
 
 			assert id, "Layer declared with no identifier."

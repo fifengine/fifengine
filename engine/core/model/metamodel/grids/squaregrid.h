@@ -35,7 +35,7 @@
 namespace FIFE {
 	class SquareGrid: public CellGrid {
 	public:
-		SquareGrid(bool diagonals_accessible=false);
+		SquareGrid(bool allow_diagonals=false);
 		virtual ~SquareGrid();
 
 		const std::string& getType() const;
@@ -50,7 +50,6 @@ namespace FIFE {
 
 	private:
 		bool isAccessibleDiagonal(const ModelCoordinate& curpos, const ModelCoordinate& target);
-		bool m_diagonals_accessible;
 	};
 }
 

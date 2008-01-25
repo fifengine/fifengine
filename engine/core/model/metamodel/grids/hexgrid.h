@@ -35,7 +35,7 @@
 namespace FIFE {
 	class HexGrid: public CellGrid {
 	public:
-		HexGrid();
+		HexGrid(bool allow_diagonals=false);
 		virtual ~HexGrid();
 
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);

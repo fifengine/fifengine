@@ -14,7 +14,7 @@ namespace std {
 namespace FIFE {
 	class CellGrid {
 	public:
-		CellGrid();
+		CellGrid(bool allow_diagonals=false);
 		virtual ~CellGrid();
 		void getAccessibleCoordinates(const ModelCoordinate& curpos, std::vector<ModelCoordinate>& coordinates);
 		virtual const std::string& getType() const = 0;

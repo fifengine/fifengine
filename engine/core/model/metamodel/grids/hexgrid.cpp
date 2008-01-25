@@ -43,7 +43,7 @@ namespace FIFE {
 	static const double VERTICAL_MULTIP = sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
 	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
 
-	HexGrid::HexGrid(): CellGrid() {
+	HexGrid::HexGrid(bool allow_diagonals): CellGrid(allow_diagonals) {
 		FL_DBG(_log, "Constructing new HexGrid");
 		FL_DBG(_log, LMsg("HEX_WIDTH ") << HEX_WIDTH);
 		FL_DBG(_log, LMsg("HEX_TO_EDGE ") << HEX_TO_EDGE);
