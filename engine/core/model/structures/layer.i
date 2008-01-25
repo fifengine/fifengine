@@ -17,6 +17,12 @@ namespace FIFE {
 	class Instance;
 	class Object;
 	class CellGrid;
+	
+	enum PathingStrategy {
+		CELL_EDGES_ONLY,
+		CELL_EDGES_AND_DIAGONALS,
+		FREEFORM
+	};	
 
 	class Layer : public AttributedClass {
 		public:
@@ -39,5 +45,8 @@ namespace FIFE {
 			bool areInstancesVisible() const;
 
 			void update();
+			
+			void setPathingStrategy(PathingStrategy strategy);
+			PathingStrategy getPathingStrategy();
 	};
 }

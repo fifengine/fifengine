@@ -406,15 +406,19 @@ class ModelLoader(handler.ContentHandler):
 			rotation = 0.0
 			x_offset = 0.0
 			y_offset = 0.0
+			pathing = "cell_edges_only"
+			grid_type = ""
 
 			for attrName in attrs.keys():
 				if (attrName == "grid_type"):
-					if (attrs.get(attrName) == "square"):
-						cellgrid = fife.SquareGrid()
-						cellgrid.thisown = 0
-					elif (attrs.get(attrName) == "hexagonal"):
-						cellgrid = fife.HexGrid()
-						cellgrid.thisown = 0
+					t = attrs.get(attrName)
+					if t in ("square", "hexagonal"):
+						grid_type = t
+				
+				elif (attrName == "pathing"):
+					t = attrs.get(attrName)
+					if t in ("cell_edges_only", "cell_edges_and_diagonals", "freeform"):
+						pathing = t
 
 				elif (attrName == "x_scale"):
 					x_scale = eval(attrs.get(attrName))
@@ -433,8 +437,16 @@ class ModelLoader(handler.ContentHandler):
 
 				elif (attrName == "id"):
 					id = attrs.get(attrName)
+						
+			assert grid_type, "No grid type defined for this layer."
+			
+			if grid_type == "square":
+				allow_diagonals = pathing == "cell_edges_and_diagonals"
+				cellgrid = fife.SquareGrid(allow_diagonals)
+			else:
+				cellgrid = fife.HexGrid()
+			cellgrid.thisown = 0
 
-			assert cellgrid, "No grid type defined for this layer."
 			assert id, "Layer declared with no identifier."
 
 			cellgrid.setRotation(rotation)
@@ -451,7 +463,14 @@ class ModelLoader(handler.ContentHandler):
 				#self.elevation.deleteLayer(self.elevation.getLayers('id', str(id))[0])
 				#self.layer = self.elevation.createLayer(str(id), cellgrid)
 				self.layer = self.elevation.getLayers('id', str(id))[0]
-
+			
+			strgy = fife.CELL_EDGES_ONLY
+			if pathing == "cell_edges_and_diagonals":
+				strgy = fife.CELL_EDGES_AND_DIAGONALS
+			if pathing == "freeform":
+				strgy = fife.FREEFORM
+			self.layer.setPathingStrategy(strgy)
+			
 			self.state = self.SLayer
 
 		else:

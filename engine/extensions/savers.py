@@ -121,6 +121,13 @@ class ModelSaver:
 			self.write_camera(elev)
 			self.endElement('elevation')
 
+	def pathing_val_to_str(self, val):
+		if val == fife.CELL_EDGES_AND_DIAGONALS:
+			return "cell_edges_and_diagonals"
+		if val == fife.FREEFORM:
+			return "freeform"
+		return "cell_edges_only"
+	
 	def write_layers(self, elevation):
 		for layer in elevation.getLayers():
 			cellgrid = layer.getCellGrid()
@@ -132,6 +139,7 @@ class ModelSaver:
 				(None, 'rotation'): str(cellgrid.getRotation()),
 				(None, 'x_offset'): str(cellgrid.getXShift()),
 				(None, 'y_offset'): str(cellgrid.getYShift()),
+				(None, 'pathing'): self.pathing_val_to_str(layer.getPathingStrategy()),
 			}
 			attr_names = {
 				(None, 'id'): 'id',
@@ -140,6 +148,7 @@ class ModelSaver:
 				(None, 'rotation'): 'rotation',
 				(None, 'x_offset'): 'x_offset',
 				(None, 'y_offset'): 'y_offset',
+				(None, 'pathing'): 'pathing',
 			}
 			attrs = AttributesNSImpl(attr_vals, attr_names)
 			self.startElement('layer', attrs)

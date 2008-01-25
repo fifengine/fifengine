@@ -42,7 +42,8 @@ namespace FIFE {
 		m_elevation(elevation),
 		m_instances_visibility(true),
 		m_instanceTree(new InstanceTree()),
-		m_grid(grid) {
+		m_grid(grid),
+		m_pathingstrategy(CELL_EDGES_ONLY) {
 	}
 
 	Layer::~Layer() {

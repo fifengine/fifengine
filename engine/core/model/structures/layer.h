@@ -47,6 +47,18 @@ namespace FIFE {
 	class Object;
 	class InstanceTree;
 
+	/** Defines how pathing can be performed on this layer
+	 *
+	 * CELL_EDGES_ONLY allows pather to use only cell edges when moving instances from cell to cell on map
+	 * CELL_EDGES_AND_DIAGONALS allows pather to use both cell edges and diagonals when moving instances from cell to cell on map
+	 * FREEFORM allows pather to find shortest route regardless of cellgrid used on the layer 
+	 */
+	enum PathingStrategy {
+		CELL_EDGES_ONLY,
+		CELL_EDGES_AND_DIAGONALS,
+		FREEFORM
+	};
+	
 	/** A basic layer on a map elevation
 	 *
 	 * @bug These comments are very outdated!
@@ -165,6 +177,16 @@ namespace FIFE {
 			/** Called periodically to update events on layer
 			 */
 			void update();
+			
+			/** Sets pathing strategy for the layer
+			 * @see PathingStrategy
+			 */
+			void setPathingStrategy(PathingStrategy strategy) { m_pathingstrategy = strategy; }
+			
+			/** Gets pathing strategy for the layer
+			 * @see PathingStrategy
+			 */
+			PathingStrategy getPathingStrategy() const { return m_pathingstrategy; }
 
 		protected:
 			Elevation* m_elevation;
@@ -177,7 +199,11 @@ namespace FIFE {
 			//The instance tree
 			InstanceTree* m_instanceTree;
 
+			// layer's cellgrid
 			CellGrid* m_grid;
+			
+			// pathing strategy for the layer
+			PathingStrategy m_pathingstrategy;
 	};
 
 } // FIFE
