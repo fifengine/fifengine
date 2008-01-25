@@ -35,7 +35,6 @@
 #include "util/logger.h"
 #include "util/exception.h"
 
-#include "sounddecoder_wav.h"
 #include "sounddecoder_ogg.h"
 
 namespace FIFE {
@@ -45,10 +44,7 @@ namespace FIFE {
 		RawData* rdptr = VFS::instance()->open(filename);
 		
 		SoundDecoder* ptr;
-		if (filename.find(".wav") != std::string::npos) {
-			ptr = new SoundDecoderWav(rdptr);
-			
-		} else if(filename.find(".ogg") != std::string::npos) {
+		if(filename.find(".ogg") != std::string::npos) {
 			ptr = new SoundDecoderOgg(rdptr);
 			
 		} else {
