@@ -1,0 +1,9 @@
+<Window title="Select an option">
+	<VBox>
+		<DropDown name="optionDrop" />	
+		<HBox>
+			<Button name="okButton" text="OK"/>
+			<Button name="cancelButton" text="Cancel"/>
+		</HBox>
+	</VBox>
+</Window>
