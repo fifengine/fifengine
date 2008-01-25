@@ -48,7 +48,7 @@ class ActionTests(unittest.TestCase):
 		print 'test1'
 		getAnimation = self.engine.animationPool.getAnimation
 		print 'test2'
-		self.inst.act('walk', self.target, 0.05)
+		self.inst.move('walk', self.target, 0.05)
 		self.engine.initializePumping()
 		backend = self.engine.renderBackend
 		for i in xrange(360):
@@ -82,7 +82,7 @@ class ActionTests(unittest.TestCase):
 		self.engine.initializePumping()
 
 		self.target.setLayerCoordinates(fife.ModelCoordinate(2,-2))	
-		self.inst.act('walk', self.target, 0.9)
+		self.inst.move('walk', self.target, 0.9)
 		targets = (
 			(2,0), (2,-1), (2,-2), (1,-2),
 			(0,-2), (-1,-2), (-2,-2), (-2,-1),
@@ -94,7 +94,7 @@ class ActionTests(unittest.TestCase):
 			l.setLayerCoordinates(fife.ModelCoordinate(0,0))
 			self.inst.setLocation(l)
 			self.target.setLayerCoordinates(fife.ModelCoordinate(*target))
-			self.inst.act('walk', self.target, 0.9)
+			self.inst.move('walk', self.target, 0.9)
 			for i in xrange(10):
 				self.engine.pump()
 		

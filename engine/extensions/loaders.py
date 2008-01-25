@@ -576,7 +576,7 @@ class ModelLoader(handler.ContentHandler):
 			if (object.getAction("default")):
 				target = fife.Location()
 				target.setLayer(self.layer)
-				inst.act_here("default", target, True)
+				inst.act("default", target, True)
 			self.instance = inst
 
 			if len( self.groups_history ):

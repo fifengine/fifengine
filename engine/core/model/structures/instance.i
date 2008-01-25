@@ -36,8 +36,8 @@ namespace FIFE {
 		double getMovementSpeed() const;
 		const Location& getFacingLocation() const;
 		int getActionRuntime() const;
-		void act(const std::string& action_name, const Location& target, const double speed);
-		void act_here(const std::string& action_name, const Location& direction, bool repeating=false);
+		void move(const std::string& action_name, const Location& target, const double speed);
+		void act(const std::string& action_name, const Location& direction, bool repeating=false);
 		void update(unsigned int curticks=0);
 
 		void setVisual(AbstractVisual* visual);

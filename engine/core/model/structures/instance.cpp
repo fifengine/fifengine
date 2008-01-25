@@ -145,7 +145,7 @@ namespace FIFE {
 		}		
 	}
 
-	void Instance::act(const std::string& action_name, const Location& target, const double speed) {
+	void Instance::move(const std::string& action_name, const Location& target, const double speed) {
 		initalizeAction(action_name);
 		m_actioninfo->m_target = new Location(target);
 		m_actioninfo->m_speed = speed;
@@ -153,7 +153,7 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << target << " with speed " << speed);
 	}
 
-	void Instance::act_here(const std::string& action_name, const Location& direction, bool repeating) {
+	void Instance::act(const std::string& action_name, const Location& direction, bool repeating) {
 		initalizeAction(action_name);
 		m_actioninfo->m_repeating = repeating;
 		setFacingLocation(direction);
@@ -167,7 +167,7 @@ namespace FIFE {
 		}
 	}
 
-	bool Instance::move() {
+	bool Instance::process_movement() {
 		FL_DBG(_log, "Moving...");
 		// timeslice for this movement
 		unsigned int timedelta  = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
@@ -205,7 +205,7 @@ namespace FIFE {
 
 		if (m_actioninfo->m_target) {
 			FL_DBG(_log, "action contains target for movement");
-			bool movement_finished = move();
+			bool movement_finished = process_movement();
 			if (movement_finished) {
 				FL_DBG(_log, "movement finished");
 				finalizeAction();

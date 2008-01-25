@@ -124,14 +124,14 @@ namespace FIFE {
 		 *  @param target place where to move this instance
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
 		 */
-		void act(const std::string& action_name, const Location& target, const double speed);
+		void move(const std::string& action_name, const Location& target, const double speed);
 
 		/** Performs given named action to the instance. Performs no movement
 		 *  @param action_name name of the action
 		 *  @param direction coordinates for cell towards instance is heading to when performing the action
 		 *  @param repeating in case true, keeps repeating this action
 		 */
-		void act_here(const std::string& action_name, const Location& direction, bool repeating=false);
+		void act(const std::string& action_name, const Location& direction, bool repeating=false);
 
 		/** Updates the instance related to the current action
 		 * @param curticks current tick count of the system
@@ -170,7 +170,7 @@ namespace FIFE {
 		// Initialize action for use
 		void initalizeAction(const std::string& action_name);
 		// Moves instance. Returns true if finished
-		bool move();
+		bool process_movement();
 		// Calculates movement based current location and speed
 		void calcMovement();
 		// set facing location for instance

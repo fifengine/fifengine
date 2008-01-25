@@ -282,13 +282,13 @@ class ActivityTests(unittest.TestCase):
 		self.inst.addListener(self.listener)
 		
 	def testMovingAction(self):
-		self.inst.act('run', self.target, 0.5)
+		self.inst.move('run', self.target, 0.5)
 		for i in xrange(30):
 			self.inst.update()
 		self.assert_(self.listener.finished)
 
 	def testNonMovingAction(self):
-		self.inst.act('run', fife.ModelCoordinate(0,0))
+		self.inst.move('run', fife.ModelCoordinate(0,0))
 		self.inst.update()
 		self.assert_(self.listener.finished)
 

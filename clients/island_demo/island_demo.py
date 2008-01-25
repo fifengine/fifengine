@@ -24,7 +24,7 @@ class InstanceReactor(fife.InstanceListener):
 		self.world = world
 
 	def OnActionFinished(self, instance, action):
-		instance.act_here('default', instance.getFacingLocation(), True)
+		instance.act('default', instance.getFacingLocation(), True)
 		self.evtlistener.PCrun = False
 		print "running reset"
 
@@ -438,7 +438,7 @@ class World(object):
 		
 		self.agent = self.agent_layer.getInstances('name', 'PC')[0]
 		self.agent.addListener(self.reactor)
-		self.agent.act_here('default', self.target, True)
+		self.agent.act('default', self.target, True)
 		self.agentcoords = self.target.getElevationCoordinates()
 
 
@@ -554,9 +554,9 @@ class World(object):
 				self.target.setElevationCoordinates(target_elevcoord)
 
 				if evtlistener.PCrun:				
-					self.agent.act('run', self.target, TDS.TestAgentSpeed)
+					self.agent.move('run', self.target, TDS.TestAgentSpeed)
 				else:
-					self.agent.act('walk', self.target, 4*TDS.TestAgentSpeed)
+					self.agent.move('walk', self.target, 4*TDS.TestAgentSpeed)
 				evtlistener.newTarget = None
 			
 			if evtlistener.quitRequested:

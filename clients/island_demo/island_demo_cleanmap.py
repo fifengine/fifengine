@@ -19,7 +19,7 @@ from fifedit import *
 
 class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
-		instance.act_here('idle', instance.getFacingLocation(), True)
+		instance.act('idle', instance.getFacingLocation(), True)
 
 
 SCROLL_MODIFIER = 0.1
@@ -342,7 +342,7 @@ class World(object):
 		
 		#self.agent = self.agent_layer.getInstances('name', 'MyHero')[0]
 		#self.agent.addListener(self.reactor)
-		#self.agent.act_here('idle', self.target, True)
+		#self.agent.act('idle', self.target, True)
 		#self.agentcoords = self.target.getElevationCoordinates()
 		#for g in self.agent_layer.getInstances('id', 'Gunner'):
 		#	g.act_here('idle', self.target, True)
@@ -451,7 +451,7 @@ class World(object):
 			#	target_elevcoord.z = 0
 			#	self.target.setElevationCoordinates(target_elevcoord)
 			#	
-			#	self.agent.act('walk', self.target, TDS.TestAgentSpeed)
+			#	self.agent.move('walk', self.target, TDS.TestAgentSpeed)
 			#	evtlistener.newTarget = None
 			
 			if evtlistener.quitRequested:
