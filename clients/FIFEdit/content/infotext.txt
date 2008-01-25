@@ -14,6 +14,7 @@ Keybindings:
 
 - O = Open the map loader dialog
 - V = Open the map visualizer dialog
+- L = Open the layer selection dialog
 - M = Make a new instance on the map with
       current object selection at current
       mouse selection.

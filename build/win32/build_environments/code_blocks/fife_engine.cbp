@@ -107,16 +107,6 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
-		<Unit filename="..\..\..\..\engine\core\audio\sounddecoder_wav.cpp">
-				<Option compilerVar="CPP"/>
-				<Option target="default"/>
-			</Unit>
-		<Unit filename="..\..\..\engine\core\audio\sounddecoder_wav.h">
-				<Option compilerVar=""/>
-				<Option compile="0"/>
-				<Option link="0"/>
-				<Option target="default"/>
-			</Unit>
 		<Unit filename="..\..\..\..\engine\core\audio\soundemitter.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>

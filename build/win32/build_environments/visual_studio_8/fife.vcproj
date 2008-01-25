@@ -110,8 +110,6 @@
 				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder_ogg.cpp"></File>
 				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder_ogg.h"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder_wav.cpp"></File>
-				<File RelativePath="..\..\..\..\engine\core\audio\sounddecoder_wav.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\audio\soundemitter.cpp"></File>
 				<File RelativePath="..\..\..\..\engine\core\audio\soundemitter.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\audio\soundmanager.cpp"></File>
