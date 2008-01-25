@@ -82,12 +82,18 @@ namespace FIFE {
 		 * @return A boolean to signify whether the instance container was found.
 		 */
 		bool getInstanceList(const ModelCoordinate& point, int w, int h, InstanceList& lst);
+		
+		/** See QuadNode::apply_visitor
+		 */
+		template<typename Visitor> void applyVisitor(Visitor& visitor) {
+			m_tree.apply_visitor(visitor);
+		}
+
+
+	private:
 		static const int kTreeDepth = 2;
 		typedef QuadTree< InstanceList, kTreeDepth > InstanceQuadTree;
 		InstanceQuadTree m_tree;
-
-	private:
-
 
 		typedef InstanceQuadTree::Node InstanceTreeNode;
 

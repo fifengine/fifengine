@@ -101,10 +101,8 @@ namespace FIFE {
 			return;
 		}
 		InstanceTree * itree = layer->getInstanceTree();
-
 		RenderVisitor VIPguess(m_renderbackend, layer,cam);
-
-		itree->m_tree.apply_visitor( VIPguess );
+		itree->applyVisitor(VIPguess);
 	}
 
 }
