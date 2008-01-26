@@ -9,7 +9,7 @@ import fife
 class ModelLoader(handler.ContentHandler):
 
 	def __init__(self, engine, source, content, state = 0, datastate = 0):
-		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SInstance, self.SObject, self.SAction, self.SInstanceGroup = range(11)
+		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SInstance, self.SObject, self.SAction = range(10)
 
 		self.engine = engine
 		self.model = self.engine.getModel()
@@ -19,9 +19,6 @@ class ModelLoader(handler.ContentHandler):
 
 		self.source = source
 		self.content_path = content
-
-		self.groups_history = []
-		self.group_x = self.group_y = self.group_z = 0
 
 		if (state):
 			self.state = state
@@ -39,17 +36,6 @@ class ModelLoader(handler.ContentHandler):
 
 		self.chars = ""
 		self.construct = False 
-
-	#def debugGroupShit( self, group, indentlvl = 1 ):
-	#	indentstr = indentlvl * '  '
-
-	#	print indentstr + group.Id()
-
-	#	for member in group.getMembers():
-	#		print '%s|- %s' % (indentstr, member.Id())
-
-	#	for grp in group.getGroups():
-	#		self.debugGroupShit( grp, indentlvl + 1 )
 
 	def startElement(self, name, attrs):
 		try:
@@ -476,52 +462,6 @@ class ModelLoader(handler.ContentHandler):
 		else:
 			assert 0, "Layers can only be declared in an <elevation> section."
 
-	def parse_igroup(self, attrs):
-		parse_instancegroup(attrs)
-
-	def parse_instancegroup(self, attrs):
-		if( self.state not in (self.SInstances, self.SInstanceGroup)):
-			assert 0, 'An <instancegroup> section can only be declared in an <instances> or <instancegroup> section.'
-
-		(x, y, z, id) = (attrs.get( 'x_offset' ), attrs.get( 'y_offset' ), attrs.get( 'z_offset' ), attrs.get( 'id' ))
-
-		if( not id ):
-			id = ''
-		else:
-			id = str( id )
-
-		if( x ):
-			x = float( x )
-			self.group_x += x
-		else:
-			x = 0.0
-		if( y ):
-			y = float( y )
-			self.group_y += y
-			self.y += y
-		else:
-			y = 0.0
-		if( z ):
-			z = float( z )
-			self.group_z += z
-		else:
-			z = 0.0
-
-		if len( self.groups_history ):
-			(lx, ly, lz, lastgroup) = self.groups_history[-1]
-		else:
-			lastgroup = None
-
-		group = self.layer.getGroupManager().createGroup( fife.InstanceGroup( id, fife.DoublePoint3D( x, y, z )))
-		if not lastgroup:
-			self.layer.getGroupManager().addGroup( group )
-		else:
-			lastgroup.addGroup( group )
-
-		# Add these instancegroup properties to historylist.
-		self.groups_history += [( x, y, z, group )]
-		self.state = self.SInstanceGroup
-
 	def parse_instances(self, attrs):
 		if (self.state == self.SLayer):
 			self.state = self.SInstances
@@ -537,7 +477,7 @@ class ModelLoader(handler.ContentHandler):
 		self.parse_instance(attrs)
 
 	def parse_instance(self, attrs):
-		if (self.state in ( self.SInstances, self.SInstanceGroup )):
+		if (self.state == self.SInstances):
 			self.oldstate = self.state
 			self.state = self.SInstance
 
@@ -554,10 +494,6 @@ class ModelLoader(handler.ContentHandler):
 			assert len(query) == 1, "Multiple objects with this identifier found."
 			object = query[0]
 
-			px = py = pz = 0.0
-			if( self.oldstate == self.SInstanceGroup ):
-				(px, py, pz) = (self.group_x, self.group_y, self.group_z)
-
 			x = attrs.get("x")
 			y = attrs.get("y")
 			z = attrs.get("z")
@@ -565,22 +501,22 @@ class ModelLoader(handler.ContentHandler):
 			id = attrs.get("id")
 
 			if (x):
-				x = float(x) + px
+				x = float(x)
 				self.x = x
 			else:
 				self.x = self.x + 1
 				x = self.x
 
 			if (y):
-				y = float(y) + py
+				y = float(y)
 				self.y = y
 			else:
 				y = self.y
 			
 			if (z):
-				z = float(z) + pz
+				z = float(z)
 			else:
-				z = pz
+				z = 0.0
 			
 			if not (id):
 				id = ''
@@ -598,9 +534,6 @@ class ModelLoader(handler.ContentHandler):
 				inst.act("default", target, True)
 			self.instance = inst
 
-			if len( self.groups_history ):
-				(x, y, z, grp) = self.groups_history[-1]
-				grp.addInstance( inst )
 		else:
 			assert 0, "Instances can only be declared in an <instances> section."
 
@@ -648,8 +581,6 @@ class ModelLoader(handler.ContentHandler):
 
 	def finish_map(self):
 		self.state = self.SModel
-		#for grp in self.layer.getGroupManager().getGroups():
-		#	self.debugGroupShit( grp )
 
 	def finish_elevation(self):
 		self.state = self.SMap
@@ -659,19 +590,6 @@ class ModelLoader(handler.ContentHandler):
 
 	def finish_layer(self):
 		self.state = self.SElevation
-
-	def finish_igroup(self):
-		self.finish_instancegroup()
-
-	def finish_instancegroup(self):
-		(x, y, z, group) = self.groups_history[-1]
-		del self.groups_history[-1]
-		self.group_x -= x
-		self.group_y -= y
-		self.group_z -= z
-
-		if( not len( self.groups_history )):
-			self.state = self.SInstances
 
 	def finish_instances(self):
 		self.state = self.SLayer
