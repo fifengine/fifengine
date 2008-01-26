@@ -71,6 +71,7 @@
 #include "view/renderers/gridrenderer.h"
 #include "view/renderers/instancerenderer.h"
 #include "view/renderers/coordinaterenderer.h"
+#include "view/renderers/floatingtextrenderer.h"
 #include "engine.h"
 
 #ifdef USE_COCOA
@@ -232,8 +233,9 @@ namespace FIFE {
 		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, m_imagepool, 0));
 		m_view->addRenderer(new InstanceRenderer(m_renderbackend, m_imagepool, m_animpool, 1));
 		m_view->addRenderer(new GridRenderer(m_renderbackend, 2));
-		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 3));
-		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont), 4));
+		m_view->addRenderer(new FloatingTextRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont), 3));
+		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 4));
+		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont), 5));
 		m_cursor = new Cursor(m_imagepool, m_animpool, m_renderbackend);
 		FL_LOG(_log, "Engine intialized");
 	}

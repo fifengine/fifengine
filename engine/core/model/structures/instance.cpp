@@ -90,6 +90,18 @@ namespace FIFE {
 		// pather
 		AbstractPather* m_pather;
 	};
+	
+	class SayInfo {
+	public:
+		SayInfo(const std::string& txt, unsigned int duration):
+			m_txt(txt),
+			m_duration(duration),
+			m_start_time(SDL_GetTicks()) {
+		}
+		std::string m_txt;
+		unsigned int m_duration;
+		unsigned int m_start_time;
+	};
 
 	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
 		AttributedClass(identifier),
@@ -98,7 +110,8 @@ namespace FIFE {
 		m_facinglocation(NULL),
 		m_actioninfo(NULL),
 		m_listeners(NULL),
-		m_visual(NULL) {
+		m_visual(NULL),
+		m_sayinfo(NULL) {
 	}
 
 	Instance::~Instance() {
@@ -157,6 +170,22 @@ namespace FIFE {
 		initalizeAction(action_name);
 		m_actioninfo->m_repeating = repeating;
 		setFacingLocation(direction);
+	}
+
+	void Instance::say(const std::string& text, unsigned int duration) {
+		delete m_sayinfo;
+		m_sayinfo = NULL;
+		
+		if (text != "") {
+			m_sayinfo = new SayInfo(text, duration);
+		}
+	}
+
+	const std::string* Instance::getSayText() const {
+		if (m_sayinfo) {
+			return &m_sayinfo->m_txt;
+		}
+		return NULL;
 	}
 
 	void Instance::setFacingLocation(const Location& loc) {
@@ -222,6 +251,13 @@ namespace FIFE {
 		}
 		if (m_actioninfo) {
 			m_actioninfo->m_prev_call_time = curticks;
+		}
+		if (m_sayinfo) {
+			if (m_sayinfo->m_duration > 0) {
+				if ((curticks - m_sayinfo->m_start_time) > m_sayinfo->m_duration) {
+					say("");
+				}
+			}
 		}
 	}
 

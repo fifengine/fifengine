@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2008 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_COORDINATERENDERER_H
- #define FIFE_COORDINATERENDERER_H
+#ifndef FIFE_FLOATINGTEXTRENDERER_H
+#define FIFE_FLOATINGTEXTRENDERER_H
 
 // Standard C++ library includes
 
@@ -31,38 +31,31 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "view/rendererbase.h"
-#include "util/rect.h"
 
 namespace FIFE {
 	class RenderBackend;
-	class ImagePool;
 	class AbstractFont;
 
-	class CoordinateRenderer: public RendererBase {
+	class FloatingTextRenderer: public RendererBase {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
-		 * @param imagepool image pool where from fetch images
 		 */
-		CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font, int position);
+		FloatingTextRenderer(RenderBackend* renderbackend, AbstractFont* font, int position);
 
 		/** Destructor.
 		 */
-		virtual ~CoordinateRenderer();
+		virtual ~FloatingTextRenderer();
 
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
 
-		std::string getName() { return "CoordinateRenderer"; }
+		std::string getName() { return "FloatingTextRenderer"; }
 
 	private:
-		void adjustLayerArea();
-
 		RenderBackend* m_renderbackend;
-		Rect m_layer_area;
-		Location m_tmploc;
-		ExactModelCoordinate m_c;
 		AbstractFont* m_font;
 	};
+
 }
 
 #endif

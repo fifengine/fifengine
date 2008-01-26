@@ -48,6 +48,7 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 	CameraZoneRenderer::CameraZoneRenderer(RenderBackend* renderbackend, ImagePool* imagepool,int position):
+		RendererBase(),
 		m_renderbackend(renderbackend),
 		m_imagepool(imagepool),
 		m_zone_image(NULL) {

@@ -38,6 +38,7 @@ namespace FIFE {
 		int getActionRuntime() const;
 		void move(const std::string& action_name, const Location& target, const double speed);
 		void act(const std::string& action_name, const Location& direction, bool repeating=false);
+		void say(const std::string& text, unsigned int duration=0);
 		void update(unsigned int curticks=0);
 
 		void setVisual(AbstractVisual* visual);

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, re, math
+import sys, os, re, math, random
 
 def _jp(path):
 	return os.path.sep.join(path.split('/'))
@@ -568,11 +568,13 @@ class World(object):
 				target_elevcoord.z = 0
 				self.target.setElevationCoordinates(target_elevcoord)
 
-				if evtlistener.PCrun:				
+				if evtlistener.PCrun:
 					self.agent.move('run', self.target, TDS.TestAgentSpeed)
 				else:
 					self.agent.move('walk', self.target, 4*TDS.TestAgentSpeed)
 				evtlistener.newTarget = None
+				txtindex = random.randint(0, len(TDS.agentTexts)-1)
+				self.agent.say(TDS.agentTexts[txtindex], 2500)
 			
 			if evtlistener.quitRequested:
 				break

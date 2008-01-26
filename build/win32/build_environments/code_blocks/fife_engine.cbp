@@ -1253,6 +1253,16 @@
 				<Option link="0"/>
 				<Option target="default"/>
 			</Unit>
+		<Unit filename="..\..\..\..\engine\core\view\renderers\floatingtextrenderer.cpp">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>
+		<Unit filename="..\..\..\engine\core\view\renderers\floatingtextrenderer.h">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>
 		<Unit filename="..\..\..\..\engine\core\view\renderers\gridrenderer.cpp">
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>

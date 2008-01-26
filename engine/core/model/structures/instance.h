@@ -43,6 +43,7 @@ namespace FIFE {
 	class Action;
 	class Instance;
 	class ActionInfo;
+	class SayInfo;
 
 	class InstanceListener {
 	public:
@@ -133,6 +134,16 @@ namespace FIFE {
 		 */
 		void act(const std::string& action_name, const Location& direction, bool repeating=false);
 
+		/** Causes instance to "say" given text (shown on screen next to the instance)
+		 *  @param text text to say. If "" given, clear the text
+		 *  @param duration duration to show the text (in ms). If 0, shows forever
+		 */
+		void say(const std::string& text, unsigned int duration=0);
+
+		/** Returns pointer to currently set saytext. In case no text is set, returns NULL
+		 */
+		const std::string* getSayText() const;
+
 		/** Updates the instance related to the current action
 		 * @param curticks current tick count of the system
 		 */
@@ -162,6 +173,8 @@ namespace FIFE {
 		std::vector<InstanceListener*>* m_listeners;
 		// instance visualization
 		AbstractVisual* m_visual;
+		// text to say + duration, NULL if nothing
+		SayInfo* m_sayinfo;
 		
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);

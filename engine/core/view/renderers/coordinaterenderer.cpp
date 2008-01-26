@@ -51,6 +51,7 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font, int position):
+		RendererBase(),
 		m_renderbackend(renderbackend),
 		m_layer_area(),
 		m_tmploc(),

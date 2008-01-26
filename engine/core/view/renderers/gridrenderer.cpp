@@ -46,6 +46,7 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 	GridRenderer::GridRenderer(RenderBackend* renderbackend, int position):
+		RendererBase(),
 		m_renderbackend(renderbackend) {
 		setPipelinePosition(position);
 		setEnabled(false);
