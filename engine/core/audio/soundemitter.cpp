@@ -218,7 +218,7 @@ namespace FIFE {
 			m_soundclip->setStreamPos(m_streamid, type, value);
 			
 			// detach all buffers
-			alSourcei(m_source, AL_BUFFER, NULL);
+			alSourcei(m_source, AL_BUFFER, 0);
 
 			// queue the buffers with new data
 			m_soundclip->acquireStream(m_streamid);

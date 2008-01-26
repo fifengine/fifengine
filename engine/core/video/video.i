@@ -22,6 +22,7 @@
 
 %{
 #include "video/image.h"
+#include "video/cursor.h"
 #include "video/animation.h"
 #include "video/imagepool.h"
 #include "video/animationpool.h"
@@ -99,5 +100,22 @@ namespace FIFE {
 		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
 	private:
 		RenderBackend(const std::string& name);
+	};
+	
+	enum MouseCursorType {
+		CURSOR_NATIVE,
+		CURSOR_IMAGE,
+		CURSOR_ANIMATION
+	};
+	
+	class Cursor {
+	public:
+		virtual ~Cursor() {}
+		void set(MouseCursorType ctype, unsigned int cursor_id=0);
+		unsigned int getId() const;
+		MouseCursorType getType() const;
+	
+	private:
+		Cursor(ImagePool* imgpool, AnimationPool* animpool);
 	};
 }

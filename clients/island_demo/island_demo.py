@@ -484,7 +484,20 @@ class World(object):
 		emitter.load('content/audio/music/caribic.ogg')
 		emitter.setLooping(True)
 		emitter.play()
-			
+		
+	def test_cursor(self):
+		cursor_type = fife.CURSOR_NATIVE
+		#cursor_type = fife.CURSOR_IMAGE
+		#cursor_type = fife.CURSOR_ANIMATION
+		
+		c = self.engine.getCursor()
+		if cursor_type == fife.CURSOR_NATIVE:
+			c.set(fife.CURSOR_NATIVE)
+		elif cursor_type == fife.CURSOR_IMAGE:
+			c.set(fife.CURSOR_IMAGE, 20)
+		elif cursor_type == fife.CURSOR_ANIMATION:
+			c.set(fife.CURSOR_ANIMATION, 5)
+		
 	def run(self):
 		camloc = fife.Location()
 		evtlistener = self.evtlistener
@@ -504,6 +517,8 @@ class World(object):
 		cam_to_right = True
 		self.cameras['small'].setEnabled(showSecondCamera)
 		#print self.agent.getObject().getPather().getName()
+		
+		self.test_cursor()
 		
 		while True:
 			if showTileOutline != evtlistener.showTileOutline:

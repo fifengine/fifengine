@@ -360,6 +360,8 @@
 				<File RelativePath="..\..\..\..\engine\core\video\animation.cpp"></File>
 				<File RelativePath="..\..\..\..\engine\core\video\animation.h"></File>
 				<File RelativePath="..\..\..\..\engine\core\video\animationpool.h"></File>
+				<File RelativePath="..\..\..\..\engine\core\video\cursor.cpp"></File>
+				<File RelativePath="..\..\..\..\engine\core\video\cursor.h"></File>
 				<Filter Name="fonts">
 					<File RelativePath="..\..\..\..\engine\core\video\fonts\abstractfont.h"></File>
 					<File RelativePath="..\..\..\..\engine\core\video\fonts\fontbase.cpp"></File>

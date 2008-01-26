@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2008 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,105 +19,74 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_ENGINE_H
-#define FIFE_ENGINE_H
+#ifndef FIFE_CURSOR_H
+#define FIFE_CURSOR_H
 
 // Standard C++ library includes
-#include <map>
-#include <string>
-#include <vector>
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "enginesettings.h"
-
-namespace gcn {
-	class Graphics;
-}
 
 namespace FIFE {
 
-	class SoundManager;
-	class RenderBackend;
-	class GUIManager;
-	class VFS;
-	class VFSSourceFactory;
-	class EventManager;
-	class TimeManager;
 	class ImagePool;
 	class AnimationPool;
-	class View;
-	class Model;
-	class LogManager;
-	class GuiFont;
-	class VFS;
-	class Cursor;
-
-	class Engine {
+	class RenderBackend;
+	
+	/** Defines the type of shown cursor
+	 * native -> default cursor
+	 * image -> cursor from image pool
+	 * animation -> cursor from animation pool
+	 */
+	enum MouseCursorType {
+		CURSOR_NATIVE,
+		CURSOR_IMAGE,
+		CURSOR_ANIMATION
+	};
+	
+	/**  Cursor class manages mouse cursor handling
+	 */
+	class Cursor {
 	public:
-		/** Constructor
+		/** Constructor.
 		 */
-		Engine();
+		Cursor(ImagePool* imgpool, AnimationPool* animpool, RenderBackend* renderbackend);
 
-		/** Destructor
+		/** Destructor.
 		 */
-		virtual ~Engine();
+		virtual ~Cursor() {}
 
-		/** Gets settings class for engine
+		/** draws cursor on screen
 		 */
-		EngineSettings& getSettings();
+		virtual void draw();
+
+		/** Sets the current mouse cursor type and possible pool value
+		 * @param ctype cursor type
+		 * @param cursor_id pool id for the cursor (either image or animation)
+		 */
+		void set(MouseCursorType ctype, unsigned int cursor_id=0);
 		
-		/** Initializes the engine
+		/** Gets the current mouse cursor pool id
 		 */
-		void init() throw(NotSet);
+		unsigned int getId() const { return m_cursor_id; }
 		
-		void initializePumping();
-		void finalizePumping();
-
-		/** Runs one cycle for the engine
+		/** Gets the current mouse cursor type
 		 */
-		void pump();
-
-		SoundManager* getSoundManager() { return m_soundmanager; }
-		EventManager* getEventManager() { return m_eventmanager; }
-		TimeManager* getTimeManager() { return m_timemanager; }
-		GUIManager* getGuiManager() { return m_guimanager; }
-		ImagePool* getImagePool() { return m_imagepool; }
-		AnimationPool* getAnimationPool() { return m_animpool; }
-		RenderBackend* getRenderBackend() { return m_renderbackend; }
-		Model* getModel() { return m_model; }
-		View* getView() { return m_view; }
-		LogManager* getLogManager() { return m_logmanager; }
-		GuiFont* getDefaultFont() { return m_defaultfont; }
-		VFS* getVFS() { return m_vfs; }
-		Cursor* getCursor() { return m_cursor; }
-
+		MouseCursorType getType() const { return m_cursor_type; }
+	
 	private:
-		void preInit();
-		
+		unsigned int m_cursor_id;
+		MouseCursorType m_cursor_type;
 		RenderBackend* m_renderbackend;
-		GUIManager* m_guimanager;
-		EventManager* m_eventmanager;
-		SoundManager* m_soundmanager;
-		TimeManager* m_timemanager;
-		ImagePool* m_imagepool;
+		ImagePool* m_imgpool;
 		AnimationPool* m_animpool;
-		VFS* m_vfs;
-		Model* m_model;
-		gcn::Graphics* m_gui_graphics;
-		View* m_view;
-		LogManager* m_logmanager;
-		GuiFont* m_defaultfont;
-		Cursor* m_cursor;
-		
-		EngineSettings m_settings;
+		unsigned int m_animtime;
 	};
 
-}//FIFE
+} //FIFE
 
 #endif

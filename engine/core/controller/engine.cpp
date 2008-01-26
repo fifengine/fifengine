@@ -47,6 +47,7 @@
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
+#include "video/cursor.h"
 #ifdef HAVE_OPENGL
 #include "video/opengl/renderbackendopengl.h"
 #include "gui/base/opengl/opengl_gui_graphics.h"
@@ -97,6 +98,7 @@ namespace FIFE {
 		m_gui_graphics(0),
 		m_view(0),
 		m_logmanager(0),
+		m_cursor(0),
 		m_settings() {
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
@@ -232,12 +234,14 @@ namespace FIFE {
 		m_view->addRenderer(new GridRenderer(m_renderbackend, 2));
 		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 3));
 		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, dynamic_cast<AbstractFont*>(m_defaultfont), 4));
+		m_cursor = new Cursor(m_imagepool, m_animpool, m_renderbackend);
 		FL_LOG(_log, "Engine intialized");
 	}
 
 	Engine::~Engine() {
 		FL_LOG(_log, "Destructing engine");
-		delete m_view;
+ 		delete m_cursor;
+ 		delete m_view;
 		delete m_model;
 		delete m_soundmanager;
 		delete m_guimanager;
@@ -271,6 +275,7 @@ namespace FIFE {
 		m_timemanager->update();
 		m_model->update();
 		m_view->update( m_imagepool,m_animpool );
+		m_cursor->draw();
 		m_guimanager->turn();
 		m_renderbackend->endFrame();
 		SDL_Delay(1);
