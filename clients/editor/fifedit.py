@@ -20,8 +20,8 @@ class Fifedit:
 	# The key will be displayed on the Editor menu, and the value will be called when the key is clicked.
 	def registerPlugin(self, plugin):
 		for key in plugin.menu_items:
-			button = widgets.Button(parent=self.gui, text=key)
-			button.name = key
+			button = widgets.Button(parent=self.gui,name=key,text=key)
+			#button.name = key
 			self.gui.add(button)
 
 		self.gui.mapEvents(plugin.menu_items)

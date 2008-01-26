@@ -421,13 +421,13 @@ class Widget(object):
 	def _setName(self,name):
 		from pychan import manager
 		self._name = name
-		add_listener = hasattr(self,'_event_id')
+		add_listener = not hasattr(self,'_event_id')
 		try:
 			self._event_id = "%s(name=%s,id=%d)" % (str(self.__class__),name,id(self))
 			self.real_widget.setActionEventId(self._event_id)
 			if add_listener:
 				self.real_widget.addActionListener(manager.guimanager)
-		except AttributeError: pass 
+		except AttributeError: pass
 	name = property(_getName,_setName)
 
 	def _getStyle(self): return self._style
