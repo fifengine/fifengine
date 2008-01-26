@@ -69,18 +69,24 @@ class Widget(object):
 			style = None, **kwargs):
 		
 		assert( hasattr(self,'real_widget') )
+		self._has_listener = False
+		self._visible = False
+		
+		# Data distribution & retrieval settings
+		self.accepts_data = False
+		self.accepts_initial_data = False
+
 		self._parent = parent
+		
+		# This will also set the _event_id and call real_widget.setActionEventId
 		self.name = name
+		
 		self.min_size = min_size
 		self.max_size = max_size
 		self.size = size
 		self.position_technique = "explicit"
-		self._visible = False
 		self.font = 'default'
 		
-		self.accepts_data = False
-		self.accepts_initial_data = False
-
 		# Inherit style
 		if style is None and parent:
 			style = parent.style
@@ -105,10 +111,14 @@ class Widget(object):
 		
 		The callback must be either a callable or None.
 		The old event handler (if any) will be overridden by the callback.
-		If None is given, the event will be disabled.
+		If None is given, the event will be disabled. You can query L{isCaptured}
+		wether this widgets events are currently captured.
 		"""
 		if callback is None:
 			del get_manager().widgetEvents[self._event_id]
+			if self._has_listener:
+				self.real_widget.removeActionListener(manager.guimanager)
+			self._has_listener = None
 			return
 
 		if not callable(callback):
@@ -116,7 +126,14 @@ class Widget(object):
 
 		def captured_f(event):
 			tools.applyOnlySuitable(callback,event=event,widget=self)
+
 		get_manager().widgetEvents[self._event_id] = captured_f
+		if not self._has_listener:
+			self.real_widget.addActionListener(get_manager().guimanager)
+		self._has_listener = True
+
+	def isCaptured(self):
+		return self._has_listener
 
 	def show(self):
 		"""
@@ -421,13 +438,13 @@ class Widget(object):
 	def _setName(self,name):
 		from pychan import manager
 		self._name = name
-		add_listener = not hasattr(self,'_event_id')
-		try:
+		# Do not change the event id while we are captured.
+		if not self.isCaptured():
 			self._event_id = "%s(name=%s,id=%d)" % (str(self.__class__),name,id(self))
-			self.real_widget.setActionEventId(self._event_id)
-			if add_listener:
-				self.real_widget.addActionListener(manager.guimanager)
-		except AttributeError: pass
+		else:
+			# Print some notfication, so obscure behaviour might get debugged.
+			print "%s already captured, but changing the name attribute. Just a notification :-)" % str(self)
+		self.real_widget.setActionEventId(self._event_id)
 	name = property(_getName,_setName)
 
 	def _getStyle(self): return self._style

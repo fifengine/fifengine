@@ -17,7 +17,6 @@ Features
 
 TODO
 ----
- - Refactoring of Widget._setName
  - Add __str__ and __repr__ methods consistantly.
  - Make setting parent attribute imply containment relation.
 
