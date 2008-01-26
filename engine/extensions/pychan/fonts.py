@@ -52,6 +52,12 @@ class Font(object):
 			fonts.append( Font(name,_get) )
 		return fonts
 
+	def __str__(self):
+		return "Font(source='%s')" % self.source
+	
+	def __repr__(self):
+		return "<Font(source='%s') at %x>" % (self.source,id(self))
+
 def loadFonts(filename):
 	"""
 	Load fonts from a config file. These are then available via their name.

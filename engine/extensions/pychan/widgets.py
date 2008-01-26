@@ -94,7 +94,7 @@ class Widget(object):
 		
 		# Not needed as attrib assignment will trigger manager.stylize call
 		#manager.stylize(self,self.style)
-	
+
 	def match(self,**kwargs):
 		"""
 		Matches the widget against a list of key-value pairs.
@@ -365,6 +365,12 @@ class Widget(object):
 			self._parent.sizeChanged()
 		else:
 			self.adaptLayout()
+
+	def __str__(self):
+		return "%s(name='%s')" % (self.__class__.__name__,self.name)
+	
+	def __repr__(self):
+		return "<%s(name='%s') at %x>" % (self.__class__.__name__,self.name,id(self))
 
 	def _setSize(self,size):
 		if isinstance(size,fife.Point):
@@ -1169,6 +1175,13 @@ class Spacer(object):
 	"""
 	def __init__(self,parent=None,**kwargs):
 		self._parent = parent
+
+	def __str__(self):
+		return "Spacer(parent.name='%s')" % getattr(self._parent,'name','None')
+	
+	def __repr__(self):
+		return "<Spacer(parent.name='%s') at %x>" % (getattr(self._parent,'name','None'),id(self))
+
 
 # Global Widget Class registry
 
