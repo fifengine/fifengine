@@ -102,10 +102,21 @@ class Widget(object):
 	def capture(self, callback):
 		"""
 		Add a callback to be executed when the widget event occurs on this widget.
+		
+		The callback must be either a callable or None.
+		The old event handler (if any) will be overridden by the callback.
+		If None is given, the event will be disabled.
 		"""
+		if callback is None:
+			del get_manager().widgetEvents[self._event_id]
+			return
+
+		if not callable(callback):
+			raise RuntimeError("An event callback must be either a callable or None - not %s" % repr(callback))
+
 		def captured_f(event):
 			tools.applyOnlySuitable(callback,event=event,widget=self)
-		get_manager().widgetEvents.setdefault(self._event_id,[]).append(captured_f)
+		get_manager().widgetEvents[self._event_id] = captured_f
 
 	def show(self):
 		"""
@@ -179,6 +190,11 @@ class Widget(object):
 		"""
 		Convenience function to map widget events to functions
 		in a batch.
+		
+		Subsequent calls of mapEvents will merge events with different
+		widget names and override the previously set callback.
+		You can also pass C{None} instead of a callback, which will
+		disable the event completely.
 		
 		@param eventMap: A dictionary with widget names as keys and callbacks as values.
 		@param ignoreMissing: Normally this method raises an RuntimeError, when a widget
