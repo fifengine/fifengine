@@ -1,12 +1,21 @@
 # Fifedit is the editor tool. It is designed to be embedded in clients, most notably the editor.
 # Fifedit is based on a plugin system. See registerPlugin below.
 
+import math
+
 import fife
 import pychan
 import pychan.widgets as widgets
 
 class Fifedit(fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
+		self.eventmanager = engine.getEventManager()
+
+		fife.IMouseListener.__init__(self)
+		self.eventmanager.addMouseListener(self)
+		fife.IKeyListener.__init__(self)
+		self.eventmanager.addKeyListener(self)
+
 		pychan.init(engine,debug=True)
 		self.gui = pychan.loadXML('content/gui/rootpanel.xml')
 		eventMap = {
@@ -15,8 +24,9 @@ class Fifedit(fife.IMouseListener, fife.IKeyListener):
 		self.gui.mapEvents(eventMap)
 		self.gui.show()
 
-		self.map = None
 		self.camera = None
+		self.elevation = None
+		self.layer = None
 		self.selection = None
 
 	# To create a plugin, just define menu_items with string keys and function values.
@@ -33,9 +43,20 @@ class Fifedit(fife.IMouseListener, fife.IKeyListener):
 	def quit(self):
 		self.gui.hide()
 
+	def editWith(self, camera):
+		self.camera = camera
+		self.elevation = camera.getLocation().getElevation()
+		self.layer = camera.getLocation().getLayer()
+
 	def mousePressed(self, evt):
-		self.selection = fife.ScreenPoint(evt.getX(), evt.getY())
-		self.callback()
+		if self.camera:
+			# TODO: make Sleek fix this ugly mess
+			tmp = fife.ScreenPoint(evt.getX(), evt.getY())
+			dy = -(tmp.y - self.camera.toScreenCoordinates(self.camera.getLocation().getElevationCoordinates()).y)
+			tmp.z = (int)(math.tan(self.camera.getTilt()* (math.pi / 180.0)) * dy)
+			self.selection = self.camera.toElevationCoordinates(tmp)
+			self.selection.z = 0
+			self.selection = self.layer.getCellGrid().toLayerCoordinates(self.selection)
 
 	def mouseReleased(self, evt):
 		pass
@@ -58,13 +79,11 @@ class Fifedit(fife.IMouseListener, fife.IKeyListener):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		if keystr == 'm':
-			self.make_inst = True
+			pass # TODO: make an instance
 		elif keystr == 'x':
-			self.delete_inst = True
-		elif keystr == 'l':
-			self.show_layers = True
-		elif keystr == 'o':
-			self.open_file = True
+			if self.selection:
+				for inst in self.layer.getInstances('loc', str(self.selection.x) + ',' + str(self.selection.y)):
+					self.layer.deleteInstance(inst)
 
 	def keyReleased(self, evt):
 		pass

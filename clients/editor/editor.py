@@ -56,8 +56,7 @@ class Editor(basicapplication.ApplicationBase):
 	def _pump(self):
 		self.viewer.pump()
 		if self.viewer.new_view:
-#			self.fifedit.editMap(self.viewer.map, self.viewer.camera)
-			pass
+			self.fifedit.editWith(self.viewer.camera)
 
 if __name__ == '__main__':
 	app = Editor()
