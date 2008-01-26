@@ -58,6 +58,7 @@ namespace FIFE {
 		virtual int getStringIndexAt(const std::string &text, int x);
 		
 		Image* getAsImage(const std::string& text);
+		Image* getAsImageMultiline(const std::string& text);
 		SDL_Color getColor() const;
 		
 		virtual SDL_Surface* renderString(const std::string& text) = 0;		

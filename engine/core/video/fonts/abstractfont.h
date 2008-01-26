@@ -95,6 +95,11 @@ namespace FIFE {
 		 */
 		virtual Image* getAsImage(const std::string& text) = 0;
 
+		/** Gets given text as Image. Text is splitted on multiple lines based "\n" marks
+		 *  The rsulting image is pooled, so it's not that time critical
+		 */
+		virtual Image* getAsImageMultiline(const std::string& text) = 0;
+		
 		/** Set the color the text should be rendered in
 		 */
 		virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;

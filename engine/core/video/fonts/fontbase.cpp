@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <vector>
 
 // Platform specific includes
 
@@ -91,6 +92,58 @@ namespace FIFE {
 			SDL_Surface* textSurface = renderString(text);
 			image = RenderBackend::instance()->createStaticImageFromSDL(textSurface);
 			m_pool.addRenderedText( this, text, image );
+		}
+		return image;
+	}
+	
+	Image* FontBase::getAsImageMultiline(const std::string& text) {
+		Image* image = m_pool.getRenderedText(this, text);
+		if (!image) {
+			std::vector<SDL_Surface*> lines;
+			
+			// split text as needed
+			std::string::size_type pos, last_pos = 0;
+			int length = 0;
+			int render_width, render_height = 0;
+			do {
+				pos = text.find("\n", last_pos);
+				if (pos != std::string::npos) {
+					length = pos - last_pos;
+				} else {
+					length = text.size() - last_pos;
+				}
+				std::string sub = text.substr(last_pos, length);
+				SDL_Surface* text_surface = renderString(sub);
+				if (text_surface->w > render_width) {
+					render_width = text_surface->w;
+				}
+				lines.push_back(text_surface);
+				last_pos = pos + 1;
+			} while (pos != std::string::npos);
+			render_height = (getRowSpacing() + getHeight()) * lines.size();
+			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+				render_width,render_height,32,
+				0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
+			SDL_FillRect(final_surface,0,0x00000000);
+			
+			int ypos = 0;
+			for (std::vector<SDL_Surface*>::iterator i = lines.begin(); i != lines.end(); ++i) {
+				SDL_Rect src_rect;
+				src_rect.x = 0;
+				src_rect.y = 0;
+				src_rect.w = (*i)->w;
+				src_rect.h = (*i)->h;
+				
+				SDL_Rect dst_rect = src_rect;
+				dst_rect.y = ypos;
+				
+				SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
+				SDL_BlitSurface(*i,&src_rect,final_surface,&dst_rect);
+				ypos += getRowSpacing() + getHeight();
+				SDL_FreeSurface(*i);
+			}
+			image = RenderBackend::instance()->createStaticImageFromSDL(final_surface);
+			m_pool.addRenderedText(this, text, image);
 		}
 		return image;
 	}

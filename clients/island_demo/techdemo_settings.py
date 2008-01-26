@@ -15,8 +15,8 @@ CoordinateLayerName = "TechdemoMapObjectLayer"
 QuadTreeLayerName = "" #"TechdemoMapObjectLayer"
 
 agentTexts = (
-	'I wonder when the guys get this world ready for me',
-	"Bring it on baby, I'm ready for action!",
+	'I wonder when the guys get\n' + 'this world ready for me',
+	'Bring it on baby,\n' + "I'm ready for action!",
 	'humm di dum....', '', '', ''
 )
 

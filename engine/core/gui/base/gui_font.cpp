@@ -97,6 +97,10 @@ namespace FIFE {
 		return m_font->getAsImage(text);
 	}
 	
+	Image* GuiFont::getAsImageMultiline(const std::string& text) {
+		return m_font->getAsImageMultiline(text);
+	}
+	
 	void GuiFont::setColor(uint8_t r,uint8_t g,uint8_t b) {
 		m_font->setColor(r, g, b);
 	}

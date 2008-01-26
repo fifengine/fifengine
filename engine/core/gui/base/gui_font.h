@@ -55,6 +55,7 @@ namespace FIFE {
 		void setAntiAlias(bool antiAlias);
 		bool isAntiAlias();
 		Image* getAsImage(const std::string& text);
+		Image* getAsImageMultiline(const std::string& text);
 		void setColor(uint8_t r,uint8_t g,uint8_t b);
 		SDL_Color getColor() const;
 		int getWidth(const std::string& text) const;
