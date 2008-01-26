@@ -31,7 +31,6 @@ class EditorListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListen
 		eventmanager.addWidgetListener(self)
 	
 		self.engine = engine		
-		self.newTarget = None
 		self.showTileOutline = True
 		self.showEditor = False
 		self.showCoordinates = False

@@ -42,6 +42,10 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		self._dragx = 0
 		self._dragy = 0
 
+		self.new_view = False
+		self.map = None
+		self.camera = None
+
 	def mousePressed(self, evt):
 		if (evt.getButton() == fife.IMouseEvent.LEFT ):
 			if self._ctrldown:
@@ -140,7 +144,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 			selection = self.viewSelect.collectData(['optionDrop'])['optionDrop']
 			if selection < 0:
 				return
-			self._editMap(map_list[selection])
+			self._viewMap(map_list[selection])
 
 		if not self.viewSelect:
 			self.viewSelect = pychan.loadXML('content/gui/selection.xml')
@@ -154,7 +158,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		})
 		self.viewSelect.show()
 
-	def _editMap(self, mapid):
+	def _viewMap(self, mapid):
 		self.map = self.engine.getModel().getMaps('id', mapid)[0]
 		self.elevation = self.map.getElevations()[0]
 		self.layer = self.elevation.getLayers()[0]
@@ -179,6 +183,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 
 		self._set_camera((0, 0, W, H))
 		self.engine.getView().resetRenderers()
+		self.new_view = True
 
 	def pump(self):
 		if (self.horizscroll or self.vertscroll):

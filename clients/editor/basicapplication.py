@@ -45,7 +45,9 @@ class ApplicationBase(object):
 		engine = fife.Engine()
 		self.engine = engine
 		log = fifelog.LogManager(engine, settings.LogToPrompt, settings.LogToFile)
-		
+		if settings.LogModules:
+			log.setVisibleModules(*settings.LogModules)
+
 		engineSetting = engine.getSettings()
 		engineSetting.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
 				".,!?-+/:();%`'*#=[]")

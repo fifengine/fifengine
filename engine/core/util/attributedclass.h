@@ -76,6 +76,8 @@ namespace FIFE {
 			 *  the empty string is returned.
 			 *
 			 *  @param field The field to be retrieved.
+			 *
+			 *  Special field: 'id', the identifier of the attributed class instance.
 			 */
 			virtual const std::string& get(const std::string& field);
 

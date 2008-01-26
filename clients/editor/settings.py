@@ -7,7 +7,7 @@ SDLRemoveFakeAlpha  = 1
 ScreenWidth         = 1024
 ScreenHeight        = 768
 
-LogModules          = []#['hexgrid']
+LogModules          = ['controller']
 LogToPrompt         = 1
 LogToFile           = 0
 

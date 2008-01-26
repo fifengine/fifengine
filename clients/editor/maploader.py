@@ -55,7 +55,7 @@ class MapLoader:
 				lst.append(new_dir)
 			self.path = '/'.join(lst)
 
-		self.dir_list = ('..',) + self.engine.getVFS().listDirectories(self.path)
+		self.dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
 		self.file_list = filter(lambda f: f.split('.')[-1] == 'xml', self.engine.getVFS().listFiles(self.path))
 		self.maploadWidget.distributeInitialData({
 			'dirList'  : self.dir_list,

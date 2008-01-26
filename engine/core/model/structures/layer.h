@@ -143,6 +143,9 @@ namespace FIFE {
 			/** Get a list of instances on this layer with a value.
 			 * @param field the (string) field to search on
 			 * @param value the value to be found in the field
+			 *
+			 *  Special field: 'loc', the location of the instance.
+			 *
 			 */
 			std::vector<Instance*> getInstances(const std::string& field, const std::string& value);
 
