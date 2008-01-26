@@ -98,7 +98,7 @@ namespace FIFE {
 			bool isRemoveFakeAlpha() { return m_removefakealpha; }
 
 		protected:
-			void setClipArea(const Rect& cliparea);
+			void setClipArea(const Rect& cliparea, bool clear);
 
 
 		private:

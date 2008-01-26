@@ -264,13 +264,15 @@ namespace FIFE {
 
 	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) { /* not implemented */ }
 
-	void RenderBackendSDL::setClipArea(const Rect& cliparea) {
+	void RenderBackendSDL::setClipArea(const Rect& cliparea, bool clear) {
 		SDL_Rect rect;
 		rect.x = cliparea.x;
 		rect.y = cliparea.y;
 		rect.w = cliparea.w;
 		rect.h = cliparea.h;
 		SDL_SetClipRect(m_screen, &rect);
-		SDL_FillRect(m_screen, &rect, 0x00);
+		if (clear) {
+			SDL_FillRect(m_screen, &rect, 0x00);
+		}
 	}
 }

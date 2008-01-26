@@ -228,8 +228,10 @@ namespace FIFE {
 		glEnd();
 	}
 
-	void RenderBackendOpenGL::setClipArea(const Rect& cliparea) {
+	void RenderBackendOpenGL::setClipArea(const Rect& cliparea, bool clear) {
 	        glScissor(cliparea.x, getScreenHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
-	        glClear(GL_COLOR_BUFFER_BIT);
+		if (clear) {
+	        	glClear(GL_COLOR_BUFFER_BIT);
+		}
 	}
 }

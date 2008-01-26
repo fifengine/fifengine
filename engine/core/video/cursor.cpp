@@ -62,7 +62,6 @@ namespace FIFE {
 	}
 	
 	void Cursor::draw() {
-		
 		if (m_cursor_type == CURSOR_NATIVE) {
 			return;
 		}
@@ -72,12 +71,13 @@ namespace FIFE {
 		Image* cur = NULL;
 		if (m_cursor_type == CURSOR_IMAGE) {
 			cur = &m_imgpool->getImage(m_cursor_id);
+			
 		} else {
 			Animation& anim = m_animpool->getAnimation(m_cursor_id);
 			int animtime = (SDL_GetTicks() - m_animtime) % anim.getDuration();
 			cur = anim.getFrameByTimestamp(animtime);
 		}
-		m_renderbackend->pushClipArea(Rect(mx, my, cur->getWidth(), cur->getHeight()));
+		m_renderbackend->pushClipArea(Rect(mx, my, cur->getWidth(), cur->getHeight()), false);
  		cur->render(Rect(mx, my, cur->getWidth(), cur->getHeight()));
  		std::cout << mx << ", " << my << ", " << cur->getWidth() << ", " << cur->getHeight() << "\n";
  		m_renderbackend->popClipArea();

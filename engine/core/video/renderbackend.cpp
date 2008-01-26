@@ -65,9 +65,12 @@ namespace FIFE {
 		// Dummy Implementation.
 	}
 	
-	void RenderBackend::pushClipArea(const Rect& cliparea) {
-		m_clipstack.push(cliparea);
-		setClipArea(cliparea);
+	void RenderBackend::pushClipArea(const Rect& cliparea, bool clear) {
+		ClipInfo ci;
+		ci.r = cliparea;
+		ci.clearing = clear;
+		m_clipstack.push(ci);
+		setClipArea(cliparea, clear);
         }
 	
 	void RenderBackend::popClipArea() {
@@ -76,7 +79,8 @@ namespace FIFE {
 		if (m_clipstack.empty()) {
 			clearClipArea();
 		} else {
-			setClipArea(m_clipstack.top());
+			ClipInfo ci = m_clipstack.top();
+			setClipArea(ci.r, ci.clearing);
 		}
 	}
 	
@@ -88,13 +92,13 @@ namespace FIFE {
 	
 	const Rect& RenderBackend::getClipArea() const {
 		if (m_clipstack.empty()) {
-			return m_clipstack.top();
+			return m_clipstack.top().r;
 		} else {
 			return m_screenarea;
 		}
 	}
 	
 	void RenderBackend::clearClipArea() {
-		setClipArea(m_screenarea);
+		setClipArea(m_screenarea, true);
 	}
 }

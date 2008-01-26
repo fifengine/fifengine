@@ -275,8 +275,8 @@ namespace FIFE {
 		m_timemanager->update();
 		m_model->update();
 		m_view->update( m_imagepool,m_animpool );
-		m_cursor->draw();
 		m_guimanager->turn();
+		m_cursor->draw();
 		m_renderbackend->endFrame();
 		SDL_Delay(1);
 		m_eventmanager->processEvents();

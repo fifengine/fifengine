@@ -146,7 +146,7 @@ namespace FIFE {
 			 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
 			 *  note that previous items in stack do not affect the latest area pushed
 			 */
-			void pushClipArea(const Rect& cliparea);
+			void pushClipArea(const Rect& cliparea, bool clear=true);
 
 			/** Pops clip area from clip stack
 			 *  @see pushClipArea
@@ -163,7 +163,7 @@ namespace FIFE {
 			/** Sets given clip area to render backend
 			 *  @see pushClipArea
 			 */
-			virtual void setClipArea(const Rect& cliparea) = 0;
+			virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
 
 			/** Clears any possible clip areas
 			 *  @see pushClipArea
@@ -176,7 +176,13 @@ namespace FIFE {
 			Rect m_screenarea;
 			// The name of the renderbackend.
 			std::string m_name;
-			std::stack<Rect> m_clipstack;
+			
+			class ClipInfo {
+			public:
+				Rect r;
+				bool clearing;
+			};
+			std::stack<ClipInfo> m_clipstack;
 	};
 
 }
