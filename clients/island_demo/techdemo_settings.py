@@ -12,7 +12,7 @@ LogToPrompt         = 1
 LogToFile           = 0
 
 CoordinateLayerName = "TechdemoMapObjectLayer"
-QuadTreeLayerName = "TechdemoMapObjectLayer"
+QuadTreeLayerName = "" #"TechdemoMapObjectLayer"
 
 agentTexts = (
 	'I wonder when the guys get this world ready for me',
