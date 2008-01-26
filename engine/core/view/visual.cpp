@@ -77,7 +77,8 @@ namespace FIFE {
 		m_stackposition(0),
 		m_instance(NULL),
 		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
-		m_cached_static_img_angle(0) {
+		m_cached_static_img_angle(0),
+ 		m_cached_dimensions() {
 	}
 	
 	InstanceVisual* InstanceVisual::create(Instance* instance) {

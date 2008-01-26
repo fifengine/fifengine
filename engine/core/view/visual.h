@@ -37,6 +37,7 @@ namespace FIFE {
 	class Object;
 	class Instance;
 	class Action;
+	class Image;
 	
 	class Visual2DGfx: public AbstractVisual {
 	public:
@@ -154,6 +155,31 @@ namespace FIFE {
 			return m_screenpoint;
 		}
 		
+		/** Sets current dimensions for image that is drawn
+		 *  Value is basically cached so that it needs to be computed only once
+		 */
+		void setCachedImageDimensions(const Rect& dimensions) {
+			m_cached_dimensions = dimensions;
+		}
+		
+		/** Gets current dimensions for image that is drawn
+		 */
+		const Rect& getCachedImageDimensions() const {
+			return m_cached_dimensions;
+		}
+		
+		/** Cached image for this instance, written after its resolved the first time
+		 * Image is valid for the duration of one render pipeline iteration
+		 */
+		void setCachedImage(Image* img) {
+			m_cached_image = img;
+		}
+
+		/** Gets currently cached image
+		 */
+		Image* getCachedImage() const {
+			return m_cached_image;
+		}
 
 	private:
 		/** Constructor
@@ -165,6 +191,8 @@ namespace FIFE {
 		int m_cached_static_img_id;
 		int m_cached_static_img_angle;
 		ScreenPoint m_screenpoint;
+		Rect m_cached_dimensions;
+		Image* m_cached_image;
 	};
 	
 	class ActionVisual: public Visual2DGfx {

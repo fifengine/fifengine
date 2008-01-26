@@ -615,6 +615,7 @@ digraph "source tree" {
     "engine/core/view/renderers/floatingtextrenderer.cpp" -> "video/image.h"
     "engine/core/view/renderers/floatingtextrenderer.cpp" -> "video/renderbackend.h"
     "engine/core/view/renderers/floatingtextrenderer.cpp" -> "view/camera.h"
+    "engine/core/view/renderers/floatingtextrenderer.cpp" -> "view/visual.h"
     "engine/core/view/renderers/floatingtextrenderer.h" -> "view/rendererbase.h"
     "engine/core/view/renderers/gridrenderer.cpp" -> "gridrenderer.h"
     "engine/core/view/renderers/gridrenderer.cpp" -> "model/metamodel/grids/cellgrid.h"

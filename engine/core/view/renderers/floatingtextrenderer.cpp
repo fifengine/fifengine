@@ -39,6 +39,7 @@
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
 
+#include "view/visual.h"
 #include "view/camera.h"
 #include "floatingtextrenderer.h"
 
@@ -64,14 +65,13 @@ namespace FIFE {
 			Instance* instance = *instance_it;
 			saytext = instance->getSayText();
 			if (saytext) {
-				ExactModelCoordinate elevpos = instance->getLocation().getElevationCoordinates();
-				ScreenPoint drawpt = cam->toScreenCoordinates(elevpos);
-				
+				InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+				const Rect& ir = visual->getCachedImageDimensions();
 				m_font->setColor(25,25,112);
 				Image* img = m_font->getAsImage(*saytext);
 				Rect r;
-				r.x = drawpt.x;
-				r.y = drawpt.y;
+				r.x = ir.x + ir.w;
+				r.y = ir.y;
 				r.w = img->getWidth();
 				r.h = img->getHeight();
 				img->render(r);

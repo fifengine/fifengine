@@ -76,52 +76,8 @@ namespace FIFE {
 			Instance* instance = (*instance_it);
 			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
 
-			Image* image = NULL;
-			ExactModelCoordinate elevpos = instance->getLocation().getElevationCoordinates();
-			ScreenPoint campos = cam->toScreenCoordinates(elevpos);
-
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocation().getLayerCoordinates());
-			FL_DBG(_log, LMsg("Instance elevation position = ") << elevpos);
-			FL_DBG(_log, LMsg("Instance camera position = ") << campos);
-
-			Action* action = instance->getCurrentAction();
-			const Location& facing_loc = instance->getFacingLocation();
-			int angle = cam->getAngleBetween(instance->getLocation(), facing_loc);
-			FL_DBG(_log, LMsg("Rendering instance with angle ") << angle);
-			if (action) {
-				FL_DBG(_log, "Instance has action");
-				int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
-				Animation& animation = m_animationpool->getAnimation(animation_id);
-				int animtime = instance->getActionRuntime() % animation.getDuration();
-				image = animation.getFrameByTimestamp(animtime);
-				FL_DBG(_log, LMsg("Instance facing location = ") << facing_loc);
-				FL_DBG(_log, LMsg("Calculated angle = ") << angle);
-			} else {
-				FL_DBG(_log, "No action");
-				int imageid = visual->getStaticImageIndexByAngle(angle);
-				FL_DBG(_log, LMsg("Instance does not have action, using static image with id ") << imageid);
-				if (imageid >= 0) {
-					image = &m_imagepool->getImage(imageid);
-				}
-			}
-			if (image) {
-				ExactModelCoordinate exact_elevpos = instance->getLocation().getElevationCoordinates();
-				ScreenPoint drawpt = cam->toScreenCoordinates( exact_elevpos );
-
-				int w = image->getWidth();
-				int h = image->getHeight();
-				drawpt.x -= w / 2;
-				drawpt.x += image->getXShift();
-				drawpt.y -= h / 2;
-				drawpt.y += image->getYShift();
-				Rect r = Rect(drawpt.x, drawpt.y, w, h);
-				FL_DBG(_log, LMsg("image(") << r << "), viewport (" << cam->getViewPort());
-					FL_DBG(_log, "Instance is visible in viewport, rendering");
-					image->render(r);
-			}
-			else {
-				FL_DBG(_log, "Instance does not have image to render");
-			}
+			visual->getCachedImage()->render(visual->getCachedImageDimensions());
 		}
 
 	}

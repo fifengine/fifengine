@@ -229,14 +229,10 @@ namespace FIFE {
 						if (!r.intersects((*cam_it)->getViewPort()))
 							continue;
 
+						visual->setCachedImageDimensions(r);
+						visual->setCameraCoordinate(drawpt);
+						visual->setCachedImage(image);
 						instances_to_render.push_back(instance);
-
-
-
-
-						ExactModelCoordinate c = instance->getLocation().getElevationCoordinates();
-						visual->setCameraCoordinate((*cam_it)->toScreenCoordinates(c));
-
 					}
 				}
 
