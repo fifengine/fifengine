@@ -47,11 +47,9 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 
-	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, AbstractFont* font, int position):
-		RendererBase(),
-		m_renderbackend(renderbackend),
+	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font):
+		RendererBase(renderbackend, position),
 		m_font(font) {
-		setPipelinePosition(position);
 		setEnabled(true);
 	}
 

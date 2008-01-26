@@ -42,9 +42,10 @@ namespace FIFE {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
-		 * @param imagepool image pool where from fetch images
+		 * @param position position for this renderer in rendering pipeline
+		 * @param font font used to render the coordinates
 		 */
-		CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font, int position);
+		CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
 
 		/** Destructor.
 		 */
@@ -57,7 +58,6 @@ namespace FIFE {
 	private:
 		void adjustLayerArea();
 
-		RenderBackend* m_renderbackend;
 		Rect m_layer_area;
 		Location m_tmploc;
 		ExactModelCoordinate m_c;

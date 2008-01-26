@@ -51,12 +51,10 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool, int position):
-		RendererBase(),
-		m_renderbackend(renderbackend),
+	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
+		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
 		m_animationpool(animpool) {
-		setPipelinePosition(position);
 		setEnabled(true);
 	}
 

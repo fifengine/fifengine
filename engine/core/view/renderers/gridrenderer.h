@@ -51,7 +51,6 @@ namespace FIFE {
 		std::string getName() { return "GridRenderer"; }
 
 	private:
-		RenderBackend* m_renderbackend;
 	};
 
 }

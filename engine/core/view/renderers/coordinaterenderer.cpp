@@ -50,14 +50,12 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, AbstractFont* font, int position):
-		RendererBase(),
-		m_renderbackend(renderbackend),
+	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font):
+		RendererBase(renderbackend, position),
 		m_layer_area(),
 		m_tmploc(),
 		m_c(),
 		m_font(font) {
-		setPipelinePosition(position);
 		setEnabled(false);
 	}
 

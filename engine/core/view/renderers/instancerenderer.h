@@ -45,7 +45,7 @@ namespace FIFE {
 		 * @param imagepool image pool where from fetch images
 		 * @param animpool animation pool where from fetch images
 		 */
-		InstanceRenderer(RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool, int position);
+		InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
 
 		/** Destructor.
 		 */
@@ -56,7 +56,6 @@ namespace FIFE {
 		std::string getName() { return "InstanceRenderer"; }
 
 	private:
-		RenderBackend* m_renderbackend;
 		ImagePool* m_imagepool;
 		AnimationPool* m_animationpool;
 	};

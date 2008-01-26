@@ -40,9 +40,10 @@ namespace FIFE {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
+		 * @param position position for this renderer in rendering pipeline
 		 * @param imagepool image pool where from fetch images
 		 */
-		CameraZoneRenderer(RenderBackend* renderbackend, ImagePool* imagepool,int position);
+		CameraZoneRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool);
 
 		/** Destructor.
 		 */
@@ -54,9 +55,7 @@ namespace FIFE {
 
 		void setEnabled(bool enabled);
 
-
 	private:
-		RenderBackend* m_renderbackend;
 		ImagePool* m_imagepool;
 		Image* m_zone_image;
 	};

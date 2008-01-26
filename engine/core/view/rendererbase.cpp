@@ -35,10 +35,12 @@
 namespace FIFE {
 	static Logger _log(LM_VIEW);
 	
-	RendererBase::RendererBase(): 
-		m_enabled(false), 
+	RendererBase::RendererBase(RenderBackend* renderbackend, int position): 
+		m_renderbackend(renderbackend),
+		m_enabled(false),
 		m_pipeline_position(DEFAULT_RENDERER_POSITION),
 		m_listener(NULL) {
+		setPipelinePosition(position);
 	}
 	
 	void RendererBase::setPipelinePosition(int position) { 

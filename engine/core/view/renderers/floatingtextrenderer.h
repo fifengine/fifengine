@@ -40,8 +40,10 @@ namespace FIFE {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
+		 * @param position position for this renderer in rendering pipeline
+		 * @param font font used to render the texts
 		 */
-		FloatingTextRenderer(RenderBackend* renderbackend, AbstractFont* font, int position);
+		FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
 
 		/** Destructor.
 		 */
@@ -52,7 +54,6 @@ namespace FIFE {
 		std::string getName() { return "FloatingTextRenderer"; }
 
 	private:
-		RenderBackend* m_renderbackend;
 		AbstractFont* m_font;
 	};
 

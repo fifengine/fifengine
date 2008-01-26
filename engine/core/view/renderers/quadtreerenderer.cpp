@@ -48,8 +48,7 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 	QuadTreeRenderer::QuadTreeRenderer(RenderBackend* renderbackend, int position):
-			RendererBase(),
-			m_renderbackend(renderbackend) {
+		RendererBase(renderbackend, position) {
 		setPipelinePosition(position);
 		setEnabled(false);
 	}

@@ -37,6 +37,7 @@ namespace FIFE {
 	class Layer;
 	class Elevation;
 	class Instance;
+	class RenderBackend;
 	
 	class RendererBase;
 	/** RendererListener allows reaction to changes in renderer
@@ -66,8 +67,10 @@ namespace FIFE {
 	class RendererBase {
 	public:
 		/** Constructor
+		 * @param renderbackend to use
+		 * @param position position for this renderer in rendering pipeline
 		 */
-		RendererBase();
+		RendererBase(RenderBackend* renderbackend, int position);
 		
 		/** Destructor
 		 */
@@ -80,7 +83,7 @@ namespace FIFE {
 		 * some instance not visible on the screen.
 		 *
 		 * @param cam camera view to draw
-		 * @param cam current layer to be rendered
+		 * @param layer current layer to be rendered
 		 * @param instances instances on the current layer
 		 * @ see setPipelinePosition
 		 */
@@ -136,6 +139,7 @@ namespace FIFE {
 	
 	protected:
 		std::list<Layer*> m_active_layers;
+		RenderBackend* m_renderbackend;
 	
 	private:
 		bool m_enabled;
