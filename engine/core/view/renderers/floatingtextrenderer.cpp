@@ -70,8 +70,8 @@ namespace FIFE {
 				m_font->setColor(25,25,112);
 				Image* img = m_font->getAsImageMultiline(*saytext);
 				Rect r;
-				r.x = ir.x + ir.w;
-				r.y = ir.y;
+				r.x = (ir.x + ir.w/2) - img->getWidth()/2; /// the center of the text rect is always aligned to the instance's rect center.
+				r.y = ir.y- img->getHeight(); /// make the text rect floating higher than the instance.
 				r.w = img->getWidth();
 				r.h = img->getHeight();
 				img->render(r);

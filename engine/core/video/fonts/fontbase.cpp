@@ -40,13 +40,13 @@
 
 namespace FIFE {
 
-	FontBase::FontBase(): 
-		m_pool(),
-		mColor(),
-		mGlyphSpacing(0),
-		mRowSpacing(0),
-		mFilename(""),
-		m_antiAlias(true) {
+	FontBase::FontBase():
+			m_pool(),
+			mColor(),
+			mGlyphSpacing(0),
+			mRowSpacing(0),
+			mFilename(""),
+			m_antiAlias(true) {
 	}
 
 	void FontBase::setRowSpacing(int spacing) {
@@ -95,16 +95,16 @@ namespace FIFE {
 		}
 		return image;
 	}
-	
+
 	Image* FontBase::getAsImageMultiline(const std::string& text) {
 		Image* image = m_pool.getRenderedText(this, text);
 		if (!image) {
 			std::vector<SDL_Surface*> lines;
-			
+
 			// split text as needed
 			std::string::size_type pos, last_pos = 0;
 			int length = 0;
-			int render_width, render_height = 0;
+			int render_width = 0, render_height = 0;
 			do {
 				pos = text.find("\n", last_pos);
 				if (pos != std::string::npos) {
@@ -122,10 +122,14 @@ namespace FIFE {
 			} while (pos != std::string::npos);
 			render_height = (getRowSpacing() + getHeight()) * lines.size();
 			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-				render_width,render_height,32,
-				0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
-			SDL_FillRect(final_surface,0,0x00000000);
-			
+										 render_width,render_height,32,
+										 0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
+			if (final_surface)
+				SDL_FillRect(final_surface,0,0x00000000);
+			else {
+				fprintf(stderr, "CreateRGBSurface failed: %s", SDL_GetError());
+				exit(0);
+			}
 			int ypos = 0;
 			for (std::vector<SDL_Surface*>::iterator i = lines.begin(); i != lines.end(); ++i) {
 				SDL_Rect src_rect;
@@ -133,10 +137,10 @@ namespace FIFE {
 				src_rect.y = 0;
 				src_rect.w = (*i)->w;
 				src_rect.h = (*i)->h;
-				
+
 				SDL_Rect dst_rect = src_rect;
 				dst_rect.y = ypos;
-				
+
 				SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
 				SDL_BlitSurface(*i,&src_rect,final_surface,&dst_rect);
 				ypos += getRowSpacing() + getHeight();
