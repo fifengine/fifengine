@@ -25,7 +25,7 @@ from fifedit import Fifedit
 from mapeditor import MapEditor
 
 # Help display
-class Help:
+class Help(object):
 	def __init__(self):
 		self.helpWidget = None	
 		self.menu_items = { 'Help' : self.showHelp }
@@ -43,9 +43,6 @@ class Editor(basicapplication.ApplicationBase):
 	def __init__(self):
 		super(Editor,self).__init__()
 
-		# override default event listener
-		self.listenertype = EditorListener
-		
 		# embed Fifedit tools
 		self.fifedit = Fifedit(self.engine)
 
@@ -56,6 +53,10 @@ class Editor(basicapplication.ApplicationBase):
 		self.fifedit.registerPlugin(Help())
 		self.fifedit.registerPlugin(MapLoader(self.engine))
 		self.fifedit.registerPlugin(self.mapedit)
+
+	def createListener(self):
+		# override default event listener
+		return EditorListener(self)
 
 	def _pump(self):
 		self.mapedit.pump()

@@ -39,7 +39,6 @@ TODO
 BUGS
 ----
  - ImageButton will raise fife.NotFound in case the down image is not set and it's pressed.
- - Spurious lines appear below RadioButtons.
  - Font.glyph_spacing is rendered incorrectly.
  - It just looks ugly.
 

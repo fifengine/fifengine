@@ -140,7 +140,7 @@ DEFAULT_STYLE = {
 		'border_size': 0,
 		'margins' : (10,5),
 	},
-	widgets.CheckBox : {
+	(widgets.CheckBox,widgets.RadioButton) : {
 		'border_size': 0,
 	},
 	widgets.Label : {
