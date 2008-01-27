@@ -1,7 +1,6 @@
 # coding: utf-8
-import fife, re
 
-__doc__ = """\
+"""\
 Pythonize FIFE
 
 Import this extension to get a more
@@ -20,6 +19,8 @@ conveniences:
   * fife.Rect
 
 """
+
+import fife, re
 
 __all__ = ()
 

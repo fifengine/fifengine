@@ -1,26 +1,45 @@
-<Window title="This is the PyChan demo application.">
-	<VBox>
-		<HBox>
-			<ScrollArea size="200,500">
+<Window title="All Widgets demo.">
+	<HBox>
+		<VBox>
+			<Label text="ScrollArea with ListBox:"/>
+			<ScrollArea size="200,100">
 				<ListBox name="demoList" min_size="100,100" />
 			</ScrollArea>
-			<VBox margins="0,0">
-				<Label text=" Select one example from the listbox and press 'Start Example'"/>
-				<Label text=" You can also execute this script with an Gui XML file as argument."/>
-				<HBox margins="0,0">
-					<Button text="XML code"/>
-				</HBox>
-				<ScrollArea size="600,200">
-					<TextBox name="xmlSource" filename="content/gui/all_widgets.xml"/>
-				</ScrollArea>
-				<Spacer />
-			</VBox>
-		</HBox>
-		<HBox>
-			<ClickLabel name="creditsLink" text="Credits"/>
-			<Spacer />
-			<Button name="selectButton" text="Start Example"/>
-			<Button name="closeButton" text="Quit Demo"/>
-		</HBox>
-	</VBox>
+		</VBox>
+		<VBox>
+			<Label text="ScrollArea with TextBox:"/>
+			<ScrollArea size="200,100">
+				<TextBox name="demoList" min_size="100,100" />
+			</ScrollArea>
+		</VBox>
+	</HBox>
+	<Label text="HBox with Buttons:"/>
+	<HBox>
+		<Button text="Button 1"/>
+		<Button text="Button 2"/>
+		<Button text="Button 3"/>
+		<Spacer/>
+	</HBox>
+	<Label text="Radiobuttons with different group attributes:"/>
+	<HBox>
+		<VBox>
+			<RadioButton text="Exclusive choice 1" group="radio1"/>
+			<RadioButton text="Exclusive choice 2" group="radio1"/>
+			<RadioButton text="Exclusive choice 3" group="radio1"/>
+			<Spacer/>
+		</VBox>
+		<VBox>
+			<RadioButton text="Exclusive choice 1" group="radio2"/>
+			<RadioButton text="Exclusive choice 2" group="radio2"/>
+			<RadioButton text="Exclusive choice 3" group="radio2"/>
+			<RadioButton text="Exclusive choice 4" group="radio2"/>
+		</VBox>
+	</HBox>
+	<Label text="Some CheckBoxes:"/>
+	<CheckBox text="Inclusive choice 1"/>
+	<CheckBox text="Inclusive choice 2"/>
+	<HBox>
+		<Spacer/>
+		<Button name="okButton" text="OK"/>
+	</HBox>
 </Window>

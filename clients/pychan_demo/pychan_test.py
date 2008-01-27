@@ -40,7 +40,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		super(DemoApplication,self).__init__()
 		
 		pychan.init(self.engine,debug=True)
-		self.gui = pychan.loadXML('content/gui/all_widgets.xml')
+		self.gui = pychan.loadXML('content/gui/demoapp.xml')
 		
 		eventMap = {
 			'creditsLink'  : self.showCredits,
@@ -55,8 +55,9 @@ class DemoApplication(basicapplication.ApplicationBase):
 		self.examples = {
 			'Load Map' : PyChanExample('content/gui/loadmap.xml'),
 			'Map Properties' : MapProperties(),
-			'Absolute' : PyChanExample('content/gui/absolute.xml'),
-			'Styling' : StylingExample()
+			'Absolute Positioning' : PyChanExample('content/gui/absolute.xml'),
+			'Basic Styling' : StylingExample(),
+			'All Widgets' : PyChanExample('content/gui/all_widgets.xml')
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items += self.examples.keys()
@@ -72,6 +73,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		self.currentExample = self.examples[self.demoList.selected_item]
 		self.gui.findChild(name="xmlSource").text = open(self.currentExample.xmlFile).read()
 		self.currentExample.start()
+
 	def showCredits(self):
 		if self.creditsWidget:
 			self.creditsWidget.show()

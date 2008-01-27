@@ -4,7 +4,7 @@
 Pythonic Guichan Wrapper - PyChan
 =================================
 
-Alpha state.
+Pythonic GUI API.
 
 Features
 --------
@@ -18,15 +18,18 @@ Features
 TODO
 ----
  - Make setting parent attribute imply containment relation.
+ - Factor out parsing of attributes.
 
  - Documentation ( Allways not enough :-( )
  - Completion of above features
- - Wrap missing widgets: RadioButton, Slider
+ - Wrap missing widgets: TwoButton, Slider
  - Handle Image Fonts
+ - Move Font config files to XML, too ...
  - Add support for fixed size 'Spacers'
  - Add dialog.execute()
  - Add messageBox(text)
 
+ - Implement real Menus
  - Implement StackWidget
  - Then implement TabWidget
 

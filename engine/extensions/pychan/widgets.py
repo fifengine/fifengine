@@ -897,6 +897,46 @@ class CheckBox(BasicTextWidget):
 	def _setMarked(self,mark): self.real_widget.setMarked(mark)
 	marked = property(_isMarked,_setMarked)
 
+class RadioButton(BasicTextWidget):
+	"""
+	A basic radiobutton (an exclusive checkbox).
+	
+	New Attributes
+	==============
+	
+	  - marked: Boolean: Whether the checkbox is checked or not.
+	  - group: String: All RadioButtons with the same group name
+	  can only be checked exclusively.
+	
+	Data
+	====
+	The marked status can be read and set via L{distributeData} and L{collectData}
+	"""
+	def __init__(self,group="_no_group_",**kwargs):
+		self.real_widget = fife.RadioButton()
+		super(RadioButton,self).__init__(**kwargs)
+
+		self.group = group
+
+		# Prepare Data collection framework
+		self.accepts_data = True
+		self._realGetData = self._isMarked
+		self._realSetData = self._setMarked
+		
+		# Initial data stuff inherited.
+	
+	def _isMarked(self): return self.real_widget.isMarked()
+	def _setMarked(self,mark): self.real_widget.setMarked(mark)
+	marked = property(_isMarked,_setMarked)
+
+	def _setGroup(self,group): self.real_widget.setGroup(group)
+	def _getGroup(self): return self.real_widget.getGroup()
+	group = property(_getGroup,_setGroup)
+
+	def resizeToContent(self,recurse=True):
+		self.width = self.real_font.getWidth(self.text) + 35# Size of the Checked box?
+		self.height = self.real_font.getHeight()
+
 class GenericListmodel(fife.ListModel,list):
 	"""
 	A wrapper for the exported list model to behave more like a Python list.
@@ -1201,6 +1241,7 @@ WIDGETS = {
 	# Button Widgets
 	"Button" : Button,
 	"CheckBox" : CheckBox,
+	"RadioButton" : RadioButton,
 	
 	#Complexer Widgets / Text io
 	"TextField" : TextField,
