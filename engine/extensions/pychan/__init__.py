@@ -11,6 +11,7 @@ Features
  - Simpler Interface
  - Very Basic XML Format support
  - Very Basic Layout Engine
+ - Pseudo-Synchronous Dialogs.
  - Automagic background tiling (WIP)
  - Basic Styling support.
  - Simple Font Handling
@@ -19,6 +20,7 @@ TODO
 ----
  - Make setting parent attribute imply containment relation.
  - Factor out parsing of attributes.
+ - Finalize Widget.execute
 
  - Documentation ( Allways not enough :-( )
  - Completion of above features
@@ -26,7 +28,6 @@ TODO
  - Handle Image Fonts
  - Move Font config files to XML, too ...
  - Add support for fixed size 'Spacers'
- - Add dialog.execute()
  - Add messageBox(text)
 
  - Implement real Menus
@@ -38,6 +39,7 @@ TODO
 
 BUGS
 ----
+ - Focus problems with Widget.execute.
  - ImageButton will raise fife.NotFound in case the down image is not set and it's pressed.
  - Font.glyph_spacing is rendered incorrectly.
  - It just looks ugly.
@@ -386,6 +388,23 @@ def loadXML(file):
 	return loader.root
 
 def setupModalExecution(mainLoop,breakFromMainLoop):
+	"""
+	Setup the synchronous dialog execution feature.
+	
+	You can enable synchronous dialog execution by
+	passing to functions to this function.
+	
+	@param mainLoop: Function - This is regarded as the applications
+	main loop, which should be able to be called recursively.
+	It should not take no arguments and return the argument
+	passed to the second function (breakFromMainLoop).
+	
+	@param breakFromMainLoop: Function -This function should cause the
+	first function to finish and return the passed argument.
+	
+	With these to functions dialogs can be executed synchronously.
+	See L{Widget.execute}.
+	"""
 	if not manager:
 		raise InitializationError("PyChan is not initialized yet.")
 	manager.setupModalExecution(mainLoop,breakFromMainLoop)

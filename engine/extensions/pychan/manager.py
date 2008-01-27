@@ -35,6 +35,9 @@ class Manager(fife.IWidgetListener):
 		self.can_execute = True
 
 	def setupModalExecution(self,mainLoop,breakFromMainLoop):
+		"""
+		Setup synchronous execution of dialogs.
+		"""
 		self.mainLoop = mainLoop
 		self.breakFromMainLoop = breakFromMainLoop
 		self.can_execute = True

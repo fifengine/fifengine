@@ -77,8 +77,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		self.currentExample.start()
 
 	def showCredits(self):
-		self.creditsWidget = pychan.loadXML('content/gui/credits.xml')
-		return self.creditsWidget.execute({ 'okButton' : True })
+		print pychan.loadXML('content/gui/credits.xml').execute({ 'okButton' : "Yay!" })
 
 class TestXMLApplication(basicapplication.ApplicationBase):
 	"""

@@ -103,8 +103,27 @@ class Widget(object):
 		#manager.stylize(self,self.style)
 
 	def execute(self,bind):
+		"""
+		Execute a dialog synchronously.
+		
+		As argument a dictionary mapping widget names to return values
+		is expected. Events from these widgets will cause this function
+		to return with the associated return value.
+		
+		This function will not return until such an event occurs.
+		The widget will be shown before execution and hidden afterwards.
+		You can only execute root widgets.
+		
+		Note: This feature is not tested well, and the API will propably
+		change. Otherwise have fun::
+		  # Okay this a very condensed example :-)
+		  return pychan.loadXML("contents/gui/dialog.xml").execute({ 'okButton' : True, 'closeButton' : False })
+		
+		"""
 		if not get_manager().can_execute:
 			raise RuntimeError("Synchronous execution is not set up!")
+		if self._parent:
+			raise RuntimeError("You can only 'execute' root widgets, not %s!" % str(self))
 		
 		for name,returnValue in bind.items():
 			def _quitThisDialog():
