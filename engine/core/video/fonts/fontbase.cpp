@@ -122,12 +122,12 @@ namespace FIFE {
 			} while (pos != std::string::npos);
 			render_height = (getRowSpacing() + getHeight()) * lines.size();
 			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-										 render_width,render_height,32,
-										 0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
-			if (final_surface)
+				render_width,render_height,32,
+				RMASK, GMASK, BMASK ,AMASK);
+			if (final_surface) {
 				SDL_FillRect(final_surface,0,0x00000000);
-			else {
-				fprintf(stderr, "CreateRGBSurface failed: %s", SDL_GetError());
+			} else {
+				std::cerr << "CreateRGBSurface failed: " << SDL_GetError() << "\n";
 				exit(0);
 			}
 			int ypos = 0;

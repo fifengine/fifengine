@@ -50,7 +50,7 @@ namespace FIFE {
 		
 	Image* RenderBackend::createStaticImageFromRGBA(const uint8_t* data, unsigned int width, unsigned int height) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
-		                                            0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
 
 		unsigned int size = width * height * 4;

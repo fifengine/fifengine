@@ -63,7 +63,7 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 		self.quitRequested = False
 		self.newTarget = None
 		self.PCrun = False
-		self.showTileOutline = True
+		self.showTileOutline = False
 		self.showEditor = False
 		self.showCoordinates = False
 		self.showSecondCamera = False

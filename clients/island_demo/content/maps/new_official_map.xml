@@ -503,7 +503,7 @@
 
 				<i o="Girl" x="42" y="42" />
 				<i o="Beekeeper" x="34" y="91" />
-				<i o="Boy" x="0" y="0" >
+				<i o="Boy" x="50" y="41" >
 					<metadata>
 						<param name="name" value="PC"/>
 					</metadata>

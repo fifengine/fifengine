@@ -61,7 +61,7 @@ namespace FIFE {
 		// and copy the Pixelbuffers surface
 		SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE,
 			surface->w,surface->h,32,
-			0xff000000,0x00ff0000,0x0000ff00,0x00000000);
+			RMASK, GMASK, BMASK ,NULLMASK);
 
 		SDL_BlitSurface(surface,0,tmp,0);
 		surface = tmp;
@@ -108,7 +108,7 @@ namespace FIFE {
 
 			tmp = SDL_CreateRGBSurface(SDL_SWSURFACE,
 					w,surface->h,32,
-					0xff000000,0x00ff0000,0x0000ff00,0x00000000);
+					RMASK, GMASK, BMASK ,NULLMASK);
 
 			SDL_FillRect(tmp,0,colorkey);
 			SDL_BlitSurface(surface,&src,tmp,0);

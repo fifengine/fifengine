@@ -33,6 +33,7 @@
 #include "video/image.h"
 #include "video/renderbackend.h"
 #include "video/image_location.h"
+#include "util/fife_stdint.h"
 #include "util/resource/pooled_resource.h"
 #include "util/exception.h"
 #include "util/logger.h"
@@ -68,9 +69,9 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("subimage_loader")
 			<< " rect:" << Rect(src_rect.x,src_rect.y,src_rect.w,src_rect.h));
 
-		uint32_t Amask = src->format->Amask ?  0x000000ff : 0;
+		uint32_t Amask = src->format->Amask ?  AMASK : 0;
 		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, src_rect.w,  src_rect.h, 32,
-		                                           0xff000000, 0x00ff0000, 0x0000ff00, Amask);
+		                                           RMASK, GMASK, BMASK, Amask);
 		SDL_FillRect(result, NULL, 0);
 		SDL_SetAlpha(src,0,SDL_ALPHA_OPAQUE);
 		SDL_BlitSurface(src,&src_rect,result,0);

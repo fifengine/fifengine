@@ -38,7 +38,7 @@ namespace FIFE {
 	RenderBackendOpenGL::RenderBackendOpenGL() : RenderBackend("OpenGL") {
 		// Get the pixelformat we want.
 		SDL_Surface* testsurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 1, 1, 32,
-				0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+				RMASK, GMASK, BMASK ,AMASK);
 
 		m_rgba_format = *(testsurface->format);
 		SDL_FreeSurface(testsurface);

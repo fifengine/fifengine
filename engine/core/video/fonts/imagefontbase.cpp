@@ -77,7 +77,7 @@ namespace FIFE {
 	SDL_Surface *ImageFontBase::renderString(const std::string& text) {
 		SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 			getWidth(text),getHeight(),32,
-			0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
+			RMASK, GMASK, BMASK ,AMASK);
 
 		SDL_FillRect(surface,0,0x00000000);
 

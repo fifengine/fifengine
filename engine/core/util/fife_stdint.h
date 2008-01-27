@@ -47,4 +47,20 @@ typedef unsigned __int64	uint64_t;
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+// SDL masks for SDL_CreateRGBSurface
+namespace FIFE {
+#if 1 // tried "SDL_BYTEORDER != SDL_BIG_ENDIAN" with SDL.h inclusion, however this doesn't seem not work
+	const int RMASK    = 0xff000000;
+	const int GMASK    = 0x00ff0000;
+	const int BMASK    = 0x0000ff00;
+	const int AMASK    = 0x000000ff;
+#else
+	const int RMASK    = 0x000000ff;
+	const int GMASK    = 0x0000ff00;
+	const int BMASK    = 0x00ff0000;
+	const int AMASK    = 0xff000000;
+#endif	
+	const int NULLMASK = 0x00000000;
+}
+
 #endif // FIFEINT_H
