@@ -1,7 +1,7 @@
 <Window title="Credits.">
 	<Label text="These guys contributed to FIFE. Man!" />
 	<ScrollArea size="400,400">
-		<TextBox name="creditText"/>
+		<TextBox name="creditText" filename="../../doc/AUTHORS"/>
 	</ScrollArea>
 	<HBox>
 		<Spacer />
