@@ -118,7 +118,7 @@ namespace FIFE {
 			 * @param path the directory
 			 * @return the filelist
 			 */
-			std::vector<std::string> listFiles(const std::string& path) const;
+			std::set<std::string> listFiles(const std::string& path) const;
 
 			/** List the files of a given directory matching a regex
 			 *
@@ -129,14 +129,14 @@ namespace FIFE {
 			 * @param filterregex the regex the files have to match
 			 * @return the filelist
 			 */
-			std::vector<std::string> listFiles(const std::string& path, const std::string& filterregex) const;
+			std::set<std::string> listFiles(const std::string& path, const std::string& filterregex) const;
 
 			/** Get a directorylist of the given directory
 			 *
 			 * @param path the directory
 			 * @return the directorylist
 			 */
-			std::vector<std::string> listDirectories(const std::string& path) const;
+			std::set<std::string> listDirectories(const std::string& path) const;
 
 			/** List the subdirectorys of a given directory matching a regex
 			 *
@@ -144,7 +144,7 @@ namespace FIFE {
 			 * @param filterregex the regex the files have to match
 			 * @return the filelist
 			 */
-			std::vector<std::string> listDirectories(const std::string& path, const std::string& filterregex) const;
+			std::set<std::string> listDirectories(const std::string& path, const std::string& filterregex) const;
 
 		private:
 			typedef std::vector<VFSSourceProvider*> type_providers;
@@ -156,7 +156,7 @@ namespace FIFE {
 			typedef std::set<std::string> type_usedfiles;
 			mutable type_usedfiles m_usedfiles;
 
-			std::vector<std::string> filterList(const std::vector<std::string>& list, const std::string& fregex) const;
+			std::set<std::string> filterList(const std::set<std::string>& list, const std::string& fregex) const;
 			std::string lower(const std::string&) const;
 			VFSSource* getSourceForFile(const std::string& file) const;
 	};

@@ -1,6 +1,7 @@
 # coding: utf-8
 # Plugin for the editor. See fifedit.py.
-# Viewer provides for both viewing loaded content, and selecting a view.
+# Viewer provides for both viewing loaded content, and selecting a view. See viewMap.
+# Viewer must be pumped (see pump) for proper scrolling.
 
 import math
 
@@ -11,7 +12,6 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 	def __init__(self, engine):
 		self.engine = engine
 		self.viewSelect = None
-		self.menu_items = { 'View' : self._editSelection }
 
 		eventmanager = self.engine.getEventManager()
 
@@ -158,11 +158,19 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		})
 		self.viewSelect.show()
 
-	def _viewMap(self, mapid):
+	def viewMap(self, mapid):
 		self.map = self.engine.getModel().getMaps('id', mapid)[0]
 		self.elevation = self.map.getElevations()[0]
 		self.layer = self.elevation.getLayers()[0]
 		self.adjust_views()
+
+	def adjust_views(self):
+		W = self.engine.getRenderBackend().getScreenWidth()
+		H = self.engine.getRenderBackend().getScreenHeight()
+
+		self._set_camera((0, 0, W, H))
+		self.engine.getView().resetRenderers()
+		self.new_view = True
 
 	def _set_camera(self, viewport):
 		self.camera = self.engine.getView().getCamera('default')
@@ -176,14 +184,6 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 
 		self.camera.setViewPort(fife.Rect(*[int(c) for c in viewport]))
 		self.camera.setLocation(camloc)
-
-	def adjust_views(self):
-		W = self.engine.getRenderBackend().getScreenWidth()
-		H = self.engine.getRenderBackend().getScreenHeight()
-
-		self._set_camera((0, 0, W, H))
-		self.engine.getView().resetRenderers()
-		self.new_view = True
 
 	def pump(self):
 		if (self.horizscroll or self.vertscroll):

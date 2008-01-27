@@ -65,7 +65,7 @@ namespace FIFE {
 		return new RawData(new RawDataFile(m_root + file));
 	}
 
-	std::vector<std::string> VFSDirectory::listFiles(const std::string& path) const {
+	std::set<std::string> VFSDirectory::listFiles(const std::string& path) const {
 		std::string dir = m_root;
 		// Avoid double slashes
 		if(path[0] == '/' && m_root[m_root.size()-1] == '/') {
@@ -78,7 +78,7 @@ namespace FIFE {
 		return list(dir, false);
 	}
 
-	std::vector<std::string> VFSDirectory::listDirectories(const std::string& path) const {
+	std::set<std::string> VFSDirectory::listDirectories(const std::string& path) const {
 		std::string dir = m_root;
 		// Avoid double slashes
 		if(path[0] == '/' && m_root[m_root.size()-1] == '/') {
@@ -91,8 +91,8 @@ namespace FIFE {
 		return list(dir, true);
 	}
 
-	std::vector<std::string> VFSDirectory::list(const std::string& path, bool directorys) const {
-		std::vector<std::string> list;
+	std::set<std::string> VFSDirectory::list(const std::string& path, bool directorys) const {
+		std::set<std::string> list;
 		bfs::path boost_path(m_root + path);
 		if (!bfs::exists(boost_path) || !bfs::is_directory(boost_path))
 			return list;
@@ -102,7 +102,7 @@ namespace FIFE {
 			if (bfs::is_directory(*i) != directorys)
 				continue;
 
-			list.push_back(i->leaf());
+			list.insert(i->leaf());
 		}
 
 		return list;

@@ -22,6 +22,7 @@ from maploader import MapLoader
 from viewer import Viewer
 from listener import EditorListener
 from fifedit import Fifedit
+from mapeditor import MapEditor
 
 # Help display
 class Help:
@@ -47,16 +48,17 @@ class Editor(basicapplication.ApplicationBase):
 		
 		# embed Fifedit tools
 		self.fifedit = Fifedit(self.engine)
+
+		# Create this client's modules
+		self.mapedit = MapEditor(self.engine)
+
+		# Register plugins with Fifedit.
 		self.fifedit.registerPlugin(Help())
 		self.fifedit.registerPlugin(MapLoader(self.engine))
-
-		self.viewer = Viewer(self.engine)
-		self.fifedit.registerPlugin(self.viewer)
+		self.fifedit.registerPlugin(self.mapedit)
 
 	def _pump(self):
-		self.viewer.pump()
-		if self.viewer.new_view:
-			self.fifedit.editWith(self.viewer.camera)
+		self.mapedit.pump()
 
 if __name__ == '__main__':
 	app = Editor()

@@ -136,8 +136,8 @@ namespace FIFE {
 			throw NotFound(file);
 	}
 
-	std::vector<std::string> ZipSource::listFiles(const std::string& path) const {
-		std::vector<std::string> result;
+	std::set<std::string> ZipSource::listFiles(const std::string& path) const {
+		std::set<std::string> result;
 
 		std::string fixedPath = fixPath(path);
 		int path_len = path.length();
@@ -152,13 +152,13 @@ namespace FIFE {
 				std::string name = *iter;
 				int len = name.length();
 				if (name.find(fixedPath) == 0 && name[len - 1] != '/')
-					result.push_back(name.substr(path_len));
+					result.insert(name.substr(path_len));
 		}
 		return result;
 	}
 
-	std::vector<std::string> ZipSource::listDirectories(const std::string& path) const {
-		std::vector<std::string> result;
+	std::set<std::string> ZipSource::listDirectories(const std::string& path) const {
+		std::set<std::string> result;
 
 		std::string fixedPath = fixPath(path);
 		int path_len = path.length();
@@ -173,7 +173,7 @@ namespace FIFE {
 				std::string name = *iter;
 				int len = name.length();
 				if (name.find(fixedPath) == 0 && name[len - 1] == '/' && len > path_len)
-					result.push_back(name.substr(path_len));
+					result.insert(name.substr(path_len));
 		}
 		return result;
 	}

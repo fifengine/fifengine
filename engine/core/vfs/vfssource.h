@@ -68,14 +68,14 @@ namespace FIFE {
 			 * @param path path to list files in
 			 * Will return an empty list on \b any error
 			 */
-			virtual std::vector<std::string> listFiles(const std::string& path) const = 0;
+			virtual std::set<std::string> listFiles(const std::string& path) const = 0;
 
 			/** list all directories in a directory of this source
 			 * 
 			 * @param path path to list directories in
 			 * Will return an empty list on \b any error
 			 */
-			virtual std::vector<std::string> listDirectories(const std::string& path) const = 0;
+			virtual std::set<std::string> listDirectories(const std::string& path) const = 0;
 
 		protected:
 			std::string fixPath(std::string path) const;
