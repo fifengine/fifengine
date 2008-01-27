@@ -173,13 +173,14 @@ namespace gcn {
 	%feature("notabstract") TwoButton;
 	class TwoButton: public Widget {
 	public:
-		TwoButton(Image *up_image, Image *down_image);
-		TwoButton(Image *up_image, Image *down_image, const char * caption);
+		TwoButton(Image *up_image = 0, Image *down_image = 0, const char * caption = "");
 		~TwoButton();
 		virtual void setCaption(const std::string& caption);
 		virtual const std::string& getCaption() const;
 		virtual void setAlignment(unsigned int alignment);
 		virtual unsigned int getAlignment() const;
+		void setUpImage(Image* image);
+		void setDownImage(Image* image);
 	};
 
 	%feature("notabstract") ScrollArea;

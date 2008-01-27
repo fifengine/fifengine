@@ -22,7 +22,7 @@ TODO
 
  - Documentation ( Allways not enough :-( )
  - Completion of above features
- - Wrap missing widgets: TwoButton, Slider
+ - Wrap missing widgets: Slider
  - Handle Image Fonts
  - Move Font config files to XML, too ...
  - Add support for fixed size 'Spacers'
@@ -38,6 +38,8 @@ TODO
 
 BUGS
 ----
+ - ImageButton will raise fife.NotFound in case the down image is not set and it's pressed.
+ - Spurious lines appear below RadioButtons.
  - Font.glyph_spacing is rendered incorrectly.
  - It just looks ugly.
 

@@ -9,7 +9,7 @@
 		<VBox>
 			<Label text="ScrollArea with TextBox:"/>
 			<ScrollArea size="200,100">
-				<TextBox name="demoList" min_size="100,100" />
+				<TextBox name="demoText" min_size="100,100" />
 			</ScrollArea>
 		</VBox>
 	</HBox>
@@ -38,6 +38,9 @@
 	<Label text="Some CheckBoxes:"/>
 	<CheckBox text="Inclusive choice 1"/>
 	<CheckBox text="Inclusive choice 2"/>
+	<Label text="Icon and ImageButton:"/>
+	<Icon image="content/gui/stripe.png" />
+	<ImageButton up_image="content/gui/stripe.png" text="Click me for a Bug demonstration" />
 	<HBox>
 		<Spacer/>
 		<Button name="okButton" text="OK"/>

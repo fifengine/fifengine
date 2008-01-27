@@ -32,20 +32,9 @@
 #include "twobutton.h"
 
 namespace gcn {
-	TwoButton::TwoButton(Image * up_file , Image *down_file)  : Button() {
-		up = up_file;
-		assert(up!=NULL);
-		down = down_file;
-		assert(down!=NULL);
-		setBorderSize(0);
-		adjustSize();
-		mCaption = "";
-	}
 	TwoButton::TwoButton(Image * up_file , Image *down_file, const std::string& caption): Button() {
-		up = up_file;
-		assert(up!=NULL);
-		down = down_file;
-		assert(down!=NULL);
+		m_upImage = up_file;
+		m_downImage = down_file;
 		setBorderSize(0);
 		adjustSize();
 		mCaption = caption;
@@ -53,10 +42,15 @@ namespace gcn {
 	TwoButton::~TwoButton() {
 	}
 	void TwoButton::draw(Graphics *graphics) {
-		if (isPressed())
-			graphics->drawImage(down, 0, 0);
-		else
-			graphics->drawImage(up, 0, 0);
+		if (isPressed()) {
+			if( m_upImage ) {
+				graphics->drawImage(m_downImage, 0, 0);
+			}
+		} else {
+			if( m_downImage ) {
+				graphics->drawImage(m_upImage, 0, 0);
+			}
+		}
 
 		graphics->setColor(getForegroundColor());
 		int textX;
@@ -86,9 +80,23 @@ namespace gcn {
 		}
 	}
 	void TwoButton::adjustSize() {
-		//FIXME: should check if 'down' is same size
-		setWidth(up->getWidth());
-		setHeight(up->getHeight());
+		if( m_upImage ) {
+			setWidth(m_upImage->getWidth());
+			setHeight(m_upImage->getHeight());
+		}
+		if( m_downImage ) {
+			setWidth(std::max(m_downImage->getWidth(),getWidth()));
+			setHeight(std::max(m_downImage->getHeight(),getHeight()));
+		}
 	}
+	void TwoButton::setUpImage(Image* image) {
+		m_upImage = image;
+		adjustSize();
+	}
+	void TwoButton::setDownImage(Image* image) {
+		m_downImage = image;
+		adjustSize();
+	}
+
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

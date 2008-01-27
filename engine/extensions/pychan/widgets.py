@@ -1,4 +1,11 @@
+# coding: utf-8
 ### Widget/Container Base Classes ###
+
+"""
+Widget wrappers.
+
+Please look at the documentation of L{Widget} for details.
+"""
 
 import fife, pythonize
 import tools
@@ -835,19 +842,19 @@ class Icon(Widget):
 	New Attributes
 	==============
 	
-	  - source: The source location of the Image.
+	  - image: String: The source location of the Image.
 	"""
-	def __init__(self,source="",**kwargs):
+	def __init__(self,image="",**kwargs):
 		self.real_widget = fife.Icon(None)
 		super(Icon,self).__init__(**kwargs)
 
-	def _setSource(self,source):
-		self._source = source
+	def _setImage(self,source):
+		self._image_source = source
 		self._image = get_manager().loadImage(source)
 		self.real_widget.setImage( self._image )
-                print self._image,self.real_widget.getWidth(),self.real_widget.getWidth()
-	def _getSource(self): return self._source
-	source = property(_getSource,_setSource)
+                #print self._image,self.real_widget.getWidth(),self.real_widget.getWidth()
+	def _getImage(self): return self._source
+	image = property(_getImage,_setImage)
 
 class ClickLabel(BasicTextWidget):
 	"""
@@ -868,6 +875,45 @@ class Button(BasicTextWidget):
 		self.real_widget = fife.Button("")
 		super(Button,self).__init__(**kwargs)
 
+class ImageButton(BasicTextWidget):
+	"""
+	A basic push button with two different images for the up and down state.
+	
+	B{Work in progress.}
+	
+	New Attributes
+	==============
+	
+	  - up_image: String: The source location of the Image for the B{unpressed} state.
+	  - down_image: String: The source location of the Image for the B{pressed} state.
+	"""
+	def __init__(self,up_image="",down_image="",**kwargs):
+		self.real_widget = fife.TwoButton()
+		super(ImageButton,self).__init__(**kwargs)
+		self.up_image = up_image
+		self.down_image = down_image
+
+		# The catch ALL causes will be removed next commit!
+
+	def _setUpImage(self,image):
+		self._upimage_source = image
+		try:
+			self._upimage = get_manager().loadImage(image)
+			self.real_widget.setUpImage( self._upimage )
+		except:
+			pass
+	def _getUpImage(self): return self._upimage_source
+	up_image = property(_getUpImage,_setUpImage)
+
+	def _setDownImage(self,image):
+		self._downimage_source = image
+		try:
+			self._downimage = get_manager().loadImage(image)
+			self.real_widget.setDownImage( self._downimage )
+		except:
+			pass
+	def _getDownImage(self): return self._downimage_source
+	down_image = property(_getDownImage,_setDownImage)
 
 class CheckBox(BasicTextWidget):
 	"""
@@ -1242,6 +1288,7 @@ WIDGETS = {
 	"Button" : Button,
 	"CheckBox" : CheckBox,
 	"RadioButton" : RadioButton,
+	"ImageButton" : ImageButton,
 	
 	#Complexer Widgets / Text io
 	"TextField" : TextField,

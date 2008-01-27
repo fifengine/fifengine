@@ -37,19 +37,17 @@ namespace gcn {
 
 	class TwoButton : public Button {
 		public:
-			TwoButton(Image *up_image, Image *down_image);
-			TwoButton(Image *up_image, Image *down_image, const std::string& caption);
+			TwoButton(Image *up_image = 0, Image *down_image = 0, const std::string& caption = "");
 			~TwoButton();
 			void draw(Graphics *graphics);
 			void adjustSize();
-			/*
-			bool isPressed() const;
-			void mousePress(int,int,int);
-			void mouseRelease(int,int,int);
-			*/
+
+			void setUpImage(Image* image);
+			void setDownImage(Image* image);
+
 		private:
-			Image *up;
-			Image *down;
+			Image *m_upImage;
+			Image *m_downImage;
 	};
 
 }
