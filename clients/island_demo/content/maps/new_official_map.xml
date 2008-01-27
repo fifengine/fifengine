@@ -1089,7 +1089,7 @@
 		</layer>
 
 		<camera id='main' zoom='1' tilt='-42' rotation='45' ref_layer_id='TechdemoMapObjectLayer' ref_cell_width='32' ref_cell_height='16' viewport='0,0,1024,768' />
-		<camera id='small' zoom='1' tilt='-42' rotation='45' ref_layer_id='TechdemoMapObjectLayer' ref_cell_width='126' ref_cell_height='96' viewport='0,0,100,100' />
+		<camera id='small' zoom='1' tilt='-42' rotation='45' ref_layer_id='TechdemoMapObjectLayer' ref_cell_width='32' ref_cell_height='16' viewport='0,0,250,250' />
 
 	</elevation>
 </map>

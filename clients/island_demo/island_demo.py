@@ -499,6 +499,8 @@ class World(object):
 		showSecondCamera = not evtlistener.showSecondCamera
 		editorShown = False
 		
+		smallcamloc = self.cameras['small'].getLocation()
+		smallcamloc.setExactLayerCoordinates( fife.ExactModelCoordinate( 10.0, 10.0, 0.0 ))
 		smallcamx = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		initial_camx = smallcamx
 		cam_to_right = True
