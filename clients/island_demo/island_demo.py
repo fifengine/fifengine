@@ -569,17 +569,13 @@ class World(object):
 				break
 			
 			if evtlistener.reloadRequested:
-				camcoords = self.cameras['main'].getLocation().getExactLayerCoordinates()
 				evtlistener.reloadRequested = False
 				self.model.deleteMaps()
 				self.metamodel.deleteDatasets()
-				self.create_world(MAPFILE)
 				self.view.clearCameras()
+				self.create_world(MAPFILE)
 				self.adjust_views()
 				self.cameras['small'].setEnabled(showSecondCamera)
-				camloc = self.cameras['main'].getLocation()
-				camloc.setExactLayerCoordinates(camcoords)
-				self.cameras['main'].setLocation(camloc)
 				evtlistener.scrollwheelvalue = self.scrollwheelvalue
 				print 'reloaded'
 
