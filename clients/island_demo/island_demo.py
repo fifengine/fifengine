@@ -430,7 +430,7 @@ class World(object):
 		camera = self.view.addCamera(name, self.layer,fife.Rect(*[int(c) for c in viewport]),emc)
 		camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
 		camera.setRotation(45)
-		camera.setTilt(-42)
+		camera.setTilt(-40.7)
 
 		self.cameras[name] = camera
 	
