@@ -384,3 +384,8 @@ def loadXML(file):
 	loader = _GuiLoader()
 	parse(file,loader)
 	return loader.root
+
+def setupModalExecution(mainLoop,breakFromMainLoop):
+	if not manager:
+		raise InitializationError("PyChan is not initialized yet.")
+	manager.setupModalExecution(mainLoop,breakFromMainLoop)

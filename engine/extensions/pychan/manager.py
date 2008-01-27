@@ -30,6 +30,15 @@ class Manager(fife.IWidgetListener):
 		self.engine.getEventManager().addWidgetListener(self)
                 Manager.manager = self
 
+		self.mainLoop = None
+		self.breakFromMainLoop = None
+		self.can_execute = True
+
+	def setupModalExecution(self,mainLoop,breakFromMainLoop):
+		self.mainLoop = mainLoop
+		self.breakFromMainLoop = breakFromMainLoop
+		self.can_execute = True
+
 	def show(self,widget):
 		"""
 		Shows a widget on screen. Used by L{Widget.show} - do not use directly.

@@ -40,6 +40,8 @@ class DemoApplication(basicapplication.ApplicationBase):
 		super(DemoApplication,self).__init__()
 		
 		pychan.init(self.engine,debug=True)
+		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
+		
 		self.gui = pychan.loadXML('content/gui/demoapp.xml')
 		
 		eventMap = {
@@ -75,13 +77,8 @@ class DemoApplication(basicapplication.ApplicationBase):
 		self.currentExample.start()
 
 	def showCredits(self):
-		if self.creditsWidget:
-			self.creditsWidget.show()
-			return
 		self.creditsWidget = pychan.loadXML('content/gui/credits.xml')
-		self.creditsWidget.mapEvents({ 'okButton' : self.creditsWidget.hide })
-		self.creditsWidget.distributeData({ 'creditText' : open("../../doc/AUTHORS").read() })
-		self.creditsWidget.show()
+		return self.creditsWidget.execute({ 'okButton' : True })
 
 class TestXMLApplication(basicapplication.ApplicationBase):
 	"""

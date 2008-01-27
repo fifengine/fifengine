@@ -102,6 +102,18 @@ class Widget(object):
 		# Not needed as attrib assignment will trigger manager.stylize call
 		#manager.stylize(self,self.style)
 
+	def execute(self,bind):
+		if not get_manager().can_execute:
+			raise RuntimeError("Synchronous execution is not set up!")
+		
+		for name,returnValue in bind.items():
+			def _quitThisDialog():
+				get_manager().breakFromMainLoop( returnValue )
+				self.hide()
+			self.findChild(name=name).capture( _quitThisDialog )
+		self.show()
+		return get_manager().mainLoop()
+
 	def match(self,**kwargs):
 		"""
 		Matches the widget against a list of key-value pairs.
