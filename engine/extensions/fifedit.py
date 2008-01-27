@@ -332,6 +332,7 @@ class FIFEdit(fife.IWidgetListener, object):
 
 	def edit_camview(self, camera):
 		self.camera = camera
+		self.edit_layer = 0
 
 
 class DatasetEditor(Form):

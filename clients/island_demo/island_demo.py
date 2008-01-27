@@ -388,6 +388,7 @@ class World(object):
 		self.metamodel = self.model.getMetaModel()
 		self.gui = gui
 		self.view = self.engine.getView()
+		self.editor = FIFEdit( self.engine, [MAPFILE] )
 		
 		self.ctrl_scrollwheelvalue = 0
 		self.alt_scrollwheelvalue = 0
@@ -399,6 +400,7 @@ class World(object):
 	
 		self.elevation = self.map.getElevations("id", "TechdemoMapElevation")[0]
 		self.layer = self.elevation.getLayers("id", "TechdemoMapTileLayer")[0]
+		self.setup_cameras()
 		
 		self.agent_layer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
 		
@@ -408,8 +410,6 @@ class World(object):
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.agent_layer)
-		
-		self.cameras = {}
 		
 		self.scrollwheelvalue = self.elevation.getLayers("id", TDS.TestRotationLayerName)[0].getCellGrid().getRotation()
 
@@ -421,6 +421,8 @@ class World(object):
 		self.agent.act('default', self.target, True)
 		self.agentcoords = self.target.getElevationCoordinates()
 
+		# Update editor camera.
+		self.editor.edit_camview( self.cameras['main'] )
 
 	def save_world(self, path):
 		saveMapFile(path, self.engine, self.map)
@@ -434,13 +436,13 @@ class World(object):
 
 		self.cameras[name] = camera
 	
-	def adjust_views(self):
-		W = self.renderbackend.getScreenWidth()
-		H = self.renderbackend.getScreenHeight()
-		maincoords = (1, 1)
+	def setup_cameras( self ):
+		self.cameras = {}
 		for cam in self.view.getCameras():
 			self.cameras[cam.getId()] = cam
 
+
+	def adjust_views(self):
 		self.view.resetRenderers()
 		self.ctrl_scrollwheelvalue = self.cameras['main'].getRotation()
 		self.shift_scrollwheelvalue = self.cameras['main'].getZoom()
@@ -651,13 +653,8 @@ if __name__ == '__main__':
 	gui = Gui(engine)
 	w = World(engine, gui)
 
-	e = FIFEdit(engine, [MAPFILE])
-	e.show()
-
 	w.create_world(MAPFILE)
 	w.adjust_views()
-
-	e.edit_camview(w.cameras['main'])
 
 	if TDS.PlaySounds:
 		w.create_background_music()
