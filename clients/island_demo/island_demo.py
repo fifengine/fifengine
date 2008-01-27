@@ -28,26 +28,6 @@ class InstanceReactor(fife.InstanceListener):
 		self.evtlistener.PCrun = False
 		print "running reset"
 
-		elevcoords = instance.getLocation().getElevationCoordinates()		
-		agentscreen = self.world.cameras['main'].toScreenCoordinates( elevcoords )
-		camlocation = self.world.cameras['main'].getLocation()
-		camcoords = camlocation.getElevationCoordinates()
-
-		print 'Agent screen: %d, %d' % (agentscreen.x, agentscreen.y)
-		print 'Camlocation: %d, %d' % (camcoords.x, camcoords.y)
-
-		movecam = 0
-		if agentscreen.x > TDS.ScreenWidth - 150 or agentscreen.x < 150:
-			camcoords.x = elevcoords.x
-			movecam = 1
-		if agentscreen.y > TDS.ScreenHeight - 150 or agentscreen.y < 150:
-			camcoords.y = elevcoords.y
-			movecam = 1
-		
-		if movecam:
-			camlocation.setElevationCoordinates( camcoords )
-			self.world.cameras['main'].setLocation( camlocation )
-
 SCROLL_MODIFIER = 0.1
 MAPFILE = 'content/maps/new_official_map.xml'
 
@@ -458,8 +438,9 @@ class World(object):
 		W = self.renderbackend.getScreenWidth()
 		H = self.renderbackend.getScreenHeight()
 		maincoords = (1, 1)
-		self._create_camera('main', maincoords, (0, 0, W, H))
-		self._create_camera('small', (6,1), (W*0.6, H*0.01, W*0.39, H*0.36))
+		for cam in self.view.getCameras():
+			self.cameras[cam.getId()] = cam
+
 		self.view.resetRenderers()
 		self.ctrl_scrollwheelvalue = self.cameras['main'].getRotation()
 		self.shift_scrollwheelvalue = self.cameras['main'].getZoom()
@@ -474,6 +455,11 @@ class World(object):
 		renderer.clearActiveLayers()
 		if TDS.QuadTreeLayerName:
 			renderer.addActiveLayer(self.elevation.getLayers("id", TDS.QuadTreeLayerName)[0])
+
+		try:
+			self.cameras['main'].attachToInstance( self.agent );
+		except:
+			print "Could not attach camera!"
 
 	def create_background_music(self):
 		# set up the audio engine

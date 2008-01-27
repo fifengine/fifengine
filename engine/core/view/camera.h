@@ -39,6 +39,7 @@ namespace FIFE {
 
 	typedef Point3D ScreenPoint;
 	class Layer;
+	class Instance;
 
 	/** Camera describes properties of a view port shown in the main screen
 	 *  Main screen can have multiple cameras active simultanously
@@ -151,6 +152,28 @@ namespace FIFE {
 		 */
 		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
 
+		/** Attaches the camera to an instance.
+		 * @param instance Instance to which the camera shall be attached
+		 * @note The camera can only be attached to an instance at the same layer!
+		 * @throws FIFE::Exception when camera on different layer than instance
+		 */
+		void attachToInstance( Instance *instance );
+
+		/** Detaches the camera from an instance.
+		 */
+		void detach();
+
+		/** Checks if the camera is attached.
+		 * @return bool True when attached.
+		 */
+		bool isAttached() const { return m_attachedto != NULL; }
+
+		/** General update routine.
+		 * In this function, the camera's position gets updated when its attached
+		 * to another instance.
+		 */
+		void update();
+
 	private:
 		std::string m_id;
 
@@ -169,6 +192,7 @@ namespace FIFE {
 		unsigned int m_screen_cell_height;
 		double m_reference_scale;
 		bool m_enabled;
+		Instance *m_attachedto;
 	};
 }
 #endif

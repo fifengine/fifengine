@@ -30,6 +30,7 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/layer.h"
 #include "model/structures/instancetree.h"
+#include "model/structures/instance.h"
 #include "util/logger.h"
 
 #include "camera.h"
@@ -51,7 +52,8 @@ namespace FIFE {
 			m_screen_cell_width(1),
 			m_screen_cell_height(1),
 			m_reference_scale(1),
-			m_enabled(true) {
+			m_enabled(true),
+			m_attachedto(NULL) {
 		m_location.setLayer(layer);
 		m_location.setExactLayerCoordinates(emc);
 		m_viewport = viewport;
@@ -279,5 +281,23 @@ namespace FIFE {
 		ModelCoordinate ecl = layer.getCellGrid()->toLayerCoordinates(ece);
 		InstanceTree* itree = layer.getInstanceTree();
 		itree->getInstanceList(ecl, 0, 0, instances);
+	}
+
+	void Camera::attachToInstance( Instance *instance ) {
+		m_attachedto = instance;
+		update();
+	}
+
+	void Camera::detach() {
+		m_attachedto = NULL;
+	}
+
+	void Camera::update() {
+		if( !m_attachedto ) {
+			return;
+		}
+
+		m_location.setExactLayerCoordinates( m_attachedto->getLocation().getExactLayerCoordinates());
+		updateMatrices();
 	}
 }

@@ -166,6 +166,8 @@ namespace FIFE {
 				continue;
 			}
 
+			(*cam_it)->update();
+
 			const Location& loc = (*cam_it)->getLocation();
 			Elevation* elev = loc.getElevation();
 			if (!elev) {

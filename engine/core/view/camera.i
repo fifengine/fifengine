@@ -31,6 +31,12 @@ namespace FIFE {
 		bool isEnabled();
 		
 		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
+
+		void attachToInstance( Instance *instance );
+		void detach();
+		bool isAttached() const;
+
+
 	};
 	%clear std::list<Instance*>& instances;
 }
