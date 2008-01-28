@@ -124,12 +124,11 @@ namespace FIFE {
 			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 				render_width,render_height,32,
 				RMASK, GMASK, BMASK ,AMASK);
-			if (final_surface) {
-				SDL_FillRect(final_surface,0,0x00000000);
-			} else {
+			if (!final_surface) {
 				std::cerr << "CreateRGBSurface failed: " << SDL_GetError() << "\n";
 				exit(0);
 			}
+			SDL_FillRect(final_surface, 0, 0x00000000);
 			int ypos = 0;
 			for (std::vector<SDL_Surface*>::iterator i = lines.begin(); i != lines.end(); ++i) {
 				SDL_Rect src_rect;

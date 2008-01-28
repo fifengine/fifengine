@@ -405,7 +405,9 @@ class World(object):
 	
 		self.elevation = self.map.getElevations("id", "TechdemoMapElevation")[0]
 		self.layer = self.elevation.getLayers("id", "TechdemoMapTileLayer")[0]
-		self.setup_cameras()
+		self.cameras = {}
+		for cam in self.view.getCameras():
+			self.cameras[cam.getId()] = cam
 		
 		self.agent_layer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
 		
@@ -432,21 +434,6 @@ class World(object):
 	def save_world(self, path):
 		saveMapFile(path, self.engine, self.map)
 		
-	def _create_camera(self, name, coordinate, viewport):
-		emc = fife.ExactModelCoordinate(coordinate[0],coordinate[1],0)
-		camera = self.view.addCamera(name, self.layer,fife.Rect(*[int(c) for c in viewport]),emc)
-		camera.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)
-		camera.setRotation(45)
-		camera.setTilt(-40.7)
-
-		self.cameras[name] = camera
-	
-	def setup_cameras( self ):
-		self.cameras = {}
-		for cam in self.view.getCameras():
-			self.cameras[cam.getId()] = cam
-
-
 	def adjust_views(self):
 		self.view.resetRenderers()
 		self.ctrl_scrollwheelvalue = self.cameras['main'].getRotation()
@@ -555,9 +542,9 @@ class World(object):
 			
 			# agent movement
 			if evtlistener.newTarget:
-				objlayer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
-				instances = self.cameras['main'].getMatchingInstances(evtlistener.newTarget, objlayer)
-				print ', '.join(['instance "%s" from obj "%s"' % (i.Id(), i.getObject().Id()) for i in instances])
+				#objlayer = self.agent_layer
+				#instances = self.cameras['main'].getMatchingInstances(evtlistener.newTarget, objlayer)
+				#print ', '.join(['instance "%s" from obj "%s"' % (i.Id(), i.getObject().Id()) for i in instances])
 				dy = -(evtlistener.newTarget.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getElevationCoordinates()).y)
 				evtlistener.newTarget.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
 				target_elevcoord = self.cameras['main'].toElevationCoordinates(evtlistener.newTarget)

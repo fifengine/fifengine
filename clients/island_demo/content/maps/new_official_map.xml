@@ -4,9 +4,8 @@
 	<metadata>
 		<param type="text" name="Name">new_official_map.xml</param>
 		<param type="id" name="Version">1</param>
-		<param type="text" name="Comment">Official FIFE 2007.3 example map.</param>
+		<param type="text" name="Comment">Official FIFE 2008.0 demo map.</param>
 		<param type="text" name="Author">FIFE team</param>
-		<param type="id" name="_START_ELEVATION">1</param>
 	</metadata>
 
 	<!-- Load tile object datasets -->
@@ -46,7 +45,6 @@
 	<elevation id="TechdemoMapElevation">
 
 		<metadata>
-			<param name="_START_POSITION" type="Point"><x>6</x><y>7</y></param>
 		</metadata>
 
 		<!-- TILE LAYER -->

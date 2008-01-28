@@ -95,11 +95,11 @@ namespace FIFE {
 		double getZoom() const;
 
 		void setCellImageDimensions(unsigned int width, unsigned int height);
-
-    /** Gets screen cell image dimensions.
-     * @return Point Point containing x=width and y=height
-     */
-    Point getCellImageDimensions();
+		
+		/** Gets screen cell image dimensions.
+		* @return Point Point containing x=width and y=height
+		*/
+		Point getCellImageDimensions();
 
 		/** Sets the location for camera
 		 * @param location location (center point) to render
