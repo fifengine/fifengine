@@ -193,6 +193,11 @@ class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListe
 			self.reloadRequested = True
 		elif keystr == 'e':
 			self.showEditor = True
+		elif keystr == 'a':
+			if self.world.cameras['main'].isAttached():
+				self.world.cameras['main'].detach()
+			else:
+				self.world.cameras['main'].attachToInstance( self.world.agent )
 		elif keyval in (fife.IKey.LEFT_CONTROL, fife.IKey.RIGHT_CONTROL):
 			self._ctrldown = True
 		elif keyval in (fife.IKey.LEFT_SHIFT, fife.IKey.RIGHT_SHIFT):

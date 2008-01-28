@@ -14,6 +14,7 @@ Keybindings:
 - C = Toggles coordinates on / off
 - R = Reload map (useful for map editing)
 - S = Second camera on / off
+- A = Toggle autoscroll on / off
 - SHIFT + mouse wheel = Adjust camera zoom
 - CTRL + mouse wheel = Adjust camera rotation
 - ALT + mouse wheel = Adjust camera tilt
