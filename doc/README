@@ -1,12 +1,13 @@
 == Introduction ==
-Welcome to the FIFE 2008.0 pre-release README. This snapshot is based on SVN revision 2055.
+Welcome to the FIFE 2008.0 pre-release README. This snapshot is based on SVN revision 2057.
 
 == Important changes since the 2007.2 release ==
+* New audio module with support for some more advanced audio features.
 * Optimized view code to improve the performance and resolve map instance z-order issues.
 * Switched back to island_demo concept; this will be the techdemo that ships with future FIFE releases as well.
 * Floating text renderer.
 * Improved virtual file system code for editor tool.
-* Vastly improved pychan wrapper.
+* Vastly improved pychan extension.
 * Quadtree adjustments.
 * Basic mouse map instance picking.
 * Editor tool (still work in progress).
@@ -62,8 +63,7 @@ Move into the <FIFE>\clients\island_demo directory and start the island_demo.py 
 The engine utilizes special settings files for configuring FIFE. For the island_demo the file is called "techdemo_settings.py" and resides in the same directory as the island_demo.py script. You can customize FIFE by editing this file.
 
 == Known issues ==
-* The player character does currently walk over all map objects. There are a couple of reasons for this:
-*# We didn't have the time to properly set blockers for all map objects yet.
+* Map instance blocking is currently buggy on the island_demo map.
 * Win32 users tend to suffer from problems with the OpenAL drivers. If you don't hear the background music playing while running the techdemo, run oalinst.exe that ships with the Win32 package. This is the latest OpenAL driver for Win32.
 * The boost unit tests are broken on Win32. We plan to address this issue but we're lacking active Win32 developers to look into these kind of problems as the vast majority of the active developers is set on Linux. If you would like to help out with Win32-related issues please contact us at our IRC channel:
 http://wiki.fifengine.de/index.php?title=IRC
