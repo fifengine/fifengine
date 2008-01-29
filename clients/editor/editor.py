@@ -66,7 +66,7 @@ class Editor(basicapplication.ApplicationBase):
 		if self.maploader.newMap:
 			self.mapedit.editMap(self.maploader.newMap.Id())	
 			self.maploader.newMap = None
-		if self.mapsaver.saveRequested:
+		if self.mapsaver.saveRequested and self.mapedit.map:
 			self.mapsaver.saveMap(self.mapedit.map)
 			self.mapsaver.saveRequested = False
 		self.mapedit.pump()

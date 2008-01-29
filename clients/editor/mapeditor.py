@@ -57,6 +57,7 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 
 		self.mapEdit = None
 		self.camera = None
+		self.map = None
 		self.elevation = None
 		self.layer = None
 		self.selection = None
