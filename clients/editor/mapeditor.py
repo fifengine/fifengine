@@ -8,6 +8,28 @@ import pychan
 import pychan.widgets as widgets
 from viewer import Viewer
 
+# Create a selection gui
+# list - the list to select from
+# onSelection - the function to call when a selection is made. Accepts one argument: an element of the list.
+def offerSelection(list, onSelection):
+	select = pychan.loadXML('content/gui/selection.xml')
+
+	def selected():
+		selection = select.collectData(['optionDrop'])['optionDrop']
+		if selection < 0: return
+		onSelection(list[selection])
+		select.hide()
+
+	select.mapEvents({
+		'okButton'     : selected,
+		'cancelButton' : select.hide
+	})
+
+	select.distributeInitialData({
+		'optionDrop' : list
+	})
+	select.show()
+
 class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
 		self.engine = engine
@@ -19,44 +41,84 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.eventmanager.addKeyListener(self)
 
 		# Fifedit plugin data
-		self.menu_items = { 'Edit' : self._editSelection }
+		self.menu_items = { 'Edit' : self._selectMap }
 
 		# MapEditor needs a viewer so the user can see things.
 		self.viewer = Viewer(self.engine)
 
 		self.mapSelect = None
+		self.datSelect = None
+
+		self.mapEdit = None
 		self.camera = None
 		self.elevation = None
 		self.layer = None
 		self.selection = None
 
+		self.datView = None
+		self.dataset = None
+		self.objectList = None
+
 	# gui for selecting a map
-	def _editSelection(self):
-		map_list = [map.Id() for map in self.engine.getModel().getMaps()]
+	def _selectMap(self):
+		offerSelection([map.Id() for map in self.engine.getModel().getMaps()], self._editMap)
 
-		def selected():
-			selection = self.mapSelect.collectData(['optionDrop'])['optionDrop']
-			if selection < 0:
-				return
-			self.viewer.viewMap(map_list[selection])
-			self.camera = self.viewer.camera
-			self.elevation = self.camera.getLocation().getElevation()
-			self.layer = self.camera.getLocation().getLayer()
+	def _editMap(self, mapid):
+		self.viewer.viewMap(mapid)
+		self.map = self.engine.getModel().getMaps('id', mapid)[0]
+		self.camera = self.viewer.camera
+		self.elevation = self.camera.getLocation().getElevation()
+		self.layer = self.camera.getLocation().getLayer()
 
-		if not self.mapSelect:
-			self.mapSelect = pychan.loadXML('content/gui/selection.xml')
-			self.mapSelect.mapEvents({
-				'okButton'    : selected,
-				'cancelButton' : self.mapSelect.hide
+		if not self.mapEdit:
+			self.mapEdit = pychan.loadXML('content/gui/mapeditor.xml')
+			self.mapEdit.mapEvents({
+				'datButton'   : self._selectDataset,
+				'closeButton' : self.quit
 			})
 
-		self.mapSelect.distributeInitialData({
-			'optionDrop'  : map_list
+		# TODO: create the metadata editing fields
+		metafields = self.mapEdit.findChild(name='Metadata Properties')
+		for metafield in self.map.listFields():
+			hbox = widgets.HBox()
+			metafields.add(hbox)
+
+			label = widgets.Label(text=metafield)
+			hbox.add(label)
+			field = widgets.TextBox(text=self.map.get(metafield))
+			hbox.add(field)
+
+		self.mapEdit.show()
+
+	def _selectDataset(self):
+		offerSelection([dat.Id() for dat in self.map.getDatasets()], self._viewDataset)
+
+	def _viewDataset(self, datid):
+		if not self.datView:
+			self.datView = pychan.loadXML('content/gui/dataset_viewer.xml')
+			self.datView.mapEvents({
+				'closeButton' : self.datView.hide
+			})
+
+		self.dataset = self.engine.getModel().getMetaModel().getDatasets('id', datid)[0]
+		self.object_list = [obj.Id() for obj in self.dataset.getObjects()]
+		self.datView.distributeInitialData({
+			'optionDrop' : self.object_list
 		})
-		self.mapSelect.show()
+
+		self.datView.show()
 
 	def pump(self):
 		self.viewer.pump()
+
+	def quit(self):
+#		self.viewer.	 # TODO: find a way to "turn off" the viewer
+		self.camera = None
+		self.elevation = None
+		self.layer = None
+		self.selection = None
+
+		self.mapEdit.hide()
 
 	def mousePressed(self, evt):
 		if self.camera:
@@ -90,6 +152,11 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		keystr = evt.getKey().getAsString().lower()
 		if keystr == 'm':
 			pass # TODO: make an instance
+			if self.selection and self.datView:
+				objid = self.object_list[self.datView.collectData(['optionDrop'])['optionDrop']]
+				inst = self.layer.createInstance(self.dataset.getObjects('id', objid)[0], self.selection)
+				fife.InstanceVisual.create(inst)
+
 		elif keystr == 'x':
 			if self.selection:
 				for inst in self.layer.getInstances('loc', str(self.selection.x) + ',' + str(self.selection.y)):

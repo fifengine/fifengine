@@ -1,0 +1,12 @@
+<Window title="Map Editor">
+	<HBox>
+		<VBox name="Metadata Properties">
+		</VBox>
+		<VBox>
+			<Button name="elevButton" text="Edit Elevation"/>
+			<Button name="datButton" text="View Dataset"/>
+			<Spacer /> 		
+			<Button name="closeButton" text="Close"/>
+		</VBox>
+	</HBox>
+</Window>
