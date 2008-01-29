@@ -42,6 +42,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		self._dragx = 0
 		self._dragy = 0
 
+		self.active = False
 		self.new_view = False
 		self.map = None
 		self.camera = None
@@ -163,6 +164,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		self.elevation = self.map.getElevations()[0]
 		self.layer = self.elevation.getLayers()[0]
 		self.adjust_views()
+		self.active = True
 
 	def adjust_views(self):
 		W = self.engine.getRenderBackend().getScreenWidth()
@@ -186,6 +188,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		self.camera.setLocation(camloc)
 
 	def pump(self):
+		if not self.active: return
 		if (self.horizscroll or self.vertscroll):
 			loc = self.camera.getLocation()
 			cam_scroll = loc.getExactLayerCoordinates()
