@@ -6,14 +6,14 @@
 				<ListBox name="dirList"/>
 			</ScrollArea>
 		</VBox>
-		<VBox>
+		<VBox name="fileColumn">
 			<Label name="fileLabel" text="Files:"/>
 			<ScrollArea size="200,300">
 				<ListBox name="fileList"/>
 			</ScrollArea>
 		</VBox>
 		<VBox>
-			<Button name="openButton" text="Open"/>
+			<Button name="selectButton" text="Select"/>
 			<Spacer />
 			<Button name="closeButton" text="Close"/>
 		</VBox>

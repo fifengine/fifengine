@@ -89,7 +89,7 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 
 			label = widgets.Label(text=metafield)
 			hbox.add(label)
-			field = widgets.TextBox(text=self.map.get(metafield))
+			field = widgets.TextField(text=self.map.get(metafield))
 			hbox.add(field)
 
 		self.mapEdit.show()
@@ -109,7 +109,8 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.viewer.pump()
 
 	def quit(self):
-#		self.viewer.	 # TODO: find a way to "turn off" the viewer
+#   Sleek: why doesn't this work?
+#		self.viewer.deactivate() 
 		self.camera = None
 		self.elevation = None
 		self.layer = None

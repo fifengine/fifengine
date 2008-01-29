@@ -166,6 +166,10 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		self.adjust_views()
 		self.active = True
 
+	def deactivate(self):
+		self.camera.setEnabled(False)
+		self.active = False
+
 	def adjust_views(self):
 		W = self.engine.getRenderBackend().getScreenWidth()
 		H = self.engine.getRenderBackend().getScreenHeight()

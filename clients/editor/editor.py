@@ -19,6 +19,7 @@ import pychan
 import pychan.widgets as widgets
 
 from maploader import MapLoader
+from maploader import MapSaver
 from viewer import Viewer
 from listener import EditorListener
 from fifedit import Fifedit
@@ -27,17 +28,17 @@ from mapeditor import MapEditor
 # Help display
 class Help(object):
 	def __init__(self):
-		self.helpWidget = None	
+		self._helpWidget = None	
 		self.menu_items = { 'Help' : self.showHelp }
 
 	def showHelp(self):
-		if self.helpWidget:
-			self.helpWidget.show()
+		if self._helpWidget:
+			self._helpWidget.show()
 			return
-		self.helpWidget = pychan.loadXML('content/gui/help.xml')
-		self.helpWidget.mapEvents({ 'closeButton' : self.helpWidget.hide })
-		self.helpWidget.distributeData({ 'helpText' : open("content/infotext.txt").read() })
-		self.helpWidget.show()
+		self._helpWidget = pychan.loadXML('content/gui/help.xml')
+		self._helpWidget.mapEvents({ 'closeButton' : self._helpWidget.hide })
+		self._helpWidget.distributeData({ 'helpText' : open("content/infotext.txt").read() })
+		self._helpWidget.show()
 
 class Editor(basicapplication.ApplicationBase):
 	def __init__(self):
@@ -49,10 +50,12 @@ class Editor(basicapplication.ApplicationBase):
 		# Create this client's modules
 		self.mapedit = MapEditor(self.engine)
 		self.maploader = MapLoader(self.engine)
+		self.mapsaver = MapSaver(self.engine)
 
 		# Register plugins with Fifedit.
 		self.fifedit.registerPlugin(Help())
 		self.fifedit.registerPlugin(self.maploader)
+		self.fifedit.registerPlugin(self.mapsaver)
 		self.fifedit.registerPlugin(self.mapedit)
 
 	def createListener(self):
@@ -63,6 +66,9 @@ class Editor(basicapplication.ApplicationBase):
 		if self.maploader.newMap:
 			self.mapedit.editMap(self.maploader.newMap.Id())	
 			self.maploader.newMap = None
+		if self.mapsaver.saveRequested:
+			self.mapsaver.saveMap(self.mapedit.map)
+			self.mapsaver.saveRequested = False
 		self.mapedit.pump()
 
 if __name__ == '__main__':
