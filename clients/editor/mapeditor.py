@@ -8,27 +8,33 @@ import pychan
 import pychan.widgets as widgets
 from viewer import Viewer
 
-# Create a selection gui
-# list - the list to select from
-# onSelection - the function to call when a selection is made. Accepts one argument: an element of the list.
-def offerSelection(list, onSelection):
-	select = pychan.loadXML('content/gui/selection.xml')
+class Selection():
+	"""
+	Selection displays a list of options for the user to select from. The result is passed to onSelection.
+	list - the list to select from
+	onSelection - the function to call when a selection is made. Accepts one argument: an element of the list.
+	"""
+	def __init__(self, list, onSelection):
+		self.list = list
+		self._callback = onSelection
 
-	def selected():
-		selection = select.collectData(['optionDrop'])['optionDrop']
+		self._widget = pychan.loadXML('content/gui/selection.xml')
+
+		self._widget.mapEvents({
+			'okButton'     : self._selected,
+			'cancelButton' : self._widget.hide
+		})
+
+		self._widget.distributeInitialData({
+			'optionDrop' : list
+		})
+		self._widget.show()
+
+	def _selected(self):
+		selection = self._widget.collectData(['optionDrop'])['optionDrop']
 		if selection < 0: return
-		onSelection(list[selection])
-		select.hide()
-
-	select.mapEvents({
-		'okButton'     : selected,
-		'cancelButton' : select.hide
-	})
-
-	select.distributeInitialData({
-		'optionDrop' : list
-	})
-	select.show()
+		self._callback(self.list[selection])
+		self._widget.hide()
 
 class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
@@ -55,15 +61,14 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.layer = None
 		self.selection = None
 
-		self.datView = None
 		self.dataset = None
-		self.objectList = None
+		self.object = None
 
 	# gui for selecting a map
 	def _selectMap(self):
-		offerSelection([map.Id() for map in self.engine.getModel().getMaps()], self._editMap)
+		Selection([map.Id() for map in self.engine.getModel().getMaps()], self.editMap)
 
-	def _editMap(self, mapid):
+	def editMap(self, mapid):
 		self.viewer.viewMap(mapid)
 		self.map = self.engine.getModel().getMaps('id', mapid)[0]
 		self.camera = self.viewer.camera
@@ -77,7 +82,6 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 				'closeButton' : self.quit
 			})
 
-		# TODO: create the metadata editing fields
 		metafields = self.mapEdit.findChild(name='Metadata Properties')
 		for metafield in self.map.listFields():
 			hbox = widgets.HBox()
@@ -91,22 +95,15 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.mapEdit.show()
 
 	def _selectDataset(self):
-		offerSelection([dat.Id() for dat in self.map.getDatasets()], self._viewDataset)
+		Selection([dat.Id() for dat in self.map.getDatasets()], self._viewDataset)
 
 	def _viewDataset(self, datid):
-		if not self.datView:
-			self.datView = pychan.loadXML('content/gui/dataset_viewer.xml')
-			self.datView.mapEvents({
-				'closeButton' : self.datView.hide
-			})
+		self.dataset = self.engine.getModel().getMetaModel().getDatasets('id',  datid)[0]
+		Selection([obj.Id() for obj in self.dataset.getObjects()], self.editWith)
 
-		self.dataset = self.engine.getModel().getMetaModel().getDatasets('id', datid)[0]
-		self.object_list = [obj.Id() for obj in self.dataset.getObjects()]
-		self.datView.distributeInitialData({
-			'optionDrop' : self.object_list
-		})
-
-		self.datView.show()
+	def editWith(self, object_id):
+		if self.dataset:
+			self.object = self.dataset.getObjects('id', object_id)[0]
 
 	def pump(self):
 		self.viewer.pump()
@@ -152,9 +149,8 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		keystr = evt.getKey().getAsString().lower()
 		if keystr == 'm':
 			pass # TODO: make an instance
-			if self.selection and self.datView:
-				objid = self.object_list[self.datView.collectData(['optionDrop'])['optionDrop']]
-				inst = self.layer.createInstance(self.dataset.getObjects('id', objid)[0], self.selection)
+			if self.selection and self.object:
+				inst = self.layer.createInstance(self.object, self.selection)
 				fife.InstanceVisual.create(inst)
 
 		elif keystr == 'x':

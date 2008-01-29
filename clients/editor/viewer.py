@@ -172,10 +172,15 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 
 		self._set_camera((0, 0, W, H))
 		self.engine.getView().resetRenderers()
+		for camera in self.engine.getView().getCameras():
+			camera.setEnabled(False)
+		self.camera.setEnabled(True)
 		self.new_view = True
 
 	def _set_camera(self, viewport):
-		self.camera = self.engine.getView().getCamera('default')
+		if self.elevation:
+			# grab a camera associated with this elevation
+			self.camera = filter(lambda c: c.getLocation().getElevation().Id() == self.elevation.Id(), self.engine.getView().getCameras())[0]
 
 		if not self.camera:
 			raise RuntimeError, "No default camera view found for this map: " + self.map.Id()

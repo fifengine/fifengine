@@ -31,6 +31,8 @@ class MapLoader:
 			'Load Map' : self.showMapBrowser,
 		}
 
+		self.newMap = None
+
 	def showMapBrowser(self):
 		if self.maploadWidget:
 			self.maploadWidget.show()
@@ -71,5 +73,5 @@ class MapLoader:
 		content = self.path.split('/')
 		content.pop()
 		content.pop()
-		loadMapFile('/'.join([self.path, self.file_list[selection]]), self.engine, '/'.join(content) + '/')
+		self.newMap = loadMapFile('/'.join([self.path, self.file_list[selection]]), self.engine, '/'.join(content) + '/')
 		self.maploadWidget.hide()

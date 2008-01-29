@@ -48,10 +48,11 @@ class Editor(basicapplication.ApplicationBase):
 
 		# Create this client's modules
 		self.mapedit = MapEditor(self.engine)
+		self.maploader = MapLoader(self.engine)
 
 		# Register plugins with Fifedit.
 		self.fifedit.registerPlugin(Help())
-		self.fifedit.registerPlugin(MapLoader(self.engine))
+		self.fifedit.registerPlugin(self.maploader)
 		self.fifedit.registerPlugin(self.mapedit)
 
 	def createListener(self):
@@ -59,6 +60,9 @@ class Editor(basicapplication.ApplicationBase):
 		return EditorListener(self)
 
 	def _pump(self):
+		if self.maploader.newMap:
+			self.mapedit.editMap(self.maploader.newMap.Id())	
+			self.maploader.newMap = None
 		self.mapedit.pump()
 
 if __name__ == '__main__':
