@@ -15,8 +15,6 @@ import techdemo_settings as TDS
 from loaders import loadMapFile
 from savers import saveMapFile
 
-from fifedit import *
-
 class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
 		instance.act('idle', instance.getFacingLocation(), True)
@@ -396,7 +394,6 @@ class World(object):
 		showTileOutline = not evtlistener.showTileOutline
 		showCoordinates = not evtlistener.showCoordinates
 		showSecondCamera = not evtlistener.showSecondCamera
-		editorShown = False
 		
 		smallcamx = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		initial_camx = smallcamx
@@ -470,11 +467,6 @@ class World(object):
 				evtlistener.scrollwheelvalue = self.scrollwheelvalue
 				print 'reloaded'
 
-			if evtlistener.showEditor and not editorShown:
-				e = FIFEdit(engine, [MAPFILE])
-				e.show()
-				editorShown = True
-
 			agentcoords = self.agent.getLocation().getElevationCoordinates()
 			if not ((self.agentcoords.x == agentcoords.x) and (self.agentcoords.y == agentcoords.y)):
 				loc = self.cameras['main'].getLocation()
@@ -542,13 +534,8 @@ if __name__ == '__main__':
 	gui = Gui(engine)
 	w = World(engine, gui)
 
-	e = FIFEdit(engine, [MAPFILE])
-	e.show()
-
 	w.create_world(MAPFILE)
 	w.adjust_views()
-
-	e.edit_camview(w.cameras['main'])
 
 	if TDS.PlaySounds:
 		w.create_background_music()

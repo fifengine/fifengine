@@ -15,8 +15,6 @@ import techdemo_settings as TDS
 from loaders import loadMapFile
 from savers import saveMapFile
 
-from fifedit import *
-
 class InstanceReactor(fife.InstanceListener):
 	def __init__(self, evtlistener, world):
 		fife.InstanceListener.__init__(self)
@@ -393,7 +391,6 @@ class World(object):
 		self.metamodel = self.model.getMetaModel()
 		self.gui = gui
 		self.view = self.engine.getView()
-		self.editor = FIFEdit( self.engine, [MAPFILE] )
 		
 		self.ctrl_scrollwheelvalue = 0
 		self.alt_scrollwheelvalue = 0
@@ -427,9 +424,6 @@ class World(object):
 		self.agent.addListener(self.reactor)
 		self.agent.act('default', self.target, True)
 		self.agentcoords = self.target.getElevationCoordinates()
-
-		# Update editor camera.
-		self.editor.edit_camview( self.cameras['main'] )
 
 	def save_world(self, path):
 		saveMapFile(path, self.engine, self.map)
@@ -491,7 +485,6 @@ class World(object):
 		showTileOutline = not evtlistener.showTileOutline
 		showCoordinates = not evtlistener.showCoordinates
 		showSecondCamera = not evtlistener.showSecondCamera
-		editorShown = False
 		
 		smallcamloc = self.cameras['small'].getLocation()
 		smallcamloc.setExactLayerCoordinates( fife.ExactModelCoordinate( 10.0, 10.0, 0.0 ))
@@ -572,11 +565,6 @@ class World(object):
 				self.cameras['small'].setEnabled(showSecondCamera)
 				evtlistener.scrollwheelvalue = self.scrollwheelvalue
 				print 'reloaded'
-
-			if evtlistener.showEditor and not editorShown:
-				e = FIFEdit(engine, [MAPFILE])
-				e.show()
-				editorShown = True
 
 			#agentcoords = self.agent.getLocation().getElevationCoordinates()
 			#if not ((self.agentcoords.x == agentcoords.x) and (self.agentcoords.y == agentcoords.y)):
