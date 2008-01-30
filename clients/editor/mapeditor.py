@@ -65,6 +65,8 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.dataset = None
 		self.object = None
 
+		self.elevEdit = None
+
 	# gui for selecting a map
 	def _selectMap(self):
 		Selection([map.Id() for map in self.engine.getModel().getMaps()], self.editMap)
@@ -79,6 +81,7 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		if not self.mapEdit:
 			self.mapEdit = pychan.loadXML('content/gui/mapeditor.xml')
 			self.mapEdit.mapEvents({
+				'elevButton'  : self._selectElevation,
 				'datButton'   : self._selectDataset,
 				'closeButton' : self.quit
 			})
@@ -95,11 +98,43 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 
 		self.mapEdit.show()
 
+	def _selectElevation(self):
+		Selection([elevation.Id() for elevation in self.map.getElevations()], self._editElevation)
+
+	def _editElevation(self, elevid):
+		self.elevation = self.map.getElevations('id', elevid)[0]
+
+		if not self.elevEdit:
+			self.elevEdit = pychan.loadXML('content/gui/eleveditor.xml')
+			self.elevEdit.mapEvents({
+				'layerButton' : self._selectLayer,
+				'closeButton' : self.elevEdit.hide
+			})
+
+		metafields = self.elevEdit.findChild(name='Metadata Properties')
+		for metafield in self.elevation.listFields():
+			hbox = widgets.HBox()
+			metafields.add(hbox)
+
+			label = widgets.Label(text=metafield)
+			hbox.add(label)
+			field = widgets.TextField(text=self.elevation.get(metafield))
+			hbox.add(field)
+
+		self.elevEdit.show()
+
+	def _selectLayer(self):
+		Selection([layer.Id() for layer in self.elevation.getLayers()], self._editLayer)
+
+	def _editLayer(self, layerid):
+		self.layer = self.elevation.getLayers('id', layerid)[0]
+		print layerid
+
 	def _selectDataset(self):
 		Selection([dat.Id() for dat in self.map.getDatasets()], self._viewDataset)
 
 	def _viewDataset(self, datid):
-		self.dataset = self.engine.getModel().getMetaModel().getDatasets('id',  datid)[0]
+		self.dataset = self.engine.getModel().getMetaModel().getDatasets('id', datid)[0]
 		Selection([obj.Id() for obj in self.dataset.getObjects()], self.editWith)
 
 	def editWith(self, object_id):
