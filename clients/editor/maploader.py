@@ -25,7 +25,7 @@ class FileBrowser(object):
 
 		self._widget = None
 
-		self.path = '.'
+		self.path = './..'
 		self.dir_list = ('..',) + self.engine.getVFS().listDirectories(self.path)
 		self.file_list = self.engine.getVFS().listFiles(self.path)
 

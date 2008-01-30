@@ -1,4 +1,4 @@
-<Window title="Select an option">
+<Window title="Select an option" minsize="100,100">
 	<VBox>
 		<DropDown name="optionDrop" />	
 		<HBox>
