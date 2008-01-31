@@ -18,12 +18,14 @@ import basicapplication
 import pychan
 import pychan.widgets as widgets
 
-from maploader import MapLoader
-from maploader import MapSaver
-from viewer import Viewer
 from listener import EditorListener
-from fifedit import Fifedit
-from mapeditor import MapEditor
+
+import editor
+#from editor.fifedit import Fifedit
+from editor.plugins.maploader import MapLoader
+from editor.plugins.maploader import MapSaver
+from editor.plugins.viewer import Viewer
+from editor.plugins.mapeditor import MapEditor
 
 # Help display
 class Help(object):
@@ -45,7 +47,7 @@ class Editor(basicapplication.ApplicationBase):
 		super(Editor,self).__init__()
 
 		# embed Fifedit tools
-		self.fifedit = Fifedit(self.engine)
+		self.fifedit = editor.Fifedit(self.engine)
 
 		# Create this client's modules
 		self.mapedit = MapEditor(self.engine)

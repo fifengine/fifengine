@@ -7,7 +7,7 @@ import fife
 import pychan
 import pychan.widgets as widgets
 from viewer import Viewer
-from selection import Selection
+from editor.selection import Selection
 
 class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
