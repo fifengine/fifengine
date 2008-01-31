@@ -212,4 +212,4 @@ if not env['projectfiles_only']:
 	if sys.platform == 'linux2':
 		env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Copy('$TARGET', '$SOURCE')])
 		env.Install('$PREFIX/lib/python2.5/site-packages/fife', flib)
-		env.Install('$PREFIX/lib/python2.5/site-packages/fife', [str(f) for f in extensionfiles])
+#		env.Install('$PREFIX/lib/python2.5/site-packages/fife', [str(f) for f in extensionfiles])
