@@ -324,6 +324,7 @@ digraph "source tree" {
     "engine/core/model/structures/instance.h" -> "model/metamodel/object.h"
     "engine/core/model/structures/instancetree.cpp" -> "instancetree.h"
     "engine/core/model/structures/instancetree.cpp" -> "model/structures/instance.h"
+    "engine/core/model/structures/instancetree.cpp" -> "util/rect.h"
     "engine/core/model/structures/instancetree.h" -> "model/metamodel/modelcoords.h"
     "engine/core/model/structures/instancetree.h" -> "util/fifeclass.h"
     "engine/core/model/structures/instancetree.h" -> "util/quadtree.h"
