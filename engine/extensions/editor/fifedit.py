@@ -15,6 +15,8 @@ class Fifedit():
 		self.gui.mapEvents(eventMap)
 		self.gui.show()
 
+		self.active = True
+
 	# To create a plugin, just define menu_items with string keys and function values.
 	# The key will be displayed on the Editor menu, and the value will be called when the key is clicked.
 	def registerPlugin(self, plugin):
@@ -28,3 +30,4 @@ class Fifedit():
 
 	def quit(self):
 		self.gui.hide()
+		self.active = False

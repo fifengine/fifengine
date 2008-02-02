@@ -71,6 +71,7 @@ class Editor(basicapplication.ApplicationBase):
 		if self.mapsaver.saveRequested and self.mapedit.map:
 			self.mapsaver.saveMap(self.mapedit.map)
 			self.mapsaver.saveRequested = False
+		if not self.fifedit.active: self.quitRequested = True
 		self.mapedit.pump()
 
 if __name__ == '__main__':
