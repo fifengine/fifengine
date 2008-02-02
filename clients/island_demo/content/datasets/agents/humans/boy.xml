@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
 <dataset id="Boy" type="Embedded" format="1.0">
 	<object id="Boy">
-		<action id="default">
-			<animation source="content/animations/agents/humans/boy/boy_rotate.xml"/>
-		</action>
-
 		<action id="talk">
 			<animation source="content/animations/agents/humans/boy/boy_talk_n.xml" direction='90' />
 			<animation source="content/animations/agents/humans/boy/boy_talk_ne.xml" direction='45' />
@@ -58,6 +54,17 @@
 			<animation source="content/animations/agents/humans/boy/boy_kicking_sw.xml" direction='225' />
 			<animation source="content/animations/agents/humans/boy/boy_kicking_w.xml" direction='180' />
 			<animation source="content/animations/agents/humans/boy/boy_kicking_nw.xml" direction='135' />
+		</action>
+		
+		<action id="idle">
+			<animation source="content/animations/agents/humans/boy/boy_idle_090.xml" direction='90' />
+			<animation source="content/animations/agents/humans/boy/boy_idle_045.xml" direction='45' />
+			<animation source="content/animations/agents/humans/boy/boy_idle_000.xml" direction='0' />
+			<animation source="content/animations/agents/humans/boy/boy_idle_315.xml" direction='315' />
+			<animation source="content/animations/agents/humans/boy/boy_idle_270.xml" direction='270' />
+			<animation source="content/animations/agents/humans/boy/boy_idle_225.xml" direction='225' />
+			<animation source="content/animations/agents/humans/boy/boy_idle_180.xml" direction='180' />
+			<animation source="content/animations/agents/humans/boy/boy_idle_135.xml" direction='135' />
 		</action>
 	</object>
 </dataset>
