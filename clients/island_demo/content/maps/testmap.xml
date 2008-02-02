@@ -6,30 +6,30 @@
 		<param name="Name">new_official_map.xml</param>
 		<param name="Version">1</param>
 	</metadata>
-	<dataset source="./../island_demo//content/datasets/tiles/new_official_map_tiles.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/generic/generic.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/generic/helpers.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/beach_ball.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/box.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/deck_chair.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/extinguisher.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/life_belt.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/mussel.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/plant.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/pool.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/quay.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/rocks.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/root.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/skull.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/starfish.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/beach/sunshade.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/bushes/bush.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/mushroom/mushroom.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/trees/tree.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/objects/animated_objects/crate.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/agents/humans/beekeeper.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/agents/humans/boy.xml" type="XML"></dataset>
-	<dataset source="./../island_demo//content/datasets/agents/humans/girl.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/tiles/new_official_map_tiles.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/generic/generic.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/generic/helpers.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/beach_ball.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/box.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/deck_chair.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/extinguisher.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/life_belt.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/mussel.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/plant.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/pool.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/quay.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/rocks.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/root.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/skull.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/starfish.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/beach/sunshade.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/bushes/bush.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/mushroom/mushroom.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/trees/tree.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/objects/animated_objects/crate.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/agents/humans/beekeeper.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/agents/humans/boy.xml" type="XML"></dataset>
+	<dataset source="./../island_demo//./../island_demo//./../island_demo//content/datasets/agents/humans/girl.xml" type="XML"></dataset>
 	<elevation id="TechdemoMapElevation">
 		<metadata>
 		</metadata>
@@ -1443,17 +1443,6 @@
 				<i x="40" o="Blocker:Visible" z="0" y="11"></i>
 				<i x="40" o="Blocker:Visible" z="0" y="12"></i>
 				<i x="40" o="Blocker:Visible" z="0" y="13"></i>
-				<i x="40" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="39" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="38" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="37" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="36" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="35" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="34" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="33" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="33" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="32" o="Blocker:Visible" z="0" y="14"></i>
-				<i x="31" o="Blocker:Visible" z="0" y="14"></i>
 				<i x="30" o="Blocker:Visible" z="0" y="14"></i>
 				<i x="30" o="Blocker:Visible" z="0" y="15"></i>
 				<i x="30" o="Blocker:Visible" z="0" y="16"></i>
@@ -1474,10 +1463,315 @@
 				<i x="43" o="Blocker:Visible" z="0" y="17"></i>
 				<i x="44" o="Blocker:Visible" z="0" y="17"></i>
 				<i x="45" o="Blocker:Visible" z="0" y="17"></i>
-				<i x="46" o="Blocker:Visible" z="0" y="17"></i>
+				<i x="30" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="31" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="32" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="33" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="34" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="36" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="35" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="37" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="13"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="18"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="19"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="20"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="21"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="22"></i>
+				<i x="46" o="Blocker:Visible" z="0" y="22"></i>
+				<i x="47" o="Blocker:Visible" z="0" y="22"></i>
+				<i x="48" o="Blocker:Visible" z="0" y="22"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="22"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="23"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="24"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="25"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="26"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="27"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="28"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="29"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="30"></i>
+				<i x="48" o="Blocker:Visible" z="0" y="30"></i>
+				<i x="47" o="Blocker:Visible" z="0" y="30"></i>
+				<i x="46" o="Blocker:Visible" z="0" y="30"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="30"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="31"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="32"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="33"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="34"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="35"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="45" o="Blocker:Visible" z="0" y="37"></i>
+				<i x="44" o="Blocker:Visible" z="0" y="37"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="37"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="42" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="41" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="40" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="40" o="Blocker:Visible" z="0" y="37"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="37"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="38"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="38"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="39"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="40"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="41"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="42"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="43"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="44"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="45"></i>
+				<i x="38" o="Blocker:Visible" z="0" y="46"></i>
+				<i x="37" o="Blocker:Visible" z="0" y="46"></i>
+				<i x="37" o="Blocker:Visible" z="0" y="47"></i>
+				<i x="37" o="Blocker:Visible" z="0" y="48"></i>
+				<i x="37" o="Blocker:Visible" z="0" y="49"></i>
+				<i x="49" o="Blocker:Visible" z="0" y="29"></i>
+				<i x="37" o="Blocker:Visible" z="0" y="50"></i>
+				<i x="36" o="Blocker:Visible" z="0" y="50"></i>
+				<i x="35" o="Blocker:Visible" z="0" y="50"></i>
+				<i x="35" o="Blocker:Visible" z="0" y="49"></i>
+				<i x="34" o="Blocker:Visible" z="0" y="49"></i>
+				<i x="33" o="Blocker:Visible" z="0" y="49"></i>
+				<i x="32" o="Blocker:Visible" z="0" y="49"></i>
+				<i x="31" o="Blocker:Visible" z="0" y="49"></i>
+				<i x="30" o="Blocker:Visible" z="0" y="49"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="49"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="50"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="51"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="52"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="53"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="55"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="56"></i>
+				<i x="29" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="28" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="27" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="26" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="25" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="24" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="23" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="22" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="55"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="56"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="20" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="19" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="17" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="16" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="15" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="14" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="12" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="11" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="10" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="8" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="7" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="6" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="54"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="55"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="56"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="57"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="58"></i>
+				<i x="6" o="Blocker:Visible" z="0" y="58"></i>
+				<i x="7" o="Blocker:Visible" z="0" y="58"></i>
+				<i x="8" o="Blocker:Visible" z="0" y="58"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="58"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="59"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="60"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="61"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="62"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="63"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="64"></i>
+				<i x="10" o="Blocker:Visible" z="0" y="64"></i>
+				<i x="11" o="Blocker:Visible" z="0" y="64"></i>
+				<i x="11" o="Blocker:Visible" z="0" y="65"></i>
+				<i x="11" o="Blocker:Visible" z="0" y="66"></i>
+				<i x="10" o="Blocker:Visible" z="0" y="66"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="66"></i>
+				<i x="7" o="Blocker:Visible" z="0" y="66"></i>
+				<i x="8" o="Blocker:Visible" z="0" y="66"></i>
+				<i x="6" o="Blocker:Visible" z="0" y="66"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="66"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="67"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="68"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="69"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="70"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="71"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="72"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="73"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="74"></i>
+				<i x="7" o="Blocker:Visible" z="0" y="74"></i>
+				<i x="6" o="Blocker:Visible" z="0" y="74"></i>
+				<i x="8" o="Blocker:Visible" z="0" y="74"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="74"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="75"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="76"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="77"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="78"></i>
+				<i x="10" o="Blocker:Visible" z="0" y="78"></i>
+				<i x="11" o="Blocker:Visible" z="0" y="78"></i>
+				<i x="12" o="Blocker:Visible" z="0" y="78"></i>
+				<i x="12" o="Blocker:Visible" z="0" y="77"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="77"></i>
+				<i x="14" o="Blocker:Visible" z="0" y="77"></i>
+				<i x="15" o="Blocker:Visible" z="0" y="77"></i>
+				<i x="16" o="Blocker:Visible" z="0" y="77"></i>
+				<i x="17" o="Blocker:Visible" z="0" y="77"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="77"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="78"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="79"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="80"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="81"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="82"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="83"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="85"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="19" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="20" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="91"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="92"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="93"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="94"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="95"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="96"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="97"></i>
+				<i x="21" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="20" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="19" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="18" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="17" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="16" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="15" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="14" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="97"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="98"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="96"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="95"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="94"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="93"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="92"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="91"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="13" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="12" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="11" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="10" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="9" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="8" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="7" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="6" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="5" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="4" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="3" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="2" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="1" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="1" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="0" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="-1" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="-2" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="-2" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="-2" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="-2" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="-2" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="-2" o="Blocker:Visible" z="0" y="91"></i>
+				<i x="-3" o="Blocker:Visible" z="0" y="91"></i>
+				<i x="-4" o="Blocker:Visible" z="0" y="91"></i>
+				<i x="-5" o="Blocker:Visible" z="0" y="91"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="85"></i>
+				<i x="43" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="42" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="41" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="40" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="85"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="39" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="40" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="41" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="42" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="51" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="51" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="51" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="51" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="52" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="53" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="54" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="55" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="55" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="55" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="55" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="55" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="55" o="Blocker:Visible" z="0" y="85"></i>
+				<i x="55" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="54" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="53" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="52" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="51" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="51" o="Blocker:Visible" z="0" y="85"></i>
+				<i x="51" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="64" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="65" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="66" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="67" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="67" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="67" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="67" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="67" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="67" o="Blocker:Visible" z="0" y="85"></i>
+				<i x="67" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="66" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="65" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="64" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="63" o="Blocker:Visible" z="0" y="84"></i>
+				<i x="63" o="Blocker:Visible" z="0" y="85"></i>
+				<i x="63" o="Blocker:Visible" z="0" y="86"></i>
+				<i x="63" o="Blocker:Visible" z="0" y="87"></i>
+				<i x="63" o="Blocker:Visible" z="0" y="88"></i>
+				<i x="63" o="Blocker:Visible" z="0" y="89"></i>
+				<i x="63" o="Blocker:Visible" z="0" y="90"></i>
+				<i x="72" o="Blocker:Visible" z="0" y="42"></i>
+				<i x="72" o="Blocker:Visible" z="0" y="41"></i>
+				<i x="72" o="Blocker:Visible" z="0" y="40"></i>
+				<i x="72" o="Blocker:Visible" z="0" y="39"></i>
+				<i x="72" o="Blocker:Visible" z="0" y="38"></i>
+				<i x="72" o="Blocker:Visible" z="0" y="37"></i>
+				<i x="72" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="73" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="74" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="75" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="76" o="Blocker:Visible" z="0" y="36"></i>
+				<i x="76" o="Blocker:Visible" z="0" y="37"></i>
+				<i x="76" o="Blocker:Visible" z="0" y="38"></i>
+				<i x="76" o="Blocker:Visible" z="0" y="39"></i>
+				<i x="76" o="Blocker:Visible" z="0" y="40"></i>
+				<i x="76" o="Blocker:Visible" z="0" y="41"></i>
+				<i x="76" o="Blocker:Visible" z="0" y="42"></i>
+				<i x="75" o="Blocker:Visible" z="0" y="42"></i>
+				<i x="74" o="Blocker:Visible" z="0" y="42"></i>
+				<i x="73" o="Blocker:Visible" z="0" y="42"></i>
 			</instances>
 		</layer>
 		<camera ref_cell_width="32" zoom="1.0" tilt="-42.0" viewport="0,0,1024,768" id="main" ref_layer_id="TechdemoMapObjectLayer" ref_cell_height="16" rotation="45.0">
+		</camera>
+		<camera ref_cell_width="32" zoom="1.0" tilt="-42.0" viewport="0,0,250,250" id="small" ref_layer_id="TechdemoMapObjectLayer" ref_cell_height="16" rotation="45.0">
 		</camera>
 	</elevation>
 </map>
