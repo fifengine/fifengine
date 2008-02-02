@@ -151,6 +151,7 @@ namespace FIFE {
 			std::vector<Camera*>::iterator cam_it = m_cameras.begin();
 			for (; cam_it != m_cameras.end(); ++cam_it) {
 				const Location& loc = (*cam_it)->getLocation();
+				r_it->second->reset();
 				r_it->second->activateAllLayers(loc.getElevation());
 			}
 		}

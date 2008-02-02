@@ -24,7 +24,7 @@ namespace FIFE {
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
 		void setCellImageDimensions(unsigned int width, unsigned int height);
-    Point getCellImageDimensions();
+		Point getCellImageDimensions();
 		ScreenPoint toScreenCoordinates(ExactModelCoordinate elevation_coords);
 		ExactModelCoordinate toElevationCoordinates(ScreenPoint screen_coords);
 		void setEnabled(bool enabled);

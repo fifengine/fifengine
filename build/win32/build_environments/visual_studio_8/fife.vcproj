@@ -406,6 +406,8 @@
 				<Filter Name="renderers">
 					<File RelativePath="..\..\..\..\engine\core\view\renderers\camerazonerenderer.cpp"></File>
 					<File RelativePath="..\..\..\..\engine\core\view\renderers\camerazonerenderer.h"></File>
+					<File RelativePath="..\..\..\..\engine\core\view\renderers\cellselectionrenderer.cpp"></File>
+					<File RelativePath="..\..\..\..\engine\core\view\renderers\cellselectionrenderer.h"></File>
 					<File RelativePath="..\..\..\..\engine\core\view\renderers\coordinaterenderer.cpp"></File>
 					<File RelativePath="..\..\..\..\engine\core\view\renderers\coordinaterenderer.h"></File>
 					<File RelativePath="..\..\..\..\engine\core\view\renderers\floatingtextrenderer.cpp"></File>

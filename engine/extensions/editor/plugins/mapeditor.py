@@ -136,6 +136,10 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			self.selection = self.camera.toElevationCoordinates(tmp)
 			self.selection.z = 0
 			self.selection = self.layer.getCellGrid().toLayerCoordinates(self.selection)
+			loc = fife.Location()
+			loc.setLayer(self.layer)
+			loc.setLayerCoordinates(self.selection)
+			fife.CellSelectionRenderer.getInstance(self.engine.getView()).selectLocation(loc)
 
 	def mouseReleased(self, evt):
 		pass

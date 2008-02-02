@@ -108,6 +108,10 @@ namespace FIFE {
 		 */
 		virtual void setEnabled(bool enabled);
 		
+		/** Resets information in the renderer
+		 */
+		virtual void reset() {}
+		
 		/** Is renderer enabled
 		 */
 		bool isEnabled() const { return m_enabled; }
