@@ -142,7 +142,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		map_list = [map.Id() for map in self.engine.getModel().getMaps()]
 
 		def selected():
-			selection = self.viewSelect.collectData(['optionDrop'])['optionDrop']
+			selection = self.viewSelect.collectData('optionDrop')
 			if selection < 0:
 				return
 			self._viewMap(map_list[selection])

@@ -43,7 +43,7 @@ class FileBrowser(object):
 		self._widget.show()
 
 	def _setDirectory(self):
-		selection = self._widget.collectData(['dirList'])['dirList']
+		selection = self._widget.collectData('dirList')
 		if not (selection < 0):
 			new_dir = self.dir_list[selection]
 			lst = self.path.split('/')
@@ -64,9 +64,9 @@ class FileBrowser(object):
 		self._widget.hide()
 
 	def getSelection(self):
-		selection = self._widget.collectData(['fileList'])['fileList']
+		selection = self._widget.collectData('fileList')
 		if selection < 0: return
-		return self.file_list[self._widget.collectData(['fileList'])['fileList']]
+		return self.file_list[self._widget.collectData('fileList')]
 
 class MapLoader(FileBrowser):
 	def __init__(self, engine):
@@ -110,7 +110,7 @@ class MapSaver(FileBrowser):
 			FileBrowser.showBrowser(self)
 
 	def saveMap(self, map):
-		newlocation = self._widget.collectData(['saveField'])['saveField']
+		newlocation = self._widget.collectData('saveField')
 		if newlocation:
 			saveMapFile('/'.join([self.path, newlocation]), self.engine, map)
 		elif _location:

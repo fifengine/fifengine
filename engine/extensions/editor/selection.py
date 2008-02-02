@@ -24,7 +24,7 @@ class Selection():
 		self._widget.show()
 
 	def _selected(self):
-		selection = self._widget.collectData(['optionDrop'])['optionDrop']
+		selection = self._widget.collectData('optionDrop')
 		if selection < 0: return
 		self._callback(self.list[selection])
 		self._widget.hide()

@@ -108,8 +108,7 @@ class StylingExample(PyChanExample):
 			self.styledCredits.hide()
 
 	def testStyle(self):
-		# Hm in this case the collectData IFACE  is pretty rediciulous :-( but it needs a test!
-		style = self.styles[self.widget.collectData(['styleList'])['styleList']]
+		style = self.styles[self.widget.collectData('styleList')
 		if self.styledCredits:
 			self.styledCredits.hide()
 		self.styledCredits = pychan.loadXML('content/gui/credits.xml')

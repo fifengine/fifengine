@@ -329,15 +329,15 @@ class Widget(object):
 				raise RuntimeError("DistributeData can only handle widgets with unique names.")
 			widgetList[0].setData(data)
 
-	def collectData(self,widgetNames):
+	def collectDataAsDict(self,widgetNames):
 		"""
-		Collect data from a widget hierachy by names.
+		Collect data from a widget hierachy by names into a dictionary.
 		This can only handle UNIQUE widget names (in the hierachy)
 		and will raise a RuntimeError if the number of matching widgets
 		is not equal to one.
 		
 		Usage::
-		  data = guiElement.collectData(['myTextField','myListBox'])
+		  data = guiElement.collectDataAsDict(['myTextField','myListBox'])
 		  print "You entered:",data['myTextField']," and selected ",data['myListBox']
 		
 		"""
@@ -349,6 +349,37 @@ class Widget(object):
 			
 			dataMap[name] = widgetList[0].getData()
 		return dataMap
+
+	def collectData(self,*widgetNames):
+		"""
+		Collect data from a widget hierachy by names.
+		This can only handle UNIQUE widget names (in the hierachy)
+		and will raise a RuntimeError if the number of matching widgets
+		is not equal to one.
+		
+		This function takes an arbitrary number of widget names and
+		returns a list of the collected data in the same order.
+		
+		In case only one argument is given, it will return just the
+		data, with out putting it into a list.
+		
+		Usage::
+		  # Multiple element extraction:
+		  text, selected = guiElement.collectData('myTextField','myListBox')
+		  print "You entered:",text," and selected item nr",selected
+		  # Single elements are handled gracefully, too:
+		  test = guiElement.collectData('testElement')
+		
+		"""
+		dataList = []
+		for name in widgetNames:
+			widgetList = self.findChildren(name = name)
+			if len(widgetList) != 1:
+				raise RuntimeError("CollectData can only handle widgets with unique names.")
+			dataList.append( widgetList[0].getData() )
+		if len(dataList) == 1:
+			return dataList[0]
+		return dataList
 
 	def stylize(self,style,**kwargs):
 		"""
