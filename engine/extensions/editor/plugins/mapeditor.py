@@ -176,6 +176,10 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			gridrenderer = self.engine.getView().getRenderer('GridRenderer')
 			gridrenderer.setEnabled(not gridrenderer.isEnabled())
 
+		elif keystr == 'b':
+			blockrenderer = self.engine.getView().getRenderer('BlockingInfoRenderer')
+			blockrenderer.setEnabled(not blockrenderer.isEnabled())
+
 	def keyReleased(self, evt):
 		pass
 

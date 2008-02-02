@@ -16,5 +16,6 @@ Keybindings:
 - X = Remove instances at current mouse
       selection. 
 - T = shows / hides grid
+- B = shows / hides blocking info
 
 http://www.fifengine.de

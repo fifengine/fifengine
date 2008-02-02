@@ -73,6 +73,7 @@
 #include "view/renderers/coordinaterenderer.h"
 #include "view/renderers/floatingtextrenderer.h"
 #include "view/renderers/cellselectionrenderer.h"
+#include "view/renderers/blockinginforenderer.h"
 #include "engine.h"
 
 #ifdef USE_COCOA
@@ -235,9 +236,10 @@ namespace FIFE {
 		m_view->addRenderer(new InstanceRenderer(m_renderbackend, 1, m_imagepool, m_animpool));
 		m_view->addRenderer(new GridRenderer(m_renderbackend, 2));
 		m_view->addRenderer(new CellSelectionRenderer(m_renderbackend, 3));
-		m_view->addRenderer(new FloatingTextRenderer(m_renderbackend, 4, dynamic_cast<AbstractFont*>(m_defaultfont)));
-		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 5));
-		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, 6, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_view->addRenderer(new BlockingInfoRenderer(m_renderbackend, 4));
+		m_view->addRenderer(new FloatingTextRenderer(m_renderbackend, 5, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 6));
+		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, 7, dynamic_cast<AbstractFont*>(m_defaultfont)));
 		m_cursor = new Cursor(m_imagepool, m_animpool, m_renderbackend);
 		FL_LOG(_log, "Engine intialized");
 	}
