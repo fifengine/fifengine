@@ -101,7 +101,9 @@ class ApplicationBase(object):
 		"""
 		eventlistener = self.createListener()
 		self.engine.initializePumping()
-		return self.mainLoop()
+		retval = self.mainLoop()
+		self.engine.finalizePumping()
+		return retval
 	
 	def mainLoop(self):
 		"""
@@ -122,12 +124,6 @@ class ApplicationBase(object):
 				break
 
 			self._pump()
-
-			try:
-				self.engine.finalizePumping()
-			except fife.Exception, e:
-				print e.getMessage()
-				break
 
 			if self.breakRequested:
 				self.breakRequested = False

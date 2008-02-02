@@ -259,7 +259,6 @@ class GuiXMLError(PyChanException):
 	"""
 	An error that occured during parsing an XML file.
 	"""
-	pass
 
 class _GuiLoader(object, handler.ContentHandler):
 	def __init__(self):
@@ -348,9 +347,11 @@ class _GuiLoader(object, handler.ContentHandler):
 		if self.stack.pop() in ('gui_element','spacer'):
 			self.root = self.root._parent or self.root
 
-def loadXML(file):
+def loadXML(filename_or_stream):
 	"""
 	Loads a PyChan XML file and generates a widget from it.
+	
+	@param filename_or_stream: A filename or a file-like object (for example using StringIO).
 	
 	The XML format is very dynamic, in the sense, that the actual allowed tags and attributes
 	depend on the PyChan code and names in this file.
@@ -384,7 +385,7 @@ def loadXML(file):
 	"""
 	from xml.sax import parse
 	loader = _GuiLoader()
-	parse(file,loader)
+	parse(filename_or_stream,loader)
 	return loader.root
 
 def setupModalExecution(mainLoop,breakFromMainLoop):

@@ -114,7 +114,7 @@ class Widget(object):
 		The widget will be shown before execution and hidden afterwards.
 		You can only execute root widgets.
 		
-		Note: This feature is not tested well, and the API will propably
+		Note: This feature is not tested well, and the API will probably
 		change. Otherwise have fun::
 		  # Okay this a very condensed example :-)
 		  return pychan.loadXML("contents/gui/dialog.xml").execute({ 'okButton' : True, 'closeButton' : False })

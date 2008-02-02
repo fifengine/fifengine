@@ -64,6 +64,9 @@ class Manager(fife.IWidgetListener):
 		@param name: A string identifier from the font definitions in pychans config files.
 		"""
 		font = self.fonts.get(name)
+		
+		# For the default font directly return it,
+		# otherwise the GuiFont is in the font attribute.
 		return getattr(font,"font",font)
 
 	def addFont(self,font):
