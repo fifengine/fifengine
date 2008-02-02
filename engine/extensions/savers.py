@@ -225,8 +225,6 @@ class ModelSaver:
 				self.startElement( 'camera', attrs );
 				self.endElement( 'camera' );
 
-				return
-
 	def flush(self):
 		self.xmlout.endDocument()
 		self.file.close()
