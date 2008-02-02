@@ -270,10 +270,10 @@ namespace FIFE {
 	}
 	void Engine::initializePumping() {
 		m_eventmanager->processEvents();
-		m_renderbackend->startFrame();
 	}
 
 	void Engine::pump() {
+		m_renderbackend->startFrame();
 		m_timemanager->update();
 		m_model->update();
 		m_view->update( m_imagepool,m_animpool );
@@ -286,9 +286,7 @@ namespace FIFE {
 	}
 
 	void Engine::finalizePumping() {
-		m_timemanager->update();
-		m_guimanager->turn();
-		m_renderbackend->endFrame();
+		// nothing here at the moment..
 	}
 }//FIFE
 
