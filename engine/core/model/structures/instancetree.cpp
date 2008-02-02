@@ -66,23 +66,31 @@ namespace FIFE {
 	class InstanceListCollector {
 		public:
 			InstanceTree::InstanceList& instanceList;
-			InstanceListCollector(InstanceTree::InstanceList& a_instanceList) : instanceList(a_instanceList) {
+			Rect searchRect;
+			InstanceListCollector(InstanceTree::InstanceList& a_instanceList, const Rect& rect)
+			: instanceList(a_instanceList), searchRect(rect) {
 			}
 			bool visit(InstanceTree::InstanceTreeNode* node, int d);
 	};
 
 	bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, int d) {
 		InstanceTree::InstanceList& list = node->data();
-		std::copy(list.begin(),list.end(),std::back_inserter(instanceList));
+		for(InstanceTree::InstanceList::const_iterator it(list.begin()); it != list.end(); ++it) {
+			ModelCoordinate coords = (*it)->getLocation().getLayerCoordinates();
+			if( searchRect.contains(Point(coords.x,coords.y)) ) {
+				instanceList.push_back(*it);
+			}
+		}
 		return true;
 	}
 
 	void InstanceTree::findInstances(const ModelCoordinate& point, int w, int h, InstanceTree::InstanceList& list) {
 		InstanceTreeNode * node = m_tree.find_container(point.x, point.y, w, h);
-		InstanceListCollector collector(list);
+		Rect rect(point.x, point.y, w, h);
+		InstanceListCollector collector(list,rect);
+
 		node->apply_visitor(collector);
 
-		Rect rect(point.x, point.y, w, h);
 		node = node->parent();
 		while( node ) {
 			for(InstanceList::const_iterator it(node->data().begin()); it != node->data().end(); ++it) {
