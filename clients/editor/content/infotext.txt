@@ -15,5 +15,6 @@ Keybindings:
       mouse selection.
 - X = Remove instances at current mouse
       selection. 
+- T = shows / hides grid
 
 http://www.fifengine.de

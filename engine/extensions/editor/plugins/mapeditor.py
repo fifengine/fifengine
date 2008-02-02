@@ -171,6 +171,10 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			if self.selection:
 				for inst in self.layer.getInstances('loc', str(self.selection.x) + ',' + str(self.selection.y)):
 					self.layer.deleteInstance(inst)
+				
+		elif keystr == 't':
+			gridrenderer = self.engine.getView().getRenderer('GridRenderer')
+			gridrenderer.setEnabled(not gridrenderer.isEnabled())
 
 	def keyReleased(self, evt):
 		pass
