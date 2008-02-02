@@ -13,7 +13,8 @@
 
 	<!-- Load object datasets -->
 	<!-- Generic objects -->
-	<dataset type="XML" source="content/datasets/objects/generic/generic.xml" /> 
+	<dataset type="XML" source="content/datasets/objects/generic/generic.xml" />
+	<dataset type="XML" source="content/datasets/objects/generic/helpers.xml" /> 
 
 	<!-- Map specific object -->
 	<dataset type="XML" source="content/datasets/objects/beach/beach_ball.xml" />

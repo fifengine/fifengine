@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<dataset id="Helpers" type="Embedded" format="1.0">
+	<object id="Blocker:Invisible" static="1" blocking="1" />
+	<object id="Blocker:Visible" static="1" blocking="1">
+		<image source="content/gfx/helpers/blocker_visible.png"/>
+	</object>
+</dataset>
