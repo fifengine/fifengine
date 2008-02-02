@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <dataset id="Boy" type="Embedded" format="1.0">
-	<object id="Boy">
+	<object id="Boy" blocking="1">
 		<action id="talk">
 			<animation source="content/animations/agents/humans/boy/boy_talk_n.xml" direction='90' />
 			<animation source="content/animations/agents/humans/boy/boy_talk_ne.xml" direction='45' />

@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
 <dataset id="Girl" type="Embedded" format="1.0">
-	<object id="Girl">
-		<action id="default">
-			<animation source="content/animations/agents/humans/girl/girl_rotate.xml" />
-		</action>
-
+	<object id="Girl" blocking="1">
 		<action id="talk">
 			<animation source="content/animations/agents/humans/girl/girl_talk_n.xml" direction='90' />
 			<animation source="content/animations/agents/humans/girl/girl_talk_ne.xml" direction='45' />
@@ -15,5 +11,28 @@
 			<animation source="content/animations/agents/humans/girl/girl_talk_w.xml" direction='180' />
 			<animation source="content/animations/agents/humans/girl/girl_talk_nw.xml" direction='135' />
 		</action>
+		
+		<action id="default">
+			<animation source="content/animations/agents/humans/girl/girl_stop_090.xml" direction='90' />
+			<animation source="content/animations/agents/humans/girl/girl_stop_045.xml" direction='45' />
+			<animation source="content/animations/agents/humans/girl/girl_stop_000.xml" direction='0' />
+			<animation source="content/animations/agents/humans/girl/girl_stop_315.xml" direction='315' />
+			<animation source="content/animations/agents/humans/girl/girl_stop_270.xml" direction='270' />
+			<animation source="content/animations/agents/humans/girl/girl_stop_225.xml" direction='225' />
+			<animation source="content/animations/agents/humans/girl/girl_stop_180.xml" direction='180' />
+			<animation source="content/animations/agents/humans/girl/girl_stop_135.xml" direction='135' />
+		</action>
+
+		<action id="run">
+			<animation source="content/animations/agents/humans/girl/girl_run_090.xml" direction='90' />
+			<animation source="content/animations/agents/humans/girl/girl_run_045.xml" direction='45' />
+			<animation source="content/animations/agents/humans/girl/girl_run_000.xml" direction='0' />
+			<animation source="content/animations/agents/humans/girl/girl_run_315.xml" direction='315' />
+			<animation source="content/animations/agents/humans/girl/girl_run_270.xml" direction='270' />
+			<animation source="content/animations/agents/humans/girl/girl_run_225.xml" direction='225' />
+			<animation source="content/animations/agents/humans/girl/girl_run_180.xml" direction='180' />
+			<animation source="content/animations/agents/humans/girl/girl_run_135.xml" direction='135' />
+		</action>
+
 	</object>
 </dataset>

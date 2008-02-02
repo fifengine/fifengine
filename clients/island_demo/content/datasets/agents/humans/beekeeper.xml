@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- Note, this file needs to be updated to collect all the animations in one object (with varying 'direction' value) -->
 <dataset id="Beekeeper" type="Embedded" format="1.0">
-	<object id="Beekeeper">
+	<object id="Beekeeper" blocking="1">
 		<action id="default">
 			<animation source="content/animations/agents/humans/beekeeper/beekeeper_rotate.xml"/>
 		</action>

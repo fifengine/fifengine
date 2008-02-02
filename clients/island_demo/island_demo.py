@@ -15,7 +15,7 @@ import techdemo_settings as TDS
 from loaders import loadMapFile
 from savers import saveMapFile
 
-class InstanceReactor(fife.InstanceListener):
+class PCReactor(fife.InstanceListener):
 	def __init__(self, evtlistener, world):
 		fife.InstanceListener.__init__(self)
 		self.evtlistener = evtlistener
@@ -24,7 +24,24 @@ class InstanceReactor(fife.InstanceListener):
 	def OnActionFinished(self, instance, action):
 		instance.act('idle', instance.getFacingLocation(), True)
 		self.evtlistener.PCrun = False
-		print "running reset"
+
+class GirlNpcReactor(fife.InstanceListener):
+	def __init__(self, evtlistener, world):
+		fife.InstanceListener.__init__(self)
+		self.evtlistener = evtlistener
+		self.world = world
+		self.running = True
+
+	def OnActionFinished(self, instance, action):
+		if self.running:
+			instance.act('default', instance.getFacingLocation())
+			print "not running"
+			self.running = False
+		else:
+			instance.move('run', self.world.get_waypoint_loc(), 2.0 * TDS.TestAgentSpeed)
+			print "running"
+			self.running = True
+	
 
 SCROLL_MODIFIER = 0.1
 MAPFILE = 'content/maps/new_official_map.xml'
@@ -267,7 +284,7 @@ class Gui(object):
 		self.renderbackend = self.engine.getRenderBackend()
 		self.create_panel()
 		self.create_infoscreen()
-
+		
 	# to prevent mem problems in current codebase and shorten the code length
 	def register_widget(self, w, container):
 		self.widgets.append(w)
@@ -385,7 +402,8 @@ class World(object):
 		self.engine = engine
 		self.renderbackend = self.engine.getRenderBackend()
 		self.evtlistener = MyEventListener(self)
-		self.reactor = InstanceReactor(self.evtlistener, self)
+		self.pc_reactor = PCReactor(self.evtlistener, self)
+		self.girl_npc_reactor = GirlNpcReactor(self.evtlistener, self)
 
 		self.eventmanager = self.engine.getEventManager()
 		self.model = self.engine.getModel()
@@ -397,7 +415,16 @@ class World(object):
 		self.alt_scrollwheelvalue = 0
 		self.shift_scrollwheelvalue = 0
 		self.scrollwheelvalue = 0
+		self.curcoordind = 0
+		self.coords = ((67, 84), (75, 40))
 		
+	def get_waypoint_loc(self):
+		self.curcoordind += 1
+		l = fife.Location()
+		l.setLayer(self.agent_layer)
+		l.setLayerCoordinates(fife.ModelCoordinate(*self.coords[self.curcoordind % len(self.coords)]))
+		return l
+	
 	def create_world(self, path):
 		self.map = loadMapFile(path, self.engine)
 	
@@ -422,9 +449,14 @@ class World(object):
 		self.target.setLayerCoordinates(fife.ModelCoordinate(5,1))
 		
 		self.agent = self.agent_layer.getInstances('name', 'PC')[0]
-		self.agent.addListener(self.reactor)
+		self.agent.addListener(self.pc_reactor)
 		self.agent.act('idle', self.target, True)
 		self.agentcoords = self.target.getElevationCoordinates()
+		
+		self.girlnpc = self.agent_layer.getInstances('name', 'NPC:girl')[0]
+		self.girlnpc.addListener(self.girl_npc_reactor)
+		self.girlnpc.move('run', self.get_waypoint_loc(), 2.0 * TDS.TestAgentSpeed)
+		
 
 	def save_world(self, path):
 		saveMapFile(path, self.engine, self.map)

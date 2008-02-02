@@ -1,0 +1,10 @@
+<animation delay="130" id="3230">
+	<frame source="content/gfx/agents/girl/running_e0000.png" />
+	<frame source="content/gfx/agents/girl/running_e0001.png" />
+	<frame source="content/gfx/agents/girl/running_e0002.png" />
+	<frame source="content/gfx/agents/girl/running_e0003.png" />
+	<frame source="content/gfx/agents/girl/running_e0004.png" />
+	<frame source="content/gfx/agents/girl/running_e0005.png" />
+	<frame source="content/gfx/agents/girl/running_e0006.png" />
+	<frame source="content/gfx/agents/girl/running_e0007.png" />
+</animation>
