@@ -43,62 +43,49 @@ namespace FIFE {
 
 	bool InstanceTree::addInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
-		InstanceList* lst = getInstanceList(coords, 0, 0);
-		if(lst == 0) {
-			return false;
-		}
-		lst->push_back(instance);
+		InstanceList& list = m_tree.find_container(coords.x,coords.y,0,0)->data();
+		list.push_back(instance);
 		return true;
 	}
 
 	bool InstanceTree::removeInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
-		InstanceList* lst = getInstanceList(coords, 1, 1);
+		InstanceList& list = m_tree.find_container(coords.x,coords.y, 0, 0)->data();
 
-		if(lst == 0) {
-			return false;
-		}
-
-		for(InstanceList::iterator i = lst->begin(); i != lst->end(); ++i) {
-
+		for(InstanceList::iterator i = list.begin(); i != list.end(); ++i) {
 			if((*i) == instance) {
-				lst->erase(i);
+				list.erase(i);
 				return true;
 			}
 		}
 
 		return false;
-
 	}
 
-	bool InstanceTree::getInstanceList(const ModelCoordinate& point, int w, int h, InstanceTree::InstanceList& lst) {
-		InstanceList* lstptr = getInstanceList(point, w, h);
-		if(lstptr == 0) {
-			return false;
-		}
-		lst = *lstptr;
+	class InstanceListCollector {
+		public:
+			InstanceTree::InstanceList& instanceList;
+			InstanceListCollector(InstanceTree::InstanceList& a_instanceList) : instanceList(a_instanceList) {
+			}
+			bool visit(InstanceTree::InstanceTreeNode* node, int d);
+	};
+
+	bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, int d) {
+		InstanceTree::InstanceList& list = node->data();
+		std::copy(list.begin(),list.end(),std::back_inserter(instanceList));
 		return true;
 	}
 
-	InstanceTree::InstanceList* InstanceTree::getInstanceList(const ModelCoordinate& point, int w, int h) {
-		//Do it based on the model coordinates. Should we use model coordinates or
-		//exact model coordinates?
-		InstanceTreeNode* node = m_tree.find_container(point.x, point.y, w, h);
-		if (!node) {
-			return 0;
-		}
+	void InstanceTree::findInstances(const ModelCoordinate& point, int w, int h, InstanceTree::InstanceList& list) {
+		InstanceTreeNode * node = m_tree.find_container(point.x, point.y, w, h);
+		InstanceListCollector collector(list);
+		node->apply_visitor(collector);
 
-		return &node->data();
+		node = node->parent();
+		while( node ) {
+			std::copy(node->data().begin(),node->data().end(),std::back_inserter(list));
+			node = node->parent();
+		}
 	}
 
-	InstanceTree::InstanceList* InstanceTree::getInstanceList(const Rect& rect) {
-		//Do it based on the model coordinates. Should we use model coordinates or
-		//exact model coordinates?
-		InstanceTreeNode* node = m_tree.find_container(rect.x, rect.y, rect.w, rect.h);
-		if (!node) {
-			return 0;
-		}
-
-		return &node->data();
-	}
 }

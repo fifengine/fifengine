@@ -280,7 +280,7 @@ namespace FIFE {
 		ExactModelCoordinate ece = toElevationCoordinates(pt);
 		ModelCoordinate ecl = layer.getCellGrid()->toLayerCoordinates(ece);
 		InstanceTree* itree = layer.getInstanceTree();
-		itree->getInstanceList(ecl, 0, 0, instances);
+		itree->findInstances(ecl, 0, 0, instances);
 	}
 
 	void Camera::attachToInstance( Instance *instance ) {

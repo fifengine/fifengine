@@ -40,8 +40,11 @@ namespace FIFE {
 	class Instance;
 
 	class InstanceTree: public FifeClass {
+		static const int kTreeDepth = 2;
 	public:
 		typedef std::list<Instance*> InstanceList;
+		typedef QuadTree< InstanceList, kTreeDepth > InstanceQuadTree;
+		typedef InstanceQuadTree::Node InstanceTreeNode;
 
 		/** Constructor
 		 *
@@ -79,9 +82,8 @@ namespace FIFE {
 		 * @param w The width of the search area in Model Units.
 		 * @param h The height of the search area in Model Units.
 		 * @param lst vector reference that will be filled with all instances within that space.
-		 * @return A boolean to signify whether the instance container was found.
 		 */
-		bool getInstanceList(const ModelCoordinate& point, int w, int h, InstanceList& lst);
+		void findInstances(const ModelCoordinate& point, int w, int h, InstanceList& lst);
 		
 		/** See QuadNode::apply_visitor
 		 */
@@ -91,26 +93,7 @@ namespace FIFE {
 
 
 	private:
-		static const int kTreeDepth = 2;
-		typedef QuadTree< InstanceList, kTreeDepth > InstanceQuadTree;
 		InstanceQuadTree m_tree;
-
-		typedef InstanceQuadTree::Node InstanceTreeNode;
-
-		/** Find all instances in a given area.
-		 *
-		 * Takes a box as an area then returns a vector filled with all instances that intersect
-		 * with that box.
-		 *
-		 * @param point A ModelCoordinate representing the upper left part of the search area.
-		 * @param w The width of the search area in Model Units.
-		 * @param h The height of the search area in Model Units.
-		 * @return A vector pointer to a vector of the contents of the node.
-		 */
-		InstanceList* getInstanceList(const ModelCoordinate& point, int w, int h);
-		InstanceList* getInstanceList(const Rect& rect);
-
-		// The quadtree containing instances.
 
 	};
 

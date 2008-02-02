@@ -168,7 +168,7 @@ namespace FIFE {
 
 	bool Layer::cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate) {
 		std::list<Instance*> adjacentInstances;
-		m_instanceTree->getInstanceList(cellCoordinate, 0, 0, adjacentInstances);
+		m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
 		bool blockingInstance = false;
 		for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
 			if((*j)->getObject()->isBlocking()	&& (*j)->getLocation().getLayerCoordinates() == cellCoordinate) {
