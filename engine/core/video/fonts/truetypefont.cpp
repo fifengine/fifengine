@@ -66,11 +66,22 @@ namespace FIFE {
 	}
 
 	SDL_Surface* TrueTypeFont::renderString(const std::string& text) {
+		SDL_Surface* renderedText = 0;
 		if (m_antiAlias) {
-			return TTF_RenderText_Blended(mFont, text.c_str(), mColor);
+			renderedText = TTF_RenderText_Blended(mFont, text.c_str(), mColor);
 		} else {
-			return TTF_RenderText_Solid(mFont, text.c_str(), mColor);
+			renderedText = TTF_RenderText_Solid(mFont, text.c_str(), mColor);
 		}
+		// Workaround for a freetype bug, see here:
+		// http://www.nabble.com/SDL_ttf-and-DPMSDisable-bug-is-back-or-still-there-to9578884.html
+		if (renderedText == 0 && !m_antiAlias) {
+			renderedText = TTF_RenderText_Blended(mFont, text.c_str(), mColor);
+		}
+		// Still could not render? Something went horribly wrong!
+		if (renderedText == 0) {
+			throw FIFE::SDLException(TTF_GetError());
+		}
+		return renderedText;
 	}
 
 	void TrueTypeFont::setColor(Uint8 r, Uint8 g, Uint8 b) {
