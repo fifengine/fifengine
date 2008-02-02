@@ -28,6 +28,7 @@ class InstanceReactor(fife.InstanceListener):
 
 SCROLL_MODIFIER = 0.1
 MAPFILE = 'content/maps/new_official_map.xml'
+DEFAULT_FONT_GLYPHS = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`'*#=[]"
 
 class MyEventListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
 	              fife.ConsoleExecuter, fife.IWidgetListener):
@@ -434,6 +435,10 @@ class World(object):
 		self.shift_scrollwheelvalue = self.cameras['main'].getZoom()
 		self.alt_scrollwheelvalue = self.cameras['main'].getTilt()
 		
+		renderer = fife.FloatingTextRenderer.getInstance(self.view)
+		textfont = self.engine.getGuiManager().createFont('content/fonts/rpgfont.png', 0, DEFAULT_FONT_GLYPHS);
+		renderer.changeDefaultFont(textfont)
+		
 		renderer = self.view.getRenderer('CoordinateRenderer')
 		renderer.clearActiveLayers()
 		renderer.addActiveLayer(self.elevation.getLayers("id", TDS.CoordinateLayerName)[0])
@@ -617,8 +622,7 @@ if __name__ == '__main__':
 		log.setVisibleModules(*TDS.LogModules)
 	
 	s = engine.getSettings()
-	s.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
-			".,!?-+/:();%`'*#=[]")
+	s.setDefaultFontGlyphs(DEFAULT_FONT_GLYPHS)
 	s.setDefaultFontPath('content/fonts/samanata.ttf')
 	s.setDefaultFontSize(12)
 	s.setBitsPerPixel(TDS.BitsPerPixel)

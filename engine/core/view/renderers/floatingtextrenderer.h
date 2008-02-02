@@ -35,13 +35,14 @@
 namespace FIFE {
 	class RenderBackend;
 	class AbstractFont;
+	class View;
 
 	class FloatingTextRenderer: public RendererBase {
 	public:
 		/** constructor.
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
-		 * @param font font used to render the texts
+		 * @param font default font used to render the texts
 		 */
 		FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
 
@@ -52,6 +53,15 @@ namespace FIFE {
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
 
 		std::string getName() { return "FloatingTextRenderer"; }
+		
+		/** Changes default font in the renderer
+		 * Note that this does not change the font ownership
+		 */
+		void changeDefaultFont(AbstractFont* font) { m_font = font; }
+		
+		/** returns instance used in given view
+		 */
+		static FloatingTextRenderer* getInstance(View* view);
 
 	private:
 		AbstractFont* m_font;

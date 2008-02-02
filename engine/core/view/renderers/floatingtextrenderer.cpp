@@ -41,6 +41,7 @@
 
 #include "view/visual.h"
 #include "view/camera.h"
+#include "view/view.h"
 #include "floatingtextrenderer.h"
 
 
@@ -77,5 +78,9 @@ namespace FIFE {
 				img->render(r);
 			}
 		}
+	}
+	
+	FloatingTextRenderer* FloatingTextRenderer::getInstance(View* view) {
+		return dynamic_cast<FloatingTextRenderer*>(view->getRenderer("FloatingTextRenderer"));
 	}
 }

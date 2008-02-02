@@ -51,6 +51,8 @@ namespace FIFE {
 
 		std::string getName() { return "CellSelectionRenderer"; }
 
+		/** returns instance used in given view
+		 */
 		static CellSelectionRenderer* getInstance(View* view);
 		
 		void reset();
