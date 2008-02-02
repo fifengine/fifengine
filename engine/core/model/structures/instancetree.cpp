@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/structures/instance.h"
+#include "util/rect.h"
 
 #include "instancetree.h"
 
@@ -81,9 +82,15 @@ namespace FIFE {
 		InstanceListCollector collector(list);
 		node->apply_visitor(collector);
 
+		Rect rect(point.x, point.y, w, h);
 		node = node->parent();
 		while( node ) {
-			std::copy(node->data().begin(),node->data().end(),std::back_inserter(list));
+			for(InstanceList::const_iterator it(node->data().begin()); it != node->data().end(); ++it) {
+				ModelCoordinate coords = (*it)->getLocation().getLayerCoordinates();
+				if( rect.contains(Point(coords.x,coords.y)) ) {
+					list.push_back(*it);
+				}
+			}
 			node = node->parent();
 		}
 	}
