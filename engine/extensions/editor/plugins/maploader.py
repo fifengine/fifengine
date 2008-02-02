@@ -113,7 +113,7 @@ class MapSaver(FileBrowser):
 		newlocation = self._widget.collectData('saveField')
 		if newlocation:
 			saveMapFile('/'.join([self.path, newlocation]), self.engine, map)
-		elif _location:
+		elif self._location:
 			saveMapFile('/'.join([self.path, self._location]), self.engine, map)
 
 	def _selectFile(self):

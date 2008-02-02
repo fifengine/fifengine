@@ -189,12 +189,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		if not self.camera:
 			raise RuntimeError, "No default camera view found for this map: " + self.map.Id()
 
-		camloc = fife.Location()
-		camloc.setLayer(self.layer)
-		self.camera.setLocation(camloc)
-
 		self.camera.setViewPort(fife.Rect(*[int(c) for c in viewport]))
-		self.camera.setLocation(camloc)
 
 	def pump(self):
 		if not self.active: return
