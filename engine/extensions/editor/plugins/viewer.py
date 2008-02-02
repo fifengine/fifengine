@@ -8,6 +8,8 @@ import math
 import fife
 import pychan
 
+SCROLL_MODIFIER = 0.3
+
 class Viewer(fife.IKeyListener, fife.IMouseListener):
 	def __init__(self, engine):
 		self.engine = engine
@@ -197,11 +199,11 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 			loc = self.camera.getLocation()
 			cam_scroll = loc.getExactLayerCoordinates()
 			if (self.horizscroll):
-				cam_scroll.x += 0.1*self.horizscrolldir * (2/self.camera.getZoom()) * math.cos(self.camera.getRotation()/180.0 * math.pi);
-				cam_scroll.y += 0.1*self.horizscrolldir * (2/self.camera.getZoom()) * math.sin(self.camera.getRotation()/180.0 * math.pi);
+				cam_scroll.x += SCROLL_MODIFIER*self.horizscrolldir * (2/self.camera.getZoom()) * math.cos(self.camera.getRotation()/180.0 * math.pi);
+				cam_scroll.y += SCROLL_MODIFIER*self.horizscrolldir * (2/self.camera.getZoom()) * math.sin(self.camera.getRotation()/180.0 * math.pi);
 			if (self.vertscroll):
-				cam_scroll.x += 0.1*self.vertscrolldir *(2/self.camera.getZoom()) *  math.sin(-self.camera.getRotation()/180.0 * math.pi);
-				cam_scroll.y += 0.1*self.vertscrolldir *(2/self.camera.getZoom()) *  math.cos(-self.camera.getRotation()/180.0 * math.pi);
+				cam_scroll.x += SCROLL_MODIFIER*self.vertscrolldir *(2/self.camera.getZoom()) *  math.sin(-self.camera.getRotation()/180.0 * math.pi);
+				cam_scroll.y += SCROLL_MODIFIER*self.vertscrolldir *(2/self.camera.getZoom()) *  math.cos(-self.camera.getRotation()/180.0 * math.pi);
 
 			loc.setExactLayerCoordinates(cam_scroll)
 			self.camera.setLocation(loc)
