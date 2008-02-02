@@ -58,6 +58,13 @@ namespace FIFE {
 	class VFS;
 	class Cursor;
 
+
+	/** Engine acts as a controller to the whole system
+	 * Responsibilities of the engine are:
+	 *  - Construct and initialize engine internals
+	 *  - Clean-up when the program ends
+	 *  - Act as an entry point to the engine subsystems
+	 */
 	class Engine {
 	public:
 		/** Constructor
@@ -76,25 +83,71 @@ namespace FIFE {
 		 */
 		void init() throw(NotSet);
 		
+		/** Initializes the continuous processing of the engine
+		 * Call this only once in your program
+		 */
 		void initializePumping();
+		
+		/** Finalizes the continuous processing of the engine
+		 * Call this only once in your program, after you have called
+		 * initializePumping + (pump() * N times)
+		 */
 		void finalizePumping();
 
 		/** Runs one cycle for the engine
 		 */
 		void pump();
 
+		/** Provides access point to the SoundManager
+		 */
 		SoundManager* getSoundManager() { return m_soundmanager; }
+		
+		/** Provides access point to the EventManager
+		 */
 		EventManager* getEventManager() { return m_eventmanager; }
+		
+		/** Provides access point to the TimeManager
+		 */
 		TimeManager* getTimeManager() { return m_timemanager; }
+		
+		/** Provides access point to the GuiManager
+		 */
 		GUIManager* getGuiManager() { return m_guimanager; }
+		
+		/** Provides access point to the ImagePool
+		 */
 		ImagePool* getImagePool() { return m_imagepool; }
+		
+		/** Provides access point to the AnimationPool
+		 */
 		AnimationPool* getAnimationPool() { return m_animpool; }
+		
+		/** Provides access point to the RenderBackend
+		 */
 		RenderBackend* getRenderBackend() { return m_renderbackend; }
+		
+		/** Provides access point to the Model
+		 */
 		Model* getModel() { return m_model; }
+		
+		/** Provides access point to the View
+		 */
 		View* getView() { return m_view; }
+		
+		/** Provides access point to the LogManager
+		 */
 		LogManager* getLogManager() { return m_logmanager; }
+		
+		/** Returns default font used in the engine
+		 */
 		GuiFont* getDefaultFont() { return m_defaultfont; }
+		
+		/** Provides access point to the VFS
+		 */
 		VFS* getVFS() { return m_vfs; }
+		
+		/** Returns cursor used in the engine
+		 */
 		Cursor* getCursor() { return m_cursor; }
 
 	private:
