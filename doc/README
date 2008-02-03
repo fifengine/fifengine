@@ -72,7 +72,7 @@ Platform specific details how to build FIFE can be found down below.
 Detailed information how to build FIFE on Linux-based distributions can be found at the project wiki:
 http://wiki.fifengine.de/index.php?title=Building:Linux:SCons
 
-After FIFE has been built successfully move into the <FIFE>/clients/island_demo directory and run: python island_demo.py
+After FIFE has been built successfully move into the <FIFE>/clients/island_demo directory and run: python run_demo.py
 
 === Mac ===
 Detailed information how to build FIFE on linux-based distributions can be found at the project wiki:
@@ -81,7 +81,7 @@ http://wiki.fifengine.de/index.php?title=Building:Mac:Scons
 Caution: the Mac compile guide is currently heavily outdated! We would like to improve this situation but we're lacking a Mac maintainer who could take care of that. In case you're interested in the position feel free to get in contact with our developers on the project's IRC channel:
 http://wiki.fifengine.de/index.php?title=IRC
 
-In case you manage to build FIFE on your Mac system you can move into the <FIFE>/clients/island_demo directory and run: python island_demo.py
+In case you manage to build FIFE on your Mac system you can move into the <FIFE>/clients/island_demo directory and run: python run_demo.py
 
 === Win32 ===
 The Win32 package ships with precompiled binaries. Simply unpack the package to location of your choice. After that you'll need to install ActivePython 2.5 to run the techdemo:
