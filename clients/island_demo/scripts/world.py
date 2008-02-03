@@ -4,6 +4,8 @@ from loaders import loadMapFile
 from savers import saveMapFile
 from hero import Hero
 from girl import Girl
+from cloud import Cloud
+from agent import create_anonymous_agents
 import settings as TDS
 
 class World(EventListenerBase):
@@ -20,7 +22,7 @@ class World(EventListenerBase):
 	def reset(self):
 		self.map, self.elevation, self.agentlayer = None, None, None
 		self.cameras = {}
-		self.hero, self.girl = None, None
+		self.hero, self.girl, self.clouds = None, None, []
 		self.cur_cam2_x, self.initial_cam2_x, self.cam2_scrolling_right = 0, 0, True
 		self.target_rotation = 0
 
@@ -34,6 +36,10 @@ class World(EventListenerBase):
 		self.hero.start()
 		self.girl = Girl(self.model, 'NPC:girl', self.agentlayer)
 		self.girl.start()
+		cloudlayer = self.elevation.getLayers("id", "TechdemoMapCloudLayer")[0]
+		self.clouds = create_anonymous_agents(self.model, 'Cloud', cloudlayer, Cloud)
+		for cloud in self.clouds:
+			cloud.start(0.1, 0.05)
 		
 		for cam in self.view.getCameras():
 			self.cameras[cam.getId()] = cam

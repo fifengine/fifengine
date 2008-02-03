@@ -5,8 +5,8 @@ import fife
 _STATE_NONE, _STATE_IDLE, _STATE_RUN = 0, 1, 2
 
 class Girl(Agent):
-	def __init__(self, model, agentName, layer):
-		super(Girl, self).__init__(model, agentName, layer)
+	def __init__(self, model, agentName, layer, uniqInMap=True):
+		super(Girl, self).__init__(model, agentName, layer, uniqInMap)
 		self.state = _STATE_NONE
 		self.waypoints = ((67, 80), (75, 44))
 		self.waypoint_counter = 0

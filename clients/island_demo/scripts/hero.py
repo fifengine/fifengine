@@ -5,8 +5,8 @@ import techdemo_settings as TDS
 _STATE_NONE, _STATE_IDLE, _STATE_RUN = 0, 1, 2
 
 class Hero(Agent):
-	def __init__(self, model, agentName, layer):
-		super(Hero, self).__init__(model, agentName, layer)
+	def __init__(self, model, agentName, layer, uniqInMap=True):
+		super(Hero, self).__init__(model, agentName, layer, uniqInMap)
 		self.state = _STATE_NONE
 
 	def OnActionFinished(self, instance, action):

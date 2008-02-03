@@ -38,7 +38,7 @@
 	<dataset type="XML" source="content/datasets/objects/trees/tree.xml" />
 	<dataset type="XML" source="content/datasets/objects/animated_objects/crate.xml" />
 
-	<dataset type="XML" source="content/datasets/objects/clouds/clouds.xml" />
+	<dataset type="XML" source="content/datasets/agents/cloud.xml" />
 
 	<!-- Load NPC datasets -->
 	<dataset type="XML" source="content/datasets/agents/humans/beekeeper.xml" />
@@ -1095,7 +1095,29 @@
 
 		<layer id="TechdemoMapCloudLayer" grid_type="square" x_scale="0.25" y_scale="0.25" x_offset="0.75" y_offset="-1.45">
 			<instances>
-				<i o="Cloud:002" x="41" y="87" />
+				<i o="Cloud" x="41" y="87" />
+				<i x="31" o="Cloud" y="36"></i>
+				<i x="32" o="Cloud" y="37"></i>
+				<i x="31" o="Cloud" y="42"></i>
+				<i x="33" o="Cloud" y="41"></i>
+				<i x="32" o="Cloud" y="46"></i>
+				<i x="31" o="Cloud" y="36"></i>
+				<i x="40" o="Cloud" y="35"></i>
+				<i x="31" o="Cloud" y="88"></i>
+				<i x="27" o="Cloud" y="84"></i>
+				<i x="34" o="Cloud" y="78"></i>
+				<i x="41" o="Cloud" y="64"></i>
+				
+				<i x="10" o="Cloud" y="10"></i>
+				<i x="70" o="Cloud" y="88"></i>
+				<i x="60" o="Cloud" y="84"></i>
+				<i x="34" o="Cloud" y="8"></i>
+				<i x="41" o="Cloud" y="4"></i>
+				
+				<i x="80" o="Cloud" y="44"></i>
+				<i x="75" o="Cloud" y="49"></i>
+				<i x="60" o="Cloud" y="56"></i>
+				<i x="84" o="Cloud" y="40"></i>
 			</instances>
 		</layer>
 
