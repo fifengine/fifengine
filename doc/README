@@ -14,12 +14,34 @@ This release is surely not the beginning of the end of the road for us, but it's
 * New audio module with support for some more advanced audio features.
 * Optimized view code to improve the performance and resolve map instance z-order issues.
 * Switched back to island_demo concept; this will be the example game that ships with future FIFE releases as well.
-* Floating text renderer for map instances.
-* Improved virtual file system code for editor tool.
-* Vastly improved pychan extension.
-* Quadtree adjustments.
+* Ability to save maps
+* Routing pathfinding (previous release only had linear pather)
+* Pluggable rendering system. Several new plugins including:
+** Floating text renderer for map instances.
+** Blocking info renderer to show instance blocking info
+** Cell selection renderer for selection highlighting
+** Coordinate renderer for cellgrids
+** Quadtree renderer to show quadtree debug information
+* New editor tool, which can be used to layout maps
+* XML-format improvements: stack position, z-position, camera definitions, animation x/y offsets
+* Vastly improved pychan extension; XML based GUI definitions
+* Quadtree adjustments
+* Ability to define own settings formats and interpret them from scripts
+* Ability to attach cameras to instances (so that they are tracked while they move)
+* Separate x/y scaling for cellgrids, allows more flexible geometry definitions (e.g. rectangle)
 * Basic mouse map instance picking.
 * Editor tool (still work in progress).
+* Improved engine-script exception reporting
+* Mouse cursors can be changed from scripts
+
+Few non-code related changes
+* Rough task list for the whole island demo has now been created:
+** https://mirror1.cvsdude.com/trac/fife/engine/report/3
+* Vastly improved documentation with nightly updates:
+** Core: http://fifedocs.boxbox.org//doxygen/
+** Scripts: http://fifedocs.boxbox.org//epydoc/
+* Lots of new content gathered and created for island demo 
+** E.g. agent definitions, clouds graphics, music...
 
 == Features ==
 * A complete list of the features that FIFE offers can be found at the project wiki:
