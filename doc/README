@@ -1,5 +1,5 @@
 == Introduction ==
-Welcome to the FIFE 2008.0 README. This snapshot is based on SVN revision 21xx.
+Welcome to the FIFE 2008.0 README. This snapshot is based on SVN revision 2109.
 
 == Theme of this release ==
 For the 2008.0 release we decided to pick up the island_demo concept again. Right: again. We already used this concept for the 2007.1 release but we put it on ice as we worked together with the Zero-Projekt developers on a different example game for the 2007.2 release. The cooperation didn't work out as planned for either side and so both teams stick to their own projects again now.
@@ -94,7 +94,7 @@ The editor tool can be found within the <FIFE>\clients\editor directory. You can
 Last but not least there is an example client residing in <FIFE>\clients\pychan_demo that shows how the pychan GUI library works. Start the GUI demo application by running pychan_test.py.
 
 == Configuring FIFE ==
-The engine utilizes special settings files for configuring FIFE. For the island_demo the file is called "techdemo_settings.py" and resides in the same directory as the island_demo.py script. You can customize FIFE by editing this file. For the editor and the pychan_demo these configuration files are called settings.py.
+The engine utilizes special settings files for configuring FIFE. For the island_demo the file is called settings.py and resides in the same directory as the island_demo.py script. You can customize FIFE by editing this file. There are similar settings files for the editor and the pychan_demo in their directories as well.
 
 == Known issues ==
 * Map instance blocking is currently not working well on the island_demo map. We did some tests with invisble instance blockers to prevent that the boy can run into the sea and the tools but unfortunately it turned out that this brings up more problems than it resolves. At least we were able to spot the problem this way; now we know that there is still quite some room for pathfinding improvements in our next releases.
