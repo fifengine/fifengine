@@ -18,10 +18,16 @@ import settings as TDS
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
 	def __init__(self, engine, world):
-		eventlistenerbase.EventListenerBase.__init__(self,engine,regKeys=True,regCmd=True, regMouse=True, regConsole=True, regWidget=True)
-		#super(ApplicationListener, self).__init__()
+		super(ApplicationListener, self).__init__(engine,regKeys=True,regCmd=True, regMouse=False, regConsole=True, regWidget=True)
 		self.engine = engine
 		self.world = world
+		engine.getEventManager().setNonConsumableKeys([
+			fife.IKey.ESCAPE,
+			fife.IKey.F10,
+			fife.IKey.LEFT,
+			fife.IKey.RIGHT,
+			fife.IKey.UP,
+			fife.IKey.DOWN])
 		
 		self.quit = False
 		self.aboutWindow = None
@@ -39,41 +45,43 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		consumed = False
 		if keyval == fife.IKey.ESCAPE:
 			self.quit = True
-			consumed = True
+			evt.consume()
 		elif keyval == fife.IKey.F10:
 			self.engine.getGuiManager().getConsole().toggleShowHide()
-			consumed = True
+			evt.consume()
 		elif keystr == 'p':
 			self.engine.getRenderBackend().captureScreen('screenshot.bmp')
-			consumed = True
-		if not consumed:
-			self.world.keyPressed(evt)
+			evt.consume()
 	
 	def onCommand(self, command):
 		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if not self.quit:
-			self.world.onCommand(command)
+		if self.quit:
+			command.consume()
 
 	def onConsoleCommand(self, command):
-		result = "no result"
+		result = ''
 		if command.lower() in ('quit', 'exit'):
 			self.quit = True
-			return 'quitting'
-		
-		if command.lower() in ( 'help', 'help()' ):
+			result = 'quitting'
+		elif command.lower() in ( 'help', 'help()' ):
 			self.engine.getGuiManager().getConsole().println( open( 'content/infotext.txt', 'r' ).read() )
-			return "-- End of help --"
-		
-		return self.world.onConsoleCommand(command)
-
-	def mouseReleased(self, evt):
-		self.world.mouseReleased(evt)
+			result = "-- End of help --"
+		else:
+			result = self.world.onConsoleCommand(command)
+		if not result:
+			try:
+				result = str(eval(command))
+			except:
+				pass
+		if not result:
+			result = 'no result'
+		return result
 
 	def onQuitButtonPress(self):
 		cmd = fife.Command()
 		cmd.setSource(None)
 		cmd.setCommandType(fife.CMD_QUIT_GAME)
-		self.engine.getEventManager().dispatchCommand(cmd);
+		self.engine.getEventManager().dispatchCommand(cmd)
 		
 	def onAboutButtonPress(self):
 		if not self.aboutWindow:
@@ -86,7 +94,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 class IslandDemo(ApplicationBase):
 	def __init__(self):
 		super(IslandDemo,self).__init__()
-		pychan.init(self.engine, debug=True)
+		pychan.init(self.engine, debug=TDS.PychanDebug)
 		self.world = world.World(self.engine)
 		self.listener = ApplicationListener(self.engine, self.world)
 		self.world.load(TDS.MapFile)
@@ -100,10 +108,15 @@ class IslandDemo(ApplicationBase):
 		emitter.setLooping(True)
 		emitter.play()
 		
+	def createListener(self):
+		pass # already created in constructor
+		
 	def _pump(self):
 		if self.listener.quit:
 			self.breakRequested = True
 			self.world.save('content/maps/savefile.xml')
+		else:
+			self.world.pump()
 
 def main():
 	app = IslandDemo()

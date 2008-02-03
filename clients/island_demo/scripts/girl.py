@@ -8,7 +8,7 @@ class Girl(Agent):
 	def __init__(self, model, agentName, layer):
 		super(Girl, self).__init__(model, agentName, layer)
 		self.state = _STATE_NONE
-		self.waypoints = ((67, 84), (75, 40))
+		self.waypoints = ((67, 80), (75, 44))
 		self.waypoint_counter = 0
 
 	def OnActionFinished(self, instance, action):

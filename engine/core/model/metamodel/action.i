@@ -14,5 +14,7 @@ namespace FIFE {
 		virtual ~Action();
 		void adoptVisual(AbstractVisual* visual);
 		template<typename T> T* getVisual() const;
+		void setDuration(unsigned int duration);
+		unsigned int getDuration();
 	};
 }

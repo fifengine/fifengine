@@ -8,19 +8,21 @@ import settings as TDS
 
 class World(EventListenerBase):
 	def __init__(self, engine):
+		super(World, self).__init__(engine, regMouse=True, regKeys=True)
 		self.engine = engine
-		
 		self.eventmanager = engine.getEventManager()
 		self.model = engine.getModel()
 		self.metamodel = self.model.getMetaModel()
 		self.view = self.engine.getView()
 		self.filename = ''
 		
+		
 	def reset(self):
 		self.map, self.elevation, self.agentlayer = None, None, None
 		self.cameras = {}
 		self.hero, self.girl = None, None
 		self.cur_cam2_x, self.initial_cam2_x, self.cam2_scrolling_right = 0, 0, True
+		self.target_rotation = 0
 
 	def load(self, filename):
 		self.filename = filename
@@ -53,11 +55,13 @@ class World(EventListenerBase):
 			renderer.addActiveLayer(self.elevation.getLayers("id", TDS.QuadTreeLayerName)[0])
 			
 		self.cam2_loc = self.cameras['small'].getLocation()
-		self.cam2_loc.setExactLayerCoordinates( fife.ExactModelCoordinate( 10.0, 10.0, 0.0 ))
+		self.cam2_loc.setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
 		self.initial_cam2_x = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		self.cur_cam2_x = self.initial_cam2_x
 		self.cam2_scrolling_right = True
 		self.cameras['small'].setEnabled(False)
+		
+		self.target_rotation = self.cameras['main'].getRotation()
 	
 	def save(self, filename):
 		saveMapFile(filename, self.engine, self.map)
@@ -79,6 +83,13 @@ class World(EventListenerBase):
 			self.metamodel.deleteDatasets()
 			self.view.clearCameras()
 			self.load(self.filename)
+		elif keystr == 'o':
+			self.target_rotation = (self.target_rotation + 90) % 360
+	
+	def changeRotation(self):
+		currot = self.cameras['main'].getRotation()
+		if self.target_rotation != currot:
+			self.cameras['main'].setRotation((currot + 5) % 360)
 	
 	def mouseReleased(self, evt):
 		if (evt.getButton() == fife.IMouseEvent.LEFT):
@@ -92,18 +103,27 @@ class World(EventListenerBase):
 			l.setElevationCoordinates(target_elevcoord)
 			self.hero.run(l)
 
+	def onConsoleCommand(self, command):
+		result = ''
+		try:
+			result = str(eval(command))
+		except:
+			pass
+		return result
+
+		
 	def pump(self):
 		if self.cameras['small'].isEnabled():
 			self.cam2_loc = self.cameras['small'].getLocation()
 			c = self.cam2_loc.getExactLayerCoordinates()
 			if self.cam2_scrolling_right:
-				self.cur_cam2_x = c.x = c.x+0.01
-				if self.cur_cam2_x > self.initial_cam2_x+2:
+				self.cur_cam2_x = c.x = c.x+0.1
+				if self.cur_cam2_x > self.initial_cam2_x+10:
 					self.cam2_scrolling_right = False
 			else:
-				self.cur_cam2_x = c.x = c.x-0.01
-				if self.cur_cam2_x < self.initial_cam2_x-2:
+				self.cur_cam2_x = c.x = c.x-0.1
+				if self.cur_cam2_x < self.initial_cam2_x-10:
 					self.cam2_scrolling_right = True
 			self.cam2_loc.setExactLayerCoordinates(c)
-			self.cameras['small'].setLocation(smallcam_loc)
-		
+			self.cameras['small'].setLocation(self.cam2_loc)
+		self.changeRotation()

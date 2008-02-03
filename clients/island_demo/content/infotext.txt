@@ -3,10 +3,6 @@ Welcome to the FIFE island_demo, release 2008.0
 Keybindings:
 --------------
 - P = Make screenshot
-- LEFT = Move camera left
-- RIGHT = Move camera right
-- UP = Move camera up
-- DOWN = Move camera down
 - F10 = Toggle console on / off
 - ESC = Quit techdemo
 - LMB = Move agent around
@@ -14,10 +10,7 @@ Keybindings:
 - C = Toggles coordinates on / off
 - R = Reload map (useful for map editing)
 - S = Second camera on / off
-- A = Toggle autoscroll on / off
-- SHIFT + mouse wheel = Adjust camera zoom
-- CTRL + mouse wheel = Adjust camera rotation
-- ALT + mouse wheel = Adjust camera tilt
+- O = Rotate main camera
 
 Have fun,
 The FIFE team

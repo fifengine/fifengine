@@ -17,7 +17,6 @@ class Hero(Agent):
 	
 	def idle(self):
 		self.state = _STATE_IDLE
-		print "idling"
 		self.agent.act('idle', self.agent.getFacingLocation(), True)
 		
 	def run(self, location):

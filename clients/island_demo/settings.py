@@ -10,6 +10,7 @@ MapFile             = 'content/maps/new_official_map.xml'
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`'*#=[]"
 
 LogModules          = ['controller']
+PychanDebug         = False
 LogToPrompt         = 1
 LogToFile           = 0
 

@@ -57,7 +57,7 @@ namespace FIFE {
 		virtual void consume() = 0;
 
 		/** Checks if the event is consumed.
-         * @return true if the event is consumed, false otherwise.
+		* @return true if the event is consumed, false otherwise.
 		 */
 		virtual bool isConsumed() const = 0;
 

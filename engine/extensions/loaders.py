@@ -291,8 +291,10 @@ class ModelLoader(handler.ContentHandler):
 		if not source: self._err('Animation declared with no source location.')
 
 		try:
-			animation = self.anim_pool.addResourceFromFile(str(source))
-			self.action.get2dGfxVisual().addAnimation(int(direction), animation)
+			anim_id = self.anim_pool.addResourceFromFile(str(source))
+			animation = self.anim_pool.getAnimation(anim_id)
+			self.action.get2dGfxVisual().addAnimation(int(direction), anim_id)
+			self.action.setDuration(animation.getDuration())
 		except fife.Exception,e:
 			print e.getMessage()
 
