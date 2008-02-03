@@ -38,6 +38,8 @@
 	<dataset type="XML" source="content/datasets/objects/trees/tree.xml" />
 	<dataset type="XML" source="content/datasets/objects/animated_objects/crate.xml" />
 
+	<dataset type="XML" source="content/datasets/objects/clouds/clouds.xml" />
+
 	<!-- Load NPC datasets -->
 	<dataset type="XML" source="content/datasets/agents/humans/beekeeper.xml" />
 	<dataset type="XML" source="content/datasets/agents/humans/boy.xml" />
@@ -1088,6 +1090,12 @@
 
 				<i o="Tree:007" x="58" y="90" />
 				<i o="Tree:007" x="61" y="90" />
+			</instances>
+		</layer>
+
+		<layer id="TechdemoMapCloudLayer" grid_type="square" x_scale="0.25" y_scale="0.25" x_offset="0.75" y_offset="-1.45">
+			<instances>
+				<i o="Cloud:002" x="41" y="87" />
 			</instances>
 		</layer>
 
