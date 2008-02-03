@@ -108,7 +108,7 @@ class StylingExample(PyChanExample):
 			self.styledCredits.hide()
 
 	def testStyle(self):
-		style = self.styles[self.widget.collectData('styleList')
+		style = self.styles[self.widget.collectData('styleList')]
 		if self.styledCredits:
 			self.styledCredits.hide()
 		self.styledCredits = pychan.loadXML('content/gui/credits.xml')
