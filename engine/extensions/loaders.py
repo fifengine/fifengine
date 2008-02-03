@@ -44,9 +44,12 @@ class ModelLoader(handler.ContentHandler):
 
 	def startElement(self, name, attrs):
 		try:
-			getattr(self, "parse_"+name)(attrs)
+			parser = getattr(self, "parse_"+name)
 		except AttributeError:
-			print ''.join(['Invalid xml tag: ' , name , '. Ignoring...'])
+			print ''.join(['File: ', self.source, '. Invalid xml tag: ' , name , '. Ignoring...'])
+
+		try:
+			parser(attrs)
 		except SyntaxError, e:
 			print e
 			print 'Attempting to continue.'
