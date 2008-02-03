@@ -31,6 +31,8 @@ namespace FIFE {
 		SD_TIME_POS,
 		SD_BYTE_POS
 	};
+
+	class SoundDecoder;
 	
 	class SoundEmitter {
 	public:
@@ -40,6 +42,7 @@ namespace FIFE {
 		unsigned int getID();
 		
 		bool load(const std::string &filename);
+		bool load(SoundDecoder* decoder);
 		void reset(bool defaultall = false);
 		void release();
 		
@@ -62,3 +65,4 @@ namespace FIFE {
 		float getCursor(SoundPositionType type);
 	};
 }
+

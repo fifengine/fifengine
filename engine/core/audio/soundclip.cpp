@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2008 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -58,9 +58,7 @@ namespace FIFE {
 				alBufferData(ptr->buffers[i], m_decoder->getALFormat(), m_decoder->getBuffer(),
 					m_decoder->getBufferSize(), m_decoder->getSampleRate());
 				
-				if (AL_NO_ERROR != alGetError()) {
-					FL_WARN(_log, LMsg() << "Error copying data to buffers");
-				}
+				CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error copying data to buffers")
 					
 				ptr->usedbufs++;
 			}
@@ -78,6 +76,8 @@ namespace FIFE {
 		SoundBufferEntry* ptr = new SoundBufferEntry();
 		ptr->usedbufs=0;
 		alGenBuffers(BUFFER_NUM, ptr->buffers);
+
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating streaming-buffers")
 		
 		m_buffervec.push_back(ptr);
 		
@@ -145,7 +145,7 @@ namespace FIFE {
 
 		// Error while decoding file?
 		if (m_decoder->decode(BUFFER_LEN)) {
-			throw Exception("Error while reading from audio file");
+			throw Exception("error while reading from audio file");
 		}
 
 		// fill the buffer with data
@@ -156,6 +156,8 @@ namespace FIFE {
 			
 		// update cursor
 		ptr->deccursor += BUFFER_LEN;
+
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error catching stream")
 		
 		return false;
 	}

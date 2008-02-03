@@ -44,12 +44,12 @@ namespace FIFE {
 		RawData* rdptr = VFS::instance()->open(filename);
 		
 		SoundDecoder* ptr;
-		if(filename.find(".ogg") != std::string::npos) {
+		if(filename.find(".ogg", filename.size() - 4) != std::string::npos) {
 			ptr = new SoundDecoderOgg(rdptr);
 			
 		} else {
 			FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << filename << "\"!");
-			throw Exception("No appropriate audio-decoder available");
+			throw Exception("");
 		}
 		
 		return ptr;

@@ -47,6 +47,8 @@ namespace FIFE {
 		TimeManager::instance()->registerEvent(this);
 		setPeriod(-1);
 		alGenSources(1, &m_source);
+
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating source")
 	}
 		
 	SoundEmitter::~SoundEmitter() {
@@ -104,6 +106,23 @@ namespace FIFE {
 		m_soundclip = &(SoundManager::instance()->getSoundClipPool().getSoundClip(m_soundclipid));
 		m_soundclip->addRef();
 		
+		attachSoundClip();
+		return true;
+	}
+
+	bool SoundEmitter::load(SoundDecoder* decoder) {
+		if (!SoundManager::instance()->isActive() || decoder == NULL) {
+			return false;
+		}
+		reset();
+
+		m_soundclip = new SoundClip(decoder, false);
+
+		attachSoundClip();
+		return true;
+	}
+
+	void SoundEmitter::attachSoundClip() {
 		if (!m_soundclip->isStream()) {
 			// non-streaming
 			alSourceQueueBuffers(m_source, m_soundclip->countBuffers(), m_soundclip->getBuffers());
@@ -119,8 +138,7 @@ namespace FIFE {
 			alSourcei(m_source, AL_LOOPING, AL_FALSE);
 		}
 
-		CHECK_OPENAL_LOG_DETAIL(_log, LogManager::LEVEL_ERROR, "Could not queue buffers");
-		return true;
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error attaching sound clip")
 	}
 	
 	void SoundEmitter::updateEvent(unsigned long time) {
@@ -152,6 +170,8 @@ namespace FIFE {
 			}
 			alSourceQueueBuffers(m_source, 1, &buffer);
 		}
+
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error while streaming")
 	}
 	
 	void SoundEmitter::setLooping(bool loop) {
@@ -206,6 +226,8 @@ namespace FIFE {
 				alSourcef(m_source, AL_SEC_OFFSET, value);
 				break;
 			}
+
+			CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error setting cursor position")
 		}
 		else {
 			alGetSourcei(m_source, AL_SOURCE_STATE, &state);
@@ -228,6 +250,8 @@ namespace FIFE {
 				setPeriod(5000);
 				alSourcePlay(m_source);
 			}
+
+			CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error setting stream cursor position")
 		}
 	}
 	
@@ -253,6 +277,8 @@ namespace FIFE {
 		if (m_soundclip->isStream()) {
 			pos += m_soundclip->getStreamPos(m_streamid, type);
 		}
+
+		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error getting cursor")
 		
 		return pos;
 	}

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
+ *   Copyright (C) 2005-2008 by the FIFE Team                              *
  *   fife-public@lists.sourceforge.net                                     *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -71,17 +71,12 @@ namespace FIFE {
 		 */
 		bool load(const std::string &filename);
 		
-		/** Loads audio data from rawdata-ptr
-		 *
-		 * @param ptr RawData-pointer to the audio-data.
+		/** Loads audio data using a specified decoder
+		 * This does not transfer the ownership of the decoder
+		 * 
+		 * @return true on success, false on failure
 		 */
-		bool load(RawData* ptr);
-		
-		/** Loads audio data using the specified decoder
-		 * That's for matroska decoder-support
-		 * (video module can use own decoder)
-		 */
-		bool loadFromDecoder(SoundDecoder* decoder);
+		bool load(SoundDecoder* decoder);
 		
 		/** Reset the emitter, free all internal buffers
 		 *  
@@ -184,6 +179,10 @@ namespace FIFE {
 		/** Implementation of the pure virtual function from TimeEvent to update streaming
 		 */
 		virtual void updateEvent(unsigned long time);
+
+		/** Internal function to attach a soundclip to the source
+		 */
+		void attachSoundClip();
 		
 		ALuint							m_source;			// The openAL-source
 		SoundClip*					m_soundclip;	// the attached soundclip

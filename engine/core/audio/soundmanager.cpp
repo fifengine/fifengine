@@ -65,6 +65,11 @@ namespace FIFE {
 		if (m_device) {
 			alcDestroyContext(m_context);
 			alcCloseDevice(m_device);
+			m_device = NULL;
+		}
+
+		if (alcGetError(NULL) != ALC_NO_ERROR) {
+			FL_ERR(_log, LMsg() << "error closing openal device");
 		}
 	}
 
