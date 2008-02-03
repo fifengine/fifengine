@@ -64,11 +64,8 @@ class ApplicationBase(object):
 		self.settings = settings
 		
 		engineSetting = self.engine.getSettings()
-		engineSetting.setDefaultFontGlyphs(
-			" abcdefghijklmnopqrstuvwxyz"
-			+ "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-			+ ".,!?-+/:();%`'*#=[]")
-		engineSetting.setDefaultFontPath('content/fonts/samanata.ttf')
+		engineSetting.setDefaultFontGlyphs(settings.FontGlyphs)
+		engineSetting.setDefaultFontPath(settings.Font)
 		engineSetting.setDefaultFontSize(12)
 		engineSetting.setBitsPerPixel(settings.BitsPerPixel)
 		engineSetting.setFullScreen(settings.FullScreen)
