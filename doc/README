@@ -1,11 +1,20 @@
 == Introduction ==
-Welcome to the FIFE 2008.0 pre-release README. This snapshot is based on SVN revision 2057.
+Welcome to the FIFE 2008.0 README. This snapshot is based on SVN revision 21xx.
+
+== Theme of this release ==
+For the 2008.0 release we decided to pick up the island_demo concept again. Right: again. We already used this concept for the 2007.1 release but we put it on ice as we worked together with the Zero-Projekt developers on a different example game for the 2007.2 release. The cooperation didn't work out as planned for either side and so both teams stick to their own projects again now.
+
+After the cooperation has ended we considered all possible options and finally decided to flesh out the old island_demo concept and base our future example game upon it. Although we were able to finish the initial planning work for the new island_demo game some days ago, there is almost none of the new planned content in place yet. On the other side the engine itself and the editor tool that ships with it now made _huge_ steps forward since the last release about 4 months ago. Therefore we decided to release the current status as stable release although it offers not many new aspects on the content side and the content that is in place is very likely to change with the 2008.1 release.
+
+The milestone itself seems to be a very important step into the right direction. You can build your own maps now with the help of the editor tool. Furthermore a basic application structure is in place that should give you an idea how can create your own FIFE-based game. We'll surely adjust the structure of the island_demo client over the next months but this release is stable enough to start working on your game now.
+
+This release is surely not the beginning of the end of the road for us, but it's the end of beginning for the FIFE development team. Enjoy it as we do :-) 
 
 == Important changes since the 2007.2 release ==
 * New audio module with support for some more advanced audio features.
 * Optimized view code to improve the performance and resolve map instance z-order issues.
-* Switched back to island_demo concept; this will be the techdemo that ships with future FIFE releases as well.
-* Floating text renderer.
+* Switched back to island_demo concept; this will be the example game that ships with future FIFE releases as well.
+* Floating text renderer for map instances.
 * Improved virtual file system code for editor tool.
 * Vastly improved pychan extension.
 * Quadtree adjustments.
@@ -17,11 +26,10 @@ Welcome to the FIFE 2008.0 pre-release README. This snapshot is based on SVN rev
 http://wiki.fifengine.de/index.php?title=Engine_features
 
 == License ==
-The source code (*.cpp, *.h & *.py) is licensed under GPL 2.0 or newer. The techdemo content is licensed under Creative Commons Attribution-Share Alike 3.0:
+The source code (*.cpp, *.h & *.py) is licensed under GPL 2.0 or newer:
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-http://creativecommons.org/licenses/by-sa/3.0/
 
-Directories with content that is not licensed under the Creative Commons Attribution-Share Alike 3.0 feature a separate LICENSE file that states the origin of the content, the author and the actual license it was published under.
+The island_demo content was taken from a lot a lot of different 3rd party sources. Therefore each content directory comes with a separate LICENSE file that states the origin of the content, the author and the actual license it was published under.
 
 == Building FIFE ==
 === Dependencies ===
@@ -46,7 +54,7 @@ After FIFE has been built successfully move into the <FIFE>/clients/island_demo 
 
 === Mac ===
 Detailed information how to build FIFE on linux-based distributions can be found at the project wiki:
-http://wiki.fifengine.de/index.php?title=Mac_compile_guide
+http://wiki.fifengine.de/index.php?title=Building:Mac:Scons
 
 Caution: the Mac compile guide is currently heavily outdated! We would like to improve this situation but we're lacking a Mac maintainer who could take care of that. In case you're interested in the position feel free to get in contact with our developers on the project's IRC channel:
 http://wiki.fifengine.de/index.php?title=IRC
@@ -57,13 +65,17 @@ In case you manage to build FIFE on your Mac system you can move into the <FIFE>
 The Win32 package ships with precompiled binaries. Simply unpack the package to location of your choice. After that you'll need to install ActivePython 2.5 to run the techdemo:
 http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.1.1-win32-x86.msi
 
-Move into the <FIFE>\clients\island_demo directory and start the island_demo.py script. You can simply double-click with your mouse on it. It should be automatically associated with the Python interpreter after installing ActivePython.
+Move into the <FIFE>\clients\island_demo directory and start the run_demo.py script. You can simply double-click with your mouse on it. It should be automatically associated with the Python interpreter after installing ActivePython.
+
+The editor tool can be found within the <FIFE>\clients\editor directory. You can launch it by running editor_client.py.
+
+Last but not least there is an example client residing in <FIFE>\clients\pychan_demo that shows how the pychan GUI library works. Start the GUI demo application by running pychan_test.py.
 
 == Configuring FIFE ==
-The engine utilizes special settings files for configuring FIFE. For the island_demo the file is called "techdemo_settings.py" and resides in the same directory as the island_demo.py script. You can customize FIFE by editing this file.
+The engine utilizes special settings files for configuring FIFE. For the island_demo the file is called "techdemo_settings.py" and resides in the same directory as the island_demo.py script. You can customize FIFE by editing this file. For the editor and the pychan_demo these configuration files are called settings.py.
 
 == Known issues ==
-* Map instance blocking is currently buggy on the island_demo map.
+* Map instance blocking is currently not working well on the island_demo map. We did some tests with invisble instance blockers to prevent that the boy can run into the sea and the tools but unfortunately it turned out that this brings up more problems than it resolves. At least we were able to spot the problem this way; now we know that there is still quite some room for pathfinding improvements in our next releases.
 * Win32 users tend to suffer from problems with the OpenAL drivers. If you don't hear the background music playing while running the techdemo, run oalinst.exe that ships with the Win32 package. This is the latest OpenAL driver for Win32.
 * The boost unit tests are broken on Win32. We plan to address this issue but we're lacking active Win32 developers to look into these kind of problems as the vast majority of the active developers is set on Linux. If you would like to help out with Win32-related issues please contact us at our IRC channel:
 http://wiki.fifengine.de/index.php?title=IRC
@@ -79,4 +91,4 @@ Have fun with the release and let us know what you think about it!
 
 http://www.fifengine.de/
 
-2008/01/28
+2008/02/03
