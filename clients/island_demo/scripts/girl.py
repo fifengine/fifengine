@@ -1,5 +1,5 @@
 from agent import Agent
-import techdemo_settings as TDS
+import settings as TDS
 import fife
 
 _STATE_NONE, _STATE_IDLE, _STATE_RUN = 0, 1, 2

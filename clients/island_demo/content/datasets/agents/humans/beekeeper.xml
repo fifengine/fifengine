@@ -6,7 +6,7 @@
 			<animation source="content/animations/agents/humans/beekeeper/beekeeper_rotate.xml"/>
 		</action>
 
-		<action id="walk">
+		<action id="talk">
 			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_n.xml" direction='90' />
 			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_ne.xml" direction='45' />
 			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_e.xml" direction='0' />

@@ -1,5 +1,5 @@
 from agent import Agent
-import techdemo_settings as TDS
+import settings as TDS
 import fife
 import random
 

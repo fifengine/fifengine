@@ -20,8 +20,6 @@ class Agent(fife.InstanceListener):
 def create_anonymous_agents(model, objectName, layer, agentClass):
 	agents = []
 	instances = [a for a in layer.getInstances() if a.getObject().Id() == objectName]
-	print instances
-	print "---------------------------"
 	i = 0
 	for a in instances:
 		agentName = '%s:i:%d' % (objectName, i)

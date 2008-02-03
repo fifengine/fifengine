@@ -5,6 +5,7 @@ from savers import saveMapFile
 from hero import Hero
 from girl import Girl
 from cloud import Cloud
+from beekeeper import Beekeeper
 from agent import create_anonymous_agents
 import settings as TDS
 
@@ -22,7 +23,7 @@ class World(EventListenerBase):
 	def reset(self):
 		self.map, self.elevation, self.agentlayer = None, None, None
 		self.cameras = {}
-		self.hero, self.girl, self.clouds = None, None, []
+		self.hero, self.girl, self.clouds, self.beekeepers = None, None, [], []
 		self.cur_cam2_x, self.initial_cam2_x, self.cam2_scrolling_right = 0, 0, True
 		self.target_rotation = 0
 
@@ -40,7 +41,10 @@ class World(EventListenerBase):
 		self.clouds = create_anonymous_agents(self.model, 'Cloud', cloudlayer, Cloud)
 		for cloud in self.clouds:
 			cloud.start(0.1, 0.05)
-		
+		self.beekeepers = create_anonymous_agents(self.model, 'Beekeeper', self.agentlayer, Beekeeper)
+		for beekeeper in self.beekeepers:
+			beekeeper.start()
+
 		for cam in self.view.getCameras():
 			self.cameras[cam.getId()] = cam
 		self.cameras['main'].attachToInstance(self.hero.agent)
