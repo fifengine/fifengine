@@ -178,8 +178,8 @@ class Widget(object):
 		Show the widget and all contained widgets.
 		"""
 		if self._visible: return
-		self.beforeShow()
 		self.adaptLayout()
+		self.beforeShow()
 		get_manager().show(self)
 		self._visible = True
 
@@ -268,7 +268,7 @@ class Widget(object):
 		In case the widget does not accept initial data, a L{RuntimeError} is thrown.
 		"""
 		if not self.accepts_initial_data:
-			raise RuntimeError("Trying to set data on a widget that does not accept initial data.")
+			raise RuntimeError("Trying to set data on a widget that does not accept initial data. Widget: %s Data: %s " % (repr(self),repr(data)))
 		self._realSetInitialData(data)
 	
 	def setData(self,data):
@@ -539,7 +539,7 @@ class Widget(object):
 
 ### Containers + Layout code ###
 
-class Container(Widget,fife.Container):
+class Container(Widget):
 	"""
 	This is the basic container class. It provides space in which child widgets can
 	be position via the position attribute. If you want to use the layout engine,
@@ -1206,7 +1206,7 @@ class TextBox(Widget):
 
 		# Prepare Data collection framework
 		self.accepts_data = True
-		self.accepts_inital_data = False # Would make sense in a way ...
+		self.accepts_initial_data = True # Make sense in a way ...
 		self._realSetInitialData = self._setText
 		self._realSetData = self._setText
 		self._realGetData = self._getText
@@ -1358,3 +1358,13 @@ WIDGETS = {
 	"ListBox" : ListBox,
 	"DropDown" : DropDown
 }
+
+def registerWidget(cls):
+	"""
+	Register a new Widget class for pychan.
+	"""
+	global WIDGETS
+	name = cls.__name__
+	if name in WIDGETS:
+		raise InitializationError("Widget class name '%s' already registered." % name)
+	WIDGETS[name] = cls

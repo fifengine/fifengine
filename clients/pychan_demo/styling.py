@@ -20,45 +20,47 @@ import pychan
 from pychan_test import PyChanExample
 
 STYLES= {
-'redzone': {
+'new default': {
 	'default' : {
 		'border_size': 2,
 		'margins': (0,0),
-		'base_color' : fife.Color(255,0,100),
+		'base_color' : fife.Color(128,128,128),
 		'foreground_color' : fife.Color(255,255,255),
-		'background_color' : fife.Color(128,0,0),
-		'font' : 'samanata_large'
+		'background_color' : fife.Color(55,55,55),
+		'font' : 'samanata_small'
 	},
 	'Button' : {
 		'border_size': 2,
-		'margins' : (10,5),
-		'base_color' : fife.Color(0,0,100),
-		'foreground_color' : fife.Color(0,0,100),
-		'font' : 'samanata_large'
+		'margins' : (20,5),
+		'min_size' : (100,20),
+		'font' : 'samanata_small'
 	},
 	'CheckBox' : {
-		'border_size': 2,
+		'border_size': 0,
+		'background_color' : fife.Color(0,0,0,0),
+	},
+	'RadioButton' : {
+		'border_size': 0,
 		'background_color' : fife.Color(0,0,0,0),
 	},
 	'Label' : {
-		'border_size': 2,
-		'base_color' : fife.Color(0,0,100),
-		'font' : 'samanata_large'
+		'border_size': 0,
+		'font' : 'samanata_small'
 	},
 	'ClickLabel' : {
-		'border_size': 2,
-		'base_color' : fife.Color(0,0,100),
-		'font' : 'samanata_large'
+		'border_size': 0,
+		'font' : 'samanata_small'
 	},
 	'ListBox' : {
-		'border_size': 2,
-		'base_color' : fife.Color(0,0,100),
-		'font' : 'samanata_large'
+		'border_size': 0,
+		'font' : 'samanata_small'
 	},
 	'Window' : {
-		'border_size': 5,
-		'margins': (5,5),
-		'background_image' : 'content/gui/stripe.png',
+		'border_size': 1,
+		'margins': (10,10),
+		'opaque' : 0,
+		'titlebar_height' : 30,
+		'background_image' : 'content/gui/background.png',
 		'font' : 'samanata_large'
 	},
 	'TextBox' : {
@@ -66,6 +68,7 @@ STYLES= {
 	},
 	('Container','HBox','VBox') : {
 		'border_size': 0,
+		'background_image' : 'content/gui/background.png',
 		'opaque' : False
 	}
 	},
@@ -111,7 +114,11 @@ class StylingExample(PyChanExample):
 		style = self.styles[self.widget.collectData('styleList')]
 		if self.styledCredits:
 			self.styledCredits.hide()
-		self.styledCredits = pychan.loadXML('content/gui/credits.xml')
+		self.styledCredits = pychan.loadXML('content/gui/all_widgets.xml')
+		self.styledCredits.distributeInitialData({
+			'demoList' : dir(pychan),
+			'demoText' : pychan.__doc__
+		})
 		self.styledCredits.stylize(style)
 		self.styledCredits.mapEvents({'okButton':self.styledCredits.hide})
 		self.styledCredits.show()
