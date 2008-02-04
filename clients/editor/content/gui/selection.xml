@@ -1,6 +1,8 @@
-<Window title="Select an option" minsize="100,100">
+<Window title="Select an option">
 	<VBox>
-		<DropDown name="optionDrop" />	
+		<ScrollArea size="150,300">
+			<ListBox name="optionDrop"/>	
+		</ScrollArea>
 		<HBox>
 			<Button name="okButton" text="OK"/>
 			<Button name="cancelButton" text="Cancel"/>
