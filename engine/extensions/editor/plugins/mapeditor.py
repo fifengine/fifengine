@@ -7,7 +7,7 @@ import fife
 import pychan
 import pychan.widgets as widgets
 from viewer import Viewer
-from editor.selection import Selection
+from editor.selection import Selection, ClickSelection
 
 class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
@@ -39,6 +39,9 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.object = None
 
 		self.elevEdit = None
+
+		self.insertmode = False
+		self.clickmode = False
 
 	# gui for selecting a map
 	def _selectMap(self):
@@ -108,7 +111,7 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 
 	def _viewDataset(self, datid):
 		self.dataset = self.engine.getModel().getMetaModel().getDatasets('id', datid)[0]
-		Selection([obj.Id() for obj in self.dataset.getObjects()], self.editWith)
+		ClickSelection([obj.Id() for obj in self.dataset.getObjects()], self.editWith)
 
 	def editWith(self, object_id):
 		if self.dataset:
@@ -127,10 +130,10 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 
 		self.mapEdit.hide()
 
-	def mousePressed(self, evt):
+	def _setSelection(self, screenx, screeny):
 		if self.camera:
 			# TODO: make Sleek fix this ugly mess
-			tmp = fife.ScreenPoint(evt.getX(), evt.getY())
+			tmp = fife.ScreenPoint(screenx, screeny)
 			dy = -(tmp.y - self.camera.toScreenCoordinates(self.camera.getLocation().getElevationCoordinates()).y)
 			tmp.z = (int)(math.tan(self.camera.getTilt()* (math.pi / 180.0)) * dy)
 			self.selection = self.camera.toElevationCoordinates(tmp)
@@ -141,8 +144,15 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			loc.setLayerCoordinates(self.selection)
 			fife.CellSelectionRenderer.getInstance(self.engine.getView()).selectLocation(loc)
 
+	def mousePressed(self, evt):
+		self.clickmode = True
+		self._setSelection(evt.getX(), evt.getY())
+		if self.insertmode and self.selection and self.object:
+			inst = self.layer.createInstance(self.object, self.selection)
+			fife.InstanceVisual.create(inst)
+
 	def mouseReleased(self, evt):
-		pass
+		self.clickmode = False
 	def mouseEntered(self, evt):
 		pass
 	def mouseExited(self, evt):
@@ -154,7 +164,12 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def mouseWheelMovedDown(self, evt):
 		pass
 	def mouseMoved(self, evt):
-		pass
+		if self.clickmode:
+			self._setSelection(evt.getX(), evt.getY())
+		if self.insertmode and self.selection and self.object:
+			inst = self.layer.createInstance(self.object, self.selection)
+			fife.InstanceVisual.create(inst)
+
 	def mouseDragged(self, evt):
 		pass
 
@@ -162,10 +177,7 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		if keystr == 'm':
-			pass # TODO: make an instance
-			if self.selection and self.object:
-				inst = self.layer.createInstance(self.object, self.selection)
-				fife.InstanceVisual.create(inst)
+			self.insertmode = not self.insertmode
 
 		elif keystr == 'x':
 			if self.selection:
