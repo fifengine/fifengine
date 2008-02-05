@@ -41,7 +41,6 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.elevEdit = None
 
 		self.insertmode = False
-		self.clickmode = False
 
 	# gui for selecting a map
 	def _selectMap(self):
@@ -144,15 +143,17 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			loc.setLayerCoordinates(self.selection)
 			fife.CellSelectionRenderer.getInstance(self.engine.getView()).selectLocation(loc)
 
-	def mousePressed(self, evt):
-		self.clickmode = True
-		self._setSelection(evt.getX(), evt.getY())
+	def _placeInstance(self):
 		if self.insertmode and self.selection and self.object:
 			inst = self.layer.createInstance(self.object, self.selection)
 			fife.InstanceVisual.create(inst)
 
+	def mousePressed(self, evt):
+		self._setSelection(evt.getX(), evt.getY())
+		self._placeInstance()
+
 	def mouseReleased(self, evt):
-		self.clickmode = False
+		pass
 	def mouseEntered(self, evt):
 		pass
 	def mouseExited(self, evt):
@@ -164,14 +165,11 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def mouseWheelMovedDown(self, evt):
 		pass
 	def mouseMoved(self, evt):
-		if self.clickmode:
-			self._setSelection(evt.getX(), evt.getY())
-		if self.insertmode and self.selection and self.object:
-			inst = self.layer.createInstance(self.object, self.selection)
-			fife.InstanceVisual.create(inst)
+		pass
 
 	def mouseDragged(self, evt):
-		pass
+		self._setSelection(evt.getX(), evt.getY())
+		self._placeInstance()
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
