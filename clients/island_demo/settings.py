@@ -6,7 +6,7 @@ RenderBackend       = "OpenGL"
 SDLRemoveFakeAlpha  = 1
 ScreenWidth         = 1024
 ScreenHeight        = 768
-MapFile             = 'content/maps/island_demo_map.xml'
+MapFile             = 'content/maps/island_demo_blockers.xml'
 Font                = 'content/fonts/samanata.ttf'
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`'*#=[]"
 

@@ -67,9 +67,6 @@ namespace FIFE {
 			}
 			return session_id;
 		}
-		if((instance->getLocation().getLayer() != target.getLayer() || target.getLayer()->cellContainsBlockingInstance(target.getLayerCoordinates()))) {
-			return -1;
-		}
 		SearchSpace* searchspace = getSearchSpace(target.getLayer());
 		if(!searchspace) {
 			searchspace = new SearchSpace(target.getLayer());
@@ -134,6 +131,7 @@ namespace FIFE {
 		{
 			instancePos.x += (dx / distance) * speed;
 			instancePos.y += (dy / distance) * speed;
+
 		} else {
 			pop = true;
 		}
@@ -141,6 +139,12 @@ namespace FIFE {
 		if(pop)
 		{
 			path.pop_front();
+			if(!path.empty() && instanceLoc.getLayer()->cellContainsBlockingInstance(path.front().getLayerCoordinates()))
+			{
+				//TODO: Determine if we're close enough to stop, otherwise find alternate route.
+				path.clear();
+				return;
+			}
 		}
 	}
 	

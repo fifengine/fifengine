@@ -53,6 +53,12 @@ namespace FIFE {
 	private:
 		//The class to use to calculate the heuristic value.
 		Heuristic*                m_heuristic;
+		//The destination coordinate as an int.
+		int                       m_destCoordInt;
+		//The start coordinate as an int.
+		int                       m_startCoordInt;
+		//The next coordinate int to check out.
+		int                       m_next;
 		//The shortest path tree.
 		std::vector<int>          m_spt;
 		//The search frontier.

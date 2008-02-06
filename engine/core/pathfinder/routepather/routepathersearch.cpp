@@ -40,10 +40,11 @@
 
 namespace FIFE {
 	RoutePatherSearch::RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
-		: Search(session_id, from, to, searchSpace) {
-		int coord = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
+		: Search(session_id, from, to, searchSpace), m_next(0), m_startCoordInt(0), m_destCoordInt(0) {
+		m_startCoordInt = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
 		int max_index = m_searchspace->getMaxIndex();
-		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(coord, 0.0f));
+		m_destCoordInt = m_searchspace->convertCoordToInt(to.getLayerCoordinates());
+		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(m_startCoordInt, 0.0f));
 		m_spt.resize(max_index + 1, -1);
 		m_sf.resize(max_index + 1, -1);
 		m_gCosts.resize(max_index + 1, 0.0f);
@@ -57,17 +58,16 @@ namespace FIFE {
 		}
 		PriorityQueue<int, float>::value_type topvalue = m_sortedfrontier.getPriorityElement();
 		m_sortedfrontier.popElement();
-		int next = topvalue.first;
-		m_spt[next] = m_sf[next];
+		m_next = topvalue.first;
+		m_spt[m_next] = m_sf[m_next];
 		ModelCoordinate destCoord = m_to.getLayerCoordinates();
-		int destcoordInt = m_searchspace->convertCoordToInt(destCoord);
-		if(destcoordInt == next) {
+		if(m_destCoordInt == m_next) {
 			setSearchStatus(search_status_complete);
 			return;
 		}
 		//use destination layer for getting the cell coordinates for now, this should be moved
 		//into search space.
-		ModelCoordinate nextCoord = m_searchspace->convertIntToCoord(next);
+		ModelCoordinate nextCoord = m_searchspace->convertIntToCoord(m_next);
 		std::vector<ModelCoordinate> adjacents;
 		m_searchspace->getLayer()->getCellGrid()->getAccessibleCoordinates(nextCoord, adjacents);
 		for(std::vector<ModelCoordinate>::iterator i = adjacents.begin(); i != adjacents.end(); ++i) {
@@ -77,29 +77,30 @@ namespace FIFE {
 			loc.setLayerCoordinates((*i));
 			int adjacentInt = m_searchspace->convertCoordToInt((*i));
 			if(m_searchspace->isInSearchSpace(loc)) {
-				if(adjacentInt == next || loc.getLayer()->cellContainsBlockingInstance(loc.getLayerCoordinates())) {
+				if((adjacentInt == m_next || loc.getLayer()->cellContainsBlockingInstance(loc.getLayerCoordinates())) &&
+					adjacentInt != m_destCoordInt) {
 					continue;
 				}
 
 				float hCost = m_heuristic->calculate((*i), destCoord);
-				float gCost = m_gCosts[next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
+				float gCost = m_gCosts[m_next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				if(m_sf[adjacentInt] == -1) {
 					m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(adjacentInt, gCost + hCost));
 					m_gCosts[adjacentInt] = gCost;
-					m_sf[adjacentInt] = next;
+					m_sf[adjacentInt] = m_next;
 				}
 				else if(gCost < m_gCosts[adjacentInt] && m_spt[adjacentInt] == -1) {
 					m_sortedfrontier.changeElementPriority(adjacentInt, gCost + hCost);
 					m_gCosts[adjacentInt] = gCost;
-					m_sf[adjacentInt] = next;
+					m_sf[adjacentInt] = m_next;
 				}
 			} 
 		}
 	}
 
 	RoutePatherSearch::Path RoutePatherSearch::calcPath() {
-		int current = m_searchspace->convertCoordToInt(m_to.getLayerCoordinates());
-		int end = m_searchspace->convertCoordToInt(m_from.getLayerCoordinates());
+		int current = m_destCoordInt;
+		int end = m_startCoordInt;
 		Path path;
 		//This assures that the agent always steps into the center of the cell.
 		Location to(m_to);
@@ -113,7 +114,7 @@ namespace FIFE {
 			newnode.setLayerCoordinates(currentCoord);
 			path.push_front(newnode);
 		}
-		path.pop_front();
+		path.front().setExactLayerCoordinates(m_from.getExactLayerCoordinates());
 		return path;
 	}
 }
