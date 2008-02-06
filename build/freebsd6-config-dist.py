@@ -1,5 +1,4 @@
 # Needed pkg-config additions:
-# lualib50 & lua
 # SDL_ttf
 # SDL_image
 # guichan, guichan_opengl & guichan_sdl
@@ -13,12 +12,7 @@ def addExtras(context):
 	context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
 	context.checkSimpleLib(['openal'], 'AL/al.h')
 
-	if context.env['script'] == 'lua':
-		context.env.Append(LIBS = ['lua'])
-		context.checkSimpleLib(['lua5.1'])
-		# context.checkSimpleLib(['lualib50', 'lua'], 'lualib.h')
-
-	context.checkSimpleLib(['sdl11'], 'SDL.h')
+	context.checkSimpleLib(['sdl11', 'sdl12', 'sdl'], 'SDL.h')
 	context.checkSimpleLib(['SDL_ttf'], 'SDL_ttf.h')
 	context.checkSimpleLib(['SDL_image'], 'SDL_image.h')
 	context.checkSimpleLib(['guichan'])
@@ -32,5 +26,5 @@ def addExtras(context):
 		context.env.Append(LIBPATH = ['/usr/X11R6/lib'])
 		context.checkSimpleLib(['guichan_opengl'])
 
-	# Caution: workaround for the linking order issues on FreeBSD; this is no perfect solution but it works at least
-	context.env.Append(LIBS = ['fife', 'lua'])
+	# FIXME: Is this still needed? Was originally used for a lua linking order workaround. Now that lua support is done we should remove it completely and see if it still builds fine.
+	context.env.Append(LIBS = ['fife'])
