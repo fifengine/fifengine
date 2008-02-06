@@ -65,6 +65,7 @@ namespace FIFE {
 					return -1;
 				}
 			}
+			return session_id;
 		}
 		if((instance->getLocation().getLayer() != target.getLayer() || target.getLayer()->cellContainsBlockingInstance(target.getLayerCoordinates()))) {
 			return -1;
@@ -103,6 +104,7 @@ namespace FIFE {
 				delete priority_session;
 				m_sessions.popElement();
 			} else if(priority_session->getSearchStatus() == Search::search_status_failed) {
+				invalidateSessionId(priority_session->getSessionId());
 				delete priority_session;
 				m_sessions.popElement();
 			}
