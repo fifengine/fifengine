@@ -11,7 +11,7 @@ FORMAT = '1.0'
 class ModelLoader(handler.ContentHandler):
 
 	def __init__(self, engine, source, content, state = 0, datastate = 0):
-		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SInstance, self.SObject, self.SAction = range(10)
+		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SLayer, self.SInstances, self.SInstance, self.SObject, self.SAction = range(9)
 
 		self.engine = engine
 		self.model = self.engine.getModel()
@@ -82,13 +82,11 @@ class ModelLoader(handler.ContentHandler):
 		self.state = self.SMap
 
 	def parse_metadata(self, attrs):
-		if not self.state in (self.SMap, self.SElevation, self.SLayer, self.SDataset,
+		if not self.state in (self.SMap, self.SLayer, self.SDataset,
 			self.SObject, self.SAction, self.SInstance): self._err('<metadata> declared in an invalid section.')
 
 		if (self.state == self.SMap):
 			self.datastack.append(self.map)
-		elif (self.state == self.SElevation):
-			self.datastack.append(self.elevation)
 		elif (self.state == self.SLayer):
 			self.datastack.append(self.layer)
 		elif (self.state == self.SDataset):
@@ -301,27 +299,8 @@ class ModelLoader(handler.ContentHandler):
 		except fife.Exception,e:
 			print e.getMessage()
 
-	def parse_elevation(self, attrs):
-		if self.state != self.SMap: self._err('<elevation> tag found outside a <map> section.')
-
-		id = 0
-		for attrName in attrs.keys():
-			if (attrName == "id"):
-				id = attrs.get(attrName)
-
-		if not id: self._err('Elevation declared without an identifier.')
-
-		try:
-			self.elevation = self.map.createElevation(str(id))
-		except fife.Exception, e:
-			print e.getMessage()
-			print 'The elevation ' + str(id) + ' already exists! Using existing elevation.'
-			self.elevation = self.map.getElevations('id', str(id))[0]
-
-		self.state = self.SElevation
-
 	def parse_camera(self, attrs):
-		if self.state != self.SElevation: self._err('<camera> tag found outside an <elevation> section.')
+		if self.state != self.SMap: self._err('<camera> tag found outside an <map> section.')
 
 		id = 0
 		zoom = 1
@@ -355,7 +334,7 @@ class ModelLoader(handler.ContentHandler):
 		if not (ref_cell_width and ref_cell_height): self._err(''.join(['Camera ', str(id), ' declared without reference cell dimensions.']))
 
 		try:
-			camera = self.engine.getView().addCamera(str(id), self.elevation.getLayers('id', str(ref_layer_id))[0],fife.Rect(*[int(c) for c in viewport.split(',')]),fife.ExactModelCoordinate(0,0,0))
+			camera = self.engine.getView().addCamera(str(id), self.map.getLayers('id', str(ref_layer_id))[0],fife.Rect(*[int(c) for c in viewport.split(',')]),fife.ExactModelCoordinate(0,0,0))
 
 			camera.setCellImageDimensions(int(ref_cell_width), int(ref_cell_height))
 			camera.setRotation(float(rotation))
@@ -365,7 +344,7 @@ class ModelLoader(handler.ContentHandler):
 			print e.getMessage()
 
 	def parse_layer(self, attrs):
-		if self.state != self.SElevation: self._err('<layer> tag found outside an <elevation> section.')
+		if self.state != self.SMap: self._err('<layer> tag found outside an <map> section.')
 
 		id = 0
 		cellgrid = 0
@@ -423,11 +402,11 @@ class ModelLoader(handler.ContentHandler):
 		cellgrid.setYShift(y_offset)
 
 		try:
-			self.layer = self.elevation.createLayer(str(id), cellgrid)
+			self.layer = self.map.createLayer(str(id), cellgrid)
 		except fife.Exception, e:
 			print e.getMessage()
 			print 'The layer ' + str(id) + ' already exists! Using existing layer.'
-			self.layer = self.elevation.getLayers('id', str(id))[0]
+			self.layer = self.map.getLayers('id', str(id))[0]
 		
 		strgy = fife.CELL_EDGES_ONLY
 		if pathing == "cell_edges_and_diagonals":
@@ -553,14 +532,11 @@ class ModelLoader(handler.ContentHandler):
 	def finish_map(self):
 		self.state = self.SModel
 
-	def finish_elevation(self):
-		self.state = self.SMap
-
 	def finish_camera(self):
 		pass
 
 	def finish_layer(self):
-		self.state = self.SElevation
+		self.state = self.SMap
 
 	def finish_instances(self):
 		self.state = self.SLayer

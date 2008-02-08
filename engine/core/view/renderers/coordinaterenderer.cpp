@@ -37,7 +37,6 @@
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
-#include "model/structures/elevation.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -64,7 +63,7 @@ namespace FIFE {
 
 
 	void CoordinateRenderer::adjustLayerArea() {
-		m_tmploc.setElevationCoordinates(m_c);
+		m_tmploc.setMapCoordinates(m_c);
 		ModelCoordinate c = m_tmploc.getLayerCoordinates();
 		m_layer_area.x = std::min(c.x, m_layer_area.x);
 		m_layer_area.w = std::max(c.x, m_layer_area.w);
@@ -82,13 +81,13 @@ namespace FIFE {
 
 		m_tmploc.setLayer(layer);
 		Rect cv = cam->getViewPort();
-		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x, cv.y));
+		m_c = cam->toMapCoordinates(ScreenPoint(cv.x, cv.y));
 		adjustLayerArea();
-		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x+cv.w, cv.y));
+		m_c = cam->toMapCoordinates(ScreenPoint(cv.x+cv.w, cv.y));
 		adjustLayerArea();
-		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x, cv.y+cv.h));
+		m_c = cam->toMapCoordinates(ScreenPoint(cv.x, cv.y+cv.h));
 		adjustLayerArea();
-		m_c = cam->toElevationCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h));
+		m_c = cam->toMapCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h));
 		adjustLayerArea();
 
 		Rect r = Rect();
@@ -96,7 +95,7 @@ namespace FIFE {
 			for (int y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
 				ModelCoordinate mc(x, y);
 				m_tmploc.setLayerCoordinates(mc);
-				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getElevationCoordinates());
+				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getMapCoordinates());
 				if ((drawpt.x >= cv.x) && (drawpt.x <= cv.x + cv.w) &&
 				    (drawpt.y >= cv.y) && (drawpt.y <= cv.y + cv.h)) {
 					std::stringstream ss;

@@ -99,16 +99,16 @@ namespace FIFE {
 		return squareGrid;
 	}
 
-	ExactModelCoordinate SquareGrid::toElevationCoordinates(const ExactModelCoordinate& layer_coords) {
+	ExactModelCoordinate SquareGrid::toMapCoordinates(const ExactModelCoordinate& layer_coords) {
 		return m_matrix * layer_coords;
 	}
 
-	ExactModelCoordinate SquareGrid::toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
-		return m_inverse_matrix * elevation_coord;
+	ExactModelCoordinate SquareGrid::toExactLayerCoordinates(const ExactModelCoordinate& map_coord) {
+		return m_inverse_matrix * map_coord;
 	}
 
-	ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& elevation_coord) {
-		ExactModelCoordinate dblpt = toExactLayerCoordinates(elevation_coord);
+	ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord) {
+		ExactModelCoordinate dblpt = toExactLayerCoordinates(map_coord);
 		ModelCoordinate result;
 		result.x = static_cast<int>(floor(dblpt.x));
 		result.y = static_cast<int>(floor(dblpt.y));

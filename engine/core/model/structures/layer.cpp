@@ -32,14 +32,14 @@
 
 #include "layer.h"
 #include "instance.h"
-#include "elevation.h"
+#include "map.h"
 #include "instancetree.h"
 
 namespace FIFE {
 
-	Layer::Layer(const std::string& identifier, Elevation* elevation, CellGrid* grid)
+	Layer::Layer(const std::string& identifier, Map* map, CellGrid* grid)
 		: AttributedClass(identifier),
-		m_elevation(elevation),
+		m_map(map),
 		m_instances_visibility(true),
 		m_instanceTree(new InstanceTree()),
 		m_grid(grid),

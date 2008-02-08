@@ -21,7 +21,7 @@ class World(EventListenerBase):
 		
 		
 	def reset(self):
-		self.map, self.elevation, self.agentlayer = None, None, None
+		self.map, self.agentlayer = None, None
 		self.cameras = {}
 		self.hero, self.girl, self.clouds, self.beekeepers = None, None, [], []
 		self.cur_cam2_x, self.initial_cam2_x, self.cam2_scrolling_right = 0, 0, True
@@ -31,13 +31,12 @@ class World(EventListenerBase):
 		self.filename = filename
 		self.reset()
 		self.map = loadMapFile(filename, self.engine)
-		self.elevation = self.map.getElevations("id", "TechdemoMapElevation")[0]
-		self.agentlayer = self.elevation.getLayers("id", "TechdemoMapObjectLayer")[0]
+		self.agentlayer = self.map.getLayers("id", "TechdemoMapObjectLayer")[0]
 		self.hero = Hero(self.model, 'PC', self.agentlayer)
 		self.hero.start()
 		self.girl = Girl(self.model, 'NPC:girl', self.agentlayer)
 		self.girl.start()
-		cloudlayer = self.elevation.getLayers("id", "TechdemoMapCloudLayer")[0]
+		cloudlayer = self.map.getLayers("id", "TechdemoMapCloudLayer")[0]
 		self.clouds = create_anonymous_agents(self.model, 'Cloud', cloudlayer, Cloud)
 		for cloud in self.clouds:
 			cloud.start(0.1, 0.05)
@@ -56,13 +55,13 @@ class World(EventListenerBase):
 		
 		renderer = self.view.getRenderer('CoordinateRenderer')
 		renderer.clearActiveLayers()
-		renderer.addActiveLayer(self.elevation.getLayers("id", TDS.CoordinateLayerName)[0])
+		renderer.addActiveLayer(self.map.getLayers("id", TDS.CoordinateLayerName)[0])
 		
 		renderer = self.view.getRenderer('QuadTreeRenderer')
 		renderer.setEnabled(True)
 		renderer.clearActiveLayers()
 		if TDS.QuadTreeLayerName:
-			renderer.addActiveLayer(self.elevation.getLayers("id", TDS.QuadTreeLayerName)[0])
+			renderer.addActiveLayer(self.map.getLayers("id", TDS.QuadTreeLayerName)[0])
 			
 		self.cam2_loc = self.cameras['small'].getLocation()
 		self.cam2_loc.setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
@@ -104,13 +103,13 @@ class World(EventListenerBase):
 	def mouseReleased(self, evt):
 		if (evt.getButton() == fife.IMouseEvent.LEFT):
 			newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
-			dy = -(newTarget.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getElevationCoordinates()).y)
+			dy = -(newTarget.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getMapCoordinates()).y)
 			newTarget.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
-			target_elevcoord = self.cameras['main'].toElevationCoordinates(newTarget)
-			target_elevcoord.z = 0
+			target_mapcoord = self.cameras['main'].toMapCoordinates(newTarget)
+			target_mapcoord.z = 0
 			l = fife.Location()
 			l.setLayer(self.agentlayer)
-			l.setElevationCoordinates(target_elevcoord)
+			l.setMapCoordinates(target_mapcoord)
 			self.hero.run(l)
 
 	def onConsoleCommand(self, command):

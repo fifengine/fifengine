@@ -34,7 +34,6 @@
 #include "util/fife_math.h"
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
-#include "model/structures/elevation.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -91,8 +90,8 @@ namespace FIFE {
 			ModelCoordinate prevLayerCoord;
 			for (int y = 0; y < rect.h; y++) {
 				for (int x = 0; x < rect.w; x++) {
-					ExactModelCoordinate elevCoord = cam->toElevationCoordinates(ScreenPoint(x, y));
-					ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
+					ExactModelCoordinate mapCoord = cam->toMapCoordinates(ScreenPoint(x, y));
+					ModelCoordinate layerCoord = cg->toLayerCoordinates(mapCoord);
 
 					if (prevLayerCoord != layerCoord) {
 						data[x + rect.w * y] = edge_pixel;
@@ -104,8 +103,8 @@ namespace FIFE {
 
 			for (int x = 0; x < rect.w; x++) {
 				for (int y = 0; y < rect.h; y++) {
-					ExactModelCoordinate elevCoord = cam->toElevationCoordinates(ScreenPoint(x, y));
-					ModelCoordinate layerCoord = cg->toLayerCoordinates(elevCoord);
+					ExactModelCoordinate mapCoord = cam->toMapCoordinates(ScreenPoint(x, y));
+					ModelCoordinate layerCoord = cg->toLayerCoordinates(mapCoord);
 
 					if (prevLayerCoord != layerCoord) {
 						data[x + rect.w * y] = edge_pixel;

@@ -212,8 +212,8 @@ namespace FIFE {
 			m_actioninfo->m_pather_session_id);
 		m_location.getLayer()->getInstanceTree()->removeInstance(this);
 		m_location = nextLocation;
-		ExactModelCoordinate a = nextLocation.getElevationCoordinates();
-		ExactModelCoordinate b = m_actioninfo->m_target->getElevationCoordinates();
+		ExactModelCoordinate a = nextLocation.getMapCoordinates();
+		ExactModelCoordinate b = m_actioninfo->m_target->getMapCoordinates();
 		m_location.getLayer()->getInstanceTree()->addInstance(this);
 		// return if we are close enough to target to stop
 		if(m_actioninfo->m_pather_session_id == -1) {

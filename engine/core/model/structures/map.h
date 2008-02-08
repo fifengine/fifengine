@@ -35,24 +35,19 @@
 #include "util/attributedclass.h"
 
 #include "location.h"
-#include "elevation.h"
 
 namespace FIFE {
 
-	class Elevation;
+	class Layer;
+	class CellGrid;
 
 	class Dataset;
 
-	/** A container of \c Elevation(s).
+	/** A container of \c Layer(s).
 	 *
-	 * The actual data is contained in \c Elevation objects; only one
-	 * \c Elevation can be displayed at any time.
+	 * The actual data is contained in \c Layer objects
 	 *
-	 * Fallout legacy: A map (file or this object) contains a number of
-	 * levels in one file (to switch between some level w/o loading).
-	 * This has nothing to do with height-levels.
-	 *
-	 * @see MapElevation
+	 * @see Layer
 	 * @see MapView
 	 * @see MapLoader
 	 */
@@ -82,34 +77,43 @@ namespace FIFE {
 			 */
 			std::list<Dataset*>  getDatasetsRec();
 
-			/** Add an elevation to this map, and get a pointer
-			 * to it; the returned pointer is owned by the Map
-			 * so don't delete it!
+			/** Add a Layer to this Map. Map owns
+			 * the returned pointer to the new Layer, so don't
+			 * delete it!
 			 */
-			Elevation* createElevation(const std::string& identifier);
-			
-			/** Remove an elevation from this map
-			 */
-			void deleteElevation(Elevation*);
+			Layer* createLayer(const std::string& identifier, CellGrid* grid);
 
-			/** Get the elevations on this map.
+			/** Delete a layer from the map
 			 */
-			std::list<Elevation*> getElevations() const;
+			void deleteLayer(Layer*);
 
-			/** Get a set of elevations by a value.
+			/** Get the layers on this map.
+			 */
+			std::list<Layer*> getLayers() const;
+
+			/** Get a set of layers by a value.
 			 *
 			 * @param the field to search on
 			 * @param the value to be searched for in the field
 			 */
-			std::list<Elevation*> getElevations(const std::string& field, const std::string& value) const;
+			std::list<Layer*> getLayers(const std::string& field, const std::string& value) const;
 
-			/** Return the number of elevations on this map
+			/** Get all layers
 			 */
-			size_t getNumElevations() const;
+			const std::vector<Layer*>& getLayers() { return m_layers; }
 
-			/** Remove all elevations from a map
+			/** Get the overall number of layers
 			 */
-			void deleteElevations();
+			size_t getNumLayers() const;
+
+			/** Delete all layers from the map
+			 */
+			void deleteLayers();
+
+			/** Maps coordinate from one layer to another
+			 */
+			void getMatchingCoordinates(const ModelCoordinate& coord_to_map, const Layer* from_layer, 
+				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
 
 			/** Called periodically to update events on map
 			 */
@@ -121,7 +125,7 @@ namespace FIFE {
 
 			std::vector<Dataset*> m_datasets;
 
-			std::vector<Elevation*> m_elevations;
+			std::vector<Layer*> m_layers;
 
 			Map(const Map& map);
 			Map& operator=(const Map& map);

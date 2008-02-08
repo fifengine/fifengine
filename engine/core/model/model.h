@@ -38,6 +38,7 @@
 namespace FIFE {
 
 	class MetaModel;
+	class AbstractPather;
 
 	/**
 	 * A model is a facade for everything in the model.

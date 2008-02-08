@@ -33,7 +33,6 @@
 #include "util/fife_math.h"
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
-#include "model/structures/elevation.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -134,12 +133,12 @@ namespace FIFE {
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, instance->getLocation().getLayerCoordinates());
 			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toElevationCoordinates(*it));
+			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
 			Point pt1(firstpt.x, firstpt.y);
 			Point pt2;
 			++it;
 			for (; it != vertices.end(); it++) {
-				ScreenPoint pts = cam->toScreenCoordinates(cg->toElevationCoordinates(*it));
+				ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
 				pt2.x = pts.x; pt2.y = pts.y;
 				Point cpt1 = pt1;
 				Point cpt2 = pt2;

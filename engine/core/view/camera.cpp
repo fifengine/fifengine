@@ -63,8 +63,8 @@ namespace FIFE {
 	}
 
 	int Camera::getAngleBetween(const Location& loc1, const Location& loc2) {
-		ScreenPoint pt1 = this->toScreenCoordinates(loc1.getElevationCoordinates());
-		ScreenPoint pt2 = this->toScreenCoordinates(loc2.getElevationCoordinates());
+		ScreenPoint pt1 = this->toScreenCoordinates(loc1.getMapCoordinates());
+		ScreenPoint pt2 = this->toScreenCoordinates(loc2.getMapCoordinates());
 		double dy = pt2.y - pt1.y;
 		double dx = pt2.x - pt1.x;
 
@@ -208,7 +208,7 @@ namespace FIFE {
 		if (m_location.getLayer()) {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
 			if (cg) {
-				ExactModelCoordinate pt = m_location.getElevationCoordinates();
+				ExactModelCoordinate pt = m_location.getMapCoordinates();
 				m_matrix.applyTranslate( -pt.x *m_reference_scale,-pt.y *m_reference_scale, 0);
 			}
 		}
@@ -219,7 +219,7 @@ namespace FIFE {
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
-	ExactModelCoordinate Camera::toElevationCoordinates(ScreenPoint screen_coords) {
+	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords) {
 		screen_coords.x -= m_viewport.w / 2;
 		screen_coords.y -= m_viewport.h / 2;
 
@@ -252,7 +252,7 @@ namespace FIFE {
 		mtx.applyRotate(m_tilt, 1.0, 0.0, 0.0);
 		double x1, x2, y1, y2;
 		for (unsigned int i = 0; i < vertices.size(); i++) {
-			vertices[i] = cg->toElevationCoordinates(vertices[i]);
+			vertices[i] = cg->toMapCoordinates(vertices[i]);
 			vertices[i] = mtx * vertices[i];
 			if (i == 0) {
 				x1 = x2 = vertices[0].x;
@@ -275,9 +275,9 @@ namespace FIFE {
 	void Camera::getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
 		ScreenPoint pt(screen_coords);
-		int dy = -(pt.y - toScreenCoordinates(getLocation().getElevationCoordinates()).y);
+		int dy = -(pt.y - toScreenCoordinates(getLocation().getMapCoordinates()).y);
 		pt.z = (int)(tan(getTilt()* (M_PI / 180.0)) * dy);
-		ExactModelCoordinate ece = toElevationCoordinates(pt);
+		ExactModelCoordinate ece = toMapCoordinates(pt);
 		ModelCoordinate ecl = layer.getCellGrid()->toLayerCoordinates(ece);
 		InstanceTree* itree = layer.getInstanceTree();
 		itree->findInstances(ecl, 0, 0, instances);

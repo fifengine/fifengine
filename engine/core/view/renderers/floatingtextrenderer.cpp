@@ -34,7 +34,6 @@
 #include "util/logger.h"
 #include "video/fonts/abstractfont.h"
 #include "video/image.h"
-#include "model/structures/elevation.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"

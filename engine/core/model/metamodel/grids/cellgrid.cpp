@@ -72,8 +72,8 @@ namespace FIFE {
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
-	ExactModelCoordinate CellGrid::toElevationCoordinates(const ModelCoordinate& layer_coords) {
-		return toElevationCoordinates(intPt2doublePt(layer_coords));
+	ExactModelCoordinate CellGrid::toMapCoordinates(const ModelCoordinate& layer_coords) {
+		return toMapCoordinates(intPt2doublePt(layer_coords));
 	}
 
 	int CellGrid::orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2) {

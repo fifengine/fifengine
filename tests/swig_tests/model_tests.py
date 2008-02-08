@@ -50,39 +50,13 @@ class TestModel(unittest.TestCase):
 		map = self.model.createMap("map005")
 		map.set("Name", "MyMap")
 
-		elev1 = map.createElevation("elevation001")
-		elev2 = map.createElevation("elevation002")
-
-		elev1.set("Name", "Elev1")
-		elev2.set("Name", "Elev2")
-
-		self.assertEqual(elev1.get("Name"), "Elev1")
-		self.assertEqual(elev2.get("Name"), "Elev2")
-
-		query = map.getElevations("Name", "Elev1")
-		self.assertEqual(len(query), 1)
-
-		query = map.getElevations("Name", "Elev2")
-		self.assertEqual(len(query), 1)
-
-		self.assertEqual(map.getNumElevations(), 2)
-
-		map.deleteElevations()
-		self.assertEqual(map.getNumElevations(), 0)
-
-	def testElevations(self):
-		map = self.model.createMap("map006")
-		elev = map.createElevation("elevation003")
-		elev.set("Name", "MyElevation")
-
-		#self.assertEqual(elev.getMap(), map)
-		self.assertEqual(elev.getNumLayers(), 0)
+		self.assertEqual(map.getNumLayers(), 0)
 
 		dat = self.metamodel.createDataset("dataset001")
 		grid = fife.SquareGrid()
 
-		layer1 = elev.createLayer("layer001", grid)
-		layer2 = elev.createLayer("layer002", grid)
+		layer1 = map.createLayer("layer001", grid)
+		layer2 = map.createLayer("layer002", grid)
 
 		layer1.set("Name", "Layer1")
 		layer2.set("Name", "Layer2")
@@ -90,17 +64,16 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(layer1.get("Name"), "Layer1")
 		self.assertEqual(layer2.get("Name"), "Layer2")
 
-		self.assertEqual(len(elev.getLayers("Name", "Layer1")), 1)
+		self.assertEqual(len(map.getLayers("Name", "Layer1")), 1)
 
-		self.assertEqual(elev.getNumLayers(), 2)
-		elev.deleteLayer(layer2)
-		self.assertEqual(elev.getNumLayers(), 1)
-		elev.deleteLayers()
-		self.assertEqual(elev.getNumLayers(), 0)
+		self.assertEqual(map.getNumLayers(), 2)
+		map.deleteLayer(layer2)
+		self.assertEqual(map.getNumLayers(), 1)
+		map.deleteLayers()
+		self.assertEqual(map.getNumLayers(), 0)
 
 	def testLayers(self):
-		map = self.model.createMap("map007")
-		elev = map.createElevation("elevation004")
+		map = self.model.createMap("map006")
 
 		dat = self.metamodel.createDataset("dataset002")
 		grid = fife.SquareGrid()
@@ -112,10 +85,10 @@ class TestModel(unittest.TestCase):
 		self.assertEqual(obj1.get("id"), "object001")
 		self.assertEqual(obj2.get("id"), "object002")
 
-		layer = elev.createLayer("layer003", grid)
+		layer = map.createLayer("layer003", grid)
 
 		self.assertEqual(layer.hasInstances(), 0)
-		#self.assertEqual(layer.getElevation(), elev)
+		#self.assertEqual(layer.getMap(), map)
 
 		inst = layer.createInstance(obj1, fife.ModelCoordinate(4,4))
 		layer.createInstance(obj2, fife.ModelCoordinate(5,6))
@@ -264,8 +237,8 @@ class InstanceListener(fife.InstanceListener):
 class ActivityTests(unittest.TestCase):
 	def setUp(self):
 		grid = fife.HexGrid()
-		elev = fife.Elevation("elevation010")
-		self.layer = elev.addLayer("layer010", grid)
+		map = fife.Map("map007")
+		self.layer = map.addLayer("layer010", grid)
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.layer)

@@ -40,7 +40,7 @@
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
-#include "model/structures/elevation.h"
+#include "model/structures/map.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -152,7 +152,7 @@ namespace FIFE {
 			for (; cam_it != m_cameras.end(); ++cam_it) {
 				const Location& loc = (*cam_it)->getLocation();
 				r_it->second->reset();
-				r_it->second->activateAllLayers(loc.getElevation());
+				r_it->second->activateAllLayers(loc.getMap());
 			}
 		}
 	}
@@ -170,15 +170,15 @@ namespace FIFE {
 			(*cam_it)->update();
 
 			const Location& loc = (*cam_it)->getLocation();
-			Elevation* elev = loc.getElevation();
-			if (!elev) {
-				FL_ERR(_log, "No elevation for camera found");
+			Map* map = loc.getMap();
+			if (!map) {
+				FL_ERR(_log, "No map for camera found");
 				continue;
 			}
 			// update each layer
 			m_renderbackend->pushClipArea((*cam_it)->getViewPort());
 
-			const std::vector<Layer*>& layers = elev->getLayers();
+			const std::vector<Layer*>& layers = map->getLayers();
 			std::vector<Layer*>::const_iterator layer_it = layers.begin();
 			for (;layer_it != layers.end(); ++layer_it) {
 
@@ -200,7 +200,7 @@ namespace FIFE {
 						exit(0);
 						return;
 					}
-					ScreenPoint drawpt = (*cam_it)->toScreenCoordinates( instance->getLocation().getElevationCoordinates() );
+					ScreenPoint drawpt = (*cam_it)->toScreenCoordinates( instance->getLocation().getMapCoordinates() );
 					Image* image = NULL;
 					Action* action = instance->getCurrentAction();
 					int angle = (*cam_it)->getAngleBetween(instance->getLocation(), instance->getFacingLocation());

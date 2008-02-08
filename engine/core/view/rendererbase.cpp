@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/structures/layer.h"
-#include "model/structures/elevation.h"
+#include "model/structures/map.h"
 #include "util/logger.h"
 #include "rendererbase.h"
 
@@ -79,10 +79,10 @@ namespace FIFE {
 		return std::find(m_active_layers.begin(), m_active_layers.end(), layer) != m_active_layers.end();
 	}
 	
-	void RendererBase::activateAllLayers(Elevation* elevation) {
+	void RendererBase::activateAllLayers(Map* map) {
 		clearActiveLayers();
 		
-		const std::vector<Layer*>& tmp = elevation->getLayers();
+		const std::vector<Layer*>& tmp = map->getLayers();
 		std::vector<Layer*>::const_iterator it = tmp.begin();
 		for (; it != tmp.end(); ++it) {
 			addActiveLayer(*it);

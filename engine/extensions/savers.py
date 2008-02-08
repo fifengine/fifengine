@@ -8,7 +8,7 @@ MAPFORMAT = '1.0'
 class ModelSaver:
 
 	def __init__(self, filepath, engine, state = 0, datastate = 0):
-		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SElevation, self.SLayer, self.SInstances, self.SObject, self.SAction = range(9)
+		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = range(8)
 
 		self.engine = engine
 		self.model = self.engine.getModel()
@@ -64,7 +64,8 @@ class ModelSaver:
 		self.state = self.SMap
 		self.write_metadata(map)
 		self.write_datasets(map)
-		self.write_elevations(map)
+		self.write_layers(map)
+		self.write_camera(map)
 		self.endElement('map')
 
 	def write_metadata(self, parent):
@@ -106,21 +107,6 @@ class ModelSaver:
 			self.xmlout.endElementNS((None, 'dataset'), 'dataset')
 			self.file.write('\n')
 
-	def write_elevations(self, map):
-		for elev in map.getElevations():
-			attr_vals = {
-				(None, 'id'): elev.Id(),
-			}
-			attr_names = {
-				(None, 'id'): 'id',
-			}
-			attrs = AttributesNSImpl(attr_vals, attr_names)
-			self.startElement('elevation', attrs)
-			self.write_metadata(elev)
-			self.write_layers(elev)
-			self.write_camera(elev)
-			self.endElement('elevation')
-
 	def pathing_val_to_str(self, val):
 		if val == fife.CELL_EDGES_AND_DIAGONALS:
 			return "cell_edges_and_diagonals"
@@ -128,8 +114,8 @@ class ModelSaver:
 			return "freeform"
 		return "cell_edges_only"
 	
-	def write_layers(self, elevation):
-		for layer in elevation.getLayers():
+	def write_layers(self, map):
+		for layer in map.getLayers():
 			cellgrid = layer.getCellGrid()
 			attr_vals = {
 				(None, 'id'): layer.Id(),
@@ -190,12 +176,12 @@ class ModelSaver:
 
 		self.endElement('instances')
 
-	# Save the linked camera of an elevation.
-	def write_camera( self, elev ):
+	# Save the linked camera of a map.
+	def write_camera( self, map ):
 		cameralist = self.engine.getView().getCameras()
 
 		for cam in cameralist:
-			if cam.getLocation().getElevation().Id() == elev.Id():
+			if cam.getLocation().getMap().Id() == map.Id():
 				celldimensions = cam.getCellImageDimensions()
 				viewport = cam.getViewPort();
 

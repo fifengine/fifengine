@@ -163,8 +163,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 
 	def viewMap(self, mapid):
 		self.map = self.engine.getModel().getMaps('id', mapid)[0]
-		self.elevation = self.map.getElevations()[0]
-		self.layer = self.elevation.getLayers()[0]
+		self.layer = self.map.getLayers()[0]
 		self.adjust_views()
 		self.active = True
 
@@ -184,9 +183,9 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 		self.new_view = True
 
 	def _set_camera(self, viewport):
-		if self.elevation:
-			# grab a camera associated with this elevation
-			self.camera = filter(lambda c: c.getLocation().getElevation().Id() == self.elevation.Id(), self.engine.getView().getCameras())[0]
+		if self.map:
+			# grab a camera associated with this map
+			self.camera = filter(lambda c: c.getLocation().getMap().Id() == self.map.Id(), self.engine.getView().getCameras())[0]
 
 		if not self.camera:
 			raise RuntimeError, "No default camera view found for this map: " + self.map.Id()

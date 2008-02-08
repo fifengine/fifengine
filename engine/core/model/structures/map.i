@@ -8,16 +8,16 @@
 %include "util/attributedclass.i"
 
 namespace FIFE {
-  class Elevation;
+  class Layer;
 }
 
 namespace std {
-  %template(ElevationList) list<FIFE::Elevation*>;
+  %template(LayerList) list<FIFE::Layer*>;
 }
 
 namespace FIFE {
 
-  class Elevation;
+  class Layer;
 
   class Dataset;
 
@@ -31,14 +31,14 @@ namespace FIFE {
 			std::list<Dataset*> getDatasets();
 			std::list<Dataset*> getDatasetsRec();
 
-			Elevation* createElevation(const std::string& identifier);
-			void deleteElevation(Elevation*);
+			Layer* createLayer(const std::string& identifier, CellGrid* grid);
+			void deleteLayer(Layer* index);
 
-			std::list<Elevation*> getElevations() const;
-			std::list<Elevation*> getElevations(const std::string& field, const std::string& value) const;
+			std::list<Layer*> getLayers() const;
+			std::list<Layer*> getLayers(const std::string& field, const std::string& value) const;
 
-			size_t getNumElevations() const;
-			void deleteElevations();
+			size_t getNumLayers() const;
+			void deleteLayers();
 
 			void update();
 	};

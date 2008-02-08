@@ -10,10 +10,9 @@ class ActionTests(unittest.TestCase):
 
 		self.engine = getEngine()
 		_map = self.engine.getModel().createMap("map001")
-		elev = _map.createElevation("elevation001")
 		
 		self.grid = fife.SquareGrid(True)
-		self.layer = elev.createLayer("Layer001", self.grid)
+		self.layer = _map.createLayer("Layer001", self.grid)
 		
 		self.target = fife.Location()
 		self.target.setLayer(self.layer)

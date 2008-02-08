@@ -30,7 +30,7 @@
 // Second block: files included from the same folder
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
-#include "model/structures/elevation.h"
+#include "model/structures/map.h"
 
 #include "searchspace.h"
 
@@ -39,8 +39,8 @@ namespace FIFE {
 	SearchSpace::SearchSpace(Layer* layer) 
 	: m_upperX(0), m_upperY(0), m_lowerX(0), m_lowerY(0), m_layer(layer) {
 		
-		Elevation* elevation = layer->getElevation();
-		const std::vector<Layer*>& layers = elevation->getLayers();
+		Map* map = layer->getMap();
+		const std::vector<Layer*>& layers = map->getLayers();
 		ModelCoordinate min, max;
 
 		for(std::vector<Layer*>::const_iterator i = layers.begin();

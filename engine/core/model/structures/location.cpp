@@ -34,7 +34,6 @@
 
 #include "layer.h"
 #include "instance.h"
-#include "elevation.h"
 
 namespace FIFE {
 	static std::string INVALID_LAYER_SET = "Cannot set layer coordinates, given layer is not initialized properly";
@@ -75,11 +74,11 @@ namespace FIFE {
 		return !(*this == loc);
 	}
 	
-	Elevation* Location::getElevation() const {
+	Map* Location::getMap() const {
 		if (!m_layer) {
 			return NULL;
 		}
-		return m_layer->getElevation();
+		return m_layer->getMap();
 	}
 		
 	void Location::setLayer(Layer* layer) {
@@ -101,7 +100,7 @@ namespace FIFE {
 		setExactLayerCoordinates(intPt2doublePt(coordinates));
 	}
 	
-	void Location::setElevationCoordinates(const ExactModelCoordinate& coordinates) {
+	void Location::setMapCoordinates(const ExactModelCoordinate& coordinates) {
 		if (!isValid()) {
 			throw NotSet(INVALID_LAYER_SET);
 		}
@@ -116,8 +115,8 @@ namespace FIFE {
 		return getLayerCoordinates(m_layer);
 	}
 	
-	ExactModelCoordinate Location::getElevationCoordinates() const {
-		return m_layer->getCellGrid()->toElevationCoordinates(m_exact_layer_coords);
+	ExactModelCoordinate Location::getMapCoordinates() const {
+		return m_layer->getCellGrid()->toMapCoordinates(m_exact_layer_coords);
 	}
 	
 	bool Location::isValid() const {
@@ -138,7 +137,7 @@ namespace FIFE {
 		}
 		CellGrid* cg1 = m_layer->getCellGrid();
 		CellGrid* cg2 = layer->getCellGrid();
-		return cg2->toLayerCoordinates(cg1->toElevationCoordinates(m_exact_layer_coords));
+		return cg2->toLayerCoordinates(cg1->toMapCoordinates(m_exact_layer_coords));
 	}
 	
 	double Location::getCellOffsetDistance() const {

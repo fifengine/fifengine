@@ -43,9 +43,9 @@ namespace FIFE {
 		const std::string& getName() const;
 		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		unsigned int getCellSideCount() const { return 6; }
-		ExactModelCoordinate toElevationCoordinates(const ExactModelCoordinate& layer_coords);
-		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& elevation_coord);
-		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord);
+		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
+		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
+		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
 		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
 	private:
 		double getXZigzagOffset(double y);

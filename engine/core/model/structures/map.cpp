@@ -33,9 +33,8 @@
 #include "util/purge.h"
 #include "model/metamodel/dataset.h"
 
-#include "elevation.h"
-#include "layer.h"
 #include "map.h"
+#include "layer.h"
 
 namespace FIFE {
 
@@ -44,7 +43,7 @@ namespace FIFE {
 	}
 
 	Map::~Map() {
-		deleteElevations();
+		deleteLayers();
 	}
 
 	void Map::addDataset(Dataset* dataset) {
@@ -83,22 +82,22 @@ namespace FIFE {
 		return datasets;
 	}
 
-	std::list<Elevation*> Map::getElevations() const {
-		std::list<Elevation*> elevs;
-								
-		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
-		for(; it != m_elevations.end(); ++it) {
-			elevs.push_back(*it);
+	std::list<Layer*> Map::getLayers() const {
+		std::list<Layer*> layers;
+
+		std::vector<Layer*>::const_iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			layers.push_back(*it);
 		}
-		
-		return elevs;
+
+		return layers;
 	}
 
-	std::list<Elevation*> Map::getElevations(const std::string& field, const std::string& value) const {
-		std::list<Elevation*> matches;
+	std::list<Layer*> Map::getLayers(const std::string& field, const std::string& value) const {
+		std::list<Layer*> matches;
 
-		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
-		for(; it != m_elevations.end(); ++it) {
+		std::vector<Layer*>::const_iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
 			if((*it)->get(field) == value)
 				matches.push_back(*it);
 		}
@@ -106,42 +105,41 @@ namespace FIFE {
 		return matches;
 	}
 
+	size_t Map::getNumLayers() const {
+		return m_layers.size();
+	}
 
-	Elevation* Map::createElevation(const std::string& identifier) {
-		std::vector<Elevation*>::const_iterator it = m_elevations.begin();
-		for(; it != m_elevations.end(); ++it) {
+	Layer* Map::createLayer(const std::string& identifier, CellGrid* grid) {
+		std::vector<Layer*>::const_iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
 			if(identifier == (*it)->Id())
 				throw NameClash(identifier);
 		}
 
-		Elevation* elevation = new Elevation(identifier, this);
-		m_elevations.push_back(elevation);
-		return elevation;
+		Layer* layer = new Layer(identifier, this, grid);
+		m_layers.push_back(layer);
+		return layer;
 	}
-	
-	void Map::deleteElevation(Elevation* elevation) {
-		std::vector<Elevation*>::iterator it = m_elevations.begin();
-		for(; it != m_elevations.end(); ++it) {
-			if(*it == elevation) {
+
+	void Map::deleteLayer(Layer* layer) {
+		std::vector<Layer*>::iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			if((*it) == layer) {
 				delete *it;
-				m_elevations.erase(it);
+				m_layers.erase(it);
 				return ;
 			}
 		}
 	}
 
-	size_t Map::getNumElevations() const {
-		return m_elevations.size();
-	}
-
-	void Map::deleteElevations() {
-		purge(m_elevations);
-		m_elevations.clear();
+	void Map::deleteLayers() {
+		purge(m_layers);
+		m_layers.clear();
 	}
 
 	void Map::update() {
-		std::vector<Elevation*>::iterator it = m_elevations.begin();
-		for(; it != m_elevations.end(); ++it) {
+		std::vector<Layer*>::iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
 			(*it)->update();
 		}
 	}

@@ -7,7 +7,7 @@ namespace FIFE {
 	class Camera;
 	class Layer;
 	class Instance;
-	class Elevation;
+	class Map;
 	
 	class RendererBase {
 	public:
@@ -21,6 +21,6 @@ namespace FIFE {
 		void addActiveLayer(Layer* layer);
 		void removeActiveLayer(Layer* layer);
 		void clearActiveLayers();
-		void activateAllLayers(Elevation* elevation);
+		void activateAllLayers(Map* map);
 	};
 }

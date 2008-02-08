@@ -33,7 +33,6 @@
 #include "util/fife_math.h"
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
-#include "model/structures/elevation.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -76,13 +75,13 @@ namespace FIFE {
 		CellGrid *cg = m_layer->getCellGrid(); ///we have checked for null pointer in  quadtreerenderer::render().. no need to check again
 
 
-		ExactModelCoordinate emc= cg->toElevationCoordinates(ExactModelCoordinate( x,y) );//0.5 for each cell's half-width
+		ExactModelCoordinate emc= cg->toMapCoordinates(ExactModelCoordinate( x,y) );//0.5 for each cell's half-width
 		ScreenPoint scrpt1 =m_camera->toScreenCoordinates( emc );
-		emc= cg->toElevationCoordinates(ExactModelCoordinate( x,y+size) );// this size usage is wrong.. me thinks
+		emc= cg->toMapCoordinates(ExactModelCoordinate( x,y+size) );// this size usage is wrong.. me thinks
 		ScreenPoint scrpt2 =m_camera->toScreenCoordinates( emc );
-		emc= cg->toElevationCoordinates(ExactModelCoordinate( x+size,y) );
+		emc= cg->toMapCoordinates(ExactModelCoordinate( x+size,y) );
 		ScreenPoint scrpt3 =m_camera->toScreenCoordinates( emc );
-		emc= cg->toElevationCoordinates(ExactModelCoordinate( x+size,y+size) );
+		emc= cg->toMapCoordinates(ExactModelCoordinate( x+size,y+size) );
 		ScreenPoint scrpt4 =m_camera->toScreenCoordinates( emc );
 
 		m_renderbackend->drawLine( Point(scrpt1.x,scrpt1.y) , Point(scrpt2.x,scrpt2.y), 255, 255, 255);

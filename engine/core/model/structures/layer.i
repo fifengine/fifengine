@@ -12,7 +12,7 @@
 
 namespace FIFE {
 
-	class Elevation;
+	class Map;
 	class Selection;
 	class Instance;
 	class Object;
@@ -26,12 +26,12 @@ namespace FIFE {
 
 	class Layer : public AttributedClass {
 		public:
-			Layer(const std::string& identifier, Elevation* elevation, CellGrid* geometry);
+			Layer(const std::string& identifier, Map* map, CellGrid* geometry);
 			~Layer();
 
 			CellGrid* getCellGrid() const { return m_grid; }
 
-			Elevation* getElevation();
+			Map* getMap();
 			bool hasInstances() const;
 			Instance* createInstance(Object* object, const ModelCoordinate& p, const std::string& id="");
 			Instance* createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");

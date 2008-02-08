@@ -3,7 +3,7 @@
 		<VBox name="Metadata Properties">
 		</VBox>
 		<VBox>
-			<Button name="elevButton" text="Edit Elevation"/>
+			<Button name="layerButton" text="Edit Layer"/>
 			<Button name="datButton" text="View Dataset"/>
 			<Spacer /> 		
 			<Button name="closeButton" text="Close"/>

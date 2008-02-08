@@ -83,25 +83,25 @@ namespace FIFE {
 		 */
 		virtual unsigned int getCellSideCount() const = 0;
 
-		/** Transforms given point from layer coordinates to elevation coordinates
-		 *  @return point in elevation coordinates
+		/** Transforms given point from layer coordinates to map coordinates
+		 *  @return point in map coordinates
 		 */
-		ExactModelCoordinate toElevationCoordinates(const ModelCoordinate& layer_coords);
+		ExactModelCoordinate toMapCoordinates(const ModelCoordinate& layer_coords);
 
-		/** Transforms given point from layer coordinates to elevation coordinates
-		 *  @return point in elevation coordinates
+		/** Transforms given point from layer coordinates to map coordinates
+		 *  @return point in map coordinates
 		 */
-		virtual ExactModelCoordinate toElevationCoordinates(const ExactModelCoordinate& layer_coords) = 0;
+		virtual ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords) = 0;
 		
-		/** Transforms given point from elevation coordinates to layer coordinates
+		/** Transforms given point from map coordinates to layer coordinates
 		 *  @return point in layer coordinates
 		 */
-		virtual ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& elevation_coord) = 0;
+		virtual ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord) = 0;
 
-		/** Transforms given point from elevation coordinates to layer coordinates
+		/** Transforms given point from map coordinates to layer coordinates
 		 *  @return point in layer coordinates
 		 */
-		virtual ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& elevation_coord) = 0;
+		virtual ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord) = 0;
 
 		/** Fills given point vector with vertices from selected cell
 		 *  @param vtx vertices for given cell
@@ -110,7 +110,7 @@ namespace FIFE {
 		virtual void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) = 0;
 
 		/** Set the cellgrid x shift 
-		 *  @param shift The shift in elevation coords
+		 *  @param shift The shift in map coords
 		 */
 		void setXShift(const double& xshift) { 
 			m_xshift = xshift; 
@@ -123,7 +123,7 @@ namespace FIFE {
 		const double getXShift() const { return m_xshift; }
 
 		/** Set the cellgrid y shift 
-		 *  @param shift The shift in elevation coords
+		 *  @param shift The shift in map coords
 		 */
 		void setYShift(const double yshift) {
 			m_yshift = yshift; 
@@ -131,7 +131,7 @@ namespace FIFE {
 		}
 
 		/** Get the cellgrid x shift 
-		 *  @return The x shift in elevation coords
+		 *  @return The x shift in map coords
 		 */
 		const double getYShift() const { return m_yshift; }
 

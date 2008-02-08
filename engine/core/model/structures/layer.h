@@ -41,7 +41,7 @@
 
 namespace FIFE {
 
-	class Elevation;
+	class Map;
 	class Selection;
 	class CellGrid;
 	class Object;
@@ -59,7 +59,7 @@ namespace FIFE {
 		FREEFORM
 	};
 	
-	/** A basic layer on a map elevation
+	/** A basic layer on a map
 	 *
 	 * @bug These comments are very outdated!
 	 *
@@ -96,18 +96,18 @@ namespace FIFE {
 	class Layer : public AttributedClass {
 		public:
 			/** Constructor
-			 * Elevations are created by calling addLayer from elevation, thus
+			 * Layers are created by calling addLayer from map, thus
 			 * this method should really be called only by elevation or test code
 			 */
-			Layer(const std::string& identifier, Elevation* elevation, CellGrid* grid);
+			Layer(const std::string& identifier, Map* map, CellGrid* grid);
 
 			/** Destructs a Layer instance
 			 */
 			~Layer();
 
-			/** Get the elevation this layer is contained in
+			/** Get the map this layer is contained in
 			 */
-			Elevation* getElevation() const { return m_elevation; }
+			Map* getMap() const { return m_map; }
 
 			/** Get the Cellgrid as set in the constructor
 			 * @return a valid cellgrid
@@ -192,7 +192,7 @@ namespace FIFE {
 			PathingStrategy getPathingStrategy() const { return m_pathingstrategy; }
 
 		protected:
-			Elevation* m_elevation;
+			Map* m_map;
 
 			bool m_instances_visibility;
 

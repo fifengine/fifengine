@@ -31,14 +31,11 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.mapEdit = None
 		self.camera = None
 		self.map = None
-		self.elevation = None
 		self.layer = None
 		self.selection = None
 
 		self.dataset = None
 		self.object = None
-
-		self.elevEdit = None
 
 		self.insertmode = False
 		self.clickmode = False # TODO: fix event consumption issues with mouse-drag to make this mode tracker unnecessary. See ticket 291.
@@ -51,13 +48,12 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.viewer.viewMap(mapid)
 		self.map = self.engine.getModel().getMaps('id', mapid)[0]
 		self.camera = self.viewer.camera
-		self.elevation = self.camera.getLocation().getElevation()
 		self.layer = self.camera.getLocation().getLayer()
 
 		if not self.mapEdit:
 			self.mapEdit = pychan.loadXML('content/gui/mapeditor.xml')
 			self.mapEdit.mapEvents({
-				'elevButton'  : self._selectElevation,
+				'layerButton'  : self._selectLayer,
 				'datButton'   : self._selectDataset,
 				'closeButton' : self.quit
 			})
@@ -74,36 +70,11 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 
 		self.mapEdit.show()
 
-	def _selectElevation(self):
-		Selection([elevation.Id() for elevation in self.map.getElevations()], self._editElevation)
-
-	def _editElevation(self, elevid):
-		self.elevation = self.map.getElevations('id', elevid)[0]
-
-		if not self.elevEdit:
-			self.elevEdit = pychan.loadXML('content/gui/eleveditor.xml')
-			self.elevEdit.mapEvents({
-				'layerButton' : self._selectLayer,
-				'closeButton' : self.elevEdit.hide
-			})
-
-		metafields = self.elevEdit.findChild(name='Metadata Properties')
-		for metafield in self.elevation.listFields():
-			hbox = widgets.HBox()
-			metafields.add(hbox)
-
-			label = widgets.Label(text=metafield)
-			hbox.add(label)
-			field = widgets.TextField(text=self.elevation.get(metafield))
-			hbox.add(field)
-
-		self.elevEdit.show()
-
 	def _selectLayer(self):
-		Selection([layer.Id() for layer in self.elevation.getLayers()], self._editLayer)
+		Selection([layer.Id() for layer in self.map.getLayers()], self._editLayer)
 
 	def _editLayer(self, layerid):
-		self.layer = self.elevation.getLayers('id', layerid)[0]
+		self.layer = self.map.getLayers('id', layerid)[0]
 		print layerid
 
 	def _selectDataset(self):
@@ -124,7 +95,6 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 #   Sleek: why doesn't this work?
 #		self.viewer.deactivate() 
 		self.camera = None
-		self.elevation = None
 		self.layer = None
 		self.selection = None
 
@@ -134,9 +104,9 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		if self.camera:
 			# TODO: make Sleek fix this ugly mess
 			tmp = fife.ScreenPoint(screenx, screeny)
-			dy = -(tmp.y - self.camera.toScreenCoordinates(self.camera.getLocation().getElevationCoordinates()).y)
+			dy = -(tmp.y - self.camera.toScreenCoordinates(self.camera.getLocation().getMapCoordinates()).y)
 			tmp.z = (int)(math.tan(self.camera.getTilt()* (math.pi / 180.0)) * dy)
-			self.selection = self.camera.toElevationCoordinates(tmp)
+			self.selection = self.camera.toMapCoordinates(tmp)
 			self.selection.z = 0
 			self.selection = self.layer.getCellGrid().toLayerCoordinates(self.selection)
 			loc = fife.Location()

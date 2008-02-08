@@ -7,7 +7,6 @@ class TestView(unittest.TestCase):
 	def setUp(self):
 		self.engine = getEngine()
 		map = self.engine.getModel().createMap("map001")
-		elev = map.createElevation("elevation001")
 		
 		dat = self.engine.getModel().getMetaModel().createDataset("dataset001")
 		self.grid = fife.SquareGrid()
@@ -27,7 +26,7 @@ class TestView(unittest.TestCase):
 		self.screen_cell_w = img.getWidth()
 		self.screen_cell_h = img.getHeight()
 		
-		self.layer = elev.createLayer("layer001", self.grid)
+		self.layer = map.createLayer("layer001", self.grid)
 
 		self.camcoord = fife.ExactModelCoordinate(2,0)
 		

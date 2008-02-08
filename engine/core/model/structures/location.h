@@ -36,7 +36,7 @@
 #include "util/fifeclass.h"
 
 namespace FIFE {
-	class Elevation;
+	class Map;
 	class Layer;
 
 	class Location: public FifeClass {
@@ -69,11 +69,11 @@ namespace FIFE {
 		 */
 		bool operator!=(const Location& loc) const;
 		
-		/** Gets the elevation where this location is pointing to
+		/** Gets the map where this location is pointing to
 		 * @note this information is fetched from the set layer
-		 * @return elevation where this location is pointing to, NULL in case its invalid
+		 * @return map where this location is pointing to, NULL in case its invalid
 		 */
-		Elevation* getElevation() const;
+		Map* getMap() const;
 		
 		/** Sets layer where this location is pointing to
 		 *  @param layer layer to set
@@ -114,15 +114,15 @@ namespace FIFE {
 		 */
 		ModelCoordinate getLayerCoordinates() const throw(NotSet);
 		
-		/** Sets elevation coordinates to this location
+		/** Sets map coordinates to this location
 		 *  @param coordinates coordinates to set
 		 */
-		void setElevationCoordinates(const ExactModelCoordinate& coordinates);
+		void setMapCoordinates(const ExactModelCoordinate& coordinates);
 		
-		/** Gets elevation coordinates set to this location
-		 * @return elevation coordinates
+		/** Gets map coordinates set to this location
+		 * @return map coordinates
 		 */
-		ExactModelCoordinate getElevationCoordinates() const;
+		ExactModelCoordinate getMapCoordinates() const;
 		
 		/** Gets exact layer coordinates of this location mapped on given layer
 		 *  @throws NotSet in the following cases:

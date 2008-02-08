@@ -38,7 +38,6 @@
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
-#include "model/structures/elevation.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"

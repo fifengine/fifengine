@@ -29,10 +29,10 @@
 // Second block: files included from the same folder
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
 
 #include "linearpather.h"
-
-
 
 namespace FIFE {
 	static Logger _log(LM_PATHFINDER);
@@ -41,26 +41,26 @@ namespace FIFE {
 		                            double distance_to_travel, Location& nextLocation,
 		                            Location& facingLocation, int session_id, int priority) {
 		Location curloc = instance->getLocation();
-		assert(curloc.getElevation() == target.getElevation());
+		assert(curloc.getMap() == target.getMap());
 		Layer* layer = curloc.getLayer();
 		assert(layer == target.getLayer());
 		CellGrid* cg = layer->getCellGrid();
 		assert(layer == target.getLayer());
 		
 		assert(curloc.getLayer() == target.getLayer());
-		m_map = curloc.getElevation()->getMap();
+		m_map = curloc.getMap();
 		
 		int cur_session_id = session_id;
 		if (cur_session_id < 0) {
 			cur_session_id = m_session_counter++;
 			
 			// extrapolate facing location for this session
-			ExactModelCoordinate cur_pos = curloc.getElevationCoordinates();
-			ExactModelCoordinate fac_pos = target.getElevationCoordinates();
+			ExactModelCoordinate cur_pos = curloc.getMapCoordinates();
+			ExactModelCoordinate fac_pos = target.getMapCoordinates();
 			fac_pos.x = fac_pos.x + (fac_pos.x - cur_pos.x);
 			fac_pos.y = fac_pos.y + (fac_pos.y - cur_pos.y);
 			facingLocation = target;
-			facingLocation.setElevationCoordinates(fac_pos);
+			facingLocation.setMapCoordinates(fac_pos);
 			m_session2face[cur_session_id] = facingLocation;
 			FL_DBG(_log, LMsg("storing new facing loc ") <<  facingLocation);
 		} else {
@@ -68,8 +68,8 @@ namespace FIFE {
 			facingLocation = m_session2face[cur_session_id];
 		}
 		FL_DBG(_log, LMsg("curloc ") <<  curloc << ", target " << target << ", dist2travel " << distance_to_travel);
-		ExactModelCoordinate cur_pos = curloc.getElevationCoordinates();
-		ExactModelCoordinate target_pos = target.getElevationCoordinates();
+		ExactModelCoordinate cur_pos = curloc.getMapCoordinates();
+		ExactModelCoordinate target_pos = target.getMapCoordinates();
 		double dx = (target_pos.x - cur_pos.x) * cg->getXScale();
 		double dy = (target_pos.y - cur_pos.y) * cg->getYScale();
 		double dist = sqrt(dx*dx + dy*dy);
@@ -81,7 +81,7 @@ namespace FIFE {
 		}
 		cur_pos.x += dx * (distance_to_travel / dist);
 		cur_pos.y += dy * (distance_to_travel / dist);
-		nextLocation.setElevationCoordinates(cur_pos);
+		nextLocation.setMapCoordinates(cur_pos);
 		FL_DBG(_log, LMsg("in case not blocking, could move to ") << nextLocation);
 		
 		// check if we have collisions and if we do, keep instance on current location

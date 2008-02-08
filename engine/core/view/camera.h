@@ -122,15 +122,15 @@ namespace FIFE {
 		 */
 		const Rect& getViewPort() const;
 
-		/** Transforms given point from screen coordinates to elevation coordinates
-		 *  @return point in elevation coordinates
+		/** Transforms given point from screen coordinates to map coordinates
+		 *  @return point in map coordinates
 		 */
-		ExactModelCoordinate toElevationCoordinates(ScreenPoint screen_coords);
+		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords);
 
-		/** Transforms given point from elevation coordinates to screen coordinates
+		/** Transforms given point from map coordinates to screen coordinates
 		 *  @return point in screen coordinates
 		 */
-		ScreenPoint toScreenCoordinates(ExactModelCoordinate elevation_coords);
+		ScreenPoint toScreenCoordinates(ExactModelCoordinate map_coords);
 
 		/** Sets camera enabled / disabled
 		 */

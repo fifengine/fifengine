@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cassert>
 
 // 3rd party library includes
 
@@ -27,9 +28,9 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include <cassert>
-
 #include "model/metamodel/grids/cellgrid.h"
+#include "model/structures/instance.h"
+#include "model/structures/layer.h"
 
 #include "pathfinder/searchspace.h"
 
@@ -111,13 +112,13 @@ namespace FIFE {
 
 	void RoutePather::followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation) {
 		Location instanceLoc = instance->getLocation();
-		ExactModelCoordinate instancePos = instanceLoc.getElevationCoordinates();
-		ExactModelCoordinate facingPos = path.front().getElevationCoordinates();
+		ExactModelCoordinate instancePos = instanceLoc.getMapCoordinates();
+		ExactModelCoordinate facingPos = path.front().getMapCoordinates();
 		facingPos.x = facingPos.x + (facingPos.x - instancePos.x);
 		facingPos.y = facingPos.y + (facingPos.y - instancePos.y);
 		facingLocation = path.front();
-		facingLocation.setElevationCoordinates(facingPos);
-		ExactModelCoordinate targetPos = path.front().getElevationCoordinates();
+		facingLocation.setMapCoordinates(facingPos);
+		ExactModelCoordinate targetPos = path.front().getMapCoordinates();
 		CellGrid* grid = instanceLoc.getLayer()->getCellGrid();
 		double dx = (targetPos.x - instancePos.x) * grid->getXScale();
 		double dy = (targetPos.y - instancePos.y) * grid->getYScale();
@@ -135,7 +136,7 @@ namespace FIFE {
 		} else {
 			pop = true;
 		}
-		nextLocation.setElevationCoordinates(instancePos);
+		nextLocation.setMapCoordinates(instancePos);
 		if(pop)
 		{
 			path.pop_front();

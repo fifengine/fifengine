@@ -30,7 +30,7 @@ class TestLocation(unittest.TestCase):
 		self.assertEqual(pt, P(5,5))
 		pt = self.loc1.getExactLayerCoordinates()
 		self.assertEqual(pt, D(5,5))
-		pt = self.loc1.getElevationCoordinates()
+		pt = self.loc1.getMapCoordinates()
 		self.assertEqual(pt, D(5,5))
 		pt = self.loc1.getLayerCoordinates(self.layer2)
 		self.assertEqual(pt, P(5,5))
@@ -49,14 +49,14 @@ class TestLocation(unittest.TestCase):
 	def testSquareGridRotation(self):
 		self.squaregrid1.setRotation(90)
 		self.loc1.setLayerCoordinates(P(3,3))
-		pt = self.loc1.getElevationCoordinates()
+		pt = self.loc1.getMapCoordinates()
 		self.assertEqual(pt, D(-3,3))
 
 	def testSquareGridShifts(self):
 		self.squaregrid1.setXShift(-3)
 		self.squaregrid1.setYShift(-3)
 		self.loc1.setLayerCoordinates(P(3,3))
-		pt = self.loc1.getElevationCoordinates()
+		pt = self.loc1.getMapCoordinates()
 		self.assertEqual(pt, D(0,0))
 
 	def testSquareCombinations(self):
@@ -67,7 +67,7 @@ class TestLocation(unittest.TestCase):
 		self.squaregrid1.setXScale(5)
 		self.squaregrid1.setYScale(5)
 		self.loc1.setLayerCoordinates(P(1,1))
-		pt = self.loc1.getElevationCoordinates()
+		pt = self.loc1.getMapCoordinates()
 		print pt 
 		self.assert_(is_near(pt.x, -3))
 		self.assert_(is_near(pt.y, 7))
@@ -91,59 +91,59 @@ class TestHexGrid(unittest.TestCase):
 		del self.log
 
 	def testHexGrid0row(self):
-		self.loc1.setElevationCoordinates(D(-2,0))
+		self.loc1.setMapCoordinates(D(-2,0))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-2,0))
 		
-		self.loc1.setElevationCoordinates(D(-1,0))
+		self.loc1.setMapCoordinates(D(-1,0))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-1,0))
 		
-		self.loc1.setElevationCoordinates(D(0,0))
+		self.loc1.setMapCoordinates(D(0,0))
 		self.assert_(self.loc1.getLayerCoordinates() == P(0,0))
 
-		self.loc1.setElevationCoordinates(D(1,0))
+		self.loc1.setMapCoordinates(D(1,0))
 		self.assert_(self.loc1.getLayerCoordinates() == P(1,0))
 
-		self.loc1.setElevationCoordinates(D(2,0))
+		self.loc1.setMapCoordinates(D(2,0))
 		self.assert_(self.loc1.getLayerCoordinates() == P(2,0))
 
 	def testHexGrid1row(self):
-		self.loc1.setElevationCoordinates(D(-1.1,1))
+		self.loc1.setMapCoordinates(D(-1.1,1))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-2,1))
 		
-		self.loc1.setElevationCoordinates(D(-0.5,1))
+		self.loc1.setMapCoordinates(D(-0.5,1))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-1,1))
 		
-		self.loc1.setElevationCoordinates(D(-0.1,1))
+		self.loc1.setMapCoordinates(D(-0.1,1))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-1,1))
 		
-		self.loc1.setElevationCoordinates(D(0.1,1))
+		self.loc1.setMapCoordinates(D(0.1,1))
 		self.assert_(self.loc1.getLayerCoordinates() == P(0,1))
 
 	def testHexGridm1row(self):
-		self.loc1.setElevationCoordinates(D(-1.1,-1))
+		self.loc1.setMapCoordinates(D(-1.1,-1))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-2,-1))
 		
-		self.loc1.setElevationCoordinates(D(-0.5,-1))
+		self.loc1.setMapCoordinates(D(-0.5,-1))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-1,-1))
 		
-		self.loc1.setElevationCoordinates(D(-0.1,-1))
+		self.loc1.setMapCoordinates(D(-0.1,-1))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-1,-1))
 		
-		self.loc1.setElevationCoordinates(D(0.1,-1))
+		self.loc1.setMapCoordinates(D(0.1,-1))
 		self.assert_(self.loc1.getLayerCoordinates() == P(0,-1))
 
 	def testEdgeHits(self):
-		self.loc1.setElevationCoordinates(D(0.5,0.5))
+		self.loc1.setMapCoordinates(D(0.5,0.5))
 		self.assert_(self.loc1.getLayerCoordinates() == P(0,1))
 		
-		self.loc1.setElevationCoordinates(D(0.1,0.4))
+		self.loc1.setMapCoordinates(D(0.1,0.4))
 		#print "______''___" + str(self.loc1.getLayerCoordinates())
 		self.assert_(self.loc1.getLayerCoordinates() == P(0,0))
 		
-		self.loc1.setElevationCoordinates(D(0.1,-0.4))
+		self.loc1.setMapCoordinates(D(0.1,-0.4))
 		self.assert_(self.loc1.getLayerCoordinates() == P(0,0))
 
-		self.loc1.setElevationCoordinates(D(-0.5,-0.5))
+		self.loc1.setMapCoordinates(D(-0.5,-0.5))
 		self.assert_(self.loc1.getLayerCoordinates() == P(-1,-1))
 
 TEST_CLASSES = [TestHexGrid, TestLocation]

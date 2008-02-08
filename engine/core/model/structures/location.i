@@ -5,7 +5,7 @@
 
 namespace FIFE {
 
-	class Elevation;
+	class Map;
 	class Layer;
 	class NotSet;
 	class ModelCoordinate;
@@ -22,17 +22,17 @@ namespace FIFE {
 		void reset();
 		Location& operator=(const Location& rhs) const;
 		bool operator==(const Location& loc) const;
-		Elevation* getElevation() const;
+		Map* getMap() const;
 		void setLayer(Layer* layer);
 		Layer* getLayer() const;
 		void setExactLayerCoordinates(const ExactModelCoordinate& coordinates) throw(NotSet);
 		void setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet);
-		void setElevationCoordinates(const ExactModelCoordinate& coordinates);
+		void setMapCoordinates(const ExactModelCoordinate& coordinates);
 		ExactModelCoordinate getExactLayerCoordinates() const throw(NotSet);
 		ExactModelCoordinate getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
 		ModelCoordinate getLayerCoordinates() const throw(NotSet);
 		ModelCoordinate getLayerCoordinates(const Layer* layer) const throw(NotSet);
-		ExactModelCoordinate getElevationCoordinates() const;
+		ExactModelCoordinate getMapCoordinates() const;
 		bool isValid() const;
 		double getCellOffsetDistance() const;
 	};

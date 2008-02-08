@@ -35,7 +35,7 @@
 namespace FIFE {
 	class Camera;
 	class Layer;
-	class Elevation;
+	class Map;
 	class Instance;
 	class RenderBackend;
 	
@@ -134,7 +134,7 @@ namespace FIFE {
 		
 		/** Activates all layers from given elevation
 		 */
-		void activateAllLayers(Elevation* elevation);
+		void activateAllLayers(Map* elevation);
 		
 		/** Returns if given layer is currently activated
 		 */
