@@ -1,6 +1,6 @@
 BitsPerPixel        = 0
 FullScreen          = 0
-InitialVolume       = 5
+InitialVolume       = 5.0
 PlaySounds          = 1
 RenderBackend       = "OpenGL"
 SDLRemoveFakeAlpha  = 1

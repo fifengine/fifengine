@@ -34,7 +34,7 @@
 #include "enginesettings.h"
 
 namespace FIFE {
-	const int MAXIMUM_VOLUME = 10;
+	const float MAXIMUM_VOLUME = 10.0;
 
 	EngineSettings::EngineSettings():
 		m_bitsperpixel(0),
@@ -81,13 +81,17 @@ namespace FIFE {
 		return tmp;
 	}
 	
-	void EngineSettings::setInitialVolume(unsigned int volume) throw(NotSupported) {
+	void EngineSettings::setInitialVolume(float volume) throw(NotSupported) {
 		if (volume > getMaxVolume()) {
 			throw NotSupported("Given volume exceeds maximum volume");
 		}
+		if (volume < 0) {
+			throw NotSupported("Given volume is below 0");
+		}
+		m_initialvolume = volume;
 	}
 	
-	unsigned int EngineSettings::getMaxVolume() const {
+	float EngineSettings::getMaxVolume() const {
 		return MAXIMUM_VOLUME;
 	}
 	

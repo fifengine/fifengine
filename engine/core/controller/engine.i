@@ -48,9 +48,9 @@ namespace FIFE {
 		std::vector<unsigned int> getPossibleBitsPerPixel() const;
 		void setFullScreen(bool fullscreen);
 		bool isFullScreen() const;
-		void setInitialVolume(unsigned int volume) throw(FIFE::NotSupported);
-		unsigned int getInitialVolume() const;
-		unsigned int getMaxVolume() const;
+		void setInitialVolume(float volume) throw(FIFE::NotSupported);
+		float getInitialVolume() const;
+		float getMaxVolume() const;
 		void setRenderBackend(const std::string& renderbackend) throw(FIFE::NotSupported);
 		const std::string getRenderBackend() const;
 		std::vector<std::string> getPossibleRenderBackends();

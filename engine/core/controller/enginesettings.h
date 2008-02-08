@@ -83,17 +83,17 @@ namespace FIFE {
 		/** Sets initial engine sound volume
 		 *  @see getInitialMaxVolume
 		 */
-		void setInitialVolume(unsigned int volume) throw(NotSupported);
+		void setInitialVolume(float volume) throw(NotSupported);
 		
 		/** Gets initial engine sound volume
 		 */
-		unsigned int getInitialVolume() const {
+		float getInitialVolume() const {
 			return m_initialvolume;
 		}
 		
 		/** Gets maximum volume that can be set
 		 */
-		unsigned int getMaxVolume() const;
+		float getMaxVolume() const;
 		
 		/** Sets name for renderbackend
 		 *  @see getPossibleRenderBackends
@@ -174,7 +174,7 @@ namespace FIFE {
 	private:
 		unsigned int m_bitsperpixel;
 		bool m_fullscreen;
-		unsigned int m_initialvolume;
+		float m_initialvolume;
 		std::string m_renderbackend;
 		bool m_sldremovefakealpha;
 		unsigned int m_screenwidth;
