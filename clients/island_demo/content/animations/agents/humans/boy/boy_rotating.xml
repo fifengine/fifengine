@@ -1,7 +1,7 @@
 <animation delay="80" id="3101">
-	<frame source="content/gfx/agents/boy/standing_0.png" />
-	<frame source="content/gfx/agents/boy/standing_45.png" />
-	<frame source="content/gfx/agents/boy/standing_90.png" />
+	<frame source="content/gfx/agents/boy/standing_000.png" />
+	<frame source="content/gfx/agents/boy/standing_045.png" />
+	<frame source="content/gfx/agents/boy/standing_090.png" />
 	<frame source="content/gfx/agents/boy/standing_135.png" />
 	<frame source="content/gfx/agents/boy/standing_180.png" />
 	<frame source="content/gfx/agents/boy/standing_225.png" />

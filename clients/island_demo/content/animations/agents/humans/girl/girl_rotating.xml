@@ -1,7 +1,7 @@
 <animation delay="80" id="3201">
-	<frame source="content/gfx/agents/girl/standing_0.png" />
-	<frame source="content/gfx/agents/girl/standing_45.png" />
-	<frame source="content/gfx/agents/girl/standing_90.png" />
+	<frame source="content/gfx/agents/girl/standing_000.png" />
+	<frame source="content/gfx/agents/girl/standing_045.png" />
+	<frame source="content/gfx/agents/girl/standing_090.png" />
 	<frame source="content/gfx/agents/girl/standing_135.png" />
 	<frame source="content/gfx/agents/girl/standing_180.png" />
 	<frame source="content/gfx/agents/girl/standing_225.png" />
