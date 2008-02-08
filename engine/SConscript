@@ -128,7 +128,13 @@ def generate_msvc_project(projectfiles):
 	projtxt = open(joinpath(msvcbuildpath, 'engine_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
 	vcprojfilename = joinpath(msvcbuildpath, 'fife.vcproj')
-	oldprojtxt = open(vcprojfilename, 'r').read()
+
+	oldprojtxt = ''
+	try:
+		oldprojtxt = open(vcprojfilename, 'r').read()
+	except:
+		pass
+
 	if(oldprojtxt <> projtxt):
 		open(vcprojfilename, 'w').write(projtxt)
 		print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(vcprojfilename)
