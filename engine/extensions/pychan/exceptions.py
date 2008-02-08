@@ -18,3 +18,8 @@ class RuntimeError(PyChanException):
 	Exception raised during the run time - for example caused by a missing name attribute in a XML file.
 	"""
 	pass
+
+class GuiXMLError(PyChanException):
+	"""
+	An error that occured during parsing an XML file.
+	"""

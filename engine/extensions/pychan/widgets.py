@@ -10,6 +10,7 @@ Please look at the documentation of L{Widget} for details.
 import fife, pythonize
 import tools
 from exceptions import *
+from attrs import *
 
 def get_manager():
     import pychan
@@ -71,6 +72,13 @@ class Widget(object):
 	   - height: Integer: The vertical part of the size attribute.
 
 	"""
+	
+	ATTRIBUTES = [ Attr('name'), PointAttr('position'),
+		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
+		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),
+		Attr('style'), Attr('font'),IntAttr('border_size')
+		]
+	
 	def __init__(self,parent = None, name = '_unnamed_',
 			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
 			style = None, **kwargs):
@@ -394,14 +402,13 @@ class Widget(object):
 		Try to shrink the widget, so that it fits closely around its content.
 		Do not call directly.
 		"""
-		pass
 
 	def expandContent(self,recurse = True):
 		"""
 		Try to expand any spacer in the widget within the current size.
 		Do not call directly.
 		"""
-		pass
+		
 
 	def _recursiveResizeToContent(self):
 		"""
@@ -556,6 +563,9 @@ class Container(Widget):
 	    to make the widget transparent.
 	  - children - Just contains the list of contained child widgets. Do NOT modify.
 	"""
+	
+	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('padding'), Attr('background_image'), BoolAttr('opaque'),PointAttr('margins') ]
+	
 	def __init__(self,padding=5,margins=(5,5),_real_widget=None, **kwargs):
 		self.real_widget = _real_widget or fife.Container()
 		self.children = []
@@ -827,6 +837,9 @@ class Window(VBoxLayoutMixin,Container):
 	  - title: The Caption of the window
 	  - titlebar_height: The height of the window title bar
 	"""
+	
+	ATTRIBUTES = Container.ATTRIBUTES + [ Attr('title'), IntAttr('titlebar_height') ]
+	
 	def __init__(self,title="title",titlebar_height=0,**kwargs):
 		super(Window,self).__init__(_real_widget = fife.Window(), **kwargs)
 		if titlebar_height == 0:
@@ -872,6 +885,9 @@ class BasicTextWidget(Widget):
 	
 	The text can be set via the L{distributeInitialData} method.
 	"""
+	
+	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text')]
+	
 	def __init__(self, text = "",**kwargs):
 		self.margins = (5,5)
 		self.text = text
@@ -906,6 +922,8 @@ class Icon(Widget):
 	
 	  - image: String: The source location of the Image.
 	"""
+	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('image')]
+
 	def __init__(self,image="",**kwargs):
 		self.real_widget = fife.Icon(None)
 		super(Icon,self).__init__(**kwargs)
@@ -949,6 +967,9 @@ class ImageButton(BasicTextWidget):
 	  - up_image: String: The source location of the Image for the B{unpressed} state.
 	  - down_image: String: The source location of the Image for the B{pressed} state.
 	"""
+	
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image')]
+	
 	def __init__(self,up_image="",down_image="",**kwargs):
 		self.real_widget = fife.TwoButton()
 		super(ImageButton,self).__init__(**kwargs)
@@ -990,6 +1011,9 @@ class CheckBox(BasicTextWidget):
 	====
 	The marked status can be read and set via L{distributeData} and L{collectData}
 	"""
+	
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('marked')]
+	
 	def __init__(self,**kwargs):
 		self.real_widget = fife.CheckBox()
 		super(CheckBox,self).__init__(**kwargs)
@@ -1020,6 +1044,9 @@ class RadioButton(BasicTextWidget):
 	====
 	The marked status can be read and set via L{distributeData} and L{collectData}
 	"""
+	
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('marked'),Attr('group')]
+	
 	def __init__(self,group="_no_group_",**kwargs):
 		self.real_widget = fife.RadioButton()
 		super(RadioButton,self).__init__(**kwargs)
@@ -1198,6 +1225,8 @@ class TextBox(Widget):
 	The text can be read and set via L{distributeData} and L{collectData}.
 	"""
 
+	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text'),Attr('filename')]
+
 	def __init__(self,text="",filename = "", **kwargs):
 		self.real_widget = fife.TextBox()
 		self.text = text
@@ -1248,6 +1277,9 @@ class TextField(Widget):
 	====
 	The text can be read and set via L{distributeData} and L{collectData}.
 	"""
+
+	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text')]
+
 	def __init__(self,text="", **kwargs):
 		self.real_widget = fife.TextField()
 		self.text = text

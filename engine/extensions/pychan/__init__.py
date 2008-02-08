@@ -126,9 +126,8 @@ or the selected index in a list. The third and final process is collection of th
   	'myTextField' : map.description
   })
   # ... process dialog.
-  data = guiElement.collectData(['myListBox','myTextField'])
-  map.description = data['myTextField']
-  print "You selected:",data['myListBox'],", good choice!"
+  map.description, choice = guiElement.collectData('myListBox','myTextField')
+  print "You selected:",choice,", good choice!"
 
 Styling and font handling
 =========================
@@ -255,11 +254,6 @@ def init(engine,debug=False):
 
 from xml.sax import saxutils, handler
 
-class GuiXMLError(PyChanException):
-	"""
-	An error that occured during parsing an XML file.
-	"""
-
 class _GuiLoader(object, handler.ContentHandler):
 	def __init__(self):
 		super(_GuiLoader,self).__init__()
@@ -267,11 +261,6 @@ class _GuiLoader(object, handler.ContentHandler):
 		self.indent = ""
 		self.stack = []
 		
-	def _toIntList(self,s):
-		try:
-			return tuple(map(int,str(s).split(',')))
-		except:
-			raise GuiXMLError("Expected an comma separated list of integers.")
 
 	def _parseAttr(self,attr):
 		name, value = attr
@@ -301,6 +290,19 @@ class _GuiLoader(object, handler.ContentHandler):
 			raise GuiXMLError("Unknown GUI Element: %s" % name)
 		return cls
 
+	def _setAttr(self,obj,name,value):
+		if not hasattr(obj.__class__,'ATTRIBUTES'):
+			raise PyChanException("The registered widget/spacer class %s does not supply an 'checkAttribute' method."
+				% repr(obj))
+		try:
+			for attr in obj.ATTRIBUTES:
+				if attr.name == name:
+					attr.set(obj,value)
+					return
+		except GuiXMLError, e:
+			raise GuiXMLError("Error parsing attr '%s'='%s' for '%s': '%s'" % (name,value,obj,e))
+		raise GuiXMLError("Unknown GUI Attribute '%s' on '%s'" % (name,repr(obj)))
+
 	def startElement(self, name, attrs):
 		self._printTag(name,attrs)
 		cls = self._resolveTag(name)
@@ -315,11 +317,10 @@ class _GuiLoader(object, handler.ContentHandler):
 		self.indent += " "*4
 
 	def _createInstance(self,cls,name,attrs):
-		attrs = map(self._parseAttr,attrs.items())
 		obj = cls(parent=self.root)
-		for k,v in attrs:
-			setattr(obj,k,v)
-			
+		for k,v in attrs.items():
+			self._setAttr(obj,k,v)
+
 		if hasattr(self.root,'add'):
 			self.root.add(obj)
 		elif hasattr(self.root,'content'):
