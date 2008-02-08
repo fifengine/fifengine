@@ -179,6 +179,10 @@ class Widget(object):
 		self._has_listener = True
 
 	def isCaptured(self):
+		"""
+		Check whether this widgets events are captured
+		(a callback is installed) or not.
+		"""
 		return self._has_listener
 
 	def show(self):
@@ -200,6 +204,16 @@ class Widget(object):
 		self.afterHide()
 		self._visible = False
 	
+	def isVisible(self):
+		"""
+		Check whether the widget is currently shown,
+		either directly or as part of a container widget.
+		"""
+		widget = self
+		while widget._parent:
+			widget = widget._parent
+		return widget._visible
+	
 	def adaptLayout(self):
 		"""
 		Execute the Layout engine. Automatically called by L{show}.
@@ -215,7 +229,6 @@ class Widget(object):
 		You can override this in derived widgets to add finalization
 		behaviour.
 		"""
-		pass
 
 	def afterHide(self):
 		"""
@@ -223,13 +236,13 @@ class Widget(object):
 		You can override this in derived widgets to add finalization
 		behaviour.
 		"""
-		pass
 
 	def findChildren(self,**kwargs):
 		"""
 		Find all contained child widgets by attribute values.
 		
-		closeButtons = root_widget.findChildren(name='close')
+		Usage::
+		  closeButtons = root_widget.findChildren(name='close')
 		"""
 
 		children = []
@@ -242,7 +255,8 @@ class Widget(object):
 	def findChild(self,**kwargs):
 		""" Find the first contained child widgets by attribute values.
 		
-		closeButton = root_widget.findChild(name='close')
+		Usage::
+		  closeButton = root_widget.findChild(name='close')
 		"""
 		children = self.findChildren(**kwargs)
 		if children:
