@@ -1329,8 +1329,13 @@ class ScrollArea(Widget):
 	==============
 	
 	  - content: The wrapped widget.
+	  - vertical_scrollbar: Boolean: Set this to False to hide the Vertcial scrollbar
+	  - horizontal_scrollbar: Boolean: Set this to False to hide the Horizontal scrollbar
 	
 	"""
+	
+	ATTRIBUTES = Widget.ATTRIBUTES + [ BoolAttr("vertical_scrollbar"),BoolAttr("horizontal_scrollbar") ]
+	
 	def __init__(self,**kwargs):
 		self.real_widget = fife.ScrollArea()
 		self._content = None
@@ -1353,6 +1358,30 @@ class ScrollArea(Widget):
 		self.content.width = max(self.content.width,self.width-5)
 		self.content.height = max(self.content.height,self.height-5)
 
+	def _visibilityToScrollPolicy(self,visibility):
+		if visibility: 
+			return fife.ScrollArea.SHOW_AUTO
+		return fife.ScrollArea.SHOW_NEVER
+	
+	def _scrollPolicyToVisibility(self,policy):
+		if policy == fife.ScrollArea.SHOW_NEVER:
+			return False
+		return True
+
+	def _setHorizontalScrollbar(self,visibility):
+		self.real_widget.setHorizontalScrollPolicy( self._visibilityToScrollPolicy(visibility) )
+	
+	def _setVerticalScrollbar(self,visibility):
+		self.real_widget.setVerticalScrollPolicy( self._visibilityToScrollPolicy(visibility) )
+
+	def _getHorizontalScrollbar(self):
+		return self._scrollPolicyToVisibility( self.real_widget.getHorizontalScrollPolicy() )
+	
+	def _getVerticalScrollbar(self):
+		return self._scrollPolicyToVisibility( self.real_widget.getVerticalScrollPolicy() )
+
+	vertical_scrollbar = property(_getVerticalScrollbar,_setVerticalScrollbar)
+	horizontal_scrollbar = property(_getHorizontalScrollbar,_setHorizontalScrollbar)
 
 # Spacer
 
