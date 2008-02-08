@@ -260,20 +260,6 @@ class _GuiLoader(object, handler.ContentHandler):
 		self.root = None
 		self.indent = ""
 		self.stack = []
-		
-
-	def _parseAttr(self,attr):
-		name, value = attr
-		name = str(name)
-		if name in ('position','size','min_size','max_size','margins'):
-			value = self._toIntList(value)
-		elif name in ('foreground_color','base_color','background_color'):
-			value = self._toIntList(value)
-		elif name in ('opaque','border_size','padding'):
-			value = int(value)
-		else:
-			value = str(value)
-		return (name,value)
 
 	def _printTag(self,name,attrs):
 		if not manager.debug: return
@@ -331,11 +317,7 @@ class _GuiLoader(object, handler.ContentHandler):
 		self.root = obj
 	
 	def _createSpacer(self,cls,name,attrs):
-		attrs = map(self._parseAttr,attrs.items())
 		obj = cls(parent=self.root)
-		for k,v in attrs:
-			setattr(obj,k,v)
-			
 		if hasattr(self.root,'add'):
 			self.root.addSpacer(obj)
 		else:
@@ -355,7 +337,7 @@ def loadXML(filename_or_stream):
 	@param filename_or_stream: A filename or a file-like object (for example using StringIO).
 	
 	The XML format is very dynamic, in the sense, that the actual allowed tags and attributes
-	depend on the PyChan code and names in this file.
+	depend on the PyChan code.
 	
 	So when a tag C{Button} is encountered, an instance of class Button will be generated,
 	and added to the parent object.
@@ -368,6 +350,8 @@ def loadXML(filename_or_stream):
 	  - opaque,border_size,padding - These are assumed to be simple integers.
 	
 	All other attributes are set verbatim as strings on the generated instance.
+	In case a Widget does not accept an attribute to be set or the attribute can not be parsed
+	correctly, the function will raise a GuiXMLError.
 	
 	In short::
 		<VBox>

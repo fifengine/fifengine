@@ -10,7 +10,7 @@ Please look at the documentation of L{Widget} for details.
 import fife, pythonize
 import tools
 from exceptions import *
-from attrs import *
+from attrs import Attr,PointAttr,ColorAttr,BoolAttr,IntAttr
 
 def get_manager():
     import pychan

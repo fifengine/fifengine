@@ -23,3 +23,8 @@ class GuiXMLError(PyChanException):
 	"""
 	An error that occured during parsing an XML file.
 	"""
+
+class ParserError(PyChanException):
+	"""
+	An error that occured during parsing an attribute.
+	"""
