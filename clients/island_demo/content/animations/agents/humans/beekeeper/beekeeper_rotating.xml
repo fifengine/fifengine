@@ -1,0 +1,10 @@
+<animation delay="350" id="3001">
+	<frame source="content/gfx/agents/beekeeper/standing_0.png" />
+	<frame source="content/gfx/agents/beekeeper/standing_45.png" />
+	<frame source="content/gfx/agents/beekeeper/standing_90.png" />
+	<frame source="content/gfx/agents/beekeeper/standing_135.png" />
+	<frame source="content/gfx/agents/beekeeper/standing_180.png" />
+	<frame source="content/gfx/agents/beekeeper/standing_225.png" />
+	<frame source="content/gfx/agents/beekeeper/standing_270.png" />
+	<frame source="content/gfx/agents/beekeeper/standing_315.png" />
+</animation>

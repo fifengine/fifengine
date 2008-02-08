@@ -3,18 +3,18 @@
 <dataset id="Beekeeper" type="Embedded" format="1.0">
 	<object id="Beekeeper" blocking="1">
 		<action id="default">
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_rotate.xml"/>
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_rotating.xml"/>
 		</action>
 
 		<action id="talk">
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_n.xml" direction='90' />
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_ne.xml" direction='45' />
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_e.xml" direction='0' />
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_se.xml" direction='315' />
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_s.xml" direction='270' />
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_sw.xml" direction='225' />
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_w.xml" direction = '180' />
-			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talk_nw.xml" direction= '135' />
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talking_0.xml" direction='0' />
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talking_45.xml" direction='45' />
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talking_90.xml" direction='90' />
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talking_135.xml" direction= '135' />
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talking_180.xml" direction = '180' />
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talking_225.xml" direction='225' />
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talking_270.xml" direction='270' />
+			<animation source="content/animations/agents/humans/beekeeper/beekeeper_talking_315.xml" direction='315' />
 		</action>
 	</object>
 </dataset>
