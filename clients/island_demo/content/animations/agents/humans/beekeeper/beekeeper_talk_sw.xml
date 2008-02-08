@@ -1,11 +1,11 @@
 <animation delay="100" id="3017">
-	<frame source="content/gfx/agents/beekeeper/talking_sw0000.png" />
-	<frame source="content/gfx/agents/beekeeper/talking_sw0001.png" />
-	<frame source="content/gfx/agents/beekeeper/talking_sw0002.png" />
-	<frame source="content/gfx/agents/beekeeper/talking_sw0003.png" />
-	<frame source="content/gfx/agents/beekeeper/talking_sw0004.png" />
-	<frame source="content/gfx/agents/beekeeper/talking_sw0005.png" />
-	<frame source="content/gfx/agents/beekeeper/talking_sw0006.png" />
-	<frame source="content/gfx/agents/beekeeper/talking_sw0007.png" />
-	<frame source="content/gfx/agents/beekeeper/talking_sw0008.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0000.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0001.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0002.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0003.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0004.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0005.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0006.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0007.png" />
+	<frame source="content/gfx/agents/beekeeper/talking_225_0008.png" />
 </animation>

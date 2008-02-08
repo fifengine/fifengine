@@ -1,10 +1,10 @@
 <animation delay="130" id="3114">
-	<frame source="content/gfx/agents/boy/walking_nw0000.png" />
-	<frame source="content/gfx/agents/boy/walking_nw0001.png" />
-	<frame source="content/gfx/agents/boy/walking_nw0002.png" />
-	<frame source="content/gfx/agents/boy/walking_nw0003.png" />
-	<frame source="content/gfx/agents/boy/walking_nw0004.png" />
-	<frame source="content/gfx/agents/boy/walking_nw0005.png" />
-	<frame source="content/gfx/agents/boy/walking_nw0006.png" />
-	<frame source="content/gfx/agents/boy/walking_nw0007.png" />
+	<frame source="content/gfx/agents/boy/walking_135_0000.png" />
+	<frame source="content/gfx/agents/boy/walking_135_0001.png" />
+	<frame source="content/gfx/agents/boy/walking_135_0002.png" />
+	<frame source="content/gfx/agents/boy/walking_135_0003.png" />
+	<frame source="content/gfx/agents/boy/walking_135_0004.png" />
+	<frame source="content/gfx/agents/boy/walking_135_0005.png" />
+	<frame source="content/gfx/agents/boy/walking_135_0006.png" />
+	<frame source="content/gfx/agents/boy/walking_135_0007.png" />
 </animation>

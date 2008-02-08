@@ -1,10 +1,10 @@
 <animation delay="130" id="3111">
-	<frame source="content/gfx/agents/boy/running_e0000.png" />
-	<frame source="content/gfx/agents/boy/running_e0001.png" />
-	<frame source="content/gfx/agents/boy/running_e0002.png" />
-	<frame source="content/gfx/agents/boy/running_e0003.png" />
-	<frame source="content/gfx/agents/boy/running_e0004.png" />
-	<frame source="content/gfx/agents/boy/running_e0005.png" />
-	<frame source="content/gfx/agents/boy/running_e0006.png" />
-	<frame source="content/gfx/agents/boy/running_e0007.png" />
+	<frame source="content/gfx/agents/boy/running_0_0000.png" />
+	<frame source="content/gfx/agents/boy/running_0_0001.png" />
+	<frame source="content/gfx/agents/boy/running_0_0002.png" />
+	<frame source="content/gfx/agents/boy/running_0_0003.png" />
+	<frame source="content/gfx/agents/boy/running_0_0004.png" />
+	<frame source="content/gfx/agents/boy/running_0_0005.png" />
+	<frame source="content/gfx/agents/boy/running_0_0006.png" />
+	<frame source="content/gfx/agents/boy/running_0_0007.png" />
 </animation>

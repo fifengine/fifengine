@@ -1,11 +1,11 @@
 <animation delay="130" id="3123">
-	<frame source="content/gfx/agents/boy/cheering_ne0000.png" />
-	<frame source="content/gfx/agents/boy/cheering_ne0001.png" />
-	<frame source="content/gfx/agents/boy/cheering_ne0002.png" />
-	<frame source="content/gfx/agents/boy/cheering_ne0003.png" />
-	<frame source="content/gfx/agents/boy/cheering_ne0004.png" />
-	<frame source="content/gfx/agents/boy/cheering_ne0005.png" />
-	<frame source="content/gfx/agents/boy/cheering_ne0006.png" />
-	<frame source="content/gfx/agents/boy/cheering_ne0007.png" />
-	<frame source="content/gfx/agents/boy/cheering_ne0008.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0000.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0001.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0002.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0003.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0004.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0005.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0006.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0007.png" />
+	<frame source="content/gfx/agents/boy/cheering_45_0008.png" />
 </animation>
