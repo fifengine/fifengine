@@ -159,6 +159,9 @@ class Widget(object):
 		The old event handler (if any) will be overridden by the callback.
 		If None is given, the event will be disabled. You can query L{isCaptured}
 		wether this widgets events are currently captured.
+		
+		It might be useful to check out L{tools.callbackWithArguments}.
+		
 		"""
 		if callback is None:
 			if not get_manager().widgetEvents.has_key(self._event_id):

@@ -68,7 +68,7 @@ for the details of the XML format
    guiElement = pychan.loadXML("contents/gui/myform.xml")
 
 The resulting guiElement can be shown and hidden with the
-obvious C{show} and C{hide} methods.
+obvious L{widgets.Widget.show} and L{widgets.Widget.hide} methods.
 
 To get a specific widget you have to give it a name in the XML
 definition and use that to extract the widget from the returned
@@ -89,10 +89,10 @@ is somewhat limited.
 
 A dialog without an OK button would be futile - so here's how
 you hook widget events to function calls. Every widget
-has a C{capture} method, which will directly call the passed
+has a L{widgets.Widget.capture} method, which will directly call the passed
 function when an widget event occurs. As a convenience a
-C{mapEvents} function will batch the C{findChild} and
-C{capture} calls in an obvious way.
+L{widgets.Widget.mapEvents} function will batch the L{widgets.Widget.findChild} and
+L{widgets.Widget.capture} calls in an obvious way.
 ::
    myButton.capture( application.quit )
    guiElement.mapEvents({
@@ -101,10 +101,9 @@ C{capture} calls in an obvious way.
    })
 
 Other important places to look for information:
-  - L{Widget} - Attributes explained.
+  - L{widgets.Widget} - Attributes explained.
   - L{loadXML} - Explain the XML format.
   - L{LayoutBase} - Working of the layout engine.
-
 
 Initialization, data distribution and collection
 ================================================
@@ -127,6 +126,9 @@ or the selected index in a list. The third and final process is collection of th
   # ... process dialog.
   map.description, choice = guiElement.collectData('myListBox','myTextField')
   print "You selected:",choice,", good choice!"
+
+See L{widgets.Widget.distributeData},L{widgets.Widget.distributeInitialData},
+L{widgets.Widget.collectData} and L{widgets.Widget.collectDataAsDict}.
 
 Styling and font handling
 =========================
@@ -388,7 +390,7 @@ def setupModalExecution(mainLoop,breakFromMainLoop):
 	first function to finish and return the passed argument.
 	
 	With these to functions dialogs can be executed synchronously.
-	See L{Widget.execute}.
+	See L{widgets.Widget.execute}.
 	"""
 	if not manager:
 		raise InitializationError("PyChan is not initialized yet.")
