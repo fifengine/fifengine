@@ -152,7 +152,7 @@ namespace FIFE {
 			void mouseWheelMovedUp(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
 			void mouseWheelMovedDown(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
 			void mouseMoved(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseDragged(IMouseEvent& evt) { /* do not consume dragging events */ }
+			void mouseDragged(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
 
 		private:
 			void evaluateKeyEventConsumption(IKeyEvent& evt);

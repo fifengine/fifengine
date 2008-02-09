@@ -19,7 +19,6 @@ Features
 TODO
 ----
  - Make setting parent attribute imply containment relation.
- - Factor out parsing of attributes.
  - Finalize Widget.execute
 
  - Documentation ( Allways not enough :-( )

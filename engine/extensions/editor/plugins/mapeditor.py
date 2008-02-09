@@ -38,7 +38,7 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.object = None
 
 		self.insertmode = False
-		self.clickmode = False # TODO: fix event consumption issues with mouse-drag to make this mode tracker unnecessary. See ticket 291.
+		#self.clickmode = False # TODO: fix event consumption issues with mouse-drag to make this mode tracker unnecessary. See ticket 291.
 
 	# gui for selecting a map
 	def _selectMap(self):
@@ -122,10 +122,11 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def mousePressed(self, evt):
 		self._setSelection(evt.getX(), evt.getY())
 		self._placeInstance()
-		self.clickmode = True
+		#self.clickmode = True
 
 	def mouseReleased(self, evt):
-		self.clickmode = False
+		#self.clickmode = False
+		pass
 	def mouseEntered(self, evt):
 		pass
 	def mouseExited(self, evt):
@@ -140,9 +141,9 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		pass
 
 	def mouseDragged(self, evt):
-		if self.clickmode:
-			self._setSelection(evt.getX(), evt.getY())
-			self._placeInstance()
+		#if self.clickmode:
+		self._setSelection(evt.getX(), evt.getY())
+		self._placeInstance()
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()

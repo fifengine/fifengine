@@ -174,11 +174,13 @@ namespace FIFE {
 
 	void GUIManager::turn() {
 		// Due to a BUG in Guichan we need to catch GCN exceptions
+		// This is a potentially dangerous workaround put in place
+		// until we upgrade to Guichan 0.8.0
 		// See here: http://code.google.com/p/guichan/issues/detail?id=24
 		try {
 			m_gcn_gui->logic();
 		} catch( const gcn::Exception& e) {
-			FL_WARN(_log, LMsg("GUIManager, discarding events gcn::Exception: ") << e.getMessage());
+			FL_WARN(_log, LMsg("GUIManager, discarding gcn::Exception: ") << e.getMessage());
 		}
 		m_gcn_gui->draw();
 	}
