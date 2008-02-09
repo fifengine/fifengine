@@ -981,6 +981,10 @@ class ClickLabel(BasicTextWidget):
 		self.real_widget = fife.ClickLabel("")
 		super(ClickLabel,self).__init__(**kwargs)
 
+	def resizeToContent(self, recurse = True):
+		self.height = self.real_widget.getHeight() + self.margins[1]*2
+		self.width = self.real_widget.getWidth() + self.margins[0]*2
+
 class Button(BasicTextWidget):
 	"""
 	A basic push button.

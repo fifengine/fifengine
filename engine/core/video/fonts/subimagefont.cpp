@@ -122,7 +122,6 @@ namespace FIFE {
 
 			x += w;
 		}
-		SDL_FreeSurface(surface);
 
 		// Set placeholder glyph
 		if( m_glyphs.find('?') != m_glyphs.end() ) {
@@ -132,6 +131,7 @@ namespace FIFE {
 		}
 
 		mHeight = surface->h;
+		SDL_FreeSurface(surface);
 	}
 
 

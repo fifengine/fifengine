@@ -36,11 +36,13 @@
 
 namespace gcn {
 	ClickLabel::ClickLabel(): Button() {
+		setAlignment(Graphics::LEFT);
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 		setBorderSize(0);
 	}
 	
 	ClickLabel::ClickLabel(const std::string& caption): Button(caption)  {
+		setAlignment(Graphics::LEFT);
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 		setBorderSize(0);
 		adjustSize();
@@ -57,7 +59,7 @@ namespace gcn {
 	
 	void ClickLabel::draw(Graphics* graphics) {
 		int textX;
-		int textY = getHeight() / 2 - getFont()->getHeight() / 2;
+		int textY = 0;
 
 		switch (getAlignment())
 		{
@@ -74,7 +76,7 @@ namespace gcn {
 				throw FIFE::GuiException("Unknown alignment.");
 		}
 		if (mGuiFont) {
-			mGuiFont->drawMultiLineString(graphics, mCaption, 0, 0);
+			mGuiFont->drawMultiLineString(graphics, mCaption, textX, textY);
 		}
 	}
 

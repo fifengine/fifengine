@@ -131,17 +131,11 @@ namespace FIFE {
 			SDL_FillRect(final_surface, 0, 0x00000000);
 			int ypos = 0;
 			for (std::vector<SDL_Surface*>::iterator i = lines.begin(); i != lines.end(); ++i) {
-				SDL_Rect src_rect;
-				src_rect.x = 0;
-				src_rect.y = 0;
-				src_rect.w = (*i)->w;
-				src_rect.h = (*i)->h;
-
-				SDL_Rect dst_rect = src_rect;
+				SDL_Rect dst_rect = { 0, 0, 0, 0 };
 				dst_rect.y = ypos;
 
 				SDL_SetAlpha(*i,0,SDL_ALPHA_OPAQUE);
-				SDL_BlitSurface(*i,&src_rect,final_surface,&dst_rect);
+				SDL_BlitSurface(*i,0,final_surface,&dst_rect);
 				ypos += getRowSpacing() + getHeight();
 				SDL_FreeSurface(*i);
 			}

@@ -257,6 +257,11 @@ from xml.sax import saxutils, handler
 from traceback import print_exc
 
 def traced(f):
+	"""
+	Simple decorator that prints tracebacks for any exceptions occuring in a
+	function. Useful to avoid the infamous 'finally pops bad exception'
+	that shadows the real cause of the error ...
+	"""
 	def traced_f(*args,**kwargs):
 		try:
 			return f(*args,**kwargs)
@@ -289,7 +294,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _setAttr(self,obj,name,value):
 		if not hasattr(obj.__class__,'ATTRIBUTES'):
-			raise PyChanException("The registered widget/spacer class %s does not supply an 'checkAttribute' method."
+			raise PyChanException("The registered widget/spacer class %s does not supply an 'ATTRIBUTES'."
 				% repr(obj))
 		try:
 			for attr in obj.ATTRIBUTES:
