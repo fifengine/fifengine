@@ -7,6 +7,7 @@ import fife
 import pychan
 import pychan.widgets as widgets
 from viewer import Viewer
+from datasetselector import DatasetSelector
 from editor.selection import Selection, ClickSelection
 
 class MapEditor(fife.IMouseListener, fife.IKeyListener):
@@ -38,7 +39,7 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.object = None
 
 		self.insertmode = False
-		#self.clickmode = False # TODO: fix event consumption issues with mouse-drag to make this mode tracker unnecessary. See ticket 291.
+		self.datasetSelector = None
 
 	# gui for selecting a map
 	def _selectMap(self):
@@ -63,9 +64,9 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			hbox = widgets.HBox()
 			metafields.add(hbox)
 
-			label = widgets.Label(text=metafield)
+			label = widgets.Label(text=metafield)#,min_size="80,0")
 			hbox.add(label)
-			field = widgets.TextField(text=self.map.get(metafield))
+			field = widgets.TextField(text=self.map.get(metafield))#,min_size="100,0")
 			hbox.add(field)
 
 		self.mapEdit.show()
@@ -78,15 +79,12 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		print layerid
 
 	def _selectDataset(self):
-		Selection([dat.Id() for dat in self.map.getDatasets()], self._viewDataset)
+		if not self.datasetSelector:
+			self.datasetSelector = DatasetSelector(self.engine, self.map, self.editWith)
+		self.datasetSelector.show()
 
-	def _viewDataset(self, datid):
-		self.dataset = self.engine.getModel().getMetaModel().getDatasets('id', datid)[0]
-		ClickSelection([obj.Id() for obj in self.dataset.getObjects()], self.editWith)
-
-	def editWith(self, object_id):
-		if self.dataset:
-			self.object = self.dataset.getObjects('id', object_id)[0]
+	def editWith(self, object):
+		self.object = object
 
 	def pump(self):
 		self.viewer.pump()
