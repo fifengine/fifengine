@@ -47,8 +47,8 @@ class DatasetSelector(object):
 		self.instanceSelected()
 
 	def instanceSelected(self):
-		self.selectedInstance = self.instances.selected_item
-		object = self.selected_dataset.getObjects('id', self.selectedInstance)[0]
+		self.selected_instance = self.instances.selected_item
+		object = self.selected_dataset.getObjects('id', self.selected_instance)[0]
 		self.notify(object)
 	
 	def show(self):

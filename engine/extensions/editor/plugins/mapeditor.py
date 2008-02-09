@@ -64,9 +64,9 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			hbox = widgets.HBox()
 			metafields.add(hbox)
 
-			label = widgets.Label(text=metafield)#,min_size="80,0")
+			label = widgets.Label(text=metafield,min_size=(80,0))
 			hbox.add(label)
-			field = widgets.TextField(text=self.map.get(metafield))#,min_size="100,0")
+			field = widgets.TextField(text=self.map.get(metafield),min_size=(100,0))
 			hbox.add(field)
 
 		self.mapEdit.show()
@@ -130,7 +130,9 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def mouseExited(self, evt):
 		pass
 	def mouseClicked(self, evt):
-		pass
+		self._setSelection(evt.getX(), evt.getY())
+		self._placeInstance()
+
 	def mouseWheelMovedUp(self, evt):
 		pass
 	def mouseWheelMovedDown(self, evt):
@@ -139,7 +141,6 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		pass
 
 	def mouseDragged(self, evt):
-		#if self.clickmode:
 		self._setSelection(evt.getX(), evt.getY())
 		self._placeInstance()
 
