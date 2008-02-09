@@ -161,7 +161,12 @@ class Widget(object):
 		wether this widgets events are currently captured.
 		"""
 		if callback is None:
-			del get_manager().widgetEvents[self._event_id]
+			if not get_manager().widgetEvents.has_key(self._event_id):
+				if get_manager().debug:
+					print "You passed None as parameter to %s.capture, which would normally remove a mapped event." % str(self)
+					print "But there was no event mapped. Did you accidently call a function instead of passing it?"
+			else:
+				del get_manager().widgetEvents[self._event_id]
 			if self._has_listener:
 				self.real_widget.removeActionListener(manager.guimanager)
 			self._has_listener = None
