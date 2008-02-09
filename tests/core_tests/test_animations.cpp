@@ -109,7 +109,7 @@ void test_animation(RenderBackend& renderbackend) {
 	}
 	
 	int start_ticks = SDL_GetTicks();
-	for (int i = 0; i < 200; i++) {
+	for (int i = 0; i < 100; i++) {
 		renderbackend.startFrame();
 		std::vector<PositionedAnimation*>::iterator i = animations.begin();
 		while (i != animations.end()) {

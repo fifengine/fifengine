@@ -35,7 +35,7 @@ class TestVideo(unittest.TestCase):
 		self.engine.initializePumping()
 		
 		be = self.engine.getRenderBackend()
-		for i in xrange(100):
+		for i in xrange(20):
 			prevPt = fife.Point(*points[1])
 			for pt in points[1:]:
 				curPt = fife.Point(*pt)

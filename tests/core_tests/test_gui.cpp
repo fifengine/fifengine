@@ -99,7 +99,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 	
 	int h = img->getHeight();
 	int w = img->getWidth();
-	for (int i = 0; i < 400; i+=2) {
+	for (int i = 0; i < 100; i+=2) {
 		renderbackend.startFrame();
 		img->render(Rect(i, i, w, h), screen);
 		gui->logic();

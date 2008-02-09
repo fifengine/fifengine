@@ -80,13 +80,13 @@ void test_image(RenderBackend& renderbackend) {
 	
 	int h = img->getHeight();
 	int w = img->getWidth();
-	for (int i = 0; i < 200; i++) {
+	for (int i = 0; i < 100; i++) {
 		renderbackend.startFrame();
 		img->render(Rect(i, i, w, h), screen);
 		renderbackend.endFrame();
 	}	
 	for (int j = 0; j < 5; j++) {
-		for (int i = -20; i < 20; i++) {
+		for (int i = -10; i < 10; i++) {
 			renderbackend.startFrame();
 			img->setXShift(i);
 			img->setYShift(i);

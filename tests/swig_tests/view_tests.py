@@ -84,7 +84,6 @@ class TestView(unittest.TestCase):
 			elif i > 90 and i < 100:	
 				cam.setZoom(cam.getZoom() - 0.010)
 			self.engine.pump()
-			time.sleep(0.05)
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)
 	

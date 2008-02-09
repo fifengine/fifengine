@@ -108,6 +108,11 @@ namespace FIFE {
 		 */
 		double getMovementSpeed() const;
 
+		/** Sets the direction where instance is heading. Useful e.g. with static
+		 * instances which don't "move" or "act"
+		 */
+		void setFacingLocation(const Location& loc);
+				
 		/** Returns the direction where instance is heading
 		 * @return the direction of instance.
 		 */
@@ -186,8 +191,6 @@ namespace FIFE {
 		bool process_movement();
 		// Calculates movement based current location and speed
 		void calcMovement();
-		// set facing location for instance
-		void setFacingLocation(const Location& loc);
 	};
 
 } // FIFE

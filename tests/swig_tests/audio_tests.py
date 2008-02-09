@@ -20,7 +20,7 @@ class TestAudio(unittest.TestCase):
 		sound.load('tests/data/left_right_test.ogg')
 		sound.setLooping(True)
 		sound.play()
-		time.sleep(30);
+		time.sleep(3);
 	
 	def test2Streams(self):
 		em = self.soundmanager.createEmitter()
@@ -32,7 +32,7 @@ class TestAudio(unittest.TestCase):
 		em.setGain(0.7)
 		em.play()
 		sound.play()
-		time.sleep(30);
+		time.sleep(3);
 
 TEST_CLASSES = [TestAudio]
 
