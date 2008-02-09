@@ -942,20 +942,30 @@ class Icon(Widget):
 	New Attributes
 	==============
 	
-	  - image: String: The source location of the Image.
+	  - image: String or GuiImage: The source location of the Image or a direct GuiImage
 	"""
 	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('image')]
 
 	def __init__(self,image="",**kwargs):
 		self.real_widget = fife.Icon(None)
 		super(Icon,self).__init__(**kwargs)
+		self._source = self._image = None
+		if image:
+			self.image = image
 
 	def _setImage(self,source):
-		self._image_source = source
-		self._image = get_manager().loadImage(source)
+		if isinstance(source,str):
+			self._source = source
+			self._image = get_manager().loadImage(source)
+		else:
+			self._source = None
+			self._image = source
 		self.real_widget.setImage( self._image )
                 #print self._image,self.real_widget.getWidth(),self.real_widget.getWidth()
-	def _getImage(self): return self._source
+	def _getImage(self):
+		if self._source is not None:
+			return self._source
+		return self._image
 	image = property(_getImage,_setImage)
 
 class ClickLabel(BasicTextWidget):
