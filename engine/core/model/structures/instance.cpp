@@ -53,7 +53,8 @@ namespace FIFE {
 			m_action_start_time(SDL_GetTicks()),
 			m_prev_call_time(m_action_start_time),
 			m_pather_session_id(-1),
-			m_pather(pather) {}
+			m_pather(pather),
+			m_leader(NULL) {}
 
 		~ActionInfo() {
 			if (m_pather_session_id != -1) {
@@ -89,6 +90,8 @@ namespace FIFE {
 		int m_pather_session_id;
 		// pather
 		AbstractPather* m_pather;
+		// leader for follow activity
+		Instance* m_leader;
 	};
 	
 	class SayInfo {
@@ -165,6 +168,15 @@ namespace FIFE {
 		setFacingLocation(target);
 		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << target << " with speed " << speed);
 	}
+	
+	void Instance::follow(const std::string& action_name, Instance* leader, const double speed) {
+		initalizeAction(action_name);
+		m_actioninfo->m_target = new Location(leader->getLocationRef());
+		m_actioninfo->m_speed = speed;
+		m_actioninfo->m_leader = leader;
+		setFacingLocation(*m_actioninfo->m_target);
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << *m_actioninfo->m_target << " with speed " << speed);
+	}
 
 	void Instance::act(const std::string& action_name, const Location& direction, bool repeating) {
 		initalizeAction(action_name);
@@ -234,6 +246,10 @@ namespace FIFE {
 
 		if (m_actioninfo->m_target) {
 			FL_DBG(_log, "action contains target for movement");
+			// update target if needed
+			if (m_actioninfo->m_leader && (m_actioninfo->m_leader->getLocationRef() != *m_actioninfo->m_target)) {
+				*m_actioninfo->m_target = m_actioninfo->m_leader->getLocation();
+			}
 			bool movement_finished = process_movement();
 			if (movement_finished) {
 				FL_DBG(_log, "movement finished");

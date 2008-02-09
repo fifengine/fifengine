@@ -163,6 +163,14 @@ namespace FIFE {
 		 */
 		void say(const std::string& text, unsigned int duration=0);
 
+		/** Performs given named action to the instance. While performing the action
+		 *  follows given isntance with given speed
+		 *  @param action_name name of the action
+		 *  @param leader followed instance
+		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
+		 */
+		void follow(const std::string& action_name, Instance* leader, const double speed);
+
 		/** Returns pointer to currently set saytext. In case no text is set, returns NULL
 		 */
 		const std::string* getSayText() const;

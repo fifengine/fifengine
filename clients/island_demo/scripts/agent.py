@@ -15,7 +15,7 @@ class Agent(fife.InstanceListener):
 
 	def start(self):
 		raise ProgrammingError('No start defined for Agent')
-
+	
 
 def create_anonymous_agents(model, objectName, layer, agentClass):
 	agents = []
