@@ -23,3 +23,28 @@ def applyOnlySuitable(func,**kwargs):
 		if name not in varnames:
 			del kwargs[name]
 	return func(**kwargs)
+
+def callbackWithArguments(callback,*args,**kwargs):
+	"""
+	Curries a function with extra arguments to
+	create a suitable callback.
+	
+	If you don't know what this means, don't worry.
+	It is designed for the case where you need
+	different buttons to execute basically the same code
+	with different argumnets.
+	
+	Usage::
+	  # The target callback
+	  def printStuff(text):
+	      print text
+	  # Mapping the events
+	  gui.mapEvents({
+	      'buttonHello' : callbackWithArguments(printStuff,"Hello"),
+	      'buttonBye' : callbackWithArguments(printStuff,"Adieu")
+	  })
+	"""
+	def real_callback():
+		callback(*args,**kwargs)
+	return real_callback
+
