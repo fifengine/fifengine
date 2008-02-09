@@ -254,6 +254,16 @@ def init(engine,debug=False):
 # XML Loader
 
 from xml.sax import saxutils, handler
+from traceback import print_exc
+
+def traced(f):
+	def traced_f(*args,**kwargs):
+		try:
+			return f(*args,**kwargs)
+		except:
+			print_exc()
+			raise
+	return traced_f
 
 class _GuiLoader(object, handler.ContentHandler):
 	def __init__(self):
@@ -302,6 +312,7 @@ class _GuiLoader(object, handler.ContentHandler):
 		else:
 			self.stack.append('unknown')
 		self.indent += " "*4
+	startElement = traced( startElement )
 
 	def _createInstance(self,cls,name,attrs):
 		obj = cls(parent=self.root)
@@ -330,6 +341,7 @@ class _GuiLoader(object, handler.ContentHandler):
 		if manager.debug: print self.indent + "</%s>" % name
 		if self.stack.pop() in ('gui_element','spacer'):
 			self.root = self.root._parent or self.root
+	endElement = traced( endElement )
 
 def loadXML(filename_or_stream):
 	"""

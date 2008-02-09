@@ -68,6 +68,28 @@ namespace FIFE {
 		Image* image = getAsImage(text);
 		image->render(rect, RenderBackend::instance()->getScreenSurface());
 	}
+
+	void GuiFont::drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int x, int y) {
+		if (text == "") {
+			return;
+		}
+
+		int yoffset = getRowSpacing() / 2;
+
+		const gcn::ClipRectangle& clip = graphics->getCurrentClipArea();
+
+		Image* image = getAsImageMultiline(text);
+
+		FIFE::Rect rect;
+		rect.x = x + clip.xOffset;
+		rect.y = y + clip.yOffset + yoffset;
+		rect.w = image->getWidth();
+		rect.h = image->getHeight();
+		if (!rect.intersects(Rect(clip.x,clip.y,clip.width,clip.height)) ) {
+			return;
+		}
+		image->render(rect, RenderBackend::instance()->getScreenSurface());
+	}
 	
 	void GuiFont::setRowSpacing (int spacing) {
 		m_font->setRowSpacing(spacing);

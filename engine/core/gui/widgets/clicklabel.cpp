@@ -28,17 +28,20 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "gui/base/gui_font.h" 
 #include "util/exception.h"
+#include "video/image.h" 
 
 #include "clicklabel.h"
 
 namespace gcn {
 	ClickLabel::ClickLabel(): Button() {
+		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 		setBorderSize(0);
-		adjustSize();
 	}
 	
 	ClickLabel::ClickLabel(const std::string& caption): Button(caption)  {
+		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 		setBorderSize(0);
 		adjustSize();
 	}
@@ -48,6 +51,7 @@ namespace gcn {
 	
 	void ClickLabel::setCaption(const std::string& caption) {
 		Button::setCaption(caption);
+		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 		adjustSize();
 	}
 	
@@ -69,9 +73,16 @@ namespace gcn {
 			default:
 				throw FIFE::GuiException("Unknown alignment.");
 		}
+		if (mGuiFont) {
+			mGuiFont->drawMultiLineString(graphics, mCaption, 0, 0);
+		}
+	}
 
-		graphics->setFont(getFont());
-		graphics->setColor(getForegroundColor());
-		graphics->drawText(getCaption(), textX, textY, getAlignment());
+	void  ClickLabel::adjustSize() {
+		if (mGuiFont) {
+			FIFE::Image* image = mGuiFont->getAsImageMultiline(mCaption);
+			setWidth( image->getWidth() );
+			setHeight( image->getHeight() );
+		}
 	}
 }

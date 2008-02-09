@@ -33,14 +33,24 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+namespace FIFE {
+	class GuiFont;
+}
+
 namespace gcn {
 	class ClickLabel : public Button {
 	public:
 		ClickLabel();
 		ClickLabel(const std::string& caption);
 		virtual ~ClickLabel();
+
 		virtual void setCaption(const std::string& caption);
 		virtual void draw(Graphics* graphics);
+
+		virtual void adjustSize();
+
+	protected:
+		FIFE::GuiFont* mGuiFont;
 	};
 }
 

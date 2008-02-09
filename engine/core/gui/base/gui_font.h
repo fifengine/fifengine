@@ -47,6 +47,7 @@ namespace FIFE {
 		
 		int getStringIndexAt(const std::string& text, int x);
 		void drawString(gcn::Graphics* graphics, const std::string& text, int x, int y);
+		void drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int x, int y);
 
 		void setRowSpacing (int spacing);
 		int getRowSpacing() const;

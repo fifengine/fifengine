@@ -66,6 +66,14 @@ namespace FIFE {
 	}
 
 	SDL_Surface* TrueTypeFont::renderString(const std::string& text) {
+		if( text.empty() ) {
+			SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+				1,getHeight(),32,
+				RMASK, GMASK, BMASK ,AMASK);
+				SDL_FillRect(surface,0,0x00000000);
+			return surface;
+		}
+
 		SDL_Surface* renderedText = 0;
 		if (m_antiAlias) {
 			renderedText = TTF_RenderText_Blended(mFont, text.c_str(), mColor);

@@ -20,7 +20,7 @@ def _mungeText(text):
 	"""
 	This function is applied to all text set on widgets, currently only replacing tabs with four spaces.
 	"""
-	return text.replace('\t'," "*4)
+	return text.replace('\t'," "*4).replace('[br]','\n')
 
 class Widget(object):
 	"""
@@ -920,7 +920,7 @@ class BasicTextWidget(Widget):
 		self._realSetInitialData = self._setText
 
 	def _getText(self): return self.real_widget.getCaption()
-	def _setText(self,text): self.real_widget.setCaption(text)
+	def _setText(self,text): self.real_widget.setCaption(_mungeText(text))
 	text = property(_getText,_setText)
 
 	def resizeToContent(self, recurse = True):
