@@ -119,10 +119,8 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 	def mousePressed(self, evt):
 		self._setSelection(evt.getX(), evt.getY())
 		self._placeInstance()
-		#self.clickmode = True
 
 	def mouseReleased(self, evt):
-		#self.clickmode = False
 		pass
 	def mouseEntered(self, evt):
 		pass

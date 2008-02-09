@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from pychan import widgets
+import fife
 
 class DatasetSelector(object):
 	def __init__(self,engine,map,selectNotify):
@@ -22,6 +23,10 @@ class DatasetSelector(object):
 		hbox.add(scrollArea)
 		self.instances = widgets.ListBox(parent=scrollArea)
 		scrollArea.content = self.instances
+		scrollArea = widgets.ScrollArea(parent=hbox, size=(120,300))
+		hbox.add(scrollArea)
+		self.preview = widgets.Icon()
+		scrollArea.content = self.preview
 
 		hbox = widgets.HBox(parent=self.gui)
 		self.gui.add(hbox)
@@ -50,6 +55,25 @@ class DatasetSelector(object):
 		self.selected_instance = self.instances.selected_item
 		object = self.selected_dataset.getObjects('id', self.selected_instance)[0]
 		self.notify(object)
+		self._refreshPreview(object)
+
+	def _refreshPreview(self, object):
+		visual = None
+		
+		try:
+			visual = object.get2dGfxVisual()
+		except:
+			print 'Visual Selection created for type without a visual?'
+			raise	
+
+		index = visual.getStaticImageIndexByAngle(0)
+		if index == -1:
+			print 'Visual missing static image.'
+			return
+
+		image = fife.GuiImage(index, self.engine.getImagePool())
+		self.preview.image = image
+		self.gui.adaptLayout()
 	
 	def show(self):
 		self.gui.show()
