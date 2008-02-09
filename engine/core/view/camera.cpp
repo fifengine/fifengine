@@ -157,40 +157,30 @@ namespace FIFE {
 		updateMatrices();
 	}
 
-  Point Camera::getCellImageDimensions() {
-    return Point( m_screen_cell_width, m_screen_cell_height );
-  }
+	Point Camera::getCellImageDimensions() {
+		return Point( m_screen_cell_width, m_screen_cell_height );
+	}
 
-	/** Gets the location camera is rendering
-	 * @return camera location
-	 */
-	const Location& Camera::getLocation() const {
+	Location Camera::getLocation() const {
 		return m_location;
 	}
 
-	/** Sets the viewport for camera
-	 * viewport is rectangle inside the view where camera renders
-	 * @param viewport area for camera render
-	 */
+	Location& Camera::getLocationRef() {
+		return m_location;
+	}
+	
 	void Camera::setViewPort(const Rect& viewport) {
 		m_viewport = viewport;
 	}
 
-	/** Gets the viewport for camera
-	 * @return camera viewport
-	 */
 	const Rect& Camera::getViewPort() const {
 		return m_viewport;
 	}
 
-	/** Sets camera enabled / disabled
-	 */
 	void Camera::setEnabled(bool enabled) {
 		m_enabled = enabled;
 	}
-
-	/** Gets if camera is enabled / disabled
-	 */
+	
 	bool Camera::isEnabled() {
 		return m_enabled;
 	}
@@ -275,7 +265,7 @@ namespace FIFE {
 	void Camera::getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
 		ScreenPoint pt(screen_coords);
-		int dy = -(pt.y - toScreenCoordinates(getLocation().getMapCoordinates()).y);
+		int dy = -(pt.y - toScreenCoordinates(getLocationRef().getMapCoordinates()).y);
 		pt.z = (int)(tan(getTilt()* (M_PI / 180.0)) * dy);
 		ExactModelCoordinate ece = toMapCoordinates(pt);
 		ModelCoordinate ecl = layer.getCellGrid()->toLayerCoordinates(ece);
@@ -297,7 +287,11 @@ namespace FIFE {
 			return;
 		}
 
-		m_location.setExactLayerCoordinates( m_attachedto->getLocation().getExactLayerCoordinates());
+		m_location.setExactLayerCoordinates( m_attachedto->getLocationRef().getExactLayerCoordinates());
+		updateMatrices();
+	}
+	
+	void Camera::refresh() {
 		updateMatrices();
 	}
 }

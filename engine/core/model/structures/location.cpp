@@ -49,6 +49,11 @@ namespace FIFE {
 		m_exact_layer_coords = loc.m_exact_layer_coords;
 	}
 	
+	Location::Location(Layer* layer) {
+		reset();
+		m_layer = layer;
+	}
+	
 	Location::~Location() {
 		reset();
 	}
@@ -107,11 +112,15 @@ namespace FIFE {
 		m_exact_layer_coords = m_layer->getCellGrid()->toExactLayerCoordinates(coordinates);
 	}
 	
-	ExactModelCoordinate Location::getExactLayerCoordinates() const throw(NotSet) {
+	ExactModelCoordinate& Location::getExactLayerCoordinatesRef() {
 		return m_exact_layer_coords;
 	}
 	
-	ModelCoordinate Location::getLayerCoordinates() const throw(NotSet) {
+	ExactModelCoordinate Location::getExactLayerCoordinates() const {
+		return m_exact_layer_coords;
+	}
+	
+	ModelCoordinate Location::getLayerCoordinates() const {
 		return getLayerCoordinates(m_layer);
 	}
 	

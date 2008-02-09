@@ -63,8 +63,7 @@ class World(EventListenerBase):
 		if TDS.QuadTreeLayerName:
 			renderer.addActiveLayer(self.map.getLayers("id", TDS.QuadTreeLayerName)[0])
 			
-		self.cam2_loc = self.cameras['small'].getLocation()
-		self.cam2_loc.setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
+		self.cameras['small'].getLocationRef().setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
 		self.initial_cam2_x = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		self.cur_cam2_x = self.initial_cam2_x
 		self.cam2_scrolling_right = True
@@ -107,8 +106,7 @@ class World(EventListenerBase):
 			newTarget.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
 			target_mapcoord = self.cameras['main'].toMapCoordinates(newTarget)
 			target_mapcoord.z = 0
-			l = fife.Location()
-			l.setLayer(self.agentlayer)
+			l = fife.Location(self.agentlayer)
 			l.setMapCoordinates(target_mapcoord)
 			self.hero.run(l)
 
@@ -123,8 +121,7 @@ class World(EventListenerBase):
 		
 	def pump(self):
 		if self.cameras['small'].isEnabled():
-			self.cam2_loc = self.cameras['small'].getLocation()
-			c = self.cam2_loc.getExactLayerCoordinates()
+			c = self.cameras['small'].getLocationRef().getExactLayerCoordinatesRef()
 			if self.cam2_scrolling_right:
 				self.cur_cam2_x = c.x = c.x+0.1
 				if self.cur_cam2_x > self.initial_cam2_x+10:
@@ -133,6 +130,7 @@ class World(EventListenerBase):
 				self.cur_cam2_x = c.x = c.x-0.1
 				if self.cur_cam2_x < self.initial_cam2_x-10:
 					self.cam2_scrolling_right = True
-			self.cam2_loc.setExactLayerCoordinates(c)
-			self.cameras['small'].setLocation(self.cam2_loc)
+			# manual refresh call needed due to direct coordinate updates (instead of setLocation)
+			self.cameras['small'].refresh()
+			
 		self.changeRotation()

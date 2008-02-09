@@ -19,8 +19,7 @@ class Girl(Agent):
 
 	def getNextWaypoint(self):
 		self.waypoint_counter += 1
-		l = fife.Location()
-		l.setLayer(self.layer)
+		l = fife.Location(self.layer)
 		l.setLayerCoordinates(fife.ModelCoordinate(*self.waypoints[self.waypoint_counter % len(self.waypoints)]))
 		return l
 	

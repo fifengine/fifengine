@@ -240,8 +240,7 @@ class ActivityTests(unittest.TestCase):
 		map = fife.Map("map007")
 		self.layer = map.addLayer("layer010", grid)
 		
-		self.target = fife.Location()
-		self.target.setLayer(self.layer)
+		self.target = fife.Location(self.layer)
 		self.target.setPosition(fife.ModelCoordinate(10,10))
 		
 		self.obj = fife.Object("object010")

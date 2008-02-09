@@ -93,7 +93,7 @@ namespace FIFE {
 			if ((i == instance) || (!i->getObject()->isBlocking())) {
 				continue;
 			}
-			ModelCoordinate c = i->getLocation().getLayerCoordinates();
+			ModelCoordinate c = i->getLocationRef().getLayerCoordinates();
 			if ((c.x == nextCellcoord.x) && (c.y == nextCellcoord.y)) {
 				FL_DBG(_log, LMsg("Found blocking instance from planned cell ") << nextLocation);
 				nextLocation = curloc;

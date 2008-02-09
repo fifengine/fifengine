@@ -43,14 +43,14 @@ namespace FIFE {
 	}
 
 	bool InstanceTree::addInstance(Instance* instance) {
-		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
+		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
 		InstanceList& list = m_tree.find_container(coords.x,coords.y,0,0)->data();
 		list.push_back(instance);
 		return true;
 	}
 
 	bool InstanceTree::removeInstance(Instance* instance) {
-		ModelCoordinate coords = instance->getLocation().getLayerCoordinates();
+		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
 		InstanceList& list = m_tree.find_container(coords.x,coords.y, 0, 0)->data();
 
 		for(InstanceList::iterator i = list.begin(); i != list.end(); ++i) {
@@ -76,7 +76,7 @@ namespace FIFE {
 	bool InstanceListCollector::visit(InstanceTree::InstanceTreeNode* node, int d) {
 		InstanceTree::InstanceList& list = node->data();
 		for(InstanceTree::InstanceList::const_iterator it(list.begin()); it != list.end(); ++it) {
-			ModelCoordinate coords = (*it)->getLocation().getLayerCoordinates();
+			ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
 			if( searchRect.contains(Point(coords.x,coords.y)) ) {
 				instanceList.push_back(*it);
 			}
@@ -94,7 +94,7 @@ namespace FIFE {
 		node = node->parent();
 		while( node ) {
 			for(InstanceList::const_iterator it(node->data().begin()); it != node->data().end(); ++it) {
-				ModelCoordinate coords = (*it)->getLocation().getLayerCoordinates();
+				ModelCoordinate coords = (*it)->getLocationRef().getLayerCoordinates();
 				if( rect.contains(Point(coords.x,coords.y)) ) {
 					list.push_back(*it);
 				}

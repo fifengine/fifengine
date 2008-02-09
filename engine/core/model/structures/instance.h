@@ -77,14 +77,42 @@ namespace FIFE {
 		void setLocation(const Location& loc) { m_location = loc; }
 
 		/** Gets current location of instance
+		 *  @note does not return const Location&, since swig wont be const correct
 		 *  @return current location
 		 */
-		const Location& getLocation() const { return m_location; }
+		Location getLocation() const { return m_location; }
+		
+		/** Gets reference of current location of instance
+		 *  @return reference to current location
+		 */
+		Location& getLocationRef() { return m_location; }
 		
 		/** Gets movement target in case instance is moving. In case not, returns current location
+		 *  To move target location, call move-method
+		 *  @see move
+		 *  @note does not return const Location&, since swig wont be const correct
 		 *  @return Movement target location
 		 */
-		const Location& getTargetLocation() const;
+		Location getTargetLocation() const;
+		
+		/** Sets the direction where instance is heading. Useful e.g. with static
+		 * instances which don't "move" or "act"
+		 */
+		void setFacingLocation(const Location& loc);
+		
+		/** Returns the direction where instance is heading
+		*  @note does not return const Location&, since swig wont be const correct
+		 * @return the direction of instance.
+		 */
+		Location getFacingLocation() const;
+		
+		/** Returns reference to the direction where instance is heading
+		 * Note: if instance didn't previously hadn't defined facing location
+		 * (e.g. by movement or setFacingLocation), method creates the location
+		 * thus increasing memory consumption.
+		 * @return reference to the direction of instance.
+		 */
+		Location& getFacingLocationRef();
 		
 		/** Adds new instance listener
 		 * @param listener to add
@@ -107,16 +135,6 @@ namespace FIFE {
 		 * @return instance speed. Value 1 means distance 1 in layer coordinates / second
 		 */
 		double getMovementSpeed() const;
-
-		/** Sets the direction where instance is heading. Useful e.g. with static
-		 * instances which don't "move" or "act"
-		 */
-		void setFacingLocation(const Location& loc);
-				
-		/** Returns the direction where instance is heading
-		 * @return the direction of instance.
-		 */
-		const Location& getFacingLocation() const;
 
 		/** Gets the time in milliseconds how long action has been active
 		 *  In case there is no current action, returns -1

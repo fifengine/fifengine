@@ -20,7 +20,8 @@ namespace FIFE {
 		void setZoom(double zoom);
 		double getZoom() const;
 		void setLocation(Location location);
-		const Location& getLocation() const;
+		Location getLocation() const;
+		Location& getLocationRef();
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
 		void setCellImageDimensions(unsigned int width, unsigned int height);
@@ -35,8 +36,8 @@ namespace FIFE {
 		void attachToInstance( Instance *instance );
 		void detach();
 		bool isAttached() const;
-
-
+		
+		void refresh();
 	};
 	%clear std::list<Instance*>& instances;
 }

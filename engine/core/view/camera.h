@@ -109,8 +109,15 @@ namespace FIFE {
 		/** Gets the location camera is rendering
 		 * @return camera location
 		 */
-		const Location& getLocation() const;
+		Location getLocation() const;
 
+		/** Gets a reference to the camera location
+		 * @note if you change returned location without calling Camera::setLocation(...),
+		 *       remember to call Camera::refresh() (otherwise camera transforms are not updated)
+		 * @return reference to the camera location
+		 */
+		Location& getLocationRef();
+		
 		/** Sets the viewport for camera
 		 * viewport is rectangle inside the view where camera renders
 		 * @param viewport area for camera render
@@ -173,6 +180,11 @@ namespace FIFE {
 		 * to another instance.
 		 */
 		void update();
+
+		/** Refreshes camera view in case e.g. location is updated directly (not via setLocation)
+		 */
+		void refresh();
+
 
 	private:
 		std::string m_id;

@@ -14,9 +14,8 @@ class ActionTests(unittest.TestCase):
 		self.grid = fife.SquareGrid(True)
 		self.layer = _map.createLayer("Layer001", self.grid)
 		
-		self.target = fife.Location()
-		self.target.setLayer(self.layer)
-		
+		self.target = fife.Location(self.layer)
+	
 		self.obj = fife.Object("object001")
 		fife.ObjectVisual.create(self.obj)
 		self.pather = fife.LinearPather()

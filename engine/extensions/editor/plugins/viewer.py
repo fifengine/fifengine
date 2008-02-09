@@ -185,7 +185,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 	def _set_camera(self, viewport):
 		if self.map:
 			# grab a camera associated with this map
-			self.camera = filter(lambda c: c.getLocation().getMap().Id() == self.map.Id(), self.engine.getView().getCameras())[0]
+			self.camera = filter(lambda c: c.getLocationRef().getMap().Id() == self.map.Id(), self.engine.getView().getCameras())[0]
 
 		if not self.camera:
 			raise RuntimeError, "No default camera view found for this map: " + self.map.Id()
@@ -195,7 +195,7 @@ class Viewer(fife.IKeyListener, fife.IMouseListener):
 	def pump(self):
 		if not self.active: return
 		if (self.horizscroll or self.vertscroll):
-			loc = self.camera.getLocation()
+			loc = self.camera.getLocationRef()
 			cam_scroll = loc.getExactLayerCoordinates()
 			if (self.horizscroll):
 				cam_scroll.x += SCROLL_MODIFIER*self.horizscrolldir * (2/self.camera.getZoom()) * math.cos(self.camera.getRotation()/180.0 * math.pi);

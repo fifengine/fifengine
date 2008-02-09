@@ -131,7 +131,7 @@ namespace FIFE {
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = *instance_it;
 			std::vector<ExactModelCoordinate> vertices;
-			cg->getVertices(vertices, instance->getLocation().getLayerCoordinates());
+			cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
 			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
 			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
 			Point pt1(firstpt.x, firstpt.y);

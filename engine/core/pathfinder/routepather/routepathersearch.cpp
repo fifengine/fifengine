@@ -40,7 +40,7 @@
 
 namespace FIFE {
 	RoutePatherSearch::RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
-		: Search(session_id, from, to, searchSpace), m_next(0), m_startCoordInt(0), m_destCoordInt(0) {
+		: Search(session_id, from, to, searchSpace), m_destCoordInt(0), m_startCoordInt(0), m_next(0)  {
 		m_startCoordInt = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
 		int max_index = m_searchspace->getMaxIndex();
 		m_destCoordInt = m_searchspace->convertCoordToInt(to.getLayerCoordinates());

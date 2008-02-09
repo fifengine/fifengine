@@ -17,20 +17,15 @@ class Cloud(Agent):
 		if self.state == _STATE_APPEAR:
 			self.move()
 		elif self.state == _STATE_FLOATING:
-			loc = self.agent.getLocation()
-			c = loc.getExactLayerCoordinates()
+			c = self.agent.getLocationRef().getExactLayerCoordinatesRef()
 			c.x += self.x_dir
 			c.y += self.y_dir
 			if self.isOutOfBounds(c):
 				self.disappear()
 			else:
-				loc.setExactLayerCoordinates(c)
-				self.agent.setLocation(loc)
 				self.move()
 		elif self.state == _STATE_DISAPPEAR:
-			loc = self.agent.getLocation()
-			loc.setExactLayerCoordinates(self.initialCoords)
-			self.agent.setLocation(loc)
+			self.agent.getLocationRef().setExactLayerCoordinates(self.initialCoords)
 			self.appear()
 
 	def start(self, x_dir, y_dir):

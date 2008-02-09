@@ -150,7 +150,7 @@ namespace FIFE {
 		for (; r_it != m_renderers.end(); ++r_it) {
 			std::vector<Camera*>::iterator cam_it = m_cameras.begin();
 			for (; cam_it != m_cameras.end(); ++cam_it) {
-				const Location& loc = (*cam_it)->getLocation();
+				const Location& loc = (*cam_it)->getLocationRef();
 				r_it->second->reset();
 				r_it->second->activateAllLayers(loc.getMap());
 			}
@@ -169,7 +169,7 @@ namespace FIFE {
 
 			(*cam_it)->update();
 
-			const Location& loc = (*cam_it)->getLocation();
+			const Location& loc = (*cam_it)->getLocationRef();
 			Map* map = loc.getMap();
 			if (!map) {
 				FL_ERR(_log, "No map for camera found");
@@ -194,16 +194,16 @@ namespace FIFE {
 
 					Instance* instance = *instance_it;
 
-					CellGrid* cg = instance->getLocation().getLayer()->getCellGrid();
+					CellGrid* cg = instance->getLocationRef().getLayer()->getCellGrid();
 					if (!cg) {
 						FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
 						exit(0);
 						return;
 					}
-					ScreenPoint drawpt = (*cam_it)->toScreenCoordinates( instance->getLocation().getMapCoordinates() );
+					ScreenPoint drawpt = (*cam_it)->toScreenCoordinates( instance->getLocationRef().getMapCoordinates() );
 					Image* image = NULL;
 					Action* action = instance->getCurrentAction();
-					int angle = (*cam_it)->getAngleBetween(instance->getLocation(), instance->getFacingLocation());
+					int angle = (*cam_it)->getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
 					InstanceVisual* visual = instance->getVisual<InstanceVisual>();
 					if (action) {
 						FL_DBG(_log, "Instance has action");

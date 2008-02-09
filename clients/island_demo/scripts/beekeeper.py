@@ -13,13 +13,10 @@ class Beekeeper(Agent):
 		self.talk()
 
 	def start(self):
-		loc = self.agent.getLocation()
-		c = loc.getLayerCoordinates()
+		self.facingLoc = self.agent.getLocation()
+		c = self.facingLoc.getExactLayerCoordinatesRef()
 		c.x += random.randint(-1, 1)
 		c.y += random.randint(-1, 1)
-		self.facingLoc = fife.Location()
-		self.facingLoc.setLayer(loc.getLayer())
-		self.facingLoc.setLayerCoordinates(c)
 		self.talk()
 	
 	def talk(self):

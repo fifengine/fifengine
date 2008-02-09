@@ -285,7 +285,7 @@ namespace FIFE {
 		return NULL;
 	}
 
-	const Location& Instance::getTargetLocation() const {
+	Location Instance::getTargetLocation() const {
 		if ( m_actioninfo && m_actioninfo->m_target ) {
 			return *m_actioninfo->m_target;
 		}
@@ -299,11 +299,18 @@ namespace FIFE {
 		return 0;
 	}
 
-	const Location& Instance::getFacingLocation() const {
+	Location Instance::getFacingLocation() const {
 		if (m_facinglocation) {
 			return *m_facinglocation;
 		}
 		return m_location;
+	}
+
+	Location& Instance::getFacingLocationRef() {
+		if (!m_facinglocation) {
+			m_facinglocation = new Location(m_location);
+		}
+		return *m_facinglocation;
 	}
 
 	int Instance::getActionRuntime() const {

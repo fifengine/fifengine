@@ -75,7 +75,7 @@ namespace FIFE {
 			Instance* instance = (*instance_it);
 			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
 
-			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocation().getLayerCoordinates());
+			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 			visual->getCachedImage()->render(visual->getCachedImageDimensions());
 		}
 

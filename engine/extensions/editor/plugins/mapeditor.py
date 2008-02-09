@@ -49,7 +49,7 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		self.viewer.viewMap(mapid)
 		self.map = self.engine.getModel().getMaps('id', mapid)[0]
 		self.camera = self.viewer.camera
-		self.layer = self.camera.getLocation().getLayer()
+		self.layer = self.camera.getLocationRef().getLayer()
 
 		if not self.mapEdit:
 			self.mapEdit = pychan.loadXML('content/gui/mapeditor.xml')
@@ -102,13 +102,12 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 		if self.camera:
 			# TODO: make Sleek fix this ugly mess
 			tmp = fife.ScreenPoint(screenx, screeny)
-			dy = -(tmp.y - self.camera.toScreenCoordinates(self.camera.getLocation().getMapCoordinates()).y)
+			dy = -(tmp.y - self.camera.toScreenCoordinates(self.camera.getLocationRef().getMapCoordinates()).y)
 			tmp.z = (int)(math.tan(self.camera.getTilt()* (math.pi / 180.0)) * dy)
 			self.selection = self.camera.toMapCoordinates(tmp)
 			self.selection.z = 0
 			self.selection = self.layer.getCellGrid().toLayerCoordinates(self.selection)
-			loc = fife.Location()
-			loc.setLayer(self.layer)
+			loc = fife.Location(self.layer)
 			loc.setLayerCoordinates(self.selection)
 			fife.CellSelectionRenderer.getInstance(self.engine.getView()).selectLocation(loc)
 

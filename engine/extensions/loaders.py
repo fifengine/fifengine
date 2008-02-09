@@ -482,8 +482,7 @@ class ModelLoader(handler.ContentHandler):
 			inst.get2dGfxVisual().setStackPosition(int(stackpos))
 			
 		if (object.getAction("default")):
-			target = fife.Location()
-			target.setLayer(self.layer)
+			target = fife.Location(self.layer)
 			inst.act("default", target, True)
 		self.instance = inst
 

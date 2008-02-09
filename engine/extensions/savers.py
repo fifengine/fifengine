@@ -146,7 +146,7 @@ class ModelSaver:
 		attrs = AttributesNSImpl({}, {})
 		self.startElement('instances',  attrs)
 		for inst in layer.getInstances():
-			position = inst.getLocation().getLayerCoordinates()
+			position = inst.getLocationRef().getLayerCoordinates()
 			attr_vals = {
 				(None, 'o'): inst.getObject().Id(),
 				(None, 'x'): str(position.x),
@@ -181,7 +181,7 @@ class ModelSaver:
 		cameralist = self.engine.getView().getCameras()
 
 		for cam in cameralist:
-			if cam.getLocation().getMap().Id() == map.Id():
+			if cam.getLocationRef().getMap().Id() == map.Id():
 				celldimensions = cam.getCellImageDimensions()
 				viewport = cam.getViewPort();
 

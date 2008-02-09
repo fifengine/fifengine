@@ -49,6 +49,10 @@ namespace FIFE {
 		 */
 		Location(const Location& loc);
 		
+		/** Utility constructor
+		 */
+		Location(Layer* layer);
+		
 		/** Destructor
 		 */
 		~Location();
@@ -93,14 +97,6 @@ namespace FIFE {
 		 */
 		void setExactLayerCoordinates(const ExactModelCoordinate& coordinates) throw(NotSet);
 		
-		/** Gets exact layer coordinates set to this location
-		 *  @throws NotSet in the following cases:
-		 *     - layer is not set (NULL)
-		 *     - layer does not have cellgrid assigned
-		 * @return exact layer coordinates
-		 */
-		ExactModelCoordinate getExactLayerCoordinates() const throw(NotSet);
-		
 		/** Sets "cell precise" layer coordinates to this location
 		 *  @throws NotSet in the following cases:
 		 *     - layer is not set (NULL)
@@ -108,22 +104,23 @@ namespace FIFE {
 		 * @see setLayerCoordinates(const ExactModelCoordinate& coordinates)
 		 */
 		void setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet);
-		
-		/** Gets cell precision layer coordinates set to this location
-		 * @see getExactLayerCoordinates()
-		 */
-		ModelCoordinate getLayerCoordinates() const throw(NotSet);
-		
+
 		/** Sets map coordinates to this location
 		 *  @param coordinates coordinates to set
 		 */
 		void setMapCoordinates(const ExactModelCoordinate& coordinates);
-		
-		/** Gets map coordinates set to this location
-		 * @return map coordinates
+
+		/** Gets reference to exact layer coordinates. This means that if you
+		 *  modify the coordinates, location gets modified directly
+		 * @return reference to exact layer coordinates
 		 */
-		ExactModelCoordinate getMapCoordinates() const;
+		ExactModelCoordinate& getExactLayerCoordinatesRef();
 		
+		/** Gets exact layer coordinates set to this location
+		 * @return exact layer coordinates
+		 */
+		ExactModelCoordinate getExactLayerCoordinates() const;
+
 		/** Gets exact layer coordinates of this location mapped on given layer
 		 *  @throws NotSet in the following cases:
 		 *     - given layer is not set (NULL)
@@ -132,10 +129,20 @@ namespace FIFE {
 		 */
 		ExactModelCoordinate getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
 		
+		/** Gets cell precision layer coordinates set to this location
+		 * @see getExactLayerCoordinates()
+		 */
+		ModelCoordinate getLayerCoordinates() const;
+		
 		/** Gets cell precision layer coordinates of this location mapped on given layer
 		 * @see getExactLayerCoordinates(const Layer* layer)
 		 */
 		ModelCoordinate getLayerCoordinates(const Layer* layer) const throw(NotSet);
+		
+		/** Gets map coordinates set to this location
+		 * @return map coordinates
+		 */
+		ExactModelCoordinate getMapCoordinates() const;
 	
 		/** Gets offset distance from cell center
 		 * @return offset distance

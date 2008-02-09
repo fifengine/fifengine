@@ -109,7 +109,7 @@ namespace FIFE {
 			ModelCoordinate pt = parse_point(value);
 			std::vector<Instance*>::iterator it = m_instances.begin();
 			for(; it != m_instances.end(); ++it) {
-				Location loc = (*it)->getLocation();
+				Location& loc = (*it)->getLocationRef();
 				if(loc.getLayerCoordinates(this) == pt)
 					matches.push_back(*it);
 			}
@@ -132,14 +132,14 @@ namespace FIFE {
 			layer = this;
 		}
 		
-		min = m_instances.front()->getLocation().getLayerCoordinates(layer);
+		min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
 		max = min;
 
 		for(std::vector<Instance*>::const_iterator i = m_instances.begin();
 			i != m_instances.end();
 			++i) {
 
-			ModelCoordinate coord = (*i)->getLocation().getLayerCoordinates(layer);
+			ModelCoordinate coord = (*i)->getLocationRef().getLayerCoordinates(layer);
 
 			if(coord.x < min.x) {
 				min.x = coord.x;
@@ -171,7 +171,7 @@ namespace FIFE {
 		m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
 		bool blockingInstance = false;
 		for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
-			if((*j)->getObject()->isBlocking()	&& (*j)->getLocation().getLayerCoordinates() == cellCoordinate) {
+			if((*j)->getObject()->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
 				blockingInstance = true;
 			}
 		}
