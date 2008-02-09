@@ -957,9 +957,11 @@ class Icon(Widget):
 		if isinstance(source,str):
 			self._source = source
 			self._image = get_manager().loadImage(source)
-		else:
+		elif isinstance(source,fife.GuiImage):
 			self._source = None
 			self._image = source
+		else:
+			raise RuntimeError("Icon.image only accepts GuiImage and python strings, not '%s'" % repr(source))
 		self.real_widget.setImage( self._image )
                 #print self._image,self.real_widget.getWidth(),self.real_widget.getWidth()
 	def _getImage(self):
