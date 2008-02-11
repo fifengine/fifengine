@@ -60,14 +60,18 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			})
 
 		metafields = self.mapEdit.findChild(name='Metadata Properties')
+		
+		# Clear previously added children
+		metafields.removeChildren(*metafields.children)
+		
 		for metafield in self.map.listFields():
 			hbox = widgets.HBox()
-			metafields.add(hbox)
+			metafields.addChild(hbox)
 
 			label = widgets.Label(text=metafield,min_size=(80,0))
-			hbox.add(label)
+			hbox.addChild(label)
 			field = widgets.TextField(text=self.map.get(metafield),min_size=(100,0))
-			hbox.add(field)
+			hbox.addChild(field)
 
 		self.mapEdit.show()
 

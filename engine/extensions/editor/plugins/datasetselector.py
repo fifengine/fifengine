@@ -14,25 +14,25 @@ class DatasetSelector(object):
 	def buildGui(self):
 		self.gui = widgets.Window(title="Dataset selector")
 		hbox = widgets.HBox(parent=self.gui)
-		self.gui.add(hbox)
+		self.gui.addChild(hbox)
 		scrollArea = widgets.ScrollArea(parent=hbox,size=(120,300))
-		hbox.add(scrollArea)
+		hbox.addChild(scrollArea)
 		self.datasets = widgets.ListBox(parent=scrollArea)
 		scrollArea.content = self.datasets
 		scrollArea = widgets.ScrollArea(parent=hbox,size=(120,300))
-		hbox.add(scrollArea)
+		hbox.addChild(scrollArea)
 		self.instances = widgets.ListBox(parent=scrollArea)
 		scrollArea.content = self.instances
 		scrollArea = widgets.ScrollArea(parent=hbox, size=(120,300))
-		hbox.add(scrollArea)
+		hbox.addChild(scrollArea)
 		self.preview = widgets.Icon()
 		scrollArea.content = self.preview
 
 		hbox = widgets.HBox(parent=self.gui)
-		self.gui.add(hbox)
+		self.gui.addChild(hbox)
 		hbox.addSpacer( widgets.Spacer() )
 		closeButton = widgets.Button(parent=hbox,text="Close")
-		hbox.add( closeButton )
+		hbox.addChild( closeButton )
 		closeButton.capture(self.hide)
 		
 		self.datasets.capture(self.updateInstances)

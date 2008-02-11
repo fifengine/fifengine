@@ -282,11 +282,6 @@ class Widget(object):
 			return children[0]
 		return None
 
-	def removeChild(self,widget):
-		"""
-		
-		"""
-
 	def addChild(self,widget):
 		"""
 		This function adds a widget as child widget and is only implemented
@@ -297,6 +292,17 @@ class Widget(object):
 	def addChildren(self,*widgets):
 		for widget in widgets:
 			self.addChild(widget)
+
+	def removeChild(self,widget):
+		"""
+		This function removes a direct child widget and is only implemented
+		in container widgets.
+		"""
+		raise RuntimeError("Trying to remove a widget from %s, which is not a container widget." % repr(self))
+
+	def removeChildren(self,*widgets):
+		for widget in widgets:
+			self.removeChild(widget)
 
 	def mapEvents(self,eventMap,ignoreMissing = False):
 		"""
