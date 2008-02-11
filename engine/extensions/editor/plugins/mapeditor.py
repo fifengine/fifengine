@@ -72,7 +72,10 @@ class MapEditor(fife.IMouseListener, fife.IKeyListener):
 			hbox.addChild(label)
 			field = widgets.TextField(text=self.map.get(metafield),min_size=(100,0))
 			hbox.addChild(field)
-
+		
+		# Make sure Layout get's recalculated.
+		self.mapEdit.adaptLayout()
+		
 		self.mapEdit.show()
 
 	def _selectLayer(self):
