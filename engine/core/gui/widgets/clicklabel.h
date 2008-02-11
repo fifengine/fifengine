@@ -49,8 +49,15 @@ namespace gcn {
 
 		virtual void adjustSize();
 
+		void setTextWrapping(bool);
+		bool isTextWrapping() const;
+
 	protected:
+		void wrapText();
+
 		FIFE::GuiFont* mGuiFont;
+		bool mTextWrapping;
+		std::string mWrappedText;
 	};
 }
 

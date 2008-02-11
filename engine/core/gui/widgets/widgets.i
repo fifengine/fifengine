@@ -357,6 +357,8 @@ namespace gcn {
 		ClickLabel(const std::string& caption);
 		virtual ~ClickLabel();
 		virtual void setCaption(const std::string& caption);
+		bool isTextWrapping() const;
+		void setTextWrapping(bool);
 	};
 
 	%feature("notabstract") Icon2;

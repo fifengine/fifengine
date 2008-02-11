@@ -36,15 +36,18 @@
 
 namespace gcn {
 	ClickLabel::ClickLabel(): Button() {
-		setAlignment(Graphics::LEFT);
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
+		setAlignment(Graphics::LEFT);
+		setTextWrapping(false);
 		setBorderSize(0);
 	}
 	
 	ClickLabel::ClickLabel(const std::string& caption): Button(caption)  {
-		setAlignment(Graphics::LEFT);
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
+		setAlignment(Graphics::LEFT);
+		setTextWrapping(false);
 		setBorderSize(0);
+		wrapText();
 		adjustSize();
 	}
 	
@@ -54,6 +57,7 @@ namespace gcn {
 	void ClickLabel::setCaption(const std::string& caption) {
 		Button::setCaption(caption);
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
+		wrapText();
 		adjustSize();
 	}
 	
@@ -61,6 +65,7 @@ namespace gcn {
 
 		if (mGuiFont != static_cast<FIFE::GuiFont*> (getFont())) {
 			mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
+			wrapText();
 			adjustSize();
 		}
 
@@ -82,15 +87,44 @@ namespace gcn {
 				throw FIFE::GuiException("Unknown alignment.");
 		}
 		if (mGuiFont) {
-			mGuiFont->drawMultiLineString(graphics, mCaption, textX, textY);
+			if( isTextWrapping() ) {
+				mGuiFont->drawMultiLineString(graphics, mWrappedText, textX, textY);
+			} else {
+				mGuiFont->drawMultiLineString(graphics, mCaption, textX, textY);
+			}
 		}
+	}
+
+	void ClickLabel::setTextWrapping(bool textWrapping) {
+		bool wrappingEnabled = !mTextWrapping && textWrapping;
+		mTextWrapping = textWrapping;
+		if (wrappingEnabled) {
+			wrapText();
+		}
+	}
+
+	bool ClickLabel::isTextWrapping() const {
+		return mTextWrapping;
 	}
 
 	void  ClickLabel::adjustSize() {
 		if (mGuiFont) {
-			FIFE::Image* image = mGuiFont->getAsImageMultiline(mCaption);
+			FIFE::Image* image;
+			if( isTextWrapping() ) {
+				image = mGuiFont->getAsImageMultiline(mWrappedText);
+			} else {
+				image = mGuiFont->getAsImage(mCaption);
+			}
 			setWidth( image->getWidth() );
 			setHeight( image->getHeight() );
 		}
 	}
+
+	void ClickLabel::wrapText() {
+		if( isTextWrapping() && mGuiFont ) {
+			mWrappedText = mGuiFont->splitTextToWidth(mCaption,getWidth());
+			// std::cerr << mCaption << ":" << getWidth() << "\n" << mWrappedText << "\n";
+		}
+	}
+
 }

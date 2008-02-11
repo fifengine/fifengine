@@ -144,4 +144,58 @@ namespace FIFE {
 		}
 		return image;
 	}
+
+	std::string FontBase::splitTextToWidth (const std::string& text, int render_width) {
+		if (render_width <= 0 || text.empty()) { 
+			return text;
+		}
+		std::string output;
+		std::string line;
+		std::string::size_type pos = 0;
+		std::list<std::pair<size_t,size_t> > break_pos;
+		bool firstLine = true;
+
+		while( pos < text.length() )
+		{
+			break_pos.clear();
+			if( !firstLine ) {
+				line =  "\n";
+			} else {
+				firstLine = false;
+			}
+
+			while( getWidth(line) < render_width && pos < text.length() )
+			{
+				if (text.at(pos) == ' ' && !line.empty())
+					break_pos.push_back( std::make_pair(line.length(),pos) );
+				line.push_back( text.at(pos) );
+				++pos;
+			}
+			if( pos >= text.length() )
+				break;
+
+			if( break_pos.empty() ) {
+				// No break position and line length smaller than 2
+				// means the renderwidth is really screwed. Just continue
+				// appending single character lines.
+				if( line.length() <= 1 ) {
+					output.append(line);
+					continue;
+				}
+
+				// We can't do hyphenation here,
+				// so we just retreat one character :-(
+				line.erase(line.length() - 1);
+				--pos;
+			} else {
+				line = line.substr(0,break_pos.back().first);
+				pos = break_pos.back().second + 1;
+			}
+			output.append(line);
+		}
+		if( !line.empty() ) {
+			output.append(line);
+		}
+		return output;
+	}
 }

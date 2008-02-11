@@ -100,6 +100,8 @@ namespace FIFE {
 		 */
 		virtual Image* getAsImageMultiline(const std::string& text) = 0;
 		
+		virtual std::string splitTextToWidth (const std::string& text, int render_width) = 0;
+
 		/** Set the color the text should be rendered in
 		 */
 		virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;

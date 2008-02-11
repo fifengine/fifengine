@@ -122,7 +122,11 @@ namespace FIFE {
 	Image* GuiFont::getAsImageMultiline(const std::string& text) {
 		return m_font->getAsImageMultiline(text);
 	}
-	
+
+	std::string GuiFont::splitTextToWidth (const std::string& text, int render_width) {
+		return m_font->splitTextToWidth(text,render_width);
+	}
+
 	void GuiFont::setColor(uint8_t r,uint8_t g,uint8_t b) {
 		m_font->setColor(r, g, b);
 	}
