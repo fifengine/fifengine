@@ -47,19 +47,18 @@ class DemoApplication(basicapplication.ApplicationBase):
 		eventMap = {
 			'creditsLink'  : self.showCredits,
 			'closeButton'  : self.quit,
-			'selectButton' : self.selectExample
+			'demoList' : self.selectExample
 		}
 		self.gui.mapEvents(eventMap)
 
-		from mapwidgets import MapProperties
+		from dynamic import DynamicExample
 		from styling import StylingExample
 		
 		self.examples = {
-			'Load Map' : PyChanExample('content/gui/loadmap.xml'),
-			'Map Properties' : MapProperties(),
 			'Absolute Positioning' : PyChanExample('content/gui/absolute.xml'),
 			'Basic Styling' : StylingExample(),
-			'All Widgets' : PyChanExample('content/gui/all_widgets.xml')
+			'All Widgets' : PyChanExample('content/gui/all_widgets.xml'),
+			'Dynamic Widgets' : DynamicExample(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items += self.examples.keys()

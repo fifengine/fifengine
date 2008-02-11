@@ -81,6 +81,11 @@ class Widget(object):
 	
 	DEFAULT_NAME = '__unnamed__'
 	
+	HIDE_SHOW_ERROR = """\
+	You can only show/hide the top widget of a hierachy.
+	Use 'addChild' or 'removeChild' to add/remove labels for example.
+	"""
+	
 	def __init__(self,parent = None, name = DEFAULT_NAME,
 			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
 			style = None, **kwargs):
@@ -199,6 +204,8 @@ class Widget(object):
 		"""
 		Show the widget and all contained widgets.
 		"""
+		if self._parent:
+			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if self._visible: return
 		self.adaptLayout()
 		self.beforeShow()
@@ -209,6 +216,8 @@ class Widget(object):
 		"""
 		Hide the widget and all contained widgets.
 		"""
+		if self._parent:
+			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if not self._visible: return
 		get_manager().hide(self)
 		self.afterHide()
@@ -272,6 +281,22 @@ class Widget(object):
 		if children:
 			return children[0]
 		return None
+
+	def removeChild(self,widget):
+		"""
+		
+		"""
+
+	def addChild(self,widget):
+		"""
+		This function adds a widget as child widget and is only implemented
+		in container widgets.
+		"""
+		raise RuntimeError("Trying to add a widget to %s, which doesn't allow this." % repr(self))
+
+	def addChildren(self,*widgets):
+		for widget in widgets:
+			self.addChild(widget)
 
 	def mapEvents(self,eventMap,ignoreMissing = False):
 		"""
@@ -612,13 +637,21 @@ class Container(Widget):
 		self._background_image = None
 		super(Container,self).__init__(**kwargs)
 
-	def add(self, *widgets):
-		"""
-		Adds a child widget to the container.
-		"""
-		for widget in widgets:
-			self.children.append(widget)
-			self.real_widget.add(widget.real_widget)
+	def addChild(self, widget):
+		widget._parent = self
+		self.children.append(widget)
+		self.real_widget.add(widget.real_widget)
+
+	def removeChild(self,widget):
+		if not widget in self.children:
+			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
+		self.children.remove(widget)
+		self.real_widget.remove(widget.real_widget)
+		widget._parent = None
+
+	def add(self,*widgets):
+		print "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."
+		self.addChildren(*widgets)
 
 	def getMaxChildrenWidth(self):
 		if not self.children: return 0
@@ -1379,6 +1412,14 @@ class ScrollArea(Widget):
 		self.real_widget = fife.ScrollArea()
 		self._content = None
 		super(ScrollArea,self).__init__(**kwargs)
+
+	def addChild(self,widget):
+		self.content = widget
+
+	def removeChild(self,widget):
+		if self._content != widget:
+			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
+		self.content = None
 
 	def _setContent(self,content):
 		self.real_widget.setContent(content.real_widget)

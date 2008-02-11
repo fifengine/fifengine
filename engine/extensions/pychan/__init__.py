@@ -324,13 +324,8 @@ class _GuiLoader(object, handler.ContentHandler):
 		for k,v in attrs.items():
 			self._setAttr(obj,k,v)
 
-		if hasattr(self.root,'add'):
-			self.root.add(obj)
-		elif hasattr(self.root,'content'):
-			self.root.content = obj
-		else:
-			if self.root is not None:
-				raise GuiXMLError("*** unknown containment relation :-(")
+		if self.root:
+			self.root.addChild( obj )
 		self.root = obj
 	
 	def _createSpacer(self,cls,name,attrs):

@@ -70,7 +70,7 @@ namespace FIFE {
 			SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 				1,getHeight(),32,
 				RMASK, GMASK, BMASK ,AMASK);
-				SDL_FillRect(surface,0,0x00000000);
+			SDL_FillRect(surface,0,0x00000000);
 			return surface;
 		}
 

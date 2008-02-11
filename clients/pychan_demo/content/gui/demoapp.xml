@@ -19,7 +19,6 @@
 		<HBox>
 			<ClickLabel name="creditsLink" text="Credits"/>
 			<Spacer />
-			<Button name="selectButton" text="Start Example"/>
 			<Button name="closeButton" text="Quit Demo"/>
 		</HBox>
 	</VBox>
