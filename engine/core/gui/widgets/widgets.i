@@ -120,18 +120,6 @@ namespace gcn {
 		virtual void clear();
 	};
 	
-	%feature("notabstract") Label;
-	class Label: public Widget {
-	public:
-		Label();
-		Label(const std::string& caption);
-		virtual const std::string &getCaption() const;
-		virtual void setCaption(const std::string& caption);
-		virtual void setAlignment(unsigned int alignment);
-		virtual unsigned int getAlignment();
-		virtual void adjustSize();
-	};
-	
 	%feature("notabstract") CheckBox;
 	class CheckBox: public Widget {
 	public:
@@ -351,12 +339,14 @@ namespace gcn {
 	};
 
 	%feature("notabstract") ClickLabel;
-	class ClickLabel: public Button {
+	%rename(Label) ClickLabel;
+	class ClickLabel: public Widget {
 	public:
 		ClickLabel();
 		ClickLabel(const std::string& caption);
 		virtual ~ClickLabel();
 		virtual void setCaption(const std::string& caption);
+		virtual const std::string& getCaption() const;
 		bool isTextWrapping() const;
 		void setTextWrapping(bool);
 		virtual void setWidth(int width);

@@ -38,7 +38,7 @@ namespace FIFE {
 }
 
 namespace gcn {
-	class ClickLabel : public Button {
+	class ClickLabel : public Widget, public MouseListener, public KeyListener, public FocusListener {
 	public:
 		ClickLabel();
 		ClickLabel(const std::string& caption);
@@ -46,6 +46,8 @@ namespace gcn {
 
 		virtual void setWidth(int width);
 		virtual void setCaption(const std::string& caption);
+		virtual const std::string& getCaption() const;
+
 		virtual void draw(Graphics* graphics);
 
 		virtual void adjustSize();
@@ -53,12 +55,41 @@ namespace gcn {
 		void setTextWrapping(bool);
 		bool isTextWrapping() const;
 
+		// Inherited from FocusListener
+	
+		virtual void focusLost(const Event& event);
+	
+	
+		// Inherited from MouseListener
+	
+		virtual void mousePressed(MouseEvent& mouseEvent);
+	
+		virtual void mouseReleased(MouseEvent& mouseEvent);
+	
+		virtual void mouseEntered(MouseEvent& mouseEvent);
+	
+		virtual void mouseExited(MouseEvent& mouseEvent);
+	
+		virtual void mouseDragged(MouseEvent& mouseEvent);
+	
+	
+		// Inherited from KeyListener
+	
+		virtual void keyPressed(KeyEvent& keyEvent);
+	
+		virtual void keyReleased(KeyEvent& keyEvent);
+
 	protected:
 		void wrapText();
 
 		FIFE::GuiFont* mGuiFont;
 		bool mTextWrapping;
+		std::string mCaption;
 		std::string mWrappedText;
+
+		bool mHasMouse;
+		bool mKeyPressed;
+		bool mMousePressed;
 	};
 }
 

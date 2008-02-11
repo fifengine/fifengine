@@ -35,18 +35,29 @@
 #include "clicklabel.h"
 
 namespace gcn {
-	ClickLabel::ClickLabel(): Button() {
+	ClickLabel::ClickLabel()  {
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
-		setAlignment(Graphics::LEFT);
+// 		setAlignment(Graphics::LEFT);
 		setTextWrapping(false);
 		setBorderSize(0);
+
+		addMouseListener(this);
+		addKeyListener(this);
+		addFocusListener(this);
+
 	}
 	
-	ClickLabel::ClickLabel(const std::string& caption): Button(caption)  {
+	ClickLabel::ClickLabel(const std::string& caption) {
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
-		setAlignment(Graphics::LEFT);
+// 		setAlignment(Graphics::LEFT);
 		setTextWrapping(false);
+		setCaption(caption);
 		setBorderSize(0);
+
+		addMouseListener(this);
+		addKeyListener(this);
+		addFocusListener(this);
+
 		wrapText();
 	}
 	
@@ -54,13 +65,17 @@ namespace gcn {
 	}
 	
 	void ClickLabel::setCaption(const std::string& caption) {
-		Button::setCaption(caption);
+		mCaption = caption;
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 		wrapText();
 	}
 
+	const std::string& ClickLabel::getCaption() const {
+		return mCaption;
+	}
+
 	void ClickLabel::setWidth(int width) {
-		Button::setWidth(width);
+		Widget::setWidth(width);
 		wrapText();
 	}
 	
@@ -72,23 +87,9 @@ namespace gcn {
 			adjustSize();
 		}
 
-		int textX;
+		int textX = 0;
 		int textY = 0;
 
-		switch (getAlignment())
-		{
-			case Graphics::LEFT:
-				textX = 0;
-				break;
-			case Graphics::CENTER:
-				textX = getWidth() / 2;
-				break;
-			case Graphics::RIGHT:
-				textX = getWidth();
-				break;
-			default:
-				throw FIFE::GuiException("Unknown alignment.");
-		}
 		if (mGuiFont) {
 			if( isTextWrapping() ) {
 				mGuiFont->drawMultiLineString(graphics, mWrappedText, textX, textY);
@@ -129,4 +130,66 @@ namespace gcn {
 		}
 	}
 
+
+	void ClickLabel::mousePressed(MouseEvent& mouseEvent)
+	{
+		if (mouseEvent.getButton() == MouseEvent::LEFT) {
+			mMousePressed = true;
+			mouseEvent.consume();
+		}
+	}
+	
+	void ClickLabel::mouseExited(MouseEvent& mouseEvent)
+	{
+		mHasMouse = false;
+	}
+	
+	void ClickLabel::mouseEntered(MouseEvent& mouseEvent)
+	{
+		mHasMouse = true;
+	}
+	
+	void ClickLabel::mouseReleased(MouseEvent& mouseEvent)
+	{
+		if (mouseEvent.getButton() == MouseEvent::LEFT && mMousePressed && mHasMouse) {
+			mMousePressed = false;
+			generateAction();
+			mouseEvent.consume();
+		} else if (mouseEvent.getButton() == MouseEvent::LEFT) {
+			mMousePressed = false;
+			mouseEvent.consume();
+		}
+	}
+	
+	void ClickLabel::mouseDragged(MouseEvent& mouseEvent)
+	{
+		mouseEvent.consume();
+	}
+	
+	void ClickLabel::keyPressed(KeyEvent& keyEvent)
+	{
+		Key key = keyEvent.getKey();
+	
+		if (key.getValue() == Key::ENTER || key.getValue() == Key::SPACE) {
+			mKeyPressed = true;
+			keyEvent.consume();
+		}
+	}
+	
+	void ClickLabel::keyReleased(KeyEvent& keyEvent)
+	{
+		Key key = keyEvent.getKey();
+	
+		if ((key.getValue() == Key::ENTER || key.getValue() == Key::SPACE) && mKeyPressed) {
+			mKeyPressed = false;
+			generateAction();
+			keyEvent.consume();
+		}
+	}
+	
+	void ClickLabel::focusLost(const Event& event)
+	{
+		mMousePressed = false;
+		mKeyPressed = false;
+	}
 }

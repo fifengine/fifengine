@@ -48,3 +48,11 @@ def callbackWithArguments(callback,*args,**kwargs):
 		callback(*args,**kwargs)
 	return real_callback
 
+
+def this_is_deprecated(func,message=None):
+	if message is None:
+		message = repr(func)
+	def wrapped_func(*args,**kwargs):
+		print "PyChan: You are using the DEPRECATED functionality: %s" % message
+		return func(*args,**kwargs)
+	return wrapped_func

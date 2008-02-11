@@ -981,14 +981,6 @@ class BasicTextWidget(Widget):
 		self.height = self.real_font.getHeight() + self.margins[1]*2
 		self.width = self.real_font.getWidth(self.text) + self.margins[0]*2
 
-class Label(BasicTextWidget):
-	"""
-	A basic label - displaying a string.
-	"""
-	def __init__(self,**kwargs):
-		self.real_widget = fife.Label("")
-		super(Label,self).__init__(**kwargs)
-
 class Icon(Widget):
 	"""
 	An image icon.
@@ -1024,18 +1016,16 @@ class Icon(Widget):
 		return self._image
 	image = property(_getImage,_setImage)
 
-class ClickLabel(BasicTextWidget):
+class Label(BasicTextWidget):
 	"""
 	A basic label - displaying a string.
 	
-	Only difference to L{Label} is that this will generate an event,
-	if clicked - just like a HTML link.
 	Also allows text wrapping.
 	
 	New Attributes
 	==============
 	
-	 - wrap_text: Boolean: Enable/Disable automatic text wrapping. Enabled by default.
+	 - wrap_text: Boolean: Enable/Disable automatic text wrapping. Disabled by default.
 	 Currently to actually see text wrapping you have to explicitly set a max_size with
 	 the desired width of the text, as the layout engine is not capable of deriving
 	 the maximum width from a parent container.
@@ -1043,10 +1033,10 @@ class ClickLabel(BasicTextWidget):
 	
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
 	
-	def __init__(self,wrap_text=True,**kwargs):
-		self.real_widget = fife.ClickLabel("")
+	def __init__(self,wrap_text=False,**kwargs):
+		self.real_widget = fife.Label("")
 		self.wrap_text = wrap_text
-		super(ClickLabel,self).__init__(**kwargs)
+		super(Label,self).__init__(**kwargs)
 
 	def resizeToContent(self):
 		self.real_widget.setWidth( self.max_size[0] )
@@ -1058,6 +1048,13 @@ class ClickLabel(BasicTextWidget):
 	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
 	def _getTextWrapping(self): self.real_widget.isTextWrapping()
 	wrap_text = property(_getTextWrapping,_setTextWrapping)
+
+class ClickLabel(Label):
+	"""
+	Deprecated - use L{Label} instead.
+	"""
+	__init__ = tools.this_is_deprecated(Label.__init__,message = "ClickLabel - Use Label instead")
+
 
 class Button(BasicTextWidget):
 	"""

@@ -24,7 +24,7 @@ class Manager(fife.IWidgetListener):
 		self.fonts['default'] = self.engine.getDefaultFont()
 		
 		self.styles = {}
-		self.styles['default'] = DEFAULT_STYLE
+		self.addStyle('default',DEFAULT_STYLE)
 		
 		self.widgetEvents = {}
 		self.engine.getEventManager().addWidgetListener(self)
@@ -84,7 +84,7 @@ class Manager(fife.IWidgetListener):
 	def addStyle(self,name,style):
 		style = self._remapStyleKeys(style)
 		
-		for k,v in self.styles['default'].items():
+		for k,v in self.styles.get('default',{}).items():
 			style[k] = style.get(k,v)
 		self.styles[name] = style
 
@@ -151,27 +151,24 @@ DEFAULT_STYLE = {
 		'foreground_color' : fife.Color(255,255,255),
 		'background_color' : fife.Color(0,0,0),
 	},
-	widgets.Button : {
+	'Button' : {
 		'border_size': 0,
 		'margins' : (10,5),
 	},
-	(widgets.CheckBox,widgets.RadioButton) : {
+	('CheckBox','RadioButton') : {
 		'border_size': 0,
 	},
-	widgets.Label : {
+	'Label' : {
 		'border_size': 0,
 	},
-	widgets.ClickLabel : {
+	'ListBox' : {
 		'border_size': 0,
 	},
-	widgets.ListBox : {
-		'border_size': 0,
-	},
-	widgets.Window : {
+	'Window' : {
 		'border_size': 1,
 		'margins': (5,5),
 	},
-	(widgets.Container,widgets.HBox,widgets.VBox) : {
+	('Container','HBox','VBox') : {
 		'border_size': 0,
 		'opaque' : False
 	}
