@@ -79,7 +79,9 @@ class Widget(object):
 		Attr('style'), Attr('font'),IntAttr('border_size')
 		]
 	
-	def __init__(self,parent = None, name = '_unnamed_',
+	DEFAULT_NAME = '__unnamed__'
+	
+	def __init__(self,parent = None, name = DEFAULT_NAME,
 			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
 			style = None, **kwargs):
 		
@@ -410,6 +412,19 @@ class Widget(object):
 		if len(dataList) == 1:
 			return dataList[0]
 		return dataList
+
+	def listNamedWidgets(self):
+		"""
+		This function will print a list of all currently named child-widgets
+		to the standard output. This is useful for debugging purposes.
+		"""
+		def _printNamedWidget(widget):
+			if widget.name != Widget.DEFAULT_NAME:
+				print widget.name.ljust(20),repr(widget).ljust(50),repr(widget._parent)
+		print "Named child widgets of ",repr(self)
+		print "name".ljust(20),"widget".ljust(50),"parent"
+		self.deepApply(_printNamedWidget)
+
 
 	def stylize(self,style,**kwargs):
 		"""

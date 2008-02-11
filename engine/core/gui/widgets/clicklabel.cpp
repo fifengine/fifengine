@@ -58,6 +58,12 @@ namespace gcn {
 	}
 	
 	void ClickLabel::draw(Graphics* graphics) {
+
+		if (mGuiFont != static_cast<FIFE::GuiFont*> (getFont())) {
+			mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
+			adjustSize();
+		}
+
 		int textX;
 		int textY = 0;
 
