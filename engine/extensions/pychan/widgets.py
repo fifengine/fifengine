@@ -1030,14 +1030,34 @@ class ClickLabel(BasicTextWidget):
 	
 	Only difference to L{Label} is that this will generate an event,
 	if clicked - just like a HTML link.
+	Also allows text wrapping.
+	
+	New Attributes
+	==============
+	
+	 - wrap_text: Boolean: Enable/Disable automatic text wrapping. Enabled by default.
+	 Currently to actually see text wrapping you have to explicitly set a max_size with
+	 the desired width of the text, as the layout engine is not capable of deriving
+	 the maximum width from a parent container.
 	"""
-	def __init__(self,**kwargs):
+	
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
+	
+	def __init__(self,wrap_text=True,**kwargs):
 		self.real_widget = fife.ClickLabel("")
+		self.wrap_text = wrap_text
 		super(ClickLabel,self).__init__(**kwargs)
 
-	def resizeToContent(self, recurse = True):
+	def resizeToContent(self):
+		self.real_widget.setWidth( self.max_size[0] )
+		self.real_widget.adjustSize()
 		self.height = self.real_widget.getHeight() + self.margins[1]*2
-		self.width = self.real_widget.getWidth() + self.margins[0]*2
+		self.width  = self.real_widget.getWidth()  + self.margins[0]*2
+		#print self.width,self.max_size[0]
+	
+	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
+	def _getTextWrapping(self): self.real_widget.isTextWrapping()
+	wrap_text = property(_getTextWrapping,_setTextWrapping)
 
 class Button(BasicTextWidget):
 	"""

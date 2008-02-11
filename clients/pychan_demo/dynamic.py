@@ -33,10 +33,8 @@ class DynamicExample(PyChanExample):
 		self.widget.show()
 
 	def addLabel(self):
-		label = pychan.widgets.ClickLabel()
 		# Code to check text wrapping code in FIFE
-		label.real_widget.setTextWrapping(True)
-		label.width = 200
+		label = pychan.widgets.ClickLabel(max_size=(200,1000))
 		label.text = self.widget.collectData('labelText')
 		label.capture(self.removeLabel)
 		self.labelBox.addChild( label )

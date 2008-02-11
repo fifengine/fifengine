@@ -48,7 +48,6 @@ namespace gcn {
 		setTextWrapping(false);
 		setBorderSize(0);
 		wrapText();
-		adjustSize();
 	}
 	
 	ClickLabel::~ClickLabel() {
@@ -58,7 +57,11 @@ namespace gcn {
 		Button::setCaption(caption);
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 		wrapText();
-		adjustSize();
+	}
+
+	void ClickLabel::setWidth(int width) {
+		Button::setWidth(width);
+		wrapText();
 	}
 	
 	void ClickLabel::draw(Graphics* graphics) {
@@ -123,7 +126,6 @@ namespace gcn {
 	void ClickLabel::wrapText() {
 		if( isTextWrapping() && mGuiFont ) {
 			mWrappedText = mGuiFont->splitTextToWidth(mCaption,getWidth());
-			// std::cerr << mCaption << ":" << getWidth() << "\n" << mWrappedText << "\n";
 		}
 	}
 

@@ -44,6 +44,7 @@ namespace gcn {
 		ClickLabel(const std::string& caption);
 		virtual ~ClickLabel();
 
+		virtual void setWidth(int width);
 		virtual void setCaption(const std::string& caption);
 		virtual void draw(Graphics* graphics);
 

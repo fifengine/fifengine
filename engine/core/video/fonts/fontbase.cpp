@@ -170,6 +170,14 @@ namespace FIFE {
 					break_pos.push_back( std::make_pair(line.length(),pos) );
 				line.push_back( text.at(pos) );
 				++pos;
+
+				// Special case: Already newlines in string:
+				if( text.at(pos-1) == '\n' ) {
+					if( line[0] == '\n' && line.length() > 1 )
+						line.erase(0);
+					output.append(line);
+					break;
+				}
 			}
 			if( pos >= text.length() )
 				break;

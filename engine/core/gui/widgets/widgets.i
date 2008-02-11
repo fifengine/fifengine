@@ -359,6 +359,8 @@ namespace gcn {
 		virtual void setCaption(const std::string& caption);
 		bool isTextWrapping() const;
 		void setTextWrapping(bool);
+		virtual void setWidth(int width);
+		virtual void adjustSize();
 	};
 
 	%feature("notabstract") Icon2;
