@@ -94,7 +94,9 @@ def check_for_duplicate_files(files):
 		for l in dupes: print l
 		Exit(1)
 
-def generate_msvc_project(projectfiles):
+msvcbuildpath = joinpath('build', 'win32', 'build_environments', 'visual_studio_8')
+
+def generate_msvc_project(target, source, env):
 	def create_dict_tree(source_dict):
 		for f in source_dict.keys():
 			parts = f.split(os.path.sep, 1)
@@ -122,27 +124,30 @@ def generate_msvc_project(projectfiles):
 				retstr.append(tabcount * '\t' + '<File RelativePath="%s"></File>' % newpath.replace('/','\\'))
 		return '\n'.join(retstr)
 			
-	msvcbuildpath = joinpath('..', 'build', 'win32', 'build_environments', 'visual_studio_8')
-	vcpaths = [os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1] for f in projectfiles]
+	vcpaths = [os.path.abspath(str(f)).split('%sengine%s' % (_sep, _sep))[-1] for f in source]
 	xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
 	projtxt = open(joinpath(msvcbuildpath, 'engine_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
-	vcprojfilename = joinpath(msvcbuildpath, 'fife.vcproj')
 
 	oldprojtxt = ''
 	try:
-		oldprojtxt = open(vcprojfilename, 'r').read()
+		oldprojtxt = open(str(target[0]), 'r').read()
 	except:
 		pass
 
 	if(oldprojtxt <> projtxt):
-		open(vcprojfilename, 'w').write(projtxt)
-		print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(vcprojfilename)
+		open(str(target[0]), 'w').write(projtxt)
+		print "FIFE msvc project file succesfully created (%s)" % os.path.abspath(str(target[0]))
 	else:
-		print "FIFE msvc project file already up-to-date (%s)" % os.path.abspath(vcprojfilename)
+		print "FIFE msvc project file already up-to-date (%s)" % os.path.abspath(str(target[0]))
+
+msvc_project_builder = Builder(action = generate_msvc_project, suffix = '.vcproj')
+env.Append(BUILDERS = {'MSVCProject': msvc_project_builder})
 
 
-def generate_codeblocks_project(projectfiles):
+cbbuildpath = joinpath('build', 'win32', 'build_environments', 'code_blocks')
+
+def generate_codeblocks_project(target, source, env):
 	codeblocksHeaderDef = \
 	'''		<Unit filename="..\..\..\engine\%s">
 				<Option compilerVar=""/>
@@ -156,21 +161,21 @@ def generate_codeblocks_project(projectfiles):
 				<Option compilerVar="CPP"/>
 				<Option target="default"/>
 			</Unit>'''
-	cbbuildpath = joinpath('..', 'build', 'win32', 'build_environments', 'code_blocks')
 	xmlstr = []
-	for f in projectfiles:
-		newf = os.path.abspath(f).split('%sengine%s' % (_sep, _sep))[-1]
+	for f in source:
+		newf = os.path.abspath(str(f)).split('%sengine%s' % (_sep, _sep))[-1]
 		newf = newf.replace('/', '\\')
-		if f in headerfiles:
+		if str(f) in headerfiles:
 			xmlstr.append(codeblocksHeaderDef % newf)
 		else:
 			xmlstr.append(codeblocksCppDef % newf)
 	projtxt = open(joinpath(cbbuildpath, 'engine_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', '\n'.join(xmlstr))
-	cbprojfilename = joinpath(cbbuildpath, 'fife_engine.cbp')
-	open(cbprojfilename, 'w').write(projtxt)
-	print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(cbprojfilename)
+	open(str(target[0]), 'w').write(projtxt)
+	print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(str(target[0]))
 
+codeblocks_project_builder = Builder(action = generate_codeblocks_project, suffix = '.cbp')
+env.Append(BUILDERS = {'CodeblocksProject': codeblocks_project_builder})
 
 variated_dirs = eval(open(joinpath('config', 'variated_dirs'), 'r').read())
 # filter out swigwrappers. fife_wrap.cxx is appended manually
@@ -199,17 +204,14 @@ headerfiles = [f for f in allfiles if is_headerfile(f)]
 implfiles = [f for f in allfiles if is_implfile(f)]
 extensionfiles = list(extensionpath.walkfiles('*.py'))
 
-def generate_all_project_files():
-	filtered_prj_paths = eval(open(joinpath('config', 'removed_from_project_files'), 'r').read())
-	filtered_prj_paths = [joinpath(*p.split('/')) for p in filtered_prj_paths]
-	projectfiles = remove_based_on_dir_filter(filtered_prj_paths, headerfiles + implfiles)
-	projectfiles.sort()
-	
-	generate_msvc_project(projectfiles)
-	generate_codeblocks_project(projectfiles)
+filtered_prj_paths = eval(open(joinpath('config', 'removed_from_project_files'), 'r').read())
+filtered_prj_paths = [joinpath(*p.split('/')) for p in filtered_prj_paths]
+projectfiles = [str(f) for f in remove_based_on_dir_filter(filtered_prj_paths, headerfiles + implfiles)]
 
-if not env.GetOption('clean'): 
-	generate_all_project_files()
+projectfiles.append('./swigwrappers/%s/fife_wrap.cxx' % env['script'])
+
+msvcproj = env.MSVCProject(joinpath('..', msvcbuildpath, 'fife'), projectfiles)
+cbproj = env.CodeblocksProject(joinpath('..', cbbuildpath, 'fife_engine'), projectfiles)
 
 if not env['projectfiles_only']:
 	env.Append(CPPPATH = ['#/engine/core', '#/engine/swigwrappers'])
