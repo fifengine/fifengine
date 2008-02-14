@@ -64,8 +64,6 @@ namespace FIFE {
 
 		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
-			std::list<Dataset*> tmp = (*it)->getDatasets();
-			datasets.splice(datasets.end(), tmp);
 			datasets.push_back(*it);
 		}
 
@@ -79,12 +77,6 @@ namespace FIFE {
 		for(; it != m_datasets.end(); ++it) {
 			if((*it)->get(field) == value)
 				datasets.push_back(*it);
-		}
-
-		std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
-		for(; jt != m_datasets.end(); ++jt) {
-			std::list<Dataset*> tmp = (*jt)->getDatasets(field, value);
-			datasets.splice(datasets.end(), tmp);
 		}
 
 		return datasets;

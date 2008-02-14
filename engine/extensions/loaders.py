@@ -141,9 +141,9 @@ class ModelLoader(handler.ContentHandler):
 			if (self.state == self.SMap):
 				handler = ModelLoader(self.engine, source, self.content_path, self.SMap, self.map)
 			elif (self.state == self.SDataset):
-				handler = ModelLoader(self.model, source, self.content_path, self.SDataset, self.dataset)
+				handler = ModelLoader(self.engine, source, self.content_path, self.SDataset, self.dataset)
 			else:
-				handler = ModelLoader(self.model, source, self.content_path)
+				handler = ModelLoader(self.engine, source, self.content_path)
 
 			parser.setContentHandler(handler)
 			parser.parse(open(source))
@@ -165,11 +165,12 @@ class ModelLoader(handler.ContentHandler):
 				self.dataset = dataset
 
 			elif (self.state == self.SMap):
+				self.map.addDataset(dataset)
 				self.dataset = dataset
-				self.map.addDataset(self.dataset)
 				
 			elif (self.state == self.SDataset):
-				self.datastack.append(self.dataset)
+				self.dataset.addDataset(dataset)
+				print ''.join(['Adding dataset ', dataset.Id(), ' to ', self.dataset.Id()])
 				self.dataset = dataset
 
 			self.dataset.setSource(str(self.source))
@@ -194,8 +195,8 @@ class ModelLoader(handler.ContentHandler):
 			if (attrName == "id"):
 				id = attrs.get(attrName)
 			elif (attrName == "parent"):
-				query = self.metamodel.getObjects("id", str(attrs.get(attrName)))
-				if len(query) != 1: self._err(''.join([str(len(query)), 'objects found with identifier ', str(id), '.']))
+				query = self.dataset.getObjects("id", str(attrs.get(attrName)))
+				if len(query) != 1: self._err(''.join([str(len(query)), ' objects found with identifier ', str(id), '.']))
 				parent = query[0]
 			elif (attrName == "blocking"):
 				blocking = int(attrs.get(attrName))
@@ -502,7 +503,7 @@ class ModelLoader(handler.ContentHandler):
 		self.state = self.stack.pop()
 
 	def finish_param(self):
-		assert len(self.datastack) > 0
+		assert len(self.datastack) > 0, 'Internal loaders error. Corrupt datastack!?'
 		if self.value:
 			self.datastack[-1].set(self.param_name, self.value)
 		else:
@@ -512,9 +513,6 @@ class ModelLoader(handler.ContentHandler):
 
 	def finish_dataset(self):
 		self.state = self.stack.pop()
-		if (self.state == self.SDataset):
-			assert len(self.datastack) > 0, "Corrupted dataset stack."
-			self.dataset = self.datastack.pop()
 
 	def finish_object(self):
 		self.state = self.SDataset

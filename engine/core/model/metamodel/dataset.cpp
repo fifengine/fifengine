@@ -42,20 +42,11 @@ namespace FIFE {
 	}
 
 	Dataset::~Dataset() {
-		purge(m_datasets);
 		purge(m_objects);
 	}
 
-	Dataset* Dataset::createDataset(const std::string& identifier) {
-		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
-		for(; it != m_datasets.end(); ++it) {
-			if(identifier == (*it)->Id())
-				throw NameClash(identifier);
-		}
-
-		Dataset* dataset = new Dataset(identifier);
-		m_datasets.push_back(dataset);
-		return dataset;
+	void Dataset::addDataset(Dataset& dataset) {
+		m_datasets.insert(&dataset);
 	}
 
 	Object* Dataset::createObject(const std::string& identifier, Object* inherited) {
@@ -73,7 +64,7 @@ namespace FIFE {
 	std::list<Dataset*> Dataset::getDatasets() {
 		std::list<Dataset*> datasets;
 
-		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		std::set<Dataset*>::iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
 			datasets.push_back(*it);
 		}
@@ -84,7 +75,9 @@ namespace FIFE {
 	std::list<Dataset*> Dataset::getDatasetsRec() {
 		std::list<Dataset*> datasets;
 
-		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		// Logic is buggy here (duplicates). Probably return values should be std::set too, but that's
+		// beyond the scope of this changeset. --jwt
+		std::set<Dataset*>::iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
 			std::list<Dataset*> tmp = (*it)->getDatasets();
 			datasets.splice(datasets.end(), tmp);
@@ -97,13 +90,13 @@ namespace FIFE {
 	std::list<Dataset*> Dataset::getDatasets(const std::string& field, const std::string& value) {
 		std::list<Dataset*> datasets;
 
-		std::vector<Dataset*>::const_iterator it = m_datasets.begin();
+		std::set<Dataset*>::iterator it = m_datasets.begin();
 		for(; it != m_datasets.end(); ++it) {
 			if((*it)->get(field) == value)
 				datasets.push_back(*it);
 		}
 
-		std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
+		std::set<Dataset*>::iterator jt = m_datasets.begin();
 		for(; jt != m_datasets.end(); ++jt) {
 			std::list<Dataset*> tmp = (*jt)->getDatasets(field, value);
 			datasets.splice(datasets.end(), tmp);
@@ -115,12 +108,12 @@ namespace FIFE {
 	std::list<Object*> Dataset::getObjects() {
 		std::list<Object*> objects;
 
-		std::vector<Object*>::const_iterator it = m_objects.begin();
+		std::vector<Object*>::iterator it = m_objects.begin();
 		for(; it != m_objects.end(); ++it) {
 				objects.push_back(*it);
 		}
 
-		std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
+		std::set<Dataset*>::iterator jt = m_datasets.begin();
 		for(; jt != m_datasets.end(); ++jt) {
 			std::list<Object*> tmp = (*jt)->getObjects();
 			objects.splice(objects.end(), tmp);
@@ -138,7 +131,7 @@ namespace FIFE {
 				objects.push_back(*it);
 		}
 
-		std::vector<Dataset*>::const_iterator jt = m_datasets.begin();
+		std::set<Dataset*>::iterator jt = m_datasets.begin();
 		for(; jt != m_datasets.end(); ++jt) {
 			std::list<Object*> tmp = (*jt)->getObjects(field, value);
 			objects.splice(objects.end(), tmp);

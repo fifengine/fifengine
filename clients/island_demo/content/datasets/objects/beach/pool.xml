@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <dataset id="Pool" type="Embedded" format="1.0">
+	<dataset type="XML" source="content/datasets/objects/generic/generic.xml"/>
+
 	<object id="Pool:001" parent="Object:Tilelike" blocking="1" static="1">
 		<image source="content/gfx/objects/beach/pool_001.png"/>
 	</object>

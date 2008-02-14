@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <dataset id="Quay" type="Embedded" format="1.0">
+	<dataset type="XML" source="content/datasets/objects/generic/generic.xml"/>
+
 	<object id="Quay:001" parent="Object:Tilelike">
 		<image source="content/gfx/objects/quay/quay_001.png"/>
 	</object>

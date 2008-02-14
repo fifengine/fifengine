@@ -70,12 +70,9 @@ namespace FIFE {
 				return source;
 			}
 
-			/** Add a (nested) dataset
-			 *
-			 * @note This Dataset owns any datasets you add to it, so
-			 * don't delete the returned pointer!
+			/** Add a reference to a (nested) dataset
 			 */
-			Dataset* createDataset(const std::string& identifier);
+			void addDataset(Dataset& dataset);
 
 			/** Add an object to this dataset; objects may optionally inherit
 			 * values from other objects (see object.h for details).
@@ -85,23 +82,15 @@ namespace FIFE {
 			 */
 			Object* createObject(const std::string& identifier, Object* inherited = 0);
 
-			/** Get the datasets contained in this dataset.
-			 * @note These datasets are owned by this dataset, so don't delete
-			 * returned pointers!
+			/** Get the datasets referred to by this dataset.
 			 */
 			std::list<Dataset*> getDatasets();
 
-			/** Get the datasets contained in this dataset. Recursive.
-			 * @note These datasets are owned by this dataset, so don't delete
-			 * returned pointers!
+			/** Get the datasets referred to by this dataset. Recursive.
 			 */
 			std::list<Dataset*> getDatasetsRec();
 
-			/** Get datasets from this dataset having the given value in the
-			 * given field.
-			 *
-			 * @note These datasets are owned by this dataset, so don't delete
-			 * returned pointers!
+			/** Get datasets from this dataset having the given value in the given field.
 			 */
 			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
@@ -123,7 +112,7 @@ namespace FIFE {
 			std::vector<Object*> m_objects;
 
 			// nested datasets
-			std::vector<Dataset*> m_datasets;
+			std::set<Dataset*> m_datasets;
 
 			// source xml file
 			std::string source;

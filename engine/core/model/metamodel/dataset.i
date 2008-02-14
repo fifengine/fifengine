@@ -18,7 +18,7 @@ namespace FIFE {
 			void setSource(const std::string& src);
 			const std::string& getSource();
 
-			Dataset* createDataset(const std::string& identifier);
+			void addDataset(Dataset&);
 
 			Object* createObject(const std::string& identifier, Object* inherited = 0);
 
