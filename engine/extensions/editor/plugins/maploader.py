@@ -14,16 +14,19 @@ for p in _paths:
 
 import fife
 import fifelog
+import plugin
 import pychan
 import pychan.widgets as widgets
 from loaders import loadMapFile
 from savers import saveMapFile
 
 class FileBrowser(object):
-	def __init__(self, engine):
+	def __init__(self, engine,fileSelected, savefile = False):
 		self.engine = engine
+		self.fileSelected = fileSelected
 
 		self._widget = None
+		self.savefile = savefile
 
 		self.path = './..'
 		self.dir_list = ('..',) + self.engine.getVFS().listDirectories(self.path)
@@ -40,6 +43,9 @@ class FileBrowser(object):
 			'closeButton'   : self._widget.hide
 		})
 		self._setDirectory()
+		if self.savefile:
+			self._file_entry = widgets.TextField(name='saveField', text='')	
+			self._widget.findChild(name="fileColumn").addChild(self._file_entry)
 		self._widget.show()
 
 	def _setDirectory(self):
@@ -62,61 +68,60 @@ class FileBrowser(object):
 
 	def _selectFile(self):
 		self._widget.hide()
-
-	def getSelection(self):
 		selection = self._widget.collectData('fileList')
-		if selection < 0: return
-		return self.file_list[self._widget.collectData('fileList')]
+		if selection >= 0:
+			selection = self.file_list[selection]
+			if self.savefile:
+				newlocation = self._widget.collectData('saveField')
+				self.fileSelected(self.path,selection,newlocation)
+				return
+			self.fileSelected(self.path,selection)
 
-class MapLoader(FileBrowser):
+
+class MapLoader(object):
 	def __init__(self, engine):
-		FileBrowser.__init__(self, engine)
+		super(MapLoader,self).__init__(engine)
+		self.engine = engine
+		
+		self.filebrowser = FileBrowser(engine,self._selectFile)
 
 		self.menu_items = {
-			'Load Map' : self.showBrowser,
+			'Load Map' : self.filebrowser.showBrowser,
 		}
 
 		self.newMap = None
 
-	def _selectFile(self):
-		selection = self.getSelection()
-		if not selection: return
-
+	def _selectFile(self,path,filename):
 		# assumes the root/content/{map|datasets|...} directory structure. (And is rather fragile)
-		content = self.path.split('/')
+		content = path.split('/')
 		content.pop()
 		content.pop()
-		self.newMap = loadMapFile('/'.join([self.path, selection]), self.engine, '/'.join(content) + '/')
-		self._widget.hide()
+		self.newMap = loadMapFile('/'.join([path, filename]), self.engine, '/'.join(content) + '/')
 
-class MapSaver(FileBrowser):
+class MapSaver(object):
 	def __init__(self, engine):
-		FileBrowser.__init__(self, engine)
+		super(MapSaver,self).__init__(engine)
+		self.engine = engine
+		
+		self.filebrowser = FileBrowser(engine,self._selectFile,savefile=True)
 
 		self.menu_items = {
-			'Save Map' : self.showBrowser,
+			'Save Map' : self.filebrowser.showBrowser,
 		}	
 
 		self.saveRequested = False
 		self._location = None
-
-	def showBrowser(self):
-		if not self._widget:
-			FileBrowser.showBrowser(self)
-			self._file_entry = widgets.TextField(name='saveField', text='')	
-			self._widget.findChild(name="fileColumn").add(self._file_entry)
-			self._widget.adaptLayout()
-		else:
-			FileBrowser.showBrowser(self)
+		self._newlocation = None
 
 	def saveMap(self, map):
-		newlocation = self._widget.collectData('saveField')
-		if newlocation:
-			saveMapFile('/'.join([self.path, newlocation]), self.engine, map)
+		print self
+		if self._newlocation:
+			saveMapFile('/'.join([self.path, self._newlocation]), self.engine, map)
 		elif self._location:
 			saveMapFile('/'.join([self.path, self._location]), self.engine, map)
 
-	def _selectFile(self):
-		self._location = self.getSelection()
+	def _selectFile(self,path,filename,newlocation):
+		self._location = filename
+		self._newlocation= newlocation
+		self.path = path
 		self.saveRequested = True
-		self._widget.hide()

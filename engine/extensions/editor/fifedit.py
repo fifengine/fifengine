@@ -1,11 +1,14 @@
-# Fifedit is the editor tool. It is designed to be embedded in clients, most notably the editor.
-# Fifedit is a plugin system for editing tools. See registerPlugin below.
+# coding: utf-8
 
 import fife
 import pychan
 import pychan.widgets as widgets
 
 class Fifedit():
+	"""
+	Fifedit is the editor tool. It is designed to be embedded in clients, most notably the editor.
+	Fifedit is a plugin system for editing tools. See L{registerPlugin}.
+	"""
 	def __init__(self, engine):
 		pychan.init(engine,debug=True)
 		self.gui = pychan.loadXML('content/gui/rootpanel.xml')

@@ -1,7 +1,10 @@
 # coding: utf-8
-# Plugin for the editor. See fifedit.py.
-# Viewer provides for both viewing loaded content, and selecting a view. See viewMap.
-# Viewer must be pumped (see pump) for proper scrolling.
+
+"""
+Plugin for the editor. See fifedit.py.
+Viewer provides for both viewing loaded content, and selecting a view. See viewMap.
+Viewer must be pumped (see pump) for proper scrolling.
+"""
 
 import math
 
