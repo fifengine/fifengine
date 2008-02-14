@@ -11,5 +11,5 @@ LogModules          = ['GUI']#['hexgrid']
 LogToPrompt         = 1
 LogToFile           = 0
 
-FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`'*#=[]"
+FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\""
 Font                = 'content/fonts/samanata.ttf'
