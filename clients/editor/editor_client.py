@@ -22,13 +22,14 @@ from listener import EditorListener
 
 import editor
 #from editor.fifedit import Fifedit
+from editor.plugins.plugin import Plugin
 from editor.plugins.maploader import MapLoader
 from editor.plugins.maploader import MapSaver
 from editor.plugins.viewer import Viewer
 from editor.plugins.mapeditor import MapEditor
 
 # Help display
-class Help(object):
+class Help(Plugin):
 	def __init__(self):
 		self._helpWidget = None	
 		self.menu_items = { 'Help' : self.showHelp }

@@ -10,10 +10,11 @@ import math
 
 import fife
 import pychan
+import plugin
 
 SCROLL_MODIFIER = 0.3
 
-class Viewer(fife.IKeyListener, fife.IMouseListener):
+class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 	def __init__(self, engine):
 		self.engine = engine
 		self.viewSelect = None

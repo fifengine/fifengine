@@ -4,13 +4,14 @@
 import math
 
 import fife
+import plugin
 import pychan
 import pychan.widgets as widgets
 from viewer import Viewer
 from datasetselector import DatasetSelector
 from editor.selection import Selection, ClickSelection
 
-class MapEditor(fife.IMouseListener, fife.IKeyListener):
+class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
 		self.engine = engine
 		self.eventmanager = self.engine.getEventManager()

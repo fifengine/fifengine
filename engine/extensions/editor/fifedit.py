@@ -23,11 +23,7 @@ class Fifedit():
 	# To create a plugin, just define menu_items with string keys and function values.
 	# The key will be displayed on the Editor menu, and the value will be called when the key is clicked.
 	def registerPlugin(self, plugin):
-		for key in plugin.menu_items:
-			button = widgets.Button(name=key,text=key)
-			self.gui.addChild(button)
-		self.gui.mapEvents(plugin.menu_items)
-		self.gui.adaptLayout()
+		plugin.install(self.gui)
 
 	def quit(self):
 		self.gui.hide()

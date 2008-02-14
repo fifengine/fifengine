@@ -7,9 +7,9 @@ import filebrowser
 from loaders import loadMapFile
 from savers import saveMapFile
 
-class MapLoader(object):
+class MapLoader(plugin.Plugin):
 	def __init__(self, engine):
-		super(MapLoader,self).__init__(engine)
+		super(MapLoader,self).__init__()
 		self.engine = engine
 		
 		self.filebrowser = filebrowser.FileBrowser(engine,self._selectFile)
@@ -27,9 +27,9 @@ class MapLoader(object):
 		content.pop()
 		self.newMap = loadMapFile('/'.join([path, filename]), self.engine, '/'.join(content) + '/')
 
-class MapSaver(object):
+class MapSaver(plugin.Plugin):
 	def __init__(self, engine):
-		super(MapSaver,self).__init__(engine)
+		super(MapSaver,self).__init__()
 		self.engine = engine
 		
 		self.filebrowser = filebrowser.FileBrowser(engine,self._selectFile,savefile=True)
