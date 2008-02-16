@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object id="Earth-2" static="1">
+	<image source="content/gfx/tiles/ground/earth_2.png" direction="0"/>
+</object>

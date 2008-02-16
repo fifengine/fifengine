@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object id="Beach-sw1" static="1" blocking="1">
+	<image source="content/gfx/tiles/beach/beach_sw1.png" direction="0"/>
+</object>

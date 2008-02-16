@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object id="OpenFullCrate" blocking="1" static="1">
+	<image source="content/gfx/objects/crate/open_full_1.png" direction="315"/>
+	<image source="content/gfx/objects/crate/open_full_1.png" direction="270"/>
+	<image source="content/gfx/objects/crate/open_full_1.png" direction="235"/>
+</object>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<dataset namespace="OfficialMapTiles">
+  <!-- Ground tiles -->
+	<object source="content/gfx/tiles/ground/earth_1.xml"/>
+	<object source="content/gfx/tiles/ground/earth_2.xml"/>
+	<object source="content/gfx/tiles/ground/earth_3.xml"/>
+	<object source="content/gfx/tiles/ground/earth_4.xml"/>
+	<object source="content/gfx/tiles/ground/earth_5.xml"/>
+	<object source="content/gfx/tiles/ground/sand_1.xml"/>
+	<object source="content/gfx/tiles/ground/sand_2.xml"/>
+
+	<!-- Beach tiles -->
+	<object source="content/gfx/tiles/beach/beach_n1.xml"/>
+	<object source="content/gfx/tiles/beach/beach_n2.xml"/>
+	<object source="content/gfx/tiles/beach/beach_ne1.xml"/>
+	<object source="content/gfx/tiles/beach/beach_ne2.xml"/>
+	<object source="content/gfx/tiles/beach/beach_ne3.xml"/>
+	<object source="content/gfx/tiles/beach/beach_e1.xml"/>
+	<object source="content/gfx/tiles/beach/beach_e2.xml"/>
+	<object source="content/gfx/tiles/beach/beach_se1.xml"/>
+	<object source="content/gfx/tiles/beach/beach_se2.xml"/>
+	<object source="content/gfx/tiles/beach/beach_se3.xml"/>
+	<object source="content/gfx/tiles/beach/beach_s1.xml"/>
+	<object source="content/gfx/tiles/beach/beach_s2.xml"/>
+	<object source="content/gfx/tiles/beach/beach_sw1.xml"/>
+	<object source="content/gfx/tiles/beach/beach_sw2.xml"/>
+	<object source="content/gfx/tiles/beach/beach_sw3.xml"/>
+	<object source="content/gfx/tiles/beach/beach_w1.xml"/>
+	<object source="content/gfx/tiles/beach/beach_w2.xml"/>
+	<object source="content/gfx/tiles/beach/beach_nw1.xml"/>
+	<object source="content/gfx/tiles/beach/beach_nw2.xml"/>
+	<object source="content/gfx/tiles/beach/beach_nw3.xml"/>
+	<object source="content/gfx/tiles/beach/beach_special_ne.xml"/>
+	<object source="content/gfx/tiles/beach/beach_special_se.xml"/>
+	<object source="content/gfx/tiles/beach/beach_special_sw.xml"/>
+	<object source="content/gfx/tiles/beach/beach_special_nw.xml"/>
+
+	<!-- Water -->
+	<object source="content/gfx/tiles/beach/water.xml"/>
+</dataset>

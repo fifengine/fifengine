@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object id="Water" static="1" blocking="1">
+	<image source="content/gfx/tiles/beach/water.png" direction="0"/>
+</object>

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object id="HalfOpenEmptyCrate" blocking="1" static="1">
+	<image source="content/gfx/objects/crate/halfopen_empty_1.png" direction="315"/>
+	<image source="content/gfx/objects/crate/halfopen_empty_2.png" direction="270"/>
+	<image source="content/gfx/objects/crate/halfopen_empty_3.png" direction="235"/>
+</object>
