@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<dataset id="IslandDemoFonts" format="1.0">
+	<fonts>
+		<font glyphs=" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`'*#=[]"
+		      source="content/fonts/samanata.ttf" size="12" id="samanata_12" />
+	</fonts>
+	
+	<text_styles>
+		<text_style font_id="samanata_12" color="120:25:25" id="normal"/>
+		<text_style font_id="samanata_12" color="225:50:25" id="angry"/>
+	</text_styles>
+</dataset>
