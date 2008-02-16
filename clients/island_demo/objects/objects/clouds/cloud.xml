@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<object id="Cloud" blocking="0">
+	<action id="disappear">
+		<animation source="objects/objects/clouds/cloud_disappear.xml" direction='0' />
+	</action>
+
+	<action id="appear">
+		<animation source="objects/objects/clouds/cloud_appear.xml" direction='0' />
+	</action>
+
+	<action id="float">
+		<animation source="objects/objects/clouds/cloud_float.xml" direction='0' />
+	</action>
+
+	<action id="default">
+		<animation source="objects/objects/clouds/cloud_float.xml" direction='0' />
+	</action>
+</object>
