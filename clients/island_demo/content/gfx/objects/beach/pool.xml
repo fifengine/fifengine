@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<object id="Pool" parent="Tilelike" blocking="1" static="1">
+	<image source="content/gfx/objects/beach/pool_000.png" direction="0"/>
+	<image source="content/gfx/objects/beach/pool_315.png" direction="315"/>
+	<image source="content/gfx/objects/beach/pool_270.png" direction="270"/>
+	<image source="content/gfx/objects/beach/pool_235.png" direction="235"/>
+</object>

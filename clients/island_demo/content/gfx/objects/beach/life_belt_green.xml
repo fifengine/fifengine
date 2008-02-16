@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object id="GreenLifeBelt" blocking="1" static="1">
+	<image source="content/gfx/objects/beach/life_belt_green_315.png" direction="315"/>
+	<image source="content/gfx/objects/beach/life_belt_green_270.png" direction="270"/>
+	<image source="content/gfx/objects/beach/life_belt_green_235.png" direction="235"/>
+</object>

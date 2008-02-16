@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object id="Root02" blocking="1" static="1">
+	<image source="content/gfx/objects/beach/root02.png"/>
+</object>

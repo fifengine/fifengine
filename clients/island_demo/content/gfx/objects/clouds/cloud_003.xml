@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object id="Cloud03" static="1">
+	<image source="content/gfx/objects/clouds/cloud_003.png"/>
+</object>
