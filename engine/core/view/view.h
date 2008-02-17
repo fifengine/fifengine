@@ -104,6 +104,7 @@ namespace FIFE {
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;
+		bool m_updated; // false, if view has never been updated before
 	};
 
 }

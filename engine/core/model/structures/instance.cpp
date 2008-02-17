@@ -109,7 +109,8 @@ namespace FIFE {
 	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
 		AttributedClass(identifier),
 		m_object(object),
-		m_location(location),
+		m_cur_location(location),
+		m_prev_location(location),
 		m_facinglocation(NULL),
 		m_actioninfo(NULL),
 		m_listeners(NULL),
@@ -152,7 +153,7 @@ namespace FIFE {
 			delete m_actioninfo;
 			m_actioninfo = NULL;
 		}
-		m_actioninfo = new ActionInfo(m_object->getPather(), m_location);
+		m_actioninfo = new ActionInfo(m_object->getPather(), m_cur_location);
 		m_actioninfo->m_action = m_object->getAction(action_name);
 		if (!m_actioninfo->m_action) {
 			delete m_actioninfo;
@@ -166,7 +167,7 @@ namespace FIFE {
 		m_actioninfo->m_target = new Location(target);
 		m_actioninfo->m_speed = speed;
 		setFacingLocation(target);
-		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << target << " with speed " << speed);
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_cur_location << " to " << target << " with speed " << speed);
 	}
 	
 	void Instance::follow(const std::string& action_name, Instance* leader, const double speed) {
@@ -175,7 +176,7 @@ namespace FIFE {
 		m_actioninfo->m_speed = speed;
 		m_actioninfo->m_leader = leader;
 		setFacingLocation(*m_actioninfo->m_target);
-		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << *m_actioninfo->m_target << " with speed " << speed);
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_cur_location << " to " << *m_actioninfo->m_target << " with speed " << speed);
 	}
 
 	void Instance::act(const std::string& action_name, const Location& direction, bool repeating) {
@@ -217,16 +218,16 @@ namespace FIFE {
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * m_actioninfo->m_speed;
 		FL_DBG(_log, LMsg("dist ") <<  distance_to_travel);
 				
-		Location nextLocation = m_location;
+		Location nextLocation = m_cur_location;
 		m_actioninfo->m_pather_session_id = m_actioninfo->m_pather->getNextLocation(
 			this, *m_actioninfo->m_target,
 			distance_to_travel, nextLocation, *m_facinglocation,
 			m_actioninfo->m_pather_session_id);
-		m_location.getLayer()->getInstanceTree()->removeInstance(this);
-		m_location = nextLocation;
+		m_cur_location.getLayer()->getInstanceTree()->removeInstance(this);
+		m_cur_location = nextLocation;
 		ExactModelCoordinate a = nextLocation.getMapCoordinates();
 		ExactModelCoordinate b = m_actioninfo->m_target->getMapCoordinates();
-		m_location.getLayer()->getInstanceTree()->addInstance(this);
+		m_cur_location.getLayer()->getInstanceTree()->addInstance(this);
 		// return if we are close enough to target to stop
 		if(m_actioninfo->m_pather_session_id == -1) {
 			return true;
@@ -235,6 +236,7 @@ namespace FIFE {
 	}
 
 	void Instance::update(unsigned int curticks) {
+		m_prev_location = m_cur_location;
 		if (!m_actioninfo) {
 			return;
 		}
@@ -305,7 +307,7 @@ namespace FIFE {
 		if ( m_actioninfo && m_actioninfo->m_target ) {
 			return *m_actioninfo->m_target;
 		}
-		return m_location;
+		return m_cur_location;
 	}
 
 	double Instance::getMovementSpeed() const {
@@ -319,12 +321,12 @@ namespace FIFE {
 		if (m_facinglocation) {
 			return *m_facinglocation;
 		}
-		return m_location;
+		return m_cur_location;
 	}
 
 	Location& Instance::getFacingLocationRef() {
 		if (!m_facinglocation) {
-			m_facinglocation = new Location(m_location);
+			m_facinglocation = new Location(m_cur_location);
 		}
 		return *m_facinglocation;
 	}

@@ -74,18 +74,18 @@ namespace FIFE {
 		/** Sets location of the instance
 		 *  @param loc new location
 		 */
-		void setLocation(const Location& loc) { m_location = loc; }
+		void setLocation(const Location& loc) { m_cur_location = loc; }
 
 		/** Gets current location of instance
 		 *  @note does not return const Location&, since swig wont be const correct
 		 *  @return current location
 		 */
-		Location getLocation() const { return m_location; }
+		Location getLocation() const { return m_cur_location; }
 		
 		/** Gets reference of current location of instance
 		 *  @return reference to current location
 		 */
-		Location& getLocationRef() { return m_location; }
+		Location& getLocationRef() { return m_cur_location; }
 		
 		/** Gets movement target in case instance is moving. In case not, returns current location
 		 *  To move target location, call move-method
@@ -150,6 +150,10 @@ namespace FIFE {
 		 */
 		void move(const std::string& action_name, const Location& target, const double speed);
 
+		/** Returns true, if instance was moved during previous update
+		 */
+		bool isMoved() { return m_cur_location != m_prev_location; }
+		
 		/** Performs given named action to the instance. Performs no movement
 		 *  @param action_name name of the action
 		 *  @param direction coordinates for cell towards instance is heading to when performing the action
@@ -177,6 +181,8 @@ namespace FIFE {
 
 		/** Updates the instance related to the current action
 		 * @param curticks current tick count of the system
+		 * @note call this only once in engine update cycle, so that tracking between
+		 *  current position and previous position keeps in sync.
 		 */
 		void update(unsigned int curticks=0);
 		
@@ -195,7 +201,9 @@ namespace FIFE {
 		// object where instantiated from
 		Object* m_object;
 		// current location
-		Location m_location;
+		Location m_cur_location;
+		// location on previous round
+		Location m_prev_location;
 		// current facing location. Just a pointer to save space e.g. on tiles
 		Location* m_facinglocation;
 		// action information, allocated when actions are bind

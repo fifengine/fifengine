@@ -32,6 +32,7 @@
 #include "model/structures/instancetree.h"
 #include "model/structures/instance.h"
 #include "util/logger.h"
+#include "util/fife_math.h"
 
 #include "camera.h"
 #include "view.h"
@@ -48,12 +49,16 @@ namespace FIFE {
 			m_rotation(0),
 			m_zoom(1),
 			m_location(),
+			m_prev_origo(ScreenPoint(0,0,0)),
+			m_cur_origo(ScreenPoint(0,0,0)),
 			m_viewport(),
 			m_screen_cell_width(1),
 			m_screen_cell_height(1),
 			m_reference_scale(1),
 			m_enabled(true),
-			m_attachedto(NULL) {
+			m_attachedto(NULL),
+			m_image_dimensions(),
+			m_iswarped(false) {
 		m_location.setLayer(layer);
 		m_location.setExactLayerCoordinates(emc);
 		m_viewport = viewport;
@@ -74,59 +79,37 @@ namespace FIFE {
 		return angle;
 	}
 
-	/** Sets tilt for the camera.
-		 * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45
-		 * @param tilt tilt for the camera
-		 */
 	void Camera::setTilt(double tilt) {
-
 		m_tilt = tilt;
 		updateReferenceScale();
 		updateMatrices();
+		m_iswarped = true;
 	}
 
-	/** Gets camera tilt
-	 * @return tilt of camera
-	 */
 	double Camera::getTilt() const {
 		return m_tilt;
 	}
 
-	/** Sets rotation for the camera.
-	 * Rotation can be visualized by thinking camera that rotates around an object
-	 * that it is rendering
-	 * @param rotation rotation for the camera
-	 */
 	void Camera::setRotation(double rotation) {
 		m_rotation = rotation;
 		updateReferenceScale();
 		updateMatrices();
+		m_iswarped = true;
 	}
 
-
-
-	/** Gets camera rotation
-	 * @return rotation of the camera
-	 */
 	double Camera::getRotation() const {
 		return m_rotation;
 	}
 
-	/** Sets zoom for the camera.
-	 * @param zoom zoom for the camera
-	 */
 	void Camera::setZoom(double zoom) {
 		m_zoom = zoom;
 		if (m_zoom < 0.001) {
 			m_zoom = 0.001;
 		}
-
 		updateMatrices();
+		m_iswarped = true;
 	}
 
-	/** Gets camera zoom
-	 * @return zoom of the camera
-	 */
 	double Camera::getZoom() const {
 		return m_zoom;
 	}
@@ -136,14 +119,21 @@ namespace FIFE {
 		m_screen_cell_height = height;
 		updateReferenceScale();
 		updateMatrices();
+		m_iswarped = true;
 	}
 
-	/** Sets the location for camera
-	 * @param location location (center point) to render
-	 */
-	void Camera::setLocation(const Location& location) {
-		m_location = location;
+	ScreenPoint Camera::getLatestMovement() {
+		return m_prev_origo - m_cur_origo;
+	}
 
+	void Camera::setLocation(const Location& location) {
+		// initialize first set properly
+		if ((m_prev_origo == m_cur_origo) && (m_prev_origo == ScreenPoint(0,0,0))) {
+			m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
+			m_prev_origo = m_cur_origo;
+		}	
+		m_location = location;
+		
 		CellGrid* cg = NULL;
 		if (m_location.getLayer()) {
 			cg = m_location.getLayer()->getCellGrid();
@@ -153,14 +143,35 @@ namespace FIFE {
 		if (!cg) {
 			throw Exception("Camera layer has no cellgrid specified");
 		}
-
+		
 		updateMatrices();
+		
+		m_prev_origo = m_cur_origo;
+		m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
 	}
 
 	Point Camera::getCellImageDimensions() {
-		return Point( m_screen_cell_width, m_screen_cell_height );
+		return getCellImageDimensions(m_location.getLayer());
 	}
 
+	Point Camera::getCellImageDimensions(Layer* layer) {
+		if (layer == m_location.getLayer()) {
+			return Point( m_screen_cell_width, m_screen_cell_height );
+		}
+		std::map<Layer*, Point>::iterator it = m_image_dimensions.find(layer);
+		if (it != m_image_dimensions.end()) {
+			return it->second;
+		}
+		Point p;
+		CellGrid* cg = layer->getCellGrid();
+		assert(cg);
+		DoublePoint dimensions = getLogicalCellDimensions(layer);
+		p.x = static_cast<int>(round(m_reference_scale * dimensions.x));
+		p.y = static_cast<int>(round(m_reference_scale * dimensions.y));
+		m_image_dimensions[layer] = p;
+		return p;
+	}
+	
 	Location Camera::getLocation() const {
 		return m_location;
 	}
@@ -185,15 +196,8 @@ namespace FIFE {
 		return m_enabled;
 	}
 
-	/** Update the camera transformation matrix T with requested values.
-	 *  The requests are done using these functions :
-	 * setLocation
-	 * setRotation
-	 * setTilt
-	 */
-
 	void Camera::updateMatrices() {
-		double scale =   m_reference_scale;
+		double scale = m_reference_scale;
 		m_matrix.loadScale(scale, scale, scale);
 		if (m_location.getLayer()) {
 			CellGrid* cg = m_location.getLayer()->getCellGrid();
@@ -224,14 +228,12 @@ namespace FIFE {
 		return pt;
 	}
 
-	void Camera::updateReferenceScale() {
+	DoublePoint Camera::getLogicalCellDimensions(Layer* layer) {
 		CellGrid* cg = NULL;
-		if (m_location.getLayer()) {
-			cg = m_location.getLayer()->getCellGrid();
+		if (layer) {
+			cg = layer->getCellGrid();
 		}
-		if (!cg) {
-			return;
-		}
+		assert(cg);
 
 		ModelCoordinate cell(0,0);
 		std::vector<ExactModelCoordinate> vertices;
@@ -254,11 +256,15 @@ namespace FIFE {
 				y2 = std::max(vertices[i].y, y2);
 			}
 		}
-		m_reference_scale = static_cast<double>(m_screen_cell_width) / (x2 - x1);
+		return DoublePoint( x2 - x1, y2 - y1 );
+	}
+
+	void Camera::updateReferenceScale() {
+		DoublePoint dim = getLogicalCellDimensions(m_location.getLayer());
+		m_reference_scale = static_cast<double>(m_screen_cell_width) / dim.x;
 
 		FL_DBG(_log, "Updating reference scale");
 		FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
-		FL_DBG(_log, LMsg("   x1=") << x1 << " x2=" << x2 << " y1=" << y1 << " y2=" << y2);
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 	
@@ -275,7 +281,6 @@ namespace FIFE {
 
 	void Camera::attachToInstance( Instance *instance ) {
 		m_attachedto = instance;
-		update();
 	}
 
 	void Camera::detach() {
@@ -286,12 +291,19 @@ namespace FIFE {
 		if( !m_attachedto ) {
 			return;
 		}
-
-		m_location.setExactLayerCoordinates( m_attachedto->getLocationRef().getExactLayerCoordinates());
+		Location loc(m_location);
+		loc.setExactLayerCoordinates( m_attachedto->getLocationRef().getExactLayerCoordinates(m_location.getLayer()) );
+		setLocation(loc);
 		updateMatrices();
 	}
 	
 	void Camera::refresh() {
 		updateMatrices();
+		m_iswarped = true;
+	}
+	
+	void Camera::resetUpdates() {
+		m_iswarped = false;
+		m_prev_origo = m_cur_origo;
 	}
 }

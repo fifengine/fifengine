@@ -38,9 +38,6 @@
 
 
 namespace FIFE {
-	const int STATIC_IMAGE_NOT_INITIALIZED = -2;
-	const int STATIC_IMAGE_NOT_FOUND = -1;
-
 
 	static Logger _log(LM_VIEW);
 	
@@ -73,12 +70,31 @@ namespace FIFE {
 		return getIndexByAngle(angle, m_angle2img);
 	}	
 	
-	InstanceVisual::InstanceVisual(): 
-		m_stackposition(0),
-		m_instance(NULL),
+	const int STATIC_IMAGE_NOT_INITIALIZED = -2;
+	const int STATIC_IMAGE_NOT_FOUND = -1;
+
+	InstanceVisualCacheItem::InstanceVisualCacheItem():
+		screenpoint(),
+		dimensions(),
+		image(NULL),
 		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
-		m_cached_static_img_angle(0),
- 		m_cached_dimensions() {
+		m_cached_static_img_angle(0) {
+	}
+
+	int InstanceVisualCacheItem::getStaticImageIndexByAngle(unsigned int angle, Instance* instance) {
+		if (static_cast<int>(angle) != m_cached_static_img_angle) {
+			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
+		}
+		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
+			return m_cached_static_img_id;
+		}
+		m_cached_static_img_id = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
+ 		m_cached_static_img_angle = angle;
+		return m_cached_static_img_id;
+	}	
+	
+	InstanceVisual::InstanceVisual(): 
+		m_stackposition(0) {
 	}
 	
 	InstanceVisual* InstanceVisual::create(Instance* instance) {
@@ -87,24 +103,21 @@ namespace FIFE {
 		}
 		InstanceVisual* v = new InstanceVisual();
 		instance->setVisual(v);
-		v->m_instance = instance;
 		return v;
 	}
 	
 	InstanceVisual::~InstanceVisual() {
 	}
 	
-	int InstanceVisual::getStaticImageIndexByAngle(unsigned int angle) {
-		if (static_cast<int>(angle) != m_cached_static_img_angle) {
-			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
+	InstanceVisualCacheItem& InstanceVisual::getCacheItem(Camera* cam) {
+		std::map<Camera*, InstanceVisualCacheItem>::iterator it = m_cache.find(cam);
+		if (it != m_cache.end()) {
+			return it->second;
 		}
-		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
-			return m_cached_static_img_id;
-		}
-		m_cached_static_img_id = m_instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
- 		m_cached_static_img_angle = angle;
-		return m_cached_static_img_id;
-	}	
+		InstanceVisualCacheItem item;
+		m_cache[cam] = item;
+		return m_cache[cam];
+	}
 	
 	ActionVisual::ActionVisual(): m_animations() {
 	}

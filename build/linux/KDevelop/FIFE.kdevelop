@@ -45,6 +45,9 @@
         <default/>
       </environments>
     </make>
+    <general>
+      <activedir/>
+    </general>
   </kdevcustomproject>
   <kdevdebugger>
     <general>

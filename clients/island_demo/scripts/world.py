@@ -121,7 +121,8 @@ class World(EventListenerBase):
 		
 	def pump(self):
 		if self.cameras['small'].isEnabled():
-			c = self.cameras['small'].getLocationRef().getExactLayerCoordinatesRef()
+			loc = self.cameras['small'].getLocation()
+			c = loc.getExactLayerCoordinatesRef()
 			if self.cam2_scrolling_right:
 				self.cur_cam2_x = c.x = c.x+0.1
 				if self.cur_cam2_x > self.initial_cam2_x+10:
@@ -130,7 +131,6 @@ class World(EventListenerBase):
 				self.cur_cam2_x = c.x = c.x-0.1
 				if self.cur_cam2_x < self.initial_cam2_x-10:
 					self.cam2_scrolling_right = True
-			# manual refresh call needed due to direct coordinate updates (instead of setLocation)
-			self.cameras['small'].refresh()
+			self.cameras['small'].setLocation(loc)
 			
 		self.changeRotation()

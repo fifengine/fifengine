@@ -66,7 +66,7 @@ namespace FIFE {
 			saytext = instance->getSayText();
 			if (saytext) {
 				InstanceVisual* visual = instance->getVisual<InstanceVisual>();
-				const Rect& ir = visual->getCachedImageDimensions();
+				const Rect& ir = visual->getCacheItem(cam).dimensions;
 				m_font->setColor(25,25,112);
 				Image* img = m_font->getAsImageMultiline(*saytext);
 				Rect r;
