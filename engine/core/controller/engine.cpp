@@ -166,7 +166,7 @@ namespace FIFE {
 		m_animpool->addResourceProvider(new AnimationProvider(m_imagepool));
 
 		FL_LOG(_log, "Creating render backend");
-		const std::string& rbackend = m_settings.getRenderBackend();
+		std::string rbackend(m_settings.getRenderBackend());
 		if (rbackend == "SDL") {
 			m_renderbackend = new RenderBackendSDL();
 			FL_LOG(_log, "SDL Render backend created");
