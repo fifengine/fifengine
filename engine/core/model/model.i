@@ -19,7 +19,6 @@ namespace FIFE {
 
 	class Model: public FifeClass {
 	public:
-
 		Model();
 		~Model();
 
@@ -33,7 +32,10 @@ namespace FIFE {
 		void deleteMaps();
 
 		MetaModel* getMetaModel();
-		void update();
 		AbstractPather* getPather(const std::string& pathername);
+		
+		void setTimeMultiplier(float multip);
+		double getTimeMultiplier() const;
+		
 	};
 }

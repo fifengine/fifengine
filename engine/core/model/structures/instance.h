@@ -44,6 +44,7 @@ namespace FIFE {
 	class Instance;
 	class ActionInfo;
 	class SayInfo;
+	class TimeProvider;
 
 	class InstanceListener {
 	public:
@@ -74,7 +75,7 @@ namespace FIFE {
 		/** Sets location of the instance
 		 *  @param loc new location
 		 */
-		void setLocation(const Location& loc) { m_cur_location = loc; }
+		void setLocation(const Location& loc);
 
 		/** Gets current location of instance
 		 *  @note does not return const Location&, since swig wont be const correct
@@ -194,6 +195,23 @@ namespace FIFE {
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
 		
+		/** Sets speed for the map. See Model::setTimeMultiplier.
+		*/
+		void setTimeMultiplier(float multip);
+		
+		/** Gets instance speed. @see setTimeMultiplier.
+		*/
+		float getTimeMultiplier();
+		
+		/** Gets instance speed, considering also model and map speeds. @see setTimeMultiplier.
+		*/
+		float getTotalTimeMultiplier();
+		
+		/** Refreshes instance e.g. in case location is updated directly (not via setLocation)
+		 * In this case e.g. instance's master time provider is changed, so it needs to be updated
+		 */
+		void refresh();
+		
 		std::vector<std::string> listFields() const;
 		const std::string& get(const std::string& field);
 
@@ -214,6 +232,8 @@ namespace FIFE {
 		AbstractVisual* m_visual;
 		// text to say + duration, NULL if nothing
 		SayInfo* m_sayinfo;
+		// time scaler for this instance
+		TimeProvider* m_timeprovider;
 		
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);
@@ -225,6 +245,8 @@ namespace FIFE {
 		bool process_movement();
 		// Calculates movement based current location and speed
 		void calcMovement();
+		// rebinds time provider based on new location
+		void bindTimeProvider();
 	};
 
 } // FIFE

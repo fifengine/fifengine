@@ -38,8 +38,8 @@
 
 namespace FIFE {
 
-	Map::Map(const std::string& identifier) 
-		: AttributedClass(identifier) {
+	Map::Map(const std::string& identifier, TimeProvider* tp_master) 
+		: AttributedClass(identifier), m_timeprovider(tp_master) {
 	}
 
 	Map::~Map() {

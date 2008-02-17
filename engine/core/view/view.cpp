@@ -40,6 +40,7 @@
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
+#include "model/metamodel/timeprovider.h"
 #include "model/structures/map.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -232,7 +233,7 @@ namespace FIFE {
 						int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
 
 						Animation& animation = m_animationpool->getAnimation(animation_id);
-						int animtime = instance->getActionRuntime() % animation.getDuration();
+						int animtime = scaleTime(instance->getTotalTimeMultiplier(), instance->getActionRuntime()) % animation.getDuration();
 						image = animation.getFrameByTimestamp(animtime);
 					} else {
 						FL_DBG(_log, "No action");

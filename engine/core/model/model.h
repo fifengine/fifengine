@@ -34,6 +34,7 @@
 #include "util/fifeclass.h"
 
 #include "model/structures/map.h"
+#include "model/metamodel/timeprovider.h"
 
 namespace FIFE {
 
@@ -102,12 +103,23 @@ namespace FIFE {
 		/** Called periodically to update events on model
 		 */
 		void update();
+		
+		/** Sets speed for the model. With speed 1.0, everything runs with normal speed.
+		 * With speed 2.0, clock is ticking twice as fast. With 0, everything gets paused.
+		 * Negavtive values are not supported (throws NotSupported exception).
+		 */
+		void setTimeMultiplier(float multip) { m_timeprovider.setMultiplier(multip); }
+		
+		/** Gets model speed. @see setTimeMultiplier.
+		 */
+		double getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }
 
 	private:
 
 		std::vector<Map*> m_maps;
 		std::vector<AbstractPather*> m_pathers;
 		MetaModel* m_meta;
+		TimeProvider m_timeprovider;
 	};
 
 }; //FIFE

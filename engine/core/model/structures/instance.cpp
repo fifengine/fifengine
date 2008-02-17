@@ -35,7 +35,9 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/abstractpather.h"
 #include "model/metamodel/action.h"
+#include "model/metamodel/timeprovider.h"
 #include "model/structures/layer.h"
+#include "model/structures/map.h"
 #include "model/structures/instancetree.h"
 
 #include "instance.h"
@@ -115,7 +117,8 @@ namespace FIFE {
 		m_actioninfo(NULL),
 		m_listeners(NULL),
 		m_visual(NULL),
-		m_sayinfo(NULL) {
+		m_sayinfo(NULL),
+		m_timeprovider(NULL) {
 	}
 
 	Instance::~Instance() {
@@ -123,6 +126,13 @@ namespace FIFE {
 		delete m_listeners;
 		delete m_visual;
 		delete m_facinglocation;
+		delete m_timeprovider;
+	}
+	
+	void Instance::setLocation(const Location& loc) {
+		m_cur_location = loc;
+		// rebind timeprovider to do proper timescaling
+		bindTimeProvider();
 	}
 
 	void Instance::addListener(InstanceListener* listener) {
@@ -212,7 +222,7 @@ namespace FIFE {
 	bool Instance::process_movement() {
 		FL_DBG(_log, "Moving...");
 		// timeslice for this movement
-		unsigned int timedelta  = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
+		unsigned int timedelta = scaleTime(getTotalTimeMultiplier(), m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time);
 		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << m_actioninfo->m_prev_call_time);
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * m_actioninfo->m_speed;
@@ -240,6 +250,11 @@ namespace FIFE {
 		if (!m_actioninfo) {
 			return;
 		}
+		
+		if (!m_timeprovider) {
+			bindTimeProvider();
+		}
+		
 		if (curticks == 0) {
 			curticks = SDL_GetTicks();
 		}
@@ -259,7 +274,7 @@ namespace FIFE {
 			}
 		} else {
 			FL_DBG(_log, "action does not contain target for movement");
-			if ((curticks - m_actioninfo->m_action_start_time) >= m_actioninfo->m_action->getDuration()) {
+			if (scaleTime(getTotalTimeMultiplier(), curticks - m_actioninfo->m_action_start_time) >= m_actioninfo->m_action->getDuration()) {
 				if (m_actioninfo->m_repeating) {
 					m_actioninfo->m_action_start_time = curticks;
 				} else {
@@ -272,7 +287,7 @@ namespace FIFE {
 		}
 		if (m_sayinfo) {
 			if (m_sayinfo->m_duration > 0) {
-				if ((curticks - m_sayinfo->m_start_time) > m_sayinfo->m_duration) {
+				if (scaleTime(getTotalTimeMultiplier(), curticks - m_sayinfo->m_start_time) > m_sayinfo->m_duration) {
 					say("");
 				}
 			}
@@ -351,5 +366,50 @@ namespace FIFE {
 			return value;
 		}
 		return m_object->get(field);
+	}
+	
+	void Instance::bindTimeProvider() {
+		float multiplier = 1.0;
+		if (m_timeprovider) {
+			multiplier = m_timeprovider->getMultiplier();
+		}
+		delete m_timeprovider;
+		m_timeprovider = NULL;
+		
+		if (m_cur_location.getLayer()) {
+			Map* map = m_cur_location.getLayer()->getMap();
+			if (map) {
+				m_timeprovider = new TimeProvider(map->getTimeProvider());
+			}
+		}
+		if (!m_timeprovider) {
+			m_timeprovider = new TimeProvider(NULL);
+		}
+		m_timeprovider->setMultiplier(multiplier);
+	}
+	
+	void Instance::refresh() {
+		bindTimeProvider();
+	}
+	
+	void Instance::setTimeMultiplier(float multip) { 
+		if (!m_timeprovider) {
+			bindTimeProvider();
+		}
+		m_timeprovider->setMultiplier(multip);
+	}
+	
+	float Instance::getTimeMultiplier() {
+		if (!m_timeprovider) {
+			return 1.0;
+		}
+		return m_timeprovider->getMultiplier();
+	}
+	
+	float Instance::getTotalTimeMultiplier() {
+		if (!m_timeprovider) {
+			return 1.0;
+		}
+		return m_timeprovider->getTotalMultiplier();
 	}
 }

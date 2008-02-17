@@ -175,6 +175,7 @@ subgraph cluster_12 {
     "model" -> "util"
     "model/metamodel" -> "model/metamodel/grids"
     "model/metamodel" -> "util"
+    "model/metamodel" -> "util/time"
     "model/metamodel/grids" -> "model/metamodel"
     "model/metamodel/grids" -> "util"
     "model/structures" -> "model/metamodel"

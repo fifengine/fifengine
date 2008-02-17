@@ -40,7 +40,8 @@ namespace FIFE {
 
 	Model::Model(): 
 		FifeClass(), 
-		m_meta(new MetaModel()) {
+		m_meta(new MetaModel()),
+		m_timeprovider(NULL) {
 	}
 
 	Model::~Model() {
@@ -56,7 +57,7 @@ namespace FIFE {
 				throw NameClash(identifier);
 		}
 
-		Map* map = new Map(identifier);
+		Map* map = new Map(identifier, &m_timeprovider);
 		m_maps.push_back(map);
 		return map;
 	}

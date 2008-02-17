@@ -24,7 +24,7 @@ namespace FIFE {
 	class Map : public AttributedClass {
 		public:
 
-			Map(const std::string& identifier);
+			Map(const std::string& identifier, TimeProvider* tp_master=NULL);
 			~Map();
 
 			void addDataset(Dataset* dataset);
@@ -39,7 +39,9 @@ namespace FIFE {
 
 			size_t getNumLayers() const;
 			void deleteLayers();
-
-			void update();
+			
+			void setTimeMultiplier(float multip);
+			double getTimeMultiplier() const;
+			
 	};
 }
