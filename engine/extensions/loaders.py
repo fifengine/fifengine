@@ -135,7 +135,7 @@ class ModelLoader(handler.ContentHandler):
 			parser = make_parser()
 
 			if self.content_path:
-				source = '/'.join([self.content_path, source])
+				source = '/'.join([self.content_path.rstrip('/'), source])
 
 			handler = 0
 			if (self.state == self.SMap):
