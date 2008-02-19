@@ -113,7 +113,7 @@ namespace FIFE {
 				}
 			}
 
-			m_zone_image =  m_renderbackend->createStaticImageFromRGBA((uint8_t*) data, rect.w, rect.h);
+			m_zone_image =  m_renderbackend->createImage((uint8_t*) data, rect.w, rect.h);
 			delete data;
 		}
 		m_zone_image->render(rect);

@@ -282,8 +282,7 @@ namespace FIFE {
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
 				assert(vc.image);
 				Uint8 r, g, b, a;
-				unsigned int pixel = vc.image->getPixel(screen_coords.x - vc.dimensions.x, screen_coords.y - vc.dimensions.y);
-				vc.image->getRgba(pixel, &r, &b, &g, &a);
+				vc.image->getPixelRGBA(screen_coords.x - vc.dimensions.x, screen_coords.y - vc.dimensions.y, &r, &b, &g, &a);
 				// instance is hit with mouse if not totally transparent
 				if (a != 0) {
 					instances.push_back(i);

@@ -85,12 +85,12 @@ namespace FIFE {
 	}
 
 	void Console::reLayout() {
-		SDL_Surface *screen = RenderBackend::instance()->getScreenSurface();
+		Image* screen = RenderBackend::instance()->getScreenImage();
 		assert(screen);
 		
 		int w, h, b, input_h, bbar_h, button_w;
-		w = screen->w*4/5;
-		h = screen->h*4/5;
+		w = screen->getWidth() * 4/5;
+		h = screen->getHeight() * 4/5;
 		b = 0;
 		input_h = getFont()->getHeight();
 		bbar_h = input_h;
@@ -101,7 +101,7 @@ namespace FIFE {
 		gcn::Color dark(50,60,50,0xff);
 
 		setSize(w, h);
-		setPosition((screen->w - w) / 2,-h);
+		setPosition((screen->getWidth() - w) / 2,-h);
 		setBorderSize(0);
 
 		setForegroundColor(white);

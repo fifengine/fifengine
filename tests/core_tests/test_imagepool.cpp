@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE( ImagePool_test ) {
 	RenderBackendSDL renderbackend;
 
 	renderbackend.init();
-	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	ImagePool pool;
 	pool.addResourceProvider(new SubImageProvider());
 	pool.addResourceProvider(new ImageProvider());
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE( ImagePool_test ) {
 			int w = r.getWidth();
 			for (int i = 20; i > 0; i-=2) {
 				renderbackend.startFrame();
-				r.render(Rect(i, i, w, h), screen);
+				r.render(Rect(i, i, w, h));
 				renderbackend.endFrame();
 				TimeManager::instance()->update();
 			}

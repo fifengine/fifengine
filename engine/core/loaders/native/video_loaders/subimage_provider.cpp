@@ -76,7 +76,7 @@ namespace FIFE {
 		SDL_SetAlpha(src,0,SDL_ALPHA_OPAQUE);
 		SDL_BlitSurface(src,&src_rect,result,0);
 
-		return RenderBackend::instance()->createStaticImageFromSDL(result);
+		return RenderBackend::instance()->createImage(result);
 	};
 
 }

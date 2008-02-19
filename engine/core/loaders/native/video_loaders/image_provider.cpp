@@ -62,7 +62,7 @@ namespace FIFE {
 			return 0;
 		}
 
-		Image* res = RenderBackend::instance()->createStaticImageFromSDL(surface);
+		Image* res = RenderBackend::instance()->createImage(surface);
 		if (loc) {
 			res->setXShift(loc->getXShift());
 			res->setYShift(loc->getYShift());

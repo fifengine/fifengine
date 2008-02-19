@@ -73,7 +73,7 @@ struct environment {
 
 void test_image(RenderBackend& renderbackend) {
 	renderbackend.init();
-	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false);
 
 	ImageProvider provider;
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(ImageLocation(IMAGE_FILE))));
@@ -82,7 +82,7 @@ void test_image(RenderBackend& renderbackend) {
 	int w = img->getWidth();
 	for (int i = 0; i < 100; i++) {
 		renderbackend.startFrame();
-		img->render(Rect(i, i, w, h), screen);
+		img->render(Rect(i, i, w, h));
 		renderbackend.endFrame();
 	}	
 	for (int j = 0; j < 5; j++) {
@@ -90,7 +90,7 @@ void test_image(RenderBackend& renderbackend) {
 			renderbackend.startFrame();
 			img->setXShift(i);
 			img->setYShift(i);
-			img->render(Rect(200, 200, w, h), screen);
+			img->render(Rect(200, 200, w, h));
 			renderbackend.endFrame();
 		}	
 	}
@@ -98,7 +98,7 @@ void test_image(RenderBackend& renderbackend) {
 
 void test_subimage(RenderBackend& renderbackend) {
 	renderbackend.init();
-	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false);
 
 	ImageProvider imgprovider;
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.createResource(ImageLocation(SUBIMAGE_FILE))));
@@ -125,7 +125,7 @@ void test_subimage(RenderBackend& renderbackend) {
 	
 	for (unsigned int i = 0; i < 200; i++) {
 		renderbackend.startFrame();
-		subimages[i / 40]->render(Rect(200, 200, w, h), screen);
+		subimages[i / 40]->render(Rect(200, 200, w, h));
 		renderbackend.endFrame();
 	}
 	std::vector<Image*>::iterator i = subimages.begin();
@@ -140,9 +140,9 @@ void test_sdl_alphaoptimize() {
 	environment env;
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
-	renderbackend.setRemoveFakeAlpha(true);
-	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
-	
+	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.setAlphaOptimizerEnabled(true);
+		
 	ImageProvider provider;
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(ImageLocation(IMAGE_FILE))));
 
@@ -155,10 +155,10 @@ void test_sdl_alphaoptimize() {
 	int w1 = alpha_img->getWidth();
 	for(int i=0; i != 200; ++i) {
 		renderbackend.startFrame();
-		img->render(Rect(i, i, w0, h0), screen);
-		alpha_img->render(Rect(i, i, w1, h1), screen);
-		alpha_img->render(Rect(i, h0+i, w1, h1), screen);
-		img->render(Rect(i, h0+i, w0, h0), screen);
+		img->render(Rect(i, i, w0, h0));
+		alpha_img->render(Rect(i, i, w1, h1));
+		alpha_img->render(Rect(i, h0+i, w1, h1));
+		img->render(Rect(i, h0+i, w0, h0));
 		renderbackend.endFrame();
 	}
 	

@@ -23,6 +23,7 @@
 #define FIFE_VIDEO_IMAGE_H
 
 // Standard C++ library includes
+#include <stack>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -31,96 +32,166 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/fife_stdint.h"
 #include "util/resource/pooled_resource.h"
+#include "util/point.h"
+#include "util/rect.h"
 
 namespace FIFE {
 	class Rect;
+	
+	class AbstractImage {
+	public:
+		virtual ~AbstractImage() {}
+			
+		/** Get the surface used by this image
+		 * @return pointer to used surface
+		 */
+		virtual SDL_Surface* getSurface() = 0;
+		
+		/** Returns the @b maximum width occupied by this image.
+		 * This should return the maximum width that could be covered by the
+		 * image.
+		 */
+		virtual unsigned int getWidth() const = 0;
 
+		/** Returns the @b maximum height occupied by this image.
+		 */
+		virtual unsigned int getHeight() const = 0;
+		
+		/** Gets the area of the image
+		 * @return Image area in rect
+		 */
+		virtual const Rect& getArea() = 0;
+		
+		/** Returns pixel RGBA values from given position
+		 */
+		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
+
+		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
+		 */
+ 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
+		
+		/** Draws line between given points with given RGBA
+		 */
+		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
+
+		/** Draws quad between given points with given RGBA
+		 */
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
+		
+		/** Pushes clip area to clip stack
+		 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
+		 *  note that previous items in stack do not affect the latest area pushed
+		 */
+		virtual void pushClipArea(const Rect& cliparea, bool clear=true) = 0;
+
+		/** Pops clip area from clip stack
+		 *  @see pushClipArea
+		 */
+		virtual void popClipArea() = 0;
+
+		/** Gets the current clip area
+		 *  @see pushClipArea
+		 */
+		virtual const Rect& getClipArea() const = 0;
+		
+		/** Saves the image using given filename
+		 */
+		virtual void saveImage(const std::string& filename) = 0;
+		
+		/** Enable or disable the alpha 'optimizing' code
+		 *
+		 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
+		 * Only implemented by and useful for the SDL backend at the moment.
+		 */
+		virtual void setAlphaOptimizerEnabled(bool enabled) = 0;
+		
+		/** @see setAlphaOptimizerEnabled
+		 */
+		virtual bool isAlphaOptimizerEnabled() = 0;
+	};
+	
 	/** Base Class for Images.
 	 */
-	class Image : public IPooledResource {
+	class Image : public AbstractImage, public IPooledResource {
+	public:
+		/** Constructor.
+		* @note Takes ownership of the SDL Surface
+		* @param surface SDL Surface in RGBA format
+		 */
+		Image(SDL_Surface* surface);
+
+		/** Constructor
+		* @param data Pointer to the imagedata (needs to be in RGBA, 8 bits per channel).
+		* @param width Width of the image.
+		* @param height Height of the image.
+		 */
+		Image(const uint8_t* data, unsigned int width, unsigned int height);
+		
+		/** Renders itself to the Destination surface at the rectangle rect.
+		 *
+		 * @param rect The position and clipping where to draw this image to.
+		 * @param target Target surface to draw to, e.g. main screen or other image
+		 * @param alpha The alpha value, with which to draw self. opaque by default.
+		 */
+		virtual void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255) = 0;
+
+		/** Renders itself to the main screen at the rectangle rect.
+		 * Convenience function
+		 * @param rect The position and clipping where to draw this image to.
+		 * @param alpha The alpha value, with which to draw self.
+		 */
+		void render(const Rect& rect, unsigned char alpha = 255);
+		
+		virtual ~Image();
+		SDL_Surface* getSurface() { return m_surface; }
+		unsigned int getWidth() const;
+		unsigned int getHeight() const;
+		const Rect& getArea();
+		void setXShift(int xshift);
+		int getXShift() const;
+		void setYShift(int yshift);
+		int getYShift() const;
+		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
+		void pushClipArea(const Rect& cliparea, bool clear=true);
+		void popClipArea();
+		const Rect& getClipArea() const;
+		void setAlphaOptimizerEnabled(bool enabled) { m_isalphaoptimized = enabled; }
+		bool isAlphaOptimizerEnabled() { return m_isalphaoptimized; }
+		
+	protected:
+		/** Sets given clip area into image
+		 *  @see pushClipArea
+		 */
+		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
+		
+		/** Clears any possible clip areas
+		 *  @see pushClipArea
+		 */
+		virtual void clearClipArea();
+		
+		// The SDL Surface used.
+		SDL_Surface* m_surface;
+		// The X shift of the Image
+		int m_xshift;
+		// The Y shift of the Image
+		int m_yshift;
+
+		class ClipInfo {
 		public:
-			/** Constructor.
-			 */
-			Image(SDL_Surface* surface);
-
-			/** Destructor.
-			 */
-			virtual ~Image();
-
-			/** Get the surface used by this image
-			 * @return pointer to used surface
-			 */
-			SDL_Surface* getSurface();
-
-			/** Sets the X shift of the Image.
-			 * @param xshift The X shift of the Image.
-			 */
-			void setXShift(int xshift);
-
-			/** Gets the X shift of the Image.
-			 * @return The X shift of the Image.
-			 */
-			int getXShift() const;
-
-			/** Sets the Y shift of the Image.
-			 * @param yshift The Y shift of the Image.
-			 */
-			void setYShift(int yshift);
-
-			/** Gets the Y shift of the Image.
-			 */
-			int getYShift() const;
-
-			/** Renders itself to the Screen at the rectangle rect.
-			 *
-			 * @param rect The position and clipping where to draw this image to.
-			 * @param screen The Screen as it is created by the RenderBackend. Draw self on this.
-			 * @param alpha The alpha value, with which to draw self.
-			 * @see RenderBackend, Screen
-			 */
-			virtual void render(const Rect& rect, SDL_Surface* screen, unsigned char alpha = 255) = 0;
-
-			/** Renders itself to the main screen at the rectangle rect.
-			 * Convenience function
-			 * @param rect The position and clipping where to draw this image to.
-			 * @param alpha The alpha value, with which to draw self.
-			 * @see RenderBackend, Screen
-			 */
-			void render(const Rect& rect, unsigned char alpha = 255);
-
-			/** Returns the @b maximum width occupied by this image.
-			 * This should return the maximum width that could be covered by the
-			 * image.
-			 */
-			virtual unsigned int getWidth() const = 0;
-
-			/** Returns the @b maximum height occupied by this image.
-			 */
-			virtual unsigned int getHeight() const = 0;
-
-			/** Enable or disable the alpha 'optimizing' code
-			 *
-			 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
-			 * Only implemented by and useful for the SDL backend at the moment.
-			 */
-			virtual void setAlphaOptimizerEnabled(bool) {};
-			
-			/** Returns pixel from given image
-			 */
-			Uint32 getPixel(int x, int y);
-			
-			/** Returns rgba values from given pixel
-			 */
-			void getRgba(Uint32 pixel, Uint8* r, Uint8* g, Uint8* b, Uint8* a);
-
-		protected:
-			// The SDL Surface used.
-			SDL_Surface* m_surface;
-			// The X shift of the Image
-			int m_xshift;
-			// The Y shift of the Image
-			int m_yshift;
+			Rect r;
+			bool clearing;
+		};
+		std::stack<ClipInfo> m_clipstack;
+		
+		// image area
+		Rect m_area;
+		bool m_isalphaoptimized;	
+	
+	private:
+		void reset(SDL_Surface* surface);
 	};
 
 }

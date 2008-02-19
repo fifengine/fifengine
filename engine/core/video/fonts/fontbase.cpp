@@ -90,7 +90,7 @@ namespace FIFE {
 		Image* image = m_pool.getRenderedText(this, text);
 		if (!image) {
 			SDL_Surface* textSurface = renderString(text);
-			image = RenderBackend::instance()->createStaticImageFromSDL(textSurface);
+			image = RenderBackend::instance()->createImage(textSurface);
 			m_pool.addRenderedText( this, text, image );
 		}
 		return image;
@@ -139,7 +139,7 @@ namespace FIFE {
 				ypos += getRowSpacing() + getHeight();
 				SDL_FreeSurface(*i);
 			}
-			image = RenderBackend::instance()->createStaticImageFromSDL(final_surface);
+			image = RenderBackend::instance()->createImage(final_surface);
 			m_pool.addRenderedText(this, text, image);
 		}
 		return image;

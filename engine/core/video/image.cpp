@@ -24,6 +24,7 @@
 #include <iostream>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -33,21 +34,59 @@
 
 namespace FIFE {
 
-	Image::Image(SDL_Surface* surface):
-		m_surface(surface),
-		m_xshift(0), 
-		m_yshift(0) {}
+	Image::Image(SDL_Surface* surface): m_surface(NULL) {
+		reset(surface);
+	}
 
+	Image::Image(const uint8_t* data, unsigned int width, unsigned int height) {
+		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
+		                                            RMASK, GMASK, BMASK ,AMASK);
+		SDL_LockSurface(surface);
 
-	Image::~Image() {
-		//assert(m_refcount == 0);
+		unsigned int size = width * height * 4;
+		uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
+		std::copy(data, data + size, pixeldata);
+		SDL_UnlockSurface(surface);
+		reset(surface);
+	}
+
+	void Image::reset(SDL_Surface* surface) {
 		if( m_surface ) {
 			SDL_FreeSurface(m_surface);
 		}
+		m_surface = surface;
+		m_xshift = 0;
+		m_yshift = 0;
+		while (!m_clipstack.empty()) {
+			m_clipstack.pop();
+		}
+		m_area.x = m_area.y = m_area.w = m_area.h = 0;
+		m_surface = surface;
+	}
+	
+	Image::~Image() {
+		//assert(m_refcount == 0);
+		reset(NULL);
 	}
 
-	SDL_Surface* Image::getSurface() { 
-		return m_surface; 
+	unsigned int Image::getWidth() const {
+		if (!m_surface) {
+			return 0;
+		}
+		return m_surface->w;
+	}
+
+	unsigned int Image::getHeight() const {
+		if (!m_surface) {
+			return 0;
+		}
+		return m_surface->h;
+	}
+	
+	const Rect& Image::getArea() {
+		m_area.w = getWidth();
+		m_area.h = getHeight();
+		return m_area;
 	}
 
 	void Image::setXShift(int xshift) {
@@ -65,36 +104,71 @@ namespace FIFE {
 	int Image::getYShift() const {
 		return m_yshift;
 	}
-
-	void Image::render(const Rect& rect, unsigned char alpha) {
-		render(rect,SDL_GetVideoSurface(),alpha);
-	}
-
-	Uint32 Image::getPixel(int x, int y) {
+	
+	void Image::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
 		int bpp = m_surface->format->BytesPerPixel;
 		Uint8 *p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
+		uint32_t pixel;
 		switch(bpp) {
 		case 1:
-			return *p;
+			pixel = *p;
 		
 		case 2:
-			return *(Uint16 *)p;
+			pixel = *(Uint16 *)p;
 		
 		case 3:
-			if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-				return p[0] << 16 | p[1] << 8 | p[2];
+			if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+				pixel = p[0] << 16 | p[1] << 8 | p[2];
 			} else {
-				return p[0] | p[1] << 8 | p[2] << 16;
+				pixel = p[0] | p[1] << 8 | p[2] << 16;
 			}
 		
 		case 4:
-			return *(Uint32 *)p;
+			pixel = *(Uint32 *)p;
 		}
-		return 0;	
+		SDL_GetRGBA(pixel, m_surface->format, r, b, g, a);
+	}
+
+	void Image::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+		drawLine(p1, p2, r, g, b);
+		drawLine(p2, p3, r, g, b);
+		drawLine(p3, p4, r, g, b);
+		drawLine(p4, p1, r, g, b);
+	}
+
+	void Image::render(const Rect& rect, unsigned char alpha) {
+		render(rect, SDL_GetVideoSurface(), alpha);
+	}
+
+	void Image::pushClipArea(const Rect& cliparea, bool clear) {
+		ClipInfo ci;
+		ci.r = cliparea;
+		ci.clearing = clear;
+		m_clipstack.push(ci);
+		setClipArea(cliparea, clear);
 	}
 	
-	void Image::getRgba(Uint32 pixel, Uint8* r, Uint8* g, Uint8* b, Uint8* a) {
-		SDL_GetRGBA(pixel, m_surface->format, r, b, g, a);
+	void Image::popClipArea() {
+		assert(!m_clipstack.empty());
+		m_clipstack.pop();
+		if (m_clipstack.empty()) {
+			clearClipArea();
+		} else {
+			ClipInfo ci = m_clipstack.top();
+			setClipArea(ci.r, ci.clearing);
+		}
+	}
+	
+	const Rect& Image::getClipArea() const {
+		if (m_clipstack.empty()) {
+			return m_clipstack.top().r;
+		} else {
+			return m_area;
+		}
+	}
+
+	void Image::clearClipArea() {
+		setClipArea(m_area, true);
 	}
 }
 

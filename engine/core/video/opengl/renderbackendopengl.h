@@ -34,67 +34,23 @@
 
 namespace FIFE {
 
-	class GLScreen;
-
 	/** The main class of the OpenGL-based renderer.
-	 *
 	 * @see RenderBackend
 	 */
 	class RenderBackendOpenGL : public RenderBackend {
-		public:
-			/** Simple constructor.
-			 *
-			 * @note Registers the renderbackend 'OpenGL' but does not yet create a screen.
-			 */
-			RenderBackendOpenGL();
-
-			/** Deletes the backend instance.
-			 */
-			virtual ~RenderBackendOpenGL();
-
-			/* Starts the frame.
-			 */
-			virtual void startFrame();
-			/* Ends the frame.
-			 */
-			virtual void endFrame();
-
-			/** Initialises the SDL video subsystem.
-			 */
-			virtual void init();
-
-			/** Deletes the current screen and quits the SDL video subsystem.
-			 */
-			virtual void deinit();
-
-			/** Creates the internal screen and returns it as well.
-			 *
-			 * @note Use sensible values; fs means fullscreen.
-			 * @note bitsPerPixel = 0 causes autodetection of best supported mode.
-			 * @note Hardcoded flags: SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE | SDL_HWACCEL
-			 */
-			virtual SDL_Surface* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs);
-
-			/** Convenience wrapper around GLImage.
-			 *
-			 * Creates an GLImage instance from the specified data.
-			 *
-			 * @see GLImage
-			 */
-			virtual Image* createStaticImageFromSDL(SDL_Surface* surface);
-
-			/** Makes a screenshot and saves it as a BMP file.
-			 */
-			virtual void captureScreen(const std::string& filename);
-
-			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-			virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
-
-		protected:
-			void setClipArea(const Rect& cliparea, bool clear);
-
-		private:
-			SDL_PixelFormat m_rgba_format;
+	public:
+		RenderBackendOpenGL();
+		virtual ~RenderBackendOpenGL();
+		const std::string& getName() const;
+		void startFrame();
+		void endFrame();
+		void init();
+		Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen);
+		Image* createImage(const uint8_t* data, unsigned int width, unsigned int height);
+		Image* createImage(SDL_Surface* surface);
+	
+	private:
+		SDL_PixelFormat m_rgba_format;
 	};
 
 }

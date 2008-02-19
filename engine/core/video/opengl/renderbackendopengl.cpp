@@ -35,7 +35,7 @@
 
 namespace FIFE {
 
-	RenderBackendOpenGL::RenderBackendOpenGL() : RenderBackend("OpenGL") {
+	RenderBackendOpenGL::RenderBackendOpenGL() : RenderBackend() {
 		// Get the pixelformat we want.
 		SDL_Surface* testsurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 1, 1, 32,
 				RMASK, GMASK, BMASK ,AMASK);
@@ -44,6 +44,10 @@ namespace FIFE {
 		SDL_FreeSurface(testsurface);
 	}
 
+	const std::string& RenderBackendOpenGL::getName() const {
+		static std::string backend_name = "OpenGL";
+		return backend_name;
+	}
 
 	RenderBackendOpenGL::~RenderBackendOpenGL() {
 	}
@@ -57,15 +61,8 @@ namespace FIFE {
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
 	}
 
-	void RenderBackendOpenGL::deinit() {
-		SDL_FreeSurface(m_screen);
-		m_screen = 0;
-
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);
-	}
-
-	SDL_Surface* RenderBackendOpenGL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs) {
-		SDL_FreeSurface(m_screen);
+	Image* RenderBackendOpenGL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs) {
+		delete m_screen;
 		m_screen = 0;
 
 		Uint32 flags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE | SDL_HWACCEL;
@@ -121,8 +118,7 @@ namespace FIFE {
 		glPointSize(1.0);
 		glLineWidth(1.0);
 
-
-		m_screen = screen;
+		m_screen = new GLImage(screen);
 		return m_screen;
 	}
 
@@ -134,7 +130,7 @@ namespace FIFE {
 		SDL_GL_SwapBuffers();
 	}
 
-	Image* RenderBackendOpenGL::createStaticImageFromSDL(SDL_Surface* surface) {
+	Image* RenderBackendOpenGL::createImage(SDL_Surface* surface) {
 		// Given an abritary surface, we must convert it to the format GLImage will understand.
 		// It's easiest to let SDL do this for us.
 
@@ -165,73 +161,7 @@ namespace FIFE {
 		return image;
 	}
 
-	void RenderBackendOpenGL::captureScreen(const std::string& filename) {
-		unsigned int swidth = getScreenWidth();
-		unsigned int sheight = getScreenHeight();
-
-		// We need unsigned char to avoid pointer alignment issues
-		uint8_t *pixels = new uint8_t[swidth * sheight * 3];
-
-		// Read in the pixel data
-		glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
-
-		/* At this point the image has been reversed, so we need to re-reverse it so that
-		it is the correct way around. We do this by copying the "image" pixels to another
-		surface in reverse order */
-		SDL_Surface* image = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 24,
-			255U << (0), // Blue channel
-			255U << (8), // Green channel
-			255U << (16), // Red channel
-			0 /* no alpha! */);
-		SDL_LockSurface(image);
-
-		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(image->pixels);
-		// Copy the "reversed_image" memory to the "image" memory
-		for (int y = (sheight - 1); y >= 0; --y) {
-			uint8_t *row_begin = pixels + y * swidth * 3;
-			uint8_t *row_end = row_begin + swidth * 3;
-
-			std::copy(row_begin, row_end, imagepixels);
-
-			// Advance a row in the output surface.
-			imagepixels += image->pitch;
-		}
-		SDL_UnlockSurface(image);
-
-		// Save file
-		SDL_SaveBMP(image, filename.c_str());
-
-		// Clear memory
-		delete []pixels;
-		SDL_FreeSurface( image );
-	}
-
-	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
-	        glColor4ub(r, g, b, 255);
-		glBegin(GL_LINES);
-		glVertex3f(p1.x+0.5f, p1.y+0.5f, 0);
-		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
-		glEnd();
-
-		glBegin(GL_POINTS);
-		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
-		glEnd();
-	}
-
-	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-	        glColor4ub(r, g, b, 165);
-		glBegin(GL_QUADS);
-		glVertex3f(p1.x, p1.y, 0);
-		glVertex3f(p2.x, p2.y, 0);
-		glVertex3f(p3.x, p3.y, 0);
-		glVertex3f(p4.x, p4.y, 0);
-		glEnd();
-	}
-
-	void RenderBackendOpenGL::setClipArea(const Rect& cliparea, bool clear) {
-	        glScissor(cliparea.x, getScreenHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
-		if (clear) {
-	        	glClear(GL_COLOR_BUFFER_BIT);
-		}
+	Image* RenderBackendOpenGL::createImage(const uint8_t* data, unsigned int width, unsigned int height) {
+		return new GLImage(data, width, height);
 	}
 }

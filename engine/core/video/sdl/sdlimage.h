@@ -38,63 +38,37 @@ namespace FIFE {
 	/** The SDL implementation of the @c Image base class.
 	 */
 	class SDLImage : public Image {
-		public:
-			/** Contructor.
-			 *
-			 * Creates a new @c SDLImage from an SDL surface
-			 *
-			 * @note Takes ownership of the SDL Surface
-			 * @param surface The SDL surface from which to create the SDLImage.
-			 */
-			SDLImage(SDL_Surface* surface);
+	public:
+		SDLImage(SDL_Surface* surface);
+		SDLImage(const uint8_t* data, unsigned int width, unsigned int height);
+		virtual ~SDLImage();
+		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
+ 		bool putPixel(int x, int y, int r, int g, int b);
+		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
+		void saveImage(const std::string& filename);
 
-			/** Destructor.
-			 *
-			 * Destroys the @c SDLImage and frees any associated memory.
-			 */
-			virtual ~SDLImage();
+	protected:
+		void setClipArea(const Rect& cliparea, bool clear);
+	
+	private:
+		// Call this before rendering
+		void finalize();
+		
+		/** SDL Alpha Optimizer
+		 * This tries to convert an image with a fake alpha channel
+		 * to an RGB image when the channel can be reasonably be replaced
+		 * by an colorkey.
+		 */
+		SDL_Surface* optimize(SDL_Surface* surface);
+		
+		void resetSdlimage();
 
-			/** Renders the image on a @c SDLScreen with alpha blending.
-			 *
-			 * @param rect The rect of the image to render.
-			 * @param screen The screen on which to render the image.
-			 * @param alpha The level of transparency, opaque by default.
-			 */
-			virtual void render(const Rect& rect, SDL_Surface* screen, unsigned char alpha = 255);
-
-			/** Gets the width of the image.
-			 *
-			 * @return Width of the image.
-			 */
-			virtual unsigned int getWidth() const;
-			/** Gets the height of the image.
-			 *
-			 * @return Height of the image.
-			 */
-			virtual unsigned int getHeight() const;
-
-			/** Enable or disable the alpha 'optimizing' code
-			 *
-			 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
-			 */
-			virtual void setAlphaOptimizerEnabled(bool optimize);
-
-		private:
-			// Call this before rendering
-			void finalize();
-			/** SDL Alpha Optimizer
-			 * This tries to convert an image with a fake alpha channel
-			 * to an RGB image when the channel can be reasonably be replaced
-			 * by an colorkey.
-			 */
-			SDL_Surface* optimize(SDL_Surface* surface);
-
-			// SDLSurface used to create the SDLImage.
-			Uint8 m_last_alpha;
-			// Is the surface already optimized for rendering
-			bool m_finalized;
-			// Wether to try to optimize alpha out ...
-			bool m_optimize_alpha;
+		// SDLSurface used to create the SDLImage.
+		Uint8 m_last_alpha;
+		// Is the surface already optimized for rendering
+		bool m_finalized;
+		// Wether to try to optimize alpha out ...
+		bool m_optimize_alpha;
 	};
 
 }
