@@ -422,6 +422,7 @@ digraph "source tree" {
     "engine/core/util/resource/pool.h" -> "resource_location.h"
     "engine/core/util/resource/pool.h" -> "resource_provider.h"
     "engine/core/util/resource/pool.h" -> "util/fifeclass.h"
+    "engine/core/util/resource/resource.h" -> "resource_location.h"
     "engine/core/util/resource/resource_location.h" -> "util/fifeclass.h"
     "engine/core/util/singleton.h" -> "fifeclass.h"
     "engine/core/util/time/timeevent.cpp" -> "timeevent.h"
