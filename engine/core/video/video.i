@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -37,23 +37,53 @@ namespace FIFE {
 	class Pool;
 	class Point;
 
-	class Image {
+	class AbstractImage {
 	public:
-		virtual ~Image();
-		void setXShift(int xshift);
-		void setYShift(int yshift);
-		int getXShift() const;
-		int getYShift() const;
+		virtual ~AbstractImage() {}
+		virtual SDL_Surface* getSurface() = 0;
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
-		void render(const Rect& rect, unsigned char alpha=255);
+		virtual const Rect& getArea() = 0;
+		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
+ 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
+		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
+		virtual void pushClipArea(const Rect& cliparea, bool clear=true) = 0;
+		virtual void popClipArea() = 0;
+		virtual const Rect& getClipArea() const = 0;
+		virtual void saveImage(const std::string& filename) = 0;
+		virtual void setAlphaOptimizerEnabled(bool enabled) = 0;
+		virtual bool isAlphaOptimizerEnabled() = 0;
+	};
+	
+	class Image : public AbstractImage {
+	public:
+		void render(const Rect& rect, unsigned char alpha = 255);
+		virtual ~Image();
+		SDL_Surface* getSurface() { return m_surface; }
+		unsigned int getWidth() const;
+		unsigned int getHeight() const;
+		const Rect& getArea();
+		void setXShift(int xshift);
+		int getXShift() const;
+		void setYShift(int yshift);
+		int getYShift() const;
+		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
+		void pushClipArea(const Rect& cliparea, bool clear=true);
+		void popClipArea();
+		const Rect& getClipArea() const;
+		void setAlphaOptimizerEnabled(bool enabled);
+		bool isAlphaOptimizerEnabled();
 		void addRef();
 		void decRef();
 		unsigned int getRefCount();
+		
 	private:
 		Image(SDL_Surface* surface);
+		Image(const uint8_t* data, unsigned int width, unsigned int height);
 	};
-
+	
 	class Animation {
 	public:
 		~Animation();
@@ -91,15 +121,28 @@ namespace FIFE {
 		AnimationPool();
 	};
 
-	class RenderBackend {
+	class RenderBackend: public AbstractImage {
 	public:
 		virtual ~RenderBackend();
-		unsigned int getScreenWidth() const;
-		unsigned int getScreenHeight() const;
-		virtual void captureScreen(const std::string& filename);
-		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-	private:
-		RenderBackend(const std::string& name);
+		virtual const std::string& getName() const = 0;
+		Image* getScreenImage() const { return m_screen; };
+		void captureScreen(const std::string& filename);
+		SDL_Surface* getSurface();
+		unsigned int getWidth() const;
+		unsigned int getHeight() const;
+		unsigned int getScreenWidth() const { return getWidth(); }
+		unsigned int getScreenHeight() const { return getHeight(); }
+		const Rect& getArea();
+		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+ 		bool putPixel(int x, int y, int r, int g, int b);
+		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
+		void pushClipArea(const Rect& cliparea, bool clear=true);
+		void popClipArea();
+		const Rect& getClipArea() const;
+		void setAlphaOptimizerEnabled(bool enabled);
+		bool isAlphaOptimizerEnabled();
+		void saveImage(const std::string& filename);
 	};
 	
 	enum MouseCursorType {

@@ -43,8 +43,10 @@ namespace FIFE {
 		void act(const std::string& action_name, const Location& direction, bool repeating=false);
 		void follow(const std::string& action_name, Instance* leader, const double speed);
 		void say(const std::string& text, unsigned int duration=0);
-		void update(unsigned int curticks=0);
-
+		void setTimeMultiplier(float multip);
+		float getTimeMultiplier();
+		void refresh();
+		
 		void setVisual(AbstractVisual* visual);
 		template<typename T> T* getVisual() const;
 	};

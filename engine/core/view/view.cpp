@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -40,6 +40,7 @@
 #include "util/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
+#include "model/metamodel/timeprovider.h"
 #include "model/structures/map.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -56,7 +57,8 @@ namespace FIFE {
 		m_cameras(),
 		m_renderbackend(renderbackend),
 		m_renderers(),
-		m_pipeline() {
+		m_pipeline(),
+		m_updated(false) {
 	}
 
 	View::~View() {
@@ -135,14 +137,23 @@ namespace FIFE {
 		}
 	}
 
-	bool instanceDistanceSort(const Instance* lhs, const Instance* rhs) {
-		return (lhs->getVisual<InstanceVisual>()->getCameraCoordinate().z <
-			   rhs->getVisual<InstanceVisual>()->getCameraCoordinate().z);
+	class InstanceDistanceSort {
+	public:
+		Camera* cam;
+		bool operator()(const Instance* lhs, const Instance* rhs) {
+			return (lhs->getVisual<InstanceVisual>()->getCacheItem(cam).screenpoint.z <
+				rhs->getVisual<InstanceVisual>()->getCacheItem(cam).screenpoint.z);
+		}
+	};
+	
+/*	bool instanceDistanceSort(const Instance* lhs, const Instance* rhs) {
+		return (lhs->getVisual<InstanceVisual>()->getCacheItem(cam).screenpoint.z <
+			rhs->getVisual<InstanceVisual>()->getCacheItem(cam).screenpoint.z);
 	}
-
+*/
 	bool instanceStackSort(const Instance* lhs, const Instance* rhs) {
 		return (lhs->getVisual<InstanceVisual>()->getStackPosition() <
-				rhs->getVisual<InstanceVisual>()->getStackPosition());
+		        rhs->getVisual<InstanceVisual>()->getStackPosition());
 	}
 
 	void View::resetRenderers() {
@@ -156,27 +167,29 @@ namespace FIFE {
 			}
 		}
 	}
-
+	
 	void View::update(ImagePool*m_imagepool,AnimationPool* m_animationpool) {
 		FL_DBG(_log, "In View::update");
 
 		// update each camera
 		std::vector<Camera*>::iterator cam_it = m_cameras.begin();
 		for (; cam_it != m_cameras.end(); ++cam_it) {
-			if (!(*cam_it)->isEnabled()) {
+			Camera* cam = *cam_it;
+			
+			if (!cam->isEnabled()) {
 				continue;
 			}
 
-			(*cam_it)->update();
+			cam->update();
 
-			const Location& loc = (*cam_it)->getLocationRef();
+			const Location& loc = cam->getLocationRef();
 			Map* map = loc.getMap();
 			if (!map) {
 				FL_ERR(_log, "No map for camera found");
 				continue;
 			}
 			// update each layer
-			m_renderbackend->pushClipArea((*cam_it)->getViewPort());
+			m_renderbackend->pushClipArea(cam->getViewPort());
 
 			const std::vector<Layer*>& layers = map->getLayers();
 			std::vector<Layer*>::const_iterator layer_it = layers.begin();
@@ -190,37 +203,50 @@ namespace FIFE {
 				std::vector<Instance*>::const_iterator instance_it = allinstances.begin();
 				std::vector<Instance*> instances_to_render;
 				for (;instance_it != allinstances.end(); ++instance_it) {
-
-
 					Instance* instance = *instance_it;
-
-					CellGrid* cg = instance->getLocationRef().getLayer()->getCellGrid();
-					if (!cg) {
-						FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
-						exit(0);
-						return;
+					InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+					InstanceVisualCacheItem& vc = visual->getCacheItem(cam);
+					
+					// use cached values if there is no need to do full recalculation
+					
+					ScreenPoint drawpt;
+					//std::cout << m_updated << ", " << (!cam->isWarped()) << ", " << (!instance->isMoved()) << "\n";
+					if (m_updated && (!cam->isWarped()) && (!instance->isMoved()) && (vc.image)) {
+						ScreenPoint cammove = cam->getLatestMovement();
+						int pos_estimate_x = vc.screenpoint.x - cammove.x;
+						int pos_estimate_y = vc.screenpoint.y - cammove.y;
+						int pos_estimate_z = vc.screenpoint.z - cammove.z;
+						//std::cout << "orig x = " << drawpt.x << ", est x = " << pos_estimate_x << "\n";
+						//std::cout << "orig y = " << drawpt.y << ", est y = " << pos_estimate_y << "\n";
+						drawpt.x = pos_estimate_x;
+						drawpt.y = pos_estimate_y;
+						drawpt.z = pos_estimate_z;
+						//drawpt.z = cam->toScreenCoordinates( instance->getLocationRef().getMapCoordinates() ).z;
+					} else {
+						drawpt = cam->toScreenCoordinates( instance->getLocationRef().getMapCoordinates() );
 					}
-					ScreenPoint drawpt = (*cam_it)->toScreenCoordinates( instance->getLocationRef().getMapCoordinates() );
 					Image* image = NULL;
 					Action* action = instance->getCurrentAction();
-					int angle = (*cam_it)->getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
-					InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+					int angle = cam->getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
 					if (action) {
 						FL_DBG(_log, "Instance has action");
 						int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
 
 						Animation& animation = m_animationpool->getAnimation(animation_id);
-						int animtime = instance->getActionRuntime() % animation.getDuration();
+						int animtime = scaleTime(instance->getTotalTimeMultiplier(), instance->getActionRuntime()) % animation.getDuration();
 						image = animation.getFrameByTimestamp(animtime);
 					} else {
 						FL_DBG(_log, "No action");
-						int imageid = visual->getStaticImageIndexByAngle(angle);
+						int imageid = vc.getStaticImageIndexByAngle(angle, instance);
 						FL_DBG(_log, LMsg("Instance does not have action, using static image with id ") << imageid);
 						if (imageid >= 0) {
 							image = &m_imagepool->getImage(imageid);
 						}
 					}
 					if (image) {
+						vc.image = image;
+						vc.screenpoint = drawpt;
+						
 						int w = image->getWidth();
 						int h = image->getHeight();
 						drawpt.x -= w / 2;
@@ -228,29 +254,30 @@ namespace FIFE {
 						drawpt.y -= h / 2;
 						drawpt.y += image->getYShift();
 						Rect r = Rect(drawpt.x, drawpt.y, w, h);
-
-						if (!r.intersects((*cam_it)->getViewPort()))
-							continue;
-
-						visual->setCachedImageDimensions(r);
-						visual->setCameraCoordinate(drawpt);
-						visual->setCachedImage(image);
-						instances_to_render.push_back(instance);
+						vc.dimensions = r;
+						
+						if (r.intersects(cam->getViewPort())) {
+							instances_to_render.push_back(instance);
+						}
 					}
 				}
 
+				InstanceDistanceSort ids;
+				ids.cam = cam;
 				std::stable_sort(instances_to_render.begin(), instances_to_render.end(), instanceStackSort);
-				std::stable_sort(instances_to_render.begin(), instances_to_render.end(), instanceDistanceSort);
+				std::stable_sort(instances_to_render.begin(), instances_to_render.end(), ids);
 
 				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 				for (; r_it != m_pipeline.end(); ++r_it) {
 					if ((*r_it)->isActivedLayer(*layer_it)) {
-						(*r_it)->render(*cam_it, *layer_it, instances_to_render);
+						(*r_it)->render(cam, *layer_it, instances_to_render);
 					}
 				}
 			}
 			m_renderbackend->popClipArea();
+			cam->resetUpdates();
 		}
+		m_updated = true;
 	}
 }
 

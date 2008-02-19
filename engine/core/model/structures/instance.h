@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -44,6 +44,7 @@ namespace FIFE {
 	class Instance;
 	class ActionInfo;
 	class SayInfo;
+	class TimeProvider;
 
 	class InstanceListener {
 	public:
@@ -74,18 +75,18 @@ namespace FIFE {
 		/** Sets location of the instance
 		 *  @param loc new location
 		 */
-		void setLocation(const Location& loc) { m_location = loc; }
+		void setLocation(const Location& loc);
 
 		/** Gets current location of instance
 		 *  @note does not return const Location&, since swig wont be const correct
 		 *  @return current location
 		 */
-		Location getLocation() const { return m_location; }
+		Location getLocation() const { return m_cur_location; }
 		
 		/** Gets reference of current location of instance
 		 *  @return reference to current location
 		 */
-		Location& getLocationRef() { return m_location; }
+		Location& getLocationRef() { return m_cur_location; }
 		
 		/** Gets movement target in case instance is moving. In case not, returns current location
 		 *  To move target location, call move-method
@@ -150,6 +151,10 @@ namespace FIFE {
 		 */
 		void move(const std::string& action_name, const Location& target, const double speed);
 
+		/** Returns true, if instance was moved during previous update
+		 */
+		bool isMoved() { return m_cur_location != m_prev_location; }
+		
 		/** Performs given named action to the instance. Performs no movement
 		 *  @param action_name name of the action
 		 *  @param direction coordinates for cell towards instance is heading to when performing the action
@@ -177,6 +182,8 @@ namespace FIFE {
 
 		/** Updates the instance related to the current action
 		 * @param curticks current tick count of the system
+		 * @note call this only once in engine update cycle, so that tracking between
+		 *  current position and previous position keeps in sync.
 		 */
 		void update(unsigned int curticks=0);
 		
@@ -188,6 +195,23 @@ namespace FIFE {
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
 		
+		/** Sets speed for the map. See Model::setTimeMultiplier.
+		*/
+		void setTimeMultiplier(float multip);
+		
+		/** Gets instance speed. @see setTimeMultiplier.
+		*/
+		float getTimeMultiplier();
+		
+		/** Gets instance speed, considering also model and map speeds. @see setTimeMultiplier.
+		*/
+		float getTotalTimeMultiplier();
+		
+		/** Refreshes instance e.g. in case location is updated directly (not via setLocation)
+		 * In this case e.g. instance's master time provider is changed, so it needs to be updated
+		 */
+		void refresh();
+		
 		std::vector<std::string> listFields() const;
 		const std::string& get(const std::string& field);
 
@@ -195,7 +219,9 @@ namespace FIFE {
 		// object where instantiated from
 		Object* m_object;
 		// current location
-		Location m_location;
+		Location m_cur_location;
+		// location on previous round
+		Location m_prev_location;
 		// current facing location. Just a pointer to save space e.g. on tiles
 		Location* m_facinglocation;
 		// action information, allocated when actions are bind
@@ -206,6 +232,8 @@ namespace FIFE {
 		AbstractVisual* m_visual;
 		// text to say + duration, NULL if nothing
 		SayInfo* m_sayinfo;
+		// time scaler for this instance
+		TimeProvider* m_timeprovider;
 		
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);
@@ -217,6 +245,8 @@ namespace FIFE {
 		bool process_movement();
 		// Calculates movement based current location and speed
 		void calcMovement();
+		// rebinds time provider based on new location
+		void bindTimeProvider();
 	};
 
 } // FIFE

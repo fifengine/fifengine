@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -34,22 +34,30 @@
 
 namespace FIFE {
 
-	GLImage::GLImage(SDL_Surface* surface)
-		: Image(surface), m_width(surface->w), m_height(surface->h) {
-		m_tex_x=0;
-		m_tex_y=0;
-		m_textureid=0;
-		m_rows=0;
-		m_cols=0;
-		m_last_col_width=0;
-		m_last_row_height=0;
+	GLImage::GLImage(SDL_Surface* surface):
+		Image(surface) {
+		resetGlimage();
 	}
 
+	GLImage::GLImage(const uint8_t* data, unsigned int width, unsigned int height):
+		Image(data, width, height) {
+		resetGlimage();
+	}
 
 	GLImage::~GLImage() {
 		cleanup();
 	}
 
+	void GLImage::resetGlimage() {
+		m_tex_x = 0;
+		m_tex_y = 0;
+		m_textureid = 0;
+		m_rows = 0;
+		m_cols = 0;
+		m_last_col_width = 0;
+		m_last_row_height = 0;
+	}
+	
 	void GLImage::cleanup() {
 		for (unsigned int i = 0; i < m_rows*m_cols; ++i) {
 			glDeleteTextures(1, &m_textureid[i]);
@@ -73,8 +81,8 @@ namespace FIFE {
 		float tex_end_x;
 		float tex_end_y;
 
-		float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_width);
-		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_height);
+		float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
+		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
 
 		Rect target;
 		/// setting transparency for whole primitive:
@@ -129,23 +137,17 @@ namespace FIFE {
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	unsigned int GLImage::getWidth() const {
-		return m_width;
-	}
-
-	unsigned int GLImage::getHeight() const {
-		return m_height;
-	}
-
 	void GLImage::generateTexture() {
+		const unsigned int width = m_surface->w;
+		const unsigned int height = m_surface->h;
 		uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
 		int pitch     = m_surface->pitch;
 
 		m_last_col_width = 1;
-		m_cols = static_cast<int>(m_width/256);
-		if (m_width%256) {
+		m_cols = static_cast<int>(width/256);
+		if (width%256) {
 			++m_cols;
-			while(m_last_col_width < m_width%256) {
+			while(m_last_col_width < width%256) {
 				m_last_col_width <<= 1;
 			}
 		} else {
@@ -153,10 +155,10 @@ namespace FIFE {
 		}
 
 		m_last_row_height = 1;
-		m_rows = static_cast<int>(m_height/256);
-		if (m_height%256) {
+		m_rows = static_cast<int>(height/256);
+		if (height%256) {
 			++m_rows;
-			while(m_last_row_height < m_height%256) {
+			while(m_last_row_height < height%256) {
 				m_last_row_height <<= 1;
 			}
 		} else {
@@ -166,11 +168,11 @@ namespace FIFE {
 		m_textureid = new GLuint[m_rows*m_cols];
 		memset(m_textureid, 0x00, m_rows*m_cols*sizeof(GLuint));
 
-		if(m_width%256) {
-			m_tex_x = static_cast<float>(m_width%256) / static_cast<float>(m_last_col_width);
-			m_tex_y = static_cast<float>(m_height%256) / static_cast<float>(m_last_row_height);
+		if(width%256) {
+			m_tex_x = static_cast<float>(width%256) / static_cast<float>(m_last_col_width);
+			m_tex_y = static_cast<float>(height%256) / static_cast<float>(m_last_row_height);
 		}
-		else {  // (m_width%256) / m_last_col_width == 0 == 256 (mod 256)
+		else {  // (width%256) / m_last_col_width == 0 == 256 (mod 256)
 			m_tex_x = 1.0f;
 			m_tex_y = 1.0f;
 		}
@@ -184,7 +186,7 @@ namespace FIFE {
 			for (unsigned int j = 0; j < m_rows; ++j) {
 				if (i==m_cols-1) {
 					chunk_width = m_last_col_width;
-					data_chunk_width = m_width%256;
+					data_chunk_width = width%256;
 					if(data_chunk_width == 0) {  // 0 == 256 (mod 256)
 						data_chunk_width = 256;
 					}
@@ -194,7 +196,7 @@ namespace FIFE {
 				}
 				if (j==m_rows-1) {
 					chunk_height = m_last_row_height;
-					data_chunk_height = m_height%256;
+					data_chunk_height = height%256;
 					if(data_chunk_height == 0) {  // 0 = 256 (mod 256)
 						data_chunk_height = 256;
 					}
@@ -230,6 +232,86 @@ namespace FIFE {
 
 				delete[] oglbuffer;
 			}
+		}
+	}
+	
+	bool GLImage::putPixel(int x, int y, int r, int g, int b) {
+		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
+			return false;
+		}
+
+		Point p(x, y);
+		drawLine(p, p, r, g, b);
+		return true;
+	}
+	
+	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+		glColor4ub(r, g, b, 255);
+		glBegin(GL_LINES);
+		glVertex3f(p1.x+0.5f, p1.y+0.5f, 0);
+		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
+		glEnd();
+
+		glBegin(GL_POINTS);
+		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
+		glEnd();
+	}
+	
+	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+	        glColor4ub(r, g, b, 165);
+		glBegin(GL_QUADS);
+		glVertex3f(p1.x, p1.y, 0);
+		glVertex3f(p2.x, p2.y, 0);
+		glVertex3f(p3.x, p3.y, 0);
+		glVertex3f(p4.x, p4.y, 0);
+		glEnd();
+	}
+	
+	void GLImage::saveImage(const std::string& filename) {
+		unsigned int swidth = getWidth();
+		unsigned int sheight = getHeight();
+
+		// We need unsigned char to avoid pointer alignment issues
+		uint8_t *pixels = new uint8_t[swidth * sheight * 3];
+
+		// Read in the pixel data
+		glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
+
+		/* At this point the image has been reversed, so we need to re-reverse it so that
+		it is the correct way around. We do this by copying the "image" pixels to another
+		surface in reverse order */
+		SDL_Surface* image = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 24,
+			255U << (0), // Blue channel
+			255U << (8), // Green channel
+			255U << (16), // Red channel
+			0 /* no alpha! */);
+		SDL_LockSurface(image);
+
+		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(image->pixels);
+		// Copy the "reversed_image" memory to the "image" memory
+		for (int y = (sheight - 1); y >= 0; --y) {
+			uint8_t *row_begin = pixels + y * swidth * 3;
+			uint8_t *row_end = row_begin + swidth * 3;
+
+			std::copy(row_begin, row_end, imagepixels);
+
+			// Advance a row in the output surface.
+			imagepixels += image->pitch;
+		}
+		SDL_UnlockSurface(image);
+
+		// Save file
+		SDL_SaveBMP(image, filename.c_str());
+
+		// Clear memory
+		delete []pixels;
+		SDL_FreeSurface( image );
+	}
+	
+	void GLImage::setClipArea(const Rect& cliparea, bool clear) {
+	        glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
+		if (clear) {
+	        	glClear(GL_COLOR_BUFFER_BIT);
 		}
 	}
 }

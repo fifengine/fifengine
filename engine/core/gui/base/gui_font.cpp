@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -66,7 +66,7 @@ namespace FIFE {
 		}
 
 		Image* image = getAsImage(text);
-		image->render(rect, RenderBackend::instance()->getScreenSurface());
+		image->render(rect);
 	}
 
 	void GuiFont::drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int x, int y) {
@@ -88,7 +88,7 @@ namespace FIFE {
 		if (!rect.intersects(Rect(clip.x,clip.y,clip.width,clip.height)) ) {
 			return;
 		}
-		image->render(rect, RenderBackend::instance()->getScreenSurface());
+		image->render(rect);
 	}
 	
 	void GuiFont::setRowSpacing (int spacing) {

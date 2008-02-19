@@ -22,7 +22,8 @@ class TestVideo(unittest.TestCase):
 			if not image:
 				image = animation.getFrame(0)
 				starttime = gettime()
-			image.render(fife.Rect(0,0,image.getWidth(),image.getHeight()),255)
+			print fife.Rect(0,0,image.getWidth(),image.getHeight())
+			image.render(fife.Rect(0,0,image.getWidth(),image.getHeight()), 255)
 			self.engine.pump()
 		self.engine.finalizePumping()
 

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2005-2008 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -66,7 +66,7 @@ namespace FIFE {
 			saytext = instance->getSayText();
 			if (saytext) {
 				InstanceVisual* visual = instance->getVisual<InstanceVisual>();
-				const Rect& ir = visual->getCachedImageDimensions();
+				const Rect& ir = visual->getCacheItem(cam).dimensions;
 				m_font->setColor(25,25,112);
 				Image* img = m_font->getAsImageMultiline(*saytext);
 				Rect r;

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -39,71 +39,17 @@ namespace FIFE {
 	 * @see RenderBackend
 	 */
 	class RenderBackendSDL : public RenderBackend {
-		public:
-			/** Simple constructor.
-			 *
-			 * @note Registers the renderbackend 'SDL' but does not yet create a screen.
-			 */
-			RenderBackendSDL();
+	public:
+		RenderBackendSDL();
+		virtual ~RenderBackendSDL();
+		const std::string& getName() const;
 
-			/** Deletes the backend instance.
-			 */
-			virtual ~RenderBackendSDL();
-
-			/* Starts the frame.
-			 */
-			virtual void startFrame();
-			/* Ends the frame.
-			 */
-			virtual void endFrame();
-
-			/** Initialises the SDL video subsystem.
-			 */
-			virtual void init();
-
-			/** Deletes the current screen and quits the SDL video subsystem.
-			 */
-			virtual void deinit();
-
-			/** Creates the internal screen and returns it as well.
-			 *
-			 * @note Use sensible values; fs means fullscreen.
-			 * @note bitsPerPixel = 0 causes autodetection of best supported mode.
-			 */
-			virtual SDL_Surface* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs);
-
-			/** Convenience wrapper around SDLImage.
-			 *
-			 * Creates an SDLImage instance from the specified data.
-			 * Takes ownership over the surface.
-			 *
-			 * @see SDLImage
-			 */
-			virtual Image* createStaticImageFromSDL(SDL_Surface* surface);
-
-			/** Makes a screenshot and saves it as a BMP file.
-			 */
-			virtual void captureScreen(const std::string& filename);
-
-			virtual void drawPoint(const Point& p1, int r, int g, int b){}
-			virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-			virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
-
-			/** Removes fake alpha from images
-			 */
-			void setRemoveFakeAlpha(bool removefakealpha) { m_removefakealpha = removefakealpha; }
-
-			/** True, if fake alpha is removed from images
-			 */
-			bool isRemoveFakeAlpha() { return m_removefakealpha; }
-
-		protected:
-			void setClipArea(const Rect& cliparea, bool clear);
-
-
-		private:
-			inline void putPixel(int x, int y, int r, int g, int b);
-			bool m_removefakealpha;
+		void startFrame();
+		void endFrame();
+		void init();
+		Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen);
+		Image* createImage(const uint8_t* data, unsigned int width, unsigned int height);
+		Image* createImage(SDL_Surface* surface);
 	};
 
 }

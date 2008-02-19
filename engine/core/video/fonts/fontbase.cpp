@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -90,7 +90,7 @@ namespace FIFE {
 		Image* image = m_pool.getRenderedText(this, text);
 		if (!image) {
 			SDL_Surface* textSurface = renderString(text);
-			image = RenderBackend::instance()->createStaticImageFromSDL(textSurface);
+			image = RenderBackend::instance()->createImage(textSurface);
 			m_pool.addRenderedText( this, text, image );
 		}
 		return image;
@@ -139,7 +139,7 @@ namespace FIFE {
 				ypos += getRowSpacing() + getHeight();
 				SDL_FreeSurface(*i);
 			}
-			image = RenderBackend::instance()->createStaticImageFromSDL(final_surface);
+			image = RenderBackend::instance()->createImage(final_surface);
 			m_pool.addRenderedText(this, text, image);
 		}
 		return image;

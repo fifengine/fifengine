@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2005-2006 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *

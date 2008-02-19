@@ -23,8 +23,8 @@ class TestGui(unittest.TestCase):
 			f.setColor(255,20,20)
 		container = fife.Container()
 		self.guimanager.add(container)
-		container.setSize(self.renderbackend.getScreenWidth(), 
-		                  self.renderbackend.getScreenHeight())
+		container.setSize(self.renderbackend.getWidth(), 
+		                  self.renderbackend.getHeight())
 		container.setOpaque(False)
 		label1 = fife.Label('This is a Truetype font')
 		label1.setPosition(0, 70)

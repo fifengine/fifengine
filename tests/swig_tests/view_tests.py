@@ -37,7 +37,7 @@ class TestView(unittest.TestCase):
 
 	def testCamera(self):
 		rb = self.engine.getRenderBackend()
-		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
+		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
 
 		cam = self.engine.getView().addCamera("foo", self.layer, viewport, self.camcoord )
 		cam.setCellImageDimensions(self.screen_cell_w, self.screen_cell_h)

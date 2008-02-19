@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -38,8 +38,8 @@
 
 namespace FIFE {
 
-	Map::Map(const std::string& identifier) 
-		: AttributedClass(identifier) {
+	Map::Map(const std::string& identifier, TimeProvider* tp_master) 
+		: AttributedClass(identifier), m_timeprovider(tp_master) {
 	}
 
 	Map::~Map() {

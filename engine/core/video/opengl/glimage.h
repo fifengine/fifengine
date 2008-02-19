@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -46,66 +46,40 @@ namespace FIFE {
 	 * it draws a textured @i Quad to the screen.
 	 *
 	 * @see Image
-	 * @see RenderBackendOpenGL
 	 * @note Width and height are not limited to powers of two; non-power of two
 	 * images will be converted internally.
 	 * @todo Check the correctness of the generateTexture function on big endian systems (ppc)
 	 */
 	class GLImage : public Image {
-		public:
-			/** Constructs an instance from a SDL Surface
-			 *
-			 * @note Takes ownership of the SDL Surface
-			 * @param surface SDL Surface in RGBA format
-			 */
-			GLImage(SDL_Surface* surface);
+	public:
+		GLImage(SDL_Surface* surface);
+		GLImage(const uint8_t* data, unsigned int width, unsigned int height);
+		virtual ~GLImage();
+		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
+ 		bool putPixel(int x, int y, int r, int g, int b);
+		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
+		void saveImage(const std::string& filename);
 
-			/** Destructor.
-			 *
-			 * Deletes the GL resources allocated by this instance.
-			 */
-			virtual ~GLImage();
+	protected:
+		void setClipArea(const Rect& cliparea, bool clear);
 
-			/** Draw this image into the specified clip-rect of the given screen.
-			 *
-			 * @param rect Destination clip-rectangle.
-			 * @param screen Screen to draw to.
-			 * @param alpha  Alpha-value for this frame; default is fully opaque.
-			 */
-			virtual void render(const Rect& rect, SDL_Surface* screen, unsigned char alpha = 255);
-			/** Returns the width of this image.
-			 *
-			 * @return Width of the image.
-			 */
-			virtual unsigned int getWidth() const;
-			/** Returns the height of this image.
-			 *
-			 * @return Height of the image.
-			 */
-			virtual unsigned int getHeight() const;
+	private:
+		unsigned int m_rows;
+		unsigned int m_cols;
 
-		private:
-			// Width of the image.
-			unsigned int m_width;
-			// Height of the image.
-			unsigned int m_height;
+		float m_tex_x;
+		float m_tex_y;
 
-			unsigned int m_rows;
-			unsigned int m_cols;
+		unsigned int m_last_col_width;
+		unsigned int m_last_row_height;
 
-			float m_tex_x;
-			float m_tex_y;
+		GLuint *m_textureid;
 
-			unsigned int m_last_col_width;
-			unsigned int m_last_row_height;
-
-			GLuint *m_textureid;
-
-			void cleanup();
-			void generateTexture();
-
+		void cleanup();
+		void resetGlimage();
+		void generateTexture();
 	};
-
 }
 
 #endif

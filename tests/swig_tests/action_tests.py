@@ -68,7 +68,7 @@ class ActionTests(unittest.TestCase):
 	def testWalkAround(self):
 
 		rb = self.engine.getRenderBackend()
-		viewport = fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight())
+		viewport = fife.Rect(0, 0, rb.getWidth(), rb.getHeight())
 		
 		cam = self.engine.getView().addCamera("foo", self.layer, viewport, fife.ExactModelCoordinate(0,0) )
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())

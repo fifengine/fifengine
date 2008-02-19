@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -33,6 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
+#include "model/metamodel/timeprovider.h"
 
 #include "location.h"
 
@@ -58,7 +59,7 @@ namespace FIFE {
 			 * To add map to model, one should call Model::addMap (otherwise
 			 * map is not registered with the engine properly)
 			 */
-			Map(const std::string& identifier);
+			Map(const std::string& identifier, TimeProvider* tp_master=NULL);
 
 			/** Destructor
 			 */
@@ -118,15 +119,25 @@ namespace FIFE {
 			/** Called periodically to update events on map
 			 */
 			void update();
+			
+			/** Sets speed for the map. See Model::setTimeMultiplier.
+			 */
+			void setTimeMultiplier(float multip) { m_timeprovider.setMultiplier(multip); }
+			
+			/** Gets model speed. @see setTimeMultiplier.
+			 */
+			float getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }
+			
+			/** Gets timeprovider used in the map
+			 */
+			TimeProvider* getTimeProvider() { return &m_timeprovider; }
 
 		private:
-
 			std::string m_mapname;
-
 			std::vector<Dataset*> m_datasets;
-
 			std::vector<Layer*> m_layers;
-
+			TimeProvider m_timeprovider;
+			
 			Map(const Map& map);
 			Map& operator=(const Map& map);
 	};

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -166,7 +166,7 @@ namespace FIFE {
 		m_animpool->addResourceProvider(new AnimationProvider(m_imagepool));
 
 		FL_LOG(_log, "Creating render backend");
-		const std::string& rbackend = m_settings.getRenderBackend();
+		std::string rbackend(m_settings.getRenderBackend());
 		if (rbackend == "SDL") {
 			m_renderbackend = new RenderBackendSDL();
 			FL_LOG(_log, "SDL Render backend created");

@@ -88,7 +88,7 @@ void test_animation(RenderBackend& renderbackend) {
 	renderbackend.init();
 	const int W = 800;
 	const int H = 600;
-	SDL_Surface* screen = renderbackend.createMainScreen(W, H, 0, false);
+	renderbackend.createMainScreen(W, H, 0, false);
 
 	ImagePool* imagepool = new ImagePool();
 	imagepool->addResourceProvider(new ImageProvider());
@@ -120,7 +120,7 @@ void test_animation(RenderBackend& renderbackend) {
 				start_ticks = SDL_GetTicks();
 				continue;
 			}
-			frame->render(Rect((*i)->x, (*i)->y, w, h), screen);
+			frame->render(Rect((*i)->x, (*i)->y, w, h));
 			i++;
 		}
 		renderbackend.endFrame();

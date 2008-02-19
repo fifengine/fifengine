@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -39,6 +39,11 @@ namespace FIFE {
 	class Action;
 	class Image;
 	
+	/** Base class for all 2 dimensional visual classes
+	 * Visual classes are extensions to visualize the stuff in model (e.g. instances)
+	 * The reason why its separated is to keep model view-agnostic, so that we could
+	 * have e.g. 3d, 2d and character based visualizations to the same data
+	 */
 	class Visual2DGfx: public AbstractVisual {
 	public:
 		/** Destructor
@@ -101,7 +106,7 @@ namespace FIFE {
 		/** Returns closest matching static image for given angle
 		 * @return id for static image
 		 */
-		int getStaticImageIndexByAngle(unsigned int angle);		
+		int getStaticImageIndexByAngle(unsigned int angle);
 		
 	private:
 		/** Constructor
@@ -109,6 +114,34 @@ namespace FIFE {
 		ObjectVisual();
 		
 		type_angle2id m_angle2img;
+	};
+
+	/** InstanceVisualCacheItem caches values calculated by view
+	 * values are camera specific
+	 * Class should be used by engine itself only
+	 */
+	class InstanceVisualCacheItem {
+	public:
+		InstanceVisualCacheItem();
+	
+		/** Returns closest matching static image for given angle
+		* @return id for static image
+		* @see ObjectVisual::getStaticImageIndexByAngle
+		*/
+		int getStaticImageIndexByAngle(unsigned int angle, Instance* instance);
+	
+		// point where instance was drawn during the previous render
+		ScreenPoint screenpoint;
+		
+		// dimensions of this visual during the previous render
+		Rect dimensions;
+		
+		// image used during previous render
+		Image* image;
+		
+	private:
+		int m_cached_static_img_id;
+		int m_cached_static_img_angle;
 	};
 
 	/** Instance visual contains data that is needed to visualize the instance on screen
@@ -135,66 +168,22 @@ namespace FIFE {
 		 */
 		int getStackPosition() { return m_stackposition; }
 		
-		/** Returns closest matching static image for given angle
-		 * @return id for static image
-		 * @see ObjectVisual::getStaticImageIndexByAngle
+		/** Get camera specific cache item for the visual
+		 *  @return cache item
 		 */
-		int getStaticImageIndexByAngle(unsigned int angle);
+		InstanceVisualCacheItem& getCacheItem(Camera* cam);
 		
-		/** Sets current camera coordinate for the instance. 
-		 *  Value is basically cached so that it needs to be computed only once
-		 */
-		void setCameraCoordinate(ScreenPoint screenpoint) {
-			m_screenpoint = screenpoint;
-		}
-		
-		/** Gets current camera coordinate for the instance. 
-		 *  @see setCameraCoordinate
-		 */
-		ScreenPoint getCameraCoordinate() const {
-			return m_screenpoint;
-		}
-		
-		/** Sets current dimensions for image that is drawn
-		 *  Value is basically cached so that it needs to be computed only once
-		 */
-		void setCachedImageDimensions(const Rect& dimensions) {
-			m_cached_dimensions = dimensions;
-		}
-		
-		/** Gets current dimensions for image that is drawn
-		 */
-		const Rect& getCachedImageDimensions() const {
-			return m_cached_dimensions;
-		}
-		
-		/** Cached image for this instance, written after its resolved the first time
-		 * Image is valid for the duration of one render pipeline iteration
-		 */
-		void setCachedImage(Image* img) {
-			m_cached_image = img;
-		}
-
-		/** Gets currently cached image
-		 */
-		Image* getCachedImage() const {
-			return m_cached_image;
-		}
-
 	private:
 		/** Constructor
 		 */
 		InstanceVisual();
 		int m_stackposition;
-		Instance* m_instance;
-		// static image that is read from object. Used for fast access when drawing images
-		int m_cached_static_img_id;
-		int m_cached_static_img_angle;
-		ScreenPoint m_screenpoint;
-		Rect m_cached_dimensions;
-		Image* m_cached_image;
+		// there is separate cache item for each camera
+		std::map<Camera*, InstanceVisualCacheItem> m_cache;
 	};
 	
+	/** Action visual contains data that is needed to visualize different actions on screen
+	 */
 	class ActionVisual: public Visual2DGfx {
 	public:
 		/** Constructs and assigns it to the passed item

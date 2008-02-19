@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<dataset namespace="OfficialMapTiles">
+<dataset namespace="IslandMapTiles">
   <!-- Ground tiles -->
 	<object source="content/gfx/tiles/ground/earth_1.xml"/>
 	<object source="content/gfx/tiles/ground/earth_2.xml"/>

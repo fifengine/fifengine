@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -35,7 +35,9 @@
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/abstractpather.h"
 #include "model/metamodel/action.h"
+#include "model/metamodel/timeprovider.h"
 #include "model/structures/layer.h"
+#include "model/structures/map.h"
 #include "model/structures/instancetree.h"
 
 #include "instance.h"
@@ -109,12 +111,14 @@ namespace FIFE {
 	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
 		AttributedClass(identifier),
 		m_object(object),
-		m_location(location),
+		m_cur_location(location),
+		m_prev_location(location),
 		m_facinglocation(NULL),
 		m_actioninfo(NULL),
 		m_listeners(NULL),
 		m_visual(NULL),
-		m_sayinfo(NULL) {
+		m_sayinfo(NULL),
+		m_timeprovider(NULL) {
 	}
 
 	Instance::~Instance() {
@@ -122,6 +126,13 @@ namespace FIFE {
 		delete m_listeners;
 		delete m_visual;
 		delete m_facinglocation;
+		delete m_timeprovider;
+	}
+	
+	void Instance::setLocation(const Location& loc) {
+		m_cur_location = loc;
+		// rebind timeprovider to do proper timescaling
+		bindTimeProvider();
 	}
 
 	void Instance::addListener(InstanceListener* listener) {
@@ -152,7 +163,7 @@ namespace FIFE {
 			delete m_actioninfo;
 			m_actioninfo = NULL;
 		}
-		m_actioninfo = new ActionInfo(m_object->getPather(), m_location);
+		m_actioninfo = new ActionInfo(m_object->getPather(), m_cur_location);
 		m_actioninfo->m_action = m_object->getAction(action_name);
 		if (!m_actioninfo->m_action) {
 			delete m_actioninfo;
@@ -166,7 +177,7 @@ namespace FIFE {
 		m_actioninfo->m_target = new Location(target);
 		m_actioninfo->m_speed = speed;
 		setFacingLocation(target);
-		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << target << " with speed " << speed);
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_cur_location << " to " << target << " with speed " << speed);
 	}
 	
 	void Instance::follow(const std::string& action_name, Instance* leader, const double speed) {
@@ -175,7 +186,7 @@ namespace FIFE {
 		m_actioninfo->m_speed = speed;
 		m_actioninfo->m_leader = leader;
 		setFacingLocation(*m_actioninfo->m_target);
-		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << *m_actioninfo->m_target << " with speed " << speed);
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_cur_location << " to " << *m_actioninfo->m_target << " with speed " << speed);
 	}
 
 	void Instance::act(const std::string& action_name, const Location& direction, bool repeating) {
@@ -211,22 +222,22 @@ namespace FIFE {
 	bool Instance::process_movement() {
 		FL_DBG(_log, "Moving...");
 		// timeslice for this movement
-		unsigned int timedelta  = m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time;
+		unsigned int timedelta = scaleTime(getTotalTimeMultiplier(), m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time);
 		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << m_actioninfo->m_prev_call_time);
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * m_actioninfo->m_speed;
 		FL_DBG(_log, LMsg("dist ") <<  distance_to_travel);
 				
-		Location nextLocation = m_location;
+		Location nextLocation = m_cur_location;
 		m_actioninfo->m_pather_session_id = m_actioninfo->m_pather->getNextLocation(
 			this, *m_actioninfo->m_target,
 			distance_to_travel, nextLocation, *m_facinglocation,
 			m_actioninfo->m_pather_session_id);
-		m_location.getLayer()->getInstanceTree()->removeInstance(this);
-		m_location = nextLocation;
+		m_cur_location.getLayer()->getInstanceTree()->removeInstance(this);
+		m_cur_location = nextLocation;
 		ExactModelCoordinate a = nextLocation.getMapCoordinates();
 		ExactModelCoordinate b = m_actioninfo->m_target->getMapCoordinates();
-		m_location.getLayer()->getInstanceTree()->addInstance(this);
+		m_cur_location.getLayer()->getInstanceTree()->addInstance(this);
 		// return if we are close enough to target to stop
 		if(m_actioninfo->m_pather_session_id == -1) {
 			return true;
@@ -235,9 +246,15 @@ namespace FIFE {
 	}
 
 	void Instance::update(unsigned int curticks) {
+		m_prev_location = m_cur_location;
 		if (!m_actioninfo) {
 			return;
 		}
+		
+		if (!m_timeprovider) {
+			bindTimeProvider();
+		}
+		
 		if (curticks == 0) {
 			curticks = SDL_GetTicks();
 		}
@@ -257,7 +274,7 @@ namespace FIFE {
 			}
 		} else {
 			FL_DBG(_log, "action does not contain target for movement");
-			if ((curticks - m_actioninfo->m_action_start_time) >= m_actioninfo->m_action->getDuration()) {
+			if (scaleTime(getTotalTimeMultiplier(), curticks - m_actioninfo->m_action_start_time) >= m_actioninfo->m_action->getDuration()) {
 				if (m_actioninfo->m_repeating) {
 					m_actioninfo->m_action_start_time = curticks;
 				} else {
@@ -270,7 +287,7 @@ namespace FIFE {
 		}
 		if (m_sayinfo) {
 			if (m_sayinfo->m_duration > 0) {
-				if ((curticks - m_sayinfo->m_start_time) > m_sayinfo->m_duration) {
+				if (scaleTime(getTotalTimeMultiplier(), curticks - m_sayinfo->m_start_time) > m_sayinfo->m_duration) {
 					say("");
 				}
 			}
@@ -305,7 +322,7 @@ namespace FIFE {
 		if ( m_actioninfo && m_actioninfo->m_target ) {
 			return *m_actioninfo->m_target;
 		}
-		return m_location;
+		return m_cur_location;
 	}
 
 	double Instance::getMovementSpeed() const {
@@ -319,12 +336,12 @@ namespace FIFE {
 		if (m_facinglocation) {
 			return *m_facinglocation;
 		}
-		return m_location;
+		return m_cur_location;
 	}
 
 	Location& Instance::getFacingLocationRef() {
 		if (!m_facinglocation) {
-			m_facinglocation = new Location(m_location);
+			m_facinglocation = new Location(m_cur_location);
 		}
 		return *m_facinglocation;
 	}
@@ -349,5 +366,50 @@ namespace FIFE {
 			return value;
 		}
 		return m_object->get(field);
+	}
+	
+	void Instance::bindTimeProvider() {
+		float multiplier = 1.0;
+		if (m_timeprovider) {
+			multiplier = m_timeprovider->getMultiplier();
+		}
+		delete m_timeprovider;
+		m_timeprovider = NULL;
+		
+		if (m_cur_location.getLayer()) {
+			Map* map = m_cur_location.getLayer()->getMap();
+			if (map) {
+				m_timeprovider = new TimeProvider(map->getTimeProvider());
+			}
+		}
+		if (!m_timeprovider) {
+			m_timeprovider = new TimeProvider(NULL);
+		}
+		m_timeprovider->setMultiplier(multiplier);
+	}
+	
+	void Instance::refresh() {
+		bindTimeProvider();
+	}
+	
+	void Instance::setTimeMultiplier(float multip) { 
+		if (!m_timeprovider) {
+			bindTimeProvider();
+		}
+		m_timeprovider->setMultiplier(multip);
+	}
+	
+	float Instance::getTimeMultiplier() {
+		if (!m_timeprovider) {
+			return 1.0;
+		}
+		return m_timeprovider->getMultiplier();
+	}
+	
+	float Instance::getTotalTimeMultiplier() {
+		if (!m_timeprovider) {
+			return 1.0;
+		}
+		return m_timeprovider->getTotalMultiplier();
 	}
 }

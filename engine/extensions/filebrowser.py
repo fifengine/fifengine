@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import pychan
+import pychan.widgets as widgets
 
 class FileBrowser(object):
 	def __init__(self, engine,fileSelected, savefile = False):

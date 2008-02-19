@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -40,7 +40,8 @@ namespace FIFE {
 
 	Model::Model(): 
 		FifeClass(), 
-		m_meta(new MetaModel()) {
+		m_meta(new MetaModel()),
+		m_timeprovider(NULL) {
 	}
 
 	Model::~Model() {
@@ -56,7 +57,7 @@ namespace FIFE {
 				throw NameClash(identifier);
 		}
 
-		Map* map = new Map(identifier);
+		Map* map = new Map(identifier, &m_timeprovider);
 		m_maps.push_back(map);
 		return map;
 	}

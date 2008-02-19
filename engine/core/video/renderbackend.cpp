@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -31,74 +31,92 @@
 
 namespace FIFE {
 	
-	RenderBackend::RenderBackend(const std::string& name): 
-		m_screen(0),
-		m_screenarea(),
-		m_name(name),
-		m_clipstack() {
+	RenderBackend::RenderBackend(): 
+		m_screen(NULL), m_isalphaoptimized(false) {
 	}
 
 
 	RenderBackend::~RenderBackend() {
-		SDL_FreeSurface(m_screen);
-		m_screen = 0;
 	}
 
-	const std::string& RenderBackend::getName() const {
-		return m_name;
-	}
-		
-	Image* RenderBackend::createStaticImageFromRGBA(const uint8_t* data, unsigned int width, unsigned int height) {
-		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
-		                                            RMASK, GMASK, BMASK ,AMASK);
-		SDL_LockSurface(surface);
-
-		unsigned int size = width * height * 4;
-		uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
-		std::copy(data, data + size, pixeldata);
-		SDL_UnlockSurface(surface);
-
-		return createStaticImageFromSDL(surface);
+	void RenderBackend::deinit() {
+		delete m_screen;
+		m_screen = NULL;
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	}
 
 	void RenderBackend::captureScreen(const std::string& filename) {
-		// Dummy Implementation.
+		m_screen->saveImage(filename);
 	}
 	
 	void RenderBackend::pushClipArea(const Rect& cliparea, bool clear) {
-		ClipInfo ci;
-		ci.r = cliparea;
-		ci.clearing = clear;
-		m_clipstack.push(ci);
-		setClipArea(cliparea, clear);
+		assert(m_screen);
+		m_screen->pushClipArea(cliparea, clear);
         }
 	
 	void RenderBackend::popClipArea() {
-		assert(!m_clipstack.empty());
-		m_clipstack.pop();
-		if (m_clipstack.empty()) {
-			clearClipArea();
-		} else {
-			ClipInfo ci = m_clipstack.top();
-			setClipArea(ci.r, ci.clearing);
-		}
-	}
-	
-	const Rect& RenderBackend::getScreenArea() {
-		m_screenarea.w = getScreenWidth();
-		m_screenarea.h = getScreenHeight();
-		return m_screenarea;
+		assert(m_screen);
+		m_screen->popClipArea();
 	}
 	
 	const Rect& RenderBackend::getClipArea() const {
-		if (m_clipstack.empty()) {
-			return m_clipstack.top().r;
-		} else {
-			return m_screenarea;
-		}
+		assert(m_screen);
+		return m_screen->getClipArea();
 	}
 	
-	void RenderBackend::clearClipArea() {
-		setClipArea(m_screenarea, true);
+	SDL_Surface* RenderBackend::getSurface() {
+		assert(m_screen);
+		return m_screen->getSurface();
 	}
+	
+	unsigned int RenderBackend::getWidth() const {
+		assert(m_screen);
+		return m_screen->getWidth();
+	}
+	
+	unsigned int RenderBackend::getHeight() const {
+		assert(m_screen);
+		return m_screen->getHeight();
+	}
+	
+	const Rect& RenderBackend::getArea() {
+		assert(m_screen);
+		return m_screen->getArea();
+	}
+	
+	void RenderBackend::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
+		assert(m_screen);
+		m_screen->getPixelRGBA(x, y, r, g, b, a);
+	}
+	
+	bool RenderBackend::putPixel(int x, int y, int r, int g, int b) {
+		assert(m_screen);
+		return m_screen->putPixel(x, y, r, g, b);
+	}
+	
+	void RenderBackend::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+		assert(m_screen);
+		m_screen->drawLine(p1, p2, r, g, b);
+	}
+	
+	void RenderBackend::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+		assert(m_screen);
+		m_screen->drawQuad(p1, p2, p3, p4, r, g, b);
+	}
+	
+	void RenderBackend::saveImage(const std::string& filename) {
+		assert(m_screen);
+		m_screen->saveImage(filename);
+	}
+	
+	void RenderBackend::setAlphaOptimizerEnabled(bool enabled) {
+		assert(m_screen);
+		m_screen->setAlphaOptimizerEnabled(enabled);
+	}
+	
+	bool RenderBackend::isAlphaOptimizerEnabled() {
+		assert(m_screen);
+		return m_screen->isAlphaOptimizerEnabled();
+	}
+	
 }

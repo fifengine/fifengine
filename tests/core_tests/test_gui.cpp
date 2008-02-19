@@ -75,7 +75,7 @@ struct environment {
 		}
 };
 
-void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, ImagePool& pool, SDL_Surface* screen) {
+void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, ImagePool& pool) {
 	pool.addResourceProvider(new SubImageProvider());
 	pool.addResourceProvider(new ImageProvider());
 
@@ -101,7 +101,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 	int w = img->getWidth();
 	for (int i = 0; i < 100; i+=2) {
 		renderbackend.startFrame();
-		img->render(Rect(i, i, w, h), screen);
+		img->render(Rect(i, i, w, h));
 		gui->logic();
 		gui->draw();
 		renderbackend.endFrame();
@@ -117,10 +117,10 @@ BOOST_AUTO_TEST_CASE( SDL_gui_test ) {
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
 	ImagePool pool;
-	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	SdlGuiGraphics graphics(pool);
-	graphics.setTarget(screen);
-	test_gui_image(renderbackend, graphics, pool, screen);
+	graphics.setTarget(screen->getSurface());
+	test_gui_image(renderbackend, graphics, pool);
 }
 
 
@@ -133,9 +133,9 @@ BOOST_AUTO_TEST_CASE( OGL_gui_test ) {
 	RenderBackendOpenGL renderbackend;
 	renderbackend.init();
 	ImagePool pool;
-	SDL_Surface* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	OpenGLGuiGraphics graphics(pool);
-	test_gui_image(renderbackend, graphics, pool, screen);
+	test_gui_image(renderbackend, graphics, pool);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300
