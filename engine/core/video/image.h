@@ -105,6 +105,14 @@ namespace FIFE {
 			 * Only implemented by and useful for the SDL backend at the moment.
 			 */
 			virtual void setAlphaOptimizerEnabled(bool) {};
+			
+			/** Returns pixel from given image
+			 */
+			Uint32 getPixel(int x, int y);
+			
+			/** Returns rgba values from given pixel
+			 */
+			void getRgba(Uint32 pixel, Uint8* r, Uint8* g, Uint8* b, Uint8* a);
 
 		protected:
 			// The SDL Surface used.

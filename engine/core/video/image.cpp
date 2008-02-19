@@ -70,5 +70,31 @@ namespace FIFE {
 		render(rect,SDL_GetVideoSurface(),alpha);
 	}
 
+	Uint32 Image::getPixel(int x, int y) {
+		int bpp = m_surface->format->BytesPerPixel;
+		Uint8 *p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
+		switch(bpp) {
+		case 1:
+			return *p;
+		
+		case 2:
+			return *(Uint16 *)p;
+		
+		case 3:
+			if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+				return p[0] << 16 | p[1] << 8 | p[2];
+			} else {
+				return p[0] | p[1] << 8 | p[2] << 16;
+			}
+		
+		case 4:
+			return *(Uint32 *)p;
+		}
+		return 0;	
+	}
+	
+	void Image::getRgba(Uint32 pixel, Uint8* r, Uint8* g, Uint8* b, Uint8* a) {
+		SDL_GetRGBA(pixel, m_surface->format, r, b, g, a);
+	}
 }
 

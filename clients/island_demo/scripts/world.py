@@ -100,15 +100,19 @@ class World(EventListenerBase):
 			self.cameras['main'].setRotation((currot + 5) % 360)
 	
 	def mouseReleased(self, evt):
+		clickpoint = fife.ScreenPoint(evt.getX(), evt.getY())
+		dy = -(clickpoint.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getMapCoordinates()).y)
+		clickpoint.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
+		
 		if (evt.getButton() == fife.IMouseEvent.LEFT):
-			newTarget = fife.ScreenPoint(evt.getX(), evt.getY())
-			dy = -(newTarget.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getMapCoordinates()).y)
-			newTarget.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
-			target_mapcoord = self.cameras['main'].toMapCoordinates(newTarget)
+			target_mapcoord = self.cameras['main'].toMapCoordinates(clickpoint)
 			target_mapcoord.z = 0
 			l = fife.Location(self.agentlayer)
 			l.setMapCoordinates(target_mapcoord)
 			self.hero.run(l)
+		elif (evt.getButton() == fife.IMouseEvent.RIGHT):
+			instances = self.cameras['main'].getMatchingInstances(clickpoint, self.agentlayer);
+			print "selected instances on agent layer: ", [i.getObject().Id() for i in instances]
 
 	def onConsoleCommand(self, command):
 		result = ''

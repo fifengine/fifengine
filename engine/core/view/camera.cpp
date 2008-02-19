@@ -22,6 +22,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -33,9 +34,11 @@
 #include "model/structures/instance.h"
 #include "util/logger.h"
 #include "util/fife_math.h"
+#include "video/image.h"
 
 #include "camera.h"
 #include "view.h"
+#include "visual.h"
 
 
 namespace FIFE {
@@ -270,13 +273,24 @@ namespace FIFE {
 	
 	void Camera::getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
-		ScreenPoint pt(screen_coords);
-		int dy = -(pt.y - toScreenCoordinates(getLocationRef().getMapCoordinates()).y);
-		pt.z = (int)(tan(getTilt()* (M_PI / 180.0)) * dy);
-		ExactModelCoordinate ece = toMapCoordinates(pt);
-		ModelCoordinate ecl = layer.getCellGrid()->toLayerCoordinates(ece);
-		InstanceTree* itree = layer.getInstanceTree();
-		itree->findInstances(ecl, 0, 0, instances);
+		const std::vector<Instance*>& layer_instances = layer.getInstances();
+		std::vector<Instance*>::const_iterator instance_it = layer_instances.begin();
+		for (;instance_it != layer_instances.end(); ++instance_it) {
+			Instance* i = (*instance_it);
+			InstanceVisual* visual = i->getVisual<InstanceVisual>();
+			InstanceVisualCacheItem& vc = visual->getCacheItem(this);
+			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
+				assert(vc.image);
+				Uint8 r, g, b, a;
+				unsigned int pixel = vc.image->getPixel(screen_coords.x - vc.dimensions.x, screen_coords.y - vc.dimensions.y);
+				vc.image->getRgba(pixel, &r, &b, &g, &a);
+				// instance is hit with mouse if not totally transparent
+				if (a != 0) {
+					instances.push_back(i);
+				}
+
+			}
+		}
 	}
 
 	void Camera::attachToInstance( Instance *instance ) {
