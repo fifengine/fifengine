@@ -45,9 +45,23 @@ namespace FIFE {
 		 */
 		TimeProvider(TimeProvider* master);
 		~TimeProvider();
+		
+		/** With multiplier, you can adjust the time speed. 0.5 means time runs half as slow,
+		 * while 2.0 means it runs twice as fast
+		 */
 		void setMultiplier(float multiplier);
+		
+		/** @see setMultiplier. Returns mutliplier for this single provider
+		 */
 		float getMultiplier() const;
+		
+		/** @see setMultiplier. Returns mutliplier for whole chain of timeproviders
+		 * E.g. if master has multiplier 2.0 and this has 0.5, end result = 1.0
+		 */
 		float getTotalMultiplier() const;
+		
+		/** Returns current game ticks. Fetched from furthest master to reduce system calls.
+		 */
 		unsigned int getGameTicks() const;
 		
 	private:
@@ -55,6 +69,10 @@ namespace FIFE {
 		float m_multiplier;
 	};
 	
+	/** Utility function to calculate time scaling. Mostly done to avoid littering other code
+	 * with related casting
+	 * @return multiplier * ticks
+	 */
 	unsigned int scaleTime(float multiplier, unsigned int ticks);
 
 } //FIFE

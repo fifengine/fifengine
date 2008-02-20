@@ -130,6 +130,7 @@ namespace FIFE {
 		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
 		SDLImage* img = new SDLImage(mask_surface);
 		
+		// TODO: optimize...
 		uint8_t r, g, b, a = 0;
 		int prev_a = a;
 		for (unsigned int x = 0; x < img->getWidth(); x++) {

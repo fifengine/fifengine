@@ -156,6 +156,17 @@ namespace FIFE {
 		 */
 		bool isValid() const;
 		
+		/** Gets distance in map coordinates to another location on the Map
+		 * @param location is the location you want to get the distance to
+		 */
+		double getMapDistanceTo(const Location& location) const;
+
+		/** Gets layer distance to another location
+		 * @param location is the location you want to get the distance to
+		 * In case location resides on different layer, it is mapped to this layer
+		 */
+		double getLayerDistanceTo(const Location& location) const;
+		
 	private:
 		bool isValid(const Layer* layer) const;
 		

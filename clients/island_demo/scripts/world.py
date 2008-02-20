@@ -18,6 +18,7 @@ class World(EventListenerBase):
 		self.metamodel = self.model.getMetaModel()
 		self.view = self.engine.getView()
 		self.filename = ''
+		self.pump_ctr = 0 # for testing purposis
 		
 		
 	def reset(self):
@@ -151,5 +152,10 @@ class World(EventListenerBase):
 				if self.cur_cam2_x < self.initial_cam2_x-10:
 					self.cam2_scrolling_right = True
 			self.cameras['small'].setLocation(loc)
-			
+		if (self.pump_ctr % 50) == 0:
+			heroloc = self.hero.agent.getLocationRef()
+			girlloc = self.girl.agent.getLocationRef()
+			print 'hero - girl distance. layer: %f, map: %f' % (
+				heroloc.getLayerDistanceTo(girlloc), heroloc.getMapDistanceTo(girlloc))
 		self.changeRotation()
+		self.pump_ctr += 1

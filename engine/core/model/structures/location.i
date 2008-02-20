@@ -43,6 +43,9 @@ namespace FIFE {
 		
 		bool isValid() const;
 		double getCellOffsetDistance() const;
+		
+		double getMapDistanceTo(const Location& location) const;
+		double getLayerDistanceTo(const Location& location) const;
 	};
 	std::ostream& operator<<(std::ostream& os, const Location& l);
 }

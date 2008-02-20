@@ -160,4 +160,26 @@ namespace FIFE {
 		ExactModelCoordinate p = l.getExactLayerCoordinates();
 		return os << "x=" << p.x << ", y=" << p.y;
 	}
+	
+	double Location::getMapDistanceTo(const Location& location) const{
+		ExactModelCoordinate current = getMapCoordinates();
+		ExactModelCoordinate target = location.getMapCoordinates();
+		
+		double rx = current.x - target.x;
+		double ry = current.y - target.y;
+		double rz = current.z - target.z;
+		
+		return sqrt(rx*rx + ry*ry + rz*rz);
+	}
+
+	double Location::getLayerDistanceTo(const Location& location) const{
+		ModelCoordinate current = getLayerCoordinates();
+		ModelCoordinate target = location.getLayerCoordinates(m_layer);
+		
+		double rx = current.x - target.x;
+		double ry = current.y - target.y;
+		double rz = current.z - target.z;
+		
+		return sqrt(rx*rx + ry*ry + rz*rz);
+	}	
 }
