@@ -37,7 +37,7 @@ namespace FIFE {
 
 	/** The SDL implementation of the @c Image base class.
 	 */
-	class SDLImage : public Image, public AbstractGraphics {
+	class SDLImage : public Image {
 	public:
 		SDLImage(SDL_Surface* surface);
 		SDLImage(const uint8_t* data, unsigned int width, unsigned int height);

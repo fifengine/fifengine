@@ -39,6 +39,10 @@
 #include "fife_opengl.h"
 
 namespace FIFE {
+	// FIXME: due to image chunking issues, GLImage uses SDLImage to draw primitives on its surface
+	// remember though that OpenGL backend is not separate thing of SDL; instead it sits on top of it
+	class SDLImage;
+
 
 	/** Implements an Image using OpenGL.
 	 *
@@ -57,6 +61,9 @@ namespace FIFE {
 		virtual ~GLImage();
 		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
 		void saveImage(const std::string& filename);
+ 		bool putPixel(int x, int y, int r, int g, int b);
+		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 
 	protected:
 		void setClipArea(const Rect& cliparea, bool clear);
@@ -71,7 +78,7 @@ namespace FIFE {
 		unsigned int m_last_col_width;
 		unsigned int m_last_row_height;
 
-		GLuint *m_textureid;
+		GLuint* m_textureid;
 
 		void cleanup();
 		void resetGlimage();
@@ -80,6 +87,8 @@ namespace FIFE {
 		 * http://developer.apple.com/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/chapter_10_section_4.html
 		 */
 		void generateTextureChunks();
+		
+		SDLImage* m_sdlimage;
 	};
 }
 

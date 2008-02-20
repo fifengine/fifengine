@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/rect.h"
+#include "video/sdl/sdlimage.h"
 
 #include "glimage.h"
 
@@ -36,6 +37,7 @@ namespace FIFE {
 
 	GLImage::GLImage(SDL_Surface* surface):
 		Image(surface) {
+		m_sdlimage = new SDLImage(surface);
 		resetGlimage();
 	}
 
@@ -45,13 +47,16 @@ namespace FIFE {
 	}
 
 	GLImage::~GLImage() {
+		// remove surface so that deletion happens correctly (by base class destructor)
+		m_sdlimage->detachSurface();
+		delete m_sdlimage;
 		cleanup();
 	}
 
 	void GLImage::resetGlimage() {
 		m_tex_x = 0;
 		m_tex_y = 0;
-		m_textureid = 0;
+		m_textureid = NULL;
 		m_rows = 0;
 		m_cols = 0;
 		m_last_col_width = 0;
@@ -63,10 +68,12 @@ namespace FIFE {
 			glDeleteTextures(1, &m_textureid[i]);
 		}
 		delete[] m_textureid;
+		m_textureid = NULL;
+		resetGlimage();
 	}
 
 	void GLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
-		if( m_textureid == 0 ) {
+		if (!m_textureid) {
 			generateTextureChunks();
 		}
 
@@ -285,5 +292,20 @@ namespace FIFE {
 		if (clear) {
 	        	glClear(GL_COLOR_BUFFER_BIT);
 		}
+	}
+	
+	bool GLImage::putPixel(int x, int y, int r, int g, int b) {
+		cleanup();
+		return m_sdlimage->putPixel(x, y, r, g, b);
+	}
+	
+	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+		cleanup();
+		m_sdlimage->drawLine(p1, p2, r, g, b);
+	}	
+	
+	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+		cleanup();
+		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b);
 	}
 }

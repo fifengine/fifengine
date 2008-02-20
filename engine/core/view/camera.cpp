@@ -37,7 +37,6 @@
 #include "video/image.h"
 
 #include "camera.h"
-#include "view.h"
 #include "visual.h"
 
 

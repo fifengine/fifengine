@@ -40,23 +40,6 @@
 namespace FIFE {
 	class Rect;
 	
-	class AbstractGraphics {
-	public:
-		virtual ~AbstractGraphics() {}
-	
-		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
-		 */
- 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
-		
-		/** Draws line between given points with given RGBA
-		 */
-		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
-
-		/** Draws quad between given points with given RGBA
-		 */
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
-	};
-	
 	class AbstractImage {
 	public:
 		virtual ~AbstractImage() {}
@@ -80,6 +63,18 @@ namespace FIFE {
 		 * @return Image area in rect
 		 */
 		virtual const Rect& getArea() = 0;
+		
+		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
+		 */
+ 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
+		
+		/** Draws line between given points with given RGBA
+		 */
+		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
+
+		/** Draws quad between given points with given RGBA
+		 */
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
 		
 		/** Returns pixel RGBA values from given position
 		 */
