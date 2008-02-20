@@ -50,7 +50,7 @@ namespace FIFE {
 	 * animation user to query frames based on current timestamp and show
 	 * returned images on screen.
 	 */
-	class Animation: public IPooledResource {
+	class Animation : public IPooledResource {
 	public:
 		/** Constructor.
 		 */ 
@@ -62,7 +62,6 @@ namespace FIFE {
 
 		//TODO: fill in these stubs! Note, m_location is not properly initialized.
 		virtual const ResourceLocation& getResourceLocation()  { return m_location; }
-		virtual const std::string& getResourceFile() { return m_location.getFilename(); }
 
 		virtual void setResourceLocation(const ResourceLocation& location)  { }
 		virtual void setResourceFile(const std::string& filename) { }

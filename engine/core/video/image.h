@@ -136,7 +136,6 @@ namespace FIFE {
 
 		//TODO: fill in these stub! Note that m_location is not properly initialized.
 		virtual const ResourceLocation& getResourceLocation() { return m_location; }
-		virtual const std::string& getResourceFile() { return m_location.getFilename(); }
 
 		virtual void setResourceLocation(const ResourceLocation& location) { }
 		virtual void setResourceFile(const std::string& filename) { }

@@ -95,7 +95,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 	top->add(icon, 10, 30);
 
 	ImageProvider provider;
-	boost::scoped_ptr<Image> img(provider.loadImageFromLocation(ImageLocation(IMAGE_FILE)));
+	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();
 	int w = img->getWidth();

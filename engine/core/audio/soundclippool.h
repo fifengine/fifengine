@@ -42,13 +42,12 @@ namespace FIFE {
 	 */
 	class SoundClipLoader : public IPooledResourceLoader {
 	public:
-		IPooledResource* loadPooledResourceFromLocation(const ResourceLocation& location) {
+		virtual IResource* loadResource(const ResourceLocation& location) {
 			return new SoundClip(SoundDecoder::create(location.getFilename()));
 		}
 
-		IPooledResource* loadPooledResourceFromFile(const std::string& filename) {
-			return new SoundClip(SoundDecoder::create(filename));
-		}
+		SoundClip* loadSoundClip(const ResourceLocation& location) { return dynamic_cast<SoundClip*>(loadResource(location)); }
+		SoundClip* loadSoundClip(const std::string& filename) { return loadSoundClip(ResourceLocation(filename)); }
 	};
 	
 	/**  Pool for holding sound clips

@@ -41,8 +41,11 @@ namespace FIFE {
 	class AnimationProvider : public IPooledResourceLoader {
 	public:
 		AnimationProvider(ImagePool* pool): m_pool(pool) {}
-		IPooledResource* loadPooledResourceFromLocation(const ResourceLocation& location);
-		Animation* loadAnimationFromLocation(const ResourceLocation& location);
+		virtual IResource* loadResource(const ResourceLocation& location);
+
+		Animation* loadAnimation(const ResourceLocation& location);
+		Animation* loadAnimation(const std::string& filename) { return loadAnimation(ResourceLocation(filename)); }
+
 	private:
 		ImagePool* m_pool;
 	};

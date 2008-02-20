@@ -103,7 +103,7 @@ namespace FIFE {
 			if (!entry->loader) {
 				findAndSetProvider(*entry);
 			} else {
-				entry->resource = entry->loader->loadPooledResourceFromLocation(*entry->location);
+				entry->resource = entry->loader->loadPooledResource(*entry->location);
 			}
 			if (!entry->loader) {
 				LMsg msg("No suitable loader was found for resource ");
@@ -202,7 +202,7 @@ namespace FIFE {
 		}
 		for(; it != end; ++it) {
 			try {
-				entry.resource = (*it)->loadPooledResourceFromLocation(*entry.location);
+				entry.resource = (*it)->loadPooledResource(*entry.location);
 			} catch (Exception e) {
 				FL_ERR(_log, e.getMessage());
 				continue;

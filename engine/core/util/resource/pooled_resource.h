@@ -65,18 +65,13 @@ namespace FIFE {
 	public:
 		virtual ~IPooledResourceLoader() {}
 
-		virtual IResource* loadResourceFromLocation(const ResourceLocation& location)
-			{ return loadPooledResourceFromLocation(location); }
-		virtual IResource* loadResourceFromFile(const std::string& filename)
-			{ return loadPooledResourceFromFile(filename); }
-
-		virtual IPooledResource* loadPooledResourceFromLocation(const ResourceLocation& location) = 0;
-		virtual IPooledResource* loadPooledResourceFromFile(const std::string& filename)
-			{ return loadPooledResourceFromLocation(ResourceLocation(filename)); }
-
+		IPooledResource* loadPooledResource(const ResourceLocation& location)
+			{ return dynamic_cast<IPooledResource*>(loadResource(location)); }
+		IPooledResource* loadPooledResource(const std::string& filename)
+			{ return loadPooledResource(ResourceLocation(filename)); }
 	};
 
-	class IPooledResourceSaver : IResourceSaver {
+	class IPooledResourceSaver : public IResourceSaver {
 	public:
 		virtual ~IPooledResourceSaver() {}
 	};

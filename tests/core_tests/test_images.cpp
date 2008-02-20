@@ -76,7 +76,7 @@ void test_image(RenderBackend& renderbackend) {
 	renderbackend.createMainScreen(800, 600, 0, false);
 
 	ImageProvider provider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadImageFromLocation(ImageLocation(IMAGE_FILE))));
+	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();
 	int w = img->getWidth();
@@ -101,7 +101,7 @@ void test_subimage(RenderBackend& renderbackend) {
 	renderbackend.createMainScreen(800, 600, 0, false);
 
 	ImageProvider imgprovider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.loadImageFromLocation(ImageLocation(SUBIMAGE_FILE))));
+	boost::scoped_ptr<Image> img(imgprovider.loadImage(ImageLocation(SUBIMAGE_FILE)));
 
 	ImageLocation location(SUBIMAGE_FILE);
 	location.setParentSource(&*img);
@@ -118,7 +118,7 @@ void test_subimage(RenderBackend& renderbackend) {
 		for (int y = 0; y < (H - h); y+=h) {
 			location.setXShift(x);
 			location.setYShift(y);
-			Image* sub = dynamic_cast<Image*>(subprovider.loadPooledResourceFromLocation(location));
+			Image* sub = subprovider.loadSubImage(location);
 			subimages.push_back(sub);
 		}
 	}
@@ -144,9 +144,9 @@ void test_sdl_alphaoptimize() {
 	renderbackend.setAlphaOptimizerEnabled(true);
 		
 	ImageProvider provider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadImageFromLocation(ImageLocation(IMAGE_FILE))));
+	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 
-	boost::scoped_ptr<Image> alpha_img(dynamic_cast<Image*>(provider.loadImageFromLocation(ImageLocation(ALPHA_IMAGE_FILE))));
+	boost::scoped_ptr<Image> alpha_img(provider.loadImage(ImageLocation(ALPHA_IMAGE_FILE)));
 
 	int h0 = img->getHeight();
 	int w0 = img->getWidth();

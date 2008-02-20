@@ -41,8 +41,10 @@ namespace FIFE {
 	class ImageProvider : public IPooledResourceLoader {
 	public:
 		ImageProvider() {}
-		IPooledResource* loadPooledResourceFromLocation(const ResourceLocation& location);
-		Image* loadImageFromLocation(const ResourceLocation& location);
+		virtual IResource* loadResource(const ResourceLocation& location);
+
+		Image* loadImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
+		Image* loadImage(const std::string& filename) { return loadImage(ResourceLocation(filename)); }
 	};
 }
 #endif

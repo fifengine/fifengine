@@ -44,7 +44,7 @@ namespace FIFE {
 		/** Get the location/file of this resource.
 		 */
 		virtual const ResourceLocation& getResourceLocation() = 0;
-		virtual const std::string& getResourceFile() = 0;
+		virtual const std::string& getResourceFile() { return getResourceLocation().getFilename(); }
 
 		/** Change the location/file of this resource.
 		 */
@@ -59,8 +59,8 @@ namespace FIFE {
 	public:
 		virtual ~IResourceLoader() { };
 
-		virtual IResource* loadResourceFromLocation(const ResourceLocation& location) = 0;
-		virtual IResource* loadResourceFromFile(const std::string& filename) = 0;
+		virtual IResource* loadResource(const ResourceLocation& location) = 0;
+		virtual IResource* loadResource(const std::string& filename) { return loadResource(ResourceLocation(filename)); }
 	};
 
 	/** IResourceSaver defines an interface for saving Resources. 
@@ -69,8 +69,8 @@ namespace FIFE {
 	public:
 		virtual ~IResourceSaver() { };
 
-		virtual void saveResourceToLocation(const ResourceLocation& location, IResource* resource) = 0;
-		virtual void saveResourceToFile(const std::string& filename, IResource* resource) = 0;
+		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
+		virtual void save(const std::string& filename, IResource* resource) = 0;
 	};
 }
 

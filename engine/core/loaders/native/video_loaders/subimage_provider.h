@@ -41,8 +41,10 @@ namespace FIFE {
 	class SubImageProvider : public IPooledResourceLoader {
 	public:
 		SubImageProvider() {}
-		IPooledResource* loadPooledResourceFromLocation(const ResourceLocation& location);
-		Image* loadImageFromLocation(const ResourceLocation& location);
+		virtual IResource* loadResource(const ResourceLocation& location);
+
+		Image* loadSubImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
+		Image* loadSubImage(const std::string& filename) { return loadSubImage(ResourceLocation(filename)); }
 	};
 
 }

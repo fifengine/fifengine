@@ -42,11 +42,7 @@
 #include "image_provider.h"
 
 namespace FIFE { 
-	Image* ImageProvider::loadImageFromLocation(const ResourceLocation& location) {
-		return dynamic_cast<Image*>(loadPooledResourceFromLocation(location));
-	}
-
-	IPooledResource* ImageProvider::loadPooledResourceFromLocation(const ResourceLocation& location) {
+	IResource* ImageProvider::loadResource(const ResourceLocation& location) {
 		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
 
 		const std::string& filename = location.getFilename();
