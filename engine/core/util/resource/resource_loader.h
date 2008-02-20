@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_SAVER_H
-#define FIFE_SAVER_H
+#ifndef FIFE_LOADER_H
+#define FIFE_LOADER_H
 
 // Standard C++ library includes
 
@@ -33,13 +33,14 @@
 
 namespace FIFE {
 
-	/** ISaver defines an interface for saving Resources. 
+	/** IResourceLoader defines an interface for loading resources. The resource returned is owned by
+	 * the caller, and must be deleted when finished.
 	 */
-	class ISaver {
+	class IResourceLoader {
 	public:
-		virtual ~ISaver() { };
+		virtual ~IResourceLoader() { };
 
-		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
+		virtual IResource* load(const ResourceLocation& location) = 0;
 	};
 }
 
