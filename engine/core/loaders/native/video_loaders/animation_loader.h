@@ -19,50 +19,36 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_VIDEO_LOADERS_ANIM_PROVIDER_H
+#define FIFE_VIDEO_LOADERS_ANIM_PROVIDER_H
+
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/scoped_array.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <SDL.h>
-#include <SDL_image.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/resource/resource_location.h"
 #include "util/resource/pooled_resource.h"
-#include "vfs/raw/rawdata.h"
-#include "vfs/vfs.h"
-#include "video/renderbackend.h"
-#include "video/image_location.h"
-
-#include "image_provider.h"
+#include "video/image.h"
 
 namespace FIFE { 
-	IResource* ImageProvider::loadResource(const ResourceLocation& location) {
-		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
+	class Animation;
+	class ImagePool;
 
-		const std::string& filename = location.getFilename();
-		boost::scoped_ptr<RawData> data (VFS::instance()->open(filename));
-		size_t datalen = data->getDataLength();
-		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
-		data->readInto(darray.get(), datalen);
-		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
-		SDL_Surface* surface = IMG_Load_RW(rwops, false);
-		SDL_FreeRW(rwops);
-		if( !surface ) {
-			return 0;
-		}
+	class AnimationLoader : public IPooledResourceLoader {
+	public:
+		AnimationLoader(ImagePool* pool): m_pool(pool) {}
+		virtual IResource* loadResource(const ResourceLocation& location);
 
-		Image* res = RenderBackend::instance()->createImage(surface);
-		if (loc) {
-			res->setXShift(loc->getXShift());
-			res->setYShift(loc->getYShift());
-		}
-		res->setAlphaOptimizerEnabled(true);
-		return res;
+		Animation* loadAnimation(const ResourceLocation& location);
+		Animation* loadAnimation(const std::string& filename) { return loadAnimation(ResourceLocation(filename)); }
+
+	private:
+		ImagePool* m_pool;
 	};
+
 }
+#endif

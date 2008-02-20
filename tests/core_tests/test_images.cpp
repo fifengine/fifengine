@@ -44,9 +44,9 @@
 #include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_provider.h"
-#include "loaders/native/video_loaders/subimage_provider.h"
-#include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/video_loaders/subimage_loader.h"
+#include "loaders/native/video_loaders/animation_loader.h"
 #include "util/exception.h"
 
 using boost::unit_test::test_suite;
@@ -75,7 +75,7 @@ void test_image(RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	ImageProvider provider;
+	ImageLoader provider;
 	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();
@@ -100,7 +100,7 @@ void test_subimage(RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	ImageProvider imgprovider;
+	ImageLoader imgprovider;
 	boost::scoped_ptr<Image> img(imgprovider.loadImage(ImageLocation(SUBIMAGE_FILE)));
 
 	ImageLocation location(SUBIMAGE_FILE);
@@ -113,7 +113,7 @@ void test_subimage(RenderBackend& renderbackend) {
 	location.setHeight(h);
 	std::vector<Image*> subimages;
 
-	SubImageProvider subprovider;
+	SubImageLoader subprovider;
 	for (int x = 0; x < (W - w); x+=w) {
 		for (int y = 0; y < (H - h); y+=h) {
 			location.setXShift(x);
@@ -143,7 +143,7 @@ void test_sdl_alphaoptimize() {
 	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	renderbackend.setAlphaOptimizerEnabled(true);
 		
-	ImageProvider provider;
+	ImageLoader provider;
 	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 
 	boost::scoped_ptr<Image> alpha_img(provider.loadImage(ImageLocation(ALPHA_IMAGE_FILE)));

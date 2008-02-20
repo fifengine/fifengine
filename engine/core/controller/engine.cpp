@@ -56,9 +56,9 @@
 #include "gui/base/gui_font.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/fonts/abstractfont.h"
-#include "loaders/native/video_loaders/subimage_provider.h"
-#include "loaders/native/video_loaders/image_provider.h"
-#include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/subimage_loader.h"
+#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/video_loaders/animation_loader.h"
 //#include "loaders/fallout/model_loaders/dat1.h"
 //#include "loaders/fallout/model_loaders/dat2.h"
 #include "model/model.h"
@@ -161,9 +161,9 @@ namespace FIFE {
 		FL_LOG(_log, "Creating pools");
 		m_imagepool = new ImagePool();
 		m_animpool = new AnimationPool();
-		m_imagepool->addResourceLoader(new SubImageProvider());
-		m_imagepool->addResourceLoader(new ImageProvider());
-		m_animpool->addResourceLoader(new AnimationProvider(m_imagepool));
+		m_imagepool->addResourceLoader(new SubImageLoader());
+		m_imagepool->addResourceLoader(new ImageLoader());
+		m_animpool->addResourceLoader(new AnimationLoader(m_imagepool));
 
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());

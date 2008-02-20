@@ -37,16 +37,16 @@
 #include "util/purge.h"
 #include "xml/tinyxml/tinyxml.h"
 
-#include "animation_provider.h"
-#include "image_provider.h"
+#include "animation_loader.h"
+#include "image_loader.h"
 
 namespace FIFE {
 	static Logger _log(LM_NATIVE_LOADERS);
 
-	Animation* AnimationProvider::loadAnimation(const ResourceLocation& location) { return dynamic_cast<Animation*>(loadResource(location)); }
+	Animation* AnimationLoader::loadAnimation(const ResourceLocation& location) { return dynamic_cast<Animation*>(loadResource(location)); }
 
 	const int INITIAL_OFFSET = -9999999;
-	IResource* AnimationProvider::loadResource(const ResourceLocation& location) {
+	IResource* AnimationLoader::loadResource(const ResourceLocation& location) {
 		assert(m_pool);
 		
 		const std::string& filename = location.getFilename();

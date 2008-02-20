@@ -46,8 +46,8 @@
 #include "video/animationpool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/animation_provider.h"
-#include "loaders/native/video_loaders/image_provider.h"
+#include "loaders/native/video_loaders/animation_loader.h"
+#include "loaders/native/video_loaders/image_loader.h"
 #include "util/exception.h"
 
 using boost::unit_test::test_suite;
@@ -91,10 +91,10 @@ void test_animation(RenderBackend& renderbackend) {
 	renderbackend.createMainScreen(W, H, 0, false);
 
 	ImagePool* imagepool = new ImagePool();
-	imagepool->addResourceLoader(new ImageProvider());
+	imagepool->addResourceLoader(new ImageLoader());
 
 	AnimationPool* animpool = new AnimationPool();
-	animpool->addResourceLoader(new AnimationProvider(imagepool));
+	animpool->addResourceLoader(new AnimationLoader(imagepool));
 
 	Animation& anim = animpool->getAnimation(animpool->addResourceFromFile(ANIM_FILE));
 

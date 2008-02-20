@@ -37,10 +37,10 @@
 namespace FIFE {
 	class Image;
 
-	/** ImageProvider for cropping another image */
-	class SubImageProvider : public IPooledResourceLoader {
+	/** SubImageLoader for cropping another image */
+	class SubImageLoader : public IPooledResourceLoader {
 	public:
-		SubImageProvider() {}
+		SubImageLoader() {}
 		virtual IResource* loadResource(const ResourceLocation& location);
 
 		Image* loadSubImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }

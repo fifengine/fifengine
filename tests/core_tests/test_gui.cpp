@@ -45,9 +45,9 @@
 #include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_provider.h"
-#include "loaders/native/video_loaders/subimage_provider.h"
-#include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/video_loaders/subimage_loader.h"
+#include "loaders/native/video_loaders/animation_loader.h"
 #include "util/exception.h"
 #include "gui/base/opengl/opengl_gui_graphics.h"
 #include "gui/base/sdl/sdl_gui_graphics.h"
@@ -76,8 +76,8 @@ struct environment {
 };
 
 void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, ImagePool& pool) {
-	pool.addResourceLoader(new SubImageProvider());
-	pool.addResourceLoader(new ImageProvider());
+	pool.addResourceLoader(new SubImageLoader());
+	pool.addResourceLoader(new ImageLoader());
 
 	GuiImageLoader imageloader(pool);
 	gcn::Image::setImageLoader(&imageloader);	
@@ -94,7 +94,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 	top->add(label, 10, 10);
 	top->add(icon, 10, 30);
 
-	ImageProvider provider;
+	ImageLoader provider;
 	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();

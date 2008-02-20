@@ -37,10 +37,10 @@
 namespace FIFE {
 	class Image;
 
-	/** ImageProvider for some basic formats like jpeg, png etc. */
-	class ImageProvider : public IPooledResourceLoader {
+	/** ImageLoader for some basic formats like jpeg, png etc. */
+	class ImageLoader : public IPooledResourceLoader {
 	public:
-		ImageProvider() {}
+		ImageLoader() {}
 		virtual IResource* loadResource(const ResourceLocation& location);
 
 		Image* loadImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
