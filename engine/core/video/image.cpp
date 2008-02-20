@@ -69,6 +69,12 @@ namespace FIFE {
 		reset(NULL);
 	}
 
+	SDL_Surface* Image::detachSurface() {
+		SDL_Surface* srf = m_surface;
+		m_surface = NULL;
+		return srf;
+	}
+	
 	unsigned int Image::getWidth() const {
 		if (!m_surface) {
 			return 0;
@@ -127,13 +133,6 @@ namespace FIFE {
 			pixel = *(Uint32 *)p;
 		}
 		SDL_GetRGBA(pixel, m_surface->format, r, b, g, a);
-	}
-
-	void Image::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-		drawLine(p1, p2, r, g, b);
-		drawLine(p2, p3, r, g, b);
-		drawLine(p3, p4, r, g, b);
-		drawLine(p4, p1, r, g, b);
 	}
 
 	void Image::render(const Rect& rect, unsigned char alpha) {

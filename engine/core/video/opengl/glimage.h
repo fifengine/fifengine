@@ -56,9 +56,6 @@ namespace FIFE {
 		GLImage(const uint8_t* data, unsigned int width, unsigned int height);
 		virtual ~GLImage();
 		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
- 		bool putPixel(int x, int y, int r, int g, int b);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 		void saveImage(const std::string& filename);
 
 	protected:
@@ -78,7 +75,11 @@ namespace FIFE {
 
 		void cleanup();
 		void resetGlimage();
-		void generateTexture();
+		
+		/** Generates 256*256 pixel chunks for renders. For reference, see
+		 * http://developer.apple.com/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/chapter_10_section_4.html
+		 */
+		void generateTextureChunks();
 	};
 }
 

@@ -47,7 +47,7 @@ namespace FIFE {
 	class Image;
 
 	 /** Abstract interface for all the renderbackends. */
-	class RenderBackend: public AbstractImage, public DynamicSingleton<RenderBackend> {
+	class RenderBackend: public AbstractImage, public AbstractGraphics, public DynamicSingleton<RenderBackend> {
 	public:
 		/** Constructor.
 		 * @param name The name of the new renderbackend.
@@ -119,9 +119,6 @@ namespace FIFE {
 		unsigned int getScreenHeight() const { return getHeight(); }
 		const Rect& getArea();
 		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
- 		bool putPixel(int x, int y, int r, int g, int b);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;

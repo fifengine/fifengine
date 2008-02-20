@@ -48,6 +48,9 @@ namespace FIFE {
 		Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen);
 		Image* createImage(const uint8_t* data, unsigned int width, unsigned int height);
 		Image* createImage(SDL_Surface* surface);
+ 		bool putPixel(int x, int y, int r, int g, int b);
+		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 	
 	private:
 		SDL_PixelFormat m_rgba_format;

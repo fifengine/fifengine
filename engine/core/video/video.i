@@ -37,6 +37,14 @@ namespace FIFE {
 	class Pool;
 	class Point;
 
+	class AbstractGraphics {
+	public:
+		virtual ~AbstractGraphics() {}
+ 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
+		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
+	};
+
 	class AbstractImage {
 	public:
 		virtual ~AbstractImage() {}
@@ -45,9 +53,6 @@ namespace FIFE {
 		virtual unsigned int getHeight() const = 0;
 		virtual const Rect& getArea() = 0;
 		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
- 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
-		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
 		virtual void pushClipArea(const Rect& cliparea, bool clear=true) = 0;
 		virtual void popClipArea() = 0;
 		virtual const Rect& getClipArea() const = 0;
@@ -69,7 +74,6 @@ namespace FIFE {
 		void setYShift(int yshift);
 		int getYShift() const;
 		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;
@@ -121,7 +125,7 @@ namespace FIFE {
 		AnimationPool();
 	};
 
-	class RenderBackend: public AbstractImage {
+	class RenderBackend: public AbstractImage, public AbstractGraphics {
 	public:
 		virtual ~RenderBackend();
 		virtual const std::string& getName() const = 0;

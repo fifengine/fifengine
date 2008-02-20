@@ -67,7 +67,7 @@ namespace FIFE {
 
 	void GLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
 		if( m_textureid == 0 ) {
-			generateTexture();
+			generateTextureChunks();
 		}
 
 		if (rect.right() < 0 || rect.x > static_cast<int>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->h)) {
@@ -137,11 +137,11 @@ namespace FIFE {
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	void GLImage::generateTexture() {
+	void GLImage::generateTextureChunks() {
 		const unsigned int width = m_surface->w;
 		const unsigned int height = m_surface->h;
 		uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
-		int pitch     = m_surface->pitch;
+		int pitch = m_surface->pitch;
 
 		m_last_col_width = 1;
 		m_cols = static_cast<int>(width/256);
@@ -224,47 +224,19 @@ namespace FIFE {
 					}
 				}
 
+				// get texture id from opengl
 				glGenTextures(1, &m_textureid[j*m_cols + i]);
+				// set focus on that texture
 				glBindTexture(GL_TEXTURE_2D, m_textureid[j*m_cols + i]);
+				// set filters for texture
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				// transfer data from sdl buffer
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, chunk_width, chunk_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
 
 				delete[] oglbuffer;
 			}
 		}
-	}
-	
-	bool GLImage::putPixel(int x, int y, int r, int g, int b) {
-		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
-			return false;
-		}
-
-		Point p(x, y);
-		drawLine(p, p, r, g, b);
-		return true;
-	}
-	
-	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
-		glColor4ub(r, g, b, 255);
-		glBegin(GL_LINES);
-		glVertex3f(p1.x+0.5f, p1.y+0.5f, 0);
-		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
-		glEnd();
-
-		glBegin(GL_POINTS);
-		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
-		glEnd();
-	}
-	
-	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-	        glColor4ub(r, g, b, 165);
-		glBegin(GL_QUADS);
-		glVertex3f(p1.x, p1.y, 0);
-		glVertex3f(p2.x, p2.y, 0);
-		glVertex3f(p3.x, p3.y, 0);
-		glVertex3f(p4.x, p4.y, 0);
-		glEnd();
 	}
 	
 	void GLImage::saveImage(const std::string& filename) {

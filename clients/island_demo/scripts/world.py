@@ -62,7 +62,7 @@ class World(EventListenerBase):
 		renderer.clearActiveLayers()
 		if TDS.QuadTreeLayerName:
 			renderer.addActiveLayer(self.map.getLayers("id", TDS.QuadTreeLayerName)[0])
-			
+		
 		self.cameras['small'].getLocationRef().setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
 		self.initial_cam2_x = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		self.cur_cam2_x = self.initial_cam2_x
@@ -99,11 +99,15 @@ class World(EventListenerBase):
 		if self.target_rotation != currot:
 			self.cameras['main'].setRotation((currot + 5) % 360)
 	
-	def mouseReleased(self, evt):
-		clickpoint = fife.ScreenPoint(evt.getX(), evt.getY())
+	# @FIXME this functionality should be in core side
+	def getMousePoint(self, x, y):
+		clickpoint = fife.ScreenPoint(x, y)
 		dy = -(clickpoint.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getMapCoordinates()).y)
 		clickpoint.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
-		
+		return clickpoint
+	
+	def mouseReleased(self, evt):
+		clickpoint = self.getMousePoint(evt.getX(), evt.getY())
 		if (evt.getButton() == fife.IMouseEvent.LEFT):
 			target_mapcoord = self.cameras['main'].toMapCoordinates(clickpoint)
 			target_mapcoord.z = 0
@@ -114,6 +118,17 @@ class World(EventListenerBase):
 			instances = self.cameras['main'].getMatchingInstances(clickpoint, self.agentlayer);
 			print "selected instances on agent layer: ", [i.getObject().Id() for i in instances]
 
+	def mouseMoved(self, evt):
+		renderer = fife.InstanceRenderer.getInstance(self.view)
+		renderer.removeAllOutlines()
+		
+		pt = self.getMousePoint(evt.getX(), evt.getY())
+		instances = self.cameras['main'].getMatchingInstances(pt, self.agentlayer);
+		for i in instances:
+			if i.getObject().Id() in ('Girl', 'Beekeeper'):
+				renderer.addOutlined(i, 173, 255, 47, 3)
+	
+	
 	def onConsoleCommand(self, command):
 		result = ''
 		try:

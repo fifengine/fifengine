@@ -164,4 +164,39 @@ namespace FIFE {
 	Image* RenderBackendOpenGL::createImage(const uint8_t* data, unsigned int width, unsigned int height) {
 		return new GLImage(data, width, height);
 	}
+	
+	bool RenderBackendOpenGL::putPixel(int x, int y, int r, int g, int b) {
+		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
+			return false;
+		}
+		glColor4ub(r, g, b, 255);
+		glBegin(GL_POINTS);
+		glVertex2i(x, y);
+		glEnd();
+		std::cout << x << ", "<< y << "\n";
+		return true;
+	}
+	
+	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+		glColor4ub(r, g, b, 255);
+		glBegin(GL_LINES);
+		glVertex3f(p1.x+0.5f, p1.y+0.5f, 0);
+		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
+		glEnd();
+
+		glBegin(GL_POINTS);
+		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
+		glEnd();
+	}
+	
+	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+	        glColor4ub(r, g, b, 165);
+		glBegin(GL_QUADS);
+		glVertex3f(p1.x, p1.y, 0);
+		glVertex3f(p2.x, p2.y, 0);
+		glVertex3f(p3.x, p3.y, 0);
+		glVertex3f(p4.x, p4.y, 0);
+		glEnd();
+	}
+	
 }

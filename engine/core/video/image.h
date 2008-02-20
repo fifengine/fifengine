@@ -40,6 +40,23 @@
 namespace FIFE {
 	class Rect;
 	
+	class AbstractGraphics {
+	public:
+		virtual ~AbstractGraphics() {}
+	
+		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
+		 */
+ 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
+		
+		/** Draws line between given points with given RGBA
+		 */
+		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
+
+		/** Draws quad between given points with given RGBA
+		 */
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
+	};
+	
 	class AbstractImage {
 	public:
 		virtual ~AbstractImage() {}
@@ -68,18 +85,6 @@ namespace FIFE {
 		 */
 		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
 
-		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
-		 */
- 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
-		
-		/** Draws line between given points with given RGBA
-		 */
-		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
-
-		/** Draws quad between given points with given RGBA
-		 */
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
-		
 		/** Pushes clip area to clip stack
 		 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
 		 *  note that previous items in stack do not affect the latest area pushed
@@ -144,6 +149,11 @@ namespace FIFE {
 		 */
 		void render(const Rect& rect, unsigned char alpha = 255);
 		
+		/** Removes underlying SDL_Surface from the image (if exists) and returns this
+		 * @note this effectively causes SDL_Surface not to be freed on destruction
+		 */
+		SDL_Surface* detachSurface();
+		
 		virtual ~Image();
 		SDL_Surface* getSurface() { return m_surface; }
 		unsigned int getWidth() const;
@@ -154,7 +164,6 @@ namespace FIFE {
 		void setYShift(int yshift);
 		int getYShift() const;
 		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;

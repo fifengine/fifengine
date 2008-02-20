@@ -580,6 +580,13 @@ namespace FIFE {
 		}
 	}	
 	
+	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+		drawLine(p1, p2, r, g, b);
+		drawLine(p2, p3, r, g, b);
+		drawLine(p3, p4, r, g, b);
+		drawLine(p4, p1, r, g, b);
+	}
+	
 	void SDLImage::saveImage(const std::string& filename) {
 		if (m_surface) {
  			SDL_SaveBMP(m_surface, filename.c_str());

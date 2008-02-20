@@ -89,21 +89,6 @@ namespace FIFE {
 		m_screen->getPixelRGBA(x, y, r, g, b, a);
 	}
 	
-	bool RenderBackend::putPixel(int x, int y, int r, int g, int b) {
-		assert(m_screen);
-		return m_screen->putPixel(x, y, r, g, b);
-	}
-	
-	void RenderBackend::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
-		assert(m_screen);
-		m_screen->drawLine(p1, p2, r, g, b);
-	}
-	
-	void RenderBackend::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-		assert(m_screen);
-		m_screen->drawQuad(p1, p2, p3, p4, r, g, b);
-	}
-	
 	void RenderBackend::saveImage(const std::string& filename) {
 		assert(m_screen);
 		m_screen->saveImage(filename);

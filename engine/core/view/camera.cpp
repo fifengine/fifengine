@@ -287,7 +287,6 @@ namespace FIFE {
 				if (a != 0) {
 					instances.push_back(i);
 				}
-
 			}
 		}
 	}

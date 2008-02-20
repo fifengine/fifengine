@@ -37,6 +37,8 @@ namespace FIFE {
 	class RenderBackend;
 	class ImagePool;
 	class AnimationPool;
+	class InstanceVisualCacheItem;
+	class View;
 
 	class InstanceRenderer: public RendererBase {
 	public:
@@ -50,14 +52,51 @@ namespace FIFE {
 		/** Destructor.
 		 */
 		virtual ~InstanceRenderer();
-
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
-
 		std::string getName() { return "InstanceRenderer"; }
+
+		/** Marks given instance to be outlined with given parameters
+		 */
+		void addOutlined(Instance* instance, int r, int g, int b, int width);
+		
+		/** Removes instance from outlining list
+		 */
+		void removeOutlined(Instance* instance);
+		
+		/** Removes all outlines
+		 */
+		void removeAllOutlines();
+		
+		/** Gets instance for interface access
+		 */
+		static InstanceRenderer* getInstance(View* view);
+		
+		void reset();
 
 	private:
 		ImagePool* m_imagepool;
 		AnimationPool* m_animationpool;
+		
+		// contains per-instance information for outline drawing
+		class OutlineInfo {
+		public:
+			uint8_t r;
+			uint8_t g;
+			uint8_t b;
+			int width;
+			Image* mask;
+			Image* curimg;
+			OutlineInfo();
+			~OutlineInfo();
+		};
+		typedef std::map<Instance*, OutlineInfo> InstanceToOutlines_t;
+		typedef std::map<Layer*, InstanceToOutlines_t> LayerToOutlineMap_t;
+		// mapping of layer -> instance -> outlineinfo
+		LayerToOutlineMap_t m_layer_to_outlinemap;
+		
+		/** Binds new mask (if needed) to the instance's OutlineInfo
+		 */
+		Image* bindMask(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam);
 	};
 }
 

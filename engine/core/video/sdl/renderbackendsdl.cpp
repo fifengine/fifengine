@@ -125,4 +125,16 @@ namespace FIFE {
 	Image* RenderBackendSDL::createImage(const uint8_t* data, unsigned int width, unsigned int height) {
 		return new SDLImage(data, width, height);
 	}
+	
+	bool RenderBackendSDL::putPixel(int x, int y, int r, int g, int b) {
+		static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b);
+	}
+	
+	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+		static_cast<SDLImage*>(m_screen)->drawLine(p1, p2, r, g, b);
+	}
+	
+	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+		static_cast<SDLImage*>(m_screen)->drawQuad(p1, p2, p3, p4, r, g, b);
+	}
 }

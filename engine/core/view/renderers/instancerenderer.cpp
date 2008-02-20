@@ -29,6 +29,7 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "video/image.h"
+#include "video/sdl/sdlimage.h"
 #include "video/imagepool.h"
 #include "video/animation.h"
 #include "video/animationpool.h"
@@ -44,16 +45,35 @@
 
 #include "view/camera.h"
 #include "view/visual.h"
+#include "view/view.h"
 #include "instancerenderer.h"
 
 
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
+	InstanceRenderer::OutlineInfo::OutlineInfo(): 
+		r(0), 
+		g(0), 
+		b(0), 
+		width(1), 
+		mask(NULL), 
+		curimg(NULL) {
+	}
+	
+	InstanceRenderer::OutlineInfo::~OutlineInfo() { 
+		delete mask;
+	}
+	
+	InstanceRenderer* InstanceRenderer::getInstance(View* view) {
+		return dynamic_cast<InstanceRenderer*>(view->getRenderer("InstanceRenderer"));
+	}
+	
 	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
-		m_animationpool(animpool) {
+		m_animationpool(animpool),
+		m_layer_to_outlinemap() {
 		setEnabled(true);
 	}
 
@@ -69,16 +89,89 @@ namespace FIFE {
 			return;
 		}
 
+		bool potential_outlining = false;
+		LayerToOutlineMap_t::iterator l2i = m_layer_to_outlinemap.find(layer);
+		if (l2i != m_layer_to_outlinemap.end()) {
+			potential_outlining = true;
+		}
+		InstanceToOutlines_t& i2o = l2i->second;
+		InstanceToOutlines_t::iterator end = i2o.end();
+
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it);
 			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
-
-			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 			InstanceVisualCacheItem& vc = visual->getCacheItem(cam);
+			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
+			
+			if (potential_outlining) {
+				InstanceToOutlines_t::iterator it = i2o.find(instance);
+				if (it != end) {
+					bindMask(it->second, vc, cam)->render(vc.dimensions);
+				}
+			}
 			vc.image->render(vc.dimensions);
 		}
 
 	}
+	
+	Image* InstanceRenderer::bindMask(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam) {
+		if (info.curimg == vc.image) {
+			return info.mask;
+		}
+		if (info.mask) {
+			delete info.mask; // delete old mask
+			info.mask = NULL;
+		}
+		SDL_Surface* surface = vc.image->getSurface();
+		SDL_Surface* mask_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
+		
+		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
+		SDLImage* img = new SDLImage(mask_surface);
+		
+		uint8_t r, g, b, a = 0;
+		int prev_a = a;
+		for (unsigned int x = 0; x < img->getWidth(); x++) {
+			for (unsigned int y = 0; y < img->getHeight(); y++) {
+				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
+					for (unsigned int xx = x - info.width; xx <= x + info.width; xx++) {
+						for (unsigned int yy = y - info.width; yy <= y + info.width; yy++) {
+							img->putPixel(xx, yy, info.r, info.g, info.b);
+						}
+					}
+				}
+				prev_a = a;
+			}
+		}
+		// In case of OpenGL backend, SDLImage needs to be converted
+		info.mask = m_renderbackend->createImage(img->detachSurface());
+		delete img;
+		return info.mask;
+	}
+	
+	void InstanceRenderer::addOutlined(Instance* instance, int r, int g, int b, int width) {
+		OutlineInfo info;
+		info.r = r;
+		info.g = g;
+		info.b = b;
+		info.width = width;
+		InstanceToOutlines_t& i2h = m_layer_to_outlinemap[instance->getLocation().getLayer()];
+		i2h[instance] = info;
+	}
+	
+	void InstanceRenderer::removeOutlined(Instance* instance) {
+		InstanceToOutlines_t i2h = m_layer_to_outlinemap[instance->getLocation().getLayer()];
+		i2h.erase(instance);
+	}
+	
+	void InstanceRenderer::removeAllOutlines() {
+		m_layer_to_outlinemap.clear();
+	}
+	
+	void InstanceRenderer::reset() {
+		removeAllOutlines();
+	}
+	
 }

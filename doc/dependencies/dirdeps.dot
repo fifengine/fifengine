@@ -223,6 +223,7 @@ subgraph cluster_12 {
     "view/renderers" -> "util"
     "view/renderers" -> "video"
     "view/renderers" -> "video/fonts"
+    "view/renderers" -> "video/sdl"
     "view/renderers" -> "view"
     "xml/tinyxml" -> "vfs"
     "xml/tinyxml" -> "vfs/raw"

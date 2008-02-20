@@ -37,15 +37,16 @@ namespace FIFE {
 
 	/** The SDL implementation of the @c Image base class.
 	 */
-	class SDLImage : public Image {
+	class SDLImage : public Image, public AbstractGraphics {
 	public:
 		SDLImage(SDL_Surface* surface);
 		SDLImage(const uint8_t* data, unsigned int width, unsigned int height);
 		virtual ~SDLImage();
 		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
+		void saveImage(const std::string& filename);
  		bool putPixel(int x, int y, int r, int g, int b);
 		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-		void saveImage(const std::string& filename);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 
 	protected:
 		void setClipArea(const Rect& cliparea, bool clear);
