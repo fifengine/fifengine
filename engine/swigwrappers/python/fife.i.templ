@@ -3,6 +3,8 @@
 %include "std_vector.i"
 %include "typemaps.i"
 
+%feature("autodoc", "1");  // 0 == no param types, 1 == show param types
+
 namespace std {
 	%template(StringVector) vector<std::string>;
 	%template(UintVector) vector<unsigned int>;

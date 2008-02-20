@@ -34,7 +34,8 @@ def generate_swig_wrappers(target, source, env):
 		open(interfacefile, 'w').write(template.substitute(inclusions=inclusions))
 
 		includepath = joinpath('engine', 'core')
-		pipe = os.popen(swigpath +'swig -c++ -%s -I%s -outdir %s %s' % (lang, includepath, langoutdir, interfacefile))
+		# added -w511 to ignore warnings for "Can't use keyword arguments with overloaded functions"
+		pipe = os.popen(swigpath +'swig -w511 -c++ -%s -I%s -outdir %s %s' % (lang, includepath, langoutdir, interfacefile))
 		if pipe.close():
 			print "\nError while running swig, stopped"
 			Exit(1)
