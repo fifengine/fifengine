@@ -32,6 +32,7 @@
 // Second block: files included from the same folder
 
 namespace FIFE {
+	class IResource;
 
 	/** IResourceSaver defines an interface for saving Resources. 
 	 */
@@ -39,7 +40,8 @@ namespace FIFE {
 	public:
 		virtual ~IResourceSaver() { };
 
-		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
+		virtual void saveResourceToLocation(const ResourceLocation& location, IResource* resource) = 0;
+		virtual void saveResourceToFile(const std::string& filename, IResource* resource) = 0;
 	};
 }
 

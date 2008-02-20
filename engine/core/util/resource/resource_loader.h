@@ -32,6 +32,7 @@
 // Second block: files included from the same folder
 
 namespace FIFE {
+	class IResource;
 
 	/** IResourceLoader defines an interface for loading resources. The resource returned is owned by
 	 * the caller, and must be deleted when finished.
@@ -40,7 +41,8 @@ namespace FIFE {
 	public:
 		virtual ~IResourceLoader() { };
 
-		virtual IResource* load(const ResourceLocation& location) = 0;
+		virtual IResource* loadResourceFromLocation(const ResourceLocation& location) = 0;
+		virtual IResource* loadResourceFromFile(const std::string& filename) = 0;
 	};
 }
 

@@ -41,13 +41,15 @@ namespace FIFE {
 	public:
 		virtual ~IResource() { };
 
-		/** Get the location of this resource.
+		/** Get the location/file of this resource.
 		 */
-		virtual const ResourceLocation& getLocation() = 0;
+		virtual const ResourceLocation& getResourceLocation() = 0;
+		virtual const std::string& getResourceFile() = 0;
 
-		/** Change the location of this resource.
+		/** Change the location/file of this resource.
 		 */
-		virtual void setLocation(const ResourceLocation& location) = 0;
+		virtual void setResourceLocation(const ResourceLocation& location) = 0;
+		virtual void setResourceFile(const std::string& filename) = 0;
 	};
 }
 

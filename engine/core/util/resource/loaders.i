@@ -27,26 +27,24 @@
 #include "util/resource/resource_saver.h"
 %}
 
-%include "resource_location.i"
-
 namespace FIFE {
 
 	class IResource {
 	public:
 		virtual ~IResource() {};
-		virtual const ResourceLocation& getLocation() = 0;
-		virtual void setLocation(const ResourceLocation& location) = 0;
+		virtual const std::string& getResourceFile() = 0;
+		virtual void setResourceFile(const std::string& location) = 0;
 	};
 
 	class IResourceLoader {
 	public:
 		virtual ~IResourceLoader() {};
-		virtual IResource* load(const ResourceLocation& location) = 0;
+		virtual IResource* loadResourceFromFile(const std::string& location) = 0;
 	};
 
 	class IResourceSaver {
 	public:
 		virtual ~IResorceSaver() {};
-		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
+		virtual void saveResourceToFile(const std::string& location, IResource* resource) = 0;
 	};
 }
