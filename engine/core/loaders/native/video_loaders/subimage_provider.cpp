@@ -43,11 +43,11 @@
 namespace FIFE { 
 	static Logger _log(LM_NATIVE_LOADERS);
 	
-	Image* SubImageProvider::createImage(const ResourceLocation& location) {
-		return dynamic_cast<Image*>(createResource(location));
+	Image* SubImageProvider::loadImageFromLocation(const ResourceLocation& location) {
+		return dynamic_cast<Image*>(loadPooledResourceFromLocation(location));
 	}
 	
-	IPooledResource* SubImageProvider::createResource(const ResourceLocation& location) {
+	IPooledResource* SubImageProvider::loadPooledResourceFromLocation(const ResourceLocation& location) {
 		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
 		if (!loc) {
 			throw InvalidConversion("Wrong location type given for subimage provider");

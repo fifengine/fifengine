@@ -91,10 +91,10 @@ void test_animation(RenderBackend& renderbackend) {
 	renderbackend.createMainScreen(W, H, 0, false);
 
 	ImagePool* imagepool = new ImagePool();
-	imagepool->addResourceProvider(new ImageProvider());
+	imagepool->addResourceLoader(new ImageProvider());
 
 	AnimationPool* animpool = new AnimationPool();
-	animpool->addResourceProvider(new AnimationProvider(imagepool));
+	animpool->addResourceLoader(new AnimationProvider(imagepool));
 
 	Animation& anim = animpool->getAnimation(animpool->addResourceFromFile(ANIM_FILE));
 

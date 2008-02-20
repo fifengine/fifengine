@@ -32,18 +32,17 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/rect.h"
-#include "util/resource/resource_provider.h"
-
+#include "util/resource/pooled_resource.h"
 
 namespace FIFE {
 	class Image;
 
 	/** ImageProvider for cropping another image */
-	class SubImageProvider : public IResourceProvider {
+	class SubImageProvider : public IPooledResourceLoader {
 	public:
 		SubImageProvider() {}
-		IPooledResource* createResource(const ResourceLocation& location);
-		Image* createImage(const ResourceLocation& location);
+		IPooledResource* loadPooledResourceFromLocation(const ResourceLocation& location);
+		Image* loadImageFromLocation(const ResourceLocation& location);
 	};
 
 }

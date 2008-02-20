@@ -23,8 +23,6 @@
 %{
 #include "util/resource/resource.h"
 #include "util/resource/resource_location.h"
-#include "util/resource/resource_loader.h"
-#include "util/resource/resource_saver.h"
 %}
 
 namespace FIFE {

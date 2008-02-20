@@ -39,6 +39,7 @@
 namespace FIFE {
 
 	Animation::Animation(): 
+		m_location(""),
 		m_action_frame(-1),
 		m_animation_endtime(-1),
 		m_direction(0) {

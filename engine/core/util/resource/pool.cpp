@@ -31,7 +31,6 @@
 #include "util/logger.h"
 
 #include "pool.h"
-#include "resource_provider.h"
 
 namespace FIFE {
 	static Logger _log(LM_POOL);
@@ -40,16 +39,16 @@ namespace FIFE {
 		FifeClass(),
 		m_entries(),
 		m_listeners(),
-		m_providers(),
+		m_loaders(),
 		m_curind(0)
 	{
 	}
 
 	Pool::~Pool() {
 		clear();
-		std::vector<IResourceProvider*>::iterator provider;
-		for (provider = m_providers.begin(); provider != m_providers.end(); provider++) {
-			delete (*provider);
+		std::vector<IPooledResourceLoader*>::iterator loader;
+		for (loader = m_loaders.begin(); loader != m_loaders.end(); loader++) {
+			delete (*loader);
 		}
 	}
 	
@@ -65,8 +64,8 @@ namespace FIFE {
 		m_entries.clear();
 	}
 
-	void Pool::addResourceProvider(IResourceProvider* provider) {
-		m_providers.push_back(provider);
+	void Pool::addResourceLoader(IPooledResourceLoader* loader) {
+		m_loaders.push_back(loader);
 	}
 
 	int Pool::addResourceFromLocation(const ResourceLocation& loc) {
@@ -101,19 +100,19 @@ namespace FIFE {
 		if (entry->resource) {
 			res = entry->resource;
 		} else {
-			if (!entry->provider) {
+			if (!entry->loader) {
 				findAndSetProvider(*entry);
 			} else {
-				entry->resource = entry->provider->createResource(*entry->location);
+				entry->resource = entry->loader->loadPooledResourceFromLocation(*entry->location);
 			}
-			if (!entry->provider) {
-				LMsg msg("No suitable provider was found for resource ");
+			if (!entry->loader) {
+				LMsg msg("No suitable loader was found for resource ");
 				msg << entry->location->getFilename();
 				FL_ERR(_log, msg);
 				throw NotFound(msg.str);
 			}
 			if (!entry->resource) {
-				LMsg msg("No provider was able to load the requested resource ");
+				LMsg msg("No loader was able to load the requested resource ");
 				msg << entry->location->getFilename();
 				FL_ERR(_log, msg);
 				throw NotFound(msg.str);
@@ -196,14 +195,14 @@ namespace FIFE {
 	}
 
 	void Pool::findAndSetProvider(PoolEntry& entry) {
-		std::vector<IResourceProvider*>::iterator it = m_providers.begin();
-		std::vector<IResourceProvider*>::iterator end = m_providers.end();
+		std::vector<IPooledResourceLoader*>::iterator it = m_loaders.begin();
+		std::vector<IPooledResourceLoader*>::iterator end = m_loaders.end();
 		if( it == end ) {
-			FL_PANIC(_log, "no provider constructors given for resource pool");
+			FL_PANIC(_log, "no loader constructors given for resource pool");
 		}
 		for(; it != end; ++it) {
 			try {
-				entry.resource = (*it)->createResource(*entry.location);
+				entry.resource = (*it)->loadPooledResourceFromLocation(*entry.location);
 			} catch (Exception e) {
 				FL_ERR(_log, e.getMessage());
 				continue;
@@ -212,7 +211,7 @@ namespace FIFE {
 			if( !entry.resource )
 				continue;
 
-			entry.provider = *it;
+			entry.loader = *it;
 			return;
 		};
 	}

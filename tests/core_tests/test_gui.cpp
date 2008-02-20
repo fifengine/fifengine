@@ -76,8 +76,8 @@ struct environment {
 };
 
 void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, ImagePool& pool) {
-	pool.addResourceProvider(new SubImageProvider());
-	pool.addResourceProvider(new ImageProvider());
+	pool.addResourceLoader(new SubImageProvider());
+	pool.addResourceLoader(new ImageProvider());
 
 	GuiImageLoader imageloader(pool);
 	gcn::Image::setImageLoader(&imageloader);	
@@ -95,7 +95,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 	top->add(icon, 10, 30);
 
 	ImageProvider provider;
-	boost::scoped_ptr<Image> img(provider.createImage(ImageLocation(IMAGE_FILE)));
+	boost::scoped_ptr<Image> img(provider.loadImageFromLocation(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();
 	int w = img->getWidth();

@@ -23,6 +23,7 @@
 #define FIFE_RESOURCE_LOCATION_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -54,7 +55,7 @@ namespace FIFE {
 		/** Returns the filename.
 		 * @return The filename.
 		 */
-		std::string getFilename() const { return m_filename; };
+		const std::string& getFilename() const { return m_filename; };
 
 		/** Compares two ResourceLocations for equality.
 		 */

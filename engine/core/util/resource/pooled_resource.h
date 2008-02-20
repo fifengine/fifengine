@@ -31,9 +31,10 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "resource.h"
 
 namespace FIFE {
-	class IPooledResource {
+	class IPooledResource : public IResource {
 	public:
 		IPooledResource() : m_refcount(0) {};
 
@@ -58,6 +59,26 @@ namespace FIFE {
 		virtual unsigned int getRefCount() { return m_refcount; };
 	protected:
 		unsigned int m_refcount;
+	};
+
+	class IPooledResourceLoader : public IResourceLoader {
+	public:
+		virtual ~IPooledResourceLoader() {}
+
+		virtual IResource* loadResourceFromLocation(const ResourceLocation& location)
+			{ return loadPooledResourceFromLocation(location); }
+		virtual IResource* loadResourceFromFile(const std::string& filename)
+			{ return loadPooledResourceFromFile(filename); }
+
+		virtual IPooledResource* loadPooledResourceFromLocation(const ResourceLocation& location) = 0;
+		virtual IPooledResource* loadPooledResourceFromFile(const std::string& filename)
+			{ return loadPooledResourceFromLocation(ResourceLocation(filename)); }
+
+	};
+
+	class IPooledResourceSaver : IResourceSaver {
+	public:
+		virtual ~IPooledResourceSaver() {}
 	};
 }
 

@@ -39,7 +39,6 @@
 
 #include "pooled_resource.h"
 #include "resource_location.h"
-#include "resource_provider.h"
 
 namespace FIFE {
 
@@ -78,7 +77,7 @@ namespace FIFE {
 
 		/** Adds new resource provider. Transfers provider ownership to the pool
 		 */
-		virtual void addResourceProvider(IResourceProvider* provider);
+		virtual void addResourceLoader(IPooledResourceLoader* loader);
 
 		/** Adds new resource into the pool using the given location.
 		 * @return The index of the resource in the pool.
@@ -138,7 +137,7 @@ namespace FIFE {
 	private:
 		class PoolEntry {
 		public:
-			PoolEntry(): resource(0), location(0), provider(0) {}
+			PoolEntry(): resource(0), location(0), loader(0) {}
 			~PoolEntry() {
 				delete location;
 				delete resource;
@@ -149,13 +148,13 @@ namespace FIFE {
 			// Location of the resource.
 			ResourceLocation* location;
 			// Resource loader.
-			IResourceProvider* provider;
+			IPooledResourceLoader* loader;
 		};
 
 		void findAndSetProvider(PoolEntry& entry);
 		std::vector<PoolEntry*> m_entries;
 		std::vector<IPoolListener*> m_listeners;
-		std::vector<IResourceProvider*> m_providers;
+		std::vector<IPooledResourceLoader*> m_loaders;
 		int m_curind;
 	};
 

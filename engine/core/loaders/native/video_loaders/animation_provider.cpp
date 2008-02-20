@@ -43,12 +43,12 @@
 namespace FIFE {
 	static Logger _log(LM_NATIVE_LOADERS);
 
-	Animation* AnimationProvider::createAnimation(const ResourceLocation& location) {
-		return dynamic_cast<Animation*>(createResource(location));
+	Animation* AnimationProvider::loadAnimationFromLocation(const ResourceLocation& location) {
+		return dynamic_cast<Animation*>(loadPooledResourceFromLocation(location));
 	}
 	
 	const int INITIAL_OFFSET = -9999999;
-	IPooledResource* AnimationProvider::createResource(const ResourceLocation& location) {
+	IPooledResource* AnimationProvider::loadPooledResourceFromLocation(const ResourceLocation& location) {
 		assert(m_pool);
 		
 		const std::string& filename = location.getFilename();

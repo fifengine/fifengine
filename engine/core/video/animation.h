@@ -60,6 +60,13 @@ namespace FIFE {
 		 */
 		~Animation();
 
+		//TODO: fill in these stubs! Note, m_location is not properly initialized.
+		virtual const ResourceLocation& getResourceLocation()  { return m_location; }
+		virtual const std::string& getResourceFile() { return m_location.getFilename(); }
+
+		virtual void setResourceLocation(const ResourceLocation& location)  { }
+		virtual void setResourceFile(const std::string& filename) { }
+
 		/** Adds new frame into animation
 		 * Frames must be added starting from first frame. Increases the reference
 		 * count of the given image.
@@ -133,6 +140,8 @@ namespace FIFE {
 			unsigned int duration;
 			Image* img;
 		};
+
+		ResourceLocation m_location;
 
 		/** Checks for animation frame index overflows
 		 */

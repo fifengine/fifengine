@@ -47,7 +47,7 @@ namespace FIFE {
 				       m_mutevol(0),
 							 m_volume(1.0) {
 		// add provider to the pool
-		m_pool.addResourceProvider(new SoundClipProvider());
+		m_pool.addResourceLoader(new SoundClipLoader());
 	}
 
 	SoundManager::~SoundManager() {

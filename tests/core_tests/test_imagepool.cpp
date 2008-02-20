@@ -84,8 +84,8 @@ BOOST_AUTO_TEST_CASE( ImagePool_test ) {
 	renderbackend.init();
 	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	ImagePool pool;
-	pool.addResourceProvider(new SubImageProvider());
-	pool.addResourceProvider(new ImageProvider());
+	pool.addResourceLoader(new SubImageProvider());
+	pool.addResourceLoader(new ImageProvider());
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 

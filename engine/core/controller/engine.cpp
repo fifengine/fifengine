@@ -161,9 +161,9 @@ namespace FIFE {
 		FL_LOG(_log, "Creating pools");
 		m_imagepool = new ImagePool();
 		m_animpool = new AnimationPool();
-		m_imagepool->addResourceProvider(new SubImageProvider());
-		m_imagepool->addResourceProvider(new ImageProvider());
-		m_animpool->addResourceProvider(new AnimationProvider(m_imagepool));
+		m_imagepool->addResourceLoader(new SubImageProvider());
+		m_imagepool->addResourceLoader(new ImageProvider());
+		m_animpool->addResourceLoader(new AnimationProvider(m_imagepool));
 
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());

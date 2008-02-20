@@ -31,18 +31,18 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/resource_provider.h"
+#include "util/resource/pooled_resource.h"
 #include "video/image.h"
 
 namespace FIFE { 
 	class Animation;
 	class ImagePool;
 
-	class AnimationProvider : public IResourceProvider {
+	class AnimationProvider : public IPooledResourceLoader {
 	public:
 		AnimationProvider(ImagePool* pool): m_pool(pool) {}
-		IPooledResource* createResource(const ResourceLocation& location);
-		Animation* createAnimation(const ResourceLocation& location);
+		IPooledResource* loadPooledResourceFromLocation(const ResourceLocation& location);
+		Animation* loadAnimationFromLocation(const ResourceLocation& location);
 	private:
 		ImagePool* m_pool;
 	};
