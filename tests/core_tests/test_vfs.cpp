@@ -35,7 +35,6 @@
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
 #include "util/rect.h"
-#include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/raw/rawdata.h"
@@ -47,24 +46,13 @@ static const std::string FIFE_TEST_DIR = "fifetestdir";
 using boost::unit_test::test_suite;
 using namespace FIFE;
 
-// Environment
-struct environment {
-	boost::shared_ptr<TimeManager> timemanager;
-	boost::shared_ptr<VFS> vfs;
-
-	environment()
-		: timemanager(new TimeManager()),
-		  vfs(new VFS()) {
-		VFS::instance()->addSource(new VFSDirectory());
-		}
-};
-
 #ifdef FIFE_BOOST_VERSION_103300
 void test_is_directory() {
 #else
 BOOST_AUTO_TEST_CASE( OGL_gui_test ) {
 #endif
-	environment env;
+	boost::shared_ptr<VFS> vfs(new VFS());
+	vfs->addSource(new VFSDirectory(vfs.get()));
 
 	if(boost::filesystem::exists(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR)) {
 		boost::filesystem::remove(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
@@ -75,15 +63,15 @@ BOOST_AUTO_TEST_CASE( OGL_gui_test ) {
 	}
 	
 	// Check root dir
-	BOOST_CHECK(VFS::instance()->isDirectory(""));
-	BOOST_CHECK(VFS::instance()->isDirectory("/"));
+	BOOST_CHECK(vfs->isDirectory(""));
+	BOOST_CHECK(vfs->isDirectory("/"));
 
-	BOOST_CHECK(!VFS::instance()->isDirectory(FIFE_TEST_DIR));
+	BOOST_CHECK(!vfs->isDirectory(FIFE_TEST_DIR));
 	boost::filesystem::create_directory(FIFE_TEST_DIR);
-	BOOST_CHECK(VFS::instance()->isDirectory(FIFE_TEST_DIR));
-	BOOST_CHECK(!VFS::instance()->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
+	BOOST_CHECK(vfs->isDirectory(FIFE_TEST_DIR));
+	BOOST_CHECK(!vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
 	boost::filesystem::create_directories(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
-	BOOST_CHECK(VFS::instance()->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
+	BOOST_CHECK(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
 
 	boost::filesystem::remove(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR);
 	boost::filesystem::remove(FIFE_TEST_DIR);

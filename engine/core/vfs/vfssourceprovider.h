@@ -56,6 +56,13 @@ namespace FIFE {
 			 */
 			const std::string& getName() const;
 
+			/** Get the VFS this provider is using. Providers will not be able to locate
+			 * sources before a VFS is set. VFS::addProvider sets this automatically.
+			 */
+			void setVFS(VFS* vfs);
+
+			VFS* getVFS() const { return m_vfs; }
+
 			/** Check if a given file is readable for this VFSSource
 			 *
 			 *
@@ -72,8 +79,9 @@ namespace FIFE {
 			virtual VFSSource* createSource(const std::string& file) const = 0;
 
 		private:
-			std::string m_name;
 
+			VFS* m_vfs;
+			std::string m_name;
 	};
 }
 

@@ -45,7 +45,7 @@ namespace FIFE {
 	 */
 	class VFSSource {
 		public:
-			VFSSource();
+			VFSSource(VFS* vfs);
 			virtual ~VFSSource();
 
 			/** check if the given file exists
@@ -54,6 +54,10 @@ namespace FIFE {
 			 * @return true if it exists, false otherwise
 			 */
 			virtual bool fileExists(const std::string& file) const = 0;
+
+			/** get the VFS this source is associated with.
+			 */
+			VFS* getVFS() const { return m_vfs; }
 
 			/** open a file inside this source
 			 *
@@ -80,6 +84,8 @@ namespace FIFE {
 		protected:
 			std::string fixPath(std::string path) const;
 
+		private:
+			VFS* m_vfs;
 	};
 
 }

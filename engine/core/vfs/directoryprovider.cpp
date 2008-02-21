@@ -36,12 +36,12 @@
 
 namespace FIFE {
 	bool DirectoryProvider::isReadable(const std::string& path) const {
-		return VFS::instance()->isDirectory(path);
+		return getVFS()->isDirectory(path);
 	}
 
 	FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path) const {
 		if (isReadable(path))
-			return new VFSDirectory(path);
+			return new VFSDirectory(getVFS(), path);
 		else
 			throw Exception("Path " + path + " is not readable.");
 	}

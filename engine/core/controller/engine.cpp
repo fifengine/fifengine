@@ -130,7 +130,7 @@ namespace FIFE {
 		m_vfs = new VFS();
 
 		FL_LOG(_log, "Adding root directory to VFS");
-		m_vfs->addSource(new VFSDirectory());
+		m_vfs->addSource( new VFSDirectory(m_vfs) );
 		m_vfs->addProvider( new DirectoryProvider() );
 #ifdef HAVE_ZIP
 		FL_LOG(_log, "Adding zip provider to VFS");

@@ -41,7 +41,7 @@ namespace FIFE {
 	 */
 	class ZipSource : public VFSSource {
 	public:
-		ZipSource(const std::string& zip_file);
+		ZipSource(VFS* vfs, const std::string& zip_file);
 		~ZipSource();
 
 		/// WARNING: fileExists, listFiles and listDirectories are not

@@ -44,7 +44,7 @@ subgraph cluster_5 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "loaders/fallout/vfs_loaders"; "loaders/native/video_loaders"
+    "loaders/native/video_loaders"
     label = "loaders";
 }
 subgraph cluster_6 {
@@ -72,7 +72,7 @@ subgraph cluster_9 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "vfs"; "vfs/raw"; "vfs/zip"
+    "vfs"; "vfs/dat"; "vfs/raw"; "vfs/zip"
     label = "vfs";
 }
 subgraph cluster_10 {
@@ -160,10 +160,6 @@ subgraph cluster_12 {
     "gui/widgets" -> "gui/base"
     "gui/widgets" -> "util"
     "gui/widgets" -> "video"
-    "loaders/fallout/vfs_loaders" -> "util"
-    "loaders/fallout/vfs_loaders" -> "util/time"
-    "loaders/fallout/vfs_loaders" -> "vfs"
-    "loaders/fallout/vfs_loaders" -> "vfs/raw"
     "loaders/native/video_loaders" -> "util"
     "loaders/native/video_loaders" -> "util/resource"
     "loaders/native/video_loaders" -> "vfs"
@@ -198,6 +194,10 @@ subgraph cluster_12 {
     "util/time" -> "util"
     "vfs" -> "util"
     "vfs" -> "vfs/raw"
+    "vfs/dat" -> "util"
+    "vfs/dat" -> "util/time"
+    "vfs/dat" -> "vfs"
+    "vfs/dat" -> "vfs/raw"
     "vfs/raw" -> "util"
     "vfs/zip" -> "util"
     "vfs/zip" -> "vfs"

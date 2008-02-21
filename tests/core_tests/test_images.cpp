@@ -64,7 +64,7 @@ struct environment {
 	environment()
 		: timemanager(new TimeManager()),
 		  vfs(new VFS()) {
-		VFS::instance()->addSource(new VFSDirectory());
+		vfs->addSource(new VFSDirectory(vfs.get()));
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 				throw SDLException(SDL_GetError());
 			}

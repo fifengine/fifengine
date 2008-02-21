@@ -105,7 +105,7 @@ namespace FIFE {
 		} while (unzGoToNextFile(file) == UNZ_OK);
 	}
 
-	ZipSource::ZipSource(const std::string& zip_file) {
+	ZipSource::ZipSource(VFS* vfs, const std::string& zip_file) : VFSSource(vfs) {
 		m_data = new zip_data_t();
 
 		m_data->zipName = zip_file;

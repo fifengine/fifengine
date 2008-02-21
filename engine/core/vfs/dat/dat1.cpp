@@ -36,7 +36,7 @@
 namespace FIFE {
 	static Logger _log(LM_FO_LOADERS);
 
-	DAT1::DAT1(const std::string& file) : m_datpath(file), m_data(VFS::instance()->open(file))  {
+	DAT1::DAT1(VFS* vfs, const std::string& file) : VFSSource(vfs), m_datpath(file), m_data(vfs->open(file))  {
 		FL_LOG(_log, LMsg("MFFalloutDAT1") 
 			<< "loading: " << file 
 			<< " filesize: " << m_data->getDataLength());

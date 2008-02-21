@@ -19,88 +19,67 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_MAP_LOADERS_FALLOUT_DAT2_H
-#define FIFE_MAP_LOADERS_FALLOUT_DAT2_H
+#ifndef FIFE_MAP_LOADERS_FALLOUT_DAT1_H
+#define FIFE_MAP_LOADERS_FALLOUT_DAT1_H
 
 // Standard C++ library includes
 #include <map>
-#include <string>
-
-// Platform specific includes
-#include "util/fife_stdint.h"
+#include <boost/scoped_ptr.hpp>
 
 // 3rd party library includes
-#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/time/timer.h"
 #include "vfs/vfs.h"
 #include "vfs/vfssource.h"
 
-#include "rawdatadat2.h"
+#include "rawdatadat1.h"
 
 namespace FIFE {
-	class RawData;
-	
-	/** VFSource for the Fallout2 DAT file format
-	 *
-	 *  Implements a kind of lazy initializing, by reading the file list
-	 *  in chunks. Behaviour is the same as if it wouldn't do this,
-	 *  but startup is very fast. But a open/fileExists call with a 
-	 *  filename that doesn't exist, does trigger completely loading
-	 *  the file entries.
-	 *
-	 * @see MFFalloutDAT1
-	 * @todo @b maybe merge common DAT1/DAT2 code in a common base class
-	 */
-	class DAT2 : public VFSSource {
 
+	/** VFSource for the Fallout1 DAT file format.
+	 */
+	class DAT1 : public VFSSource {
 		public:
 			/** Constructor
-			 * Create a VFSSource for a Fallout2 DAT file.
-			 * @param file A Fallout2 DAT file - e.g. master.DAT
+			 * Create a VFSSource for a Fallout1 DAT file.
+			 * @param file A Fallout1 DAT file - e.g. master.DAT
 			 */
-			DAT2(const std::string& path);
+			DAT1(VFS* vfs, const std::string& file);
 
 			bool fileExists(const std::string& name) const;
 			RawData* open(const std::string& file) const;
 
-			/** Get Information needed to unpack and extract data
+			/** Get the needed information to unpack and extract a file from the
+			 * DAT file.
+			 * Retrieves the Information needed to extract a specific file, this
+			 * is passed as argument to a mffalloutrawdatadat1 RawMemSource,
+			 * which itself fills its memory content with the unpacked file.
 			 *
-			 * @see MFFalloutDAT1::getInfo
+			 *  @throw NotFound
+			 *  @see MFFalloutRawDataDAT1, RawMemSource
 			 */
-			const RawDataDAT2::s_info& getInfo(const std::string& name) const;
+			const RawDataDAT1::s_info& getInfo(const std::string& name) const;
 
 			std::set<std::string> listFiles(const std::string& pathstr) const;
 			std::set<std::string> listDirectories(const std::string& pathstr) const;
 
 		private:
 			std::string m_datpath;
-			mutable boost::scoped_ptr<RawData> m_data;
-			typedef std::map<std::string, RawDataDAT2::s_info> type_filelist;
-			mutable type_filelist m_filelist;
-
-			/// number of file entries to read
-			mutable uint32_t m_filecount;
-			/// current index in file
-			mutable unsigned int m_currentIndex;
-			/// lazy loading timer
-			mutable Timer m_timer;
-
-			/// read a bunch of file entries 
-			void readFileEntry() const;
-
-			/// find a file entry
-			type_filelist::const_iterator findFileEntry(const std::string& name) const;
+			boost::scoped_ptr<RawData> m_data;
+			typedef std::map<std::string, RawDataDAT1::s_info> type_filelist;
+			type_filelist m_filelist;
 
 			std::set<std::string> list(const std::string& pathstr, bool dirs) const;
+			std::string readString();
+
+			void loadFileList(const std::string& dirname);
 
 			// Not copyable
-			DAT2(const DAT2&);
-			DAT2& operator=(const DAT2&);
+			DAT1(const DAT1&);
+			DAT1& operator=(const DAT1&);
 	};
 
 } // FIFE
