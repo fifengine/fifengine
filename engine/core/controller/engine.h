@@ -57,6 +57,7 @@ namespace FIFE {
 	class GuiFont;
 	class VFS;
 	class Cursor;
+	class TriggerManager;
 
 
 	/** Engine acts as a controller to the whole system
@@ -156,6 +157,7 @@ namespace FIFE {
 		RenderBackend* m_renderbackend;
 		GUIManager* m_guimanager;
 		EventManager* m_eventmanager;
+		TriggerManager* m_triggermanager;
 		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
 		ImagePool* m_imagepool;
@@ -167,6 +169,7 @@ namespace FIFE {
 		LogManager* m_logmanager;
 		GuiFont* m_defaultfont;
 		Cursor* m_cursor;
+
 		
 		EngineSettings m_settings;
 	};

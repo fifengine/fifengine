@@ -38,6 +38,7 @@ enum logmodule_t {
 	LM_AUDIO,
 	LM_CONTROLLER,
 	LM_EVTCHANNEL,
+	LM_TRIGGER,
 	LM_GUI,
 	LM_CONSOLE,
 	LM_LOADERS,
@@ -72,6 +73,7 @@ enum logmodule_t {
 		{LM_AUDIO, LM_CORE, "Audio"}, \
 		{LM_CONTROLLER, LM_CORE, "Controller"}, \
 		{LM_EVTCHANNEL, LM_CORE, "Event Channel"}, \
+		{LM_TRIGGER, LM_EVTCHANNEL, "Trigger System"}, \
 		{LM_GUI, LM_CORE, "GUI"}, \
 		  {LM_CONSOLE, LM_GUI, "Console"}, \
 		{LM_LOADERS, LM_CORE, "Loaders"}, \
