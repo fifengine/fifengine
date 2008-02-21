@@ -33,9 +33,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_icommand.h"
 
 namespace FIFE {
+	class Command;
 
 	/**  Listener of command events.
 	 * To be able to listen for commands you must make a class which inherits 
@@ -46,7 +46,7 @@ namespace FIFE {
 		/** Called when an command is received from a command source
 		 * @param command command coming from command source
 		 */
-		virtual void onCommand(ICommand& command) = 0;
+		virtual void onCommand(Command& command) = 0;
 
 		virtual ~ICommandListener() {}
 	};

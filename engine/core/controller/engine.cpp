@@ -43,7 +43,7 @@
 #ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
 #endif
-#include "eventchannel/manager/eventmanager.h"
+#include "eventchannel/eventmanager.h"
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"

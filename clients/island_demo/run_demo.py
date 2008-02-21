@@ -22,12 +22,12 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.engine = engine
 		self.world = world
 		engine.getEventManager().setNonConsumableKeys([
-			fife.IKey.ESCAPE,
-			fife.IKey.F10,
-			fife.IKey.LEFT,
-			fife.IKey.RIGHT,
-			fife.IKey.UP,
-			fife.IKey.DOWN])
+			fife.Key.ESCAPE,
+			fife.Key.F10,
+			fife.Key.LEFT,
+			fife.Key.RIGHT,
+			fife.Key.UP,
+			fife.Key.DOWN])
 		
 		self.quit = False
 		self.aboutWindow = None
@@ -43,10 +43,10 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		consumed = False
-		if keyval == fife.IKey.ESCAPE:
+		if keyval == fife.Key.ESCAPE:
 			self.quit = True
 			evt.consume()
-		elif keyval == fife.IKey.F10:
+		elif keyval == fife.Key.F10:
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 			evt.consume()
 		elif keystr == 'p':

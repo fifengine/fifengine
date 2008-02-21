@@ -41,6 +41,8 @@
 #include "video/fonts/truetypefont.h"
 #include "video/fonts/subimagefont.h"
 #include "eventchannel/widget/ec_widgetevent.h"
+#include "eventchannel/key/ec_keyevent.h"
+#include "eventchannel/mouse/ec_mouseevent.h"
 
 #include "guimanager.h"
 
@@ -192,21 +194,21 @@ namespace FIFE {
 		m_widgetlistener->onWidgetAction(wevt);
 	}
 
-	void GUIManager::evaluateKeyEventConsumption(IKeyEvent& evt) {
+	void GUIManager::evaluateKeyEventConsumption(KeyEvent& evt) {
 		gcn::Widget* w = m_focushandler->getFocused();
 		if (w) {
 			evt.consume();
 		}
 	}
 
-	void GUIManager::evaluateMouseEventConsumption(IMouseEvent& evt) {
+	void GUIManager::evaluateMouseEventConsumption(MouseEvent& evt) {
 		gcn::Widget* w = m_gcn_topcontainer->getWidgetAt(evt.getX(), evt.getY());
 		if (w && w->isVisible()) {
 			evt.consume();
 		}
 	}
 
-	void GUIManager::mousePressed(IMouseEvent& evt) {
+	void GUIManager::mousePressed(MouseEvent& evt) {
  		evaluateMouseEventConsumption(evt);
 		if (!evt.isConsumed()) {
 			m_focushandler->focusNone();

@@ -30,7 +30,7 @@ def _Color2Str(c):
 fife.Color.__str__ = _Color2Str
 
 classes = [ fife.Engine, fife.Instance, fife.Point, fife.Rect, fife.Image, fife.Animation,
- fife.RenderBackend, fife.IEvent, fife.Command, fife.Container ]
+ fife.RenderBackend, fife.Event, fife.Command, fife.Container ]
 
 def createProperties():
 	""" Autocreate properties for getXYZ/setXYZ functions.

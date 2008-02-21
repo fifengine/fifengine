@@ -133,8 +133,8 @@ namespace FIFE {
 		// TODO: optimize...
 		uint8_t r, g, b, a = 0;
 		int prev_a = a;
-		for (unsigned int x = 0; x < img->getWidth(); x++) {
-			for (unsigned int y = 0; y < img->getHeight(); y++) {
+		for (unsigned int x = 0; x < img->getWidth(); x ++) {
+			for (unsigned int y = 0; y < img->getHeight(); y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
 					for (unsigned int xx = x - info.width; xx <= x + info.width; xx++) {

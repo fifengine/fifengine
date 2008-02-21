@@ -33,9 +33,10 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_imouseevent.h"
 
 namespace FIFE {
+
+	class MouseEvent;
 
 	/**  Listener of mouse events.
 	 * To be able to listen for mouse events you must make a class which inherits 
@@ -47,59 +48,59 @@ namespace FIFE {
 		 * Called when the mouse has entered into the event source area.
 		 * @param evt describes the event.
 		 */
-		virtual void mouseEntered(IMouseEvent& evt) = 0;
+		virtual void mouseEntered(MouseEvent& evt) = 0;
 
 		/**
 		 * Called when the mouse has exited the event source area.
 		 * @param evt describes the event.
 		 */
-		virtual void mouseExited(IMouseEvent& evt) = 0;
+		virtual void mouseExited(MouseEvent& evt) = 0;
 
 		/**
 		 * Called when a mouse button has been pressed on the event source area.
 		 * NOTE: A mouse press is NOT equal to a mouse click.
 		 * @param evt describes the event.
 		 */
-		virtual void mousePressed(IMouseEvent& evt) = 0;
+		virtual void mousePressed(MouseEvent& evt) = 0;
 
 		/**
 		 * Called when a mouse button has been released on the event source area.
 		 * @param evt describes the event.
 		 */
-		virtual void mouseReleased(IMouseEvent& evt) = 0;
+		virtual void mouseReleased(MouseEvent& evt) = 0;
 
 		/**
 		 * Called when a mouse button is pressed and released (clicked) on
 		 * the event source area.
 		 * @param evt describes the event.
 		 */
-		virtual void mouseClicked(IMouseEvent& evt) = 0;
+		virtual void mouseClicked(MouseEvent& evt) = 0;
 
 		/**
 		 * Called when the mouse wheel has moved up on the event source area.
 		 * @param evt describes the event.
 		 */
-		virtual void mouseWheelMovedUp(IMouseEvent& evt) = 0;
+		virtual void mouseWheelMovedUp(MouseEvent& evt) = 0;
 
 		/**
 		 * Called when the mouse wheel has moved down on the event source area.
 		 * @param mousEvent describes the event.
 		 */
-		virtual void mouseWheelMovedDown(IMouseEvent& evt) = 0;
+		virtual void mouseWheelMovedDown(MouseEvent& evt) = 0;
 
 		/**
 		 * Called when the mouse has moved in the event source area and no mouse button
 		 * has been pressed
 		 * @param evt describes the event.
 		 */
-		virtual void mouseMoved(IMouseEvent& evt) = 0;
+		virtual void mouseMoved(MouseEvent& evt) = 0;
 
 		/**
 		 * Called when the mouse has moved and the mouse has previously been
 		 * pressed on the event source.
 		 * @param evt describes the event.
 		 */
-		virtual void mouseDragged(IMouseEvent& evt) = 0;
+		virtual void mouseDragged(MouseEvent& evt) = 0;
 
 		virtual ~IMouseListener() {}
 	};

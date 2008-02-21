@@ -34,25 +34,27 @@
 // Second block: files included from the same folder
 //
 #include "eventchannel/base/ec_event.h"
-#include "ec_iwidgetevent.h"
 
 namespace FIFE {
-
 	/**  Interface for widget events
 	 * Events are sent by different UI widgets
 	 */
-	class WidgetEvent: public Event, public IWidgetEvent {
+	class WidgetEvent: public Event {
 	public:
-        /** Constructor.
-         */
+		/** Constructor.
+		 */
 		WidgetEvent(): 
 			Event(),
 			m_id("") {}
 
-        /** Destructor.
-         */
+		/** Destructor.
+		 */
 		~WidgetEvent() {}
 
+		/**
+		 * Gets the id of the event.
+		 * @return the id of the event.
+		 */
 		const std::string& getId() const { return m_id; }
 		void setId(const std::string& id) { m_id = id; }
 

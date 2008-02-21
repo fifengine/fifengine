@@ -49,7 +49,7 @@ namespace FIFE {
 		m_nonconsumablekeys(),
 		m_keystatemap(),
 		m_mousestate(0),
-		m_mostrecentbtn(IMouseEvent::EMPTY)
+		m_mostrecentbtn(MouseEvent::EMPTY)
  	{
 	}
 
@@ -59,55 +59,55 @@ namespace FIFE {
 	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
 		mouseevt.setX(sdlevt.button.x);
 		mouseevt.setY(sdlevt.button.y);
-		mouseevt.setButton(IMouseEvent::EMPTY);
-		mouseevt.setType(IMouseEvent::MOVED);
+		mouseevt.setButton(MouseEvent::EMPTY);
+		mouseevt.setType(MouseEvent::MOVED);
 		if ((sdlevt.type == SDL_MOUSEBUTTONUP) || (sdlevt.type == SDL_MOUSEBUTTONDOWN)) {
 			switch (sdlevt.button.button) {
 				case SDL_BUTTON_LEFT:
-					mouseevt.setButton(IMouseEvent::LEFT);
+					mouseevt.setButton(MouseEvent::LEFT);
 					break;
 				case SDL_BUTTON_RIGHT:
-					mouseevt.setButton(IMouseEvent::RIGHT);
+					mouseevt.setButton(MouseEvent::RIGHT);
 					break;
 				case SDL_BUTTON_MIDDLE:
-					mouseevt.setButton(IMouseEvent::MIDDLE);
+					mouseevt.setButton(MouseEvent::MIDDLE);
 					break;
 				default:
-					mouseevt.setButton(IMouseEvent::UNKNOWN_BUTTON);
+					mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);
 					break;
 			}
 
 
 			if (sdlevt.type == SDL_MOUSEBUTTONUP ) {
 
-				mouseevt.setType(IMouseEvent::RELEASED);
+				mouseevt.setType(MouseEvent::RELEASED);
 
 			} else {
-				mouseevt.setType(IMouseEvent::PRESSED);
+				mouseevt.setType(MouseEvent::PRESSED);
 			}
 
 			switch (sdlevt.button.button) {
 				case SDL_BUTTON_WHEELDOWN:
-					mouseevt.setType(IMouseEvent::WHEEL_MOVED_DOWN);
+					mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
 					break;
 				case SDL_BUTTON_WHEELUP:
-					mouseevt.setType(IMouseEvent::WHEEL_MOVED_UP);
+					mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
 					break;
 				default:
 					break;
 			}
 		}
-		if ((mouseevt.getType() == IMouseEvent::MOVED) && m_mousestate) {
-			mouseevt.setType(IMouseEvent::DRAGGED);
+		if ((mouseevt.getType() == MouseEvent::MOVED) && m_mousestate) {
+			mouseevt.setType(MouseEvent::DRAGGED);
 			mouseevt.setButton(m_mostrecentbtn);
 		}
 	}
 
 	void EventManager::fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt) {
 		if (sdlevt.type == SDL_KEYDOWN) {
-			keyevt.setType(IKeyEvent::PRESSED);
+			keyevt.setType(KeyEvent::PRESSED);
 		} else if (sdlevt.type == SDL_KEYUP) {
-			keyevt.setType(IKeyEvent::RELEASED);
+			keyevt.setType(KeyEvent::RELEASED);
 		} else {
 			throw EventException("Invalid event type in fillKeyEvent");
 		}
@@ -119,67 +119,67 @@ namespace FIFE {
 							&& sdlevt.key.keysym.sym <= SDLK_KP_EQUALS);
 
 		SDL_keysym keysym = sdlevt.key.keysym;
-		IKey::KeyType value = IKey::INVALID_KEY;
+		Key::KeyType value = Key::INVALID_KEY;
 		std::string repr("");
 
 		if (keysym.unicode < 255) {
-			value = static_cast<IKey::KeyType>(keysym.unicode);
+			value = static_cast<Key::KeyType>(keysym.unicode);
 			repr.push_back(value);
 		}
 
 		#define MAP_KEY(_orig, _new) case _orig: value = _new; repr = #_new; break;
 		switch (keysym.sym) {
-			MAP_KEY(SDLK_TAB, IKey::TAB);
-			MAP_KEY(SDLK_LALT, IKey::LEFT_ALT);
-			MAP_KEY(SDLK_RALT, IKey::RIGHT_ALT);
-			MAP_KEY(SDLK_LSHIFT, IKey::LEFT_SHIFT);
-			MAP_KEY(SDLK_RSHIFT, IKey::RIGHT_SHIFT);
-			MAP_KEY(SDLK_LCTRL, IKey::LEFT_CONTROL);
-			MAP_KEY(SDLK_RCTRL, IKey::RIGHT_CONTROL);
-			MAP_KEY(SDLK_BACKSPACE, IKey::BACKSPACE);
-			MAP_KEY(SDLK_PAUSE, IKey::PAUSE);
-			MAP_KEY(SDLK_ESCAPE, IKey::ESCAPE);
-			MAP_KEY(SDLK_DELETE, IKey::DELETE_KEY);
-			MAP_KEY(SDLK_INSERT, IKey::INSERT);
-			MAP_KEY(SDLK_HOME, IKey::HOME);
-			MAP_KEY(SDLK_END, IKey::END);
-			MAP_KEY(SDLK_PAGEUP, IKey::PAGE_UP);
-			MAP_KEY(SDLK_PRINT, IKey::PRINT_SCREEN);
-			MAP_KEY(SDLK_PAGEDOWN, IKey::PAGE_DOWN);
-			MAP_KEY(SDLK_F1, IKey::F1);
-			MAP_KEY(SDLK_F2, IKey::F2);
-			MAP_KEY(SDLK_F3, IKey::F3);
-			MAP_KEY(SDLK_F4, IKey::F4);
-			MAP_KEY(SDLK_F5, IKey::F5);
-			MAP_KEY(SDLK_F6, IKey::F6);
-			MAP_KEY(SDLK_F7, IKey::F7);
-			MAP_KEY(SDLK_F8, IKey::F8);
-			MAP_KEY(SDLK_F9, IKey::F9);
-			MAP_KEY(SDLK_F10, IKey::F10);
-			MAP_KEY(SDLK_F11, IKey::F11);
-			MAP_KEY(SDLK_F12, IKey::F12);
-			MAP_KEY(SDLK_F13, IKey::F13);
-			MAP_KEY(SDLK_F14, IKey::F14);
-			MAP_KEY(SDLK_F15, IKey::F15);
-			MAP_KEY(SDLK_NUMLOCK, IKey::NUM_LOCK);
-			MAP_KEY(SDLK_CAPSLOCK, IKey::CAPS_LOCK);
-			MAP_KEY(SDLK_SCROLLOCK, IKey::SCROLL_LOCK);
-			MAP_KEY(SDLK_RMETA, IKey::RIGHT_META);
-			MAP_KEY(SDLK_LMETA, IKey::LEFT_META);
-			MAP_KEY(SDLK_LSUPER, IKey::LEFT_SUPER);
-			MAP_KEY(SDLK_RSUPER, IKey::RIGHT_SUPER);
-			MAP_KEY(SDLK_MODE, IKey::ALT_GR);
-			MAP_KEY(SDLK_UP, IKey::UP);
-			MAP_KEY(SDLK_DOWN, IKey::DOWN);
-			MAP_KEY(SDLK_LEFT, IKey::LEFT);
-			MAP_KEY(SDLK_RIGHT, IKey::RIGHT);
-			MAP_KEY(SDLK_RETURN, IKey::ENTER);
-			MAP_KEY(SDLK_KP_ENTER, IKey::ENTER);
+			MAP_KEY(SDLK_TAB, Key::TAB);
+			MAP_KEY(SDLK_LALT, Key::LEFT_ALT);
+			MAP_KEY(SDLK_RALT, Key::RIGHT_ALT);
+			MAP_KEY(SDLK_LSHIFT, Key::LEFT_SHIFT);
+			MAP_KEY(SDLK_RSHIFT, Key::RIGHT_SHIFT);
+			MAP_KEY(SDLK_LCTRL, Key::LEFT_CONTROL);
+			MAP_KEY(SDLK_RCTRL, Key::RIGHT_CONTROL);
+			MAP_KEY(SDLK_BACKSPACE, Key::BACKSPACE);
+			MAP_KEY(SDLK_PAUSE, Key::PAUSE);
+			MAP_KEY(SDLK_ESCAPE, Key::ESCAPE);
+			MAP_KEY(SDLK_DELETE, Key::DELETE_KEY);
+			MAP_KEY(SDLK_INSERT, Key::INSERT);
+			MAP_KEY(SDLK_HOME, Key::HOME);
+			MAP_KEY(SDLK_END, Key::END);
+			MAP_KEY(SDLK_PAGEUP, Key::PAGE_UP);
+			MAP_KEY(SDLK_PRINT, Key::PRINT_SCREEN);
+			MAP_KEY(SDLK_PAGEDOWN, Key::PAGE_DOWN);
+			MAP_KEY(SDLK_F1, Key::F1);
+			MAP_KEY(SDLK_F2, Key::F2);
+			MAP_KEY(SDLK_F3, Key::F3);
+			MAP_KEY(SDLK_F4, Key::F4);
+			MAP_KEY(SDLK_F5, Key::F5);
+			MAP_KEY(SDLK_F6, Key::F6);
+			MAP_KEY(SDLK_F7, Key::F7);
+			MAP_KEY(SDLK_F8, Key::F8);
+			MAP_KEY(SDLK_F9, Key::F9);
+			MAP_KEY(SDLK_F10, Key::F10);
+			MAP_KEY(SDLK_F11, Key::F11);
+			MAP_KEY(SDLK_F12, Key::F12);
+			MAP_KEY(SDLK_F13, Key::F13);
+			MAP_KEY(SDLK_F14, Key::F14);
+			MAP_KEY(SDLK_F15, Key::F15);
+			MAP_KEY(SDLK_NUMLOCK, Key::NUM_LOCK);
+			MAP_KEY(SDLK_CAPSLOCK, Key::CAPS_LOCK);
+			MAP_KEY(SDLK_SCROLLOCK, Key::SCROLL_LOCK);
+			MAP_KEY(SDLK_RMETA, Key::RIGHT_META);
+			MAP_KEY(SDLK_LMETA, Key::LEFT_META);
+			MAP_KEY(SDLK_LSUPER, Key::LEFT_SUPER);
+			MAP_KEY(SDLK_RSUPER, Key::RIGHT_SUPER);
+			MAP_KEY(SDLK_MODE, Key::ALT_GR);
+			MAP_KEY(SDLK_UP, Key::UP);
+			MAP_KEY(SDLK_DOWN, Key::DOWN);
+			MAP_KEY(SDLK_LEFT, Key::LEFT);
+			MAP_KEY(SDLK_RIGHT, Key::RIGHT);
+			MAP_KEY(SDLK_RETURN, Key::ENTER);
+			MAP_KEY(SDLK_KP_ENTER, Key::ENTER);
 		case SDLK_SPACE:
 			// Special characters like ~ (tilde) ends up with the keysym.sym SDLK_SPACE which
 			// without this check would be lost. The check is only valid on key down events in SDL.
 			if (sdlevt.type == SDL_KEYUP || keysym.unicode == ' ') {
-				value = IKey::SPACE;
+				value = Key::SPACE;
 			}
 			break;
 		default:
@@ -188,16 +188,16 @@ namespace FIFE {
 
 		if (!(keysym.mod & KMOD_NUM)) {
 			switch (keysym.sym) {
-			MAP_KEY(SDLK_KP0, IKey::INSERT);
-			MAP_KEY(SDLK_KP1, IKey::END);
-			MAP_KEY(SDLK_KP2, IKey::DOWN);
-			MAP_KEY(SDLK_KP3, IKey::PAGE_DOWN);
-			MAP_KEY(SDLK_KP4, IKey::LEFT);
-			MAP_KEY(SDLK_KP5, IKey::INVALID_KEY);
-			MAP_KEY(SDLK_KP6, IKey::RIGHT);
-			MAP_KEY(SDLK_KP7, IKey::HOME);
-			MAP_KEY(SDLK_KP8, IKey::UP);
-			MAP_KEY(SDLK_KP9, IKey::PAGE_UP);
+			MAP_KEY(SDLK_KP0, Key::INSERT);
+			MAP_KEY(SDLK_KP1, Key::END);
+			MAP_KEY(SDLK_KP2, Key::DOWN);
+			MAP_KEY(SDLK_KP3, Key::PAGE_DOWN);
+			MAP_KEY(SDLK_KP4, Key::LEFT);
+			MAP_KEY(SDLK_KP5, Key::INVALID_KEY);
+			MAP_KEY(SDLK_KP6, Key::RIGHT);
+			MAP_KEY(SDLK_KP7, Key::HOME);
+			MAP_KEY(SDLK_KP8, Key::UP);
+			MAP_KEY(SDLK_KP9, Key::PAGE_UP);
 			default:
 				break;
 			}
@@ -256,7 +256,7 @@ namespace FIFE {
 		removeListener<IWidgetListener*>(m_pending_wldeletions, listener);
 	}
 
-	void EventManager::dispatchCommand(ICommand& command) {
+	void EventManager::dispatchCommand(Command& command) {
 		if (!m_pending_cldeletions.empty()) {
 			std::vector<ICommandListener*>::iterator i = m_pending_cldeletions.begin();
 			while (i != m_pending_cldeletions.end()) {
@@ -292,7 +292,7 @@ namespace FIFE {
 		}
 	}
 
-	void EventManager::dispatchKeyEvent(IKeyEvent& evt) {
+	void EventManager::dispatchKeyEvent(KeyEvent& evt) {
 		bool nonconsumablekey = false;
 		for (std::vector<int>::iterator it = m_nonconsumablekeys.begin();
 		     it != m_nonconsumablekeys.end(); ++it) {
@@ -330,10 +330,10 @@ namespace FIFE {
 		std::vector<IKeyListener*>::iterator i = m_keylisteners.begin();
 		while (i != m_keylisteners.end()) {
 			switch (evt.getType()) {
-				case IKeyEvent::PRESSED:
+				case KeyEvent::PRESSED:
 					(*i)->keyPressed(evt);
 					break;
-				case IKeyEvent::RELEASED:
+				case KeyEvent::RELEASED:
 					(*i)->keyReleased(evt);
 					break;
 				default:
@@ -347,18 +347,18 @@ namespace FIFE {
 	}
 
 	void EventManager::fillModifiers(InputEvent& evt) {
-		evt.setAltPressed(m_keystatemap[IKey::ALT_GR] |
-						m_keystatemap[IKey::LEFT_ALT] |
-						m_keystatemap[IKey::RIGHT_ALT]);
-		evt.setControlPressed(m_keystatemap[IKey::LEFT_CONTROL] |
-							m_keystatemap[IKey::RIGHT_CONTROL]);
-		evt.setMetaPressed(m_keystatemap[IKey::LEFT_META] |
-							m_keystatemap[IKey::RIGHT_META]);
-		evt.setShiftPressed(m_keystatemap[IKey::LEFT_SHIFT] |
-							m_keystatemap[IKey::RIGHT_SHIFT]);
+		evt.setAltPressed(m_keystatemap[Key::ALT_GR] |
+						m_keystatemap[Key::LEFT_ALT] |
+						m_keystatemap[Key::RIGHT_ALT]);
+		evt.setControlPressed(m_keystatemap[Key::LEFT_CONTROL] |
+							m_keystatemap[Key::RIGHT_CONTROL]);
+		evt.setMetaPressed(m_keystatemap[Key::LEFT_META] |
+							m_keystatemap[Key::RIGHT_META]);
+		evt.setShiftPressed(m_keystatemap[Key::LEFT_SHIFT] |
+							m_keystatemap[Key::RIGHT_SHIFT]);
 	}
 
-	void EventManager::dispatchMouseEvent(IMouseEvent& evt) {
+	void EventManager::dispatchMouseEvent(MouseEvent& evt) {
 		if (!m_pending_mldeletions.empty()) {
 			std::vector<IMouseListener*>::iterator i = m_pending_mldeletions.begin();
 			while (i != m_pending_mldeletions.end()) {
@@ -387,30 +387,30 @@ namespace FIFE {
 		std::vector<IMouseListener*>::iterator i = m_mouselisteners.begin();
 		while (i != m_mouselisteners.end()) {
 			switch (evt.getType()) {
-				case IMouseEvent::MOVED:
+				case MouseEvent::MOVED:
 					(*i)->mouseMoved(evt);
 					break;
-				case IMouseEvent::PRESSED:
+				case MouseEvent::PRESSED:
 					(*i)->mousePressed(evt);
 					break;
-				case IMouseEvent::RELEASED:
+				case MouseEvent::RELEASED:
 					(*i)->mouseReleased(evt);
 					break;
-				case IMouseEvent::WHEEL_MOVED_DOWN:
+				case MouseEvent::WHEEL_MOVED_DOWN:
 					(*i)->mouseWheelMovedDown(evt);
 					break;
-				case IMouseEvent::WHEEL_MOVED_UP:
+				case MouseEvent::WHEEL_MOVED_UP:
 					(*i)->mouseWheelMovedUp(evt);
 					break;
-				case IMouseEvent::CLICKED:
+				case MouseEvent::CLICKED:
 					(*i)->mouseClicked(evt);
 					break;
-				case IMouseEvent::ENTERED:
+				case MouseEvent::ENTERED:
 					(*i)->mouseEntered(evt);
-				case IMouseEvent::EXITED:
+				case MouseEvent::EXITED:
 					(*i)->mouseExited(evt);
 					break;
-				case IMouseEvent::DRAGGED:
+				case MouseEvent::DRAGGED:
 					(*i)->mouseDragged(evt);
 					break;
 				default:
@@ -456,7 +456,7 @@ namespace FIFE {
 		}
 	}
 
-	void EventManager::dispatchWidgetEvent(IWidgetEvent& evt) {
+	void EventManager::dispatchWidgetEvent(WidgetEvent& evt) {
 		if (!m_pending_wldeletions.empty()) {
 			std::vector<IWidgetListener*>::iterator i = m_pending_wldeletions.begin();
 			while (i != m_pending_wldeletions.end()) {
@@ -492,7 +492,7 @@ namespace FIFE {
 		}
 	}
 
-	void EventManager::onWidgetAction(IWidgetEvent& evt) {
+	void EventManager::onWidgetAction(WidgetEvent& evt) {
 		dispatchWidgetEvent(evt);
 	}
 
@@ -514,7 +514,7 @@ namespace FIFE {
 					KeyEvent keyevt;
 					keyevt.setSource(this);
 					fillKeyEvent(event, keyevt);
-					m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == IKeyEvent::PRESSED);
+					m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == KeyEvent::PRESSED);
 					dispatchKeyEvent(keyevt);
 					}
 					break;

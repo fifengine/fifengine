@@ -290,7 +290,7 @@ namespace FIFE {
 		}
 	}
 
-	void Camera::attachToInstance( Instance *instance ) {
+	void Camera::attach(Instance *instance) {
 		m_attachedto = instance;
 	}
 

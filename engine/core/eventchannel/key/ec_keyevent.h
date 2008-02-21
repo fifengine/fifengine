@@ -36,14 +36,20 @@
 #include "eventchannel/base/ec_inputevent.h"
 #include "eventchannel/source/ec_ieventsource.h"
 
-#include "ec_ikeyevent.h"
+#include "ec_key.h"
 
 namespace FIFE {
 
 	/**  Class for key events
 	 */
-	class KeyEvent: public InputEvent, public IKeyEvent {
+	class KeyEvent: public InputEvent {
 	public:
+		enum KeyEventType {
+			UNKNOWN = -1,
+			PRESSED = 0,
+			RELEASED
+		};
+		
 		/** Constructor
 		 */
 		KeyEvent(): 
@@ -62,7 +68,7 @@ namespace FIFE {
 		bool isNumericPad() const { return m_isnumericpad; }
 		void setNumericPad(bool ispad) { m_isnumericpad = ispad; }
 	
-		const IKey& getKey() const { return m_key; }
+		const Key& getKey() const { return m_key; }
 		void setKey(const Key& key) { m_key = key; }
 
 		virtual bool isAltPressed() const { return InputEvent::isAltPressed(); }

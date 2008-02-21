@@ -35,11 +35,25 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "util/singleton.h"
+#include "eventchannel/command/ec_command.h"
+#include "eventchannel/command/ec_icommandcontroller.h"
+#include "eventchannel/command/ec_icommandlistener.h"
+
+#include "eventchannel/key/ec_ikeycontroller.h"
 #include "eventchannel/key/ec_ikeylistener.h"
-#include "eventchannel/key/ec_ikey.h"
-#include "eventchannel/ec_ieventcontroller.h"
+#include "eventchannel/key/ec_keyevent.h"
+#include "eventchannel/key/ec_key.h"
+
+#include "eventchannel/mouse/ec_imousecontroller.h"
+#include "eventchannel/mouse/ec_imouselistener.h"
+#include "eventchannel/mouse/ec_mouseevent.h"
+
+#include "eventchannel/sdl/ec_isdleventcontroller.h"
+#include "eventchannel/sdl/ec_isdleventlistener.h"
+
+#include "eventchannel/widget/ec_iwidgetcontroller.h"
 #include "eventchannel/widget/ec_iwidgetlistener.h"
+#include "eventchannel/widget/ec_widgetevent.h"
 
 namespace FIFE {
 
@@ -51,8 +65,12 @@ namespace FIFE {
 	/**  Event Manager manages all events related to FIFE
 	 */
 	class EventManager: 
-		public DynamicSingleton<EventManager>, 
-		public IEventController,
+		public ICommandController,
+		public IKeyController, 
+		public IMouseController, 
+		public ISdlEventController, 
+		public IWidgetController,
+		public IEventSource,
 		public IWidgetListener {
 	public:
 		/** Constructor.
@@ -65,6 +83,7 @@ namespace FIFE {
 
 		void addCommandListener(ICommandListener* listener);
 		void removeCommandListener(ICommandListener* listener);
+		void dispatchCommand(Command& command);
 		void addKeyListener(IKeyListener* listener);
 		void removeKeyListener(IKeyListener* listener);
 		void addMouseListener(IMouseListener* listener);
@@ -77,9 +96,7 @@ namespace FIFE {
 		void setNonConsumableKeys(const std::vector<int>& keys);
 		std::vector<int> getNonConsumableKeys();
 
-		void dispatchCommand(ICommand& command);
-
-		void onWidgetAction(IWidgetEvent& evt);
+		void onWidgetAction(WidgetEvent& evt);
 
 		/** Process the SDL event queue.
 		 * This is to be called only by the engine itself once per frame. 
@@ -88,10 +105,10 @@ namespace FIFE {
 		void processEvents();
 
 	private:
-		void dispatchKeyEvent(IKeyEvent& evt);
-		void dispatchMouseEvent(IMouseEvent& evt);
+		void dispatchKeyEvent(KeyEvent& evt);
+		void dispatchMouseEvent(MouseEvent& evt);
 		void dispatchSdlEvent(SDL_Event& evt);
-		void dispatchWidgetEvent(IWidgetEvent& evt);
+		void dispatchWidgetEvent(WidgetEvent& evt);
 		void fillModifiers(InputEvent& evt);
 		void fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt);
 		void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt);
@@ -119,7 +136,7 @@ namespace FIFE {
 		std::vector<int> m_nonconsumablekeys;
 		std::map<int, bool> m_keystatemap;
 		int m_mousestate;
-		IMouseEvent::MouseButtonType m_mostrecentbtn;
+		MouseEvent::MouseButtonType m_mostrecentbtn;
 	};
 } //FIFE
 

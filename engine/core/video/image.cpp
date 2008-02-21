@@ -112,6 +112,14 @@ namespace FIFE {
 	}
 	
 	void Image::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
+		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
+			r = 0;
+			g = 0;
+			b = 0;
+			a = 0;
+			return;
+		}
+		
 		int bpp = m_surface->format->BytesPerPixel;
 		Uint8 *p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
 		uint32_t pixel;

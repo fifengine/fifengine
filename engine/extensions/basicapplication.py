@@ -19,14 +19,14 @@ class ExitEventListener(fife.IKeyListener):
 		self.app = app
 		self.engine = app.engine
 		eventmanager = self.engine.getEventManager()
-		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE])
+		eventmanager.setNonConsumableKeys([fife.Key.ESCAPE])
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
 		self.quitRequested = False
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
-		if keyval == fife.IKey.ESCAPE:
+		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
 	
 	def keyReleased(self, evt):

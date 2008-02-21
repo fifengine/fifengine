@@ -33,9 +33,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_isdleventlistener.h"
 
 namespace FIFE {
+	class ISdlEventListener;
 
 	/**  Controller provides a way to receive events from the system
 	 * Using this interface, clients can subscribe themselves to receive events

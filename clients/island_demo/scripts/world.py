@@ -47,7 +47,7 @@ class World(EventListenerBase):
 
 		for cam in self.view.getCameras():
 			self.cameras[cam.getId()] = cam
-		self.cameras['main'].attachToInstance(self.hero.agent)
+		self.cameras['main'].attach(self.hero.agent)
 				
 		self.view.resetRenderers()
 		renderer = fife.FloatingTextRenderer.getInstance(self.view)
@@ -109,13 +109,13 @@ class World(EventListenerBase):
 	
 	def mouseReleased(self, evt):
 		clickpoint = self.getMousePoint(evt.getX(), evt.getY())
-		if (evt.getButton() == fife.IMouseEvent.LEFT):
+		if (evt.getButton() == fife.MouseEvent.LEFT):
 			target_mapcoord = self.cameras['main'].toMapCoordinates(clickpoint)
 			target_mapcoord.z = 0
 			l = fife.Location(self.agentlayer)
 			l.setMapCoordinates(target_mapcoord)
 			self.hero.run(l)
-		elif (evt.getButton() == fife.IMouseEvent.RIGHT):
+		elif (evt.getButton() == fife.MouseEvent.RIGHT):
 			instances = self.cameras['main'].getMatchingInstances(clickpoint, self.agentlayer);
 			print "selected instances on agent layer: ", [i.getObject().Id() for i in instances]
 

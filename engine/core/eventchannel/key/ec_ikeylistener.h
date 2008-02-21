@@ -33,9 +33,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_ikeyevent.h"
 
 namespace FIFE {
+	class KeyEvent;
 
 	/**  Listener of key events.
 	 * To be able to listen for key events you must make a class which inherits 
@@ -47,12 +47,12 @@ namespace FIFE {
 		 * If a key is held down the multiple key presses are generated.
 		 * @param keyevent discribes the event.
 		 */
-		virtual void keyPressed(IKeyEvent& evt) = 0;
+		virtual void keyPressed(KeyEvent& evt) = 0;
 
 		/** Called if a key is released
 		 * @param keyevent discribes the event.
 		 */
-		virtual void keyReleased(IKeyEvent& evt) = 0;
+		virtual void keyReleased(KeyEvent& evt) = 0;
 
 		virtual ~IKeyListener() {}
 	};

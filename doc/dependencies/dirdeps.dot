@@ -30,7 +30,7 @@ subgraph cluster_3 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "eventchannel"; "eventchannel/base"; "eventchannel/command"; "eventchannel/key"; "eventchannel/manager"; "eventchannel/mouse"; "eventchannel/sdl"; "eventchannel/source"; "eventchannel/widget"
+    "eventchannel"; "eventchannel/base"; "eventchannel/command"; "eventchannel/key"; "eventchannel/mouse"; "eventchannel/sdl"; "eventchannel/source"; "eventchannel/widget"
     label = "eventchannel";
 }
 subgraph cluster_4 {
@@ -102,7 +102,7 @@ subgraph cluster_12 {
     "audio" -> "vfs"
     "audio" -> "vfs/raw"
     "controller" -> "audio"
-    "controller" -> "eventchannel/manager"
+    "controller" -> "eventchannel"
     "controller" -> "gui"
     "controller" -> "gui/base"
     "controller" -> "gui/base/opengl"
@@ -122,16 +122,16 @@ subgraph cluster_12 {
     "controller" -> "video/sdl"
     "controller" -> "view"
     "controller" -> "view/renderers"
+    "eventchannel" -> "eventchannel/command"
+    "eventchannel" -> "eventchannel/key"
+    "eventchannel" -> "eventchannel/mouse"
+    "eventchannel" -> "eventchannel/sdl"
+    "eventchannel" -> "eventchannel/widget"
+    "eventchannel" -> "util"
     "eventchannel/base" -> "eventchannel/source"
     "eventchannel/command" -> "eventchannel/base"
     "eventchannel/key" -> "eventchannel/base"
     "eventchannel/key" -> "eventchannel/source"
-    "eventchannel/manager" -> "eventchannel"
-    "eventchannel/manager" -> "eventchannel/command"
-    "eventchannel/manager" -> "eventchannel/key"
-    "eventchannel/manager" -> "eventchannel/mouse"
-    "eventchannel/manager" -> "eventchannel/widget"
-    "eventchannel/manager" -> "util"
     "eventchannel/mouse" -> "eventchannel/base"
     "eventchannel/widget" -> "eventchannel/base"
     "gui" -> "eventchannel/key"

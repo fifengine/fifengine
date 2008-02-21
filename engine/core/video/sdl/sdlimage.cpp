@@ -59,7 +59,7 @@ namespace FIFE {
 
 
 	void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
-	                               SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha ) {
+		SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha ) {
 		if( 0 == alpha ) {
 			return;
 		}

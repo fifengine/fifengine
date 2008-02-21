@@ -22,6 +22,9 @@ namespace FIFE {
 		void setLocation(Location location);
 		Location getLocation() const;
 		Location& getLocationRef();
+		void attach(Instance *instance);
+		void detach();
+		Instance* getAttached() const;
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
 		void setCellImageDimensions(unsigned int width, unsigned int height);
@@ -33,10 +36,6 @@ namespace FIFE {
 		
 		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
 
-		void attachToInstance( Instance *instance );
-		void detach();
-		bool isAttached() const;
-		
 		void refresh();
 	};
 	%clear std::list<Instance*>& instances;

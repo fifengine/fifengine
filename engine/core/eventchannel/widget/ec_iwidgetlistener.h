@@ -33,9 +33,9 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_iwidgetevent.h"
 
 namespace FIFE {
+	class WidgetEvent;
 
 	/**  Listener of widget events.
 	 * To be able to listen for widget events you must make a class which inherits 
@@ -49,7 +49,7 @@ namespace FIFE {
 		 * occured.
 		 * @param evy the event of the action.
 		 */
-		virtual void onWidgetAction(IWidgetEvent& evt) = 0;
+		virtual void onWidgetAction(WidgetEvent& evt) = 0;
 
 		virtual ~IWidgetListener() {}
 	};
