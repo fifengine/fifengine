@@ -127,7 +127,7 @@ namespace FIFE {
 	}
 	
 	bool RenderBackendSDL::putPixel(int x, int y, int r, int g, int b) {
-		static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b);
+		return static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b);
 	}
 	
 	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {

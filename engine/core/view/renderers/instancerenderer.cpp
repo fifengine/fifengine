@@ -90,12 +90,15 @@ namespace FIFE {
 		}
 
 		bool potential_outlining = false;
+		InstanceToOutlines_t i2o;
+		InstanceToOutlines_t::iterator end;
+		
 		LayerToOutlineMap_t::iterator l2i = m_layer_to_outlinemap.find(layer);
 		if (l2i != m_layer_to_outlinemap.end()) {
 			potential_outlining = true;
+			i2o = l2i->second;
+			end = i2o.end();
 		}
-		InstanceToOutlines_t& i2o = l2i->second;
-		InstanceToOutlines_t::iterator end = i2o.end();
 
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
