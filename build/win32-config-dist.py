@@ -10,7 +10,7 @@ def addExtras(context):
 	includepath = path + '\\..\\..\\includes\\mingw'
 	staticlibpath = path + '\\..\\..\\static_libs\\mingw'
 
-	context.env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\sdl_image', includepath + '\\zlib', includepath + '\\libguichan', includepath + '\\boost_1_34_1', includepath + '\\libvorbis', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\python25'])
+	context.env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\sdl_image', includepath + '\\zlib', includepath + '\\libguichan', includepath + '\\boost_1_33_1', includepath + '\\libvorbis', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\python25'])
 	context.env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python25'])
 	
 	context.env.Append(LIBS = ['libguichan_sdl', 'libguichan', 'mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'python25'])
