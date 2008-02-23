@@ -22,7 +22,7 @@ namespace FIFE {
 		~Location();
 		void reset();
 		Location& operator=(const Location& rhs) const;
-		bool operator==(const Location& loc) const;
+		inline bool operator==(const Location& loc) const;
 		
 		Map* getMap() const;
 		void setLayer(Layer* layer);
