@@ -36,28 +36,21 @@
 //
 
 #include "ec_nativetriggertypes.h"
+#include "ec_itrigger.h"
 
 namespace FIFE {
-	
-	class ITrigger;
 
 	/**
 	 * Manages triggers
 	 */
-	class TriggerManager {
+	class ITriggerManager {
 		
 	public:
-		
-		/** Constructor
-		 *
-		 */
-		TriggerManager();
-
 		void registerTrigger(ITrigger& trigger);
 
 		void pollTriggers();
 
-	private:
+	protected:
 		std::list<ITrigger*> m_triggers;
 
 	};

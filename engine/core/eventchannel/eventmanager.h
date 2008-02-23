@@ -55,6 +55,8 @@
 #include "eventchannel/widget/ec_iwidgetlistener.h"
 #include "eventchannel/widget/ec_widgetevent.h"
 
+#include "eventchannel/trigger/ec_itriggermanager.h"
+
 namespace FIFE {
 
 	class ICommandListener;
@@ -71,7 +73,8 @@ namespace FIFE {
 		public ISdlEventController, 
 		public IWidgetController,
 		public IEventSource,
-		public IWidgetListener {
+		public IWidgetListener,
+		public ITriggerManager {
 	public:
 		/** Constructor.
 		 */
@@ -97,6 +100,9 @@ namespace FIFE {
 		std::vector<int> getNonConsumableKeys();
 
 		void onWidgetAction(WidgetEvent& evt);
+
+		void registerTrigger(ITrigger& trigger);
+		void pollTriggers();
 
 		/** Process the SDL event queue.
 		 * This is to be called only by the engine itself once per frame. 

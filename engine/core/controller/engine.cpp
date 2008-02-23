@@ -44,7 +44,6 @@
 #include "vfs/zip/zipprovider.h"
 #endif
 #include "eventchannel/eventmanager.h"
-#include "eventchannel/trigger/ec_triggermanager.h"
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
@@ -158,9 +157,6 @@ namespace FIFE {
 
 		FL_LOG(_log, "Creating event manager");
 		m_eventmanager = new EventManager();
-
-		FL_LOG(_log, "Creating trigger manager");
-		m_triggermanager = new TriggerManager();
 
 		FL_LOG(_log, "Creating pools");
 		m_imagepool = new ImagePool();
@@ -290,7 +286,6 @@ namespace FIFE {
 		m_renderbackend->endFrame();
 		SDL_Delay(1);
 		m_eventmanager->processEvents();
-		m_triggermanager->pollTriggers();
 		m_renderbackend->startFrame();
 		
 	}

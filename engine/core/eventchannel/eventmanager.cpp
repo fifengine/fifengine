@@ -537,6 +537,8 @@ namespace FIFE {
 			}
 			dispatchSdlEvent(event);
 		}
+
+		pollTriggers();
 	}
 
 	EventSourceType EventManager::getEventSourceType() {
@@ -549,5 +551,17 @@ namespace FIFE {
 
 	std::vector<int> EventManager::getNonConsumableKeys() {
 		return m_nonconsumablekeys;
+	}
+
+	void EventManager::registerTrigger(ITrigger& trigger){
+		m_triggers.push_back(&trigger);
+	}
+
+	void EventManager::pollTriggers(){
+		for (std::list<ITrigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
+			if((*it)->pollTrigger()){
+				//Do something!
+			}
+		}
 	}
 }
