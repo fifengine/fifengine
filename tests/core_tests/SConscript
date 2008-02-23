@@ -28,4 +28,8 @@ env.Program('testprog_animations', ['test_animations.cpp'])
 env.Program('testprog_imagepool', ['test_imagepool.cpp'])
 env.Program('testprog_vfs', ['test_vfs.cpp'])
 
+
+if env['zip']:
+	env.Program('testprog_zip', ['test_zip.cpp'])
+
 # vim: set filetype=python :

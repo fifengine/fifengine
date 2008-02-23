@@ -18,61 +18,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
-
-#ifndef FIFE_ZIP_SOURCE_H
-#define FIFE_ZIP_SOURCE_H
-
-// Standard C++ library includes
-//
-#include <map>
-
-// 3rd party library includes
-//
-
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-#include "vfs/vfssource.h"
+#include "zipfilesource.h"
+#include <cassert>
+#include <string>
 
 namespace FIFE {
-	/**  Implements a Zip archive file source.
-	 *
-	 * @see FIFE::VFSSource
-	 */
-	class ZipSource : public VFSSource {
-		public:
-			ZipSource(VFS* vfs, const std::string& zip_file);
-			~ZipSource();
 
-			/// WARNING: fileExists, listFiles and listDirectories are not
-			// thread-safe, and will probably break if called from multiple
-			// threads at the same time.
-			bool fileExists(const std::string& file) const;
-			std::set<std::string> listFiles(const std::string& path) const;
-			std::set<std::string> listDirectories(const std::string& path) const;
+	ZipFileSource::ZipFileSource(uint8_t* data, unsigned int datalen) : m_data(data), m_datalen(datalen) {
+	}
 
-			virtual RawData* open(const std::string& path) const;
+	ZipFileSource::~ZipFileSource() {
+		delete[] m_data;
+	}
 
-		private:
-			struct s_data {
-					uint16_t comp;
-					uint32_t crc32;
-					std::string path;
-					unsigned int size_comp;
-					unsigned int size_real;
-					unsigned int offset;
-				};
+	unsigned int ZipFileSource::getSize() const {
+		return m_datalen;
+	}
 
-			typedef std::map<std::string, s_data> type_files;
-
-			RawData* m_zipfile;
-			type_files m_files;
-
-			void readIndex();
-			bool readFileToIndex();
-	};
-
-} //FIFE
-
-#endif
+	void ZipFileSource::readInto(uint8_t* target, unsigned int start, unsigned int len) {
+		assert(start + len <= m_datalen);
+		memcpy(target, m_data + start, len);
+	}
+}
