@@ -197,7 +197,6 @@ namespace FIFE {
 		bool m_logtofile;
 		bool m_logtoprompt;
 		
-		std::ofstream* m_flowtracefile;
 		std::ofstream* m_logfile;
 	};
 	

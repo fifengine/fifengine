@@ -173,7 +173,6 @@ namespace FIFE {
 		m_logtofile(false),
 		m_logtoprompt(false) {
 		validateModuleDescription(LM_CORE);
-		m_flowtracefile = new std::ofstream("fife_flow.log");
 		m_logfile = new std::ofstream("fife.log");
 		clearVisibleModules();
 	}
