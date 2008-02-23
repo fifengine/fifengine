@@ -142,7 +142,7 @@ namespace FIFE {
 		std::vector<std::string>::const_iterator token=tokens.begin();
 		while (token != tokens.end()) {
 			if (*token != "") {
-				if (*token != "." && *token != ".." && listDirectories(currentpath, *token).size() == 0) {
+				if (*token != "." && *token != ".." && VFS::instance()->listDirectories(currentpath, *token).size() == 0) {
 					return false;
 				} else {
 					currentpath += *token + "/";
