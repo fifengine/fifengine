@@ -161,9 +161,13 @@ namespace FIFE {
 		unsigned int getHeight() const;
 		const Rect& getArea();
 		void setXShift(int xshift);
-		int getXShift() const;
+		inline int getXShift() const {
+			return m_xshift;
+		}
 		void setYShift(int yshift);
-		int getYShift() const;
+		inline int getYShift() const {
+			return m_yshift;
+		}
 		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();

@@ -34,6 +34,7 @@
 #include "glimage.h"
 
 namespace FIFE {
+	const unsigned int CHUNK_SIZE = 256;
 
 	GLImage::GLImage(SDL_Surface* surface):
 		Image(surface) {
@@ -111,18 +112,18 @@ namespace FIFE {
 					tex_end_y = 1.0;
 				}
 
-				target.x = rect.x + static_cast<int>(i*256*scale_x);
-				target.y = rect.y + static_cast<int>(j*256*scale_y);
+				target.x = rect.x + static_cast<int>(i*CHUNK_SIZE*scale_x);
+				target.y = rect.y + static_cast<int>(j*CHUNK_SIZE*scale_y);
 
 				if (i == m_cols-1) {
 					target.w = static_cast<int>(scale_y*m_last_col_width*m_tex_x);
 				} else {
-					target.w = static_cast<int>(scale_y*256);
+					target.w = static_cast<int>(scale_y*CHUNK_SIZE);
 				}
 				if (j == m_rows-1) {
 					target.h = static_cast<int>(scale_y*m_last_row_height*m_tex_y);
 				} else {
-					target.h = static_cast<int>(scale_y*256);
+					target.h = static_cast<int>(scale_y*CHUNK_SIZE);
 				}
 
 				glBegin(GL_QUADS);
@@ -151,35 +152,35 @@ namespace FIFE {
 		int pitch = m_surface->pitch;
 
 		m_last_col_width = 1;
-		m_cols = static_cast<int>(width/256);
-		if (width%256) {
+		m_cols = static_cast<int>(width/CHUNK_SIZE);
+		if (width%CHUNK_SIZE) {
 			++m_cols;
-			while(m_last_col_width < width%256) {
+			while(m_last_col_width < width%CHUNK_SIZE) {
 				m_last_col_width <<= 1;
 			}
 		} else {
-			m_last_col_width = 256;
+			m_last_col_width = CHUNK_SIZE;
 		}
 
 		m_last_row_height = 1;
-		m_rows = static_cast<int>(height/256);
-		if (height%256) {
+		m_rows = static_cast<int>(height/CHUNK_SIZE);
+		if (height%CHUNK_SIZE) {
 			++m_rows;
-			while(m_last_row_height < height%256) {
+			while(m_last_row_height < height%CHUNK_SIZE) {
 				m_last_row_height <<= 1;
 			}
 		} else {
-			m_last_row_height = 256;
+			m_last_row_height = CHUNK_SIZE;
 		}
 
 		m_textureid = new GLuint[m_rows*m_cols];
 		memset(m_textureid, 0x00, m_rows*m_cols*sizeof(GLuint));
 
-		if(width%256) {
-			m_tex_x = static_cast<float>(width%256) / static_cast<float>(m_last_col_width);
-			m_tex_y = static_cast<float>(height%256) / static_cast<float>(m_last_row_height);
+		if(width%CHUNK_SIZE) {
+			m_tex_x = static_cast<float>(width%CHUNK_SIZE) / static_cast<float>(m_last_col_width);
+			m_tex_y = static_cast<float>(height%CHUNK_SIZE) / static_cast<float>(m_last_row_height);
 		}
-		else {  // (width%256) / m_last_col_width == 0 == 256 (mod 256)
+		else {  // (width%CHUNK_SIZE) / m_last_col_width == 0 == CHUNK_SIZE (mod CHUNK_SIZE)
 			m_tex_x = 1.0f;
 			m_tex_y = 1.0f;
 		}
@@ -193,23 +194,23 @@ namespace FIFE {
 			for (unsigned int j = 0; j < m_rows; ++j) {
 				if (i==m_cols-1) {
 					chunk_width = m_last_col_width;
-					data_chunk_width = width%256;
-					if(data_chunk_width == 0) {  // 0 == 256 (mod 256)
-						data_chunk_width = 256;
+					data_chunk_width = width%CHUNK_SIZE;
+					if(data_chunk_width == 0) {  // 0 == CHUNK_SIZE (mod CHUNK_SIZE)
+						data_chunk_width = CHUNK_SIZE;
 					}
 				} else {
-					chunk_width = 256;
-					data_chunk_width = 256;
+					chunk_width = CHUNK_SIZE;
+					data_chunk_width = CHUNK_SIZE;
 				}
 				if (j==m_rows-1) {
 					chunk_height = m_last_row_height;
-					data_chunk_height = height%256;
-					if(data_chunk_height == 0) {  // 0 = 256 (mod 256)
-						data_chunk_height = 256;
+					data_chunk_height = height%CHUNK_SIZE;
+					if(data_chunk_height == 0) {  // 0 = CHUNK_SIZE (mod CHUNK_SIZE)
+						data_chunk_height = CHUNK_SIZE;
 					}
 				} else {
-					chunk_height = 256;
-					data_chunk_height = 256;
+					chunk_height = CHUNK_SIZE;
+					data_chunk_height = CHUNK_SIZE;
 				}
 
 				uint32_t* oglbuffer = new uint32_t[chunk_width * chunk_height];
@@ -217,7 +218,7 @@ namespace FIFE {
 
 				for (unsigned int y = 0;  y < data_chunk_height; ++y) {
 					for (unsigned int x = 0; x < data_chunk_width; ++x) {
-						unsigned int pos = (y + j*256)*pitch + (x + i*256) * 4;
+						unsigned int pos = (y + j*CHUNK_SIZE)*pitch + (x + i*CHUNK_SIZE) * 4;
 
 						// FIXME
 						// The following code might not be endianness correct

@@ -83,7 +83,7 @@ namespace FIFE {
 		void cleanup();
 		void resetGlimage();
 		
-		/** Generates 256*256 pixel chunks for renders. For reference, see
+		/** Generates chunks for render. For reference, see
 		 * http://developer.apple.com/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/chapter_10_section_4.html
 		 */
 		void generateTextureChunks();

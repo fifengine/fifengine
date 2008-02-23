@@ -71,14 +71,6 @@ namespace FIFE {
 		return *this;
 	}
 	
-	bool Location::operator==(const Location& loc) const {
-		return ((m_layer == loc.m_layer) && (m_exact_layer_coords == loc.m_exact_layer_coords));
-	}
-		
-	bool Location::operator!=(const Location& loc) const {
-		return !(*this == loc);
-	}
-	
 	Map* Location::getMap() const {
 		if (!m_layer) {
 			return NULL;

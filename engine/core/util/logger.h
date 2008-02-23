@@ -228,7 +228,7 @@ namespace FIFE {
 		
 		/** gets module where this logger is associated to
 		 */
-		logmodule_t getModule() const { return m_module; }
+		inline logmodule_t getModule() const { return m_module; }
 		
 	private:
 		logmodule_t m_module;

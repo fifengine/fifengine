@@ -182,7 +182,14 @@ namespace FIFE {
 		/** Gets angle of vector defined by given locations and camera properties (e.g. rotation)
 		 *  @return angle in polar coordinates
 		 */
-		int getAngleBetween(const Location& loc1, const Location& loc2);
+		inline int getAngleBetween(const Location& loc1, const Location& loc2) {
+			ScreenPoint pt1 = this->toScreenCoordinates(loc1.getMapCoordinates());
+			ScreenPoint pt2 = this->toScreenCoordinates(loc2.getMapCoordinates());
+			double dy = pt2.y - pt1.y;
+			double dx = pt2.x - pt1.x;
+			int angle = static_cast<int>(atan2(-dy,dx)*(180.0/M_PI));
+			return angle;
+		}
 		
 		/** Returns instances that match given screen coordinate
 		 * @param screen_coords screen coordinates to be used for hit search
@@ -209,11 +216,13 @@ namespace FIFE {
 
 		/** Returns latest camera movement in screen coordinates (dx, dy)
 		 */
-		ScreenPoint getLatestMovement();
+		inline ScreenPoint getLatestMovement() {
+			return m_prev_origo - m_cur_origo;
+		}
 		
 		/** Returns true, if camera was rotated, tilted or zoomed during the previous update
 		 */
-		bool isWarped() { return m_iswarped; }
+		inline bool isWarped() { return m_iswarped; }
 		
 		/** Resets temporary values from last update round, like warped flag
 		 */

@@ -141,20 +141,16 @@ namespace FIFE {
 	public:
 		Camera* cam;
 		bool operator()(const Instance* lhs, const Instance* rhs) {
-			return (lhs->getVisual<InstanceVisual>()->getCacheItem(cam).screenpoint.z <
-				rhs->getVisual<InstanceVisual>()->getCacheItem(cam).screenpoint.z);
+			InstanceVisual* liv = lhs->getVisual<InstanceVisual>();
+			InstanceVisual* riv = rhs->getVisual<InstanceVisual>();
+			InstanceVisualCacheItem& lic = liv->getCacheItem(cam);
+			InstanceVisualCacheItem& ric = riv->getCacheItem(cam);
+			if (lic.screenpoint.z == ric.screenpoint.z) {
+				return liv->getStackPosition() < riv->getStackPosition();
+			}
+			return lic.screenpoint.z < ric.screenpoint.z;
 		}
 	};
-	
-/*	bool instanceDistanceSort(const Instance* lhs, const Instance* rhs) {
-		return (lhs->getVisual<InstanceVisual>()->getCacheItem(cam).screenpoint.z <
-			rhs->getVisual<InstanceVisual>()->getCacheItem(cam).screenpoint.z);
-	}
-*/
-	bool instanceStackSort(const Instance* lhs, const Instance* rhs) {
-		return (lhs->getVisual<InstanceVisual>()->getStackPosition() <
-		        rhs->getVisual<InstanceVisual>()->getStackPosition());
-	}
 
 	void View::resetRenderers() {
 		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
@@ -179,10 +175,10 @@ namespace FIFE {
 			if (!cam->isEnabled()) {
 				continue;
 			}
-
 			cam->update();
-
+			ScreenPoint cammove = cam->getLatestMovement();
 			const Location& loc = cam->getLocationRef();
+			
 			Map* map = loc.getMap();
 			if (!map) {
 				FL_ERR(_log, "No map for camera found");
@@ -210,12 +206,13 @@ namespace FIFE {
 					// use cached values if there is no need to do full recalculation
 					
 					ScreenPoint drawpt;
+					int angle = 0;
 					//std::cout << m_updated << ", " << (!cam->isWarped()) << ", " << (!instance->isMoved()) << "\n";
 					if (m_updated && (!cam->isWarped()) && (!instance->isMoved()) && (vc.image)) {
-						ScreenPoint cammove = cam->getLatestMovement();
 						int pos_estimate_x = vc.screenpoint.x - cammove.x;
 						int pos_estimate_y = vc.screenpoint.y - cammove.y;
 						int pos_estimate_z = vc.screenpoint.z - cammove.z;
+						angle = vc.facing_angle;
 						//std::cout << "orig x = " << drawpt.x << ", est x = " << pos_estimate_x << "\n";
 						//std::cout << "orig y = " << drawpt.y << ", est y = " << pos_estimate_y << "\n";
 						drawpt.x = pos_estimate_x;
@@ -224,10 +221,10 @@ namespace FIFE {
 						//drawpt.z = cam->toScreenCoordinates( instance->getLocationRef().getMapCoordinates() ).z;
 					} else {
 						drawpt = cam->toScreenCoordinates( instance->getLocationRef().getMapCoordinates() );
+						vc.facing_angle = angle = cam->getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
 					}
 					Image* image = NULL;
 					Action* action = instance->getCurrentAction();
-					int angle = cam->getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
 					if (action) {
 						FL_DBG(_log, "Instance has action");
 						int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
@@ -264,7 +261,6 @@ namespace FIFE {
 
 				InstanceDistanceSort ids;
 				ids.cam = cam;
-				std::stable_sort(instances_to_render.begin(), instances_to_render.end(), instanceStackSort);
 				std::stable_sort(instances_to_render.begin(), instances_to_render.end(), ids);
 
 				std::list<RendererBase*>::iterator r_it = m_pipeline.begin();

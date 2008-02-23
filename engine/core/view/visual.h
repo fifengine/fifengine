@@ -139,6 +139,8 @@ namespace FIFE {
 		// image used during previous render
 		Image* image;
 		
+		// current facing angle 
+		int facing_angle;
 	private:
 		int m_cached_static_img_id;
 		int m_cached_static_img_angle;

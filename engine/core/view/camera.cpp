@@ -69,18 +69,6 @@ namespace FIFE {
 	Camera::~Camera() {
 	}
 
-	int Camera::getAngleBetween(const Location& loc1, const Location& loc2) {
-		ScreenPoint pt1 = this->toScreenCoordinates(loc1.getMapCoordinates());
-		ScreenPoint pt2 = this->toScreenCoordinates(loc2.getMapCoordinates());
-		double dy = pt2.y - pt1.y;
-		double dx = pt2.x - pt1.x;
-
-		int angle = static_cast<int>(atan2(-dy,dx)*(180.0/M_PI));
-
-		FL_DBG(_log, LMsg("-> angle, pt1=") << pt1 << ", pt2=" << pt2 << ", angle=" << angle);
-		return angle;
-	}
-
 	void Camera::setTilt(double tilt) {
 		m_tilt = tilt;
 		updateReferenceScale();
@@ -122,10 +110,6 @@ namespace FIFE {
 		updateReferenceScale();
 		updateMatrices();
 		m_iswarped = true;
-	}
-
-	ScreenPoint Camera::getLatestMovement() {
-		return m_prev_origo - m_cur_origo;
 	}
 
 	void Camera::setLocation(const Location& location) {

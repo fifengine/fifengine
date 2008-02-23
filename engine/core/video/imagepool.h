@@ -50,8 +50,8 @@ namespace FIFE {
 		 */
 		virtual ~ImagePool() {}
 
-		Image& getImage(unsigned int index)  {
-			return dynamic_cast<Image&>(get(index));
+		inline Image& getImage(unsigned int index)  {
+			return static_cast<Image&>(get(index));
 		}
 	};
 

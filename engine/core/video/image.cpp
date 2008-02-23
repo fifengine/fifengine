@@ -103,14 +103,6 @@ namespace FIFE {
 		m_yshift = yshift;
 	}
 
-	int Image::getXShift() const {
-		return m_xshift;
-	}
-
-	int Image::getYShift() const {
-		return m_yshift;
-	}
-	
 	void Image::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
 		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
 			r = 0;

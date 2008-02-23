@@ -153,7 +153,7 @@ namespace FIFE {
 
 		/** Returns true, if instance was moved during previous update
 		 */
-		bool isMoved() { return m_cur_location != m_prev_location; }
+		inline bool isMoved() { return m_cur_location != m_prev_location; }
 		
 		/** Performs given named action to the instance. Performs no movement
 		 *  @param action_name name of the action

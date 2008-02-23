@@ -67,11 +67,15 @@ namespace FIFE {
 		
 		/** Compares equality of two locations
 		 */
-		bool operator==(const Location& loc) const;
+		inline bool operator==(const Location& loc) const {
+			return ((m_layer == loc.m_layer) && (m_exact_layer_coords == loc.m_exact_layer_coords));
+		}
 		
 		/** Compares unequality of two locations
 		 */
-		bool operator!=(const Location& loc) const;
+		inline bool operator!=(const Location& loc) const {
+			return !(*this == loc);
+		}
 		
 		/** Gets the map where this location is pointing to
 		 * @note this information is fetched from the set layer
