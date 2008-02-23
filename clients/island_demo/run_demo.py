@@ -101,12 +101,13 @@ class IslandDemo(ApplicationBase):
 		
 		self.soundmanager = self.engine.getSoundManager()
 		self.soundmanager.init()
-
-		# play track as background music
-		emitter = self.soundmanager.createEmitter()
-		emitter.load('content/audio/music/caribic.ogg')
-		emitter.setLooping(True)
-		emitter.play()
+		
+		if TDS.PlaySounds:
+			# play track as background music
+			emitter = self.soundmanager.createEmitter()
+			emitter.load('content/audio/music/caribic.ogg')
+			emitter.setLooping(True)
+			emitter.play()
 		
 	def createListener(self):
 		pass # already created in constructor
