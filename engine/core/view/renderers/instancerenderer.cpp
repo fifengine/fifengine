@@ -57,12 +57,12 @@ namespace FIFE {
 		g(0), 
 		b(0), 
 		width(1), 
-		mask(NULL), 
+		outline(NULL), 
 		curimg(NULL) {
 	}
 	
 	InstanceRenderer::OutlineInfo::~OutlineInfo() { 
-		delete mask;
+		delete outline;
 	}
 	
 	InstanceRenderer* InstanceRenderer::getInstance(View* view) {
@@ -111,7 +111,7 @@ namespace FIFE {
 			if (potential_outlining) {
 				InstanceToOutlines_t::iterator it = i2o.find(instance);
 				if (it != end) {
-					bindMask(it->second, vc, cam)->render(vc.dimensions);
+					bindOutline(it->second, vc, cam)->render(vc.dimensions);
 				}
 			}
 			vc.image->render(vc.dimensions);
@@ -119,40 +119,64 @@ namespace FIFE {
 
 	}
 	
-	Image* InstanceRenderer::bindMask(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam) {
+	Image* InstanceRenderer::bindOutline(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam) {
 		if (info.curimg == vc.image) {
-			return info.mask;
+			return info.outline;
 		}
-		if (info.mask) {
-			delete info.mask; // delete old mask
-			info.mask = NULL;
+		if (info.outline) {
+			delete info.outline; // delete old mask
+			info.outline = NULL;
 		}
 		SDL_Surface* surface = vc.image->getSurface();
-		SDL_Surface* mask_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
+		SDL_Surface* outline_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
 		
 		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
-		SDLImage* img = new SDLImage(mask_surface);
+		SDLImage* img = new SDLImage(outline_surface);
 		
 		// TODO: optimize...
 		uint8_t r, g, b, a = 0;
 		int prev_a = a;
+		// vertical sweep
 		for (unsigned int x = 0; x < img->getWidth(); x ++) {
 			for (unsigned int y = 0; y < img->getHeight(); y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
-					for (unsigned int xx = x - info.width; xx <= x + info.width; xx++) {
-						for (unsigned int yy = y - info.width; yy <= y + info.width; yy++) {
-							img->putPixel(xx, yy, info.r, info.g, info.b);
+					if (a < prev_a) {
+						for (unsigned int yy = y; yy < y + info.width; yy++) {
+							img->putPixel(x, yy, info.r, info.g, info.b);
+						}
+					} else {
+						for (unsigned int yy = y - info.width; yy < y; yy++) {
+							img->putPixel(x, yy, info.r, info.g, info.b);
 						}
 					}
 				}
 				prev_a = a;
 			}
 		}
+		// horizontal sweep
+		for (unsigned int y = 0; y < img->getHeight(); y ++) {
+			for (unsigned int x = 0; x < img->getWidth(); x ++) {
+				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
+					if (a < prev_a) {
+						for (unsigned int xx = x; xx < x + info.width; xx++) {
+							img->putPixel(xx, y, info.r, info.g, info.b);
+						}
+					} else {
+						for (unsigned int xx = x - info.width; xx < x; xx++) {
+							img->putPixel(xx, y, info.r, info.g, info.b);
+						}
+					}
+				}
+				prev_a = a;
+			}
+		}
+		
 		// In case of OpenGL backend, SDLImage needs to be converted
-		info.mask = m_renderbackend->createImage(img->detachSurface());
+		info.outline = m_renderbackend->createImage(img->detachSurface());
 		delete img;
-		return info.mask;
+		return info.outline;
 	}
 	
 	void InstanceRenderer::addOutlined(Instance* instance, int r, int g, int b, int width) {

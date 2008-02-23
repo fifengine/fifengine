@@ -84,7 +84,7 @@ namespace FIFE {
 			uint8_t g;
 			uint8_t b;
 			int width;
-			Image* mask;
+			Image* outline;
 			Image* curimg;
 			OutlineInfo();
 			~OutlineInfo();
@@ -94,9 +94,9 @@ namespace FIFE {
 		// mapping of layer -> instance -> outlineinfo
 		LayerToOutlineMap_t m_layer_to_outlinemap;
 		
-		/** Binds new mask (if needed) to the instance's OutlineInfo
+		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
-		Image* bindMask(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam);
+		Image* bindOutline(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam);
 	};
 }
 

@@ -127,7 +127,7 @@ class World(EventListenerBase):
 		instances = self.cameras['main'].getMatchingInstances(pt, self.agentlayer);
 		for i in instances:
 			if i.getObject().Id() in ('Girl', 'Beekeeper'):
-				renderer.addOutlined(i, 173, 255, 47, 3)
+				renderer.addOutlined(i, 173, 255, 47, 2)
 	
 	
 	def onConsoleCommand(self, command):
