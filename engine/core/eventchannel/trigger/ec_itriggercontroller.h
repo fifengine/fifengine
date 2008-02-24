@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_TRIGGERMANAGER_H
-#define FIFE_EVENTCHANNEL_TRIGGERMANAGER_H
+#ifndef FIFE_EVENTCHANNEL_TRIGGERCONTROLLER_H
+#define FIFE_EVENTCHANNEL_TRIGGERCONTROLLER_H
 
 // Standard C++ library includes
 //
@@ -35,12 +35,9 @@
 // Second block: files included from the same folder
 //
 
-#include "ec_nativetriggertypes.h"
-#include "ec_trigger.h"
-
-
 namespace FIFE {
 
+	class Trigger;
 
 	/**
 	 * Manages triggers

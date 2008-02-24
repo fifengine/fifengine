@@ -39,6 +39,8 @@
 #include "model/structures/layer.h"
 #include "model/structures/map.h"
 #include "model/structures/instancetree.h"
+#include "eventchannel/trigger/ec_trigger.h"
+#include "eventchannel/trigger/ec_itriggerlistener.h"
 
 #include "instance.h"
 
@@ -415,5 +417,11 @@ namespace FIFE {
 
 	void Instance::setTriggerController(ITriggerController* triggercontroller){
 		m_triggercontroller = triggercontroller;
+	}
+
+	void Instance::registerTrigger(Trigger& trigger){
+		if(m_triggercontroller != 0){
+			m_triggercontroller->registerTrigger(trigger);
+		}
 	}
 }

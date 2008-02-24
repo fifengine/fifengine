@@ -46,6 +46,8 @@ namespace FIFE {
 	class ActionInfo;
 	class SayInfo;
 	class TimeProvider;
+	class ITriggerListener;
+	class Trigger;
 
 	class InstanceListener {
 	public:
@@ -214,7 +216,8 @@ namespace FIFE {
 		void refresh();
 
 		void setTriggerController(ITriggerController* triggercontroller);
-		
+		void registerTrigger(Trigger& trigger);
+
 		std::vector<std::string> listFields() const;
 		const std::string& get(const std::string& field);
 

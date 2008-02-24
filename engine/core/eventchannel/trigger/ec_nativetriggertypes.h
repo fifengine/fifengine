@@ -41,8 +41,7 @@ namespace FIFE {
 	 */
 	enum NativeTriggerTypes {
 		UnknownTrigger = -1,
-		CustomTrigger = 1,
-		InstanceMoved = 2
+		InstanceMovedTrigger = 1
 	};
 }
 

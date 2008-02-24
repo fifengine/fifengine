@@ -34,6 +34,7 @@
 #include "eventchannel/mouse/ec_mouseevent.h"
 #include "eventchannel/widget/ec_widgetevent.h"
 #include "eventchannel/command/ec_command.h"
+#include "eventchannel/trigger/ec_trigger.h"
 
 #include "eventmanager.h"
 
@@ -563,9 +564,7 @@ namespace FIFE {
 
 	void EventManager::pollTriggers(){
 		for (std::list<Trigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
-			if((*it)->pollTrigger()){
-				//Do something!
-			}
+			(*it)->pollTrigger();
 		}
 	}
 }
