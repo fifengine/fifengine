@@ -63,12 +63,9 @@ static const std::string SUBIMAGE_FILE = "../data/rpg_tiles_01.png";
 // Environment
 struct environment {
 	boost::shared_ptr<TimeManager> timemanager;
-	boost::shared_ptr<VFS> vfs;
 
 	environment()
-		: timemanager(new TimeManager()),
-		  vfs(new VFS()) {
-		vfs->addSource(new VFSDirectory(vfs.get()));
+		: timemanager(new TimeManager()) {
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 				throw SDLException(SDL_GetError());
 			}
@@ -76,8 +73,11 @@ struct environment {
 };
 
 void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, ImagePool& pool) {
+	boost::scoped_ptr<VFS> vfs(new VFS());
+	vfs->addSource(new VFSDirectory(vfs.get()));
+
 	pool.addResourceLoader(new SubImageLoader());
-	pool.addResourceLoader(new ImageLoader());
+	pool.addResourceLoader(new ImageLoader(vfs.get()));
 
 	GuiImageLoader imageloader(pool);
 	gcn::Image::setImageLoader(&imageloader);	
@@ -94,7 +94,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 	top->add(label, 10, 10);
 	top->add(icon, 10, 30);
 
-	ImageLoader provider;
+	ImageLoader provider(vfs.get());
 	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();

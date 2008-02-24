@@ -71,11 +71,11 @@ struct environment {
 		}
 };
 
-void test_image(RenderBackend& renderbackend) {
+void test_image(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	ImageLoader provider;
+	ImageLoader provider(vfs);
 	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();
@@ -96,11 +96,11 @@ void test_image(RenderBackend& renderbackend) {
 	}
 }
 
-void test_subimage(RenderBackend& renderbackend) {
+void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	ImageLoader imgprovider;
+	ImageLoader imgprovider(vfs);
 	boost::scoped_ptr<Image> img(imgprovider.loadImage(ImageLocation(SUBIMAGE_FILE)));
 
 	ImageLocation location(SUBIMAGE_FILE);
@@ -143,7 +143,7 @@ void test_sdl_alphaoptimize() {
 	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	renderbackend.setAlphaOptimizerEnabled(true);
 		
-	ImageLoader provider;
+	ImageLoader provider(env.vfs.get());
 	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 
 	boost::scoped_ptr<Image> alpha_img(provider.loadImage(ImageLocation(ALPHA_IMAGE_FILE)));
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE( SDL_image_test ) {
 #endif
 	environment env;
 	RenderBackendSDL renderbackend;
-	test_image(renderbackend);
+	test_image(env.vfs.get(), renderbackend);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE( OGL_image_test ) {
 #endif
 	environment env;
 	RenderBackendOpenGL renderbackend;
-	test_image(renderbackend);
+	test_image(env.vfs.get(), renderbackend);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE( SDL_subimage_test ) {
 #endif
 	environment env;
 	RenderBackendSDL renderbackend;
-	test_subimage(renderbackend);
+	test_subimage(env.vfs.get(), renderbackend);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE( OGL_subimage_test ) {
 #endif
 	environment env;
 	RenderBackendOpenGL renderbackend;
-	test_subimage(renderbackend);
+	test_subimage(env.vfs.get(), renderbackend);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300

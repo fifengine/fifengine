@@ -36,15 +36,19 @@
 
 namespace FIFE {
 	class Image;
+	class VFS;
 
 	/** ImageLoader for some basic formats like jpeg, png etc. */
 	class ImageLoader : public IPooledResourceLoader {
 	public:
-		ImageLoader() {}
+		ImageLoader(VFS* vfs) : m_vfs(vfs) {}
 		virtual IResource* loadResource(const ResourceLocation& location);
 
 		Image* loadImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
 		Image* loadImage(const std::string& filename) { return loadImage(ResourceLocation(filename)); }
+
+	private:
+		VFS* m_vfs;
 	};
 }
 #endif

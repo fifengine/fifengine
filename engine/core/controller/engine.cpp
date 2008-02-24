@@ -162,7 +162,7 @@ namespace FIFE {
 		m_imagepool = new ImagePool();
 		m_animpool = new AnimationPool();
 		m_imagepool->addResourceLoader(new SubImageLoader());
-		m_imagepool->addResourceLoader(new ImageLoader());
+		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
 		m_animpool->addResourceLoader(new AnimationLoader(m_imagepool));
 
 		FL_LOG(_log, "Creating render backend");

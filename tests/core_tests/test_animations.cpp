@@ -58,12 +58,9 @@ static const std::string ANIM_FILE = "../data/crate_full_001.xml";
 // Environment
 struct environment {
 	boost::shared_ptr<TimeManager> timemanager;
-	boost::shared_ptr<VFS> vfs;
 
 	environment()
-		: timemanager(new TimeManager()),
-		  vfs(new VFS()) {
-		vfs->addSource(new VFSDirectory(vfs.get()));
+		: timemanager(new TimeManager()) {
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 				throw SDLException(SDL_GetError());
 			}
@@ -90,8 +87,11 @@ void test_animation(RenderBackend& renderbackend) {
 	const int H = 600;
 	renderbackend.createMainScreen(W, H, 0, false);
 
+	boost::scoped_ptr<VFS> vfs(new VFS());
+	vfs->addSource(new VFSDirectory(vfs.get()));
+	
 	ImagePool* imagepool = new ImagePool();
-	imagepool->addResourceLoader(new ImageLoader());
+	imagepool->addResourceLoader(new ImageLoader(vfs.get()));
 
 	AnimationPool* animpool = new AnimationPool();
 	animpool->addResourceLoader(new AnimationLoader(imagepool));
