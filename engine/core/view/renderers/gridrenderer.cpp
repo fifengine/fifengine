@@ -49,6 +49,15 @@ namespace FIFE {
 		setEnabled(false);
 	}
 
+ 	GridRenderer::GridRenderer(const GridRenderer& old):
+		RendererBase(old) {
+		setEnabled(false);
+	}
+
+	RendererBase* GridRenderer::clone() {
+		return new GridRenderer(*this);
+	}
+
 	GridRenderer::~GridRenderer() {
 	}
 

@@ -53,10 +53,24 @@ namespace FIFE {
 		setEnabled(true);
 	}
 
+ 	FloatingTextRenderer::FloatingTextRenderer(const FloatingTextRenderer& old):
+		RendererBase(old),
+		m_font(old.m_font) {
+		setEnabled(true);
+	}
+	
+	RendererBase* FloatingTextRenderer::clone() {
+		return new FloatingTextRenderer(*this);
+	}
+
 	FloatingTextRenderer::~FloatingTextRenderer() {
 	}
 
 	void FloatingTextRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+		if (!m_font) {
+			return;
+		}
+		
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
 		const std::string* saytext = NULL;
 

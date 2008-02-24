@@ -1,16 +1,18 @@
 %module fife
 %{
 #include "view/camera.h"
+#include "view/rendererbase.h"
 %}
+
+%include "view/rendererbase.i"
 
 namespace FIFE {
 	typedef Point3D ScreenPoint;
 	%template(ScreenPoint) PointType3D<int>;
 	
 	%apply std::list<Instance*> &OUTPUT { std::list<Instance*>& instances };
-	class Camera {
+	class Camera: public IRendererContainer {
 	public:
-		Camera(const std::string& id, Layer* layer,Rect viewport, ExactModelCoordinate emc);
 		~Camera();
 		const std::string& getId();
 		void setTilt(double tilt);
@@ -35,8 +37,12 @@ namespace FIFE {
 		bool isEnabled();
 		
 		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
+		RendererBase* getRenderer(const std::string& name);
+		void resetRenderers();
 
 		void refresh();
+	private:
+		Camera();
 	};
 	%clear std::list<Instance*>& instances;
 }

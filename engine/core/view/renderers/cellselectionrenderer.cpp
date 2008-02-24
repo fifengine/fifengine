@@ -50,6 +50,16 @@ namespace FIFE {
 		setEnabled(true);
 	}
 
+ 	CellSelectionRenderer::CellSelectionRenderer(const CellSelectionRenderer& old):
+		RendererBase(old),
+		m_loc(NULL) {
+		setEnabled(true);
+	}
+
+	RendererBase* CellSelectionRenderer::clone() {
+		return new CellSelectionRenderer(*this);
+	}
+
 	CellSelectionRenderer::~CellSelectionRenderer() {
 	}
 

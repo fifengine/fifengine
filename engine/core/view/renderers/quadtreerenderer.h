@@ -54,6 +54,10 @@ namespace FIFE {
 			 * @param renderbackend to use
 			 */
 			QuadTreeRenderer(RenderBackend* renderbackend, int position);
+			
+			QuadTreeRenderer(const QuadTreeRenderer& old);
+			
+			RendererBase* clone();
 
 			/** Destructor.
 			 */

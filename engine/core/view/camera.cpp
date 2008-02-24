@@ -28,13 +28,22 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+
 #include "model/metamodel/grids/cellgrid.h"
+#include "model/metamodel/action.h"
+#include "model/metamodel/timeprovider.h"
+#include "model/structures/map.h"
 #include "model/structures/layer.h"
 #include "model/structures/instancetree.h"
 #include "model/structures/instance.h"
+#include "model/structures/location.h"
 #include "util/logger.h"
 #include "util/fife_math.h"
+#include "video/renderbackend.h"
 #include "video/image.h"
+#include "video/imagepool.h"
+#include "video/animation.h"
+#include "video/animationpool.h"
 
 #include "camera.h"
 #include "visual.h"
@@ -43,7 +52,13 @@
 namespace FIFE {
 	static Logger _log(LM_CAMERA);
 
-	Camera::Camera(const std::string& id, Layer *layer, Rect viewport, ExactModelCoordinate emc):
+	Camera::Camera(const std::string& id, 
+		Layer *layer, 
+		Rect viewport, 
+		ExactModelCoordinate emc,
+		RenderBackend* renderbackend,
+		ImagePool* ipool,
+		AnimationPool* apool):
 			m_id(id),
 			m_matrix(),
 			m_inverse_matrix(),
@@ -60,13 +75,24 @@ namespace FIFE {
 			m_enabled(true),
 			m_attachedto(NULL),
 			m_image_dimensions(),
-			m_iswarped(false) {
+			m_iswarped(false),
+			m_renderers(),
+			m_pipeline(),
+			m_updated(false),
+			m_renderbackend(renderbackend),
+			m_ipool(ipool),
+			m_apool(apool) {
 		m_location.setLayer(layer);
 		m_location.setExactLayerCoordinates(emc);
 		m_viewport = viewport;
 	}
 
 	Camera::~Camera() {
+		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
+		for(; r_it != m_renderers.end(); ++r_it) {
+			delete r_it->second;
+		}
+		m_renderers.clear();
 	}
 
 	void Camera::setTilt(double tilt) {
@@ -301,4 +327,159 @@ namespace FIFE {
 		m_iswarped = false;
 		m_prev_origo = m_cur_origo;
 	}
+	
+	bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs) {
+		return (lhs->getPipelinePosition() < rhs->getPipelinePosition());
+	}
+	
+	void Camera::addRenderer(RendererBase* renderer) {
+		renderer->setRendererListener(this);
+		m_renderers[renderer->getName()] = renderer;
+		if (renderer->isEnabled()) {
+			m_pipeline.push_back(renderer);
+		}
+		m_pipeline.sort(pipelineSort);
+	}
+	
+	void Camera::onRendererPipelinePositionChanged(RendererBase* renderer) {
+		m_pipeline.sort(pipelineSort);
+	}
+	
+	void Camera::onRendererEnabledChanged(RendererBase* renderer) {
+		assert(m_renderers[renderer->getName()]);
+		if (renderer->isEnabled()) {
+			FL_LOG(_log, LMsg("Enabling renderer ") << renderer->getName());
+			m_pipeline.push_back(renderer);
+			m_pipeline.sort(pipelineSort);
+		} else {
+			m_pipeline.remove(renderer);
+		}
+	}
+
+	RendererBase* Camera::getRenderer(const std::string& name) {
+		return m_renderers[name];
+	}
+	
+	class InstanceDistanceSort {
+	public:
+		Camera* cam;
+		inline bool operator()(const Instance* lhs, const Instance* rhs) {
+			InstanceVisual* liv = lhs->getVisual<InstanceVisual>();
+			InstanceVisual* riv = rhs->getVisual<InstanceVisual>();
+			InstanceVisualCacheItem& lic = liv->getCacheItem(cam);
+			InstanceVisualCacheItem& ric = riv->getCacheItem(cam);
+			if (lic.screenpoint.z == ric.screenpoint.z) {
+				return liv->getStackPosition() < riv->getStackPosition();
+			}
+			return lic.screenpoint.z < ric.screenpoint.z;
+		}
+	};
+
+	void Camera::resetRenderers() {
+		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
+		for (; r_it != m_renderers.end(); ++r_it) {
+			Map* map = m_location.getMap();
+			r_it->second->reset();
+			r_it->second->activateAllLayers(map);
+		}
+	}
+
+	void Camera::render() {
+		ScreenPoint cammove = getLatestMovement();
+		
+		Map* map = m_location.getMap();
+		if (!map) {
+			FL_ERR(_log, "No map for camera found");
+			return;
+		}
+		
+		// update each layer
+		m_renderbackend->pushClipArea(getViewPort());
+
+		const std::vector<Layer*>& layers = map->getLayers();
+		std::vector<Layer*>::const_iterator layer_it = layers.begin();
+		for (;layer_it != layers.end(); ++layer_it) {
+
+			// sort instances on layer based on stack position + camera distance. done only once
+			//  here instead passing it to each renderer.
+			// instances are checked first if their image intersects with the viewport.
+			// this reduces processing load during sorting later
+			std::vector<Instance*> allinstances((*layer_it)->getInstances());
+			std::vector<Instance*>::const_iterator instance_it = allinstances.begin();
+			std::vector<Instance*> instances_to_render;
+			for (;instance_it != allinstances.end(); ++instance_it) {
+				Instance* instance = *instance_it;
+				InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+				InstanceVisualCacheItem& vc = visual->getCacheItem(this);
+				
+				// use cached values if there is no need to do full recalculation
+				ScreenPoint drawpt;
+				int angle = 0;
+				if (m_updated && (!m_iswarped) && (!instance->isMoved()) && (vc.image)) {
+					int pos_estimate_x = vc.screenpoint.x - cammove.x;
+					int pos_estimate_y = vc.screenpoint.y - cammove.y;
+					int pos_estimate_z = vc.screenpoint.z - cammove.z;
+					angle = vc.facing_angle;
+					//std::cout << "orig x = " << drawpt.x << ", est x = " << pos_estimate_x << "\n";
+					//std::cout << "orig y = " << drawpt.y << ", est y = " << pos_estimate_y << "\n";
+					drawpt.x = pos_estimate_x;
+					drawpt.y = pos_estimate_y;
+					drawpt.z = pos_estimate_z;
+					//drawpt.z = toScreenCoordinates( instance->getLocationRef().getMapCoordinates() ).z;
+				} else {
+					drawpt = toScreenCoordinates( instance->getLocationRef().getMapCoordinates() );
+					vc.facing_angle = angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
+				}
+				Image* image = NULL;
+				Action* action = instance->getCurrentAction();
+				if (action) {
+					FL_DBG(_log, "Instance has action");
+					int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
+
+					Animation& animation = m_apool->getAnimation(animation_id);
+					int animtime = scaleTime(instance->getTotalTimeMultiplier(), instance->getActionRuntime()) % animation.getDuration();
+					image = animation.getFrameByTimestamp(animtime);
+				} else {
+					FL_DBG(_log, "No action");
+					int imageid = vc.getStaticImageIndexByAngle(angle, instance);
+					FL_DBG(_log, LMsg("Instance does not have action, using static image with id ") << imageid);
+					if (imageid >= 0) {
+						image = &m_ipool->getImage(imageid);
+					}
+				}
+				if (image) {
+					vc.image = image;
+					vc.screenpoint = drawpt;
+					
+					int w = image->getWidth();
+					int h = image->getHeight();
+					drawpt.x -= w / 2;
+					drawpt.x += image->getXShift();
+					drawpt.y -= h / 2;
+					drawpt.y += image->getYShift();
+					Rect r = Rect(drawpt.x, drawpt.y, w, h);
+					vc.dimensions = r;
+					
+					if (r.intersects(getViewPort())) {
+						instances_to_render.push_back(instance);
+					}
+				}
+			}
+
+			InstanceDistanceSort ids;
+			ids.cam = this;
+			std::stable_sort(instances_to_render.begin(), instances_to_render.end(), ids);
+
+			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
+			for (; r_it != m_pipeline.end(); ++r_it) {
+				if ((*r_it)->isActivedLayer(*layer_it)) {
+					(*r_it)->render(this, *layer_it, instances_to_render);
+				}
+			}
+		}
+		m_renderbackend->popClipArea();
+		resetUpdates();
+		m_updated = true;
+	}
+
 }

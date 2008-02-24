@@ -47,6 +47,10 @@ namespace FIFE {
 		 * @param animpool animation pool where from fetch images
 		 */
 		InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
+		
+		InstanceRenderer(const InstanceRenderer& old);
+		
+		RendererBase* clone();
 
 		/** Destructor.
 		 */

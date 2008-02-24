@@ -46,6 +46,10 @@ namespace FIFE {
 		 * @param font font used to render the coordinates
 		 */
 		CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		
+		CoordinateRenderer(const CoordinateRenderer& old);
+		
+		RendererBase* clone();
 
 		/** Destructor.
 		 */

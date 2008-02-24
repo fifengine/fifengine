@@ -76,6 +76,18 @@ namespace FIFE {
 		setEnabled(true);
 	}
 
+ 	InstanceRenderer::InstanceRenderer(const InstanceRenderer& old):
+		RendererBase(old),
+		m_imagepool(old.m_imagepool),
+		m_animationpool(old.m_animationpool),
+		m_layer_to_outlinemap() {
+		setEnabled(true);
+	}
+
+	RendererBase* InstanceRenderer::clone() {
+		return new InstanceRenderer(*this);
+	}
+
 	InstanceRenderer::~InstanceRenderer() {
 	}
 

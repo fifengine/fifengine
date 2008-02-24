@@ -53,6 +53,17 @@ namespace FIFE {
 		setEnabled(false);
 	}
 
+	CameraZoneRenderer::CameraZoneRenderer(const CameraZoneRenderer& old):
+		RendererBase(old),
+		m_imagepool(old.m_imagepool),
+		m_zone_image(NULL) {
+		setEnabled(false);
+	}
+
+	RendererBase* CameraZoneRenderer::clone() {
+		return new CameraZoneRenderer(*this);
+	}
+
 	CameraZoneRenderer::~CameraZoneRenderer() {
 		delete m_zone_image;
 	}

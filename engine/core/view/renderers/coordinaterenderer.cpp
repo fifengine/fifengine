@@ -58,9 +58,20 @@ namespace FIFE {
 		setEnabled(false);
 	}
 
+ 	CoordinateRenderer::CoordinateRenderer(const CoordinateRenderer& old):
+		m_layer_area(),
+		m_tmploc(),
+		m_c(),
+		m_font(old.m_font) {
+		setEnabled(false);
+	}
+	
 	CoordinateRenderer::~CoordinateRenderer() {
 	}
 
+	RendererBase* CoordinateRenderer::clone() {
+		return new CoordinateRenderer(*this);
+	}
 
 	void CoordinateRenderer::adjustLayerArea() {
 		m_tmploc.setMapCoordinates(m_c);

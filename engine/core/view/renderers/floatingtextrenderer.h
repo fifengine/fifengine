@@ -44,6 +44,10 @@ namespace FIFE {
 		 * @param font default font used to render the texts
 		 */
 		FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		
+		FloatingTextRenderer(const FloatingTextRenderer& old);
+		
+		RendererBase* clone();
 
 		/** Destructor.
 		 */

@@ -231,7 +231,7 @@ namespace FIFE {
 		m_model->adoptPather(new RoutePather());
 
 		FL_LOG(_log, "Creating view");
-		m_view = new View(m_renderbackend);
+		m_view = new View(m_renderbackend, m_imagepool, m_animpool);
 		FL_LOG(_log, "Creating renderers to view");
 		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, 0, m_imagepool));
 		m_view->addRenderer(new InstanceRenderer(m_renderbackend, 10, m_imagepool, m_animpool));
@@ -281,7 +281,7 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_timemanager->update();
 		m_model->update();
-		m_view->update( m_imagepool,m_animpool );
+		m_view->update();
 		m_guimanager->turn();
 		m_cursor->draw();
 		m_renderbackend->endFrame();

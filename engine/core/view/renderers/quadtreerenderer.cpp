@@ -48,8 +48,16 @@ namespace FIFE {
 
 	QuadTreeRenderer::QuadTreeRenderer(RenderBackend* renderbackend, int position):
 		RendererBase(renderbackend, position) {
-		setPipelinePosition(position);
 		setEnabled(false);
+	}
+
+ 	QuadTreeRenderer::QuadTreeRenderer(const QuadTreeRenderer& old):
+		RendererBase(old) {
+		setEnabled(false);
+	}
+
+	RendererBase* QuadTreeRenderer::clone() {
+		return new QuadTreeRenderer(*this);
 	}
 
 	QuadTreeRenderer::~QuadTreeRenderer() {	}

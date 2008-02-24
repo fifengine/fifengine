@@ -80,6 +80,14 @@ namespace FIFE {
 		 */
 		RendererBase(RenderBackend* renderbackend, int position);
 		
+		/** Copy Constructor
+		 */
+		RendererBase(const RendererBase& old);
+		
+		/** Makes copy of this renderer
+		 */
+		virtual RendererBase* clone() = 0;
+		
 		/** Destructor
 		 */
 		virtual ~RendererBase() {};
@@ -150,6 +158,8 @@ namespace FIFE {
 		
 	
 	protected:
+		RendererBase();
+		
 		std::list<Layer*> m_active_layers;
 		RenderBackend* m_renderbackend;
 	

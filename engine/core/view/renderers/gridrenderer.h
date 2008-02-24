@@ -41,6 +41,10 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 */
 		GridRenderer(RenderBackend* renderbackend, int position);
+		
+		GridRenderer(const GridRenderer& old);
+		
+		RendererBase* clone();
 
 		/** Destructor.
 		 */

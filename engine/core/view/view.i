@@ -9,7 +9,7 @@ namespace std {
 
 namespace FIFE {
 	class RendererBase;
-	class View: public IRendererContainer {
+	class View {
 	public:
 		~View();
 		Camera* addCamera(const std::string& id, Layer* layr,Rect viewport, ExactModelCoordinate emc);
@@ -17,7 +17,6 @@ namespace FIFE {
 		std::vector<Camera*>& getCameras();
 		void removeCamera(Camera* camera);
 		void clearCameras();
-		RendererBase* getRenderer(const std::string& name);
 		void resetRenderers();
 	private:
 		View(RenderBackend* renderbackend);

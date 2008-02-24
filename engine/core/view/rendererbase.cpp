@@ -46,6 +46,21 @@ namespace FIFE {
 		setPipelinePosition(position);
 	}
 	
+	RendererBase::RendererBase(const RendererBase& old):
+		m_renderbackend(old.m_renderbackend),
+		m_enabled(old.m_enabled),
+		m_pipeline_position(old.m_pipeline_position),
+		m_listener(NULL) {
+		setPipelinePosition(old.m_pipeline_position);
+	}
+	
+	RendererBase::RendererBase():
+		m_renderbackend(NULL),
+		m_enabled(false),
+		m_pipeline_position(DEFAULT_RENDERER_POSITION),
+		m_listener(NULL) {
+	}
+	
 	void RendererBase::setPipelinePosition(int position) { 
 		if (position !=m_pipeline_position) { 
 			m_pipeline_position = position; 

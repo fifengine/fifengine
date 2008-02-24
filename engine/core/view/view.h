@@ -32,35 +32,24 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "rendererbase.h"
 
 namespace FIFE {
 	class Camera;
 	class RenderBackend;
 	class ImagePool;
 	class AnimationPool;
-	class Instance;
-	class Object;
-	class Action;
+	class RendererBase;
 
-	class View: public IRendererListener, public IRendererContainer {
+	class View {
 	public:
 		/** Constructor
+		 * 
 		 */
-		View(RenderBackend* renderbackend);
+		View(RenderBackend* renderbackend, ImagePool* ipool, AnimationPool* apool);
 
 		/** Destructor
 		 */
 		~View();
-
-		/** Adds new renderer on the view. Ownership is transferred to the view.
-		 * After addition, renderer is active for all cameras
-		 */
-		void addRenderer(RendererBase* renderer);
-
-		/** Gets renderer with given name
-		 */
-		RendererBase* getRenderer(const std::string& name);
 
 		/** Adds new camera on view.
 		 *  After creation, camera gets rendered by the added renderers
@@ -84,27 +73,25 @@ namespace FIFE {
 		 */
 		void clearCameras();
 
-		/** resets active layer information to be reseted on all renderers.
-		 *  View fetches all layers from cameras and activate them on each renderer.
+		/** resets active layer information on all renderers.
 		 */
 		void resetRenderers();
 
 		/** Causes view to render all cameras
 		 */
-		void update(ImagePool*,AnimationPool*);
-
-		void onRendererPipelinePositionChanged(RendererBase* renderer);
-		void onRendererEnabledChanged(RendererBase* renderer);
-
+		void update();
+		
+		/** Adds new renderer on the view. Ownership is transferred to the view.
+		 */
+		void addRenderer(RendererBase* renderer);
 
 	private:
 		// list of cameras managed by the view
 		std::vector<Camera*> m_cameras;
 		RenderBackend* m_renderbackend;
-		// list of renderers managed by the view
+		ImagePool* m_ipool;
+		AnimationPool* m_apool;
 		std::map<std::string, RendererBase*> m_renderers;
-		std::list<RendererBase*> m_pipeline;
-		bool m_updated; // false, if view has never been updated before
 	};
 
 }

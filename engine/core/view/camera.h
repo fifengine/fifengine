@@ -35,18 +35,23 @@
 #include "util/matrix.h"
 #include "util/rect.h"
 
+#include "rendererbase.h"
+
 namespace FIFE {
 
 	typedef Point3D ScreenPoint;
 	class Layer;
 	class Instance;
+	class ImagePool;
+	class AnimationPool;
+	class RenderBackend;
 
 	/** Camera describes properties of a view port shown in the main screen
 	 *  Main screen can have multiple cameras active simultanously
 	 *  Different cameras can have different properties, like location
 	 *  to shoot, zoom or tilt
 	 */
-	class Camera {
+	class Camera: public IRendererListener, public IRendererContainer {
 	public:
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
@@ -56,8 +61,17 @@ namespace FIFE {
 		 *   * camera could be bind to a pather, which operates on layer
 		 * @param viewport used viewport for the camera. Viewport is measured in pixels in relation to game main screen
 		 * @param emc coordinate, where camera is focused on given layer
+		 * @param renderbackend to use with rendering
+		 * @param ipool to use with rendering
+		 * @param apool to use with rendering
 		 */
-		Camera(const std::string& id, Layer* layer, Rect viewport, ExactModelCoordinate emc);
+		Camera(const std::string& id, 
+			Layer* layer,
+			Rect viewport,
+			ExactModelCoordinate emc, 
+			RenderBackend* renderbackend,
+			ImagePool* ipool,
+			AnimationPool* apool);
 
 		/** Destructor
 		 */
@@ -134,7 +148,6 @@ namespace FIFE {
 		 * @return reference to the camera location
 		 */
 		Location& getLocationRef();
-		
 
 		/** Attaches the camera to an instance.
 		 * @param instance Instance to which the camera shall be attached
@@ -220,14 +233,29 @@ namespace FIFE {
 			return m_prev_origo - m_cur_origo;
 		}
 		
-		/** Returns true, if camera was rotated, tilted or zoomed during the previous update
-		 */
-		inline bool isWarped() { return m_iswarped; }
-		
 		/** Resets temporary values from last update round, like warped flag
 		 */
 		void resetUpdates();
 
+		/** Adds new renderer on the view. Ownership is transferred to the camera.
+		 */
+		void addRenderer(RendererBase* renderer);
+
+		/** Gets renderer with given name
+		 */
+		RendererBase* getRenderer(const std::string& name);
+
+		/** resets active layer information on all renderers.
+		 */
+		void resetRenderers();
+
+		void onRendererPipelinePositionChanged(RendererBase* renderer);
+		void onRendererEnabledChanged(RendererBase* renderer);
+		
+		/** Renders camera
+		 */
+		void render();
+		
 	private:
 		std::string m_id;
 
@@ -250,7 +278,7 @@ namespace FIFE {
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
-
+		
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
 		double m_tilt;
@@ -269,6 +297,16 @@ namespace FIFE {
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
 		bool m_iswarped;
+		
+		// list of renderers managed by the view
+		std::map<std::string, RendererBase*> m_renderers;
+		std::list<RendererBase*> m_pipeline;
+		bool m_updated; // false, if view has never been updated before
+	
+		RenderBackend* m_renderbackend;
+		ImagePool* m_ipool;
+		AnimationPool* m_apool;
+	
 	};
 }
 #endif

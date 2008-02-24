@@ -117,7 +117,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			self.selection = self.layer.getCellGrid().toLayerCoordinates(self.selection)
 			loc = fife.Location(self.layer)
 			loc.setLayerCoordinates(self.selection)
-			fife.CellSelectionRenderer.getInstance(self.engine.getView()).selectLocation(loc)
+			fife.CellSelectionRenderer.getInstance(self.viewer.camera).selectLocation(loc)
 
 	def _placeInstance(self):
 		if self.insertmode and self.selection and self.object:
@@ -165,11 +165,11 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 					self.layer.deleteInstance(inst)
 				
 		elif keystr == 't':
-			gridrenderer = self.engine.getView().getRenderer('GridRenderer')
+			gridrenderer = self.viewer.camera.getRenderer('GridRenderer')
 			gridrenderer.setEnabled(not gridrenderer.isEnabled())
 
 		elif keystr == 'b':
-			blockrenderer = self.engine.getView().getRenderer('BlockingInfoRenderer')
+			blockrenderer = self.viewer.camera.getRenderer('BlockingInfoRenderer')
 			blockrenderer.setEnabled(not blockrenderer.isEnabled())
 
 	def keyReleased(self, evt):

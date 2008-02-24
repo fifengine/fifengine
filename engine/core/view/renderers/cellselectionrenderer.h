@@ -41,6 +41,10 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 */
 		CellSelectionRenderer(RenderBackend* renderbackend, int position);
+		
+		CellSelectionRenderer(const CellSelectionRenderer& old);
+		
+		RendererBase* clone();
 
 		/** Destructor.
 		 */

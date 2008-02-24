@@ -50,15 +50,18 @@ class World(EventListenerBase):
 		self.cameras['main'].attach(self.hero.agent)
 				
 		self.view.resetRenderers()
-		renderer = fife.FloatingTextRenderer.getInstance(self.view)
+		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
 		textfont = self.engine.getGuiManager().createFont('content/fonts/rpgfont.png', 0, TDS.FontGlyphs);
 		renderer.changeDefaultFont(textfont)
 		
-		renderer = self.view.getRenderer('CoordinateRenderer')
+		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['small'])
+		renderer.changeDefaultFont(None)
+		
+		renderer = self.cameras['main'].getRenderer('CoordinateRenderer')
 		renderer.clearActiveLayers()
 		renderer.addActiveLayer(self.map.getLayers("id", TDS.CoordinateLayerName)[0])
 		
-		renderer = self.view.getRenderer('QuadTreeRenderer')
+		renderer = self.cameras['main'].getRenderer('QuadTreeRenderer')
 		renderer.setEnabled(True)
 		renderer.clearActiveLayers()
 		if TDS.QuadTreeLayerName:
@@ -79,10 +82,10 @@ class World(EventListenerBase):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		if keystr == 't':
-			r = self.view.getRenderer('GridRenderer')
+			r = self.cameras['main'].getRenderer('GridRenderer')
 			r.setEnabled(not r.isEnabled())
 		elif keystr == 'c':
-			r = self.view.getRenderer('CoordinateRenderer')
+			r = self.cameras['main'].getRenderer('CoordinateRenderer')
 			r.setEnabled(not r.isEnabled())
 		elif keystr == 's':
 			c = self.cameras['small']
@@ -120,7 +123,7 @@ class World(EventListenerBase):
 			print "selected instances on agent layer: ", [i.getObject().Id() for i in instances]
 
 	def mouseMoved(self, evt):
-		renderer = fife.InstanceRenderer.getInstance(self.view)
+		renderer = fife.InstanceRenderer.getInstance(self.cameras['main'])
 		renderer.removeAllOutlines()
 		
 		pt = self.getMousePoint(evt.getX(), evt.getY())

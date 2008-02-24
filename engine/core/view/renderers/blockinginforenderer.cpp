@@ -50,6 +50,14 @@ namespace FIFE {
 		setEnabled(false);
 	}
 
+	BlockingInfoRenderer::BlockingInfoRenderer(const BlockingInfoRenderer& old):
+		RendererBase(old) {
+	}
+
+	RendererBase* BlockingInfoRenderer::clone() {
+		return new BlockingInfoRenderer(*this);
+	}
+
 	BlockingInfoRenderer::~BlockingInfoRenderer() {
 	}
 
