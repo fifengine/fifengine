@@ -553,12 +553,12 @@ namespace FIFE {
 		return m_nonconsumablekeys;
 	}
 
-	void EventManager::registerTrigger(ITrigger& trigger){
+	void EventManager::registerTrigger(Trigger& trigger){
 		m_triggers.push_back(&trigger);
 	}
 
 	void EventManager::pollTriggers(){
-		for (std::list<ITrigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
+		for (std::list<Trigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
 			if((*it)->pollTrigger()){
 				//Do something!
 			}

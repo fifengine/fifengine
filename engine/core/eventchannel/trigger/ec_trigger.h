@@ -42,16 +42,11 @@ namespace FIFE {
 	/**
 	 * A trigger is fired when certain preconditions met
 	 */
-	class ITrigger{
+	class Trigger {
 		
 	public:
-		
-		/** Constructor
-		 *
-		 */
-		ITrigger();
 
-		virtual ~ITrigger(){
+		virtual ~Trigger(){
 			m_dependents.clear();
 		}
 
@@ -71,10 +66,10 @@ namespace FIFE {
 
 		
 		
-	private:
+	protected:
 
 		bool pollSubTriggers(){
-			for (std::list<ITrigger*>::iterator it = m_dependents.begin(); it!=m_dependents.end(); ++it) {
+			for (std::list<Trigger*>::iterator it = m_dependents.begin(); it!=m_dependents.end(); ++it) {
 			if(!(*it)->pollTrigger()){
 				return false;
 			}	
@@ -82,7 +77,7 @@ namespace FIFE {
 		return true;	
 		}
 
-		std::list<ITrigger*> m_dependents;
+		std::list<Trigger*> m_dependents;
 	};
 }
 

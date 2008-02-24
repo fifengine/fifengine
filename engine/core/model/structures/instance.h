@@ -33,6 +33,7 @@
 // Second block: files included from the same folder
 #include "model/metamodel/object.h"
 #include "model/metamodel/abstractvisual.h"
+#include "eventchannel/trigger/ec_itriggermanager.h"
 
 #include "location.h"
 
@@ -55,7 +56,8 @@ namespace FIFE {
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
-	class Instance : public AttributedClass {
+	class Instance : public AttributedClass,
+					 public TriggerClass {
 	public:
 
 		/** Constructor

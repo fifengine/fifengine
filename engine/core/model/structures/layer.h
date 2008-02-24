@@ -36,6 +36,7 @@
 #include "model/metamodel/modelcoords.h"
 #include "util/attributedclass.h"
 #include "model/metamodel/object.h"
+#include "eventchannel/trigger/ec_itriggermanager.h"
 
 #include "instance.h"
 
@@ -93,7 +94,8 @@ namespace FIFE {
 	 * 	Connections between Layers to walk through (Elevators...)
 	 * Grouping of Layers (These Layers are roofs ... etc)
 	 */
-	class Layer : public AttributedClass {
+	class Layer : public AttributedClass,
+				  public TriggerClass {
 		public:
 			/** Constructor
 			 * Layers are created by calling addLayer from map, thus

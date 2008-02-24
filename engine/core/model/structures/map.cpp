@@ -117,6 +117,7 @@ namespace FIFE {
 		}
 
 		Layer* layer = new Layer(identifier, this, grid);
+		layer->setTriggerManager(m_triggermanager);
 		m_layers.push_back(layer);
 		return layer;
 	}

@@ -101,7 +101,7 @@ namespace FIFE {
 
 		void onWidgetAction(WidgetEvent& evt);
 
-		void registerTrigger(ITrigger& trigger);
+		void registerTrigger(Trigger& trigger);
 		void pollTriggers();
 
 		/** Process the SDL event queue.

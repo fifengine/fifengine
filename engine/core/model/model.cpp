@@ -58,6 +58,7 @@ namespace FIFE {
 		}
 
 		Map* map = new Map(identifier, &m_timeprovider);
+		map->setTriggerManager(m_triggermanager);
 		m_maps.push_back(map);
 		return map;
 	}

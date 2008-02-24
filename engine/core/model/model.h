@@ -35,6 +35,7 @@
 
 #include "model/structures/map.h"
 #include "model/metamodel/timeprovider.h"
+#include "eventchannel/trigger/ec_itriggermanager.h"
 
 namespace FIFE {
 
@@ -44,7 +45,8 @@ namespace FIFE {
 	/**
 	 * A model is a facade for everything in the model.
 	 */
-	class Model: public FifeClass {
+	class Model: public FifeClass,
+				 public TriggerClass {
 	public:
 
 		/** Constructor

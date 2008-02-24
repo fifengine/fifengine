@@ -34,6 +34,7 @@
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
 #include "model/metamodel/timeprovider.h"
+#include "eventchannel/trigger/ec_itriggermanager.h"
 
 #include "location.h"
 
@@ -52,7 +53,8 @@ namespace FIFE {
 	 * @see MapView
 	 * @see MapLoader
 	 */
-	class Map : public AttributedClass {
+	class Map : public AttributedClass,
+				public TriggerClass {
 		public:
 
 			/** Construct a map

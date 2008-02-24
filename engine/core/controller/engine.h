@@ -48,6 +48,7 @@ namespace FIFE {
 	class VFS;
 	class VFSSourceFactory;
 	class EventManager;
+	class ITriggerManager;
 	class TimeManager;
 	class ImagePool;
 	class AnimationPool;
@@ -57,7 +58,6 @@ namespace FIFE {
 	class GuiFont;
 	class VFS;
 	class Cursor;
-	class TriggerManager;
 
 
 	/** Engine acts as a controller to the whole system
@@ -157,7 +157,7 @@ namespace FIFE {
 		RenderBackend* m_renderbackend;
 		GUIManager* m_guimanager;
 		EventManager* m_eventmanager;
-		TriggerManager* m_triggermanager;
+		ITriggerManager* m_triggermanager;
 		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
 		ImagePool* m_imagepool;
