@@ -23,4 +23,11 @@ namespace FIFE {
 		void clearActiveLayers();
 		void activateAllLayers(Map* map);
 	};
+	
+	class IRendererContainer {
+	public:
+		virtual ~IRendererContainer() {}
+		virtual RendererBase* getRenderer(const std::string& renderername) = 0;
+	};
+	
 }

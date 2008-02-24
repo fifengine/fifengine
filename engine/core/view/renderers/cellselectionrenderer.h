@@ -34,7 +34,6 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class View;
 
 	class CellSelectionRenderer: public RendererBase {
 	public:
@@ -53,7 +52,7 @@ namespace FIFE {
 
 		/** returns instance used in given view
 		 */
-		static CellSelectionRenderer* getInstance(View* view);
+		static CellSelectionRenderer* getInstance(IRendererContainer* cnt);
 		
 		void reset();
 		

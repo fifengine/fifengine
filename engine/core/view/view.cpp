@@ -46,9 +46,9 @@
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
 
-#include "view.h"
 #include "camera.h"
 #include "visual.h"
+#include "view.h"
 
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);

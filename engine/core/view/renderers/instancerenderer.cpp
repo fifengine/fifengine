@@ -45,7 +45,6 @@
 
 #include "view/camera.h"
 #include "view/visual.h"
-#include "view/view.h"
 #include "instancerenderer.h"
 
 
@@ -65,8 +64,8 @@ namespace FIFE {
 		delete outline;
 	}
 	
-	InstanceRenderer* InstanceRenderer::getInstance(View* view) {
-		return dynamic_cast<InstanceRenderer*>(view->getRenderer("InstanceRenderer"));
+	InstanceRenderer* InstanceRenderer::getInstance(IRendererContainer* cnt) {
+		return dynamic_cast<InstanceRenderer*>(cnt->getRenderer("InstanceRenderer"));
 	}
 	
 	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):

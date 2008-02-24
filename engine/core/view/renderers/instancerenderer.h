@@ -38,7 +38,6 @@ namespace FIFE {
 	class ImagePool;
 	class AnimationPool;
 	class InstanceVisualCacheItem;
-	class View;
 
 	class InstanceRenderer: public RendererBase {
 	public:
@@ -69,7 +68,7 @@ namespace FIFE {
 		
 		/** Gets instance for interface access
 		 */
-		static InstanceRenderer* getInstance(View* view);
+		static InstanceRenderer* getInstance(IRendererContainer* cnt);
 		
 		void reset();
 

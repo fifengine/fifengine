@@ -38,7 +38,6 @@
 #include "model/structures/location.h"
 
 #include "view/camera.h"
-#include "view/view.h"
 #include "cellselectionrenderer.h"
 
 
@@ -54,8 +53,8 @@ namespace FIFE {
 	CellSelectionRenderer::~CellSelectionRenderer() {
 	}
 
-	CellSelectionRenderer* CellSelectionRenderer::getInstance(View* view) {
-		return dynamic_cast<CellSelectionRenderer*>(view->getRenderer("CellSelectionRenderer"));
+	CellSelectionRenderer* CellSelectionRenderer::getInstance(IRendererContainer* cnt) {
+		return dynamic_cast<CellSelectionRenderer*>(cnt->getRenderer("CellSelectionRenderer"));
 	}
 	
 	void CellSelectionRenderer::reset() {

@@ -43,7 +43,7 @@ namespace FIFE {
 	class Object;
 	class Action;
 
-	class View: public RendererListener {
+	class View: public IRendererListener, public IRendererContainer {
 	public:
 		/** Constructor
 		 */

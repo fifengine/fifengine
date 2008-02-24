@@ -44,9 +44,9 @@ namespace FIFE {
 	 *  Having this implemented via callback mechanism should speed up the rendering a bit
 	 *  (e.g. no need to sort pipeline order per each frame)
 	 */
-	class RendererListener {
+	class IRendererListener {
 	public:
-		virtual ~RendererListener() {}
+		virtual ~IRendererListener() {}
 		
 		/** Renderer's pipeline position has been changed
 		 */
@@ -57,9 +57,17 @@ namespace FIFE {
 		virtual void onRendererEnabledChanged(RendererBase* renderer) = 0;
 	};
 	
-	
-	// use some big value, so that non-positioned renderers show on top
-	const int DEFAULT_RENDERER_POSITION = 1000;
+	/** Interface to class owning the renderers
+	 * Used to get correct subclass of renderer in scripting side (via renderer's static method)
+	 */
+	class IRendererContainer {
+	public:
+		virtual ~IRendererContainer() {}
+		
+		/** Returns renderer with given name
+		 */
+		virtual RendererBase* getRenderer(const std::string& renderername) = 0;
+	};
 	
 	/** Base class for all view renderers
 	 * View renderer renders one aspect of the view shown on screen
@@ -118,7 +126,7 @@ namespace FIFE {
 		
 		/** Sets listener for renderer
 		 */
-		void setRendererListener(RendererListener* listener) { m_listener = listener; }
+		void setRendererListener(IRendererListener* listener) { m_listener = listener; }
 		
 		/** Adds active layer to renderer. Only active layers are rendered
 		 */
@@ -148,7 +156,7 @@ namespace FIFE {
 	private:
 		bool m_enabled;
 		int m_pipeline_position;
-		RendererListener* m_listener;
+		IRendererListener* m_listener;
 	};
 }
 

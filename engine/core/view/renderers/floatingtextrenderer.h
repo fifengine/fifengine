@@ -35,7 +35,6 @@
 namespace FIFE {
 	class RenderBackend;
 	class AbstractFont;
-	class View;
 
 	class FloatingTextRenderer: public RendererBase {
 	public:
@@ -61,7 +60,7 @@ namespace FIFE {
 		
 		/** returns instance used in given view
 		 */
-		static FloatingTextRenderer* getInstance(View* view);
+		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
 		AbstractFont* m_font;

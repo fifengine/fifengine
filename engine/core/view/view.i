@@ -9,7 +9,7 @@ namespace std {
 
 namespace FIFE {
 	class RendererBase;
-	class View {
+	class View: public IRendererContainer {
 	public:
 		~View();
 		Camera* addCamera(const std::string& id, Layer* layr,Rect viewport, ExactModelCoordinate emc);
