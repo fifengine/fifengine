@@ -24,12 +24,14 @@ def resolve_test_modules(directory):
 	pythonfilenames = [p for p in os.listdir(directory) if len(p) > 3 and p[-3:] == '.py']
 	modname = directory.replace(os.path.sep, '.') + '.'
 	modules = []
-	skipped_filenames = ('_test_utils.py', '__init__.py', 'test_all.py')
+	skipped_filenames = ('test_all.py',)
 	for p in pythonfilenames:
 		skip = False
 		for s in skipped_filenames:
 			if p.find(s) != -1:
 				skip = True
+		if p[0] == '_':
+			skip = True
 		if not skip:
 			modules.append(modname + p[:-3])
 	return modules
