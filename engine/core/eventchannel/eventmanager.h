@@ -26,6 +26,7 @@
 //
 #include <vector>
 #include <map>
+#include <list>
 
 // 3rd party library includes
 //
@@ -55,7 +56,7 @@
 #include "eventchannel/widget/ec_iwidgetlistener.h"
 #include "eventchannel/widget/ec_widgetevent.h"
 
-#include "eventchannel/trigger/ec_itriggermanager.h"
+#include "eventchannel/trigger/ec_itriggercontroller.h"
 
 namespace FIFE {
 
@@ -74,7 +75,7 @@ namespace FIFE {
 		public IWidgetController,
 		public IEventSource,
 		public IWidgetListener,
-		public ITriggerManager {
+		public ITriggerController {
 	public:
 		/** Constructor.
 		 */
@@ -143,6 +144,8 @@ namespace FIFE {
 		std::map<int, bool> m_keystatemap;
 		int m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
+
+		std::list<Trigger*> m_triggers;
 	};
 } //FIFE
 

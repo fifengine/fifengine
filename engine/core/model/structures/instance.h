@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "model/metamodel/object.h"
 #include "model/metamodel/abstractvisual.h"
-#include "eventchannel/trigger/ec_itriggermanager.h"
+#include "eventchannel/trigger/ec_itriggercontroller.h"
 
 #include "location.h"
 
@@ -56,8 +56,7 @@ namespace FIFE {
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
-	class Instance : public AttributedClass,
-					 public TriggerClass {
+	class Instance : public AttributedClass {
 	public:
 
 		/** Constructor
@@ -213,6 +212,8 @@ namespace FIFE {
 		 * In this case e.g. instance's master time provider is changed, so it needs to be updated
 		 */
 		void refresh();
+
+		void setTriggerController(ITriggerController* triggercontroller);
 		
 		std::vector<std::string> listFields() const;
 		const std::string& get(const std::string& field);
@@ -236,6 +237,8 @@ namespace FIFE {
 		SayInfo* m_sayinfo;
 		// time scaler for this instance
 		TimeProvider* m_timeprovider;
+
+		ITriggerController* m_triggercontroller;
 		
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);

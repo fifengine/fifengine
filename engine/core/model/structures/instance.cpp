@@ -412,4 +412,8 @@ namespace FIFE {
 		}
 		return m_timeprovider->getTotalMultiplier();
 	}
+
+	void Instance::setTriggerController(ITriggerController* triggercontroller){
+		m_triggercontroller = triggercontroller;
+	}
 }

@@ -35,7 +35,7 @@
 
 #include "model/structures/map.h"
 #include "model/metamodel/timeprovider.h"
-#include "eventchannel/trigger/ec_itriggermanager.h"
+#include "eventchannel/trigger/ec_itriggercontroller.h"
 
 namespace FIFE {
 
@@ -45,8 +45,7 @@ namespace FIFE {
 	/**
 	 * A model is a facade for everything in the model.
 	 */
-	class Model: public FifeClass,
-				 public TriggerClass {
+	class Model: public FifeClass {
 	public:
 
 		/** Constructor
@@ -116,12 +115,14 @@ namespace FIFE {
 		 */
 		double getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }
 
+		void setTriggerController(ITriggerController* triggercontroller);
 	private:
 
 		std::vector<Map*> m_maps;
 		std::vector<AbstractPather*> m_pathers;
 		MetaModel* m_meta;
 		TimeProvider m_timeprovider;
+		ITriggerController* m_triggercontroller;
 	};
 
 }; //FIFE

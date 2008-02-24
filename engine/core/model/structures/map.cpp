@@ -117,7 +117,7 @@ namespace FIFE {
 		}
 
 		Layer* layer = new Layer(identifier, this, grid);
-		layer->setTriggerManager(m_triggermanager);
+		layer->setTriggerController(m_triggercontroller);
 		m_layers.push_back(layer);
 		return layer;
 	}
@@ -143,6 +143,10 @@ namespace FIFE {
 		for(; it != m_layers.end(); ++it) {
 			(*it)->update();
 		}
+	}
+
+	void Map::setTriggerController(ITriggerController* triggercontroller){
+		m_triggercontroller = triggercontroller;
 	}
 
 } //FIFE

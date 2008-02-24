@@ -34,7 +34,7 @@
 // Second block: files included from the same folder
 #include "util/attributedclass.h"
 #include "model/metamodel/timeprovider.h"
-#include "eventchannel/trigger/ec_itriggermanager.h"
+#include "eventchannel/trigger/ec_itriggercontroller.h"
 
 #include "location.h"
 
@@ -53,8 +53,7 @@ namespace FIFE {
 	 * @see MapView
 	 * @see MapLoader
 	 */
-	class Map : public AttributedClass,
-				public TriggerClass {
+	class Map : public AttributedClass {
 		public:
 
 			/** Construct a map
@@ -134,12 +133,14 @@ namespace FIFE {
 			 */
 			TimeProvider* getTimeProvider() { return &m_timeprovider; }
 
+			void setTriggerController(ITriggerController* triggercontroller);
 		private:
 			std::string m_mapname;
 			std::vector<Dataset*> m_datasets;
 			std::vector<Layer*> m_layers;
 			TimeProvider m_timeprovider;
-			
+			ITriggerController* m_triggercontroller;
+
 			Map(const Map& map);
 			Map& operator=(const Map& map);
 	};

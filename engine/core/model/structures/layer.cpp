@@ -61,7 +61,7 @@ namespace FIFE {
 		l.setLayerCoordinates(p);
 
 		Instance* instance = new Instance(object, l, id);
-		instance->setTriggerManager(m_triggermanager);
+		instance->setTriggerController(m_triggercontroller);
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
 		return instance;
@@ -73,7 +73,7 @@ namespace FIFE {
 		l.setExactLayerCoordinates(p);
 
 		Instance* instance = new Instance(object, l, id);
-		instance->setTriggerManager(m_triggermanager);
+		instance->setTriggerController(m_triggercontroller);
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
 		return instance;
@@ -186,6 +186,10 @@ namespace FIFE {
 		for(; it != m_instances.end(); ++it) {
 			(*it)->update(curticks);
 		}
+	}
+
+	void Layer::setTriggerController(ITriggerController* triggercontroller){
+		m_triggercontroller = triggercontroller;
 	}
 
 } // FIFE

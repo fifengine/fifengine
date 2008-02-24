@@ -48,7 +48,7 @@ namespace FIFE {
 	class VFS;
 	class VFSSourceFactory;
 	class EventManager;
-	class ITriggerManager;
+	class ITriggerController;
 	class TimeManager;
 	class ImagePool;
 	class AnimationPool;
@@ -157,7 +157,7 @@ namespace FIFE {
 		RenderBackend* m_renderbackend;
 		GUIManager* m_guimanager;
 		EventManager* m_eventmanager;
-		ITriggerManager* m_triggermanager;
+		ITriggerController* m_triggercontroller;
 		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
 		ImagePool* m_imagepool;

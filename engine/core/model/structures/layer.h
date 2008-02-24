@@ -36,7 +36,7 @@
 #include "model/metamodel/modelcoords.h"
 #include "util/attributedclass.h"
 #include "model/metamodel/object.h"
-#include "eventchannel/trigger/ec_itriggermanager.h"
+#include "eventchannel/trigger/ec_itriggercontroller.h"
 
 #include "instance.h"
 
@@ -94,8 +94,7 @@ namespace FIFE {
 	 * 	Connections between Layers to walk through (Elevators...)
 	 * Grouping of Layers (These Layers are roofs ... etc)
 	 */
-	class Layer : public AttributedClass,
-				  public TriggerClass {
+	class Layer : public AttributedClass {
 		public:
 			/** Constructor
 			 * Layers are created by calling addLayer from map, thus
@@ -193,8 +192,11 @@ namespace FIFE {
 			 */
 			PathingStrategy getPathingStrategy() const { return m_pathingstrategy; }
 
+			void setTriggerController(ITriggerController* triggercontroller);
+
 		protected:
 			Map* m_map;
+			ITriggerController* m_triggercontroller;
 
 			bool m_instances_visibility;
 
