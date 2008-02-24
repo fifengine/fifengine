@@ -173,7 +173,7 @@ namespace FIFE {
 		/** Get camera specific cache item for the visual
 		 *  @return cache item
 		 */
-		InstanceVisualCacheItem& getCacheItem(Camera* cam);
+		inline InstanceVisualCacheItem& getCacheItem(Camera* cam) { return m_cache[cam]; }
 		
 	private:
 		/** Constructor

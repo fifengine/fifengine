@@ -109,16 +109,6 @@ namespace FIFE {
 	InstanceVisual::~InstanceVisual() {
 	}
 	
-	InstanceVisualCacheItem& InstanceVisual::getCacheItem(Camera* cam) {
-		std::map<Camera*, InstanceVisualCacheItem>::iterator it = m_cache.find(cam);
-		if (it != m_cache.end()) {
-			return it->second;
-		}
-		InstanceVisualCacheItem item;
-		m_cache[cam] = item;
-		return m_cache[cam];
-	}
-	
 	ActionVisual::ActionVisual(): m_animations() {
 	}
 	

@@ -140,7 +140,7 @@ namespace FIFE {
 	class InstanceDistanceSort {
 	public:
 		Camera* cam;
-		bool operator()(const Instance* lhs, const Instance* rhs) {
+		inline bool operator()(const Instance* lhs, const Instance* rhs) {
 			InstanceVisual* liv = lhs->getVisual<InstanceVisual>();
 			InstanceVisual* riv = rhs->getVisual<InstanceVisual>();
 			InstanceVisualCacheItem& lic = liv->getCacheItem(cam);
