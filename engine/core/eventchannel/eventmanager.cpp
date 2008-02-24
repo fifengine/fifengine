@@ -557,6 +557,10 @@ namespace FIFE {
 		m_triggers.push_back(&trigger);
 	}
 
+	void EventManager::unregisterTrigger(Trigger& trigger){
+		m_triggers.remove(&trigger);
+	}
+
 	void EventManager::pollTriggers(){
 		for (std::list<Trigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
 			if((*it)->pollTrigger()){

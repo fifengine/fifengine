@@ -157,7 +157,6 @@ namespace FIFE {
 
 		FL_LOG(_log, "Creating event manager");
 		m_eventmanager = new EventManager();
-		m_triggercontroller = m_eventmanager;
 
 		FL_LOG(_log, "Creating pools");
 		m_imagepool = new ImagePool();
@@ -226,7 +225,7 @@ namespace FIFE {
 
 		FL_LOG(_log, "Creating model");
 		m_model = new Model();
-		m_model->setTriggerController(m_triggercontroller);
+		m_model->setTriggerController(m_eventmanager);
 		FL_LOG(_log, "Adding pathers to model");
 		m_model->adoptPather(new LinearPather());
 		m_model->adoptPather(new RoutePather());

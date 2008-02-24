@@ -48,11 +48,11 @@ namespace FIFE {
 	class ITriggerController {
 		
 	public:
-		virtual ~ITriggerController(){ }
+		virtual ~ITriggerController() { }
 
-		virtual void registerTrigger(Trigger& trigger) { }
-
-		virtual void pollTriggers() { }		
+		virtual void registerTrigger(Trigger& trigger) = 0;
+		
+		virtual void unregisterTrigger(Trigger& trigger) = 0;
 
 	};
 }

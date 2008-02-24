@@ -25,6 +25,7 @@ digraph "source tree" {
     "loaders" -> "vfs"
     "loaders" -> "video"
     "loaders" -> "xml"
+    "model" -> "eventchannel"
     "model" -> "util"
     "pathfinder" -> "model"
     "pathfinder" -> "util"

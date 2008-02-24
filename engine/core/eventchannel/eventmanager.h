@@ -103,7 +103,7 @@ namespace FIFE {
 		void onWidgetAction(WidgetEvent& evt);
 
 		void registerTrigger(Trigger& trigger);
-		void pollTriggers();
+		void unregisterTrigger(Trigger& trigger);
 
 		/** Process the SDL event queue.
 		 * This is to be called only by the engine itself once per frame. 
@@ -119,7 +119,8 @@ namespace FIFE {
 		void fillModifiers(InputEvent& evt);
 		void fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt);
 		void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt);
-
+		void pollTriggers();
+		
 		std::vector<ICommandListener*> m_commandlisteners;
 		std::vector<ICommandListener*> m_pending_commandlisteners;
 		std::vector<ICommandListener*> m_pending_cldeletions;

@@ -9,12 +9,12 @@ from utils.util_scripts.path import path
 # format = user -> providers
 ALLOWED_MODULE_DEPS = {
 	'controller': ('model', 'eventchannel', 'gui', 'video', 'loaders', 'view', 'audio', 'util', 'vfs', 'pathfinder'),
-	'model': ('util',),
+	'model': ('util', 'eventchannel'),
 	'eventchannel': ('util',),
 	'gui': ('eventchannel', 'util', 'video', 'vfs'),
 	'video': ('util',),
 	'loaders': ('video', 'vfs', 'xml', 'util', 'view', 'model'),
-	'view': ('model', 'video', 'util', 'audio'),
+	'view': ('model', 'video', 'util', 'audio', 'eventchannel'),
 	'audio': ('util', 'vfs'),
 	'util': ['engine'],
 	'vfs': ('util',),
@@ -198,9 +198,12 @@ def analyze(write_postscript=False):
 	#out = []
 	#for f, file2inc
 	result = '\n'.join(illegalModuleDeps)
-	if not result:
-		result = "no dependency analyzer errors found"
-	print result
+	if result:
+		print result
+	else:
+		print "no dependency analyzer errors found"
+	return result
+
 
 _ANALYZE_FN_ = analyze
 
