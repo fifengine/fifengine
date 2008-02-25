@@ -19,6 +19,7 @@ class World(EventListenerBase):
 		self.view = self.engine.getView()
 		self.filename = ''
 		self.pump_ctr = 0 # for testing purposis
+		self.ctrldown = False
 		
 		
 	def reset(self):
@@ -97,6 +98,21 @@ class World(EventListenerBase):
 			self.load(self.filename)
 		elif keystr == 'o':
 			self.target_rotation = (self.target_rotation + 90) % 360
+		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
+			self.ctrldown = True
+	
+	def keyReleased(self, evt):
+		keyval = evt.getKey().getValue()
+		if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
+			self.ctrldown = False
+	
+	def mouseWheelMovedUp(self, evt):
+		if self.ctrldown:
+			self.cameras['main'].setZoom(self.cameras['main'].getZoom() + 0.05)
+	
+	def mouseWheelMovedDown(self, evt):
+		if self.ctrldown:
+			self.cameras['main'].setZoom(self.cameras['main'].getZoom() - 0.05)
 	
 	def changeRotation(self):
 		currot = self.cameras['main'].getRotation()
