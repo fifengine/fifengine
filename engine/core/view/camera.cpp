@@ -291,7 +291,19 @@ namespace FIFE {
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
 				assert(vc.image);
 				Uint8 r, g, b, a;
-				vc.image->getPixelRGBA(screen_coords.x - vc.dimensions.x, screen_coords.y - vc.dimensions.y, &r, &b, &g, &a);
+				int x = screen_coords.x - vc.dimensions.x;
+				int y = screen_coords.y - vc.dimensions.y;
+				if (m_zoom != 1.0) {
+					double fx = static_cast<double>(x);
+					double fy = static_cast<double>(y);
+					double fow = static_cast<double>(vc.image->getWidth());
+					double foh = static_cast<double>(vc.image->getHeight());
+					double fsw = static_cast<double>(vc.dimensions.w);
+					double fsh = static_cast<double>(vc.dimensions.h);
+					x = static_cast<int>(round(fx / fsw * fow));
+					y = static_cast<int>(round(fy / fsh * foh));
+				}
+				vc.image->getPixelRGBA(x, y, &r, &b, &g, &a);
 				// instance is hit with mouse if not totally transparent
 				if (a != 0) {
 					instances.push_back(i);
@@ -458,9 +470,17 @@ namespace FIFE {
 					drawpt.y -= h / 2;
 					drawpt.y += image->getYShift();
 					Rect r = Rect(drawpt.x, drawpt.y, w, h);
-					vc.dimensions = r;
 					
-					if (r.intersects(getViewPort())) {
+					vc.dimensions = r;
+					if (m_zoom != 1.0) {
+						r.w = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.w) * m_zoom)) + 1;
+						r.h = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.h) * m_zoom)) + 1;
+						r.x = vc.dimensions.x - static_cast<unsigned int>(ceil(static_cast<double>(r.w - vc.dimensions.w) / 2)) - 1;
+						r.y = vc.dimensions.y - static_cast<unsigned int>(ceil(static_cast<double>(r.h - vc.dimensions.h) / 2)) - 1;
+						vc.dimensions = r;
+					}
+					
+					if (vc.dimensions.intersects(getViewPort())) {
 						instances_to_render.push_back(instance);
 					}
 				}

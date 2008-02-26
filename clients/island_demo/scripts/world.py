@@ -108,11 +108,11 @@ class World(EventListenerBase):
 	
 	def mouseWheelMovedUp(self, evt):
 		if self.ctrldown:
-			self.cameras['main'].setZoom(self.cameras['main'].getZoom() + 0.05)
+			self.cameras['main'].setZoom(self.cameras['main'].getZoom() * 1.05)
 	
 	def mouseWheelMovedDown(self, evt):
 		if self.ctrldown:
-			self.cameras['main'].setZoom(self.cameras['main'].getZoom() - 0.05)
+			self.cameras['main'].setZoom(self.cameras['main'].getZoom() / 1.05)
 	
 	def changeRotation(self):
 		currot = self.cameras['main'].getRotation()

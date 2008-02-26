@@ -291,8 +291,6 @@ namespace FIFE {
 		m_renderbackend->endFrame();
 		SDL_Delay(1);
 		m_eventmanager->processEvents();
-		m_renderbackend->startFrame();
-		
 	}
 
 	void Engine::finalizePumping() {

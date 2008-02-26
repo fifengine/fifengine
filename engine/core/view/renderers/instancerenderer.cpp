@@ -123,20 +123,13 @@ namespace FIFE {
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 			
 			double z = cam->getZoom();
-			Rect r = vc.dimensions;
-			if (z != 1.0) {
-				r.w = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.w) * z)) + 1;
-				r.h = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.h) * z)) + 1;
-				r.x = vc.dimensions.x - static_cast<unsigned int>(ceil(static_cast<double>(r.w - vc.dimensions.w) / 2)) - 1;
-				r.y = vc.dimensions.y - static_cast<unsigned int>(ceil(static_cast<double>(r.h - vc.dimensions.h) / 2)) - 1;
-			}
 			if (potential_outlining) {
 				InstanceToOutlines_t::iterator it = i2o.find(instance);
 				if (it != end) {
-					bindOutline(it->second, vc, cam)->render(r);
+					bindOutline(it->second, vc, cam)->render(vc.dimensions);
 				}
 			}
-			vc.image->render(r);
+			vc.image->render(vc.dimensions);
 		}
 
 	}
