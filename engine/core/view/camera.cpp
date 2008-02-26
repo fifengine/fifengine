@@ -308,8 +308,10 @@ namespace FIFE {
 					double foh = static_cast<double>(vc.image->getHeight());
 					double fsw = static_cast<double>(vc.dimensions.w);
 					double fsh = static_cast<double>(vc.dimensions.h);
-					x = static_cast<int>(round(fx / fsw * fow));
-					y = static_cast<int>(round(fy / fsh * foh));
+					double fxo = static_cast<double>(vc.image->getXShift()) * m_zoom;
+					double fyo = static_cast<double>(vc.image->getYShift()) * m_zoom;
+					x = static_cast<int>(round(fx / fsw * fow - fxo));
+					y = static_cast<int>(round(fy / fsh * foh - fyo));
 				}
 				vc.image->getPixelRGBA(x, y, &r, &b, &g, &a);
 				// instance is hit with mouse if not totally transparent
@@ -486,8 +488,10 @@ namespace FIFE {
 						//       In case additions / substractions are removed, gaps appear between tiles.
 						r.w = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.w) * m_zoom)) + 2;
 						r.h = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.h) * m_zoom)) + 2;
-						r.x = vc.dimensions.x - static_cast<unsigned int>(ceil(static_cast<double>(r.w - vc.dimensions.w) / 2)) - 1;
-						r.y = vc.dimensions.y - static_cast<unsigned int>(ceil(static_cast<double>(r.h - vc.dimensions.h) / 2)) - 1;
+						int xo = static_cast<int>(ceil(static_cast<double>(vc.image->getXShift()) * m_zoom)) - vc.image->getXShift();
+						int yo = static_cast<int>(ceil(static_cast<double>(vc.image->getYShift()) * m_zoom)) - vc.image->getYShift();
+						r.x = vc.dimensions.x - static_cast<unsigned int>(ceil(static_cast<double>(r.w - vc.dimensions.w) / 2)) + xo - 1;
+						r.y = vc.dimensions.y - static_cast<unsigned int>(ceil(static_cast<double>(r.h - vc.dimensions.h) / 2)) + yo - 1;
 						vc.dimensions = r;
 					}
 					
