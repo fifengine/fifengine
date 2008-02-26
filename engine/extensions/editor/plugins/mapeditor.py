@@ -109,10 +109,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def _setSelection(self, screenx, screeny):
 		if self.camera:
 			# TODO: make Sleek fix this ugly mess
-			tmp = fife.ScreenPoint(screenx, screeny)
-			dy = -(tmp.y - self.camera.toScreenCoordinates(self.camera.getLocationRef().getMapCoordinates()).y)
-			tmp.z = (int)(math.tan(self.camera.getTilt()* (math.pi / 180.0)) * dy)
-			self.selection = self.camera.toMapCoordinates(tmp)
+			self.selection = self.camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
 			self.selection.z = 0
 			self.selection = self.layer.getCellGrid().toLayerCoordinates(self.selection)
 			loc = fife.Location(self.layer)

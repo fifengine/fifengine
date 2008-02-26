@@ -175,9 +175,11 @@ namespace FIFE {
 		const Rect& getViewPort() const;
 
 		/** Transforms given point from screen coordinates to map coordinates
-		 *  @return point in map coordinates
+		 * @param screen_coords screen coordinates to transform
+		 * @param z_calculated if true, z-value (depth cut point) is pre-calculated. If false, camera calculates it
+		 * @return point in map coordinates
 		 */
-		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords);
+		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords, bool z_calculated=true);
 
 		/** Transforms given point from map coordinates to screen coordinates
 		 *  @return point in screen coordinates
@@ -209,7 +211,7 @@ namespace FIFE {
 		 * @param layer layer to use for search
 		 * @param instances list of instances that is filled based on hit test results
 		 */
-		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
+		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances);
 
 		/** General update routine.
 		 * In this function, the camera's position gets updated when its attached
@@ -248,6 +250,10 @@ namespace FIFE {
 		/** resets active layer information on all renderers.
 		 */
 		void resetRenderers();
+		
+		/** calculates z-value for given screenpoint
+		 */
+		void calculateZValue(ScreenPoint& screen_coords);
 
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 		void onRendererEnabledChanged(RendererBase* renderer);

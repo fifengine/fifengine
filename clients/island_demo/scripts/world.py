@@ -119,17 +119,10 @@ class World(EventListenerBase):
 		if self.target_rotation != currot:
 			self.cameras['main'].setRotation((currot + 5) % 360)
 	
-	# @FIXME this functionality should be in core side
-	def getMousePoint(self, x, y):
-		clickpoint = fife.ScreenPoint(x, y)
-		dy = -(clickpoint.y - self.cameras['main'].toScreenCoordinates(self.cameras['main'].getLocation().getMapCoordinates()).y)
-		clickpoint.z = (int)(math.tan(self.cameras['main'].getTilt()* (math.pi / 180.0)) * dy);
-		return clickpoint
-	
 	def mouseReleased(self, evt):
-		clickpoint = self.getMousePoint(evt.getX(), evt.getY())
+		clickpoint = fife.ScreenPoint(evt.getX(), evt.getY())
 		if (evt.getButton() == fife.MouseEvent.LEFT):
-			target_mapcoord = self.cameras['main'].toMapCoordinates(clickpoint)
+			target_mapcoord = self.cameras['main'].toMapCoordinates(clickpoint, False)
 			target_mapcoord.z = 0
 			l = fife.Location(self.agentlayer)
 			l.setMapCoordinates(target_mapcoord)
@@ -142,7 +135,7 @@ class World(EventListenerBase):
 		renderer = fife.InstanceRenderer.getInstance(self.cameras['main'])
 		renderer.removeAllOutlines()
 		
-		pt = self.getMousePoint(evt.getX(), evt.getY())
+		pt = fife.ScreenPoint(evt.getX(), evt.getY())
 		instances = self.cameras['main'].getMatchingInstances(pt, self.agentlayer);
 		for i in instances:
 			if i.getObject().Id() in ('Girl', 'Beekeeper'):

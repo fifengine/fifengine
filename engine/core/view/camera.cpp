@@ -225,7 +225,15 @@ namespace FIFE {
 		m_inverse_matrix = m_matrix.inverse();
 	}
 
-	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords) {
+	void Camera::calculateZValue(ScreenPoint& screen_coords) {
+		int dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
+		screen_coords.z = static_cast<int>(tan(m_tilt * (M_PI / 180.0)) * static_cast<double>(dy));
+	}
+	
+	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords, bool z_calculated) {
+		if (!z_calculated) {
+			calculateZValue(screen_coords);
+		}
 		screen_coords.x -= m_viewport.w / 2;
 		screen_coords.y -= m_viewport.h / 2;
 
@@ -280,7 +288,7 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 	
-	void Camera::getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances) {
+	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
 		const std::vector<Instance*>& layer_instances = layer.getInstances();
 		std::vector<Instance*>::const_iterator instance_it = layer_instances.begin();

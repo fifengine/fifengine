@@ -32,11 +32,11 @@ namespace FIFE {
 		void setCellImageDimensions(unsigned int width, unsigned int height);
 		Point getCellImageDimensions();
 		ScreenPoint toScreenCoordinates(ExactModelCoordinate map_coords);
-		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords);
+		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords, bool z_calculated=true);
 		void setEnabled(bool enabled);
 		bool isEnabled();
 		
-		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
+		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances);
 		RendererBase* getRenderer(const std::string& name);
 		void resetRenderers();
 
