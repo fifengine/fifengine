@@ -308,10 +308,8 @@ namespace FIFE {
 					double foh = static_cast<double>(vc.image->getHeight());
 					double fsw = static_cast<double>(vc.dimensions.w);
 					double fsh = static_cast<double>(vc.dimensions.h);
-					double fxo = static_cast<double>(vc.image->getXShift()) * m_zoom;
-					double fyo = static_cast<double>(vc.image->getYShift()) * m_zoom;
-					x = static_cast<int>(round(fx / fsw * fow - fxo));
-					y = static_cast<int>(round(fy / fsh * foh - fyo));
+					x = static_cast<int>(round(fx / fsw * fow));
+					y = static_cast<int>(round(fy / fsh * foh));
 				}
 				vc.image->getPixelRGBA(x, y, &r, &b, &g, &a);
 				// instance is hit with mouse if not totally transparent
