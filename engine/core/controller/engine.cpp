@@ -46,6 +46,7 @@
 #include "eventchannel/eventmanager.h"
 #include "video/imagepool.h"
 #include "video/animationpool.h"
+#include "audio/soundclippool.h"
 #include "video/renderbackend.h"
 #include "video/cursor.h"
 #ifdef HAVE_OPENGL
@@ -96,6 +97,7 @@ namespace FIFE {
 		m_timemanager(0),
 		m_imagepool(0),
 		m_animpool(0),
+		m_soundclippool(0),
 		m_vfs(0),
 		m_model(0),
 		m_gui_graphics(0),
@@ -161,9 +163,11 @@ namespace FIFE {
 		FL_LOG(_log, "Creating pools");
 		m_imagepool = new ImagePool();
 		m_animpool = new AnimationPool();
+		m_soundclippool = new SoundClipPool();
 		m_imagepool->addResourceLoader(new SubImageLoader());
 		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
 		m_animpool->addResourceLoader(new AnimationLoader(m_imagepool));
+		m_soundclippool->addResourceLoader(new SoundClipLoader());
 
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());
@@ -220,7 +224,7 @@ namespace FIFE {
 		SDL_EnableUNICODE(1);
 
 		FL_LOG(_log, "Creating sound manager");
-		m_soundmanager = new SoundManager();
+		m_soundmanager = new SoundManager(m_soundclippool);
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
 		FL_LOG(_log, "Creating model");

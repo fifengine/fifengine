@@ -121,6 +121,10 @@ namespace FIFE {
 		/** Provides access point to the AnimationPool
 		 */
 		AnimationPool* getAnimationPool() { return m_animpool; }
+
+		/** Provides access point to the SoundClipPool
+		 */
+		SoundClipPool* getSoundClipPool() { return m_soundclippool; }
 		
 		/** Provides access point to the RenderBackend
 		 */
@@ -160,6 +164,7 @@ namespace FIFE {
 		TimeManager* m_timemanager;
 		ImagePool* m_imagepool;
 		AnimationPool* m_animpool;
+		SoundClipPool* m_soundclippool;
 		VFS* m_vfs;
 		Model* m_model;
 		gcn::Graphics* m_gui_graphics;

@@ -31,6 +31,7 @@ namespace FIFE {
 	class GUIManager;
 	class ImagePool;
 	class AnimationPool;
+	class SoundClipPool;
 	class RenderBackend;
 	class View;
 	class Model;
@@ -87,6 +88,7 @@ namespace FIFE {
 		GUIManager* getGuiManager();
 		ImagePool* getImagePool();
 		AnimationPool* getAnimationPool();
+		SoundClipPool* getSoundClipPool();
 		RenderBackend* getRenderBackend();
 		View* getView();
 		Model* getModel();

@@ -33,16 +33,17 @@ namespace FIFE {
 	};
 
 	class SoundDecoder;
+	class SoundClipPool;
+
 	
 	class SoundEmitter {
 	public:
-		SoundEmitter(unsigned int uid);
+		SoundEmitter(SoundClipPool* pool, unsigned int uid);
 		~SoundEmitter();
 		
 		unsigned int getID();
 		
-		bool load(const std::string &filename);
-		bool load(SoundDecoder* decoder);
+		void setSoundClip(unsigned int sound_id);
 		void reset(bool defaultall = false);
 		void release();
 		

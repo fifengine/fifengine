@@ -105,10 +105,11 @@ class IslandDemo(ApplicationBase):
 		if TDS.PlaySounds:
 			# play track as background music
 			emitter = self.soundmanager.createEmitter()
-			emitter.load('content/audio/music/rio_de_hola.ogg')
+			id = self.engine.getSoundClipPool().addResourceFromFile('content/audio/music/rio_de_hola.ogg')
+			emitter.setSoundClip(id)
 			emitter.setLooping(True)
 			emitter.play()
-		
+
 	def createListener(self):
 		pass # already created in constructor
 		
