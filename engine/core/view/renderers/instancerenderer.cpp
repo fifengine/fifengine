@@ -92,7 +92,7 @@ namespace FIFE {
 	}
 
 	unsigned int scale(unsigned int val, double factor) {
-		return static_cast<unsigned int>(static_cast<double>(val) * factor);
+		return static_cast<unsigned int>(ceil(static_cast<double>(val) * factor));
 	}
 	
 	void InstanceRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
@@ -122,18 +122,20 @@ namespace FIFE {
 			InstanceVisualCacheItem& vc = visual->getCacheItem(cam);
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 			
+			double z = cam->getZoom();
+			Rect r = vc.dimensions;
+			if (z != 1.0) {
+				r.w = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.w) * z)) + 1;
+				r.h = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.h) * z)) + 1;
+				r.x = vc.dimensions.x - static_cast<unsigned int>(ceil(static_cast<double>(r.w - vc.dimensions.w) / 2)) - 1;
+				r.y = vc.dimensions.y - static_cast<unsigned int>(ceil(static_cast<double>(r.h - vc.dimensions.h) / 2)) - 1;
+			}
 			if (potential_outlining) {
 				InstanceToOutlines_t::iterator it = i2o.find(instance);
 				if (it != end) {
-					bindOutline(it->second, vc, cam)->render(vc.dimensions);
+					bindOutline(it->second, vc, cam)->render(r);
 				}
 			}
-			double z = cam->getZoom();
-			Rect r;
-			r.w = scale(vc.dimensions.w, z);
-			r.h = scale(vc.dimensions.h, z);
-			r.x = vc.dimensions.x - ((r.w - vc.dimensions.w) / 2);
-			r.y = vc.dimensions.y - ((r.h - vc.dimensions.h) / 2);
 			vc.image->render(r);
 		}
 
@@ -156,7 +158,6 @@ namespace FIFE {
 		// TODO: optimize...
 		uint8_t r, g, b, a = 0;
 		int prev_a = a;
-		double z = cam->getZoom();
 		
 		// vertical sweep
 		for (unsigned int x = 0; x < img->getWidth(); x ++) {
@@ -165,11 +166,11 @@ namespace FIFE {
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
 					if (a < prev_a) {
 						for (unsigned int yy = y; yy < y + info.width; yy++) {
-							img->putPixel(scale(x, z), scale(yy, z), info.r, info.g, info.b);
+							img->putPixel(x, yy, info.r, info.g, info.b);
 						}
 					} else {
 						for (unsigned int yy = y - info.width; yy < y; yy++) {
-							img->putPixel(scale(x, z), scale(yy, z), info.r, info.g, info.b);
+							img->putPixel(x, yy, info.r, info.g, info.b);
 						}
 					}
 				}
@@ -183,11 +184,11 @@ namespace FIFE {
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
 					if (a < prev_a) {
 						for (unsigned int xx = x; xx < x + info.width; xx++) {
-							img->putPixel(scale(xx, z), scale(y, z), info.r, info.g, info.b);
+							img->putPixel(xx, y, info.r, info.g, info.b);
 						}
 					} else {
 						for (unsigned int xx = x - info.width; xx < x; xx++) {
-							img->putPixel(scale(xx, z), scale(y, z), info.r, info.g, info.b);
+							img->putPixel(xx, y, info.r, info.g, info.b);
 						}
 					}
 				}
