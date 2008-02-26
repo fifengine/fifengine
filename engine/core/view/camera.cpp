@@ -473,8 +473,11 @@ namespace FIFE {
 					
 					vc.dimensions = r;
 					if (m_zoom != 1.0) {
-						r.w = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.w) * m_zoom)) + 1;
-						r.h = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.h) * m_zoom)) + 1;
+						// NOTE: Due to image alignment, there is additional additions and substractions on image dimensions
+						//       There's probabaly some better solution for this, but works "good enough" for now.
+						//       In case additions / substractions are removed, gaps appear between tiles.
+						r.w = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.w) * m_zoom)) + 2;
+						r.h = static_cast<unsigned int>(ceil(static_cast<double>(vc.dimensions.h) * m_zoom)) + 2;
 						r.x = vc.dimensions.x - static_cast<unsigned int>(ceil(static_cast<double>(r.w - vc.dimensions.w) / 2)) - 1;
 						r.y = vc.dimensions.y - static_cast<unsigned int>(ceil(static_cast<double>(r.h - vc.dimensions.h) / 2)) - 1;
 						vc.dimensions = r;
