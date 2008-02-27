@@ -44,7 +44,7 @@ subgraph cluster_5 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "loaders/native/video_loaders"
+    "loaders/native/audio_loaders"; "loaders/native/video_loaders"
     label = "loaders";
 }
 subgraph cluster_6 {
@@ -108,6 +108,7 @@ subgraph cluster_12 {
     "controller" -> "gui/base/opengl"
     "controller" -> "gui/base/sdl"
     "controller" -> "gui/console"
+    "controller" -> "loaders/native/audio_loaders"
     "controller" -> "loaders/native/video_loaders"
     "controller" -> "model"
     "controller" -> "pathfinder/linearpather"
@@ -161,6 +162,10 @@ subgraph cluster_12 {
     "gui/widgets" -> "gui/base"
     "gui/widgets" -> "util"
     "gui/widgets" -> "video"
+    "loaders/native/audio_loaders" -> "audio"
+    "loaders/native/audio_loaders" -> "util"
+    "loaders/native/audio_loaders" -> "vfs"
+    "loaders/native/audio_loaders" -> "vfs/raw"
     "loaders/native/video_loaders" -> "util"
     "loaders/native/video_loaders" -> "util/resource"
     "loaders/native/video_loaders" -> "vfs"

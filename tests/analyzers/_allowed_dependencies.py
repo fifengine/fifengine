@@ -6,7 +6,7 @@ ALLOWED_MODULE_DEPS = {
 	'eventchannel': ('util',),
 	'gui': ('eventchannel', 'util', 'video', 'vfs'),
 	'video': ('util',),
-	'loaders': ('video', 'vfs', 'xml', 'util', 'view', 'model'),
+	'loaders': ('audio', 'video', 'vfs', 'xml', 'util', 'view', 'model'),
 	'view': ('model', 'video', 'util', 'audio', 'eventchannel'),
 	'audio': ('util', 'vfs'),
 	'util': ['engine'],

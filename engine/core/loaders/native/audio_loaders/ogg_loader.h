@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
  
-#ifndef FIFE_SOUNDCLIPPOOL_H_
-#define FIFE_SOUNDCLIPPOOL_H_
+#ifndef FIFE_OGGLOADER_H_
+#define FIFE_OGGLOADER_H_
 
 // Standard C++ library includes
 
@@ -32,28 +32,20 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/pool.h"
-
-#include "soundclip.h"
+#include "audio/soundcliploader.h"
 
 namespace FIFE {
-	
-	/**  Pool for holding sound clips
-	 */
-	class SoundClipPool: public Pool {
+
+	class VFS;
+
+	class OggLoader : public ISoundClipLoader {
 	public:
-		/** Default constructor.
-		 */
-		SoundClipPool(): Pool() {
-		}
-	
-		/** Destructor.
-		 */
-	   virtual ~SoundClipPool() {}
-	
-		SoundClip& getSoundClip(unsigned int index)  {
-			return dynamic_cast<SoundClip&>(get(index));
-		}
+		OggLoader(VFS* vfs) : m_vfs(vfs) { }
+
+		virtual IResource* loadResource(const ResourceLocation& location);
+
+	private:
+		VFS* m_vfs;
 	};
 }
 

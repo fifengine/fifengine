@@ -24,34 +24,34 @@
 // Platform specific includes
 
 // 3rd party library includes
-#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "vfs/raw/rawdata.h"
+#include "audio/soundclip.h"
 #include "vfs/vfs.h"
 #include "util/logger.h"
 #include "util/exception.h"
 
+#include "ogg_loader.h"
 #include "sounddecoder_ogg.h"
 
 namespace FIFE {
-	static Logger _log(LM_AUDIO);
+  static Logger _log(LM_NATIVE_LOADERS);
 
-	SoundDecoder* SoundDecoder::create(const std::string& filename) {
-		RawData* rdptr = VFS::instance()->open(filename);
-		
-		SoundDecoder* ptr;
+	IResource* OggLoader::loadResource(const ResourceLocation& location) {
+		std::string filename = location.getFilename();
+
+		SoundClip* ptr;
 		if(filename.find(".ogg", filename.size() - 4) != std::string::npos) {
-			ptr = new SoundDecoderOgg(rdptr);
+			RawData* rdptr = m_vfs->open(location.getFilename());
+			ptr = new SoundClip(new SoundDecoderOgg(rdptr));
 			
 		} else {
 			FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << filename << "\"!");
-			throw Exception("");
+			throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
 		}
-		
 		return ptr;
 	}	
 }

@@ -18,42 +18,83 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
- 
-#ifndef FIFE_SOUNDCLIPPOOL_H_
-#define FIFE_SOUNDCLIPPOOL_H_
+
+#ifndef FIFE_SOUNDDECODER_OGG_H
+#define FIFE_SOUNDDECODER_OGG_H
 
 // Standard C++ library includes
 
 // Platform specific includes
 
 // 3rd party library includes
+#include <vorbisfile.h>
+#include <boost/scoped_ptr.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/pool.h"
-
-#include "soundclip.h"
+#include "vfs/raw/rawdata.h"
+#include "audio/sounddecoder.h"
 
 namespace FIFE {
-	
-	/**  Pool for holding sound clips
-	 */
-	class SoundClipPool: public Pool {
+	class SoundDecoderOgg : public SoundDecoder {
 	public:
-		/** Default constructor.
-		 */
-		SoundClipPool(): Pool() {
+		
+		SoundDecoderOgg(RawData* ptr);
+		
+		~SoundDecoderOgg() {
+			releaseBuffer();
 		}
-	
-		/** Destructor.
+		
+		/** Returns the decoded length of the file in bytes
 		 */
-	   virtual ~SoundClipPool() {}
-	
-		SoundClip& getSoundClip(unsigned int index)  {
-			return dynamic_cast<SoundClip&>(get(index));
+		unsigned long getDecodedLength() {
+			return m_declength;
 		}
+		
+		/** Sets the current position in the file (in bytes)
+		 *
+		 * @return 0 (False), if the positioning was successful
+		 */
+		bool setCursor(unsigned long pos);
+		
+		/** Request the decoding of the next part of the stream.
+		 *
+		 * @param length The length of the decoded part
+		 * @return 0 (False), if decoding was successful
+		 */
+		bool decode(unsigned long length);
+		
+		/** Returns the next decoded buffer.
+		 *
+		 * The length of the buffer is returned by getBufferSize().
+		 */
+		void *getBuffer() {
+			return m_data;
+		}
+		
+		/** Returns the byte-size of the buffer returned by getBuffer().
+		 */
+		unsigned long getBufferSize() {
+			return m_datasize;
+		}
+		
+		/** Releases the buffer returned by getBuffer()
+		 */
+		void releaseBuffer() {
+			if (m_data != NULL) {
+				delete[] m_data;
+				m_data = NULL;
+			}
+		}
+		
+	private:
+		boost::scoped_ptr<RawData> 	m_file;
+		unsigned long		m_declength;
+		unsigned long		m_datasize;
+		char*						m_data;
+		OggVorbis_File 	m_ovf;
 	};
 }
 

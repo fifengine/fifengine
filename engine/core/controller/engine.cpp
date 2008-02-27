@@ -60,6 +60,7 @@
 #include "loaders/native/video_loaders/subimage_loader.h"
 #include "loaders/native/video_loaders/image_loader.h"
 #include "loaders/native/video_loaders/animation_loader.h"
+#include "loaders/native/audio_loaders/ogg_loader.h"
 //#include "loaders/fallout/model_loaders/dat1.h"
 //#include "loaders/fallout/model_loaders/dat2.h"
 #include "model/model.h"
@@ -167,7 +168,7 @@ namespace FIFE {
 		m_imagepool->addResourceLoader(new SubImageLoader());
 		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
 		m_animpool->addResourceLoader(new AnimationLoader(m_imagepool));
-		m_soundclippool->addResourceLoader(new SoundClipLoader());
+		m_soundclippool->addResourceLoader(new OggLoader(m_vfs));
 
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());
