@@ -145,6 +145,7 @@ namespace FIFE {
 	};
 	
 	enum MouseCursorType {
+		CURSOR_NONE,
 		CURSOR_NATIVE,
 		CURSOR_IMAGE,
 		CURSOR_ANIMATION
@@ -153,9 +154,13 @@ namespace FIFE {
 	class Cursor {
 	public:
 		virtual ~Cursor() {}
+		virtual void draw();
 		void set(MouseCursorType ctype, unsigned int cursor_id=0);
-		unsigned int getId() const;
+		void setDrag(MouseCursorType ctype, unsigned int drag_id=0, int drag_offset_x=0, int drag_offset_y=0);
 		MouseCursorType getType() const;
+		unsigned int getId() const;
+		MouseCursorType getDragType() const;
+		unsigned int getDragId() const;
 	
 	private:
 		Cursor(ImagePool* imgpool, AnimationPool* animpool);

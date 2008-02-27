@@ -499,6 +499,7 @@ digraph "source tree" {
     "engine/core/video/cursor.cpp" -> "imagepool.h"
     "engine/core/video/cursor.cpp" -> "renderbackend.h"
     "engine/core/video/cursor.cpp" -> "util/rect.h"
+    "engine/core/video/cursor.cpp" -> "util/time/timemanager.h"
     "engine/core/video/fonts/fontbase.cpp" -> "fontbase.h"
     "engine/core/video/fonts/fontbase.cpp" -> "util/exception.h"
     "engine/core/video/fonts/fontbase.cpp" -> "util/rect.h"

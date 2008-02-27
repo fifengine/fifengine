@@ -36,6 +36,7 @@ namespace FIFE {
 	class ImagePool;
 	class AnimationPool;
 	class RenderBackend;
+	class TimeManager;
 	
 	/** Defines the type of shown cursor
 	 * native -> default cursor
@@ -43,6 +44,7 @@ namespace FIFE {
 	 * animation -> cursor from animation pool
 	 */
 	enum MouseCursorType {
+		CURSOR_NONE,
 		CURSOR_NATIVE,
 		CURSOR_IMAGE,
 		CURSOR_ANIMATION
@@ -69,22 +71,47 @@ namespace FIFE {
 		 * @param cursor_id pool id for the cursor (either image or animation)
 		 */
 		void set(MouseCursorType ctype, unsigned int cursor_id=0);
+			
+		/** Sets the current drag cursor type and pool value
+		 * @param ctype drag cursor type
+		 * @param drag_id pool id for the drag cursor (either image or animation)
+		 * @param drag_offset offset of drag image shown with cursor
+		 */
+		void setDrag(MouseCursorType ctype, unsigned int drag_id=0, int drag_offset_x=0, int drag_offset_y=0);
 		
+		/** Gets the current mouse cursor type
+		 */
+		MouseCursorType getType() const { return m_cursor_type; }
+	
 		/** Gets the current mouse cursor pool id
 		 */
 		unsigned int getId() const { return m_cursor_id; }
 		
 		/** Gets the current mouse cursor type
 		 */
-		MouseCursorType getType() const { return m_cursor_type; }
+		MouseCursorType getDragType() const { return m_drag_type; }
+		
+		/** Gets the current mouse cursor pool id
+		 */
+		unsigned int getDragId() const { return m_drag_id; }
+		
 	
 	private:
 		unsigned int m_cursor_id;
+		unsigned int m_drag_id;
 		MouseCursorType m_cursor_type;
+		MouseCursorType m_drag_type;
+		
 		RenderBackend* m_renderbackend;
 		ImagePool* m_imgpool;
 		AnimationPool* m_animpool;
+		
 		unsigned int m_animtime;
+		unsigned int m_drag_animtime;
+		
+		int m_drag_offset_x;
+		int m_drag_offset_y;
+		TimeManager* m_timemanager;
 	};
 
 } //FIFE
