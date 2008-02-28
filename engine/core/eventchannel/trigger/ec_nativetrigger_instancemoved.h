@@ -19,12 +19,11 @@
 *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
 ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_TRIGGER_H
-#define FIFE_EVENTCHANNEL_TRIGGER_H
+#ifndef FIFE_EVENTCHANNEL_NATIVETRIGGER_INSTANCEMOVED_H
+#define FIFE_EVENTCHANNEL_NATIVETRIGGER_INSTANCEMOVED_H
 
 // Standard C++ library includes
 //
-#include <list>
 
 // 3rd party library includes
 //
@@ -34,71 +33,28 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
+#include "model/structures/instance.h"
+#include "model/structures/location.h"
 
-#include "ec_itriggercontroller.h"
-#include "ec_itriggerlistener.h"
+#include "ec_trigger.h"
 
 namespace FIFE {
 
   /**
   * A trigger is fired when certain preconditions met
   */
-  class Trigger : public ITriggerController {
-
+  class InstanceMovedTrigger : public Trigger {
+    
   public:
+    InstanceMovedTrigger(ITriggerListener& listener, Instance* instance);
 
-    Trigger(ITriggerListener& listener){
-      registerListener(listener);
-    }
-
-    Trigger() { };
-
-    virtual ~Trigger(){
-      m_triggers.clear();
-    }
-
-    void pollTrigger(){
-      if(requirementsMet()){
-        pollTriggers();
-      }
-    }
-
-    virtual bool requirementsMet(){
-      return false;
-    }
-
-    void registerTrigger(Trigger& trigger){
-      m_triggers.push_back(&trigger);
-    }
-
-    void unregisterTrigger(Trigger& trigger){
-      m_triggers.remove(&trigger);
-    }
-
-    void pollTriggers(){
-      for (std::list<Trigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
-        (*it)->pollTrigger();
-      }
-    }
-
-    void fireTrigger(){
-      for (std::list<ITriggerListener*>::iterator it = m_listeners.begin(); it!=m_listeners.end(); ++it) {
-        (*it)->triggerFired();
-      }
-    }
-
-    void registerListener(ITriggerListener& triggerlistener){
-      m_listeners.push_back(&triggerlistener);
-    }
-
-    void unregisterListener(ITriggerListener& triggerlistener){
-      m_listeners.remove(&triggerlistener);
-    }
+    bool requirementsMet();
 
   protected:
-    std::list<ITriggerListener*> m_listeners;
-    std::list<Trigger*> m_triggers;
+    Instance* m_instance;
+    Location m_lastlocation;
   };
+
 }
 
 #endif

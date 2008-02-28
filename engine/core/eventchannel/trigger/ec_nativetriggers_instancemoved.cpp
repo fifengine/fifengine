@@ -19,30 +19,31 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_NATIVETRIGGERTYPES_H
-#define FIFE_EVENTCHANNEL_NATIVETRIGGERTYPES_H
-
 // Standard C++ library includes
-//
 
 // 3rd party library includes
-//
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
+
+#include "ec_nativetrigger_instancemoved.h"
 
 namespace FIFE {
-	
-	/**
-	 * Trigger types that are built into the engine
-	 */
-	enum NativeTriggerTypes {
-		UnknownTrigger = -1,
-		InstanceMovedTrigger = 1
-	};
-}
 
-#endif
+  InstanceMovedTrigger::InstanceMovedTrigger(ITriggerListener& listener, Instance* instance){
+    registerListener(listener);
+    m_instance = instance;
+    m_lastlocation = m_instance->getLocation();
+  }
+
+  bool InstanceMovedTrigger::requirementsMet(){
+    if(m_lastlocation != m_instance->getLocation()){
+      m_lastlocation = m_instance->getLocation();
+      return true;
+    }
+    return false;
+  }
+
+}
