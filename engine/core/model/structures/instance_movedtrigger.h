@@ -19,8 +19,8 @@
 *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
 ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_NATIVETRIGGER_INSTANCEMOVED_H
-#define FIFE_EVENTCHANNEL_NATIVETRIGGER_INSTANCEMOVED_H
+#ifndef FIFE_STRUCTUES_INSTANCEMOVED_TRIGGER_H
+#define FIFE_STRUCTUES_INSTANCEMOVED_TRIGGER_H
 
 // Standard C++ library includes
 //
@@ -33,26 +33,26 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "model/structures/instance.h"
-#include "model/structures/location.h"
+#include "eventchannel/trigger/ec_trigger.h"
 
-#include "ec_trigger.h"
+#include "instance.h"
+#include "location.h"
 
 namespace FIFE {
 
   /**
-  * A trigger is fired when certain preconditions met
+  * This trigger is fired when an instance is moved
   */
   class InstanceMovedTrigger : public Trigger {
-    
-  public:
-    InstanceMovedTrigger(ITriggerListener& listener, Instance* instance);
 
-    bool requirementsMet();
+  public:
+	InstanceMovedTrigger(ITriggerListener& listener, Instance* instance);
+
+	bool requirementsMet();
 
   protected:
-    Instance* m_instance;
-    Location m_lastlocation;
+	Instance* m_instance;
+	Location m_lastlocation;
   };
 
 }
