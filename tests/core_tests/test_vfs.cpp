@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "util/fife_unit_test.h"
 
 // 3rd party library includes
 #include <boost/scoped_ptr.hpp>
@@ -34,12 +33,14 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
-#include "util/rect.h"
+#include "util/structures/rect.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
 #include "vfs/raw/rawdata.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
 #include "vfs/directoryprovider.h"
+
+#include "fife_unit_test.h"
 
 static const std::string FIFE_TEST_DIR = "fifetestdir";
 

@@ -27,7 +27,7 @@
 #include <SDL.h>
 
 // FIFE includes
-#include "util/exception.h"
+#include "util/base/exception.h"
 
 #include "fife_opengl.h"
 #include "glimage.h"

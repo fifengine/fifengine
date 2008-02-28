@@ -1,5 +1,5 @@
 %{
-#include "util/point.h"
+#include "util/structures/point.h"
 %}
 
 namespace FIFE {

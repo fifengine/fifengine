@@ -27,10 +27,10 @@
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
 %}
 
-#include "util/point.i"
+#include "util/structures/point.i"
 #include "util/rect.i"
 
 namespace FIFE {

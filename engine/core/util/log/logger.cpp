@@ -33,8 +33,8 @@
 // Second block: files included from the same folder
 // #include "guichan_addon/console.h"
 #include "modules.h"
-#include "util/logger.h"
-#include "util/exception.h"
+#include "logger.h"
+#include "util/base/exception.h"
 
 // define the module info relationships structure here, begin
 struct ModuleInfo {

@@ -19,13 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_ATTRIBUTEDCLASS_H
-#define FIFE_ATTRIBUTEDCLASS_H
-
 // Standard C++ library includes
-#include <map>
-#include <string>
-#include <vector>
 
 // 3rd party library includes
 
@@ -33,63 +27,56 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "logger.h"
-#include "fifeclass.h"
+#include "util/base/attributedclass.h"
 
 namespace FIFE {
 
-	/** Base for classes with metadata attributes.
-	 */
-	class AttributedClass: public FifeClass {
+	AttributedClass::AttributedClass(const std::string& identifier) 
+		: FifeClass(), m_id(identifier) { 
+	}
 
-		public:
-			/** Create a new attributed class instance
-			 *  Usually AttributedClass is inherited and the
-			 *  facilities used by it's offspring (so to speak)
-			 *
-			 *  This constructor reflects this.
-			 *
-			 *  @param identifier A string identifier for this object
-			 */
-			AttributedClass(const std::string& identifier);
+	AttributedClass::~AttributedClass() {
+	}
 
-			/** Destructor
-			 *
-			 */
-			virtual ~AttributedClass();
+	const std::string& AttributedClass::Id() const {
+		return m_id;
+	}
 
-			/** Get the (string) identifier associated with this object
-			 */
-			const std::string& Id() const;
+	std::vector<std::string> AttributedClass::listFields() const {
+		std::vector<std::string> list;
 
-			/** List the fields contained in this archetype
-			 */
-			virtual std::vector<std::string> listFields() const;
+		std::map<std::string,std::string>::const_iterator i = m_fields.begin();
+		for(; i != m_fields.end(); ++i) {
+			list.push_back(i->first);
+		}
 
-			/** Set the value of a field.
-			 */
-			virtual void set(const std::string& field, const std::string& value);
+		return list;
+	}
 
-			/** Get the value of a field.
-			 *
-			 *  If an attribute is requested, that does not exist
-			 *  the empty string is returned.
-			 *
-			 *  @param field The field to be retrieved.
-			 *
-			 *  Special field: 'id', the identifier of the attributed class instance.
-			 */
-			virtual const std::string& get(const std::string& field);
+	void AttributedClass::set(const std::string& field, const std::string& value) {
+		if(field == "id") {
+			m_id = value;
+			return ;
+		}
+		m_fields[field] = value;
+	}
 
-			/** Remove a field.
-			 */
-			void remove(const std::string& field);
+	const std::string& AttributedClass::get(const std::string& field) {
+		static std::string null = "";
+		
+		if(field == "id")
+			return m_id;
 
-		private:
-			std::map<std::string,std::string> m_fields;
+		if(m_fields.find(field) == m_fields.end()) {
+			return null;
+		}
 
-			std::string m_id;
-	};
+		return m_fields[field];
+	}
+
+	void AttributedClass::remove(const std::string& field) {
+		m_fields.erase(field);
+	}
 
 }; //FIFE
-#endif
+

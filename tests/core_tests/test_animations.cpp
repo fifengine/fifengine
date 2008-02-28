@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "util/fife_unit_test.h"
 
 // 3rd party library includes
 #include <boost/scoped_ptr.hpp>
@@ -34,8 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
-#include "util/rect.h"
-
+#include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
@@ -48,7 +46,9 @@
 #include "video/opengl/renderbackendopengl.h"
 #include "loaders/native/video_loaders/animation_loader.h"
 #include "loaders/native/video_loaders/image_loader.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
+
+#include "fife_unit_test.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;

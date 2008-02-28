@@ -44,7 +44,7 @@
 #include "vfs/vfshostsystem.h"
 #include "vfs/vfssourcefactory.h"
 #include "controller/engine.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
 #include "util/settingsmanager.h"
 
 using namespace FIFE;

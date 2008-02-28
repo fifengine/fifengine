@@ -27,7 +27,7 @@
 // 3rd party library includes
 
 // FIFE includes
-#include "util/fife_stdint.h"
+#include "util/base/fife_stdint.h"
 #include "vfs/vfs.h"
 
 namespace FIFE {

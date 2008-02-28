@@ -34,7 +34,7 @@
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 
-#include "util/logger.h"
+#include "util/log/logger.h"
 #include "model/structures/location.h"
 
 #include "camera.h"

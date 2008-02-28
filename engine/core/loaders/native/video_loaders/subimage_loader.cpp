@@ -33,10 +33,10 @@
 #include "video/image.h"
 #include "video/renderbackend.h"
 #include "video/image_location.h"
-#include "util/fife_stdint.h"
+#include "util/base/fife_stdint.h"
 #include "util/resource/pooled_resource.h"
-#include "util/exception.h"
-#include "util/logger.h"
+#include "util/base/exception.h"
+#include "util/log/logger.h"
 
 #include "subimage_loader.h"
 

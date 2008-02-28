@@ -28,7 +28,7 @@
 #include <vector>
 
 // Platform specific includes
-#include "util/fife_stdint.h"
+#include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 

@@ -5,7 +5,7 @@
 
 %include "model/metamodel/modelcoords.i"
 %include "model/metamodel/abstractvisual.i"
-%include "util/point.i"
+%include "util/structures/point.i"
 %include "location.i"
 
 namespace FIFE {

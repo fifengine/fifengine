@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/logger.h"
+#include "util/log/logger.h"
 #include "video/renderbackend.h"
 #include "gui/base/gui_imageloader.h"
 #include "gui/base/gui_font.h"

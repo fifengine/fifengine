@@ -1,6 +1,6 @@
 %module fife
 %{
-#include "util/fifeclass.h"
+#include "util/base/fifeclass.h"
 %}
 
 namespace FIFE {

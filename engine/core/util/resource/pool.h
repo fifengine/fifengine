@@ -35,7 +35,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/fifeclass.h"
+#include "util/base/fifeclass.h"
 
 #include "pooled_resource.h"
 #include "resource_location.h"

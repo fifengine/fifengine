@@ -7,8 +7,8 @@
 
 %include "model/metamodel/modelcoords.i"
 %include "model/metamodel/grids/cellgrids.i"
-%include "util/point.i"
-%include "util/attributedclass.i"
+%include "util/structures/point.i"
+%include "util/base/attributedclass.i"
 
 namespace FIFE {
 

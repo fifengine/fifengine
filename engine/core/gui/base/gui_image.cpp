@@ -28,7 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/imagepool.h"
-#include "util/logger.h"
+#include "util/log/logger.h"
 
 #include "gui_image.h"
 

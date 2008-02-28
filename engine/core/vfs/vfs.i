@@ -21,7 +21,7 @@
 
 %module fife
 %{
-#include "util/exception.h"
+#include "util/base/exception.h"
 #include "vfs/vfs.h"
 %}
 

@@ -31,8 +31,8 @@
 // Second block: files included from the same folder
 #include "audio/soundclip.h"
 #include "vfs/vfs.h"
-#include "util/logger.h"
-#include "util/exception.h"
+#include "util/log/logger.h"
+#include "util/base/exception.h"
 
 #include "ogg_loader.h"
 #include "sounddecoder_ogg.h"

@@ -32,8 +32,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
-#include "util/exception.h"
-#include "util/fifeclass.h"
+#include "util/base/exception.h"
+#include "util/base/fifeclass.h"
 
 namespace FIFE {
 	class Map;

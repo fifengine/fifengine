@@ -1,14 +1,14 @@
 %module fife
 %{
-#include "util/attributedclass.h"
-#include "util/point.h"
-#include "util/rect.h"
-#include "util/fifeclass.h"
+#include "util/base/attributedclass.h"
+#include "util/structures/point.h"
+#include "util/structures/rect.h"
+#include "util/base/fifeclass.h"
 %}
 
-%include "util/point.i"
-%include "util/rect.h"
-%include "util/fifeclass.i"
+%include "util/structures/point.i"
+%include "util/structures/rect.h"
+%include "util/base/fifeclass.i"
 
 namespace FIFE {
 

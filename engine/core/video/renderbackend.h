@@ -26,7 +26,7 @@
 #include <string>
 
 // Platform specific includes
-#include "util/fife_stdint.h"
+#include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 #include <SDL.h>
@@ -36,9 +36,9 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/singleton.h"
-#include "util/point.h"
-#include "util/rect.h"
+#include "util/base/singleton.h"
+#include "util/structures/point.h"
+#include "util/structures/rect.h"
 
 #include "image.h"
 

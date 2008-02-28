@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
 
 #include "rawdatadat2.h"
 

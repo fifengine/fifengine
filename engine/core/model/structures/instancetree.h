@@ -30,9 +30,9 @@
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src
-#include "util/fifeclass.h"
+#include "util/base/fifeclass.h"
 
-#include "util/quadtree.h"
+#include "util/structures/quadtree.h"
 #include "model/metamodel/modelcoords.h"
 
 namespace FIFE {

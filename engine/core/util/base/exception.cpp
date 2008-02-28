@@ -27,56 +27,21 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/attributedclass.h"
+#include "util/log/logger.h"
+#include "exception.h"
+
 
 namespace FIFE {
+static Logger _log(LM_EXCEPTION);
 
-	AttributedClass::AttributedClass(const std::string& identifier) 
-		: FifeClass(), m_id(identifier) { 
-	}
-
-	AttributedClass::~AttributedClass() {
-	}
-
-	const std::string& AttributedClass::Id() const {
-		return m_id;
-	}
-
-	std::vector<std::string> AttributedClass::listFields() const {
-		std::vector<std::string> list;
-
-		std::map<std::string,std::string>::const_iterator i = m_fields.begin();
-		for(; i != m_fields.end(); ++i) {
-			list.push_back(i->first);
+	Exception::Exception(const std::string& msg): FifeClass(), m_message(msg) {
+		FL_WARN(_log, LMsg() << getMessage());
 		}
 
-		return list;
+	Exception::~Exception() {}
+
+	const std::string& Exception::getMessage() const {
+		return m_message;
 	}
 
-	void AttributedClass::set(const std::string& field, const std::string& value) {
-		if(field == "id") {
-			m_id = value;
-			return ;
-		}
-		m_fields[field] = value;
-	}
-
-	const std::string& AttributedClass::get(const std::string& field) {
-		static std::string null = "";
-		
-		if(field == "id")
-			return m_id;
-
-		if(m_fields.find(field) == m_fields.end()) {
-			return null;
-		}
-
-		return m_fields[field];
-	}
-
-	void AttributedClass::remove(const std::string& field) {
-		m_fields.erase(field);
-	}
-
-}; //FIFE
-
+}//FIFE

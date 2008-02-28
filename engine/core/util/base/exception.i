@@ -21,50 +21,73 @@
 
 %module fife
 %{
-#include "util/logger.h"
+#include "util/base/exception.h"
 %}
-%include "modules.h"
-
-namespace std {
-	%template(moduleVector) std::vector<logmodule_t>;
-};
 
 namespace FIFE {
-	
-	
-	class LogManager {
+	class Exception: public FifeClass {
 	public:
-		enum LogLevel {	
-			LEVEL_DEBUG = 0,
-			LEVEL_LOG   = 1,
-			LEVEL_WARN  = 2,
-   			LEVEL_ERROR = 3
-		};
-		~LogManager();
-		
-		void setLevelFilter(LogLevel level);
-		LogLevel getLevelFilter();
-		
-		void addVisibleModule(logmodule_t module);
-		void removeVisibleModule(logmodule_t module);
-		void clearVisibleModules();
-		bool isVisible(logmodule_t module);
-		
-		void setLogToPrompt(bool log_to_promt);
-		bool isLoggingToPrompt();
-		
-		void setLogToFile(bool logtofile);
-		bool isLoggingToFile();
-		std::string getModuleName(logmodule_t module);
-		
-	private:
-		LogManager();
+		Exception(const std::string& txt);
+		virtual ~Exception();
+		const std::string& getMessage() const;
 	};
 	
-	class Logger {
+	class SDLException : public Exception {
 	public:
-		Logger(logmodule_t module);
-		~Logger();
-		void log(LogManager::LogLevel level, const std::string& msg);
+		SDLException(const std::string& msg) : Exception("SDLException: " + msg) {}
 	};
+	
+	class NotFound : public Exception {
+	public:
+		NotFound(const std::string& msg);
+	};
+	class NotSet : public Exception {
+	public:
+		NotSet(const std::string& msg);
+	};
+	class IndexOverflow : public Exception {
+	public:
+		IndexOverflow(const std::string& s);
+	};
+	class InvalidFormat : public Exception {
+	public:
+		InvalidFormat(const std::string& s);
+	};
+	class CannotOpenFile : public Exception {
+	public:
+		CannotOpenFile(const std::string& s);
+	};
+	class OutOfMemory : public Exception {
+	public:
+		OutOfMemory(const std::string& s);
+	};
+	class InvalidConversion : public Exception {
+	public:
+		InvalidConversion(const std::string& s);
+	};
+	class NotSupported : public Exception {
+	public:
+		NotSupported(const std::string& s);
+	};
+	class NameClash : public Exception {
+	public:
+		NameClash(const std::string& s);
+	};
+	class Duplicate : public Exception {
+	public:
+		Duplicate(const std::string& s);
+	};
+	class ScriptException : public Exception {
+	public:
+		ScriptException(const std::string& s);
+	};
+	class EventException : public Exception {
+	public:
+		EventException(const std::string& s);
+	};
+	class GuiException : public Exception {
+	public:
+		GuiException(const std::string& s);
+	};
+
 }

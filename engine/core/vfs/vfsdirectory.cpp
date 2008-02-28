@@ -32,7 +32,7 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "vfs/raw/rawdatafile.h"
-#include "util/logger.h"
+#include "util/log/logger.h"
 
 #include "vfsdirectory.h"
 

@@ -3,7 +3,7 @@
 #include "model/metamodel/dataset.h"
 %}
 
-%include "util/attributedclass.i"
+%include "util/base/attributedclass.i"
 
 namespace FIFE {
 

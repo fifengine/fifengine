@@ -29,7 +29,7 @@
 // Second block: files included from the same folder
 #include "model/structures/layer.h"
 #include "model/structures/map.h"
-#include "util/logger.h"
+#include "util/log/logger.h"
 #include "rendererbase.h"
 
 namespace FIFE {

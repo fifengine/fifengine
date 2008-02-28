@@ -31,8 +31,6 @@
 #include <iostream>
 
 // Platform specific includes
-#include "fife_math.h"
-#include "fife_stdint.h"
 
 // 3rd party library includes
 
@@ -40,7 +38,10 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "point.h"
+#include "util/base/fife_stdint.h"
+#include "util/structures/point.h"
+
+#include "fife_math.h"
 
 namespace FIFE {
 

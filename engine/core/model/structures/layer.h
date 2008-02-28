@@ -34,7 +34,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
-#include "util/attributedclass.h"
+#include "util/base/attributedclass.h"
 #include "model/metamodel/object.h"
 #include "eventchannel/trigger/ec_itriggercontroller.h"
 

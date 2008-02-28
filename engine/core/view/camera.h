@@ -32,8 +32,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/structures/location.h"
-#include "util/matrix.h"
-#include "util/rect.h"
+#include "util/math/matrix.h"
+#include "util/structures/rect.h"
 
 #include "rendererbase.h"
 

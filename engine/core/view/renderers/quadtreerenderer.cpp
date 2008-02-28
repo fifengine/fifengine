@@ -28,10 +28,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "util/logger.h"
-
-#include "util/fife_math.h"
-#include "util/logger.h"
+#include "util/math/fife_math.h"
+#include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -40,7 +38,7 @@
 #include "view/camera.h"
 #include "quadtreerenderer.h"
 #include "model/structures/instancetree.h"
-#include "util/quadtree.h"
+#include "util/structures/quadtree.h"
 
 ///credit to phoku for his NodeDisplay example which the visitor code is adapted from ( he coded the quadtree after all )
 namespace FIFE {

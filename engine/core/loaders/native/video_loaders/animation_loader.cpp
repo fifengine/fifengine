@@ -32,9 +32,9 @@
 #include "video/animation.h"
 #include "video/image.h"
 #include "video/imagepool.h"
-#include "util/logger.h"
-#include "util/exception.h"
-#include "util/purge.h"
+#include "util/log/logger.h"
+#include "util/base/exception.h"
+#include "util/structures/purge.h"
 #include "xml/tinyxml/tinyxml.h"
 
 #include "animation_loader.h"

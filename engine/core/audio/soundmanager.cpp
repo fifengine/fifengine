@@ -31,8 +31,8 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
-#include "util/logger.h"
-#include "util/exception.h"
+#include "util/log/logger.h"
+#include "util/base/exception.h"
 #include "audio/fife_openal.h"
 
 #include "soundmanager.h"

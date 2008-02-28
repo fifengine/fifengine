@@ -24,7 +24,7 @@
 #include "util/resource/pooled_resource.h"
 #include "util/resource/pool.h"
 %}
-%include "util/fifeclass.i"
+%include "util/base/fifeclass.i"
 
 namespace FIFE {
 

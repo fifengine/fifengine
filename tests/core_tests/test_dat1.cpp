@@ -24,7 +24,6 @@
 #include <iomanip>
 
 // Platform specific includes
-#include "util/fife_unit_test.h"
 
 // 3rd party library includes
 
@@ -36,7 +35,9 @@
 #include "vfs/vfsdirectory.h"
 #include "vfs/dat/dat1.h"
 #include "vfs/raw/rawdata.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
+
+#include "fife_unit_test.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;

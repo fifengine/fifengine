@@ -34,7 +34,7 @@
 #include "model/metamodel/object.h"
 #include "pathfinder/searchspace.h"
 #include "pathfinder/heuristic.h"
-#include "util/fife_math.h"
+#include "util/math/fife_math.h"
 
 #include "routepathersearch.h"
 

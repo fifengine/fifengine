@@ -29,7 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "gui/base/gui_font.h" 
-#include "util/exception.h"
+#include "util/base/exception.h"
 #include "video/image.h" 
 
 #include "clicklabel.h"

@@ -33,10 +33,8 @@
 #include "video/imagepool.h"
 #include "video/animation.h"
 #include "video/animationpool.h"
-#include "util/logger.h"
-
-#include "util/fife_math.h"
-#include "util/logger.h"
+#include "util/math/fife_math.h"
+#include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
 #include "model/structures/instance.h"
