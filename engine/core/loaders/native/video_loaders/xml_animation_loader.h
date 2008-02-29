@@ -19,60 +19,36 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
+#ifndef FIFE_VIDEO_LOADERS_ANIM_PROVIDER_H
+#define FIFE_VIDEO_LOADERS_ANIM_PROVIDER_H
+
 // Standard C++ library includes
-#include <iostream>
 
 // 3rd party library includes
 #include <SDL.h>
-#include <boost/lexical_cast.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/image.h"
-#include "video/renderbackend.h"
-#include "video/image_location.h"
-#include "util/base/fife_stdint.h"
 #include "util/resource/pooled_resource.h"
-#include "util/base/exception.h"
-#include "util/log/logger.h"
-
-#include "subimage_loader.h"
+#include "video/animation_loader.h"
 
 namespace FIFE { 
-	static Logger _log(LM_NATIVE_LOADERS);
-	
-	IResource* SubImageLoader::loadResource(const ResourceLocation& location) {
-		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
-		if (!loc) {
-			throw InvalidConversion("Wrong location type given for subimage provider");
-		}
-		Image* r = loc->getParentSource();
-		if (!r) {
-			throw NotFound("No parent source assigned, cannot provide subimage");
-		}
-		SDL_Surface* src = r->getSurface();
-		if (!src) {
-			return NULL;
-		}
-		SDL_Rect src_rect;
-		src_rect.x = loc->getXShift();
-		src_rect.y = loc->getYShift();
-		src_rect.w = loc->getWidth();
-		src_rect.h = loc->getHeight();
+	class Animation;
+	class ImagePool;
 
-		FL_DBG(_log, LMsg("subimage_loader")
-			<< " rect:" << Rect(src_rect.x,src_rect.y,src_rect.w,src_rect.h));
+	class XMLAnimationLoader : public IAnimationLoader {
+	public:
+		XMLAnimationLoader(ImagePool* pool): m_pool(pool) {}
+		virtual IResource* loadResource(const ResourceLocation& location);
 
-		uint32_t Amask = src->format->Amask ?  AMASK : 0;
-		SDL_Surface* result = SDL_CreateRGBSurface(SDL_SWSURFACE, src_rect.w,  src_rect.h, 32,
-		                                           RMASK, GMASK, BMASK, Amask);
-		SDL_FillRect(result, NULL, 0);
-		SDL_SetAlpha(src,0,SDL_ALPHA_OPAQUE);
-		SDL_BlitSurface(src,&src_rect,result,0);
+		Animation* loadAnimation(const ResourceLocation& location);
+		Animation* loadAnimation(const std::string& filename) { return loadAnimation(ResourceLocation(filename)); }
 
-		return RenderBackend::instance()->createImage(result);
+	private:
+		ImagePool* m_pool;
 	};
 
 }
+#endif

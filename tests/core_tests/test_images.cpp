@@ -43,9 +43,9 @@
 #include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_loader.h"
-#include "loaders/native/video_loaders/subimage_loader.h"
-#include "loaders/native/video_loaders/animation_loader.h"
+#include "loaders/native/video_loaders/sdl_image_loader.h"
+#include "loaders/native/video_loaders/sdl_subimage_loader.h"
+#include "loaders/native/video_loaders/xml_animation_loader.h"
 #include "util/base/exception.h"
 
 #include "fife_unit_test.h"
@@ -76,7 +76,7 @@ void test_image(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	ImageLoader provider(vfs);
+	SDLImageLoader provider(vfs);
 	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();
@@ -101,7 +101,7 @@ void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	ImageLoader imgprovider(vfs);
+	SDLImageLoader imgprovider(vfs);
 	boost::scoped_ptr<Image> img(imgprovider.loadImage(ImageLocation(SUBIMAGE_FILE)));
 
 	ImageLocation location(SUBIMAGE_FILE);
@@ -114,7 +114,7 @@ void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 	location.setHeight(h);
 	std::vector<Image*> subimages;
 
-	SubImageLoader subprovider;
+	SDLSubImageLoader subprovider;
 	for (int x = 0; x < (W - w); x+=w) {
 		for (int y = 0; y < (H - h); y+=h) {
 			location.setXShift(x);
@@ -144,7 +144,7 @@ void test_sdl_alphaoptimize() {
 	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
 	renderbackend.setAlphaOptimizerEnabled(true);
 		
-	ImageLoader provider(env.vfs.get());
+	SDLImageLoader provider(env.vfs.get());
 	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
 
 	boost::scoped_ptr<Image> alpha_img(provider.loadImage(ImageLocation(ALPHA_IMAGE_FILE)));

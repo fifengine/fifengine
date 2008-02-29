@@ -19,36 +19,28 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_LOADERS_ANIM_PROVIDER_H
-#define FIFE_VIDEO_LOADERS_ANIM_PROVIDER_H
+#ifndef FIFE_VIDEO_ANIMLOADER_H
+#define FIFE_VIDEO_ANIMLOADER_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/resource/pooled_resource.h"
-#include "video/image.h"
+#include "animation.h"
 
 namespace FIFE { 
-	class Animation;
-	class ImagePool;
 
-	class AnimationLoader : public IPooledResourceLoader {
+	class IAnimationLoader : public IPooledResourceLoader {
 	public:
-		AnimationLoader(ImagePool* pool): m_pool(pool) {}
-		virtual IResource* loadResource(const ResourceLocation& location);
+		virtual IResource* loadResource(const ResourceLocation& location) = 0;
 
-		Animation* loadAnimation(const ResourceLocation& location);
+		Animation* loadAnimation(const ResourceLocation& location) { return dynamic_cast<Animation*>(loadResource(location)); }
 		Animation* loadAnimation(const std::string& filename) { return loadAnimation(ResourceLocation(filename)); }
-
-	private:
-		ImagePool* m_pool;
 	};
-
 }
 #endif

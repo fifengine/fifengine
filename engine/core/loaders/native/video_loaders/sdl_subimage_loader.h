@@ -19,36 +19,31 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
-#define FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
+#ifndef FIFE_VIDEO_LOADERS_SUBIMAGE_PROVIDER_H
+#define FIFE_VIDEO_LOADERS_SUBIMAGE_PROVIDER_H
 
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/pooled_resource.h"
-#include "video/image.h"
+#include "video/image_loader.h"
 
 namespace FIFE {
-	class Image;
-	class VFS;
 
-	/** ImageLoader for some basic formats like jpeg, png etc. */
-	class ImageLoader : public IPooledResourceLoader {
+	/** SDLSubImageLoader for cropping another image */
+	class SDLSubImageLoader : public IImageLoader {
 	public:
-		ImageLoader(VFS* vfs) : m_vfs(vfs) {}
+		SDLSubImageLoader() {}
 		virtual IResource* loadResource(const ResourceLocation& location);
 
-		Image* loadImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
-		Image* loadImage(const std::string& filename) { return loadImage(ResourceLocation(filename)); }
-
-	private:
-		VFS* m_vfs;
+		Image* loadSubImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
+		Image* loadSubImage(const std::string& filename) { return loadSubImage(ResourceLocation(filename)); }
 	};
+
 }
+
 #endif
