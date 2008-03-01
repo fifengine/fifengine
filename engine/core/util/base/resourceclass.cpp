@@ -19,11 +19,7 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_POOLED_RESOURE_H
-#define FIFE_POOLED_RESOURE_H
-
 // Standard C++ library includes
-#include <cassert>
 
 // 3rd party library includes
 
@@ -31,50 +27,40 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "resource.h"
+#include "util/resource/resource_location.h"
+
+#include "exception.h"
+#include "resourceclass.h"
 
 namespace FIFE {
-	class IPooledResource : public IResource {
-	public:
-		IPooledResource() : m_refcount(0) {};
+	ResourceClass::ResourceClass():
+		FifeClass(), 
+		m_location(NULL) {
+	}
+	
+	ResourceClass::~ResourceClass() {
+		delete m_location;
+	}
+	
+	const ResourceLocation& ResourceClass::getResourceLocation() {
+		if (m_location) {
+			return *m_location;
+		}
+		throw NotSet("Resource Location has not been set");
+	}
+	
+	const std::string& ResourceClass::getResourceFile() {
+		return getResourceLocation().getFilename();
+	}
+	
+	void ResourceClass::setResourceLocation(const ResourceLocation& location) {
+		delete m_location;
+		m_location = NULL;
+		m_location = location.clone();
+	}
+	
+	void ResourceClass::setResourceFile(const std::string& filename) {
+		setResourceLocation(ResourceLocation(filename));
+	}
+}; //FIFE
 
-		virtual ~IPooledResource() { assert(m_refcount == 0); };
-
-		/** Calling this method marks resource be used by some resource client.
-		 *  It adds one to resource counter that is kept up by the resource itself.
-		 *  When resource is about to be deleted (e.g. due to pooling algorithms), 
-		 *  reference counter is inspected. In case value is non-zero, resource 
-		 *  shouldn't be deleted.
-		 */
-		virtual void addRef() { m_refcount++; };
-
-		/** Calling this method unmarks resource be used by a resource client.
-		 *  @see addRef
-		 */
-		virtual void decRef() { m_refcount--; };
-
-		/** Gets the current reference count
-		 *  @see addRef
-		 */
-		virtual unsigned int getRefCount() { return m_refcount; };
-	protected:
-		unsigned int m_refcount;
-	};
-
-	class IPooledResourceLoader : public IResourceLoader {
-	public:
-		virtual ~IPooledResourceLoader() {}
-
-		IPooledResource* loadPooledResource(const ResourceLocation& location)
-			{ return dynamic_cast<IPooledResource*>(loadResource(location)); }
-		IPooledResource* loadPooledResource(const std::string& filename)
-			{ return loadPooledResource(ResourceLocation(filename)); }
-	};
-
-	class IPooledResourceSaver : public IResourceSaver {
-	public:
-		virtual ~IPooledResourceSaver() {}
-	};
-}
-
-#endif

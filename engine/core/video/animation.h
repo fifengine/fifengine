@@ -36,7 +36,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/pooled_resource.h"
+#include "util/base/resourceclass.h"
 
 namespace FIFE {
 
@@ -50,7 +50,7 @@ namespace FIFE {
 	 * animation user to query frames based on current timestamp and show
 	 * returned images on screen.
 	 */
-	class Animation : public IPooledResource {
+	class Animation : public ResourceClass {
 	public:
 		/** Constructor.
 		 */ 

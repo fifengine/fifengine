@@ -35,14 +35,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/fifeclass.h"
-
-#include "pooled_resource.h"
+#include "resource.h"
 #include "resource_location.h"
 
 namespace FIFE {
 
-	class IPooledResource;
+	class IResource;
 
 	/**  Clients of pool get notifications about pool events through this interface
 	 */
@@ -61,7 +59,7 @@ namespace FIFE {
 	 *   instances of the same data would be loaded into the memory.
 	 *   Pool is the owner for resources taking care of their deletion.
 	 */
-	class Pool: public FifeClass {
+	class Pool {
 	public:
 		/** Indicates invalid index for pool
 		 */
@@ -77,7 +75,7 @@ namespace FIFE {
 
 		/** Adds new resource provider. Transfers provider ownership to the pool
 		 */
-		virtual void addResourceLoader(IPooledResourceLoader* loader);
+		virtual void addResourceLoader(IResourceLoader* loader);
 
 		/** Adds new resource into the pool using the given location.
 		 * @return The index of the resource in the pool.
@@ -97,7 +95,7 @@ namespace FIFE {
 		 * 
 		 * @param inc Specifies weither this call will increase the ref counter
 		 */
-		virtual IPooledResource& get(unsigned int index, bool inc = false);
+		virtual IResource& get(unsigned int index, bool inc = false);
 		
 		/** Gets resource index from pool with given filename
 		 * The resource will be created if it is not in the pool
@@ -144,17 +142,17 @@ namespace FIFE {
 			}
 
 			// Pointer to the resource that is loaded.
-			IPooledResource* resource;
+			IResource* resource;
 			// Location of the resource.
 			ResourceLocation* location;
 			// Resource loader.
-			IPooledResourceLoader* loader;
+			IResourceLoader* loader;
 		};
 
 		void findAndSetProvider(PoolEntry& entry);
 		std::vector<PoolEntry*> m_entries;
 		std::vector<IPoolListener*> m_listeners;
-		std::vector<IPooledResourceLoader*> m_loaders;
+		std::vector<IResourceLoader*> m_loaders;
 		int m_curind;
 	};
 

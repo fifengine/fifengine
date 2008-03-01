@@ -33,7 +33,7 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/resource/resource_location.h"
-#include "util/resource/pooled_resource.h"
+#include "util/resource/resource.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "video/renderbackend.h"

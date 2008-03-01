@@ -23,15 +23,38 @@
 %{
 #include "util/resource/resource.h"
 #include "util/resource/resource_location.h"
+#include "util/resource/pool.h"
 %}
 
 namespace FIFE {
 
-	class IResource {
+	class ResourceLocation {
+	public:
+		virtual ~ResourceLocation() {};
+		const std::string& getFilename() const;
+		virtual bool operator ==(const ResourceLocation& loc) const;
+		virtual bool operator <(const ResourceLocation& loc) const;
+		virtual ResourceLocation* clone() const;
+
+	private:
+		ResourceLocation(const std::string& filename);
+	};
+
+
+	class IReferenceCounted {
+		virtual ~IReferenceCounted();
+		virtual void addRef() = 0;
+		virtual void decRef() = 0;
+		virtual unsigned int getRefCount() = 0;
+	};
+
+	class IResource: public IReferenceCounted {
 	public:
 		virtual ~IResource() {};
+		virtual const ResourceLocation& getResourceLocation() = 0;
 		virtual const std::string& getResourceFile() = 0;
-		virtual void setResourceFile(const std::string& location) = 0;
+		virtual void setResourceLocation(const ResourceLocation& location) = 0;
+		virtual void setResourceFile(const std::string& filename) = 0;
 	};
 
 	class IResourceLoader {
@@ -45,4 +68,17 @@ namespace FIFE {
 		virtual ~IResorceSaver() {};
 		virtual void save(const std::string& location, IResource* resource) = 0;
 	};
+	
+
+	enum { RES_LOADED = 0x01, RES_NON_LOADED  = 0x02};
+
+	class Pool {
+	public:
+		static const int INVALID_ID = -1;
+		virtual ~Pool();
+		virtual int addResourceFromFile(const std::string& filename);
+		virtual int getResourceCount(int status);
+	private:
+		Pool();
+	};	
 }

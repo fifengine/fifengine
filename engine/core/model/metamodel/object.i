@@ -3,7 +3,7 @@
 #include "model/metamodel/object.h"
 %}
 
-%include "util/base/attributedclass.i"
+%include "util/base/utilbase.i"
 %include "model/metamodel/abstractvisual.i"
 
 namespace FIFE {

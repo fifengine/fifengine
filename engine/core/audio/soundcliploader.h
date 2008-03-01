@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/pooled_resource.h"
+#include "util/resource/resource.h"
 
 #include "soundclip.h"
 
@@ -40,7 +40,7 @@ namespace FIFE {
 	
 	/** ISoundClipLoader-interface for loading sound clips from a given ResourceLocation.
 	 */
-	class ISoundClipLoader : public IPooledResourceLoader {
+	class ISoundClipLoader : public IResourceLoader {
 	public:
 		virtual IResource* loadResource(const ResourceLocation& location) = 0;
 

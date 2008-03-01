@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE( ImagePool_test ) {
 	vfs->addSource(new VFSDirectory(vfs.get()));
 
 	renderbackend.init();
-	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false);
 	ImagePool pool;
 	pool.addResourceLoader(new SDLSubImageLoader());
 	pool.addResourceLoader(new SDLImageLoader(vfs.get()));

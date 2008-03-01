@@ -25,7 +25,7 @@
 #include "audio/soundclippool.h"
 %}
 
-%include "util/resource/pool.i"
+%include "util/resource/resource.i"
 
 namespace FIFE {
 	class SoundClip;

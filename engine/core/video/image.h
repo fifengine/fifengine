@@ -33,7 +33,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
-#include "util/resource/pooled_resource.h"
+#include "util/base/resourceclass.h"
+#include "util/resource/resource.h"
 #include "util/structures/point.h"
 #include "util/structures/rect.h"
 
@@ -114,7 +115,7 @@ namespace FIFE {
 	
 	/** Base Class for Images.
 	 */
-	class Image : public AbstractImage, public IPooledResource {
+	class Image : public ResourceClass, public AbstractImage {
 	public:
 		/** Constructor.
 		* @note Takes ownership of the SDL Surface

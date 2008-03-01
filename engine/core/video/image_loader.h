@@ -30,13 +30,13 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/pooled_resource.h"
+#include "util/resource/resource.h"
 #include "image.h"
 
 namespace FIFE {
 
 	/** ImageLoader for some basic formats like jpeg, png etc. */
-	class IImageLoader : public IPooledResourceLoader {
+	class IImageLoader : public IResourceLoader {
 	public:
 		virtual IResource* loadResource(const ResourceLocation& location) = 0;
 

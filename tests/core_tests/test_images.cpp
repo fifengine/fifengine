@@ -141,7 +141,7 @@ void test_sdl_alphaoptimize() {
 	environment env;
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
-	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false);
 	renderbackend.setAlphaOptimizerEnabled(true);
 		
 	SDLImageLoader provider(env.vfs.get());

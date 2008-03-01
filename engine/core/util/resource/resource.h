@@ -34,17 +34,40 @@
 
 namespace FIFE {
 
+	class IReferenceCounted {
+	public:
+		virtual ~IReferenceCounted() { }
+		
+		/** Calling this method marks resource be used by some resource client.
+		 *  It adds one to resource counter that is kept up by the resource itself.
+		 *  When resource is about to be deleted (e.g. due to pooling algorithms), 
+		 *  reference counter is inspected. In case value is non-zero, resource 
+		 *  shouldn't be deleted.
+		 */
+		virtual void addRef() = 0;
+
+		/** Calling this method unmarks resource be used by a resource client.
+		 *  @see addRef
+		 */
+		virtual void decRef() = 0;
+
+		/** Gets the current reference count
+		 *  @see addRef
+		 */
+		virtual unsigned int getRefCount() = 0;
+	};
+
 	/** IResource is the internal representation of a loaded file.
 	 * One resource is always associated with one file (resource location).
 	 */
-	class IResource {
+	class IResource: public virtual IReferenceCounted {
 	public:
-		virtual ~IResource() { };
+		virtual ~IResource() { }
 
 		/** Get the location/file of this resource.
 		 */
 		virtual const ResourceLocation& getResourceLocation() = 0;
-		virtual const std::string& getResourceFile() { return getResourceLocation().getFilename(); }
+		virtual const std::string& getResourceFile() = 0;
 
 		/** Change the location/file of this resource.
 		 */

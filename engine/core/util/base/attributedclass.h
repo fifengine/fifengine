@@ -34,14 +34,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/log/logger.h"
-#include "fifeclass.h"
+#include "resourceclass.h"
 
 namespace FIFE {
 
 	/** Base for classes with metadata attributes.
 	 */
-	class AttributedClass: public FifeClass {
-
+	class AttributedClass: public ResourceClass {
 		public:
 			/** Create a new attributed class instance
 			 *  Usually AttributedClass is inherited and the

@@ -18,34 +18,41 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
-%module fife
 
-%{
-#include "util/resource/pooled_resource.h"
-#include "util/resource/pool.h"
-%}
-%include "util/base/fifeclass.i"
+#ifndef RESOURCE_CLASS_H
+#define RESOURCE_CLASS_H
+
+// Standard C++ library includes
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "util/resource/resource.h"
+
+#include "fifeclass.h"
 
 namespace FIFE {
+	class ResourceLocation;
 
-	class IPooledResource {
+	/** Base class for classes that are loadable from resources
+	 */
+	class ResourceClass: public FifeClass, public IResource {
 	public:
-		virtual ~IPooledResource() {};
-		virtual void addRef() = 0;
-		virtual void decRef() = 0;
-		virtual unsigned int getRefCount() = 0;
-	};
+		ResourceClass();
+		virtual ~ResourceClass();
+		
+		const ResourceLocation& getResourceLocation();
+		const std::string& getResourceFile();
 
-	enum { RES_LOADED = 0x01, RES_NON_LOADED  = 0x02};
-
-	class Pool: public FifeClass {
-	public:
-		static const int INVALID_ID = -1;
-		virtual ~Pool();
-		virtual int addResourceFromFile(const std::string& filename);
-		virtual int getResourceCount(int status);
+		virtual void setResourceLocation(const ResourceLocation& location);
+		virtual void setResourceFile(const std::string& filename);
+	
 	private:
-		Pool();
+		ResourceLocation* m_location;
 	};
-
 }
+
+#endif

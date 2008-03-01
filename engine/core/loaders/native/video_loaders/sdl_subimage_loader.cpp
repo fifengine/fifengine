@@ -34,7 +34,7 @@
 #include "video/renderbackend.h"
 #include "video/image_location.h"
 #include "util/base/fife_stdint.h"
-#include "util/resource/pooled_resource.h"
+#include "util/resource/resource.h"
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 

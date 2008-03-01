@@ -34,7 +34,7 @@
 namespace FIFE {
 static Logger _log(LM_EXCEPTION);
 
-	Exception::Exception(const std::string& msg): FifeClass(), m_message(msg) {
+	Exception::Exception(const std::string& msg): m_message(msg) {
 		FL_WARN(_log, LMsg() << getMessage());
 		}
 

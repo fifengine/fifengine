@@ -1,5 +1,6 @@
 %{
 #include "util/structures/point.h"
+#include "util/structures/rect.h"
 %}
 
 namespace FIFE {
@@ -58,4 +59,20 @@ namespace FIFE {
 
 	%template(Point3D) PointType3D<int>;
 	%template(DoublePoint3D) PointType3D<double>;
+	
+	class Rect {
+	public:
+		int x;
+		int y;
+		int w;
+		int h;
+		explicit Rect(int x = 0, int y = 0, unsigned int width = 0, unsigned int height = 0);
+		int right() const;
+		int bottom() const;
+		bool operator==(const Rect& rect ) const;
+		bool contains( const Point& point ) const;
+		bool intersects( const Rect& rect ) const;
+		bool intersectInplace( const Rect& rect );
+	};
+	std::ostream& operator<<(std::ostream&, const Rect&);
 }

@@ -215,6 +215,7 @@ subgraph cluster_12 {
     "pathfinder/routepather" -> "util/math"
     "pathfinder/routepather" -> "util/structures"
     "util/base" -> "util/log"
+    "util/base" -> "util/resource"
     "util/log" -> "engine/core"
     "util/log" -> "util/base"
     "util/math" -> "util/base"

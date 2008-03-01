@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE( OGL_gui_test ) {
 	RenderBackendOpenGL renderbackend;
 	renderbackend.init();
 	ImagePool pool;
-	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false);
 	OpenGLGuiGraphics graphics(pool);
 	test_gui_image(renderbackend, graphics, pool);
 }

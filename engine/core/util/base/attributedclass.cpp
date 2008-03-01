@@ -32,7 +32,7 @@
 namespace FIFE {
 
 	AttributedClass::AttributedClass(const std::string& identifier) 
-		: FifeClass(), m_id(identifier) { 
+		: ResourceClass(), m_id(identifier) { 
 	}
 
 	AttributedClass::~AttributedClass() {

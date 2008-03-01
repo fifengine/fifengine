@@ -5,7 +5,7 @@
 
 %include "std_list.i"
 
-%include "util/base/attributedclass.i"
+%include "util/base/utilbase.i"
 
 namespace FIFE {
   class Layer;
