@@ -34,7 +34,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/singleton.h"
 
 namespace FIFE {
 
@@ -50,7 +49,7 @@ namespace FIFE {
 	 * VFS. Since the VFSHostSystem is added first, this implies, that host filesystem
 	 * files will override whatever might be in other VFS Sources (e.g. the DAT files)
 	 */
-	class VFS : public DynamicSingleton<VFS> {
+	class VFS {
 		public:
 			/** Constructor
 			 * Called by the Engine on startup. Never create one yourself.

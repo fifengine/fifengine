@@ -39,10 +39,10 @@
 
 namespace FIFE {
 
-	RawDataDAT2::RawDataDAT2(const std::string& datfile, const s_info& info) :
+	RawDataDAT2::RawDataDAT2(VFS* vfs, const std::string& datfile, const s_info& info) :
 		RawDataMemSource(info.unpackedLength) {
 
-		boost::scoped_ptr<RawData> input (VFS::instance()->open(datfile));
+		boost::scoped_ptr<RawData> input (vfs->open(datfile));
 		input->setIndex(info.offset);
 
 		if (info.type == 1) { // compressed

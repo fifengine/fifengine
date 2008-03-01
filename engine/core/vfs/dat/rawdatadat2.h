@@ -57,10 +57,11 @@ namespace FIFE {
 			};
 
 			/** Constructor
+			 * @param vfs The vfs to open with.
 			 * @param datfile The .DAT archive - e.g. master.DAT
 			 * @param info The .DAT file entry, as retrieved by MFFalloutDAT2
 			 */
-			RawDataDAT2(const std::string& datfile, const s_info& info);
+			RawDataDAT2(VFS* vfs, const std::string& datfile, const s_info& info);
 	};
 }
 #endif

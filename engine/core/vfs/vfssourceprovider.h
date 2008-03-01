@@ -31,6 +31,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/exception.h"
 
 namespace FIFE {
 
@@ -61,7 +62,10 @@ namespace FIFE {
 			 */
 			void setVFS(VFS* vfs);
 
-			VFS* getVFS() const { return m_vfs; }
+			VFS* getVFS() const {
+				if(!m_vfs) throw NotSet("Attempt to load from VFSSourceProvider without setting a VFS!");
+				return m_vfs;
+			}
 
 			/** Check if a given file is readable for this VFSSource
 			 *

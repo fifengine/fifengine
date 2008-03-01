@@ -42,7 +42,7 @@ namespace FIFE {
 	}
 
 	void VFSSourceProvider::setVFS(VFS* vfs) {
-		if (vfs) {
+		if (m_vfs) {
 			FL_WARN(_log, "Attempt to set a VFSSourceProvider that is already associated with a VFS.");
 			return ;
 		}

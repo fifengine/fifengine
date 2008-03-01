@@ -106,7 +106,7 @@ namespace FIFE {
 
 	RawData* DAT2::open(const std::string& file) const {
 		const RawDataDAT2::s_info& info = getInfo(file);
-		return new RawData(new RawDataDAT2(m_datpath, info));
+		return new RawData(new RawDataDAT2(getVFS(), m_datpath, info));
 	}
 
 	bool DAT2::fileExists(const std::string& name) const {
