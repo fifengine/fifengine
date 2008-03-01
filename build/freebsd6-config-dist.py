@@ -28,4 +28,4 @@ def addExtras(context):
 		context.checkSimpleLib(['guichan_opengl'])
 
         # For swig/python:
-        context.env.Append(CPPPATH = ['/usr/local/include/python2.4', '/usr/local/include/python2.5'])
+        context.env.Append(CPPPATH = ['/usr/local/include/python2.5'])

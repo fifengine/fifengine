@@ -4,16 +4,15 @@ def initEnvironment(env):
 def addExtras(context):
 	context.env.Append(LIBS = 'm')
 	context.env.Replace(LIBPATH = ['/opt/lib', '%s/ext/install/lib' % context.env['SCONS_ROOT_PATH']])
-	context.env.Append(CPPPATH = ['/opt/include', 
-	                              '/usr/include/vorbis', 
-	                              '/usr/include/python2.4',
+	context.env.Append(CPPPATH = ['/opt/include',
+	                              '/usr/include/vorbis',
 	                              '/usr/include/python2.5',
 	                              '%s/ext/install/include' % context.env['SCONS_ROOT_PATH']])
 	context.env.Append(CPPPATH = [])	
 	
 	context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
 	context.checkSimpleLib(['openal'], 'AL/al.h')
-	context.checkSimpleLib(['python', 'python2.4', 'python2.5'], ['python2.4/Python.h', 'python2.5/Python.h'])
+	context.checkSimpleLib(['python', 'python2.5'], ['python2.5/Python.h'])
 	context.checkSimpleLib(['SDL'], 'SDL.h')
 	context.checkSimpleLib(['SDL_ttf'], 'SDL_ttf.h')
 	context.checkSimpleLib(['SDL_image'], 'SDL_image.h')

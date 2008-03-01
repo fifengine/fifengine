@@ -26,8 +26,6 @@ def addExtras(context):
     context.env.Append(LIBPATH = lib_dirs)
 
     context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
-    context.checkSimpleLib(['lua'], 'lua.h', 'c', 0)
-    context.checkSimpleLib(['lualib.5'], 'lualib.h', 'c', 0)
 
     context.env.Append(CPPFLAGS='-D_THREAD_SAFE')
 
