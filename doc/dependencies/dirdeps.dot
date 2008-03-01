@@ -89,13 +89,6 @@ subgraph cluster_11 {
     "view"; "view/renderers"
     label = "view";
 }
-subgraph cluster_12 {
-    style=filled;
-    color=lightgrey;
-    node [style=filled,color=white];
-    "xml/tinyxml"
-    label = "xml";
-}
     "audio" -> "util/base"
     "audio" -> "util/log"
     "audio" -> "util/resource"
@@ -175,11 +168,9 @@ subgraph cluster_12 {
     "loaders/native/video_loaders" -> "util/base"
     "loaders/native/video_loaders" -> "util/log"
     "loaders/native/video_loaders" -> "util/resource"
-    "loaders/native/video_loaders" -> "util/structures"
     "loaders/native/video_loaders" -> "vfs"
     "loaders/native/video_loaders" -> "vfs/raw"
     "loaders/native/video_loaders" -> "video"
-    "loaders/native/video_loaders" -> "xml/tinyxml"
     "model" -> "eventchannel/trigger"
     "model" -> "model/metamodel"
     "model" -> "model/structures"
@@ -276,6 +267,4 @@ subgraph cluster_12 {
     "view/renderers" -> "video/fonts"
     "view/renderers" -> "video/sdl"
     "view/renderers" -> "view"
-    "xml/tinyxml" -> "vfs"
-    "xml/tinyxml" -> "vfs/raw"
 }

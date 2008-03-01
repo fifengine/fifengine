@@ -45,7 +45,6 @@
 #include "video/opengl/renderbackendopengl.h"
 #include "loaders/native/video_loaders/image_loader.h"
 #include "loaders/native/video_loaders/subimage_loader.h"
-#include "loaders/native/video_loaders/xml_animation_loader.h"
 #include "util/base/exception.h"
 
 #include "fife_unit_test.h"

@@ -49,7 +49,7 @@ namespace FIFE {
 		public:
 			RawData(RawDataSource* datasource);
 			virtual ~RawData();
-
+			
 			/** get the data as a vector of bytes
 			 */
 			std::vector<uint8_t> getDataInBytes();
@@ -90,7 +90,7 @@ namespace FIFE {
 			 * reads sizeof(T) bytes - should be used with fixed-size datatypes like uint32_t, uint16_t, uint8_t etc.
 			 * @return the data
 			 */
-			template <typename T> T read() {
+			template <typename T> T readSingle() {
 				T val;
 				readInto(reinterpret_cast<uint8_t*>(&val), sizeof(T));
 				return val;
@@ -138,6 +138,11 @@ namespace FIFE {
 			 */
 			std::string readString(size_t len);
 
+			/** Reads all data into the buffer
+			 * Created to especially fulfill python file interface requirements
+			 */
+			void read(std::string& outbuffer, int size=-1);
+			
 			/** reads until a \\n is encountered or no more data is available
 			 *
 			 * @param buffer if successfull the new string will be assigned to buffer

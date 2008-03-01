@@ -8,6 +8,7 @@ See the L{ApplicationBase} documentation.
 
 import fife
 import fifelog
+from serializers.xmlanimation import XMLAnimationLoader
 
 class ExitEventListener(fife.IKeyListener):
 	"""
@@ -50,7 +51,10 @@ class ApplicationBase(object):
 		self.initLogging()
 		
 		self.engine.init()
-
+		
+		self._animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
+		self.engine.getAnimationPool().addResourceLoader(self._animationloader)
+		
 		self.quitRequested = False
 		self.breakRequested = False
 		self.returnValues = []

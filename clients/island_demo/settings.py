@@ -14,6 +14,7 @@ LogModules          = ['controller']
 PychanDebug         = False
 LogToPrompt         = 1
 LogToFile           = 0
+UsePsyco            = False
 
 CoordinateLayerName = "TechdemoMapObjectLayer"
 QuadTreeLayerName = "" #"TechdemoMapObjectLayer"

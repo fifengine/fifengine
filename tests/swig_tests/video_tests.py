@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from swig_test_utils import *
+from serializers.xmlanimation import XMLAnimationLoader
 
 class TestVideo(unittest.TestCase):
 	
@@ -11,18 +12,21 @@ class TestVideo(unittest.TestCase):
 
 	def testSimpleAnimation(self):
 		pool = self.engine.getAnimationPool()
+		animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
+		pool.addResourceLoader(animationloader)
+		
 		id = pool.addResourceFromFile('tests/data/wolf_walk/wolf_walk_sw.xml')
 		animation = pool.getAnimation(id)
 		self.engine.initializePumping()
 		backend = self.engine.getRenderBackend()
 		gettime = self.engine.getTimeManager().getTime
 		starttime = gettime()
-		for i in xrange(100):
+		for i in xrange(50):
 			image = animation.getFrameByTimestamp(gettime() - starttime)
 			if not image:
 				image = animation.getFrame(0)
 				starttime = gettime()
-			print fife.Rect(0,0,image.getWidth(),image.getHeight())
+			#print fife.Rect(0,0,image.getWidth(),image.getHeight())
 			image.render(fife.Rect(0,0,image.getWidth(),image.getHeight()), 255)
 			self.engine.pump()
 		self.engine.finalizePumping()

@@ -126,11 +126,14 @@ def main():
 
 
 if __name__ == '__main__':
-	# Import Psyco if available
-	try:
-		import psyco
-		psyco.full()
-		print "Psyco acceleration in use"
-	except ImportError:
+	if TDS.UsePsyco:
+		# Import Psyco if available
+		try:
+			import psyco
+			psyco.full()
+			print "Psyco acceleration in use"
+		except ImportError:
+			print "Psyco acceleration not used"
+	else:
 		print "Psyco acceleration not used"
 	main()

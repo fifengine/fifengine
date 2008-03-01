@@ -84,8 +84,9 @@ namespace FIFE {
 		Image(const uint8_t* data, unsigned int width, unsigned int height);
 	};
 	
-	class Animation {
+	class Animation: public ResourceClass {
 	public:
+		explicit Animation();
 		~Animation();
 		void addFrame(Image* image, unsigned int duration);
 		int getFrameIndex(unsigned int timestamp);
@@ -101,8 +102,6 @@ namespace FIFE {
 		void addRef();
 		void decRef();
 		unsigned int getRefCount();
-	private:
-		explicit Animation();
 	};
 
 	class ImagePool: public Pool {
@@ -167,6 +166,8 @@ namespace FIFE {
 		Cursor(ImagePool* imgpool, AnimationPool* animpool);
 	};
 	
+	%warnfilter(473) AnimationLoader; // filter out "returning a pointer or reference in a director method is not recommended"
+	%feature("director") AnimationLoader;
 	class AnimationLoader : public ResourceLoader {
 	public:
 		Animation* load(const ResourceLocation& location);

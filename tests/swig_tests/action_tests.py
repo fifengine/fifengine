@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from swig_test_utils import *
 import pythonize
+from serializers.xmlanimation import XMLAnimationLoader
 
 class ActionTests(unittest.TestCase):
 	def setUp(self):
@@ -9,6 +10,10 @@ class ActionTests(unittest.TestCase):
 		files = map(lambda dirname: template % dirname, dirnames)
 
 		self.engine = getEngine()
+		pool = self.engine.getAnimationPool()
+		self.animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
+		pool.addResourceLoader(self.animationloader)
+		
 		_map = self.engine.getModel().createMap("map001")
 		
 		self.grid = fife.SquareGrid(True)

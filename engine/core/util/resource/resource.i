@@ -80,6 +80,7 @@ namespace FIFE {
 		virtual ~Pool();
 		virtual int addResourceFromFile(const std::string& filename);
 		virtual int getResourceCount(int status);
+		virtual void addResourceLoader(ResourceLoader* loader);
 	private:
 		Pool();
 	};	
