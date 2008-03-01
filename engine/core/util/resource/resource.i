@@ -57,6 +57,7 @@ namespace FIFE {
 		virtual void setResourceFile(const std::string& filename) = 0;
 	};
 
+	%warnfilter(473) ResourceLoader; // filter out "returning a pointer or reference in a director method is not recommended"
 	class ResourceLoader {
 	public:
 		virtual ~ResourceLoader() { };

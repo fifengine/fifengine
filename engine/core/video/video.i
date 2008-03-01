@@ -27,10 +27,12 @@
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
+#include "video/animation_loader.h"
 #include "util/base/exception.h"
 %}
 
 %include "util/structures/utilstructures.i"
+%include "util/resource/resource.i"
 
 namespace FIFE {
 	class Pool;
@@ -163,5 +165,11 @@ namespace FIFE {
 	
 	private:
 		Cursor(ImagePool* imgpool, AnimationPool* animpool);
+	};
+	
+	class AnimationLoader : public ResourceLoader {
+	public:
+		Animation* load(const ResourceLocation& location);
+		Animation* load(const std::string& filename);
 	};
 }
