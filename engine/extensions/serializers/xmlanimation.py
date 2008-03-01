@@ -1,9 +1,7 @@
 import fife
 try:
 	import xml.etree.cElementTree as ET
-	print "using celementtree"	
 except:
-	print "using normal elementtree"
 	import xml.etree.ElementTree as ET
 
 class XMLAnimationLoader(fife.AnimationLoader):
@@ -15,7 +13,6 @@ class XMLAnimationLoader(fife.AnimationLoader):
 	
 	def loadResource(self, location):
 		f = self.vfs.open(location.getFilename())
-		f.setIndex(0)
 		tree = ET.parse(f)
 		root = tree.getroot()
 		
