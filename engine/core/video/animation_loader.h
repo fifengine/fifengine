@@ -35,12 +35,10 @@
 
 namespace FIFE { 
 
-	class IAnimationLoader : public IResourceLoader {
+	class AnimationLoader : public ResourceLoader {
 	public:
-		virtual IResource* loadResource(const ResourceLocation& location) = 0;
-
-		Animation* loadAnimation(const ResourceLocation& location) { return dynamic_cast<Animation*>(loadResource(location)); }
-		Animation* loadAnimation(const std::string& filename) { return loadAnimation(ResourceLocation(filename)); }
+		Animation* load(const ResourceLocation& location) { return dynamic_cast<Animation*>(load(location)); }
+		Animation* load(const std::string& filename) { return load(ResourceLocation(filename)); }
 	};
 }
 #endif

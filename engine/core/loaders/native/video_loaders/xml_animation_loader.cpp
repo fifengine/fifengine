@@ -38,12 +38,10 @@
 #include "xml/tinyxml/tinyxml.h"
 
 #include "xml_animation_loader.h"
-#include "sdl_image_loader.h"
+#include "image_loader.h"
 
 namespace FIFE {
 	static Logger _log(LM_NATIVE_LOADERS);
-
-	Animation* XMLAnimationLoader::loadAnimation(const ResourceLocation& location) { return dynamic_cast<Animation*>(loadResource(location)); }
 
 	const int INITIAL_OFFSET = -9999999;
 	IResource* XMLAnimationLoader::loadResource(const ResourceLocation& location) {

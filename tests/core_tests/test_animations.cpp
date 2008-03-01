@@ -45,7 +45,7 @@
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
 #include "loaders/native/video_loaders/xml_animation_loader.h"
-#include "loaders/native/video_loaders/sdl_image_loader.h"
+#include "loaders/native/video_loaders/image_loader.h"
 #include "util/base/exception.h"
 
 #include "fife_unit_test.h"
@@ -91,7 +91,7 @@ void test_animation(RenderBackend& renderbackend) {
 	vfs->addSource(new VFSDirectory(vfs.get()));
 	
 	ImagePool* imagepool = new ImagePool();
-	imagepool->addResourceLoader(new SDLImageLoader(vfs.get()));
+	imagepool->addResourceLoader(new ImageLoader(vfs.get()));
 
 	AnimationPool* animpool = new AnimationPool();
 	animpool->addResourceLoader(new XMLAnimationLoader(imagepool));

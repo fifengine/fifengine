@@ -75,7 +75,7 @@ namespace FIFE {
 
 		/** Adds new resource provider. Transfers provider ownership to the pool
 		 */
-		virtual void addResourceLoader(IResourceLoader* loader);
+		virtual void addResourceLoader(ResourceLoader* loader);
 
 		/** Adds new resource into the pool using the given location.
 		 * @return The index of the resource in the pool.
@@ -146,13 +146,13 @@ namespace FIFE {
 			// Location of the resource.
 			ResourceLocation* location;
 			// Resource loader.
-			IResourceLoader* loader;
+			ResourceLoader* loader;
 		};
 
 		void findAndSetProvider(PoolEntry& entry);
 		std::vector<PoolEntry*> m_entries;
 		std::vector<IPoolListener*> m_listeners;
-		std::vector<IResourceLoader*> m_loaders;
+		std::vector<ResourceLoader*> m_loaders;
 		int m_curind;
 	};
 

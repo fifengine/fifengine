@@ -45,8 +45,8 @@
 #include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/sdl_image_loader.h"
-#include "loaders/native/video_loaders/sdl_subimage_loader.h"
+#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/video_loaders/subimage_loader.h"
 #include "loaders/native/video_loaders/xml_animation_loader.h"
 #include "util/base/exception.h"
 
@@ -86,8 +86,8 @@ BOOST_AUTO_TEST_CASE( ImagePool_test ) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 	ImagePool pool;
-	pool.addResourceLoader(new SDLSubImageLoader());
-	pool.addResourceLoader(new SDLImageLoader(vfs.get()));
+	pool.addResourceLoader(new SubImageLoader());
+	pool.addResourceLoader(new ImageLoader(vfs.get()));
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE( ImagePool_test ) {
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
 
 	ImageLocation location(SUBIMAGE_FILE);
-	SDLImageLoader imgprovider(vfs.get());
+	ImageLoader imgprovider(vfs.get());
 	int fullImgInd = pool.addResourceFromLocation(ImageLocation(SUBIMAGE_FILE));
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);

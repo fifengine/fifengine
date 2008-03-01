@@ -38,10 +38,9 @@ namespace FIFE {
 
 	class VFS;
 
-	class OggLoader : public ISoundClipLoader {
+	class OggLoader : public SoundClipLoader {
 	public:
 		OggLoader(VFS* vfs) : m_vfs(vfs) { }
-
 		virtual IResource* loadResource(const ResourceLocation& location);
 
 	private:

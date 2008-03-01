@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_IMAGE_LOADER_H
-#define FIFE_VIDEO_IMAGE_LOADER_H
+#ifndef FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
+#define FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
 
 // Standard C++ library includes
 
@@ -30,18 +30,20 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/resource.h"
-#include "image.h"
+#include "video/image_loader_base.h"
 
 namespace FIFE {
+	class VFS;
 
-	/** ImageLoader for some basic formats like jpeg, png etc. */
-	class IImageLoader : public IResourceLoader {
+	/** ImageLoader for some basic formats like jpeg, png etc.
+	 */
+	class ImageLoader : public ImageLoaderBase {
 	public:
-		virtual IResource* loadResource(const ResourceLocation& location) = 0;
+		ImageLoader(VFS* vfs): m_vfs(vfs) {}
+		virtual IResource* loadResource(const ResourceLocation& location);
 
-		Image* loadImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
-		Image* loadImage(const std::string& filename) { return loadImage(ResourceLocation(filename)); }
+	private:
+		VFS* m_vfs;
 	};
 }
 #endif

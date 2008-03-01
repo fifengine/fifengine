@@ -38,14 +38,10 @@ namespace FIFE {
 	class Animation;
 	class ImagePool;
 
-	class XMLAnimationLoader : public IAnimationLoader {
+	class XMLAnimationLoader : public AnimationLoader {
 	public:
 		XMLAnimationLoader(ImagePool* pool): m_pool(pool) {}
 		virtual IResource* loadResource(const ResourceLocation& location);
-
-		Animation* loadAnimation(const ResourceLocation& location);
-		Animation* loadAnimation(const std::string& filename) { return loadAnimation(ResourceLocation(filename)); }
-
 	private:
 		ImagePool* m_pool;
 	};

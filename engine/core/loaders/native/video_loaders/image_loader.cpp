@@ -19,33 +19,50 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
-#define FIFE_VIDEO_LOADERS_IMAGE_PROVIDER_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
+#include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <SDL.h>
+#include <SDL_image.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/image_loader.h"
+#include "util/base/exception.h"
+#include "util/resource/resource_location.h"
+#include "util/resource/resource.h"
+#include "vfs/raw/rawdata.h"
+#include "vfs/vfs.h"
+#include "video/renderbackend.h"
+#include "video/image_location.h"
 
-namespace FIFE {
-	class VFS;
+#include "image_loader.h"
 
-	/** SDLImageLoader for some basic formats like jpeg, png etc. */
-	class SDLImageLoader : public IImageLoader {
-	public:
-		SDLImageLoader(VFS* vfs) : m_vfs(vfs) {}
-		virtual IResource* loadResource(const ResourceLocation& location);
+namespace FIFE { 
+	IResource* ImageLoader::loadResource(const ResourceLocation& location) {
+		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
 
-		Image* loadImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
-		Image* loadImage(const std::string& filename) { return loadImage(ResourceLocation(filename)); }
+		const std::string& filename = location.getFilename();
+		boost::scoped_ptr<RawData> data (m_vfs->open(filename));
+		size_t datalen = data->getDataLength();
+		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
+		data->readInto(darray.get(), datalen);
+		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
+		SDL_Surface* surface = IMG_Load_RW(rwops, false);
+		SDL_FreeRW(rwops);
+		if( !surface ) {
+			return 0;
+		}
 
-	private:
-		VFS* m_vfs;
+		Image* res = RenderBackend::instance()->createImage(surface);
+		if (loc) {
+			res->setXShift(loc->getXShift());
+			res->setYShift(loc->getYShift());
+		}
+		res->setAlphaOptimizerEnabled(true);
+		return res;
 	};
 }
-#endif

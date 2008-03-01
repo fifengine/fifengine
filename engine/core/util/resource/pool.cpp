@@ -45,7 +45,7 @@ namespace FIFE {
 
 	Pool::~Pool() {
 		clear();
-		std::vector<IResourceLoader*>::iterator loader;
+		std::vector<ResourceLoader*>::iterator loader;
 		for (loader = m_loaders.begin(); loader != m_loaders.end(); loader++) {
 			delete (*loader);
 		}
@@ -63,7 +63,7 @@ namespace FIFE {
 		m_entries.clear();
 	}
 
-	void Pool::addResourceLoader(IResourceLoader* loader) {
+	void Pool::addResourceLoader(ResourceLoader* loader) {
 		m_loaders.push_back(loader);
 	}
 
@@ -194,8 +194,8 @@ namespace FIFE {
 	}
 
 	void Pool::findAndSetProvider(PoolEntry& entry) {
-		std::vector<IResourceLoader*>::iterator it = m_loaders.begin();
-		std::vector<IResourceLoader*>::iterator end = m_loaders.end();
+		std::vector<ResourceLoader*>::iterator it = m_loaders.begin();
+		std::vector<ResourceLoader*>::iterator end = m_loaders.end();
 		if( it == end ) {
 			FL_PANIC(_log, "no loader constructors given for resource pool");
 		}

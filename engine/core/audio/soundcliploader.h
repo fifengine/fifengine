@@ -38,14 +38,12 @@
 
 namespace FIFE {
 	
-	/** ISoundClipLoader-interface for loading sound clips from a given ResourceLocation.
+	/** SoundClipLoader-class for loading sound clips from a given ResourceLocation.
 	 */
-	class ISoundClipLoader : public IResourceLoader {
+	class SoundClipLoader : public ResourceLoader {
 	public:
-		virtual IResource* loadResource(const ResourceLocation& location) = 0;
-
-		SoundClip* loadSoundClip(const ResourceLocation& location) { return dynamic_cast<SoundClip*>(loadResource(location)); }
-		SoundClip* loadSoundClip(const std::string& filename) { return loadSoundClip(ResourceLocation(filename)); }
+		SoundClip* load(const ResourceLocation& location) { return dynamic_cast<SoundClip*>(load(location)); }
+		SoundClip* load(const std::string& filename) { return load(ResourceLocation(filename)); }
 	};
 }
 

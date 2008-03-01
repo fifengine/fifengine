@@ -75,25 +75,23 @@ namespace FIFE {
 		virtual void setResourceFile(const std::string& filename) = 0;
 	};
 
-	/** IResourceLoader defines an interface for loading resources. The resource returned is owned by
+	/** ResourceLoader defines a class for loading resources. The resource returned is owned by
 	 * the caller, and must be deleted when finished.
 	 */
-	class IResourceLoader {
+	class ResourceLoader {
 	public:
-		virtual ~IResourceLoader() { };
-
+		virtual ~ResourceLoader() { };
 		virtual IResource* loadResource(const ResourceLocation& location) = 0;
-		virtual IResource* loadResource(const std::string& filename) { return loadResource(ResourceLocation(filename)); }
 	};
 
-	/** IResourceSaver defines an interface for saving Resources. 
+	/** ResourceSaver defines a class for saving Resources. 
 	 */
-	class IResourceSaver {
+	class ResourceSaver {
 	public:
-		virtual ~IResourceSaver() { };
+		virtual ~ResourceSaver() { };
 
 		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
-		virtual void save(const std::string& filename, IResource* resource) = 0;
+		virtual void save(const std::string& filename, IResource* resource) { save(ResourceLocation(filename), resource); }
 	};
 }
 

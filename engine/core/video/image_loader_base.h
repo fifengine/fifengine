@@ -19,8 +19,8 @@
  *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
  ***************************************************************************/
 
-#ifndef FIFE_VIDEO_LOADERS_SUBIMAGE_PROVIDER_H
-#define FIFE_VIDEO_LOADERS_SUBIMAGE_PROVIDER_H
+#ifndef FIFE_VIDEO_IMAGE_LOADER_H
+#define FIFE_VIDEO_IMAGE_LOADER_H
 
 // Standard C++ library includes
 
@@ -30,20 +30,18 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/image_loader.h"
+#include "util/resource/resource.h"
+#include "image.h"
+#include "image_location.h"
 
 namespace FIFE {
 
-	/** SDLSubImageLoader for cropping another image */
-	class SDLSubImageLoader : public IImageLoader {
+	/** ImageLoaderBase is used to load image formats supported by the engine
+	 */
+	class ImageLoaderBase : public ResourceLoader {
 	public:
-		SDLSubImageLoader() {}
-		virtual IResource* loadResource(const ResourceLocation& location);
-
-		Image* loadSubImage(const ResourceLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
-		Image* loadSubImage(const std::string& filename) { return loadSubImage(ResourceLocation(filename)); }
+		Image* load(const ImageLocation& location) { return dynamic_cast<Image*>(loadResource(location)); }
+		Image* load(const std::string& filename) { return load(ImageLocation(filename)); }
 	};
-
 }
-
 #endif

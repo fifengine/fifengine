@@ -38,12 +38,12 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 
-#include "sdl_subimage_loader.h"
+#include "subimage_loader.h"
 
 namespace FIFE { 
 	static Logger _log(LM_NATIVE_LOADERS);
 	
-	IResource* SDLSubImageLoader::loadResource(const ResourceLocation& location) {
+	IResource* SubImageLoader::loadResource(const ResourceLocation& location) {
 		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
 		if (!loc) {
 			throw InvalidConversion("Wrong location type given for subimage provider");

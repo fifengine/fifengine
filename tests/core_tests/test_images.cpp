@@ -43,8 +43,8 @@
 #include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/sdl_image_loader.h"
-#include "loaders/native/video_loaders/sdl_subimage_loader.h"
+#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/video_loaders/subimage_loader.h"
 #include "loaders/native/video_loaders/xml_animation_loader.h"
 #include "util/base/exception.h"
 
@@ -76,8 +76,8 @@ void test_image(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	SDLImageLoader provider(vfs);
-	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
+	ImageLoader provider(vfs);
+	boost::scoped_ptr<Image> img(provider.load(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();
 	int w = img->getWidth();
@@ -101,8 +101,8 @@ void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	SDLImageLoader imgprovider(vfs);
-	boost::scoped_ptr<Image> img(imgprovider.loadImage(ImageLocation(SUBIMAGE_FILE)));
+	ImageLoader imgprovider(vfs);
+	boost::scoped_ptr<Image> img(imgprovider.load(ImageLocation(SUBIMAGE_FILE)));
 
 	ImageLocation location(SUBIMAGE_FILE);
 	location.setParentSource(&*img);
@@ -114,12 +114,12 @@ void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 	location.setHeight(h);
 	std::vector<Image*> subimages;
 
-	SDLSubImageLoader subprovider;
+	SubImageLoader subprovider;
 	for (int x = 0; x < (W - w); x+=w) {
 		for (int y = 0; y < (H - h); y+=h) {
 			location.setXShift(x);
 			location.setYShift(y);
-			Image* sub = subprovider.loadSubImage(location);
+			Image* sub = subprovider.load(location);
 			subimages.push_back(sub);
 		}
 	}
@@ -144,10 +144,10 @@ void test_sdl_alphaoptimize() {
 	renderbackend.createMainScreen(800, 600, 0, false);
 	renderbackend.setAlphaOptimizerEnabled(true);
 		
-	SDLImageLoader provider(env.vfs.get());
-	boost::scoped_ptr<Image> img(provider.loadImage(ImageLocation(IMAGE_FILE)));
+	ImageLoader provider(env.vfs.get());
+	boost::scoped_ptr<Image> img(provider.load(ImageLocation(IMAGE_FILE)));
 
-	boost::scoped_ptr<Image> alpha_img(provider.loadImage(ImageLocation(ALPHA_IMAGE_FILE)));
+	boost::scoped_ptr<Image> alpha_img(provider.load(ImageLocation(ALPHA_IMAGE_FILE)));
 
 	int h0 = img->getHeight();
 	int w0 = img->getWidth();

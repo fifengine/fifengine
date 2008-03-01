@@ -57,16 +57,17 @@ namespace FIFE {
 		virtual void setResourceFile(const std::string& filename) = 0;
 	};
 
-	class IResourceLoader {
+	class ResourceLoader {
 	public:
-		virtual ~IResourceLoader() {};
-		virtual IResource* loadResource(const std::string& location) = 0;
+		virtual ~ResourceLoader() { };
+		virtual IResource* loadResource(const ResourceLocation& location) = 0;
 	};
 
-	class IResourceSaver {
+	class ResourceSaver {
 	public:
-		virtual ~IResorceSaver() {};
-		virtual void save(const std::string& location, IResource* resource) = 0;
+		virtual ~ResourceSaver() { };
+		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
+		virtual void save(const std::string& filename, IResource* resource) { save(ResourceLocation(filename), resource); }
 	};
 	
 
