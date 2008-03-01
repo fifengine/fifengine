@@ -38,7 +38,7 @@
 #include "soundclippool.h"
 
 namespace FIFE {
-	class SoundManager : public DynamicSingleton<SoundManager> {
+	class SoundManager {
 	public:
 	
 		SoundManager(SoundClipPool* pool);

@@ -39,13 +39,14 @@
 
 namespace FIFE {
 
+	class SoundManager;
 	class SoundClipPool;
 	
 	/** The class for playing audio files
 	 */
 	class SoundEmitter : private TimeEvent {
 	public:
-		SoundEmitter(SoundClipPool* pool, unsigned int uid);
+		SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid);
 		
 		~SoundEmitter();
 		
@@ -176,6 +177,7 @@ namespace FIFE {
 		 */
 		void attachSoundClip();
 
+		SoundManager*       m_manager;
 		SoundClipPool*			m_pool;
 		ALuint							m_source;			// The openAL-source
 		SoundClip*					m_soundclip;	// the attached soundclip

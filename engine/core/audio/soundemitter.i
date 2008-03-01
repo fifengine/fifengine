@@ -33,12 +33,13 @@ namespace FIFE {
 	};
 
 	class SoundDecoder;
+	class SoundManager;
 	class SoundClipPool;
 
 	
 	class SoundEmitter {
 	public:
-		SoundEmitter(SoundClipPool* pool, unsigned int uid);
+		SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid);
 		~SoundEmitter();
 		
 		unsigned int getID();

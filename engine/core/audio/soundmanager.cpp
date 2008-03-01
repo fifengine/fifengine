@@ -109,7 +109,7 @@ namespace FIFE {
 	}
 
 	SoundEmitter* SoundManager::createEmitter() {
-		SoundEmitter* ptr = new SoundEmitter(m_pool, m_emittervec.size());
+		SoundEmitter* ptr = new SoundEmitter(this, m_pool, m_emittervec.size());
 		m_emittervec.push_back(ptr);
 		return ptr;
 	}
