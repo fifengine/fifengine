@@ -46,7 +46,8 @@ namespace FIFE {
 		m_screenheight(600),
 		m_defaultfontpath(""),
 		m_defaultfontsize(8),
-		m_defaultfontglyphs("") {
+		m_defaultfontglyphs(""),
+		m_image_chunking_size(256) {
 	}
 	
 	EngineSettings::~EngineSettings() {

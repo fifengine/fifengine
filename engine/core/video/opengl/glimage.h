@@ -113,6 +113,8 @@ namespace FIFE {
 		 * purpose
 		 */
 		SDLImage* m_sdlimage;
+		
+		unsigned int m_chunk_size;
 	};
 }
 

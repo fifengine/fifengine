@@ -541,6 +541,7 @@ digraph "source tree" {
     "engine/core/video/imagepool.h" -> "util/resource/pool.h"
     "engine/core/video/opengl/glimage.cpp" -> "glimage.h"
     "engine/core/video/opengl/glimage.cpp" -> "util/structures/rect.h"
+    "engine/core/video/opengl/glimage.cpp" -> "video/renderbackend.h"
     "engine/core/video/opengl/glimage.cpp" -> "video/sdl/sdlimage.h"
     "engine/core/video/opengl/glimage.h" -> "fife_opengl.h"
     "engine/core/video/opengl/glimage.h" -> "util/base/fife_stdint.h"

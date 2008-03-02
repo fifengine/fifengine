@@ -78,6 +78,10 @@ class ApplicationBase(object):
 		engineSetting.setSDLRemoveFakeAlpha(settings.SDLRemoveFakeAlpha)
 		engineSetting.setScreenWidth(settings.ScreenWidth)
 		engineSetting.setScreenHeight(settings.ScreenHeight)
+		try:
+			engineSetting.setImageChunkingSize(settings.ImageChunkSize)
+		except:
+			pass
 	
 	def initLogging(self):
 		"""

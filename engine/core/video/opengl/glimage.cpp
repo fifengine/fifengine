@@ -30,12 +30,11 @@
 // Second block: files included from the same folder
 #include "util/structures/rect.h"
 #include "video/sdl/sdlimage.h"
+#include "video/renderbackend.h"
 
 #include "glimage.h"
 
 namespace FIFE {
-	const unsigned int CHUNK_SIZE = 256;
-
 	GLImage::GLImage(SDL_Surface* surface):
 		Image(surface) {
 		m_sdlimage = new SDLImage(surface);
@@ -62,6 +61,7 @@ namespace FIFE {
 		m_cols = 0;
 		m_last_col_width = 0;
 		m_last_row_height = 0;
+		m_chunk_size = RenderBackend::instance()->getChunkingSize();
 	}
 	
 	void GLImage::cleanup() {
@@ -111,7 +111,7 @@ namespace FIFE {
 				target.w = static_cast<int>(round(scale_y*m_last_col_width*m_last_col_fill_ratio));
 			} else {
 				col_fill_ratio = 1.0;
-				target.w = static_cast<int>(round(scale_y*CHUNK_SIZE));
+				target.w = static_cast<int>(round(scale_y*m_chunk_size));
 			}
 			if (i > 0) {
 				target.x = prev.x + prev.w;
@@ -125,7 +125,7 @@ namespace FIFE {
 					target.h = static_cast<int>(round(scale_y*m_last_row_height*m_last_row_fill_ratio));
 				} else {
 					row_fill_ratio = 1.0;
-					target.h = static_cast<int>(round(scale_y*CHUNK_SIZE));
+					target.h = static_cast<int>(round(scale_y*m_chunk_size));
 				}
 				if (j > 0) {
 					target.y = prev.y + prev.h;
@@ -160,35 +160,35 @@ namespace FIFE {
 		int pitch = m_surface->pitch;
 
 		m_last_col_width = 1;
-		m_cols = static_cast<int>(width/CHUNK_SIZE);
-		if (width%CHUNK_SIZE) {
+		m_cols = static_cast<int>(width/m_chunk_size);
+		if (width%m_chunk_size) {
 			++m_cols;
-			while(m_last_col_width < width%CHUNK_SIZE) {
+			while(m_last_col_width < width%m_chunk_size) {
 				m_last_col_width <<= 1;
 			}
 		} else {
-			m_last_col_width = CHUNK_SIZE;
+			m_last_col_width = m_chunk_size;
 		}
 
 		m_last_row_height = 1;
-		m_rows = static_cast<int>(height/CHUNK_SIZE);
-		if (height%CHUNK_SIZE) {
+		m_rows = static_cast<int>(height/m_chunk_size);
+		if (height%m_chunk_size) {
 			++m_rows;
-			while(m_last_row_height < height%CHUNK_SIZE) {
+			while(m_last_row_height < height%m_chunk_size) {
 				m_last_row_height <<= 1;
 			}
 		} else {
-			m_last_row_height = CHUNK_SIZE;
+			m_last_row_height = m_chunk_size;
 		}
 
 		m_textureids = new GLuint[m_rows*m_cols];
 		memset(m_textureids, 0x00, m_rows*m_cols*sizeof(GLuint));
 
-		if(width%CHUNK_SIZE) {
-			m_last_col_fill_ratio = static_cast<float>(width%CHUNK_SIZE) / static_cast<float>(m_last_col_width);
-			m_last_row_fill_ratio = static_cast<float>(height%CHUNK_SIZE) / static_cast<float>(m_last_row_height);
+		if(width%m_chunk_size) {
+			m_last_col_fill_ratio = static_cast<float>(width%m_chunk_size) / static_cast<float>(m_last_col_width);
+			m_last_row_fill_ratio = static_cast<float>(height%m_chunk_size) / static_cast<float>(m_last_row_height);
 		}
-		else {  // (width%CHUNK_SIZE) / m_last_col_width == 0 == CHUNK_SIZE (mod CHUNK_SIZE)
+		else {  // (width%m_chunk_size) / m_last_col_width == 0 == m_chunk_size (mod m_chunk_size)
 			m_last_col_fill_ratio = 1.0f;
 			m_last_row_fill_ratio = 1.0f;
 		}
@@ -202,23 +202,23 @@ namespace FIFE {
 			for (unsigned int j = 0; j < m_rows; ++j) {
 				if (i==m_cols-1) {
 					chunk_width = m_last_col_width;
-					data_chunk_width = width%CHUNK_SIZE;
-					if(data_chunk_width == 0) {  // 0 == CHUNK_SIZE (mod CHUNK_SIZE)
-						data_chunk_width = CHUNK_SIZE;
+					data_chunk_width = width%m_chunk_size;
+					if(data_chunk_width == 0) {  // 0 == m_chunk_size (mod m_chunk_size)
+						data_chunk_width = m_chunk_size;
 					}
 				} else {
-					chunk_width = CHUNK_SIZE;
-					data_chunk_width = CHUNK_SIZE;
+					chunk_width = m_chunk_size;
+					data_chunk_width = m_chunk_size;
 				}
 				if (j==m_rows-1) {
 					chunk_height = m_last_row_height;
-					data_chunk_height = height%CHUNK_SIZE;
-					if(data_chunk_height == 0) {  // 0 = CHUNK_SIZE (mod CHUNK_SIZE)
-						data_chunk_height = CHUNK_SIZE;
+					data_chunk_height = height%m_chunk_size;
+					if(data_chunk_height == 0) {  // 0 = m_chunk_size (mod m_chunk_size)
+						data_chunk_height = m_chunk_size;
 					}
 				} else {
-					chunk_height = CHUNK_SIZE;
-					data_chunk_height = CHUNK_SIZE;
+					chunk_height = m_chunk_size;
+					data_chunk_height = m_chunk_size;
 				}
 
 				uint32_t* oglbuffer = new uint32_t[chunk_width * chunk_height];
@@ -226,7 +226,7 @@ namespace FIFE {
 
 				for (unsigned int y = 0;  y < data_chunk_height; ++y) {
 					for (unsigned int x = 0; x < data_chunk_width; ++x) {
-						unsigned int pos = (y + j*CHUNK_SIZE)*pitch + (x + i*CHUNK_SIZE) * 4;
+						unsigned int pos = (y + j*m_chunk_size)*pitch + (x + i*m_chunk_size) * 4;
 
 						// FIXME
 						// The following code might not be endianness correct

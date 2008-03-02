@@ -126,9 +126,18 @@ namespace FIFE {
 		bool isAlphaOptimizerEnabled();
 		void saveImage(const std::string& filename);
 
+		/** OpenGL image needs to be sliced into power of two sized chunks. 
+		 * You can adjust the size by calling this method.
+		 * Size can be anything (reasonable), it is always changed to the next biggest power of two value
+		 * @example values 50 -> 64, 340 -> 512
+		 */
+		void setChunkingSize(unsigned int size);
+		unsigned int getChunkingSize();
+
 	protected:
 		Image* m_screen;
 		bool m_isalphaoptimized;
+		unsigned int m_chunkingsize;
 	};
 }
 

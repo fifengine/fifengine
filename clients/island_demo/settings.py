@@ -15,6 +15,7 @@ PychanDebug         = False
 LogToPrompt         = 1
 LogToFile           = 0
 UsePsyco            = False
+ImageChunkSize      = 256
 
 CoordinateLayerName = "TechdemoMapObjectLayer"
 QuadTreeLayerName = "" #"TechdemoMapObjectLayer"

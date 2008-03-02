@@ -170,6 +170,18 @@ namespace FIFE {
 			return m_defaultfontglyphs;
 		}
 	
+		/** Sets image chunking size, @see RenderBackend::setChunkingSize
+		 */
+		void setImageChunkingSize(unsigned int size) {
+			m_image_chunking_size = size;
+		}
+	
+		/** @see setImageChunkingSize
+		 */
+		unsigned int getImageChunkingSize() {
+			return m_image_chunking_size;
+		}
+	
 	
 	private:
 		unsigned int m_bitsperpixel;
@@ -183,6 +195,7 @@ namespace FIFE {
 		std::string m_defaultfontpath;
 		unsigned int m_defaultfontsize;
 		std::string m_defaultfontglyphs;
+		unsigned int m_image_chunking_size;
 	};
 
 }//FIFE
