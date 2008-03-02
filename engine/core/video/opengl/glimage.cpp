@@ -55,9 +55,9 @@ namespace FIFE {
 	}
 
 	void GLImage::resetGlimage() {
-		m_tex_x = 0;
-		m_tex_y = 0;
-		m_textureid = NULL;
+		m_last_col_fill_ratio = 0;
+		m_last_row_fill_ratio = 0;
+		m_textureids = NULL;
 		m_rows = 0;
 		m_cols = 0;
 		m_last_col_width = 0;
@@ -66,15 +66,15 @@ namespace FIFE {
 	
 	void GLImage::cleanup() {
 		for (unsigned int i = 0; i < m_rows*m_cols; ++i) {
-			glDeleteTextures(1, &m_textureid[i]);
+			glDeleteTextures(1, &m_textureids[i]);
 		}
-		delete[] m_textureid;
-		m_textureid = NULL;
+		delete[] m_textureids;
+		m_textureids = NULL;
 		resetGlimage();
 	}
 
 	void GLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
-		if (!m_textureid) {
+		if (!m_textureids) {
 			generateTextureChunks();
 		}
 
@@ -86,59 +86,67 @@ namespace FIFE {
 			return;
 		}
 
-		float tex_end_x;
-		float tex_end_y;
+		// used to calculate the fill ratio for given chunk
+		float col_fill_ratio;
+		float row_fill_ratio;
 
+		// the amount of "zooming" for the image
 		float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
 		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
-
+		
+		// rectangle used for drawing
 		Rect target;
-		/// setting transparency for whole primitive:
+		// zooming causes scaling sometimes to round pixels incorrectly. Instead of 
+		//  recalculating it all, store the values from previous round and calculate
+		//  new x & y
+		Rect prev;
+		
+		/// setting transparency for the whole primitive:
 		glColor4ub( 255, 255, 255, alpha );
 
 		glEnable(GL_TEXTURE_2D);
 		for (unsigned int i = 0; i < m_cols; ++i) {
+			if (i == m_cols-1) {
+				col_fill_ratio = m_last_col_fill_ratio;
+				target.w = static_cast<int>(round(scale_y*m_last_col_width*m_last_col_fill_ratio));
+			} else {
+				col_fill_ratio = 1.0;
+				target.w = static_cast<int>(round(scale_y*CHUNK_SIZE));
+			}
+			if (i > 0) {
+				target.x = prev.x + prev.w;
+			} else {
+				target.x = rect.x;
+			}
+			
 			for (unsigned int j = 0; j < m_rows; ++j) {
-				glBindTexture(GL_TEXTURE_2D, m_textureid[j*m_cols + i]);
-
-				if (i == m_cols-1) {
-					tex_end_x = m_tex_x;
-				} else {
-					tex_end_x = 1.0;
-				}
 				if (j == m_rows-1) {
-					tex_end_y = m_tex_y;
+					row_fill_ratio = m_last_row_fill_ratio;
+					target.h = static_cast<int>(round(scale_y*m_last_row_height*m_last_row_fill_ratio));
 				} else {
-					tex_end_y = 1.0;
+					row_fill_ratio = 1.0;
+					target.h = static_cast<int>(round(scale_y*CHUNK_SIZE));
 				}
-
-				target.x = rect.x + static_cast<int>(i*CHUNK_SIZE*scale_x);
-				target.y = rect.y + static_cast<int>(j*CHUNK_SIZE*scale_y);
-
-				if (i == m_cols-1) {
-					target.w = static_cast<int>(scale_y*m_last_col_width*m_tex_x);
+				if (j > 0) {
+					target.y = prev.y + prev.h;
 				} else {
-					target.w = static_cast<int>(scale_y*CHUNK_SIZE);
+					target.y = rect.y;
 				}
-				if (j == m_rows-1) {
-					target.h = static_cast<int>(scale_y*m_last_row_height*m_tex_y);
-				} else {
-					target.h = static_cast<int>(scale_y*CHUNK_SIZE);
-				}
-
+				prev = target;
+				
+				glBindTexture(GL_TEXTURE_2D, m_textureids[j*m_cols + i]);
 				glBegin(GL_QUADS);
 					glTexCoord2f(0.0f, 0.0f);
 					glVertex2i(target.x, target.y);
 
-					glTexCoord2f(0.0f, tex_end_y);
+					glTexCoord2f(0.0f, row_fill_ratio);
 					glVertex2i(target.x, target.y + target.h);
 
-					glTexCoord2f(tex_end_x, tex_end_y);
+					glTexCoord2f(col_fill_ratio, row_fill_ratio);
 					glVertex2i(target.x + target.w, target.y + target.h);
 
-					glTexCoord2f(tex_end_x, 0.0f);
+					glTexCoord2f(col_fill_ratio, 0.0f);
 					glVertex2i(target.x + target.w, target.y);
-
 				glEnd();
 			}
 		}
@@ -173,16 +181,16 @@ namespace FIFE {
 			m_last_row_height = CHUNK_SIZE;
 		}
 
-		m_textureid = new GLuint[m_rows*m_cols];
-		memset(m_textureid, 0x00, m_rows*m_cols*sizeof(GLuint));
+		m_textureids = new GLuint[m_rows*m_cols];
+		memset(m_textureids, 0x00, m_rows*m_cols*sizeof(GLuint));
 
 		if(width%CHUNK_SIZE) {
-			m_tex_x = static_cast<float>(width%CHUNK_SIZE) / static_cast<float>(m_last_col_width);
-			m_tex_y = static_cast<float>(height%CHUNK_SIZE) / static_cast<float>(m_last_row_height);
+			m_last_col_fill_ratio = static_cast<float>(width%CHUNK_SIZE) / static_cast<float>(m_last_col_width);
+			m_last_row_fill_ratio = static_cast<float>(height%CHUNK_SIZE) / static_cast<float>(m_last_row_height);
 		}
 		else {  // (width%CHUNK_SIZE) / m_last_col_width == 0 == CHUNK_SIZE (mod CHUNK_SIZE)
-			m_tex_x = 1.0f;
-			m_tex_y = 1.0f;
+			m_last_col_fill_ratio = 1.0f;
+			m_last_row_fill_ratio = 1.0f;
 		}
 
 		unsigned int chunk_width;
@@ -233,9 +241,9 @@ namespace FIFE {
 				}
 
 				// get texture id from opengl
-				glGenTextures(1, &m_textureid[j*m_cols + i]);
+				glGenTextures(1, &m_textureids[j*m_cols + i]);
 				// set focus on that texture
-				glBindTexture(GL_TEXTURE_2D, m_textureid[j*m_cols + i]);
+				glBindTexture(GL_TEXTURE_2D, m_textureids[j*m_cols + i]);
 				// set filters for texture
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

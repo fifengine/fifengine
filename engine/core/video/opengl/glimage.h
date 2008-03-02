@@ -69,18 +69,35 @@ namespace FIFE {
 		void setClipArea(const Rect& cliparea, bool clear);
 
 	private:
+		// number of rows into which this image is sliced, so that it "becomes power of 2 compatible"
 		unsigned int m_rows;
+		// see m_rows
 		unsigned int m_cols;
 
-		float m_tex_x;
-		float m_tex_y;
+		// ratio of texture fill in last column. E.g. in case image width = 300, chunk = 256x256,
+		// last column chunk width = 64 -> ratio is (300-256) / 64 = 0.6875
+		// this means that texture fills 68.75% the last column
+		float m_last_col_fill_ratio;
+		// @see m_last_col_fill_ratio
+		float m_last_row_fill_ratio;
 
+		/** the width of last column to render. This is also power of two 
+		 * (e.g. if chunks are 256x256 and image width = 300, last column = 64
+		 */
 		unsigned int m_last_col_width;
+		// see m_last_col_width 
 		unsigned int m_last_row_height;
 
-		GLuint* m_textureid;
+		/** Holds texture ids that are used to access textures in GL rendering context
+		 */
+		GLuint* m_textureids;
 
+		/** Frees allocated memory and calls resetGlImage
+		 */
 		void cleanup();
+		
+		/** Resets GLImage variables
+		 */
 		void resetGlimage();
 		
 		/** Generates chunks for render. For reference, see
@@ -88,6 +105,13 @@ namespace FIFE {
 		 */
 		void generateTextureChunks();
 		
+		/** Original SDLImage where GLImage is created from
+		 * FIXME: at the moment SDLImage is used to draw graphics (e.g. line) on screen
+		 * this is clearly not optimal, but image chunking makes somewhat harder to do
+		 * proper drawing of graphics (e.g. how to segment lines into correct boxes).
+		 * It might be possible to use some kind of offscreen OpenGL image for this
+		 * purpose
+		 */
 		SDLImage* m_sdlimage;
 	};
 }
