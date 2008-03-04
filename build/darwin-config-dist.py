@@ -2,7 +2,6 @@ import os
 
 def initEnvironment(env):
     env.Append(ENV={'PATH' : os.environ['PATH']})
-    env.Append(ENV={'PKG_CONFIG_PATH' : os.environ['PKG_CONFIG_PATH']})
     return env
 
 def addExtras(context):
@@ -15,22 +14,22 @@ def addExtras(context):
     context.env.Append(SHLINKFLAGS='-framework SDL_image')
     context.env.Append(SHLINKFLAGS='-framework SDL_ttf')
     context.env.Append(SHLINKFLAGS='-framework Python')
+    context.env['SHLIBSUFFIX']='.so'
 
-    include_dirs = ['/opt/local/include', '/usr/local/include', '/sw/include', '/Library/Frameworks/SDL.framework/Headers',
-        '/Library/Frameworks/SDL_image.framework/Headers', '/Library/Frameworks/SDL_ttf.framework/Headers', '/usr/local/include/boost-1_33_1',
-        '/System/Library/Frameworks/OpenAL.framework/Headers', '/usr/local/include/vorbis', '/opt/local/include/vorbis/', 
-	'/opt/local/include/python2.5']
+    include_dirs = ['/opt/local/include', '/usr/local/include', '/Library/Frameworks/SDL.framework/Headers',
+        '/Library/Frameworks/SDL_image.framework/Headers', '/Library/Frameworks/SDL_ttf.framework/Headers', 
+        '/opt/local/include/boost', '/System/Library/Frameworks/OpenAL.framework/Headers', '/opt/local/include/vorbis/', 
+	'/usr/include/python2.5', '/opt/local/include/guichan']
     context.env.Append(CPPPATH = include_dirs)
 
-    lib_dirs = ['/opt/local/lib','/usr/local/lib', '/sw/lib']
+    lib_dirs = ['/opt/local/lib','/usr/local/lib']
     context.env.Append(LIBPATH = lib_dirs)
-
-    context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
 
     context.env.Append(CPPFLAGS='-D_THREAD_SAFE')
 
     context.CheckHeader('SDL_image.h')
     context.CheckHeader('SDL_ttf.h')
+    context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
     context.checkSimpleLib(['guichan'])
     context.checkSimpleLib(['guichan_sdl'])
     context.checkSimpleLib(['z'], 'zlib.h')
@@ -39,4 +38,4 @@ def addExtras(context):
 
     if context.env['opengl']:
         context.checkSimpleLib(['guichan_opengl'], ['guichan/opengl.hpp'], 'cxx')
-#        context.env.Append(LINKFLAGS = '-framework OpenGL')
+        context.env.Append(SHLINKFLAGS='-framework OpenGL')
