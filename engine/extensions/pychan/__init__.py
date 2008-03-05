@@ -20,7 +20,7 @@ TODO
 ----
  - Make setting parent attribute imply containment relation.
  - Finalize Widget.execute
- - ClickLabel/Label rework.
+ - ClickLabel/Label rework. (In progress)
 
  - Documentation ( Allways not enough :-( )
  - Completion of above features
@@ -41,7 +41,6 @@ BUGS
 ----
  - Focus problems with Widget.execute.
  - Layout Bugs where max_size of a parent widget get's ignored.
- - ImageButton will raise fife.NotFound in case the down image is not set and it's pressed.
  - Font.glyph_spacing is rendered incorrectly.
  - It just looks ugly.
 
