@@ -222,8 +222,8 @@ if not env['projectfiles_only']:
 		flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl'])
 	else:
 		flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../../ext/install/lib,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
-	if sys.platform not 'win32':
+	if sys.platform != 'win32':
 		env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Copy('$TARGET', '$SOURCE')])
-		if sys.platform not 'darwin':
+		if sys.platform != 'darwin':
 			env.Install('$PREFIX/lib/python2.5/site-packages/fife', flib)
 #			env.Install('$PREFIX/lib/python2.5/site-packages/fife', [str(f) for f in extensionfiles])
