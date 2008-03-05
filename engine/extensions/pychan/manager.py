@@ -171,5 +171,8 @@ DEFAULT_STYLE = {
 	('Container','HBox','VBox') : {
 		'border_size': 0,
 		'opaque' : False
+	},
+	'Icon' : {
+		'border_size' : 0
 	}
 }

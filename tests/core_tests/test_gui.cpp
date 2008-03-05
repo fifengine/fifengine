@@ -105,7 +105,10 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 		gui->logic();
 		gui->draw();
 		renderbackend.endFrame();
-	}	
+	}
+	delete label;
+	delete icon;
+	delete guiimage;
 }
 
 #ifdef FIFE_BOOST_VERSION_103300

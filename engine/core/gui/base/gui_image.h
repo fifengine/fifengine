@@ -41,6 +41,7 @@ namespace FIFE {
 	public:
 		GuiImage();
 		GuiImage(int id, ImagePool& pool);
+		~GuiImage();
 		void free();
 		int getWidth() const;
 		int getHeight() const;

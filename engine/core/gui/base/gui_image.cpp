@@ -39,7 +39,12 @@ namespace FIFE {
 	}
 
 	GuiImage::GuiImage(int id, ImagePool& pool): gcn::Image(), m_poolid(id), m_pool(&pool) {
-	} 
+		 m_pool->getImage(m_poolid).addRef();
+	}
+
+	GuiImage::~GuiImage() {
+		 m_pool->getImage(m_poolid).decRef();
+	}
 
 	void GuiImage::free() {
 		// the imagepool should do this; should we tell it?
