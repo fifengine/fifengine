@@ -1,16 +1,16 @@
 import common, fife
 
-class Agent(fife.InstanceListener):
+class Agent(fife.InstanceActionListener):
 	def __init__(self, model, agentName, layer, uniqInMap=True):
-		fife.InstanceListener.__init__(self)
+		fife.InstanceActionListener.__init__(self)
 		self.model = model
 		self.agentName = agentName
 		self.layer = layer
 		if uniqInMap:
 			self.agent = layer.getInstances('name', agentName)[0]
-			self.agent.addListener(self)
+			self.agent.addActionListener(self)
 
-	def OnActionFinished(self, instance, action):
+	def onInstanceActionFinished(self, instance, action):
 		raise ProgrammingError('No OnActionFinished defined for Agent')
 
 	def start(self):
@@ -26,6 +26,6 @@ def create_anonymous_agents(model, objectName, layer, agentClass):
 		i += 1
 		agent = agentClass(model, agentName, layer, False)
 		agent.agent = a
-		a.addListener(agent)
+		a.addActionListener(agent)
 		agents.append(agent)
 	return agents

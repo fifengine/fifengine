@@ -39,8 +39,6 @@
 #include "model/structures/layer.h"
 #include "model/structures/map.h"
 #include "model/structures/instancetree.h"
-#include "eventchannel/trigger/ec_trigger.h"
-#include "eventchannel/trigger/ec_itriggerlistener.h"
 
 #include "instance.h"
 
@@ -50,7 +48,7 @@ namespace FIFE {
 	class ActionInfo {
 	public:
 		ActionInfo(AbstractPather* pather, const Location& curloc): 
-			m_action(0), 
+			m_action(NULL), 
 			m_target(NULL), 
 			m_speed(0), 
 			m_repeating(false),
@@ -108,50 +106,121 @@ namespace FIFE {
 		std::string m_txt;
 		unsigned int m_duration;
 		unsigned int m_start_time;
-	};
-
-	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
-		AttributedClass(identifier),
-		m_object(object),
-		m_cur_location(location),
-		m_prev_location(location),
-		m_facinglocation(NULL),
+	};	
+	
+	Instance::InstanceActivityCache::InstanceActivityCache(Instance& source):
+		m_location(source.m_location),
+		m_facinglocation(),
+		m_action(),
+		m_speed(0),
+		m_timemultiplier(1.0),
+		m_saytxt(""),
+		m_changeinfo(ICHANGE_NO_CHANGES),
+		m_actionlisteners(),
+ 		m_changelisteners(),
 		m_actioninfo(NULL),
-		m_listeners(NULL),
-		m_visual(NULL),
 		m_sayinfo(NULL),
 		m_timeprovider(NULL) {
+		if (source.m_facinglocation) {
+			m_facinglocation = *source.m_facinglocation;
+		}
 	}
-
-	Instance::~Instance() {
+	
+	Instance::InstanceActivityCache::~InstanceActivityCache() {
 		delete m_actioninfo;
-		delete m_listeners;
-		delete m_visual;
-		delete m_facinglocation;
+		delete m_sayinfo;
 		delete m_timeprovider;
 	}
 	
+	void Instance::InstanceActivityCache::update(Instance& source) {
+		m_changeinfo = ICHANGE_NO_CHANGES;
+		if (m_location != source.m_location) {
+			m_changeinfo |= ICHANGE_LOC;
+			m_location = source.m_location;
+		}
+		if (source.m_facinglocation && (m_facinglocation != *source.m_facinglocation)) {
+			m_changeinfo |= ICHANGE_FACING_LOC;
+			m_facinglocation = *source.m_facinglocation;
+		}
+		if (m_actioninfo && (m_speed != m_actioninfo->m_speed)) {
+			m_changeinfo |= ICHANGE_SPEED;
+			m_speed = m_actioninfo->m_speed;
+		}
+		if (m_actioninfo && (m_action != m_actioninfo->m_action)) {
+			m_changeinfo |= ICHANGE_ACTION;
+			m_action = m_actioninfo->m_action;
+		}
+		if (m_timeprovider && (m_timemultiplier != m_timeprovider->getMultiplier())) {
+			m_changeinfo |= ICHANGE_TIME_MULTIPLIER;
+			m_timemultiplier = m_timeprovider->getMultiplier();
+		}
+		if (m_sayinfo && (m_saytxt != m_sayinfo->m_txt)) {
+			m_changeinfo |= ICHANGE_SAYTEXT;
+			m_saytxt = m_sayinfo->m_txt;
+		}
+	}
+
+	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
+		AttributedClass(identifier),
+		m_activitycache(NULL),
+		m_object(object),
+		m_location(location),
+		m_facinglocation(NULL),
+		m_visual(NULL) {
+	}
+
+	Instance::~Instance() {
+		delete m_activitycache;
+		delete m_facinglocation;
+		delete m_visual;
+	}
+	
+	void Instance::initializeChanges() {
+		if (!m_activitycache) {
+			m_activitycache = new InstanceActivityCache(*this);
+		}
+	}
+	
 	void Instance::setLocation(const Location& loc) {
-		m_cur_location = loc;
+		initializeChanges();
+		m_location = loc;
 		// rebind timeprovider to do proper timescaling
 		bindTimeProvider();
 	}
 
-	void Instance::addListener(InstanceListener* listener) {
-		if (!m_listeners) {
-			m_listeners = new std::vector<InstanceListener*>();
-		}
-		m_listeners->push_back(listener);
+	void Instance::addActionListener(InstanceActionListener* listener) {
+		initializeChanges();
+		m_activitycache->m_actionlisteners.push_back(listener);
 	}
 
-	void Instance::removeListener(InstanceListener* listener) {
-		if (!m_listeners) {
+	void Instance::removeActionListener(InstanceActionListener* listener) {
+		if (!m_activitycache) {
 			return;
 		}
-		std::vector<InstanceListener*>::iterator i = m_listeners->begin();
-		while (i != m_listeners->end()) {
+		std::vector<InstanceActionListener*>::iterator i = m_activitycache->m_actionlisteners.begin();
+		while (i != m_activitycache->m_actionlisteners.end()) {
 			if ((*i) == listener) {
-				m_listeners->erase(i);
+				m_activitycache->m_actionlisteners.erase(i);
+				return;
+			}
+			++i;
+		}
+		FL_WARN(_log, "Cannot remove unknown listener");
+	}
+
+	void Instance::addChangeListener(InstanceChangeListener* listener) {
+		initializeChanges();
+		m_activitycache->m_changelisteners.push_back(listener);
+	}
+
+	void Instance::removeChangeListener(InstanceChangeListener* listener) {
+		if (!m_activitycache) {
+			return;
+		}
+		std::vector<InstanceChangeListener*>::iterator i = m_activitycache->m_changelisteners.begin();
+		while (i != m_activitycache->m_changelisteners.end()) {
+			if ((*i) == listener) {
+				m_activitycache->m_changelisteners.erase(i);
 				return;
 			}
 			++i;
@@ -161,54 +230,59 @@ namespace FIFE {
 
 	void Instance::initalizeAction(const std::string& action_name) {
 		assert(m_object);
-		if (m_actioninfo) {
-			delete m_actioninfo;
-			m_actioninfo = NULL;
+		assert(m_activitycache);
+		if (m_activitycache->m_actioninfo) {
+			delete m_activitycache->m_actioninfo;
+			m_activitycache->m_actioninfo = NULL;
 		}
-		m_actioninfo = new ActionInfo(m_object->getPather(), m_cur_location);
-		m_actioninfo->m_action = m_object->getAction(action_name);
-		if (!m_actioninfo->m_action) {
-			delete m_actioninfo;
-			m_actioninfo = NULL;
+		m_activitycache->m_actioninfo = new ActionInfo(m_object->getPather(), m_location);
+		m_activitycache->m_actioninfo->m_action = m_object->getAction(action_name);
+		if (!m_activitycache->m_actioninfo->m_action) {
+			delete m_activitycache->m_actioninfo;
+			m_activitycache->m_actioninfo = NULL;
 			throw NotFound(std::string("action ") + action_name + " not found");
-		}		
+		}
 	}
 
 	void Instance::move(const std::string& action_name, const Location& target, const double speed) {
+		initializeChanges();
 		initalizeAction(action_name);
-		m_actioninfo->m_target = new Location(target);
-		m_actioninfo->m_speed = speed;
+		m_activitycache->m_actioninfo->m_target = new Location(target);
+		m_activitycache->m_actioninfo->m_speed = speed;
 		setFacingLocation(target);
-		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_cur_location << " to " << target << " with speed " << speed);
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << target << " with speed " << speed);
 	}
 	
 	void Instance::follow(const std::string& action_name, Instance* leader, const double speed) {
+		initializeChanges();
 		initalizeAction(action_name);
-		m_actioninfo->m_target = new Location(leader->getLocationRef());
-		m_actioninfo->m_speed = speed;
-		m_actioninfo->m_leader = leader;
-		setFacingLocation(*m_actioninfo->m_target);
-		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_cur_location << " to " << *m_actioninfo->m_target << " with speed " << speed);
+		m_activitycache->m_actioninfo->m_target = new Location(leader->getLocationRef());
+		m_activitycache->m_actioninfo->m_speed = speed;
+		m_activitycache->m_actioninfo->m_leader = leader;
+		setFacingLocation(*m_activitycache->m_actioninfo->m_target);
+		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << *m_activitycache->m_actioninfo->m_target << " with speed " << speed);
 	}
 
 	void Instance::act(const std::string& action_name, const Location& direction, bool repeating) {
+		initializeChanges();
 		initalizeAction(action_name);
-		m_actioninfo->m_repeating = repeating;
+		m_activitycache->m_actioninfo->m_repeating = repeating;
 		setFacingLocation(direction);
 	}
 
 	void Instance::say(const std::string& text, unsigned int duration) {
-		delete m_sayinfo;
-		m_sayinfo = NULL;
+		initializeChanges();
+		delete m_activitycache->m_sayinfo;
+		m_activitycache->m_sayinfo = NULL;
 		
 		if (text != "") {
-			m_sayinfo = new SayInfo(text, duration);
+			m_activitycache->m_sayinfo = new SayInfo(text, duration);
 		}
 	}
 
 	const std::string* Instance::getSayText() const {
-		if (m_sayinfo) {
-			return &m_sayinfo->m_txt;
+		if (m_activitycache && m_activitycache->m_sayinfo) {
+			return &m_activitycache->m_sayinfo->m_txt;
 		}
 		return NULL;
 	}
@@ -224,50 +298,57 @@ namespace FIFE {
 	bool Instance::process_movement() {
 		FL_DBG(_log, "Moving...");
 		// timeslice for this movement
-		unsigned int timedelta = scaleTime(getTotalTimeMultiplier(), m_actioninfo->m_cur_time - m_actioninfo->m_prev_call_time);
-		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << m_actioninfo->m_prev_call_time);
+		unsigned int timedelta = scaleTime(getTotalTimeMultiplier(), m_activitycache->m_actioninfo->m_cur_time - m_activitycache->m_actioninfo->m_prev_call_time);
+		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << m_activitycache->m_actioninfo->m_prev_call_time);
 		// how far we can travel
-		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * m_actioninfo->m_speed;
+		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * m_activitycache->m_actioninfo->m_speed;
 		FL_DBG(_log, LMsg("dist ") <<  distance_to_travel);
 				
-		Location nextLocation = m_cur_location;
-		m_actioninfo->m_pather_session_id = m_actioninfo->m_pather->getNextLocation(
-			this, *m_actioninfo->m_target,
+		Location nextLocation = m_location;
+		m_activitycache->m_actioninfo->m_pather_session_id = m_activitycache->m_actioninfo->m_pather->getNextLocation(
+			this, *m_activitycache->m_actioninfo->m_target,
 			distance_to_travel, nextLocation, *m_facinglocation,
-			m_actioninfo->m_pather_session_id);
-		m_cur_location.getLayer()->getInstanceTree()->removeInstance(this);
-		m_cur_location = nextLocation;
-		ExactModelCoordinate a = nextLocation.getMapCoordinates();
-		ExactModelCoordinate b = m_actioninfo->m_target->getMapCoordinates();
-		m_cur_location.getLayer()->getInstanceTree()->addInstance(this);
+			m_activitycache->m_actioninfo->m_pather_session_id);
+		m_location.getLayer()->getInstanceTree()->removeInstance(this);
+		m_location = nextLocation;
+		//ExactModelCoordinate a = nextLocation.getMapCoordinates();
+		//ExactModelCoordinate b = m_actioninfo->m_target->getMapCoordinates();
+		m_location.getLayer()->getInstanceTree()->addInstance(this);
 		// return if we are close enough to target to stop
-		if(m_actioninfo->m_pather_session_id == -1) {
+		if(m_activitycache->m_actioninfo->m_pather_session_id == -1) {
 			return true;
 		} 
 		return false;
 	}
 
-	void Instance::update(unsigned int curticks) {
-		m_prev_location = m_cur_location;
-		if (!m_actioninfo) {
-			return;
+	InstanceChangeInfo Instance::update(unsigned int curticks) {
+		if (!m_activitycache) {
+			return ICHANGE_NO_CHANGES;
+		}
+		m_activitycache->update(*this);
+		if (m_activitycache->m_changeinfo != ICHANGE_NO_CHANGES) {
+			std::vector<InstanceChangeListener*>::iterator i = m_activitycache->m_changelisteners.begin();
+			while (i != m_activitycache->m_changelisteners.end()) {
+				(*i)->onInstanceChanged(this, m_activitycache->m_changeinfo);
+				++i;
+			}
 		}
 		
-		if (!m_timeprovider) {
+		if (!m_activitycache->m_timeprovider) {
 			bindTimeProvider();
 		}
 		
 		if (curticks == 0) {
 			curticks = SDL_GetTicks();
 		}
-		m_actioninfo->m_cur_time = curticks;
+		m_activitycache->m_actioninfo->m_cur_time = curticks;
 		FL_DBG(_log, LMsg("updating instance, ticks = ") << curticks);
 
-		if (m_actioninfo->m_target) {
+		if (m_activitycache->m_actioninfo->m_target) {
 			FL_DBG(_log, "action contains target for movement");
 			// update target if needed
-			if (m_actioninfo->m_leader && (m_actioninfo->m_leader->getLocationRef() != *m_actioninfo->m_target)) {
-				*m_actioninfo->m_target = m_actioninfo->m_leader->getLocation();
+			if (m_activitycache->m_actioninfo->m_leader && (m_activitycache->m_actioninfo->m_leader->getLocationRef() != *m_activitycache->m_actioninfo->m_target)) {
+				*m_activitycache->m_actioninfo->m_target = m_activitycache->m_actioninfo->m_leader->getLocation();
 			}
 			bool movement_finished = process_movement();
 			if (movement_finished) {
@@ -276,60 +357,60 @@ namespace FIFE {
 			}
 		} else {
 			FL_DBG(_log, "action does not contain target for movement");
-			if (scaleTime(getTotalTimeMultiplier(), curticks - m_actioninfo->m_action_start_time) >= m_actioninfo->m_action->getDuration()) {
-				if (m_actioninfo->m_repeating) {
-					m_actioninfo->m_action_start_time = curticks;
+			if (scaleTime(getTotalTimeMultiplier(), curticks - m_activitycache->m_actioninfo->m_action_start_time) >= m_activitycache->m_actioninfo->m_action->getDuration()) {
+				if (m_activitycache->m_actioninfo->m_repeating) {
+					m_activitycache->m_actioninfo->m_action_start_time = curticks;
 				} else {
 					finalizeAction();
 				}
 			}
 		}
-		if (m_actioninfo) {
-			m_actioninfo->m_prev_call_time = curticks;
+		if (m_activitycache->m_actioninfo) {
+			m_activitycache->m_actioninfo->m_prev_call_time = curticks;
 		}
-		if (m_sayinfo) {
-			if (m_sayinfo->m_duration > 0) {
-				if (scaleTime(getTotalTimeMultiplier(), curticks - m_sayinfo->m_start_time) > m_sayinfo->m_duration) {
+		if (m_activitycache->m_sayinfo) {
+			if (m_activitycache->m_sayinfo->m_duration > 0) {
+				if (scaleTime(getTotalTimeMultiplier(), curticks - m_activitycache->m_sayinfo->m_start_time) > m_activitycache->m_sayinfo->m_duration) {
 					say("");
 				}
 			}
 		}
+		return m_activitycache->m_changeinfo;
 	}
 
 	void Instance::finalizeAction() {
 		FL_DBG(_log, "finalizing action");
-		assert(m_actioninfo);
+		assert(m_activitycache);
+		assert(m_activitycache->m_actioninfo);
 
-		Action* action = m_actioninfo->m_action;
-		delete m_actioninfo;
-		m_actioninfo = NULL;
+		Action* action = m_activitycache->m_actioninfo->m_action;
+		delete m_activitycache->m_actioninfo;
+		m_activitycache->m_actioninfo = NULL;
 
-		if (m_listeners) {
-			std::vector<InstanceListener*>::iterator i = m_listeners->begin();
-			while (i != m_listeners->end()) {
-				(*i)->OnActionFinished(this, action);
-				++i;
-			}
+		std::vector<InstanceActionListener*>::iterator i = m_activitycache->m_actionlisteners.begin();
+		while (i != m_activitycache->m_actionlisteners.end()) {
+			(*i)->onInstanceActionFinished(this, action);
+			++i;
 		}
 	}
 
 	Action* Instance::getCurrentAction() const {
-		if (m_actioninfo) {
-			return m_actioninfo->m_action;
+		if (m_activitycache && m_activitycache->m_actioninfo) {
+			return m_activitycache->m_actioninfo->m_action;
 		}
 		return NULL;
 	}
 
 	Location Instance::getTargetLocation() const {
-		if ( m_actioninfo && m_actioninfo->m_target ) {
-			return *m_actioninfo->m_target;
+		if (m_activitycache && m_activitycache->m_actioninfo && m_activitycache->m_actioninfo->m_target) {
+			return *m_activitycache->m_actioninfo->m_target;
 		}
-		return m_cur_location;
+		return m_location;
 	}
 
 	double Instance::getMovementSpeed() const {
-		if (m_actioninfo) {
-			return m_actioninfo->m_speed;
+		if (m_activitycache && m_activitycache->m_actioninfo) {
+			return m_activitycache->m_actioninfo->m_speed;
 		}
 		return 0;
 	}
@@ -338,19 +419,19 @@ namespace FIFE {
 		if (m_facinglocation) {
 			return *m_facinglocation;
 		}
-		return m_cur_location;
+		return m_location;
 	}
 
 	Location& Instance::getFacingLocationRef() {
 		if (!m_facinglocation) {
-			m_facinglocation = new Location(m_cur_location);
+			m_facinglocation = new Location(m_location);
 		}
 		return *m_facinglocation;
 	}
 
 	int Instance::getActionRuntime() const {
-		if (m_actioninfo) {
-			return SDL_GetTicks() - m_actioninfo->m_action_start_time;
+		if (m_activitycache && m_activitycache->m_actioninfo) {
+			return SDL_GetTicks() - m_activitycache->m_actioninfo->m_action_start_time;
 		}
 		return -1;
 	}
@@ -372,56 +453,49 @@ namespace FIFE {
 	
 	void Instance::bindTimeProvider() {
 		float multiplier = 1.0;
-		if (m_timeprovider) {
-			multiplier = m_timeprovider->getMultiplier();
+		if (m_activitycache->m_timeprovider) {
+			multiplier = m_activitycache->m_timeprovider->getMultiplier();
 		}
-		delete m_timeprovider;
-		m_timeprovider = NULL;
+		delete m_activitycache->m_timeprovider;
+		m_activitycache->m_timeprovider = NULL;
 		
-		if (m_cur_location.getLayer()) {
-			Map* map = m_cur_location.getLayer()->getMap();
+		if (m_location.getLayer()) {
+			Map* map = m_location.getLayer()->getMap();
 			if (map) {
-				m_timeprovider = new TimeProvider(map->getTimeProvider());
+				m_activitycache->m_timeprovider = new TimeProvider(map->getTimeProvider());
 			}
 		}
-		if (!m_timeprovider) {
-			m_timeprovider = new TimeProvider(NULL);
+		if (!m_activitycache->m_timeprovider) {
+			m_activitycache->m_timeprovider = new TimeProvider(NULL);
 		}
-		m_timeprovider->setMultiplier(multiplier);
+		m_activitycache->m_timeprovider->setMultiplier(multiplier);
 	}
 	
 	void Instance::refresh() {
+		initializeChanges();
 		bindTimeProvider();
 	}
 	
-	void Instance::setTimeMultiplier(float multip) { 
-		if (!m_timeprovider) {
+	void Instance::setTimeMultiplier(float multip) {
+		initializeChanges();
+		if (!m_activitycache->m_timeprovider) {
 			bindTimeProvider();
 		}
-		m_timeprovider->setMultiplier(multip);
+		m_activitycache->m_timeprovider->setMultiplier(multip);
 	}
 	
 	float Instance::getTimeMultiplier() {
-		if (!m_timeprovider) {
-			return 1.0;
+		if (m_activitycache && m_activitycache->m_timeprovider) {
+			return m_activitycache->m_timeprovider->getMultiplier();
 		}
-		return m_timeprovider->getMultiplier();
+		return 1.0;
 	}
 	
 	float Instance::getTotalTimeMultiplier() {
-		if (!m_timeprovider) {
-			return 1.0;
+		if (m_activitycache && m_activitycache->m_timeprovider) {
+			return m_activitycache->m_timeprovider->getTotalMultiplier();
 		}
-		return m_timeprovider->getTotalMultiplier();
-	}
-
-	void Instance::setTriggerController(ITriggerController* triggercontroller){
-		m_triggercontroller = triggercontroller;
-	}
-
-	void Instance::registerTrigger(Trigger& trigger){
-		if(m_triggercontroller != 0){
-			m_triggercontroller->registerTrigger(trigger);
-		}
+		return 1.0;
 	}
 }
+

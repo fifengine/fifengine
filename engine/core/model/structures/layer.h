@@ -36,7 +36,6 @@
 #include "model/metamodel/modelcoords.h"
 #include "util/base/attributedclass.h"
 #include "model/metamodel/object.h"
-#include "eventchannel/trigger/ec_itriggercontroller.h"
 
 #include "instance.h"
 
@@ -60,39 +59,14 @@ namespace FIFE {
 		FREEFORM
 	};
 	
+	class LayerChangeListener {
+	public:
+		virtual ~LayerChangeListener() {};
+		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& changedInstances) = 0;
+	};
+	
+	
 	/** A basic layer on a map
-	 *
-	 * @bug These comments are very outdated!
-	 *
-	 * This class represents a layer on the Map.
-	 * This can be for example a Tile layer 
-	 * as the roofs and floors of a fo2 map
-	 * but can also just contain "objects"
-	 * on Layer coords.
-	 * 
-	 * The tiles are *not* allways created only on
-	 * a first "setTileGID".
-	 * 
-	 * The most important features of this class are
-	 * "cellgrid", "shift" and "size":
-	 *
-	 * The cellgrid is used to position objects on this
-	 * Layer and the Tiles too.
-	 *
-	 * The shift is added to all screen coords and
-	 * will create the illusion of a height-difference :-)
-	 *
-	 * The size simply is the maximum allowd size in Layer
-	 * coords this Layer covers.
-	 * 
-	 * @bug The parameter code is untested, be warned.
-	 * @bug setTileGID and setParam behave differently on invalid positions.
-	 *
-	 * Attributes: 
-	 * 
-	 * Future:
-	 * 	Connections between Layers to walk through (Elevators...)
-	 * Grouping of Layers (These Layers are roofs ... etc)
 	 */
 	class Layer : public AttributedClass {
 		public:
@@ -179,8 +153,9 @@ namespace FIFE {
 			bool areInstancesVisible() const { return m_instances_visibility; }
 
 			/** Called periodically to update events on layer
+			 * @returns true if layer was changed since the last update, false otherwise
 			 */
-			void update();
+			bool update();
 			
 			/** Sets pathing strategy for the layer
 			 * @see PathingStrategy
@@ -191,12 +166,27 @@ namespace FIFE {
 			 * @see PathingStrategy
 			 */
 			PathingStrategy getPathingStrategy() const { return m_pathingstrategy; }
-
-			void setTriggerController(ITriggerController* triggercontroller);
+			
+			/** Adds new change listener
+			* @param listener to add
+			*/
+			void addChangeListener(LayerChangeListener* listener);
+	
+			/** Removes associated change listener
+			* @param listener to remove
+			*/
+			void removeChangeListener(LayerChangeListener* listener);
+			
+			/** Returns true, if layer information was changed during previous update round
+			*/
+			bool isChanged() { return !m_changedinstances.empty(); }
+			
+			/** Returns instances that were changed during previous update round
+			*/
+			std::vector<Instance*>& getChangedInstances() { return m_changedinstances; }
 
 		protected:
 			Map* m_map;
-			ITriggerController* m_triggercontroller;
 
 			bool m_instances_visibility;
 
@@ -211,6 +201,15 @@ namespace FIFE {
 			
 			// pathing strategy for the layer
 			PathingStrategy m_pathingstrategy;
+			
+			// listeners for layer changes
+			std::vector<LayerChangeListener*> m_changelisteners;
+			
+			// holds changed instances after each update
+			std::vector<Instance*> m_changedinstances;
+			
+			// true if layer (or it's instance) information was changed during previous update round
+			bool m_changed;
 	};
 
 } // FIFE

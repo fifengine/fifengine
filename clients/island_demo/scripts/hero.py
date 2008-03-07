@@ -9,7 +9,7 @@ class Hero(Agent):
 		super(Hero, self).__init__(model, agentName, layer, uniqInMap)
 		self.state = _STATE_NONE
 
-	def OnActionFinished(self, instance, action):
+	def onInstanceActionFinished(self, instance, action):
 		self.idle()
 
 	def start(self):

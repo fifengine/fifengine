@@ -412,6 +412,9 @@ namespace FIFE {
 			FL_ERR(_log, "No map for camera found");
 			return;
 		}
+		//if ((!map->isChanged()) && (!m_iswarped) && (cammove == ScreenPoint(0,0,0))) {
+		//	return;
+		//}
 		
 		// update each layer
 		m_renderbackend->pushClipArea(getViewPort());
@@ -435,7 +438,7 @@ namespace FIFE {
 				// use cached values if there is no need to do full recalculation
 				ScreenPoint drawpt;
 				int angle = 0;
-				if (m_updated && (!m_iswarped) && (!instance->isMoved()) && (vc.image)) {
+				if (m_updated && (!m_iswarped) && (!instance->getChangeInfo() & ICHANGE_LOC) && (vc.image)) {
 					int pos_estimate_x = vc.screenpoint.x - cammove.x;
 					int pos_estimate_y = vc.screenpoint.y - cammove.y;
 					int pos_estimate_z = vc.screenpoint.z - cammove.z;

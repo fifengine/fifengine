@@ -13,7 +13,7 @@ class Girl(Agent):
 		self.waypoint_counter = 0
 		self.hero = self.layer.getInstances('name', 'PC')[0]
 
-	def OnActionFinished(self, instance, action):
+	def onInstanceActionFinished(self, instance, action):
 		if self.state in (_STATE_RUN, _STATE_FOLLOW):
 			self.idle()
 		else:

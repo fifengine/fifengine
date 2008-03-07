@@ -224,9 +224,9 @@ class TestActionAngles(unittest.TestCase):
 	def testWalkAngle199(self):
 		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationIndexByAngle(199), 2)
 
-class InstanceListener(fife.InstanceListener):
+class InstanceListener(fife.InstanceActionListener):
 	def __init__(self):
-		fife.InstanceListener.__init__(self)
+		fife.InstanceActionListener.__init__(self)
 		self.finished = False
 
 	def OnActionFinished(self, instance, action):
@@ -251,7 +251,7 @@ class ActivityTests(unittest.TestCase):
 		self.action.addAnimation(0, 1)
 		self.action.thisown = 0
 		self.listener = InstanceListener()
-		self.inst.addListener(self.listener)
+		self.inst.addActionListener(self.listener)
 		
 	def testMovingAction(self):
 		self.inst.move('run', self.target, 0.5)

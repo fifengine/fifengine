@@ -43,7 +43,9 @@ namespace FIFE {
 		m_instances_visibility(true),
 		m_instanceTree(new InstanceTree()),
 		m_grid(grid),
-		m_pathingstrategy(CELL_EDGES_ONLY) {
+		m_pathingstrategy(CELL_EDGES_ONLY),
+		m_changelisteners(),
+		m_changedinstances() {
 	}
 
 	Layer::~Layer() {
@@ -61,7 +63,6 @@ namespace FIFE {
 		l.setLayerCoordinates(p);
 
 		Instance* instance = new Instance(object, l, id);
-		instance->setTriggerController(m_triggercontroller);
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
 		return instance;
@@ -73,7 +74,6 @@ namespace FIFE {
 		l.setExactLayerCoordinates(p);
 
 		Instance* instance = new Instance(object, l, id);
-		instance->setTriggerController(m_triggercontroller);
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
 		return instance;
@@ -180,16 +180,39 @@ namespace FIFE {
 		return blockingInstance;
 	}
 
-	void Layer::update() {
+	bool Layer::update() {
+		m_changedinstances.clear();
 		unsigned int curticks = SDL_GetTicks();
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
-			(*it)->update(curticks);
+			if ((*it)->update(curticks) != ICHANGE_NO_CHANGES) {
+				m_changedinstances.push_back(*it);
+			}
+		}
+		if (!m_changedinstances.empty()) {
+			std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
+			while (i != m_changelisteners.end()) {
+				(*i)->onLayerChanged(this, m_changedinstances);
+				++i;
+			}
+			//std::cout << "Layer named " << Id() << " changed = 1\n";
+		}
+		//std::cout << "Layer named " << Id() << " changed = 0\n";
+		return !m_changedinstances.empty();
+	}
+	
+	void Layer::addChangeListener(LayerChangeListener* listener) {
+		m_changelisteners.push_back(listener);
+	}
+
+	void Layer::removeChangeListener(LayerChangeListener* listener) {
+		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			if ((*i) == listener) {
+				m_changelisteners.erase(i);
+				return;
+			}
+			++i;
 		}
 	}
-
-	void Layer::setTriggerController(ITriggerController* triggercontroller){
-		m_triggercontroller = triggercontroller;
-	}
-
 } // FIFE

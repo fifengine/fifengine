@@ -50,7 +50,7 @@ namespace FIFE {
 
 	void TimeManager::update() {
 		// if first update...
-		double avg_multiplier = 0.95;
+		double avg_multiplier = 0.985;
 		if (m_current_time == 0) {
 			m_current_time = SDL_GetTicks();
 			avg_multiplier = 0;

@@ -228,7 +228,6 @@ namespace FIFE {
 
 		FL_LOG(_log, "Creating model");
 		m_model = new Model();
-		m_model->setTriggerController(m_eventmanager);
 		FL_LOG(_log, "Adding pathers to model");
 		m_model->adoptPather(new LinearPather());
 		m_model->adoptPather(new RoutePather());

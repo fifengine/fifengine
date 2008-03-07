@@ -38,8 +38,11 @@
 
 namespace FIFE {
 
-	Map::Map(const std::string& identifier, TimeProvider* tp_master) 
-		: AttributedClass(identifier), m_timeprovider(tp_master) {
+	Map::Map(const std::string& identifier, TimeProvider* tp_master):
+		AttributedClass(identifier), 
+		m_timeprovider(tp_master),
+		m_changelisteners(),
+		m_changedlayers() {
 	}
 
 	Map::~Map() {
@@ -117,7 +120,6 @@ namespace FIFE {
 		}
 
 		Layer* layer = new Layer(identifier, this, grid);
-		layer->setTriggerController(m_triggercontroller);
 		m_layers.push_back(layer);
 		return layer;
 	}
@@ -138,15 +140,37 @@ namespace FIFE {
 		m_layers.clear();
 	}
 
-	void Map::update() {
+	bool Map::update() {
+		m_changedlayers.clear();
 		std::vector<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
-			(*it)->update();
+			if ((*it)->update()) {
+				m_changedlayers.push_back(*it);
+			}
 		}
+		if (!m_changedlayers.empty()) {
+			std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+			while (i != m_changelisteners.end()) {
+				(*i)->onMapChanged(this, m_changedlayers);
+				++i;
+			}
+		}
+		return !m_changedlayers.empty();
+	}
+	
+	void Map::addChangeListener(MapChangeListener* listener) {
+		m_changelisteners.push_back(listener);
 	}
 
-	void Map::setTriggerController(ITriggerController* triggercontroller){
-		m_triggercontroller = triggercontroller;
+	void Map::removeChangeListener(MapChangeListener* listener) {
+		std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			if ((*i) == listener) {
+				m_changelisteners.erase(i);
+				return;
+			}
+			++i;
+		}
 	}
 
 } //FIFE

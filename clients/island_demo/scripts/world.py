@@ -9,6 +9,20 @@ from beekeeper import Beekeeper
 from agent import create_anonymous_agents
 import settings as TDS
 
+class MapListener(fife.MapChangeListener):
+	def __init__(self, map):
+		fife.MapChangeListener.__init__(self)
+		map.addChangeListener(self)
+	
+	def onMapChanged(self, map, changedLayers):
+		return
+		print "Changes on map ", map.Id()
+		for layer in map.getLayers():
+			print layer.Id()
+			print "    ", ["%s, %x" % (i.getObject().Id(), i.getChangeInfo()) for i in layer.getChangedInstances()]
+
+
+
 class World(EventListenerBase):
 	def __init__(self, engine):
 		super(World, self).__init__(engine, regMouse=True, regKeys=True)
@@ -33,6 +47,7 @@ class World(EventListenerBase):
 		self.filename = filename
 		self.reset()
 		self.map = loadMapFile(filename, self.engine)
+		self.maplistener = MapListener(self.map)
 		self.agentlayer = self.map.getLayers("id", "TechdemoMapObjectLayer")[0]
 		self.hero = Hero(self.model, 'PC', self.agentlayer)
 		self.hero.start()

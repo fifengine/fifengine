@@ -24,6 +24,14 @@ namespace FIFE {
 		FREEFORM
 	};	
 
+	%feature("director") LayerChangeListener;
+	class LayerChangeListener {
+	public:
+		virtual ~LayerChangeListener() {};
+		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& changedInstances) = 0;
+	};
+	
+
 	class Layer : public AttributedClass {
 		public:
 			Layer(const std::string& identifier, Map* map, CellGrid* geometry);
@@ -44,9 +52,12 @@ namespace FIFE {
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;
 
-			void update();
-			
 			void setPathingStrategy(PathingStrategy strategy);
 			PathingStrategy getPathingStrategy();
+			
+			void addChangeListener(LayerChangeListener* listener);
+			void removeChangeListener(LayerChangeListener* listener);
+			bool isChanged();
+			std::vector<Instance*>& getChangedInstances();
 	};
 }

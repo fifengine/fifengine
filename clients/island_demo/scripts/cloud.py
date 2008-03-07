@@ -13,7 +13,7 @@ class Cloud(Agent):
 	def isOutOfBounds(self, c):
 		return (c.x < 0) or (c.x > 100) or (c.y < 0) or (c.y > 100)
 
-	def OnActionFinished(self, instance, action):
+	def onInstanceActionFinished(self, instance, action):
 		if self.state == _STATE_APPEAR:
 			self.move()
 		elif self.state == _STATE_FLOATING:

@@ -17,9 +17,16 @@ namespace std {
 
 namespace FIFE {
 
-  class Layer;
+	class Layer;
+	class Map;	
+	class Dataset;
 
-  class Dataset;
+	%feature("director") MapChangeListener;
+	class MapChangeListener {
+	public:
+		virtual ~MapChangeListener() {};
+		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) = 0;
+	};
 
 	class Map : public AttributedClass {
 		public:
@@ -43,5 +50,9 @@ namespace FIFE {
 			void setTimeMultiplier(float multip);
 			double getTimeMultiplier() const;
 			
+			void addChangeListener(MapChangeListener* listener);
+			void removeChangeListener(MapChangeListener* listener);
+			bool isChanged();
+			std::vector<Layer*>& getChangedLayers();
 	};
 }

@@ -57,7 +57,6 @@ namespace FIFE {
 		}
 
 		Map* map = new Map(identifier, &m_timeprovider);
-		map->setTriggerController(m_triggercontroller);
 		m_maps.push_back(map);
 		return map;
 	}
@@ -134,9 +133,5 @@ namespace FIFE {
 		}
 	}
 
-	void Model::setTriggerController(ITriggerController* triggercontroller){
-		m_triggercontroller = triggercontroller;
-	}
-	
 } //FIFE
 

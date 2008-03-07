@@ -34,7 +34,6 @@
 // Second block: files included from the same folder
 #include "util/base/attributedclass.h"
 #include "model/metamodel/timeprovider.h"
-#include "eventchannel/trigger/ec_itriggercontroller.h"
 
 #include "location.h"
 
@@ -42,8 +41,15 @@ namespace FIFE {
 
 	class Layer;
 	class CellGrid;
-
+	class Map;
 	class Dataset;
+
+	class MapChangeListener {
+	public:
+		virtual ~MapChangeListener() {};
+		virtual void onMapChanged(Map* layer, std::vector<Layer*>& changedLayers) = 0;
+	};
+
 
 	/** A container of \c Layer(s).
 	 *
@@ -118,8 +124,9 @@ namespace FIFE {
 				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
 
 			/** Called periodically to update events on map
+			 * @returns true, if map was changed
 			 */
-			void update();
+			bool update();
 			
 			/** Sets speed for the map. See Model::setTimeMultiplier.
 			 */
@@ -132,17 +139,40 @@ namespace FIFE {
 			/** Gets timeprovider used in the map
 			 */
 			TimeProvider* getTimeProvider() { return &m_timeprovider; }
+			
+			/** Adds new change listener
+			* @param listener to add
+			*/
+			void addChangeListener(MapChangeListener* listener);
+	
+			/** Removes associated change listener
+			* @param listener to remove
+			*/
+			void removeChangeListener(MapChangeListener* listener);
+			
+			/** Returns true, if map information was changed during previous update round
+			*/
+			bool isChanged() { return !m_changedlayers.empty(); }
 
-			void setTriggerController(ITriggerController* triggercontroller);
+			/** Returns layers that were changed during previous update round
+			*/
+			std::vector<Layer*>& getChangedLayers() { return m_changedlayers; }
+
 		private:
 			std::string m_mapname;
 			std::vector<Dataset*> m_datasets;
 			std::vector<Layer*> m_layers;
 			TimeProvider m_timeprovider;
-			ITriggerController* m_triggercontroller;
 
 			Map(const Map& map);
 			Map& operator=(const Map& map);
+	
+			// listeners for map changes
+			std::vector<MapChangeListener*> m_changelisteners;
+
+			// holds changed layers after each update
+			std::vector<Layer*> m_changedlayers;
+			
 	};
 
 } //FIFE
