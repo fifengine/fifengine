@@ -45,7 +45,8 @@ namespace FIFE {
 		m_grid(grid),
 		m_pathingstrategy(CELL_EDGES_ONLY),
 		m_changelisteners(),
-		m_changedinstances() {
+		m_changedinstances(),
+		m_changed(false) {
 	}
 
 	Layer::~Layer() {
@@ -58,14 +59,8 @@ namespace FIFE {
 	}
 
 	Instance* Layer::createInstance(Object* object, const ModelCoordinate& p, const std::string& id) {
-		Location l;
-		l.setLayer(this);
-		l.setLayerCoordinates(p);
-
-		Instance* instance = new Instance(object, l, id);
-		m_instances.push_back(instance);
-		m_instanceTree->addInstance(instance);
-		return instance;
+		ExactModelCoordinate emc(static_cast<double>(p.x), static_cast<double>(p.y), static_cast<double>(p.z));
+		return createInstance(object, emc, id);	
 	}
 
 	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
@@ -76,10 +71,23 @@ namespace FIFE {
 		Instance* instance = new Instance(object, l, id);
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
+		
+		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			(*i)->onInstanceCreate(this, instance);
+			++i;
+		}
+		m_changed = true;
 		return instance;
 	}
 	
 	void Layer::deleteInstance(Instance* instance) {
+		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			(*i)->onInstanceDelete(this, instance);
+			++i;
+		}
+	
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
 			if(*it == instance) {
@@ -89,6 +97,7 @@ namespace FIFE {
 				break;
 			}
 		}
+		m_changed = true;
 	}
 
 	const std::vector<Instance*>& Layer::getInstances() {
@@ -187,6 +196,7 @@ namespace FIFE {
 		for(; it != m_instances.end(); ++it) {
 			if ((*it)->update(curticks) != ICHANGE_NO_CHANGES) {
 				m_changedinstances.push_back(*it);
+				m_changed = true;
 			}
 		}
 		if (!m_changedinstances.empty()) {
@@ -198,7 +208,9 @@ namespace FIFE {
 			//std::cout << "Layer named " << Id() << " changed = 1\n";
 		}
 		//std::cout << "Layer named " << Id() << " changed = 0\n";
-		return !m_changedinstances.empty();
+		bool retval = m_changed;
+		m_changed = false;
+		return retval;
 	}
 	
 	void Layer::addChangeListener(LayerChangeListener* listener) {

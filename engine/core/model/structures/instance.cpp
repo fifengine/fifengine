@@ -150,6 +150,14 @@ namespace FIFE {
 			m_changeinfo |= ICHANGE_SAYTEXT;
 			m_saytxt = m_sayinfo->m_txt;
 		}
+		
+		if (m_changeinfo != ICHANGE_NO_CHANGES) {
+			std::vector<InstanceChangeListener*>::iterator i = m_changelisteners.begin();
+			while (i != m_changelisteners.end()) {
+				(*i)->onInstanceChanged(&source, m_changeinfo);
+				++i;
+			}
+		}
 	}
 
 	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
@@ -318,14 +326,6 @@ namespace FIFE {
 			return ICHANGE_NO_CHANGES;
 		}
 		m_activity->update(*this);
-		if (m_activity->m_changeinfo != ICHANGE_NO_CHANGES) {
-			std::vector<InstanceChangeListener*>::iterator i = m_activity->m_changelisteners.begin();
-			while (i != m_activity->m_changelisteners.end()) {
-				(*i)->onInstanceChanged(this, m_activity->m_changeinfo);
-				++i;
-			}
-		}
-		
 		if (!m_activity->m_timeprovider) {
 			bindTimeProvider();
 		}

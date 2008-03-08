@@ -29,6 +29,8 @@ namespace FIFE {
 	public:
 		virtual ~LayerChangeListener() {};
 		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& changedInstances) = 0;
+		virtual void onInstanceCreate(Layer* layer, Instance* instance) = 0;
+		virtual void onInstanceDelete(Layer* layer, Instance* instance) = 0;
 	};
 	
 

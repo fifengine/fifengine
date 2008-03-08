@@ -27,6 +27,8 @@ namespace FIFE {
 	public:
 		virtual ~MapChangeListener() {};
 		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) = 0;
+		virtual void onLayerCreate(Map* map, Layer* layer) = 0;
+		virtual void onLayerDelete(Map* map, Layer* layer) = 0;
 	};
 
 	class Map : public AttributedClass {

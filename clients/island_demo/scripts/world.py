@@ -20,7 +20,12 @@ class MapListener(fife.MapChangeListener):
 		for layer in map.getLayers():
 			print layer.Id()
 			print "    ", ["%s, %x" % (i.getObject().Id(), i.getChangeInfo()) for i in layer.getChangedInstances()]
-
+	
+	def onLayerCreate(self, map, layer):
+		pass
+	
+	def onLayerDelete(self, map, layer):
+		pass
 
 
 class World(EventListenerBase):

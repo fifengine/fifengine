@@ -42,7 +42,8 @@ namespace FIFE {
 		AttributedClass(identifier), 
 		m_timeprovider(tp_master),
 		m_changelisteners(),
-		m_changedlayers() {
+		m_changedlayers(),
+		m_changed(false) {
 	}
 
 	Map::~Map() {
@@ -121,6 +122,13 @@ namespace FIFE {
 
 		Layer* layer = new Layer(identifier, this, grid);
 		m_layers.push_back(layer);
+		m_changed = true;
+		std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			(*i)->onLayerCreate(this, layer);
+			++i;
+		}
+		
 		return layer;
 	}
 
@@ -128,14 +136,28 @@ namespace FIFE {
 		std::vector<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			if((*it) == layer) {
-				delete *it;
+				std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+				while (i != m_changelisteners.end()) {
+					(*i)->onLayerDelete(this, layer);
+					++i;
+				}
+				delete layer;
 				m_layers.erase(it);
 				return ;
 			}
 		}
+		m_changed = true;
 	}
 
 	void Map::deleteLayers() {
+		std::vector<Layer*>::iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+			while (i != m_changelisteners.end()) {
+				(*i)->onLayerDelete(this, *it);
+				++i;
+			}
+		}
 		purge(m_layers);
 		m_layers.clear();
 	}
@@ -155,7 +177,9 @@ namespace FIFE {
 				++i;
 			}
 		}
-		return !m_changedlayers.empty();
+		bool retval = m_changed;
+		m_changed = false;
+		return retval;
 	}
 	
 	void Map::addChangeListener(MapChangeListener* listener) {

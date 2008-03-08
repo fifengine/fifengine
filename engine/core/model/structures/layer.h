@@ -59,10 +59,31 @@ namespace FIFE {
 		FREEFORM
 	};
 	
+	/** Listener interface for changes happening on a layer
+	 */
 	class LayerChangeListener {
 	public:
 		virtual ~LayerChangeListener() {};
+		
+		/** Called when some instance is changed on layer. @see InstanceChangeType
+		 * @param layer where change occurred
+		 * @param changedInstances list of instances containing some changes
+		 * @note Does not report creations and deletions
+		 */
 		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& changedInstances) = 0;
+		
+		/** Called when some instance gets created on layer
+		 * @param layer where change occurred
+		 * @param instance which got created
+		 */
+		virtual void onInstanceCreate(Layer* layer, Instance* instance) = 0;
+		
+		/** Called when some instance gets deleted on layer
+		 * @param layer where change occurred
+		 * @param instance which will be deleted
+		 * @note right after this call, instance actually gets deleted!
+		 */
+		virtual void onInstanceDelete(Layer* layer, Instance* instance) = 0;
 	};
 	
 	
@@ -179,10 +200,11 @@ namespace FIFE {
 			
 			/** Returns true, if layer information was changed during previous update round
 			*/
-			bool isChanged() { return !m_changedinstances.empty(); }
+			bool isChanged() { return m_changed; }
 			
-			/** Returns instances that were changed during previous update round
-			*/
+			/** Returns instances that were changed during previous update round.
+			 * @note does not contain created or deleted instances
+			 */
 			std::vector<Instance*>& getChangedInstances() { return m_changedinstances; }
 
 		protected:

@@ -46,20 +46,39 @@ namespace FIFE {
 	class Map;
 	class Dataset;
 
+	/** Listener interface for changes happening on map
+	 */
 	class MapChangeListener {
 	public:
 		virtual ~MapChangeListener() {};
-		virtual void onMapChanged(Map* layer, std::vector<Layer*>& changedLayers) = 0;
+		
+		/** Called when some layer is changed on map. @see LayerChangeListener
+		 * Layer is effectively changed, in case some of its instances
+		 * is created, deleted or changed during latest update cycle
+		 * @param map where change occurred
+		 * @param changedLayers list of layers containing some changes
+		 * @note Does not report layer creations and deletions
+		 */
+		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) = 0;
+		
+		/** Called when some layer gets created on the map
+		 * @param map where change occurred
+		 * @param layer which got created
+		 */
+		virtual void onLayerCreate(Map* map, Layer* layer) = 0;
+		
+		/** Called when some instance gets deleted on layer
+		 * @param map where change occurred
+		 * @param layer which will be deleted
+		 * @note right after this call, layer actually gets deleted!
+		 */
+		virtual void onLayerDelete(Map* map, Layer* layer) = 0;
 	};
-
 
 	/** A container of \c Layer(s).
 	 *
 	 * The actual data is contained in \c Layer objects
-	 *
 	 * @see Layer
-	 * @see MapView
-	 * @see MapLoader
 	 */
 	class Map : public AttributedClass {
 		public:
@@ -175,6 +194,8 @@ namespace FIFE {
 			// holds changed layers after each update
 			std::vector<Layer*> m_changedlayers;
 			
+			// true, if something was changed on map during previous update (layer change, creation, deletion)
+			bool m_changed;
 	};
 
 } //FIFE
