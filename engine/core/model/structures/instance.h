@@ -244,34 +244,50 @@ namespace FIFE {
 		const std::string& get(const std::string& field);
 
 	private:
-		class InstanceActivityCache {
+		/** InstanceActivity gets allocated in case there is some runtime
+		 * activity related to the instance. Keeping activity related variables
+		 * in separate class keeps memory consumption lower e.g. for large tile
+		 * areas.
+		 * Class also keeps track of changes since the previous update call.
+		 * With this bookkeeping, it is possible to optimize several spots in
+		 * the engine, basically only reacting to changes instead of polling.
+		 */
+		class InstanceActivity {
 		public:
-			InstanceActivityCache(Instance& source);
-			~InstanceActivityCache();
+			InstanceActivity(Instance& source);
+			~InstanceActivity();
+			
+			// ----- Fields related to change tracking -----
+			// updates cached variables, marks changes
 			void update(Instance& source);
-			
+			// location on previous round
 			Location m_location;
+			// facing location on previous round
 			Location m_facinglocation;
-			Action* m_action; // note! might become invalid, only used for address comparison
+			 // action on previous round. @NOTE: might become invalid, only used for address comparison
+			Action* m_action;
+			// speed on previous round
 			double m_speed;
+			// time multiplier on previous round
 			float m_timemultiplier;
+			// say text on previous round
 			std::string m_saytxt;
+			// bitmask stating current changes
 			InstanceChangeInfo m_changeinfo;
-			
-			// -- fields related to activity starting here --
-			// instance listeners stored here, in case you subscribe to listen this instance, you expect it to be changed
-			std::vector<InstanceActionListener*> m_actionlisteners;
+			// listeners for changes
 			std::vector<InstanceChangeListener*> m_changelisteners;
+			
+			// ----- Fields related to generic activity -----
+			// listeners for action related events
+			std::vector<InstanceActionListener*> m_actionlisteners;
 			// action information, allocated when actions are bind
 			ActionInfo* m_actioninfo;
-			// text to say + duration, NULL if nothing
+			// text to say + duration, allocated when something is said
 			SayInfo* m_sayinfo;
 			// time scaler for this instance
 			TimeProvider* m_timeprovider;
 		};
-		// cache storing changes since previous round. Just a pointer so that static instances 
-		//  (e.g. tiles) don't consume futile space
-		InstanceActivityCache* m_activitycache;
+		InstanceActivity* m_activity;
 		
 		// object where instantiated from
 		Object* m_object;
@@ -294,13 +310,13 @@ namespace FIFE {
 		void calcMovement();
 		// rebinds time provider based on new location
 		void bindTimeProvider();
-		// called when instance has been changed. Causes instance to create InstanceActivityCache
+		// called when instance has been changed. Causes instance to create InstanceActivity
 		void initializeChanges();
 	};
 
 	inline InstanceChangeInfo Instance::getChangeInfo() {
-		if (m_activitycache) {
-			return m_activitycache->m_changeinfo;
+		if (m_activity) {
+			return m_activity->m_changeinfo;
 		}
 		return ICHANGE_NO_CHANGES;
 	}
