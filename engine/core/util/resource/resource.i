@@ -30,6 +30,7 @@ namespace FIFE {
 
 	class ResourceLocation {
 	public:
+		ResourceLocation(const std::string& filename);
 		virtual ~ResourceLocation() {};
 		const std::string& getFilename() const;
 		virtual bool operator ==(const ResourceLocation& loc) const;

@@ -563,3 +563,14 @@ def loadMapFile(path, engine, content = ''):
 	parser.parse(open(path))
 
 	return handler.map
+
+
+from serializers.xmlmap import XMLMapLoader
+
+def loadMapFileNEW(path, engine, content = ''):
+	if content != '':
+		engine.getVFS().addNewSource(content)
+
+	map_loader = XMLMapLoader(engine)
+	return map_loader.loadResource(fife.ResourceLocation(path))
+

@@ -33,6 +33,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/attributedclass.h"
+#include "util/base/resourceclass.h"
+#include "util/resource/resource.h"
 #include "model/metamodel/timeprovider.h"
 
 #include "location.h"

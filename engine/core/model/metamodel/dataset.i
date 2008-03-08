@@ -1,6 +1,7 @@
 %module fife
 %{
 #include "model/metamodel/dataset.h"
+#include "model/metamodel/dataset_loader.h"
 %}
 
 %include "util/base/utilbase.i"
@@ -32,5 +33,11 @@ namespace FIFE {
 		private:
 
 			Dataset();
+	};
+
+	class DatasetLoader : public ResourceLoader {
+	public:
+		Dataset* load(const ResourceLocation& location); 
+		Dataset* load(const std::string& filename); 
 	};
 }

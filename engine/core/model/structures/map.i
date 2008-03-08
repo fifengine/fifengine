@@ -1,6 +1,7 @@
 %module fife
 %{
 #include "model/structures/map.h"
+#include "model/structures/map_loader.h"
 %}
 
 %include "std_list.i"
@@ -54,5 +55,13 @@ namespace FIFE {
 			void removeChangeListener(MapChangeListener* listener);
 			bool isChanged();
 			std::vector<Layer*>& getChangedLayers();
+	};
+
+	%warnfilter(473) MapLoader; // filter out "returning a pointer or reference in a director method is not recommended"
+	%feature("director") MapLoader;
+	class MapLoader : public ResourceLoader {
+	public:
+		Map* load(const ResourceLocation& location);
+		Map* load(const std::string& filename);
 	};
 }
