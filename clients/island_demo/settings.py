@@ -20,11 +20,23 @@ ImageChunkSize      = 256
 CoordinateLayerName = "TechdemoMapObjectLayer"
 QuadTreeLayerName = "" #"TechdemoMapObjectLayer"
 
-agentTexts = (
+heroTexts = (
 	'I wonder when the guys will\n' + 'get this world ready for me',
-	'Bring it on baby,\n' + "I'm ready for action!",
-	'humm di dum....', '', '', ''
+	"Bring it on baby,\nI'm ready for action!",
+	'humm di dum....',
 )
+
+girlTexts = (
+	"Why I am running? Haven't you heard\nthat the bees are coming?!",
+	'Heeelp!!! The bees are going to get us!',
+)
+
+beekeeperTexts = (
+	"Some idiot has grown mutated bees around here",
+	'Want to take a look at my farm?',
+	'Did you know that I actually cannot do anything\nelse than stand still and greet everybody?',
+)
+
 
 # test settings
 TestCameraPlacement = 0

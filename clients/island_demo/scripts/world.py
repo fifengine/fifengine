@@ -1,4 +1,7 @@
-import fife, math
+import fife, math, random
+import pychan
+import pychan.widgets as widgets
+
 from eventlistenerbase import EventListenerBase
 from loaders import loadMapFile
 from savers import saveMapFile
@@ -39,7 +42,48 @@ class World(EventListenerBase):
 		self.filename = ''
 		self.pump_ctr = 0 # for testing purposis
 		self.ctrldown = False
+		self.instancemenu = None
+		self.instance_to_agent = {}
+		self.dynamic_widgets = {}
 		
+	def show_instancemenu(self, clickpoint, instance):
+		if instance.getFifeId() == self.hero.agent.getFifeId():
+			return
+		
+		dynamicbuttons = ('moveButton', 'talkButton', 'kickButton', 'inspectButton')
+		if not self.instancemenu:
+			self.instancemenu = pychan.loadXML('content/gui/instancemenu.xml')
+			self.instancemenu.mapEvents({
+				'moveButton' : self.onMoveButtonPress,
+				'talkButton' : self.onTalkButtonPress,
+				'kickButton' : self.onKickButtonPress,
+				'inspectButton' : self.onInspectButtonPress,
+			})
+			for btn in dynamicbuttons:
+				self.dynamic_widgets[btn] = self.instancemenu.findChild(name=btn)
+		for btn in dynamicbuttons:
+			try:
+				self.instancemenu.removeChild(self.dynamic_widgets[btn])
+			except pychan.exceptions.RuntimeError:
+				pass
+		
+		self.instancemenu.clickpoint = clickpoint
+		self.instancemenu.instance = instance
+		
+		self.instancemenu.addChild(self.dynamic_widgets['inspectButton'])
+		target_distance = self.hero.agent.getLocationRef().getLayerDistanceTo(instance.getLocationRef())
+		if target_distance > 3.0:
+			self.instancemenu.addChild(self.dynamic_widgets['moveButton'])
+		else:
+			if self.instance_to_agent.has_key(instance.getFifeId()):
+				self.instancemenu.addChild(self.dynamic_widgets['talkButton'])
+				self.instancemenu.addChild(self.dynamic_widgets['kickButton'])
+		self.instancemenu.position = (clickpoint.x, clickpoint.y)
+		self.instancemenu.show()
+		
+	def hide_instancemenu(self):
+		if self.instancemenu:
+			self.instancemenu.hide()
 		
 	def reset(self):
 		self.map, self.agentlayer = None, None
@@ -47,25 +91,33 @@ class World(EventListenerBase):
 		self.hero, self.girl, self.clouds, self.beekeepers = None, None, [], []
 		self.cur_cam2_x, self.initial_cam2_x, self.cam2_scrolling_right = 0, 0, True
 		self.target_rotation = 0
+		self.instance_to_agent = {}
 
 	def load(self, filename):
 		self.filename = filename
 		self.reset()
 		self.map = loadMapFile(filename, self.engine)
 		self.maplistener = MapListener(self.map)
+		
 		self.agentlayer = self.map.getLayers("id", "TechdemoMapObjectLayer")[0]
 		self.hero = Hero(self.model, 'PC', self.agentlayer)
+		self.instance_to_agent[self.hero.agent.getFifeId()] = self.hero
 		self.hero.start()
+		
 		self.girl = Girl(self.model, 'NPC:girl', self.agentlayer)
+		self.instance_to_agent[self.girl.agent.getFifeId()] = self.girl
 		self.girl.start()
+		
+		self.beekeepers = create_anonymous_agents(self.model, 'Beekeeper', self.agentlayer, Beekeeper)
+		for beekeeper in self.beekeepers:
+			self.instance_to_agent[beekeeper.agent.getFifeId()] = beekeeper
+			beekeeper.start()
+
 		cloudlayer = self.map.getLayers("id", "TechdemoMapCloudLayer")[0]
 		self.clouds = create_anonymous_agents(self.model, 'Cloud', cloudlayer, Cloud)
 		for cloud in self.clouds:
 			cloud.start(0.1, 0.05)
-		self.beekeepers = create_anonymous_agents(self.model, 'Beekeeper', self.agentlayer, Beekeeper)
-		for beekeeper in self.beekeepers:
-			beekeeper.start()
-
+		
 		for cam in self.view.getCameras():
 			self.cameras[cam.getId()] = cam
 		self.cameras['main'].attach(self.hero.agent)
@@ -139,18 +191,22 @@ class World(EventListenerBase):
 		if self.target_rotation != currot:
 			self.cameras['main'].setRotation((currot + 5) % 360)
 	
-	def mouseReleased(self, evt):
+	def mousePressed(self, evt):
 		clickpoint = fife.ScreenPoint(evt.getX(), evt.getY())
 		if (evt.getButton() == fife.MouseEvent.LEFT):
+			self.hide_instancemenu()
 			target_mapcoord = self.cameras['main'].toMapCoordinates(clickpoint, False)
 			target_mapcoord.z = 0
 			l = fife.Location(self.agentlayer)
 			l.setMapCoordinates(target_mapcoord)
 			self.hero.run(l)
-		elif (evt.getButton() == fife.MouseEvent.RIGHT):
-			instances = self.cameras['main'].getMatchingInstances(clickpoint, self.agentlayer);
+			
+		if (evt.getButton() == fife.MouseEvent.RIGHT):
+			instances = self.cameras['main'].getMatchingInstances(clickpoint, self.agentlayer)
 			print "selected instances on agent layer: ", [i.getObject().Id() for i in instances]
-
+			if instances:
+				self.show_instancemenu(clickpoint, instances[0])
+	
 	def mouseMoved(self, evt):
 		renderer = fife.InstanceRenderer.getInstance(self.cameras['main'])
 		renderer.removeAllOutlines()
@@ -161,7 +217,6 @@ class World(EventListenerBase):
 			if i.getObject().Id() in ('Girl', 'Beekeeper'):
 				renderer.addOutlined(i, 173, 255, 47, 2)
 	
-	
 	def onConsoleCommand(self, command):
 		result = ''
 		try:
@@ -170,6 +225,33 @@ class World(EventListenerBase):
 			pass
 		return result
 
+	def onMoveButtonPress(self):
+		self.hide_instancemenu()
+		self.hero.run(self.instancemenu.instance.getLocationRef())
+	
+	def onTalkButtonPress(self):
+		self.hide_instancemenu()
+		instance = self.instancemenu.instance
+		if instance.getObject().Id() == 'Beekeeper':
+			txtindex = random.randint(0, len(TDS.beekeeperTexts) - 1)
+			instance.say(TDS.beekeeperTexts[txtindex], 5000)
+		if instance.getObject().Id() == 'Girl':
+			txtindex = random.randint(0, len(TDS.girlTexts) - 1)
+			instance.say(TDS.girlTexts[txtindex], 5000)
+	
+	def onKickButtonPress(self):
+		self.hide_instancemenu()
+		self.hero.kick(self.instancemenu.instance.getLocationRef())
+	
+	def onInspectButtonPress(self):
+		self.hide_instancemenu()
+		inst = self.instancemenu.instance
+		saytext = ['Engine told me that this instance has']
+		if inst.Id():
+			saytext.append(' name %s,' % inst.Id())
+		saytext.append(' ID %s and' % inst.getFifeId())
+		saytext.append(' object name %s' % inst.getObject().Id())
+		self.hero.agent.say('\n'.join(saytext), 3500)
 		
 	def pump(self):
 		if self.cameras['small'].isEnabled():
@@ -184,10 +266,5 @@ class World(EventListenerBase):
 				if self.cur_cam2_x < self.initial_cam2_x-10:
 					self.cam2_scrolling_right = True
 			self.cameras['small'].setLocation(loc)
-		if (self.pump_ctr % 50) == 0:
-			heroloc = self.hero.agent.getLocationRef()
-			girlloc = self.girl.agent.getLocationRef()
-			print 'hero - girl distance. layer: %f, map: %f' % (
-				heroloc.getLayerDistanceTo(girlloc), heroloc.getMapDistanceTo(girlloc))
 		self.changeRotation()
 		self.pump_ctr += 1
