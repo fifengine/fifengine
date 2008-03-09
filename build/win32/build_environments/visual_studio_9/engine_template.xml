@@ -23,6 +23,7 @@
 			ConfigurationType="2"
 			CharacterSet="1"
 			>
+			
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="cd ..\..\..\..&#x0D;&#x0A;build\win32\applications\scons\scons projectfiles_only=1&#x0D;&#x0A;"
@@ -91,6 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="cd ..\..\&#x0D;&#x0A;update_dlls_msvc2008.bat"
 			/>
 		</Configuration>
 		<Configuration
@@ -231,6 +233,7 @@
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
+			
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="cd ..\..\..\..&#x0D;&#x0A;build\win32\applications\scons\scons projectfiles_only=1&#x0D;&#x0A;"
@@ -296,6 +299,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="cd ..\..\&#x0D;&#x0A;update_dlls_msvc2008.bat"
 			/>
 		</Configuration>
 	</Configurations>
