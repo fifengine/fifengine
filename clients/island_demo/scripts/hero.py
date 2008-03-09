@@ -2,7 +2,7 @@ import random
 from agent import Agent
 import settings as TDS
 
-_STATE_NONE, _STATE_IDLE, _STATE_RUN, _STATE_KICK = 0, 1, 2, 3
+_STATE_NONE, _STATE_IDLE, _STATE_RUN, _STATE_KICK, _STATE_TALK = xrange(5)
 
 class Hero(Agent):
 	def __init__(self, model, agentName, layer, uniqInMap=True):
@@ -31,6 +31,10 @@ class Hero(Agent):
 		self.state = _STATE_RUN
 		self.agent.move('run', location, 4 * TDS.TestAgentSpeed)
 	
-	def kick(self, location):
+	def kick(self, target):
 		self.state = _STATE_KICK
-		self.agent.act('kick', location)
+		self.agent.act('kick', target)
+		
+	def talk(self, target):
+		self.state = _STATE_TALK
+		self.agent.act('talk', target)

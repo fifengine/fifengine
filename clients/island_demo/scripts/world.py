@@ -232,6 +232,7 @@ class World(EventListenerBase):
 	def onTalkButtonPress(self):
 		self.hide_instancemenu()
 		instance = self.instancemenu.instance
+		self.hero.talk(instance.getLocationRef())
 		if instance.getObject().Id() == 'Beekeeper':
 			txtindex = random.randint(0, len(TDS.beekeeperTexts) - 1)
 			instance.say(TDS.beekeeperTexts[txtindex], 5000)
@@ -242,6 +243,7 @@ class World(EventListenerBase):
 	def onKickButtonPress(self):
 		self.hide_instancemenu()
 		self.hero.kick(self.instancemenu.instance.getLocationRef())
+		self.instancemenu.instance.say('Hey!', 1000)
 	
 	def onInspectButtonPress(self):
 		self.hide_instancemenu()
