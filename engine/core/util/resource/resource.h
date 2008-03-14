@@ -77,6 +77,7 @@ namespace FIFE {
 
 	/** ResourceLoader defines a class for loading resources. The resource returned is owned by
 	 * the caller, and must be deleted when finished.
+	 * In case allocation fails, or loader cannot load given location, NULL is returned
 	 */
 	class ResourceLoader {
 	public:

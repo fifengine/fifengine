@@ -46,11 +46,13 @@ namespace FIFE {
 	IResource* SubImageLoader::loadResource(const ResourceLocation& location) {
 		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
 		if (!loc) {
-			throw InvalidConversion("Wrong location type given for subimage provider");
+			// Wrong location type given for subimage provider
+			return NULL;
 		}
 		Image* r = loc->getParentSource();
 		if (!r) {
-			throw NotFound("No parent source assigned, cannot provide subimage");
+			// No parent source assigned, cannot provide subimage
+			return NULL;
 		}
 		SDL_Surface* src = r->getSurface();
 		if (!src) {

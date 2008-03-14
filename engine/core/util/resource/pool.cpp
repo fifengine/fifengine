@@ -200,18 +200,12 @@ namespace FIFE {
 			FL_PANIC(_log, "no loader constructors given for resource pool");
 		}
 		for(; it != end; ++it) {
-			try {
-				entry.resource = (*it)->loadResource(*entry.location);
-			} catch (Exception e) {
-				FL_ERR(_log, e.getMessage());
-				continue;
+			IResource* res = (*it)->loadResource(*entry.location);
+			if (res) {
+				entry.resource = res;
+				entry.loader = *it;
+				return;
 			}
-
-			if( !entry.resource )
-				continue;
-
-			entry.loader = *it;
-			return;
 		};
 	}
 
