@@ -1,0 +1,96 @@
+== Audio ==
+=== torrent71 ===
+Author:
+Greg M Johnson (http://www.gregmjohnson.com)
+
+Website:
+http://www.gregmjohnson.com/
+
+License:
+Creative Commons Attribution-No derivative works 3.0 Unported
+http://creativecommons.org/licenses/by-nd/3.0/
+
+Affected files:
+audio/music/*.ogg
+
+== Fonts ==
+=== Freefont ===
+Author:
+Various authors (http://www.gnu.org/software/freefont/)
+
+Website:
+http://download.savannah.gnu.org/releases/freefont/freefont-ttf-20060126.tar.gz
+
+License:
+GPL 2.0
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+Affected files:
+content/fonts/freefont/*.ttf
+
+=== Ubuntu ===
+Author:
+Samir Karmacharya (sanir@email.com)
+
+Download:
+http://www.ubuntu.com/
+
+License:
+Public domain
+http://packages.debian.org/changelogs/pool/main/t/ttf-indic-fonts/ttf-indic-fonts_0.4.7.4/ttf-devanagari-fonts.copyright
+
+Affected files:
+content/fonts/samanata.ttf
+
+=== Worldforge ===
+Author:
+Alistair Riddoch (alriddoch@googlemail.com)
+
+Website:
+http://guichan.sourceforge.net/oldsite/images/rpgfont.png
+
+License:
+GPL 2.0
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+Affected files:
+content/fonts/rpgfont.png
+
+== Graphics ==
+=== Reiner's tilesets ===
+Author:
+Reiner Prokein (http://www.reinerstileset.de/)
+
+Website:
+http://reinerstileset.4players.de/
+
+License:
+Custom license
+http://reinerstileset.4players.de/readmeE.html#b
+
+Affected files:
+content/gfx/agents/*/*.png
+content/gfx/objects/beach/*.png
+content/gfx/objects/bushes/*.png
+content/gfx/objects/crate/*.png
+content/gfx/objects/mushroom/*.png
+content/gfx/objects/quay/*.png
+content/gfx/objects/trees/*.png
+content/gfx/objects/vegetation/*.png
+content/gfx/tiles/beach/*.png
+content/gfx/tiles/ground/*.png
+
+=== Supertux ===
+Author:
+Supertux team (http://supertux.lethargik.org)
+
+Website:
+http://supertux.lethargik.org/svn/supertux/trunk/media/images/tiles/background/cloud.xcf
+
+License:
+Dual license GPL 3.0 & Creative Commons 3.0 CC-BY_SA
+http://www.gnu.org/licenses/gpl-3.0.txt
+http://creativecommons.org/licenses/by-sa/3.0/
+
+Affected files:
+content/gfx/objects/clouds/*.png
