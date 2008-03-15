@@ -2,11 +2,15 @@
 from util_scripts.path import path
 import os, sys
 
-_sep = os.path.sep
+DIRNAME = 'clients/rio_de_hola/objects/items/common/crates/empty_lid/open'
+DELAY = 130
+NAMESPACE = 'http://www.fifengine.de/xml/rio_de_hola'
+ACTIONFRAME = -1
+X_OFFSET = 0
+Y_OFFSET = 0
 
-print "NOTE: make sure you are running this script from fife project root!"
-dirname = raw_input("Enter directory which contains animation images: ")
-p = path(dirname)
+_sep = os.path.sep
+p = path(DIRNAME)
 files = p.walkfiles('*.png')
 
 dir2anim = {}
@@ -16,28 +20,29 @@ for f in files:
 		dir2anim[curdir] = []
 	dir2anim[curdir].append(f)
 
-print "Planning to write into following directories: "
-for d in sorted(dir2anim.keys()):
-	print "   " + d
-inp = raw_input("Press y if ok: ")
-if inp.lower() != 'y':
-	print "exiting"
-	sys.exit(0)
-
-delay = int(raw_input("Give delay for animations: "))
-sid = int(raw_input("Give starting id for animations: "))
-
-ANIM_HEADER = '<animation delay="%d" id="%d">'
+ANIM_HEADER = '<animation delay="%d" namespace="%s" id="%s" x_offset="%d" y_offset="%d">'
+ANIM_ACTION_HEADER = '<animation delay="%d" namespace="%s" id="%s" x_offset="%d" y_offset="%d" action="%d">'
 ANIM_LINE = '<frame source="%s" />'
 ANIM_FOOTER = '</animation>\n'
 
-for d in dir2anim.keys():
+for d in sorted(dir2anim.keys()):
 	anim = []
-	anim.append(ANIM_HEADER % (delay, sid))
-	sid += 1
+	animation_id = ':'.join(d.split(_sep)[-3:])
+	if ACTIONFRAME < 0:
+		anim.append(ANIM_HEADER % (DELAY, NAMESPACE, animation_id, X_OFFSET, Y_OFFSET))
+	else:
+		anim.append(ANIM_ACTION_HEADER % (DELAY, NAMESPACE, animation_id, X_OFFSET, Y_OFFSET, ACTIONFRAME))
+	
 	for f in sorted(dir2anim[d]):
-		anim.append('\t' + ANIM_LINE % f) 
+		filename = f.split(_sep)[-1]
+		anim.append('\t' + ANIM_LINE % filename)
 	anim.append(ANIM_FOOTER)
-	open(_sep.join([d, 'animation.xml']), 'w').write('\n'.join(anim))
+	
+	outfile = _sep.join([d, 'animation.xml'])
+	contents = '\n'.join(anim)
+	print outfile
+	print contents
+	print ''
+	open(outfile, 'w').write(contents)
 
 print "all done"
