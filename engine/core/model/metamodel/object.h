@@ -126,6 +126,12 @@ namespace FIFE {
 		AbstractVisual* m_visual;
 	};
 
+	class ObjectLoader : public ResourceLoader {
+	public:
+		Object* load(const ResourceLocation& location) { return dynamic_cast<Object*>(load(location)); }
+		Object* load(const std::string& filename) { return load(ResourceLocation(filename)); }
+	};
+
 } //FIFE
 #endif
 

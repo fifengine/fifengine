@@ -34,4 +34,10 @@ namespace FIFE {
 		void setStatic(bool stat);
 		bool isStatic();
 	};
+
+	class ObjectLoader : public ResourceLoader {
+	public:
+		Object* load(const ResourceLocation& location); 
+		Object* load(const std::string& filename); 
+	};
 }

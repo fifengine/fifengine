@@ -114,6 +114,12 @@ namespace FIFE {
 			std::string source;
 	};
 
+	class DatasetLoader : public ResourceLoader {
+	public:
+		Dataset* load(const ResourceLocation& location) { return dynamic_cast<Dataset*>(load(location)); }
+		Dataset* load(const std::string& filename) { return load(ResourceLocation(filename)); }
+	};
+
 }
 
 #endif

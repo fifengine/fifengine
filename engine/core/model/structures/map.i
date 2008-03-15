@@ -1,7 +1,6 @@
 %module fife
 %{
 #include "model/structures/map.h"
-#include "model/structures/map_loader.h"
 %}
 
 %include "std_list.i"

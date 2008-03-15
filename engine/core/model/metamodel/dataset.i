@@ -1,7 +1,6 @@
 %module fife
 %{
 #include "model/metamodel/dataset.h"
-#include "model/metamodel/dataset_loader.h"
 %}
 
 %include "util/base/utilbase.i"
