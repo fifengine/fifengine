@@ -24,7 +24,6 @@ namespace FIFE {
 			Object* createObject(const std::string& identifier, Object* inherited = 0);
 
 			std::list<Dataset*> getDatasets();
-			std::list<Dataset*> getDatasetsRec();
 			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
 			std::list<Object*> getObjects();

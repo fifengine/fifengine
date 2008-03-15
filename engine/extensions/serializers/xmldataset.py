@@ -52,7 +52,7 @@ class XMLDatasetLoader(fife.DatasetLoader):
 			dataset = self.metamodel.createDataset(str(id))
 		except fife.Exception, e:
 			print e.getMessage()
-			print ''.join(['File: ', self.source, '. The dataset ', str(id), ' already exists! Returning dataset definition.'])
+			print ''.join(['File: ', self.source, '. The dataset ', str(id), ' already exists! Ignoring dataset definition.'])
 			return self.metamodel.getDatasets('id', str(id))[0]
 
 		dataset.setSource(str(self.source))

@@ -195,7 +195,7 @@ class ModelLoader(handler.ContentHandler):
 			if (attrName == "id"):
 				id = attrs.get(attrName)
 			elif (attrName == "parent"):
-				query = self.dataset.getObjects("id", str(attrs.get(attrName)))
+				query = self.metamodel.getObjects("id", str(attrs.get(attrName)))
 				if len(query) != 1: self._err(''.join([str(len(query)), ' objects found with identifier ', str(id), '.']))
 				parent = query[0]
 			elif (attrName == "blocking"):
@@ -216,7 +216,7 @@ class ModelLoader(handler.ContentHandler):
 			except fife.Exception, e:
 				print e.getMessage()
 				print 'The object ' + str(id) + ' already exists! Using existing object definition.'
-				self.object = self.dataset.getObjects('id', str(id))[0]
+				self.object = self.metamodel.getObjects('id', str(id))[0]
 		else:
 			try:
 				self.object = self.dataset.createObject(str(id))
@@ -224,7 +224,7 @@ class ModelLoader(handler.ContentHandler):
 			except fife.Exception, e:
 				print e.getMessage()
 				print 'The object ' + str(id) + ' already exists! Using existing object definition.'
-				self.object = self.dataset.getObjects('id', str(id))[0]
+				self.object = self.metamodel.getObjects('id', str(id))[0]
 
 		self.object.setBlocking(blocking)
 		self.object.setStatic(static)
@@ -552,7 +552,7 @@ class ModelLoader(handler.ContentHandler):
 #		path - the path of the map to load
 #		engine - a reference to the engine
 #		content - (optional) reference to the content path.
-def loadMapFile(path, engine, content = ''):
+def loadMapFileOLD(path, engine, content = ''):
 	parser = make_parser()
 	handler = ModelLoader(engine, path, content)
 	parser.setContentHandler(handler)
@@ -567,7 +567,7 @@ def loadMapFile(path, engine, content = ''):
 
 from serializers.xmlmap import XMLMapLoader
 
-def loadMapFileNEW(path, engine, content = ''):
+def loadMapFile(path, engine, content = ''):
 	if content != '':
 		engine.getVFS().addNewSource(content)
 

@@ -73,19 +73,6 @@ namespace FIFE {
 		return datasets;
 	}
 
-	std::list<Dataset*> Map::getDatasetsRec() {
-		std::list<Dataset*> datasets;
-
-		std::vector<Dataset*>::iterator it = m_datasets.begin();
-		for(; it != m_datasets.end(); ++it) {
-			std::list<Dataset*> tmp = (*it)->getDatasetsRec();
-			datasets.splice(datasets.end(), tmp);
-			datasets.push_back(*it);
-		}
-
-		return datasets;
-	}
-
 	std::list<Layer*> Map::getLayers() const {
 		std::list<Layer*> layers;
 

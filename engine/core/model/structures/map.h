@@ -101,11 +101,6 @@ namespace FIFE {
 			 */
 			std::list<Dataset*> getDatasets();
 
-			/** Get the datasets used by this map, and recursively get any
-			 * datasets referred to by these datasets.
-			 */
-			std::list<Dataset*>  getDatasetsRec();
-
 			/** Add a Layer to this Map. Map owns
 			 * the returned pointer to the new Layer, so don't
 			 * delete it!

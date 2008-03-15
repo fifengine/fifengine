@@ -86,10 +86,6 @@ namespace FIFE {
 			 */
 			std::list<Dataset*> getDatasets();
 
-			/** Get the datasets referred to by this dataset. Recursive.
-			 */
-			std::list<Dataset*> getDatasetsRec();
-
 			/** Get datasets from this dataset having the given value in the given field.
 			 */
 			std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);

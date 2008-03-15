@@ -39,7 +39,6 @@ namespace FIFE {
 
 			void addDataset(Dataset* dataset);
 			std::list<Dataset*> getDatasets();
-			std::list<Dataset*> getDatasetsRec();
 
 			Layer* createLayer(const std::string& identifier, CellGrid* grid);
 			void deleteLayer(Layer* index);

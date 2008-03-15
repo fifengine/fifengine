@@ -69,12 +69,12 @@ namespace FIFE {
 		std::list<Dataset*> getDatasets();
 
 		/** Gets a list of datasets that with the given value
-		 * in the given field. Recursive.
+		 * in the given field.
 		 */
 		std::list<Dataset*> getDatasets(const std::string& field, const std::string& value);
 
 		/** Gets a list of objects that with the given value
-		 * in the given field. Recursive.
+		 * in the given field.
 		 */
 		std::list<Object*> getObjects(const std::string& field, const std::string& value);
 		

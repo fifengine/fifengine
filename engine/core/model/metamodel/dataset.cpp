@@ -72,21 +72,6 @@ namespace FIFE {
 		return datasets;
 	}
 
-	std::list<Dataset*> Dataset::getDatasetsRec() {
-		std::list<Dataset*> datasets;
-
-		// Logic is buggy here (duplicates). Probably return values should be std::set too, but that's
-		// beyond the scope of this changeset. --jwt
-		std::set<Dataset*>::iterator it = m_datasets.begin();
-		for(; it != m_datasets.end(); ++it) {
-			std::list<Dataset*> tmp = (*it)->getDatasets();
-			datasets.splice(datasets.end(), tmp);
-			datasets.push_back(*it);
-		}
-
-		return datasets;
-	}
-
 	std::list<Dataset*> Dataset::getDatasets(const std::string& field, const std::string& value) {
 		std::list<Dataset*> datasets;
 
@@ -94,12 +79,6 @@ namespace FIFE {
 		for(; it != m_datasets.end(); ++it) {
 			if((*it)->get(field) == value)
 				datasets.push_back(*it);
-		}
-
-		std::set<Dataset*>::iterator jt = m_datasets.begin();
-		for(; jt != m_datasets.end(); ++jt) {
-			std::list<Dataset*> tmp = (*jt)->getDatasets(field, value);
-			datasets.splice(datasets.end(), tmp);
 		}
 
 		return datasets;
@@ -113,12 +92,6 @@ namespace FIFE {
 				objects.push_back(*it);
 		}
 
-		std::set<Dataset*>::iterator jt = m_datasets.begin();
-		for(; jt != m_datasets.end(); ++jt) {
-			std::list<Object*> tmp = (*jt)->getObjects();
-			objects.splice(objects.end(), tmp);
-		}
-
 		return objects;
 	}
 
@@ -129,12 +102,6 @@ namespace FIFE {
 		for(; it != m_objects.end(); ++it) {
 			if((*it)->get(field) == value)
 				objects.push_back(*it);
-		}
-
-		std::set<Dataset*>::iterator jt = m_datasets.begin();
-		for(; jt != m_datasets.end(); ++jt) {
-			std::list<Object*> tmp = (*jt)->getObjects(field, value);
-			objects.splice(objects.end(), tmp);
 		}
 
 		return objects;
