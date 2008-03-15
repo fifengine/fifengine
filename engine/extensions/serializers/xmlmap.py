@@ -147,7 +147,7 @@ class XMLMapLoader(fife.MapLoader):
 			if not objectID: self._err('<instance> does not specify an object attribute.')
 
 			query = self.metamodel.getObjects('id', str(objectID))
-			if len(query) != 1: self._err(''.join([str(len(query)), 'objects found with identifier ', str(id), '.']))
+			if len(query) != 1: self._err(''.join([str(len(query)), ' objects found with identifier ', str(objectID), '.']))
 			object = query[0]
 
 			x = instance.get('x')
