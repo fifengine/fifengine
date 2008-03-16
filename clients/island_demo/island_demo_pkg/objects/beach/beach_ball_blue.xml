@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<object id="BlueBeachBall" blocking="1" static="1">
-	<image source="content/gfx/objects/beach/beach_ball_blue.png"/>
-</object>

@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<object id="Beach-se1" static="1" blocking="1">
-	<image source="content/gfx/tiles/beach/beach_se1.png" direction="0"/>
-</object>

@@ -1,6 +1,0 @@
-<animation delay="200" id="3301">
-	<frame source="objects/objects/clouds/cloud_006.png" />
-	<frame source="objects/objects/clouds/cloud_005.png" />
-	<frame source="objects/objects/clouds/cloud_004.png" />
-	<frame source="objects/objects/clouds/cloud_003.png" />	
-</animation>
