@@ -7,6 +7,7 @@
 
 namespace FIFE {
   class Map;
+  class Object;
 }
 
 namespace std {
@@ -14,7 +15,6 @@ namespace std {
 }
 
 namespace FIFE {
-	class MetaModel;
 	class AbstractPather;
 
 	class Model: public FifeClass {
@@ -28,10 +28,13 @@ namespace FIFE {
 		std::list<Map*> getMaps() const;
 		std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
 
+		Object* createObject(const std::string& identifier, const std::string& name_space, Object* parent=0);
+		Object* getObject(const std::string& id, const std::string& name_space);
+		std::list<Object*>& getObjects(const std::string& name_space);
+
 		size_t getNumMaps() const;
 		void deleteMaps();
 
-		MetaModel* getMetaModel();
 		AbstractPather* getPather(const std::string& pathername);
 		
 		void setTimeMultiplier(float multip);

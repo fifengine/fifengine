@@ -1,118 +1,122 @@
 #!/usr/bin/python
 from util_scripts.path import path
-import os, sys, re
+import os, sys
+
+DIRNAME = 'clients/rio_de_hola/objects/nature/trees'
+NAMESPACE = 'http://www.fifengine.de/xml/rio_de_hola'
+STATIC = 1
+BLOCKING = 1
 
 _sep = os.path.sep
 
-def create_dir(relpath):
-	d = '.' + _sep + relpath + _sep
-	if not os.path.isdir(d):
-		os.mkdir(d)
+def dirpath(p):
+	return _sep.join(p.split(_sep)[:-1]) + _sep
 
-curid = 10000
-def get_next_id():
-	global curid
-	curid += 1
-	return curid
+def filename(p):
+	return p.split(_sep)[-1]
 
 class Animation(object):
-	def __init__(self, agent, action, direction):
-		self.agent = agent
-		self.action = action
-		self.direction = direction
-		self.image_files = []
-		self.path = ''
-		
-	def add_image_file(self, filename):
-		self.image_files.append(filename)
-		
-	def write_xml(self, path, delay):
-		self.path = path
-		f = ['<animation delay="%s" id="%d">' % (delay, get_next_id())]
-		for i in self.image_files:
-			f.append('\t<frame source="%s" />' % i)
-		f.append('</animation>')
-		open(path, 'w').write('\n'.join(f))
-
-class Agent(object):
-	def __init__(self, name):
-		self.animations = {}
-		self.name = ''
+	def __init__(self, path_to_xml):
+		self.path = path_to_xml
+		self.direction = int(dirpath(path_to_xml).split(_sep)[-2])
+		self.action_name = dirpath(path_to_xml).split(_sep)[-3]
 	
-	def add_image_file(self, filename, action, direction):
-		key = (action, direction)
-		if not self.animations.has_key(key):
-			self.animations[key] = Animation(self.name, action, direction)
-		self.animations[key].add_image_file(filename)
-
-	def write_action(self, name, animations):
-		f = ['\t\t<action id="%s">' % name]
-		for animation in animations:
-			f.append('\t\t\t<animation source="%s" direction="%s" />' % (animation.path, animation.direction))
-		f.append('\t\t</action>\n')
-		return f
+	def __str__(self):
+		return self.path
 	
-	def write_xml(self, path):
-		create_dir('animations' + _sep + self.name)
-		
-		f = ['<?xml version="1.0"?>']
-		f.append('<dataset id="%s" format="1.0">' % get_next_id())
-		f.append('\t<object id="%s" blocking="1">\n' % self.name)
-		
-		animkeys = sorted(self.animations.keys())
-		curkey = animkeys[1][0]
-		frames = []
-		for key in animkeys:
-			self.animations[key].write_xml('animations' + _sep + self.name + _sep + key[0] + '_' + key[1] + '.xml', '100')
-			if key[0] != curkey:
-				f.extend(self.write_action(curkey, frames))
-				curkey, frames = key[0], []
-			else:
-				frames.append(self.animations[key])
-		f.extend(self.write_action(curkey, frames))
-		curkey, frames = key, []
-			
-		f.append('\t</object>\n</dataset>')
-		open(path, 'w').write('\n'.join(f))
+	def relpath(self, rootpath):
+		return self.path.replace(rootpath, '')
 
-class Agents(object):
-	FILE_FULL_RE = re.compile(r'(?P<action>\w+)_(?P<direction>\d+)_(?P<frame>\d+)')
-	FILE_PART_RE = re.compile(r'(?P<action>\w+)_(?P<direction>\d+)')
-	def __init__(self):
-		self.agents = {}
-		
-	def add_image_file(self, filename):
-		parts = filename.split(_sep)
-		agent = parts[-2]
-		fname = parts[-1]
-		m = Agents.FILE_FULL_RE.search(fname)
-		if not m:
-			m = Agents.FILE_PART_RE.search(fname)
-			if not m:
-				print 'Invalid image name format: ' + filename
-				return
-		action = m.group('action')
-		direction = m.group('direction')
-		if not self.agents.has_key(agent):
-			self.agents[agent] = Agent(agent)
-			self.agents[agent].name = agent
-		self.agents[agent].add_image_file(filename, action, direction)
+class StaticImage(object):
+	def __init__(self, path_to_image):
+		self.path = path_to_image
+		self.direction = int(filename(path_to_image).split('.')[0])
+
+	def __str__(self):
+		return self.path
+
+	def relpath(self, rootpath):
+		return self.path.replace(rootpath, '')
+
+OBJECT_HEADER = '<object id="%s" namespace="%s" blocking="%d" static="%d">'
+ACTION_HEADER = '\t<action id="%s">'
+ANIMATION_LINE = '\t\t<animation source="%s" direction="%d" />'
+ACTION_FOOTER = '\t</action>'
+IMAGE_LINE = '\t<image source="%s" direction="%d" />'
+OBJECT_FOOTER = '</object>\n'
+
+class Obj(object):
+	def __init__(self, path_to_xml):
+		self.path = path_to_xml
+		self.dirpath = dirpath(path_to_xml)
+		self.name = self.dirpath.split(_sep)[-2]
+		try:
+			num = int(self.name)
+			self.name = self.dirpath.split(_sep)[-3] + ':' + self.name
+		except ValueError:
+			pass  # ok, object is not named as plain integer
+		self.actions = {}
+		self.images = []
 	
+	def animation_is_part_of(self, anim):
+		return anim.path.find(self.dirpath) != -1
+	
+	def image_is_part_of(self, img):
+		return (img.path.find(self.dirpath) != -1) and (img.relpath(self.dirpath).find(_sep) == -1)
+	
+	def add_animation(self, animation):
+		if not self.actions.has_key(animation.action_name):
+			self.actions[animation.action_name] = []
+		self.actions[animation.action_name].append(animation)
+	
+	def add_image(self, image):
+		self.images.append(image)
+
 	def write_xml(self):
-		create_dir('agents')
-		create_dir('animations')
-		for agent in self.agents.values():
-			agent.write_xml('agents' + _sep + agent.name + '.xml')
+		lines = []
+		a = lines.append
+		a(OBJECT_HEADER % (self.name, NAMESPACE, BLOCKING, STATIC))
+		self.images.sort(lambda x, y: cmp(str(x), str(y)))
+		for i in self.images:
+			a(IMAGE_LINE % (i.relpath(self.dirpath), i.direction))
+		
+		for action_name in sorted(self.actions.keys()):
+			a(ACTION_HEADER % action_name)
+			self.actions[action_name].sort(lambda x, y: cmp(str(x), str(y)))
+			for animation in self.actions[action_name]:
+				a(ANIMATION_LINE % (animation.relpath(self.dirpath), animation.direction))
+			a(ACTION_FOOTER)
+		a(OBJECT_FOOTER)
+		
+		print 'FILE : ', self.path
+		print '\n'.join(lines)
+		print ''
+		open(self.path, 'w').write('\n'.join(lines))
+	
+	def __str__(self):
+		return self.name
 
+p = path(DIRNAME)
+obj_files = [str(f) for f in p.walkfiles('object.xml')]
+anim_files = [str(f) for f in p.walkfiles('animation.xml')]
+images = [str(f) for f in p.walkfiles('*.png')]
 
-def main():
-	pathname = sys.argv[1]
-	p = path(pathname)
-	files = p.walkfiles('*.png')
-	agents = Agents()
-	for f in files:
-		agents.add_image_file(f)
-	agents.write_xml()
+objects = []
+# iterate all object.xml files
+for o in obj_files:
+	obj = Obj(str(o))
+	objects.append(obj)
+	
+	for a in anim_files:
+		anim = Animation(str(a))
+		if obj.animation_is_part_of(anim):
+			obj.add_animation(anim)
+	for i in images:
+		img = StaticImage(str(i))
+		if obj.image_is_part_of(img):
+			obj.add_image(img)
 
-if __name__ == '__main__':
-	main()
+for o in objects:
+	o.write_xml()
+
+print "all done"

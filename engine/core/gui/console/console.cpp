@@ -34,8 +34,8 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "util/time/timemanager.h"
-#include "util/logger.h"
-#include "util/exception.h"
+#include "util/log/logger.h"
+#include "util/base/exception.h"
 #include "gui/guimanager.h"
 #include "gui/base/gui_font.h"
 

@@ -9,15 +9,15 @@ class EditorListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListen
 		engine = app.engine
 		eventmanager = engine.getEventManager()
 		eventmanager.setNonConsumableKeys([
-			fife.IKey.ESCAPE,
-			fife.IKey.F10,
-			fife.IKey.F9,
-			fife.IKey.F8,
-			fife.IKey.TAB,
-			fife.IKey.LEFT,
-			fife.IKey.RIGHT,
-			fife.IKey.UP,
-			fife.IKey.DOWN])
+			fife.Key.ESCAPE,
+			fife.Key.F10,
+			fife.Key.F9,
+			fife.Key.F8,
+			fife.Key.TAB,
+			fife.Key.LEFT,
+			fife.Key.RIGHT,
+			fife.Key.UP,
+			fife.Key.DOWN])
 		
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
@@ -38,7 +38,7 @@ class EditorListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListen
 		self.reloadRequested = False
 
 	def mousePressed(self, evt):
-		if(evt.getButton() == fife.IMouseEvent.RIGHT ):
+		if(evt.getButton() == fife.MouseEvent.RIGHT ):
 			print 'right click'
 	def mouseReleased(self, evt):
 		pass	
@@ -60,9 +60,9 @@ class EditorListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListen
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
-		if keyval == fife.IKey.ESCAPE:
+		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
-		elif keyval == fife.IKey.F10:
+		elif keyval == fife.Key.F10:
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 		elif keystr == 'p':
 			self.engine.getRenderBackend().captureScreen('screenshot.bmp')

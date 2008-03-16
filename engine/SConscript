@@ -34,7 +34,8 @@ def generate_swig_wrappers(target, source, env):
 		open(interfacefile, 'w').write(template.substitute(inclusions=inclusions))
 
 		includepath = joinpath('engine', 'core')
-		pipe = os.popen(swigpath +'swig -c++ -%s -I%s -outdir %s %s' % (lang, includepath, langoutdir, interfacefile))
+		# added -w511 to ignore warnings for "Can't use keyword arguments with overloaded functions"
+		pipe = os.popen(swigpath +'swig -w511 -c++ -%s -I%s -outdir %s %s' % (lang, includepath, langoutdir, interfacefile))
 		if pipe.close():
 			print "\nError while running swig, stopped"
 			Exit(1)
@@ -144,6 +145,55 @@ def generate_msvc_project(target, source, env):
 msvc_project_builder = Builder(action = generate_msvc_project, suffix = '.vcproj')
 env.Append(BUILDERS = {'MSVCProject': msvc_project_builder})
 
+msvcbuildpath9 = joinpath('build', 'win32', 'build_environments', 'visual_studio_9')
+
+def generate_msvc_project9(target, source, env):
+	def create_dict_tree(source_dict):
+		for f in source_dict.keys():
+			parts = f.split(os.path.sep, 1)
+			if len(parts) > 1:
+				try:
+					source_dict[parts[0]][parts[1]] = {}
+				except KeyError:
+					source_dict[parts[0]] = {}
+					source_dict[parts[0]][parts[1]] = {}
+				del source_dict[f]
+		for k, d in source_dict.items():
+			create_dict_tree(d)
+		return source_dict
+	
+	def get_msvc_repr(d, tabcount=2, curpath=''):
+		retstr = []
+		for k in sorted(d.keys()):
+			newpath = os.path.join(curpath, k)
+			if len(d[k].keys()):
+				retstr.append(tabcount * '\t' + '<Filter Name="%s">' % k)
+				retstr.append(get_msvc_repr(d[k], tabcount+1, newpath))
+				retstr.append(tabcount * '\t' + '</Filter>')
+			else:
+				newpath = os.path.join('..', '..', '..', '..', 'engine', newpath)
+				retstr.append(tabcount * '\t' + '<File RelativePath="%s"></File>' % newpath.replace('/','\\'))
+		return '\n'.join(retstr)
+			
+	vcpaths = [os.path.abspath(str(f)).split('%sengine%s' % (_sep, _sep))[-1] for f in source]
+	xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
+	projtxt = open(joinpath(msvcbuildpath9, 'engine_template.xml'), 'r').read()
+	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
+
+	oldprojtxt = ''
+	try:
+		oldprojtxt = open(str(target[0]), 'r').read()
+	except:
+		pass
+
+	if(oldprojtxt <> projtxt):
+		open(str(target[0]), 'w').write(projtxt)
+		print "FIFE msvc9 project file succesfully created (%s)" % os.path.abspath(str(target[0]))
+	else:
+		print "FIFE msvc9 project file already up-to-date (%s)" % os.path.abspath(str(target[0]))
+
+msvc_project_builder9 = Builder(action = generate_msvc_project9, suffix = '.vcproj')
+env.Append(BUILDERS = {'MSVCProject9': msvc_project_builder9})
 
 cbbuildpath = joinpath('build', 'win32', 'build_environments', 'code_blocks')
 
@@ -211,6 +261,7 @@ projectfiles = [str(f) for f in remove_based_on_dir_filter(filtered_prj_paths, h
 projectfiles.append('./swigwrappers/%s/fife_wrap.cxx' % env['script'])
 
 msvcproj = env.MSVCProject(joinpath('..', msvcbuildpath, 'fife'), projectfiles)
+msvcproj9 = env.MSVCProject9(joinpath('..', msvcbuildpath9, 'fife'), projectfiles)
 cbproj = env.CodeblocksProject(joinpath('..', cbbuildpath, 'fife_engine'), projectfiles)
 
 if not env['projectfiles_only']:
@@ -221,7 +272,8 @@ if not env['projectfiles_only']:
 		flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl'])
 	else:
 		flib = env.SharedLibrary('fife', compilefiles, LINKFLAGS=['-Wl,-rpath,../../ext/install/lib,-rpath,../ext/install/lib,-rpath,ext/install/lib'])
-	if sys.platform == 'linux2':
+	if sys.platform != 'win32':
 		env.Command('swigwrappers/%s/_fife.so' % env['script'], flib, [Copy('$TARGET', '$SOURCE')])
-		env.Install('$PREFIX/lib/python2.5/site-packages/fife', flib)
-#		env.Install('$PREFIX/lib/python2.5/site-packages/fife', [str(f) for f in extensionfiles])
+		if sys.platform != 'darwin':
+			env.Install('$PREFIX/lib/python2.5/site-packages/fife', flib)
+#			env.Install('$PREFIX/lib/python2.5/site-packages/fife', [str(f) for f in extensionfiles])

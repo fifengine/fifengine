@@ -28,17 +28,14 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "util/logger.h"
-
-#include "util/fife_math.h"
-#include "util/logger.h"
+#include "util/math/fife_math.h"
+#include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
 
 #include "view/camera.h"
-#include "view/view.h"
 #include "cellselectionrenderer.h"
 
 
@@ -51,11 +48,21 @@ namespace FIFE {
 		setEnabled(true);
 	}
 
+ 	CellSelectionRenderer::CellSelectionRenderer(const CellSelectionRenderer& old):
+		RendererBase(old),
+		m_loc(NULL) {
+		setEnabled(true);
+	}
+
+	RendererBase* CellSelectionRenderer::clone() {
+		return new CellSelectionRenderer(*this);
+	}
+
 	CellSelectionRenderer::~CellSelectionRenderer() {
 	}
 
-	CellSelectionRenderer* CellSelectionRenderer::getInstance(View* view) {
-		return dynamic_cast<CellSelectionRenderer*>(view->getRenderer("CellSelectionRenderer"));
+	CellSelectionRenderer* CellSelectionRenderer::getInstance(IRendererContainer* cnt) {
+		return dynamic_cast<CellSelectionRenderer*>(cnt->getRenderer("CellSelectionRenderer"));
 	}
 	
 	void CellSelectionRenderer::reset() {

@@ -50,8 +50,8 @@ namespace FIFE {
 		 */
 		virtual ~AnimationPool() {}
 
-		Animation& getAnimation(unsigned int index)  {
-			return dynamic_cast<Animation&>(get(index));
+		inline Animation& getAnimation(unsigned int index)  {
+			return static_cast<Animation&>(get(index));
 		}
 	};
 

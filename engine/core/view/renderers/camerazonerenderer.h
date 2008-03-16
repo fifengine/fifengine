@@ -45,6 +45,10 @@ namespace FIFE {
 		 */
 		CameraZoneRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool);
 
+		CameraZoneRenderer(const CameraZoneRenderer& old);
+		
+		RendererBase* clone();
+
 		/** Destructor.
 		 */
 		virtual ~CameraZoneRenderer();

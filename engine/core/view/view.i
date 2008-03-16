@@ -17,7 +17,6 @@ namespace FIFE {
 		std::vector<Camera*>& getCameras();
 		void removeCamera(Camera* camera);
 		void clearCameras();
-		RendererBase* getRenderer(const std::string& name);
 		void resetRenderers();
 	private:
 		View(RenderBackend* renderbackend);

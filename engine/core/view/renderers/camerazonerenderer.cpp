@@ -29,10 +29,8 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "video/image.h"
-#include "util/logger.h"
-
-#include "util/fife_math.h"
-#include "util/logger.h"
+#include "util/math/fife_math.h"
+#include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -51,6 +49,17 @@ namespace FIFE {
 		m_imagepool(imagepool),
 		m_zone_image(NULL) {
 		setEnabled(false);
+	}
+
+	CameraZoneRenderer::CameraZoneRenderer(const CameraZoneRenderer& old):
+		RendererBase(old),
+		m_imagepool(old.m_imagepool),
+		m_zone_image(NULL) {
+		setEnabled(false);
+	}
+
+	RendererBase* CameraZoneRenderer::clone() {
+		return new CameraZoneRenderer(*this);
 	}
 
 	CameraZoneRenderer::~CameraZoneRenderer() {

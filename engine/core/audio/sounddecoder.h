@@ -41,14 +41,6 @@ namespace FIFE {
 	class SoundDecoder {
 	public:
 		
-		/** A factory function that returns an appropriate Decoder-Instance.
-		 * 
-		 * @param filename Specifies the file that shall be opened.
-		 * @return Returns a pointer to an allocated Decoder, 0 in case of an failure.
-		 */
-		static SoundDecoder* create(const std::string &filename);
-		
-		SoundDecoder() {}
 		virtual ~SoundDecoder() {}
 		
 		/** Returns the decoded length of the file in bytes

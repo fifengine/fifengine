@@ -33,13 +33,11 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
-#include "ec_ikey.h"
-
 namespace FIFE {
 
 	/** Represents a key or a character.
 	 */
-	class Key: public IKey {
+	class Key {
 	public:
 		/** Constructor
 		 * @param value value of the key
@@ -53,22 +51,31 @@ namespace FIFE {
 		 */
 		virtual ~Key() {}
 
+		/** Checks whether a key is a character.
+		 */
 		bool isCharacter() const {
 			return (m_value >= 32 && m_value <= 126)
 				|| (m_value >= 162 && m_value <= 255)
 				|| (m_value == 9);
 		}
 
+		/** Gets the value of the key. 
+		 */
 		bool isNumber() const  {
 			return m_value >= 48 && m_value <= 57;
 		}
 
+		/** Checks whether a key is a letter. 
+		 */
 		bool isLetter() const  {
 			return (((m_value >= 65 && m_value <= 90)
 				|| (m_value >= 97 && m_value <= 122)
 				|| (m_value >= 192 && m_value <= 255))
 				&& (m_value != 215) && (m_value != 247));
 		}
+		
+		/** Gets the value of the key. 
+		 */
 		int getValue() const {
 			return m_value;
 		}
@@ -78,6 +85,58 @@ namespace FIFE {
 		const std::string& getAsString() const {
 			return m_repr;
 		}
+
+		/** Codes for different keys
+		 */
+		enum KeyType {
+			INVALID_KEY        = -1,
+			SPACE              = ' ',
+			TAB                = '\t',
+			ENTER              = '\n',
+			LEFT_ALT           = 1000,
+			RIGHT_ALT,
+			LEFT_SHIFT,
+			RIGHT_SHIFT,
+			LEFT_CONTROL,
+			RIGHT_CONTROL,
+			LEFT_META,
+			RIGHT_META,
+			LEFT_SUPER,
+			RIGHT_SUPER,
+			INSERT,
+			HOME,
+			PAGE_UP,
+			DELETE_KEY,
+			END,
+			PAGE_DOWN,
+			ESCAPE,
+			CAPS_LOCK,
+			BACKSPACE,
+			F1,
+			F2,
+			F3,
+			F4,
+			F5,
+			F6,
+			F7,
+			F8,
+			F9,
+			F10,
+			F11,
+			F12,
+			F13,
+			F14,
+			F15,
+			PRINT_SCREEN,
+			SCROLL_LOCK,
+			PAUSE,
+			NUM_LOCK,
+			ALT_GR,
+			LEFT,
+			RIGHT,
+			UP,
+			DOWN
+		};
 
 	private:
 		int m_value;

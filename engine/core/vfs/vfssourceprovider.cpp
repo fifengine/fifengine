@@ -27,15 +27,26 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/log/logger.h"
+
 #include "vfssource.h"
 #include "vfssourceprovider.h"
 
 namespace FIFE {
+  static Logger _log(LM_VFS);
 
-	VFSSourceProvider::VFSSourceProvider(const std::string& name) : m_name(name) {
+	VFSSourceProvider::VFSSourceProvider(const std::string& name) : m_vfs(0), m_name(name) {
 	}
 
 	VFSSourceProvider::~VFSSourceProvider() {
+	}
+
+	void VFSSourceProvider::setVFS(VFS* vfs) {
+		if (m_vfs) {
+			FL_WARN(_log, "Attempt to set a VFSSourceProvider that is already associated with a VFS.");
+			return ;
+		}
+		m_vfs = vfs;
 	}
 
 	const std::string& VFSSourceProvider::getName() const {

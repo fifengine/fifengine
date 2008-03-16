@@ -3,7 +3,7 @@
 #include "model/metamodel/object.h"
 %}
 
-%include "util/attributedclass.i"
+%include "util/base/utilbase.i"
 %include "model/metamodel/abstractvisual.i"
 
 namespace FIFE {
@@ -33,5 +33,11 @@ namespace FIFE {
 		
 		void setStatic(bool stat);
 		bool isStatic();
+	};
+
+	class ObjectLoader : public ResourceLoader {
+	public:
+		Object* load(const ResourceLocation& location); 
+		Object* load(const std::string& filename); 
 	};
 }

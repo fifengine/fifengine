@@ -22,10 +22,10 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 		eventmanager = self.engine.getEventManager()
 
 		eventmanager.setNonConsumableKeys([
-			fife.IKey.LEFT,
-			fife.IKey.RIGHT,
-			fife.IKey.UP,
-			fife.IKey.DOWN])
+			fife.Key.LEFT,
+			fife.Key.RIGHT,
+			fife.Key.UP,
+			fife.Key.DOWN])
 
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
@@ -54,7 +54,7 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 		self.camera = None
 
 	def mousePressed(self, evt):
-		if (evt.getButton() == fife.IMouseEvent.LEFT ):
+		if (evt.getButton() == fife.MouseEvent.LEFT ):
 			if self._ctrldown:
 				self._dragx = evt.getX()
 				self._dragy = evt.getY()
@@ -108,40 +108,40 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
-		if keyval == fife.IKey.LEFT:
+		if keyval == fife.Key.LEFT:
 			self.horizscroll = 1;
 			self.horizscrolldir = -1;
-		elif keyval == fife.IKey.RIGHT:
+		elif keyval == fife.Key.RIGHT:
 			self.horizscroll = 1;
 			self.horizscrolldir = 1;
-		elif keyval == fife.IKey.UP:
+		elif keyval == fife.Key.UP:
 			self.vertscroll = 1;
 			self.vertscrolldir = -1;
-		elif keyval == fife.IKey.DOWN:
+		elif keyval == fife.Key.DOWN:
 			self.vertscroll = 1;
 			self.vertscrolldir = 1;
-		elif keyval in (fife.IKey.LEFT_CONTROL, fife.IKey.RIGHT_CONTROL):
+		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self._ctrldown = True
-		elif keyval in (fife.IKey.LEFT_SHIFT, fife.IKey.RIGHT_SHIFT):
+		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
 			self._shiftdown = True
-		elif keyval in (fife.IKey.LEFT_ALT, fife.IKey.RIGHT_ALT):
+		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
 			self._altdown = True
 	
 	def keyReleased(self, evt):
 		keyval = evt.getKey().getValue()
-		if keyval in (fife.IKey.LEFT_CONTROL, fife.IKey.RIGHT_CONTROL):
+		if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self._ctrldown = False
-		elif keyval in (fife.IKey.LEFT_SHIFT, fife.IKey.RIGHT_SHIFT):
+		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
 			self._shiftdown = False
-		elif keyval in (fife.IKey.LEFT_ALT, fife.IKey.RIGHT_ALT):
+		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
 			self._altdown = False
-		elif keyval == fife.IKey.LEFT:
+		elif keyval == fife.Key.LEFT:
 			self.horizscroll = 0
-		elif keyval == fife.IKey.RIGHT:
+		elif keyval == fife.Key.RIGHT:
 			self.horizscroll = 0
-		elif keyval == fife.IKey.UP:
+		elif keyval == fife.Key.UP:
 			self.vertscroll = 0
-		elif keyval == fife.IKey.DOWN:
+		elif keyval == fife.Key.DOWN:
 			self.vertscroll = 0
 
 	def _editSelection(self):

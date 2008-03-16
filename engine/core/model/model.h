@@ -31,7 +31,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/fifeclass.h"
+#include "util/base/fifeclass.h"
 
 #include "model/structures/map.h"
 #include "model/metamodel/timeprovider.h"
@@ -40,6 +40,7 @@ namespace FIFE {
 
 	class MetaModel;
 	class AbstractPather;
+	class Object;
 
 	/**
 	 * A model is a facade for everything in the model.
@@ -58,8 +59,7 @@ namespace FIFE {
 		~Model();
 		
 		/** Add a map this model, and get a pointer to it.
-		 * The returned pointer is owned by the Model, so
-		 * don't delete it!
+		 * The returned pointer is owned by the Model, so don't delete it!
 		 */
 		Map* createMap(const std::string& identifier);
 
@@ -86,11 +86,22 @@ namespace FIFE {
 		 */
 		void deleteMaps();
 
-		/** Get a pointer to the MetaModel associated with
-		 * this Model. The Model owns this pointer, so don't
-		 * delete it!
+		/** Add an object to the metamodel.
+		 * 
+		 * @param identifier A string for identifying this object; must be unique for its namespace.
+		 * @param parent Objects may optionally inherit values from a parent object.
+		 * @note This object belongs to the model, so don't delete the returned pointer
 		 */
-		MetaModel* getMetaModel();
+		Object* createObject(const std::string& identifier, const std::string& name_space, Object* parent=0);
+
+		/** Get an object by its id. If no namespace is specified, the namespaces are searched in order
+		 * and the first matching object is returned. Returns 0 if object is not found.
+		 */
+		Object* getObject(const std::string& id, const std::string& name_space);
+
+		/** Get all the objects in the given namespace.
+		 */
+		std::list<Object*>& getObjects(const std::string& name_space);
 
 		/** Adds pather to model. Moves ownership to model
 		 */
@@ -117,8 +128,11 @@ namespace FIFE {
 	private:
 
 		std::vector<Map*> m_maps;
+
+		typedef std::pair<std::string, std::list<Object*> > namespace_t;
+		std::list<namespace_t> m_namespaces;
+
 		std::vector<AbstractPather*> m_pathers;
-		MetaModel* m_meta;
 		TimeProvider m_timeprovider;
 	};
 

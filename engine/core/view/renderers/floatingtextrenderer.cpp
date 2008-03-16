@@ -28,10 +28,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "util/logger.h"
-
-#include "util/fife_math.h"
-#include "util/logger.h"
+#include "util/math/fife_math.h"
+#include "util/log/logger.h"
 #include "video/fonts/abstractfont.h"
 #include "video/image.h"
 #include "model/structures/instance.h"
@@ -40,7 +38,6 @@
 
 #include "view/visual.h"
 #include "view/camera.h"
-#include "view/view.h"
 #include "floatingtextrenderer.h"
 
 
@@ -54,10 +51,24 @@ namespace FIFE {
 		setEnabled(true);
 	}
 
+ 	FloatingTextRenderer::FloatingTextRenderer(const FloatingTextRenderer& old):
+		RendererBase(old),
+		m_font(old.m_font) {
+		setEnabled(true);
+	}
+	
+	RendererBase* FloatingTextRenderer::clone() {
+		return new FloatingTextRenderer(*this);
+	}
+
 	FloatingTextRenderer::~FloatingTextRenderer() {
 	}
 
 	void FloatingTextRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+		if (!m_font) {
+			return;
+		}
+		
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
 		const std::string* saytext = NULL;
 
@@ -79,7 +90,7 @@ namespace FIFE {
 		}
 	}
 	
-	FloatingTextRenderer* FloatingTextRenderer::getInstance(View* view) {
-		return dynamic_cast<FloatingTextRenderer*>(view->getRenderer("FloatingTextRenderer"));
+	FloatingTextRenderer* FloatingTextRenderer::getInstance(IRendererContainer* cnt) {
+		return dynamic_cast<FloatingTextRenderer*>(cnt->getRenderer("FloatingTextRenderer"));
 	}
 }

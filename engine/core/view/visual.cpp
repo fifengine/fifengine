@@ -27,8 +27,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/logger.h"
-#include "util/exception.h"
+#include "util/log/logger.h"
+#include "util/base/exception.h"
 
 #include "model/structures/instance.h"
 #include "model/metamodel/object.h"
@@ -107,16 +107,6 @@ namespace FIFE {
 	}
 	
 	InstanceVisual::~InstanceVisual() {
-	}
-	
-	InstanceVisualCacheItem& InstanceVisual::getCacheItem(Camera* cam) {
-		std::map<Camera*, InstanceVisualCacheItem>::iterator it = m_cache.find(cam);
-		if (it != m_cache.end()) {
-			return it->second;
-		}
-		InstanceVisualCacheItem item;
-		m_cache[cam] = item;
-		return m_cache[cam];
 	}
 	
 	ActionVisual::ActionVisual(): m_animations() {

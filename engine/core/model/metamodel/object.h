@@ -32,8 +32,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/attributedclass.h"
-#include "util/angles.h"
+#include "util/base/attributedclass.h"
+#include "util/math/angles.h"
 
 namespace FIFE {
 
@@ -47,7 +47,7 @@ namespace FIFE {
 	 * Objects describe the properties of objects.
 	 * Objects may inherit default values from another object.
 	 *
-	 * @see AttributedClass in util/attributedclass.h
+	 * @see AttributedClass in util/base/attributedclass.h
 	 */
 	class Object : public AttributedClass {
 	public:
@@ -124,6 +124,12 @@ namespace FIFE {
 		bool m_static;
 		AbstractPather* m_pather;
 		AbstractVisual* m_visual;
+	};
+
+	class ObjectLoader : public ResourceLoader {
+	public:
+		Object* load(const ResourceLocation& location) { return dynamic_cast<Object*>(load(location)); }
+		Object* load(const std::string& filename) { return load(ResourceLocation(filename)); }
 	};
 
 } //FIFE

@@ -21,13 +21,12 @@
 
 %module fife
 %{
-#include "eventchannel/base/ec_ievent.h"
-#include "eventchannel/base/ec_iinputevent.h"
+#include "eventchannel/base/ec_event.h"
+#include "eventchannel/base/ec_inputevent.h"
 #include "eventchannel/command/ec_command.h"
 #include "eventchannel/command/ec_commandids.h"
 #include "eventchannel/command/ec_icommandlistener.h"
 #include "eventchannel/key/ec_key.h"
-#include "eventchannel/key/ec_ikeyevent.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeylistener.h"
 #include "eventchannel/source/ec_eventsourcetypes.h"
@@ -36,10 +35,10 @@
 #include "eventchannel/mouse/ec_imouselistener.h"
 #include "eventchannel/widget/ec_widgetevent.h"
 #include "eventchannel/widget/ec_iwidgetlistener.h"
-#include "eventchannel/manager/eventmanager.h"
+#include "eventchannel/eventmanager.h"
 %}
 
-%include "eventchannel/key/ec_ikey.h"
+%include "eventchannel/key/ec_key.h"
 %include "eventchannel/source/ec_eventsourcetypes.h"
 %include "eventchannel/command/ec_commandids.h"
 
@@ -51,35 +50,32 @@ namespace FIFE {
 		virtual ~IEventSource();
 	};
 
-	class IEvent {
+	class Event {
 	public:
-		virtual void consume() = 0;
-		virtual bool isConsumed() const = 0;
-		virtual IEventSource* getSource() = 0;
-		virtual gcn::Widget* getSourceWidget() = 0;
-		virtual int getTimeStamp() const = 0;
-		virtual std::string getDebugString() const = 0;
-		virtual const std::string& getName() const = 0;
+		virtual void consume();
+		virtual bool isConsumed() const;
+		virtual IEventSource* getSource();
+		virtual gcn::Widget* getSourceWidget();
+		virtual int getTimeStamp() const;
+		virtual std::string getDebugString() const;
+		virtual const std::string& getName() const;
 		virtual ~IEvent() {}
+	private:
+		Event();
 	};
 
-	class IInputEvent: public IEvent {
+	class InputEvent: public Event {
 	public:
-		virtual bool isAltPressed() const = 0;
-		virtual bool isControlPressed() const = 0;
-		virtual bool isMetaPressed() const = 0;
-		virtual bool isShiftPressed() const = 0;
+		virtual bool isAltPressed() const;
+		virtual bool isControlPressed() const;
+		virtual bool isMetaPressed() const;
+		virtual bool isShiftPressed() const;
 		virtual ~IInputEvent() {}
+	private:
+		InputEvent();
 	};
 
-	class ICommand: public IEvent {
-	public:
-		virtual CommandType getCommandType() = 0;
-		virtual int getCode() = 0;
-		virtual ~ICommand();
-	};
-	%feature("notabstract") Command;
-	class Command: public ICommand {
+	class Command: public Event {
 	public:
 		Command();
 		virtual ~Command();
@@ -90,48 +86,44 @@ namespace FIFE {
 		int getCode();
 		void setCode(int code);
 
-		virtual void consume();
-		virtual bool isConsumed() const;
-		virtual IEventSource* getSource();
 		virtual void setSource(IEventSource* source);
-		virtual gcn::Widget* getSourceWidget();
 		virtual void setSourceWidget(gcn::Widget* widget);
-		virtual int getTimeStamp() const;
 		virtual void setTimeStamp(int timestamp);
 	};
 
 	%feature("director") ICommandListener;
 	class ICommandListener {
 	public:
-		virtual void onCommand(ICommand& command) = 0;
+		virtual void onCommand(Command& command) = 0;
 		virtual ~ICommandListener() {}
 	};
 
-	class IKeyEvent: public IInputEvent  {
+	class KeyEvent: public InputEvent  {
 	public:
 		enum KeyEventType {
 			UNKNOWN = -1,
 			PRESSED = 0,
 			RELEASED
 		};
-		virtual KeyEventType getType() const = 0;
-		virtual bool isNumericPad() const = 0;
-		virtual const IKey& getKey() const = 0;
-		virtual ~IKeyEvent();
+		virtual KeyEventType getType() const;
+		virtual bool isNumericPad() const;
+		virtual const Key& getKey() const;
+		virtual ~KeyEvent();
+	private:
+		KeyEvent();
 	};
 
 	%feature("director") IKeyListener;
 	class IKeyListener {
 	public:
-		virtual void keyPressed(IKeyEvent& evt) = 0;
-		virtual void keyReleased(IKeyEvent& evt) = 0;
+		virtual void keyPressed(KeyEvent& evt) = 0;
+		virtual void keyReleased(KeyEvent& evt) = 0;
 		virtual ~IKeyListener();
 	};
 
-	class IMouseEvent: public IInputEvent {
+	class MouseEvent: public InputEvent {
 	public:
-		enum MouseEventType
-		{
+		enum MouseEventType {
 			UNKNOWN_EVENT = -1,
 			MOVED = 0,
 			PRESSED,
@@ -144,46 +136,49 @@ namespace FIFE {
 			DRAGGED
 		};
 
-		enum MouseButtonType
-		{
+		enum MouseButtonType {
 			EMPTY = 0,
 			LEFT = 1,
 			RIGHT = 2,
 			MIDDLE = 4,
 			UNKNOWN_BUTTON = 8
 		};
-		virtual int getX() const = 0;
-		virtual int getY() const = 0;
-		virtual MouseEventType getType() const = 0;
-		virtual MouseButtonType getButton() const = 0;
+		virtual int getX() const;
+		virtual int getY() const;
+		virtual MouseEventType getType() const;
+		virtual MouseButtonType getButton() const;
 		virtual ~IMouseEvent();
+	private:
+		MouseEvent();
 	};
 
 	%feature("director") IMouseListener;
 	class IMouseListener {
 	public:
-		virtual void mouseEntered(IMouseEvent& evt) = 0;
-		virtual void mouseExited(IMouseEvent& evt) = 0;
-		virtual void mousePressed(IMouseEvent& evt) = 0;
-		virtual void mouseReleased(IMouseEvent& evt) = 0;
-		virtual void mouseClicked(IMouseEvent& evt) = 0;
-		virtual void mouseWheelMovedUp(IMouseEvent& evt) = 0;
-		virtual void mouseWheelMovedDown(IMouseEvent& evt) = 0;
-		virtual void mouseMoved(IMouseEvent& evt) = 0;
-		virtual void mouseDragged(IMouseEvent& evt) = 0;
+		virtual void mouseEntered(MouseEvent& evt) = 0;
+		virtual void mouseExited(MouseEvent& evt) = 0;
+		virtual void mousePressed(MouseEvent& evt) = 0;
+		virtual void mouseReleased(MouseEvent& evt) = 0;
+		virtual void mouseClicked(MouseEvent& evt) = 0;
+		virtual void mouseWheelMovedUp(MouseEvent& evt) = 0;
+		virtual void mouseWheelMovedDown(MouseEvent& evt) = 0;
+		virtual void mouseMoved(MouseEvent& evt) = 0;
+		virtual void mouseDragged(MouseEvent& evt) = 0;
 		virtual ~IMouseListener();
 	};
 
-	class IWidgetEvent: public IEvent {
+	class WidgetEvent: public Event {
 	public:
-		virtual const std::string& getId() const = 0;
-		virtual ~IWidgetEvent();
+		virtual const std::string& getId();
+		virtual ~WidgetEvent();
+	private:
+		WidgetEvent();
 	};
 
 	%feature("director") IWidgetListener;
 	class IWidgetListener {
 	public:
-		virtual void onWidgetAction(IWidgetEvent& evt) = 0;
+		virtual void onWidgetAction(WidgetEvent& evt) = 0;
 		virtual ~IWidgetListener();
 	};
 
@@ -200,7 +195,7 @@ namespace FIFE {
 		void addWidgetListener(IWidgetListener* listener);
 		void removeWidgetListener(IWidgetListener* listener);
 		EventSourceType getEventSourceType();
-		void dispatchCommand(ICommand& command);
+		void dispatchCommand(Command& command);
 		void setNonConsumableKeys(const std::vector<int>& keys);
 		std::vector<int> getNonConsumableKeys();
 	};

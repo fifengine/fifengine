@@ -28,14 +28,16 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/rect.h"
+#include "util/structures/rect.h"
+#include "video/sdl/sdlimage.h"
+#include "video/renderbackend.h"
 
 #include "glimage.h"
 
 namespace FIFE {
-
 	GLImage::GLImage(SDL_Surface* surface):
 		Image(surface) {
+		m_sdlimage = new SDLImage(surface);
 		resetGlimage();
 	}
 
@@ -45,29 +47,35 @@ namespace FIFE {
 	}
 
 	GLImage::~GLImage() {
+		// remove surface so that deletion happens correctly (by base class destructor)
+		m_sdlimage->detachSurface();
+		delete m_sdlimage;
 		cleanup();
 	}
 
 	void GLImage::resetGlimage() {
-		m_tex_x = 0;
-		m_tex_y = 0;
-		m_textureid = 0;
+		m_last_col_fill_ratio = 0;
+		m_last_row_fill_ratio = 0;
+		m_textureids = NULL;
 		m_rows = 0;
 		m_cols = 0;
 		m_last_col_width = 0;
 		m_last_row_height = 0;
+		m_chunk_size = RenderBackend::instance()->getChunkingSize();
 	}
 	
 	void GLImage::cleanup() {
 		for (unsigned int i = 0; i < m_rows*m_cols; ++i) {
-			glDeleteTextures(1, &m_textureid[i]);
+			glDeleteTextures(1, &m_textureids[i]);
 		}
-		delete[] m_textureid;
+		delete[] m_textureids;
+		m_textureids = NULL;
+		resetGlimage();
 	}
 
 	void GLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
-		if( m_textureid == 0 ) {
-			generateTexture();
+		if (!m_textureids) {
+			generateTextureChunks();
 		}
 
 		if (rect.right() < 0 || rect.x > static_cast<int>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->h)) {
@@ -78,103 +86,111 @@ namespace FIFE {
 			return;
 		}
 
-		float tex_end_x;
-		float tex_end_y;
+		// used to calculate the fill ratio for given chunk
+		float col_fill_ratio;
+		float row_fill_ratio;
 
+		// the amount of "zooming" for the image
 		float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
 		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
-
+		
+		// rectangle used for drawing
 		Rect target;
-		/// setting transparency for whole primitive:
+		// zooming causes scaling sometimes to round pixels incorrectly. Instead of 
+		//  recalculating it all, store the values from previous round and calculate
+		//  new x & y
+		Rect prev;
+		
+		/// setting transparency for the whole primitive:
 		glColor4ub( 255, 255, 255, alpha );
 
 		glEnable(GL_TEXTURE_2D);
 		for (unsigned int i = 0; i < m_cols; ++i) {
+			if (i == m_cols-1) {
+				col_fill_ratio = m_last_col_fill_ratio;
+				target.w = static_cast<int>(round(scale_y*m_last_col_width*m_last_col_fill_ratio));
+			} else {
+				col_fill_ratio = 1.0;
+				target.w = static_cast<int>(round(scale_y*m_chunk_size));
+			}
+			if (i > 0) {
+				target.x = prev.x + prev.w;
+			} else {
+				target.x = rect.x;
+			}
+			
 			for (unsigned int j = 0; j < m_rows; ++j) {
-				glBindTexture(GL_TEXTURE_2D, m_textureid[j*m_cols + i]);
-
-				if (i == m_cols-1) {
-					tex_end_x = m_tex_x;
-				} else {
-					tex_end_x = 1.0;
-				}
 				if (j == m_rows-1) {
-					tex_end_y = m_tex_y;
+					row_fill_ratio = m_last_row_fill_ratio;
+					target.h = static_cast<int>(round(scale_y*m_last_row_height*m_last_row_fill_ratio));
 				} else {
-					tex_end_y = 1.0;
+					row_fill_ratio = 1.0;
+					target.h = static_cast<int>(round(scale_y*m_chunk_size));
 				}
-
-				target.x = rect.x + static_cast<int>(i*256*scale_x);
-				target.y = rect.y + static_cast<int>(j*256*scale_y);
-
-				if (i == m_cols-1) {
-					target.w = static_cast<int>(scale_y*m_last_col_width*m_tex_x);
+				if (j > 0) {
+					target.y = prev.y + prev.h;
 				} else {
-					target.w = static_cast<int>(scale_y*256);
+					target.y = rect.y;
 				}
-				if (j == m_rows-1) {
-					target.h = static_cast<int>(scale_y*m_last_row_height*m_tex_y);
-				} else {
-					target.h = static_cast<int>(scale_y*256);
-				}
-
+				prev = target;
+				
+				glBindTexture(GL_TEXTURE_2D, m_textureids[j*m_cols + i]);
 				glBegin(GL_QUADS);
 					glTexCoord2f(0.0f, 0.0f);
 					glVertex2i(target.x, target.y);
 
-					glTexCoord2f(0.0f, tex_end_y);
+					glTexCoord2f(0.0f, row_fill_ratio);
 					glVertex2i(target.x, target.y + target.h);
 
-					glTexCoord2f(tex_end_x, tex_end_y);
+					glTexCoord2f(col_fill_ratio, row_fill_ratio);
 					glVertex2i(target.x + target.w, target.y + target.h);
 
-					glTexCoord2f(tex_end_x, 0.0f);
+					glTexCoord2f(col_fill_ratio, 0.0f);
 					glVertex2i(target.x + target.w, target.y);
-
 				glEnd();
 			}
 		}
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	void GLImage::generateTexture() {
+	void GLImage::generateTextureChunks() {
 		const unsigned int width = m_surface->w;
 		const unsigned int height = m_surface->h;
 		uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
-		int pitch     = m_surface->pitch;
+		int pitch = m_surface->pitch;
 
 		m_last_col_width = 1;
-		m_cols = static_cast<int>(width/256);
-		if (width%256) {
+		m_cols = static_cast<int>(width/m_chunk_size);
+		if (width%m_chunk_size) {
 			++m_cols;
-			while(m_last_col_width < width%256) {
+			while(m_last_col_width < width%m_chunk_size) {
 				m_last_col_width <<= 1;
 			}
 		} else {
-			m_last_col_width = 256;
+			m_last_col_width = m_chunk_size;
 		}
 
 		m_last_row_height = 1;
-		m_rows = static_cast<int>(height/256);
-		if (height%256) {
+		m_rows = static_cast<int>(height/m_chunk_size);
+		if (height%m_chunk_size) {
 			++m_rows;
-			while(m_last_row_height < height%256) {
+			while(m_last_row_height < height%m_chunk_size) {
 				m_last_row_height <<= 1;
 			}
 		} else {
-			m_last_row_height = 256;
+			m_last_row_height = m_chunk_size;
 		}
 
-		m_textureid = new GLuint[m_rows*m_cols];
-		memset(m_textureid, 0x00, m_rows*m_cols*sizeof(GLuint));
+		m_textureids = new GLuint[m_rows*m_cols];
+		memset(m_textureids, 0x00, m_rows*m_cols*sizeof(GLuint));
 
-		if(width%256) {
-			m_tex_x = static_cast<float>(width%256) / static_cast<float>(m_last_col_width);
-			m_tex_y = static_cast<float>(height%256) / static_cast<float>(m_last_row_height);
+		if(width%m_chunk_size) {
+			m_last_col_fill_ratio = static_cast<float>(width%m_chunk_size) / static_cast<float>(m_last_col_width);
+			m_last_row_fill_ratio = static_cast<float>(height%m_chunk_size) / static_cast<float>(m_last_row_height);
 		}
-		else {  // (width%256) / m_last_col_width == 0 == 256 (mod 256)
-			m_tex_x = 1.0f;
-			m_tex_y = 1.0f;
+		else {  // (width%m_chunk_size) / m_last_col_width == 0 == m_chunk_size (mod m_chunk_size)
+			m_last_col_fill_ratio = 1.0f;
+			m_last_row_fill_ratio = 1.0f;
 		}
 
 		unsigned int chunk_width;
@@ -186,23 +202,23 @@ namespace FIFE {
 			for (unsigned int j = 0; j < m_rows; ++j) {
 				if (i==m_cols-1) {
 					chunk_width = m_last_col_width;
-					data_chunk_width = width%256;
-					if(data_chunk_width == 0) {  // 0 == 256 (mod 256)
-						data_chunk_width = 256;
+					data_chunk_width = width%m_chunk_size;
+					if(data_chunk_width == 0) {  // 0 == m_chunk_size (mod m_chunk_size)
+						data_chunk_width = m_chunk_size;
 					}
 				} else {
-					chunk_width = 256;
-					data_chunk_width = 256;
+					chunk_width = m_chunk_size;
+					data_chunk_width = m_chunk_size;
 				}
 				if (j==m_rows-1) {
 					chunk_height = m_last_row_height;
-					data_chunk_height = height%256;
-					if(data_chunk_height == 0) {  // 0 = 256 (mod 256)
-						data_chunk_height = 256;
+					data_chunk_height = height%m_chunk_size;
+					if(data_chunk_height == 0) {  // 0 = m_chunk_size (mod m_chunk_size)
+						data_chunk_height = m_chunk_size;
 					}
 				} else {
-					chunk_height = 256;
-					data_chunk_height = 256;
+					chunk_height = m_chunk_size;
+					data_chunk_height = m_chunk_size;
 				}
 
 				uint32_t* oglbuffer = new uint32_t[chunk_width * chunk_height];
@@ -210,7 +226,7 @@ namespace FIFE {
 
 				for (unsigned int y = 0;  y < data_chunk_height; ++y) {
 					for (unsigned int x = 0; x < data_chunk_width; ++x) {
-						unsigned int pos = (y + j*256)*pitch + (x + i*256) * 4;
+						unsigned int pos = (y + j*m_chunk_size)*pitch + (x + i*m_chunk_size) * 4;
 
 						// FIXME
 						// The following code might not be endianness correct
@@ -224,47 +240,19 @@ namespace FIFE {
 					}
 				}
 
-				glGenTextures(1, &m_textureid[j*m_cols + i]);
-				glBindTexture(GL_TEXTURE_2D, m_textureid[j*m_cols + i]);
+				// get texture id from opengl
+				glGenTextures(1, &m_textureids[j*m_cols + i]);
+				// set focus on that texture
+				glBindTexture(GL_TEXTURE_2D, m_textureids[j*m_cols + i]);
+				// set filters for texture
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				// transfer data from sdl buffer
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, chunk_width, chunk_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
 
 				delete[] oglbuffer;
 			}
 		}
-	}
-	
-	bool GLImage::putPixel(int x, int y, int r, int g, int b) {
-		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
-			return false;
-		}
-
-		Point p(x, y);
-		drawLine(p, p, r, g, b);
-		return true;
-	}
-	
-	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
-		glColor4ub(r, g, b, 255);
-		glBegin(GL_LINES);
-		glVertex3f(p1.x+0.5f, p1.y+0.5f, 0);
-		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
-		glEnd();
-
-		glBegin(GL_POINTS);
-		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
-		glEnd();
-	}
-	
-	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-	        glColor4ub(r, g, b, 165);
-		glBegin(GL_QUADS);
-		glVertex3f(p1.x, p1.y, 0);
-		glVertex3f(p2.x, p2.y, 0);
-		glVertex3f(p3.x, p3.y, 0);
-		glVertex3f(p4.x, p4.y, 0);
-		glEnd();
 	}
 	
 	void GLImage::saveImage(const std::string& filename) {
@@ -313,5 +301,20 @@ namespace FIFE {
 		if (clear) {
 	        	glClear(GL_COLOR_BUFFER_BIT);
 		}
+	}
+	
+	bool GLImage::putPixel(int x, int y, int r, int g, int b) {
+		cleanup();
+		return m_sdlimage->putPixel(x, y, r, g, b);
+	}
+	
+	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+		cleanup();
+		m_sdlimage->drawLine(p1, p2, r, g, b);
+	}	
+	
+	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+		cleanup();
+		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b);
 	}
 }

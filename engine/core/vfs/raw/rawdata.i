@@ -27,6 +27,7 @@
 %include "vfs/raw/rawdatasource.h"
 
 namespace FIFE {
+	%apply std::string &OUTPUT { std::string& outbuffer };
 	class RawData {
 		public:
 			RawData(RawDataSource* datasource);
@@ -41,14 +42,15 @@ namespace FIFE {
 			void moveIndex(int offset);
 
 			void readInto(uint8_t* buffer, size_t len);
-
 			uint8_t read8();
 			uint16_t read16Little();
 			uint32_t read32Little();
 			uint16_t read16Big();
 			uint32_t read32Big();
 
+			void read(std::string& outbuffer, int size=-1);
 			std::string readString(size_t len);
 			bool getLine(std::string& buffer);
 	};
+	%clear std::string& outbuffer;
 }

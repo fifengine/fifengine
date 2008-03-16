@@ -28,7 +28,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
+#include "util/base/exception.h"
 #include "vfs/vfs.h"
 
 #include "zipprovider.h"
@@ -42,8 +42,7 @@ namespace FIFE {
 			return false;
 
 		// File should exist:
-		VFS* vfs = VFS::instance();
-		if (!vfs->exists(file))
+		if (!getVFS()->exists(file))
 			return false;
 
 		// File should start with the bytes "PK":
@@ -54,7 +53,7 @@ namespace FIFE {
 
 	FIFE::VFSSource* ZipProvider::createSource(const std::string& file) const {
 		if (isReadable(file))
-			return new ZipSource(file);
+			return new ZipSource(getVFS(), file);
 		else
 			throw Exception("File " + file + " is not readable.");
 	}

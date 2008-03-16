@@ -35,16 +35,44 @@
 //
 #include "eventchannel/base/ec_inputevent.h"
 
-#include "ec_imouseevent.h"
-
 namespace FIFE {
-
+	
 	/**  Class for mouse events
 	 */
-	class MouseEvent: public InputEvent, public IMouseEvent {
+	class MouseEvent: public InputEvent {
 	public:
-        /** Constructor.
-         */
+		/**
+		 * Mouse event types.
+		 */
+		enum MouseEventType
+		{
+			UNKNOWN_EVENT = -1,
+			MOVED = 0,
+			PRESSED,
+			RELEASED,
+			WHEEL_MOVED_DOWN,
+			WHEEL_MOVED_UP,
+			CLICKED,
+			ENTERED,
+			EXITED,
+			DRAGGED
+		};
+
+		/**
+		 * Mouse button types.
+		 */
+		enum MouseButtonType
+		{
+			EMPTY = 0,
+			LEFT = 1,
+			RIGHT = 2,
+			MIDDLE = 4,
+			UNKNOWN_BUTTON = 8
+		};
+	
+	
+		/** Constructor.
+		*/
 		MouseEvent(): 
 			InputEvent(), 
 			m_eventtype(UNKNOWN_EVENT),
@@ -52,19 +80,37 @@ namespace FIFE {
 			m_x(-1),
 			m_y(-1) {}
 
-        /** Destructor.
-         */
+		/** Destructor.
+		*/
 		virtual ~MouseEvent() {}
 
+		/**
+		 * Gets the button of the mouse event.
+		 * @return the button of the mouse event.
+		 */
 		MouseButtonType getButton() const { return m_buttontype; }
 		void setButton(MouseButtonType type) { m_buttontype = type; }
 	
+		/**
+		 * Gets the type of the event.
+		 * @return the type of the event.
+		 */
 		MouseEventType getType() const { return m_eventtype; }
 		void setType(MouseEventType type) { m_eventtype = type; }
 	
+		/**
+		 * Gets the x coordinate of the mouse event. The coordinate is relative to
+		 * the source event source. 
+		 * @return the x coordinate of the mouse event.
+		 */
 		int getX() const { return m_x; }
 		void setX(int x) { m_x = x; }
 	
+		/**
+		 * Gets the y coordinate of the mouse event. The coordinate is relative to
+		 * the source event source. 
+		 * @return the y coordinate of the mouse event.
+		 */
 		int getY() const { return m_y; }
 		void setY(int y) { m_y = y; }
 
@@ -101,13 +147,77 @@ namespace FIFE {
 			return  ss.str();
 		}
 
+		/** Returns string representation of given event type
+		*/
+		inline std::string mouseEventType2str(MouseEventType t) const {
+			std::string s("unknown");
+			switch (t) {
+				case MouseEvent::MOVED:
+					s = "moved";
+					break;
+				case MouseEvent::PRESSED:
+					s = "pressed";
+					break;
+				case MouseEvent::RELEASED:
+					s = "released";
+					break;
+				case MouseEvent::WHEEL_MOVED_DOWN:
+					s = "wheel_moved_down";
+					break;
+				case MouseEvent::WHEEL_MOVED_UP:
+					s = "wheel_moved_up";
+					break;
+				case MouseEvent::CLICKED:
+					s = "clicked";
+					break;
+				case MouseEvent::ENTERED:
+					s = "entered";
+					break;
+				case MouseEvent::EXITED:
+					s = "excited";
+					break;
+				case MouseEvent::DRAGGED:
+					s = "dragged";
+					break;
+				default:
+					break;
+			}
+			return s;
+		}
+	
+		/** Returns string representation of given button type
+		*/
+		inline std::string mouseButtonType2str(MouseButtonType t) const {
+			std::string s("unknown");
+			switch (t) {
+				case MouseEvent::EMPTY:
+					s = "empty";
+					break;
+				case MouseEvent::LEFT:
+					s = "left";
+					break;
+				case MouseEvent::RIGHT:
+					s = "right";
+					break;
+				case MouseEvent::MIDDLE:
+					s = "middle";
+					break;
+				default:
+					break;
+			}
+			return s;
+		}
+		
+
 
 	private:
-        MouseEventType m_eventtype;
-        MouseButtonType m_buttontype;
+		MouseEventType m_eventtype;
+		MouseButtonType m_buttontype;
 		int m_x;
  		int m_y;
+ 		
 	};
+	
 } //FIFE
 
 #endif

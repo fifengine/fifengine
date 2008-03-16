@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -24,7 +24,6 @@
 #include <vector> 
 
 // Platform specific includes
-#include "util/fife_unit_test.h"
 
 // 3rd party library includes
 
@@ -32,7 +31,9 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/rect.h"
+#include "util/structures/rect.h"
+
+#include "fife_unit_test.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;

@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/logger.h"
+#include "util/log/logger.h"
 #include "video/renderbackend.h"
 #include "gui/base/gui_imageloader.h"
 #include "gui/base/gui_font.h"
@@ -41,6 +41,8 @@
 #include "video/fonts/truetypefont.h"
 #include "video/fonts/subimagefont.h"
 #include "eventchannel/widget/ec_widgetevent.h"
+#include "eventchannel/key/ec_keyevent.h"
+#include "eventchannel/mouse/ec_mouseevent.h"
 
 #include "guimanager.h"
 
@@ -192,21 +194,21 @@ namespace FIFE {
 		m_widgetlistener->onWidgetAction(wevt);
 	}
 
-	void GUIManager::evaluateKeyEventConsumption(IKeyEvent& evt) {
+	void GUIManager::evaluateKeyEventConsumption(KeyEvent& evt) {
 		gcn::Widget* w = m_focushandler->getFocused();
 		if (w) {
 			evt.consume();
 		}
 	}
 
-	void GUIManager::evaluateMouseEventConsumption(IMouseEvent& evt) {
+	void GUIManager::evaluateMouseEventConsumption(MouseEvent& evt) {
 		gcn::Widget* w = m_gcn_topcontainer->getWidgetAt(evt.getX(), evt.getY());
 		if (w && w->isVisible()) {
 			evt.consume();
 		}
 	}
 
-	void GUIManager::mousePressed(IMouseEvent& evt) {
+	void GUIManager::mousePressed(MouseEvent& evt) {
  		evaluateMouseEventConsumption(evt);
 		if (!evt.isConsumed()) {
 			m_focushandler->focusNone();

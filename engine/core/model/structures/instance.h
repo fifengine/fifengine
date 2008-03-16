@@ -46,12 +46,29 @@ namespace FIFE {
 	class SayInfo;
 	class TimeProvider;
 
-	class InstanceListener {
+	class InstanceActionListener {
 	public:
-		virtual ~InstanceListener() {};
-		virtual void OnActionFinished(Instance* instance, Action* action) = 0;
+		virtual ~InstanceActionListener() {};
+		virtual void onInstanceActionFinished(Instance* instance, Action* action) = 0;
 	};
 
+	enum InstanceChangeType {
+		ICHANGE_NO_CHANGES = 0x0000,
+		ICHANGE_LOC = 0x0001,
+		ICHANGE_FACING_LOC = 0x0002,
+		ICHANGE_SPEED = 0x0004,
+		ICHANGE_ACTION = 0x0008,
+		ICHANGE_TIME_MULTIPLIER = 0x0010,
+		ICHANGE_SAYTEXT = 0x0020,
+	};
+	typedef unsigned int InstanceChangeInfo;
+	
+	class InstanceChangeListener {
+	public:
+		virtual ~InstanceChangeListener() {};
+		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
+	};
+	
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
@@ -81,12 +98,12 @@ namespace FIFE {
 		 *  @note does not return const Location&, since swig wont be const correct
 		 *  @return current location
 		 */
-		Location getLocation() const { return m_cur_location; }
+		Location getLocation() const { return m_location; }
 		
 		/** Gets reference of current location of instance
 		 *  @return reference to current location
 		 */
-		Location& getLocationRef() { return m_cur_location; }
+		Location& getLocationRef() { return m_location; }
 		
 		/** Gets movement target in case instance is moving. In case not, returns current location
 		 *  To move target location, call move-method
@@ -115,16 +132,26 @@ namespace FIFE {
 		 */
 		Location& getFacingLocationRef();
 		
-		/** Adds new instance listener
+		/** Adds new instance action listener
 		 * @param listener to add
 		 */
-		void addListener(InstanceListener* listener);
+		void addActionListener(InstanceActionListener* listener);
 
-		/** Removes associated instance listener
+		/** Removes associated instance action listener
 		 * @param listener to remove
 		 */
-		void removeListener(InstanceListener* listener);
+		void removeActionListener(InstanceActionListener* listener);
 
+		/** Adds new instance change listener
+		 * @param listener to add
+		 */
+		void addChangeListener(InstanceChangeListener* listener);
+
+		/** Removes associated instance change listener
+		 * @param listener to remove
+		 */
+		void removeChangeListener(InstanceChangeListener* listener);
+		
 		/** Gets the currently active action. This is owned by
 		 *  the instance's object, so don't delete it!
 		 * @return current action, NULL in case there is none
@@ -151,10 +178,6 @@ namespace FIFE {
 		 */
 		void move(const std::string& action_name, const Location& target, const double speed);
 
-		/** Returns true, if instance was moved during previous update
-		 */
-		bool isMoved() { return m_cur_location != m_prev_location; }
-		
 		/** Performs given named action to the instance. Performs no movement
 		 *  @param action_name name of the action
 		 *  @param direction coordinates for cell towards instance is heading to when performing the action
@@ -184,8 +207,9 @@ namespace FIFE {
 		 * @param curticks current tick count of the system
 		 * @note call this only once in engine update cycle, so that tracking between
 		 *  current position and previous position keeps in sync.
+		 * @returns marked changes
 		 */
-		void update(unsigned int curticks=0);
+		InstanceChangeInfo update(unsigned int curticks=0);
 		
 		/** Sets visualization to be used. Transfers ownership.
 		 */
@@ -211,29 +235,68 @@ namespace FIFE {
 		 * In this case e.g. instance's master time provider is changed, so it needs to be updated
 		 */
 		void refresh();
-		
+
+		/** Returns a bitmask of changes since previous update
+		 */
+		inline InstanceChangeInfo getChangeInfo();
+
 		std::vector<std::string> listFields() const;
 		const std::string& get(const std::string& field);
 
 	private:
+		/** InstanceActivity gets allocated in case there is some runtime
+		 * activity related to the instance. Keeping activity related variables
+		 * in separate class keeps memory consumption lower e.g. for large tile
+		 * areas.
+		 * Class also keeps track of changes since the previous update call.
+		 * With this bookkeeping, it is possible to optimize several spots in
+		 * the engine, basically only reacting to changes instead of polling.
+		 */
+		class InstanceActivity {
+		public:
+			InstanceActivity(Instance& source);
+			~InstanceActivity();
+			
+			// ----- Fields related to change tracking -----
+			// updates cached variables, marks changes
+			void update(Instance& source);
+			// location on previous round
+			Location m_location;
+			// facing location on previous round
+			Location m_facinglocation;
+			 // action on previous round. @NOTE: might become invalid, only used for address comparison
+			Action* m_action;
+			// speed on previous round
+			double m_speed;
+			// time multiplier on previous round
+			float m_timemultiplier;
+			// say text on previous round
+			std::string m_saytxt;
+			// bitmask stating current changes
+			InstanceChangeInfo m_changeinfo;
+			// listeners for changes
+			std::vector<InstanceChangeListener*> m_changelisteners;
+			
+			// ----- Fields related to generic activity -----
+			// listeners for action related events
+			std::vector<InstanceActionListener*> m_actionlisteners;
+			// action information, allocated when actions are bind
+			ActionInfo* m_actioninfo;
+			// text to say + duration, allocated when something is said
+			SayInfo* m_sayinfo;
+			// time scaler for this instance
+			TimeProvider* m_timeprovider;
+		};
+		InstanceActivity* m_activity;
+		
 		// object where instantiated from
 		Object* m_object;
 		// current location
-		Location m_cur_location;
-		// location on previous round
-		Location m_prev_location;
+		Location m_location;
 		// current facing location. Just a pointer to save space e.g. on tiles
 		Location* m_facinglocation;
-		// action information, allocated when actions are bind
-		ActionInfo* m_actioninfo;
-		// instance listeners. Not allocated right away to save space
-		std::vector<InstanceListener*>* m_listeners;
 		// instance visualization
 		AbstractVisual* m_visual;
-		// text to say + duration, NULL if nothing
-		SayInfo* m_sayinfo;
-		// time scaler for this instance
-		TimeProvider* m_timeprovider;
 		
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);
@@ -247,8 +310,16 @@ namespace FIFE {
 		void calcMovement();
 		// rebinds time provider based on new location
 		void bindTimeProvider();
+		// called when instance has been changed. Causes instance to create InstanceActivity
+		void initializeChanges();
 	};
 
+	inline InstanceChangeInfo Instance::getChangeInfo() {
+		if (m_activity) {
+			return m_activity->m_changeinfo;
+		}
+		return ICHANGE_NO_CHANGES;
+	}
 } // FIFE
 
 #endif

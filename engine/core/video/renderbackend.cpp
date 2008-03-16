@@ -31,8 +31,11 @@
 
 namespace FIFE {
 	
+	const unsigned int DEFAULT_CHUNKING_SIZE = 256;
+	const unsigned int MAX_CHUNKING_SIZE = 262144;  // pixels!
+	
 	RenderBackend::RenderBackend(): 
-		m_screen(NULL), m_isalphaoptimized(false) {
+		m_screen(NULL), m_isalphaoptimized(false), m_chunkingsize(DEFAULT_CHUNKING_SIZE) {
 	}
 
 
@@ -89,21 +92,6 @@ namespace FIFE {
 		m_screen->getPixelRGBA(x, y, r, g, b, a);
 	}
 	
-	bool RenderBackend::putPixel(int x, int y, int r, int g, int b) {
-		assert(m_screen);
-		return m_screen->putPixel(x, y, r, g, b);
-	}
-	
-	void RenderBackend::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
-		assert(m_screen);
-		m_screen->drawLine(p1, p2, r, g, b);
-	}
-	
-	void RenderBackend::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-		assert(m_screen);
-		m_screen->drawQuad(p1, p2, p3, p4, r, g, b);
-	}
-	
 	void RenderBackend::saveImage(const std::string& filename) {
 		assert(m_screen);
 		m_screen->saveImage(filename);
@@ -119,4 +107,17 @@ namespace FIFE {
 		return m_screen->isAlphaOptimizerEnabled();
 	}
 	
+	void RenderBackend::setChunkingSize(unsigned int size) {
+		if (size > MAX_CHUNKING_SIZE) {
+			size = MAX_CHUNKING_SIZE;
+		}
+		m_chunkingsize = 1;
+		while (m_chunkingsize < size) {
+			m_chunkingsize <<= 1;
+		}
+	}
+	
+	unsigned int RenderBackend::getChunkingSize() {
+		return m_chunkingsize;
+	}
 }

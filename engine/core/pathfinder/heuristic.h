@@ -32,7 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
-#include "util/singleton.h"
+#include "util/base/singleton.h"
 
 namespace FIFE {
 	class Heuristic {

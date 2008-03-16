@@ -27,7 +27,6 @@
 
 // 3rd party library includes
 //
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -35,8 +34,9 @@
 // Second block: files included from the same folder
 //
 
-namespace FIFE {
+union SDL_Event;
 
+namespace FIFE {
 	/**  Listener of SDL events.
 	 * To be able to listen for commands you must make a class which inherits 
 	 * from this class and implements the onSdlEvent function.

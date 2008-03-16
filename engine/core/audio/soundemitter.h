@@ -32,19 +32,21 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/singleton.h"
 #include "vfs/raw/rawdata.h"
 #include "util/time/timeevent.h"
 
 #include "soundclip.h"
 
 namespace FIFE {
+
+	class SoundManager;
+	class SoundClipPool;
 	
 	/** The class for playing audio files
 	 */
 	class SoundEmitter : private TimeEvent {
 	public:
-		SoundEmitter(unsigned int uid);
+		SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid);
 		
 		~SoundEmitter();
 		
@@ -63,20 +65,11 @@ namespace FIFE {
 		void setPositioning(bool relative) {
 			alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
 		}
-		
-		/** Loads an audio file
-		 *
-		 * @param filename The filename of the to be loaded audio file.
-		 * @return true on success, false on failure
+
+		/** Sets the sound clip to be used by this emitter.
+		 * @param sound_id SoundClipPool id of the sound to be used.
 		 */
-		bool load(const std::string &filename);
-		
-		/** Loads audio data using a specified decoder
-		 * This does not transfer the ownership of the decoder
-		 * 
-		 * @return true on success, false on failure
-		 */
-		bool load(SoundDecoder* decoder);
+		void setSoundClip(unsigned int sound_id);
 		
 		/** Reset the emitter, free all internal buffers
 		 *  
@@ -183,7 +176,9 @@ namespace FIFE {
 		/** Internal function to attach a soundclip to the source
 		 */
 		void attachSoundClip();
-		
+
+		SoundManager*       m_manager;
+		SoundClipPool*			m_pool;
 		ALuint							m_source;			// The openAL-source
 		SoundClip*					m_soundclip;	// the attached soundclip
 		unsigned int				m_soundclipid;// id of the attached soundclip

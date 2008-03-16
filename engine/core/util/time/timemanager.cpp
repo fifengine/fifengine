@@ -30,7 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/logger.h"
+#include "util/log/logger.h"
 
 #include "timeevent.h"
 #include "timemanager.h"
@@ -50,7 +50,7 @@ namespace FIFE {
 
 	void TimeManager::update() {
 		// if first update...
-		double avg_multiplier = 0.95;
+		double avg_multiplier = 0.985;
 		if (m_current_time == 0) {
 			m_current_time = SDL_GetTicks();
 			avg_multiplier = 0;

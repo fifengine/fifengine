@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from swig_test_utils import *
+from serializers.xmlanimation import XMLAnimationLoader
 
 class TestPool(unittest.TestCase):
 	
@@ -27,6 +28,9 @@ class TestPool(unittest.TestCase):
 
 	def testAnimationPool(self):
 		pool = self.engine.getAnimationPool()
+		animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
+		pool.addResourceLoader(animationloader)
+		
 		self.assert_(pool)
 		self.assert_(pool.getResourceCount(fife.RES_LOADED) == 0)
 		id = pool.addResourceFromFile('tests/data/wolf_walk/wolf_walk_sw.xml')
@@ -38,8 +42,11 @@ class TestPool(unittest.TestCase):
 
 	def testAnimationPoolFail(self):
 		pool = self.engine.getAnimationPool()
+		animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
+		pool.addResourceLoader(animationloader)
+		
 		id = pool.addResourceFromFile('bogus_animation.xml')
-		self.assertRaises(fife.NotFound,pool.getAnimation,id)
+		self.assertRaises(fife.Exception, pool.getAnimation, id)
 
 TEST_CLASSES = [TestPool]
 

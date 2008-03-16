@@ -28,7 +28,7 @@
 #include <vector>
 
 // Platform specific includes
-#include "util/fife_stdint.h"
+#include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 
@@ -36,7 +36,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/pooled_resource.h"
+#include "util/base/resourceclass.h"
 
 namespace FIFE {
 
@@ -50,7 +50,7 @@ namespace FIFE {
 	 * animation user to query frames based on current timestamp and show
 	 * returned images on screen.
 	 */
-	class Animation: public IPooledResource {
+	class Animation : public ResourceClass {
 	public:
 		/** Constructor.
 		 */ 
@@ -59,6 +59,12 @@ namespace FIFE {
 		/** Destructor. Decreases the reference count of all referred images.
 		 */
 		~Animation();
+
+		//TODO: fill in these stubs! Note, m_location is not properly initialized.
+		virtual const ResourceLocation& getResourceLocation()  { return m_location; }
+
+		virtual void setResourceLocation(const ResourceLocation& location)  { }
+		virtual void setResourceFile(const std::string& filename) { }
 
 		/** Adds new frame into animation
 		 * Frames must be added starting from first frame. Increases the reference
@@ -133,6 +139,8 @@ namespace FIFE {
 			unsigned int duration;
 			Image* img;
 		};
+
+		ResourceLocation m_location;
 
 		/** Checks for animation frame index overflows
 		 */

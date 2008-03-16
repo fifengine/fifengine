@@ -139,6 +139,8 @@ namespace FIFE {
 		// image used during previous render
 		Image* image;
 		
+		// current facing angle 
+		int facing_angle;
 	private:
 		int m_cached_static_img_id;
 		int m_cached_static_img_angle;
@@ -171,7 +173,7 @@ namespace FIFE {
 		/** Get camera specific cache item for the visual
 		 *  @return cache item
 		 */
-		InstanceVisualCacheItem& getCacheItem(Camera* cam);
+		inline InstanceVisualCacheItem& getCacheItem(Camera* cam) { return m_cache[cam]; }
 		
 	private:
 		/** Constructor

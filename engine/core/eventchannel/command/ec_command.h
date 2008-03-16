@@ -34,8 +34,6 @@
 // Second block: files included from the same folder
 //
 #include "eventchannel/base/ec_event.h"
-
-#include "ec_icommand.h"
 #include "ec_commandids.h"
 
 namespace FIFE {
@@ -43,22 +41,28 @@ namespace FIFE {
 	/**  Class for commands
 	 * Commands are arbitrary events e.g. send from one subsystem to another
 	 */
-	class Command: public Event, public ICommand {
+	class Command: public Event {
 	public:
-        /** Constructor.
-         */
+		/** Constructor.
+		 */
 		Command(): 
 			Event(),
 			m_commandtype(CMD_UNKNOWN), 
 			m_code(0) {}
 
-        /** Destructor.
-         */
+		/** Destructor.
+		 */
 		virtual ~Command() {}
 
+		/** Gets the type of this command
+		 * @return type of this command
+		 */
 		CommandType getCommandType() { return m_commandtype; }
 		void setCommandType(CommandType type) { m_commandtype = type; }
 
+		/** Gets the code of this command. Meaning of code depends on the command type
+		 * @return code of this command
+		 */
 		int getCode() { return m_code; }
 		void setCode(int code) { m_code = code; }
 

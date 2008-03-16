@@ -31,7 +31,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "view/rendererbase.h"
-#include "util/quadtree.h"
+#include "util/structures/quadtree.h"
 
 namespace FIFE {
 	class RenderBackend;
@@ -54,6 +54,10 @@ namespace FIFE {
 			 * @param renderbackend to use
 			 */
 			QuadTreeRenderer(RenderBackend* renderbackend, int position);
+			
+			QuadTreeRenderer(const QuadTreeRenderer& old);
+			
+			RendererBase* clone();
 
 			/** Destructor.
 			 */

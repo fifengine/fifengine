@@ -47,7 +47,7 @@ namespace FIFE {
 			 * Creates the given file system's VFS Source, Uses boost_filesystem to
 			 * achieve Plattform independancy.
 			 */
-			VFSDirectory(const std::string& root = "./");
+			VFSDirectory(VFS* vfs, const std::string& root = "./");
 			/** Destructor
 			 */
 			virtual ~VFSDirectory();

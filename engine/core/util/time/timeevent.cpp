@@ -34,7 +34,6 @@
 namespace FIFE {
 
 	TimeEvent::TimeEvent(int period):
-		FifeClass(),
 		m_period(period),
 		m_last_updated(SDL_GetTicks()) {
 	}

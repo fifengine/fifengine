@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 //
+#include <map>
 
 // 3rd party library includes
 //
@@ -32,6 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/fife_stdint.h"
 #include "vfs/vfssource.h"
 
 namespace FIFE {
@@ -40,23 +42,36 @@ namespace FIFE {
 	 * @see FIFE::VFSSource
 	 */
 	class ZipSource : public VFSSource {
-	public:
-		ZipSource(const std::string& zip_file);
-		~ZipSource();
+		public:
+			ZipSource(VFS* vfs, const std::string& zip_file);
+			~ZipSource();
 
-		/// WARNING: fileExists, listFiles and listDirectories are not
-		// thread-safe, and will probably break if called from multiple
-		// threads at the same time.
-		bool fileExists(const std::string& file) const;
-		RawData* open(const std::string& file) const;
-		std::set<std::string> listFiles(const std::string& path) const;
-		std::set<std::string> listDirectories(const std::string& path) const;
+			/// WARNING: fileExists, listFiles and listDirectories are not
+			// thread-safe, and will probably break if called from multiple
+			// threads at the same time.
+			bool fileExists(const std::string& file) const;
+			std::set<std::string> listFiles(const std::string& path) const;
+			std::set<std::string> listDirectories(const std::string& path) const;
 
-	private:
-		// PImpl pattern, so the users of this header don't need to know
-		// about minizip.
-		struct zip_data_t;
-		struct zip_data_t* m_data;
+			virtual RawData* open(const std::string& path) const;
+
+		private:
+			struct s_data {
+					uint16_t comp;
+					uint32_t crc32;
+					std::string path;
+					unsigned int size_comp;
+					unsigned int size_real;
+					unsigned int offset;
+				};
+
+			typedef std::map<std::string, s_data> type_files;
+
+			RawData* m_zipfile;
+			type_files m_files;
+
+			void readIndex();
+			bool readFileToIndex();
 	};
 
 } //FIFE

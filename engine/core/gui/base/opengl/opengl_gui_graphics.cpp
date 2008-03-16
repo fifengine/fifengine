@@ -32,7 +32,7 @@
 // First block: files included from the FIFE root src dir
 #include "video/image.h"
 #include "gui/base/gui_image.h"
-#include "util/rect.h"
+#include "util/structures/rect.h"
 
 #include "opengl_gui_graphics.h"
 

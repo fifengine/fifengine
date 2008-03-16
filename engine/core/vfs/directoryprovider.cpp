@@ -28,7 +28,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
+#include "util/base/exception.h"
 #include "vfs/vfs.h"
 
 #include "directoryprovider.h"
@@ -36,12 +36,12 @@
 
 namespace FIFE {
 	bool DirectoryProvider::isReadable(const std::string& path) const {
-		return VFS::instance()->isDirectory(path);
+		return getVFS()->isDirectory(path);
 	}
 
 	FIFE::VFSSource* DirectoryProvider::createSource(const std::string& path) const {
 		if (isReadable(path))
-			return new VFSDirectory(path);
+			return new VFSDirectory(getVFS(), path);
 		else
 			throw Exception("Path " + path + " is not readable.");
 	}

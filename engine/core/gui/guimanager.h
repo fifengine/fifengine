@@ -32,7 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/singleton.h"
+#include "util/base/singleton.h"
 #include "eventchannel/sdl/ec_isdleventlistener.h"
 #include "eventchannel/mouse/ec_imouselistener.h"
 #include "eventchannel/key/ec_ikeylistener.h"
@@ -54,8 +54,8 @@ namespace FIFE {
 	class ImagePool;
 	class GuiImageLoader;
 	class Console;
-	class IKeyEvent;
-	class IMouseEvent;
+	class KeyEvent;
+	class MouseEvent;
 	class AbstractFont;
 	class GuiFont;
 
@@ -142,21 +142,21 @@ namespace FIFE {
 			void action(const gcn::ActionEvent & event);
 
 			void onSdlEvent(SDL_Event& evt);
-			void keyPressed(IKeyEvent& evt) { evaluateKeyEventConsumption(evt); }
-			void keyReleased(IKeyEvent& evt) { evaluateKeyEventConsumption(evt); }
-			void mouseEntered(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseExited(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mousePressed(IMouseEvent& evt);
-			void mouseReleased(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseClicked(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseWheelMovedUp(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseWheelMovedDown(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseMoved(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseDragged(IMouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void keyPressed(KeyEvent& evt) { evaluateKeyEventConsumption(evt); }
+			void keyReleased(KeyEvent& evt) { evaluateKeyEventConsumption(evt); }
+			void mouseEntered(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseExited(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mousePressed(MouseEvent& evt);
+			void mouseReleased(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseClicked(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseWheelMovedUp(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseWheelMovedDown(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseMoved(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
+			void mouseDragged(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
 
 		private:
-			void evaluateKeyEventConsumption(IKeyEvent& evt);
-			void evaluateMouseEventConsumption(IMouseEvent& evt);
+			void evaluateKeyEventConsumption(KeyEvent& evt);
+			void evaluateMouseEventConsumption(MouseEvent& evt);
 
 			// The Guichan GUI.
 			gcn::Gui* m_gcn_gui;

@@ -31,10 +31,8 @@
 #include "video/image.h"
 #include "video/imagepool.h"
 #include "video/fonts/abstractfont.h"
-#include "util/logger.h"
-
-#include "util/fife_math.h"
-#include "util/logger.h"
+#include "util/math/fife_math.h"
+#include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/action.h"
 #include "model/structures/instance.h"
@@ -58,9 +56,20 @@ namespace FIFE {
 		setEnabled(false);
 	}
 
+ 	CoordinateRenderer::CoordinateRenderer(const CoordinateRenderer& old):
+		m_layer_area(),
+		m_tmploc(),
+		m_c(),
+		m_font(old.m_font) {
+		setEnabled(false);
+	}
+	
 	CoordinateRenderer::~CoordinateRenderer() {
 	}
 
+	RendererBase* CoordinateRenderer::clone() {
+		return new CoordinateRenderer(*this);
+	}
 
 	void CoordinateRenderer::adjustLayerArea() {
 		m_tmploc.setMapCoordinates(m_c);

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -24,7 +24,6 @@
 #include <iomanip>
 
 // Platform specific includes
-#include "util/fife_unit_test.h"
 
 // 3rd party library includes
 
@@ -34,9 +33,11 @@
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
-#include "loaders/fallout/vfs_loaders/dat1.h"
+#include "vfs/dat/dat1.h"
 #include "vfs/raw/rawdata.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
+
+#include "fife_unit_test.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;
@@ -50,14 +51,14 @@ void test_decoder() {
 BOOST_AUTO_TEST_CASE( DAT1_test ) {
 #endif
 	boost::shared_ptr<VFS> vfs(new VFS());
-	vfs->addSource(new VFSDirectory());
+	vfs->addSource(new VFSDirectory(vfs.get()));
 
 	if ((!vfs->exists(COMPRESSED_FILE))) {
 		BOOST_ERROR("Test source " << COMPRESSED_FILE << " not found");
 		return;
 	}
 
-	vfs->addSource(new DAT1(COMPRESSED_FILE));
+	vfs->addSource(new DAT1(vfs.get(), COMPRESSED_FILE));
 
 	if ((!vfs->exists(RAW_FILE)) || (!vfs->exists("dat1vfstest.map"))) {
 		BOOST_ERROR("Test files not found");

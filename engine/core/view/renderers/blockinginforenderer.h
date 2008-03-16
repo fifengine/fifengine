@@ -42,7 +42,11 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 */
 		BlockingInfoRenderer(RenderBackend* renderbackend, int position);
+		
+		BlockingInfoRenderer(const BlockingInfoRenderer& old);
 
+		RendererBase* clone();
+		
 		/** Destructor.
 		 */
 		virtual ~BlockingInfoRenderer();

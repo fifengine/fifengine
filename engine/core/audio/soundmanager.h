@@ -33,15 +33,14 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-
 #include "soundemitter.h"
 #include "soundclippool.h"
 
 namespace FIFE {
-	class SoundManager : public DynamicSingleton<SoundManager> {
+	class SoundManager {
 	public:
 	
-		SoundManager();
+		SoundManager(SoundClipPool* pool);
 		
 		~SoundManager();
 		
@@ -111,12 +110,6 @@ namespace FIFE {
 		 */
 		void setListenerVelocity(float x, float y, float z);
 		
-		/** Returns the SoundClip-Pool
-		 */
-		SoundClipPool& getSoundClipPool() {
-			return m_pool;
-		}
-
 		/** Returns true if audio module is active
 		 */
 		bool isActive() {
@@ -128,7 +121,7 @@ namespace FIFE {
 		std::vector<SoundEmitter*> m_emittervec;	// emitter-vector
 		ALCcontext*						m_context; 		// OpenAL context
 		ALCdevice*						m_device; 		// OpenAL device
-		SoundClipPool					m_pool;
+		SoundClipPool*				m_pool;
 		float								m_mutevol;		// volume before mute() was called
 		float								m_volume;		// volume to support setVolume-calls before initialization
 	};

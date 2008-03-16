@@ -29,18 +29,19 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/logger.h"
+#include "util/log/logger.h"
 #include "util/time/timemanager.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
 
 #include "soundmanager.h"
+#include "soundclippool.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 	
-	SoundEmitter::SoundEmitter(unsigned int uid) : m_source(0), m_soundclip(NULL), m_soundclipid(0), m_streamid(0),
+	SoundEmitter::SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid) : m_manager(manager), m_pool(pool), m_source(0), m_soundclip(NULL), m_soundclipid(0), m_streamid(0),
 															m_emitterid(uid), m_loop(false) {
-		if (!SoundManager::instance()->isActive()) {
+		if (!m_manager->isActive()) {
 			return;
 		}
 
@@ -52,7 +53,7 @@ namespace FIFE {
 	}
 		
 	SoundEmitter::~SoundEmitter() {
-		if (!SoundManager::instance()->isActive()) {
+		if (!m_manager->isActive()) {
 			return;
 		}
 
@@ -77,7 +78,7 @@ namespace FIFE {
 			}
 			
 			// release the soundclip
-			SoundManager::instance()->getSoundClipPool().release(m_soundclipid, true);
+			m_pool->release(m_soundclipid, true);
 			m_soundclip = NULL;
 			
 			// default source properties
@@ -92,34 +93,15 @@ namespace FIFE {
 	}
 
 	void SoundEmitter::release() {
-		SoundManager::instance()->releaseEmitter(m_emitterid);
+		m_manager->releaseEmitter(m_emitterid);
 	}
 	
-	bool SoundEmitter::load(const std::string &filename) {
-		if (!SoundManager::instance()->isActive()) {
-			return false;
-		}
-		reset();
-		
-		// get the soundclip
-		m_soundclipid = SoundManager::instance()->getSoundClipPool().getIndex(filename);
-		m_soundclip = &(SoundManager::instance()->getSoundClipPool().getSoundClip(m_soundclipid));
+	void SoundEmitter::setSoundClip(unsigned int sound_id) {
+		m_soundclipid = sound_id;
+		m_soundclip = &(m_pool->getSoundClip(m_soundclipid));
 		m_soundclip->addRef();
 		
 		attachSoundClip();
-		return true;
-	}
-
-	bool SoundEmitter::load(SoundDecoder* decoder) {
-		if (!SoundManager::instance()->isActive() || decoder == NULL) {
-			return false;
-		}
-		reset();
-
-		m_soundclip = new SoundClip(decoder, false);
-
-		attachSoundClip();
-		return true;
 	}
 
 	void SoundEmitter::attachSoundClip() {

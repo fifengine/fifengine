@@ -35,7 +35,7 @@
 #include "model/metamodel/abstractpather.h"
 #include "model/structures/location.h"
 #include "model/structures/map.h"
-#include "util/priorityqueue.h"
+#include "util/structures/priorityqueue.h"
 
 namespace FIFE {
 

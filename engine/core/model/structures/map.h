@@ -32,7 +32,9 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/attributedclass.h"
+#include "util/base/attributedclass.h"
+#include "util/base/resourceclass.h"
+#include "util/resource/resource.h"
 #include "model/metamodel/timeprovider.h"
 
 #include "location.h"
@@ -41,16 +43,41 @@ namespace FIFE {
 
 	class Layer;
 	class CellGrid;
+	class Map;
 
-	class Dataset;
+	/** Listener interface for changes happening on map
+	 */
+	class MapChangeListener {
+	public:
+		virtual ~MapChangeListener() {};
+		
+		/** Called when some layer is changed on map. @see LayerChangeListener
+		 * Layer is effectively changed, in case some of its instances
+		 * is created, deleted or changed during latest update cycle
+		 * @param map where change occurred
+		 * @param changedLayers list of layers containing some changes
+		 * @note Does not report layer creations and deletions
+		 */
+		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) = 0;
+		
+		/** Called when some layer gets created on the map
+		 * @param map where change occurred
+		 * @param layer which got created
+		 */
+		virtual void onLayerCreate(Map* map, Layer* layer) = 0;
+		
+		/** Called when some instance gets deleted on layer
+		 * @param map where change occurred
+		 * @param layer which will be deleted
+		 * @note right after this call, layer actually gets deleted!
+		 */
+		virtual void onLayerDelete(Map* map, Layer* layer) = 0;
+	};
 
 	/** A container of \c Layer(s).
 	 *
 	 * The actual data is contained in \c Layer objects
-	 *
 	 * @see Layer
-	 * @see MapView
-	 * @see MapLoader
 	 */
 	class Map : public AttributedClass {
 		public:
@@ -64,19 +91,6 @@ namespace FIFE {
 			/** Destructor
 			 */
 			~Map();
-
-			/** Adds dataset into map. Does not transfer ownership
-			 */
-			void addDataset(Dataset* dataset);
-
-			/** Get the datasets used by this map.
-			 */
-			std::list<Dataset*> getDatasets();
-
-			/** Get the datasets used by this map, and recursively get any
-			 * datasets referred to by these datasets.
-			 */
-			std::list<Dataset*>  getDatasetsRec();
 
 			/** Add a Layer to this Map. Map owns
 			 * the returned pointer to the new Layer, so don't
@@ -117,8 +131,9 @@ namespace FIFE {
 				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
 
 			/** Called periodically to update events on map
+			 * @returns true, if map was changed
 			 */
-			void update();
+			bool update();
 			
 			/** Sets speed for the map. See Model::setTimeMultiplier.
 			 */
@@ -131,15 +146,47 @@ namespace FIFE {
 			/** Gets timeprovider used in the map
 			 */
 			TimeProvider* getTimeProvider() { return &m_timeprovider; }
+			
+			/** Adds new change listener
+			* @param listener to add
+			*/
+			void addChangeListener(MapChangeListener* listener);
+	
+			/** Removes associated change listener
+			* @param listener to remove
+			*/
+			void removeChangeListener(MapChangeListener* listener);
+			
+			/** Returns true, if map information was changed during previous update round
+			*/
+			bool isChanged() { return !m_changedlayers.empty(); }
+
+			/** Returns layers that were changed during previous update round
+			*/
+			std::vector<Layer*>& getChangedLayers() { return m_changedlayers; }
 
 		private:
 			std::string m_mapname;
-			std::vector<Dataset*> m_datasets;
 			std::vector<Layer*> m_layers;
 			TimeProvider m_timeprovider;
-			
+
 			Map(const Map& map);
 			Map& operator=(const Map& map);
+	
+			// listeners for map changes
+			std::vector<MapChangeListener*> m_changelisteners;
+
+			// holds changed layers after each update
+			std::vector<Layer*> m_changedlayers;
+			
+			// true, if something was changed on map during previous update (layer change, creation, deletion)
+			bool m_changed;
+	};
+
+	class MapLoader : public ResourceLoader {
+	public:
+		Map* load(const ResourceLocation& location) { return dynamic_cast<Map*>(load(location)); }
+		Map* load(const std::string& filename) { return load(ResourceLocation(filename)); }
 	};
 
 } //FIFE

@@ -32,7 +32,7 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "vfs/raw/rawdatafile.h"
-#include "util/logger.h"
+#include "util/log/logger.h"
 
 #include "vfsdirectory.h"
 
@@ -40,7 +40,7 @@ namespace bfs = boost::filesystem;
 namespace FIFE {
 	static Logger _log(LM_VFS);
 
-	VFSDirectory::VFSDirectory(const std::string& root) : m_root(root) {
+	VFSDirectory::VFSDirectory(VFS* vfs, const std::string& root) : VFSSource(vfs), m_root(root) {
 		std::transform(m_root.begin(), m_root.end(), m_root.begin(), tolower);
 		FL_DBG(_log, LMsg("VFSDirectory created with root path ") << m_root);
 		if(!m_root.empty() && *(m_root.end() - 1) != '/')

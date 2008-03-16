@@ -26,7 +26,7 @@
 #include <string>
 
 // Platform specific includes
-#include "util/fife_stdint.h"
+#include "util/base/fife_stdint.h"
 
 // 3rd party library includes
 #include <SDL.h>
@@ -36,9 +36,9 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/singleton.h"
-#include "util/point.h"
-#include "util/rect.h"
+#include "util/base/singleton.h"
+#include "util/structures/point.h"
+#include "util/structures/rect.h"
 
 #include "image.h"
 
@@ -119,9 +119,6 @@ namespace FIFE {
 		unsigned int getScreenHeight() const { return getHeight(); }
 		const Rect& getArea();
 		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
- 		bool putPixel(int x, int y, int r, int g, int b);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;
@@ -129,9 +126,18 @@ namespace FIFE {
 		bool isAlphaOptimizerEnabled();
 		void saveImage(const std::string& filename);
 
+		/** OpenGL image needs to be sliced into power of two sized chunks. 
+		 * You can adjust the size by calling this method.
+		 * Size can be anything (reasonable), it is always changed to the next biggest power of two value
+		 * @example values 50 -> 64, 340 -> 512
+		 */
+		void setChunkingSize(unsigned int size);
+		unsigned int getChunkingSize();
+
 	protected:
 		Image* m_screen;
 		bool m_isalphaoptimized;
+		unsigned int m_chunkingsize;
 	};
 }
 

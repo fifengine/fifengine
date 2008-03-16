@@ -34,7 +34,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
-#include "util/attributedclass.h"
+#include "util/base/attributedclass.h"
 #include "model/metamodel/object.h"
 
 #include "instance.h"
@@ -59,39 +59,35 @@ namespace FIFE {
 		FREEFORM
 	};
 	
+	/** Listener interface for changes happening on a layer
+	 */
+	class LayerChangeListener {
+	public:
+		virtual ~LayerChangeListener() {};
+		
+		/** Called when some instance is changed on layer. @see InstanceChangeType
+		 * @param layer where change occurred
+		 * @param changedInstances list of instances containing some changes
+		 * @note Does not report creations and deletions
+		 */
+		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& changedInstances) = 0;
+		
+		/** Called when some instance gets created on layer
+		 * @param layer where change occurred
+		 * @param instance which got created
+		 */
+		virtual void onInstanceCreate(Layer* layer, Instance* instance) = 0;
+		
+		/** Called when some instance gets deleted on layer
+		 * @param layer where change occurred
+		 * @param instance which will be deleted
+		 * @note right after this call, instance actually gets deleted!
+		 */
+		virtual void onInstanceDelete(Layer* layer, Instance* instance) = 0;
+	};
+	
+	
 	/** A basic layer on a map
-	 *
-	 * @bug These comments are very outdated!
-	 *
-	 * This class represents a layer on the Map.
-	 * This can be for example a Tile layer 
-	 * as the roofs and floors of a fo2 map
-	 * but can also just contain "objects"
-	 * on Layer coords.
-	 * 
-	 * The tiles are *not* allways created only on
-	 * a first "setTileGID".
-	 * 
-	 * The most important features of this class are
-	 * "cellgrid", "shift" and "size":
-	 *
-	 * The cellgrid is used to position objects on this
-	 * Layer and the Tiles too.
-	 *
-	 * The shift is added to all screen coords and
-	 * will create the illusion of a height-difference :-)
-	 *
-	 * The size simply is the maximum allowd size in Layer
-	 * coords this Layer covers.
-	 * 
-	 * @bug The parameter code is untested, be warned.
-	 * @bug setTileGID and setParam behave differently on invalid positions.
-	 *
-	 * Attributes: 
-	 * 
-	 * Future:
-	 * 	Connections between Layers to walk through (Elevators...)
-	 * Grouping of Layers (These Layers are roofs ... etc)
 	 */
 	class Layer : public AttributedClass {
 		public:
@@ -178,8 +174,9 @@ namespace FIFE {
 			bool areInstancesVisible() const { return m_instances_visibility; }
 
 			/** Called periodically to update events on layer
+			 * @returns true if layer was changed since the last update, false otherwise
 			 */
-			void update();
+			bool update();
 			
 			/** Sets pathing strategy for the layer
 			 * @see PathingStrategy
@@ -190,6 +187,25 @@ namespace FIFE {
 			 * @see PathingStrategy
 			 */
 			PathingStrategy getPathingStrategy() const { return m_pathingstrategy; }
+			
+			/** Adds new change listener
+			* @param listener to add
+			*/
+			void addChangeListener(LayerChangeListener* listener);
+	
+			/** Removes associated change listener
+			* @param listener to remove
+			*/
+			void removeChangeListener(LayerChangeListener* listener);
+			
+			/** Returns true, if layer information was changed during previous update round
+			*/
+			bool isChanged() { return m_changed; }
+			
+			/** Returns instances that were changed during previous update round.
+			 * @note does not contain created or deleted instances
+			 */
+			std::vector<Instance*>& getChangedInstances() { return m_changedinstances; }
 
 		protected:
 			Map* m_map;
@@ -207,6 +223,15 @@ namespace FIFE {
 			
 			// pathing strategy for the layer
 			PathingStrategy m_pathingstrategy;
+			
+			// listeners for layer changes
+			std::vector<LayerChangeListener*> m_changelisteners;
+			
+			// holds changed instances after each update
+			std::vector<Instance*> m_changedinstances;
+			
+			// true if layer (or it's instance) information was changed during previous update round
+			bool m_changed;
 	};
 
 } // FIFE

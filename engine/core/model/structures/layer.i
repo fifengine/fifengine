@@ -7,8 +7,8 @@
 
 %include "model/metamodel/modelcoords.i"
 %include "model/metamodel/grids/cellgrids.i"
-%include "util/point.i"
-%include "util/attributedclass.i"
+%include "util/structures/utilstructures.i"
+%include "util/base/utilbase.i"
 
 namespace FIFE {
 
@@ -23,6 +23,16 @@ namespace FIFE {
 		CELL_EDGES_AND_DIAGONALS,
 		FREEFORM
 	};	
+
+	%feature("director") LayerChangeListener;
+	class LayerChangeListener {
+	public:
+		virtual ~LayerChangeListener() {};
+		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& changedInstances) = 0;
+		virtual void onInstanceCreate(Layer* layer, Instance* instance) = 0;
+		virtual void onInstanceDelete(Layer* layer, Instance* instance) = 0;
+	};
+	
 
 	class Layer : public AttributedClass {
 		public:
@@ -44,9 +54,12 @@ namespace FIFE {
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;
 
-			void update();
-			
 			void setPathingStrategy(PathingStrategy strategy);
 			PathingStrategy getPathingStrategy();
+			
+			void addChangeListener(LayerChangeListener* listener);
+			void removeChangeListener(LayerChangeListener* listener);
+			bool isChanged();
+			std::vector<Instance*>& getChangedInstances();
 	};
 }

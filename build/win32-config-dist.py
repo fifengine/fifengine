@@ -18,7 +18,3 @@ def addExtras(context):
 	if context.env['opengl']:
 		context.env.Prepend(LIBS = ['libguichan_opengl'])
 		context.env.Append(LIBS = ['opengl32', 'glu32'])
-
-	if context.env['zip']:
-		context.env.Append(CPPPATH = [includepath + '\\libminizip'])
-		context.env.Prepend(LIBS = ['libminizip'])

@@ -35,7 +35,6 @@
 namespace FIFE {
 	class RenderBackend;
 	class AbstractFont;
-	class View;
 
 	class FloatingTextRenderer: public RendererBase {
 	public:
@@ -45,6 +44,10 @@ namespace FIFE {
 		 * @param font default font used to render the texts
 		 */
 		FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		
+		FloatingTextRenderer(const FloatingTextRenderer& old);
+		
+		RendererBase* clone();
 
 		/** Destructor.
 		 */
@@ -61,7 +64,7 @@ namespace FIFE {
 		
 		/** returns instance used in given view
 		 */
-		static FloatingTextRenderer* getInstance(View* view);
+		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
 		AbstractFont* m_font;

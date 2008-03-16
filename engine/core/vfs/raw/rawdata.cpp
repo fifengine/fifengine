@@ -30,8 +30,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/logger.h"
+#include "util/base/exception.h"
+#include "util/log/logger.h"
 
 #include "rawdata.h"
 
@@ -98,26 +98,26 @@ namespace FIFE {
 	}
 
 	uint8_t RawData::read8() {
-		return read<uint8_t>();
+		return readSingle<uint8_t>();
 	}
 
 	uint16_t RawData::read16Little() {
-		uint16_t val = read<uint16_t>();
+		uint16_t val = readSingle<uint16_t>();
 		return littleToHost(val);
 	}
 
 	uint32_t RawData::read32Little() {
-		uint32_t val = read<uint32_t>();
+		uint32_t val = readSingle<uint32_t>();
 		return littleToHost(val);
 	}
 
 	uint16_t RawData::read16Big() {
-		uint16_t val = read<uint16_t>();
+		uint16_t val = readSingle<uint16_t>();
 		return bigToHost(val);
 	}
 
 	uint32_t RawData::read32Big() {
-		uint32_t val = read<uint32_t>();
+		uint32_t val = readSingle<uint32_t>();
 		return bigToHost(val);
 	}
 
@@ -129,6 +129,23 @@ namespace FIFE {
 		delete [] str;
 		return ret;
 	}
+
+	void RawData::read(std::string& outbuffer, int size) {
+		if ((size < 0) || ((size + m_index_current + 1) > getDataLength())) {
+			size = getDataLength() - m_index_current - 1;
+		}
+		if (size == 0) {
+			outbuffer = "";
+			return;
+		}
+		uint8_t* array = new uint8_t[size + 1];
+		m_datasource->readInto(array, m_index_current, size);
+		array[size] = 0x00;
+		outbuffer = reinterpret_cast<char*>(array);
+		delete[] array;
+		m_index_current += size;
+	}
+	
 
 	bool RawData::getLine(std::string& buffer) {
 		if (getCurrentIndex() >= getDataLength())

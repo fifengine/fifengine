@@ -28,10 +28,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "util/logger.h"
-
-#include "util/fife_math.h"
-#include "util/logger.h"
+#include "util/math/fife_math.h"
+#include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
@@ -48,6 +46,14 @@ namespace FIFE {
 	BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int position):
 		RendererBase(renderbackend, position) {
 		setEnabled(false);
+	}
+
+	BlockingInfoRenderer::BlockingInfoRenderer(const BlockingInfoRenderer& old):
+		RendererBase(old) {
+	}
+
+	RendererBase* BlockingInfoRenderer::clone() {
+		return new BlockingInfoRenderer(*this);
 	}
 
 	BlockingInfoRenderer::~BlockingInfoRenderer() {

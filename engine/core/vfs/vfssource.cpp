@@ -33,13 +33,12 @@
 
 namespace FIFE {
 
-	VFSSource::VFSSource() {}
+	VFSSource::VFSSource(VFS* vfs) : m_vfs(vfs) {}
 
 
 	VFSSource::~VFSSource() {
-		VFS::instance()->removeSource(this);
+		m_vfs->removeSource(this);
 	}
-
 
 }
 

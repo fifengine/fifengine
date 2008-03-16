@@ -29,57 +29,24 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/purge.h"
-#include "model/metamodel/dataset.h"
+#include "util/base/exception.h"
+#include "util/structures/purge.h"
 
 #include "map.h"
 #include "layer.h"
 
 namespace FIFE {
 
-	Map::Map(const std::string& identifier, TimeProvider* tp_master) 
-		: AttributedClass(identifier), m_timeprovider(tp_master) {
+	Map::Map(const std::string& identifier, TimeProvider* tp_master):
+		AttributedClass(identifier), 
+		m_timeprovider(tp_master),
+		m_changelisteners(),
+		m_changedlayers(),
+		m_changed(false) {
 	}
 
 	Map::~Map() {
 		deleteLayers();
-	}
-
-	void Map::addDataset(Dataset* dataset) {
-		// no duplicates
-		std::vector<Dataset*>::iterator it = m_datasets.begin();
-		for(; it != m_datasets.end(); ++it) {
-			if((*it) == dataset) {
-				return;
-			}
-		}
-
-		m_datasets.push_back(dataset);
-	}
-
-	std::list<Dataset*> Map::getDatasets() {
-		std::list<Dataset*> datasets;
-
-		std::vector<Dataset*>::iterator it = m_datasets.begin();
-		for(; it != m_datasets.end(); ++it) {
-			datasets.push_back(*it);	
-		}
-
-		return datasets;
-	}
-
-	std::list<Dataset*> Map::getDatasetsRec() {
-		std::list<Dataset*> datasets;
-
-		std::vector<Dataset*>::iterator it = m_datasets.begin();
-		for(; it != m_datasets.end(); ++it) {
-			std::list<Dataset*> tmp = (*it)->getDatasetsRec();
-			datasets.splice(datasets.end(), tmp);
-			datasets.push_back(*it);
-		}
-
-		return datasets;
 	}
 
 	std::list<Layer*> Map::getLayers() const {
@@ -118,6 +85,13 @@ namespace FIFE {
 
 		Layer* layer = new Layer(identifier, this, grid);
 		m_layers.push_back(layer);
+		m_changed = true;
+		std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			(*i)->onLayerCreate(this, layer);
+			++i;
+		}
+		
 		return layer;
 	}
 
@@ -125,22 +99,64 @@ namespace FIFE {
 		std::vector<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			if((*it) == layer) {
-				delete *it;
+				std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+				while (i != m_changelisteners.end()) {
+					(*i)->onLayerDelete(this, layer);
+					++i;
+				}
+				delete layer;
 				m_layers.erase(it);
 				return ;
 			}
 		}
+		m_changed = true;
 	}
 
 	void Map::deleteLayers() {
+		std::vector<Layer*>::iterator it = m_layers.begin();
+		for(; it != m_layers.end(); ++it) {
+			std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+			while (i != m_changelisteners.end()) {
+				(*i)->onLayerDelete(this, *it);
+				++i;
+			}
+		}
 		purge(m_layers);
 		m_layers.clear();
 	}
 
-	void Map::update() {
+	bool Map::update() {
+		m_changedlayers.clear();
 		std::vector<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
-			(*it)->update();
+			if ((*it)->update()) {
+				m_changedlayers.push_back(*it);
+			}
+		}
+		if (!m_changedlayers.empty()) {
+			std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+			while (i != m_changelisteners.end()) {
+				(*i)->onMapChanged(this, m_changedlayers);
+				++i;
+			}
+		}
+		bool retval = m_changed;
+		m_changed = false;
+		return retval;
+	}
+	
+	void Map::addChangeListener(MapChangeListener* listener) {
+		m_changelisteners.push_back(listener);
+	}
+
+	void Map::removeChangeListener(MapChangeListener* listener) {
+		std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			if ((*i) == listener) {
+				m_changelisteners.erase(i);
+				return;
+			}
+			++i;
 		}
 	}
 

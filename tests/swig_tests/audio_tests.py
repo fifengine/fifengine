@@ -17,7 +17,8 @@ class TestAudio(unittest.TestCase):
 	
 	def testLeftRight(self):
 		sound = self.soundmanager.createEmitter()
-		sound.load('tests/data/left_right_test.ogg')
+		id = self.engine.getSoundClipPool().addResourceFromFile('tests/data/left_right_test.ogg')
+		sound.setSoundClip(id)
 		sound.setLooping(True)
 		sound.play()
 		time.sleep(3);
@@ -25,10 +26,11 @@ class TestAudio(unittest.TestCase):
 	def test2Streams(self):
 		em = self.soundmanager.createEmitter()
 		sound = self.soundmanager.createEmitter()
-		sound.load('tests/data/left_right_test.ogg')
+		id = self.engine.getSoundClipPool().addResourceFromFile('tests/data/left_right_test.ogg')
+		sound.setSoundClip(id)
 		sound.setLooping(True)
 		sound.setCursor(fife.SD_TIME_POS, 5)
-		em.load('tests/data/left_right_test.ogg')
+		em.setSoundClip(id)
 		em.setGain(0.7)
 		em.play()
 		sound.play()

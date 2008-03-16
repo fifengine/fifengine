@@ -34,16 +34,15 @@
 // Second block: files included from the same folder
 //
 #include "ec_event.h"
-#include "ec_iinputevent.h"
 
 namespace FIFE {
 
 	/**  Base class for input events (like mouse and keyboard)
 	 */
-	class InputEvent: public Event, public IInputEvent {
+	class InputEvent: public Event {
 	public:
-        /** Constructor.
-         */
+		/** Constructor.
+		*/
 		InputEvent(): 
 			Event(), 
 			m_isshiftpressed(false), 
@@ -51,16 +50,27 @@ namespace FIFE {
 			m_isaltpressed(false), 
 			m_ismetapressed(false) {};
 
-        /** Destructor.
-         */
+		/** Destructor.
+		*/
 		~InputEvent() {}
 
+		/** Checks whether alt is pressed. 
+		 */
 		virtual bool isAltPressed() const { return m_isaltpressed; }
 		virtual void setAltPressed(bool pressed) { m_isaltpressed = pressed; }
+		
+		/** Checks whether control is pressed. 
+		 */
 		virtual bool isControlPressed() const { return m_iscontrolpressed; }
 		virtual void setControlPressed(bool pressed) { m_iscontrolpressed = pressed; }
+		
+		/** Checks whether meta is pressed. 
+		 */
 		virtual bool isMetaPressed() const { return m_ismetapressed; }
 		virtual void setMetaPressed(bool pressed) { m_ismetapressed = pressed; }
+		
+		/** Checks whether shift is pressed. 
+		 */
 		virtual bool isShiftPressed() const { return m_isshiftpressed; }
 		virtual void setShiftPressed(bool pressed) { m_isshiftpressed = pressed; }
 

@@ -30,9 +30,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/logger.h"
-#include "util/logger.h"
+#include "util/base/exception.h"
+#include "util/log/logger.h"
 #include "util/time/timemanager.h"
 #include "audio/soundmanager.h"
 #include "gui/console/console.h"
@@ -43,9 +42,10 @@
 #ifdef HAVE_ZIP
 #include "vfs/zip/zipprovider.h"
 #endif
-#include "eventchannel/manager/eventmanager.h"
+#include "eventchannel/eventmanager.h"
 #include "video/imagepool.h"
 #include "video/animationpool.h"
+#include "audio/soundclippool.h"
 #include "video/renderbackend.h"
 #include "video/cursor.h"
 #ifdef HAVE_OPENGL
@@ -56,9 +56,9 @@
 #include "gui/base/gui_font.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/fonts/abstractfont.h"
-#include "loaders/native/video_loaders/subimage_provider.h"
-#include "loaders/native/video_loaders/image_provider.h"
-#include "loaders/native/video_loaders/animation_provider.h"
+#include "loaders/native/video_loaders/subimage_loader.h"
+#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/audio_loaders/ogg_loader.h"
 //#include "loaders/fallout/model_loaders/dat1.h"
 //#include "loaders/fallout/model_loaders/dat2.h"
 #include "model/model.h"
@@ -96,6 +96,7 @@ namespace FIFE {
 		m_timemanager(0),
 		m_imagepool(0),
 		m_animpool(0),
+		m_soundclippool(0),
 		m_vfs(0),
 		m_model(0),
 		m_gui_graphics(0),
@@ -130,7 +131,7 @@ namespace FIFE {
 		m_vfs = new VFS();
 
 		FL_LOG(_log, "Adding root directory to VFS");
-		m_vfs->addSource(new VFSDirectory());
+		m_vfs->addSource( new VFSDirectory(m_vfs) );
 		m_vfs->addProvider( new DirectoryProvider() );
 #ifdef HAVE_ZIP
 		FL_LOG(_log, "Adding zip provider to VFS");
@@ -161,9 +162,10 @@ namespace FIFE {
 		FL_LOG(_log, "Creating pools");
 		m_imagepool = new ImagePool();
 		m_animpool = new AnimationPool();
-		m_imagepool->addResourceProvider(new SubImageProvider());
-		m_imagepool->addResourceProvider(new ImageProvider());
-		m_animpool->addResourceProvider(new AnimationProvider(m_imagepool));
+		m_soundclippool = new SoundClipPool();
+		m_imagepool->addResourceLoader(new SubImageLoader());
+		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
+		m_soundclippool->addResourceLoader(new OggLoader(m_vfs));
 
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());
@@ -182,6 +184,7 @@ namespace FIFE {
 #endif
 		}
 		FL_LOG(_log, "Initializing render backend");
+		m_renderbackend->setChunkingSize(m_settings.getImageChunkingSize());
 		m_renderbackend->init();
 
 		FL_LOG(_log, "Creating main screen");
@@ -220,7 +223,7 @@ namespace FIFE {
 		SDL_EnableUNICODE(1);
 
 		FL_LOG(_log, "Creating sound manager");
-		m_soundmanager = new SoundManager();
+		m_soundmanager = new SoundManager(m_soundclippool);
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
 		FL_LOG(_log, "Creating model");
@@ -230,16 +233,16 @@ namespace FIFE {
 		m_model->adoptPather(new RoutePather());
 
 		FL_LOG(_log, "Creating view");
-		m_view = new View(m_renderbackend);
+		m_view = new View(m_renderbackend, m_imagepool, m_animpool);
 		FL_LOG(_log, "Creating renderers to view");
 		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, 0, m_imagepool));
-		m_view->addRenderer(new InstanceRenderer(m_renderbackend, 1, m_imagepool, m_animpool));
-		m_view->addRenderer(new GridRenderer(m_renderbackend, 2));
-		m_view->addRenderer(new CellSelectionRenderer(m_renderbackend, 3));
-		m_view->addRenderer(new BlockingInfoRenderer(m_renderbackend, 4));
-		m_view->addRenderer(new FloatingTextRenderer(m_renderbackend, 5, dynamic_cast<AbstractFont*>(m_defaultfont)));
-		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 6));
-		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, 7, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_view->addRenderer(new InstanceRenderer(m_renderbackend, 10, m_imagepool, m_animpool));
+		m_view->addRenderer(new GridRenderer(m_renderbackend, 20));
+		m_view->addRenderer(new CellSelectionRenderer(m_renderbackend, 30));
+		m_view->addRenderer(new BlockingInfoRenderer(m_renderbackend, 40));
+		m_view->addRenderer(new FloatingTextRenderer(m_renderbackend, 50, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 60));
+		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, 70, dynamic_cast<AbstractFont*>(m_defaultfont)));
 		m_cursor = new Cursor(m_imagepool, m_animpool, m_renderbackend);
 		FL_LOG(_log, "Engine intialized");
 	}
@@ -280,13 +283,12 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_timemanager->update();
 		m_model->update();
-		m_view->update( m_imagepool,m_animpool );
+		m_view->update();
 		m_guimanager->turn();
 		m_cursor->draw();
 		m_renderbackend->endFrame();
 		SDL_Delay(1);
 		m_eventmanager->processEvents();
-		m_renderbackend->startFrame();
 	}
 
 	void Engine::finalizePumping() {

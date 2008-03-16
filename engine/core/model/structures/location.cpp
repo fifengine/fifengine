@@ -28,8 +28,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/purge.h"
+#include "util/base/exception.h"
+#include "util/structures/purge.h"
 #include "model/metamodel/grids/cellgrid.h"
 
 #include "layer.h"
@@ -39,7 +39,7 @@ namespace FIFE {
 	static std::string INVALID_LAYER_SET = "Cannot set layer coordinates, given layer is not initialized properly";
 	static std::string INVALID_LAYER_GET = "Cannot get layer coordinates, layer is not initialized properly";
 	
-	Location::Location(): FifeClass() {
+	Location::Location() {
 		reset();
 	}
 
@@ -69,14 +69,6 @@ namespace FIFE {
 		m_exact_layer_coords.x = rhs.m_exact_layer_coords.x;
 		m_exact_layer_coords.y = rhs.m_exact_layer_coords.y;
 		return *this;
-	}
-	
-	bool Location::operator==(const Location& loc) const {
-		return ((m_layer == loc.m_layer) && (m_exact_layer_coords == loc.m_exact_layer_coords));
-	}
-		
-	bool Location::operator!=(const Location& loc) const {
-		return !(*this == loc);
 	}
 	
 	Map* Location::getMap() const {
@@ -160,4 +152,26 @@ namespace FIFE {
 		ExactModelCoordinate p = l.getExactLayerCoordinates();
 		return os << "x=" << p.x << ", y=" << p.y;
 	}
+	
+	double Location::getMapDistanceTo(const Location& location) const{
+		ExactModelCoordinate current = getMapCoordinates();
+		ExactModelCoordinate target = location.getMapCoordinates();
+		
+		double rx = current.x - target.x;
+		double ry = current.y - target.y;
+		double rz = current.z - target.z;
+		
+		return sqrt(rx*rx + ry*ry + rz*rz);
+	}
+
+	double Location::getLayerDistanceTo(const Location& location) const{
+		ModelCoordinate current = getLayerCoordinates();
+		ModelCoordinate target = location.getLayerCoordinates(m_layer);
+		
+		double rx = current.x - target.x;
+		double ry = current.y - target.y;
+		double rz = current.z - target.z;
+		
+		return sqrt(rx*rx + ry*ry + rz*rz);
+	}	
 }

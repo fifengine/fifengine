@@ -22,6 +22,10 @@ def _mungeText(text):
 	"""
 	return text.replace('\t'," "*4).replace('[br]','\n')
 
+class _DummyImage(object):
+	def getWidth(self): return 0
+	def getHeight(self): return 0
+
 class Widget(object):
 	"""
 	This is the common widget base class, which provides most of the wrapping
@@ -1009,7 +1013,11 @@ class Icon(Widget):
 		else:
 			raise RuntimeError("Icon.image only accepts GuiImage and python strings, not '%s'" % repr(source))
 		self.real_widget.setImage( self._image )
-                #print self._image,self.real_widget.getWidth(),self.real_widget.getWidth()
+
+		# Set minimum size accoriding to image
+		self.min_size = self.real_widget.getWidth(),self.real_widget.getHeight()
+		self.size  = self.max_size = self.min_size
+
 	def _getImage(self):
 		if self._source is not None:
 			return self._source
@@ -1085,15 +1093,13 @@ class ImageButton(BasicTextWidget):
 		self.up_image = up_image
 		self.down_image = down_image
 
-		# The catch ALL causes will be removed next commit!
-
 	def _setUpImage(self,image):
 		self._upimage_source = image
 		try:
 			self._upimage = get_manager().loadImage(image)
 			self.real_widget.setUpImage( self._upimage )
 		except:
-			pass
+			self._upimage = _DummyImage()
 	def _getUpImage(self): return self._upimage_source
 	up_image = property(_getUpImage,_setUpImage)
 
@@ -1103,9 +1109,13 @@ class ImageButton(BasicTextWidget):
 			self._downimage = get_manager().loadImage(image)
 			self.real_widget.setDownImage( self._downimage )
 		except:
-			pass
+			self._downimage = _DummyImage()
 	def _getDownImage(self): return self._downimage_source
 	down_image = property(_getDownImage,_setDownImage)
+
+	def resizeToContent(self):
+		self.height = max(self._upimage.getHeight(),self._downimage.getHeight()) + self.margins[1]*2
+		self.width = max(self._upimage.getWidth(),self._downimage.getWidth()) + self.margins[1]*2
 
 class CheckBox(BasicTextWidget):
 	"""

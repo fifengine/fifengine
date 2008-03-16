@@ -29,8 +29,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/logger.h"
-#include "util/rect.h"
+#include "util/log/logger.h"
+#include "util/structures/rect.h"
 
 #include "renderbackendsdl.h"
 #include "sdlblendingfunctions.h"
@@ -59,7 +59,7 @@ namespace FIFE {
 
 
 	void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
-	                               SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha ) {
+		SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha ) {
 		if( 0 == alpha ) {
 			return;
 		}
@@ -579,6 +579,13 @@ namespace FIFE {
 			}
 		}
 	}	
+	
+	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+		drawLine(p1, p2, r, g, b);
+		drawLine(p2, p3, r, g, b);
+		drawLine(p3, p4, r, g, b);
+		drawLine(p4, p1, r, g, b);
+	}
 	
 	void SDLImage::saveImage(const std::string& filename) {
 		if (m_surface) {

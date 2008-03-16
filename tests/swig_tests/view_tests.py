@@ -6,22 +6,22 @@ class TestView(unittest.TestCase):
 	
 	def setUp(self):
 		self.engine = getEngine()
-		map = self.engine.getModel().createMap("map001")
+		model = self.engine.getModel()
+		map = model.createMap("map001")
 		
-		dat = self.engine.getModel().getMetaModel().createDataset("dataset001")
 		self.grid = fife.SquareGrid()
 		pool = self.engine.getImagePool()
-		
-		self.obj1 = dat.createObject("0")
+
+		self.obj1 = model.createObject('0','test_nspace')
 		fife.ObjectVisual.create(self.obj1)
 		imgid = pool.addResourceFromFile('tests/data/mushroom_007.png')
 		self.obj1.get2dGfxVisual().addStaticImage(0, imgid)
 		
-		self.obj2 = dat.createObject("1")
+		self.obj2 = model.createObject('1','test_nspace')
 		fife.ObjectVisual.create(self.obj2)
 		imgid = pool.addResourceFromFile('tests/data/earth_1.png')
 		self.obj2.get2dGfxVisual().addStaticImage(0, imgid)
-		
+
 		img = pool.getImage(imgid)
 		self.screen_cell_w = img.getWidth()
 		self.screen_cell_h = img.getHeight()

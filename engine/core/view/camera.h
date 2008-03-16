@@ -32,21 +32,26 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/structures/location.h"
-#include "util/matrix.h"
-#include "util/rect.h"
+#include "util/math/matrix.h"
+#include "util/structures/rect.h"
+
+#include "rendererbase.h"
 
 namespace FIFE {
 
 	typedef Point3D ScreenPoint;
 	class Layer;
 	class Instance;
+	class ImagePool;
+	class AnimationPool;
+	class RenderBackend;
 
 	/** Camera describes properties of a view port shown in the main screen
 	 *  Main screen can have multiple cameras active simultanously
 	 *  Different cameras can have different properties, like location
 	 *  to shoot, zoom or tilt
 	 */
-	class Camera {
+	class Camera: public IRendererListener, public IRendererContainer {
 	public:
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
@@ -56,8 +61,17 @@ namespace FIFE {
 		 *   * camera could be bind to a pather, which operates on layer
 		 * @param viewport used viewport for the camera. Viewport is measured in pixels in relation to game main screen
 		 * @param emc coordinate, where camera is focused on given layer
+		 * @param renderbackend to use with rendering
+		 * @param ipool to use with rendering
+		 * @param apool to use with rendering
 		 */
-		Camera(const std::string& id, Layer* layer, Rect viewport, ExactModelCoordinate emc);
+		Camera(const std::string& id, 
+			Layer* layer,
+			Rect viewport,
+			ExactModelCoordinate emc, 
+			RenderBackend* renderbackend,
+			ImagePool* ipool,
+			AnimationPool* apool);
 
 		/** Destructor
 		 */
@@ -134,6 +148,20 @@ namespace FIFE {
 		 * @return reference to the camera location
 		 */
 		Location& getLocationRef();
+
+		/** Attaches the camera to an instance.
+		 * @param instance Instance to which the camera shall be attached
+		 * @note The camera can only be attached to an instance at the same layer!
+		 */
+		void attach(Instance *instance);
+
+		/** Detaches the camera from an instance.
+		 */
+		void detach();
+
+		/** Returns instance where camera is attached. NULL if not attached
+		 */
+		bool getAttached() const { return m_attachedto; }
 		
 		/** Sets the viewport for camera
 		 * viewport is rectangle inside the view where camera renders
@@ -147,9 +175,11 @@ namespace FIFE {
 		const Rect& getViewPort() const;
 
 		/** Transforms given point from screen coordinates to map coordinates
-		 *  @return point in map coordinates
+		 * @param screen_coords screen coordinates to transform
+		 * @param z_calculated if true, z-value (depth cut point) is pre-calculated. If false, camera calculates it
+		 * @return point in map coordinates
 		 */
-		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords);
+		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords, bool z_calculated=true);
 
 		/** Transforms given point from map coordinates to screen coordinates
 		 *  @return point in screen coordinates
@@ -167,29 +197,21 @@ namespace FIFE {
 		/** Gets angle of vector defined by given locations and camera properties (e.g. rotation)
 		 *  @return angle in polar coordinates
 		 */
-		int getAngleBetween(const Location& loc1, const Location& loc2);
+		inline int getAngleBetween(const Location& loc1, const Location& loc2) {
+			ScreenPoint pt1 = this->toScreenCoordinates(loc1.getMapCoordinates());
+			ScreenPoint pt2 = this->toScreenCoordinates(loc2.getMapCoordinates());
+			double dy = pt2.y - pt1.y;
+			double dx = pt2.x - pt1.x;
+			int angle = static_cast<int>(atan2(-dy,dx)*(180.0/M_PI));
+			return angle;
+		}
 		
 		/** Returns instances that match given screen coordinate
 		 * @param screen_coords screen coordinates to be used for hit search
 		 * @param layer layer to use for search
 		 * @param instances list of instances that is filled based on hit test results
 		 */
-		void getMatchingInstances(ScreenPoint& screen_coords, Layer& layer, std::list<Instance*>& instances);
-
-		/** Attaches the camera to an instance.
-		 * @param instance Instance to which the camera shall be attached
-		 * @note The camera can only be attached to an instance at the same layer!
-		 */
-		void attachToInstance( Instance *instance );
-
-		/** Detaches the camera from an instance.
-		 */
-		void detach();
-
-		/** Checks if the camera is attached.
-		 * @return bool True when attached.
-		 */
-		bool isAttached() const { return m_attachedto != NULL; }
+		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances);
 
 		/** General update routine.
 		 * In this function, the camera's position gets updated when its attached
@@ -209,16 +231,37 @@ namespace FIFE {
 
 		/** Returns latest camera movement in screen coordinates (dx, dy)
 		 */
-		ScreenPoint getLatestMovement();
-		
-		/** Returns true, if camera was rotated, tilted or zoomed during the previous update
-		 */
-		bool isWarped() { return m_iswarped; }
+		inline ScreenPoint getLatestMovement() {
+			return m_prev_origo - m_cur_origo;
+		}
 		
 		/** Resets temporary values from last update round, like warped flag
 		 */
 		void resetUpdates();
 
+		/** Adds new renderer on the view. Ownership is transferred to the camera.
+		 */
+		void addRenderer(RendererBase* renderer);
+
+		/** Gets renderer with given name
+		 */
+		RendererBase* getRenderer(const std::string& name);
+
+		/** resets active layer information on all renderers.
+		 */
+		void resetRenderers();
+		
+		/** calculates z-value for given screenpoint
+		 */
+		void calculateZValue(ScreenPoint& screen_coords);
+
+		void onRendererPipelinePositionChanged(RendererBase* renderer);
+		void onRendererEnabledChanged(RendererBase* renderer);
+		
+		/** Renders camera
+		 */
+		void render();
+		
 	private:
 		std::string m_id;
 
@@ -241,7 +284,7 @@ namespace FIFE {
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
-
+		
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
 		double m_tilt;
@@ -260,6 +303,16 @@ namespace FIFE {
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
 		bool m_iswarped;
+		
+		// list of renderers managed by the view
+		std::map<std::string, RendererBase*> m_renderers;
+		std::list<RendererBase*> m_pipeline;
+		bool m_updated; // false, if view has never been updated before
+	
+		RenderBackend* m_renderbackend;
+		ImagePool* m_ipool;
+		AnimationPool* m_apool;
+	
 	};
 }
 #endif

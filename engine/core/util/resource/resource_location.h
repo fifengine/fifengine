@@ -23,6 +23,7 @@
 #define FIFE_RESOURCE_LOCATION_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -30,7 +31,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/fifeclass.h"
 
 namespace FIFE {
 
@@ -39,13 +39,13 @@ namespace FIFE {
 	 *  This class is used to give ResoureProvider the information
 	 *  where to find the data. 
 	 */
-	class ResourceLocation: public FifeClass {
+	class ResourceLocation {
 	public:
 
 		// LIFECYCLE
 		/** Default constructor.
 		 */
-		ResourceLocation(const std::string& filename): FifeClass(), m_filename(filename) {}
+		ResourceLocation(const std::string& filename): m_filename(filename) {}
 
 		/** Destructor.
 		 */
@@ -54,7 +54,7 @@ namespace FIFE {
 		/** Returns the filename.
 		 * @return The filename.
 		 */
-		std::string getFilename() const { return m_filename; };
+		const std::string& getFilename() const { return m_filename; };
 
 		/** Compares two ResourceLocations for equality.
 		 */

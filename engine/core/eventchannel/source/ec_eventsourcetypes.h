@@ -39,9 +39,8 @@ namespace FIFE {
 	/**  Types for different event sources
 	 */
 	enum EventSourceType {
-		ES_ENGINE			= 1,
+		ES_ENGINE		= 1,
 		ES_GUICHAN_WIDGET	= 2,
-		ES_MAPVIEW			= 3
 	};
 
 } //FIFE

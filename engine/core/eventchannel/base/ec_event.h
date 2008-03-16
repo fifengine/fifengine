@@ -43,34 +43,63 @@
 //
 #include "eventchannel/source/ec_ieventsource.h"
 
-#include "ec_ievent.h"
-
+namespace gcn {
+	class Widget;
+}
 
 namespace FIFE {
 	/**  Base class for all events
 	 */
-	class Event: public IEvent {
+	class Event {
 	public:
-        /** Constructor.
-         */
+		/** Constructor.
+		*/
 		Event(): 
 			m_isconsumed(false), 
 			m_eventsource(NULL),
 			m_timestamp(SDL_GetTicks()) {}
 
-        /** Destructor.
-         */
+		/** Destructor.
+		*/
 		virtual ~Event() {}
 
+		/** Marks the event as consumed.
+		 */
 		virtual void consume() { m_isconsumed = true; }
+		
+		/** Checks if the event is consumed.
+		 * @return true if the event is consumed, false otherwise.
+		 */
 		virtual bool isConsumed() const { return m_isconsumed; }
+		
+		/** Gets the source of the event.
+		 */
 		virtual IEventSource* getSource() { return m_eventsource; }
+		
+		/** Sets the source of the event.
+		 */
 		virtual void setSource(IEventSource* source) { m_eventsource = source; }
+		
+		/** Get the source of the (widget) event. Null for non-widget.
+		 * FIXME: This is a bit of a hack, using forward declared guichan pointer
+		 *        Should use something non-guichan specific
+		 */
 		virtual gcn::Widget* getSourceWidget() { return m_sourcewidget; }
+		
+		/** Set the source of the (widget) event. @see getSourceWidget
+		 */
 		virtual void setSourceWidget(gcn::Widget* widget) { m_sourcewidget = widget; }
+		
+		/** Gets the timestamp of the event
+		 */
 		virtual int getTimeStamp() const { return m_timestamp; }
+		
+		/** Sets the timestamp of the event
+		 */
 		virtual void setTimeStamp(int timestamp ) { m_timestamp = timestamp; }
 
+		/** Gets the name of the event
+		 */
 		virtual const std::string& getName() const {
 			const static std::string eventName("Event");
 			return eventName;
@@ -86,6 +115,8 @@ namespace FIFE {
 			return ss.str();
 		}
 
+		/** Gets the debugstring of the event
+		 */
 		virtual std::string getDebugString() const { 
 			std::stringstream ss;
 			ss << getName() << std::endl;

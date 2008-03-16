@@ -31,8 +31,8 @@
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
-#include "util/logger.h"
-#include "util/exception.h"
+#include "util/log/logger.h"
+#include "util/base/exception.h"
 #include "audio/fife_openal.h"
 
 #include "soundmanager.h"
@@ -42,12 +42,11 @@
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundManager::SoundManager() : m_context(0),
+	SoundManager::SoundManager(SoundClipPool* pool) : m_context(0),
 				       m_device(0),
+	             m_pool(pool),
 				       m_mutevol(0),
 							 m_volume(1.0) {
-		// add provider to the pool
-		m_pool.addResourceProvider(new SoundClipProvider());
 	}
 
 	SoundManager::~SoundManager() {
@@ -110,7 +109,7 @@ namespace FIFE {
 	}
 
 	SoundEmitter* SoundManager::createEmitter() {
-		SoundEmitter* ptr = new SoundEmitter(m_emittervec.size());
+		SoundEmitter* ptr = new SoundEmitter(this, m_pool, m_emittervec.size());
 		m_emittervec.push_back(ptr);
 		return ptr;
 	}

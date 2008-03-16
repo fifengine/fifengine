@@ -32,8 +32,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/raw/rawdata.h"
-#include "util/exception.h"
-#include "util/logger.h"
+#include "util/base/exception.h"
+#include "util/log/logger.h"
 
 #include "vfs.h"
 #include "vfssource.h"
@@ -63,6 +63,7 @@ namespace FIFE {
 	}
 
 	void VFS::addProvider(VFSSourceProvider* provider) {
+		provider->setVFS(this);
 		m_providers.push_back(provider);
 		FL_LOG(_log, LMsg("new provider: ") << provider->getName());
 	}
@@ -141,7 +142,7 @@ namespace FIFE {
 		std::vector<std::string>::const_iterator token=tokens.begin();
 		while (token != tokens.end()) {
 			if (*token != "") {
-				if (*token != "." && *token != ".." && VFS::instance()->listDirectories(currentpath, *token).size() == 0) {
+				if (*token != "." && *token != ".." && listDirectories(currentpath, *token).size() == 0) {
 					return false;
 				} else {
 					currentpath += *token + "/";

@@ -32,7 +32,7 @@
 #include "twobutton.h"
 
 namespace gcn {
-	TwoButton::TwoButton(Image * up_file , Image *down_file, const std::string& caption): Button() {
+	TwoButton::TwoButton(Image *up_file , Image *down_file, const std::string& caption): Button() {
 		m_upImage = up_file;
 		m_downImage = down_file;
 		setBorderSize(0);
@@ -43,11 +43,11 @@ namespace gcn {
 	}
 	void TwoButton::draw(Graphics *graphics) {
 		if (isPressed()) {
-			if( m_upImage ) {
+			if( m_downImage ) {
 				graphics->drawImage(m_downImage, 0, 0);
 			}
 		} else {
-			if( m_downImage ) {
+			if( m_upImage ) {
 				graphics->drawImage(m_upImage, 0, 0);
 			}
 		}

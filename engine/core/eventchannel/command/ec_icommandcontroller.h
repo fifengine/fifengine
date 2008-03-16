@@ -36,9 +36,11 @@
 #include "ec_icommandlistener.h"
 
 namespace FIFE {
+	class Command;
 
 	/**  Controller provides a way to receive events from the system
 	 * Using this interface, clients can subscribe themselves to receive events
+	 * Also command sending is possible
 	 */
 	class ICommandController {
 	public:
@@ -54,6 +56,11 @@ namespace FIFE {
 		 * @param listener listener to remove
 		 */
 		virtual void removeCommandListener(ICommandListener* listener) = 0;
+
+		/** Use this method to send command to command listeners
+		 * @param command command to dispatch
+		 */
+		virtual void dispatchCommand(Command& command) = 0;
 
 		virtual ~ICommandController() {}
 	};

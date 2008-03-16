@@ -6,15 +6,6 @@ Import('env')
 curpath = str(path('.'))
 installpath = str((path('.') / path('install')).abspath())
 
-os.chdir( str( path( '.' ) / path( 'minizip' ) ) )
-os.system( 'make' )
-os.system( 'make install prefix=%s' % installpath )
-for f in path('.').files('*.h'): 
-	dest = (path('..') / path('install') / path('include') / path(f.basename())).abspath()
-	print "copying %s to %s" % (str(f), str(dest))
-	f.copy(str(dest))
-os.chdir( '..' )
-
 os.chdir(str(path('.') / path('guichan-0.7.1')))
 
 os.system('./configure')

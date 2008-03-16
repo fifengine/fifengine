@@ -27,11 +27,12 @@
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
-#include "util/exception.h"
+#include "video/animation_loader.h"
+#include "util/base/exception.h"
 %}
 
-#include "util/point.i"
-#include "util/rect.i"
+%include "util/structures/utilstructures.i"
+%include "util/resource/resource.i"
 
 namespace FIFE {
 	class Pool;
@@ -65,11 +66,10 @@ namespace FIFE {
 		unsigned int getHeight() const;
 		const Rect& getArea();
 		void setXShift(int xshift);
-		int getXShift() const;
+		inline int getXShift() const;
 		void setYShift(int yshift);
-		int getYShift() const;
+		inline int getYShift() const;
 		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;
@@ -84,8 +84,9 @@ namespace FIFE {
 		Image(const uint8_t* data, unsigned int width, unsigned int height);
 	};
 	
-	class Animation {
+	class Animation: public ResourceClass {
 	public:
+		explicit Animation();
 		~Animation();
 		void addFrame(Image* image, unsigned int duration);
 		int getFrameIndex(unsigned int timestamp);
@@ -101,14 +102,12 @@ namespace FIFE {
 		void addRef();
 		void decRef();
 		unsigned int getRefCount();
-	private:
-		explicit Animation();
 	};
 
 	class ImagePool: public Pool {
 	public:
 		virtual ~ImagePool();
-		Image& getImage(unsigned int index) throw(FIFE::NotFound, FIFE::IndexOverflow);
+		inline Image& getImage(unsigned int index) throw(FIFE::NotFound, FIFE::IndexOverflow);
 	private:
 		ImagePool();
 	};
@@ -116,7 +115,7 @@ namespace FIFE {
 	class AnimationPool: public Pool {
 	public:
 		virtual ~AnimationPool();
-		Animation& getAnimation(unsigned int index) throw(FIFE::NotFound, FIFE::IndexOverflow);
+		inline Animation& getAnimation(unsigned int index) throw(FIFE::NotFound, FIFE::IndexOverflow);
 	private:
 		AnimationPool();
 	};
@@ -146,6 +145,7 @@ namespace FIFE {
 	};
 	
 	enum MouseCursorType {
+		CURSOR_NONE,
 		CURSOR_NATIVE,
 		CURSOR_IMAGE,
 		CURSOR_ANIMATION
@@ -154,11 +154,23 @@ namespace FIFE {
 	class Cursor {
 	public:
 		virtual ~Cursor() {}
+		virtual void draw();
 		void set(MouseCursorType ctype, unsigned int cursor_id=0);
-		unsigned int getId() const;
+		void setDrag(MouseCursorType ctype, unsigned int drag_id=0, int drag_offset_x=0, int drag_offset_y=0);
 		MouseCursorType getType() const;
+		unsigned int getId() const;
+		MouseCursorType getDragType() const;
+		unsigned int getDragId() const;
 	
 	private:
 		Cursor(ImagePool* imgpool, AnimationPool* animpool);
+	};
+	
+	%warnfilter(473) AnimationLoader; // filter out "returning a pointer or reference in a director method is not recommended"
+	%feature("director") AnimationLoader;
+	class AnimationLoader : public ResourceLoader {
+	public:
+		Animation* load(const ResourceLocation& location);
+		Animation* load(const std::string& filename);
 	};
 }

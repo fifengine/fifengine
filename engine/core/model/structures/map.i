@@ -5,7 +5,7 @@
 
 %include "std_list.i"
 
-%include "util/attributedclass.i"
+%include "util/base/utilbase.i"
 
 namespace FIFE {
   class Layer;
@@ -17,19 +17,23 @@ namespace std {
 
 namespace FIFE {
 
-  class Layer;
+	class Layer;
+	class Map;	
 
-  class Dataset;
+	%feature("director") MapChangeListener;
+	class MapChangeListener {
+	public:
+		virtual ~MapChangeListener() {};
+		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) = 0;
+		virtual void onLayerCreate(Map* map, Layer* layer) = 0;
+		virtual void onLayerDelete(Map* map, Layer* layer) = 0;
+	};
 
 	class Map : public AttributedClass {
 		public:
 
 			Map(const std::string& identifier, TimeProvider* tp_master=NULL);
 			~Map();
-
-			void addDataset(Dataset* dataset);
-			std::list<Dataset*> getDatasets();
-			std::list<Dataset*> getDatasetsRec();
 
 			Layer* createLayer(const std::string& identifier, CellGrid* grid);
 			void deleteLayer(Layer* index);
@@ -43,5 +47,17 @@ namespace FIFE {
 			void setTimeMultiplier(float multip);
 			double getTimeMultiplier() const;
 			
+			void addChangeListener(MapChangeListener* listener);
+			void removeChangeListener(MapChangeListener* listener);
+			bool isChanged();
+			std::vector<Layer*>& getChangedLayers();
+	};
+
+	%warnfilter(473) MapLoader; // filter out "returning a pointer or reference in a director method is not recommended"
+	%feature("director") MapLoader;
+	class MapLoader : public ResourceLoader {
+	public:
+		Map* load(const ResourceLocation& location);
+		Map* load(const std::string& filename);
 	};
 }

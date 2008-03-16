@@ -109,15 +109,12 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def _setSelection(self, screenx, screeny):
 		if self.camera:
 			# TODO: make Sleek fix this ugly mess
-			tmp = fife.ScreenPoint(screenx, screeny)
-			dy = -(tmp.y - self.camera.toScreenCoordinates(self.camera.getLocationRef().getMapCoordinates()).y)
-			tmp.z = (int)(math.tan(self.camera.getTilt()* (math.pi / 180.0)) * dy)
-			self.selection = self.camera.toMapCoordinates(tmp)
+			self.selection = self.camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
 			self.selection.z = 0
 			self.selection = self.layer.getCellGrid().toLayerCoordinates(self.selection)
 			loc = fife.Location(self.layer)
 			loc.setLayerCoordinates(self.selection)
-			fife.CellSelectionRenderer.getInstance(self.engine.getView()).selectLocation(loc)
+			fife.CellSelectionRenderer.getInstance(self.viewer.camera).selectLocation(loc)
 
 	def _placeInstance(self):
 		if self.insertmode and self.selection and self.object:
@@ -165,11 +162,11 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 					self.layer.deleteInstance(inst)
 				
 		elif keystr == 't':
-			gridrenderer = self.engine.getView().getRenderer('GridRenderer')
+			gridrenderer = self.viewer.camera.getRenderer('GridRenderer')
 			gridrenderer.setEnabled(not gridrenderer.isEnabled())
 
 		elif keystr == 'b':
-			blockrenderer = self.engine.getView().getRenderer('BlockingInfoRenderer')
+			blockrenderer = self.viewer.camera.getRenderer('BlockingInfoRenderer')
 			blockrenderer.setEnabled(not blockrenderer.isEnabled())
 
 	def keyReleased(self, evt):

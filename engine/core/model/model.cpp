@@ -27,27 +27,26 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/purge.h"
-#include "util/memory.h"
-#include "model/metamodel/metamodel.h"
+#include "util/structures/purge.h"
 #include "model/metamodel/abstractpather.h"
+#include "model/metamodel/object.h"
 #include "structures/map.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
 
 #include "model.h"
 
 namespace FIFE {
 
 	Model::Model(): 
-		FifeClass(), 
-		m_meta(new MetaModel()),
+		FifeClass(),
 		m_timeprovider(NULL) {
 	}
 
 	Model::~Model() {
 		purge(m_maps);
+		for(std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace)
+			purge(nspace->second);
 		purge(m_pathers);
-		delete m_meta;
 	}
 
 	Map* Model::createMap(const std::string& identifier) {
@@ -119,8 +118,45 @@ namespace FIFE {
 		m_maps.clear();
 	}
 
-	MetaModel* Model::getMetaModel() {
-		return m_meta;
+	Object* Model::createObject(const std::string& identifier, const std::string& name_space, Object* parent) {
+
+		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
+		for(; nspace != m_namespaces.end(); ++nspace) {
+			if(nspace->first == name_space) break;
+		}
+
+		if(nspace == m_namespaces.end()) {
+			m_namespaces.push_back(namespace_t(name_space,std::list<Object*>()));
+			nspace = m_namespaces.end();
+			--nspace;
+		}
+
+		Object* object = new Object(identifier, parent);
+		nspace->second.push_back(object);
+		return object;
+	}
+
+	Object* Model::getObject(const std::string& id, const std::string& name_space) {
+		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
+		for(; nspace != m_namespaces.end(); ++nspace) {
+			std::list<Object*>::iterator obj = nspace->second.begin();
+			for(; obj != nspace->second.end(); ++obj)
+				if((*obj)->Id() == id) return *obj;
+		}
+
+		return 0;
+	}
+
+	std::list<Object*>& Model::getObjects(const std::string& name_space) {
+		std::list<namespace_t>::iterator nspace;
+		for(; nspace != m_namespaces.end(); ++nspace)
+			if(nspace->first == name_space) break;
+
+		if(nspace == m_namespaces.end()) {
+			throw NotFound(std::string("Tried to get objects from the nonexistant namespace: ") + name_space + ".");
+		}	
+
+		return nspace->second;		
 	}
 
 	void Model::update() {
@@ -133,6 +169,6 @@ namespace FIFE {
 			(*jt)->update();
 		}
 	}
-	
+
 } //FIFE
 

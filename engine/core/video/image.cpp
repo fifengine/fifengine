@@ -34,11 +34,15 @@
 
 namespace FIFE {
 
-	Image::Image(SDL_Surface* surface): m_surface(NULL) {
+	Image::Image(SDL_Surface* surface): 
+		m_location(ResourceLocation("")), 
+		m_surface(NULL) {
 		reset(surface);
 	}
 
-	Image::Image(const uint8_t* data, unsigned int width, unsigned int height) {
+	Image::Image(const uint8_t* data, unsigned int width, unsigned int height): 
+		m_location(ResourceLocation("")), 
+		m_surface(NULL) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
@@ -69,6 +73,12 @@ namespace FIFE {
 		reset(NULL);
 	}
 
+	SDL_Surface* Image::detachSurface() {
+		SDL_Surface* srf = m_surface;
+		m_surface = NULL;
+		return srf;
+	}
+	
 	unsigned int Image::getWidth() const {
 		if (!m_surface) {
 			return 0;
@@ -97,15 +107,15 @@ namespace FIFE {
 		m_yshift = yshift;
 	}
 
-	int Image::getXShift() const {
-		return m_xshift;
-	}
-
-	int Image::getYShift() const {
-		return m_yshift;
-	}
-	
 	void Image::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
+		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
+			r = 0;
+			g = 0;
+			b = 0;
+			a = 0;
+			return;
+		}
+		
 		int bpp = m_surface->format->BytesPerPixel;
 		Uint8 *p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
 		uint32_t pixel;
@@ -127,13 +137,6 @@ namespace FIFE {
 			pixel = *(Uint32 *)p;
 		}
 		SDL_GetRGBA(pixel, m_surface->format, r, b, g, a);
-	}
-
-	void Image::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-		drawLine(p1, p2, r, g, b);
-		drawLine(p2, p3, r, g, b);
-		drawLine(p3, p4, r, g, b);
-		drawLine(p4, p1, r, g, b);
 	}
 
 	void Image::render(const Rect& rect, unsigned char alpha) {

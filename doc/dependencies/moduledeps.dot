@@ -21,10 +21,10 @@ digraph "source tree" {
     "gui" -> "eventchannel"
     "gui" -> "util"
     "gui" -> "video"
+    "loaders" -> "audio"
     "loaders" -> "util"
     "loaders" -> "vfs"
     "loaders" -> "video"
-    "loaders" -> "xml"
     "model" -> "util"
     "pathfinder" -> "model"
     "pathfinder" -> "util"
@@ -34,5 +34,4 @@ digraph "source tree" {
     "view" -> "model"
     "view" -> "util"
     "view" -> "video"
-    "xml" -> "vfs"
 }

@@ -38,15 +38,6 @@
 
 namespace FIFE {
 	
-	/** SoundProvider-class (creates SoundClip/decoder from location)
-	 */
-	class SoundClipProvider : public IResourceProvider {
-	public:
-		IPooledResource* createResource(const ResourceLocation& location) {
-			return new SoundClip(SoundDecoder::create(location.getFilename()));
-		}
-	};
-	
 	/**  Pool for holding sound clips
 	 */
 	class SoundClipPool: public Pool {

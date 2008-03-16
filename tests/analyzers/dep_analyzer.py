@@ -4,23 +4,7 @@ import sys, re, os
 if '.' not in sys.path:
 	sys.path.append('.')
 from utils.util_scripts.path import path
-
-# the following dictionary defines the allowed dependencies checked while testing
-# format = user -> providers
-ALLOWED_MODULE_DEPS = {
-	'controller': ('model', 'eventchannel', 'gui', 'video', 'loaders', 'view', 'audio', 'util', 'vfs', 'pathfinder'),
-	'model': ('util',),
-	'eventchannel': ('util',),
-	'gui': ('eventchannel', 'util', 'video', 'vfs'),
-	'video': ('util',),
-	'loaders': ('video', 'vfs', 'xml', 'util', 'view', 'model'),
-	'view': ('model', 'video', 'util', 'audio'),
-	'audio': ('util', 'vfs'),
-	'util': ['engine'],
-	'vfs': ('util',),
-	'xml': ('vfs', 'util'),
-	'pathfinder': ('util', 'model'),
-}
+from _allowed_dependencies import ALLOWED_MODULE_DEPS
 
 _S = os.path.sep
 ROOTDIRNAME = 'engine%score' % _S
@@ -198,9 +182,12 @@ def analyze(write_postscript=False):
 	#out = []
 	#for f, file2inc
 	result = '\n'.join(illegalModuleDeps)
-	if not result:
-		result = "no dependency analyzer errors found"
-	print result
+	if result:
+		print result
+	else:
+		print "no dependency analyzer errors found"
+	return result
+
 
 _ANALYZE_FN_ = analyze
 

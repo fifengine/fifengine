@@ -27,29 +27,27 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
-#include "util/logger.h"
+#include "util/base/exception.h"
+#include "util/log/logger.h"
 
 #include "pool.h"
-#include "resource_provider.h"
 
 namespace FIFE {
 	static Logger _log(LM_POOL);
 	
 	Pool::Pool(): 
-		FifeClass(),
 		m_entries(),
 		m_listeners(),
-		m_providers(),
+		m_loaders(),
 		m_curind(0)
 	{
 	}
 
 	Pool::~Pool() {
 		clear();
-		std::vector<IResourceProvider*>::iterator provider;
-		for (provider = m_providers.begin(); provider != m_providers.end(); provider++) {
-			delete (*provider);
+		std::vector<ResourceLoader*>::iterator loader;
+		for (loader = m_loaders.begin(); loader != m_loaders.end(); loader++) {
+			delete (*loader);
 		}
 	}
 	
@@ -65,8 +63,8 @@ namespace FIFE {
 		m_entries.clear();
 	}
 
-	void Pool::addResourceProvider(IResourceProvider* provider) {
-		m_providers.push_back(provider);
+	void Pool::addResourceLoader(ResourceLoader* loader) {
+		m_loaders.push_back(loader);
 	}
 
 	int Pool::addResourceFromLocation(const ResourceLocation& loc) {
@@ -91,29 +89,29 @@ namespace FIFE {
 		return addResourceFromLocation(ResourceLocation(filename));
 	}
 
-	IPooledResource& Pool::get(unsigned int index, bool inc) {
+	IResource& Pool::get(unsigned int index, bool inc) {
 		if (index >= m_entries.size()) {
 			FL_ERR(_log, LMsg("Tried to get with index ") << index << ", only " << m_entries.size() << " items in pool");
 			throw IndexOverflow( __FUNCTION__ );
 		}
-		IPooledResource* res = NULL;
+		IResource* res = NULL;
 		PoolEntry* entry = m_entries[index];
 		if (entry->resource) {
 			res = entry->resource;
 		} else {
-			if (!entry->provider) {
+			if (!entry->loader) {
 				findAndSetProvider(*entry);
 			} else {
-				entry->resource = entry->provider->createResource(*entry->location);
+				entry->resource = entry->loader->loadResource(*entry->location);
 			}
-			if (!entry->provider) {
-				LMsg msg("No suitable provider was found for resource ");
+			if (!entry->loader) {
+				LMsg msg("No suitable loader was found for resource ");
 				msg << entry->location->getFilename();
 				FL_ERR(_log, msg);
 				throw NotFound(msg.str);
 			}
 			if (!entry->resource) {
-				LMsg msg("No provider was able to load the requested resource ");
+				LMsg msg("No loader was able to load the requested resource ");
 				msg << entry->location->getFilename();
 				FL_ERR(_log, msg);
 				throw NotFound(msg.str);
@@ -148,7 +146,7 @@ namespace FIFE {
 			throw IndexOverflow( __FUNCTION__ );
 		}
 
-		IPooledResource* res = NULL;
+		IResource* res = NULL;
 		PoolEntry* entry = m_entries[index];
 		if (entry->resource) {
 			res = entry->resource;
@@ -196,24 +194,18 @@ namespace FIFE {
 	}
 
 	void Pool::findAndSetProvider(PoolEntry& entry) {
-		std::vector<IResourceProvider*>::iterator it = m_providers.begin();
-		std::vector<IResourceProvider*>::iterator end = m_providers.end();
+		std::vector<ResourceLoader*>::iterator it = m_loaders.begin();
+		std::vector<ResourceLoader*>::iterator end = m_loaders.end();
 		if( it == end ) {
-			FL_PANIC(_log, "no provider constructors given for resource pool");
+			FL_PANIC(_log, "no loader constructors given for resource pool");
 		}
 		for(; it != end; ++it) {
-			try {
-				entry.resource = (*it)->createResource(*entry.location);
-			} catch (Exception e) {
-				FL_ERR(_log, e.getMessage());
-				continue;
+			IResource* res = (*it)->loadResource(*entry.location);
+			if (res) {
+				entry.resource = res;
+				entry.loader = *it;
+				return;
 			}
-
-			if( !entry.resource )
-				continue;
-
-			entry.provider = *it;
-			return;
 		};
 	}
 

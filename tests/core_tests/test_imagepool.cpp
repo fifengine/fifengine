@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -24,7 +24,6 @@
 #include <iomanip>
 
 // Platform specific includes
-#include "util/fife_unit_test.h"
 
 // 3rd party library includes
 #include <boost/scoped_ptr.hpp>
@@ -36,7 +35,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
-#include "util/rect.h"
+#include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
@@ -46,10 +45,11 @@
 #include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_provider.h"
-#include "loaders/native/video_loaders/subimage_provider.h"
-#include "loaders/native/video_loaders/animation_provider.h"
-#include "util/exception.h"
+#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/video_loaders/subimage_loader.h"
+#include "util/base/exception.h"
+
+#include "fife_unit_test.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;
@@ -64,9 +64,7 @@ struct environment {
 	boost::shared_ptr<VFS> vfs;
 
 	environment()
-		: timemanager(new TimeManager()),
-		  vfs(new VFS()) {
-		VFS::instance()->addSource(new VFSDirectory());
+		: timemanager(new TimeManager()) {
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 				throw SDLException(SDL_GetError());
 			}
@@ -81,11 +79,14 @@ BOOST_AUTO_TEST_CASE( ImagePool_test ) {
 	environment env;
 	RenderBackendSDL renderbackend;
 
+	boost::scoped_ptr<VFS> vfs(new VFS());
+	vfs->addSource(new VFSDirectory(vfs.get()));
+
 	renderbackend.init();
-	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false);
 	ImagePool pool;
-	pool.addResourceProvider(new SubImageProvider());
-	pool.addResourceProvider(new ImageProvider());
+	pool.addResourceLoader(new SubImageLoader());
+	pool.addResourceLoader(new ImageLoader(vfs.get()));
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 0);
 
@@ -94,7 +95,7 @@ BOOST_AUTO_TEST_CASE( ImagePool_test ) {
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 1);
 
 	ImageLocation location(SUBIMAGE_FILE);
-	ImageProvider imgprovider;
+	ImageLoader imgprovider(vfs.get());
 	int fullImgInd = pool.addResourceFromLocation(ImageLocation(SUBIMAGE_FILE));
 	BOOST_CHECK(pool.getResourceCount(RES_LOADED) == 0);
 	BOOST_CHECK(pool.getResourceCount(RES_NON_LOADED) == 2);

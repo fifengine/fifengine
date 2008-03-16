@@ -29,7 +29,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/exception.h"
+#include "util/base/exception.h"
 
 #include "enginesettings.h"
 
@@ -46,7 +46,8 @@ namespace FIFE {
 		m_screenheight(600),
 		m_defaultfontpath(""),
 		m_defaultfontsize(8),
-		m_defaultfontglyphs("") {
+		m_defaultfontglyphs(""),
+		m_image_chunking_size(256) {
 	}
 	
 	EngineSettings::~EngineSettings() {

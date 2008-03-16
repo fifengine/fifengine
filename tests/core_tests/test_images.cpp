@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2007 by the FIFE Team                              *
- *   fife-public@lists.sourceforge.net                                     *
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or modify          *
@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "util/fife_unit_test.h"
 
 // 3rd party library includes
 #include <boost/scoped_ptr.hpp>
@@ -34,7 +33,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "vfs/vfs.h"
-#include "util/rect.h"
+#include "util/structures/rect.h"
 #include "util/time/timemanager.h"
 #include "vfs/vfs.h"
 #include "vfs/vfsdirectory.h"
@@ -44,10 +43,11 @@
 #include "video/imagepool.h"
 #include "video/sdl/renderbackendsdl.h"
 #include "video/opengl/renderbackendopengl.h"
-#include "loaders/native/video_loaders/image_provider.h"
-#include "loaders/native/video_loaders/subimage_provider.h"
-#include "loaders/native/video_loaders/animation_provider.h"
-#include "util/exception.h"
+#include "loaders/native/video_loaders/image_loader.h"
+#include "loaders/native/video_loaders/subimage_loader.h"
+#include "util/base/exception.h"
+
+#include "fife_unit_test.h"
 
 using boost::unit_test::test_suite;
 using namespace FIFE;
@@ -64,19 +64,19 @@ struct environment {
 	environment()
 		: timemanager(new TimeManager()),
 		  vfs(new VFS()) {
-		VFS::instance()->addSource(new VFSDirectory());
+		vfs->addSource(new VFSDirectory(vfs.get()));
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 				throw SDLException(SDL_GetError());
 			}
 		}
 };
 
-void test_image(RenderBackend& renderbackend) {
+void test_image(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	ImageProvider provider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(ImageLocation(IMAGE_FILE))));
+	ImageLoader provider(vfs);
+	boost::scoped_ptr<Image> img(provider.load(ImageLocation(IMAGE_FILE)));
 	
 	int h = img->getHeight();
 	int w = img->getWidth();
@@ -96,12 +96,12 @@ void test_image(RenderBackend& renderbackend) {
 	}
 }
 
-void test_subimage(RenderBackend& renderbackend) {
+void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
 	renderbackend.createMainScreen(800, 600, 0, false);
 
-	ImageProvider imgprovider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.createResource(ImageLocation(SUBIMAGE_FILE))));
+	ImageLoader imgprovider(vfs);
+	boost::scoped_ptr<Image> img(imgprovider.load(ImageLocation(SUBIMAGE_FILE)));
 
 	ImageLocation location(SUBIMAGE_FILE);
 	location.setParentSource(&*img);
@@ -113,12 +113,12 @@ void test_subimage(RenderBackend& renderbackend) {
 	location.setHeight(h);
 	std::vector<Image*> subimages;
 
-	SubImageProvider subprovider;
+	SubImageLoader subprovider;
 	for (int x = 0; x < (W - w); x+=w) {
 		for (int y = 0; y < (H - h); y+=h) {
 			location.setXShift(x);
 			location.setYShift(y);
-			Image* sub = dynamic_cast<Image*>(subprovider.createResource(location));
+			Image* sub = subprovider.load(location);
 			subimages.push_back(sub);
 		}
 	}
@@ -140,13 +140,13 @@ void test_sdl_alphaoptimize() {
 	environment env;
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
-	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false);
 	renderbackend.setAlphaOptimizerEnabled(true);
 		
-	ImageProvider provider;
-	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.createResource(ImageLocation(IMAGE_FILE))));
+	ImageLoader provider(env.vfs.get());
+	boost::scoped_ptr<Image> img(provider.load(ImageLocation(IMAGE_FILE)));
 
-	boost::scoped_ptr<Image> alpha_img(dynamic_cast<Image*>(provider.createResource(ImageLocation(ALPHA_IMAGE_FILE))));
+	boost::scoped_ptr<Image> alpha_img(provider.load(ImageLocation(ALPHA_IMAGE_FILE)));
 
 	int h0 = img->getHeight();
 	int w0 = img->getWidth();
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE( SDL_image_test ) {
 #endif
 	environment env;
 	RenderBackendSDL renderbackend;
-	test_image(renderbackend);
+	test_image(env.vfs.get(), renderbackend);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE( OGL_image_test ) {
 #endif
 	environment env;
 	RenderBackendOpenGL renderbackend;
-	test_image(renderbackend);
+	test_image(env.vfs.get(), renderbackend);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE( SDL_subimage_test ) {
 #endif
 	environment env;
 	RenderBackendSDL renderbackend;
-	test_subimage(renderbackend);
+	test_subimage(env.vfs.get(), renderbackend);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE( OGL_subimage_test ) {
 #endif
 	environment env;
 	RenderBackendOpenGL renderbackend;
-	test_subimage(renderbackend);
+	test_subimage(env.vfs.get(), renderbackend);
 }
 
 #ifdef FIFE_BOOST_VERSION_103300

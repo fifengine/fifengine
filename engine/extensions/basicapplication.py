@@ -8,6 +8,7 @@ See the L{ApplicationBase} documentation.
 
 import fife
 import fifelog
+from serializers.xmlanimation import XMLAnimationLoader
 
 class ExitEventListener(fife.IKeyListener):
 	"""
@@ -19,14 +20,14 @@ class ExitEventListener(fife.IKeyListener):
 		self.app = app
 		self.engine = app.engine
 		eventmanager = self.engine.getEventManager()
-		eventmanager.setNonConsumableKeys([fife.IKey.ESCAPE])
+		eventmanager.setNonConsumableKeys([fife.Key.ESCAPE])
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
 		self.quitRequested = False
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
-		if keyval == fife.IKey.ESCAPE:
+		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
 	
 	def keyReleased(self, evt):
@@ -50,7 +51,10 @@ class ApplicationBase(object):
 		self.initLogging()
 		
 		self.engine.init()
-
+		
+		self._animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
+		self.engine.getAnimationPool().addResourceLoader(self._animationloader)
+		
 		self.quitRequested = False
 		self.breakRequested = False
 		self.returnValues = []
@@ -74,6 +78,10 @@ class ApplicationBase(object):
 		engineSetting.setSDLRemoveFakeAlpha(settings.SDLRemoveFakeAlpha)
 		engineSetting.setScreenWidth(settings.ScreenWidth)
 		engineSetting.setScreenHeight(settings.ScreenHeight)
+		try:
+			engineSetting.setImageChunkingSize(settings.ImageChunkSize)
+		except:
+			pass
 	
 	def initLogging(self):
 		"""

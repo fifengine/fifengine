@@ -48,7 +48,7 @@
 #include "video/renderbackend.h"
 #include "video/rendermanager.h"
 #include "engine.h"
-#include "util/exception.h"
+#include "util/base/exception.h"
 #include "util/settingsmanager.h"
 
 #include "frm_raw_loader.h"

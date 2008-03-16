@@ -6,7 +6,6 @@ class TestModel(unittest.TestCase):
 	
 	def setUp(self):
 		self.model = fife.Model()
-		self.metamodel = self.model.getMetaModel()
 
 	def testModel(self):
 		map1 = self.model.createMap("map001")
@@ -52,7 +51,6 @@ class TestModel(unittest.TestCase):
 
 		self.assertEqual(map.getNumLayers(), 0)
 
-		dat = self.metamodel.createDataset("dataset001")
 		grid = fife.SquareGrid()
 
 		layer1 = map.createLayer("layer001", grid)
@@ -75,11 +73,10 @@ class TestModel(unittest.TestCase):
 	def testLayers(self):
 		map = self.model.createMap("map006")
 
-		dat = self.metamodel.createDataset("dataset002")
 		grid = fife.SquareGrid()
-		obj1 = dat.createObject("object001")
+		obj1 = self.model.createObject("object001","test_nspace")
 		obj1.set("Name", "MyHero")
-		obj2 = dat.createObject("object002")
+		obj2 = self.model.createObject("object002","test_nspace")
 		obj2.set("Name", "Goon")
 
 		self.assertEqual(obj1.get("id"), "object001")
@@ -105,54 +102,6 @@ class TestModel(unittest.TestCase):
 		print p2.x, p2.y
 		self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4,4))
 		
-	def testMetaModel(self):
-		dat1 = self.metamodel.createDataset("dataset003")
-		dat2 = self.metamodel.createDataset("dataset004")
-		dat1.set("Name", "Dat1")
-		dat2.set("Name", "Dat2")
-
-		self.assertEqual(dat1.get("Name"), "Dat1")
-		self.assertEqual(dat2.get("Name"), "Dat2")
-
-		meta_query = self.metamodel.getDatasets("Name", "Dat1")
-		self.assertEqual(len(meta_query), 1)
-
-		meta_query = self.metamodel.getDatasets("Name", "Dat2")
-		self.assertEqual(len(meta_query), 1)
-
-	def testDatasets(self):
-		dat = self.metamodel.createDataset("dataset005")
-
-		obj1 = dat.createObject("1")
-		obj2 = dat.createObject("2")
-		obj3 = dat.createObject("3")
-
-		obj1.set("Name", "MyHero")
-		obj1.set("Hitpoints", '100')
-		obj1.set("Type", "Humanoid")
-
-		obj2.set("Name", "Zombie")
-		obj2.set("Hitpoints", '40')
-		obj2.set("Type", "Humanoid")
-
-		obj3.set("Name", "Box")
-		obj3.set("Type", "Inanimate")
-
-		meta_query = self.metamodel.getObjects("id", "1")
-		self.assertEqual(len(meta_query), 1)
-		self.assertEqual(meta_query[0].get("Name"), "MyHero")
-
-		meta_query = self.metamodel.getObjects("Name", "MyHero")
-		self.assertEqual(len(meta_query), 1)
-		self.assertEqual(meta_query[0].get("Name"), "MyHero")
-		
-		meta_query = self.metamodel.getObjects("Type", "Humanoid")
-		self.assertEqual(len(meta_query), 2)
-
-		meta_query = self.metamodel.getObjects("Name", "Box")
-		obj = meta_query[0]
-		self.assertEqual(obj.get("Type"), "Inanimate")
-
 class TestActionAngles(unittest.TestCase):
 	def setUp(self):
 		self.runaction = fife.Action("action001")
@@ -224,9 +173,9 @@ class TestActionAngles(unittest.TestCase):
 	def testWalkAngle199(self):
 		self.assertEqual(self.walkaction.get2dGfxVisual().getAnimationIndexByAngle(199), 2)
 
-class InstanceListener(fife.InstanceListener):
+class InstanceListener(fife.InstanceActionListener):
 	def __init__(self):
-		fife.InstanceListener.__init__(self)
+		fife.InstanceActionListener.__init__(self)
 		self.finished = False
 
 	def OnActionFinished(self, instance, action):
@@ -251,7 +200,7 @@ class ActivityTests(unittest.TestCase):
 		self.action.addAnimation(0, 1)
 		self.action.thisown = 0
 		self.listener = InstanceListener()
-		self.inst.addListener(self.listener)
+		self.inst.addActionListener(self.listener)
 		
 	def testMovingAction(self):
 		self.inst.move('run', self.target, 0.5)

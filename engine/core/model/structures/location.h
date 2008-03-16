@@ -32,14 +32,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/metamodel/modelcoords.h"
-#include "util/exception.h"
-#include "util/fifeclass.h"
+#include "util/base/exception.h"
 
 namespace FIFE {
 	class Map;
 	class Layer;
 
-	class Location: public FifeClass {
+	class Location {
 	public:
 		/** Default constructor
 		 */
@@ -67,11 +66,15 @@ namespace FIFE {
 		
 		/** Compares equality of two locations
 		 */
-		bool operator==(const Location& loc) const;
+		inline bool operator==(const Location& loc) const {
+			return ((m_layer == loc.m_layer) && (m_exact_layer_coords == loc.m_exact_layer_coords));
+		}
 		
 		/** Compares unequality of two locations
 		 */
-		bool operator!=(const Location& loc) const;
+		inline bool operator!=(const Location& loc) const {
+			return !(*this == loc);
+		}
 		
 		/** Gets the map where this location is pointing to
 		 * @note this information is fetched from the set layer
@@ -155,6 +158,17 @@ namespace FIFE {
 		 *   - layer has cellgrid
 		 */
 		bool isValid() const;
+		
+		/** Gets distance in map coordinates to another location on the Map
+		 * @param location is the location you want to get the distance to
+		 */
+		double getMapDistanceTo(const Location& location) const;
+
+		/** Gets layer distance to another location
+		 * @param location is the location you want to get the distance to
+		 * In case location resides on different layer, it is mapped to this layer
+		 */
+		double getLayerDistanceTo(const Location& location) const;
 		
 	private:
 		bool isValid(const Layer* layer) const;
