@@ -35,7 +35,7 @@
 
 namespace FIFE {
 	Object::Object(const std::string& identifier, Object* inherited):
-		AttributedClass(identifier),
+		m_id(identifier),
 		m_inherited(inherited),
 		m_actions(NULL),
 		m_blocking(false),
@@ -56,28 +56,6 @@ namespace FIFE {
 		delete m_visual;
 	}
 
-	const std::string& Object::get(const std::string& field) {
-		static std::string null = "";
-
-		if(field == "parent") {
-			if(m_inherited) {
-				return m_inherited->Id();
-			}
-			else {
-				return null;
-			}
-		}
-
-		const std::string& s = AttributedClass::get(field);
-		if(s != "")
-			return s;
-
-		if(m_inherited)
-			return m_inherited->get(field);
-
-		return null;
-	}
-
 	Action* Object::createAction(const std::string& identifier) {
 		if (!m_actions) {
 			m_actions = new std::map<std::string, Action*>;
@@ -85,7 +63,7 @@ namespace FIFE {
 
 		std::map<std::string, Action*>::const_iterator it = m_actions->begin();
 		for(; it != m_actions->end(); ++it) {
-			if(identifier == it->second->Id())
+			if(identifier == it->second->getId())
 				throw NameClash(identifier);
 		}
 

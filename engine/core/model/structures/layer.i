@@ -34,10 +34,12 @@ namespace FIFE {
 	};
 	
 
-	class Layer : public AttributedClass {
+	class Layer : public ResourceClass {
 		public:
 			Layer(const std::string& identifier, Map* map, CellGrid* geometry);
 			~Layer();
+
+			const std::string& getId();
 
 			CellGrid* getCellGrid() const { return m_grid; }
 
@@ -47,8 +49,8 @@ namespace FIFE {
 			Instance* createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
 			void deleteInstance(Instance* object);
 
-			const std::vector<Instance*>& getInstances();
-			std::vector<Instance*> getInstances(const std::string& field, const std::string& value);
+			const std::vector<Instance*>& getInstances() const;
+			Instance* getInstance(const std::string& id);
 
 			void setInstancesVisible(bool vis);
 			void toggleInstancesVisible();

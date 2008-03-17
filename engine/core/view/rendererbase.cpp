@@ -100,8 +100,8 @@ namespace FIFE {
 	void RendererBase::activateAllLayers(Map* map) {
 		clearActiveLayers();
 		
-		const std::vector<Layer*>& tmp = map->getLayers();
-		std::vector<Layer*>::const_iterator it = tmp.begin();
+		const std::list<Layer*>& tmp = map->getLayers();
+		std::list<Layer*>::const_iterator it = tmp.begin();
 		for (; it != tmp.end(); ++it) {
 			addActiveLayer(*it);
 		}

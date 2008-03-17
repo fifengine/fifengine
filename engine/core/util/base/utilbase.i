@@ -97,15 +97,4 @@ namespace FIFE {
 		ResourceClass();
 	};	
 	
-	class AttributedClass: public ResourceClass {
-	public:
-		AttributedClass(const std::string& identifier);
-		~AttributedClass();
-		const std::string& Id() const;
-
-		virtual std::vector<std::string> listFields() const;
-		virtual const std::string& get(const std::string& field);
-		virtual void set(const std::string& field, const std::string& value);
-		void remove(const std::string& field);
-	};
 }

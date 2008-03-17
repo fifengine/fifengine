@@ -23,6 +23,7 @@
 #define FIFE_MAP_MAP_H
 
 // Standard C++ library includes
+#include <list>
 #include <string>
 #include <vector>
 
@@ -32,7 +33,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/attributedclass.h"
 #include "util/base/resourceclass.h"
 #include "util/resource/resource.h"
 #include "model/metamodel/timeprovider.h"
@@ -79,7 +79,7 @@ namespace FIFE {
 	 * The actual data is contained in \c Layer objects
 	 * @see Layer
 	 */
-	class Map : public AttributedClass {
+	class Map : public ResourceClass {
 		public:
 
 			/** Construct a map
@@ -92,9 +92,11 @@ namespace FIFE {
 			 */
 			~Map();
 
-			/** Add a Layer to this Map. Map owns
-			 * the returned pointer to the new Layer, so don't
-			 * delete it!
+			/** Get the identifier for this map.
+			 */
+			const std::string& getId() { return m_id; }
+
+			/** Add a Layer to this Map. Map owns the returned pointer to the new Layer, so don't delete it!
 			 */
 			Layer* createLayer(const std::string& identifier, CellGrid* grid);
 
@@ -104,18 +106,11 @@ namespace FIFE {
 
 			/** Get the layers on this map.
 			 */
-			std::list<Layer*> getLayers() const;
+			const std::list<Layer*>& getLayers() const { return m_layers; }
 
-			/** Get a set of layers by a value.
-			 *
-			 * @param the field to search on
-			 * @param the value to be searched for in the field
+			/** Get the layer with the given id.
 			 */
-			std::list<Layer*> getLayers(const std::string& field, const std::string& value) const;
-
-			/** Get all layers
-			 */
-			const std::vector<Layer*>& getLayers() { return m_layers; }
+			Layer* getLayer(const std::string& identifier);
 
 			/** Get the overall number of layers
 			 */
@@ -166,8 +161,9 @@ namespace FIFE {
 			std::vector<Layer*>& getChangedLayers() { return m_changedlayers; }
 
 		private:
-			std::string m_mapname;
-			std::vector<Layer*> m_layers;
+			std::string m_id;
+
+			std::list<Layer*> m_layers;
 			TimeProvider m_timeprovider;
 
 			Map(const Map& map);

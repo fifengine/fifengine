@@ -25,12 +25,12 @@ namespace FIFE {
 		Map* createMap(const std::string& identifier);
 		void deleteMap(Map*);
 
-		std::list<Map*> getMaps() const;
-		std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
+		const std::list<Map*>& getMaps() const;
+		Map* getMap(const std::string& id) const;
 
 		Object* createObject(const std::string& identifier, const std::string& name_space, Object* parent=0);
 		Object* getObject(const std::string& id, const std::string& name_space);
-		std::list<Object*>& getObjects(const std::string& name_space);
+		const std::list<Object*>& getObjects(const std::string& name_space) const;
 
 		size_t getNumMaps() const;
 		void deleteMaps();

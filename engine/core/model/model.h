@@ -69,14 +69,13 @@ namespace FIFE {
 
 		/** Get all the maps in the model.
 		 */
-		std::list<Map*> getMaps() const;
+		const std::list<Map*>& getMaps() const { return m_maps; }
 
-		/** Get a set of maps by a value.
+		/** Get a map.
 		 *
-		 * @param the field to search on
-		 * @param the value to be searched for in the field
+		 * @param identifier the id of the map to be found.
 		 */
-		std::list<Map*> getMaps(const std::string& field, const std::string& value) const;
+		Map* getMap(const std::string& identifier) const;
 
 		/** Return the number of maps in this model
 		 */
@@ -101,7 +100,7 @@ namespace FIFE {
 
 		/** Get all the objects in the given namespace.
 		 */
-		std::list<Object*>& getObjects(const std::string& name_space);
+		const std::list<Object*>& getObjects(const std::string& name_space) const;
 
 		/** Adds pather to model. Moves ownership to model
 		 */
@@ -127,7 +126,7 @@ namespace FIFE {
 
 	private:
 
-		std::vector<Map*> m_maps;
+		std::list<Map*> m_maps;
 
 		typedef std::pair<std::string, std::list<Object*> > namespace_t;
 		std::list<namespace_t> m_namespaces;

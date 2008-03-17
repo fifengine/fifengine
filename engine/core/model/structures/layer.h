@@ -33,8 +33,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/resourceclass.h"
 #include "model/metamodel/modelcoords.h"
-#include "util/base/attributedclass.h"
 #include "model/metamodel/object.h"
 
 #include "instance.h"
@@ -89,7 +89,7 @@ namespace FIFE {
 	
 	/** A basic layer on a map
 	 */
-	class Layer : public AttributedClass {
+	class Layer : public ResourceClass {
 		public:
 			/** Constructor
 			 * Layers are created by calling addLayer from map, thus
@@ -100,6 +100,10 @@ namespace FIFE {
 			/** Destructs a Layer instance
 			 */
 			~Layer();
+
+			/** Get the id of this layer.
+			 */
+			const std::string& getId() { return m_id; }
 
 			/** Get the map this layer is contained in
 			 */
@@ -134,16 +138,11 @@ namespace FIFE {
 
 			/** Get the list of instances on this layer
 			 */
-			const std::vector<Instance*>& getInstances();
+			const std::vector<Instance*>& getInstances() const { return m_instances; }
 
-			/** Get a list of instances on this layer with a value.
-			 * @param field the (string) field to search on
-			 * @param value the value to be found in the field
-			 *
-			 *  Special field: 'loc', the location of the instance.
-			 *
+			/** Get the instance on this layer with the given identifier.
 			 */
-			std::vector<Instance*> getInstances(const std::string& field, const std::string& value);
+			Instance* getInstance(const std::string& id);
 
 			/** Set object visibility
 			 */
@@ -208,6 +207,8 @@ namespace FIFE {
 			std::vector<Instance*>& getChangedInstances() { return m_changedinstances; }
 
 		protected:
+			std::string m_id;
+
 			Map* m_map;
 
 			bool m_instances_visibility;

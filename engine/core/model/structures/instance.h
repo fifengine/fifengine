@@ -72,7 +72,7 @@ namespace FIFE {
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
-	class Instance : public AttributedClass {
+	class Instance : public ResourceClass {
 	public:
 
 		/** Constructor
@@ -84,6 +84,10 @@ namespace FIFE {
 		/** Destructor
 		 */
 		virtual ~Instance();
+
+		/** Get the identifier for this instance; possibly null.
+		 */
+		const std::string& getId() { return m_id; }
 
 		/** Gets object where this instance is instantiated from
 		 */
@@ -240,10 +244,9 @@ namespace FIFE {
 		 */
 		inline InstanceChangeInfo getChangeInfo();
 
-		std::vector<std::string> listFields() const;
-		const std::string& get(const std::string& field);
-
 	private:
+		std::string m_id;
+
 		/** InstanceActivity gets allocated in case there is some runtime
 		 * activity related to the instance. Keeping activity related variables
 		 * in separate class keeps memory consumption lower e.g. for large tile

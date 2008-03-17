@@ -40,10 +40,11 @@ namespace FIFE {
 		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
 	};
 
-	class Instance : public AttributedClass {
+	class Instance : public ResourceClass {
 	public:
 		Instance(Object* object, const Location& location, const std::string& identifier="");
 		virtual ~Instance();
+		const std::string& getId();
 		Object* getObject();
 		void setLocation(const Location& loc);
 		Location getLocation() const;

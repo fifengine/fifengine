@@ -11,43 +11,36 @@ class TestModel(unittest.TestCase):
 		map1 = self.model.createMap("map001")
 		map2 = self.model.createMap("map002")
 		
-		map1.set("Name", "Map1")
-		map2.set("Name", "Map2")
-		
-		self.assertEqual(map1.get("Name"), "Map1")
-		self.assertEqual(map2.get("Name"), "Map2")
+		query = self.model.getMap("map001")
+		self.assertEqual(map1.getId(), query.getId())
 
-		map_query = self.model.getMaps("Name", "Map1")
-		self.assertEqual(len(map_query), 1)
+		query = self.model.getMap("map002")
+		self.assertEqual(map2.getId(), query.getId())
 
-		map_query = self.model.getMaps("Name", "Map2")
-		self.assertEqual(len(map_query), 1)
+		query = self.model.getMaps()
+		self.assertEqual(len(query), 2)
 
-		map_query = self.model.getMaps()
-		self.assertEqual(len(map_query), 2)
-
-		self.assertEqual(len(map_query), self.model.getNumMaps())
+		self.assertEqual(len(query), self.model.getNumMaps())
 
 		self.model.deleteMap(map2)
 
-		map_query = self.model.getMaps()
-		self.assertEqual(len(map_query), 1)
+		query = self.model.getMaps()
+		self.assertEqual(len(query), 1)
 
 		self.model.createMap("map003")
 		self.model.createMap("map004")
 		
-		map_query = self.model.getMaps()
-		self.assertEqual(len(map_query), 3)
+		query = self.model.getMaps()
+		self.assertEqual(len(query), 3)
 		self.assertEqual(self.model.getNumMaps(), 3)
 		
 		self.model.deleteMaps()
-		map_query = self.model.getMaps()
-		self.assertEqual(len(map_query), 0)
+		query = self.model.getMaps()
+		self.assertEqual(len(query), 0)
 		self.assertEqual(self.model.getNumMaps(), 0)
 
 	def testMaps(self):
 		map = self.model.createMap("map005")
-		map.set("Name", "MyMap")
 
 		self.assertEqual(map.getNumLayers(), 0)
 
@@ -56,13 +49,10 @@ class TestModel(unittest.TestCase):
 		layer1 = map.createLayer("layer001", grid)
 		layer2 = map.createLayer("layer002", grid)
 
-		layer1.set("Name", "Layer1")
-		layer2.set("Name", "Layer2")
+		self.assertEqual(layer1.getId(), "layer001")
+		self.assertEqual(layer2.getId(), "layer002")
 
-		self.assertEqual(layer1.get("Name"), "Layer1")
-		self.assertEqual(layer2.get("Name"), "Layer2")
-
-		self.assertEqual(len(map.getLayers("Name", "Layer1")), 1)
+		self.assertEqual(len(map.getLayers()), 2)
 
 		self.assertEqual(map.getNumLayers(), 2)
 		map.deleteLayer(layer2)
@@ -75,32 +65,30 @@ class TestModel(unittest.TestCase):
 
 		grid = fife.SquareGrid()
 		obj1 = self.model.createObject("object001","test_nspace")
-		obj1.set("Name", "MyHero")
 		obj2 = self.model.createObject("object002","test_nspace")
-		obj2.set("Name", "Goon")
 
-		self.assertEqual(obj1.get("id"), "object001")
-		self.assertEqual(obj2.get("id"), "object002")
+		self.assertEqual(obj1.getId(), "object001")
+		self.assertEqual(obj2.getId(), "object002")
 
 		layer = map.createLayer("layer003", grid)
 
 		self.assertEqual(layer.hasInstances(), 0)
-		#self.assertEqual(layer.getMap(), map)
+		self.assertEqual(layer.getMap().getId(), map.getId())
 
 		inst = layer.createInstance(obj1, fife.ModelCoordinate(4,4))
 		layer.createInstance(obj2, fife.ModelCoordinate(5,6))
 		layer.createInstance(obj2, fife.ModelCoordinate(5,4))
 		
-		query = layer.getInstances("Name", "Goon")
-		self.assertEqual(len(query), 2)
+		#query = layer.getInstances("Name", "Goon")
+		#self.assertEqual(len(query), 2)
 		self.assertEqual(len(layer.getInstances()), 3)
 
-		self.assertEqual(query[0].get("Name"), "Goon")
-		p1 = fife.ModelCoordinate(4,4)
-		print p1.x, p1.y
-		p2 = inst.getLocation().getLayerCoordinates()
-		print p2.x, p2.y
-		self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4,4))
+		#self.assertEqual(query[0].get("Name"), "Goon")
+		#p1 = fife.ModelCoordinate(4,4)
+		#print p1.x, p1.y
+		#p2 = inst.getLocation().getLayerCoordinates()
+		#print p2.x, p2.y
+		#self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4,4))
 		
 class TestActionAngles(unittest.TestCase):
 	def setUp(self):

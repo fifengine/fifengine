@@ -29,17 +29,19 @@ namespace FIFE {
 		virtual void onLayerDelete(Map* map, Layer* layer) = 0;
 	};
 
-	class Map : public AttributedClass {
+	class Map : public ResourceClass {
 		public:
 
 			Map(const std::string& identifier, TimeProvider* tp_master=NULL);
 			~Map();
 
+			const std::string& getId();
+
 			Layer* createLayer(const std::string& identifier, CellGrid* grid);
 			void deleteLayer(Layer* index);
 
 			std::list<Layer*> getLayers() const;
-			std::list<Layer*> getLayers(const std::string& field, const std::string& value) const;
+			Layer* getLayer(const std::string& id);
 
 			size_t getNumLayers() const;
 			void deleteLayers();

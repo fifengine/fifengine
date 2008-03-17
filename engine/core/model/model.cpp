@@ -50,9 +50,9 @@ namespace FIFE {
 	}
 
 	Map* Model::createMap(const std::string& identifier) {
-		std::vector<Map*>::const_iterator it = m_maps.begin();
+		std::list<Map*>::const_iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
-			if(identifier == (*it)->Id())
+			if(identifier == (*it)->getId())
 				throw NameClash(identifier);
 		}
 
@@ -75,31 +75,18 @@ namespace FIFE {
 		return NULL;
 	}
 	
-	std::list<Map*> Model::getMaps() const {
-		std::list<Map*> lst;
-
-		std::vector<Map*>::const_iterator it = m_maps.begin();
+	Map* Model::getMap(const std::string& identifier) const {
+		std::list<Map*>::const_iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
-			lst.push_back(*it);
+			if((*it)->getId() == identifier)
+				return *it;
 		}
 
-		return lst;
-	}
-
-	std::list<Map*> Model::getMaps(const std::string& field, const std::string& value) const {
-		std::list<Map*> matches;
-
-		std::vector<Map*>::const_iterator it = m_maps.begin();
-		for(; it != m_maps.end(); ++it) {
-			if((*it)->get(field) == value)
-				matches.push_back(*it);
-		}
-
-		return matches;
+		throw NotFound(std::string("Tried to get non-existant map: ") + identifier + ".");
 	}
 
 	void Model::deleteMap(Map* map) {
-		std::vector<Map*>::iterator it = m_maps.begin();
+		std::list<Map*>::iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
 			if(*it == map) {
 				delete *it;
@@ -131,6 +118,12 @@ namespace FIFE {
 			--nspace;
 		}
 
+		std::list<Object*>::const_iterator it = nspace->second.begin();
+		for(; it != nspace->second.end(); ++it) {
+			if(identifier == (*it)->getId())
+				throw NameClash(identifier);
+		}
+
 		Object* object = new Object(identifier, parent);
 		nspace->second.push_back(object);
 		return object;
@@ -141,26 +134,23 @@ namespace FIFE {
 		for(; nspace != m_namespaces.end(); ++nspace) {
 			std::list<Object*>::iterator obj = nspace->second.begin();
 			for(; obj != nspace->second.end(); ++obj)
-				if((*obj)->Id() == id) return *obj;
+				if((*obj)->getId() == id) return *obj;
 		}
 
 		return 0;
 	}
 
-	std::list<Object*>& Model::getObjects(const std::string& name_space) {
-		std::list<namespace_t>::iterator nspace;
-		for(; nspace != m_namespaces.end(); ++nspace)
-			if(nspace->first == name_space) break;
+	const std::list<Object*>& Model::getObjects(const std::string& name_space) const {
+		std::list<namespace_t>::const_iterator nspace = m_namespaces.begin();
+		for(; nspace != m_namespaces.end(); ++nspace) {
+			if(nspace->first == name_space) return nspace->second;
+		}
 
-		if(nspace == m_namespaces.end()) {
-			throw NotFound(std::string("Tried to get objects from the nonexistant namespace: ") + name_space + ".");
-		}	
-
-		return nspace->second;		
+		throw NotFound(name_space);
 	}
 
 	void Model::update() {
-		std::vector<Map*>::iterator it = m_maps.begin();
+		std::list<Map*>::iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
 			(*it)->update();
 		}

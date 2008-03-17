@@ -34,7 +34,7 @@
 
 namespace FIFE {
 	Action::Action(const std::string& identifier)
-		: AttributedClass(identifier),
+		: m_id(identifier),
 		m_duration(0),
 		m_visual(NULL) {
 	}

@@ -38,7 +38,7 @@
 namespace FIFE {
 
 	Map::Map(const std::string& identifier, TimeProvider* tp_master):
-		AttributedClass(identifier), 
+		m_id(identifier), 
 		m_timeprovider(tp_master),
 		m_changelisteners(),
 		m_changedlayers(),
@@ -49,27 +49,14 @@ namespace FIFE {
 		deleteLayers();
 	}
 
-	std::list<Layer*> Map::getLayers() const {
-		std::list<Layer*> layers;
-
-		std::vector<Layer*>::const_iterator it = m_layers.begin();
+	Layer* Map::getLayer(const std::string& id) {
+		std::list<Layer*>::const_iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
-			layers.push_back(*it);
+			if((*it)->getId() == id)
+				return *it;
 		}
 
-		return layers;
-	}
-
-	std::list<Layer*> Map::getLayers(const std::string& field, const std::string& value) const {
-		std::list<Layer*> matches;
-
-		std::vector<Layer*>::const_iterator it = m_layers.begin();
-		for(; it != m_layers.end(); ++it) {
-			if((*it)->get(field) == value)
-				matches.push_back(*it);
-		}
-
-		return matches;
+		throw NotFound(id);
 	}
 
 	size_t Map::getNumLayers() const {
@@ -77,9 +64,9 @@ namespace FIFE {
 	}
 
 	Layer* Map::createLayer(const std::string& identifier, CellGrid* grid) {
-		std::vector<Layer*>::const_iterator it = m_layers.begin();
+		std::list<Layer*>::const_iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
-			if(identifier == (*it)->Id())
+			if(identifier == (*it)->getId())
 				throw NameClash(identifier);
 		}
 
@@ -96,7 +83,7 @@ namespace FIFE {
 	}
 
 	void Map::deleteLayer(Layer* layer) {
-		std::vector<Layer*>::iterator it = m_layers.begin();
+		std::list<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			if((*it) == layer) {
 				std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
@@ -113,7 +100,7 @@ namespace FIFE {
 	}
 
 	void Map::deleteLayers() {
-		std::vector<Layer*>::iterator it = m_layers.begin();
+		std::list<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			std::vector<MapChangeListener*>::iterator i = m_changelisteners.begin();
 			while (i != m_changelisteners.end()) {
@@ -127,7 +114,7 @@ namespace FIFE {
 
 	bool Map::update() {
 		m_changedlayers.clear();
-		std::vector<Layer*>::iterator it = m_layers.begin();
+		std::list<Layer*>::iterator it = m_layers.begin();
 		for(; it != m_layers.end(); ++it) {
 			if ((*it)->update()) {
 				m_changedlayers.push_back(*it);

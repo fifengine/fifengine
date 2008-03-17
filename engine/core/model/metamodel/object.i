@@ -11,12 +11,12 @@ namespace FIFE {
 	class Action;
 	class AbstractPather;
 
-	class Object : public AttributedClass {
+	class Object : public ResourceClass {
 	public:
 		Object(const std::string& identifier, Object* inherited=NULL);
 		~Object();
 
-		const std::string& get(const std::string& field);
+		const std::string& getId();
 
 		Action* createAction(const std::string& identifier);
 		Action* getAction(const std::string& identifier);

@@ -40,10 +40,10 @@ namespace FIFE {
 	: m_upperX(0), m_upperY(0), m_lowerX(0), m_lowerY(0), m_layer(layer) {
 		
 		Map* map = layer->getMap();
-		const std::vector<Layer*>& layers = map->getLayers();
+		const std::list<Layer*>& layers = map->getLayers();
 		ModelCoordinate min, max;
 
-		for(std::vector<Layer*>::const_iterator i = layers.begin();
+		for(std::list<Layer*>::const_iterator i = layers.begin();
 			i != layers.end();
 			++i) {
 

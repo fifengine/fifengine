@@ -38,7 +38,7 @@
 namespace FIFE {
 
 	Layer::Layer(const std::string& identifier, Map* map, CellGrid* grid)
-		: AttributedClass(identifier),
+		: m_id(identifier),
 		m_map(map),
 		m_instances_visibility(true),
 		m_instanceTree(new InstanceTree()),
@@ -67,6 +67,14 @@ namespace FIFE {
 		Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
+
+		if(id != "") {
+			std::vector<Instance*>::iterator it = m_instances.begin();
+			for(; it != m_instances.end(); ++it) {
+				if((*it)->getId() == id)
+					throw NameClash(id);
+			}
+		}
 
 		Instance* instance = new Instance(object, l, id);
 		m_instances.push_back(instance);
@@ -100,41 +108,14 @@ namespace FIFE {
 		m_changed = true;
 	}
 
-	const std::vector<Instance*>& Layer::getInstances() {
-		return m_instances;
-	}
-
-	ModelCoordinate parse_point(const std::string& value) {
-		size_t delim = value.find(',');
-		std::istringstream strx(value.substr(0,delim));
-		std::istringstream stry(value.substr(delim + 1,value.length()));
-		ModelCoordinate pt;
-		strx >> pt.x;
-		stry >> pt.y;
-		return pt;
-	}
-	std::vector<Instance*> Layer::getInstances(const std::string& field, const std::string& value) {
-		std::vector<Instance*> matches;
-
-		if(field == "loc") {
-			ModelCoordinate pt = parse_point(value);
-			std::vector<Instance*>::iterator it = m_instances.begin();
-			for(; it != m_instances.end(); ++it) {
-				Location& loc = (*it)->getLocationRef();
-				if(loc.getLayerCoordinates(this) == pt)
-					matches.push_back(*it);
-			}
-
-			return matches;
-		}
-
+	Instance* Layer::getInstance(const std::string& id) {
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
-			if((*it)->get(field) == value)
-				matches.push_back(*it);
+			if((*it)->getId() == id)
+				return *it;
 		}
 
-		return matches;
+		throw NotFound(id);
 	}
 
 	void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const {

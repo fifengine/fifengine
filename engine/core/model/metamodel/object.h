@@ -32,12 +32,11 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/attributedclass.h"
+#include "util/base/resourceclass.h"
 #include "util/math/angles.h"
 
 namespace FIFE {
 
-	class Dataset;
 	class Action;
 	class AbstractPather;
 	class AbstractVisual;
@@ -47,9 +46,8 @@ namespace FIFE {
 	 * Objects describe the properties of objects.
 	 * Objects may inherit default values from another object.
 	 *
-	 * @see AttributedClass in util/base/attributedclass.h
 	 */
-	class Object : public AttributedClass {
+	class Object : public ResourceClass {
 	public:
 		/** Constructor
 		 * An object may optionally inherit default attributes
@@ -67,7 +65,7 @@ namespace FIFE {
 		 */
 		~Object();
 		
-		const std::string& get(const std::string& field);
+		const std::string& getId() { return m_id; }
 
 		/** Adds new action with given id. In case there is action already
 		 *  with given id, returns it instead of new object
@@ -118,6 +116,7 @@ namespace FIFE {
 	
 	
 	private:
+		std::string m_id;
 		Object* m_inherited;
 		std::map<std::string, Action*>* m_actions;
 		bool m_blocking;

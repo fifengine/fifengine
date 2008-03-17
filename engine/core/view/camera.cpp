@@ -419,8 +419,8 @@ namespace FIFE {
 		// update each layer
 		m_renderbackend->pushClipArea(getViewPort());
 
-		const std::vector<Layer*>& layers = map->getLayers();
-		std::vector<Layer*>::const_iterator layer_it = layers.begin();
+		const std::list<Layer*>& layers = map->getLayers();
+		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
 
 			// sort instances on layer based on stack position + camera distance. done only once

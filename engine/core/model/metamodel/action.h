@@ -33,14 +33,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/attributedclass.h"
 #include "util/math/angles.h"
+#include "util/base/resourceclass.h"
 
 #include "abstractvisual.h"
 
 namespace FIFE {
 
-	class Action : public AttributedClass {
+	class Action : public ResourceClass {
 	public:
 		/** Constructor
 		 * Actions are created by calling addAction from object, thus
@@ -51,6 +51,10 @@ namespace FIFE {
 		/** Destructor
 		 */
 		virtual ~Action();
+
+		/** Get the identifier for this action.
+		 */
+		const std::string& getId() { return m_id; }
 
 		/** Sets the duration for this action
 		 */
@@ -70,6 +74,8 @@ namespace FIFE {
 
 
 	private:
+		std::string m_id;
+
 		// duration of the action
 		unsigned int m_duration;
 		// visualization for action
