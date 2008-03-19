@@ -17,11 +17,16 @@ class XMLObjectLoader(fife.ObjectLoader):
 		self.metamodel = model.getMetaModel()
 		self.dataset=dataset
 		self.vfs = vfs
+		self.source = None
 
 	def _err(self, msg):
-		raise SyntaxError(''.join(['File: ', self.source, '. ', msg]))
+		raise SyntaxError(''.join(['File: ', self.source.getFilename(), '. ', msg]))
 
+	def _print_err(self, msg):
+		print 'File: %s. %s' % (self.source.getFilename(), msg)
+	
 	def loadResource(self, location):
+		self.source = location
 		node = None
 		try:
 			node = location.node
@@ -32,7 +37,7 @@ class XMLObjectLoader(fife.ObjectLoader):
 			try:
 				f = self.vfs.open(self.source)
 			except AttributeError:
-				print 'XMLObjectLoader was asked to open a file, but no vfs was given.'
+				self._print_err('XMLObjectLoader was asked to open a file, but no vfs was given.')
 				raise
 			tree = ET.parse(f)
 			node = tree.getroot()
@@ -57,22 +62,21 @@ class XMLObjectLoader(fife.ObjectLoader):
 			try:
 				query = self.metamodel.getObjects('id', str(parent))
 				if len(query) == 0: self._err(''.join(['No objects found with identifier', str(parent), '.']))
-				if len(query) > 1: print ''.join(['Warning: ', str(len(query)), ' objects found with identifier ', str(parent), '.'])
+				if len(query) > 1: 
+					self._print_err('Warning: %d objects found with identifier %s.' % (str(len(query)), str(parent)))
 				parent = query[0]
 
 				obj = dataset.createObject(str(id), parent)
 				fife.ObjectVisual.create(obj)
 			except fife.Exception, e:
-				print e.getMessage()
-				print 'The object ' + str(id) + ' already exists! Ignoring object definition.'
+				self._print_err(e.getMessage() + '\n\tThe object ' + str(id) + ' already exists! Ignoring object definition.')
 				return
 		else:
 			try:
 				obj = dataset.createObject(str(id))
 				fife.ObjectVisual.create(obj)
 			except fife.Exception, e:
-				print e.getMessage()
-				print 'The object ' + str(id) + ' already exists! Ignoring object definition.'
+				self._print_err(e.getMessage() + '\n\tThe object ' + str(id) + ' already exists! Ignoring object definition.')
 				return
 
 		obj.setBlocking(bool(blocking))
@@ -99,7 +103,7 @@ class XMLObjectLoader(fife.ObjectLoader):
 				img.setXShift(int(x_offset))
 				img.setYShift(int(y_offset))
 			except fife.Exception,e:
-				print e.getMessage()
+				self._print_err(e.getMessage())
 				raise
 
 	def parse_actions(self, objelt, object):
@@ -112,8 +116,7 @@ class XMLObjectLoader(fife.ObjectLoader):
 				act_obj = object.createAction(str(id))
 				fife.ActionVisual.create(act_obj)
 			except fife.Exception, e:
-				print e.getMessage()
-				print 'The action ' + str(id) + ' already exists! Ignoring action definition.'
+				self._print_err(e.getMessage() + '\n\tThe action ' + str(id) + ' already exists! Ignoring action definition.')
 				continue
 
 			self.parse_animations(action, act_obj)
@@ -131,6 +134,6 @@ class XMLObjectLoader(fife.ObjectLoader):
 				action.get2dGfxVisual().addAnimation(int(direction), anim_id)
 				action.setDuration(animation.getDuration())
 			except fife.Exception,e:
-				print e.getMessage()
+				self._print_err(e.getMessage())
 				raise
 
