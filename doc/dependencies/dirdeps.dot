@@ -178,7 +178,6 @@ subgraph cluster_11 {
     "model/metamodel" -> "model/metamodel/grids"
     "model/metamodel" -> "util/base"
     "model/metamodel" -> "util/math"
-    "model/metamodel" -> "util/resource"
     "model/metamodel" -> "util/structures"
     "model/metamodel" -> "util/time"
     "model/metamodel/grids" -> "model/metamodel"

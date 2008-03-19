@@ -83,23 +83,21 @@ class XMLObjectLoader(fife.ObjectLoader):
 		self.parse_actions(object, obj)
 
 	def parse_images(self, objelt, object):
-		for image in objelt.findall('image'):	
+		for image in objelt.findall('image'):
 			source = image.get('source')
-			direction = image.get('direction')
-			x_offset = image.get('x_offset')
-			y_offset = image.get('y_offset')
-
-			if not direction: direction = 0
-
-			if not source: self._err('<image> declared without a source attribute.')
+			if not source:
+				self._err('<image> declared without a source attribute.')
+			
+			direction = image.get('direction', 0)
+			x_offset = image.get('x_offset', 0)
+			y_offset = image.get('y_offset', 0)
 
 			try:
 				id = self.image_pool.addResourceFromFile(str(source))	
 				object.get2dGfxVisual().addStaticImage(int(direction), id)
-				if (x_offset or y_offset):
-					img = self.image_pool.getImage(id)
-					img.setXShift(int(x_offset))
-					img.setYShift(int(y_offset))
+				img = self.image_pool.getImage(id)
+				img.setXShift(int(x_offset))
+				img.setYShift(int(y_offset))
 			except fife.Exception,e:
 				print e.getMessage()
 				raise
@@ -123,12 +121,10 @@ class XMLObjectLoader(fife.ObjectLoader):
 	def parse_animations(self, actelt, action):
 		for anim in actelt.findall('animation'):
 			source = anim.get('source')
-			direction = anim.get('direction')
-
-			if not direction: direction = 0
-	
-			if not source: self._err('Animation declared with no source location.')
-
+			if not source: 
+				self._err('Animation declared with no source location.')
+			
+			direction = anim.get('direction', 0)
 			try:
 				anim_id = self.anim_pool.addResourceFromFile(str(source))
 				animation = self.anim_pool.getAnimation(anim_id)
@@ -137,5 +133,4 @@ class XMLObjectLoader(fife.ObjectLoader):
 			except fife.Exception,e:
 				print e.getMessage()
 				raise
-
 
