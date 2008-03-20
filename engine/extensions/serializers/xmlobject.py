@@ -1,4 +1,6 @@
-import fife
+import fife, sys
+from traceback import print_exc
+
 try:
 	import xml.etree.cElementTree as ET
 except:
@@ -19,12 +21,6 @@ class XMLObjectLoader(fife.ObjectLoader):
 		self.vfs = vfs
 		self.source = None
 
-	def _err(self, msg):
-		raise SyntaxError(''.join(['File: ', self.source.getFilename(), '. ', msg]))
-
-	def _print_err(self, msg):
-		print 'File: %s. %s' % (self.source.getFilename(), msg)
-	
 	def loadResource(self, location):
 		self.source = location
 		node = None
@@ -37,14 +33,26 @@ class XMLObjectLoader(fife.ObjectLoader):
 			try:
 				f = self.vfs.open(self.source)
 			except AttributeError:
-				self._print_err('XMLObjectLoader was asked to open a file, but no vfs was given.')
+				print 'XMLObjectLoader was asked to open a file %s, but no vfs was given.' % self.source.getFilename()
 				raise
 			tree = ET.parse(f)
 			node = tree.getroot()
 			if node.tag != 'object':
 				self._err(''.join(['Expected <object> tag, but found <', node.tag, '>.']))
 
-		self.parse_object(self.dataset, node)
+		try:
+			self.parse_object(self.dataset, node)
+		except:
+			print "\n\n=================== LOADER EXCEPTION INFO BEGIN ======================"
+			print "Exception : ", sys.exc_info()[0]
+			print "Error while processing file " + self.source.getFilename()
+			print "----------------------------------------------------------------"
+			print_exc()
+			print "----------------------------------------------------------------"
+			print "XML dump:"
+			ET.dump(node)
+			print "==================== LOADER EXCEPTION INFO END =======================\n\n"
+			raise
 
 	def parse_object(self, dataset, object):
 		id = object.get('id')
@@ -96,15 +104,11 @@ class XMLObjectLoader(fife.ObjectLoader):
 			x_offset = image.get('x_offset', 0)
 			y_offset = image.get('y_offset', 0)
 
-			try:
-				id = self.image_pool.addResourceFromFile(str(source))	
-				object.get2dGfxVisual().addStaticImage(int(direction), id)
-				img = self.image_pool.getImage(id)
-				img.setXShift(int(x_offset))
-				img.setYShift(int(y_offset))
-			except fife.Exception,e:
-				self._print_err(e.getMessage())
-				raise
+			id = self.image_pool.addResourceFromFile(str(source))	
+			object.get2dGfxVisual().addStaticImage(int(direction), id)
+			img = self.image_pool.getImage(id)
+			img.setXShift(int(x_offset))
+			img.setYShift(int(y_offset))
 
 	def parse_actions(self, objelt, object):
 		for action in objelt.findall('action'):
@@ -112,13 +116,8 @@ class XMLObjectLoader(fife.ObjectLoader):
 			if not id: self._err('<action> declared without an id attribute.')
 	
 			act_obj = None
-			try:
-				act_obj = object.createAction(str(id))
-				fife.ActionVisual.create(act_obj)
-			except fife.Exception, e:
-				self._print_err(e.getMessage() + '\n\tThe action ' + str(id) + ' already exists! Ignoring action definition.')
-				continue
-
+			act_obj = object.createAction(str(id))
+			fife.ActionVisual.create(act_obj)
 			self.parse_animations(action, act_obj)
 
 	def parse_animations(self, actelt, action):
@@ -128,12 +127,8 @@ class XMLObjectLoader(fife.ObjectLoader):
 				self._err('Animation declared with no source location.')
 			
 			direction = anim.get('direction', 0)
-			try:
-				anim_id = self.anim_pool.addResourceFromFile(str(source))
-				animation = self.anim_pool.getAnimation(anim_id)
-				action.get2dGfxVisual().addAnimation(int(direction), anim_id)
-				action.setDuration(animation.getDuration())
-			except fife.Exception,e:
-				self._print_err(e.getMessage())
-				raise
+			anim_id = self.anim_pool.addResourceFromFile(str(source))
+			animation = self.anim_pool.getAnimation(anim_id)
+			action.get2dGfxVisual().addAnimation(int(direction), anim_id)
+			action.setDuration(animation.getDuration())
 
