@@ -207,6 +207,17 @@ digraph "source tree" {
     "engine/core/model/metamodel/action.h" -> "abstractvisual.h"
     "engine/core/model/metamodel/action.h" -> "util/base/attributedclass.h"
     "engine/core/model/metamodel/action.h" -> "util/math/angles.h"
+<<<<<<< .working
+=======
+    "engine/core/model/metamodel/dataset.cpp" -> "dataset.h"
+    "engine/core/model/metamodel/dataset.cpp" -> "model/metamodel/grids/cellgrid.h"
+    "engine/core/model/metamodel/dataset.cpp" -> "object.h"
+    "engine/core/model/metamodel/dataset.cpp" -> "util/base/exception.h"
+    "engine/core/model/metamodel/dataset.cpp" -> "util/structures/purge.h"
+    "engine/core/model/metamodel/dataset.h" -> "model/metamodel/grids/cellgrid.h"
+    "engine/core/model/metamodel/dataset.h" -> "object.h"
+    "engine/core/model/metamodel/dataset.h" -> "util/base/attributedclass.h"
+>>>>>>> .merge-right.r2330
     "engine/core/model/metamodel/grids/cellgrid.cpp" -> "cellgrid.h"
     "engine/core/model/metamodel/grids/cellgrid.cpp" -> "util/log/logger.h"
     "engine/core/model/metamodel/grids/cellgrid.h" -> "model/metamodel/modelcoords.h"

@@ -1,8 +1,5 @@
 import fife
-try:
-	import xml.etree.cElementTree as ET
-except:
-	import xml.etree.ElementTree as ET
+from serializers import *
 
 class ObjectLocation(fife.ResourceLocation):
 	def __init__(self, file, node=None):
@@ -17,125 +14,85 @@ class XMLObjectLoader(fife.ObjectLoader):
 		self.metamodel = model.getMetaModel()
 		self.dataset=dataset
 		self.vfs = vfs
-
-	def _err(self, msg):
-		raise SyntaxError(''.join(['File: ', self.source, '. ', msg]))
+		self.source = None
+		self.filename = ''
 
 	def loadResource(self, location):
-		node = None
-		try:
-			node = location.node
-		except AttributeError:
-			pass
-
-		if node == None:
-			try:
-				f = self.vfs.open(self.source)
-			except AttributeError:
-				print 'XMLObjectLoader was asked to open a file, but no vfs was given.'
-				raise
+		# store information about stuff to be loaded, after that do actual loading under @guarded
+		self.source = location
+		self.filename = self.source.getFilename()
+		self.node = None
+		if hasattr(location, 'node'):
+			self.node = location.node
+		self.do_load_resource()
+	
+	@guarded
+	def do_load_resource(self):
+		if self.node == None:
+			f = self.vfs.open(self.source)
 			tree = ET.parse(f)
-			node = tree.getroot()
-			if node.tag != 'object':
-				self._err(''.join(['Expected <object> tag, but found <', node.tag, '>.']))
-
-		self.parse_object(self.dataset, node)
+			self.node = tree.getroot()
+		self.parse_object(self.dataset, self.node)
 
 	def parse_object(self, dataset, object):
+		if self.node.tag != 'object':
+			raise InvalidFormat('Expected <object> tag, but found <%s>.' % node.tag)
+		
 		id = object.get('id')
-		parent = object.get('parent')
-		blocking = object.get('blocking')
-		static = object.get('static')
-		pather = object.get('pather')
-
-		if not pather: pather = self.model.getPather('RoutePather')
-
-		if not id: self._err('<object> declared without an id attribute.')
-
+		if not id:
+			raise InvalidFormat('<object> declared without an id attribute.')
+		
 		obj = None
+		parent = object.get('parent', None)
 		if parent:
-			try:
-				query = self.metamodel.getObjects('id', str(parent))
-				if len(query) == 0: self._err(''.join(['No objects found with identifier', str(parent), '.']))
-				if len(query) > 1: print ''.join(['Warning: ', str(len(query)), ' objects found with identifier ', str(parent), '.'])
-				parent = query[0]
+			query = self.metamodel.getObjects('id', str(parent))
+			if len(query) == 0:
+				raise NotFound('No objects found with identifier %s.' % str(parent))
+			elif len(query) > 1:
+				raise NameClash('%d objects found with identifier %s.' % (len(query), str(parent)))
+			parent = query[0]
+		obj = dataset.createObject(str(id), parent)
+		fife.ObjectVisual.create(obj)
 
-				obj = dataset.createObject(str(id), parent)
-				fife.ObjectVisual.create(obj)
-			except fife.Exception, e:
-				print e.getMessage()
-				print 'The object ' + str(id) + ' already exists! Ignoring object definition.'
-				return
-		else:
-			try:
-				obj = dataset.createObject(str(id))
-				fife.ObjectVisual.create(obj)
-			except fife.Exception, e:
-				print e.getMessage()
-				print 'The object ' + str(id) + ' already exists! Ignoring object definition.'
-				return
-
-		obj.setBlocking(bool(blocking))
-		obj.setStatic(bool(static))
-		obj.setPather(pather)
+		obj.setBlocking(bool( object.get('blocking', False) ))
+		obj.setStatic(bool( object.get('static', False) ))
+		
+		pather = object.get('pather', 'RoutePather')
+		obj.setPather( self.model.getPather(pather) )
 
 		self.parse_images(object, obj)
 		self.parse_actions(object, obj)
 
 	def parse_images(self, objelt, object):
-		for image in objelt.findall('image'):	
+		for image in objelt.findall('image'):
 			source = image.get('source')
-			direction = image.get('direction')
-			x_offset = image.get('x_offset')
-			y_offset = image.get('y_offset')
+			if not source:
+				raise InvalidFormat('<image> declared without a source attribute.')
 
-			if not direction: direction = 0
-
-			if not source: self._err('<image> declared without a source attribute.')
-
-			try:
-				id = self.image_pool.addResourceFromFile(str(source))	
-				object.get2dGfxVisual().addStaticImage(int(direction), id)
-				if (x_offset or y_offset):
-					img = self.image_pool.getImage(id)
-					img.setXShift(int(x_offset))
-					img.setYShift(int(y_offset))
-			except fife.Exception,e:
-				print e.getMessage()
-				raise
+			id = self.image_pool.addResourceFromFile( str(source) )
+			object.get2dGfxVisual().addStaticImage(int( image.get('direction', 0) ), id)
+			img = self.image_pool.getImage(id)
+			img.setXShift(int( image.get('x_offset', 0) ))
+			img.setYShift(int( image.get('y_offset', 0) ))
 
 	def parse_actions(self, objelt, object):
 		for action in objelt.findall('action'):
 			id = action.get('id')
-			if not id: self._err('<action> declared without an id attribute.')
+			if not id:
+				raise InvalidFormat('<action> declared without an id attribute.')
 	
-			act_obj = None
-			try:
-				act_obj = object.createAction(str(id))
-				fife.ActionVisual.create(act_obj)
-			except fife.Exception, e:
-				print e.getMessage()
-				print 'The action ' + str(id) + ' already exists! Ignoring action definition.'
-				continue
-
+			act_obj = object.createAction(str(id))
+			fife.ActionVisual.create(act_obj)
 			self.parse_animations(action, act_obj)
 
 	def parse_animations(self, actelt, action):
 		for anim in actelt.findall('animation'):
 			source = anim.get('source')
-			direction = anim.get('direction')
-
-			if not direction: direction = 0
-	
-			if not source: self._err('Animation declared with no source location.')
-
-			try:
-				anim_id = self.anim_pool.addResourceFromFile(str(source))
-				animation = self.anim_pool.getAnimation(anim_id)
-				action.get2dGfxVisual().addAnimation(int(direction), anim_id)
-				action.setDuration(animation.getDuration())
-			except fife.Exception,e:
-				print e.getMessage()
-				raise
-
+			if not source:
+				raise InvalidFormat('Animation declared with no source location.')
+			
+			anim_id = self.anim_pool.addResourceFromFile(str(source))
+			animation = self.anim_pool.getAnimation(anim_id)
+			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), anim_id)
+			action.setDuration(animation.getDuration())
 

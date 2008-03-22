@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from swig_test_utils import *
+from serializers import *
 from serializers.xmlanimation import XMLAnimationLoader
 
 class TestPool(unittest.TestCase):
@@ -46,7 +47,7 @@ class TestPool(unittest.TestCase):
 		pool.addResourceLoader(animationloader)
 		
 		id = pool.addResourceFromFile('bogus_animation.xml')
-		self.assertRaises(fife.Exception, pool.getAnimation, id)
+		self.assertRaises(SerializerError, pool.getAnimation, id)
 
 TEST_CLASSES = [TestPool]
 

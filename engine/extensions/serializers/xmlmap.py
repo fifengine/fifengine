@@ -4,8 +4,6 @@ try:
 except:
 	import xml.etree.ElementTree as ET
 
-from xmldataset import XMLDatasetLoader
-
 FORMAT = '1.0'
 
 class XMLMapLoader(fife.MapLoader):
