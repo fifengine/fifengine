@@ -8,11 +8,10 @@ MAPFORMAT = '1.0'
 class ModelSaver:
 
 	def __init__(self, filepath, engine, state = 0, datastate = 0):
-		self.SModel, self.SDataset, self.SMetadata, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = range(8)
+		self.SModel, self.SMap, self.SLayer, self.SInstances, self.SObject, self.SAction = range(6)
 
 		self.engine = engine
 		self.model = self.engine.getModel()
-		self.metamodel = self.model.getMetaModel()
 		self.pool = self.engine.getImagePool()
 		self.anim_pool = self.engine.getAnimationPool()
 
@@ -20,8 +19,6 @@ class ModelSaver:
 			self.state = state
 			if (state == self.SMap):
 				self.map = datastate
-			elif (state == self.SDataset):
-				self.dataset = datastate
 			else:
 				assert 0, "Invalid initialization state."
 		else:
@@ -52,7 +49,7 @@ class ModelSaver:
 		assert self.state == self.SModel, "Declaration of <map> not at the top level."
 
 		attr_vals = {
-			(None, 'id'): map.Id(),
+			(None, 'id'): map.getId(),
 			(None, 'format'): MAPFORMAT,
 		}
 		attr_names = {
@@ -62,34 +59,13 @@ class ModelSaver:
 		attrs = AttributesNSImpl(attr_vals, attr_names)
 		self.startElement('map', attrs)
 		self.state = self.SMap
-		self.write_metadata(map)
-		self.write_datasets(map)
+		self.write_imports(map)
 		self.write_layers(map)
 		self.write_camera(map)
 		self.endElement('map')
 
-	def write_metadata(self, parent):
-		attrs = AttributesNSImpl({}, {})
-		self.startElement('metadata', attrs)
-		list = parent.listFields()
-
-		for i in range(0, len(list)):
-			attr_vals = {
-				(None, 'name'): list[i],
-			}
-			attr_names = {
-				(None, 'name'): 'name',
-			}
-			attrs = AttributesNSImpl(attr_vals, attr_names)
-			self.file.write(self.indent_level)
-			self.xmlout.startElementNS((None, 'param'), 'param', attrs)
-
-			self.xmlout.characters(parent.get(list[i]))
-
-			self.xmlout.endElementNS((None, 'param'), 'param')
-			self.file.write('\n')
-
-		self.endElement('metadata')
+	def write_imports(self, map):
+		pass
 
 	def write_datasets(self, parent):
 		for set in parent.getDatasets():
@@ -118,7 +94,7 @@ class ModelSaver:
 		for layer in map.getLayers():
 			cellgrid = layer.getCellGrid()
 			attr_vals = {
-				(None, 'id'): layer.Id(),
+				(None, 'id'): layer.getId(),
 				(None, 'grid_type'): cellgrid.getType(),
 				(None, 'x_scale'): str(cellgrid.getXScale()),
 				(None, 'y_scale'): str(cellgrid.getYScale()),
@@ -138,7 +114,6 @@ class ModelSaver:
 			}
 			attrs = AttributesNSImpl(attr_vals, attr_names)
 			self.startElement('layer', attrs)
-			self.write_metadata(layer)
 			self.write_instances(layer)
 			self.endElement('layer')
 
@@ -148,7 +123,7 @@ class ModelSaver:
 		for inst in layer.getInstances():
 			position = inst.getLocationRef().getLayerCoordinates()
 			attr_vals = {
-				(None, 'o'): inst.getObject().Id(),
+				(None, 'o'): inst.getObject().getId(),
 				(None, 'x'): str(position.x),
 				(None, 'y'): str(position.y),
 				(None, 'z'): str(position.z),
@@ -159,9 +134,9 @@ class ModelSaver:
 				(None, 'y'): 'y',
 				(None, 'z'): 'z',
 			}
-			instId = inst.Id()
+			instId = inst.getId()
 			if instId:
-				attr_vals[(None, 'id')] = inst.Id()
+				attr_vals[(None, 'id')] = inst.getId()
 				attr_names[(None, 'id')] = 'id'
 			attrs = AttributesNSImpl(attr_vals, attr_names)
 			if not inst.listFields():
@@ -171,7 +146,6 @@ class ModelSaver:
 				self.file.write('\n')
 			else:
 				self.startElement('i', attrs)
-				self.write_metadata(inst)
 				self.endElement('i')
 
 		self.endElement('instances')
@@ -181,7 +155,7 @@ class ModelSaver:
 		cameralist = self.engine.getView().getCameras()
 
 		for cam in cameralist:
-			if cam.getLocationRef().getMap().Id() == map.Id():
+			if cam.getLocationRef().getMap().getId() == map.getId():
 				celldimensions = cam.getCellImageDimensions()
 				viewport = cam.getViewPort();
 
@@ -201,7 +175,7 @@ class ModelSaver:
 					(None, 'zoom'): str( cam.getZoom()),
 					(None, 'tilt'): str( cam.getTilt()),
 					(None, 'rotation'): str( cam.getRotation()),
-					(None, 'ref_layer_id'): cam.getLocation().getLayer().Id(),
+					(None, 'ref_layer_id'): cam.getLocation().getLayer().getId(),
 					(None, 'ref_cell_width'): str( celldimensions.x ),
 					(None, 'ref_cell_height'): str( celldimensions.y ),
 					(None, 'viewport'): '%d,%d,%d,%d' % (viewport.x, viewport.y, viewport.w, viewport.h),

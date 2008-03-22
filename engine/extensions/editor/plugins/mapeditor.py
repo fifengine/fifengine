@@ -44,11 +44,11 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 
 	# gui for selecting a map
 	def _selectMap(self):
-		Selection([map.Id() for map in self.engine.getModel().getMaps()], self.editMap)
+		Selection([map.getId() for map in self.engine.getModel().getMaps()], self.editMap)
 
 	def editMap(self, mapid):
 		self.viewer.viewMap(mapid)
-		self.map = self.engine.getModel().getMaps('id', mapid)[0]
+		self.map = self.engine.getModel().getMap(mapid)
 		self.camera = self.viewer.camera
 		self.layer = self.camera.getLocationRef().getLayer()
 
@@ -65,14 +65,13 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		# Clear previously added children
 		metafields.removeChildren(*metafields.children)
 		
-		for metafield in self.map.listFields():
-			hbox = widgets.HBox()
-			metafields.addChild(hbox)
+		hbox = widgets.HBox()
+		metafields.addChild(hbox)
 
-			label = widgets.Label(text=metafield,min_size=(80,0))
-			hbox.addChild(label)
-			field = widgets.TextField(text=self.map.get(metafield),min_size=(100,0))
-			hbox.addChild(field)
+		label = widgets.Label(text='ID',min_size=(80,0))
+		hbox.addChild(label)
+		field = widgets.TextField(text=self.map.getId(),min_size=(100,0))
+		hbox.addChild(field)
 		
 		# Make sure Layout get's recalculated.
 		self.mapEdit.adaptLayout()
@@ -80,11 +79,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self.mapEdit.show()
 
 	def _selectLayer(self):
-		Selection([layer.Id() for layer in self.map.getLayers()], self._editLayer)
+		Selection([layer.getId() for layer in self.map.getLayers()], self._editLayer)
 
 	def _editLayer(self, layerid):
-		self.layer = self.map.getLayers('id', layerid)[0]
-		print layerid
+		self.layer = self.map.getLayers()[0]
 
 	def _selectDataset(self):
 		if not self.datasetSelector:

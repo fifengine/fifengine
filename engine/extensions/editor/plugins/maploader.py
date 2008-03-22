@@ -40,17 +40,15 @@ class MapSaver(plugin.Plugin):
 
 		self.saveRequested = False
 		self._location = None
-		self._newlocation = None
+		self.path = '.'
 
 	def saveMap(self, map):
-		print self
-		if self._newlocation:
-			saveMapFile('/'.join([self.path, self._newlocation]), self.engine, map)
-		elif self._location:
+		if self._location:
 			saveMapFile('/'.join([self.path, self._location]), self.engine, map)
+		else:
+			print 'MapSaver: error, no file location specified.'
 
-	def _selectFile(self,path,filename,newlocation):
+	def _selectFile(self,path,filename):
 		self._location = filename
-		self._newlocation= newlocation
 		self.path = path
 		self.saveRequested = True

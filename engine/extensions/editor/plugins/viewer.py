@@ -166,10 +166,13 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 		self.viewSelect.show()
 
 	def viewMap(self, mapid):
-		self.map = self.engine.getModel().getMaps('id', mapid)[0]
-		self.layer = self.map.getLayers()[0]
-		self.adjust_views()
-		self.active = True
+		self.map = self.engine.getModel().getMap(mapid)
+		if self.map.getLayers():
+			self.layer = self.map.getLayers()[0]
+			self.adjust_views()
+			self.active = True
+		else:
+			raise AttributeError('Viewer error: map ' + self.map.getId() + ' has no layers. Nothing to view.')
 
 	def deactivate(self):
 		self.camera.setEnabled(False)
@@ -189,10 +192,10 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 	def _set_camera(self, viewport):
 		if self.map:
 			# grab a camera associated with this map
-			self.camera = filter(lambda c: c.getLocationRef().getMap().Id() == self.map.Id(), self.engine.getView().getCameras())[0]
-
-		if not self.camera:
-			raise RuntimeError, "No default camera view found for this map: " + self.map.Id()
+			try:
+				self.camera = filter(lambda c: c.getLocationRef().getMap().getId() == self.map.getId(), self.engine.getView().getCameras())[0]
+			except IndexError:
+				raise RuntimeError('No cameras found associated with this map: ' + self.map.getId())
 
 		self.camera.setViewPort(fife.Rect(*[int(c) for c in viewport]))
 

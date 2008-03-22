@@ -21,12 +21,12 @@ import pychan.widgets as widgets
 from listener import EditorListener
 
 import editor
-#from editor.fifedit import Fifedit
 from editor.plugins.plugin import Plugin
 from editor.plugins.maploader import MapLoader
 from editor.plugins.maploader import MapSaver
 from editor.plugins.viewer import Viewer
 from editor.plugins.mapeditor import MapEditor
+from editor.plugins.mapwizard import MapWizard
 
 # Help display
 class Help(Plugin):
@@ -54,12 +54,14 @@ class Editor(basicapplication.ApplicationBase):
 		self.mapedit = MapEditor(self.engine)
 		self.maploader = MapLoader(self.engine)
 		self.mapsaver = MapSaver(self.engine)
+		self.mapwizard = MapWizard(self.engine)
 
 		# Register plugins with Fifedit.
 		self.fifedit.registerPlugin(Help())
 		self.fifedit.registerPlugin(self.maploader)
 		self.fifedit.registerPlugin(self.mapsaver)
 		self.fifedit.registerPlugin(self.mapedit)
+		self.fifedit.registerPlugin(self.mapwizard)
 
 	def createListener(self):
 		# override default event listener
@@ -67,8 +69,11 @@ class Editor(basicapplication.ApplicationBase):
 
 	def _pump(self):
 		if self.maploader.newMap:
-			self.mapedit.editMap(self.maploader.newMap.Id())	
+			self.mapedit.editMap(self.maploader.newMap.getId())	
 			self.maploader.newMap = None
+		if self.mapwizard.newMap:
+			self.mapedit.editMap(self.mapwizard.map.getId())
+			self.mapwizard.newMap = False
 		if self.mapsaver.saveRequested and self.mapedit.map:
 			self.mapsaver.saveMap(self.mapedit.map)
 			self.mapsaver.saveRequested = False

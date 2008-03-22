@@ -52,10 +52,14 @@ class FileBrowser(object):
 	def _selectFile(self):
 		self._widget.hide()
 		selection = self._widget.collectData('fileList')
-		if selection >= 0:
-			selection = self.file_list[selection]
-			if self.savefile:
-				newlocation = self._widget.collectData('saveField')
-				self.fileSelected(self.path,selection,newlocation)
+
+		if self.savefile:
+			if self._widget.collectData('saveField'):
+				self.fileSelected(self.path,self._widget.collectData('saveField'))
 				return
-			self.fileSelected(self.path,selection)
+
+		if selection >= 0:
+			self.fileSelected(self.path,self.file_list[selection])
+			return
+		
+		print 'FileBrowser: error, no selection.'
