@@ -2,35 +2,35 @@
 	<VBox>
 		<HBox>
 			<Label name="idLabel" text="Camera ID:"/>
-			<TextField name="idBox" text="empty"/>
+			<TextField name="idBox" min_size="50,10"/>
 		</HBox>
 		<HBox>
 			<Label name="mapLabel" text="Camera Map ID:"/>
-      <TextField name="mapBox" text="empty"/>
+      <TextField name="mapBox" min_size="50,10"/>
 		</HBox>
 		<HBox>
 			<Label name="layerLabel" text="Camera Layer ID:"/>
-      <TextField name="layerBox" text="empty"/>
+      <TextField name="layerBox" min_size="50,10"/>
 		</HBox>
 		<HBox>
 			<Label name="viewLabel" text="Viewport ('x,y,w,h'):"/>
-		  <TextField name="viewBox" text="0,0,640,480"/>
+		  <TextField name="viewBox" text="0,0,640,480" min_size="50,10"/>
 		</HBox>
 		<HBox>
 			<Label name="refhLabel" text="Reference cell height:"/>
-			<TextField name="refhBox" text="1"/>
+			<TextField name="refhBox" min_size="50,10"/>
 		</HBox>
 		<HBox>
 			<Label name="refwLabel" text="Reference cell width:"/>
-			<TextField name="refwBox" text="1"/>
+			<TextField name="refwBox" min_size="50,10"/>
 		</HBox>
 		<HBox>
 			<Label name="rotLabel" text="Rotation:"/>
-			<TextField name="rotBox" text="0"/>
+			<TextField name="rotBox" text="0" min_size="50,10"/>
 		</HBox>
 		<HBox>
 			<Label name="tiltLabel" text="Tilt:"/>
-			<TextField name="tiltBox" text="0"/>
+			<TextField name="tiltBox" text="0" min_size="50,10"/>
 		</HBox>
 	</VBox>
 	<HBox>
