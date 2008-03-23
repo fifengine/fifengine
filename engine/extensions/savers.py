@@ -65,23 +65,24 @@ class ModelSaver:
 		self.endElement('map')
 
 	def write_imports(self, map):
-		pass
+		imports = []
+		for layer in map.getLayers():
+			for instance in layer.getInstances():
+				file = instance.getObject().getResourceFile()
+				if not (file in imports):
+					imports.append(file)	
+					self.write_import(file)
 
-	def write_datasets(self, parent):
-		for set in parent.getDatasets():
-			attr_vals = {
-				(None, 'type'): 'XML',
-				(None, 'source'): set.getSource(),
-			}
-			attr_names = {
-				(None, 'type'): 'type',
-				(None, 'name'): 'name',
-			}
-			attrs = AttributesNSImpl(attr_vals, attr_names)
-			self.file.write(self.indent_level)
-			self.xmlout.startElementNS((None, 'dataset'), 'dataset', attrs)
-			self.xmlout.endElementNS((None, 'dataset'), 'dataset')
-			self.file.write('\n')
+	def write_import(self, file):
+		attr_vals = {
+			(None, 'file'): file,
+		}
+		attr_names = {
+			(None, 'file'): 'file',
+		}
+		attrs = AttributesNSImpl(attr_vals, attr_names)
+		self.startElement('import', attrs)
+		self.endElement('import')
 
 	def pathing_val_to_str(self, val):
 		if val == fife.CELL_EDGES_AND_DIAGONALS:
@@ -127,27 +128,27 @@ class ModelSaver:
 				(None, 'x'): str(position.x),
 				(None, 'y'): str(position.y),
 				(None, 'z'): str(position.z),
+				(None, 'ns'): inst.getObject().getNamespace(),
 			}
 			attr_names = {
 				(None, 'o'): 'o',
 				(None, 'x'): 'x',
 				(None, 'y'): 'y',
 				(None, 'z'): 'z',
+				(None, 'ns'): 'ns',
 			}
+
 			instId = inst.getId()
 			if instId:
 				attr_vals[(None, 'id')] = inst.getId()
 				attr_names[(None, 'id')] = 'id'
-			attrs = AttributesNSImpl(attr_vals, attr_names)
-			if not inst.listFields():
-				self.file.write(self.indent_level)
-				self.xmlout.startElementNS((None, 'i'), 'i', attrs)
-				self.xmlout.endElementNS((None, 'i'), 'i')
-				self.file.write('\n')
-			else:
-				self.startElement('i', attrs)
-				self.endElement('i')
 
+			attrs = AttributesNSImpl(attr_vals, attr_names)
+			self.file.write(self.indent_level)
+			self.xmlout.startElementNS((None, 'i'), 'i', attrs)
+			self.xmlout.endElementNS((None, 'i'), 'i')
+			self.file.write('\n')
+	
 		self.endElement('instances')
 
 	# Save the linked camera of a map.

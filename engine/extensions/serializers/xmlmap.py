@@ -4,6 +4,8 @@ try:
 except:
 	import xml.etree.ElementTree as ET
 
+from serializers.xmlobject import XMLObjectLoader
+
 FORMAT = '1.0'
 
 class XMLMapLoader(fife.MapLoader):
@@ -44,10 +46,16 @@ class XMLMapLoader(fife.MapLoader):
 			print ''.join(['File: ', self.source, '. The map ', str(id), ' already exists! Ignoring map definition.'])
 			return None
 
+		self.parse_imports(mapelt, map)
 		self.parse_layers(mapelt, map)	
 		self.parse_cameras(mapelt, map)
 
 		return map
+
+	def parse_imports(self, mapelt, map):
+		object_loader = XMLObjectLoader(self.engine.getImagePool(), self.engine.getAnimationPool(), self.engine.getModel(), self.engine.getVFS())
+		for file in mapelt.findall('import'):
+			object_loader.loadResource(fife.ResourceLocation(file.get('file')))
 
 	def parse_layers(self, mapelt, map):
 		for layer in mapelt.findall('layer'):
@@ -116,9 +124,16 @@ class XMLMapLoader(fife.MapLoader):
 
 			if not objectID: self._err('<instance> does not specify an object attribute.')
 
-			query = self.metamodel.getObjects('id', str(objectID))
-			if len(query) != 1: self._err(''.join([str(len(query)), ' objects found with identifier ', str(objectID), '.']))
-			object = query[0]
+			nspace = instance.get('namespace')
+			if (not nspace):
+				nspace = instance.get('ns')
+
+			if not nspace: self._err('<instance> %s does not specify an object namespace.' % str(objectID))
+
+			object = self.model.getObject(str(objectID), str(nspace))
+			if not object:
+				print ''.join(['Object with id=', str(objectID), ' ns=', str(nspace), ' could not be found. Omitting...'])
+				continue
 
 			x = instance.get('x')
 			y = instance.get('y')

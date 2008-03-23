@@ -34,8 +34,9 @@
 #include "abstractpather.h"
 
 namespace FIFE {
-	Object::Object(const std::string& identifier, Object* inherited):
+	Object::Object(const std::string& identifier, const std::string& name_space, Object* inherited):
 		m_id(identifier),
+		m_namespace(name_space),
 		m_inherited(inherited),
 		m_actions(NULL),
 		m_blocking(false),

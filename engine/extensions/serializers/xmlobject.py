@@ -55,6 +55,7 @@ class XMLObjectLoader(fife.ObjectLoader):
 			parent = query[0]
 
 		obj = self.model.createObject(str(id), str(nspace), parent)
+		obj.setResourceLocation(self.source)
 		fife.ObjectVisual.create(obj)
 
 		obj.setBlocking(bool( object.get('blocking', False) ))

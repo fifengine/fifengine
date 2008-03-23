@@ -59,13 +59,14 @@ namespace FIFE {
 		 * @see Dataset in model/metamodel/dataset.h for creation
 		 * of objects.
 		 */
-		Object(const std::string& identifier, Object* inherited=NULL);
+		Object(const std::string& identifier, const std::string& name_space, Object* inherited=NULL);
 
 		/** Destructor
 		 */
 		~Object();
 		
 		const std::string& getId() { return m_id; }
+		const std::string& getNamespace() { return m_namespace; }
 
 		/** Adds new action with given id. In case there is action already
 		 *  with given id, returns it instead of new object
@@ -117,6 +118,7 @@ namespace FIFE {
 	
 	private:
 		std::string m_id;
+		std::string m_namespace;
 		Object* m_inherited;
 		std::map<std::string, Action*>* m_actions;
 		bool m_blocking;

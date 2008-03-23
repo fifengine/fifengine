@@ -13,10 +13,11 @@ namespace FIFE {
 
 	class Object : public ResourceClass {
 	public:
-		Object(const std::string& identifier, Object* inherited=NULL);
+		Object(const std::string& identifier, const std::string& name_space, Object* inherited=NULL);
 		~Object();
 
 		const std::string& getId();
+		const std::string& getNamespace();
 
 		Action* createAction(const std::string& identifier);
 		Action* getAction(const std::string& identifier);

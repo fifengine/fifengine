@@ -134,7 +134,7 @@ namespace FIFE {
 				throw NameClash(identifier);
 		}
 
-		Object* object = new Object(identifier, parent);
+		Object* object = new Object(identifier, name_space, parent);
 		nspace->second.push_back(object);
 		return object;
 	}

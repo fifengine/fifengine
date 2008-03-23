@@ -116,9 +116,9 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def _placeInstance(self):
 		if self.insertmode and self.selection and self.object:
 			# don't place repeat instances
-			for prior in self.layer.getInstances('loc', ''.join([str(self.selection.x),',',str(self.selection.y)])):
-				if prior.getObject().this == self.object.this:
-					return
+			#for prior in self.layer.getInstances('loc', ''.join([str(self.selection.x),',',str(self.selection.y)])):
+			#	if prior.getObject().this == self.object.this:
+			#		return
 			inst = self.layer.createInstance(self.object, self.selection)
 			fife.InstanceVisual.create(inst)
 
@@ -155,8 +155,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 
 		elif keystr == 'x':
 			if self.selection:
-				for inst in self.layer.getInstances('loc', ''.join([str(self.selection.x),',',str(self.selection.y)])):
-					self.layer.deleteInstance(inst)
+				for inst in self.layer.getInstances():
+					loc = inst.getLocation().getExactLayerCoordinates()
+					if loc.x == self.selection.x and loc.y == self.selection.y:
+						self.layer.deleteInstance(inst)
 				
 		elif keystr == 't':
 			gridrenderer = self.viewer.camera.getRenderer('GridRenderer')
