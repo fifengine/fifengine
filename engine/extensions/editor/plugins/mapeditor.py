@@ -8,8 +8,8 @@ import plugin
 import pychan
 import pychan.widgets as widgets
 from viewer import Viewer
-from datasetselector import DatasetSelector
 from editor.selection import Selection, ClickSelection
+from editor.plugins.objectselector import ObjectSelector
 
 class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
@@ -36,11 +36,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self.layer = None
 		self.selection = None
 
-		self.dataset = None
 		self.object = None
 
 		self.insertmode = False
-		self.datasetSelector = None
+		self.objectSelector = None
 
 	# gui for selecting a map
 	def _selectMap(self):
@@ -56,17 +55,17 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			self.mapEdit = pychan.loadXML('content/gui/mapeditor.xml')
 			self.mapEdit.mapEvents({
 				'layerButton'  : self._selectLayer,
-				'datButton'   : self._selectDataset,
+				'objButton'   : self._selectObject,
 				'closeButton' : self.quit
 			})
 
-		metafields = self.mapEdit.findChild(name='Metadata Properties')
+		fields = self.mapEdit.findChild(name='Properties')
 		
 		# Clear previously added children
-		metafields.removeChildren(*metafields.children)
+		fields.removeChildren(*fields.children)
 		
 		hbox = widgets.HBox()
-		metafields.addChild(hbox)
+		fields.addChild(hbox)
 
 		label = widgets.Label(text='ID',min_size=(80,0))
 		hbox.addChild(label)
@@ -84,10 +83,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def _editLayer(self, layerid):
 		self.layer = self.map.getLayers()[0]
 
-	def _selectDataset(self):
-		if not self.datasetSelector:
-			self.datasetSelector = DatasetSelector(self.engine, self.map, self.editWith)
-		self.datasetSelector.show()
+	def _selectObject(self):
+		if not self.objectSelector:
+			self.objectSelector = ObjectSelector(self.engine, self.map, self.editWith)
+		self.objectSelector.show()
 
 	def editWith(self, object):
 		self.object = object

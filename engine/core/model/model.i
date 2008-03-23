@@ -11,6 +11,7 @@ namespace FIFE {
 }
 
 namespace std {
+  %template(StringList) list<std::string>;
   %template(MapList) list<FIFE::Map*>;
 }
 
@@ -27,6 +28,8 @@ namespace FIFE {
 
 		const std::list<Map*>& getMaps() const;
 		Map* getMap(const std::string& id) const;
+
+		std::list<std::string> getNamespaces() const;
 
 		Object* createObject(const std::string& identifier, const std::string& name_space, Object* parent=0);
 		Object* getObject(const std::string& id, const std::string& name_space);

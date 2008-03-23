@@ -105,6 +105,16 @@ namespace FIFE {
 		m_maps.clear();
 	}
 
+	std::list<std::string> Model::getNamespaces() const {
+		std::list<std::string> lst;
+		std::list<namespace_t>::const_iterator nspace = m_namespaces.begin();
+		for(; nspace != m_namespaces.end(); ++nspace) {
+			lst.push_back(nspace->first);
+		}
+
+		return lst;
+	}
+
 	Object* Model::createObject(const std::string& identifier, const std::string& name_space, Object* parent) {
 
 		std::list<namespace_t>::iterator nspace = m_namespaces.begin();

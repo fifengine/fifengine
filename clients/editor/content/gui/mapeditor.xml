@@ -1,10 +1,10 @@
 <Window title="Map Editor">
 	<HBox>
-		<VBox name="Metadata Properties">
+		<VBox name="Properties">
 		</VBox>
 		<VBox>
 			<Button name="layerButton" text="Edit Layer"/>
-			<Button name="datButton" text="View Dataset"/>
+			<Button name="objButton" text="View Objects"/>
 			<Spacer /> 		
 			<Button name="closeButton" text="Close"/>
 		</VBox>

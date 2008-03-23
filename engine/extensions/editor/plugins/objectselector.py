@@ -3,7 +3,7 @@
 from pychan import widgets
 import fife
 
-class DatasetSelector(object):
+class ObjectSelector(object):
 	def __init__(self,engine,map,selectNotify):
 		self.engine = engine
 		self.map = map
@@ -12,17 +12,17 @@ class DatasetSelector(object):
 		self.buildGui()
 	
 	def buildGui(self):
-		self.gui = widgets.Window(title="Dataset selector")
+		self.gui = widgets.Window(title="Object selector")
 		hbox = widgets.HBox(parent=self.gui)
 		self.gui.addChild(hbox)
 		scrollArea = widgets.ScrollArea(parent=hbox,size=(120,300))
 		hbox.addChild(scrollArea)
-		self.datasets = widgets.ListBox(parent=scrollArea)
-		scrollArea.content = self.datasets
+		self.namespaces = widgets.ListBox(parent=scrollArea)
+		scrollArea.content = self.namespaces
 		scrollArea = widgets.ScrollArea(parent=hbox,size=(120,300))
 		hbox.addChild(scrollArea)
-		self.instances = widgets.ListBox(parent=scrollArea)
-		scrollArea.content = self.instances
+		self.objects = widgets.ListBox(parent=scrollArea)
+		scrollArea.content = self.objects
 		scrollArea = widgets.ScrollArea(parent=hbox, size=(120,300))
 		hbox.addChild(scrollArea)
 		self.preview = widgets.Icon()
@@ -35,25 +35,27 @@ class DatasetSelector(object):
 		hbox.addChild( closeButton )
 		closeButton.capture(self.hide)
 		
-		self.datasets.capture(self.updateInstances)
-		self.datasets.items = [dat.Id() for dat in self.map.getDatasets()]
-		self.datasets.selected = 0
-		self.updateInstances()
+		self.namespaces.capture(self.updateObjects)
+		self.namespaces.items = self.engine.getModel().getNamespaces()
+		self.namespaces.selected = 0
+		self.updateObjects()
 	
-		self.instances.capture(self.instanceSelected)
+		self.objects.capture(self.objectSelected)
 
 	
-	def updateInstances(self):
-		datid = self.datasets.selected_item
-		self.selected_dataset = self.engine.getModel().getMetaModel().getDatasets('id', datid)[0]
-		self.instances.items  = [obj.Id() for obj in self.selected_dataset.getObjects()]
-		if not self.instances.selected_item:
-			self.instances.selected = 0
-		self.instanceSelected()
+	def updateObjects(self):
+		if not self.namespaces.selected_item: return
 
-	def instanceSelected(self):
-		self.selected_instance = self.instances.selected_item
-		object = self.selected_dataset.getObjects('id', self.selected_instance)[0]
+		selected_namespace = self.namespaces.items[self.namespaces.selected_item]
+		self.objects.items = [obj.getId() for obj in self.engine.getModel().getObjects(selected_namespace)]
+		if not self.objects.selected_item:
+			self.objects.selected = 0
+		self.objectSelected()
+
+	def objectSelected(self):
+		if not self.objects.selected_item: return
+		self.selected_object = self.objects.items[self.objects.selected_item]
+		object = self.engine.getModel().getObjects(self.selected_object, self.namespace.items[self.namespaces.selected_item])
 		self.notify(object)
 		self._refreshPreview(object)
 

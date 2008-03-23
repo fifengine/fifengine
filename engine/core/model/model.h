@@ -85,6 +85,10 @@ namespace FIFE {
 		 */
 		void deleteMaps();
 
+		/** Get a list of namespaces currently referenced by objects in the metamodel.
+		 */
+		std::list<std::string> getNamespaces() const;
+
 		/** Add an object to the metamodel.
 		 * 
 		 * @param identifier A string for identifying this object; must be unique for its namespace.
