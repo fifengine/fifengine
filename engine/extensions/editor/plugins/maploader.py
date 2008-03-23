@@ -5,7 +5,7 @@
 import plugin
 import filebrowser
 from loaders import loadMapFile
-from includes import loadIncludeFile
+from loaders import loadIncludeFile
 from savers import saveMapFile
 
 class MapLoader(plugin.Plugin):
