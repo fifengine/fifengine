@@ -12,6 +12,7 @@ namespace FIFE {
 
 namespace std {
   %template(StringList) list<std::string>;
+  %template(ObjectList) list<FIFE::Object*>;
   %template(MapList) list<FIFE::Map*>;
 }
 

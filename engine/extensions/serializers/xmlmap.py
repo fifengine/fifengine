@@ -14,11 +14,8 @@ class XMLMapLoader(fife.MapLoader):
 		self.engine = engine
 		self.vfs = self.engine.getVFS()
 		self.model = self.engine.getModel()
-		self.metamodel = self.model.getMetaModel()
 		self.pool = self.engine.getImagePool()
 		self.anim_pool = self.engine.getAnimationPool()
-
-		self.dataset_loader = XMLDatasetLoader(self.pool, self.anim_pool, self.model, self.vfs)
 
 	def _err(self, msg):
 		raise SyntaxError(''.join(['File: ', self.source, ' . ', msg]))
@@ -47,34 +44,10 @@ class XMLMapLoader(fife.MapLoader):
 			print ''.join(['File: ', self.source, '. The map ', str(id), ' already exists! Ignoring map definition.'])
 			return None
 
-		self.parse_metadata(mapelt, map)
-		self.parse_datasets(mapelt, map)
 		self.parse_layers(mapelt, map)	
 		self.parse_cameras(mapelt, map)
 
 		return map
-
-	def parse_metadata(self, element, attr_object):
-		metelt = element.find('metadata')
-		if not metelt: return
-
-		for param in metelt.findall('param'):
-			name,value = param.get('name'),param.get('value')
-			if not name: self._err('<param> declared without a name attribute')
-			if value:
-				attr_object.set(name,value)
-			else:
-				attr_object.set(name,param.text)	
-
-	def parse_datasets(self, mapelt, map):
-		datasets = mapelt.findall('dataset')
-
-		for dataset in datasets:
-			type,source = dataset.get('type'),dataset.get('source')
-			if not type: self._err('<dataset> inclusion declared with no type attribute.')
-
-			dat_obj = self.dataset_loader.loadResource(fife.ResourceLocation(source))
-			map.addDataset(dat_obj)
 
 	def parse_layers(self, mapelt, map):
 		for layer in mapelt.findall('layer'):
@@ -125,7 +98,6 @@ class XMLMapLoader(fife.MapLoader):
 				strgy = fife.FREEFORM
 			layer_obj.setPathingStrategy(strgy)
 
-			self.parse_metadata(layer, layer_obj)
 			self.parse_instances(layer, layer_obj)
 		
 	def parse_instances(self, layerelt, layer):
@@ -186,8 +158,6 @@ class XMLMapLoader(fife.MapLoader):
 				target = fife.Location(layer)
 				inst.act('default', target, True)
 
-			self.parse_metadata(instance, inst)
-
 	def parse_cameras(self, mapelt, map):
 		for camera in mapelt.findall('camera'):
 			id = camera.get('id')
@@ -209,7 +179,7 @@ class XMLMapLoader(fife.MapLoader):
 			if not (ref_cell_width and ref_cell_height): self._err(''.join(['Camera ', str(id), ' declared without reference cell dimensions.']))
 
 			try:
-				cam = self.engine.getView().addCamera(str(id), map.getLayers('id', str(ref_layer_id))[0],fife.Rect(*[int(c) for c in viewport.split(',')]),fife.ExactModelCoordinate(0,0,0))
+				cam = self.engine.getView().addCamera(str(id), map.getLayer(str(ref_layer_id)),fife.Rect(*[int(c) for c in viewport.split(',')]),fife.ExactModelCoordinate(0,0,0))
 
 				cam.setCellImageDimensions(int(ref_cell_width), int(ref_cell_height))
 				cam.setRotation(float(rotation))

@@ -38,8 +38,13 @@ class XMLAnimationLoader(fife.AnimationLoader):
 			frame_x_offset = int(frame.get('x_offset', x_offset))
 			frame_y_offset = int(frame.get('y_offset', y_offset))
 			frame_delay = int(frame.get('delay', common_frame_delay))
-			
-			image = self.imagepool.getImage(self.imagepool.addResourceFromFile(source))
+
+			# xml paths are relative to the directory of the file they're used in.
+			path = self.filename.split('/')
+			path.pop()
+			path.append(str(source))
+
+			image = self.imagepool.getImage(self.imagepool.addResourceFromFile('/'.join(path)))
 			image.setXShift(frame_x_offset)
 			image.setYShift(frame_y_offset)
 			animation.addFrame(image, frame_delay);

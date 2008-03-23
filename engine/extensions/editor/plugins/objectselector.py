@@ -46,16 +46,14 @@ class ObjectSelector(object):
 	def updateObjects(self):
 		if not self.namespaces.selected_item: return
 
-		selected_namespace = self.namespaces.items[self.namespaces.selected_item]
-		self.objects.items = [obj.getId() for obj in self.engine.getModel().getObjects(selected_namespace)]
+		self.objects.items = [obj.getId() for obj in self.engine.getModel().getObjects(self.namespaces.selected_item)]
 		if not self.objects.selected_item:
 			self.objects.selected = 0
 		self.objectSelected()
 
 	def objectSelected(self):
 		if not self.objects.selected_item: return
-		self.selected_object = self.objects.items[self.objects.selected_item]
-		object = self.engine.getModel().getObjects(self.selected_object, self.namespace.items[self.namespaces.selected_item])
+		object = self.engine.getModel().getObject(self.objects.selected_item, self.namespaces.selected_item)
 		self.notify(object)
 		self._refreshPreview(object)
 
@@ -78,6 +76,7 @@ class ObjectSelector(object):
 		self.gui.adaptLayout()
 	
 	def show(self):
+		self.updateObjects()
 		self.gui.show()
 	def hide(self):
 		self.gui.hide()

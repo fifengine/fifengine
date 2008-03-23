@@ -23,6 +23,7 @@ from listener import EditorListener
 import editor
 from editor.plugins.plugin import Plugin
 from editor.plugins.maploader import MapLoader
+from editor.plugins.maploader import IncludeLoader
 from editor.plugins.maploader import MapSaver
 from editor.plugins.viewer import Viewer
 from editor.plugins.mapeditor import MapEditor
@@ -62,6 +63,7 @@ class Editor(basicapplication.ApplicationBase):
 		self.fifedit.registerPlugin(self.mapsaver)
 		self.fifedit.registerPlugin(self.mapedit)
 		self.fifedit.registerPlugin(self.mapwizard)
+		self.fifedit.registerPlugin(IncludeLoader(self.engine))
 
 	def createListener(self):
 		# override default event listener

@@ -7,12 +7,10 @@ class ObjectLocation(fife.ResourceLocation):
 		self.node = node
 
 class XMLObjectLoader(fife.ObjectLoader):
-	def __init__(self, image_pool, anim_pool, model, vfs=None, dataset=None):
+	def __init__(self, image_pool, anim_pool, model, vfs=None):
 		self.image_pool = image_pool
 		self.anim_pool = anim_pool
 		self.model = model
-		self.metamodel = model.getMetaModel()
-		self.dataset=dataset
 		self.vfs = vfs
 		self.source = None
 		self.filename = ''
@@ -29,18 +27,22 @@ class XMLObjectLoader(fife.ObjectLoader):
 	@guarded
 	def do_load_resource(self):
 		if self.node == None:
-			f = self.vfs.open(self.source)
+			f = self.vfs.open(self.filename)
 			tree = ET.parse(f)
 			self.node = tree.getroot()
-		self.parse_object(self.dataset, self.node)
+		self.parse_object(self.node)
 
-	def parse_object(self, dataset, object):
+	def parse_object(self, object):
 		if self.node.tag != 'object':
 			raise InvalidFormat('Expected <object> tag, but found <%s>.' % node.tag)
 		
 		id = object.get('id')
 		if not id:
 			raise InvalidFormat('<object> declared without an id attribute.')
+
+		nspace = object.get('namespace')
+		if not nspace:
+			raise InvalidFormat('<object> %s declared without a namespace attribute.' % str(id))
 		
 		obj = None
 		parent = object.get('parent', None)
@@ -51,7 +53,8 @@ class XMLObjectLoader(fife.ObjectLoader):
 			elif len(query) > 1:
 				raise NameClash('%d objects found with identifier %s.' % (len(query), str(parent)))
 			parent = query[0]
-		obj = dataset.createObject(str(id), parent)
+
+		obj = self.model.createObject(str(id), str(nspace), parent)
 		fife.ObjectVisual.create(obj)
 
 		obj.setBlocking(bool( object.get('blocking', False) ))
@@ -69,7 +72,12 @@ class XMLObjectLoader(fife.ObjectLoader):
 			if not source:
 				raise InvalidFormat('<image> declared without a source attribute.')
 
-			id = self.image_pool.addResourceFromFile( str(source) )
+			# paths are relative to this resource's path
+			path = self.filename.split('/')
+			path.pop()
+			path.append(str(source))
+
+			id = self.image_pool.addResourceFromFile('/'.join(path))
 			object.get2dGfxVisual().addStaticImage(int( image.get('direction', 0) ), id)
 			img = self.image_pool.getImage(id)
 			img.setXShift(int( image.get('x_offset', 0) ))
@@ -91,7 +99,12 @@ class XMLObjectLoader(fife.ObjectLoader):
 			if not source:
 				raise InvalidFormat('Animation declared with no source location.')
 			
-			anim_id = self.anim_pool.addResourceFromFile(str(source))
+			# animation paths are relative to this resource's path
+			path = self.filename.split('/')
+			path.pop()
+			path.append(str(source))
+
+			anim_id = self.anim_pool.addResourceFromFile('/'.join(path))
 			animation = self.anim_pool.getAnimation(anim_id)
 			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), anim_id)
 			action.setDuration(animation.getDuration())
