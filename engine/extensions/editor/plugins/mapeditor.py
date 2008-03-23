@@ -95,7 +95,6 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self.viewer.pump()
 
 	def quit(self):
-#   Sleek: why doesn't this work?
 #		self.viewer.deactivate() 
 		self.camera = None
 		self.layer = None
@@ -105,7 +104,6 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 
 	def _setSelection(self, screenx, screeny):
 		if self.camera:
-			# TODO: make Sleek fix this ugly mess
 			self.selection = self.camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
 			self.selection.z = 0
 			self.selection = self.layer.getCellGrid().toLayerCoordinates(self.selection)
@@ -115,10 +113,17 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 
 	def _placeInstance(self):
 		if self.insertmode and self.selection and self.object:
+
 			# don't place repeat instances
-			#for prior in self.layer.getInstances('loc', ''.join([str(self.selection.x),',',str(self.selection.y)])):
-			#	if prior.getObject().this == self.object.this:
-			#		return
+			for prior in self.layer.getInstances():
+				coords = prior.getLocation().getExactLayerCoordinates()
+				if coords.x != self.selection.x or coords.y != self.selection.y:
+					continue
+
+				if prior.getObject().getId() == self.object.getId():
+					print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % self.object.getId()
+					return
+
 			inst = self.layer.createInstance(self.object, self.selection)
 			fife.InstanceVisual.create(inst)
 
