@@ -33,6 +33,8 @@ class ModelSaver:
 
 		self.indent_level = ''
 
+		self.nspace = None
+
 	def startElement(self, name, attrs):
 		self.file.write(self.indent_level)
 		self.xmlout.startElementNS((None, name), name, attrs)
@@ -81,9 +83,11 @@ class ModelSaver:
 			(None, 'file'): 'file',
 		}
 		attrs = AttributesNSImpl(attr_vals, attr_names)
-		self.startElement('import', attrs)
-		self.endElement('import')
-
+		self.file.write(self.indent_level)
+		self.xmlout.startElementNS((None, 'import'), 'import', attrs)
+		self.xmlout.endElementNS((None, 'import'), 'import')
+		self.file.write('\n')
+	
 	def pathing_val_to_str(self, val):
 		if val == fife.CELL_EDGES_AND_DIAGONALS:
 			return "cell_edges_and_diagonals"
@@ -121,6 +125,7 @@ class ModelSaver:
 	def write_instances(self, layer):
 		attrs = AttributesNSImpl({}, {})
 		self.startElement('instances',  attrs)
+
 		for inst in layer.getInstances():
 			position = inst.getLocationRef().getLayerCoordinates()
 			attr_vals = {
@@ -128,15 +133,21 @@ class ModelSaver:
 				(None, 'x'): str(position.x),
 				(None, 'y'): str(position.y),
 				(None, 'z'): str(position.z),
-				(None, 'ns'): inst.getObject().getNamespace(),
+#				(None, 'ns'): inst.getObject().getNamespace(),
 			}
 			attr_names = {
 				(None, 'o'): 'o',
 				(None, 'x'): 'x',
 				(None, 'y'): 'y',
 				(None, 'z'): 'z',
-				(None, 'ns'): 'ns',
+#				(None, 'ns'): 'ns',
 			}
+
+			nspace = inst.getObject().getNamespace()
+			if nspace != self.nspace:
+				attr_vals[(None, 'ns')] = inst.getObject().getNamespace()
+				attr_names[(None, 'ns')] = 'ns'
+				self.nspace = nspace
 
 			instId = inst.getId()
 			if instId:

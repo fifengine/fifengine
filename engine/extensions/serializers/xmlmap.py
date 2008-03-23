@@ -19,6 +19,8 @@ class XMLMapLoader(fife.MapLoader):
 		self.pool = self.engine.getImagePool()
 		self.anim_pool = self.engine.getAnimationPool()
 
+		self.nspace = None
+
 	def _err(self, msg):
 		raise SyntaxError(''.join(['File: ', self.source, ' . ', msg]))
 
@@ -117,18 +119,22 @@ class XMLMapLoader(fife.MapLoader):
 		for instance in instances:
 
 			objectID = instance.get('object')
-			if (not objectID):
+			if not objectID:
 				objectID = instance.get('obj')
-			if (not objectID):
+			if not objectID:
 				objectID = instance.get('o')
 
 			if not objectID: self._err('<instance> does not specify an object attribute.')
 
 			nspace = instance.get('namespace')
-			if (not nspace):
+			if not nspace:
 				nspace = instance.get('ns')
+			if not nspace:
+				nspace = self.nspace
 
-			if not nspace: self._err('<instance> %s does not specify an object namespace.' % str(objectID))
+			if not nspace: self._err('<instance> %s does not specify an object namespace, and no default is available.' % str(objectID))
+
+			self.nspace = nspace
 
 			object = self.model.getObject(str(objectID), str(nspace))
 			if not object:
