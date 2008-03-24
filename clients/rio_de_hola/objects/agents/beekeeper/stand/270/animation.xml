@@ -1,0 +1,3 @@
+<animation delay="2000" namespace="http://www.fifengine.de/xml/rio_de_hola" id="beekeeper:stand:270" x_offset="0" y_offset="0">
+	<frame source="0000.png" />
+</animation>

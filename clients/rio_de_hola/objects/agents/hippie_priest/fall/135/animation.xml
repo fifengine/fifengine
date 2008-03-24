@@ -1,0 +1,12 @@
+<animation delay="130" namespace="http://www.fifengine.de/xml/rio_de_hola" id="hippie_priest:fall:135" x_offset="0" y_offset="0">
+	<frame source="0000.png" />
+	<frame source="0001.png" />
+	<frame source="0002.png" />
+	<frame source="0003.png" />
+	<frame source="0004.png" />
+	<frame source="0005.png" />
+	<frame source="0006.png" />
+	<frame source="0007.png" />
+	<frame source="0008.png" />
+	<frame source="0009.png" />
+</animation>
