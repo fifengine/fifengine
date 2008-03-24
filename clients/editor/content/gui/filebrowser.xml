@@ -1,4 +1,4 @@
-<Window title="Load Map">
+<Window title="File Browser">
 	<HBox>
 		<VBox>
 			<Label name="dirLabel" text="Directories:"/>
