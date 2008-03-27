@@ -45,8 +45,8 @@ namespace FIFE {
 
 			Map* getMap();
 			bool hasInstances() const;
-			Instance* createInstance(Object* object, const ModelCoordinate& p, const std::string& id="");
-			Instance* createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
+			Instance* createInstance(Object* object, const ModelCoordinate& p, int rotation=0, const std::string& id="");
+			Instance* createInstance(Object* object, const ExactModelCoordinate& p, int rotation=0, const std::string& id="");
 			void deleteInstance(Instance* object);
 
 			const std::vector<Instance*>& getInstances() const;

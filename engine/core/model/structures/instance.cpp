@@ -160,8 +160,9 @@ namespace FIFE {
 		}
 	}
 
-	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
+	Instance::Instance(Object* object, const Location& location, int rotation, const std::string& identifier):
 		m_id(identifier),
+		m_rotation(rotation),
 		m_activity(NULL),
 		m_object(object),
 		m_location(location),

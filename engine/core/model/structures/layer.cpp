@@ -58,12 +58,12 @@ namespace FIFE {
 		return !m_instances.empty();
 	}
 
-	Instance* Layer::createInstance(Object* object, const ModelCoordinate& p, const std::string& id) {
+	Instance* Layer::createInstance(Object* object, const ModelCoordinate& p, int rotation, const std::string& id) {
 		ExactModelCoordinate emc(static_cast<double>(p.x), static_cast<double>(p.y), static_cast<double>(p.z));
-		return createInstance(object, emc, id);	
+		return createInstance(object, emc, rotation, id);	
 	}
 
-	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
+	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, int rotation, const std::string& id) {
 		Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
@@ -76,7 +76,7 @@ namespace FIFE {
 			}
 		}
 
-		Instance* instance = new Instance(object, l, id);
+		Instance* instance = new Instance(object, l, rotation, id);
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
 		

@@ -453,6 +453,8 @@ namespace FIFE {
 					drawpt = toScreenCoordinates( instance->getLocationRef().getMapCoordinates() );
 					vc.facing_angle = angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
 				}
+				angle += instance->getRotation();
+
 				Image* image = NULL;
 				Action* action = instance->getCurrentAction();
 				if (action) {

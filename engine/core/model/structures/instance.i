@@ -42,7 +42,7 @@ namespace FIFE {
 
 	class Instance : public ResourceClass {
 	public:
-		Instance(Object* object, const Location& location, const std::string& identifier="");
+		Instance(Object* object, const Location& location, int rotation=0, const std::string& identifier="");
 		virtual ~Instance();
 		const std::string& getId();
 		Object* getObject();
@@ -50,6 +50,7 @@ namespace FIFE {
 		Location getLocation() const;
 		Location& getLocationRef();
 		Location getTargetLocation() const;
+		int getRotation() const;
 		void addActionListener(InstanceActionListener* listener);
 		void removeActionListener(InstanceActionListener* listener);
 		void addChangeListener(InstanceChangeListener* listener);

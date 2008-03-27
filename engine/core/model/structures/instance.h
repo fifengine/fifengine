@@ -79,7 +79,7 @@ namespace FIFE {
 		 * Instances are created by calling addInstance from layer, thus
 		 * this method should really be called only by layer or test code
 		 */
-		Instance(Object* object, const Location& location, const std::string& identifier="");
+		Instance(Object* object, const Location& location, int rotation=0, const std::string& identifier="");
 
 		/** Destructor
 		 */
@@ -127,6 +127,10 @@ namespace FIFE {
 		 * @return the direction of instance.
 		 */
 		Location getFacingLocation() const;
+
+		/** Get the (static) rotation of this instance
+		 */
+		int getRotation() const { return m_rotation; }
 		
 		/** Returns reference to the direction where instance is heading
 		 * Note: if instance didn't previously hadn't defined facing location
@@ -247,6 +251,10 @@ namespace FIFE {
 	private:
 		std::string m_id;
 
+		// The (static) rotation of this instance. This is in addition to possible camera rotation and
+		// intended for setting initial conditions. For example, setting the rotation of a tile.
+		const int m_rotation;
+
 		/** InstanceActivity gets allocated in case there is some runtime
 		 * activity related to the instance. Keeping activity related variables
 		 * in separate class keeps memory consumption lower e.g. for large tile
@@ -267,7 +275,7 @@ namespace FIFE {
 			Location m_location;
 			// facing location on previous round
 			Location m_facinglocation;
-			 // action on previous round. @NOTE: might become invalid, only used for address comparison
+			// action on previous round. @NOTE: might become invalid, only used for address comparison
 			Action* m_action;
 			// speed on previous round
 			double m_speed;

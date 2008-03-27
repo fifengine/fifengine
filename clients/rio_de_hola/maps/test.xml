@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ascii"?>
+<map id="myMap" format="1.0">
+	<import file="./../rio_de_hola/objects/ground/sands/01/object.xml"></import>
+	<import file="./../rio_de_hola/objects/ground/beach/03/object.xml"></import>
+	<layer grid_type="square" id="myLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
+		<instances>
+			<i x="-2" o="sands:01" z="0" y="-1" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
+			<i x="-1" o="sands:01" z="0" y="-1"></i>
+			<i x="0" o="sands:01" z="0" y="-1"></i>
+			<i x="1" o="sands:01" z="0" y="-1"></i>
+			<i x="2" o="sands:01" z="0" y="-1"></i>
+			<i x="3" o="sands:01" z="0" y="-1"></i>
+			<i x="2" o="sands:01" z="0" y="0"></i>
+			<i x="3" o="sands:01" z="0" y="0"></i>
+			<i x="1" o="sands:01" z="0" y="0"></i>
+			<i x="-1" o="sands:01" z="0" y="0"></i>
+			<i x="-2" o="sands:01" z="0" y="0"></i>
+			<i x="0" o="sands:01" z="0" y="0"></i>
+			<i x="-2" o="beach:03" z="0" y="1" r="0"></i>
+			<i x="-2" o="beach:03" z="0" y="3" r="-1"></i>
+			<i x="-1" o="beach:03" z="0" y="1" r="-90"></i>
+			<i x="-1" o="beach:03" z="0" y="3" r="-91"></i>
+			<i x="0" o="beach:03" z="0" y="1" r="-180"></i>
+			<i x="0" o="beach:03" z="0" y="3" r="-181"></i>
+			<i x="1" o="beach:03" z="0" y="1" r="-270"></i>
+			<i x="1" o="beach:03" z="0" y="3" r="-271"></i>
+			<i x="2" o="beach:03" z="0" y="1" r="-360"></i>
+			<i x="2" o="beach:03" z="0" y="3" r="-361"></i>
+		</instances>
+	</layer>
+	<camera tilt="-42.0" viewport="0,0,1024,768" id="myCamera" ref_layer_id="myLayer" ref_cell_height="96" rotation="45.0" ref_cell_width="128" zoom="1.0">
+	</camera>
+</map>
