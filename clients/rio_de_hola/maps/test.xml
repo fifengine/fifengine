@@ -16,16 +16,26 @@
 			<i x="-1" o="sands:01" z="0" y="0"></i>
 			<i x="-2" o="sands:01" z="0" y="0"></i>
 			<i x="0" o="sands:01" z="0" y="0"></i>
-			<i x="-2" o="beach:03" z="0" y="1" r="0"></i>
-			<i x="-2" o="beach:03" z="0" y="3" r="-1"></i>
-			<i x="-1" o="beach:03" z="0" y="1" r="-90"></i>
-			<i x="-1" o="beach:03" z="0" y="3" r="-91"></i>
-			<i x="0" o="beach:03" z="0" y="1" r="-180"></i>
-			<i x="0" o="beach:03" z="0" y="3" r="-181"></i>
-			<i x="1" o="beach:03" z="0" y="1" r="-270"></i>
-			<i x="1" o="beach:03" z="0" y="3" r="-271"></i>
-			<i x="2" o="beach:03" z="0" y="1" r="-360"></i>
-			<i x="2" o="beach:03" z="0" y="3" r="-361"></i>
+			
+			<i x="-2" o="beach:03" z="0" y="2" r="1"></i>
+			<i x="-2" o="beach:03" z="0" y="3" r="0"></i>
+			<i x="-2" o="beach:03" z="0" y="4" r="-1"></i>
+			
+			<i x="-1" o="beach:03" z="0" y="2" r="-89"></i>
+			<i x="-1" o="beach:03" z="0" y="3" r="-90"></i>
+			<i x="-1" o="beach:03" z="0" y="4" r="-91"></i>
+			
+			<i x="0" o="beach:03" z="0" y="2" r="-179"></i>
+			<i x="0" o="beach:03" z="0" y="3" r="-180"></i>
+			<i x="0" o="beach:03" z="0" y="4" r="-181"></i>
+			
+			<i x="1" o="beach:03" z="0" y="2" r="-269"></i>
+			<i x="1" o="beach:03" z="0" y="3" r="-270"></i>
+			<i x="1" o="beach:03" z="0" y="4" r="-271"></i>
+			
+			<i x="2" o="beach:03" z="0" y="2" r="-359"></i>
+			<i x="2" o="beach:03" z="0" y="3" r="-360"></i>
+			<i x="2" o="beach:03" z="0" y="4" r="-361"></i>
 		</instances>
 	</layer>
 	<camera tilt="-42.0" viewport="0,0,1024,768" id="myCamera" ref_layer_id="myLayer" ref_cell_height="96" rotation="45.0" ref_cell_width="128" zoom="1.0">

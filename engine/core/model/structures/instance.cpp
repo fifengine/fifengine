@@ -107,7 +107,6 @@ namespace FIFE {
 		m_speed(0),
 		m_timemultiplier(1.0),
 		m_saytxt(""),
-		m_changeinfo(ICHANGE_NO_CHANGES),
  		m_changelisteners(),
 		m_actionlisteners(),
 		m_actioninfo(NULL),
@@ -125,45 +124,46 @@ namespace FIFE {
 	}
 	
 	void Instance::InstanceActivity::update(Instance& source) {
-		m_changeinfo = ICHANGE_NO_CHANGES;
+		source.m_changeinfo = ICHANGE_NO_CHANGES;
 		if (m_location != source.m_location) {
-			m_changeinfo |= ICHANGE_LOC;
+			source.m_changeinfo |= ICHANGE_LOC;
 			m_location = source.m_location;
 		}
 		if (source.m_facinglocation && (m_facinglocation != *source.m_facinglocation)) {
-			m_changeinfo |= ICHANGE_FACING_LOC;
+			source.m_changeinfo |= ICHANGE_FACING_LOC;
 			m_facinglocation = *source.m_facinglocation;
 		}
 		if (m_actioninfo && (m_speed != m_actioninfo->m_speed)) {
-			m_changeinfo |= ICHANGE_SPEED;
+			source.m_changeinfo |= ICHANGE_SPEED;
 			m_speed = m_actioninfo->m_speed;
 		}
 		if (m_actioninfo && (m_action != m_actioninfo->m_action)) {
-			m_changeinfo |= ICHANGE_ACTION;
+			source.m_changeinfo |= ICHANGE_ACTION;
 			m_action = m_actioninfo->m_action;
 		}
 		if (m_timeprovider && (m_timemultiplier != m_timeprovider->getMultiplier())) {
-			m_changeinfo |= ICHANGE_TIME_MULTIPLIER;
+			source.m_changeinfo |= ICHANGE_TIME_MULTIPLIER;
 			m_timemultiplier = m_timeprovider->getMultiplier();
 		}
 		if (m_sayinfo && (m_saytxt != m_sayinfo->m_txt)) {
-			m_changeinfo |= ICHANGE_SAYTEXT;
+			source.m_changeinfo |= ICHANGE_SAYTEXT;
 			m_saytxt = m_sayinfo->m_txt;
 		}
 		
-		if (m_changeinfo != ICHANGE_NO_CHANGES) {
+		if (source.m_changeinfo != ICHANGE_NO_CHANGES) {
 			std::vector<InstanceChangeListener*>::iterator i = m_changelisteners.begin();
 			while (i != m_changelisteners.end()) {
-				(*i)->onInstanceChanged(&source, m_changeinfo);
+				(*i)->onInstanceChanged(&source, source.m_changeinfo);
 				++i;
 			}
 		}
 	}
 
-	Instance::Instance(Object* object, const Location& location, int rotation, const std::string& identifier):
+	Instance::Instance(Object* object, const Location& location, const std::string& identifier):
 		m_id(identifier),
-		m_rotation(rotation),
+		m_rotation(0),
 		m_activity(NULL),
+		m_changeinfo(ICHANGE_NO_CHANGES),
 		m_object(object),
 		m_location(location),
 		m_facinglocation(NULL),
@@ -186,6 +186,11 @@ namespace FIFE {
 		initializeChanges();
 		m_location = loc;
 		bindTimeProvider();
+	}
+
+	void Instance::setRotation(int rotation) {
+		m_rotation = rotation;
+		m_changeinfo |= ICHANGE_ROTATION;
 	}
 
 	void Instance::addActionListener(InstanceActionListener* listener) {
@@ -369,7 +374,7 @@ namespace FIFE {
 				}
 			}
 		}
-		return m_activity->m_changeinfo;
+		return m_changeinfo;
 	}
 
 	void Instance::finalizeAction() {

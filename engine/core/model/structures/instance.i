@@ -30,6 +30,7 @@ namespace FIFE {
 		ICHANGE_ACTION = 0x0008,
 		ICHANGE_TIME_MULTIPLIER = 0x0010,
 		ICHANGE_SAYTEXT = 0x0020,
+		ICHANGE_ROTATION = 0x0040,
 	};
 	typedef unsigned int InstanceChangeInfo;
 	
@@ -42,7 +43,7 @@ namespace FIFE {
 
 	class Instance : public ResourceClass {
 	public:
-		Instance(Object* object, const Location& location, int rotation=0, const std::string& identifier="");
+		Instance(Object* object, const Location& location, const std::string& identifier="");
 		virtual ~Instance();
 		const std::string& getId();
 		Object* getObject();
@@ -50,6 +51,7 @@ namespace FIFE {
 		Location getLocation() const;
 		Location& getLocationRef();
 		Location getTargetLocation() const;
+		void setRotation(int);
 		int getRotation() const;
 		void addActionListener(InstanceActionListener* listener);
 		void removeActionListener(InstanceActionListener* listener);

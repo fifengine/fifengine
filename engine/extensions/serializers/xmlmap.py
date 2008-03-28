@@ -170,13 +170,21 @@ class XMLMapLoader(fife.MapLoader):
 			else:
 				id = str(id)
 
+			inst = layer.createInstance(object, fife.ExactModelCoordinate(x,y,z), str(id))
+			
 			rotation = instance.get('r')
 			if not rotation:
 				rotation = instance.get('rotation')
 			if not rotation:
-				rotation = '0'
-		
-			inst = layer.createInstance(object, fife.ExactModelCoordinate(x,y,z), int(rotation), str(id))
+				angles = object.get2dGfxVisual().getStaticImageAngles()
+				if angles:
+					rotation = angles[0]
+				else:
+					rotation = 0
+			else:
+				rotation = int(rotation)
+			inst.setRotation(rotation)
+			
 			fife.InstanceVisual.create(inst)
 			if (stackpos):
 				inst.get2dGfxVisual().setStackPosition(int(stackpos))

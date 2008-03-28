@@ -66,9 +66,25 @@ namespace FIFE {
 		m_angle2img[angle % 360] = image_index;
 	}
 			
-	int ObjectVisual::getStaticImageIndexByAngle(unsigned int angle) {
-		return getIndexByAngle(angle, m_angle2img);
-	}	
+	int ObjectVisual::getStaticImageIndexByAngle(int angle) {
+		int closestMatch = 0;
+		return getIndexByAngle(angle, m_angle2img, closestMatch);
+	}
+	
+	int ObjectVisual::getClosestMatchingAngle(int angle) {
+		int closestMatch = 0;
+		getIndexByAngle(angle, m_angle2img, closestMatch);
+		return closestMatch;
+	}
+	
+	void ObjectVisual::getStaticImageAngles(std::vector<int>& angles) {
+		angles.clear();
+		type_angle2id::const_iterator i(m_angle2img.begin());
+		while (i != m_angle2img.end()) {
+			angles.push_back(i->first);
+			++i;
+		}
+	}
 	
 	const int STATIC_IMAGE_NOT_INITIALIZED = -2;
 	const int STATIC_IMAGE_NOT_FOUND = -1;
@@ -129,6 +145,7 @@ namespace FIFE {
 	}
 
 	int ActionVisual::getAnimationIndexByAngle(int angle) {
-		return getIndexByAngle(angle, m_animations);
+		int closestMatch = 0;
+		return getIndexByAngle(angle, m_animations, closestMatch);
 	}
 }

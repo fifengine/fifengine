@@ -172,6 +172,26 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		elif keystr == 'b':
 			blockrenderer = self.viewer.camera.getRenderer('BlockingInfoRenderer')
 			blockrenderer.setEnabled(not blockrenderer.isEnabled())
+		
+		elif keystr == 'o':
+			if self.selection:
+				for inst in self.layer.getInstances():
+					loc = inst.getLocation().getExactLayerCoordinates()
+					if loc.x == self.selection.x and loc.y == self.selection.y:
+						ovis = inst.getObject().get2dGfxVisual()
+						curUsedAngle = ovis.getClosestMatchingAngle(inst.getRotation())
+						print curUsedAngle
+						angles = ovis.getStaticImageAngles()
+						print angles
+						ind = list(angles).index(curUsedAngle)
+						if ind == (len(angles) - 1):
+							ind = 0
+						else:
+							ind += 1
+						inst.setRotation(angles[ind])
+						print "set ", angles[ind]
+						
+				
 
 	def keyReleased(self, evt):
 		pass

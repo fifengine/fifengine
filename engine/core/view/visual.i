@@ -15,16 +15,20 @@ namespace FIFE {
 		Visual2DGfx();
 	};
 
+	%apply std::vector<int> &OUTPUT { std::vector<int>& angles };
 	class ObjectVisual: public Visual2DGfx {
 	public:
 		static ObjectVisual* create(Object* object);
 		virtual ~ObjectVisual();
 		void addStaticImage(unsigned int angle, int image_index);
-		int getStaticImageIndexByAngle(unsigned int angle);
+		int getStaticImageIndexByAngle(int angle);
+		int getClosestMatchingAngle(int angle);
+		void getStaticImageAngles(std::vector<int>& angles);
 	private:
 		ObjectVisual();
 	};
 	%template(get2dGfxVisual) Object::getVisual<ObjectVisual>;
+	%clear std::vector<int> angles;
 	
 	class InstanceVisual: public Visual2DGfx {
 	public:

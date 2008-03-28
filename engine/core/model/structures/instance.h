@@ -60,6 +60,7 @@ namespace FIFE {
 		ICHANGE_ACTION = 0x0008,
 		ICHANGE_TIME_MULTIPLIER = 0x0010,
 		ICHANGE_SAYTEXT = 0x0020,
+		ICHANGE_ROTATION = 0x0040,  // NOTE! does not currently get updated onInstanceChange unless some other activity is performed
 	};
 	typedef unsigned int InstanceChangeInfo;
 	
@@ -79,7 +80,7 @@ namespace FIFE {
 		 * Instances are created by calling addInstance from layer, thus
 		 * this method should really be called only by layer or test code
 		 */
-		Instance(Object* object, const Location& location, int rotation=0, const std::string& identifier="");
+		Instance(Object* object, const Location& location, const std::string& identifier="");
 
 		/** Destructor
 		 */
@@ -128,7 +129,11 @@ namespace FIFE {
 		 */
 		Location getFacingLocation() const;
 
-		/** Get the (static) rotation of this instance
+		/** Set the rotation offset of this instance
+		 */
+		void setRotation(int rotation);
+		
+		/** Get the rotation offset of this instance
 		 */
 		int getRotation() const { return m_rotation; }
 		
@@ -251,9 +256,9 @@ namespace FIFE {
 	private:
 		std::string m_id;
 
-		// The (static) rotation of this instance. This is in addition to possible camera rotation and
-		// intended for setting initial conditions. For example, setting the rotation of a tile.
-		const int m_rotation;
+		// The rotation offset of this instance. This is in addition to possible camera rotation and
+		// intended for setting, for example, a rotation of a tile.
+		int m_rotation;
 
 		/** InstanceActivity gets allocated in case there is some runtime
 		 * activity related to the instance. Keeping activity related variables
@@ -283,8 +288,6 @@ namespace FIFE {
 			float m_timemultiplier;
 			// say text on previous round
 			std::string m_saytxt;
-			// bitmask stating current changes
-			InstanceChangeInfo m_changeinfo;
 			// listeners for changes
 			std::vector<InstanceChangeListener*> m_changelisteners;
 			
@@ -299,6 +302,8 @@ namespace FIFE {
 			TimeProvider* m_timeprovider;
 		};
 		InstanceActivity* m_activity;
+		// bitmask stating current changes
+		InstanceChangeInfo m_changeinfo;
 		
 		// object where instantiated from
 		Object* m_object;
@@ -327,7 +332,7 @@ namespace FIFE {
 
 	inline InstanceChangeInfo Instance::getChangeInfo() {
 		if (m_activity) {
-			return m_activity->m_changeinfo;
+			return m_changeinfo;
 		}
 		return ICHANGE_NO_CHANGES;
 	}

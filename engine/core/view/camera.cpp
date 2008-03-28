@@ -438,7 +438,7 @@ namespace FIFE {
 				// use cached values if there is no need to do full recalculation
 				ScreenPoint drawpt;
 				int angle = 0;
-				if (m_updated && (!m_iswarped) && (!instance->getChangeInfo() & ICHANGE_LOC) && (vc.image)) {
+				if (m_updated && (!m_iswarped) && (!(instance->getChangeInfo() & (ICHANGE_LOC | ICHANGE_ROTATION))) && (vc.image)) {
 					int pos_estimate_x = vc.screenpoint.x - cammove.x;
 					int pos_estimate_y = vc.screenpoint.y - cammove.y;
 					int pos_estimate_z = vc.screenpoint.z - cammove.z;

@@ -31,13 +31,14 @@
 #include "angles.h"
 
 namespace FIFE {
-	int getIndexByAngle(int angle, const type_angle2id& angle2id) {
+	int getIndexByAngle(int angle, const type_angle2id& angle2id, int& closestMatchingAngle) {
 		int wangle = (360 + angle) % 360;
 
 		if (angle2id.size() == 0) {
 			return -1;
 		}
 		if (angle2id.size() == 1) {
+			closestMatchingAngle = angle2id.begin()->first;
 			return angle2id.begin()->second;
 		}
 
@@ -50,9 +51,11 @@ namespace FIFE {
 			int ld = 360 - wangle + angle2id.begin()->first;
 			if (ud > ld) {
 				// wrapped value (first)
+				closestMatchingAngle = angle2id.begin()->first;
 				return angle2id.begin()->second;
 			}
 			// non-wrapped value
+			closestMatchingAngle = u->first;
 			return u->second;
 		}
 
@@ -64,22 +67,28 @@ namespace FIFE {
 			int ud = 360 - tmp->first + wangle;
 			if (ud > ld) {
 				// non-wrapped value (first)
+				closestMatchingAngle = angle2id.begin()->first;
 				return angle2id.begin()->second;
 			}
 			// wrapped value (last)
+			closestMatchingAngle = tmp->first;
 			return tmp->second;
 		}
 
 		// value in the middle...
 		int ud = u->first - wangle;
+		int ucm = u->first;
 		int ui = u->second;
 		u--;
 		int ld = wangle - u->first;
+		int lcm = u->first;
 		int li = u->second;
 
 		if (ud <= ld) {
+			closestMatchingAngle = ucm;
 			return ui;
 		}
+		closestMatchingAngle = lcm;
 		return li;
 	}
 }

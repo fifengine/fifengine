@@ -106,7 +106,16 @@ namespace FIFE {
 		/** Returns closest matching static image for given angle
 		 * @return id for static image
 		 */
-		int getStaticImageIndexByAngle(unsigned int angle);
+		int getStaticImageIndexByAngle(int angle);
+		
+		/** Returns closest matching image angle for given angle
+		 * @return closest matching angle
+		 */
+		int getClosestMatchingAngle(int angle);
+		
+		/** Returns list of available static image angles for this object
+		 */
+		void getStaticImageAngles(std::vector<int>& angles);
 		
 	private:
 		/** Constructor
