@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
-#include <cmath>
+#include "util/math/fife_math.h"
 
 // 3rd party library includes
 
@@ -51,7 +51,7 @@ namespace FIFE {
 	}
 
 	float SquareGridHeuristic::calculate(const ModelCoordinate& current, const ModelCoordinate& dest) {
-		return (float)(abs(dest.x - current.x) + abs(dest.y - current.y));
+		return (float)(ABS(dest.x - current.x) + ABS(dest.y - current.y));
 	}
 
 	HexGridHeuristic::HexGridHeuristic(void) {

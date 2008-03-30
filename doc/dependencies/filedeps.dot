@@ -301,6 +301,7 @@ digraph "source tree" {
     "engine/core/model/structures/map.h" -> "util/base/resourceclass.h"
     "engine/core/model/structures/map.h" -> "util/resource/resource.h"
     "engine/core/pathfinder/heuristic.cpp" -> "heuristic.h"
+    "engine/core/pathfinder/heuristic.cpp" -> "util/math/fife_math.h"
     "engine/core/pathfinder/heuristic.h" -> "model/metamodel/modelcoords.h"
     "engine/core/pathfinder/heuristic.h" -> "util/base/singleton.h"
     "engine/core/pathfinder/linearpather/linearpather.cpp" -> "linearpather.h"
