@@ -1,3 +1,4 @@
+<?fife type="object"?>
 <object id="dynamites_lid" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
 	<image source="045.png" direction="0" />
 	<image source="045.png" direction="45" />

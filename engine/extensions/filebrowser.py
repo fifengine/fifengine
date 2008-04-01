@@ -4,12 +4,21 @@ import pychan
 import pychan.widgets as widgets
 
 class FileBrowser(object):
-	def __init__(self, engine,fileSelected, savefile = False):
+	"""
+	FileBrowser displays directory and file listings from the vfs.
+	The fileSelected parameter is a callback invoked when a file selection has been made; its
+    signature must be fileSelected(path,filename). If selectdir is set, fileSelected's
+		filename parameter should be optional.
+	The savefile option provides a box for supplying a new filename that doesn't exist yet.
+  The selectdir option allows directories to be selected as well as files.
+	"""
+	def __init__(self, engine, fileSelected, savefile=False, selectdir=False):
 		self.engine = engine
 		self.fileSelected = fileSelected
 
 		self._widget = None
 		self.savefile = savefile
+		self.selectdir = selectdir
 
 		self.path = './..'
 		self.dir_list = ('..',) + self.engine.getVFS().listDirectories(self.path)
@@ -62,4 +71,8 @@ class FileBrowser(object):
 			self.fileSelected(self.path,self.file_list[selection])
 			return
 		
+		if self.selectdir:
+			self.fileSelected(self.path)
+			return
+
 		print 'FileBrowser: error, no selection.'

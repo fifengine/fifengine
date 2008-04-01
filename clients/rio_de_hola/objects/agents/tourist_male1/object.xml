@@ -1,3 +1,4 @@
+<?fife type="object"?>
 <object id="tourist_male1" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="0">
 	<action id="bend_down">
 		<animation source="bend_down/000/animation.xml" direction="0" />

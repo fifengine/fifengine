@@ -11,7 +11,7 @@ def loadMapFile(path, engine, content = ''):
 
 from serializers.xmlobject import XMLObjectLoader
 
-def loadIncludeFile(path, engine):
+def loadImportFile(path, engine):
 	object_loader = XMLObjectLoader(engine.getImagePool(), engine.getAnimationPool(), engine.getModel(), engine.getVFS())
 	return object_loader.loadResource(fife.ResourceLocation(path))
 

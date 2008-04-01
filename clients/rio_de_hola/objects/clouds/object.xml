@@ -1,3 +1,4 @@
+<?fife type="object"?>
 <object id="clouds" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="0" static="0">
 	<action id="disappear">
 		<animation source="disappear/000/animation.xml" direction="0" />

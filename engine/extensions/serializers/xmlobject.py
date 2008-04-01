@@ -20,21 +20,28 @@ class XMLObjectLoader(fife.ObjectLoader):
 		self.source = location
 		self.filename = self.source.getFilename()
 		self.node = None
+		self.file = None
 		if hasattr(location, 'node'):
 			self.node = location.node
-		self.do_load_resource()
+		else:
+			f = self.vfs.open(self.filename)
+			s = f.readString(len('<?fife type="object"?>'))
+			if s != '<?fife type="object"?>':
+				raise InvalidFormat('Tried to open non-object file %s with XMLObjectLoader.' % self.filename)
+
+		self.do_load_resource(f)
 	
 	@guarded
-	def do_load_resource(self):
-		if self.node == None:
-			f = self.vfs.open(self.filename)
-			tree = ET.parse(f)
+	def do_load_resource(self, file):
+		if file:
+			tree = ET.parse(file)
 			self.node = tree.getroot()
+
 		self.parse_object(self.node)
 
 	def parse_object(self, object):
 		if self.node.tag != 'object':
-			raise InvalidFormat('Expected <object> tag, but found <%s>.' % node.tag)
+			raise InvalidFormat('Expected <object> tag, but found <%s>.' % self.node.tag)
 		
 		id = object.get('id')
 		if not id:

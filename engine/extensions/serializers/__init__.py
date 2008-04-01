@@ -22,7 +22,7 @@ class NotFound(SerializerError):
 
 def guarded(fn):
 	'''
-	Use "guadred" decorator to catch serializer exceptions, and print more nice output before exception is re-raised
+	Use "guarded" decorator to catch serializer exceptions, and print more nice output before exception is re-raised
 	Usage of decorator benefits if instance of class where decorated method resides, contains attributes
 	self.filename (currently processed filename) and self.node (ET node currently under work).
 	In case these are in place, filename gets printed and node dumped along with the exception info
