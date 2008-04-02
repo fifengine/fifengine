@@ -17,6 +17,7 @@ import fifelog
 import basicapplication
 import pychan
 import pychan.widgets as widgets
+import sys
 
 from listener import EditorListener
 
@@ -25,7 +26,6 @@ from editor.plugins.plugin import Plugin
 from editor.plugins.maploader import MapLoader
 from editor.plugins.maploader import MapSaver
 from editor.plugins.importer import Importer
-from editor.plugins.viewer import Viewer
 from editor.plugins.mapeditor import MapEditor
 from editor.plugins.mapwizard import MapWizard
 
@@ -45,7 +45,7 @@ class Help(Plugin):
 		self._helpWidget.show()
 
 class Editor(basicapplication.ApplicationBase):
-	def __init__(self):
+	def __init__(self, params):
 		super(Editor,self).__init__()
 
 		# embed Fifedit tools
@@ -64,6 +64,8 @@ class Editor(basicapplication.ApplicationBase):
 		self.fifedit.registerPlugin(self.mapedit)
 		self.fifedit.registerPlugin(self.mapwizard)
 		self.fifedit.registerPlugin(Importer(self.engine))
+		
+		self.params = params
 
 	def createListener(self):
 		# override default event listener
@@ -76,12 +78,21 @@ class Editor(basicapplication.ApplicationBase):
 		if self.mapwizard.newMap:
 			self.mapedit.editMap(self.mapwizard.map.getId())
 			self.mapwizard.newMap = False
-		if self.mapsaver.saveRequested and self.mapedit.map:
-			self.mapsaver.saveMap(self.mapedit.map)
+		if self.mapsaver.saveRequested and self.mapedit._map:
+			self.mapsaver.saveMap(self.mapedit._map)
 			self.mapsaver.saveRequested = False
-		if not self.fifedit.active: self.quitRequested = True
-		self.mapedit.pump()
+		if not self.fifedit.active: 
+			self.quitRequested = True
+		if self.params:
+			s = os.path.sep
+			parts = self.params.split(s)
+			self.maploader.loadFile(s.join(parts[0:-1]), parts[-1])
+			self.params = None
 
 if __name__ == '__main__':
-	app = Editor()
+	print sys.argv
+	params = None
+	if len(sys.argv) > 1:
+		params = sys.argv[1]
+	app = Editor(params)
 	app.run()

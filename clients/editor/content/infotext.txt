@@ -10,12 +10,19 @@ Keybindings:
 - F10 = Toggle console on / off
 - ESC = Quit techdemo
 
-- M = Make a new instance on the map with
-      current object selection at current
-      mouse selection.
-- X = Remove instances at current mouse
-      selection. 
-- T = shows / hides grid
-- B = shows / hides blocking info
+- INS = Makes a new instance on the map with
+        current object selection at current
+        mouse selection (toggle).
+- DEL = Removes instances at current mouse
+        selection (toggle).
+- R   = Rotates selected instace (if object
+        contains rotated images)
+- M   = Moves selected instace (drag it around)
+- T   = shows / hides grid
+- B   = shows / hides blocking info
+- CTRL = Enters pan/zoom mode. Pan with LMB drag,
+         zoom with mouse wheel while CTRL is
+         pressed
+
 
 http://www.fifengine.de

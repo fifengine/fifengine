@@ -12,7 +12,7 @@ class MapLoader(plugin.Plugin):
 		super(MapLoader,self).__init__()
 		self.engine = engine
 		
-		self.filebrowser = filebrowser.FileBrowser(engine,self._selectFile)
+		self.filebrowser = filebrowser.FileBrowser(engine,self.loadFile)
 
 		self.menu_items = {
 			'Load Map' : self.filebrowser.showBrowser,
@@ -20,11 +20,8 @@ class MapLoader(plugin.Plugin):
 
 		self.newMap = None
 
-	def _selectFile(self,path,filename):
-		# assumes the root/content/{map|datasets|...} directory structure. (And is rather fragile)
+	def loadFile(self, path, filename):
 		content = path.split('/')
-		content.pop()
-		content.pop()
 		self.newMap = loadMapFile('/'.join([path, filename]), self.engine, '/'.join(content) + '/')
 
 class MapSaver(plugin.Plugin):

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="ascii"?>
+<map id="myMap" format="1.0">
+	<import file="./../rio_de_hola/objects/ground/water/object.xml"></import>
+	<import file="./../rio_de_hola/objects/ground/beach/02/object.xml"></import>
+	<import file="./../rio_de_hola/objects/ground/beach/01/object.xml"></import>
+	<import file="./../rio_de_hola/objects/ground/beach/03/object.xml"></import>
+	<import file="./../rio_de_hola/objects/ground/sands/01/object.xml"></import>
+	<layer grid_type="square" id="myLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
+		<instances>
+			<i r="0" z="0" x="-3" o="water" y="-5" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
+			<i x="-3" o="water" z="0" y="-4" r="0"></i>
+			<i x="-4" o="water" z="0" y="-4" r="0"></i>
+			<i x="-4" o="water" z="0" y="-3" r="0"></i>
+			<i x="-4" o="water" z="0" y="-2" r="0"></i>
+			<i x="-5" o="water" z="0" y="-2" r="0"></i>
+			<i x="-5" o="water" z="0" y="-1" r="0"></i>
+			<i x="-5" o="water" z="0" y="0" r="0"></i>
+			<i x="-4" o="water" z="0" y="1" r="0"></i>
+			<i x="-4" o="water" z="0" y="0" r="0"></i>
+			<i x="-3" o="water" z="0" y="0" r="0"></i>
+			<i x="-3" o="water" z="0" y="-1" r="0"></i>
+			<i x="-3" o="water" z="0" y="-2" r="0"></i>
+			<i x="-4" o="water" z="0" y="-1" r="0"></i>
+			<i x="-3" o="water" z="0" y="-3" r="0"></i>
+			<i x="-2" o="water" z="0" y="-3" r="0"></i>
+			<i x="-2" o="water" z="0" y="-4" r="0"></i>
+			<i x="-2" o="water" z="0" y="-5" r="0"></i>
+			<i x="-2" o="water" z="0" y="-2" r="0"></i>
+			<i x="-1" o="water" z="0" y="-2" r="0"></i>
+			<i x="-2" o="water" z="0" y="-1" r="0"></i>
+			<i x="-2" o="water" z="0" y="0" r="0"></i>
+			<i x="-2" o="water" z="0" y="1" r="0"></i>
+			<i x="-3" o="water" z="0" y="1" r="0"></i>
+			<i x="-1" o="water" z="0" y="0" r="0"></i>
+			<i x="-1" o="water" z="0" y="-1" r="0"></i>
+			<i x="0" o="water" z="0" y="-3" r="0"></i>
+			<i x="-1" o="water" z="0" y="-3" r="0"></i>
+			<i x="-1" o="water" z="0" y="-4" r="0"></i>
+			<i x="0" o="water" z="0" y="-4" r="0"></i>
+			<i x="0" o="water" z="0" y="-5" r="0"></i>
+			<i x="-1" o="water" z="0" y="-5" r="0"></i>
+			<i x="1" o="water" z="0" y="-4" r="0"></i>
+			<i x="2" o="water" z="0" y="-4" r="0"></i>
+			<i x="2" o="water" z="0" y="-3" r="0"></i>
+			<i x="2" o="water" z="0" y="-2" r="0"></i>
+			<i x="3" o="water" z="0" y="-2" r="0"></i>
+			<i x="3" o="water" z="0" y="-1" r="0"></i>
+			<i x="4" o="water" z="0" y="-1" r="0"></i>
+			<i x="3" o="water" z="0" y="0" r="0"></i>
+			<i x="2" o="water" z="0" y="1" r="0"></i>
+			<i x="2" o="water" z="0" y="2" r="0"></i>
+			<i x="2" o="water" z="0" y="3" r="0"></i>
+			<i x="1" o="water" z="0" y="3" r="0"></i>
+			<i x="1" o="water" z="0" y="4" r="0"></i>
+			<i x="0" o="water" z="0" y="4" r="0"></i>
+			<i x="0" o="water" z="0" y="5" r="0"></i>
+			<i x="-1" o="water" z="0" y="4" r="0"></i>
+			<i x="-2" o="water" z="0" y="4" r="0"></i>
+			<i x="-3" o="water" z="0" y="4" r="0"></i>
+			<i x="-3" o="water" z="0" y="3" r="0"></i>
+			<i x="-2" o="water" z="0" y="2" r="0"></i>
+			<i x="-3" o="water" z="0" y="2" r="0"></i>
+			<i x="-4" o="water" z="0" y="2" r="0"></i>
+			<i x="-2" o="water" z="0" y="3" r="0"></i>
+			<i x="-1" o="water" z="0" y="3" r="0"></i>
+			<i x="0" o="water" z="0" y="3" r="0"></i>
+			<i x="0" o="water" z="0" y="2" r="0"></i>
+			<i x="0" o="water" z="0" y="1" r="0"></i>
+			<i x="-1" o="water" z="0" y="1" r="0"></i>
+			<i x="-1" o="water" z="0" y="2" r="0"></i>
+			<i x="1" o="water" z="0" y="2" r="0"></i>
+			<i x="1" o="water" z="0" y="1" r="0"></i>
+			<i x="0" o="water" z="0" y="0" r="0"></i>
+			<i x="1" o="water" z="0" y="0" r="0"></i>
+			<i x="2" o="water" z="0" y="0" r="0"></i>
+			<i x="2" o="water" z="0" y="-1" r="0"></i>
+			<i x="1" o="water" z="0" y="-1" r="0"></i>
+			<i x="1" o="water" z="0" y="-2" r="0"></i>
+			<i x="0" o="water" z="0" y="-2" r="0"></i>
+			<i x="0" o="water" z="0" y="-1" r="0"></i>
+			<i x="1" o="water" z="0" y="-3" r="0"></i>
+			<i x="4" o="beach:02" z="0" y="1" r="180"></i>
+			<i x="4" o="beach:01" z="0" y="0" r="0"></i>
+			<i x="5" o="beach:03" z="0" y="-1" r="225"></i>
+			<i x="3" o="beach:01" z="0" y="1" r="0"></i>
+			<i x="3" o="beach:03" z="0" y="2" r="225"></i>
+			<i x="4" o="sands:01" z="0" y="2" r="0"></i>
+			<i x="4" o="sands:01" z="0" y="3" r="0"></i>
+			<i x="3" o="beach:03" z="0" y="3" r="225"></i>
+			<i x="5" o="beach:03" z="0" y="-2" r="225"></i>
+			<i x="4" o="water" z="0" y="-2" r="0"></i>
+			<i x="3" o="water" z="0" y="-3" r="0"></i>
+			<i x="3" o="water" z="0" y="-4" r="0"></i>
+			<i x="2" o="water" z="0" y="-5" r="0"></i>
+			<i x="1" o="water" z="0" y="-5" r="0"></i>
+			<i x="5" o="beach:03" z="0" y="-3" r="225"></i>
+			<i x="5" o="beach:03" z="0" y="-4" r="225"></i>
+			<i x="5" o="beach:01" z="0" y="-5" r="0"></i>
+			<i x="4" o="water" z="0" y="-3" r="0"></i>
+			<i x="4" o="water" z="0" y="-4" r="0"></i>
+			<i x="4" o="water" z="0" y="-5" r="0"></i>
+			<i x="3" o="water" z="0" y="-5" r="0"></i>
+			<i x="6" o="sands:01" z="0" y="-5" r="0"></i>
+			<i x="6" o="sands:01" z="0" y="-4" r="0"></i>
+			<i x="6" o="sands:01" z="0" y="-3" r="0"></i>
+			<i x="6" o="sands:01" z="0" y="-2" r="0"></i>
+			<i x="6" o="sands:01" z="0" y="-1" r="0"></i>
+			<i x="6" o="sands:01" z="0" y="0" r="0"></i>
+			<i x="5" o="sands:01" z="0" y="1" r="0"></i>
+			<i x="5" o="sands:01" z="0" y="2" r="0"></i>
+			<i x="5" o="sands:01" z="0" y="3" r="0"></i>
+			<i x="4" o="sands:01" z="0" y="4" r="0"></i>
+			<i x="5" o="beach:02" z="0" y="0" r="180"></i>
+			<i x="5" o="sands:01" z="0" y="4" r="0"></i>
+		</instances>
+	</layer>
+	<camera tilt="-42.0" viewport="0,0,1024,768" id="myCamera" ref_layer_id="myLayer" ref_cell_height="96" rotation="45.0" ref_cell_width="128" zoom="0.676839362029">
+	</camera>
+</map>

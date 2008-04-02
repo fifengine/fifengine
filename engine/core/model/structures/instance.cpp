@@ -340,6 +340,10 @@ namespace FIFE {
 			curticks = SDL_GetTicks();
 		}
 		ActionInfo* info = m_activity->m_actioninfo;
+		if (!info) {
+			return m_changeinfo;
+		}
+		
 		info->m_cur_time = curticks;
 		FL_DBG(_log, LMsg("updating instance, ticks = ") << curticks);
 

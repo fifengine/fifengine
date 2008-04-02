@@ -133,12 +133,14 @@ class ModelSaver:
 				(None, 'x'): str(position.x),
 				(None, 'y'): str(position.y),
 				(None, 'z'): str(position.z),
+				(None, 'r'): str(inst.getRotation()),
 			}
 			attr_names = {
 				(None, 'o'): 'o',
 				(None, 'x'): 'x',
 				(None, 'y'): 'y',
 				(None, 'z'): 'z',
+				(None, 'r'): 'r',
 			}
 
 			nspace = inst.getObject().getNamespace()

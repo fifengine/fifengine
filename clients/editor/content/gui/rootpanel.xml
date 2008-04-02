@@ -1,5 +1,3 @@
 <HBox opaque='1'>
-	<Label name="Title" text="FIFEdit 2008.0"/>
-	<Spacer />
 	<Button name="quitButton" text="Quit"/>
 </HBox>

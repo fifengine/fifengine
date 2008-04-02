@@ -14,7 +14,7 @@ class Importer(plugin.Plugin):
 		self.filebrowser = filebrowser.FileBrowser(engine,self._selectFile,selectdir=True)
 
 		self.menu_items = {
-			'Import' : self.filebrowser.showBrowser,
+			'Import Objects' : self.filebrowser.showBrowser,
 		}
 
 		self.newImport = None
