@@ -198,7 +198,7 @@ namespace FIFE {
 		 *  @return angle in polar coordinates
 		 */
 		inline int getAngleBetween(const Location& loc1, const Location& loc2) {
-			static const int VECTOR_MULTIP = 1000;
+			static const double VECTOR_MULTIP = 100000.0;
 			ExactModelCoordinate c1 = loc1.getMapCoordinates();
 			ExactModelCoordinate c2 = loc2.getMapCoordinates();
 			ExactModelCoordinate cd((c2.x - c1.x) * VECTOR_MULTIP, (c2.y - c1.y) * VECTOR_MULTIP, 0);
