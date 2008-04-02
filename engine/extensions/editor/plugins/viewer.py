@@ -32,16 +32,6 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 		fife.IMouseListener.__init__(self)
 		eventmanager.addMouseListener(self)
 
-		self.scrollwheelvalue = 0
-		self.ctrl_scrollwheelvalue = 0
-		self.alt_scrollwheelvalue = 0
-		self.shift_scrollwheelvalue = 0
-
-		# scroll support
-		self.horizscroll = 0
-		self.vertscroll = 0
-		self.horizscrolldir = 1
-		self.vertscrolldir = 1
 		self._ctrldown = False
 		self._shiftdown = False
 		self._altdown = False
@@ -54,72 +44,58 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 		self.camera = None
 
 	def mousePressed(self, evt):
-		if (evt.getButton() == fife.MouseEvent.LEFT ):
-			if self._ctrldown:
-				self._dragx = evt.getX()
-				self._dragy = evt.getY()
-				self.horizscroll = 0
-				self.vertscroll = 0
+		if (evt.getButton() == fife.MouseEvent.LEFT) and (self._ctrldown):
+			self._dragx = evt.getX()
+			self._dragy = evt.getY()
 
 	def mouseReleased(self, evt):
-		self._dragx = 0
-		self._dragy = 0
-		self.horizscroll = 0
-		self.vertscroll = 0
-	
+		pass
 	def mouseEntered(self, evt):
 		pass
 	def mouseExited(self, evt):
 		pass
 	def mouseClicked(self, evt):
 		pass
-	def mouseWheelMovedUp(self, evt):
-		if self._ctrldown:
-			self.ctrl_scrollwheelvalue += 1
-		elif self._shiftdown:
-			self.shift_scrollwheelvalue += 0.01
-		elif self._altdown :
-			if  self.alt_scrollwheelvalue < -1:
-				self.alt_scrollwheelvalue += 1
-		else:
-			self.scrollwheelvalue += 0.1
-			
-	def mouseWheelMovedDown(self, evt):
-		if self._ctrldown:
-			self.ctrl_scrollwheelvalue -= 1
-		elif self._shiftdown:
-			self.shift_scrollwheelvalue -= 0.01
-		elif self._altdown :
-			if  self.alt_scrollwheelvalue > -89:
-				self.alt_scrollwheelvalue -= 1
-		else:
-			self.scrollwheelvalue -= 0.1
-	
 	def mouseMoved(self, evt):
 		pass
+	
+	def mouseWheelMovedUp(self, evt):
+		if self._ctrldown and self.camera:
+			self.camera.setZoom(self.camera.getZoom() * 1.05)
+			
+	def mouseWheelMovedDown(self, evt):
+		if self._ctrldown and self.camera:
+			self.camera.setZoom(self.camera.getZoom() / 1.05)
+	
+	def move_camera(self, screen_x, screen_y):
+		coords = self.camera.getLocationRef().getMapCoordinates()
+		z = self.camera.getZoom()
+		r = self.camera.getRotation()
+		if screen_x:
+			coords.x -= screen_x / z * math.cos(r / 180.0 * math.pi) / 100;
+			coords.y -= screen_x / z * math.sin(r / 180.0 * math.pi) / 100;
+		if screen_y:
+			coords.x -= screen_y / z * math.sin(-r / 180.0 * math.pi) / 100;
+			coords.y -= screen_y / z * math.cos(-r / 180.0 * math.pi) / 100;
+		coords = self.camera.getLocationRef().setMapCoordinates(coords)
+		self.camera.refresh()
+	
 	def mouseDragged(self, evt):
-		if self._ctrldown:
-			self.horizscroll = self.vertscroll = 1
-			self.horizscrolldir = -((self._dragx - evt.getX()) / 10.0)
-			self.vertscrolldir = -((self._dragy - evt.getY()) / 10.0)
-
+		if self._ctrldown and self.camera:
+			self.move_camera(evt.getX() - self._dragx, evt.getY() - self._dragy)
 			self._dragx = evt.getX()
 			self._dragy = evt.getY()
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		if keyval == fife.Key.LEFT:
-			self.horizscroll = 1;
-			self.horizscrolldir = -1;
+			self.move_camera(-50, 0)
 		elif keyval == fife.Key.RIGHT:
-			self.horizscroll = 1;
-			self.horizscrolldir = 1;
+			self.move_camera(50, 0)
 		elif keyval == fife.Key.UP:
-			self.vertscroll = 1;
-			self.vertscrolldir = -1;
+			self.move_camera(0, -50)
 		elif keyval == fife.Key.DOWN:
-			self.vertscroll = 1;
-			self.vertscrolldir = 1;
+			self.move_camera(0, 50)
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self._ctrldown = True
 		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
@@ -135,14 +111,6 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 			self._shiftdown = False
 		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
 			self._altdown = False
-		elif keyval == fife.Key.LEFT:
-			self.horizscroll = 0
-		elif keyval == fife.Key.RIGHT:
-			self.horizscroll = 0
-		elif keyval == fife.Key.UP:
-			self.vertscroll = 0
-		elif keyval == fife.Key.DOWN:
-			self.vertscroll = 0
 
 	def _editSelection(self):
 		map_list = [map.Id() for map in self.engine.getModel().getMaps()]
@@ -200,17 +168,5 @@ class Viewer(plugin.Plugin, fife.IKeyListener, fife.IMouseListener):
 		self.camera.setViewPort(fife.Rect(*[int(c) for c in viewport]))
 
 	def pump(self):
-		if not self.active: return
-		if (self.horizscroll or self.vertscroll):
-			loc = self.camera.getLocationRef()
-			cam_scroll = loc.getExactLayerCoordinates()
-			if (self.horizscroll):
-				cam_scroll.x += SCROLL_MODIFIER*self.horizscrolldir * (2/self.camera.getZoom()) * math.cos(self.camera.getRotation()/180.0 * math.pi);
-				cam_scroll.y += SCROLL_MODIFIER*self.horizscrolldir * (2/self.camera.getZoom()) * math.sin(self.camera.getRotation()/180.0 * math.pi);
-			if (self.vertscroll):
-				cam_scroll.x += SCROLL_MODIFIER*self.vertscrolldir *(2/self.camera.getZoom()) *  math.sin(-self.camera.getRotation()/180.0 * math.pi);
-				cam_scroll.y += SCROLL_MODIFIER*self.vertscrolldir *(2/self.camera.getZoom()) *  math.cos(-self.camera.getRotation()/180.0 * math.pi);
-
-			loc.setExactLayerCoordinates(cam_scroll)
-			self.camera.setLocation(loc)
-			self.horizscroll = self.vertscroll = 0
+		if not self.active:
+			return
