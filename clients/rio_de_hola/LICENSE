@@ -61,6 +61,18 @@ Affected files:
 fonts/rpgfont.png
 
 == Graphics ==
+=== Dauerflucher ===
+Author:
+Dauerflucher (dauerflucher@gmail.com)
+
+Website:
+http://www.openanno.org
+
+Affected files:
+objects/items/coins/*.png
+objects/items/flask/*.png
+objects/items/matchbox/*.png
+
 === Reiner's tilesets ===
 Author:
 Reiner Prokein (http://www.reinerstileset.de/)
@@ -73,10 +85,10 @@ Custom license
 http://reinerstileset.4players.de/readmeE.html#b
 
 Affected files:
-objects/agents/*/*.png
-objects/ground/*/*.png
-objects/items/*/*.png
-objects/nature/*/*.png
+objects/agents/*.png
+objects/ground/*.png
+objects/items/*.png
+objects/nature/*.png
 
 === Supertux ===
 Author:
@@ -91,4 +103,4 @@ http://www.gnu.org/licenses/gpl-3.0.txt
 http://creativecommons.org/licenses/by-sa/3.0/
 
 Affected files:
-objects/clouds/*/*.png
+objects/clouds/*.png

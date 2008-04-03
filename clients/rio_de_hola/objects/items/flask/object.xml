@@ -1,0 +1,11 @@
+<?fife type="object"?>
+<object id="flask_map" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+	<image source="000.png" direction="0" />
+	<image source="045.png" direction="45" />
+	<image source="090.png" direction="90" />
+	<image source="135.png" direction="135" />
+	<image source="180.png" direction="180" />
+	<image source="225.png" direction="225" />
+	<image source="270.png" direction="270" />
+	<image source="315.png" direction="315" />
+</object>
