@@ -47,7 +47,7 @@ class ModelSaver:
 		self.xmlout.endElementNS((None, name), name)
 		self.file.write('\n')
 
-	def write_map(self, map):
+	def write_map(self, map, importList):
 		assert self.state == self.SModel, "Declaration of <map> not at the top level."
 
 		attr_vals = {
@@ -61,19 +61,32 @@ class ModelSaver:
 		attrs = AttributesNSImpl(attr_vals, attr_names)
 		self.startElement('map', attrs)
 		self.state = self.SMap
-		self.write_imports(map)
+		self.write_imports(map, importList)
 		self.write_layers(map)
 		self.write_camera(map)
 		self.endElement('map')
 
-	def write_imports(self, map):
+	def write_imports(self, map, importList):
+		for importdir in importList:
+			self.write_importdir(importdir)
+
 		imports = []
 		for layer in map.getLayers():
 			for instance in layer.getInstances():
 				file = instance.getObject().getResourceFile()
 				if not (file in imports):
-					imports.append(file)	
-					self.write_import(file)
+					if not self.have_superdir(file, importList):
+						imports.append(file)	
+						self.write_import(file)
+
+	def have_superdir(self, file, importList):
+		for dir in importList:
+			have = True
+			for test in zip(dir.split('/'), file.split('/')):
+				if test[0] != test[1]: have = False
+			if have: return True	
+
+		return False
 
 	def write_import(self, file):
 		attr_vals = {
@@ -81,6 +94,19 @@ class ModelSaver:
 		}
 		attr_names = {
 			(None, 'file'): 'file',
+		}
+		attrs = AttributesNSImpl(attr_vals, attr_names)
+		self.file.write(self.indent_level)
+		self.xmlout.startElementNS((None, 'import'), 'import', attrs)
+		self.xmlout.endElementNS((None, 'import'), 'import')
+		self.file.write('\n')
+
+	def write_importdir(self, dir):
+		attr_vals = {
+			(None, 'dir'): dir,
+		}
+		attr_names = {
+			(None, 'dir'): 'dir',
 		}
 		attrs = AttributesNSImpl(attr_vals, attr_names)
 		self.file.write(self.indent_level)
@@ -201,6 +227,6 @@ class ModelSaver:
 		self.xmlout.endDocument()
 		self.file.close()
 
-def saveMapFile(path, engine, map):
+def saveMapFile(path, engine, map, importList=[]):
 	writer = ModelSaver(path, engine)
-	writer.write_map(map)
+	writer.write_map(map, importList)

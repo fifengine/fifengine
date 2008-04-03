@@ -56,6 +56,7 @@ class Editor(basicapplication.ApplicationBase):
 		self.maploader = MapLoader(self.engine)
 		self.mapsaver = MapSaver(self.engine)
 		self.mapwizard = MapWizard(self.engine)
+		self.importer = Importer(self.engine)
 
 		# Register plugins with Fifedit.
 		self.fifedit.registerPlugin(Help())
@@ -63,7 +64,7 @@ class Editor(basicapplication.ApplicationBase):
 		self.fifedit.registerPlugin(self.mapsaver)
 		self.fifedit.registerPlugin(self.mapedit)
 		self.fifedit.registerPlugin(self.mapwizard)
-		self.fifedit.registerPlugin(Importer(self.engine))
+		self.fifedit.registerPlugin(self.importer)
 		
 		self.params = params
 
@@ -74,12 +75,13 @@ class Editor(basicapplication.ApplicationBase):
 	def _pump(self):
 		if self.maploader.newMap:
 			self.mapedit.editMap(self.maploader.newMap.getId())	
+			self.importer.addDirs(self.maploader.newMap.importDirs)
 			self.maploader.newMap = None
 		if self.mapwizard.newMap:
 			self.mapedit.editMap(self.mapwizard.map.getId())
 			self.mapwizard.newMap = False
 		if self.mapsaver.saveRequested and self.mapedit._map:
-			self.mapsaver.saveMap(self.mapedit._map)
+			self.mapsaver.saveMap(self.mapedit._map,self.importer.importList)
 			self.mapsaver.saveRequested = False
 		if not self.fifedit.active: 
 			self.quitRequested = True
