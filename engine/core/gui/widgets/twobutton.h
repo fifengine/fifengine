@@ -35,6 +35,14 @@
 
 namespace gcn {
 
+	class TwoButton;
+	class TwoButtonListener {
+	public:
+		virtual ~TwoButtonListener() {}
+		virtual void mouseEntered(TwoButton& btn) = 0;
+		virtual void mouseExited(TwoButton& btn) = 0;
+	};
+	
 	class TwoButton : public Button {
 		public:
 			TwoButton(Image *up_image = 0, Image *down_image = 0, const std::string& caption = "");
@@ -44,10 +52,27 @@ namespace gcn {
 
 			void setUpImage(Image* image);
 			void setDownImage(Image* image);
+			
+			void setDownOffset(int x, int y);
+			int getDownXOffset() { return x_downoffset; }
+			int getDownYOffset() { return y_downoffset; }
+			
+		        void mouseEntered(MouseEvent& mouseEvent);
+		        void mouseExited(MouseEvent& mouseEvent);
+			
+			void setListener(TwoButtonListener* listener) { m_listener = listener; }
+			TwoButtonListener* getListener() { return m_listener; }
 
+			void setHelpText(const std::string& txt) { m_helptext = txt; }
+			const std::string& getHelpText() { return m_helptext; }
+		
 		private:
 			Image *m_upImage;
 			Image *m_downImage;
+			int x_downoffset;
+			int y_downoffset;
+			TwoButtonListener* m_listener;
+			std::string m_helptext;
 	};
 
 }

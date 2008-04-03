@@ -158,6 +158,16 @@ namespace gcn {
 		virtual bool isPressed() const;
 	};
 
+	
+	class TwoButton;
+	%feature("director") TwoButtonListener;
+	class TwoButtonListener {
+	public:
+		virtual ~TwoButtonListener();
+		virtual void mouseEntered(TwoButton& btn) = 0;
+		virtual void mouseExited(TwoButton& btn) = 0;
+	};
+		
 	%feature("notabstract") TwoButton;
 	class TwoButton: public Widget {
 	public:
@@ -169,6 +179,14 @@ namespace gcn {
 		virtual unsigned int getAlignment() const;
 		void setUpImage(Image* image);
 		void setDownImage(Image* image);
+		void setDownOffset(int x, int y);
+		int getDownXOffset();
+		int getDownYOffset();
+		void setListener(TwoButtonListener* listener);
+		TwoButtonListener* getListener();
+
+		void setHelpText(const std::string& txt);
+		const std::string& getHelpText();
 	};
 
 	%feature("notabstract") ScrollArea;

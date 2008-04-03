@@ -52,19 +52,26 @@ class MapSelection(object):
 		self._mapedit.hide()
 
 class Toolbar(object):
-	def __init__(self, onSelect, onMove, onInsert, onDelete):
+	def __init__(self, onSelect, onMove, onInsert, onDelete, onBtnEnter, onBtnExit):
 		self._onSelect, self._onMove, self._onInsert, self._onDelete = onSelect, onMove, onInsert, onDelete
+		self.onBtnEnter, self.onBtnExit = onBtnEnter, onBtnExit
 		self._toolbar = None
 	
 	def show(self):
 		if not self._toolbar:
 			self._toolbar = pychan.loadXML('content/gui/tools.xml')
-			self._toolbar.mapEvents({
+			evtmap = {
 				'btnSelect' : self._onSelect,
 				'btnMove' : self._onMove,
 				'btnInsert' : self._onInsert,
 				'btnDelete' : self._onDelete
-			})
+			}
+			self._toolbar.mapEvents(evtmap)
+			for k in evtmap.keys():
+				btn = self._toolbar.findChild(name=k)
+				btn.setEnterCallback(self.onBtnEnter)
+				btn.setExitCallback(self.onBtnExit)
+		
 		#self._toolbar.adaptLayout()
 		self._toolbar.show()
 		self._toolbar.x = 10
@@ -92,12 +99,22 @@ class StatusBar(object):
 		height = 25
 		self._statusbar.position = (0, screenh - height)
 		self._statusbar.size = (screenw, height)
+		self.statustxt = ''
+		self.lbl = self._statusbar.findChild(name='lblStatus')
 
 	def setStatus(self, msg):
-		lbl = self._statusbar.findChild(name='lblStatus')
-		lbl.text = '  ' + msg
-		lbl.resizeToContent()
+		self.statustxt = msg
+		self.lbl.text = '  ' + msg
+		self.lbl.resizeToContent()
 	
+	def showTooltip(self, elem):
+		self.lbl.text = elem.helptext
+		self.lbl.resizeToContent()
+
+	def hideTooltip(self, elem):
+		self.lbl.text = self.statustxt
+		self.lbl.resizeToContent()
+
 
 class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
@@ -131,11 +148,12 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		
 		self._mapselector = MapSelection(self._selectLayer, self._selectObject)
 		self._objectselector = None
-		self._toolbar = Toolbar(cbwa(self._setMode, VIEWING), cbwa(self._setMode, MOVING),
-		                        cbwa(self._setMode, INSERTING), cbwa(self._setMode, REMOVING))
-		self._toolbar.show()
 		rb = self._engine.getRenderBackend()
 		self._statusbar = StatusBar(rb.getWidth(), rb.getHeight())
+		self._toolbar = Toolbar(cbwa(self._setMode, VIEWING), cbwa(self._setMode, MOVING),
+		                        cbwa(self._setMode, INSERTING), cbwa(self._setMode, REMOVING),
+					self._statusbar.showTooltip, self._statusbar.hideTooltip)
+		self._toolbar.show()
 		self._setMode(NOTHING_LOADED)
 
 

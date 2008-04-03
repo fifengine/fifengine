@@ -1072,6 +1072,21 @@ class Button(BasicTextWidget):
 		self.real_widget = fife.Button("")
 		super(Button,self).__init__(**kwargs)
 
+class ImageButtonListener(fife.TwoButtonListener):
+	def __init__(self, btn):
+		fife.TwoButtonListener.__init__(self)
+		self.btn = btn
+		self.entercb = None
+		self.exitcb = None
+	
+	def mouseEntered(self, btn):
+		if self.entercb:
+			self.entercb(self.btn)
+	
+	def mouseExited(self, btn):
+		if self.exitcb:
+			self.exitcb(self.btn)
+	
 class ImageButton(BasicTextWidget):
 	"""
 	A basic push button with two different images for the up and down state.
@@ -1085,13 +1100,17 @@ class ImageButton(BasicTextWidget):
 	  - down_image: String: The source location of the Image for the B{pressed} state.
 	"""
 	
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext')]
 	
-	def __init__(self,up_image="",down_image="",**kwargs):
+	def __init__(self,up_image="",down_image="",offset=(0,0),**kwargs):
 		self.real_widget = fife.TwoButton()
 		super(ImageButton,self).__init__(**kwargs)
+		self.listener = ImageButtonListener(self)
+		self.real_widget.setListener(self.listener)
+		
 		self.up_image = up_image
 		self.down_image = down_image
+		self.offset = offset
 
 	def _setUpImage(self,image):
 		self._upimage_source = image
@@ -1113,9 +1132,37 @@ class ImageButton(BasicTextWidget):
 	def _getDownImage(self): return self._downimage_source
 	down_image = property(_getDownImage,_setDownImage)
 
+	def _setOffset(self, offset):
+		self.real_widget.setDownOffset(offset[0], offset[1])
+	def _getOffset(self):
+		return (self.real_widget.getDownXOffset(), self.real_widget.getDownYOffset())
+	offset = property(_getOffset,_setOffset)
+
+	def _setHelpText(self, txt):
+		self.real_widget.setHelpText(txt)
+	def _getHelpText(self):
+		return self.real_widget.getHelpText()
+	helptext = property(_getHelpText,_setHelpText)
+	
 	def resizeToContent(self):
 		self.height = max(self._upimage.getHeight(),self._downimage.getHeight()) + self.margins[1]*2
 		self.width = max(self._upimage.getWidth(),self._downimage.getWidth()) + self.margins[1]*2
+
+	def setEnterCallback(self, cb):
+		'''
+		Callback is called when mouse enters the area of ImageButton
+		callback should have form of function(button)
+		'''
+		self.listener.entercb = cb
+	
+	def setExitCallback(self, cb):
+		'''
+		Callback is called when mouse enters the area of ImageButton
+		callback should have form of function(button)
+		'''
+		self.listener.exitcb = cb
+	
+
 
 class CheckBox(BasicTextWidget):
 	"""

@@ -32,19 +32,31 @@
 #include "twobutton.h"
 
 namespace gcn {
-	TwoButton::TwoButton(Image *up_file , Image *down_file, const std::string& caption): Button() {
-		m_upImage = up_file;
-		m_downImage = down_file;
+	TwoButton::TwoButton(Image *up_file , Image *down_file, const std::string& caption): 
+		Button(),
+		m_upImage(up_file),
+		m_downImage(down_file),
+		x_downoffset(0),
+		y_downoffset(0),
+		m_listener(NULL),
+		m_helptext("") {
 		setBorderSize(0);
 		adjustSize();
 		mCaption = caption;
 	}
+	
 	TwoButton::~TwoButton() {
 	}
+	
+	void TwoButton::setDownOffset(int x, int y) {
+		x_downoffset = x;
+		y_downoffset = y;
+	}
+	
 	void TwoButton::draw(Graphics *graphics) {
 		if (isPressed()) {
 			if( m_downImage ) {
-				graphics->drawImage(m_downImage, 0, 0);
+				graphics->drawImage(m_downImage, x_downoffset, y_downoffset);
 			}
 		} else {
 			if( m_upImage ) {
@@ -80,14 +92,18 @@ namespace gcn {
 		}
 	}
 	void TwoButton::adjustSize() {
+		int w = 0;
+		int h = w;
 		if( m_upImage ) {
-			setWidth(m_upImage->getWidth());
-			setHeight(m_upImage->getHeight());
+			w += m_upImage->getWidth();
+			h += m_upImage->getHeight();
 		}
 		if( m_downImage ) {
-			setWidth(std::max(m_downImage->getWidth(),getWidth()));
-			setHeight(std::max(m_downImage->getHeight(),getHeight()));
+			w += std::max(m_downImage->getWidth(), getWidth());
+			h += std::max(m_downImage->getHeight(), getHeight());
 		}
+		setWidth(w);
+		setHeight(h);
 	}
 	void TwoButton::setUpImage(Image* image) {
 		m_upImage = image;
@@ -97,6 +113,19 @@ namespace gcn {
 		m_downImage = image;
 		adjustSize();
 	}
-
+	
+	void TwoButton::mouseEntered(MouseEvent& mouseEvent) {
+		if (m_listener) {
+			m_listener->mouseEntered(*this);
+		}
+		Button::mouseEntered(mouseEvent);
+	}
+	
+	void TwoButton::mouseExited(MouseEvent& mouseEvent) {
+		if (m_listener) {
+			m_listener->mouseExited(*this);
+		}
+		Button::mouseExited(mouseEvent);
+	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
