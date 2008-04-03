@@ -346,13 +346,13 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		keystr = evt.getKey().getAsString().lower()
 		
 		if keyval == fife.Key.LEFT:
-			self._moveCamera(-50, 0)
-		elif keyval == fife.Key.RIGHT:
 			self._moveCamera(50, 0)
+		elif keyval == fife.Key.RIGHT:
+			self._moveCamera(-50, 0)
 		elif keyval == fife.Key.UP:
-			self._moveCamera(0, -50)
-		elif keyval == fife.Key.DOWN:
 			self._moveCamera(0, 50)
+		elif keyval == fife.Key.DOWN:
+			self._moveCamera(0, -50)
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self._ctrldown = True
 		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
