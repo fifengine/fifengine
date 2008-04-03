@@ -6,8 +6,8 @@ import fife
 import plugin
 import pychan
 import pychan.widgets as widgets
-from editor.input import Input
-from editor.selection import Selection,ClickSelection
+from input import Input
+from selection import Selection,ClickSelection
 
 class CameraEditor():
 	"""

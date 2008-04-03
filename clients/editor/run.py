@@ -7,7 +7,7 @@ import sys, os, re
 def _jp(path):
 	return os.path.sep.join(path.split('/'))
 
-_paths = ('../../engine/swigwrappers/python', '../../engine/extensions')
+_paths = ('.', '../../engine/swigwrappers/python', '../../engine/extensions')
 for p in _paths:
 	if p not in sys.path:
 		sys.path.append(_jp(p))
@@ -21,13 +21,13 @@ import sys
 
 from listener import EditorListener
 
-import editor
-from editor.plugins.plugin import Plugin
-from editor.plugins.maploader import MapLoader
-from editor.plugins.maploader import MapSaver
-from editor.plugins.importer import Importer
-from editor.plugins.mapeditor import MapEditor
-from editor.plugins.mapwizard import MapWizard
+from plugins.plugin import Plugin
+from plugins.maploader import MapLoader
+from plugins.maploader import MapSaver
+from plugins.importer import Importer
+from plugins.mapeditor import MapEditor
+from plugins.mapwizard import MapWizard
+from fifedit import Fifedit
 
 # Help display
 class Help(Plugin):
@@ -49,7 +49,7 @@ class Editor(basicapplication.ApplicationBase):
 		super(Editor,self).__init__()
 
 		# embed Fifedit tools
-		self.fifedit = editor.Fifedit(self.engine)
+		self.fifedit = Fifedit(self.engine)
 
 		# Create this client's modules
 		self.mapedit = MapEditor(self.engine)

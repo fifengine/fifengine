@@ -8,8 +8,8 @@ import plugin
 import pychan
 import pychan.widgets as widgets
 from pychan.tools import callbackWithArguments as cbwa
-from editor.selection import Selection, ClickSelection
-from editor.plugins.objectselector import ObjectSelector
+from selection import Selection, ClickSelection
+from plugins.objectselector import ObjectSelector
 
 from pychan.manager import DEFAULT_STYLE
 DEFAULT_STYLE['default']['base_color'] = fife.Color(85,128,151)
