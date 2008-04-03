@@ -11,6 +11,9 @@ from pychan.tools import callbackWithArguments as cbwa
 from editor.selection import Selection, ClickSelection
 from editor.plugins.objectselector import ObjectSelector
 
+from pychan.manager import DEFAULT_STYLE
+DEFAULT_STYLE['default']['base_color'] = fife.Color(85,128,151)
+
 states = ('NOTHING_LOADED', 'VIEWING', 'INSERTING', 'REMOVING', 'MOVING')
 for s in states:
 	globals()[s] = s
@@ -82,9 +85,17 @@ class Toolbar(object):
 	def enableSelect(self, enabled):
 		self._enableBtn(enabled, self._toolbar.findChild(name='btnSelect'))
 	
+class StatusBar(object):
+	def __init__(self, screenw, screenh):
+		self._statusbar = pychan.loadXML('content/gui/statuspanel.xml')
+		self._statusbar.show()
+		height = 25
+		self._statusbar.position = (0, screenh - height)
+		self._statusbar.size = (screenw, height)
+
 	def setStatus(self, msg):
-		lbl = self._toolbar.findChild(name='lblStatus')
-		lbl.text = msg
+		lbl = self._statusbar.findChild(name='lblStatus')
+		lbl.text = '  ' + msg
 		lbl.resizeToContent()
 	
 
@@ -120,10 +131,11 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		
 		self._mapselector = MapSelection(self._selectLayer, self._selectObject)
 		self._objectselector = None
-
 		self._toolbar = Toolbar(cbwa(self._setMode, VIEWING), cbwa(self._setMode, MOVING),
 		                        cbwa(self._setMode, INSERTING), cbwa(self._setMode, REMOVING))
 		self._toolbar.show()
+		rb = self._engine.getRenderBackend()
+		self._statusbar = StatusBar(rb.getWidth(), rb.getHeight())
 		self._setMode(NOTHING_LOADED)
 
 
@@ -134,14 +146,14 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	
 	def _setMode(self, mode):
 		if (mode != NOTHING_LOADED) and (not self._camera):
-			self._toolbar.setStatus('Please load map first')
+			self._statusbar.setStatus('Please load map first')
 			return
 		if (mode == INSERTING) and (not self._object):
-			self._toolbar.setStatus('Please select object first')
+			self._statusbar.setStatus('Please select object first')
 			return
 		self._mode = mode
 		print "Entered mode " + mode
-		self._toolbar.setStatus(mode.replace('_', ' ').capitalize())
+		self._statusbar.setStatus(mode.replace('_', ' ').capitalize())
 	
 	# gui for selecting a map
 	def _selectMap(self):

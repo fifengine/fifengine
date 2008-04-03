@@ -1,13 +1,8 @@
 <Window title="tools">
-	<VBox>
-		<HBox>
-			<Button name="btnSelect" text="sel" />
-			<Button name="btnMove" text="move" />
-			<Button name="btnInsert" text="ins" />
-			<Button name="btnDelete" text="del" />
-		</HBox>
-		<HBox>
-			<Label name="lblStatus" size="200,100" text="" />
-		</HBox>
-	</VBox>
+	<HBox>
+		<Button name="btnSelect" text="sel" />
+		<Button name="btnMove" text="move" />
+		<Button name="btnInsert" text="ins" />
+		<Button name="btnDelete" text="del" />
+	</HBox>
 </Window>
