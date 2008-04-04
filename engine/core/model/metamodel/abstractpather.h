@@ -23,6 +23,7 @@
 #define FIFE_MODEL_ABSTRACTPATHER_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 

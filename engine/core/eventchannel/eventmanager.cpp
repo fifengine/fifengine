@@ -519,8 +519,10 @@ namespace FIFE {
 					dispatchKeyEvent(keyevt);
 					}
 					break;
-				case SDL_MOUSEMOTION:
 				case SDL_MOUSEBUTTONUP:
+					if(event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP)
+						break;
+				case SDL_MOUSEMOTION:
 				case SDL_MOUSEBUTTONDOWN: {
 					MouseEvent mouseevt;
 					mouseevt.setSource(this);
