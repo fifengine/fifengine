@@ -120,7 +120,6 @@ namespace FIFE {
 			InstanceVisualCacheItem& vc = visual->getCacheItem(cam);
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 			
-			double z = cam->getZoom();
 			if (potential_outlining) {
 				InstanceToOutlines_t::iterator it = i2o.find(instance);
 				if (it != end) {

@@ -500,6 +500,7 @@ namespace FIFE {
 	void EventManager::processEvents(){
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
+			dispatchSdlEvent(event);
 			switch (event.type) {
 				case SDL_QUIT: {
 					Command cmd;
@@ -520,8 +521,6 @@ namespace FIFE {
 					}
 					break;
 				case SDL_MOUSEBUTTONUP:
-					if(event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP)
-						break;
 				case SDL_MOUSEMOTION:
 				case SDL_MOUSEBUTTONDOWN: {
 					MouseEvent mouseevt;
@@ -534,11 +533,16 @@ namespace FIFE {
 					} else if (event.type == SDL_MOUSEBUTTONUP) {
 						m_mousestate &= ~static_cast<int>(mouseevt.getButton());
 					}
+					// fire scrollwheel events only once
+					if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
+						if (event.type == SDL_MOUSEBUTTONUP) {
+							break;
+						}
+					}
 					dispatchMouseEvent(mouseevt);
 					break;
 					}
 			}
-			dispatchSdlEvent(event);
 		}
 
 		pollTriggers();

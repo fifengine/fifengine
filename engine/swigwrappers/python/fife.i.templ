@@ -14,9 +14,52 @@ namespace std {
 	%template(BoolVector) vector<bool>;
 };
 
+%{
+#include "util/base/exception.h"
+static void handleDirectorException() {
+	PyObject* exception = NULL;
+	PyObject* value = NULL;
+	PyObject* traceback = NULL;
+	PyErr_Fetch(&exception, &value, &traceback);
+	PyErr_NormalizeException(&exception, &value, &traceback);
+	if (exception) {
+		PySys_SetObject("last_type", exception);
+		PySys_SetObject("last_value", value);
+		PySys_SetObject("last_traceback", traceback);	
+		
+		PyObject* d = PyModule_GetDict (PyImport_AddModule ("__main__"));
+		PyDict_SetItemString(d, "exc_type", exception);
+		PyDict_SetItemString(d, "exc_value", value);
+		PyDict_SetItemString(d, "exc_traceback", traceback ? traceback : Py_None);
+		
+		char buf[1024];
+		sprintf (buf, "\n\
+import traceback\n\
+s = \"\"\n\
+for filename, line, function, text in traceback.extract_tb(exc_traceback):\n\
+	s = s + ' File \"%%s\", line %%d, in %%s\\n    %%s' %% (filename, line, function, text)\n\
+	if s[-1] != '\\n': s = s + '\\n'\n\
+for l in traceback.format_exception_only(exc_type, exc_value):\n\
+	s = s + ' ' + l\n\
+	if s[-1] != '\\n': s = s + '\\n'\n\
+print s\n\
+");
+		PyObject* e = PyRun_String(buf, Py_file_input, d, d);
+		if (!e) {
+			PyErr_Print();
+		}
+		Py_XDECREF(e);
+		Py_XDECREF(d);
+		Py_XDECREF(exception);
+		Py_XDECREF(value);
+		Py_XDECREF(traceback);
+	}
+}
+%}
+
 %feature("director:except") {
 	if ($$error != NULL) {
-		throw Swig::DirectorMethodException();
+		handleDirectorException();
 	}
 }
 

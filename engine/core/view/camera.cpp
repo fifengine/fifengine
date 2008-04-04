@@ -81,7 +81,8 @@ namespace FIFE {
 			m_updated(false),
 			m_renderbackend(renderbackend),
 			m_ipool(ipool),
-			m_apool(apool) {
+			m_apool(apool),
+			m_layer_to_instances() {
 		m_location.setLayer(layer);
 		m_location.setExactLayerCoordinates(emc);
 		m_viewport = viewport;
@@ -290,9 +291,10 @@ namespace FIFE {
 	
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
-		const std::vector<Instance*>& layer_instances = layer.getInstances();
-		std::vector<Instance*>::const_iterator instance_it = layer_instances.begin();
-		for (;instance_it != layer_instances.end(); ++instance_it) {
+		const std::vector<Instance*>& layer_instances = m_layer_to_instances[&layer];
+		std::vector<Instance*>::const_iterator instance_it = layer_instances.end();
+		do {
+			--instance_it;
 			Instance* i = (*instance_it);
 			InstanceVisual* visual = i->getVisual<InstanceVisual>();
 			InstanceVisualCacheItem& vc = visual->getCacheItem(this);
@@ -317,7 +319,26 @@ namespace FIFE {
 					instances.push_back(i);
 				}
 			}
-		}
+		} while (instance_it != layer_instances.begin());
+	}
+	
+	void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates) {
+		instances.clear();
+		const std::vector<Instance*>& layer_instances = m_layer_to_instances[loc.getLayer()];
+		std::vector<Instance*>::const_iterator instance_it = layer_instances.end();
+		do {
+			--instance_it;
+			Instance* i = (*instance_it);
+			if (use_exactcoordinates) {
+				if (i->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
+					instances.push_back(i);
+				}
+			} else {
+				if (i->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
+					instances.push_back(i);
+				}
+			}
+		} while (instance_it != layer_instances.begin());
 	}
 
 	void Camera::attach(Instance *instance) {
@@ -418,6 +439,8 @@ namespace FIFE {
 		
 		// update each layer
 		m_renderbackend->pushClipArea(getViewPort());
+		
+		m_layer_to_instances.clear();
 
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
@@ -429,7 +452,7 @@ namespace FIFE {
 			// this reduces processing load during sorting later
 			std::vector<Instance*> allinstances((*layer_it)->getInstances());
 			std::vector<Instance*>::const_iterator instance_it = allinstances.begin();
-			std::vector<Instance*> instances_to_render;
+			std::vector<Instance*>& instances_to_render = m_layer_to_instances[*layer_it];
 			for (;instance_it != allinstances.end(); ++instance_it) {
 				Instance* instance = *instance_it;
 				InstanceVisual* visual = instance->getVisual<InstanceVisual>();

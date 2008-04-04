@@ -45,6 +45,7 @@ namespace FIFE {
 	class ImagePool;
 	class AnimationPool;
 	class RenderBackend;
+	typedef std::map<Layer*, std::vector<Instance*> > t_layer_to_instances;
 
 	/** Camera describes properties of a view port shown in the main screen
 	 *  Main screen can have multiple cameras active simultanously
@@ -219,6 +220,14 @@ namespace FIFE {
 		 */
 		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances);
 
+		/** Returns instances that match given location. Instances are sorted based on camera view, so that "topmost"
+		 * instance is first in returned list
+		 * @param loc location where to fetch instances from
+		 * @param instances list of instances that is filled based on hit test results
+		 * @param use_exactcoordinates if true, comparison is done using exact coordinates. if not, cell coordinates are used
+		 */
+		void getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates=false);
+		
 		/** General update routine.
 		 * In this function, the camera's position gets updated when its attached
 		 * to another instance.
@@ -318,7 +327,9 @@ namespace FIFE {
 		RenderBackend* m_renderbackend;
 		ImagePool* m_ipool;
 		AnimationPool* m_apool;
-	
+		
+		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
+		t_layer_to_instances m_layer_to_instances;
 	};
 }
 #endif

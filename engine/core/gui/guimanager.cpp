@@ -59,7 +59,8 @@ namespace FIFE {
         	m_console(0),
         	m_fonts(),
 		m_widgetlistener(widgetlistener),
-		m_pool(pool) {
+		m_pool(pool),
+		m_logic_executed(false) {
 		
 		m_gcn_gui->setTop(m_gcn_topcontainer);
 		m_gcn_topcontainer->setOpaque(false);
@@ -175,16 +176,19 @@ namespace FIFE {
 	}
 
 	void GUIManager::turn() {
-		// Due to a BUG in Guichan we need to catch GCN exceptions
-		// This is a potentially dangerous workaround put in place
-		// until we upgrade to Guichan 0.8.0
-		// See here: http://code.google.com/p/guichan/issues/detail?id=24
-		try {
-			m_gcn_gui->logic();
-		} catch( const gcn::Exception& e) {
-			FL_WARN(_log, LMsg("GUIManager, discarding gcn::Exception: ") << e.getMessage());
+		if (!m_logic_executed) {
+			// Due to a BUG in Guichan we need to catch GCN exceptions
+			// This is a potentially dangerous workaround put in place
+			// until we upgrade to Guichan 0.8.0
+			// See here: http://code.google.com/p/guichan/issues/detail?id=24
+			try {
+				m_gcn_gui->logic();
+			} catch( const gcn::Exception& e) {
+				FL_WARN(_log, LMsg("GUIManager, discarding gcn::Exception: ") << e.getMessage());
+			}
 		}
 		m_gcn_gui->draw();
+		m_logic_executed = false;
 	}
 
 	void GUIManager::action(const gcn::ActionEvent & event) {
@@ -213,5 +217,15 @@ namespace FIFE {
 		if (!evt.isConsumed()) {
 			m_focushandler->focusNone();
 		}
+	}
+	
+	void GUIManager::mouseDragged(MouseEvent& evt) {
+		try {
+			m_gcn_gui->logic();
+			m_logic_executed = true;
+		} catch( const gcn::Exception& e) {
+			FL_WARN(_log, LMsg("GUIManager, discarding gcn::Exception: ") << e.getMessage());
+		}
+		evaluateMouseEventConsumption(evt);
 	}
 }

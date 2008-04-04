@@ -47,6 +47,8 @@ class MapSelection(object):
 		hbox.addChild(field)
 		self._mapedit.adaptLayout()
 		self._mapedit.show()
+		self._mapedit.x = 10
+		self._mapedit.y = 580
 
 	def hide(self):
 		self._mapedit.hide()
@@ -239,15 +241,18 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		loc = fife.Location(self._layer)
 		loc.setLayerCoordinates(self._selection)
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
+		return loc
 
-	def _getInstancesFromSelection(self):
+	def _getInstancesFromSelection(self, top_only):
 		self._assert(self._layer, 'No layer assigned in _getInstancesFromSelection')
+		self._assert(self._selection, 'No selection assigned in _getInstancesFromSelection')
+		self._assert(self._camera, 'No camera assigned in _getInstancesFromSelection')
 		
-		instances = []
-		for i in self._layer.getInstances():
-			coords = i.getLocation().getExactLayerCoordinates()
-			if coords.x == self._selection.x and coords.y == self._selection.y:
-				instances.append(i)
+		loc = fife.Location(self._layer)
+		loc.setLayerCoordinates(self._selection)
+		instances = self._camera.getMatchingInstances(loc)
+		if top_only and (len(instances) > 0):
+			instances = [instances[0]]
 		return instances
 	
 	def _placeInstance(self):
@@ -258,7 +263,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._mode == INSERTING, 'No mode is not INSERTING in %s (is instead %s)' % (mname, str(self._mode)))
 		
 		# don't place repeat instances
-		for i in self._getInstancesFromSelection():
+		for i in self._getInstancesFromSelection(False):
 			if i.getObject().getId() == self._object.getId():
 				print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % self._object.getId()
 				return
@@ -272,7 +277,8 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 		self._assert(self._mode == REMOVING, 'Mode is not REMOVING in %s (is instead %s)' % (mname, str(self._mode)))
 		
-		for i in self._getInstancesFromSelection():
+		for i in self._getInstancesFromSelection(top_only=True):
+			print "deleting " + str(i)
 			self._layer.deleteInstance(i)
 				
 	def _moveInstances(self):
@@ -291,7 +297,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._selection, 'No selection assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 		
-		for i in self._getInstancesFromSelection():
+		for i in self._getInstancesFromSelection(top_only=True):
 			ovis = i.getObject().get2dGfxVisual()
 			curUsedAngle = ovis.getClosestMatchingAngle(i.getRotation())
 			angles = ovis.getStaticImageAngles()
@@ -323,12 +329,14 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		else:
 			if self._camera:
 				self._selectCell(evt.getX(), evt.getY())
-			if self._mode == INSERTING:
+			if self._mode == VIEWING:
+				self._instances = self._getInstancesFromSelection(top_only=True)
+			elif self._mode == INSERTING:
 				self._placeInstance()
 			elif self._mode == REMOVING:
 				self._removeInstances()
 			elif self._mode == MOVING:
-				self.instances = self._getInstancesFromSelection()
+				self.instances = self._getInstancesFromSelection(top_only=True)
 			else:
 				self._setMode(self._mode) # refresh status
 	
@@ -345,7 +353,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			elif self._mode == REMOVING:
 				self._selectCell(evt.getX(), evt.getY())
 				self._removeInstances()
-			elif self._mode == MOVING and self.instances:
+			elif self._mode == MOVING and self._instances:
 				self._selectCell(evt.getX(), evt.getY())
 				self._moveInstances()
 
