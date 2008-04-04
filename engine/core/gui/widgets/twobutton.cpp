@@ -32,10 +32,11 @@
 #include "twobutton.h"
 
 namespace gcn {
-	TwoButton::TwoButton(Image *up_file , Image *down_file, const std::string& caption): 
+	TwoButton::TwoButton(Image *up_file , Image *down_file, Image *hover_file, const std::string& caption): 
 		Button(),
 		m_upImage(up_file),
 		m_downImage(down_file),
+		m_hoverImage(hover_file),
 		x_downoffset(0),
 		y_downoffset(0),
 		m_listener(NULL),
@@ -54,14 +55,25 @@ namespace gcn {
 	}
 	
 	void TwoButton::draw(Graphics *graphics) {
+		Image* img = NULL;
+		int xoffset = 0;
+		int yoffset = 0;
+		
 		if (isPressed()) {
 			if( m_downImage ) {
-				graphics->drawImage(m_downImage, x_downoffset, y_downoffset);
+				img = m_downImage;
+				xoffset = x_downoffset;
+				yoffset = y_downoffset;
 			}
 		} else {
-			if( m_upImage ) {
-				graphics->drawImage(m_upImage, 0, 0);
+			if( mHasMouse && m_hoverImage) { 
+				img = m_hoverImage;
+			} else if (m_upImage) {
+				img = m_upImage;
 			}
+		}
+		if (img) {
+			graphics->drawImage(img, xoffset, yoffset);
 		}
 
 		graphics->setColor(getForegroundColor());
@@ -95,12 +107,16 @@ namespace gcn {
 		int w = 0;
 		int h = w;
 		if( m_upImage ) {
-			w += m_upImage->getWidth();
-			h += m_upImage->getHeight();
+			w = m_upImage->getWidth();
+			h = m_upImage->getHeight();
 		}
 		if( m_downImage ) {
-			w += std::max(m_downImage->getWidth(), getWidth());
-			h += std::max(m_downImage->getHeight(), getHeight());
+			w = std::max(m_downImage->getWidth(), w);
+			h = std::max(m_downImage->getHeight(), h);
+		}
+		if( m_hoverImage ) {
+			w = std::max(m_hoverImage->getWidth(), w);
+			h = std::max(m_hoverImage->getHeight(), h);
 		}
 		setWidth(w);
 		setHeight(h);
@@ -113,7 +129,11 @@ namespace gcn {
 		m_downImage = image;
 		adjustSize();
 	}
-	
+	void TwoButton::setHoverImage(Image* image) {
+		m_hoverImage = image;
+		adjustSize();
+	}
+		
 	void TwoButton::mouseEntered(MouseEvent& mouseEvent) {
 		if (m_listener) {
 			m_listener->mouseEntered(*this);
@@ -129,3 +149,4 @@ namespace gcn {
 	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
+

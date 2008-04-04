@@ -1089,7 +1089,7 @@ class ImageButtonListener(fife.TwoButtonListener):
 	
 class ImageButton(BasicTextWidget):
 	"""
-	A basic push button with two different images for the up and down state.
+	A basic push button with three different images for the up, down and hover state.
 	
 	B{Work in progress.}
 	
@@ -1098,11 +1098,12 @@ class ImageButton(BasicTextWidget):
 	
 	  - up_image: String: The source location of the Image for the B{unpressed} state.
 	  - down_image: String: The source location of the Image for the B{pressed} state.
+	  - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
 	"""
 	
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext'),Attr('hover_image')]
 	
-	def __init__(self,up_image="",down_image="",offset=(0,0),**kwargs):
+	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),**kwargs):
 		self.real_widget = fife.TwoButton()
 		super(ImageButton,self).__init__(**kwargs)
 		self.listener = ImageButtonListener(self)
@@ -1110,6 +1111,7 @@ class ImageButton(BasicTextWidget):
 		
 		self.up_image = up_image
 		self.down_image = down_image
+		self.hover_image = hover_image
 		self.offset = offset
 
 	def _setUpImage(self,image):
@@ -1132,6 +1134,16 @@ class ImageButton(BasicTextWidget):
 	def _getDownImage(self): return self._downimage_source
 	down_image = property(_getDownImage,_setDownImage)
 
+	def _setHoverImage(self,image):
+		self._hoverimage_source = image
+		try:
+			self._hoverimage = get_manager().loadImage(image)
+			self.real_widget.setHoverImage( self._hoverimage )
+		except:
+			self._hoverimage = _DummyImage()
+	def _getHoverImage(self): return self._hoverimage_source
+	hover_image = property(_getHoverImage,_setHoverImage)	
+	
 	def _setOffset(self, offset):
 		self.real_widget.setDownOffset(offset[0], offset[1])
 	def _getOffset(self):
@@ -1145,8 +1157,8 @@ class ImageButton(BasicTextWidget):
 	helptext = property(_getHelpText,_setHelpText)
 	
 	def resizeToContent(self):
-		self.height = max(self._upimage.getHeight(),self._downimage.getHeight()) + self.margins[1]*2
-		self.width = max(self._upimage.getWidth(),self._downimage.getWidth()) + self.margins[1]*2
+		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
+		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
 
 	def setEnterCallback(self, cb):
 		'''
