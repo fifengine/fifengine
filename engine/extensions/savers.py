@@ -153,7 +153,7 @@ class ModelSaver:
 		self.startElement('instances',  attrs)
 
 		for inst in layer.getInstances():
-			position = inst.getLocationRef().getLayerCoordinates()
+			position = inst.getLocationRef().getExactLayerCoordinates()
 			attr_vals = {
 				(None, 'o'): inst.getObject().getId(),
 				(None, 'x'): str(position.x),

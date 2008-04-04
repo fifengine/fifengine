@@ -232,14 +232,18 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def _editObject(self, object):
 		self._object = object
 
-	def _selectCell(self, screenx, screeny):
+	def _selectCell(self, screenx, screeny, preciseCoords=False):
 		self._assert(self._camera, 'No camera bind yet, cannot select any cell')
 		
 		self._selection = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
 		self._selection.z = 0
-		self._selection = self._layer.getCellGrid().toLayerCoordinates(self._selection)
 		loc = fife.Location(self._layer)
-		loc.setLayerCoordinates(self._selection)
+		if preciseCoords:
+			self._selection = self._layer.getCellGrid().toExactLayerCoordinates(self._selection)
+			loc.setExactLayerCoordinates(self._selection)
+		else:
+			self._selection = self._layer.getCellGrid().toLayerCoordinates(self._selection)
+			loc.setLayerCoordinates(self._selection)
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
 		return loc
 
@@ -249,7 +253,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._camera, 'No camera assigned in _getInstancesFromSelection')
 		
 		loc = fife.Location(self._layer)
-		loc.setLayerCoordinates(self._selection)
+		if self._shiftdown:
+			loc.setExactLayerCoordinates(self._selection)
+		else:
+			loc.setLayerCoordinates(self._selection)
 		instances = self._camera.getMatchingInstances(loc)
 		if top_only and (len(instances) > 0):
 			instances = [instances[0]]
@@ -288,7 +295,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._mode == MOVING, 'Mode is not MOVING in %s (is instead %s)' % (mname, str(self._mode)))
 		
 		loc = fife.Location(self._layer)
-		loc.setLayerCoordinates(self._selection)
+		if self._shiftdown:
+			loc.setExactLayerCoordinates(self._selection)
+		else:
+			loc.setLayerCoordinates(self._selection)
 		for i in self.instances:
 			i.setLocation(loc)
 	
@@ -328,7 +338,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 				self._dragy = evt.getY()
 		else:
 			if self._camera:
-				self._selectCell(evt.getX(), evt.getY())
+				self._selectCell(evt.getX(), evt.getY(), self._shiftdown)
 			if self._mode == VIEWING:
 				self._instances = self._getInstancesFromSelection(top_only=True)
 			elif self._mode == INSERTING:
@@ -354,7 +364,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 				self._selectCell(evt.getX(), evt.getY())
 				self._removeInstances()
 			elif self._mode == MOVING and self._instances:
-				self._selectCell(evt.getX(), evt.getY())
+				self._selectCell(evt.getX(), evt.getY(), self._shiftdown)
 				self._moveInstances()
 
 	def mouseReleased(self, evt):
