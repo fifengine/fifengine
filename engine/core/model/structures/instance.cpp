@@ -340,35 +340,32 @@ namespace FIFE {
 			curticks = SDL_GetTicks();
 		}
 		ActionInfo* info = m_activity->m_actioninfo;
-		if (!info) {
-			return m_changeinfo;
-		}
-		
-		info->m_cur_time = curticks;
-		FL_DBG(_log, LMsg("updating instance, ticks = ") << curticks);
+		if (info) {
+			info->m_cur_time = curticks;
+			FL_DBG(_log, LMsg("updating instance, ticks = ") << curticks);
 
-		if (info->m_target) {
-			FL_DBG(_log, "action contains target for movement");
-			// update target if needed
-			if (info->m_leader && (info->m_leader->getLocationRef() != *info->m_target)) {
-				*info->m_target = info->m_leader->getLocation();
-			}
-			bool movement_finished = process_movement();
-			if (movement_finished) {
-				FL_DBG(_log, "movement finished");
-				finalizeAction();
-			}
-		} else {
-			FL_DBG(_log, "action does not contain target for movement");
-			if (scaleTime(getTotalTimeMultiplier(), curticks - info->m_action_start_time) >= info->m_action->getDuration()) {
-				if (info->m_repeating) {
-					info->m_action_start_time = curticks;
-				} else {
+			if (info->m_target) {
+				FL_DBG(_log, "action contains target for movement");
+				// update target if needed
+				if (info->m_leader && (info->m_leader->getLocationRef() != *info->m_target)) {
+					*info->m_target = info->m_leader->getLocation();
+				}
+				bool movement_finished = process_movement();
+				if (movement_finished) {
+					FL_DBG(_log, "movement finished");
 					finalizeAction();
 				}
+			} else {
+				FL_DBG(_log, "action does not contain target for movement");
+				if (scaleTime(getTotalTimeMultiplier(), curticks - info->m_action_start_time) >= info->m_action->getDuration()) {
+					if (info->m_repeating) {
+						info->m_action_start_time = curticks;
+					} else {
+						finalizeAction();
+					}
+				}
 			}
-		}
-		if (m_activity->m_actioninfo) {
+
 			m_activity->m_actioninfo->m_prev_call_time = curticks;
 		}
 		if (m_activity->m_sayinfo) {

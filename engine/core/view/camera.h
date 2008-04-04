@@ -198,10 +198,16 @@ namespace FIFE {
 		 *  @return angle in polar coordinates
 		 */
 		inline int getAngleBetween(const Location& loc1, const Location& loc2) {
-			ScreenPoint pt1 = this->toScreenCoordinates(loc1.getMapCoordinates());
-			ScreenPoint pt2 = this->toScreenCoordinates(loc2.getMapCoordinates());
-			double dy = pt2.y - pt1.y;
-			double dx = pt2.x - pt1.x;
+			static const double VECTOR_MULTIP = 100000.0;
+			ExactModelCoordinate c1 = loc1.getMapCoordinates();
+			ExactModelCoordinate c2 = loc2.getMapCoordinates();
+			ExactModelCoordinate cd((c2.x - c1.x) * VECTOR_MULTIP, (c2.y - c1.y) * VECTOR_MULTIP, 0);
+			c2.x = c1.x + cd.x;
+			c2.y = c1.y + cd.y;
+			ScreenPoint pt1 = this->toScreenCoordinates(c1);
+			ScreenPoint pt2 = this->toScreenCoordinates(c2);
+			double dy = (pt2.y - pt1.y);
+			double dx = (pt2.x - pt1.x);
 			int angle = static_cast<int>(atan2(-dy,dx)*(180.0/M_PI));
 			return angle;
 		}

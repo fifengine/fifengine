@@ -193,6 +193,7 @@ subgraph cluster_11 {
     "pathfinder" -> "model/metamodel"
     "pathfinder" -> "model/structures"
     "pathfinder" -> "util/base"
+    "pathfinder" -> "util/math"
     "pathfinder/linearpather" -> "model/metamodel"
     "pathfinder/linearpather" -> "model/metamodel/grids"
     "pathfinder/linearpather" -> "model/structures"
