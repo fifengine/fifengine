@@ -10,7 +10,7 @@ class Fifedit():
 	Fifedit is a plugin system for editing tools. See L{registerPlugin}.
 	"""
 	def __init__(self, engine):
-		pychan.init(engine,debug=True)
+		pychan.init(engine,debug=False)
 		self.gui = pychan.loadXML('content/gui/rootpanel.xml')
 		eventMap = {
 			'quitButton'  : self.quit

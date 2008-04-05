@@ -230,3 +230,4 @@ class ModelSaver:
 def saveMapFile(path, engine, map, importList=[]):
 	writer = ModelSaver(path, engine)
 	writer.write_map(map, importList)
+	map.setResourceFile(path)

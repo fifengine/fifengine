@@ -15,7 +15,7 @@ class MapLoader(plugin.Plugin):
 		self.filebrowser = filebrowser.FileBrowser(engine,self.loadFile)
 
 		self.menu_items = {
-			'Load Map' : self.filebrowser.showBrowser,
+			'Load' : self.filebrowser.showBrowser,
 		}
 
 		self.newMap = None
@@ -32,16 +32,31 @@ class MapSaver(plugin.Plugin):
 		self.filebrowser = filebrowser.FileBrowser(engine,self._selectFile,savefile=True)
 
 		self.menu_items = {
-			'Save Map' : self.filebrowser.showBrowser,
+			'Save' : self.save,
+			'Save As' : self.filebrowser.showBrowser,
 		}	
 
 		self.saveRequested = False
 		self._location = None
 		self.path = '.'
 
+	def save(self):
+		self.saveRequested = True
+
 	def saveMap(self, map, importList):
+		curname = None
+		try:
+			curname = map.getResourceLocation().getFilename()
+		except RuntimeError:
+			pass # no name set for map yet
 		if self._location:
-			saveMapFile('/'.join([self.path, self._location]), self.engine, map, importList)
+			fname = '/'.join([self.path, self._location])
+			saveMapFile(fname, self.engine, map, importList)
+			print "map saved as " + fname
+			self._location = None
+		elif curname:
+			saveMapFile(curname, self.engine, map, importList)
+			print "map saved with old name " + curname
 		else:
 			print 'MapSaver: error, no file location specified.'
 

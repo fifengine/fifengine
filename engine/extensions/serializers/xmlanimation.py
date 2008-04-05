@@ -14,7 +14,6 @@ class XMLAnimationLoader(fife.AnimationLoader):
 		self.filename = location.getFilename()
 		return self.do_load_resource()
 
-	@guarded
 	def do_load_resource(self):
 		f = self.vfs.open(self.filename)
 		tree = ET.parse(f)

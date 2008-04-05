@@ -1,5 +1,7 @@
 import fife
 from serializers import *
+from fife_utils import *
+from serializers import *
 
 class ObjectLocation(fife.ResourceLocation):
 	def __init__(self, file, node=None):
@@ -16,7 +18,6 @@ class XMLObjectLoader(fife.ObjectLoader):
 		self.filename = ''
 
 	def loadResource(self, location):
-		# store information about stuff to be loaded, after that do actual loading under @guarded
 		self.source = location
 		self.filename = self.source.getFilename()
 		self.node = None
@@ -24,19 +25,26 @@ class XMLObjectLoader(fife.ObjectLoader):
 		if hasattr(location, 'node'):
 			self.node = location.node
 		else:
+			isobjectfile = True
 			f = self.vfs.open(self.filename)
-			s = f.readString(len('<?fife type="object"?>'))
-			if s != '<?fife type="object"?>':
-				raise InvalidFormat('Tried to open non-object file %s with XMLObjectLoader.' % self.filename)
-
+			
+			obj_identifier = '<?fife type="object"?>'
+			try:
+				s = f.readString(len(obj_identifier))
+			except fife.IndexOverflow:
+				isobjectfile = False
+			
+			if isobjectfile and s != obj_identifier:
+				isobjectfile = False
+			
+			if not isobjectfile:
+				raise WrongFileType('Tried to open non-object file %s with XMLObjectLoader.' % self.filename)
 		self.do_load_resource(f)
 	
-	@guarded
 	def do_load_resource(self, file):
 		if file:
 			tree = ET.parse(file)
 			self.node = tree.getroot()
-
 		self.parse_object(self.node)
 
 	def parse_object(self, object):
@@ -61,10 +69,15 @@ class XMLObjectLoader(fife.ObjectLoader):
 				raise NameClash('%d objects found with identifier %s.' % (len(query), str(parent)))
 			parent = query[0]
 
-		obj = self.model.createObject(str(id), str(nspace), parent)
+		try:
+			obj = self.model.createObject(str(id), str(nspace), parent)
+		except RuntimeError, e:
+			if is_fife_exc(fife.NameClash, e):
+				raise NameClash('Tried to create already existing object, ignoring')
+			raise
+
 		obj.setResourceLocation(self.source)
 		fife.ObjectVisual.create(obj)
-
 		obj.setBlocking(bool( object.get('blocking', False) ))
 		obj.setStatic(bool( object.get('static', False) ))
 		

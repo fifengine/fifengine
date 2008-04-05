@@ -2,6 +2,21 @@
 %include "std_string.i"
 %include "std_vector.i"
 %include "typemaps.i"
+%include "exception.i"
+
+/**
+ * Some materials to understand exception handling:
+ *
+ * Basics about python exceptions:
+ * 	http://docs.python.org/tut/node10.html
+ * Python exception handling in C APIs
+ * 	http://docs.python.org/api/exceptions.html
+ * 	http://docs.python.org/api/exceptionHandling.html
+ * SWIG exception handling
+ * 	http://www.swig.org/Doc1.3/Customization.html#exception 
+ * 	http://www.swig.org/Doc1.3/SWIGPlus.html#SWIGPlus_exception_specifications
+ * 	http://www.swig.org/Doc1.3/Python.html#Python_nn36
+ */
 
 %feature("autodoc", "1");  // 0 == no param types, 1 == show param types
 
@@ -55,6 +70,12 @@ print s\n\
 		Py_XDECREF(traceback);
 	}
 }
+
+#define _FIFE_EXC_HANDLER(_fife_exc_type, _converted_type) \
+	catch (FIFE::_fife_exc_type& _e) { \
+		PyErr_Clear(); \
+		SWIG_exception(_converted_type, _e.getMessage().c_str()); \
+	}
 %}
 
 %feature("director:except") {
@@ -67,14 +88,7 @@ print s\n\
 	try {
 		$$action
 	}
-	catch (Swig::DirectorException &_e) {
-		std::cerr << _e.getMessage() << std::endl;
-		SWIG_fail;
-	} catch (FIFE::Exception& _e) {
-		std::stringstream str;
-		str << "Catched FIFE exception, message = " << _e.getMessage();
-		SWIG_Python_Raise(SWIG_NewPointerObj((new FIFE::Exception(static_cast< const FIFE::Exception& >(_e))),SWIGTYPE_p_FIFE__Exception,SWIG_POINTER_OWN), str.str(), SWIGTYPE_p_FIFE__Exception); SWIG_fail;
-	}
+	_FIFE_EXC_HANDLER(Exception, SWIG_RuntimeError)
 }
 
 $inclusions

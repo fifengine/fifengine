@@ -30,7 +30,9 @@ class XMLMapLoader(fife.MapLoader):
 		tree = ET.parse(f)
 		root = tree.getroot()
 
-		return self.parse_map(root)
+		map = self.parse_map(root)
+		map.setResourceFile(self.source)
+		return map
 
 	def parse_map(self, mapelt):
 		if not mapelt:

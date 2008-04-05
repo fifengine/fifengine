@@ -53,112 +53,40 @@ namespace FIFE {
 		 * @return The error message.
 		 */
 		const std::string& getMessage() const;
+		
+		virtual const std::string& getTypeStr() const { static const std::string s = "Exception"; return s; }
+		virtual const std::string& getDescription() const { static const std::string s = "Generic FIFE exception"; return s; }
 
 	private:
 		// The error string.
 		std::string m_message;
 	};
 
-	// Common exceptions.
-
-	/** SDL reported something bad :( 
-	 */
-	class SDLException : public Exception {
-		public:
-			SDLException(const std::string& msg) : Exception("SDLException: " + msg) {}
-	};
-
-	/** We searched for something, but it's missing in action.... 
-	 */
-	class NotFound : public Exception {
-		public:
-			NotFound(const std::string& msg) : Exception("NotFound: " + msg) {}
-	};
-
-	/** Something was not set correctly
-	 */
-	class NotSet : public Exception {
-		public:
-			NotSet(const std::string& msg) : Exception("NotSet: " + msg) {}
-	};
+	#define FIFE_EXCEPTION_DECL(_name, _description) \
+	class _name : public Exception { \
+	public: \
+		_name(const std::string& msg) : Exception(msg) {} \
+		const std::string& getTypeStr() const { static const std::string s = #_name; return s; } \
+		const std::string& getDescription() const { static const std::string s = _description; return s; } \
+	}
 	
-	/** Someone tried to access a non-existing element.
-	 */
-	class IndexOverflow : public Exception {
-		public:
-			IndexOverflow(const std::string& s) : Exception("IndexOverflow: " + s) {}
-	};
+	FIFE_EXCEPTION_DECL(SDLException, "SDL reported something bad");
+	FIFE_EXCEPTION_DECL(NotFound, "Something was searched, but not found");
+	FIFE_EXCEPTION_DECL(NotSet, "Something was not set correctly");
+	FIFE_EXCEPTION_DECL(IndexOverflow, "Someone tried to access a non-existing element");
+	FIFE_EXCEPTION_DECL(InvalidFormat, "Found invalid data");
+	FIFE_EXCEPTION_DECL(CannotOpenFile, "File couldn't be opened");
+	FIFE_EXCEPTION_DECL(InvalidConversion, "Tried an invalid conversion");
+	FIFE_EXCEPTION_DECL(NotSupported, "This action was not supported");
+	FIFE_EXCEPTION_DECL(NameClash, "A name or identifier is already in use");
+	FIFE_EXCEPTION_DECL(Duplicate, "A duplicate item was added, where this is not allowed");
+	FIFE_EXCEPTION_DECL(ScriptException, "Error related to scripting functionality");
+	FIFE_EXCEPTION_DECL(EventException, "Error related to event functionality");
+	FIFE_EXCEPTION_DECL(GuiException, "Error related to gui functionality");
+	
+	/** @bug The memory allocation in @c std::string might fail, resulting in terminate. */
+	FIFE_EXCEPTION_DECL(OutOfMemory, "Buy more ram ;)");
 
-	/** Found invalid data.
-	 */
-	class InvalidFormat : public Exception {
-		public:
-			InvalidFormat(const std::string& s) : Exception("InvalidFormat: " + s) {}
-	};
-
-	/** We couldn't open a needed file. 
-	 */
-	class CannotOpenFile : public Exception {
-		public:
-			CannotOpenFile(const std::string& s) : Exception("CannotOpenFile: " + s) {}
-	};
-
-	/** Buy more ram ;)
-	 *  @bug The memory allocation in @c std::string might fail, resulting in terminate.
-	 */
-	class OutOfMemory : public Exception {
-		public:
-			OutOfMemory(const std::string& s) : Exception("OutOfMemory: " + s) {}
-	};
-
-	/** Tried an invalid conversion. 
-	 */
-	class InvalidConversion : public Exception {
-		public:
-			InvalidConversion(const std::string& s) : Exception("InvalidConversion: " + s) {}
-	};
-
-	/** This action was not supported. 
-	 */
-	class NotSupported : public Exception {
-		public:
-			NotSupported(const std::string& s) : Exception("NotSupported: " + s) {}
-	};
-
-	/** A name or identifier is already in use
-	 */
-	class NameClash : public Exception {
-		public:
-			NameClash(const std::string& s) : Exception("Name already in use: " +s) {}
-	};
-
-	/** A duplicate item was added, where this is not allowed.
-	 */
-	class Duplicate : public Exception {
-		public:
-			Duplicate(const std::string& s) : Exception("Duplicate item: " +s) {}
-	};
-
-	/** Error related to scripting functionality
-	 */
-	class ScriptException : public Exception {
-		public:
-			ScriptException(const std::string& s) : Exception ( "Script-Exception: " +s) {};
-	};
-
-	/** Error related to event functionality
-	 */
-	class EventException : public Exception {
-		public:
-			EventException(const std::string& s) : Exception ( "Event Exception: " +s) {};
-	};
-
-	/** Error related to gui functionality
-	 */
-	class GuiException : public Exception {
-		public:
-			GuiException(const std::string& s) : Exception ( "Gui Exception: " +s) {};
-	};
 
 }//FIFE
 

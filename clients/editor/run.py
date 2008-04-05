@@ -80,8 +80,11 @@ class Editor(basicapplication.ApplicationBase):
 		if self.mapwizard.newMap:
 			self.mapedit.editMap(self.mapwizard.map.getId())
 			self.mapwizard.newMap = False
-		if self.mapsaver.saveRequested and self.mapedit._map:
-			self.mapsaver.saveMap(self.mapedit._map,self.importer.importList)
+		if self.mapsaver.saveRequested:
+			if self.mapedit._map:
+				self.mapsaver.saveMap(self.mapedit._map,self.importer.importList)
+			else:
+				print "Cannot save, map doesn't exist"
 			self.mapsaver.saveRequested = False
 		if not self.fifedit.active: 
 			self.quitRequested = True

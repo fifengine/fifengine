@@ -299,7 +299,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			loc.setExactLayerCoordinates(self._selection)
 		else:
 			loc.setLayerCoordinates(self._selection)
-		for i in self.instances:
+		for i in self._instances:
 			i.setLocation(loc)
 	
 	def _rotateInstances(self):
@@ -346,7 +346,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			elif self._mode == REMOVING:
 				self._removeInstances()
 			elif self._mode == MOVING:
-				self.instances = self._getInstancesFromSelection(top_only=True)
+				self._instances = self._getInstancesFromSelection(top_only=True)
 			else:
 				self._setMode(self._mode) # refresh status
 	

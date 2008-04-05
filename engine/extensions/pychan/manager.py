@@ -134,12 +134,7 @@ class Manager(fife.IWidgetListener):
 	def onWidgetAction(self, event):
 		#print event.getId(),self.widgetEvents
 		handler = self.widgetEvents.get( event.getId(), self.defaultWidgetAction )
-		try:
-			handler( event )
-		except Exception, e:
-			print "*** Error in event callback for ",event.getId()
-			import traceback
-			traceback.print_exc()
+		handler( event )
 
 # Default Widget style.
 

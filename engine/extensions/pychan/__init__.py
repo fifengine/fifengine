@@ -318,7 +318,6 @@ class _GuiLoader(object, handler.ContentHandler):
 		else:
 			self.stack.append('unknown')
 		self.indent += " "*4
-	startElement = traced( startElement )
 
 	def _createInstance(self,cls,name,attrs):
 		obj = cls(parent=self.root)
@@ -342,7 +341,6 @@ class _GuiLoader(object, handler.ContentHandler):
 		if manager.debug: print self.indent + "</%s>" % name
 		if self.stack.pop() in ('gui_element','spacer'):
 			self.root = self.root._parent or self.root
-	endElement = traced( endElement )
 
 def loadXML(filename_or_stream):
 	"""
