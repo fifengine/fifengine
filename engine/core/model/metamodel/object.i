@@ -19,8 +19,9 @@ namespace FIFE {
 		const std::string& getId();
 		const std::string& getNamespace();
 
-		Action* createAction(const std::string& identifier);
+		Action* createAction(const std::string& identifier, bool is_default=false);
 		Action* getAction(const std::string& identifier);
+		Action* getDefaultAction();
 
 		void setPather(AbstractPather* pather);
 		AbstractPather* getPather();

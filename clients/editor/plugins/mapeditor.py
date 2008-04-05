@@ -311,12 +311,15 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			ovis = i.getObject().get2dGfxVisual()
 			curUsedAngle = ovis.getClosestMatchingAngle(i.getRotation())
 			angles = ovis.getStaticImageAngles()
-			ind = list(angles).index(curUsedAngle)
-			if ind == (len(angles) - 1):
-				ind = 0
+			if angles:
+				ind = list(angles).index(curUsedAngle)
+				if ind == (len(angles) - 1):
+					ind = 0
+				else:
+					ind += 1
+				i.setRotation(angles[ind])
 			else:
-				ind += 1
-			i.setRotation(angles[ind])
+				print "rotation not supported for this instance"
 	
 	def _moveCamera(self, screen_x, screen_y):
 		coords = self._camera.getLocationRef().getMapCoordinates()

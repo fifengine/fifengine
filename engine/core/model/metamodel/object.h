@@ -71,13 +71,22 @@ namespace FIFE {
 		/** Adds new action with given id. In case there is action already
 		 *  with given id, returns it instead of new object
 		 *  Action instances are managed by object
+		 * @param is_default if true, becomes default action for this object
+		 * 	default objects are used e.g. when showing them on editor.
+		 *      if multiple default actions are created, last one remains.
+		 *      In case there's no explicit default action created, first
+		 *      action created becomes the default
 		 */
-		Action* createAction(const std::string& identifier);
+		Action* createAction(const std::string& identifier, bool is_default=false);
 
 		/** Gets action with given id. If not found, returns NULL
 		 */
 		Action* getAction(const std::string& identifier);
 
+		/** Gets default action assigned to this object. If none available, returns NULL
+		 */
+		Action* getDefaultAction() { return m_defaultaction; }
+		
 		/** Sets pather used by instances created out of this object
 		 */
 		void setPather(AbstractPather* pather);
@@ -125,6 +134,7 @@ namespace FIFE {
 		bool m_static;
 		AbstractPather* m_pather;
 		AbstractVisual* m_visual;
+		Action* m_defaultaction;
 	};
 
 	class ObjectLoader : public ResourceLoader {

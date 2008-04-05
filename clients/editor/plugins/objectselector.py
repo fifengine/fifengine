@@ -68,12 +68,21 @@ class ObjectSelector(object):
 
 		index = visual.getStaticImageIndexByAngle(0)
 		if index == -1:
-			print 'Visual missing static image.'
-			return
-
-		image = fife.GuiImage(index, self.engine.getImagePool())
-		self.preview.image = image
-		self.gui.adaptLayout()
+			# no static image available, try default action
+			action = object.getDefaultAction()
+			if action:
+				animation_id = action.get2dGfxVisual().getAnimationIndexByAngle(0)
+				animation = self.engine.getAnimationPool().getAnimation(animation_id)
+				image = animation.getFrameByTimestamp(0)
+				index = image.getPoolId()
+		
+		if index != -1:
+			image = fife.GuiImage(index, self.engine.getImagePool())
+			self.preview.image = image
+			self.gui.adaptLayout()
+		else:
+			print 'No image available for selected object'
+	
 	
 	def show(self):
 		self.updateObjects()

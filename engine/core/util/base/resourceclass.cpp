@@ -35,7 +35,8 @@
 namespace FIFE {
 	ResourceClass::ResourceClass():
 		FifeClass(), 
-		m_location(NULL) {
+		m_location(NULL),
+		m_poolid(-1) {
 	}
 	
 	ResourceClass::~ResourceClass() {

@@ -29,6 +29,9 @@ namespace FIFE {
 		virtual void setResourceLocation(const ResourceLocation& location);
 		virtual void setResourceFile(const std::string& filename);
 	
+		int getPoolId();
+		void setPoolId(int poolid);
+	
 	private:
 		ResourceClass();
 	};	

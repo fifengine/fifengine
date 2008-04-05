@@ -39,6 +39,7 @@
 #include "model/structures/location.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
+#include "util/time/timemanager.h"
 #include "video/renderbackend.h"
 #include "video/image.h"
 #include "video/imagepool.h"
@@ -437,6 +438,8 @@ namespace FIFE {
 		//	return;
 		//}
 		
+		const unsigned long curtime = TimeManager::instance()->getTime();
+		
 		// update each layer
 		m_renderbackend->pushClipArea(getViewPort());
 		
@@ -493,6 +496,15 @@ namespace FIFE {
 					FL_DBG(_log, LMsg("Instance does not have action, using static image with id ") << imageid);
 					if (imageid >= 0) {
 						image = &m_ipool->getImage(imageid);
+					} else {
+						// there was no static image for instance, trying default action
+						action = instance->getObject()->getDefaultAction();
+						if (action) {
+							int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
+							Animation& animation = m_apool->getAnimation(animation_id);
+							int animtime = scaleTime(instance->getTotalTimeMultiplier(), curtime) % animation.getDuration();
+							image = animation.getFrameByTimestamp(animtime);
+						}
 					}
 				}
 				if (image) {

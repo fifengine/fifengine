@@ -57,7 +57,7 @@ namespace FIFE {
 		virtual bool isAlphaOptimizerEnabled() = 0;
 	};
 	
-	class Image : public AbstractImage {
+	class Image : public AbstractImage, public ResourceClass {
 	public:
 		void render(const Rect& rect, unsigned char alpha = 255);
 		virtual ~Image();

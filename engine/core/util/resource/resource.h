@@ -73,6 +73,11 @@ namespace FIFE {
 		 */
 		virtual void setResourceLocation(const ResourceLocation& location) = 0;
 		virtual void setResourceFile(const std::string& filename) = 0;
+		
+		/** returns -1 if not pooled, otherwise its a valid id
+		 */
+		virtual int getPoolId() = 0;
+		virtual void setPoolId(int poolid) = 0;
 	};
 
 	/** ResourceLoader defines a class for loading resources. The resource returned is owned by

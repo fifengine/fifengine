@@ -42,7 +42,8 @@ namespace FIFE {
 		m_blocking(false),
 		m_static(false),
 		m_pather(NULL),
-		m_visual(NULL) {
+		m_visual(NULL),
+		m_defaultaction(NULL) {
 	}
 
 	Object::~Object() {
@@ -57,21 +58,25 @@ namespace FIFE {
 		delete m_visual;
 	}
 
-	Action* Object::createAction(const std::string& identifier) {
+	Action* Object::createAction(const std::string& identifier, bool is_default) {
 		if (!m_actions) {
 			m_actions = new std::map<std::string, Action*>;
 		}
 
 		std::map<std::string, Action*>::const_iterator it = m_actions->begin();
 		for(; it != m_actions->end(); ++it) {
-			if(identifier == it->second->getId())
+			if(identifier == it->second->getId()) {
 				throw NameClash(identifier);
+			}
 		}
 
 		Action* a = getAction(identifier);
 		if (!a) {
 			a = new Action(identifier);
 			(*m_actions)[identifier] = a;
+			if (is_default || (!m_defaultaction)) {
+				m_defaultaction = a;
+			}
 		}
 		return a;
 	}

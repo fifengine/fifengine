@@ -121,6 +121,7 @@ namespace FIFE {
 		if (inc) {
 			res->addRef();
 		}
+		res->setPoolId(index);
 		return *res;
 	}
 	
