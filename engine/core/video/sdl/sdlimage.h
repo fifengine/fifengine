@@ -63,7 +63,7 @@ namespace FIFE {
 		SDL_Surface* optimize(SDL_Surface* surface);
 		
 		void resetSdlimage();
-
+		
 		// SDLSurface used to create the SDLImage.
 		Uint8 m_last_alpha;
 		// Is the surface already optimized for rendering

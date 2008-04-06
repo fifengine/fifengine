@@ -173,5 +173,84 @@ namespace FIFE {
 	void Image::clearClipArea() {
 		setClipArea(m_area, true);
 	}
+
+	void Image::saveAsPng(const std::string& filename, SDL_Surface& surface) {
+		FILE *fp;
+		png_structp pngptr;
+		png_infop infoptr;
+		int colortype;
+		png_bytep *rowpointers = NULL;
+		Uint32 rmask, gmask, bmask, amask;
+		//get endian
+		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
+		#else
+		rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
+		#endif
+
+		fp = fopen(filename.c_str(), "wb");
+			
+		if (fp == NULL) {
+			return;
+		}
+
+		//create the png file
+		pngptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 
+		NULL, NULL, NULL);
+		if (pngptr == NULL) {
+			fclose(fp);
+			return;
+		}
+		
+		//create information struct
+		infoptr = png_create_info_struct(pngptr);
+		if (infoptr == NULL) {
+			fclose(fp);
+			png_destroy_write_struct(&pngptr, (png_infopp)NULL);
+			return;				
+		}
+		
+		if (setjmp(png_jmpbuf(pngptr))) {
+			png_destroy_write_struct(&pngptr, &infoptr);
+			fclose(fp);
+			return;
+		}
+		
+		//initialize io
+		png_init_io(pngptr, fp);
+		
+		//lock the surface for access
+		SDL_LockSurface(&surface);
+
+		colortype = PNG_COLOR_TYPE_RGB;
+		if(m_surface->format->palette){
+			colortype |= PNG_COLOR_TYPE_PALETTE;
+		}
+		else if (m_surface->format->Amask){
+			colortype |= PNG_COLOR_TYPE_RGB_ALPHA;
+		}
+		else{}
+
+		png_set_IHDR(pngptr, infoptr, surface.w, surface.h, 8, colortype,	
+			PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+		
+		png_write_info(pngptr, infoptr);
+		png_set_packing(pngptr);
+
+		rowpointers = new png_bytep[surface.h];
+		for (int i = 0; i < surface.h; i++) {
+			rowpointers[i] = (png_bytep)(Uint8 *)surface.pixels + i*surface.pitch;
+		}
+		//write the image
+		png_write_image(pngptr, rowpointers);
+		png_write_end(pngptr, infoptr);
+
+		SDL_UnlockSurface(&surface);
+		delete [] rowpointers;
+		png_destroy_write_struct(&pngptr, &infoptr);
+		fclose(fp);
+
+	}
 }
+
 

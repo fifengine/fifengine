@@ -256,46 +256,50 @@ namespace FIFE {
 	}
 	
 	void GLImage::saveImage(const std::string& filename) {
-		unsigned int swidth = getWidth();
-		unsigned int sheight = getHeight();
+		const unsigned int swidth = getWidth();
+		const unsigned int sheight = getHeight();
+		Uint32 rmask, gmask, bmask, amask;
+		SDL_Surface *surface = NULL;
+		uint8_t *pixels; 
+		
+		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
+		#else
+		rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
+		#endif
 
-		// We need unsigned char to avoid pointer alignment issues
-		uint8_t *pixels = new uint8_t[swidth * sheight * 3];
-
-		// Read in the pixel data
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, 
+			sheight, 24, 
+			rmask, gmask, bmask, 0);
+		
+		if(surface == NULL) {
+			return;
+		}
+		
+		SDL_LockSurface(surface);
+		pixels = new uint8_t[swidth * sheight * 3];
 		glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
-
-		/* At this point the image has been reversed, so we need to re-reverse it so that
-		it is the correct way around. We do this by copying the "image" pixels to another
-		surface in reverse order */
-		SDL_Surface* image = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, sheight, 24,
-			255U << (0), // Blue channel
-			255U << (8), // Green channel
-			255U << (16), // Red channel
-			0 /* no alpha! */);
-		SDL_LockSurface(image);
-
-		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(image->pixels);
+		
+		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
 		// Copy the "reversed_image" memory to the "image" memory
 		for (int y = (sheight - 1); y >= 0; --y) {
-			uint8_t *row_begin = pixels + y * swidth * 3;
-			uint8_t *row_end = row_begin + swidth * 3;
+			uint8_t *rowbegin = pixels + y * swidth * 3;
+			uint8_t *rowend = rowbegin + swidth * 3;
 
-			std::copy(row_begin, row_end, imagepixels);
+			std::copy(rowbegin, rowend, imagepixels);
 
 			// Advance a row in the output surface.
-			imagepixels += image->pitch;
+			imagepixels += surface->pitch;
 		}
-		SDL_UnlockSurface(image);
+		
+		SDL_UnlockSurface(surface);
+		saveAsPng(filename, *surface);
+		SDL_FreeSurface(surface);
+		delete [] pixels;
 
-		// Save file
-		SDL_SaveBMP(image, filename.c_str());
 
-		// Clear memory
-		delete []pixels;
-		SDL_FreeSurface( image );
 	}
-	
+
 	void GLImage::setClipArea(const Rect& cliparea, bool clear) {
 	        glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
 		if (clear) {

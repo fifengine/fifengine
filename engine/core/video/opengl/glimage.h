@@ -100,6 +100,8 @@ namespace FIFE {
 		 */
 		void resetGlimage();
 		
+		//void saveAsPng(const std::string& filename, SDL_Surface& surface);
+
 		/** Generates chunks for render. For reference, see
 		 * http://developer.apple.com/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/chapter_10_section_4.html
 		 */

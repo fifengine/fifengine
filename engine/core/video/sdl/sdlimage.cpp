@@ -586,13 +586,34 @@ namespace FIFE {
 		drawLine(p3, p4, r, g, b);
 		drawLine(p4, p1, r, g, b);
 	}
-	
+
 	void SDLImage::saveImage(const std::string& filename) {
-		if (m_surface) {
- 			SDL_SaveBMP(m_surface, filename.c_str());
+		if(m_surface) {
+			const unsigned int swidth = getWidth();
+			const unsigned int sheight = getHeight();
+			Uint32 rmask, gmask, bmask, amask;
+			SDL_Surface *surface = NULL;
+			
+			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+			rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
+			#else
+			rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
+			#endif
+
+			surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, 
+				sheight, 24, 
+				rmask, gmask, bmask, 0);
+
+			if(surface == NULL) {
+				return;
+			}
+			
+			SDL_BlitSurface(m_surface, NULL, surface, NULL);
+
+			saveAsPng(filename, *surface);
+			SDL_FreeSurface(surface);
 		}
 	}
-	
 
 	void SDLImage::setClipArea(const Rect& cliparea, bool clear) {
 		SDL_Rect rect;
