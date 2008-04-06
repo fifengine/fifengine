@@ -27,6 +27,7 @@
 
 // 3rd party library includes
 #include <SDL.h>
+#include <png.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -181,7 +182,8 @@ namespace FIFE {
 		 *  @see pushClipArea
 		 */
 		virtual void setClipArea(const Rect& cliparea, bool clear) = 0;
-		
+		//saves images to png format
+		virtual void saveAsPng(const std::string& filename, SDL_Surface& surface);
 		/** Clears any possible clip areas
 		 *  @see pushClipArea
 		 */

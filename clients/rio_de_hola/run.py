@@ -50,7 +50,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 			evt.consume()
 		elif keystr == 'p':
-			self.engine.getRenderBackend().captureScreen('screenshot.bmp')
+			self.engine.getRenderBackend().captureScreen('screenshot.png')
 			evt.consume()
 	
 	def onCommand(self, command):
