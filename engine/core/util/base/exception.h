@@ -43,7 +43,7 @@ namespace FIFE {
 		/** Constructor. 
 		 * @param txt The error mesage to be stored.
 		 */
-		Exception(const std::string& txt);
+		Exception(const std::string& msg);
 
 		/** Destructor. 
 		 */
@@ -52,7 +52,7 @@ namespace FIFE {
 		/** Returns the error message.
 		 * @return The error message.
 		 */
-		const std::string& getMessage() const;
+		std::string getMessage() const;
 		
 		virtual const std::string& getTypeStr() const { static const std::string s = "Exception"; return s; }
 		virtual const std::string& getDescription() const { static const std::string s = "Generic FIFE exception"; return s; }

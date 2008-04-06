@@ -107,7 +107,7 @@ namespace FIFE {
 	class ImagePool: public Pool {
 	public:
 		virtual ~ImagePool();
-		inline Image& getImage(unsigned int index) throw(FIFE::NotFound, FIFE::IndexOverflow);
+		inline Image& getImage(unsigned int index);
 	private:
 		ImagePool();
 	};
@@ -115,7 +115,7 @@ namespace FIFE {
 	class AnimationPool: public Pool {
 	public:
 		virtual ~AnimationPool();
-		inline Animation& getAnimation(unsigned int index) throw(FIFE::NotFound, FIFE::IndexOverflow);
+		inline Animation& getAnimation(unsigned int index);
 	private:
 		AnimationPool();
 	};

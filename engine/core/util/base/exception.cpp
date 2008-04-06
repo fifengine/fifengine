@@ -40,7 +40,7 @@ static Logger _log(LM_EXCEPTION);
 
 	Exception::~Exception() {}
 
-	const std::string& Exception::getMessage() const {
+	std::string Exception::getMessage() const {
 		std::stringstream str;
 		str << "_[" << getTypeStr() << "]_ , " << m_message;
 		return str.str();

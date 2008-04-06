@@ -76,11 +76,18 @@ print s\n\
 		PyErr_Clear(); \
 		SWIG_exception(_converted_type, _e.getMessage().c_str()); \
 	}
+
+#define _FIFE_DIRECTOR_EXC_HANDLER() \
+	catch (Swig::DirectorException &_e) { \
+		PyErr_Clear(); \
+		SWIG_exception(SWIG_RuntimeError, "Catched director exception"); \
+	}
 %}
 
 %feature("director:except") {
 	if ($$error != NULL) {
 		handleDirectorException();
+		throw Swig::DirectorMethodException();
 	}
 }
 
@@ -88,6 +95,7 @@ print s\n\
 	try {
 		$$action
 	}
+	_FIFE_DIRECTOR_EXC_HANDLER()
 	_FIFE_EXC_HANDLER(Exception, SWIG_RuntimeError)
 }
 

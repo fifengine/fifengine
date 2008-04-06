@@ -98,7 +98,7 @@ namespace FIFE {
 		 *     - layer does not have cellgrid assigned
 		 *  @param coordinates coordinates to set
 		 */
-		void setExactLayerCoordinates(const ExactModelCoordinate& coordinates) throw(NotSet);
+		void setExactLayerCoordinates(const ExactModelCoordinate& coordinates);
 		
 		/** Sets "cell precise" layer coordinates to this location
 		 *  @throws NotSet in the following cases:
@@ -106,7 +106,7 @@ namespace FIFE {
 		 *     - layer does not have cellgrid assigned
 		 * @see setLayerCoordinates(const ExactModelCoordinate& coordinates)
 		 */
-		void setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet);
+		void setLayerCoordinates(const ModelCoordinate& coordinates);
 
 		/** Sets map coordinates to this location
 		 *  @param coordinates coordinates to set
@@ -130,7 +130,7 @@ namespace FIFE {
 		 *     - given layer does not have cellgrid assigned
 		 * @return exact layer coordinates
 		 */
-		ExactModelCoordinate getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
+		ExactModelCoordinate getExactLayerCoordinates(const Layer* layer) const;
 		
 		/** Gets cell precision layer coordinates set to this location
 		 * @see getExactLayerCoordinates()
@@ -140,7 +140,7 @@ namespace FIFE {
 		/** Gets cell precision layer coordinates of this location mapped on given layer
 		 * @see getExactLayerCoordinates(const Layer* layer)
 		 */
-		ModelCoordinate getLayerCoordinates(const Layer* layer) const throw(NotSet);
+		ModelCoordinate getLayerCoordinates(const Layer* layer) const;
 		
 		/** Gets map coordinates set to this location
 		 * @return map coordinates

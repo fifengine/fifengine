@@ -28,16 +28,16 @@ namespace FIFE {
 		void setLayer(Layer* layer);
 		Layer* getLayer() const;
 		
-		void setExactLayerCoordinates(const ExactModelCoordinate& coordinates) throw(NotSet);
-		void setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet);
+		void setExactLayerCoordinates(const ExactModelCoordinate& coordinates);
+		void setLayerCoordinates(const ModelCoordinate& coordinates);
 		void setMapCoordinates(const ExactModelCoordinate& coordinates);
 		
 		ExactModelCoordinate& getExactLayerCoordinatesRef();
-		ExactModelCoordinate getExactLayerCoordinates() const throw(NotSet);
-		ExactModelCoordinate getExactLayerCoordinates(const Layer* layer) const throw(NotSet);
+		ExactModelCoordinate getExactLayerCoordinates() const;
+		ExactModelCoordinate getExactLayerCoordinates(const Layer* layer) const;
 		
-		ModelCoordinate getLayerCoordinates() const throw(NotSet);
-		ModelCoordinate getLayerCoordinates(const Layer* layer) const throw(NotSet);
+		ModelCoordinate getLayerCoordinates() const;
+		ModelCoordinate getLayerCoordinates(const Layer* layer) const;
 		
 		ExactModelCoordinate getMapCoordinates() const;
 		

@@ -33,7 +33,7 @@ namespace FIFE {
 	class SoundClipPool: public Pool {
 	public:
 		virtual ~SoundClipPool();
-		inline SoundClip& getSoundClip(unsigned int index) throw(FIFE::NotFound, FIFE::IndexOverflow);
+		inline SoundClip& getSoundClip(unsigned int index);
 	private:
 		SoundClipPool();
 	};

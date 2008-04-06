@@ -53,7 +53,7 @@ namespace FIFE {
 	EngineSettings::~EngineSettings() {
 	}
 	
-	void EngineSettings::validate() const throw(NotSet) {
+	void EngineSettings::validate() const {
 		if (m_defaultfontpath == "") {
 			throw NotSet("Path for default font is not set");
 		}
@@ -63,7 +63,7 @@ namespace FIFE {
 		}
 	}
 	
-	void EngineSettings::setBitsPerPixel(unsigned int bitsperpixel) throw(NotSupported){
+	void EngineSettings::setBitsPerPixel(unsigned int bitsperpixel) {
 		std::vector<unsigned int> pv = getPossibleBitsPerPixel();
 		std::vector<unsigned int>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);
 		if (i != pv.end()) {
@@ -82,7 +82,7 @@ namespace FIFE {
 		return tmp;
 	}
 	
-	void EngineSettings::setInitialVolume(float volume) throw(NotSupported) {
+	void EngineSettings::setInitialVolume(float volume) {
 		if (volume > getMaxVolume()) {
 			throw NotSupported("Given volume exceeds maximum volume");
 		}
@@ -96,7 +96,7 @@ namespace FIFE {
 		return MAXIMUM_VOLUME;
 	}
 	
-	void EngineSettings::setRenderBackend(const std::string& renderbackend) throw(NotSupported) {
+	void EngineSettings::setRenderBackend(const std::string& renderbackend) {
 		std::vector<std::string> pv = getPossibleRenderBackends();
 		std::vector<std::string>::iterator i = std::find(pv.begin(), pv.end(), renderbackend);
 		if (i != pv.end()) {
@@ -125,7 +125,7 @@ namespace FIFE {
 		m_screenheight = screenheight;
 	}
 	
-	void EngineSettings::setDefaultFontPath(const std::string& defaultfontpath) throw(NotFound) {
+	void EngineSettings::setDefaultFontPath(const std::string& defaultfontpath) {
 		m_defaultfontpath = defaultfontpath;
 	}
 	

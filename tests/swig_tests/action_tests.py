@@ -21,7 +21,7 @@ class ActionTests(unittest.TestCase):
 		
 		self.target = fife.Location(self.layer)
 	
-		self.obj = fife.Object("object001")
+		self.obj = fife.Object("object001", 'plaa')
 		fife.ObjectVisual.create(self.obj)
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
@@ -32,7 +32,7 @@ class ActionTests(unittest.TestCase):
 			degree = 45 * index
 			self.action.get2dGfxVisual().addAnimation(degree, addResource(files[index]))
 
-		self.ground = fife.Object("ground")
+		self.ground = fife.Object("ground", 'plaa')
 		imgid = self.engine.imagePool.addResourceFromFile('tests/data/earth_1.png')
 		fife.ObjectVisual.create(self.ground)
 		self.ground.get2dGfxVisual().addStaticImage(0, imgid)		
@@ -79,11 +79,9 @@ class ActionTests(unittest.TestCase):
 		cam.setCellImageDimensions(self.ground.img.getWidth(), self.ground.img.getHeight())
 		cam.setRotation(45)
 		cam.setTilt(40)
-		
-		self.engine.getView().resetRenderers()
-		
-		self.engine.initializePumping()
 
+		self.engine.getView().resetRenderers()
+		self.engine.initializePumping()
 		self.target.setLayerCoordinates(fife.ModelCoordinate(2,-2))	
 		self.inst.move('walk', self.target, 0.9)
 		targets = (
@@ -92,7 +90,6 @@ class ActionTests(unittest.TestCase):
 			(-2,0), (-2,1), (-2,2), (-1,2),
 			(0,2), (1,2), (2,2), (2,1))
 		for target in targets:
-			print "============> in 0,0"
 			l = self.inst.getLocation()
 			l.setLayerCoordinates(fife.ModelCoordinate(0,0))
 			self.inst.setLocation(l)
@@ -100,7 +97,7 @@ class ActionTests(unittest.TestCase):
 			self.inst.move('walk', self.target, 0.9)
 			for i in xrange(10):
 				self.engine.pump()
-		
+
 		self.engine.finalizePumping()
 		self.engine.getView().removeCamera(cam)
 

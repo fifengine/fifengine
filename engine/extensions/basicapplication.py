@@ -124,9 +124,8 @@ class ApplicationBase(object):
 		while not self.quitRequested:
 			try:
 				self.engine.pump()
-			except fife.Exception, e:
-				print e.getMessage()
-				break
+			except RuntimeError, e:
+				print str(e)
 
 			self._pump()
 

@@ -255,6 +255,7 @@ subgraph cluster_11 {
     "view" -> "util/log"
     "view" -> "util/math"
     "view" -> "util/structures"
+    "view" -> "util/time"
     "view" -> "video"
     "view/renderers" -> "model/metamodel"
     "view/renderers" -> "model/metamodel/grids"

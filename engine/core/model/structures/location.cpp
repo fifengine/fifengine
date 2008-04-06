@@ -86,14 +86,14 @@ namespace FIFE {
 		return m_layer;
 	}
 	
-	void Location::setExactLayerCoordinates(const ExactModelCoordinate& coordinates) throw(NotSet) {
+	void Location::setExactLayerCoordinates(const ExactModelCoordinate& coordinates) {
 		if (!isValid()) {
 			throw NotSet(INVALID_LAYER_SET);
 		}
 		m_exact_layer_coords = coordinates;
 	}
 	
-	void Location::setLayerCoordinates(const ModelCoordinate& coordinates) throw(NotSet) {
+	void Location::setLayerCoordinates(const ModelCoordinate& coordinates) {
 		setExactLayerCoordinates(intPt2doublePt(coordinates));
 	}
 	
@@ -128,11 +128,11 @@ namespace FIFE {
 		return (layer && layer->getCellGrid());
 	}
 	
-	ExactModelCoordinate Location::getExactLayerCoordinates(const Layer* layer) const throw(NotSet) {
+	ExactModelCoordinate Location::getExactLayerCoordinates(const Layer* layer) const {
 		return m_exact_layer_coords;
 	}
 	
-	ModelCoordinate Location::getLayerCoordinates(const Layer* layer) const throw(NotSet) {
+	ModelCoordinate Location::getLayerCoordinates(const Layer* layer) const {
 		if (!isValid(layer)) {
 			throw NotSet(INVALID_LAYER_GET);
 		}

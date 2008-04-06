@@ -81,7 +81,7 @@ namespace FIFE {
 		
 		/** Initializes the engine
 		 */
-		void init() throw(NotSet);
+		void init();
 		
 		/** Initializes the continuous processing of the engine
 		 * Call this only once in your program

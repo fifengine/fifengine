@@ -51,12 +51,12 @@ namespace FIFE {
 		
 		/** Validates settings. On invalid settings, throws NotSet with message
 		 */
-		void validate() const throw(NotSet);
+		void validate() const;
 		
 		/** Sets bits per pixel
 		 * @see getPossibleBitsPerPixel
 		 */
-		void setBitsPerPixel(unsigned int bitsperpixel) throw(NotSupported);
+		void setBitsPerPixel(unsigned int bitsperpixel);
 		
 		/** Gets currently set bits per pixel value
 		 */
@@ -83,7 +83,7 @@ namespace FIFE {
 		/** Sets initial engine sound volume
 		 *  @see getInitialMaxVolume
 		 */
-		void setInitialVolume(float volume) throw(NotSupported);
+		void setInitialVolume(float volume);
 		
 		/** Gets initial engine sound volume
 		 */
@@ -98,7 +98,7 @@ namespace FIFE {
 		/** Sets name for renderbackend
 		 *  @see getPossibleRenderBackends
 		 */
-		void setRenderBackend(const std::string& renderbackend) throw(NotSupported);
+		void setRenderBackend(const std::string& renderbackend);
 		
 		/** Gets currently set renderbackend name
 		 */
@@ -142,7 +142,7 @@ namespace FIFE {
 		
 		/** Sets path for default font
 		 */
-		void setDefaultFontPath(const std::string& defaultfontpath) throw(NotFound);
+		void setDefaultFontPath(const std::string& defaultfontpath);
 		
 		/** Sets current path for default font
 		 */

@@ -142,7 +142,7 @@ namespace FIFE {
 		FL_LOG(_log, "Engine pre-init done");
 	}
 
-	void Engine::init() throw(NotSet) {
+	void Engine::init() {
 		FL_LOG(_log, "Engine initialize start");
 		m_settings.validate();
 		FL_LOG(_log, "Engine settings validated");

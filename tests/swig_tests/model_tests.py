@@ -180,7 +180,7 @@ class ActivityTests(unittest.TestCase):
 		self.target = fife.Location(self.layer)
 		self.target.setPosition(fife.ModelCoordinate(10,10))
 		
-		self.obj = fife.Object("object010")
+		self.obj = fife.Object("object010", '')
 		self.pather = fife.LinearPather()
 		self.obj.setPather(self.pather)
 		self.inst = self.layer.addInstance(self.obj, fife.ModelCoordinate(4,4))

@@ -43,16 +43,16 @@ namespace FIFE {
 	class EngineSettings {
 	public:
 		~EngineSettings();
-		void validate() const throw(FIFE::NotSet);
-		void setBitsPerPixel(unsigned int bitsperpixel) throw(FIFE::NotSupported);
+		void validate() const;
+		void setBitsPerPixel(unsigned int bitsperpixel);
 		unsigned int getBitsPerPixel() const;
 		std::vector<unsigned int> getPossibleBitsPerPixel() const;
 		void setFullScreen(bool fullscreen);
 		bool isFullScreen() const;
-		void setInitialVolume(float volume) throw(FIFE::NotSupported);
+		void setInitialVolume(float volume);
 		float getInitialVolume() const;
 		float getMaxVolume() const;
-		void setRenderBackend(const std::string& renderbackend) throw(FIFE::NotSupported);
+		void setRenderBackend(const std::string& renderbackend);
 		const std::string getRenderBackend() const;
 		std::vector<std::string> getPossibleRenderBackends();
 		void setSDLRemoveFakeAlpha(bool sldremovefakealpha);
@@ -61,7 +61,7 @@ namespace FIFE {
 		unsigned int getScreenWidth() const;
 		void setScreenHeight(unsigned int screenheight);
 		unsigned int getScreenHeight() const;
-		void setDefaultFontPath(const std::string& defaultfontpath) throw(FIFE::NotFound);
+		void setDefaultFontPath(const std::string& defaultfontpath);
 		std::string getDefaultFontPath() const;
 		void setDefaultFontSize(const unsigned int defaultfontsize);
 		unsigned int getDefaultFontSize() const;
@@ -83,7 +83,7 @@ namespace FIFE {
 		void pump();
 
 		EngineSettings& getSettings();
-		void init() throw(FIFE::NotSet);
+		void init();
 
 		SoundManager* getSoundManager();
 		EventManager* getEventManager();
