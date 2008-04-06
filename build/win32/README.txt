@@ -1,5 +1,5 @@
 ==========================
-FIFE Win32 compile guide for building the 2008.0 release version
+FIFE Win32 compile guide for building the 2008.0-r1 release version
 ==========================
 
 Installation / build process
@@ -20,11 +20,11 @@ http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.1.1-w
 
 
 4.1 Run <FIFE>\trunk\build\win32\update_project_files.bat.
-4.2 Build files for each supported IDE can be found in the sub-directories of <FIFE>\build\win32\build_environments (code_blocks, scons, visual_studio_8).
+4.2 Build files for each supported IDE can be found in the sub-directories of <FIFE>\build\win32\build_environments (code_blocks, scons, visual_studio_8, visual_studio_9).
 
 5. The final dynamic library (_fife.pyd) is automatically moved to:
 <FIFE>\engine
 
-6. Depending on the IDE you have utilized for building FIFE you either need to run <FIFE>\build\win32\update_dlls_mingw.bat (in case you built FIFE with code::blocks or scons) or <FIFE>\build\win32\update_dlls_msvc2005.bat (Visual Studio 2005).
+6. Depending on the IDE you have utilized for building FIFE you either need to run <FIFE>\build\win32\update_dlls_mingw.bat (in case you built FIFE with code::blocks or scons), <FIFE>\build\win32\update_dlls_msvc2005.bat (Visual Studio 2005) or <FIFE>\build\win32\update_dlls_msvc2008.bat (Visual Studio 2008).
 
-7. You can now start your custom FIFE build by launching editor_client.py, fo_remake.py & island_demo.py that reside in the subdirectories of <FIFE>\clients.
+7. You can now start your custom FIFE build by launching the python scripts that reside in the subdirectories of <FIFE>\clients.
