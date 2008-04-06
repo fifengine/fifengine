@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ascii"?>
 <map id="myMap" format="1.0">
-	<import dir="./../rio_de_hola/objects/items"></import>
-	<import file="./../rio_de_hola/objects/ground/water/object.xml"></import>
-	<import file="./../rio_de_hola/objects/ground/beach/02/object.xml"></import>
-	<import file="./../rio_de_hola/objects/ground/beach/01/object.xml"></import>
-	<import file="./../rio_de_hola/objects/ground/beach/03/object.xml"></import>
-	<import file="./../rio_de_hola/objects/ground/sands/01/object.xml"></import>
-	<import file="./../rio_de_hola/objects/items/common/crates/empty_lid/object.xml"></import>
+	<import dir="../objects/items"></import>
+	<import file="../objects/ground/water/object.xml"></import>
+	<import file="../objects/ground/beach/02/object.xml"></import>
+	<import file="../objects/ground/beach/01/object.xml"></import>
+	<import file="../objects/ground/beach/03/object.xml"></import>
+	<import file="../objects/ground/sands/01/object.xml"></import>
+	<import file="../objects/items/common/crates/empty_lid/object.xml"></import>
 	<layer grid_type="square" id="myLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
 		<instances>
 			<i r="0" z="0" x="-3" o="water" y="-5" ns="http://www.fifengine.de/xml/rio_de_hola"></i>

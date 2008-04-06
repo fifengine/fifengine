@@ -5,6 +5,7 @@ except:
 	import xml.etree.ElementTree as ET
 
 import loaders
+from serializers import *
 
 FORMAT = '1.0'
 
@@ -18,6 +19,8 @@ class XMLMapLoader(fife.MapLoader):
 		self.model = self.engine.getModel()
 		self.pool = self.engine.getImagePool()
 		self.anim_pool = self.engine.getAnimationPool()
+		self.map = None
+		self.source = None
 
 		self.nspace = None
 
@@ -31,7 +34,6 @@ class XMLMapLoader(fife.MapLoader):
 		root = tree.getroot()
 
 		map = self.parse_map(root)
-		map.setResourceFile(self.source)
 		return map
 
 	def parse_map(self, mapelt):
@@ -44,40 +46,40 @@ class XMLMapLoader(fife.MapLoader):
 		
 		map = None
 		try:
-			map = self.model.createMap(str(id))
+			self.map = self.model.createMap(str(id))
+			self.map.setResourceFile(self.source)
 		except fife.Exception, e: # NameClash appears as general fife.Exception; any ideas?
 			print e.getMessage()
 			print ''.join(['File: ', self.source, '. The map ', str(id), ' already exists! Ignoring map definition.'])
 			return None
 
 		# xml-specific directory imports. This is used by xml savers.
-		map.importDirs = []
+		self.map.importDirs = []
 
-		self.parse_imports(mapelt, map)
-		self.parse_layers(mapelt, map)	
-		self.parse_cameras(mapelt, map)
+		self.parse_imports(mapelt, self.map)
+		self.parse_layers(mapelt, self.map)	
+		self.parse_cameras(mapelt, self.map)
 
-		return map
+		return self.map
 
 	def parse_imports(self, mapelt, map):
 		for item in mapelt.findall('import'):
 			file = item.get('file')
+			if file:
+				file = reverse_root_subfile(self.source, file)
 			dir = item.get('dir')
+			if dir:
+				dir = reverse_root_subfile(self.source, dir)
 
-			try:
-				if file and dir:
-					loaders.loadImportFile('/'.join(dir, file), self.engine)
-				elif file:
-					loaders.loadImportFile(file, self.engine)
-				elif dir:
-					loaders.loadImportDirRec(dir, self.engine)
-					map.importDirs.append(dir)
-				else:
-					print 'Empty import statement?'
-			except:
-				print 'Error parsing import statement.'
-				continue
-		
+			if file and dir:
+				loaders.loadImportFile('/'.join(dir, file), self.engine)
+			elif file:
+				loaders.loadImportFile(file, self.engine)
+			elif dir:
+				loaders.loadImportDirRec(dir, self.engine)
+				map.importDirs.append(dir)
+			else:
+				print 'Empty import statement?'
 
 	def parse_layers(self, mapelt, map):
 		for layer in mapelt.findall('layer'):

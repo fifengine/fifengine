@@ -1,5 +1,6 @@
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
+from serializers import *
 
 import fife
 
@@ -68,8 +69,8 @@ class ModelSaver:
 
 	def write_imports(self, map, importList):
 		for importdir in importList:
-			self.write_importdir(importdir)
-
+			self.write_importdir(root_subfile(map.getResourceFile(), importdir))
+		
 		imports = []
 		for layer in map.getLayers():
 			for instance in layer.getInstances():
@@ -77,14 +78,15 @@ class ModelSaver:
 				if not (file in imports):
 					if not self.have_superdir(file, importList):
 						imports.append(file)	
-						self.write_import(file)
+						self.write_import(root_subfile(map.getResourceFile(), file))
 
 	def have_superdir(self, file, importList):
+		'''returns true, if file is in directories given in importList'''
 		for dir in importList:
 			have = True
 			for test in zip(dir.split('/'), file.split('/')):
 				if test[0] != test[1]: have = False
-			if have: return True	
+			if have: return True
 
 		return False
 
@@ -228,6 +230,6 @@ class ModelSaver:
 		self.file.close()
 
 def saveMapFile(path, engine, map, importList=[]):
+	map.setResourceFile(path)
 	writer = ModelSaver(path, engine)
 	writer.write_map(map, importList)
-	map.setResourceFile(path)

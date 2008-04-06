@@ -253,7 +253,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._camera, 'No camera assigned in _getInstancesFromSelection')
 		
 		loc = fife.Location(self._layer)
-		if self._shiftdown:
+		if type(self._selection) == fife.ExactModelCoordinate:
 			loc.setExactLayerCoordinates(self._selection)
 		else:
 			loc.setLayerCoordinates(self._selection)
