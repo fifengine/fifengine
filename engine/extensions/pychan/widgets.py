@@ -145,7 +145,7 @@ class Widget(object):
 			raise RuntimeError("You can only 'execute' root widgets, not %s!" % str(self))
 		
 		for name,returnValue in bind.items():
-			def _quitThisDialog():
+			def _quitThisDialog(returnValue = returnValue ):
 				get_manager().breakFromMainLoop( returnValue )
 				self.hide()
 			self.findChild(name=name).capture( _quitThisDialog )
