@@ -2,6 +2,7 @@ import os
 
 def initEnvironment(env):
     env.Append(ENV={'PATH' : os.environ['PATH']})
+    env.Prepend(CXXFLAGS = '-DUSE_COCOA')
     return env
 
 def addExtras(context):
@@ -14,15 +15,16 @@ def addExtras(context):
     context.env.Append(SHLINKFLAGS='-framework SDL_image')
     context.env.Append(SHLINKFLAGS='-framework SDL_ttf')
     context.env.Append(SHLINKFLAGS='-framework Python')
+    context.env.Append(SHLINKFLAGS='-lpng')
     context.env['SHLIBSUFFIX']='.so'
 
-    include_dirs = ['/opt/local/include', '/usr/local/include', '/Library/Frameworks/SDL.framework/Headers',
+    include_dirs = ['/opt/local/include', '/usr/local/include', '/usr/X11/include', '/Library/Frameworks/SDL.framework/Headers',
         '/Library/Frameworks/SDL_image.framework/Headers', '/Library/Frameworks/SDL_ttf.framework/Headers', 
         '/opt/local/include/boost', '/System/Library/Frameworks/OpenAL.framework/Headers', '/opt/local/include/vorbis/', 
-	'/usr/include/python2.5', '/opt/local/include/guichan']
+	'/usr/include/python2.5', '/opt/local/include/guichan', 'ext/install/include', '../ext/install/include', '../ext/install/include/guichan']
     context.env.Append(CPPPATH = include_dirs)
 
-    lib_dirs = ['/opt/local/lib','/usr/local/lib']
+    lib_dirs = ['/opt/local/lib','/usr/local/lib','/usr/X11/lib','ext/install/lib','../ext/install/lib']
     context.env.Append(LIBPATH = lib_dirs)
 
     context.env.Append(CPPFLAGS='-D_THREAD_SAFE')
