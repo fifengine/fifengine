@@ -3,6 +3,7 @@ del .\..\..\clients\editor\*.dll
 del .\..\..\clients\island_demo\*.dll
 del .\..\..\clients\pychan_demo\*.dll
 
+copy .\binaries\msvc2008\zlib.dll .\binaries\msvc2008\zlib1.dll
 copy .\binaries\msvc2008\*.dll .\..\..\*.*
 copy .\binaries\msvc2008\*.dll .\..\..\clients\editor\*.*
 copy .\binaries\msvc2008\*.dll .\..\..\clients\island_demo\*.*
