@@ -33,7 +33,7 @@ def root_subfile(masterfile, subfile):
 	returned path is ../foo2/subfoo.xml
 	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
 	'''
-	s = os.path.sep
+	s = '/'
 	
 	masterfile = os.path.abspath(masterfile)
 	subfile = os.path.abspath(subfile)
@@ -66,7 +66,7 @@ def reverse_root_subfile(masterfile, subfile):
 	Usually this function is used to convert saved paths into engine relative paths
 	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
 	'''
-	s = os.path.sep
+	s = '/'
 	
 	masterfile = os.path.abspath(masterfile).split(s)[:-1]
 	subfile = os.path.abspath( s.join(masterfile) + s + subfile )
