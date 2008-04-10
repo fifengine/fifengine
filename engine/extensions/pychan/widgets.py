@@ -1074,7 +1074,7 @@ class Button(BasicTextWidget):
 
 class ImageButton(BasicTextWidget):
 	"""
-	A basic push button with two different images for the up and down state.
+	A basic push button with three different images for the up, down and hover state.
 	
 	B{Work in progress.}
 	
@@ -1083,15 +1083,17 @@ class ImageButton(BasicTextWidget):
 	
 	  - up_image: String: The source location of the Image for the B{unpressed} state.
 	  - down_image: String: The source location of the Image for the B{pressed} state.
+	  - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
 	"""
 	
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),Attr('hover_image')]
 	
-	def __init__(self,up_image="",down_image="",**kwargs):
+	def __init__(self,up_image="",down_image="",hover_image="",**kwargs):
 		self.real_widget = fife.TwoButton()
 		super(ImageButton,self).__init__(**kwargs)
 		self.up_image = up_image
 		self.down_image = down_image
+		self.hover_image = hover_image
 
 	def _setUpImage(self,image):
 		self._upimage_source = image
@@ -1113,9 +1115,19 @@ class ImageButton(BasicTextWidget):
 	def _getDownImage(self): return self._downimage_source
 	down_image = property(_getDownImage,_setDownImage)
 
+	def _setHoverImage(self,image):
+		self._hoverimage_source = image
+		try:
+			self._hoverimage = get_manager().loadImage(image)
+			self.real_widget.setHoverImage( self._hoverimage )
+		except:
+			self._hoverimage = _DummyImage()
+	def _getHoverImage(self): return self._hoverimage_source
+	hover_image = property(_getHoverImage,_setHoverImage)
+
 	def resizeToContent(self):
-		self.height = max(self._upimage.getHeight(),self._downimage.getHeight()) + self.margins[1]*2
-		self.width = max(self._upimage.getWidth(),self._downimage.getWidth()) + self.margins[1]*2
+		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
+		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
 
 class CheckBox(BasicTextWidget):
 	"""

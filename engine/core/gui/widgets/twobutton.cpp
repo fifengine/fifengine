@@ -32,9 +32,10 @@
 #include "twobutton.h"
 
 namespace gcn {
-	TwoButton::TwoButton(Image *up_file , Image *down_file, const std::string& caption): Button() {
+	TwoButton::TwoButton(Image *up_file , Image *down_file , Image *hover_file, const std::string& caption): Button() {
 		m_upImage = up_file;
 		m_downImage = down_file;
+		m_hoverImage = hover_file;
 		setBorderSize(0);
 		adjustSize();
 		mCaption = caption;
@@ -45,6 +46,10 @@ namespace gcn {
 		if (isPressed()) {
 			if( m_downImage ) {
 				graphics->drawImage(m_downImage, 0, 0);
+			}
+		} else if(mHasMouse) {
+			if( m_hoverImage ) {
+				graphics->drawImage(m_hoverImage, 0, 0);
 			}
 		} else {
 			if( m_upImage ) {
@@ -88,6 +93,10 @@ namespace gcn {
 			setWidth(std::max(m_downImage->getWidth(),getWidth()));
 			setHeight(std::max(m_downImage->getHeight(),getHeight()));
 		}
+		if( m_hoverImage ) {
+			setWidth(std::max(m_hoverImage->getWidth(),getWidth()));
+			setHeight(std::max(m_hoverImage->getHeight(),getHeight()));
+		}
 	}
 	void TwoButton::setUpImage(Image* image) {
 		m_upImage = image;
@@ -95,6 +104,10 @@ namespace gcn {
 	}
 	void TwoButton::setDownImage(Image* image) {
 		m_downImage = image;
+		adjustSize();
+	}
+	void TwoButton::setHoverImage(Image* image) {
+		m_hoverImage = image;
 		adjustSize();
 	}
 
