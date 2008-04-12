@@ -1,3 +1,4 @@
+import os
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
 from serializers import *
@@ -84,7 +85,7 @@ class ModelSaver:
 		'''returns true, if file is in directories given in importList'''
 		for dir in importList:
 			have = True
-			for test in zip(dir.split('/'), file.split('/')):
+			for test in zip(dir.split(os.path.sep), file.split(os.path.sep)):
 				if test[0] != test[1]: have = False
 			if have: return True
 

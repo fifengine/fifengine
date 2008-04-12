@@ -4,6 +4,7 @@ try:
 except:
 	import xml.etree.ElementTree as ET
 
+import os
 import loaders
 from serializers import *
 
@@ -66,13 +67,15 @@ class XMLMapLoader(fife.MapLoader):
 		for item in mapelt.findall('import'):
 			file = item.get('file')
 			if file:
+				file = os.path.sep.join(file.split('/'))
 				file = reverse_root_subfile(self.source, file)
 			dir = item.get('dir')
 			if dir:
+				dir = os.path.sep.join(dir.split('/'))
 				dir = reverse_root_subfile(self.source, dir)
 
 			if file and dir:
-				loaders.loadImportFile('/'.join(dir, file), self.engine)
+				loaders.loadImportFile(os.path.sep.join(dir, file), self.engine)
 			elif file:
 				loaders.loadImportFile(file, self.engine)
 			elif dir:

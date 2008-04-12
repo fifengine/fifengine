@@ -1,3 +1,4 @@
+import os
 import fife
 from serializers import *
 from fife_utils import *
@@ -94,11 +95,11 @@ class XMLObjectLoader(fife.ObjectLoader):
 				raise InvalidFormat('<image> declared without a source attribute.')
 
 			# paths are relative to this resource's path
-			path = self.filename.split('/')
+			path = self.filename.split(os.path.sep)
 			path.pop()
 			path.append(str(source))
 
-			id = self.image_pool.addResourceFromFile('/'.join(path))
+			id = self.image_pool.addResourceFromFile(os.path.sep.join(path))
 			object.get2dGfxVisual().addStaticImage(int( image.get('direction', 0) ), id)
 			img = self.image_pool.getImage(id)
 			img.setXShift(int( image.get('x_offset', 0) ))
@@ -121,11 +122,11 @@ class XMLObjectLoader(fife.ObjectLoader):
 				raise InvalidFormat('Animation declared with no source location.')
 			
 			# animation paths are relative to this resource's path
-			path = self.filename.split('/')
+			path = self.filename.split(os.path.sep)
 			path.pop()
 			path.append(str(source))
 
-			anim_id = self.anim_pool.addResourceFromFile('/'.join(path))
+			anim_id = self.anim_pool.addResourceFromFile(os.path.sep.join(path))
 			animation = self.anim_pool.getAnimation(anim_id)
 			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), anim_id)
 			action.setDuration(animation.getDuration())

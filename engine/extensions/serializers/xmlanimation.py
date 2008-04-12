@@ -1,3 +1,4 @@
+import os
 import fife
 from serializers import *
 
@@ -39,11 +40,11 @@ class XMLAnimationLoader(fife.AnimationLoader):
 			frame_delay = int(frame.get('delay', common_frame_delay))
 
 			# xml paths are relative to the directory of the file they're used in.
-			path = self.filename.split('/')
+			path = self.filename.split(os.path.sep)
 			path.pop()
 			path.append(str(source))
 
-			image = self.imagepool.getImage(self.imagepool.addResourceFromFile('/'.join(path)))
+			image = self.imagepool.getImage(self.imagepool.addResourceFromFile(os.path.sep.join(path)))
 			image.setXShift(frame_x_offset)
 			image.setYShift(frame_y_offset)
 			animation.addFrame(image, frame_delay);
