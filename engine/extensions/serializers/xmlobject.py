@@ -94,6 +94,8 @@ class XMLObjectLoader(fife.ObjectLoader):
 			if not source:
 				raise InvalidFormat('<image> declared without a source attribute.')
 
+			source = os.path.sep.join(source.split('/'))
+
 			# paths are relative to this resource's path
 			path = self.filename.split(os.path.sep)
 			path.pop()
@@ -120,6 +122,8 @@ class XMLObjectLoader(fife.ObjectLoader):
 			source = anim.get('source')
 			if not source:
 				raise InvalidFormat('Animation declared with no source location.')
+
+			source = os.path.sep.join(source.split('/'))
 			
 			# animation paths are relative to this resource's path
 			path = self.filename.split(os.path.sep)

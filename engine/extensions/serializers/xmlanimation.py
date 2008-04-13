@@ -35,6 +35,8 @@ class XMLAnimationLoader(fife.AnimationLoader):
 			if not source:
 				raise InvalidFormat('animation without <frame>s')
 
+			source = os.path.sep.join(source.split('/'))
+
 			frame_x_offset = int(frame.get('x_offset', x_offset))
 			frame_y_offset = int(frame.get('y_offset', y_offset))
 			frame_delay = int(frame.get('delay', common_frame_delay))
