@@ -81,4 +81,4 @@ def norm_path(path):
 	if os.path.sep == '/':
 		return path
 	
-	path = '/'.join(path.split(os.path.sep))	
+	return '/'.join(path.split(os.path.sep))	
