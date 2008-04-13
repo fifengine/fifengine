@@ -33,10 +33,10 @@ def root_subfile(masterfile, subfile):
 	returned path is ../foo2/subfoo.xml
 	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
 	'''
-	s = os.path.sep
+	s = '/'
 	
-	masterfile = os.path.abspath(masterfile)
-	subfile = os.path.abspath(subfile)
+	masterfile = norm_path(os.path.abspath(masterfile))
+	subfile = norm_path(os.path.abspath(subfile))
 	
 	master_fragments = masterfile.split(s)
 	sub_fragments = subfile.split(s)
@@ -66,12 +66,19 @@ def reverse_root_subfile(masterfile, subfile):
 	Usually this function is used to convert saved paths into engine relative paths
 	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
 	'''
-	s = os.path.sep
+	s = '/'
 	
-	masterfile = os.path.abspath(masterfile).split(s)[:-1]
-	subfile = os.path.abspath( s.join(masterfile) + s + subfile )
-	masterfile = os.getcwd() + s + 'foo.bar' # cheat a little to satisfy root_subfile
+	masterfile = norm_path(os.path.abspath(masterfile)).split(s)[:-1]
+	subfile = norm_path(os.path.abspath( s.join(masterfile) + s + subfile ))
+	masterfile = norm_path(os.getcwd()) + s + 'foo.bar' # cheat a little to satisfy root_subfile
 	return root_subfile(masterfile, subfile)
 	
+def norm_path(path):
+	'''
+	Makes the path use '/' delimited separators. FIFE always uses these delimiters, but some os-related
+  routines will default to os.path.sep.
+	'''
+	if os.path.sep == '/':
+		return path
 	
-	
+	path = '/'.join(path.split(os.path.sep))	
