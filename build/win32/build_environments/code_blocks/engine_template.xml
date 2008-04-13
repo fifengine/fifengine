@@ -17,12 +17,12 @@
 					<Add option="-DLOG_ENABLED" />
 					<Add directory="..\..\..\..\engine" />
 					<Add directory="..\..\..\..\engine\core" />
-					<Add directory="..\..\includes\mingw\boost_1_33_1" />
+					<Add directory="..\..\includes\mingw\boost_1_35_0" />
 					<Add directory="..\..\includes\mingw\libguichan" />
-					<Add directory="..\..\includes\mingw\libminizip" />
 					<Add directory="..\..\includes\mingw\libogg" />
+					<Add directory="..\..\includes\mingw\libpng" />
 					<Add directory="..\..\includes\mingw\libvorbis" />
-					<Add directory="..\..\includes\mingw\openal" />
+					<Add directory="..\..\includes\mingw\openal-soft" />
 					<Add directory="..\..\includes\mingw\python25" />
 					<Add directory="..\..\includes\mingw\sdl" />
 					<Add directory="..\..\includes\mingw\sdl_image" />
@@ -30,7 +30,6 @@
 					<Add directory="..\..\includes\mingw\zlib" />
 				</Compiler>
 				<Linker>
-					<Add library="..\..\static_libs\mingw\libminizip.a" />
 					<Add library="..\..\static_libs\mingw\libguichan_opengl.a" />
 					<Add library="..\..\static_libs\mingw\libguichan_sdl.a" />
 					<Add library="..\..\static_libs\mingw\libguichan.a" />
@@ -39,13 +38,15 @@
 					<Add library="..\..\static_libs\mingw\libvorbis.a" />
 					<Add library="..\..\static_libs\mingw\libogg.a" />
 					<Add library="..\..\static_libs\mingw\libvorbisfile.a" />
+					<Add library="..\..\static_libs\mingw\libpng.a" />
 					<Add library="..\..\static_libs\mingw\SDL_image.lib" />
 					<Add library="..\..\static_libs\mingw\libSDLmain.a" />
 					<Add library="..\..\static_libs\mingw\libSDL.dll.a" />
-					<Add library="..\..\static_libs\mingw\OpenAL32.lib" />
+					<Add library="..\..\static_libs\mingw\libopenal32.a" />
 					<Add library="..\..\static_libs\mingw\SDL_ttf.lib" />
 					<Add library="..\..\static_libs\mingw\libboost_filesystem.a" />
 					<Add library="..\..\static_libs\mingw\libboost_regex.a" />
+					<Add library="..\..\static_libs\mingw\libboost_system.a" />
 					<Add library="..\..\applications\mingw\lib\libopengl32.a" />
 					<Add library="..\..\applications\mingw\lib\libglu32.a" />
 					<Add library="..\..\static_libs\mingw\python25\libpython25.a" />
