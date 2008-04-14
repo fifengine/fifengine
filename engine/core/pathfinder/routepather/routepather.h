@@ -48,7 +48,7 @@ namespace FIFE {
 		/** Constructor.
 		 *
 		 */
-		RoutePather() : m_map(0), m_nextFreeSessionId(0), m_maxticks(100) {
+		RoutePather() : m_map(0), m_nextFreeSessionId(0), m_maxticks(1000) {
 		}
 		
 		void setMap(Map* map);
