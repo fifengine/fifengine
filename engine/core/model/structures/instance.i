@@ -56,7 +56,7 @@ namespace FIFE {
 		Action* getCurrentAction() const;
 		double getMovementSpeed() const;
 		void setFacingLocation(const Location& loc);
-		Location getFacingLocation() const;
+		Location getFacingLocation();
 		Location& getFacingLocationRef();
 		int getActionRuntime() const;
 		void move(const std::string& action_name, const Location& target, const double speed);

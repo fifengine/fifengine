@@ -122,7 +122,7 @@ namespace FIFE {
 		*  @note does not return const Location&, since swig wont be const correct
 		 * @return the direction of instance.
 		 */
-		Location getFacingLocation() const;
+		Location getFacingLocation();
 		
 		/** Returns reference to the direction where instance is heading
 		 * Note: if instance didn't previously hadn't defined facing location
