@@ -90,13 +90,13 @@ namespace FIFE {
 
 		m_tmploc.setLayer(layer);
 		Rect cv = cam->getViewPort();
-		m_c = cam->toMapCoordinates(ScreenPoint(cv.x, cv.y));
+		m_c = cam->toMapCoordinates(ScreenPoint(cv.x, cv.y), false);
 		adjustLayerArea();
-		m_c = cam->toMapCoordinates(ScreenPoint(cv.x+cv.w, cv.y));
+		m_c = cam->toMapCoordinates(ScreenPoint(cv.x+cv.w, cv.y), false);
 		adjustLayerArea();
-		m_c = cam->toMapCoordinates(ScreenPoint(cv.x, cv.y+cv.h));
+		m_c = cam->toMapCoordinates(ScreenPoint(cv.x, cv.y+cv.h), false);
 		adjustLayerArea();
-		m_c = cam->toMapCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h));
+		m_c = cam->toMapCoordinates(ScreenPoint(cv.x+cv.w, cv.y+cv.h), false);
 		adjustLayerArea();
 
 		Rect r = Rect();
