@@ -32,7 +32,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.quit = False
 		self.aboutWindow = None
 		
-		self.rootpanel = pychan.loadXML('content/gui/rootpanel.xml')
+		self.rootpanel = pychan.loadXML('gui/rootpanel.xml')
 		self.rootpanel.mapEvents({ 
 			'quitButton' : self.onQuitButtonPress,
 			'aboutButton' : self.onAboutButtonPress,
@@ -64,7 +64,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.quit = True
 			result = 'quitting'
 		elif command.lower() in ( 'help', 'help()' ):
-			self.engine.getGuiManager().getConsole().println( open( 'content/infotext.txt', 'r' ).read() )
+			self.engine.getGuiManager().getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
 			result = "-- End of help --"
 		else:
 			result = self.world.onConsoleCommand(command)
@@ -85,9 +85,9 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		
 	def onAboutButtonPress(self):
 		if not self.aboutWindow:
-			self.aboutWindow = pychan.loadXML('content/gui/help.xml')
+			self.aboutWindow = pychan.loadXML('gui/help.xml')
 			self.aboutWindow.mapEvents({ 'closeButton' : self.aboutWindow.hide })
-			self.aboutWindow.distributeData({ 'helpText' : open("content/infotext.txt").read() })
+			self.aboutWindow.distributeData({ 'helpText' : open("misc/infotext.txt").read() })
 		self.aboutWindow.show()
 
 
@@ -105,7 +105,7 @@ class IslandDemo(ApplicationBase):
 		if TDS.PlaySounds:
 			# play track as background music
 			emitter = self.soundmanager.createEmitter()
-			id = self.engine.getSoundClipPool().addResourceFromFile('content/audio/music/rio_de_hola.ogg')
+			id = self.engine.getSoundClipPool().addResourceFromFile('music/rio_de_hola.ogg')
 			emitter.setSoundClip(id)
 			emitter.setLooping(True)
 			emitter.play()
@@ -116,7 +116,7 @@ class IslandDemo(ApplicationBase):
 	def _pump(self):
 		if self.listener.quit:
 			self.breakRequested = True
-			self.world.save('content/maps/savefile.xml')
+			self.world.save('maps/savefile.xml')
 		else:
 			self.world.pump()
 

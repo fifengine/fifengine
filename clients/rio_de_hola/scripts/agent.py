@@ -7,7 +7,7 @@ class Agent(fife.InstanceActionListener):
 		self.agentName = agentName
 		self.layer = layer
 		if uniqInMap:
-			self.agent = layer.getInstances('name', agentName)[0]
+			self.agent = layer.getInstance(agentName)
 			self.agent.addActionListener(self)
 
 	def onInstanceActionFinished(self, instance, action):
@@ -19,7 +19,7 @@ class Agent(fife.InstanceActionListener):
 
 def create_anonymous_agents(model, objectName, layer, agentClass):
 	agents = []
-	instances = [a for a in layer.getInstances() if a.getObject().Id() == objectName]
+	instances = [a for a in layer.getInstances() if a.getObject().getId() == objectName]
 	i = 0
 	for a in instances:
 		agentName = '%s:i:%d' % (objectName, i)

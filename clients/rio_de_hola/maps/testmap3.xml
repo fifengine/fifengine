@@ -12,7 +12,9 @@
 	<import file="../objects/items/flask/inventory/object.xml"></import>
 	<import file="../objects/items/matchbox/object.xml"></import>
 	<import file="../objects/items/matchbox/inventory/object.xml"></import>
-	<layer grid_type="square" id="myLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
+	<import file="../objects/agents/boy/object.xml"></import>
+	<import file="../objects/agents/girl/object.xml"></import>
+	<layer grid_type="square" id="TechdemoMapTileLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
 		<instances>
 			<i r="0" z="0.0" x="-3.0" o="water" y="-5.0" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
 			<i x="-3.0" o="water" z="0.0" y="-4.0" r="0"></i>
@@ -394,9 +396,17 @@
 			<i x="6.0" o="flask_inventory" z="0.0" y="-5.0" r="180"></i>
 			<i x="6.0" o="matchbox_map" z="0.0" y="-4.0" r="0"></i>
 			<i x="6.0" o="matchbox_inventory" z="0.0" y="-4.0" r="135"></i>
-			<i x="7.0" o="beekeeper" z="0.0" y="0.0" r="0"></i>
 		</instances>
 	</layer>
-	<camera tilt="-42.0" viewport="0,0,1024,768" id="myCamera" ref_layer_id="myLayer" ref_cell_height="96" rotation="45.0" ref_cell_width="128" zoom="0.676839362029">
+	<layer grid_type="square" id="TechdemoMapObjectLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
+		<instances>
+			<i x="7.0" o="beekeeper" z="0.0" y="0.0" r="0"></i>
+			<i r="0" id="PC" z="0.0" x="5.0" o="boy" y="4.0"></i>
+			<i r="0" id="NPC:girl" z="0.0" x="8.0" o="girl" y="2.0"></i>
+		</instances>
+	</layer>
+	<camera tilt="-42.0" viewport="0,0,1024,768" id="main" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0" ref_cell_width="128" zoom="0.676839362029">
+	</camera>
+	<camera tilt="-42.0" viewport="10,10,400,250" id="small" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0" ref_cell_width="128" zoom="1.0">
 	</camera>
 </map>

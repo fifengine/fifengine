@@ -11,7 +11,7 @@ class Girl(Agent):
 		self.state = _STATE_NONE
 		self.waypoints = ((67, 80), (75, 44))
 		self.waypoint_counter = 0
-		self.hero = self.layer.getInstances('name', 'PC')[0]
+		self.hero = self.layer.getInstance('PC')
 
 	def onInstanceActionFinished(self, instance, action):
 		if self.state in (_STATE_RUN, _STATE_FOLLOW):
@@ -34,7 +34,7 @@ class Girl(Agent):
 	
 	def idle(self):
 		self.state = _STATE_IDLE
-		self.agent.act('default', self.agent.getFacingLocation(), False)
+		self.agent.act('stand', self.agent.getFacingLocation(), False)
 		
 	def follow_hero(self):
 		self.state = _STATE_FOLLOW

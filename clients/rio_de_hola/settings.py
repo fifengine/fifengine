@@ -6,8 +6,8 @@ RenderBackend       = "OpenGL"
 SDLRemoveFakeAlpha  = 1
 ScreenWidth         = 1024
 ScreenHeight        = 768
-MapFile             = 'content/maps/island_demo_map.xml'
-Font                = 'content/fonts/samanata.ttf'
+MapFile             = 'maps/testmap3.xml'
+Font                = 'fonts/samanata.ttf'
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\""
 
 LogModules          = ['controller']
@@ -17,7 +17,7 @@ LogToFile           = 0
 UsePsyco            = False
 ImageChunkSize      = 256
 
-CoordinateLayerName = "TechdemoMapObjectLayer"
+CoordinateLayerName = "TechdemoMapTileLayer"
 QuadTreeLayerName = "" #"TechdemoMapObjectLayer"
 
 heroTexts = (

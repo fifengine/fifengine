@@ -12,7 +12,7 @@ class Hero(Agent):
 
 	def onInstanceActionFinished(self, instance, action):
 		self.idle()
-		if action.Id() != 'idle':
+		if action.getId() != 'stand':
 			self.idlecounter = 1
 		else:
 			self.idlecounter += 1
@@ -25,7 +25,7 @@ class Hero(Agent):
 	
 	def idle(self):
 		self.state = _STATE_IDLE
-		self.agent.act('idle', self.agent.getFacingLocation())
+		self.agent.act('stand', self.agent.getFacingLocation())
 		
 	def run(self, location):
 		self.state = _STATE_RUN

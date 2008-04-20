@@ -19,10 +19,10 @@ class MapListener(fife.MapChangeListener):
 	
 	def onMapChanged(self, map, changedLayers):
 		return
-		print "Changes on map ", map.Id()
+		print "Changes on map ", map.getId()
 		for layer in map.getLayers():
-			print layer.Id()
-			print "    ", ["%s, %x" % (i.getObject().Id(), i.getChangeInfo()) for i in layer.getChangedInstances()]
+			print layer.getId()
+			print "    ", ["%s, %x" % (i.getObject().getId(), i.getChangeInfo()) for i in layer.getChangedInstances()]
 	
 	def onLayerCreate(self, map, layer):
 		pass
@@ -37,7 +37,6 @@ class World(EventListenerBase):
 		self.engine = engine
 		self.eventmanager = engine.getEventManager()
 		self.model = engine.getModel()
-		self.metamodel = self.model.getMetaModel()
 		self.view = self.engine.getView()
 		self.filename = ''
 		self.pump_ctr = 0 # for testing purposis
@@ -52,7 +51,7 @@ class World(EventListenerBase):
 		
 		dynamicbuttons = ('moveButton', 'talkButton', 'kickButton', 'inspectButton')
 		if not self.instancemenu:
-			self.instancemenu = pychan.loadXML('content/gui/instancemenu.xml')
+			self.instancemenu = pychan.loadXML('gui/instancemenu.xml')
 			self.instancemenu.mapEvents({
 				'moveButton' : self.onMoveButtonPress,
 				'talkButton' : self.onTalkButtonPress,
@@ -99,7 +98,7 @@ class World(EventListenerBase):
 		self.map = loadMapFile(filename, self.engine)
 		self.maplistener = MapListener(self.map)
 		
-		self.agentlayer = self.map.getLayers("id", "TechdemoMapObjectLayer")[0]
+		self.agentlayer = self.map.getLayer('TechdemoMapObjectLayer')
 		self.hero = Hero(self.model, 'PC', self.agentlayer)
 		self.instance_to_agent[self.hero.agent.getFifeId()] = self.hero
 		self.hero.start()
@@ -113,7 +112,7 @@ class World(EventListenerBase):
 			self.instance_to_agent[beekeeper.agent.getFifeId()] = beekeeper
 			beekeeper.start()
 
-		cloudlayer = self.map.getLayers("id", "TechdemoMapCloudLayer")[0]
+		cloudlayer = self.map.getLayer('TechdemoMapTileLayer')
 		self.clouds = create_anonymous_agents(self.model, 'Cloud', cloudlayer, Cloud)
 		for cloud in self.clouds:
 			cloud.start(0.1, 0.05)
@@ -124,7 +123,7 @@ class World(EventListenerBase):
 				
 		self.view.resetRenderers()
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
-		textfont = self.engine.getGuiManager().createFont('content/fonts/rpgfont.png', 0, TDS.FontGlyphs);
+		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, TDS.FontGlyphs);
 		renderer.changeDefaultFont(textfont)
 		
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['small'])
@@ -132,13 +131,13 @@ class World(EventListenerBase):
 		
 		renderer = self.cameras['main'].getRenderer('CoordinateRenderer')
 		renderer.clearActiveLayers()
-		renderer.addActiveLayer(self.map.getLayers("id", TDS.CoordinateLayerName)[0])
+		renderer.addActiveLayer(self.map.getLayer(TDS.CoordinateLayerName))
 		
 		renderer = self.cameras['main'].getRenderer('QuadTreeRenderer')
 		renderer.setEnabled(True)
 		renderer.clearActiveLayers()
 		if TDS.QuadTreeLayerName:
-			renderer.addActiveLayer(self.map.getLayers("id", TDS.QuadTreeLayerName)[0])
+			renderer.addActiveLayer(self.map.getLayer(TDS.QuadTreeLayerName))
 		
 		self.cameras['small'].getLocationRef().setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
 		self.initial_cam2_x = self.cameras['small'].getLocation().getExactLayerCoordinates().x
@@ -164,10 +163,11 @@ class World(EventListenerBase):
 			c = self.cameras['small']
 			c.setEnabled(not c.isEnabled())
 		elif keystr == 'r':
-			self.model.deleteMaps()
-			self.metamodel.deleteDatasets()
-			self.view.clearCameras()
-			self.load(self.filename)
+			pass
+#			self.model.deleteMaps()
+#			self.metamodel.deleteDatasets()
+#			self.view.clearCameras()
+#			self.load(self.filename)
 		elif keystr == 'o':
 			self.target_rotation = (self.target_rotation + 90) % 360
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
@@ -203,7 +203,7 @@ class World(EventListenerBase):
 			
 		if (evt.getButton() == fife.MouseEvent.RIGHT):
 			instances = self.cameras['main'].getMatchingInstances(clickpoint, self.agentlayer)
-			print "selected instances on agent layer: ", [i.getObject().Id() for i in instances]
+			print "selected instances on agent layer: ", [i.getObject().getId() for i in instances]
 			if instances:
 				self.show_instancemenu(clickpoint, instances[0])
 	
@@ -211,11 +211,11 @@ class World(EventListenerBase):
 		renderer = fife.InstanceRenderer.getInstance(self.cameras['main'])
 		renderer.removeAllOutlines()
 		
-		pt = fife.ScreenPoint(evt.getX(), evt.getY())
-		instances = self.cameras['main'].getMatchingInstances(pt, self.agentlayer);
-		for i in instances:
-			if i.getObject().Id() in ('Girl', 'Beekeeper'):
-				renderer.addOutlined(i, 173, 255, 47, 2)
+#		pt = fife.ScreenPoint(evt.getX(), evt.getY())
+#		instances = self.cameras['main'].getMatchingInstances(pt, self.agentlayer);
+#		for i in instances:
+#			if i.getObject().getId() in ('Girl', 'Beekeeper'):
+#				renderer.addOutlined(i, 173, 255, 47, 2)
 	
 	def onConsoleCommand(self, command):
 		result = ''
@@ -233,10 +233,10 @@ class World(EventListenerBase):
 		self.hide_instancemenu()
 		instance = self.instancemenu.instance
 		self.hero.talk(instance.getLocationRef())
-		if instance.getObject().Id() == 'Beekeeper':
+		if instance.getObject().getId() == 'Beekeeper':
 			txtindex = random.randint(0, len(TDS.beekeeperTexts) - 1)
 			instance.say(TDS.beekeeperTexts[txtindex], 5000)
-		if instance.getObject().Id() == 'Girl':
+		if instance.getObject().getId() == 'Girl':
 			txtindex = random.randint(0, len(TDS.girlTexts) - 1)
 			instance.say(TDS.girlTexts[txtindex], 5000)
 	
@@ -249,10 +249,10 @@ class World(EventListenerBase):
 		self.hide_instancemenu()
 		inst = self.instancemenu.instance
 		saytext = ['Engine told me that this instance has']
-		if inst.Id():
-			saytext.append(' name %s,' % inst.Id())
+		if inst.getId():
+			saytext.append(' name %s,' % inst.getId())
 		saytext.append(' ID %s and' % inst.getFifeId())
-		saytext.append(' object name %s' % inst.getObject().Id())
+		saytext.append(' object name %s' % inst.getObject().getId())
 		self.hero.agent.say('\n'.join(saytext), 3500)
 		
 	def pump(self):
