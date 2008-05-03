@@ -415,16 +415,15 @@ namespace FIFE {
 		return 0;
 	}
 
-	Location Instance::getFacingLocation() const {
-		if (m_facinglocation) {
-			return *m_facinglocation;
-		}
-		return m_location;
+	Location Instance::getFacingLocation() {
+		return this->getFacingLocationRef();
 	}
 
 	Location& Instance::getFacingLocationRef() {
 		if (!m_facinglocation) {
 			m_facinglocation = new Location(m_location);
+			m_facinglocation->setExactLayerCoordinates(m_facinglocation->getExactLayerCoordinates() + ExactModelCoordinate(1.0, 0.0));
+			//m_facinglocation->setLayerCoordinates(ModelCoordinate(1,0));
 		}
 		return *m_facinglocation;
 	}

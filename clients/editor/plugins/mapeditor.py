@@ -158,7 +158,6 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._toolbar.show()
 		self._setMode(NOTHING_LOADED)
 
-
 	def _assert(self, statement, msg):
 		if not statement:
 			print msg
@@ -320,6 +319,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 				i.setRotation(angles[ind])
 			else:
 				print "rotation not supported for this instance"
+
+	def changeRotation(self):
+		currot = self._camera.getRotation()
+		self._camera.setRotation((currot + 90) % 360)
 	
 	def _moveCamera(self, screen_x, screen_y):
 		coords = self._camera.getLocationRef().getMapCoordinates()
@@ -440,6 +443,9 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		elif keystr == 'r':
 			if self._selection:
 				self._rotateInstances()
+
+		elif keystr == 'o':
+			self.changeRotation()
 	
 	def keyReleased(self, evt):
 		keyval = evt.getKey().getValue()

@@ -252,6 +252,3 @@ namespace FIFE {
 
 	}
 }
-
-
-

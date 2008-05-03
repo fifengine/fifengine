@@ -41,6 +41,7 @@ namespace gcn {
 		y_downoffset(0),
 		m_listener(NULL),
 		m_helptext("") {
+		m_hoverImage = hover_file;
 		setBorderSize(0);
 		adjustSize();
 		mCaption = caption;
@@ -64,6 +65,10 @@ namespace gcn {
 				img = m_downImage;
 				xoffset = x_downoffset;
 				yoffset = y_downoffset;
+			}
+		} else if(mHasMouse) {
+			if( m_hoverImage ) {
+				graphics->drawImage(m_hoverImage, 0, 0);
 			}
 		} else {
 			if( mHasMouse && m_hoverImage) { 

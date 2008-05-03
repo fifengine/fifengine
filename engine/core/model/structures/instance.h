@@ -127,7 +127,7 @@ namespace FIFE {
 		*  @note does not return const Location&, since swig wont be const correct
 		 * @return the direction of instance.
 		 */
-		Location getFacingLocation() const;
+		Location getFacingLocation();
 
 		/** Set the rotation offset of this instance
 		 */
