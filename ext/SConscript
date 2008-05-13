@@ -12,5 +12,14 @@ os.system('./configure')
 os.system('make')
 os.system('make install prefix=%s' % installpath)
 
+os.chdir(str(path('..')))
+
+os.chdir(str(path('.') / path('libpng-1.2.26')))
+
+os.system('./configure')
+os.system('make all-am')
+os.system('make install prefix=%s' % installpath)
+os.system('make install-data-hook prefix=%s' % installpath)
+
 os.chdir(curpath)
 
