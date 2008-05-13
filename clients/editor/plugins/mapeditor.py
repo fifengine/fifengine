@@ -307,18 +307,27 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 		
 		for i in self._getInstancesFromSelection(top_only=True):
-			ovis = i.getObject().get2dGfxVisual()
-			curUsedAngle = ovis.getClosestMatchingAngle(i.getRotation())
-			angles = ovis.getStaticImageAngles()
-			if angles:
-				ind = list(angles).index(curUsedAngle)
-				if ind == (len(angles) - 1):
-					ind = 0
-				else:
-					ind += 1
-				i.setRotation(angles[ind])
-			else:
-				print "rotation not supported for this instance"
+			i.setRotation((i.getRotation() + 90) % 360)
+##    Surprisingly, the following "snap-to-rotation" code is actually incorrect. Object
+##    rotation is independent of the camera, whereas the choice of an actual rotation image
+##    depends very much on how the camera is situated. For example, suppose an object has
+##    rotations defined for 45,135,225,315. And suppose the camera position results in an
+##    effective 60 degree rotation. If the object is given a rotation of 0, then the (correct)
+##    final rotation value of 45 (which is closest to 60 = 0 + 60) will be chosen. If we try
+##    to snap to the closest value to 0 (45), then an incorrect final rotation value will be
+##    chosen: 135, which is closest to 105 = 45 + 60. --jwt
+#			ovis = i.getObject().get2dGfxVisual()
+#			curUsedAngle = ovis.getClosestMatchingAngle(i.getRotation())
+#			angles = ovis.getStaticImageAngles()
+#			if angles:
+#				ind = list(angles).index(curUsedAngle)
+#				if ind == (len(angles) - 1):
+#					ind = 0
+#				else:
+#					ind += 1
+#				i.setRotation(angles[ind])
+#			else:
+#				print "rotation not supported for this instance"
 
 	def changeRotation(self):
 		currot = self._camera.getRotation()
