@@ -51,6 +51,7 @@ namespace FIFE {
 			std::vector<Instance*> getInstances(const std::string& field, const std::string& value);
 
 			void setInstancesVisible(bool vis);
+			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;
 
