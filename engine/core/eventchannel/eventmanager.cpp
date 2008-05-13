@@ -258,6 +258,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchCommand(Command& command) {
+		if(!m_pending_commandlisteners.empty()) {
+			std::vector<ICommandListener*>::iterator i = m_pending_commandlisteners.begin();
+			while (i != m_pending_commandlisteners.end()) {
+				m_commandlisteners.push_back(*i);
+				++i;
+			}
+			m_pending_commandlisteners.clear();
+		}
+
 		if (!m_pending_cldeletions.empty()) {
 			std::vector<ICommandListener*>::iterator i = m_pending_cldeletions.begin();
 			while (i != m_pending_cldeletions.end()) {
@@ -272,15 +281,6 @@ namespace FIFE {
 				++i;
 			}
 			m_pending_cldeletions.clear();
-		}
-
-		if(!m_pending_commandlisteners.empty()) {
-			std::vector<ICommandListener*>::iterator i = m_pending_commandlisteners.begin();
-			while (i != m_pending_commandlisteners.end()) {
-				m_commandlisteners.push_back(*i);
-				++i;
-			}
-			m_pending_commandlisteners.clear();
 		}
 
 		std::vector<ICommandListener*>::iterator i = m_commandlisteners.begin();
@@ -303,6 +303,15 @@ namespace FIFE {
 			}
 		}
 
+		if(!m_pending_keylisteners.empty()) {
+			std::vector<IKeyListener*>::iterator i = m_pending_keylisteners.begin();
+			while (i != m_pending_keylisteners.end()) {
+				m_keylisteners.push_back(*i);
+				++i;
+			}
+			m_pending_keylisteners.clear();
+		}
+
 		if (!m_pending_kldeletions.empty()) {
 			std::vector<IKeyListener*>::iterator i = m_pending_kldeletions.begin();
 			while (i != m_pending_kldeletions.end()) {
@@ -317,15 +326,6 @@ namespace FIFE {
 				++i;
 			}
 			m_pending_kldeletions.clear();
-		}
-
-		if(!m_pending_keylisteners.empty()) {
-			std::vector<IKeyListener*>::iterator i = m_pending_keylisteners.begin();
-			while (i != m_pending_keylisteners.end()) {
-				m_keylisteners.push_back(*i);
-				++i;
-			}
-			m_pending_keylisteners.clear();
 		}
 
 		std::vector<IKeyListener*>::iterator i = m_keylisteners.begin();
@@ -360,6 +360,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchMouseEvent(MouseEvent& evt) {
+		if(!m_pending_mouselisteners.empty()) {
+			std::vector<IMouseListener*>::iterator i = m_pending_mouselisteners.begin();
+			while (i != m_pending_mouselisteners.end()) {
+				m_mouselisteners.push_back(*i);
+				++i;
+			}
+			m_pending_mouselisteners.clear();
+		}
+
 		if (!m_pending_mldeletions.empty()) {
 			std::vector<IMouseListener*>::iterator i = m_pending_mldeletions.begin();
 			while (i != m_pending_mldeletions.end()) {
@@ -374,15 +383,6 @@ namespace FIFE {
 				++i;
 			}
 			m_pending_mldeletions.clear();
-		}
-
-		if(!m_pending_mouselisteners.empty()) {
-			std::vector<IMouseListener*>::iterator i = m_pending_mouselisteners.begin();
-			while (i != m_pending_mouselisteners.end()) {
-				m_mouselisteners.push_back(*i);
-				++i;
-			}
-			m_pending_mouselisteners.clear();
 		}
 
 		std::vector<IMouseListener*>::iterator i = m_mouselisteners.begin();
@@ -425,6 +425,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchSdlEvent(SDL_Event& evt) {
+		if (!m_pending_sdleventlisteners.empty()) {
+			std::vector<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners.begin();
+			while(i != m_pending_sdleventlisteners.end()) {
+				m_sdleventlisteners.push_back(*i);
+				++i;
+			}
+			m_pending_sdleventlisteners.clear();
+		}
+
 		if (!m_pending_sdldeletions.empty()) {
 			std::vector<ISdlEventListener*>::iterator i = m_pending_sdldeletions.begin();
 			while (i != m_pending_sdldeletions.end()) {
@@ -441,15 +450,6 @@ namespace FIFE {
 			m_pending_sdldeletions.clear();
 		}
 
-		if (!m_pending_sdleventlisteners.empty()) {
-			std::vector<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners.begin();
-			while(i != m_pending_sdleventlisteners.end()) {
-				m_sdleventlisteners.push_back(*i);
-				++i;
-			}
-			m_pending_sdleventlisteners.clear();
-		}
-
 		std::vector<ISdlEventListener*>::iterator i = m_sdleventlisteners.begin();
 		while (i != m_sdleventlisteners.end()) {
 			(*i)->onSdlEvent(evt);
@@ -458,6 +458,15 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchWidgetEvent(WidgetEvent& evt) {
+		if(!m_pending_widgetlisteners.empty()) {
+			std::vector<IWidgetListener*>::iterator i = m_pending_widgetlisteners.begin();
+			while (i != m_pending_widgetlisteners.end()) {
+				m_widgetlisteners.push_back(*i);
+				++i;
+			}
+			m_pending_widgetlisteners.clear();
+		}
+
 		if (!m_pending_wldeletions.empty()) {
 			std::vector<IWidgetListener*>::iterator i = m_pending_wldeletions.begin();
 			while (i != m_pending_wldeletions.end()) {
@@ -472,15 +481,6 @@ namespace FIFE {
 				++i;
 			}
 			m_pending_wldeletions.clear();
-		}
-
-		if(!m_pending_widgetlisteners.empty()) {
-			std::vector<IWidgetListener*>::iterator i = m_pending_widgetlisteners.begin();
-			while (i != m_pending_widgetlisteners.end()) {
-				m_widgetlisteners.push_back(*i);
-				++i;
-			}
-			m_pending_widgetlisteners.clear();
 		}
 
 		std::vector<IWidgetListener*>::iterator i = m_widgetlisteners.begin();
