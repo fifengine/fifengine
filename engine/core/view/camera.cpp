@@ -294,7 +294,7 @@ namespace FIFE {
 		instances.clear();
 		const std::vector<Instance*>& layer_instances = m_layer_to_instances[&layer];
 		std::vector<Instance*>::const_iterator instance_it = layer_instances.end();
-		do {
+		while (instance_it != layer_instances.begin()) {
 			--instance_it;
 			Instance* i = (*instance_it);
 			InstanceVisual* visual = i->getVisual<InstanceVisual>();
@@ -320,14 +320,14 @@ namespace FIFE {
 					instances.push_back(i);
 				}
 			}
-		} while (instance_it != layer_instances.begin());
+		}
 	}
 	
 	void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates) {
 		instances.clear();
 		const std::vector<Instance*>& layer_instances = m_layer_to_instances[loc.getLayer()];
 		std::vector<Instance*>::const_iterator instance_it = layer_instances.end();
-		do {
+		while (instance_it != layer_instances.begin()) {
 			--instance_it;
 			Instance* i = (*instance_it);
 			if (use_exactcoordinates) {
@@ -339,7 +339,7 @@ namespace FIFE {
 					instances.push_back(i);
 				}
 			}
-		} while (instance_it != layer_instances.begin());
+		}
 	}
 
 	void Camera::attach(Instance *instance) {
