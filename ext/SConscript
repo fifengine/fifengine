@@ -21,5 +21,10 @@ os.system('make all-am')
 os.system('make install prefix=%s' % installpath)
 os.system('make install-data-hook prefix=%s' % installpath)
 
-os.chdir(curpath)
+os.chdir('..')
+os.chdir(str(path('.') / path('openal-soft')))
+os.system('./configure')
+os.system('make')
+os.system('make install prefix=%s' % installpath)
 
+os.chdir(curpath)

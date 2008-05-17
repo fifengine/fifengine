@@ -21,7 +21,7 @@ class TestAudio(unittest.TestCase):
 		sound.setSoundClip(id)
 		sound.setLooping(True)
 		sound.play()
-		time.sleep(3);
+		time.sleep(15);
 	
 	def test2Streams(self):
 		em = self.soundmanager.createEmitter()
@@ -34,7 +34,7 @@ class TestAudio(unittest.TestCase):
 		em.setGain(0.7)
 		em.play()
 		sound.play()
-		time.sleep(3);
+		time.sleep(15);
 
 TEST_CLASSES = [TestAudio]
 
