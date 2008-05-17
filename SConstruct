@@ -86,6 +86,7 @@ def checkSimpleLib(context, liblist, header = '', lang = 'c', required = 1):
 			ret = conf.CheckLib(lib)
 
 		if ret:
+#			print "ret: " + ret
 			if not lib in conf.env['LIBS']:
 				conf.env.Append(LIBS = [lib])
 			return ret

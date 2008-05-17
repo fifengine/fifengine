@@ -53,6 +53,7 @@ namespace FIFE {
 			Instance* getInstance(const std::string& id);
 
 			void setInstancesVisible(bool vis);
+			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;
 

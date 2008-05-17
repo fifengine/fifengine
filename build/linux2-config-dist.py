@@ -11,7 +11,7 @@ def addExtras(context):
 	context.env.Append(CPPPATH = [])	
 	
 	context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
-	context.checkSimpleLib(['openal'], 'AL/al.h')
+	context.checkSimpleLib(['openal_soft'], 'AL/al.h')
 	context.checkSimpleLib(['python', 'python2.5'], ['python2.5/Python.h'])
 	context.checkSimpleLib(['SDL'], 'SDL.h')
 	context.checkSimpleLib(['SDL_ttf'], 'SDL_ttf.h')
