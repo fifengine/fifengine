@@ -42,6 +42,10 @@ class ObjectSelector(object):
 	
 		self.objects.capture(self.objectSelected)
 
+	def update(self):
+		self.namespaces.items = self.engine.getModel().getNamespaces()
+		self.namespaces.selected = 0
+		self.updateObjects()
 	
 	def updateObjects(self):
 		if not self.namespaces.selected_item: return
@@ -85,7 +89,7 @@ class ObjectSelector(object):
 	
 	
 	def show(self):
-		self.updateObjects()
+		self.update()
 		self.gui.show()
 	def hide(self):
 		self.gui.hide()
