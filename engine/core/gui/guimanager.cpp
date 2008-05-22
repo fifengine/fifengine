@@ -204,7 +204,7 @@ namespace FIFE {
 	void GUIManager::evaluateMouseEventConsumption(MouseEvent& evt) {
 		gcn::Widget* w = m_gcn_topcontainer->getWidgetAt(evt.getX(), evt.getY());
 		if (w && w->isVisible()) {
-			evt.consume();
+			// evt.consume();
 		}
 	}
 
