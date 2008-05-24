@@ -22,7 +22,7 @@
 					<Add directory="..\..\includes\mingw\libogg" />
 					<Add directory="..\..\includes\mingw\libpng" />
 					<Add directory="..\..\includes\mingw\libvorbis" />
-					<Add directory="..\..\includes\mingw\openal-soft" />
+					<Add directory="..\..\includes\mingw\openal" />
 					<Add directory="..\..\includes\mingw\python25" />
 					<Add directory="..\..\includes\mingw\sdl" />
 					<Add directory="..\..\includes\mingw\sdl_image" />
@@ -42,7 +42,7 @@
 					<Add library="..\..\static_libs\mingw\SDL_image.lib" />
 					<Add library="..\..\static_libs\mingw\libSDLmain.a" />
 					<Add library="..\..\static_libs\mingw\libSDL.dll.a" />
-					<Add library="..\..\static_libs\mingw\libopenal32.a" />
+					<Add library="..\..\static_libs\mingw\OpenAl32.lib" />
 					<Add library="..\..\static_libs\mingw\SDL_ttf.lib" />
 					<Add library="..\..\static_libs\mingw\libboost_filesystem.a" />
 					<Add library="..\..\static_libs\mingw\libboost_regex.a" />

@@ -24,7 +24,7 @@
 			<Tool Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2005\libguichan;..\..\includes\msvc2005\boost_1_35_0;..\..\includes\msvc2005\openal-soft;..\..\includes\msvc2005\sdl;..\..\includes\msvc2005\zlib;..\..\includes\msvc2005\libvorbis;..\..\includes\msvc2005\libpng;..\..\includes\msvc2005\libogg;..\..\includes\msvc2005\python25;..\..\includes\msvc2005\sdl_image;..\..\includes\msvc2005\sdl_ttf"
+				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2005\libguichan;..\..\includes\msvc2005\boost_1_35_0;..\..\includes\msvc2005\openal;..\..\includes\msvc2005\sdl;..\..\includes\msvc2005\zlib;..\..\includes\msvc2005\libvorbis;..\..\includes\msvc2005\libpng;..\..\includes\msvc2005\libogg;..\..\includes\msvc2005\python25;..\..\includes\msvc2005\sdl_image;..\..\includes\msvc2005\sdl_ttf"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_OPENGL;HAVE_ZIP;LOG_ENABLED;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
@@ -69,7 +69,7 @@
 			<Tool Name="VCMIDLTool"/>
 			<Tool Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2005\libguichan;..\..\includes\msvc2005\boost_1_35_0;..\..\includes\msvc2005\openal-soft;..\..\includes\msvc2005\sdl;..\..\includes\msvc2005\zlib;..\..\includes\msvc2005\libvorbis;..\..\includes\msvc2005\libpng;..\..\includes\msvc2005\libogg;..\..\includes\msvc2005\python25;..\..\includes\msvc2005\sdl_image;..\..\includes\msvc2005\sdl_ttf"
+				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2005\libguichan;..\..\includes\msvc2005\boost_1_35_0;..\..\includes\msvc2005\openal;..\..\includes\msvc2005\sdl;..\..\includes\msvc2005\zlib;..\..\includes\msvc2005\libvorbis;..\..\includes\msvc2005\libpng;..\..\includes\msvc2005\libogg;..\..\includes\msvc2005\python25;..\..\includes\msvc2005\sdl_image;..\..\includes\msvc2005\sdl_ttf"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;HAVE_OPENGL;HAVE_ZIP;LOG_ENABLED;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -108,7 +108,7 @@
 			<Tool Name="VCMIDLTool"/>
 			<Tool Name="VCCLCompilerTool"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2005\libguichan;..\..\includes\msvc2005\boost_1_35_0;..\..\includes\msvc2005\openal-soft;..\..\includes\msvc2005\sdl;..\..\includes\msvc2005\zlib;..\..\includes\msvc2005\libvorbis;..\..\includes\msvc2005\libpng;..\..\includes\msvc2005\libogg;..\..\includes\msvc2005\python25;..\..\includes\msvc2005\sdl_image;..\..\includes\msvc2005\sdl_ttf"
+				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2005\libguichan;..\..\includes\msvc2005\boost_1_35_0;..\..\includes\msvc2005\openal;..\..\includes\msvc2005\sdl;..\..\includes\msvc2005\zlib;..\..\includes\msvc2005\libvorbis;..\..\includes\msvc2005\libpng;..\..\includes\msvc2005\libogg;..\..\includes\msvc2005\python25;..\..\includes\msvc2005\sdl_image;..\..\includes\msvc2005\sdl_ttf"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_OPENGL;HAVE_ZIP;LOG_ENABLED;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -147,7 +147,7 @@
 			<Tool Name="VCMIDLTool"/>
 			<Tool Name="VCCLCompilerTool" 
 				WholeProgramOptimization="false" 
-				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2005\libguichan;..\..\includes\msvc2005\boost_1_35_0;..\..\includes\msvc2005\openal-soft;..\..\includes\msvc2005\sdl;..\..\includes\msvc2005\zlib;..\..\includes\msvc2005\libvorbis;..\..\includes\msvc2005\libpng;..\..\includes\msvc2005\libogg;..\..\includes\msvc2005\python25;..\..\includes\msvc2005\sdl_image;..\..\includes\msvc2005\sdl_ttf" 
+				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2005\libguichan;..\..\includes\msvc2005\boost_1_35_0;..\..\includes\msvc2005\openal;..\..\includes\msvc2005\sdl;..\..\includes\msvc2005\zlib;..\..\includes\msvc2005\libvorbis;..\..\includes\msvc2005\libpng;..\..\includes\msvc2005\libogg;..\..\includes\msvc2005\python25;..\..\includes\msvc2005\sdl_image;..\..\includes\msvc2005\sdl_ttf" 
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_OPENGL;HAVE_ZIP;LOG_ENABLED;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880" 
 				RuntimeLibrary="2" 
 				UsePrecompiledHeader="0" 
