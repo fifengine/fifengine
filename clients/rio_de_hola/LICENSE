@@ -68,10 +68,18 @@ Dauerflucher (dauerflucher@gmail.com)
 Website:
 http://www.openanno.org
 
+License:
+Creative Commons Attribution-Sharealike 3.0 Unported
+http://creativecommons.org/licenses/by-sa/3.0/
+
 Affected files:
+objects/items/beebox/*.png
 objects/items/coins/*.png
 objects/items/flask/*.png
 objects/items/matchbox/*.png
+objects/items/shrine/*.png
+objects/items/signs/*.png
+objects/items/*/source/*.blend
 
 === Reiner's tilesets ===
 Author:

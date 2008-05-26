@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="ascii"?>
 <map id="myMap" format="1.0">
+	<import dir="../objects/agents/bee"></import>
+	<import dir="../objects/agents/beekeeper"></import>
+	<import dir="../objects/agents/boy"></import>
+	<import dir="../objects/agents/chemist"></import>
+	<import dir="../objects/agents/girl"></import>
+	<import dir="../objects/agents/hippie_priest"></import>
+	<import dir="../objects/agents/merchant"></import>
+	<import dir="../objects/agents/tourist_female_1"></import>
+	<import dir="../objects/agents/tourist_female_2"></import>
+	<import dir="../objects/agents/tourist_male_1"></import>
+	<import dir="../objects/agents/tourist_male_2"></import>
+	<import dir="../objects/clouds"></import>
+	<import dir="../objects/ground"></import>
+	<import dir="../objects/helpers"></import>
 	<import dir="../objects/items"></import>
+	<import dir="../objects/nature"></import>
 	<import file="../objects/ground/water/object.xml"></import>
 	<import file="../objects/ground/beach/02/object.xml"></import>
 	<import file="../objects/ground/beach/01/object.xml"></import>

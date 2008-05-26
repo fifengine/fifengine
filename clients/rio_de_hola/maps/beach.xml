@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ascii"?>
 <map id="myMap" format="1.0">
 	<import dir="../objects/agents/beekeeper"></import>
-	<import dir="../objects"></import>
+	<import dir="../objects/clouds"></import>
+	<import dir="../objects/ground"></import>
+	<import dir="../objects/helpers"></import>
+	<import dir="../objects/items"></import>
+	<import dir="../objects/nature"></import>
 	<import dir="../objects/items/resort/deck_chairs"></import>
 	<layer grid_type="square" id="TechdemoMapTileLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
 		<instances>
