@@ -32,6 +32,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4250;4290"
 			/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
@@ -40,6 +41,7 @@
 				AdditionalDependencies="glu32.lib guichan_opengl.lib guichan_sdl.lib guichan.lib ogg_static.lib openal32.lib opengl32.lib sdl.lib sdlmain.lib SDL_image.lib SDL_ttf.lib vorbis_static.lib vorbisfile_static.lib libpng.lib zlib.lib"
 				OutputFile="$(OutDir)\_fife.pyd"
 				AdditionalLibraryDirectories="..\..\static_libs\msvc2005;..\..\static_libs\msvc2005\python25"
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
 			/>
 			<Tool Name="VCALinkTool"/>
@@ -78,6 +80,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4250;4290"
 			/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
@@ -115,6 +118,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4250;4290"
 			/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
@@ -154,6 +158,7 @@
 				WarningLevel="3" 
 				Detect64BitPortabilityProblems="true" 
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4250;4290"
 			/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
@@ -162,6 +167,7 @@
 				AdditionalDependencies="glu32.lib guichan_opengl.lib guichan_sdl.lib guichan.lib ogg_static.lib openal32.lib opengl32.lib sdl.lib sdlmain.lib SDL_image.lib SDL_ttf.lib vorbis_static.lib vorbisfile_static.lib libpng.lib zlib.lib" 
 				OutputFile="$(OutDir)\_fife.pyd" 
 				AdditionalLibraryDirectories="..\..\static_libs\msvc2005;..\..\static_libs\msvc2005\python25"
+				IgnoreDefaultLibraryNames="libcmt.lib"
 			/>
 			<Tool Name="VCALinkTool"/>
 			<Tool Name="VCManifestTool"/>
