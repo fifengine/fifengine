@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# coding: utf-8
+# This is the island_demo client for FIFE.
+
 import sys, os, re, math, random
 
 def _jp(path):
