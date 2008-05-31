@@ -11,7 +11,7 @@
 			<DebugSettings
 				Command="..\..\..\..\engine\swigwrappers\python\python.exe"
 				WorkingDirectory="..\..\..\..\clients\island_demo"
-				CommandArguments="island_demo.py"
+				CommandArguments="run_demo.py"
 			/>
 		</Configuration>
 		<Configuration
@@ -20,7 +20,7 @@
 			<DebugSettings
 				Command="..\..\..\..\engine\swigwrappers\python\python.exe"
 				WorkingDirectory="..\..\..\..\clients\island_demo"
-				CommandArguments="island_demo.py"
+				CommandArguments="run_demo.py"
 			/>
 		</Configuration>
 	</Configurations>
