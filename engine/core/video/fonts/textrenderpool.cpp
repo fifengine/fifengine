@@ -113,16 +113,16 @@ namespace FIFE {
 
 	void TextRenderPool::removeOldEntries() {
 
-		type_pool::iterator tmp,it = m_pool.begin();
+		type_pool::iterator it = m_pool.begin();
 		uint32_t now = TimeManager::instance()->getTime();
-		for(;it != m_pool.end(); ++it) {
+		while (it != m_pool.end()) {
 			if( (now - it->timestamp) > 1000*60 ) {
-				tmp = it;
-				++tmp;
 				delete it->image;
-				m_pool.erase(it);
+				it = m_pool.erase(it);
 				--m_poolSize;
-				it = tmp;
+			}
+			else {
+				++it;
 			}
 		}
 
