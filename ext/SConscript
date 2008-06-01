@@ -14,7 +14,7 @@ os.system('make install prefix=%s' % installpath)
 
 os.chdir(str(path('..')))
 
-os.chdir(str(path('.') / path('libpng-1.2.26')))
+os.chdir(str(path('.') / path('libpng-1.2.29')))
 
 os.system('./configure')
 os.system('make all-am')
