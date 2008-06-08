@@ -48,6 +48,10 @@
 	<import file="../objects/nature/trees/02/object.xml"></import>
 	<import file="../objects/nature/bushes/18/object.xml"></import>
 	<import file="../objects/nature/bushes/17/object.xml"></import>
+	<import file="../objects/items/sanctuary/skull_pole/object.xml"></import>
+	<import file="../objects/items/signs/sign2/object.xml"></import>
+	<import file="../objects/items/signs/sign1/object.xml"></import>
+	<import file="../objects/nature/bushes/06/object.xml"></import>
 	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="TileLayer" x_scale="1.0" y_scale="1.0" rotation="0.0">
 		<instances>
 			<i x="-1.0" o="sands:01" y="1.0" r="0" z="0.0" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
@@ -5184,6 +5188,44 @@
 			<i x="-23.0" o="sands:02" z="0.0" y="28.0" r="0"></i>
 			<i x="-21.0" o="sands:02" z="0.0" y="28.0" r="0"></i>
 			<i x="-19.0" o="sands:02" z="0.0" y="28.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="11.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="13.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="15.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="17.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="19.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="21.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="23.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="25.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="27.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="29.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="31.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-11.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-13.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-15.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-17.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-19.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-21.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-23.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-25.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-27.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-29.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-31.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-33.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-35.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="7.0" r="0"></i>
+			<i x="9.0" o="sands:02" z="0.0" y="-8.0" r="0"></i>
+			<i x="-33.0" o="sands:02" z="0.0" y="-19.0" r="0"></i>
+			<i x="-35.0" o="sands:02" z="0.0" y="-19.0" r="0"></i>
+			<i x="-37.0" o="sands:02" z="0.0" y="-19.0" r="0"></i>
+			<i x="-39.0" o="sands:02" z="0.0" y="-19.0" r="0"></i>
+			<i x="-41.0" o="sands:02" z="0.0" y="-19.0" r="0"></i>
+			<i x="-43.0" o="sands:02" z="0.0" y="-19.0" r="0"></i>
+			<i x="25.0" o="sands:02" z="0.0" y="-1.0" r="0"></i>
+			<i x="27.0" o="sands:02" z="0.0" y="-1.0" r="0"></i>
+			<i x="29.0" o="sands:02" z="0.0" y="-1.0" r="0"></i>
+			<i x="31.0" o="sands:02" z="0.0" y="-1.0" r="0"></i>
+			<i x="33.0" o="sands:02" z="0.0" y="-1.0" r="0"></i>
+			<i x="22.0" o="sands:02" z="0.0" y="-1.0" r="0"></i>
 		</instances>
 	</layer>
 	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="ObjectLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
@@ -5200,9 +5242,6 @@
 			<i x="5.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
 			<i x="6.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
 			<i x="7.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
-			<i x="8.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
-			<i x="9.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
-			<i x="10.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
 			<i x="11.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
 			<i x="12.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
 			<i x="13.0" o="trees:05" z="0.0" y="-8.0" r="0"></i>
@@ -5220,9 +5259,6 @@
 			<i x="22.0" o="trees:05" z="0.0" y="-5.0" r="0"></i>
 			<i x="22.0" o="trees:05" z="0.0" y="-4.0" r="0"></i>
 			<i x="22.0" o="trees:05" z="0.0" y="-3.0" r="0"></i>
-			<i x="22.0" o="trees:05" z="0.0" y="-2.0" r="0"></i>
-			<i x="22.0" o="trees:05" z="0.0" y="-1.0" r="0"></i>
-			<i x="22.0" o="trees:05" z="0.0" y="0.0" r="0"></i>
 			<i x="22.0" o="trees:05" z="0.0" y="1.0" r="0"></i>
 			<i x="22.0" o="trees:05" z="0.0" y="2.0" r="0"></i>
 			<i x="22.0" o="trees:05" z="0.0" y="3.0" r="0"></i>
@@ -5242,9 +5278,6 @@
 			<i x="13.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
 			<i x="12.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
 			<i x="11.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
-			<i x="10.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
-			<i x="9.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
-			<i x="8.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
 			<i x="7.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
 			<i x="6.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
 			<i x="5.0" o="trees:05" z="0.0" y="7.0" r="0"></i>
@@ -5358,7 +5391,7 @@
 			<i x="60.0" o="starfishes:01" z="0.0" y="-5.0" r="0"></i>
 			<i x="51.0" o="starfishes:01" z="0.0" y="-3.0" r="0"></i>
 			<i x="55.0" o="starfishes:01" z="0.0" y="21.0" r="0"></i>
-			<i x="-14.0" o="priest_hut" z="0.0" y="-3.0" r="0"></i>
+			<i x="-14.0" o="priest_hut" z="0.0" y="-3.0" r="180"></i>
 			<i x="53.0" o="mussels:01" z="0.0" y="-31.0" r="0"></i>
 			<i x="60.0" o="mussels:01" z="0.0" y="-19.0" r="0"></i>
 			<i x="43.0" o="mussels:01" z="0.0" y="-3.0" r="0"></i>
@@ -5422,7 +5455,7 @@
 			<i x="-30.0" o="mussels:03" z="0.0" y="30.0" r="0"></i>
 			<i x="-11.0" o="mussels:03" z="0.0" y="39.0" r="0"></i>
 			<i x="-23.0" o="mussels:04" z="0.0" y="36.0" r="0"></i>
-			<i x="-4.0" o="mussels:04" z="0.0" y="33.0" r="0"></i>
+			<i x="-15.0" o="mussels:04" z="0.0" y="34.0" r="0"></i>
 			<i x="40.0" o="mussels:04" z="0.0" y="36.0" r="0"></i>
 			<i x="57.0" o="mussels:04" z="0.0" y="28.0" r="0"></i>
 			<i x="49.0" o="mussels:04" z="0.0" y="4.0" r="0"></i>
@@ -5495,7 +5528,6 @@
 			<i x="-46.0" o="mussels:09" z="0.0" y="-46.0" r="0"></i>
 			<i x="-49.0" o="mussels:09" z="0.0" y="-14.0" r="0"></i>
 			<i x="-53.0" o="mussels:09" z="0.0" y="19.0" r="0"></i>
-			<i x="-7.0" o="mussels:10" z="0.0" y="33.0" r="0"></i>
 			<i x="48.0" o="mussels:10" z="0.0" y="35.0" r="0"></i>
 			<i x="53.0" o="mussels:10" z="0.0" y="-20.0" r="0"></i>
 			<i x="47.0" o="mussels:10" z="0.0" y="-39.0" r="0"></i>
@@ -5628,9 +5660,40 @@
 			<i x="56.0" o="bushes:17" z="0.0" y="-11.0" r="0"></i>
 			<i x="55.0" o="bushes:17" z="0.0" y="-10.0" r="0"></i>
 			<i x="53.0" o="bushes:17" z="0.0" y="-2.0" r="0"></i>
+			<i x="22.0" o="trees:05" z="0.0" y="0.0" r="0"></i>
+			<i x="-18.0" o="skull_pole" z="0.0" y="38.0" r="180"></i>
+			<i x="-15.0" o="skull_pole" z="0.0" y="38.0" r="180"></i>
+			<i x="-15.0" o="sign:001" z="0.0" y="36.0" r="0"></i>
+			<i x="-15.0" o="sign:001" z="0.0" y="1.0" r="270"></i>
+			<i x="11.0" o="sign:001" z="0.0" y="30.0" r="0"></i>
+			<i x="34.0" o="sign:001" z="0.0" y="-3.0" r="90"></i>
+			<i x="9.0" o="sign:001" z="0.0" y="-36.0" r="270"></i>
+			<i x="-6.0" o="sign:000" z="0.0" y="1.0" r="90"></i>
+			<i x="-17.0" o="sign:001" z="0.0" y="-18.0" r="0"></i>
+			<i x="-33.0" o="sign:000" z="0.0" y="-21.0" r="180"></i>
+			<i x="-32.0" o="sign:000" z="0.0" y="-25.0" r="180"></i>
+			<i x="-31.0" o="sign:000" z="0.0" y="-26.0" r="180"></i>
+			<i x="-30.0" o="sign:000" z="0.0" y="-27.0" r="180"></i>
+			<i x="-29.0" o="sign:000" z="0.0" y="-27.0" r="90"></i>
+			<i x="-26.0" o="sign:000" z="0.0" y="-21.0" r="270"></i>
+			<i x="-28.0" o="sign:000" z="0.0" y="-26.0" r="90"></i>
+			<i x="-26.0" o="sign:000" z="0.0" y="-22.0" r="270"></i>
+			<i x="-33.0" o="sign:000" z="0.0" y="-22.0" r="180"></i>
+			<i x="-33.0" o="sign:000" z="0.0" y="-23.0" r="180"></i>
+			<i x="-26.0" o="sign:000" z="0.0" y="-23.0" r="0"></i>
+			<i x="-33.0" o="sign:000" z="0.0" y="-24.0" r="180"></i>
+			<i x="-26.0" o="sign:000" z="0.0" y="-24.0" r="0"></i>
+			<i x="-27.0" o="sign:000" z="0.0" y="-25.0" r="270"></i>
+			<i x="-30.0" o="bushes:06" z="0.0" y="-25.0" r="0"></i>
+			<i x="-27.0" o="bushes:06" z="0.0" y="-21.0" r="0"></i>
+			<i x="-27.0" o="bushes:06" z="0.0" y="-23.0" r="0"></i>
+			<i x="-29.0" o="bushes:06" z="0.0" y="-25.0" r="0"></i>
+			<i x="-28.0" o="bushes:06" z="0.0" y="-24.0" r="0"></i>
+			<i x="-32.0" o="bushes:06" z="0.0" y="-24.0" r="0"></i>
+			<i x="-32.0" o="bushes:06" z="0.0" y="-21.0" r="0"></i>
 		</instances>
 	</layer>
-	<camera ref_cell_width="128" zoom="0.149147966415" tilt="-42.0" viewport="0,0,1280,800" id="main" ref_layer_id="TileLayer" ref_cell_height="96" rotation="45.0">
+	<camera ref_cell_width="128" zoom="0.48101709809" tilt="-42.0" viewport="0,0,1280,800" id="main" ref_layer_id="TileLayer" ref_cell_height="96" rotation="45.0">
 	</camera>
 	<camera ref_cell_width="128" zoom="1.0" tilt="-42.0" viewport="10,10,400,250" id="small" ref_layer_id="TileLayer" ref_cell_height="96" rotation="45.0">
 	</camera>
