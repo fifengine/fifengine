@@ -65,7 +65,7 @@ class EditorListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListen
 		elif keyval == fife.Key.F10:
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 		elif keystr == 'p':
-			self.engine.getRenderBackend().captureScreen('screenshot.bmp')
+			self.engine.getRenderBackend().captureScreen('screenshot.png')
 		elif keystr == 't':
 			self.showTileOutline = not self.showTileOutline
 		elif keystr == 'c':
