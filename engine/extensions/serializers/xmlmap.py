@@ -30,6 +30,7 @@ class XMLMapLoader(fife.MapLoader):
 	def loadResource(self, location):
 		self.source = location.getFilename()
 		f = self.vfs.open(self.source)
+		f.thisown = 1
 		tree = ET.parse(f)
 		root = tree.getroot()
 

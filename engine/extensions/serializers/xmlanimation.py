@@ -16,6 +16,7 @@ class XMLAnimationLoader(fife.AnimationLoader):
 
 	def do_load_resource(self):
 		f = self.vfs.open(self.filename)
+		f.thisown = 1
 		tree = ET.parse(f)
 		self.node = tree.getroot()
 		

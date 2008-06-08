@@ -27,6 +27,7 @@ class XMLObjectLoader(fife.ObjectLoader):
 		else:
 			isobjectfile = True
 			f = self.vfs.open(self.filename)
+			f.thisown = 1
 			
 			obj_identifier = '<?fife type="object"?>'
 			try:
@@ -40,7 +41,7 @@ class XMLObjectLoader(fife.ObjectLoader):
 			if not isobjectfile:
 				raise WrongFileType('Tried to open non-object file %s with XMLObjectLoader.' % self.filename)
 		self.do_load_resource(f)
-	
+
 	def do_load_resource(self, file):
 		if file:
 			tree = ET.parse(file)
