@@ -142,11 +142,18 @@ namespace FIFE {
 	Object* Model::getObject(const std::string& id, const std::string& name_space) {
 		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
 		for(; nspace != m_namespaces.end(); ++nspace) {
+			if(nspace->first == name_space) {
+				std::list<Object*>::iterator obj = nspace->second.begin();
+				for(; obj != nspace->second.end(); ++obj)
+					if((*obj)->getId() == id) return *obj;
+			}
+		}
+		for(; nspace != m_namespaces.end(); ++nspace) {
 			std::list<Object*>::iterator obj = nspace->second.begin();
 			for(; obj != nspace->second.end(); ++obj)
 				if((*obj)->getId() == id) return *obj;
 		}
-
+ 
 		return 0;
 	}
 
