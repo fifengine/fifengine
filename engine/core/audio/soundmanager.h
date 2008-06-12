@@ -32,11 +32,12 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-
-#include "soundemitter.h"
-#include "soundclippool.h"
+#include "fife_openal.h"
 
 namespace FIFE {
+	class SoundEmitter;
+	class SoundClipPool;
+
 	class SoundManager {
 	public:
 	

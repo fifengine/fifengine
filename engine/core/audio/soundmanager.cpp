@@ -33,7 +33,6 @@
 #include "vfs/vfs.h"
 #include "util/log/logger.h"
 #include "util/base/exception.h"
-#include "audio/fife_openal.h"
 
 #include "soundmanager.h"
 #include "soundemitter.h"
