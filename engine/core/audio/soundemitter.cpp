@@ -32,7 +32,7 @@
 #include "util/log/logger.h"
 #include "util/time/timemanager.h"
 #include "util/base/exception.h"
-
+#include "soundemitter.h"
 #include "soundmanager.h"
 #include "soundclippool.h"
 
