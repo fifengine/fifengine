@@ -57,9 +57,20 @@ namespace FIFE {
 		outline(NULL), 
 		curimg(NULL) {
 	}
+	InstanceRenderer::ColoringInfo::ColoringInfo():
+		r(0), 
+		g(0), 
+		b(0), 
+		overlay(NULL),
+		curimg(NULL) {
+	}
 	
 	InstanceRenderer::OutlineInfo::~OutlineInfo() { 
 		delete outline;
+	}
+	
+	InstanceRenderer::ColoringInfo::~ColoringInfo() {
+		delete overlay;
 	}
 	
 	InstanceRenderer* InstanceRenderer::getInstance(IRendererContainer* cnt) {
@@ -70,7 +81,8 @@ namespace FIFE {
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
 		m_animationpool(animpool),
-		m_layer_to_outlinemap() {
+		m_layer_to_outlinemap(),
+		m_layer_to_coloringmap() {
 		setEnabled(true);
 	}
 
@@ -78,7 +90,8 @@ namespace FIFE {
 		RendererBase(old),
 		m_imagepool(old.m_imagepool),
 		m_animationpool(old.m_animationpool),
-		m_layer_to_outlinemap() {
+		m_layer_to_outlinemap(),
+		m_layer_to_coloringmap() {
 		setEnabled(true);
 	}
 
@@ -102,14 +115,25 @@ namespace FIFE {
 		}
 
 		bool potential_outlining = false;
-		InstanceToOutlines_t i2o;
-		InstanceToOutlines_t::iterator end;
-		
-		LayerToOutlineMap_t::iterator l2i = m_layer_to_outlinemap.find(layer);
-		if (l2i != m_layer_to_outlinemap.end()) {
+		InstanceToOutlines_t outline_i2o;
+		InstanceToOutlines_t::iterator outline_end;
+
+		LayerToOutlineMap_t::iterator outline_l2i = m_layer_to_outlinemap.find(layer);
+		if (outline_l2i != m_layer_to_outlinemap.end()) {
 			potential_outlining = true;
-			i2o = l2i->second;
-			end = i2o.end();
+			outline_i2o = outline_l2i->second;
+			outline_end = outline_i2o.end();
+		}
+
+		bool potential_coloring = false;
+		InstanceToColoring_t coloring_i2o;
+		InstanceToColoring_t::iterator coloring_end;
+
+		LayerToColoringMap_t::iterator coloring_l2i = m_layer_to_coloringmap.find(layer);
+		if (coloring_l2i != m_layer_to_coloringmap.end()) {
+			potential_coloring = true;
+			coloring_i2o = coloring_l2i->second;
+			coloring_end = coloring_i2o.end();
 		}
 
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
@@ -121,14 +145,20 @@ namespace FIFE {
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 			
 			if (potential_outlining) {
-				InstanceToOutlines_t::iterator it = i2o.find(instance);
-				if (it != end) {
-					bindOutline(it->second, vc, cam)->render(vc.dimensions);
+				InstanceToOutlines_t::iterator outline_it = outline_i2o.find(instance);
+				if (outline_it != outline_end) {
+					bindOutline(outline_it->second, vc, cam)->render(vc.dimensions);
+				}
+			}
+			if (potential_coloring) {
+				InstanceToColoring_t::iterator coloring_it = coloring_i2o.find(instance);
+				if (coloring_it != coloring_end) {
+					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions);
+					continue;
 				}
 			}
 			vc.image->render(vc.dimensions);
 		}
-
 	}
 	
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam) {
@@ -191,7 +221,38 @@ namespace FIFE {
 		delete img;
 		return info.outline;
 	}
-	
+
+	Image* InstanceRenderer::bindColoring(ColoringInfo& info, InstanceVisualCacheItem& vc, Camera* cam) {
+		if (info.curimg == vc.image) {
+			return info.overlay;
+		}
+		if (info.overlay) {
+			delete info.overlay; // delete old mask
+			info.overlay = NULL;
+		}
+		SDL_Surface* surface = vc.image->getSurface();
+		SDL_Surface* overlay_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
+		
+		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
+		SDLImage* img = new SDLImage(overlay_surface);
+		
+		uint8_t r, g, b, a = 0;
+		
+		for (unsigned int x = 0; x < img->getWidth(); x ++) {
+			for (unsigned int y = 0; y < img->getHeight(); y ++) {
+				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+				if (a > 0) {
+					img->putPixel(x, y, (r + info.r) >> 1, (g + info.g) >> 1, (b + info.b) >> 1);
+				}
+			}
+		}
+		
+		// In case of OpenGL backend, SDLImage needs to be converted
+		info.overlay = m_renderbackend->createImage(img->detachSurface());
+		delete img;
+		return info.overlay;
+	}
+
 	void InstanceRenderer::addOutlined(Instance* instance, int r, int g, int b, int width) {
 		OutlineInfo info;
 		info.r = r;
@@ -201,9 +262,23 @@ namespace FIFE {
 		InstanceToOutlines_t& i2h = m_layer_to_outlinemap[instance->getLocation().getLayer()];
 		i2h[instance] = info;
 	}
-	
+
+	void InstanceRenderer::addColored(Instance* instance, int r, int g, int b) {
+		ColoringInfo info;
+		info.r = r;
+		info.g = g;
+		info.b = b;
+		InstanceToColoring_t& i2h = m_layer_to_coloringmap[instance->getLocation().getLayer()];
+		i2h[instance] = info;
+	}
+
 	void InstanceRenderer::removeOutlined(Instance* instance) {
-		InstanceToOutlines_t i2h = m_layer_to_outlinemap[instance->getLocation().getLayer()];
+		InstanceToOutlines_t& i2h = m_layer_to_outlinemap[instance->getLocation().getLayer()];
+		i2h.erase(instance);
+	}
+	
+	void InstanceRenderer::removeColored(Instance* instance) {
+		InstanceToColoring_t& i2h = m_layer_to_coloringmap[instance->getLocation().getLayer()];
 		i2h.erase(instance);
 	}
 	
@@ -211,8 +286,13 @@ namespace FIFE {
 		m_layer_to_outlinemap.clear();
 	}
 	
+	void InstanceRenderer::removeAllColored() {
+		m_layer_to_coloringmap.clear();
+	}
+	
 	void InstanceRenderer::reset() {
 		removeAllOutlines();
+		removeAllColored();
 	}
 	
 }

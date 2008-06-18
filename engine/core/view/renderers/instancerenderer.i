@@ -16,6 +16,9 @@ namespace FIFE {
 		void addOutlined(Instance* instance, int r, int g, int b, int width);
 		void removeOutlined(Instance* instance);
 		void removeAllOutlines();
+		void addColored(Instance* instance, int r, int g, int b);
+		void removeColored(Instance* instance);
+		void removeAllColored();
 		static InstanceRenderer* getInstance(IRendererContainer* cnt);
 	private:
 		InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);

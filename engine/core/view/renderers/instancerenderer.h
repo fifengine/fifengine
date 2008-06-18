@@ -62,13 +62,25 @@ namespace FIFE {
 		 */
 		void addOutlined(Instance* instance, int r, int g, int b, int width);
 		
+		/** Marks given instance to be colored with given parameters
+		 */
+		void addColored(Instance* instance, int r, int g, int b);
+		
 		/** Removes instance from outlining list
 		 */
 		void removeOutlined(Instance* instance);
 		
+		/** Removes instance from coloring list
+		 */
+		void removeColored(Instance* instance);
+		
 		/** Removes all outlines
 		 */
 		void removeAllOutlines();
+		
+		/** Removes all coloring
+		 */
+		void removeAllColored();
 		
 		/** Gets instance for interface access
 		 */
@@ -92,14 +104,29 @@ namespace FIFE {
 			OutlineInfo();
 			~OutlineInfo();
 		};
+		// contains per-instance information for overlay drawing
+		class ColoringInfo {
+		public:
+			uint8_t r;
+			uint8_t g;
+			uint8_t b;
+			Image* overlay;
+			Image* curimg;
+			ColoringInfo();
+			~ColoringInfo();
+		};
 		typedef std::map<Instance*, OutlineInfo> InstanceToOutlines_t;
 		typedef std::map<Layer*, InstanceToOutlines_t> LayerToOutlineMap_t;
+		typedef std::map<Instance*, ColoringInfo> InstanceToColoring_t;
+		typedef std::map<Layer*, InstanceToColoring_t> LayerToColoringMap_t;
 		// mapping of layer -> instance -> outlineinfo
 		LayerToOutlineMap_t m_layer_to_outlinemap;
+		LayerToColoringMap_t m_layer_to_coloringmap;
 		
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
 		Image* bindOutline(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam);
+		Image* bindColoring(ColoringInfo& info, InstanceVisualCacheItem& vc, Camera* cam);
 	};
 }
 
