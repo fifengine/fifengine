@@ -6,6 +6,8 @@ import fife
 from serializers.xmlmap import XMLMapLoader
 from serializers import WrongFileType, NameClash
 
+fileExtensions = ('xml',)
+
 def loadMapFile(path, engine, content = ''):
 	map_loader = XMLMapLoader(engine)
 	return map_loader.loadResource(fife.ResourceLocation(path))

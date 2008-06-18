@@ -182,7 +182,7 @@ class Widget(object):
 			else:
 				del get_manager().widgetEvents[self._event_id]
 			if self._has_listener:
-				self.real_widget.removeActionListener(manager.guimanager)
+				self.real_widget.removeActionListener(get_manager().guimanager)
 			self._has_listener = None
 			return
 

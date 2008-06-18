@@ -12,7 +12,7 @@ class FileBrowser(object):
 	The savefile option provides a box for supplying a new filename that doesn't exist yet.
   The selectdir option allows directories to be selected as well as files.
 	"""
-	def __init__(self, engine, fileSelected, savefile=False, selectdir=False):
+	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',)):
 		self.engine = engine
 		self.fileSelected = fileSelected
 
@@ -20,6 +20,7 @@ class FileBrowser(object):
 		self.savefile = savefile
 		self.selectdir = selectdir
 
+		self.extensions = extensions
 		self.path = './..'
 		self.dir_list = ('..',) + self.engine.getVFS().listDirectories(self.path)
 		self.file_list = self.engine.getVFS().listFiles(self.path)
@@ -52,7 +53,7 @@ class FileBrowser(object):
 			self.path = '/'.join(lst)
 
 		self.dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
-		self.file_list = filter(lambda f: f.split('.')[-1] == 'xml', self.engine.getVFS().listFiles(self.path))
+		self.file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(self.path))
 		self._widget.distributeInitialData({
 			'dirList'  : self.dir_list,
 			'fileList' : self.file_list

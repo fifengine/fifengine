@@ -4,6 +4,7 @@
 
 import plugin
 import filebrowser
+import loaders, savers
 from loaders import loadMapFile
 from savers import saveMapFile
 
@@ -12,12 +13,11 @@ class MapLoader(plugin.Plugin):
 		super(MapLoader,self).__init__()
 		self.engine = engine
 		
-		self.filebrowser = filebrowser.FileBrowser(engine,self.loadFile)
+		self.filebrowser = filebrowser.FileBrowser(engine,self.loadFile, extensions = loaders.fileExtensions)
 
 		self.menu_items = {
 			'Load' : self.filebrowser.showBrowser,
 		}
-
 		self.newMap = None
 
 	def loadFile(self, path, filename):
@@ -29,7 +29,7 @@ class MapSaver(plugin.Plugin):
 		super(MapSaver,self).__init__()
 		self.engine = engine
 		
-		self.filebrowser = filebrowser.FileBrowser(engine,self._selectFile,savefile=True)
+		self.filebrowser = filebrowser.FileBrowser(engine,self._selectFile,savefile=True, extensions = savers.fileExtensions)
 
 		self.menu_items = {
 			'Save' : self.save,

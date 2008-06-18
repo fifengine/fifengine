@@ -7,6 +7,7 @@ import fife
 
 MAPFORMAT = '1.0'
 
+fileExtensions = ('xml',)
 class ModelSaver:
 
 	def __init__(self, filepath, engine, state = 0, datastate = 0):
