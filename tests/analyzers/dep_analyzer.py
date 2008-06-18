@@ -1,6 +1,18 @@
 #!/usr/bin/python
 import sys, re, os
 
+try:
+	from os.shutil import copyfile
+
+except ImportError:
+	def copyfile(src,dest):
+		srcf = open(src)
+		destf = open(dest,"w")
+		destf.write( srcf.read() )
+		destf.close()
+		srcf.close()
+
+
 if '.' not in sys.path:
 	sys.path.append('.')
 from utils.util_scripts.path import path
@@ -129,6 +141,24 @@ def get_cluster_str(ind, elements, label):
 	a('}')
 	return '\n'.join(lines)
 
+def run_dot(basename,type):
+	dotname = basename + ".dot"
+	outname  = basename + "." + type
+
+	dotchanged = True
+
+	try:
+		olddot = open(dotname + "~").read()
+		dotchanged =  olddot != open(dotname).read()
+		dotchanged = dotchanged or not os.path.exists(outname)
+	except IOError: pass
+	if not dotchanged:
+		return
+	print "Generating: ",outname
+	cmd = 'dot -T%(type)s %(dotname)s > %(outname)s' % locals()
+	os.system(cmd)
+	copyfile(dotname,dotname + "~")
+
 def analyze(write_postscript=False):
 	root = path(ROOTDIRNAME)
 	headers = list(root.walkfiles('*.h'))
@@ -154,8 +184,8 @@ def analyze(write_postscript=False):
 					illegalModuleDeps.append(msg)
 	write_dot_file('%s.dot' % MODULE_DEPS_OUT, out)
 	if write_postscript:
-		os.system('dot -Tps %s.dot > %s.ps' % (MODULE_DEPS_OUT, MODULE_DEPS_OUT))
-	os.system('dot -Tpng %s.dot	 > %s.png' % (MODULE_DEPS_OUT, MODULE_DEPS_OUT))
+		run_dot(MODULE_DEPS_OUT, "ps")
+	run_dot(MODULE_DEPS_OUT,"png")
 	
 	# write dir dep graph
 	out = []
@@ -167,7 +197,7 @@ def analyze(write_postscript=False):
 				out.append('    "' + user + '" -> "' + provider + '"')
 	write_dot_file('%s.dot' % DIR_DEPS_OUT, out)
 	if write_postscript:
-		os.system('dot -Tps %s.dot > %s.ps' % (DIR_DEPS_OUT, DIR_DEPS_OUT))
+		run_dot(DIR_DEPS_OUT, "ps")
 	
 	# write file dep graph
 	out = []
