@@ -158,6 +158,9 @@ DEFAULT_STYLE = {
 	('CheckBox','RadioButton') : {
 		'border_size': 0,
 	},
+	'TextBox' : {
+		'border_size' : 0,
+	},
 	'Label' : {
 		'border_size': 0,
 	},

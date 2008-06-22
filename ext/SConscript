@@ -6,7 +6,7 @@ Import('env')
 curpath = str(path('.'))
 installpath = str((path('.') / path('install')).abspath())
 
-os.chdir(str(path('.') / path('guichan-0.7.1')))
+os.chdir(str(path('.') / path('guichan-0.8.1')))
 
 os.system('./configure')
 os.system('make')

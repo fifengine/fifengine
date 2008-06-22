@@ -27,11 +27,22 @@
 #include "gui/widgets/icon2.hpp"
 %}
 
-
 namespace gcn {
 	class Font;
 	class Image;
 	class ActionListener;
+
+	%nodefaultctor;
+	class Graphics {
+	public:
+		enum Alignmnet {
+			LEFT = 0,
+			CENTER,
+			RIGHT
+		};
+	};
+	%clearnodefaultctor;
+
 	
 	class Color {
 	public:
@@ -48,11 +59,11 @@ namespace gcn {
 		int b;
 		int a;
 	};
-	
+
 	class Widget {
 	public:
-		Widget();
-		virtual ~Widget();
+/* 		Widget(); */
+/* 		virtual ~Widget(); */
 		virtual void setWidth(int width);
 		virtual int getWidth() const;
 		virtual void setHeight(int height);
@@ -63,8 +74,8 @@ namespace gcn {
 		virtual void setY(int y);
 		virtual int getY() const;
 		virtual void setPosition(int x, int y);
-		virtual void setBorderSize(unsigned int borderSize);
-		virtual unsigned int getBorderSize() const;
+		virtual void setFrameSize(unsigned int frameSize);
+		virtual unsigned int getFrameSize() const;
 		virtual void setFocusable(bool focusable);
 		virtual bool isFocusable() const;
 		virtual bool isFocused() const;
@@ -95,15 +106,15 @@ namespace gcn {
 		virtual void requestModalMouseInputFocus();
 		virtual void releaseModalFocus();
 		virtual void releaseModalMouseInputFocus();
-		virtual bool hasModalFocus() const;
-		virtual bool hasModalMouseInputFocus() const;
+		virtual bool isModalFocused() const;
+		virtual bool isModalMouseInputFocused() const;
 		virtual Widget *getWidgetAt(int x, int y);
 		virtual void moveToTop(Widget* widget) { };
 		virtual void moveToBottom(Widget* widget) { };
 		virtual void focusNext() { };
 		virtual void focusPrevious() { };
 		virtual void addActionListener(ActionListener* actionListener);
-	protected:
+/* 	protected: */
 		virtual void draw(Graphics* graphics) = 0;
 	};
 	
@@ -125,8 +136,8 @@ namespace gcn {
 	public:
 		CheckBox();
 		virtual ~CheckBox();
-		virtual bool isMarked() const;
-		virtual void setMarked(bool marked);
+		virtual bool isSelected() const;
+		virtual void setSelected(bool marked);
 		virtual const std::string &getCaption() const;
 		virtual void setCaption(const std::string& caption);
 		virtual void adjustSize();
@@ -152,10 +163,10 @@ namespace gcn {
 		Button(const std::string& caption);
 		virtual void setCaption(const std::string& caption);
 		virtual const std::string& getCaption() const;
-		virtual void setAlignment(unsigned int alignment);
-		virtual unsigned int getAlignment() const;
+		virtual void setAlignment(Graphics::Alignment alignment);
+		virtual Graphics::Alignment getAlignment() const;
 		virtual void adjustSize();
-		virtual bool isPressed() const;
+		/*virtual bool isPressed() const;*/
 	};
 
 	%feature("notabstract") TwoButton;
@@ -165,8 +176,8 @@ namespace gcn {
 		~TwoButton();
 		virtual void setCaption(const std::string& caption);
 		virtual const std::string& getCaption() const;
-		virtual void setAlignment(unsigned int alignment);
-		virtual unsigned int getAlignment() const;
+		virtual void setAlignment(Graphics::Alignment alignment);
+		virtual Graphics::Alignment getAlignment() const;
 		void setUpImage(Image* image);
 		void setDownImage(Image* image);
 		void setHoverImage(Image* image);
@@ -177,15 +188,15 @@ namespace gcn {
 	public:
 		ScrollArea();
 		ScrollArea(Widget *content);
-		ScrollArea(Widget *content, unsigned int hPolicy, unsigned int vPolicy);
+		ScrollArea(Widget *content,ScrollArea::ScrollPolicy hPolicy,ScrollArea::ScrollPolicy vPolicy);
 		virtual ~ScrollArea();
 		virtual void setContent(Widget* widget);
 		virtual Widget* getContent();
-		virtual void setHorizontalScrollPolicy(unsigned int hPolicy);
-		virtual unsigned int getHorizontalScrollPolicy();
-		virtual void setVerticalScrollPolicy(unsigned int vPolicy);
-		virtual unsigned int getVerticalScrollPolicy();
-		virtual void setScrollPolicy(unsigned int hPolicy, unsigned int vPolicy);
+		virtual void setHorizontalScrollPolicy(ScrollArea::ScrollPolicy hPolicy);
+		virtual ScrollArea::ScrollPolicy getHorizontalScrollPolicy();
+		virtual void setVerticalScrollPolicy(ScrollArea::ScrollPolicy vPolicy);
+		virtual ScrollArea::ScrollPolicy getVerticalScrollPolicy();
+		virtual void setScrollPolicy(ScrollArea::ScrollPolicy hPolicy, ScrollArea::ScrollPolicy vPolicy);
 		virtual void setVerticalScrollAmount(int vScroll);
 		virtual int getVerticalScrollAmount();
 		virtual void setHorizontalScrollAmount(int hScroll);
@@ -203,7 +214,7 @@ namespace gcn {
 		virtual int getRightButtonScrollAmount();
 		virtual int getUpButtonScrollAmount();
 		virtual int getDownButtonScrollAmount();
-		enum
+		enum ScrollPolicy
 		{
 			SHOW_ALWAYS,
 			SHOW_NEVER,
@@ -257,8 +268,8 @@ namespace gcn {
 		virtual void setListModel(ListModel *listModel);
 		virtual ListModel *getListModel();
 		virtual void adjustSize();
-		virtual bool isWrappingKeyboardSelection();
-		virtual void setWrappingKeyboardSelection(bool wrapping);
+		virtual bool isWrappingEnabled();
+		virtual void setWrappingEnabled(bool wrapping);
 	};
 
 	%feature("notabstract") DropDown;
@@ -283,8 +294,8 @@ namespace gcn {
 					const std::string &group,
 					bool marked=false);
 		virtual ~RadioButton();
-		virtual bool isMarked() const;
-		virtual void setMarked(bool marked);
+		virtual bool isSelected() const;
+		virtual void setSelected(bool marked);
 		virtual const std::string &getCaption() const;
 		virtual void setCaption(const std::string caption);
 		virtual void setGroup(const std::string &group);
@@ -307,11 +318,11 @@ namespace gcn {
 		virtual void setValue(double value);
 		virtual void setMarkerLength(int length);
 		virtual int getMarkerLength() const;
-		virtual void setOrientation(unsigned int orientation);
-		virtual unsigned int getOrientation() const;
+		virtual void setOrientation(Slider::Orientation orientation);
+		virtual Slider::Orientation getOrientation() const;
 		virtual void setStepLength(double length);
 		virtual double getStepLength() const;
-		enum
+		enum Orientation
 		{
 			HORIZONTAL = 0,
 			VERTICAL
@@ -326,8 +337,8 @@ namespace gcn {
 		virtual ~Window();
 		virtual void setCaption(const std::string& caption);
 		virtual const std::string& getCaption() const;
-		virtual void setAlignment(unsigned int alignment);
-		virtual unsigned int getAlignment() const;
+		virtual void setAlignment(Graphics::Alignment alignment);
+		virtual Graphics::Alignment getAlignment() const;
 		virtual void setPadding(unsigned int padding);
 		virtual unsigned int getPadding() const;
 		virtual void setTitleBarHeight(unsigned int height);
@@ -363,5 +374,6 @@ namespace gcn {
 		void setImage(Image* image);
 	};
 }
+
 
 

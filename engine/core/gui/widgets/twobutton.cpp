@@ -36,7 +36,7 @@ namespace gcn {
 		m_upImage = up_file;
 		m_downImage = down_file;
 		m_hoverImage = hover_file;
-		setBorderSize(0);
+		setFrameSize(0);
 		adjustSize();
 		mCaption = caption;
 	}

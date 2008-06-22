@@ -39,7 +39,7 @@ namespace gcn {
 		mGuiFont = static_cast<FIFE::GuiFont*> (getFont());
 // 		setAlignment(Graphics::LEFT);
 		setTextWrapping(false);
-		setBorderSize(0);
+		setFrameSize(0);
 
 		addMouseListener(this);
 		addKeyListener(this);
@@ -52,7 +52,7 @@ namespace gcn {
 // 		setAlignment(Graphics::LEFT);
 		setTextWrapping(false);
 		setCaption(caption);
-		setBorderSize(0);
+		setFrameSize(0);
 
 		addMouseListener(this);
 		addKeyListener(this);
@@ -153,7 +153,7 @@ namespace gcn {
 	{
 		if (mouseEvent.getButton() == MouseEvent::LEFT && mMousePressed && mHasMouse) {
 			mMousePressed = false;
-			generateAction();
+			distributeActionEvent();
 			mouseEvent.consume();
 		} else if (mouseEvent.getButton() == MouseEvent::LEFT) {
 			mMousePressed = false;
@@ -182,7 +182,7 @@ namespace gcn {
 	
 		if ((key.getValue() == Key::ENTER || key.getValue() == Key::SPACE) && mKeyPressed) {
 			mKeyPressed = false;
-			generateAction();
+			distributeActionEvent();
 			keyEvent.consume();
 		}
 	}

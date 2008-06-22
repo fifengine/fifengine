@@ -1,0 +1,1 @@
+EXTRA_DIST = sdltruetypefont.hpp
