@@ -9,9 +9,9 @@ from serializers import *
 
 FORMAT = '1.0'
 
-class XMLMapLoader(fife.MapLoader):
+class XMLMapLoader(fife.ResourceLoader):
 	def __init__(self, engine):
-		fife.MapLoader.__init__(self)
+		fife.ResourceLoader.__init__(self)
 		self.thisown = 0
 
 		self.engine = engine

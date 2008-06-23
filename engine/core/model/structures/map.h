@@ -179,12 +179,6 @@ namespace FIFE {
 			bool m_changed;
 	};
 
-	class MapLoader : public ResourceLoader {
-	public:
-		Map* load(const ResourceLocation& location) { return dynamic_cast<Map*>(load(location)); }
-		Map* load(const std::string& filename) { return load(ResourceLocation(filename)); }
-	};
-
 } //FIFE
 
 #endif

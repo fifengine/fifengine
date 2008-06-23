@@ -1,9 +1,9 @@
 import fife
 from serializers import *
 
-class XMLAnimationLoader(fife.AnimationLoader):
+class XMLAnimationLoader(fife.ResourceLoader):
 	def __init__(self, imagepool, vfs):
-		fife.AnimationLoader.__init__(self)
+		fife.ResourceLoader.__init__(self)
 		self.imagepool = imagepool
 		self.vfs = vfs
 		self.thisown = 0

@@ -27,7 +27,6 @@
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
-#include "video/animation_loader.h"
 #include "util/base/exception.h"
 %}
 
@@ -166,11 +165,4 @@ namespace FIFE {
 		Cursor(ImagePool* imgpool, AnimationPool* animpool);
 	};
 	
-	%warnfilter(473) AnimationLoader; // filter out "returning a pointer or reference in a director method is not recommended"
-	%feature("director") AnimationLoader;
-	class AnimationLoader : public ResourceLoader {
-	public:
-		Animation* load(const ResourceLocation& location);
-		Animation* load(const std::string& filename);
-	};
 }

@@ -163,6 +163,7 @@ subgraph cluster_11 {
     "loaders/native/audio_loaders" -> "audio"
     "loaders/native/audio_loaders" -> "util/base"
     "loaders/native/audio_loaders" -> "util/log"
+    "loaders/native/audio_loaders" -> "util/resource"
     "loaders/native/audio_loaders" -> "vfs"
     "loaders/native/audio_loaders" -> "vfs/raw"
     "loaders/native/video_loaders" -> "util/base"

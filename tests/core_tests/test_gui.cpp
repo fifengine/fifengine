@@ -95,7 +95,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 	top->add(icon, 10, 30);
 
 	ImageLoader provider(vfs.get());
-	boost::scoped_ptr<Image> img(provider.load(ImageLocation(IMAGE_FILE)));
+	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
 	
 	int h = img->getHeight();
 	int w = img->getWidth();

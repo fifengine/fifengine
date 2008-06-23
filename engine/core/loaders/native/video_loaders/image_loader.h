@@ -30,14 +30,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/image_loader_base.h"
+#include "util/resource/resource.h"
 
 namespace FIFE {
 	class VFS;
 
 	/** ImageLoader for some basic formats like jpeg, png etc.
 	 */
-	class ImageLoader : public ImageLoaderBase {
+	class ImageLoader : public ResourceLoader {
 	public:
 		ImageLoader(VFS* vfs): m_vfs(vfs) {}
 		virtual IResource* loadResource(const ResourceLocation& location);

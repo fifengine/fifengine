@@ -8,7 +8,7 @@ class ObjectLocation(fife.ResourceLocation):
 		fife.ResourceLocation.__init__(self, file)
 		self.node = node
 
-class XMLObjectLoader(fife.ObjectLoader):
+class XMLObjectLoader(fife.ResourceLoader):
 	def __init__(self, image_pool, anim_pool, model, vfs=None):
 		self.image_pool = image_pool
 		self.anim_pool = anim_pool
