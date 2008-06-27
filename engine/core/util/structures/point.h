@@ -245,7 +245,7 @@ namespace FIFE {
 	/** Convert from 3D double point to 3D int point
 	 */
 	inline Point3D doublePt2intPt(DoublePoint3D pt) {
-		PPoint3D tmp(static_cast<int>(round(pt.x)), static_cast<int>(round(pt.y)), static_cast<int>(round(pt.z)));
+		Point3D tmp(static_cast<int>(round(pt.x)), static_cast<int>(round(pt.y)), static_cast<int>(round(pt.z)));
 		return tmp;
 	}
 
