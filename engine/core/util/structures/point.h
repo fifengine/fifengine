@@ -238,14 +238,14 @@ namespace FIFE {
 	/** Convert from 2D double point to 2D int point
 	 */
 	inline Point doublePt2intPt(DoublePoint pt) {
-		Point tmp(static_cast<int>(pt.x), static_cast<int>(pt.y));
+		Point tmp(static_cast<int>(round(pt.x)), static_cast<int>(round(pt.y)));
 		return tmp;
 	}
 
 	/** Convert from 3D double point to 3D int point
 	 */
 	inline Point3D doublePt2intPt(DoublePoint3D pt) {
-		Point3D tmp(static_cast<int>(pt.x), static_cast<int>(pt.y), static_cast<int>(pt.z));
+		PPoint3D tmp(static_cast<int>(round(pt.x)), static_cast<int>(round(pt.y)), static_cast<int>(round(pt.z)));
 		return tmp;
 	}
 
