@@ -1,0 +1,6 @@
+{
+	'opengl': ['core/video/opengl/', 'core/gui/base/opengl/'],
+	'zip': ['core/vfs/zip/'],
+	'script-python': ['swigwrappers/python'],
+	'script-lua': ['swigwrappers/lua'],
+}

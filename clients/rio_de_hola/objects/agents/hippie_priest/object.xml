@@ -1,0 +1,93 @@
+<?fife type="object"?>
+<object id="hippie_priest" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="0">
+	<action id="attack">
+		<animation source="attack/000/animation.xml" direction="0" />
+		<animation source="attack/045/animation.xml" direction="45" />
+		<animation source="attack/090/animation.xml" direction="90" />
+		<animation source="attack/135/animation.xml" direction="135" />
+		<animation source="attack/180/animation.xml" direction="180" />
+		<animation source="attack/225/animation.xml" direction="225" />
+		<animation source="attack/270/animation.xml" direction="270" />
+		<animation source="attack/315/animation.xml" direction="315" />
+	</action>
+	<action id="cast_spell">
+		<animation source="cast_spell/000/animation.xml" direction="0" />
+		<animation source="cast_spell/045/animation.xml" direction="45" />
+		<animation source="cast_spell/090/animation.xml" direction="90" />
+		<animation source="cast_spell/135/animation.xml" direction="135" />
+		<animation source="cast_spell/180/animation.xml" direction="180" />
+		<animation source="cast_spell/225/animation.xml" direction="225" />
+		<animation source="cast_spell/270/animation.xml" direction="270" />
+		<animation source="cast_spell/315/animation.xml" direction="315" />
+	</action>
+	<action id="fall">
+		<animation source="fall/000/animation.xml" direction="0" />
+		<animation source="fall/045/animation.xml" direction="45" />
+		<animation source="fall/090/animation.xml" direction="90" />
+		<animation source="fall/135/animation.xml" direction="135" />
+		<animation source="fall/180/animation.xml" direction="180" />
+		<animation source="fall/225/animation.xml" direction="225" />
+		<animation source="fall/270/animation.xml" direction="270" />
+		<animation source="fall/315/animation.xml" direction="315" />
+	</action>
+	<action id="get_hit">
+		<animation source="get_hit/000/animation.xml" direction="0" />
+		<animation source="get_hit/045/animation.xml" direction="45" />
+		<animation source="get_hit/090/animation.xml" direction="90" />
+		<animation source="get_hit/135/animation.xml" direction="135" />
+		<animation source="get_hit/180/animation.xml" direction="180" />
+		<animation source="get_hit/225/animation.xml" direction="225" />
+		<animation source="get_hit/270/animation.xml" direction="270" />
+		<animation source="get_hit/315/animation.xml" direction="315" />
+	</action>
+	<action id="read">
+		<animation source="read/000/animation.xml" direction="0" />
+		<animation source="read/045/animation.xml" direction="45" />
+		<animation source="read/090/animation.xml" direction="90" />
+		<animation source="read/135/animation.xml" direction="135" />
+		<animation source="read/180/animation.xml" direction="180" />
+		<animation source="read/225/animation.xml" direction="225" />
+		<animation source="read/270/animation.xml" direction="270" />
+		<animation source="read/315/animation.xml" direction="315" />
+	</action>
+	<action id="run">
+		<animation source="run/000/animation.xml" direction="0" />
+		<animation source="run/045/animation.xml" direction="45" />
+		<animation source="run/090/animation.xml" direction="90" />
+		<animation source="run/135/animation.xml" direction="135" />
+		<animation source="run/180/animation.xml" direction="180" />
+		<animation source="run/225/animation.xml" direction="225" />
+		<animation source="run/270/animation.xml" direction="270" />
+		<animation source="run/315/animation.xml" direction="315" />
+	</action>
+	<action id="stand">
+		<animation source="stand/000/animation.xml" direction="0" />
+		<animation source="stand/045/animation.xml" direction="45" />
+		<animation source="stand/090/animation.xml" direction="90" />
+		<animation source="stand/135/animation.xml" direction="135" />
+		<animation source="stand/180/animation.xml" direction="180" />
+		<animation source="stand/225/animation.xml" direction="225" />
+		<animation source="stand/270/animation.xml" direction="270" />
+		<animation source="stand/315/animation.xml" direction="315" />
+	</action>
+	<action id="talk">
+		<animation source="talk/000/animation.xml" direction="0" />
+		<animation source="talk/045/animation.xml" direction="45" />
+		<animation source="talk/090/animation.xml" direction="90" />
+		<animation source="talk/135/animation.xml" direction="135" />
+		<animation source="talk/180/animation.xml" direction="180" />
+		<animation source="talk/225/animation.xml" direction="225" />
+		<animation source="talk/270/animation.xml" direction="270" />
+		<animation source="talk/315/animation.xml" direction="315" />
+	</action>
+	<action id="walk">
+		<animation source="walk/000/animation.xml" direction="0" />
+		<animation source="walk/045/animation.xml" direction="45" />
+		<animation source="walk/090/animation.xml" direction="90" />
+		<animation source="walk/135/animation.xml" direction="135" />
+		<animation source="walk/180/animation.xml" direction="180" />
+		<animation source="walk/225/animation.xml" direction="225" />
+		<animation source="walk/270/animation.xml" direction="270" />
+		<animation source="walk/315/animation.xml" direction="315" />
+	</action>
+</object>

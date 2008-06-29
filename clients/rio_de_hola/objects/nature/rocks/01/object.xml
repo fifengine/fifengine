@@ -1,0 +1,5 @@
+<?fife type="object"?>
+<object id="rocks:01" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+	<image source="090.png" direction="90" />
+	<image source="180.png" direction="180" />
+</object>

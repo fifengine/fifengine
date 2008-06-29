@@ -1,0 +1,21 @@
+<?fife type="object"?>
+<object id="empty_lid" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+	<image source="045.png" direction="0" />
+	<image source="045.png" direction="45" />
+	<image source="090.png" direction="90" />
+	<image source="135.png" direction="135" />
+	<image source="135.png" direction="180" />
+	<image source="045.png" direction="225" />
+	<image source="090.png" direction="270" />
+	<image source="135.png" direction="315" />
+	<action id="open">
+		<animation source="open/045/animation.xml" direction="0" />
+		<animation source="open/045/animation.xml" direction="45" />
+		<animation source="open/090/animation.xml" direction="90" />
+		<animation source="open/135/animation.xml" direction="135" />
+		<animation source="open/135/animation.xml" direction="180" />
+		<animation source="open/045/animation.xml" direction="225" />
+		<animation source="open/090/animation.xml" direction="270" />
+		<animation source="open/135/animation.xml" direction="315" />
+	</action>
+</object>

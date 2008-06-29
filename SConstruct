@@ -167,13 +167,4 @@ else:
 	if env['utils']:
 		SConscript([str(p) for p in upath('utils').walkfiles('SConscript')])
 
-	# techdemo installation
-	if sys.platform == 'linux2':
-		source = [str(f) for f in upath('clients/island_demo').walkfiles() if str(f).find('.svn') == -1]
-		target = map(lambda x: '$PREFIX/share/games/fife/'+x, source)
-		env.InstallAs(target, source)
-		env.InstallAs('$PREFIX/bin/fife-techdemo', 'island_demo.py')
-	
-		env.Alias('install', '$PREFIX')
-
 # vim: set filetype=python: 

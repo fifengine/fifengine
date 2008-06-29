@@ -1,0 +1,56 @@
+== Cursors ==
+=== GTK+ ===
+Author:
+GTK+ development team
+
+Download:
+http://ftp.gnome.org/pub/gnome/sources/gtk+/2.12/gtk+-2.12.9.tar.bz2
+
+License:
+LGPL
+http://www.gnu.org/licenses/lgpl-2.1.html
+
+Affected files:
+cursors/load_map.png
+cursors/save_map.png
+
+=== Inkscape ===
+Author:
+Inkscape development team
+
+Download:
+http://downloads.sourceforge.net/inkscape/inkscape-0.46.tar.gz
+
+License:
+GPL
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+Affected files:
+cursors/add_instance.png
+cursors/add_layer.png
+cursors/delete_layer.png
+cursors/eraser.png
+cursors/hand.png
+cursors/help.png
+cursors/map_wizard.png
+cursors/new_map.png
+cursors/quit.png
+cursors/take_screenshot.png
+cursors/zoom_default.png
+cursors/zoom_in.png
+cursors/zoom_out.png
+
+== Fonts ==
+=== Ubuntu ===
+Author:
+Samir Karmacharya (sanir@email.com)
+
+Download:
+http://www.ubuntu.com/
+
+License:
+Public domain
+http://packages.debian.org/changelogs/pool/main/t/ttf-indic-fonts/ttf-indic-fonts_0.4.7.4/ttf-devanagari-fonts.copyright
+
+Affected files:
+content/fonts/samanata.ttf

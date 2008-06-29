@@ -1,0 +1,6 @@
+<?fife type="object"?>
+<object id="trees:06" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+	<image source="000.png" direction="0" />
+	<image source="135.png" direction="135" />
+	<image source="225.png" direction="225" />
+</object>

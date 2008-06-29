@@ -1,0 +1,6 @@
+Import('env')
+
+env = env.Copy()
+env.Program('datextract', ['main.cpp', 'usage.cpp'])
+ 
+# vim: set filetype=python:

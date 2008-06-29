@@ -1,0 +1,63 @@
+/***************************************************************************
+ *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   http://www.fifengine.de                                               *
+ *   This file is part of FIFE.                                            *
+ *                                                                         *
+ *   FIFE is free software; you can redistribute it and/or modify          *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA              *
+ ***************************************************************************/
+
+#ifndef FIFE_MAP_LOADERS_FALLOUT_RAWDATADAT1_H
+#define FIFE_MAP_LOADERS_FALLOUT_RAWDATADAT1_H
+
+// Standard C++ library includes
+#include <string>
+
+// 3rd party library includes
+
+// FIFE includes
+// These includes are split up in two parts, separated by one empty line
+// First block: files included from the FIFE root src directory
+// Second block: files included from the same folder
+#include "vfs/raw/rawdatamemsource.h"
+#include "vfs/vfs.h"
+
+namespace FIFE {
+
+	/** A subclass of RawDataMemSource, that fills itself with a FALLOUT1 .DAT file entry
+	 * @see MFFalloutDAT1
+	 */
+	class RawDataDAT1 : public RawDataMemSource {
+		public:
+			/** The needed information for the extraction.
+			 */
+			struct s_info {
+				std::string name;
+				uint32_t packedLength;
+				uint32_t unpackedLength;
+				uint32_t offset;
+				uint32_t type;
+			};
+
+			/** Constructor
+			 * @param vfs The vfs to open with.
+			 * @param datfile The .DAT archive - e.g. master.DAT
+			 * @param info The .DAT file entry, as retrieved by MFFalloutDAT1
+			 */
+			RawDataDAT1(VFS* vfs, const std::string& datfile, const s_info& info);
+	};
+
+}
+#endif

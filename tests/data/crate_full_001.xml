@@ -1,0 +1,18 @@
+<animation delay="10" id="2005">
+	<frame source="crate/full_s_000.png" />
+	<frame source="crate/full_s_0001.png" />
+	<frame delay="20" source="crate/full_s_0002.png" />
+	<frame delay="40" source="crate/full_s_0003.png" />
+	<frame delay="60" source="crate/full_s_0004.png" />
+	<frame delay="80" source="crate/full_s_0005.png" />
+	<frame delay="100" source="crate/full_s_0006.png" />
+	<frame delay="120" source="crate/full_s_0007.png" />
+	<frame delay="120" source="crate/full_s_0008.png" />
+	<frame delay="100" source="crate/full_s_0007.png" />
+	<frame delay="80" source="crate/full_s_0006.png" />
+	<frame delay="60" source="crate/full_s_0005.png" />
+	<frame delay="40" source="crate/full_s_0004.png" />
+	<frame delay="20" source="crate/full_s_0003.png" />
+	<frame source="crate/full_s_0002.png" />
+	<frame source="crate/full_s_0001.png" />
+</animation>

@@ -1,0 +1,37 @@
+digraph "source tree" {
+    overlap=scale;
+    size="8,10";
+    ratio="fill";
+    fontsize="16";
+    fontname="Helvetica";
+    clusterrank="local";
+    "audio" -> "util"
+    "audio" -> "vfs"
+    "controller" -> "audio"
+    "controller" -> "eventchannel"
+    "controller" -> "gui"
+    "controller" -> "loaders"
+    "controller" -> "model"
+    "controller" -> "pathfinder"
+    "controller" -> "util"
+    "controller" -> "vfs"
+    "controller" -> "video"
+    "controller" -> "view"
+    "eventchannel" -> "util"
+    "gui" -> "eventchannel"
+    "gui" -> "util"
+    "gui" -> "video"
+    "loaders" -> "audio"
+    "loaders" -> "util"
+    "loaders" -> "vfs"
+    "loaders" -> "video"
+    "model" -> "util"
+    "pathfinder" -> "model"
+    "pathfinder" -> "util"
+    "util" -> "engine"
+    "vfs" -> "util"
+    "video" -> "util"
+    "view" -> "model"
+    "view" -> "util"
+    "view" -> "video"
+}

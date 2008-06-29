@@ -1,0 +1,10 @@
+<animation delay="90" id="2001">
+	<frame source="gfx/walk_sw_1.png" />
+	<frame source="gfx/walk_sw_2.png" />
+	<frame source="gfx/walk_sw_3.png" />
+	<frame source="gfx/walk_sw_4.png" />
+	<frame source="gfx/walk_sw_5.png" />
+	<frame source="gfx/walk_sw_6.png" />
+	<frame source="gfx/walk_sw_7.png" />
+	<frame source="gfx/walk_sw_8.png" />
+</animation>

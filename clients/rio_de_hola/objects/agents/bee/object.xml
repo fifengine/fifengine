@@ -1,0 +1,53 @@
+<?fife type="object"?>
+<object id="bee" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="0">
+	<action id="attack">
+		<animation source="attack/000/animation.xml" direction="0" />
+		<animation source="attack/045/animation.xml" direction="45" />
+		<animation source="attack/090/animation.xml" direction="90" />
+		<animation source="attack/135/animation.xml" direction="135" />
+		<animation source="attack/180/animation.xml" direction="180" />
+		<animation source="attack/225/animation.xml" direction="225" />
+		<animation source="attack/270/animation.xml" direction="270" />
+		<animation source="attack/315/animation.xml" direction="315" />
+	</action>
+	<action id="fall">
+		<animation source="fall/000/animation.xml" direction="0" />
+		<animation source="fall/045/animation.xml" direction="45" />
+		<animation source="fall/090/animation.xml" direction="90" />
+		<animation source="fall/135/animation.xml" direction="135" />
+		<animation source="fall/180/animation.xml" direction="180" />
+		<animation source="fall/225/animation.xml" direction="225" />
+		<animation source="fall/270/animation.xml" direction="270" />
+		<animation source="fall/315/animation.xml" direction="315" />
+	</action>
+	<action id="fly">
+		<animation source="fly/000/animation.xml" direction="0" />
+		<animation source="fly/045/animation.xml" direction="45" />
+		<animation source="fly/090/animation.xml" direction="90" />
+		<animation source="fly/135/animation.xml" direction="135" />
+		<animation source="fly/180/animation.xml" direction="180" />
+		<animation source="fly/225/animation.xml" direction="225" />
+		<animation source="fly/270/animation.xml" direction="270" />
+		<animation source="fly/315/animation.xml" direction="315" />
+	</action>
+	<action id="get_hit">
+		<animation source="get_hit/000/animation.xml" direction="0" />
+		<animation source="get_hit/045/animation.xml" direction="45" />
+		<animation source="get_hit/090/animation.xml" direction="90" />
+		<animation source="get_hit/135/animation.xml" direction="135" />
+		<animation source="get_hit/180/animation.xml" direction="180" />
+		<animation source="get_hit/225/animation.xml" direction="225" />
+		<animation source="get_hit/270/animation.xml" direction="270" />
+		<animation source="get_hit/315/animation.xml" direction="315" />
+	</action>
+	<action id="stand">
+		<animation source="stand/000/animation.xml" direction="0" />
+		<animation source="stand/045/animation.xml" direction="45" />
+		<animation source="stand/090/animation.xml" direction="90" />
+		<animation source="stand/135/animation.xml" direction="135" />
+		<animation source="stand/180/animation.xml" direction="180" />
+		<animation source="stand/225/animation.xml" direction="225" />
+		<animation source="stand/270/animation.xml" direction="270" />
+		<animation source="stand/315/animation.xml" direction="315" />
+	</action>
+</object>

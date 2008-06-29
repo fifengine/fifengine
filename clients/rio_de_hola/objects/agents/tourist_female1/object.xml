@@ -1,0 +1,33 @@
+<?fife type="object"?>
+<object id="tourist_female1" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="0">
+	<action id="stand">
+		<animation source="stand/000/animation.xml" direction="0" />
+		<animation source="stand/045/animation.xml" direction="45" />
+		<animation source="stand/090/animation.xml" direction="90" />
+		<animation source="stand/135/animation.xml" direction="135" />
+		<animation source="stand/180/animation.xml" direction="180" />
+		<animation source="stand/225/animation.xml" direction="225" />
+		<animation source="stand/270/animation.xml" direction="270" />
+		<animation source="stand/315/animation.xml" direction="315" />
+	</action>
+	<action id="talk">
+		<animation source="talk/000/animation.xml" direction="0" />
+		<animation source="talk/045/animation.xml" direction="45" />
+		<animation source="talk/090/animation.xml" direction="90" />
+		<animation source="talk/135/animation.xml" direction="135" />
+		<animation source="talk/180/animation.xml" direction="180" />
+		<animation source="talk/225/animation.xml" direction="225" />
+		<animation source="talk/270/animation.xml" direction="270" />
+		<animation source="talk/315/animation.xml" direction="315" />
+	</action>
+	<action id="walk">
+		<animation source="walk/000/animation.xml" direction="0" />
+		<animation source="walk/045/animation.xml" direction="45" />
+		<animation source="walk/090/animation.xml" direction="90" />
+		<animation source="walk/135/animation.xml" direction="135" />
+		<animation source="walk/180/animation.xml" direction="180" />
+		<animation source="walk/225/animation.xml" direction="225" />
+		<animation source="walk/270/animation.xml" direction="270" />
+		<animation source="walk/315/animation.xml" direction="315" />
+	</action>
+</object>

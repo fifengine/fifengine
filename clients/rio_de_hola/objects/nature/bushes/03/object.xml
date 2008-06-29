@@ -1,0 +1,4 @@
+<?fife type="object"?>
+<object id="bushes:03" namespace="http://www.fifengine.de/xml/rio_de_hola" blocking="1" static="1">
+	<image source="000.png" direction="0" />
+</object>
