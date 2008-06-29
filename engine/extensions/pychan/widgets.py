@@ -564,8 +564,8 @@ class Widget(object):
 	def _getFont(self):
 		return self._font
 
-	def _getBorderSize(self): return self.real_widget.getBorderSize()
-	def _setBorderSize(self,size): self.real_widget.setBorderSize(size)
+	def _getBorderSize(self): return self.real_widget.getFrameSize()
+	def _setBorderSize(self,size): self.real_widget.setFrameSize(size)
 
 	def _getBaseColor(self): return self.real_widget.getBaseColor()
 	def _setBaseColor(self,color):
@@ -1203,8 +1203,8 @@ class CheckBox(BasicTextWidget):
 		
 		# Initial data stuff inherited.
 	
-	def _isMarked(self): return self.real_widget.isMarked()
-	def _setMarked(self,mark): self.real_widget.setMarked(mark)
+	def _isMarked(self): return self.real_widget.isSelected()
+	def _setMarked(self,mark): self.real_widget.setSelected(mark)
 	marked = property(_isMarked,_setMarked)
 
 class RadioButton(BasicTextWidget):
@@ -1238,8 +1238,8 @@ class RadioButton(BasicTextWidget):
 		
 		# Initial data stuff inherited.
 	
-	def _isMarked(self): return self.real_widget.isMarked()
-	def _setMarked(self,mark): self.real_widget.setMarked(mark)
+	def _isMarked(self): return self.real_widget.isSelected()
+	def _setMarked(self,mark): self.real_widget.setSelected(mark)
 	marked = property(_isMarked,_setMarked)
 
 	def _setGroup(self,group): self.real_widget.setGroup(group)

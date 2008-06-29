@@ -102,7 +102,7 @@ namespace FIFE {
 
 		setSize(w, h);
 		setPosition((screen->getWidth() - w) / 2,-h);
-		setBorderSize(0);
+		setFrameSize(0);
 
 		setForegroundColor(white);
 		setBackgroundColor(black);

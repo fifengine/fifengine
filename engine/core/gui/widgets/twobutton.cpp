@@ -42,7 +42,7 @@ namespace gcn {
 		m_listener(NULL),
 		m_helptext("") {
 		m_hoverImage = hover_file;
-		setBorderSize(0);
+		setFrameSize(0);
 		adjustSize();
 		mCaption = caption;
 	}
