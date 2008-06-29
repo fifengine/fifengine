@@ -1,6 +1,0 @@
-<VBox opaque='1'>
-	<Button name="moveButton" text="Move here" />
-	<Button name="talkButton" text="Talk" />
-	<Button name="kickButton" text="Kick" />
-	<Button name="inspectButton" text="Inspect" />
-</VBox>

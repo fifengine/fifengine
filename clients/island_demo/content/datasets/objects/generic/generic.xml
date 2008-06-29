@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<dataset id="Generic" type="Embedded" format="1.0">
-	<!-- Draw an object tile-like -->
-	<object id="Object:Tilelike" static="1">
-	</object>
-</dataset>

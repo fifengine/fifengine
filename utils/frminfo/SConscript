@@ -1,8 +1,0 @@
-import glob
-
-Import('env')
-env = env.Copy()
-files = glob.glob('*.cpp')
-env.Program('frminfo', files)
-	
-# vim: set filetype=python :
