@@ -201,20 +201,20 @@ namespace FIFE {
 	void GUIManager::evaluateKeyEventConsumption(KeyEvent& evt) {
 		gcn::Widget* w = m_focushandler->getFocused();
 		if (w) {
-			evt.consume();
+			evt.consumedByGuichan();
 		}
 	}
 
 	void GUIManager::evaluateMouseEventConsumption(MouseEvent& evt) {
 		gcn::Widget* w = m_gcn_topcontainer->getWidgetAt(evt.getX(), evt.getY());
 		if (w && w->isVisible()) {
-			// evt.consume();
+			evt.consumedByGuichan();
 		}
 	}
 
 	void GUIManager::mousePressed(MouseEvent& evt) {
  		evaluateMouseEventConsumption(evt);
-		if (!evt.isConsumed()) {
+		if (!evt.isConsumedByGuichan()) {
 			m_focushandler->focusNone();
 		}
 	}

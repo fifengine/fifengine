@@ -66,6 +66,7 @@ namespace FIFE {
 
 	class InputEvent: public Event {
 	public:
+		virtual bool isConsumedByGuichan() const;
 		virtual bool isAltPressed() const;
 		virtual bool isControlPressed() const;
 		virtual bool isMetaPressed() const;

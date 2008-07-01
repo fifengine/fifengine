@@ -125,6 +125,8 @@ namespace FIFE {
 
 		virtual void consume() { InputEvent::consume(); }
 		virtual bool isConsumed() const { return InputEvent::isConsumed(); }
+		virtual void consumedByGuichan() { InputEvent::consumedByGuichan(); }
+		virtual bool isConsumedByGuichan() const { return InputEvent::isConsumedByGuichan(); }
 		virtual IEventSource* getSource() { return InputEvent::getSource(); }
 		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
 		virtual gcn::Widget* getSourceWidget() { return InputEvent::getSourceWidget(); }

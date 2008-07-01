@@ -408,6 +408,7 @@ namespace FIFE {
 					break;
 				case MouseEvent::ENTERED:
 					(*i)->mouseEntered(evt);
+					break;
 				case MouseEvent::EXITED:
 					(*i)->mouseExited(evt);
 					break;

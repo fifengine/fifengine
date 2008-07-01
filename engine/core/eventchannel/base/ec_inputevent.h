@@ -45,6 +45,7 @@ namespace FIFE {
 		*/
 		InputEvent(): 
 			Event(), 
+			m_consumedbyguichan(false), 
 			m_isshiftpressed(false), 
 			m_iscontrolpressed(false), 
 			m_isaltpressed(false), 
@@ -73,6 +74,11 @@ namespace FIFE {
 		 */
 		virtual bool isShiftPressed() const { return m_isshiftpressed; }
 		virtual void setShiftPressed(bool pressed) { m_isshiftpressed = pressed; }
+		
+		/** Marks events as consumed by guichan. 
+		 */
+		virtual void consumedByGuichan() { m_consumedbyguichan = true; }
+		virtual bool isConsumedByGuichan() const { return m_consumedbyguichan; }
 
 		virtual void consume() { Event::consume(); }
 		virtual bool isConsumed() const { return Event::isConsumed(); }
@@ -101,6 +107,7 @@ namespace FIFE {
 
 
 	private:
+		bool m_consumedbyguichan;
 		bool m_isshiftpressed;
 		bool m_iscontrolpressed;
 		bool m_isaltpressed;
