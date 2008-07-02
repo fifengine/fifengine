@@ -35,7 +35,7 @@ namespace gcn {
 	%nodefaultctor;
 	class Graphics {
 	public:
-		enum Alignmnet {
+		enum Alignment {
 			LEFT = 0,
 			CENTER,
 			RIGHT
