@@ -394,7 +394,7 @@
 			<i x="4.0" o="beach:02" z="0.0" y="1.0" r="180"></i>
 		</instances>
 	</layer>
-	<layer grid_type="square" id="TechdemoMapObjectLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
+	<layer grid_type="square" id="TechdemoMapGroundObjectLayer" x_scale="1.0" pathing="cell_edges_only" y_scale="1.0" rotation="0.0" x_offset="0.0" y_offset="0.0">
 		<instances>
 			<i x="7.0" o="beekeeper" z="0.0" y="0.0" r="0"></i>
 			<i r="0" id="PC" z="0.0" x="5.0" o="boy" y="4.0"></i>

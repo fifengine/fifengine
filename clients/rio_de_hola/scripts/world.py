@@ -98,7 +98,7 @@ class World(EventListenerBase):
 		self.map = loadMapFile(filename, self.engine)
 		self.maplistener = MapListener(self.map)
 		
-		self.agentlayer = self.map.getLayer('TechdemoMapObjectLayer')
+		self.agentlayer = self.map.getLayer('TechdemoMapGroundObjectLayer')
 		self.hero = Hero(self.model, 'PC', self.agentlayer)
 		self.instance_to_agent[self.hero.agent.getFifeId()] = self.hero
 		self.hero.start()
