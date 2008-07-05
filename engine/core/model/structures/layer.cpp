@@ -119,35 +119,39 @@ namespace FIFE {
 	}
 
 	void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const {
-		
-		if(layer == 0) {
+		if (!layer) {
 			layer = this;
 		}
 		
-		min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
-		max = min;
-
-		for(std::vector<Instance*>::const_iterator i = m_instances.begin();
-			i != m_instances.end();
-			++i) {
-
-			ModelCoordinate coord = (*i)->getLocationRef().getLayerCoordinates(layer);
-
-			if(coord.x < min.x) {
-				min.x = coord.x;
+		bool first_found = false;
+		for (std::vector<Instance*>::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
+			if (!first_found) {
+				min = m_instances.front()->getLocationRef().getLayerCoordinates(layer);
+				max = min;
+				first_found = true;
+			} else {
+				ModelCoordinate coord = (*i)->getLocationRef().getLayerCoordinates(layer);
+	
+				if(coord.x < min.x) {
+					min.x = coord.x;
+				}
+				
+				if(coord.x > max.x) {
+					max.x = coord.x;
+				}
+	
+				if(coord.y < min.y) {
+					min.y = coord.y;
+				}
+				
+				if(coord.y > max.y) {
+					max.y = coord.y;
+				}
 			}
-			
-			if(coord.x > max.x) {
-				max.x = coord.x;
-			}
-
-			if(coord.y < min.y) {
-				min.y = coord.y;
-			}
-			
-			if(coord.y > max.y) {
-				max.y = coord.y;
-			}
+		}
+		if (!first_found) {
+			min = ModelCoordinate();
+			max = min;
 		}
 	}
 

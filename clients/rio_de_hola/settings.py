@@ -6,7 +6,7 @@ RenderBackend       = "OpenGL"
 SDLRemoveFakeAlpha  = 1
 ScreenWidth         = 1024
 ScreenHeight        = 768
-MapFile             = 'maps/testmap3.xml'
+MapFile             = 'maps/shrine.xml'
 Font                = 'fonts/samanata.ttf'
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\""
 

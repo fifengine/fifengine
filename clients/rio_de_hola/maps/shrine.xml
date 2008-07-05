@@ -57,7 +57,7 @@
 	<import file="../objects/items/beebox/object.xml"></import>
 	<import file="../objects/agents/beekeeper/object.xml"></import>
 	<import file="../objects/agents/hippie_priest/object.xml"></import>
-	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="TileLayer" x_scale="1.0" y_scale="1.0" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="TechdemoMapTileLayer" x_scale="1.0" y_scale="1.0" rotation="0.0">
 		<instances>
 			<i x="-1.0" o="sands:01" y="1.0" r="0" z="0.0" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
 			<i x="0.0" o="sands:01" z="0.0" y="1.0" r="0"></i>
@@ -5166,7 +5166,7 @@
 			<i x="-43.0" o="sands:02" z="0.0" y="-31.0" r="0"></i>
 		</instances>
 	</layer>
-	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="ObjectLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="TechdemoMapGroundObjectLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
 		<instances>
 			<i x="8.0" o="shrine" z="0.0" y="-1.0" r="180"></i>
 			<i x="11.0" o="shrine" z="0.0" y="-1.0" r="0"></i>
@@ -6102,10 +6102,12 @@
 			<i x="-41.0" o="beebox" z="0.0" y="-34.0" r="90"></i>
 			<i x="-40.0" o="beekeeper" z="0.0" y="-31.0" r="180"></i>
 			<i x="43.0" o="hippie_priest" z="0.0" y="19.0" r="180"></i>
+			<i r="0" id="PC" z="0.0" x="5.0" o="boy" y="4.0"></i>
+			<i r="0" id="NPC:girl" z="0.0" x="8.0" o="girl" y="2.0"></i>
 		</instances>
 	</layer>
-	<camera ref_cell_width="128" zoom="1.157625" tilt="-42.0" viewport="0,0,1280,960" id="main" ref_layer_id="TileLayer" ref_cell_height="96" rotation="45.0">
+	<camera ref_cell_width="128" zoom="1.157625" tilt="-42.0" viewport="0,0,1280,960" id="main" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0">
 	</camera>
-	<camera ref_cell_width="128" zoom="1.0" tilt="-42.0" viewport="10,10,400,250" id="small" ref_layer_id="TileLayer" ref_cell_height="96" rotation="45.0">
+	<camera ref_cell_width="128" zoom="1.0" tilt="-42.0" viewport="10,10,400,250" id="small" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0">
 	</camera>
 </map>
