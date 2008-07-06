@@ -9,18 +9,18 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command="..\..\..\..\engine\swigwrappers\python\python.exe"
-				WorkingDirectory="..\..\..\..\clients\island_demo"
-				CommandArguments="run_demo.py"
+				Command="python"
+				WorkingDirectory="..\..\..\..\clients\rio_de_hola"
+				CommandArguments="run.py"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			>
 			<DebugSettings
-				Command="..\..\..\..\engine\swigwrappers\python\python.exe"
-				WorkingDirectory="..\..\..\..\clients\island_demo"
-				CommandArguments="run_demo.py"
+				Command="python"
+				WorkingDirectory="..\..\..\..\clients\rio_de_hola"
+				CommandArguments="run.py"
 			/>
 		</Configuration>
 	</Configurations>

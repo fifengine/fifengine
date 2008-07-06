@@ -10,8 +10,8 @@
 			>
 			<DebugSettings
 				Command="python"
-				WorkingDirectory="..\..\..\..\clients\island_demo"
-				CommandArguments="run_demo.py"
+				WorkingDirectory="..\..\..\..\clients\rio_de_hola"
+				CommandArguments="run.py"
 			/>
 		</Configuration>
 		<Configuration
@@ -19,8 +19,8 @@
 			>
 			<DebugSettings
 				Command="python"
-				WorkingDirectory="..\..\..\..\clients\island_demo"
-				CommandArguments="run_demo.py"
+				WorkingDirectory="..\..\..\..\clients\rio_de_hola"
+				CommandArguments="run.py"
 			/>
 		</Configuration>
 	</Configurations>
