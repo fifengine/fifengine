@@ -16,7 +16,7 @@
 	<import file="../objects/ground/beach/02/object.xml"></import>
 	<import file="../objects/ground/beach/01/object.xml"></import>
 	<import file="../objects/ground/quays/06/object.xml"></import>
-	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="TileLayer" x_scale="1.0" y_scale="1.0" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TileLayer" x_scale="1.0" y_scale="1.0" rotation="0.0">
 		<instances>
 			<i x="-24.0" o="water" y="30.0" r="0" z="0.0" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
 			<i x="-23.0" o="water" z="0.0" y="30.0" r="0"></i>
@@ -4772,7 +4772,7 @@
 			<i x="-8.0" o="water" z="0.0" y="23.0" r="0"></i>
 		</instances>
 	</layer>
-	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="GroundLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="GroundLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
 		<instances>
 			<i x="-17.0" o="quays:06" z="0.0" y="-63.0" r="0"></i>
 			<i x="-17.0" o="quays:06" z="0.0" y="-62.0" r="0"></i>
@@ -4788,7 +4788,7 @@
 			<i x="-17.0" o="quays:06" z="0.0" y="-52.0" r="0"></i>
 		</instances>
 	</layer>
-	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="ObjectLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="ObjectLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
 		<instances>
 		</instances>
 	</layer>
