@@ -18,6 +18,7 @@
 	<import file="../objects/ground/beach/06/object.xml"></import>
 	<import file="../objects/ground/sands/02/object.xml"></import>
 	<import file="../objects/ground/quays/07/object.xml"></import>
+	<import file="../objects/ground/quays/03/object.xml"></import>
 	<import file="../objects/items/shrine/object.xml"></import>
 	<import file="../objects/nature/rocks/01/object.xml"></import>
 	<import file="../objects/nature/rocks/03/object.xml"></import>
@@ -43,7 +44,6 @@
 	<import file="../objects/items/signs/sign2/object.xml"></import>
 	<import file="../objects/items/signs/sign1/object.xml"></import>
 	<import file="../objects/buildings/priest_hut/object.xml"></import>
-	<import file="../objects/ground/quays/03/object.xml"></import>
 	<import file="../objects/nature/bushes/16/object.xml"></import>
 	<import file="../objects/nature/trees/05/object.xml"></import>
 	<import file="../objects/nature/trees/06/object.xml"></import>
@@ -57,6 +57,9 @@
 	<import file="../objects/items/beebox/object.xml"></import>
 	<import file="../objects/agents/beekeeper/object.xml"></import>
 	<import file="../objects/agents/hippie_priest/object.xml"></import>
+	<import file="../objects/agents/boy/object.xml"></import>
+	<import file="../objects/agents/girl/object.xml"></import>
+	<import file="../objects/buildings/beach_bar/object.xml"></import>
 	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="TechdemoMapTileLayer" x_scale="1.0" y_scale="1.0" rotation="0.0">
 		<instances>
 			<i x="-1.0" o="sands:01" y="1.0" r="0" z="0.0" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
@@ -5164,6 +5167,13 @@
 			<i x="-43.0" o="sands:02" z="0.0" y="-35.0" r="0"></i>
 			<i x="-43.0" o="sands:02" z="0.0" y="-33.0" r="0"></i>
 			<i x="-43.0" o="sands:02" z="0.0" y="-31.0" r="0"></i>
+			<i x="-42.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
+			<i x="-42.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
+			<i x="-41.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
+			<i x="-41.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
+			<i x="-40.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
+			<i x="-40.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
+			<i x="-34.0" o="sands:02" z="0.0" y="-27.0" r="0"></i>
 		</instances>
 	</layer>
 	<layer x_offset="0.0" pathing="cell_edges_only" y_offset="0.0" grid_type="square" id="TechdemoMapGroundObjectLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
@@ -5372,7 +5382,6 @@
 			<i x="-35.0" o="sign:000" z="0.0" y="-17.0" r="90"></i>
 			<i x="-34.0" o="sign:000" z="0.0" y="-17.0" r="90"></i>
 			<i x="-40.0" o="priest_hut" z="0.0" y="-42.0" r="0"></i>
-			<i x="-34.0" o="sands:02" z="0.0" y="-27.0" r="0"></i>
 			<i x="-45.0" o="sign:000" z="0.0" y="-41.0" r="90"></i>
 			<i x="-46.0" o="sign:000" z="0.0" y="-41.0" r="90"></i>
 			<i x="-47.0" o="sign:000" z="0.0" y="-41.0" r="90"></i>
@@ -5414,12 +5423,6 @@
 			<i x="-25.0" o="sign:000" z="0.0" y="-25.0" r="270"></i>
 			<i x="-24.0" o="sign:000" z="0.0" y="-25.0" r="270"></i>
 			<i x="-23.0" o="sign:000" z="0.0" y="-25.0" r="270"></i>
-			<i x="-42.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
-			<i x="-42.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
-			<i x="-41.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
-			<i x="-41.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
-			<i x="-40.0" o="quays:03" z="0.0" y="-10.0" r="0"></i>
-			<i x="-40.0" o="quays:03" z="0.0" y="-11.0" r="0"></i>
 			<i x="55.0" o="bushes:17" z="0.0" y="-15.0" r="0"></i>
 			<i x="59.0" o="bushes:17" z="0.0" y="-31.0" r="0"></i>
 			<i x="55.0" o="bushes:17" z="0.0" y="-31.0" r="0"></i>
@@ -6102,11 +6105,12 @@
 			<i x="-41.0" o="beebox" z="0.0" y="-34.0" r="90"></i>
 			<i x="-40.0" o="beekeeper" z="0.0" y="-31.0" r="180"></i>
 			<i x="43.0" o="hippie_priest" z="0.0" y="19.0" r="180"></i>
-			<i r="0" id="PC" z="0.0" x="5.0" o="boy" y="4.0"></i>
-			<i r="0" id="NPC:girl" z="0.0" x="8.0" o="girl" y="2.0"></i>
+			<i x="5.0" o="boy" y="4.0" r="0" id="PC" z="0.0"></i>
+			<i x="8.0" o="girl" y="2.0" r="0" id="NPC:girl" z="0.0"></i>
+			<i x="-19.0" o="beach_bar" z="0.0" y="2.0" r="180"></i>
 		</instances>
 	</layer>
-	<camera ref_cell_width="64" zoom="1.0" tilt="-42.0" viewport="0,0,1280,960" id="main" ref_layer_id="TechdemoMapGroundObjectLayer" ref_cell_height="48" rotation="45.0">
+	<camera ref_cell_width="64" zoom="1.0" tilt="-42.0" viewport="0,0,1280,800" id="main" ref_layer_id="TechdemoMapGroundObjectLayer" ref_cell_height="48" rotation="45.0">
 	</camera>
 	<camera ref_cell_width="128" zoom="1.0" tilt="-42.0" viewport="10,10,400,250" id="small" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0">
 	</camera>
