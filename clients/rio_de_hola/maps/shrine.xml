@@ -6106,7 +6106,7 @@
 			<i r="0" id="NPC:girl" z="0.0" x="8.0" o="girl" y="2.0"></i>
 		</instances>
 	</layer>
-	<camera ref_cell_width="128" zoom="1.157625" tilt="-42.0" viewport="0,0,1280,960" id="main" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0">
+	<camera ref_cell_width="64" zoom="1.0" tilt="-42.0" viewport="0,0,1280,960" id="main" ref_layer_id="TechdemoMapGroundObjectLayer" ref_cell_height="48" rotation="45.0">
 	</camera>
 	<camera ref_cell_width="128" zoom="1.0" tilt="-42.0" viewport="10,10,400,250" id="small" ref_layer_id="TechdemoMapTileLayer" ref_cell_height="96" rotation="45.0">
 	</camera>

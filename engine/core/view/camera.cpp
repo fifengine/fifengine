@@ -343,6 +343,11 @@ namespace FIFE {
 	}
 
 	void Camera::attach(Instance *instance) {
+		// fail if the layers aren't the same
+		if (m_location.getLayer()->getId() != instance->getLocation().getLayer()->getId()) {
+			FL_WARN(_log, "Tried to attach camera to instance on different layer.");
+			return ;
+		}
 		m_attachedto = instance;
 	}
 

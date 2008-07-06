@@ -21,9 +21,11 @@ def loadImportFile(path, engine):
 		res = object_loader.loadResource(fife.ResourceLocation(path))
 		print 'imported object file ' + path
 	except WrongFileType:
-		print 'ignored non-object file ' + path
+		pass
+#		print 'ignored non-object file ' + path
 	except NameClash:
-		print 'ignored already loaded file ' + path
+		pass
+#		print 'ignored already loaded file ' + path
 	return res
 
 def loadImportDir(path, engine):
