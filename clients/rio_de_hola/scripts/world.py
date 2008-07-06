@@ -210,12 +210,12 @@ class World(EventListenerBase):
 	def mouseMoved(self, evt):
 		renderer = fife.InstanceRenderer.getInstance(self.cameras['main'])
 		renderer.removeAllOutlines()
-		
-#		pt = fife.ScreenPoint(evt.getX(), evt.getY())
-#		instances = self.cameras['main'].getMatchingInstances(pt, self.agentlayer);
-#		for i in instances:
-#			if i.getObject().getId() in ('Girl', 'Beekeeper'):
-#				renderer.addOutlined(i, 173, 255, 47, 2)
+
+		pt = fife.ScreenPoint(evt.getX(), evt.getY())
+		instances = self.cameras['main'].getMatchingInstances(pt, self.agentlayer);
+		for i in instances:
+			if i.getObject().getId() in ('girl', 'beekeeper'):
+				renderer.addOutlined(i, 173, 255, 47, 2)
 	
 	def onConsoleCommand(self, command):
 		result = ''
