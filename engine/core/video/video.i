@@ -27,6 +27,7 @@
 #include "video/imagepool.h"
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
+#include "video/image_location.h"
 #include "util/base/exception.h"
 %}
 
@@ -36,6 +37,7 @@
 namespace FIFE {
 	class Pool;
 	class Point;
+	class ResourceLocation;
 
 	class AbstractImage {
 	public:
@@ -101,6 +103,22 @@ namespace FIFE {
 		void addRef();
 		void decRef();
 		unsigned int getRefCount();
+	};
+
+	class ImageLocation: public ResourceLocation {
+	public:
+		ImageLocation(const std::string& filename);
+		virtual ~ResourceLocation() {};
+		virtual void setXShift(int xshift) { m_xshift = xshift; }
+		virtual int getXShift() const { return m_xshift; }
+		virtual void setYShift(int yshift) { m_yshift = yshift; }
+		virtual int getYShift() const { return m_yshift; }
+		virtual void setWidth(unsigned int width) { m_width = width; }
+		virtual unsigned int getWidth() const { return m_width; }
+		virtual void setHeight(unsigned int height) { m_height = height; }
+		virtual unsigned int getHeight() const { return m_height; }
+		virtual void setParentSource(Image* image) { m_parent_image = image; }
+		virtual Image* getParentSource() const { return m_parent_image; }
 	};
 
 	class ImagePool: public Pool {
