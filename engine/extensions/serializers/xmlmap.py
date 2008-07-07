@@ -91,7 +91,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			rotation = layer.get('rotation')
 			x_offset = layer.get('x_offset')
 			y_offset = layer.get('y_offset')
-			pathing = "cell_edges_only"
+			pathing = layer.get('pathing')
 
 			if not x_scale: x_scale = 1.0
 			if not y_scale: y_scale = 1.0
