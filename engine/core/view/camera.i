@@ -37,6 +37,7 @@ namespace FIFE {
 		bool isEnabled();
 		
 		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances);
+		void getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances);
 		void getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates=false);
 		RendererBase* getRenderer(const std::string& name);
 		void resetRenderers();

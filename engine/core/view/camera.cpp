@@ -323,6 +323,45 @@ namespace FIFE {
 		}
 	}
 	
+	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances) {
+		instances.clear();
+		const std::vector<Instance*>& layer_instances = m_layer_to_instances[&layer];
+		std::vector<Instance*>::const_iterator instance_it = layer_instances.end();
+		while (instance_it != layer_instances.begin()) {
+			--instance_it;
+			Instance* i = (*instance_it);
+			InstanceVisual* visual = i->getVisual<InstanceVisual>();
+			InstanceVisualCacheItem& vc = visual->getCacheItem(this);
+			if ((vc.dimensions.intersects(screen_rect))) {
+				assert(vc.image);
+				Uint8 r, g, b, a;
+				for(int xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
+					for(int yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
+						int x = xx - vc.dimensions.x;
+						int y = yy - vc.dimensions.y;
+						if (m_zoom != 1.0) {
+							double fx = static_cast<double>(x);
+							double fy = static_cast<double>(y);
+							double fow = static_cast<double>(vc.image->getWidth());
+							double foh = static_cast<double>(vc.image->getHeight());
+							double fsw = static_cast<double>(vc.dimensions.w);
+							double fsh = static_cast<double>(vc.dimensions.h);
+							x = static_cast<int>(round(fx / fsw * fow));
+							y = static_cast<int>(round(fy / fsh * foh));
+						}
+						vc.image->getPixelRGBA(x, y, &r, &b, &g, &a);
+						// instance is hit with mouse if not totally transparent
+						if (a != 0) {
+							instances.push_back(i);
+							goto found_non_transparent_pixel;
+						}
+					}
+				}
+				found_non_transparent_pixel:;
+			}
+		}
+	}
+	
 	void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates) {
 		instances.clear();
 		const std::vector<Instance*>& layer_instances = m_layer_to_instances[loc.getLayer()];
