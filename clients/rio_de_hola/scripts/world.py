@@ -192,6 +192,9 @@ class World(EventListenerBase):
 			self.cameras['main'].setRotation((currot + 5) % 360)
 	
 	def mousePressed(self, evt):
+		if evt.isConsumedByWidgets():
+			return
+		
 		clickpoint = fife.ScreenPoint(evt.getX(), evt.getY())
 		if (evt.getButton() == fife.MouseEvent.LEFT):
 			self.hide_instancemenu()
