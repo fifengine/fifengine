@@ -14,16 +14,16 @@ namespace FIFE {
 		GenericRendererNode(const Point &attached_point);
 		~GenericRendererNode();
 		
-		void setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point);
-		void setAttached(Instance* attached_instance, const Location &relative_location);
+		void setAttached(Instance* attached_instance, Location* relative_location, const Point &relative_point);
+		void setAttached(Instance* attached_instance, Location* relative_location);
 		void setAttached(Instance* attached_instance, const Point &relative_point);
 		void setAttached(Instance* attached_instance);
-		void setAttached(const Location &attached_location, const Point &relative_point);
-		void setAttached(const Location &attached_location);
+		void setAttached(Location* attached_location, const Point &relative_point);
+		void setAttached(Location* attached_location);
 		void setAttached(const Point &attached_point);
 		
-		void setRelative(const Location &relative_location);
-		void setRelative(const Location &relative_location, Point relative_point);
+		void setRelative(Location* relative_location);
+		void setRelative(Location* relative_location, Point relative_point);
 		void setRelative(const Point &relative_point);
 		
 		Instance* getAttachedInstance();
