@@ -74,7 +74,6 @@
 #include "view/renderers/floatingtextrenderer.h"
 #include "view/renderers/cellselectionrenderer.h"
 #include "view/renderers/blockinginforenderer.h"
-#include "view/renderers/geometricrenderer.h"
 #include "view/renderers/genericrenderer.h"
 #include "engine.h"
 
@@ -245,8 +244,7 @@ namespace FIFE {
 		m_view->addRenderer(new FloatingTextRenderer(m_renderbackend, 50, dynamic_cast<AbstractFont*>(m_defaultfont)));
 		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 60));
 		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, 70, dynamic_cast<AbstractFont*>(m_defaultfont)));
-		m_view->addRenderer(new GeometricRenderer(m_renderbackend, 80));
-		m_view->addRenderer(new GenericRenderer(m_renderbackend, 100, m_imagepool, m_animpool));
+		m_view->addRenderer(new GenericRenderer(m_renderbackend, 80, m_imagepool, m_animpool));
 		m_cursor = new Cursor(m_imagepool, m_animpool, m_renderbackend);
 		FL_LOG(_log, "Engine intialized");
 	}

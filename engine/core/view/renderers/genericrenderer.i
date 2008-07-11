@@ -120,12 +120,12 @@ namespace FIFE {
 		~GeometricRenderer();
 		std::string getName();
 		static GenericRenderer* getInstance(IRendererContainer* cnt);
-		void addLine(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
-		void addPoint(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
-		void addQuad(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
-		void addText(GenericRendererNode n, AbstractFont* font, std::string text);
-		void addImage(GenericRendererNode n, int image);
-		void addAnimation(GenericRendererNode n, int animation);
-		void removeAll();
+		void addLine(int group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
+		void addPoint(int group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
+		void addQuad(int group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
+		void addText(int group, GenericRendererNode n, AbstractFont* font, std::string text);
+		void addImage(int group, GenericRendererNode n, int image);
+		void addAnimation(int group, GenericRendererNode n, int animation);
+		void removeAll(int group);
 	};
 }

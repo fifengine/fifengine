@@ -287,7 +287,7 @@ namespace FIFE {
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
 		m_animationpool(animpool),
-		m_infos() {
+		m_groups() {
 		setEnabled(false);
 	}
 
@@ -295,7 +295,7 @@ namespace FIFE {
 		RendererBase(old),
 		m_imagepool(old.m_imagepool),
 		m_animationpool(old.m_animationpool),
-		m_infos() {
+		m_groups() {
 		setEnabled(false);
 	}
 
@@ -305,43 +305,46 @@ namespace FIFE {
 
 	GenericRenderer::~GenericRenderer() {
 	}
-	void GenericRenderer::addLine(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b) {
+	void GenericRenderer::addLine(int group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b) {
 		GenericRendererElementInfo* info = new GenericRendererLineInfo(n1, n2, r, g, b);
-		m_infos.push_back(info);
+		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addPoint(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b) {
+	void GenericRenderer::addPoint(int group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b) {
 		GenericRendererElementInfo* info = new GenericRendererPointInfo(n, r, g, b);
-		m_infos.push_back(info);
+		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addQuad(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b) {
+	void GenericRenderer::addQuad(int group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b) {
 		GenericRendererElementInfo* info = new GenericRendererQuadInfo(n1, n2, n3, n4, r, g, b);
-		m_infos.push_back(info);
+		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addText(GenericRendererNode n, AbstractFont* font, std::string text) {
+	void GenericRenderer::addText(int group, GenericRendererNode n, AbstractFont* font, std::string text) {
 		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
-		m_infos.push_back(info);
+		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addImage(GenericRendererNode n, int image) {
+	void GenericRenderer::addImage(int group, GenericRendererNode n, int image) {
 		GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image);
-		m_infos.push_back(info);
+		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addAnimation(GenericRendererNode n, int animation) {
+	void GenericRenderer::addAnimation(int group, GenericRendererNode n, int animation) {
 		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
-		m_infos.push_back(info);
+		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::removeAll() {
-		std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_infos.begin();
-		for (;info_it != m_infos.end(); ++info_it) {
+	void GenericRenderer::removeAll(int group) {
+		std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
+		for (;info_it != m_groups[group].end(); ++info_it) {
 			delete *info_it;
 		}
-		m_infos.clear();
+		m_groups[group].clear();
+		m_groups.erase(group);
 	}
 
 	void GenericRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
-		std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_infos.begin();
-		for (;info_it != m_infos.end(); ++info_it) {
-			GenericRendererElementInfo* info = *info_it;
-			info->render(cam, layer, instances, m_renderbackend, m_imagepool, m_animationpool);
+		std::map<int, std::vector<GenericRendererElementInfo*> >::iterator group_it = m_groups.begin();
+		for(; group_it != m_groups.end(); ++group_it) {
+			std::vector<GenericRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
+			for (;info_it != group_it->second.end(); ++info_it) {
+				(*info_it)->render(cam, layer, instances, m_renderbackend, m_imagepool, m_animationpool);
+			}
 		}
 	}
 }
