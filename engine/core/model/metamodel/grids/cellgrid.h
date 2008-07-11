@@ -174,6 +174,10 @@ namespace FIFE {
 		 */
 		const double getRotation() const { return m_rotation; }
 
+		/** Returns clone of this cellgrid
+		 */
+		virtual CellGrid* clone() = 0;
+
 	protected:
 		void updateMatrices();
 		bool ptInTriangle(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2, const ExactModelCoordinate& pt3);

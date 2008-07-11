@@ -93,7 +93,7 @@ namespace FIFE {
 		public:
 			/** Constructor
 			 * Layers are created by calling addLayer from map, thus
-			 * this method should really be called only by elevation or test code
+			 * this method should really be called only by map or test code
 			 */
 			Layer(const std::string& identifier, Map* map, CellGrid* grid);
 

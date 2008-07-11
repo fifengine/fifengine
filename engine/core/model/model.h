@@ -114,6 +114,14 @@ namespace FIFE {
 		 */
 		AbstractPather* getPather(const std::string& pathername);
 		
+		/** Adds cellgrid to model. Moves ownership to model
+		 */
+		void adoptCellGrid(CellGrid* grid);
+		
+		/** Returns new copy of cellgrid corresponding given name. If none found, returns NULL
+		 */
+		CellGrid* getCellGrid(const std::string& gridtype);
+		
 		/** Called periodically to update events on model
 		 */
 		void update();
@@ -136,6 +144,8 @@ namespace FIFE {
 		std::list<namespace_t> m_namespaces;
 
 		std::vector<AbstractPather*> m_pathers;
+		std::vector<CellGrid*> m_adopted_grids;
+		std::vector<CellGrid*> m_created_grids;
 		TimeProvider m_timeprovider;
 	};
 

@@ -59,12 +59,11 @@
 #include "loaders/native/video_loaders/subimage_loader.h"
 #include "loaders/native/video_loaders/image_loader.h"
 #include "loaders/native/audio_loaders/ogg_loader.h"
-//#include "loaders/fallout/model_loaders/dat1.h"
-//#include "loaders/fallout/model_loaders/dat2.h"
 #include "model/model.h"
 #include "pathfinder/linearpather/linearpather.h"
 #include "pathfinder/routepather/routepather.h"
-
+#include "model/metamodel/grids/hexgrid.h"
+#include "model/metamodel/grids/squaregrid.h"
 #include "view/view.h"
 #include "view/renderers/camerazonerenderer.h"
 #include "view/renderers/quadtreerenderer.h"
@@ -232,6 +231,9 @@ namespace FIFE {
 		FL_LOG(_log, "Adding pathers to model");
 		m_model->adoptPather(new LinearPather());
 		m_model->adoptPather(new RoutePather());
+		FL_LOG(_log, "Adding grid prototypes to model");
+		m_model->adoptCellGrid(new SquareGrid());
+		m_model->adoptCellGrid(new HexGrid());
 
 		FL_LOG(_log, "Creating view");
 		m_view = new View(m_renderbackend, m_imagepool, m_animpool);

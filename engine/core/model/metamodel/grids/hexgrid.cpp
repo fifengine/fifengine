@@ -52,6 +52,10 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("VERTICAL_MULTIP ") << VERTICAL_MULTIP);
 	}
 
+	CellGrid* HexGrid::clone() {
+		return new HexGrid(this);
+	}
+
 	HexGrid::~HexGrid() {
 	}
 

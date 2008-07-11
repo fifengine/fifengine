@@ -47,6 +47,7 @@ namespace FIFE {
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
 		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
 		void getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell);
+		CellGrid* clone();
 
 	private:
 		bool isAccessibleDiagonal(const ModelCoordinate& curpos, const ModelCoordinate& target);

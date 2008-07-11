@@ -104,11 +104,8 @@ class XMLMapLoader(fife.ResourceLoader):
 			if not grid_type: self._err(''.join(['Layer ', str(id), ' has no grid_type attribute.']))
 
 			allow_diagonals = pathing == "cell_edges_and_diagonals"
-			if grid_type == "square":
-				cellgrid = fife.SquareGrid(allow_diagonals)
-			else:
-				cellgrid = fife.HexGrid(allow_diagonals)
-			cellgrid.thisown = 0
+			cellgrid = self.model.getCellGrid(grid_type)
+			if not cellgrid: self._err('<layer> declared with invalid cellgrid type. (%s)' % grid_type)
 
 			cellgrid.setRotation(float(rotation))
 			cellgrid.setXScale(float(x_scale))

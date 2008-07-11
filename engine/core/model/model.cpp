@@ -30,6 +30,7 @@
 #include "util/structures/purge.h"
 #include "model/metamodel/abstractpather.h"
 #include "model/metamodel/object.h"
+#include "model/metamodel/grids/cellgrid.h"
 #include "structures/map.h"
 #include "util/base/exception.h"
 
@@ -47,6 +48,8 @@ namespace FIFE {
 		for(std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace)
 			purge(nspace->second);
 		purge(m_pathers);
+		purge(m_created_grids);
+		purge(m_adopted_grids);
 	}
 
 	Map* Model::createMap(const std::string& identifier) {
@@ -74,6 +77,23 @@ namespace FIFE {
 		}
 		return NULL;
 	}
+
+	void Model::adoptCellGrid(CellGrid* grid) {
+		m_adopted_grids.push_back(grid);
+	}
+
+	CellGrid* Model::getCellGrid(const std::string& gridtype) {
+		std::vector<CellGrid*>::const_iterator it = m_adopted_grids.begin();
+		for(; it != m_adopted_grids.end(); ++it) {
+			if ((*it)->getType() == gridtype) {
+				CellGrid* newcg = (*it)->clone();
+				m_created_grids.push_back(newcg);
+				return newcg;
+			}
+		}
+		return NULL;
+	}
+
 	
 	Map* Model::getMap(const std::string& identifier) const {
 		std::list<Map*>::const_iterator it = m_maps.begin();

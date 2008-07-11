@@ -41,6 +41,10 @@ namespace FIFE {
 		CellGrid(allow_diagonals) {
 	}
 
+	CellGrid* SquareGrid::clone() {
+		return new SquareGrid(this);
+	}
+
 	SquareGrid::~SquareGrid() {
 	}
 
