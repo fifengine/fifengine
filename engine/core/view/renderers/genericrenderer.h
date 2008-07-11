@@ -135,6 +135,8 @@ namespace FIFE {
 	private:
 		GenericRendererNode m_anchor;
 		int m_animation;
+		unsigned int m_start_time;
+		float m_time_scale;
 	};
 	class GenericRendererTextInfo : public GenericRendererElementInfo {
 	public:

@@ -36,6 +36,7 @@
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
+#include "model/metamodel/timeprovider.h"
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
@@ -244,10 +245,21 @@ namespace FIFE {
 	GenericRendererAnimationInfo::GenericRendererAnimationInfo(GenericRendererNode anchor, int animation):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
-		m_animation(animation) {
+		m_animation(animation),
+		m_start_time(SDL_GetTicks()),
+		m_time_scale(1.0) {
 	}
 	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		return;
+		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
+		Animation& animation = animpool->getAnimation(m_animation);
+		int animtime = scaleTime(m_time_scale, SDL_GetTicks() - m_start_time) % animation.getDuration();
+		Image* img = animation.getFrameByTimestamp(animtime);
+		Rect r;
+		r.x = p.x-img->getWidth()/2;
+		r.y = p.y-img->getHeight()/2;
+		r.w = img->getWidth();
+		r.h = img->getHeight();
+		img->render(r);
 	}
 	
 	GenericRendererTextInfo::GenericRendererTextInfo(GenericRendererNode anchor, AbstractFont* font, std::string text):
