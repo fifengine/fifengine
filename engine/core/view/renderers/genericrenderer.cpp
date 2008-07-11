@@ -183,56 +183,56 @@ namespace FIFE {
 
 	GenericRendererLineInfo::GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b):
 		GenericRendererElementInfo(),
-		n1(n1),
-		n2(n2),
-		r(r),
-		g(g),
-		b(b) {
+		m_edge1(n1),
+		m_edge2(n2),
+		m_red(r),
+		m_green(g),
+		m_blue(b) {
 	}
 	void GenericRendererLineInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p1 = n1.getCalculatedPoint(cam, layer, instances);
-		Point p2 = n2.getCalculatedPoint(cam, layer, instances);
-		renderbackend->drawLine(p1, p2, r, g, b);
+		Point p1 = m_edge1.getCalculatedPoint(cam, layer, instances);
+		Point p2 = m_edge2.getCalculatedPoint(cam, layer, instances);
+		renderbackend->drawLine(p1, p2, m_red, m_green, m_blue);
 	}
 	
-	GenericRendererPointInfo::GenericRendererPointInfo(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b):
+	GenericRendererPointInfo::GenericRendererPointInfo(GenericRendererNode anchor, uint8_t r, uint8_t g, uint8_t b):
 		GenericRendererElementInfo(),
-		n(n),
-		r(r),
-		g(g),
-		b(b) {
+		m_anchor(anchor),
+		m_red(r),
+		m_green(g),
+		m_blue(b) {
 	}
 	void GenericRendererPointInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p = n.getCalculatedPoint(cam, layer, instances);
-		renderbackend->putPixel(p.x, p.y, r, g, b);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
+		renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue);
 	}
 	
 	GenericRendererQuadInfo::GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b):
 		GenericRendererElementInfo(),
-		n1(n1),
-		n2(n2),
-		n3(n3),
-		n4(n4),
-		r(r),
-		g(g),
-		b(b) {
+		m_edge1(n1),
+		m_edge2(n2),
+		m_edge3(n3),
+		m_edge4(n4),
+		m_red(r),
+		m_green(g),
+		m_blue(b) {
 	}
 	void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p1 = n1.getCalculatedPoint(cam, layer, instances);
-		Point p2 = n2.getCalculatedPoint(cam, layer, instances);
-		Point p3 = n3.getCalculatedPoint(cam, layer, instances);
-		Point p4 = n4.getCalculatedPoint(cam, layer, instances);
-		renderbackend->drawQuad(p1, p2, p3, p4, r, g, b);
+		Point p1 = m_edge1.getCalculatedPoint(cam, layer, instances);
+		Point p2 = m_edge2.getCalculatedPoint(cam, layer, instances);
+		Point p3 = m_edge3.getCalculatedPoint(cam, layer, instances);
+		Point p4 = m_edge4.getCalculatedPoint(cam, layer, instances);
+		renderbackend->drawQuad(p1, p2, p3, p4, m_red, m_green, m_blue);
 	}
 	
-	GenericRendererImageInfo::GenericRendererImageInfo(GenericRendererNode n, int image):
+	GenericRendererImageInfo::GenericRendererImageInfo(GenericRendererNode anchor, int image):
 		GenericRendererElementInfo(),
-		n(n),
-		image(image) {
+		m_anchor(anchor),
+		m_image(image) {
 	}
 	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p = n.getCalculatedPoint(cam, layer, instances);
-		Image* img = &imagepool->getImage(image);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
+		Image* img = &imagepool->getImage(m_image);
 		Rect r;
 		r.x = p.x-img->getWidth()/2;
 		r.y = p.y-img->getHeight()/2;
@@ -241,24 +241,24 @@ namespace FIFE {
 		img->render(r);
 	}
 	
-	GenericRendererAnimationInfo::GenericRendererAnimationInfo(GenericRendererNode n, int animation):
+	GenericRendererAnimationInfo::GenericRendererAnimationInfo(GenericRendererNode anchor, int animation):
 		GenericRendererElementInfo(),
-		n(n),
-		animation(animation) {
+		m_anchor(anchor),
+		m_animation(animation) {
 	}
 	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		return;
 	}
 	
-	GenericRendererTextInfo::GenericRendererTextInfo(GenericRendererNode n, AbstractFont* font, std::string text):
+	GenericRendererTextInfo::GenericRendererTextInfo(GenericRendererNode anchor, AbstractFont* font, std::string text):
 		GenericRendererElementInfo(),
-		n(n),
-		font(font),
-		text(text) {
+		m_anchor(anchor),
+		m_font(font),
+		m_text(text) {
 	}
 	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p = n.getCalculatedPoint(cam, layer, instances);
-		Image* img = font->getAsImageMultiline(text);
+		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
+		Image* img = m_font->getAsImageMultiline(m_text);
 		Rect r;
 		r.x = p.x-img->getWidth()/2;
 		r.y = p.y-img->getHeight()/2;

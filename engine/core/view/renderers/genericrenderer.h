@@ -77,68 +77,74 @@ namespace FIFE {
 	};
 	class GenericRendererElementInfo {
 	public:
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) { };
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {};
 		virtual ~GenericRendererElementInfo() {};
 	};
 
 	class GenericRendererLineInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererNode n1;
-		GenericRendererNode n2;
-		uint8_t r;
-		uint8_t g;
-		uint8_t b;
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererLineInfo() {};
+	private:
+		GenericRendererNode m_edge1;
+		GenericRendererNode m_edge2;
+		uint8_t m_red;
+		uint8_t m_green;
+		uint8_t m_blue;
 	};
 	class GenericRendererPointInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererNode n;
-		uint8_t r;
-		uint8_t g;
-		uint8_t b;
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererPointInfo(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererPointInfo() {};
+	private:
+		GenericRendererNode m_anchor;
+		uint8_t m_red;
+		uint8_t m_green;
+		uint8_t m_blue;
 	};
 	class GenericRendererQuadInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererNode n1;
-		GenericRendererNode n2;
-		GenericRendererNode n3;
-		GenericRendererNode n4;
-		uint8_t r;
-		uint8_t g;
-		uint8_t b;
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererQuadInfo() {};
+	private:
+		GenericRendererNode m_edge1;
+		GenericRendererNode m_edge2;
+		GenericRendererNode m_edge3;
+		GenericRendererNode m_edge4;
+		uint8_t m_red;
+		uint8_t m_green;
+		uint8_t m_blue;
 	};
 	class GenericRendererImageInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererNode n;
-		int image;
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererImageInfo(GenericRendererNode n, int image);
 		virtual ~GenericRendererImageInfo() {};
+	private:
+		GenericRendererNode m_anchor;
+		int m_image;
 	};
 	class GenericRendererAnimationInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererNode n;
-		int animation;
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererAnimationInfo(GenericRendererNode n, int animation);
 		virtual ~GenericRendererAnimationInfo() {};
+	private:
+		GenericRendererNode m_anchor;
+		int m_animation;
 	};
 	class GenericRendererTextInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererNode n;
-		AbstractFont* font;
-		std::string text;
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererTextInfo(GenericRendererNode n, AbstractFont* font, std::string text);
 		virtual ~GenericRendererTextInfo() {};
+	private:
+		GenericRendererNode m_anchor;
+		AbstractFont* m_font;
+		std::string m_text;
 	};
 	class GenericRenderer: public RendererBase {
 	public:
@@ -171,9 +177,9 @@ namespace FIFE {
 		void removeAll();
 
 	private:
-		std::vector<GenericRendererElementInfo*> m_infos;
 		ImagePool* m_imagepool;
 		AnimationPool* m_animationpool;
+		std::vector<GenericRendererElementInfo*> m_infos;
 	};
 
 }
