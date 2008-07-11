@@ -66,25 +66,54 @@ namespace FIFE {
 	}
 
 	void GenericRendererNode::setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point) {
+		m_instance = attached_instance;
+		m_location = relative_location;
+		m_point = relative_point;
 	}
 	void GenericRendererNode::setAttached(Instance* attached_instance, const Location &relative_location) {
+		m_instance = attached_instance;
+		m_location = relative_location;
 	}
 	void GenericRendererNode::setAttached(Instance* attached_instance, const Point &relative_point) {
+		m_instance = attached_instance;
+		m_point = relative_point;
 	}
 	void GenericRendererNode::setAttached(Instance* attached_instance) {
+		m_instance = attached_instance;
 	}
 	void GenericRendererNode::setAttached(const Location &attached_location, const Point &relative_point) {
+		m_instance = NULL;
+		m_location = attached_location;
+		m_point = relative_point;
 	}
 	void GenericRendererNode::setAttached(const Location &attached_location) {
+		m_instance = NULL;
+		m_location = attached_location;
 	}
 	void GenericRendererNode::setAttached(const Point &attached_point) {
+		m_instance = NULL;
+		m_location = NULL;
+		m_point = attached_point;
 	}
 
 	void GenericRendererNode::setRelative(const Location &relative_location) {
+		if(m_instance == NULL) {
+			throw NotSupported("No instance attached.");
+		}
+		m_location = relative_location;
 	}
 	void GenericRendererNode::setRelative(const Location &relative_location, Point relative_point) {
+		if(m_instance == NULL) {
+			throw NotSupported("No instance attached.");
+		}
+		m_location = relative_location;
+		m_point = relative_point;
 	}
 	void GenericRendererNode::setRelative(const Point &relative_point) {
+		if(m_instance == NULL or m_location == NULL) {
+			throw NotSupported("No instance or location attached.");
+		}
+		m_point = relative_point;
 	}
 
 	Instance* GenericRendererNode::getAttachedInstance() {
