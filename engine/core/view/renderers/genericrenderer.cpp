@@ -89,32 +89,32 @@ namespace FIFE {
 
 	Instance* GenericRendererNode::getAttachedInstance() {
 		if(m_instance == NULL) {
-			throw "asd";
+			throw NotSupported("No instance attached.");
 		}
 		return m_instance;
 	}
 	Location* GenericRendererNode::getAttachedLocation() {
 		if(m_instance != NULL or m_location == NULL) {
-			throw "asd";
+			throw NotSupported("No location attached.");
 		}
 		return m_location;
 	}
 	Point GenericRendererNode::getAttachedPoint() {
 		if(m_instance != NULL or m_location != NULL) {
-			throw "asd";
+			throw NotSupported("No point attached.");
 		}
 		return m_point;
 	}
 
 	Location* GenericRendererNode::getOffsetLocation() {
-		if(m_instance == NULL) {
-			throw "asd";
+		if(m_instance == NULL or m_location == NULL) {
+			throw NotSupported("No location as offset used.");
 		}
 		return m_location;
 	}
 	Point GenericRendererNode::getOffsetPoint() {
 		if(m_instance == NULL and m_location == NULL) {
-			throw "asd";
+			throw NotSupported("No point as offset used.");
 		}
 		return m_point;
 	}
@@ -265,6 +265,10 @@ namespace FIFE {
 		m_infos.push_back(info);
 	}
 	void GenericRenderer::removeAll() {
+		std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_infos.begin();
+		for (;info_it != m_infos.end(); ++info_it) {
+			delete *info_it;
+		}
 		m_infos.clear();
 	}
 
