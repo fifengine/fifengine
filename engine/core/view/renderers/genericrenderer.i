@@ -45,7 +45,7 @@ namespace FIFE {
 	};
 	class GenericRendererElementInfo {
 	public:
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend) = 0;
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) = 0;
 		virtual ~GenericRendererElementInfo() {};
 	};
 
@@ -56,7 +56,7 @@ namespace FIFE {
 		uint8_t r;
 		uint8_t g;
 		uint8_t b;
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererLineInfo() {};
 	};
@@ -66,7 +66,7 @@ namespace FIFE {
 		uint8_t r;
 		uint8_t g;
 		uint8_t b;
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererPointInfo(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererPointInfo() {};
 	};
@@ -79,7 +79,7 @@ namespace FIFE {
 		uint8_t r;
 		uint8_t g;
 		uint8_t b;
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererQuadInfo() {};
 	};
@@ -87,7 +87,7 @@ namespace FIFE {
 	public:
 		GenericRendererNode n;
 		int image;
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererImageInfo(GenericRendererNode n, int image);
 		virtual ~GenericRendererImageInfo() {};
 	};
@@ -95,7 +95,7 @@ namespace FIFE {
 	public:
 		GenericRendererNode n;
 		int animation;
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererAnimationInfo(GenericRendererNode n, int animation);
 		virtual ~GenericRendererAnimationInfo() {};
 	};
@@ -104,13 +104,13 @@ namespace FIFE {
 		GenericRendererNode n;
 		AbstractFont* font;
 		std::string text;
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererTextInfo(GenericRendererNode n, AbstractFont* font, std::string text);
 		virtual ~GenericRendererTextInfo() {};
 	};
 	class GenericRenderer: public RendererBase {
 	public:
-		GenericRenderer(RenderBackend* renderbackend, int position);
+		GenericRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
 		~GeometricRenderer();
 		std::string getName();
 		static GenericRenderer* getInstance(IRendererContainer* cnt);

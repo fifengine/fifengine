@@ -28,6 +28,11 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
+#include "video/imagepool.h"
+#include "video/animation.h"
+#include "video/animationpool.h"
+#include "video/fonts/abstractfont.h"
+#include "video/image.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
@@ -184,7 +189,7 @@ namespace FIFE {
 		g(g),
 		b(b) {
 	}
-	void GenericRendererLineInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend) {
+	void GenericRendererLineInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p1 = n1.getCalculatedPoint(cam, layer, instances);
 		Point p2 = n2.getCalculatedPoint(cam, layer, instances);
 		renderbackend->drawLine(p1, p2, r, g, b);
@@ -197,7 +202,7 @@ namespace FIFE {
 		g(g),
 		b(b) {
 	}
-	void GenericRendererPointInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend) {
+	void GenericRendererPointInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p = n.getCalculatedPoint(cam, layer, instances);
 		renderbackend->putPixel(p.x, p.y, r, g, b);
 	}
@@ -212,7 +217,7 @@ namespace FIFE {
 		g(g),
 		b(b) {
 	}
-	void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend) {
+	void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p1 = n1.getCalculatedPoint(cam, layer, instances);
 		Point p2 = n2.getCalculatedPoint(cam, layer, instances);
 		Point p3 = n3.getCalculatedPoint(cam, layer, instances);
@@ -225,8 +230,15 @@ namespace FIFE {
 		n(n),
 		image(image) {
 	}
-	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend) {
-		return;
+	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = n.getCalculatedPoint(cam, layer, instances);
+		Image* img = &imagepool->getImage(image);
+		Rect r;
+		r.x = p.x-img->getWidth()/2;
+		r.y = p.y-img->getHeight()/2;
+		r.w = img->getWidth();
+		r.h = img->getHeight();
+		img->render(r);
 	}
 	
 	GenericRendererAnimationInfo::GenericRendererAnimationInfo(GenericRendererNode n, int animation):
@@ -234,7 +246,7 @@ namespace FIFE {
 		n(n),
 		animation(animation) {
 	}
-	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend) {
+	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		return;
 	}
 	
@@ -244,16 +256,25 @@ namespace FIFE {
 		font(font),
 		text(text) {
 	}
-	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend) {
-		return;
+	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = n.getCalculatedPoint(cam, layer, instances);
+		Image* img = font->getAsImageMultiline(text);
+		Rect r;
+		r.x = p.x-img->getWidth()/2;
+		r.y = p.y-img->getHeight()/2;
+		r.w = img->getWidth();
+		r.h = img->getHeight();
+		img->render(r);
 	}
 	
 	GenericRenderer* GenericRenderer::getInstance(IRendererContainer* cnt) {
 		return dynamic_cast<GenericRenderer*>(cnt->getRenderer("GenericRenderer"));
 	}
 	
-	GenericRenderer::GenericRenderer(RenderBackend* renderbackend, int position):
+	GenericRenderer::GenericRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
 		RendererBase(renderbackend, position),
+		m_imagepool(imagepool),
+		m_animationpool(animpool),
 		m_infos() {
 		setEnabled(false);
 	}
@@ -305,7 +326,7 @@ namespace FIFE {
 		std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_infos.begin();
 		for (;info_it != m_infos.end(); ++info_it) {
 			GenericRendererElementInfo* info = *info_it;
-			info->render(cam, layer, instances, m_renderbackend);
+			info->render(cam, layer, instances, m_renderbackend, m_imagepool, m_animationpool);
 		}
 	}
 }

@@ -35,6 +35,8 @@
 namespace FIFE {
 	class RenderBackend;
 	class AbstractFont;
+	class ImagePool;
+	class AnimationPool;
 
 	class GenericRendererNode {
 	public:
@@ -75,7 +77,7 @@ namespace FIFE {
 	};
 	class GenericRendererElementInfo {
 	public:
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend) { };
+		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) { };
 		virtual ~GenericRendererElementInfo() {};
 	};
 
@@ -86,7 +88,7 @@ namespace FIFE {
 		uint8_t r;
 		uint8_t g;
 		uint8_t b;
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererLineInfo() {};
 	};
@@ -96,7 +98,7 @@ namespace FIFE {
 		uint8_t r;
 		uint8_t g;
 		uint8_t b;
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererPointInfo(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererPointInfo() {};
 	};
@@ -109,7 +111,7 @@ namespace FIFE {
 		uint8_t r;
 		uint8_t g;
 		uint8_t b;
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
 		virtual ~GenericRendererQuadInfo() {};
 	};
@@ -117,7 +119,7 @@ namespace FIFE {
 	public:
 		GenericRendererNode n;
 		int image;
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererImageInfo(GenericRendererNode n, int image);
 		virtual ~GenericRendererImageInfo() {};
 	};
@@ -125,7 +127,7 @@ namespace FIFE {
 	public:
 		GenericRendererNode n;
 		int animation;
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererAnimationInfo(GenericRendererNode n, int animation);
 		virtual ~GenericRendererAnimationInfo() {};
 	};
@@ -134,7 +136,7 @@ namespace FIFE {
 		GenericRendererNode n;
 		AbstractFont* font;
 		std::string text;
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend);
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
 		GenericRendererTextInfo(GenericRendererNode n, AbstractFont* font, std::string text);
 		virtual ~GenericRendererTextInfo() {};
 	};
@@ -144,7 +146,7 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
 		 */
-		GenericRenderer(RenderBackend* renderbackend, int position);
+		GenericRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
 		
 		GenericRenderer(const GenericRenderer& old);
 		
@@ -170,6 +172,8 @@ namespace FIFE {
 
 	private:
 		std::vector<GenericRendererElementInfo*> m_infos;
+		ImagePool* m_imagepool;
+		AnimationPool* m_animationpool;
 	};
 
 }
