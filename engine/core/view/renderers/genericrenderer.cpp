@@ -280,7 +280,10 @@ namespace FIFE {
 	}
 
 	GenericRenderer::GenericRenderer(const GenericRenderer& old):
-		RendererBase(old) {
+		RendererBase(old),
+		m_imagepool(old.m_imagepool),
+		m_animationpool(old.m_animationpool),
+		m_infos() {
 		setEnabled(false);
 	}
 
