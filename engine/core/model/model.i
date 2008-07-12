@@ -33,6 +33,8 @@ namespace FIFE {
 		std::list<std::string> getNamespaces() const;
 
 		Object* createObject(const std::string& identifier, const std::string& name_space, Object* parent=0);
+		bool deleteObject(Object*);
+		bool deleteObjects();
 		Object* getObject(const std::string& id, const std::string& name_space);
 		const std::list<Object*>& getObjects(const std::string& name_space) const;
 

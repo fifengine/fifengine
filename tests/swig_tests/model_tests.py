@@ -89,7 +89,26 @@ class TestModel(unittest.TestCase):
 		#p2 = inst.getLocation().getLayerCoordinates()
 		#print p2.x, p2.y
 		#self.assertEqual(inst.getLocation().getLayerCoordinates(), fife.ModelCoordinate(4,4))
-		
+
+	def testObjects(self):
+		obj1 = self.model.createObject("object003","test_nspace")
+		obj2 = self.model.createObject("object004","test_nspace")
+		self.model.createObject("object005","test_nspace")
+		self.model.createObject("object006","test_nspace")
+
+		self.assertEqual(self.model.deleteObject(obj2),True)
+
+		map = self.model.createMap("map007")
+		grid = fife.SquareGrid()
+		layer = map.createLayer("layer004",grid)
+
+		inst = layer.createInstance(obj1, fife.ModelCoordinate(4,4))
+		self.assertEqual(self.model.deleteObject(obj1),False)
+		self.assertEqual(self.model.deleteObjects(),False)
+		layer.deleteInstance(inst)
+		self.assertEqual(self.model.deleteObject(obj1),True)
+		self.assertEqual(self.model.deleteObjects(),True)
+
 class TestActionAngles(unittest.TestCase):
 	def setUp(self):
 		self.runaction = fife.Action("action001")

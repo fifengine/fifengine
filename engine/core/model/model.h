@@ -97,6 +97,16 @@ namespace FIFE {
 		 */
 		Object* createObject(const std::string& identifier, const std::string& name_space, Object* parent=0);
 
+		/** Attempt to remove an object from the model
+		 *  Fails and returns false if the object is referenced by an instance.
+		 */
+		bool deleteObject(Object*);
+
+		/** Attempt to remove all objects from the model
+		 *  Fails and returns false if any maps with instances are present.
+		 */
+		bool deleteObjects();
+
 		/** Get an object by its id. If no namespace is specified, the namespaces are searched in order
 		 * and the first matching object is returned. Returns 0 if object is not found.
 		 */

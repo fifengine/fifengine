@@ -32,6 +32,8 @@
 #include "model/metamodel/object.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "structures/map.h"
+#include "structures/layer.h"
+#include "structures/instance.h"
 #include "util/base/exception.h"
 
 #include "model.h"
@@ -157,6 +159,62 @@ namespace FIFE {
 		Object* object = new Object(identifier, name_space, parent);
 		nspace->second.push_back(object);
 		return object;
+	}
+
+	bool Model::deleteObject(Object* object) {
+		std::list<Layer*>::const_iterator jt;
+		std::vector<Instance*>::const_iterator kt;
+		for(std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
+			for(jt = (*it)->getLayers().begin(); jt != (*it)->getLayers().end(); ++jt) {
+				for(kt = (*jt)->getInstances().begin(); kt != (*jt)->getInstances().end(); ++kt) {
+					Object* o = (*kt)->getObject();
+					while(o != 0) {
+						if(o == object)
+							return false;
+					}
+				}
+			}
+		}
+
+		std::string name_space = object->getNamespace();
+		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
+		for(; nspace != m_namespaces.end(); ++nspace) {
+			if(nspace->first == name_space) break;
+		}
+
+		if(nspace == m_namespaces.end())
+			return true;
+
+		std::list<Object*>::iterator it = nspace->second.begin();
+		for(; it != nspace->second.end(); ++it) {
+			if(*it == object) {
+				delete *it;
+				nspace->second.erase(it);
+				return true;
+			}
+		}
+
+		return true;
+	}
+
+	bool Model::deleteObjects() {
+		std::list<Layer*>::const_iterator jt;
+		for(std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
+			for(jt = (*it)->getLayers().begin(); jt != (*it)->getLayers().end(); ++jt) {
+				if((*jt)->hasInstances())
+					return false;
+			}
+		}
+
+		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
+		while(nspace != m_namespaces.end()) {
+			std::list<Object*>::iterator it = nspace->second.begin();
+			for(; it != nspace->second.end(); ++it) {
+				delete *it;
+			}
+			nspace = m_namespaces.erase(nspace);
+		}
+		return true;
 	}
 
 	Object* Model::getObject(const std::string& id, const std::string& name_space) {

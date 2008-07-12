@@ -235,6 +235,8 @@ digraph "source tree" {
     "engine/core/model/model.cpp" -> "model/metamodel/abstractpather.h"
     "engine/core/model/model.cpp" -> "model/metamodel/grids/cellgrid.h"
     "engine/core/model/model.cpp" -> "model/metamodel/object.h"
+    "engine/core/model/model.cpp" -> "structures/instance.h"
+    "engine/core/model/model.cpp" -> "structures/layer.h"
     "engine/core/model/model.cpp" -> "structures/map.h"
     "engine/core/model/model.cpp" -> "util/base/exception.h"
     "engine/core/model/model.cpp" -> "util/structures/purge.h"
