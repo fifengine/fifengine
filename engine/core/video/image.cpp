@@ -136,7 +136,7 @@ namespace FIFE {
 		case 4:
 			pixel = *(Uint32 *)p;
 		}
-		SDL_GetRGBA(pixel, m_surface->format, r, b, g, a);
+		SDL_GetRGBA(pixel, m_surface->format, r, g, b, a);
 	}
 
 	void Image::render(const Rect& rect, unsigned char alpha) {

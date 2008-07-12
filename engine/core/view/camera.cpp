@@ -314,7 +314,7 @@ namespace FIFE {
 					x = static_cast<int>(round(fx / fsw * fow));
 					y = static_cast<int>(round(fy / fsh * foh));
 				}
-				vc.image->getPixelRGBA(x, y, &r, &b, &g, &a);
+				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				// instance is hit with mouse if not totally transparent
 				if (a != 0) {
 					instances.push_back(i);
@@ -349,7 +349,7 @@ namespace FIFE {
 							x = static_cast<int>(round(fx / fsw * fow));
 							y = static_cast<int>(round(fy / fsh * foh));
 						}
-						vc.image->getPixelRGBA(x, y, &r, &b, &g, &a);
+						vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 						// instance is hit with mouse if not totally transparent
 						if (a != 0) {
 							instances.push_back(i);
