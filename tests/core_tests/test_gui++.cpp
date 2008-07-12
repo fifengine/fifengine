@@ -29,7 +29,6 @@
 #include <boost/shared_ptr.hpp>
 #include <SDL.h>
 #include <guichan.hpp>
-#include "../../ext/UnitTest++/src/UnitTest++.h"
 
 #include "vfs/vfs.h"
 #include "util/structures/rect.h"
@@ -90,7 +89,7 @@ void test_gui_image(RenderBackend& renderbackend, gcn::Graphics& graphics, Image
 		top->add(icon, 10, 30);
 
 		ImageLoader provider(vfs.get());
-		boost::scoped_ptr<Image> img(provider.load(ImageLocation(IMAGE_FILE)));
+		boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
 
 		int h = img->getHeight();
 		int w = img->getWidth();
