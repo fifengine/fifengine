@@ -177,10 +177,10 @@ namespace FIFE {
 		
 		// TODO: optimize...
 		uint8_t r, g, b, a = 0;
-		int prev_a = a;
 		
 		// vertical sweep
 		for (unsigned int x = 0; x < img->getWidth(); x ++) {
+			uint8_t prev_a = 0;
 			for (unsigned int y = 0; y < img->getHeight(); y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
@@ -199,6 +199,7 @@ namespace FIFE {
 		}
 		// horizontal sweep
 		for (unsigned int y = 0; y < img->getHeight(); y ++) {
+			uint8_t prev_a = 0;
 			for (unsigned int x = 0; x < img->getWidth(); x ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
