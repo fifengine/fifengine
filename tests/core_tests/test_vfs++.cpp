@@ -44,7 +44,7 @@
 static const std::string FIFE_TEST_DIR = "fifetestdir";
 using namespace FIFE;
 
-TEST(test_is_dictionary)
+TEST(test_is_directory)
 {
 	boost::shared_ptr<VFS> vfs(new VFS());
 	vfs->addSource(new VFSDirectory(vfs.get()));
