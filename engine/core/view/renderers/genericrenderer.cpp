@@ -116,7 +116,7 @@ namespace FIFE {
 		m_point = relative_point;
 	}
 	void GenericRendererNode::setRelative(const Point &relative_point) {
-		if(m_instance == NULL or m_location == NULL) {
+		if(m_instance == NULL || m_location == NULL) {
 			throw NotSupported("No instance or location attached.");
 		}
 		m_point = relative_point;
@@ -129,26 +129,26 @@ namespace FIFE {
 		return m_instance;
 	}
 	Location* GenericRendererNode::getAttachedLocation() {
-		if(m_instance != NULL or m_location == NULL) {
+		if(m_instance != NULL || m_location == NULL) {
 			throw NotSupported("No location attached.");
 		}
 		return m_location;
 	}
 	Point GenericRendererNode::getAttachedPoint() {
-		if(m_instance != NULL or m_location != NULL) {
+		if(m_instance != NULL || m_location != NULL) {
 			throw NotSupported("No point attached.");
 		}
 		return m_point;
 	}
 
 	Location* GenericRendererNode::getOffsetLocation() {
-		if(m_instance == NULL or m_location == NULL) {
+		if(m_instance == NULL || m_location == NULL) {
 			throw NotSupported("No location as offset used.");
 		}
 		return m_location;
 	}
 	Point GenericRendererNode::getOffsetPoint() {
-		if(m_instance == NULL and m_location == NULL) {
+		if(m_instance == NULL && m_location == NULL) {
 			throw NotSupported("No point as offset used.");
 		}
 		return m_point;
