@@ -1,5 +1,5 @@
 == Introduction ==
-Welcome to the FIFE 2008.1 README. This snapshot is based on SVN revision 2509.
+Welcome to the FIFE 2008.1 README. This snapshot is based on SVN revision 2510.
 
 == Table of contents ==
 1 Theme of this release
@@ -14,7 +14,6 @@ Welcome to the FIFE 2008.1 README. This snapshot is based on SVN revision 2509.
 6 Known issues
 7 Feedback
 8 Signature
-
 
 == Theme of this release ==
 For the 2008.1 release we decided to stick to the tropical island concept and called our example game "Rio de hola".
@@ -98,50 +97,52 @@ The milestone itself seems to be a very important step into the right direction.
  * Lots of bug fixes.
 
 === Non-code related changes ===
-* Switch from GPL 2.0 to LGPL 2.1 (or newer).
+ * Switch from GPL 2.0 to LGPL 2.1 (or newer).
 
 == Features ==
-* A complete list of the features that FIFE offers can be found at the project wiki: http://wiki.fifengine.de/index.php?title=Engine_features
+A complete list of the features that FIFE offers can be found at the project wiki:
+ * http://wiki.fifengine.de/index.php?title=Engine_features
 
 == License ==
-The source code (*.cpp, *.h & *.py) is licensed under LGPL 2.1 or newer: http://www.gnu.org/licenses/lgpl-2.1.html
+The source code (*.cpp, *.h & *.py) is licensed under LGPL 2.1 or newer:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
 
 Content was taken from a lot a lot of different 3rd party sources. Therefore each client directory comes with a separate LICENSE file that states the origin of the content, the author and the actual license it was published under.
 
 == Building & running FIFE ==
 === Dependencies ===
 A list of all dependencies (including accurate version numbers) that you'll need to obtain to build FIFE on your platform can be found at the project wiki:
-http://wiki.fifengine.de/index.php?title=Build_dependencies
+ * http://wiki.fifengine.de/index.php?title=Build_dependencies
 
 === General notes ===
 FIFE utilizes the SCons (http://www.scons.org) build system. Here is a quick list of scons commands that can be important for building FIFE on your platform:
-* 'scons ext=1' will build specific FIFE dependencies from source that usually don't reside in the most important Linux package managers.
-* 'scons -h' will list additional compile options.
-* 'scons' will build FIFE.
-* 'scons tests=1' will build FIFE and the unittests (needed for test_fife.py).
-* 'scons -c' clears any compiled objects (= scons equivalent of 'make clean').
+ * 'scons ext=1' will build specific FIFE dependencies from source that usually don't reside in the most important Linux package managers.
+ * 'scons -h' will list additional compile options.
+ * 'scons' will build FIFE.
+ * 'scons tests=1' will build FIFE and the unittests (needed for test_fife.py).
+ * 'scons -c' clears any compiled objects (= scons equivalent of 'make clean').
 
 Platform specific details how to build FIFE can be found down below.
 
 === Linux ===
 Detailed information how to build FIFE on Linux-based distributions can be found at the project wiki:
-http://wiki.fifengine.de/index.php?title=Building:Linux:SCons
+ * http://wiki.fifengine.de/index.php?title=Building:Linux:SCons
 
 After FIFE has been built successfully move into the <FIFE>/clients/rio_de_hola directory and run: python run.py
 
 === Mac ===
 Detailed information how to build FIFE on Macintosh systems can be found at the project wiki:
-http://wiki.fifengine.de/index.php?title=Building:Mac:Scons
+ * http://wiki.fifengine.de/index.php?title=Building:Mac:Scons
 
 Caution: the Mac compile guide is currently heavily outdated! We would like to improve this situation but we're lacking a Mac maintainer who could take care of that. In case you're interested in the position feel free to get in contact with our developers on the project's IRC channel:
-http://wiki.fifengine.de/index.php?title=IRC
+ * http://wiki.fifengine.de/index.php?title=IRC
 
 In case you manage to build FIFE on your Mac system you can move into the <FIFE>/clients/rio_de_hola directory and run: python run.py
 
 === Win32 ===
 The Win32 package ships with precompiled binaries. Simply unpack the package to location of your choice. After that you'll need to install ActivePython 2.5 to run the techdemo:
-http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.2.2-win32-x86.msi (for 32bit Windows systems)
-http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.2.2-win64-x64-nopywin32.msi (for 64bit Windows systems)
+ * http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.2.2-win32-x86.msi (for 32bit Windows systems)
+ * http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.2.2-win64-x64-nopywin32.msi (for 64bit Windows systems)
 
 Move into the <FIFE>\clients\rio_de_hola directory and start the run.py script. You can simply double-click with your mouse on it. It should be automatically associated with the Python interpreter after installing ActivePython.
 
@@ -153,16 +154,15 @@ Last but not least there is an example client residing in <FIFE>\clients\pychan_
 The engine utilizes special settings files for configuring FIFE. This file is called settings.py and resides in the same directory as the run.py scripts. You can customize FIFE by editing this file.
 
 == Known issues ==
-* All included maps are still really early work in progress versions that lack proper blocking. Furthermore a lot of planned map objects are missing because we're still searching for 3d artists who could help us with the creation of those.
-* Despite the Rio de hola client is labeled as a game, it does not feature any relevant kind of gameplay yet. We can hopefully improve this over the next releases. We released FIFE in its current form nevertheless because the license switch as well as the engine and editor improvements are huge steps forward in our opinion.
-* Win32 users tend to suffer from problems with the OpenAL drivers. If you don't hear the background music playing while running Rio de hola, run oalinst.exe that ships with the Win32 package. This is the latest OpenAL driver for Win32.
-* The unittests are broken on Win32 (if used in combination with scons & mingw). We plan to address this issue but we're lacking active Win32 developers to look into these kind of problems as the vast majority of the active developers are running Linux. If you would like to help out with Win32-related issues please contact us at our IRC channel:
-http://wiki.fifengine.de/index.php?title=IRC
+ * All included maps are still really early work in progress versions that lack proper blocking. Furthermore a lot of planned map objects are missing because we're still searching for 3d artists who could help us with the creation of those.
+ * Despite the Rio de hola client is labeled as a game, it does not feature any relevant kind of gameplay yet. We can hopefully improve this over the next releases. We released FIFE in its current form nevertheless because the license switch as well as the engine and editor improvements are huge steps forward in our opinion.
+ * Win32 users tend to suffer from problems with the OpenAL drivers. If you don't hear the background music playing while running Rio de hola, run oalinst.exe that ships with the Win32 package. This is the latest OpenAL driver for Win32.
+ * The unittests are broken on Win32 (if used in combination with scons & mingw). We plan to address this issue but we're lacking active Win32 developers to look into these kind of problems as the vast majority of the active developers are running Linux. If you would like to help out with Win32-related issues please contact us at our IRC channel: http://wiki.fifengine.de/index.php?title=IRC
 
 == Feedback ==
 We appreciate every kind of feedback concerning the release, the project in general and the bundled techdemo. Feedback is a great way to help us to improve FIFE. If you would like to get in contact with us and provide feedback you can either visit our IRC channel or our forums:
-http://wiki.fifengine.de/index.php?title=IRC
-http://forums.fifengine.de/index.php?board=5.0
+ * http://wiki.fifengine.de/index.php?title=IRC
+ * http://forums.fifengine.de/index.php?board=5.0
 
 == Signature ==
 Have fun with the release and let us know what you think about it!
