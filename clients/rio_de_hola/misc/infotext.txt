@@ -1,4 +1,4 @@
-Welcome to the FIFE island_demo, release 2008.0
+Welcome to the FIFE Rio de hola game, release 2008.1
 
 Keybindings:
 --------------
