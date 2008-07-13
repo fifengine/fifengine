@@ -107,7 +107,7 @@ class World(EventListenerBase):
 		self.instance_to_agent[self.girl.agent.getFifeId()] = self.girl
 		self.girl.start()
 		
-		self.beekeepers = create_anonymous_agents(self.model, 'Beekeeper', self.agentlayer, Beekeeper)
+		self.beekeepers = create_anonymous_agents(self.model, 'beekeeper', self.agentlayer, Beekeeper)
 		for beekeeper in self.beekeepers:
 			self.instance_to_agent[beekeeper.agent.getFifeId()] = beekeeper
 			beekeeper.start()
@@ -236,10 +236,10 @@ class World(EventListenerBase):
 		self.hide_instancemenu()
 		instance = self.instancemenu.instance
 		self.hero.talk(instance.getLocationRef())
-		if instance.getObject().getId() == 'Beekeeper':
+		if instance.getObject().getId() == 'beekeeper':
 			txtindex = random.randint(0, len(TDS.beekeeperTexts) - 1)
 			instance.say(TDS.beekeeperTexts[txtindex], 5000)
-		if instance.getObject().getId() == 'Girl':
+		if instance.getObject().getId() == 'girl':
 			txtindex = random.randint(0, len(TDS.girlTexts) - 1)
 			instance.say(TDS.girlTexts[txtindex], 5000)
 	
