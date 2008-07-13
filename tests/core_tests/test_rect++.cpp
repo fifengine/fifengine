@@ -82,3 +82,7 @@ TEST(rectangle_interesection)
 		CHECK(!dont_intersect[i].intersects(a));
 	}	
 }
+
+int main() {
+	return UnitTest::RunAllTests();
+}

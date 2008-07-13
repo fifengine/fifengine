@@ -89,5 +89,8 @@ TEST(DAT1_test){
 	delete[] d_comp;
 	delete fraw;
 	delete fcomp;
+}
 
+int main() {
+	return UnitTest::RunAllTests();
 }

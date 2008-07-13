@@ -131,3 +131,7 @@ TEST(test_image_pool)
 	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
 	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
 }
+
+int main() {
+	return UnitTest::RunAllTests();
+}

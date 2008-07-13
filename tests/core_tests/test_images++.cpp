@@ -196,3 +196,6 @@ TEST(test_ogl_subimage)
 	test_subimage(env.vfs.get(), renderbackend);
 }
 
+int main() {
+	return UnitTest::RunAllTests();
+}

@@ -99,3 +99,7 @@ TEST(DAT2_test){
 	delete fcomp;
 
 }
+
+int main() {
+	return UnitTest::RunAllTests();
+}

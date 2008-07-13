@@ -128,3 +128,7 @@ TEST(test_ogl_gui_image)
 	OpenGLGuiGraphics graphics(pool);
 	test_gui_image(renderbackend, graphics, pool);
 }
+
+int main() {
+	return UnitTest::RunAllTests();
+}

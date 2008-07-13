@@ -67,3 +67,7 @@ TEST(test_is_directory)
 	CHECK(vfs->isDirectory(FIFE_TEST_DIR+"/"+FIFE_TEST_DIR));
 
 }
+
+int main() {
+	return UnitTest::RunAllTests();
+}

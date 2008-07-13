@@ -114,3 +114,7 @@ TEST(test_decoder) {
 	delete fraw;
 	delete fcomp;
 }
+
+int main() {
+	return UnitTest::RunAllTests();
+}
