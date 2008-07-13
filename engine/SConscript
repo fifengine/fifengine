@@ -195,9 +195,9 @@ def generate_msvc_project9(target, source, env):
 msvc_project_builder9 = Builder(action = generate_msvc_project9, suffix = '.vcproj')
 env.Append(BUILDERS = {'MSVCProject9': msvc_project_builder9})
 
-cbbuildpath = joinpath('build', 'win32', 'build_environments', 'code_blocks')
+cbbuildpath_win32 = joinpath('build', 'win32', 'build_environments', 'code_blocks')
 
-def generate_codeblocks_project(target, source, env):
+def generate_codeblocks_project_win32(target, source, env):
 	codeblocksHeaderDef = \
 	'''		<Unit filename="..\..\..\engine\%s">
 				<Option compilerVar=""/>
@@ -219,13 +219,47 @@ def generate_codeblocks_project(target, source, env):
 			xmlstr.append(codeblocksHeaderDef % newf)
 		else:
 			xmlstr.append(codeblocksCppDef % newf)
-	projtxt = open(joinpath(cbbuildpath, 'engine_template.xml'), 'r').read()
+	projtxt = open(joinpath(cbbuildpath_win32, 'engine_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', '\n'.join(xmlstr))
 	open(str(target[0]), 'w').write(projtxt)
 	print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(str(target[0]))
 
-codeblocks_project_builder = Builder(action = generate_codeblocks_project, suffix = '.cbp')
-env.Append(BUILDERS = {'CodeblocksProject': codeblocks_project_builder})
+codeblocks_project_builder_win32 = Builder(action = generate_codeblocks_project_win32, suffix = '.cbp')
+env.Append(BUILDERS = {'CodeblocksProject': codeblocks_project_builder_win32})
+
+
+cbbuildpath_linux = joinpath('build', 'linux', 'code_blocks')
+
+def generate_codeblocks_project_linux(target, source, env):
+	codeblocksHeaderDef = \
+	'''		<Unit filename="../../../engine/%s">
+				<Option compilerVar=""/>
+				<Option compile="0"/>
+				<Option link="0"/>
+				<Option target="default"/>
+			</Unit>'''
+	
+	codeblocksCppDef = \
+	'''		<Unit filename="../../../engine/%s">
+				<Option compilerVar="CPP"/>
+				<Option target="default"/>
+			</Unit>'''
+	xmlstr = []
+	for f in source:
+		newf = os.path.abspath(str(f)).split('%sengine%s' % (_sep, _sep))[-1]
+		newf = newf.replace('/', '\\')
+		if str(f) in headerfiles:
+			xmlstr.append(codeblocksHeaderDef % newf)
+		else:
+			xmlstr.append(codeblocksCppDef % newf)
+	projtxt = open(joinpath(cbbuildpath_linux, 'engine_template.xml'), 'r').read()
+	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', '\n'.join(xmlstr))
+	open(str(target[0]), 'w').write(projtxt)
+	print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(str(target[0]))
+
+codeblocks_project_builder_linux = Builder(action = generate_codeblocks_project_linux, suffix = '.cbp')
+env.Append(BUILDERS = {'CodeblocksProject': codeblocks_project_builder_linux})
+
 
 variated_dirs = eval(open(joinpath('config', 'variated_dirs'), 'r').read())
 # filter out swigwrappers. fife_wrap.cxx is appended manually
@@ -262,7 +296,8 @@ projectfiles.append('./swigwrappers/%s/fife_wrap.cxx' % env['script'])
 
 msvcproj = env.MSVCProject(joinpath('..', msvcbuildpath, 'fife'), projectfiles)
 msvcproj9 = env.MSVCProject9(joinpath('..', msvcbuildpath9, 'fife'), projectfiles)
-cbproj = env.CodeblocksProject(joinpath('..', cbbuildpath, 'fife_engine'), projectfiles)
+cbproj_win32 = env.CodeblocksProject(joinpath('..', cbbuildpath_win32, 'fife_engine'), projectfiles)
+cbproj_linux = env.CodeblocksProject(joinpath('..', cbbuildpath_linux, 'fife_engine'), projectfiles)
 
 if not env['projectfiles_only']:
 	env.Append(CPPPATH = ['#/engine/core', '#/engine/swigwrappers'])
