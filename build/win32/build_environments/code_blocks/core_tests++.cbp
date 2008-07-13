@@ -71,13 +71,13 @@
 			<Add library="glu32" />
 		</Linker>
 		<Unit filename="..\..\..\..\tests\core_tests\main.cpp" />
-		<Unit filename="..\..\..\..\tests\core_tests\test_dat1++.cpp" />
-		<Unit filename="..\..\..\..\tests\core_tests\test_dat2++.cpp" />
-		<Unit filename="..\..\..\..\tests\core_tests\test_imagepool++.cpp" />
-		<Unit filename="..\..\..\..\tests\core_tests\test_images++.cpp" />
-		<Unit filename="..\..\..\..\tests\core_tests\test_rect++.cpp" />
-		<Unit filename="..\..\..\..\tests\core_tests\test_vfs++.cpp" />
-		<Unit filename="..\..\..\..\tests\core_tests\test_zip++.cpp" />
+		<Unit filename="..\..\..\..\tests\core_tests\test_dat1.cpp" />
+		<Unit filename="..\..\..\..\tests\core_tests\test_dat2.cpp" />
+		<Unit filename="..\..\..\..\tests\core_tests\test_imagepool.cpp" />
+		<Unit filename="..\..\..\..\tests\core_tests\test_images.cpp" />
+		<Unit filename="..\..\..\..\tests\core_tests\test_rect.cpp" />
+		<Unit filename="..\..\..\..\tests\core_tests\test_vfs.cpp" />
+		<Unit filename="..\..\..\..\tests\core_tests\test_zip.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
