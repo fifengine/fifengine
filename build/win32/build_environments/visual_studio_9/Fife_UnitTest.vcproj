@@ -183,35 +183,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\test_dat1++.cpp"
+				RelativePath="..\..\..\..\tests\core_tests\test_dat1.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\test_dat2++.cpp"
+				RelativePath="..\..\..\..\tests\core_tests\test_dat2.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\test_gui++.cpp"
+				RelativePath="..\..\..\..\tests\core_tests\test_gui.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\test_imagepool++.cpp"
+				RelativePath="..\..\..\..\tests\core_tests\test_imagepool.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\test_images++.cpp"
+				RelativePath="..\..\..\..\tests\core_tests\test_images.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\test_rect++.cpp"
+				RelativePath="..\..\..\..\tests\core_tests\test_rect.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\test_vfs++.cpp"
+				RelativePath="..\..\..\..\tests\core_tests\test_vfs.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\test_zip++.cpp"
+				RelativePath="..\..\..\..\tests\core_tests\test_zip.cpp"
 				>
 			</File>
 		</Filter>
@@ -221,7 +221,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\..\tests\core_tests\fife_unittest++.h"
+				RelativePath="..\..\..\..\tests\core_tests\fife_unittest.h"
 				>
 			</File>
 		</Filter>

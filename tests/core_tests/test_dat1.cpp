@@ -24,7 +24,7 @@
 #include <iomanip>
 
 // Platform specific includes
-#include "fife_unittest++.h"
+#include "fife_unittest.h"
 
 // 3rd party library includes
 

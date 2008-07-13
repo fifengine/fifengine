@@ -22,7 +22,7 @@
 // Standard C++ library includes
 
 // Platform specific includes
-#include "fife_unittest++.h"
+#include "fife_unittest.h"
 
 // 3rd party library includes
 #include <boost/scoped_ptr.hpp>
