@@ -225,7 +225,7 @@ def generate_codeblocks_project_win32(target, source, env):
 	print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(str(target[0]))
 
 codeblocks_project_builder_win32 = Builder(action = generate_codeblocks_project_win32, suffix = '.cbp')
-env.Append(BUILDERS = {'CodeblocksProject': codeblocks_project_builder_win32})
+env.Append(BUILDERS = {'CodeblocksProjectWin32': codeblocks_project_builder_win32})
 
 
 cbbuildpath_linux = joinpath('build', 'linux', 'code_blocks')
@@ -258,7 +258,7 @@ def generate_codeblocks_project_linux(target, source, env):
 	print "FIFE code::blocks project file succesfully created (%s)" % os.path.abspath(str(target[0]))
 
 codeblocks_project_builder_linux = Builder(action = generate_codeblocks_project_linux, suffix = '.cbp')
-env.Append(BUILDERS = {'CodeblocksProject': codeblocks_project_builder_linux})
+env.Append(BUILDERS = {'CodeblocksProjectLinux': codeblocks_project_builder_linux})
 
 
 variated_dirs = eval(open(joinpath('config', 'variated_dirs'), 'r').read())
@@ -296,8 +296,8 @@ projectfiles.append('./swigwrappers/%s/fife_wrap.cxx' % env['script'])
 
 msvcproj = env.MSVCProject(joinpath('..', msvcbuildpath, 'fife'), projectfiles)
 msvcproj9 = env.MSVCProject9(joinpath('..', msvcbuildpath9, 'fife'), projectfiles)
-cbproj_win32 = env.CodeblocksProject(joinpath('..', cbbuildpath_win32, 'fife_engine'), projectfiles)
-cbproj_linux = env.CodeblocksProject(joinpath('..', cbbuildpath_linux, 'fife_engine'), projectfiles)
+cbproj_win32 = env.CodeblocksProjectWin32(joinpath('..', cbbuildpath_win32, 'fife_engine'), projectfiles)
+cbproj_linux = env.CodeblocksProjectLinux(joinpath('..', cbbuildpath_linux, 'fife_engine'), projectfiles)
 
 if not env['projectfiles_only']:
 	env.Append(CPPPATH = ['#/engine/core', '#/engine/swigwrappers'])

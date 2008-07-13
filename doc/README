@@ -2,19 +2,20 @@
 Welcome to the FIFE 2008.1 README. This snapshot is based on SVN revision !FIXME.
 
 == Theme of this release ==
-For the 2008.1 release we decided to flesh out the tropical island concept and called our example game "Rio de hola".
+For the 2008.1 release we decided to stick to the tropical island concept and called our example game "Rio de hola".
 
 Caution: this release is still lacking a lot of polish, especially the "Rio de hola" game that ships with it. It lacks almost any form of gameplay but there is a reason why we decided to ship the release in its current form nevertheless. We planned to ship future FIFE releases under the LGPL to offer a less "restrictive" license to possible FIFE users (we know that the term "restrictive" is just our personal point of view).
 
-We had to clear up the legal situation first and fortunately the software freedom law center (http://www.softwarefreedom.org/) helped us with the transition. The agreement of all developers who contributed code that was still used in FIFE was needed and because over two dozens of people contributed code to the project, this took us a lot of time. We were not able to reach all of them so we decided to remove the code of the contributors who didn't reply to our license switch proposal mails.
+We had to clear up the legal situation first and fortunately the software freedom law center (http://www.softwarefreedom.org/) helped us with the transition. The agreement of all developers who contributed code that was still used in FIFE was needed and because over two dozens of people contributed code to the project, this took us a lot of time. We were not able to reach all of them so we decided to either remove or rewrite the code of the contributors who didn't reply to our license switch proposal mails (from scratch).
 
-We were able to replace the last problematic code today so now FIFE is official LGPL'ed software. We're glad that we were able to make this step after it took us so long and we think that the new license alone is worth a release. Therefore we're proud to finally present the first FIFE release that is published under LGPL 2.1 or newer (your choice).
+We were able to replace the last parts of the problematic code today so now FIFE is officially LGPL'ed software. We're glad that we were able to make this step after it took us so long and we think that the new license alone is worth a release. Therefore we're proud to finally present the first FIFE release that is published under LGPL 2.1 or newer (your choice).
 
 Engine and the editor tool made _huge_ steps forward since the last release about 5 months ago. Therefore we decided to release the current status as stable release although it offers not many new aspects on the content side and the content that is in place is very likely to change with the 2008.2 release.
 
 The milestone itself seems to be a very important step into the right direction. You can build your own maps now with the help of the editor tool. Furthermore a basic application structure is in place that should give you an idea how can create your own FIFE-based game; this release is stable enough to start working on your game now :-)
 
 == Important changes since the 2008.0 release ==
+* !FIXME
 
 === Non-code related changes ===
 * Switch from GPL to LGPL
@@ -25,7 +26,7 @@ http://wiki.fifengine.de/index.php?title=Engine_features
 
 == License ==
 The source code (*.cpp, *.h & *.py) is licensed under LGPL 2.1 or newer:
-http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+http://www.gnu.org/licenses/lgpl-2.1.html
 
 Content was taken from a lot a lot of different 3rd party sources. Therefore each client directory comes with a separate LICENSE file that states the origin of the content, the author and the actual license it was published under.
 
@@ -36,7 +37,7 @@ http://wiki.fifengine.de/index.php?title=Build_dependencies
 
 === General notes ===
 FIFE utilizes the SCons (http://www.scons.org) build system. Here is a quick list of scons commands that can be important for building FIFE on your platform:
-* 'scons ext=1' will build specific FIFE dependencies that usually don't reside in the most important Linux package managers from source.
+* 'scons ext=1' will build specific FIFE dependencies from source that usually don't reside in the most important Linux package managers.
 * 'scons -h' will list additional compile options.
 * 'scons' will build FIFE.
 * 'scons tests=1' will build FIFE and the unittests (needed for test_fife.py).
@@ -48,34 +49,36 @@ Platform specific details how to build FIFE can be found down below.
 Detailed information how to build FIFE on Linux-based distributions can be found at the project wiki:
 http://wiki.fifengine.de/index.php?title=Building:Linux:SCons
 
-After FIFE has been built successfully move into the <FIFE>/clients/island_demo directory and run: python run_demo.py
+After FIFE has been built successfully move into the <FIFE>/clients/rio_de_hola directory and run: python run.py
 
 === Mac ===
-Detailed information how to build FIFE on linux-based distributions can be found at the project wiki:
+Detailed information how to build FIFE on Macintosh systems can be found at the project wiki:
 http://wiki.fifengine.de/index.php?title=Building:Mac:Scons
 
 Caution: the Mac compile guide is currently heavily outdated! We would like to improve this situation but we're lacking a Mac maintainer who could take care of that. In case you're interested in the position feel free to get in contact with our developers on the project's IRC channel:
 http://wiki.fifengine.de/index.php?title=IRC
 
-In case you manage to build FIFE on your Mac system you can move into the <FIFE>/clients/island_demo directory and run: python run_demo.py
+In case you manage to build FIFE on your Mac system you can move into the <FIFE>/clients/rio_de_hola directory and run: python run.py
 
 === Win32 ===
 The Win32 package ships with precompiled binaries. Simply unpack the package to location of your choice. After that you'll need to install ActivePython 2.5 to run the techdemo:
-http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.1.1-win32-x86.msi
+http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.2.2-win32-x86.msi (for 32bit Windows systems)
+http://downloads.activestate.com/ActivePython/windows/2.5/ActivePython-2.5.2.2-win64-x64-nopywin32.msi (for 64bit Windows systems)
 
-Move into the <FIFE>\clients\island_demo directory and start the run_demo.py script. You can simply double-click with your mouse on it. It should be automatically associated with the Python interpreter after installing ActivePython.
+Move into the <FIFE>\clients\rio_de_hola directory and start the run.py script. You can simply double-click with your mouse on it. It should be automatically associated with the Python interpreter after installing ActivePython.
 
-The editor tool can be found within the <FIFE>\clients\editor directory. You can launch it by running editor_client.py.
+The editor tool can be found within the <FIFE>\clients\editor directory. You can launch it by running run.py.
 
 Last but not least there is an example client residing in <FIFE>\clients\pychan_demo that shows how the pychan GUI library works. Start the GUI demo application by running pychan_test.py.
 
 == Configuring FIFE ==
-The engine utilizes special settings files for configuring FIFE. For the island_demo the file is called settings.py and resides in the same directory as the island_demo.py script. You can customize FIFE by editing this file. There are similar settings files for the editor and the pychan_demo in their directories as well.
+The engine utilizes special settings files for configuring FIFE. This file is called settings.py and resides in the same directory as the run.py scripts. You can customize FIFE by editing this file.
 
 == Known issues ==
-* Map instance blocking is currently not working well on the island_demo map. We did some tests with invisble instance blockers to prevent that the boy can run into the sea and the tools but unfortunately it turned out that this brings up more problems than it resolves. At least we were able to spot the problem this way; now we know that there is still quite some room for pathfinding improvements in our next releases.
-* Win32 users tend to suffer from problems with the OpenAL drivers. If you don't hear the background music playing while running the techdemo, run oalinst.exe that ships with the Win32 package. This is the latest OpenAL driver for Win32.
-* The boost unit tests are broken on Win32. We plan to address this issue but we're lacking active Win32 developers to look into these kind of problems as the vast majority of the active developers is set on Linux. If you would like to help out with Win32-related issues please contact us at our IRC channel:
+* All included maps are still really early work in progress versions that lack proper blocking. Furthermore a lot of planned map objects are missing because we're still searching for 3d artists who could help us with the creation of those.
+* Despite the Rio de hola client is labeled as a game, it does not feature any relevant kind of gameplay yet. We can hopefully improve this over the next releases. We released FIFE in its current form nevertheless because the license switch as well as the engine and editor improvements are huge steps forward in our opinion.
+* Win32 users tend to suffer from problems with the OpenAL drivers. If you don't hear the background music playing while running Rio de hola, run oalinst.exe that ships with the Win32 package. This is the latest OpenAL driver for Win32.
+* The unittests are broken on Win32 (if used in combination with scons & mingw). We plan to address this issue but we're lacking active Win32 developers to look into these kind of problems as the vast majority of the active developers are running Linux. If you would like to help out with Win32-related issues please contact us at our IRC channel:
 http://wiki.fifengine.de/index.php?title=IRC
 
 == Feedback ==
