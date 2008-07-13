@@ -347,6 +347,9 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._camera.refresh()
 	
 	def mousePressed(self, evt):
+		if evt.isConsumedByWidgets():
+			return
+		
 		if self._ctrldown:
 			if evt.getButton() == fife.MouseEvent.LEFT:
 				self._dragx = evt.getX()
@@ -366,6 +369,9 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 				self._setMode(self._mode) # refresh status
 	
 	def mouseDragged(self, evt):
+		if evt.isConsumedByWidgets():
+			return
+		
 		if self._ctrldown:
 			if (self._dragx != NOT_INITIALIZED) and (self._dragy != NOT_INITIALIZED):
 				self._moveCamera(evt.getX() - self._dragx, evt.getY() - self._dragy)
@@ -383,6 +389,9 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 				self._moveInstances()
 
 	def mouseReleased(self, evt):
+		if evt.isConsumedByWidgets():
+			return
+		
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED
 	
