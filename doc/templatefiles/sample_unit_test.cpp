@@ -22,23 +22,19 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <boost/test/unit_test.hpp>
+#include "fife_unittest++.h"
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
-using boost::unit_test::test_suite;
 using namespace FIFE;
 
-void test_foo() {
-	Log::setLogLevel(Log::LEVEL_MAX);
-	BOOST_ERROR("Blank Test. Please provide an implementation");
+TEST(foo) {
+	CHECK("Blank Test for foo. Please provide an implementation");
 }
 
-test_suite* init_unit_test_suite(int argc, char* argv[]) {
-	test_suite* test = BOOST_TEST_SUITE("__NAME_HERE__ tests");
-	test->add(BOOST_TEST_CASE(&test_foo), 0);
-	return test;
+int main() {
+	return UnitTest::RunAllTests();
 }
