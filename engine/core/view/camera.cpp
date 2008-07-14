@@ -503,6 +503,8 @@ namespace FIFE {
 			for (;instance_it != allinstances.end(); ++instance_it) {
 				Instance* instance = *instance_it;
 				InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+				if(!visual->isVisible())
+					continue;
 				InstanceVisualCacheItem& vc = visual->getCacheItem(this);
 				
 				// use cached values if there is no need to do full recalculation

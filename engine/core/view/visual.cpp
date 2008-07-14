@@ -41,7 +41,7 @@ namespace FIFE {
 
 	static Logger _log(LM_VIEW);
 	
-	Visual2DGfx::Visual2DGfx(): m_transparency(0) {
+	Visual2DGfx::Visual2DGfx(): m_transparency(0), m_visible(true) {
 	}
 	
 	Visual2DGfx::~Visual2DGfx() {
