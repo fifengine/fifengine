@@ -210,25 +210,11 @@ namespace FIFE {
 			/** Transform given point using this matrix
 			 */
 			inline PointType3D<T> operator* (const PointType3D<T>& vec) {
-				PointType3D<T> ret(T(0));
-				for (register unsigned j = 0; j < 3; ++j)
-					for (register unsigned i = 0; i < 3; ++i)
-						ret.val[j] += vec.val[i]*m[j+i*4]; //scale and rotate disregarding w scaling
-
-				for (register unsigned i = 0; i < 3; ++i)
-					ret.val[i] += m[i+3*4]; //translate
-
-				//do w scaling
-				T w = m[15];
-				for (register unsigned i = 0; i < 3; ++i)
-					w += vec.val[i]*m[3+i*4];
-
-				register T resip = 1/w;
-
-				for (register unsigned i = 0; i < 3; ++i)
-					ret[i] *= resip;
-
-				return ret;
+				return PointType3D<T> (
+					vec.x * m0 + vec.y * m4 + vec.z * m8 + m12,
+					vec.x * m1 + vec.y * m5 + vec.z * m9 + m13,
+					vec.x * m2 + vec.y * m6 + vec.z * m10 + m14
+				);
 			}
 
 			/** Direct access to the matrix elements, just remember they are in column major format!!
