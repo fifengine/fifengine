@@ -57,6 +57,7 @@ namespace FIFE {
 		Uint32 flags = SDL_INIT_VIDEO;
 		if (SDL_InitSubSystem(flags) < 0)
 			throw SDLException(SDL_GetError());
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
 	}
@@ -65,7 +66,7 @@ namespace FIFE {
 		delete m_screen;
 		m_screen = 0;
 
-		Uint32 flags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE | SDL_HWACCEL;
+		Uint32 flags = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL;
 		if ( fs ) {
 			flags |= SDL_FULLSCREEN;
 		}
