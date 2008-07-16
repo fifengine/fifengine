@@ -34,6 +34,7 @@
 
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
+#include "SDL_image.h"
 
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
@@ -58,10 +59,17 @@ namespace FIFE {
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
 	}
 
-	Image* RenderBackendSDL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs) {
+	Image* RenderBackendSDL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs, const std::string& title, const std::string& icon) {
 		Uint32 flags = 0;
 		if (fs) {
 			flags |= SDL_FULLSCREEN;
+		}
+
+		if(icon != "") {
+			SDL_Surface *img = IMG_Load(icon.c_str());
+			if(img != NULL) {
+				SDL_WM_SetIcon(img, 0);
+			}
 		}
 
 		SDL_Surface* screen = NULL;
@@ -100,7 +108,7 @@ namespace FIFE {
 			<< "Videomode " << width << "x" << height
 			<< " at " << int(screen->format->BitsPerPixel) << " bpp");
 
-		SDL_WM_SetCaption("FIFE", NULL);
+		SDL_WM_SetCaption(title.c_str(), NULL);
 
 		if (!screen) {
 			throw SDLException(SDL_GetError());

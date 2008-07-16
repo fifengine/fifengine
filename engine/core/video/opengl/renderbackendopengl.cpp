@@ -32,6 +32,7 @@
 #include "fife_opengl.h"
 #include "glimage.h"
 #include "renderbackendopengl.h"
+#include "SDL_image.h"
 
 namespace FIFE {
 
@@ -62,13 +63,20 @@ namespace FIFE {
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
 	}
 
-	Image* RenderBackendOpenGL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs) {
+	Image* RenderBackendOpenGL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs, const std::string& title, const std::string& icon) {
 		delete m_screen;
 		m_screen = 0;
 
 		Uint32 flags = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL;
 		if ( fs ) {
 			flags |= SDL_FULLSCREEN;
+		}
+
+		if(icon != "") {
+			SDL_Surface *img = IMG_Load(icon.c_str());
+			if(img != NULL) {
+				SDL_WM_SetIcon(img, 0);
+			}
 		}
 
 		SDL_Surface* screen = NULL;
@@ -98,7 +106,7 @@ namespace FIFE {
 			screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
 		}
 
-		SDL_WM_SetCaption("FIFE", 0);
+		SDL_WM_SetCaption(title.c_str(), 0);
 
 		if (!screen) {
 			throw SDLException(SDL_GetError());

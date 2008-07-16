@@ -69,6 +69,10 @@ namespace FIFE {
 		std::string getDefaultFontGlyphs() const;
 		void setImageChunkingSize(unsigned int size);
 		unsigned int getImageChunkingSize();
+		void setWindowTitle(const std::string& title);
+		std::string getWindowTitle() const;
+		void setWindowIcon(const std::string& icon);
+		std::string getWindowIcon() const;
 		
 	private:
 		EngineSettings();

@@ -192,7 +192,9 @@ namespace FIFE {
 			m_settings.getScreenWidth(),
 			m_settings.getScreenHeight(),
 			static_cast<unsigned char>(m_settings.getBitsPerPixel()),
-			m_settings.isFullScreen());
+			m_settings.isFullScreen(),
+			m_settings.getWindowTitle(),
+			m_settings.getWindowIcon());
 		FL_LOG(_log, "Main screen created");
 
 #ifdef HAVE_OPENGL

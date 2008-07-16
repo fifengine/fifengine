@@ -44,6 +44,8 @@ namespace FIFE {
 		m_sldremovefakealpha(false),
 		m_screenwidth(800),
 		m_screenheight(600),
+		m_windowtitle("FIFE"),
+		m_windowicon(""),
 		m_defaultfontpath(""),
 		m_defaultfontsize(8),
 		m_defaultfontglyphs(""),
@@ -136,5 +138,14 @@ namespace FIFE {
 	void EngineSettings::setDefaultFontGlyphs(const std::string& defaultfontglyphs) {
 		m_defaultfontglyphs = defaultfontglyphs;
 	}
+	
+	void EngineSettings::setWindowTitle(const std::string& title) {
+		m_windowtitle = title;
+	}
+	
+	void EngineSettings::setWindowIcon(const std::string& icon) {
+		m_windowicon = icon;
+	}
+	
 }
 

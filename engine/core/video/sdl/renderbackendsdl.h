@@ -47,7 +47,7 @@ namespace FIFE {
 		void startFrame();
 		void endFrame();
 		void init();
-		Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen);
+		Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen, const std::string& title, const std::string& icon);
 		Image* createImage(const uint8_t* data, unsigned int width, unsigned int height);
 		Image* createImage(SDL_Surface* surface);
  		bool putPixel(int x, int y, int r, int g, int b);

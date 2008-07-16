@@ -86,7 +86,7 @@ namespace FIFE {
 		 * @param fullscreen Use fullscreen mode?
 		 * @return The new Screen Image
 		 */
-		virtual Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen) = 0;
+		virtual Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen, const std::string& title, const std::string& icon) = 0;
 
 		/** Creates an Image suitable for this renderbackend.
 		 * @param data Pointer to the imagedata (needs to be in RGBA, 8 bits per channel).

@@ -181,8 +181,19 @@ namespace FIFE {
 		unsigned int getImageChunkingSize() {
 			return m_image_chunking_size;
 		}
+
+		void setWindowTitle(const std::string& title);
+
+		std::string getWindowTitle() const {
+			return m_windowtitle;
+		}
 	
-	
+		void setWindowIcon(const std::string& icon);
+
+		std::string getWindowIcon() const {
+			return m_windowicon;
+		}
+		
 	private:
 		unsigned int m_bitsperpixel;
 		bool m_fullscreen;
@@ -191,6 +202,9 @@ namespace FIFE {
 		bool m_sldremovefakealpha;
 		unsigned int m_screenwidth;
 		unsigned int m_screenheight;
+		std::string m_windowtitle;
+		std::string m_windowicon;
+		
 		
 		std::string m_defaultfontpath;
 		unsigned int m_defaultfontsize;
