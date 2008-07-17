@@ -15,15 +15,15 @@ class ObjectSelector(object):
 		self.gui = widgets.Window(title="Object selector")
 		hbox = widgets.HBox(parent=self.gui)
 		self.gui.addChild(hbox)
-		scrollArea = widgets.ScrollArea(parent=hbox,size=(120,300))
+		scrollArea = widgets.ScrollArea(parent=hbox,size=(200,300))
 		hbox.addChild(scrollArea)
 		self.namespaces = widgets.ListBox(parent=scrollArea)
 		scrollArea.content = self.namespaces
-		scrollArea = widgets.ScrollArea(parent=hbox,size=(120,300))
+		scrollArea = widgets.ScrollArea(parent=hbox,size=(200,300))
 		hbox.addChild(scrollArea)
 		self.objects = widgets.ListBox(parent=scrollArea)
 		scrollArea.content = self.objects
-		scrollArea = widgets.ScrollArea(parent=hbox, size=(120,300))
+		scrollArea = widgets.ScrollArea(parent=hbox, size=(200,300))
 		hbox.addChild(scrollArea)
 		self.preview = widgets.Icon()
 		scrollArea.content = self.preview
