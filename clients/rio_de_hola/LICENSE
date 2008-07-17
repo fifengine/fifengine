@@ -101,6 +101,8 @@ http://www.gnu.org/licenses/gpl-3.0.txt
 Affected files:
 objects/items/sanctuary/skull_pole/*.png
 objects/items/sanctuary/skull_pole/source/*.blend
+objects/items/resort/balls/*/*.png
+objects/items/resort/balls/*/source/*.blend
 
 === Reiner's tilesets ===
 Author:
