@@ -79,7 +79,28 @@ objects/items/flask/*.png
 objects/items/matchbox/*.png
 objects/items/shrine/*.png
 objects/items/signs/*.png
-objects/items/*/source/*.blend
+objects/items/beebox/source/*.blend
+objects/items/coins/source/*.blend
+objects/items/flask/source/*.blend
+objects/items/matchbox/source/*.blend
+objects/items/shrine/source/*.blend
+objects/items/signs/source/*.blend
+
+=== Kaelis Ebonrai ===
+
+Author:
+Blake "Kaelis Ebonrai" Heatly (knux.econa@gmail.com)
+
+Website:
+http://ebonrai.com/
+
+License:
+GNU GPL 3.0 or Later.
+http://www.gnu.org/licenses/gpl-3.0.txt
+
+Affected files:
+objects/items/sanctuary/skull_pole/*.png
+objects/items/sanctuary/skull_pole/source/*.blend
 
 === Reiner's tilesets ===
 Author:
