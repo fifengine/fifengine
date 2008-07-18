@@ -286,6 +286,7 @@ namespace FIFE {
 	}
 
 	void Engine::pump() {
+		m_eventmanager->processEvents();
 		m_renderbackend->startFrame();
 		m_timemanager->update();
 		m_model->update();
@@ -293,8 +294,6 @@ namespace FIFE {
 		m_guimanager->turn();
 		m_cursor->draw();
 		m_renderbackend->endFrame();
-		SDL_Delay(1);
-		m_eventmanager->processEvents();
 	}
 
 	void Engine::finalizePumping() {
