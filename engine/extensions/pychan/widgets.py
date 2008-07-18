@@ -588,6 +588,13 @@ class Widget(object):
 		self.real_widget.setForegroundColor(color)
 	foreground_color = property(_getForegroundColor,_setForegroundColor)
 	
+	def _getSelectionColor(self): return self.real_widget.getSelectionColor()
+	def _setSelectionColor(self,color):
+		if isinstance(color,type(())):
+			color = fife.Color(*color)
+		self.real_widget.setSelectionColor(color)
+	selection_color = property(_getSelectionColor,_setSelectionColor)
+	
 	def _getName(self): return self._name
 	def _setName(self,name):
 		from pychan import manager

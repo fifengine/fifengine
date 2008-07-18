@@ -89,6 +89,8 @@ namespace gcn {
 		virtual const Color& getForegroundColor() const;
 		virtual void setBackgroundColor(const Color& color);
 		virtual const Color& getBackgroundColor() const;
+		virtual void setSelectionColor(const Color& color);
+		virtual const Color& getSelectionColor() const;
 		virtual void requestFocus();
 		virtual void requestMoveToTop();
 		virtual void requestMoveToBottom();
