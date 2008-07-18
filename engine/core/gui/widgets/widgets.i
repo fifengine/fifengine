@@ -304,6 +304,14 @@ namespace gcn {
 		virtual void setListModel(ListModel *listModel);
 		virtual ListModel *getListModel();
 		virtual void adjustHeight();
+		virtual void setBaseColor(const Color& color);
+		virtual const Color& getBaseColor() const;
+		virtual void setForegroundColor(const Color& color);
+		virtual const Color& getForegroundColor() const;
+		virtual void setBackgroundColor(const Color& color);
+		virtual const Color& getBackgroundColor() const;
+		virtual void setSelectionColor(const Color& color);
+		virtual const Color& getSelectionColor() const;
 	};
 
 	%feature("notabstract") RadioButton;
