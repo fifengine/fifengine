@@ -112,7 +112,7 @@ TEST(test_sdl_gui_image)
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
 	ImagePool pool;
-	Image* screen = renderbackend.createMainScreen(800, 600, 0, false);
+	Image* screen = renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 	SdlGuiGraphics graphics(pool);
 	graphics.setTarget(screen->getSurface());
 	test_gui_image(renderbackend, graphics, pool);
@@ -124,11 +124,18 @@ TEST(test_ogl_gui_image)
 	RenderBackendOpenGL renderbackend;
 	renderbackend.init();
 	ImagePool pool;
-	renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 	OpenGLGuiGraphics graphics(pool);
 	test_gui_image(renderbackend, graphics, pool);
 }
 
-int main() {
+// need this here because SDL redefines 
+// main to SDL_main in SDL_main.h
+#ifdef main
+#undef main
+#endif
+
+int main()
+{
 	return UnitTest::RunAllTests();
 }

@@ -61,23 +61,21 @@ struct environment {
 	boost::shared_ptr<VFS> vfs;
 
 	environment()
-		: timemanager(new TimeManager()) {
+		: timemanager(new TimeManager()), vfs(new VFS()) {
 			if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {	
 				throw SDLException(SDL_GetError());
 			}
 		}
 };
 
-TEST(test_image_pool)
+TEST_FIXTURE(environment, test_image_pool)
 {
-	environment env;
 	RenderBackendSDL renderbackend;
 
-	boost::scoped_ptr<VFS> vfs(new VFS());
 	vfs->addSource(new VFSDirectory(vfs.get()));
 
 	renderbackend.init();
-	renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 	ImagePool pool;
 	pool.addResourceLoader(new SubImageLoader());
 	pool.addResourceLoader(new ImageLoader(vfs.get()));
@@ -132,6 +130,15 @@ TEST(test_image_pool)
 	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
 }
 
-int main() {
+// need this here because SDL redefines 
+// main to SDL_main in SDL_main.h
+#ifdef main
+#undef main
+#endif
+
+int main()
+{
 	return UnitTest::RunAllTests();
 }
+
+

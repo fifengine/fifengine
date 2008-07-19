@@ -72,7 +72,7 @@ struct environment {
 
 void test_image(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
-	renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 
 	ImageLoader provider(vfs);
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(provider.loadResource(ImageLocation(IMAGE_FILE))));
@@ -97,7 +97,7 @@ void test_image(VFS* vfs, RenderBackend& renderbackend) {
 
 void test_subimage(VFS* vfs, RenderBackend& renderbackend) {
 	renderbackend.init();
-	renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 
 	ImageLoader imgprovider(vfs);
 	boost::scoped_ptr<Image> img(dynamic_cast<Image*>(imgprovider.loadResource(ImageLocation(SUBIMAGE_FILE))));
@@ -140,7 +140,7 @@ TEST(test_sdl_alphaoptimize)
 	environment env;
 	RenderBackendSDL renderbackend;
 	renderbackend.init();
-	renderbackend.createMainScreen(800, 600, 0, false);
+	renderbackend.createMainScreen(800, 600, 0, false, "FIFE", "");
 	renderbackend.setAlphaOptimizerEnabled(true);
 		
 	ImageLoader provider(env.vfs.get());
@@ -196,6 +196,13 @@ TEST(test_ogl_subimage)
 	test_subimage(env.vfs.get(), renderbackend);
 }
 
-int main() {
+// need this here because SDL redefines 
+// main to SDL_main in SDL_main.h
+#ifdef main
+#undef main
+#endif
+
+int main()
+{
 	return UnitTest::RunAllTests();
 }
