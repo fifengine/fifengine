@@ -28,6 +28,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/log/logger.h"
 #include "util/structures/purge.h"
 
 #include "layer.h"
@@ -36,6 +37,8 @@
 #include "instancetree.h"
 
 namespace FIFE {
+
+	static Logger _log(LM_STRUCTURES);
 
 	Layer::Layer(const std::string& identifier, Map* map, CellGrid* grid)
 		: m_id(identifier),
@@ -63,7 +66,7 @@ namespace FIFE {
 		return createInstance(object, emc, id);	
 	}
 
-	bool Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
+	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) { 
 		Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
