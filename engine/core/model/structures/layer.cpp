@@ -89,6 +89,34 @@ namespace FIFE {
 		return instance;
 	}
 	
+	bool Layer::addInstance(Instance* instance, const ExactModelCoordinate& p){
+        if( !instance )
+            FL_ERR(_log, "Tried to add an instance to layer, but given instance is invalid");
+	    Location l;
+		l.setLayer(this);
+		l.setExactLayerCoordinates(p);
+        std::string id = instance->getId();
+
+		if(id != "") {
+			std::vector<Instance*>::iterator it = m_instances.begin();
+			for(; it != m_instances.end(); ++it) {
+				if((*it)->getId() == id)
+					throw NameClash(id);
+			}
+		}
+
+		m_instances.push_back(instance);
+		m_instanceTree->addInstance(instance);
+
+		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			(*i)->onInstanceCreate(this, instance);
+			++i;
+		}
+		m_changed = true;
+		return instance;
+	}
+	
 	void Layer::deleteInstance(Instance* instance) {
 		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
 		while (i != m_changelisteners.end()) {
