@@ -1,0 +1,44 @@
+import os, shutil
+from utils.util_scripts.path import path
+
+Import('env')
+
+curpath = str(path('.'))
+installpath = str((path('.') / path('install')).abspath())
+
+print "======= FIFE EXTERNAL DEPENDENCY BUILD: GUICHAN ======="
+os.chdir(str(path('.') / path('guichan-0.8.1')))
+os.system('./configure')
+os.system('make')
+os.system('make install prefix=%s' % installpath)
+
+print "======= FIFE EXTERNAL DEPENDENCY BUILD: LIBPNG ======="
+os.chdir(str(path('..')))
+os.chdir(str(path('.') / path('libpng-1.2.29')))
+os.system('./configure')
+os.system('make all-am')
+os.system('make install prefix=%s' % installpath)
+os.system('make install-data-hook prefix=%s' % installpath)
+
+print "======= FIFE EXTERNAL DEPENDENCY BUILD: OPENAL-SOFT ======="
+os.chdir('..')
+os.chdir(str(path('.') / path('openal-soft')))
+os.system('./configure')
+os.system('make')
+os.system('make install prefix=%s' % installpath)
+
+print "======= FIFE EXTERNAL DEPENDENCY BUILD: UNITTEST++ ======="
+os.chdir('..')
+os.chdir(str(path('.') / path('UnitTest++')))
+os.system('make')
+shutil.copyfile('libUnitTest++.a', str(path(installpath) / path('lib') / path('libUnitTest++.a')))
+shutil.copyfile(
+	str(path('src') / path('UnitTest++.h')),
+	str(path(installpath) / path('include') / path('UnitTest++.h')))
+shutil.copyfile(
+	str(path('src') / path('TestReporterStdout.h')),
+	str(path(installpath) / path('include') / path('TestReporterStdout.h')))
+
+print "======= FIFE EXTERNAL DEPENDENCY BUILD: ALL DONE ( CHECK LOG FOR POSSIBLE ERRORS ) ======="
+
+os.chdir(curpath)
