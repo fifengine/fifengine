@@ -68,6 +68,7 @@ namespace FIFE {
 			bool hasInstances() const;
 			Instance* createInstance(Object* object, const ModelCoordinate& p, const std::string& id="");
 			Instance* createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
+			bool addInstance(Instance* instance, const ExactModelCoordinate& p);
 			void deleteInstance(Instance* object);
 
 			const std::vector<Instance*>& getInstances() const;

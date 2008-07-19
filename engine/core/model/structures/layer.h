@@ -135,7 +135,7 @@ namespace FIFE {
 			/** Add a valid instance at a specific position. This is temporary. It will be moved to a higher level
 			later so that we can ensure that each Instance only lives in one layer.
 			 */
-			Instance* Layer::addInstance(Instance* instance, const ExactModelCoordinate& p);
+			bool addInstance(Instance* instance, const ExactModelCoordinate& p);
 						
 			/** Remove an instance from the layer
 			 */

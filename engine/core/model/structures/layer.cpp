@@ -63,7 +63,7 @@ namespace FIFE {
 		return createInstance(object, emc, id);	
 	}
 
-	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
+	bool Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
 		Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
@@ -90,8 +90,11 @@ namespace FIFE {
 	}
 	
 	bool Layer::addInstance(Instance* instance, const ExactModelCoordinate& p){
-        if( !instance )
+        if( !instance ){
             FL_ERR(_log, "Tried to add an instance to layer, but given instance is invalid");
+            return false;
+        }
+        
 	    Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
@@ -114,7 +117,7 @@ namespace FIFE {
 			++i;
 		}
 		m_changed = true;
-		return instance;
+		return true;
 	}
 	
 	void Layer::deleteInstance(Instance* instance) {
