@@ -116,12 +116,10 @@ namespace FIFE {
 			~ColoringInfo();
 		};
 		typedef std::map<Instance*, OutlineInfo> InstanceToOutlines_t;
-		typedef std::map<Layer*, InstanceToOutlines_t> LayerToOutlineMap_t;
 		typedef std::map<Instance*, ColoringInfo> InstanceToColoring_t;
-		typedef std::map<Layer*, InstanceToColoring_t> LayerToColoringMap_t;
-		// mapping of layer -> instance -> outlineinfo
-		LayerToOutlineMap_t m_layer_to_outlinemap;
-		LayerToColoringMap_t m_layer_to_coloringmap;
+		
+		InstanceToOutlines_t m_instance_outlines;
+		InstanceToColoring_t m_instance_colorings;
 		
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
