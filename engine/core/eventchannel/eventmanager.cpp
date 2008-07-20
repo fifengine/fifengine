@@ -508,9 +508,35 @@ namespace FIFE {
 					cmd.setSource(this);
 					cmd.setCommandType(CMD_QUIT_GAME);
 					dispatchCommand(cmd);
-					break;
 					}
-				case SDL_ACTIVEEVENT:
+					break;
+				case SDL_ACTIVEEVENT: {
+					Command cmd;
+					cmd.setSource(this);
+					SDL_ActiveEvent actevt = event.active;
+					if (actevt.state == SDL_APPMOUSEFOCUS)
+					{
+						if (actevt.gain)
+							cmd.setCommandType(CMD_MOUSE_FOCUS_GAINED);
+						else
+							cmd.setCommandType(CMD_MOUSE_FOCUS_LOST);
+					}
+					else if (actevt.state == SDL_APPINPUTFOCUS)
+					{
+						if (actevt.gain)
+							cmd.setCommandType(CMD_INPUT_FOCUS_GAINED);
+						else
+							cmd.setCommandType(CMD_INPUT_FOCUS_LOST);
+					}
+					else if (actevt.state == SDL_APPACTIVE)
+					{
+						if (actevt.gain)
+							cmd.setCommandType(CMD_APP_RESTORED);
+						else
+							cmd.setCommandType(CMD_APP_ICONIFIED);
+					}
+					dispatchCommand(cmd);
+					}
 					break;
 				case SDL_KEYDOWN:
 				case SDL_KEYUP: {
@@ -541,8 +567,8 @@ namespace FIFE {
 						}
 					}
 					dispatchMouseEvent(mouseevt);
-					break;
 					}
+					break;
 			}
 		}
 
