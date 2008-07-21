@@ -2,14 +2,14 @@ import fife, math, random
 import pychan
 import pychan.widgets as widgets
 
-from eventlistenerbase import EventListenerBase
+from scripts.common.eventlistenerbase import EventListenerBase
 from loaders import loadMapFile
 from savers import saveMapFile
-from hero import Hero
-from girl import Girl
-from cloud import Cloud
-from beekeeper import Beekeeper
-from agent import create_anonymous_agents
+from agents.hero import Hero
+from agents.girl import Girl
+from agents.cloud import Cloud
+from agents.beekeeper import Beekeeper
+from agents.agent import create_anonymous_agents
 import settings as TDS
 
 class MapListener(fife.MapChangeListener):

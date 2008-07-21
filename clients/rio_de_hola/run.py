@@ -13,7 +13,8 @@ for p in _paths:
 		sys.path.append(_jp(p))
 
 import fife, fifelog
-from scripts import world, eventlistenerbase
+from scripts import world
+from scripts.common import eventlistenerbase
 from basicapplication import ApplicationBase
 import pychan
 import pychan.widgets as widgets

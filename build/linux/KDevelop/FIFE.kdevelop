@@ -64,7 +64,6 @@
       <filetype>Makefile</filetype>
       <filetype>CMakeLists.txt</filetype>
     </filetypes>
-    <blacklist/>
   </kdevcustomproject>
   <kdevdebugger>
     <general>

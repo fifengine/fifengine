@@ -1,4 +1,5 @@
-import common, fife
+import fife
+from scripts.common.common import ProgrammingError
 
 class Agent(fife.InstanceActionListener):
 	def __init__(self, model, agentName, layer, uniqInMap=True):
