@@ -299,7 +299,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		else:
 			loc.setLayerCoordinates(self._selection)
 		for i in self._instances:
+			f = fife.Location(self._layer)
+			f.setExactLayerCoordinates(i.getFacingLocation().getExactLayerCoordinates() + fife.ExactModelCoordinate(float(self._selection.x), float(self._selection.y)) - i.getLocation().getExactLayerCoordinates())
 			i.setLocation(loc)
+			i.setFacingLocation(f)
 	
 	def _rotateInstances(self):
 		mname = '_rotateInstances'
