@@ -37,6 +37,7 @@ namespace FIFE {
 	
 	Pool::Pool(): 
 		m_entries(),
+		m_location_to_entry(),
 		m_listeners(),
 		m_loaders(),
 		m_curind(0)
@@ -61,6 +62,7 @@ namespace FIFE {
 			delete (*entry);
 		}
 		m_entries.clear();
+		m_location_to_entry.clear();
 	}
 
 	void Pool::addResourceLoader(ResourceLoader* loader) {
@@ -68,20 +70,16 @@ namespace FIFE {
 	}
 
 	int Pool::addResourceFromLocation(const ResourceLocation& loc) {
-		std::vector<PoolEntry*>::iterator it = m_entries.begin();
-		int index = 0;
-		for (; it != m_entries.end(); it++) {
-			ResourceLocation* loc2 = (*it)->location;
-			if (*loc2 == loc) {
-				return index;
-			}
-			index++;
+		ResourceLocationToEntry::const_iterator it = m_location_to_entry.find(loc);
+		if (it != m_location_to_entry.end()) {
+			return (*it).second;
 		}
 		
 		PoolEntry* entry = new PoolEntry();
 		entry->location = loc.clone();
 		m_entries.push_back(entry);
-		index = m_entries.size();
+		size_t index = m_entries.size();
+		m_location_to_entry[loc] = index;
 		return index - 1;
 	}
 

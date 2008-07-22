@@ -151,6 +151,8 @@ namespace FIFE {
 
 		void findAndSetProvider(PoolEntry& entry);
 		std::vector<PoolEntry*> m_entries;
+		typedef std::map<ResourceLocation, int> ResourceLocationToEntry;
+		ResourceLocationToEntry m_location_to_entry;
 		std::vector<IPoolListener*> m_listeners;
 		std::vector<ResourceLoader*> m_loaders;
 		int m_curind;
