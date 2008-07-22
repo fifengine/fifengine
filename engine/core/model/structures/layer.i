@@ -72,6 +72,7 @@ namespace FIFE {
 			void deleteInstance(Instance* object);
 
 			const std::vector<Instance*>& getInstances() const;
+			std::vector<Instance*> getInstances(const std::string& identifier);
 			Instance* getInstance(const std::string& id);
 
 			void setInstancesVisible(bool vis);

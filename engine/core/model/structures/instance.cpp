@@ -193,6 +193,10 @@ namespace FIFE {
 		m_changeinfo |= ICHANGE_ROTATION;
 	}
 
+	void Instance::setId(const std::string& identifier) {
+		m_id = identifier;
+	}
+
 	void Instance::addActionListener(InstanceActionListener* listener) {
 		initializeChanges();
 		m_activity->m_actionlisteners.push_back(listener);

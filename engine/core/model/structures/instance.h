@@ -90,6 +90,10 @@ namespace FIFE {
 		 */
 		const std::string& getId() { return m_id; }
 
+		/** Set the identifier for this instance.
+		 */
+		void setId(const std::string& identifier="");
+
 		/** Gets object where this instance is instantiated from
 		 */
 		Object* getObject() { return m_object; }

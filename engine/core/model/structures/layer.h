@@ -145,9 +145,13 @@ namespace FIFE {
 			 */
 			const std::vector<Instance*>& getInstances() const { return m_instances; }
 
-			/** Get the instance on this layer with the given identifier.
+			/** Get the list of instances on this layer with the given identifier.
 			 */
-			Instance* getInstance(const std::string& id);
+			std::vector<Instance*> getInstances(const std::string& id);
+
+			/** Get the first instance on this layer with the given identifier.
+			 */
+			Instance* getInstance(const std::string& identifier);
 
 			/** Set object visibility
 			 */

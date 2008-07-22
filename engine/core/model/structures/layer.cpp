@@ -71,14 +71,6 @@ namespace FIFE {
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
 
-		if(id != "") {
-			std::vector<Instance*>::iterator it = m_instances.begin();
-			for(; it != m_instances.end(); ++it) {
-				if((*it)->getId() == id)
-					throw NameClash(id);
-			}
-		}
-
 		Instance* instance = new Instance(object, l, id);
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
@@ -101,15 +93,6 @@ namespace FIFE {
 	    Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
-        std::string id = instance->getId();
-
-		if(id != "") {
-			std::vector<Instance*>::iterator it = m_instances.begin();
-			for(; it != m_instances.end(); ++it) {
-				if((*it)->getId() == id)
-					throw NameClash(id);
-			}
-		}
 
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
@@ -150,6 +133,16 @@ namespace FIFE {
 		}
 
 		throw NotFound(id);
+	}
+
+	std::vector<Instance*> Layer::getInstances(const std::string& id) {
+		std::vector<Instance*> matching_instances;
+		std::vector<Instance*>::iterator it = m_instances.begin();
+		for(; it != m_instances.end(); ++it) {
+			if((*it)->getId() == id)
+				matching_instances.push_back(*it);
+		}
+		return matching_instances;
 	}
 
 	void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const {
