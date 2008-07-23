@@ -112,6 +112,7 @@ namespace FIFE {
 		void processEvents();
 
 	private:
+		bool combineEvents(SDL_Event& event1, const SDL_Event& event2);
 		void dispatchKeyEvent(KeyEvent& evt);
 		void dispatchMouseEvent(MouseEvent& evt);
 		void dispatchSdlEvent(SDL_Event& evt);

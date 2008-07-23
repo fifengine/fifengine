@@ -498,9 +498,30 @@ namespace FIFE {
 		dispatchWidgetEvent(evt);
 	}
 
+	bool EventManager::combineEvents(SDL_Event& event1, const SDL_Event& event2) {
+		if(event1.type == event2.type) {
+			switch (event1.type) {
+				case SDL_MOUSEMOTION:
+					if(event1.motion.state == event2.motion.state) {
+						event1.motion.x = event2.motion.x;
+						event1.motion.y = event2.motion.y;
+						event1.motion.xrel += event2.motion.xrel;
+						event1.motion.yrel += event2.motion.yrel;
+						return true;
+					}
+					return false;
+			}
+		}
+		return false;
+	}
+
 	void EventManager::processEvents(){
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
+		SDL_Event event, newevent;
+		bool has_event = SDL_PollEvent(&event);
+		while (has_event) {
+			has_event = SDL_PollEvent(&newevent);
+			if(has_event && combineEvents(event, newevent))
+				continue;
 			dispatchSdlEvent(event);
 			switch (event.type) {
 				case SDL_QUIT: {
@@ -570,6 +591,8 @@ namespace FIFE {
 					}
 					break;
 			}
+			if(has_event)
+				event = newevent;
 		}
 
 		pollTriggers();
