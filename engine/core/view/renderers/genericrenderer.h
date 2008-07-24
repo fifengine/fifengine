@@ -170,18 +170,18 @@ namespace FIFE {
 		 */
 		static GenericRenderer* getInstance(IRendererContainer* cnt);
 
-		void addLine(int group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
-		void addPoint(int group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
-		void addQuad(int group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
-		void addText(int group, GenericRendererNode n, AbstractFont* font, std::string text);
-		void addImage(int group, GenericRendererNode n, int image);
-		void addAnimation(int group, GenericRendererNode n, int animation);
-		void removeAll(int group);
+		void addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
+		void addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
+		void addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
+		void addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text);
+		void addImage(const std::string &group, GenericRendererNode n, int image);
+		void addAnimation(const std::string &group, GenericRendererNode n, int animation);
+		void removeAll(const std::string &group);
 
 	private:
 		ImagePool* m_imagepool;
 		AnimationPool* m_animationpool;
-		std::map<int, std::vector<GenericRendererElementInfo*> > m_groups;
+		std::map<std::string, std::vector<GenericRendererElementInfo*> > m_groups;
 	};
 
 }

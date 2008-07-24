@@ -305,31 +305,31 @@ namespace FIFE {
 
 	GenericRenderer::~GenericRenderer() {
 	}
-	void GenericRenderer::addLine(int group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b) {
+	void GenericRenderer::addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b) {
 		GenericRendererElementInfo* info = new GenericRendererLineInfo(n1, n2, r, g, b);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addPoint(int group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b) {
+	void GenericRenderer::addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b) {
 		GenericRendererElementInfo* info = new GenericRendererPointInfo(n, r, g, b);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addQuad(int group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b) {
+	void GenericRenderer::addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b) {
 		GenericRendererElementInfo* info = new GenericRendererQuadInfo(n1, n2, n3, n4, r, g, b);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addText(int group, GenericRendererNode n, AbstractFont* font, std::string text) {
+	void GenericRenderer::addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text) {
 		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addImage(int group, GenericRendererNode n, int image) {
+	void GenericRenderer::addImage(const std::string &group, GenericRendererNode n, int image) {
 		GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addAnimation(int group, GenericRendererNode n, int animation) {
+	void GenericRenderer::addAnimation(const std::string &group, GenericRendererNode n, int animation) {
 		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::removeAll(int group) {
+	void GenericRenderer::removeAll(const std::string &group) {
 		std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
 		for (;info_it != m_groups[group].end(); ++info_it) {
 			delete *info_it;
@@ -339,7 +339,7 @@ namespace FIFE {
 	}
 
 	void GenericRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
-		std::map<int, std::vector<GenericRendererElementInfo*> >::iterator group_it = m_groups.begin();
+		std::map<std::string, std::vector<GenericRendererElementInfo*> >::iterator group_it = m_groups.begin();
 		for(; group_it != m_groups.end(); ++group_it) {
 			std::vector<GenericRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
 			for (;info_it != group_it->second.end(); ++info_it) {
