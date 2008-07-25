@@ -78,6 +78,13 @@ class ApplicationBase(object):
 		engineSetting.setSDLRemoveFakeAlpha(settings.SDLRemoveFakeAlpha)
 		engineSetting.setScreenWidth(settings.ScreenWidth)
 		engineSetting.setScreenHeight(settings.ScreenHeight)
+
+
+		try:
+			engineSetting.setWindowTitle(settings.WindowTitle)
+			engineSetting.setWindowIcon(settings.WindowIcon)
+		except:
+			pass			
 		try:
 			engineSetting.setImageChunkingSize(settings.ImageChunkSize)
 		except:

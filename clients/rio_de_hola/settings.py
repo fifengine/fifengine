@@ -6,6 +6,9 @@ RenderBackend       = "OpenGL"
 SDLRemoveFakeAlpha  = 1
 ScreenWidth         = 1024
 ScreenHeight        = 768
+WindowTitle			= 'FIFE - Rio de hola'
+WindowIcon			= ''
+
 MapFile             = 'maps/shrine.xml'
 Font                = 'fonts/samanata.ttf'
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\""
