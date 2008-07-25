@@ -209,7 +209,6 @@ class ModelSaver:
 						(None, 'ref_layer_id'): 'ref_layer_id',
 						(None, 'ref_cell_width'): 'ref_cell_width',
 						(None, 'ref_cell_height'): 'ref_cell_height',
-						(None, 'viewport'): 'viewport',
 				}
 
 				attr_vals = {
@@ -220,8 +219,12 @@ class ModelSaver:
 					(None, 'ref_layer_id'): cam.getLocation().getLayer().getId(),
 					(None, 'ref_cell_width'): str( celldimensions.x ),
 					(None, 'ref_cell_height'): str( celldimensions.y ),
-					(None, 'viewport'): '%d,%d,%d,%d' % (viewport.x, viewport.y, viewport.w, viewport.h),
 				}
+
+				# add a viewport entry if the cam isn't full sized
+				if not (viewport == self.engine.getRenderBackend().getArea()):
+					attr_names[(None,'viewport')] = 'viewport'
+					attr_vals[(None,'viewport')] = '%d,%d,%d,%d' % (viewport.x, viewport.y, viewport.w, viewport.h)
 
 				attrs = AttributesNSImpl( attr_vals, attr_names )
 				self.startElement( 'camera', attrs );

@@ -229,12 +229,15 @@ class XMLMapLoader(fife.ResourceLoader):
 			if not rotation: rotation = 0
 
 			if not id: self._err('Camera declared without an id.')
-			if not viewport: self._err(''.join(['Camera ', str(id), ' declared without a viewport.']))
 			if not ref_layer_id: self._err(''.join(['Camera ', str(id), ' declared with no reference layer.']))
 			if not (ref_cell_width and ref_cell_height): self._err(''.join(['Camera ', str(id), ' declared without reference cell dimensions.']))
 
 			try:
-				cam = self.engine.getView().addCamera(str(id), map.getLayer(str(ref_layer_id)),fife.Rect(*[int(c) for c in viewport.split(',')]),fife.ExactModelCoordinate(0,0,0))
+				if viewport:
+					cam = self.engine.getView().addCamera(str(id), map.getLayer(str(ref_layer_id)),fife.Rect(*[int(c) for c in viewport.split(',')]),fife.ExactModelCoordinate(0,0,0))
+				else:
+					screen = self.engine.getRenderBackend()
+					cam = self.engine.getView().addCamera(str(id), map.getLayer(str(ref_layer_id)),fife.Rect(0,0,screen.getScreenWidth(),screen.getScreenHeight()),fife.ExactModelCoordinate(0,0,0))
 
 				cam.setCellImageDimensions(int(ref_cell_width), int(ref_cell_height))
 				cam.setRotation(float(rotation))
