@@ -7,7 +7,7 @@ $srcdir=OpenAL32/*.o
 f=""
 
 OPENAL_OBJS = OpenAL32/alBuffer.o OpenAL32/alFilter.o  OpenAL32/alSource.o OpenAL32/OpenAL32.o OpenAL32/alAuxEffectSlot.o OpenAL32/alEffect.o OpenAL32/alError.o OpenAL32/alListener.o OpenAL32/alState.o OpenAL32/alThunk.o OpenAL32/alExtension.o
-ALC_OBJS = Alc/ALc.o Alc/ALu.o Alc/alcConfig.o Alc/alcRing.o Alc/alcThread.o Alc/bs2b.o Alc/wave.o Alc/alsa.o
+ALC_OBJS = Alc/ALc.o Alc/ALu.o Alc/alcConfig.o Alc/alcRing.o Alc/alcThread.o Alc/bs2b.o Alc/wave.o Alc/alsa.o Alc/oss.o
 
 #OPENAL_OBJS = OpenAL32/alBuffer.c OpenAL32/alFilter.c
 #ALC_OBJS = Alc/*.c

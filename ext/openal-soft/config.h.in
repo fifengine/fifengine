@@ -8,7 +8,7 @@
 #endif
 
 /* Define if we have the OSS backend */
-#undef HAVE_OSS		/// using only alsa
+#define HAVE_OSS
 
 
 /* Define if we have the DSound backend */
