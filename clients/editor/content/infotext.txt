@@ -20,6 +20,7 @@ Keybindings:
 - M   = Moves selected instace (drag it around)
 - T   = shows / hides grid
 - B   = shows / hides blocking info
+- U   = Undo an instance placement or removal
 - CTRL = Enters pan/zoom mode. Pan with LMB drag,
          zoom with mouse wheel while CTRL is
          pressed

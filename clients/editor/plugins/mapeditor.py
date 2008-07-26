@@ -158,6 +158,9 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._toolbar.show()
 		self._setMode(NOTHING_LOADED)
 
+		self._undoStack = []
+		self._undo = False # tracks whether current action is an undo
+
 	def _assert(self, statement, msg):
 		if not statement:
 			print msg
@@ -246,49 +249,64 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
 		return loc
 
-	def _getInstancesFromSelection(self, top_only):
-		self._assert(self._layer, 'No layer assigned in _getInstancesFromSelection')
-		self._assert(self._selection, 'No selection assigned in _getInstancesFromSelection')
-		self._assert(self._camera, 'No camera assigned in _getInstancesFromSelection')
+	def _getInstancesFromPosition(self, position, top_only):
+		self._assert(self._layer, 'No layer assigned in _getInstancesFromPosition')
+		self._assert(position, 'No position assigned in _getInstancesFromPosition')
+		self._assert(self._camera, 'No camera assigned in _getInstancesFromPosition')
 		
 		loc = fife.Location(self._layer)
-		if type(self._selection) == fife.ExactModelCoordinate:
-			loc.setExactLayerCoordinates(self._selection)
+		if type(position) == fife.ExactModelCoordinate:
+			loc.setExactLayerCoordinates(position)
 		else:
-			loc.setLayerCoordinates(self._selection)
+			loc.setLayerCoordinates(position)
 		instances = self._camera.getMatchingInstances(loc)
 		if top_only and (len(instances) > 0):
 			instances = [instances[0]]
 		return instances
+
+	def undo(self):
+		if self._undoStack != []:
+			# execute inverse of last action
+			self._undo = True
+			self._undoStack.pop()()
+			self._undo = False
 	
-	def _placeInstance(self):
+	def _placeInstance(self,position,object):
 		mname = '_placeInstance'
-		self._assert(self._object, 'No object assigned in %s' % mname)
-		self._assert(self._selection, 'No selection assigned in %s' % mname)
+		self._assert(object, 'No object assigned in %s' % mname)
+		self._assert(position, 'No position assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
-		self._assert(self._mode == INSERTING, 'No mode is not INSERTING in %s (is instead %s)' % (mname, str(self._mode)))
+
+		print 'Placing instance of ' + object.getId() + ' at ' + str(position)
+		print object
 		
 		# don't place repeat instances
-		for i in self._getInstancesFromSelection(False):
-			if i.getObject().getId() == self._object.getId():
-				print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % self._object.getId()
+		for i in self._getInstancesFromPosition(position, False):
+			if i.getObject().getId() == object.getId():
+				print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % object.getId()
 				return
 
-		inst = self._layer.createInstance(self._object, self._selection)
+		inst = self._layer.createInstance(object, position)
 		fife.InstanceVisual.create(inst)
+		if not self._undo:
+			self._undoStack.append(lambda: self._removeInstances(position))
 
-	def _removeInstances(self):
+	def _removeInstances(self,position):
 		mname = '_removeInstances'
-		self._assert(self._selection, 'No selection assigned in %s' % mname)
+		self._assert(position, 'No position assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
-		self._assert(self._mode == REMOVING, 'Mode is not REMOVING in %s (is instead %s)' % (mname, str(self._mode)))
-		
-		for i in self._getInstancesFromSelection(top_only=True):
-			print "deleting " + str(i)
+
+		for i in self._getInstancesFromPosition(position, top_only=True):
+			print 'Deleting instance ' + str(i) + ' at ' + str(position)
+			if not self._undo:
+				print '>>> ' + i.getObject().getId()
+				print '>>> ' + str(i.getObject())
+				object = i.getObject()
+				self._undoStack.append(lambda: self._placeInstance(position,object))
 			self._layer.deleteInstance(i)
 				
 	def _moveInstances(self):
-		mname = '_removeInstances'
+		mname = '_moveInstances'
 		self._assert(self._selection, 'No selection assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 		self._assert(self._mode == MOVING, 'Mode is not MOVING in %s (is instead %s)' % (mname, str(self._mode)))
@@ -309,7 +327,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._selection, 'No selection assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 		
-		for i in self._getInstancesFromSelection(top_only=True):
+		for i in self._getInstancesFromPosition(self._selection, top_only=True):
 			i.setRotation((i.getRotation() + 90) % 360)
 ##    Surprisingly, the following "snap-to-rotation" code is actually incorrect. Object
 ##    rotation is independent of the camera, whereas the choice of an actual rotation image
@@ -361,13 +379,13 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			if self._camera:
 				self._selectCell(evt.getX(), evt.getY(), self._shiftdown)
 			if self._mode == VIEWING:
-				self._instances = self._getInstancesFromSelection(top_only=True)
+				self._instances = self._getInstancesFromPosition(self._selection, top_only=True)
 			elif self._mode == INSERTING:
-				self._placeInstance()
+				self._placeInstance(self._selection,self._object)
 			elif self._mode == REMOVING:
-				self._removeInstances()
+				self._removeInstances(self._selection)
 			elif self._mode == MOVING:
-				self._instances = self._getInstancesFromSelection(top_only=True)
+				self._instances = self._getInstancesFromPosition(self._selection, top_only=True)
 			else:
 				self._setMode(self._mode) # refresh status
 	
@@ -383,10 +401,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		else:
 			if self._mode == INSERTING:
 				self._selectCell(evt.getX(), evt.getY())
-				self._placeInstance()
+				self._placeInstance(self._selection,self._object)
 			elif self._mode == REMOVING:
 				self._selectCell(evt.getX(), evt.getY())
-				self._removeInstances()
+				self._removeInstances(self._selection)
 			elif self._mode == MOVING and self._instances:
 				self._selectCell(evt.getX(), evt.getY(), self._shiftdown)
 				self._moveInstances()
@@ -467,6 +485,9 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 
 		elif keystr == 'o':
 			self.changeRotation()
+
+		elif keystr == 'u':
+			self.undo()
 	
 	def keyReleased(self, evt):
 		keyval = evt.getKey().getValue()
