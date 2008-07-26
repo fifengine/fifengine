@@ -112,99 +112,14 @@ namespace FIFE {
 		} else {
 			throw EventException("Invalid event type in fillKeyEvent");
 		}
-		keyevt.setShiftPressed(sdlevt.key.keysym.mod & KMOD_SHIFT);
-		keyevt.setControlPressed(sdlevt.key.keysym.mod & KMOD_CTRL);
-		keyevt.setAltPressed(sdlevt.key.keysym.mod & KMOD_ALT);
-		keyevt.setMetaPressed(sdlevt.key.keysym.mod & KMOD_META);
-		keyevt.setNumericPad(sdlevt.key.keysym.sym >= SDLK_KP0
-							&& sdlevt.key.keysym.sym <= SDLK_KP_EQUALS);
-
 		SDL_keysym keysym = sdlevt.key.keysym;
-		Key::KeyType value = Key::INVALID_KEY;
-		std::string repr("");
 
-		if (keysym.unicode < 255) {
-			value = static_cast<Key::KeyType>(keysym.unicode);
-			repr.push_back(value);
-		}
-
-		#define MAP_KEY(_orig, _new) case _orig: value = _new; repr = #_new; break;
-		switch (keysym.sym) {
-			MAP_KEY(SDLK_TAB, Key::TAB);
-			MAP_KEY(SDLK_LALT, Key::LEFT_ALT);
-			MAP_KEY(SDLK_RALT, Key::RIGHT_ALT);
-			MAP_KEY(SDLK_LSHIFT, Key::LEFT_SHIFT);
-			MAP_KEY(SDLK_RSHIFT, Key::RIGHT_SHIFT);
-			MAP_KEY(SDLK_LCTRL, Key::LEFT_CONTROL);
-			MAP_KEY(SDLK_RCTRL, Key::RIGHT_CONTROL);
-			MAP_KEY(SDLK_BACKSPACE, Key::BACKSPACE);
-			MAP_KEY(SDLK_PAUSE, Key::PAUSE);
-			MAP_KEY(SDLK_ESCAPE, Key::ESCAPE);
-			MAP_KEY(SDLK_DELETE, Key::DELETE_KEY);
-			MAP_KEY(SDLK_INSERT, Key::INSERT);
-			MAP_KEY(SDLK_HOME, Key::HOME);
-			MAP_KEY(SDLK_END, Key::END);
-			MAP_KEY(SDLK_PAGEUP, Key::PAGE_UP);
-			MAP_KEY(SDLK_PRINT, Key::PRINT_SCREEN);
-			MAP_KEY(SDLK_PAGEDOWN, Key::PAGE_DOWN);
-			MAP_KEY(SDLK_F1, Key::F1);
-			MAP_KEY(SDLK_F2, Key::F2);
-			MAP_KEY(SDLK_F3, Key::F3);
-			MAP_KEY(SDLK_F4, Key::F4);
-			MAP_KEY(SDLK_F5, Key::F5);
-			MAP_KEY(SDLK_F6, Key::F6);
-			MAP_KEY(SDLK_F7, Key::F7);
-			MAP_KEY(SDLK_F8, Key::F8);
-			MAP_KEY(SDLK_F9, Key::F9);
-			MAP_KEY(SDLK_F10, Key::F10);
-			MAP_KEY(SDLK_F11, Key::F11);
-			MAP_KEY(SDLK_F12, Key::F12);
-			MAP_KEY(SDLK_F13, Key::F13);
-			MAP_KEY(SDLK_F14, Key::F14);
-			MAP_KEY(SDLK_F15, Key::F15);
-			MAP_KEY(SDLK_NUMLOCK, Key::NUM_LOCK);
-			MAP_KEY(SDLK_CAPSLOCK, Key::CAPS_LOCK);
-			MAP_KEY(SDLK_SCROLLOCK, Key::SCROLL_LOCK);
-			MAP_KEY(SDLK_RMETA, Key::RIGHT_META);
-			MAP_KEY(SDLK_LMETA, Key::LEFT_META);
-			MAP_KEY(SDLK_LSUPER, Key::LEFT_SUPER);
-			MAP_KEY(SDLK_RSUPER, Key::RIGHT_SUPER);
-			MAP_KEY(SDLK_MODE, Key::ALT_GR);
-			MAP_KEY(SDLK_UP, Key::UP);
-			MAP_KEY(SDLK_DOWN, Key::DOWN);
-			MAP_KEY(SDLK_LEFT, Key::LEFT);
-			MAP_KEY(SDLK_RIGHT, Key::RIGHT);
-			MAP_KEY(SDLK_RETURN, Key::ENTER);
-			MAP_KEY(SDLK_KP_ENTER, Key::ENTER);
-		case SDLK_SPACE:
-			// Special characters like ~ (tilde) ends up with the keysym.sym SDLK_SPACE which
-			// without this check would be lost. The check is only valid on key down events in SDL.
-			if (sdlevt.type == SDL_KEYUP || keysym.unicode == ' ') {
-				value = Key::SPACE;
-			}
-			break;
-		default:
-			break;
-		}
-
-		if (!(keysym.mod & KMOD_NUM)) {
-			switch (keysym.sym) {
-			MAP_KEY(SDLK_KP0, Key::INSERT);
-			MAP_KEY(SDLK_KP1, Key::END);
-			MAP_KEY(SDLK_KP2, Key::DOWN);
-			MAP_KEY(SDLK_KP3, Key::PAGE_DOWN);
-			MAP_KEY(SDLK_KP4, Key::LEFT);
-			MAP_KEY(SDLK_KP5, Key::INVALID_KEY);
-			MAP_KEY(SDLK_KP6, Key::RIGHT);
-			MAP_KEY(SDLK_KP7, Key::HOME);
-			MAP_KEY(SDLK_KP8, Key::UP);
-			MAP_KEY(SDLK_KP9, Key::PAGE_UP);
-			default:
-				break;
-			}
-		}
-
-		keyevt.setKey(Key(value, repr));
+		keyevt.setShiftPressed(keysym.mod & KMOD_SHIFT);
+		keyevt.setControlPressed(keysym.mod & KMOD_CTRL);
+		keyevt.setAltPressed(keysym.mod & KMOD_ALT);
+		keyevt.setMetaPressed(keysym.mod & KMOD_META);
+		keyevt.setNumericPad(keysym.sym >= SDLK_KP0 && keysym.sym <= SDLK_KP_EQUALS);
+		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym), keysym.unicode));
 	}
 
 	template<typename T>
