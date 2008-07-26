@@ -116,6 +116,7 @@ namespace gcn {
 		virtual void focusNext() { };
 		virtual void focusPrevious() { };
 		virtual void addActionListener(ActionListener* actionListener);
+		virtual void removeActionListener(ActionListener* actionListener);
 /* 	protected: */
 		virtual void draw(Graphics* graphics) = 0;
 	};
