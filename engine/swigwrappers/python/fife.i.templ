@@ -1,6 +1,10 @@
 %module(directors="1") fife
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_pair.i"
+%include "std_list.i"
+%include "std_map.i"
+%include "std_set.i"
 %include "typemaps.i"
 %include "exception.i"
 
@@ -27,6 +31,9 @@ namespace std {
 	%template(FloatVector) vector<float>;
 	%template(DoubleVector) vector<double>;
 	%template(BoolVector) vector<bool>;
+
+	%template(UintUintPair) pair<unsigned int, unsigned int>;
+	%template(UintUintPairVector) vector<std::pair<unsigned int, unsigned int> >;
 };
 
 %{

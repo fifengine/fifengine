@@ -47,6 +47,7 @@ namespace FIFE {
 		void setBitsPerPixel(unsigned int bitsperpixel);
 		unsigned int getBitsPerPixel() const;
 		std::vector<unsigned int> getPossibleBitsPerPixel() const;
+		std::vector<std::pair<unsigned int, unsigned int> > getPossibleResolutions() const;
 		void setFullScreen(bool fullscreen);
 		bool isFullScreen() const;
 		void setInitialVolume(float volume);

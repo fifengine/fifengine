@@ -26,7 +26,6 @@
 %}
 
 %include "vfs/raw/rawdata.i"
-%include "std_set.i"
 
 namespace std{
 	%template(StringSet) set<std::string>;

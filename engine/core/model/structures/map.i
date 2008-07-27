@@ -24,8 +24,6 @@
 #include "model/structures/map.h"
 %}
 
-%include "std_list.i"
-
 %include "util/base/utilbase.i"
 
 namespace FIFE {

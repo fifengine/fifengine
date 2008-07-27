@@ -67,7 +67,11 @@ namespace FIFE {
 		/** Gets all possible bits per pixel values
 		 */
 		std::vector<unsigned int> getPossibleBitsPerPixel() const;
-		
+
+		/** Gets all possible screen resolutions
+		 */
+		std::vector<std::pair<unsigned int, unsigned int> > getPossibleResolutions() const;
+
 		/** Sets fullscreen / windowed mode
 		 */
 		void setFullScreen(bool fullscreen) { 

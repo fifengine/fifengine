@@ -24,6 +24,7 @@
 #include <string>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -64,7 +65,19 @@ namespace FIFE {
 			throw NotSet("Glyphs for default font are not set");
 		}
 	}
-	
+
+	std::vector<std::pair<unsigned int, unsigned int> > EngineSettings::getPossibleResolutions() const {
+		SDL_Rect **modes = SDL_ListModes(NULL, ((getRenderBackend() != "SDL") ? (SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL) : 0) | (isFullScreen() ? SDL_FULLSCREEN : 0));
+		if(modes == (SDL_Rect **)0)
+			throw NotFound("No VideoMode Found");
+
+		std::vector<std::pair<unsigned int, unsigned int> > result;
+		if(modes != (SDL_Rect **)-1)
+			for(unsigned int i = 0; modes[i]; ++i)
+				result.push_back(std::pair<unsigned int, unsigned int>(modes[i]->w, modes[i]->h));
+		return result;
+	}
+
 	void EngineSettings::setBitsPerPixel(unsigned int bitsperpixel) {
 		std::vector<unsigned int> pv = getPossibleBitsPerPixel();
 		std::vector<unsigned int>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);

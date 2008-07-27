@@ -24,8 +24,6 @@
 #include "model/model.h"
 %}
 
-%include "std_list.i"
-
 namespace FIFE {
   class Map;
   class Object;

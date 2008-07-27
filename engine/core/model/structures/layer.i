@@ -24,8 +24,6 @@
 #include "model/structures/layer.h"
 %}
 
-%include "std_vector.i"
-
 %include "model/metamodel/modelcoords.i"
 %include "model/metamodel/grids/cellgrids.i"
 %include "util/structures/utilstructures.i"
