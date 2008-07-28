@@ -105,6 +105,8 @@ objects/items/resort/balls/*/*.png
 objects/items/resort/balls/*/source/*.blend
 objects/items/resort/deck_chairs/*/*.png
 objects/items/resort/deck_chairs/*/source/*.blend
+objects/items/resort/life_belts/*/.png
+objects/items/resort/life_belts/*/source/*.blend
 
 === Reiner's tilesets ===
 Author:
