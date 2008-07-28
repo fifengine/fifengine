@@ -459,7 +459,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			else:
 				self._setMode(VIEWING)
 
-		elif keyval == fife.Key.DELETE_KEY:
+		elif keyval == fife.Key.DELETE:
 			if self._mode != REMOVING:
 				self._setMode(REMOVING)
 			else:
