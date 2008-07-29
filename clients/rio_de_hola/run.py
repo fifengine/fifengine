@@ -153,5 +153,4 @@ if __name__ == '__main__':
 				print "Psyco acceleration not used"
 		else:
 			print "Psyco acceleration not used"
-
-	main()
+		main()
