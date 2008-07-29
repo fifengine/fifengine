@@ -33,10 +33,10 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			fife.Key.RIGHT,
 			fife.Key.UP,
 			fife.Key.DOWN])
-		
+
 		self.quit = False
 		self.aboutWindow = None
-		
+
 		self.rootpanel = pychan.loadXML('gui/rootpanel.xml')
 		self.rootpanel.mapEvents({ 
 			'quitButton' : self.onQuitButtonPress,
@@ -57,7 +57,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		elif keystr == 'p':
 			self.engine.getRenderBackend().captureScreen('screenshot.png')
 			evt.consume()
-	
+
 	def onCommand(self, command):
 		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
 		if self.quit:
@@ -87,7 +87,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		cmd.setSource(None)
 		cmd.setCommandType(fife.CMD_QUIT_GAME)
 		self.engine.getEventManager().dispatchCommand(cmd)
-		
+
 	def onAboutButtonPress(self):
 		if not self.aboutWindow:
 			self.aboutWindow = pychan.loadXML('gui/help.xml')
@@ -103,10 +103,10 @@ class IslandDemo(ApplicationBase):
 		self.world = world.World(self.engine)
 		self.listener = ApplicationListener(self.engine, self.world)
 		self.world.load(TDS.MapFile)
-		
+
 		self.soundmanager = self.engine.getSoundManager()
 		self.soundmanager.init()
-		
+
 		if TDS.PlaySounds:
 			# play track as background music
 			emitter = self.soundmanager.createEmitter()
@@ -117,7 +117,7 @@ class IslandDemo(ApplicationBase):
 
 	def createListener(self):
 		pass # already created in constructor
-		
+
 	def _pump(self):
 		if self.listener.quit:
 			self.breakRequested = True
@@ -131,14 +131,27 @@ def main():
 
 
 if __name__ == '__main__':
-	if TDS.UsePsyco:
-		# Import Psyco if available
-		try:
-			import psyco
-			psyco.full()
-			print "Psyco acceleration in use"
-		except ImportError:
-			print "Psyco acceleration not used"
+	if TDS.ProfilingOn:
+		import hotshot, hotshot.stats
+		print "Starting profiler"
+		prof = hotshot.Profile("fife.prof")
+		prof.runcall(main)
+		prof.close()
+		print "analysing profiling results"
+		stats = hotshot.stats.load("fife.prof")
+		stats.strip_dirs()
+		stats.sort_stats('time', 'calls')
+		stats.print_stats(20)
 	else:
-		print "Psyco acceleration not used"
+		if TDS.UsePsyco:
+			# Import Psyco if available
+			try:
+				import psyco
+				psyco.full()
+				print "Psyco acceleration in use"
+			except ImportError:
+				print "Psyco acceleration not used"
+		else:
+			print "Psyco acceleration not used"
+
 	main()

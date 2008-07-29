@@ -6,8 +6,8 @@ RenderBackend       = "OpenGL"
 SDLRemoveFakeAlpha  = 1
 ScreenWidth         = 1024
 ScreenHeight        = 768
-WindowTitle			= 'FIFE - Rio de hola'
-WindowIcon			= ''
+WindowTitle         = 'FIFE - Rio de hola'
+WindowIcon          = ''
 
 MapFile             = 'maps/shrine.xml'
 Font                = 'fonts/samanata.ttf'
@@ -19,6 +19,7 @@ LogToPrompt         = 1
 LogToFile           = 0
 UsePsyco            = False
 ImageChunkSize      = 256
+ProfilingOn         = False
 
 CoordinateLayerName = "TechdemoMapTileLayer"
 QuadTreeLayerName = "" #"TechdemoMapObjectLayer"
