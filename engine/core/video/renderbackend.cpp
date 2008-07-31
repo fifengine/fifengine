@@ -84,7 +84,9 @@ namespace FIFE {
 	
 	const Rect& RenderBackend::getArea() {
 		assert(m_screen);
-		return m_screen->getArea();
+		SDL_Surface* s = m_screen->getSurface();
+		static Rect r(0, 0, s->w, s->h);
+		return r;
 	}
 	
 	void RenderBackend::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
