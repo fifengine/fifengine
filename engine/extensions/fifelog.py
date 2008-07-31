@@ -37,8 +37,11 @@ class LogManager(object):
 				self.lm.addVisibleModule(k)
 		else:
 			for m in names:
-				self.lm.addVisibleModule(self.name2mod[m])
-		
+				try:
+					self.lm.addVisibleModule(self.name2mod[m])
+				except KeyError:
+					print 'Tried to enable non-existing log module "%s"' % m
+	
 	def removeVisibleModules(self, *names):
 		'''
 		Removes modules that are visible in logs. By default, all modules
