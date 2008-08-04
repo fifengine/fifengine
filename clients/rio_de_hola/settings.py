@@ -7,7 +7,7 @@ SDLRemoveFakeAlpha  = 1
 ScreenWidth         = 1024
 ScreenHeight        = 768
 WindowTitle         = 'FIFE - Rio de hola'
-WindowIcon          = ''
+WindowIcon          = 'gui/icons/boy.png'
 
 MapFile             = 'maps/shrine.xml'
 Font                = 'fonts/samanata.ttf'
