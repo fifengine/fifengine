@@ -8,7 +8,7 @@
 	<InitialVolume> 5.0 </InitialVolume>
 	<SDLRemoveFakeAlpha> 1 </SDLRemoveFakeAlpha>
 	<WindowTitle> FIFE - Rio de hola </WindowTitle>
-	<WindowIcon />
+	<WindowIcon>gui/icons/boy.png</WindowIcon>
 
 	<MapFile> maps/shrine.xml </MapFile>
 	<Font> fonts/samanata.ttf </Font>

@@ -9,7 +9,7 @@ class Setting(object):
 	def onOptionsPress(self):	
 		self.changesRequireRestart = False
 		self.isSetToDefault = False
-		self.Resolutions = ['800x600', '1024x768', '1440x900']
+		self.Resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
 		if not hasattr(self, 'OptionsDlg'):
 			self.OptionsDlg = None
 		if not self.OptionsDlg:
