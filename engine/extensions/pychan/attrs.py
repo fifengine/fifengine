@@ -54,13 +54,20 @@ class PointAttr(Attr):
 
 class ColorAttr(Attr):
 	def parse(self,value):
+		a = 255
 		try:
-			r,g,b = tuple(map(int,str(value).split(',')))
+			try:
+				r,g,b,a = tuple(map(int,str(value).split(',')))
+				for c in (r,g,b,a):
+					if not 0 <= c < 256: raise ParserError("Expected a color (Failed: 0 <= %d <= 255)" %c)
+			except:
+				r,g,b = tuple(map(int,str(value).split(',')))
+				for c in (r,g,b):
+					if not 0 <= c < 256: raise ParserError("Expected a color (Failed: 0 <= %d <= 255)" %c)
 		except:
 			raise ParserError("Expected an color.")
-		for c in (r,g,b):
-			if not 0 <= c < 256: raise ParserError("Expected a color (Failed: 0 <= %d <= 255)" %c)
-		return r,g,b
+
+		return r,g,b,a
 
 class IntAttr(Attr):
 	def parse(self,value):
