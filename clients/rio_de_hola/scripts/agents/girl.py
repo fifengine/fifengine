@@ -1,10 +1,12 @@
 from agent import Agent
-import settings as TDS
 import fife
+from settings import Setting
+
+TDS = Setting()
 
 _STATE_NONE, _STATE_IDLE, _STATE_RUN, _STATE_FOLLOW = 0, 1, 2, 3
 
-GIRL_SPEED = 3 * TDS.TestAgentSpeed
+GIRL_SPEED = 3 * float(TDS.readSetting("TestAgentSpeed"))
 class Girl(Agent):
 	def __init__(self, model, agentName, layer, uniqInMap=True):
 		super(Girl, self).__init__(model, agentName, layer, uniqInMap)

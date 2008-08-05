@@ -10,7 +10,9 @@ from agents.girl import Girl
 from agents.cloud import Cloud
 from agents.beekeeper import Beekeeper
 from agents.agent import create_anonymous_agents
-import settings as TDS
+from settings import Setting
+
+TDS = Setting()
 
 class MapListener(fife.MapChangeListener):
 	def __init__(self, map):
@@ -123,7 +125,7 @@ class World(EventListenerBase):
 				
 		self.view.resetRenderers()
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
-		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, TDS.FontGlyphs);
+		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, str(TDS.readSetting("FontGlyphs", strip=False)));
 		renderer.changeDefaultFont(textfont)
 		
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['small'])
@@ -131,13 +133,13 @@ class World(EventListenerBase):
 		
 		renderer = self.cameras['main'].getRenderer('CoordinateRenderer')
 		renderer.clearActiveLayers()
-		renderer.addActiveLayer(self.map.getLayer(TDS.CoordinateLayerName))
+		renderer.addActiveLayer(self.map.getLayer(str(TDS.readSetting("CoordinateLayerName"))))
 		
 		renderer = self.cameras['main'].getRenderer('QuadTreeRenderer')
 		renderer.setEnabled(True)
 		renderer.clearActiveLayers()
-		if TDS.QuadTreeLayerName:
-			renderer.addActiveLayer(self.map.getLayer(TDS.QuadTreeLayerName))
+		if str(TDS.readSetting("QuadTreeLayerName")):
+			renderer.addActiveLayer(self.map.getLayer(str(TDS.readSetting("QuadTreeLayerName"))))
 		
 		self.cameras['small'].getLocationRef().setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
 		self.initial_cam2_x = self.cameras['small'].getLocation().getExactLayerCoordinates().x
@@ -237,11 +239,13 @@ class World(EventListenerBase):
 		instance = self.instancemenu.instance
 		self.hero.talk(instance.getLocationRef())
 		if instance.getObject().getId() == 'beekeeper':
-			txtindex = random.randint(0, len(TDS.beekeeperTexts) - 1)
-			instance.say(TDS.beekeeperTexts[txtindex], 5000)
+			beekeeperTexts = TDS.readSetting("beekeeperTexts", type='list', text=True)
+			txtindex = random.randint(0, len(beekeeperTexts) - 1)
+			instance.say(beekeeperTexts[txtindex], 5000)
 		if instance.getObject().getId() == 'girl':
-			txtindex = random.randint(0, len(TDS.girlTexts) - 1)
-			instance.say(TDS.girlTexts[txtindex], 5000)
+			girlTexts = TDS.readSetting("girlTexts", type='list', text=True)
+			txtindex = random.randint(0, len(girlTexts) - 1)
+			instance.say(girlTexts[txtindex], 5000)
 	
 	def onKickButtonPress(self):
 		self.hide_instancemenu()

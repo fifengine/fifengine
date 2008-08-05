@@ -1,0 +1,7 @@
+<Window title="Changes require restart">
+	<Label text="Some of your changes require you to restart Rio de hola." />
+	<HBox>
+		<Spacer />
+		<Button name="closeButton" text="Ok" />
+	</HBox>
+</Window>

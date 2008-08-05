@@ -1,5 +1,4 @@
 from agent import Agent
-import settings as TDS
 import fife
 import random
 

@@ -2,4 +2,5 @@
 	<Label name="Title" text="Rio de hola 2008.1"/>
 	<Button name="quitButton" text="Quit"/>
 	<Button name="aboutButton" text="About"/>
+	<Button name="optionsButton" text="Options"/>
 </HBox>

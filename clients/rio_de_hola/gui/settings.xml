@@ -1,0 +1,21 @@
+<Window name="Settings" title="Settings">
+	<Label text="Rio de hola Settings menu!" />
+	<HBox>
+		<VBox>
+			<Label text="Resolution:" />
+			<Label text="Renderer:" />
+		</VBox>
+		<VBox>
+			<DropDown name="screen_resolution" min_size="120,0" />
+			<DropDown name="render_backend" min_size="120,0" />
+		</VBox>
+	</HBox>
+	<CheckBox name="enable_fullscreen" text="Use the full screen mode" />
+	<CheckBox name="enable_sound" text="Enable sound" />
+	<HBox>
+		<Spacer />
+		<Button name="cancelButton" text="Cancel" />
+		<Button name="okButton" text="Ok" />
+		<Button name="defaultButton" text="Defaults" />
+	</HBox>
+</Window>

@@ -2,7 +2,7 @@
 # coding: utf-8
 # This is the rio de hola client for FIFE.
 
-import sys, os, re, math, random
+import sys, os, re, math, random, shutil
 
 def _jp(path):
 	return os.path.sep.join(path.split('/'))
@@ -12,14 +12,18 @@ for p in _paths:
 	if p not in sys.path:
 		sys.path.append(_jp(p))
 
+if not os.path.exists('settings.xml'):
+	shutil.copyfile('settings-dist.xml', 'settings.xml')
+
 import fife, fifelog
 from scripts import world
 from scripts.common import eventlistenerbase
 from basicapplication import ApplicationBase
 import pychan
 import pychan.widgets as widgets
-import settings as TDS
+from settings import Setting
 
+TDS = Setting()
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
 	def __init__(self, engine, world):
@@ -41,6 +45,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.rootpanel.mapEvents({ 
 			'quitButton' : self.onQuitButtonPress,
 			'aboutButton' : self.onAboutButtonPress,
+			'optionsButton' : TDS.onOptionsPress
 		})
 		self.rootpanel.show()
 
@@ -95,25 +100,63 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.aboutWindow.distributeData({ 'helpText' : open("misc/infotext.txt").read() })
 		self.aboutWindow.show()
 
-
 class IslandDemo(ApplicationBase):
 	def __init__(self):
 		super(IslandDemo,self).__init__()
-		pychan.init(self.engine, debug=TDS.PychanDebug)
+		pychan.init(self.engine, debug=TDS.readSetting("PychanDebug", type='bool'))
 		self.world = world.World(self.engine)
 		self.listener = ApplicationListener(self.engine, self.world)
-		self.world.load(TDS.MapFile)
+		self.world.load(str(TDS.readSetting("MapFile")))
 
 		self.soundmanager = self.engine.getSoundManager()
 		self.soundmanager.init()
 
-		if TDS.PlaySounds:
+		if int(TDS.readSetting("PlaySounds")):
 			# play track as background music
 			emitter = self.soundmanager.createEmitter()
 			id = self.engine.getSoundClipPool().addResourceFromFile('music/rio_de_hola.ogg')
 			emitter.setSoundClip(id)
 			emitter.setLooping(True)
 			emitter.play()
+
+	def loadSettings(self):
+		"""
+		Load the settings from a python file and load them into the engine.
+		Called in the ApplicationBase constructor.
+		"""
+		import settings
+		self.settings = settings
+
+		engineSetting = self.engine.getSettings()
+		engineSetting.setDefaultFontGlyphs(str(TDS.readSetting("FontGlyphs", strip=False)))
+		engineSetting.setDefaultFontPath(str(TDS.readSetting("Font")))
+		engineSetting.setDefaultFontSize(12)
+		engineSetting.setBitsPerPixel(int(TDS.readSetting("BitsPerPixel")))
+		engineSetting.setInitialVolume(float(TDS.readSetting("InitialVolume")))
+		engineSetting.setSDLRemoveFakeAlpha(int(TDS.readSetting("SDLRemoveFakeAlpha")))
+		engineSetting.setScreenWidth(int(TDS.readSetting("ScreenWidth")))
+		engineSetting.setScreenHeight(int(TDS.readSetting("ScreenHeight")))
+		engineSetting.setRenderBackend(str(TDS.readSetting("RenderBackend")))
+		engineSetting.setFullScreen(int(TDS.readSetting("FullScreen")))
+
+		try:
+			engineSetting.setWindowTitle(str(TDS.readSetting("WindowTitle")))
+			engineSetting.setWindowIcon(str(TDS.readSetting("WindowIcon")))
+		except:
+			pass			
+		try:
+			engineSetting.setImageChunkingSize(int(TDS.readSetting("ImageChunkSize")))
+		except:
+			pass
+
+	def initLogging(self):
+		"""
+		Initialize the LogManager.
+		"""
+		LogModules = TDS.readSetting("LogModules", type='list')
+		self.log = fifelog.LogManager(self.engine, int(TDS.readSetting("LogToPrompt")), int(TDS.readSetting("LogToFile")))
+		if LogModules:
+			self.log.setVisibleModules(*LogModules)
 
 	def createListener(self):
 		pass # already created in constructor
@@ -131,7 +174,7 @@ def main():
 
 
 if __name__ == '__main__':
-	if TDS.ProfilingOn:
+	if TDS.readSetting("ProfilingOn", type='bool'):
 		import hotshot, hotshot.stats
 		print "Starting profiler"
 		prof = hotshot.Profile("fife.prof")
@@ -143,7 +186,7 @@ if __name__ == '__main__':
 		stats.sort_stats('time', 'calls')
 		stats.print_stats(20)
 	else:
-		if TDS.UsePsyco:
+		if TDS.readSetting("UsePsyco", type='bool'):
 			# Import Psyco if available
 			try:
 				import psyco

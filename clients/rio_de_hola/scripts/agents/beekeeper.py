@@ -1,5 +1,4 @@
 from agent import Agent
-import settings as TDS
 import fife, random
 
 _STATE_NONE, _STATE_TALK = 0, 1

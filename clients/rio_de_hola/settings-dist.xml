@@ -1,0 +1,35 @@
+<Settings>
+	<FullScreen> 0 </FullScreen>
+	<PlaySounds> 1 </PlaySounds>
+	<RenderBackend> OpenGL </RenderBackend>
+	<ScreenWidth> 1024 </ScreenWidth>
+	<ScreenHeight> 768 </ScreenHeight>
+	<BitsPerPixel> 0 </BitsPerPixel>
+	<InitialVolume> 5.0 </InitialVolume>
+	<SDLRemoveFakeAlpha> 1 </SDLRemoveFakeAlpha>
+	<WindowTitle> FIFE - Rio de hola </WindowTitle>
+	<WindowIcon />
+
+	<MapFile> maps/shrine.xml </MapFile>
+	<Font> fonts/samanata.ttf </Font>
+	<FontGlyphs> abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\"</FontGlyphs>
+	<LogModules> controller </LogModules>
+	<PychanDebug> False </PychanDebug>
+	<LogToPrompt> 1 </LogToPrompt>
+	<LogToFile> 0 </LogToFile>
+	<UsePsyco> False </UsePsyco>
+	<ProfilingOn> False </ProfilingOn>
+	<ImageChunkSize> 256 </ImageChunkSize>
+
+	<CoordinateLayerName> TechdemoMapTileLayer </CoordinateLayerName>
+	<QuadTreeLayerName> <!--TechdemoMapObjectLayer--> </QuadTreeLayerName>
+
+	<heroTexts> I wonder when the guys will \n get this world ready for me ; Bring it on baby, \n I'm ready for action! ; humm di dum.... </heroTexts>
+	<girlTexts> Why I am running? Haven't you heard \n that the bees are coming?! ; Heeelp!!! The bees are going to get us! </girlTexts>
+	<beekeeperTexts> Some idiot has grown mutated bees around here ; Want to take a look at my farm? ; Did you know that I actually cannot do anything \n else than stand still and greet everybody? </beekeeperTexts>
+
+<!-- Test Settings -->
+	<TestCameraPlacement> 0 </TestCameraPlacement>
+	<TestRotationLayerName> TechdemoMapObjectLayer <!-- TechdemoMapTileLayer --> </TestRotationLayerName>
+	<TestAgentSpeed> 0.5 </TestAgentSpeed>
+</Settings>
