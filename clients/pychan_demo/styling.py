@@ -60,7 +60,7 @@ STYLES= {
 		'margins': (10,10),
 		'opaque' : 0,
 		'titlebar_height' : 30,
-		'background_image' : 'content/gui/background.png',
+		'background_image' : 'gui/backgrounds/background.png',
 		'font' : 'samanata_large'
 	},
 	'TextBox' : {
@@ -68,7 +68,7 @@ STYLES= {
 	},
 	('Container','HBox','VBox') : {
 		'border_size': 0,
-		'background_image' : 'content/gui/background.png',
+		'background_image' : 'gui/backgrounds/background.png',
 		'opaque' : False
 	}
 	},
