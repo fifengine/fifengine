@@ -1,0 +1,13 @@
+<Window title="Dynamic widgets.">
+	<Label text="ClickLabel text:" />
+	<ScrollArea size="200,100" vertical_scrollbar="0">
+		<TextBox name="labelText" text="Add some text here."/>
+	</ScrollArea>
+	<VBox name="labelBox" min_size="0,100" border_size="1" background_image="gui/backgrounds/background.png" opaque="0">
+	</VBox>
+	<HBox>
+		<Button name="addButton" text="Add one label!"/>
+		<Spacer />
+		<Button name="okButton" text="Close"/>
+	</HBox>
+</Window>

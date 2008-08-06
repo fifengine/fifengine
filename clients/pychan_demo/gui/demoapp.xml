@@ -1,0 +1,25 @@
+<Window title="This is the PyChan demo application.">
+	<VBox>
+		<HBox>
+			<ScrollArea size="200,500">
+				<ListBox name="demoList" min_size="100,100" />
+			</ScrollArea>
+			<VBox margins="0,0">
+				<Label text=" Select one example from the listbox and press 'Start Example'"/>
+				<Label text=" You can also execute this script with an Gui XML file as argument."/>
+				<HBox margins="0,0">
+					<Button text="XML code"/>
+				</HBox>
+				<ScrollArea size="600,200">
+					<TextBox name="xmlSource" filename="gui/all_widgets.xml"/>
+				</ScrollArea>
+				<Spacer />
+			</VBox>
+		</HBox>
+		<HBox>
+			<ClickLabel name="creditsLink" text="Credits"/>
+			<Spacer />
+			<Button name="closeButton" text="Quit Demo"/>
+		</HBox>
+	</VBox>
+</Window>
