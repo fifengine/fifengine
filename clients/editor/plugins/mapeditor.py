@@ -1,5 +1,4 @@
 # MapEditor is a plugin for Fifedit. It allows for selection and visual editing of maps.
-# MapEditor must be pumped (see pump).
 
 import math
 
@@ -13,6 +12,9 @@ from plugins.objectselector import ObjectSelector
 
 from pychan.manager import DEFAULT_STYLE
 DEFAULT_STYLE['default']['base_color'] = fife.Color(85,128,151)
+
+SCROLL_TOLERANCE = 30
+SCROLL_SPEED = 1.0
 
 states = ('NOTHING_LOADED', 'VIEWING', 'INSERTING', 'REMOVING', 'MOVING')
 for s in states:
@@ -147,6 +149,8 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._altdown = False
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED
+		self._scrollx = 0
+		self._scrolly = 0
 		
 		self._mapselector = MapSelection(self._selectLayer, self._selectObject)
 		self._objectselector = None
@@ -417,7 +421,30 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._dragy = NOT_INITIALIZED
 	
 	def mouseMoved(self, evt):
-		pass
+		if self._camera:
+			screen_x = self._engine.getRenderBackend().getWidth()
+			screen_y = self._engine.getRenderBackend().getHeight()
+			ratio = float(screen_x) / screen_y
+
+			mouse_x = evt.getX()
+			mouse_y = evt.getY()
+
+			self._scrollx = 0
+			self._scrolly = 0
+
+			if mouse_y <= SCROLL_TOLERANCE:
+				# up
+				self._scrolly = SCROLL_SPEED * ratio
+			if mouse_x >= screen_x - SCROLL_TOLERANCE:
+				# right
+				self._scrollx = -SCROLL_SPEED
+			if mouse_y >= screen_y - SCROLL_TOLERANCE:
+				# bottom
+				self._scrolly = -SCROLL_SPEED * ratio
+			if mouse_x <= SCROLL_TOLERANCE:
+				# left
+				self._scrollx = SCROLL_SPEED
+
 	def mouseEntered(self, evt):
 		pass
 	def mouseExited(self, evt):
@@ -498,4 +525,6 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
 			self._altdown = False
 
-
+	def pump(self):
+		if self._scrollx != 0 or self._scrolly != 0:
+			self._moveCamera(self._scrollx * self._engine.getTimeManager().getTimeDelta(), self._scrolly * self._engine.getTimeManager().getTimeDelta())

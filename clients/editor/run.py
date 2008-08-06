@@ -73,6 +73,7 @@ class Editor(basicapplication.ApplicationBase):
 		return EditorListener(self)
 
 	def _pump(self):
+		self.mapedit.pump()
 		if self.maploader.newMap:
 			self.mapedit.editMap(self.maploader.newMap.getId())	
 			self.importer.addDirs(self.maploader.newMap.importDirs)
