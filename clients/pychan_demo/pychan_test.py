@@ -43,7 +43,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		pychan.init(self.engine,debug=True)
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
-		self.gui = pychan.loadXML('content/gui/demoapp.xml')
+		self.gui = pychan.loadXML('gui/demoapp.xml')
 		
 		eventMap = {
 			'creditsLink'  : self.showCredits,
@@ -56,9 +56,9 @@ class DemoApplication(basicapplication.ApplicationBase):
 		from styling import StylingExample
 		
 		self.examples = {
-			'Absolute Positioning' : PyChanExample('content/gui/absolute.xml'),
+			'Absolute Positioning' : PyChanExample('gui/absolute.xml'),
 			'Basic Styling' : StylingExample(),
-			'All Widgets' : PyChanExample('content/gui/all_widgets.xml'),
+			'All Widgets' : PyChanExample('gui/all_widgets.xml'),
 			'Dynamic Widgets' : DynamicExample(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
@@ -77,7 +77,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		self.currentExample.start()
 
 	def showCredits(self):
-		print pychan.loadXML('content/gui/credits.xml').execute({ 'okButton' : "Yay!" })
+		print pychan.loadXML('gui/credits.xml').execute({ 'okButton' : "Yay!" })
 
 class TestXMLApplication(basicapplication.ApplicationBase):
 	"""

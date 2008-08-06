@@ -13,3 +13,6 @@ LogToFile           = 0
 
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\""
 Font                = 'content/fonts/samanata.ttf'
+
+WindowTitle			= 'Pychan demo [FIFE Client]'
+WindowIcon			= 'gui/pychan_logo.png'

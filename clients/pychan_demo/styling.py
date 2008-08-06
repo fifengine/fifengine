@@ -85,13 +85,13 @@ STYLES= {
 
 class StylingExample(PyChanExample):
 	def __init__(self):
-		super(StylingExample,self).__init__('content/gui/styling.xml')
+		super(StylingExample,self).__init__('gui/styling.xml')
 
 		self.styles = ['default'] + STYLES.keys()
 		for name,style in STYLES.items():
 			pychan.manager.addStyle(name,style)
 
-		pychan.loadFonts("content/fonts/samanata.fontdef")
+		pychan.loadFonts("fonts/samanata.fontdef")
 
 	def start(self):
 		self.styledCredits = None
@@ -114,7 +114,7 @@ class StylingExample(PyChanExample):
 		style = self.styles[self.widget.collectData('styleList')]
 		if self.styledCredits:
 			self.styledCredits.hide()
-		self.styledCredits = pychan.loadXML('content/gui/all_widgets.xml')
+		self.styledCredits = pychan.loadXML('gui/all_widgets.xml')
 		self.styledCredits.distributeInitialData({
 			'demoList' : dir(pychan),
 			'demoText' : pychan.__doc__

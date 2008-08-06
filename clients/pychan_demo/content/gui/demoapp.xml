@@ -11,7 +11,7 @@
 					<Button text="XML code"/>
 				</HBox>
 				<ScrollArea size="600,200">
-					<TextBox name="xmlSource" filename="content/gui/all_widgets.xml"/>
+					<TextBox name="xmlSource" filename="gui/all_widgets.xml"/>
 				</ScrollArea>
 				<Spacer />
 			</VBox>

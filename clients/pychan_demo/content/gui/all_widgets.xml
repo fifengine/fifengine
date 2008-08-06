@@ -39,8 +39,8 @@
 	<CheckBox text="Inclusive choice 1"/>
 	<CheckBox text="Inclusive choice 2"/>
 	<Label text="Icon and ImageButton:"/>
-	<Icon image="content/gui/stripe.png" />
-	<ImageButton up_image="content/gui/stripe.png" text="Click me for a Bug demonstration" />
+	<Icon image="gui/backgrounds/stripe.png" />
+	<ImageButton up_image="gui/backgrounds/stripe.png" text="Click me for a Bug demonstration" />
 	<HBox>
 		<Label text="I'm a ClickLabel[br]Multiline enabled?![br]I do hope so."/>
 		<Spacer/>
