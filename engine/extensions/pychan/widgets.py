@@ -30,15 +30,15 @@ class Widget(object):
 	"""
 	This is the common widget base class, which provides most of the wrapping
 	functionality.
-	
+
 	Attributes
 	==========
-	
+
 	Widgets are manipulated (mostly) through attributes - and these can all be set by XML attributes.
 	Derived widgets will have other attributes. Please see their B{New Attributes} sections. The types of the
 	attributes are pretty straightforward, but note that Position and Color attribute types will also accept
 	C{fife.Point} and C{fife.Color} values.
-	
+
 	  - name: String: The identification of the widget, most useful if it is unique within a given widget hiarachy.
 	  This is used to find widgets by L{mapEvents},L{distributeInitialData},L{distributeData} and L{collectData}.
 	  - position: Position: The position relative to the parent widget - or on screen, if this is the root widget.
@@ -59,7 +59,7 @@ class Widget(object):
 
 	Convenience Attributes
 	======================
-	
+
 	These attributes are convenience/shorthand versions of above mentioned attributes and assignment will reflect
 	the associated attributes values. E.g. the following is equivalent::
 	   # Set X position, leave Y alone
@@ -76,20 +76,20 @@ class Widget(object):
 	   - height: Integer: The vertical part of the size attribute.
 
 	"""
-	
+
 	ATTRIBUTES = [ Attr('name'), PointAttr('position'),
 		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
 		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),
 		Attr('style'), Attr('font'),IntAttr('border_size')
 		]
-	
+
 	DEFAULT_NAME = '__unnamed__'
-	
+
 	HIDE_SHOW_ERROR = """\
 	You can only show/hide the top widget of a hierachy.
 	Use 'addChild' or 'removeChild' to add/remove labels for example.
 	"""
-	
+
 	def __init__(self,parent = None, name = DEFAULT_NAME,
 			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
 			style = None, **kwargs):
@@ -97,53 +97,53 @@ class Widget(object):
 		assert( hasattr(self,'real_widget') )
 		self._has_listener = False
 		self._visible = False
-		
+
 		# Data distribution & retrieval settings
 		self.accepts_data = False
 		self.accepts_initial_data = False
 
 		self._parent = parent
-		
+
 		# This will also set the _event_id and call real_widget.setActionEventId
 		self.name = name
-		
+
 		self.min_size = min_size
 		self.max_size = max_size
 		self.size = size
 		self.position_technique = "explicit"
 		self.font = 'default'
-		
+
 		# Inherit style
 		if style is None and parent:
 			style = parent.style
 		self.style = style or "default"
-		
+
 		# Not needed as attrib assignment will trigger manager.stylize call
 		#manager.stylize(self,self.style)
 
 	def execute(self,bind):
 		"""
 		Execute a dialog synchronously.
-		
+
 		As argument a dictionary mapping widget names to return values
 		is expected. Events from these widgets will cause this function
 		to return with the associated return value.
-		
+
 		This function will not return until such an event occurs.
 		The widget will be shown before execution and hidden afterwards.
 		You can only execute root widgets.
-		
+
 		Note: This feature is not tested well, and the API will probably
 		change. Otherwise have fun::
 		  # Okay this a very condensed example :-)
 		  return pychan.loadXML("contents/gui/dialog.xml").execute({ 'okButton' : True, 'closeButton' : False })
-		
+
 		"""
 		if not get_manager().can_execute:
 			raise RuntimeError("Synchronous execution is not set up!")
 		if self._parent:
 			raise RuntimeError("You can only 'execute' root widgets, not %s!" % str(self))
-		
+
 		for name,returnValue in bind.items():
 			def _quitThisDialog(returnValue = returnValue ):
 				get_manager().breakFromMainLoop( returnValue )
@@ -170,7 +170,7 @@ class Widget(object):
 		The old event handler (if any) will be overridden by the callback.
 		If None is given, the event will be disabled. You can query L{isCaptured}
 		wether this widgets events are currently captured.
-		
+
 		It might be useful to check out L{tools.callbackWithArguments}.
 		
 		"""
@@ -226,7 +226,7 @@ class Widget(object):
 		get_manager().hide(self)
 		self.afterHide()
 		self._visible = False
-	
+
 	def isVisible(self):
 		"""
 		Check whether the widget is currently shown,
@@ -236,7 +236,7 @@ class Widget(object):
 		while widget._parent:
 			widget = widget._parent
 		return widget._visible
-	
+
 	def adaptLayout(self):
 		"""
 		Execute the Layout engine. Automatically called by L{show}.
@@ -245,7 +245,7 @@ class Widget(object):
 		"""
 		self._recursiveResizeToContent()
 		self._recursiveExpandContent()
-	
+
 	def beforeShow(self):
 		"""
 		This method is called just before the widget is shown.
@@ -263,7 +263,7 @@ class Widget(object):
 	def findChildren(self,**kwargs):
 		"""
 		Find all contained child widgets by attribute values.
-		
+
 		Usage::
 		  closeButtons = root_widget.findChildren(name='close')
 		"""
@@ -277,7 +277,7 @@ class Widget(object):
 
 	def findChild(self,**kwargs):
 		""" Find the first contained child widgets by attribute values.
-		
+
 		Usage::
 		  closeButton = root_widget.findChild(name='close')
 		"""
@@ -312,7 +312,7 @@ class Widget(object):
 		"""
 		Convenience function to map widget events to functions
 		in a batch.
-		
+
 		Subsequent calls of mapEvents will merge events with different
 		widget names and override the previously set callback.
 		You can also pass C{None} instead of a callback, which will
@@ -337,7 +337,7 @@ class Widget(object):
 		if not self.accepts_initial_data:
 			raise RuntimeError("Trying to set data on a widget that does not accept initial data. Widget: %s Data: %s " % (repr(self),repr(data)))
 		self._realSetInitialData(data)
-	
+
 	def setData(self,data):
 		"""
 		Set the user-mutable data on a widget, what this means depends on the Widget.
@@ -364,19 +364,19 @@ class Widget(object):
 		using the keys as names and the values as the data (which is set via L{setInitialData}).
 		If more than one widget matches - the data is set on ALL matching widgets.
 		By default a missing widget is just ignored.
-		
+
 		Use it like this::
 		  guiElement.distributeInitialData({
 		       'myTextField' : 'Hello World!',
 		       'myListBox' : ["1","2","3"]
 		  })
-		
+
 		"""
 		for name,data in initialDataMap.items():
 			widgetList = self.findChildren(name = name)
 			for widget in widgetList:
 				widget.setInitialData(data)
-	
+
 	def distributeData(self,dataMap):
 		"""
 		Distribute data from a dictionary over the widgets in the hierachy
@@ -402,18 +402,18 @@ class Widget(object):
 		This can only handle UNIQUE widget names (in the hierachy)
 		and will raise a RuntimeError if the number of matching widgets
 		is not equal to one.
-		
+
 		Usage::
 		  data = guiElement.collectDataAsDict(['myTextField','myListBox'])
 		  print "You entered:",data['myTextField']," and selected ",data['myListBox']
-		
+
 		"""
 		dataMap = {}
 		for name in widgetNames:
 			widgetList = self.findChildren(name = name)
 			if len(widgetList) != 1:
 				raise RuntimeError("CollectData can only handle widgets with unique names.")
-			
+
 			dataMap[name] = widgetList[0].getData()
 		return dataMap
 
@@ -423,20 +423,20 @@ class Widget(object):
 		This can only handle UNIQUE widget names (in the hierachy)
 		and will raise a RuntimeError if the number of matching widgets
 		is not equal to one.
-		
+
 		This function takes an arbitrary number of widget names and
 		returns a list of the collected data in the same order.
-		
+
 		In case only one argument is given, it will return just the
 		data, with out putting it into a list.
-		
+
 		Usage::
 		  # Multiple element extraction:
 		  text, selected = guiElement.collectData('myTextField','myListBox')
 		  print "You entered:",text," and selected item nr",selected
 		  # Single elements are handled gracefully, too:
 		  test = guiElement.collectData('testElement')
-		
+
 		"""
 		dataList = []
 		for name in widgetNames:
@@ -460,7 +460,6 @@ class Widget(object):
 		print "name".ljust(20),"widget".ljust(50),"parent"
 		self.deepApply(_printNamedWidget)
 
-
 	def stylize(self,style,**kwargs):
 		"""
 		Recursively apply a style to all widgets.
@@ -480,7 +479,7 @@ class Widget(object):
 		Try to expand any spacer in the widget within the current size.
 		Do not call directly.
 		"""
-		
+
 
 	def _recursiveResizeToContent(self):
 		"""
@@ -516,7 +515,7 @@ class Widget(object):
 
 	def __str__(self):
 		return "%s(name='%s')" % (self.__class__.__name__,self.name)
-	
+
 	def __repr__(self):
 		return "<%s(name='%s') at %x>" % (self.__class__.__name__,self.name,id(self))
 
@@ -573,7 +572,7 @@ class Widget(object):
 			color = fife.Color(*color)
 		self.real_widget.setBaseColor(color)
 	base_color = property(_getBaseColor,_setBaseColor)
-	
+
 	def _getBackgroundColor(self): return self.real_widget.getBackgroundColor()
 	def _setBackgroundColor(self,color):
 		if isinstance(color,type(())):
@@ -587,14 +586,14 @@ class Widget(object):
 			color = fife.Color(*color)
 		self.real_widget.setForegroundColor(color)
 	foreground_color = property(_getForegroundColor,_setForegroundColor)
-	
+
 	def _getSelectionColor(self): return self.real_widget.getSelectionColor()
 	def _setSelectionColor(self,color):
 		if isinstance(color,type(())):
 			color = fife.Color(*color)
 		self.real_widget.setSelectionColor(color)
 	selection_color = property(_getSelectionColor,_setSelectionColor)
-	
+
 	def _getName(self): return self._name
 	def _setName(self,name):
 		from pychan import manager
@@ -631,10 +630,10 @@ class Container(Widget):
 	be position via the position attribute. If you want to use the layout engine,
 	you have to use derived containers with vertical or horizontal orientation
 	(L{VBox} or L{HBox})
-	
+
 	New Attributes
 	==============
-	
+
 	  - padding - Integer: Not used in the Container class istelf, distance between child widgets.
 	  - background_image - Set this to a GuiImage or a resource location (simply a filename).
 	    The image will be tiled over the background area.
@@ -642,9 +641,9 @@ class Container(Widget):
 	    to make the widget transparent.
 	  - children - Just contains the list of contained child widgets. Do NOT modify.
 	"""
-	
+
 	ATTRIBUTES = Widget.ATTRIBUTES + [ IntAttr('padding'), Attr('background_image'), BoolAttr('opaque'),PointAttr('margins') ]
-	
+
 	def __init__(self,padding=5,margins=(5,5),_real_widget=None, **kwargs):
 		self.real_widget = _real_widget or fife.Container()
 		self.children = []
@@ -690,12 +689,12 @@ class Container(Widget):
 		image = self._background_image
 		if image is None:
 			return
-		
+
 		back_w,back_h = self.width, self.height
 		image_w, image_h = image.getWidth(), image.getHeight()
 
 		map(self.real_widget.remove,self._background)
-		
+
 		# Now tile the background over the widget
 		self._background = []
 		icon = fife.Icon(image)
@@ -724,7 +723,7 @@ class Container(Widget):
 		if not isinstance(image, fife.GuiImage):
 			image = get_manager().loadImage(image)
 		self._background_image = image
-	
+
 	def getBackgroundImage(self): return self._background_image
 	background_image = property(getBackgroundImage,setBackgroundImage)
 
@@ -739,15 +738,15 @@ class LayoutBase(object):
 	This class is at the core of the layout engine. The two MixIn classes L{VBoxLayoutMixin}
 	and L{HBoxLayoutMixin} specialise on this by reimplementing the C{resizeToContent} and
 	the C{expandContent} methods.
-	
+
 	At the core the layout engine works in two passes:
-	
+
 	Before a root widget loaded by the XML code is shown, its resizeToContent method
 	is called recursively (walking the widget containment relation in post order).
 	This shrinks all HBoxes and VBoxes to their minimum heigt and width.
 	After that the expandContent method is called recursively in the same order,
 	which will re-align the widgets if there is space left AND if a Spacer is contained.
-	
+
 	Inside bare Container instances (without a Layout MixIn) absolute positioning
 	can be used.
 	"""
@@ -766,7 +765,6 @@ class LayoutBase(object):
 	def ydelta(self,widget):return 0
 
 	def _adjustHeight(self):
-		
 		if self.align[1] == AlignTop:return #dy = 0
 		if self.align[1] == AlignBottom:
 			y = self.height - self.childarea[1] - self.border_size - self.margins[1]
@@ -780,7 +778,6 @@ class LayoutBase(object):
 		pass
 
 	def _adjustWidth(self):
-
 		if self.align[0] == AlignLeft:return #dx = 0
 		if self.align[0] == AlignRight:
 			x = self.width - self.childarea[0] - self.border_size - self.margins[0]
@@ -793,11 +790,11 @@ class LayoutBase(object):
 	def _expandWidthSpacer(self):
 		x = self.border_size + self.margins[0]
 		xdelta = map(self.xdelta,self.children)
-		
+
 		for widget in self.children[:self.spacer.index]:
 			widget.x = x
 			x += xdelta.pop(0)
-		
+
 		x = self.width - sum(xdelta) - self.border_size - self.margins[0]
 		for widget in self.children[self.spacer.index:]:
 			widget.x = x
@@ -806,11 +803,11 @@ class LayoutBase(object):
 	def _expandHeightSpacer(self):
 		y = self.border_size + self.margins[1]
 		ydelta = map(self.ydelta,self.children)
-		
+
 		for widget in self.children[:self.spacer.index]:
 			widget.y = y
 			y += ydelta.pop(0)
-		
+
 		y = self.height - sum(ydelta) - self.border_size - self.margins[1]
 		for widget in self.children[self.spacer.index:]:
 			widget.y = y
@@ -833,7 +830,7 @@ class VBoxLayoutMixin(LayoutBase):
 			widget.y = y
 			widget.width = max_w
 			y += widget.height + self.padding
-		
+
 		#Add the padding for the spacer.
 		if self.spacer:
 			y += self.padding
@@ -867,7 +864,7 @@ class HBoxLayoutMixin(LayoutBase):
 			widget.y = y
 			widget.height = max_h
 			x += widget.width + self.padding
-		
+
 		#Add the padding for the spacer.
 		if self.spacer:
 			x += self.padding
@@ -875,7 +872,7 @@ class HBoxLayoutMixin(LayoutBase):
 		self.width = x + self.margins[0] - self.padding
 		self.height = max_h + 2*y
 		self.childarea = x - self.margins[0] - self.padding, max_h
-		
+
 		self._adjustHeight()
 		self._adjustWidth()
 
@@ -889,11 +886,11 @@ class HBoxLayoutMixin(LayoutBase):
 class VBox(VBoxLayoutMixin,Container):
 	"""
 	A vertically aligned box - for containement of child widgets.
-	
+
 	Widgets added to this container widget, will layout on top of each other.
 	Also the minimal width of the container will be the maximum of the minimal
 	widths of the contained widgets.
-	
+
 	The default alignment is to the top. This can be changed by adding a Spacer
 	to the widget at any point (but only one!). The spacer will expand, so that
 	widgets above the spacer are aligned to the top, while widgets below the spacer
@@ -907,7 +904,7 @@ class VBox(VBoxLayoutMixin,Container):
 class HBox(HBoxLayoutMixin,Container):
 	"""
 	A horizontally aligned box - for containement of child widgets.
-	
+
 	Please see L{VBox} for details - just change the directions :-).
 	"""	
 	def __init__(self,padding=5,**kwargs):
@@ -917,16 +914,16 @@ class HBox(HBoxLayoutMixin,Container):
 class Window(VBoxLayoutMixin,Container):
 	"""
 	A L{VBox} with a draggable title bar aka a window
-	
+
 	New Attributes
 	==============
-	
+
 	  - title: The Caption of the window
 	  - titlebar_height: The height of the window title bar
 	"""
-	
+
 	ATTRIBUTES = Container.ATTRIBUTES + [ Attr('title'), IntAttr('titlebar_height') ]
-	
+
 	def __init__(self,title="title",titlebar_height=0,**kwargs):
 		super(Window,self).__init__(_real_widget = fife.Window(), **kwargs)
 		if titlebar_height == 0:
@@ -941,7 +938,7 @@ class Window(VBoxLayoutMixin,Container):
 	def _getTitle(self): return self.real_widget.getCaption()
 	def _setTitle(self,text): self.real_widget.setCaption(text)
 	title = property(_getTitle,_setTitle)
-	
+
 	def _getTitleBarHeight(self): return self.real_widget.getTitleBarHeight()
 	def _setTitleBarHeight(self,h): self.real_widget.setTitleBarHeight(h)
 	titlebar_height = property(_getTitleBarHeight,_setTitleBarHeight)
@@ -961,25 +958,25 @@ class BasicTextWidget(Widget):
 	"""
 	The base class for widgets which display a string - L{Label},L{ClickLabel},L{Button}, etc.
 	Do not use directly.
-	
+
 	New Attributes
 	==============
-	
+
 	  - text: The text (depends on actual widget)
-	
+
 	Data
 	====
-	
+
 	The text can be set via the L{distributeInitialData} method.
 	"""
-	
+
 	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text')]
-	
+
 	def __init__(self, text = "",**kwargs):
 		self.margins = (5,5)
 		self.text = text
 		super(BasicTextWidget,self).__init__(**kwargs)
-		
+
 		# Prepare Data collection framework
 		self.accepts_initial_data = True
 		self._realSetInitialData = self._setText
@@ -995,10 +992,10 @@ class BasicTextWidget(Widget):
 class Icon(Widget):
 	"""
 	An image icon.
-	
+
 	New Attributes
 	==============
-	
+
 	  - image: String or GuiImage: The source location of the Image or a direct GuiImage
 	"""
 	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('image')]
@@ -1034,20 +1031,20 @@ class Icon(Widget):
 class Label(BasicTextWidget):
 	"""
 	A basic label - displaying a string.
-	
+
 	Also allows text wrapping.
-	
+
 	New Attributes
 	==============
-	
+
 	 - wrap_text: Boolean: Enable/Disable automatic text wrapping. Disabled by default.
 	 Currently to actually see text wrapping you have to explicitly set a max_size with
 	 the desired width of the text, as the layout engine is not capable of deriving
 	 the maximum width from a parent container.
 	"""
-	
+
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
-	
+
 	def __init__(self,wrap_text=False,**kwargs):
 		self.real_widget = fife.Label("")
 		self.wrap_text = wrap_text
@@ -1085,37 +1082,37 @@ class ImageButtonListener(fife.TwoButtonListener):
 		self.btn = btn
 		self.entercb = None
 		self.exitcb = None
-	
+
 	def mouseEntered(self, btn):
 		if self.entercb:
 			self.entercb(self.btn)
-	
+
 	def mouseExited(self, btn):
 		if self.exitcb:
 			self.exitcb(self.btn)
-	
+
 class ImageButton(BasicTextWidget):
 	"""
 	A basic push button with three different images for the up, down and hover state.
-	
+
 	B{Work in progress.}
-	
+
 	New Attributes
 	==============
-	
+
 	  - up_image: String: The source location of the Image for the B{unpressed} state.
 	  - down_image: String: The source location of the Image for the B{pressed} state.
 	  - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
 	"""
-	
+
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext'),Attr('hover_image')]
-	
+
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),**kwargs):
 		self.real_widget = fife.TwoButton()
 		super(ImageButton,self).__init__(**kwargs)
 		self.listener = ImageButtonListener(self)
 		self.real_widget.setListener(self.listener)
-		
+
 		self.up_image = up_image
 		self.down_image = down_image
 		self.hover_image = hover_image
@@ -1150,7 +1147,7 @@ class ImageButton(BasicTextWidget):
 			self._hoverimage = _DummyImage()
 	def _getHoverImage(self): return self._hoverimage_source
 	hover_image = property(_getHoverImage,_setHoverImage)	
-	
+
 	def _setOffset(self, offset):
 		self.real_widget.setDownOffset(offset[0], offset[1])
 	def _getOffset(self):
@@ -1162,7 +1159,7 @@ class ImageButton(BasicTextWidget):
 	def _getHelpText(self):
 		return self.real_widget.getHelpText()
 	helptext = property(_getHelpText,_setHelpText)
-	
+
 	def resizeToContent(self):
 		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
 		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
@@ -1173,32 +1170,32 @@ class ImageButton(BasicTextWidget):
 		callback should have form of function(button)
 		'''
 		self.listener.entercb = cb
-	
+
 	def setExitCallback(self, cb):
 		'''
 		Callback is called when mouse enters the area of ImageButton
 		callback should have form of function(button)
 		'''
 		self.listener.exitcb = cb
-	
+
 
 
 class CheckBox(BasicTextWidget):
 	"""
 	A basic checkbox.
-	
+
 	New Attributes
 	==============
-	
+
 	  - marked: Boolean value, whether the checkbox is checked or not.
-	
+
 	Data
 	====
 	The marked status can be read and set via L{distributeData} and L{collectData}
 	"""
-	
+
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('marked')]
-	
+
 	def __init__(self,**kwargs):
 		self.real_widget = fife.CheckBox()
 		super(CheckBox,self).__init__(**kwargs)
@@ -1207,9 +1204,9 @@ class CheckBox(BasicTextWidget):
 		self.accepts_data = True
 		self._realGetData = self._isMarked
 		self._realSetData = self._setMarked
-		
+
 		# Initial data stuff inherited.
-	
+
 	def _isMarked(self): return self.real_widget.isSelected()
 	def _setMarked(self,mark): self.real_widget.setSelected(mark)
 	marked = property(_isMarked,_setMarked)
@@ -1217,21 +1214,21 @@ class CheckBox(BasicTextWidget):
 class RadioButton(BasicTextWidget):
 	"""
 	A basic radiobutton (an exclusive checkbox).
-	
+
 	New Attributes
 	==============
-	
+
 	  - marked: Boolean: Whether the checkbox is checked or not.
 	  - group: String: All RadioButtons with the same group name
 	  can only be checked exclusively.
-	
+
 	Data
 	====
 	The marked status can be read and set via L{distributeData} and L{collectData}
 	"""
-	
+
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('marked'),Attr('group')]
-	
+
 	def __init__(self,group="_no_group_",**kwargs):
 		self.real_widget = fife.RadioButton()
 		super(RadioButton,self).__init__(**kwargs)
@@ -1242,9 +1239,9 @@ class RadioButton(BasicTextWidget):
 		self.accepts_data = True
 		self._realGetData = self._isMarked
 		self._realSetData = self._setMarked
-		
+
 		# Initial data stuff inherited.
-	
+
 	def _isMarked(self): return self.real_widget.isSelected()
 	def _setMarked(self,mark): self.real_widget.setSelected(mark)
 	marked = property(_isMarked,_setMarked)
@@ -1270,7 +1267,7 @@ class GenericListmodel(fife.ListModel,list):
 			self.pop()
 	def getNumberOfElements(self):
 		return len(self)
-		
+
 	def getElementAt(self, i):
 		i = max(0,min(i,len(self) - 1))
 		return str(self[i])
@@ -1279,16 +1276,16 @@ class ListBox(Widget):
 	"""
 	A basic list box widget for displaying lists of strings. It makes most sense to wrap
 	this into a L{ScrollArea}.
-	
+
 	New Attributes
 	==============
-	
+
 	  - items: A List of strings. This can be treated like an ordinary python list.
 	    but only strings are allowed.
 	  - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
 	    A negative value indicates, that no item is selected.
 	  - selected_item: The selected string itself, or C{None} - if no string is selected.
-	
+
 	Data
 	====
 	The selected attribute can be read and set via L{distributeData} and L{collectData}.
@@ -1302,7 +1299,7 @@ class ListBox(Widget):
 		# Prepare Data collection framework
 		self.accepts_initial_data = True
 		self._realSetInitialData = self._setItems
-		
+
 		self.accepts_data = True
 		self._realSetData = self._setSelected
 		self._realGetData = self._getSelected
@@ -1319,7 +1316,7 @@ class ListBox(Widget):
 	def _setItems(self,items):
 		# Note we cannot use real_widget.setListModel
 		# for some reason ???
-		
+
 		# Also self assignment can kill you
 		if id(items) != id(self._items):
 			self._items.clear()
@@ -1339,16 +1336,16 @@ class ListBox(Widget):
 class DropDown(Widget):
 	"""
 	A dropdown or combo box widget for selecting lists of strings.
-	
+
 	New Attributes
 	==============
-	
+
 	  - items: A List of strings. This can be treated like an ordinary python list.
 	    but only strings are allowed.
 	  - selected: The index of the selected item in the list. Starting from C{0} to C{len(items)-1}.
 	    A negative value indicates, that no item is selected.
 	  - selected_item: The selected string itself, or C{None} - if no string is selected.
-	
+
 	Data
 	====
 	The selected attribute can be read and set via L{distributeData} and L{collectData}.
@@ -1362,7 +1359,7 @@ class DropDown(Widget):
 		# Prepare Data collection framework
 		self.accepts_initial_data = True
 		self._realSetInitialData = self._setItems
-		
+
 		self.accepts_data = True
 		self._realSetData = self._setSelected
 		self._realGetData = self._getSelected
@@ -1379,13 +1376,13 @@ class DropDown(Widget):
 	def _setItems(self,items):
 		# Note we cannot use real_widget.setListModel
 		# for some reason ???
-		
+
 		# Also self assignment can kill you
 		if id(items) != id(self._items):
 			self._items.clear()
 			self._items.extend(items)
 	items = property(_getItems,_setItems)
-	
+
 	def _getSelected(self): return self.real_widget.getSelected()
 	def _setSelected(self,index): self.real_widget.setSelected(index)
 	selected = property(_getSelected,_setSelected)
@@ -1398,13 +1395,13 @@ class DropDown(Widget):
 class TextBox(Widget):
 	"""
 	An editable B{multiline} text edit widget.
-	
+
 	New Attributes
 	==============
-	
+
 	  - text: The text in the TextBox.
 	  - filename: A write-only attribute - assigning a filename will cause the widget to load it's text from it.
-	
+
 	Data
 	====
 	The text can be read and set via L{distributeData} and L{collectData}.
@@ -1452,12 +1449,12 @@ class TextBox(Widget):
 class TextField(Widget):
 	"""
 	An editable B{single line} text edit widget.
-	
+
 	New Attributes
 	==============
-	
+
 	  - text: The text in the TextBox.
-	
+
 	Data
 	====
 	The text can be read and set via L{distributeData} and L{collectData}.
@@ -1495,18 +1492,18 @@ class TextField(Widget):
 class ScrollArea(Widget):
 	"""
 	A wrapper around another (content) widget.
-	
+
 	New Attributes
 	==============
-	
+
 	  - content: The wrapped widget.
 	  - vertical_scrollbar: Boolean: Set this to False to hide the Vertcial scrollbar
 	  - horizontal_scrollbar: Boolean: Set this to False to hide the Horizontal scrollbar
-	
+
 	"""
-	
+
 	ATTRIBUTES = Widget.ATTRIBUTES + [ BoolAttr("vertical_scrollbar"),BoolAttr("horizontal_scrollbar") ]
-	
+
 	def __init__(self,**kwargs):
 		self.real_widget = fife.ScrollArea()
 		self._content = None
@@ -1541,7 +1538,7 @@ class ScrollArea(Widget):
 		if visibility: 
 			return fife.ScrollArea.SHOW_AUTO
 		return fife.ScrollArea.SHOW_NEVER
-	
+
 	def _scrollPolicyToVisibility(self,policy):
 		if policy == fife.ScrollArea.SHOW_NEVER:
 			return False
@@ -1549,13 +1546,13 @@ class ScrollArea(Widget):
 
 	def _setHorizontalScrollbar(self,visibility):
 		self.real_widget.setHorizontalScrollPolicy( self._visibilityToScrollPolicy(visibility) )
-	
+
 	def _setVerticalScrollbar(self,visibility):
 		self.real_widget.setVerticalScrollPolicy( self._visibilityToScrollPolicy(visibility) )
 
 	def _getHorizontalScrollbar(self):
 		return self._scrollPolicyToVisibility( self.real_widget.getHorizontalScrollPolicy() )
-	
+
 	def _getVerticalScrollbar(self):
 		return self._scrollPolicyToVisibility( self.real_widget.getVerticalScrollPolicy() )
 
@@ -1566,13 +1563,13 @@ class ScrollArea(Widget):
 
 class Spacer(object):
 	""" A spacer represents expandable 'whitespace' in the GUI.
-	
+
 	In a XML file you can get this by adding a <Spacer /> inside a VBox or
 	HBox element (Windows implicitly are VBox elements).
-	
+
 	The effect is, that elements before the spacer will be left (top)
 	and elements after the spacer will be right (bottom) aligned.
-	
+
 	There can only be one spacer in VBox (HBox).
 	"""
 	def __init__(self,parent=None,**kwargs):
@@ -1580,7 +1577,7 @@ class Spacer(object):
 
 	def __str__(self):
 		return "Spacer(parent.name='%s')" % getattr(self._parent,'name','None')
-	
+
 	def __repr__(self):
 		return "<Spacer(parent.name='%s') at %x>" % (getattr(self._parent,'name','None'),id(self))
 
@@ -1594,18 +1591,18 @@ WIDGETS = {
 	"VBox" : VBox,
 	"HBox" : HBox,
 	"ScrollArea" :ScrollArea,
-	
+
 	# Simple Widgets
 	"Icon" : Icon,
 	"Label" : Label,
 	"ClickLabel" : ClickLabel,
-	
+
 	# Button Widgets
 	"Button" : Button,
 	"CheckBox" : CheckBox,
 	"RadioButton" : RadioButton,
 	"ImageButton" : ImageButton,
-	
+
 	#Complexer Widgets / Text io
 	"TextField" : TextField,
 	"TextBox" : TextBox,

@@ -247,10 +247,9 @@ def init(engine,debug=False):
 	
 	@param engine: The FIFE engine object.
 	"""
-        from manager import Manager
+	from manager import Manager
 	global manager
 	manager = Manager(engine,debug)
-
 
 # XML Loader
 
@@ -327,7 +326,7 @@ class _GuiLoader(object, handler.ContentHandler):
 		if self.root:
 			self.root.addChild( obj )
 		self.root = obj
-	
+
 	def _createSpacer(self,cls,name,attrs):
 		obj = cls(parent=self.root)
 		if hasattr(self.root,'add'):
@@ -345,33 +344,33 @@ class _GuiLoader(object, handler.ContentHandler):
 def loadXML(filename_or_stream):
 	"""
 	Loads a PyChan XML file and generates a widget from it.
-	
+
 	@param filename_or_stream: A filename or a file-like object (for example using StringIO).
-	
+
 	The XML format is very dynamic, in the sense, that the actual allowed tags and attributes
 	depend on the PyChan code.
-	
+
 	So when a tag C{Button} is encountered, an instance of class Button will be generated,
 	and added to the parent object.
 	All attributes will then be parsed and then set in the following way:
-	
+
 	  - position,size,min_size,max_size,margins - These are assumed to be comma separated tuples
 	    of integers.
 	  - foreground_color,base_color,background_color - These are assumed to be triples of comma
 	    separated integers.
 	  - opaque,border_size,padding - These are assumed to be simple integers.
-	
+
 	All other attributes are set verbatim as strings on the generated instance.
 	In case a Widget does not accept an attribute to be set or the attribute can not be parsed
 	correctly, the function will raise a GuiXMLError.
-	
+
 	In short::
 		<VBox>
 			<Button text="X" min_size="20,20" base_color="255,0,0" border_size="2" />
 		</VBox>
-	
+
 	This result in the following code executed::
-	
+
 		vbox = VBox(parent=None)
 		button = Button(parent=vbox)
 		button.text = "X"
@@ -388,18 +387,18 @@ def loadXML(filename_or_stream):
 def setupModalExecution(mainLoop,breakFromMainLoop):
 	"""
 	Setup the synchronous dialog execution feature.
-	
+
 	You can enable synchronous dialog execution by
 	passing to functions to this function.
-	
+
 	@param mainLoop: Function - This is regarded as the applications
 	main loop, which should be able to be called recursively.
 	It should not take no arguments and return the argument
 	passed to the second function (breakFromMainLoop).
-	
+
 	@param breakFromMainLoop: Function -This function should cause the
 	first function to finish and return the passed argument.
-	
+
 	With these to functions dialogs can be executed synchronously.
 	See L{widgets.Widget.execute}.
 	"""

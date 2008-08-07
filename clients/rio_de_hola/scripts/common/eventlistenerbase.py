@@ -1,10 +1,9 @@
 import fife
 
-class EventListenerBase(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener,
-	                fife.ConsoleExecuter, fife.IWidgetListener):
+class EventListenerBase(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, fife.ConsoleExecuter, fife.IWidgetListener):
 	def __init__(self, engine, regKeys=False, regCmd=False, regMouse=False, regConsole=False, regWidget=False):
 		self.eventmanager = engine.getEventManager()
-		
+
 		fife.IKeyListener.__init__(self)
 		if regKeys:
 			self.eventmanager.addKeyListener(self)
@@ -20,8 +19,8 @@ class EventListenerBase(fife.IKeyListener, fife.ICommandListener, fife.IMouseLis
 		fife.IWidgetListener.__init__(self)
 		if regWidget:
 			self.eventmanager.addWidgetListener(self)
-		
-	
+
+
 	def mousePressed(self, evt):
 		pass
 	def mouseReleased(self, evt):

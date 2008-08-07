@@ -6,7 +6,7 @@ class LogManager(object):
 	You can set log targets individually (prompt, file). You can also adjust
 	things like visible modules through log manager.
 	'''
-	
+
 	def __init__(self, engine, promptlog=True, filelog=False):
 		'''
 		Constructs new log manager
@@ -23,7 +23,7 @@ class LogManager(object):
 			if k.startswith('LM_') and k not in ('LM_CORE', 'LM_MODULE_MAX'):
 				self.mod2name[v] = self.lm.getModuleName(v)
 		self.name2mod = dict([(v.lower(), k) for k, v in self.mod2name.items()])
-	
+
 	def addVisibleModules(self, *names):
 		'''
 		Adds modules that are visible in logs. By default, all modules
@@ -41,7 +41,7 @@ class LogManager(object):
 					self.lm.addVisibleModule(self.name2mod[m])
 				except KeyError:
 					print 'Tried to enable non-existing log module "%s"' % m
-	
+
 	def removeVisibleModules(self, *names):
 		'''
 		Removes modules that are visible in logs. By default, all modules
@@ -56,7 +56,7 @@ class LogManager(object):
 		else:
 			for m in names:
 				self.lm.removeVisibleModule(self.name2mod[m])
-		
+
 	def getVisibleModules(self):
 		'''
 		Gets currently visible modules
@@ -75,4 +75,3 @@ class LogManager(object):
 		'''
 		self.lm.clearVisibleModules()
 		self.addVisibleModules(*names)
-

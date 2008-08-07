@@ -34,16 +34,16 @@ def root_subfile(masterfile, subfile):
 	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
 	'''
 	s = '/'
-	
+
 	masterfile = norm_path(os.path.abspath(masterfile))
 	subfile = norm_path(os.path.abspath(subfile))
-	
+
 	master_fragments = masterfile.split(s)
 	sub_fragments = subfile.split(s)
-	
+
 	master_leftovers = []
 	sub_leftovers = []
-	
+
 	for i in xrange(len(master_fragments)):
 		try:
 			if master_fragments[i] == sub_fragments[i]:
@@ -51,7 +51,7 @@ def root_subfile(masterfile, subfile):
 				sub_leftovers = sub_fragments[i+1:]
 		except IndexError:
 			break
-	
+
 	pathstr = ''
 	for f in master_leftovers[:-1]:
 		pathstr += '..' + s
@@ -67,12 +67,12 @@ def reverse_root_subfile(masterfile, subfile):
 	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
 	'''
 	s = '/'
-	
+
 	masterfile = norm_path(os.path.abspath(masterfile)).split(s)[:-1]
 	subfile = norm_path(os.path.abspath( s.join(masterfile) + s + subfile ))
 	masterfile = norm_path(os.getcwd()) + s + 'foo.bar' # cheat a little to satisfy root_subfile
 	return root_subfile(masterfile, subfile)
-	
+
 def norm_path(path):
 	'''
 	Makes the path use '/' delimited separators. FIFE always uses these delimiters, but some os-related
@@ -80,5 +80,5 @@ def norm_path(path):
 	'''
 	if os.path.sep == '/':
 		return path
-	
+
 	return '/'.join(path.split(os.path.sep))	

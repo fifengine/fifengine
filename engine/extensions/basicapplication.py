@@ -13,7 +13,7 @@ from serializers.xmlanimation import XMLAnimationLoader
 class ExitEventListener(fife.IKeyListener):
 	"""
 	Default, rudimentary event listener.
-	
+
 	Will cause the application to quit on pressing ESC.
 	"""
 	def __init__(self, app):
@@ -29,32 +29,32 @@ class ExitEventListener(fife.IKeyListener):
 		keyval = evt.getKey().getValue()
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
-	
+
 	def keyReleased(self, evt):
 		pass
 
 class ApplicationBase(object):
 	"""
 	ApplicationBase is an extendable class that provides a basic environment for a FIFE-based client.
-	
+
 	The unextended application reads in and initializes engine settings, sets up a simple event
 	listener, and pumps the engine while listening for a quit message. Specialized applications can
 	modify settings.py to change initial engine settings. They can provide their own event listener
 	by overriding L{createListener}. And they can override the L{_pump} method
 	to define runtime behavior of the application.
-	
+
 	"""
 	def __init__(self):
 		self.engine = fife.Engine()
 
 		self.loadSettings()
 		self.initLogging()
-		
+
 		self.engine.init()
-		
+
 		self._animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
 		self.engine.getAnimationPool().addResourceLoader(self._animationloader)
-		
+
 		self.quitRequested = False
 		self.breakRequested = False
 		self.returnValues = []
@@ -66,7 +66,7 @@ class ApplicationBase(object):
 		"""
 		import settings
 		self.settings = settings
-		
+
 		engineSetting = self.engine.getSettings()
 		engineSetting.setDefaultFontGlyphs(settings.FontGlyphs)
 		engineSetting.setDefaultFontPath(settings.Font)
@@ -89,7 +89,7 @@ class ApplicationBase(object):
 			engineSetting.setImageChunkingSize(settings.ImageChunkSize)
 		except:
 			pass
-	
+
 	def initLogging(self):
 		"""
 		Initialize the LogManager.
@@ -102,7 +102,7 @@ class ApplicationBase(object):
 		"""
 		This creates a default event listener, which will just close the program
 		after pressing ESC.
-		
+
 		You should override this method to provide your own event handling.
 		"""
 		return ExitEventListener(self)
@@ -116,11 +116,11 @@ class ApplicationBase(object):
 		retval = self.mainLoop()
 		self.engine.finalizePumping()
 		return retval
-	
+
 	def mainLoop(self):
 		"""
 		The programs main loop.
-		
+
 		Do not override this, instead provide your own L{_pump} method.
 		You can call this recursively, e.g. to provide synchronous
 		Dialogs :-) and break out of the current mainLoop by calling
@@ -139,23 +139,23 @@ class ApplicationBase(object):
 			if self.breakRequested:
 				self.breakRequested = False
 				break
-		
+
 		return self.returnValues.pop()
 
 	def breakFromMainLoop(self,returnValue):
 		"""
 		Break from the currently running L{mainLoop}.
-		
+
 		The passed argument will be returned by the mainLoop.
 		"""
 		self.returnValues[-1] = returnValue
 		self.breakRequested = True
 
-	
+
 	def _pump(self):
 		"""
 		Application pump.
-		
+
 		Derived classes can specialize this for unique behavior.
 		This is called every frame.
 		"""

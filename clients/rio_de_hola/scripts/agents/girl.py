@@ -30,19 +30,18 @@ class Girl(Agent):
 		l = fife.Location(self.layer)
 		l.setLayerCoordinates(fife.ModelCoordinate(*self.waypoints[self.waypoint_counter % len(self.waypoints)]))
 		return l
-	
+
 	def start(self):
 		self.follow_hero()
-	
+
 	def idle(self):
 		self.state = _STATE_IDLE
 		self.agent.act('stand', self.agent.getFacingLocation(), False)
-		
+
 	def follow_hero(self):
 		self.state = _STATE_FOLLOW
 		self.agent.follow('run', self.hero, GIRL_SPEED)
-		
+
 	def run(self, location):
 		self.state = _STATE_RUN
 		self.agent.move('run', location, GIRL_SPEED)
-	

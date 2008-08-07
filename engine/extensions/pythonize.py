@@ -51,7 +51,7 @@ def createProperties():
 		except TypeError, e:
 			#print func, e
 			return False
-	
+
 	def createNames(name):
 		for prefix in ('get', 'is', 'are'):
 			if name.startswith(prefix):
@@ -60,7 +60,7 @@ def createProperties():
 		settername   = 'set' + new_name
 		propertyname = new_name[0].lower() + new_name[1:]
 		return settername, propertyname
-		
+
 	getter = re.compile(r"^(get|are|is)[A-Z]")
 	for class_ in classes:
 		methods = [(name,attr) for name,attr in class_.__dict__.items()
@@ -75,7 +75,7 @@ def createProperties():
 				#print name, settername, "--->",propertyname,'(',method,',',setter,')'
 				setattr(class_,propertyname,property(method,setter))
 		if not getters: continue
-		
+
 		# We need to override the swig setattr function
 		# to get properties to work.
 		class_._property_names = set([name for name,method in getters])

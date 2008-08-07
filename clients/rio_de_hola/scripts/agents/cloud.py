@@ -8,7 +8,7 @@ class Cloud(Agent):
 	def __init__(self, model, agentName, layer, uniqInMap=False):
 		super(Cloud, self).__init__(model, agentName, layer, uniqInMap)
 		self.state = _STATE_NONE
-		
+
 	def isOutOfBounds(self, c):
 		return (c.x < 0) or (c.x > 100) or (c.y < 0) or (c.y > 100)
 
@@ -33,16 +33,15 @@ class Cloud(Agent):
 		self.loc = self.agent.getLocation()
 		self.initialCoords = self.agent.getLocation().getExactLayerCoordinates()
 		self.appear()
-	
+
 	def appear(self):
 		self.state = _STATE_APPEAR
 		self.agent.act('appear', self.loc, False)
-	
+
 	def disappear(self):
 		self.state = _STATE_DISAPPEAR
 		self.agent.act('disappear', self.loc, False)
-	
+
 	def move(self):
 		self.state = _STATE_FLOATING
 		self.agent.act('default', self.loc, False)
-	

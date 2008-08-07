@@ -9,7 +9,7 @@ class XMLAnimationLoader(fife.ResourceLoader):
 		self.thisown = 0
 		self.filename = ''
 		self.node = None
-	
+
 	def loadResource(self, location):
 		self.filename = location.getFilename()
 		return self.do_load_resource()
@@ -19,17 +19,17 @@ class XMLAnimationLoader(fife.ResourceLoader):
 		f.thisown = 1
 		tree = ET.parse(f)
 		self.node = tree.getroot()
-		
+
 		animation = fife.Animation()
 		common_frame_delay = int(self.node.get('delay', 0))
 		x_offset = int(self.node.get('x_offset', 0))
 		y_offset = int(self.node.get('y_offset', 0))
 		animation.setActionFrame(int(self.node.get('action', 0)))
-		
+
 		frames = self.node.findall('frame')
 		if not frames:
 			raise InvalidFormat('animation without <frame>s')
-		
+
 		for frame in frames:
 			source = frame.get('source')
 			if not source:

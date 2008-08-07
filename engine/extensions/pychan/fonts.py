@@ -18,7 +18,7 @@ class Font(object):
 			self.antialias = int(get("antialias",1))
 			self.color = map(int,get("color","255,255,255").split(','))
 			self.font = Manager.manager.guimanager.createFont(self.source,self.size,"")
-			
+
 			if self.font is None:
 				raise InitializationError("Could not load font %s" % name)
 
@@ -26,7 +26,7 @@ class Font(object):
 			self.font.setColor(*self.color)
 		else:
 			raise InitializationError("Unsupported font type %s" % self.typename)
-		
+
 		self.font.setRowSpacing( self.row_spacing )
 		self.font.setGlyphSpacing( self.glyph_spacing )
 
@@ -36,12 +36,12 @@ class Font(object):
 		Static method to load font definitions out of a PyChan config file.
 		"""
 		import ConfigParser
-		
+
 		fontdef = ConfigParser.ConfigParser()
 		fontdef.read(filename)
-		
+
 		sections = [section for section in fontdef.sections() if section.startswith("Font/")]
-	
+
 		fonts = []
 		for section in sections:
 			name = section[5:]
@@ -54,7 +54,7 @@ class Font(object):
 
 	def __str__(self):
 		return "Font(source='%s')" % self.source
-	
+
 	def __repr__(self):
 		return "<Font(source='%s') at %x>" % (self.source,id(self))
 
@@ -63,7 +63,6 @@ def loadFonts(filename):
 	Load fonts from a config file. These are then available via their name.
 	"""
 	from manager import Manager
-	
+
 	for font in Font.loadFromFile(filename):
 		Manager.manager.addFont(font)
-

@@ -72,7 +72,7 @@ class ModelSaver:
 	def write_imports(self, map, importList):
 		for importdir in importList:
 			self.write_importdir(root_subfile(map.getResourceFile(), importdir))
-		
+
 		imports = []
 		for layer in map.getLayers():
 			for instance in layer.getInstances():
@@ -117,14 +117,14 @@ class ModelSaver:
 		self.xmlout.startElementNS((None, 'import'), 'import', attrs)
 		self.xmlout.endElementNS((None, 'import'), 'import')
 		self.file.write('\n')
-	
+
 	def pathing_val_to_str(self, val):
 		if val == fife.CELL_EDGES_AND_DIAGONALS:
 			return "cell_edges_and_diagonals"
 		if val == fife.FREEFORM:
 			return "freeform"
 		return "cell_edges_only"
-	
+
 	def write_layers(self, map):
 		for layer in map.getLayers():
 			cellgrid = layer.getCellGrid()
@@ -189,7 +189,7 @@ class ModelSaver:
 			self.xmlout.startElementNS((None, 'i'), 'i', attrs)
 			self.xmlout.endElementNS((None, 'i'), 'i')
 			self.file.write('\n')
-	
+
 		self.endElement('instances')
 
 	# Save the linked camera of a map.

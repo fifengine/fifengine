@@ -28,16 +28,16 @@ class XMLObjectLoader(fife.ResourceLoader):
 			isobjectfile = True
 			f = self.vfs.open(self.filename)
 			f.thisown = 1
-			
+
 			obj_identifier = '<?fife type="object"?>'
 			try:
 				s = f.readString(len(obj_identifier))
 			except fife.IndexOverflow:
 				isobjectfile = False
-			
+
 			if isobjectfile and s != obj_identifier:
 				isobjectfile = False
-			
+
 			if not isobjectfile:
 				raise WrongFileType('Tried to open non-object file %s with XMLObjectLoader.' % self.filename)
 		self.do_load_resource(f)
@@ -51,7 +51,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 	def parse_object(self, object):
 		if self.node.tag != 'object':
 			raise InvalidFormat('Expected <object> tag, but found <%s>.' % self.node.tag)
-		
+
 		id = object.get('id')
 		if not id:
 			raise InvalidFormat('<object> declared without an id attribute.')
@@ -59,7 +59,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 		nspace = object.get('namespace')
 		if not nspace:
 			raise InvalidFormat('<object> %s declared without a namespace attribute.' % str(id))
-		
+
 		obj = None
 		parent = object.get('parent', None)
 		if parent:
@@ -81,7 +81,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 		fife.ObjectVisual.create(obj)
 		obj.setBlocking(bool( object.get('blocking', False) ))
 		obj.setStatic(bool( object.get('static', False) ))
-		
+
 		pather = object.get('pather', 'RoutePather')
 		obj.setPather( self.model.getPather(pather) )
 
@@ -110,7 +110,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 			id = action.get('id')
 			if not id:
 				raise InvalidFormat('<action> declared without an id attribute.')
-	
+
 			act_obj = object.createAction(str(id))
 			fife.ActionVisual.create(act_obj)
 			self.parse_animations(action, act_obj)
@@ -130,4 +130,3 @@ class XMLObjectLoader(fife.ResourceLoader):
 			animation = self.anim_pool.getAnimation(anim_id)
 			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), anim_id)
 			action.setDuration(animation.getDuration())
-

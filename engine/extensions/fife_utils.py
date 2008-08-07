@@ -11,5 +11,3 @@ def is_fife_exc(type, original_exc):
 		if m.group(1) == type('').getTypeStr():
 			ret = True
 	return ret
-
-

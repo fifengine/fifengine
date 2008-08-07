@@ -28,7 +28,7 @@ class Attr(object):
 	"""
 	def __init__(self,name):
 		self.name = name
-	
+
 	def set(self,obj,value):
 		"""
 		Parses the given value with the L{parse} method

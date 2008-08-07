@@ -17,15 +17,15 @@ class Manager(fife.IWidgetListener):
 			raise InitializationError("No event manager installed.")
 		if not self.engine.getGuiManager():
 			raise InitializationError("No GUI manager installed.")
-		
+
 		self.guimanager = engine.getGuiManager()
 		self.fonts = {}
 		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
 		self.fonts['default'] = self.engine.getDefaultFont()
-		
+
 		self.styles = {}
 		self.addStyle('default',DEFAULT_STYLE)
-		
+
 		self.widgetEvents = {}
 		self.engine.getEventManager().addWidgetListener(self)
                 Manager.manager = self
@@ -60,11 +60,11 @@ class Manager(fife.IWidgetListener):
 	def getFont(self,name):
 		"""
 		Returns a GuiFont identified by its name.
-		
+
 		@param name: A string identifier from the font definitions in pychans config files.
 		"""
 		font = self.fonts.get(name)
-		
+
 		# For the default font directly return it,
 		# otherwise the GuiFont is in the font attribute.
 		return getattr(font,"font",font)
@@ -74,7 +74,7 @@ class Manager(fife.IWidgetListener):
 		Add a font to the font registry. It's not necessary to call this directly.
 		But it expects a L{Font} instance and throws an L{InitializationError}
 		otherwise.
-		
+
 		@param font: A L{Font} instance.
 		"""
 		if not isinstance(font,fonts.Font):
@@ -83,7 +83,7 @@ class Manager(fife.IWidgetListener):
 
 	def addStyle(self,name,style):
 		style = self._remapStyleKeys(style)
-		
+
 		for k,v in self.styles.get('default',{}).items():
 			style[k] = style.get(k,v)
 		self.styles[name] = style
@@ -93,7 +93,7 @@ class Manager(fife.IWidgetListener):
 		for k,v in style.get('default',{}).items():
 			v = kwargs.get(k,v)
 			setattr(widget,k,v)
-		
+
 		cls = widget.__class__
 		for applicable,specstyle in style.items():
 			if not isinstance(applicable,tuple):
@@ -108,13 +108,13 @@ class Manager(fife.IWidgetListener):
 		def _toClass(class_):
 			if class_ == "default":
 				return class_
-			
+
 			if type(class_) == type(widgets.Widget) and issubclass(class_,widgets.Widget):
 				return class_
 			if not widgets.WIDGETS.has_key(str(class_)):
 				raise InitializationError("Can't resolve %s to a widget class." % repr(class_))
 			return widgets.WIDGETS[str(class_)]
-		
+
 		style_copy = {}
 		for k,v in style.items():
 			if isinstance(k,tuple):

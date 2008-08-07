@@ -44,7 +44,7 @@ class XMLMapLoader(fife.ResourceLoader):
 
 		if not format == FORMAT: self._err(''.join(['This file has format ', format, ' but this loader has format ', FORMAT]))
 		if not id: self._err('Map declared without an identifier.')
-		
+
 		map = None
 		try:
 			self.map = self.model.createMap(str(id))
@@ -120,7 +120,7 @@ class XMLMapLoader(fife.ResourceLoader):
 				print e.getMessage()
 				print 'The layer ' + str(id) + ' already exists! Ignoring this layer.'
 				continue
-		
+
 			strgy = fife.CELL_EDGES_ONLY
 			if pathing == "cell_edges_and_diagonals":
 				strgy = fife.CELL_EDGES_AND_DIAGONALS
@@ -129,7 +129,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			layer_obj.setPathingStrategy(strgy)
 
 			self.parse_instances(layer, layer_obj)
-		
+
 	def parse_instances(self, layerelt, layer):
 		instelt = layerelt.find('instances')
 
@@ -179,19 +179,19 @@ class XMLMapLoader(fife.ResourceLoader):
 				self.y = y
 			else:
 				y = self.y
-		
+
 			if z:
 				z = float(z)
 			else:
 				z = 0.0
-		
+
 			if not id:
 				id = ''
 			else:
 				id = str(id)
 
 			inst = layer.createInstance(object, fife.ExactModelCoordinate(x,y,z), str(id))
-			
+
 			rotation = instance.get('r')
 			if not rotation:
 				rotation = instance.get('rotation')
@@ -204,7 +204,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			else:
 				rotation = int(rotation)
 			inst.setRotation(rotation)
-			
+
 			fife.InstanceVisual.create(inst)
 			if (stackpos):
 				inst.get2dGfxVisual().setStackPosition(int(stackpos))
