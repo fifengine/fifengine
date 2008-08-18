@@ -23,6 +23,7 @@ def addExtras(context):
 	context.checkSimpleLib(['png'], 'png.h');
 	
 	if context.env['opengl']:
-		context.env.Append(LIBS = ['GL', 'GLU'])
+		# linking explicitly against libstdc++ to work around Segfault_in_cxa_allocate_exception issue: http://wiki.fifengine.de/Segfault_in_cxa_allocate_exception
+		context.env.Append(LIBS = ['stdc++', 'GL', 'GLU'])
 		context.env.Append(LIBPATH = ['/usr/X11R6/lib'])
 		context.checkSimpleLib(['guichan_opengl'])
