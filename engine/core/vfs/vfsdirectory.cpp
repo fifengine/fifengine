@@ -102,7 +102,7 @@ namespace FIFE {
 			if (bfs::is_directory(*i) != directorys)
 				continue;
 
-			list.insert(i->leaf());
+			list.insert(i->path().leaf());
 		}
 
 		return list;
