@@ -13,7 +13,7 @@ from plugins.objectselector import ObjectSelector
 from pychan.manager import DEFAULT_STYLE
 DEFAULT_STYLE['default']['base_color'] = fife.Color(85,128,151)
 
-SCROLL_TOLERANCE = 30
+SCROLL_TOLERANCE = 10
 SCROLL_SPEED = 1.0
 
 states = ('NOTHING_LOADED', 'VIEWING', 'INSERTING', 'REMOVING', 'MOVING')
@@ -332,7 +332,37 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 		
 		for i in self._getInstancesFromPosition(self._selection, top_only=True):
-			i.setRotation((i.getRotation() + 90) % 360)
+# by c 09/11/08
+# FIXME:
+			# "hardcoded" rotation is bad for offset editing
+			# instead we should use the angle list given from the object
+			# animations are an issue, as a workaround settings.py provides
+			# project specific animation angles
+			try:
+				if self._objectedit_rotations is not None:
+#				print "available angles: ", self._offsetedit_rotations
+					rotation_prev = i.getRotation()
+#				print "previous rotation: ", rotation_prev
+					length = len(self._offsetedit_rotations)
+#				print "length: ", length
+					index = self._offsetedit_rotations.index( str(rotation_prev) )
+#				print "index, old: ", index
+					if index < length - 1:
+						index += 1
+					elif index == length:
+						index = 0
+					else:
+						index = 0
+#				print "index, new: ", index
+					
+					i.setRotation( int(self._offsetedit_rotations[index]) )
+#				print "new rotation: ", self._offsetedit_rotations[index]
+			except:
+				# Fallback
+				i.setRotation((i.getRotation() + 90) % 360)
+# end FIXME
+# end edit c
+
 ##    Surprisingly, the following "snap-to-rotation" code is actually incorrect. Object
 ##    rotation is independent of the camera, whereas the choice of an actual rotation image
 ##    depends very much on how the camera is situated. For example, suppose an object has

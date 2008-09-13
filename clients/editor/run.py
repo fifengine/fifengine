@@ -28,6 +28,9 @@ from plugins.importer import Importer
 from plugins.mapeditor import MapEditor
 from plugins.mapwizard import MapWizard
 from fifedit import Fifedit
+# by c 09/11/08 
+from plugins.objectedit import ObjectEdit
+# end edit c
 
 # Help display
 class Help(Plugin):
@@ -57,7 +60,9 @@ class Editor(basicapplication.ApplicationBase):
 		self.mapsaver = MapSaver(self.engine)
 		self.mapwizard = MapWizard(self.engine)
 		self.importer = Importer(self.engine)
-
+# by c 09/11/08 
+		self.objectedit = ObjectEdit(self.engine, self.mapedit)
+# end edit c
 		# Register plugins with Fifedit.
 		self.fifedit.registerPlugin(Help())
 		self.fifedit.registerPlugin(self.maploader)
@@ -65,7 +70,9 @@ class Editor(basicapplication.ApplicationBase):
 		self.fifedit.registerPlugin(self.mapedit)
 		self.fifedit.registerPlugin(self.mapwizard)
 		self.fifedit.registerPlugin(self.importer)
-		
+# by c 09/11/08 
+		self.fifedit.registerPlugin(self.objectedit)
+# end edit c		
 		self.params = params
 
 	def createListener(self):
@@ -94,6 +101,10 @@ class Editor(basicapplication.ApplicationBase):
 			parts = self.params.split(s)
 			self.maploader.loadFile(s.join(parts[0:-1]), parts[-1])
 			self.params = None
+# edit by c 11/09
+		if self.mapedit._instances is not None:
+			self.objectedit.input()
+# end edit c
 
 if __name__ == '__main__':
 	print sys.argv
