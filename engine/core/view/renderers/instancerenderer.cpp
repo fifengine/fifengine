@@ -104,6 +104,12 @@ namespace FIFE {
 	}
 	
 	void InstanceRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+		// patch #335 by abeyer
+		if (!layer->areInstancesVisible()) {
+			FL_DBG(_log, "Layer instances hidden");
+			return;
+		}
+			
 		FL_DBG(_log, "Iterating layer...");
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
