@@ -58,6 +58,7 @@ namespace FIFE {
 		virtual void setResourceFile(const std::string& filename) = 0;
 		virtual int getPoolId() = 0;
 		virtual void setPoolId(int poolid) = 0;
+		virtual unsigned int getRefCount() = 0;
 	};
 
 	%warnfilter(473) ResourceLoader; // filter out "returning a pointer or reference in a director method is not recommended"
@@ -86,6 +87,11 @@ namespace FIFE {
 		virtual int addResourceFromLocation(const ResourceLocation& loc);
 		virtual int getResourceCount(int status);
 		virtual void addResourceLoader(ResourceLoader* loader);
+		virtual void release(unsigned int index, bool dec = false);
+		virtual unsigned int getIndex(const std::string& filename);
+		virtual IResource& get(unsigned int index, bool inc = false);
+		virtual void printStatistics();
+
 	private:
 		Pool();
 	};	
