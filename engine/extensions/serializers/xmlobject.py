@@ -99,7 +99,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 			path.pop()
 			path.append(str(source))
 
-			id = self.image_pool.addResourceFromFile('/'.join(path))
+			id = self.image_pool.getIndex('/'.join(path))
 			object.get2dGfxVisual().addStaticImage(int( image.get('direction', 0) ), id)
 			img = self.image_pool.getImage(id)
 			img.setXShift(int( image.get('x_offset', 0) ))
@@ -126,7 +126,7 @@ class XMLObjectLoader(fife.ResourceLoader):
 			path.pop()
 			path.append(str(source))
 
-			anim_id = self.anim_pool.addResourceFromFile('/'.join(path))
+			anim_id = self.anim_pool.getIndex('/'.join(path))
 			animation = self.anim_pool.getAnimation(anim_id)
 			action.get2dGfxVisual().addAnimation(int( anim.get('direction', 0) ), anim_id)
 			action.setDuration(animation.getDuration())
