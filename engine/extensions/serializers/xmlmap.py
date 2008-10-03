@@ -10,9 +10,21 @@ from serializers import *
 FORMAT = '1.0'
 
 class XMLMapLoader(fife.ResourceLoader):
-	def __init__(self, engine):
+	def __init__(self, engine, callback):
+		""" The XMLMapLoader parses the xml map using several section. 
+		Each section fires a callback (if given) which can e. g. be
+		used to show a progress bar.
+		
+		The callback sends two values, a string and a float (which shows
+		the overall process): callback(string, float)
+			
+		@param	engine	:	a pointer to fife.engine
+		@param	callback:	a callback with two arguments, optional
+		"""
 		fife.ResourceLoader.__init__(self)
 		self.thisown = 0
+		
+		self.callback = callback
 
 		self.engine = engine
 		self.vfs = self.engine.getVFS()
@@ -33,7 +45,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		f.thisown = 1
 		tree = ET.parse(f)
 		root = tree.getroot()
-
+			
 		map = self.parse_map(root)
 		return map
 
@@ -57,13 +69,22 @@ class XMLMapLoader(fife.ResourceLoader):
 		# xml-specific directory imports. This is used by xml savers.
 		self.map.importDirs = []
 
+		if self.callback is not None:
+			self.callback('created map', float(0.25) )
+
 		self.parse_imports(mapelt, self.map)
+		
 		self.parse_layers(mapelt, self.map)	
+		
 		self.parse_cameras(mapelt, self.map)
 
 		return self.map
 
 	def parse_imports(self, mapelt, map):
+		if self.callback is not None:		
+			tmplist = mapelt.findall('import')
+			i = float(0)
+		
 		for item in mapelt.findall('import'):
 			file = item.get('file')
 			if file:
@@ -81,8 +102,21 @@ class XMLMapLoader(fife.ResourceLoader):
 				map.importDirs.append(dir)
 			else:
 				print 'Empty import statement?'
+				
+			if self.callback is not None:
+				i += 1				
+				self.callback('loaded imports', float( i / float(len(tmplist)) * 0.25 + 0.25 ) )
+				
+		# cleanup
+		if self.callback is not None:
+			del tmplist
+			del i
 
 	def parse_layers(self, mapelt, map):
+		if self.callback is not None:		
+			tmplist = mapelt.findall('layer')
+			i = float(0)
+
 		for layer in mapelt.findall('layer'):
 			id = layer.get('id')
 			grid_type = layer.get('grid_type')
@@ -129,6 +163,15 @@ class XMLMapLoader(fife.ResourceLoader):
 			layer_obj.setPathingStrategy(strgy)
 
 			self.parse_instances(layer, layer_obj)
+
+			if self.callback is not None:
+				i += 1
+				self.callback('loaded layer :' + str(id), float( i / float(len(tmplist)) * 0.25 + 0.5 ) )
+
+		# cleanup
+		if self.callback is not None:
+			del tmplist
+			del i
 
 	def parse_instances(self, layerelt, layer):
 		instelt = layerelt.find('instances')
@@ -214,6 +257,10 @@ class XMLMapLoader(fife.ResourceLoader):
 				inst.act('default', target, True)
 
 	def parse_cameras(self, mapelt, map):
+		if self.callback is not None:		
+			tmplist = mapelt.findall('camera')
+			i = float(0)
+
 		for camera in mapelt.findall('camera'):
 			id = camera.get('id')
 			zoom = camera.get('zoom')
@@ -245,3 +292,12 @@ class XMLMapLoader(fife.ResourceLoader):
 				cam.setZoom(float(zoom))
 			except fife.Exception, e:
 				print e.getMessage()
+				
+			if self.callback is not None:
+				i += 1
+				self.callback('loaded camera: ' +  str(id), float( i / len(tmplist) * 0.25 + 0.75 ) )	
+			
+		# cleanup
+		if self.callback is not None:
+			del tmplist
+			del i

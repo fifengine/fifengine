@@ -6,13 +6,23 @@ import fife
 from serializers.xmlmap import XMLMapLoader
 from serializers import WrongFileType, NameClash
 
+from serializers.xmlobject import XMLObjectLoader
+
 fileExtensions = ('xml',)
 
-def loadMapFile(path, engine, content = ''):
-	map_loader = XMLMapLoader(engine)
+def loadMapFile(path, engine, callback=None):
+	""" load map file and get (an optional) callback if major stuff is done:
+	- map creation
+	- parsed imports
+	- parsed layers 
+	- parsed cameras
+	the callback will send both a string and a float (which shows
+	the overall process), callback(string, float)
+		
+	@return	map	: map object
+	"""
+	map_loader = XMLMapLoader(engine, callback)
 	return map_loader.loadResource(fife.ResourceLocation(path))
-
-from serializers.xmlobject import XMLObjectLoader
 
 def loadImportFile(path, engine):
 	object_loader = XMLObjectLoader(engine.getImagePool(), engine.getAnimationPool(), engine.getModel(), engine.getVFS())
