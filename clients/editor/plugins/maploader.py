@@ -22,7 +22,8 @@ class MapLoader(plugin.Plugin):
 
 	def loadFile(self, path, filename):
 		content = path.split('/')
-		self.newMap = loadMapFile('/'.join([path, filename]), self.engine, '/'.join(content) + '/')
+		print content
+		self.newMap = loadMapFile('/'.join([path, filename]), self.engine)
 
 class MapSaver(plugin.Plugin):
 	def __init__(self, engine):
