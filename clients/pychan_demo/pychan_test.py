@@ -48,7 +48,8 @@ class DemoApplication(basicapplication.ApplicationBase):
 		eventMap = {
 			'creditsLink'  : self.showCredits,
 			'closeButton'  : self.quit,
-			'demoList' : self.selectExample
+			'demoList' : self.selectExample,
+			'slider': self.test_slider
 		}
 		self.gui.mapEvents(eventMap)
 
@@ -65,6 +66,9 @@ class DemoApplication(basicapplication.ApplicationBase):
 		self.demoList.items += self.examples.keys()
 		self.gui.show()
 		
+		self.slider = self.gui.findChild(name='slider')
+		self.slider_value = self.gui.findChild(name='slider_value')
+		
 		self.currentExample = None
 		self.creditsWidget = None
 
@@ -78,6 +82,9 @@ class DemoApplication(basicapplication.ApplicationBase):
 
 	def showCredits(self):
 		print pychan.loadXML('gui/credits.xml').execute({ 'okButton' : "Yay!" })
+		
+	def test_slider(self):
+		self.slider_value._setText( str(self.slider.getValue()) )
 
 class TestXMLApplication(basicapplication.ApplicationBase):
 	"""

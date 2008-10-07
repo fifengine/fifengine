@@ -172,5 +172,8 @@ DEFAULT_STYLE = {
 	},
 	'Icon' : {
 		'border_size' : 0
+	},
+	'Slider' : {
+		'border_size' : 0
 	}
 }

@@ -1,4 +1,9 @@
 <Window title="This is the PyChan demo application.">
+	<HBox>
+		<Slider size="100,15" name="slider" orientation="0" scale_start="0.1" scale_end="1.5" base_color="93,161,102" />
+		<Label name="slider_desc" text="Move the slider!" />
+		<TextBox name="slider_value" text="0" base_color="0,0,0,0"/>
+	</HBox>
 	<VBox>
 		<HBox>
 			<ScrollArea size="200,500">

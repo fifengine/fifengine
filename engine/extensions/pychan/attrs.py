@@ -85,3 +85,10 @@ class BoolAttr(Attr):
 			return value
 		except:
 			raise ParserError("Expected a 0 or 1.")
+			
+class FloatAttr(Attr):
+	def parse(self, value):
+		try:
+			return float(value)
+		except:
+			raise ParseError("Expected a float.")
