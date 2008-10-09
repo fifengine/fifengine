@@ -82,6 +82,10 @@ namespace FIFE {
 		/** Initializes the engine
 		 */
 		void init();
+
+		/** Explicit destruction of engine
+		 */
+		void destroy();
 		
 		/** Initializes the continuous processing of the engine
 		 * Call this only once in your program
@@ -172,7 +176,7 @@ namespace FIFE {
 		LogManager* m_logmanager;
 		GuiFont* m_defaultfont;
 		Cursor* m_cursor;
-
+		bool m_destroyed;
 		
 		EngineSettings m_settings;
 	};

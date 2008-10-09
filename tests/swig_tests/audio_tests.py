@@ -12,7 +12,7 @@ class TestAudio(unittest.TestCase):
 		self.soundmanager.init()
 
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 		del self.log
 	
 	def testLeftRight(self):

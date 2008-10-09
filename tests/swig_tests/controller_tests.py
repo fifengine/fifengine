@@ -7,7 +7,7 @@ class TestController(unittest.TestCase):
 		self.engine = getEngine(True)
 		
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 		
 	def testInstances(self):
 		print "\nTest SoundManager"

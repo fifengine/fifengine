@@ -45,6 +45,8 @@ namespace FIFE {
 	}
 
 	Pool::~Pool() {
+		FL_LOG(_log, LMsg("Pool destroyed "));
+		printStatistics();
 		clear();
 		std::vector<ResourceLoader*>::iterator loader;
 		for (loader = m_loaders.begin(); loader != m_loaders.end(); loader++) {
@@ -209,6 +211,8 @@ namespace FIFE {
 	}
 
 	void Pool::printStatistics() {
-		FL_LOG(_log, LMsg("Pool size =") << m_entries.size());
+		FL_LOG(_log, LMsg("Pool not loaded =") << getResourceCount(RES_NON_LOADED));
+		FL_LOG(_log, LMsg("Pool loaded     =") << getResourceCount(RES_LOADED));
+		FL_LOG(_log, LMsg("Pool total size =") << m_entries.size());
 	}
 }

@@ -140,6 +140,7 @@ namespace FIFE {
 		//m_vfs->addProvider(ProviderDAT2());
 		//m_vfs->addProvider(ProviderDAT1());
 		FL_LOG(_log, "Engine pre-init done");
+		m_destroyed = false;
 	}
 
 	void Engine::init() {
@@ -254,6 +255,12 @@ namespace FIFE {
 	}
 
 	Engine::~Engine() {
+		if( !m_destroyed ) {
+			destroy();
+		}
+	}
+
+	void Engine::destroy() {
 		FL_LOG(_log, "Destructing engine");
  		delete m_cursor;
  		delete m_view;
@@ -262,15 +269,15 @@ namespace FIFE {
 		delete m_guimanager;
 		delete m_gui_graphics;
 
-		m_renderbackend->deinit();
-		delete m_renderbackend;
-
 		// Note the dependancy between image and animation pools
 		// as animations reference images they have to be deleted
 		// before clearing the image pool.
 		delete m_animpool;
 		delete m_imagepool;
 		delete m_eventmanager;
+
+		m_renderbackend->deinit();
+		delete m_renderbackend;
 
 		delete m_vfs;
 
@@ -279,6 +286,7 @@ namespace FIFE {
 		TTF_Quit();
 		SDL_Quit();
 		FL_LOG(_log, "================== Engine destructed ==================");
+		m_destroyed = true;
 		//delete m_logmanager;
 	}
 	void Engine::initializePumping() {

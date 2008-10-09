@@ -9,7 +9,7 @@ class TestGui(unittest.TestCase):
 		self.renderbackend = self.engine.getRenderBackend()
 
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 	
 	def testFonts(self):
 		ttffont = fife.TTFont('tests/data/FreeMono.ttf', 14)

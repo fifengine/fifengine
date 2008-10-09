@@ -9,7 +9,7 @@ class TestVfs(unittest.TestCase):
 		self.vfs = self.engine.getVFS()
 
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 	
 	def testListFiles(self):
 		self.vfs.listFiles('.')

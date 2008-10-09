@@ -33,7 +33,7 @@ class TestView(unittest.TestCase):
 
 		
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 
 	def testCamera(self):
 		rb = self.engine.getRenderBackend()

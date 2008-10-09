@@ -15,7 +15,7 @@ class TestEventChannel(unittest.TestCase):
 		self.eventmanager = self.engine.getEventManager()
 		
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 		
 	def testEvents(self):
 		l = MyEventListener()

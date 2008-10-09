@@ -10,7 +10,7 @@ class TestPool(unittest.TestCase):
 		self.engine = getEngine()
 		
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 			
 	def testImagePool(self):
 		pool = self.engine.getImagePool()

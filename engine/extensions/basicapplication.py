@@ -115,6 +115,7 @@ class ApplicationBase(object):
 		self.engine.initializePumping()
 		retval = self.mainLoop()
 		self.engine.finalizePumping()
+		self.engine.destroy()
 		return retval
 
 	def mainLoop(self):

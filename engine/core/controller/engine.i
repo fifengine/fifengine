@@ -89,6 +89,7 @@ namespace FIFE {
 
 		EngineSettings& getSettings();
 		void init();
+		void destroy();
 
 		SoundManager* getSoundManager();
 		EventManager* getEventManager();

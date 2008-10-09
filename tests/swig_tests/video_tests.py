@@ -8,7 +8,7 @@ class TestVideo(unittest.TestCase):
 		self.engine = getEngine()
 		
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 
 	def testSimpleAnimation(self):
 		pool = self.engine.getAnimationPool()

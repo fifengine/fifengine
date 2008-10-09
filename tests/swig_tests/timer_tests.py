@@ -17,7 +17,7 @@ class TestTimer(unittest.TestCase):
 		self.timemanager = self.engine.getTimeManager()
 
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 	
 	def testEvents(self):
 		e = MyTimeEvent(100)

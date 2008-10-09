@@ -70,7 +70,7 @@ def checkConf(context, name):
 	configcall = '%s --libs --cflags' %binary
 	return tryConfigCommand(context, configcall)
 
-def checkSimpleLib(context, liblist, header = '', lang = 'c', required = 1):
+def checkSimpleLib(context, liblist, header = '', lang = 'c++', required = 1):
 	for lib in liblist:
 		ret = checkPKG(context, lib)
 		if ret:
@@ -83,7 +83,7 @@ def checkSimpleLib(context, liblist, header = '', lang = 'c', required = 1):
 		if len(header):
 			ret = conf.CheckLibWithHeader(lib, header, lang)
 		else:
-			ret = conf.CheckLib(lib)
+			ret = conf.CheckLib(lib,language=lang)
 
 		if ret:
 #			print "ret: " + ret

@@ -45,7 +45,7 @@ class ActionTests(unittest.TestCase):
 		fife.InstanceVisual.create(self.inst)
 			
 	def tearDown(self):
-		del self.engine
+		self.engine.destroy()
 
 	def _testWalkingAction(self):
 		print 'test1'
