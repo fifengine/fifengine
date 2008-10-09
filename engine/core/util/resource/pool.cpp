@@ -35,17 +35,18 @@
 namespace FIFE {
 	static Logger _log(LM_POOL);
 	
-	Pool::Pool(): 
+	Pool::Pool(const std::string& name): 
 		m_entries(),
 		m_location_to_entry(),
 		m_listeners(),
 		m_loaders(),
-		m_curind(0)
+		m_curind(0),
+		m_name(name)
 	{
 	}
 
 	Pool::~Pool() {
-		FL_LOG(_log, LMsg("Pool destroyed "));
+		FL_LOG(_log, LMsg("Pool destroyed: ") << m_name);
 		printStatistics();
 		clear();
 		std::vector<ResourceLoader*>::iterator loader;
@@ -61,6 +62,12 @@ namespace FIFE {
 		}
 		std::vector<PoolEntry*>::iterator entry;
 		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
+			// Warn about leaks, but at least display ALL of them
+			// Instead of bailing out with an exception in the FifeClass destructor.
+			if( (*entry)->resource && (*entry)->resource->getRefCount() > 0 ) {
+				FL_WARN(_log, LMsg(m_name + " leak: ") << (*entry)->location->getFilename());
+				(*entry)->resource = 0;
+			}
 			delete (*entry);
 		}
 		m_entries.clear();
@@ -80,9 +87,9 @@ namespace FIFE {
 		PoolEntry* entry = new PoolEntry();
 		entry->location = loc.clone();
 		m_entries.push_back(entry);
-		size_t index = m_entries.size();
+		size_t index = m_entries.size() - 1;
 		m_location_to_entry[loc] = index;
-		return index - 1;
+		return index;
 	}
 
 	int Pool::addResourceFromFile(const std::string& filename) {
@@ -91,7 +98,7 @@ namespace FIFE {
 
 	IResource& Pool::get(unsigned int index, bool inc) {
 		if (index >= m_entries.size()) {
-			FL_ERR(_log, LMsg("Tried to get with index ") << index << ", only " << m_entries.size() << " items in pool");
+			FL_ERR(_log, LMsg("Tried to get with index ") << index << ", only " << m_entries.size() << " items in pool " + m_name);
 			throw IndexOverflow( __FUNCTION__ );
 		}
 		IResource* res = NULL;
@@ -104,15 +111,20 @@ namespace FIFE {
 			} else {
 				entry->resource = entry->loader->loadResource(*entry->location);
 			}
+
 			if (!entry->loader) {
 				LMsg msg("No suitable loader was found for resource ");
-				msg << entry->location->getFilename();
+				msg << "#" << index << "<" << entry->location->getFilename()
+				    << "> in pool " << m_name;
 				FL_ERR(_log, msg);
+	      
 				throw NotFound(msg.str);
 			}
+
 			if (!entry->resource) {
 				LMsg msg("No loader was able to load the requested resource ");
-				msg << entry->location->getFilename();
+				msg << "#" << index << "<" << entry->location->getFilename()
+				    << "> in pool " << m_name;
 				FL_ERR(_log, msg);
 				throw NotFound(msg.str);
 			}
@@ -125,19 +137,7 @@ namespace FIFE {
 		return *res;
 	}
 	
-	unsigned int Pool::getIndex(const std::string& filename) {
-		std::vector<PoolEntry*>::iterator it = m_entries.begin();
-		int index = 0;
-		
-		// look for the appropriate entry
-		for (; it != m_entries.end(); it++) {
-			
-				if ((*it)->location->getFilename() == filename) {
-					return index;
-				}
-			index++;
-		}
-		
+	int Pool::getIndex(const std::string& filename) {
 		// create resource
 		return addResourceFromFile(filename);
 	}
@@ -213,6 +213,16 @@ namespace FIFE {
 	void Pool::printStatistics() {
 		FL_LOG(_log, LMsg("Pool not loaded =") << getResourceCount(RES_NON_LOADED));
 		FL_LOG(_log, LMsg("Pool loaded     =") << getResourceCount(RES_LOADED));
+		int amount = 0;
+		std::vector<PoolEntry*>::iterator entry;
+		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
+			if ((*entry)->resource) {
+				if ((*entry)->resource->getRefCount() > 0) {
+					amount++;
+				}
+			}
+		}
+		FL_LOG(_log, LMsg("Pool locked     =") << amount);
 		FL_LOG(_log, LMsg("Pool total size =") << m_entries.size());
 	}
 }

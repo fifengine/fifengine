@@ -44,12 +44,12 @@ namespace FIFE {
 	public:
 		/** Default constructor.
 		 */
-		SoundClipPool(): Pool() {
+		SoundClipPool(const std::string& name = "SoundPool"): Pool(name) {
 		}
 	
 		/** Destructor.
 		 */
-	   virtual ~SoundClipPool() {}
+		virtual ~SoundClipPool() {}
 	
 		SoundClip& getSoundClip(unsigned int index)  {
 			return dynamic_cast<SoundClip&>(get(index));

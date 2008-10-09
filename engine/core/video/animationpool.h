@@ -43,7 +43,7 @@ namespace FIFE {
 	public:
 		/** Default constructor.
 		 */
-		AnimationPool(): Pool() {
+		AnimationPool(const std::string& name = "AnimationPool"): Pool(name) {
 		}
 
 		/** Destructor.

@@ -72,13 +72,7 @@ namespace FIFE {
 		 *  This is needed as the locations should be stored in a \c std::map
 		 */
 		virtual bool operator <(const ResourceLocation& loc) const {
-			if (m_filename < loc.m_filename) {
-				return true;
-			}
-			if (m_filename != loc.m_filename) {
-				return false;
-			}
-			return true;
+			return m_filename < loc.m_filename;
 		}
 
 		/** Creates copy of this location

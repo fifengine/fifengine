@@ -45,7 +45,7 @@ namespace FIFE {
 		}
 		const ImageLocation* r = dynamic_cast<const ImageLocation*>(&loc);
 		if (!r) {
-			return true;
+			return false;
 		}
 		
 		if (m_xshift != r->m_xshift) {
@@ -72,6 +72,10 @@ namespace FIFE {
 		}
 
 		const ImageLocation* r = dynamic_cast<const ImageLocation*>(&loc);
+		if (!r) {
+			return true;
+		}
+
 		if (m_xshift < r->m_xshift) {
 			return false;
 		}

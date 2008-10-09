@@ -23,7 +23,7 @@ def loadMapFile(path, engine, callback=None):
 	"""
 	map_loader = XMLMapLoader(engine, callback)
 	map = map_loader.loadResource(fife.ResourceLocation(path))
-	#print "--- Loading map took: ", map_loader.time_to_load, " seconds."
+	print "--- Loading map took: ", map_loader.time_to_load, " seconds."
 	return map
 
 

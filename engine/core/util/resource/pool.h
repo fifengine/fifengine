@@ -67,7 +67,7 @@ namespace FIFE {
 
 		/** Default constructor.
 		 */
-		Pool();
+		Pool(const std::string& name);
 
 		/** Destructor.
 		 */
@@ -100,7 +100,7 @@ namespace FIFE {
 		/** Gets resource index from pool with given filename
 		 * The resource will be created if it is not in the pool
 		 */
-		virtual unsigned int getIndex(const std::string& filename);
+		virtual int getIndex(const std::string& filename);
 
 		/** Removes the resource from pool if reference counter is null
 		 * 
@@ -150,12 +150,14 @@ namespace FIFE {
 		};
 
 		void findAndSetProvider(PoolEntry& entry);
+
 		std::vector<PoolEntry*> m_entries;
 		typedef std::map<ResourceLocation, int> ResourceLocationToEntry;
 		ResourceLocationToEntry m_location_to_entry;
 		std::vector<IPoolListener*> m_listeners;
 		std::vector<ResourceLoader*> m_loaders;
 		int m_curind;
+		std::string m_name;
 	};
 
 } // FIFE
