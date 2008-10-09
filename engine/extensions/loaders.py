@@ -22,7 +22,10 @@ def loadMapFile(path, engine, callback=None):
 	@return	map	: map object
 	"""
 	map_loader = XMLMapLoader(engine, callback)
-	return map_loader.loadResource(fife.ResourceLocation(path))
+	map = map_loader.loadResource(fife.ResourceLocation(path))
+	#print "--- Loading map took: ", map_loader.time_to_load, " seconds."
+	return map
+
 
 def loadImportFile(path, engine):
 	object_loader = XMLObjectLoader(engine.getImagePool(), engine.getAnimationPool(), engine.getModel(), engine.getVFS())

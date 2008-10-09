@@ -6,6 +6,7 @@ except:
 
 import loaders
 from serializers import *
+import time
 
 FORMAT = '1.0'
 
@@ -33,6 +34,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		self.anim_pool = self.engine.getAnimationPool()
 		self.map = None
 		self.source = None
+		self.time_to_load = 0
 
 		self.nspace = None
 
@@ -40,6 +42,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		raise SyntaxError(''.join(['File: ', self.source, ' . ', msg]))
 
 	def loadResource(self, location):
+		start_time = time.time()
 		self.source = location.getFilename()
 		f = self.vfs.open(self.source)
 		f.thisown = 1
@@ -47,6 +50,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		root = tree.getroot()
 			
 		map = self.parse_map(root)
+		self.time_to_load = time.time() - start_time
 		return map
 
 	def parse_map(self, mapelt):

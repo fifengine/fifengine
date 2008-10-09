@@ -55,7 +55,7 @@ namespace FIFE {
 		bool deleteObject(Object*);
 		bool deleteObjects();
 		Object* getObject(const std::string& id, const std::string& name_space);
-		const std::list<Object*>& getObjects(const std::string& name_space) const;
+		std::list<Object*> getObjects(const std::string& name_space) const;
 
 		size_t getNumMaps() const;
 		void deleteMaps();

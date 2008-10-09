@@ -42,13 +42,14 @@ namespace FIFE {
 
 	Model::Model(): 
 		FifeClass(),
+		m_last_namespace(NULL),
 		m_timeprovider(NULL) {
 	}
 
 	Model::~Model() {
 		purge(m_maps);
 		for(std::list<namespace_t>::iterator nspace = m_namespaces.begin(); nspace != m_namespaces.end(); ++nspace)
-			purge(nspace->second);
+			purge_map(nspace->second);
 		purge(m_pathers);
 		purge(m_created_grids);
 		purge(m_adopted_grids);
@@ -128,76 +129,68 @@ namespace FIFE {
 	}
 
 	std::list<std::string> Model::getNamespaces() const {
-		std::list<std::string> lst;
+		std::list<std::string> namespace_list;
 		std::list<namespace_t>::const_iterator nspace = m_namespaces.begin();
 		for(; nspace != m_namespaces.end(); ++nspace) {
-			lst.push_back(nspace->first);
+			namespace_list.push_back(nspace->first);
 		}
-
-		return lst;
+		return namespace_list;
 	}
 
 	Object* Model::createObject(const std::string& identifier, const std::string& name_space, Object* parent) {
-
-		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
-		for(; nspace != m_namespaces.end(); ++nspace) {
-			if(nspace->first == name_space) break;
+		// Find or create namespace
+		namespace_t* nspace = selectNamespace(name_space);
+		if(!nspace) {
+			m_namespaces.push_back(namespace_t(name_space,objectmap_t()));
+			nspace = selectNamespace(name_space);
 		}
 
-		if(nspace == m_namespaces.end()) {
-			m_namespaces.push_back(namespace_t(name_space,std::list<Object*>()));
-			nspace = m_namespaces.end();
-			--nspace;
+		// Check for nameclashes
+		objectmap_t::const_iterator it = nspace->second.find(identifier);
+		if( it != nspace->second.end() ) {
+			throw NameClash(identifier);
 		}
 
-		std::list<Object*>::const_iterator it = nspace->second.begin();
-		for(; it != nspace->second.end(); ++it) {
-			if(identifier == (*it)->getId())
-				throw NameClash(identifier);
-		}
-
+		// Finally insert & create
 		Object* object = new Object(identifier, name_space, parent);
-		nspace->second.push_back(object);
+		nspace->second[identifier] = object;
 		return object;
 	}
 
 	bool Model::deleteObject(Object* object) {
+		// WARNING: This code has obviously not been tested (thoroughly).
+
+		// Check if any instances exist. If yes - bail out.
 		std::list<Layer*>::const_iterator jt;
 		std::vector<Instance*>::const_iterator kt;
 		for(std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
 			for(jt = (*it)->getLayers().begin(); jt != (*it)->getLayers().end(); ++jt) {
 				for(kt = (*jt)->getInstances().begin(); kt != (*jt)->getInstances().end(); ++kt) {
 					Object* o = (*kt)->getObject();
-					while(o != 0) {
-						if(o == object)
-							return false;
+					if(o == object) {
+						return false;
 					}
 				}
 			}
 		}
 
-		std::string name_space = object->getNamespace();
-		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
-		for(; nspace != m_namespaces.end(); ++nspace) {
-			if(nspace->first == name_space) break;
-		}
-
-		if(nspace == m_namespaces.end())
+		// Check if the namespace exists
+		namespace_t* nspace = selectNamespace(object->getNamespace());
+		if(!nspace)
 			return true;
 
-		std::list<Object*>::iterator it = nspace->second.begin();
-		for(; it != nspace->second.end(); ++it) {
-			if(*it == object) {
-				delete *it;
-				nspace->second.erase(it);
-				return true;
-			}
+		// If yes - delete+erase object.
+		objectmap_t::iterator it = nspace->second.find(object->getId());
+		if( it != nspace->second.end()) {
+			delete it->second;
+			nspace->second.erase(it);
 		}
 
 		return true;
 	}
 
 	bool Model::deleteObjects() {
+		// If we have layers with instances - bail out.
 		std::list<Layer*>::const_iterator jt;
 		for(std::list<Map*>::iterator it = m_maps.begin(); it != m_maps.end(); ++it) {
 			for(jt = (*it)->getLayers().begin(); jt != (*it)->getLayers().end(); ++jt) {
@@ -206,42 +199,63 @@ namespace FIFE {
 			}
 		}
 
+		// Otherwise delete every object in every namespace
 		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
 		while(nspace != m_namespaces.end()) {
-			std::list<Object*>::iterator it = nspace->second.begin();
+			objectmap_t::iterator it = nspace->second.begin();
 			for(; it != nspace->second.end(); ++it) {
-				delete *it;
+				delete it->second;
 			}
 			nspace = m_namespaces.erase(nspace);
 		}
+		m_last_namespace = 0;
 		return true;
 	}
 
 	Object* Model::getObject(const std::string& id, const std::string& name_space) {
-		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
-		for(; nspace != m_namespaces.end(); ++nspace) {
-			if(nspace->first == name_space) {
-				std::list<Object*>::iterator obj = nspace->second.begin();
-				for(; obj != nspace->second.end(); ++obj)
-					if((*obj)->getId() == id) return *obj;
-			}
+		namespace_t* nspace = selectNamespace(name_space);
+		if(nspace) {
+			objectmap_t::iterator it = nspace->second.find(id);
+			if( it !=  nspace->second.end() )
+				return it->second;
 		}
-		for(; nspace != m_namespaces.end(); ++nspace) {
-			std::list<Object*>::iterator obj = nspace->second.begin();
-			for(; obj != nspace->second.end(); ++obj)
-				if((*obj)->getId() == id) return *obj;
-		}
- 
 		return 0;
 	}
 
-	const std::list<Object*>& Model::getObjects(const std::string& name_space) const {
+	std::list<Object*> Model::getObjects(const std::string& name_space) const {
+		std::list<Object*> object_list;
+		const namespace_t* nspace = selectNamespace(name_space);
+		if(nspace) {
+			objectmap_t::const_iterator it = nspace->second.begin();
+			for(; it != nspace->second.end(); ++it )
+				object_list.push_back(it->second);
+			return object_list;
+		}
+		throw NotFound(name_space);
+	}
+
+	const Model::namespace_t* Model::selectNamespace(const std::string& name_space) const {
 		std::list<namespace_t>::const_iterator nspace = m_namespaces.begin();
 		for(; nspace != m_namespaces.end(); ++nspace) {
-			if(nspace->first == name_space) return nspace->second;
+			if( nspace->first == name_space ) {
+				return &(*nspace);
+			}
 		}
+		return 0;
+	}
 
-		throw NotFound(name_space);
+	Model::namespace_t* Model::selectNamespace(const std::string& name_space) {
+		if( m_last_namespace && m_last_namespace->first == name_space )
+			return m_last_namespace;
+		std::list<namespace_t>::iterator nspace = m_namespaces.begin();
+		for(; nspace != m_namespaces.end(); ++nspace) {
+			if( nspace->first == name_space ) {
+				m_last_namespace = &(*nspace);
+				return m_last_namespace;
+			}
+		}
+		m_last_namespace = 0;
+		return 0;
 	}
 
 	void Model::update() {

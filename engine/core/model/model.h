@@ -107,14 +107,13 @@ namespace FIFE {
 		 */
 		bool deleteObjects();
 
-		/** Get an object by its id. If no namespace is specified, the namespaces are searched in order
-		 * and the first matching object is returned. Returns 0 if object is not found.
+		/** Get an object by its id. Returns 0 if object is not found.
 		 */
 		Object* getObject(const std::string& id, const std::string& name_space);
 
 		/** Get all the objects in the given namespace.
 		 */
-		const std::list<Object*>& getObjects(const std::string& name_space) const;
+		std::list<Object*> getObjects(const std::string& name_space) const;
 
 		/** Adds pather to model. Moves ownership to model
 		 */
@@ -150,8 +149,18 @@ namespace FIFE {
 
 		std::list<Map*> m_maps;
 
-		typedef std::pair<std::string, std::list<Object*> > namespace_t;
+		typedef std::map<std::string,Object*> objectmap_t;
+		typedef std::pair<std::string,objectmap_t> namespace_t;
 		std::list<namespace_t> m_namespaces;
+
+		/// Used to remember last 'selected' namespace.
+		namespace_t* m_last_namespace;
+
+		/// Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
+		namespace_t* selectNamespace(const std::string& name_space);
+
+		/// Convenience function to retrieve a pointer to a namespace or NULL if it doesn't exist
+		const namespace_t* selectNamespace(const std::string& name_space) const;
 
 		std::vector<AbstractPather*> m_pathers;
 		std::vector<CellGrid*> m_adopted_grids;
