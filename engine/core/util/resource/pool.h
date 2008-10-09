@@ -127,9 +127,13 @@ namespace FIFE {
 		 */
 		virtual void removePoolListener(IPoolListener* listener);
 
-		/** Prints the cache statistics to the standard output
+		/** Prints the cache statistics to the log
 		 */
 		virtual void printStatistics();
+
+		/** Performs a sanity check for the location map.
+		 */
+		virtual void sanityCheck();
 
 	protected:
 	private:

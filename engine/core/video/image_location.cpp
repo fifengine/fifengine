@@ -37,6 +37,7 @@ namespace FIFE {
 		m_width(0),
 		m_height(0),
 		m_parent_image(NULL) {
+		m_type = RES_TYPE_IMAGE;
 	}
 
 	bool ImageLocation::operator ==(const ResourceLocation& loc) const {
@@ -67,9 +68,14 @@ namespace FIFE {
 	}
 
 	bool ImageLocation::operator <(const ResourceLocation& loc) const {
-		if (!ResourceLocation::operator <(loc)) {
+		if( m_type < loc.getType() )
+			return true;
+		if( m_type > loc.getType() )
 			return false;
-		}
+		if( m_filename < loc.getFilename() )
+			return true;
+		if( m_filename > loc.getFilename() )
+			return false;
 
 		const ImageLocation* r = dynamic_cast<const ImageLocation*>(&loc);
 		if (!r) {

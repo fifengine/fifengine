@@ -48,6 +48,7 @@ namespace FIFE {
 	Pool::~Pool() {
 		FL_LOG(_log, LMsg("Pool destroyed: ") << m_name);
 		printStatistics();
+		sanityCheck();
 		clear();
 		std::vector<ResourceLoader*>::iterator loader;
 		for (loader = m_loaders.begin(); loader != m_loaders.end(); loader++) {
@@ -225,4 +226,24 @@ namespace FIFE {
 		FL_LOG(_log, LMsg("Pool locked     =") << amount);
 		FL_LOG(_log, LMsg("Pool total size =") << m_entries.size());
 	}
+
+	void Pool::sanityCheck() {
+		// It is easy to mess up the important consistent
+		// less-than operator for the location classes.
+		// This will check if according to the '==' operator 
+		// entries are duplicate (=memory leaks).
+		// Slow and inaccurate. But should barf at real messups.
+		for(unsigned i = 0; i != m_entries.size(); ++i) {
+			int count = 0;
+			for(unsigned j = i+1; j < m_entries.size(); ++j) {
+				if( *m_entries[i]->location == *m_entries[j]->location )
+					count ++;
+			}
+			if( 0 == count )
+				continue;
+			FL_WARN(_log, LMsg("Multiple entries: ") << m_entries[i]->location->getFilename()
+			  << " #entries = " << (count+1) );
+		}
+	}
+
 }

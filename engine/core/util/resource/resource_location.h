@@ -34,10 +34,17 @@
 
 namespace FIFE {
 
+#define RES_TYPE_FILE 0
+#define RES_TYPE_IMAGE 1
+
 	/** Contains information about the Location of a Resource
 	 *
 	 *  This class is used to give ResoureProvider the information
-	 *  where to find the data. 
+	 *  where to find the data.
+	 *
+	 *  WARNING: It is \b very important that the comparison operators work correctly,
+	 *  otherwise the pools will silently consume more and more memory. So before you change
+	 *  something there, think about the implications. Please.
 	 */
 	class ResourceLocation {
 	public:
@@ -45,7 +52,7 @@ namespace FIFE {
 		// LIFECYCLE
 		/** Default constructor.
 		 */
-		ResourceLocation(const std::string& filename): m_filename(filename) {}
+		ResourceLocation(const std::string& filename): m_filename(filename),m_type(RES_TYPE_FILE) {}
 
 		/** Destructor.
 		 */
@@ -59,6 +66,10 @@ namespace FIFE {
 		/** Compares two ResourceLocations for equality.
 		 */
 		virtual bool operator ==(const ResourceLocation& loc) const {
+			if( m_type != loc.m_type ) {
+				return false;
+			}
+
 			if (m_filename.length() != loc.m_filename.length()) {
 				return false;
 			}
@@ -72,6 +83,10 @@ namespace FIFE {
 		 *  This is needed as the locations should be stored in a \c std::map
 		 */
 		virtual bool operator <(const ResourceLocation& loc) const {
+			if( m_type < loc.m_type )
+				return true;
+			if( m_type > loc.m_type )
+				return false;
 			return m_filename < loc.m_filename;
 		}
 
@@ -82,8 +97,11 @@ namespace FIFE {
 			return new ResourceLocation(m_filename);
 		}
 
-	private:
+		int getType() const { return m_type; }
+
+	protected:
 		std::string m_filename;
+		int m_type;
 	};
 } //FIFE
 
