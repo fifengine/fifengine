@@ -37,6 +37,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/resourceclass.h"
+#include "util/resource/resource_ptr.h"
 
 namespace FIFE {
 
@@ -72,7 +73,7 @@ namespace FIFE {
 		 * @param image Pointer to Image. Does not transfer the ownership
 		 * @param duration Duration for given frame in the animation
 		 */
-		void addFrame(Image* image, unsigned int duration);
+		void addFrame(ResourcePtr image, unsigned int duration);
 
 		/** Get the frame index that matches given timestamp. In case there is no exact match,
 		 * correct frame is calculated. E.g. if there are frames for timestamps 50 and 100
@@ -137,7 +138,7 @@ namespace FIFE {
 		struct FrameInfo {
 			unsigned int index;
 			unsigned int duration;
-			Image* img;
+			ResourcePtr image;
 		};
 
 		ResourceLocation m_location;

@@ -85,7 +85,9 @@ class XMLMapLoader(fife.ResourceLoader):
 		return self.map
 
 	def parse_imports(self, mapelt, map):
-		if self.callback is not None:		
+		parsedImports = {}
+
+		if self.callback:		
 			tmplist = mapelt.findall('import')
 			i = float(0)
 		
@@ -97,6 +99,12 @@ class XMLMapLoader(fife.ResourceLoader):
 			if dir:
 				dir = reverse_root_subfile(self.source, dir)
 
+			# Don't parse duplicate imports
+			if (dir,file) in parsedImports:
+				print "Duplicate import:" ,(dir,file)
+				continue
+			parsedImports[(dir,file)] = 1
+
 			if file and dir:
 				loaders.loadImportFile('/'.join(dir, file), self.engine)
 			elif file:
@@ -107,14 +115,10 @@ class XMLMapLoader(fife.ResourceLoader):
 			else:
 				print 'Empty import statement?'
 				
-			if self.callback is not None:
+			if self.callback:
 				i += 1				
 				self.callback('loaded imports', float( i / float(len(tmplist)) * 0.25 + 0.25 ) )
-				
-		# cleanup
-		if self.callback is not None:
-			del tmplist
-			del i
+
 
 	def parse_layers(self, mapelt, map):
 		if self.callback is not None:		
@@ -261,7 +265,7 @@ class XMLMapLoader(fife.ResourceLoader):
 				inst.act('default', target, True)
 
 	def parse_cameras(self, mapelt, map):
-		if self.callback is not None:		
+		if self.callback:		
 			tmplist = mapelt.findall('camera')
 			i = float(0)
 
@@ -297,11 +301,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			except fife.Exception, e:
 				print e.getMessage()
 				
-			if self.callback is not None:
+			if self.callback:
 				i += 1
 				self.callback('loaded camera: ' +  str(id), float( i / len(tmplist) * 0.25 + 0.75 ) )	
 			
-		# cleanup
-		if self.callback is not None:
-			del tmplist
-			del i

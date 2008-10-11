@@ -22,6 +22,7 @@
 
 %{
 #include "util/resource/resource.h"
+#include "util/resource/resource_ptr.h"
 #include "util/resource/resource_location.h"
 #include "util/resource/pool.h"
 %}
@@ -96,4 +97,14 @@ namespace FIFE {
 	private:
 		Pool();
 	};	
+
+	class ResourcePtr {
+	public:
+		ResourcePtr(IResource* ptr = 0);
+		ResourcePtr(Pool* pool,int index);
+		ResourcePtr(const ResourcePtr& r);
+		void release();
+		void load();
+		void unload();
+	};
 }

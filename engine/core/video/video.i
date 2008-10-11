@@ -89,7 +89,7 @@ namespace FIFE {
 	public:
 		explicit Animation();
 		~Animation();
-		void addFrame(Image* image, unsigned int duration);
+		void addFrame(ResourcePtr image, unsigned int duration);
 		int getFrameIndex(unsigned int timestamp);
 		Image* getFrame(int index);
 		Image* getFrameByTimestamp(unsigned int timestamp);

@@ -46,20 +46,22 @@ namespace FIFE {
 		}
 	
 	Animation::~Animation() {
-		std::vector<FrameInfo>::const_iterator i(m_frames.begin());
-		while (i != m_frames.end()) {
-			i->img->decRef();
-			i++;
-		}
+// 		std::vector<FrameInfo>::const_iterator i(m_frames.begin());
+// 		while (i != m_frames.end()) {
+// 			i->img->decRef();
+// 			i++;
+// 		}
 	}
 	
-	void Animation::addFrame(Image* image, unsigned int duration) {
-		image->addRef();
+// 	void Animation::addFrame(Image* image, unsigned int duration) {
+// 		addFrame(ResourcePtr(image),duration);
+// 	}
 
+	void Animation::addFrame(ResourcePtr image, unsigned int duration) {
 		FrameInfo info;
 		info.index = m_frames.size();
 		info.duration = duration;
-		info.img = image;
+		info.image = image;
 		m_frames.push_back(info);
 
 		std::map<unsigned int, FrameInfo>::const_iterator i(m_framemap.end());
@@ -95,7 +97,7 @@ namespace FIFE {
 
 	Image* Animation::getFrame(int index) {
 		if (isValidIndex(index)) {
-			return m_frames[index].img;
+			return m_frames[index].image.get<Image>();
 		} else {
 			return NULL;
 		}

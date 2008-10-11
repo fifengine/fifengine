@@ -44,10 +44,13 @@ class XMLAnimationLoader(fife.ResourceLoader):
 			path.pop()
 			path.append(str(source))
 
-			image = self.imagepool.getImage(self.imagepool.getIndex('/'.join(path)))
-			image.setXShift(frame_x_offset)
-			image.setYShift(frame_y_offset)
-			animation.addFrame(image, frame_delay);
+			image_location = fife.ImageLocation('/'.join(path))
+			image_location.setXShift(frame_x_offset)
+			image_location.setYShift(frame_y_offset)
+
+			image_index = self.imagepool.addResourceFromLocation(image_location)
+			animation.addFrame(fife.ResourcePtr(self.imagepool,image_index), frame_delay)
+			#print "...",image_index,image_location.getFilename()
 
 		animation.thisown = 0
 		return animation
