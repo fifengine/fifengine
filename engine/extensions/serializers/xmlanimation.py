@@ -1,5 +1,4 @@
 import fife
-import fife_compat
 from serializers import *
 
 class XMLAnimationLoader(fife.ResourceLoader):
@@ -51,8 +50,6 @@ class XMLAnimationLoader(fife.ResourceLoader):
 
 			image_index = self.imagepool.addResourceFromLocation(image_location)
 			animation.addFrame(fife.ResourcePtr(self.imagepool,image_index), frame_delay)
-			#animation.addFrame(self.imagepool.get(image_index), frame_delay)
-			#print "...",image_index,image_location.getFilename()
 
 		animation.thisown = 0
 		return animation

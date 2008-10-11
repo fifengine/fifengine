@@ -90,11 +90,6 @@ namespace FIFE {
 		 */
 		virtual IResource& get(unsigned int index, bool inc = false);
 		
-		/** Gets resource index from pool with given filename
-		 * The resource will be created if it is not in the pool
-		 */
-		virtual int getIndex(const std::string& filename);
-
 		/** Removes the resource from pool if reference counter is null
 		 * 
 		 * @param dec Specifies weither the ref counter will be decreased

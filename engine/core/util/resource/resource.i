@@ -90,7 +90,6 @@ namespace FIFE {
 		virtual int purgeLoadedResources();
 		virtual void addResourceLoader(ResourceLoader* loader);
 		virtual void release(unsigned int index, bool dec = false);
-		virtual unsigned int getIndex(const std::string& filename);
 		virtual IResource& get(unsigned int index, bool inc = false);
 		virtual void printStatistics();
 

@@ -149,11 +149,6 @@ namespace FIFE {
 		res->setPoolId(index);
 		return *res;
 	}
-	
-	int Pool::getIndex(const std::string& filename) {
-		// create resource
-		return addResourceFromFile(filename);
-	}
 
 	void Pool::release(unsigned int index, bool dec) {
 		if (index >= m_entries.size()) {
