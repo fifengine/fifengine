@@ -42,14 +42,6 @@ namespace FIFE {
 
 	class IResource;
 
-	/**  Clients of pool get notifications about pool events through this interface
-	 */
-	class IPoolListener {
-	public:
-		virtual void poolCleared() = 0;
-		virtual ~IPoolListener() {};
-	};
-
 	enum { RES_LOADED = 0x01, RES_NON_LOADED  = 0x02};
 
 	/**  Pool is used to optimize memory usage for resources
@@ -121,16 +113,6 @@ namespace FIFE {
 		 */
 		virtual int getResourceCount(int status);
 
-		/** Adds pool listener.
-		 * Pool listeners get indications e.g. when ownerships of pooled
-		 * resources change.
-		 */
-		virtual void addPoolListener(IPoolListener* listener);
-
-		/** Removes pool listener
-		 */
-		virtual void removePoolListener(IPoolListener* listener);
-
 		/** Prints the cache statistics to the log
 		 */
 		virtual void printStatistics();
@@ -169,14 +151,8 @@ namespace FIFE {
 		std::vector<PoolEntry*> m_entries;
 		typedef std::map<ResourceLocation, int> ResourceLocationToEntry;
 		ResourceLocationToEntry m_location_to_entry;
-		std::vector<IPoolListener*> m_listeners;
 		std::vector<ResourceLoader*> m_loaders;
-		int m_curind;
 		std::string m_name;
-
-		/** Clears pool from ALL resources. Frees associated memory 
-		 */
-		void cleanUp();
 	};
 
 } // FIFE

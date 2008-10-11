@@ -38,9 +38,7 @@ namespace FIFE {
 	Pool::Pool(const std::string& name): 
 		m_entries(),
 		m_location_to_entry(),
-		m_listeners(),
 		m_loaders(),
-		m_curind(0),
 		m_name(name)
 	{
 	}
@@ -57,10 +55,6 @@ namespace FIFE {
 	}
 	
 	void Pool::reset() {
-		std::vector<IPoolListener*>::iterator listener;
-		for (listener = m_listeners.begin(); listener != m_listeners.end(); listener++) {
-			(*listener)->poolCleared();
-		}
 		std::vector<PoolEntry*>::iterator entry;
 		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
 			// Warn about leaks, but at least display ALL of them
@@ -76,10 +70,6 @@ namespace FIFE {
 	}
 
 	int Pool::purgeLoadedResources() {
-		std::vector<IPoolListener*>::iterator listener;
-		for (listener = m_listeners.begin(); listener != m_listeners.end(); listener++) {
-			(*listener)->poolCleared();
-		}
 		int count = 0;
 		std::vector<PoolEntry*>::iterator it;
 		for (it = m_entries.begin(); it != m_entries.end(); it++) {
@@ -140,8 +130,12 @@ namespace FIFE {
 				throw NotFound(msg.str);
 			}
 
+			// This branch will only be relevant if the resource has been
+			// loaded successfully before, but for some reason the loader
+			// can't load the resource anymore.
+			// Maybe someone deleted a file under FIFE's hands?
 			if (!entry->resource) {
-				LMsg msg("No loader was able to load the requested resource ");
+				LMsg msg("The loader was unable to load the resource ");
 				msg << "#" << index << "<" << entry->location->getFilename()
 				    << "> in pool " << m_name;
 				FL_ERR(_log, msg);
@@ -196,21 +190,6 @@ namespace FIFE {
 			}
 		}
 		return amount;
-	}
-
-	void Pool::addPoolListener(IPoolListener* listener) {
-		m_listeners.push_back(listener);
-	}
-
-	void Pool::removePoolListener(IPoolListener* listener) {
-		std::vector<IPoolListener*>::iterator i = m_listeners.begin();
-		while (i != m_listeners.end()) {
-			if ((*i) == listener) {
-				m_listeners.erase(i);
-				return;
-			}
-			++i;
-		}
 	}
 
 	void Pool::findAndSetProvider(PoolEntry& entry) {
