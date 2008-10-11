@@ -66,6 +66,7 @@ namespace FIFE {
 		static const int INVALID_ID = -1;
 
 		/** Default constructor.
+		 *  @param name The name used in debug output.
 		 */
 		Pool(const std::string& name);
 
@@ -109,13 +110,16 @@ namespace FIFE {
 		 */
 		virtual void release(unsigned int index, bool dec = false);
 
+		/** Purge all loaded resources.
+		 *  This will purge all loaded resources with a ref count of zero.
+		 *  Indices remain valid, though.
+		 *  @return Number of resources deleted.
+		 */
+		virtual int purgeLoadedResources();
+
 		/** Gets amount of resources in the pool with given status
 		 */
 		virtual int getResourceCount(int status);
-
-		/** Clears pool from resources. Frees associated memory 
-		 */
-		virtual void clear();
 
 		/** Adds pool listener.
 		 * Pool listeners get indications e.g. when ownerships of pooled
@@ -133,7 +137,14 @@ namespace FIFE {
 
 		/** Performs a sanity check for the location map.
 		 */
-		virtual void sanityCheck();
+		void sanityCheck();
+
+		/** Resets the pool.
+		 *  This will purge all loaded resources with a ref count of zero.
+		 *  The location and loader information for the locations is lost.
+		 *  Only the resource loaders are retained.
+		 */
+		virtual void reset();
 
 	protected:
 	private:
@@ -162,6 +173,10 @@ namespace FIFE {
 		std::vector<ResourceLoader*> m_loaders;
 		int m_curind;
 		std::string m_name;
+
+		/** Clears pool from ALL resources. Frees associated memory 
+		 */
+		void cleanUp();
 	};
 
 } // FIFE

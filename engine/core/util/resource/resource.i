@@ -86,6 +86,7 @@ namespace FIFE {
 		virtual int addResourceFromFile(const std::string& filename);
 		virtual int addResourceFromLocation(const ResourceLocation& loc);
 		virtual int getResourceCount(int status);
+		virtual int purgeLoadedResources();
 		virtual void addResourceLoader(ResourceLoader* loader);
 		virtual void release(unsigned int index, bool dec = false);
 		virtual unsigned int getIndex(const std::string& filename);

@@ -49,14 +49,14 @@ namespace FIFE {
 		FL_LOG(_log, LMsg("Pool destroyed: ") << m_name);
 		printStatistics();
 		sanityCheck();
-		clear();
+		reset();
 		std::vector<ResourceLoader*>::iterator loader;
 		for (loader = m_loaders.begin(); loader != m_loaders.end(); loader++) {
 			delete (*loader);
 		}
 	}
 	
-	void Pool::clear() {
+	void Pool::reset() {
 		std::vector<IPoolListener*>::iterator listener;
 		for (listener = m_listeners.begin(); listener != m_listeners.end(); listener++) {
 			(*listener)->poolCleared();
@@ -73,6 +73,24 @@ namespace FIFE {
 		}
 		m_entries.clear();
 		m_location_to_entry.clear();
+	}
+
+	int Pool::purgeLoadedResources() {
+		std::vector<IPoolListener*>::iterator listener;
+		for (listener = m_listeners.begin(); listener != m_listeners.end(); listener++) {
+			(*listener)->poolCleared();
+		}
+		int count = 0;
+		std::vector<PoolEntry*>::iterator it;
+		for (it = m_entries.begin(); it != m_entries.end(); it++) {
+			PoolEntry* entry = *it;
+			if( entry->resource && entry->resource->getRefCount() == 0 ) {
+				delete entry->resource;
+				entry->resource = 0;
+				++count;
+			}
+		}
+		return count;
 	}
 
 	void Pool::addResourceLoader(ResourceLoader* loader) {

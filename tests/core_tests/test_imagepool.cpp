@@ -125,7 +125,12 @@ TEST_FIXTURE(environment, test_image_pool)
 	}
 	CHECK_EQUAL(3, pool.getResourceCount(RES_LOADED));
 	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
-	pool.clear();
+
+	CHECK_EQUAL(3, pool.purgeLoadedResources() );
+
+	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
+	CHECK_EQUAL(3, pool.getResourceCount(RES_NON_LOADED));
+	pool.reset();
 	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
 	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
 }
