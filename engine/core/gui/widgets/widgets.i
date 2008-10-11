@@ -379,6 +379,15 @@ namespace gcn {
 		virtual void resizeToContent();
 	};
 
+	class ClickLabel;
+	%feature("director") ClickLabelListener;
+	class ClickLabelListener {
+	public:
+		virtual ~ClickLabelListener();
+		virtual void mouseEntered(ClickLabel& btn) = 0;
+		virtual void mouseExited(ClickLabel& btn) = 0;
+	};
+
 	%feature("notabstract") ClickLabel;
 	%rename(Label) ClickLabel;
 	class ClickLabel: public Widget {
@@ -392,6 +401,9 @@ namespace gcn {
 		void setTextWrapping(bool);
 		virtual void setWidth(int width);
 		virtual void adjustSize();
+		
+		void setListener(ClickLabelListener* listener);
+		ClickLabelListener* getListener();		
 	};
 
 	%feature("notabstract") Icon2;

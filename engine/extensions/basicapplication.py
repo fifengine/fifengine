@@ -29,6 +29,9 @@ class ExitEventListener(fife.IKeyListener):
 		keyval = evt.getKey().getValue()
 		if keyval == fife.Key.ESCAPE:
 			self.app.quit()
+		elif keyval == fife.Key.F10:
+			self.engine.getGuiManager().getConsole().toggleShowHide()
+			evt.consume()
 
 	def keyReleased(self, evt):
 		pass

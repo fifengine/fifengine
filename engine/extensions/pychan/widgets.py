@@ -1028,11 +1028,31 @@ class Icon(Widget):
 		return self._image
 	image = property(_getImage,_setImage)
 
+class LabelListener(fife.ClickLabelListener):
+	""" the listener class for label onMouse events
+	
+	@type	btn:	object
+	@param	btn:	the label widget
+	"""
+	def __init__(self, lbl):
+		fife.ClickLabelListener.__init__(self)
+		self.lbl = lbl
+		self.entercb = None
+		self.exitcb = None
+
+	def mouseEntered(self, lbl):
+		if self.entercb:
+			self.entercb(self.lbl)
+
+	def mouseExited(self, lbl):
+		if self.exitcb:
+			self.exitcb(self.lbl)
+
 class Label(BasicTextWidget):
 	"""
 	A basic label - displaying a string.
 
-	Also allows text wrapping.
+	Also allows text wrapping and onMouse hover callbacks.
 
 	New Attributes
 	==============
@@ -1041,6 +1061,7 @@ class Label(BasicTextWidget):
 	 Currently to actually see text wrapping you have to explicitly set a max_size with
 	 the desired width of the text, as the layout engine is not capable of deriving
 	 the maximum width from a parent container.
+	 
 	"""
 
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
@@ -1049,7 +1070,9 @@ class Label(BasicTextWidget):
 		self.real_widget = fife.Label("")
 		self.wrap_text = wrap_text
 		super(Label,self).__init__(**kwargs)
-
+		self.listener = LabelListener(self)
+		self.real_widget.setListener(self.listener)
+		
 	def resizeToContent(self):
 		self.real_widget.setWidth( self.max_size[0] )
 		self.real_widget.adjustSize()
@@ -1060,6 +1083,20 @@ class Label(BasicTextWidget):
 	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
 	def _getTextWrapping(self): self.real_widget.isTextWrapping()
 	wrap_text = property(_getTextWrapping,_setTextWrapping)
+
+	def setEnterCallback(self, cb):
+		"""
+		Callback is called when mouse enters the area of Label
+		callback should have form of function(button)
+		"""
+		self.listener.entercb = cb
+
+	def setExitCallback(self, cb):
+		"""
+		Callback is called when mouse enters the area of Label
+		callback should have form of function(button)
+		"""
+		self.listener.exitcb = cb
 
 class ClickLabel(Label):
 	"""
@@ -1165,17 +1202,17 @@ class ImageButton(BasicTextWidget):
 		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
 
 	def setEnterCallback(self, cb):
-		'''
+		"""
 		Callback is called when mouse enters the area of ImageButton
 		callback should have form of function(button)
-		'''
+		"""
 		self.listener.entercb = cb
 
 	def setExitCallback(self, cb):
-		'''
+		"""
 		Callback is called when mouse enters the area of ImageButton
 		callback should have form of function(button)
-		'''
+		"""
 		self.listener.exitcb = cb
 
 
