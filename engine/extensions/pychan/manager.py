@@ -125,7 +125,8 @@ class Manager(fife.IWidgetListener):
 		return style_copy
 
 	def loadImage(self,filename):
-		return fife.GuiImage(self.engine.imagePool.getIndex(filename),self.engine.imagePool)
+		index = self.engine.imagePool.addResourceFromFile(filename)
+		return fife.GuiImage(index,self.engine.imagePool)
 
 	def defaultWidgetAction(self,event):
 		if self.debug:
