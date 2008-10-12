@@ -337,23 +337,25 @@ namespace FIFE {
 				Uint8 r, g, b, a;
 				for(int xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
 					for(int yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
-						int x = xx - vc.dimensions.x;
-						int y = yy - vc.dimensions.y;
-						if (m_zoom != 1.0) {
-							double fx = static_cast<double>(x);
-							double fy = static_cast<double>(y);
-							double fow = static_cast<double>(vc.image->getWidth());
-							double foh = static_cast<double>(vc.image->getHeight());
-							double fsw = static_cast<double>(vc.dimensions.w);
-							double fsh = static_cast<double>(vc.dimensions.h);
-							x = static_cast<int>(round(fx / fsw * fow));
-							y = static_cast<int>(round(fy / fsh * foh));
-						}
-						vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
-						// instance is hit with mouse if not totally transparent
-						if (a != 0) {
-							instances.push_back(i);
-							goto found_non_transparent_pixel;
+						if ((vc.dimensions.contains(Point(xx, yy)))) {
+							int x = xx - vc.dimensions.x;
+							int y = yy - vc.dimensions.y;
+							if (m_zoom != 1.0) {
+								double fx = static_cast<double>(x);
+								double fy = static_cast<double>(y);
+								double fow = static_cast<double>(vc.image->getWidth());
+								double foh = static_cast<double>(vc.image->getHeight());
+								double fsw = static_cast<double>(vc.dimensions.w);
+								double fsh = static_cast<double>(vc.dimensions.h);
+								x = static_cast<int>(round(fx / fsw * fow));
+								y = static_cast<int>(round(fy / fsh * foh));
+							}
+							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
+							// instance is hit with mouse if not totally transparent
+							if (a != 0) {
+								instances.push_back(i);
+								goto found_non_transparent_pixel;
+							}
 						}
 					}
 				}
