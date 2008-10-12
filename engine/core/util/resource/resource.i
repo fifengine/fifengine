@@ -85,7 +85,7 @@ namespace FIFE {
 		static const int INVALID_ID = -1;
 		virtual ~Pool();
 		virtual int addResourceFromFile(const std::string& filename);
-		virtual int addResourceFromLocation(const ResourceLocation& loc);
+		virtual int addResourceFromLocation(ResourceLocation* loc);
 		virtual int getResourceCount(int status);
 		virtual int purgeLoadedResources();
 		virtual void addResourceLoader(ResourceLoader* loader);

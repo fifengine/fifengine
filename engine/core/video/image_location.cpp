@@ -74,32 +74,39 @@ namespace FIFE {
 			return true;
 		if( m_type > loc.getType() )
 			return false;
-		if( m_filename < loc.getFilename() )
-			return true;
-		if( m_filename > loc.getFilename() )
-			return false;
 
 		const ImageLocation* r = dynamic_cast<const ImageLocation*>(&loc);
 		if (!r) {
-			return true;
+			return false;
 		}
 
-		if (m_xshift < r->m_xshift) {
+		if(m_xshift < r->m_xshift)
+			return true;
+		if(m_xshift > r->m_xshift)
 			return false;
-		}
-		if (m_yshift < r->m_yshift) {
+
+		if(m_yshift < r->m_yshift)
+			return true;
+		if(m_yshift > r->m_yshift)
 			return false;
-		}
-		if (m_width < r->m_width) {
+
+		if(m_width < r->m_width)
+			return true;
+		if(m_width > r->m_width)
 			return false;
-		}
-		if (m_height < r->m_height) {
+
+		if(m_height < r->m_height)
+			return true;
+		if(m_height > r->m_height)
 			return false;
-		}
-		if (m_parent_image < r->m_parent_image) {
+
+
+		if( m_parent_image < r->m_parent_image  )
+			return true;
+		if( m_parent_image  > r->m_parent_image  )
 			return false;
-		}
- 		return true;
+
+		return m_filename < loc.getFilename();
 	}
 
 	ResourceLocation* ImageLocation::clone() const {

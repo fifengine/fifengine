@@ -87,22 +87,23 @@ namespace FIFE {
 		m_loaders.push_back(loader);
 	}
 
-	int Pool::addResourceFromLocation(const ResourceLocation& loc) {
+	int Pool::addResourceFromLocation(ResourceLocation* loc) {
 		ResourceLocationToEntry::const_iterator it = m_location_to_entry.find(loc);
 		if (it != m_location_to_entry.end()) {
-			return (*it).second;
+			return it->second;
 		}
 		
 		PoolEntry* entry = new PoolEntry();
-		entry->location = loc.clone();
+		entry->location = loc->clone();
 		m_entries.push_back(entry);
 		size_t index = m_entries.size() - 1;
-		m_location_to_entry[loc] = index;
+		m_location_to_entry[entry->location] = index;
 		return index;
 	}
 
 	int Pool::addResourceFromFile(const std::string& filename) {
-		return addResourceFromLocation(ResourceLocation(filename));
+		ResourceLocation r = ResourceLocation(filename);
+		return addResourceFromLocation(&r);
 	}
 
 	IResource& Pool::get(unsigned int index, bool inc) {

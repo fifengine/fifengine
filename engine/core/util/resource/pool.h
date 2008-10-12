@@ -40,6 +40,13 @@
 
 namespace FIFE {
 
+	struct ResourceLocationComparator {
+		bool operator()(const ResourceLocation* r1, const ResourceLocation* r2) const
+		{
+			return r1->operator<(*r2);
+		}
+	};
+
 	class IResource;
 
 	enum { RES_LOADED = 0x01, RES_NON_LOADED  = 0x02};
@@ -73,7 +80,7 @@ namespace FIFE {
 		/** Adds new resource into the pool using the given location.
 		 * @return The index of the resource in the pool.
 		 */
-		virtual int addResourceFromLocation(const ResourceLocation& loc);
+		virtual int addResourceFromLocation(ResourceLocation* loc);
 		
 		/** This is a convenience version of addResourceFromLocation().
 		 * It converts the filename into a ResourceLocation and then
@@ -144,7 +151,7 @@ namespace FIFE {
 		void findAndSetProvider(PoolEntry& entry);
 
 		std::vector<PoolEntry*> m_entries;
-		typedef std::map<ResourceLocation, int> ResourceLocationToEntry;
+		typedef std::map<ResourceLocation*, int, ResourceLocationComparator> ResourceLocationToEntry;
 		ResourceLocationToEntry m_location_to_entry;
 		std::vector<ResourceLoader*> m_loaders;
 		std::string m_name;

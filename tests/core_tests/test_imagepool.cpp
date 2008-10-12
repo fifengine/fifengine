@@ -83,12 +83,14 @@ TEST_FIXTURE(environment, test_image_pool)
 	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
 	CHECK_EQUAL(0, pool.getResourceCount(RES_NON_LOADED));
 
-	pool.addResourceFromLocation(ImageLocation(IMAGE_FILE));
+	ImageLocation location(IMAGE_FILE);
+	pool.addResourceFromLocation(&location);
 	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
 	CHECK_EQUAL(1, pool.getResourceCount(RES_NON_LOADED));
-	ImageLocation location(SUBIMAGE_FILE);
+
+	location = ImageLocation(SUBIMAGE_FILE);
 	ImageLoader imgprovider(vfs.get());
-	int fullImgInd = pool.addResourceFromLocation(ImageLocation(SUBIMAGE_FILE));
+	int fullImgInd = pool.addResourceFromLocation(&location);
 	CHECK_EQUAL(0, pool.getResourceCount(RES_LOADED));
 	CHECK_EQUAL(2, pool.getResourceCount(RES_NON_LOADED));
 	Image& img = pool.getImage(fullImgInd);
@@ -102,7 +104,10 @@ TEST_FIXTURE(environment, test_image_pool)
 	int h = H / 12;
 	location.setWidth(w);
 	location.setHeight(h);
-	pool.addResourceFromLocation(location);
+	CHECK(w != 0 && h !=0);
+
+	int subImgInd = pool.addResourceFromLocation(&location);
+	CHECK(fullImgInd != subImgInd);
 
 	CHECK_EQUAL(1, pool.getResourceCount(RES_LOADED));
 	CHECK_EQUAL(2, pool.getResourceCount(RES_NON_LOADED));

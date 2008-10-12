@@ -99,11 +99,12 @@ class XMLObjectLoader(fife.ResourceLoader):
 			path.pop()
 			path.append(str(source))
 
-			id = self.image_pool.addResourceFromFile('/'.join(path))
+			image_location = fife.ImageLocation('/'.join(path))
+			image_location .setXShift(int( image.get('x_offset', 0) ))
+			image_location .setYShift(int( image.get('y_offset', 0) ))
+			id = self.image_pool.addResourceFromLocation(image_location)
 			object.get2dGfxVisual().addStaticImage(int( image.get('direction', 0) ), id)
-			img = self.image_pool.getImage(id)
-			img.setXShift(int( image.get('x_offset', 0) ))
-			img.setYShift(int( image.get('y_offset', 0) ))
+			#img = self.image_pool.getImage(id)
 
 	def parse_actions(self, objelt, object):
 		for action in objelt.findall('action'):

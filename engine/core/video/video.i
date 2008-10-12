@@ -108,7 +108,7 @@ namespace FIFE {
 	class ImageLocation: public ResourceLocation {
 	public:
 		ImageLocation(const std::string& filename);
-		virtual ~ResourceLocation() {};
+		virtual ~ImageLocation() {};
 		virtual void setXShift(int xshift) { m_xshift = xshift; }
 		virtual int getXShift() const { return m_xshift; }
 		virtual void setYShift(int yshift) { m_yshift = yshift; }
