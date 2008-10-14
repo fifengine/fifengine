@@ -23,6 +23,9 @@ def _mungeText(text):
 	"""
 	return text.replace('\t'," "*4).replace('[br]','\n')
 
+def isLayouted(widget):
+	return isinstance(widget,LayoutBase)
+
 class _DummyImage(object):
 	def getWidth(self): return 0
 	def getHeight(self): return 0
@@ -221,14 +224,33 @@ class Widget(object):
 			widget = widget._parent
 		return widget._visible
 
-	def adaptLayout(self):
+	def adaptLayout(self,recurse=True):
 		"""
 		Execute the Layout engine. Automatically called by L{show}.
-		In case you want to relayout a visible widget, you have to call this function
-		on the root widget.
+		In case you want to relayout a visible widget.
+		This function will automatically perform the layout adaption
+		from the top-most layouted widget.
+
+		To make this clear consider this arrangement::
+		      VBox 1
+		      - Container
+			- VBox 2
+			  - HBox 
+			    - Label
+		
+		If you call adaptLayout on the Label the layout from the VBox 2
+		will get recalculated, while the VBox 1 stays untouched.
+
+		@param recurse Pass False here to force the layout to start from
+		this widget.
 		"""
-		self._recursiveResizeToContent()
-		self._recursiveExpandContent()
+		widget = self
+		while widget.parent and recurse:
+			if not isLayouted(widget.parent):
+				break
+			widget = widget.parent
+		widget._recursiveResizeToContent()
+		widget._recursiveExpandContent()
 
 	def beforeShow(self):
 		"""
@@ -757,6 +779,16 @@ class LayoutBase(object):
 	This class is at the core of the layout engine. The two MixIn classes L{VBoxLayoutMixin}
 	and L{HBoxLayoutMixin} specialise on this by reimplementing the C{resizeToContent} and
 	the C{expandContent} methods.
+
+	Dynamic Layouting
+	-----------------
+
+	The layout is calculated in the L{Widget.show} method. Thus if you modify the layout,
+	by adding or removing child widgets for example, you have to call L{Widget.adaptLayout}
+	so that the changes ripple through the widget hierachy.
+
+	Internals
+	---------
 
 	At the core the layout engine works in two passes:
 
