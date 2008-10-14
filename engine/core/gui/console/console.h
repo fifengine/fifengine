@@ -61,7 +61,7 @@ namespace FIFE {
 
 	/** Ingame Console
 	 */
-	class Console : public gcn::Container, public gcn::ActionListener {
+	class Console : public gcn::Container, public gcn::ActionListener, public gcn::FocusListener {
 		public:
 			/** Constructor
 			 */
@@ -138,6 +138,9 @@ namespace FIFE {
 			 */
 			void setIOFont(GuiFont* font);
 
+			/** Hide if we loose focus
+			*/
+			void focusLost(const gcn::Event& event);
 		private:
 
 			bool m_isAttached;

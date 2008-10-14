@@ -29,12 +29,11 @@
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeylistener.h"
+#include "eventchannel/key/ec_ikeyfilter.h"
 #include "eventchannel/source/ec_eventsourcetypes.h"
 #include "eventchannel/source/ec_ieventsource.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 #include "eventchannel/mouse/ec_imouselistener.h"
-#include "eventchannel/widget/ec_widgetevent.h"
-#include "eventchannel/widget/ec_iwidgetlistener.h"
 #include "eventchannel/eventmanager.h"
 %}
 
@@ -168,19 +167,11 @@ namespace FIFE {
 		virtual ~IMouseListener();
 	};
 
-	class WidgetEvent: public Event {
+	%feature("director") IKeyFilter;
+	class IKeyFilter {
 	public:
-		virtual const std::string& getId();
-		virtual ~WidgetEvent();
-	private:
-		WidgetEvent();
-	};
-
-	%feature("director") IWidgetListener;
-	class IWidgetListener {
-	public:
-		virtual void onWidgetAction(WidgetEvent& evt) = 0;
-		virtual ~IWidgetListener();
+		virtual bool isFiltered(const KeyEvent& evt) = 0;
+		virtual ~IKeyFilter();
 	};
 
 	class EventManager {
@@ -193,11 +184,8 @@ namespace FIFE {
 		void removeKeyListener(IKeyListener* listener);
 		void addMouseListener(IMouseListener* listener);
 		void removeMouseListener(IMouseListener* listener);
-		void addWidgetListener(IWidgetListener* listener);
-		void removeWidgetListener(IWidgetListener* listener);
 		EventSourceType getEventSourceType();
 		void dispatchCommand(Command& command);
-		void setNonConsumableKeys(const std::vector<int>& keys);
-		std::vector<int> getNonConsumableKeys();
+		void setKeyFilter(IKeyFilter* keyFilter);
 	};
 };

@@ -19,63 +19,25 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_WIDGETEVENT_H
-#define FIFE_EVENTCHANNEL_WIDGETEVENT_H
-
 // Standard C++ library includes
-//
+#include <iostream>
 
 // 3rd party library includes
-//
+
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
-#include "eventchannel/base/ec_event.h"
+
+#include "guilistener.h"
+
 
 namespace FIFE {
-	/**  Interface for widget events
-	 * Events are sent by different UI widgets
-	 */
-	class WidgetEvent: public Event {
-	public:
-		/** Constructor.
-		 */
-		WidgetEvent(): 
-			Event(),
-			m_id("") {}
 
-		/** Destructor.
-		 */
-		~WidgetEvent() {}
+	GUIEventListener::GUIEventListener() {
+	}
 
-		/**
-		 * Gets the id of the event.
-		 * @return the id of the event.
-		 */
-		const std::string& getId() const { return m_id; }
-		void setId(const std::string& id) { m_id = id; }
-
-		virtual void consume() { Event::consume(); }
-		virtual bool isConsumed() const { return Event::isConsumed(); }
-		virtual IEventSource* getSource() { return Event::getSource(); }
-		virtual void setSource(IEventSource* source) { Event::setSource(source); }
-		virtual gcn::Widget* getSourceWidget() { return Event::getSourceWidget(); }
-		virtual void setSourceWidget(gcn::Widget* widget) { Event::setSourceWidget(widget); }
-		virtual int getTimeStamp() const { return Event::getTimeStamp(); }
-		virtual void setTimeStamp(int timestamp ) { Event::setTimeStamp(timestamp); }
-		virtual const std::string& getName() const {
-			const static std::string eventName("WidgetEvent");
-			return eventName;
-		}
-		virtual std::string getDebugString() const { return Event::getDebugString(); }
-
-	private:
-		std::string m_id;
-	};
-
-} //FIFE
-
-#endif
+	GUIEventListener::~GUIEventListener() {
+	}
+}

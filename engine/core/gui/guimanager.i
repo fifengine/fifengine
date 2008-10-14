@@ -27,25 +27,23 @@
 
 namespace gcn {
 	class Widget;
-	class ActionEvent;
-	class ActionListener {
-	public:
-		virtual void action(const ActionEvent& actionEvent) = 0;
-	};
 }
 namespace FIFE {
 	class Console;
 	
 	%feature("notabstract") GUIManager;
-	class GUIManager: public gcn::ActionListener {
+	class GUIManager {
 	public:
 		Console* getConsole();
 		void add(gcn::Widget* widget);
 		void remove(gcn::Widget* widget);
 		GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
 		void releaseFont(GuiFont* font);
+
+		KeyEvent translateKeyEvent(const gcn::KeyEvent& evt);
+		MouseEvent translateMouseEvent(const gcn::MouseEvent& evt);
 		
 	private:
-		GUIManager(IWidgetListener* widgetListener);
+		GUIManager();
 	};
 }

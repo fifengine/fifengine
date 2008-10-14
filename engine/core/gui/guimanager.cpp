@@ -32,6 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "video/renderbackend.h"
 #include "gui/base/gui_imageloader.h"
@@ -40,7 +41,6 @@
 #include "video/fonts/fontbase.h"
 #include "video/fonts/truetypefont.h"
 #include "video/fonts/subimagefont.h"
-#include "eventchannel/widget/ec_widgetevent.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 
@@ -50,24 +50,26 @@
 namespace FIFE {
 	static Logger _log(LM_GUI);
 
-	GUIManager::GUIManager(IWidgetListener* widgetlistener, ImagePool& pool) : 
+	GUIManager::GUIManager(ImagePool& pool) :
 		m_gcn_gui(new gcn::Gui()), 
 		m_focushandler(0),
-        	m_gcn_topcontainer(new gcn::Container()), 
-        	m_imgloader(new GuiImageLoader(pool)) , 
-        	m_input(new gcn::SDLInput()),
-        	m_console(0),
-        	m_fonts(),
-		m_widgetlistener(widgetlistener),
+		m_gcn_topcontainer(new gcn::Container()),
+		m_imgloader(new GuiImageLoader(pool)) ,
+		m_input(new gcn::SDLInput()),
+		m_console(0),
+		m_fonts(),
 		m_pool(pool),
 		m_logic_executed(false) {
-		
-		m_gcn_gui->setTop(m_gcn_topcontainer);
-		m_gcn_topcontainer->setOpaque(false);
-		m_gcn_gui->setInput(m_input);
 
+		m_gcn_gui->setInput(m_input);
 		gcn::Image::setImageLoader(m_imgloader);
+
+		m_gcn_gui->setTop(m_gcn_topcontainer);
 		m_focushandler = m_gcn_topcontainer->_getFocusHandler();
+
+		m_gcn_topcontainer->setOpaque(false);
+		m_gcn_topcontainer->setFocusable(false);
+		m_had_mouse = false;
 	}
 
 	GUIManager::~GUIManager() {
@@ -83,13 +85,54 @@ namespace FIFE {
 		}
 	}
 
-	void GUIManager::onSdlEvent(SDL_Event& evt) {
+	bool GUIManager::onSdlEvent(SDL_Event& evt) {
 		gcn::SDLInput *input = dynamic_cast<gcn::SDLInput*>(m_gcn_gui->getInput());
 		if (!input) {
 			FL_WARN(_log, "GUIManager, GuichanGUI->getInput == 0 ... discarding events!");
-			return;
+			return false;
 		}
-		input->pushInput(evt);
+
+		switch(evt.type) {
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				if( m_gcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) ) {
+					input->pushInput(evt);
+					return true;
+				}
+				m_focushandler->focusNone();
+				return false;
+
+			case SDL_MOUSEMOTION:
+				if( m_gcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) ) {
+					m_had_mouse = true;
+					input->pushInput(evt);
+					return true;
+				}
+				if( m_had_mouse ) {
+					m_had_mouse = false;
+					input->pushInput(evt);
+					return true;
+				}
+				return false;
+
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+				if(m_focushandler->getFocused()) {
+					input->pushInput(evt);
+					return true;
+				}
+				return false;
+
+			case SDL_ACTIVEEVENT:
+				if( evt.active.state & SDL_APPMOUSEFOCUS ) {
+					input->pushInput(evt);
+					return true;
+				}
+				return false;
+
+			default:
+				return false;
+		}
 	}
 
 	void GUIManager::resizeTopContainer(unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
@@ -176,56 +219,85 @@ namespace FIFE {
 	}
 
 	void GUIManager::turn() {
-		if (!m_logic_executed) {
-			// Due to a BUG in Guichan we need to catch GCN exceptions
-			// This is a potentially dangerous workaround put in place
-			// until we upgrade to Guichan 0.8.0
-			// See here: http://code.google.com/p/guichan/issues/detail?id=24
-			try {
-				m_gcn_gui->logic();
-			} catch( const gcn::Exception& e) {
-				FL_WARN(_log, LMsg("GUIManager, discarding gcn::Exception: ") << e.getMessage());
-			}
-		}
-		m_gcn_gui->draw();
-		m_logic_executed = false;
-	}
-
-	void GUIManager::action(const gcn::ActionEvent & event) {
-		WidgetEvent wevt;
-		wevt.setId(event.getId());
-		wevt.setSourceWidget(event.getSource());
-		m_widgetlistener->onWidgetAction(wevt);
-	}
-
-	void GUIManager::evaluateKeyEventConsumption(KeyEvent& evt) {
-		gcn::Widget* w = m_focushandler->getFocused();
-		if (w) {
-			evt.consumedByWidgets();
-		}
-	}
-
-	void GUIManager::evaluateMouseEventConsumption(MouseEvent& evt) {
-		gcn::Widget* w = m_gcn_topcontainer->getWidgetAt(evt.getX(), evt.getY());
-		if (w && w->isVisible()) {
-			evt.consumedByWidgets();
-		}
-	}
-
-	void GUIManager::mousePressed(MouseEvent& evt) {
- 		evaluateMouseEventConsumption(evt);
-		if (!evt.isConsumedByWidgets()) {
-			m_focushandler->focusNone();
-		}
-	}
-	
-	void GUIManager::mouseDragged(MouseEvent& evt) {
-		try {
+		if (!m_logic_executed)
 			m_gcn_gui->logic();
-			m_logic_executed = true;
-		} catch( const gcn::Exception& e) {
-			FL_WARN(_log, LMsg("GUIManager, discarding gcn::Exception: ") << e.getMessage());
-		}
-		evaluateMouseEventConsumption(evt);
+		m_logic_executed = false;
+		m_gcn_gui->draw();
 	}
+
+	KeyEvent GUIManager::translateKeyEvent(const gcn::KeyEvent& gcnevt) {
+		KeyEvent keyevt;
+		if(gcnevt.getType() == gcn::KeyEvent::PRESSED)
+			keyevt.setType(KeyEvent::PRESSED);
+		else if(gcnevt.getType() == gcn::KeyEvent::RELEASED)
+			keyevt.setType(KeyEvent::RELEASED);
+		else
+			throw EventException("Invalid event type in fillKeyEvent");
+		keyevt.setShiftPressed(gcnevt.isShiftPressed());
+		keyevt.setControlPressed(gcnevt.isControlPressed());
+		keyevt.setAltPressed(gcnevt.isAltPressed());
+		keyevt.setMetaPressed(gcnevt.isMetaPressed());
+		keyevt.setNumericPad(gcnevt.isNumericPad());
+		keyevt.setKey(Key(static_cast<Key::KeyType>(gcnevt.getKey().getValue()), gcnevt.getKey().getValue()));
+		return keyevt;
+	}
+
+	MouseEvent GUIManager::translateMouseEvent(const gcn::MouseEvent& gcnevt) {
+		MouseEvent mouseevt;
+		mouseevt.setShiftPressed(gcnevt.isShiftPressed());
+		mouseevt.setControlPressed(gcnevt.isControlPressed());
+		mouseevt.setAltPressed(gcnevt.isAltPressed());
+		mouseevt.setMetaPressed(gcnevt.isMetaPressed());
+		mouseevt.setX(gcnevt.getX());
+		mouseevt.setY(gcnevt.getY());
+
+		switch(gcnevt.getType()) {
+			case gcn::MouseEvent::PRESSED:
+				mouseevt.setType(MouseEvent::PRESSED);
+				break;
+			case gcn::MouseEvent::RELEASED:
+				mouseevt.setType(MouseEvent::RELEASED);
+				break;
+			case gcn::MouseEvent::MOVED:
+				mouseevt.setType(MouseEvent::MOVED);
+				break;
+			case gcn::MouseEvent::CLICKED:
+				mouseevt.setType(MouseEvent::CLICKED);
+				break;
+			case gcn::MouseEvent::ENTERED:
+				mouseevt.setType(MouseEvent::ENTERED);
+				break;
+			case gcn::MouseEvent::EXITED:
+				mouseevt.setType(MouseEvent::EXITED);
+				break;
+			case gcn::MouseEvent::DRAGGED:
+				mouseevt.setType(MouseEvent::DRAGGED);
+				break;
+			case gcn::MouseEvent::WHEEL_MOVED_DOWN:
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
+				break;
+			case gcn::MouseEvent::WHEEL_MOVED_UP:
+				mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
+				break;
+			default:
+				mouseevt.setType(MouseEvent::UNKNOWN_EVENT);
+		}
+
+		switch(gcnevt.getButton()) {
+			case gcn::MouseInput::LEFT:
+				mouseevt.setButton(MouseEvent::LEFT);
+				break;
+			case gcn::MouseInput::RIGHT:
+				mouseevt.setButton(MouseEvent::RIGHT);
+				break;
+			case gcn::MouseInput::MIDDLE:
+				mouseevt.setButton(MouseEvent::MIDDLE);
+				break;
+			default:
+				mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);
+				break;
+		}
+		return mouseevt;
+	}
+
 }

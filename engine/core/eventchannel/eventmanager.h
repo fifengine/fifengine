@@ -52,10 +52,6 @@
 #include "eventchannel/sdl/ec_isdleventcontroller.h"
 #include "eventchannel/sdl/ec_isdleventlistener.h"
 
-#include "eventchannel/widget/ec_iwidgetcontroller.h"
-#include "eventchannel/widget/ec_iwidgetlistener.h"
-#include "eventchannel/widget/ec_widgetevent.h"
-
 #include "eventchannel/trigger/ec_itriggercontroller.h"
 
 namespace FIFE {
@@ -64,6 +60,7 @@ namespace FIFE {
 	class InputEvent;
 	class MouseEvent;
 	class KeyEvent;
+	class IKeyFilter;
 
 	/**  Event Manager manages all events related to FIFE
 	 */
@@ -72,9 +69,7 @@ namespace FIFE {
 		public IKeyController, 
 		public IMouseController, 
 		public ISdlEventController, 
-		public IWidgetController,
 		public IEventSource,
-		public IWidgetListener,
 		public ITriggerController {
 	public:
 		/** Constructor.
@@ -94,13 +89,7 @@ namespace FIFE {
 		void removeMouseListener(IMouseListener* listener);
 		void addSdlEventListener(ISdlEventListener* listener);
 		void removeSdlEventListener(ISdlEventListener* listener);
-		void addWidgetListener(IWidgetListener* listener);
-		void removeWidgetListener(IWidgetListener* listener);
 		EventSourceType getEventSourceType();
-		void setNonConsumableKeys(const std::vector<int>& keys);
-		std::vector<int> getNonConsumableKeys();
-
-		void onWidgetAction(WidgetEvent& evt);
 
 		void registerTrigger(Trigger& trigger);
 		void unregisterTrigger(Trigger& trigger);
@@ -111,15 +100,25 @@ namespace FIFE {
 		 */
 		void processEvents();
 
+		void setKeyFilter(IKeyFilter* keyFilter);
+
 	private:
+		// Helpers for processEvents
+		void processActiveEvent(SDL_Event event);
+		void processKeyEvent(SDL_Event event);
+		void processMouseEvent(SDL_Event event);
 		bool combineEvents(SDL_Event& event1, const SDL_Event& event2);
+
+		// Events dispatchers - only dispatchSdlevent may reject the event.
+		bool dispatchSdlEvent(SDL_Event& evt);
 		void dispatchKeyEvent(KeyEvent& evt);
 		void dispatchMouseEvent(MouseEvent& evt);
-		void dispatchSdlEvent(SDL_Event& evt);
-		void dispatchWidgetEvent(WidgetEvent& evt);
+
+		// Translate events
 		void fillModifiers(InputEvent& evt);
 		void fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt);
 		void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt);
+
 		void pollTriggers();
 		
 		std::vector<ICommandListener*> m_commandlisteners;
@@ -138,12 +137,8 @@ namespace FIFE {
 		std::vector<ISdlEventListener*> m_pending_sdleventlisteners;
 		std::vector<ISdlEventListener*> m_pending_sdldeletions;
 
-		std::vector<IWidgetListener*> m_widgetlisteners;
-		std::vector<IWidgetListener*> m_pending_widgetlisteners;
-		std::vector<IWidgetListener*> m_pending_wldeletions;
-
-		std::vector<int> m_nonconsumablekeys;
 		std::map<int, bool> m_keystatemap;
+		IKeyFilter* m_keyfilter;
 		int m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
 

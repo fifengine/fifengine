@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_IWIDGETLISTENER_H
-#define FIFE_EVENTCHANNEL_IWIDGETLISTENER_H
+#ifndef FIFE_EVENTCHANNEL_IKEYFILTER_H
+#define FIFE_EVENTCHANNEL_IKEYFILTER_H
 
 // Standard C++ library includes
 //
@@ -33,26 +33,23 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
+#include "ec_keyevent.h"
 
 namespace FIFE {
-	class WidgetEvent;
-
-	/**  Listener of widget events.
-	 * To be able to listen for widget events you must make a class which inherits 
-	 * from this class and implements its functions.
+	/**  Controller provides a way to receive events from the system
+	 * Using this interface, clients can subscribe themselves to receive events
 	 */
-	class IWidgetListener {
+	class IKeyFilter {
 	public:
-		/**
-		 * Called when an action is recieved from a Widget. It is used
-		 * to be able to recieve a notification that an action has
-		 * occured.
-		 * @param evy the event of the action.
-		 */
-		virtual void onWidgetAction(WidgetEvent& evt) = 0;
 
-		virtual ~IWidgetListener() {}
+		/** Check whether a keyevent should be filtered out.
+		 * @param event They key event.
+		 */
+		virtual bool isFiltered(const KeyEvent& event) = 0;
+
+		virtual ~IKeyFilter() {}
 	};
+
 } //FIFE
 
 #endif

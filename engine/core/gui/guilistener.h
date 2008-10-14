@@ -19,38 +19,30 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_ISDLEVENTLISTENER_H
-#define FIFE_EVENTCHANNEL_ISDLEVENTLISTENER_H
+#ifndef FIFE_VIDEO_GUI_GUILISTENER_H
+#define FIFE_VIDEO_GUI_GUILISTENER_H
 
 // Standard C++ library includes
-//
+#include <set>
 
 // 3rd party library includes
-//
+#include <guichan.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-//
-
-union SDL_Event;
 
 namespace FIFE {
-	/**  Listener of SDL events.
-	 * To be able to listen for commands you must make a class which inherits 
-	 * from this class and implements the onSdlEvent function.
-	 */
-	class ISdlEventListener {
-	public:
-		/** Called when an SDL event is received from SDL
-		 * @param evt SDL event
-		 */
-		virtual bool onSdlEvent(SDL_Event& evt) = 0;
 
-		virtual ~ISdlEventListener() {}
+	class GUIEventListener 
+		: public gcn::MouseListener, public gcn::KeyListener, public gcn::ActionListener {
+	public:
+		GUIEventListener();
+		virtual ~GUIEventListener();
+		virtual void action(const gcn::ActionEvent& actionEvent) {};
 	};
 
-} //FIFE
+}
 
 #endif

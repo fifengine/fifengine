@@ -34,9 +34,8 @@
 // Second block: files included from the same folder
 #include "util/base/singleton.h"
 #include "eventchannel/sdl/ec_isdleventlistener.h"
-#include "eventchannel/mouse/ec_imouselistener.h"
-#include "eventchannel/key/ec_ikeylistener.h"
-#include "eventchannel/widget/ec_iwidgetlistener.h"
+// #include "eventchannel/mouse/ec_imouselistener.h"
+// #include "eventchannel/key/ec_ikeylistener.h"
 
 namespace gcn {
 
@@ -65,15 +64,12 @@ namespace FIFE {
 	 */
 	class GUIManager : 
 		public DynamicSingleton<GUIManager>, 
-		public ISdlEventListener,
-		public IKeyListener,
-		public IMouseListener,
-		public gcn::ActionListener
+		public ISdlEventListener
 		 {
 		public:
 			/** Constructor.
 			 */
-			GUIManager(IWidgetListener* widgetListener, ImagePool& pool);
+			GUIManager(ImagePool& pool);
 			/** Destructor.
 			 */
 			virtual ~GUIManager();
@@ -140,27 +136,12 @@ namespace FIFE {
 			 */
 			void releaseFont(GuiFont* font);
 
-			/** Callback from guichan
-			 */
-			void action(const gcn::ActionEvent & event);
+			bool onSdlEvent(SDL_Event& evt);
 
-			void onSdlEvent(SDL_Event& evt);
-			void keyPressed(KeyEvent& evt) { evaluateKeyEventConsumption(evt); }
-			void keyReleased(KeyEvent& evt) { evaluateKeyEventConsumption(evt); }
-			void mouseEntered(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseExited(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mousePressed(MouseEvent& evt);
-			void mouseReleased(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseClicked(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseWheelMovedUp(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseWheelMovedDown(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseMoved(MouseEvent& evt) { evaluateMouseEventConsumption(evt); }
-			void mouseDragged(MouseEvent& evt);
+			KeyEvent translateKeyEvent(const gcn::KeyEvent& evt);
+			MouseEvent translateMouseEvent(const gcn::MouseEvent& evt);
 
 		private:
-			void evaluateKeyEventConsumption(KeyEvent& evt);
-			void evaluateMouseEventConsumption(MouseEvent& evt);
-
 			// The Guichan GUI.
 			gcn::Gui* m_gcn_gui;
 			// Focus handler for input management
@@ -178,8 +159,9 @@ namespace FIFE {
 			// Added widgets
 			std::set<gcn::Widget*> m_widgets;
 
-			// instance whom to deliver widget events coming from guichan
-			IWidgetListener* m_widgetlistener;
+			// Used to accept mouse motion events that leave widget space
+			bool m_had_mouse;
+
 			// pool used for images
 			ImagePool& m_pool;
 

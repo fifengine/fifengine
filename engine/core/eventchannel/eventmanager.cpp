@@ -31,8 +31,8 @@
 #include "util/base/exception.h"
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
+#include "eventchannel/key/ec_ikeyfilter.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
-#include "eventchannel/widget/ec_widgetevent.h"
 #include "eventchannel/command/ec_command.h"
 #include "eventchannel/trigger/ec_trigger.h"
 
@@ -45,81 +45,14 @@ namespace FIFE {
 		m_keylisteners(),
 		m_mouselisteners(),
 		m_sdleventlisteners(),
-		m_widgetlisteners(),
-		m_pending_widgetlisteners(),
-		m_nonconsumablekeys(),
 		m_keystatemap(),
+		m_keyfilter(0),
 		m_mousestate(0),
 		m_mostrecentbtn(MouseEvent::EMPTY)
  	{
 	}
 
 	EventManager::~EventManager() {
-	}
-
-	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
-		mouseevt.setX(sdlevt.button.x);
-		mouseevt.setY(sdlevt.button.y);
-		mouseevt.setButton(MouseEvent::EMPTY);
-		mouseevt.setType(MouseEvent::MOVED);
-		if ((sdlevt.type == SDL_MOUSEBUTTONUP) || (sdlevt.type == SDL_MOUSEBUTTONDOWN)) {
-			switch (sdlevt.button.button) {
-				case SDL_BUTTON_LEFT:
-					mouseevt.setButton(MouseEvent::LEFT);
-					break;
-				case SDL_BUTTON_RIGHT:
-					mouseevt.setButton(MouseEvent::RIGHT);
-					break;
-				case SDL_BUTTON_MIDDLE:
-					mouseevt.setButton(MouseEvent::MIDDLE);
-					break;
-				default:
-					mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);
-					break;
-			}
-
-
-			if (sdlevt.type == SDL_MOUSEBUTTONUP ) {
-
-				mouseevt.setType(MouseEvent::RELEASED);
-
-			} else {
-				mouseevt.setType(MouseEvent::PRESSED);
-			}
-
-			switch (sdlevt.button.button) {
-				case SDL_BUTTON_WHEELDOWN:
-					mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
-					break;
-				case SDL_BUTTON_WHEELUP:
-					mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
-					break;
-				default:
-					break;
-			}
-		}
-		if ((mouseevt.getType() == MouseEvent::MOVED) && m_mousestate) {
-			mouseevt.setType(MouseEvent::DRAGGED);
-			mouseevt.setButton(m_mostrecentbtn);
-		}
-	}
-
-	void EventManager::fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt) {
-		if (sdlevt.type == SDL_KEYDOWN) {
-			keyevt.setType(KeyEvent::PRESSED);
-		} else if (sdlevt.type == SDL_KEYUP) {
-			keyevt.setType(KeyEvent::RELEASED);
-		} else {
-			throw EventException("Invalid event type in fillKeyEvent");
-		}
-		SDL_keysym keysym = sdlevt.key.keysym;
-
-		keyevt.setShiftPressed(keysym.mod & KMOD_SHIFT);
-		keyevt.setControlPressed(keysym.mod & KMOD_CTRL);
-		keyevt.setAltPressed(keysym.mod & KMOD_ALT);
-		keyevt.setMetaPressed(keysym.mod & KMOD_META);
-		keyevt.setNumericPad(keysym.sym >= SDLK_KP0 && keysym.sym <= SDLK_KP_EQUALS);
-		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym), keysym.unicode));
 	}
 
 	template<typename T>
@@ -164,14 +97,6 @@ namespace FIFE {
 		removeListener<ISdlEventListener*>(m_pending_sdldeletions, listener);
 	}
 
-	void EventManager::addWidgetListener(IWidgetListener* listener) {
-		addListener<IWidgetListener*>(m_pending_widgetlisteners, listener);
-	}
-
-	void EventManager::removeWidgetListener(IWidgetListener* listener) {
-		removeListener<IWidgetListener*>(m_pending_wldeletions, listener);
-	}
-
 	void EventManager::dispatchCommand(Command& command) {
 		if(!m_pending_commandlisteners.empty()) {
 			std::vector<ICommandListener*>::iterator i = m_pending_commandlisteners.begin();
@@ -209,15 +134,6 @@ namespace FIFE {
 	}
 
 	void EventManager::dispatchKeyEvent(KeyEvent& evt) {
-		bool nonconsumablekey = false;
-		for (std::vector<int>::iterator it = m_nonconsumablekeys.begin();
-		     it != m_nonconsumablekeys.end(); ++it) {
-			if (*it == evt.getKey().getValue()) {
-				nonconsumablekey = true;
-				break;
-			}
-		}
-
 		if(!m_pending_keylisteners.empty()) {
 			std::vector<IKeyListener*>::iterator i = m_pending_keylisteners.begin();
 			while (i != m_pending_keylisteners.end()) {
@@ -255,23 +171,8 @@ namespace FIFE {
 				default:
 					break;
 			}
-			if ((!nonconsumablekey) && (evt.isConsumed())) {
-				break;
-			}
 			++i;
 		}
-	}
-
-	void EventManager::fillModifiers(InputEvent& evt) {
-		evt.setAltPressed(m_keystatemap[Key::ALT_GR] |
-						m_keystatemap[Key::LEFT_ALT] |
-						m_keystatemap[Key::RIGHT_ALT]);
-		evt.setControlPressed(m_keystatemap[Key::LEFT_CONTROL] |
-							m_keystatemap[Key::RIGHT_CONTROL]);
-		evt.setMetaPressed(m_keystatemap[Key::LEFT_META] |
-							m_keystatemap[Key::RIGHT_META]);
-		evt.setShiftPressed(m_keystatemap[Key::LEFT_SHIFT] |
-							m_keystatemap[Key::RIGHT_SHIFT]);
 	}
 
 	void EventManager::dispatchMouseEvent(MouseEvent& evt) {
@@ -340,7 +241,8 @@ namespace FIFE {
 		}
 	}
 
-	void EventManager::dispatchSdlEvent(SDL_Event& evt) {
+	bool EventManager::dispatchSdlEvent(SDL_Event& evt) {
+		bool ret = false;
 		if (!m_pending_sdleventlisteners.empty()) {
 			std::vector<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners.begin();
 			while(i != m_pending_sdleventlisteners.end()) {
@@ -368,49 +270,10 @@ namespace FIFE {
 
 		std::vector<ISdlEventListener*>::iterator i = m_sdleventlisteners.begin();
 		while (i != m_sdleventlisteners.end()) {
-			(*i)->onSdlEvent(evt);
+			ret = ret || (*i)->onSdlEvent(evt);
 			++i;
 		}
-	}
-
-	void EventManager::dispatchWidgetEvent(WidgetEvent& evt) {
-		if(!m_pending_widgetlisteners.empty()) {
-			std::vector<IWidgetListener*>::iterator i = m_pending_widgetlisteners.begin();
-			while (i != m_pending_widgetlisteners.end()) {
-				m_widgetlisteners.push_back(*i);
-				++i;
-			}
-			m_pending_widgetlisteners.clear();
-		}
-
-		if (!m_pending_wldeletions.empty()) {
-			std::vector<IWidgetListener*>::iterator i = m_pending_wldeletions.begin();
-			while (i != m_pending_wldeletions.end()) {
-				std::vector<IWidgetListener*>::iterator j = m_widgetlisteners.begin();
-				while (j != m_widgetlisteners.end()) {
-					if(*j == *i) {
-						m_widgetlisteners.erase(j);
-						break;
-					}
-					++j;
-				}
-				++i;
-			}
-			m_pending_wldeletions.clear();
-		}
-
-		std::vector<IWidgetListener*>::iterator i = m_widgetlisteners.begin();
-		while (i != m_widgetlisteners.end()) {
-			(*i)->onWidgetAction(evt);
-			if (evt.isConsumed()) {
-				break;
-			}
-			++i;
-		}
-	}
-
-	void EventManager::onWidgetAction(WidgetEvent& evt) {
-		dispatchWidgetEvent(evt);
+		return ret;
 	}
 
 	bool EventManager::combineEvents(SDL_Event& event1, const SDL_Event& event2) {
@@ -430,14 +293,16 @@ namespace FIFE {
 		return false;
 	}
 
-	void EventManager::processEvents(){
-		SDL_Event event, newevent;
-		bool has_event = SDL_PollEvent(&event);
-		while (has_event) {
-			has_event = SDL_PollEvent(&newevent);
-			if(has_event && combineEvents(event, newevent))
+	void EventManager::processEvents() {
+		// The double SDL_PollEvent calls don't throw away events,
+		// but try to combine (mouse motion) events.
+		SDL_Event event, next_event;
+		bool has_next_event = SDL_PollEvent(&event);
+		while (has_next_event) {
+			has_next_event = SDL_PollEvent(&next_event);
+			if(has_next_event && combineEvents(event, next_event))
 				continue;
-			dispatchSdlEvent(event);
+
 			switch (event.type) {
 				case SDL_QUIT: {
 					Command cmd;
@@ -446,83 +311,178 @@ namespace FIFE {
 					dispatchCommand(cmd);
 					}
 					break;
-				case SDL_ACTIVEEVENT: {
-					Command cmd;
-					cmd.setSource(this);
-					SDL_ActiveEvent actevt = event.active;
-					if (actevt.state == SDL_APPMOUSEFOCUS)
-					{
-						if (actevt.gain)
-							cmd.setCommandType(CMD_MOUSE_FOCUS_GAINED);
-						else
-							cmd.setCommandType(CMD_MOUSE_FOCUS_LOST);
-					}
-					else if (actevt.state == SDL_APPINPUTFOCUS)
-					{
-						if (actevt.gain)
-							cmd.setCommandType(CMD_INPUT_FOCUS_GAINED);
-						else
-							cmd.setCommandType(CMD_INPUT_FOCUS_LOST);
-					}
-					else if (actevt.state == SDL_APPACTIVE)
-					{
-						if (actevt.gain)
-							cmd.setCommandType(CMD_APP_RESTORED);
-						else
-							cmd.setCommandType(CMD_APP_ICONIFIED);
-					}
-					dispatchCommand(cmd);
-					}
+
+				case SDL_ACTIVEEVENT:
+					processActiveEvent(event);
 					break;
+
 				case SDL_KEYDOWN:
-				case SDL_KEYUP: {
-					KeyEvent keyevt;
-					keyevt.setSource(this);
-					fillKeyEvent(event, keyevt);
-					m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == KeyEvent::PRESSED);
-					dispatchKeyEvent(keyevt);
-					}
+				case SDL_KEYUP:
+					processKeyEvent(event);
 					break;
+
 				case SDL_MOUSEBUTTONUP:
 				case SDL_MOUSEMOTION:
-				case SDL_MOUSEBUTTONDOWN: {
-					MouseEvent mouseevt;
-					mouseevt.setSource(this);
-					fillMouseEvent(event, mouseevt);
-					fillModifiers(mouseevt);
-					if (event.type == SDL_MOUSEBUTTONDOWN) {
-						m_mousestate |= static_cast<int>(mouseevt.getButton());
-						m_mostrecentbtn = mouseevt.getButton();
-					} else if (event.type == SDL_MOUSEBUTTONUP) {
-						m_mousestate &= ~static_cast<int>(mouseevt.getButton());
-					}
-					// fire scrollwheel events only once
-					if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
-						if (event.type == SDL_MOUSEBUTTONUP) {
-							break;
-						}
-					}
-					dispatchMouseEvent(mouseevt);
-					}
+				case SDL_MOUSEBUTTONDOWN:
+					processMouseEvent(event);
 					break;
 			}
-			if(has_event)
-				event = newevent;
+			if(has_next_event)
+				event = next_event;
+		}
+		pollTriggers();
+	}
+
+	void EventManager::processActiveEvent(SDL_Event event) {
+		if(dispatchSdlEvent(event))
+			return;
+
+		Command cmd;
+		cmd.setSource(this);
+		SDL_ActiveEvent actevt = event.active;
+		if (actevt.state == SDL_APPMOUSEFOCUS)
+		{
+			if (actevt.gain)
+				cmd.setCommandType(CMD_MOUSE_FOCUS_GAINED);
+			else
+				cmd.setCommandType(CMD_MOUSE_FOCUS_LOST);
+		}
+		else if (actevt.state == SDL_APPINPUTFOCUS)
+		{
+			if (actevt.gain)
+				cmd.setCommandType(CMD_INPUT_FOCUS_GAINED);
+			else
+				cmd.setCommandType(CMD_INPUT_FOCUS_LOST);
+		}
+		else if (actevt.state == SDL_APPACTIVE)
+		{
+			if (actevt.gain)
+				cmd.setCommandType(CMD_APP_RESTORED);
+			else
+				cmd.setCommandType(CMD_APP_ICONIFIED);
+		}
+		dispatchCommand(cmd);
+	}
+
+	void EventManager::processKeyEvent(SDL_Event event) {
+		KeyEvent keyevt;
+		keyevt.setSource(this);
+		fillKeyEvent(event, keyevt);
+		m_keystatemap[keyevt.getKey().getValue()] = (keyevt.getType() == KeyEvent::PRESSED);
+
+		bool dispatchAsSdl = !keyevt.getKey().isFunctionKey();
+		if( dispatchAsSdl && m_keyfilter ) {
+			dispatchAsSdl = !m_keyfilter->isFiltered(keyevt);
 		}
 
-		pollTriggers();
+		if( dispatchAsSdl ) {
+			if( dispatchSdlEvent(event) )
+				return;
+		}
+
+		dispatchKeyEvent(keyevt);
+	}
+
+	void EventManager::processMouseEvent(SDL_Event event) {
+		if(dispatchSdlEvent(event))
+			return;
+
+		MouseEvent mouseevt;
+		mouseevt.setSource(this);
+		fillMouseEvent(event, mouseevt);
+		fillModifiers(mouseevt);
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			m_mousestate |= static_cast<int>(mouseevt.getButton());
+			m_mostrecentbtn = mouseevt.getButton();
+		} else if (event.type == SDL_MOUSEBUTTONUP) {
+			m_mousestate &= ~static_cast<int>(mouseevt.getButton());
+		}
+		// fire scrollwheel events only once
+		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
+			if (event.type == SDL_MOUSEBUTTONUP) {
+				return;
+			}
+		}
+		dispatchMouseEvent(mouseevt);
+	}
+
+
+	void EventManager::fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt) {
+		mouseevt.setX(sdlevt.button.x);
+		mouseevt.setY(sdlevt.button.y);
+		mouseevt.setButton(MouseEvent::EMPTY);
+		mouseevt.setType(MouseEvent::MOVED);
+		if ((sdlevt.type == SDL_MOUSEBUTTONUP) || (sdlevt.type == SDL_MOUSEBUTTONDOWN)) {
+			switch (sdlevt.button.button) {
+				case SDL_BUTTON_LEFT:
+					mouseevt.setButton(MouseEvent::LEFT);
+					break;
+				case SDL_BUTTON_RIGHT:
+					mouseevt.setButton(MouseEvent::RIGHT);
+					break;
+				case SDL_BUTTON_MIDDLE:
+					mouseevt.setButton(MouseEvent::MIDDLE);
+					break;
+				default:
+					mouseevt.setButton(MouseEvent::UNKNOWN_BUTTON);
+					break;
+			}
+
+			if (sdlevt.type == SDL_MOUSEBUTTONUP ) {
+				mouseevt.setType(MouseEvent::RELEASED);
+			} else {
+				mouseevt.setType(MouseEvent::PRESSED);
+			}
+
+			switch (sdlevt.button.button) {
+				case SDL_BUTTON_WHEELDOWN:
+					mouseevt.setType(MouseEvent::WHEEL_MOVED_DOWN);
+					break;
+				case SDL_BUTTON_WHEELUP:
+					mouseevt.setType(MouseEvent::WHEEL_MOVED_UP);
+					break;
+				default:
+					break;
+			}
+		}
+		if ((mouseevt.getType() == MouseEvent::MOVED) && m_mousestate) {
+			mouseevt.setType(MouseEvent::DRAGGED);
+			mouseevt.setButton(m_mostrecentbtn);
+		}
+	}
+
+	void EventManager::fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt) {
+		if (sdlevt.type == SDL_KEYDOWN) {
+			keyevt.setType(KeyEvent::PRESSED);
+		} else if (sdlevt.type == SDL_KEYUP) {
+			keyevt.setType(KeyEvent::RELEASED);
+		} else {
+			throw EventException("Invalid event type in fillKeyEvent");
+		}
+		SDL_keysym keysym = sdlevt.key.keysym;
+
+		keyevt.setShiftPressed(keysym.mod & KMOD_SHIFT);
+		keyevt.setControlPressed(keysym.mod & KMOD_CTRL);
+		keyevt.setAltPressed(keysym.mod & KMOD_ALT);
+		keyevt.setMetaPressed(keysym.mod & KMOD_META);
+		keyevt.setNumericPad(keysym.sym >= SDLK_KP0 && keysym.sym <= SDLK_KP_EQUALS);
+		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym), keysym.unicode));
+	}
+	
+	void EventManager::fillModifiers(InputEvent& evt) {
+		evt.setAltPressed(m_keystatemap[Key::ALT_GR] |
+			m_keystatemap[Key::LEFT_ALT] |
+			m_keystatemap[Key::RIGHT_ALT]);
+		evt.setControlPressed(m_keystatemap[Key::LEFT_CONTROL] |
+			m_keystatemap[Key::RIGHT_CONTROL]);
+		evt.setMetaPressed(m_keystatemap[Key::LEFT_META] |
+			m_keystatemap[Key::RIGHT_META]);
+		evt.setShiftPressed(m_keystatemap[Key::LEFT_SHIFT] |
+			m_keystatemap[Key::RIGHT_SHIFT]);
 	}
 
 	EventSourceType EventManager::getEventSourceType() {
 		return ES_ENGINE;
-	}
-
-	void EventManager::setNonConsumableKeys(const std::vector<int>& keys) {
-		m_nonconsumablekeys = keys;
-	}
-
-	std::vector<int> EventManager::getNonConsumableKeys() {
-		return m_nonconsumablekeys;
 	}
 
 	void EventManager::registerTrigger(Trigger& trigger){
@@ -537,5 +497,9 @@ namespace FIFE {
 		for (std::list<Trigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
 			(*it)->pollTrigger();
 		}
+	}
+
+	void EventManager::setKeyFilter(IKeyFilter* keyFilter) {
+		m_keyfilter = keyFilter;
 	}
 }

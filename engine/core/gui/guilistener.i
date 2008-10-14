@@ -19,45 +19,51 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_EVENTCHANNEL_IWIDGET_CONTROLLER_H
-#define FIFE_EVENTCHANNEL_IWIDGET_CONTROLLER_H
+%module fife
+%{
+#include <guichan.hpp>
+#include "gui/guilistener.h"
+%}
 
-// Standard C++ library includes
-//
+namespace gcn {
 
-// 3rd party library includes
-//
+	%nodefaultctor;
+	class MouseListener {
+	public:
+	};
 
-// FIFE includes
-// These includes are split up in two parts, separated by one empty line
-// First block: files included from the FIFE root src directory
-// Second block: files included from the same folder
-//
-#include "ec_iwidgetlistener.h"
+	class KeyListener {
+	public:
+	};
+
+	class ActionListener {
+	public:
+	};
+	%clearnodefaultctor;
+}
 
 namespace FIFE {
 
-	/**  Controller provides a way to receive events from the system
-	 * Using this interface, clients can subscribe themselves to receive events
-	 */
-	class IWidgetController {
+	%feature("director") GUIEventListener;
+	class GUIEventListener : 
+		public gcn::MouseListener, public gcn::KeyListener, public gcn::ActionListener {
 	public:
+		 GUIEventListener();
+		 virtual ~GUIEventListener();
 
-		/** Adds a listener to the controller
-		 * Listener will be notified via the corresponding events
-		 * @param listener listener to add
-		 */
-		virtual void addWidgetListener(IWidgetListener* listener) = 0;
+		/* Mouse events */
+		virtual void mouseEntered(gcn::MouseEvent& mouseEvent);
+		virtual void mouseExited(gcn::MouseEvent& mouseEvent);
+		virtual void mousePressed(gcn::MouseEvent& mouseEvent);
+		virtual void mouseReleased(gcn::MouseEvent& mouseEvent);
+		virtual void mouseClicked(gcn::MouseEvent& mouseEvent);
+		virtual void mouseWheelMovedUp(gcn::MouseEvent& mouseEvent);
+		virtual void mouseWheelMovedDown(gcn::MouseEvent& mouseEvent);
+		virtual void mouseMoved(gcn::MouseEvent& mouseEvent);
+		virtual void mouseDragged(gcn::MouseEvent& mouseEvent);
 
-		/** Removes an added listener from the controller.
-		 * Listener will not be notified anymore via the corresponding events
-		 * @param listener listener to remove
-		 */
-		virtual void removeWidgetListener(IWidgetListener* listener) = 0;
+		virtual void action(const gcn::ActionEvent& actionEvent);
 
-		virtual ~IWidgetController() {}
 	};
 
-} //FIFE
-
-#endif
+}

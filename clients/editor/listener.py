@@ -3,21 +3,14 @@
 import fife
 
 class EditorListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListener, 
-	              fife.ConsoleExecuter, fife.IWidgetListener):
+	              fife.ConsoleExecuter):
 	def __init__(self, app):
 		self.app = app
 		engine = app.engine
 		eventmanager = engine.getEventManager()
-		eventmanager.setNonConsumableKeys([
-			fife.Key.ESCAPE,
-			fife.Key.F10,
-			fife.Key.F9,
-			fife.Key.F8,
-			fife.Key.TAB,
-			fife.Key.LEFT,
-			fife.Key.RIGHT,
-			fife.Key.UP,
-			fife.Key.DOWN])
+		#eventmanager.setNonConsumableKeys([
+			#fife.Key.ESCAPE,
+			#fife.Key.TAB,])
 		
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
@@ -27,8 +20,6 @@ class EditorListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListen
 		eventmanager.addMouseListener(self)
 		fife.ConsoleExecuter.__init__(self)
 		engine.getGuiManager().getConsole().setConsoleExecuter(self)
-		fife.IWidgetListener.__init__(self)
-		eventmanager.addWidgetListener(self)
 	
 		self.engine = engine		
 		self.showTileOutline = True

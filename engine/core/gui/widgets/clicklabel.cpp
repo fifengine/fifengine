@@ -40,7 +40,6 @@ namespace gcn {
 // 		setAlignment(Graphics::LEFT);
 		setTextWrapping(false);
 		setFrameSize(0);
-		m_listener = NULL;
 		addMouseListener(this);
 		addKeyListener(this);
 		addFocusListener(this);
@@ -53,7 +52,6 @@ namespace gcn {
 		setTextWrapping(false);
 		setCaption(caption);
 		setFrameSize(0);
-		m_listener = NULL;
 		addMouseListener(this);
 		addKeyListener(this);
 		addFocusListener(this);
@@ -141,19 +139,11 @@ namespace gcn {
 	
 	void ClickLabel::mouseExited(MouseEvent& mouseEvent)
 	{
-		// taken from TwoButton.cpp
-		if (m_listener) {
-			m_listener->mouseExited(*this);
-		}		
 		mHasMouse = false;
 	}
 	
 	void ClickLabel::mouseEntered(MouseEvent& mouseEvent)
 	{
-		// taken from TwoButton.cpp
-		if (m_listener) {
-			m_listener->mouseEntered(*this);
-		}		
 		mHasMouse = true;
 	}
 	

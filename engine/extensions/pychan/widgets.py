@@ -9,6 +9,7 @@ Please look at the documentation of L{Widget} for details.
 
 import fife, pythonize
 import tools
+import events
 from exceptions import *
 from attrs import Attr,PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
 
@@ -95,14 +96,14 @@ class Widget(object):
 			style = None, **kwargs):
 		
 		assert( hasattr(self,'real_widget') )
-		self._has_listener = False
+		self.event_mapper = events.EventMapper(self)
 		self._visible = False
 
 		# Data distribution & retrieval settings
 		self.accepts_data = False
 		self.accepts_initial_data = False
 
-		self._parent = parent
+		self.parent = parent
 
 		# This will also set the _event_id and call real_widget.setActionEventId
 		self.name = name
@@ -162,7 +163,7 @@ class Widget(object):
 				return False
 		return True
 
-	def capture(self, callback):
+	def capture(self, callback, event_name="action"):
 		"""
 		Add a callback to be executed when the widget event occurs on this widget.
 		
@@ -172,37 +173,18 @@ class Widget(object):
 		wether this widgets events are currently captured.
 
 		It might be useful to check out L{tools.callbackWithArguments}.
-		
+
+		@param callback: Event callback - may accept keyword arguments event and widget.
+		@paran event_name: The event to capture - may be one of L{events.EVENTS} and defaults to "action"
 		"""
-		if callback is None:
-			if not get_manager().widgetEvents.has_key(self._event_id):
-				if get_manager().debug:
-					print "You passed None as parameter to %s.capture, which would normally remove a mapped event." % str(self)
-					print "But there was no event mapped. Did you accidently call a function instead of passing it?"
-			else:
-				del get_manager().widgetEvents[self._event_id]
-			if self._has_listener:
-				self.real_widget.removeActionListener(get_manager().guimanager)
-			self._has_listener = None
-			return
-
-		if not callable(callback):
-			raise RuntimeError("An event callback must be either a callable or None - not %s" % repr(callback))
-
-		def captured_f(event):
-			tools.applyOnlySuitable(callback,event=event,widget=self)
-
-		get_manager().widgetEvents[self._event_id] = captured_f
-		if not self._has_listener:
-			self.real_widget.addActionListener(get_manager().guimanager)
-		self._has_listener = True
+		self.event_mapper.capture( event_name, callback )
 
 	def isCaptured(self):
 		"""
 		Check whether this widgets events are captured
 		(a callback is installed) or not.
 		"""
-		return self._has_listener
+		return bool(self.event_mapper.getCapturedEvents())
 
 	def show(self):
 		"""
@@ -223,7 +205,9 @@ class Widget(object):
 		if self._parent:
 			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if not self._visible: return
+
 		get_manager().hide(self)
+
 		self.afterHide()
 		self._visible = False
 
@@ -318,14 +302,27 @@ class Widget(object):
 		You can also pass C{None} instead of a callback, which will
 		disable the event completely.
 		
-		@param eventMap: A dictionary with widget names as keys and callbacks as values.
+		@param eventMap: A dictionary with widget/event names as keys and callbacks as values.
 		@param ignoreMissing: Normally this method raises an RuntimeError, when a widget
 		can not be found - this behaviour can be overriden by passing True here.
+
+		The keys in the dictionary are parsed as "widgetName/eventName" with the slash
+		separating the two. If no slash is found the eventName is assumed to be "action".
+
+		Example::
+		    guiElement.mapEvents({
+			"button" : guiElement.hide,
+			"button/mouseEntered" : toggleButtonColorGreen,
+			"button/mouseExited" :  toggleButtonColorBlue,
+		    })
+
 		"""
-		for name,func in eventMap.items():
+		for descr,func in eventMap.items():
+			name, event_name = events.splitEventDescriptor(descr)
+			print name, event_name
 			widget = self.findChild(name=name)
 			if widget:
-				widget.capture( func )
+				widget.capture( func, event_name = event_name )
 			elif not ignoreMissing:
 				raise RuntimeError("No widget with the name: %s" % name)
 
@@ -594,24 +591,20 @@ class Widget(object):
 		self.real_widget.setSelectionColor(color)
 	selection_color = property(_getSelectionColor,_setSelectionColor)
 
-	def _getName(self): return self._name
-	def _setName(self,name):
-		from pychan import manager
-		self._name = name
-		# Do not change the event id while we are captured.
-		if not self.isCaptured():
-			self._event_id = "%s(name=%s,id=%d)" % (str(self.__class__),name,id(self))
-		else:
-			# Print some notfication, so obscure behaviour might get debugged.
-			print "%s already captured, but changing the name attribute. Just a notification :-)" % str(self)
-		self.real_widget.setActionEventId(self._event_id)
-	name = property(_getName,_setName)
-
 	def _getStyle(self): return self._style
 	def _setStyle(self,style):
 		self._style = style
 		get_manager().stylize(self,style)
 	style = property(_getStyle,_setStyle)
+
+	def _getParent(self): return self._parent
+	def _setParent(self,parent):
+		self._parent = parent
+	parent = property(_getParent,_setParent)
+
+	def _setName(self,name): self._name = name
+	def _getName(self): return self._name
+	name = property(_getName,_setName)
 
 	x = property(_getX,_setX)
 	y = property(_getY,_setY)
@@ -621,6 +614,32 @@ class Widget(object):
 	position = property(_getPosition,_setPosition)
 	font = property(_getFont,_setFont)
 	border_size = property(_getBorderSize,_setBorderSize)
+
+	def setEnterCallback(self, cb):
+		"""
+		*DEPRECATED*
+
+		Callback is called when mouse enters the area of Widget
+		callback should have form of function(button)
+		"""
+		def callback(widget=None):
+			return cb(widget)
+		print "PyChan: You are using the DEPRECATED functionality: setEnterCallback."
+		self.capture(callback, event_name = "mouseEntered" )
+
+	def setExitCallback(self, cb):
+		"""
+		*DEPRECATED*
+
+		Callback is called when mouse exits the area of Widget
+		callback should have form of function(button)
+		"""
+		def callback(widget=None):
+			return cb(widget)
+		print "PyChan: You are using the DEPRECATED functionality: setExitCallback."
+		self.capture(callback, event_name = "mouseExited" )
+
+
 
 ### Containers + Layout code ###
 
@@ -654,7 +673,7 @@ class Container(Widget):
 		super(Container,self).__init__(**kwargs)
 
 	def addChild(self, widget):
-		widget._parent = self
+		widget.parent = self
 		self.children.append(widget)
 		self.real_widget.add(widget.real_widget)
 
@@ -663,7 +682,7 @@ class Container(Widget):
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
 		self.children.remove(widget)
 		self.real_widget.remove(widget.real_widget)
-		widget._parent = None
+		widget.parent = None
 
 	def add(self,*widgets):
 		print "PyChan: Deprecation warning: Please use 'addChild' or 'addChildren' instead."
@@ -1028,26 +1047,6 @@ class Icon(Widget):
 		return self._image
 	image = property(_getImage,_setImage)
 
-class LabelListener(fife.ClickLabelListener):
-	""" the listener class for label onMouse events
-	
-	@type	btn:	object
-	@param	btn:	the label widget
-	"""
-	def __init__(self, lbl):
-		fife.ClickLabelListener.__init__(self)
-		self.lbl = lbl
-		self.entercb = None
-		self.exitcb = None
-
-	def mouseEntered(self, lbl):
-		if self.entercb:
-			self.entercb(self.lbl)
-
-	def mouseExited(self, lbl):
-		if self.exitcb:
-			self.exitcb(self.lbl)
-
 class Label(BasicTextWidget):
 	"""
 	A basic label - displaying a string.
@@ -1070,8 +1069,6 @@ class Label(BasicTextWidget):
 		self.real_widget = fife.Label("")
 		self.wrap_text = wrap_text
 		super(Label,self).__init__(**kwargs)
-		self.listener = LabelListener(self)
-		self.real_widget.setListener(self.listener)
 		
 	def resizeToContent(self):
 		self.real_widget.setWidth( self.max_size[0] )
@@ -1083,20 +1080,6 @@ class Label(BasicTextWidget):
 	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
 	def _getTextWrapping(self): self.real_widget.isTextWrapping()
 	wrap_text = property(_getTextWrapping,_setTextWrapping)
-
-	def setEnterCallback(self, cb):
-		"""
-		Callback is called when mouse enters the area of Label
-		callback should have form of function(button)
-		"""
-		self.listener.entercb = cb
-
-	def setExitCallback(self, cb):
-		"""
-		Callback is called when mouse enters the area of Label
-		callback should have form of function(button)
-		"""
-		self.listener.exitcb = cb
 
 class ClickLabel(Label):
 	"""
@@ -1112,21 +1095,6 @@ class Button(BasicTextWidget):
 	def __init__(self,**kwargs):
 		self.real_widget = fife.Button("")
 		super(Button,self).__init__(**kwargs)
-
-class ImageButtonListener(fife.TwoButtonListener):
-	def __init__(self, btn):
-		fife.TwoButtonListener.__init__(self)
-		self.btn = btn
-		self.entercb = None
-		self.exitcb = None
-
-	def mouseEntered(self, btn):
-		if self.entercb:
-			self.entercb(self.btn)
-
-	def mouseExited(self, btn):
-		if self.exitcb:
-			self.exitcb(self.btn)
 
 class ImageButton(BasicTextWidget):
 	"""
@@ -1147,8 +1115,6 @@ class ImageButton(BasicTextWidget):
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),**kwargs):
 		self.real_widget = fife.TwoButton()
 		super(ImageButton,self).__init__(**kwargs)
-		self.listener = ImageButtonListener(self)
-		self.real_widget.setListener(self.listener)
 
 		self.up_image = up_image
 		self.down_image = down_image
@@ -1200,21 +1166,6 @@ class ImageButton(BasicTextWidget):
 	def resizeToContent(self):
 		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
 		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
-
-	def setEnterCallback(self, cb):
-		"""
-		Callback is called when mouse enters the area of ImageButton
-		callback should have form of function(button)
-		"""
-		self.listener.entercb = cb
-
-	def setExitCallback(self, cb):
-		"""
-		Callback is called when mouse enters the area of ImageButton
-		callback should have form of function(button)
-		"""
-		self.listener.exitcb = cb
-
 
 
 class CheckBox(BasicTextWidget):
@@ -1548,11 +1499,13 @@ class ScrollArea(Widget):
 
 	def addChild(self,widget):
 		self.content = widget
+		widget.parent = self
 
 	def removeChild(self,widget):
 		if self._content != widget:
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
 		self.content = None
+		widget.parent = None
 
 	def _setContent(self,content):
 		self.real_widget.setContent(content.real_widget)

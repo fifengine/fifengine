@@ -4,8 +4,9 @@ import fife
 import widgets
 import fonts
 from exceptions import *
+from traceback import print_exc
 
-class Manager(fife.IWidgetListener):
+class Manager(object):
 	manager = None
 
 	def __init__(self, engine, debug = False):
@@ -26,13 +27,12 @@ class Manager(fife.IWidgetListener):
 		self.styles = {}
 		self.addStyle('default',DEFAULT_STYLE)
 
-		self.widgetEvents = {}
-		self.engine.getEventManager().addWidgetListener(self)
                 Manager.manager = self
 
+		# Setup synchronous dialogs
 		self.mainLoop = None
 		self.breakFromMainLoop = None
-		self.can_execute = True
+		self.can_execute = False
 
 	def setupModalExecution(self,mainLoop,breakFromMainLoop):
 		"""
@@ -127,15 +127,6 @@ class Manager(fife.IWidgetListener):
 	def loadImage(self,filename):
 		index = self.engine.imagePool.addResourceFromFile(filename)
 		return fife.GuiImage(index,self.engine.imagePool)
-
-	def defaultWidgetAction(self,event):
-		if self.debug:
-			print "Event(%s) received." % event.getId()
-
-	def onWidgetAction(self, event):
-		#print event.getId(),self.widgetEvents
-		handler = self.widgetEvents.get( event.getId(), self.defaultWidgetAction )
-		handler( event )
 
 # Default Widget style.
 

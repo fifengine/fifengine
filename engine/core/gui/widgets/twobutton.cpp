@@ -39,7 +39,6 @@ namespace gcn {
 		m_hoverImage(hover_file),
 		x_downoffset(0),
 		y_downoffset(0),
-		m_listener(NULL),
 		m_helptext("") {
 		m_hoverImage = hover_file;
 		setFrameSize(0);
@@ -139,19 +138,6 @@ namespace gcn {
 		adjustSize();
 	}
 		
-	void TwoButton::mouseEntered(MouseEvent& mouseEvent) {
-		if (m_listener) {
-			m_listener->mouseEntered(*this);
-		}
-		Button::mouseEntered(mouseEvent);
-	}
-	
-	void TwoButton::mouseExited(MouseEvent& mouseEvent) {
-		if (m_listener) {
-			m_listener->mouseExited(*this);
-		}
-		Button::mouseExited(mouseEvent);
-	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
 

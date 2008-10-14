@@ -20,11 +20,8 @@ TODO
 ----
  - Make setting parent attribute imply containment relation.
  - Finalize Widget.execute
- - ClickLabel/Label rework. (In progress)
 
  - Documentation ( Allways not enough :-( )
- - Completion of above features
- - Wrap missing widgets: Slider
  - Handle Image Fonts
  - Move Font config files to XML, too ...
  - Add support for fixed size 'Spacers'

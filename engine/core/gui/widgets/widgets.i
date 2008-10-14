@@ -31,6 +31,8 @@ namespace gcn {
 	class Font;
 	class Image;
 	class ActionListener;
+	class MouseListener;
+	class KeyListener;
 
 	%nodefaultctor;
 	class Graphics {
@@ -117,6 +119,10 @@ namespace gcn {
 		virtual void focusPrevious() { };
 		virtual void addActionListener(ActionListener* actionListener);
 		virtual void removeActionListener(ActionListener* actionListener);
+		virtual void addMouseListener(MouseListener* actionListener);
+		virtual void removeMouseListener(MouseListener* actionListener);
+		virtual void addKeyListener(KeyListener* actionListener);
+		virtual void removeKeyListener(KeyListener* actionListener);
 /* 	protected: */
 		virtual void draw(Graphics* graphics) = 0;
 	};
@@ -171,16 +177,6 @@ namespace gcn {
 		virtual void adjustSize();
 		/*virtual bool isPressed() const;*/
 	};
-
-	
-	class TwoButton;
-	%feature("director") TwoButtonListener;
-	class TwoButtonListener {
-	public:
-		virtual ~TwoButtonListener();
-		virtual void mouseEntered(TwoButton& btn) = 0;
-		virtual void mouseExited(TwoButton& btn) = 0;
-	};
 		
 	%feature("notabstract") TwoButton;
 	class TwoButton: public Widget {
@@ -197,8 +193,6 @@ namespace gcn {
 		void setDownOffset(int x, int y);
 		int getDownXOffset();
 		int getDownYOffset();
-		void setListener(TwoButtonListener* listener);
-		TwoButtonListener* getListener();
 
 		void setHelpText(const std::string& txt);
 		const std::string& getHelpText();
@@ -379,15 +373,6 @@ namespace gcn {
 		virtual void resizeToContent();
 	};
 
-	class ClickLabel;
-	%feature("director") ClickLabelListener;
-	class ClickLabelListener {
-	public:
-		virtual ~ClickLabelListener();
-		virtual void mouseEntered(ClickLabel& btn) = 0;
-		virtual void mouseExited(ClickLabel& btn) = 0;
-	};
-
 	%feature("notabstract") ClickLabel;
 	%rename(Label) ClickLabel;
 	class ClickLabel: public Widget {
@@ -401,9 +386,6 @@ namespace gcn {
 		void setTextWrapping(bool);
 		virtual void setWidth(int width);
 		virtual void adjustSize();
-		
-		void setListener(ClickLabelListener* listener);
-		ClickLabelListener* getListener();		
 	};
 
 	%feature("notabstract") Icon2;

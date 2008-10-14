@@ -30,7 +30,7 @@ subgraph cluster_3 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "eventchannel"; "eventchannel/base"; "eventchannel/command"; "eventchannel/key"; "eventchannel/mouse"; "eventchannel/sdl"; "eventchannel/source"; "eventchannel/trigger"; "eventchannel/widget"
+    "eventchannel"; "eventchannel/base"; "eventchannel/command"; "eventchannel/key"; "eventchannel/mouse"; "eventchannel/sdl"; "eventchannel/source"; "eventchannel/trigger"
     label = "eventchannel";
 }
 subgraph cluster_4 {
@@ -124,18 +124,15 @@ subgraph cluster_11 {
     "eventchannel" -> "eventchannel/mouse"
     "eventchannel" -> "eventchannel/sdl"
     "eventchannel" -> "eventchannel/trigger"
-    "eventchannel" -> "eventchannel/widget"
     "eventchannel" -> "util/base"
     "eventchannel/base" -> "eventchannel/source"
     "eventchannel/command" -> "eventchannel/base"
     "eventchannel/key" -> "eventchannel/base"
     "eventchannel/key" -> "eventchannel/source"
     "eventchannel/mouse" -> "eventchannel/base"
-    "eventchannel/widget" -> "eventchannel/base"
     "gui" -> "eventchannel/key"
     "gui" -> "eventchannel/mouse"
     "gui" -> "eventchannel/sdl"
-    "gui" -> "eventchannel/widget"
     "gui" -> "gui/base"
     "gui" -> "gui/console"
     "gui" -> "util/base"

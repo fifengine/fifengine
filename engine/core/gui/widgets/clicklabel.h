@@ -39,18 +39,6 @@ namespace FIFE {
 
 namespace gcn {
 	
-	// taken from TwoButton.cpp
-	// FIXME: the listener code for Twobutton and Clicklabel is 
-	// a kind of a hack and shouldn't be necessary later. So if 
-	// eventmanager changes some day, this should be modified, too
-	class ClickLabel;
-	class ClickLabelListener {
-	public:
-		virtual ~ClickLabelListener() {}
-		virtual void mouseEntered(ClickLabel& btn) = 0;
-		virtual void mouseExited(ClickLabel& btn) = 0;
-	};	
-	
 	class ClickLabel : public Widget, public MouseListener, public KeyListener, public FocusListener {
 	public:
 		ClickLabel();
@@ -92,11 +80,6 @@ namespace gcn {
 	
 		virtual void keyReleased(KeyEvent& keyEvent);
 
-
-			// taken from TwoButton.cpp
-			void setListener(ClickLabelListener* listener) { m_listener = listener; }
-			ClickLabelListener* getListener() { return m_listener; }
-
 	protected:
 		void wrapText();
 
@@ -104,7 +87,6 @@ namespace gcn {
 		bool mTextWrapping;
 		std::string mCaption;
 		std::string mWrappedText;
-		ClickLabelListener* m_listener;		
 
 		bool mHasMouse;
 		bool mKeyPressed;

@@ -52,6 +52,9 @@ class DemoApplication(basicapplication.ApplicationBase):
 			'slider': self.test_slider
 		}
 		self.gui.mapEvents(eventMap)
+		credits = self.gui.findChild(name="creditsLink")
+		credits.setEnterCallback(lambda w : credits._setText("CREDITS"))
+		credits.capture(lambda : credits._setText("Credits"), event_name="mouseExited")
 
 		from dynamic import DynamicExample
 		from styling import StylingExample
@@ -82,7 +85,6 @@ class DemoApplication(basicapplication.ApplicationBase):
 
 	def showCredits(self):
 		print pychan.loadXML('gui/credits.xml').execute({ 'okButton' : "Yay!" })
-		
 	def test_slider(self):
 		self.slider_value._setText( str(self.slider.getValue()) )
 

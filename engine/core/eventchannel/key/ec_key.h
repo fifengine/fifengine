@@ -296,6 +296,9 @@ namespace FIFE {
 			return m_unicode != 0;
 		}
 		
+		bool isFunctionKey() const {
+			return m_key >= F1 && m_key <= F15;
+		}
 		
 		/** Gets the value of the key. 
 		 */

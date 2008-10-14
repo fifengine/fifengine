@@ -20,7 +20,7 @@ class ExitEventListener(fife.IKeyListener):
 		self.app = app
 		self.engine = app.engine
 		eventmanager = self.engine.getEventManager()
-		eventmanager.setNonConsumableKeys([fife.Key.ESCAPE])
+		#eventmanager.setNonConsumableKeys([fife.Key.ESCAPE])
 		fife.IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
 		self.quitRequested = False

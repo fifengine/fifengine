@@ -78,6 +78,8 @@ namespace FIFE {
 		m_animationTimer.setCallback( boost::bind(&Console::updateAnimation, this) );
 
 		m_toolsbutton->addActionListener(this);
+		m_toolsbutton->setFocusable(false);
+		m_input->addFocusListener(this);
 
 		GuiFont* font = GUIManager::instance()->createFont();
 		font->setColor(255,255,255);
@@ -298,6 +300,10 @@ namespace FIFE {
 	void Console::setIOFont(GuiFont* font) {
 		m_input->setFont(font);
 		m_output->setFont(font);
+	}
+
+	void Console::focusLost(const gcn::Event& ) {
+		hide();
 	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

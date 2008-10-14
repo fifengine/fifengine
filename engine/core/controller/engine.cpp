@@ -207,13 +207,9 @@ namespace FIFE {
 			m_gui_graphics = new SdlGuiGraphics(*m_imagepool);
 		}
 		FL_LOG(_log, "Constructing GUI manager");
-		m_guimanager = new GUIManager(m_eventmanager, *m_imagepool);
-		m_eventmanager->addSdlEventListener(m_guimanager);
-		// keep guimanager as the first key listener so that it can evaluate guichan hits
-		m_eventmanager->addKeyListener(m_guimanager);
-		// keep guimanager as the first mouse listener so that it can evaluate guichan hits
-		m_eventmanager->addMouseListener(m_guimanager);
+		m_guimanager = new GUIManager(*m_imagepool);
 		FL_LOG(_log, "Events bind to GUI manager");
+		m_eventmanager->addSdlEventListener(m_guimanager);
 
 		FL_LOG(_log, "Creating default font");
 		m_defaultfont = m_guimanager->setDefaultFont(

@@ -124,11 +124,11 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def __init__(self, engine):
 		self._engine = engine
 		eventmanager = self._engine.getEventManager()
-		eventmanager.setNonConsumableKeys([
-			fife.Key.LEFT,
-			fife.Key.RIGHT,
-			fife.Key.UP,
-			fife.Key.DOWN])
+		#eventmanager.setNonConsumableKeys([
+			#fife.Key.LEFT,
+			#fife.Key.RIGHT,
+			#fife.Key.UP,
+			#fife.Key.DOWN])
 		fife.IMouseListener.__init__(self)
 		eventmanager.addMouseListener(self)
 		fife.IKeyListener.__init__(self)

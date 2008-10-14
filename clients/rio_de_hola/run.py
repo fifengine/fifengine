@@ -15,6 +15,7 @@ for p in _paths:
 if not os.path.exists('settings.xml'):
 	shutil.copyfile('settings-dist.xml', 'settings.xml')
 
+import fife_compat
 import fife, fifelog
 from scripts import world
 from scripts.common import eventlistenerbase
@@ -31,12 +32,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.engine = engine
 		self.world = world
 		engine.getEventManager().setNonConsumableKeys([
-			fife.Key.ESCAPE,
-			fife.Key.F10,
-			fife.Key.LEFT,
-			fife.Key.RIGHT,
-			fife.Key.UP,
-			fife.Key.DOWN])
+			fife.Key.ESCAPE,])
 
 		self.quit = False
 		self.aboutWindow = None
@@ -50,6 +46,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		self.rootpanel.show()
 
 	def keyPressed(self, evt):
+		print evt
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		consumed = False

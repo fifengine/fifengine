@@ -11,6 +11,7 @@ run code that wasn't adapted to API changes in FIFE.
 
  - Animation.addFrame now expects a fife.ResourcePtr instead of an fife.Image
  - Pool.getIndex is just an alias for Pool.addResourceFromFile.
+ - EventManager.setNonConsumableKeys is superseeded by EventManager.setKeyFilter
 
 """
 
@@ -47,3 +48,28 @@ fife.Pool.getIndex = this_is_deprecated(
 	revision = 2617,
 	message  = "Use addResourceFromFile instead of getIndex"
 )
+
+def _compat_NonConsumableKeys():
+	class CompatKeyFilter(fife.IKeyFilter):
+		def __init__(self, keys):
+			fife.IKeyFilter.__init__(self)
+			self.keys = keys
+
+		def isFiltered(self, event):
+			return event.getKey().getValue() in self.keys
+
+	def _setNonConsumableKeys(self,keys):
+		deprecated(2636, "Write an IKeyFilter instead of using EventManager.setNonConsumableKeys.\n" +
+				 "You probably don't need it anyway")
+		self.compat_keyfilter = CompatKeyFilter(keys)
+		self.compat_keyfilter.__disown__()
+		self.setKeyFilter(self.compat_keyfilter)
+
+	def _getNonConsumableKeys(self,keys):
+		deprecated(2636, "Write an IKeyFilter instead of using EventManager.getNonConsumableKeys.")
+		return self.compat_keyfilter.keys
+
+	fife.EventManager.setNonConsumableKeys = _setNonConsumableKeys
+	fife.EventManager.getNonConsumableKeys = _getNonConsumableKeys
+
+_compat_NonConsumableKeys()
