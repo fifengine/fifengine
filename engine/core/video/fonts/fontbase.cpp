@@ -106,13 +106,14 @@ namespace FIFE {
 			int length = 0;
 			int render_width = 0, render_height = 0;
 			do {
-				pos = text.find("\n", last_pos);
+				pos = text.find('\n', last_pos);
 				if (pos != std::string::npos) {
 					length = pos - last_pos;
 				} else {
 					length = text.size() - last_pos;
 				}
 				std::string sub = text.substr(last_pos, length);
+				std::cerr << "substring: " << sub << "\n";
 				SDL_Surface* text_surface = renderString(sub);
 				if (text_surface->w > render_width) {
 					render_width = text_surface->w;
@@ -164,6 +165,7 @@ namespace FIFE {
 				firstLine = false;
 			}
 
+			bool haveNewLine = false;
 			while( getWidth(line) < render_width && pos < text.length() )
 			{
 				if (text.at(pos) == ' ' && !line.empty())
@@ -173,13 +175,18 @@ namespace FIFE {
 
 				// Special case: Already newlines in string:
 				if( text.at(pos-1) == '\n' ) {
-					if( line[0] == '\n' && line.length() > 1 )
-						line.erase(0);
+					if( line[line.size()-1] == '\n' )
+						line.erase(line.size()-1);
 					output.append(line);
+					line = "";
+					haveNewLine = true;
 					break;
 				}
 			}
-			if( pos >= text.length() )
+			if( haveNewLine )
+				continue;
+
+			if( pos >= text.length())
 				break;
 
 			if( break_pos.empty() ) {
