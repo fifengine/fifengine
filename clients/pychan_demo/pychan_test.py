@@ -61,9 +61,10 @@ class DemoApplication(basicapplication.ApplicationBase):
 		
 		self.examples = {
 			'Absolute Positioning' : PyChanExample('gui/absolute.xml'),
-			'Basic Styling' : StylingExample(),
 			'All Widgets' : PyChanExample('gui/all_widgets.xml'),
+			'Basic Styling' : StylingExample(),
 			'Dynamic Widgets' : DynamicExample(),
+			'ScrollArea' : PyChanExample('gui/scrollarea.xml'),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items += self.examples.keys()
