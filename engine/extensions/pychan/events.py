@@ -42,7 +42,7 @@ def getEventType(name):
 	if "mouse" in name:
 		return MOUSE_EVENT
 	if "key" in name:
-		return MOUSE_EVENT
+		return KEY_EVENT
 	return ACTION_EVENT
 
 
@@ -81,7 +81,8 @@ class EventListener(fife.GUIEventListener):
 		event = self.translateEvent(getEventType(name), event)
 		if name in self.events:
 			if self.debug: print "-"*self.indent, name
-			self.events[name]( event )
+			for f in self.events[name].itervalues():
+				f( event )
 		self.indent -= 4
 
 	def translateEvent(self,event_type,event):
@@ -143,6 +144,7 @@ class EventMapper(object):
 		if not self.listener.events:
 			return
 		if self.debug: print "Attach:",self
+		self.widget.real_widget.addKeyListener( self.listener )
 		self.widget.real_widget.addMouseListener( self.listener )
 		self.widget.real_widget.addActionListener( self.listener )
 		self.is_attached = True
@@ -156,23 +158,22 @@ class EventMapper(object):
 		if not self.is_attached:
 			return
 		if self.debug: print "Detach:",self
+		self.widget.real_widget.removeKeyListener( self.listener )
 		self.widget.real_widget.removeMouseListener( self.listener )
 		self.widget.real_widget.removeActionListener( self.listener )
 		self.is_attached = False
 
-	def capture(self,event_name,callback):
+	def capture(self,event_name,callback,group_name):
 		if event_name not in EVENTS:
 			raise exceptions.RuntimeError("Unknown eventname: " + event_name)
 
-		if callback is None and not self.isCaptured(event_name):
-			if self.debug:
-				print CALLBACK_NONE_MESSAGE % str(self.widget)
-			return
-
 		if callback is None:
-			del self.listener.events[event_name]
-			if not self.listener.events:
-				self.detach()
+			if self.isCaptured(event_name):
+				del self.listener.events[event_name][group_name]
+				if not self.listener.events:
+					self.detach()
+			elif self.debug:
+					print CALLBACK_NONE_MESSAGE % str(self.widget)
 			return
 
 		if not callable(callback):
@@ -181,11 +182,14 @@ class EventMapper(object):
 		def captured_f(event):
 			tools.applyOnlySuitable(callback,event=event,widget=self.widget)
 
-		self.listener.events[event_name] = captured_f
+		if event_name not in self.listener.events:
+			self.listener.events[event_name] = {group_name : captured_f}
+		else:
+			self.listener.events[event_name][group_name] = captured_f
 		self.attach()
 
-	def isCaptured(self,event_name):
-		return event_name in self.listener.events
+	def isCaptured(self,event_name,group_name):
+		return event_name in self.listener.events and group_name in self.listener.events[event_name]
 
 	def getCapturedEvents(self):
 		return self.listener.events.keys()
@@ -194,11 +198,13 @@ class EventMapper(object):
 def splitEventDescriptor(name):
 	""" Utility function to split "widgetName/eventName" descriptions into tuples. """
 	L = name.split("/")
+	if len(L) not in (1,2,3):
+		raise exceptions.RuntimeError("Invalid widgetname / eventname combination: " + name)
 	if len(L) == 1:
 		L = L[0],"action"
-	if len(L) != 2:
-		raise exceptions.RuntimeError("Invalid widgetname / eventname combination: " + name)
-	if L[1] not in EVENTS:
+	elif L[1] not in EVENTS:
 		raise exceptions.RuntimeError("Unknown event name: " + name)
+	if len(L) == 2:
+		L = L[0],L[1],"default"
 	return L
 

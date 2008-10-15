@@ -166,7 +166,7 @@ class Widget(object):
 				return False
 		return True
 
-	def capture(self, callback, event_name="action"):
+	def capture(self, callback, event_name="action", group_name="default"):
 		"""
 		Add a callback to be executed when the widget event occurs on this widget.
 		
@@ -180,7 +180,7 @@ class Widget(object):
 		@param callback: Event callback - may accept keyword arguments event and widget.
 		@paran event_name: The event to capture - may be one of L{events.EVENTS} and defaults to "action"
 		"""
-		self.event_mapper.capture( event_name, callback )
+		self.event_mapper.capture( event_name, callback, group_name )
 
 	def isCaptured(self):
 		"""
@@ -340,11 +340,11 @@ class Widget(object):
 
 		"""
 		for descr,func in eventMap.items():
-			name, event_name = events.splitEventDescriptor(descr)
-			print name, event_name
+			name, event_name, group_name = events.splitEventDescriptor(descr)
+			print name, event_name, group_name
 			widget = self.findChild(name=name)
 			if widget:
-				widget.capture( func, event_name = event_name )
+				widget.capture( func, event_name = event_name, group_name = group_name )
 			elif not ignoreMissing:
 				raise RuntimeError("No widget with the name: %s" % name)
 
