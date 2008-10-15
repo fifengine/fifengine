@@ -36,6 +36,19 @@ class PyChanExample(object):
 			self.widget.hide()
 		self.widget = None
 
+def testTimer():
+	import timer
+	timer.init( pychan.manager.engine.getTimeManager() )
+	def spam():
+		print "SPAM SPAM"
+		return 1
+	repeater = timer.repeatCall(500,spam)
+	def stop_spam():
+		repeater.stop()
+		print "BACON EGGS AND SPAM"
+	timer.delayCall(5000,stop_spam)
+
+
 class DemoApplication(basicapplication.ApplicationBase):
 	def __init__(self):
 		super(DemoApplication,self).__init__()
@@ -75,6 +88,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		
 		self.currentExample = None
 		self.creditsWidget = None
+		testTimer()
 
 	def selectExample(self):
 		if self.demoList.selected_item is None: return
