@@ -28,3 +28,9 @@ class ParserError(PyChanException):
 	"""
 	An error that occured during parsing an attribute.
 	"""
+
+class PrivateFunctionalityError(RuntimeError):
+	"""
+	Exception raised if private attributes/functions are used."
+	"""
+	pass

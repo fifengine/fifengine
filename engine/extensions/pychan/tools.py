@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import exceptions
+
 ### Functools ###
 
 def applyOnlySuitable(func,**kwargs):
@@ -47,6 +49,55 @@ def callbackWithArguments(callback,*args,**kwargs):
 	def real_callback():
 		callback(*args,**kwargs)
 	return real_callback
+
+def attrSetCallback(**kwargs):
+	"""
+	Generates an event callback that sets attributes on the widget
+	it is called on. This is especially useful for mouseEntered/Exited
+	events - to create hover effects.
+
+	It takes a set of keyword arguments. The keys are treated as attribute names,
+	which are then set to the corresponding value when the callback is called.
+	Some key names are treated special - see below.
+
+	Usage - Example adapted from demo application::
+		eventMap = {
+			'creditsLink'  : showCreditsCallback,
+			'creditsLink/mouseEntered' : attrSetCallback(
+			      text = "Show credits!",
+			      background_color = (255,255,0,255),
+			      do__adaptLayout=True),
+			'creditsLink/mouseExited'  : attrSetCallback(text = "Credits"),
+		gui.mapEvents(eventMap)
+
+	Now when the mouse enters the creditsLink (a Label in our case), the following code will be executed::
+		#widget is the creditsLink - given to the event callback.
+		widget.text = "Show credits!"
+		widget.background_color = (255,255,0,255)
+		widget.adaptLayout()
+
+	The C{do__adaptLayout} argument causes the method C{adaptLayout} to be called.
+	In fact any key starting with C{do__} results in such a method call. The order
+	of execution of such calls is undefined.
+
+	Keys starting with an underscore raise a L{execptions.PrivateFunctionalityError}.
+	"""
+	do_calls = []
+
+	for name in kwargs.keys():
+		if name.startswith("_"):
+			raise exceptions.PrivateFunctionalityError(name)
+		if name.startswith("do__"):
+			do_calls.append(name[4:])
+			del kwargs[name]
+
+	def callback(widget=None):
+		for name,value in kwargs.items():
+			setattr(widget,name,value)
+		for method_name in do_calls:
+			method = getattr(widget,method_name)
+			method()
+	return callback
 
 def this_is_deprecated(func,message=None):
 	if message is None:
