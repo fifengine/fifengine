@@ -168,8 +168,10 @@ class EventMapper(object):
 			raise exceptions.RuntimeError("Unknown eventname: " + event_name)
 
 		if callback is None:
-			if self.isCaptured(event_name):
+			if self.isCaptured(event_name,group_name):
 				del self.listener.events[event_name][group_name]
+				if not self.listener.events[event_name]:
+					del self.listener.events[event_name]
 				if not self.listener.events:
 					self.detach()
 			elif self.debug:
@@ -188,7 +190,7 @@ class EventMapper(object):
 			self.listener.events[event_name][group_name] = captured_f
 		self.attach()
 
-	def isCaptured(self,event_name,group_name):
+	def isCaptured(self,event_name,group_name="default"):
 		return event_name in self.listener.events and group_name in self.listener.events[event_name]
 
 	def getCapturedEvents(self):

@@ -644,6 +644,10 @@ class Widget(object):
 		Callback is called when mouse enters the area of Widget
 		callback should have form of function(button)
 		"""
+		if cb is None:
+			self.capture(None, event_name = "mouseEntered" )
+			return
+
 		def callback(widget=None):
 			return cb(widget)
 		print "PyChan: You are using the DEPRECATED functionality: setEnterCallback."
@@ -656,6 +660,10 @@ class Widget(object):
 		Callback is called when mouse exits the area of Widget
 		callback should have form of function(button)
 		"""
+		if cb is None:
+			self.capture(None, event_name = "mouseExited" )
+			return
+
 		def callback(widget=None):
 			return cb(widget)
 		print "PyChan: You are using the DEPRECATED functionality: setExitCallback."
