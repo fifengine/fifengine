@@ -85,7 +85,7 @@ print s\n\
 	}
 
 #define _FIFE_DIRECTOR_EXC_HANDLER() \
-	catch (Swig::DirectorException &_e) { \
+	catch (Swig::DirectorException &) { \
 		PyErr_Clear(); \
 		SWIG_exception(SWIG_RuntimeError, "Catched director exception"); \
 	}
