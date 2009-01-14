@@ -14,7 +14,7 @@ includedir=${prefix}/include
 
 Name: Guichan
 Description: A GUI library
-Version: 0.6
+Version: 0.8.1
 Requires: 
 Libs: -L${libdir} -lguichan
 Cflags: -I${includedir}

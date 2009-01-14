@@ -12,9 +12,9 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
-Name: Guichan
-Description: A GUI library
-Version: 0.6
+Name: Zlib
+Description: A compression library
+Version: 1.2.3.3
 Requires: 
 Libs: -L${libdir} -lz
 Cflags: -I${includedir}

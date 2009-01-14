@@ -13,8 +13,8 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: Boost Regex
-Description: 
-Version: 0.6
+Description: Part of the Boost C++ Libraries Collection. Regex module.
+Version: 1.33.1
 Requires: 
 Libs: -L${libdir} -lboost_regex
 Cflags: -I${includedir}
