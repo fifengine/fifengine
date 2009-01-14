@@ -26,7 +26,7 @@
 			
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="cd ..\..\..\..&#x0D;&#x0A;build\win32\applications\scons\scons projectfiles_only=1&#x0D;&#x0A;"
+				CommandLine="cd ..\..\&#x0D;&#x0A;update_project_files.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -105,7 +105,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="cd ..\..\..\..&#x0D;&#x0A;build\win32\applications\scons\scons projectfiles_only=1&#x0D;&#x0A;"
+				CommandLine="cd ..\..\&#x0D;&#x0A;update_project_files.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -172,7 +172,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="cd ..\..\..\..&#x0D;&#x0A;build\win32\applications\scons\scons projectfiles_only=1&#x0D;&#x0A;"
+				CommandLine="cd ..\..\&#x0D;&#x0A;update_project_files.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -237,7 +237,7 @@
 			
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="cd ..\..\..\..&#x0D;&#x0A;build\win32\applications\scons\scons projectfiles_only=1&#x0D;&#x0A;"
+				CommandLine="cd ..\..\&#x0D;&#x0A;update_project_files.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
