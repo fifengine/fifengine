@@ -12,13 +12,15 @@ class FileBrowser(object):
 	The savefile option provides a box for supplying a new filename that doesn't exist yet.
   The selectdir option allows directories to be selected as well as files.
 	"""
-	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',)):
+	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="content/gui/filebrowser.xml"):
 		self.engine = engine
 		self.fileSelected = fileSelected
 
 		self._widget = None
 		self.savefile = savefile
 		self.selectdir = selectdir
+		
+		self.guixmlpath = guixmlpath
 
 		self.extensions = extensions
 		self.path = './..'
@@ -29,7 +31,7 @@ class FileBrowser(object):
 		if self._widget:
 			self._widget.show()
 			return
-		self._widget = pychan.loadXML('content/gui/filebrowser.xml')
+		self._widget = pychan.loadXML(self.guixmlpath)
 		self._widget.mapEvents({
 			'dirList'       : self._setDirectory,
 			'selectButton'  : self._selectFile,
