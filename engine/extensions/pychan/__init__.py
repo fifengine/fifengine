@@ -353,8 +353,8 @@ def loadXML(filename_or_stream):
 
 	  - position,size,min_size,max_size,margins - These are assumed to be comma separated tuples
 	    of integers.
-	  - foreground_color,base_color,background_color - These are assumed to be triples of comma
-	    separated integers.
+	  - foreground_color,base_color,background_color - These are assumed to be triples or quadruples of comma
+	    separated integers. (triples: r,p,g; quadruples: r,p,g,a)
 	  - opaque,border_size,padding - These are assumed to be simple integers.
 
 	All other attributes are set verbatim as strings on the generated instance.
