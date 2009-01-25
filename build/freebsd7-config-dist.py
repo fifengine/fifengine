@@ -5,6 +5,8 @@
 # vorbisfile
 # openal
 
+import sys
+
 def initEnvironment(env):
 	return env
 
@@ -26,6 +28,5 @@ def addExtras(context):
 		context.env.Append(CPPPATH = ['/usr/local/include'])
 		context.env.Append(LIBPATH = ['/usr/local/lib'])
 		context.checkSimpleLib(['guichan_opengl'])
-
         # For swig/python:
-        context.env.Append(CPPPATH = ['/usr/local/include/python2.5'])
+        context.env.Append(CPPPATH = ['/usr/local/include/python%s'%sys.version])
