@@ -53,7 +53,7 @@ namespace FIFE {
 		void stop();
 
 		void setLooping(bool loop);
-		void setRoleoff(float roleoff);
+		void setRolloff(float rolloff);
 		void setPositioning(bool relative);
 		void setPosition(float x, float y, float z);
 		void setVelocity(float x, float y, float z);

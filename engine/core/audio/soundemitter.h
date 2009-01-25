@@ -68,10 +68,10 @@ namespace FIFE {
 
 		/** Sets the AL_ROLEOFF_FACTOR. Rolloff factor judges the strength of attenuation over distance.
 		 *
-		 * @param roleoff Roleoff factor. You'll need to do a lot of testing to find a value which suits your needs.
+		 * @param rolloff Rolloff factor. You'll need to do a lot of testing to find a value which suits your needs.
 		 */
-		void setRoleoff(float roleoff) {
-			alSourcef (m_source, AL_ROLLOFF_FACTOR,  roleoff);
+		void setRolloff(float rolloff) {
+			alSourcef (m_source, AL_ROLLOFF_FACTOR,  rolloff);
 		}
 
 		/** Sets the sound clip to be used by this emitter.
