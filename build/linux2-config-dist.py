@@ -5,7 +5,7 @@ def initEnvironment(env):
 
 def addExtras(context):
 	context.env.Append(LIBS = 'm')
-	context.env.Replace(LIBPATH = ['/opt/lib', ('%s/ext/install/lib' % context.env['SCONS_ROOT_PATH'])])
+	context.env.Replace(LIBPATH = ['/opt/lib', '%s/ext/install/lib' % context.env['SCONS_ROOT_PATH']])
 	context.env.Append(CPPPATH = ['/opt/include',
 	                              '/usr/include/vorbis',
 	                              '/usr/include/python%s'% sys.version[:3],
