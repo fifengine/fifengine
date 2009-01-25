@@ -1207,6 +1207,94 @@ class ImageButton(BasicTextWidget):
 		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
 		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
 
+class ToggleButton(BasicTextWidget):
+	"""
+	A basic push button that can be toggled.
+
+	Unfortunately a bit of code duplication from ImageButton.	
+
+	New Attributes
+	==============
+
+	  - group: String: The group the button belongs to. Only one button in each group will be toggled at one time.
+	  - toggled: Boolean: Whether the button is toggled or not.
+	"""
+
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext'),Attr('hover_image'),Attr('group')]
+
+	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),group="",**kwargs):
+		
+		self.real_widget = fife.ToggleButton()
+		super(ToggleButton,self).__init__(**kwargs)
+		self.group = group
+		self.up_image = up_image
+		self.down_image = down_image
+		self.hover_image = hover_image
+		self.offset = offset
+		
+	def _setGroup(self,group):
+		self.real_widget.setGroup( group )
+		
+	def _getGroup(self):
+		return self.real_widget.getGroup()
+	group = property(_getGroup,_setGroup)
+	
+	def _setToggled(self, toggled):
+		self.real_widget.setToggled( toggled )
+		
+	def _isToggled(self):
+		return self.real_widget.isToggled()
+	toggled = property(_isToggled, _setToggled)
+
+	###
+	# I didn't want to do this, but this is just cut and paste from the ImageButton class:
+	###
+
+	def _setUpImage(self,image):
+		self._upimage_source = image
+		try:
+			self._upimage = get_manager().loadImage(image)
+			self.real_widget.setUpImage( self._upimage )
+		except:
+			self._upimage = _DummyImage()
+	def _getUpImage(self): return self._upimage_source
+	up_image = property(_getUpImage,_setUpImage)
+
+	def _setDownImage(self,image):
+		self._downimage_source = image
+		try:
+			self._downimage = get_manager().loadImage(image)
+			self.real_widget.setDownImage( self._downimage )
+		except:
+			self._downimage = _DummyImage()
+	def _getDownImage(self): return self._downimage_source
+	down_image = property(_getDownImage,_setDownImage)
+
+	def _setHoverImage(self,image):
+		self._hoverimage_source = image
+		try:
+			self._hoverimage = get_manager().loadImage(image)
+			self.real_widget.setHoverImage( self._hoverimage )
+		except:
+			self._hoverimage = _DummyImage()
+	def _getHoverImage(self): return self._hoverimage_source
+	hover_image = property(_getHoverImage,_setHoverImage)	
+
+	def _setOffset(self, offset):
+		self.real_widget.setDownOffset(offset[0], offset[1])
+	def _getOffset(self):
+		return (self.real_widget.getDownXOffset(), self.real_widget.getDownYOffset())
+	offset = property(_getOffset,_setOffset)
+
+	def _setHelpText(self, txt):
+		self.real_widget.setHelpText(txt)
+	def _getHelpText(self):
+		return self.real_widget.getHelpText()
+	helptext = property(_getHelpText,_setHelpText)
+
+	def resizeToContent(self):
+		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
+		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
 
 class CheckBox(BasicTextWidget):
 	"""
@@ -1729,6 +1817,7 @@ WIDGETS = {
 	"CheckBox" : CheckBox,
 	"RadioButton" : RadioButton,
 	"ImageButton" : ImageButton,
+	"ToggleButton" : ToggleButton,
 
 	#Complexer Widgets / Text io
 	"TextField" : TextField,

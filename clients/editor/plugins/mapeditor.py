@@ -85,16 +85,25 @@ class Toolbar(object):
 		self._toolbar.hide()
 	
 	def _enableBtn(self, enabled, btn):
-		pass
-	
-	def enableInsert(self, enabled):
-		self._enableBtn(enabled, self._toolbar.findChild(name='btnInsert'))
-		
-	def enableDelete(self, enabled):
-		self._enableBtn(enabled, self._toolbar.findChild(name='btnDelete'))
+		btn.toggled = enabled;
 
 	def enableSelect(self, enabled):
 		self._enableBtn(enabled, self._toolbar.findChild(name='btnSelect'))
+
+	def enableMove(self, enabled):
+		self._enableBtn(enabled, self._toolbar.findChild(name='btnMove'))
+
+	def enableInsert(self, enabled):
+		self._enableBtn(enabled, self._toolbar.findChild(name='btnInsert'))
+
+	def enableDelete(self, enabled):
+		self._enableBtn(enabled, self._toolbar.findChild(name='btnDelete'))
+
+	def disableAll(self):
+		self.enableDelete(False)
+		self.enableSelect(False)
+		self.enableInsert(False)
+		self.enableMove(False)
 	
 class StatusBar(object):
 	def __init__(self, screenw, screenh):
@@ -157,8 +166,8 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		rb = self._engine.getRenderBackend()
 		self._statusbar = StatusBar(rb.getWidth(), rb.getHeight())
 		self._toolbar = Toolbar(cbwa(self._setMode, VIEWING), cbwa(self._setMode, MOVING),
-		                        cbwa(self._setMode, INSERTING), cbwa(self._setMode, REMOVING),
-					self._statusbar.showTooltip, self._statusbar.hideTooltip)
+								cbwa(self._setMode, INSERTING), cbwa(self._setMode, REMOVING),
+								self._statusbar.showTooltip, self._statusbar.hideTooltip)
 		self._toolbar.show()
 		self._setMode(NOTHING_LOADED)
 
@@ -173,10 +182,24 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def _setMode(self, mode):
 		if (mode != NOTHING_LOADED) and (not self._camera):
 			self._statusbar.setStatus('Please load map first')
+			self._toolbar.disableAll()
 			return
 		if (mode == INSERTING) and (not self._object):
 			self._statusbar.setStatus('Please select object first')
-			return
+			mode = self._mode
+		
+		# Update toolbox buttons
+		if (mode == INSERTING):
+			self._toolbar.enableInsert(True)
+		elif mode == VIEWING:
+			self._toolbar.enableSelect(True)
+		elif mode == REMOVING:
+			self._toolbar.enableDelete(True)
+		elif mode == MOVING:
+			self._toolbar.enableMove(True)
+		else:
+			self._toolbar.disableAll()
+		
 		self._mode = mode
 		print "Entered mode " + mode
 		self._statusbar.setStatus(mode.replace('_', ' ').capitalize())

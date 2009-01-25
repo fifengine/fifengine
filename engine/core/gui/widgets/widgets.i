@@ -22,7 +22,9 @@
 %module fife
 %{
 #include <guichan.hpp>
+#include <guichan/mouseevent.hpp>
 #include "gui/widgets/twobutton.h"
+#include "gui/widgets/togglebutton.h"
 #include "gui/widgets/clicklabel.h"
 #include "gui/widgets/icon2.hpp"
 %}
@@ -193,6 +195,29 @@ namespace gcn {
 		void setDownOffset(int x, int y);
 		int getDownXOffset();
 		int getDownYOffset();
+		void setHelpText(const std::string& txt);
+		const std::string& getHelpText();
+	};
+	
+	%feature("notabstract") ToggleButton;
+	class ToggleButton: public Widget {
+	public:
+		ToggleButton(Image *up_image = 0, Image *down_image = 0, Image *hover_image = 0, const char * caption = "", const char * group = "");
+		~ToggleButton();
+		virtual void setCaption(const std::string& caption);
+		virtual const std::string& getCaption() const;
+		virtual void setAlignment(Graphics::Alignment alignment);
+		virtual Graphics::Alignment getAlignment() const;
+		void setUpImage(Image* image);
+		void setDownImage(Image* image);
+		void setHoverImage(Image* image);
+		void setDownOffset(int x, int y);
+		int getDownXOffset() const;
+		int getDownYOffset() const;
+		bool isToggled() const;
+		void setToggled(bool toggled);
+		void setGroup(const std::string &group);
+		const std::string &getGroup() const;
 
 		void setHelpText(const std::string& txt);
 		const std::string& getHelpText();
