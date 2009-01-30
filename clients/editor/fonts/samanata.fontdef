@@ -1,7 +1,7 @@
 [Font/samanata_large]
 
 type: truetype
-source: content/fonts/samanata.ttf
+source: fonts/samanata.ttf
 size: 30
 
 antialias: 0
@@ -11,7 +11,7 @@ color: 255,255,0
 [Font/samanata_small]
 
 type: truetype
-source: content/fonts/samanata.ttf
+source: fonts/samanata.ttf
 size: 8
 
 antialias: 0
