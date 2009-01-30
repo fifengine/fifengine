@@ -115,7 +115,7 @@ class ObjectEdit(plugin.Plugin):
 			- creates the gui skeleton by loading the xml file
 			- finds some important childs and saves their widget in the object
 		"""
-		self.container = pychan.loadXML('gui/offsetedit.xml')
+		self.container = pychan.loadXML('content/gui/offsetedit.xml')
 		self.container.mapEvents({
 			'x_offset_up' 	: cbwa(self.change_offset_x, 1),
 			'x_offset_dn' 	: cbwa(self.change_offset_x, -1),
