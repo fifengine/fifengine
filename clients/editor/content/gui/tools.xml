@@ -1,8 +1,0 @@
-<Window title="" titlebar_height="15" margins="0,0">
-	<VBox padding="0">
-		<ToggleButton group="toolbuttons" hover_image="content/icons/hand.png" up_image="content/icons/hand.png" down_image="content/icons/hand.png" name="btnSelect" offset="1,1" helptext="Select cells on layer" />
-		<ToggleButton group="toolbuttons" hover_image="content/icons/select_layer.png" up_image="content/icons/select_layer.png" down_image="content/icons/select_layer.png" name="btnMove" offset="1,1" helptext="Moves instances" />
-		<ToggleButton group="toolbuttons" hover_image="content/icons/add_instance.png" up_image="content/icons/add_instance.png" down_image="content/icons/add_instance.png" name="btnInsert" offset="1,1" helptext="Adds new instances based on currently selected object" />
-		<ToggleButton group="toolbuttons" hover_image="content/icons/quit.png" up_image="content/icons/quit.png" down_image="content/icons/quit.png" name="btnDelete" offset="1,1" helptext="Deletes instances" />
-	</VBox>
-</Window>

@@ -11,7 +11,7 @@ class Selection():
 		self.list = list
 		self._callback = onSelection
 
-		self._widget = pychan.loadXML('content/gui/selection.xml')
+		self._widget = pychan.loadXML('gui/selection.xml')
 
 		self._widget.mapEvents({
 			'okButton'     : self._selected,
@@ -40,7 +40,7 @@ class ClickSelection():
 		self.list = list
 		self._callback = onSelection
 
-		self._widget = pychan.loadXML('content/gui/selection.xml')
+		self._widget = pychan.loadXML('gui/selection.xml')
 
 		self._widget.mapEvents({
 			'okButton'     : self._widget.hide,

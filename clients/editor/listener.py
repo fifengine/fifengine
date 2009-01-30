@@ -84,7 +84,7 @@ class EditorListener(fife.IKeyListener, fife.ICommandListener, fife.IMouseListen
 			self.app.quit()
 
 		if command.lower() in ( 'help', 'help()' ):
-			self.engine.getGuiManager().getConsole().println( open( 'content/infotext.txt', 'r' ).read() )
+			self.engine.getGuiManager().getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
 			return "-- End of help --"
 		
 		try:

@@ -17,7 +17,7 @@ class CameraEditor():
 	def __init__(self, engine, callback=None, map=None, layer=None):
 		self.engine = engine
 		self.callback = callback
-		self._widget = pychan.loadXML('content/gui/cameraedit.xml')
+		self._widget = pychan.loadXML('gui/cameraedit.xml')
 
 		if map:
 			self._widget.distributeData({

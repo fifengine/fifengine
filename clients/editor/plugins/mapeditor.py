@@ -32,7 +32,7 @@ class MapSelection(object):
 
 	def show(self, map):
 		if not self._mapedit:
-			self._mapedit = pychan.loadXML('content/gui/mapeditor.xml')
+			self._mapedit = pychan.loadXML('gui/mapeditor.xml')
 			self._mapedit.mapEvents({
 				'layerButton'  : self._onLayerSelect,
 				'objButton'   : self._onObjectSelect,
@@ -63,7 +63,7 @@ class Toolbar(object):
 	
 	def show(self):
 		if not self._toolbar:
-			self._toolbar = pychan.loadXML('content/gui/tools.xml')
+			self._toolbar = pychan.loadXML('gui/tools.xml')
 			evtmap = {
 				'btnSelect' : self._onSelect,
 				'btnMove' : self._onMove,
@@ -107,7 +107,7 @@ class Toolbar(object):
 	
 class StatusBar(object):
 	def __init__(self, screenw, screenh):
-		self._statusbar = pychan.loadXML('content/gui/statuspanel.xml')
+		self._statusbar = pychan.loadXML('gui/statuspanel.xml')
 		self._statusbar.show()
 		height = 25
 		self._statusbar.position = (0, screenh - height)

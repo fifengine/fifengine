@@ -9,7 +9,7 @@ class Input():
 	def __init__(self, prompt, onEntry):
 		self._callback = onEntry
 
-		self._widget = pychan.loadXML('content/gui/input.xml')
+		self._widget = pychan.loadXML('gui/input.xml')
 
 		self._widget.mapEvents({
 			'okButton'     : self._complete,

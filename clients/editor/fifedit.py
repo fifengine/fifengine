@@ -11,7 +11,7 @@ class Fifedit():
 	"""
 	def __init__(self, engine):
 		pychan.init(engine,debug=False)
-		self.gui = pychan.loadXML('content/gui/rootpanel.xml')
+		self.gui = pychan.loadXML('gui/rootpanel.xml')
 		eventMap = {
 			'quitButton'  : self.quit
 		}

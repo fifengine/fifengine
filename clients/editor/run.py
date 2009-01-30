@@ -42,9 +42,9 @@ class Help(Plugin):
 		if self._helpWidget:
 			self._helpWidget.show()
 			return
-		self._helpWidget = pychan.loadXML('content/gui/help.xml')
+		self._helpWidget = pychan.loadXML('gui/help.xml')
 		self._helpWidget.mapEvents({ 'closeButton' : self._helpWidget.hide })
-		self._helpWidget.distributeData({ 'helpText' : open("content/infotext.txt").read() })
+		self._helpWidget.distributeData({ 'helpText' : open("misc/infotext.txt").read() })
 		self._helpWidget.show()
 
 class Editor(basicapplication.ApplicationBase):

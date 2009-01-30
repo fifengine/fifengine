@@ -12,7 +12,7 @@ class FileBrowser(object):
 	The savefile option provides a box for supplying a new filename that doesn't exist yet.
   The selectdir option allows directories to be selected as well as files.
 	"""
-	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="content/gui/filebrowser.xml"):
+	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="gui/filebrowser.xml"):
 		self.engine = engine
 		self.fileSelected = fileSelected
 
