@@ -32,6 +32,7 @@
 #include "util/log/logger.h"
 #include "util/base/exception.h"
 #include "util/math/fife_math.h"
+#include "util/time/timemanager.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/abstractpather.h"
 #include "model/metamodel/action.h"
@@ -52,8 +53,8 @@ namespace FIFE {
 			m_target(NULL), 
 			m_speed(0), 
 			m_repeating(false),
-			m_action_start_time(SDL_GetTicks()),
-			m_prev_call_time(m_action_start_time),
+			m_action_start_time(0),
+			m_prev_call_time(0),
 			m_pather_session_id(-1),
 			m_pather(pather),
 			m_leader(NULL) {}
@@ -78,8 +79,6 @@ namespace FIFE {
 		unsigned int m_action_start_time;
 		// ticks since last call
 		unsigned int m_prev_call_time;
-		// current time for action processing (set by Instance::update), optimized to avoid multiple calls to GetTicks
-		unsigned int m_cur_time;
 		// session id for pather
 		int m_pather_session_id;
 		// pather
@@ -93,8 +92,8 @@ namespace FIFE {
 		SayInfo(const std::string& txt, unsigned int duration):
 			m_txt(txt),
 			m_duration(duration),
-			m_start_time(SDL_GetTicks()) {
-		}
+			m_start_time(0) {}
+
 		std::string m_txt;
 		unsigned int m_duration;
 		unsigned int m_start_time;
@@ -251,6 +250,7 @@ namespace FIFE {
 			m_activity->m_actioninfo = NULL;
 			throw NotFound(std::string("action ") + action_name + " not found");
 		}
+		m_activity->m_actioninfo->m_prev_call_time = m_activity->m_actioninfo->m_action_start_time = getRuntime();
 	}
 
 	void Instance::move(const std::string& action_name, const Location& target, const double speed) {
@@ -286,6 +286,7 @@ namespace FIFE {
 		
 		if (text != "") {
 			m_activity->m_sayinfo = new SayInfo(text, duration);
+			m_activity->m_sayinfo->m_start_time = getRuntime();
 		}
 	}
 
@@ -308,7 +309,7 @@ namespace FIFE {
 		FL_DBG(_log, "Moving...");
 		ActionInfo* info = m_activity->m_actioninfo;
 		// timeslice for this movement
-		unsigned int timedelta = scaleTime(getTotalTimeMultiplier(), info->m_cur_time - info->m_prev_call_time);
+		unsigned int timedelta = m_activity->m_timeprovider->getGameTime() - info->m_prev_call_time;
 		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << info->m_prev_call_time);
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
@@ -331,7 +332,7 @@ namespace FIFE {
 		return false;
 	}
 
-	InstanceChangeInfo Instance::update(unsigned int curticks) {
+	InstanceChangeInfo Instance::update() {
 		if (!m_activity) {
 			return ICHANGE_NO_CHANGES;
 		}
@@ -339,14 +340,9 @@ namespace FIFE {
 		if (!m_activity->m_timeprovider) {
 			bindTimeProvider();
 		}
-		
-		if (curticks == 0) {
-			curticks = SDL_GetTicks();
-		}
 		ActionInfo* info = m_activity->m_actioninfo;
 		if (info) {
-			info->m_cur_time = curticks;
-			FL_DBG(_log, LMsg("updating instance, ticks = ") << curticks);
+			FL_DBG(_log, "updating instance");
 
 			if (info->m_target) {
 				FL_DBG(_log, "action contains target for movement");
@@ -361,20 +357,20 @@ namespace FIFE {
 				}
 			} else {
 				FL_DBG(_log, "action does not contain target for movement");
-				if (scaleTime(getTotalTimeMultiplier(), curticks - info->m_action_start_time) >= info->m_action->getDuration()) {
+				if (m_activity->m_timeprovider->getGameTime() - info->m_action_start_time >= info->m_action->getDuration()) {
 					if (info->m_repeating) {
-						info->m_action_start_time = curticks;
+						info->m_action_start_time = m_activity->m_timeprovider->getGameTime();
 					} else {
 						finalizeAction();
 					}
 				}
 			}
 
-			m_activity->m_actioninfo->m_prev_call_time = curticks;
+			m_activity->m_actioninfo->m_prev_call_time = m_activity->m_timeprovider->getGameTime();
 		}
 		if (m_activity->m_sayinfo) {
 			if (m_activity->m_sayinfo->m_duration > 0) {
-				if (scaleTime(getTotalTimeMultiplier(), curticks - m_activity->m_sayinfo->m_start_time) > m_activity->m_sayinfo->m_duration) {
+				if (m_activity->m_timeprovider->getGameTime() >= m_activity->m_sayinfo->m_start_time + m_activity->m_sayinfo->m_duration) {
 					say("");
 				}
 			}
@@ -432,13 +428,15 @@ namespace FIFE {
 		return *m_facinglocation;
 	}
 
-	int Instance::getActionRuntime() const {
+	unsigned int Instance::getActionRuntime() {
 		if (m_activity && m_activity->m_actioninfo) {
-			return SDL_GetTicks() - m_activity->m_actioninfo->m_action_start_time;
+			if(!m_activity->m_timeprovider)
+				bindTimeProvider();
+			return m_activity->m_timeprovider->getGameTime() - m_activity->m_actioninfo->m_action_start_time;
 		}
-		return -1;
+		return getRuntime();
 	}
-	
+
 	void Instance::bindTimeProvider() {
 		float multiplier = 1.0;
 		if (m_activity->m_timeprovider) {
@@ -458,12 +456,12 @@ namespace FIFE {
 		}
 		m_activity->m_timeprovider->setMultiplier(multiplier);
 	}
-	
+
 	void Instance::refresh() {
 		initializeChanges();
 		bindTimeProvider();
 	}
-	
+
 	void Instance::setTimeMultiplier(float multip) {
 		initializeChanges();
 		if (!m_activity->m_timeprovider) {
@@ -471,19 +469,39 @@ namespace FIFE {
 		}
 		m_activity->m_timeprovider->setMultiplier(multip);
 	}
-	
+
 	float Instance::getTimeMultiplier() {
 		if (m_activity && m_activity->m_timeprovider) {
 			return m_activity->m_timeprovider->getMultiplier();
 		}
 		return 1.0;
 	}
-	
+
 	float Instance::getTotalTimeMultiplier() {
 		if (m_activity && m_activity->m_timeprovider) {
 			return m_activity->m_timeprovider->getTotalMultiplier();
 		}
+		if (m_location.getLayer()) {
+			Map* map = m_location.getLayer()->getMap();
+			if (map && map->getTimeProvider()) {
+				return map->getTimeProvider()->getTotalMultiplier();
+			}
+		}
 		return 1.0;
 	}
-}
 
+	unsigned int Instance::getRuntime() {
+		if (m_activity) {
+			if(!m_activity->m_timeprovider)
+				bindTimeProvider();
+			return m_activity->m_timeprovider->getGameTime();
+		}
+		if (m_location.getLayer()) {
+			Map* map = m_location.getLayer()->getMap();
+			if (map && map->getTimeProvider()) {
+				return map->getTimeProvider()->getGameTime();
+			}
+		}
+		return TimeManager::instance()->getTime();
+	}
+}

@@ -35,6 +35,7 @@
 #include "video/image.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
+#include "util/time/timemanager.h"
 #include "model/metamodel/grids/cellgrid.h"
 #include "model/metamodel/timeprovider.h"
 #include "model/structures/instance.h"
@@ -246,13 +247,13 @@ namespace FIFE {
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
-		m_start_time(SDL_GetTicks()),
+		m_start_time(TimeManager::instance()->getTime()),
 		m_time_scale(1.0) {
 	}
 	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
 		Animation& animation = animpool->getAnimation(m_animation);
-		int animtime = scaleTime(m_time_scale, SDL_GetTicks() - m_start_time) % animation.getDuration();
+		int animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 		Image* img = animation.getFrameByTimestamp(animtime);
 		Rect r;
 		r.x = p.x-img->getWidth()/2;

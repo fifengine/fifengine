@@ -484,8 +484,6 @@ namespace FIFE {
 		//	return;
 		//}
 		
-		const unsigned long curtime = TimeManager::instance()->getTime();
-		
 		// update each layer
 		m_renderbackend->pushClipArea(getViewPort());
 		
@@ -534,9 +532,8 @@ namespace FIFE {
 				if (action) {
 					FL_DBG(_log, "Instance has action");
 					int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
-
 					Animation& animation = m_apool->getAnimation(animation_id);
-					int animtime = scaleTime(instance->getTotalTimeMultiplier(), instance->getActionRuntime()) % animation.getDuration();
+					unsigned int animtime = instance->getActionRuntime() % animation.getDuration();
 					image = animation.getFrameByTimestamp(animtime);
 				} else {
 					FL_DBG(_log, "No action");
@@ -550,7 +547,7 @@ namespace FIFE {
 						if (action) {
 							int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
 							Animation& animation = m_apool->getAnimation(animation_id);
-							int animtime = scaleTime(instance->getTotalTimeMultiplier(), curtime) % animation.getDuration();
+							unsigned int animtime = instance->getRuntime() % animation.getDuration();
 							image = animation.getFrameByTimestamp(animtime);
 						}
 					}

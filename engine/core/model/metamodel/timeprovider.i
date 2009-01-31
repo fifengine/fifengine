@@ -33,6 +33,6 @@ namespace FIFE {
 		void setMultiplier(float multiplier);
 		float getMultiplier() const;
 		float getTotalMultiplier() const;
-		unsigned int getGameTicks() const;
+		unsigned int getGameTime() const;
 	};
 }

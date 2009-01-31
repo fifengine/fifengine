@@ -60,13 +60,18 @@ namespace FIFE {
 		 */
 		float getTotalMultiplier() const;
 		
-		/** Returns current game ticks. Fetched from furthest master to reduce system calls.
+		/** Returns current game ticks, already scaled.
 		 */
-		unsigned int getGameTicks() const;
+		unsigned int getGameTime() const;
 		
 	private:
 		TimeProvider* m_master;
 		float m_multiplier;
+		double m_time_static, m_time_scaled; 
+		
+		/** Returns current game ticks, already scaled, more precise.
+		 */
+		double getPreciseGameTime() const;
 	};
 	
 	/** Utility function to calculate time scaling. Mostly done to avoid littering other code

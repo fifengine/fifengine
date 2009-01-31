@@ -203,10 +203,9 @@ namespace FIFE {
 
 	bool Layer::update() {
 		m_changedinstances.clear();
-		unsigned int curticks = SDL_GetTicks();
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
-			if ((*it)->update(curticks) != ICHANGE_NO_CHANGES) {
+			if ((*it)->update() != ICHANGE_NO_CHANGES) {
 				m_changedinstances.push_back(*it);
 				m_changed = true;
 			}

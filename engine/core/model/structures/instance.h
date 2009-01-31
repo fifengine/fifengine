@@ -185,7 +185,7 @@ namespace FIFE {
 		 *  In case there is no current action, returns -1
 		 * @return action runtime
 		 */
-		int getActionRuntime() const;
+		unsigned int getActionRuntime();
 
 		/** Performs given named action to the instance. While performing the action
 		 *  moves instance to given target with given speed
@@ -221,12 +221,11 @@ namespace FIFE {
 		const std::string* getSayText() const;
 
 		/** Updates the instance related to the current action
-		 * @param curticks current tick count of the system
 		 * @note call this only once in engine update cycle, so that tracking between
 		 *  current position and previous position keeps in sync.
 		 * @returns marked changes
 		 */
-		InstanceChangeInfo update(unsigned int curticks=0);
+		InstanceChangeInfo update();
 		
 		/** Sets visualization to be used. Transfers ownership.
 		 */
@@ -248,6 +247,11 @@ namespace FIFE {
 		*/
 		float getTotalTimeMultiplier();
 		
+		/** Gets the scaled runtime in milliseconds
+		 * @return runtime
+		 */
+		unsigned int getRuntime();
+
 		/** Refreshes instance e.g. in case location is updated directly (not via setLocation)
 		 * In this case e.g. instance's master time provider is changed, so it needs to be updated
 		 */

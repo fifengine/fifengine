@@ -84,13 +84,14 @@ namespace FIFE {
 		void setFacingLocation(const Location& loc);
 		Location getFacingLocation();
 		Location& getFacingLocationRef();
-		int getActionRuntime() const;
+		unsigned int getActionRuntime();
 		void move(const std::string& action_name, const Location& target, const double speed);
 		void act(const std::string& action_name, const Location& direction, bool repeating=false);
 		void follow(const std::string& action_name, Instance* leader, const double speed);
 		void say(const std::string& text, unsigned int duration=0);
 		void setTimeMultiplier(float multip);
 		float getTimeMultiplier();
+		unsigned int getRuntime();
 		void refresh();
 		InstanceChangeInfo getChangeInfo();
 		
