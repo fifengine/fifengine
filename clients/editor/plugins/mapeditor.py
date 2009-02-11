@@ -243,6 +243,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._setMode(VIEWING)
 		
 		self._mapselector.show(self._map)
+		
+		# zero-projekt plugin
+		if self.layertool is not None:
+			self.layertool.update()
 	
 	def _selectLayer(self):
 		Selection([layer.getId() for layer in self._map.getLayers()], self._editLayer)

@@ -28,9 +28,11 @@ from plugins.importer import Importer
 from plugins.mapeditor import MapEditor
 from plugins.mapwizard import MapWizard
 from fifedit import Fifedit
-# by c 09/11/08 
+
+# zero-projekt plugins
 from plugins.objectedit import ObjectEdit
-# end edit c
+from plugins.layertool import LayerTool
+
 
 # Help display
 class Help(Plugin):
@@ -60,9 +62,11 @@ class Editor(basicapplication.ApplicationBase):
 		self.mapsaver = MapSaver(self.engine)
 		self.mapwizard = MapWizard(self.engine)
 		self.importer = Importer(self.engine)
-# by c 09/11/08 
+
+		# zero-projekt plugins
 		self.objectedit = ObjectEdit(self.engine, self.mapedit)
-# end edit c
+		self.layertool = LayerTool(self.engine, self.mapedit)
+
 		# Register plugins with Fifedit.
 		self.fifedit.registerPlugin(Help())
 		self.fifedit.registerPlugin(self.maploader)
@@ -70,9 +74,11 @@ class Editor(basicapplication.ApplicationBase):
 		self.fifedit.registerPlugin(self.mapedit)
 		self.fifedit.registerPlugin(self.mapwizard)
 		self.fifedit.registerPlugin(self.importer)
-# by c 09/11/08 
+
+		# zero-projekt plugins
 		self.fifedit.registerPlugin(self.objectedit)
-# end edit c		
+		self.fifedit.registerPlugin(self.layertool)
+			
 		self.params = params
 
 	def createListener(self):
@@ -101,10 +107,11 @@ class Editor(basicapplication.ApplicationBase):
 			parts = self.params.split(s)
 			self.maploader.loadFile(s.join(parts[0:-1]), parts[-1])
 			self.params = None
-# edit by c 11/09
+
+		# zero-projekt plugins
 		if self.mapedit._instances is not None:
 			self.objectedit.input()
-# end edit c
+
 
 if __name__ == '__main__':
 	print sys.argv
