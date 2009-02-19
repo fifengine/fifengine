@@ -367,12 +367,12 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			# project specific animation angles
 			try:
 				if self._objectedit_rotations is not None:
-#				print "available angles: ", self._offsetedit_rotations
+#				print "available angles: ", self._objectedit_rotations
 					rotation_prev = i.getRotation()
 #				print "previous rotation: ", rotation_prev
-					length = len(self._offsetedit_rotations)
+					length = len(self._objectedit_rotations)
 #				print "length: ", length
-					index = self._offsetedit_rotations.index( str(rotation_prev) )
+					index = self._objectedit_rotations.index( str(rotation_prev) )
 #				print "index, old: ", index
 					if index < length - 1:
 						index += 1
@@ -382,11 +382,12 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 						index = 0
 #				print "index, new: ", index
 					
-					i.setRotation( int(self._offsetedit_rotations[index]) )
-#				print "new rotation: ", self._offsetedit_rotations[index]
+					i.setRotation( int(self._objectedit_rotations[index]) )
+#				print "new rotation: ", self._objectedit_rotations[index]
 			except:
 				# Fallback
 				i.setRotation((i.getRotation() + 90) % 360)
+			
 # end FIXME
 # end edit c
 
