@@ -1,11 +1,16 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from swig_test_utils import *
 import math
 
 class TestModel(unittest.TestCase):
 	
 	def setUp(self):
+		self.timeManager = fife.TimeManager()
 		self.model = fife.Model()
+
+	def tearDown(self):
+		del self.timeManager
 
 	def testModel(self):
 		map1 = self.model.createMap("map001")
