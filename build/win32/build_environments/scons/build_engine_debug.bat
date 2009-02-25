@@ -9,7 +9,7 @@ SET PATH=%_%\..\..\applications\scons;%_%\..\..\applications\mingw\bin
 :: Goto TRUNK and call SCons
 cd \
 cd "%_%\..\..\..\.."
-scons debug=1 zip=1
+scons debug=1
 
 :: Delete old versions of _fife.pyd and rename the compiled fife.dll to _fife.pyd
 cd "%_%\..\..\..\..\engine\swigwrappers\python"
