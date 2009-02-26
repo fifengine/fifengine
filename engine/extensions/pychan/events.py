@@ -175,7 +175,7 @@ class EventMapper(object):
 				if not self.listener.events:
 					self.detach()
 			elif self.debug:
-					print CALLBACK_NONE_MESSAGE % str(self.widget)
+				print CALLBACK_NONE_MESSAGE % str(self.widget)
 			return
 
 		if not callable(callback):

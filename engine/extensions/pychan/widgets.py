@@ -14,8 +14,8 @@ from exceptions import *
 from attrs import Attr,PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
 
 def get_manager():
-    import pychan
-    return pychan.manager
+	import pychan
+	return pychan.manager
 
 def _mungeText(text):
 	"""
@@ -90,14 +90,14 @@ class Widget(object):
 	DEFAULT_NAME = '__unnamed__'
 
 	HIDE_SHOW_ERROR = """\
-	You can only show/hide the top widget of a hierachy.
-	Use 'addChild' or 'removeChild' to add/remove labels for example.
-	"""
+		You can only show/hide the top widget of a hierachy.
+		Use 'addChild' or 'removeChild' to add/remove labels for example.
+		"""
 
 	def __init__(self,parent = None, name = DEFAULT_NAME,
-			size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
-			style = None, **kwargs):
-		
+				 size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
+				 style = None, **kwargs):
+
 		assert( hasattr(self,'real_widget') )
 		self.event_mapper = events.EventMapper(self)
 		self._visible = False
@@ -169,7 +169,7 @@ class Widget(object):
 	def capture(self, callback, event_name="action", group_name="default"):
 		"""
 		Add a callback to be executed when the widget event occurs on this widget.
-		
+
 		The callback must be either a callable or None.
 		The old event handler (if any) will be overridden by the callback.
 		If None is given, the event will be disabled. You can query L{isCaptured}
@@ -235,9 +235,9 @@ class Widget(object):
 		      VBox 1
 		      - Container
 			- VBox 2
-			  - HBox 
+			  - HBox
 			    - Label
-		
+
 		If you call adaptLayout on the Label the layout from the VBox 2
 		will get recalculated, while the VBox 1 stays untouched.
 
@@ -323,7 +323,7 @@ class Widget(object):
 		widget names and override the previously set callback.
 		You can also pass C{None} instead of a callback, which will
 		disable the event completely.
-		
+
 		@param eventMap: A dictionary with widget/event names as keys and callbacks as values.
 		@param ignoreMissing: Normally this method raises an RuntimeError, when a widget
 		can not be found - this behaviour can be overriden by passing True here.
@@ -401,13 +401,13 @@ class Widget(object):
 		Distribute data from a dictionary over the widgets in the hierachy
 		using the keys as names and the values as the data (which is set via L{setData}).
 		This will only accept unique matches.
-		
+
 		Use it like this::
 		  guiElement.distributeData({
 		       'myTextField' : 'Hello World!',
 		       'myListBox' : ["1","2","3"]
 		  })
-		
+
 		"""
 		for name,data in dataMap.items():
 			widgetList = self.findChildren(name = name)
@@ -965,7 +965,7 @@ class HBox(HBoxLayoutMixin,Container):
 	A horizontally aligned box - for containement of child widgets.
 
 	Please see L{VBox} for details - just change the directions :-).
-	"""	
+	"""
 	def __init__(self,padding=5,**kwargs):
 		super(HBox,self).__init__(**kwargs)
 		self.padding = padding
@@ -1100,7 +1100,7 @@ class Label(BasicTextWidget):
 	 Currently to actually see text wrapping you have to explicitly set a max_size with
 	 the desired width of the text, as the layout engine is not capable of deriving
 	 the maximum width from a parent container.
-	 
+
 	"""
 
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
@@ -1109,14 +1109,14 @@ class Label(BasicTextWidget):
 		self.real_widget = fife.Label("")
 		self.wrap_text = wrap_text
 		super(Label,self).__init__(**kwargs)
-		
+
 	def resizeToContent(self):
 		self.real_widget.setWidth( self.max_size[0] )
 		self.real_widget.adjustSize()
 		self.height = self.real_widget.getHeight() + self.margins[1]*2
 		self.width  = self.real_widget.getWidth()  + self.margins[0]*2
 		#print self.width,self.max_size[0]
-	
+
 	def _setTextWrapping(self,wrapping): self.real_widget.setTextWrapping(wrapping)
 	def _getTextWrapping(self): self.real_widget.isTextWrapping()
 	wrap_text = property(_getTextWrapping,_setTextWrapping)
@@ -1189,7 +1189,7 @@ class ImageButton(BasicTextWidget):
 		except:
 			self._hoverimage = _DummyImage()
 	def _getHoverImage(self): return self._hoverimage_source
-	hover_image = property(_getHoverImage,_setHoverImage)	
+	hover_image = property(_getHoverImage,_setHoverImage)
 
 	def _setOffset(self, offset):
 		self.real_widget.setDownOffset(offset[0], offset[1])
@@ -1211,7 +1211,7 @@ class ToggleButton(BasicTextWidget):
 	"""
 	A basic push button that can be toggled.
 
-	Unfortunately a bit of code duplication from ImageButton.	
+	Unfortunately a bit of code duplication from ImageButton.
 
 	New Attributes
 	==============
@@ -1223,7 +1223,7 @@ class ToggleButton(BasicTextWidget):
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext'),Attr('hover_image'),Attr('group')]
 
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),group="",**kwargs):
-		
+
 		self.real_widget = fife.ToggleButton()
 		super(ToggleButton,self).__init__(**kwargs)
 		self.group = group
@@ -1231,17 +1231,17 @@ class ToggleButton(BasicTextWidget):
 		self.down_image = down_image
 		self.hover_image = hover_image
 		self.offset = offset
-		
+
 	def _setGroup(self,group):
 		self.real_widget.setGroup( group )
-		
+
 	def _getGroup(self):
 		return self.real_widget.getGroup()
 	group = property(_getGroup,_setGroup)
-	
+
 	def _setToggled(self, toggled):
 		self.real_widget.setToggled( toggled )
-		
+
 	def _isToggled(self):
 		return self.real_widget.isToggled()
 	toggled = property(_isToggled, _setToggled)
@@ -1278,7 +1278,7 @@ class ToggleButton(BasicTextWidget):
 		except:
 			self._hoverimage = _DummyImage()
 	def _getHoverImage(self): return self._hoverimage_source
-	hover_image = property(_getHoverImage,_setHoverImage)	
+	hover_image = property(_getHoverImage,_setHoverImage)
 
 	def _setOffset(self, offset):
 		self.real_widget.setDownOffset(offset[0], offset[1])
@@ -1653,7 +1653,7 @@ class ScrollArea(Widget):
 		self.content.height = max(self.content.height,self.height-5)
 
 	def _visibilityToScrollPolicy(self,visibility):
-		if visibility: 
+		if visibility:
 			return fife.ScrollArea.SHOW_AUTO
 		return fife.ScrollArea.SHOW_NEVER
 
@@ -1701,7 +1701,7 @@ class Spacer(object):
 
 class Slider(Widget):
 	""" A slider widget
-	
+
 	Use a callback to read out the slider value every time the marker
 	is moved.
 
@@ -1711,40 +1711,40 @@ class Slider(Widget):
 	  - orientation: 1 = horizontal, 0=vertical
 	  - scale_start: float: default 0.0
 	  - scale_end: float: default 1.0
-	
+
 	FIXME:
 		- set new attributes for marker & step length, value
-		- update docstrings		
+		- update docstrings
 	"""
-	
+
 	HORIZONTAL = fife.Slider.HORIZONTAL
 	VERTICAL = fife.Slider.VERTICAL
-	
+
 	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end')]
-	
+
 	def __init__(self, scaleStart=0.0, scaleEnd=1.0, orientation=HORIZONTAL, **kwargs):
 		self.real_widget = fife.Slider(scaleStart, scaleEnd)
 		self.orientation = orientation
 		self.setOrientation(self.orientation)
 		super(Slider, self).__init__(**kwargs)
-	
+
 	def _setScale(self, start, end):
 		"""setScale(self, double scaleStart, double scaleEnd)"""
 		if type(start) != float:
 			raise RuntimeError("Slider expects float for start scale")
 		if type(end) != float:
-			raise RuntimeError("Slider expects float for end scale")		
+			raise RuntimeError("Slider expects float for end scale")
 		self.real_widget.setScale(start, end)
-	
+
 	def getScaleStart(self):
 		"""getScaleStart(self) -> double"""
 		return self.real_widget.getScaleStart()
-		
+
 	def setScaleStart(self, start):
 		"""setScaleStart(self, double scaleStart)"""
 		if type(start) != float:
 			raise RuntimeError("Slider expects float for start scale")
-		self.real_widget.setScaleStart(start)		
+		self.real_widget.setScaleStart(start)
 	scale_start = property(getScaleStart, setScaleStart)
 
 	def getScaleEnd(self):
@@ -1781,7 +1781,7 @@ class Slider(Widget):
 	def setOrientation(self, orientation):
 		"""setOrientation(self, Orientation orientation)"""
 		self.real_widget.setOrientation(orientation)
-		
+
 	def getOrientation(self):
 		"""getOrientation(self) -> int"""
 		return self.real_widget.getOrientation()

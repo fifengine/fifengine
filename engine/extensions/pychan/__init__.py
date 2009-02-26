@@ -163,18 +163,18 @@ L{loadFonts} in your startup code::
 
 The font definition files are in the following format::
 	[Font/FIRST_FONT_NAME]
-	
+
 	type: truetype
 	source: path/to/font.ttf
 	# The font size in point
 	size: 30
-	
+
 	[Font/SECOND_FONT_NAME]
-	
+
 	type: truetype
 	source: content/fonts/samanata.ttf
 	size: 8
-	
+
 	# And so on.
 
 I hope the example is clear enough ... Other options you can set:
@@ -241,7 +241,7 @@ def init(engine,debug=False):
 	"""
 	This has to be called before any other pychan methods can be used.
 	It sets up a manager object which is available under pychan.manager.
-	
+
 	@param engine: The FIFE engine object.
 	"""
 	from manager import Manager
@@ -292,7 +292,7 @@ class _GuiLoader(object, handler.ContentHandler):
 	def _setAttr(self,obj,name,value):
 		if not hasattr(obj.__class__,'ATTRIBUTES'):
 			raise PyChanException("The registered widget/spacer class %s does not supply an 'ATTRIBUTES'."
-				% repr(obj))
+								  % repr(obj))
 		try:
 			for attr in obj.ATTRIBUTES:
 				if attr.name == name:

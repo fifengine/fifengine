@@ -27,7 +27,7 @@ class Manager(object):
 		self.styles = {}
 		self.addStyle('default',DEFAULT_STYLE)
 
-                Manager.manager = self
+		Manager.manager = self
 
 		# Setup synchronous dialogs
 		self.mainLoop = None
@@ -125,8 +125,8 @@ class Manager(object):
 		return style_copy
 
 	def loadImage(self,filename):
-		index = self.engine.imagePool.addResourceFromFile(filename)
-		return fife.GuiImage(index,self.engine.imagePool)
+		index = self.engine.getImagePool().addResourceFromFile(filename)
+		return fife.GuiImage(index,self.engine.getImagePool())
 
 # Default Widget style.
 
@@ -137,34 +137,34 @@ DEFAULT_STYLE = {
 		'base_color' : fife.Color(0,0,100),
 		'foreground_color' : fife.Color(255,255,255),
 		'background_color' : fife.Color(0,0,0),
-	},
+		},
 	'Button' : {
 		'border_size': 0,
 		'margins' : (10,5),
-	},
+		},
 	('CheckBox','RadioButton') : {
 		'border_size': 0,
-	},
+		},
 	'TextBox' : {
 		'border_size' : 0,
-	},
+		},
 	'Label' : {
 		'border_size': 0,
-	},
+		},
 	'ListBox' : {
 		'border_size': 0,
-	},
+		},
 	'Window' : {
 		'border_size': 1,
 		'margins': (5,5),
-	},
+		},
 	('Container','HBox','VBox') : {
 		'border_size': 0,
 		'opaque' : False
-	},
+		},
 	'Icon' : {
 		'border_size' : 0
-	},
+		},
 	'Slider' : {
 		'border_size' : 0
 	}

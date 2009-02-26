@@ -10,7 +10,7 @@ an attribute of an object accepts.
 Usage::
   class SomeObject:
       nameAttr, posAttr = [ Attr("name"), PointAttr("pos") ]
-  
+
   obj =  SomeObject()
   obj.nameAttr.set(obj,"newName")
   obj.posAttr.set(obj,"89,89")
@@ -85,7 +85,7 @@ class BoolAttr(Attr):
 			return value
 		except:
 			raise ParserError("Expected a 0 or 1.")
-			
+
 class FloatAttr(Attr):
 	def parse(self, value):
 		try:
