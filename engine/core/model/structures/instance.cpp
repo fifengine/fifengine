@@ -45,13 +45,13 @@
 
 namespace FIFE {
 	static Logger _log(LM_INSTANCE);
-	
+
 	class ActionInfo {
 	public:
-		ActionInfo(AbstractPather* pather, const Location& curloc): 
-			m_action(NULL), 
-			m_target(NULL), 
-			m_speed(0), 
+		ActionInfo(AbstractPather* pather, const Location& curloc):
+			m_action(NULL),
+			m_target(NULL),
+			m_speed(0),
 			m_repeating(false),
 			m_action_start_time(0),
 			m_prev_call_time(0),
@@ -86,7 +86,7 @@ namespace FIFE {
 		// leader for follow activity
 		Instance* m_leader;
 	};
-	
+
 	class SayInfo {
 	public:
 		SayInfo(const std::string& txt, unsigned int duration):
@@ -97,8 +97,8 @@ namespace FIFE {
 		std::string m_txt;
 		unsigned int m_duration;
 		unsigned int m_start_time;
-	};	
-	
+	};
+
 	Instance::InstanceActivity::InstanceActivity(Instance& source):
 		m_location(source.m_location),
 		m_facinglocation(),
@@ -115,13 +115,13 @@ namespace FIFE {
 			m_facinglocation = *source.m_facinglocation;
 		}
 	}
-	
+
 	Instance::InstanceActivity::~InstanceActivity() {
 		delete m_actioninfo;
 		delete m_sayinfo;
 		delete m_timeprovider;
 	}
-	
+
 	void Instance::InstanceActivity::update(Instance& source) {
 		source.m_changeinfo = ICHANGE_NO_CHANGES;
 		if (m_location != source.m_location) {
@@ -148,7 +148,7 @@ namespace FIFE {
 			source.m_changeinfo |= ICHANGE_SAYTEXT;
 			m_saytxt = m_sayinfo->m_txt;
 		}
-		
+
 		if (source.m_changeinfo != ICHANGE_NO_CHANGES) {
 			std::vector<InstanceChangeListener*>::iterator i = m_changelisteners.begin();
 			while (i != m_changelisteners.end()) {
@@ -174,13 +174,13 @@ namespace FIFE {
 		delete m_facinglocation;
 		delete m_visual;
 	}
-	
+
 	void Instance::initializeChanges() {
 		if (!m_activity) {
 			m_activity = new InstanceActivity(*this);
 		}
 	}
-	
+
 	void Instance::setLocation(const Location& loc) {
 		initializeChanges();
 		m_location = loc;
@@ -235,10 +235,10 @@ namespace FIFE {
 		}
 		FL_WARN(_log, "Cannot remove unknown listener");
 	}
-
-	void Instance::initalizeAction(const std::string& action_name) {
+	void Instance::initializeAction(const std::string& action_name) {
 		assert(m_object);
 		assert(m_activity);
+		const Action *old_action = m_activity->m_actioninfo ? m_activity->m_actioninfo->m_action : NULL;
 		if (m_activity->m_actioninfo) {
 			delete m_activity->m_actioninfo;
 			m_activity->m_actioninfo = NULL;
@@ -250,21 +250,24 @@ namespace FIFE {
 			m_activity->m_actioninfo = NULL;
 			throw NotFound(std::string("action ") + action_name + " not found");
 		}
-		m_activity->m_actioninfo->m_prev_call_time = m_activity->m_actioninfo->m_action_start_time = getRuntime();
+		m_activity->m_actioninfo->m_prev_call_time = getRuntime();
+		if (m_activity->m_actioninfo->m_action != old_action) {
+			m_activity->m_actioninfo->m_action_start_time = m_activity->m_actioninfo->m_prev_call_time;
+	    }
 	}
 
 	void Instance::move(const std::string& action_name, const Location& target, const double speed) {
 		initializeChanges();
-		initalizeAction(action_name);
+		initializeAction(action_name);
 		m_activity->m_actioninfo->m_target = new Location(target);
 		m_activity->m_actioninfo->m_speed = speed;
 		setFacingLocation(target);
 		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << target << " with speed " << speed);
 	}
-	
+
 	void Instance::follow(const std::string& action_name, Instance* leader, const double speed) {
 		initializeChanges();
-		initalizeAction(action_name);
+		initializeAction(action_name);
 		m_activity->m_actioninfo->m_target = new Location(leader->getLocationRef());
 		m_activity->m_actioninfo->m_speed = speed;
 		m_activity->m_actioninfo->m_leader = leader;
@@ -274,7 +277,7 @@ namespace FIFE {
 
 	void Instance::act(const std::string& action_name, const Location& direction, bool repeating) {
 		initializeChanges();
-		initalizeAction(action_name);
+		initializeAction(action_name);
 		m_activity->m_actioninfo->m_repeating = repeating;
 		setFacingLocation(direction);
 	}
@@ -283,7 +286,7 @@ namespace FIFE {
 		initializeChanges();
 		delete m_activity->m_sayinfo;
 		m_activity->m_sayinfo = NULL;
-		
+
 		if (text != "") {
 			m_activity->m_sayinfo = new SayInfo(text, duration);
 			m_activity->m_sayinfo->m_start_time = getRuntime();
@@ -314,7 +317,7 @@ namespace FIFE {
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
 		FL_DBG(_log, LMsg("dist ") <<  distance_to_travel);
-				
+
 		Location nextLocation = m_location;
 		info->m_pather_session_id = info->m_pather->getNextLocation(
 			this, *info->m_target,
@@ -328,7 +331,7 @@ namespace FIFE {
 		// return if we are close enough to target to stop
 		if (info->m_pather_session_id == -1) {
 			return true;
-		} 
+		}
 		return false;
 	}
 
@@ -444,7 +447,7 @@ namespace FIFE {
 		}
 		delete m_activity->m_timeprovider;
 		m_activity->m_timeprovider = NULL;
-		
+
 		if (m_location.getLayer()) {
 			Map* map = m_location.getLayer()->getMap();
 			if (map) {

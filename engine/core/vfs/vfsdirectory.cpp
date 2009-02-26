@@ -102,7 +102,10 @@ namespace FIFE {
 			if (bfs::is_directory(*i) != directorys)
 				continue;
 
-			list.insert(i->path().leaf());
+			// This only works with boost 1.34 and up
+			// list.insert(i->path().leaf());
+			// This one should be ok with both 1.33 and above
+			list.insert(i->leaf());
 		}
 
 		return list;

@@ -63,13 +63,13 @@ namespace FIFE {
 		ICHANGE_ROTATION = 0x0040,  // NOTE! does not currently get updated onInstanceChange unless some other activity is performed
 	};
 	typedef unsigned int InstanceChangeInfo;
-	
+
 	class InstanceChangeListener {
 	public:
 		virtual ~InstanceChangeListener() {};
 		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
 	};
-	
+
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
@@ -108,12 +108,12 @@ namespace FIFE {
 		 *  @return current location
 		 */
 		Location getLocation() const { return m_location; }
-		
+
 		/** Gets reference of current location of instance
 		 *  @return reference to current location
 		 */
 		Location& getLocationRef() { return m_location; }
-		
+
 		/** Gets movement target in case instance is moving. In case not, returns current location
 		 *  To move target location, call move-method
 		 *  @see move
@@ -121,12 +121,12 @@ namespace FIFE {
 		 *  @return Movement target location
 		 */
 		Location getTargetLocation() const;
-		
+
 		/** Sets the direction where instance is heading. Useful e.g. with static
 		 * instances which don't "move" or "act"
 		 */
 		void setFacingLocation(const Location& loc);
-		
+
 		/** Returns the direction where instance is heading
 		*  @note does not return const Location&, since swig wont be const correct
 		 * @return the direction of instance.
@@ -136,11 +136,11 @@ namespace FIFE {
 		/** Set the rotation offset of this instance
 		 */
 		void setRotation(int rotation);
-		
+
 		/** Get the rotation offset of this instance
 		 */
 		int getRotation() const { return m_rotation; }
-		
+
 		/** Returns reference to the direction where instance is heading
 		 * Note: if instance didn't previously hadn't defined facing location
 		 * (e.g. by movement or setFacingLocation), method creates the location
@@ -148,7 +148,7 @@ namespace FIFE {
 		 * @return reference to the direction of instance.
 		 */
 		Location& getFacingLocationRef();
-		
+
 		/** Adds new instance action listener
 		 * @param listener to add
 		 */
@@ -168,7 +168,7 @@ namespace FIFE {
 		 * @param listener to remove
 		 */
 		void removeChangeListener(InstanceChangeListener* listener);
-		
+
 		/** Gets the currently active action. This is owned by
 		 *  the instance's object, so don't delete it!
 		 * @return current action, NULL in case there is none
@@ -226,27 +226,27 @@ namespace FIFE {
 		 * @returns marked changes
 		 */
 		InstanceChangeInfo update();
-		
+
 		/** Sets visualization to be used. Transfers ownership.
 		 */
 		void setVisual(AbstractVisual* visual) { m_visual = visual; }
-		
+
 		/** Gets used visualization
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
-		
+
 		/** Sets speed for the map. See Model::setTimeMultiplier.
 		*/
 		void setTimeMultiplier(float multip);
-		
+
 		/** Gets instance speed. @see setTimeMultiplier.
 		*/
 		float getTimeMultiplier();
-		
+
 		/** Gets instance speed, considering also model and map speeds. @see setTimeMultiplier.
 		*/
 		float getTotalTimeMultiplier();
-		
+
 		/** Gets the scaled runtime in milliseconds
 		 * @return runtime
 		 */
@@ -280,7 +280,7 @@ namespace FIFE {
 		public:
 			InstanceActivity(Instance& source);
 			~InstanceActivity();
-			
+
 			// ----- Fields related to change tracking -----
 			// updates cached variables, marks changes
 			void update(Instance& source);
@@ -298,7 +298,7 @@ namespace FIFE {
 			std::string m_saytxt;
 			// listeners for changes
 			std::vector<InstanceChangeListener*> m_changelisteners;
-			
+
 			// ----- Fields related to generic activity -----
 			// listeners for action related events
 			std::vector<InstanceActionListener*> m_actionlisteners;
@@ -312,7 +312,7 @@ namespace FIFE {
 		InstanceActivity* m_activity;
 		// bitmask stating current changes
 		InstanceChangeInfo m_changeinfo;
-		
+
 		// object where instantiated from
 		Object* m_object;
 		// current location
@@ -321,13 +321,13 @@ namespace FIFE {
 		Location* m_facinglocation;
 		// instance visualization
 		AbstractVisual* m_visual;
-		
+
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);
 		// Finalize current action
 		void finalizeAction();
 		// Initialize action for use
-		void initalizeAction(const std::string& action_name);
+		void initializeAction(const std::string& action_name);
 		// Moves instance. Returns true if finished
 		bool process_movement();
 		// Calculates movement based current location and speed
