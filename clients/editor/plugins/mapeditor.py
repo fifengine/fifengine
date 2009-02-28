@@ -60,7 +60,7 @@ class Toolbar(object):
 		self._onSelect, self._onMove, self._onInsert, self._onDelete = onSelect, onMove, onInsert, onDelete
 		self.onBtnEnter, self.onBtnExit = onBtnEnter, onBtnExit
 		self._toolbar = None
-	
+
 	def show(self):
 		if not self._toolbar:
 			self._toolbar = pychan.loadXML('gui/tools.xml')
@@ -75,15 +75,15 @@ class Toolbar(object):
 				btn = self._toolbar.findChild(name=k)
 				btn.setEnterCallback(self.onBtnEnter)
 				btn.setExitCallback(self.onBtnExit)
-		
+
 		#self._toolbar.adaptLayout()
 		self._toolbar.show()
 		self._toolbar.x = 10
 		self._toolbar.y = 50
-	
+
 	def hide(self):
 		self._toolbar.hide()
-	
+
 	def _enableBtn(self, enabled, btn):
 		btn.toggled = enabled;
 
@@ -104,7 +104,7 @@ class Toolbar(object):
 		self.enableSelect(False)
 		self.enableInsert(False)
 		self.enableMove(False)
-	
+
 class StatusBar(object):
 	def __init__(self, screenw, screenh):
 		self._statusbar = pychan.loadXML('gui/statuspanel.xml')
@@ -119,7 +119,7 @@ class StatusBar(object):
 		self.statustxt = msg
 		self.lbl.text = '  ' + msg
 		self.lbl.resizeToContent()
-	
+
 	def showTooltip(self, elem):
 		self.lbl.text = elem.helptext
 		self.lbl.resizeToContent()
@@ -160,7 +160,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._dragy = NOT_INITIALIZED
 		self._scrollx = 0
 		self._scrolly = 0
-		
+
 		self._mapselector = MapSelection(self._selectLayer, self._selectObject)
 		self._objectselector = None
 		rb = self._engine.getRenderBackend()
@@ -178,7 +178,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		if not statement:
 			print msg
 			raise EditorLogicError(msg)
-	
+
 	def _setMode(self, mode):
 		if (mode != NOTHING_LOADED) and (not self._camera):
 			self._statusbar.setStatus('Please load map first')
@@ -187,7 +187,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		if (mode == INSERTING) and (not self._object):
 			self._statusbar.setStatus('Please select object first')
 			mode = self._mode
-		
+
 		# Update toolbox buttons
 		if (mode == INSERTING):
 			self._toolbar.enableInsert(True)
@@ -199,22 +199,22 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			self._toolbar.enableMove(True)
 		else:
 			self._toolbar.disableAll()
-		
+
 		self._mode = mode
 		print "Entered mode " + mode
 		self._statusbar.setStatus(mode.replace('_', ' ').capitalize())
-	
+
 	# gui for selecting a map
 	def _selectMap(self):
 		Selection([map.getId() for map in self._engine.getModel().getMaps()], self.editMap)
 
 	def _selectDefaultCamera(self, map):
 		self._camera = None
-		
+
 		self._engine.getView().resetRenderers()
 		for cam in self._engine.getView().getCameras():
 			cam.setEnabled(False)
-			
+
 		for cam in self._engine.getView().getCameras():
 			if cam.getLocationRef().getMap().getId() == map.getId():
 				rb = self._engine.getRenderBackend()
@@ -233,21 +233,21 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._selection = None
 		self._instances = None
 		self._setMode(NOTHING_LOADED)
-		
+
 		self._map = self._engine.getModel().getMap(mapid)
 		if not self._map.getLayers():
 			raise AttributeError('Editor error: map ' + self._map.getId() + ' has no layers. Cannot edit.')
-		
+
 		self._layer = self._map.getLayers()[0]
 		self._selectDefaultCamera(self._map)
 		self._setMode(VIEWING)
-		
+
 		self._mapselector.show(self._map)
-		
+
 		# zero-projekt plugin
 		if self.layertool is not None:
 			self.layertool.update()
-	
+
 	def _selectLayer(self):
 		Selection([layer.getId() for layer in self._map.getLayers()], self._editLayer)
 
@@ -267,7 +267,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 
 	def _selectCell(self, screenx, screeny, preciseCoords=False):
 		self._assert(self._camera, 'No camera bind yet, cannot select any cell')
-		
+
 		self._selection = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
 		self._selection.z = 0
 		loc = fife.Location(self._layer)
@@ -284,7 +284,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		self._assert(self._layer, 'No layer assigned in _getInstancesFromPosition')
 		self._assert(position, 'No position assigned in _getInstancesFromPosition')
 		self._assert(self._camera, 'No camera assigned in _getInstancesFromPosition')
-		
+
 		loc = fife.Location(self._layer)
 		if type(position) == fife.ExactModelCoordinate:
 			loc.setExactLayerCoordinates(position)
@@ -301,7 +301,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			self._undo = True
 			self._undoStack.pop()()
 			self._undo = False
-	
+
 	def _placeInstance(self,position,object):
 		mname = '_placeInstance'
 		self._assert(object, 'No object assigned in %s' % mname)
@@ -310,7 +310,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 
 		print 'Placing instance of ' + object.getId() + ' at ' + str(position)
 		print object
-		
+
 		# don't place repeat instances
 		for i in self._getInstancesFromPosition(position, False):
 			if i.getObject().getId() == object.getId():
@@ -335,13 +335,13 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 				object = i.getObject()
 				self._undoStack.append(lambda: self._placeInstance(position,object))
 			self._layer.deleteInstance(i)
-				
+
 	def _moveInstances(self):
 		mname = '_moveInstances'
 		self._assert(self._selection, 'No selection assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 		self._assert(self._mode == MOVING, 'Mode is not MOVING in %s (is instead %s)' % (mname, str(self._mode)))
-		
+
 		loc = fife.Location(self._layer)
 		if self._shiftdown:
 			loc.setExactLayerCoordinates(self._selection)
@@ -352,12 +352,12 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			f.setExactLayerCoordinates(i.getFacingLocation().getExactLayerCoordinates() + fife.ExactModelCoordinate(float(self._selection.x), float(self._selection.y)) - i.getLocation().getExactLayerCoordinates())
 			i.setLocation(loc)
 			i.setFacingLocation(f)
-	
+
 	def _rotateInstances(self):
 		mname = '_rotateInstances'
 		self._assert(self._selection, 'No selection assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
-		
+
 		for i in self._getInstancesFromPosition(self._selection, top_only=True):
 # by c 09/11/08
 # FIXME:
@@ -381,13 +381,13 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 					else:
 						index = 0
 #				print "index, new: ", index
-					
+
 					i.setRotation( int(self._objectedit_rotations[index]) )
 #				print "new rotation: ", self._objectedit_rotations[index]
 			except:
 				# Fallback
 				i.setRotation((i.getRotation() + 90) % 360)
-			
+
 # end FIXME
 # end edit c
 
@@ -415,7 +415,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def changeRotation(self):
 		currot = self._camera.getRotation()
 		self._camera.setRotation((currot + 90) % 360)
-	
+
 	def _moveCamera(self, screen_x, screen_y):
 		coords = self._camera.getLocationRef().getMapCoordinates()
 		z = self._camera.getZoom()
@@ -428,11 +428,11 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			coords.y -= screen_y / z * math.cos(-r / 180.0 * math.pi) / 100;
 		coords = self._camera.getLocationRef().setMapCoordinates(coords)
 		self._camera.refresh()
-	
+
 	def mousePressed(self, evt):
 		if evt.isConsumedByWidgets():
 			return
-		
+
 		if self._ctrldown:
 			if evt.getButton() == fife.MouseEvent.LEFT:
 				self._dragx = evt.getX()
@@ -450,11 +450,11 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 				self._instances = self._getInstancesFromPosition(self._selection, top_only=True)
 			else:
 				self._setMode(self._mode) # refresh status
-	
+
 	def mouseDragged(self, evt):
 		if evt.isConsumedByWidgets():
 			return
-		
+
 		if self._ctrldown:
 			if (self._dragx != NOT_INITIALIZED) and (self._dragy != NOT_INITIALIZED):
 				self._moveCamera(evt.getX() - self._dragx, evt.getY() - self._dragy)
@@ -474,10 +474,10 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 	def mouseReleased(self, evt):
 		if evt.isConsumedByWidgets():
 			return
-		
+
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED
-	
+
 	def mouseMoved(self, evt):
 		if self._camera:
 			screen_x = self._engine.getRenderBackend().getWidth()
@@ -509,20 +509,20 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		pass
 	def mouseClicked(self, evt):
 		pass
-	
+
 	def mouseWheelMovedUp(self, evt):
 		if self._ctrldown and self._camera:
 			self._camera.setZoom(self._camera.getZoom() * 1.05)
-			
+
 	def mouseWheelMovedDown(self, evt):
 		if self._ctrldown and self._camera:
 			self._camera.setZoom(self._camera.getZoom() / 1.05)
-			
+
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
-		
+
 		if keyval == fife.Key.LEFT:
 			self._moveCamera(50, 0)
 		elif keyval == fife.Key.RIGHT:
@@ -537,7 +537,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 			self._shiftdown = True
 		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
 			self._altdown = True
-		
+
 		elif keyval == fife.Key.INSERT:
 			if self._mode != INSERTING:
 				self._setMode(INSERTING)
@@ -549,13 +549,13 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 				self._setMode(REMOVING)
 			else:
 				self._setMode(VIEWING)
-			
+
 		elif keystr == 'm':
 			if self._mode != MOVING:
 				self._setMode(MOVING)
 			else:
 				self._setMode(VIEWING)
-		
+
 		elif keystr == 't':
 			gridrenderer = self._camera.getRenderer('GridRenderer')
 			gridrenderer.setEnabled(not gridrenderer.isEnabled())
@@ -563,7 +563,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 		elif keystr == 'b':
 			blockrenderer = self._camera.getRenderer('BlockingInfoRenderer')
 			blockrenderer.setEnabled(not blockrenderer.isEnabled())
-		
+
 		elif keystr == 'r':
 			if self._selection:
 				self._rotateInstances()
@@ -573,7 +573,7 @@ class MapEditor(plugin.Plugin,fife.IMouseListener, fife.IKeyListener):
 
 		elif keystr == 'u':
 			self.undo()
-	
+
 	def keyReleased(self, evt):
 		keyval = evt.getKey().getValue()
 		if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):

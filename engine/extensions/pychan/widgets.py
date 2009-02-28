@@ -1161,33 +1161,61 @@ class ImageButton(BasicTextWidget):
 		self.hover_image = hover_image
 		self.offset = offset
 
-	def _setUpImage(self,image):
-		self._upimage_source = image
-		try:
-			self._upimage = get_manager().loadImage(image)
+	def _setUpImage(self, source):
+		if isinstance(source,str):
+			self._upimage_source = source
+			try:
+				self._upimage = get_manager().loadImage(image)
+				self.real_widget.setUpImage( self._upimage )
+			except:
+				self._upimage = _DummyImage()
+		elif isinstance(source,fife.GuiImage):
+			self._upimage_source = None
+			self._upimage = source
 			self.real_widget.setUpImage( self._upimage )
-		except:
-			self._upimage = _DummyImage()
+		else:
+			raise RuntimeError("Icon.image only accepts GuiImage and python strings, not '%s'" % repr(source))
+
+		# Set minimum size accoriding to image
+		self.min_size = self.real_widget.getWidth(),self.real_widget.getHeight()
+		self.size  = self.max_size = self.min_size
+
 	def _getUpImage(self): return self._upimage_source
 	up_image = property(_getUpImage,_setUpImage)
 
-	def _setDownImage(self,image):
-		self._downimage_source = image
-		try:
-			self._downimage = get_manager().loadImage(image)
+	def _setDownImage(self, source):
+		if isinstance(source,str):
+			self._downimage_source = source
+			try:
+				self._downimage = get_manager().loadImage(image)
+				self.real_widget.setDownImage( self._downimage )
+			except:
+				self._downimage = _DummyImage()
+		elif isinstance(source,fife.GuiImage):
+			self._downimage_source = None
+			self._downimage = source
 			self.real_widget.setDownImage( self._downimage )
-		except:
-			self._downimage = _DummyImage()
+		else:
+			raise RuntimeError("Icon.image only accepts GuiImage and python strings, not '%s'" % repr(source))
+
 	def _getDownImage(self): return self._downimage_source
 	down_image = property(_getDownImage,_setDownImage)
 
-	def _setHoverImage(self,image):
-		self._hoverimage_source = image
-		try:
-			self._hoverimage = get_manager().loadImage(image)
+	def _setHoverImage(self, source):
+		if isinstance(source, str):
+			self._hoverimage_source = source
+			try:
+				self._hoverimage = get_manager().loadImage(image)
+				self.real_widget.setHoverImage( self._hoverimage )
+			except:
+				self._hoverimage = _DummyImage()
+		elif isinstance(source,fife.GuiImage):
+			self._hoverimage_source = None
+			self._hoverimage = source
 			self.real_widget.setHoverImage( self._hoverimage )
-		except:
-			self._hoverimage = _DummyImage()
+		else:
+			raise RuntimeError("Icon.image only accepts GuiImage and python strings, not '%s'" % repr(source))
+
 	def _getHoverImage(self): return self._hoverimage_source
 	hover_image = property(_getHoverImage,_setHoverImage)
 
@@ -1613,7 +1641,7 @@ class ScrollArea(Widget):
 	==============
 
 	  - content: The wrapped widget.
-	  - vertical_scrollbar: Boolean: Set this to False to hide the Vertcial scrollbar
+	  - vertical_scrollbar: Boolean: Set this to False to hide the Vertical scrollbar
 	  - horizontal_scrollbar: Boolean: Set this to False to hide the Horizontal scrollbar
 
 	"""
