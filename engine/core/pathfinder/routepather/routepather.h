@@ -96,6 +96,7 @@ namespace FIFE {
 		typedef std::list<int> SessionList;
 		typedef std::map<int, Path> PathMap;
 		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;
+		typedef std::map<int, Location> LocationMap;
 		/** Makes the instance follow the given path.
 		 *
 		 * Calculates the next position the instance should move to given the 
@@ -105,8 +106,9 @@ namespace FIFE {
 		 * @param speed The speed to move the instance.
 		 * @param nextLocation An out variable which will store the instances next location.
 		 * @param facingLocation An out variable which will store the instances facing location.
+                 * @return true if it was possible to follow the path, false if it was not
 		 */
-		void followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation);
+		bool followPath(const Instance* instance, Path& path, double speed, Location& nextLocation, Location& facingLocation);
 
 		/** Adds a session id to the session map.
 		 *
@@ -115,8 +117,32 @@ namespace FIFE {
 		 * @param sessionId The session id to store.
 		 */
 		void addSessionId(const int sessionId);
-
-
+		
+		/** Schedules a plan to be created for the given instance to reach the given
+		 * target; the session id is where the plan should be stored 
+		 *
+		 * @param instance is the instance to pathfind for
+		 * @param target is where the instance is going
+		 * @param session_id is which pathfinding slot to put the plan in
+		 * @param priority is the priority of the request
+		 */
+		void makePlan(const Instance *instance, const Location& target, int session_id, int priority);
+		
+		/** make a new session id 
+			@return the new session id
+		*/
+		int makeSessionId();
+		
+		/** are two locations equivalent from the perspective of pathing */
+		bool locationsEqual(const Location &a, const Location &b);
+		
+		/** check whether it's safe to continue moving down the path
+			@param instance is the instance following the path
+			@param path is the path to step through
+			@return true if the path could be followed, false if blocked
+		*/
+		bool testStep(const Instance *instance, Path& path);
+		
 		/** Determines if the given session Id is valid.
 		 *
 		 * Searches the session list to determine if a search with the given session id
@@ -145,6 +171,9 @@ namespace FIFE {
 		//Calculated paths for the movement phase.
 		PathMap		   m_paths;
 
+		//The endpoints for which those paths were calculated
+		LocationMap        m_path_targets;
+		
 		//A map of searchspaces.
 		SearchSpaceMap m_searchspaces; 
 
