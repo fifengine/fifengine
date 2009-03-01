@@ -125,7 +125,7 @@ def generate_msvc_project(target, source, env):
 				retstr.append(tabcount * '\t' + '<File RelativePath="%s"></File>' % newpath.replace('/','\\'))
 		return '\n'.join(retstr)
 
-	vcpaths = [os.path.abspath(str(f)).split('%sengine%s' % (_sep, _sep))[-1] for f in source]
+	vcpaths = [os.path.abspath(str(f)).rsplit('%sengine%s' % (_sep, _sep))[-1] for f in source]
 	xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
 	projtxt = open(joinpath(msvcbuildpath, 'engine_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
@@ -175,7 +175,7 @@ def generate_msvc_project9(target, source, env):
 				retstr.append(tabcount * '\t' + '<File RelativePath="%s"></File>' % newpath.replace('/','\\'))
 		return '\n'.join(retstr)
 
-	vcpaths = [os.path.abspath(str(f)).split('%sengine%s' % (_sep, _sep))[-1] for f in source]
+	vcpaths = [os.path.abspath(str(f)).rsplit('%sengine%s' % (_sep, _sep))[-1] for f in source]
 	xmlstr = get_msvc_repr(create_dict_tree(dict([[p, {}] for p in vcpaths])))
 	projtxt = open(joinpath(msvcbuildpath9, 'engine_template.xml'), 'r').read()
 	projtxt = projtxt.replace('__FILE_INSERTION_POINT__', xmlstr)
@@ -213,7 +213,7 @@ def generate_codeblocks_project_win32(target, source, env):
 			</Unit>'''
 	xmlstr = []
 	for f in source:
-		newf = os.path.abspath(str(f)).split('%sengine%s' % (_sep, _sep))[-1]
+		newf = os.path.abspath(str(f)).rsplit('%sengine%s' % (_sep, _sep))[-1]
 		newf = newf.replace('/', '\\')
 		if str(f) in headerfiles:
 			xmlstr.append(codeblocksHeaderDef % newf)
@@ -246,7 +246,7 @@ def generate_codeblocks_project_linux(target, source, env):
 			</Unit>'''
 	xmlstr = []
 	for f in source:
-		newf = os.path.abspath(str(f)).split('%sengine%s' % (_sep, _sep))[-1]
+		newf = os.path.abspath(str(f)).rsplit('%sengine%s' % (_sep, _sep))[-1]
 		newf = newf.replace('/', '\\')
 		if str(f) in headerfiles:
 			xmlstr.append(codeblocksHeaderDef % newf)
