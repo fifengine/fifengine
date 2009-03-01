@@ -1660,7 +1660,9 @@ class ScrollArea(Widget):
 	def removeChild(self,widget):
 		if self._content != widget:
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
-		self.content = None
+		# Set a Container here, as this can not be set to None
+		# Might be possible to find a better solution, needs peer review
+		self.content = Container()
 		widget.parent = None
 
 	def _setContent(self,content):
