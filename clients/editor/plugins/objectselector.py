@@ -115,6 +115,7 @@ class ObjectSelector(object):
 		been selected.
 		@param obj: fife.Object instance"""
 		self.preview.image = self._getImage(obj)
+		self.gui.adaptLayout()
 		self.notify(obj)
 
 	def update(self):
