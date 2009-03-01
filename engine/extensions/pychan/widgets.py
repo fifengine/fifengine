@@ -1165,7 +1165,7 @@ class ImageButton(BasicTextWidget):
 		if isinstance(source,str):
 			self._upimage_source = source
 			try:
-				self._upimage = get_manager().loadImage(image)
+				self._upimage = get_manager().loadImage(source)
 				self.real_widget.setUpImage( self._upimage )
 			except:
 				self._upimage = _DummyImage()
@@ -1187,7 +1187,7 @@ class ImageButton(BasicTextWidget):
 		if isinstance(source,str):
 			self._downimage_source = source
 			try:
-				self._downimage = get_manager().loadImage(image)
+				self._downimage = get_manager().loadImage(source)
 				self.real_widget.setDownImage( self._downimage )
 			except:
 				self._downimage = _DummyImage()
@@ -1205,7 +1205,7 @@ class ImageButton(BasicTextWidget):
 		if isinstance(source, str):
 			self._hoverimage_source = source
 			try:
-				self._hoverimage = get_manager().loadImage(image)
+				self._hoverimage = get_manager().loadImage(source)
 				self.real_widget.setHoverImage( self._hoverimage )
 			except:
 				self._hoverimage = _DummyImage()
