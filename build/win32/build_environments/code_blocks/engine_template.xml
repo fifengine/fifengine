@@ -17,7 +17,7 @@
 					<Add option="-DLOG_ENABLED" />
 					<Add directory="..\..\..\..\engine" />
 					<Add directory="..\..\..\..\engine\core" />
-					<Add directory="..\..\includes\mingw\boost_1_35_0" />
+					<Add directory="..\..\includes\mingw\boost_1_38_0" />
 					<Add directory="..\..\includes\mingw\libguichan" />
 					<Add directory="..\..\includes\mingw\libogg" />
 					<Add directory="..\..\includes\mingw\libpng" />

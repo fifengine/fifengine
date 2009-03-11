@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2008\libguichan;..\..\includes\msvc2008\boost_1_35_0;..\..\includes\msvc2008\openal;..\..\includes\msvc2008\sdl;..\..\includes\msvc2008\zlib;..\..\includes\msvc2008\libvorbis;..\..\includes\msvc2008\libpng;..\..\includes\msvc2008\libogg;..\..\includes\msvc2008\python25;..\..\includes\msvc2008\sdl_image;..\..\includes\msvc2008\sdl_ttf;&quot;..\..\includes\msvc2008\unittest++&quot;"
+				AdditionalIncludeDirectories="..\..\..\..\engine;..\..\..\..\engine\core;..\..\includes\msvc;..\..\includes\msvc2008\libguichan;..\..\includes\msvc2008\boost_1_38_0;..\..\includes\msvc2008\openal;..\..\includes\msvc2008\sdl;..\..\includes\msvc2008\zlib;..\..\includes\msvc2008\libvorbis;..\..\includes\msvc2008\libpng;..\..\includes\msvc2008\libogg;..\..\includes\msvc2008\python25;..\..\includes\msvc2008\sdl_image;..\..\includes\msvc2008\sdl_ttf;&quot;..\..\includes\msvc2008\unittest++&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_OPENGL;HAVE_ZIP;LOG_ENABLED;WIN32_LEAN_AND_MEAN;NOMINMAX;M_SQRT2=1.41421356237309504880"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"

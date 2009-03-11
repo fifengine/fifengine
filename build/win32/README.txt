@@ -1,5 +1,5 @@
 ==========================
-FIFE Win32 compile guide for building the 2008.0-r1 release version
+FIFE Win32 compile guide for building the 2009.0 release version
 ==========================
 
 Installation / build process
