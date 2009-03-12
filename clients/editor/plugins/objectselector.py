@@ -28,7 +28,7 @@ class ObjectSelector(object):
 		scrollArea = widgets.ScrollArea(size=(200,300))
 		hbox.addChild(scrollArea)
 		self.namespaces = widgets.ListBox()
-		self.namespaces.capture(self.update)
+		self.namespaces.capture(self.update_namespace)
 		self.namespaces.items = self.engine.getModel().getNamespaces()
 		self.namespaces.selected = 0
 		scrollArea.addChild(self.namespaces)
@@ -91,6 +91,7 @@ class ObjectSelector(object):
 			self.objects.items = [obj.getId() for obj in self.engine.getModel().getObjects(self.namespaces.selected_item)]
 			if not self.objects.selected_item:
 				self.objects.selected = 0
+				self.listEntrySelected()
 
 	def listEntrySelected(self):
 		"""This function is used as callback for the TextList."""
@@ -99,7 +100,8 @@ class ObjectSelector(object):
 			self.objectSelected(obj)
 
 	def fillPreviewList(self):
-		for obj in self.engine.getModel().getObjects(self.namespaces.selected_item):
+		objects = self.engine.getModel().getObjects(self.namespaces.selected_item)
+		for obj in objects:
 			image = self._getImage(obj)
 			if image is not None:
 				imagebutton = widgets.ImageButton(up_image=image, down_image=image, hover_image=image)
@@ -109,6 +111,9 @@ class ObjectSelector(object):
 				self.gui.adaptLayout()
 			else:
 				print 'No image available for selected object'
+		if len(objects)>0:
+			self.objectSelected(objects[0])
+
 
 	def objectSelected(self, obj):
 		"""This is used as callback function to notify the editor that a new object has
@@ -118,9 +123,17 @@ class ObjectSelector(object):
 		self.gui.adaptLayout()
 		self.notify(obj)
 
-	def update(self):
+	def update_namespace(self):
 		self.namespaces.items = self.engine.getModel().getNamespaces()
-		self.namespaces.selected = 0
+		if not self.namespaces.selected_item:
+			self.namespaces.selected = 0
+		if self.mode == 'list':
+			self.setTextList()
+		elif self.mode == 'preview':
+			self.setImageList()
+		self.update()
+
+	def update(self):
 		if self.mode == 'list':
 			self.fillTextList()
 		elif self.mode == 'preview':
@@ -159,7 +172,7 @@ class ObjectSelector(object):
 
 
 	def show(self):
-		self.update()
+		self.update_namespace()
 		self.gui.show()
 
 	def hide(self):
