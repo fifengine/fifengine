@@ -162,7 +162,7 @@ namespace FIFE {
 
 		/** Returns instance where camera is attached. NULL if not attached
 		 */
-		bool getAttached() const { return m_attachedto; }
+		Instance* getAttached() const { return m_attachedto; }
 		
 		/** Sets the viewport for camera
 		 * viewport is rectangle inside the view where camera renders
