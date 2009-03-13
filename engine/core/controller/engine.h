@@ -55,8 +55,8 @@ namespace FIFE {
 	class Model;
 	class LogManager;
 	class GuiFont;
-	class VFS;
 	class Cursor;
+	class SoundClipPool;
 
 
 	/** Engine acts as a controller to the whole system
