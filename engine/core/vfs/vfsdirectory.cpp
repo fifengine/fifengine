@@ -66,34 +66,26 @@ namespace FIFE {
 	}
 
 	std::set<std::string> VFSDirectory::listFiles(const std::string& path) const {
-		std::string dir = m_root;
-		// Avoid double slashes
-		if(path[0] == '/' && m_root[m_root.size()-1] == '/') {
-			dir.append(path.substr(1));
-		}
-		else {
-			dir.append(path);
-		}
-
-		return list(dir, false);
+		return list(path, false);
 	}
 
 	std::set<std::string> VFSDirectory::listDirectories(const std::string& path) const {
-		std::string dir = m_root;
-		// Avoid double slashes
-		if(path[0] == '/' && m_root[m_root.size()-1] == '/') {
-			dir.append(path.substr(1));
-		}
-		else {
-			dir.append(path);
-		}
-
-		return list(dir, true);
+		return list(path, true);
 	}
 
 	std::set<std::string> VFSDirectory::list(const std::string& path, bool directorys) const {
 		std::set<std::string> list;
-		bfs::path boost_path(m_root + path);
+		std::string dir = m_root;
+
+		// Avoid double slashes
+		if(path[0] == '/' && m_root[m_root.size()-1] == '/') {
+			dir.append(path.substr(1));
+		}
+		else {
+			dir.append(path);
+		}
+
+		bfs::path boost_path(dir);
 		if (!bfs::exists(boost_path) || !bfs::is_directory(boost_path))
 			return list;
 
