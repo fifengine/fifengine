@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <map>
 
 // 3rd party library includes
 
