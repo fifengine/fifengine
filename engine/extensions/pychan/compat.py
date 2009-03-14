@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 
 in_fife = None
 guichan = None
@@ -38,7 +38,7 @@ def _munge_engine_hook(engine):
 	guimanager = engine.getGuiManager()
 
 	def _fife_load_image(filename):
-		index = engine.imagePool.addResourceFromFile(filename)
+		index = engine.getImagePool().addResourceFromFile(filename)
 		return guichan.GuiImage(index,engine.getImagePool())
 
 	class hook:
