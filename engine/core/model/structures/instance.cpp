@@ -369,7 +369,10 @@ namespace FIFE {
 				}
 			}
 
-			m_activity->m_actioninfo->m_prev_call_time = m_activity->m_timeprovider->getGameTime();
+			// previous code may invalidate actioninfo.
+			if( m_activity->m_actioninfo ) {
+				m_activity->m_actioninfo->m_prev_call_time = m_activity->m_timeprovider->getGameTime();
+			}
 		}
 		if (m_activity->m_sayinfo) {
 			if (m_activity->m_sayinfo->m_duration > 0) {
