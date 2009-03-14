@@ -38,7 +38,7 @@ class PyChanExample(object):
 
 def testTimer():
 	import timer
-	timer.init( pychan.manager.engine.getTimeManager() )
+	timer.init( pychan.manager.hook.engine.getTimeManager() )
 	def spam():
 		print "SPAM SPAM"
 		return 1

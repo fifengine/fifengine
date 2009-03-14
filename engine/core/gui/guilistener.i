@@ -22,36 +22,17 @@
 %module fife
 %{
 #include <guichan.hpp>
-#include "gui/guilistener.h"
+#include <guichan/actionevent.hpp>
+#include <guichan/keyevent.hpp>
 %}
 
 namespace gcn {
 
-	%nodefaultctor;
+	%feature("director") MouseListener;
 	class MouseListener {
 	public:
-	};
+		virtual ~MouseListener();
 
-	class KeyListener {
-	public:
-	};
-
-	class ActionListener {
-	public:
-	};
-	%clearnodefaultctor;
-}
-
-namespace FIFE {
-
-	%feature("director") GUIEventListener;
-	class GUIEventListener : 
-		public gcn::MouseListener, public gcn::KeyListener, public gcn::ActionListener {
-	public:
-		 GUIEventListener();
-		 virtual ~GUIEventListener();
-
-		/* Mouse events */
 		virtual void mouseEntered(gcn::MouseEvent& mouseEvent);
 		virtual void mouseExited(gcn::MouseEvent& mouseEvent);
 		virtual void mousePressed(gcn::MouseEvent& mouseEvent);
@@ -61,9 +42,27 @@ namespace FIFE {
 		virtual void mouseWheelMovedDown(gcn::MouseEvent& mouseEvent);
 		virtual void mouseMoved(gcn::MouseEvent& mouseEvent);
 		virtual void mouseDragged(gcn::MouseEvent& mouseEvent);
-
-		virtual void action(const gcn::ActionEvent& actionEvent);
-
+	protected:
+		MouseListener() { }
 	};
 
+	%feature("director") MouseListener;
+	class KeyListener {
+	public:
+		virtual ~KeyListener() { }
+
+		virtual void keyPressed(gcn::KeyEvent& keyEvent) { }
+		virtual void keyReleased(gcn::KeyEvent& keyEvent) { }
+	protected:
+		KeyListener() { }
+	};
+
+	%feature("director") ActionListener;
+	class ActionListener {
+	public:
+		virtual ~ActionListener() { }
+		virtual void action(const gcn::ActionEvent& actionEvent) = 0;
+	};
 }
+
+

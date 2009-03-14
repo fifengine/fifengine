@@ -46,16 +46,9 @@ namespace FIFE {
 		}
 	
 	Animation::~Animation() {
-// 		std::vector<FrameInfo>::const_iterator i(m_frames.begin());
-// 		while (i != m_frames.end()) {
-// 			i->img->decRef();
-// 			i++;
-// 		}
+		// note: we don't need to free the images, as they are handled via
+		// smart references.
 	}
-	
-// 	void Animation::addFrame(Image* image, unsigned int duration) {
-// 		addFrame(ResourcePtr(image),duration);
-// 	}
 
 	void Animation::addFrame(ResourcePtr image, unsigned int duration) {
 		FrameInfo info;

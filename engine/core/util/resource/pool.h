@@ -130,7 +130,6 @@ namespace FIFE {
 		 */
 		virtual void reset();
 
-	protected:
 	private:
 		class PoolEntry {
 		public:

@@ -31,6 +31,6 @@ class ParserError(PyChanException):
 
 class PrivateFunctionalityError(RuntimeError):
 	"""
-	Exception raised if private attributes/functions are used."
+	Exception raised if private attributes/functions are used.
 	"""
 	pass

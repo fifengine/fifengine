@@ -56,7 +56,6 @@ namespace FIFE {
 	
 	void ResourceClass::setResourceLocation(const ResourceLocation& location) {
 		delete m_location;
-		m_location = NULL;
 		m_location = location.clone();
 	}
 	

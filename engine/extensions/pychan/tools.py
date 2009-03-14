@@ -1,10 +1,14 @@
 # coding: utf-8
 
+"""
+Functional utilities designed for pychan use cases.
+"""
+
 import exceptions
 
 ### Functools ###
 
-def applyOnlySuitable(func,**kwargs):
+def applyOnlySuitable(func,*args,**kwargs):
 	"""
 	This nifty little function takes another function and applies it to a dictionary of
 	keyword arguments. If the supplied function does not expect one or more of the
@@ -20,11 +24,11 @@ def applyOnlySuitable(func,**kwargs):
 
 	#http://docs.python.org/lib/inspect-types.html
 	if code.co_flags & 8:
-		return func(**kwargs)
+		return func(*args,**kwargs)
 	for name,value in kwargs.items():
 		if name not in varnames:
 			del kwargs[name]
-	return func(**kwargs)
+	return func(*args,**kwargs)
 
 def callbackWithArguments(callback,*args,**kwargs):
 	"""
@@ -91,13 +95,31 @@ def attrSetCallback(**kwargs):
 			do_calls.append(name[4:])
 			del kwargs[name]
 
-	def callback(widget=None):
+	def attrSet_callback(widget=None):
 		for name,value in kwargs.items():
 			setattr(widget,name,value)
 		for method_name in do_calls:
 			method = getattr(widget,method_name)
 			method()
-	return callback
+	return attrSet_callback
+
+def chainCallbacks(*args):
+	"""
+	Chains callbacks to be called one after the other.
+	
+	Example Usage::
+	    def print_event(event=0):
+	      print event
+	    def print_widget(widget=0):
+	      print widget
+            callback = tools.chainCallbacks(doSomethingUseful, print_event, print_widget)
+	    guiElement.capture(callback)
+	"""
+	callbacks = args
+	def chain_callback(event=0,widget=0):
+		for callback in callbacks:
+			applyOnlySuitable(callback, event=event, widget=widget)
+	return chain_callback
 
 def this_is_deprecated(func,message=None):
 	if message is None:

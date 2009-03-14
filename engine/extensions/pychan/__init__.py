@@ -10,7 +10,7 @@ Features
 --------
  - Simpler Interface
  - Very Basic XML Format support
- - Very Basic Layout Engine
+ - Basic Layout Engine
  - Pseudo-Synchronous Dialogs.
  - Automagic background tiling (WIP)
  - Basic Styling support.
@@ -24,8 +24,6 @@ TODO
  - Documentation ( Allways not enough :-( )
  - Handle Image Fonts
  - Move Font config files to XML, too ...
- - Add support for fixed size 'Spacers'
- - Add messageBox(text)
 
  - Implement real Menus
  - Implement StackWidget
@@ -37,9 +35,9 @@ TODO
 BUGS
 ----
  - Focus problems with Widget.execute.
- - Layout Bugs where max_size of a parent widget get's ignored.
  - Font.glyph_spacing is rendered incorrectly.
- - It just looks ugly.
+ - Is this a bug? At least inconvenient. MouseEntered events are not distributed for freshly shown widget.
+ - It just looks bad.
 
 Problems
 --------
@@ -154,6 +152,8 @@ classes and thus - for example apply a common font::
      }
   }
 
+A new style is added to pychan with L{internal.Manager.addStyle}.
+
 The font is set via a string identifier pulled from a font definition
 in a PyChan configuration file. You have to load these by calling
 L{loadFonts} in your startup code::
@@ -225,8 +225,6 @@ __all__ = [
 	'manager'
 ]
 
-import fife, pythonize
-
 from widgets import *
 from exceptions import *
 
@@ -244,9 +242,11 @@ def init(engine,debug=False):
 
 	@param engine: The FIFE engine object.
 	"""
-	from manager import Manager
+	from compat import _munge_engine_hook
+	from internal import Manager
 	global manager
-	manager = Manager(engine,debug)
+
+	manager = Manager(_munge_engine_hook(engine),debug)
 
 # XML Loader
 
@@ -326,6 +326,9 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _createSpacer(self,cls,name,attrs):
 		obj = cls(parent=self.root)
+		for k,v in attrs.items():
+			self._setAttr(obj,k,v)
+
 		if hasattr(self.root,'add'):
 			self.root.addSpacer(obj)
 		else:

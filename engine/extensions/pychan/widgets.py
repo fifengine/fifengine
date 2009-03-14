@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # coding: utf-8
 ### Widget/Container Base Classes ###
 
@@ -412,6 +413,8 @@ class Widget(object):
 		for name,data in dataMap.items():
 			widgetList = self.findChildren(name = name)
 			if len(widgetList) != 1:
+				if get_manager().debug:
+					self.listNamedWidgets()
 				raise RuntimeError("DistributeData can only handle widgets with unique names.")
 			widgetList[0].setData(data)
 
@@ -431,6 +434,8 @@ class Widget(object):
 		for name in widgetNames:
 			widgetList = self.findChildren(name = name)
 			if len(widgetList) != 1:
+				if get_manager().debug:
+					self.listNamedWidgets()
 				raise RuntimeError("CollectData can only handle widgets with unique names.")
 
 			dataMap[name] = widgetList[0].getData()
@@ -461,6 +466,8 @@ class Widget(object):
 		for name in widgetNames:
 			widgetList = self.findChildren(name = name)
 			if len(widgetList) != 1:
+				if get_manager().debug:
+					self.listNamedWidgets()
 				raise RuntimeError("CollectData can only handle widgets with unique names.")
 			dataList.append( widgetList[0].getData() )
 		if len(dataList) == 1:

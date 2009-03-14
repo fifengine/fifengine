@@ -5,7 +5,7 @@ from exceptions import *
 
 class Font(object):
 	def __init__(self,name,get):
-		from manager import Manager
+		from internal import get_manager
 		self.font = None
 		self.name = name
 		self.typename = get("type")
@@ -17,7 +17,7 @@ class Font(object):
 			self.size = int(get("size"))
 			self.antialias = int(get("antialias",1))
 			self.color = map(int,get("color","255,255,255").split(','))
-			self.font = Manager.manager.guimanager.createFont(self.source,self.size,"")
+			self.font = get_manager().hook.engine.getGuiManager().createFont(self.source,self.size,"")
 
 			if self.font is None:
 				raise InitializationError("Could not load font %s" % name)
@@ -62,7 +62,7 @@ def loadFonts(filename):
 	"""
 	Load fonts from a config file. These are then available via their name.
 	"""
-	from manager import Manager
+	from internal import get_manager
 
 	for font in Font.loadFromFile(filename):
-		Manager.manager.addFont(font)
+		get_manager().addFont(font)
