@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 
 from compat import guichan, in_fife
 import widgets
@@ -91,7 +91,7 @@ class Manager(object):
 				return font
 			if hasattr(font,"font") and isinstance(getattr(font,"font"),guichan.GuiFont):
 				return font.font
-			return fonts.parseFontSpec(name)
+			raise InitializationError("Couldn't find the font '%s' - did you forget loading a .fontdef?" % str(name))
 		else:
 			return self.hook.get_font(name)
 
