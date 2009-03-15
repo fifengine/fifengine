@@ -170,6 +170,17 @@ namespace FIFE {
 	}
 
 	Instance::~Instance() {
+                std::vector<InstanceDeleteListener *>::iterator itor;
+                for(itor = m_deletelisteners.begin();
+                    itor != m_deletelisteners.end();
+                    ++itor) {
+                        (*itor)->onInstanceDeleted(this);
+                }
+                if(m_activity &&
+                   m_activity->m_actioninfo &&
+                   m_activity->m_actioninfo->m_leader) {
+                        m_activity->m_actioninfo->m_leader->removeDeleteListener(this);
+                }
 		delete m_activity;
 		delete m_facinglocation;
 		delete m_visual;
@@ -271,6 +282,7 @@ namespace FIFE {
 		m_activity->m_actioninfo->m_target = new Location(leader->getLocationRef());
 		m_activity->m_actioninfo->m_speed = speed;
 		m_activity->m_actioninfo->m_leader = leader;
+                leader->addDeleteListener(this);
 		setFacingLocation(*m_activity->m_actioninfo->m_target);
 		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << *m_activity->m_actioninfo->m_target << " with speed " << speed);
 	}
@@ -510,4 +522,25 @@ namespace FIFE {
 		}
 		return TimeManager::instance()->getTime();
 	}
+        void Instance::addDeleteListener(InstanceDeleteListener *listener) const {
+                m_deletelisteners.push_back(listener);
+        }
+        void Instance::removeDeleteListener(InstanceDeleteListener *listener) const {
+                std::vector<InstanceDeleteListener*>::iterator itor;
+                itor = std::find(m_deletelisteners.begin(),
+                                 m_deletelisteners.end(),
+                                 listener);
+                if(itor != m_deletelisteners.end()) {
+                        m_deletelisteners.erase(itor);
+                } else {
+                        FL_WARN(_log, "Cannot remove unknown listener");
+                }
+        }
+        void Instance::onInstanceDeleted(Instance* instance) {
+                if(m_activity && 
+                   m_activity->m_actioninfo && 
+                   m_activity->m_actioninfo->m_leader == instance) {
+                        m_activity->m_actioninfo->m_leader = NULL;
+                }
+        }
 }

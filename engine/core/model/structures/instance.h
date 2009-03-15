@@ -70,10 +70,17 @@ namespace FIFE {
 		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
 	};
 
+
+	class InstanceDeleteListener {
+	public:
+		virtual ~InstanceDeleteListener() {};
+		virtual void onInstanceDeleted(Instance* instance) =0;
+	};
+
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
-	class Instance : public ResourceClass {
+	class Instance : public ResourceClass, public InstanceDeleteListener {
 	public:
 
 		/** Constructor
@@ -169,6 +176,16 @@ namespace FIFE {
 		 */
 		void removeChangeListener(InstanceChangeListener* listener);
 
+		/** Adds new instance delete listener
+		 * @param listener to add
+		 */
+		void addDeleteListener(InstanceDeleteListener* listener) const;
+
+		/** Removes associated instance delete listener
+		 * @param listener to remove
+		 */
+		void removeDeleteListener(InstanceDeleteListener* listener) const;
+
 		/** Gets the currently active action. This is owned by
 		 *  the instance's object, so don't delete it!
 		 * @return current action, NULL in case there is none
@@ -261,6 +278,10 @@ namespace FIFE {
 		 */
 		inline InstanceChangeInfo getChangeInfo();
 
+		/** callback so other instances we depend on can notify us if they go away 
+		*/
+		void onInstanceDeleted(Instance* instance);
+
 	private:
 		std::string m_id;
 
@@ -312,6 +333,8 @@ namespace FIFE {
 		InstanceActivity* m_activity;
 		// bitmask stating current changes
 		InstanceChangeInfo m_changeinfo;
+		// listeners for deletion of the instance
+		mutable std::vector<InstanceDeleteListener*> m_deletelisteners;
 
 		// object where instantiated from
 		Object* m_object;
