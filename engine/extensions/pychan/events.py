@@ -94,7 +94,7 @@ class EventListenerBase(object):
 		super(EventListenerBase,self).__init__()
 		self.events = {}
 		self.indent = 0
-		self.debug = 1
+		self.debug = get_manager().debug
 		self.is_attached = False
 
 	def attach(self,widget):

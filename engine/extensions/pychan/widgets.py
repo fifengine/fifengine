@@ -342,7 +342,7 @@ class Widget(object):
 		"""
 		for descr,func in eventMap.items():
 			name, event_name, group_name = events.splitEventDescriptor(descr)
-			print name, event_name, group_name
+			#print name, event_name, group_name
 			widget = self.findChild(name=name)
 			if widget:
 				widget.capture( func, event_name = event_name, group_name = group_name )
