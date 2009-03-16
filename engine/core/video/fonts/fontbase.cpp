@@ -33,6 +33,7 @@
 // Second block: files included from the same folder
 #include "util/structures/rect.h"
 #include "util/base/exception.h"
+#include "util/utf8/utf8.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 
@@ -78,12 +79,33 @@ namespace FIFE {
 	}
 
 	int FontBase::getStringIndexAt(const std::string &text, int x) {
-		for (int i = 0; i < static_cast<int>(text.size()); ++i) {
-			if (getWidth(text.substr(0,i)) > x) {
-				return i-1;
+		std::string::const_iterator cur, last;
+		int idx = 0;
+		if (text.size() == 0) return 0;
+		if (x <= 0) return 0;
+
+		last = text.begin();
+		cur = last;
+
+		utf8::next(cur, text.end());
+
+		std::string buff;
+		while(cur != text.end()) {
+			buff = std::string(text.begin(), cur);
+
+			if (getWidth(buff) > x) {
+				return buff.size();
+			} else {
+				utf8::next(cur, text.end());
+				idx++;
 			}
 		}
-		return text.length();
+
+		if (x > getWidth(text)) {
+			return text.size();
+		} else {
+			return buff.size();
+		}
 	}
 
 	Image* FontBase::getAsImage(const std::string& text) {
@@ -97,6 +119,7 @@ namespace FIFE {
 	}
 
 	Image* FontBase::getAsImageMultiline(const std::string& text) {
+		//FIXME UTF8 support
 		Image* image = m_pool.getRenderedText(this, text);
 		if (!image) {
 			std::vector<SDL_Surface*> lines;
