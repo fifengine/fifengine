@@ -16,12 +16,3 @@ LogToFile           = 0
 
 WindowTitle			= 'FIFE - Editor client'
 WindowIcon			= ''
-
-#offset editor:
-RotAngles = {}
-# zero-projekt angles
-#RotAngles['animations'] = ["0", "60", "120", "180", "240", "300"]
-# rio de hola angles
-RotAngles['animations'] = ["0", "45", "90", "135", "180", "225", "270", "315"]
-
-
