@@ -119,31 +119,31 @@ namespace FIFE {
 	}
 
 	Image* FontBase::getAsImageMultiline(const std::string& text) {
-		//FIXME UTF8 support
+		//FIXME UTF8 support - TESTME
+		const uint32_t newline = '\n';
 		Image* image = m_pool.getRenderedText(this, text);
 		if (!image) {
 			std::vector<SDL_Surface*> lines;
-
+			std::string::const_iterator it = text.begin();
 			// split text as needed
-			std::string::size_type pos, last_pos = 0;
-			int length = 0;
 			int render_width = 0, render_height = 0;
 			do {
-				pos = text.find('\n', last_pos);
-				if (pos != std::string::npos) {
-					length = pos - last_pos;
-				} else {
-					length = text.size() - last_pos;
+				uint32_t codepoint = 0;
+				std::string line;
+				while( codepoint != newline && it != text.end() );
+				{
+					codepoint = utf8::next(it,text.end());
+					if( codepoint != newline )
+						utf8::append(codepoint, back_inserter(line));
 				}
-				std::string sub = text.substr(last_pos, length);
-				std::cerr << "substring: " << sub << "\n";
-				SDL_Surface* text_surface = renderString(sub);
+				//std::cout << "Line:" << line << std::endl;
+				SDL_Surface* text_surface = renderString(line);
 				if (text_surface->w > render_width) {
 					render_width = text_surface->w;
 				}
 				lines.push_back(text_surface);
-				last_pos = pos + 1;
-			} while (pos != std::string::npos);
+			} while (it != text.end());
+			
 			render_height = (getRowSpacing() + getHeight()) * lines.size();
 			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 				render_width,render_height,32,
