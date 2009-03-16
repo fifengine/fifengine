@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # coding: utf-8
 # This is the pychan demo client for FIFE.
 
@@ -54,9 +55,12 @@ class DemoApplication(basicapplication.ApplicationBase):
 		super(DemoApplication,self).__init__()
 		
 		pychan.init(self.engine,debug=True)
+		pychan.loadFonts("fonts/freefont.fontdef")
+		pychan.manager.setDefaultFont("FreeSans")
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
 		self.gui = pychan.loadXML('gui/demoapp.xml')
+		self.gui.findChild(name="xmlSource").font = "FreeMono"
 		
 		eventMap = {
 			'creditsLink'  : self.showCredits,
