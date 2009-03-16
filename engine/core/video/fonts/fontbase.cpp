@@ -130,7 +130,7 @@ namespace FIFE {
 			do {
 				uint32_t codepoint = 0;
 				std::string line;
-				while( codepoint != newline && it != text.end() );
+				while( codepoint != newline && it != text.end() )
 				{
 					codepoint = utf8::next(it,text.end());
 					if( codepoint != newline )
@@ -170,16 +170,18 @@ namespace FIFE {
 	}
 
 	std::string FontBase::splitTextToWidth (const std::string& text, int render_width) {
+		const uint32_t whitespace = ' ';
+		const uint32_t newline = '\n';
 		if (render_width <= 0 || text.empty()) { 
 			return text;
 		}
 		std::string output;
 		std::string line;
-		std::string::size_type pos = 0;
-		std::list<std::pair<size_t,size_t> > break_pos;
+		std::string::const_iterator pos = text.begin();
+		std::list<std::pair<size_t,std::string::const_iterator> > break_pos;
 		bool firstLine = true;
 
-		while( pos < text.length() )
+		while( pos != text.end() )
 		{
 			break_pos.clear();
 			if( !firstLine ) {
@@ -189,14 +191,15 @@ namespace FIFE {
 			}
 
 			bool haveNewLine = false;
-			while( getWidth(line) < render_width && pos < text.length() )
+			while( getWidth(line) < render_width && pos != text.end() )
 			{
-				if (text.at(pos) == ' ' && !line.empty())
+				uint32_t codepoint = utf8::next(pos, text.end());
+				if (codepoint == whitespace && !line.empty())
 					break_pos.push_back( std::make_pair(line.length(),pos) );
-				line.push_back( text.at(pos) );
-				++pos;
+				utf8::append(codepoint, back_inserter(line) );
 
-				// Special case: Already newlines in string:
+				// Special case: Already newlines in string: FIXME
+/*
 				if( text.at(pos-1) == '\n' ) {
 					if( line[line.size()-1] == '\n' )
 						line.erase(line.size()-1);
@@ -205,11 +208,12 @@ namespace FIFE {
 					haveNewLine = true;
 					break;
 				}
+*/
 			}
 			if( haveNewLine )
 				continue;
 
-			if( pos >= text.length())
+			if( pos == text.end() )
 				break;
 
 			if( break_pos.empty() ) {
@@ -223,6 +227,7 @@ namespace FIFE {
 
 				// We can't do hyphenation here,
 				// so we just retreat one character :-(
+				// FIXME
 				line.erase(line.length() - 1);
 				--pos;
 			} else {
