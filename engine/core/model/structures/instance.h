@@ -179,12 +179,12 @@ namespace FIFE {
 		/** Adds new instance delete listener
 		 * @param listener to add
 		 */
-		void addDeleteListener(InstanceDeleteListener* listener) const;
+		void addDeleteListener(InstanceDeleteListener* listener);
 
 		/** Removes associated instance delete listener
 		 * @param listener to remove
 		 */
-		void removeDeleteListener(InstanceDeleteListener* listener) const;
+		void removeDeleteListener(InstanceDeleteListener* listener);
 
 		/** Gets the currently active action. This is owned by
 		 *  the instance's object, so don't delete it!
@@ -334,7 +334,7 @@ namespace FIFE {
 		// bitmask stating current changes
 		InstanceChangeInfo m_changeinfo;
 		// listeners for deletion of the instance
-		mutable std::vector<InstanceDeleteListener*> m_deletelisteners;
+		std::vector<InstanceDeleteListener*> m_deletelisteners;
 
 		// object where instantiated from
 		Object* m_object;

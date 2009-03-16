@@ -522,10 +522,10 @@ namespace FIFE {
 		}
 		return TimeManager::instance()->getTime();
 	}
-        void Instance::addDeleteListener(InstanceDeleteListener *listener) const {
+        void Instance::addDeleteListener(InstanceDeleteListener *listener) {
                 m_deletelisteners.push_back(listener);
         }
-        void Instance::removeDeleteListener(InstanceDeleteListener *listener) const {
+        void Instance::removeDeleteListener(InstanceDeleteListener *listener) {
                 std::vector<InstanceDeleteListener*>::iterator itor;
                 itor = std::find(m_deletelisteners.begin(),
                                  m_deletelisteners.end(),
