@@ -1,4 +1,4 @@
-<Window title="This is the PyChan demo application.">
+<Window title="This is the PyChan demo application. "><!--[PyChanのてすとです: ÜÖÄ]"-->
 	<HBox>
 		<Slider size="100,15" name="slider" orientation="0" scale_start="0.1" scale_end="1.5" base_color="93,161,102" />
 		<Label name="slider_desc" text="Move the slider!" />

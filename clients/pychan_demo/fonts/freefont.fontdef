@@ -18,3 +18,23 @@ antialias: 1
 
 color: 255,255,255
 
+[Font/CyberCJK]
+
+type: truetype
+source: fonts/Cybercjk.ttf
+size: 14
+
+antialias: 1
+
+color: 255,255,255
+
+[Font/Kochi]
+
+type: truetype
+source: fonts/kochi-gothic-subst.ttf
+size: 14
+
+antialias: 1
+
+color: 255,255,255
+

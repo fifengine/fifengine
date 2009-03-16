@@ -57,6 +57,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		pychan.init(self.engine,debug=True)
 		pychan.loadFonts("fonts/freefont.fontdef")
 		pychan.manager.setDefaultFont("FreeSans")
+		#pychan.manager.setDefaultFont("Kochi")
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
 		self.gui = pychan.loadXML('gui/demoapp.xml')

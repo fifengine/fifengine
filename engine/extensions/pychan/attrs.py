@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # coding: utf-8
 
 """
@@ -43,6 +44,15 @@ class Attr(object):
 		Override with specialiced behaviour.
 		"""
 		return str(value)
+
+class UnicodeAttr(Attr):
+	def parse(self,value):
+		"""
+		Parses a value and checks for errors.
+		Override with specialiced behaviour.
+		"""
+		return unicode(value)
+
 
 class PointAttr(Attr):
 	def parse(self,value):
