@@ -32,6 +32,13 @@ from pychan.tools import callbackWithArguments as cbwa
 
 import settings as Settings
 
+# default should be pychan default, highlight can be choosen (format: r,g,b)
+_DEFAULT_BACKGROUND_COLOR = (0,0,100)
+_HIGHLIGHT_BACKGROUND_COLOR = (173,216,230)
+
+# the dynamicly created widgets have the name scheme prefix + layerid
+_LABEL_NAME_PREFIX = "select_"
+
 class LayerTool(plugin.Plugin):
 	""" The B{LayerTool} is an advanced method to view
 	and change layer informations.
@@ -100,7 +107,7 @@ class LayerTool(plugin.Plugin):
 			
 			layer_name_widget = pychan.widgets.Label()
 			layer_name_widget.text = layerid
-			layer_name_widget.name = "select_" + layerid
+			layer_name_widget.name = _LABEL_NAME_PREFIX + layerid
 			layer_name_widget.capture(self.select_active_layer,"mousePressed")
 			
 			subwrapper.addChild(visibility_widget)
@@ -123,6 +130,11 @@ class LayerTool(plugin.Plugin):
 	def toggle_layer_visibility(self, event, widget):
 		""" callback for ToggleButtons 
 		
+		Toggle the chosen layer visible / invisible
+		
+		NOTE:
+			- if a layer is set to invisible, it also shouldn't be the active layer anymore
+		
 		@type	event:	object
 		@param	event:	pychan mouse event
 		@type	widget:	object
@@ -133,17 +145,52 @@ class LayerTool(plugin.Plugin):
 		layerid = widget.name[7:]
 		
 		layer = self._mapedit._map.getLayer(layerid)
+		
 		if layer.areInstancesVisible():
 			layer.setInstancesVisible(False)
+			self.select_different_active_layer(layerid)
 		else:
 			layer.setInstancesVisible(True)
 			
+		
+	def select_different_active_layer(self, layerid):
+		""" a helper method to pick either the previous or next layer in the layerlist
+		by using the given layerid as pivot element
+		
+		FIXME:
+			- either drop this feature or find a solution for boderline cases:
+				- user hides all layers (which one should be active?)
+				- worst case would be that this algo has to check all layers recursive until it knows that all are invisible
+				  to return with no result (no selection of an active layer, I'm not sure if FIFEdit supports that at all)
+		
+		@type	layerid:	string
+		@param	layerid:	the layerid of the pivot element		
+		"""
+		layers = [layer.getId() for layer in self._mapedit._map.getLayers()]
+		pivot_index = layers.index(layerid)
+
+		if len(layers) == 1:
+			return
+
+		if pivot_index == len(layers) - 1:
+			different_layer = layers[pivot_index - 1]
+		else:
+			different_layer = layers[pivot_index + 1]
+
+		widget = self.container.findChild(name=_LABEL_NAME_PREFIX + different_layer)
+		self.select_active_layer(None, widget)
 		
 	def select_active_layer(self, event, widget):
 		""" callback for Labels 
 		
 		We hand the layerid over to the mapeditor module to select a 
 		new active layer
+		
+		Additionally, we mark the active layer widget (changing base color) and reseting the previous one
+		
+		FIXME:
+			- styled widgets don't accept layout changes (might be a bug in the pychan layout engine)
+			- therefore we can only mark the active layer via text (I added a * to the label text)
 
 		@type	event:	object
 		@param	event:	pychan mouse event
@@ -152,5 +199,19 @@ class LayerTool(plugin.Plugin):
 		"""
 		if not self.data: return
 		
+		previous_active_layer = self._mapedit._layer.getId()
+		previous_active_widget = self.container.findChild(name="select_" + str(previous_active_layer))
+		previous_active_widget._setBackgroundColor(_DEFAULT_BACKGROUND_COLOR)
+		previous_active_widget._setForegroundColor(_DEFAULT_BACKGROUND_COLOR)
+		previous_active_widget._setBaseColor(_DEFAULT_BACKGROUND_COLOR)		
+		previous_active_widget.text = str(previous_active_layer)
+		
 		layerid = widget.name[7:]	
+		
+		widget._setBackgroundColor(_HIGHLIGHT_BACKGROUND_COLOR)
+		widget._setForegroundColor(_HIGHLIGHT_BACKGROUND_COLOR)
+		widget._setBaseColor(_HIGHLIGHT_BACKGROUND_COLOR)
+		widget.text = widget.text + " *"
+		self.container.adaptLayout()
+		
 		self._mapedit._editLayer(layerid)
