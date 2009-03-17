@@ -58,6 +58,7 @@ class LayerTool(plugin.Plugin):
 		self.menu_items = { 'LayerTool' : self.toggle }
 		self._mapedit = mapedit
 		self.data = False
+		self.previous_active_layer = None
 		
 		# "register" at mapeditor module 
 		self._mapedit.layertool = self
@@ -148,14 +149,26 @@ class LayerTool(plugin.Plugin):
 		
 		if layer.areInstancesVisible():
 			layer.setInstancesVisible(False)
-			self.select_different_active_layer(layerid)
+			self.select_no_layer()
+#			self.select_different_active_layer(layerid)
 		else:
 			layer.setInstancesVisible(True)
 			
+			
+	def select_no_layer(self):
+		""" the exception approach - as soon as the user hides a layer, the mapedit module should stop to use this
+		one, too.
+		
+		A bunch of exceptions is the result (each click on the map will result in a exception as no layer is set etc...)	
+		"""
+		self._mapedit._editLayer(None)
 		
 	def select_different_active_layer(self, layerid):
 		""" a helper method to pick either the previous or next layer in the layerlist
 		by using the given layerid as pivot element
+		
+		NOTE:
+			- dropped for now, we set self.mapedit._layer to None if a layer gets invisible
 		
 		FIXME:
 			- either drop this feature or find a solution for boderline cases:
@@ -199,12 +212,13 @@ class LayerTool(plugin.Plugin):
 		"""
 		if not self.data: return
 		
-		previous_active_layer = self._mapedit._layer.getId()
-		previous_active_widget = self.container.findChild(name="select_" + str(previous_active_layer))
-		previous_active_widget._setBackgroundColor(_DEFAULT_BACKGROUND_COLOR)
-		previous_active_widget._setForegroundColor(_DEFAULT_BACKGROUND_COLOR)
-		previous_active_widget._setBaseColor(_DEFAULT_BACKGROUND_COLOR)		
-		previous_active_widget.text = str(previous_active_layer)
+		if self.previous_active_layer is not None:
+			previous_layer_id = str(self.previous_active_layer)
+			previous_active_widget = self.container.findChild(name="select_" + previous_layer_id)
+			previous_active_widget._setBackgroundColor(_DEFAULT_BACKGROUND_COLOR)
+			previous_active_widget._setForegroundColor(_DEFAULT_BACKGROUND_COLOR)
+			previous_active_widget._setBaseColor(_DEFAULT_BACKGROUND_COLOR)		
+			previous_active_widget.text = previous_layer_id
 		
 		layerid = widget.name[7:]	
 		
@@ -212,6 +226,7 @@ class LayerTool(plugin.Plugin):
 		widget._setForegroundColor(_HIGHLIGHT_BACKGROUND_COLOR)
 		widget._setBaseColor(_HIGHLIGHT_BACKGROUND_COLOR)
 		widget.text = widget.text + " *"
+		self.previous_active_layer = layerid
 		self.container.adaptLayout()
 		
 		self._mapedit._editLayer(layerid)
