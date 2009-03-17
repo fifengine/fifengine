@@ -38,7 +38,7 @@ namespace FIFE {
 	using namespace gcn;
 
 
-	CommandLine::CommandLine() : gcn::TextField("") {
+	CommandLine::CommandLine() : gcn::UTF8TextField() {
 		m_history_position = 0;
 
 		m_blinkTimer.setInterval(500);
@@ -73,11 +73,11 @@ namespace FIFE {
 
 		if (key.getValue() == Key::LEFT && mCaretPosition > 0)
 		{
-			--mCaretPosition;
+			UTF8TextField::keyPressed(keyEvent);
 		}
 		else if (key.getValue() == Key::RIGHT && mCaretPosition < mText.size())
 		{
-			++mCaretPosition;
+			UTF8TextField::keyPressed(keyEvent);
 		}
 		else if (key.getValue() == Key::DOWN && !m_history.empty())
 		{
@@ -102,12 +102,11 @@ namespace FIFE {
 		}
 		else if (key.getValue() == Key::DELETE && mCaretPosition < mText.size())
 		{
-			mText.erase(mCaretPosition, 1);
+			UTF8TextField::keyPressed(keyEvent);
 		}
 		else if (key.getValue() == Key::BACKSPACE && mCaretPosition > 0)
 		{
-			mText.erase(mCaretPosition - 1, 1);
-			--mCaretPosition;
+			UTF8TextField::keyPressed(keyEvent);
 		}
 		else if (key.getValue() == Key::ENTER)
 		{
@@ -130,11 +129,7 @@ namespace FIFE {
 		}    
 		else if (key.isCharacter())
 		{
-			m_cmdline = mText;
-			m_history_position = m_history.size();
-
-			mText.insert(mCaretPosition, std::string(1,char(key.getValue())));
-			++mCaretPosition;
+			UTF8TextField::keyPressed(keyEvent);
 		}
 		stopBlinking();
 		fixScroll();
