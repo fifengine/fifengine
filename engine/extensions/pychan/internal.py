@@ -28,6 +28,7 @@ class Manager(object):
 		super(Manager,self).__init__()
 		self.hook = hook
 		self.debug = debug
+		self.unicodePolicy = ('ignore',)
 
 		if in_fife:
 			if not hook.engine.getEventManager():

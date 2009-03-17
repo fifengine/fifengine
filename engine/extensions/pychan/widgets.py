@@ -26,14 +26,14 @@ def _text2gui(text):
 	if not isinstance(text,unicode):
 		print "Widget text needs to be set from an unicode object. Got: '%s'" % repr(text)
 		text = unicode(text,"utf8")
-	return text.encode("utf8","ignore").replace("\t"," "*4).replace("[br]","\n")
+	return text.encode("utf8",*get_manager().unicodePolicy).replace("\t"," "*4).replace("[br]","\n")
 
 def _gui2text(text):
 	"""
 	This function is applied to all text get from widgets.
 	Translates the encoded string into a unicode object.
 	"""
-	return unicode(text,"utf8","ignore")
+	return unicode(text,"utf8",*get_manager().unicodePolicy)
 
 
 def isLayouted(widget):
