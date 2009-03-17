@@ -198,20 +198,17 @@ namespace FIFE {
 				uint32_t codepoint = utf8::next(pos, text.end());
 				if (codepoint == whitespace && !line.empty())
 					break_pos.push_back( std::make_pair(line.length(),pos) );
-				utf8::append(codepoint, back_inserter(line) );
+
+				if( codepoint != newline )
+					utf8::append(codepoint, back_inserter(line) );
 
 				// Special case: Already newlines in string:
-				// FIXME ignored.
-/*
-				if( text.at(pos-1) == '\n' ) {
-					if( line[line.size()-1] == '\n' )
-						line.erase(line.size()-1);
+				if( codepoint == newline ) {
 					output.append(line);
 					line = "";
 					haveNewLine = true;
 					break;
 				}
-*/
 			}
 			if( haveNewLine )
 				continue;
@@ -223,7 +220,7 @@ namespace FIFE {
 				// No break position and line length smaller than 2
 				// means the renderwidth is really screwed. Just continue
 				// appending single character lines.
-				if( line.length() <= 1 ) {
+				if( utf8::distance(line.begin(),line.end()) <= 1 ) {
 					output.append(line);
 					continue;
 				}
@@ -236,7 +233,6 @@ namespace FIFE {
 			} else {
 				line = line.substr(0,break_pos.back().first);
 				pos = break_pos.back().second;
-				utf8::next(pos,text.end());
 			}
 			output.append(line);
 		}
