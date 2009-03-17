@@ -26,7 +26,7 @@ def _text2gui(text):
 	if not isinstance(text,unicode):
 		print "Widget text needs to be set from an unicode object. Got: '%s'" % repr(text)
 		text = unicode(text,"utf8")
-	return text.encode("utf8","ignore").replace("\t"," "*4)
+	return text.encode("utf8","ignore").replace("\t"," "*4).replace("[br]","\n")
 
 def _gui2text(text):
 	"""

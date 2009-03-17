@@ -74,15 +74,11 @@ namespace gcn {
 		cur = text.begin();
 		end = text.end();
 
-		for(i = 0; i <= charIndex; i++) {
-			try {
-				utf8::next(cur, end);
-			} catch (...) {
-				return text.size();
-			}
+		for(i = 0; i < charIndex && cur != end; i++) {
+			utf8::next(cur, end);
 		}
 
-		return std::string(text.begin(), cur).size() - 1;
+		return std::string(text.begin(), cur).size();
 	}
 };
 

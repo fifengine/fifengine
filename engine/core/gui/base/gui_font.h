@@ -37,7 +37,7 @@
 namespace FIFE {
 	class gcn::Graphics;
 
-	class GuiFont : public gcn::Font, public AbstractFont {
+	class GuiFont : public gcn::Font {
 	public:
 		/** Constructor
 		 *  Takes the ownership of given font
@@ -45,7 +45,7 @@ namespace FIFE {
 		GuiFont(AbstractFont* font);
 		virtual ~GuiFont();
 		
-		int getStringIndexAt(const std::string& text, int x);
+		int getStringIndexAt(const std::string& text, int x) const;
 		void drawString(gcn::Graphics* graphics, const std::string& text, int x, int y);
 		void drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int x, int y);
 		std::string splitTextToWidth (const std::string& text, int render_width);

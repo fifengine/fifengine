@@ -79,13 +79,12 @@ namespace FIFE {
 	}
 
 	int FontBase::getStringIndexAt(const std::string &text, int x) {
-		std::string::const_iterator cur, last;
-		int idx = 0;
+		assert( utf8::is_valid(text.begin(), text.end()) );
+		std::string::const_iterator cur;
 		if (text.size() == 0) return 0;
 		if (x <= 0) return 0;
 
-		last = text.begin();
-		cur = last;
+		cur = text.begin();
 
 		utf8::next(cur, text.end());
 
@@ -97,7 +96,6 @@ namespace FIFE {
 				return buff.size();
 			} else {
 				utf8::next(cur, text.end());
-				idx++;
 			}
 		}
 
@@ -120,7 +118,10 @@ namespace FIFE {
 
 	Image* FontBase::getAsImageMultiline(const std::string& text) {
 		//FIXME UTF8 support - TESTME
-		const uint32_t newline = '\n';
+		const uint8_t newline_utf8 = '\n';
+		uint32_t newline;
+		utf8::utf8to32(&newline_utf8,&newline_utf8 + 1,&newline);
+		std::cout << "Text:" << text << std::endl;
 		Image* image = m_pool.getRenderedText(this, text);
 		if (!image) {
 			std::vector<SDL_Surface*> lines;
@@ -136,7 +137,7 @@ namespace FIFE {
 					if( codepoint != newline )
 						utf8::append(codepoint, back_inserter(line));
 				}
-				//std::cout << "Line:" << line << std::endl;
+				std::cout << "Line:" << line << std::endl;
 				SDL_Surface* text_surface = renderString(line);
 				if (text_surface->w > render_width) {
 					render_width = text_surface->w;
@@ -149,8 +150,7 @@ namespace FIFE {
 				render_width,render_height,32,
 				RMASK, GMASK, BMASK ,AMASK);
 			if (!final_surface) {
-				std::cerr << "CreateRGBSurface failed: " << SDL_GetError() << "\n";
-				exit(0);
+				throw SDLException(std::string("CreateRGBSurface failed: ") + SDL_GetError());
 			}
 			SDL_FillRect(final_surface, 0, 0x00000000);
 			int ypos = 0;
@@ -171,7 +171,9 @@ namespace FIFE {
 
 	std::string FontBase::splitTextToWidth (const std::string& text, int render_width) {
 		const uint32_t whitespace = ' ';
-		const uint32_t newline = '\n';
+		const uint8_t newline_utf8 = '\n';
+		uint32_t newline;
+		utf8::utf8to32(&newline_utf8,&newline_utf8 + 1,&newline);
 		if (render_width <= 0 || text.empty()) { 
 			return text;
 		}
@@ -198,7 +200,8 @@ namespace FIFE {
 					break_pos.push_back( std::make_pair(line.length(),pos) );
 				utf8::append(codepoint, back_inserter(line) );
 
-				// Special case: Already newlines in string: FIXME
+				// Special case: Already newlines in string:
+				// FIXME ignored.
 /*
 				if( text.at(pos-1) == '\n' ) {
 					if( line[line.size()-1] == '\n' )
@@ -228,11 +231,12 @@ namespace FIFE {
 				// We can't do hyphenation here,
 				// so we just retreat one character :-(
 				// FIXME
-				line.erase(line.length() - 1);
-				--pos;
+				//line = line.erase(line.length() - 1);
+				//--pos;
 			} else {
 				line = line.substr(0,break_pos.back().first);
-				pos = break_pos.back().second + 1;
+				pos = break_pos.back().second;
+				utf8::next(pos,text.end());
 			}
 			output.append(line);
 		}

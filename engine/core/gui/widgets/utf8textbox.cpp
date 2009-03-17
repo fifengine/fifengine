@@ -1,4 +1,6 @@
 #include "utf8textbox.h"
+#include <cassert>
+#include "util/utf8/utf8.h"
 
 namespace gcn {
 
@@ -164,7 +166,8 @@ namespace gcn {
 
 		adjustSize();
 		scrollToCaret();
-
+		assert( utf8::is_valid(mTextRows[mCaretRow].begin(),mTextRows[mCaretRow].end()) );
+		assert( utf8::is_valid(mTextRows[mCaretRow].begin(),mTextRows[mCaretRow].begin() + mCaretColumn) );
 		keyEvent.consume();
 	}
 

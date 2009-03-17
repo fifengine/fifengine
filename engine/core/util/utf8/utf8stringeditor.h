@@ -13,7 +13,7 @@ namespace gcn {
 	 * 
 	 * @author Przemyslaw Grzywacz
 	 */
-	class GCN_EXTENSION_DECLSPEC UTF8StringEditor {
+	class UTF8StringEditor {
 	public:
 		/**
 		 * Returns byte offset of the next character.
@@ -22,7 +22,7 @@ namespace gcn {
 		 * @param byteOffset Byte offset of current character.
 		 * @return Byte offset of the next character.
 		 */
-		int nextChar(const std::string& text, int byteOffset);
+		static int nextChar(const std::string& text, int byteOffset);
 
 		/**
 		 * Returns byte offset of the previous character.
@@ -31,7 +31,7 @@ namespace gcn {
 		 * @param byteOffset Byte offset of current character.
 		 * @return Byte offset of the previous character.
 		 */
-		int prevChar(const std::string& text, int byteOffset);
+		static int prevChar(const std::string& text, int byteOffset);
 
 		/**
 		 * Erase character at specified byte offset.
@@ -40,7 +40,7 @@ namespace gcn {
 		 * @param byteOffset Byte offset of the character to erase.
 		 * @return New byte offset (is equal to byteOffset).
 		 */
-		int eraseChar(std::string& text, int byteOffset);
+		static int eraseChar(std::string& text, int byteOffset);
 
 		/**
 		 * Insert a character at specified byte offset.
@@ -50,7 +50,7 @@ namespace gcn {
 		 * @param ch Unicode character to insert.
 		 * @return New byte offset (after the new character).
 		 */
-		int insertChar(std::string& text, int byteOffset, int ch);
+		static int insertChar(std::string& text, int byteOffset, int ch);
 
 		/**
 		 * Counts characters up to byteOffset.
@@ -59,7 +59,7 @@ namespace gcn {
 		 * @param byteOffset Byte offset inside the text.
 		 * @return Number of characters.
 		 */
-		int countChars(const std::string& text, int byteOffset);
+		static int countChars(const std::string& text, int byteOffset);
 
 		/**
 		 * Gets byte offset for character index.
@@ -71,7 +71,7 @@ namespace gcn {
 		 * @param charIndex Character index to move to.
 		 * @return Byte offset of character at charIndex.
 		 */
-		int getOffset(const std::string& text, int charIndex);
+		static int getOffset(const std::string& text, int charIndex);
 	};
 
 };

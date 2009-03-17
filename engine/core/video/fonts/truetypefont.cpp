@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <cassert>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -30,6 +31,7 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
+#include "util/utf8/utf8.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 
@@ -56,6 +58,7 @@ namespace FIFE {
 
 	int TrueTypeFont::getWidth(const std::string& text) const {
 		int w, h;
+		assert( utf8::is_valid(text.begin(), text.end()) );
 		TTF_SizeUTF8(mFont, text.c_str(), &w, &h);
 		return w;
 	}
