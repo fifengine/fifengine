@@ -35,6 +35,7 @@
 #include "util/base/exception.h"
 #include "util/log/logger.h"
 #include "util/structures/rect.h"
+#include "util/utf8/utf8.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 #include "video/imagepool.h"
@@ -93,7 +94,8 @@ namespace FIFE {
 		SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
 		// Finally extract all glyphs
-		for(size_t i=0; i != glyphs.size(); ++i) {
+		std::string::const_iterator text_it = glyphs.begin();
+		while(text_it != glyphs.end()) {
 			w=0;
 			while(x < surface->w && pixels[x] == separator)
 				++x;
@@ -118,12 +120,14 @@ namespace FIFE {
 			SDL_SetColorKey(tmp,SDL_SRCCOLORKEY,colorkey);
 
 
-			m_glyphs[ glyphs[i] ].surface = tmp;
+			uint32_t codepoint = utf8::next(text_it, glyphs.end());
+			m_glyphs[ codepoint ].surface = tmp;
 
 			x += w;
 		}
 
 		// Set placeholder glyph
+		// This should actually work ith utf8.
 		if( m_glyphs.find('?') != m_glyphs.end() ) {
 			m_placeholder = m_glyphs['?'];
 		} else {
