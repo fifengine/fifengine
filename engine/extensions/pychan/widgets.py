@@ -56,6 +56,7 @@ class Widget(object):
 	  - base_color: Color
 	  - background_color: Color
 	  - foreground_color: Color
+	  - selection_color: Color
 	  - font: String: This should identify a font that was loaded via L{loadFonts} before.
 	  - border_size: Integer: The size of the border in pixels.
 	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
@@ -84,7 +85,7 @@ class Widget(object):
 
 	ATTRIBUTES = [ Attr('name'), PointAttr('position'),
 		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
-		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),
+		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),ColorAttr('selection_color'),
 		Attr('style'), Attr('font'),IntAttr('border_size')
 		]
 

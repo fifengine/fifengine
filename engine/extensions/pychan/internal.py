@@ -166,6 +166,7 @@ DEFAULT_STYLE = {
 		'base_color' : guichan.Color(28,28,28),
 		'foreground_color' : guichan.Color(255,255,255),
 		'background_color' : guichan.Color(50,50,50),
+		'selection_color' : guichan.Color(80,80,80),
 	},
 	'Button' : {
 		'border_size': 2,

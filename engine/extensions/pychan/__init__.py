@@ -153,6 +153,7 @@ classes and thus - for example apply a common font::
   }
 
 A new style is added to pychan with L{internal.Manager.addStyle}.
+You can set a new default style by adding a style with the name 'default'.
 
 The font is set via a string identifier pulled from a font definition
 in a PyChan configuration file. You have to load these by calling
