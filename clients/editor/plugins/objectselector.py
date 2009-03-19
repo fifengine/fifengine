@@ -1,8 +1,49 @@
 # coding: utf-8
 
-from pychan import widgets, tools
+from pychan import widgets, tools, attrs
 import fife
 
+# TODO:
+# - Scrollarea in previewmode does not display the last item properly
+# - Better event handling in ObjectIcon
+
+class ObjectIcon(widgets.VBox):
+	""" The ObjectIcon is used to represent the object in the object selector.
+	Unlike 
+	"""	
+	ATTRIBUTES = widgets.VBox.ATTRIBUTES + [ attrs.Attr("text"), attrs.Attr("image") ]
+	
+	def __init__(self,**kwargs):
+		self.real_widget = fife.Container()
+		super(ObjectIcon,self).__init__(_real_widget=self.real_widget,**kwargs)
+
+		vbox = widgets.VBox(padding=3)
+
+		# Icon
+		self.icon = widgets.Icon(**kwargs)
+		self.addChild(self.icon)
+
+		# Label
+		hbox = widgets.HBox(padding=1)
+		self.addChild(hbox)
+		self.label = widgets.Label(**kwargs)
+		hbox.addChild(self.label)
+		
+
+	def _setText(self, text):
+		self.label.text = text
+		
+	def _getText(self):
+		return self.label.text
+	text = property(_getText, _setText)
+
+	def _setImage(self, image):
+		self.icon.image = image
+
+	def _getImage(self):
+		return self.icon.image
+	image = property(_getImage, _setImage)
+		
 class ObjectSelector(object):
 	"""The ObjectSelector class offers a gui Widget that let's you select the object you
 	wish to use to in the editor.
@@ -27,9 +68,16 @@ class ObjectSelector(object):
 		# Add the drop down with list of namespaces
 		self.namespaces = widgets.DropDown()
 		vbox.addChild(self.namespaces)
-		self.namespaces.capture(self.update_namespace)
+		
 		self.namespaces.items = self.engine.getModel().getNamespaces()
 		self.namespaces.selected = 0
+
+		# Events for namespacelist
+		# TODO: Replace with SelectionEvent, once pychan supports it
+		self.namespaces.capture(self.update_namespace, "action")
+		self.namespaces.capture(self.update_namespace, "mouseWheelMovedUp")
+		self.namespaces.capture(self.update_namespace, "mouseWheelMovedDown")
+		self.namespaces.capture(self.update_namespace, "keyReleased")
 
 		# This scrollarea is used to display the preview images
 		self.mainScrollArea = widgets.ScrollArea(size=(230,300))
@@ -39,7 +87,6 @@ class ObjectSelector(object):
 		else: # Assuming self.mode is 'preview'
 			self.setImageList()
 		vbox.addChild(self.mainScrollArea)
-
 
 		# Add another Hbox to hold the close button
 		hbox = widgets.HBox(parent=self.gui)
@@ -75,6 +122,7 @@ class ObjectSelector(object):
 		if self.objects is not None:
 			self.mainScrollArea.removeChild(self.objects)
 		self.objects = widgets.VBox(name='list', size=(200,300))
+		self.objects.base_color = self.mainScrollArea.background_color
 		self.mainScrollArea.addChild(self.objects)
 
 	def setTextList(self):
@@ -103,14 +151,17 @@ class ObjectSelector(object):
 		objects = self.engine.getModel().getObjects(self.namespaces.selected_item)
 		for obj in objects:
 			image = self._getImage(obj)
-			if image is not None:
-				imagebutton = widgets.ImageButton(up_image=image, down_image=image, hover_image=image)
-				imagebutton.capture(tools.callbackWithArguments(self.objectSelected, obj))
-				self.objects.addChild(imagebutton)
-				self.objects._recursiveResizeToContent()
-				self.gui.adaptLayout()
-			else:
+			if image is None:
 				print 'No image available for selected object'
+				image = ""
+			
+			icon = ObjectIcon(image=image, text=obj.getId())
+			icon.capture(tools.callbackWithArguments(self.objectSelected, obj), "mouseClicked")
+			self.objects.addChild(icon)
+
+		self.objects._recursiveResizeToContent()
+		self.gui.adaptLayout()
+			
 		if len(objects)>0:
 			self.objectSelected(objects[0])
 
