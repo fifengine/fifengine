@@ -170,17 +170,17 @@ namespace FIFE {
 	}
 
 	Instance::~Instance() {
-                std::vector<InstanceDeleteListener *>::iterator itor;
-                for(itor = m_deletelisteners.begin();
-                    itor != m_deletelisteners.end();
-                    ++itor) {
-                        (*itor)->onInstanceDeleted(this);
-                }
-                if(m_activity &&
-                   m_activity->m_actioninfo &&
-                   m_activity->m_actioninfo->m_leader) {
-                        m_activity->m_actioninfo->m_leader->removeDeleteListener(this);
-                }
+		std::vector<InstanceDeleteListener *>::iterator itor;
+		for(itor = m_deletelisteners.begin();
+			itor != m_deletelisteners.end();
+			++itor) {
+				(*itor)->onInstanceDeleted(this);
+		}
+
+		if(m_activity && m_activity->m_actioninfo) {
+			finalizeAction();
+		}
+
 		delete m_activity;
 		delete m_facinglocation;
 		delete m_visual;
@@ -400,6 +400,10 @@ namespace FIFE {
 		FL_DBG(_log, "finalizing action");
 		assert(m_activity);
 		assert(m_activity->m_actioninfo);
+
+		if( m_activity->m_actioninfo->m_leader ) {
+			m_activity->m_actioninfo->m_leader->removeDeleteListener(this);
+		}
 
 		Action* action = m_activity->m_actioninfo->m_action;
 		delete m_activity->m_actioninfo;
