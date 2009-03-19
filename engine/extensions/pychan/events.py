@@ -53,6 +53,8 @@ EVENTS = [
 	"mouseReleased",
 	"mouseClicked",
 	"mouseMoved",
+	"mouseWheelMovedUp",
+	"mouseWheelMovedDown",
 	"mouseDragged",
 	"action",
 	"keyPressed",
@@ -166,6 +168,8 @@ class _MouseEventListener(EventListenerBase,guichan.MouseListener):
 	def mouseReleased(self,e): self._redirectEvent("mouseReleased",e)
 	def mouseClicked(self,e): self._redirectEvent("mouseClicked",e)
 	def mouseMoved(self,e): self._redirectEvent("mouseMoved",e)
+	def mouseWheelMovedUp(self,e): self._redirectEvent("mouseWheelMovedUp",e)
+	def mouseWheelMovedDown(self,e): self._redirectEvent("mouseWheelMovedDown",e)
 	def mouseDragged(self,e): self._redirectEvent("mouseDragged",e)
 
 class _KeyEventListener(EventListenerBase,guichan.KeyListener):

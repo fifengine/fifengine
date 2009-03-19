@@ -46,7 +46,7 @@ namespace gcn {
 		MouseListener() { }
 	};
 
-	%feature("director") MouseListener;
+	%feature("director") KeyListener;
 	class KeyListener {
 	public:
 		virtual ~KeyListener() { }

@@ -109,7 +109,6 @@ namespace FIFE {
 					return true;
 				}
 				if( m_had_mouse ) {
-					m_had_mouse = false;
 					input->pushInput(evt);
 					return true;
 				}
