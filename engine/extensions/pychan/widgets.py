@@ -1338,9 +1338,9 @@ class ToggleButton(BasicTextWidget):
 	offset = property(_getOffset,_setOffset)
 
 	def _setHelpText(self, txt):
-		self.real_widget.setHelpText(txt)
+		self.real_widget.setHelpText(_text2gui(txt))
 	def _getHelpText(self):
-		return self.real_widget.getHelpText()
+		return _gui2text(self.real_widget.getHelpText())
 	helptext = property(_getHelpText,_setHelpText)
 
 	def resizeToContent(self):
