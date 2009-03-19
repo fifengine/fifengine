@@ -22,6 +22,8 @@
 # 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # ###################################################
 
+""" a tool for FIFEdit to edit object and instance attributes """
+
 import fife
 import plugin
 import pychan
@@ -29,50 +31,53 @@ import pychan.widgets as widgets
 from pychan.tools import callbackWithArguments as cbwa
 
 import settings as Settings
+import math
 
 class ObjectEdit(plugin.Plugin):
+	""" The B{ObjectEdit} module is a plugin for FIFedit and allows to edit
+	attributes of an selected instance - like offset, instance id or rotation
+	(namespaces and object id editing is excluded)
+	
+	current features:
+		- click instance and get all known data
+		- edit offsets, rotation, instance id
+		- outline highlighting of the selected object
+			
+	missing features:
+		- blocking flag (flag doesn't work yet from FIFE side)
+		- static flag (flag doesn't work yet from FIFE side)		
+		- object saving
+		- a lot of bug fixing concerning the rotation
+		- use sliders to allow offset changes
+		- the module should be able to use the editors global undo history
+
+	FIXME:
+		- this module owns a pointer to the mapedit module - this shouldn't be
+		  necessary; a better plugin system of fifedit should only hand over the needed
+		  data (selected instance)
+		- we also need to edit run.py of the editor core to make this plugin work (shouldn't be necessary, too)
+	"""
 	def __init__(self, engine, mapedit):
-		"""
-			ObjectEdit plugin for FIFEdit
-			
-			Mission: provide a gui mask to edit all important object data within the editor
-			(id, offsets, rotation, blocking, static)
-			
-			namespaces and object ids are excluded
-			
-			Current features:
-				- click instance and get all known data
-				- edit offsets, rotation, blocking, static
-				- outline highlighting of the selected object
-				- 3 data states: current, previous and default (so there is at least a one-step-undo)
-				
-			Missing features:
-				- object saving
-				- id saving (handled by Fifedit via save map, but we have to set the id from here)
-				- a lot of bug fixing concerning the rotation and the data records ^^
-				- cleanup
-		
-			NOTE:
-				- this tool isn't ready for a working enviroment (yet)
-		"""
 		# Fifedit plugin data
 		self.menu_items = { 'ObjectEdit' : self.toggle_offsetedit }
 		
 		self._mapedit = mapedit
 
-# FIXME		
 		# this is _very bad_ - but I need to change the current rotation code by providing
 		# project specific rotation angles. FIFE later should provide a list of the loaded
 		# object rotations (they are provided by the xml files, so we just need to use them...)
 		self._mapedit._objectedit_rotations = None
-# end FIXME		
+	
 		self.active = False
+		self._camera = None
+		self._layer = None
+		
+		self.offset_slider = {}
+		self.offset_slider['x'] = False
+		self.offset_slider['y'] = False
 		
 		self.imagepool = engine.getImagePool()
 		self.animationpool = engine.getAnimationPool()
-			
-		self._camera = None
-		self._layer = None
 		
 		self.guidata = {}
 		self.objectdata = {}
@@ -80,7 +85,6 @@ class ObjectEdit(plugin.Plugin):
 		self._reset()		
 		self.create_gui()
 
-	
 	def _reset(self):
 		"""
 			resets all dynamic vars, but leaves out static ones (e.g. camera, layer)
@@ -88,6 +92,8 @@ class ObjectEdit(plugin.Plugin):
 		"""
 		self._instances = None
 		self._image = None
+		self._image_default_x_offset = None
+		self._image_default_y_offset = None
 		self._animation = False
 		self._rotation = None
 		self._avail_rotations = []
@@ -98,15 +104,6 @@ class ObjectEdit(plugin.Plugin):
 		self._instance_id = None
 		self._fixed_rotation = None
 		
-		self.guidata['instance_id'] = 'None'
-		self.guidata['object_id'] = 'None'
-		self.guidata['x_offset'] = 0
-		self.guidata['y_offset'] = 0
-		self.guidata['instance_rotation'] = 0
-		self.guidata['namespace'] = 'None'
-		self.guidata['blocking'] = 0
-		self.guidata['static'] = 0
-		
 		if self._camera is not None:
 			self.renderer.removeAllOutlines()		
 		
@@ -115,7 +112,7 @@ class ObjectEdit(plugin.Plugin):
 			- creates the gui skeleton by loading the xml file
 			- finds some important childs and saves their widget in the object
 		"""
-		self.container = pychan.loadXML('gui/offsetedit.xml')
+		self.container = pychan.loadXML('gui/objectedit.xml')
 		self.container.mapEvents({
 			'x_offset_up' 	: cbwa(self.change_offset_x, 1),
 			'x_offset_dn' 	: cbwa(self.change_offset_x, -1),
@@ -123,9 +120,11 @@ class ObjectEdit(plugin.Plugin):
 			'y_offset_up' 	: cbwa(self.change_offset_y, 1),
 			'y_offset_dn' 	: cbwa(self.change_offset_y, -1),
 			
-			'use_data'		: cbwa(self.use_user_data),
-			'previous_data' : cbwa(self.load_previous_data),
-			'default_data'	: cbwa(self.load_default_data)
+			'x_offset_slider' : cbwa(self.get_slider_value, "x"),
+			'y_offset_slider' : cbwa(self.get_slider_value, "y"),
+			
+			'use_data'		: self.use_user_data,
+			
 		})
 
 		self._gui_anim_panel_wrapper = self.container.findChild(name="animation_panel_wrapper")
@@ -137,6 +136,50 @@ class ObjectEdit(plugin.Plugin):
 		
 		self._gui_xoffset_textfield = self.container.findChild(name="x_offset")
 		self._gui_yoffset_textfield = self.container.findChild(name="y_offset")
+		
+		self._gui_instance_id_textfield = self.container.findChild(name="instance_id")
+		
+		print "Steplength x slider", self.container.findChild(name="x_offset_slider").getStepLength()
+		print "Steplength y slider", self.container.findChild(name="y_offset_slider").getStepLength()
+		self.container.findChild(name="x_offset_slider").setStepLength(0.01)
+		self.container.findChild(name="y_offset_slider").setStepLength(0.01)
+		print "New steplength x slider", self.container.findChild(name="x_offset_slider").getStepLength()
+		print "New steplength y slider", self.container.findChild(name="y_offset_slider").getStepLength()
+		
+	def get_slider_value(self, orientation):
+		""" get current slider value for offset manipulation """
+		
+		slider_name = orientation + "_offset_slider"
+		widget = self.container.findChild(name=slider_name)
+		value = widget.getValue()
+
+		print "%s slider value: %s" % (orientation, str(value))
+		
+		if value < 0: 
+			self.offset_slider[orientation] = False
+			return
+		
+		callback = getattr(self, "change_offset_" + orientation)
+
+		if self.offset_slider[orientation] == widget.getScaleStart():
+			self.set_default_offset(orientation)
+			self.offset_slider[orientation] = False
+			return	
+		elif self.offset_slider[orientation] >= widget.getScaleEnd():
+			pass
+		elif self.offset_slider[orientation] < value:
+			callback(1)
+		elif self.offset_slider[orientation] > value :
+			callback(-1)
+
+		self.offset_slider[orientation] = value
+
+	def set_default_offset(self, axis):
+		""" set default image offset for given axis """
+		if axis == 'x':
+			self._image.setXShift(self._image_default_x_offset)
+		elif axis == 'y':
+			self._image.setYShift(self._image_default_y_offset)
 
 	def _get_gui_size(self):
 		"""
@@ -165,17 +208,17 @@ class ObjectEdit(plugin.Plugin):
 				#self._gui_anim_panel_wrapper.resizeToContent()
 			#except:
 				#pass
-		
+
 		self.container.distributeInitialData({
 			'select_rotations' 	: self._avail_rotations,
-			'instance_id'		: self.guidata['instance_id'],
-			'object_id'			: self.guidata['object_id'],
-			'x_offset'			: self.guidata['x_offset'],
-			'y_offset'			: self.guidata['y_offset'],
-			'instance_rotation' : self.guidata['instance_rotation'],
-			'object_namespace'	: self.guidata['namespace'],
-			'object_blocking'	: self.guidata['blocking'],
-			'object_static'		: self.guidata['static'],
+			'instance_id'		: str( self._instances[0].getId() ),
+			'object_id'			: str( self._object_id ),
+			'x_offset'			: str( self._image.getXShift() ),
+			'y_offset'			: str( self._image.getYShift() ),
+			'instance_rotation' : str( self._instances[0].getRotation() ),
+			'object_namespace'	: str( self._namespace ),
+			'object_blocking'	: str( self._blocking ),
+			'object_static'		: str( self._static ),
 		})
 		try:
 			print self._avail_rotations
@@ -224,12 +267,11 @@ class ObjectEdit(plugin.Plugin):
 			- changes x offset of current instance (image)
 			- updates gui
 			
-			@param	int		value	the modifier for the x offset
+			@type	value:	int
+			@param	value:	the modifier for the x offset
 		"""		
 		if self._image is not None:
 			self._image.setXShift(self._image.getXShift() + value)
-			
-			self.guidata['x_offset'] = str( self._image.getXShift() )
 			self.update_gui()
 
 	def change_offset_y(self, value=1):
@@ -238,12 +280,11 @@ class ObjectEdit(plugin.Plugin):
 			- changes y offset of current instance (image)
 			- updates gui
 			
-			@param	int		value	the modifier for the y offset
+			@type	value:	int
+			@param	value:	the modifier for the y offset
 		"""
 		if self._image is not None:
 			self._image.setYShift(self._image.getYShift() + value)
-			
-			self.guidata['y_offset'] = str( self._image.getYShift() )
 			self.update_gui()
 
 	def use_user_data(self):
@@ -258,6 +299,16 @@ class ObjectEdit(plugin.Plugin):
 		"""
 		xoffset = self._gui_xoffset_textfield._getText()
 		yoffset = self._gui_yoffset_textfield._getText()
+		
+		instance_id = self._gui_instance_id_textfield._getText()
+		if instance_id is not None and instance_id is not "None":
+			existing_instances = self._mapedit._layer.getInstances(instance_id)
+			if existing_instances == ():
+				self._instances[0].setId(instance_id)
+				print "Set new instance id: ", instance_id		
+			else:
+				for i in existing_instances:
+					print i
 		
 		# workaround - dropdown list only has 2 entries, but sends 3 -> pychan bug?
 		if len(self._avail_rotations) < self._gui_rotation_dropdown._getSelected():
@@ -284,79 +335,9 @@ class ObjectEdit(plugin.Plugin):
 		except:
 			pass
 #		print "y offset must be of type int!"
-		
-		self.write_current_data()
-		self.objectdata[self._namespace][self._object_id]['previous'] = self.objectdata[self._namespace][self._object_id]['current'].copy()
-		self.update_gui()
-		
-	def load_previous_data(self):
-		"""
-			- writes a copy of the previous record back to the current record (aka one-step-undo)
-			- loads current data into class object
-			- updates gui
-		"""
-		self.objectdata[self._namespace][self._object_id]['current'] = self.objectdata[self._namespace][self._object_id]['previous'].copy()
-		self.load_current_data()
-		self.update_gui()
-		
-	def load_default_data(self):
-		"""
-			- writes a copy of the default record back to the current record
-			- loads current data into class object
-			- updates gui			
-		"""
-		self.objectdata[self._namespace][self._object_id]['current'] = self.objectdata[self._namespace][self._object_id]['default'].copy()
-		self.load_current_data()
-		self.update_gui()
 
-	def load_current_data(self):
-		"""
-			loads the current record into class object
-		"""
-		self._image = self.objectdata[self._namespace][self._object_id]['current']['image']
-		self._animation = self.objectdata[self._namespace][self._object_id]['current']['animation']
-		self._rotation = self.objectdata[self._namespace][self._object_id]['current']['rotation']
-		self._fixed_rotation = self.objectdata[self._namespace][self._object_id]['current']['fixed_rotation']
-		self._avail_rotations = self.objectdata[self._namespace][self._object_id]['current']['avail_rotations']
-		self._blocking = self.objectdata[self._namespace][self._object_id]['current']['blocking']
-		self._static = self.objectdata[self._namespace][self._object_id]['current']['static']
-		self._instance_id = self.objectdata[self._namespace][self._object_id]['current']['instance_id']
-		self._image.setXShift( self.objectdata[self._namespace][self._object_id]['current']['xoffset'] )
-		self._image.setYShift( self.objectdata[self._namespace][self._object_id]['current']['yoffset'] )
+		self.update_gui()
 		
-		self.write_current_guidata()
-		
-	def write_current_data(self):
-		"""
-			updates the current record
-		"""
-		self.objectdata[self._namespace][self._object_id]['current']['instance'] = self._instances[0]
-		self.objectdata[self._namespace][self._object_id]['current']['image'] = self._image
-		self.objectdata[self._namespace][self._object_id]['current']['animation'] = self._animation
-		self.objectdata[self._namespace][self._object_id]['current']['rotation'] = self._rotation
-		self.objectdata[self._namespace][self._object_id]['current']['fixed_rotation'] = self._fixed_rotation
-		self.objectdata[self._namespace][self._object_id]['current']['avail_rotations'] = self._avail_rotations
-		self.objectdata[self._namespace][self._object_id]['current']['blocking'] = self._blocking
-		self.objectdata[self._namespace][self._object_id]['current']['static'] = self._static
-		self.objectdata[self._namespace][self._object_id]['current']['instance_id'] = self._instance_id
-		self.objectdata[self._namespace][self._object_id]['current']['xoffset'] = self._image.getXShift()
-		self.objectdata[self._namespace][self._object_id]['current']['yoffset'] = self._image.getYShift()
-		
-		self.write_current_guidata()
-		
-	def write_current_guidata(self):
-		"""
-			updates the gui data with
-		"""		
-		self.guidata['instance_rotation'] = str( self._instances[0].getRotation() )		
-		self.guidata['object_id'] = str( self._object_id )
-		self.guidata['instance_id'] = str( self._instance_id )
-		self.guidata['x_offset'] = str( self._image.getXShift() )
-		self.guidata['y_offset'] = str( self._image.getYShift() )
-		self.guidata['namespace'] = self._namespace	
-		self.guidata['blocking'] = str( self._blocking )
-		self.guidata['static'] = str( self._static )		
-			
 	def get_instance_data(self, timestamp=None, frame=None, angle=-1, instance=None):
 		"""
 			- grabs all available data from both object and instance
@@ -377,105 +358,69 @@ class ObjectEdit(plugin.Plugin):
 		self._namespace = object.getNamespace()
 		self._object_id = object.getId()
 
-		if angle != -1:
-			del self.objectdata[self._namespace][self._object_id]
-		
-		if not self.objectdata.has_key(self._namespace):
-			self.objectdata[self._namespace] = {}
-		
-		if not self.objectdata[self._namespace].has_key(self._object_id):
-			self.objectdata[self._namespace][self._object_id] = {}
-			
-			# we hold 3 versions of the data: current, previous, default
-			# default is only set one time, current and previous are changing data
-			# due to the users actions
-			self.objectdata[self._namespace][self._object_id]['current'] = {}
-			self.objectdata[self._namespace][self._object_id]['previous'] = {}
-			
-			self._instance_id = instance.getId()
-		
-			if self._instance_id == '':
-				self._instance_id = 'None'
+		self._instance_id = instance.getId()
+	
+		if self._instance_id == '':
+			self._instance_id = 'None'
 
-			if angle == -1:
-				angle = int(instance.getRotation())
-			else:
-				angle = int(angle)	
+		if angle == -1:
+			angle = int(instance.getRotation())
+		else:
+			angle = int(angle)	
+			
+		self._rotation = angle
+		
+		if object.isBlocking():
+			self._blocking = 1
+			
+		if object.isStatic():
+			self._static = 1
+		
+		try:
+			visual = object.get2dGfxVisual()
+		except:
+			print 'Fetching visual of object - failed. :/'
+			raise			
+
+#		print "Camera Tilt: ", self._camera.getTilt()
+#		print "Camera Rotation: ", self._camera.getRotation()
+
+		self._fixed_rotation = int(instance.getRotation() + abs( self._camera.getTilt() ) )		
+		self._fixed_rotation = visual.getClosestMatchingAngle(self._fixed_rotation)	
+
+		index = visual.getStaticImageIndexByAngle(self._fixed_rotation)
+
+		if index == -1:
+			# object is an animation
+			self._animation = True
+			# no static image available, try default action
+			action = object.getDefaultAction()
+			if action:
+				animation_id = action.get2dGfxVisual().getAnimationIndexByAngle(self._fixed_rotation)
+				animation = self.animationpool.getAnimation(animation_id)
+#				if timestamp is None and frame is not None:
+#					self._image = animation.getFrame(frame)	
+#				elif timestamp is not None and frame is None:
+#					self._image = animation.getFrameByTimestamp(timestamp)
+#				else:
+				self._image = animation.getFrameByTimestamp(0)
+				index = self._image.getPoolId()
+		elif index != -1:
+			# object is a static image
+			self._animation = False
+			self._image = self.imagepool.getImage(index)
+
+		if not self._animation:
+			rotation_tuple = visual.getStaticImageAngles()
+			for angle in rotation_tuple:
+				self._avail_rotations.append( str(angle) )
 				
-			self._rotation = angle
-			
-			if object.isBlocking():
-				self._blocking = 1
-				
-			if object.isStatic():
-				self._static = 1
-			
-			try:
-				visual = object.get2dGfxVisual()
-			except:
-				print 'Fetching visual of object - failed. :/'
-				raise			
-
-			self._fixed_rotation = int(instance.getRotation() + abs( self._camera.getTilt() ) )		
-			self._fixed_rotation = visual.getClosestMatchingAngle(self._fixed_rotation)	
-
-			index = visual.getStaticImageIndexByAngle(self._fixed_rotation)
-
-			if index == -1:
-				# object is an animation
-				self._animation = True
-				# no static image available, try default action
-				action = object.getDefaultAction()
-				if action:
-					animation_id = action.get2dGfxVisual().getAnimationIndexByAngle(self._fixed_rotation)
-					animation = self.animationpool.getAnimation(animation_id)
-					if timestamp is None and frame is not None:
-						self._image = animation.getFrame(frame)	
-					elif timestamp is not None and frame is None:
-						self._image = animation.getFrameByTimestamp(timestamp)
-					else:
-						self._image = animation.getFrameByTimestamp(0)
-					index = self._image.getPoolId()
-			elif index != -1:
-				# object is a static image
-				self._animation = False
-				self._image = self.imagepool.getImage(index)
-
-			if self._animation:
-				self._avail_rotations = Settings.RotAngles['animations']
-			else:
-				rotation_tuple = visual.getStaticImageAngles()
-				for angle in rotation_tuple:
-					self._avail_rotations.append( str(angle) )
+		self._image_default_x_offset = self._image.getXShift()
+		self._image_default_y_offset = self._image.getYShift()
 
 # FIXME: see l. 40
-			self._mapedit._objectedit_rotations = self._avail_rotations
+		self._mapedit._objectedit_rotations = self._avail_rotations
 # end FIXME
-			self.write_current_data()
-			
-			self.objectdata[self._namespace][self._object_id]['default'] = {}
-			self.objectdata[self._namespace][self._object_id]['default'] = self.objectdata[self._namespace][self._object_id]['current'].copy()
-			self.objectdata[self._namespace][self._object_id]['previous'] = self.objectdata[self._namespace][self._object_id]['current'].copy()
-			
-			self.write_current_guidata()
-		else:
-			self.load_current_data()
-
-	def dump_objectdata(self):
-		"""
-			just a useful dumper ^^
-		"""
-		print "#"*4, "Dump of objectdata", "#"*4, "\n" 
-		for namespace in self.objectdata:
-			print "namespace: ", namespace
-			for key in self.objectdata[namespace]:
-				print "\tkey: ", key
-				for item in self.objectdata[namespace][key]:
-					if len(item) >= 9:
-						tab = "\t"*1
-					else:
-						tab = "\t"*2
-					print "\t\t", item, " : ", tab, self.objectdata[namespace][key][item]
 		
 	def input(self):
 		"""
@@ -486,6 +431,7 @@ class ObjectEdit(plugin.Plugin):
 		"""
 		if self._mapedit._instances != self._instances:
 			if self.active is True:
+				self._reset()
 				self._instances = self._mapedit._instances
 				
 				if self._camera is None:
@@ -497,17 +443,11 @@ class ObjectEdit(plugin.Plugin):
 				if self._instances != ():
 					self.highlight_selected_instance()
 					self.get_instance_data()
-					
-					if self._animation is False:
-						self.update_gui()
-						self.container.adaptLayout()
-						self.container.show()
-						self._get_gui_size()
-						self.container._setPosition(self.position)
-					else:
-						self.container.hide()
-						print "Animation objects are not yet editable"
-#					self.dump_objectdata()
+					self.update_gui()
+					self.container.adaptLayout()
+					self.container.show()
+					self._get_gui_size()
+					self.container._setPosition(self.position)
 				else:
 					self._reset()
 					self.container.hide()

@@ -21,36 +21,29 @@ class ObjectSelector(object):
 	def buildGui(self):
 		# Create the main Window
 		self.gui = widgets.Window(title="Object selector")
-		hbox = widgets.HBox()
-		self.gui.addChild(hbox)
+		vbox = widgets.VBox()
+		self.gui.addChild(vbox)
 
-		# Add the Scrollarea with list of namespaces
-		scrollArea = widgets.ScrollArea(size=(200,300))
-		hbox.addChild(scrollArea)
-		self.namespaces = widgets.ListBox()
+		# Add the drop down with list of namespaces
+		self.namespaces = widgets.DropDown()
+		vbox.addChild(self.namespaces)
 		self.namespaces.capture(self.update_namespace)
 		self.namespaces.items = self.engine.getModel().getNamespaces()
 		self.namespaces.selected = 0
-		scrollArea.addChild(self.namespaces)
 
-		# This Vbox is used to display the preview images
-		self.mainScrollArea = widgets.ScrollArea(size=(200,300))
+		# This scrollarea is used to display the preview images
+		self.mainScrollArea = widgets.ScrollArea(size=(230,300))
 		self.objects = None
 		if self.mode == 'list':
 			self.setTextList()
 		else: # Assuming self.mode is 'preview'
 			self.setImageList()
-		hbox.addChild(self.mainScrollArea)
+		vbox.addChild(self.mainScrollArea)
 
-		# This is the preview area
-		scrollArea = widgets.ScrollArea(size=(200,300))
-		hbox.addChild(scrollArea)
-		self.preview = widgets.Icon()
-		scrollArea.addChild(self.preview)
 
 		# Add another Hbox to hold the close button
 		hbox = widgets.HBox(parent=self.gui)
-		self.gui.addChild(hbox)
+		vbox.addChild(hbox)
 		hbox.addSpacer(widgets.Spacer())
 		toggleButton = widgets.Button(text="Toggle Preview Mode")
 		toggleButton.capture(self.toggleMode)
@@ -58,6 +51,13 @@ class ObjectSelector(object):
 		closeButton = widgets.Button(text="Close")
 		closeButton.capture(self.hide)
 		hbox.addChild(closeButton)
+
+		# This is the preview area
+		scrollArea = widgets.ScrollArea(size=(230,1))
+		vbox.addChild(scrollArea)
+		self.preview = widgets.Icon()
+		scrollArea.addChild(self.preview)
+		scrollArea._setBackgroundColor(self.gui._getBaseColor())
 
 	def toggleMode(self):
 		if self.mode == 'list':
@@ -120,6 +120,9 @@ class ObjectSelector(object):
 		been selected.
 		@param obj: fife.Object instance"""
 		self.preview.image = self._getImage(obj)
+		height = self.preview.image.getHeight();
+		if height > 200: height = 200
+		self.preview._getParent()._setHeight(height)
 		self.gui.adaptLayout()
 		self.notify(obj)
 
