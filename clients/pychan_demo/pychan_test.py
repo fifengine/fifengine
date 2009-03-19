@@ -68,6 +68,9 @@ class DemoApplication(basicapplication.ApplicationBase):
 		credits = self.gui.findChild(name="creditsLink")
 		credits.setEnterCallback(lambda w : credits._setText("CREDITS"))
 		credits.capture(lambda : credits._setText("Credits"), event_name="mouseExited")
+		def pr(event=None):
+			print event
+		self.gui.capture(pr,event_name="keyPressed")
 
 		from dynamic import DynamicExample
 		from styling import StylingExample

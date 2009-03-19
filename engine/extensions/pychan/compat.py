@@ -75,7 +75,7 @@ if in_fife:
 	fife = guichan
 	guichan.ActionListener._ActionListener_init__ = lambda x : x
 	#guichan.MouseListener.__init__ = lambda x : x
-	guichan.KeyListener.__init__ = lambda x : x
+	#guichan.KeyListener.__init__ = lambda x : x
 else:
 	guichan.Point = _point
 	guichan.ScrollArea.SHOW_AUTO = guichan.ScrollArea.ShowAuto

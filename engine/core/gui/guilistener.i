@@ -49,10 +49,11 @@ namespace gcn {
 	%feature("director") KeyListener;
 	class KeyListener {
 	public:
-		virtual ~KeyListener() { }
+		virtual ~KeyListener();
 
-		virtual void keyPressed(gcn::KeyEvent& keyEvent) { }
-		virtual void keyReleased(gcn::KeyEvent& keyEvent) { }
+		virtual void keyPressed(gcn::KeyEvent& keyEvent);
+		virtual void keyReleased(gcn::KeyEvent& keyEvent);
+
 	protected:
 		KeyListener() { }
 	};
