@@ -1,21 +1,38 @@
 # coding: utf-8
 
-from pychan import widgets, tools, attrs
+from pychan import widgets, tools, attrs, internal
 import fife
+from fife import Color
+import pdb
+#from internal import DEFAULT_STYLE
 
 # TODO:
-# - Scrollarea in previewmode does not display the last item properly
+# - Scrollarea in previewmode only displays about 1/3 of items (checked against Rio de Hola items)
 # - Better event handling in ObjectIcon
+# - Label background color can't be set
+
+_DEFAULT_BASE_COLOR = internal.DEFAULT_STYLE['default']['base_color']
+_DEFAULT_SELECTION_COLOR = internal.DEFAULT_STYLE['default']['selection_color']
+_DEFAULT_COLOR_STEP = Color(10, 10, 10)
+
+_selected_objectitem = None
+
 
 class ObjectIcon(widgets.VBox):
 	""" The ObjectIcon is used to represent the object in the object selector.
 	Unlike 
 	"""	
-	ATTRIBUTES = widgets.VBox.ATTRIBUTES + [ attrs.Attr("text"), attrs.Attr("image") ]
+	ATTRIBUTES = widgets.VBox.ATTRIBUTES + [ attrs.Attr("text"), attrs.Attr("image"), attrs.BoolAttr("selected") ]
 	
-	def __init__(self,**kwargs):
+	def __init__(self,callback,**kwargs):
 		self.real_widget = fife.Container()
 		super(ObjectIcon,self).__init__(_real_widget=self.real_widget,**kwargs)
+
+		self.callback = callback	
+
+		self.capture(self._mouseEntered, "mouseEntered")
+		self.capture(self._mouseExited, "mouseExited")
+		self.capture(self._mouseClicked, "mouseClicked")
 
 		vbox = widgets.VBox(padding=3)
 
@@ -28,7 +45,6 @@ class ObjectIcon(widgets.VBox):
 		self.addChild(hbox)
 		self.label = widgets.Label(**kwargs)
 		hbox.addChild(self.label)
-		
 
 	def _setText(self, text):
 		self.label.text = text
@@ -43,7 +59,42 @@ class ObjectIcon(widgets.VBox):
 	def _getImage(self):
 		return self.icon.image
 	image = property(_getImage, _setImage)
+
+	def _setSelected(self, enabled):
+		global _selected_objectitem
 		
+		if enabled == True:
+			if _selected_objectitem is not None:
+				_selected_objectitem.selected = False
+				
+			_selected_objectitem = self
+		else:
+			if self.selected:
+				_selected_objectitem = None
+		
+		# + Color(0,0,0) to force variable copy
+		if self.selected:
+			self.base_color = _DEFAULT_SELECTION_COLOR + Color(0,0,0)
+		else:
+			self.base_color = _DEFAULT_BASE_COLOR + Color(0,0,0)
+
+	def _isSelected(self):
+		_selected_objectitem
+		return self == _selected_objectitem
+	selected = property(_isSelected, _setSelected)
+
+	#--- Event handling ---#
+	def _mouseEntered(self, event):
+		self.base_color += _DEFAULT_COLOR_STEP
+
+	def _mouseExited(self, event):
+		self.base_color -= _DEFAULT_COLOR_STEP
+
+	def _mouseClicked(self, event):
+		self.selected = True
+		self.callback()
+
+	
 class ObjectSelector(object):
 	"""The ObjectSelector class offers a gui Widget that let's you select the object you
 	wish to use to in the editor.
@@ -121,7 +172,7 @@ class ObjectSelector(object):
 		preview Images"""
 		if self.objects is not None:
 			self.mainScrollArea.removeChild(self.objects)
-		self.objects = widgets.VBox(name='list', size=(200,300))
+		self.objects = widgets.VBox(name='list', size=(200,1000))
 		self.objects.base_color = self.mainScrollArea.background_color
 		self.mainScrollArea.addChild(self.objects)
 
@@ -154,15 +205,13 @@ class ObjectSelector(object):
 			if image is None:
 				print 'No image available for selected object'
 				image = ""
-			
-			icon = ObjectIcon(image=image, text=obj.getId())
-			icon.capture(tools.callbackWithArguments(self.objectSelected, obj), "mouseClicked")
-			self.objects.addChild(icon)
 
-		self.objects._recursiveResizeToContent()
-		self.gui.adaptLayout()
+			callback = tools.callbackWithArguments(self.objectSelected, obj)	
+			icon = ObjectIcon(callback=callback, image=image, text=obj.getId())
+			self.objects.addChild(icon)
 			
 		if len(objects)>0:
+			objects[0].selected = True
 			self.objectSelected(objects[0])
 
 
@@ -170,12 +219,18 @@ class ObjectSelector(object):
 		"""This is used as callback function to notify the editor that a new object has
 		been selected.
 		@param obj: fife.Object instance"""
+
+		# Set preview image
 		self.preview.image = self._getImage(obj)
 		height = self.preview.image.getHeight();
 		if height > 200: height = 200
 		self.preview._getParent()._setHeight(height)
+		
 		self.gui.adaptLayout()
 		self.notify(obj)
+
+		self.objects.adaptLayout()
+		self.gui.adaptLayout()		
 
 	def update_namespace(self):
 		self.namespaces.items = self.engine.getModel().getNamespaces()
