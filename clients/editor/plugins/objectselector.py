@@ -7,26 +7,21 @@ import pdb
 #from internal import DEFAULT_STYLE
 
 # TODO:
-# - Scrollarea in previewmode only displays about 1/3 of items (checked against Rio de Hola items)
-# - Better event handling in ObjectIcon
+# - Better event handling in ObjectIcon and ObjectIconList
 # - Label background color can't be set
+# - Model-View design for ObjectIconList
 
 _DEFAULT_BASE_COLOR = internal.DEFAULT_STYLE['default']['base_color']
 _DEFAULT_SELECTION_COLOR = internal.DEFAULT_STYLE['default']['selection_color']
 _DEFAULT_COLOR_STEP = Color(10, 10, 10)
 
-_selected_objectitem = None
-
-
 class ObjectIcon(widgets.VBox):
 	""" The ObjectIcon is used to represent the object in the object selector.
-	Unlike 
 	"""	
 	ATTRIBUTES = widgets.VBox.ATTRIBUTES + [ attrs.Attr("text"), attrs.Attr("image"), attrs.BoolAttr("selected") ]
 	
 	def __init__(self,callback,**kwargs):
-		self.real_widget = fife.Container()
-		super(ObjectIcon,self).__init__(_real_widget=self.real_widget,**kwargs)
+		super(ObjectIcon,self).__init__(**kwargs)
 
 		self.callback = callback	
 
@@ -61,16 +56,12 @@ class ObjectIcon(widgets.VBox):
 	image = property(_getImage, _setImage)
 
 	def _setSelected(self, enabled):
-		global _selected_objectitem
-		
-		if enabled == True:
-			if _selected_objectitem is not None:
-				_selected_objectitem.selected = False
-				
-			_selected_objectitem = self
-		else:
-			if self.selected:
-				_selected_objectitem = None
+		if isinstance(self.parent, ObjectIconList):
+			if enabled == True:
+				self.parent.selected_item = self
+			else:
+				if self.selected:
+					self.parent.selected_item = None
 		
 		# + Color(0,0,0) to force variable copy
 		if self.selected:
@@ -79,8 +70,9 @@ class ObjectIcon(widgets.VBox):
 			self.base_color = _DEFAULT_BASE_COLOR + Color(0,0,0)
 
 	def _isSelected(self):
-		_selected_objectitem
-		return self == _selected_objectitem
+		if isinstance(self.parent, ObjectIconList):
+			return self == self.parent.selected_item
+		return False
 	selected = property(_isSelected, _setSelected)
 
 	#--- Event handling ---#
@@ -94,6 +86,31 @@ class ObjectIcon(widgets.VBox):
 		self.selected = True
 		self.callback()
 
+class ObjectIconList(widgets.VBox):
+	def __init__(self,**kwargs):
+		super(ObjectIconList, self).__init__(max_size=(5000,500000), **kwargs)
+		self.base_color = self.background_color
+
+		# TODO: Pychan doesn't support keyevents for nonfocusable widgets, yet
+		self.capture(self._keyPressed, "keyPressed")
+		self.capture(self._keyPressed, "keyReleased")
+		self._selectedItem = None
+
+	def _keyPressed(self, event):
+		print "KeyEvent", event
+
+	def _setSelectedItem(self, item):
+		if isinstance(item, ObjectIcon) or item is None:
+			if self._selectedItem is not None:
+				tmp = self._selectedItem
+				self._selectedItem = item
+				tmp.selected = False
+			else:
+				self._selectedItem = item
+
+	def _getSelectedItem(self):
+		return self._selectedItem
+	selected_item = property(_getSelectedItem, _setSelectedItem)
 	
 class ObjectSelector(object):
 	"""The ObjectSelector class offers a gui Widget that let's you select the object you
@@ -172,7 +189,7 @@ class ObjectSelector(object):
 		preview Images"""
 		if self.objects is not None:
 			self.mainScrollArea.removeChild(self.objects)
-		self.objects = widgets.VBox(name='list', size=(200,1000))
+		self.objects = ObjectIconList(name='list', size=(200,1000))
 		self.objects.base_color = self.mainScrollArea.background_color
 		self.mainScrollArea.addChild(self.objects)
 
