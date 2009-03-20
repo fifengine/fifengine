@@ -10,9 +10,6 @@ from pychan.tools import callbackWithArguments as cbwa
 from selection import Selection, ClickSelection
 from plugins.objectselector import ObjectSelector
 
-from pychan.manager import DEFAULT_STYLE
-DEFAULT_STYLE['default']['base_color'] = fife.Color(85,128,151)
-
 SCROLL_TOLERANCE = 10
 SCROLL_SPEED = 1.0
 
