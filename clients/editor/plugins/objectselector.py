@@ -1,15 +1,14 @@
 # coding: utf-8
 
+import pychan
 from pychan import widgets, tools, attrs, internal
+from pychan.tools import callbackWithArguments
 import fife
 from fife import Color
-import pdb
-#from internal import DEFAULT_STYLE
 
 # TODO:
-# - Better event handling in ObjectIcon and ObjectIconList
+# - Better event handling
 # - Label background color can't be set
-# - Model-View design for ObjectIconList
 
 _DEFAULT_BASE_COLOR = internal.DEFAULT_STYLE['default']['base_color']
 _DEFAULT_SELECTION_COLOR = internal.DEFAULT_STYLE['default']['selection_color']
@@ -87,17 +86,24 @@ class ObjectIcon(widgets.VBox):
 		self.callback()
 
 class ObjectIconList(widgets.VBox):
+	ATTRIBUTES = widgets.VBox.ATTRIBUTES
+	
 	def __init__(self,**kwargs):
 		super(ObjectIconList, self).__init__(max_size=(5000,500000), **kwargs)
 		self.base_color = self.background_color
 
 		# TODO: Pychan doesn't support keyevents for nonfocusable widgets, yet
-		self.capture(self._keyPressed, "keyPressed")
-		self.capture(self._keyPressed, "keyReleased")
+		#self.capture(self._keyPressed, "keyPressed")
+		#self.capture(self._keyPressed, "keyReleased")
 		self._selectedItem = None
 
-	def _keyPressed(self, event):
-		print "KeyEvent", event
+	#def _keyPressed(self, event):
+		#print "KeyEvent", event
+
+	def clear(self):
+		count = 0
+		for c in reversed(self.children):
+			self.removeChild(c)
 
 	def _setSelectedItem(self, item):
 		if isinstance(item, ObjectIcon) or item is None:
@@ -106,7 +112,7 @@ class ObjectIconList(widgets.VBox):
 				self._selectedItem = item
 				tmp.selected = False
 			else:
-				self._selectedItem = item
+				self._selectedItem = item	
 
 	def _getSelectedItem(self):
 		return self._selectedItem
@@ -127,52 +133,42 @@ class ObjectSelector(object):
 
 		self.buildGui()
 
-	def buildGui(self):
-		# Create the main Window
-		self.gui = widgets.Window(title="Object selector")
-		vbox = widgets.VBox()
-		self.gui.addChild(vbox)
 
-		# Add the drop down with list of namespaces
-		self.namespaces = widgets.DropDown()
-		vbox.addChild(self.namespaces)
+	def buildGui(self):
+		self.gui = pychan.loadXML('gui/objectselector.xml')
+
+		# Add search field
+		self._searchfield = self.gui.findChild(name="searchField")
+		self._searchfield.capture(self._search)
+		self.gui.findChild(name="searchButton").capture(self._search)
 		
+		# Add the drop down with list of namespaces
+		self.namespaces = self.gui.findChild(name="namespaceDropdown")
 		self.namespaces.items = self.engine.getModel().getNamespaces()
 		self.namespaces.selected = 0
 
-		# Events for namespacelist
 		# TODO: Replace with SelectionEvent, once pychan supports it
 		self.namespaces.capture(self.update_namespace, "action")
 		self.namespaces.capture(self.update_namespace, "mouseWheelMovedUp")
 		self.namespaces.capture(self.update_namespace, "mouseWheelMovedDown")
 		self.namespaces.capture(self.update_namespace, "keyReleased")
 
-		# This scrollarea is used to display the preview images
-		self.mainScrollArea = widgets.ScrollArea(size=(230,300))
+		# Object list
+		self.mainScrollArea = self.gui.findChild(name="mainScrollArea")
 		self.objects = None
 		if self.mode == 'list':
 			self.setTextList()
 		else: # Assuming self.mode is 'preview'
 			self.setImageList()
-		vbox.addChild(self.mainScrollArea)
 
-		# Add another Hbox to hold the close button
-		hbox = widgets.HBox(parent=self.gui)
-		vbox.addChild(hbox)
-		hbox.addSpacer(widgets.Spacer())
-		toggleButton = widgets.Button(text="Toggle Preview Mode")
-		toggleButton.capture(self.toggleMode)
-		hbox.addChild(toggleButton)
-		closeButton = widgets.Button(text="Close")
-		closeButton.capture(self.hide)
-		hbox.addChild(closeButton)
+		# Action buttons
+		self.gui.findChild(name="toggleModeButton").capture(self.toggleMode)
+		self.gui.findChild(name="closeButton").capture(self.hide)
 
-		# This is the preview area
-		scrollArea = widgets.ScrollArea(size=(230,1))
-		vbox.addChild(scrollArea)
-		self.preview = widgets.Icon()
-		scrollArea.addChild(self.preview)
-		scrollArea._setBackgroundColor(self.gui._getBaseColor())
+		# Preview area
+		self.gui.findChild(name="previewScrollArea").background_color = self.gui.base_color
+		self.preview = self.gui.findChild(name="previewIcon")
+		
 
 	def toggleMode(self):
 		if self.mode == 'list':
@@ -202,9 +198,36 @@ class ObjectSelector(object):
 		self.objects.capture(self.listEntrySelected)
 		self.mainScrollArea.addChild(self.objects)
 
-	def fillTextList(self):
+	def _search(self):
+		self.search(self._searchfield.text)
+
+	def search(self, str):
+		namespaces = self.engine.getModel().getNamespaces()
+		results = []
+		for namesp in namespaces:
+			objects = self.engine.getModel().getObjects(namesp)
+			for obj in objects:
+				if obj.getId().find(str) > -1:
+					results.append(obj)
+		
+		if self.mode == 'list':
+			self.fillTextList(results)
+		elif self.mode == 'preview':
+			self.fillPreviewList(results)
+
+	def fillTextList(self, objects=None):
+		if objects is None:
+			objects = self.engine.getModel().getObjects(self.namespaces.selected_item)
+		
+		class _ListItem:
+			def __init__( self, name, namespace ):
+				self.name = name
+				self.namespace = namespace
+			def __str__( self ):
+				return self.name
+			
 		if self.namespaces.selected_item:
-			self.objects.items = [obj.getId() for obj in self.engine.getModel().getObjects(self.namespaces.selected_item)]
+			self.objects.items = [_ListItem(obj.getId(), obj.getNamespace()) for obj in objects]
 			if not self.objects.selected_item:
 				self.objects.selected = 0
 				self.listEntrySelected()
@@ -212,11 +235,17 @@ class ObjectSelector(object):
 	def listEntrySelected(self):
 		"""This function is used as callback for the TextList."""
 		if self.objects.selected_item:
-			obj = self.engine.getModel().getObject(self.objects.selected_item, self.namespaces.selected_item)
+			object_id = self.objects.selected_item.name
+			namespace = self.objects.selected_item.namespace
+			obj = self.engine.getModel().getObject(object_id, namespace)
 			self.objectSelected(obj)
 
-	def fillPreviewList(self):
-		objects = self.engine.getModel().getObjects(self.namespaces.selected_item)
+	def fillPreviewList(self, objects=None):
+		self.objects.clear()
+		
+		if objects is None:
+			objects = self.engine.getModel().getObjects(self.namespaces.selected_item)
+		
 		for obj in objects:
 			image = self._getImage(obj)
 			if image is None:
@@ -268,7 +297,7 @@ class ObjectSelector(object):
 		self.mainScrollArea.resizeToContent()
 
 	def _getImage(self, obj):
-		""" Returs an image for the given object.
+		""" Returns an image for the given object.
 		@param: fife.Object for which an image is to be returned
 		@return: fife.GuiImage"""
 		visual = None
