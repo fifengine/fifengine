@@ -203,13 +203,26 @@ class ObjectSelector(object):
 		self.search(self._searchfield.text)
 
 	def search(self, str):
-		namespaces = self.engine.getModel().getNamespaces()
-		results = []
-		for namesp in namespaces:
-			objects = self.engine.getModel().getObjects(namesp)
-			for obj in objects:
-				if obj.getId().find(str) > -1:
-					results.append(obj)
+		results = []	
+			
+		# Format search terms
+		terms = [term.lower() for term in str.split()]
+		
+		# Search
+		if len(terms) > 0:
+			namespaces = self.engine.getModel().getNamespaces()
+			for namesp in namespaces:
+				objects = self.engine.getModel().getObjects(namesp)
+				for obj in objects:
+					doAppend = True
+					for term in terms:
+						if obj.getId().lower().find(term) < 0:
+							doAppend = False
+							break
+					if doAppend:
+						results.append(obj)
+		else:
+			results = None
 		
 		if self.mode == 'list':
 			self.fillTextList(results)
