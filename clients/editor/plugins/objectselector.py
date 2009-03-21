@@ -140,6 +140,7 @@ class ObjectSelector(object):
 		# Add search field
 		self._searchfield = self.gui.findChild(name="searchField")
 		self._searchfield.capture(self._search)
+		self._searchfield.capture(self._search, "keyPressed")
 		self.gui.findChild(name="searchButton").capture(self._search)
 		
 		# Add the drop down with list of namespaces
