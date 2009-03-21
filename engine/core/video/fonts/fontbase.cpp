@@ -33,6 +33,7 @@
 // Second block: files included from the same folder
 #include "util/structures/rect.h"
 #include "util/base/exception.h"
+#include "util/utf8/utf8.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 
@@ -78,12 +79,31 @@ namespace FIFE {
 	}
 
 	int FontBase::getStringIndexAt(const std::string &text, int x) {
-		for (int i = 0; i < static_cast<int>(text.size()); ++i) {
-			if (getWidth(text.substr(0,i)) > x) {
-				return i-1;
+		assert( utf8::is_valid(text.begin(), text.end()) );
+		std::string::const_iterator cur;
+		if (text.size() == 0) return 0;
+		if (x <= 0) return 0;
+
+		cur = text.begin();
+
+		utf8::next(cur, text.end());
+
+		std::string buff;
+		while(cur != text.end()) {
+			buff = std::string(text.begin(), cur);
+
+			if (getWidth(buff) > x) {
+				return buff.size();
+			} else {
+				utf8::next(cur, text.end());
 			}
 		}
-		return text.length();
+
+		if (x > getWidth(text)) {
+			return text.size();
+		} else {
+			return buff.size();
+		}
 	}
 
 	Image* FontBase::getAsImage(const std::string& text) {
@@ -97,37 +117,39 @@ namespace FIFE {
 	}
 
 	Image* FontBase::getAsImageMultiline(const std::string& text) {
+		const uint8_t newline_utf8 = '\n';
+		uint32_t newline;
+		utf8::utf8to32(&newline_utf8,&newline_utf8 + 1,&newline);
+		//std::cout << "Text:" << text << std::endl;
 		Image* image = m_pool.getRenderedText(this, text);
 		if (!image) {
 			std::vector<SDL_Surface*> lines;
-
+			std::string::const_iterator it = text.begin();
 			// split text as needed
-			std::string::size_type pos, last_pos = 0;
-			int length = 0;
 			int render_width = 0, render_height = 0;
 			do {
-				pos = text.find('\n', last_pos);
-				if (pos != std::string::npos) {
-					length = pos - last_pos;
-				} else {
-					length = text.size() - last_pos;
+				uint32_t codepoint = 0;
+				std::string line;
+				while( codepoint != newline && it != text.end() )
+				{
+					codepoint = utf8::next(it,text.end());
+					if( codepoint != newline )
+						utf8::append(codepoint, back_inserter(line));
 				}
-				std::string sub = text.substr(last_pos, length);
-				std::cerr << "substring: " << sub << "\n";
-				SDL_Surface* text_surface = renderString(sub);
+				//std::cout << "Line:" << line << std::endl;
+				SDL_Surface* text_surface = renderString(line);
 				if (text_surface->w > render_width) {
 					render_width = text_surface->w;
 				}
 				lines.push_back(text_surface);
-				last_pos = pos + 1;
-			} while (pos != std::string::npos);
+			} while (it != text.end());
+			
 			render_height = (getRowSpacing() + getHeight()) * lines.size();
 			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 				render_width,render_height,32,
 				RMASK, GMASK, BMASK ,AMASK);
 			if (!final_surface) {
-				std::cerr << "CreateRGBSurface failed: " << SDL_GetError() << "\n";
-				exit(0);
+				throw SDLException(std::string("CreateRGBSurface failed: ") + SDL_GetError());
 			}
 			SDL_FillRect(final_surface, 0, 0x00000000);
 			int ypos = 0;
@@ -147,16 +169,20 @@ namespace FIFE {
 	}
 
 	std::string FontBase::splitTextToWidth (const std::string& text, int render_width) {
+		const uint32_t whitespace = ' ';
+		const uint8_t newline_utf8 = '\n';
+		uint32_t newline;
+		utf8::utf8to32(&newline_utf8,&newline_utf8 + 1,&newline);
 		if (render_width <= 0 || text.empty()) { 
 			return text;
 		}
 		std::string output;
 		std::string line;
-		std::string::size_type pos = 0;
-		std::list<std::pair<size_t,size_t> > break_pos;
+		std::string::const_iterator pos = text.begin();
+		std::list<std::pair<size_t,std::string::const_iterator> > break_pos;
 		bool firstLine = true;
 
-		while( pos < text.length() )
+		while( pos != text.end() )
 		{
 			break_pos.clear();
 			if( !firstLine ) {
@@ -166,17 +192,17 @@ namespace FIFE {
 			}
 
 			bool haveNewLine = false;
-			while( getWidth(line) < render_width && pos < text.length() )
+			while( getWidth(line) < render_width && pos != text.end() )
 			{
-				if (text.at(pos) == ' ' && !line.empty())
+				uint32_t codepoint = utf8::next(pos, text.end());
+				if (codepoint == whitespace && !line.empty())
 					break_pos.push_back( std::make_pair(line.length(),pos) );
-				line.push_back( text.at(pos) );
-				++pos;
+
+				if( codepoint != newline )
+					utf8::append(codepoint, back_inserter(line) );
 
 				// Special case: Already newlines in string:
-				if( text.at(pos-1) == '\n' ) {
-					if( line[line.size()-1] == '\n' )
-						line.erase(line.size()-1);
+				if( codepoint == newline ) {
 					output.append(line);
 					line = "";
 					haveNewLine = true;
@@ -186,25 +212,26 @@ namespace FIFE {
 			if( haveNewLine )
 				continue;
 
-			if( pos >= text.length())
+			if( pos == text.end() )
 				break;
 
 			if( break_pos.empty() ) {
 				// No break position and line length smaller than 2
 				// means the renderwidth is really screwed. Just continue
 				// appending single character lines.
-				if( line.length() <= 1 ) {
+				if( utf8::distance(line.begin(),line.end()) <= 1 ) {
 					output.append(line);
 					continue;
 				}
 
 				// We can't do hyphenation here,
 				// so we just retreat one character :-(
-				line.erase(line.length() - 1);
-				--pos;
+				// FIXME
+				//line = line.erase(line.length() - 1);
+				//--pos;
 			} else {
 				line = line.substr(0,break_pos.back().first);
-				pos = break_pos.back().second + 1;
+				pos = break_pos.back().second;
 			}
 			output.append(line);
 		}

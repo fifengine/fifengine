@@ -34,6 +34,7 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/structures/rect.h"
+#include "util/utf8/utf8.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
 
@@ -54,9 +55,10 @@ namespace FIFE {
 
 	int ImageFontBase::getWidth(const std::string& text) const {
 		int w = 0;
-
-		for(size_t i=0; i!= text.size(); ++i) {
-			type_glyphs::const_iterator it = m_glyphs.find( text[i] );
+		std::string::const_iterator text_it = text.begin();
+		while(text_it != text.end()) {
+			uint32_t codepoint = utf8::next(text_it,text.end());
+			type_glyphs::const_iterator it = m_glyphs.find( codepoint );
 
 			if( it != m_glyphs.end() ) {
 				w += it->second.surface->w + getGlyphSpacing();
@@ -85,8 +87,10 @@ namespace FIFE {
 		dst.x = dst.y = 0;
 		s_glyph *glyph = 0;
 
-		for(size_t i=0; i!= text.size(); ++i) {
-			type_glyphs::iterator it = m_glyphs.find( text[i] );
+		std::string::const_iterator text_it = text.begin();
+		while(text_it != text.end()) {
+			uint32_t codepoint = utf8::next(text_it,text.end());
+			type_glyphs::iterator it = m_glyphs.find( codepoint );
 
 			if( it == m_glyphs.end() ) {
 				if( !m_placeholder.surface ) {

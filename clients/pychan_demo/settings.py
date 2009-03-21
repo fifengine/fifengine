@@ -12,7 +12,7 @@ LogToPrompt         = 1
 LogToFile           = 0
 
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\""
-Font                = 'fonts/samanata.ttf'
+Font                = 'fonts/freefont/FreeMono.ttf'
 
 WindowTitle			= 'Pychan demo [FIFE Client]'
 WindowIcon			= 'gui/icons/pychan_logo.png'

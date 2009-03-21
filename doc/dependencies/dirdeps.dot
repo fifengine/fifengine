@@ -65,7 +65,7 @@ subgraph cluster_8 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "util/base"; "util/log"; "util/math"; "util/resource"; "util/structures"; "util/time"
+    "util/base"; "util/log"; "util/math"; "util/resource"; "util/structures"; "util/time"; "util/utf8"
     label = "util";
 }
 subgraph cluster_9 {
@@ -151,12 +151,14 @@ subgraph cluster_11 {
     "gui/base/sdl" -> "video"
     "gui/console" -> "gui"
     "gui/console" -> "gui/base"
+    "gui/console" -> "gui/widgets"
     "gui/console" -> "util/base"
     "gui/console" -> "util/log"
     "gui/console" -> "util/time"
     "gui/console" -> "video"
     "gui/widgets" -> "gui/base"
     "gui/widgets" -> "util/base"
+    "gui/widgets" -> "util/utf8"
     "gui/widgets" -> "video"
     "loaders/native/audio_loaders" -> "audio"
     "loaders/native/audio_loaders" -> "util/base"
@@ -239,6 +241,7 @@ subgraph cluster_11 {
     "video/fonts" -> "util/log"
     "video/fonts" -> "util/structures"
     "video/fonts" -> "util/time"
+    "video/fonts" -> "util/utf8"
     "video/fonts" -> "video"
     "video/opengl" -> "util/base"
     "video/opengl" -> "util/structures"
