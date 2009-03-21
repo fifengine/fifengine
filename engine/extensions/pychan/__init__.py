@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # coding: utf-8
 
 """\
@@ -185,6 +186,18 @@ I hope the example is clear enough ... Other options you can set:
   - row_spacing: Extra height per row. Default is 0.
   - glyph_spacing: Extra space per glyph. Default is 0. B{Currently buggy in the engine!}
 
+Unicode and internationalisation
+================================
+
+All text that is visible and editable by the player has to be a unicode object.
+All text that is used internally, e.g. widget names, have to be normal strings.
+
+While PyChan will not raise an exception, if you do not follow this guideline,
+you are encouraged to so.
+
+You can change the way unicode encoding errors are handled by using the
+function L{setUnicodePolicy}.
+
 
 Widget hierachy
 ===============
@@ -277,7 +290,7 @@ class _GuiLoader(object, handler.ContentHandler):
 
 	def _printTag(self,name,attrs):
 		if not manager.debug: return
-		attrstrings = map(lambda t: '%s="%s"' % tuple(map(str,t)),attrs.items())
+		attrstrings = map(lambda t: '%s="%s"' % tuple(map(unicode,t)),attrs.items())
 		tag = "<%s " % name + " ".join(attrstrings) + ">"
 		print self.indent + tag
 
@@ -406,3 +419,23 @@ def setupModalExecution(mainLoop,breakFromMainLoop):
 	if not manager:
 		raise InitializationError("PyChan is not initialized yet.")
 	manager.setupModalExecution(mainLoop,breakFromMainLoop)
+
+def setUnicodePolicy(*policy):
+	"""
+	Possible options are:
+	- 'strict' meaning that encoding errors raise a UnicodeEncodeError.
+	- 'ignore' all encoding errors will be silently ignored.
+	- 'replace' all errors are replaced by the next argument.
+
+	For further information look at the python documentation,
+	especially L{codecs.register_error}.
+
+	Example:
+		pychan.setUnicodePolicy('replace','?')
+	"""
+	if not manager:
+		raise InitializationError("PyChan is not initialized yet.")
+	manager.unicodePolicy = policy
+
+
+

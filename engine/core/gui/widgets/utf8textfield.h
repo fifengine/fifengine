@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
+ *   Copyright (C) 2009 by the FIFE team                                   *
  *   http://www.fifengine.de                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
@@ -19,52 +19,66 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_GUI_FONT_H
-#define FIFE_GUI_FONT_H
+#ifndef GCN_UTF8TEXTFIELD_HPP
+#define GCN_UTF8TEXTFIELD_HPP
 
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <guichan/font.hpp>
+#include <guichan/widgets/textfield.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/fonts/abstractfont.h"
+#include "util/utf8/utf8stringeditor.h"
 
+namespace gcn {
 
-namespace FIFE {
-
-	class GuiFont : public gcn::Font {
+	/**
+	 * UTF-8 aware version of the TextField class.
+	 *
+	 * Using UTF8StringEditor, it is able to correctly edit UTF-8 text line.
+	 *
+	 * You will also need an UTF-8 aware font to be able to correctly
+	 * display such text (so gcn::ImageFont can not be used).
+	 * 
+	 * @author Przemyslaw Grzywacz
+	 */
+	class UTF8TextField: public TextField
+	{
 	public:
-		/** Constructor
-		 *  Takes the ownership of given font
+		/**
+		 * UTF8TextField constructor.
+		 * @param text Initial text.
 		 */
-		GuiFont(AbstractFont* font);
-		virtual ~GuiFont();
-		
-		int getStringIndexAt(const std::string& text, int x) const;
-		void drawString(gcn::Graphics* graphics, const std::string& text, int x, int y);
-		void drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int x, int y);
-		std::string splitTextToWidth (const std::string& text, int render_width);
+		UTF8TextField(const std::string& text = "");
 
-		void setRowSpacing (int spacing);
-		int getRowSpacing() const;
-		void setGlyphSpacing(int spacing);
-		int getGlyphSpacing() const;
-		void setAntiAlias(bool antiAlias);
-		bool isAntiAlias();
-		Image* getAsImage(const std::string& text);
-		Image* getAsImageMultiline(const std::string& text);
-		void setColor(uint8_t r,uint8_t g,uint8_t b);
-		SDL_Color getColor() const;
-		int getWidth(const std::string& text) const;
-		int getHeight() const;
-		
-	private:
-		AbstractFont* m_font;
+		/**
+		 * Destructor.
+		 */
+		virtual ~UTF8TextField();
+
+		/**
+		 * Key pressed handler.
+		 *
+		 * Overides gcn::TextField to handle UTF-8 character codes.
+		 *
+		 * @param keyEvent Keyboard event.
+		 */
+		virtual void keyPressed(KeyEvent& keyEvent);
+
+	protected:
+		/**
+		 * UTF-8 string editor suppor.
+		 *
+		 * It allows the UTF8TextField to easly traverse UTF-8 strings
+		 * as well as inserting and deleting characters.
+		 */
+		UTF8StringEditor* mStringEditor;
 	};
+
+
 }
 
-#endif
+#endif // !GCN_UTF8TEXTFIELD_HPP

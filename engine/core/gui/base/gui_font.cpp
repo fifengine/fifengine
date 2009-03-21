@@ -43,7 +43,7 @@ namespace FIFE {
 		delete m_font;
 	}
 	
-	int GuiFont::getStringIndexAt(const std::string& text, int x) {
+	int GuiFont::getStringIndexAt(const std::string& text, int x) const {
 		return m_font->getStringIndexAt(text, x);
 	}
 	

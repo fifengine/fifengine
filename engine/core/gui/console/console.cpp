@@ -38,6 +38,7 @@
 #include "util/base/exception.h"
 #include "gui/guimanager.h"
 #include "gui/base/gui_font.h"
+#include "gui/widgets/utf8textbox.h"
 
 #include "commandline.h"
 #include "console.h"
@@ -50,7 +51,7 @@ namespace FIFE {
 		: gcn::Container(),
 		m_consoleexec(0),
 		m_input(new CommandLine()),
-		m_output(new gcn::TextBox("")),
+		m_output(new gcn::UTF8TextBox()),
 		m_outputscrollarea(new gcn::ScrollArea(m_output)),
 		m_status(new gcn::Label()),
 		m_toolsbutton(new gcn::Button("Tools"))

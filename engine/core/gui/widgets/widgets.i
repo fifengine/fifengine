@@ -23,6 +23,8 @@
 %{
 #include <guichan.hpp>
 #include <guichan/mouseevent.hpp>
+#include "gui/widgets/utf8textfield.h"
+#include "gui/widgets/utf8textbox.h"
 #include "gui/widgets/twobutton.h"
 #include "gui/widgets/togglebutton.h"
 #include "gui/widgets/clicklabel.h"
@@ -154,11 +156,12 @@ namespace gcn {
 		virtual void adjustSize();
 	};
 
-	%feature("notabstract") TextField;
-	class TextField: public Widget {
+	%feature("notabstract") UTF8TextField;
+	%rename(TextField) UTF8TextField;
+	class UTF8TextField: public Widget {
 	public:
-		TextField();
-		TextField(const std::string& text);
+		UTF8TextField();
+		UTF8TextField(const std::string& text);
 		virtual void setText(const std::string& text);
 		virtual const std::string& getText() const;
 		virtual void adjustSize();
@@ -263,11 +266,12 @@ namespace gcn {
 	};
 	
 	
-	%feature("notabstract") TextBox;
-	class TextBox: public Widget {
+	%feature("notabstract") UTF8TextBox;
+	%rename(TextBox) UTF8TextBox;
+	class UTF8TextBox: public Widget {
 	public:
-		TextBox();
-		TextBox(const std::string& text);
+		UTF8TextBox();
+		UTF8TextBox(const std::string& text);
 		virtual void setText(const std::string& text);
 		virtual std::string getText() const;
 		virtual const std::string& getTextRow(int row) const;

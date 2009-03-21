@@ -115,7 +115,7 @@ namespace gcn {
 			if( isTextWrapping() ) {
 				image = mGuiFont->getAsImageMultiline(mWrappedText);
 			} else {
-				image = mGuiFont->getAsImage(mCaption);
+				image = mGuiFont->getAsImageMultiline(mCaption);
 			}
 			setWidth( image->getWidth() );
 			setHeight( image->getHeight() );

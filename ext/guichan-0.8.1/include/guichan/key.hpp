@@ -125,7 +125,7 @@ namespace gcn
             SPACE              = ' ',
             TAB                = '\t',
             ENTER              = '\n',
-            LEFT_ALT           = 1000,
+            LEFT_ALT           = -1000,
             RIGHT_ALT,
             LEFT_SHIFT,
             RIGHT_SHIFT,

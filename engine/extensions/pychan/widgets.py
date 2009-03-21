@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# coding: utf-8
 ### Widget/Container Base Classes ###
 
 """
@@ -12,17 +11,30 @@ import fife, pythonize
 import tools
 import events
 from exceptions import *
-from attrs import Attr,PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
+from attrs import Attr,UnicodeAttr, PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
 
 def get_manager():
 	import pychan
 	return pychan.manager
 
-def _mungeText(text):
+def _text2gui(text):
 	"""
-	This function is applied to all text set on widgets, currently only replacing tabs with four spaces.
+	This function is applied to all text set on widgets.
+	It replaces tabs by four spaces.
+	It assumes the text to be a unicode object.
 	"""
-	return text.replace('\t'," "*4).replace('[br]','\n')
+	if not isinstance(text,unicode):
+		print "Widget text needs to be set from an unicode object. Got: '%s'" % repr(text)
+		text = unicode(text,"utf8")
+	return text.encode("utf8",*get_manager().unicodePolicy).replace("\t"," "*4).replace("[br]","\n")
+
+def _gui2text(text):
+	"""
+	This function is applied to all text get from widgets.
+	Translates the encoded string into a unicode object.
+	"""
+	return unicode(text,"utf8",*get_manager().unicodePolicy)
+
 
 def isLayouted(widget):
 	return isinstance(widget,LayoutBase)
@@ -989,9 +1001,9 @@ class Window(VBoxLayoutMixin,Container):
 	  - titlebar_height: The height of the window title bar
 	"""
 
-	ATTRIBUTES = Container.ATTRIBUTES + [ Attr('title'), IntAttr('titlebar_height') ]
+	ATTRIBUTES = Container.ATTRIBUTES + [ UnicodeAttr('title'), IntAttr('titlebar_height') ]
 
-	def __init__(self,title="title",titlebar_height=0,**kwargs):
+	def __init__(self,title=u"title",titlebar_height=0,**kwargs):
 		super(Window,self).__init__(_real_widget = fife.Window(), **kwargs)
 		if titlebar_height == 0:
 			titlebar_height = self.real_font.getHeight() + 4
@@ -1002,8 +1014,8 @@ class Window(VBoxLayoutMixin,Container):
 		self.position_technique = "automatic"
 
 
-	def _getTitle(self): return self.real_widget.getCaption()
-	def _setTitle(self,text): self.real_widget.setCaption(text)
+	def _getTitle(self): return _gui2text(self.real_widget.getCaption())
+	def _setTitle(self,text): self.real_widget.setCaption(_text2gui(text))
 	title = property(_getTitle,_setTitle)
 
 	def _getTitleBarHeight(self): return self.real_widget.getTitleBarHeight()
@@ -1037,9 +1049,9 @@ class BasicTextWidget(Widget):
 	The text can be set via the L{distributeInitialData} method.
 	"""
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
 
-	def __init__(self, text = "",**kwargs):
+	def __init__(self, text = u"",**kwargs):
 		self.margins = (5,5)
 		self.text = text
 		super(BasicTextWidget,self).__init__(**kwargs)
@@ -1048,13 +1060,13 @@ class BasicTextWidget(Widget):
 		self.accepts_initial_data = True
 		self._realSetInitialData = self._setText
 
-	def _getText(self): return self.real_widget.getCaption()
-	def _setText(self,text): self.real_widget.setCaption(_mungeText(text))
+	def _getText(self): return _gui2text(self.real_widget.getCaption())
+	def _setText(self,text): self.real_widget.setCaption(_text2gui(text))
 	text = property(_getText,_setText)
 
 	def resizeToContent(self, recurse = True):
 		self.height = self.real_font.getHeight() + self.margins[1]*2
-		self.width = self.real_font.getWidth(self.text) + self.margins[0]*2
+		self.width = self.real_font.getWidth(_text2gui(self.text)) + self.margins[0]*2
 
 class Icon(Widget):
 	"""
@@ -1158,7 +1170,7 @@ class ImageButton(BasicTextWidget):
 	  - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
 	"""
 
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext'),Attr('hover_image')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),UnicodeAttr('helptext'),Attr('hover_image')]
 
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),**kwargs):
 		self.real_widget = fife.TwoButton()
@@ -1256,7 +1268,11 @@ class ToggleButton(BasicTextWidget):
 	  - toggled: Boolean: Whether the button is toggled or not.
 	"""
 
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('helptext'),Attr('hover_image'),Attr('group')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [
+		Attr('up_image'),Attr('down_image'),Attr('hover_image'),
+		PointAttr('offset'),
+		UnicodeAttr('helptext'),Attr('group')
+	]
 
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),group="",**kwargs):
 
@@ -1323,9 +1339,9 @@ class ToggleButton(BasicTextWidget):
 	offset = property(_getOffset,_setOffset)
 
 	def _setHelpText(self, txt):
-		self.real_widget.setHelpText(txt)
+		self.real_widget.setHelpText(_text2gui(txt))
 	def _getHelpText(self):
-		return self.real_widget.getHelpText()
+		return _gui2text(self.real_widget.getHelpText())
 	helptext = property(_getHelpText,_setHelpText)
 
 	def resizeToContent(self):
@@ -1403,7 +1419,7 @@ class RadioButton(BasicTextWidget):
 	group = property(_getGroup,_setGroup)
 
 	def resizeToContent(self,recurse=True):
-		self.width = self.real_font.getWidth(self.text) + 35# Size of the Checked box?
+		self.width = self.real_font.getWidth(_text2gui(self.text)) + 35# Size of the Checked box?
 		self.height = self.real_font.getHeight()
 
 class GenericListmodel(fife.ListModel,list):
@@ -1559,9 +1575,9 @@ class TextBox(Widget):
 	The text can be read and set via L{distributeData} and L{collectData}.
 	"""
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text'),Attr('filename')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text'),Attr('filename')]
 
-	def __init__(self,text="",filename = "", **kwargs):
+	def __init__(self,text=u"",filename = "", **kwargs):
 		self.real_widget = fife.TextBox()
 		self.text = text
 		self.filename = filename
@@ -1579,7 +1595,8 @@ class TextBox(Widget):
 		self._filename = filename
 		if not filename: return
 		try:
-			self.text = open(filename).read()
+			# FIXME needs encoding detection.
+			self.text = unicode(open(filename).read(),"utf8")
 		except Exception, e:
 			self.text = str(e)
 	filename = property(_getFileName, _loadFromFile)
@@ -1590,8 +1607,8 @@ class TextBox(Widget):
 		self.width = max_w
 		self.height = (self.real_font.getHeight() + 2) * self.real_widget.getNumberOfRows()
 
-	def _getText(self): return self.real_widget.getText()
-	def _setText(self,text): self.real_widget.setText(_mungeText(text))
+	def _getText(self): return _gui2text(self.real_widget.getText())
+	def _setText(self,text): self.real_widget.setText(_text2gui(text))
 	text = property(_getText,_setText)
 
 	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
@@ -1612,7 +1629,7 @@ class TextField(Widget):
 	The text can be read and set via L{distributeData} and L{collectData}.
 	"""
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [Attr('text')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
 
 	def __init__(self,text="", **kwargs):
 		self.real_widget = fife.TextField()
