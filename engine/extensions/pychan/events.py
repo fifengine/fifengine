@@ -135,7 +135,7 @@ class EventListenerBase(object):
 					f( event )
 
 		except:
-			print name, event
+			print name, repr(event)
 			traceback.print_exc()
 			raise
 
