@@ -45,6 +45,7 @@ import exceptions
 from internal import get_manager
 import tools
 import traceback
+import weakref
 
 EVENTS = [
 	"mouseEntered",
@@ -111,7 +112,7 @@ class EventListenerBase(object):
 			return
 		if self.debug: print "Attach:",self
 		self.doAttach(widget.real_widget)
-		self.widget = widget
+		self.widget_ref = weakref.ref(widget)
 		self.is_attached = True
 
 	def detach(self):
@@ -122,8 +123,6 @@ class EventListenerBase(object):
 		if not self.is_attached:
 			return
 		if self.debug: print "Detach:",self
-		self.doDetach(self.widget.real_widget)
-		self.widget = None
 		self.is_attached = False
 
 	def _redirectEvent(self,name,event):
@@ -152,14 +151,14 @@ class EventListenerBase(object):
 
 class _ActionEventListener(EventListenerBase,guichan.ActionListener):
 	def __init__(self):super(_ActionEventListener,self).__init__()
-	def doAttach(self,real_widget):	real_widget.addActionListener(self)
+	def doAttach(self,real_widget): real_widget.addActionListener(self)
 	def doDetach(self,real_widget): real_widget.removeActionListener(self)
 
 	def action(self,e): self._redirectEvent("action",e)
 
 class _MouseEventListener(EventListenerBase,guichan.MouseListener):
 	def __init__(self):super(_MouseEventListener,self).__init__()
-	def doAttach(self,real_widget):	real_widget.addMouseListener(self)
+	def doAttach(self,real_widget): real_widget.addMouseListener(self)
 	def doDetach(self,real_widget): real_widget.removeMouseListener(self)
 
 	def mouseEntered(self,e): self._redirectEvent("mouseEntered",e)
@@ -174,7 +173,7 @@ class _MouseEventListener(EventListenerBase,guichan.MouseListener):
 
 class _KeyEventListener(EventListenerBase,guichan.KeyListener):
 	def __init__(self):super(_KeyEventListener,self).__init__()
-	def doAttach(self,real_widget):	real_widget.addKeyListener(self)
+	def doAttach(self,real_widget): real_widget.addKeyListener(self)
 	def doDetach(self,real_widget): real_widget.removeKeyListener(self)
 
 	def keyPressed(self,e): self._redirectEvent("keyPressed",e)
@@ -203,7 +202,8 @@ class EventMapper(object):
 	"""
 	def __init__(self,widget):
 		super(EventMapper,self).__init__()
-		self.widget = widget
+		self.widget_ref = weakref.ref(widget)
+		self.callbacks = {}
 		self.listener = {
 			KEY_EVENT    : _KeyEventListener(),
 			ACTION_EVENT : _ActionEventListener(),
@@ -213,8 +213,16 @@ class EventMapper(object):
 		self.debug = get_manager().debug
 
 	def __repr__(self):
-		return "EventMapper(%s)" % repr(self.widget)
+		return "EventMapper(%s)" % repr(self.widget_ref())
 
+	def attach(self):
+		for listener in self.listener.values():
+			listener.attach()
+
+	def detach(self):
+		for listener in self.listener.values():
+			listener.detach()
+			
 
 	def capture(self,event_name,callback,group_name):
 		if event_name not in EVENTS:
@@ -224,7 +232,7 @@ class EventMapper(object):
 			if self.isCaptured(event_name,group_name):
 				self.removeEvent(event_name,group_name)
 			elif self.debug:
-				print CALLBACK_NONE_MESSAGE % str(self.widget)
+				print CALLBACK_NONE_MESSAGE % str(self.widget_ref())
 			return
 		self.addEvent(event_name,callback,group_name)
 
@@ -245,17 +253,35 @@ class EventMapper(object):
 	def removeEvent(self,event_name,group_name):
 		listener = self.getListener(event_name)
 		del listener.events[event_name][group_name]
+		
 		if not listener.events[event_name]:
 			del listener.events[event_name]
 		if not listener.events:
 			listener.detach()
+			
+		del self.callbacks[group_name][event_name]
+		if len(self.callbacks[group_name]) <= 0:
+			del self.callbacks[group_name]
 
 	def addEvent(self,event_name,callback,group_name):
 		if not callable(callback):
 			raise RuntimeError("An event callback must be either a callable or None - not %s" % repr(callback))
+		# The closure self needs to keep a weak ref.
+		# Otherwise the GC has problems.
+		self_ref = weakref.ref(self)
 
+		# Set up callback dictionary. This should fix some GC issues
+		if not self.callbacks.has_key(group_name):
+			self.callbacks[group_name] = {}
+			
+		if not self.callbacks[group_name].has_key(event_name):
+			self.callbacks[group_name][event_name] = {}
+			
+		self.callbacks[group_name][event_name] = callback
+			
+		
 		def captured_f(event):
-			tools.applyOnlySuitable(callback,event=event,widget=self.widget)
+			tools.applyOnlySuitable(self_ref().callbacks[group_name][event_name],event=event,widget=self_ref().widget_ref())
 
 		listener = self.getListener(event_name)
 
@@ -263,7 +289,7 @@ class EventMapper(object):
 			listener.events[event_name] = {group_name : captured_f}
 		else:
 			listener.events[event_name][group_name] = captured_f
-		listener.attach(self.widget)
+		listener.attach(self.widget_ref())
 
 
 def splitEventDescriptor(name):
@@ -278,5 +304,3 @@ def splitEventDescriptor(name):
 	if len(L) == 2:
 		L = L[0],L[1],"default"
 	return L
-
-
