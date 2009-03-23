@@ -1631,7 +1631,7 @@ class TextField(Widget):
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
 
-	def __init__(self,text="", **kwargs):
+	def __init__(self,text=u"", **kwargs):
 		self.real_widget = fife.TextField()
 		self.text = text
 		super(TextField,self).__init__(**kwargs)
@@ -1648,7 +1648,7 @@ class TextField(Widget):
 		self.width = max_w
 		self.height = (self.real_font.getHeight() + 2)
 	def _getText(self): return self.real_widget.getText()
-	def _setText(self,text): self.real_widget.setText(text)
+	def _setText(self,text): self.real_widget.setText(_text2gui(text))
 	text = property(_getText,_setText)
 
 	def _setOpaque(self,opaque): self.real_widget.setOpaque(opaque)
