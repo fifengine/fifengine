@@ -35,13 +35,11 @@
 namespace FIFE {
 
 	Image::Image(SDL_Surface* surface): 
-		m_location(ResourceLocation("")), 
 		m_surface(NULL) {
 		reset(surface);
 	}
 
 	Image::Image(const uint8_t* data, unsigned int width, unsigned int height): 
-		m_location(ResourceLocation("")), 
 		m_surface(NULL) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);

@@ -47,7 +47,7 @@ namespace FIFE {
 		if(filename.find(".ogg", filename.size() - 4) != std::string::npos) {
 			RawData* rdptr = m_vfs->open(location.getFilename());
 			ptr = new SoundClip(new SoundDecoderOgg(rdptr));
-			
+			ptr->setResourceLocation(location);
 		} else {
 			FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << filename << "\"!");
 			throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
