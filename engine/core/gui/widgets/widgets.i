@@ -198,8 +198,6 @@ namespace gcn {
 		void setDownOffset(int x, int y);
 		int getDownXOffset();
 		int getDownYOffset();
-		void setHelpText(const std::string& txt);
-		const std::string& getHelpText();
 	};
 	
 	%feature("notabstract") ToggleButton;
@@ -221,9 +219,6 @@ namespace gcn {
 		void setToggled(bool toggled);
 		void setGroup(const std::string &group);
 		const std::string &getGroup() const;
-
-		void setHelpText(const std::string& txt);
-		const std::string& getHelpText();
 	};
 
 	%feature("notabstract") ScrollArea;

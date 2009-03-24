@@ -38,8 +38,7 @@ namespace gcn {
 		m_downImage(down_file),
 		m_hoverImage(hover_file),
 		x_downoffset(0),
-		y_downoffset(0),
-		m_helptext("") {
+		y_downoffset(0) {
 		m_hoverImage = hover_file;
 		setFrameSize(0);
 		adjustSize();
