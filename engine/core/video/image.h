@@ -131,12 +131,6 @@ namespace FIFE {
 		 */
 		Image(const uint8_t* data, unsigned int width, unsigned int height);
 
-		//TODO: fill in these stub! Note that m_location is not properly initialized.
-		virtual const ResourceLocation& getResourceLocation() { return m_location; }
-
-		virtual void setResourceLocation(const ResourceLocation& location) { }
-		virtual void setResourceFile(const std::string& filename) { }
-		
 		/** Renders itself to the Destination surface at the rectangle rect.
 		 *
 		 * @param rect The position and clipping where to draw this image to.
@@ -188,8 +182,6 @@ namespace FIFE {
 		 *  @see pushClipArea
 		 */
 		virtual void clearClipArea();
-
-		ResourceLocation m_location;
 		
 		// The SDL Surface used.
 		SDL_Surface* m_surface;

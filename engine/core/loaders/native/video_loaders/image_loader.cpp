@@ -58,6 +58,7 @@ namespace FIFE {
 		}
 
 		Image* res = RenderBackend::instance()->createImage(surface);
+		res->setResourceLocation(location);
 		if (loc) {
 			res->setXShift(loc->getXShift());
 			res->setYShift(loc->getYShift());

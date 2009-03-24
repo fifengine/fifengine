@@ -61,12 +61,6 @@ namespace FIFE {
 	   SoundClip(SoundDecoder* decptr, bool deletedecoder = true);
 	
 		~SoundClip();
-
-		// TODO: fill in these stubs! Note: m_location is _not_ properly initialized.
-		virtual const ResourceLocation& getResourceLocation() { return m_location; }
-
-		virtual void setResourceLocation(const ResourceLocation& location) { }
-		virtual void setResourceFile(const std::string& filename) { }
 		
 		/** Does this SoundClip require a streaming mechanism?
 		 * 
@@ -140,7 +134,6 @@ namespace FIFE {
 		}
 		
 	private:
-		ResourceLocation m_location;
 		//unsigned int 		m_refcount;			// Reference count of that soundclip
 		bool						m_isstream; 		// is stream?
 		SoundDecoder*		m_decoder;			// attached decoder
