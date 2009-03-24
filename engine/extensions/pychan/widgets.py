@@ -12,6 +12,7 @@ import tools
 import events
 from exceptions import *
 from attrs import Attr,UnicodeAttr, PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
+from properties import ColorProperty
 
 def get_manager():
 	import pychan
@@ -42,6 +43,8 @@ def isLayouted(widget):
 class _DummyImage(object):
 	def getWidth(self): return 0
 	def getHeight(self): return 0
+
+
 
 class Widget(object):
 	"""
@@ -98,7 +101,7 @@ class Widget(object):
 	ATTRIBUTES = [ Attr('name'), PointAttr('position'),
 		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
 		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),ColorAttr('selection_color'),
-		Attr('style'), Attr('font'),IntAttr('border_size')
+		Attr('style'), Attr('font'),IntAttr('border_size'),Attr('position_technique'),
 		]
 
 	DEFAULT_NAME = '__unnamed__'
@@ -605,33 +608,10 @@ class Widget(object):
 	def _getBorderSize(self): return self.real_widget.getFrameSize()
 	def _setBorderSize(self,size): self.real_widget.setFrameSize(size)
 
-	def _getBaseColor(self): return self.real_widget.getBaseColor()
-	def _setBaseColor(self,color):
-		if isinstance(color,type(())):
-			color = fife.Color(*color)
-		self.real_widget.setBaseColor(color)
-	base_color = property(_getBaseColor,_setBaseColor)
-
-	def _getBackgroundColor(self): return self.real_widget.getBackgroundColor()
-	def _setBackgroundColor(self,color):
-		if isinstance(color,type(())):
-			color = fife.Color(*color)
-		self.real_widget.setBackgroundColor(color)
-	background_color = property(_getBackgroundColor,_setBackgroundColor)
-
-	def _getForegroundColor(self): return self.real_widget.getForegroundColor()
-	def _setForegroundColor(self,color):
-		if isinstance(color,type(())):
-			color = fife.Color(*color)
-		self.real_widget.setForegroundColor(color)
-	foreground_color = property(_getForegroundColor,_setForegroundColor)
-
-	def _getSelectionColor(self): return self.real_widget.getSelectionColor()
-	def _setSelectionColor(self,color):
-		if isinstance(color,type(())):
-			color = fife.Color(*color)
-		self.real_widget.setSelectionColor(color)
-	selection_color = property(_getSelectionColor,_setSelectionColor)
+	base_color = ColorProperty("BaseColor")
+	background_color = ColorProperty("BackgroundColor")
+	foreground_color = ColorProperty("ForegroundColor")
+	selection_color = ColorProperty("SelectionColor")
 
 	def _getStyle(self): return self._style
 	def _setStyle(self,style):
