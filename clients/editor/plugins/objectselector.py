@@ -231,6 +231,8 @@ class ObjectSelector(object):
 
 	def fillTextList(self, objects=None):
 		if objects is None:
+			if self.namespaces.selected_item is None:
+				return
 			objects = self.engine.getModel().getObjects(self.namespaces.selected_item)
 		
 		class _ListItem:
@@ -258,6 +260,8 @@ class ObjectSelector(object):
 		self.objects.clear()
 		
 		if objects is None:
+			if self.namespaces.selected_item is None:
+				return
 			objects = self.engine.getModel().getObjects(self.namespaces.selected_item)
 		
 		for obj in objects:
