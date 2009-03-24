@@ -196,6 +196,11 @@ class Widget(object):
 
 		@param callback: Event callback - may accept keyword arguments event and widget.
 		@paran event_name: The event to capture - may be one of L{events.EVENTS} and defaults to "action"
+		@paran group_name: Event group.
+
+		Event groups are used to have different B{channels} which don't interfere with each other.
+		For derived widgets that need to capture events it's advised to use the group_name 'widget'.
+		The 'default' group is used by default, and should be reserved for the application programmers.
 		"""
 		self.event_mapper.capture( event_name, callback, group_name )
 
@@ -289,6 +294,7 @@ class Widget(object):
 
 		Usage::
 		  closeButtons = root_widget.findChildren(name='close')
+		  buttons = root_widget.findChildren(__class__=pychan.widgets.Button)
 		"""
 
 		children = []
@@ -329,6 +335,15 @@ class Widget(object):
 
 	def removeChildren(self,*widgets):
 		for widget in widgets:
+			self.removeChild(widget)
+
+	def removeAllChildren(self):
+		"""
+		This function will remove all direct child widgets.
+		This will work even for non-container widgets.
+		"""
+		children = self.findChildren(parent=self)
+		for widget in children:
 			self.removeChild(widget)
 
 	def mapEvents(self,eventMap,ignoreMissing = False):
