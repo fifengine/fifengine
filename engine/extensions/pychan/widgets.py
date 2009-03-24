@@ -73,6 +73,7 @@ class Widget(object):
 	  - foreground_color: Color
 	  - selection_color: Color
 	  - font: String: This should identify a font that was loaded via L{loadFonts} before.
+	  - helptext: Unicode: Text which can be used for e.g. tooltips.
 	  - border_size: Integer: The size of the border in pixels.
 	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
 	  results in new windows being centered on screen (for now).
@@ -102,6 +103,7 @@ class Widget(object):
 		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
 		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),ColorAttr('selection_color'),
 		Attr('style'), Attr('font'),IntAttr('border_size'),Attr('position_technique'),
+		UnicodeAttr('helptext')
 		]
 
 	DEFAULT_NAME = '__unnamed__'
@@ -113,6 +115,7 @@ class Widget(object):
 
 	def __init__(self,parent = None, name = DEFAULT_NAME,
 				 size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
+				 helptext=u"",
 				 style = None, **kwargs):
 
 		assert( hasattr(self,'real_widget') )
@@ -139,6 +142,7 @@ class Widget(object):
 			style = parent.style
 		self.style = style or "default"
 
+		self.helptext = helptext
 		# Not needed as attrib assignment will trigger manager.stylize call
 		#manager.stylize(self,self.style)
 
@@ -1165,7 +1169,7 @@ class ImageButton(BasicTextWidget):
 	  - hover_image: String: The source location of the Image for the B{unpressed hovered} state.
 	"""
 
-	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),UnicodeAttr('helptext'),Attr('hover_image')]
+	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [Attr('up_image'),Attr('down_image'),PointAttr('offset'),Attr('hover_image')]
 
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),**kwargs):
 		self.real_widget = fife.TwoButton()
@@ -1240,12 +1244,6 @@ class ImageButton(BasicTextWidget):
 		return (self.real_widget.getDownXOffset(), self.real_widget.getDownYOffset())
 	offset = property(_getOffset,_setOffset)
 
-	def _setHelpText(self, txt):
-		self.real_widget.setHelpText(txt)
-	def _getHelpText(self):
-		return self.real_widget.getHelpText()
-	helptext = property(_getHelpText,_setHelpText)
-
 	def resizeToContent(self):
 		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
 		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
@@ -1265,8 +1263,7 @@ class ToggleButton(BasicTextWidget):
 
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [
 		Attr('up_image'),Attr('down_image'),Attr('hover_image'),
-		PointAttr('offset'),
-		UnicodeAttr('helptext'),Attr('group')
+		PointAttr('offset'),Attr('group')
 	]
 
 	def __init__(self,up_image="",down_image="",hover_image="",offset=(0,0),group="",**kwargs):
@@ -1332,12 +1329,6 @@ class ToggleButton(BasicTextWidget):
 	def _getOffset(self):
 		return (self.real_widget.getDownXOffset(), self.real_widget.getDownYOffset())
 	offset = property(_getOffset,_setOffset)
-
-	def _setHelpText(self, txt):
-		self.real_widget.setHelpText(_text2gui(txt))
-	def _getHelpText(self):
-		return _gui2text(self.real_widget.getHelpText())
-	helptext = property(_getHelpText,_setHelpText)
 
 	def resizeToContent(self):
 		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2

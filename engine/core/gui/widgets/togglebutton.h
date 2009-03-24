@@ -123,24 +123,6 @@ namespace gcn {
 			int getDownYOffset() const;
 
 			/**
-			 * Sets the help text for the button
-			 *
-			 * @param txt The help text
-			 *
-			 * @see getHelpText
-			 */
-			void setHelpText(const std::string& txt);
-
-			/** 
-			 * Gets the help text for the button
-			 *
-			 * @return The help text
-			 *
-			 * @see setHelpText
-			 */
-			const std::string& getHelpText();
-
-			/**
 			 * Checks if the radio button is selected.
 			 *
 			 * @return True if the radio button is selecte, false otherwise.
@@ -199,9 +181,6 @@ namespace gcn {
 			// corner, when the button is pressed or toggled
 			int x_downoffset;
 			int y_downoffset;
-
-			// Help text for the button
-			std::string m_helptext;
 
 			/**
 			 * Whether the button is toggled or not.

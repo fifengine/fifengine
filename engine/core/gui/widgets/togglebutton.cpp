@@ -51,7 +51,6 @@ namespace gcn {
 		m_hoverImage(hover_file),
 		x_downoffset(0),
 		y_downoffset(0),
-		m_helptext(""),
 		m_group(group) {
 
 		m_hoverImage = hover_file;
@@ -255,13 +254,6 @@ namespace gcn {
 		return y_downoffset; 
 	}
 
-	void ToggleButton::setHelpText(const std::string& txt) { 
-		m_helptext = txt; 
-	}
-
-	const std::string& ToggleButton::getHelpText() { 
-		return m_helptext; 
-	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
 

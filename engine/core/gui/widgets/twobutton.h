@@ -52,16 +52,12 @@ namespace gcn {
 			int getDownXOffset() { return x_downoffset; }
 			int getDownYOffset() { return y_downoffset; }
 			
-			void setHelpText(const std::string& txt) { m_helptext = txt; }
-			const std::string& getHelpText() { return m_helptext; }
-		
 		private:
 			Image *m_upImage;
 			Image *m_downImage;
 			Image *m_hoverImage;
 			int x_downoffset;
 			int y_downoffset;
-			std::string m_helptext;
 	};
 
 }
