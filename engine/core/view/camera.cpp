@@ -497,7 +497,7 @@ namespace FIFE {
 			//  here instead passing it to each renderer.
 			// instances are checked first if their image intersects with the viewport.
 			// this reduces processing load during sorting later
-			std::vector<Instance*> allinstances((*layer_it)->getInstances());
+			const std::vector<Instance*>& allinstances = (*layer_it)->getInstances();
 			std::vector<Instance*>::const_iterator instance_it = allinstances.begin();
 			std::vector<Instance*>& instances_to_render = m_layer_to_instances[*layer_it];
 			for (;instance_it != allinstances.end(); ++instance_it) {

@@ -126,10 +126,8 @@ namespace FIFE {
 				return false;
 
 			case SDL_ACTIVEEVENT:
-				if( evt.active.state & SDL_APPMOUSEFOCUS ) {
-					input->pushInput(evt);
-					return true;
-				}
+				// Actually Guichan doesn't care (it should!)
+				// so at least don't swallow mouse_focus events up.
 				return false;
 
 			default:
