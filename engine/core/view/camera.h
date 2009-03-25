@@ -253,12 +253,6 @@ namespace FIFE {
 		 */
 		void refresh();
 
-		/** Returns latest camera movement in screen coordinates (dx, dy)
-		 */
-		inline ScreenPoint getLatestMovement() {
-			return m_prev_origo - m_cur_origo;
-		}
-		
 		/** Resets temporary values from last update round, like warped flag
 		 */
 		void resetUpdates();
