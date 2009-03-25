@@ -88,7 +88,7 @@ namespace FIFE {
 		 */
 		virtual bool isAntiAlias() = 0;
 
-		virtual int getStringIndexAt(const std::string &text, int x) = 0;
+		virtual int getStringIndexAt(const std::string &text, int x) const = 0;
 
 		/** Gets given text as Image
 		 *  The rsulting image is pooled, so it's not that time critical

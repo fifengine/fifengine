@@ -178,6 +178,9 @@ namespace FIFE {
 		}
 
 		if(m_activity && m_activity->m_actioninfo) {
+			// Don't ditribute onActionFinished in case we're already
+			// deleting.
+			m_activity->m_actionlisteners.clear();
 			finalizeAction();
 		}
 
