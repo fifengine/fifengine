@@ -35,6 +35,18 @@ class MapListener(fife.MapChangeListener):
 
 
 class World(EventListenerBase):
+	"""
+	The world!
+
+	This class handles:
+	  setup of map view (cameras ...)
+	  loading the map
+	  GUI for right clicks
+	  handles mouse/key events which aren't handled by the GUI.
+	   ( by inheriting from EventlistenerBase )
+
+	That's obviously too much, and should get factored out.
+	"""
 	def __init__(self, engine):
 		super(World, self).__init__(engine, regMouse=True, regKeys=True)
 		self.engine = engine
@@ -49,29 +61,20 @@ class World(EventListenerBase):
 		self.dynamic_widgets = {}
 
 	def show_instancemenu(self, clickpoint, instance):
+		"""
+		Build and show a popupmenu for an instance that the player
+		clicked on. The available actions are dynamically added to
+		the menu (and mapped to the onXYZ functions).
+		"""
 		if instance.getFifeId() == self.hero.agent.getFifeId():
 			return
 
-		dynamicbuttons = ('moveButton', 'talkButton', 'kickButton', 'inspectButton')
-		if not self.instancemenu:
-			self.instancemenu = pychan.loadXML('gui/instancemenu.xml')
-			self.instancemenu.mapEvents({
-				'moveButton' : self.onMoveButtonPress,
-				'talkButton' : self.onTalkButtonPress,
-				'kickButton' : self.onKickButtonPress,
-				'inspectButton' : self.onInspectButtonPress,
-			})
-			for btn in dynamicbuttons:
-				self.dynamic_widgets[btn] = self.instancemenu.findChild(name=btn)
-		for btn in dynamicbuttons:
-			try:
-				self.instancemenu.removeChild(self.dynamic_widgets[btn])
-			except pychan.exceptions.RuntimeError:
-				pass
-
+		# Create the popup.
+		self.build_instancemenu()
 		self.instancemenu.clickpoint = clickpoint
 		self.instancemenu.instance = instance
 
+		# Add the buttons according to circumstances.
 		self.instancemenu.addChild(self.dynamic_widgets['inspectButton'])
 		target_distance = self.hero.agent.getLocationRef().getLayerDistanceTo(instance.getLocationRef())
 		if target_distance > 3.0:
@@ -80,14 +83,36 @@ class World(EventListenerBase):
 			if self.instance_to_agent.has_key(instance.getFifeId()):
 				self.instancemenu.addChild(self.dynamic_widgets['talkButton'])
 				self.instancemenu.addChild(self.dynamic_widgets['kickButton'])
+		# And show it :)
 		self.instancemenu.position = (clickpoint.x, clickpoint.y)
 		self.instancemenu.show()
+
+	def build_instancemenu(self):
+		"""
+		Just loads the menu from an XML file
+		and hooks the events up.
+		The buttons are removed and later re-added if appropiate.
+		"""
+		dynamicbuttons = ('moveButton', 'talkButton', 'kickButton', 'inspectButton')
+		self.instancemenu = pychan.loadXML('gui/instancemenu.xml')
+		self.instancemenu.mapEvents({
+			'moveButton' : self.onMoveButtonPress,
+			'talkButton' : self.onTalkButtonPress,
+			'kickButton' : self.onKickButtonPress,
+			'inspectButton' : self.onInspectButtonPress,
+		})
+		for btn in dynamicbuttons:
+			self.dynamic_widgets[btn] = self.instancemenu.findChild(name=btn)
+		self.instancemenu.removeAllChildren()
 
 	def hide_instancemenu(self):
 		if self.instancemenu:
 			self.instancemenu.hide()
 
 	def reset(self):
+		"""
+		Clear the agent information and reset the moving secondary camera state.
+		"""
 		self.map, self.agentlayer = None, None
 		self.cameras = {}
 		self.hero, self.girl, self.clouds, self.beekeepers = None, None, [], []
@@ -96,11 +121,27 @@ class World(EventListenerBase):
 		self.instance_to_agent = {}
 
 	def load(self, filename):
+		"""
+		Load a xml map and setup agents and cameras.
+		"""
 		self.filename = filename
 		self.reset()
 		self.map = loadMapFile(filename, self.engine)
 		self.maplistener = MapListener(self.map)
 
+		self.initAgents()
+		self.initCameras()
+
+	def initAgents(self):
+		"""
+		Setup agents.
+
+		For this techdemo we have a very simple 'active things on the map' model,
+		which is called agents. All rio maps will have a separate layer for them.
+
+		Note that we keep a mapping from map instances (C++ model of stuff on the map)
+		to the python agents for later reference.
+		"""
 		self.agentlayer = self.map.getLayer('TechdemoMapGroundObjectLayer')
 		self.hero = Hero(self.model, 'PC', self.agentlayer)
 		self.instance_to_agent[self.hero.agent.getFifeId()] = self.hero
@@ -115,23 +156,42 @@ class World(EventListenerBase):
 			self.instance_to_agent[beekeeper.agent.getFifeId()] = beekeeper
 			beekeeper.start()
 
+		# Clouds are currently defunct.
 		cloudlayer = self.map.getLayer('TechdemoMapTileLayer')
 		self.clouds = create_anonymous_agents(self.model, 'Cloud', cloudlayer, Cloud)
 		for cloud in self.clouds:
 			cloud.start(0.1, 0.05)
 
+
+	def initCameras(self):
+		"""
+		Before we can actually see something on screen we have to specify the render setup.
+		This is done through Camera objects which offer a viewport on the map.
+
+		For this techdemo two cameras are used. One follows the hero(!) via 'attach'
+		the other one scrolls around a bit (see the pump function).
+		"""
 		for cam in self.view.getCameras():
 			self.cameras[cam.getId()] = cam
 		self.cameras['main'].attach(self.hero.agent)
 
 		self.view.resetRenderers()
+		# Floating text renderers currntly only support one font.
+		# ... so we set that up.
+		# You'll se that for our demo we use a image font, so we have to specify the font glyphs
+		# for that one.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
 		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, str(TDS.readSetting("FontGlyphs", strip=False)));
 		renderer.changeDefaultFont(textfont)
 
+		# The small camera shouldn't be cluttered by the 'humm di dums' of our hero.
+		# So we disable the renderer simply by setting its font to None.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['small'])
 		renderer.changeDefaultFont(None)
 
+		# The following renderers are used for debugging.
+		# Note that by default ( that is after calling View.resetRenderers or Camera.resetRenderers )
+		# renderers will be handed all layers. That's handled here.
 		renderer = self.cameras['main'].getRenderer('CoordinateRenderer')
 		renderer.clearActiveLayers()
 		renderer.addActiveLayer(self.map.getLayer(str(TDS.readSetting("CoordinateLayerName"))))
@@ -142,12 +202,13 @@ class World(EventListenerBase):
 		if str(TDS.readSetting("QuadTreeLayerName")):
 			renderer.addActiveLayer(self.map.getLayer(str(TDS.readSetting("QuadTreeLayerName"))))
 
-		self.cameras['small'].getLocationRef().setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
+		# Set up the second camera
+		# NOTE: We need to explicitly call setLocation, there's a bit of a messup in the Camera code.
+		self.cameras['small'].setLocation(self.hero.agent.getLocation())
+		#self.cameras['small'].getLocationRef().setExactLayerCoordinates( fife.ExactModelCoordinate( 40.0, 40.0, 0.0 ))
 		self.initial_cam2_x = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		self.cur_cam2_x = self.initial_cam2_x
 		self.cam2_scrolling_right = True
-		# We need to set the second cameras location
-		self.cameras['small'].setLocation(self.hero.agent.getLocation())
 		self.target_rotation = self.cameras['main'].getRotation()
 
 	def save(self, filename):
@@ -166,11 +227,9 @@ class World(EventListenerBase):
 			c = self.cameras['small']
 			c.setEnabled(not c.isEnabled())
 		elif keystr == 'r':
-			pass
-#			self.model.deleteMaps()
-#			self.metamodel.deleteDatasets()
-#			self.view.clearCameras()
-#			self.load(self.filename)
+			self.model.deleteMaps()
+			self.view.clearCameras()
+			self.load(self.filename)
 		elif keystr == 'o':
 			self.target_rotation = (self.target_rotation + 90) % 360
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
@@ -227,10 +286,11 @@ class World(EventListenerBase):
 		result = ''
 		try:
 			result = str(eval(command))
-		except:
-			pass
+		except Exception, e:
+			result = str(e)
 		return result
 
+	# Callbacks from the popupmenu
 	def onMoveButtonPress(self):
 		self.hide_instancemenu()
 		self.hero.run(self.instancemenu.instance.getLocationRef())
