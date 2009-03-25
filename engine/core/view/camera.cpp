@@ -145,7 +145,7 @@ namespace FIFE {
 		if ((m_prev_origo == m_cur_origo) && (m_prev_origo == ScreenPoint(0,0,0))) {
 			m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
 			m_prev_origo = m_cur_origo;
-		}	
+		}
 		m_location = location;
 		
 		CellGrid* cg = NULL;
@@ -160,7 +160,6 @@ namespace FIFE {
 		
 		updateMatrices();
 		
-		m_prev_origo = m_cur_origo;
 		m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
 	}
 
@@ -473,7 +472,7 @@ namespace FIFE {
 	}
 
 	void Camera::render() {
-		ScreenPoint cammove = getLatestMovement();
+		ScreenPoint cammove = m_prev_origo - m_cur_origo;
 		
 		Map* map = m_location.getMap();
 		if (!map) {

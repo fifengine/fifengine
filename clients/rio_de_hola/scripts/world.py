@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import fife, math, random
 import pychan
 import pychan.widgets as widgets
@@ -145,8 +146,8 @@ class World(EventListenerBase):
 		self.initial_cam2_x = self.cameras['small'].getLocation().getExactLayerCoordinates().x
 		self.cur_cam2_x = self.initial_cam2_x
 		self.cam2_scrolling_right = True
-		self.cameras['small'].setEnabled(False)
-
+		# We need to set the second cameras location
+		self.cameras['small'].setLocation(self.hero.agent.getLocation())
 		self.target_rotation = self.cameras['main'].getRotation()
 
 	def save(self, filename):
