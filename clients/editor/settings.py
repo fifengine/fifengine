@@ -7,7 +7,7 @@ SDLRemoveFakeAlpha  = 1
 ScreenWidth         = 1024
 ScreenHeight        = 768
 
-Font                = 'fonts/samanata.ttf'
+Font                = 'fonts/FreeSans.ttf'
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\""
 
 LogModules          = ['controller']

@@ -215,16 +215,16 @@ class LayerTool(plugin.Plugin):
 		if self.previous_active_layer is not None:
 			previous_layer_id = str(self.previous_active_layer)
 			previous_active_widget = self.container.findChild(name="select_" + previous_layer_id)
-			previous_active_widget._setBackgroundColor(_DEFAULT_BACKGROUND_COLOR)
-			previous_active_widget._setForegroundColor(_DEFAULT_BACKGROUND_COLOR)
-			previous_active_widget._setBaseColor(_DEFAULT_BACKGROUND_COLOR)		
+			previous_active_widget.background_color = _DEFAULT_BACKGROUND_COLOR
+			previous_active_widget.foreground_color = _DEFAULT_BACKGROUND_COLOR
+			previous_active_widget.base_color = _DEFAULT_BACKGROUND_COLOR
 			previous_active_widget.text = previous_layer_id
 		
 		layerid = widget.name[7:]	
 		
-		widget._setBackgroundColor(_HIGHLIGHT_BACKGROUND_COLOR)
-		widget._setForegroundColor(_HIGHLIGHT_BACKGROUND_COLOR)
-		widget._setBaseColor(_HIGHLIGHT_BACKGROUND_COLOR)
+		widget.background_color = _HIGHLIGHT_BACKGROUND_COLOR
+		widget.foreground_color = _HIGHLIGHT_BACKGROUND_COLOR
+		widget.base_color = _HIGHLIGHT_BACKGROUND_COLOR
 		widget.text = widget.text + " *"
 		self.previous_active_layer = layerid
 		self.container.adaptLayout()
