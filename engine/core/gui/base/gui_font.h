@@ -36,7 +36,7 @@
 
 namespace FIFE {
 
-	class GuiFont : public gcn::Font {
+	class GuiFont : public gcn::Font, public AbstractFont {
 	public:
 		/** Constructor
 		 *  Takes the ownership of given font

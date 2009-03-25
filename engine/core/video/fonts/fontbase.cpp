@@ -78,7 +78,7 @@ namespace FIFE {
 		return mColor;
 	}
 
-	int FontBase::getStringIndexAt(const std::string &text, int x) {
+	int FontBase::getStringIndexAt(const std::string &text, int x) const {
 		assert( utf8::is_valid(text.begin(), text.end()) );
 		std::string::const_iterator cur;
 		if (text.size() == 0) return 0;

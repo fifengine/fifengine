@@ -55,7 +55,7 @@ namespace FIFE {
 		int getGlyphSpacing() const;
 		void setAntiAlias(bool antiAlias);
 		bool isAntiAlias();
-		virtual int getStringIndexAt(const std::string &text, int x);
+		virtual int getStringIndexAt(const std::string &text, int x) const;
 		
 		Image* getAsImage(const std::string& text);
 		Image* getAsImageMultiline(const std::string& text);
