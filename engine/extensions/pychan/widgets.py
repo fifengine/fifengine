@@ -323,10 +323,25 @@ class Widget(object):
 		"""
 		This function adds a widget as child widget and is only implemented
 		in container widgets.
+
+		You'll need to call L{adaptLayout} if the container is already shown,
+		to adapt the layout to the new widget. This doesn't happen
+		automatically.
 		"""
 		raise RuntimeError("Trying to add a widget to %s, which doesn't allow this." % repr(self))
 
 	def addChildren(self,*widgets):
+		"""
+		Add multiple widgets as children.
+		Only implemented for container widgets. See also L{addChild}
+
+		Usage::
+			container.addChildren( widget1, widget2, ... )
+			# or you can use this on a list
+			container.addChildren( [widget1,widget2,...] )
+		"""
+		if len(widgets) == 1 and not isinstance(widgets[0],Widget):
+			widgets = widgets[0]
 		for widget in widgets:
 			self.addChild(widget)
 
@@ -334,10 +349,27 @@ class Widget(object):
 		"""
 		This function removes a direct child widget and is only implemented
 		in container widgets.
+
+		You'll need to call L{adaptLayout} if the container is already shown,
+		to adapt the layout to the removed widget. This doesn't happen
+		automatically.
 		"""
 		raise RuntimeError("Trying to remove a widget from %s, which is not a container widget." % repr(self))
 
 	def removeChildren(self,*widgets):
+		"""
+		Remove a list of direct child widgets.
+		All widgets have to be direct child widgets.
+		To 'clear' a container take a look at L{removeAllChildren}.
+		See also L{removeChild}.
+
+		Usage::
+			container.removeChildren( widget1, widget2, ... )
+			# or you can use this on a list
+			container.removeChildren( [widget1,widget2,...] )
+		"""
+		if len(widgets) == 1 and not isinstance(widgets[0],Widget):
+			widgets = widgets[0]
 		for widget in widgets:
 			self.removeChild(widget)
 
@@ -364,15 +396,19 @@ class Widget(object):
 		@param ignoreMissing: Normally this method raises an RuntimeError, when a widget
 		can not be found - this behaviour can be overriden by passing True here.
 
-		The keys in the dictionary are parsed as "widgetName/eventName" with the slash
+		The keys in the dictionary are parsed as C{"widgetName/eventName"} with the slash
 		separating the two. If no slash is found the eventName is assumed to be "action".
 
+		Additionally you can supply a group name or channel C{"widgetName/eventName/groupName"}.
+		Event handlers from one group are not overridden by handlers from another group.
+		The default group name is C{"default"}.
+
 		Example::
-		    guiElement.mapEvents({
-			"button" : guiElement.hide,
-			"button/mouseEntered" : toggleButtonColorGreen,
-			"button/mouseExited" :  toggleButtonColorBlue,
-		    })
+			guiElement.mapEvents({
+				"button" : guiElement.hide,
+				"button/mouseEntered" : toggleButtonColorGreen,
+				"button/mouseExited" :  toggleButtonColorBlue,
+			})
 
 		"""
 		for descr,func in eventMap.items():
