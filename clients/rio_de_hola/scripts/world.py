@@ -93,6 +93,7 @@ class World(EventListenerBase):
 		and hooks the events up.
 		The buttons are removed and later re-added if appropiate.
 		"""
+		self.hide_instancemenu()
 		dynamicbuttons = ('moveButton', 'talkButton', 'kickButton', 'inspectButton')
 		self.instancemenu = pychan.loadXML('gui/instancemenu.xml')
 		self.instancemenu.mapEvents({
@@ -214,6 +215,23 @@ class World(EventListenerBase):
 	def save(self, filename):
 		saveMapFile(filename, self.engine, self.map)
 
+	def getInstancesAt(self, clickpoint):
+		"""
+		Query the main camera for instances on our active(agent) layer.
+		"""
+		return self.cameras['main'].getMatchingInstances(clickpoint, self.agentlayer)
+
+	def getLocationAt(self, clickpoint):
+		"""
+		Query the main camera for the Map location (on the agent layer)
+		that a screen point refers to.
+		"""
+		target_mapcoord = self.cameras['main'].toMapCoordinates(clickpoint, False)
+		target_mapcoord.z = 0
+		location = fife.Location(self.agentlayer)
+		location.setMapCoordinates(target_mapcoord)
+		return location
+
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
@@ -249,6 +267,10 @@ class World(EventListenerBase):
 			self.cameras['main'].setZoom(self.cameras['main'].getZoom() / 1.05)
 
 	def changeRotation(self):
+		"""
+		Smoothly change the main cameras rotation until
+		the current target rotation is reached.
+		"""
 		currot = self.cameras['main'].getRotation()
 		if self.target_rotation != currot:
 			self.cameras['main'].setRotation((currot + 5) % 360)
@@ -260,14 +282,10 @@ class World(EventListenerBase):
 		clickpoint = fife.ScreenPoint(evt.getX(), evt.getY())
 		if (evt.getButton() == fife.MouseEvent.LEFT):
 			self.hide_instancemenu()
-			target_mapcoord = self.cameras['main'].toMapCoordinates(clickpoint, False)
-			target_mapcoord.z = 0
-			l = fife.Location(self.agentlayer)
-			l.setMapCoordinates(target_mapcoord)
-			self.hero.run(l)
+			self.hero.run( self.getLocationAt(clickpoint) )
 
 		if (evt.getButton() == fife.MouseEvent.RIGHT):
-			instances = self.cameras['main'].getMatchingInstances(clickpoint, self.agentlayer)
+			instances = self.getInstancesAt(clickpoint)
 			print "selected instances on agent layer: ", [i.getObject().getId() for i in instances]
 			if instances:
 				self.show_instancemenu(clickpoint, instances[0])
@@ -277,7 +295,7 @@ class World(EventListenerBase):
 		renderer.removeAllOutlines()
 
 		pt = fife.ScreenPoint(evt.getX(), evt.getY())
-		instances = self.cameras['main'].getMatchingInstances(pt, self.agentlayer);
+		instances = self.getInstancesAt(pt);
 		for i in instances:
 			if i.getObject().getId() in ('girl', 'beekeeper'):
 				renderer.addOutlined(i, 173, 255, 47, 2)
@@ -301,12 +319,10 @@ class World(EventListenerBase):
 		self.hero.talk(instance.getLocationRef())
 		if instance.getObject().getId() == 'beekeeper':
 			beekeeperTexts = TDS.readSetting("beekeeperTexts", type='list', text=True)
-			txtindex = random.randint(0, len(beekeeperTexts) - 1)
-			instance.say(beekeeperTexts[txtindex], 5000)
+			instance.say(random.choice(beekeeperTexts), 5000)
 		if instance.getObject().getId() == 'girl':
 			girlTexts = TDS.readSetting("girlTexts", type='list', text=True)
-			txtindex = random.randint(0, len(girlTexts) - 1)
-			instance.say(girlTexts[txtindex], 5000)
+			instance.say(random.choice(girlTexts), 5000)
 
 	def onKickButtonPress(self):
 		self.hide_instancemenu()
@@ -324,6 +340,12 @@ class World(EventListenerBase):
 		self.hero.agent.say('\n'.join(saytext), 3500)
 
 	def pump(self):
+		"""
+		Called every frame.
+
+		Scroll the small demo camera and
+		(smoothly) update the rotation.
+		"""
 		if self.cameras['small'].isEnabled():
 			loc = self.cameras['small'].getLocation()
 			c = loc.getExactLayerCoordinatesRef()
