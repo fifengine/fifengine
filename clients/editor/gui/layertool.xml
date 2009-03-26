@@ -1,5 +1,0 @@
-<Window title="Layertool" position="10,200">
-	<VBox name="layers_wrapper">
-	
-	</VBox>
-</Window>
