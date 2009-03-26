@@ -7,6 +7,7 @@ from pychan.exceptions import *
 from pychan.attrs import Attr,UnicodeAttr, PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
 from pychan.properties import ColorProperty
 
+AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
 
 def get_manager():
 	import pychan
@@ -31,7 +32,7 @@ def gui2text(text):
 	return unicode(text,"utf8",*get_manager().unicodePolicy)
 
 def isLayouted(widget):
-	from containers import LayoutBase
+	from layout import LayoutBase
 	return isinstance(widget,LayoutBase)
 
 class DummyImage(object):
