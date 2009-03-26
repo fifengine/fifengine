@@ -1,0 +1,133 @@
+#from editor import getEditor # Needed to quit application
+
+import fife
+from fife import IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter
+
+CALLBACK_NONE_MESSAGE = """\
+You passed None as parameter to EventMapper, which would normally remove a mapped event.
+But there was no event mapped. Did you accidently call a function instead of passing it?
+Group name = %s
+"""
+
+class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
+	def __init__(self, engine):
+		self.engine = engine
+		
+		self.callbacks = {}
+		
+		eventmanager = self.engine.getEventManager()
+
+		IKeyListener.__init__(self)
+		eventmanager.addKeyListener(self)
+		
+		ICommandListener.__init__(self)
+		eventmanager.addCommandListener(self)
+		
+		IMouseListener.__init__(self)
+		eventmanager.addMouseListener(self)
+		
+		ConsoleExecuter.__init__(self)
+		self.engine.getGuiManager().getConsole().setConsoleExecuter(self)
+		
+		MapChangeListener.__init__(self)
+		LayerChangeListener.__init__(self)
+		
+
+	# Since this EventMapper is shared by all modules in the editor, 
+	# a groupname parameter must be supplied so that the event can be
+	# removed by the object that created it later.
+	#
+	# By setting callback to None, the event will be removed.
+	def capture(self, group_name, event_name, callback=None ):
+		if callback is None:
+			if self.isCaptured(group_name, event_name):
+				self._removeEvent(group_name, event_name)
+			elif self.debug:
+				print CALLBACK_NONE_MESSAGE % str(group_name)
+			return
+		self._addEvent(group_name, event_name, callback)
+	
+	def isCaptured(self, group_name, event_name):
+		if self.callbacks.has_key(group_name):
+			if self.callbacks[group_name].has_key(event_name):
+				return True
+		return False
+
+	def _addEvent(self, group_name, event_name, callback):
+		# Set up callback dictionary. This should fix some GC issues
+		if not self.callbacks.has_key(group_name):
+			self.callbacks[group_name] = {}
+			
+		if not self.callbacks[group_name].has_key(event_name):
+			self.callbacks[group_name][event_name] = {}
+			
+		self.callbacks[group_name][event_name] = callback
+
+	def _removeEvent(self, groupname, event_name):
+		del self.callbacks[group_name][event_name]
+		if len(self.callbacks[group_name]) <= 0:
+			del self.callbacks[group_name]
+
+	def _redirectEvent(self, event_name, *args):
+		for group in self.callbacks:
+			for event in self.callbacks[group]:
+				if event == event_name:
+					self.callbacks[group][event](*args)
+		#print "Event:", event_name, args
+
+	# addHotkey is similar to capture, except that it accepts a key 
+	# sequence (e.g. "CTRL+X") instead of an event.
+	def addHotkey(self, groupname, keysequence, callback=None): 
+		pass
+	
+	#--- Listener methods ---#
+	def onSave(self, map):
+		self._redirectEvent("onSave", map)
+		
+	def mapAdded(self, map):
+		self._redirectEvent("mapAdded", map)
+		
+	def onQuit(self):
+		self._redirectEvent("onQuit")
+	
+	# IKeyListener
+	def keyPressed(self, evt): 
+		keyval = evt.getKey().getValue()
+		if keyval == fife.Key.ESCAPE:
+			self.onQuit()
+		elif keyval == fife.Key.F10:
+			self.engine.getGuiManager().getConsole().toggleShowHide()
+		
+		self._redirectEvent("keyPressed", evt)
+		
+		evt.consume()
+
+	def keyReleased(self, evt): self._redirectEvent("keyReleased", evt)
+
+	# ICommandListener
+	def onCommand(self, command): self._redirectEvent("onCommand", command)
+
+	# IMouseListener
+	def mouseEntered(self, evt): self._redirectEvent("mouseEntered", evt)
+	def mouseExited(self, evt): self._redirectEvent("mouseExited", evt)
+	def mousePressed(self, evt): self._redirectEvent("mousePressed", evt)
+	def mouseReleased(self, evt): self._redirectEvent("mouseReleased", evt)
+	def mouseClicked(self, evt): self._redirectEvent("mouseClicked", evt)
+	def mouseWheelMovedUp(self, evt): self._redirectEvent("mouseWheelMovedUp", evt)
+	def mouseWheelMovedDown(self, evt): self._redirectEvent("mouseWheelMovedDown", evt)
+	def mouseMoved(self, evt): self._redirectEvent("mouseMoved", evt)
+	def mouseDragged(self, evt): self._redirectEvent("mouseDragged", evt)
+
+	# LayerChangeListener
+	def onLayerChanged(self, layer, changedInstances): self._redirectEvent("onLayerChanged", layer, changedInstances)
+	def onInstanceCreate(self, layer, instance): self._redirectEvent("onInstanceCreate", layer, instance)
+	def onInstanceDelete(self, layer, instance): self._redirectEvent("onInstanceDelete", layer, instance)
+
+	# MapChangeListener
+	def onMapChanged(self, map, changedLayers): self._redirectEvent("onMapChanged", map, changedLayers)
+	def onLayerCreate(self, map, layer): self._redirectEvent("onLayerCreate", map, layer)
+	def onLayerDelete(self, map, layer): self._redirectEvent("onLayerDelete", map, layer)
+
+	# ConsoleExecuter
+	def onToolsClick(self): self._redirectEvent("onConsoleCommand")
+	def onConsoleCommand(self, command): self._redirectEvent("onConsoleCommand", command)
