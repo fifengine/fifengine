@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import fife, pythonize
-import pychan.tools as tools
-import pychan.events as events
-from pychan.exceptions import *
-from pychan.attrs import Attr,UnicodeAttr, PointAttr,ColorAttr,BoolAttr,IntAttr,FloatAttr
-from pychan.properties import ColorProperty
-
 from pychan.widgets.common import *
 
 class Widget(object):

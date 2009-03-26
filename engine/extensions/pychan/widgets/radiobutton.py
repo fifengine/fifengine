@@ -43,5 +43,5 @@ class RadioButton(BasicTextWidget):
 	group = property(_getGroup,_setGroup)
 
 	def resizeToContent(self,recurse=True):
-		self.width = self.real_font.getWidth(_text2gui(self.text)) + 35# Size of the Checked box?
+		self.width = self.real_font.getWidth(text2gui(self.text)) + 35# Size of the Checked box?
 		self.height = self.real_font.getHeight()
