@@ -1,0 +1,11 @@
+<Window title="Select an option">
+	<VBox>
+		<ScrollArea size="150,300">
+			<ListBox name="optionDrop"/>	
+		</ScrollArea>
+		<HBox>
+			<Button name="okButton" text="OK"/>
+			<Button name="cancelButton" text="Cancel"/>
+		</HBox>
+	</VBox>
+</Window>

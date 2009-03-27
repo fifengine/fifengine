@@ -1,0 +1,21 @@
+<Window title="File Browser">
+	<HBox>
+		<VBox>
+			<Label name="dirLabel" text="Directories:"/>
+			<ScrollArea size="200,300">
+				<ListBox name="dirList"/>
+			</ScrollArea>
+		</VBox>
+		<VBox name="fileColumn">
+			<Label name="fileLabel" text="Files:"/>
+			<ScrollArea size="200,300">
+				<ListBox name="fileList"/>
+			</ScrollArea>
+		</VBox>
+		<VBox>
+			<Button name="selectButton" text="Select"/>
+			<Spacer />
+			<Button name="closeButton" text="Close"/>
+		</VBox>
+	</HBox>
+</Window>
