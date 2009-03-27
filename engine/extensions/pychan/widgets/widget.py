@@ -59,7 +59,7 @@ class Widget(object):
 		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
 		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),ColorAttr('selection_color'),
 		Attr('style'), Attr('font'),IntAttr('border_size'),Attr('position_technique'),
-		BoolAttr('vexpand'),BoolAttr('hexpand'),
+		IntAttr('vexpand'),IntAttr('hexpand'),
 		UnicodeAttr('helptext')
 		]
 
@@ -556,9 +556,9 @@ class Widget(object):
 		def _callExpandContent(widget):
 			#print "ETC:",widget
 			widget.expandContent()
-		self.deepApply(_callExpandContent)
+		self.deepApply(_callExpandContent, leaves_first=False)
 
-	def deepApply(self,visitorFunc):
+	def deepApply(self,visitorFunc, leaves_first = True):
 		"""
 		Recursively apply a callable to all contained widgets and then the widget itself.
 		"""

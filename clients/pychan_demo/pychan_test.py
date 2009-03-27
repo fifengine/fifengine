@@ -61,6 +61,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
 		self.gui = pychan.loadXML('gui/demoapp.xml')
+		self.gui.min_size = self.engine.getRenderBackend().getScreenWidth(),self.engine.getRenderBackend().getScreenHeight()
 		self.gui.findChild(name="xmlSource").font = "FreeMono"
 
 		eventMap = {
@@ -90,6 +91,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items += self.examples.keys()
 		self.gui.show()
+		print self.gui.size
 		
 		self.slider = self.gui.findChild(name='slider')
 		self.slider_value = self.gui.findChild(name='slider_value')

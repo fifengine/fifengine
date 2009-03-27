@@ -18,10 +18,10 @@ class ScrollArea(Widget):
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ BoolAttr("vertical_scrollbar"),BoolAttr("horizontal_scrollbar") ]
 
-	def __init__(self,**kwargs):
+	def __init__(self,hexpand=1,vexpand=1,**kwargs):
 		self.real_widget = fife.ScrollArea()
 		self._content = None
-		super(ScrollArea,self).__init__(**kwargs)
+		super(ScrollArea,self).__init__(hexpand=hexpand,vexpand=vexpand,**kwargs)
 
 	def addChild(self,widget):
 		self.content = widget
@@ -42,9 +42,12 @@ class ScrollArea(Widget):
 	def _getContent(self): return self._content
 	content = property(_getContent,_setContent)
 
-	def deepApply(self,visitorFunc):
-		if self._content: self._content.deepApply(visitorFunc)
+	def deepApply(self,visitorFunc, leaves_first = True):
+		if leaves_first:
+			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first)
 		visitorFunc(self)
+		if not leaves_first:
+			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first)
 
 	def resizeToContent(self,recurse=True):
 		if self._content is None: return

@@ -57,10 +57,14 @@ class Container(Widget):
 		if not self.children: return 0
 		return max(widget.height for widget in self.children)
 
-	def deepApply(self,visitorFunc):
-		for child in self.children:
-			child.deepApply(visitorFunc)
+	def deepApply(self,visitorFunc, leaves_first = True):
+		if leaves_first:
+			for child in self.children:
+				child.deepApply(visitorFunc, leaves_first = leaves_first)
 		visitorFunc(self)
+		if not leaves_first:
+			for child in self.children:
+				child.deepApply(visitorFunc, leaves_first = leaves_first)
 
 	def beforeShow(self):
 		self._resetTiling()
@@ -124,8 +128,8 @@ class VBox(VBoxLayoutMixin,Container):
 	widgets above the spacer are aligned to the top, while widgets below the spacer
 	are aligned to the bottom.
 	"""
-	def __init__(self,padding=5,**kwargs):
-		super(VBox,self).__init__(**kwargs)
+	def __init__(self,padding=5,vexpand=1,**kwargs):
+		super(VBox,self).__init__(vexpand=vexpand,**kwargs)
 		self.padding = padding
 
 
@@ -135,8 +139,8 @@ class HBox(HBoxLayoutMixin,Container):
 
 	Please see L{VBox} for details - just change the directions :-).
 	"""
-	def __init__(self,padding=5,**kwargs):
-		super(HBox,self).__init__(**kwargs)
+	def __init__(self,padding=5,hexpand=1,**kwargs):
+		super(HBox,self).__init__(hexpand=hexpand,**kwargs)
 		self.padding = padding
 
 class Window(VBoxLayoutMixin,Container):
