@@ -59,6 +59,7 @@ class Widget(object):
 		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
 		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),ColorAttr('selection_color'),
 		Attr('style'), Attr('font'),IntAttr('border_size'),Attr('position_technique'),
+		BoolAttr('vexpanding'),BoolAttr('hexpanding'),
 		UnicodeAttr('helptext')
 		]
 
@@ -72,11 +73,14 @@ class Widget(object):
 	def __init__(self,parent = None, name = DEFAULT_NAME,
 				 size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
 				 helptext=u"",
-				 style = None, **kwargs):
+				 style = None, vexpanding=0,hexpanding=0,**kwargs):
 
 		assert( hasattr(self,'real_widget') )
 		self.event_mapper = events.EventMapper(self)
 		self._visible = False
+		self._extra_border = (0,0)
+		self.hexpanding = hexpanding
+		self.vexpanding = vexpanding
 
 		# Data distribution & retrieval settings
 		self.accepts_data = False

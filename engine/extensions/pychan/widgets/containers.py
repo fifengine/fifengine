@@ -180,25 +180,3 @@ class Window(VBoxLayoutMixin,Container):
 	def _getHeight(self): return self.real_widget.getHeight() - self.titlebar_height
 	height = property(_getHeight,_setHeight)
 
-
-# Spacer
-
-class Spacer(object):
-	""" A spacer represents expandable 'whitespace' in the GUI.
-
-	In a XML file you can get this by adding a <Spacer /> inside a VBox or
-	HBox element (Windows implicitly are VBox elements).
-
-	The effect is, that elements before the spacer will be left (top)
-	and elements after the spacer will be right (bottom) aligned.
-
-	There can only be one spacer in VBox (HBox).
-	"""
-	def __init__(self,parent=None,**kwargs):
-		self._parent = parent
-
-	def __str__(self):
-		return "Spacer(parent.name='%s')" % getattr(self._parent,'name','None')
-
-	def __repr__(self):
-		return "<Spacer(parent.name='%s') at %x>" % (getattr(self._parent,'name','None'),id(self))

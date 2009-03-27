@@ -9,7 +9,8 @@ Please look at the documentation of L{Widget} for details.
 
 from widget import Widget
 
-from containers import Container, VBox, HBox, Window, Spacer
+from layout import Spacer
+from containers import Container, VBox, HBox, Window
 from label import Label, ClickLabel
 from icon import Icon
 from buttons import Button, ToggleButton, ImageButton
