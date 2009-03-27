@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-#coding: utf-8
 
-"""
-PyChan event handling
-=====================
+"""\
+PyChan event handling (internal).
+=================================
 
 Users shouldn't need to use this module directly.
 L{widgets.Widget.capture} and L{widgets.Widget.mapEvents} provide
 a convenient API to capture events.
 
 Nevertheless to understand how its supposed to work
-take a look at L{EventMapper} and L{EventListener}
+take a look at L{EventMapper} and L{EventListenerBase}
 
 Event callbacks
 ---------------
@@ -40,6 +39,7 @@ Available Events
 """
 
 from compat import guichan
+import widgets
 
 import exceptions
 from internal import get_manager
@@ -188,8 +188,8 @@ class EventMapper(object):
 	as attribute B{event_mapper}.
 
 	This instance handles all necessary house-keeping.
-	Such an event mapper can be either *attached* or
-	*detached*. In its attached state an L{EventListener}
+	Such an event mapper can be either C{attached} or
+	C{detached}. In its attached state an L{EventListenerBase}
 	is added to the Guichan widget and will redirect
 	the events to the callbacks.
 
