@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import fife
 
 """
@@ -34,6 +35,7 @@ def init(timemanager):
 class Timer(fife.TimeEvent):
 	def __init__(self,delay=0,callback=None):
 		super(Timer,self).__init__(0)
+		self.manager = _manager
 		self.is_registered = False
 		self.callback = callback
 		self.setPeriod(delay)
@@ -44,8 +46,7 @@ class Timer(fife.TimeEvent):
 		self.is_registered = True
 		global _alltimers
 		_alltimers[self]=1
-	    
-		_manager.registerEvent(self)
+		self.manager.registerEvent(self)
 
 	def stop(self):
 		if not self.is_registered:
@@ -53,8 +54,7 @@ class Timer(fife.TimeEvent):
 		self.is_registered = False
 		global _alltimers
 		del _alltimers[self]
-
-		_manager.unregisterEvent(self)
+		self.manager.unregisterEvent(self)
 
 	def updateEvent(self,delta):
 		if callable(self.callback):

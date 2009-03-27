@@ -68,7 +68,7 @@ namespace FIFE {
 		// It is very important to NOT use iterators (over a vector)
 		// here, as an event might add enough events to resize the vector.
 		// -> Ugly segfault
-		for (size_t i = 0; i != m_events_list.size(); ++i) {
+		for (size_t i = 0; i < m_events_list.size(); ++i) {
 			TimeEvent* event = m_events_list[ i ];
 			if( event ) {
 				event->managerUpdateEvent(m_current_time);
@@ -88,10 +88,10 @@ namespace FIFE {
 
 	void TimeManager::unregisterEvent(TimeEvent* event) {
 		// Unregister.
-		std::vector<TimeEvent*>::iterator i = m_events_list.begin();
-		for(; i != m_events_list.end(); ++i) {
-			if( (*i) == event ) {
-				*i = 0;
+		for (size_t i = 0; i < m_events_list.size(); ++i) {
+			TimeEvent*& event_i = m_events_list[ i ];
+			if( event_i == event) {
+				event_i = 0;
 				return;
 			}
 		}

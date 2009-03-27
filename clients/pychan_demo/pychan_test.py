@@ -77,6 +77,10 @@ class DemoApplication(basicapplication.ApplicationBase):
 		credits = self.gui.findChild(name="creditsLink")
 		# setEnterCallback is deprecated - we use it here to test it.
 		credits.setEnterCallback(lambda w : credits._setText(u"CREDITS"))
+		# Note that we can't simply write:
+		# credits.capture(credits._setText(u"Credits"), event_name="mouseExited")
+		# that's because that would call credits._setText _NOW_ and we want to call
+		# it later.
 		credits.capture(lambda : credits._setText(u"Credits"), event_name="mouseExited")
 
 		# Our list of examples

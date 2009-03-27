@@ -2,6 +2,7 @@
 
 from compat import guichan, in_fife
 import widgets
+import timer
 import fonts
 from exceptions import *
 from traceback import print_exc
@@ -36,6 +37,7 @@ class Manager(object):
 				raise InitializationError("No event manager installed.")
 			if not hook.engine.getGuiManager():
 				raise InitializationError("No GUI manager installed.")
+		timer.init(hook.engine.getTimeManager())
 
 		self.fonts = {}
 		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'

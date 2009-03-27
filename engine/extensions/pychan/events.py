@@ -46,6 +46,7 @@ from internal import get_manager
 import tools
 import traceback
 import weakref
+import timer
 
 EVENTS = [
 	"mouseEntered",
@@ -132,7 +133,9 @@ class EventListenerBase(object):
 			if name in self.events:
 				if self.debug: print "-"*self.indent, name
 				for f in self.events[name].itervalues():
-					f( event )
+					def delayed_f():
+						f( event )
+					timer.delayCall(0,delayed_f)
 
 		except:
 			print name, repr(event)
