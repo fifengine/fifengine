@@ -100,7 +100,7 @@ class ImageButton(BasicTextWidget):
 		return (self.real_widget.getDownXOffset(), self.real_widget.getDownYOffset())
 	offset = property(_getOffset,_setOffset)
 
-	def resizeToContent(self):
+	def resizeToContent(self, recurse=True):
 		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
 		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2
 
@@ -186,6 +186,6 @@ class ToggleButton(BasicTextWidget):
 		return (self.real_widget.getDownXOffset(), self.real_widget.getDownYOffset())
 	offset = property(_getOffset,_setOffset)
 
-	def resizeToContent(self):
+	def resizeToContent(self, recurse=True):
 		self.height = max(self._upimage.getHeight(),self._downimage.getHeight(),self._hoverimage.getHeight()) + self.margins[1]*2
 		self.width = max(self._upimage.getWidth(),self._downimage.getWidth(),self._hoverimage.getWidth()) + self.margins[1]*2

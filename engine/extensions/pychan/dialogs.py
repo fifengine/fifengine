@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 
 from pychan import loadXML
 import pychan.tools
@@ -68,7 +68,7 @@ MESSAGE_BOX_XML = """\
 <Label wrap_text="1" text="$MESSAGE" name="message" vexpanding="1"/>
 </ScrollArea>
 <HBox>
-<Spacer/><Button min_width="50" name="okButton" text="OK"/>
+<Spacer/><Button min_size="50,0" name="okButton" text="OK"/>
 </HBox>
 </Window>
 """
@@ -80,8 +80,8 @@ YESNO_BOX_XML = """\
 </ScrollArea>
 <HBox>
 <Spacer/>
-<Button min_width="50" name="yesButton" text="Yes"/>
-<Button min_width="50" name="noButton" text="No"/>
+<Button min_size="50,0" name="yesButton" text="Yes"/>
+<Button min_size="50,0" name="noButton" text="No"/>
 </HBox>
 </Window>
 """
@@ -117,8 +117,8 @@ SELECT_BOX_XML = """\
 
 EXCEPTION_CATCHER_XML="""\
 <Window name="window" title="An exception occurred - what now?">
-  <VBox hexpanding="1">
-    <Label wrap_text="1" max_width="400" text="$MESSAGE" name="message"/>
+  <VBox hexpand="1">
+    <Label wrap_text="1" max_size="400,90000" text="$MESSAGE" name="message"/>
     <ScrollArea>
     <Label text="$MESSAGE" name="traceback"/>
     </ScrollArea>

@@ -54,7 +54,7 @@ class ScrollArea(Widget):
 	def resizeToContent(self,recurse=True):
 		if self._content is None: return
 		if recurse:
-			self.content.resizeToContent(recurse=True)
+			self.content.resizeToContent(recurse=recurse)
 		self.content.width = max(self.content.width,self.width-5)
 		self.content.height = max(self.content.height,self.height-5)
 

@@ -95,7 +95,6 @@ class Widget(object):
 		# Data distribution & retrieval settings
 		self.accepts_data = False
 		self.accepts_initial_data = False
-
 		self.parent = parent
 
 		# This will also set the _event_id and call real_widget.setActionEventId
@@ -144,7 +143,7 @@ class Widget(object):
 			def _quitThisDialog(returnValue = returnValue ):
 				get_manager().breakFromMainLoop( returnValue )
 				self.hide()
-			self.findChild(name=name).capture( _quitThisDialog )
+			self.findChild(name=name).capture( _quitThisDialog , group_name = "__execute__" )
 		self.show()
 		return get_manager().mainLoop()
 
@@ -653,7 +652,9 @@ class Widget(object):
 	parent = property(_getParent,_setParent)
 
 	def _setName(self,name): self._name = name
-	def _getName(self): return self._name
+	def _getName(self):
+		# __str__ relies on self.name
+		return getattr(self,'_name','__no_name_yet__')
 	name = property(_getName,_setName)
 
 	x = property(_getX,_setX)

@@ -17,6 +17,7 @@ import fife
 import fifelog
 import basicapplication
 import pychan
+from pychan.dialogs import trace
 
 class PyChanExample(object):
 	def __init__(self,xmlFile):
@@ -68,7 +69,6 @@ class DemoApplication(basicapplication.ApplicationBase):
 			'creditsLink'  : self.showCredits,
 			'closeButton'  : self.quit,
 			'demoList' : self.selectExample,
-			'slider': self.test_slider
 		}
 		self.gui.mapEvents(eventMap)
 		credits = self.gui.findChild(name="creditsLink")
@@ -80,21 +80,19 @@ class DemoApplication(basicapplication.ApplicationBase):
 
 		from dynamic import DynamicExample
 		from styling import StylingExample
+		from sliders import SliderExample
 		
 		self.examples = {
 			'Absolute Positioning' : PyChanExample('gui/absolute.xml'),
 			'All Widgets' : PyChanExample('gui/all_widgets.xml'),
 			'Basic Styling' : StylingExample(),
 			'Dynamic Widgets' : DynamicExample(),
+			'Sliders' : SliderExample(),
 			'ScrollArea' : PyChanExample('gui/scrollarea.xml'),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
-		self.demoList.items += self.examples.keys()
+		self.demoList.items += sorted(self.examples.keys())
 		self.gui.show()
-		print self.gui.size
-		
-		self.slider = self.gui.findChild(name='slider')
-		self.slider_value = self.gui.findChild(name='slider_value')
 		
 		self.currentExample = None
 		self.creditsWidget = None
@@ -104,13 +102,12 @@ class DemoApplication(basicapplication.ApplicationBase):
 		print "selected",self.demoList.selected_item
 		if self.currentExample: self.currentExample.stop()
 		self.currentExample = self.examples[self.demoList.selected_item]
-		self.gui.findChild(name="xmlSource").text = open(self.currentExample.xmlFile).read()
-		self.currentExample.start()
+		self.gui.findChild(name="xmlSource").text = unicode(open(self.currentExample.xmlFile).read(), 'utf8')
+		start = trace(self.currentExample.start)
+		start()
 
 	def showCredits(self):
 		print pychan.loadXML('gui/credits.xml').execute({ 'okButton' : "Yay!" })
-	def test_slider(self):
-		self.slider_value._setText( str(self.slider.getValue()) )
 
 class TestXMLApplication(basicapplication.ApplicationBase):
 	"""

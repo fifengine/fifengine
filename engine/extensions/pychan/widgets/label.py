@@ -26,7 +26,7 @@ class Label(BasicTextWidget):
 		self.wrap_text = wrap_text
 		super(Label,self).__init__(**kwargs)
 
-	def resizeToContent(self):
+	def resizeToContent(self, recurse=True):
 		self.real_widget.setWidth( self.max_size[0] )
 		self.real_widget.adjustSize()
 		self.height = self.real_widget.getHeight() + self.margins[1]*2
