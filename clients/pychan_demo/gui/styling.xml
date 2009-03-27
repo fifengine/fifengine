@@ -1,5 +1,5 @@
 <Window title="Styling" style="greenzone">
-	<Label text="These guys contributed to FIFE. Man!" />
+	<Label text="Select a style and click on 'Test Style'[br]The window on the left should adapt accordingly." />
 	<ScrollArea size="400,400">
 		<ListBox name="styleList"/>
 	</ScrollArea>

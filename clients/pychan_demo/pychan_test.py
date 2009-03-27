@@ -76,8 +76,8 @@ class DemoApplication(basicapplication.ApplicationBase):
 		# A simple hover-effect for the credits label
 		credits = self.gui.findChild(name="creditsLink")
 		# setEnterCallback is deprecated - we use it here to test it.
-		credits.setEnterCallback(lambda w : credits._setText("CREDITS"))
-		credits.capture(lambda : credits._setText("Credits"), event_name="mouseExited")
+		credits.setEnterCallback(lambda w : credits._setText(u"CREDITS"))
+		credits.capture(lambda : credits._setText(u"Credits"), event_name="mouseExited")
 
 		# Our list of examples
 		# We keep a dictionary of these and fill

@@ -101,7 +101,7 @@ class Container(Widget):
 			self._background_image = image
 			map(self.real_widget.remove,self._background)
 			self._background = []
-
+			return
 		# Background generation is done in _resetTiling
 
 		if not isinstance(image, fife.GuiImage):

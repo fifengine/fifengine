@@ -134,6 +134,9 @@ class Manager(object):
 					setattr(widget,k,v)
 
 	def _remapStyleKeys(self,style):
+		"""
+		Translate style selectors to tuples of widget classes. (internal)
+		"""
 		# Remap class names, create copy:
 		def _toClass(class_):
 			if class_ == "default":
@@ -169,6 +172,7 @@ DEFAULT_STYLE = {
 		'foreground_color' : guichan.Color(255,255,255),
 		'background_color' : guichan.Color(50,50,50),
 		'selection_color' : guichan.Color(80,80,80),
+		'font' : 'default'
 	},
 	'Button' : {
 		'border_size': 2,
@@ -195,10 +199,9 @@ DEFAULT_STYLE = {
 		'border_size': 0,
 		'margins': (5,5),
 		'opaque' : 1,
+		'padding':2,
 		'titlebar_height' : 12,
-		'vexpanding' : 1,
-		#'background_image' : 'gui/backgrounds/background.png',
-		#'font' : 'samanata_large'
+		'background_image' : None,
 	},
 	'TextBox' : {
 	},
@@ -206,6 +209,7 @@ DEFAULT_STYLE = {
 		'border_size': 0,
 		'margins': (0,0),
 		'padding':2,
-		#'background_image' : 'gui/backgrounds/background.png',
+		'opaque' : 1,
+		'background_image' : None,
 	}
 }
