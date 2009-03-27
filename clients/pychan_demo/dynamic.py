@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# coding: utf-8
 
 import pychan
-
 from pychan_test import PyChanExample
 
 class DynamicExample(PyChanExample):
