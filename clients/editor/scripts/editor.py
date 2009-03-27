@@ -26,9 +26,8 @@ class Editor(basicapplication.ApplicationBase):
 	def _initGui(self):
 		bar_height = 30
 		screen_width = self.engine.getSettings().getScreenWidth()
-		screen_height = self.engine.getSettings().getScreenWidth()
-		self._statusbar = StatusBar(min_size=(screen_width, bar_height))
-		self._statusbar.position = (0, screen_height-bar_height)
+		screen_height = self.engine.getSettings().getScreenHeight()
+		self._statusbar = StatusBar(min_size=(screen_width, bar_height), position=(0, screen_height-bar_height))
 		self._toolbar = ToolBar(min_size=(screen_width, bar_height), position=(0, bar_height))
 		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
 		self._toolbox = Toolbox(min_size=(50, 150), position=(150, 300))
