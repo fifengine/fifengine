@@ -1,5 +1,7 @@
 import basicapplication
 from events import EventMapper
+import pychan
+from gui import MenuBar, ToolBar, Toolbox, StatusBar
 
 def getEditor():
 	if Editor.editor is None:
@@ -9,25 +11,44 @@ def getEditor():
 class Editor(basicapplication.ApplicationBase):
 	editor = None
 
-	def __init__(self, params):
-		super(Editor,self).__init__()
+	def __init__(self, params, *args, **kwargs):
+		super(Editor,self).__init__(*args, **kwargs)
 
 		self.params = params
 		self._eventmapper = None
 		
 		self.editor = self
+		
+		pychan.init(self.engine, debug=False)
+		
+		self._initGui()
+		
+	def _initGui(self):
+		bar_height = 30
+		screen_width = self.engine.getSettings().getScreenWidth()
+		screen_height = self.engine.getSettings().getScreenWidth()
+		self._statusbar = StatusBar(min_size=(screen_width, bar_height))
+		self._statusbar.position = (0, screen_height-bar_height)
+		self._toolbar = ToolBar(min_size=(screen_width, bar_height), position=(0, bar_height))
+		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
+		self._toolbox = Toolbox(min_size=(50, 150), position=(150, 300))
+		
+		self._menubar.show()
+		self._statusbar.show()
+		self._toolbar.show()
+		self._toolbox.show()
 	
 	def getStatusBar(self): 
-		return None
+		return self._statusbar
 		
 	def getMenuBar(self):
-		return None
+		return self._menubar
 	
 	def getToolBar(self): 
-		return None
+		return self._toolbar
 	
 	def getToolbox(self): 
-		return None
+		return self._toolbox
 	
 	def getPluginManager(self): 
 		return None

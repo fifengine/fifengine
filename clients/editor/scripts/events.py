@@ -68,7 +68,7 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 		if len(self.callbacks[group_name]) <= 0:
 			del self.callbacks[group_name]
 
-	def _redirectEvent(self, event_name, *args):
+	def dispatchEvent(self, event_name, *args):
 		for group in self.callbacks:
 			for event in self.callbacks[group]:
 				if event == event_name:
@@ -82,13 +82,13 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 	
 	#--- Listener methods ---#
 	def onSave(self, map):
-		self._redirectEvent("onSave", map)
+		self.dispatchEvent("onSave", map)
 		
 	def mapAdded(self, map):
-		self._redirectEvent("mapAdded", map)
+		self.dispatchEvent("mapAdded", map)
 		
 	def onQuit(self):
-		self._redirectEvent("onQuit")
+		self.dispatchEvent("onQuit")
 	
 	# IKeyListener
 	def keyPressed(self, evt): 
@@ -98,36 +98,41 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 		elif keyval == fife.Key.F10:
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 		
-		self._redirectEvent("keyPressed", evt)
+		self.dispatchEvent("keyPressed", evt)
 		
 		evt.consume()
 
-	def keyReleased(self, evt): self._redirectEvent("keyReleased", evt)
+	def keyReleased(self, evt): self.dispatchEvent("keyReleased", evt)
 
 	# ICommandListener
-	def onCommand(self, command): self._redirectEvent("onCommand", command)
+	def onCommand(self, command):
+		if command.getCommandType() == fife.CMD_QUIT_GAME:
+			self.onQuit()
+		else:
+			self.dispatchEvent("onCommand", command)
+		
 
 	# IMouseListener
-	def mouseEntered(self, evt): self._redirectEvent("mouseEntered", evt)
-	def mouseExited(self, evt): self._redirectEvent("mouseExited", evt)
-	def mousePressed(self, evt): self._redirectEvent("mousePressed", evt)
-	def mouseReleased(self, evt): self._redirectEvent("mouseReleased", evt)
-	def mouseClicked(self, evt): self._redirectEvent("mouseClicked", evt)
-	def mouseWheelMovedUp(self, evt): self._redirectEvent("mouseWheelMovedUp", evt)
-	def mouseWheelMovedDown(self, evt): self._redirectEvent("mouseWheelMovedDown", evt)
-	def mouseMoved(self, evt): self._redirectEvent("mouseMoved", evt)
-	def mouseDragged(self, evt): self._redirectEvent("mouseDragged", evt)
+	def mouseEntered(self, evt): self.dispatchEvent("mouseEntered", evt)
+	def mouseExited(self, evt): self.dispatchEvent("mouseExited", evt)
+	def mousePressed(self, evt): self.dispatchEvent("mousePressed", evt)
+	def mouseReleased(self, evt): self.dispatchEvent("mouseReleased", evt)
+	def mouseClicked(self, evt): self.dispatchEvent("mouseClicked", evt)
+	def mouseWheelMovedUp(self, evt): self.dispatchEvent("mouseWheelMovedUp", evt)
+	def mouseWheelMovedDown(self, evt): self.dispatchEvent("mouseWheelMovedDown", evt)
+	def mouseMoved(self, evt): self.dispatchEvent("mouseMoved", evt)
+	def mouseDragged(self, evt): self.dispatchEvent("mouseDragged", evt)
 
 	# LayerChangeListener
-	def onLayerChanged(self, layer, changedInstances): self._redirectEvent("onLayerChanged", layer, changedInstances)
-	def onInstanceCreate(self, layer, instance): self._redirectEvent("onInstanceCreate", layer, instance)
-	def onInstanceDelete(self, layer, instance): self._redirectEvent("onInstanceDelete", layer, instance)
+	def onLayerChanged(self, layer, changedInstances): self.dispatchEvent("onLayerChanged", layer, changedInstances)
+	def onInstanceCreate(self, layer, instance): self.dispatchEvent("onInstanceCreate", layer, instance)
+	def onInstanceDelete(self, layer, instance): self.dispatchEvent("onInstanceDelete", layer, instance)
 
 	# MapChangeListener
-	def onMapChanged(self, map, changedLayers): self._redirectEvent("onMapChanged", map, changedLayers)
-	def onLayerCreate(self, map, layer): self._redirectEvent("onLayerCreate", map, layer)
-	def onLayerDelete(self, map, layer): self._redirectEvent("onLayerDelete", map, layer)
+	def onMapChanged(self, map, changedLayers): self.dispatchEvent("onMapChanged", map, changedLayers)
+	def onLayerCreate(self, map, layer): self.dispatchEvent("onLayerCreate", map, layer)
+	def onLayerDelete(self, map, layer): self.dispatchEvent("onLayerDelete", map, layer)
 
 	# ConsoleExecuter
-	def onToolsClick(self): self._redirectEvent("onConsoleCommand")
-	def onConsoleCommand(self, command): self._redirectEvent("onConsoleCommand", command)
+	def onToolsClick(self): self.dispatchEvent("onConsoleCommand")
+	def onConsoleCommand(self, command): self.dispatchEvent("onConsoleCommand", command)
