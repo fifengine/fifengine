@@ -2,6 +2,7 @@
 
 import fife
 from fife import IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter
+import pychan
 
 CALLBACK_NONE_MESSAGE = """\
 You passed None as parameter to EventMapper, which would normally remove a mapped event.
@@ -68,12 +69,11 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 		if len(self.callbacks[group_name]) <= 0:
 			del self.callbacks[group_name]
 
-	def dispatchEvent(self, event_name, *args):
+	def dispatchEvent(self, event_name, *args, **kwargs):
 		for group in self.callbacks:
 			for event in self.callbacks[group]:
 				if event == event_name:
-					self.callbacks[group][event](*args)
-		#print "Event:", event_name, args
+					pychan.tools.applyOnlySuitable(self.callbacks[group][event],*args, **kwargs)
 
 	# addHotkey is similar to capture, except that it accepts a key 
 	# sequence (e.g. "CTRL+X") instead of an event.
@@ -86,6 +86,9 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 		
 	def mapAdded(self, map):
 		self.dispatchEvent("mapAdded", map)
+		
+	def mapRemoved(self):
+		self.dispatchEvent("mapRemoved")
 		
 	def onQuit(self):
 		self.dispatchEvent("onQuit")
