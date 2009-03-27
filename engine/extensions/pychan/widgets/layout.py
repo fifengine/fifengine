@@ -139,9 +139,9 @@ class LayoutBase(object):
 			if spacers and spacers[0].index == index:
 				expanders.append( spacers.pop(0) )
 			#print self,child,child.expanding
-			if child.vexpanding and vertical:
+			if child.vexpand and vertical:
 				expanders.append( child )
-			if child.hexpanding and not vertical:
+			if child.hexpand and not vertical:
 				expanders.append( child )
 		return expanders + spacers
 
@@ -179,7 +179,7 @@ class VBoxLayoutMixin(LayoutBase):
 
 	def expandContent(self):
 		self._expandHeightSpacer()
-		if not self.hexpanding:return
+		if not self.hexpand:return
 		for widget in self.children:
 			widget.width = self.width - 2*self.margins[0] - 2*self.border_size - self._extra_border[0]
 
@@ -214,7 +214,7 @@ class HBoxLayoutMixin(LayoutBase):
 
 	def expandContent(self):
 		self._expandWidthSpacer()
-		if not self.vexpanding:return
+		if not self.vexpand:return
 		for widget in self.children:
 			widget.height = self.height - 2*self.margins[1] - 2*self.border_size - self._extra_border[1]
 
@@ -274,5 +274,5 @@ class Spacer(object):
 		if self.min_size < self.max_size:
 			return 1
 		return 0
-	vexpanding = property(_isExpanding)
-	hexpanding = property(_isExpanding)
+	vexpand = property(_isExpanding)
+	hexpand = property(_isExpanding)
