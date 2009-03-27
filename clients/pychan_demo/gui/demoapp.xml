@@ -1,22 +1,22 @@
 <VBox hexpand="1"><!--[PyChanのてすとです: ÜÖÄ]"-->
 	<Label text="This is the PyChan demo application. "/>
 	<HBox>
-		<Slider size="100,15" name="slider" orientation="0" scale_start="0.1" scale_end="1.5" base_color="93,161,102" />
+		<Slider name="slider" orientation="0" scale_start="0.1" scale_end="1.5" base_color="93,161,102" />
 		<Label name="slider_desc" text="Move the slider!" />
-		<TextField name="slider_value" text="0" base_color="0,0,0,0"/>
+		<TextField name="slider_value" text="0" base_color="0,0,0,0" hexpand="5" />
 	</HBox>
 	<HBox vexpand="1">
 		<ScrollArea>
-			<ListBox name="demoList" min_size="100,100" />
+			<ListBox name="demoList"/>
 		</ScrollArea>
-		<VBox margins="0,0" hexpand="1">
+		<VBox margins="0,0" hexpand="2">
 			<Label text=" Select one example from the listbox and press 'Start Example'"/>
 			<Label text=" You can also execute this script with an Gui XML file as argument."/>
 -			<HBox margins="0,0">
 				<Button text="XML code"/>
 			</HBox>
-			<ScrollArea size="600,200">
-				<TextBox name="xmlSource" filename="gui/all_widgets.xml"/>
+			<ScrollArea>
+				<TextBox name="xmlSource" font="FreeMono" filename="gui/all_widgets.xml"/>
 			</ScrollArea>
 		</VBox>
 	</HBox>

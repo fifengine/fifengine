@@ -62,7 +62,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		
 		self.gui = pychan.loadXML('gui/demoapp.xml')
 		self.gui.min_size = self.engine.getRenderBackend().getScreenWidth(),self.engine.getRenderBackend().getScreenHeight()
-		self.gui.findChild(name="xmlSource").font = "FreeMono"
+		#self.gui.findChild(name="xmlSource").font = "FreeMono"
 
 		eventMap = {
 			'creditsLink'  : self.showCredits,

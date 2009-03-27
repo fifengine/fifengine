@@ -24,10 +24,11 @@ def screen_height():
 class Manager(object):
 	manager = None
 
-	def __init__(self, hook, debug = False):
+	def __init__(self, hook, debug = False, compat_layout = False):
 		super(Manager,self).__init__()
 		self.hook = hook
 		self.debug = debug
+		self.compat_layout = compat_layout
 		self.unicodePolicy = ('ignore',)
 
 		if in_fife:

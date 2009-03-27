@@ -21,10 +21,10 @@ class Label(BasicTextWidget):
 
 	ATTRIBUTES = BasicTextWidget.ATTRIBUTES + [BoolAttr('wrap_text')]
 
-	def __init__(self,wrap_text=False,hexpand=1,**kwargs):
+	def __init__(self,wrap_text=False,**kwargs):
 		self.real_widget = fife.Label("")
 		self.wrap_text = wrap_text
-		super(Label,self).__init__(hexpand=hexpand,**kwargs)
+		super(Label,self).__init__(**kwargs)
 
 	def resizeToContent(self):
 		self.real_widget.setWidth( self.max_size[0] )

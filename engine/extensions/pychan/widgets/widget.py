@@ -34,6 +34,8 @@ class Widget(object):
 	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
 	  results in new windows being centered on screen (for now).
 	  If it is set to "explicit" the position attribute will not be touched.
+	  - vexpand: Integer: >= 0. Proportion to expand this widget vertically.
+	  - hexpand: Integer: >= 0. Proportion to expand this widget horizontally.
 
 	Convenience Attributes
 	======================
@@ -66,6 +68,7 @@ class Widget(object):
 	DEFAULT_NAME = '__unnamed__'
 	DEFAULT_HEXPAND = 0
 	DEFAULT_VEXPAND = 0
+	DEFAULT_MAX_SIZE = 500000, 500000
 
 	HIDE_SHOW_ERROR = """\
 		You can only show/hide the top widget of a hierachy.
@@ -74,8 +77,9 @@ class Widget(object):
 
 
 	def __init__(self,parent = None, name = DEFAULT_NAME,
-				 size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
+				 size = (-1,-1), min_size=(0,0), max_size=DEFAULT_MAX_SIZE,
 				 helptext=u"",
+				 position = (0,0),
 				 style = None, **kwargs):
 
 		assert( hasattr(self,'real_widget') )
@@ -84,6 +88,9 @@ class Widget(object):
 		self._extra_border = (0,0)
 		self.hexpand = kwargs.get("hexpand",self.DEFAULT_HEXPAND)
 		self.vexpand = kwargs.get("vexpand",self.DEFAULT_VEXPAND)
+		# Simple way to get at least some compat layout:
+		if get_manager().compat_layout:
+			self.hexpand, self.vexpand = 0,0
 
 		# Data distribution & retrieval settings
 		self.accepts_data = False
@@ -94,6 +101,7 @@ class Widget(object):
 		# This will also set the _event_id and call real_widget.setActionEventId
 		self.name = name
 
+		self.position = position
 		self.min_size = min_size
 		self.max_size = max_size
 		self.size = size

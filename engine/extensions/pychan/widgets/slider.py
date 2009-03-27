@@ -25,6 +25,8 @@ class Slider(Widget):
 	VERTICAL = fife.Slider.VERTICAL
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end')]
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 0
 
 	def __init__(self, scaleStart=0.0, scaleEnd=1.0, orientation=HORIZONTAL, **kwargs):
 		self.real_widget = fife.Slider(scaleStart, scaleEnd)
