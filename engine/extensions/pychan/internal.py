@@ -2,7 +2,7 @@
 
 from compat import guichan, in_fife
 import widgets
-import timer
+import fife_timer as timer
 import fonts
 from exceptions import *
 from traceback import print_exc

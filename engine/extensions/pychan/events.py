@@ -46,7 +46,7 @@ from internal import get_manager
 import tools
 import traceback
 import weakref
-import timer
+import fife_timer as timer
 
 EVENTS = [
 	"mouseEntered",

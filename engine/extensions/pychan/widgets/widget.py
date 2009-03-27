@@ -625,6 +625,19 @@ class Widget(object):
 
 	def _getHeight(self): return self.real_widget.getHeight()
 
+	def _getMinWidth(self): return self.min_size[0]
+	def _getMaxWidth(self): return self.max_size[0]
+	def _getMinHeight(self): return self.min_size[1]
+	def _getMaxHeight(self): return self.max_size[1]
+	def _setMinWidth(self,w):
+		self.min_size = w, self.min_size[1]
+	def _setMaxWidth(self,w):
+		self.max_size = w, self.max_size[1]
+	def _setMinHeight(self,h):
+		self.min_size = self.min_size[0],h
+	def _setMaxHeight(self,h):
+		self.max_size = self.max_size[0],h
+
 	def _setFont(self, font):
 		self._font = font
 		self.real_font = get_manager().getFont(font)
@@ -661,6 +674,10 @@ class Widget(object):
 	y = property(_getY,_setY)
 	width = property(_getWidth,_setWidth)
 	height = property(_getHeight,_setHeight)
+	min_width = property(_getMinWidth,_setMinWidth)
+	min_height = property(_getMinHeight,_setMinHeight)
+	max_width = property(_getMaxWidth,_setMaxWidth)
+	max_height = property(_getMaxHeight,_setMaxHeight)
 	size = property(_getSize,_setSize)
 	position = property(_getPosition,_setPosition)
 	font = property(_getFont,_setFont)
