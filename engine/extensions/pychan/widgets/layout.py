@@ -113,7 +113,7 @@ class LayoutBase(object):
 			return
 
 		expandable_items = self._getExpanders(vertical=True)
-		print "AS/US - before",self,[o.height for o in expandable_items]
+		#print "AS/US - before",self,[o.height for o in expandable_items]
 
 		index = 0
 		while used_space < available_space and expandable_items:
@@ -128,7 +128,7 @@ class LayoutBase(object):
 				used_space += 1
 				index += 1
 
-		print "AS/US - after",self,[o.height for o in expandable_items]
+		#print "AS/US - after",self,[o.height for o in expandable_items]
 		self._applyHeight(spacers = self.spacer[:])
 
 

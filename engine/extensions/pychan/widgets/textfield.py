@@ -18,11 +18,13 @@ class TextField(Widget):
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 0
 
-	def __init__(self,text=u"",hexpand=1, **kwargs):
+	def __init__(self,text=u"",**kwargs):
 		self.real_widget = fife.TextField()
 		self.text = text
-		super(TextField,self).__init__(hexpand=hexpand,**kwargs)
+		super(TextField,self).__init__(**kwargs)
 
 		# Prepare Data collection framework
 		self.accepts_data = True

@@ -64,23 +64,26 @@ class Widget(object):
 		]
 
 	DEFAULT_NAME = '__unnamed__'
+	DEFAULT_HEXPAND = 0
+	DEFAULT_VEXPAND = 0
 
 	HIDE_SHOW_ERROR = """\
 		You can only show/hide the top widget of a hierachy.
 		Use 'addChild' or 'removeChild' to add/remove labels for example.
 		"""
 
+
 	def __init__(self,parent = None, name = DEFAULT_NAME,
 				 size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
 				 helptext=u"",
-				 style = None, vexpand=0,hexpand=0,**kwargs):
+				 style = None, **kwargs):
 
 		assert( hasattr(self,'real_widget') )
 		self.event_mapper = events.EventMapper(self)
 		self._visible = False
 		self._extra_border = (0,0)
-		self.hexpand = hexpand
-		self.vexpand = vexpand
+		self.hexpand = kwargs.get("hexpand",self.DEFAULT_HEXPAND)
+		self.vexpand = kwargs.get("vexpand",self.DEFAULT_VEXPAND)
 
 		# Data distribution & retrieval settings
 		self.accepts_data = False

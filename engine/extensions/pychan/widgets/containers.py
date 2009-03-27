@@ -128,8 +128,11 @@ class VBox(VBoxLayoutMixin,Container):
 	widgets above the spacer are aligned to the top, while widgets below the spacer
 	are aligned to the bottom.
 	"""
-	def __init__(self,padding=5,vexpand=1,**kwargs):
-		super(VBox,self).__init__(vexpand=vexpand,**kwargs)
+	DEFAULT_HEXPAND = 0
+	DEFAULT_VEXPAND = 1
+
+	def __init__(self,padding=5,**kwargs):
+		super(VBox,self).__init__(**kwargs)
 		self.padding = padding
 
 
@@ -139,8 +142,11 @@ class HBox(HBoxLayoutMixin,Container):
 
 	Please see L{VBox} for details - just change the directions :-).
 	"""
-	def __init__(self,padding=5,hexpand=1,**kwargs):
-		super(HBox,self).__init__(hexpand=hexpand,**kwargs)
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 0
+
+	def __init__(self,padding=5,**kwargs):
+		super(HBox,self).__init__(**kwargs)
 		self.padding = padding
 
 class Window(VBoxLayoutMixin,Container):

@@ -19,6 +19,8 @@ class TextBox(Widget):
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text'),Attr('filename')]
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 1
 
 	def __init__(self,text=u"",filename = "", **kwargs):
 		self.real_widget = fife.TextBox()

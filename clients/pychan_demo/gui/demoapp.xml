@@ -3,10 +3,12 @@
 	<HBox>
 		<Slider size="100,15" name="slider" orientation="0" scale_start="0.1" scale_end="1.5" base_color="93,161,102" />
 		<Label name="slider_desc" text="Move the slider!" />
-		<TextBox name="slider_value" text="0" base_color="0,0,0,0"/>
+		<TextField name="slider_value" text="0" base_color="0,0,0,0"/>
 	</HBox>
 	<HBox vexpand="1">
-		<ListBox name="demoList" min_size="100,100" vexpand="1"/>
+		<ScrollArea>
+			<ListBox name="demoList" min_size="100,100" />
+		</ScrollArea>
 		<VBox margins="0,0" hexpand="1">
 			<Label text=" Select one example from the listbox and press 'Start Example'"/>
 			<Label text=" You can also execute this script with an Gui XML file as argument."/>

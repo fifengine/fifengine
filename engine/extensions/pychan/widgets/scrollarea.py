@@ -17,11 +17,13 @@ class ScrollArea(Widget):
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ BoolAttr("vertical_scrollbar"),BoolAttr("horizontal_scrollbar") ]
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 1
 
-	def __init__(self,hexpand=1,vexpand=1,**kwargs):
+	def __init__(self,**kwargs):
 		self.real_widget = fife.ScrollArea()
 		self._content = None
-		super(ScrollArea,self).__init__(hexpand=hexpand,vexpand=vexpand,**kwargs)
+		super(ScrollArea,self).__init__(**kwargs)
 
 	def addChild(self,widget):
 		self.content = widget
