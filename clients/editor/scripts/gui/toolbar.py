@@ -58,9 +58,6 @@ class ToolbarButton(widgets.VBox):
 	def getButtonStyle(self):
 		return self._button_style
 	button_style = property(getButtonStyle, setButtonStyle)
-	
-	def getWidget(self):
-		return self._widget
 		
 	def update(self):
 		if self._widget != None:
@@ -130,8 +127,6 @@ class ToolBar(widgets.HBox):
 		if separator==None:
 			separator = Action(separator=True)
 		self.addAction(separator)
-		
-	def insertSeparator(self): pass
 
 	def addAction(self, action):
 		if self.hasAction(action):
@@ -139,7 +134,8 @@ class ToolBar(widgets.HBox):
 			return
 			
 		button = ToolbarButton(action, button_style=self._button_style)
-		self.addChild(button)
+		#self.addChild(button)
+		self.children.append(button)
 		self._actions.append(button)
 		
 	def removeAction(self, action):
@@ -147,9 +143,11 @@ class ToolBar(widgets.HBox):
 			print "Tried to remove an action, which is not in the toolbar."
 			return
 		
-		
-		self.removeWidget(action.widget)
-		self._actions.remove(action)
+		for a in self._actions:
+			if a.action == action:
+				self.removeChild(a)
+				self._actions.remove(a)
+				break
 		self.adaptLayout()
 		
 	def hasAction(self, action):
@@ -158,16 +156,23 @@ class ToolBar(widgets.HBox):
 				return True
 		return False
 		
-	def _updateToolbar(self):
-		actionlist = self._actions
-		#self.clear()
+	def addActionGroup(self, actiongroup): 
+		actions = actiongroup.getActions()
+		for action in actions:
+			self.addAction(action)
 		
-		for action in actionlist:
-			action.button_style = self._button_style
-			#self.addAction(action.action)
-
-		self.adaptLayout()
+	def insertAction(self, action, before):
+		pass
 		
+	def insertSeparator(self): 
+		pass
+		
+	def insertActionGroup(self, actiongroup, before): 
+		pass
+		
+	def clear(self):
+		self.removeAllChildren()
+		self._actions = []
 		
 	def setButtonStyle(self, button_style):
 		self._button_style = BUTTON_STYLE['IconOnly']
@@ -181,25 +186,12 @@ class ToolBar(widgets.HBox):
 		return self._button_style
 	button_style = property(getButtonStyle, setButtonStyle)
 		
-	def addActionGroup(self, actiongroup): 
-		actions = actiongroup.getActions()
-		for action in actions:
-			self.addAction(action)
+	def _updateToolbar(self):
+		actionlist = self._actions
+		#self.clear()
 		
-	def insertAction(self, action, before): 
-		pass
-		
-	def insertActionGroup(self, actiongroup, before): 
-		pass
+		for action in actionlist:
+			action.button_style = self._button_style
+			#self.addAction(action.action)
 
-	def removeAction(self, item):
-		for action in self._actions:
-			if action.action == item:
-				self.removeChild(action)
-				self._actions.remove(action)
-				break
-		
-	def clear(self):
-		self.removeAllChildren()
-		self._actions = []
-		
+		self.adaptLayout()
