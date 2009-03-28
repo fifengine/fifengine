@@ -38,9 +38,18 @@ class Editor(basicapplication.ApplicationBase):
 		self._toolbox.position_technique = "explicit"
 		self._statusbar.position_technique = "left:bottom"
 		
-		testAction = Action("TestAction", "gui/icons/hand.png")
-		self.getEventMapper().capture("Editor", "activated", self._actionActivated, sender=testAction)
-		self._toolbar.addAction(testAction)
+		testAction1 = Action(u"TestAction1", "gui/icons/hand.png")
+		self.getEventMapper().capture("Editor1", "activated", self._actionActivated, sender=testAction1)
+		self._toolbar.addAction(testAction1)
+		
+		testAction2 = Action(u"TestAction2", "gui/icons/select_layer.png")
+		self.getEventMapper().capture("Editor2", "activated", self._actionActivated, sender=testAction2)
+		self._toolbar.addAction(testAction2)
+		
+		testAction3 = Action(u"TestAction3", "gui/icons/eraser.png")
+		self.getEventMapper().capture("Editor3", "activated", self._actionActivated, sender=testAction3)
+		self._toolbar.addAction(testAction3)
+		
 		
 		self._menubar.show()
 		self._statusbar.show()
@@ -49,6 +58,7 @@ class Editor(basicapplication.ApplicationBase):
 	
 	def _actionActivated(self, sender):
 		print "Action activated:", sender
+		self._toolbar.button_style += 1
 	
 	def getStatusBar(self): 
 		return self._statusbar
