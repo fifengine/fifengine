@@ -57,11 +57,11 @@ class Editor(basicapplication.ApplicationBase):
 		
 		testAction5 = Action(u"CheckAble2", "gui/icons/eraser.png")
 		testAction5.setCheckable(True)
-		self._toolbar.addAction(testAction5)
+		self._toolbar.insertAction(testAction5, 3)
 		
 		testAction6 = Action(u"CheckAble3", "gui/icons/eraser.png")
 		testAction6.setCheckable(True)
-		self._toolbar.addAction(testAction6)
+		self._toolbar.insertAction(testAction6, 0, before=testAction5)
 		
 		self._toolbar.addSeparator()
 		

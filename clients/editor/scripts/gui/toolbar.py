@@ -124,19 +124,40 @@ class ToolBar(widgets.HBox):
 		
 
 	def addSeparator(self, separator=None): 
-		if separator==None:
-			separator = Action(separator=True)
-		self.addAction(separator)
+		self.insertSeparator(separator, len(self.children))
 
 	def addAction(self, action):
-		if self.hasAction(action):
-			print "Action already added to toolbar"
+		self.insertAction(action, len(self.children))
+		
+	# This is a hack. insertChild and insertChildBefore should be moved to pychan
+	def insertChild(self, widget, position):
+		if position > len(self.children) or 0-position > len(self.children):
+			print "insertChild: Warning: Index overflow.",
+			if position >= 0:
+				print "Appending widget."
+				self.addChild(widget)
+			else:
+				print "Prepending widget."
+				self.insertChild(widget, 0)
 			return
 			
-		button = ToolbarButton(action, button_style=self._button_style)
-		#self.addChild(button)
-		self.children.append(button)
-		self._actions.append(button)
+		self.children = self.children[0:position]+[widget]+self.children[position:]
+		self.real_widget.add(widget.real_widget)
+
+		
+	def insertChildBefore(self, widget, before):
+		i = -1
+		for child in self.children:
+			i += 1
+			if child == before:
+				break
+			
+			
+		self.insertChild(widget, i)
+		
+		if i < 0:
+			print "insertChildBefore: Didn't find widget:", before
+			return
 		
 	def removeAction(self, action):
 		if self.hasAction(action) is False:
@@ -157,18 +178,39 @@ class ToolBar(widgets.HBox):
 		return False
 		
 	def addActionGroup(self, actiongroup): 
+		self.insertActionGroup(actiongroup, len(self.children))
+		
+	def insertAction(self, action, position=0, before=None):
+		if self.hasAction(action):
+			print "Action already added to toolbar"
+			return
+			
+		button = ToolbarButton(action, button_style=self._button_style)
+		self._actions.append(button)
+		
+		if before is not None:
+			for a in self._actions:
+				if a.action == before:
+					before = a
+					break
+			self.insertChildBefore(button, before)
+		else:
+			self.insertChild(button, position)
+		
+		
+	def insertSeparator(self, separator=None, position=0, before=None): 
+		if separator==None:
+			separator = Action(separator=True)
+		self.insertAction(separator, position, before)
+		
+	def insertActionGroup(self, actiongroup, position=0, before=None): 
 		actions = actiongroup.getActions()
+
+		if position >= 0:
+			actions = reversed(actions)
+
 		for action in actions:
-			self.addAction(action)
-		
-	def insertAction(self, action, before):
-		pass
-		
-	def insertSeparator(self): 
-		pass
-		
-	def insertActionGroup(self, actiongroup, before): 
-		pass
+			self.insertAction(action, position, before)
 		
 	def clear(self):
 		self.removeAllChildren()
