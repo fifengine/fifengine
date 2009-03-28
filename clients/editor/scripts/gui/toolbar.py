@@ -2,6 +2,9 @@ from pychan import widgets
 import scripts.editor
 import copy
 
+from action import Action, ActionGroup
+from fife import Color
+
 # Orientation isn't implemented yet
 ORIENTATION = {
 			"Horizontal"	: 0,
@@ -15,10 +18,103 @@ BUTTON_STYLE = {
 			"TextBesideIcon"	: 3
 			}
 
-class ToolbarAction:
-	def __init__(self, action, widget):
-		self.action = action
-		self.widget = widget
+class ToolbarButton(widgets.VBox):
+	def __init__(self, action, button_style=0, **kwargs):
+		self._action = action
+		self._widget = None
+		
+		super(ToolbarButton, self).__init__(**kwargs)
+		
+		self.setButtonStyle(button_style)
+		self.update()
+		
+		# Register new eventlistener
+		eventMapper = scripts.editor.getEditor().getEventMapper()
+		eventMapper.capture("toolbutton_"+str(id(self)), "changed", self.update, sender=action)
+		
+	def setAction(self, action):
+		# Remove eventlistener for old action
+		eventMapper = scripts.editor.getEditor().getEventMapper()
+		eventMapper.capture("toolbutton_"+str(id(self)), "changed", None, sender=self._action)
+		
+		self._action = action
+		self.update()
+		
+		# Register new eventlistener
+		eventMapper.capture("toolbutton_"+str(id(self)), "changed", self.update, sender=action)
+	
+	def getAction(self):
+		return self._action
+	action = property(getAction, setAction)
+	
+	def setButtonStyle(self, button_style):
+		self._button_style = BUTTON_STYLE['IconOnly']
+		for key, val in BUTTON_STYLE.iteritems():
+			if val == button_style:
+				self._button_style = button_style
+				break
+		self.update()
+		
+	def getButtonStyle(self):
+		return self._button_style
+	button_style = property(getButtonStyle, setButtonStyle)
+	
+	def getWidget(self):
+		return self._widget
+		
+	def update(self):
+		if self._widget != None:
+			self.removeChild(self._widget)
+			self._widget = None
+			
+		if self._action is None:
+			return
+			
+		widget = None
+		icon = None
+		text = None
+		
+		if self._action.isSeparator():
+			widget = widgets.VBox()
+			widget.base_color += Color(8, 8, 8)
+			widget.min_size = (2, 2)
+		else:
+			if self._button_style != BUTTON_STYLE['TextOnly']:
+				if self._action.isCheckable():
+					icon = widgets.ToggleButton(up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
+					icon.toggled = self._action.isChecked()
+				else:
+					icon = widgets.ImageButton(up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
+				icon.capture(self._action.activate)
+				
+			if self._button_style != BUTTON_STYLE['IconOnly']:
+				text = widgets.Label(text=self._action.text)
+				text.capture(self._action.activate, "mouseClicked")
+			
+			if self._button_style == BUTTON_STYLE['TextOnly']:
+				widget = text
+				widget.capture(self._action.activate, "mouseClicked")
+				
+			elif self._button_style == BUTTON_STYLE['TextUnderIcon']:
+				widget = widgets.VBox()
+				icon.position_technique = "center:top"
+				text.position_technique = "center:bottom"
+				widget.addChild(icon)
+				widget.addChild(text)
+				
+			elif self._button_style == BUTTON_STYLE['TextBesideIcon']:
+				widget = widgets.HBox()
+				widget.addChild(icon)
+				widget.addChild(text)
+					
+			else:
+				widget = icon
+			
+		widget.position_technique = "left:center"
+		widget.hexpand = 0
+		
+		self._widget = widget
+		self.addChild(self._widget)
 
 class ToolBar(widgets.HBox):
 	def __init__(self, button_style=0, orientation=0, *args, **kwargs):
@@ -27,67 +123,34 @@ class ToolBar(widgets.HBox):
 		self._actions = []
 		self._button_style = 0
 		
-		self.button_style = button_style
+		self.setButtonStyle(button_style)
 		
 
 	def addSeparator(self, separator=None): 
-		pass
+		if separator==None:
+			separator = Action(separator=True)
+		self.addAction(separator)
+		
+	def insertSeparator(self): pass
 
 	def addAction(self, action):
-		if action is None:
+		if self.hasAction(action):
+			print "Action already added to toolbar"
 			return
 			
-		widget = None
-		icon = None
-		text = None
-		
-		if self._button_style != BUTTON_STYLE['TextOnly']:
-			if action.checkable:
-				icon = widgets.ToggleButton(up_image=action.icon,down_image=action.icon,hover_image=action.icon,offset=(1,1),group="t")
-			else:
-				icon = widgets.ImageButton(up_image=action.icon,down_image=action.icon,hover_image=action.icon,offset=(1,1))
-			icon.capture(action.activate)
-			
-		if self._button_style != BUTTON_STYLE['IconOnly']:
-			text = widgets.Label(text=action.text)
-			text.capture(action.activate, "mouseClicked")
-		
-		if self._button_style == BUTTON_STYLE['TextOnly']:
-			widget = text
-			widget.capture(action.activate, "mouseClicked")
-			
-		elif self._button_style == BUTTON_STYLE['TextUnderIcon']:
-			widget = widgets.VBox()
-			icon.position_technique = "center:top"
-			text.position_technique = "center:bottom"
-			widget.addChild(icon)
-			widget.addChild(text)
-			
-		elif self._button_style == BUTTON_STYLE['TextBesideIcon']:
-			widget = widgets.HBox()
-			widget.addChild(icon)
-			widget.addChild(text)
-				
-		else:
-			widget = icon
-			
-		widget.position_technique = "left:center"
-		widget.hexpand = 0
-		self.addChild(widget)
-		toolbarAction = ToolbarAction(action, widget)
-		self._actions.append(toolbarAction)
-		
-		eventMapper = scripts.editor.getEditor().getEventMapper()
-		eventMapper.capture("toolbar_"+str(id(self)), "changed", self._actionChanged, sender=action)
+		button = ToolbarButton(action, button_style=self._button_style)
+		self.addChild(button)
+		self._actions.append(button)
 		
 	def removeAction(self, action):
-		i = 0
-		for a in self._actions:
-			if a.action == action:
-				self.removeWidget(action.widget)
-				del self._actions[i]
-				break
-			i += 1
+		if self.hasAction(action) is False:
+			print "Tried to remove an action, which is not in the toolbar."
+			return
+		
+		
+		self.removeWidget(action.widget)
+		self._actions.remove(action)
+		self.adaptLayout()
 		
 	def hasAction(self, action):
 		for a in self._actions:
@@ -95,24 +158,18 @@ class ToolBar(widgets.HBox):
 				return True
 		return False
 		
-	def _actionChanged(self, sender, event_name, *args, **kwargs):
-		pass
-		
 	def _updateToolbar(self):
-		actionlist = copy.copy(self._actions)
-		self.clear()
+		actionlist = self._actions
+		#self.clear()
+		
 		for action in actionlist:
-			self.addAction(action.action)
+			action.button_style = self._button_style
+			#self.addAction(action.action)
 
 		self.adaptLayout()
 		
 		
-	def _updateAction(self, action):
-		for a in self._actions:
-			if a.action == action:
-				pass
-		
-	def _setButtonStyle(self, button_style):
+	def setButtonStyle(self, button_style):
 		self._button_style = BUTTON_STYLE['IconOnly']
 		for key, val in BUTTON_STYLE.iteritems():
 			if val == button_style:
@@ -120,26 +177,29 @@ class ToolBar(widgets.HBox):
 				break
 		self._updateToolbar()
 		
-	def _getButtonStyle(self):
+	def getButtonStyle(self):
 		return self._button_style
-	button_style = property(_getButtonStyle, _setButtonStyle)
+	button_style = property(getButtonStyle, setButtonStyle)
 		
 	def addActionGroup(self, actiongroup): 
-		pass
+		actions = actiongroup.getActions()
+		for action in actions:
+			self.addAction(action)
 		
 	def insertAction(self, action, before): 
-		pass
-		
-	def insertSeparator(self, separator, before): 
 		pass
 		
 	def insertActionGroup(self, actiongroup, before): 
 		pass
 
-	def removeItem(self, item):
-		pass
+	def removeAction(self, item):
+		for action in self._actions:
+			if action.action == item:
+				self.removeChild(action)
+				self._actions.remove(action)
+				break
 		
 	def clear(self):
 		self.removeAllChildren()
 		self._actions = []
-		pass
+		

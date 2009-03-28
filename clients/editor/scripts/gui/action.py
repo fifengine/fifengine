@@ -13,16 +13,17 @@ class Action:
 		self._checkable = False
 		
 	def activate(self):
+		if self.isCheckable():
+			self.setChecked(not self.isChecked())
 		scripts.editor.getEditor().getEventMapper().dispatchEvent("activated", self)
 		
 	def _changed(self):
 		scripts.editor.getEditor().getEventMapper().dispatchEvent("changed", self)
 
-	def _setSeparator(self, separator): 
+	def setSeparator(self, separator): 
 		self._separator = separator
 		self._changed()
-	def _isSeparator(self): return self._separator
-	separator = property(_isSeparator, _setSeparator)
+	def isSeparator(self): return self._separator
 
 	def _setText(self, text): 
 		self._text = text
@@ -48,23 +49,30 @@ class Action:
 	def _getHelpText(self): return self._helptext
 	helptext = property(_getHelpText, _setHelpText)
 
-	def _setEnabled(self, enabled): 
+	def setEnabled(self, enabled): 
 		self._enabled = enabled
 		self._changed()
-	def _isEnabled(self): return self._enabled
-	enabled = property(_isEnabled, _setEnabled)
+		
+	def isEnabled(self): 
+		return self._enabled
 
-	def _setChecked(self, checked): 
+	def setChecked(self, checked):
 		self._checked = checked
-		scripts.editor.getEditor().getEventMapper().dispatchEvent("toggled", sender=self, checked=checked)	
-	def _isChecked(self): return self._checked
-	checked = property(_isChecked, _setChecked)
-
-	def _setCheckable(self, checkable): 
-		self._checkable = checkable
 		self._changed()
-	def _isCheckable(self): return self._checkable
-	checkable = property(_isCheckable, _setCheckable)
+		scripts.editor.getEditor().getEventMapper().dispatchEvent("toggled", sender=self, checked=checked)	
+	
+	def isChecked(self): 
+		return self._checked
+
+	def setCheckable(self, checkable): 
+		self._checkable = checkable
+		if self._checkable is False and self._checked is True:
+			self.checked = False
+			
+		self._changed()
+		
+	def isCheckable(self):
+		return self._checkable
 
 	# Emits signals:
 	# changed()
@@ -75,24 +83,57 @@ class ActionGroup:
 	def __init__(self):
 		self._exclusive = True
 		self._enabled = True
+		self._actions = []
 
-	def setEnabled(self, enabled): self._enabled = enabled
-	def isEnabled(self): return self._enabled
-	enabled = property(isEnabled, setEnabled)
+	def setEnabled(self, enabled): 
+		self._enabled = enabled
+		
+	def isEnabled(self): 
+		return self._enabled
 
 	def setExclusive(self, exclusive):
 		self._exclusive = exclusive
+		
 	def isExclusive(self):
 		return self._exclusive
 
 	def addAction(self, action):
-		pass
+		if self.hasAction(action):
+			print "Actiongroup already has this action"
+			return
+		self._actions.append(action)
+		eventmapper = scripts.editor.getEditor().getEventMapper()
+		eventmapper.capture("actiongroup_"+str(id(self))+"_"+str(id(action)), "toggled", self._actionToggled, sender=action)
+		
+	def addSeparator(self):
+		separator = Action(separator=True)
+		self.addAction(separator)
+	
+	def getActions(self):
+		return self._actions
 	
 	def removeAction(self, action):
-		pass
+		for a in self._actions:
+			if action == a:
+				self._actions.remove(a)
 	
 	def clear(self):
-		pass
+		self._actions = []
+			
+	def hasAction(self, action):
+		for a in self._actions:
+			if a == action:
+				return True
+		return False
+	
+	def _actionToggled(self, sender):
+		if sender.isChecked() is False:
+			return
+			
+		for a in self._actions:
+			if a != sender and a.isChecked():
+				a.setChecked(False)
+			
 
 	# Emits signals:
 	# triggered( Action action )

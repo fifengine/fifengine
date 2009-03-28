@@ -48,7 +48,7 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 		if callback is None:
 			if self.isCaptured(group_name, event_name):
 				self._removeEvent(group_name, event_name)
-			elif self.debug:
+			else:
 				print CALLBACK_NONE_MESSAGE % str(group_name)
 			return
 		self._addEvent(group_name, event_name, callback, sender)

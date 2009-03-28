@@ -4,7 +4,7 @@ import pychan
 from gui import MenuBar, ToolBar, Toolbox, StatusBar
 import loaders
 from mapview import MapView
-from gui.action import Action
+from gui.action import Action, ActionGroup
 
 def getEditor():
 	if Editor.editor is None:
@@ -42,14 +42,43 @@ class Editor(basicapplication.ApplicationBase):
 		self.getEventMapper().capture("Editor1", "activated", self._actionActivated, sender=testAction1)
 		self._toolbar.addAction(testAction1)
 		
-		testAction2 = Action(u"TestAction2", "gui/icons/select_layer.png")
-		self.getEventMapper().capture("Editor2", "activated", self._actionActivated, sender=testAction2)
+		testAction2 = Action(u"TestAction2", "gui/icons/quit.png")
+		self.getEventMapper().capture("Editor2", "activated", self._actionActivated2, sender=testAction2)
 		self._toolbar.addAction(testAction2)
+		self.testAction = testAction2
 		
-		testAction3 = Action(u"TestAction3", "gui/icons/eraser.png")
-		self.getEventMapper().capture("Editor3", "activated", self._actionActivated, sender=testAction3)
+		testAction4 = Action(u"Separator")
+		testAction4.setCheckable(True)
+		self._toolbar.addAction(testAction4)
+		
+		testAction3 = Action(u"CheckAble1", "gui/icons/eraser.png")
+		testAction3.setCheckable(True)
 		self._toolbar.addAction(testAction3)
 		
+		testAction5 = Action(u"CheckAble2", "gui/icons/eraser.png")
+		testAction5.setCheckable(True)
+		self._toolbar.addAction(testAction5)
+		
+		testAction6 = Action(u"CheckAble3", "gui/icons/eraser.png")
+		testAction6.setCheckable(True)
+		self._toolbar.addAction(testAction6)
+		
+		self._toolbar.addSeparator()
+		
+		actionGroup = ActionGroup()
+		toggle1 = Action(u"ToggleGroup1", "gui/icons/add_instance.png")
+		toggle1.setCheckable(True)
+		actionGroup.addAction(toggle1)
+		
+		toggle2 = Action(u"ToggleGroup2", "gui/icons/add_instance.png")
+		toggle2.setCheckable(True)
+		actionGroup.addAction(toggle2)
+		
+		toggle3 = Action(u"ToggleGroup3", "gui/icons/add_instance.png")
+		toggle3.setCheckable(True)
+		actionGroup.addAction(toggle3)
+		
+		self._toolbar.addActionGroup(actionGroup)
 		
 		self._menubar.show()
 		self._statusbar.show()
@@ -57,8 +86,14 @@ class Editor(basicapplication.ApplicationBase):
 		self._toolbox.show()
 	
 	def _actionActivated(self, sender):
-		print "Action activated:", sender
+		print "Action activated - cycling buttonstyle:", sender
 		self._toolbar.button_style += 1
+		
+	def _actionActivated2(self, sender):
+		print "Action activated - removing item:", sender
+		if self.testAction is not None:
+			self._toolbar.removeAction(self.testAction)
+			self.testAction = None
 	
 	def getStatusBar(self): 
 		return self._statusbar
