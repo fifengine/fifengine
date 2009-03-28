@@ -10,6 +10,11 @@ But there was no event mapped. Did you accidently call a function instead of pas
 Group name = %s
 """
 
+class EventCallback:
+	def __init__(self, callback, sender):
+		self.callback = callback
+		self.sender = sender
+
 class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
 	def __init__(self, engine):
 		self.engine = engine
@@ -39,14 +44,14 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 	# removed by the object that created it later.
 	#
 	# By setting callback to None, the event will be removed.
-	def capture(self, group_name, event_name, callback=None ):
+	def capture(self, group_name, event_name, callback=None, sender=None ):
 		if callback is None:
 			if self.isCaptured(group_name, event_name):
 				self._removeEvent(group_name, event_name)
 			elif self.debug:
 				print CALLBACK_NONE_MESSAGE % str(group_name)
 			return
-		self._addEvent(group_name, event_name, callback)
+		self._addEvent(group_name, event_name, callback, sender)
 	
 	def isCaptured(self, group_name, event_name):
 		if self.callbacks.has_key(group_name):
@@ -54,7 +59,7 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 				return True
 		return False
 
-	def _addEvent(self, group_name, event_name, callback):
+	def _addEvent(self, group_name, event_name, callback, sender):
 		# Set up callback dictionary. This should fix some GC issues
 		if not self.callbacks.has_key(group_name):
 			self.callbacks[group_name] = {}
@@ -62,18 +67,21 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 		if not self.callbacks[group_name].has_key(event_name):
 			self.callbacks[group_name][event_name] = {}
 			
-		self.callbacks[group_name][event_name] = callback
+		self.callbacks[group_name][event_name] = EventCallback(callback, sender)
 
 	def _removeEvent(self, groupname, event_name):
 		del self.callbacks[group_name][event_name]
 		if len(self.callbacks[group_name]) <= 0:
 			del self.callbacks[group_name]
 
-	def dispatchEvent(self, event_name, *args, **kwargs):
+	def dispatchEvent(self, event_name, sender=None, *args, **kwargs):
 		for group in self.callbacks:
 			for event in self.callbacks[group]:
 				if event == event_name:
-					pychan.tools.applyOnlySuitable(self.callbacks[group][event],*args, **kwargs)
+					if self.callbacks[group][event].sender is None \
+							or self.callbacks[group][event].sender == sender:
+						pychan.tools.applyOnlySuitable(self.callbacks[group][event].callback, \
+									event_name=event_name, group_name=group, sender=sender, *args, **kwargs)
 
 	# addHotkey is similar to capture, except that it accepts a key 
 	# sequence (e.g. "CTRL+X") instead of an event.

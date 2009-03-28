@@ -4,6 +4,7 @@ import pychan
 from gui import MenuBar, ToolBar, Toolbox, StatusBar
 import loaders
 from mapview import MapView
+from gui.action import Action
 
 def getEditor():
 	if Editor.editor is None:
@@ -18,6 +19,7 @@ class Editor(basicapplication.ApplicationBase):
 	
 		self.params = params
 		self._eventmapper = None
+		
 		self._inited = False
 		
 		self._mapview = None
@@ -26,22 +28,27 @@ class Editor(basicapplication.ApplicationBase):
 		super(Editor,self).__init__(*args, **kwargs)
 		pychan.init(self.engine, debug=False)
 		
-		self._initGui()
-		
 	def _initGui(self):
-		bar_height = 30
 		screen_width = self.engine.getSettings().getScreenWidth()
-		screen_height = self.engine.getSettings().getScreenHeight()
-		self._statusbar = StatusBar(min_size=(screen_width, bar_height), position=(0, screen_height-bar_height))
+		bar_height = 30
+		self._statusbar = StatusBar(min_size=(screen_width, bar_height))
 		self._toolbar = ToolBar(min_size=(screen_width, bar_height), position=(0, bar_height))
 		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
 		self._toolbox = Toolbox(min_size=(50, 150), position=(50, 150))
 		self._toolbox.position_technique = "explicit"
+		self._statusbar.position_technique = "left:bottom"
+		
+		testAction = Action("TestAction", "gui/icons/hand.png")
+		self.getEventMapper().capture("Editor", "activated", self._actionActivated, sender=testAction)
+		self._toolbar.addAction(testAction)
 		
 		self._menubar.show()
 		self._statusbar.show()
 		self._toolbar.show()
 		self._toolbox.show()
+	
+	def _actionActivated(self, sender):
+		print "Action activated:", sender
 	
 	def getStatusBar(self): 
 		return self._statusbar
@@ -67,7 +74,7 @@ class Editor(basicapplication.ApplicationBase):
 	def getActiveMapView():
 		return self._mapview
 
-	def getEventListener(self):
+	def getEventMapper(self):
 		return self._eventmapper
 
 	def createListener(self):
@@ -99,9 +106,8 @@ class Editor(basicapplication.ApplicationBase):
 			mapView.save()
 
 	def _pump(self):
-		if self._inited is False:
-			# Load a map for testing
-			self.openFile("../rio_de_hola/maps/shrine.xml")
+		if self._inited == False:
+			self._initGui()
 			self._inited = True
 		pass
 		
