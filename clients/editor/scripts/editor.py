@@ -1,11 +1,12 @@
 import basicapplication
-from events import EventMapper
 import pychan
-from gui import MenuBar, ToolBar, Toolbox, StatusBar
+import fife
 import loaders
+from events import EventMapper
+from gui import MenuBar, ToolBar, Toolbox, StatusBar
 from mapview import MapView
 from gui.action import Action, ActionGroup
-import fife
+
 
 DOCK_AREA = {
 		'left'	: 'left',
@@ -52,7 +53,7 @@ class Editor(basicapplication.ApplicationBase):
 		self._statusbar = StatusBar(min_size=(screen_width, bar_height))
 		self._toolbar = ToolBar(button_style=3)
 		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
-		self._toolbox = Toolbox(min_size=(50, 150), position=(150, 150))
+		self._toolbox = ToolBar(title=u"Toolbox", orientation=0, min_size=(50, 150), position=(150, 150))
 		self._toolbox.position_technique = "explicit"
 		
 		# Set up root widget. This
@@ -94,6 +95,7 @@ class Editor(basicapplication.ApplicationBase):
 		self._toolbar.dockTo(DOCK_AREA['top'])
 		
 		self._rootwidget.show()
+		
 		self._toolbox.show()
 
 	def _initActions(self):
@@ -153,6 +155,7 @@ class Editor(basicapplication.ApplicationBase):
 		dockGroup.addAction(dockFloat)
 		
 		self._toolbar.addActionGroup(dockGroup)
+		self._toolbox.addActionGroup(dockGroup)
 	
 	def _actionActivated(self, sender):
 		print "Action activated - cycling buttonstyle:", sender

@@ -116,7 +116,7 @@ class ToolbarButton(widgets.VBox):
 		
 
 class ToolBar(widgets.Window):
-	def __init__(self, button_style=0, auto_expand=True, panel_size=30, orientation=1, *args, **kwargs):
+	def __init__(self, button_style=0, auto_expand=True, panel_size=30, orientation=0, *args, **kwargs):
 		super(ToolBar, self).__init__(*args, **kwargs)
 		
 		self._actions = []
@@ -129,8 +129,7 @@ class ToolBar(widgets.Window):
 		self._button_style = button_style
 		
 		self._titlebarheight = 16
-
-		self.unDock()
+		
 		self._updateToolbar()
 		
 
@@ -158,16 +157,12 @@ class ToolBar(widgets.Window):
 				return True
 		return False
 		
-	def addActionGroup(self, actiongroup): 
-		self.insertActionGroup(actiongroup, len(self._actions))
-		
 	def insertAction(self, action, position=0, before=None):
 		if self.hasAction(action):
 			print "Action already added to toolbar"
 			return
 			
-		button = ToolbarButton(action, button_style=self._button_style)
-		self._actions.append(button)
+		button = ToolbarButton(action, button_style=self._button_style, name=action.text)
 		
 		if before is not None:
 			for a in self._actions:
@@ -175,17 +170,25 @@ class ToolBar(widgets.Window):
 					before = a
 					break
 			self.gui.insertChildBefore(button, before)
+			self._actions.insert(self._actions.index(before), button)
 		else:
 			self.gui.insertChild(button, position)
+			self._actions.insert(position, button)
 		
 		
 	def insertSeparator(self, separator=None, position=0, before=None): 
 		if separator==None:
 			separator = Action(separator=True)
 		self.insertAction(separator, position, before)
+	
+	def addActionGroup(self, actiongroup): 
+		self.insertActionGroup(actiongroup, len(self._actions))
 		
 	def insertActionGroup(self, actiongroup, position=0, before=None): 
 		actions = actiongroup.getActions()
+
+		if position >= 0:
+			actions = reversed(actions)
 
 		for action in actions:
 			self.insertAction(action, position, before)
