@@ -14,12 +14,21 @@ class EventCallback:
 	def __init__(self, callback, sender):
 		self.callback = callback
 		self.sender = sender
+		
+class QueueItem:
+	def __init__(self, type, group_name, event_name, callback, sender):
+		self.type = type
+		self.group_name = group_name
+		self.event_name = event_name
+		self.callback = callback
+		self.sender = sender
 
 class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
 	def __init__(self, engine):
 		self.engine = engine
 		
 		self.callbacks = {}
+		self.queue = []
 		
 		eventmanager = self.engine.getEventManager()
 
@@ -47,15 +56,20 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 	def capture(self, group_name, event_name, callback=None, sender=None ):
 		if callback is None:
 			if self.isCaptured(group_name, event_name):
-				self._removeEvent(group_name, event_name)
+				self.queue.append(QueueItem("remove", group_name, event_name, callback, sender))
+				#self._removeEvent(group_name, event_name)
 			else:
 				print CALLBACK_NONE_MESSAGE % str(group_name)
 			return
-		self._addEvent(group_name, event_name, callback, sender)
+		self.queue.append(QueueItem("add", group_name, event_name, callback, sender))
+		#self._addEvent(group_name, event_name, callback, sender)
 	
 	def isCaptured(self, group_name, event_name):
 		if self.callbacks.has_key(group_name):
 			if self.callbacks[group_name].has_key(event_name):
+				return True
+		for q in self.queue:
+			if q.type == "add" and q.group_name == group_name and q.event_name == event_name:
 				return True
 		return False
 
@@ -73,7 +87,7 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 		del self.callbacks[group_name][event_name]
 		if len(self.callbacks[group_name]) <= 0:
 			del self.callbacks[group_name]
-
+			
 	def dispatchEvent(self, event_name, sender=None, *args, **kwargs):
 		for group in self.callbacks:
 			for event in self.callbacks[group]:
@@ -87,6 +101,14 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 	# sequence (e.g. "CTRL+X") instead of an event.
 	def addHotkey(self, groupname, keysequence, callback=None): 
 		pass
+		
+	def pump(self):
+		for q in self.queue:
+			if q.type == "add":
+				self._addEvent(q.group_name, q.event_name, q.callback, q.sender)
+			elif q.type == "remove":
+				self._removeEvent(q.group_name, q.event_name)
+		self.queue = []
 	
 	#--- Listener methods ---#
 	def onSave(self, map):

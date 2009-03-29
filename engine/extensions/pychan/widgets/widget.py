@@ -300,6 +300,23 @@ class Widget(object):
 		"""
 		raise RuntimeError("Trying to add a widget to %s, which doesn't allow this." % repr(self))
 
+	def insertChild(self, widget, position):
+		"""
+		This function inserts a widget a given index in the child list.
+		
+		See L{addChild} and L{insertChildBefore} 
+		"""
+		raise RuntimeError("Trying to insert a widget to %s, which doesn't allow this." % repr(self))
+		
+	def insertChildBefore(self, widget, before):
+		"""
+		Inserts a child widget before a given widget. If the widget isn't found,
+		the widget is appended to the children list.
+		
+		See L{addChild} and L{insertChild} 
+		"""
+		raise RuntimeError("Trying to insert a widget to %s, which doesn't allow this." % repr(self))
+
 	def addChildren(self,*widgets):
 		"""
 		Add multiple widgets as children.

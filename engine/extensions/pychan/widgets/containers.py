@@ -38,6 +38,30 @@ class Container(Widget):
 		self.children.append(widget)
 		self.real_widget.add(widget.real_widget)
 
+	def insertChild(self, widget, position):
+		if position > len(self.children) or 0-position > len(self.children):
+			print "insertChild: Warning: Index overflow.",
+			if position >= 0:
+				self.addChild(widget)
+			else:
+				self.insertChild(widget, 0)
+			return
+			
+		self.children = self.children[0:position]+[widget]+self.children[position:]
+		self.real_widget.add(widget.real_widget)
+		
+	def insertChildBefore(self, widget, before):
+		i = -1
+		for child in self.children:
+			i += 1
+			if child == before:
+				break
+			
+		self.insertChild(widget, i)
+		if i < 0:
+			print "insertChildBefore: Didn't find widget:", before
+			return
+
 	def removeChild(self,widget):
 		if not widget in self.children:
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))

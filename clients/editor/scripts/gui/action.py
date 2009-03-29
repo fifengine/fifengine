@@ -80,8 +80,8 @@ class Action:
 	# activated()
 
 class ActionGroup:
-	def __init__(self):
-		self._exclusive = True
+	def __init__(self, exclusive=False):
+		self._exclusive = exclusive
 		self._enabled = True
 		self._actions = []
 
@@ -127,7 +127,7 @@ class ActionGroup:
 		return False
 	
 	def _actionToggled(self, sender):
-		if sender.isChecked() is False:
+		if sender.isChecked() is False or self._exclusive is False:
 			return
 			
 		for a in self._actions:
