@@ -1,6 +1,7 @@
-from pychan import widgets
 import scripts.editor
 import copy
+
+from pychan import widgets
 
 from action import Action, ActionGroup
 from fife import Color
@@ -17,103 +18,6 @@ BUTTON_STYLE = {
 			"TextUnderIcon"		: 2,
 			"TextBesideIcon"	: 3
 			}
-
-class ToolbarButton(widgets.VBox):
-	def __init__(self, action, button_style=0, **kwargs):
-		self._action = action
-		self._widget = None
-
-		super(ToolbarButton, self).__init__(**kwargs)
-		
-		self.setButtonStyle(button_style)
-		self.update()
-		
-		# Register new eventlistener
-		eventMapper = scripts.editor.getEditor().getEventMapper()
-		eventMapper.capture("toolbutton_"+str(id(self)), "changed", self.update, sender=action)
-		
-	def setAction(self, action):
-		# Remove eventlistener for old action
-		eventMapper = scripts.editor.getEditor().getEventMapper()
-		eventMapper.capture("toolbutton_"+str(id(self)), "changed", None, sender=self._action)
-		
-		self._action = action
-		self.update()
-		
-		# Register new eventlistener
-		eventMapper.capture("toolbutton_"+str(id(self)), "changed", self.update, sender=action)
-	
-	def getAction(self):
-		return self._action
-	action = property(getAction, setAction)
-	
-	def setButtonStyle(self, button_style):
-		self._button_style = BUTTON_STYLE['IconOnly']
-		for key, val in BUTTON_STYLE.iteritems():
-			if val == button_style:
-				self._button_style = button_style
-				break
-		self.update()
-		
-	def getButtonStyle(self):
-		return self._button_style
-	button_style = property(getButtonStyle, setButtonStyle)
-		
-	def update(self):
-		if self._widget != None:
-			self.removeChild(self._widget)
-			self._widget = None
-			
-		if self._action is None:
-			return
-			
-		widget = None
-		icon = None
-		text = None
-
-		if self._action.isSeparator():
-			widget = widgets.VBox()
-			widget.base_color += Color(8, 8, 8)
-			widget.min_size = (2, 2)
-		else:
-			if self._button_style != BUTTON_STYLE['TextOnly']:
-				if self._action.isCheckable():
-					icon = widgets.ToggleButton(up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
-					icon.toggled = self._action.isChecked()
-				else:
-					icon = widgets.ImageButton(up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
-				icon.capture(self._action.activate)
-				
-			if self._button_style != BUTTON_STYLE['IconOnly']:
-				text = widgets.Label(text=self._action.text)
-				text.capture(self._action.activate, "mouseClicked")
-			
-			if self._button_style == BUTTON_STYLE['TextOnly']:
-				widget = text
-				widget.capture(self._action.activate, "mouseClicked")
-				
-			elif self._button_style == BUTTON_STYLE['TextUnderIcon']:
-				widget = widgets.VBox()
-				icon.position_technique = "center:top"
-				text.position_technique = "center:bottom"
-				widget.addChild(icon)
-				widget.addChild(text)
-				
-			elif self._button_style == BUTTON_STYLE['TextBesideIcon']:
-				widget = widgets.HBox()
-				widget.addChild(icon)
-				widget.addChild(text)
-					
-			else:
-				widget = icon
-			
-		widget.position_technique = "left:center"
-		widget.hexpand = 0
-		
-		self._widget = widget
-		self.addChild(self._widget)
-		self.adaptLayout()
-		
 
 class ToolBar(widgets.Window):
 	def __init__(self, button_style=0, auto_expand=True, panel_size=30, orientation=0, *args, **kwargs):
@@ -265,7 +169,6 @@ class ToolBar(widgets.Window):
 	panel_size = property(getPanelSize, setPanelSize)
 	
 	def dockTo(self, dockarea):
-		print "Dockto", dockarea
 		self._floating = False
 		self.real_widget.setTitleBarHeight(0)
 		
@@ -294,3 +197,113 @@ class ToolBar(widgets.Window):
 		
 	def isFloating(self):
 		return self._floating
+		
+
+class ToolbarButton(widgets.VBox):
+	def __init__(self, action, button_style=0, **kwargs):
+		self._action = action
+		self._widget = None
+
+		super(ToolbarButton, self).__init__(**kwargs)
+		
+		self.setButtonStyle(button_style)
+		self.update()
+		
+		# Register eventlisteners
+		self.capture(self._showTooltip, "mouseEntered")
+		self.capture(self._hideTooltip, "mouseExited")
+		
+		eventMapper = scripts.editor.getEditor().getEventMapper()
+		eventMapper.capture("toolbutton_"+str(id(self)), "changed", self.update, sender=action)
+	
+	def setAction(self, action):
+		# Remove eventlistener for old action
+		eventMapper = scripts.editor.getEditor().getEventMapper()
+		eventMapper.capture("toolbutton_"+str(id(self)), "changed", None, sender=self._action)
+		
+		self._action = action
+		self.update()
+		
+		# Register new eventlistener
+		eventMapper.capture("toolbutton_"+str(id(self)), "changed", self.update, sender=action)
+	
+	def getAction(self):
+		return self._action
+	action = property(getAction, setAction)
+	
+	def setButtonStyle(self, button_style):
+		self._button_style = BUTTON_STYLE['IconOnly']
+		for key, val in BUTTON_STYLE.iteritems():
+			if val == button_style:
+				self._button_style = button_style
+				break
+		self.update()
+		
+	def getButtonStyle(self):
+		return self._button_style
+	button_style = property(getButtonStyle, setButtonStyle)
+	
+	def _showTooltip(self):
+		if self._action is not None and self._action.helptext != "":
+			scripts.editor.getEditor().getStatusBar().showTooltip(self._action.helptext)
+			
+	def _hideTooltip(self):
+		scripts.editor.getEditor().getStatusBar().hideTooltip()
+		
+	def update(self):
+		""" Sets up the widget """
+		
+		if self._widget != None:
+			self.removeChild(self._widget)
+			self._widget = None
+			
+		if self._action is None:
+			return
+			
+		widget = None
+		icon = None
+		text = None
+
+		if self._action.isSeparator():
+			widget = widgets.VBox()
+			widget.base_color += Color(8, 8, 8)
+			widget.min_size = (2, 2)
+		else:
+			if self._button_style != BUTTON_STYLE['TextOnly']:
+				if self._action.isCheckable():
+					icon = widgets.ToggleButton(up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
+					icon.toggled = self._action.isChecked()
+				else:
+					icon = widgets.ImageButton(up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
+				icon.capture(self._action.activate)
+				
+			if self._button_style != BUTTON_STYLE['IconOnly']:
+				text = widgets.Label(text=self._action.text)
+				text.capture(self._action.activate, "mouseClicked")
+			
+			if self._button_style == BUTTON_STYLE['TextOnly']:
+				widget = text
+				widget.capture(self._action.activate, "mouseClicked")
+				
+			elif self._button_style == BUTTON_STYLE['TextUnderIcon']:
+				widget = widgets.VBox()
+				icon.position_technique = "center:top"
+				text.position_technique = "center:bottom"
+				widget.addChild(icon)
+				widget.addChild(text)
+				
+			elif self._button_style == BUTTON_STYLE['TextBesideIcon']:
+				widget = widgets.HBox()
+				widget.addChild(icon)
+				widget.addChild(text)
+					
+			else:
+				widget = icon
+			
+		widget.position_technique = "left:center"
+		widget.hexpand = 0
+		
+		self._widget = widget
+		self.addChild(self._widget)
+		self.adaptLayout()
+		

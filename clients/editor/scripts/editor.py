@@ -3,7 +3,7 @@ import pychan
 import fife
 import loaders
 from events import EventMapper
-from gui import MenuBar, ToolBar, Toolbox, StatusBar
+from gui import MenuBar, ToolBar, StatusBar
 from mapview import MapView
 from gui.action import Action, ActionGroup
 
@@ -50,11 +50,12 @@ class Editor(basicapplication.ApplicationBase):
 		screen_width = self.engine.getSettings().getScreenWidth()
 		screen_height = self.engine.getSettings().getScreenHeight()
 		bar_height = 30
-		self._statusbar = StatusBar(min_size=(screen_width, bar_height))
+		self._statusbar = StatusBar(text=u"", panel_size=bar_height)
 		self._toolbar = ToolBar(button_style=3)
 		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
-		self._toolbox = ToolBar(title=u"Toolbox", orientation=0, min_size=(50, 150), position=(150, 150))
+		self._toolbox = ToolBar(title=u"", orientation=1, panel_size=bar_height)
 		self._toolbox.position_technique = "explicit"
+		self._toolbox.position = (150, 150)
 		
 		# Set up root widget. This
 		self._rootwidget = pychan.widgets.VBox(padding=0, vexpand=1, hexpand=1)
@@ -100,10 +101,12 @@ class Editor(basicapplication.ApplicationBase):
 
 	def _initActions(self):
 		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/zoom_in.png")
+		testAction1.helptext = u"Cycles button styles. There are currently four button styles."
 		self.getEventMapper().capture("Editor1", "activated", self._actionActivated, sender=testAction1)
 		self._toolbar.addAction(testAction1)
 		
 		testAction2 = Action(u"Remove action", "gui/icons/zoom_out.png")
+		testAction2.helptext = u"Removes the action from the active toolbar/menubar"
 		self.getEventMapper().capture("Editor2", "activated", self._actionActivated2, sender=testAction2)
 		self._toolbar.addAction(testAction2)
 		self.testAction = testAction2
@@ -114,14 +117,17 @@ class Editor(basicapplication.ApplicationBase):
 		self._toolbar.addAction(testAction4)
 		
 		testAction3 = Action(u"CheckAble1", "gui/icons/eraser.png")
+		testAction3.helptext = u"A simple action to showcase toggleable actions."
 		testAction3.setCheckable(True)
 		self._toolbar.addAction(testAction3)
 		
 		testAction5 = Action(u"CheckAble2", "gui/icons/eraser.png")
+		testAction5.helptext = u"A simple action to showcase toggleable actions."
 		testAction5.setCheckable(True)
 		self._toolbar.insertAction(testAction5, 3)
 		
 		testAction6 = Action(u"CheckAble3", "gui/icons/eraser.png")
+		testAction6.helptext = u"A simple action to showcase toggleable actions."
 		testAction6.setCheckable(True)
 		self._toolbar.insertAction(testAction6, 0, before=testAction5)
 		
@@ -130,27 +136,32 @@ class Editor(basicapplication.ApplicationBase):
 		dockGroup = ActionGroup(exclusive=True)
 		
 		dockTop = Action(u"Top", "gui/icons/select_layer.png")
+		dockTop.helptext = u"Dock the toolbar to the top dock area."
 		dockTop.setCheckable(True)
 		dockTop.setChecked(True)
 		self._eventmapper.capture("docking1", "activated", self._actionDockTop, sender=dockTop)
 		dockGroup.addAction(dockTop)
 		
 		dockRight = Action(u"Right", "gui/icons/select_layer.png")
+		dockRight.helptext = u"Dock the toolbar to the right dock area."
 		dockRight.setCheckable(True)
 		self._eventmapper.capture("docking2", "activated", self._actionDockRight, sender=dockRight)
 		dockGroup.addAction(dockRight)
 		
 		dockBottom = Action(u"Bottom", "gui/icons/select_layer.png")
+		dockBottom.helptext = u"Dock the toolbar to the bottom dock area."
 		dockBottom.setCheckable(True)
 		self._eventmapper.capture("docking3", "activated", self._actionDockBottom, sender=dockBottom)
 		dockGroup.addAction(dockBottom)
 		
 		dockLeft = Action(u"Left", "gui/icons/select_layer.png")
+		dockLeft.helptext = u"Dock the toolbar to the left dock area."
 		dockLeft.setCheckable(True)
 		self._eventmapper.capture("docking4", "activated", self._actionDockLeft, sender=dockLeft)
 		dockGroup.addAction(dockLeft)
 		
 		dockFloat = Action(u"Float", "gui/icons/delete_layer.png")
+		dockFloat.helptext = u"Undock the toolbar. Currently a little buggy."
 		self._eventmapper.capture("docking5", "activated", self._toolbar.unDock, sender=dockFloat)
 		dockGroup.addAction(dockFloat)
 		
@@ -158,11 +169,9 @@ class Editor(basicapplication.ApplicationBase):
 		self._toolbox.addActionGroup(dockGroup)
 	
 	def _actionActivated(self, sender):
-		print "Action activated - cycling buttonstyle:", sender
 		self._toolbar.button_style += 1
 		
 	def _actionActivated2(self, sender):
-		print "Action activated - removing item:", sender
 		if self.testAction is not None:
 			self._toolbar.removeAction(self.testAction)
 			self.testAction = None
