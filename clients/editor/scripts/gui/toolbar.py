@@ -1,13 +1,10 @@
-import copy
-import objgraph
-import pdb
-
 from pychan import widgets
 
+import scripts.events
 import scripts.gui.action
 from action import Action, ActionGroup
 from fife import Color
-import gc
+
 from scripts.signal import Signal
 
 # Orientation isn't implemented yet
@@ -24,12 +21,11 @@ BUTTON_STYLE = {
 		}
 
 class ToolBar(widgets.Window):
-	buttonStyleChanged = Signal(providing_args=["buttonStyle"])
-
 	def __init__(self, button_style=0, auto_expand=True, panel_size=30, orientation=0, *args, **kwargs):
 		super(ToolBar, self).__init__(*args, **kwargs)
 		
 		self._actions = []
+		self._actionbuttons = []
 		self._button_style = 0
 		self._panel_size = panel_size
 		self.gui = None
@@ -50,63 +46,55 @@ class ToolBar(widgets.Window):
 		self.insertAction(action, len(self._actions))
 		
 	def removeAction(self, action):
-		if self.hasAction(action) is False:
-			print "Tried to remove an action, which is not in the toolbar."
-			return
-		
-		for a in self._actions:
-			if a.action == action:
+		self._actions.remove(action)
+		if isinstance(action, ActionGroup):
+			for a in action:
 				self.gui.removeChild(a)
-				self._actions.remove(a)
-				break
+				self._actionbuttons.remove(a)
+			
 		self.adaptLayout()
 		
 	def hasAction(self, action):
 		for a in self._actions:
-			if a.action == action:
-				return True
+			if a == action: return True
 		return False
 		
 	def insertAction(self, action, position=0, before=None):
 		if self.hasAction(action):
 			print "Action already added to toolbar"
 			return
-			
-		button = ToolbarButton(action, button_style=self._button_style, name=action.text)
-		ToolBar.buttonStyleChanged.connect(button.update, sender=self)
-		
+
 		if before is not None:
-			for a in self._actions:
-				if a.action == before:
-					before = a
-					break
-			self.gui.insertChildBefore(button, before)
-			self._actions.insert(self._actions.index(before), button)
-		else:
-			self.gui.insertChild(button, position)
-			self._actions.insert(position, button)
+			position = self._actions.index(before)
+
+		self._actions.insert(position, action)
+		self._insertButton(action, position)
 		
+	def _insertButton(self, action, position):
+		actions = [action]
+		if isinstance(action, ActionGroup):
+			actions = action.getActions()
+
+		if position >= 0:
+			actions = reversed(actions)
+
+		for a in actions:
+			button = ToolbarButton(a, button_style=self._button_style, name=a.text)
+			self.gui.insertChild(button, position)
+			self._actionbuttons.insert(position, button)
 		
 	def insertSeparator(self, separator=None, position=0, before=None): 
 		if separator==None:
 			separator = Action(separator=True)
 		self.insertAction(separator, position, before)
-	
-	def addActionGroup(self, actiongroup): 
-		self.insertActionGroup(actiongroup, len(self._actions))
-		
-	def insertActionGroup(self, actiongroup, position=0, before=None): 
-		actions = actiongroup.getActions()
-
-		if position >= 0:
-			actions = reversed(actions)
-
-		for action in actions:
-			self.insertAction(action, position, before)
 		
 	def clear(self):
 		self.removeAllChildren()
 		self._actions = []
+		
+		for i in reversed(range(len(self._actionbuttons))):
+			self._actionbuttons[i].removeEvents()
+		self._actionbuttons = []
 		
 	def setButtonStyle(self, button_style):
 		self._button_style = BUTTON_STYLE['IconOnly']
@@ -114,15 +102,16 @@ class ToolBar(widgets.Window):
 			if val == button_style:
 				self._button_style = button_style
 				break
-		ToolBar.buttonStyleChanged.send(sender=self, buttonStyle=self._button_style)
-		self.adaptLayout()
+		
+		self._updateToolbar()
 		
 	def getButtonStyle(self):
 		return self._button_style
 	button_style = property(getButtonStyle, setButtonStyle)
 		
 	def _updateToolbar(self):
-		actionlist = self._actions
+		actions = self._actions
+		
 		self.clear()
 		
 		if self._orientation == ORIENTATION['Vertical']:
@@ -131,10 +120,8 @@ class ToolBar(widgets.Window):
 			self.gui = widgets.HBox(min_size=(self._panel_size, self._panel_size))
 		self.addChild(self.gui)
 		
-		for action in actionlist:
-			self.addAction(action.action)
-			
-		#pdb.set_trace()
+		for action in actions:
+			self.addAction(action)
 
 		self.setAutoExpand(self._auto_expand)
 		self.adaptLayout()
@@ -221,22 +208,31 @@ class ToolbarButton(widgets.VBox):
 		
 		self.setButtonStyle(button_style)
 		self.update()
-		
+
+		self.initEvents()
+	
+	def initEvents(self):
 		# Register eventlisteners
 		self.capture(self._showTooltip, "mouseEntered")
 		self.capture(self._hideTooltip, "mouseExited")
 		
-		scripts.gui.action.changed.connect(self.update, sender=action)
+		scripts.gui.action.changed.connect(self.update, sender=self._action)
+	
+	def removeEvents(self):
+		# Remove eventlisteners
+		self.capture(None, "mouseEntered")
+		self.capture(None, "mouseExited")
+		
+		scripts.gui.action.changed.disconnect(self.update, sender=self._action)
 	
 	def setAction(self, action):
-		# Remove eventlistener for old action
-		scripts.gui.action.changed.disconnect(self.update, sender=self._action)
+		self.removeEvents()
 		
 		self._action = action
 		self.update()
+		self.adeptLayout()
 		
-		# Register new eventlistener
-		scripts.gui.action.changed.connect(self.update, sender=action)
+		self.initEvents()
 	
 	def getAction(self):
 		return self._action
@@ -261,10 +257,7 @@ class ToolbarButton(widgets.VBox):
 		scripts.editor.getEditor().getStatusBar().hideTooltip()
 		
 	def update(self):
-		""" Sets up the widget """
-		
-		print "Update: ", self._action.text, id(self)
-		
+		""" Sets up the button widget """
 		if self._widget != None:
 			self.removeChild(self._widget)
 			self._widget = None
@@ -317,5 +310,4 @@ class ToolbarButton(widgets.VBox):
 		
 		self._widget = widget
 		self.addChild(self._widget)
-		self.adaptLayout()
 		

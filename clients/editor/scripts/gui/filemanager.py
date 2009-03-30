@@ -32,7 +32,7 @@ class FileManager(object):
 		fileGroup.addAction(saveAction)
 		fileGroup.addAction(saveAllAction)
 		
-		self.editor.getToolBar().insertActionGroup(fileGroup, 0)
+		self.editor.getToolBar().insertAction(fileGroup, 0)
 
 		self.newMap = None
 		self.saveRequested = False

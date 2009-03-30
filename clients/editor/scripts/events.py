@@ -3,8 +3,10 @@
 import fife
 from fife import IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter
 from signal import Signal
+import pdb
 
 #--- Signals ---#
+onPump = Signal()
 preSave	= Signal(providing_args=["map"])
 postSave = Signal(providing_args=["map"])
 mapAdded = Signal(providing_args=["map"])

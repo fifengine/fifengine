@@ -173,8 +173,8 @@ class Editor(basicapplication.ApplicationBase):
 		action.activated.connect(self._toolbar.unDock, sender=dockFloat)
 		dockGroup.addAction(dockFloat)
 		
-		self._toolbar.addActionGroup(dockGroup)
-		self._toolbox.addActionGroup(dockGroup)
+		self._toolbar.addAction(dockGroup)
+		self._toolbox.addAction(dockGroup)
 	
 	def _actionActivated(self, sender):
 		self._toolbar.button_style += 1

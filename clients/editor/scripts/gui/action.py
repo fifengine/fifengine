@@ -127,7 +127,6 @@ class ActionGroup:
 		return False
 	
 	def _actionToggled(self, sender):
-		print "Toggled"
 		if sender.isChecked() is False or self._exclusive is False:
 			return
 			
