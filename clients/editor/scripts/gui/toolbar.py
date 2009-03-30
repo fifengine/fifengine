@@ -111,7 +111,7 @@ class ToolBar(widgets.Window):
 			if val == button_style:
 				self._button_style = button_style
 				break
-		
+
 		self._updateToolbar()
 		
 	def getButtonStyle(self):
@@ -289,10 +289,10 @@ class ToolbarButton(widgets.VBox):
 		else:
 			if self._button_style != BUTTON_STYLE['TextOnly']:
 				if self._action.isCheckable():
-					icon = widgets.ToggleButton(up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
+					icon = widgets.ToggleButton(hexpand=0, up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
 					icon.toggled = self._action.isChecked()
 				else:
-					icon = widgets.ImageButton(up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
+					icon = widgets.ImageButton(hexpand=0, up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
 				icon.capture(self._action.activate)
 				
 			if self._button_style != BUTTON_STYLE['IconOnly']:
@@ -301,7 +301,6 @@ class ToolbarButton(widgets.VBox):
 			
 			if self._button_style == BUTTON_STYLE['TextOnly']:
 				widget = text
-				widget.capture(self._action.activate, "mouseClicked")
 				
 			elif self._button_style == BUTTON_STYLE['TextUnderIcon']:
 				widget = widgets.VBox()

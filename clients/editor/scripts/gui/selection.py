@@ -29,7 +29,7 @@ class SelectionDialog(object):
 		self._callback(self.list[selection])
 		self._widget.hide()
 
-class ClickSelection():
+class ClickSelectionDialog(object):
 	"""
 	ClickSelection displays a list of options for the user to select from. The result is passed to onSelection.
 	Differs from Selection: the selection is made when a list element is clicked, rather than when the box is closed.	

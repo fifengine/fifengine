@@ -125,23 +125,6 @@ class Editor(basicapplication.ApplicationBase):
 		testAction4.setSeparator(True)
 		self._toolbar.addAction(testAction4)
 		
-		testAction3 = Action(u"CheckAble1", "gui/icons/eraser.png")
-		testAction3.helptext = u"A simple action to showcase toggleable actions."
-		testAction3.setCheckable(True)
-		self._toolbar.addAction(testAction3)
-		
-		testAction5 = Action(u"CheckAble2", "gui/icons/eraser.png")
-		testAction5.helptext = u"A simple action to showcase toggleable actions."
-		testAction5.setCheckable(True)
-		self._toolbar.insertAction(testAction5, 3)
-		
-		testAction6 = Action(u"CheckAble3", "gui/icons/eraser.png")
-		testAction6.helptext = u"A simple action to showcase toggleable actions."
-		testAction6.setCheckable(True)
-		self._toolbar.insertAction(testAction6, 0, before=testAction5)
-		
-		self._toolbar.addSeparator()
-		
 		dockGroup = ActionGroup(exclusive=True)
 		
 		dockTop = Action(u"Top", "gui/icons/select_layer.png")
