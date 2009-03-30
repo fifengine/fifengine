@@ -1,5 +1,10 @@
-import scripts.editor
+from scripts.signal import Signal
 import pychan.internal
+
+changed = Signal(providing_args=[])
+toggled = Signal(providing_args=["toggled"])
+activated = Signal(providing_args=[])
+#triggered = Signal(providing_args=["action"])
 
 class Action:
 	def __init__(self, text="", icon="", separator=False):
@@ -15,12 +20,12 @@ class Action:
 	def activate(self):
 		if self.isCheckable():
 			self.setChecked(not self.isChecked())
-		scripts.editor.getEditor().getEventMapper().dispatchEvent("activated", self)
+		activated.send(sender=self)
 		
 	def _changed(self):
-		scripts.editor.getEditor().getEventMapper().dispatchEvent("changed", self)
+		changed.send(sender=self)
 
-	def setSeparator(self, separator): 
+	def setSeparator(self, separator):
 		self._separator = separator
 		self._changed()
 	def isSeparator(self): return self._separator
@@ -59,8 +64,8 @@ class Action:
 	def setChecked(self, checked):
 		self._checked = checked
 		self._changed()
-		scripts.editor.getEditor().getEventMapper().dispatchEvent("toggled", sender=self, checked=checked)	
-	
+		toggled.send(sender=self, toggled=checked)
+
 	def isChecked(self): 
 		return self._checked
 
@@ -73,11 +78,6 @@ class Action:
 		
 	def isCheckable(self):
 		return self._checkable
-
-	# Emits signals:
-	# changed()
-	# toggled(bool)
-	# activated()
 
 class ActionGroup:
 	def __init__(self, exclusive=False):
@@ -102,9 +102,8 @@ class ActionGroup:
 			print "Actiongroup already has this action"
 			return
 		self._actions.append(action)
-		eventmapper = scripts.editor.getEditor().getEventMapper()
-		eventmapper.capture("actiongroup_"+str(id(self))+"_"+str(id(action)), "toggled", self._actionToggled, sender=action)
-		
+		toggled.connect(self._actionToggled, sender=action)
+
 	def addSeparator(self):
 		separator = Action(separator=True)
 		self.addAction(separator)
@@ -113,11 +112,12 @@ class ActionGroup:
 		return self._actions
 	
 	def removeAction(self, action):
-		for a in self._actions:
-			if action == a:
-				self._actions.remove(a)
+		self._actions.remove(action)
+		toggled.disconnect(self._actionToggled, sender=action)
 	
 	def clear(self):
+		for action in self._actions:
+			toggled.disconnect(self._actionToggled, sender=action)
 		self._actions = []
 			
 	def hasAction(self, action):
@@ -127,13 +127,11 @@ class ActionGroup:
 		return False
 	
 	def _actionToggled(self, sender):
+		print "Toggled"
 		if sender.isChecked() is False or self._exclusive is False:
 			return
 			
 		for a in self._actions:
 			if a != sender and a.isChecked():
 				a.setChecked(False)
-			
 
-	# Emits signals:
-	# triggered( Action action )

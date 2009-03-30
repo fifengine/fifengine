@@ -2,33 +2,41 @@
 
 import fife
 from fife import IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter
-import pychan
+from signal import Signal
 
-CALLBACK_NONE_MESSAGE = """\
-You passed None as parameter to EventMapper, which would normally remove a mapped event.
-But there was no event mapped. Did you accidently call a function instead of passing it?
-Group name = %s
-"""
+#--- Signals ---#
+preSave	= Signal(providing_args=["map"])
+postSave = Signal(providing_args=["map"])
+mapAdded = Signal(providing_args=["map"])
+preMapRemove = Signal(providing_args=["map"])
+postMapRemove = Signal(providing_args=["map"])
 
-class EventCallback:
-	def __init__(self, callback, sender):
-		self.callback = callback
-		self.sender = sender
-		
-class QueueItem:
-	def __init__(self, type, group_name, event_name, callback, sender):
-		self.type = type
-		self.group_name = group_name
-		self.event_name = event_name
-		self.callback = callback
-		self.sender = sender
+# Signals emitted by EventListener
+onQuit			= Signal(providing_args=[])
+keyPressed		= Signal(providing_args=["event"])
+keyReleased		= Signal(providing_args=["event"])
+mouseEntered	= Signal(providing_args=["event"])
+mouseExited		= Signal(providing_args=["event"])
+mousePressed	= Signal(providing_args=["event"])
+mouseReleased	= Signal(providing_args=["event"])
+mouseClicked	= Signal(providing_args=["event"])
+mouseWheelMovedUp = Signal(providing_args=["event"])
+mouseWheelMovedDown = Signal(providing_args=["event"])
+mouseMoved		= Signal(providing_args=["event"])
+mouseDragged	= Signal(providing_args=["event"])
+onLayerChanged	= Signal(providing_args=["layer", "changedInstances"])
+onInstanceCreate = Signal(providing_args=["layer", "instance"])
+onInstanceDelete = Signal(providing_args=["layer", "instance"])
+onMapChanged	= Signal(providing_args=["map", "changedLayers"])
+onLayerCreate	= Signal(providing_args=["map", "layer"])
+onLayerDelete	= Signal(providing_args=["map", "layer"])
+onToolsClick	= Signal(providing_args=[])
+onCommand		= Signal(providing_args=["command"])
+onConsoleCommand= Signal(providing_args=["command"])
 
-class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
+class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
 	def __init__(self, engine):
 		self.engine = engine
-		
-		self.callbacks = {}
-		self.queue = []
 		
 		eventmanager = self.engine.getEventManager()
 
@@ -46,126 +54,85 @@ class EventMapper(IKeyListener, ICommandListener, IMouseListener, LayerChangeLis
 		
 		MapChangeListener.__init__(self)
 		LayerChangeListener.__init__(self)
-		
-
-	# Since this EventMapper is shared by all modules in the editor, 
-	# a groupname parameter must be supplied so that the event can be
-	# removed by the object that created it later.
-	#
-	# By setting callback to None, the event will be removed.
-	def capture(self, group_name, event_name, callback=None, sender=None ):
-		if callback is None:
-			if self.isCaptured(group_name, event_name):
-				self.queue.append(QueueItem("remove", group_name, event_name, callback, sender))
-				#self._removeEvent(group_name, event_name)
-			else:
-				print CALLBACK_NONE_MESSAGE % str(group_name)
-			return
-		self.queue.append(QueueItem("add", group_name, event_name, callback, sender))
-		#self._addEvent(group_name, event_name, callback, sender)
-	
-	def isCaptured(self, group_name, event_name):
-		if self.callbacks.has_key(group_name):
-			if self.callbacks[group_name].has_key(event_name):
-				return True
-		for q in self.queue:
-			if q.type == "add" and q.group_name == group_name and q.event_name == event_name:
-				return True
-		return False
-
-	def _addEvent(self, group_name, event_name, callback, sender):
-		# Set up callback dictionary. This should fix some GC issues
-		if not self.callbacks.has_key(group_name):
-			self.callbacks[group_name] = {}
-			
-		if not self.callbacks[group_name].has_key(event_name):
-			self.callbacks[group_name][event_name] = {}
-			
-		self.callbacks[group_name][event_name] = EventCallback(callback, sender)
-
-	def _removeEvent(self, groupname, event_name):
-		del self.callbacks[group_name][event_name]
-		if len(self.callbacks[group_name]) <= 0:
-			del self.callbacks[group_name]
-			
-	def dispatchEvent(self, event_name, sender=None, *args, **kwargs):
-		for group in self.callbacks:
-			for event in self.callbacks[group]:
-				if event == event_name:
-					if self.callbacks[group][event].sender is None \
-							or self.callbacks[group][event].sender == sender:
-						pychan.tools.applyOnlySuitable(self.callbacks[group][event].callback, \
-									event_name=event_name, group_name=group, sender=sender, *args, **kwargs)
-
-	# addHotkey is similar to capture, except that it accepts a key 
-	# sequence (e.g. "CTRL+X") instead of an event.
-	def addHotkey(self, groupname, keysequence, callback=None): 
-		pass
-		
-	def pump(self):
-		for q in self.queue:
-			if q.type == "add":
-				self._addEvent(q.group_name, q.event_name, q.callback, q.sender)
-			elif q.type == "remove":
-				self._removeEvent(q.group_name, q.event_name)
-		self.queue = []
 	
 	#--- Listener methods ---#
-	def onSave(self, map):
-		self.dispatchEvent("onSave", map)
-		
-	def mapAdded(self, map):
-		self.dispatchEvent("mapAdded", map)
-		
-	def mapRemoved(self):
-		self.dispatchEvent("mapRemoved")
-		
-	def onQuit(self):
-		self.dispatchEvent("onQuit")
-	
 	# IKeyListener
-	def keyPressed(self, evt): 
+	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
+		keystr = evt.getKey().getAsString().lower()
 		if keyval == fife.Key.ESCAPE:
-			self.onQuit()
+			onQuit.send(sender=self.engine)
 		elif keyval == fife.Key.F10:
 			self.engine.getGuiManager().getConsole().toggleShowHide()
+		elif keystr == "d":
+			pdb.set_trace()
 		
-		self.dispatchEvent("keyPressed", evt)
+		keyPressed.send(sender=self.engine, event=evt)
 		
 		evt.consume()
 
-	def keyReleased(self, evt): self.dispatchEvent("keyReleased", evt)
+	def keyReleased(self, evt):
+		keyReleased.send(sender=self.engine, event=evt)
 
 	# ICommandListener
 	def onCommand(self, command):
 		if command.getCommandType() == fife.CMD_QUIT_GAME:
-			self.onQuit()
+			onQuit.send(sender=self.engine)
 		else:
-			self.dispatchEvent("onCommand", command)
+			onCommand.send(sender=self.engine, command=command)
 		
 
 	# IMouseListener
-	def mouseEntered(self, evt): self.dispatchEvent("mouseEntered", evt)
-	def mouseExited(self, evt): self.dispatchEvent("mouseExited", evt)
-	def mousePressed(self, evt): self.dispatchEvent("mousePressed", evt)
-	def mouseReleased(self, evt): self.dispatchEvent("mouseReleased", evt)
-	def mouseClicked(self, evt): self.dispatchEvent("mouseClicked", evt)
-	def mouseWheelMovedUp(self, evt): self.dispatchEvent("mouseWheelMovedUp", evt)
-	def mouseWheelMovedDown(self, evt): self.dispatchEvent("mouseWheelMovedDown", evt)
-	def mouseMoved(self, evt): self.dispatchEvent("mouseMoved", evt)
-	def mouseDragged(self, evt): self.dispatchEvent("mouseDragged", evt)
+	def mouseEntered(self, evt):
+		mouseEntered.send(sender=self.engine, event=evt)
+	
+	def mouseExited(self, evt):
+		mouseExited.send(sender=self.engine, event=evt)
+	
+	def mousePressed(self, evt):
+		mousePressed.send(sender=self.engine, event=evt)
+	
+	def mouseReleased(self, evt):
+		mouseReleased.send(sender=self.engine, event=evt)
+	
+	def mouseClicked(self, evt):
+		mouseClicked.send(sender=self.engine, event=evt)
+	
+	def mouseWheelMovedUp(self, evt):
+		mouseWheelMovedUp.send(sender=self.engine, event=evt)
+	
+	def mouseWheelMovedDown(self, evt):
+		mouseWheelMovedDown.send(sender=self.engine, event=evt)
+	
+	def mouseMoved(self, evt):
+		mouseMoved.send(sender=self.engine, event=evt)
+	
+	def mouseDragged(self, evt):
+		mouseDragged.send(sender=self.engine, event=evt)
 
 	# LayerChangeListener
-	def onLayerChanged(self, layer, changedInstances): self.dispatchEvent("onLayerChanged", layer, changedInstances)
-	def onInstanceCreate(self, layer, instance): self.dispatchEvent("onInstanceCreate", layer, instance)
-	def onInstanceDelete(self, layer, instance): self.dispatchEvent("onInstanceDelete", layer, instance)
+	def onLayerChanged(self, layer, changedInstances):
+		onLayerChanged.send(sender=self.engine, layer=layer, changedInstances=changedInstances)
+		
+	def onInstanceCreate(self, layer, instance):
+		onInstanceCreate.send(sender=self.engine, layer=layer, instance=instance)
+		
+	def onInstanceDelete(self, layer, instance):
+		onInstanceDelete.send(sender=self.engine, layer=layer, instance=instance)
 
 	# MapChangeListener
-	def onMapChanged(self, map, changedLayers): self.dispatchEvent("onMapChanged", map, changedLayers)
-	def onLayerCreate(self, map, layer): self.dispatchEvent("onLayerCreate", map, layer)
-	def onLayerDelete(self, map, layer): self.dispatchEvent("onLayerDelete", map, layer)
+	def onMapChanged(self, map, changedLayers):
+		onMapChanged.send(sender=self.engine, map=map, changedLayers=changedLayers)
+		
+	def onLayerCreate(self, map, layer):
+		onLayerCreate.send(sender=self.engine, map=map, layer=layer)
+		
+	def onLayerDelete(self, map, layer):
+		onLayerDelete.send(sender=self.engine, map=map, layer=layer)
 
 	# ConsoleExecuter
-	def onToolsClick(self): self.dispatchEvent("onConsoleCommand")
-	def onConsoleCommand(self, command): self.dispatchEvent("onConsoleCommand", command)
+	def onToolsClick(self):
+		onToolsClick.send(sender=self.engine)
+		
+	def onConsoleCommand(self, command):
+		onConsoleCommand.send(sender=self.engine, command=command)

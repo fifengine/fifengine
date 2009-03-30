@@ -2,11 +2,14 @@ import basicapplication
 import pychan
 import fife
 import loaders
-from events import EventMapper
+import events
+from events import EventListener
 from gui import MenuBar, ToolBar, StatusBar
 from mapview import MapView
+from gui import action
 from gui.action import Action, ActionGroup
 
+from gui.filemanager import FileManager
 
 DOCK_AREA = {
 		'left'	: 'left',
@@ -26,8 +29,10 @@ class Editor(basicapplication.ApplicationBase):
 	def __init__(self, params, *args, **kwargs):
 		Editor.editor = self
 	
+		self._filemanager = None
+	
 		self.params = params
-		self._eventmapper = None
+		self._eventlistener = None
 		
 		self._inited = False
 		
@@ -45,6 +50,9 @@ class Editor(basicapplication.ApplicationBase):
 		
 		super(Editor,self).__init__(*args, **kwargs)
 		pychan.init(self.engine, debug=False)
+		
+	def _initTools(self):
+		self._filemanager = FileManager()
 		
 	def _initGui(self):
 		screen_width = self.engine.getSettings().getScreenWidth()
@@ -102,12 +110,12 @@ class Editor(basicapplication.ApplicationBase):
 	def _initActions(self):
 		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/zoom_in.png")
 		testAction1.helptext = u"Cycles button styles. There are currently four button styles."
-		self.getEventMapper().capture("Editor1", "activated", self._actionActivated, sender=testAction1)
+		action.activated.connect(self._actionActivated, sender=testAction1)
 		self._toolbar.addAction(testAction1)
 		
 		testAction2 = Action(u"Remove action", "gui/icons/zoom_out.png")
 		testAction2.helptext = u"Removes the action from the active toolbar/menubar"
-		self.getEventMapper().capture("Editor2", "activated", self._actionActivated2, sender=testAction2)
+		action.activated.connect(self._actionActivated2, sender=testAction2)
 		self._toolbar.addAction(testAction2)
 		self.testAction = testAction2
 		
@@ -139,30 +147,30 @@ class Editor(basicapplication.ApplicationBase):
 		dockTop.helptext = u"Dock the toolbar to the top dock area."
 		dockTop.setCheckable(True)
 		dockTop.setChecked(True)
-		self._eventmapper.capture("docking1", "activated", self._actionDockTop, sender=dockTop)
+		action.activated.connect(self._actionDockTop, sender=dockTop)
 		dockGroup.addAction(dockTop)
 		
 		dockRight = Action(u"Right", "gui/icons/select_layer.png")
 		dockRight.helptext = u"Dock the toolbar to the right dock area."
 		dockRight.setCheckable(True)
-		self._eventmapper.capture("docking2", "activated", self._actionDockRight, sender=dockRight)
+		action.activated.connect(self._actionDockRight, sender=dockRight)
 		dockGroup.addAction(dockRight)
 		
 		dockBottom = Action(u"Bottom", "gui/icons/select_layer.png")
 		dockBottom.helptext = u"Dock the toolbar to the bottom dock area."
 		dockBottom.setCheckable(True)
-		self._eventmapper.capture("docking3", "activated", self._actionDockBottom, sender=dockBottom)
+		action.activated.connect(self._actionDockBottom, sender=dockBottom)
 		dockGroup.addAction(dockBottom)
 		
 		dockLeft = Action(u"Left", "gui/icons/select_layer.png")
 		dockLeft.helptext = u"Dock the toolbar to the left dock area."
 		dockLeft.setCheckable(True)
-		self._eventmapper.capture("docking4", "activated", self._actionDockLeft, sender=dockLeft)
+		action.activated.connect(self._actionDockLeft, sender=dockLeft)
 		dockGroup.addAction(dockLeft)
 		
 		dockFloat = Action(u"Float", "gui/icons/delete_layer.png")
 		dockFloat.helptext = u"Undock the toolbar. Currently a little buggy."
-		self._eventmapper.capture("docking5", "activated", self._toolbar.unDock, sender=dockFloat)
+		action.activated.connect(self._toolbar.unDock, sender=dockFloat)
 		dockGroup.addAction(dockFloat)
 		
 		self._toolbar.addActionGroup(dockGroup)
@@ -178,19 +186,19 @@ class Editor(basicapplication.ApplicationBase):
 			
 	def _actionDockLeft(self, sender):
 		if sender.isChecked() is False: self._toolbar.unDock()
-		self._toolbar.dockTo("left")
+		else: self._toolbar.dockTo("left")
 		
 	def _actionDockRight(self, sender):
 		if sender.isChecked() is False: self._toolbar.unDock()
-		self._toolbar.dockTo("right")
+		else: self._toolbar.dockTo("right")
 		
 	def _actionDockTop(self, sender):
 		if sender.isChecked() is False: self._toolbar.unDock()
-		self._toolbar.dockTo("top")
+		else: self._toolbar.dockTo("top")
 		
 	def _actionDockBottom(self, sender):
 		if sender.isChecked() is False: self._toolbar.unDock()
-		self._toolbar.dockTo("bottom")
+		else: self._toolbar.dockTo("bottom")
 			
 	def dockWidgetTo(self, widget, dockarea):
 		if isinstance(widget, pychan.widgets.Widget) is False:
@@ -246,15 +254,12 @@ class Editor(basicapplication.ApplicationBase):
 	def getActiveMapView():
 		return self._mapview
 
-	def getEventMapper(self):
-		return self._eventmapper
-
 	def createListener(self):
-		if self._eventmapper is None:
-			self._eventmapper = EventMapper(self.engine)
-			self._eventmapper.capture("Editor", "onQuit", self._onQuit)
+		if self._eventlistener is None:
+			self._eventlistener = EventListener(self.engine)
+			events.onQuit.connect(self.quit)
 		
-		return self._eventmapper
+		return self._eventlistener
 		
 	def importFile(self, path):
 		loaders.loadImportFile(path, self.engine)
@@ -268,7 +273,7 @@ class Editor(basicapplication.ApplicationBase):
 	def openFile(self, path):
 		map = loaders.loadMapFile(path, self.engine)
 		self._mapview = MapView(map)
-		self._eventmapper.mapAdded(map)
+		events.mapAdded.send(sender=self, map=map)
 		self._mapviewList.append(self._mapview)
 		
 		return self._mapview
@@ -278,12 +283,10 @@ class Editor(basicapplication.ApplicationBase):
 			mapView.save()
 
 	def _pump(self):
+		# ApplicationBase and Engine should be done initializing at this point
 		if self._inited == False:
 			self._initGui()
+			self._initTools()
 			self._inited = True
-			
-		self._eventmapper.pump()
+
 		
-	def _onQuit(self):
-		print "Quitting already?"
-		self.quit()

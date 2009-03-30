@@ -1,10 +1,14 @@
-import scripts.editor
 import copy
+import objgraph
+import pdb
 
 from pychan import widgets
 
+import scripts.gui.action
 from action import Action, ActionGroup
 from fife import Color
+import gc
+from scripts.signal import Signal
 
 # Orientation isn't implemented yet
 ORIENTATION = {
@@ -17,9 +21,11 @@ BUTTON_STYLE = {
 			"TextOnly"			: 1,
 			"TextUnderIcon"		: 2,
 			"TextBesideIcon"	: 3
-			}
+		}
 
 class ToolBar(widgets.Window):
+	buttonStyleChanged = Signal(providing_args=["buttonStyle"])
+
 	def __init__(self, button_style=0, auto_expand=True, panel_size=30, orientation=0, *args, **kwargs):
 		super(ToolBar, self).__init__(*args, **kwargs)
 		
@@ -28,6 +34,7 @@ class ToolBar(widgets.Window):
 		self._panel_size = panel_size
 		self.gui = None
 		self._auto_expand = auto_expand 
+		self._floating = True
 		
 		self._orientation = orientation
 		self._button_style = button_style
@@ -35,7 +42,6 @@ class ToolBar(widgets.Window):
 		self._titlebarheight = 16
 		
 		self._updateToolbar()
-		
 
 	def addSeparator(self, separator=None): 
 		self.insertSeparator(separator, len(self._actions))
@@ -67,6 +73,7 @@ class ToolBar(widgets.Window):
 			return
 			
 		button = ToolbarButton(action, button_style=self._button_style, name=action.text)
+		ToolBar.buttonStyleChanged.connect(button.update, sender=self)
 		
 		if before is not None:
 			for a in self._actions:
@@ -107,7 +114,8 @@ class ToolBar(widgets.Window):
 			if val == button_style:
 				self._button_style = button_style
 				break
-		self._updateToolbar()
+		ToolBar.buttonStyleChanged.send(sender=self, buttonStyle=self._button_style)
+		self.adaptLayout()
 		
 	def getButtonStyle(self):
 		return self._button_style
@@ -123,9 +131,10 @@ class ToolBar(widgets.Window):
 			self.gui = widgets.HBox(min_size=(self._panel_size, self._panel_size))
 		self.addChild(self.gui)
 		
-		
 		for action in actionlist:
 			self.addAction(action.action)
+			
+		#pdb.set_trace()
 
 		self.setAutoExpand(self._auto_expand)
 		self.adaptLayout()
@@ -169,8 +178,9 @@ class ToolBar(widgets.Window):
 	panel_size = property(getPanelSize, setPanelSize)
 	
 	def dockTo(self, dockarea):
-		self._floating = False
-		self.real_widget.setTitleBarHeight(0)
+		if self._floating == True:
+			self._floating = False
+			self.real_widget.setTitleBarHeight(0)
 		
 		if dockarea == "left" or dockarea == "right":
 			self.orientation = ORIENTATION['Vertical']
@@ -181,6 +191,9 @@ class ToolBar(widgets.Window):
 		mainwindow.dockWidgetTo(self, dockarea)
 	
 	def unDock(self):
+		if self._floating == True:
+			return
+			
 		self._floating = True
 		
 		if self.parent is not None:
@@ -203,7 +216,7 @@ class ToolbarButton(widgets.VBox):
 	def __init__(self, action, button_style=0, **kwargs):
 		self._action = action
 		self._widget = None
-
+		
 		super(ToolbarButton, self).__init__(**kwargs)
 		
 		self.setButtonStyle(button_style)
@@ -213,19 +226,17 @@ class ToolbarButton(widgets.VBox):
 		self.capture(self._showTooltip, "mouseEntered")
 		self.capture(self._hideTooltip, "mouseExited")
 		
-		eventMapper = scripts.editor.getEditor().getEventMapper()
-		eventMapper.capture("toolbutton_"+str(id(self)), "changed", self.update, sender=action)
+		scripts.gui.action.changed.connect(self.update, sender=action)
 	
 	def setAction(self, action):
 		# Remove eventlistener for old action
-		eventMapper = scripts.editor.getEditor().getEventMapper()
-		eventMapper.capture("toolbutton_"+str(id(self)), "changed", None, sender=self._action)
+		scripts.gui.action.changed.disconnect(self.update, sender=self._action)
 		
 		self._action = action
 		self.update()
 		
 		# Register new eventlistener
-		eventMapper.capture("toolbutton_"+str(id(self)), "changed", self.update, sender=action)
+		scripts.gui.action.changed.connect(self.update, sender=action)
 	
 	def getAction(self):
 		return self._action
@@ -237,7 +248,6 @@ class ToolbarButton(widgets.VBox):
 			if val == button_style:
 				self._button_style = button_style
 				break
-		self.update()
 		
 	def getButtonStyle(self):
 		return self._button_style
@@ -252,6 +262,8 @@ class ToolbarButton(widgets.VBox):
 		
 	def update(self):
 		""" Sets up the widget """
+		
+		print "Update: ", self._action.text, id(self)
 		
 		if self._widget != None:
 			self.removeChild(self._widget)
