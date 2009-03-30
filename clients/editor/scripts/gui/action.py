@@ -1,4 +1,4 @@
-from scripts.signal import Signal
+from scripts.events.signal import Signal
 import pychan.internal
 
 changed = Signal(providing_args=[])

@@ -53,6 +53,7 @@ class Editor(basicapplication.ApplicationBase):
 		
 	def _initTools(self):
 		self._filemanager = FileManager()
+		self._toolbar.adaptLayout()
 		
 	def _initGui(self):
 		screen_width = self.engine.getSettings().getScreenWidth()
@@ -183,6 +184,7 @@ class Editor(basicapplication.ApplicationBase):
 		if self.testAction is not None:
 			self._toolbar.removeAction(self.testAction)
 			self.testAction = None
+			self._toolbar.adaptLayout()
 			
 	def _actionDockLeft(self, sender):
 		if sender.isChecked() is False: self._toolbar.unDock()

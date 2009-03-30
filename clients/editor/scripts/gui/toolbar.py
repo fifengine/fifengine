@@ -5,8 +5,6 @@ import scripts.gui.action
 from action import Action, ActionGroup
 from fife import Color
 
-from scripts.signal import Signal
-
 # Orientation isn't implemented yet
 ORIENTATION = {
 			"Horizontal"	: 0,
@@ -47,10 +45,16 @@ class ToolBar(widgets.Window):
 		
 	def removeAction(self, action):
 		self._actions.remove(action)
+		
+		actions = [action]
 		if isinstance(action, ActionGroup):
-			for a in action:
-				self.gui.removeChild(a)
-				self._actionbuttons.remove(a)
+			actions = action.getActions()
+
+		for a in actions:
+			for b in self._actionbuttons[:]:
+				if a == b.action:
+					self.gui.removeChild(b)
+					self._actionbuttons.remove(b)
 			
 		self.adaptLayout()
 		
@@ -216,7 +220,7 @@ class ToolbarButton(widgets.VBox):
 		self.capture(self._showTooltip, "mouseEntered")
 		self.capture(self._hideTooltip, "mouseExited")
 		
-		scripts.gui.action.changed.connect(self.update, sender=self._action)
+		scripts.gui.action.changed.connect(self._actionChanged, sender=self._action)
 	
 	def removeEvents(self):
 		# Remove eventlisteners
@@ -230,7 +234,7 @@ class ToolbarButton(widgets.VBox):
 		
 		self._action = action
 		self.update()
-		self.adeptLayout()
+		self.adaptLayout()
 		
 		self.initEvents()
 	
@@ -255,6 +259,10 @@ class ToolbarButton(widgets.VBox):
 			
 	def _hideTooltip(self):
 		scripts.editor.getEditor().getStatusBar().hideTooltip()
+		
+	def _actionChanged(self):
+		self.update()
+		self.adaptLayout()
 		
 	def update(self):
 		""" Sets up the button widget """
