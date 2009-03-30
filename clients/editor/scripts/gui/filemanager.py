@@ -33,6 +33,7 @@ class FileManager(object):
 		fileGroup.addAction(saveAllAction)
 		
 		self.editor.getToolBar().insertAction(fileGroup, 0)
+		self.editor.getToolBar().insertSeparator(None, 1)
 
 		self.newMap = None
 		self.saveRequested = False

@@ -81,6 +81,11 @@ class ToolBar(widgets.Window):
 
 		if position >= 0:
 			actions = reversed(actions)
+		
+		# Action groups are counted as one action, add the hidde number of actions to position
+		for i in range(position):
+			if isinstance(self._actions[i], ActionGroup):
+				position += len(self._actions[i].getActions()) - 1
 
 		for a in actions:
 			button = ToolbarButton(a, button_style=self._button_style, name=a.text)
@@ -291,8 +296,8 @@ class ToolbarButton(widgets.VBox):
 				icon.capture(self._action.activate)
 				
 			if self._button_style != BUTTON_STYLE['IconOnly']:
-				text = widgets.Label(text=self._action.text)
-				text.capture(self._action.activate, "mouseClicked")
+				text = widgets.Button(text=self._action.text)
+				text.capture(self._action.activate)
 			
 			if self._button_style == BUTTON_STYLE['TextOnly']:
 				widget = text

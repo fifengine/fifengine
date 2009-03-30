@@ -16,7 +16,14 @@ class Action:
 		self._enabled = True
 		self._checked = False
 		self._checkable = False
-		
+	
+	def __str__(self):
+		return "%s(name='%s')" % (self.__class__.__name__,self.text)
+
+	def __repr__(self):
+		return "<%s(name='%s') at %x>" % (self.__class__.__name__,self.text,id(self))
+
+	
 	def activate(self):
 		if self.isCheckable():
 			self.setChecked(not self.isChecked())
@@ -80,10 +87,18 @@ class Action:
 		return self._checkable
 
 class ActionGroup:
-	def __init__(self, exclusive=False):
+	def __init__(self, exclusive=False, name="actiongroup"):
 		self._exclusive = exclusive
 		self._enabled = True
 		self._actions = []
+		self.name = name
+		
+	def __str__(self):
+		return "%s(name='%s')" % (self.__class__.__name__,self.name)
+
+	def __repr__(self):
+		return "<%s(name='%s') at %x>" % (self.__class__.__name__,self.name,id(self))
+
 
 	def setEnabled(self, enabled): 
 		self._enabled = enabled
