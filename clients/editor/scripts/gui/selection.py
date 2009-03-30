@@ -1,7 +1,7 @@
 import pychan
 import pychan.widgets as widgets
 
-class Selection():
+class SelectionDialog(object):
 	"""
 	Selection displays a list of options for the user to select from. The result is passed to onSelection.
 	list - the list to select from

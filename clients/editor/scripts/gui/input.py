@@ -1,7 +1,7 @@
 import pychan
 import pychan.widgets as widgets
 
-class Input():
+class InputDialog(object):
 	"""
 	Input supplies a text box for entering data. The result is passed to onEntry.
 	onEntry - the function to call when a input is complete. Accepts one argument: a string of text.
