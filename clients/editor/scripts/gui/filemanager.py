@@ -12,93 +12,85 @@ class FileManager(object):
 	def __init__(self):
 		self.editor = scripts.editor.getEditor()
 		self.engine = self.editor.getEngine()
-		
-		self._filebrowser = None
 
 		newAction = Action(u"New map", "gui/icons/new_map.png")
 		loadAction = Action(u"Load", "gui/icons/load_map.png")
 		saveAction = Action(u"Save", "gui/icons/save_map.png")
+		saveAsAction = Action(u"Save as", "gui/icons/save_map.png")
 		saveAllAction = Action(u"Save all", "gui/icons/select_layer.png")
 		
 		newAction.helptext = u"Create new map"
 		loadAction.helptext = u"Open map"
-		saveAction.helptext = u"(Not implemented) Save map"
-		saveAllAction.helptext = u"(Not implemented) Save all maps"
+		saveAction.helptext = u"Save map"
+		saveAsAction.helptext = u"Save map as"
+		saveAllAction.helptext = u"Save all maps"
 		
 		action.activated.connect(self.showMapWizard, sender=newAction)
 		action.activated.connect(self.showLoadDialog, sender=loadAction)
-		#action.activated.connect(self._actionActivated2, sender=testAction2)
-		#action.activated.connect(self._actionActivated2, sender=testAction2)
-		#action.activated.connect(self._actionActivated2, sender=testAction2)
+		action.activated.connect(self.save, sender=saveAction)
+		action.activated.connect(self.showSaveDialog, sender=saveAsAction)
+		action.activated.connect(self.editor.saveAll, sender=saveAllAction)
 		
 		fileGroup = ActionGroup()
 		fileGroup.addAction(newAction)
 		fileGroup.addAction(loadAction)
 		fileGroup.addAction(saveAction)
+		fileGroup.addAction(saveAsAction)
 		fileGroup.addAction(saveAllAction)
 		
 		self.editor.getToolBar().insertAction(fileGroup, 0)
 		self.editor.getToolBar().insertSeparator(None, 1)
 
-		self.map = None
-		self.newMap = None
-		self.saveRequested = False
-		self._location = None
-		self.path = '.'
-
 	def showLoadDialog(self):
 		filebrowser.FileBrowser(self.engine, self.loadFile, extensions = loaders.fileExtensions).showBrowser()
 		
 	def showSaveDialog(self):
-		pass
+		filebrowser.FileBrowser(self.engine, self.saveFile, savefile=True, extensions = loaders.fileExtensions).showBrowser()
 
+	def saveFile(self, path, filename):
+		mapview = self.editor.getActiveMapView()
+		if mapview is None:
+			print "No map is open"
+			return
+			
+		fname = '/'.join([path, filename])
+		mapview.saveAs(fname)
+		
 	def loadFile(self, path, filename):
 		self.editor.openFile('/'.join([path, filename]))
 		
 	def showMapWizard(self):
+		map = None
 		def newMap(mapId):
 			def newLayer(layerId):
 				def newCamera():
-					self.newMap = True
+					self.editor.newMapView(map)
 
 				grid = fife.SquareGrid()
-				layer = self.map.createLayer(str(layerId), grid)
+				layer = map.createLayer(str(layerId), grid)
 				grid.thisown = 0
 
-				CameraEditor(self.engine, newCamera, self.map, layer)
+				CameraEditor(self.engine, newCamera, map, layer)
 
-			self.map = self.engine.getModel().createMap(str(mapId))
+			map = self.engine.getModel().createMap(str(mapId))
 			InputDialog(u'Enter a layer identifier for a default layer:', newLayer)
 		
 		InputDialog(u'Enter a map identifier:', newMap)
-"""
-	def save(self):
-		self.saveRequested = True
-	
-	def saveMap(self, map, importList):
-		pass
-		curname = None
-		try:
-			curname = map.getResourceLocation().getFilename()
-		except RuntimeError:
-			pass # no name set for map yet
-			
-		if self._location:
-			fname = '/'.join([self.path, self._location])
-			saveMapFile(fname, self.engine, map, importList)
-			print "map saved as " + fname
-			self._location = None
-		elif curname:
-			saveMapFile(curname, self.engine, map, importList)
-			print "map saved with old name " + curname
-		else:
-			print 'MapSaver: error, no file location specified.'
 
-	def _selectFile(self,path,filename):
-		self._location = filename
-		self.path = path
-		self.saveRequested = True
-"""
+	def save(self):
+		curname = None
+		mapview = self.editor.getActiveMapView()
+		if mapview is None:
+			print "No map is open"
+			return
+		
+		try:
+			curname = mapview.getMap().getResourceLocation().getFilename()
+		except RuntimeError:
+			self.showSaveDialog()
+			return
+		
+		mapview.save()
 
 class CameraEditor(object):
 	"""

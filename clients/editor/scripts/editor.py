@@ -39,6 +39,8 @@ class Editor(basicapplication.ApplicationBase):
 		self._mapview = None
 		self._mapviewList = []
 		
+		self.importlist = []
+		
 		self._rootwidget = None
 		self._central_widget = None
 		self._dockareas = {
@@ -233,11 +235,16 @@ class Editor(basicapplication.ApplicationBase):
 	def getEngine(self): 
 		return self.engine
 
-	def getMapViews():
+	def getMapViews(self):
 		return self._mapviewList
 		
-	def getActiveMapView():
+	def getActiveMapView(self):
 		return self._mapview
+		
+	def showMapView(self, mapview):
+		if mapview is None:
+			return
+		self._mapview = mapview
 
 	def createListener(self):
 		if self._eventlistener is None:
@@ -250,22 +257,33 @@ class Editor(basicapplication.ApplicationBase):
 		loaders.loadImportFile(path, self.engine)
 		
 	def importDir(self, path, recursive=True):
+		self.importlist.append(path)
 		if recursive is True:
 			loaders.loadImportDirRec(path, self.engine)
 		else:
 			loaders.loadImportDir(path, self.engine)
 	
-	def openFile(self, path):
-		map = loaders.loadMapFile(path, self.engine)
+	def newMapView(self, map):
 		self._mapview = MapView(map)
 		events.mapAdded.send(sender=self, map=map)
 		self._mapviewList.append(self._mapview)
+		self._mapview.show()
 		
 		return self._mapview
 	
+	def openFile(self, path):
+		map = loaders.loadMapFile(path, self.engine)
+		self.importlist.extend(map.importDirs)
+
+		return self.newMapView(map)
+	
 	def saveAll(self):
-		for mapView in self._mapviews:
-			mapView.save()
+		tmpView = self._mapview
+		for mapView in self._mapviewList:
+			self._mapview = mapView
+			self._filemanager.save()
+			print self._mapview
+		self._mapview = tmpView
 
 	def _pump(self):
 		# ApplicationBase and Engine should be done initializing at this point
