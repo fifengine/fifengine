@@ -1,28 +1,21 @@
-import basicapplication
+from basicapplication import ApplicationBase
 import pychan
 import fife
 import loaders
 import events
 from events import EventListener
-from gui import MenuBar, ToolBar, StatusBar
+from gui import ToolBar, action
 from mapview import MapView
-from gui import action
 from gui.action import Action, ActionGroup
 from gui.filemanager import FileManager
-
-DOCK_AREA = {
-		'left'	: 'left',
-		'right' : 'right',
-		'top'	: 'top',
-		'bottom': 'bottom'
-	}
+from gui.mainwindow import MainWindow
 
 def getEditor():
 	if Editor.editor is None:
 		Editor(None)
 	return Editor.editor
 
-class Editor(basicapplication.ApplicationBase):
+class Editor(ApplicationBase, MainWindow):
 	editor = None
 
 	def __init__(self, params, *args, **kwargs):
@@ -39,17 +32,9 @@ class Editor(basicapplication.ApplicationBase):
 		self._mapviewList = []
 		self._mapgroup = None
 		self._mapbar = None
-		
-		self._rootwidget = None
-		self._central_widget = None
-		self._dockareas = {
-				DOCK_AREA['left']:None, 
-				DOCK_AREA['right']:None, 
-				DOCK_AREA['top']:None, 
-				DOCK_AREA['bottom']:None
-			}
-		
-		super(Editor,self).__init__(*args, **kwargs)
+	
+		ApplicationBase.__init__(self, *args, **kwargs)
+		MainWindow.__init__(self, *args, **kwargs)
 		pychan.init(self.engine, debug=False)
 		
 	def _initTools(self):
@@ -60,9 +45,8 @@ class Editor(basicapplication.ApplicationBase):
 		screen_width = self.engine.getSettings().getScreenWidth()
 		screen_height = self.engine.getSettings().getScreenHeight()
 		bar_height = 30
-		self._statusbar = StatusBar(text=u"", panel_size=bar_height)
-		self._toolbar = ToolBar(button_style=3)
-		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
+		MainWindow.initGui(self, screen_width, screen_height)
+
 		self._toolbox = ToolBar(title=u"", orientation=1, panel_size=bar_height)
 		self._toolbox.position_technique = "explicit"
 		self._toolbox.position = (150, 150)
@@ -70,47 +54,9 @@ class Editor(basicapplication.ApplicationBase):
 		self._mapbar = ToolBar(panel_size=20)
 		self._mapbar.setDocked(True)
 		
-		# Set up root widget. This
-		self._rootwidget = pychan.widgets.VBox(padding=0, vexpand=1, hexpand=1)
-		self._rootwidget.min_size = \
-		self._rootwidget.max_size = (screen_width, screen_height)
-		self._rootwidget.opaque = False
-		
-		# These VBoxes should be replaced with panels, once that widget has been written
-		self._dockareas[DOCK_AREA['left']] = pychan.widgets.VBox(margins=(0,0,0,0))
-		self._dockareas[DOCK_AREA['right']] = pychan.widgets.VBox(margins=(0,0,0,0))
-		self._dockareas[DOCK_AREA['top']] = pychan.widgets.HBox(margins=(0,0,0,0))
-		self._dockareas[DOCK_AREA['bottom']] = pychan.widgets.HBox(margins=(0,0,0,0))
-		
-		# This is where the map will be displayed
-		self._centralwidget = pychan.widgets.VBox(vexpand=1, hexpand=1)
 		self._centralwidget.addChild(self._mapbar)
-		self._centralwidget.addChild(pychan.widgets.Label(text=u"Central widget: Map"))
-		self._centralwidget.opaque = False
 		
 		self._initActions()
-		
-		middle = pychan.widgets.HBox(padding=0, vexpand=1, hexpand=1)
-		middle.opaque = False
-		
-		# Pychan bug? Adding a spacer instead of a container creates
-		# a gap after the right dockarea
-		middle.addChild(self._dockareas['left'])
-		middle.addChild(self._centralwidget)
-		#middle.addSpacer(pychan.widgets.Spacer())
-		middle.addChild(self._dockareas['right'])
-		
-		self._rootwidget.addChild(self._menubar)
-		#self._rootwidget.addChild(self._toolbar)
-		self._rootwidget.addChild(self._dockareas['top'])
-		self._rootwidget.addChild(middle)
-		self._rootwidget.addChild(self._dockareas['bottom'])
-		self._rootwidget.addChild(self._statusbar)
-
-		self._toolbar.setDocked(True)
-		self.dockWidgetTo(self._toolbar, "top")
-		
-		self._rootwidget.show()
 		
 		self._toolbox.show()
 
@@ -206,45 +152,6 @@ class Editor(basicapplication.ApplicationBase):
 	def _actionUndock(self, sender):
 		self._toolbar.setDocked(False)
 			
-	def dockWidgetTo(self, widget, dockarea):
-		if isinstance(widget, pychan.widgets.Widget) is False:
-			print "Argument is not a valid widget"
-			return
-			
-		if widget.parent:
-			widgetParent = widget.parent
-			widgetParent.removeChild(widget)
-			widgetParent.adaptLayout()
-			widget.hide()
-	
-		if dockarea == DOCK_AREA['left']:
-			self._dockareas[DOCK_AREA['left']].addChild(widget)
-			self._dockareas[DOCK_AREA['left']].adaptLayout()
-			
-		elif dockarea == DOCK_AREA['right']:
-			self._dockareas[DOCK_AREA['right']].addChild(widget)
-			self._dockareas[DOCK_AREA['right']].adaptLayout()
-			
-		elif dockarea == DOCK_AREA['top']:
-			self._dockareas[DOCK_AREA['top']].addChild(widget)
-			self._dockareas[DOCK_AREA['top']].adaptLayout()
-			
-		elif dockarea == DOCK_AREA['bottom']:
-			self._dockareas[DOCK_AREA['bottom']].addChild(widget)
-			self._dockareas[DOCK_AREA['bottom']].adaptLayout()
-			
-		else:
-			print "Invalid dockarea"
-	
-	def getStatusBar(self): 
-		return self._statusbar
-		
-	def getMenuBar(self):
-		return self._menubar
-	
-	def getToolBar(self): 
-		return self._toolbar
-	
 	def getToolbox(self): 
 		return self._toolbox
 	
