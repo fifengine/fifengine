@@ -3,6 +3,7 @@ import pychan
 import fife
 import loaders
 import events
+import plugin
 from events import EventListener
 from gui import ToolBar, action
 from mapview import MapView
@@ -25,6 +26,7 @@ class Editor(ApplicationBase, MainWindow):
 	
 		self.params = params
 		self._eventlistener = None
+		self._pluginmanager = None
 		
 		self._inited = False
 		
@@ -38,6 +40,8 @@ class Editor(ApplicationBase, MainWindow):
 		pychan.init(self.engine, debug=False)
 		
 	def _initTools(self):
+		self._pluginmanager = plugin.PluginManager()
+		
 		self._filemanager = FileManager()
 		self._toolbar.adaptLayout()
 		
@@ -60,7 +64,7 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self._toolbox.show()
 
-	def _initActions(self):
+	def _initActions(self):	
 		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/zoom_in.png")
 		testAction1.helptext = u"Cycles button styles. There are currently four button styles."
 		action.activated.connect(self._actionActivated, sender=testAction1)
@@ -156,7 +160,7 @@ class Editor(ApplicationBase, MainWindow):
 		return self._toolbox
 	
 	def getPluginManager(self): 
-		return None
+		return self._pluginmanager
 		
 	def getEngine(self): 
 		return self.engine
@@ -213,5 +217,7 @@ class Editor(ApplicationBase, MainWindow):
 			self._initGui()
 			self._initTools()
 			self._inited = True
+		
+		events.onPump.send(sender=self)
 
 		

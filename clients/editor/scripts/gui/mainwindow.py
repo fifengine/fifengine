@@ -2,6 +2,10 @@ import pychan
 from menubar import MenuBar
 from toolbar import ToolBar
 from statusbar import StatusBar
+import fife
+
+import scripts.editor
+from scripts.events import *
 
 DOCKAREA = {
 	'left'	: 'left',
@@ -48,6 +52,18 @@ class MainWindow(object):
 		self._centralwidget = pychan.widgets.VBox(vexpand=1, hexpand=1)
 		self._centralwidget.opaque = False
 		
+		# Let centralwidget capture mouse events. See events.py for details.		
+		
+		cw = self._centralwidget
+		cw.capture(self.__sendMouseEvent, "mouseEntered")
+		cw.capture(self.__sendMouseEvent, "mousePressed")
+		cw.capture(self.__sendMouseEvent, "mouseReleased")
+		cw.capture(self.__sendMouseEvent, "mouseClicked")
+		cw.capture(self.__sendMouseEvent, "mouseMoved")
+		cw.capture(self.__sendMouseEvent, "mouseWheelMovedUp")
+		cw.capture(self.__sendMouseEvent, "mouseWheelMovedDown")
+		cw.capture(self.__sendMouseEvent, "mouseDragged")
+
 		middle = pychan.widgets.HBox(padding=0, vexpand=1, hexpand=1)
 		middle.opaque = False
 		
@@ -69,6 +85,38 @@ class MainWindow(object):
 		self.dockWidgetTo(self._toolbar, "top")
 		
 		self._rootwidget.show()
+		
+	def __sendMouseEvent(self, event, **kwargs):
+		engine = scripts.editor.getEditor().getEngine()
+		msEvent = fife.MouseEvent
+		type = event.getType()
+		
+		if type == msEvent.MOVED:
+			mouseMoved.send(sender=engine, event=event)
+			
+		elif type == msEvent.PRESSED:
+			mousePressed.send(sender=engine, event=event)
+			
+		elif type == msEvent.RELEASED:
+			mouseReleased.send(sender=engine, event=event)
+			
+		elif type == msEvent.WHEEL_MOVED_DOWN:
+			mouseWheelMovedDown.send(sender=engine, event=event)
+			
+		elif type == msEvent.WHEEL_MOVED_UP:
+			mouseWheelMovedUp.send(sender=engine, event=event)
+			
+		elif type == msEvent.CLICKED:
+			mouseClicked.send(sender=engine, event=event)
+			
+		elif type == msEvent.ENTERED:
+			mouseEntered.send(sender=engine, event=event)
+			
+		elif type == msEvent.EXITED:
+			mouseExited.send(sender=engine, event=event)
+			
+		elif type == msEvent.DRAGGED:
+			mouseDragged.send(sender=engine, event=event)
 	
 	def getStatusBar(self): 
 		return self._statusbar

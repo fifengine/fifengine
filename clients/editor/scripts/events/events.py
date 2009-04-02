@@ -37,6 +37,10 @@ onCommand		= Signal(providing_args=["command"])
 onConsoleCommand= Signal(providing_args=["command"])
 
 class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
+	# NOTE: As FIFEdit currently covers the entire screen with widgets,
+	#		FIFE doesn't receive any mouse events. Therefore we have to add
+	#		mouse event tracking for the central widget
+	
 	def __init__(self, engine):
 		self.engine = engine
 		
