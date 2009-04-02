@@ -8,6 +8,8 @@ Heavily modified for Django's purposes.
 Copied from django v1.1 beta 1
 Changes:
  * Receivers aren't needed to accept any arguments
+ * _live_receivers() now work on a copy of self.receivers, which fixes a bug when
+   connecting and disconnecting during send()
 """
 
 import weakref
@@ -197,7 +199,7 @@ class Signal(object):
         """
         none_senderkey = _make_id(None)
 
-        for (receiverkey, r_senderkey), receiver in self.receivers:
+        for (receiverkey, r_senderkey), receiver in self.receivers[:]:
             if r_senderkey == none_senderkey or r_senderkey == senderkey:
                 if isinstance(receiver, WEAKREF_TYPES):
                     # Dereference the weak reference.

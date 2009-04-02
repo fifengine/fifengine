@@ -102,12 +102,14 @@ class ActionGroup:
 
 	def setEnabled(self, enabled): 
 		self._enabled = enabled
+		self._changed()
 		
 	def isEnabled(self): 
 		return self._enabled
 
 	def setExclusive(self, exclusive):
 		self._exclusive = exclusive
+		self._changed()
 		
 	def isExclusive(self):
 		return self._exclusive
@@ -118,10 +120,12 @@ class ActionGroup:
 			return
 		self._actions.append(action)
 		toggled.connect(self._actionToggled, sender=action)
+		self._changed()
 
 	def addSeparator(self):
 		separator = Action(separator=True)
 		self.addAction(separator)
+		self._changed()
 	
 	def getActions(self):
 		return self._actions
@@ -129,11 +133,13 @@ class ActionGroup:
 	def removeAction(self, action):
 		self._actions.remove(action)
 		toggled.disconnect(self._actionToggled, sender=action)
+		self._changed()
 	
 	def clear(self):
 		for action in self._actions:
 			toggled.disconnect(self._actionToggled, sender=action)
 		self._actions = []
+		self._changed()
 			
 	def hasAction(self, action):
 		for a in self._actions:
@@ -148,4 +154,7 @@ class ActionGroup:
 		for a in self._actions:
 			if a != sender and a.isChecked():
 				a.setChecked(False)
+				
+	def _changed(self):
+		changed.send(sender=self)
 

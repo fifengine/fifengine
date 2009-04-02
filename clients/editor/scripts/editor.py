@@ -8,7 +8,6 @@ from gui import MenuBar, ToolBar, StatusBar
 from mapview import MapView
 from gui import action
 from gui.action import Action, ActionGroup
-
 from gui.filemanager import FileManager
 
 DOCK_AREA = {
@@ -38,8 +37,8 @@ class Editor(basicapplication.ApplicationBase):
 		
 		self._mapview = None
 		self._mapviewList = []
-		
-		self.importlist = []
+		self._mapgroup = None
+		self._mapbar = None
 		
 		self._rootwidget = None
 		self._central_widget = None
@@ -68,11 +67,14 @@ class Editor(basicapplication.ApplicationBase):
 		self._toolbox.position_technique = "explicit"
 		self._toolbox.position = (150, 150)
 		
+		self._mapbar = ToolBar(panel_size=20)
+		self._mapbar.setDocked(True)
+		
 		# Set up root widget. This
 		self._rootwidget = pychan.widgets.VBox(padding=0, vexpand=1, hexpand=1)
 		self._rootwidget.min_size = \
 		self._rootwidget.max_size = (screen_width, screen_height)
-		self._rootwidget.base_color = fife.Color(0,0,0,0) # Transparent
+		self._rootwidget.opaque = False
 		
 		# These VBoxes should be replaced with panels, once that widget has been written
 		self._dockareas[DOCK_AREA['left']] = pychan.widgets.VBox(margins=(0,0,0,0))
@@ -82,13 +84,14 @@ class Editor(basicapplication.ApplicationBase):
 		
 		# This is where the map will be displayed
 		self._centralwidget = pychan.widgets.VBox(vexpand=1, hexpand=1)
+		self._centralwidget.addChild(self._mapbar)
 		self._centralwidget.addChild(pychan.widgets.Label(text=u"Central widget: Map"))
-		self._centralwidget.base_color = fife.Color(0,0,100,50) # Transparent
+		self._centralwidget.opaque = False
 		
 		self._initActions()
 		
 		middle = pychan.widgets.HBox(padding=0, vexpand=1, hexpand=1)
-		middle.base_color = fife.Color(0,0,0,0) # Transparent
+		middle.opaque = False
 		
 		# Pychan bug? Adding a spacer instead of a container creates
 		# a gap after the right dockarea
@@ -104,7 +107,8 @@ class Editor(basicapplication.ApplicationBase):
 		self._rootwidget.addChild(self._dockareas['bottom'])
 		self._rootwidget.addChild(self._statusbar)
 
-		self._toolbar.dockTo(DOCK_AREA['top'])
+		self._toolbar.setDocked(True)
+		self.dockWidgetTo(self._toolbar, "top")
 		
 		self._rootwidget.show()
 		
@@ -156,11 +160,15 @@ class Editor(basicapplication.ApplicationBase):
 		
 		dockFloat = Action(u"Float", "gui/icons/delete_layer.png")
 		dockFloat.helptext = u"Undock the toolbar. Currently a little buggy."
-		action.activated.connect(self._toolbar.unDock, sender=dockFloat)
+		action.activated.connect(self._actionUndock, sender=dockFloat)
 		dockGroup.addAction(dockFloat)
 		
 		self._toolbar.addAction(dockGroup)
 		self._toolbox.addAction(dockGroup)
+		
+		self._mapgroup = ActionGroup(exclusive=True, name="Mapgroup")
+		self._mapbar.addAction(self._mapgroup)
+		self._mapbar.addAction(ActionGroup(exclusive=True, name="Mapgroup2"))
 	
 	def _actionActivated(self, sender):
 		self._toolbar.button_style += 1
@@ -172,20 +180,31 @@ class Editor(basicapplication.ApplicationBase):
 			self._toolbar.adaptLayout()
 			
 	def _actionDockLeft(self, sender):
-		if sender.isChecked() is False: self._toolbar.unDock()
-		else: self._toolbar.dockTo("left")
+		self._toolbar.setDocked(sender.isChecked())
+		if sender.isChecked():
+			self._toolbar.orientation = 1
+			self.dockWidgetTo(self._toolbar, "left")
 		
 	def _actionDockRight(self, sender):
-		if sender.isChecked() is False: self._toolbar.unDock()
-		else: self._toolbar.dockTo("right")
+		self._toolbar.setDocked(sender.isChecked())
+		if sender.isChecked():
+			self._toolbar.orientation = 1
+			self.dockWidgetTo(self._toolbar, "right")
 		
 	def _actionDockTop(self, sender):
-		if sender.isChecked() is False: self._toolbar.unDock()
-		else: self._toolbar.dockTo("top")
+		self._toolbar.setDocked(sender.isChecked())
+		if sender.isChecked():
+			self._toolbar.orientation = 0
+			self.dockWidgetTo(self._toolbar, "top")
 		
 	def _actionDockBottom(self, sender):
-		if sender.isChecked() is False: self._toolbar.unDock()
-		else: self._toolbar.dockTo("bottom")
+		self._toolbar.setDocked(sender.isChecked())
+		if sender.isChecked():
+			self._toolbar.orientation = 0
+			self.dockWidgetTo(self._toolbar, "bottom")
+	
+	def _actionUndock(self, sender):
+		self._toolbar.setDocked(False)
 			
 	def dockWidgetTo(self, widget, dockarea):
 		if isinstance(widget, pychan.widgets.Widget) is False:
@@ -252,28 +271,24 @@ class Editor(basicapplication.ApplicationBase):
 			events.onQuit.connect(self.quit)
 		
 		return self._eventlistener
-		
-	def importFile(self, path):
-		loaders.loadImportFile(path, self.engine)
-		
-	def importDir(self, path, recursive=True):
-		self.importlist.append(path)
-		if recursive is True:
-			loaders.loadImportDirRec(path, self.engine)
-		else:
-			loaders.loadImportDir(path, self.engine)
 	
 	def newMapView(self, map):
 		self._mapview = MapView(map)
-		events.mapAdded.send(sender=self, map=map)
+		
 		self._mapviewList.append(self._mapview)
+		
+		mapAction = Action(unicode(map.getId()))
+		action.activated.connect(self._mapview.show, sender=mapAction)
+		self._mapgroup.addAction(mapAction)
+		
 		self._mapview.show()
+		
+		events.mapAdded.send(sender=self, map=map)
 		
 		return self._mapview
 	
 	def openFile(self, path):
 		map = loaders.loadMapFile(path, self.engine)
-		self.importlist.extend(map.importDirs)
 
 		return self.newMapView(map)
 	

@@ -7,11 +7,11 @@ import pdb
 
 #--- Signals ---#
 onPump = Signal()
-preSave	= Signal(providing_args=["map"])
-postSave = Signal(providing_args=["map"])
-mapAdded = Signal(providing_args=["map"])
-preMapRemove = Signal(providing_args=["map"])
-postMapRemove = Signal(providing_args=["map"])
+preSave	= Signal(providing_args=["mapview"])
+postSave = Signal(providing_args=["mapview"])
+mapAdded = Signal(providing_args=["mapview"])
+preMapRemove = Signal(providing_args=["mapview"])
+postMapRemove = Signal(providing_args=["mapview"])
 
 # Signals emitted by EventListener
 onQuit			= Signal(providing_args=[])

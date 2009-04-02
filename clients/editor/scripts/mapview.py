@@ -2,6 +2,7 @@ import fife
 import undomanager
 import editor
 import loaders, savers
+from events import events
 
 class MapView:
 	def __init__(self, map):
@@ -15,6 +16,9 @@ class MapView:
 				raise AttributeError('Editor error: map ' + self._map.getId() + ' has no layers. Cannot edit.')
 
 		self._undomanager = undomanager.UndoManager()
+		self.importlist = []
+		if hasattr(map, "importDirs"):
+			self.importlist.extend(map.importDirs)
 		
 	# Copied from mapeditor.py
 	def show(self):
@@ -55,15 +59,27 @@ class MapView:
 		except RuntimeError:
 			print "Map has no filename yet, can't save."
 			return
-		
-		importlist = self.editor.importlist
-		savers.saveMapFile(curname, self.editor.getEngine(), self._map, importList=importlist)
+
+		events.preSave.send(sender=self, mapview=self)
+		savers.saveMapFile(curname, self.editor.getEngine(), self._map, importList=self.importlist)
+		events.postSave.send(sender=self, mapview=self)
 		
 	def saveAs(self, filename):
-		importlist = self.editor.importlist
-		savers.saveMapFile(str(filename), self.editor.getEngine(), self._map, importList=importlist)
+		events.preSave.send(sender=self, mapview=self)
+		savers.saveMapFile(str(filename), self.editor.getEngine(), self._map, importList=self.importlist)
+		events.postSave.send(sender=self, mapview=self)
 		
 	def close(self):
 		pass
 		
+		
+	def importFile(self, path):
+		loaders.loadImportFile(path, self.editor.getEngine())
+		
+	def importDir(self, path, recursive=True):
+		self.importlist.append(path)
+		if recursive is True:
+			loaders.loadImportDirRec(path, self.editor.getEngine())
+		else:
+			loaders.loadImportDir(path, self.editor.getEngine())
 	

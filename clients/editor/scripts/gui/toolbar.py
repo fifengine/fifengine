@@ -32,7 +32,7 @@ class ToolBar(widgets.Window):
 		
 		self._orientation = orientation
 		self._button_style = button_style
-		
+
 		self._titlebarheight = 16
 		
 		self._updateToolbar()
@@ -49,6 +49,7 @@ class ToolBar(widgets.Window):
 		actions = [action]
 		if isinstance(action, ActionGroup):
 			actions = action.getActions()
+			scripts.gui.action.changed.disconnect(self._updateActionGroup, sender=action)
 
 		for a in actions:
 			for b in self._actionbuttons[:]:
@@ -74,10 +75,17 @@ class ToolBar(widgets.Window):
 		self._actions.insert(position, action)
 		self._insertButton(action, position)
 		
+	def _updateActionGroup(self, sender):
+		position = self._actions.index(sender)
+		self.removeAction(sender)
+		self.insertAction(sender, position)
+		self.adaptLayout()
+		
 	def _insertButton(self, action, position):
 		actions = [action]
 		if isinstance(action, ActionGroup):
 			actions = action.getActions()
+			scripts.gui.action.changed.connect(self._updateActionGroup, sender=action)
 
 		if position >= 0:
 			actions = reversed(actions)
@@ -173,36 +181,24 @@ class ToolBar(widgets.Window):
 		return self._panel_size
 	panel_size = property(getPanelSize, setPanelSize)
 	
-	def dockTo(self, dockarea):
-		if self._floating == True:
-			self._floating = False
-			self.real_widget.setTitleBarHeight(0)
-		
-		if dockarea == "left" or dockarea == "right":
-			self.orientation = ORIENTATION['Vertical']
-		else:
-			self.orientation = ORIENTATION['Horizontal']
-		
-		mainwindow = scripts.editor.getEditor()
-		mainwindow.dockWidgetTo(self, dockarea)
-	
-	def unDock(self):
-		if self._floating == True:
-			return
+	def setDocked(self, docked):
+		if docked is True and self._floating == True:
+				self._floating = False
+				self.real_widget.setTitleBarHeight(0)
+				self.real_widget.setMovable(False)
+				
+		elif docked is False and self._floating is False:			
+			self._floating = True
+			self.real_widget.setMovable(True)
 			
-		self._floating = True
-		
-		if self.parent is not None:
-			widgetParent = self.parent
-			widgetParent.removeChild(self)
-			widgetParent.adaptLayout()
-			self.hide()
-			
-		self.position = (150,150)
-		self.position_technique = "explicit"
-		self.real_widget.setTitleBarHeight(self._titlebarheight)
-		self.show()
-		#self._updateToolbar()
+			if self.parent is not None:
+				widgetParent = self.parent
+				widgetParent.removeChild(self)
+				widgetParent.adaptLayout()
+				self.hide()
+				
+			self.real_widget.setTitleBarHeight(self._titlebarheight)
+			self.show()
 		
 	def isFloating(self):
 		return self._floating
@@ -287,7 +283,7 @@ class ToolbarButton(widgets.VBox):
 			widget.base_color += Color(8, 8, 8)
 			widget.min_size = (2, 2)
 		else:
-			if self._button_style != BUTTON_STYLE['TextOnly']:
+			if self._button_style != BUTTON_STYLE['TextOnly'] and len(self._action.icon) > 0:
 				if self._action.isCheckable():
 					icon = widgets.ToggleButton(hexpand=0, up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
 					icon.toggled = self._action.isChecked()
@@ -295,11 +291,11 @@ class ToolbarButton(widgets.VBox):
 					icon = widgets.ImageButton(hexpand=0, up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
 				icon.capture(self._action.activate)
 				
-			if self._button_style != BUTTON_STYLE['IconOnly']:
+			if self._button_style != BUTTON_STYLE['IconOnly'] or len(self._action.icon) <= 0:
 				text = widgets.Button(text=self._action.text)
 				text.capture(self._action.activate)
 			
-			if self._button_style == BUTTON_STYLE['TextOnly']:
+			if self._button_style == BUTTON_STYLE['TextOnly'] or len(self._action.icon) <= 0:
 				widget = text
 				
 			elif self._button_style == BUTTON_STYLE['TextUnderIcon']:
