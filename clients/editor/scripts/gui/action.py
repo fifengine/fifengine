@@ -7,15 +7,15 @@ activated = Signal(providing_args=[])
 #triggered = Signal(providing_args=["action"])
 
 class Action:
-	def __init__(self, text="", icon="", separator=False):
+	def __init__(self, text="", icon="", separator=False, checkable=False, checked=False):
 		self._separator = separator
 		self._text = text
 		self._icon = icon
 		self._shortcut = ""
 		self._helptext = ""
 		self._enabled = True
-		self._checked = False
-		self._checkable = False
+		self._checked = checked
+		self._checkable = checkable
 	
 	def __str__(self):
 		return "%s(name='%s')" % (self.__class__.__name__,self.text)
@@ -154,6 +154,13 @@ class ActionGroup:
 		for a in self._actions:
 			if a != sender and a.isChecked():
 				a.setChecked(False)
+				
+	def getChecked(self):
+		for a in self._actions:
+			if a.isChecked():
+				return a
+			
+		return None
 				
 	def _changed(self):
 		changed.send(sender=self)

@@ -9,7 +9,10 @@ from gui import ToolBar, action
 from mapview import MapView
 from gui.action import Action, ActionGroup
 from gui.filemanager import FileManager
+from mapeditor import MapEditor
 from gui.mainwindow import MainWindow
+from pychan.tools import callbackWithArguments as cbwa
+from events import *
 
 def getEditor():
 	if Editor.editor is None:
@@ -34,6 +37,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapviewList = []
 		self._mapgroup = None
 		self._mapbar = None
+		self._maparea = None
 	
 		ApplicationBase.__init__(self, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
@@ -58,7 +62,21 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapbar = ToolBar(panel_size=20)
 		self._mapbar.setDocked(True)
 		
+		self._maparea = pychan.widgets.VBox()
+		self._maparea.opaque = False
+		
+		cw = self._maparea
+		cw.capture(self.__sendMouseEvent, "mouseEntered")
+		cw.capture(self.__sendMouseEvent, "mousePressed")
+		cw.capture(self.__sendMouseEvent, "mouseReleased")
+		cw.capture(self.__sendMouseEvent, "mouseClicked")
+		cw.capture(self.__sendMouseEvent, "mouseMoved")
+		cw.capture(self.__sendMouseEvent, "mouseWheelMovedUp")
+		cw.capture(self.__sendMouseEvent, "mouseWheelMovedDown")
+		cw.capture(self.__sendMouseEvent, "mouseDragged")
+		
 		self._centralwidget.addChild(self._mapbar)
+		self._centralwidget.addChild(self._maparea)
 		
 		self._initActions()
 		
@@ -156,6 +174,38 @@ class Editor(ApplicationBase, MainWindow):
 	def _actionUndock(self, sender):
 		self._toolbar.setDocked(False)
 			
+	def __sendMouseEvent(self, event, **kwargs):
+		msEvent = fife.MouseEvent
+		type = event.getType()
+		
+		if type == msEvent.MOVED:
+			mouseMoved.send(sender=self._maparea, event=event)
+			
+		elif type == msEvent.PRESSED:
+			mousePressed.send(sender=self._maparea, event=event)
+			
+		elif type == msEvent.RELEASED:
+			mouseReleased.send(sender=self._maparea, event=event)
+			
+		elif type == msEvent.WHEEL_MOVED_DOWN:
+			mouseWheelMovedDown.send(sender=self._maparea, event=event)
+			
+		elif type == msEvent.WHEEL_MOVED_UP:
+			mouseWheelMovedUp.send(sender=self._maparea, event=event)
+			
+		elif type == msEvent.CLICKED:
+			mouseClicked.send(sender=self._maparea, event=event)
+			
+		elif type == msEvent.ENTERED:
+			mouseEntered.send(sender=self._maparea, event=event)
+			
+		elif type == msEvent.EXITED:
+			mouseExited.send(sender=self._maparea, event=event)
+			
+		elif type == msEvent.DRAGGED:
+			mouseDragged.send(sender=self._maparea, event=event)
+	
+			
 	def getToolbox(self): 
 		return self._toolbox
 	
@@ -172,9 +222,11 @@ class Editor(ApplicationBase, MainWindow):
 		return self._mapview
 		
 	def showMapView(self, mapview):
-		if mapview is None:
+		if mapview is None or mapview == self._mapview:
 			return
+			
 		self._mapview = mapview
+		self._mapview.show()
 
 	def createListener(self):
 		if self._eventlistener is None:
@@ -189,7 +241,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapviewList.append(self._mapview)
 		
 		mapAction = Action(unicode(map.getId()))
-		action.activated.connect(self._mapview.show, sender=mapAction)
+		action.activated.connect(cbwa(self.showMapView, self._mapview), sender=mapAction, weak=False)
 		self._mapgroup.addAction(mapAction)
 		
 		self._mapview.show()
@@ -208,7 +260,6 @@ class Editor(ApplicationBase, MainWindow):
 		for mapView in self._mapviewList:
 			self._mapview = mapView
 			self._filemanager.save()
-			print self._mapview
 		self._mapview = tmpView
 
 	def _pump(self):
@@ -217,7 +268,9 @@ class Editor(ApplicationBase, MainWindow):
 			self._initGui()
 			self._initTools()
 			self._inited = True
+			self.openFile("../rio_de_hola/maps/shrine.xml")
 		
 		events.onPump.send(sender=self)
+		
 
 		

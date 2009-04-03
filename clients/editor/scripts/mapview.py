@@ -3,6 +3,7 @@ import undomanager
 import editor
 import loaders, savers
 from events import events
+from gui.mapeditor import MapEditor
 
 class MapView:
 	def __init__(self, map):
@@ -19,6 +20,8 @@ class MapView:
 		self.importlist = []
 		if hasattr(map, "importDirs"):
 			self.importlist.extend(map.importDirs)
+			
+		self._mapedit = MapEditor(self._map)
 		
 	# Copied from mapeditor.py
 	def show(self):
@@ -34,11 +37,13 @@ class MapView:
 				rb = engine.getRenderBackend()
 				cam.setViewPort(fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight()))
 				cam.setEnabled(True)
-				_camera = cam
+				self._camera = cam
 				break
-		if not _camera:
+		else:
 			raise AttributeError('No cameras found associated with this map: ' + self._map.getId())
 
+	def getCamera(self):
+		return self._camera
 		
 	def getMap(self):
 		return self._map
