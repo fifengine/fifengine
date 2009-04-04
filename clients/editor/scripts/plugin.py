@@ -12,14 +12,17 @@ class PluginManager:
 				files.append(os.path.splitext(f)[0])
 				
 		for f in files:
-			print "Importing plugin:", f
-			exec "import plugins."+f
-			plugin = eval("plugins."+f+"."+f+"()")
-			if isinstance(plugin, Plugin) is False:
-				print f+" is not an instance of Plugin!"
-			else:
-				plugin.enable()
-				self._plugins.append(plugin)
+			try:
+				print "Importing plugin:", f
+				exec "import plugins."+f
+				plugin = eval("plugins."+f+"."+f+"()")
+				if isinstance(plugin, Plugin) is False:
+					print f+" is not an instance of Plugin!"
+				else:
+					plugin.enable()
+					self._plugins.append(plugin)
+			except:
+				print "Invalid plugin:", f
 
 		
 class Plugin:
