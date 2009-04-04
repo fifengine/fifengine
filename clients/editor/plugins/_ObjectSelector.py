@@ -101,7 +101,6 @@ class ObjectIconList(widgets.VBox):
 		#print "KeyEvent", event
 
 	def clear(self):
-		count = 0
 		for c in reversed(self.children):
 			self.removeChild(c)
 
