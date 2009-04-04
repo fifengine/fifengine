@@ -9,7 +9,6 @@ from gui import ToolBar, action
 from mapview import MapView
 from gui.action import Action, ActionGroup
 from gui.filemanager import FileManager
-from mapeditor import MapEditor
 from gui.mainwindow import MainWindow
 from gui.mapeditor import MapEditor
 from pychan.tools import callbackWithArguments as cbwa
@@ -229,10 +228,10 @@ class Editor(ApplicationBase, MainWindow):
 		if mapview is None or mapview == self._mapview:
 			return
 			
+		events.preMapShown.send(sender=self, mapview=mapview)
 		self._mapview = mapview
 		self._mapview.show()
-		
-		self._mapeditor.setController(self._mapview.getController())
+		events.postMapShown.send(sender=self, mapview=mapview)
 
 	def createListener(self):
 		if self._eventlistener is None:
@@ -274,7 +273,7 @@ class Editor(ApplicationBase, MainWindow):
 			self._initGui()
 			self._initTools()
 			self._inited = True
-			self.openFile("../rio_de_hola/maps/shrine.xml")
+			#self.openFile("../rio_de_hola/maps/shrine.xml")
 		
 		events.onPump.send(sender=self)
 		

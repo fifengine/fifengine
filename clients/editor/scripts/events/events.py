@@ -12,6 +12,8 @@ postSave = Signal(providing_args=["mapview"])
 mapAdded = Signal(providing_args=["mapview"])
 preMapRemove = Signal(providing_args=["mapview"])
 postMapRemove = Signal(providing_args=["mapview"])
+preMapShown = Signal(providing_args=["mapview"])
+postMapShown = Signal(providing_args=["mapview"])
 
 # Signals emitted by EventListener
 onQuit			= Signal(providing_args=[])

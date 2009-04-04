@@ -43,6 +43,8 @@ class MapEditor:
 		self._shiftdown = False
 		self._altdown = False
 		
+		events.postMapShown.connect(self._mapChanged)
+		
 	def _init(self):
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED
@@ -77,6 +79,9 @@ class MapEditor:
 		events.mouseExited.disconnect(self.mouseExited)
 	
 		events.onPump.disconnect(self.pump)
+		
+	def _mapChanged(self, sender, mapview):
+		self.setController(mapview.getController())
 		
 	def setController(self, controller):
 		if self._controller is not None:

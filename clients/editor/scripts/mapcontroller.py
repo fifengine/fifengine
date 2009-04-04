@@ -75,9 +75,9 @@ class MapController(object):
 		return loc
 
 	def getInstancesFromPosition(self, position, top_only):
-		self._assert(self._layer, 'No layer assigned in _getInstancesFromPosition')
-		self._assert(position, 'No position assigned in _getInstancesFromPosition')
-		self._assert(self._camera, 'No camera assigned in _getInstancesFromPosition')
+		self._assert(self._layer, 'No layer assigned in getInstancesFromPosition')
+		self._assert(position, 'No position assigned in getInstancesFromPosition')
+		self._assert(self._camera, 'No camera assigned in getInstancesFromPosition')
 
 		loc = fife.Location(self._layer)
 		if type(position) == fife.ExactModelCoordinate:

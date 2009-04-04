@@ -1,6 +1,26 @@
+import os
+
 class PluginManager:
 	def __init__(self, *args, **kwargs):
 		self._pluginDir = "plugins"
+		self._plugins = []
+		
+		files = []
+		for f in os.listdir(self._pluginDir):
+			path = os.path.join(self._pluginDir, f)
+			if os.path.isfile(path) and os.path.splitext(f)[1] == ".py" and f != "__init__.py":
+				files.append(os.path.splitext(f)[0])
+				
+		for f in files:
+			print "Importing plugin:", f
+			exec "import plugins."+f
+			plugin = eval("plugins."+f+"."+f+"()")
+			if isinstance(plugin, Plugin) is False:
+				print f+" is not an instance of Plugin!"
+			else:
+				plugin.enable()
+				self._plugins.append(plugin)
+
 		
 class Plugin:
 	def enable(self):

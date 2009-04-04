@@ -26,6 +26,8 @@
 
 import fife
 import scripts.plugin as plugin
+import scripts.editor
+from scripts.events import *
 import pychan
 import pychan.widgets as widgets
 from pychan.tools import callbackWithArguments as cbwa
@@ -56,6 +58,7 @@ class LayerTool(plugin.Plugin):
 	def __init__(self):	
 		self._editor = None
 		self._enabled = False
+		self._mapview = None
 			
 		self.data = False
 		self.previous_active_layer = None
@@ -63,21 +66,21 @@ class LayerTool(plugin.Plugin):
 		self.subwrappers = []
 			
 	#--- Plugin function ---#
-	def enable(self, editor):
+	def enable(self):
 		if self._enabled is True:
 			return
 			
 		# Fifedit plugin data
-		self._editor = editor
+		self._editor = scripts.editor.getEditor()
 
 		self.__create_gui()
 		
 		self.container.show()
 		self._adjust_position()
 		
-		print "enabled"
+		events.postMapShown.connect(self.update)
 
-	def disable(self, editor):
+	def disable(self):
 		if self._enabled is False:
 			return
 		self.container.hide()
@@ -110,14 +113,15 @@ class LayerTool(plugin.Plugin):
 			
 		self.subwrappers = []
 		
-	def update(self):
+	def update(self, mapview):
 		""" dump new layer informations into the wrapper 
 		
 		We group one ToggleButton and one Lable into a HBox, the main wrapper
 		itself is a VBox and we also capture both the Button and the Label to listen
 		for mouse actions
 		"""
-		layers = self._mapedit._map.getLayers()
+		self._mapview = mapview
+		layers = self._mapview.getMap().getLayers()
 		
 		self.clear()
 		
@@ -125,7 +129,7 @@ class LayerTool(plugin.Plugin):
 			layerid = layer.getId()
 			subwrapper = pychan.widgets.HBox()
 
-			visibility_widget = pychan.widgets.ToggleButton(up_image="icons/is_visible.png",down_image="icons/quit.png")
+			visibility_widget = pychan.widgets.ToggleButton(up_image="gui/icons/is_visible.png",down_image="gui/icons/quit.png")
 			visibility_widget.name = "toggle_" + layerid
 			visibility_widget.capture(self.toggle_layer_visibility,"mousePressed")
 			
@@ -160,7 +164,7 @@ class LayerTool(plugin.Plugin):
 		
 		layerid = widget.name[7:]
 		
-		layer = self._mapedit._map.getLayer(layerid)
+		layer = self._mapview.getMap().getLayer(layerid)
 		
 		if layer.areInstancesVisible():
 			layer.setInstancesVisible(False)
@@ -176,7 +180,7 @@ class LayerTool(plugin.Plugin):
 		
 		A bunch of exceptions is the result (each click on the map will result in a exception as no layer is set etc...)	
 		"""
-		self._mapedit._editLayer(None)
+		self._mapview.getController().selectLayer(None)
 		
 	def select_different_active_layer(self, layerid):
 		""" a helper method to pick either the previous or next layer in the layerlist
@@ -194,7 +198,7 @@ class LayerTool(plugin.Plugin):
 		@type	layerid:	string
 		@param	layerid:	the layerid of the pivot element		
 		"""
-		layers = [layer.getId() for layer in self._mapedit._map.getLayers()]
+		layers = [layer.getId() for layer in self._mapview.getMap().getLayers()]
 		pivot_index = layers.index(layerid)
 
 		if len(layers) == 1:
@@ -244,4 +248,4 @@ class LayerTool(plugin.Plugin):
 		self.previous_active_layer = layerid
 		self.container.adaptLayout()
 		
-		self._mapedit._editLayer(layerid)
+		self._mapview.getController().selectLayer(layerid)
