@@ -5,6 +5,7 @@ import math
 import fife
 import pychan
 import pychan.widgets as widgets
+import scripts
 import scripts.events as events
 import action
 from toolbar import ToolBar
@@ -19,36 +20,39 @@ for s in states:
 	globals()[s] = s
 NOT_INITIALIZED = -9999999
 
-class MapEditor(MapController, fife.IKeyListener):
-	def __init__(self, map):
-		MapController.__init__(self, map)
-
-		eventmanager = self._engine.getEventManager()
-
-		fife.IKeyListener.__init__(self)
-		eventmanager.addKeyListener(self)
-
+class MapEditor:
+	def __init__(self):	
 		self._ignoreToggles = False # A hack to avoid infinite recursion when toggling a button
-
-		self._ctrldown = False
-		self._shiftdown = False
-		self._altdown = False
-		self._dragx = NOT_INITIALIZED
-		self._dragy = NOT_INITIALIZED
-		self._scrollx = 0
-		self._scrolly = 0
+		self._controller = None
 		self._mode = VIEWING
 		
+		self._editor = scripts.editor.getEditor()
 		self._statusbar = self._editor.getStatusBar()
 		self._toolbar = self._editor.getToolBar()
+		
 		self._toolbox = ToolBar(title=u"", orientation=1, panel_size=26)
 		self._toolbox.position_technique = "explicit"
 		self._toolbox.position = (200, 150)
 		self._toolbox.setDocked(False)
-		self._toolbox.show()
 		
 		self._initToolbuttons()
+		
+		self._toolbox.show()
+		
+		self._ctrldown = False
+		self._shiftdown = False
+		self._altdown = False
+		
+	def _init(self):
+		self._dragx = NOT_INITIALIZED
+		self._dragy = NOT_INITIALIZED
+		self._scrollx = 0
+		self._scrolly = 0
+		
 		self._setMode(VIEWING)
+		
+		events.keyPressed.connect(self.keyPressed)
+		events.keyReleased.connect(self.keyReleased)
 		
 		events.mousePressed.connect(self.mousePressed)
 		events.mouseDragged.connect(self.mouseDragged)
@@ -56,8 +60,32 @@ class MapEditor(MapController, fife.IKeyListener):
 		events.mouseMoved.connect(self.mouseMoved)
 		events.mouseWheelMovedUp.connect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.connect(self.mouseWheelMovedDown)
+		events.mouseExited.connect(self.mouseExited)
 	
 		events.onPump.connect(self.pump)
+		
+	def _clear(self):
+		events.keyPressed.disconnect(self.keyPressed)
+		events.keyReleased.disconnect(self.keyReleased)
+		
+		events.mousePressed.disconnect(self.mousePressed)
+		events.mouseDragged.disconnect(self.mouseDragged)
+		events.mouseReleased.disconnect(self.mouseReleased)
+		events.mouseMoved.disconnect(self.mouseMoved)
+		events.mouseWheelMovedUp.disconnect(self.mouseWheelMovedUp)
+		events.mouseWheelMovedDown.disconnect(self.mouseWheelMovedDown)
+		events.mouseExited.disconnect(self.mouseExited)
+	
+		events.onPump.disconnect(self.pump)
+		
+	def setController(self, controller):
+		if self._controller is not None:
+			self._clear()
+
+		if controller is not None:
+			self._init()
+			
+		self._controller = controller
 		
 	def _initToolbuttons(self):
 		self._selectAction = Action(text=u"Select", icon="gui/icons/hand.png", checkable=True)
@@ -89,7 +117,7 @@ class MapEditor(MapController, fife.IKeyListener):
 		self._toolbar.adaptLayout()
 		
 	def _setMode(self, mode):
-		if (mode == INSERTING) and (not self._object):
+		if (mode == INSERTING) and (not self._controller._object):
 			self._statusbar.setText(u'Please select object first')
 			mode = self._mode
 
@@ -110,6 +138,7 @@ class MapEditor(MapController, fife.IKeyListener):
 		self._statusbar.setText(mode.replace('_', ' ').capitalize())
 		
 	def _buttonToggled(self, sender, toggled):
+		if self._controller is None: return
 		if self._ignoreToggles is True: return
 	
 		mode = VIEWING
@@ -125,6 +154,11 @@ class MapEditor(MapController, fife.IKeyListener):
 				mode = REMOVING
 
 		self._setMode(mode)
+		
+	def mouseExited(self, sender, event):
+		self._scrollx = 0
+		self._scrolly = 0
+
 
 	def mousePressed(self, sender, event):
 		if event.isConsumedByWidgets():
@@ -137,16 +171,16 @@ class MapEditor(MapController, fife.IKeyListener):
 				self._dragx = realCoords[0]
 				self._dragy = realCoords[1]
 		else:
-			if self._camera:
-				self.selectCell(realCoords[0], realCoords[1], self._shiftdown)
+			if self._controller._camera:
+				self._controller.selectCell(realCoords[0], realCoords[1], self._shiftdown)
 			if self._mode == VIEWING:
-				self._instances = self.getInstancesFromPosition(self._selection, top_only=True)
+				self._controller._instances = self._controller.getInstancesFromPosition(self._controller._selection, top_only=True)
 			elif self._mode == INSERTING:
-				self.placeInstance(self._selection,self._object)
+				self._controller.placeInstance(self._controller._selection, self._controller._object)
 			elif self._mode == REMOVING:
-				self.removeInstances(self._selection)
+				self._controller.removeInstances(self._controller._selection)
 			elif self._mode == MOVING:
-				self._instances = self.getInstancesFromPosition(self._selection, top_only=True)
+				self._controller._instances = self._controller.getInstancesFromPosition(self._controller._selection, top_only=True)
 			else:
 				self._setMode(self._mode) # refresh status
 
@@ -159,19 +193,19 @@ class MapEditor(MapController, fife.IKeyListener):
 			
 		if self._ctrldown:
 			if (self._dragx != NOT_INITIALIZED) and (self._dragy != NOT_INITIALIZED):
-				self.moveCamera(realCoords[0] - self._dragx, realCoords[1] - self._dragy)
+				self._controller.moveCamera(realCoords[0] - self._dragx, realCoords[1] - self._dragy)
 			self._dragx = realCoords[0]
 			self._dragy = realCoords[1]
 		else:
 			if self._mode == INSERTING:
-				self.selectCell(realCoords[0], realCoords[1])
-				self.placeInstance(self._selection,self._object)
+				self._controller.selectCell(realCoords[0], realCoords[1])
+				self._controller.placeInstance(self._controller._selection, self._controller._object)
 			elif self._mode == REMOVING:
-				self.selectCell(realCoords[0], realCoords[1])
-				self.removeInstances(self._selection)
-			elif self._mode == MOVING and self._instances:
-				self.selectCell(realCoords[0], realCoords[1], self._shiftdown)
-				self.moveInstances()
+				self._controller.selectCell(realCoords[0], realCoords[1])
+				self._controller.removeInstances(self._controller._selection)
+			elif self._mode == MOVING and self._controller._instances:
+				self._controller.selectCell(realCoords[0], realCoords[1], self._shiftdown)
+				self._controller.moveInstances(exact=self._shiftdown)
 
 	def mouseReleased(self, sender, event):
 		if event.isConsumedByWidgets():
@@ -182,7 +216,7 @@ class MapEditor(MapController, fife.IKeyListener):
 
 	def mouseMoved(self, sender, event):
 		realCoords = self._getRealCoords(sender, event)
-		if self._camera:
+		if self._controller._camera:
 			mouse_x = realCoords[0]
 			mouse_y = realCoords[1]
 			
@@ -210,12 +244,12 @@ class MapEditor(MapController, fife.IKeyListener):
 				self._scrollx = SCROLL_SPEED
 				
 	def mouseWheelMovedUp(self, event):
-		if self._ctrldown and self._camera:
-			self._camera.setZoom(self._camera.getZoom() * 1.05)
+		if self._ctrldown and self._controller._camera:
+			self._controller._camera.setZoom(self._controller._camera.getZoom() * 1.05)
 
 	def mouseWheelMovedDown(self, event):
-		if self._ctrldown and self._camera:
-			self._camera.setZoom(self._camera.getZoom() / 1.05)
+		if self._ctrldown and self._controller._camera:
+			self._controller._camera.setZoom(self._controller._camera.getZoom() / 1.05)
 
 
 	def keyPressed(self, event):
@@ -223,13 +257,13 @@ class MapEditor(MapController, fife.IKeyListener):
 		keystr = event.getKey().getAsString().lower()
 
 		if keyval == fife.Key.LEFT:
-			self.moveCamera(50, 0)
+			self._controller.moveCamera(50, 0)
 		elif keyval == fife.Key.RIGHT:
-			self.moveCamera(-50, 0)
+			self._controller.moveCamera(-50, 0)
 		elif keyval == fife.Key.UP:
-			self.moveCamera(0, 50)
+			self._controller.moveCamera(0, 50)
 		elif keyval == fife.Key.DOWN:
-			self.moveCamera(0, -50)
+			self._controller.moveCamera(0, -50)
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self._ctrldown = True
 		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
@@ -256,22 +290,22 @@ class MapEditor(MapController, fife.IKeyListener):
 				self._setMode(VIEWING)
 
 		elif keystr == 't':
-			gridrenderer = self._camera.getRenderer('GridRenderer')
+			gridrenderer = self._controller._camera.getRenderer('GridRenderer')
 			gridrenderer.setEnabled(not gridrenderer.isEnabled())
 
 		elif keystr == 'b':
-			blockrenderer = self._camera.getRenderer('BlockingInfoRenderer')
+			blockrenderer = self._controller._camera.getRenderer('BlockingInfoRenderer')
 			blockrenderer.setEnabled(not blockrenderer.isEnabled())
 
 		elif keystr == 'r':
-			if self._selection:
-				self._rotateInstances()
+			if self._controller._selection:
+				self._controller.rotateInstances()
 
 		elif keystr == 'o':
-			self.changeRotation()
+			self._controller.changeRotation()
 
 		elif keystr == 'u':
-			self.undo()
+			self._controller.undo()
 
 	def keyReleased(self, event):
 		keyval = event.getKey().getValue()
@@ -292,13 +326,13 @@ class MapEditor(MapController, fife.IKeyListener):
 			if isinstance(parent, widgets.Widget):
 				offsetX += parent.x
 				offsetY += parent.y
-			if hasattr(parent, "parent") is False:
+				parent = parent.parent
+			else:
 				break
-			
-			parent = parent.parent
 			
 		return (offsetX, offsetY)
 
 	def pump(self):
 		if self._scrollx != 0 or self._scrolly != 0:
-			self.moveCamera(self._scrollx * self._engine.getTimeManager().getTimeDelta(), self._scrolly * self._engine.getTimeManager().getTimeDelta())
+			engine = self._editor.getEngine()
+			self._controller.moveCamera(self._scrollx * engine.getTimeManager().getTimeDelta(), self._scrolly * engine.getTimeManager().getTimeDelta())

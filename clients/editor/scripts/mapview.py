@@ -3,12 +3,13 @@ import undomanager
 import editor
 import loaders, savers
 from events import events
-from gui.mapeditor import MapEditor
+from mapcontroller import MapController
 
 class MapView:
 	def __init__(self, map):
 		self._map = map
-		self.editor = editor.getEditor()
+		self._editor = editor.getEditor()
+		self._controller = MapController(self._map)
 		
 		if map is None:
 			print "No map passed to MapView!"
@@ -20,14 +21,12 @@ class MapView:
 		self.importlist = []
 		if hasattr(map, "importDirs"):
 			self.importlist.extend(map.importDirs)
-			
-		self._mapedit = MapEditor(self._map)
 		
 	# Copied from mapeditor.py
 	def show(self):
 		_camera = None
 		
-		engine = self.editor.getEngine()
+		engine = self._editor.getEngine()
 		engine.getView().resetRenderers()
 		for cam in engine.getView().getCameras():
 			cam.setEnabled(False)
@@ -44,6 +43,9 @@ class MapView:
 
 	def getCamera(self):
 		return self._camera
+	
+	def getController(self):
+		return self._controller
 		
 	def getMap(self):
 		return self._map
@@ -66,12 +68,12 @@ class MapView:
 			return
 
 		events.preSave.send(sender=self, mapview=self)
-		savers.saveMapFile(curname, self.editor.getEngine(), self._map, importList=self.importlist)
+		savers.saveMapFile(curname, self._editor.getEngine(), self._map, importList=self.importlist)
 		events.postSave.send(sender=self, mapview=self)
 		
 	def saveAs(self, filename):
 		events.preSave.send(sender=self, mapview=self)
-		savers.saveMapFile(str(filename), self.editor.getEngine(), self._map, importList=self.importlist)
+		savers.saveMapFile(str(filename), self._editor.getEngine(), self._map, importList=self.importlist)
 		events.postSave.send(sender=self, mapview=self)
 		
 	def close(self):
@@ -79,12 +81,12 @@ class MapView:
 		
 		
 	def importFile(self, path):
-		loaders.loadImportFile(path, self.editor.getEngine())
+		loaders.loadImportFile(path, self._editor.getEngine())
 		
 	def importDir(self, path, recursive=True):
 		self.importlist.append(path)
 		if recursive is True:
-			loaders.loadImportDirRec(path, self.editor.getEngine())
+			loaders.loadImportDirRec(path, self._editor.getEngine())
 		else:
-			loaders.loadImportDir(path, self.editor.getEngine())
+			loaders.loadImportDir(path, self._editor.getEngine())
 	

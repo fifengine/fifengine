@@ -96,14 +96,13 @@ class MapController(object):
 			self._undoStack.pop()()
 			self._undo = False
 
-	def placeInstance(self,position,object):
+	def placeInstance(self, position, object):
 		mname = '_placeInstance'
 		self._assert(object, 'No object assigned in %s' % mname)
 		self._assert(position, 'No position assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 
 		print 'Placing instance of ' + object.getId() + ' at ' + str(position)
-		print object
 
 		# don't place repeat instances
 		for i in self.getInstancesFromPosition(position, False):
@@ -113,6 +112,7 @@ class MapController(object):
 
 		inst = self._layer.createInstance(object, position)
 		fife.InstanceVisual.create(inst)
+		
 		if not self._undo:
 			self._undoStack.append(lambda: self.removeInstances(position))
 
@@ -130,13 +130,13 @@ class MapController(object):
 				self._undoStack.append(lambda: self.placeInstance(position,object))
 			self._layer.deleteInstance(i)
 
-	def moveInstances(self):
+	def moveInstances(self, exact=False):
 		mname = '_moveInstances'
 		self._assert(self._selection, 'No selection assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 
 		loc = fife.Location(self._layer)
-		if self._shiftdown:
+		if exact:
 			loc.setExactLayerCoordinates(self._selection)
 		else:
 			loc.setLayerCoordinates(self._selection)
@@ -204,7 +204,6 @@ class MapController(object):
 #				i.setRotation(angles[ind])
 #			else:
 #				print "rotation not supported for this instance"
-
 	def changeRotation(self):
 		currot = self._camera.getRotation()
 		self._camera.setRotation((currot + 90) % 360)

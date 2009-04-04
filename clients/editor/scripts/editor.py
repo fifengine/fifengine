@@ -11,6 +11,7 @@ from gui.action import Action, ActionGroup
 from gui.filemanager import FileManager
 from mapeditor import MapEditor
 from gui.mainwindow import MainWindow
+from gui.mapeditor import MapEditor
 from pychan.tools import callbackWithArguments as cbwa
 from events import *
 
@@ -38,6 +39,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapgroup = None
 		self._mapbar = None
 		self._maparea = None
+		self._mapeditor = None
 	
 		ApplicationBase.__init__(self, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
@@ -48,6 +50,7 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self._filemanager = FileManager()
 		self._toolbar.adaptLayout()
+		self._mapeditor = MapEditor()
 		
 	def _initGui(self):
 		screen_width = self.engine.getSettings().getScreenWidth()
@@ -67,6 +70,7 @@ class Editor(ApplicationBase, MainWindow):
 		
 		cw = self._maparea
 		cw.capture(self.__sendMouseEvent, "mouseEntered")
+		cw.capture(self.__sendMouseEvent, "mouseExited")
 		cw.capture(self.__sendMouseEvent, "mousePressed")
 		cw.capture(self.__sendMouseEvent, "mouseReleased")
 		cw.capture(self.__sendMouseEvent, "mouseClicked")
@@ -227,6 +231,8 @@ class Editor(ApplicationBase, MainWindow):
 			
 		self._mapview = mapview
 		self._mapview.show()
+		
+		self._mapeditor.setController(self._mapview.getController())
 
 	def createListener(self):
 		if self._eventlistener is None:
@@ -236,19 +242,19 @@ class Editor(ApplicationBase, MainWindow):
 		return self._eventlistener
 	
 	def newMapView(self, map):
-		self._mapview = MapView(map)
+		mapview = MapView(map)
 		
-		self._mapviewList.append(self._mapview)
+		self._mapviewList.append(mapview)
 		
 		mapAction = Action(unicode(map.getId()))
-		action.activated.connect(cbwa(self.showMapView, self._mapview), sender=mapAction, weak=False)
+		action.activated.connect(cbwa(self.showMapView, mapview), sender=mapAction, weak=False)
 		self._mapgroup.addAction(mapAction)
 		
-		self._mapview.show()
+		self.showMapView(mapview)
 		
 		events.mapAdded.send(sender=self, map=map)
 		
-		return self._mapview
+		return mapview
 	
 	def openFile(self, path):
 		map = loaders.loadMapFile(path, self.engine)
