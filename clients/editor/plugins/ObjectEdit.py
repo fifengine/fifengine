@@ -25,10 +25,14 @@
 """ a tool for FIFEdit to edit object and instance attributes """
 
 import fife
-import plugin
 import pychan
 import pychan.widgets as widgets
 from pychan.tools import callbackWithArguments as cbwa
+
+import scripts
+import scripts.plugin as plugin
+from scripts.events import *
+from scripts.gui.action import Action
 
 import settings as Settings
 import math
@@ -57,33 +61,27 @@ class ObjectEdit(plugin.Plugin):
 		  data (selected instance)
 		- we also need to edit run.py of the editor core to make this plugin work (shouldn't be necessary, too)
 	"""
-	def __init__(self, engine, mapedit):
-		# Fifedit plugin data
-		self.menu_items = { 'ObjectEdit' : self.toggle_offsetedit }
-		
-		self._mapedit = mapedit
-
+	def __init__(self):
 		# this is _very bad_ - but I need to change the current rotation code by providing
 		# project specific rotation angles. FIFE later should provide a list of the loaded
 		# object rotations (they are provided by the xml files, so we just need to use them...)
-		self._mapedit._objectedit_rotations = None
+		#self._mapedit._objectedit_rotations = None
 	
 		self.active = False
 		self._camera = None
 		self._layer = None
 		
+		self._enabled = False
+		
 		self.offset_slider = {}
 		self.offset_slider['x'] = False
 		self.offset_slider['y'] = False
 		
-		self.imagepool = engine.getImagePool()
-		self.animationpool = engine.getAnimationPool()
+		self.imagepool = None
+		self.animationpool = None
 		
 		self.guidata = {}
 		self.objectdata = {}
-
-		self._reset()		
-		self.create_gui()
 
 	def _reset(self):
 		"""
@@ -107,6 +105,45 @@ class ObjectEdit(plugin.Plugin):
 		if self._camera is not None:
 			self.renderer.removeAllOutlines()		
 		
+
+	def enable(self):
+		if self._enabled is True:
+			return
+			
+		self._editor = scripts.editor.getEditor()
+		self.engine = self._editor.getEngine()
+		
+		self.imagepool = self.engine.getImagePool()
+		self.animationpool = self.engine.getAnimationPool()
+		
+		self._showAction = Action(u"Object editor")
+		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
+		
+		self._editor.getToolBar().addAction(self._showAction)
+		
+		events.onInstancesSelected.connect(self.input)
+		
+		self._reset()		
+		self.create_gui()
+
+	def disable(self):
+		if self._enabled is False:
+			return
+			
+		self._reset()
+		self.container.hide()
+		self.removeAllChildren()
+		
+		events.onInstancesSelected.disconnect(self.input)
+		
+		self._editor.getToolBar().removeAction(self._showAction)
+
+	def isEnabled(self):
+		return self._enabled;
+
+	def getName(self):
+		return "Object editor"
+
 	def create_gui(self):
 		"""
 			- creates the gui skeleton by loading the xml file
@@ -237,8 +274,10 @@ class ObjectEdit(plugin.Plugin):
 				- ATM not in use, needs some additional code when showing / hiding the gui (see input() )
 		"""
 		if self.container.isVisible():
+			self.active = False
 			self.container.hide()
 		else:
+			self.active = True
 			self.container.show()
 			
 	def toggle_offsetedit(self):
@@ -302,7 +341,7 @@ class ObjectEdit(plugin.Plugin):
 		
 		instance_id = self._gui_instance_id_textfield._getText()
 		if instance_id is not None and instance_id is not "None":
-			existing_instances = self._mapedit._layer.getInstances(instance_id)
+			existing_instances = self._editor.getActiveMapView().getController()._layer.getInstances(instance_id)
 			if existing_instances == ():
 				self._instances[0].setId(instance_id)
 				print "Set new instance id: ", instance_id		
@@ -418,27 +457,31 @@ class ObjectEdit(plugin.Plugin):
 		self._image_default_x_offset = self._image.getXShift()
 		self._image_default_y_offset = self._image.getYShift()
 
+
 # FIXME: see l. 40
-		self._mapedit._objectedit_rotations = self._avail_rotations
+		self._editor.getActiveMapView().getController()._objectedit_rotations = self._avail_rotations
 # end FIXME
 		
-	def input(self):
+	def input(self, instances):
 		"""
 			if called _and_ the user wishes to edit offsets,
 			gets instance data and show gui
 			
 			(see run.py, pump() )
 		"""
-		if self._mapedit._instances != self._instances:
+		print "Input:"
+		if instances != self._instances:
+			print "1"
 			if self.active is True:
+				print "2"
 				self._reset()
-				self._instances = self._mapedit._instances
+				self._instances = instances
 				
 				if self._camera is None:
-					self._camera = self._mapedit._camera
+					self._camera = self._editor.getActiveMapView().getCamera()
 					self.renderer = fife.InstanceRenderer.getInstance(self._camera)				
 					
-				self._layer = self._mapedit._layer
+				self._layer = self._editor.getActiveMapView().getController()._layer
 			
 				if self._instances != ():
 					self.highlight_selected_instance()
@@ -451,3 +494,4 @@ class ObjectEdit(plugin.Plugin):
 				else:
 					self._reset()
 					self.container.hide()
+				print "end"

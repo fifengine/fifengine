@@ -4,6 +4,7 @@ import math
 
 import fife
 import editor
+import events
 
 class EditorLogicError(Exception):
 	pass
@@ -73,6 +74,10 @@ class MapController(object):
 			loc.setLayerCoordinates(self._selection)
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
 		return loc
+		
+	def setSelectedInstances(self, instances):
+		events.onInstancesSelected.send(sender=self, instances=instances)
+		self._instances = instances
 
 	def getInstancesFromPosition(self, position, top_only):
 		self._assert(self._layer, 'No layer assigned in getInstancesFromPosition')
@@ -85,6 +90,7 @@ class MapController(object):
 		else:
 			loc.setLayerCoordinates(position)
 		instances = self._camera.getMatchingInstances(loc)
+
 		if top_only and (len(instances) > 0):
 			instances = [instances[0]]
 		return instances

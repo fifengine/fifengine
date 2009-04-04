@@ -179,13 +179,13 @@ class MapEditor:
 			if self._controller._camera:
 				self._controller.selectCell(realCoords[0], realCoords[1], self._shiftdown)
 			if self._mode == VIEWING:
-				self._controller._instances = self._controller.getInstancesFromPosition(self._controller._selection, top_only=True)
+				self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
 			elif self._mode == INSERTING:
 				self._controller.placeInstance(self._controller._selection, self._controller._object)
 			elif self._mode == REMOVING:
 				self._controller.removeInstances(self._controller._selection)
 			elif self._mode == MOVING:
-				self._controller._instances = self._controller.getInstancesFromPosition(self._controller._selection, top_only=True)
+				self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
 			else:
 				self._setMode(self._mode) # refresh status
 

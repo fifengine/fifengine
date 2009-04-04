@@ -142,12 +142,10 @@ class ObjectSelector(plugin.Plugin):
 		self.editor = scripts.editor.getEditor()
 		self.engine = self.editor.getEngine()
 			
-		# Fifedit plugin data
-		self._editor = scripts.editor.getEditor()
 		self._showAction = Action(u"Object selector")
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
 		
-		self._editor.getToolBar().addAction(self._showAction)
+		self.editor.getToolBar().addAction(self._showAction)
 		
 		events.postMapShown.connect(self.update)
 		
@@ -160,7 +158,9 @@ class ObjectSelector(plugin.Plugin):
 		self.gui.hide()
 		self.removeAllChildren()
 		
-		self._editor.getToolBar().removeAction(self._showAction)
+		events.postMapShown.disconnect(self.update)
+		
+		self.editor.getToolBar().removeAction(self._showAction)
 
 	def isEnabled(self):
 		return self._enabled;

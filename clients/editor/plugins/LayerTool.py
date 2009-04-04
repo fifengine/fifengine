@@ -92,6 +92,8 @@ class LayerTool(plugin.Plugin):
 		self.container.hide()
 		self.removeAllChildren()
 		
+		events.postMapShown.disconnect(self.update)
+		
 		self._editor.getToolBar().removeAction(self._showAction)
 
 	def isEnabled(self):
