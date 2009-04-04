@@ -25,7 +25,7 @@
 """ an advanced layer tool for FIFedit """
 
 import fife
-import plugin
+import scripts.plugin as plugin
 import pychan
 import pychan.widgets as widgets
 from pychan.tools import callbackWithArguments as cbwa
@@ -53,18 +53,41 @@ class LayerTool(plugin.Plugin):
 	The plugin has to register itself in the mapeditor module
 	to get actual content when a new map is loaded.
 	"""
-	def __init__(self, engine, mapedit):	
-		# Fifedit plugin data
-		self.menu_items = { 'LayerTool' : self.toggle }
-		self._mapedit = mapedit
+	def __init__(self):	
+		self._editor = None
+		self._enabled = False
+			
 		self.data = False
 		self.previous_active_layer = None
 		
-		# "register" at mapeditor module 
-		self._mapedit.layertool = self
-		
 		self.subwrappers = []
+			
+	#--- Plugin function ---#
+	def enable(self, editor):
+		if self._enabled is True:
+			return
+			
+		# Fifedit plugin data
+		self._editor = editor
+
 		self.__create_gui()
+		
+		self.container.show()
+		self._adjust_position()
+		
+		print "enabled"
+
+	def disable(self, editor):
+		if self._enabled is False:
+			return
+		self.container.hide()
+		self.removeAllChildren()
+
+	def isEnabled(self):
+		return self._enabled;
+
+	def getName(self):
+		return "Layertool"
 		
 	def __create_gui(self):
 		""" create the basic gui container """
@@ -98,7 +121,7 @@ class LayerTool(plugin.Plugin):
 		
 		self.clear()
 		
-		for layer in layers:
+		for layer in reversed(layers):
 			layerid = layer.getId()
 			subwrapper = pychan.widgets.HBox()
 
@@ -119,14 +142,6 @@ class LayerTool(plugin.Plugin):
 		
 		self.container.adaptLayout()	
 		self.data = True			
-
-	def toggle(self):
-		""" toggle visibility of the main gui container """
-		if self.container.isVisible():
-			self.container.hide()
-		else:
-			self.container.show()
-			self._adjust_position()
 			
 	def toggle_layer_visibility(self, event, widget):
 		""" callback for ToggleButtons 
