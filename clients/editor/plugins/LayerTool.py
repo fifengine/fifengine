@@ -28,6 +28,7 @@ import fife
 import scripts.plugin as plugin
 import scripts.editor
 from scripts.events import *
+from scripts.gui.action import Action
 import pychan
 import pychan.widgets as widgets
 from pychan.tools import callbackWithArguments as cbwa
@@ -59,6 +60,8 @@ class LayerTool(plugin.Plugin):
 		self._editor = None
 		self._enabled = False
 		self._mapview = None
+		
+		self._showAction = None
 			
 		self.data = False
 		self.previous_active_layer = None
@@ -72,6 +75,9 @@ class LayerTool(plugin.Plugin):
 			
 		# Fifedit plugin data
 		self._editor = scripts.editor.getEditor()
+		self._showAction = Action(u"LayerTool")
+		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
+		self._editor.getToolBar().addAction(self._showAction)
 
 		self.__create_gui()
 		
@@ -85,6 +91,8 @@ class LayerTool(plugin.Plugin):
 			return
 		self.container.hide()
 		self.removeAllChildren()
+		
+		self._editor.getToolBar().removeAction(self._showAction)
 
 	def isEnabled(self):
 		return self._enabled;
@@ -249,3 +257,10 @@ class LayerTool(plugin.Plugin):
 		self.container.adaptLayout()
 		
 		self._mapview.getController().selectLayer(layerid)
+
+	def toggle(self):
+		print self
+		if self.container.isVisible():
+			self.container.hide()
+		else:
+			self.container.show()

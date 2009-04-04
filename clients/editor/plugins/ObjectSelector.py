@@ -3,6 +3,10 @@
 import pychan
 from pychan import widgets, tools, attrs, internal
 from pychan.tools import callbackWithArguments
+import scripts
+import scripts.plugin as plugin
+from scripts.events import *
+from scripts.gui.action import Action
 import fife
 from fife import Color
 
@@ -117,21 +121,53 @@ class ObjectIconList(widgets.VBox):
 		return self._selectedItem
 	selected_item = property(_getSelectedItem, _setSelectedItem)
 	
-class ObjectSelector(object):
+class ObjectSelector(plugin.Plugin):
 	"""The ObjectSelector class offers a gui Widget that let's you select the object you
 	wish to use to in the editor.
 	@param engine: fife instance
 	@param map: fife.Map instance containing your map
 	@param selectNotify: callback function used to tell the editor you selected an object.
 	"""
-	def __init__(self, engine, map, selectNotify):
-		self.engine = engine
-		self.map = map
-		self.notify = selectNotify
+	def __init__(self):
+		self.editor = None
+		self.engine = None
 		self.mode = 'list' # Other mode is 'preview'
+		
+		self._enabled = False
 
+	def enable(self):
+		if self._enabled is True:
+			return
+			
+		self.editor = scripts.editor.getEditor()
+		self.engine = self.editor.getEngine()
+			
+		# Fifedit plugin data
+		self._editor = scripts.editor.getEditor()
+		self._showAction = Action(u"Object selector")
+		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
+		
+		self._editor.getToolBar().addAction(self._showAction)
+		
+		events.postMapShown.connect(self.update)
+		
 		self.buildGui()
 
+	def disable(self):
+		if self._enabled is False:
+			return
+			
+		self.gui.hide()
+		self.removeAllChildren()
+		
+		self._editor.getToolBar().removeAction(self._showAction)
+
+	def isEnabled(self):
+		return self._enabled;
+
+	def getName(self):
+		return "Object selector"
+		
 
 	def buildGui(self):
 		self.gui = pychan.loadXML('gui/objectselector.xml')
@@ -296,6 +332,7 @@ class ObjectSelector(object):
 		self.gui.adaptLayout()		
 
 	def update_namespace(self):
+		
 		self.namespaces.items = self.engine.getModel().getNamespaces()
 		if not self.namespaces.selected_item:
 			self.namespaces.selected = 0
@@ -349,3 +386,9 @@ class ObjectSelector(object):
 
 	def hide(self):
 		self.gui.hide()
+		
+	def toggle(self):
+		if self.gui.isVisible():
+			self.gui.hide()
+		else:
+			self.gui.show()
