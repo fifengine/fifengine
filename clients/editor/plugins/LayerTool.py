@@ -142,7 +142,7 @@ class LayerTool(plugin.Plugin):
 			visibility_widget.capture(self.toggle_layer_visibility,"mousePressed")
 			
 			layer_name_widget = pychan.widgets.Label()
-			layer_name_widget.text = layerid
+			layer_name_widget.text = unicode(layerid)
 			layer_name_widget.name = _LABEL_NAME_PREFIX + layerid
 			layer_name_widget.capture(self.select_active_layer,"mousePressed")
 			
@@ -245,21 +245,20 @@ class LayerTool(plugin.Plugin):
 			previous_active_widget.background_color = _DEFAULT_BACKGROUND_COLOR
 			previous_active_widget.foreground_color = _DEFAULT_BACKGROUND_COLOR
 			previous_active_widget.base_color = _DEFAULT_BACKGROUND_COLOR
-			previous_active_widget.text = previous_layer_id
+			previous_active_widget.text = unicode(previous_layer_id)
 		
 		layerid = widget.name[7:]	
 		
 		widget.background_color = _HIGHLIGHT_BACKGROUND_COLOR
 		widget.foreground_color = _HIGHLIGHT_BACKGROUND_COLOR
 		widget.base_color = _HIGHLIGHT_BACKGROUND_COLOR
-		widget.text = widget.text + " *"
+		widget.text = widget.text + u" *"
 		self.previous_active_layer = layerid
 		self.container.adaptLayout()
 		
 		self._mapview.getController().selectLayer(layerid)
 
 	def toggle(self):
-		print self
 		if self.container.isVisible():
 			self.container.hide()
 		else:

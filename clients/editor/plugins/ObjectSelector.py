@@ -326,7 +326,7 @@ class ObjectSelector(plugin.Plugin):
 		self.preview._getParent()._setHeight(height)
 		
 		self.gui.adaptLayout()
-		self.notify(obj)
+		self.editor.getActiveMapView().getController().selectObject(obj)
 
 		self.objects.adaptLayout()
 		self.gui.adaptLayout()		
@@ -389,6 +389,6 @@ class ObjectSelector(plugin.Plugin):
 		
 	def toggle(self):
 		if self.gui.isVisible():
-			self.gui.hide()
+			self.hide()
 		else:
-			self.gui.show()
+			self.show()

@@ -30,7 +30,7 @@ class MainWindow(object):
 		bar_height = 30
 		
 		self._statusbar = StatusBar(text=u"", panel_size=bar_height)
-		self._toolbar = ToolBar(button_style=3)
+		self._toolbar = ToolBar(button_style=0)
 		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
 		
 		# Set up root widget. This
