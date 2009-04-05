@@ -5,6 +5,7 @@ import math
 import fife
 import editor
 import events
+import undomanager
 
 class EditorLogicError(Exception):
 	pass
@@ -21,8 +22,8 @@ class MapController(object):
 		self._selection = None  # currently selected coordinates
 		self._instances = None  # currently selected instances
 		self._map = None
-		self._undoStack = []
 		self._undo = False
+		self._undomanager = undomanager.UndoManager()
 		
 		if map is not None:
 			self.setMap(map.getId())
@@ -95,12 +96,18 @@ class MapController(object):
 			instances = [instances[0]]
 		return instances
 
+	def getUndoManager(self):
+		return self._undomanager
+
 	def undo(self):
-		if self._undoStack != []:
-			# execute inverse of last action
-			self._undo = True
-			self._undoStack.pop()()
-			self._undo = False
+		self._undo = True
+		self._undomanager.undo()
+		self._undo = False
+			
+	def redo(self):
+		self._undo = True
+		self._undomanager.redo()
+		self._undo = False
 
 	def placeInstance(self, position, object):
 		mname = '_placeInstance'
@@ -120,7 +127,10 @@ class MapController(object):
 		fife.InstanceVisual.create(inst)
 		
 		if not self._undo:
-			self._undoStack.append(lambda: self.removeInstances(position))
+			redocall = lambda: self.placeInstance(position, object)
+			undocall = lambda: self.removeInstances(position)
+			undoobject = undomanager.UndoObject(undocall, redocall, "Placed instance")
+			self._undomanager.addAction(undoobject)
 
 	def removeInstances(self, position):
 		mname = '_removeInstances'
@@ -130,10 +140,13 @@ class MapController(object):
 		for i in self.getInstancesFromPosition(position, top_only=True):
 			print 'Deleting instance ' + str(i) + ' at ' + str(position)
 			if not self._undo:
-				print '>>> ' + i.getObject().getId()
-				print '>>> ' + str(i.getObject())
+				print '>>> ' + i.getObject().getId(), str(i.getObject)
 				object = i.getObject()
-				self._undoStack.append(lambda: self.placeInstance(position,object))
+				
+				undocall = lambda: self.placeInstance(position, object)
+				redocall = lambda: self.removeInstances(position)
+				undoobject = undomanager.UndoObject(undocall, redocall, "Removed instance")
+				self._undomanager.addAction(undoobject)
 			self._layer.deleteInstance(i)
 
 	def moveInstances(self, exact=False):

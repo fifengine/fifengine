@@ -248,14 +248,14 @@ class ObjectEdit(plugin.Plugin):
 
 		self.container.distributeInitialData({
 			'select_rotations' 	: self._avail_rotations,
-			'instance_id'		: str( self._instances[0].getId() ),
-			'object_id'			: str( self._object_id ),
-			'x_offset'			: str( self._image.getXShift() ),
-			'y_offset'			: str( self._image.getYShift() ),
-			'instance_rotation' : str( self._instances[0].getRotation() ),
-			'object_namespace'	: str( self._namespace ),
-			'object_blocking'	: str( self._blocking ),
-			'object_static'		: str( self._static ),
+			'instance_id'		: unicode( self._instances[0].getId() ),
+			'object_id'			: unicode( self._object_id ),
+			'x_offset'			: unicode( self._image.getXShift() ),
+			'y_offset'			: unicode( self._image.getYShift() ),
+			'instance_rotation' : unicode( self._instances[0].getRotation() ),
+			'object_namespace'	: unicode( self._namespace ),
+			'object_blocking'	: unicode( self._blocking ),
+			'object_static'		: unicode( self._static ),
 		})
 		try:
 			print self._avail_rotations
@@ -469,11 +469,8 @@ class ObjectEdit(plugin.Plugin):
 			
 			(see run.py, pump() )
 		"""
-		print "Input:"
 		if instances != self._instances:
-			print "1"
 			if self.active is True:
-				print "2"
 				self._reset()
 				self._instances = instances
 				
@@ -494,4 +491,3 @@ class ObjectEdit(plugin.Plugin):
 				else:
 					self._reset()
 					self.container.hide()
-				print "end"

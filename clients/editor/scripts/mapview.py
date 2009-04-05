@@ -1,5 +1,4 @@
 import fife
-import undomanager
 import editor
 import loaders, savers
 from events import events
@@ -17,7 +16,6 @@ class MapView:
 			if not self._map.getLayers():
 				raise AttributeError('Editor error: map ' + self._map.getId() + ' has no layers. Cannot edit.')
 
-		self._undomanager = undomanager.UndoManager()
 		self.importlist = []
 		if hasattr(map, "importDirs"):
 			self.importlist.extend(map.importDirs)
@@ -50,15 +48,6 @@ class MapView:
 	def getMap(self):
 		return self._map
 		
-	def getUndoManager(self):
-		return self._undomanager
-		
-	def undo(self):
-		self._undomanager.undo()
-		
-	def redo(self):
-		self._undomanager.redo()
-	
 	def save(self):
 		curname = ""
 		try:

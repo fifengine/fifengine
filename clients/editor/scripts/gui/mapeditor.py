@@ -309,8 +309,12 @@ class MapEditor:
 		elif keystr == 'o':
 			self._controller.changeRotation()
 
-		elif keystr == 'u':
-			self._controller.undo()
+		elif keyval == ord('z'):
+			if self._ctrldown:
+				if self._shiftdown:
+					self._controller.redo()
+				else:
+					self._controller.undo()
 
 	def keyReleased(self, event):
 		keyval = event.getKey().getValue()
