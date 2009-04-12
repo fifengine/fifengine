@@ -46,7 +46,7 @@ class Manager(object):
 		self.styles = {}
 		self.addStyle('default',DEFAULT_STYLE)
 
-                Manager.manager = self
+		Manager.manager = self
 
 		# Setup synchronous dialogs
 		self.mainLoop = None
