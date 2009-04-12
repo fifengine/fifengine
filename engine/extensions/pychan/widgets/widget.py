@@ -95,6 +95,10 @@ class Widget(object):
 		# Data distribution & retrieval settings
 		self.accepts_data = False
 		self.accepts_initial_data = False
+
+		# Parent attribute makes sure we only have one parent,
+		# that tests self._parent - so make sure we have the attr here.
+		self.__parent = None
 		self.parent = parent
 
 		# This will also set the _event_id and call real_widget.setActionEventId
@@ -189,7 +193,7 @@ class Widget(object):
 		"""
 		Show the widget and all contained widgets.
 		"""
-		if self._parent:
+		if self.parent:
 			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if self._visible: return
 		self.adaptLayout()
@@ -201,7 +205,7 @@ class Widget(object):
 		"""
 		Hide the widget and all contained widgets.
 		"""
-		if self._parent:
+		if self.parent:
 			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if not self._visible: return
 
@@ -216,8 +220,8 @@ class Widget(object):
 		either directly or as part of a container widget.
 		"""
 		widget = self
-		while widget._parent:
-			widget = widget._parent
+		while widget.parent:
+			widget = widget.parent
 		return widget._visible
 
 	def adaptLayout(self,recurse=True):
@@ -676,9 +680,13 @@ class Widget(object):
 		get_manager().stylize(self,style)
 	style = property(_getStyle,_setStyle)
 
-	def _getParent(self): return self._parent
+	def _getParent(self): return self.__parent
 	def _setParent(self,parent):
-		self._parent = parent
+		if self.__parent is not parent:
+			if self.__parent and parent is not None:
+				print "Widget containment fumble:", self, self.__parent, parent
+				self.__parent.removeChild(self)
+		self.__parent = parent
 	parent = property(_getParent,_setParent)
 
 	def _setName(self,name): self._name = name

@@ -53,6 +53,9 @@ class Manager(object):
 		self.breakFromMainLoop = None
 		self.can_execute = False
 
+		import weakref
+		self.allWidgets = weakref.WeakKeyDictionary()
+
 		# Autopos
 		from autoposition import placeWidget
 		self.placeWidget = placeWidget
@@ -70,6 +73,8 @@ class Manager(object):
 		Shows a widget on screen. Used by L{Widget.show} - do not use directly.
 		"""
 		self.placeWidget(widget, widget.position_technique)
+		assert widget not in self.allWidgets
+		self.allWidgets[ widget ] = 1
 		self.hook.add_widget( widget.real_widget )
 
 	def hide(self,widget):
@@ -77,6 +82,7 @@ class Manager(object):
 		Hides a widget again. Used by L{Widget.hide} - do not use directly.
 		"""
 		self.hook.remove_widget( widget.real_widget )
+		del self.allWidgets[ widget ]
 
 	def setDefaultFont(self,name):
 		self.fonts['default'] = self.getFont(name)

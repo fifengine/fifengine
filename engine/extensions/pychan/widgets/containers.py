@@ -46,21 +46,17 @@ class Container(Widget):
 			else:
 				self.insertChild(widget, 0)
 			return
-			
-		self.children = self.children[0:position]+[widget]+self.children[position:]
-		self.real_widget.add(widget.real_widget)
 		
+		children = self.children[0:position]+[widget]+self.children[position:]
+		#assert len(children) == len(self.children) + 1
+		self.removeAllChildren()
+		for child in children:
+			self.addChild(child)
+
 	def insertChildBefore(self, widget, before):
-		i = -1
-		for child in self.children:
-			i += 1
-			if child == before:
-				break
-			
-		self.insertChild(widget, i)
-		if i < 0:
-			print "insertChildBefore: Didn't find widget:", before
-			return
+		if before not in self.children:
+			raise RuntimeError("Couldn't find widget %s as child of %s - in insertChildBefore" % (str(widget),str(before)))
+		self.insertChild(widget, self.children.index(before))
 
 	def removeChild(self,widget):
 		if not widget in self.children:

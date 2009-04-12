@@ -242,7 +242,7 @@ class Spacer(object):
 	]
 
 	def __init__(self,parent=None,**kwargs):
-		self._parent = parent
+		self.parent = parent
 		self.min_size = 0
 		self.max_size = 1000
 		self.size = 0

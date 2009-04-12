@@ -355,7 +355,7 @@ class _GuiLoader(object, handler.ContentHandler):
 		self.indent = self.indent[:-4]
 		if manager.debug: print self.indent + "</%s>" % name
 		if self.stack.pop() in ('gui_element','spacer'):
-			self.root = self.root._parent or self.root
+			self.root = self.root.parent or self.root
 
 def loadXML(filename_or_stream):
 	"""
