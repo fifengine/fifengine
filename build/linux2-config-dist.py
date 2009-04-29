@@ -21,8 +21,8 @@ def addExtras(context):
 	context.checkSimpleLib(['SDL_image'], 'SDL_image.h')
 	context.checkSimpleLib(['guichan'])
 	context.checkSimpleLib(['guichan_sdl'])
-	context.checkSimpleLib(['boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41'])
-	context.checkSimpleLib(['boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41'])
+	context.checkSimpleLib(['boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt'])
+	context.checkSimpleLib(['boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt'])
 	context.checkSimpleLib(['png'], 'png.h');
 
 	if context.env['opengl']:
