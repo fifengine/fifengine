@@ -1,16 +1,39 @@
+from events.signal import Signal
+import collections
+import pdb
 
+actionAdded = Signal(providing_args=["action"])
+preUndo = Signal()
+postUndo = Signal()
+preRedo = Signal()
+postRedo = Signal()
+cleared = Signal()
+modeChanged = Signal(providing_args=["mode"])
+changed = Signal()
+
+# Fixme: Sometimes undoing/redoing many items at the same time ( undomanager.undo(n) )
+#        causes too many tiles to be placed.
 class UndoManager:
 	# Methods
 	def __init__(self, branchedMode = False, max_history=10000):
 		self._max_history = max_history
 		# Should we use deque, instead of lists?
-		self._undostack = []
-		self._redostack = []
+		self._undostack = collections.deque()
 		self._groups = []
 		self._branched_mode = False
+		
+		def warn(msg):
+			print "Warning: ",msg
+		self.first_item = UndoStackItem(UndoObject(None, None))
+		self.first_item.object.name = "First item"
+		self.first_item.object.description = "First item in stack. Placeholder"
+		self.first_item.object.undoCallback = lambda: warn("Tried to undo first item")
+		self.first_item.object.redoCallback = lambda: warn("Tried to redo first item")
+		
+		self.current_item = self.first_item
 
-	def getStack(self):
-		return self._stack
+	def getUndoStack(self):
+		return self._undostack
 
 	def startGroup(self, name="", description="", icon=""): 
 		self.groups.append(UndoGroup(name, description, icon))
@@ -28,58 +51,74 @@ class UndoManager:
 			self._groups[len(self._groups)-1].addObject(action)
 		else:
 			stackitem = UndoStackItem(action)
-			self._undostack.append(stackitem)
-			self._redostack = []
+			
+			stackitem.previous = self.current_item
+			stackitem.previous.addBranch(stackitem)
+			
+			self.current_item = stackitem
+			
+			actionAdded.send(sender=self, action=action)
+			changed.send(sender=self)
 
 	def clear(self):
-		self._undostack = []
-		self._redostack = []
+		self._undostack.clear()
 		self._groups = []
+		cleared.send(sender=self)
+		changed.send(sender=self)
 
 	# Linear undo
 	def undo(self, amount=1): 
 		if amount <= 0:
 			return
 			
+		print self.current_item
+	
+		preUndo.send(sender=self)
 		for i in range(amount):
-			if len(self._undostack) <= 0:
+			if self.current_item == self.first_item:
 				print "Warning: UndoManager: Tried to undo non-existing action."
-				return
-				
-			stackitem = self._undostack.pop()
-			self._redostack.append(stackitem)
+				break
 			
-			actions = [stackitem._object]
-			if isinstance(stackitem._object, UndoGroup):
-				actions = stackitem._object._undoobjects
+			actions = [self.current_item.object]
+			if isinstance(self.current_item.object, UndoGroup):
+				actions = self.current_item.object.getObjects()
 			for action in actions:
-				stackitem._object.getUndoAction()()
+				action.undo()
+			
+			self.current_item = self.current_item.previous
+			
+		postUndo.send(sender=self)
+		changed.send(sender=self)
 			
 			
 	def redo(self, amount=1):
 		if amount <= 0:
 			return
-			
+		
+		print self.current_item
+		
+		preRedo.send(sender=self)
 		for i in range(amount):
-			if len(self._redostack) <= 0:
+			if self.current_item.next is None:
 				print "Warning: UndoManager: Tried to redo non-existing action."
-				return
+				break
 				
-			stackitem = self._redostack.pop()
-			self._undostack.append(stackitem)
+			self.current_item = self.current_item.next
 			
-			actions = [stackitem._object]
-			if isinstance(stackitem._object, UndoGroup):
-				actions = stackitem._object._undoobjects
+			actions = [self.current_item.object]
+			if isinstance(self.current_item.object, UndoGroup):
+				actions = self.current_item.object.getObjects()
 			for action in actions:
-				stackitem._object.getRedoAction()()
+				action.redo()
+				
+		postRedo.send(sender=self)
+		changed.send(sender=self)
 
-	# Non-linear undo. This needs some work so that an action can't be undone twice
 	def undoAction(self, action): 
-		action.getUndoAction()()
+		action.undo()
 		
 	def redoAction(self, action):
-		action.getRedoAction()()
+		action.redo()
 
 	# Branched mode
 	def setMaxHistoryItems(self, maxitems): 
@@ -94,10 +133,16 @@ class UndoManager:
 		
 	def setBranchMode(self, enable):
 		self._branched_mode = enable
+		changed.send(sender=self)
 
 	def getBranches(self): return []
-	def nextBranch(self): pass
-	def previousBranch(self): pass
+	def nextBranch(self): 
+		self.current_item.nextBranch()
+		changed.send(sender=self)
+		
+	def previousBranch(self):
+		self.current_item.previousBranch()
+		changed.send(sender=self)
 
 class UndoObject:
 	def __init__(self, undoCallback, redoCallback, name="", description="", icon=""):
@@ -106,35 +151,90 @@ class UndoObject:
 		self.undoCallback = undoCallback
 		self.description = description
 		self.icon = icon
-
-	def getUndoAction(self): 
-		return self.undoCallback
 		
-	def getRedoAction(self): 
-		return self.redoCallback
+		self.undone = False
+
+	def undo(self): 
+		if self.undone is True:
+			print "Tried to undo already undone action!"
+			return
+			
+		self.undone = True
+		self.undoCallback()
+		
+	def redo(self): 
+		if self.undone is False:
+			print "Tried to redo already redone action!"
+			return
+			
+		self.undone = False
+		self.redoCallback()
 		
 class UndoGroup:
 	def __init__(self, name="", description="", icon=""):
-		self._name = name
-		self._description = description
-		self._icon = icon
+		self.name = name
+		self.description = description
+		self.icon = icon
 		
-		self._undoobjects = []
+		self.undoobjects = []
 		
 	def addObject(self, object):
-		self._undoobjects.append(object)
+		self.undoobjects.append(object)
 	
 	def getObjects(self):
-		return self._undoobjects
+		return self.undoobjects
 
 class UndoStackItem:
 	def __init__(self, object):
 		self._branches = []
 		self._currentbranch = -1
-		self._object = object
+		
+		self.parent = None
+		self.object = object
+		self.previous = None
+		self.next = None
 	
 	def addBranch(self, item):
 		self._branches.append(item)
 		
-	def nextBranch():
-		pass
+		self._currentbranch += 1
+		self.next = self._branches[self._currentbranch]
+		self.next.parent = self
+		
+	def nextBranch(self):
+		if len(self._branches) <= 0:
+			return
+		self._currentbranch += 1
+		if self._currentbranch >= len(self._branches):
+			self._currentbranch = 0
+		changed.send(sender=self)
+		self.next = self._branches[self._currentbranch]
+			
+	def previousBranch(self):
+		if len(self._branches) <= 0:
+			return
+			
+		self._currentbranch -= 1
+		if self._currentbranch < 0:
+			self._currentbranch = len(self._branches)-1
+		changed.send(sender=self)
+		self.next = self._branches[self._currentbranch]
+		
+	def setBranchIndex(self, index):
+		if index < 0 or index >= len(self._branches):
+			return
+		self._currentbranch = index
+		changed.send(sender=self)
+		self.next = self._branches[self._currentbranch]
+	
+	def setBranch(self, branch):
+		for b in range(len(self._branches)):
+			if self._branches[b] == branch:
+				self._currentbranch = b
+				self.next = self._branches[self._currentbranch]
+				changed.send(sender=self)
+				return True
+		else:
+			print "Didn't find branch!"
+			return False
+	

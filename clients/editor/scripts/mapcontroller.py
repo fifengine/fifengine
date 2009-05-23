@@ -1,4 +1,5 @@
 import editor
+import pdb
 
 import math
 
@@ -24,6 +25,10 @@ class MapController(object):
 		self._map = None
 		self._undo = False
 		self._undomanager = undomanager.UndoManager()
+		undomanager.preUndo.connect(self._startUndo, sender=self._undomanager)
+		undomanager.preRedo.connect(self._startUndo, sender=self._undomanager)
+		undomanager.postUndo.connect(self._endUndo, sender=self._undomanager)
+		undomanager.postRedo.connect(self._endUndo, sender=self._undomanager)
 		
 		if map is not None:
 			self.setMap(map.getId())
@@ -90,6 +95,7 @@ class MapController(object):
 			loc.setExactLayerCoordinates(position)
 		else:
 			loc.setLayerCoordinates(position)
+		#print "Valid:", loc.isValid(), loc.getLayer(), self._layer, loc.getLayer().getCellGrid()
 		instances = self._camera.getMatchingInstances(loc)
 
 		if top_only and (len(instances) > 0):
@@ -100,16 +106,18 @@ class MapController(object):
 		return self._undomanager
 
 	def undo(self):
-		self._undo = True
 		self._undomanager.undo()
-		self._undo = False
-			
+
 	def redo(self):
-		self._undo = True
 		self._undomanager.redo()
+		
+	def _startUndo(self):
+		self._undo = True
+		
+	def _endUndo(self):
 		self._undo = False
 
-	def placeInstance(self, position, object):
+	def placeInstance(self, position, object, force=False):
 		mname = '_placeInstance'
 		self._assert(object, 'No object assigned in %s' % mname)
 		self._assert(position, 'No position assigned in %s' % mname)
@@ -118,37 +126,39 @@ class MapController(object):
 		print 'Placing instance of ' + object.getId() + ' at ' + str(position)
 
 		# don't place repeat instances
-		for i in self.getInstancesFromPosition(position, False):
-			if i.getObject().getId() == object.getId():
-				print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % object.getId()
-				return
+		if force is False:
+			for i in self.getInstancesFromPosition(position, False):
+				if i.getObject().getId() == object.getId():
+					print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % object.getId()
+					return
 
 		inst = self._layer.createInstance(object, position)
 		fife.InstanceVisual.create(inst)
 		
 		if not self._undo:
-			redocall = lambda: self.placeInstance(position, object)
-			undocall = lambda: self.removeInstances(position)
+			redocall = lambda: self.placeInstance(position, object, force=True)
+			undocall = lambda: self.removeInstances(position, force=True)
 			undoobject = undomanager.UndoObject(undocall, redocall, "Placed instance")
 			self._undomanager.addAction(undoobject)
 
-	def removeInstances(self, position):
+	def removeInstances(self, position, force=False):
 		mname = '_removeInstances'
 		self._assert(position, 'No position assigned in %s' % mname)
 		self._assert(self._layer, 'No layer assigned in %s' % mname)
 
-		for i in self.getInstancesFromPosition(position, top_only=True):
-			print 'Deleting instance ' + str(i) + ' at ' + str(position)
+		instances = self.getInstancesFromPosition(position, top_only=True)
+		for i in instances:
+			print 'Deleting instance ' + i.getObject().getId() + ' at ' + str(position)
+			self._layer.deleteInstance(i)
+			
 			if not self._undo:
-				print '>>> ' + i.getObject().getId(), str(i.getObject)
 				object = i.getObject()
 				
-				undocall = lambda: self.placeInstance(position, object)
-				redocall = lambda: self.removeInstances(position)
+				undocall = lambda: self.placeInstance(position, object, force=True)
+				redocall = lambda: self.removeInstances(position, force=True)
 				undoobject = undomanager.UndoObject(undocall, redocall, "Removed instance")
 				self._undomanager.addAction(undoobject)
-			self._layer.deleteInstance(i)
-
+		
 	def moveInstances(self, exact=False):
 		mname = '_moveInstances'
 		self._assert(self._selection, 'No selection assigned in %s' % mname)

@@ -21,7 +21,8 @@ class PluginManager:
 				else:
 					plugin.enable()
 					self._plugins.append(plugin)
-			except:
+			except BaseException, error:
+				print "Error: ", error
 				print "Invalid plugin:", f
 
 		
