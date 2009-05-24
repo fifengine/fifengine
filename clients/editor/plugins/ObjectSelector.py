@@ -142,7 +142,7 @@ class ObjectSelector(plugin.Plugin):
 		self.editor = scripts.editor.getEditor()
 		self.engine = self.editor.getEngine()
 			
-		self._showAction = Action(u"Object selector")
+		self._showAction = Action(u"Object selector", checkable=True)
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
 		
 		self.editor.getToolBar().addAction(self._showAction)
@@ -385,9 +385,11 @@ class ObjectSelector(plugin.Plugin):
 	def show(self):
 		self.update_namespace()
 		self.gui.show()
+		self._showAction.setChecked(True)
 
 	def hide(self):
 		self.gui.hide()
+		self._showAction.setChecked(False)
 		
 	def toggle(self):
 		if self.gui.isVisible():

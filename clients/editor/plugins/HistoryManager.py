@@ -26,7 +26,7 @@ class HistoryManager(plugin.Plugin):
 		self.engine = self.editor.getEngine()
 			
 		self._undoGroup = ActionGroup(name=u"UndoGroup")
-		self._showAction = Action(u"History manager")
+		self._showAction = Action(u"History manager", checkable=True)
 		self._undoAction = Action(u"Undo")
 		self._redoAction = Action(u"Redo")
 		self._nextAction = Action(u"Next branch")
@@ -51,8 +51,6 @@ class HistoryManager(plugin.Plugin):
 		undomanager.changed.connect(self.update)
 		
 		self.buildGui()
-		self.update()
-		self.gui.show()
 
 	def disable(self):
 		if self._enabled is False:
@@ -90,6 +88,8 @@ class HistoryManager(plugin.Plugin):
 		
 		self.gui.addChild(self.scrollarea)
 		self.scrollarea.addChild(self.list)
+		
+		self.gui.position_technique = "right:center"
 		
 	def _itemSelected(self):
 		mapview = self.editor.getActiveMapView()
@@ -230,9 +230,11 @@ class HistoryManager(plugin.Plugin):
 	def show(self):
 		self.update()
 		self.gui.show()
+		self._showAction.setChecked(True)
 
 	def hide(self):
 		self.gui.hide()
+		self._showAction.setChecked(False)
 		
 	def _undo(self):
 		self.undomanager.undo()

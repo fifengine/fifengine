@@ -1,4 +1,4 @@
-<Window title="Layertool" position="10,200">
+<Window title="Layertool" position="10,200" min_size="100, 25">
 	<VBox name="layers_wrapper">
 	
 	</VBox>

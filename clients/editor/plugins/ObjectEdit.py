@@ -116,7 +116,7 @@ class ObjectEdit(plugin.Plugin):
 		self.imagepool = self.engine.getImagePool()
 		self.animationpool = self.engine.getAnimationPool()
 		
-		self._showAction = Action(u"Object editor")
+		self._showAction = Action(u"Object editor", checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
 		
 		self._editor.getToolBar().addAction(self._showAction)
@@ -271,30 +271,16 @@ class ObjectEdit(plugin.Plugin):
 	def toggle_gui(self):
 		"""
 			show / hide the gui
-			
-			FIXME:
-				- ATM not in use, needs some additional code when showing / hiding the gui (see input() )
-		"""
-		if self.container.isVisible():
-			self.active = False
-			self.container.hide()
-		else:
-			self.active = True
-			self.container.show()
-			
-	def toggle_offsetedit(self):
-		"""
-			- toggles the object editor activ / inactiv - just in case the user don't want to have
-			  the gui popping up all the time while mapping :-)
-			- hides gui
 		"""
 		if self.active is True:
 			self.active = False
 			if self.container.isVisible():
 				self.container.hide()
+			self._showAction.setChecked(False)
 		else:
-			self.active = True	
-
+			self.active = True
+			self._showAction.setChecked(True)
+	
 	def highlight_selected_instance(self):
 		"""
 			just highlights selected instance

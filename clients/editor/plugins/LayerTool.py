@@ -75,15 +75,14 @@ class LayerTool(plugin.Plugin):
 			
 		# Fifedit plugin data
 		self._editor = scripts.editor.getEditor()
-		self._showAction = Action(u"LayerTool")
+		self._showAction = Action(u"LayerTool", checkable=True)
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
 		self._editor.getToolBar().addAction(self._showAction)
 		self._editor._toolsMenu.addAction(self._showAction)
 
 		self.__create_gui()
 		
-		self.container.show()
-		self._adjust_position()
+		self.toggle()
 		
 		events.postMapShown.connect(self.update)
 
@@ -265,5 +264,8 @@ class LayerTool(plugin.Plugin):
 	def toggle(self):
 		if self.container.isVisible():
 			self.container.hide()
+			self._showAction.setChecked(False)
 		else:
 			self.container.show()
+			self._showAction.setChecked(True)
+			self._adjust_position()
