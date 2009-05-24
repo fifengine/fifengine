@@ -56,7 +56,6 @@ class MenuBar(widgets.HBox):
 			menu.y += parent.y
 			parent = parent.parent
 
-		menu._update()
 		menu.show()
 		
 	def addMenu(self, menu):
@@ -87,10 +86,11 @@ class MenuBar(widgets.HBox):
 		self._buildGui()
 
 class Menu(widgets.VBox):
-	def __init__(self, name=u"", icon=u"", min_width=100, min_height=15, *args, **kwargs):
+	def __init__(self, name=u"", icon=u"", min_width=100, min_height=15, margins=(2,2), *args, **kwargs):
 		super(Menu, self).__init__(*args, **kwargs)
 		self.min_width=min_width
 		self.min_height=min_height
+		self.margins=margins
 		
 		self.name = name
 		self.icon = icon
@@ -186,6 +186,10 @@ class Menu(widgets.VBox):
 
 		self.adaptLayout()
 		
+	def show(self):
+		self._update()
+		super(Menu, self).show()
+		
 class MenuButton(widgets.HBox):
 	def __init__(self, action, **kwargs):
 		self._action = action
@@ -255,7 +259,12 @@ class MenuButton(widgets.HBox):
 		else:
 			hasIcon = len(self._action.icon) > 0
 			
-			text = widgets.Button(text=self._action.text)
+			if self._action.isCheckable():
+				text = widgets.ToggleButton(text=self._action.text)
+				text.toggled = self._action.isChecked()
+				text.hexpand = 1
+			else:
+				text = widgets.Button(text=self._action.text)
 			text.min_size = (1, MENU_ICON_SIZE)
 			text.max_size = (1000, MENU_ICON_SIZE)
 			text.capture(self._action.activate)

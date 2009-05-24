@@ -209,6 +209,8 @@ namespace gcn {
 		virtual const std::string& getCaption() const;
 		virtual void setAlignment(Graphics::Alignment alignment);
 		virtual Graphics::Alignment getAlignment() const;
+		void setSpacing(unsigned int spacing);
+		unsigned int getSpacing() const;
 		void setUpImage(Image* image);
 		void setDownImage(Image* image);
 		void setHoverImage(Image* image);

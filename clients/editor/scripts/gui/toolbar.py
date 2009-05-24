@@ -292,7 +292,11 @@ class ToolbarButton(widgets.VBox):
 				icon.capture(self._action.activate)
 				
 			if self._button_style != BUTTON_STYLE['IconOnly'] or len(self._action.icon) <= 0:
-				text = widgets.Button(text=self._action.text)
+				if self._action.isCheckable():
+					text = widgets.ToggleButton(hexpand=0, text=self._action.text,offset=(1,1))
+					text.toggled = self._action.isChecked()
+				else:
+					text = widgets.Button(text=self._action.text)
 				text.capture(self._action.activate)
 			
 			if self._button_style == BUTTON_STYLE['TextOnly'] or len(self._action.icon) <= 0:
