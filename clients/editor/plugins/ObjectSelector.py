@@ -146,6 +146,7 @@ class ObjectSelector(plugin.Plugin):
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
 		
 		self.editor.getToolBar().addAction(self._showAction)
+		self.editor._toolsMenu.addAction(self._showAction)
 		
 		events.postMapShown.connect(self.update)
 		
@@ -161,6 +162,7 @@ class ObjectSelector(plugin.Plugin):
 		events.postMapShown.disconnect(self.update)
 		
 		self.editor.getToolBar().removeAction(self._showAction)
+		self.editor._toolsMenu.removeAction(self._showAction)
 
 	def isEnabled(self):
 		return self._enabled;

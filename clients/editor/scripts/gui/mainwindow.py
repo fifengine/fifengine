@@ -1,5 +1,5 @@
 import pychan
-from menubar import MenuBar
+from menubar import MenuBar, Menu
 from toolbar import ToolBar
 from statusbar import StatusBar
 import fife

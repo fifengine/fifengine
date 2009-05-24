@@ -120,6 +120,7 @@ class ObjectEdit(plugin.Plugin):
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
 		
 		self._editor.getToolBar().addAction(self._showAction)
+		self._editor._toolsMenu.addAction(self._showAction)
 		
 		events.onInstancesSelected.connect(self.input)
 		
@@ -137,6 +138,7 @@ class ObjectEdit(plugin.Plugin):
 		events.onInstancesSelected.disconnect(self.input)
 		
 		self._editor.getToolBar().removeAction(self._showAction)
+		self._editor._toolsMenu.removeAction(self._showAction)
 
 	def isEnabled(self):
 		return self._enabled;

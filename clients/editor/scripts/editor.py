@@ -11,6 +11,7 @@ from gui.action import Action, ActionGroup
 from gui.filemanager import FileManager
 from gui.mainwindow import MainWindow
 from gui.mapeditor import MapEditor
+from gui.menubar import Menu, MenuBar
 from pychan.tools import callbackWithArguments as cbwa
 from events import *
 
@@ -39,6 +40,12 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapbar = None
 		self._maparea = None
 		self._mapeditor = None
+		
+		self._fileMenu = None
+		self._editMenu = None
+		self._viewMenu = None
+		self._toolsMenu = None
+		self._helpMenu = None
 	
 		ApplicationBase.__init__(self, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
@@ -85,22 +92,38 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self._toolbox.show()
 
-	def _initActions(self):	
+	def _initActions(self):
+		exitAction = Action(u"Exit")
+		exitAction.helptext = u"Exit program"
+		action.activated.connect(self.quit, sender=exitAction)
+		
+		self._fileMenu = Menu(name=u"File")
+		self._fileMenu.addAction(exitAction)
+		
+		self._editMenu = Menu(name=u"Edit")
+		self._viewMenu = Menu(name=u"View")
+		self._toolsMenu = Menu(name=u"Tools")
+		self._windowMenu = Menu(name=u"Window")
+		self._helpMenu = Menu(name=u"Help")
+	
 		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/zoom_in.png")
 		testAction1.helptext = u"Cycles button styles. There are currently four button styles."
 		action.activated.connect(self._actionActivated, sender=testAction1)
 		self._toolbar.addAction(testAction1)
+		self._viewMenu.addAction(testAction1)
 		
 		testAction2 = Action(u"Remove action", "gui/icons/zoom_out.png")
 		testAction2.helptext = u"Removes the action from the active toolbar/menubar"
 		action.activated.connect(self._actionActivated2, sender=testAction2)
 		self._toolbar.addAction(testAction2)
+		self._viewMenu.addAction(testAction2)
 		self.testAction = testAction2
 		
 		testAction4 = Action(u"Separator")
 		testAction4.setCheckable(True)
 		testAction4.setSeparator(True)
 		self._toolbar.addAction(testAction4)
+		self._viewMenu.addAction(testAction4)
 		
 		dockGroup = ActionGroup(exclusive=True)
 		
@@ -136,10 +159,22 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self._toolbar.addAction(dockGroup)
 		self._toolbox.addAction(dockGroup)
+		self._viewMenu.addAction(dockGroup)
 		
 		self._mapgroup = ActionGroup(exclusive=True, name="Mapgroup")
 		self._mapbar.addAction(self._mapgroup)
 		self._mapbar.addAction(ActionGroup(exclusive=True, name="Mapgroup2"))
+		self._windowMenu.addAction(self._mapgroup)
+		
+		helpAction = Action(u"Help! AAAAH!", "gui/icons/delete_layer.png")
+		self._helpMenu.addAction(helpAction)
+		
+		self._menubar.addMenu(self._fileMenu)
+		self._menubar.addMenu(self._editMenu)
+		self._menubar.addMenu(self._viewMenu)
+		self._menubar.addMenu(self._toolsMenu)
+		self._menubar.addMenu(self._windowMenu)
+		self._menubar.addMenu(self._helpMenu)
 	
 	def _actionActivated(self, sender):
 		self._toolbar.button_style += 1

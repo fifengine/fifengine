@@ -40,6 +40,8 @@ class FileManager(object):
 		
 		self.editor.getToolBar().insertAction(fileGroup, 0)
 		self.editor.getToolBar().insertSeparator(None, 1)
+		self.editor._fileMenu.insertAction(fileGroup, 0)
+		self.editor._fileMenu.insertSeparator(None, 1)
 
 	def showLoadDialog(self):
 		filebrowser.FileBrowser(self.engine, self.loadFile, extensions = loaders.fileExtensions).showBrowser()

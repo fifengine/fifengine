@@ -9,6 +9,7 @@ import scripts
 import scripts.events as events
 import action
 from toolbar import ToolBar
+from menubar import Menu, MenuBar
 from action import Action, ActionGroup
 from scripts.mapcontroller import MapController
 
@@ -120,6 +121,8 @@ class MapEditor:
 		
 		self._toolbar.addAction(self._toolgroup)
 		self._toolbar.adaptLayout()
+		
+		self._editor._editMenu.addAction(self._toolgroup)
 		
 	def _setMode(self, mode):
 		if (mode == INSERTING) and (not self._controller._object):

@@ -5,7 +5,7 @@ from pychan import widgets, tools, attrs, internal
 import scripts
 import scripts.plugin as plugin
 from scripts.events import *
-from scripts.gui.action import Action
+from scripts.gui.action import Action, ActionGroup
 import fife
 from fife import Color
 from scripts import undomanager
@@ -25,22 +25,28 @@ class HistoryManager(plugin.Plugin):
 		self.editor = scripts.editor.getEditor()
 		self.engine = self.editor.getEngine()
 			
+		self._undoGroup = ActionGroup(name=u"UndoGroup")
 		self._showAction = Action(u"History manager")
 		self._undoAction = Action(u"Undo")
 		self._redoAction = Action(u"Redo")
-		self._nextAction = Action(u"Next")
-		self._prevAction = Action(u"Previous")
+		self._nextAction = Action(u"Next branch")
+		self._prevAction = Action(u"Previous branch")
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
 		scripts.gui.action.activated.connect(self._undo, sender=self._undoAction)
 		scripts.gui.action.activated.connect(self._redo, sender=self._redoAction)
 		scripts.gui.action.activated.connect(self._next, sender=self._nextAction)
 		scripts.gui.action.activated.connect(self._prev, sender=self._prevAction)
 		
+		self._undoGroup.addAction(self._undoAction)
+		self._undoGroup.addAction(self._redoAction)
+		self._undoGroup.addAction(self._nextAction)
+		self._undoGroup.addAction(self._prevAction)
+		
 		self.editor.getToolBar().addAction(self._showAction)
-		self.editor.getToolBar().addAction(self._undoAction)
-		self.editor.getToolBar().addAction(self._redoAction)
-		self.editor.getToolBar().addAction(self._nextAction)
-		self.editor.getToolBar().addAction(self._prevAction)
+		self.editor._toolsMenu.addAction(self._showAction)
+		self.editor._editMenu.insertAction(self._undoGroup, 0)
+		self.editor._editMenu.insertSeparator(position=1)
+		
 		events.postMapShown.connect(self.update)
 		undomanager.changed.connect(self.update)
 		
@@ -65,10 +71,9 @@ class HistoryManager(plugin.Plugin):
 		scripts.gui.action.activated.disconnect(self._prev, sender=self._prevAction)
 		
 		self.editor.getToolBar().removeAction(self._showAction)
-		self.editor.getToolBar().removeAction(self._undoAction)
-		self.editor.getToolBar().removeAction(self._redoAction)
-		self.editor.getToolBar().removeAction(self._nextAction)
-		self.editor.getToolBar().removeAction(self._prevAction)
+		self.editor._toolsMenu.removeAction(self._showAction)
+		self.editor._toolsMenu.removeAction(self._undoGroup)
+
 
 	def isEnabled(self):
 		return self._enabled;
