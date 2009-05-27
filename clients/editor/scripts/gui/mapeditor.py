@@ -116,9 +116,6 @@ class MapEditor:
 		self._toolbox.addAction(self._toolgroup)
 		self._toolbox.adaptLayout()
 		
-		self._toolbar.addAction(self._toolgroup)
-		self._toolbar.adaptLayout()
-		
 		self._editor._editMenu.addAction(self._toolgroup)
 		
 	def _setMode(self, mode):

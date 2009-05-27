@@ -130,15 +130,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._toolbar.addAction(testAction1)
 		self._viewMenu.addAction(testAction1)
 		
-		testAction2 = Action(u"Remove action", "gui/icons/zoom_out.png")
-		testAction2.helptext = u"Removes the action from the active toolbar/menubar"
-		action.activated.connect(self._actionActivated2, sender=testAction2)
-		self._toolbar.addAction(testAction2)
-		self._viewMenu.addAction(testAction2)
-		self.testAction = testAction2
-		
 		testAction4 = Action(u"Separator")
-		testAction4.setCheckable(True)
 		testAction4.setSeparator(True)
 		self._toolbar.addAction(testAction4)
 		self._viewMenu.addAction(testAction4)
@@ -161,12 +153,6 @@ class Editor(ApplicationBase, MainWindow):
 	def _actionActivated(self, sender):
 		self._toolbar.button_style += 1
 		
-	def _actionActivated2(self, sender):
-		if self.testAction is not None:
-			self._toolbar.removeAction(self.testAction)
-			self.testAction = None
-			self._toolbar.adaptLayout()
-
 	def toggleStatusbar(self):
 		statusbar = self.getStatusBar()
 		if statusbar.max_size[1] > 0:

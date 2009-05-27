@@ -44,7 +44,6 @@ class HistoryManager(plugin.Plugin):
 		self._undoGroup.addAction(self._nextAction)
 		self._undoGroup.addAction(self._prevAction)
 		
-		self.editor.getToolBar().addAction(self._showAction)
 		self.editor._toolsMenu.addAction(self._showAction)
 		self.editor._editMenu.insertAction(self._undoGroup, 0)
 		self.editor._editMenu.insertSeparator(position=1)
@@ -70,7 +69,6 @@ class HistoryManager(plugin.Plugin):
 		scripts.gui.action.activated.disconnect(self._next, sender=self._nextAction)
 		scripts.gui.action.activated.disconnect(self._prev, sender=self._prevAction)
 		
-		self.editor.getToolBar().removeAction(self._showAction)
 		self.editor._toolsMenu.removeAction(self._showAction)
 		self.editor._toolsMenu.removeAction(self._undoGroup)
 

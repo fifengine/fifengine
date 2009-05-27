@@ -100,18 +100,22 @@ class MainWindow(object):
 		widget.hide() 
 	
 		if dockarea == DOCKAREA['left']:
+			widget.vexpand = 0
 			self._dockareas[DOCKAREA['left']].addChild(widget)
 			self._dockareas[DOCKAREA['left']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['right']:
+			widget.vexpand = 0
 			self._dockareas[DOCKAREA['right']].addChild(widget)
 			self._dockareas[DOCKAREA['right']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['top']:
+			widget.hexpand = 0
 			self._dockareas[DOCKAREA['top']].addChild(widget)
 			self._dockareas[DOCKAREA['top']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['bottom']:
+			widget.hexpand = 0
 			self._dockareas[DOCKAREA['bottom']].addChild(widget)
 			self._dockareas[DOCKAREA['bottom']].adaptLayout()
 			

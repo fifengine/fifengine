@@ -226,7 +226,7 @@ class ToolBar(widgets.Window):
 			self.setDocked(True)
 			self.setOrientation(ORIENTATION["Horizontal"])
 			editor.dockWidgetTo(self, "top")
-		elif self.y + event.getY() > pychan.internal.screen_width() - 50:
+		elif self.y + event.getY() > pychan.internal.screen_height() - 50:
 			self.setDocked(True)
 			self.setOrientation(ORIENTATION["Horizontal"])
 			editor.dockWidgetTo(self, "bottom")
