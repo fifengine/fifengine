@@ -1,4 +1,4 @@
-<Window title="Object editor" position="10,700"> <!-- size="200,250" min_size="200,250" max_size="200,250" > -->
+<Panel title="Object editor" position="10,700"> <!-- size="200,250" min_size="200,250" max_size="200,250" > -->
 
 	<Label text="Namespace:" min_size="85,20"/>
 	<Label text="None" name="object_namespace" min_size="30,20"/>
@@ -74,4 +74,4 @@
 	<Spacer />
 	<Button name="change_data" text="Save object"/>
 
-</Window>
+</Panel>

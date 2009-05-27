@@ -1,4 +1,4 @@
-<Window title="Object selector">
+<Panel title="Object selector">
 	<VBox>
 		<!-- Search field -->
 		<HBox>
@@ -24,4 +24,4 @@
 			<Icon name="previewIcon" />
 		</ScrollArea>
 	</VBox>
-</Window>
+</Panel>

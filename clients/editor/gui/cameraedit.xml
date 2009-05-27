@@ -1,4 +1,4 @@
-<Window title="Camera Editor">
+<Panel title="Camera Editor">
 	<VBox>
 		<HBox>
 			<Label name="idLabel" text="Camera ID:"/>
@@ -37,4 +37,4 @@
 		<Button name="okButton" text="OK"/>
 		<Button name="cancelButton" text="Cancel"/>
 	</HBox>
-</Window>
+</Panel>

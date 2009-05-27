@@ -74,24 +74,16 @@ class Panel(widgets.Window):
 			
 			# Resize horizontally
 			if self.left:
-				if self.width - diffX < 50:
-					diffX = 0
 				self.x += diffX
 				self.width -= diffX
 			elif self.right:
-				if diffX < 50:
-					diffX = 50
 				self.width = diffX
 				
 			# Resize vertically
 			if self.top:
-				if self.height - diffY < 50:
-					diffY = 0
 				self.y += diffY
 				self.height -= diffY
 			elif self.bottom:
-				if diffY < 50+self.titlebar_height:
-					diffY = 50+self.titlebar_height
 				self.height = diffY-self.titlebar_height
 			
 		
@@ -103,6 +95,8 @@ class Panel(widgets.Window):
 		
 		if self.left or self.right or self.top or self.bottom:
 			self.resize = True
+			self.min_size = (10, 10)
+			self.max_size = (5000, 5000)
 		else:
 			# Let guichan take care of moving the window for us
 			self.real_widget.setMovable(True)
@@ -112,12 +106,17 @@ class Panel(widgets.Window):
 		# Resize/move done
 		self.real_widget.setMovable(False)
 		
-		#if self.resize:
-		#	self.adaptLayout()
+		if self.resize:
+			self.min_size = (self.width, self.height)
+			self.max_size = (self.width, self.height)
+			self.adaptLayout()
 		
 		self.resize = False
 		if event.getX() < 0 or event.getX() >= self.width \
 				or event.getY() < 0 or event.getY() >= self.height+self.titlebar_height:
 			self.mouseExited(event)
 	
+# Register widget to pychan
+if 'Panel' not in widgets.WIDGETS:
+	widgets.WIDGETS['Panel'] = Panel
 		

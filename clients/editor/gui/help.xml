@@ -1,4 +1,4 @@
-<Window title="Help">
+<Panel title="Help">
 	<TextBox name="helpText"/>
 	<Button name="closeButton" text="Close"/>
-</Window>
+</Panel>

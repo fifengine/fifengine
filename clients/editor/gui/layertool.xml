@@ -1,5 +1,5 @@
-<Window title="Layertool" position="10,200" min_size="100, 25">
+<Panel title="Layertool" position="10,200" min_size="100, 25">
 	<VBox name="layers_wrapper">
 	
 	</VBox>
-</Window>
+</Panel>

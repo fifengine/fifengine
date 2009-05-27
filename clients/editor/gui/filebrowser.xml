@@ -1,4 +1,4 @@
-<Window title="File Browser">
+<Panel title="File Browser">
 	<HBox>
 		<VBox>
 			<Label name="dirLabel" text="Directories:"/>
@@ -18,4 +18,4 @@
 			<Button name="closeButton" text="Close"/>
 		</VBox>
 	</HBox>
-</Window>
+</Panel>

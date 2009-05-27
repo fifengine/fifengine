@@ -1,4 +1,4 @@
-<Window title="Select an option">
+<Panel title="Select an option">
 	<VBox>
 		<ScrollArea size="150,300">
 			<ListBox name="optionDrop"/>	
@@ -8,4 +8,4 @@
 			<Button name="cancelButton" text="Cancel"/>
 		</HBox>
 	</VBox>
-</Window>
+</Panel>
