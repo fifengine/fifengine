@@ -31,10 +31,7 @@ class MapEditor:
 		self._statusbar = self._editor.getStatusBar()
 		self._toolbar = self._editor.getToolBar()
 		
-		self._toolbox = ToolBar(title=u"", orientation=1, panel_size=26)
-		self._toolbox.position_technique = "explicit"
-		self._toolbox.position = (200, 150)
-		self._toolbox.setDocked(False)
+		self._toolbox = self._editor.getToolbox()
 		
 		self._initToolbuttons()
 		

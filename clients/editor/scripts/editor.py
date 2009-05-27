@@ -105,6 +105,24 @@ class Editor(ApplicationBase, MainWindow):
 		self._toolsMenu = Menu(name=u"Tools")
 		self._windowMenu = Menu(name=u"Window")
 		self._helpMenu = Menu(name=u"Help")
+		
+		self._actionShowStatusbar = Action(u"Statusbar")
+		self._actionShowStatusbar.helptext = u"Toggle statusbar"
+		action.activated.connect(self.toggleStatusbar, sender=self._actionShowStatusbar)
+		
+		self._actionShowToolbar = Action(u"Toolbar")
+		self._actionShowToolbar.helptext = u"Toggle toolbar"
+		action.activated.connect(self.toggleToolbar, sender=self._actionShowToolbar)
+		
+		self._actionShowToolbox = Action(u"Tool box")
+		self._actionShowToolbox.helptext = u"Toggle tool box"
+		action.activated.connect(self.toggleToolbox, sender=self._actionShowToolbox)
+		
+		self._viewMenu.addAction(self._actionShowStatusbar)
+		self._viewMenu.addAction(self._actionShowToolbar)
+		self._viewMenu.addAction(self._actionShowToolbox)
+		self._viewMenu.addSeparator()
+	
 	
 		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/zoom_in.png")
 		testAction1.helptext = u"Cycles button styles. There are currently four button styles."
@@ -124,42 +142,6 @@ class Editor(ApplicationBase, MainWindow):
 		testAction4.setSeparator(True)
 		self._toolbar.addAction(testAction4)
 		self._viewMenu.addAction(testAction4)
-		
-		dockGroup = ActionGroup(exclusive=True)
-		
-		dockTop = Action(u"Top", "gui/icons/select_layer.png")
-		dockTop.helptext = u"Dock the toolbar to the top dock area."
-		dockTop.setCheckable(True)
-		dockTop.setChecked(True)
-		action.activated.connect(self._actionDockTop, sender=dockTop)
-		dockGroup.addAction(dockTop)
-		
-		dockRight = Action(u"Right", "gui/icons/select_layer.png")
-		dockRight.helptext = u"Dock the toolbar to the right dock area."
-		dockRight.setCheckable(True)
-		action.activated.connect(self._actionDockRight, sender=dockRight)
-		dockGroup.addAction(dockRight)
-		
-		dockBottom = Action(u"Bottom", "gui/icons/select_layer.png")
-		dockBottom.helptext = u"Dock the toolbar to the bottom dock area."
-		dockBottom.setCheckable(True)
-		action.activated.connect(self._actionDockBottom, sender=dockBottom)
-		dockGroup.addAction(dockBottom)
-		
-		dockLeft = Action(u"Left", "gui/icons/select_layer.png")
-		dockLeft.helptext = u"Dock the toolbar to the left dock area."
-		dockLeft.setCheckable(True)
-		action.activated.connect(self._actionDockLeft, sender=dockLeft)
-		dockGroup.addAction(dockLeft)
-		
-		dockFloat = Action(u"Float", "gui/icons/delete_layer.png")
-		dockFloat.helptext = u"Undock the toolbar. Currently a little buggy."
-		action.activated.connect(self._actionUndock, sender=dockFloat)
-		dockGroup.addAction(dockFloat)
-		
-		self._toolbar.addAction(dockGroup)
-		self._toolbox.addAction(dockGroup)
-		self._viewMenu.addAction(dockGroup)
 		
 		self._mapgroup = ActionGroup(exclusive=True, name="Mapgroup")
 		self._mapbar.addAction(self._mapgroup)
@@ -184,33 +166,39 @@ class Editor(ApplicationBase, MainWindow):
 			self._toolbar.removeAction(self.testAction)
 			self.testAction = None
 			self._toolbar.adaptLayout()
+
+	def toggleStatusbar(self):
+		statusbar = self.getStatusBar()
+		if statusbar.max_size[1] > 0:
+			statusbar.min_size=(statusbar.min_size[0], 0)
+			statusbar.max_size=(statusbar.max_size[0], 0)
+			self._actionShowStatusbar.setChecked(False)
+		else:
+			statusbar.min_size=(statusbar.min_size[0], statusbar.min_size[0])
+			statusbar.max_size=(statusbar.max_size[0], statusbar.max_size[0])
+			self._actionShowStatusbar.setChecked(True)
+		statusbar.adaptLayout()
 			
-	def _actionDockLeft(self, sender):
-		self._toolbar.setDocked(sender.isChecked())
-		if sender.isChecked():
-			self._toolbar.orientation = 1
-			self.dockWidgetTo(self._toolbar, "left")
-		
-	def _actionDockRight(self, sender):
-		self._toolbar.setDocked(sender.isChecked())
-		if sender.isChecked():
-			self._toolbar.orientation = 1
-			self.dockWidgetTo(self._toolbar, "right")
-		
-	def _actionDockTop(self, sender):
-		self._toolbar.setDocked(sender.isChecked())
-		if sender.isChecked():
-			self._toolbar.orientation = 0
-			self.dockWidgetTo(self._toolbar, "top")
-		
-	def _actionDockBottom(self, sender):
-		self._toolbar.setDocked(sender.isChecked())
-		if sender.isChecked():
-			self._toolbar.orientation = 0
-			self.dockWidgetTo(self._toolbar, "bottom")
-	
-	def _actionUndock(self, sender):
-		self._toolbar.setDocked(False)
+	def toggleToolbar(self):
+		toolbar = self.getToolBar()
+		if toolbar.isVisible():
+			toolbar.setDocked(False)
+			toolbar.hide()
+			self._actionShowToolbar.setChecked(False)
+		else:
+			toolbar.show()
+			self._actionShowToolbar.setChecked(True)
+			
+	def toggleToolbox(self):
+		toolbox = self.getToolbox()
+		if toolbox.isVisible():
+			toolbox.setDocked(False)
+			toolbox.hide()
+			self._actionShowToolbox.setChecked(False)
+		else:
+			toolbox.show()
+			self._actionShowToolbox.setChecked(True)
+		toolbox.adaptLayout()
 			
 	def __sendMouseEvent(self, event, **kwargs):
 		msEvent = fife.MouseEvent
