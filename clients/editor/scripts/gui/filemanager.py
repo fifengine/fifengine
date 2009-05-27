@@ -14,7 +14,7 @@ class FileManager(object):
 		self.engine = self.editor.getEngine()
 
 		newAction = Action(u"New map", "gui/icons/new_map.png")
-		loadAction = Action(u"Load", "gui/icons/load_map.png")
+		loadAction = Action(u"Open", "gui/icons/load_map.png")
 		saveAction = Action(u"Save", "gui/icons/save_map.png")
 		saveAsAction = Action(u"Save as", "gui/icons/save_map.png")
 		saveAllAction = Action(u"Save all", "gui/icons/select_layer.png")

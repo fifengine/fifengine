@@ -127,13 +127,7 @@ class Editor(ApplicationBase, MainWindow):
 		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/zoom_in.png")
 		testAction1.helptext = u"Cycles button styles. There are currently four button styles."
 		action.activated.connect(self._actionActivated, sender=testAction1)
-		self._toolbar.addAction(testAction1)
 		self._viewMenu.addAction(testAction1)
-		
-		testAction4 = Action(u"Separator")
-		testAction4.setSeparator(True)
-		self._toolbar.addAction(testAction4)
-		self._viewMenu.addAction(testAction4)
 		
 		self._mapgroup = ActionGroup(exclusive=True, name="Mapgroup")
 		self._mapbar.addAction(self._mapgroup)

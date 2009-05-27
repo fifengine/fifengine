@@ -40,6 +40,7 @@ class ToolBar(widgets.Window):
 		self._updateToolbar()
 		
 		self.capture(self.mouseReleased, "mouseReleased", "widget")
+		self.capture(self.mouseClicked, "mouseClicked", "widget")
 
 	def addSeparator(self, separator=None): 
 		self.insertSeparator(separator, len(self._actions))
@@ -222,7 +223,7 @@ class ToolBar(widgets.Window):
 			self.setDocked(True)
 			self.setOrientation(ORIENTATION["Vertical"])
 			editor.dockWidgetTo(self, "right")
-		elif self.y + event.getY() < 25:
+		elif self.y + event.getY() < 50:
 			self.setDocked(True)
 			self.setOrientation(ORIENTATION["Horizontal"])
 			editor.dockWidgetTo(self, "top")
@@ -230,8 +231,12 @@ class ToolBar(widgets.Window):
 			self.setDocked(True)
 			self.setOrientation(ORIENTATION["Horizontal"])
 			editor.dockWidgetTo(self, "bottom")
-		
-
+			
+	def mouseClicked(self, event):
+		if event.getButton() == 2: # Right click
+			self.setDocked(False)
+			
+			
 class ToolbarButton(widgets.VBox):
 	def __init__(self, action, button_style=0, **kwargs):
 		self._action = action
