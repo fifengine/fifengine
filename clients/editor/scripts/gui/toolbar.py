@@ -1,7 +1,9 @@
+import pychan
 from pychan import widgets
 
 import scripts.events
-import scripts.gui.action
+import action
+import scripts.editor
 from action import Action, ActionGroup
 from fife import Color
 
@@ -36,6 +38,8 @@ class ToolBar(widgets.Window):
 		self._titlebarheight = 16
 		
 		self._updateToolbar()
+		
+		self.capture(self.mouseReleased, "mouseReleased", "widget")
 
 	def addSeparator(self, separator=None): 
 		self.insertSeparator(separator, len(self._actions))
@@ -202,6 +206,30 @@ class ToolBar(widgets.Window):
 		
 	def isFloating(self):
 		return self._floating
+		
+	# Drag and drop docking
+	def mouseReleased(self, event):
+		if self.isFloating() is False:
+			return
+			
+		editor = scripts.editor.getEditor()
+		if self.x + event.getX() < 25:
+			self.setDocked(True)
+			self.setOrientation(ORIENTATION["Vertical"])
+			editor.dockWidgetTo(self, "left")
+			
+		elif self.x + event.getX() > pychan.internal.screen_width() - 25:
+			self.setDocked(True)
+			self.setOrientation(ORIENTATION["Vertical"])
+			editor.dockWidgetTo(self, "right")
+		elif self.y + event.getY() < 25:
+			self.setDocked(True)
+			self.setOrientation(ORIENTATION["Horizontal"])
+			editor.dockWidgetTo(self, "top")
+		elif self.y + event.getY() > pychan.internal.screen_width() - 50:
+			self.setDocked(True)
+			self.setOrientation(ORIENTATION["Horizontal"])
+			editor.dockWidgetTo(self, "bottom")
 		
 
 class ToolbarButton(widgets.VBox):

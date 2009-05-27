@@ -16,6 +16,7 @@ class MainWindow(object):
 	def __init__(self, *args, **kwargs):
 		self._toolbar = None
 		self._menubar = None
+		self._statusbar = None
 	
 		self._rootwidget = None
 		self._centralwidget = None
@@ -30,7 +31,7 @@ class MainWindow(object):
 		bar_height = 30
 		
 		self._statusbar = StatusBar(text=u"", panel_size=bar_height)
-		self._toolbar = ToolBar(button_style=0)
+		self._toolbar = ToolBar(title=u"Toolbar", button_style=0)
 		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
 		
 		# Set up root widget. This
@@ -92,7 +93,11 @@ class MainWindow(object):
 			widgetParent = widget.parent
 			widgetParent.removeChild(widget)
 			widgetParent.adaptLayout()
-			widget.hide()
+			
+		# We must hide the widget before adding it to the dockarea,
+		# or we will get a duplicate copy of the widget in the top left corner
+		# of screen.
+		widget.hide() 
 	
 		if dockarea == DOCKAREA['left']:
 			self._dockareas[DOCKAREA['left']].addChild(widget)
@@ -112,4 +117,3 @@ class MainWindow(object):
 			
 		else:
 			print "Invalid dockarea"
-	
