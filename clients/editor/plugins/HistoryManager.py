@@ -9,6 +9,8 @@ from scripts.gui.action import Action, ActionGroup
 import fife
 from fife import Color
 from scripts import undomanager
+import scripts.gui
+from scripts.gui.panel import Panel
 import pdb
 
 class HistoryManager(plugin.Plugin):
@@ -81,7 +83,7 @@ class HistoryManager(plugin.Plugin):
 		
 
 	def buildGui(self):
-		self.gui = widgets.Window(title=u"History")
+		self.gui = Panel(title=u"History")
 		self.scrollarea = widgets.ScrollArea(min_size=(200,300))
 		self.list = widgets.ListBox()
 		self.list.capture(self._itemSelected)
@@ -93,6 +95,9 @@ class HistoryManager(plugin.Plugin):
 		
 	def _itemSelected(self):
 		mapview = self.editor.getActiveMapView()
+		if mapview is None:
+			return
+			
 		undomanager = mapview.getController().getUndoManager()
 		
 		stackitem = self.list.selected_item.item
