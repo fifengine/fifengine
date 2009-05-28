@@ -173,16 +173,16 @@ class ToolBar(Panel):
 			
 		editor = scripts.editor.getEditor()
 		if self.x + event.getX() < 25:
-			editor.dockToolbarTo(self, "left")
+			editor.dockWidgetTo(self, "left")
 			
 		elif self.x + event.getX() > pychan.internal.screen_width() - 25:
-			editor.dockToolbarTo(self, "right")
+			editor.dockWidgetTo(self, "right")
 			
 		elif self.y + event.getY() < 50:
-			editor.dockToolbarTo(self, "top")
+			editor.dockWidgetTo(self, "top")
 			
 		elif self.y + event.getY() > pychan.internal.screen_height() - 50:
-			editor.dockToolbarTo(self, "bottom")
+			editor.dockWidgetTo(self, "bottom")
 			
 			
 class ToolbarButton(widgets.VBox):

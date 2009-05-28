@@ -1,5 +1,6 @@
 import pychan
 from menubar import MenuBar, Menu
+from panel import Panel
 import toolbar
 from toolbar import ToolBar
 from statusbar import StatusBar
@@ -43,17 +44,45 @@ class MainWindow(object):
 		self._toolbar = ToolBar(title=u"Toolbar", button_style=0)
 		self._menubar = MenuBar(min_size=(screen_width, bar_height), position=(0, 0))
 		
-		# Set up root widget. This
+		# Set up root widget
 		self._rootwidget = pychan.widgets.VBox(padding=0, vexpand=1, hexpand=1)
 		self._rootwidget.min_size = \
 		self._rootwidget.max_size = (screen_width, screen_height)
 		self._rootwidget.opaque = False
 		
-		# These VBoxes should be replaced with DockArea, once that widget has been written
-		self._dockareas[DOCKAREA['left']] = pychan.widgets.VBox(margins=(0,0,0,0))
-		self._dockareas[DOCKAREA['right']] = pychan.widgets.VBox(margins=(0,0,0,0))
-		self._dockareas[DOCKAREA['top']] = pychan.widgets.HBox(margins=(0,0,0,0))
-		self._dockareas[DOCKAREA['bottom']] = pychan.widgets.HBox(margins=(0,0,0,0))
+		leftDockarea = Panel(margins=(0,0,0,0))
+		rightDockarea = Panel(margins=(0,0,0,0))
+		topDockarea = Panel(margins=(0,0,0,0))
+		bottomDockarea = Panel(margins=(0,0,0,0))
+		
+		leftDockarea.setDocked(True)
+		rightDockarea.setDocked(True)
+		topDockarea.setDocked(True)
+		bottomDockarea.setDocked(True)
+		
+		leftDockarea.dockable = False
+		rightDockarea.dockable = False
+		topDockarea.dockable = False
+		bottomDockarea.dockable = False
+		
+		leftDockarea._resizable_left = \
+		leftDockarea._resizable_top = \
+		leftDockarea._resizable_bottom = False
+		rightDockarea._resizable_right = \
+		rightDockarea._resizable_top = \
+		rightDockarea._resizable_bottom = False
+		topDockarea._resizable_left = \
+		topDockarea._resizable_top = \
+		topDockarea._resizable_right = False
+		bottomDockarea._resizable_left = \
+		bottomDockarea._resizable_right = \
+		bottomDockarea._resizable_bottom = False
+		
+		self._dockareas[DOCKAREA['left']] = leftDockarea
+		self._dockareas[DOCKAREA['right']] = rightDockarea
+		self._dockareas[DOCKAREA['top']] = topDockarea
+		self._dockareas[DOCKAREA['bottom']] = bottomDockarea
+
 		
 		self._toolbarareas[DOCKAREA['left']] = pychan.widgets.VBox(margins=(0,0,0,0))
 		self._toolbarareas[DOCKAREA['right']] = pychan.widgets.VBox(margins=(0,0,0,0))
@@ -86,7 +115,7 @@ class MainWindow(object):
 		self._rootwidget.addChild(self._statusbar)
 
 		self._toolbar.setDocked(True)
-		self.dockToolbarTo(self._toolbar, "top")
+		self.dockWidgetTo(self._toolbar, "top")
 		
 		self._rootwidget.show()
 		
@@ -102,49 +131,6 @@ class MainWindow(object):
 	def getToolBar(self): 
 		return self._toolbar
 	
-	def dockToolbarTo(self, toolbar, dockarea):
-		if isinstance(toolbar, ToolBar) is False:
-			print "Argument is not a valid toolbar"
-			return
-			
-		if toolbar.parent:
-			widgetParent = toolbar.parent
-			widgetParent.removeChild(toolbar)
-			widgetParent.adaptLayout()
-			
-		# We must hide the widget before adding it to the dockarea,
-		# or we will get a duplicate copy of the widget in the top left corner
-		# of screen.
-		toolbar.hide() 
-	
-		if dockarea == DOCKAREA['left']:
-			toolbar.setDocked(True)
-			toolbar.setOrientation(ToolBar.ORIENTATION["Vertical"])
-			self._toolbarareas[DOCKAREA['left']].addChild(toolbar)
-			self._toolbarareas[DOCKAREA['left']].adaptLayout()
-			
-		elif dockarea == DOCKAREA['right']:
-			toolbar.setDocked(True)
-			toolbar.setOrientation(ToolBar.ORIENTATION["Vertical"])
-			self._toolbarareas[DOCKAREA['right']].addChild(toolbar)
-			self._toolbarareas[DOCKAREA['right']].adaptLayout()
-			
-		elif dockarea == DOCKAREA['top']:
-			toolbar.setDocked(True)
-			toolbar.setOrientation(ToolBar.ORIENTATION["Horizontal"])
-			self._toolbarareas[DOCKAREA['top']].addChild(toolbar)
-			self._toolbarareas[DOCKAREA['top']].adaptLayout()
-			
-		elif dockarea == DOCKAREA['bottom']:
-			toolbar.setDocked(True)
-			toolbar.setOrientation(ToolBar.ORIENTATION["Horizontal"])
-			self._toolbarareas[DOCKAREA['bottom']].addChild(toolbar)
-			self._toolbarareas[DOCKAREA['bottom']].adaptLayout()
-			
-		else:
-			print "Invalid dockarea"
-
-	
 	def dockWidgetTo(self, widget, dockarea):
 		if isinstance(widget, pychan.widgets.Widget) is False:
 			print "Argument is not a valid widget"
@@ -159,26 +145,34 @@ class MainWindow(object):
 		# or we will get a duplicate copy of the widget in the top left corner
 		# of screen.
 		widget.hide() 
+		dockareas = self._dockareas
+		if isinstance(widget, ToolBar):
+			dockareas = self._toolbarareas
+			if dockarea == DOCKAREA['left'] or dockarea == DOCKAREA['right']:
+				widget.setOrientation(ToolBar.ORIENTATION["Vertical"])
+			elif dockarea == DOCKAREA['top'] or dockarea == DOCKAREA['bottom']:
+				widget.setOrientation(ToolBar.ORIENTATION["Horizontal"])
 	
 		if dockarea == DOCKAREA['left']:
+			
 			widget.setDocked(True)
-			self._dockareas[DOCKAREA['left']].addChild(widget)
-			self._dockareas[DOCKAREA['left']].adaptLayout()
+			dockareas[DOCKAREA['left']].addChild(widget)
+			dockareas[DOCKAREA['left']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['right']:
 			widget.setDocked(True)
-			self._dockareas[DOCKAREA['right']].addChild(widget)
-			self._dockareas[DOCKAREA['right']].adaptLayout()
+			dockareas[DOCKAREA['right']].addChild(widget)
+			dockareas[DOCKAREA['right']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['top']:
 			widget.setDocked(True)
-			self._dockareas[DOCKAREA['top']].addChild(widget)
-			self._dockareas[DOCKAREA['top']].adaptLayout()
+			dockareas[DOCKAREA['top']].addChild(widget)
+			dockareas[DOCKAREA['top']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['bottom']:
 			widget.setDocked(True)
-			self._dockareas[DOCKAREA['bottom']].addChild(widget)
-			self._dockareas[DOCKAREA['bottom']].adaptLayout()
+			dockareas[DOCKAREA['bottom']].addChild(widget)
+			dockareas[DOCKAREA['bottom']].adaptLayout()
 			
 		else:
 			print "Invalid dockarea"

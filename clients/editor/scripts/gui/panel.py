@@ -4,7 +4,7 @@ import scripts.editor
 import fife
 
 class Panel(widgets.Window):
-	def __init__(self, resizable=True, *args, **kwargs):
+	def __init__(self, resizable=True, dockable=True, *args, **kwargs):
 		super(Panel, self).__init__(*args, **kwargs)
 		self.capture(self.mouseEntered, "mouseEntered", "panel")
 		self.capture(self.mouseExited, "mouseExited", "panel")
@@ -19,10 +19,15 @@ class Panel(widgets.Window):
 		self.cursor_id = 0
 		self.cursor_type = 0
 		
+		self.dockable = dockable
 		self.resizable = resizable
 		self.resize = False
 		self._movable = self.real_widget.isMovable()
 		self._resizable = resizable
+		self._resizable_top = True
+		self._resizable_left = True
+		self._resizable_right = True
+		self._resizable_bottom = True
 		
 		self.dragoffset = (0, 0)
 		
@@ -30,6 +35,9 @@ class Panel(widgets.Window):
 		self._titlebarheight = 16
 		
 	def setDocked(self, docked):
+		if self.dockable is False:
+			return
+		
 		if docked is True and self._floating == True:
 				self._floating = False
 				self.real_widget.setTitleBarHeight(0)
@@ -93,10 +101,10 @@ class Panel(widgets.Window):
 		
 		cursor = self.engine.getCursor()
 		
-		left	= event.getX() < 5
-		right	= event.getX() > self.width-5
-		top		= event.getY() < 5
-		bottom	= event.getY() - self.titlebar_height > self.height-5
+		left	= event.getX() < 5 and self._resizable_left
+		right	= event.getX() > self.width-5 and self._resizable_right
+		top		= event.getY() < 5 and self._resizable_top
+		bottom	= event.getY() - self.titlebar_height > self.height-5 and self._resizable_bottom
 		
 		try:
 			if left and top:
@@ -151,10 +159,10 @@ class Panel(widgets.Window):
 		if self.resizable is False:
 			return
 			
-		self.left	= event.getX() < 5
-		self.right	= event.getX() > self.width-5
-		self.top	= event.getY() < 5
-		self.bottom	= event.getY() - self.titlebar_height > self.height-5
+		self.left	= event.getX() < 5 and self._resizable_left
+		self.right	= event.getX() > self.width-5 and self._resizable_right
+		self.top	= event.getY() < 5 and self._resizable_top
+		self.bottom	= event.getY() - self.titlebar_height > self.height-5 and self._resizable_bottom
 		
 		if self.left or self.right or self.top or self.bottom:
 			self._movable = self.real_widget.isMovable()
@@ -177,7 +185,7 @@ class Panel(widgets.Window):
 			if event.getX() <= 0 or event.getX() >= self.width \
 					or event.getY() <= 0 or event.getY() >= self.height+self.titlebar_height:
 				self.mouseExited(event)
-		else:
+		elif self._movable:
 			editor = scripts.editor.getEditor()
 			if self.x + event.getX() < 25:
 				editor.dockWidgetTo(self, "left")
