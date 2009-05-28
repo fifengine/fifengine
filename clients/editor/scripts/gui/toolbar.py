@@ -6,8 +6,9 @@ import action
 import scripts.editor
 from action import Action, ActionGroup
 from fife import Color
+from panel import Panel
 
-class ToolBar(widgets.Window):
+class ToolBar(Panel):
 	ORIENTATION = {
 			"Horizontal"	: 0,
 			"Vertical"		: 1
@@ -21,24 +22,20 @@ class ToolBar(widgets.Window):
 			}
 
 	def __init__(self, button_style=0, panel_size=30, orientation=0, *args, **kwargs):
-		super(ToolBar, self).__init__(*args, **kwargs)
+		super(ToolBar, self).__init__(resizable=False, *args, **kwargs)
 		
 		self._actions = []
 		self._actionbuttons = []
 		self._button_style = 0
 		self._panel_size = panel_size
 		self.gui = None
-		self._floating = True
 		
 		self._orientation = orientation
 		self._button_style = button_style
 
-		self._titlebarheight = 16
-		
 		self._updateToolbar()
 		
-		self.capture(self.mouseReleased, "mouseReleased", "widget")
-		self.capture(self.mouseClicked, "mouseClicked", "widget")
+		self.capture(self.mouseReleased, "mouseReleased", "toolbar")
 
 	def addSeparator(self, separator=None): 
 		self.insertSeparator(separator, len(self._actions))
@@ -168,56 +165,10 @@ class ToolBar(widgets.Window):
 	def getPanelSize(self):
 		return self._panel_size
 	panel_size = property(getPanelSize, setPanelSize)
-	
-	def setDocked(self, docked):
-		if docked is True and self._floating == True:
-				self._floating = False
-				self.real_widget.setTitleBarHeight(0)
-				self.real_widget.setMovable(False)
-				
-		elif docked is False and self._floating is False:			
-			self._floating = True
-			self.real_widget.setMovable(True)
-			
-			# Since x and y coordinates are reset if the widget gets hidden,
-			# we need to store them
-			absX = self.x
-			absY = self.y
-			# Get absolute pos
-			parent = self.parent
-			while parent is not None:
-				absX += parent.x
-				absY += parent.y
-				parent = parent.parent
-			
-			if self.parent is not None:
-				# Remove from parent widget
-				widgetParent = self.parent
-				widgetParent.removeChild(self)
-				widgetParent.adaptLayout()
-				self.hide()
-				
-			self.real_widget.setTitleBarHeight(self._titlebarheight)
-			self.show()
-			
-			# Slighly offset toolbar when undocking
-			mw = pychan.internal.screen_width() / 2
-			mh = pychan.internal.screen_height() / 2
-			if absX < mw:
-				self.x = absX + self.panel_size
-			else:
-				self.x = absX - self.panel_size
-			if absY < mh:
-				self.y = absY + self.panel_size
-			else:
-				self.y = absY - self.panel_size
 
-	def isFloating(self):
-		return self._floating
-		
 	# Drag and drop docking
 	def mouseReleased(self, event):
-		if self.isFloating() is False:
+		if self.isDocked():
 			return
 			
 		editor = scripts.editor.getEditor()
@@ -232,10 +183,6 @@ class ToolBar(widgets.Window):
 			
 		elif self.y + event.getY() > pychan.internal.screen_height() - 50:
 			editor.dockToolbarTo(self, "bottom")
-			
-	def mouseClicked(self, event):
-		if event.getButton() == 2: # Right click
-			self.setDocked(False)
 			
 			
 class ToolbarButton(widgets.VBox):

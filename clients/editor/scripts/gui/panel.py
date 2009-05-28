@@ -4,33 +4,93 @@ import scripts.editor
 import fife
 
 class Panel(widgets.Window):
-	def __init__(self, *args, **kwargs):
+	def __init__(self, resizable=True, *args, **kwargs):
 		super(Panel, self).__init__(*args, **kwargs)
-		self.capture(self.mouseEntered, "mouseEntered", "widget")
-		self.capture(self.mouseExited, "mouseExited", "widget")
-		self.capture(self.mouseMoved, "mouseMoved", "widget")
-		self.capture(self.mouseDragged, "mouseDragged", "widget")
-		self.capture(self.mousePressed, "mousePressed", "widget")
-		self.capture(self.mouseReleased, "mouseReleased", "widget")
+		self.capture(self.mouseEntered, "mouseEntered", "panel")
+		self.capture(self.mouseExited, "mouseExited", "panel")
+		self.capture(self.mouseMoved, "mouseMoved", "panel")
+		self.capture(self.mouseDragged, "mouseDragged", "panel")
+		self.capture(self.mousePressed, "mousePressed", "panel")
+		self.capture(self.mouseReleased, "mouseReleased", "panel")
+		self.capture(self.mouseClicked, "mouseClicked", "panel")
 		
 		self.engine = scripts.editor.getEditor().getEngine()
 		
 		self.cursor_id = 0
 		self.cursor_type = 0
 		
+		self.resizable = resizable
 		self.resize = False
-		self.real_widget.setMovable(False) # Don't let guichan move window while we resize
+		self._movable = self.real_widget.isMovable()
+		self._resizable = resizable
 		
 		self.dragoffset = (0, 0)
 		
+		self._floating = True
+		self._titlebarheight = 16
+		
+	def setDocked(self, docked):
+		if docked is True and self._floating == True:
+				self._floating = False
+				self.real_widget.setTitleBarHeight(0)
+				self.real_widget.setMovable(False)
+				self._movable = False
+				#self.resizable = False
+				
+		elif docked is False and self._floating is False:			
+			self._floating = True
+			self._movable = True
+			self.real_widget.setMovable(True)
+			self.resizable = self._resizable
+			
+			# Since x and y coordinates are reset if the widget gets hidden,
+			# we need to store them
+			absX = self.x
+			absY = self.y
+			# Get absolute pos
+			parent = self.parent
+			while parent is not None:
+				absX += parent.x
+				absY += parent.y
+				parent = parent.parent
+			
+			if self.parent is not None:
+				# Remove from parent widget
+				widgetParent = self.parent
+				widgetParent.removeChild(self)
+				widgetParent.adaptLayout()
+				self.hide()
+				
+			self.real_widget.setTitleBarHeight(self._titlebarheight)
+			self.show()
+			
+			# Slighly offset toolbar when undocking
+			mw = pychan.internal.screen_width() / 2
+			mh = pychan.internal.screen_height() / 2
+			if absX < mw:
+				self.x = absX + self._titlebarheight
+			else:
+				self.x = absX - self._titlebarheight
+			if absY < mh:
+				self.y = absY + self._titlebarheight
+			else:
+				self.y = absY - self._titlebarheight
+
+	def isDocked(self):
+		return self._floating == False
+		
+		
 	def mouseEntered(self, event):
 		# Save cursor id
-		if self.resize is False:
+		if self.resizable and self.resize is False:
 			cursor = self.engine.getCursor()
 			self.cursor_id = cursor.getId()
 			self.cursor_type = cursor.getType()
 		
 	def mouseMoved(self, event):
+		if self.resizable is False: 
+			return
+		
 		cursor = self.engine.getCursor()
 		
 		left	= event.getX() < 5
@@ -63,12 +123,12 @@ class Panel(widgets.Window):
 		
 	def mouseExited(self, event):
 		# Reset cursor to whatever it was before it entered this window
-		if self.resize is False:
+		if self.resizable and self.resize is False:
 			cursor = self.engine.getCursor()
 			cursor.set(self.cursor_type, self.cursor_id)
 		
 	def mouseDragged(self, event):
-		if self.resize:
+		if self.resizable and self.resize:
 			diffX = event.getX()
 			diffY = event.getY()
 			
@@ -88,23 +148,24 @@ class Panel(widgets.Window):
 			
 		
 	def mousePressed(self, event):
+		if self.resizable is False:
+			return
+			
 		self.left	= event.getX() < 5
 		self.right	= event.getX() > self.width-5
 		self.top	= event.getY() < 5
 		self.bottom	= event.getY() - self.titlebar_height > self.height-5
 		
 		if self.left or self.right or self.top or self.bottom:
+			self._movable = self.real_widget.isMovable()
+			self.real_widget.setMovable(False) # Don't let guichan move window while we resize
 			self.resize = True
 			self.min_size = (10, 10)
 			self.max_size = (5000, 5000)
-		else:
-			# Let guichan take care of moving the window for us
-			self.real_widget.setMovable(True)
-			self.resize = False
 		
 	def mouseReleased(self, event):
 		# Resize/move done
-		self.real_widget.setMovable(False)
+		self.real_widget.setMovable(self._movable)
 		
 		if self.resize:
 			self.min_size = (self.width, self.height)
@@ -112,10 +173,29 @@ class Panel(widgets.Window):
 			self.adaptLayout()
 			event.consume()
 		
-		self.resize = False
-		if event.getX() <= 0 or event.getX() >= self.width \
-				or event.getY() <= 0 or event.getY() >= self.height+self.titlebar_height:
-			self.mouseExited(event)
+			self.resize = False
+			if event.getX() <= 0 or event.getX() >= self.width \
+					or event.getY() <= 0 or event.getY() >= self.height+self.titlebar_height:
+				self.mouseExited(event)
+		else:
+			editor = scripts.editor.getEditor()
+			if self.x + event.getX() < 25:
+				editor.dockWidgetTo(self, "left")
+				
+			elif self.x + event.getX() > pychan.internal.screen_width() - 25:
+				editor.dockWidgetTo(self, "right")
+				
+			elif self.y + event.getY() < 50:
+				editor.dockWidgetTo(self, "top")
+				
+			elif self.y + event.getY() > pychan.internal.screen_height() - 50:
+				editor.dockWidgetTo(self, "bottom")
+	
+	def mouseClicked(self, event):
+		if event.getButton() == 2: # Right click
+			if self.isDocked():
+				self.setDocked(False)
+				event.consume()
 	
 # Register widget to pychan
 if 'Panel' not in widgets.WIDGETS:
