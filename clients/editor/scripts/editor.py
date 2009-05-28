@@ -167,8 +167,12 @@ class Editor(ApplicationBase, MainWindow):
 			toolbar.setDocked(False)
 			toolbar.hide()
 			self._actionShowToolbar.setChecked(False)
-		else:
+		else: 
+			tx = toolbar.x
+			ty = toolbar.y
 			toolbar.show()
+			toolbar.x = tx
+			toolbar.y = ty
 			self._actionShowToolbar.setChecked(True)
 			
 	def toggleToolbox(self):
@@ -178,7 +182,11 @@ class Editor(ApplicationBase, MainWindow):
 			toolbox.hide()
 			self._actionShowToolbox.setChecked(False)
 		else:
+			tx = toolbox.x
+			ty = toolbox.y
 			toolbox.show()
+			toolbox.x = tx
+			toolbox.y = ty
 			self._actionShowToolbox.setChecked(True)
 		toolbox.adaptLayout()
 			

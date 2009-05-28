@@ -113,8 +113,8 @@ class Panel(widgets.Window):
 			event.consume()
 		
 		self.resize = False
-		if event.getX() < 0 or event.getX() >= self.width \
-				or event.getY() < 0 or event.getY() >= self.height+self.titlebar_height:
+		if event.getX() <= 0 or event.getX() >= self.width \
+				or event.getY() <= 0 or event.getY() >= self.height+self.titlebar_height:
 			self.mouseExited(event)
 	
 # Register widget to pychan

@@ -7,21 +7,20 @@ import scripts.editor
 from action import Action, ActionGroup
 from fife import Color
 
-# Orientation isn't implemented yet
-ORIENTATION = {
+class ToolBar(widgets.Window):
+	ORIENTATION = {
 			"Horizontal"	: 0,
 			"Vertical"		: 1
 		}
 
-BUTTON_STYLE = {
-			"IconOnly"			: 0,
-			"TextOnly"			: 1,
-			"TextUnderIcon"		: 2,
-			"TextBesideIcon"	: 3
-		}
+	BUTTON_STYLE = {
+				"IconOnly"			: 0,
+				"TextOnly"			: 1,
+				"TextUnderIcon"		: 2,
+				"TextBesideIcon"	: 3
+			}
 
-class ToolBar(widgets.Window):
-	def __init__(self, button_style=0, auto_expand=True, panel_size=30, orientation=0, *args, **kwargs):
+	def __init__(self, button_style=0, panel_size=30, orientation=0, *args, **kwargs):
 		super(ToolBar, self).__init__(*args, **kwargs)
 		
 		self._actions = []
@@ -29,7 +28,6 @@ class ToolBar(widgets.Window):
 		self._button_style = 0
 		self._panel_size = panel_size
 		self.gui = None
-		self._auto_expand = auto_expand 
 		self._floating = True
 		
 		self._orientation = orientation
@@ -119,8 +117,8 @@ class ToolBar(widgets.Window):
 		self._actionbuttons = []
 		
 	def setButtonStyle(self, button_style):
-		self._button_style = BUTTON_STYLE['IconOnly']
-		for key, val in BUTTON_STYLE.iteritems():
+		self._button_style = ToolBar.BUTTON_STYLE['IconOnly']
+		for key, val in ToolBar.BUTTON_STYLE.iteritems():
 			if val == button_style:
 				self._button_style = button_style
 				break
@@ -136,7 +134,7 @@ class ToolBar(widgets.Window):
 		
 		self.clear()
 		
-		if self._orientation == ORIENTATION['Vertical']:
+		if self._orientation == ToolBar.ORIENTATION['Vertical']:
 			self.gui = widgets.VBox(min_size=(self._panel_size, self._panel_size))
 		else:
 			self.gui = widgets.HBox(min_size=(self._panel_size, self._panel_size))
@@ -145,15 +143,14 @@ class ToolBar(widgets.Window):
 		for action in actions:
 			self.addAction(action)
 
-		self.setAutoExpand(self._auto_expand)
 		self.adaptLayout()
 		
 	def setOrientation(self, orientation):
-		if orientation == ORIENTATION['Vertical']:
-			self._orientation = ORIENTATION['Vertical']
+		if orientation == ToolBar.ORIENTATION['Vertical']:
+			self._orientation = ToolBar.ORIENTATION['Vertical']
 			self._max_size = (self._panel_size, 5000)
 		else:
-			self._orientation = ORIENTATION['Horizontal']
+			self._orientation = ToolBar.ORIENTATION['Horizontal']
 			self._max_size = (5000, self._panel_size)
 		self._orientation = orientation
 		
@@ -162,20 +159,6 @@ class ToolBar(widgets.Window):
 	def getOrientation(self):
 		return self._orientation
 	orientation = property(getOrientation, setOrientation)
-	
-	def setAutoExpand(self, auto_expand):
-		self._auto_expand = auto_expand
-		
-		self.hexpand = self.gui.hexpand = 0
-		self.vexpand = self.gui.vexpand = 0
-		if auto_expand:
-			if self._orientation == ORIENTATION['Vertical']:
-				self.vexpand = 1
-			else:
-				self.hexpand = 1
-		
-	def getAutoExpand(self):
-		return self._auto_expand
 		
 	def setPanelSize(self, panel_size):
 		self._panel_size = panel_size
@@ -196,7 +179,19 @@ class ToolBar(widgets.Window):
 			self._floating = True
 			self.real_widget.setMovable(True)
 			
+			# Since x and y coordinates are reset if the widget gets hidden,
+			# we need to store them
+			absX = self.x
+			absY = self.y
+			# Get absolute pos
+			parent = self.parent
+			while parent is not None:
+				absX += parent.x
+				absY += parent.y
+				parent = parent.parent
+			
 			if self.parent is not None:
+				# Remove from parent widget
 				widgetParent = self.parent
 				widgetParent.removeChild(self)
 				widgetParent.adaptLayout()
@@ -204,7 +199,19 @@ class ToolBar(widgets.Window):
 				
 			self.real_widget.setTitleBarHeight(self._titlebarheight)
 			self.show()
-		
+			
+			# Slighly offset toolbar when undocking
+			mw = pychan.internal.screen_width() / 2
+			mh = pychan.internal.screen_height() / 2
+			if absX < mw:
+				self.x = absX + self.panel_size
+			else:
+				self.x = absX - self.panel_size
+			if absY < mh:
+				self.y = absY + self.panel_size
+			else:
+				self.y = absY - self.panel_size
+
 	def isFloating(self):
 		return self._floating
 		
@@ -215,22 +222,16 @@ class ToolBar(widgets.Window):
 			
 		editor = scripts.editor.getEditor()
 		if self.x + event.getX() < 25:
-			self.setDocked(True)
-			self.setOrientation(ORIENTATION["Vertical"])
-			editor.dockWidgetTo(self, "left")
+			editor.dockToolbarTo(self, "left")
 			
 		elif self.x + event.getX() > pychan.internal.screen_width() - 25:
-			self.setDocked(True)
-			self.setOrientation(ORIENTATION["Vertical"])
-			editor.dockWidgetTo(self, "right")
+			editor.dockToolbarTo(self, "right")
+			
 		elif self.y + event.getY() < 50:
-			self.setDocked(True)
-			self.setOrientation(ORIENTATION["Horizontal"])
-			editor.dockWidgetTo(self, "top")
+			editor.dockToolbarTo(self, "top")
+			
 		elif self.y + event.getY() > pychan.internal.screen_height() - 50:
-			self.setDocked(True)
-			self.setOrientation(ORIENTATION["Horizontal"])
-			editor.dockWidgetTo(self, "bottom")
+			editor.dockToolbarTo(self, "bottom")
 			
 	def mouseClicked(self, event):
 		if event.getButton() == 2: # Right click
@@ -277,8 +278,8 @@ class ToolbarButton(widgets.VBox):
 	action = property(getAction, setAction)
 	
 	def setButtonStyle(self, button_style):
-		self._button_style = BUTTON_STYLE['IconOnly']
-		for key, val in BUTTON_STYLE.iteritems():
+		self._button_style = ToolBar.BUTTON_STYLE['IconOnly']
+		for key, val in ToolBar.BUTTON_STYLE.iteritems():
 			if val == button_style:
 				self._button_style = button_style
 				break
@@ -316,7 +317,7 @@ class ToolbarButton(widgets.VBox):
 			widget.base_color += Color(8, 8, 8)
 			widget.min_size = (2, 2)
 		else:
-			if self._button_style != BUTTON_STYLE['TextOnly'] and len(self._action.icon) > 0:
+			if self._button_style != ToolBar.BUTTON_STYLE['TextOnly'] and len(self._action.icon) > 0:
 				if self._action.isCheckable():
 					icon = widgets.ToggleButton(hexpand=0, up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
 					icon.toggled = self._action.isChecked()
@@ -324,7 +325,7 @@ class ToolbarButton(widgets.VBox):
 					icon = widgets.ImageButton(hexpand=0, up_image=self._action.icon,down_image=self._action.icon,hover_image=self._action.icon,offset=(1,1))
 				icon.capture(self._action.activate)
 				
-			if self._button_style != BUTTON_STYLE['IconOnly'] or len(self._action.icon) <= 0:
+			if self._button_style != ToolBar.BUTTON_STYLE['IconOnly'] or len(self._action.icon) <= 0:
 				if self._action.isCheckable():
 					text = widgets.ToggleButton(hexpand=0, text=self._action.text,offset=(1,1))
 					text.toggled = self._action.isChecked()
@@ -332,17 +333,17 @@ class ToolbarButton(widgets.VBox):
 					text = widgets.Button(text=self._action.text)
 				text.capture(self._action.activate)
 			
-			if self._button_style == BUTTON_STYLE['TextOnly'] or len(self._action.icon) <= 0:
+			if self._button_style == ToolBar.BUTTON_STYLE['TextOnly'] or len(self._action.icon) <= 0:
 				widget = text
 				
-			elif self._button_style == BUTTON_STYLE['TextUnderIcon']:
+			elif self._button_style == ToolBar.BUTTON_STYLE['TextUnderIcon']:
 				widget = widgets.VBox()
 				icon.position_technique = "center:top"
 				text.position_technique = "center:bottom"
 				widget.addChild(icon)
 				widget.addChild(text)
 				
-			elif self._button_style == BUTTON_STYLE['TextBesideIcon']:
+			elif self._button_style == ToolBar.BUTTON_STYLE['TextBesideIcon']:
 				widget = widgets.HBox()
 				widget.addChild(icon)
 				widget.addChild(text)

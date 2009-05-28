@@ -1,5 +1,6 @@
 import pychan
 from menubar import MenuBar, Menu
+import toolbar
 from toolbar import ToolBar
 from statusbar import StatusBar
 import fife
@@ -68,7 +69,7 @@ class MainWindow(object):
 		self._rootwidget.addChild(self._statusbar)
 
 		self._toolbar.setDocked(True)
-		self.dockWidgetTo(self._toolbar, "top")
+		self.dockToolbarTo(self._toolbar, "top")
 		
 		self._rootwidget.show()
 		
@@ -84,39 +85,43 @@ class MainWindow(object):
 	def getToolBar(self): 
 		return self._toolbar
 	
-	def dockWidgetTo(self, widget, dockarea):
-		if isinstance(widget, pychan.widgets.Widget) is False:
-			print "Argument is not a valid widget"
+	def dockToolbarTo(self, toolbar, dockarea):
+		if isinstance(toolbar, ToolBar) is False:
+			print "Argument is not a valid toolbar"
 			return
 			
-		if widget.parent:
-			widgetParent = widget.parent
-			widgetParent.removeChild(widget)
+		if toolbar.parent:
+			widgetParent = toolbar.parent
+			widgetParent.removeChild(toolbar)
 			widgetParent.adaptLayout()
 			
 		# We must hide the widget before adding it to the dockarea,
 		# or we will get a duplicate copy of the widget in the top left corner
 		# of screen.
-		widget.hide() 
+		toolbar.hide() 
 	
 		if dockarea == DOCKAREA['left']:
-			widget.vexpand = 0
-			self._dockareas[DOCKAREA['left']].addChild(widget)
+			toolbar.setDocked(True)
+			toolbar.setOrientation(ToolBar.ORIENTATION["Vertical"])
+			self._dockareas[DOCKAREA['left']].addChild(toolbar)
 			self._dockareas[DOCKAREA['left']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['right']:
-			widget.vexpand = 0
-			self._dockareas[DOCKAREA['right']].addChild(widget)
+			toolbar.setDocked(True)
+			toolbar.setOrientation(ToolBar.ORIENTATION["Vertical"])
+			self._dockareas[DOCKAREA['right']].addChild(toolbar)
 			self._dockareas[DOCKAREA['right']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['top']:
-			widget.hexpand = 0
-			self._dockareas[DOCKAREA['top']].addChild(widget)
+			toolbar.setDocked(True)
+			toolbar.setOrientation(ToolBar.ORIENTATION["Horizontal"])
+			self._dockareas[DOCKAREA['top']].addChild(toolbar)
 			self._dockareas[DOCKAREA['top']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['bottom']:
-			widget.hexpand = 0
-			self._dockareas[DOCKAREA['bottom']].addChild(widget)
+			toolbar.setDocked(True)
+			toolbar.setOrientation(ToolBar.ORIENTATION["Horizontal"])
+			self._dockareas[DOCKAREA['bottom']].addChild(toolbar)
 			self._dockareas[DOCKAREA['bottom']].adaptLayout()
 			
 		else:
