@@ -147,7 +147,7 @@ class ObjectSelector(plugin.Plugin):
 		
 		self.editor._toolsMenu.addAction(self._showAction)
 		
-		events.postMapShown.connect(self.update)
+		events.postMapShown.connect(self.update_namespace)
 		
 		self.buildGui()
 
@@ -158,7 +158,7 @@ class ObjectSelector(plugin.Plugin):
 		self.gui.hide()
 		self.removeAllChildren()
 		
-		events.postMapShown.disconnect(self.update)
+		events.postMapShown.disconnect(self.update_namespace)
 		
 		self.editor._toolsMenu.removeAction(self._showAction)
 

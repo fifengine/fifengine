@@ -1,16 +1,16 @@
 <Panel title="Object selector">
-	<VBox>
+	<VBox hexpand="1" vexpand="1">
 		<!-- Search field -->
 		<HBox>
-			<TextField name="searchField" min_size="200,20" />
-			<Button name="searchButton" text="Search" /> 
+			<TextField name="searchField" />
+			<Button name="searchButton" text="Search" hexpand="0" /> 
 		</HBox>
 
     <!-- Namespaces -->
 		<DropDown name="namespaceDropdown" />
 
     <!-- Main area (object list) -->
-		<ScrollArea name="mainScrollArea" size="230,350" />
+		<ScrollArea name="mainScrollArea" size="100,50" hexpand="1" vexpand="1" />
 
     <!-- Action buttons -->
 		<HBox>
@@ -20,7 +20,7 @@
 		</HBox>
 
     <!-- Preview area -->
-		<ScrollArea name="previewScrollArea" size="230,1">
+		<ScrollArea name="previewScrollArea" size="230,1" vexpand="0">
 			<Icon name="previewIcon" />
 		</ScrollArea>
 	</VBox>
