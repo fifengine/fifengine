@@ -12,8 +12,10 @@ from gui.filemanager import FileManager
 from gui.mainwindow import MainWindow
 from gui.mapeditor import MapEditor
 from gui.menubar import Menu, MenuBar
+from gui.error import ErrorDialog
 from pychan.tools import callbackWithArguments as cbwa
 from events import *
+import sys
 
 def getEditor():
 	if Editor.editor is None:
@@ -259,9 +261,16 @@ class Editor(ApplicationBase, MainWindow):
 		return mapview
 	
 	def openFile(self, path):
-		map = loaders.loadMapFile(path, self.engine)
-
-		return self.newMapView(map)
+		try:
+			map = loaders.loadMapFile(path, self.engine)
+			return self.newMapView(map)
+		except:
+			errormsg = u"Opening map failed:\n"
+			errormsg += u"File: "+unicode(path)+"\n"
+			errormsg += u"Error: "+unicode(sys.exc_info()[1])
+			ErrorDialog(errormsg)
+			return None
+			
 	
 	def saveAll(self):
 		tmpView = self._mapview
