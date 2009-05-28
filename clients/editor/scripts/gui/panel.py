@@ -12,7 +12,6 @@ class Panel(widgets.Window):
 		self.capture(self.mouseDragged, "mouseDragged", "panel")
 		self.capture(self.mousePressed, "mousePressed", "panel")
 		self.capture(self.mouseReleased, "mouseReleased", "panel")
-		self.capture(self.mouseClicked, "mouseClicked", "panel")
 		
 		self.engine = scripts.editor.getEditor().getEngine()
 		
@@ -199,11 +198,6 @@ class Panel(widgets.Window):
 			elif self.y + event.getY() > pychan.internal.screen_height() - 50:
 				editor.dockWidgetTo(self, "bottom")
 	
-	def mouseClicked(self, event):
-		if event.getButton() == 2: # Right click
-			if self.isDocked():
-				self.setDocked(False)
-				event.consume()
 	
 # Register widget to pychan
 if 'Panel' not in widgets.WIDGETS:

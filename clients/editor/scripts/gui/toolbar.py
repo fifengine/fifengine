@@ -36,6 +36,7 @@ class ToolBar(Panel):
 		self._updateToolbar()
 		
 		self.capture(self.mouseReleased, "mouseReleased", "toolbar")
+		self.capture(self.mouseClicked, "mouseClicked", "toolbar")
 
 	def addSeparator(self, separator=None): 
 		self.insertSeparator(separator, len(self._actions))
@@ -183,6 +184,12 @@ class ToolBar(Panel):
 			
 		elif self.y + event.getY() > pychan.internal.screen_height() - 50:
 			editor.dockWidgetTo(self, "bottom")
+			
+	def mouseClicked(self, event):
+		if event.getButton() == 2: # Right click
+			if self.isDocked():
+				self.setDocked(False)
+				event.consume()
 			
 			
 class ToolbarButton(widgets.VBox):

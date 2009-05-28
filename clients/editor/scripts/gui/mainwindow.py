@@ -1,6 +1,7 @@
 import pychan
 from menubar import MenuBar, Menu
 from panel import Panel
+from dockarea import DockArea
 import toolbar
 from toolbar import ToolBar
 from statusbar import StatusBar
@@ -50,40 +51,11 @@ class MainWindow(object):
 		self._rootwidget.max_size = (screen_width, screen_height)
 		self._rootwidget.opaque = False
 		
-		leftDockarea = Panel(margins=(0,0,0,0))
-		rightDockarea = Panel(margins=(0,0,0,0))
-		topDockarea = Panel(margins=(0,0,0,0))
-		bottomDockarea = Panel(margins=(0,0,0,0))
-		
-		leftDockarea.setDocked(True)
-		rightDockarea.setDocked(True)
-		topDockarea.setDocked(True)
-		bottomDockarea.setDocked(True)
-		
-		leftDockarea.dockable = False
-		rightDockarea.dockable = False
-		topDockarea.dockable = False
-		bottomDockarea.dockable = False
-		
-		leftDockarea._resizable_left = \
-		leftDockarea._resizable_top = \
-		leftDockarea._resizable_bottom = False
-		rightDockarea._resizable_right = \
-		rightDockarea._resizable_top = \
-		rightDockarea._resizable_bottom = False
-		topDockarea._resizable_left = \
-		topDockarea._resizable_top = \
-		topDockarea._resizable_right = False
-		bottomDockarea._resizable_left = \
-		bottomDockarea._resizable_right = \
-		bottomDockarea._resizable_bottom = False
-		
-		self._dockareas[DOCKAREA['left']] = leftDockarea
-		self._dockareas[DOCKAREA['right']] = rightDockarea
-		self._dockareas[DOCKAREA['top']] = topDockarea
-		self._dockareas[DOCKAREA['bottom']] = bottomDockarea
+		self._dockareas[DOCKAREA['left']] = DockArea("left")
+		self._dockareas[DOCKAREA['right']] = DockArea("right")
+		self._dockareas[DOCKAREA['top']] = DockArea("top")
+		self._dockareas[DOCKAREA['bottom']] = DockArea("bottom")
 
-		
 		self._toolbarareas[DOCKAREA['left']] = pychan.widgets.VBox(margins=(0,0,0,0))
 		self._toolbarareas[DOCKAREA['right']] = pychan.widgets.VBox(margins=(0,0,0,0))
 		self._toolbarareas[DOCKAREA['top']] = pychan.widgets.HBox(margins=(0,0,0,0))
@@ -154,23 +126,26 @@ class MainWindow(object):
 				widget.setOrientation(ToolBar.ORIENTATION["Horizontal"])
 	
 		if dockarea == DOCKAREA['left']:
-			
+			widget.resizable = False
 			widget.setDocked(True)
 			dockareas[DOCKAREA['left']].addChild(widget)
 			dockareas[DOCKAREA['left']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['right']:
+			widget.resizable = False
 			widget.setDocked(True)
 			dockareas[DOCKAREA['right']].addChild(widget)
 			dockareas[DOCKAREA['right']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['top']:
 			widget.setDocked(True)
+			widget.resizable = False
 			dockareas[DOCKAREA['top']].addChild(widget)
 			dockareas[DOCKAREA['top']].adaptLayout()
 			
 		elif dockarea == DOCKAREA['bottom']:
 			widget.setDocked(True)
+			widget.resizable = False
 			dockareas[DOCKAREA['bottom']].addChild(widget)
 			dockareas[DOCKAREA['bottom']].adaptLayout()
 			
