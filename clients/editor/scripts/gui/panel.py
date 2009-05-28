@@ -110,6 +110,7 @@ class Panel(widgets.Window):
 			self.min_size = (self.width, self.height)
 			self.max_size = (self.width, self.height)
 			self.adaptLayout()
+			event.consume()
 		
 		self.resize = False
 		if event.getX() < 0 or event.getX() >= self.width \

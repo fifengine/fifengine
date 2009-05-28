@@ -39,7 +39,7 @@ class FileBrowser(object):
 		})
 		self._setDirectory()
 		if self.savefile:
-			self._file_entry = widgets.TextField(name='saveField', text='')	
+			self._file_entry = widgets.TextField(name='saveField', text=u'')	
 			self._widget.findChild(name="fileColumn").addChild(self._file_entry)
 		self._widget.show()
 

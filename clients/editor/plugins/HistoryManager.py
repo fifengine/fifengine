@@ -19,6 +19,7 @@ class HistoryManager(plugin.Plugin):
 		self.engine = None
 		
 		self._enabled = False
+		self.undomanager = None
 
 	def enable(self):
 		if self._enabled is True:
@@ -240,16 +241,20 @@ class HistoryManager(plugin.Plugin):
 		self._showAction.setChecked(False)
 		
 	def _undo(self):
-		self.undomanager.undo()
+		if self.undomanager:
+			self.undomanager.undo()
 	
 	def _redo(self):
-		self.undomanager.redo()
+		if self.undomanager:
+			self.undomanager.redo()
 		
 	def _next(self):
-		self.undomanager.nextBranch()
+		if self.undomanager:
+			self.undomanager.nextBranch()
 		
 	def _prev(self):
-		self.undomanager.previousBranch()
+		if self.undomanager:
+			self.undomanager.previousBranch()
 		
 	def toggle(self):
 		if self.gui.isVisible():

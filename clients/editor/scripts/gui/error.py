@@ -16,4 +16,5 @@ class ErrorDialog(object):
 			'message' : message
 		})
 		self._widget.show()
+		self._widget.adaptLayout() # Necessary to make scrollarea work properly
 

@@ -28,7 +28,7 @@ class FileManager(object):
 		action.activated.connect(self.showMapWizard, sender=newAction)
 		action.activated.connect(self.showLoadDialog, sender=loadAction)
 		action.activated.connect(self.save, sender=saveAction)
-		action.activated.connect(self.showSaveDialog, sender=saveAsAction)
+		action.activated.connect(self.saveAs, sender=saveAsAction)
 		action.activated.connect(self.editor.saveAll, sender=saveAllAction)
 		
 		fileGroup = ActionGroup()
@@ -57,6 +57,13 @@ class FileManager(object):
 			
 		fname = '/'.join([path, filename])
 		mapview.saveAs(fname)
+		
+	def saveAs(self):
+		mapview = self.editor.getActiveMapView()
+		if mapview is None:
+			print "No map is open"
+			return
+		self.showSaveDialog(self)
 		
 	def loadFile(self, path, filename):
 		self.editor.openFile('/'.join([path, filename]))

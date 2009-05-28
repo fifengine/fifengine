@@ -1,4 +1,6 @@
-<Window name="errorWindow" title="Error" min_size="150, 50">
-	<Label name="message" text="Error:" wrap_text="1"/>
+<Panel name="errorWindow" title="Error" min_size="300, 100">
+	<ScrollArea>
+		<Label name="message" text="Error:" wrap_text="1" vexpand="1"/>
+	</ScrollArea>
 	<Button name="okButton" text="OK"/>
-</Window>
+</Panel>
