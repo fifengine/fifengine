@@ -71,6 +71,7 @@ namespace FIFE {
 
 			const std::vector<Instance*>& getInstances() const;
 			std::vector<Instance*> getInstances(const std::string& identifier);
+			std::vector<Instance*> getInstancesAt(Location& loc, bool use_exactcoordinates=false);
 			Instance* getInstance(const std::string& id);
 
 			void setInstancesVisible(bool vis);

@@ -88,15 +88,14 @@ class MapController(object):
 	def getInstancesFromPosition(self, position, top_only):
 		self._assert(self._layer, 'No layer assigned in getInstancesFromPosition')
 		self._assert(position, 'No position assigned in getInstancesFromPosition')
-		self._assert(self._camera, 'No camera assigned in getInstancesFromPosition')
 
 		loc = fife.Location(self._layer)
 		if type(position) == fife.ExactModelCoordinate:
 			loc.setExactLayerCoordinates(position)
 		else:
 			loc.setLayerCoordinates(position)
-		#print "Valid:", loc.isValid(), loc.getLayer(), self._layer, loc.getLayer().getCellGrid()
-		instances = self._camera.getMatchingInstances(loc)
+			
+		instances = self._layer.getInstancesAt(loc)
 
 		if top_only and (len(instances) > 0):
 			instances = [instances[0]]
