@@ -27,9 +27,7 @@ class Panel(widgets.Window):
 		self._resizable_left = True
 		self._resizable_right = True
 		self._resizable_bottom = True
-		
-		self.dragoffset = (0, 0)
-		
+
 		self._floating = True
 		self._titlebarheight = 16
 		
@@ -185,18 +183,39 @@ class Panel(widgets.Window):
 					or event.getY() <= 0 or event.getY() >= self.height+self.titlebar_height:
 				self.mouseExited(event)
 		elif self._movable:
+			mouseX = self.x+event.getX()
+			mouseY = self.y+event.getY()
+		
 			editor = scripts.editor.getEditor()
-			if self.x + event.getX() < 25:
-				editor.dockWidgetTo(self, "left")
-				
-			elif self.x + event.getX() > pychan.internal.screen_width() - 25:
-				editor.dockWidgetTo(self, "right")
-				
-			elif self.y + event.getY() < 50:
-				editor.dockWidgetTo(self, "top")
-				
-			elif self.y + event.getY() > pychan.internal.screen_height() - 50:
-				editor.dockWidgetTo(self, "bottom")
+			
+			# FIXME: This is a little hackish. Perhaps we should do this check in MainWindow?
+			for side in editor._dockareas:
+				dockarea = editor._dockareas[side]
+				# Get absolute pos
+				absX = dockarea.x
+				absY = dockarea.y
+				parent = dockarea.parent
+				while parent is not None:
+					absX += parent.x
+					absY += parent.y
+					parent = parent.parent
+					
+				if absX <= self.x+mouseX and absX <= mouseY \
+						and absX+dockarea.width >= mouseX and absX+dockarea.height >= mouseY:
+					editor.dockWidgetTo(self, side)
+					break
+			else:
+				if self.x + event.getX() < 25:
+					editor.dockWidgetTo(self, "left")
+					
+				elif self.x + event.getX() > pychan.internal.screen_width() - 25:
+					editor.dockWidgetTo(self, "right")
+					
+				elif self.y + event.getY() < 50:
+					editor.dockWidgetTo(self, "top")
+					
+				elif self.y + event.getY() > pychan.internal.screen_height() - 50:
+					editor.dockWidgetTo(self, "bottom")
 	
 	
 # Register widget to pychan

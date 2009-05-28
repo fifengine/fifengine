@@ -45,6 +45,7 @@ class DockArea(widgets.VBox):
 				tabwidget.removeTab(child)
 				self.gui.removeChild(tabwidget)
 				child.setDocked(False)
+				self.adaptLayout()
 			tab[2].capture(undock)
 			tabwidget.hexpand=1
 			tabwidget.vexpand=1
@@ -126,7 +127,7 @@ class DockArea(widgets.VBox):
 				
 			if self.left or self.right:
 				# Resize children
-				for child in self.findChildren(parent=self):
+				for child in self.gui.findChildren(parent=self.gui):
 					child.min_size = (self.width, child.min_size[1])
 					child.max_size = (self.width, child.max_size[1])
 					
@@ -140,7 +141,7 @@ class DockArea(widgets.VBox):
 				
 			if self.top or self.bottom:
 				# Resize children
-				for child in self.findChildren(parent=self):
+				for child in self.gui.findChildren(parent=self.gui):
 					child.min_size = (child.min_size[0], self.height)
 					child.max_size = (child.max_size[0], self.height)
 					
@@ -156,18 +157,9 @@ class DockArea(widgets.VBox):
 		
 		if self.left or self.right or self.top or self.bottom:
 			self.resize = True
-			self.min_size = (5, 5)
-			self.max_size = (5000, 5000)
 		
 	def mouseReleased(self, event):
 		if self.resize:
-			if self.side == "left" or self.side == "right":
-				self.min_size = (self.width, self.min_size[1])
-				self.max_size = (self.width, self.max_size[1])
-			else:
-				self.min_size = (self.min_size[0], self.height)
-				self.max_size = (self.max_size[0], self.height)
-				
 			self.adaptLayout()
 			event.consume()
 		
@@ -175,5 +167,3 @@ class DockArea(widgets.VBox):
 			if event.getX() <= 0 or event.getX() >= self.width \
 					or event.getY() <= 0 or event.getY() >= self.height:
 				self.mouseExited(event)
-	
-		
