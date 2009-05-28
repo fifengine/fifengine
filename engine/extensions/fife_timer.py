@@ -70,10 +70,13 @@ def delayCall(delay,callback):
 	@return The timer.
 	"""
 	timer = Timer(delay)
-	def real_callback():
-		timer.stop()
-		callback()
-	timer.callback = real_callback
+	def cbwa(c, *args):
+		c(*args)
+	def real_callback(c, t):
+		t.stop()
+		c()
+		
+	timer.callback = cbwa(real_callback, callback, timer)
 	timer.start()
 	return timer
 
