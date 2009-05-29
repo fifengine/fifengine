@@ -27,8 +27,14 @@ class DockArea(widgets.VBox, ResizableBase):
 		
 		self.buildGui()
 		self.tabwidgets = []
+		self.panels = []
 		
 	def dockChild(self, child, x, y):
+		for panel in self.panels:
+			if panel[0] == child:
+				return
+	
+		child.dockarea = self
 		child.setDocked(True)
 		areaX, areaY = self.getAbsolutePos()
 		
@@ -81,20 +87,34 @@ class DockArea(widgets.VBox, ResizableBase):
 			tabwidget = placeIn
 
 		tab = tabwidget.addTab(child, child.title)
+		self.panels.append( (child, tabwidget) )
 		
 		def undock(event):
 			if event.getButton() != 2: # Right click
 				return
 				
-			tabwidget.removeTab(child)
-			child.setDocked(False)
-			
-			if len(tabwidget.tabs) <= 0:
-				self.gui.removeChild(tabwidget)
-				self.tabwidgets.remove(tabwidget)
-			self.adaptLayout()
+			self.undockChild(child)
 			
 		tab[2].capture(undock, "mouseClicked")
+		
+	def undockChild(self, child, childIsCaller=False):
+		tabwidget = None
+		for panel in self.panels:
+			if panel[0] == child:
+				tabwidget = panel[1]
+				self.panels.remove(panel)
+				break
+		else:
+			return
+			
+		tabwidget.removeTab(child)
+		if childIsCaller is False:
+			child.setDocked(False)
+		
+		if len(tabwidget.tabs) <= 0:
+			self.gui.removeChild(tabwidget)
+			self.tabwidgets.remove(tabwidget)
+		self.adaptLayout()
 		
 	def buildGui(self):
 		if self.gui:

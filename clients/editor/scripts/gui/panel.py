@@ -19,6 +19,8 @@ class Panel(widgets.Window, ResizableBase):
 		self._floating = True
 		self._titlebarheight = 16
 		
+		self.dockarea = None
+		
 	def setDocked(self, docked):
 		if self.dockable is False:
 			return
@@ -38,17 +40,16 @@ class Panel(widgets.Window, ResizableBase):
 			
 			# Since x and y coordinates are reset if the widget gets hidden,
 			# we need to store them
-			absX = self.x
-			absY = self.y
-			# Get absolute pos
-			parent = self.parent
-			while parent is not None:
-				absX += parent.x
-				absY += parent.y
-				parent = parent.parent
+			absX, absY = self.getAbsolutePos()
 			
-			if self.parent is not None:
-				# Remove from parent widget
+			# Remove from parent widget
+			if self.dockarea is not None:
+				# Use dockareas undock method
+				self.dockarea.undockChild(self, True)
+				self.dockarea = None
+
+			elif self.parent is not None:
+				# Force removal
 				widgetParent = self.parent
 				widgetParent.removeChild(self)
 				widgetParent.adaptLayout()
@@ -95,7 +96,7 @@ class Panel(widgets.Window, ResizableBase):
 			dockArea = editor.getDockAreaAt(mouseX, mouseY)
 			if dockArea is not None:
 				editor.dockWidgetTo(self, dockArea, mouseX, mouseY)
-	
+				
 	
 # Register widget to pychan
 if 'Panel' not in widgets.WIDGETS:

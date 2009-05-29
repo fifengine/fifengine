@@ -21,6 +21,9 @@ class ResizableBase(object):
 		self.capture(self.mousePressed, "mousePressed", "ResizableBase")
 		self.capture(self.mouseReleased, "mouseReleased", "ResizableBase")
 		
+		self.cursor_id = 0
+		self.cursor_type = 1
+		
 	
 	def mouseEntered(self, event):
 		# Save cursor id
@@ -75,6 +78,7 @@ class ResizableBase(object):
 			return
 			
 		event.consume()
+		_mousemoveevent[key].consume()
 		
 	def mouseExited(self, event):
 		# Reset cursor to whatever it was before it entered this window

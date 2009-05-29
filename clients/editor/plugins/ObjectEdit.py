@@ -272,7 +272,8 @@ class ObjectEdit(plugin.Plugin):
 		"""
 		if self.active is True:
 			self.active = False
-			if self.container.isVisible():
+			if self.container.isVisible() or self.container.isDocked():
+				self.container.setDocked(False)
 				self.container.hide()
 			self._showAction.setChecked(False)
 		else:

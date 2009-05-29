@@ -260,8 +260,10 @@ class LayerTool(plugin.Plugin):
 		self._mapview.getController().selectLayer(layerid)
 
 	def toggle(self):
-		if self.container.isVisible():
+		if self.container.isVisible() or self.container.isDocked():
+			self.container.setDocked(False)
 			self.container.hide()
+
 			self._showAction.setChecked(False)
 		else:
 			self.container.show()

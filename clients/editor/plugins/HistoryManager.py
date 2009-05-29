@@ -237,6 +237,7 @@ class HistoryManager(plugin.Plugin):
 		self._showAction.setChecked(True)
 
 	def hide(self):
+		self.gui.setDocked(False)
 		self.gui.hide()
 		self._showAction.setChecked(False)
 		
@@ -257,7 +258,7 @@ class HistoryManager(plugin.Plugin):
 			self.undomanager.previousBranch()
 		
 	def toggle(self):
-		if self.gui.isVisible():
+		if self.gui.isVisible() or self.gui.isDocked():
 			self.hide()
 		else:
 			self.show()
