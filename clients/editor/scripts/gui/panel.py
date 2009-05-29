@@ -123,8 +123,7 @@ class Panel(widgets.Window):
 			else:
 				cursor.set(self.cursor_type, self.cursor_id)
 		except:
-			print "Resizable windows are a lot cooler with native cursors =)",
-			print " Check the patch in the forums"
+			pass
 		
 	def mouseExited(self, event):
 		# Reset cursor to whatever it was before it entered this window
