@@ -103,7 +103,7 @@ class MainWindow(object):
 	def getToolBar(self): 
 		return self._toolbar
 	
-	def dockWidgetTo(self, widget, dockarea):
+	def dockWidgetTo(self, widget, dockarea, x=-1, y=-1):
 		if isinstance(widget, pychan.widgets.Widget) is False:
 			print "Argument is not a valid widget"
 			return
@@ -125,47 +125,51 @@ class MainWindow(object):
 			elif dockarea == DOCKAREA['top'] or dockarea == DOCKAREA['bottom']:
 				widget.setOrientation(ToolBar.ORIENTATION["Horizontal"])
 	
-		if dockarea == DOCKAREA['left']:
-			widget.resizable = False
-			widget.setDocked(True)
-			dockareas[DOCKAREA['left']].addChild(widget)
-			dockareas[DOCKAREA['left']].adaptLayout()
-			
-		elif dockarea == DOCKAREA['right']:
-			widget.resizable = False
-			widget.setDocked(True)
-			dockareas[DOCKAREA['right']].addChild(widget)
-			dockareas[DOCKAREA['right']].adaptLayout()
-			
-		elif dockarea == DOCKAREA['top']:
-			widget.setDocked(True)
-			widget.resizable = False
-			dockareas[DOCKAREA['top']].addChild(widget)
-			dockareas[DOCKAREA['top']].adaptLayout()
-			
-		elif dockarea == DOCKAREA['bottom']:
-			widget.setDocked(True)
-			widget.resizable = False
-			dockareas[DOCKAREA['bottom']].addChild(widget)
-			dockareas[DOCKAREA['bottom']].adaptLayout()
-			
+		if isinstance(widget, ToolBar):
+			if dockarea == DOCKAREA['left']:
+				widget.setDocked(True)
+				dockareas[DOCKAREA['left']].addChild(widget)
+				dockareas[DOCKAREA['left']].adaptLayout()
+				
+			elif dockarea == DOCKAREA['right']:
+				widget.setDocked(True)
+				dockareas[DOCKAREA['right']].addChild(widget)
+				dockareas[DOCKAREA['right']].adaptLayout()
+				
+			elif dockarea == DOCKAREA['top']:
+				widget.resizable = False
+				dockareas[DOCKAREA['top']].addChild(widget)
+				dockareas[DOCKAREA['top']].adaptLayout()
+				
+			elif dockarea == DOCKAREA['bottom']:
+				widget.setDocked(True)
+				dockareas[DOCKAREA['bottom']].addChild(widget)
+				dockareas[DOCKAREA['bottom']].adaptLayout()
+				
+			else:
+				print "Invalid dockarea"
 		else:
-			print "Invalid dockarea"
+			if dockarea == DOCKAREA['left']:
+				dockareas[DOCKAREA['left']].dockChild(widget, x, y)
+				
+			elif dockarea == DOCKAREA['right']:
+				dockareas[DOCKAREA['right']].dockChild(widget, x, y)
+				
+			elif dockarea == DOCKAREA['top']:
+				dockareas[DOCKAREA['top']].dockChild(widget, x, y)
+				
+			elif dockarea == DOCKAREA['bottom']:
+				dockareas[DOCKAREA['bottom']].dockChild(widget, x, y)
+				
+			else:
+				print "Invalid dockarea"
 			
 	def getDockAreaAt(self, x, y):
 		for key in DOCKAREA:
 			side = DOCKAREA[key]
 			
 			dockarea = self._dockareas[side]
-			# Get absolute pos
-			absX = dockarea.x
-			absY = dockarea.y
-			parent = dockarea.parent
-			while parent is not None:
-				absX += parent.x
-				absY += parent.y
-				parent = parent.parent
-				
+			absX, absY = dockarea.getAbsolutePos()
 			if absX <= x and absY <= y \
 					and absX+dockarea.width >= x and absX+dockarea.height >= y:
 				return side

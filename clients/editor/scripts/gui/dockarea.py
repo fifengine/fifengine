@@ -37,30 +37,73 @@ class DockArea(widgets.VBox):
 		self.buildGui()
 		self.tabwidgets = []
 		
-	def addChild(self, child):
-		if isinstance(child, Panel):
-			if len(self.tabwidgets) <= 0:
-				self.tabwidgets.append(FakeTabWidget())
-				self.gui.addChild(self.tabwidgets[0])
-			tabwidget = self.tabwidgets[0]
-			
-			tab = tabwidget.addTab(child, child.title)
-			
-			def undock(event):
-				if event.getButton() != 2: # Right click
-					return
+	def dockChild(self, child, x, y):
+		child.setDocked(True)
+		areaX, areaY = self.getAbsolutePos()
+		
+		placeAfter = None
+		placeBefore = None
+		placeIn = None
+		
+		if x >= 0 and y >= 0:
+			# See if widget was dropped on a tabwidget
+			for tabwidget in self.tabwidgets:
+				absX, absY = tabwidget.getAbsolutePos()
 					
-				tabwidget.removeTab(child)
-				child.setDocked(False)
-				
-				if len(tabwidget.tabs) <= 0:
-					self.gui.removeChild(tabwidget)
-				self.adaptLayout()
-			tab[2].capture(undock, "mouseClicked")
+				if absX <= x and absY <= y \
+						and absX+tabwidget.width >= x and absX+tabwidget.height >= y:
+					# Check if the user tried to place it in front, or after this widget
+					if self.side == "left" or self.side == "right":
+						if y < absY+30:
+							placeBefore = tabwidget
+						elif y > absY+tabwidget.height-30:
+							placeAfter = tabwidget
+						else:
+							placeIn = tabwidget
+					else:
+						if x < absX+30:
+							placeBefore = tabwidget
+						elif x > absX+tabwidget.width-30:
+							placeAfter = tabwidget
+						else:
+							placeIn = tabwidget
+					break
+	
+		if placeIn is None:
+			tabwidget = FakeTabWidget(resizable=True)
 			tabwidget.hexpand=1
 			tabwidget.vexpand=1
+		
+			if self.side == "left" or self.side == "right":
+				tabwidget._resizable_bottom = True
+			else:
+				tabwidget._resizable_right = True
+			self.tabwidgets.append(tabwidget)
+			
+			if placeBefore:
+				self.gui.insertChildBefore(tabwidget, placeBefore)
+			elif placeAfter:
+				self.gui.insertChild(tabwidget, self.gui.children.index(placeAfter)+1)
+			else:
+				self.gui.addChild(tabwidget)
 		else:
-			super(DockArea, self).addChild(child)
+			tabwidget = placeIn
+
+		tab = tabwidget.addTab(child, child.title)
+		
+		def undock(event):
+			if event.getButton() != 2: # Right click
+				return
+				
+			tabwidget.removeTab(child)
+			child.setDocked(False)
+			
+			if len(tabwidget.tabs) <= 0:
+				self.gui.removeChild(tabwidget)
+				self.tabwidgets.remove(tabwidget)
+			self.adaptLayout()
+			
+		tab[2].capture(undock, "mouseClicked")
 		
 	def buildGui(self):
 		if self.gui:
@@ -140,7 +183,6 @@ class DockArea(widgets.VBox):
 				for child in self.gui.findChildren(parent=self.gui):
 					child.min_size = (self.width, child.min_size[1])
 					child.max_size = (self.width, child.max_size[1])
-					
 				
 			# Resize vertically
 			if self.top:
@@ -154,6 +196,8 @@ class DockArea(widgets.VBox):
 				for child in self.gui.findChildren(parent=self.gui):
 					child.min_size = (child.min_size[0], self.height)
 					child.max_size = (child.max_size[0], self.height)
+					
+			self.gui.max_size = (self.width, self.height)
 					
 
 	def mousePressed(self, event):
@@ -177,3 +221,4 @@ class DockArea(widgets.VBox):
 			if event.getX() <= 0 or event.getX() >= self.width \
 					or event.getY() <= 0 or event.getY() >= self.height:
 				self.mouseExited(event)
+				

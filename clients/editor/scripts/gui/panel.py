@@ -40,7 +40,7 @@ class Panel(widgets.Window):
 				self.real_widget.setTitleBarHeight(0)
 				self.real_widget.setMovable(False)
 				self._movable = False
-				#self.resizable = False
+				self.resizable = False
 				
 		elif docked is False and self._floating is False:			
 			self._floating = True
@@ -188,7 +188,7 @@ class Panel(widgets.Window):
 			editor = scripts.editor.getEditor()
 			dockArea = editor.getDockAreaAt(mouseX, mouseY)
 			if dockArea is not None:
-				editor.dockWidgetTo(self, dockArea)
+				editor.dockWidgetTo(self, dockArea, mouseX, mouseY)
 	
 	
 # Register widget to pychan
