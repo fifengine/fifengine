@@ -35,18 +35,28 @@ class DockArea(widgets.VBox):
 		self.gui = None
 		
 		self.buildGui()
+		self.tabwidgets = []
 		
 	def addChild(self, child):
 		if isinstance(child, Panel):
-			tabwidget = FakeTabWidget()
+			if len(self.tabwidgets) <= 0:
+				self.tabwidgets.append(FakeTabWidget())
+				self.gui.addChild(self.tabwidgets[0])
+			tabwidget = self.tabwidgets[0]
+			
 			tab = tabwidget.addTab(child, child.title)
-			self.gui.addChild(tabwidget)
-			def undock():
+			
+			def undock(event):
+				if event.getButton() != 2: # Right click
+					return
+					
 				tabwidget.removeTab(child)
-				self.gui.removeChild(tabwidget)
 				child.setDocked(False)
+				
+				if len(tabwidget.tabs) <= 0:
+					self.gui.removeChild(tabwidget)
 				self.adaptLayout()
-			tab[2].capture(undock)
+			tab[2].capture(undock, "mouseClicked")
 			tabwidget.hexpand=1
 			tabwidget.vexpand=1
 		else:

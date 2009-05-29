@@ -22,24 +22,18 @@ class FakeTabWidget(widgets.VBox):
 			if tab[1] == widget:
 				return
 	
-		widget.max_size = (1000, 1000)
+		widget.max_size = (5000, 5000)
 		widget.hexpand = 1
 		widget.vexpand = 1
 	
-		self.widgetarea.removeAllChildren()
-		self.widgetarea.addChild( widget )
-		
-		
-		button = widgets.Button(text=title)
+		button = widgets.ToggleButton(text=title, group="faketab_"+str(id(self)))
 		self.buttonbox.addChild(button)
 		
 		tab = (title, widget, button)
 		self.tabs.append( tab )
-		print self.tabs[0][1].parent
-		
-		def callback(event):
-			self.buttonClicked(tab, event)
-		button.capture(callback, "mouseClicked")
+
+		button.capture(cbwa(self.showTab, tab))
+		self.showTab(tab)
 		
 		return tab
 		
@@ -50,8 +44,16 @@ class FakeTabWidget(widgets.VBox):
 					self.widgetarea.removeChild(widget)
 				self.buttonbox.removeChild(tab[2])
 				del self.tabs[i]
+				break
+		else: return
+			
+		if len(self.tabs) > 0:
+			self.showTab(self.tabs[0])
 		
-	def buttonClicked(self, tab, event):
-		pass
+	def showTab(self, tab):
+		tab[2].toggled = True
+		self.widgetarea.removeAllChildren()
+		self.widgetarea.addChild(tab[1])
+		self.widgetarea.adaptLayout()
 		
 		

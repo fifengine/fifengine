@@ -151,4 +151,36 @@ class MainWindow(object):
 			
 		else:
 			print "Invalid dockarea"
+			
+	def getDockAreaAt(self, x, y):
+		for key in DOCKAREA:
+			side = DOCKAREA[key]
+			
+			dockarea = self._dockareas[side]
+			# Get absolute pos
+			absX = dockarea.x
+			absY = dockarea.y
+			parent = dockarea.parent
+			while parent is not None:
+				absX += parent.x
+				absY += parent.y
+				parent = parent.parent
+				
+			if absX <= x and absY <= y \
+					and absX+dockarea.width >= x and absX+dockarea.height >= y:
+				return side
 
+		# Mouse wasn't over any dockwidgets. See if it is near any edge of the screen instead
+		if x < 25:
+			return DOCKAREA["left"]
+			
+		elif x > pychan.internal.screen_width() - 25:
+			return DOCKAREA["right"]
+			
+		elif y < 50:
+			return DOCKAREA["top"]
+			
+		elif y > pychan.internal.screen_height() - 50:
+			return DOCKAREA["bottom"]
+
+		return None
