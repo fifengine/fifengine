@@ -62,7 +62,7 @@ class Widget(object):
 		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),ColorAttr('selection_color'),
 		Attr('style'), Attr('font'),IntAttr('border_size'),Attr('position_technique'),
 		IntAttr('vexpand'),IntAttr('hexpand'),
-		UnicodeAttr('helptext')
+		UnicodeAttr('helptext'), BoolAttr('is_focusable')
 		]
 
 	DEFAULT_NAME = '__unnamed__'
@@ -695,6 +695,10 @@ class Widget(object):
 		return getattr(self,'_name','__no_name_yet__')
 	name = property(_getName,_setName)
 
+	def _setFocusable(self, b): self.real_widget.setFocusable(b)
+	def _isFocusable(self):
+		return self.real_widget.isFocusable()
+
 	x = property(_getX,_setX)
 	y = property(_getY,_setY)
 	width = property(_getWidth,_setWidth)
@@ -707,6 +711,7 @@ class Widget(object):
 	position = property(_getPosition,_setPosition)
 	font = property(_getFont,_setFont)
 	border_size = property(_getBorderSize,_setBorderSize)
+	is_focusable = property(_isFocusable,_setFocusable) 
 
 	def setEnterCallback(self, cb):
 		"""

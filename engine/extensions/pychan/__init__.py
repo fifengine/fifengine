@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# coding: utf-8
 
 """\
 Pythonic Guichan Wrapper - PyChan
@@ -100,7 +99,7 @@ L{widgets.Widget.capture} calls in an obvious way.
 Other important places to look for information:
   - L{widgets.Widget} - Attributes explained.
   - L{loadXML} - Explain the XML format.
-  - L{LayoutBase} - Working of the layout engine.
+  - L{widgets.layout.LayoutBase} - Working of the layout engine.
 
 Initialization, data distribution and collection
 ================================================
@@ -239,12 +238,17 @@ __all__ = [
 	'manager'
 ]
 
+
+# For epydoc
+import widgets
+import widgets.ext
+
+# This *import should really be removed!
 from widgets import *
+
 from exceptions import *
 
 from fonts import loadFonts
-
-# Text munging befor adding it to TextBoxes
 
 ### Initialisation ###
 
@@ -424,15 +428,17 @@ def setupModalExecution(mainLoop,breakFromMainLoop):
 
 def setUnicodePolicy(*policy):
 	"""
+	Set the unicode error handling policy.
+	
 	Possible options are:
-	- 'strict' meaning that encoding errors raise a UnicodeEncodeError.
-	- 'ignore' all encoding errors will be silently ignored.
-	- 'replace' all errors are replaced by the next argument.
+	 - 'strict' meaning that encoding errors raise a UnicodeEncodeError.
+	 - 'ignore' all encoding errors will be silently ignored.
+	 - 'replace' all errors are replaced by the next argument.
 
 	For further information look at the python documentation,
 	especially L{codecs.register_error}.
 
-	Example:
+	Example::
 		pychan.setUnicodePolicy('replace','?')
 	"""
 	if not manager:
