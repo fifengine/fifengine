@@ -33,6 +33,15 @@ class ResizableBase(object):
 		if self.resizable is False: 
 			return
 			
+		# Hack to allow consuming mousemove events
+		key = (event.getX(), event.getY())
+		if _mousemoveevent.has_key( key ) is False:
+			_mousemoveevent.clear()
+			_mousemoveevent[key] = event
+		elif _mousemoveevent[key].isConsumed():
+			return
+			
+			
 		titleheight = 0
 		if hasattr(self.real_widget, "getTitleBarHeight"):
 			titleheight = self.real_widget.getTitleBarHeight()
@@ -63,6 +72,9 @@ class ResizableBase(object):
 			cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZES)
 		else:
 			cursor.set(self.cursor_type, self.cursor_id)
+			return
+			
+		event.consume()
 		
 	def mouseExited(self, event):
 		# Reset cursor to whatever it was before it entered this window
@@ -124,4 +136,6 @@ class ResizableBase(object):
 					or event.getY() <= 0 or event.getY() >= self.height+titleheight:
 				self.mouseExited(event)
 				
-	
+# Ugly hack to allow consumption of mousemove events
+_mousemoveevent = {}
+
