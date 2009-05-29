@@ -256,7 +256,7 @@ namespace FIFE {
 
 		// Load cursor
 #if defined( __linux__ )
-		Display* dsp = XOpenDisplay(NULL);
+		static Display* dsp = XOpenDisplay(NULL);
 		XCursor xCursor = XcursorShapeLoadCursor(dsp, cursor_id);
 		if (xCursor == 0) {
 			if (m_native_cursor != NULL) {
