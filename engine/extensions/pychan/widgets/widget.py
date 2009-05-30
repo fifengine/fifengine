@@ -594,6 +594,19 @@ class Widget(object):
 		Recursively apply a callable to all contained widgets and then the widget itself.
 		"""
 		visitorFunc(self)
+		
+	def getAbsolutePos(self):
+		"""
+		Get absolute position on screen
+		"""
+		absX = self.x
+		absY = self.y
+		parent = self.parent
+		while parent is not None:
+			absX += parent.x
+			absY += parent.y
+			parent = parent.parent
+		return (absX, absY)
 
 	def sizeChanged(self):
 		pass

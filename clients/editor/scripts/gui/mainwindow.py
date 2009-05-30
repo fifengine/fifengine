@@ -37,6 +37,7 @@ class MainWindow(object):
 				DOCKAREA['bottom']:None
 			}
 			
+		self.dockareamarker = None
 			
 	def initGui(self, screen_width, screen_height):
 		bar_height = 30
@@ -164,27 +165,78 @@ class MainWindow(object):
 			else:
 				print "Invalid dockarea"
 			
-	def getDockAreaAt(self, x, y):
+	def getDockAreaAt(self, x, y, mark=False):
+		if self.dockareamarker is None:
+			self.dockareamarker = pychan.widgets.Container()
+			self.dockareamarker.base_color = fife.Color(200, 0, 0, 100)
+		if mark is False:
+			self.dockareamarker.hide()
+	
 		for key in DOCKAREA:
 			side = DOCKAREA[key]
 			
 			dockarea = self._dockareas[side]
-			absX, absY = dockarea.getAbsolutePos()
-			if absX <= x and absY <= y \
-					and absX+dockarea.width >= x and absX+dockarea.height >= y:
+			#absX, absY = dockarea.getAbsolutePos()
+			#if absX <= x and absY <= y \
+			#		and absX+dockarea.width >= x and absX+dockarea.height >= y:
+			#	return side
+			placeIn, placeBefore, placeAfter = dockarea.getDockLocation(x, y)
+			if placeIn or placeBefore or placeAfter:
+				if mark is True:
+					if placeIn:
+						self.dockareamarker.position = placeIn.getAbsolutePos()
+						self.dockareamarker.size = placeIn.size
+					elif placeBefore:
+						self.dockareamarker.position = placeBefore.getAbsolutePos()
+						if side == "left" or side == "right":
+							self.dockareamarker.size = (placeBefore.width, 10)
+						else:
+							self.dockareamarker.size = (10, placeBefore.height)
+					elif placeAfter:
+						self.dockareamarker.position = placeAfter.getAbsolutePos()
+						
+						if side == "left" or side == "right":
+							self.dockareamarker.size = (placeAfter.width, 10)
+							self.dockareamarker.y += placeAfter.height-10
+						else:
+							self.dockareamarker.size = (10, placeAfter.height)
+							self.dockareamarker.x += placeAfter.width-10
+						
+					self.dockareamarker.show()
 				return side
+			
 
 		# Mouse wasn't over any dockwidgets. See if it is near any edge of the screen instead
-		if x < 25:
+		if x <= self._dockareas["left"].getAbsolutePos()[0]+10:
+			if mark:
+				self.dockareamarker.position = self._dockareas["left"].getAbsolutePos()
+				self.dockareamarker.size = (10, self._dockareas["left"].height)
+				self.dockareamarker.show()
 			return DOCKAREA["left"]
 			
-		elif x > pychan.internal.screen_width() - 25:
+		elif x >= self._dockareas["right"].getAbsolutePos()[0]-10:
+			if mark:
+				self.dockareamarker.position = self._dockareas["right"].getAbsolutePos()
+				self.dockareamarker.size = (10, self._dockareas["right"].height)
+				self.dockareamarker.x -= 10
+				self.dockareamarker.show()
 			return DOCKAREA["right"]
 			
-		elif y < 50:
+		elif y <= self._dockareas["top"].getAbsolutePos()[1]+10:
+			if mark:
+				self.dockareamarker.position = self._dockareas["top"].getAbsolutePos()
+				self.dockareamarker.size = (self._dockareas["top"].width, 10)
+				self.dockareamarker.show()
 			return DOCKAREA["top"]
 			
-		elif y > pychan.internal.screen_height() - 50:
+		elif y >= self._dockareas["bottom"].getAbsolutePos()[1]-10:
+			if mark:
+				self.dockareamarker.position = self._dockareas["bottom"].getAbsolutePos()
+				self.dockareamarker.y -= 10
+				self.dockareamarker.size = (self._dockareas["bottom"].width, 10)
+				self.dockareamarker.show()
 			return DOCKAREA["bottom"]
 
+		if mark is True:
+			self.dockareamarker.hide()
 		return None

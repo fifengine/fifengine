@@ -29,15 +29,7 @@ class DockArea(widgets.VBox, ResizableBase):
 		self.tabwidgets = []
 		self.panels = []
 		
-	def dockChild(self, child, x, y):
-		for panel in self.panels:
-			if panel[0] == child:
-				return
-	
-		child.dockarea = self
-		child.setDocked(True)
-		areaX, areaY = self.getAbsolutePos()
-		
+	def getDockLocation(self, x, y):
 		placeAfter = None
 		placeBefore = None
 		placeIn = None
@@ -48,23 +40,33 @@ class DockArea(widgets.VBox, ResizableBase):
 				absX, absY = tabwidget.getAbsolutePos()
 					
 				if absX <= x and absY <= y \
-						and absX+tabwidget.width >= x and absX+tabwidget.height >= y:
+						and absX+tabwidget.width >= x and absY+tabwidget.height >= y:
 					# Check if the user tried to place it in front, or after this widget
 					if self.side == "left" or self.side == "right":
-						if y < absY+30:
+						if y < absY+10:
 							placeBefore = tabwidget
-						elif y > absY+tabwidget.height-30:
+						elif y > absY+tabwidget.height-10:
 							placeAfter = tabwidget
-						else:
-							placeIn = tabwidget
 					else:
-						if x < absX+30:
+						if x < absX+10:
 							placeBefore = tabwidget
-						elif x > absX+tabwidget.width-30:
+						elif x > absX+tabwidget.width-10:
 							placeAfter = tabwidget
-						else:
-							placeIn = tabwidget
+					if placeAfter is None and placeBefore is None:
+						placeIn = tabwidget
 					break
+					
+		return (placeIn, placeBefore, placeAfter)
+		
+	def dockChild(self, child, x, y):
+		for panel in self.panels:
+			if panel[0] == child:
+				return
+	
+		child.dockarea = self
+		child.setDocked(True)
+		
+		placeIn, placeBefore, placeAfter = self.getDockLocation(x, y)
 	
 		if placeIn is None:
 			tabwidget = FakeTabWidget(resizable=True)

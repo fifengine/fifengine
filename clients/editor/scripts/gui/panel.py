@@ -21,6 +21,8 @@ class Panel(widgets.Window, ResizableBase):
 		
 		self.dockarea = None
 		
+		self._editor = scripts.editor.getEditor()
+		
 	def setDocked(self, docked):
 		if self.dockable is False:
 			return
@@ -81,6 +83,14 @@ class Panel(widgets.Window, ResizableBase):
 		if self._rLeft or self._rRight or self._rTop or self._rBottom:
 			self._movable = self.real_widget.isMovable()
 			self.real_widget.setMovable(False) # Don't let guichan move window while we resize
+			
+	def mouseDragged(self, event):
+		if self._resize is False and self.isDocked() is False:
+			mouseX = self.x+event.getX()
+			mouseY = self.y+event.getY()
+			self._editor.getDockAreaAt(mouseX, mouseY, True)
+		else:
+			ResizableBase.mouseDragged(self, event)
 	
 	def mouseReleased(self, event):
 		# Resize/move done
@@ -92,10 +102,9 @@ class Panel(widgets.Window, ResizableBase):
 			mouseX = self.x+event.getX()
 			mouseY = self.y+event.getY()
 		
-			editor = scripts.editor.getEditor()
-			dockArea = editor.getDockAreaAt(mouseX, mouseY)
+			dockArea = self._editor.getDockAreaAt(mouseX, mouseY)
 			if dockArea is not None:
-				editor.dockWidgetTo(self, dockArea, mouseX, mouseY)
+				self._editor.dockWidgetTo(self, dockArea, mouseX, mouseY)
 				
 	
 # Register widget to pychan
