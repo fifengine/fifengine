@@ -13,9 +13,6 @@ from menubar import Menu, MenuBar
 from action import Action, ActionGroup
 from scripts.mapcontroller import MapController
 
-SCROLL_TOLERANCE = 10
-SCROLL_SPEED = 1.0
-
 states = (u'VIEWING', u'INSERTING', u'REMOVING', u'MOVING')
 for s in states:
 	globals()[s] = s
@@ -28,6 +25,7 @@ class MapEditor:
 		self._mode = VIEWING
 		
 		self._editor = scripts.editor.getEditor()
+		self._eventlistener = self._editor.getEventListener()
 		self._statusbar = self._editor.getStatusBar()
 		self._toolbar = self._editor.getToolBar()
 		
@@ -37,17 +35,11 @@ class MapEditor:
 		
 		self._toolbox.show()
 		
-		self._ctrldown = False
-		self._shiftdown = False
-		self._altdown = False
-		
 		events.postMapShown.connect(self._mapChanged)
 		
 	def _init(self):
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED
-		self._scrollx = 0
-		self._scrolly = 0
 		
 		self._setMode(VIEWING)
 		
@@ -158,8 +150,7 @@ class MapEditor:
 		self._setMode(mode)
 		
 	def mouseExited(self, sender, event):
-		self._scrollx = 0
-		self._scrolly = 0
+		pass
 
 
 	def mousePressed(self, sender, event):
@@ -168,13 +159,13 @@ class MapEditor:
 
 		realCoords = self._getRealCoords(sender, event)
 
-		if self._ctrldown:
+		if self._eventlistener.controlPressed:
 			if event.getButton() == fife.MouseEvent.LEFT:
 				self._dragx = realCoords[0]
 				self._dragy = realCoords[1]
 		else:
 			if self._controller._camera:
-				self._controller.selectCell(realCoords[0], realCoords[1], self._shiftdown)
+				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
 			if self._mode == VIEWING:
 				self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
 			elif self._mode == INSERTING:
@@ -189,10 +180,10 @@ class MapEditor:
 	def mouseDragged(self, sender, event):
 		if event.isConsumedByWidgets():
 			return
-
+			
 		realCoords = self._getRealCoords(sender, event)
 			
-		if self._ctrldown:
+		if self._eventlistener.controlPressed:
 			if (self._dragx != NOT_INITIALIZED) and (self._dragy != NOT_INITIALIZED):
 				self._controller.moveCamera(realCoords[0] - self._dragx, realCoords[1] - self._dragy)
 			self._dragx = realCoords[0]
@@ -205,8 +196,8 @@ class MapEditor:
 				self._controller.selectCell(realCoords[0], realCoords[1])
 				self._controller.removeInstances(self._controller._selection)
 			elif self._mode == MOVING and self._controller._instances:
-				self._controller.selectCell(realCoords[0], realCoords[1], self._shiftdown)
-				self._controller.moveInstances(exact=self._shiftdown)
+				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
+				self._controller.moveInstances(exact=self._eventlistener.shiftPressed)
 
 	def mouseReleased(self, sender, event):
 		if event.isConsumedByWidgets():
@@ -227,36 +218,20 @@ class MapEditor:
 			screen_x = sender.width + sender_x
 			screen_y = sender.height + sender_y
 			ratio = float(screen_x) / screen_y
-
-			self._scrollx = 0
-			self._scrolly = 0
-
-			if mouse_y <= SCROLL_TOLERANCE + sender_y:
-				# up
-				self._scrolly = SCROLL_SPEED * ratio
-			if mouse_x >= screen_x - SCROLL_TOLERANCE:
-				# right
-				self._scrollx = -SCROLL_SPEED
-			if mouse_y >= screen_y - SCROLL_TOLERANCE:
-				# bottom
-				self._scrolly = -SCROLL_SPEED * ratio
-			if mouse_x <= SCROLL_TOLERANCE + sender_x:
-				# left
-				self._scrollx = SCROLL_SPEED
 				
 	def mouseWheelMovedUp(self, event):
-		if self._ctrldown and self._controller._camera:
+		if self._eventlistener.controlPressed and self._controller._camera:
 			self._controller._camera.setZoom(self._controller._camera.getZoom() * 1.05)
 
 	def mouseWheelMovedDown(self, event):
-		if self._ctrldown and self._controller._camera:
+		if self._eventlistener.controlPressed and self._controller._camera:
 			self._controller._camera.setZoom(self._controller._camera.getZoom() / 1.05)
 
 
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
 		keystr = event.getKey().getAsString().lower()
-
+		
 		if keyval == fife.Key.LEFT:
 			self._controller.moveCamera(50, 0)
 		elif keyval == fife.Key.RIGHT:
@@ -265,13 +240,7 @@ class MapEditor:
 			self._controller.moveCamera(0, 50)
 		elif keyval == fife.Key.DOWN:
 			self._controller.moveCamera(0, -50)
-		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
-			self._ctrldown = True
-		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
-			self._shiftdown = True
-		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
-			self._altdown = True
-
+		
 		elif keyval == fife.Key.INSERT:
 			if self._mode != INSERTING:
 				self._setMode(INSERTING)
@@ -306,26 +275,20 @@ class MapEditor:
 			self._controller.changeRotation()
 
 		elif keyval == ord('z'):
-			if self._ctrldown:
-				if self._altdown:
-					if self._shiftdown:
+			if self._eventlistener.controlPressed:
+				if self._eventlistener.altPressed:
+					if self._eventlistener.shiftPressed:
 						self._controller.getUndoManager().previousBranch()
 					else:
 						self._controller.getUndoManager().nextBranch()
 				else:
-					if self._shiftdown:
+					if self._eventlistener.shiftPressed:
 						self._controller.redo()
 					else:
 						self._controller.undo()
 
-	def keyReleased(self, event):
-		keyval = event.getKey().getValue()
-		if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
-			self._ctrldown = False
-		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
-			self._shiftdown = False
-		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
-			self._altdown = False
+	def keyReleased(self, event):		
+		pass
 			
 	def _getRealCoords(self, sender, event):
 		cw = sender
@@ -344,6 +307,4 @@ class MapEditor:
 		return (offsetX, offsetY)
 
 	def pump(self):
-		if self._scrollx != 0 or self._scrolly != 0:
-			engine = self._editor.getEngine()
-			self._controller.moveCamera(self._scrollx * engine.getTimeManager().getTimeDelta(), self._scrolly * engine.getTimeManager().getTimeDelta())
+		pass

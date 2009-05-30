@@ -7,6 +7,7 @@ import scripts.editor
 from action import Action, ActionGroup
 from fife import Color
 from panel import Panel
+from resizablebase import ResizableBase
 
 class ToolBar(Panel):
 	ORIENTATION = {

@@ -238,7 +238,13 @@ namespace FIFE {
 		keyevt.setAltPressed(gcnevt.isAltPressed());
 		keyevt.setMetaPressed(gcnevt.isMetaPressed());
 		keyevt.setNumericPad(gcnevt.isNumericPad());
-		keyevt.setKey(Key(static_cast<Key::KeyType>(gcnevt.getKey().getValue()), gcnevt.getKey().getValue()));
+
+		// Guichan has different values from FIFE for modifier keys
+		// Left alt: Guichan = -1000, FIFE = 302
+		int keyval = gcnevt.getKey().getValue();
+		if (keyval < 0) keyval += 1302;
+		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval), keyval));
+
 		return keyevt;
 	}
 

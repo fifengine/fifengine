@@ -138,7 +138,7 @@ class MainWindow(object):
 				dockareas[DOCKAREA['right']].adaptLayout()
 				
 			elif dockarea == DOCKAREA['top']:
-				widget.resizable = False
+				widget.setDocked(True)
 				dockareas[DOCKAREA['top']].addChild(widget)
 				dockareas[DOCKAREA['top']].adaptLayout()
 				

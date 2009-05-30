@@ -41,8 +41,8 @@ onConsoleCommand= Signal(providing_args=["command"])
 
 class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
 	# NOTE: As FIFEdit currently covers the entire screen with widgets,
-	#		FIFE doesn't receive any mouse events. Therefore we have to add
-	#		mouse event tracking for the central widget
+	#		FIFE doesn't receive any mouse or key events. Therefore we have to add
+	#		mouse and key event tracking for the central widget
 	
 	def __init__(self, engine):
 		self.engine = engine
@@ -63,24 +63,60 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 		
 		MapChangeListener.__init__(self)
 		LayerChangeListener.__init__(self)
+		
+		self.controlPressed = False
+		self.altPressed		= False
+		self.shiftPressed	= False
+		self.metaPressed	= False
 	
 	#--- Listener methods ---#
 	# IKeyListener
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
-		if keyval == fife.Key.ESCAPE:
+		
+		self.controlPressed = evt.isControlPressed()
+		self.altPressed		= evt.isAltPressed()
+		self.shiftPressed	= evt.isShiftPressed()
+		self.metaPressed	= evt.isMetaPressed()
+		
+		if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
+			self.controlPressed = True
+		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
+			self.shiftPressed = True
+		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
+			self.altPressed = True
+		elif keyval in (fife.Key.RIGHT_META, fife.Key.LEFT_META):
+			self.metaPressed = True
+	
+		elif keyval == fife.Key.ESCAPE:
 			onQuit.send(sender=self.engine)
 		elif keyval == fife.Key.F10:
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 		elif keystr == "d":
 			pdb.set_trace()
-		
+			
 		keyPressed.send(sender=self.engine, event=evt)
 		
 		evt.consume()
 
 	def keyReleased(self, evt):
+		keyval = evt.getKey().getValue()
+		
+		self.controlPressed = evt.isControlPressed()
+		self.altPressed		= evt.isAltPressed()
+		self.shiftPressed	= evt.isShiftPressed()
+		self.metaPressed	= evt.isMetaPressed()
+		
+		if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
+			self.controlPressed = False
+		elif keyval in (fife.Key.LEFT_SHIFT, fife.Key.RIGHT_SHIFT):
+			self.shiftPressed = False
+		elif keyval in (fife.Key.LEFT_ALT, fife.Key.RIGHT_ALT):
+			self.altPressed = False
+		elif keyval in (fife.Key.RIGHT_META, fife.Key.LEFT_META):
+			self.metaPressed = False
+			
 		keyReleased.send(sender=self.engine, event=evt)
 
 	# ICommandListener

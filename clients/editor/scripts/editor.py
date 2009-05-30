@@ -87,6 +87,8 @@ class Editor(ApplicationBase, MainWindow):
 		cw.capture(self.__sendMouseEvent, "mouseWheelMovedUp")
 		cw.capture(self.__sendMouseEvent, "mouseWheelMovedDown")
 		cw.capture(self.__sendMouseEvent, "mouseDragged")
+		cw.capture(self.__sendKeyEvent, "keyPressed")
+		cw.capture(self.__sendKeyEvent, "keyReleased")
 		
 		self._centralwidget.addChild(self._mapbar)
 		self._centralwidget.addChild(self._maparea)
@@ -221,7 +223,15 @@ class Editor(ApplicationBase, MainWindow):
 			
 		elif type == msEvent.DRAGGED:
 			mouseDragged.send(sender=self._maparea, event=event)
-	
+		
+	def __sendKeyEvent(self, event, **kwargs):
+		type = event.getType()
+		
+		if type == fife.KeyEvent.PRESSED:
+			self._eventlistener.keyPressed(event)
+		
+		elif type == fife.KeyEvent.RELEASED:
+			self._eventlistener.keyReleased(event)
 			
 	def getToolbox(self): 
 		return self._toolbox
@@ -252,6 +262,9 @@ class Editor(ApplicationBase, MainWindow):
 			self._eventlistener = EventListener(self.engine)
 			events.onQuit.connect(self.quit)
 		
+		return self._eventlistener
+		
+	def getEventListener(self):
 		return self._eventlistener
 	
 	def newMapView(self, map):
