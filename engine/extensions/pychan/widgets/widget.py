@@ -97,7 +97,7 @@ class Widget(object):
 		self.accepts_initial_data = False
 
 		# Parent attribute makes sure we only have one parent,
-		# that tests self._parent - so make sure we have the attr here.
+		# that tests self.__parent - so make sure we have the attr here.
 		self.__parent = None
 		self.parent = parent
 
@@ -140,7 +140,7 @@ class Widget(object):
 		"""
 		if not get_manager().can_execute:
 			raise RuntimeError("Synchronous execution is not set up!")
-		if self._parent:
+		if self.__parent:
 			raise RuntimeError("You can only 'execute' root widgets, not %s!" % str(self))
 
 		for name,returnValue in bind.items():
@@ -543,7 +543,7 @@ class Widget(object):
 		"""
 		def _printNamedWidget(widget):
 			if widget.name != Widget.DEFAULT_NAME:
-				print widget.name.ljust(20),repr(widget).ljust(50),repr(widget._parent)
+				print widget.name.ljust(20),repr(widget).ljust(50),repr(widget.__parent)
 		print "Named child widgets of ",repr(self)
 		print "name".ljust(20),"widget".ljust(50),"parent"
 		self.deepApply(_printNamedWidget)

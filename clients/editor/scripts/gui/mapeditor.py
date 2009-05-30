@@ -190,7 +190,6 @@ class MapEditor:
 		if event.isConsumedByWidgets():
 			return
 
-
 		realCoords = self._getRealCoords(sender, event)
 			
 		if self._ctrldown:

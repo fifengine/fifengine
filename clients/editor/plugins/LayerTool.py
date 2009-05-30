@@ -22,7 +22,7 @@
 # 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # ###################################################
 
-""" an advanced layer tool for FIFedit """
+""" An advanced layer tool for FIFedit """
 
 import fife
 import scripts.plugin as plugin
@@ -36,8 +36,8 @@ from pychan.tools import callbackWithArguments as cbwa
 import settings as Settings
 
 # default should be pychan default, highlight can be choosen (format: r,g,b)
-_DEFAULT_BACKGROUND_COLOR = (0,0,100)
-_HIGHLIGHT_BACKGROUND_COLOR = (173,216,230)
+_DEFAULT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['base_color']
+_HIGHLIGHT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['selection_color']
 
 # the dynamicly created widgets have the name scheme prefix + layerid
 _LABEL_NAME_PREFIX = "select_"
@@ -53,8 +53,6 @@ class LayerTool(plugin.Plugin):
 		- select layer
 		- list layers
 		
-	The plugin has to register itself in the mapeditor module
-	to get actual content when a new map is loaded.
 	"""
 	def __init__(self):	
 		self._editor = None
@@ -62,9 +60,6 @@ class LayerTool(plugin.Plugin):
 		self._mapview = None
 		
 		self._showAction = None
-			
-		self.data = False
-		self.previous_active_layer = None
 		
 		self.subwrappers = []
 			
@@ -88,6 +83,7 @@ class LayerTool(plugin.Plugin):
 	def disable(self):
 		if self._enabled is False:
 			return
+		self.container.setDocked(False)
 		self.container.hide()
 		self.removeAllChildren()
 		
@@ -99,19 +95,22 @@ class LayerTool(plugin.Plugin):
 		return self._enabled;
 
 	def getName(self):
-		return "Layertool"
-		
+		return u"Layertool"
+	
+	#--- End plugin functions ---#
+	
 	def __create_gui(self):
 		""" create the basic gui container """
 		self.container =  pychan.loadXML('gui/layertool.xml')
 		self.wrapper = self.container.findChild(name="layers_wrapper")
+		self.update(None)
 
 	def _adjust_position(self):
 		"""	adjusts the position of the container - we don't want to
 		let the window appear at the center of the screen.
 		(new default position: left, beneath the tools window)
 		"""
-		self.container.position = (10, 200)
+		self.container.position = (50, 200)
 		
 	def clear(self):
 		""" remove all subwrappers """
@@ -123,23 +122,42 @@ class LayerTool(plugin.Plugin):
 		self.subwrappers = []
 		
 	def update(self, mapview):
-		""" dump new layer informations into the wrapper 
+		""" Dump new layer informations into the wrapper 
 		
-		We group one ToggleButton and one Lable into a HBox, the main wrapper
+		We group one ToggleButton and one Label into a HBox, the main wrapper
 		itself is a VBox and we also capture both the Button and the Label to listen
 		for mouse actions
 		"""
+		layers = []
 		self._mapview = mapview
-		layers = self._mapview.getMap().getLayers()
+		if self._mapview is not None:
+			layers = self._mapview.getMap().getLayers()
 		
 		self.clear()
 		
+		if len(layers) <= 0:
+			layerid = "No layers"
+			subwrapper = pychan.widgets.HBox()
+
+			layer_name_widget = pychan.widgets.Label()
+			layer_name_widget.text = unicode(layerid)
+			layer_name_widget.name = _LABEL_NAME_PREFIX + layerid
+			subwrapper.addChild(layer_name_widget)
+			
+			self.wrapper.addChild(subwrapper)
+			self.subwrappers.append(subwrapper)
+		
+		active_layer = self.getActiveLayer()
+		if active_layer:
+			active_layer = active_layer.getId()
 		for layer in reversed(layers):
 			layerid = layer.getId()
 			subwrapper = pychan.widgets.HBox()
 
 			visibility_widget = pychan.widgets.ToggleButton(hexpand=0, up_image="gui/icons/is_visible.png",down_image="gui/icons/quit.png")
 			visibility_widget.name = "toggle_" + layerid
+			if layer.areInstancesVisible() is False:
+				visibility_widget.toggled = True
 			visibility_widget.capture(self.toggle_layer_visibility,"mousePressed")
 			
 			layer_name_widget = pychan.widgets.Label()
@@ -147,17 +165,21 @@ class LayerTool(plugin.Plugin):
 			layer_name_widget.name = _LABEL_NAME_PREFIX + layerid
 			layer_name_widget.capture(self.select_active_layer,"mousePressed")
 			
+			if active_layer == layerid:
+				layer_name_widget.background_color	= _HIGHLIGHT_BACKGROUND_COLOR
+				layer_name_widget.foreground_color	= _HIGHLIGHT_BACKGROUND_COLOR
+				layer_name_widget.base_color		= _HIGHLIGHT_BACKGROUND_COLOR
+			
 			subwrapper.addChild(visibility_widget)
 			subwrapper.addChild(layer_name_widget)
 			
 			self.wrapper.addChild(subwrapper)
 			self.subwrappers.append(subwrapper)
 		
-		self.container.adaptLayout()	
-		self.data = True			
+		self.container.adaptLayout()		
 			
 	def toggle_layer_visibility(self, event, widget):
-		""" callback for ToggleButtons 
+		""" Callback for ToggleButtons 
 		
 		Toggle the chosen layer visible / invisible
 		
@@ -169,18 +191,21 @@ class LayerTool(plugin.Plugin):
 		@type	widget:	object
 		@param	widget:	the pychan widget where the event occurs, transports the layer id in it's name
 		"""
-		if not self.data: return
-		
-		layerid = widget.name[7:]
+
+		layerid = widget.name[len(_LABEL_NAME_PREFIX):]
 		
 		layer = self._mapview.getMap().getLayer(layerid)
+		active_layer = self.getActiveLayer()
+		if active_layer:
+			active_layer = active_layer.getId()
 		
 		if layer.areInstancesVisible():
 			layer.setInstancesVisible(False)
-			self.select_no_layer()
-#			self.select_different_active_layer(layerid)
 		else:
 			layer.setInstancesVisible(True)
+			
+		if active_layer == layerid:
+			self.select_no_layer()
 			
 			
 	def select_no_layer(self):
@@ -189,37 +214,21 @@ class LayerTool(plugin.Plugin):
 		
 		A bunch of exceptions is the result (each click on the map will result in a exception as no layer is set etc...)	
 		"""
+		previous_active_layer = self.getActiveLayer()
+		if previous_active_layer is not None:
+			previous_layer_id = previous_active_layer.getId()
+			previous_active_widget = self.container.findChild(name=_LABEL_NAME_PREFIX + previous_layer_id)
+			previous_active_widget.background_color = _DEFAULT_BACKGROUND_COLOR
+			previous_active_widget.foreground_color = _DEFAULT_BACKGROUND_COLOR
+			previous_active_widget.base_color = _DEFAULT_BACKGROUND_COLOR
+			previous_active_widget.text = unicode(previous_layer_id)
+			
 		self._mapview.getController().selectLayer(None)
 		
-	def select_different_active_layer(self, layerid):
-		""" a helper method to pick either the previous or next layer in the layerlist
-		by using the given layerid as pivot element
-		
-		NOTE:
-			- dropped for now, we set self.mapedit._layer to None if a layer gets invisible
-		
-		FIXME:
-			- either drop this feature or find a solution for boderline cases:
-				- user hides all layers (which one should be active?)
-				- worst case would be that this algo has to check all layers recursive until it knows that all are invisible
-				  to return with no result (no selection of an active layer, I'm not sure if FIFEdit supports that at all)
-		
-		@type	layerid:	string
-		@param	layerid:	the layerid of the pivot element		
-		"""
-		layers = [layer.getId() for layer in self._mapview.getMap().getLayers()]
-		pivot_index = layers.index(layerid)
-
-		if len(layers) == 1:
-			return
-
-		if pivot_index == len(layers) - 1:
-			different_layer = layers[pivot_index - 1]
-		else:
-			different_layer = layers[pivot_index + 1]
-
-		widget = self.container.findChild(name=_LABEL_NAME_PREFIX + different_layer)
-		self.select_active_layer(None, widget)
+	def getActiveLayer(self):
+		""" Returns the active layer """
+		if self._mapview:
+			return self._mapview.getController()._layer
 		
 	def select_active_layer(self, event, widget):
 		""" callback for Labels 
@@ -228,33 +237,20 @@ class LayerTool(plugin.Plugin):
 		new active layer
 		
 		Additionally, we mark the active layer widget (changing base color) and reseting the previous one
-		
-		FIXME:
-			- styled widgets don't accept layout changes (might be a bug in the pychan layout engine)
-			- therefore we can only mark the active layer via text (I added a * to the label text)
 
 		@type	event:	object
 		@param	event:	pychan mouse event
 		@type	widget:	object
 		@param	widget:	the pychan widget where the event occurs, transports the layer id in it's name
 		"""
-		if not self.data: return
-		
-		if self.previous_active_layer is not None:
-			previous_layer_id = str(self.previous_active_layer)
-			previous_active_widget = self.container.findChild(name="select_" + previous_layer_id)
-			previous_active_widget.background_color = _DEFAULT_BACKGROUND_COLOR
-			previous_active_widget.foreground_color = _DEFAULT_BACKGROUND_COLOR
-			previous_active_widget.base_color = _DEFAULT_BACKGROUND_COLOR
-			previous_active_widget.text = unicode(previous_layer_id)
+
+		self.select_no_layer()
 		
 		layerid = widget.name[7:]	
 		
 		widget.background_color = _HIGHLIGHT_BACKGROUND_COLOR
 		widget.foreground_color = _HIGHLIGHT_BACKGROUND_COLOR
 		widget.base_color = _HIGHLIGHT_BACKGROUND_COLOR
-		widget.text = widget.text + u" *"
-		self.previous_active_layer = layerid
 		self.container.adaptLayout()
 		
 		self._mapview.getController().selectLayer(layerid)

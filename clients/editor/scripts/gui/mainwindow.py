@@ -164,6 +164,48 @@ class MainWindow(object):
 				
 			else:
 				print "Invalid dockarea"
+				
+	def getToolbarAreaAt(self, x, y, mark=False):
+		if self.dockareamarker is None:
+			self.dockareamarker = pychan.widgets.Container()
+			self.dockareamarker.base_color = fife.Color(200, 0, 0, 100)
+		if mark is False:
+			self.dockareamarker.hide()
+	
+		# Mouse wasn't over any dockwidgets. See if it is near any edge of the screen instead
+		if x <= self._toolbarareas["left"].getAbsolutePos()[0]+10:
+			if mark:
+				self.dockareamarker.position = self._toolbarareas["left"].getAbsolutePos()
+				self.dockareamarker.size = (10, self._toolbarareas["left"].height)
+				self.dockareamarker.show()
+			return DOCKAREA["left"]
+			
+		elif x >= self._toolbarareas["right"].getAbsolutePos()[0]-10:
+			if mark:
+				self.dockareamarker.position = self._toolbarareas["right"].getAbsolutePos()
+				self.dockareamarker.size = (10, self._toolbarareas["right"].height)
+				self.dockareamarker.x -= 10
+				self.dockareamarker.show()
+			return DOCKAREA["right"]
+			
+		elif y <= self._toolbarareas["top"].getAbsolutePos()[1]+10:
+			if mark:
+				self.dockareamarker.position = self._toolbarareas["top"].getAbsolutePos()
+				self.dockareamarker.size = (self._toolbarareas["top"].width, 10)
+				self.dockareamarker.show()
+			return DOCKAREA["top"]
+			
+		elif y >= self._toolbarareas["bottom"].getAbsolutePos()[1]-10:
+			if mark:
+				self.dockareamarker.position = self._toolbarareas["bottom"].getAbsolutePos()
+				self.dockareamarker.y -= 10
+				self.dockareamarker.size = (self._toolbarareas["bottom"].width, 10)
+				self.dockareamarker.show()
+			return DOCKAREA["bottom"]
+
+		if mark is True:
+			self.dockareamarker.hide()
+		return None
 			
 	def getDockAreaAt(self, x, y, mark=False):
 		if self.dockareamarker is None:

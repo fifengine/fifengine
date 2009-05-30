@@ -8,9 +8,6 @@ import editor
 import events
 import undomanager
 
-class EditorLogicError(Exception):
-	pass
-
 class MapController(object):
 	def __init__(self, map):
 		
@@ -52,22 +49,22 @@ class MapController(object):
 
 		self._layer = self._map.getLayers()[0]
 
-	def _assert(self, statement, msg):
-		if not statement:
-			print msg
-			raise EditorLogicError(msg)
-
 	def selectLayer(self, layerid):
 		self._layer = None
 		layers = [l for l in self._map.getLayers() if l.getId() == layerid]
-		self._assert(len(layers) == 1, 'Layer amount != 1')
-		self._layer = layers[0]
+		if len(layers) == 1:
+			self._layer = layers[0]
 
 	def selectObject(self, object):
 		self._object = object
 
 	def selectCell(self, screenx, screeny, preciseCoords=False):
-		self._assert(self._camera, 'No camera bind yet, cannot select any cell')
+		if not self._camera: 
+			print 'No camera bind yet, cannot select any cell'
+			return
+		if not self._layer:
+			print 'No layer assigned in selectCell'
+			return
 
 		self._selection = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
 		self._selection.z = 0
@@ -86,8 +83,12 @@ class MapController(object):
 		self._instances = instances
 
 	def getInstancesFromPosition(self, position, top_only):
-		self._assert(self._layer, 'No layer assigned in getInstancesFromPosition')
-		self._assert(position, 'No position assigned in getInstancesFromPosition')
+		if not self._layer:
+			print 'No layer assigned in getInstancesFromPosition'
+			return
+		if not position:
+			print 'No position assigned in getInstancesFromPosition'
+			return
 
 		loc = fife.Location(self._layer)
 		if type(position) == fife.ExactModelCoordinate:
@@ -118,9 +119,15 @@ class MapController(object):
 
 	def placeInstance(self, position, object, force=False):
 		mname = '_placeInstance'
-		self._assert(object, 'No object assigned in %s' % mname)
-		self._assert(position, 'No position assigned in %s' % mname)
-		self._assert(self._layer, 'No layer assigned in %s' % mname)
+		if not object:
+			print 'No object assigned in %s' % mname
+			return
+		if not position:
+			print 'No position assigned in %s' % mname
+			return
+		if not self._layer:
+			print 'No layer assigned in %s' % mname
+			return
 
 		print 'Placing instance of ' + object.getId() + ' at ' + str(position)
 
@@ -142,8 +149,12 @@ class MapController(object):
 
 	def removeInstances(self, position, force=False):
 		mname = '_removeInstances'
-		self._assert(position, 'No position assigned in %s' % mname)
-		self._assert(self._layer, 'No layer assigned in %s' % mname)
+		if not position:
+			print 'No position assigned in %s' % mname
+			return
+		if not self._layer:
+			print 'No layer assigned in %s' % mname
+			return
 
 		instances = self.getInstancesFromPosition(position, top_only=True)
 		for i in instances:
@@ -160,8 +171,12 @@ class MapController(object):
 		
 	def moveInstances(self, exact=False):
 		mname = '_moveInstances'
-		self._assert(self._selection, 'No selection assigned in %s' % mname)
-		self._assert(self._layer, 'No layer assigned in %s' % mname)
+		if not self._selection:
+			print 'No selection assigned in %s' % mname
+			return
+		if not self._layer:
+			print 'No layer assigned in %s' % mname
+			return
 
 		loc = fife.Location(self._layer)
 		if exact:
@@ -176,8 +191,12 @@ class MapController(object):
 
 	def rotateInstances(self):
 		mname = '_rotateInstances'
-		self._assert(self._selection, 'No selection assigned in %s' % mname)
-		self._assert(self._layer, 'No layer assigned in %s' % mname)
+		if not self._selection:
+			print 'No selection assigned in %s' % mname
+			return
+		if not self._layer:
+			print 'No layer assigned in %s' % mname
+			return
 
 		for i in self.getInstancesFromPosition(self._selection, top_only=True):
 # by c 09/11/08

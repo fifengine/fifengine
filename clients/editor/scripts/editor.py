@@ -75,6 +75,7 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self._maparea = pychan.widgets.VBox()
 		self._maparea.opaque = False
+		self._maparea.is_focusable = True
 		
 		cw = self._maparea
 		cw.capture(self.__sendMouseEvent, "mouseEntered")

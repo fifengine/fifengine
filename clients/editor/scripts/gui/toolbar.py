@@ -166,24 +166,6 @@ class ToolBar(Panel):
 	def getPanelSize(self):
 		return self._panel_size
 	panel_size = property(getPanelSize, setPanelSize)
-
-	# Drag and drop docking
-	def mouseReleased(self, event):
-		if self.isDocked():
-			return
-			
-		editor = scripts.editor.getEditor()
-		if self.x + event.getX() < 25:
-			editor.dockWidgetTo(self, "left")
-			
-		elif self.x + event.getX() > pychan.internal.screen_width() - 25:
-			editor.dockWidgetTo(self, "right")
-			
-		elif self.y + event.getY() < 50:
-			editor.dockWidgetTo(self, "top")
-			
-		elif self.y + event.getY() > pychan.internal.screen_height() - 50:
-			editor.dockWidgetTo(self, "bottom")
 			
 	def mouseClicked(self, event):
 		if event.getButton() == 2: # Right click
@@ -191,6 +173,27 @@ class ToolBar(Panel):
 				self.setDocked(False)
 				event.consume()
 			
+	def mouseDragged(self, event):
+		if self._resize is False and self.isDocked() is False:
+			mouseX = self.x+event.getX()
+			mouseY = self.y+event.getY()
+			self._editor.getToolbarAreaAt(mouseX, mouseY, True)
+		else:
+			ResizableBase.mouseDragged(self, event)
+	
+	def mouseReleased(self, event):
+		# Resize/move done
+		self.real_widget.setMovable(self._movable)
+		
+		if self._resize:
+			ResizableBase.mouseReleased(self, event)
+		elif self._movable:
+			mouseX = self.x+event.getX()
+			mouseY = self.y+event.getY()
+		
+			dockArea = self._editor.getToolbarAreaAt(mouseX, mouseY)
+			if dockArea is not None:
+				self._editor.dockWidgetTo(self, dockArea, mouseX, mouseY)
 			
 class ToolbarButton(widgets.VBox):
 	def __init__(self, action, button_style=0, **kwargs):
