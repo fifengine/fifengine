@@ -55,8 +55,7 @@ class ScrollArea(Widget):
 		if self._content is None: return
 		if recurse:
 			self.content.resizeToContent(recurse=recurse)
-		self.content.width = max(self.content.width,self.width-5)
-		self.content.height = max(self.content.height,self.height-5)
+		self.size = self.min_size
 
 	def _visibilityToScrollPolicy(self,visibility):
 		if visibility:
@@ -79,6 +78,11 @@ class ScrollArea(Widget):
 
 	def _getVerticalScrollbar(self):
 		return self._scrollPolicyToVisibility( self.real_widget.getVerticalScrollPolicy() )
+		
+	def sizeChanged(self):
+		if self.content:
+			self.content.width = max(self.content.width,self.width-5)
+			self.content.height = max(self.content.height,self.height-5)
 
 	vertical_scrollbar = property(_getVerticalScrollbar,_setVerticalScrollbar)
 	horizontal_scrollbar = property(_getHorizontalScrollbar,_setHorizontalScrollbar)

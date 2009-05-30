@@ -12,7 +12,6 @@ from fife import Color
 
 # TODO:
 # - Better event handling
-# - Label background color can't be set
 
 _DEFAULT_BASE_COLOR = internal.DEFAULT_STYLE['default']['base_color']
 _DEFAULT_SELECTION_COLOR = internal.DEFAULT_STYLE['default']['selection_color']
@@ -66,11 +65,10 @@ class ObjectIcon(widgets.VBox):
 				if self.selected:
 					self.parent.selected_item = None
 		
-		# + Color(0,0,0) to force variable copy
 		if self.selected:
-			self.base_color = _DEFAULT_SELECTION_COLOR + Color(0,0,0)
+			self.base_color = _DEFAULT_SELECTION_COLOR
 		else:
-			self.base_color = _DEFAULT_BASE_COLOR + Color(0,0,0)
+			self.base_color = _DEFAULT_BASE_COLOR
 
 	def _isSelected(self):
 		if isinstance(self.parent, ObjectIconList):
@@ -96,13 +94,13 @@ class ObjectIconList(widgets.VBox):
 		super(ObjectIconList, self).__init__(max_size=(5000,500000), **kwargs)
 		self.base_color = self.background_color
 
-		# TODO: Pychan doesn't support keyevents for nonfocusable widgets, yet
-		#self.capture(self._keyPressed, "keyPressed")
+		self.capture(self._keyPressed, "keyPressed")
 		#self.capture(self._keyPressed, "keyReleased")
 		self._selectedItem = None
+		self.is_focusable = True
 
-	#def _keyPressed(self, event):
-		#print "KeyEvent", event
+	def _keyPressed(self, event):
+		print "KeyEvent", event
 
 	def clear(self):
 		for c in reversed(self.children):
@@ -306,7 +304,7 @@ class ObjectSelector(plugin.Plugin):
 				image = ""
 
 			callback = tools.callbackWithArguments(self.objectSelected, obj)	
-			icon = ObjectIcon(callback=callback, image=image, text=obj.getId())
+			icon = ObjectIcon(callback=callback, image=image, text=unicode(obj.getId()))
 			self.objects.addChild(icon)
 			
 		if len(objects)>0:

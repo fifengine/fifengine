@@ -10,7 +10,7 @@
 		<DropDown name="namespaceDropdown" />
 
     <!-- Main area (object list) -->
-		<ScrollArea name="mainScrollArea" size="100,50" hexpand="1" vexpand="1" />
+		<ScrollArea name="mainScrollArea" min_size="100,50"/>
 
     <!-- Action buttons -->
 		<HBox>
@@ -20,7 +20,7 @@
 		</HBox>
 
     <!-- Preview area -->
-		<ScrollArea name="previewScrollArea" size="230,1" vexpand="0">
+		<ScrollArea name="previewScrollArea" min_size="230,1" vexpand="0">
 			<Icon name="previewIcon" />
 		</ScrollArea>
 	</VBox>
