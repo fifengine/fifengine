@@ -321,7 +321,7 @@ class ObjectSelector(plugin.Plugin):
 		self.preview.image = self._getImage(obj)
 		height = self.preview.image.getHeight();
 		if height > 200: height = 200
-		self.preview._getParent()._setHeight(height)
+		self.preview.parent.max_height = height
 		
 		self.gui.adaptLayout()
 		self.editor.getActiveMapView().getController().selectObject(obj)
@@ -346,7 +346,7 @@ class ObjectSelector(plugin.Plugin):
 		elif self.mode == 'preview':
 			self.fillPreviewList()
 
-		self.mainScrollArea.resizeToContent()
+		self.gui.adaptLayout()
 
 	def _getImage(self, obj):
 		""" Returns an image for the given object.

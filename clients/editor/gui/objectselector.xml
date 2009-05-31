@@ -1,4 +1,4 @@
-<Panel title="Object selector">
+<Panel title="Object selector" min_size="200,300">
 	<VBox hexpand="1" vexpand="1">
 		<!-- Search field -->
 		<HBox>
@@ -10,7 +10,7 @@
 		<DropDown name="namespaceDropdown" />
 
     <!-- Main area (object list) -->
-		<ScrollArea name="mainScrollArea" min_size="100,50"/>
+		<ScrollArea name="mainScrollArea" min_size="150,50"/>
 
     <!-- Action buttons -->
 		<HBox>
@@ -20,7 +20,7 @@
 		</HBox>
 
     <!-- Preview area -->
-		<ScrollArea name="previewScrollArea" min_size="230,1" vexpand="0">
+		<ScrollArea name="previewScrollArea" max_size="200,1" vexpand="1">
 			<Icon name="previewIcon" />
 		</ScrollArea>
 	</VBox>
