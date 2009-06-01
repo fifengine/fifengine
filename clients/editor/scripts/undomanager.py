@@ -36,7 +36,9 @@ class UndoManager:
 		return self._undostack
 
 	def startGroup(self, name="", description="", icon=""): 
-		self.groups.append(UndoGroup(name, description, icon))
+		undogroup = UndoGroup(name, description, icon)
+		self._groups.append(undogroup)
+		return undogroup
 	
 	def endGroup(self):
 		if len(self._groups) <= 0:
@@ -70,8 +72,6 @@ class UndoManager:
 	def undo(self, amount=1): 
 		if amount <= 0:
 			return
-			
-		print self.current_item
 	
 		preUndo.send(sender=self)
 		for i in range(amount):
@@ -81,7 +81,7 @@ class UndoManager:
 			
 			actions = [self.current_item.object]
 			if isinstance(self.current_item.object, UndoGroup):
-				actions = self.current_item.object.getObjects()
+				actions = (self.current_item.object.getObjects())
 			for action in actions:
 				action.undo()
 			
@@ -95,8 +95,6 @@ class UndoManager:
 		if amount <= 0:
 			return
 		
-		print self.current_item
-		
 		preRedo.send(sender=self)
 		for i in range(amount):
 			if self.current_item.next is None:
@@ -107,7 +105,7 @@ class UndoManager:
 			
 			actions = [self.current_item.object]
 			if isinstance(self.current_item.object, UndoGroup):
-				actions = self.current_item.object.getObjects()
+				actions = reversed(self.current_item.object.getObjects())
 			for action in actions:
 				action.redo()
 				

@@ -13,7 +13,7 @@ from menubar import Menu, MenuBar
 from action import Action, ActionGroup
 from scripts.mapcontroller import MapController
 
-states = (u'VIEWING', u'INSERTING', u'REMOVING', u'MOVING')
+states = (u'SELECTING', u'INSERTING', u'REMOVING', u'MOVING')
 for s in states:
 	globals()[s] = s
 NOT_INITIALIZED = -9999999
@@ -22,26 +22,31 @@ class MapEditor:
 	def __init__(self):	
 		self._ignoreToggles = False # A hack to avoid infinite recursion when toggling a button
 		self._controller = None
-		self._mode = VIEWING
+		self._mode = SELECTING
 		
 		self._editor = scripts.editor.getEditor()
 		self._eventlistener = self._editor.getEventListener()
 		self._statusbar = self._editor.getStatusBar()
 		self._toolbar = self._editor.getToolBar()
+		self._object = None
+		self._lastDragPos = None
 		
 		self._toolbox = self._editor.getToolbox()
 		
 		self._initToolbuttons()
 		
 		self._toolbox.show()
+		self._instances = []
 		
 		events.postMapShown.connect(self._mapChanged)
+		events.onObjectSelected.connect(self.setObject)
+		self._undogroup = False
 		
 	def _init(self):
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED
 		
-		self._setMode(VIEWING)
+		self._setMode(SELECTING)
 		
 		events.keyPressed.connect(self.keyPressed)
 		events.keyReleased.connect(self.keyReleased)
@@ -53,8 +58,6 @@ class MapEditor:
 		events.mouseWheelMovedUp.connect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.connect(self.mouseWheelMovedDown)
 		events.mouseExited.connect(self.mouseExited)
-	
-		events.onPump.connect(self.pump)
 		
 	def _clear(self):
 		events.keyPressed.disconnect(self.keyPressed)
@@ -72,6 +75,9 @@ class MapEditor:
 		
 	def _mapChanged(self, sender, mapview):
 		self.setController(mapview.getController())
+		
+	def setObject(self, object):
+		self._object = object
 		
 	def setController(self, controller):
 		if self._controller is not None:
@@ -111,7 +117,7 @@ class MapEditor:
 		self._editor._editMenu.addAction(self._toolgroup)
 		
 	def _setMode(self, mode):
-		if (mode == INSERTING) and (not self._controller._object):
+		if (mode == INSERTING) and (not self._object):
 			self._statusbar.setText(u'Please select object first')
 			mode = self._mode
 
@@ -135,11 +141,11 @@ class MapEditor:
 		if self._controller is None: return
 		if self._ignoreToggles is True: return
 	
-		mode = VIEWING
+		mode = SELECTING
 		
 		if toggled:
 			if sender == self._selectAction:
-				mode = VIEWING
+				mode = SELECTING
 			elif sender == self._moveAction:
 				mode = MOVING
 			elif sender == self._drawAction:
@@ -164,18 +170,35 @@ class MapEditor:
 				self._dragx = realCoords[0]
 				self._dragy = realCoords[1]
 		else:
-			if self._controller._camera:
-				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
-			if self._mode == VIEWING:
+			if self._mode == SELECTING:
 				self._controller.resetSelection()
 			elif self._mode == INSERTING:
-				self._controller.placeInstance(self._controller._selection, self._controller._object)
+				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
+				self._controller.getUndoManager().startGroup("Inserted instances")
+				self._undogroup = True
+				
+				self._controller.placeInstance(self._controller._selection, self._object)
 			elif self._mode == REMOVING:
-				self._controller.removeInstances(self._controller._selection)
+				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
+				self._controller.getUndoManager().startGroup("Removed instances")
+				self._undogroup = True
+				
+				self._controller.removeInstances(self._controller.getInstancesFromSelection())
 			elif self._mode == MOVING:
-				self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
-			else:
-				self._setMode(self._mode) # refresh status
+				# TODO: Check if mousepos is in a selected cell. If not, select the clicked cell
+				
+				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				if self._eventlistener.shiftPressed:
+					pos = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
+				else:
+					pos = self._controller._layer.getCellGrid().toLayerCoordinates(position)
+
+				self._lastDragPos = fife.ExactModelCoordinate(float(pos.x), float(pos.y), float(pos.z))
+					
+				self._instances = self._controller.getInstancesFromSelection()
+				
+				self._controller.getUndoManager().startGroup("Moved instances")
+				self._undogroup = True
 
 	def mouseDragged(self, sender, event):
 		if event.isConsumedByWidgets():
@@ -189,31 +212,42 @@ class MapEditor:
 			self._dragx = realCoords[0]
 			self._dragy = realCoords[1]
 		else:
-			if self._mode != VIEWING:
+			if self._mode != SELECTING:
 				self._controller.resetSelection()
 				
-			if self._mode == VIEWING:
+			if self._mode == SELECTING:
 				self._controller.selectCell(realCoords[0], realCoords[1])
-				self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
 			elif self._mode == INSERTING:
 				self._controller.selectCell(realCoords[0], realCoords[1])
-				self._controller.placeInstance(self._controller._selection, self._controller._object)
+				self._controller.placeInstance(self._controller._selection, self._object)
 			elif self._mode == REMOVING:
 				self._controller.selectCell(realCoords[0], realCoords[1])
-				self._controller.removeInstances(self._controller._selection)
-			elif self._mode == MOVING and self._controller._instances:
+				self._controller.removeInstances(self._controller.getInstancesFromSelection())
+			elif self._mode == MOVING:
 				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
-				self._controller.moveInstances(exact=self._eventlistener.shiftPressed)
+				
+				mapcoords = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				if self._eventlistener.shiftPressed:
+					position = self._controller._layer.getCellGrid().toExactLayerCoordinates(mapcoords)
+				else:
+					position = self._controller._layer.getCellGrid().toLayerCoordinates(mapcoords)
+				position = fife.ExactModelCoordinate(float(position.x), float(position.y), float(position.z))
+
+				self._controller.moveInstances(self._instances, position-self._lastDragPos)
+				self._lastDragPos = position
+				
 
 	def mouseReleased(self, sender, event):
 		if event.isConsumedByWidgets():
 			return
 			
 		realCoords = self._getRealCoords(sender, event)
-		if self._mode == VIEWING:
+		if self._mode == SELECTING and not self._eventlistener.controlPressed:
 			self._controller.selectCell(realCoords[0], realCoords[1])
-			self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
 		
+		if self._undogroup:
+			self._controller.getUndoManager().endGroup()
+			self._undogroup = False
 
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED
@@ -257,19 +291,19 @@ class MapEditor:
 			if self._mode != INSERTING:
 				self._setMode(INSERTING)
 			else:
-				self._setMode(VIEWING)
+				self._setMode(SELECTING)
 
 		elif keyval == fife.Key.DELETE:
 			if self._mode != REMOVING:
 				self._setMode(REMOVING)
 			else:
-				self._setMode(VIEWING)
+				self._setMode(SELECTING)
 
 		elif keystr == 'm':
 			if self._mode != MOVING:
 				self._setMode(MOVING)
 			else:
-				self._setMode(VIEWING)
+				self._setMode(SELECTING)
 
 		elif keystr == 't':
 			gridrenderer = self._controller._camera.getRenderer('GridRenderer')
@@ -280,8 +314,7 @@ class MapEditor:
 			blockrenderer.setEnabled(not blockrenderer.isEnabled())
 
 		elif keystr == 'r':
-			if self._controller._selection:
-				self._controller.rotateInstances()
+			self._controller.rotateInstances()
 
 		elif keystr == 'o':
 			self._controller.changeRotation()
@@ -317,6 +350,3 @@ class MapEditor:
 				break
 			
 		return (offsetX, offsetY)
-
-	def pump(self):
-		pass

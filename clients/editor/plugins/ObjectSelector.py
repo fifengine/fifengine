@@ -324,7 +324,7 @@ class ObjectSelector(plugin.Plugin):
 		self.preview.parent.max_height = height
 		
 		self.gui.adaptLayout()
-		self.editor.getActiveMapView().getController().selectObject(obj)
+		events.onObjectSelected.send(sender=self, object=obj)
 
 		self.objects.adaptLayout()
 		self.gui.adaptLayout()		

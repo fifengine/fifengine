@@ -15,6 +15,7 @@ postMapRemove = Signal(providing_args=["mapview"])
 preMapShown = Signal(providing_args=["mapview"])
 postMapShown = Signal(providing_args=["mapview"])
 onInstancesSelected = Signal(providing_args=["instances"])
+onObjectSelected = Signal(providing_args=["object"])
 
 # Signals emitted by EventListener
 onQuit			= Signal(providing_args=[])

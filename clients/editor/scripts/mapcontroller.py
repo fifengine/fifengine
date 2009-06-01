@@ -17,8 +17,7 @@ class MapController(object):
 		self._camera = None     # currently selected camera
 		self._layer = None      # currently selected layer
 		self._object = None     # currently selected object
-		self._selection = None  # currently selected coordinates
-		self._instances = None  # currently selected instances
+		self._selection = set()	# currently selected coordinates
 		self._map = None
 		self._undo = False
 		self._undomanager = undomanager.UndoManager()
@@ -28,6 +27,8 @@ class MapController(object):
 		undomanager.postRedo.connect(self._endUndo, sender=self._undomanager)
 		self.debug = False
 		
+		self.overwriteInstances = True # Remove instances on cell before placing new instance
+		
 		if map is not None:
 			self.setMap(map.getId())
 		
@@ -36,8 +37,7 @@ class MapController(object):
 		self._map = None
 		self._layer = None
 		self._object = None
-		self._selection = None
-		self._instances = None
+		self._selection.clear()
 
 		self._map = self._engine.getModel().getMap(mapid)
 		if not self._map.getLayers():
@@ -51,20 +51,30 @@ class MapController(object):
 		self._layer = self._map.getLayers()[0]
 
 	def selectLayer(self, layerid):
+		self.resetSelection()
 		self._layer = None
 		layers = [l for l in self._map.getLayers() if l.getId() == layerid]
 		if len(layers) == 1:
 			self._layer = layers[0]
 
-	def selectObject(self, object):
-		self._object = object
-		
 	def resetSelection(self):
 		if not self._camera: 
 			if self.debug: print 'No camera bind yet, cannot select any cell'
 			return
-		self._selection = None
+		self._selection.clear()
 		fife.CellSelectionRenderer.getInstance(self._camera).reset()
+		
+	def clearSelection(self):
+		instances = getInstancesFromSelection()
+		self.undomanager.startGroup("Cleared selection")
+		self.removeInstances(instances)
+		self.undomanager.endGroup()
+		
+	def fillSelection(self, object):
+		self.undomanager.startGroup("Cleared selection")
+		for pos in self._selection:
+			self.placeInstance(pos, object)
+		self.undomanager.endGroup()
 
 	def selectCell(self, screenx, screeny, preciseCoords=False):
 		if not self._camera: 
@@ -77,19 +87,46 @@ class MapController(object):
 		mapCoords = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
 		loc = fife.Location(self._layer)
 		if preciseCoords:
-			self._selection = self._layer.getCellGrid().toExactLayerCoordinates(mapCoords)
-			loc.setExactLayerCoordinates(self._selection)
+			position = self._layer.getCellGrid().toExactLayerCoordinates(mapCoords)
+			self._selection.add( position )
+			loc.setExactLayerCoordinates(position)
 		else:
-			self._selection = self._layer.getCellGrid().toLayerCoordinates(mapCoords)
-			loc.setLayerCoordinates(self._selection)
+			position = self._layer.getCellGrid().toLayerCoordinates(mapCoords)
+			self._selection.add(position)
+			loc.setLayerCoordinates(position)
+			
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
 		return loc
 		
-	def setSelectedInstances(self, instances):
-		events.onInstancesSelected.send(sender=self, instances=instances)
-		self._instances = instances
+	def deselectCell(self, screenx, screeny, preciseCoords=False):
+		if not self._camera: 
+			if self.debug: print 'No camera bind yet, cannot select any cell'
+			return
+		if not self._layer:
+			if self.debug: print 'No layer assigned in selectCell'
+			return
 
-	def getInstancesFromPosition(self, position, top_only):
+		mapCoords = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
+		loc = fife.Location(self._layer)
+		if preciseCoords:
+			position = self._layer.getCellGrid().toExactLayerCoordinates(mapCoords)
+			self._selection.discard( position )
+			loc.setExactLayerCoordinates(position)
+		else:
+			position = self._layer.getCellGrid().toLayerCoordinates(mapCoords)
+			self._selection.discard(position)
+			loc.setLayerCoordinates(position)
+			
+		fife.CellSelectionRenderer.getInstance(self._camera).deselectLocation(loc)
+		return loc
+		
+	def getInstancesFromSelection(self):
+		instances = []
+		for pos in self._selection:
+			instances.extend(self.getInstancesFromPosition(pos))
+		return instances
+
+	def getInstancesFromPosition(self, position):
 		if not self._layer:
 			if self.debug: print 'No layer assigned in getInstancesFromPosition'
 			return
@@ -105,8 +142,6 @@ class MapController(object):
 			
 		instances = self._layer.getInstancesAt(loc)
 
-		if top_only and (len(instances) > 0):
-			instances = [instances[0]]
 		return instances
 
 	def getUndoManager(self):
@@ -124,8 +159,8 @@ class MapController(object):
 	def _endUndo(self):
 		self._undo = False
 
-	def placeInstance(self, position, object, force=False):
-		mname = '_placeInstance'
+	def placeInstance(self, position, object):
+		mname = 'placeInstance'
 		if not object:
 			if self.debug: print 'No object assigned in %s' % mname
 			return
@@ -138,74 +173,71 @@ class MapController(object):
 
 		if self.debug: print 'Placing instance of ' + object.getId() + ' at ' + str(position)
 
-		# don't place repeat instances
-		if force is False:
-			for i in self.getInstancesFromPosition(position, False):
-				if i.getObject().getId() == object.getId():
-					if self.debug: print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % object.getId()
-					return
+		# Remove instances from target position
+		if not self._undo:
+			self._undomanager.startGroup("Placed instance")
+			self.removeInstances(self.getInstancesFromPosition(position))
 
 		inst = self._layer.createInstance(object, position)
 		fife.InstanceVisual.create(inst)
 		
 		if not self._undo:
-			redocall = lambda: self.placeInstance(position, object, force=True)
-			undocall = lambda: self.removeInstances(position, force=True)
+			redocall = lambda: self.placeInstance(position, object)
+			undocall = lambda: self.removeInstances([inst])
 			undoobject = undomanager.UndoObject(undocall, redocall, "Placed instance")
 			self._undomanager.addAction(undoobject)
-
-	def removeInstances(self, position, force=False):
-		mname = '_removeInstances'
-		if not position:
-			if self.debug: print 'No position assigned in %s' % mname
-			return
-		if not self._layer:
-			if self.debug: print 'No layer assigned in %s' % mname
-			return
-
-		instances = self.getInstancesFromPosition(position, top_only=True)
+			self._undomanager.endGroup()
+			
+	def placeInstances(self, instances):
 		for i in instances:
-			if self.debug: print 'Deleting instance ' + i.getObject().getId() + ' at ' + str(position)
-			self._layer.deleteInstance(i)
+			fife.InstanceVisual.create(i)
+			
+	def removeInstances(self, instances):
+		mname = 'removeInstances'
+		if not instances:
+			if self.debug: print 'No instances assigned in %s' % mname
+			return
+			
+		for i in instances:
+			print 'Deleting instance ' + i.getObject().getId() + ' at ' + str(i.getLocation().getExactLayerCoordinates())
 			
 			if not self._undo:
 				object = i.getObject()
 				
-				undocall = lambda: self.placeInstance(position, object, force=True)
-				redocall = lambda: self.removeInstances(position, force=True)
+				position = i.getLocation().getExactLayerCoordinates()
+				undocall = lambda: self.placeInstances(position, object)
+				redocall = lambda: self.removeInstances([i])
 				undoobject = undomanager.UndoObject(undocall, redocall, "Removed instance")
 				self._undomanager.addAction(undoobject)
-		
-	def moveInstances(self, exact=False):
-		mname = '_moveInstances'
-		if not self._selection:
-			if self.debug: print 'No selection assigned in %s' % mname
-			return
+				
+			self._layer.deleteInstance(i)
+
+	def moveInstances(self, instances, moveBy):
+		mname = 'moveInstances'
 		if not self._layer:
 			if self.debug: print 'No layer assigned in %s' % mname
 			return
 
-		loc = fife.Location(self._layer)
-		if exact:
-			loc.setExactLayerCoordinates(self._selection)
-		else:
-			loc.setLayerCoordinates(self._selection)
-		for i in self._instances:
-			f = fife.Location(self._layer)
-			f.setExactLayerCoordinates(i.getFacingLocation().getExactLayerCoordinates() + fife.ExactModelCoordinate(float(self._selection.x), float(self._selection.y)) - i.getLocation().getExactLayerCoordinates())
+		for i in instances:
+			loc = i.getLocation()
+			if type(moveBy) == fife.ExactModelCoordinate:
+				oldCoords = loc.getExactLayerCoordinates()
+				loc.setExactLayerCoordinates(oldCoords+moveBy)
+			else:
+				oldCoords = loc.getLayerCoordinates()
+				exactCoords = oldCoords+moveBy
+				exactCoords = fife.ExactModelCoordinate(float(exactCoords.x), float(exactCoords.y), float(exactCoords.z))
+				loc.setMapCoordinates(exactCoords)
+				
 			i.setLocation(loc)
-			i.setFacingLocation(f)
 
-	def rotateInstances(self):
-		mname = '_rotateInstances'
-		if not self._selection:
-			if self.debug: print 'No selection assigned in %s' % mname
-			return
+	def rotateInstances(self, instances):
+		mname = 'rotateInstances'
 		if not self._layer:
 			if self.debug: print 'No layer assigned in %s' % mname
 			return
 
-		for i in self.getInstancesFromPosition(self._selection, top_only=True):
+		for i in instances:
 # by c 09/11/08
 # FIXME:
 			# "hardcoded" rotation is bad for offset editing

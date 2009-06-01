@@ -101,7 +101,7 @@ class HistoryManager(plugin.Plugin):
 		
 		stackitem = self.list.selected_item.item
 		if stackitem == undomanager.current_item:
-			print "Selected current item"
+			#print "Selected current item"
 			return
 		
 		searchlist = []
@@ -135,9 +135,6 @@ class HistoryManager(plugin.Plugin):
 		for s in range(sl):
 			if searchlist[s][0] != searchlist[s][0]:
 				searchlist = searchlist[s-1:]
-			
-		print "S1:", searchlist
-		print "S2:", searchlist2
 		
 		s_item = searchlist[0][0]
 
@@ -146,7 +143,6 @@ class HistoryManager(plugin.Plugin):
 		item = current_item
 		while item is not None:
 			if item == s_item:
-				print "Undo:", i
 				undomanager.undo(i)
 				current_item = item
 				break
@@ -166,7 +162,6 @@ class HistoryManager(plugin.Plugin):
 		i = 0
 		while item is not None:
 			if item == stackitem:
-				print "Redo:", i
 				undomanager.redo(i)
 				break
 			i += 1
