@@ -32,7 +32,10 @@ namespace FIFE {
 		virtual ~CellSelectionRenderer();
 		std::string getName();
 		static CellSelectionRenderer* getInstance(IRendererContainer* cnt);
-		void selectLocation(Location* loc);
+		void reset();
+		void selectLocation(const Location* loc);
+		void deselectLocation(const Location* loc);
+		const std::vector<const Location> getLocations() const;
 		
 	private:
 		CellSelectionRenderer(RenderBackend* renderbackend, int position);

@@ -31,10 +31,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "view/rendererbase.h"
+#include "model/structures/location.h"
 
 namespace FIFE {
 	class RenderBackend;
 
+	/** CellSelectionRenderer renders a frame around selected cells.
+	 */
 	class CellSelectionRenderer: public RendererBase {
 	public:
 		/** constructor.
@@ -52,22 +55,31 @@ namespace FIFE {
 
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
 
+		/** Returns the renderer name */
 		std::string getName() { return "CellSelectionRenderer"; }
 
 		/** returns instance used in given view
 		 */
 		static CellSelectionRenderer* getInstance(IRendererContainer* cnt);
 		
+		/** Deselects all locations */
 		void reset();
 		
 		/** Selects given location on map
-		 * If NULL is given, deselects
 		 */
-		void selectLocation(Location* loc);
+		void selectLocation(const Location* loc);
+
+		/** Deselects given location on map
+		 */
+		void deselectLocation(const Location* loc);
+
+		/** Returns selected locations
+		 */
+		const std::vector<const Location> getLocations() const { return m_locations; }
 		
 	private:
-		// selected location
-		Location* m_loc;
+		// selected locations
+		std::vector<const Location> m_locations;
 	};
 
 }

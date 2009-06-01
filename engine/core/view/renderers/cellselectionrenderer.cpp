@@ -43,14 +43,12 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 	CellSelectionRenderer::CellSelectionRenderer(RenderBackend* renderbackend, int position):
-		RendererBase(renderbackend, position),
-		m_loc(NULL) {
+		RendererBase(renderbackend, position) {
 		setEnabled(true);
 	}
 
  	CellSelectionRenderer::CellSelectionRenderer(const CellSelectionRenderer& old):
-		RendererBase(old),
-		m_loc(NULL) {
+		RendererBase(old) {
 		setEnabled(true);
 	}
 
@@ -66,48 +64,63 @@ namespace FIFE {
 	}
 	
 	void CellSelectionRenderer::reset() {
-		delete m_loc;
-		m_loc = NULL;
+		m_locations.clear();
 	}
 
-	void CellSelectionRenderer::selectLocation(Location* loc) {
-		delete m_loc;
-		m_loc = NULL;
+	void CellSelectionRenderer::selectLocation(const Location* loc) {
 		if (loc) {
-			m_loc = new Location(*loc);
+			std::vector<const Location>::const_iterator it = m_locations.begin();
+			for (; it != m_locations.end(); it++) {
+				if (*it == *loc) return;
+			}
+
+			m_locations.push_back(Location(*loc));
+		}
+	}
+
+	void CellSelectionRenderer::deselectLocation(const Location* loc) {
+		if (loc) {
+			std::vector<const Location>::const_iterator it = m_locations.begin();
+			for (; it != m_locations.end(); it++) {
+				if (*it == *loc) {
+					m_locations.erase(it);
+					break;
+				}
+			}
 		}
 	}
 
 	void CellSelectionRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
-		if (!m_loc) {
-			return;
-		}
-		
-		if (layer != m_loc->getLayer()) {
-			return;
-		}
-		
-		CellGrid* cg = layer->getCellGrid();
-		if (!cg) {
-			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw selection");
-			return;
-		}
+		std::vector<const Location>::const_iterator locit = m_locations.begin();
 
-		std::vector<ExactModelCoordinate> vertices;
-		cg->getVertices(vertices, m_loc->getLayerCoordinates());
-		std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-		ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-		Point pt1(firstpt.x, firstpt.y);
-		Point pt2;
-		++it;
-		for (; it != vertices.end(); it++) {
-			ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-			pt2.x = pts.x; pt2.y = pts.y;
-			Point cpt1 = pt1;
-			Point cpt2 = pt2;
-			m_renderbackend->drawLine(cpt1, cpt2, 255, 0, 0);
-			pt1 = pt2;
+		for (; locit != m_locations.end(); locit++) {
+			const Location loc = *locit;
+			if (layer != loc.getLayer()) {
+				continue;
+			}
+			
+			CellGrid* cg = layer->getCellGrid();
+			if (!cg) {
+				FL_WARN(_log, "No cellgrid assigned to layer, cannot draw selection");
+				continue;
+			}
+
+			std::vector<ExactModelCoordinate> vertices;
+			cg->getVertices(vertices, loc.getLayerCoordinates());
+			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
+			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+			Point pt1(firstpt.x, firstpt.y);
+			Point pt2;
+			++it;
+			for (; it != vertices.end(); it++) {
+				ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+				pt2.x = pts.x; pt2.y = pts.y;
+				Point cpt1 = pt1;
+				Point cpt2 = pt2;
+				m_renderbackend->drawLine(cpt1, cpt2, 255, 0, 0);
+				pt1 = pt2;
+			}
+			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), 255, 0, 0);
 		}
-		m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), 255, 0, 0);
 	}
 }

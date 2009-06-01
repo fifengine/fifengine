@@ -167,7 +167,7 @@ class MapEditor:
 			if self._controller._camera:
 				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
 			if self._mode == VIEWING:
-				self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
+				self._controller.resetSelection()
 			elif self._mode == INSERTING:
 				self._controller.placeInstance(self._controller._selection, self._controller._object)
 			elif self._mode == REMOVING:
@@ -189,7 +189,13 @@ class MapEditor:
 			self._dragx = realCoords[0]
 			self._dragy = realCoords[1]
 		else:
-			if self._mode == INSERTING:
+			if self._mode != VIEWING:
+				self._controller.resetSelection()
+				
+			if self._mode == VIEWING:
+				self._controller.selectCell(realCoords[0], realCoords[1])
+				self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
+			elif self._mode == INSERTING:
 				self._controller.selectCell(realCoords[0], realCoords[1])
 				self._controller.placeInstance(self._controller._selection, self._controller._object)
 			elif self._mode == REMOVING:
@@ -202,6 +208,12 @@ class MapEditor:
 	def mouseReleased(self, sender, event):
 		if event.isConsumedByWidgets():
 			return
+			
+		realCoords = self._getRealCoords(sender, event)
+		if self._mode == VIEWING:
+			self._controller.selectCell(realCoords[0], realCoords[1])
+			self._controller.setSelectedInstances(self._controller.getInstancesFromPosition(self._controller._selection, top_only=True))
+		
 
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED

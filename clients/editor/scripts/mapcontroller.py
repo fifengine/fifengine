@@ -26,6 +26,7 @@ class MapController(object):
 		undomanager.preRedo.connect(self._startUndo, sender=self._undomanager)
 		undomanager.postUndo.connect(self._endUndo, sender=self._undomanager)
 		undomanager.postRedo.connect(self._endUndo, sender=self._undomanager)
+		self.debug = False
 		
 		if map is not None:
 			self.setMap(map.getId())
@@ -57,23 +58,29 @@ class MapController(object):
 
 	def selectObject(self, object):
 		self._object = object
+		
+	def resetSelection(self):
+		if not self._camera: 
+			if self.debug: print 'No camera bind yet, cannot select any cell'
+			return
+		self._selection = None
+		fife.CellSelectionRenderer.getInstance(self._camera).reset()
 
 	def selectCell(self, screenx, screeny, preciseCoords=False):
 		if not self._camera: 
-			print 'No camera bind yet, cannot select any cell'
+			if self.debug: print 'No camera bind yet, cannot select any cell'
 			return
 		if not self._layer:
-			print 'No layer assigned in selectCell'
+			if self.debug: print 'No layer assigned in selectCell'
 			return
 
-		self._selection = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
-		self._selection.z = 0
+		mapCoords = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
 		loc = fife.Location(self._layer)
 		if preciseCoords:
-			self._selection = self._layer.getCellGrid().toExactLayerCoordinates(self._selection)
+			self._selection = self._layer.getCellGrid().toExactLayerCoordinates(mapCoords)
 			loc.setExactLayerCoordinates(self._selection)
 		else:
-			self._selection = self._layer.getCellGrid().toLayerCoordinates(self._selection)
+			self._selection = self._layer.getCellGrid().toLayerCoordinates(mapCoords)
 			loc.setLayerCoordinates(self._selection)
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
 		return loc
@@ -84,10 +91,10 @@ class MapController(object):
 
 	def getInstancesFromPosition(self, position, top_only):
 		if not self._layer:
-			print 'No layer assigned in getInstancesFromPosition'
+			if self.debug: print 'No layer assigned in getInstancesFromPosition'
 			return
 		if not position:
-			print 'No position assigned in getInstancesFromPosition'
+			if self.debug: print 'No position assigned in getInstancesFromPosition'
 			return
 
 		loc = fife.Location(self._layer)
@@ -120,22 +127,22 @@ class MapController(object):
 	def placeInstance(self, position, object, force=False):
 		mname = '_placeInstance'
 		if not object:
-			print 'No object assigned in %s' % mname
+			if self.debug: print 'No object assigned in %s' % mname
 			return
 		if not position:
-			print 'No position assigned in %s' % mname
+			if self.debug: print 'No position assigned in %s' % mname
 			return
 		if not self._layer:
-			print 'No layer assigned in %s' % mname
+			if self.debug: print 'No layer assigned in %s' % mname
 			return
 
-		print 'Placing instance of ' + object.getId() + ' at ' + str(position)
+		if self.debug: print 'Placing instance of ' + object.getId() + ' at ' + str(position)
 
 		# don't place repeat instances
 		if force is False:
 			for i in self.getInstancesFromPosition(position, False):
 				if i.getObject().getId() == object.getId():
-					print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % object.getId()
+					if self.debug: print 'Warning: attempt to place duplicate instance of object %s. Ignoring request.' % object.getId()
 					return
 
 		inst = self._layer.createInstance(object, position)
@@ -150,15 +157,15 @@ class MapController(object):
 	def removeInstances(self, position, force=False):
 		mname = '_removeInstances'
 		if not position:
-			print 'No position assigned in %s' % mname
+			if self.debug: print 'No position assigned in %s' % mname
 			return
 		if not self._layer:
-			print 'No layer assigned in %s' % mname
+			if self.debug: print 'No layer assigned in %s' % mname
 			return
 
 		instances = self.getInstancesFromPosition(position, top_only=True)
 		for i in instances:
-			print 'Deleting instance ' + i.getObject().getId() + ' at ' + str(position)
+			if self.debug: print 'Deleting instance ' + i.getObject().getId() + ' at ' + str(position)
 			self._layer.deleteInstance(i)
 			
 			if not self._undo:
@@ -172,10 +179,10 @@ class MapController(object):
 	def moveInstances(self, exact=False):
 		mname = '_moveInstances'
 		if not self._selection:
-			print 'No selection assigned in %s' % mname
+			if self.debug: print 'No selection assigned in %s' % mname
 			return
 		if not self._layer:
-			print 'No layer assigned in %s' % mname
+			if self.debug: print 'No layer assigned in %s' % mname
 			return
 
 		loc = fife.Location(self._layer)
@@ -192,10 +199,10 @@ class MapController(object):
 	def rotateInstances(self):
 		mname = '_rotateInstances'
 		if not self._selection:
-			print 'No selection assigned in %s' % mname
+			if self.debug: print 'No selection assigned in %s' % mname
 			return
 		if not self._layer:
-			print 'No layer assigned in %s' % mname
+			if self.debug: print 'No layer assigned in %s' % mname
 			return
 
 		for i in self.getInstancesFromPosition(self._selection, top_only=True):

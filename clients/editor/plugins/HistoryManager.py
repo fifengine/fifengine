@@ -229,7 +229,7 @@ class HistoryManager(plugin.Plugin):
 				self.list.selected = i
 				break
 			i += 1
-		self.scrollarea.resizeToContent()
+		self.scrollarea.adaptLayout()
 
 	def show(self):
 		self.update()
