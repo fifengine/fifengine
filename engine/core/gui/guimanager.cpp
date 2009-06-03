@@ -25,6 +25,7 @@
 // 3rd party library includes
 #include <boost/filesystem/convenience.hpp>
 #include <guichan/sdl/sdlinput.hpp>
+#include <guichan/key.hpp>
 #include <guichan/focushandler.hpp>
 #include <guichan.hpp>
 
@@ -41,6 +42,7 @@
 #include "video/fonts/fontbase.h"
 #include "video/fonts/truetypefont.h"
 #include "video/fonts/subimagefont.h"
+#include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 
@@ -239,10 +241,10 @@ namespace FIFE {
 		keyevt.setMetaPressed(gcnevt.isMetaPressed());
 		keyevt.setNumericPad(gcnevt.isNumericPad());
 
-		// Guichan has different values from FIFE for modifier keys
-		// Left alt: Guichan = -1000, FIFE = 302
+		// Convert from guichan keyval to FIFE keyval
 		int keyval = gcnevt.getKey().getValue();
-		if (keyval < 0) keyval += 1302;
+		keyval = convertGuichanKeyToFifeKey(keyval);
+		
 		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval), keyval));
 
 		return keyevt;
@@ -306,4 +308,162 @@ namespace FIFE {
 		return mouseevt;
 	}
 
+
+	int GUIManager::convertGuichanKeyToFifeKey(int value) {
+
+		switch (value) {
+			case gcn::Key::TAB:
+				value = Key::TAB;
+				break;
+			case gcn::Key::LEFT_ALT:
+				value = Key::LEFT_ALT;
+				break;
+			case gcn::Key::RIGHT_ALT:
+				value = Key::RIGHT_ALT;
+				break;
+			case gcn::Key::LEFT_SHIFT:
+				value = Key::LEFT_SHIFT;
+				break;
+			case gcn::Key::RIGHT_SHIFT:
+				value = Key::RIGHT_SHIFT;
+				break;
+			case gcn::Key::LEFT_CONTROL:
+				value = Key::LEFT_CONTROL;
+				break;
+			case gcn::Key::RIGHT_CONTROL:
+				value = Key::RIGHT_CONTROL;
+				break;
+			case gcn::Key::BACKSPACE:
+				value = Key::BACKSPACE;
+				break;
+			case gcn::Key::PAUSE:
+				value = Key::PAUSE;
+				break;
+			case gcn::Key::SPACE:
+				value = Key::SPACE;
+				break;
+			case gcn::Key::ESCAPE:
+				value = Key::ESCAPE;
+				break;
+			case gcn::Key::DELETE:
+				value = Key::DELETE;
+				break;
+			case gcn::Key::INSERT:
+				value = Key::INSERT;
+				break;
+			case gcn::Key::HOME:
+				value = Key::HOME;
+				break;
+			case gcn::Key::END:
+				value = Key::END;
+				break;
+			case gcn::Key::PAGE_UP:
+				value = Key::PAGE_UP;
+				break;
+			case gcn::Key::PRINT_SCREEN:
+				value = Key::PRINT_SCREEN;
+				break;
+			case gcn::Key::PAGE_DOWN:
+				value = Key::PAGE_DOWN;
+				break;
+			case gcn::Key::F1:
+				value = Key::F1;
+				break;
+			case gcn::Key::F2:
+				value = Key::F2;
+				break;
+			case gcn::Key::F3:
+				value = Key::F3;
+				break;
+			case gcn::Key::F4:
+				value = Key::F4;
+				break;
+			case gcn::Key::F5:
+				value = Key::F5;
+				break;
+			case gcn::Key::F6:
+				value = Key::F6;
+				break;
+			case gcn::Key::F7:
+				value = Key::F7;
+				break;
+			case gcn::Key::F8:
+				value = Key::F8;
+				break;
+			case gcn::Key::F9:
+				value = Key::F9;
+				break;
+			case gcn::Key::F10:
+				value = Key::F10;
+				break;
+			case gcn::Key::F11:
+				value = Key::F11;
+				break;
+			case gcn::Key::F12:
+				value = Key::F12;
+				break;
+			case gcn::Key::F13:
+				value = Key::F13;
+				break;
+			case gcn::Key::F14:
+				value = Key::F14;
+				break;
+			case gcn::Key::F15:
+				value = Key::F15;
+				break;
+			case gcn::Key::NUM_LOCK:
+				value = Key::NUM_LOCK;
+				break;
+			case gcn::Key::CAPS_LOCK:
+				value = Key::CAPS_LOCK;
+				break;
+			case gcn::Key::SCROLL_LOCK:
+				value = Key::SCROLL_LOCK;
+				break;
+			case gcn::Key::RIGHT_META:
+				value = Key::RIGHT_META;
+				break;
+			case gcn::Key::LEFT_META:
+				value = Key::LEFT_META;
+				break;
+			case gcn::Key::LEFT_SUPER:
+				value = Key::LEFT_SUPER;
+				break;
+			case gcn::Key::RIGHT_SUPER:
+				value = Key::RIGHT_SUPER;
+				break;
+			case gcn::Key::ALT_GR:
+				value = Key::ALT_GR;
+				break;
+			case gcn::Key::UP:
+				value = Key::UP;
+				break;
+			case gcn::Key::DOWN:
+				value = Key::DOWN;
+				break;
+			case gcn::Key::LEFT:
+				value = Key::LEFT;
+				break;
+			case gcn::Key::RIGHT:
+				value = Key::RIGHT;
+				break;
+			case gcn::Key::ENTER:
+				value = Key::ENTER;
+				break;
+
+			default:
+				// Convert from unicode to lowercase letters
+				if (value >= 1 && value <= 26) {
+					// Control characters
+					value = value - 1 + 'a';
+				} else if (value >= 'A' && value <= 'Z') {
+					value = value - 'A' + 'a';
+				}
+
+				// FIXME: Accented characters (á) will not get converted properly.
+				break;
+		}
+
+		return value;
+	}
 }
