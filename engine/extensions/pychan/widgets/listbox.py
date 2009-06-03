@@ -19,7 +19,7 @@ class GenericListmodel(fife.ListModel,list):
 
 	def getElementAt(self, i):
 		i = max(0,min(i,len(self) - 1))
-		return str(self[i])
+		return text2gui(unicode(self[i]))
 
 class ListBox(Widget):
 	"""
