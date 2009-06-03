@@ -29,7 +29,9 @@ class MapEditor:
 		self._statusbar = self._editor.getStatusBar()
 		self._toolbar = self._editor.getToolBar()
 		self._object = None
+		self._startDragPos = None
 		self._lastDragPos = None
+		self._lastDragPosExact = None
 		
 		self._toolbox = self._editor.getToolbox()
 		
@@ -173,13 +175,17 @@ class MapEditor:
 			if self._mode == SELECTING:
 				self._controller.resetSelection()
 			elif self._mode == INSERTING:
-				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
+				self._controller.selectCell(realCoords[0], realCoords[1])
 				self._controller.getUndoManager().startGroup("Inserted instances")
 				self._undogroup = True
 				
-				self._controller.placeInstance(self._controller._selection, self._object)
+				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
+				
+				self._controller.selectCell(realCoords[0], realCoords[1])
+				self._controller.placeInstance(position, self._object)
 			elif self._mode == REMOVING:
-				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
+				self._controller.selectCell(realCoords[0], realCoords[1])
 				self._controller.getUndoManager().startGroup("Removed instances")
 				self._undogroup = True
 				
@@ -188,12 +194,17 @@ class MapEditor:
 				# TODO: Check if mousepos is in a selected cell. If not, select the clicked cell
 				
 				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
-				if self._eventlistener.shiftPressed:
-					pos = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
-				else:
-					pos = self._controller._layer.getCellGrid().toLayerCoordinates(position)
+				position = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
 
-				self._lastDragPos = fife.ExactModelCoordinate(float(pos.x), float(pos.y), float(pos.z))
+				self._lastDragPos = self._controller._layer.getCellGrid().toLayerCoordinates(position)
+				self._lastDragPosExact = position
+				
+				for i in self._controller._selection:
+					if i.getLayerCoordinates() == self._lastDragPos:
+						break
+				else:
+					self._controller.resetSelection()
+					self._controller.selectCell(realCoords[0], realCoords[1])
 					
 				self._instances = self._controller.getInstancesFromSelection()
 				
@@ -218,24 +229,33 @@ class MapEditor:
 			if self._mode == SELECTING:
 				self._controller.selectCell(realCoords[0], realCoords[1])
 			elif self._mode == INSERTING:
+				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
+				
 				self._controller.selectCell(realCoords[0], realCoords[1])
-				self._controller.placeInstance(self._controller._selection, self._object)
+				self._controller.placeInstance(position, self._object)
 			elif self._mode == REMOVING:
 				self._controller.selectCell(realCoords[0], realCoords[1])
 				self._controller.removeInstances(self._controller.getInstancesFromSelection())
 			elif self._mode == MOVING:
-				self._controller.selectCell(realCoords[0], realCoords[1], self._eventlistener.shiftPressed)
+				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				positionExact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
+				position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
 				
-				mapcoords = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
 				if self._eventlistener.shiftPressed:
-					position = self._controller._layer.getCellGrid().toExactLayerCoordinates(mapcoords)
+					self._controller.moveInstances(self._instances, positionExact-self._lastDragPosExact, True)
 				else:
-					position = self._controller._layer.getCellGrid().toLayerCoordinates(mapcoords)
-				position = fife.ExactModelCoordinate(float(position.x), float(position.y), float(position.z))
-
-				self._controller.moveInstances(self._instances, position-self._lastDragPos)
+					self._controller.moveInstances(self._instances, position-self._lastDragPos, False)
 				self._lastDragPos = position
+				self._lastDragPosExact = positionExact
 				
+				# Update selection
+				self._controller.resetSelection()
+				
+				for i in self._instances:
+					pos = i.getLocation().getExactLayerCoordinates()
+					pos = self._controller._camera.toScreenCoordinates(pos)
+					self._controller.selectCell(pos.x, pos.y)
 
 	def mouseReleased(self, sender, event):
 		if event.isConsumedByWidgets():
