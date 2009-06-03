@@ -44,6 +44,9 @@ class MapEditor:
 		events.onObjectSelected.connect(self.setObject)
 		self._undogroup = False
 		
+		self._scrollX = 0
+		self._scrollY = 0
+		
 	def _init(self):
 		self._dragx = NOT_INITIALIZED
 		self._dragy = NOT_INITIALIZED
@@ -60,6 +63,7 @@ class MapEditor:
 		events.mouseWheelMovedUp.connect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.connect(self.mouseWheelMovedDown)
 		events.mouseExited.connect(self.mouseExited)
+		events.onPump.connect(self.pump)
 		
 	def _clear(self):
 		events.keyPressed.disconnect(self.keyPressed)
@@ -72,6 +76,7 @@ class MapEditor:
 		events.mouseWheelMovedUp.disconnect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.disconnect(self.mouseWheelMovedDown)
 		events.mouseExited.disconnect(self.mouseExited)
+		events.onPump.disconnect(self.pump)
 		
 	def _mapChanged(self, sender, mapview):
 		self.setController(mapview.getController())
@@ -165,13 +170,23 @@ class MapEditor:
 
 		realCoords = self._getRealCoords(sender, event)
 
-		if self._eventlistener.controlPressed:
+		if self._eventlistener.altPressed:
 			if event.getButton() == fife.MouseEvent.LEFT:
 				self._dragx = realCoords[0]
 				self._dragy = realCoords[1]
+		elif event.getButton() == fife.MouseEvent.MIDDLE:
+			self._dragx = realCoords[0]
+			self._dragy = realCoords[1]
 		else:
 			if self._mode == SELECTING:
-				self._controller.resetSelection()
+				if event.getButton() == fife.MouseEvent.LEFT:
+					if self._eventlistener.controlPressed is False:
+						self._controller.resetSelection()
+					self._controller.selectCell(realCoords[0], realCoords[1])
+					
+				elif event.getButton() == fife.MouseEvent.RIGHT:
+					self._controller.resetSelection()
+					
 			elif self._mode == INSERTING:
 				self._controller.selectCell(realCoords[0], realCoords[1])
 				self._controller.getUndoManager().startGroup("Inserted instances")
@@ -182,15 +197,15 @@ class MapEditor:
 				
 				self._controller.selectCell(realCoords[0], realCoords[1])
 				self._controller.placeInstance(position, self._object)
+				
 			elif self._mode == REMOVING:
 				self._controller.selectCell(realCoords[0], realCoords[1])
 				self._controller.getUndoManager().startGroup("Removed instances")
 				self._undogroup = True
 				
 				self._controller.removeInstances(self._controller.getInstancesFromSelection())
-			elif self._mode == MOVING:
-				# TODO: Check if mousepos is in a selected cell. If not, select the clicked cell
 				
+			elif self._mode == MOVING:
 				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
 				position = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
 
@@ -215,17 +230,21 @@ class MapEditor:
 			
 		realCoords = self._getRealCoords(sender, event)
 			
-		if self._eventlistener.controlPressed:
+		if self._eventlistener.altPressed:
 			if (self._dragx != NOT_INITIALIZED) and (self._dragy != NOT_INITIALIZED):
 				self._controller.moveCamera(realCoords[0] - self._dragx, realCoords[1] - self._dragy)
 			self._dragx = realCoords[0]
 			self._dragy = realCoords[1]
+		elif event.getButton() == fife.MouseEvent.MIDDLE:
+			self._scrollX = (self._dragx-realCoords[0])/10.0
+			self._scrollY = (self._dragy-realCoords[1])/10.0
 		else:
 			if self._mode != SELECTING:
 				self._controller.resetSelection()
 				
 			if self._mode == SELECTING:
-				self._controller.selectCell(realCoords[0], realCoords[1])
+				if event.getButton() == fife.MouseEvent.LEFT:
+					self._controller.selectCell(realCoords[0], realCoords[1])
 			elif self._mode == INSERTING:
 				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
 				position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
@@ -259,10 +278,12 @@ class MapEditor:
 		if event.isConsumedByWidgets():
 			return
 			
+		if event.getButton() == fife.MouseEvent.MIDDLE:
+			self._scrollX = 0
+			self._scrollY = 0
+			
 		realCoords = self._getRealCoords(sender, event)
-		if self._mode == SELECTING and not self._eventlistener.controlPressed:
-			self._controller.selectCell(realCoords[0], realCoords[1])
-		
+
 		if self._undogroup:
 			self._controller.getUndoManager().endGroup()
 			self._undogroup = False
@@ -334,7 +355,7 @@ class MapEditor:
 		elif keystr == 'o':
 			self._controller.changeRotation()
 
-		elif keyval == ord('z'):
+		elif keystr == 'z':
 			if self._eventlistener.controlPressed:
 				if self._eventlistener.altPressed:
 					if self._eventlistener.shiftPressed:
@@ -366,3 +387,7 @@ class MapEditor:
 				break
 			
 		return (offsetX, offsetY)
+		
+	def pump(self):
+		if self._scrollX != 0:
+			self._controller.moveCamera(self._scrollX, self._scrollY)
