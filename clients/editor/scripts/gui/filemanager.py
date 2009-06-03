@@ -12,6 +12,7 @@ class FileManager(object):
 	def __init__(self):
 		self.editor = scripts.editor.getEditor()
 		self.engine = self.editor.getEngine()
+		
 
 		newAction = Action(u"New map", "gui/icons/new_map.png")
 		loadAction = Action(u"Open", "gui/icons/load_map.png")
@@ -30,6 +31,12 @@ class FileManager(object):
 		action.activated.connect(self.save, sender=saveAction)
 		action.activated.connect(self.saveAs, sender=saveAsAction)
 		action.activated.connect(self.editor.saveAll, sender=saveAllAction)
+		
+		eventlistener = self.editor.getEventListener()
+		eventlistener.getKeySequenceSignal(fife.Key.N, ["ctrl"]).connect(self.showMapWizard)
+		eventlistener.getKeySequenceSignal(fife.Key.O, ["ctrl"]).connect(self.showLoadDialog)
+		eventlistener.getKeySequenceSignal(fife.Key.S, ["ctrl"]).connect(self.save)
+		eventlistener.getKeySequenceSignal(fife.Key.S, ["ctrl", "shift"]).connect(self.editor.saveAll)
 		
 		fileGroup = ActionGroup()
 		fileGroup.addAction(newAction)

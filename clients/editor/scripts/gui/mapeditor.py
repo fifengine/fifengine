@@ -72,8 +72,6 @@ class MapEditor:
 		events.mouseWheelMovedUp.disconnect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.disconnect(self.mouseWheelMovedDown)
 		events.mouseExited.disconnect(self.mouseExited)
-	
-		events.onPump.disconnect(self.pump)
 		
 	def _mapChanged(self, sender, mapview):
 		self.setController(mapview.getController())
@@ -332,10 +330,7 @@ class MapEditor:
 		elif keystr == 'b':
 			blockrenderer = self._controller._camera.getRenderer('BlockingInfoRenderer')
 			blockrenderer.setEnabled(not blockrenderer.isEnabled())
-
-		elif keystr == 'r':
-			self._controller.rotateInstances()
-
+			
 		elif keystr == 'o':
 			self._controller.changeRotation()
 
@@ -351,6 +346,7 @@ class MapEditor:
 						self._controller.redo()
 					else:
 						self._controller.undo()
+			
 
 	def keyReleased(self, event):		
 		pass

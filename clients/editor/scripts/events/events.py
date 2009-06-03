@@ -40,6 +40,12 @@ onToolsClick	= Signal(providing_args=[])
 onCommand		= Signal(providing_args=["command"])
 onConsoleCommand= Signal(providing_args=["command"])
 
+class KeySequence(object):
+	def __init__(self):
+		self.key = None
+		self.modifiers = {"alt":False,"ctrl":False,"shift":False,"meta":False}
+		self.signal = None
+
 class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
 	# NOTE: As FIFEdit currently covers the entire screen with widgets,
 	#		FIFE doesn't receive any mouse or key events. Therefore we have to add
@@ -49,6 +55,7 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 		self.engine = engine
 		
 		eventmanager = self.engine.getEventManager()
+		self.keysequences = []
 
 		IKeyListener.__init__(self)
 		eventmanager.addKeyListener(self)
@@ -69,6 +76,30 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 		self.altPressed		= False
 		self.shiftPressed	= False
 		self.metaPressed	= False
+		
+	def getKeySequenceSignal(self, key, modifiers=[]):
+		# Parse modifiers
+		mods = {"alt":False,"ctrl":False,"shift":False,"meta":False}
+		for m in modifiers:
+			m = m.lower()
+			if m in mods:
+				mods[m] = True
+			else:
+				print "Unknown modifier:",m
+		
+		# Check if signal for keysequence has been created
+		for k in self.keysequences:
+			if k.key == key and k.modifiers == mods:
+				return k.signal
+				
+		# Create keysequence and signal
+		keysequence = KeySequence()
+		keysequence.key = key
+		keysequence.modifiers = mods
+		keysequence.signal = Signal(providing_args=["event"])
+		self.keysequences.append(keysequence)
+		
+		return keysequence.signal
 	
 	#--- Listener methods ---#
 	# IKeyListener
@@ -96,6 +127,15 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 		elif keystr == "d":
 			pdb.set_trace()
+			
+		# Check keysequences
+		for k in self.keysequences:
+			if k.modifiers["alt"] != self.altPressed: continue
+			if k.modifiers["ctrl"] != self.controlPressed: continue
+			if k.modifiers["shift"]	!= self.shiftPressed: continue
+			if k.modifiers["meta"] != self.metaPressed: continue
+			if keyval != k.key: continue
+			k.signal.send(sender=self, event=evt)
 			
 		keyPressed.send(sender=self.engine, event=evt)
 		
