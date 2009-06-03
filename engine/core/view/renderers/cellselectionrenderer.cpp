@@ -69,7 +69,7 @@ namespace FIFE {
 
 	void CellSelectionRenderer::selectLocation(const Location* loc) {
 		if (loc) {
-			std::vector<const Location>::const_iterator it = m_locations.begin();
+			std::vector<Location>::const_iterator it = m_locations.begin();
 			for (; it != m_locations.end(); it++) {
 				if (*it == *loc) return;
 			}
@@ -80,7 +80,7 @@ namespace FIFE {
 
 	void CellSelectionRenderer::deselectLocation(const Location* loc) {
 		if (loc) {
-			std::vector<const Location>::const_iterator it = m_locations.begin();
+			std::vector<Location>::iterator it = m_locations.begin();
 			for (; it != m_locations.end(); it++) {
 				if (*it == *loc) {
 					m_locations.erase(it);
@@ -91,7 +91,7 @@ namespace FIFE {
 	}
 
 	void CellSelectionRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
-		std::vector<const Location>::const_iterator locit = m_locations.begin();
+		std::vector<Location>::const_iterator locit = m_locations.begin();
 
 		for (; locit != m_locations.end(); locit++) {
 			const Location loc = *locit;

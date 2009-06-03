@@ -75,11 +75,11 @@ namespace FIFE {
 
 		/** Returns selected locations
 		 */
-		const std::vector<const Location> getLocations() const { return m_locations; }
+		const std::vector<Location> getLocations() const { return m_locations; }
 		
 	private:
 		// selected locations
-		std::vector<const Location> m_locations;
+		std::vector<Location> m_locations;
 	};
 
 }
