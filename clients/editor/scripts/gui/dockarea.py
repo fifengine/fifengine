@@ -116,6 +116,12 @@ class DockArea(widgets.VBox, ResizableBase):
 		if len(tabwidget.tabs) <= 0:
 			self.gui.removeChild(tabwidget)
 			self.tabwidgets.remove(tabwidget)
+			
+			# This stops a guichan exception when a widget with modul focus gets focused.
+			# It is not pretty, but crashes aren't pretty either
+			tabwidget.__del__()
+			del tabwidget
+				
 		self.adaptLayout()
 		
 	def buildGui(self):

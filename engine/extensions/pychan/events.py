@@ -282,9 +282,9 @@ class EventMapper(object):
 			
 		self.callbacks[group_name][event_name] = callback
 			
-		
 		def captured_f(event):
-			tools.applyOnlySuitable(self_ref().callbacks[group_name][event_name],event=event,widget=self_ref().widget_ref())
+			if self_ref() is not None:
+				tools.applyOnlySuitable(self_ref().callbacks[group_name][event_name],event=event,widget=self_ref().widget_ref())
 
 		listener = self.getListener(event_name)
 

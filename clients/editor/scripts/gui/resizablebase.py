@@ -124,6 +124,7 @@ class ResizableBase(object):
 		if self._rLeft or self._rRight or self._rTop or self._rBottom:
 			self._resize = True
 			self.min_size = (30, 30)
+			event.consume()
 		
 	def mouseReleased(self, event):
 		if self._resize:

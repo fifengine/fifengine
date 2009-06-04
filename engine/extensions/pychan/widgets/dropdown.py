@@ -38,7 +38,7 @@ class DropDown(Widget):
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
 		# if no items are in the list
-		_item_widths = map(self.real_font.getWidth,map(str,self._items)) + [self.real_font.getHeight()]
+		_item_widths = map(self.real_font.getWidth, map(text2gui, map(unicode, self._items))) + [self.real_font.getHeight()]
 		max_w = max(_item_widths)
 		self.width = max_w
 		self.height = (self.real_font.getHeight() + 2)

@@ -29,6 +29,12 @@ class FakeTabWidget(widgets.VBox, ResizableBase):
 		self.resizable_right = False
 		self.resizable_bottom = False
 		
+	def __del__(self):
+		# Force deletion of C++ object
+		if self.real_widget:
+			self.real_widget.__del__()
+			self.real_widget = None
+		
 	def addTab(self, widget, title):
 		for tab in self.tabs:
 			if tab[1] == widget:
