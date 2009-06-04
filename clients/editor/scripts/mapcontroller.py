@@ -63,16 +63,16 @@ class MapController(object):
 		fife.CellSelectionRenderer.getInstance(self._camera).reset()
 		
 	def clearSelection(self):
-		instances = getInstancesFromSelection()
-		self.undomanager.startGroup("Cleared selection")
+		instances = self.getInstancesFromSelection()
+		self._undomanager.startGroup("Cleared selection")
 		self.removeInstances(instances)
-		self.undomanager.endGroup()
+		self._undomanager.endGroup()
 		
 	def fillSelection(self, object):
-		self.undomanager.startGroup("Cleared selection")
+		self._undomanager.startGroup("Filled selection")
 		for loc in self._selection:
 			self.placeInstance(loc.getLayerCoordinates(), object)
-		self.undomanager.endGroup()
+		self._undomanager.endGroup()
 
 	def selectCell(self, screenx, screeny):
 		if not self._camera: 
@@ -105,6 +105,7 @@ class MapController(object):
 			for u in uniqueInstances:
 				# We must use the location reference to check for equality,
 				# as i == u always returns false
+				# However, this will not select all tiles if there are multiple tiles on a location
 				if i.getLocationRef() == u.getLocationRef(): 
 					break
 			else: uniqueInstances.append(i)
@@ -218,9 +219,25 @@ class MapController(object):
 			i.setLocation(loc)
 			i.setFacingLocation(f)
 
-	def changeRotation(self):
+	def rotateCounterClockwise(self):
+		currot = self._camera.getRotation()
+		self._camera.setRotation((currot + 270) % 360)
+		
+	def rotateClockwise(self):
 		currot = self._camera.getRotation()
 		self._camera.setRotation((currot + 90) % 360)
+		
+	def getZoom(self):
+		if not self._camera: 
+			if self.debug: print 'No camera bind yet, cannot get zoom'
+			return 0
+		return self._camera.getZoom()
+		
+	def setZoom(self, zoom):
+		if not self._camera: 
+			if self.debug: print 'No camera bind yet, cannot get zoom'
+			return
+		self._camera.setZoom(zoom)
 
 	def moveCamera(self, screen_x, screen_y):
 		coords = self._camera.getLocationRef().getMapCoordinates()
