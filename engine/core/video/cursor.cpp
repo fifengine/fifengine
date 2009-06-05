@@ -75,7 +75,7 @@ namespace FIFE {
 	static Logger _log(LM_GUI); // We should have a log module for cursor
 
 	Cursor::Cursor(ImagePool* imgpool, AnimationPool* animpool, RenderBackend* renderbackend):
-		m_cursor_id(0),
+		m_cursor_id(NC_ARROW),
 		m_drag_id(0),
 		m_cursor_type(CURSOR_NATIVE),
 		m_drag_type(CURSOR_NONE),
@@ -89,6 +89,7 @@ namespace FIFE {
 		m_native_cursor(NULL),
 		m_timemanager(TimeManager::instance()) {
 		assert(m_timemanager);
+		set(m_cursor_type, m_cursor_id);
 	}
 	
 	void Cursor::set(MouseCursorType ctype, unsigned int cursor_id) {
