@@ -13,6 +13,7 @@ from gui.mainwindow import MainWindow
 from gui.mapeditor import MapEditor
 from gui.menubar import Menu, MenuBar
 from gui.error import ErrorDialog
+from settings import Settings
 from pychan.tools import callbackWithArguments as cbwa
 from events import *
 import sys
@@ -48,10 +49,49 @@ class Editor(ApplicationBase, MainWindow):
 		self._viewMenu = None
 		self._toolsMenu = None
 		self._helpMenu = None
+		
+		self._settings = None
 	
 		ApplicationBase.__init__(self, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
 		pychan.init(self.engine, debug=False)
+		
+
+	def loadSettings(self):
+		"""
+		Load the settings from a python file and load them into the engine.
+		Called in the ApplicationBase constructor.
+		"""
+		self._settings = Settings()
+		TDS = self._settings
+		
+		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
+		engineSetting = self.engine.getSettings()
+		engineSetting.setDefaultFontGlyphs(TDS.get("FIFE", "FontGlyphs", glyphDft))
+		engineSetting.setDefaultFontPath(TDS.get("FIFE", "Font", "fonts/FreeSans.ttf"))
+		engineSetting.setDefaultFontSize(12)
+		engineSetting.setBitsPerPixel(TDS.get("FIFE", "BitsPerPixel", 0))
+		engineSetting.setInitialVolume(TDS.get("FIFE", "InitialVolume", 5.0))
+		engineSetting.setSDLRemoveFakeAlpha(TDS.get("FIFE", "SDLRemoveFakeAlpha", 1))
+		engineSetting.setScreenWidth(TDS.get("FIFE", "ScreenWidth", 1024))
+		engineSetting.setScreenHeight(TDS.get("FIFE", "ScreenHeight", 768))
+		engineSetting.setRenderBackend(TDS.get("FIFE", "RenderBackend", "OpenGL"))
+		engineSetting.setFullScreen(TDS.get("FIFE", "FullScreen", 0))
+
+		engineSetting.setWindowTitle(TDS.get("FIFE", "WindowTitle", "No window title set"))
+		engineSetting.setWindowIcon(TDS.get("FIFE", "WindowIcon", ""))
+		engineSetting.setImageChunkingSize(TDS.get("FIFE", "ImageChunkSize", 256))
+
+	def initLogging(self):
+		"""
+		Initialize the LogManager.
+		"""
+		import fifelog
+		
+		LogModules = self._settings.get("FIFE", "LogModules")
+		self.log = fifelog.LogManager(self.engine, self._settings.get("FIFE", "LogToPrompt"), self._settings.get("FIFE", "LogToFile"))
+		if LogModules:
+			self.log.setVisibleModules(*LogModules)
 		
 	def _initTools(self):
 		self._pluginmanager = plugin.PluginManager()
@@ -248,6 +288,9 @@ class Editor(ApplicationBase, MainWindow):
 	def getActiveMapView(self):
 		return self._mapview
 		
+	def getSettings(self):
+		return self._settings;
+		
 	def showMapView(self, mapview):
 		if mapview is None or mapview == self._mapview:
 			return
@@ -300,6 +343,10 @@ class Editor(ApplicationBase, MainWindow):
 			self._mapview = mapView
 			self._filemanager.save()
 		self._mapview = tmpView
+		
+	def quit(self):
+		self._settings.saveSettings()
+		ApplicationBase.quit(self)
 
 	def _pump(self):
 		# ApplicationBase and Engine should be done initializing at this point

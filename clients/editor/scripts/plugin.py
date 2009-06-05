@@ -1,7 +1,10 @@
 import os
+import editor
 
 class PluginManager:
 	def __init__(self, *args, **kwargs):
+		self._settings = editor.getEditor().getSettings()
+		
 		self._pluginDir = "plugins"
 		self._plugins = []
 		
@@ -12,18 +15,26 @@ class PluginManager:
 				files.append(os.path.splitext(f)[0])
 				
 		for f in files:
-			try:
-				print "Importing plugin:", f
-				exec "import plugins."+f
-				plugin = eval("plugins."+f+"."+f+"()")
-				if isinstance(plugin, Plugin) is False:
-					print f+" is not an instance of Plugin!"
-				else:
-					plugin.enable()
-					self._plugins.append(plugin)
-			except BaseException, error:
-				print "Error: ", error
-				print "Invalid plugin:", f
+			importPlugin = self._settings.get("Plugins", f, False)
+			if importPlugin:
+				try:
+					print "Importing plugin:", f
+					exec "import plugins."+f
+					plugin = eval("plugins."+f+"."+f+"()")
+					if isinstance(plugin, Plugin) is False:
+						print f+" is not an instance of Plugin!"
+					else:
+						plugin.enable()
+						self._plugins.append(plugin)
+				except BaseException, error:
+					print "Error: ", error
+					print "Invalid plugin:", f
+			else:
+				print "Not importing plugin:", f
+				
+			self._settings.set("Plugins", f, importPlugin)
+			
+		self._settings.saveSettings()
 
 		
 class Plugin:
