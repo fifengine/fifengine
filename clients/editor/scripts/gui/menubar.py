@@ -5,6 +5,7 @@ import scripts.events
 import scripts.gui.action
 from action import Action, ActionGroup
 from fife import Color
+import fife_timer
 
 MENU_ICON_SIZE = 24
 
@@ -17,6 +18,9 @@ class MenuBar(widgets.HBox):
 		self.gui = None
 		self._buildGui()
 		
+		self._timer = fife_timer.Timer(500, self._autoHideMenu)
+		self._timer.start()
+			
 	def _buildGui(self):
 		if self.gui is not None:
 			self.removeChild(self.gui)
@@ -35,7 +39,7 @@ class MenuBar(widgets.HBox):
 		self.addChild(self.gui)
 		
 	def _showMenu(self, i):
-		if self.menulist[i]._visible:
+		if self.menulist[i].isVisible():
 			self.menulist[i].hide()
 			return
 	
@@ -57,6 +61,21 @@ class MenuBar(widgets.HBox):
 			parent = parent.parent
 
 		menu.show()
+		
+	def _autoHideMenu(self):
+		for i, m in enumerate(self.menulist):
+			if not m.isVisible(): continue
+			if self._buttonlist[i].real_widget.isFocused(): continue
+			if self._isMenuFocused(m) is False:
+				m.hide()
+		
+	def _isMenuFocused(self, widget):
+		if widget.real_widget.isFocused(): return True
+		if hasattr(widget, "children"):
+			for c in widget.children:
+				if self._isMenuFocused(c):
+					return True
+		return False
 		
 	def addMenu(self, menu):
 		if menu is not None and self.menulist.count(menu) <= 0:
