@@ -12,7 +12,14 @@ class FileManager(object):
 	def __init__(self):
 		self.editor = scripts.editor.getEditor()
 		self.engine = self.editor.getEngine()
+		self._map = None
+		self._layer = None
+		self._mapdlg = None
+		self._layerdlg = None
+		self._cameradlg = None
 		
+		self._filebrowser = None
+		self._savebrowser = None
 
 		newAction = Action(u"New map", "gui/icons/new_map.png")
 		loadAction = Action(u"Open", "gui/icons/load_map.png")
@@ -51,10 +58,14 @@ class FileManager(object):
 		self.editor._fileMenu.insertSeparator(None, 1)
 
 	def showLoadDialog(self):
-		filebrowser.FileBrowser(self.engine, self.loadFile, extensions = loaders.fileExtensions).showBrowser()
+		if self._filebrowser is None:
+			self._filebrowser = filebrowser.FileBrowser(self.engine, self.loadFile, extensions = loaders.fileExtensions)
+		self._filebrowser.showBrowser()
 		
 	def showSaveDialog(self):
-		filebrowser.FileBrowser(self.engine, self.saveFile, savefile=True, extensions = loaders.fileExtensions).showBrowser()
+		if self._savebrowser is None:
+			self._savebrowser = filebrowser.FileBrowser(self.engine, self.saveFile, savefile=True, extensions = loaders.fileExtensions)
+		self._savebrowser.showBrowser()
 
 	def saveFile(self, path, filename):
 		mapview = self.editor.getActiveMapView()
@@ -76,22 +87,39 @@ class FileManager(object):
 		self.editor.openFile('/'.join([path, filename]))
 		
 	def showMapWizard(self):
-		map = None
-		def newMap(mapId):
-			def newLayer(layerId):
-				def newCamera():
-					self.editor.newMapView(map)
+		if self._cameradlg:
+			self._cameradlg._widget.show()
+		elif self._layerdlg:
+			self._layerdlg._widget.show()
+		elif self._mapdlg:
+			self._mapdlg._widget.show()
+		else:
+			self._newMap()
 
-				grid = fife.SquareGrid()
-				layer = map.createLayer(str(layerId), grid)
-				grid.thisown = 0
-
-				CameraEditor(self.engine, newCamera, map, layer)
-
-			map = self.engine.getModel().createMap(str(mapId))
-			InputDialog(u'Enter a layer identifier for a default layer:', newLayer)
+	def _newMap(self):
+		self._mapdlg = InputDialog(u'Enter a map identifier:', self._newLayer, self._clean)
 		
-		InputDialog(u'Enter a map identifier:', newMap)
+	def _newLayer(self, mapId):
+		self._map = self.engine.getModel().createMap(str(mapId))
+		self._layerdlg = InputDialog(u'Enter a layer identifier for a default layer:', self._newCamera, self._clean)
+		
+	def _newCamera(self, layerId):
+		grid = fife.SquareGrid()
+		layer = self._map.createLayer(str(layerId), grid)
+		grid.thisown = 0
+
+		self._cameradlg = CameraEditor(self.engine, self._addMap, self._clean, self._map, self._layer)
+		
+	def _addMap(self):
+		self.editor.newMapView(self._map)
+		self._clean()
+		
+	def _clean(self):
+		self._mapdlg = None
+		self._layerdlg = None
+		self._cameradlg = None
+		self._map = None
+		self._layer = None
 
 	def save(self):
 		curname = None
@@ -113,9 +141,10 @@ class CameraEditor(object):
 	CameraEditor provides a gui dialog for camera creation. The callback is called when camera creation is complete. A
 	partial specification of the camera parameters may optionally be given.
 	"""
-	def __init__(self, engine, callback=None, map=None, layer=None):
+	def __init__(self, engine, callback=None, onCancel=None, map=None, layer=None):
 		self.engine = engine
 		self.callback = callback
+		self.onCancel = onCancel
 		self._widget = pychan.loadXML('gui/cameraedit.xml')
 
 		if map:
@@ -130,10 +159,16 @@ class CameraEditor(object):
 
 		self._widget.mapEvents({
 			'okButton'     : self._finished,
-			'cancelButton' : self._widget.hide
+			'cancelButton' : self._cancelled
 		})
 
 		self._widget.show()
+		
+	def _cancelled(self):
+		if self.onCancel:
+			self.onCancel()
+		self._widget.hide()
+		
 
 	def _finished(self):
 		id = self._widget.collectData('idBox')
