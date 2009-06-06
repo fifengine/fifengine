@@ -138,7 +138,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._toolbox.show()
 
 	def _initActions(self):
-		exitAction = Action(u"Exit")
+		exitAction = Action(u"Exit", "gui/icons/quit.png")
 		exitAction.helptext = u"Exit program"
 		action.activated.connect(self.quit, sender=exitAction)
 		
@@ -169,7 +169,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._viewMenu.addSeparator()
 	
 	
-		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/zoom_in.png")
+		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/cycle_styles.png")
 		testAction1.helptext = u"Cycles button styles. There are currently four button styles."
 		action.activated.connect(self._actionActivated, sender=testAction1)
 		self._viewMenu.addAction(testAction1)
@@ -179,7 +179,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapbar.addAction(ActionGroup(exclusive=True, name="Mapgroup2"))
 		self._windowMenu.addAction(self._mapgroup)
 		
-		helpAction = Action(u"Help! AAAAH!", "gui/icons/delete_layer.png")
+		helpAction = Action(u"Help! AAAAH!", "gui/icons/help.png")
 		self._helpMenu.addAction(helpAction)
 		
 		self._menubar.addMenu(self._fileMenu)

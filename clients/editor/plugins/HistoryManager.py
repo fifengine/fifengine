@@ -30,8 +30,8 @@ class HistoryManager(plugin.Plugin):
 			
 		self._undoGroup = ActionGroup(name=u"UndoGroup")
 		self._showAction = Action(u"History manager", checkable=True)
-		self._undoAction = Action(u"Undo")
-		self._redoAction = Action(u"Redo")
+		self._undoAction = Action(u"Undo", "gui/icons/undo.png")
+		self._redoAction = Action(u"Redo", "gui/icons/redo.png")
 		self._nextAction = Action(u"Next branch")
 		self._prevAction = Action(u"Previous branch")
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)

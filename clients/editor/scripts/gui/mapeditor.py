@@ -98,10 +98,10 @@ class MapEditor:
 		self._controller = controller
 		
 	def _initToolbuttons(self):
-		self._selectAction = Action(text=u"Select", icon="gui/icons/hand.png", checkable=True)
+		self._selectAction = Action(text=u"Select", icon="gui/icons/select_instance.png", checkable=True)
 		self._drawAction = Action(text=u"Draw", icon="gui/icons/add_instance.png", checkable=True)
-		self._removeAction = Action(text=u"Remove", icon="gui/icons/quit.png", checkable=True)
-		self._moveAction = Action(text=u"Move", icon="gui/icons/select_layer.png", checkable=True)
+		self._removeAction = Action(text=u"Remove", icon="gui/icons/erase_instance.png", checkable=True)
+		self._moveAction = Action(text=u"Move", icon="gui/icons/move_instance.png", checkable=True)
 		
 		self._selectAction.helptext = u"Select cells on layer"
 		self._moveAction.helptext = u"Moves instances"
@@ -126,8 +126,8 @@ class MapEditor:
 		self._editor._editMenu.addAction(self._toolgroup)
 		
 	def _initToolbarbuttons(self):
-		rotateLeftAction = Action(text=u"Rotate counterclockwise")
-		rotateRightAction = Action(text=u"Rotate clockwise")
+		rotateLeftAction = Action(text=u"Rotate counterclockwise", icon="gui/icons/rotate_countercw.png")
+		rotateRightAction = Action(text=u"Rotate clockwise", icon="gui/icons/rotate_clockwise.png")
 		zoomInAction = Action(text=u"Zoom in", icon="gui/icons/zoom_in.png")
 		zoomOutAction = Action(text=u"Zoom out", icon="gui/icons/zoom_out.png")
 		zoomResetAction = Action(text=u"Reset zoom", icon="gui/icons/zoom_default.png")

@@ -24,14 +24,14 @@ class FileManager(object):
 		newAction = Action(u"New map", "gui/icons/new_map.png")
 		loadAction = Action(u"Open", "gui/icons/load_map.png")
 		saveAction = Action(u"Save", "gui/icons/save_map.png")
-		saveAsAction = Action(u"Save as", "gui/icons/save_map.png")
-		saveAllAction = Action(u"Save all", "gui/icons/select_layer.png")
+		saveAsAction = Action(u"Save as", "gui/icons/save_mapas.png")
+		saveAllAction = Action(u"Save all", "gui/icons/save_allmaps.png")
 		
 		newAction.helptext = u"Create new map"
-		loadAction.helptext = u"Open map"
+		loadAction.helptext = u"Open existing map"
 		saveAction.helptext = u"Save map"
 		saveAsAction.helptext = u"Save map as"
-		saveAllAction.helptext = u"Save all maps"
+		saveAllAction.helptext = u"Save all opened maps"
 		
 		action.activated.connect(self.showMapWizard, sender=newAction)
 		action.activated.connect(self.showLoadDialog, sender=loadAction)
