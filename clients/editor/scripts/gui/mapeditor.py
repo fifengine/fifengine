@@ -324,6 +324,11 @@ class MapEditor:
 		if event.isConsumedByWidgets():
 			return
 			
+		if self._mode == SELECTING or self._mode == MOVING:
+			instances = self._controller.getInstancesFromSelection()
+			if len(instances) > 0:
+				events.onInstancesSelected.send(sender=self, instances=instances)
+			
 		if event.getButton() == fife.MouseEvent.MIDDLE:
 			self._scrollX = 0
 			self._scrollY = 0
@@ -424,11 +429,9 @@ class MapEditor:
 		self._controller.setZoom(1)
 		
 	def rotateCounterClockwise(self):
-		print "Rotate cclockwise"
 		self._controller.rotateCounterClockwise()
 		
 	def rotateClockwise(self):
-		print "Rotate clockwise"
 		self._controller.rotateClockwise()
 			
 	def _getRealCoords(self, sender, event):
