@@ -2,6 +2,14 @@ import os
 import editor
 
 class PluginManager:
+	""" Currently, pluginmanager iterates through the plugin directory
+	adding the plugins if they are set to True in settings.xml. If a plugin
+	isn't set in settings.xml it assumes it is not to be loaded, and saves it
+	as False in settings.xml.
+	
+	If a plugin fails to load due to exceptions, they are caught and a line
+	of the error is printed to console.
+	"""
 	def __init__(self, *args, **kwargs):
 		self._settings = editor.getEditor().getSettings()
 		
@@ -38,6 +46,8 @@ class PluginManager:
 
 		
 class Plugin:
+	""" The base class for all plugins. All plugins should override these functions. """
+	
 	def enable(self):
 		raise NotImplementedError, "Plugin has not implemented the enable() function!"
 

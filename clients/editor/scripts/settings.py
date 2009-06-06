@@ -1,13 +1,19 @@
 import shutil
 import os
-import pychan
 try:
 	import xml.etree.cElementTree as ET
 except:
 	import xml.etree.ElementTree as ET
 
 class Settings(object):
-	instance = None
+	""" This class provides an interface for retrieving and putting settings
+	to an XML-file. 
+	
+	Only one instance of this class may exist, or a RuntimeWarning exception
+	will be raised. Use Settings.instance or Editor.getSettings() to retrieve
+	an instance of this class.
+	"""
+	instance = None # Points to the first initialized instance of this class
 	def __init__(self, *args, **kwargs):
 		if Settings.instance is not None:
 			raise RuntimeWarning("Settings instance has already been initialized! Use Editor.getSettings instead")
@@ -22,6 +28,7 @@ class Settings(object):
 		self.validateTree()
 		
 	def validateTree(self):
+		""" Iterates the settings tree and prints warning when an invalid tag is found """
 		for c in self.root_element.getchildren():
 			if c.tag != "Module":
 				print "Invalid tag in settings.xml. Expected Module, got: ", c.tag
@@ -37,6 +44,8 @@ class Settings(object):
 						print ". Setting name is empty", e.tag
 		
 	def getModuleTree(self, module):
+		""" Returns a module element from the settings tree. If no module with the specified
+		name exists, a new element will be created. """
 		if not isinstance(module, str) and not isinstance(module, unicode):
 			raise AttributeError("Settings:getModuleTree: Invalid type for module argument.")
 			
@@ -48,6 +57,10 @@ class Settings(object):
 		return ET.SubElement(self.root_element, "Module", {"name":module})
 
 	def get(self, module, name, defaultValue=None):
+		""" Gets the value of a specified setting
+		
+		defaultValue is returned if the setting does not exist
+		"""
 		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("Settings:get: Invalid type for name argument.")
 		
@@ -98,6 +111,15 @@ class Settings(object):
 			return self._deserializeDict(e_value)
 
 	def set(self, module, name, value, extra_attrs={}):
+		"""
+		Sets a setting to specified value.
+		
+		Parameters:
+		module (str|unicode): Module where the setting should be set
+		name (str|unicode): Name of setting
+		value: Value to assign to setting
+		extra_attrs (dict): Extra attributes to be stored in the XML-file
+		"""
 		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("Settings:set: Invalid type for name argument.")
 			
@@ -140,12 +162,13 @@ class Settings(object):
 			elm.text = value
 
 	def saveSettings(self):
+		""" Save settings into settings.xml """
 		self._indent(self.root_element)
 		self.tree.write('settings.xml', 'UTF-8')
 		
 	def _indent(self, elem, level=0):
 		""" 
-		Clean XML-code
+		Adds whitespace, so the resulting XML-file is properly indented.
 		Shamelessly stolen from http://effbot.org/zone/element-lib.htm 
 		"""
 		i = "\n" + level*"  "
@@ -168,12 +191,15 @@ class Settings(object):
 	# It will not check the types nor the content for conflicts.
 	# Perhaps we should add a small serialization library?
 	def _serializeList(self, list):
+		""" Serializes a list, so it can be stored in a text file """
 		return " ; ".join(list)
 		
 	def _deserializeList(self, string):
+		""" Deserializes a list back into a list object """
 		return string.split(" ; ")
 
 	def _serializeDict(self, dict):
+		""" Serializes a list, so it can be stored in a text file """
 		serial = ""
 		for key in dict:
 			value = dict[key]
@@ -183,6 +209,7 @@ class Settings(object):
 		return serial
 	
 	def _deserializeDict(self, serial):
+		""" Deserializes a list back into a dict object """
 		dict = {}
 		items = serial.split(" ; ")
 		for i in items:

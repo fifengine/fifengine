@@ -5,6 +5,11 @@ from events import events
 from mapcontroller import MapController
 
 class MapView:
+	""" MapView represents a map in the editor. 
+	
+	It handles opening, saving and closing of a map,
+	as well as displaying it on screen.
+	"""
 	def __init__(self, map):
 		self._map = map
 		self._editor = editor.getEditor()
@@ -22,6 +27,8 @@ class MapView:
 		
 	# Copied from mapeditor.py
 	def show(self):
+		""" Sets up the camera to display the map. Size of the camera is equal to the
+		screen size """
 		_camera = None
 		
 		engine = self._editor.getEngine()
@@ -49,6 +56,10 @@ class MapView:
 		return self._map
 		
 	def save(self):
+		""" Saves the map using the previous filename.
+		
+		Emits preSave and postSave signals.
+		"""
 		curname = ""
 		try:
 			curname = self._map.getResourceLocation().getFilename()
@@ -61,18 +72,25 @@ class MapView:
 		events.postSave.send(sender=self, mapview=self)
 		
 	def saveAs(self, filename):
+		""" Saves the map using a specified filename.
+		
+		Emits preSave and postSave signals.
+		"""
 		events.preSave.send(sender=self, mapview=self)
 		savers.saveMapFile(str(filename), self._editor.getEngine(), self._map, importList=self.importlist)
 		events.postSave.send(sender=self, mapview=self)
 		
 	def close(self):
+		""" Closes the mapview """
 		pass
 		
 		
 	def importFile(self, path):
+		""" Imports a file supported by the provided loaders. """
 		loaders.loadImportFile(path, self._editor.getEngine())
 		
 	def importDir(self, path, recursive=True):
+		""" Imports an entire directory supported by the provided loaders. """
 		self.importlist.append(path)
 		if recursive is True:
 			loaders.loadImportDirRec(path, self._editor.getEngine())
