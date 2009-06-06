@@ -33,8 +33,6 @@ import pychan
 import pychan.widgets as widgets
 from pychan.tools import callbackWithArguments as cbwa
 
-import settings as Settings
-
 # default should be pychan default, highlight can be choosen (format: r,g,b)
 _DEFAULT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['base_color']
 _HIGHLIGHT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['selection_color']
