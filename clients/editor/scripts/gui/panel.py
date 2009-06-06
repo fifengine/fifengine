@@ -105,6 +105,16 @@ class Panel(widgets.Window, ResizableBase):
 			dockArea = self._editor.getDockAreaAt(mouseX, mouseY)
 			if dockArea is not None:
 				self._editor.dockWidgetTo(self, dockArea, mouseX, mouseY)
+		
+	def hide(self):
+		if self.isDocked():
+			self.setDocked(False)
+		widgets.Window.hide(self)
+		
+	def show(self):
+		if self.isDocked():
+			return
+		widgets.Window.show(self)
 				
 	
 # Register widget to pychan

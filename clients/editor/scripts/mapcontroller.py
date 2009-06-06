@@ -96,20 +96,11 @@ class MapController(object):
 		
 	def getInstancesFromSelection(self):
 		instances = []
-		uniqueInstances = []
 		
 		for loc in self._selection:
 			instances.extend(self.getInstancesFromPosition(loc.getLayerCoordinates()))
-		
-		for i in instances:
-			for u in uniqueInstances:
-				# We must use the location reference to check for equality,
-				# as i == u always returns false
-				# However, this will not select all tiles if there are multiple tiles on a location
-				if i.getLocationRef() == u.getLocationRef(): 
-					break
-			else: uniqueInstances.append(i)
-		return uniqueInstances
+
+		return instances
 
 	def getInstancesFromPosition(self, position):
 		if not self._layer:

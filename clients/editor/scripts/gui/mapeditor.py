@@ -203,12 +203,7 @@ class MapEditor:
 
 		realCoords = self._getRealCoords(sender, event)
 
-		if self._eventlistener.altPressed:
-			if event.getButton() == fife.MouseEvent.LEFT:
-				self._dragx = realCoords[0]
-				self._dragy = realCoords[1]
-				
-		elif event.getButton() == fife.MouseEvent.MIDDLE:
+		if event.getButton() == fife.MouseEvent.MIDDLE:
 			self._dragx = realCoords[0]
 			self._dragy = realCoords[1]
 			
@@ -249,14 +244,14 @@ class MapEditor:
 				
 			elif self._mode == MOVING:
 				if event.getButton() == fife.MouseEvent.LEFT:
+				
 					position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
-					position = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
 
 					self._lastDragPos = self._controller._layer.getCellGrid().toLayerCoordinates(position)
-					self._lastDragPosExact = position
-					
-					for i in self._controller._selection:
-						if i.getLayerCoordinates() == self._lastDragPos:
+					self._lastDragPosExact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
+	
+					for loc in self._controller._selection:
+						if loc.getLayerCoordinates() == self._lastDragPos:
 							break
 					else:
 						self._controller.resetSelection()
@@ -273,12 +268,7 @@ class MapEditor:
 			
 		realCoords = self._getRealCoords(sender, event)
 			
-		if self._eventlistener.altPressed:
-			if (self._dragx != NOT_INITIALIZED) and (self._dragy != NOT_INITIALIZED):
-				self._controller.moveCamera(realCoords[0] - self._dragx, realCoords[1] - self._dragy)
-			self._dragx = realCoords[0]
-			self._dragy = realCoords[1]
-		elif event.getButton() == fife.MouseEvent.MIDDLE:
+		if event.getButton() == fife.MouseEvent.MIDDLE:
 			self._scrollX = (self._dragx-realCoords[0])/10.0
 			self._scrollY = (self._dragy-realCoords[1])/10.0
 		else:
@@ -302,6 +292,7 @@ class MapEditor:
 				
 			elif self._mode == MOVING:
 				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				
 				positionExact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
 				position = self._controller._layer.getCellGrid().toLayerCoordinates(position)
 				
@@ -316,7 +307,7 @@ class MapEditor:
 				self._controller.resetSelection()
 				
 				for i in self._instances:
-					pos = i.getLocation().getExactLayerCoordinates()
+					pos = i.getLocation().getMapCoordinates()
 					pos = self._controller._camera.toScreenCoordinates(pos)
 					self._controller.selectCell(pos.x, pos.y)
 
