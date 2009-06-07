@@ -1,5 +1,6 @@
 <Panel title="Object editor" position="10,700"> <!-- size="200,250" min_size="200,250" max_size="200,250" > -->
 
+	<Label text="           Object" background_color="0,0,0" />
 	<Label text="Namespace:" min_size="85,20"/>
 	<Label text="None" name="object_namespace" min_size="30,20"/>
 
@@ -15,33 +16,14 @@
 		<TextBox text="0" name="object_static" min_size="20,20"/>
 	</HBox>
 
+	<Button name="change_data" text="Save object"/>
+
+	<Label text="          Selected Instance" background_color="0,0,0" />
 
 	<HBox>	 
 		<Label text="Select Rotation:" min_size="85,20" />
+		<DropDown min_size="80,0" name="select_rotations"/>
 	</HBox>
-	
-	<DropDown min_size="80,0" name="select_rotations"/>
-
-	<VBox>
-		<Label text="Offset:" min_size="45,20"/>
-		<HBox>
-			<Label text="X: " min_size="25,20"/>
-			<TextBox text="0" name="x_offset" size="30,20" min_size="30,20" max_size="30,20" />
-			<Button name="x_offset_up" text="+" max_size="20,20"/>
-			<Button name="x_offset_dn" text="-" max_size="20,20"/>
-			<Slider size="100,20" name="x_offset_slider" orientation="0" scale_start="0.0" scale_end="4.0" />
-		</HBox>
-
-		<HBox>
-			<Label text="Y: " min_size="25,20"/>
-			<TextBox text="0" name="y_offset" size="30,20" min_size="30,20" max_size="30,20"/>
-			<Button name="y_offset_up" text="+" max_size="20,20"/>
-			<Button name="y_offset_dn" text="-" max_size="20,20"/>
-			<Slider size="100,20" name="y_offset_slider" orientation="0" scale_start="0.0" scale_end="4.0" />
-		</HBox>
-	</VBox>
-
-	<Label text="Selected Instance" min_size="85,20" />
 	
 	<HBox >	 
 		<Label text="Instance ID:" min_size="85,20"/>
@@ -49,10 +31,8 @@
 	</HBox>
 	<HBox >	 
 		<Label text="Instance rot:" min_size="85,20"/>
-		<TextBox text="0" name="instance_rotation" min_size="30,20"/>
+		<TextBox text="0" name="instance_rotation" min_size="30,20" hexpand="1"/>
 	</HBox>
-
-
 
 	<VBox name="animation_panel_wrapper" max_size="150,50">
 		<Spacer />
@@ -70,8 +50,6 @@
 
 	<HBox>
 		<Button name="use_data" text="Use"/>
-	</HBox>
-	<Spacer />
-	<Button name="change_data" text="Save object"/>
+	</HBox>	
 
 </Panel>
