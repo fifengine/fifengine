@@ -1,6 +1,6 @@
 #from editor import getEditor # Needed to quit application
 
-import fife
+import fife, scripts
 from fife import IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter
 from signal import Signal
 import pdb
@@ -122,7 +122,7 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 			self.metaPressed = True
 	
 		elif keyval == fife.Key.ESCAPE:
-			onQuit.send(sender=self.engine)
+			scripts.editor.getEditor().quit()
 		elif keyval == fife.Key.F10:
 			self.engine.getGuiManager().getConsole().toggleShowHide()
 		elif keystr == "d":
@@ -163,7 +163,7 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 	# ICommandListener
 	def onCommand(self, command):
 		if command.getCommandType() == fife.CMD_QUIT_GAME:
-			onQuit.send(sender=self.engine)
+			scripts.editor.getEditor().quit()
 		else:
 			onCommand.send(sender=self.engine, command=command)
 		

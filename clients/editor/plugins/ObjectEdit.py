@@ -34,7 +34,6 @@ import scripts.plugin as plugin
 from scripts.events import *
 from scripts.gui.action import Action
 
-import settings as Settings
 import math
 
 class ObjectEdit(plugin.Plugin):

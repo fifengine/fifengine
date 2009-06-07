@@ -1,5 +1,34 @@
 This is the standalone FIFE editor, HEAD release
 
+User interface:
+---------------
+When you open the editor, you will see a menubar
+at the top of the screen. You can reach all the
+editor functions from this menu.
+
+Right below it is a toolbar which provides fast
+access to the most frequently used actions.
+
+In the middle is a big black area. This is the map
+view. When you create a new map, or open an existing
+map, it will be displayed here.
+
+At the bottom of the screen is the statusbar which
+displays information. If you hover the mouse over a
+button, a help text will be displayed here.
+
+Docking/Undocking:
+------------------
+Panels and toolbars can be either floating, or docked.
+
+To dock a toolbar or panel, move it one of the
+sides and a red line should appear. This indicates
+that it will be docked at that location. Panels can
+be docked before, after or inside existing panels.
+
+To undock a toolbar, simply right click it. To
+undock a panel, right click its button,
+
 Keybindings:
 --------------
 Map editing:

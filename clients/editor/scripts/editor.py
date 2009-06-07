@@ -320,7 +320,7 @@ class Editor(ApplicationBase, MainWindow):
 	def createListener(self):
 		if self._eventlistener is None:
 			self._eventlistener = EventListener(self.engine)
-			events.onQuit.connect(self.quit)
+			
 		
 		return self._eventlistener
 		
@@ -362,6 +362,8 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapview = tmpView
 		
 	def quit(self):
+		events.onQuit.send(sender=self)
+		
 		self._settings.saveSettings()
 		ApplicationBase.quit(self)
 
