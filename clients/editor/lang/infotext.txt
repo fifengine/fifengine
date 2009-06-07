@@ -1,29 +1,42 @@
-This is the standalone FIFE editor, release 2008.1
+This is the standalone FIFE editor, HEAD release
 
 Keybindings:
 --------------
-- P = Make screenshot
-- LEFT = Move camera left
-- RIGHT = Move camera right
-- UP = Move camera up
-- DOWN = Move camera down
-- F10 = Toggle console on / off
-- ESC = Quit techdemo
+Map editing:
+- S: Enter select mode
+- I: Enter insert mode
+- R: Enter removal mode
+- M: Enter move mode
+- INS: Fills selection with current object
+- DEL: Removes selected instances
 
+Camera navigation:
+- Arrowkeys: Scroll map
+- Middle mouse button + Drag mouse: Scroll map
+- Ctrl+Mouse wheel: Zoom
+
+Undo:
+- Ctrl+Z: Undo
+- Ctrl+Shift+Z: Redo
+- Ctrl+Alt+Z: Next undobranch
+- Ctrl+Alt+Shift+Z: Previous undobranch
+
+File management:
+- Ctrl+N: New level
+- Ctrl+O: Open level
+- Ctrl+S: Save current level
+- Ctrl+Shift+S: Save all levels
+
+Misc:
+- F10 = Toggle console on / off
+- ESC = Quit editor
 - INS = Makes a new instance on the map with
         current object selection at current
         mouse selection (toggle).
 - DEL = Removes instances at current mouse
         selection (toggle).
-- R   = Rotates selected instace (if object
-        contains rotated images)
-- M   = Moves selected instace (drag it around)
 - T   = shows / hides grid
 - B   = shows / hides blocking info
-- U   = Undo an instance placement or removal
-- CTRL = Enters pan/zoom mode. Pan with LMB drag,
-         zoom with mouse wheel while CTRL is
-         pressed
 
 
 http://www.fifengine.de

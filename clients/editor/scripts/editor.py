@@ -13,6 +13,7 @@ from gui.mainwindow import MainWindow
 from gui.mapeditor import MapEditor
 from gui.menubar import Menu, MenuBar
 from gui.error import ErrorDialog
+from gui.panel import Panel
 from settings import Settings
 from pychan.tools import callbackWithArguments as cbwa
 from events import *
@@ -51,6 +52,8 @@ class Editor(ApplicationBase, MainWindow):
 		self._helpMenu = None
 		
 		self._settings = None
+		
+		self._helpDialog = None
 	
 		ApplicationBase.__init__(self, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
@@ -179,7 +182,8 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapbar.addAction(ActionGroup(exclusive=True, name="Mapgroup2"))
 		self._windowMenu.addAction(self._mapgroup)
 		
-		helpAction = Action(u"Help! AAAAH!", "gui/icons/help.png")
+		helpAction = Action(u"Help", "gui/icons/help.png")
+		action.activated.connect(self._showHelpDialog, sender=helpAction)
 		self._helpMenu.addAction(helpAction)
 		
 		self._menubar.addMenu(self._fileMenu)
@@ -191,6 +195,20 @@ class Editor(ApplicationBase, MainWindow):
 	
 	def _actionActivated(self, sender):
 		self._toolbar.button_style += 1
+		
+	def _showHelpDialog(self, sender):
+		if self._helpDialog is not None:
+			self._helpDialog.show()
+			return
+		
+		self._helpDialog = pychan.loadXML("gui/help.xml")
+		self._helpDialog.findChild(name="closeButton").capture(self._helpDialog.hide)
+		
+		f = open('lang/infotext.txt', 'r')
+		self._helpDialog.findChild(name="helpText").text = unicode(f.read())
+		f.close()
+		
+		self._helpDialog.show()
 		
 	def toggleStatusbar(self):
 		statusbar = self.getStatusBar()
