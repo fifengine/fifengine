@@ -16,8 +16,13 @@ Camera navigation:
 - Ctrl+Mouse wheel: Zoom
 
 Selection:
+- Click starts a new selection
 - CTRL+Click adds to selection
+- Shift+Click subtracts from selection
 - Right click deselects
+
+Moving instances:
+- Shift+Drag: Exact instance move
 
 Undo:
 - Ctrl+Z: Undo

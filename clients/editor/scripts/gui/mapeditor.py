@@ -217,20 +217,23 @@ class MapEditor:
 			
 		else:
 			if event.getButton() == fife.MouseEvent.RIGHT:
-				self._controller.resetSelection()
+				self._controller.deselectSelection()
 				
 			if self._mode == SELECTING:
 				if event.getButton() == fife.MouseEvent.LEFT:
-					if self._eventlistener.controlPressed is False:
-						self._controller.resetSelection()
-					self._controller.selectCell(realCoords[0], realCoords[1])
+					if self._eventlistener.shiftPressed:
+						self._controller.deselectCell(realCoords[0], realCoords[1])
+					else:
+						if self._eventlistener.controlPressed is False:
+							self._controller.deselectSelection()
+						self._controller.selectCell(realCoords[0], realCoords[1])
 					
 				elif event.getButton() == fife.MouseEvent.RIGHT:
-					self._controller.resetSelection()
+					self._controller.deselectSelection()
 					
 			elif self._mode == INSERTING:
 				if event.getButton() == fife.MouseEvent.LEFT:
-					self._controller.resetSelection()
+					self._controller.deselectSelection()
 					self._controller.selectCell(realCoords[0], realCoords[1])
 					self._controller.getUndoManager().startGroup("Inserted instances")
 					self._undogroup = True
@@ -243,7 +246,7 @@ class MapEditor:
 				
 			elif self._mode == REMOVING:
 				if event.getButton() == fife.MouseEvent.LEFT:
-					self._controller.resetSelection()
+					self._controller.deselectSelection()
 					self._controller.selectCell(realCoords[0], realCoords[1])
 					self._controller.getUndoManager().startGroup("Removed instances")
 					self._undogroup = True
@@ -262,7 +265,7 @@ class MapEditor:
 						if loc.getLayerCoordinates() == self._lastDragPos:
 							break
 					else:
-						self._controller.resetSelection()
+						self._controller.deselectSelection()
 						self._controller.selectCell(realCoords[0], realCoords[1])
 						
 					self._instances = self._controller.getInstancesFromSelection()
@@ -290,11 +293,14 @@ class MapEditor:
 			self._scrollY = (self._dragy-realCoords[1])/10.0
 		else:
 			if self._mode != SELECTING:
-				self._controller.resetSelection()
+				self._controller.deselectSelection()
 				
 			if self._mode == SELECTING:
 				if event.getButton() == fife.MouseEvent.LEFT:
-					self._controller.selectCell(realCoords[0], realCoords[1])
+					if self._eventlistener.shiftPressed:
+						self._controller.deselectCell(realCoords[0], realCoords[1])
+					else:
+						self._controller.selectCell(realCoords[0], realCoords[1])
 					
 			elif self._mode == INSERTING:
 				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
@@ -321,7 +327,7 @@ class MapEditor:
 				self._lastDragPosExact = positionExact
 				
 				# Update selection
-				self._controller.resetSelection()
+				self._controller.deselectSelection()
 				
 				for i in self._instances:
 					pos = i.getLocation().getMapCoordinates()

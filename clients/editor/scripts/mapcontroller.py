@@ -16,7 +16,7 @@ class MapController(object):
 
 		self._camera = None     # currently selected camera
 		self._layer = None      # currently selected layer
-		self._selection = set()	# currently selected cells
+		self._selection = []	# currently selected cells
 		self._map = None
 		self._undo = False
 		self._undomanager = undomanager.UndoManager()
@@ -35,7 +35,7 @@ class MapController(object):
 		self._camera = None
 		self._map = None
 		self._layer = None
-		self._selection.clear()
+		self._selection = []
 
 		self._map = self._engine.getModel().getMap(mapid)
 		if not self._map.getLayers():
@@ -49,17 +49,17 @@ class MapController(object):
 		self._layer = self._map.getLayers()[0]
 
 	def selectLayer(self, layerid):
-		self.resetSelection()
+		self.deselectSelection()
 		self._layer = None
 		layers = [l for l in self._map.getLayers() if l.getId() == layerid]
 		if len(layers) == 1:
 			self._layer = layers[0]
 
-	def resetSelection(self):
+	def deselectSelection(self):
 		if not self._camera: 
 			if self.debug: print 'No camera bind yet, cannot select any cell'
 			return
-		self._selection.clear()
+		self._selection = []
 		fife.CellSelectionRenderer.getInstance(self._camera).reset()
 		
 	def clearSelection(self):
@@ -91,8 +91,29 @@ class MapController(object):
 		for i in self._selection:
 			if loc == i: return
 			
-		self._selection.add( loc )
+		self._selection.append( loc )
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
+		
+	def deselectCell(self, screenx, screeny):
+		if not self._camera: 
+			if self.debug: print 'No camera bind yet, cannot select any cell'
+			return
+		if not self._layer:
+			if self.debug: print 'No layer assigned in selectCell'
+			return
+
+		mapCoords = self._camera.toMapCoordinates(fife.ScreenPoint(screenx, screeny), False)
+		position = self._layer.getCellGrid().toLayerCoordinates(mapCoords)
+		
+		loc = fife.Location(self._layer)
+		loc.setLayerCoordinates(position)
+		
+		for i in self._selection:
+			if loc == i:
+				self._selection.remove( loc )
+				fife.CellSelectionRenderer.getInstance(self._camera).deselectLocation(loc)
+				return
+		
 		
 	def getInstancesFromSelection(self):
 		instances = []
