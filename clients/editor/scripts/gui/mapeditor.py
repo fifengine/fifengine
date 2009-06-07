@@ -13,7 +13,7 @@ from menubar import Menu, MenuBar
 from action import Action, ActionGroup
 from scripts.mapcontroller import MapController
 
-states = (u'SELECTING', u'INSERTING', u'REMOVING', u'MOVING')
+states = (u'SELECTING', u'INSERTING', u'REMOVING', u'MOVING', u'OBJECTPICKER')
 for s in states:
 	globals()[s] = s
 NOT_INITIALIZED = -9999999
@@ -102,22 +102,26 @@ class MapEditor:
 		self._drawAction = Action(text=u"Draw", icon="gui/icons/add_instance.png", checkable=True)
 		self._removeAction = Action(text=u"Remove", icon="gui/icons/erase_instance.png", checkable=True)
 		self._moveAction = Action(text=u"Move", icon="gui/icons/move_instance.png", checkable=True)
+		self._objectpickerAction = Action(text=u"Pick object", icon="gui/icons/objectpicker.png", checkable=True)
 		
 		self._selectAction.helptext = u"Select cells on layer"
 		self._moveAction.helptext = u"Moves instances"
 		self._drawAction.helptext = u"Adds new instances based on currently selected object"
 		self._removeAction.helptext = u"Deletes instances"
+		self._objectpickerAction.helptext = u"Click an instance to set the current object to the one used by instance"
 		
 		action.toggled.connect(self._buttonToggled, sender=self._selectAction)
 		action.toggled.connect(self._buttonToggled, sender=self._moveAction)
 		action.toggled.connect(self._buttonToggled, sender=self._drawAction)
 		action.toggled.connect(self._buttonToggled, sender=self._removeAction)
+		action.toggled.connect(self._buttonToggled, sender=self._objectpickerAction)
 		
 		self._toolgroup = ActionGroup(exclusive=True, name=u"Tool group")
 		self._toolgroup.addAction(self._selectAction)
 		self._toolgroup.addAction(self._moveAction)
 		self._toolgroup.addAction(self._drawAction)
 		self._toolgroup.addAction(self._removeAction)
+		self._toolgroup.addAction(self._objectpickerAction)
 		
 		
 		self._toolbox.addAction(self._toolgroup)
@@ -167,6 +171,8 @@ class MapEditor:
 			self._removeAction.setChecked(True)
 		elif mode == MOVING:
 			self._moveAction.setChecked(True)
+		elif mode == OBJECTPICKER:
+			self._objectpickerAction.setChecked(True)
 		else:
 			self._selectAction.setChecked(True)
 		self._ignoreToggles = False
@@ -190,6 +196,8 @@ class MapEditor:
 				mode = INSERTING
 			elif sender == self._removeAction:
 				mode = REMOVING
+			elif sender == self._objectpickerAction:
+				mode = OBJECTPICKER
 
 		self._setMode(mode)
 		
@@ -261,6 +269,15 @@ class MapEditor:
 					
 					self._controller.getUndoManager().startGroup("Moved instances")
 					self._undogroup = True
+					
+			elif self._mode == OBJECTPICKER:
+				position = self._controller._camera.toMapCoordinates(fife.ScreenPoint(realCoords[0], realCoords[1]), False)
+				exact = self._controller._layer.getCellGrid().toExactLayerCoordinates(position)
+				instances = self._controller.getInstancesFromPosition(exact)
+				if len(instances) >= 1:
+					object = instances[0].getObject()
+					if object.getId() != self._object.getId() or object.getNamespace() != self._object.getNamespace():
+						events.onObjectSelected.send(sender=self, object=object)
 
 	def mouseDragged(self, sender, event):
 		if event.isConsumedByWidgets():
@@ -310,6 +327,8 @@ class MapEditor:
 					pos = i.getLocation().getMapCoordinates()
 					pos = self._controller._camera.toScreenCoordinates(pos)
 					self._controller.selectCell(pos.x, pos.y)
+			elif self._mode == OBJECTPICKER:
+				pass
 
 	def mouseReleased(self, sender, event):
 		if event.isConsumedByWidgets():

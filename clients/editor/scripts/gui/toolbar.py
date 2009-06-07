@@ -22,7 +22,7 @@ class ToolBar(Panel):
 				"TextBesideIcon"	: 3
 			}
 
-	def __init__(self, button_style=0, panel_size=30, orientation=0, *args, **kwargs):
+	def __init__(self, button_style=0, panel_size=27, orientation=0, *args, **kwargs):
 		super(ToolBar, self).__init__(resizable=False, *args, **kwargs)
 		
 		self._actions = []

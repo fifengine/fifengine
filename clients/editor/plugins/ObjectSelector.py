@@ -146,6 +146,7 @@ class ObjectSelector(plugin.Plugin):
 		self.editor._toolsMenu.addAction(self._showAction)
 		
 		events.postMapShown.connect(self.update_namespace)
+		events.onObjectSelected.connect(self.setPreview)
 		
 		self.buildGui()
 
@@ -157,6 +158,7 @@ class ObjectSelector(plugin.Plugin):
 		self.removeAllChildren()
 		
 		events.postMapShown.disconnect(self.update_namespace)
+		events.onObjectSelected.disconnect(self.setPreview)
 		
 		self.editor._toolsMenu.removeAction(self._showAction)
 
@@ -317,17 +319,20 @@ class ObjectSelector(plugin.Plugin):
 		been selected.
 		@param obj: fife.Object instance"""
 
-		# Set preview image
-		self.preview.image = self._getImage(obj)
-		height = self.preview.image.getHeight();
-		if height > 200: height = 200
-		self.preview.parent.max_height = height
+		self.setPreview(obj)
 		
 		self.gui.adaptLayout()
 		events.onObjectSelected.send(sender=self, object=obj)
 
 		self.objects.adaptLayout()
-		self.gui.adaptLayout()		
+		self.gui.adaptLayout()
+		
+	# Set preview image
+	def setPreview(self, object):
+		self.preview.image = self._getImage(object)
+		height = self.preview.image.getHeight();
+		if height > 200: height = 200
+		self.preview.parent.max_height = height
 
 	def update_namespace(self):
 		
