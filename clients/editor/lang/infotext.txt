@@ -15,6 +15,10 @@ Camera navigation:
 - Middle mouse button + Drag mouse: Scroll map
 - Ctrl+Mouse wheel: Zoom
 
+Selection:
+- CTRL+Click adds to selection
+- Right click deselects
+
 Undo:
 - Ctrl+Z: Undo
 - Ctrl+Shift+Z: Redo
