@@ -62,9 +62,10 @@ class MapEditor:
 		events.mouseDragged.connect(self.mouseDragged)
 		events.mouseReleased.connect(self.mouseReleased)
 		events.mouseMoved.connect(self.mouseMoved)
+		events.mouseEntered.connect(self.mouseEntered)
+		events.mouseExited.connect(self.mouseExited)
 		events.mouseWheelMovedUp.connect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.connect(self.mouseWheelMovedDown)
-		events.mouseExited.connect(self.mouseExited)
 		events.onPump.connect(self.pump)
 		
 	def _clear(self):
@@ -77,13 +78,54 @@ class MapEditor:
 		events.mouseDragged.disconnect(self.mouseDragged)
 		events.mouseReleased.disconnect(self.mouseReleased)
 		events.mouseMoved.disconnect(self.mouseMoved)
+		events.mouseExited.disconnect(self.mouseExited)
+		events.mouseEntered.disconnect(self.mouseEntered)
 		events.mouseWheelMovedUp.disconnect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.disconnect(self.mouseWheelMovedDown)
-		events.mouseExited.disconnect(self.mouseExited)
 		events.onPump.disconnect(self.pump)
 		
 	def _mapChanged(self, sender, mapview):
 		self.setController(mapview.getController())
+		
+	def _setCursor(self):
+		engine = self._editor.getEngine()
+		cursor = engine.getCursor()
+		
+		id = -1
+		if self._mode == SELECTING:
+			id = engine.getImagePool().addResourceFromFile("gui/icons/select_instance.png")
+			image = engine.getImagePool().getImage(id)
+			image.setXShift(-16)
+			image.setYShift(-15)
+		elif self._mode == INSERTING:
+			id = engine.getImagePool().addResourceFromFile("gui/icons/add_instance.png")
+			image = engine.getImagePool().getImage(id)
+			image.setXShift(-2)
+			image.setYShift(-20)
+		elif self._mode == REMOVING:
+			id = engine.getImagePool().addResourceFromFile("gui/icons/erase_instance.png")
+			image = engine.getImagePool().getImage(id)
+			image.setXShift(-2)
+			image.setYShift(-19)
+		elif self._mode == MOVING:
+			id = engine.getImagePool().addResourceFromFile("gui/icons/move_instance.png")
+			image = engine.getImagePool().getImage(id)
+			image.setXShift(-11)
+			image.setYShift(-11)
+		elif self._mode == OBJECTPICKER:
+			id = engine.getImagePool().addResourceFromFile("gui/icons/objectpicker.png")
+			image = engine.getImagePool().getImage(id)
+			image.setXShift(-0)
+			image.setYShift(-22)
+			
+		if id < 0:
+			self._resetCursor()
+		else:
+			cursor.set(fife.CURSOR_IMAGE, id)
+			
+	def _resetCursor(self):
+		cursor = self._editor.getEngine().getCursor()
+		cursor.set(fife.CURSOR_NATIVE, fife.NC_ARROW)
 		
 	def setObject(self, object):
 		self._object = object
@@ -180,6 +222,7 @@ class MapEditor:
 		self._mode = mode
 		print "Entered mode " + mode
 		self._statusbar.setText(mode.replace('_', ' ').capitalize())
+		self._setCursor()
 		
 	def _buttonToggled(self, sender, toggled):
 		if self._controller is None: return
@@ -201,10 +244,6 @@ class MapEditor:
 
 		self._setMode(mode)
 		
-	def mouseExited(self, sender, event):
-		pass
-
-
 	def mousePressed(self, sender, event):
 		if event.isConsumedByWidgets():
 			return
@@ -360,6 +399,12 @@ class MapEditor:
 
 	def mouseMoved(self, sender, event):
 		pass
+		
+	def mouseEntered(self, sender, event):
+		self._setCursor()
+		
+	def mouseExited(self, sender, event):
+		self._resetCursor()
 				
 	def mouseWheelMovedUp(self, event):
 		if self._eventlistener.controlPressed and self._controller._camera:

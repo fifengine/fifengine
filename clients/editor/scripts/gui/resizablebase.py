@@ -50,7 +50,6 @@ class ResizableBase(object):
 			titleheight = self.real_widget.getTitleBarHeight()
 
 		cursor = self._engine.getCursor()
-		cursor.set(fife.CURSOR_NATIVE, fife.NC_RESIZENW)
 		
 		left	= event.getX() < 5 and self.resizable_left
 		right	= event.getX() > self.width-5 and self.resizable_right
