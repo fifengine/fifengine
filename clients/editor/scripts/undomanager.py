@@ -32,7 +32,8 @@ class UndoManager:
 		# Adds an action to the undomanager
 		undocallback = lambda: doSomethingElse()
 		redocallback = lambda: doSomething()
-		action = UndoObject("Did something", "Something was done somewhere in the program.", "icon.png")
+		description = "Something was done somewhere in the program."
+		action = UndoObject(undocallback, redocallback, "Did something", description, "icon.png")
 		undomanager.addAction(action)
 	
 	def doLotOfActions():
@@ -48,9 +49,9 @@ class UndoManager:
 	undomanager.undo()
 	"""
 
-	def __init__(self, branchedMode = False):
+	def __init__(self, branchedMode = True):
 		self._groups = []
-		self._branched_mode = False
+		self._branched_mode = branchedMode
 		
 		def warn(msg):
 			print "Warning: ",msg
