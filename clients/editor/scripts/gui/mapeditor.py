@@ -95,8 +95,8 @@ class MapEditor:
 		if self._mode == SELECTING:
 			id = engine.getImagePool().addResourceFromFile("gui/icons/select_instance.png")
 			image = engine.getImagePool().getImage(id)
-			image.setXShift(-16)
-			image.setYShift(-15)
+			image.setXShift(-7)
+			image.setYShift(-7)
 		elif self._mode == INSERTING:
 			id = engine.getImagePool().addResourceFromFile("gui/icons/add_instance.png")
 			image = engine.getImagePool().getImage(id)

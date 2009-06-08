@@ -4,6 +4,9 @@ import pychan
 import pychan.widgets as widgets
 import sys
 
+def u2s(string):
+	return string.encode(sys.getfilesystemencoding())
+
 class FileBrowser(object):
 	"""
 	FileBrowser displays directory and file listings from the vfs.
@@ -47,7 +50,7 @@ class FileBrowser(object):
 	def _setDirectory(self):
 		selection = self._widget.collectData('dirList')
 		if not (selection < 0):
-			new_dir = self.dir_list[selection]
+			new_dir = u2s(self.dir_list[selection])
 			lst = self.path.split('/')
 			if new_dir == '..' and lst[-1] != '..' and lst[-1] != '.':
 				lst.pop()
@@ -55,25 +58,25 @@ class FileBrowser(object):
 				lst.append(new_dir)
 			self.path = '/'.join(lst)
 			
-			
 		def decodeList(list):
 			fs_encoding = sys.getfilesystemencoding()
 			if fs_encoding is None: fs_encoding = "ascii"
 		
 			newList = []
 			for i in list:
-				try:
-					newList.append(unicode(i, fs_encoding))
+				try: newList.append(unicode(i, fs_encoding))
 				except:
-					newList.append("WARNING: This entry could not be decoded!")
-					print "WARNING: Coult not decode an item!"
+					newList.append(unicode(i, fs_encoding, 'replace'))
+					print "WARNING: Could not decode item:", i
 			return newList
+			
+		
 
 		self.dir_list = []
 		self.file_list = []
 		
-		dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(str(self.path)))
-		file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(str(self.path)))
+		dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
+		file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(self.path))
 				
 		self.dir_list = decodeList(dir_list)
 		self.file_list = decodeList(file_list)
@@ -88,11 +91,11 @@ class FileBrowser(object):
 
 		if self.savefile:
 			if self._widget.collectData('saveField'):
-				self.fileSelected(self.path,self._widget.collectData('saveField'))
+				self.fileSelected(self.path, u2s(self._widget.collectData('saveField')))
 				return
 
 		if selection >= 0:
-			self.fileSelected(self.path,self.file_list[selection])
+			self.fileSelected(self.path, u2s(self.file_list[selection]))
 			return
 		
 		if self.selectdir:
