@@ -68,7 +68,7 @@ namespace gcn {
 			void draw(Graphics *graphics);
 
 			/**
-			 * Adjust size to fit image
+			 * Adjust size to fit image and caption
 			 */
 			void adjustSize();
 

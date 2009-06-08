@@ -34,6 +34,8 @@ class Widget(object):
 	  - position_technique: This can be either "automatic" or "explicit" - only L{Window} has this set to "automatic" which
 	  results in new windows being centered on screen (for now).
 	  If it is set to "explicit" the position attribute will not be touched.
+	  - vexpand: Integer: >= 0. Proportion to expand this widget vertically.
+	  - hexpand: Integer: >= 0. Proportion to expand this widget horizontally.
 
 	Convenience Attributes
 	======================
@@ -59,34 +61,50 @@ class Widget(object):
 		PointAttr('min_size'), PointAttr('size'), PointAttr('max_size'),
 		ColorAttr('base_color'),ColorAttr('background_color'),ColorAttr('foreground_color'),ColorAttr('selection_color'),
 		Attr('style'), Attr('font'),IntAttr('border_size'),Attr('position_technique'),
-		UnicodeAttr('helptext'), BoolAttr('is_focusable') 
+		IntAttr('vexpand'),IntAttr('hexpand'),
+		UnicodeAttr('helptext'), BoolAttr('is_focusable')
 		]
 
 	DEFAULT_NAME = '__unnamed__'
+	DEFAULT_HEXPAND = 0
+	DEFAULT_VEXPAND = 0
+	DEFAULT_MAX_SIZE = 500000, 500000
 
 	HIDE_SHOW_ERROR = """\
 		You can only show/hide the top widget of a hierachy.
 		Use 'addChild' or 'removeChild' to add/remove labels for example.
 		"""
 
+
 	def __init__(self,parent = None, name = DEFAULT_NAME,
-				 size = (-1,-1), min_size=(0,0), max_size=(5000,5000),
+				 size = (-1,-1), min_size=(0,0), max_size=DEFAULT_MAX_SIZE,
 				 helptext=u"",
+				 position = (0,0),
 				 style = None, **kwargs):
 
 		assert( hasattr(self,'real_widget') )
 		self.event_mapper = events.EventMapper(self)
 		self._visible = False
+		self._extra_border = (0,0)
+		self.hexpand = kwargs.get("hexpand",self.DEFAULT_HEXPAND)
+		self.vexpand = kwargs.get("vexpand",self.DEFAULT_VEXPAND)
+		# Simple way to get at least some compat layout:
+		if get_manager().compat_layout:
+			self.hexpand, self.vexpand = 0,0
 
 		# Data distribution & retrieval settings
 		self.accepts_data = False
 		self.accepts_initial_data = False
 
+		# Parent attribute makes sure we only have one parent,
+		# that tests self.__parent - so make sure we have the attr here.
+		self.__parent = None
 		self.parent = parent
 
 		# This will also set the _event_id and call real_widget.setActionEventId
 		self.name = name
 
+		self.position = position
 		self.min_size = min_size
 		self.max_size = max_size
 		self.size = size
@@ -122,14 +140,14 @@ class Widget(object):
 		"""
 		if not get_manager().can_execute:
 			raise RuntimeError("Synchronous execution is not set up!")
-		if self._parent:
+		if self.__parent:
 			raise RuntimeError("You can only 'execute' root widgets, not %s!" % str(self))
 
 		for name,returnValue in bind.items():
 			def _quitThisDialog(returnValue = returnValue ):
 				get_manager().breakFromMainLoop( returnValue )
 				self.hide()
-			self.findChild(name=name).capture( _quitThisDialog )
+			self.findChild(name=name).capture( _quitThisDialog , group_name = "__execute__" )
 		self.show()
 		return get_manager().mainLoop()
 
@@ -175,7 +193,7 @@ class Widget(object):
 		"""
 		Show the widget and all contained widgets.
 		"""
-		if self._parent:
+		if self.parent:
 			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if self._visible: return
 		self.adaptLayout()
@@ -187,7 +205,7 @@ class Widget(object):
 		"""
 		Hide the widget and all contained widgets.
 		"""
-		if self._parent:
+		if self.parent:
 			raise RuntimeError(Widget.HIDE_SHOW_ERROR)
 		if not self._visible: return
 
@@ -202,8 +220,8 @@ class Widget(object):
 		either directly or as part of a container widget.
 		"""
 		widget = self
-		while widget._parent:
-			widget = widget._parent
+		while widget.parent:
+			widget = widget.parent
 		return widget._visible
 
 	def adaptLayout(self,recurse=True):
@@ -285,6 +303,23 @@ class Widget(object):
 		automatically.
 		"""
 		raise RuntimeError("Trying to add a widget to %s, which doesn't allow this." % repr(self))
+
+	def insertChild(self, widget, position):
+		"""
+		This function inserts a widget a given index in the child list.
+		
+		See L{addChild} and L{insertChildBefore} 
+		"""
+		raise RuntimeError("Trying to insert a widget to %s, which doesn't allow this." % repr(self))
+		
+	def insertChildBefore(self, widget, before):
+		"""
+		Inserts a child widget before a given widget. If the widget isn't found,
+		the widget is appended to the children list.
+		
+		See L{addChild} and L{insertChild} 
+		"""
+		raise RuntimeError("Trying to insert a widget to %s, which doesn't allow this." % repr(self))
 
 	def addChildren(self,*widgets):
 		"""
@@ -508,7 +543,7 @@ class Widget(object):
 		"""
 		def _printNamedWidget(widget):
 			if widget.name != Widget.DEFAULT_NAME:
-				print widget.name.ljust(20),repr(widget).ljust(50),repr(widget._parent)
+				print widget.name.ljust(20),repr(widget).ljust(50),repr(widget.__parent)
 		print "Named child widgets of ",repr(self)
 		print "name".ljust(20),"widget".ljust(50),"parent"
 		self.deepApply(_printNamedWidget)
@@ -552,13 +587,26 @@ class Widget(object):
 		def _callExpandContent(widget):
 			#print "ETC:",widget
 			widget.expandContent()
-		self.deepApply(_callExpandContent)
+		self.deepApply(_callExpandContent, leaves_first=False)
 
-	def deepApply(self,visitorFunc):
+	def deepApply(self,visitorFunc, leaves_first = True):
 		"""
 		Recursively apply a callable to all contained widgets and then the widget itself.
 		"""
 		visitorFunc(self)
+		
+	def getAbsolutePos(self):
+		"""
+		Get absolute position on screen
+		"""
+		absX = self.x
+		absY = self.y
+		parent = self.parent
+		while parent is not None:
+			absX += parent.x
+			absY += parent.y
+			parent = parent.parent
+		return (absX, absY)
 
 	def sizeChanged(self):
 		pass
@@ -611,6 +659,19 @@ class Widget(object):
 
 	def _getHeight(self): return self.real_widget.getHeight()
 
+	def _getMinWidth(self): return self.min_size[0]
+	def _getMaxWidth(self): return self.max_size[0]
+	def _getMinHeight(self): return self.min_size[1]
+	def _getMaxHeight(self): return self.max_size[1]
+	def _setMinWidth(self,w):
+		self.min_size = w, self.min_size[1]
+	def _setMaxWidth(self,w):
+		self.max_size = w, self.max_size[1]
+	def _setMinHeight(self,h):
+		self.min_size = self.min_size[0],h
+	def _setMaxHeight(self,h):
+		self.max_size = self.max_size[0],h
+
 	def _setFont(self, font):
 		self._font = font
 		self.real_font = get_manager().getFont(font)
@@ -632,13 +693,19 @@ class Widget(object):
 		get_manager().stylize(self,style)
 	style = property(_getStyle,_setStyle)
 
-	def _getParent(self): return self._parent
+	def _getParent(self): return self.__parent
 	def _setParent(self,parent):
-		self._parent = parent
+		if self.__parent is not parent:
+			if self.__parent and parent is not None:
+				print "Widget containment fumble:", self, self.__parent, parent
+				self.__parent.removeChild(self)
+		self.__parent = parent
 	parent = property(_getParent,_setParent)
 
 	def _setName(self,name): self._name = name
-	def _getName(self): return self._name
+	def _getName(self):
+		# __str__ relies on self.name
+		return getattr(self,'_name','__no_name_yet__')
 	name = property(_getName,_setName)
 
 	def _setFocusable(self, b): self.real_widget.setFocusable(b)
@@ -649,6 +716,10 @@ class Widget(object):
 	y = property(_getY,_setY)
 	width = property(_getWidth,_setWidth)
 	height = property(_getHeight,_setHeight)
+	min_width = property(_getMinWidth,_setMinWidth)
+	min_height = property(_getMinHeight,_setMinHeight)
+	max_width = property(_getMaxWidth,_setMaxWidth)
+	max_height = property(_getMaxHeight,_setMaxHeight)
 	size = property(_getSize,_setSize)
 	position = property(_getPosition,_setPosition)
 	font = property(_getFont,_setFont)

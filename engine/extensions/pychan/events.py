@@ -46,6 +46,7 @@ from internal import get_manager
 import tools
 import traceback
 import weakref
+import fife_timer as timer
 
 EVENTS = [
 	"mouseEntered",
@@ -132,7 +133,9 @@ class EventListenerBase(object):
 			if name in self.events:
 				if self.debug: print "-"*self.indent, name
 				for f in self.events[name].itervalues():
-					f( event )
+					def delayed_f():
+						f( event )
+					timer.delayCall(0,delayed_f)
 
 		except:
 			print name, repr(event)
@@ -279,9 +282,9 @@ class EventMapper(object):
 			
 		self.callbacks[group_name][event_name] = callback
 			
-		
 		def captured_f(event):
-			tools.applyOnlySuitable(self_ref().callbacks[group_name][event_name],event=event,widget=self_ref().widget_ref())
+			if self_ref() is not None:
+				tools.applyOnlySuitable(self_ref().callbacks[group_name][event_name],event=event,widget=self_ref().widget_ref())
 
 		listener = self.getListener(event_name)
 

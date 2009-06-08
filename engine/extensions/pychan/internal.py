@@ -2,6 +2,7 @@
 
 from compat import guichan, in_fife
 import widgets
+import fife_timer as timer
 import fonts
 from exceptions import *
 from traceback import print_exc
@@ -24,10 +25,11 @@ def screen_height():
 class Manager(object):
 	manager = None
 
-	def __init__(self, hook, debug = False):
+	def __init__(self, hook, debug = False, compat_layout = False):
 		super(Manager,self).__init__()
 		self.hook = hook
 		self.debug = debug
+		self.compat_layout = compat_layout
 		self.unicodePolicy = ('ignore',)
 
 		if in_fife:
@@ -35,6 +37,7 @@ class Manager(object):
 				raise InitializationError("No event manager installed.")
 			if not hook.engine.getGuiManager():
 				raise InitializationError("No GUI manager installed.")
+		timer.init(hook.engine.getTimeManager())
 
 		self.fonts = {}
 		#glyphs = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/:();%`\'*#=[]"'
@@ -43,12 +46,15 @@ class Manager(object):
 		self.styles = {}
 		self.addStyle('default',DEFAULT_STYLE)
 
-                Manager.manager = self
+		Manager.manager = self
 
 		# Setup synchronous dialogs
 		self.mainLoop = None
 		self.breakFromMainLoop = None
 		self.can_execute = False
+
+		import weakref
+		self.allWidgets = weakref.WeakKeyDictionary()
 
 		# Autopos
 		from autoposition import placeWidget
@@ -67,6 +73,8 @@ class Manager(object):
 		Shows a widget on screen. Used by L{Widget.show} - do not use directly.
 		"""
 		self.placeWidget(widget, widget.position_technique)
+		assert widget not in self.allWidgets
+		self.allWidgets[ widget ] = 1
 		self.hook.add_widget( widget.real_widget )
 
 	def hide(self,widget):
@@ -74,6 +82,7 @@ class Manager(object):
 		Hides a widget again. Used by L{Widget.hide} - do not use directly.
 		"""
 		self.hook.remove_widget( widget.real_widget )
+		del self.allWidgets[ widget ]
 
 	def setDefaultFont(self,name):
 		self.fonts['default'] = self.getFont(name)
@@ -133,6 +142,9 @@ class Manager(object):
 					setattr(widget,k,v)
 
 	def _remapStyleKeys(self,style):
+		"""
+		Translate style selectors to tuples of widget classes. (internal)
+		"""
 		# Remap class names, create copy:
 		def _toClass(class_):
 			if class_ == "default":
@@ -168,6 +180,7 @@ DEFAULT_STYLE = {
 		'foreground_color' : guichan.Color(255,255,255),
 		'background_color' : guichan.Color(50,50,50),
 		'selection_color' : guichan.Color(80,80,80),
+		'font' : 'default'
 	},
 	'Button' : {
 		'border_size': 2,
@@ -183,6 +196,7 @@ DEFAULT_STYLE = {
 	},
 	'Label' : {
 		'border_size': 0,
+		'background_color' : guichan.Color(50,50,50,0)
 	},
 	'ClickLabel' : {
 		'border_size': 0,
@@ -194,10 +208,9 @@ DEFAULT_STYLE = {
 		'border_size': 0,
 		'margins': (5,5),
 		'opaque' : 1,
+		'padding':2,
 		'titlebar_height' : 12,
-		'vexpanding' : 1,
-		#'background_image' : 'gui/backgrounds/background.png',
-		#'font' : 'samanata_large'
+		'background_image' : None,
 	},
 	'TextBox' : {
 	},
@@ -205,6 +218,7 @@ DEFAULT_STYLE = {
 		'border_size': 0,
 		'margins': (0,0),
 		'padding':2,
-		#'background_image' : 'gui/backgrounds/background.png',
+		'opaque' : 1,
+		'background_image' : None,
 	}
 }

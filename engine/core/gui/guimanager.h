@@ -141,6 +141,9 @@ namespace FIFE {
 			KeyEvent translateKeyEvent(const gcn::KeyEvent& evt);
 			MouseEvent translateMouseEvent(const gcn::MouseEvent& evt);
 
+		protected:
+			int convertGuichanKeyToFifeKey(int value);
+
 		private:
 			// The Guichan GUI.
 			gcn::Gui* m_gcn_gui;

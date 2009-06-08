@@ -167,6 +167,27 @@ namespace FIFE {
 		CURSOR_IMAGE,
 		CURSOR_ANIMATION
 	};
+
+	enum NativeCursor {
+		NC_ARROW = 1000000,
+		NC_IBEAM,
+		NC_WAIT,
+		NC_CROSS,
+		NC_UPARROW,
+		NC_RESIZENW,
+		NC_RESIZESE,
+		NC_RESIZESW,
+		NC_RESIZENE,
+		NC_RESIZEE,
+		NC_RESIZEW,
+		NC_RESIZEN,
+		NC_RESIZES,
+		NC_RESIZEALL,
+		NC_NO,
+		NC_HAND,
+		NC_APPSTARTING,
+		NC_HELP
+	};
 	
 	class Cursor {
 	public:

@@ -181,6 +181,12 @@ namespace gcn {
 			w = std::max(m_hoverImage->getWidth(), w);
 			h = std::max(m_hoverImage->getHeight(), h);
 		}
+
+		if( mCaption.length() > 0 ) {
+			w = std::max(static_cast<int>(getFont()->getWidth(mCaption)+2*mSpacing), w);
+			h = std::max(static_cast<int>(getFont()->getHeight()+2*mSpacing), h);
+		}
+
 		setWidth(w);
 		setHeight(h);
 	}

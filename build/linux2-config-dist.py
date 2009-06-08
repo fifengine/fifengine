@@ -24,6 +24,7 @@ def addExtras(context):
 	context.checkSimpleLib(['boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt'])
 	context.checkSimpleLib(['boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt'])
 	context.checkSimpleLib(['png'], 'png.h');
+	context.checkSimpleLib(['xcursor']);
 
 	if context.env['opengl']:
 		# linking explicitly against libstdc++ to work around Segfault_in_cxa_allocate_exception issue: http://wiki.fifengine.de/Segfault_in_cxa_allocate_exception

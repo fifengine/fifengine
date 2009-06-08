@@ -149,6 +149,12 @@ namespace FIFE {
 			 */
 			std::vector<Instance*> getInstances(const std::string& id);
 
+			/** Returns instances that match given location.
+			 * @param loc location where to fetch instances from
+			 * @param use_exactcoordinates if true, comparison is done using exact coordinates. if not, cell coordinates are used
+			 */
+			std::vector<Instance*> getInstancesAt(Location& loc, bool use_exactcoordinates=false);
+
 			/** Get the first instance on this layer with the given identifier.
 			 */
 			Instance* getInstance(const std::string& identifier);

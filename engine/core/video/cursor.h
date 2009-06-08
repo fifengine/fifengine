@@ -31,6 +31,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+struct SDL_Cursor;
+
 namespace FIFE {
 
 	class ImagePool;
@@ -49,7 +51,34 @@ namespace FIFE {
 		CURSOR_IMAGE,
 		CURSOR_ANIMATION
 	};
-	
+
+	/** Defines some common native cursors between platforms.
+	  * In addition to these, you can use the values in:
+	  * Windows: http://msdn.microsoft.com/en-us/library/ms648391(VS.85).aspx
+	  * X11: http://fife.pastebin.com/f5b89dd6b
+	  */
+	enum NativeCursor {
+		// Start on 1000000 to avoid id-clashes with X11 and windows
+		NC_ARROW = 1000000, // Standard arrow
+		NC_IBEAM,			// I-beam for text selection
+		NC_WAIT,			// Hourglass
+		NC_CROSS,			// Crosshair
+		NC_UPARROW,			// Vertical arrow
+		NC_RESIZENW,		// Cursor for resize in northwest corner
+		NC_RESIZESE,		// 
+		NC_RESIZESW,		// 
+		NC_RESIZENE,		// 
+		NC_RESIZEE,			// 
+		NC_RESIZEW,			// 
+		NC_RESIZEN,			// 
+		NC_RESIZES,			// 
+		NC_RESIZEALL,		// Four-pointed arrow pointing north, south, east, and west
+		NC_NO,				// Slashed circle
+		NC_HAND,			// Hand. Common for links, etc.
+		NC_APPSTARTING,		// Standard arrow and small hourglass
+		NC_HELP				// Arrow and question mark
+	};
+
 	/**  Cursor class manages mouse cursor handling
 	 */
 	class Cursor {
@@ -68,7 +97,7 @@ namespace FIFE {
 
 		/** Sets the current mouse cursor type and possible pool value
 		 * @param ctype cursor type
-		 * @param cursor_id pool id for the cursor (either image or animation)
+		 * @param cursor_id Pool id to image or animation. For native cursors, this is the resource id to native cursor, or one of the values in NativeCursor
 		 */
 		void set(MouseCursorType ctype, unsigned int cursor_id=0);
 			
@@ -94,13 +123,29 @@ namespace FIFE {
 		/** Gets the current mouse cursor pool id
 		 */
 		unsigned int getDragId() const { return m_drag_id; }
-		
+
+	protected:
+		/** Sets the cursor to a native type.
+		  * @param cursor_id Resource id to native cursor, or one of the values in NativeCursor
+		  */
+		void setNativeCursor(unsigned int cursor_id);
+
+		/** To get some consistancy between platforms, this function checks
+		  * if cursor_id matches any of the values in NativeCursor, and
+		  * returns the resource ID specific to the running platform.
+		  * If no match is found, cursor_id is returned.
+		  *
+		  * @param One of the values in NativeCursor
+		  */
+		unsigned int getNativeId(unsigned int cursor_id);
 	
 	private:
 		unsigned int m_cursor_id;
 		unsigned int m_drag_id;
 		MouseCursorType m_cursor_type;
 		MouseCursorType m_drag_type;
+
+		SDL_Cursor* m_native_cursor;
 		
 		RenderBackend* m_renderbackend;
 		ImagePool* m_imgpool;
