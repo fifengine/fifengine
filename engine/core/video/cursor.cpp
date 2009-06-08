@@ -136,7 +136,7 @@ namespace FIFE {
  			img = anim.getFrameByTimestamp(animtime);
 		}
 		if (img) {
-			Rect area(mx + m_drag_offset_x, my + m_drag_offset_y, img->getWidth(), img->getHeight());
+			Rect area(mx + m_drag_offset_x + img->getXShift(), my + m_drag_offset_y + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img->render(area);
 			m_renderbackend->popClipArea();
@@ -152,7 +152,7 @@ namespace FIFE {
 			img = anim.getFrameByTimestamp(animtime);
 		}
 		if (img) {
-			Rect area(mx, my, img->getWidth(), img->getHeight());
+			Rect area(mx + img->getXShift(), my + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img->render(area);
 			m_renderbackend->popClipArea();
