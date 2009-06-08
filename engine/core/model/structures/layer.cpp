@@ -145,6 +145,25 @@ namespace FIFE {
 		return matching_instances;
 	}
 
+	std::vector<Instance*> Layer::getInstancesAt(Location& loc, bool use_exactcoordinates) {
+		std::vector<Instance*> matching_instances;
+		std::vector<Instance*>::iterator it = m_instances.begin();
+
+		for(; it != m_instances.end(); ++it) {
+			if (use_exactcoordinates) {
+				if ((*it)->getLocationRef().getExactLayerCoordinatesRef() == loc.getExactLayerCoordinatesRef()) {
+					matching_instances.push_back(*it);
+				}
+			} else {
+				if ((*it)->getLocationRef().getLayerCoordinates() == loc.getLayerCoordinates()) {
+					matching_instances.push_back(*it);
+				}
+			}
+		}
+
+		return matching_instances;
+	}
+
 	void Layer::getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer) const {
 		if (!layer) {
 			layer = this;

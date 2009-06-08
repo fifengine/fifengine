@@ -19,6 +19,8 @@ class BasicTextWidget(Widget):
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [UnicodeAttr('text')]
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 0
 
 	def __init__(self, text = u"",**kwargs):
 		self.margins = (5,5)

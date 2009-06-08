@@ -253,18 +253,20 @@ from fonts import loadFonts
 ### Initialisation ###
 
 manager = None
-def init(engine,debug=False):
+def init(engine,debug=False, compat_layout=False):
 	"""
 	This has to be called before any other pychan methods can be used.
 	It sets up a manager object which is available under pychan.manager.
 
 	@param engine: The FIFE engine object.
+	@param debug: bool - Enables and disables debugging output. Default is False.
+	@param compat_layout: bool - Enables and disables compat layout. Default is False.
 	"""
 	from compat import _munge_engine_hook
 	from internal import Manager
 	global manager
 
-	manager = Manager(_munge_engine_hook(engine),debug)
+	manager = Manager(_munge_engine_hook(engine),debug,compat_layout)
 
 # XML Loader
 
@@ -357,7 +359,7 @@ class _GuiLoader(object, handler.ContentHandler):
 		self.indent = self.indent[:-4]
 		if manager.debug: print self.indent + "</%s>" % name
 		if self.stack.pop() in ('gui_element','spacer'):
-			self.root = self.root._parent or self.root
+			self.root = self.root.parent or self.root
 
 def loadXML(filename_or_stream):
 	"""

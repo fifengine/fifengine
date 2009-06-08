@@ -88,6 +88,8 @@ namespace gcn {
 		int textX = 0;
 		int textY = 0;
 
+		graphics->setColor(getBackgroundColor());
+		graphics->fillRectangle(Rectangle(1, 1, getDimension().width-1, getHeight() - 1));
 		if (mGuiFont) {
 			if( isTextWrapping() ) {
 				mGuiFont->drawMultiLineString(graphics, mWrappedText, textX, textY);

@@ -17,6 +17,8 @@ class ScrollArea(Widget):
 	"""
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [ BoolAttr("vertical_scrollbar"),BoolAttr("horizontal_scrollbar") ]
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 1
 
 	def __init__(self,**kwargs):
 		self.real_widget = fife.ScrollArea()
@@ -42,16 +44,18 @@ class ScrollArea(Widget):
 	def _getContent(self): return self._content
 	content = property(_getContent,_setContent)
 
-	def deepApply(self,visitorFunc):
-		if self._content: self._content.deepApply(visitorFunc)
+	def deepApply(self,visitorFunc, leaves_first = True):
+		if leaves_first:
+			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first)
 		visitorFunc(self)
+		if not leaves_first:
+			if self._content: self._content.deepApply(visitorFunc, leaves_first = leaves_first)
 
 	def resizeToContent(self,recurse=True):
 		if self._content is None: return
 		if recurse:
-			self.content.resizeToContent(recurse=True)
-		self.content.width = max(self.content.width,self.width-5)
-		self.content.height = max(self.content.height,self.height-5)
+			self.content.resizeToContent(recurse=recurse)
+		self.size = self.min_size
 
 	def _visibilityToScrollPolicy(self,visibility):
 		if visibility:
@@ -74,6 +78,11 @@ class ScrollArea(Widget):
 
 	def _getVerticalScrollbar(self):
 		return self._scrollPolicyToVisibility( self.real_widget.getVerticalScrollPolicy() )
+		
+	def sizeChanged(self):
+		if self.content:
+			self.content.width = max(self.content.width,self.width-5)
+			self.content.height = max(self.content.height,self.height-5)
 
 	vertical_scrollbar = property(_getVerticalScrollbar,_setVerticalScrollbar)
 	horizontal_scrollbar = property(_getHorizontalScrollbar,_setHorizontalScrollbar)

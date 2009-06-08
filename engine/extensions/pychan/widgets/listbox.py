@@ -40,6 +40,9 @@ class ListBox(Widget):
 	The selected attribute can be read and set via L{distributeData} and L{collectData}.
 	The list items can be set via L{distributeInitialData}.
 	"""
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 1
+
 	def __init__(self,items=[],**kwargs):
 		self._items = GenericListmodel(*items)
 		self.real_widget = fife.ListBox(self._items)

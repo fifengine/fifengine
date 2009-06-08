@@ -172,8 +172,14 @@ class World(EventListenerBase):
 		For this techdemo two cameras are used. One follows the hero(!) via 'attach'
 		the other one scrolls around a bit (see the pump function).
 		"""
+		camera_prefix = self.filename.rpartition('.')[0] # Remove file extension
+		camera_prefix = camera_prefix.rpartition('/')[2] # Remove path
+		camera_prefix += '_'
+		
 		for cam in self.view.getCameras():
-			self.cameras[cam.getId()] = cam
+			camera_id = cam.getId().replace(camera_prefix, '')
+			self.cameras[camera_id] = cam
+			
 		self.cameras['main'].attach(self.hero.agent)
 
 		self.view.resetRenderers()

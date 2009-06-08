@@ -25,12 +25,18 @@ class Slider(Widget):
 	VERTICAL = fife.Slider.VERTICAL
 
 	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end')]
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 0
 
-	def __init__(self, scaleStart=0.0, scaleEnd=1.0, orientation=HORIZONTAL, **kwargs):
+	def __init__(self, scaleStart=0.0, scaleEnd=1.0, orientation=HORIZONTAL, min_size=(10,10),**kwargs):
 		self.real_widget = fife.Slider(scaleStart, scaleEnd)
 		self.orientation = orientation
 		self.setOrientation(self.orientation)
-		super(Slider, self).__init__(**kwargs)
+		super(Slider, self).__init__(min_size=min_size,**kwargs)
+
+		self.accepts_data = True
+		self._realSetData = self.setValue
+		self._realGetData = self.getValue
 
 	def _setScale(self, start, end):
 		"""setScale(self, double scaleStart, double scaleEnd)"""

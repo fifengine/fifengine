@@ -38,6 +38,26 @@ class Container(Widget):
 		self.children.append(widget)
 		self.real_widget.add(widget.real_widget)
 
+	def insertChild(self, widget, position):
+		if position > len(self.children) or 0-position > len(self.children):
+			print "insertChild: Warning: Index overflow.",
+			if position >= 0:
+				self.addChild(widget)
+			else:
+				self.insertChild(widget, 0)
+			return
+		
+		children = self.children[0:position]+[widget]+self.children[position:]
+		#assert len(children) == len(self.children) + 1
+		self.removeAllChildren()
+		for child in children:
+			self.addChild(child)
+
+	def insertChildBefore(self, widget, before):
+		if before not in self.children:
+			raise RuntimeError("Couldn't find widget %s as child of %s - in insertChildBefore" % (str(widget),str(before)))
+		self.insertChild(widget, self.children.index(before))
+
 	def removeChild(self,widget):
 		if not widget in self.children:
 			raise RuntimeError("%s does not have %s as direct child widget." % (str(self),str(widget)))
@@ -57,10 +77,14 @@ class Container(Widget):
 		if not self.children: return 0
 		return max(widget.height for widget in self.children)
 
-	def deepApply(self,visitorFunc):
-		for child in self.children:
-			child.deepApply(visitorFunc)
+	def deepApply(self,visitorFunc, leaves_first = True):
+		if leaves_first:
+			for child in self.children:
+				child.deepApply(visitorFunc, leaves_first = leaves_first)
 		visitorFunc(self)
+		if not leaves_first:
+			for child in self.children:
+				child.deepApply(visitorFunc, leaves_first = leaves_first)
 
 	def beforeShow(self):
 		self._resetTiling()
@@ -97,7 +121,7 @@ class Container(Widget):
 			self._background_image = image
 			map(self.real_widget.remove,self._background)
 			self._background = []
-
+			return
 		# Background generation is done in _resetTiling
 
 		if not isinstance(image, fife.GuiImage):
@@ -124,6 +148,9 @@ class VBox(VBoxLayoutMixin,Container):
 	widgets above the spacer are aligned to the top, while widgets below the spacer
 	are aligned to the bottom.
 	"""
+	DEFAULT_HEXPAND = 0
+	DEFAULT_VEXPAND = 1
+
 	def __init__(self,padding=5,**kwargs):
 		super(VBox,self).__init__(**kwargs)
 		self.padding = padding
@@ -135,6 +162,9 @@ class HBox(HBoxLayoutMixin,Container):
 
 	Please see L{VBox} for details - just change the directions :-).
 	"""
+	DEFAULT_HEXPAND = 1
+	DEFAULT_VEXPAND = 0
+
 	def __init__(self,padding=5,**kwargs):
 		super(HBox,self).__init__(**kwargs)
 		self.padding = padding
@@ -180,25 +210,3 @@ class Window(VBoxLayoutMixin,Container):
 	def _getHeight(self): return self.real_widget.getHeight() - self.titlebar_height
 	height = property(_getHeight,_setHeight)
 
-
-# Spacer
-
-class Spacer(object):
-	""" A spacer represents expandable 'whitespace' in the GUI.
-
-	In a XML file you can get this by adding a <Spacer /> inside a VBox or
-	HBox element (Windows implicitly are VBox elements).
-
-	The effect is, that elements before the spacer will be left (top)
-	and elements after the spacer will be right (bottom) aligned.
-
-	There can only be one spacer in VBox (HBox).
-	"""
-	def __init__(self,parent=None,**kwargs):
-		self._parent = parent
-
-	def __str__(self):
-		return "Spacer(parent.name='%s')" % getattr(self._parent,'name','None')
-
-	def __repr__(self):
-		return "<Spacer(parent.name='%s') at %x>" % (getattr(self._parent,'name','None'),id(self))

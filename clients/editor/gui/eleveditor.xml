@@ -1,4 +1,4 @@
-<Window title="Elevation Editor">
+<Panel title="Elevation Editor">
 	<HBox>
 		<VBox name="Metadata Properties">
 		</VBox>
@@ -8,4 +8,4 @@
 			<Button name="closeButton" text="Close"/>
 		</VBox>
 	</HBox>
-</Window>
+</Panel>

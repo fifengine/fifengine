@@ -1,19 +1,8 @@
 #!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
 
-import sys, os, re
-
-def _jp(path):
-	return os.path.sep.join(path.split('/'))
-
-_paths = ('../../engine/swigwrappers/python', '../../engine/extensions')
-for p in _paths:
-	if p not in sys.path:
-		sys.path.append(_jp(p))
 
 import fife
-import fifelog
-import settings
 
 import pychan
 
@@ -77,6 +66,9 @@ STYLES= {
 			'base_color': fife.Color(80,200,80) ,
 			'background_color': fife.Color(200,250,200),
 			},
+		'Window' : {
+			'titlebar_height' : 30,
+		},
 		'ListBox' : {
 			'font' : 'samanata_large'
 			}
@@ -94,7 +86,12 @@ class StylingExample(PyChanExample):
 		pychan.loadFonts("fonts/samanata.fontdef")
 
 	def start(self):
-		self.styledCredits = None
+		self.styledCredits = pychan.loadXML('gui/all_widgets.xml')
+		self.styledCredits.distributeInitialData({
+			'demoList' : map(lambda x:unicode(x,'utf8'),dir(pychan)),
+			'demoText' : unicode(pychan.__doc__,'utf8')
+		})
+
 		self.widget = pychan.loadXML(self.xmlFile)
 		self.widget.mapEvents({
 			'testStyle' : self.testStyle,
@@ -103,7 +100,10 @@ class StylingExample(PyChanExample):
 		self.widget.distributeInitialData({
 			'styleList' : self.styles
 		})
+		self.widget.position_technique = 'right-20:center'
+		self.styledCredits.position_technique = 'left+20:center'
 		self.widget.show()
+		self.styledCredits.show()
 
 	def stop(self):
 		super(StylingExample,self).stop()
@@ -114,11 +114,5 @@ class StylingExample(PyChanExample):
 		style = self.styles[self.widget.collectData('styleList')]
 		if self.styledCredits:
 			self.styledCredits.hide()
-		self.styledCredits = pychan.loadXML('gui/all_widgets.xml')
-		self.styledCredits.distributeInitialData({
-			'demoList' : dir(pychan),
-			'demoText' : pychan.__doc__
-		})
 		self.styledCredits.stylize(style)
-		self.styledCredits.mapEvents({'okButton':self.styledCredits.hide})
 		self.styledCredits.show()

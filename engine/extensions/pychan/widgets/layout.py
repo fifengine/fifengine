@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from common import *
+from pychan.attrs import IntAttr
+
+AlignTop, AlignBottom, AlignLeft, AlignRight, AlignCenter = range(5)
+def isLayouted(widget):
+	return isinstance(widget,LayoutBase)
 
 class LayoutBase(object):
 	"""
@@ -12,7 +16,7 @@ class LayoutBase(object):
 	-----------------
 
 	The layout is calculated in the L{Widget.show} method. Thus if you modify the layout,
-	by adding or removing child widgets for example, you have to call L{Widget.adaptLayout}
+	by adding or removing child widgets for example, you have to call L{widgets.Widget.adaptLayout}
 	so that the changes ripple through the widget hierachy.
 
 	Internals
@@ -31,67 +35,118 @@ class LayoutBase(object):
 	"""
 	def __init__(self,align = (AlignLeft,AlignTop), **kwargs):
 		self.align = align
-		self.spacer = None
+		self.spacer = []
 		super(LayoutBase,self).__init__(**kwargs)
 
 	def addSpacer(self,spacer):
-		if self.spacer:
-			raise RuntimeException("Already a Spacer in %s!" % str(self))
-		self.spacer = spacer
+		self.spacer.append(spacer)
 		spacer.index = len(self.children)
 
 	def xdelta(self,widget):return 0
 	def ydelta(self,widget):return 0
 
-	def _adjustHeight(self):
-		if self.align[1] == AlignTop:return #dy = 0
-		if self.align[1] == AlignBottom:
-			y = self.height - self.childarea[1] - self.border_size - self.margins[1]
-		else:
-			y = (self.height - self.childarea[1] - self.border_size - self.margins[1])/2
-		for widget in self.children:
-			widget.y = y
-			y += self.ydelta(widget)
+	def _applyHeight(self, spacers = []):
+		y = self.border_size + self.margins[1]
+		ydelta = map(self.ydelta,self.children)
+		for index, child in enumerate(self.children):
+			while spacers and spacers[0].index == index:
+				y += spacers.pop(0).size
+			child.y = y
+			y += ydelta.pop(0)
 
 	def _adjustHeightWithSpacer(self):
 		pass
 
-	def _adjustWidth(self):
-		if self.align[0] == AlignLeft:return #dx = 0
-		if self.align[0] == AlignRight:
-			x = self.width - self.childarea[0] - self.border_size - self.margins[0]
-		else:
-			x = (self.width - self.childarea[0] - self.border_size - self.margins[0])/2
-		for widget in self.children:
-			widget.x = x
-			x += self.xdelta(widget)
-
-	def _expandWidthSpacer(self):
+	def _applyWidth(self, spacers = []):
 		x = self.border_size + self.margins[0]
 		xdelta = map(self.xdelta,self.children)
-
-		for widget in self.children[:self.spacer.index]:
-			widget.x = x
+		for index, child in enumerate(self.children):
+			while spacers and spacers[0].index == index:
+				x += spacers.pop(0).size
+			child.x = x
 			x += xdelta.pop(0)
 
-		x = self.width - sum(xdelta) - self.border_size - self.margins[0]
-		for widget in self.children[self.spacer.index:]:
-			widget.x = x
-			x += xdelta.pop(0)
+	def _expandWidthSpacer(self):
+		xdelta = map(self.xdelta,self.children)
+		xdelta += [spacer.min_size for spacer in self.spacer]
+
+		available_space = self.width - 2*self.margins[0] - 2*self.border_size - self._extra_border[0]
+
+		used_space = sum(xdelta)
+		if self.children:
+			used_space -= self.padding
+		if used_space >= available_space:
+			return
+
+		expandable_items = self._getExpanders(vertical=False)
+		#print "AS/US - before",self,[o.width for o in expandable_items]
+		#print "SPACERS",self.spacer
+
+		index = 0
+		while used_space < available_space and expandable_items:
+			index = index % len(expandable_items)
+
+			expander = expandable_items[index]
+			old_width = expander.width
+			expander.width += 1
+			if old_width == expander.width:
+				expandable_items.pop(index)
+			else:
+				used_space += 1
+				index += 1
+
+		#print "AS/US - after",self,[o.width for o in expandable_items]
+		#print "SPACERS",self.spacer
+		self._applyWidth(spacers = self.spacer[:])
 
 	def _expandHeightSpacer(self):
-		y = self.border_size + self.margins[1]
 		ydelta = map(self.ydelta,self.children)
+		ydelta += [spacer.min_size for spacer in self.spacer]
 
-		for widget in self.children[:self.spacer.index]:
-			widget.y = y
-			y += ydelta.pop(0)
+		available_space = self.height - 2*self.margins[1] - 2*self.border_size - self._extra_border[1]
 
-		y = self.height - sum(ydelta) - self.border_size - self.margins[1]
-		for widget in self.children[self.spacer.index:]:
-			widget.y = y
-			y += ydelta.pop(0)
+		used_space = sum(ydelta)
+		if self.children:
+			used_space -= self.padding
 
+		if used_space >= available_space:
+			return
+
+		expandable_items = self._getExpanders(vertical=True)
+		#print "AS/US - before",self,[o.height for o in expandable_items]
+
+		index = 0
+		while used_space < available_space and expandable_items:
+			index = index % len(expandable_items)
+
+			expander = expandable_items[index]
+			old_width = expander.height
+			expander.height += 1
+			if old_width == expander.height:
+				expandable_items.pop(index)
+			else:
+				used_space += 1
+				index += 1
+
+		#print "AS/US - after",self,[o.height for o in expandable_items]
+		self._applyHeight(spacers = self.spacer[:])
+
+
+	def _getExpanders(self,vertical=True):
+		expanders = []
+		spacers = self.spacer[:]
+		for index, child in enumerate(self.children):
+			if spacers and spacers[0].index == index:
+				expanders.append( spacers.pop(0) )
+			if child.vexpand and vertical:
+				expanders += [child]*child.vexpand
+			if child.hexpand and not vertical:
+				expanders += [child]*child.hexpand
+		return expanders + spacers
+
+	def _resetSpacers(self):
+		for spacer in self.spacer:
+			spacer.size = 0
 
 class VBoxLayoutMixin(LayoutBase):
 	"""
@@ -101,29 +156,32 @@ class VBoxLayoutMixin(LayoutBase):
 		super(VBoxLayoutMixin,self).__init__(**kwargs)
 
 	def resizeToContent(self, recurse = True):
+		self._resetSpacers()
+
 		max_w = self.getMaxChildrenWidth()
 		x = self.margins[0] + self.border_size
 		y = self.margins[1] + self.border_size
 		for widget in self.children:
-			widget.x = x
-			widget.y = y
 			widget.width = max_w
 			y += widget.height + self.padding
 
-		#Add the padding for the spacer.
-		if self.spacer:
-			y += self.padding
+		if self.children:
+			y -= self.padding
 
-		self.height = y + self.margins[1] - self.padding
-		self.width = max_w + 2*x
-		self.childarea = max_w, y - self.padding - self.margins[1]
+		y += sum([spacer.min_size for spacer in self.spacer])
 
-		self._adjustHeight()
-		self._adjustWidth()
+		self.height = y + self.margins[1] + self.border_size + self._extra_border[1]
+		self.width = max_w + 2*x + self._extra_border[0]
+
+		self._applyHeight(spacers = self.spacer[:])
+		self._applyWidth()
 
 	def expandContent(self):
-		if self.spacer:
-			self._expandHeightSpacer()
+		self._expandHeightSpacer()
+		if not self.hexpand and self.parent:return
+		for widget in self.children:
+			widget.width = self.width - 2*self.margins[0] - 2*self.border_size - self._extra_border[0]
+
 
 	def ydelta(self,widget):return widget.height + self.padding
 
@@ -135,28 +193,85 @@ class HBoxLayoutMixin(LayoutBase):
 		super(HBoxLayoutMixin,self).__init__(**kwargs)
 
 	def resizeToContent(self, recurse = True):
+		self._resetSpacers()
+
 		max_h = self.getMaxChildrenHeight()
 		x = self.margins[0] + self.border_size
 		y = self.margins[1] + self.border_size
 		for widget in self.children:
-			widget.x = x
-			widget.y = y
 			widget.height = max_h
 			x += widget.width + self.padding
+		if self.children:
+			x -= self.padding
+		x += sum([spacer.min_size for spacer in self.spacer])
 
-		#Add the padding for the spacer.
-		if self.spacer:
-			x += self.padding
+		self.width = x + self.margins[0] + self._extra_border[0]
+		self.height = max_h + 2*y + self._extra_border[1]
 
-		self.width = x + self.margins[0] - self.padding
-		self.height = max_h + 2*y
-		self.childarea = x - self.margins[0] - self.padding, max_h
-
-		self._adjustHeight()
-		self._adjustWidth()
+		self._applyHeight()
+		self._applyWidth(spacers = self.spacer[:])
 
 	def expandContent(self):
-		if self.spacer:
-			self._expandWidthSpacer()
+		self._expandWidthSpacer()
+		if not self.vexpand and self.parent:return
+		for widget in self.children:
+			widget.height = self.height - 2*self.margins[1] - 2*self.border_size - self._extra_border[1]
 
 	def xdelta(self,widget):return widget.width + self.padding
+
+class Spacer(object):
+	""" A spacer represents expandable or fixed 'whitespace' in the GUI.
+
+	In a XML file you can get this by adding a <Spacer /> inside a VBox or
+	HBox element (Windows implicitly are VBox elements).
+
+	Attributes
+	----------
+
+	As with widgets a number of attributes can be set on a spacer (inside the XML definition).
+	
+	  - min_size: Int: The minimal size this Spacer is allowed to have.
+	  - max_size: Int: The maximal size this Spacer is allowed to have.
+	  - fixed_size: Int: Set min_size and max_size to the same vale - effectively a Fixed size spacer. 
+
+	"""
+
+	ATTRIBUTES = [
+		IntAttr('min_size'), IntAttr('size'), IntAttr('max_size'),
+		IntAttr('fixed_size'),
+	]
+
+	def __init__(self,parent=None,**kwargs):
+		self.parent = parent
+		self.min_size = 0
+		self.max_size = 1000
+		self.size = 0
+
+	def __str__(self):
+		return "Spacer(parent.name='%s')" % getattr(self.__parent,'name','None')
+
+	def __repr__(self):
+		return "<Spacer(parent.name='%s') at %x>" % (getattr(self.__parent,'name','None'),id(self))
+
+	def _getSize(self):
+		self.size = self._size
+		return self._size
+	def _setSize(self,size):
+		self._size = max(self.min_size, min(self.max_size,size))
+	size = property(_getSize,_setSize)
+
+	# Alias for size
+	width = property(_getSize,_setSize)
+	height = property(_getSize,_setSize)
+
+	def _setFixedSize(self,size):
+		self.min_size = self.max_size = size
+		self.size = size
+	fixed_size = property(fset=_setFixedSize)
+
+	def _isExpanding(self):
+		if self.min_size < self.max_size:
+			return 1
+		return 0
+	vexpand = property(_isExpanding)
+	hexpand = property(_isExpanding)
