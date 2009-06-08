@@ -2,6 +2,7 @@
 
 import pychan
 import pychan.widgets as widgets
+import sys
 
 class FileBrowser(object):
 	"""
@@ -24,8 +25,8 @@ class FileBrowser(object):
 
 		self.extensions = extensions
 		self.path = './..'
-		self.dir_list = ('..',) + self.engine.getVFS().listDirectories(self.path)
-		self.file_list = self.engine.getVFS().listFiles(self.path)
+		self.dir_list = []
+		self.file_list = []
 
 	def showBrowser(self):
 		if self._widget:
@@ -53,9 +54,29 @@ class FileBrowser(object):
 			else:
 				lst.append(new_dir)
 			self.path = '/'.join(lst)
+			
+			
+		def decodeList(list):
+			fs_encoding = sys.getfilesystemencoding()
+			if fs_encoding is None: fs_encoding = "ascii"
+		
+			newList = []
+			for i in list:
+				try:
+					newList.append(unicode(i, fs_encoding))
+				except:
+					newList.append("WARNING: This entry could not be decoded!")
+					print "WARNING: Coult not decode an item!"
+			return newList
 
-		self.dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
-		self.file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(self.path))
+		self.dir_list = []
+		self.file_list = []
+		
+		dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(str(self.path)))
+		file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(str(self.path)))
+				
+		self.dir_list = decodeList(dir_list)
+		self.file_list = decodeList(file_list)
 		self._widget.distributeInitialData({
 			'dirList'  : self.dir_list,
 			'fileList' : self.file_list
