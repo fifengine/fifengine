@@ -92,6 +92,42 @@ class HistoryManager(plugin.Plugin):
 		
 		self.gui.position_technique = "right:center"
 		
+	def _linearUndo(self, target):
+		mapview = self.editor.getActiveMapView()
+		if mapview is None:
+			return
+			
+		undomanager = mapview.getController().getUndoManager()
+		current_item = undomanager.current_item
+		
+		# Redo?
+		item = current_item
+		count = 0
+		while item is not None:
+			if item == target:
+				undomanager.redo(count)
+				break
+			count += 1
+			item = item.next
+			
+		else: 
+			# Undo?
+			count = 0
+			item = current_item
+			while item is not None:
+				if item == target:
+					undomanager.undo(count)
+					break
+				count += 1
+				item = item.previous
+				
+			else:
+				print "HistoryManager: Didn't find target item!"
+		
+		# Select the current item, important to see if the undo/redo didn't work as expected
+		self.update()
+		
+		
 	def _itemSelected(self):
 		mapview = self.editor.getActiveMapView()
 		if mapview is None:
@@ -101,7 +137,10 @@ class HistoryManager(plugin.Plugin):
 		
 		stackitem = self.list.selected_item.item
 		if stackitem == undomanager.current_item:
-			#print "Selected current item"
+			return
+		
+		if undomanager.getBranchMode() is False:
+			self._linearUndo(stackitem)
 			return
 		
 		searchlist = []
@@ -192,18 +231,19 @@ class HistoryManager(plugin.Plugin):
 			items.append(listitem)
 			branchnr = -1
 			
-			for branch in item._branches:
+			for branch in item.getBranches():
 				branchnr += 1
 				if branchnr == 0:
 					continue
 					
 				items.extend(self.recursiveUpdate(branch, indention+2, listitem, str(branchnr)))
 			
-			if len(item._branches) > 0:
-				item = item._branches[0]
-			else:
-				break
-			#item = item.next
+			if self.undomanager.getBranchMode():
+				if len(item._branches) > 0:
+					item = item._branches[0]
+				else:
+					break
+			else: item = item.next
 
 		return items
 		
