@@ -5,13 +5,12 @@ import fife
 from resizablebase import ResizableBase
 
 class Panel(widgets.Window, ResizableBase):
+	""" Panel is a window which can be resized and docked. 
+	"""
 	def __init__(self, dockable=True, *args, **kwargs):
 		widgets.Window.__init__(self, *args, **kwargs)
 		ResizableBase.__init__(self, *args, **kwargs)
 	
-		self.cursor_id = 0
-		self.cursor_type = 0
-		
 		self.dockable = dockable
 		self._movable = self.real_widget.isMovable()
 		self._resizable = self.resizable
@@ -24,6 +23,17 @@ class Panel(widgets.Window, ResizableBase):
 		self._editor = scripts.editor.getEditor()
 		
 	def setDocked(self, docked):
+		""" 
+		Dock or undock the panel
+		
+		setDocked(True) will disable resizing and moving
+		of this panel, but will not dock it in a dockarea.
+		
+		setDocked(False) will enable resizing and moving.
+		If this panel is docked in a dockarea or widget,
+		it will undock itself. The new position will be 
+		offset by panelSize.
+		"""
 		if self.dockable is False:
 			return
 		
@@ -73,6 +83,7 @@ class Panel(widgets.Window, ResizableBase):
 				self.y = absY - self._titlebarheight
 
 	def isDocked(self):
+		""" Returns true if the panel is docked """
 		return self._floating == False
 		
 	def mousePressed(self, event):
@@ -107,11 +118,13 @@ class Panel(widgets.Window, ResizableBase):
 				self._editor.dockWidgetTo(self, dockArea, mouseX, mouseY)
 		
 	def hide(self):
+		""" Hides the panel. If the widget is docked, it is first undocked """
 		if self.isDocked():
 			self.setDocked(False)
 		widgets.Window.hide(self)
 		
 	def show(self):
+		""" Show the panel. """
 		if self.isDocked():
 			return
 		widgets.Window.show(self)

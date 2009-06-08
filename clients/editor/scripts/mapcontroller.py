@@ -9,6 +9,7 @@ import events
 import undomanager
 
 class MapController(object):
+	""" MapController provides an interface for editing maps """
 	def __init__(self, map):
 		
 		self._editor = editor.getEditor()
@@ -32,6 +33,7 @@ class MapController(object):
 			self.setMap(map.getId())
 		
 	def setMap(self, mapid):
+		""" Set the map to be edited """
 		self._camera = None
 		self._map = None
 		self._layer = None
@@ -49,6 +51,7 @@ class MapController(object):
 		self._layer = self._map.getLayers()[0]
 
 	def selectLayer(self, layerid):
+		""" Select layer to be edited """
 		self.deselectSelection()
 		self._layer = None
 		layers = [l for l in self._map.getLayers() if l.getId() == layerid]
@@ -56,6 +59,7 @@ class MapController(object):
 			self._layer = layers[0]
 
 	def deselectSelection(self):
+		""" Deselects all selected cells """
 		if not self._camera: 
 			if self.debug: print 'No camera bind yet, cannot select any cell'
 			return
@@ -63,18 +67,21 @@ class MapController(object):
 		fife.CellSelectionRenderer.getInstance(self._camera).reset()
 		
 	def clearSelection(self):
+		""" Removes all instances on selected cells """
 		instances = self.getInstancesFromSelection()
 		self._undomanager.startGroup("Cleared selection")
 		self.removeInstances(instances)
 		self._undomanager.endGroup()
 		
 	def fillSelection(self, object):
+		""" Adds an instance of object on each selected cell """
 		self._undomanager.startGroup("Filled selection")
 		for loc in self._selection:
 			self.placeInstance(loc.getLayerCoordinates(), object)
 		self._undomanager.endGroup()
 
 	def selectCell(self, screenx, screeny):
+		""" Selects a cell at a position on screen """
 		if not self._camera: 
 			if self.debug: print 'No camera bind yet, cannot select any cell'
 			return
@@ -95,6 +102,7 @@ class MapController(object):
 		fife.CellSelectionRenderer.getInstance(self._camera).selectLocation(loc)
 		
 	def deselectCell(self, screenx, screeny):
+		""" Deselects a cell at a position on screen """
 		if not self._camera: 
 			if self.debug: print 'No camera bind yet, cannot select any cell'
 			return
@@ -116,6 +124,7 @@ class MapController(object):
 		
 		
 	def getInstancesFromSelection(self):
+		""" Returns all instances in the selected cells """
 		instances = []
 		
 		for loc in self._selection:
@@ -124,6 +133,7 @@ class MapController(object):
 		return instances
 
 	def getInstancesFromPosition(self, position):
+		""" Returns all instances on a specified position """
 		if not self._layer:
 			if self.debug: print 'No layer assigned in getInstancesFromPosition'
 			return
@@ -142,21 +152,27 @@ class MapController(object):
 		return instances
 
 	def getUndoManager(self):
+		""" Returns undo manager """
 		return self._undomanager
 
 	def undo(self):
+		""" Undo one level """
 		self._undomanager.undo()
 
 	def redo(self):
+		""" Redo one level """
 		self._undomanager.redo()
 		
 	def _startUndo(self):
+		""" Called before a undo operation is performed. Makes sure undo stack does not get corrupted """
 		self._undo = True
 		
 	def _endUndo(self):
+		""" Called when a undo operation is done """
 		self._undo = False
 
 	def placeInstance(self, position, object):
+		""" Places an instance of object at position. Any existing instances on position are removed. """
 		mname = 'placeInstance'
 		if not object:
 			if self.debug: print 'No object assigned in %s' % mname
@@ -186,6 +202,7 @@ class MapController(object):
 			self._undomanager.endGroup()
 			
 	def removeInstances(self, instances):
+		""" Removes all provided instances """
 		mname = 'removeInstances'
 		if not instances:
 			if self.debug: print 'No instances assigned in %s' % mname
@@ -206,6 +223,8 @@ class MapController(object):
 			self._layer.deleteInstance(i)
 
 	def moveInstances(self, instances, moveBy, exact=False):
+		""" Moves provided instances by moveBy. If exact is false, the instances are
+		snapped to closest cell. """
 		mname = 'moveInstances'
 		if not self._layer:
 			if self.debug: print 'No layer assigned in %s' % mname
@@ -232,26 +251,31 @@ class MapController(object):
 			i.setFacingLocation(f)
 
 	def rotateCounterClockwise(self):
+		""" Rotates map counterclockwise by 90 degrees """
 		currot = self._camera.getRotation()
 		self._camera.setRotation((currot + 270) % 360)
 		
 	def rotateClockwise(self):
+		""" Rotates map clockwise by 90 degrees """
 		currot = self._camera.getRotation()
 		self._camera.setRotation((currot + 90) % 360)
 		
 	def getZoom(self):
+		""" Returns camera zoom """
 		if not self._camera: 
 			if self.debug: print 'No camera bind yet, cannot get zoom'
 			return 0
 		return self._camera.getZoom()
 		
 	def setZoom(self, zoom):
+		""" Sets camera zoom """
 		if not self._camera: 
 			if self.debug: print 'No camera bind yet, cannot get zoom'
 			return
 		self._camera.setZoom(zoom)
 
 	def moveCamera(self, screen_x, screen_y):
+		""" Move camera (scroll) by screen_x, screen_y """
 		coords = self._camera.getLocationRef().getMapCoordinates()
 		z = self._camera.getZoom()
 		r = self._camera.getRotation()

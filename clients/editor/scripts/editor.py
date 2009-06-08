@@ -4,27 +4,28 @@ import fife
 import loaders
 import events
 import plugin
-from events import EventListener
-from gui import ToolBar, action
 from mapview import MapView
+from events import EventListener
+from events import *
+from gui import ToolBar, action
 from gui.action import Action, ActionGroup
 from gui.filemanager import FileManager
 from gui.mainwindow import MainWindow
 from gui.mapeditor import MapEditor
 from gui.menubar import Menu, MenuBar
 from gui.error import ErrorDialog
-from gui.panel import Panel
 from settings import Settings
 from pychan.tools import callbackWithArguments as cbwa
-from events import *
 import sys
 
 def getEditor():
+	""" Returns the Global editor instance """
 	if Editor.editor is None:
 		Editor(None)
 	return Editor.editor
 
 class Editor(ApplicationBase, MainWindow):
+	""" Editor sets up all subsystems and provides access to them """
 	editor = None
 
 	def __init__(self, params, *args, **kwargs):
@@ -97,6 +98,7 @@ class Editor(ApplicationBase, MainWindow):
 			self.log.setVisibleModules(*LogModules)
 		
 	def _initTools(self):
+		""" Initializes tools """
 		self._pluginmanager = plugin.PluginManager()
 		
 		self._filemanager = FileManager()
@@ -104,6 +106,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._mapeditor = MapEditor()
 		
 	def _initGui(self):
+		""" Sets up the GUI """
 		screen_width = self.engine.getSettings().getScreenWidth()
 		screen_height = self.engine.getSettings().getScreenHeight()
 		MainWindow.initGui(self, screen_width, screen_height)
@@ -119,6 +122,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._maparea.opaque = False
 		self._maparea.is_focusable = True
 		
+		# Capture mouse and key events for EventListener
 		cw = self._maparea
 		cw.capture(self.__sendMouseEvent, "mouseEntered")
 		cw.capture(self.__sendMouseEvent, "mouseExited")
@@ -140,6 +144,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._toolbox.show()
 
 	def _initActions(self):
+		""" Initializes toolbar and menubar buttons """
 		exitAction = Action(u"Exit", "gui/icons/quit.png")
 		exitAction.helptext = u"Exit program"
 		action.activated.connect(self.quit, sender=exitAction)
@@ -196,6 +201,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._toolbar.button_style += 1
 		
 	def _showHelpDialog(self, sender):
+		""" Shows the help dialog """
 		if self._helpDialog is not None:
 			self._helpDialog.show()
 			return
@@ -210,6 +216,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._helpDialog.show()
 		
 	def toggleStatusbar(self):
+		""" Toggles status bar """
 		statusbar = self.getStatusBar()
 		if statusbar.max_size[1] > 0:
 			statusbar.min_size=(statusbar.min_size[0], 0)
@@ -222,6 +229,7 @@ class Editor(ApplicationBase, MainWindow):
 		statusbar.adaptLayout()
 			
 	def toggleToolbar(self):
+		""" Toggles toolbar """
 		toolbar = self.getToolBar()
 		if toolbar.isVisible():
 			toolbar.setDocked(False)
@@ -236,6 +244,7 @@ class Editor(ApplicationBase, MainWindow):
 			self._actionShowToolbar.setChecked(True)
 			
 	def toggleToolbox(self):
+		""" Toggles tool box """
 		toolbox = self.getToolbox()
 		if toolbox.isVisible():
 			toolbox.setDocked(False)
@@ -250,7 +259,101 @@ class Editor(ApplicationBase, MainWindow):
 			self._actionShowToolbox.setChecked(True)
 		toolbox.adaptLayout()
 			
+	def getToolbox(self): 
+		return self._toolbox
+	
+	def getPluginManager(self): 
+		return self._pluginmanager
+		
+	def getEngine(self): 
+		return self.engine
+
+	def getMapViews(self):
+		return self._mapviewList
+		
+	def getActiveMapView(self):
+		return self._mapview
+		
+	def getSettings(self):
+		return self._settings;
+		
+	def showMapView(self, mapview):
+		""" Switches to mapview. """
+		if mapview is None or mapview == self._mapview:
+			return
+			
+		events.preMapShown.send(sender=self, mapview=mapview)
+		self._mapview = mapview
+		self._mapview.show()
+		events.postMapShown.send(sender=self, mapview=mapview)
+
+	def createListener(self):
+		""" Creates the event listener. This is called by ApplicationBase """
+		if self._eventlistener is None:
+			self._eventlistener = EventListener(self.engine)
+		
+		return self._eventlistener
+		
+	def getEventListener(self):
+		""" Returns the event listener """
+		return self._eventlistener
+	
+	def newMapView(self, map):
+		""" Creates a new map view """
+		mapview = MapView(map)
+		
+		self._mapviewList.append(mapview)
+		
+		mapAction = Action(unicode(map.getId()))
+		action.activated.connect(cbwa(self.showMapView, mapview), sender=mapAction, weak=False)
+		self._mapgroup.addAction(mapAction)
+		
+		self.showMapView(mapview)
+		
+		events.mapAdded.send(sender=self, map=map)
+		
+		return mapview
+	
+	def openFile(self, path):
+		""" Opens a file """
+		try:
+			map = loaders.loadMapFile(path, self.engine)
+			return self.newMapView(map)
+		except:
+			errormsg = u"Opening map failed:\n"
+			errormsg += u"File: "+unicode(path)+"\n"
+			errormsg += u"Error: "+unicode(sys.exc_info()[1])
+			ErrorDialog(errormsg)
+			return None
+			
+	
+	def saveAll(self):
+		""" Saves all open maps """
+		tmpView = self._mapview
+		for mapView in self._mapviewList:
+			self._mapview = mapView
+			self._filemanager.save()
+		self._mapview = tmpView
+		
+	def quit(self):
+		""" Quits the editor. An onQuit signal is sent before the application closes """
+		events.onQuit.send(sender=self)
+		
+		self._settings.saveSettings()
+		ApplicationBase.quit(self)
+
+	def _pump(self):
+		""" Called once per frame """
+		# ApplicationBase and Engine should be done initializing at this point
+		if self._inited == False:
+			self._initGui()
+			self._initTools()
+			self._inited = True
+		
+		events.onPump.send(sender=self)
+		
 	def __sendMouseEvent(self, event, **kwargs):
+		""" Function used to capture mouse events for EventListener """
 		msEvent = fife.MouseEvent
 		type = event.getType()
 		
@@ -282,6 +385,7 @@ class Editor(ApplicationBase, MainWindow):
 			mouseDragged.send(sender=self._maparea, event=event)
 		
 	def __sendKeyEvent(self, event, **kwargs):
+		""" Function used to capture key events for EventListener """
 		type = event.getType()
 		
 		if type == fife.KeyEvent.PRESSED:
@@ -290,92 +394,6 @@ class Editor(ApplicationBase, MainWindow):
 		elif type == fife.KeyEvent.RELEASED:
 			self._eventlistener.keyReleased(event)
 			
-	def getToolbox(self): 
-		return self._toolbox
-	
-	def getPluginManager(self): 
-		return self._pluginmanager
-		
-	def getEngine(self): 
-		return self.engine
-
-	def getMapViews(self):
-		return self._mapviewList
-		
-	def getActiveMapView(self):
-		return self._mapview
-		
-	def getSettings(self):
-		return self._settings;
-		
-	def showMapView(self, mapview):
-		if mapview is None or mapview == self._mapview:
-			return
-			
-		events.preMapShown.send(sender=self, mapview=mapview)
-		self._mapview = mapview
-		self._mapview.show()
-		events.postMapShown.send(sender=self, mapview=mapview)
-
-	def createListener(self):
-		if self._eventlistener is None:
-			self._eventlistener = EventListener(self.engine)
-			
-		
-		return self._eventlistener
-		
-	def getEventListener(self):
-		return self._eventlistener
-	
-	def newMapView(self, map):
-		mapview = MapView(map)
-		
-		self._mapviewList.append(mapview)
-		
-		mapAction = Action(unicode(map.getId()))
-		action.activated.connect(cbwa(self.showMapView, mapview), sender=mapAction, weak=False)
-		self._mapgroup.addAction(mapAction)
-		
-		self.showMapView(mapview)
-		
-		events.mapAdded.send(sender=self, map=map)
-		
-		return mapview
-	
-	def openFile(self, path):
-		try:
-			map = loaders.loadMapFile(path, self.engine)
-			return self.newMapView(map)
-		except:
-			errormsg = u"Opening map failed:\n"
-			errormsg += u"File: "+unicode(path)+"\n"
-			errormsg += u"Error: "+unicode(sys.exc_info()[1])
-			ErrorDialog(errormsg)
-			return None
-			
-	
-	def saveAll(self):
-		tmpView = self._mapview
-		for mapView in self._mapviewList:
-			self._mapview = mapView
-			self._filemanager.save()
-		self._mapview = tmpView
-		
-	def quit(self):
-		events.onQuit.send(sender=self)
-		
-		self._settings.saveSettings()
-		ApplicationBase.quit(self)
-
-	def _pump(self):
-		# ApplicationBase and Engine should be done initializing at this point
-		if self._inited == False:
-			self._initGui()
-			self._initTools()
-			self._inited = True
-			#self.openFile("../rio_de_hola/maps/shrine.xml")
-		
-		events.onPump.send(sender=self)
 		
 
 		
