@@ -95,11 +95,20 @@ namespace FIFE {
 	void Cursor::set(MouseCursorType ctype, unsigned int cursor_id) {
 		m_cursor_id = cursor_id;
 		m_cursor_type = ctype;
+		int mx, my;
+		SDL_GetMouseState(&mx, &my);
+
 		if (ctype == CURSOR_NATIVE) {
-			SDL_ShowCursor(1);
+			if (!SDL_ShowCursor(1)) {
+				SDL_PumpEvents();
+				SDL_WarpMouse(mx, my);
+			}
 			setNativeCursor(cursor_id);
 		} else {
-			SDL_ShowCursor(0);
+			if (SDL_ShowCursor(0)) {
+				SDL_PumpEvents();
+				SDL_WarpMouse(mx, my);
+			}
 			if (ctype == CURSOR_ANIMATION) {
 				m_animtime = m_timemanager->getTime();
 			}
