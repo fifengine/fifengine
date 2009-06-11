@@ -186,10 +186,13 @@ namespace FIFE {
 
 		if(width%m_chunk_size) {
 			m_last_col_fill_ratio = static_cast<float>(width%m_chunk_size) / static_cast<float>(m_last_col_width);
-			m_last_row_fill_ratio = static_cast<float>(height%m_chunk_size) / static_cast<float>(m_last_row_height);
-		}
-		else {  // (width%m_chunk_size) / m_last_col_width == 0 == m_chunk_size (mod m_chunk_size)
+		} else {  // (width%m_chunk_size) / m_last_col_width == 0 == m_chunk_size (mod m_chunk_size)
 			m_last_col_fill_ratio = 1.0f;
+		}
+
+		if (height%m_chunk_size) {
+			m_last_row_fill_ratio = static_cast<float>(height%m_chunk_size) / static_cast<float>(m_last_row_height);
+		} else {
 			m_last_row_fill_ratio = 1.0f;
 		}
 
