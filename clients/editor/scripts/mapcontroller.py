@@ -8,6 +8,8 @@ import editor
 import events
 import undomanager
 
+from pychan.tools import callbackWithArguments as cbwa
+
 class MapController(object):
 	""" MapController provides an interface for editing maps """
 	def __init__(self, map):
@@ -185,22 +187,39 @@ class MapController(object):
 			return
 
 		if self.debug: print 'Placing instance of ' + object.getId() + ' at ' + str(position)
-
+		
 		# Remove instances from target position
 		if not self._undo:
+			instances = self.getInstancesFromPosition(position)
+			if len(instances) == 1:
+				# Check if the only instance at position has the same object
+				objectId = instances[0].getObject().getId()
+				objectNs = instances[0].getObject().getNamespace()
+				if objectId == object.getId() and objectNs == object.getNamespace():
+					if self.debug: print "Tried to place duplicate instance"
+					return
+					
 			self._undomanager.startGroup("Placed instance")
-			self.removeInstances(self.getInstancesFromPosition(position))
+			self.removeInstances(instances)
 
 		inst = self._layer.createInstance(object, position)
 		fife.InstanceVisual.create(inst)
 		
 		if not self._undo:
-			redocall = lambda: self.placeInstance(position, object)
-			undocall = lambda: self.removeInstances([inst])
+			redocall = cbwa(self.placeInstance, position, object)
+			undocall = cbwa(self.removeInstanceOfObjectAt, position, object)
 			undoobject = undomanager.UndoObject(undocall, redocall, "Placed instance")
 			self._undomanager.addAction(undoobject)
 			self._undomanager.endGroup()
 			
+	def removeInstanceOfObjectAt(self, position, object):
+		""" Removes the first instance of object it can find on position """
+		instances = self.getInstancesFromPosition(position)
+		for i in instances:
+			if i.getObject().getId() == object.getId() and i.getObject().getNamespace() == object.getNamespace():
+				self.removeInstances([i])
+				return
+					
 	def removeInstances(self, instances):
 		""" Removes all provided instances """
 		mname = 'removeInstances'
@@ -213,10 +232,9 @@ class MapController(object):
 			
 			if not self._undo:
 				object = i.getObject()
-				
 				position = i.getLocation().getExactLayerCoordinates()
-				undocall = lambda: self.placeInstance(position, object)
-				redocall = lambda: self.removeInstances([i])
+				undocall = cbwa(self.placeInstance, position, object)
+				redocall = cbwa(self.removeInstanceOfObjectAt, position, object)
 				undoobject = undomanager.UndoObject(undocall, redocall, "Removed instance")
 				self._undomanager.addAction(undoobject)
 				
