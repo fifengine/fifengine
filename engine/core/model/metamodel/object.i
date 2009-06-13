@@ -37,30 +37,28 @@ namespace FIFE {
 		Object(const std::string& identifier, const std::string& name_space, Object* inherited=NULL);
 		~Object();
 
-		const std::string& getId();
-		const std::string& getNamespace();
+		const std::string& getId() const { return m_id; }
+		const std::string& getNamespace() const { return m_namespace; }
 
 		Action* createAction(const std::string& identifier, bool is_default=false);
-		Action* getAction(const std::string& identifier);
-		Action* getDefaultAction();
+		Action* getAction(const std::string& identifier) const;
+		Action* getDefaultAction() const { return m_defaultaction; }
 
 		void setPather(AbstractPather* pather);
-		AbstractPather* getPather();
+		AbstractPather* getPather() const { return m_pather; }
 
-		Object* getInherited();
-		void adoptVisual(AbstractVisual* visual);
-		template<typename T> T* getVisual() const;
-		
-		void setBlocking(bool blocking);
-		bool isBlocking();
-		
-		void setStatic(bool stat);
-		bool isStatic();
-	};
+		Object* getInherited() const { return m_inherited; }
+		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
+		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
 
-	class ObjectLoader : public ResourceLoader {
-	public:
-		Object* load(const ResourceLocation& location); 
-		Object* load(const std::string& filename); 
+		void setBlocking(bool blocking) { m_blocking = blocking; }
+		bool isBlocking() const;
+
+		void setStatic(bool stat) { m_static = stat; }
+		bool isStatic() const;
+
+		bool operator==(const Object& obj) const;
+		bool operator!=(const Object& obj) const;
+
 	};
 }
