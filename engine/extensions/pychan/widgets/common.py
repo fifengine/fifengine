@@ -30,6 +30,19 @@ def gui2text(text):
 	Translates the encoded string into a unicode object.
 	"""
 	return unicode(text,"utf8",*get_manager().unicodePolicy)
+	
+def gui2str(text):
+	"""
+	This function returns an 8-bit representation of the
+	unicode string. This is useful for passing strings
+	to SWIG functions.
+	"""
+	try: 
+		return text.__str__()
+	except:
+		# String contains non-ascii characters
+		return text.encode("utf-8")
+		
 
 def isLayouted(widget):
 	from layout import LayoutBase
