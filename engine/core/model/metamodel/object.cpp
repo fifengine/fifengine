@@ -81,7 +81,7 @@ namespace FIFE {
 		return a;
 	}
 
-	Action* Object::getAction(const std::string& identifier) {
+	Action* Object::getAction(const std::string& identifier) const {
 		std::map<std::string, Action*>::const_iterator i;
 		if (m_actions) {
 			i = m_actions->find(identifier);
@@ -99,7 +99,7 @@ namespace FIFE {
 		m_pather = pather;
 	}
 	
-	bool Object::isBlocking() {
+	bool Object::isBlocking() const {
 		if (m_blocking) {
 			return true;
 		}
@@ -109,7 +109,7 @@ namespace FIFE {
 		return false;
 	}
 	
-	bool Object::isStatic() {
+	bool Object::isStatic() const {
 		if (m_static) {
 			return true;
 		}
@@ -118,4 +118,12 @@ namespace FIFE {
 		}
 		return false;
 	}	
+
+	bool Object::operator==(const Object& obj) const {
+		return m_id == obj.getId() && m_namespace == obj.getNamespace();
+	}
+
+	bool Object::operator!=(const Object& obj) const {
+		return m_id != obj.getId() || m_namespace != obj.getNamespace();
+	}
 }

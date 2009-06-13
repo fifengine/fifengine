@@ -65,8 +65,8 @@ namespace FIFE {
 		 */
 		~Object();
 		
-		const std::string& getId() { return m_id; }
-		const std::string& getNamespace() { return m_namespace; }
+		const std::string& getId() const { return m_id; }
+		const std::string& getNamespace() const { return m_namespace; }
 
 		/** Adds new action with given id. In case there is action already
 		 *  with given id, returns it instead of new object
@@ -81,11 +81,11 @@ namespace FIFE {
 
 		/** Gets action with given id. If not found, returns NULL
 		 */
-		Action* getAction(const std::string& identifier);
+		Action* getAction(const std::string& identifier) const;
 
 		/** Gets default action assigned to this object. If none available, returns NULL
 		 */
-		Action* getDefaultAction() { return m_defaultaction; }
+		Action* getDefaultAction() const { return m_defaultaction; }
 		
 		/** Sets pather used by instances created out of this object
 		 */
@@ -93,12 +93,12 @@ namespace FIFE {
 
 		/** Gets associated pather
 		 */
-		AbstractPather* getPather() { return m_pather; }
+		AbstractPather* getPather() const { return m_pather; }
 
 		/** Gets an object where this object was inherited from
 		 * @see inherited object
 		 */
-		Object* getInherited() { return m_inherited; }
+		Object* getInherited() const { return m_inherited; }
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
@@ -114,7 +114,7 @@ namespace FIFE {
 
 		/** Gets if object blocks movement
 		 */
-		bool isBlocking();
+		bool isBlocking() const;
 	
 		/** Set to true, if object is such that it doesn't move
 		 */
@@ -122,8 +122,10 @@ namespace FIFE {
 
 		/** Gets if object moves
 		 */
-		bool isStatic();
+		bool isStatic() const;
 	
+		bool operator==(const Object& obj) const;
+		bool operator!=(const Object& obj) const;
 	
 	private:
 		std::string m_id;
@@ -135,12 +137,6 @@ namespace FIFE {
 		AbstractPather* m_pather;
 		AbstractVisual* m_visual;
 		Action* m_defaultaction;
-	};
-
-	class ObjectLoader : public ResourceLoader {
-	public:
-		Object* load(const ResourceLocation& location) { return dynamic_cast<Object*>(load(location)); }
-		Object* load(const std::string& filename) { return load(ResourceLocation(filename)); }
 	};
 
 } //FIFE
