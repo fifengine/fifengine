@@ -224,7 +224,7 @@ class HistoryManager(plugin.Plugin):
 				self.parent = parent
 				
 			def __str__(self):
-				return self.str
+				return self.str.encode("utf-8")
 		
 		while item is not None:
 			listitem = _ListItem(u" "*indention + branchstr + " " + item.object.name, item, parent)
