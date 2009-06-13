@@ -59,7 +59,7 @@ class ListBox(Widget):
 	def resizeToContent(self,recurse=True):
 		# We append a minimum value, so max() does not bail out,
 		# if no items are in the list
-		_item_widths = map(self.real_font.getWidth,map(str,self._items)) + [0]
+		_item_widths = map(self.real_font.getWidth,map(gui2str,self._items)) + [0]
 		max_w = max(_item_widths)
 		self.width = max_w
 		self.height = (self.real_font.getHeight() + 2) * len(self._items)
