@@ -16,7 +16,7 @@ from gui.menubar import Menu, MenuBar
 from gui.error import ErrorDialog
 from settings import Settings
 from pychan.tools import callbackWithArguments as cbwa
-import sys
+import sys, traceback
 
 def getEditor():
 	""" Returns the Global editor instance """
@@ -320,8 +320,9 @@ class Editor(ApplicationBase, MainWindow):
 			map = loaders.loadMapFile(path, self.engine)
 			return self.newMapView(map)
 		except:
+			traceback.print_exc(sys.exc_info()[1])
 			errormsg = u"Opening map failed:\n"
-			errormsg += u"File: "+unicode(path)+"\n"
+			errormsg += u"File: "+unicode(path, sys.getfilesystemencoding())+u"\n"
 			errormsg += u"Error: "+unicode(sys.exc_info()[1])
 			ErrorDialog(errormsg)
 			return None
