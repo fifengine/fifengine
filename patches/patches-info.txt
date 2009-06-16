@@ -1,0 +1,3 @@
+scons-warnings-patch.diff:
+Patches Scons Warnings only tested with Scons v1.2.0
+It don´t work with Scons 0.97
