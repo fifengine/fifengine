@@ -33,7 +33,7 @@ def getUserDataDirectory(vendor, appname):
 	See:
 	Brian Vanderburg II @ http://mail.python.org/pipermail/python-list/2008-May/660779.html
 	"""
-	dir = ""
+	dir = None 
 
 	# WINDOWS
 	if os.name == "nt":
@@ -73,6 +73,4 @@ def getUserDataDirectory(vendor, appname):
 	if not os.path.isdir(dir):
 		os.makedirs(dir)
 		
-	print dir
-
 	return dir
