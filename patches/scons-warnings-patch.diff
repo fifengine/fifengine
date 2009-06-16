@@ -1,16 +1,3 @@
-Index: utils/util_scripts/path.py
-===================================================================
---- utils/util_scripts/path.py	(Revision 2922)
-+++ utils/util_scripts/path.py	(Arbeitskopie)
-@@ -29,7 +29,7 @@
- 
- from __future__ import generators
- 
--import sys, warnings, os, fnmatch, glob, shutil, codecs, md5
-+import sys, warnings, os, fnmatch, glob, shutil, codecs, hashlib
- 
- __version__ = '2.2'
- __all__ = ['path']
 Index: SConstruct
 ===================================================================
 --- SConstruct	(Revision 2922)
