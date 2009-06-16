@@ -1,3 +1,7 @@
-scons-warnings-patch.diff:
-Patches Scons Warnings only tested with Scons v1.2.0
-It don´t work with Scons 0.97
+== scons-warnings-patch.diff ==
+* Patch to address Scons warnings that occur in combination with the latest official SCons release 1.2.0
+* Warning: applying this patch will break the build process in combination with older SCons releases! E.g. 0.9.7. Therefore it will not work in combination with the latest official win32 compile SDK.
+* Here comes the punchline: we would like to update the Win32 SDK with the latest SCons release as soon as possible. Unfortunately SCons doesn't seem to work too well in combination with any batch scripts on win32 as SCons itself relies on batch script functionality in its win32 version. We're currently using something called "scons.exe", a standalone version of SCons created with the help of py2exe. So we basically got two options to upgrade the compile SDK to the latest SCons release:
+*# Work out a way to get the official SCons release working in combination with batch scripts on Win32.
+*# Compile a standalone version of SCons with the help of py2exe or a similar tool. If anyone wants to try his / her luck, you can get a pointer how to get started at the SCons.exe project page: http://developer.berlios.de/projects/sconsexe/
+* Until we were able to get a more recent version of SCons working on Win32, this patch won't be applied to trunk.
