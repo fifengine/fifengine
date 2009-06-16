@@ -1,11 +1,20 @@
 import shutil
 import pychan
+import os
+from fife_utils import getUserDataDirectory
 try:
 	import xml.etree.cElementTree as ET
 except:
 	import xml.etree.ElementTree as ET
 
 class Setting(object):
+	def __init__(self, *args, **kwargs):
+		self._appdata = getUserDataDirectory("fife", "rio_de_hola")
+		
+		if not os.path.exists(self._appdata+'/settings.xml'):
+			shutil.copyfile('settings-dist.xml', self._appdata+'/settings.xml')
+		
+
 	def onOptionsPress(self):	
 		self.changesRequireRestart = False
 		self.isSetToDefault = False
@@ -32,13 +41,13 @@ class Setting(object):
 		self.OptionsDlg.show()
 
 	def setDefaults(self):
-		shutil.copyfile('settings-dist.xml', 'settings.xml')
+		shutil.copyfile('settings-dist.xml', self._appdata+'/settings.xml')
 		self.isSetToDefault = True
 		self.changesRequireRestart = True
 
 	def readSetting(self, name, type='int', strip=True, text=False):
 		if not hasattr(self, 'tree'):
-			self.tree = ET.parse('settings.xml')
+			self.tree = ET.parse(self._appdata+'/settings.xml')
 			self.root_element = self.tree.getroot()
 		element = self.root_element.find(name)
 		if element is not None:
@@ -93,7 +102,7 @@ class Setting(object):
 			self.changesRequireRestart = True
 
 		if not self.isSetToDefault:
-			self.tree.write('settings.xml')
+			self.tree.write(self._appdata+'/settings.xml')
 		self.OptionsDlg.hide()
 		if self.changesRequireRestart:
 			RestartDlg = pychan.loadXML('gui/changes_require_restart.xml')

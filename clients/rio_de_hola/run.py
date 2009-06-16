@@ -12,9 +12,6 @@ for p in _paths:
 	if p not in sys.path:
 		sys.path.append(_jp(p))
 
-if not os.path.exists('settings.xml'):
-	shutil.copyfile('settings-dist.xml', 'settings.xml')
-
 import fife_compat
 import fife, fifelog
 from scripts import world
