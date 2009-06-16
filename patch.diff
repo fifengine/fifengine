@@ -1,0 +1,61 @@
+Index: utils/util_scripts/path.py
+===================================================================
+--- utils/util_scripts/path.py	(Revision 2922)
++++ utils/util_scripts/path.py	(Arbeitskopie)
+@@ -29,7 +29,7 @@
+ 
+ from __future__ import generators
+ 
+-import sys, warnings, os, fnmatch, glob, shutil, codecs, md5
++import sys, warnings, os, fnmatch, glob, shutil, codecs, hashlib
+ 
+ __version__ = '2.2'
+ __all__ = ['path']
+Index: SConstruct
+===================================================================
+--- SConstruct	(Revision 2922)
++++ SConstruct	(Arbeitskopie)
+@@ -1,27 +1,27 @@
+ import os, sys
+ from utils.util_scripts.path import path as upath
+ 
+-opts = Options('options.py', ARGUMENTS)
+-opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations', 1))
+-opts.Add(BoolOption('tests',  'Build testcases in unit_tests', 0))
+-opts.Add(BoolOption('noengine',  'Prevents building of engine, use e.g. for util/test tweaking', 0))
+-opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
+-opts.Add(EnumOption('script', 'Selects generated scripting language bindings', 'python', allowed_values=('python', 'lua')))
+-opts.Add(BoolOption('profile', 'Build with profiling information', 0))
+-opts.Add(BoolOption('projectfiles_only',  "Creates IDE project files only. If defined, won't build code. " +
++opts = Variables('options.py', ARGUMENTS)
++opts.Add(BoolVariable('debug',  'Build with debuginfos and without optimisations', 1))
++opts.Add(BoolVariable('tests',  'Build testcases in unit_tests', 0))
++opts.Add(BoolVariable('noengine',  'Prevents building of engine, use e.g. for util/test tweaking', 0))
++opts.Add(BoolVariable('opengl', 'Compile OpenGL support', 1))
++opts.Add(EnumVariable('script', 'Selects generated scripting language bindings', 'python', allowed_values=('python', 'lua')))
++opts.Add(BoolVariable('profile', 'Build with profiling information', 0))
++opts.Add(BoolVariable('projectfiles_only',  "Creates IDE project files only. If defined, won't build code. " +
+                     "Note that normal builds generate these files also automatically.", 0))
+-opts.Add(BoolOption('utils',  'Build utilities', 0))
+-opts.Add(BoolOption('ext',  'Build external dependencies', 0))
+-opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
+-opts.Add(BoolOption('zip', 'Enable ZIP archive support', 1))
+-opts.Add(BoolOption('log', 'Enables logging for the engine', 1))
++opts.Add(BoolVariable('utils',  'Build utilities', 0))
++opts.Add(BoolVariable('ext',  'Build external dependencies', 0))
++opts.Add(BoolVariable('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
++opts.Add(BoolVariable('zip', 'Enable ZIP archive support', 1))
++opts.Add(BoolVariable('log', 'Enables logging for the engine', 1))
+ 
+-opts.Add(BoolOption('rend_camzone', 'Enables camera zone renderer', 0))
+-opts.Add(BoolOption('rend_grid', 'Enables grid renderer', 0))
++opts.Add(BoolVariable('rend_camzone', 'Enables camera zone renderer', 0))
++opts.Add(BoolVariable('rend_grid', 'Enables grid renderer', 0))
+ 
+ # Platform-specific prefix directories
+ if sys.platform == 'linux2':
+-	opts.Add(PathOption('PREFIX', 'Directory to install under', '/usr'))
++	opts.Add(PathVariable('PREFIX', 'Directory to install under', '/usr'))
+ 
+ env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
+ env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
