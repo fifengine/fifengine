@@ -19,11 +19,13 @@ class Settings(object):
 			raise RuntimeWarning("Settings instance has already been initialized! Use Editor.getSettings instead")
 			
 		Settings.instance = self
+		
+		self._appdata = GetUserDataDirectory("fife", "editor")
 	
-		if os.path.exists('settings.xml') is False:
-			shutil.copyfile('settings-dist.xml', 'settings.xml')
+		if os.path.exists(self._appdata+'/settings.xml') is False:
+			shutil.copyfile('settings-dist.xml', self._appdata+'/settings.xml')
 			
-		self.tree = ET.parse('settings.xml')
+		self.tree = ET.parse(self._appdata+'/settings.xml')
 		self.root_element = self.tree.getroot()
 		self.validateTree()
 		
@@ -164,7 +166,7 @@ class Settings(object):
 	def saveSettings(self):
 		""" Save settings into settings.xml """
 		self._indent(self.root_element)
-		self.tree.write('settings.xml', 'UTF-8')
+		self.tree.write(self._appdata+'/settings.xml', 'UTF-8')
 		
 	def _indent(self, elem, level=0):
 		""" 
@@ -216,3 +218,53 @@ class Settings(object):
 			kv_pair = i.split(" : ")
 			dict[kv_pair[0]] = kv_pair[1]
 		return dict
+
+def GetUserDataDirectory(vendor, appname):
+	""" Gets location to store the settings file, depending on OS.
+	See:
+	Brian Vanderburg II @ http://mail.python.org/pipermail/python-list/2008-May/660779.html
+	"""
+	dir = ""
+
+	# WINDOWS
+	if os.name == "nt":
+
+		# Try env APPDATA or USERPROFILE or HOMEDRIVE/HOMEPATH
+		if "APPDATA" in os.environ:
+			dir = os.environ["APPDATA"]
+
+		if ((dir is None) or (not os.path.isdir(dir))) and ("USERPROFILE" in os.environ):
+			dir = os.environ["USERPROFILE"]
+			if os.path.isdir(os.path.join(dir, "Application Data")):
+				dir = os.path.join(dir, "Application Data")
+
+		if ((dir is None) or (not os.path.isdir(dir))) and ("HOMEDRIVE" in os.environ) and ("HOMEPATH" in os.environ):
+			dir = os.environ["HOMEDRIVE"] + os.environ["HOMEPATH"]
+			if os.path.isdir(os.path.join(dir, "Application Data")):
+				dir = os.path.join(dir, "Application Data")
+
+		if (dir is None) or (not os.path.isdir(dir)):
+			dir = os.path.expanduser("~")
+			
+		# On windows, add vendor and app name
+		dir = os.path.join(dir, vendor, appname)
+
+	# Mac
+	elif os.name == "mac": # ?? may not be entirely correct
+		dir = os.path.expanduser("~")
+		dir = os.path.join(dir, "Library", "Application Support")
+		dir = os.path.join(dir, vendor, appname)
+
+	# Unix/Linux/all others
+	if dir is None:
+		dir = os.path.expanduser("~")
+		dir = os.path.join(dir, "."+vendor, appname)
+		
+	# Create vendor/appname folder if it doesn't exist
+	if not os.path.isdir(dir):
+		os.makedirs(dir)
+		
+	print dir
+
+	return dir
+
