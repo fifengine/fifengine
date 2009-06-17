@@ -83,17 +83,5 @@ class MapView:
 	def close(self):
 		""" Closes the mapview """
 		pass
-		
-		
-	def importFile(self, path):
-		""" Imports a file supported by the provided loaders. """
-		loaders.loadImportFile(path, self._editor.getEngine())
-		
-	def importDir(self, path, recursive=True):
-		""" Imports an entire directory supported by the provided loaders. """
-		self.importlist.append(path)
-		if recursive is True:
-			loaders.loadImportDirRec(path, self._editor.getEngine())
-		else:
-			loaders.loadImportDir(path, self._editor.getEngine())
+
 	
