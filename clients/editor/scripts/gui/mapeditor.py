@@ -1,6 +1,7 @@
 # MapEditor is a plugin for Fifedit. It allows for selection and visual editing of maps.
 
-import math
+import math, os, time
+from datetime import date
 
 import fife
 import pychan
@@ -12,6 +13,7 @@ from toolbar import ToolBar
 from menubar import Menu, MenuBar
 from action import Action, ActionGroup
 from scripts.mapcontroller import MapController
+import fife_utils
 
 states = (u'SELECTING', u'INSERTING', u'REMOVING', u'MOVING', u'OBJECTPICKER')
 for s in states:
@@ -177,12 +179,14 @@ class MapEditor:
 		zoomInAction = Action(text=u"Zoom in", icon="gui/icons/zoom_in.png")
 		zoomOutAction = Action(text=u"Zoom out", icon="gui/icons/zoom_out.png")
 		zoomResetAction = Action(text=u"Reset zoom", icon="gui/icons/zoom_default.png")
+		screenshotAction = Action(text=u"Take screenshot", icon="gui/icons/take_screenshot.png")
 		
 		action.activated.connect(self.rotateCounterClockwise, sender=rotateLeftAction)
 		action.activated.connect(self.rotateClockwise, sender=rotateRightAction)
 		action.activated.connect(self.zoomIn, sender=zoomInAction)
 		action.activated.connect(self.zoomOut, sender=zoomOutAction)
 		action.activated.connect(self.resetZoom, sender=zoomResetAction)
+		action.activated.connect(self.captureScreen, sender=screenshotAction)
 	
 		self._viewGroup = ActionGroup(name=u"View group")
 		self._viewGroup.addAction(rotateLeftAction)
@@ -190,6 +194,7 @@ class MapEditor:
 		self._viewGroup.addAction(zoomInAction)
 		self._viewGroup.addAction(zoomOutAction)
 		self._viewGroup.addAction(zoomResetAction)
+		self._viewGroup.addAction(screenshotAction)
 		
 		self._toolbar.addAction(self._viewGroup)
 		self._toolbar.adaptLayout()
@@ -434,6 +439,9 @@ class MapEditor:
 		elif keyval == fife.Key.DELETE:
 			self._controller.clearSelection()
 			
+		elif keyval == fife.Key.F7:
+			self.captureScreen()
+			
 		elif keystr == "s":
 			self._setMode(SELECTING)
 			
@@ -510,6 +518,17 @@ class MapEditor:
 				break
 			
 		return (offsetX, offsetY)
+		
+	def captureScreen(self):
+		userDir = fife_utils.getUserDataDirectory("fife", "editor")
+		t = userDir+"/screenshots"
+		if not os.path.isdir(t):
+			os.makedirs(t)
+		t += "/screen-%s-%s.png" % (date.today().strftime('%Y-%m-%d'),
+									time.strftime('%H-%M-%S'))
+		
+		self._editor.getEngine().getRenderBackend().captureScreen(t)
+		print "Saved screenshot to:", t
 		
 	def pump(self):
 		self._controller.moveCamera(self._scrollX, self._scrollY)
