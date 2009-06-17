@@ -94,7 +94,7 @@ class FileBrowser(object):
 				self.fileSelected(self.path, u2s(self._widget.collectData('saveField')))
 				return
 
-		if selection >= 0:
+		if selection >= 0 and selection < len(self.file_list):
 			self.fileSelected(self.path, u2s(self.file_list[selection]))
 			return
 		

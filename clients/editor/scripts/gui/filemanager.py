@@ -1,9 +1,10 @@
-import math, fife, pychan, filebrowser
+import os, math, fife, pychan, filebrowser, traceback, sys
 import loaders, savers
 import action
 import scripts.editor
 import pychan.widgets as widgets
-
+from pychan.tools import callbackWithArguments as cbwa
+from scripts.gui.error import ErrorDialog
 from action import Action, ActionGroup
 from input import InputDialog
 from selection import SelectionDialog, ClickSelectionDialog
@@ -19,6 +20,7 @@ class FileManager(object):
 		self._cameradlg = None
 		
 		self._filebrowser = None
+		self._importbrowser = None
 		self._savebrowser = None
 
 		newAction = Action(u"New map", "gui/icons/new_map.png")
@@ -26,18 +28,27 @@ class FileManager(object):
 		saveAction = Action(u"Save", "gui/icons/save_map.png")
 		saveAsAction = Action(u"Save as", "gui/icons/save_mapas.png")
 		saveAllAction = Action(u"Save all", "gui/icons/save_allmaps.png")
+		importFileAction = Action(u"Import file", "gui/icons/import_file.png")
+		importDirAction = Action(u"Import directory", "gui/icons/import_dir.png")
 		
 		newAction.helptext = u"Create new map"
 		loadAction.helptext = u"Open existing map"
 		saveAction.helptext = u"Save map"
 		saveAsAction.helptext = u"Save map as"
 		saveAllAction.helptext = u"Save all opened maps"
+		importFileAction.helptext = u"Imports an object file"
+		importDirAction.helptext = u"Recursively imports all objects from a directory"
 		
 		action.activated.connect(self.showMapWizard, sender=newAction)
 		action.activated.connect(self.showLoadDialog, sender=loadAction)
 		action.activated.connect(self.save, sender=saveAction)
 		action.activated.connect(self.saveAs, sender=saveAsAction)
 		action.activated.connect(self.editor.saveAll, sender=saveAllAction)
+		
+		self._importFileCallback = cbwa(self.showImportDialog, self.importFile, False)
+		self._importDirCallback = cbwa(self.showImportDialog, self.importDir, True)
+		action.activated.connect(self._importFileCallback, sender=importFileAction)
+		action.activated.connect(self._importDirCallback, sender=importDirAction)
 		
 		eventlistener = self.editor.getEventListener()
 		eventlistener.getKeySequenceSignal(fife.Key.N, ["ctrl"]).connect(self.showMapWizard)
@@ -51,6 +62,9 @@ class FileManager(object):
 		fileGroup.addAction(saveAction)
 		fileGroup.addAction(saveAsAction)
 		fileGroup.addAction(saveAllAction)
+		fileGroup.addSeparator()
+		fileGroup.addAction(importFileAction)
+		fileGroup.addAction(importDirAction)
 		
 		self.editor.getToolBar().insertAction(fileGroup, 0)
 		self.editor.getToolBar().insertSeparator(None, 1)
@@ -66,6 +80,13 @@ class FileManager(object):
 		if self._savebrowser is None:
 			self._savebrowser = filebrowser.FileBrowser(self.engine, self.saveFile, savefile=True, extensions = loaders.fileExtensions)
 		self._savebrowser.showBrowser()
+		
+	def showImportDialog(self, callback, selectdir):
+		if self._importbrowser is None:
+			self._importbrowser = filebrowser.FileBrowser(self.engine, callback, extensions = loaders.fileExtensions)
+		self._importbrowser.fileSelected = callback
+		self._importbrowser.selectdir = selectdir
+		self._importbrowser.showBrowser()
 
 	def saveFile(self, path, filename):
 		mapview = self.editor.getActiveMapView()
@@ -105,9 +126,9 @@ class FileManager(object):
 		
 	def _newCamera(self, layerId):
 		grid = fife.SquareGrid()
-		layer = self._map.createLayer(str(layerId), grid)
+		self._layer = self._map.createLayer(str(layerId), grid)
 		grid.thisown = 0
-
+		
 		self._cameradlg = CameraEditor(self.engine, self._addMap, self._clean, self._map, self._layer)
 		
 	def _addMap(self):
@@ -135,6 +156,49 @@ class FileManager(object):
 			return
 		
 		mapview.save()
+		
+	def importFile(self, path, filename):
+		file = os.path.normpath(os.path.join(path, filename))
+		# FIXME: This is necassary for the files to be loaded properly.
+		#		 The loader should be fixed to support native (windows)
+		#		 path separators.
+		file = file.replace('\\', '/') 
+		
+		try:
+			if os.path.isfile(file):
+				loaders.loadImportFile(file, self.engine)
+			else:
+				raise file+ " is not a file!"
+		except:
+			traceback.print_exc(sys.exc_info()[1])
+			errormsg = u"Importing file failed:\n"
+			errormsg += u"File: "+unicode(file)+u"\n"
+			errormsg += u"Error: "+unicode(sys.exc_info()[1])
+			ErrorDialog(errormsg)
+			return None
+			
+	def importDir(self, path, filename=""):
+		if os.path.isdir(os.path.join(path, filename)):
+			path = os.path.join(path, filename)
+			path = os.path.normpath(path)
+		
+		# FIXME: This is necassary for the files to be loaded properly.
+		#		 The loader should be fixed to support native (windows)
+		#		 path separators.
+		path = path.replace('\\', '/') 
+		
+		try:
+			if os.path.isdir(path):
+				loaders.loadImportDirRec(path, self.engine)
+			else:
+				raise file+ " is not a directory!"
+		except:
+			traceback.print_exc(sys.exc_info()[1])
+			errormsg = u"Importing directory failed:\n"
+			errormsg += u"File: "+unicode(file)+u"\n"
+			errormsg += u"Error: "+unicode(sys.exc_info()[1])
+			ErrorDialog(errormsg)
+			return None
 
 class CameraEditor(object):
 	"""
