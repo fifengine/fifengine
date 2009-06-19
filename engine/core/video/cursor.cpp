@@ -25,7 +25,7 @@
 #include <sdl.h>
 #endif
 
-#if defined( __linux__ )
+#if defined( __unix__ )
 #include <X11/Xcursor/Xcursor.h>
 #endif
 
@@ -59,7 +59,7 @@ struct WMcursor {
 
 #endif
 
-#if defined( __linux__ )
+#if defined( __unix__ )
 
 // Stops the compiler from confusing it with FIFE:Cursor
 typedef Cursor XCursor;
@@ -211,7 +211,7 @@ namespace FIFE {
 				break;
 		}
 
-#elif defined( __linux__ )
+#elif defined( __unix__ )
 		switch (cursor_id) {
 			case NC_ARROW:
 				return 68;
@@ -257,15 +257,12 @@ namespace FIFE {
 	}
 
 	void Cursor::setNativeCursor(unsigned int cursor_id) {
-#if !defined( WIN32 ) && !defined(__linux__)
-		return;
-#endif
-
+#if defined( WIN32 ) || defined(__unix__)
 		// Check if a value in NativeCursors is requested
 		cursor_id = getNativeId(cursor_id);
 
 		// Load cursor
-#if defined( __linux__ )
+#if defined( __unix__ )
 		static Display* dsp = XOpenDisplay(NULL);
 		XCursor xCursor = XcursorShapeLoadCursor(dsp, cursor_id);
 		if (xCursor == 0) {
@@ -323,7 +320,7 @@ namespace FIFE {
 			curs2->hot_y = static_cast<Sint16>(iconinfo.yHotspot);
 		}
 
-#elif defined(__linux__)
+#elif defined(__unix__)
 		cursor->x_cursor = xCursor;
 		XSync(dsp, false);
 #endif
@@ -331,5 +328,6 @@ namespace FIFE {
 		m_native_cursor = curs2;
 		SDL_SetCursor(curs2);
 
+#endif // WIN32 || __unix__
 	}
 }
