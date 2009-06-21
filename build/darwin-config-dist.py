@@ -46,6 +46,7 @@ def addExtras(context):
 
 	context.CheckHeader('SDL/SDL_image.h')
 	context.CheckHeader('SDL/SDL_ttf.h')
+	context.checkSimpleLib(['objc'])
 	context.checkSimpleLib(['vorbisfile'], 'vorbisfile.h')
 	context.checkSimpleLib(['guichan'])
 	context.checkSimpleLib(['guichan_sdl'])

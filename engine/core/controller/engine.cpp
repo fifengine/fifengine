@@ -77,6 +77,8 @@
 #include "engine.h"
 
 #ifdef USE_COCOA
+
+#include <objc/message.h>
 #include <dlfcn.h>
 
 int main(int argc, char **argv)
@@ -112,6 +114,11 @@ namespace FIFE {
 		void (*nsappload)(void);
 		nsappload = (void(*)()) dlsym( cocoa_lib, "NSApplicationLoad");
 		nsappload();
+
+		// Create an autorelease pool, so autoreleased SDL objects don't leak.
+		objc_object *NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
+		m_autoreleasePool =
+			objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
 #endif
 		preInit();
 	}
@@ -281,6 +288,9 @@ namespace FIFE {
 
 		TTF_Quit();
 		SDL_Quit();
+#ifdef USE_COCOA
+		objc_msgSend(m_autoreleasePool, sel_registerName("release"));
+#endif
 		FL_LOG(_log, "================== Engine destructed ==================");
 		m_destroyed = true;
 		//delete m_logmanager;

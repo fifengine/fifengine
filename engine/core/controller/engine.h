@@ -27,6 +27,11 @@
 #include <string>
 #include <vector>
 
+// Platform specific includes
+#ifdef USE_COCOA
+#include <objc/runtime.h>
+#endif
+
 // 3rd party library includes
 #include <SDL.h>
 
@@ -179,6 +184,11 @@ namespace FIFE {
 		bool m_destroyed;
 		
 		EngineSettings m_settings;
+
+#ifdef USE_COCOA
+		objc_object *m_autoreleasePool;
+#endif
+
 	};
 
 }//FIFE
