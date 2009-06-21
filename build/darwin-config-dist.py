@@ -25,7 +25,7 @@ def addExtras(context):
 			'/Library/Frameworks/SDL.framework/Headers',
 			'/opt/local/Library/Frameworks/SDL.framework/Headers',
 			'/Library/Frameworks/SDL_image.framework/Headers',
-			'/opt/local/Library/Frameworks/SDL_image.framework/Headers'
+			'/opt/local/Library/Frameworks/SDL_image.framework/Headers',
 			'/Library/Frameworks/SDL_ttf.framework/Headers',
 			'/opt/local/Library/Frameworks/SDL_ttf.framework/Headers',
 			'/opt/local/include/boost',
