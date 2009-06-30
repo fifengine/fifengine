@@ -47,6 +47,8 @@ namespace FIFE {
 	public:
 		RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
 
+                ~RoutePatherSearch();
+
                 typedef std::list<Location> Path;
                 /** An enumeration of the different status the search can be in.
                  *
@@ -95,6 +97,7 @@ namespace FIFE {
                         m_status = status;
                 }
 
+         private:
                 //A location object representing where the search started.
                 Location                m_to;
 
@@ -110,7 +113,6 @@ namespace FIFE {
                 //An enumeration of the searches current status.
                 SearchStatus    m_status;
 
-	private:
 		//The class to use to calculate the heuristic value.
 		Heuristic*                m_heuristic;
 		//The destination coordinate as an int.
