@@ -55,6 +55,11 @@ namespace FIFE {
              //   m_searchspace = searchSpace;
 	}
 
+        RoutePatherSearch::~RoutePatherSearch(){
+                 delete m_searchspace;
+                 delete m_heuristic;
+        }
+
 	void RoutePatherSearch::updateSearch() {
 		if(m_sortedfrontier.empty()) {
 			setSearchStatus(search_status_failed);
