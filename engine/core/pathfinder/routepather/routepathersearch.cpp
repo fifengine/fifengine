@@ -57,7 +57,6 @@ namespace FIFE {
 
         RoutePatherSearch::~RoutePatherSearch(){
                  delete m_searchspace;
-                 delete m_heuristic;
         }
 
 	void RoutePatherSearch::updateSearch() {
