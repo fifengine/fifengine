@@ -113,8 +113,6 @@ namespace FIFE {
                 //An enumeration of the searches current status.
                 SearchStatus    m_status;
 
-		//The class to use to calculate the heuristic value.
-		Heuristic*                m_heuristic;
 		//The destination coordinate as an int.
 		int                       m_destCoordInt;
 		//The start coordinate as an int.

@@ -48,15 +48,10 @@ namespace FIFE {
 		m_spt.resize(max_index + 1, -1);
 		m_sf.resize(max_index + 1, -1);
 		m_gCosts.resize(max_index + 1, 0.0f);
-		m_heuristic = Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType());
-             //   m_to = to;
-             //   m_from = from;
-             //   m_sessionId = session_id;
-             //   m_searchspace = searchSpace;
 	}
 
         RoutePatherSearch::~RoutePatherSearch(){
-                 delete m_searchspace;
+
         }
 
 	void RoutePatherSearch::updateSearch() {
@@ -90,7 +85,7 @@ namespace FIFE {
 					continue;
 				}
 
-				float hCost = m_heuristic->calculate((*i), destCoord);
+				float hCost = Heuristic::getHeuristic(m_searchspace->getLayer()->getCellGrid()->getType())->calculate((*i), destCoord);
 				float gCost = m_gCosts[m_next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				if(m_sf[adjacentInt] == -1) {
 					m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(adjacentInt, gCost + hCost));
