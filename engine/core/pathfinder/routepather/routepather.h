@@ -92,7 +92,7 @@ namespace FIFE {
 		std::string getName() const { return "RoutePather"; };		
 	private:
 		typedef std::list<Location> Path;
-		typedef PriorityQueue<RoutePatherSearch*, int> SessionQueue;
+		typedef PriorityQueue<Search*, int> SessionQueue;
 		typedef std::list<int> SessionList;
 		typedef std::map<int, Path> PathMap;
 		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;

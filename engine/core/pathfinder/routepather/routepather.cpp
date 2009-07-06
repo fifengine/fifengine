@@ -129,14 +129,14 @@ namespace FIFE {
 			if(m_sessions.empty()) {
 				break;
 			}
-			RoutePatherSearch* priority_session = m_sessions.getPriorityElement().first;
+			Search* priority_session = m_sessions.getPriorityElement().first;
 			if(!sessionIdValid(priority_session->getSessionId())) {
 				delete priority_session;
 				m_sessions.popElement();
 				continue;
 			}
 			priority_session->updateSearch();
-			if(priority_session->getSearchStatus() == RoutePatherSearch::search_status_complete) {
+			if(priority_session->getSearchStatus() == Search::search_status_complete) {
 				const int session_id = priority_session->getSessionId();
 				Path newPath = priority_session->calcPath();
 				newPath.erase(newPath.begin());
@@ -144,7 +144,7 @@ namespace FIFE {
 				invalidateSessionId(session_id);
 				delete priority_session;
 				m_sessions.popElement();
-			} else if(priority_session->getSearchStatus() == RoutePatherSearch::search_status_failed) {
+			} else if(priority_session->getSearchStatus() == Search::search_status_failed) {
 				const int session_id = priority_session->getSessionId();
 				invalidateSessionId(session_id);
 				delete priority_session;
