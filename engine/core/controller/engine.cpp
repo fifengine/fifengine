@@ -60,7 +60,7 @@
 #include "loaders/native/video_loaders/image_loader.h"
 #include "loaders/native/audio_loaders/ogg_loader.h"
 #include "model/model.h"
-//#include "pathfinder/linearpather/linearpather.h"
+#include "pathfinder/linearpather/linearpather.h"
 #include "pathfinder/routepather/routepather.h"
 #include "model/metamodel/grids/hexgrid.h"
 #include "model/metamodel/grids/squaregrid.h"
@@ -235,7 +235,7 @@ namespace FIFE {
 		FL_LOG(_log, "Creating model");
 		m_model = new Model();
 		FL_LOG(_log, "Adding pathers to model");
-//		m_model->adoptPather(new LinearPather());
+		m_model->adoptPather(new LinearPather());
 		m_model->adoptPather(new RoutePather());
 		FL_LOG(_log, "Adding grid prototypes to model");
 		m_model->adoptCellGrid(new SquareGrid());

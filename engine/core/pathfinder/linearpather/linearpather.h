@@ -19,10 +19,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_PATHFINDER_ROUTEPATHERSEARCH
-#define FIFE_PATHFINDER_ROUTEPATHERSEARCH
+#ifndef FIFE_PATHFINDER_LINEAR_H
+#define FIFE_PATHFINDER_LINEAR_H
 
 // Standard C++ library includes
+#include <map>
 
 // 3rd party library includes
 
@@ -30,45 +31,40 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "pathfinder/search.h"
-#include "util/structures/priorityqueue.h"
+#include "model/structures/location.h"
+#include "model/structures/map.h"
+#include "model/metamodel/abstractpather.h"
 
 namespace FIFE {
 
-	class Map;
-	class SearchSpace;
-	class Heuristic;
-
-	/** RoutePatherSearch using A*
-	 *
-	 * For now this class uses offline A*, however eventually this will be switched over to RTA*.
-	 */
-	class RoutePatherSearch : public Search {
+	/** Naive pathfinder implementation
+	*/
+	class LinearPather: public AbstractPather {
 	public:
-		RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
+		LinearPather(): m_session_counter(0), m_map(NULL) {}
 
-		virtual void updateSearch();
+		virtual ~LinearPather() {}
 
-		virtual Path calcPath();
+		int getNextLocation(const Instance* instance, const Location& target, 
+		                    double speed, Location& nextLocation,
+							Location& facingLocation, int session_id=-1, 
+							int priority = MEDIUM_PRIORITY);
+
+		void update() { }
+		
+		bool cancelSession(const int session_id) { 
+			m_session2face.erase(session_id);
+			return true; 
+		}
+
+		std::string getName() const { return "LinearPather"; }
+	
 	private:
-		//The class to use to calculate the heuristic value.
-		Heuristic*                m_heuristic;
-		//The destination coordinate as an int.
-		int                       m_destCoordInt;
-		//The start coordinate as an int.
-		int                       m_startCoordInt;
-		//The next coordinate int to check out.
-		int                       m_next;
-		//The shortest path tree.
-		std::vector<int>          m_spt;
-		//The search frontier.
-		std::vector<int>	      m_sf;
-		//A table to hold the costs.
-		std::vector<float>		  m_gCosts;
-		//priority queue to hold nodes on the sf in order. 
-		PriorityQueue<int, float> m_sortedfrontier;
+		std::map< int, Location > m_session2face;
+		unsigned int m_session_counter;
+		Map* m_map;
 	};
-
 }
 
 #endif
+
