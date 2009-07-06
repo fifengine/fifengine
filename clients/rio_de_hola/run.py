@@ -20,6 +20,7 @@ from basicapplication import ApplicationBase
 import pychan
 import pychan.widgets as widgets
 from settings import Setting
+from fife_utils import getUserDataDirectory
 
 TDS = Setting()
 
@@ -158,7 +159,16 @@ class IslandDemo(ApplicationBase):
 	def _pump(self):
 		if self.listener.quit:
 			self.breakRequested = True
-			self.world.save('maps/savefile.xml')
+			
+			# get the correct directory to save the map file to
+			mapSaveDir = getUserDataDirectory("fife", "rio_de_hola") + "/maps"
+			
+			# create the directory structure if it does not exist
+			if not os.path.isdir(mapSaveDir):
+				os.makedirs(mapSaveDir)
+			
+			# save map file to directory
+			self.world.save(mapSaveDir + "/savefile.xml")
 		else:
 			self.world.pump()
 
