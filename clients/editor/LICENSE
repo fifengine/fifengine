@@ -1,18 +1,44 @@
-== Cursors ==
-=== GTK+ ===
+== GUI images ==
+=== Bluesphere SVG iconpack ===
 Author:
-GTK+ development team
+Bluesphere team
 
 Download:
-http://ftp.gnome.org/pub/gnome/sources/gtk+/2.12/gtk+-2.12.9.tar.bz2
+http://sourceforge.net/projects/svgicons/files/BlueSphere/BlueSphere-0.3.0.tar.bz2/download
 
 License:
-LGPL
-http://www.gnu.org/licenses/lgpl-2.1.html
+BSD-like license
 
 Affected files:
-cursors/load_map.png
-cursors/save_map.png
+gui/icons/add_instance.png
+gui/icons/add_layer.png
+gui/icons/cycle_styles.png
+gui/icons/delete_layer.png
+gui/icons/erase_instance.png
+gui/icons/help.png
+gui/icons/import_dir.png
+gui/icons/import_file.png
+gui/icons/is_visible.png
+gui/icons/load_map.png
+gui/icons/map_wizard.png
+gui/icons/move_instance.png
+gui/icons/new_map.png
+gui/icons/next_branch.png
+gui/icons/objectpicker.png
+gui/icons/previous_branch.png
+gui/icons/quit.png
+gui/icons/redo.png
+gui/icons/rotate_clockwise.png
+gui/icons/rotate_countercw.png
+gui/icons/save_allmaps.png
+gui/icons/save_map.png
+gui/icons/save_mapas.png
+gui/icons/select_instance.png
+gui/icons/undo.png
+gui/icons/zoom_default.png
+gui/icons/zoom_in.png
+gui/icons/zoom_out.png
+gui/icons/
 
 === Inkscape ===
 Author:
@@ -26,31 +52,32 @@ GPL
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 Affected files:
-cursors/add_instance.png
-cursors/add_layer.png
-cursors/delete_layer.png
-cursors/eraser.png
-cursors/hand.png
-cursors/help.png
-cursors/map_wizard.png
-cursors/new_map.png
-cursors/quit.png
-cursors/take_screenshot.png
-cursors/zoom_default.png
-cursors/zoom_in.png
-cursors/zoom_out.png
+gui/icons/take_screenshot.png
+
+=== Undocumented assets ===
+Author:
+Unknown
+
+Download:
+Unknown
+
+License:
+Unknown
+
+Affected files:
+gui/icons/is_visible.png
 
 == Fonts ==
 === Ubuntu ===
 Author:
-Samir Karmacharya (sanir@email.com)
+GNU freefont project
 
 Download:
-http://www.ubuntu.com/
+ftp://ftp.gnu.org/pub/gnu/freefont/
 
 License:
-Public domain
-http://packages.debian.org/changelogs/pool/main/t/ttf-indic-fonts/ttf-indic-fonts_0.4.7.4/ttf-devanagari-fonts.copyright
+GPL 3.0
+http://www.gnu.org/copyleft/gpl.html
 
 Affected files:
-content/fonts/samanata.ttf
+content/fonts/FreeSans.ttf
