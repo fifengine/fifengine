@@ -23,7 +23,8 @@ opts.Add(BoolOption('rend_grid', 'Enables grid renderer', 0))
 if sys.platform == 'linux2':
 	opts.Add(PathOption('PREFIX', 'Directory to install under', '/usr'))
 
-env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
+#env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
+env = Environment(options = opts, ENV = os.environ)
 env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
 rootp = env['SCONS_ROOT_PATH']
 
