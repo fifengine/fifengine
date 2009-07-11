@@ -62,6 +62,7 @@ class LayerTool(plugin.Plugin):
 			
 	#--- Plugin function ---#
 	def enable(self):
+		""" """
 		if self._enabled is True:
 			return
 			
@@ -78,6 +79,7 @@ class LayerTool(plugin.Plugin):
 		events.postMapShown.connect(self.update)
 
 	def disable(self):
+		""" """
 		if self._enabled is False:
 			return
 		self.container.setDocked(False)
@@ -89,9 +91,11 @@ class LayerTool(plugin.Plugin):
 		self._editor._toolsMenu.removeAction(self._showAction)
 
 	def isEnabled(self):
+		""" """
 		return self._enabled;
 
 	def getName(self):
+		""" """
 		return u"Layertool"
 	
 	#--- End plugin functions ---#
@@ -206,11 +210,7 @@ class LayerTool(plugin.Plugin):
 			
 			
 	def select_no_layer(self):
-		""" the exception approach - as soon as the user hides a layer, the mapedit module should stop to use this
-		one, too.
-		
-		A bunch of exceptions is the result (each click on the map will result in a exception as no layer is set etc...)	
-		"""
+		""" Resets the current active layer (widget + editor) """
 		previous_active_layer = self.getActiveLayer()
 		if previous_active_layer is not None:
 			previous_layer_id = previous_active_layer.getId()
@@ -243,7 +243,7 @@ class LayerTool(plugin.Plugin):
 
 		self.select_no_layer()
 		
-		layerid = widget.name[7:]	
+		layerid = widget.name[len(_LABEL_NAME_PREFIX):]	
 		
 		widget.background_color = _HIGHLIGHT_BACKGROUND_COLOR
 		widget.foreground_color = _HIGHLIGHT_BACKGROUND_COLOR
@@ -253,6 +253,9 @@ class LayerTool(plugin.Plugin):
 		self._mapview.getController().selectLayer(layerid)
 
 	def toggle(self):
+		"""	toggles the layertool visible / invisible and sets
+			dock status 
+		"""
 		if self.container.isVisible() or self.container.isDocked():
 			self.container.setDocked(False)
 			self.container.hide()
