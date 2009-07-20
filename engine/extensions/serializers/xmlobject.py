@@ -79,8 +79,8 @@ class XMLObjectLoader(fife.ResourceLoader):
 
 		obj.setResourceLocation(self.source)
 		fife.ObjectVisual.create(obj)
-		obj.setBlocking(bool( object.get('blocking', False) ))
-		obj.setStatic(bool( object.get('static', False) ))
+		obj.setBlocking(bool( int(object.get('blocking', False)) ))
+		obj.setStatic(bool( int(object.get('static', False)) ))
 
 		pather = object.get('pather', 'RoutePather')
 		obj.setPather( self.model.getPather(pather) )
