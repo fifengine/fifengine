@@ -12,34 +12,29 @@ def addExtras(context):
 	context.env.Append(SHLINKFLAGS='-framework Cocoa')
 	context.env.Append(SHLINKFLAGS='-framework CoreFoundation')
 	context.env.Append(SHLINKFLAGS='-framework OpenGL')
-	context.env.Append(SHLINKFLAGS='-framework SDL')
-	context.env.Append(SHLINKFLAGS='-framework SDL_image')
-	context.env.Append(SHLINKFLAGS='-framework SDL_ttf')
+	#context.env.Append(SHLINKFLAGS='-lGL')
+	#context.env.Append(SHLINKFLAGS='-lGLU')
+	#context.env.Append(SHLINKFLAGS='-lglut')
 	context.env.Append(SHLINKFLAGS='-framework Python')
 	context.env.Append(SHLINKFLAGS='-lpng')
+	context.env.Append(SHLINKFLAGS='-lSDL')
+	context.env.Append(SHLINKFLAGS='-lSDL_image')
+	context.env.Append(SHLINKFLAGS='-lSDL_ttf')
 	context.env['SHLIBSUFFIX']='.so'
 
 	include_dirs = ['/opt/local/include',
 			'/usr/local/include',
 			'/usr/X11/include',
-			'/Library/Frameworks/SDL.framework/Headers',
-			'/opt/local/Library/Frameworks/SDL.framework/Headers',
-			'/Library/Frameworks/SDL_image.framework/Headers',
-			'/opt/local/Library/Frameworks/SDL_image.framework/Headers',
-			'/Library/Frameworks/SDL_ttf.framework/Headers',
-			'/opt/local/Library/Frameworks/SDL_ttf.framework/Headers',
+			'/opt/local/include/SDL',
+			'/opt/local/include/guichan',
 			'/opt/local/include/boost',
 			'/System/Library/Frameworks/OpenAL.framework/Headers',
 			'/opt/local/include/vorbis/',
-			'/usr/include/python%s'%sys.version[:3],
-			'/opt/local/include/guichan',
-			'ext/install/include',
-			'../ext/install/include',
-			'../ext/install/include/guichan']
+			'/usr/include/python%s'%sys.version[:3]]
 
 	context.env.Append(CPPPATH = include_dirs)
 
-	lib_dirs = ['/opt/local/lib','/usr/local/lib','/usr/X11/lib','ext/install/lib','../ext/install/lib']
+	lib_dirs = ['/opt/local/lib','/usr/local/lib','/usr/X11/lib']
 	context.env.Append(LIBPATH = lib_dirs)
 
 	context.env.Append(CPPFLAGS='-D_THREAD_SAFE -F/opt/local/Library/Frameworks')
