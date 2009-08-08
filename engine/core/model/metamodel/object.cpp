@@ -94,6 +94,18 @@ namespace FIFE {
 		}
 		return i->second;
 	}
+	
+	std::list<std::string> Object::getActionIds() const {
+		std::list<std::string> action_ids;
+		action_ids.clear();
+		if (m_actions) {
+			std::map<std::string, Action*>::const_iterator actions_it = m_actions->begin();
+			for(; actions_it != m_actions->end(); ++actions_it) {
+				action_ids.push_back(actions_it->first);
+			}
+		}
+		return action_ids;
+	}
 
 	void Object::setPather(AbstractPather* pather) {
 		m_pather = pather;
@@ -126,4 +138,5 @@ namespace FIFE {
 	bool Object::operator!=(const Object& obj) const {
 		return m_id != obj.getId() || m_namespace != obj.getNamespace();
 	}
+
 }
