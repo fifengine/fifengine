@@ -26,39 +26,4 @@
 
 %include "util/base/utilbase.i"
 %include "model/metamodel/abstractvisual.i"
-
-namespace FIFE {
-
-	class Action;
-	class AbstractPather;
-
-	class Object : public ResourceClass {
-	public:
-		Object(const std::string& identifier, const std::string& name_space, Object* inherited=NULL);
-		~Object();
-
-		const std::string& getId() const { return m_id; }
-		const std::string& getNamespace() const { return m_namespace; }
-
-		Action* createAction(const std::string& identifier, bool is_default=false);
-		Action* getAction(const std::string& identifier) const;
-		Action* getDefaultAction() const { return m_defaultaction; }
-
-		void setPather(AbstractPather* pather);
-		AbstractPather* getPather() const { return m_pather; }
-
-		Object* getInherited() const { return m_inherited; }
-		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
-		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }
-
-		void setBlocking(bool blocking) { m_blocking = blocking; }
-		bool isBlocking() const;
-
-		void setStatic(bool stat) { m_static = stat; }
-		bool isStatic() const;
-
-		bool operator==(const Object& obj) const;
-		bool operator!=(const Object& obj) const;
-
-	};
-}
+%include "model/metamodel/object.h"

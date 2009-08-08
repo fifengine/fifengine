@@ -25,6 +25,7 @@
 // Standard C++ library includes
 #include <string>
 #include <map>
+#include <list>
 
 // 3rd party library includes
 
@@ -64,7 +65,7 @@ namespace FIFE {
 		/** Destructor
 		 */
 		~Object();
-		
+
 		const std::string& getId() const { return m_id; }
 		const std::string& getNamespace() const { return m_namespace; }
 
@@ -82,6 +83,10 @@ namespace FIFE {
 		/** Gets action with given id. If not found, returns NULL
 		 */
 		Action* getAction(const std::string& identifier) const;
+
+		/** Gets all available action ids of the object and packs them into a list
+		 */
+		std::list<std::string> getActionIds() const;
 
 		/** Gets default action assigned to this object. If none available, returns NULL
 		 */
@@ -126,7 +131,7 @@ namespace FIFE {
 	
 		bool operator==(const Object& obj) const;
 		bool operator!=(const Object& obj) const;
-	
+		
 	private:
 		std::string m_id;
 		std::string m_namespace;
