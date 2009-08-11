@@ -312,8 +312,14 @@ class ObjectEdit(plugin.Plugin):
 		})
 		
 		if not self._animation:
-			index = self._avail_rotations.index( self._fixed_rotation )
-			self._gui_rotation_dropdown._setSelected(index)
+			if self._fixed_rotation in self._avail_rotations:
+				index = self._avail_rotations.index( self._fixed_rotation )
+				self._gui_rotation_dropdown._setSelected(index)
+			else:
+				print "Internal FIFE rotation: ", self._instances[0].getRotation()
+				print "Fixed rotation (cam rot) ", self._fixed_rotation + int(abs(self._camera.getRotation()))
+				print "Collected rots from object ", self._avail_rotations
+				
 
 		self.container.adaptLayout()			
 		
@@ -561,7 +567,7 @@ class ObjectEdit(plugin.Plugin):
 #		print "Camera rotation: ", self._camera.getRotation()
 #		print "Instance rotation: ", instance.getRotation()
 
-		self._fixed_rotation = int(instance.getRotation() + abs( self._camera.getTilt() ) )		
+#		self._fixed_rotation = int(instance.getRotation() + abs( self._camera.getRotation() ) )		
 		self._fixed_rotation = instance.getRotation()
 #		self._fixed_rotation = visual.getClosestMatchingAngle(self._fixed_rotation)	
 
@@ -597,6 +603,7 @@ class ObjectEdit(plugin.Plugin):
 		if not self._animation:
 			rotations = visual.getStaticImageAngles()
 			for angle in rotations:
+#				angle += int(abs( self._camera.getRotation() ))
 				self._avail_rotations.append(angle)
 	
 			self._image_default_x_offset = self._image.getXShift()
@@ -639,7 +646,6 @@ class ObjectEdit(plugin.Plugin):
 					self.highlight_selected_instance()
 					self.get_instance_data()
 					self.update_gui()
-					self.container.adaptLayout()
 					self.container.show()
 				else:
 					self._reset()
