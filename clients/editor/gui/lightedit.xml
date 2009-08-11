@@ -1,0 +1,32 @@
+<Panel title="Light editor" position="10,700">
+	<Label text="RGB values (float)" />
+	<HBox>
+		<Label text="R" />
+		<TextBox text="1.0" name="value_R" min_size="20,20"/>
+		<Button text="+" name="increase_R" />
+		<Button text="-" name="decrease_R" />
+	</HBox>
+	<HBox>
+		<Label text="G" />
+		<TextBox text="1.0" name="value_G" min_size="20,20"/>
+		<Button text="+" name="increase_G" />
+		<Button text="-" name="decrease_G" />
+	</HBox>
+	<HBox>
+		<Label text="B" />
+		<TextBox text="1.0" name="value_B" min_size="20,20"/>
+		<Button text="+" name="increase_B" />
+		<Button text="-" name="decrease_B" />
+	</HBox>
+	<HBox>
+		<Label text="A" />
+		<TextBox text="1.0" name="value_A" min_size="20,20"/>
+		<Button text="+" name="increase_A" />
+		<Button text="-" name="decrease_A" />
+	</HBox>
+	<VBox>
+		<ToggleButton text="Enable" name="enable_global_light" />
+		<Button text="Random" name="random_global_light" />
+		<Button text="Reset" name="reset_global_light" />
+	</VBox>	
+</Panel>
