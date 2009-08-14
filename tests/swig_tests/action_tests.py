@@ -23,7 +23,8 @@ class ActionTests(unittest.TestCase):
 	
 		self.obj = fife.Object("object001", 'plaa')
 		fife.ObjectVisual.create(self.obj)
-		self.pather = fife.LinearPather()
+#		self.pather = fife.LinearPather()
+                self.pather = fife.RoutePather()
 		self.obj.setPather(self.pather)
 		self.action = self.obj.createAction('walk')
 		fife.ActionVisual.create(self.action)
