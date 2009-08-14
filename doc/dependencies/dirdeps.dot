@@ -58,7 +58,7 @@ subgraph cluster_7 {
     style=filled;
     color=lightgrey;
     node [style=filled,color=white];
-    "pathfinder"; "pathfinder/linearpather"; "pathfinder/routepather"
+    "pathfinder"; "pathfinder/routepather"
     label = "pathfinder";
 }
 subgraph cluster_8 {
@@ -106,7 +106,6 @@ subgraph cluster_11 {
     "controller" -> "loaders/native/video_loaders"
     "controller" -> "model"
     "controller" -> "model/metamodel/grids"
-    "controller" -> "pathfinder/linearpather"
     "controller" -> "pathfinder/routepather"
     "controller" -> "util/base"
     "controller" -> "util/log"
@@ -197,10 +196,6 @@ subgraph cluster_11 {
     "pathfinder" -> "model/structures"
     "pathfinder" -> "util/base"
     "pathfinder" -> "util/math"
-    "pathfinder/linearpather" -> "model/metamodel"
-    "pathfinder/linearpather" -> "model/metamodel/grids"
-    "pathfinder/linearpather" -> "model/structures"
-    "pathfinder/linearpather" -> "util/log"
     "pathfinder/routepather" -> "model/metamodel"
     "pathfinder/routepather" -> "model/metamodel/grids"
     "pathfinder/routepather" -> "model/structures"
@@ -234,6 +229,7 @@ subgraph cluster_11 {
     "vfs/zip" -> "vfs"
     "vfs/zip" -> "vfs/raw"
     "video" -> "util/base"
+    "video" -> "util/log"
     "video" -> "util/resource"
     "video" -> "util/structures"
     "video" -> "util/time"
