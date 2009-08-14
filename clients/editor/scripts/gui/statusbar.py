@@ -14,31 +14,30 @@ class StatusBar(widgets.HBox):
 		self._tooltip = None
 		self._label = widgets.Label(text=text)
 		self.addChild(self._label)
+		
+		self._text = u""
+		self._tooltipDisplayed = False
 	   
 	def setText(self, text):
 		""" Sets the text to be displayed whenever a tooltip isn't displayed """
-		self._label.text = text
+		self._text = text
+		if not self.isTooltipDisplayed():
+			self._label.text = text
 		
 	def getText(self):
-		return self._label.text
+		return self._text
 	text = property(getText, setText)
 
 	def showTooltip(self, text):
 		""" Shows a text which is visible until hideTooltip is called """
-		if text == u"":
-			self.hideTooltip()
-		if self._tooltip is not None:
-			self._tooltip.text = text
-		else:
-			self.removeChild(self._label)
-			self._tooltip = widgets.Label(text=text)
-			self.addChild(self._tooltip)
-		self.adaptLayout()
+		self._label.text = text
+		self._tooltipDisplayed = True
 		
 	def hideTooltip(self):
 		""" Removes the text set by showTooltip. Whatever text previously set by setText is then displayed. """
-		if self._tooltip is not None:
-			self.removeChild(self._tooltip)
-			self.addChild(self._label)
-			self._tooltip = None
-			self.adaptLayout()
+		self._label.text = self._text
+		self._tooltipDisplayed = False
+		
+	def isTooltipDisplayed(self):
+		""" Returns true if tool tip is displayed """
+		return self._tooltipDisplayed
