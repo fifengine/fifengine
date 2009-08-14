@@ -40,7 +40,7 @@
 
 namespace FIFE {
 	RoutePatherSearch::RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
-		: Search(session_id, from, to, searchSpace), m_destCoordInt(0), m_startCoordInt(0), m_next(0)  {
+		: m_destCoordInt(0), m_startCoordInt(0), m_next(0), m_to(to), m_from(from), m_sessionId(session_id), m_searchspace(searchSpace), m_status(search_status_incomplete){
 		m_startCoordInt = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
 		int max_index = m_searchspace->getMaxIndex();
 		m_destCoordInt = m_searchspace->convertCoordToInt(to.getLayerCoordinates());
@@ -48,8 +48,9 @@ namespace FIFE {
 		m_spt.resize(max_index + 1, -1);
 		m_sf.resize(max_index + 1, -1);
 		m_gCosts.resize(max_index + 1, 0.0f);
-		m_heuristic = Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType());
+                m_heuristic = Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType());
 	}
+
 
 	void RoutePatherSearch::updateSearch() {
 		if(m_sortedfrontier.empty()) {
@@ -81,8 +82,8 @@ namespace FIFE {
 					adjacentInt != m_destCoordInt) {
 					continue;
 				}
-
-				float hCost = m_heuristic->calculate((*i), destCoord);
+                                	float hCost = m_heuristic->calculate((*i), destCoord);
+				//float hCost = Heuristic::getHeuristic(m_searchspace->getLayer()->getCellGrid()->getType())->calculate((*i), destCoord);
 				float gCost = m_gCosts[m_next] + loc.getLayer()->getCellGrid()->getAdjacentCost(nextCoord, (*i));
 				if(m_sf[adjacentInt] == -1) {
 					m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(adjacentInt, gCost + hCost));
@@ -106,14 +107,20 @@ namespace FIFE {
 		Location to(m_to);
 		to.setExactLayerCoordinates(FIFE::intPt2doublePt(to.getLayerCoordinates()));
 		path.push_back(to);
+                int count = 0;
 		while(current != end) {
-			current = m_spt[current];
+                        if(m_spt[current] < 0 ) {
+                             // This is when the size of m_spt can not handle the distance of the location
+                             setSearchStatus(search_status_failed);
+                             break;
+                        }
+                        current = m_spt[current];
 			Location newnode;
 			newnode.setLayer(m_searchspace->getLayer());
 			ModelCoordinate currentCoord = m_searchspace->convertIntToCoord(current);
 			newnode.setLayerCoordinates(currentCoord);
 			path.push_front(newnode);
-		}
+                }
 		path.front().setExactLayerCoordinates(m_from.getExactLayerCoordinates());
 		return path;
 	}
