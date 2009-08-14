@@ -22,6 +22,8 @@ class Panel(widgets.Window, ResizableBase):
 		
 		self._editor = scripts.editor.getEditor()
 		
+		self._panel_startPos = (0, 0)
+		
 	def setDocked(self, docked):
 		""" 
 		Dock or undock the panel
@@ -89,6 +91,8 @@ class Panel(widgets.Window, ResizableBase):
 	def mousePressed(self, event):
 		if self.resizable is False:
 			return
+			
+		self._panel_startPos = (self.x, self.y)
 		
 		ResizableBase.mousePressed(self, event)
 		if self._rLeft or self._rRight or self._rTop or self._rBottom:
@@ -96,23 +100,30 @@ class Panel(widgets.Window, ResizableBase):
 			self.real_widget.setMovable(False) # Don't let guichan move window while we resize
 			
 	def mouseDragged(self, event):
+		self._dragging = True
 		if self._resize is False and self.isDocked() is False:
+			if (self.x, self.y) == self._panel_startPos:
+				return
 			mouseX = self.x+event.getX()
 			mouseY = self.y+event.getY()
 			self._editor.getDockAreaAt(mouseX, mouseY, True)
 		else:
 			ResizableBase.mouseDragged(self, event)
 	
-	def mouseReleased(self, event):
+	def mouseReleased(self, event):	
+		didMove = False
+		if (self.x, self.y) != self._panel_startPos:
+			didMove = True
+		
 		# Resize/move done
 		self.real_widget.setMovable(self._movable)
 		
 		if self._resize:
 			ResizableBase.mouseReleased(self, event)
-		elif self._movable:
+		elif self._movable and didMove:
 			mouseX = self.x+event.getX()
 			mouseY = self.y+event.getY()
-		
+			
 			dockArea = self._editor.getDockAreaAt(mouseX, mouseY)
 			if dockArea is not None:
 				self._editor.dockWidgetTo(self, dockArea, mouseX, mouseY)
