@@ -139,7 +139,7 @@ class Menu(widgets.VBox):
 					self.removeChild(b)
 					self._actionbuttons.remove(b)
 			
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 	def hasAction(self, action):
 		for a in self._actions:
@@ -161,7 +161,7 @@ class Menu(widgets.VBox):
 		position = self._actions.index(sender)
 		self.removeAction(sender)
 		self.insertAction(sender, position)
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 	def _insertButton(self, action, position):
 		actions = [action]
@@ -203,7 +203,7 @@ class Menu(widgets.VBox):
 		for action in actions:
 			self.addAction(action)
 
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 	def show(self):
 		self._update()
@@ -239,7 +239,7 @@ class MenuButton(widgets.HBox):
 		
 		self._action = action
 		self.update()
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 		self.initEvents()
 	
@@ -256,7 +256,7 @@ class MenuButton(widgets.HBox):
 		
 	def _actionChanged(self):
 		self.update()
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 	def update(self):
 		""" Sets up the button widget """

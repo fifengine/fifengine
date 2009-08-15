@@ -84,7 +84,6 @@ class LayerTool(plugin.Plugin):
 			return
 		self.container.setDocked(False)
 		self.container.hide()
-		self.removeAllChildren()
 		
 		events.postMapShown.disconnect(self.update)
 		
@@ -177,7 +176,7 @@ class LayerTool(plugin.Plugin):
 			self.wrapper.addChild(subwrapper)
 			self.subwrappers.append(subwrapper)
 		
-		self.container.adaptLayout()		
+		self.container.adaptLayout(False)		
 			
 	def toggle_layer_visibility(self, event, widget):
 		""" Callback for ToggleButtons 
@@ -248,7 +247,7 @@ class LayerTool(plugin.Plugin):
 		widget.background_color = _HIGHLIGHT_BACKGROUND_COLOR
 		widget.foreground_color = _HIGHLIGHT_BACKGROUND_COLOR
 		widget.base_color = _HIGHLIGHT_BACKGROUND_COLOR
-		self.container.adaptLayout()
+		self.container.adaptLayout(False)
 		
 		self._mapview.getController().selectLayer(layerid)
 
