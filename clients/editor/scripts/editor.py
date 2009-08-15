@@ -187,6 +187,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._windowMenu.addAction(self._mapgroup)
 		
 		helpAction = Action(u"Help", "gui/icons/help.png")
+		helpAction.helptext = u"Displays a window with some simple instructions"
 		action.activated.connect(self._showHelpDialog, sender=helpAction)
 		self._helpMenu.addAction(helpAction)
 		

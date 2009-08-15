@@ -148,10 +148,10 @@ class MapEditor:
 		self._moveAction = Action(text=u"Move", icon="gui/icons/move_instance.png", checkable=True)
 		self._objectpickerAction = Action(text=u"Pick object", icon="gui/icons/objectpicker.png", checkable=True)
 		
-		self._selectAction.helptext = u"Select cells on layer"
-		self._moveAction.helptext = u"Moves instances"
-		self._drawAction.helptext = u"Adds new instances based on currently selected object"
-		self._removeAction.helptext = u"Deletes instances"
+		self._selectAction.helptext = u"Select cells on layer  (S)"
+		self._moveAction.helptext = u"Moves instances   (M)"
+		self._drawAction.helptext = u"Adds new instances based on currently selected object   (I)"
+		self._removeAction.helptext = u"Deletes instances   (R)"
 		self._objectpickerAction.helptext = u"Click an instance to set the current object to the one used by instance"
 		
 		action.toggled.connect(self._buttonToggled, sender=self._selectAction)
@@ -180,6 +180,13 @@ class MapEditor:
 		zoomOutAction = Action(text=u"Zoom out", icon="gui/icons/zoom_out.png")
 		zoomResetAction = Action(text=u"Reset zoom", icon="gui/icons/zoom_default.png")
 		screenshotAction = Action(text=u"Take screenshot", icon="gui/icons/take_screenshot.png")
+		
+		rotateLeftAction.helptext = u"Rotate counterclockwise by 90 degrees"
+		rotateRightAction.helptext = u"Rotate clockwise by 90 degrees"
+		zoomInAction.helptext = u"Zoom in   (CTRL + Mousewheel up)"
+		zoomOutAction.helptext = u"Zoom out   (CTRL + Mousewheel down)"
+		zoomResetAction.helptext = u"Reset zoom to default level"
+		screenshotAction.helptext = u"Take screenshot   (F7)"
 		
 		action.activated.connect(self.rotateCounterClockwise, sender=rotateLeftAction)
 		action.activated.connect(self.rotateClockwise, sender=rotateRightAction)
