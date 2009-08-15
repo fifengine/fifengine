@@ -252,6 +252,10 @@ class MapEditor:
 	def mousePressed(self, sender, event):
 		if event.isConsumedByWidgets():
 			return
+			
+		if not self._controller._layer:
+			if self._controller.debug: print 'No layers active. Cancelling map action'
+			return
 
 		realCoords = self._getRealCoords(sender, event)
 
@@ -330,6 +334,10 @@ class MapEditor:
 		if event.isConsumedByWidgets():
 			return
 			
+		if not self._controller._layer:
+			if self._controller.debug: print 'No layers active. Cancelling map action'
+			return
+			
 		realCoords = self._getRealCoords(sender, event)
 			
 		if event.getButton() == fife.MouseEvent.MIDDLE:
@@ -382,6 +390,10 @@ class MapEditor:
 
 	def mouseReleased(self, sender, event):
 		if event.isConsumedByWidgets():
+			return
+			
+		if not self._controller._layer:
+			if self._controller.debug: print 'No layers active. Cancelling map action'
 			return
 			
 		if self._mode == SELECTING or self._mode == MOVING:
