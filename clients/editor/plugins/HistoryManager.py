@@ -28,18 +28,25 @@ class HistoryManager(plugin.Plugin):
 		self.editor = scripts.editor.getEditor()
 		self.engine = self.editor.getEngine()
 			
-		self._undoGroup = ActionGroup(name=u"UndoGroup")
 		self._showAction = Action(u"History manager", checkable=True)
 		self._undoAction = Action(u"Undo", "gui/icons/undo.png")
 		self._redoAction = Action(u"Redo", "gui/icons/redo.png")
 		self._nextAction = Action(u"Next branch", "gui/icons/next_branch.png")
 		self._prevAction = Action(u"Previous branch", "gui/icons/previous_branch.png")
+		
+		self._showAction.helptext = u"Toggle HistoryManager"
+		self._undoAction.helptext = u"Undo action   (CTRL+Z)"
+		self._redoAction.helptext = u"Redo action   (CTRL+SHIFT+Z)"
+		self._nextAction.helptext = u"Next branch   (CTRL+ALT+Z"
+		self._prevAction.helptext = u"Previous branch   (CTRL+ALT+SHIFT+Z)"
+		
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
 		scripts.gui.action.activated.connect(self._undo, sender=self._undoAction)
 		scripts.gui.action.activated.connect(self._redo, sender=self._redoAction)
 		scripts.gui.action.activated.connect(self._next, sender=self._nextAction)
 		scripts.gui.action.activated.connect(self._prev, sender=self._prevAction)
 		
+		self._undoGroup = ActionGroup(name=u"UndoGroup")
 		self._undoGroup.addAction(self._undoAction)
 		self._undoGroup.addAction(self._redoAction)
 		self._undoGroup.addAction(self._nextAction)

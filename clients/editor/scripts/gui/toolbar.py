@@ -142,7 +142,7 @@ class ToolBar(Panel):
 		for action in actions:
 			self.addAction(action)
 
-		self.adaptLayout(False)
+		self.adaptLayout()
 		
 	def setOrientation(self, orientation):
 		if orientation == ToolBar.ORIENTATION['Vertical']:
