@@ -59,7 +59,7 @@ class ToolBar(Panel):
 					self.gui.removeChild(b)
 					self._actionbuttons.remove(b)
 			
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 	def hasAction(self, action):
 		for a in self._actions:
@@ -81,7 +81,7 @@ class ToolBar(Panel):
 		position = self._actions.index(sender)
 		self.removeAction(sender)
 		self.insertAction(sender, position)
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 	def _insertButton(self, action, position):
 		actions = [action]
@@ -142,7 +142,7 @@ class ToolBar(Panel):
 		for action in actions:
 			self.addAction(action)
 
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 	def setOrientation(self, orientation):
 		if orientation == ToolBar.ORIENTATION['Vertical']:
@@ -227,7 +227,7 @@ class ToolbarButton(widgets.VBox):
 		
 		self._action = action
 		self.update()
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 		self.initEvents()
 	
@@ -255,7 +255,7 @@ class ToolbarButton(widgets.VBox):
 		
 	def _actionChanged(self):
 		self.update()
-		self.adaptLayout()
+		self.adaptLayout(False)
 		
 	def update(self):
 		""" Sets up the button widget """

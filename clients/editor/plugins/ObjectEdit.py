@@ -321,7 +321,7 @@ class ObjectEdit(plugin.Plugin):
 				print "Collected rots from object ", self._avail_rotations
 				
 
-		self.container.adaptLayout()			
+		self.container.adaptLayout(False)			
 		
 	def toggle_gui(self):
 		"""
@@ -651,4 +651,4 @@ class ObjectEdit(plugin.Plugin):
 					self._reset()
 					self.container.hide()
 					
-		self.container.adaptLayout()						
+		self.container.adaptLayout(False)						

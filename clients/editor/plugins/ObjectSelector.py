@@ -321,11 +321,11 @@ class ObjectSelector(plugin.Plugin):
 
 		self.setPreview(obj)
 		
-		self.gui.adaptLayout()
+		self.gui.adaptLayout(False)
 		events.onObjectSelected.send(sender=self, object=obj)
 
-		self.objects.adaptLayout()
-		self.gui.adaptLayout()
+		self.objects.adaptLayout(False)
+		self.gui.adaptLayout(False)
 		
 	# Set preview image
 	def setPreview(self, object):
@@ -351,7 +351,7 @@ class ObjectSelector(plugin.Plugin):
 		elif self.mode == 'preview':
 			self.fillPreviewList()
 
-		self.gui.adaptLayout()
+		self.gui.adaptLayout(False)
 
 	def _getImage(self, obj):
 		""" Returns an image for the given object.

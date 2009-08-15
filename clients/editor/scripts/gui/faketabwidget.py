@@ -72,6 +72,6 @@ class FakeTabWidget(widgets.VBox, ResizableBase):
 		tab[2].toggled = True
 		self.widgetarea.removeAllChildren()
 		self.widgetarea.addChild(tab[1])
-		self.widgetarea.adaptLayout()
+		self.adaptLayout(False)
 		
 	
