@@ -59,6 +59,8 @@ class LayerTool(plugin.Plugin):
 		self._showAction = None
 		
 		self.subwrappers = []
+		
+		self._layer_wizard = None
 			
 	#--- Plugin function ---#
 	def enable(self):
@@ -103,6 +105,12 @@ class LayerTool(plugin.Plugin):
 		""" create the basic gui container """
 		self.container =  pychan.loadXML('gui/layertool.xml')
 		self.wrapper = self.container.findChild(name="layers_wrapper")
+		self.removeLayerButton = self.container.findChild(name="remove_layer_button")
+		self.createLayerButton = self.container.findChild(name="add_layer_button")
+		self.editLayerButton = self.container.findChild(name="edit_layer_button")
+		self.removeLayerButton.capture(self.removeSelectedLayer)
+		self.createLayerButton.capture(self.showLayerWizard)
+		self.editLayerButton.capture(self.showEditDialog)
 		self.update(None)
 
 	def _adjust_position(self):
@@ -111,6 +119,32 @@ class LayerTool(plugin.Plugin):
 		(new default position: left, beneath the tools window)
 		"""
 		self.container.position = (50, 200)
+		
+	def removeSelectedLayer(self):
+		if not self._mapview: return
+		
+		layer = self.getActiveLayer()
+		if not layer: return
+		
+		self.select_no_layer()
+		
+		map = self._mapview.getMap()
+		map.deleteLayer(layer)
+		self.update(self._mapview)
+		
+	def showLayerWizard(self):
+		if not self._mapview: return
+		
+		if self._layer_wizard: self._layer_wizard._widget.hide()
+		self._layer_wizard = LayerEditor(self._editor.getEngine(), self._mapview.getMap(), callback=cbwa(self.update, self._mapview))
+		
+	def showEditDialog(self):
+		if not self._mapview: return
+		layer = self.getActiveLayer()
+		if not layer: return
+		
+		if self._layer_wizard: self._layer_wizard._widget.hide()
+		self._layer_wizard = LayerEditor(self._editor.getEngine(), self._mapview.getMap(), layer=layer, callback=cbwa(self.update, self._mapview))
 		
 	def clear(self):
 		""" remove all subwrappers """
@@ -136,13 +170,16 @@ class LayerTool(plugin.Plugin):
 		self.clear()
 		
 		if len(layers) <= 0:
-			layerid = "No layers"
+			if not self._mapview:
+				layerid = "No map is open"
+			else:
+				layerid = "No layers"
 			subwrapper = pychan.widgets.HBox()
 
-			layer_name_widget = pychan.widgets.Label()
-			layer_name_widget.text = unicode(layerid)
-			layer_name_widget.name = _LABEL_NAME_PREFIX + layerid
-			subwrapper.addChild(layer_name_widget)
+			layerLabel = pychan.widgets.Label()
+			layerLabel.text = unicode(layerid)
+			layerLabel.name = _LABEL_NAME_PREFIX + layerid
+			subwrapper.addChild(layerLabel)
 			
 			self.wrapper.addChild(subwrapper)
 			self.subwrappers.append(subwrapper)
@@ -154,24 +191,24 @@ class LayerTool(plugin.Plugin):
 			layerid = layer.getId()
 			subwrapper = pychan.widgets.HBox()
 
-			visibility_widget = pychan.widgets.ToggleButton(hexpand=0, up_image="gui/icons/is_visible.png", down_image="gui/icons/is_visible.png", hover_image="gui/icons/is_visible.png")
-			visibility_widget.name = "toggle_" + layerid
+			toggleVisibleButton = pychan.widgets.ToggleButton(hexpand=0, up_image="gui/icons/is_visible.png", down_image="gui/icons/is_visible.png", hover_image="gui/icons/is_visible.png")
+			toggleVisibleButton.name = "toggle_" + layerid
 			if layer.areInstancesVisible():
-				visibility_widget.toggled = True
-			visibility_widget.capture(self.toggle_layer_visibility,"mousePressed")
+				toggleVisibleButton.toggled = True
+			toggleVisibleButton.capture(self.toggle_layer_visibility)
 			
-			layer_name_widget = pychan.widgets.Label()
-			layer_name_widget.text = unicode(layerid)
-			layer_name_widget.name = _LABEL_NAME_PREFIX + layerid
-			layer_name_widget.capture(self.select_active_layer,"mousePressed")
+			layerLabel = pychan.widgets.Label()
+			layerLabel.text = unicode(layerid)
+			layerLabel.name = _LABEL_NAME_PREFIX + layerid
+			layerLabel.capture(self.select_active_layer,"mousePressed")
 			
 			if active_layer == layerid:
-				layer_name_widget.background_color	= _HIGHLIGHT_BACKGROUND_COLOR
-				layer_name_widget.foreground_color	= _HIGHLIGHT_BACKGROUND_COLOR
-				layer_name_widget.base_color		= _HIGHLIGHT_BACKGROUND_COLOR
+				layerLabel.background_color	= _HIGHLIGHT_BACKGROUND_COLOR
+				layerLabel.foreground_color	= _HIGHLIGHT_BACKGROUND_COLOR
+				layerLabel.base_color		= _HIGHLIGHT_BACKGROUND_COLOR
 			
-			subwrapper.addChild(visibility_widget)
-			subwrapper.addChild(layer_name_widget)
+			subwrapper.addChild(toggleVisibleButton)
+			subwrapper.addChild(layerLabel)
 			
 			self.wrapper.addChild(subwrapper)
 			self.subwrappers.append(subwrapper)
@@ -264,3 +301,130 @@ class LayerTool(plugin.Plugin):
 			self.container.show()
 			self._showAction.setChecked(True)
 			self._adjust_position()
+
+
+class LayerEditor(object):
+	"""
+	LayerEditor provides a gui dialog for creating and editing layers.
+	"""
+	def __init__(self, engine, map, callback=None, onCancel=None, layer=None):
+		self.engine = engine
+		self.model = engine.getModel()
+		self.map = map
+		self.layer = layer
+		self.callback = callback
+		self.onCancel = onCancel
+		self._widget = pychan.loadXML('gui/layereditor.xml')
+
+		# TODO: Add access method for adopted grid types?
+		self._widget.findChild(name="gridBox").items = ['square']#, 'hex'] # Hex does not work?
+		
+		# TODO: Ditto for pather?
+		self._widget.findChild(name="pathingBox").items = ['cell_edges_only', 'cell_edges_and_diagonals', 'freeform']
+
+		if layer:
+			cg = layer.getCellGrid()
+			cgtype = 0
+			if cg.getType() == 'hex':
+				cgtype = 1
+			
+			self._widget.distributeData({
+				"layerBox" : unicode(layer.getId()),
+				"xScaleBox" : unicode(cg.getXScale()),
+				"yScaleBox" : unicode(cg.getYScale()),
+				"rotBox" : unicode(cg.getRotation()),
+				"xOffsetBox" : unicode(cg.getXShift()),
+				"yOffsetBox" : unicode(cg.getYShift())
+			})
+			
+			self._widget.findChild(name="pathingBox").selected = int(layer.getPathingStrategy())
+			self._widget.findChild(name="gridBox").selected = int(cgtype)
+		else:
+			self._widget.findChild(name="pathingBox").selected = 0
+			self._widget.findChild(name="gridBox").selected = 0
+
+		self._widget.mapEvents({
+			'okButton'     : self._finished,
+			'cancelButton' : self._cancelled
+		})
+
+		self._widget.show()
+		
+	def _cancelled(self):
+		if self.onCancel:
+			self.onCancel()
+		self._widget.hide()
+		
+
+	def _finished(self):
+		# Collect and validate data
+		layerId = self._widget.collectData('layerBox')
+		if layerId == '':
+			print 'Please enter a layer id.'
+			return
+			
+		try:
+			x_offset = float(self._widget.collectData('xOffsetBox'))
+			y_offset = float(self._widget.collectData('yOffsetBox'))
+		except ValueError:
+			print 'Please enter integer or decimal values for offset.'
+			return
+
+		try:
+			x_scale = float(self._widget.collectData('xScaleBox'))
+			y_scale = float(self._widget.collectData('yScaleBox'))
+		except ValueError:
+			print 'Please enter integer or decimal values for scale.'
+			return
+
+		try:
+			rotation = float(self._widget.collectData('rotBox'))
+		except ValueError:
+			print 'Please enter integer or decimal value for rotation.'
+			return
+			
+		grid_type = int(self._widget.collectData('gridBox'))
+		pathing = int(self._widget.collectData('pathingBox'))
+
+		if grid_type == 0:
+			grid_type = "square"
+		else:
+			grid_type = "hex"
+
+		# Set up layer
+		layer = self.layer
+		cellgrid = None
+		if not self.layer:
+			# TODO: FIFE currently does not support setting layer ID and cellgrid after the layer has been created
+			cellgrid = self.model.getCellGrid(grid_type)
+			if not cellgrid:
+				print "Invalid grid type"
+				return
+
+			cellgrid.setRotation(rotation)
+			cellgrid.setXScale(x_scale)
+			cellgrid.setYScale(y_scale)
+			cellgrid.setXShift(x_offset)
+			cellgrid.setYShift(y_offset)
+	
+			try:
+				layer = self.map.createLayer(str(layerId), cellgrid)
+			except:
+				print 'The layer ' + str(layerId) + ' already exists!'
+				return
+		else:
+			cellgrid = layer.getCellGrid()
+			cellgrid.setRotation(rotation)
+			cellgrid.setXScale(x_scale)
+			cellgrid.setYScale(y_scale)
+			cellgrid.setXShift(x_offset)
+			cellgrid.setYShift(y_offset)
+		
+		layer.setPathingStrategy(pathing)
+		
+		# Hide dialog and call back
+		self._widget.hide()
+		
+		if self.callback:
+			self.callback()
+
