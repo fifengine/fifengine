@@ -145,7 +145,6 @@ class XMLMapLoader(fife.ResourceLoader):
 			if not id: self._err('<layer> declared with no id attribute.')
 			if not grid_type: self._err(''.join(['Layer ', str(id), ' has no grid_type attribute.']))
 
-			allow_diagonals = pathing == "cell_edges_and_diagonals"
 			cellgrid = self.model.getCellGrid(grid_type)
 			if not cellgrid: self._err('<layer> declared with invalid cellgrid type. (%s)' % grid_type)
 
