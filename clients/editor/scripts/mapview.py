@@ -48,6 +48,17 @@ class MapView:
 
 	def getCamera(self):
 		return self._camera
+		
+	def setCamera(self, camera):
+		if not camera:
+			print "Camera can not be None"
+			return
+		
+		if camera.getLocation().getLayer().getMap() != self._map:
+			print "Camera is not associated with this map"
+			return
+			
+		self._camera = None
 	
 	def getController(self):
 		return self._controller

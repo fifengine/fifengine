@@ -123,12 +123,27 @@ class LayerTool(plugin.Plugin):
 	def removeSelectedLayer(self):
 		if not self._mapview: return
 		
+		if self._mapview.getMap().getNumLayers() <= 1:
+			print "Can't remove the last layer"
+			return
+		
 		layer = self.getActiveLayer()
 		if not layer: return
 		
 		self.select_no_layer()
 		
-		map = self._mapview.getMap()
+		map = self._mapview.getMap()		
+		
+		# FIFE will crash if we try to delete the layer which is in use by a camera
+		# so we will set the camera to another layer instead
+		for cam in self._editor.getEngine().getView().getCameras():
+			if cam.getLocationRef().getMap().getId() == map.getId():
+				if cam.getLocation().getLayer().getId() == layer.getId():
+					for l in map.getLayers():
+						if l.getId() == layer.getId(): continue
+						cam.getLocationRef().setLayer(l)
+						break
+		
 		map.deleteLayer(layer)
 		self.update(self._mapview)
 		
