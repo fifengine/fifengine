@@ -294,6 +294,9 @@ class MapController(object):
 
 	def moveCamera(self, screen_x, screen_y):
 		""" Move camera (scroll) by screen_x, screen_y """
+		if not self._camera: 
+			return
+			
 		coords = self._camera.getLocationRef().getMapCoordinates()
 		z = self._camera.getZoom()
 		r = self._camera.getRotation()
