@@ -21,7 +21,7 @@
 # 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # ###################################################
 
-""" An advanced layer tool for FIFedit """
+""" A layertool plugin for FIFedit """
 
 import fife
 import scripts.plugin as plugin
@@ -40,16 +40,8 @@ _HIGHLIGHT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['selectio
 _LABEL_NAME_PREFIX = "select_"
 
 class LayerTool(plugin.Plugin):
-	""" The B{LayerTool} is an advanced method to view
-	and change layer informations.
-	
-	While the original FIFedit tool only allows to select
-	layers, this one will provide the following functionality:
-	
-		- toggle layer visibility
-		- select layer
-		- list layers
-		
+	""" The B{LayerTool} allows to select and show / hide layers of a loaded
+		map as well as creating new layers or edit layer properties
 	"""
 	def __init__(self):	
 		self._editor = None
@@ -121,6 +113,9 @@ class LayerTool(plugin.Plugin):
 		self.container.position = (50, 200)
 		
 	def removeSelectedLayer(self):
+		"""
+		
+		"""
 		if not self._mapview: return
 		
 		if self._mapview.getMap().getNumLayers() <= 1:
@@ -137,12 +132,18 @@ class LayerTool(plugin.Plugin):
 		# FIFE will crash if we try to delete the layer which is in use by a camera
 		# so we will set the camera to another layer instead
 		for cam in self._editor.getEngine().getView().getCameras():
-			if cam.getLocationRef().getMap().getId() == map.getId():
-				if cam.getLocation().getLayer().getId() == layer.getId():
-					for l in map.getLayers():
-						if l.getId() == layer.getId(): continue
-						cam.getLocationRef().setLayer(l)
-						break
+			if cam.getLocationRef().getMap().getId() != map.getId():
+				continue
+				
+			if cam.getLocation().getLayer().getId() != layer.getId():
+				continue
+				
+			for l in map.getLayers():
+				if l.getId() == layer.getId(): 
+					continue
+				
+				cam.getLocationRef().setLayer(l)
+				break
 		
 		map.deleteLayer(layer)
 		self.update(self._mapview)
@@ -319,8 +320,11 @@ class LayerTool(plugin.Plugin):
 
 
 class LayerEditor(object):
-	"""
-	LayerEditor provides a gui dialog for creating and editing layers.
+	""" The B{LayerEditor} provides a gui dialog for creating and editing layers.
+	
+		FIXME:
+			- gridtypes can only be square for now
+			- pathing strategy 
 	"""
 	def __init__(self, engine, map, callback=None, onCancel=None, layer=None):
 		self.engine = engine
@@ -366,12 +370,13 @@ class LayerEditor(object):
 		self._widget.show()
 		
 	def _cancelled(self):
+		""" """
 		if self.onCancel:
 			self.onCancel()
-		self._widget.hide()
-		
+		self._widget.hide()		
 
 	def _finished(self):
+		""" """
 		# Collect and validate data
 		layerId = self._widget.collectData('layerBox')
 		if layerId == '':
