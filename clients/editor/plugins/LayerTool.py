@@ -100,9 +100,19 @@ class LayerTool(plugin.Plugin):
 		self.removeLayerButton = self.container.findChild(name="remove_layer_button")
 		self.createLayerButton = self.container.findChild(name="add_layer_button")
 		self.editLayerButton = self.container.findChild(name="edit_layer_button")
+		
 		self.removeLayerButton.capture(self.removeSelectedLayer)
+		self.removeLayerButton.capture(cbwa(self._editor.getStatusBar().showTooltip, self.removeLayerButton.helptext), 'mouseEntered')
+		self.removeLayerButton.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		
 		self.createLayerButton.capture(self.showLayerWizard)
+		self.createLayerButton.capture(cbwa(self._editor.getStatusBar().showTooltip, self.createLayerButton.helptext), 'mouseEntered')
+		self.createLayerButton.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		
 		self.editLayerButton.capture(self.showEditDialog)
+		self.editLayerButton.capture(cbwa(self._editor.getStatusBar().showTooltip, self.editLayerButton.helptext), 'mouseEntered')
+		self.editLayerButton.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		
 		self.update(None)
 
 	def _adjust_position(self):
@@ -152,7 +162,11 @@ class LayerTool(plugin.Plugin):
 		if not self._mapview: return
 		
 		if self._layer_wizard: self._layer_wizard._widget.hide()
-		self._layer_wizard = LayerEditor(self._editor.getEngine(), self._mapview.getMap(), callback=cbwa(self.update, self._mapview))
+		self._layer_wizard = LayerEditor(self._editor.getEngine(), self._mapview.getMap(), callback=self._layerCreated)
+		
+	def _layerCreated(self, layer):
+		self.update(self._mapview)
+		self.select_active_layer(None, self.wrapper.findChild(name=_LABEL_NAME_PREFIX + layer.getId()))
 		
 	def showEditDialog(self):
 		if not self._mapview: return
@@ -429,6 +443,7 @@ class LayerEditor(object):
 	
 			try:
 				layer = self.map.createLayer(str(layerId), cellgrid)
+				
 			except:
 				print 'The layer ' + str(layerId) + ' already exists!'
 				return
@@ -442,9 +457,11 @@ class LayerEditor(object):
 		
 		layer.setPathingStrategy(pathing)
 		
+		self.engine.getView().resetRenderers()
+		
 		# Hide dialog and call back
 		self._widget.hide()
 		
 		if self.callback:
-			self.callback()
+			pychan.tools.applyOnlySuitable(self.callback, layer=layer)
 
