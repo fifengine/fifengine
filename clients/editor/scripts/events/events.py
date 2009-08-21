@@ -46,7 +46,7 @@ class KeySequence(object):
 		self.modifiers = {"alt":False,"ctrl":False,"shift":False,"meta":False}
 		self.signal = None
 
-class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter):
+class EventListener:
 	# NOTE: As FIFEdit currently covers the entire screen with widgets,
 	#		FIFE doesn't receive any mouse or key events. Therefore we have to add
 	#		mouse and key event tracking for the central widget
@@ -56,27 +56,28 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 		
 		eventmanager = self.engine.getEventManager()
 		self.keysequences = []
-
-		IKeyListener.__init__(self)
-		eventmanager.addKeyListener(self)
 		
-		ICommandListener.__init__(self)
-		eventmanager.addCommandListener(self)
-		
-		IMouseListener.__init__(self)
-		eventmanager.addMouseListener(self)
-		
-		ConsoleExecuter.__init__(self)
-		self.engine.getGuiManager().getConsole().setConsoleExecuter(self)
-		
-		MapChangeListener.__init__(self)
-		LayerChangeListener.__init__(self)
+		self.keylistener			= _IKeyListener(engine)
+		self.mouselistener			= _IMouseListener(engine)
+		self.mapchangelistener		= _MapChangeListener(engine)
+		self.layerchangelistener	= _LayerChangeListener(engine)
+		self.commandlistener		= _ICommandListener(engine)
+		self.consoleexecuter		= _ConsoleExecuter(engine)
 		
 		self.controlPressed = False
 		self.altPressed		= False
 		self.shiftPressed	= False
 		self.metaPressed	= False
 		
+		eventmanager.addKeyListener(self.keylistener)
+		eventmanager.addCommandListener(self.commandlistener)
+		eventmanager.addMouseListener(self.mouselistener)
+		self.engine.getGuiManager().getConsole().setConsoleExecuter(self.consoleexecuter)
+		
+		keyPressed.connect(self.keyPressed)
+		keyReleased.connect(self.keyReleased)
+		
+
 	def getKeySequenceSignal(self, key, modifiers=[]):
 		# Parse modifiers
 		mods = {"alt":False,"ctrl":False,"shift":False,"meta":False}
@@ -100,17 +101,16 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 		self.keysequences.append(keysequence)
 		
 		return keysequence.signal
-	
-	#--- Listener methods ---#
-	# IKeyListener
-	def keyPressed(self, evt):
-		keyval = evt.getKey().getValue()
-		keystr = evt.getKey().getAsString().lower()
 		
-		self.controlPressed = evt.isControlPressed()
-		self.altPressed		= evt.isAltPressed()
-		self.shiftPressed	= evt.isShiftPressed()
-		self.metaPressed	= evt.isMetaPressed()
+	# IKeyListener
+	def keyPressed(self, event):
+		keyval = event.getKey().getValue()
+		keystr = event.getKey().getAsString().lower()
+		
+		self.controlPressed = event.isControlPressed()
+		self.altPressed		= event.isAltPressed()
+		self.shiftPressed	= event.isShiftPressed()
+		self.metaPressed	= event.isMetaPressed()
 		
 		if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self.controlPressed = True
@@ -135,19 +135,15 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 			if k.modifiers["shift"]	!= self.shiftPressed: continue
 			if k.modifiers["meta"] != self.metaPressed: continue
 			if keyval != k.key: continue
-			k.signal.send(sender=self, event=evt)
-			
-		keyPressed.send(sender=self.engine, event=evt)
-		
-		evt.consume()
+			k.signal.send(sender=self, event=event)
 
-	def keyReleased(self, evt):
-		keyval = evt.getKey().getValue()
+	def keyReleased(self, event):
+		keyval = event.getKey().getValue()
 		
-		self.controlPressed = evt.isControlPressed()
-		self.altPressed		= evt.isAltPressed()
-		self.shiftPressed	= evt.isShiftPressed()
-		self.metaPressed	= evt.isMetaPressed()
+		self.controlPressed = event.isControlPressed()
+		self.altPressed		= event.isAltPressed()
+		self.shiftPressed	= event.isShiftPressed()
+		self.metaPressed	= event.isMetaPressed()
 		
 		if keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self.controlPressed = False
@@ -157,9 +153,26 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 			self.altPressed = False
 		elif keyval in (fife.Key.RIGHT_META, fife.Key.LEFT_META):
 			self.metaPressed = False
-			
+
+	
+#--- Internal sublistener classes ---#
+class _IKeyListener(IKeyListener):
+	def __init__(self, engine):
+		IKeyListener.__init__(self)
+		self.engine = engine
+		
+	# IKeyListener
+	def keyPressed(self, evt):
+		keyPressed.send(sender=self.engine, event=evt)
+
+	def keyReleased(self, evt):
 		keyReleased.send(sender=self.engine, event=evt)
 
+class _ICommandListener(ICommandListener):
+	def __init__(self, engine):
+		ICommandListener.__init__(self)
+		self.engine = engine
+		
 	# ICommandListener
 	def onCommand(self, command):
 		if command.getCommandType() == fife.CMD_QUIT_GAME:
@@ -167,7 +180,11 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 		else:
 			onCommand.send(sender=self.engine, command=command)
 		
-
+class _IMouseListener(IMouseListener):
+	def __init__(self, engine):
+		IMouseListener.__init__(self)
+		self.engine = engine
+		
 	# IMouseListener
 	def mouseEntered(self, evt):
 		mouseEntered.send(sender=self.engine, event=evt)
@@ -196,16 +213,11 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 	def mouseDragged(self, evt):
 		mouseDragged.send(sender=self.engine, event=evt)
 
-	# LayerChangeListener
-	def onLayerChanged(self, layer, changedInstances):
-		onLayerChanged.send(sender=self.engine, layer=layer, changedInstances=changedInstances)
+class _MapChangeListener(MapChangeListener):
+	def __init__(self, engine):
+		MapChangeListener.__init__(self)
+		self.engine = engine
 		
-	def onInstanceCreate(self, layer, instance):
-		onInstanceCreate.send(sender=self.engine, layer=layer, instance=instance)
-		
-	def onInstanceDelete(self, layer, instance):
-		onInstanceDelete.send(sender=self.engine, layer=layer, instance=instance)
-
 	# MapChangeListener
 	def onMapChanged(self, map, changedLayers):
 		onMapChanged.send(sender=self.engine, map=map, changedLayers=changedLayers)
@@ -215,10 +227,32 @@ class EventListener(IKeyListener, ICommandListener, IMouseListener, LayerChangeL
 		
 	def onLayerDelete(self, map, layer):
 		onLayerDelete.send(sender=self.engine, map=map, layer=layer)
-
+		
+class _LayerChangeListener(LayerChangeListener):
+	def __init__(self, engine):
+		LayerChangeListener.__init__(self)
+		self.engine = engine
+		
+	# LayerChangeListener
+	def onLayerChanged(self, layer, changedInstances):
+		onLayerChanged.send(sender=self.engine, layer=layer, changedInstances=changedInstances)
+		
+	def onInstanceCreate(self, layer, instance):
+		onInstanceCreate.send(sender=self.engine, layer=layer, instance=instance)
+		
+	def onInstanceDelete(self, layer, instance):
+		onInstanceDelete.send(sender=self.engine, layer=layer, instance=instance)
+		
+class _ConsoleExecuter(ConsoleExecuter):
+	def __init__(self, engine):
+		ConsoleExecuter.__init__(self)
+		self.engine = engine
+		
 	# ConsoleExecuter
 	def onToolsClick(self):
 		onToolsClick.send(sender=self.engine)
 		
 	def onConsoleCommand(self, command):
 		onConsoleCommand.send(sender=self.engine, command=command)
+		
+		

@@ -391,10 +391,10 @@ class Editor(ApplicationBase, MainWindow):
 		type = event.getType()
 		
 		if type == fife.KeyEvent.PRESSED:
-			self._eventlistener.keyPressed(event)
+			keyPressed.send(sender=self._maparea, event=event)
 		
 		elif type == fife.KeyEvent.RELEASED:
-			self._eventlistener.keyReleased(event)
+			keyReleased.send(sender=self._maparea, event=event)
 			
 		
 

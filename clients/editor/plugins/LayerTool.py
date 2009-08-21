@@ -444,7 +444,7 @@ class LayerEditor(object):
 			try:
 				layer = self.map.createLayer(str(layerId), cellgrid)
 				
-			except:
+			except fife.NameClash:
 				print 'The layer ' + str(layerId) + ' already exists!'
 				return
 		else:
