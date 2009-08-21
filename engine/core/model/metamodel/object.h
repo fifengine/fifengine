@@ -55,10 +55,9 @@ namespace FIFE {
 		 * from another object. This object may override these
 		 * defaults, but it may not CHANGE the inherited values.
 		 *
-		 * Objects are created by calling addObject from dataset, thus
-		 * this method should really be called only by dataset or test code
-		 * @see Dataset in model/metamodel/dataset.h for creation
-		 * of objects.
+		 * Objects are created by calling Model::createObject, thus
+		 * this method should really be called only by Model or test code
+		 * @see Model in model/model.h for creation of objects.
 		 */
 		Object(const std::string& identifier, const std::string& name_space, Object* inherited=NULL);
 
