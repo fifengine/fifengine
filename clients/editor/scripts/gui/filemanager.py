@@ -8,6 +8,7 @@ from scripts.gui.error import ErrorDialog
 from action import Action, ActionGroup
 from input import InputDialog
 from selection import SelectionDialog, ClickSelectionDialog
+from scripts.events import events
 
 class FileManager(object):
 	def __init__(self):
@@ -176,6 +177,8 @@ class FileManager(object):
 			errormsg += u"Error: "+unicode(sys.exc_info()[1])
 			ErrorDialog(errormsg)
 			return None
+		
+		events.onObjectsImported.send(sender=self)
 			
 	def importDir(self, path, filename=""):
 		if os.path.isdir(os.path.join(path, filename)):
@@ -199,6 +202,8 @@ class FileManager(object):
 			errormsg += u"Error: "+unicode(sys.exc_info()[1])
 			ErrorDialog(errormsg)
 			return None
+			
+		events.onObjectsImported.send(sender=self)
 
 class CameraEditor(object):
 	"""
