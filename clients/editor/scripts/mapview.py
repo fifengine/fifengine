@@ -21,9 +21,19 @@ class MapView:
 			if not self._map.getLayers():
 				raise AttributeError('Editor error: map ' + self._map.getId() + ' has no layers. Cannot edit.')
 
+			map.addChangeListener(self._editor.getEventListener().mapchangelistener)
+			for layer in map.getLayers():
+				layer.addChangeListener(self._editor.getEventListener().layerchangelistener)
+				
+			events.onLayerCreate.connect(self._layerCreated)
+
 		self.importlist = []
 		if hasattr(map, "importDirs"):
 			self.importlist.extend(map.importDirs)
+			
+	def _layerCreated(self, map, layer):
+		if map.getId() == self._map.getId():
+			layer.addChangeListener(self._editor.getEventListener().layerchangelistener)
 		
 	# Copied from mapeditor.py
 	def show(self):
