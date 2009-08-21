@@ -81,7 +81,7 @@ namespace FIFE {
 		 */
 		size_t getNumMaps() const;
 
-		/** Remove all elevations from a map
+		/** Removes all maps from this model
 		 */
 		void deleteMaps();
 
