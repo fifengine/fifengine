@@ -11,6 +11,7 @@ import fife
 from fife import Color
 
 # TODO:
+# - Clean up code
 # - Better event handling
 
 _DEFAULT_BASE_COLOR = internal.DEFAULT_STYLE['default']['base_color']
@@ -113,7 +114,9 @@ class ObjectIconList(widgets.VBox):
 				self._selectedItem = item
 				tmp.selected = False
 			else:
-				self._selectedItem = item	
+				self._selectedItem = item
+		#if item is not None:
+		#	item.selected = True
 
 	def _getSelectedItem(self):
 		return self._selectedItem
@@ -132,6 +135,7 @@ class ObjectSelector(plugin.Plugin):
 		self.mode = 'list' # Other mode is 'preview'
 		
 		self._enabled = False
+		self.object = None
 
 	def enable(self):
 		if self._enabled is True:
@@ -147,6 +151,7 @@ class ObjectSelector(plugin.Plugin):
 		
 		events.postMapShown.connect(self.update_namespace)
 		events.onObjectSelected.connect(self.setPreview)
+		events.onObjectsImported.connect(self.update_namespace)
 		
 		self.buildGui()
 
@@ -159,6 +164,7 @@ class ObjectSelector(plugin.Plugin):
 		
 		events.postMapShown.disconnect(self.update_namespace)
 		events.onObjectSelected.disconnect(self.setPreview)
+		events.onObjectsImported.disconnect(self.update_namespace)
 		
 		self.editor._toolsMenu.removeAction(self._showAction)
 
@@ -277,11 +283,25 @@ class ObjectSelector(plugin.Plugin):
 			def __str__( self ):
 				return self.name
 			
-		if self.namespaces.selected_item:
-			self.objects.items = [_ListItem(obj.getId(), obj.getNamespace()) for obj in objects]
-			if not self.objects.selected_item:
+		
+		self.objects.items = [_ListItem(obj.getId(), obj.getNamespace()) for obj in objects]
+			
+		if not self.object:
+			if self.namespaces.selected_item:
 				self.objects.selected = 0
 				self.listEntrySelected()
+		else:
+			for i in range(0, len(self.objects.items)):
+				if self.objects.items[i].name != self.object.getId(): continue
+				if self.objects.items[i].namespace != self.object.getNamespace(): continue
+				
+				self.objects.selected = i
+				break
+				
+				
+		self.mainScrollArea.adaptLayout(False)
+		scrollY = (self.objects.real_font.getHeight() + 0) * self.objects.selected
+		self.mainScrollArea.real_widget.setVerticalScrollAmount(scrollY)
 
 	def listEntrySelected(self):
 		"""This function is used as callback for the TextList."""
@@ -308,10 +328,15 @@ class ObjectSelector(plugin.Plugin):
 			callback = tools.callbackWithArguments(self.objectSelected, obj)	
 			icon = ObjectIcon(callback=callback, image=image, text=unicode(obj.getId()))
 			self.objects.addChild(icon)
+			if obj == self.object:
+				icon.selected = True
 			
-		if len(objects)>0:
-			objects[0].selected = True
-			self.objectSelected(objects[0])
+		if not self.object:
+			if len(objects) > 0:
+				self.objectSelected(objects[0])
+				
+		self.mainScrollArea.adaptLayout(False)
+		self.mainScrollArea.real_widget.setVerticalScrollAmount(self.objects.selected_item.y)
 
 
 	def objectSelected(self, obj):
@@ -321,18 +346,36 @@ class ObjectSelector(plugin.Plugin):
 
 		self.setPreview(obj)
 		
-		self.gui.adaptLayout(False)
 		events.onObjectSelected.send(sender=self, object=obj)
 
-		self.objects.adaptLayout(False)
 		self.gui.adaptLayout(False)
 		
 	# Set preview image
 	def setPreview(self, object):
+		if not object: return
+		if self.object and object == self.object:
+			return
+			
+		self.object = object
+		self.scrollToObject(object)
 		self.preview.image = self._getImage(object)
 		height = self.preview.image.getHeight();
 		if height > 200: height = 200
 		self.preview.parent.max_height = height
+		
+	def scrollToObject(self, object):
+		# Select namespace
+		names = self.namespaces
+		if not names.selected_item: 
+			self.namespaces.selected = 0
+		
+		if names.selected_item != object.getNamespace():
+			for i in range(0, len(names.items)):
+				if names.items[i] == object.getNamespace():
+					self.namespaces.selected = i
+					break
+					
+		self.update()
 
 	def update_namespace(self):
 		
