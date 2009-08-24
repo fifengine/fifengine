@@ -288,9 +288,31 @@ class Widget(object):
 		Usage::
 		  closeButton = root_widget.findChild(name='close')
 		"""
+		if kwargs.keys() == ["name"]:
+			return self.findChildByName(kwargs["name"])
+
 		children = self.findChildren(**kwargs)
 		if children:
 			return children[0]
+		return None
+
+	def findChildByName(self,name):
+		"""
+		Find first contained child widget by its name.
+
+		Note that this is the fast version of findChild(name="...")
+		and that you don't have to call this explicitly, it is used
+		if possible.
+		"""
+		result = []
+		def _childCollector(widget):
+			if widget._name == name:
+				result.append(widget)
+				raise StopTreeWalking
+		try:
+			self.deepApply(_childCollector)
+		except StopTreeWalking:
+			return result[0]
 		return None
 
 	def addChild(self,widget):
