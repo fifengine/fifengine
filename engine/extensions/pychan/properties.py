@@ -101,7 +101,7 @@ class ImageProperty(WrappedProperty):
 			image_info["source"] = getattr(image,"source","")
 			image_info["image"] = image
 			if image_info["source"]:
-				image_info["image"] = get_manager().loadImage(image)
+				image_info["image"] = get_manager().loadImage(image_info["source"])
 			self._getSetter(obj)(image_info["image"])
 		else:
 			attribute_name = "%s.%s" % (obj.__class__.__name__,self.name)
