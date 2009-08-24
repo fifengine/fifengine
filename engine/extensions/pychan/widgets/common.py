@@ -42,7 +42,6 @@ def gui2str(text):
 	except:
 		# String contains non-ascii characters
 		return text.encode("utf-8")
-		
 
 def isLayouted(widget):
 	from layout import LayoutBase
