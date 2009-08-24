@@ -23,6 +23,11 @@
 # ####################################################################
 
 import fife
+from exceptions import RuntimeError
+
+def get_manager():
+	import pychan
+	return pychan.manager
 
 """
 Property bindings
@@ -63,4 +68,41 @@ class ColorProperty(WrappedProperty):
 	def __get__(self, obj, objtype = None):
 		color = self._getGetter(obj)()
 		return fife.Color(color.r,color.g,color.b,color.a)
+
+class DummyImage(object):
+	def getWidth(self): return 0
+	def getHeight(self): return 0
+
+class ImageProperty(WrappedProperty):
+	def __init__(self, name):
+		super(ImageProperty, self).__init__(name)
+		self.prop_name = "_prop_" + self.name.lower()
+	def __set__(self, obj, image):
+		image_info = getattr(obj, self.prop_name, {})
+		if not image:
+			image_info["source"] = ""
+			image_info["image"] = DummyImage()
+			self._getSetter(obj)(None)
+
+		elif isinstance(image, str):
+			image_info["source"] = image
+			# to catch or not to catch ...
+			# we just let the NotFound exception trickle here.
+			# depedning on complains we can catch and print a warning.
+			image_info["image"] = get_manager().loadImage(image)
+			self._getSetter(obj)(image_info["image"])
+
+		elif isinstance(image,fife.GuiImage):
+			image_info["source"] = None
+			image_info["image"] = image
+			self._getSetter(obj)(image_info["image"])
+		else:
+			attribute_name = "%s.%s" % (obj.__class__.__name__,self.name)
+			error_message = "%s only accepts GuiImage and python strings, not '%s'"
+			raise RuntimeError(error_message % (attribute_name, repr(source)))
+		
+		setattr(obj, self.prop_name, image_info)
+
+	def __get__(self, obj, objtype = None):
+		return getattr(obj, self.prop_name, {}).get("image",None)
 
