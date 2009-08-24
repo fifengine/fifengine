@@ -168,7 +168,18 @@ namespace FIFE {
 	std::string VFS::lower(const std::string& str) const {
 		std::string result;
 		result.resize(str.size());
-		std::transform(str.begin(), str.end(), result.begin(), tolower);
+		bool found_uppercase = false;
+		for(unsigned i=0; i != str.size(); ++i)
+		{
+			result[i] = tolower(str[i]);
+			found_uppercase |= result[i] != str[i];
+		}
+		if( found_uppercase )
+		{
+			FL_WARN(_log, LMsg("Case mismatch: given '") << str
+				<< "', FIFE will use '" << result
+				<< "' - Please only use lower case filenames to avoid problems with different file systems.");
+		}
 		return result;
 	}
 

@@ -48,6 +48,10 @@ namespace FIFE {
 	 * @note The VFS searches for a provider in the order they are added to the
 	 * VFS. Since the VFSHostSystem is added first, this implies, that host filesystem
 	 * files will override whatever might be in other VFS Sources (e.g. the DAT files)
+	 *
+	 * @note All filenames have to be @b lowercase. The VFS will convert them to lowercase
+	 * and emit a warning. This is done to avoid problems with filesystems which are not
+	 * case sensitive.
 	 */
 	class VFS {
 		public:
