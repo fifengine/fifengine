@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 
 class PyChanException(Exception):
 	"""
@@ -33,4 +33,8 @@ class PrivateFunctionalityError(RuntimeError):
 	"""
 	Exception raised if private attributes/functions are used.
 	"""
-	pass
+
+class StopTreeWalking(StopIteration):
+	"""
+	Internal exception used to abort iteration over the widget tree.
+	"""
