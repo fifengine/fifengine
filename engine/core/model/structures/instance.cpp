@@ -230,7 +230,7 @@ namespace FIFE {
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionlisteners.begin();
 		while (i != m_activity->m_actionlisteners.end()) {
 			if ((*i) == listener) {
-				m_activity->m_actionlisteners.erase(i);
+				*i = NULL;
 				return;
 			}
 			++i;
@@ -422,9 +422,15 @@ namespace FIFE {
 
 		std::vector<InstanceActionListener*>::iterator i = m_activity->m_actionlisteners.begin();
 		while (i != m_activity->m_actionlisteners.end()) {
-			(*i)->onInstanceActionFinished(this, action);
+			if(*i)
+				(*i)->onInstanceActionFinished(this, action);
 			++i;
 		}
+		m_activity->m_actionlisteners.erase(
+			std::remove(m_activity->m_actionlisteners.begin(),
+				m_activity->m_actionlisteners.end(),
+				(InstanceActionListener*)NULL),
+			m_activity->m_actionlisteners.end());
 	}
 
 	Action* Instance::getCurrentAction() const {

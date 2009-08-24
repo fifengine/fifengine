@@ -43,7 +43,7 @@ namespace FIFE {
 	InstanceTree::~InstanceTree() {
 	}
 
-	bool InstanceTree::addInstance(Instance* instance) {
+	void InstanceTree::addInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
 		InstanceTreeNode * node = m_tree.find_container(coords.x,coords.y,0,0);
 		InstanceList& list = node->data();
@@ -51,10 +51,9 @@ namespace FIFE {
 		if( m_reverse.find(instance) != m_reverse.end() )
 			throw new InconsistencyDetected("Duplicate Instance.");
 		m_reverse[instance] = node;
-		return true;
 	}
 
-	bool InstanceTree::removeInstance(Instance* instance) {
+	void InstanceTree::removeInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
 		InstanceTreeNode * node = m_reverse[instance];
 		if( !node )
@@ -64,10 +63,10 @@ namespace FIFE {
 		for(InstanceList::iterator i = list.begin(); i != list.end(); ++i) {
 			if((*i) == instance) {
 				list.erase(i);
-				return true;
+				return;
 			}
 		}
-		return false;
+		throw new InconsistencyDetected("Removing Ghost Instance (not in list?).");
 	}
 
 	class InstanceListCollector {
