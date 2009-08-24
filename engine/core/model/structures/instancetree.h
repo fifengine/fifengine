@@ -94,7 +94,7 @@ namespace FIFE {
 
 	private:
 		InstanceQuadTree m_tree;
-
+		std::map<Instance*,InstanceTreeNode*> m_reverse;
 	};
 
 }
