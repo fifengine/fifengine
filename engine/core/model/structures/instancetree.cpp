@@ -28,6 +28,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/exception.h"
 #include "model/structures/instance.h"
 #include "util/structures/rect.h"
 
@@ -44,22 +45,28 @@ namespace FIFE {
 
 	bool InstanceTree::addInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
-		InstanceList& list = m_tree.find_container(coords.x,coords.y,0,0)->data();
+		InstanceTreeNode * node = m_tree.find_container(coords.x,coords.y,0,0);
+		InstanceList& list = node->data();
 		list.push_back(instance);
+		if( m_reverse.find(instance) != m_reverse.end() )
+			throw new InconsistencyDetected("Duplicate Instance.");
+		m_reverse[instance] = node;
 		return true;
 	}
 
 	bool InstanceTree::removeInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
-		InstanceList& list = m_tree.find_container(coords.x,coords.y, 0, 0)->data();
-
+		InstanceTreeNode * node = m_reverse[instance];
+		if( !node )
+			throw new InconsistencyDetected("Removing Ghost Instance.");
+		m_reverse.erase(instance);
+		InstanceList& list = node->data();
 		for(InstanceList::iterator i = list.begin(); i != list.end(); ++i) {
 			if((*i) == instance) {
 				list.erase(i);
 				return true;
 			}
 		}
-
 		return false;
 	}
 

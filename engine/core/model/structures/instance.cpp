@@ -152,9 +152,17 @@ namespace FIFE {
 		if (source.m_changeinfo != ICHANGE_NO_CHANGES) {
 			std::vector<InstanceChangeListener*>::iterator i = m_changelisteners.begin();
 			while (i != m_changelisteners.end()) {
-				(*i)->onInstanceChanged(&source, source.m_changeinfo);
+				if (NULL != *i)
+				{
+					(*i)->onInstanceChanged(&source, source.m_changeinfo);
+				}
 				++i;
 			}
+			// Really remove "removed" listeners.
+			m_changelisteners.erase(
+				std::remove(m_changelisteners.begin(),m_changelisteners.end(),
+					(InstanceChangeListener*)NULL),
+				m_changelisteners.end());
 		}
 	}
 
@@ -242,7 +250,7 @@ namespace FIFE {
 		std::vector<InstanceChangeListener*>::iterator i = m_activity->m_changelisteners.begin();
 		while (i != m_activity->m_changelisteners.end()) {
 			if ((*i) == listener) {
-				m_activity->m_changelisteners.erase(i);
+				*i = NULL;
 				return;
 			}
 			++i;
@@ -285,7 +293,7 @@ namespace FIFE {
 		m_activity->m_actioninfo->m_target = new Location(leader->getLocationRef());
 		m_activity->m_actioninfo->m_speed = speed;
 		m_activity->m_actioninfo->m_leader = leader;
-                leader->addDeleteListener(this);
+		leader->addDeleteListener(this);
 		setFacingLocation(*m_activity->m_actioninfo->m_target);
 		FL_DBG(_log, LMsg("starting action ") <<  action_name << " from" << m_location << " to " << *m_activity->m_actioninfo->m_target << " with speed " << speed);
 	}

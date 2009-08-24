@@ -83,6 +83,7 @@ namespace FIFE {
 	FIFE_EXCEPTION_DECL(ScriptException, "Error related to scripting functionality");
 	FIFE_EXCEPTION_DECL(EventException, "Error related to event functionality");
 	FIFE_EXCEPTION_DECL(GuiException, "Error related to gui functionality");
+	FIFE_EXCEPTION_DECL(InconsistencyDetected, "An inconsistency in FIFE internals was detected. Please report this is a FIFE Bug.");
 	
 	/** @bug The memory allocation in @c std::string might fail, resulting in terminate. */
 	FIFE_EXCEPTION_DECL(OutOfMemory, "Buy more ram ;)");
