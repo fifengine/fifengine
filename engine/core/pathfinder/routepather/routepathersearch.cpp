@@ -107,7 +107,6 @@ namespace FIFE {
 		Location to(m_to);
 		to.setExactLayerCoordinates(FIFE::intPt2doublePt(to.getLayerCoordinates()));
 		path.push_back(to);
-                int count = 0;
 		while(current != end) {
                         if(m_spt[current] < 0 ) {
                              // This is when the size of m_spt can not handle the distance of the location

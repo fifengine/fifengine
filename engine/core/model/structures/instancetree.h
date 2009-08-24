@@ -62,16 +62,18 @@ namespace FIFE {
 		 * area.
 		 *
 		 * @param instance A pointer to the instance to add.
+		 * @note In case you added the instance before this will throw.
 		 */
-		bool addInstance(Instance* instance);
+		void addInstance(Instance* instance);
 
 		/** Removes an instance from the quad tree.
 		 *
 		 * Locates an instance in the quad tree then removes it.
 		 *
 		 * @param instance A pointer to the instance to find and remove.
+		 * @note In case you did @b not add the instance before this will throw.
 		 */
-		bool removeInstance(Instance* instance);
+		void removeInstance(Instance* instance);
 
 		/** Find all instances in a given area.
 		 *
