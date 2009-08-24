@@ -51,10 +51,14 @@ namespace FIFE {
 	}
 
 	int GuiImage::getWidth() const {
+		if(m_poolid==Pool::INVALID_ID)
+			return 0;
 		return m_pool->getImage(m_poolid).getWidth();
 	}
 
 	int GuiImage::getHeight() const {
+		if(m_poolid==Pool::INVALID_ID)
+			return 0;
 		return m_pool->getImage(m_poolid).getHeight();
 	}
 
@@ -69,6 +73,6 @@ namespace FIFE {
 
 	void GuiImage::convertToDisplayFormat() {
 		// empty on purpose
-		// good idea?
+		// Since we don't need any conversions - this is just a proxy.
 	}
 }

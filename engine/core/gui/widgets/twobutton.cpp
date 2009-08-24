@@ -54,7 +54,7 @@ namespace gcn {
 	}
 	
 	void TwoButton::draw(Graphics *graphics) {
-		Image* img = NULL;
+		Image* img = m_upImage;
 		int xoffset = 0;
 		int yoffset = 0;
 		
@@ -66,15 +66,10 @@ namespace gcn {
 			}
 		} else if(mHasMouse) {
 			if( m_hoverImage ) {
-				graphics->drawImage(m_hoverImage, 0, 0);
-			}
-		} else {
-			if( mHasMouse && m_hoverImage) { 
 				img = m_hoverImage;
-			} else if (m_upImage) {
-				img = m_upImage;
 			}
 		}
+		
 		if (img) {
 			graphics->drawImage(img, xoffset, yoffset);
 		}

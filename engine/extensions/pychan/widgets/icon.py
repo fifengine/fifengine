@@ -24,6 +24,7 @@
 
 from common import *
 from widget import Widget
+from pychan.properties import ImageProperty
 
 class Icon(Widget):
 	"""
@@ -39,27 +40,20 @@ class Icon(Widget):
 	def __init__(self,image="",**kwargs):
 		self.real_widget = fife.Icon(None)
 		super(Icon,self).__init__(**kwargs)
-		self._source = self._image = None
-		if image:
-			self.image = image
+		self.image = image
+
+	_image = ImageProperty("Image")
 
 	def _setImage(self,source):
-		if isinstance(source,str):
-			self._source = source
-			self._image = get_manager().loadImage(source)
-		elif isinstance(source,fife.GuiImage):
-			self._source = None
-			self._image = source
-		else:
-			raise RuntimeError("Icon.image only accepts GuiImage and python strings, not '%s'" % repr(source))
-		self.real_widget.setImage( self._image )
-
-		# Set minimum size accoriding to image
+		self._image = source
+		# This is a bit odd.
+		# ... not sure whether to leave the sizes alone, but that might
+		# break layouts. yikes.
 		self.min_size = self.real_widget.getWidth(),self.real_widget.getHeight()
-		self.size  = self.max_size = self.min_size
+		self.max_size = self.min_size
+		self.size  = self.min_size
+		#print self._image, self.min_size, self.max_size
 
 	def _getImage(self):
-		if self._source is not None:
-			return self._source
 		return self._image
 	image = property(_getImage,_setImage)

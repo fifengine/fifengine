@@ -69,11 +69,11 @@ class ColorProperty(WrappedProperty):
 		color = self._getGetter(obj)()
 		return fife.Color(color.r,color.g,color.b,color.a)
 
-class DummyImage(object):
-	def getWidth(self): return 0
-	def getHeight(self): return 0
-
 class ImageProperty(WrappedProperty):
+	"""
+	This unifies the way Images and Image attributes are handled
+	inside PyChan.
+	"""
 	def __init__(self, name):
 		super(ImageProperty, self).__init__(name)
 		self.prop_name = "_prop_" + self.name.lower()
@@ -81,7 +81,8 @@ class ImageProperty(WrappedProperty):
 		image_info = getattr(obj, self.prop_name, {})
 		if not image:
 			image_info["source"] = ""
-			image_info["image"] = DummyImage()
+			image_info["image"] = fife.GuiImage()
+			image_info["image"]._source = ""
 			self._getSetter(obj)(None)
 
 		elif isinstance(image, str):
@@ -90,11 +91,17 @@ class ImageProperty(WrappedProperty):
 			# we just let the NotFound exception trickle here.
 			# depedning on complains we can catch and print a warning.
 			image_info["image"] = get_manager().loadImage(image)
+			image_info["image"]._source = image
 			self._getSetter(obj)(image_info["image"])
 
 		elif isinstance(image,fife.GuiImage):
-			image_info["source"] = None
+			# FIXME - this trickery with the hidden annotation
+			# with an _source attribute isn't really clean.
+			# Is it even necessary
+			image_info["source"] = getattr(image,"_source","")
 			image_info["image"] = image
+			if image_info["source"]:
+				image_info["image"] = get_manager().loadImage(image)
 			self._getSetter(obj)(image_info["image"])
 		else:
 			attribute_name = "%s.%s" % (obj.__class__.__name__,self.name)
@@ -104,5 +111,9 @@ class ImageProperty(WrappedProperty):
 		setattr(obj, self.prop_name, image_info)
 
 	def __get__(self, obj, objtype = None):
-		return getattr(obj, self.prop_name, {}).get("image",None)
+		d = getattr(obj, self.prop_name, {})
+		image = d.get("image",None)
+		if not image:
+			image = fife.GuiImage()
+		return image
 
