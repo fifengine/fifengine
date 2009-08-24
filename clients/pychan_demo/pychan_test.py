@@ -25,7 +25,7 @@ class PyChanExample(object):
 	def __init__(self,xmlFile):
 		self.xmlFile = xmlFile
 		self.widget = None
-	
+
 	def start(self):
 		"""
 		The Example Protocoll: start
@@ -42,6 +42,9 @@ class PyChanExample(object):
 		# supply close and ok button, we 'ignoreMissing'
 		self.widget.mapEvents(eventMap, ignoreMissing = True)
 		self.widget.show()
+
+		#from pprint import pprint
+		#pprint(self.widget.getNamedChildren())
 
 	def stop(self):
 		"""

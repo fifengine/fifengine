@@ -101,7 +101,7 @@ class Widget(object):
 		self.__parent = None
 		self.parent = parent
 
-		# This will also set the _event_id and call real_widget.setActionEventId
+		self.has_name = False
 		self.name = name
 
 		self.position = position
@@ -282,6 +282,27 @@ class Widget(object):
 		self.deepApply(_childCollector)
 		return children
 
+	def getNamedChildren(self):
+		"""
+		Create a dictionary of child widgets with the keys being
+		their name. This will contain only Widgets which have
+		a name different from "__unnamed__" (which is the default).
+		
+		The values are lists of widgets, so not only unique names
+		are handled correctly.
+
+		Usage::
+			children = widget.getNamedChildren()
+			for widget in children.get("info",[])
+				print widget.name , " == info"
+		"""
+		children = {}
+		def _childCollector(widget):
+			if widget.has_name:
+				children.setdefault(widget._name,[]).append(widget)
+		self.deepApply(_childCollector)
+		return children
+
 	def findChild(self,**kwargs):
 		""" Find the first contained child widgets by attribute values.
 
@@ -424,12 +445,14 @@ class Widget(object):
 			})
 
 		"""
+		children = self.getNamedChildren()
 		for descr,func in eventMap.items():
 			name, event_name, group_name = events.splitEventDescriptor(descr)
 			#print name, event_name, group_name
-			widget = self.findChild(name=name)
-			if widget:
-				widget.capture( func, event_name = event_name, group_name = group_name )
+			widgets = children.get(name,[])
+			if widgets:
+				for widget in widgets:
+					widget.capture( func, event_name = event_name, group_name = group_name )
 			elif not ignoreMissing:
 				raise RuntimeError("No widget with the name: %s" % name)
 
@@ -476,8 +499,9 @@ class Widget(object):
 		  })
 
 		"""
+		children = self.getNamedChildren()
 		for name,data in initialDataMap.items():
-			widgetList = self.findChildren(name = name)
+			widgetList = children.get(name,[])
 			for widget in widgetList:
 				widget.setInitialData(data)
 
@@ -494,8 +518,9 @@ class Widget(object):
 		  })
 
 		"""
+		children = self.getNamedChildren()
 		for name,data in dataMap.items():
-			widgetList = self.findChildren(name = name)
+			widgetList = children.get(name,[])
 			if len(widgetList) != 1:
 				if get_manager().debug:
 					self.listNamedWidgets()
@@ -514,9 +539,10 @@ class Widget(object):
 		  print "You entered:",data['myTextField']," and selected ",data['myListBox']
 
 		"""
+		children = self.getNamedChildren()
 		dataMap = {}
 		for name in widgetNames:
-			widgetList = self.findChildren(name = name)
+			widgetList = children.get(name,[])
 			if len(widgetList) != 1:
 				if get_manager().debug:
 					self.listNamedWidgets()
@@ -546,9 +572,10 @@ class Widget(object):
 		  test = guiElement.collectData('testElement')
 
 		"""
+		children = self.getNamedChildren()
 		dataList = []
 		for name in widgetNames:
-			widgetList = self.findChildren(name = name)
+			widgetList = children.get(name,[])
 			if len(widgetList) != 1:
 				if get_manager().debug:
 					self.listNamedWidgets()
@@ -724,7 +751,10 @@ class Widget(object):
 		self.__parent = parent
 	parent = property(_getParent,_setParent)
 
-	def _setName(self,name): self._name = name
+	def _setName(self,name):
+		self._name = name
+		if name != Widget.DEFAULT_NAME:
+			self.has_name = True
 	def _getName(self):
 		# __str__ relies on self.name
 		return getattr(self,'_name','__no_name_yet__')

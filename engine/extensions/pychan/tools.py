@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 
 """
 Functional utilities designed for pychan use cases.
@@ -120,6 +120,24 @@ def chainCallbacks(*args):
 		for callback in callbacks:
 			applyOnlySuitable(callback, event=event, widget=widget)
 	return chain_callback
+
+def repeatALot(n = 1000):
+	"""
+	Internal decorator used to profile some pychan functions.
+	Only use with functions without side-effect.
+
+	Usage::
+		@repeatALot(n=10000)
+		def findChild(self,**kwargs):
+			...
+	"""
+	def wrap_f(f):
+		def new_f(*args,**kwargs):
+			for i in xrange(n):
+				f(*args,**kwargs)
+			return f(*args,**kwargs)
+		return new_f
+	return wrap_f
 
 def this_is_deprecated(func,message=None):
 	if message is None:
