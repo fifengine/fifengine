@@ -304,11 +304,13 @@ class Widget(object):
 		self.deepApply(_childCollector)
 		return children
 
-	def getNamedChildren(self):
+	def getNamedChildren(self, include_unnamed = False):
 		"""
 		Create a dictionary of child widgets with the keys being
 		their name. This will contain only Widgets which have
 		a name different from "__unnamed__" (which is the default).
+		
+		@param include_unnamed Defaults to false. If this is true unnamed widgets are added, too.
 		
 		The values are lists of widgets, so not only unique names
 		are handled correctly.
@@ -319,9 +321,13 @@ class Widget(object):
 				print widget.name , " == info"
 		"""
 		children = {}
-		def _childCollector(widget):
-			if widget.has_name:
+		if include_unnamed:
+			def _childCollector(widget):
 				children.setdefault(widget._name,[]).append(widget)
+		else:
+			def _childCollector(widget):
+				if widget.has_name:
+					children.setdefault(widget._name,[]).append(widget)
 		self.deepApply(_childCollector)
 		return children
 
@@ -467,7 +473,7 @@ class Widget(object):
 			})
 
 		"""
-		children = self.getNamedChildren()
+		children = self.getNamedChildren(include_unnamed=True)
 		for descr,func in eventMap.items():
 			name, event_name, group_name = events.splitEventDescriptor(descr)
 			#print name, event_name, group_name
@@ -521,7 +527,7 @@ class Widget(object):
 		  })
 
 		"""
-		children = self.getNamedChildren()
+		children = self.getNamedChildren(include_unnamed=True)
 		for name,data in initialDataMap.items():
 			widgetList = children.get(name,[])
 			for widget in widgetList:
@@ -540,7 +546,7 @@ class Widget(object):
 		  })
 
 		"""
-		children = self.getNamedChildren()
+		children = self.getNamedChildren(include_unnamed=True)
 		for name,data in dataMap.items():
 			widgetList = children.get(name,[])
 			if len(widgetList) != 1:
@@ -561,7 +567,7 @@ class Widget(object):
 		  print "You entered:",data['myTextField']," and selected ",data['myListBox']
 
 		"""
-		children = self.getNamedChildren()
+		children = self.getNamedChildren(include_unnamed=True)
 		dataMap = {}
 		for name in widgetNames:
 			widgetList = children.get(name,[])
@@ -594,7 +600,7 @@ class Widget(object):
 		  test = guiElement.collectData('testElement')
 
 		"""
-		children = self.getNamedChildren()
+		children = self.getNamedChildren(include_unnamed=True)
 		dataList = []
 		for name in widgetNames:
 			widgetList = children.get(name,[])
