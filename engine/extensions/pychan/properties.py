@@ -91,14 +91,14 @@ class ImageProperty(WrappedProperty):
 			# we just let the NotFound exception trickle here.
 			# depedning on complains we can catch and print a warning.
 			image_info["image"] = get_manager().loadImage(image)
-			image_info["image"]._source = image
+			image_info["image"].source = image
 			self._getSetter(obj)(image_info["image"])
 
 		elif isinstance(image,fife.GuiImage):
 			# FIXME - this trickery with the hidden annotation
 			# with an _source attribute isn't really clean.
 			# Is it even necessary
-			image_info["source"] = getattr(image,"_source","")
+			image_info["source"] = getattr(image,"source","")
 			image_info["image"] = image
 			if image_info["source"]:
 				image_info["image"] = get_manager().loadImage(image)
@@ -106,7 +106,7 @@ class ImageProperty(WrappedProperty):
 		else:
 			attribute_name = "%s.%s" % (obj.__class__.__name__,self.name)
 			error_message = "%s only accepts GuiImage and python strings, not '%s'"
-			raise RuntimeError(error_message % (attribute_name, repr(source)))
+			raise RuntimeError(error_message % (attribute_name, repr(image)))
 		
 		setattr(obj, self.prop_name, image_info)
 
@@ -115,5 +115,6 @@ class ImageProperty(WrappedProperty):
 		image = d.get("image",None)
 		if not image:
 			image = fife.GuiImage()
+			image.source = ""
 		return image
 

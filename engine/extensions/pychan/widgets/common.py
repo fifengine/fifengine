@@ -69,6 +69,3 @@ def isLayouted(widget):
 	from layout import LayoutBase
 	return isinstance(widget,LayoutBase)
 
-class DummyImage(object):
-	def getWidth(self): return 0
-	def getHeight(self): return 0
