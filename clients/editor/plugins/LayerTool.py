@@ -350,7 +350,7 @@ class LayerEditor(object):
 		self._widget = pychan.loadXML('gui/layereditor.xml')
 
 		# TODO: Add access method for adopted grid types?
-		self._widget.findChild(name="gridBox").items = ['square']#, 'hex'] # Hex does not work?
+		self._widget.findChild(name="gridBox").items = ['square', 'hexagonal']
 		
 		# TODO: Ditto for pather?
 		self._widget.findChild(name="pathingBox").items = ['cell_edges_only', 'cell_edges_and_diagonals', 'freeform']
@@ -358,7 +358,7 @@ class LayerEditor(object):
 		if layer:
 			cg = layer.getCellGrid()
 			cgtype = 0
-			if cg.getType() == 'hex':
+			if cg.getType() == 'hexagonal':
 				cgtype = 1
 			
 			self._widget.distributeData({
@@ -423,24 +423,24 @@ class LayerEditor(object):
 		if grid_type == 0:
 			grid_type = "square"
 		else:
-			grid_type = "hex"
+			grid_type = "hexagonal"
 
 		# Set up layer
 		layer = self.layer
 		cellgrid = None
-		if not self.layer:
-			# TODO: FIFE currently does not support setting layer ID and cellgrid after the layer has been created
-			cellgrid = self.model.getCellGrid(grid_type)
-			if not cellgrid:
-				print "Invalid grid type"
-				return
+		
+		cellgrid = self.model.getCellGrid(grid_type)
+		if not cellgrid:
+			print "Invalid grid type"
+			return
 
-			cellgrid.setRotation(rotation)
-			cellgrid.setXScale(x_scale)
-			cellgrid.setYScale(y_scale)
-			cellgrid.setXShift(x_offset)
-			cellgrid.setYShift(y_offset)
+		cellgrid.setRotation(rotation)
+		cellgrid.setXScale(x_scale)
+		cellgrid.setYScale(y_scale)
+		cellgrid.setXShift(x_offset)
+		cellgrid.setYShift(y_offset)
 	
+		if not self.layer:
 			try:
 				layer = self.map.createLayer(str(layerId), cellgrid)
 				
@@ -448,12 +448,12 @@ class LayerEditor(object):
 				print 'The layer ' + str(layerId) + ' already exists!'
 				return
 		else:
-			cellgrid = layer.getCellGrid()
-			cellgrid.setRotation(rotation)
-			cellgrid.setXScale(x_scale)
-			cellgrid.setYScale(y_scale)
-			cellgrid.setXShift(x_offset)
-			cellgrid.setYShift(y_offset)
+			layer.setCellGrid(cellgrid)
+			try:
+				layer.setId(str(layerId))
+			except fife.NameClash:
+				print 'The layer ' + str(layerId) + ' already exists!'
+				return
 		
 		layer.setPathingStrategy(pathing)
 		

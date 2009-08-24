@@ -94,7 +94,11 @@ namespace FIFE {
 
 			/** Get the identifier for this map.
 			 */
-			const std::string& getId() { return m_id; }
+			const std::string& getId() const { return m_id; }
+
+			/** Sets the identifier for this map.
+			 */
+			void setId(const std::string& id) { m_id = id; }
 
 			/** Add a Layer to this Map. Map owns the returned pointer to the new Layer, so don't delete it!
 			 */

@@ -68,6 +68,10 @@ namespace FIFE {
 		const std::string& getId() const { return m_id; }
 		const std::string& getNamespace() const { return m_namespace; }
 
+		/** Sets the identifier for this object.
+		 */
+		void setId(const std::string& id) { m_id = id; }
+
 		/** Adds new action with given id. In case there is action already
 		 *  with given id, returns it instead of new object
 		 *  Action instances are managed by object
