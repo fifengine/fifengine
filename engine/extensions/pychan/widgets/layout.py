@@ -83,18 +83,23 @@ class LayoutBase(object):
 		#print "SPACERS",self.spacer
 
 		index = 0
+		n = len(expandable_items)
 		while used_space < available_space and expandable_items:
-			index = index % len(expandable_items)
+			index = index % n
+			delta = (available_space - used_space) / n
+			if delta == 0:
+				delta = 1
 
 			expander = expandable_items[index]
 			old_width = expander.width
-			expander.width += 1
-			if old_width == expander.width:
+			expander.width += delta
+			delta = expander.width - old_width
+			if delta == 0:
 				expandable_items.pop(index)
+				n -= 1
 			else:
-				used_space += 1
+				used_space += delta
 				index += 1
-
 		#print "AS/US - after",self,[o.width for o in expandable_items]
 		#print "SPACERS",self.spacer
 		self._applyWidth(spacers = self.spacer[:])
@@ -116,16 +121,22 @@ class LayoutBase(object):
 		#print "AS/US - before",self,[o.height for o in expandable_items]
 
 		index = 0
+		n = len(expandable_items)
 		while used_space < available_space and expandable_items:
-			index = index % len(expandable_items)
+			index = index % n
+			delta = (available_space - used_space) / n
+			if delta == 0:
+				delta = 1
 
 			expander = expandable_items[index]
-			old_width = expander.height
-			expander.height += 1
-			if old_width == expander.height:
+			old_height = expander.height
+			expander.height += delta
+			delta = expander.height - old_height
+			if delta == 0:
 				expandable_items.pop(index)
+				n -= 1
 			else:
-				used_space += 1
+				used_space += delta
 				index += 1
 
 		#print "AS/US - after",self,[o.height for o in expandable_items]
