@@ -35,7 +35,8 @@ namespace FIFE {
 	class Camera: public IRendererContainer {
 	public:
 		~Camera();
-		const std::string& getId();
+		const std::string& getId() const;
+		void setId(const std::string& id);
 		void setTilt(double tilt);
 		double getTilt() const;
 		void setRotation(double rotation);

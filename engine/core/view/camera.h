@@ -81,7 +81,11 @@ namespace FIFE {
 
 		/** Gets the identifier for this camera.
 		 */
-		const std::string& getId() { return m_id; }
+		const std::string& getId() const { return m_id; }
+
+		/** Sets the identifier for this camera.
+		 */
+		void setId(const std::string& id) { m_id = id; }
 
 		/** Sets tilt for the camera.
 		 * e.g. overhead camera has tilt 0, while traditional isometric camera has tilt 45

@@ -54,7 +54,8 @@ namespace FIFE {
 			Map(const std::string& identifier, TimeProvider* tp_master=NULL);
 			~Map();
 
-			const std::string& getId();
+			const std::string& getId() const;
+			void setId(const std::string& id);
 
 			Layer* createLayer(const std::string& identifier, CellGrid* grid);
 			void deleteLayer(Layer* index);

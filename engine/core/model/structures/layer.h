@@ -103,16 +103,24 @@ namespace FIFE {
 
 			/** Get the id of this layer.
 			 */
-			const std::string& getId() { return m_id; }
+			const std::string& getId() const { return m_id; }
+
+			/** Sets the identifier for this layer.
+			 */
+			void setId(const std::string& id) { m_id = id; }
 
 			/** Get the map this layer is contained in
 			 */
 			Map* getMap() const { return m_map; }
 
-			/** Get the Cellgrid as set in the constructor
+			/** Get the Cellgrid
 			 * @return a valid cellgrid
 			 */
 			CellGrid* getCellGrid() const { return m_grid; }
+
+			/** Set the Cellgrid
+			 */
+			void setCellGrid(CellGrid* grid) { m_grid = grid; }
 
 			/** Get the instance tree. 
 			 * @return this layers instance tree.
