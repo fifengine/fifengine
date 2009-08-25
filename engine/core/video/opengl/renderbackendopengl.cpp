@@ -182,7 +182,6 @@ namespace FIFE {
 		glBegin(GL_POINTS);
 		glVertex2i(x, y);
 		glEnd();
-		std::cout << x << ", "<< y << "\n";
 		return true;
 	}
 	
