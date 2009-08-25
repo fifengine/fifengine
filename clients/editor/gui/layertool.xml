@@ -1,4 +1,4 @@
-<Panel title="Layertool" position="10,200" min_size="100, 75">
+<Panel title="Layertool" position="10,200" min_size="110, 150">
 	<ScrollArea horizontal_scrollbar="0">
 		<VBox name="layers_wrapper">
 			<!-- Content is added dynamically here -->
