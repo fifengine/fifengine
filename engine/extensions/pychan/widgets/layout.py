@@ -281,10 +281,10 @@ class Spacer(object):
 		self.size = 0
 
 	def __str__(self):
-		return "Spacer(parent.name='%s')" % getattr(self.__parent,'name','None')
+		return "Spacer(parent.name='%s')" % getattr(self.parent,'name','None')
 
 	def __repr__(self):
-		return "<Spacer(parent.name='%s') at %x>" % (getattr(self.__parent,'name','None'),id(self))
+		return "<Spacer(parent.name='%s') at %x>" % (getattr(self.parent,'name','None'),id(self))
 
 	def _getSize(self):
 		self.size = self._size
