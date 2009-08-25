@@ -1,4 +1,4 @@
-<Panel title="Camera Editor" min_size="300, 250">
+<Panel title="Camera Editor" min_size="250, 100">
 	<VBox hexpand="1">
 		<HBox>
 			<!-- Should be replaced with a dropdown box containing open maps -->
@@ -25,13 +25,16 @@
 			<Label name="viewLabel" text="Viewport ('x,y,w,h'):" min_size="100, 10" />
 			<TextField name="viewBox" text="0,0,640,480" min_size="100, 10" />
 		</HBox>
+		
 		<HBox>
-			<Label name="refhLabel" text="Reference cell height:" min_size="100, 10" />
-			<TextField name="refhBox" min_size="100, 10" />
+			<Label name="refLabel" text="Reference cell:" min_size="100, 10" />
+			<Label name="refWLabel" text="Width:" hexpand="0" />
+			<TextField name="refwBox" min_size="40, 10" />
 		</HBox>
 		<HBox>
-			<Label name="refwLabel" text="Reference cell width:" min_size="100, 10" />
-			<TextField name="refwBox" min_size="100, 10" />
+			<Spacer min_size="100" />
+			<Label name="refHLabel" text="Height:" hexpand="0" />
+			<TextField name="refhBox" min_size="40, 10" />
 		</HBox>
 		<HBox>
 			<Label name="rotLabel" text="Rotation:" min_size="100, 10" />
