@@ -546,7 +546,7 @@ namespace FIFE {
 						if (action) {
 							int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
 							Animation& animation = m_apool->getAnimation(animation_id);
-							unsigned int animtime = instance->getRuntime() % animation.getDuration();
+							unsigned int animtime = instance->getActionRuntime() % animation.getDuration();
 							image = animation.getFrameByTimestamp(animtime);
 						}
 					}
