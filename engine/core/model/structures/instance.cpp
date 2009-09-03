@@ -54,6 +54,7 @@ namespace FIFE {
 			m_speed(0),
 			m_repeating(false),
 			m_action_start_time(0),
+			m_action_offset_time(0),
 			m_prev_call_time(0),
 			m_pather_session_id(-1),
 			m_pather(pather),
@@ -77,6 +78,8 @@ namespace FIFE {
 		bool m_repeating;
 		// action start time (ticks)
 		unsigned int m_action_start_time;
+		// action offset time (ticks) for resuming an action
+		unsigned int m_action_offset_time;
 		// ticks since last call
 		unsigned int m_prev_call_time;
 		// session id for pather
@@ -383,9 +386,11 @@ namespace FIFE {
 				}
 			} else {
 				FL_DBG(_log, "action does not contain target for movement");
-				if (m_activity->m_timeprovider->getGameTime() - info->m_action_start_time >= info->m_action->getDuration()) {
+				if (m_activity->m_timeprovider->getGameTime() - info->m_action_start_time + info->m_action_offset_time >= info->m_action->getDuration()) {
 					if (info->m_repeating) {
 						info->m_action_start_time = m_activity->m_timeprovider->getGameTime();
+						// prock: offset no longer needed
+						info->m_action_offset_time = 0;
 					} else {
 						finalizeAction();
 					}
@@ -471,9 +476,13 @@ namespace FIFE {
 		if (m_activity && m_activity->m_actioninfo) {
 			if(!m_activity->m_timeprovider)
 				bindTimeProvider();
-			return m_activity->m_timeprovider->getGameTime() - m_activity->m_actioninfo->m_action_start_time;
+			return m_activity->m_timeprovider->getGameTime() - m_activity->m_actioninfo->m_action_start_time + m_activity->m_actioninfo->m_action_offset_time;
 		}
 		return getRuntime();
+	}
+
+	void Instance::setActionRuntime(unsigned int time_offset) {
+		m_activity->m_actioninfo->m_action_offset_time = time_offset;
 	}
 
 	void Instance::bindTimeProvider() {
