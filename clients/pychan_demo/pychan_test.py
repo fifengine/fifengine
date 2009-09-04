@@ -76,6 +76,12 @@ class PyChanExample(object):
 			self.widget.hide()
 		self.widget = None
 
+class TextSetter(object):
+	def __init__(self,text):
+		self.text = text
+	def __call__(self,widget):
+		widget.text = self.text
+
 class DemoApplication(basicapplication.ApplicationBase):
 	def __init__(self):
 		# Let the ApplicationBase initialise FIFE
@@ -101,7 +107,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		# A simple hover-effect for the credits label
 		credits = self.gui.findChild(name="creditsLink")
 		# setEnterCallback is deprecated - we use it here to test it.
-		credits.setEnterCallback(lambda w : credits._setText(u"CREDITS"))
+		credits.setEnterCallback(TextSetter(u"CREDITS"))
 		# Note that we can't simply write:
 		# credits.capture(credits._setText(u"Credits"), event_name="mouseExited")
 		# that's because that would call credits._setText _NOW_ and we want to call

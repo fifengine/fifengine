@@ -40,9 +40,17 @@ def applyOnlySuitable(func,*args,**kwargs):
 	if hasattr(func,'im_func'):
 		code = func.im_func.func_code
 		varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
-	else:
+	elif hasattr(func,'func_code'):
 		code = func.func_code
 		varnames = code.co_varnames[0:code.co_argcount]
+	elif hasattr(func,'__call__'):
+		func = func.__call__
+		if hasattr(func,'im_func'):
+			code = func.im_func.func_code
+			varnames = code.co_varnames[1:code.co_argcount]#ditch bound instance
+		elif hasattr(func,'func_code'):
+			code = func.func_code
+			varnames = code.co_varnames[0:code.co_argcount]
 
 	#http://docs.python.org/lib/inspect-types.html
 	if code.co_flags & 8:
