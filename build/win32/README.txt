@@ -5,7 +5,7 @@ FIFE Win32 compile guide for building the 2009.0 release version
 Installation / build process
 ==========================
 1. Check out the latest engine sources from SVN:
-Repository URL: https://svn1.cvsdude.com/fife/engine/trunk
+Repository URL: http://fife.svn.cvsdude.com/engine/trunk
 
 2.1 Get the latest compile SDK for Win32 from the FIFE wiki:
 http://wiki.fifengine.de/index.php?title=Download_section#Compile_SDKs
