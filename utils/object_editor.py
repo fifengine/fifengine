@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import sys, os, wx
 import wx.grid as gridlib
 
