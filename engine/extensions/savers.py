@@ -160,6 +160,7 @@ class ModelSaver:
 				(None, 'x_offset'): str(cellgrid.getXShift()),
 				(None, 'y_offset'): str(cellgrid.getYShift()),
 				(None, 'pathing'): self.pathing_val_to_str(layer.getPathingStrategy()),
+				(None, 'transparency'): str(layer.getLayerTransparency()),
 			}
 			attr_names = {
 				(None, 'id'): 'id',
