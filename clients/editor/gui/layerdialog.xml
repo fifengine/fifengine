@@ -29,6 +29,10 @@
 			<Label name="yOffsetLabel" text="Y:" hexpand="0" />
 			<TextField name="yOffsetBox" text="0.0" min_size="45,10" />
 		</HBox>
+		<HBox>
+			<Label name="transLabel" text="Transparency:" hexpand="0" />
+			<TextField name="transBox" text="0" min_size="45,10" />
+		</HBox>
 	</VBox>
 	
 	<HBox>

@@ -77,6 +77,8 @@ namespace FIFE {
 			Instance* getInstance(const std::string& id);
 
 			void setInstancesVisible(bool vis);
+			void setLayerTransparency(uint8_t transparency);
+			uint8_t getLayerTransparency();
 			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;

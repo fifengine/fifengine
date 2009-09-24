@@ -51,33 +51,33 @@ namespace FIFE {
 	 *
 	 * CELL_EDGES_ONLY allows pather to use only cell edges when moving instances from cell to cell on map
 	 * CELL_EDGES_AND_DIAGONALS allows pather to use both cell edges and diagonals when moving instances from cell to cell on map
-	 * FREEFORM allows pather to find shortest route regardless of cellgrid used on the layer 
+	 * FREEFORM allows pather to find shortest route regardless of cellgrid used on the layer
 	 */
 	enum PathingStrategy {
 		CELL_EDGES_ONLY,
 		CELL_EDGES_AND_DIAGONALS,
 		FREEFORM
 	};
-	
+
 	/** Listener interface for changes happening on a layer
 	 */
 	class LayerChangeListener {
 	public:
 		virtual ~LayerChangeListener() {};
-		
+
 		/** Called when some instance is changed on layer. @see InstanceChangeType
 		 * @param layer where change occurred
 		 * @param changedInstances list of instances containing some changes
 		 * @note Does not report creations and deletions
 		 */
 		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& changedInstances) = 0;
-		
+
 		/** Called when some instance gets created on layer
 		 * @param layer where change occurred
 		 * @param instance which got created
 		 */
 		virtual void onInstanceCreate(Layer* layer, Instance* instance) = 0;
-		
+
 		/** Called when some instance gets deleted on layer
 		 * @param layer where change occurred
 		 * @param instance which will be deleted
@@ -85,8 +85,8 @@ namespace FIFE {
 		 */
 		virtual void onInstanceDelete(Layer* layer, Instance* instance) = 0;
 	};
-	
-	
+
+
 	/** A basic layer on a map
 	 */
 	class Layer : public ResourceClass {
@@ -122,7 +122,7 @@ namespace FIFE {
 			 */
 			void setCellGrid(CellGrid* grid) { m_grid = grid; }
 
-			/** Get the instance tree. 
+			/** Get the instance tree.
 			 * @return this layers instance tree.
 			 */
 			InstanceTree* getInstanceTree(void) const { return m_instanceTree; }
@@ -139,12 +139,12 @@ namespace FIFE {
 			/** Add an instance of an object at a specific position
 			 */
 			Instance* createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id="");
-			
+
 			/** Add a valid instance at a specific position. This is temporary. It will be moved to a higher level
 			later so that we can ensure that each Instance only lives in one layer.
 			 */
 			bool addInstance(Instance* instance, const ExactModelCoordinate& p);
-						
+
 			/** Remove an instance from the layer
 			 */
 			void deleteInstance(Instance* object);
@@ -170,6 +170,15 @@ namespace FIFE {
 			/** Set object visibility
 			 */
 			void setInstancesVisible(bool vis);
+
+			/** Sets the transparency of all instances on the layer.  0=opaque, 255=transparent
+			 * @parm transparency Transparency value from 0-255.
+			*/
+			void setLayerTransparency(uint8_t transparency);
+
+			/** Returns the layer's transparency value
+			*/
+			uint8_t getLayerTransparency();
 
 			/** Retrieves the minimum/maximum coordinates of instances on the layer.
 			 * @param min A reference to a ModelCoordinate that will hold the minimum coordinate.
@@ -199,31 +208,31 @@ namespace FIFE {
 			 * @returns true if layer was changed since the last update, false otherwise
 			 */
 			bool update();
-			
+
 			/** Sets pathing strategy for the layer
 			 * @see PathingStrategy
 			 */
 			void setPathingStrategy(PathingStrategy strategy) { m_pathingstrategy = strategy; }
-			
+
 			/** Gets pathing strategy for the layer
 			 * @see PathingStrategy
 			 */
 			PathingStrategy getPathingStrategy() const { return m_pathingstrategy; }
-			
+
 			/** Adds new change listener
 			* @param listener to add
 			*/
 			void addChangeListener(LayerChangeListener* listener);
-	
+
 			/** Removes associated change listener
 			* @param listener to remove
 			*/
 			void removeChangeListener(LayerChangeListener* listener);
-			
+
 			/** Returns true, if layer information was changed during previous update round
 			*/
 			bool isChanged() { return m_changed; }
-			
+
 			/** Returns instances that were changed during previous update round.
 			 * @note does not contain created or deleted instances
 			 */
@@ -236,24 +245,26 @@ namespace FIFE {
 
 			bool m_instances_visibility;
 
+			uint8_t m_transparency;
+
 			// all the instances on this layer
 			std::vector<Instance*> m_instances;
-	
+
 			//The instance tree
 			InstanceTree* m_instanceTree;
 
 			// layer's cellgrid
 			CellGrid* m_grid;
-			
+
 			// pathing strategy for the layer
 			PathingStrategy m_pathingstrategy;
-			
+
 			// listeners for layer changes
 			std::vector<LayerChangeListener*> m_changelisteners;
-			
+
 			// holds changed instances after each update
 			std::vector<Instance*> m_changedinstances;
-			
+
 			// true if layer (or it's instance) information was changed during previous update round
 			bool m_changed;
 	};

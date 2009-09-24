@@ -58,7 +58,8 @@ class LayerDialog(object):
 				"yScaleBox" : unicode(cg.getYScale()),
 				"rotBox" : unicode(cg.getRotation()),
 				"xOffsetBox" : unicode(cg.getXShift()),
-				"yOffsetBox" : unicode(cg.getYShift())
+				"yOffsetBox" : unicode(cg.getYShift()),
+				"transBox" : unicode(layer.getLayerTransparency())
 			})
 			
 			self._widget.findChild(name="pathingBox").selected = int(layer.getPathingStrategy())
@@ -108,6 +109,19 @@ class LayerDialog(object):
 			print 'Please enter integer or decimal value for rotation.'
 			return
 			
+		try:
+			transparency = int(self._widget.collectData('transBox'))
+		except ValueError:
+			print 'Please enter an integer value in the range of 0-255 for transparency.'
+			return
+			
+		
+		#Clamp the transparency value between 0 and 255
+		if transparency < 0:
+			transparency = 0
+		if transparency > 255:
+			transparency = 255
+		
 		grid_type = int(self._widget.collectData('gridBox'))
 		pathing = int(self._widget.collectData('pathingBox'))
 
@@ -147,6 +161,7 @@ class LayerDialog(object):
 				return
 		
 		layer.setPathingStrategy(pathing)
+		layer.setLayerTransparency(transparency)
 		
 		self.engine.getView().resetRenderers()
 		

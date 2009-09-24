@@ -54,34 +54,34 @@ namespace {
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	InstanceRenderer::OutlineInfo::OutlineInfo(): 
-		r(0), 
-		g(0), 
-		b(0), 
-		width(1), 
-		outline(NULL), 
+	InstanceRenderer::OutlineInfo::OutlineInfo():
+		r(0),
+		g(0),
+		b(0),
+		width(1),
+		outline(NULL),
 		curimg(NULL) {
 	}
 	InstanceRenderer::ColoringInfo::ColoringInfo():
-		r(0), 
-		g(0), 
-		b(0), 
+		r(0),
+		g(0),
+		b(0),
 		overlay(NULL),
 		curimg(NULL) {
 	}
-	
-	InstanceRenderer::OutlineInfo::~OutlineInfo() { 
+
+	InstanceRenderer::OutlineInfo::~OutlineInfo() {
 		delete outline;
 	}
-	
+
 	InstanceRenderer::ColoringInfo::~ColoringInfo() {
 		delete overlay;
 	}
-	
+
 	InstanceRenderer* InstanceRenderer::getInstance(IRendererContainer* cnt) {
 		return dynamic_cast<InstanceRenderer*>(cnt->getRenderer("InstanceRenderer"));
 	}
-	
+
 	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
@@ -102,21 +102,21 @@ namespace FIFE {
 
 	InstanceRenderer::~InstanceRenderer() {
 	}
-	
+
 	void InstanceRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
 		// patch #335 by abeyer
 		if (!layer->areInstancesVisible()) {
 			FL_DBG(_log, "Layer instances hidden");
 			return;
 		}
-			
+
 		FL_DBG(_log, "Iterating layer...");
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw instances");
 			return;
 		}
-		
+
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
 
 		std::vector<Instance*>::const_iterator instance_it = instances.begin();
@@ -124,46 +124,59 @@ namespace FIFE {
 			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it);
 			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
+
+			unsigned char trans = visual->getTransparency();
+
+			/**
+			 *  the instance transparency value take precedence. If it's 0 use the layer trans
+			 *
+			 *	\todo Instances cannot be completely opaque when their layer's transparency is non zero.
+			 */
+			if (trans == 0) {
+				unsigned char layer_trans = layer->getLayerTransparency();
+				trans = layer_trans;
+			}
+
 			InstanceVisualCacheItem& vc = visual->getCacheItem(cam);
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
-			
+
 			if (any_effects) {
 				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
 				if (outline_it != m_instance_outlines.end()) {
-					bindOutline(outline_it->second, vc, cam)->render(vc.dimensions);
+					bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, 255-trans);
 				}
-			
+
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				if (coloring_it != m_instance_colorings.end()) {
-					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions);
+					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, 255-trans);
 					continue; // Skip normal rendering after drawing overlay
 				}
 			}
-			
-			vc.image->render(vc.dimensions);
+
+			vc.image->render(vc.dimensions, 255-trans);
 		}
 	}
-	
+
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam) {
 		if (info.curimg == vc.image) {
 			return info.outline;
 		} else {
 			info.curimg = vc.image;
 		}
-		
+
 		if (info.outline) {
 			delete info.outline; // delete old mask
 			info.outline = NULL;
 		}
 		SDL_Surface* surface = vc.image->getSurface();
 		SDL_Surface* outline_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
-		
+
 		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
 		SDLImage* img = new SDLImage(outline_surface);
-		
+
 		// TODO: optimize...
 		uint8_t r, g, b, a = 0;
-		
+
 		// vertical sweep
 		for (unsigned int x = 0; x < img->getWidth(); x ++) {
 			uint8_t prev_a = 0;
@@ -202,7 +215,7 @@ namespace FIFE {
 				prev_a = a;
 			}
 		}
-		
+
 		// In case of OpenGL backend, SDLImage needs to be converted
 		info.outline = m_renderbackend->createImage(img->detachSurface());
 		delete img;
@@ -221,12 +234,12 @@ namespace FIFE {
 		}
 		SDL_Surface* surface = vc.image->getSurface();
 		SDL_Surface* overlay_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
-		
+
 		// needs to use SDLImage here, since GlImage does not support drawing primitives atm
 		SDLImage* img = new SDLImage(overlay_surface);
-		
+
 		uint8_t r, g, b, a = 0;
-		
+
 		for (unsigned int x = 0; x < img->getWidth(); x ++) {
 			for (unsigned int y = 0; y < img->getHeight(); y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
@@ -235,7 +248,7 @@ namespace FIFE {
 				}
 			}
 		}
-		
+
 		// In case of OpenGL backend, SDLImage needs to be converted
 		info.overlay = m_renderbackend->createImage(img->detachSurface());
 		delete img;
@@ -248,7 +261,7 @@ namespace FIFE {
 		info.g = g;
 		info.b = b;
 		info.width = width;
-		
+
 		m_instance_outlines[instance] = info;
 	}
 
@@ -257,29 +270,29 @@ namespace FIFE {
 		info.r = r;
 		info.g = g;
 		info.b = b;
-		
+
 		m_instance_colorings[instance] = info;
 	}
 
 	void InstanceRenderer::removeOutlined(Instance* instance) {
 		m_instance_outlines.erase(instance);
 	}
-	
+
 	void InstanceRenderer::removeColored(Instance* instance) {
 		m_instance_colorings.erase(instance);
 	}
-	
+
 	void InstanceRenderer::removeAllOutlines() {
 		m_instance_outlines.clear();
 	}
-	
+
 	void InstanceRenderer::removeAllColored() {
 		m_instance_colorings.clear();
 	}
-	
+
 	void InstanceRenderer::reset() {
 		removeAllOutlines();
 		removeAllColored();
 	}
-	
+
 }

@@ -60,7 +60,7 @@
 	<import file="../objects/agents/boy/object.xml"></import>
 	<import file="../objects/agents/girl/object.xml"></import>
 	<import file="../objects/buildings/beach_bar/object.xml"></import>
-	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TechdemoMapTileLayer" x_scale="1.0" y_scale="1.0" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TechdemoMapTileLayer" transparency="0" x_scale="1.0" y_scale="1.0" rotation="0.0">
 		<instances>
 			<i x="-1.0" o="sands:01" y="1.0" r="0" z="0.0" ns="http://www.fifengine.de/xml/rio_de_hola"></i>
 			<i x="0.0" o="sands:01" z="0.0" y="1.0" r="0"></i>
@@ -4740,7 +4740,7 @@
 			<i x="7.0" o="sands:01" z="0.0" y="-24.0" r="0"></i>
 		</instances>
 	</layer>
-	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="GroundLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="GroundLayer" transparency="0" x_scale="0.5" y_scale="0.5" rotation="0.0">
 		<instances>
 			<i x="9.0" o="sands:02" z="0.0" y="9.0" r="0"></i>
 			<i x="-2.0" o="sands:02" z="0.0" y="0.0" r="0"></i>
@@ -5176,7 +5176,7 @@
 			<i x="-34.0" o="sands:02" z="0.0" y="-27.0" r="0"></i>
 		</instances>
 	</layer>
-	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TechdemoMapGroundObjectLayer" x_scale="0.5" y_scale="0.5" rotation="0.0">
+	<layer x_offset="0.0" pathing="cell_edges_and_diagonals" y_offset="0.0" grid_type="square" id="TechdemoMapGroundObjectLayer" transparency="0" x_scale="0.5" y_scale="0.5" rotation="0.0">
 		<instances>
 			<i x="8.0" o="shrine" z="0.0" y="-1.0" r="180"></i>
 			<i x="11.0" o="shrine" z="0.0" y="-1.0" r="0"></i>

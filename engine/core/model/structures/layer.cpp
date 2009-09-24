@@ -44,6 +44,7 @@ namespace FIFE {
 		: m_id(identifier),
 		m_map(map),
 		m_instances_visibility(true),
+		m_transparency(0),
 		m_instanceTree(new InstanceTree()),
 		m_grid(grid),
 		m_pathingstrategy(CELL_EDGES_ONLY),
@@ -63,10 +64,10 @@ namespace FIFE {
 
 	Instance* Layer::createInstance(Object* object, const ModelCoordinate& p, const std::string& id) {
 		ExactModelCoordinate emc(static_cast<double>(p.x), static_cast<double>(p.y), static_cast<double>(p.z));
-		return createInstance(object, emc, id);	
+		return createInstance(object, emc, id);
 	}
 
-	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) { 
+	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
 		Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
@@ -74,7 +75,7 @@ namespace FIFE {
 		Instance* instance = new Instance(object, l, id);
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
-		
+
 		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
 		while (i != m_changelisteners.end()) {
 			(*i)->onInstanceCreate(this, instance);
@@ -83,13 +84,13 @@ namespace FIFE {
 		m_changed = true;
 		return instance;
 	}
-	
+
 	bool Layer::addInstance(Instance* instance, const ExactModelCoordinate& p){
         if( !instance ){
             FL_ERR(_log, "Tried to add an instance to layer, but given instance is invalid");
             return false;
         }
-        
+
 	    Location l;
 		l.setLayer(this);
 		l.setExactLayerCoordinates(p);
@@ -105,14 +106,14 @@ namespace FIFE {
 		m_changed = true;
 		return true;
 	}
-	
+
 	void Layer::deleteInstance(Instance* instance) {
 		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
 		while (i != m_changelisteners.end()) {
 			(*i)->onInstanceDelete(this, instance);
 			++i;
 		}
-	
+
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
 			if(*it == instance) {
@@ -168,7 +169,7 @@ namespace FIFE {
 		if (!layer) {
 			layer = this;
 		}
-		
+
 		bool first_found = false;
 		for (std::vector<Instance*>::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
 			if (!first_found) {
@@ -177,19 +178,19 @@ namespace FIFE {
 				first_found = true;
 			} else {
 				ModelCoordinate coord = (*i)->getLocationRef().getLayerCoordinates(layer);
-	
+
 				if(coord.x < min.x) {
 					min.x = coord.x;
 				}
-				
+
 				if(coord.x > max.x) {
 					max.x = coord.x;
 				}
-	
+
 				if(coord.y < min.y) {
 					min.y = coord.y;
 				}
-				
+
 				if(coord.y > max.y) {
 					max.y = coord.y;
 				}
@@ -204,6 +205,15 @@ namespace FIFE {
 	void Layer::setInstancesVisible(bool vis) {
 		m_instances_visibility = vis;
 	}
+
+	void Layer::setLayerTransparency(uint8_t transparency) {
+		m_transparency = transparency;
+	}
+
+	uint8_t Layer::getLayerTransparency() {
+		return m_transparency;
+	}
+
 	void Layer::toggleInstancesVisible() {
 		m_instances_visibility = !m_instances_visibility;
 	}
@@ -242,7 +252,7 @@ namespace FIFE {
 		m_changed = false;
 		return retval;
 	}
-	
+
 	void Layer::addChangeListener(LayerChangeListener* listener) {
 		m_changelisteners.push_back(listener);
 	}

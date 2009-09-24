@@ -29,7 +29,7 @@ namespace FIFE {
 	public:
 		virtual ~Visual2DGfx();
 		void setTransparency(uint8_t transparency);
-		unsigned int getTransparency();
+		uint8_t getTransparency();
 		void setVisible(bool visible);
 		unsigned int isVisible();
 	private:
