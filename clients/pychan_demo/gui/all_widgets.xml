@@ -2,13 +2,13 @@
 	<HBox>
 		<VBox>
 			<Label text="ScrollArea with ListBox:"/>
-			<ScrollArea size="200,100">
+			<ScrollArea min_size="200,100">
 				<ListBox name="demoList" min_size="100,100" />
 			</ScrollArea>
 		</VBox>
 		<VBox>
 			<Label text="ScrollArea with TextBox:"/>
-			<ScrollArea size="200,100"  horizontal_scrollbar="0">
+			<ScrollArea min_size="200,100"  horizontal_scrollbar="0">
 				<TextBox name="demoText" min_size="100,100" />
 			</ScrollArea>
 		</VBox>
