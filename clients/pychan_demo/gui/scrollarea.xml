@@ -1,6 +1,6 @@
 <Window title="ScrollArea">
 	<Label text="A bullet list in a ScrollArea" />
-	<ScrollArea size="400,200">
+	<ScrollArea min_size="200,100">
 		<VBox>
 			<HBox name="hbox1">
 				<Button text="*"/><Spacer/><Label text="1. Documentation"/>
