@@ -1,132 +1,270 @@
-# coding: utf-8
-# ###################################################
-# Copyright (C) 2008 The Zero-Projekt team
-# http://zero-projekt.net
-# info@zero-projekt.net
-# This file is part of Zero "Was vom Morgen blieb"
-#
-# The Zero-Projekt codebase is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the
-# Free Software Foundation, Inc.,
-# 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-# ###################################################
+# -*- coding: utf-8 -*-
 
-""" A layertool plugin for FIFedit """
+# ####################################################################
+#  Copyright (C) 2005-2009 by the FIFE team
+#  http://www.fifengine.de
+#  This file is part of FIFE.
+#
+#  FIFE is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License, or (at your option) any later version.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the
+#  Free Software Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# ####################################################################
+
+""" A layer tool for FIFedit """
 
 import fife
+import pychan
+import pychan.widgets as widgets
+from pychan.tools import callbackWithArguments as cbwa
+
 import scripts.plugin as plugin
 import scripts.editor
 from scripts.events import *
 from scripts.gui.action import Action
-import pychan
-import pychan.widgets as widgets
-from pychan.tools import callbackWithArguments as cbwa
 from scripts.gui.layerdialog import LayerDialog
-
-# default should be pychan default, highlight can be choosen (format: r,g,b)
-_DEFAULT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['base_color']
-_HIGHLIGHT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['selection_color']
-
-# the dynamicly created widgets have the name scheme prefix + layerid
-_LABEL_NAME_PREFIX = "select_"
 
 class LayerTool(plugin.Plugin):
 	""" The B{LayerTool} allows to select and show / hide layers of a loaded
 		map as well as creating new layers or edit layer properties
 	"""
+	
+	# default should be pychan default, highlight can be choosen (format: r,g,b)
+	DEFAULT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['base_color']
+	HIGHLIGHT_BACKGROUND_COLOR = pychan.internal.DEFAULT_STYLE['default']['selection_color']
+
+	# the dynamicly created widgets have the name scheme prefix + layerid
+	LABEL_NAME_PREFIX = "select_"
+
 	def __init__(self):	
+		# Editor instance
 		self._editor = None
+		
+		# Plugin variables
 		self._enabled = False
+		
+		# Current mapview
 		self._mapview = None
 		
-		self._showAction = None
+		# Toolbar button to display LayerTool
+		self._action_show = None
 		
-		self.subwrappers = []
-		
+		# GUI
 		self._layer_wizard = None
+		self._container = None
+		self._wrapper = None
+		self._remove_layer_button = None
+		self._create_layer_button = None
+		self._edit_layer_button = None
 			
-	#--- Plugin function ---#
+	#--- Plugin functions ---#
 	def enable(self):
-		""" """
+		""" Enable plugin """
 		if self._enabled is True:
 			return
 			
 		# Fifedit plugin data
 		self._editor = scripts.editor.getEditor()
-		self._showAction = Action(u"LayerTool", checkable=True)
-		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
-		self._editor._toolsMenu.addAction(self._showAction)
+		self._action_show = Action(u"LayerTool", checkable=True)
+		scripts.gui.action.activated.connect(self.toggle, sender=self._action_show)
+		self._editor._toolsMenu.addAction(self._action_show)
 
-		self.__create_gui()
+		self._createGui()
 		
 		self.toggle()
 		
 		events.postMapShown.connect(self.update)
 
 	def disable(self):
-		""" """
+		""" Disable plugin """
 		if self._enabled is False:
 			return
-		self.container.setDocked(False)
-		self.container.hide()
+		self._container.setDocked(False)
+		self._container.hide()
 		
 		events.postMapShown.disconnect(self.update)
 		
-		self._editor._toolsMenu.removeAction(self._showAction)
+		self._editor._toolsMenu.removeAction(self._action_show)
 
 	def isEnabled(self):
-		""" """
+		""" Returns True if plugin is enabled """
 		return self._enabled;
 
 	def getName(self):
-		""" """
+		""" Return plugin name """
 		return u"Layertool"
 	
 	#--- End plugin functions ---#
-	
-	def __create_gui(self):
-		""" create the basic gui container """
-		self.container =  pychan.loadXML('gui/layertool.xml')
-		self.wrapper = self.container.findChild(name="layers_wrapper")
-		self.removeLayerButton = self.container.findChild(name="remove_layer_button")
-		self.createLayerButton = self.container.findChild(name="add_layer_button")
-		self.editLayerButton = self.container.findChild(name="edit_layer_button")
+	def showLayerWizard(self):
+		""" Show layer wizard """
+		if not self._mapview: return
 		
-		self.removeLayerButton.capture(self.removeSelectedLayer)
-		self.removeLayerButton.capture(cbwa(self._editor.getStatusBar().showTooltip, self.removeLayerButton.helptext), 'mouseEntered')
-		self.removeLayerButton.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		if self._layer_wizard: self._layer_wizard._widget.hide()
+		self._layer_wizard = LayerDialog(self._editor.getEngine(), self._mapview.getMap(), callback=self._layerCreated)
 		
-		self.createLayerButton.capture(self.showLayerWizard)
-		self.createLayerButton.capture(cbwa(self._editor.getStatusBar().showTooltip, self.createLayerButton.helptext), 'mouseEntered')
-		self.createLayerButton.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+	def showEditDialog(self):
+		""" Show layerdialog for active layer """
+		if not self._mapview: return
+		layer = self.getActiveLayer()
+		if not layer: return
 		
-		self.editLayerButton.capture(self.showEditDialog)
-		self.editLayerButton.capture(cbwa(self._editor.getStatusBar().showTooltip, self.editLayerButton.helptext), 'mouseEntered')
-		self.editLayerButton.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		if self._layer_wizard: self._layer_wizard._widget.hide()
+		self._layer_wizard = LayerDialog(self._editor.getEngine(), self._mapview.getMap(), layer=layer, callback=cbwa(self.update, self._mapview))
 		
-		self.update(None)
-
-	def _adjust_position(self):
-		"""	adjusts the position of the container - we don't want to
-		let the window appear at the center of the screen.
-		(new default position: left, beneath the tools window)
+	def clear(self):
+		""" Remove all subwrappers """
+		self._wrapper.removeAllChildren()
+		
+	def update(self, mapview):
+		""" Update layertool with information from mapview
+		
+		We group one ToggleButton and one Label into a HBox, the main wrapper
+		itself is a VBox and we also capture both the Button and the Label to listen
+		for mouse actions
+		
+		@type	event:	object
+		@param	event:	pychan mouse event
 		"""
-		self.container.position = (50, 200)
+		layers = []
+		self._mapview = mapview
+		if self._mapview is not None:
+			layers = self._mapview.getMap().getLayers()
+		
+		self.clear()
+		
+		if len(layers) <= 0:
+			if not self._mapview:
+				layerid = "No map is open"
+			else:
+				layerid = "No layers"
+			subwrapper = pychan.widgets.HBox()
+
+			layerLabel = pychan.widgets.Label()
+			layerLabel.text = unicode(layerid)
+			layerLabel.name = LayerTool.LABEL_NAME_PREFIX + layerid
+			subwrapper.addChild(layerLabel)
+			
+			self._wrapper.addChild(subwrapper)
+		
+		active_layer = self.getActiveLayer()
+		if active_layer:
+			active_layer = active_layer.getId()
+		for layer in reversed(layers):
+			layerid = layer.getId()
+			subwrapper = pychan.widgets.HBox()
+
+			toggleVisibleButton = pychan.widgets.ToggleButton(hexpand=0, up_image="gui/icons/is_visible.png", down_image="gui/icons/is_visible.png", hover_image="gui/icons/is_visible.png")
+			toggleVisibleButton.name = "toggle_" + layerid
+			if layer.areInstancesVisible():
+				toggleVisibleButton.toggled = True
+			toggleVisibleButton.capture(self.toggleLayerVisibility)
+			
+			layerLabel = pychan.widgets.Label()
+			layerLabel.text = unicode(layerid)
+			layerLabel.name = LayerTool.LABEL_NAME_PREFIX + layerid
+			layerLabel.capture(self.selectLayer,"mousePressed")
+			
+			if active_layer == layerid:
+				layerLabel.background_color	= LayerTool.HIGHLIGHT_BACKGROUND_COLOR
+				layerLabel.foreground_color	= LayerTool.HIGHLIGHT_BACKGROUND_COLOR
+				layerLabel.base_color		= LayerTool.HIGHLIGHT_BACKGROUND_COLOR
+			
+			subwrapper.addChild(toggleVisibleButton)
+			subwrapper.addChild(layerLabel)
+			
+			self._wrapper.addChild(subwrapper)
+		
+		self._container.adaptLayout()		
+			
+	def toggleLayerVisibility(self, event, widget):
+		""" Callback for ToggleButtons 
+		
+		Toggle the chosen layer visible / invisible. If the active layer is hidden,
+		it will be deselected.
+		
+		@type	event:	object
+		@param	event:	pychan mouse event
+		@type	widget:	object
+		@param	widget:	the pychan widget where the event occurs, transports the layer id in it's name
+		"""
+
+		layerid = widget.name[len(LayerTool.LABEL_NAME_PREFIX):]
+		
+		layer = self._mapview.getMap().getLayer(layerid)
+		active_layer = self.getActiveLayer()
+		if active_layer:
+			active_layer = active_layer.getId()
+		
+		if layer.areInstancesVisible():
+			layer.setInstancesVisible(False)
+		else:
+			layer.setInstancesVisible(True)
+			
+		if active_layer == layerid:
+			self.resetSelection()
+			
+	def getActiveLayer(self):
+		""" Returns the active layer """
+		if self._mapview:
+			return self._mapview.getController()._layer
+		
+	def selectLayer(self, event, widget=None, layerid=None):
+		""" Callback for Labels 
+		
+		We hand the layerid over to the mapeditor module to select a 
+		new active layer
+		
+		Additionally, we mark the active layer widget (changing base color) and reseting the previous one
+
+		@type	event:	object
+		@param	event:	pychan mouse event
+		@type	widget:	object
+		@param	widget:	the pychan widget where the event occurs, transports the layer id in it's name
+		@type	layerid: string
+		@param	layerid: the layer id
+		"""
+		
+		if not widget and not layerid:
+			print "No layer ID or widget passed to LayerTool.selectLayer"
+			return
+		
+		if widget is not None:
+			layerid = widget.name[len(LayerTool.LABEL_NAME_PREFIX):]	
+		
+		self.resetSelection()
+		
+		widget.background_color = LayerTool.HIGHLIGHT_BACKGROUND_COLOR
+		widget.foreground_color = LayerTool.HIGHLIGHT_BACKGROUND_COLOR
+		widget.base_color = LayerTool.HIGHLIGHT_BACKGROUND_COLOR
+		
+		self._mapview.getController().selectLayer(layerid)
+		
+	def resetSelection(self):
+		""" Deselects selected layer """
+		previous_active_layer = self.getActiveLayer()
+		if previous_active_layer is not None:
+			previous_layer_id = previous_active_layer.getId()
+			previous_active_widget = self._container.findChild(name=LayerTool.LABEL_NAME_PREFIX + previous_layer_id)
+			previous_active_widget.background_color = LayerTool.DEFAULT_BACKGROUND_COLOR
+			previous_active_widget.foreground_color = LayerTool.DEFAULT_BACKGROUND_COLOR
+			previous_active_widget.base_color = LayerTool.DEFAULT_BACKGROUND_COLOR
+			previous_active_widget.text = unicode(previous_layer_id)
+			
+		self._mapview.getController().selectLayer(None)
+		
 		
 	def removeSelectedLayer(self):
-		"""
-		
-		"""
+		""" Deletes the selected layer """
 		if not self._mapview: return
 		
 		if self._mapview.getMap().getNumLayers() <= 1:
@@ -136,7 +274,7 @@ class LayerTool(plugin.Plugin):
 		layer = self.getActiveLayer()
 		if not layer: return
 		
-		self.select_no_layer()
+		self.resetSelection()
 		
 		map = self._mapview.getMap()		
 		
@@ -158,179 +296,53 @@ class LayerTool(plugin.Plugin):
 		
 		map.deleteLayer(layer)
 		self.update(self._mapview)
-		
-	def showLayerWizard(self):
-		if not self._mapview: return
-		
-		if self._layer_wizard: self._layer_wizard._widget.hide()
-		self._layer_wizard = LayerDialog(self._editor.getEngine(), self._mapview.getMap(), callback=self._layerCreated)
-		
-	def _layerCreated(self, layer):
-		self.update(self._mapview)
-		self.select_active_layer(None, self.wrapper.findChild(name=_LABEL_NAME_PREFIX + layer.getId()))
-		
-	def showEditDialog(self):
-		if not self._mapview: return
-		layer = self.getActiveLayer()
-		if not layer: return
-		
-		if self._layer_wizard: self._layer_wizard._widget.hide()
-		self._layer_wizard = LayerDialog(self._editor.getEngine(), self._mapview.getMap(), layer=layer, callback=cbwa(self.update, self._mapview))
-		
-	def clear(self):
-		""" remove all subwrappers """
-		if self.subwrappers is []: return
-		
-		for subwrapper in self.subwrappers:
-			self.wrapper.removeChild(subwrapper)
-			
-		self.subwrappers = []
-		
-	def update(self, mapview):
-		""" Dump new layer informations into the wrapper 
-		
-		We group one ToggleButton and one Label into a HBox, the main wrapper
-		itself is a VBox and we also capture both the Button and the Label to listen
-		for mouse actions
-		"""
-		layers = []
-		self._mapview = mapview
-		if self._mapview is not None:
-			layers = self._mapview.getMap().getLayers()
-		
-		self.clear()
-		
-		if len(layers) <= 0:
-			if not self._mapview:
-				layerid = "No map is open"
-			else:
-				layerid = "No layers"
-			subwrapper = pychan.widgets.HBox()
-
-			layerLabel = pychan.widgets.Label()
-			layerLabel.text = unicode(layerid)
-			layerLabel.name = _LABEL_NAME_PREFIX + layerid
-			subwrapper.addChild(layerLabel)
-			
-			self.wrapper.addChild(subwrapper)
-			self.subwrappers.append(subwrapper)
-		
-		active_layer = self.getActiveLayer()
-		if active_layer:
-			active_layer = active_layer.getId()
-		for layer in reversed(layers):
-			layerid = layer.getId()
-			subwrapper = pychan.widgets.HBox()
-
-			toggleVisibleButton = pychan.widgets.ToggleButton(hexpand=0, up_image="gui/icons/is_visible.png", down_image="gui/icons/is_visible.png", hover_image="gui/icons/is_visible.png")
-			toggleVisibleButton.name = "toggle_" + layerid
-			if layer.areInstancesVisible():
-				toggleVisibleButton.toggled = True
-			toggleVisibleButton.capture(self.toggle_layer_visibility)
-			
-			layerLabel = pychan.widgets.Label()
-			layerLabel.text = unicode(layerid)
-			layerLabel.name = _LABEL_NAME_PREFIX + layerid
-			layerLabel.capture(self.select_active_layer,"mousePressed")
-			
-			if active_layer == layerid:
-				layerLabel.background_color	= _HIGHLIGHT_BACKGROUND_COLOR
-				layerLabel.foreground_color	= _HIGHLIGHT_BACKGROUND_COLOR
-				layerLabel.base_color		= _HIGHLIGHT_BACKGROUND_COLOR
-			
-			subwrapper.addChild(toggleVisibleButton)
-			subwrapper.addChild(layerLabel)
-			
-			self.wrapper.addChild(subwrapper)
-			self.subwrappers.append(subwrapper)
-		
-		self.container.adaptLayout()		
-			
-	def toggle_layer_visibility(self, event, widget):
-		""" Callback for ToggleButtons 
-		
-		Toggle the chosen layer visible / invisible
-		
-		NOTE:
-			- if a layer is set to invisible, it also shouldn't be the active layer anymore
-		
-		@type	event:	object
-		@param	event:	pychan mouse event
-		@type	widget:	object
-		@param	widget:	the pychan widget where the event occurs, transports the layer id in it's name
-		"""
-
-		layerid = widget.name[len(_LABEL_NAME_PREFIX):]
-		
-		layer = self._mapview.getMap().getLayer(layerid)
-		active_layer = self.getActiveLayer()
-		if active_layer:
-			active_layer = active_layer.getId()
-		
-		if layer.areInstancesVisible():
-			layer.setInstancesVisible(False)
-		else:
-			layer.setInstancesVisible(True)
-			
-		if active_layer == layerid:
-			self.select_no_layer()
-			
-			
-	def select_no_layer(self):
-		""" Resets the current active layer (widget + editor) """
-		previous_active_layer = self.getActiveLayer()
-		if previous_active_layer is not None:
-			previous_layer_id = previous_active_layer.getId()
-			previous_active_widget = self.container.findChild(name=_LABEL_NAME_PREFIX + previous_layer_id)
-			previous_active_widget.background_color = _DEFAULT_BACKGROUND_COLOR
-			previous_active_widget.foreground_color = _DEFAULT_BACKGROUND_COLOR
-			previous_active_widget.base_color = _DEFAULT_BACKGROUND_COLOR
-			previous_active_widget.text = unicode(previous_layer_id)
-			
-		self._mapview.getController().selectLayer(None)
-		
-	def getActiveLayer(self):
-		""" Returns the active layer """
-		if self._mapview:
-			return self._mapview.getController()._layer
-		
-	def select_active_layer(self, event, widget):
-		""" callback for Labels 
-		
-		We hand the layerid over to the mapeditor module to select a 
-		new active layer
-		
-		Additionally, we mark the active layer widget (changing base color) and reseting the previous one
-
-		@type	event:	object
-		@param	event:	pychan mouse event
-		@type	widget:	object
-		@param	widget:	the pychan widget where the event occurs, transports the layer id in it's name
-		"""
-
-		self.select_no_layer()
-		
-		layerid = widget.name[len(_LABEL_NAME_PREFIX):]	
-		
-		widget.background_color = _HIGHLIGHT_BACKGROUND_COLOR
-		widget.foreground_color = _HIGHLIGHT_BACKGROUND_COLOR
-		widget.base_color = _HIGHLIGHT_BACKGROUND_COLOR
-		
-		self._mapview.getController().selectLayer(layerid)
 
 	def toggle(self):
-		"""	toggles the layertool visible / invisible and sets
+		"""	Toggles the layertool visible / invisible and sets
 			dock status 
 		"""
-		if self.container.isVisible() or self.container.isDocked():
-			self.container.setDocked(False)
-			self.container.hide()
+		if self._container.isVisible() or self._container.isDocked():
+			self._container.setDocked(False)
+			self._container.hide()
 
-			self._showAction.setChecked(False)
+			self._action_show.setChecked(False)
 		else:
-			self.container.show()
-			self._showAction.setChecked(True)
-			self._adjust_position()
+			self._container.show()
+			self._action_show.setChecked(True)
+			self._adjustPosition()
+			
+	def _createGui(self):
+		""" Create the basic gui container """
+		self._container =  pychan.loadXML('gui/layertool.xml')
+		self._wrapper = self._container.findChild(name="layers_wrapper")
+		self._remove_layer_button = self._container.findChild(name="remove_layer_button")
+		self._create_layer_button = self._container.findChild(name="add_layer_button")
+		self._edit_layer_button = self._container.findChild(name="edit_layer_button")
+		
+		self._remove_layer_button.capture(self.removeSelectedLayer)
+		self._remove_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self._remove_layer_button.helptext), 'mouseEntered')
+		self._remove_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		
+		self._create_layer_button.capture(self.showLayerWizard)
+		self._create_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self._create_layer_button.helptext), 'mouseEntered')
+		self._create_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		
+		self._edit_layer_button.capture(self.showEditDialog)
+		self._edit_layer_button.capture(cbwa(self._editor.getStatusBar().showTooltip, self._edit_layer_button.helptext), 'mouseEntered')
+		self._edit_layer_button.capture(self._editor.getStatusBar().hideTooltip, 'mouseExited')
+		
+		self.update(None)
 
+	def _adjustPosition(self):
+		"""	Adjusts the position of the container - we don't want to
+		let the window appear at the center of the screen.
+		(new default position: left, beneath the tools window)
+		"""
+		self._container.position = (50, 200)
+
+	def _layerCreated(self, layer):
+		self.update(self._mapview)
+		self.selectLayer(None, self._wrapper.findChild(name=LayerTool.LABEL_NAME_PREFIX + layer.getId()))
+		
 
 
