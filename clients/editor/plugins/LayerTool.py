@@ -77,7 +77,7 @@ class LayerTool(plugin.Plugin):
 		self._editor = scripts.editor.getEditor()
 		self._action_show = Action(u"LayerTool", checkable=True)
 		scripts.gui.action.activated.connect(self.toggle, sender=self._action_show)
-		self._editor._toolsMenu.addAction(self._action_show)
+		self._editor._tools_menu.addAction(self._action_show)
 
 		self._createGui()
 		
@@ -94,7 +94,7 @@ class LayerTool(plugin.Plugin):
 		
 		events.postMapShown.disconnect(self.update)
 		
-		self._editor._toolsMenu.removeAction(self._action_show)
+		self._editor._tools_menu.removeAction(self._action_show)
 
 	def isEnabled(self):
 		""" Returns True if plugin is enabled """

@@ -22,7 +22,6 @@
 # ####################################################################
 
 import os
-import editor
 
 class PluginManager:
 	""" Currently, pluginmanager iterates through the plugin directory
@@ -33,8 +32,8 @@ class PluginManager:
 	If a plugin fails to load due to exceptions, they are caught and a line
 	of the error is printed to console.
 	"""
-	def __init__(self, *args, **kwargs):
-		self._settings = editor.getEditor().getSettings()
+	def __init__(self, settings, *args, **kwargs):
+		self._settings = settings
 		
 		self._pluginDir = "plugins"
 		self._plugins = []

@@ -94,8 +94,8 @@ class FileManager(object):
 		
 		self.editor.getToolBar().insertAction(fileGroup, 0)
 		self.editor.getToolBar().insertSeparator(None, 1)
-		self.editor._fileMenu.insertAction(fileGroup, 0)
-		self.editor._fileMenu.insertSeparator(None, 1)
+		self.editor._file_menu.insertAction(fileGroup, 0)
+		self.editor._file_menu.insertSeparator(None, 1)
 
 	def showLoadDialog(self):
 		if self._filebrowser is None:
