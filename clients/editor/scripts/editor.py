@@ -21,14 +21,26 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from basicapplication import ApplicationBase
-import pychan
+"""
+Editor
+======
+
+This class serves as 
+"""
+
+import sys
+import traceback
+
 import fife
 import loaders
 import events
 import plugin
-from mapview import MapView
-from events import EventListener
+
+from basicapplication import ApplicationBase
+
+import pychan
+from pychan.tools import callbackWithArguments as cbwa
+
 from events import *
 from gui import ToolBar, action
 from gui.action import Action, ActionGroup
@@ -37,9 +49,8 @@ from gui.mainwindow import MainWindow
 from gui.mapeditor import MapEditor
 from gui.menubar import Menu, MenuBar
 from gui.error import ErrorDialog
+from mapview import MapView
 from settings import Settings
-from pychan.tools import callbackWithArguments as cbwa
-import sys, traceback
 
 def getEditor():
 	""" Returns the Global editor instance """
@@ -56,28 +67,28 @@ class Editor(ApplicationBase, MainWindow):
 	
 		self._filemanager = None
 	
-		self.params = params
+		self._params = params
 		self._eventlistener = None
 		self._pluginmanager = None
 		
 		self._inited = False
 		
 		self._mapview = None
-		self._mapviewList = []
+		self._mapviewlist = []
 		self._mapgroup = None
 		self._mapbar = None
 		self._maparea = None
 		self._mapeditor = None
 		
-		self._fileMenu = None
-		self._editMenu = None
-		self._viewMenu = None
-		self._toolsMenu = None
-		self._helpMenu = None
+		self._file_menu = None
+		self._edit_menu = None
+		self._view_menu = None
+		self._tools_menu = None
+		self._help_menu = None
 		
 		self._settings = None
 		
-		self._helpDialog = None
+		self._help_dialog = None
 	
 		ApplicationBase.__init__(self, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
@@ -115,14 +126,14 @@ class Editor(ApplicationBase, MainWindow):
 		"""
 		import fifelog
 		
-		LogModules = self._settings.get("FIFE", "LogModules")
+		logModules = self._settings.get("FIFE", "LogModules")
 		self.log = fifelog.LogManager(self.engine, self._settings.get("FIFE", "LogToPrompt"), self._settings.get("FIFE", "LogToFile"))
-		if LogModules:
-			self.log.setVisibleModules(*LogModules)
+		if logModules:
+			self.log.setVisibleModules(*logModules)
 		
 	def _initTools(self):
 		""" Initializes tools """
-		self._pluginmanager = plugin.PluginManager()
+		self._pluginmanager = plugin.PluginManager(self.getSettings())
 		
 		self._filemanager = FileManager()
 		self._toolbar.adaptLayout()
@@ -172,72 +183,72 @@ class Editor(ApplicationBase, MainWindow):
 		exitAction.helptext = u"Exit program"
 		action.activated.connect(self.quit, sender=exitAction)
 		
-		self._fileMenu = Menu(name=u"File")
-		self._fileMenu.addAction(exitAction)
+		self._file_menu = Menu(name=u"File")
+		self._file_menu.addAction(exitAction)
 		
-		self._editMenu = Menu(name=u"Edit")
-		self._viewMenu = Menu(name=u"View")
-		self._toolsMenu = Menu(name=u"Tools")
-		self._windowMenu = Menu(name=u"Window")
-		self._helpMenu = Menu(name=u"Help")
+		self._edit_menu = Menu(name=u"Edit")
+		self._view_menu = Menu(name=u"View")
+		self._tools_menu = Menu(name=u"Tools")
+		self._window_menu = Menu(name=u"Window")
+		self._help_menu = Menu(name=u"Help")
 		
-		self._actionShowStatusbar = Action(u"Statusbar")
-		self._actionShowStatusbar.helptext = u"Toggle statusbar"
-		action.activated.connect(self.toggleStatusbar, sender=self._actionShowStatusbar)
+		self._action_show_statusbar = Action(u"Statusbar")
+		self._action_show_statusbar.helptext = u"Toggle statusbar"
+		action.activated.connect(self.toggleStatusbar, sender=self._action_show_statusbar)
 		
-		self._actionShowToolbar = Action(u"Toolbar")
-		self._actionShowToolbar.helptext = u"Toggle toolbar"
-		action.activated.connect(self.toggleToolbar, sender=self._actionShowToolbar)
+		self._action_show_toolbar = Action(u"Toolbar")
+		self._action_show_toolbar.helptext = u"Toggle toolbar"
+		action.activated.connect(self.toggleToolbar, sender=self._action_show_toolbar)
 		
-		self._actionShowToolbox = Action(u"Tool box")
-		self._actionShowToolbox.helptext = u"Toggle tool box"
-		action.activated.connect(self.toggleToolbox, sender=self._actionShowToolbox)
+		self._action_show_toolbox = Action(u"Tool box")
+		self._action_show_toolbox.helptext = u"Toggle tool box"
+		action.activated.connect(self.toggleToolbox, sender=self._action_show_toolbox)
 		
-		self._viewMenu.addAction(self._actionShowStatusbar)
-		self._viewMenu.addAction(self._actionShowToolbar)
-		self._viewMenu.addAction(self._actionShowToolbox)
-		self._viewMenu.addSeparator()
+		self._view_menu.addAction(self._action_show_statusbar)
+		self._view_menu.addAction(self._action_show_toolbar)
+		self._view_menu.addAction(self._action_show_toolbox)
+		self._view_menu.addSeparator()
 	
 	
-		testAction1 = Action(u"Cycle buttonstyles", "gui/icons/cycle_styles.png")
-		testAction1.helptext = u"Cycles button styles. There are currently four button styles."
-		action.activated.connect(self._actionActivated, sender=testAction1)
-		self._viewMenu.addAction(testAction1)
+		test_action1 = Action(u"Cycle buttonstyles", "gui/icons/cycle_styles.png")
+		test_action1.helptext = u"Cycles button styles. There are currently four button styles."
+		action.activated.connect(self._actionActivated, sender=test_action1)
+		self._view_menu.addAction(test_action1)
 		
 		self._mapgroup = ActionGroup(exclusive=True, name="Mapgroup")
 		self._mapbar.addAction(self._mapgroup)
 		self._mapbar.addAction(ActionGroup(exclusive=True, name="Mapgroup2"))
-		self._windowMenu.addAction(self._mapgroup)
+		self._window_menu.addAction(self._mapgroup)
 		
-		helpAction = Action(u"Help", "gui/icons/help.png")
-		helpAction.helptext = u"Displays a window with some simple instructions"
-		action.activated.connect(self._showHelpDialog, sender=helpAction)
-		self._helpMenu.addAction(helpAction)
+		help_action = Action(u"Help", "gui/icons/help.png")
+		help_action.helptext = u"Displays a window with some simple instructions"
+		action.activated.connect(self._showHelpDialog, sender=help_action)
+		self._help_menu.addAction(help_action)
 		
-		self._menubar.addMenu(self._fileMenu)
-		self._menubar.addMenu(self._editMenu)
-		self._menubar.addMenu(self._viewMenu)
-		self._menubar.addMenu(self._toolsMenu)
-		self._menubar.addMenu(self._windowMenu)
-		self._menubar.addMenu(self._helpMenu)
+		self._menubar.addMenu(self._file_menu)
+		self._menubar.addMenu(self._edit_menu)
+		self._menubar.addMenu(self._view_menu)
+		self._menubar.addMenu(self._tools_menu)
+		self._menubar.addMenu(self._window_menu)
+		self._menubar.addMenu(self._help_menu)
 	
 	def _actionActivated(self, sender):
 		self._toolbar.button_style += 1
 		
 	def _showHelpDialog(self, sender):
 		""" Shows the help dialog """
-		if self._helpDialog is not None:
-			self._helpDialog.show()
+		if self._help_dialog is not None:
+			self._help_dialog.show()
 			return
 		
-		self._helpDialog = pychan.loadXML("gui/help.xml")
-		self._helpDialog.findChild(name="closeButton").capture(self._helpDialog.hide)
+		self._help_dialog = pychan.loadXML("gui/help.xml")
+		self._help_dialog.findChild(name="closeButton").capture(self._help_dialog.hide)
 		
 		f = open('lang/infotext.txt', 'r')
-		self._helpDialog.findChild(name="helpText").text = unicode(f.read())
+		self._help_dialog.findChild(name="helpText").text = unicode(f.read())
 		f.close()
 		
-		self._helpDialog.show()
+		self._help_dialog.show()
 		
 	def toggleStatusbar(self):
 		""" Toggles status bar """
@@ -245,11 +256,11 @@ class Editor(ApplicationBase, MainWindow):
 		if statusbar.max_size[1] > 0:
 			statusbar.min_size=(statusbar.min_size[0], 0)
 			statusbar.max_size=(statusbar.max_size[0], 0)
-			self._actionShowStatusbar.setChecked(False)
+			self._action_show_statusbar.setChecked(False)
 		else:
 			statusbar.min_size=(statusbar.min_size[0], statusbar.min_size[0])
 			statusbar.max_size=(statusbar.max_size[0], statusbar.max_size[0])
-			self._actionShowStatusbar.setChecked(True)
+			self._action_show_statusbar.setChecked(True)
 		statusbar.adaptLayout()
 			
 	def toggleToolbar(self):
@@ -258,14 +269,14 @@ class Editor(ApplicationBase, MainWindow):
 		if toolbar.isVisible():
 			toolbar.setDocked(False)
 			toolbar.hide()
-			self._actionShowToolbar.setChecked(False)
+			self._action_show_toolbar.setChecked(False)
 		else: 
 			tx = toolbar.x
 			ty = toolbar.y
 			toolbar.show()
 			toolbar.x = tx
 			toolbar.y = ty
-			self._actionShowToolbar.setChecked(True)
+			self._action_show_toolbar.setChecked(True)
 			
 	def toggleToolbox(self):
 		""" Toggles tool box """
@@ -273,14 +284,14 @@ class Editor(ApplicationBase, MainWindow):
 		if toolbox.isVisible():
 			toolbox.setDocked(False)
 			toolbox.hide()
-			self._actionShowToolbox.setChecked(False)
+			self._action_show_toolbox.setChecked(False)
 		else:
 			tx = toolbox.x
 			ty = toolbox.y
 			toolbox.show()
 			toolbox.x = tx
 			toolbox.y = ty
-			self._actionShowToolbox.setChecked(True)
+			self._action_show_toolbox.setChecked(True)
 		toolbox.adaptLayout()
 			
 	def getToolbox(self): 
@@ -293,7 +304,7 @@ class Editor(ApplicationBase, MainWindow):
 		return self.engine
 
 	def getMapViews(self):
-		return self._mapviewList
+		return self._mapviewlist
 		
 	def getActiveMapView(self):
 		return self._mapview
@@ -326,11 +337,11 @@ class Editor(ApplicationBase, MainWindow):
 		""" Creates a new map view """
 		mapview = MapView(map)
 		
-		self._mapviewList.append(mapview)
+		self._mapviewlist.append(mapview)
 		
-		mapAction = Action(unicode(map.getId()))
-		action.activated.connect(cbwa(self.showMapView, mapview), sender=mapAction, weak=False)
-		self._mapgroup.addAction(mapAction)
+		map_action = Action(unicode(map.getId()))
+		action.activated.connect(cbwa(self.showMapView, mapview), sender=map_action, weak=False)
+		self._mapgroup.addAction(map_action)
 		
 		self.showMapView(mapview)
 		
@@ -354,11 +365,11 @@ class Editor(ApplicationBase, MainWindow):
 	
 	def saveAll(self):
 		""" Saves all open maps """
-		tmpView = self._mapview
-		for mapView in self._mapviewList:
-			self._mapview = mapView
+		tmpview = self._mapview
+		for mapview in self._mapviewlist:
+			self._mapview = mapview
 			self._filemanager.save()
-		self._mapview = tmpView
+		self._mapview = tmpview
 		
 	def quit(self):
 		""" Quits the editor. An onQuit signal is sent before the application closes """
@@ -379,34 +390,34 @@ class Editor(ApplicationBase, MainWindow):
 		
 	def __sendMouseEvent(self, event, **kwargs):
 		""" Function used to capture mouse events for EventListener """
-		msEvent = fife.MouseEvent
+		ms_event = fife.MouseEvent
 		type = event.getType()
 		
-		if type == msEvent.MOVED:
+		if type == ms_event.MOVED:
 			mouseMoved.send(sender=self._maparea, event=event)
 			
-		elif type == msEvent.PRESSED:
+		elif type == ms_event.PRESSED:
 			mousePressed.send(sender=self._maparea, event=event)
 			
-		elif type == msEvent.RELEASED:
+		elif type == ms_event.RELEASED:
 			mouseReleased.send(sender=self._maparea, event=event)
 			
-		elif type == msEvent.WHEEL_MOVED_DOWN:
+		elif type == ms_event.WHEEL_MOVED_DOWN:
 			mouseWheelMovedDown.send(sender=self._maparea, event=event)
 			
-		elif type == msEvent.WHEEL_MOVED_UP:
+		elif type == ms_event.WHEEL_MOVED_UP:
 			mouseWheelMovedUp.send(sender=self._maparea, event=event)
 			
-		elif type == msEvent.CLICKED:
+		elif type == ms_event.CLICKED:
 			mouseClicked.send(sender=self._maparea, event=event)
 			
-		elif type == msEvent.ENTERED:
+		elif type == ms_event.ENTERED:
 			mouseEntered.send(sender=self._maparea, event=event)
 			
-		elif type == msEvent.EXITED:
+		elif type == ms_event.EXITED:
 			mouseExited.send(sender=self._maparea, event=event)
 			
-		elif type == msEvent.DRAGGED:
+		elif type == ms_event.DRAGGED:
 			mouseDragged.send(sender=self._maparea, event=event)
 		
 	def __sendKeyEvent(self, event, **kwargs):

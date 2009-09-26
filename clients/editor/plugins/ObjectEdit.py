@@ -127,7 +127,7 @@ class ObjectEdit(plugin.Plugin):
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
 		
-		self._editor._toolsMenu.addAction(self._showAction)
+		self._editor._tools_menu.addAction(self._showAction)
 		
 		events.onInstancesSelected.connect(self.input)
 		
@@ -145,7 +145,7 @@ class ObjectEdit(plugin.Plugin):
 		
 		events.onInstancesSelected.disconnect(self.input)
 		
-		self._editor._toolsMenu.removeAction(self._showAction)
+		self._editor._tools_menu.removeAction(self._showAction)
 
 	def isEnabled(self):
 		""" plugin method """

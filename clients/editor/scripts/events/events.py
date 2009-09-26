@@ -20,8 +20,6 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-#from editor import getEditor # Needed to quit application
-
 import fife, scripts
 from fife import IKeyListener, ICommandListener, IMouseListener, LayerChangeListener, MapChangeListener, ConsoleExecuter
 from signal import Signal

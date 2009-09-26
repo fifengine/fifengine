@@ -194,7 +194,7 @@ class MapEditor:
 		self._toolbox.addAction(self._toolgroup)
 		self._toolbox.adaptLayout()
 		
-		self._editor._editMenu.addAction(self._toolgroup)
+		self._editor._edit_menu.addAction(self._toolgroup)
 		
 	def _initToolbarbuttons(self):
 		rotateLeftAction = Action(text=u"Rotate counterclockwise", icon="gui/icons/rotate_countercw.png")

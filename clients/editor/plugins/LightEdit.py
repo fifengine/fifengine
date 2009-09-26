@@ -93,7 +93,7 @@ class LightEdit(plugin.Plugin):
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
 		
-		self._editor._toolsMenu.addAction(self._showAction)
+		self._editor._tools_menu.addAction(self._showAction)
 		
 		events.postMapShown.connect(self.update_renderer)
 		events.onMapChanged.connect(self.update_renderer)
@@ -110,7 +110,7 @@ class LightEdit(plugin.Plugin):
 		self.container.hide()
 		self.removeAllChildren()
 		
-		self._editor._toolsMenu.removeAction(self._showAction)
+		self._editor._tools_menu.removeAction(self._showAction)
 		
 		events.postMapShown.disconnect(self.update_renderer)
 		events.onMapChanged.disconnect(self.update_renderer)

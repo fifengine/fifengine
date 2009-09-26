@@ -22,8 +22,6 @@
 # ####################################################################
 
 from events.signal import Signal
-import collections
-import pdb
 
 actionAdded = Signal(providing_args=["action"])
 preUndo = Signal()

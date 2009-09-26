@@ -147,7 +147,7 @@ class ObjectSelector(plugin.Plugin):
 		self._showAction = Action(u"Object selector", checkable=True)
 		scripts.gui.action.activated.connect(self.toggle, sender=self._showAction)
 		
-		self.editor._toolsMenu.addAction(self._showAction)
+		self.editor._tools_menu.addAction(self._showAction)
 		
 		events.postMapShown.connect(self.update_namespace)
 		events.onObjectSelected.connect(self.setPreview)
@@ -166,7 +166,7 @@ class ObjectSelector(plugin.Plugin):
 		events.onObjectSelected.disconnect(self.setPreview)
 		events.onObjectsImported.disconnect(self.update_namespace)
 		
-		self.editor._toolsMenu.removeAction(self._showAction)
+		self.editor._tools_menu.removeAction(self._showAction)
 
 	def isEnabled(self):
 		return self._enabled;
