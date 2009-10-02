@@ -103,6 +103,10 @@ namespace FIFE {
 		attachSoundClip();
 	}
 
+	void SoundEmitter::setCallback(const type_callback& cb) {
+		m_callback = cb;
+	}
+
 	void SoundEmitter::attachSoundClip() {
 		if (!m_soundclip->isStream()) {
 			// non-streaming
@@ -145,6 +149,9 @@ namespace FIFE {
 					if (bufs == 0) {
 						setPeriod(-1);
 						alSourceStop(m_source);
+						if(m_callback) {
+							m_callback();
+						}
 					}
 					continue;
 				}
