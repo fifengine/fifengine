@@ -384,6 +384,7 @@ class Editor(ApplicationBase, MainWindow):
 		if self._inited == False:
 			self._initGui()
 			self._initTools()
+			if self._params: self.openFile(self._params)
 			self._inited = True
 		
 		events.onPump.send(sender=self)
