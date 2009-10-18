@@ -128,7 +128,7 @@ class FileManager(object):
 		if mapview is None:
 			print "No map is open"
 			return
-		self.showSaveDialog(self)
+		self.showSaveDialog()
 		
 	def loadFile(self, path, filename):
 		self.editor.openFile('/'.join([path, filename]))
