@@ -199,8 +199,8 @@ class CameraEdit(plugin.Plugin):
 		""" Create the basic gui container """
 		self._container =  pychan.loadXML('gui/cameradialog.xml')
 		
-		self._container.findChild(name="mapLabel").hide()
-		self._container.findChild(name="mapBox").hide()
+		#self._container.findChild(name="mapLabel").hide()
+		#self._container.findChild(name="mapBox").hide()
 		
 		self._ok_button = self._container.findChild(name="okButton")
 		self._cancel_button = self._container.findChild(name="cancelButton")
@@ -220,3 +220,6 @@ class CameraEdit(plugin.Plugin):
 		(new default position: left, beneath the tools window)
 		"""
 		self._container.position = (50, 200)
+		
+		
+
