@@ -56,6 +56,20 @@ class MapController(object):
 		
 		if map is not None:
 			self.setMap(map.getId())
+			
+	def cleanUp(self):
+		undomanager.preUndo.disconnect(self._startUndo, sender=self._undomanager)
+		undomanager.preRedo.disconnect(self._startUndo, sender=self._undomanager)
+		undomanager.postUndo.disconnect(self._endUndo, sender=self._undomanager)
+		undomanager.postRedo.disconnect(self._endUndo, sender=self._undomanager)
+		self._undomanager.clear()
+		
+		self._editor = None
+		self._engine = None
+		self._map = None
+		self._selection = []
+		self._layer = None
+		self._camera = None
 		
 	def setMap(self, mapid):
 		""" Set the map to be edited """

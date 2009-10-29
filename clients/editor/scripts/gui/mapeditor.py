@@ -66,6 +66,7 @@ class MapEditor:
 		self._instances = []
 		
 		events.postMapShown.connect(self._mapChanged)
+		events.preMapClosed.connect(self._mapClosed)
 		events.onObjectSelected.connect(self.setObject)
 		self._undogroup = False
 		
@@ -111,6 +112,9 @@ class MapEditor:
 		
 	def _mapChanged(self, sender, mapview):
 		self.setController(mapview.getController())
+		
+	def _mapClosed(self, sender, mapview):
+		self.setController(None)
 		
 	def _setCursor(self):
 		engine = self._editor.getEngine()

@@ -37,22 +37,36 @@ class MapView:
 		self._map = map
 		self._editor = editor.getEditor()
 		self._controller = MapController(self._map)
+		self._camera = None
 		
 		if map is None:
-			print "No map passed to MapView!"
-		else:
-			if not self._map.getLayers():
-				raise AttributeError('Editor error: map ' + self._map.getId() + ' has no layers. Cannot edit.')
+			raise AttributeError("No map passed to MapView!")
+		
+		if not self._map.getLayers():
+			raise AttributeError('Editor error: map ' + self._map.getId() + ' has no layers. Cannot edit.')
 
-			map.addChangeListener(self._editor.getEventListener().mapchangelistener)
-			for layer in map.getLayers():
-				layer.addChangeListener(self._editor.getEventListener().layerchangelistener)
-				
-			events.onLayerCreate.connect(self._layerCreated)
+		map.addChangeListener(self._editor.getEventListener().mapchangelistener)
+		for layer in map.getLayers():
+			layer.addChangeListener(self._editor.getEventListener().layerchangelistener)
+			
+		events.onLayerCreate.connect(self._layerCreated)
 
 		self.importlist = []
 		if hasattr(map, "importDirs"):
 			self.importlist.extend(map.importDirs)
+			
+	def _cleanUp(self):
+		events.onLayerCreate.disconnect(self._layerCreated)
+		
+		if self._map:
+			for layer in self._map.getLayers():
+				layer.removeChangeListener(self._editor.getEventListener().layerchangelistener)
+		
+		self.importlist = []
+		self._map = None
+		self._editor = None
+		self._controller = None
+		self._camera = None
 			
 	def _layerCreated(self, map, layer):
 		if map.getId() == self._map.getId():
@@ -126,6 +140,23 @@ class MapView:
 		
 	def close(self):
 		""" Closes the mapview """
-		pass
+		events.preMapClosed.send(sender=self, mapview=self)
+		
+		self._controller.cleanUp()
+
+		# Remove cameras
+		view = self._editor.getEngine().getView()
+		for cam in view.getCameras():
+			if cam.getLocationRef().getMap().getId() == self._map.getId():
+				cam.setEnabled(False)
+				#view.removeCamera(cam)
+		view.resetRenderers()
+		
+		# Unload the map from FIFE
+		self._editor.getEngine().getModel().deleteMap(self._map)
+		self._map = None
+		self._cleanUp()
+		
+		events.postMapClosed.send(sender=self, mapview=self)
 
 	
