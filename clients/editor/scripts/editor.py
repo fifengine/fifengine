@@ -149,7 +149,7 @@ class Editor(ApplicationBase, MainWindow):
 		self._toolbox.position_technique = "explicit"
 		self._toolbox.position = (150, 150)
 		
-		self._mapbar = ToolBar(panel_size=20)
+		self._mapbar = ToolBar(name="MapBar", panel_size=20)
 		self._mapbar.setDocked(True)
 		
 		self._maparea = pychan.widgets.VBox()
@@ -217,7 +217,6 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self._mapgroup = ActionGroup(exclusive=True, name="Mapgroup")
 		self._mapbar.addAction(self._mapgroup)
-		self._mapbar.addAction(ActionGroup(exclusive=True, name="Mapgroup2"))
 		self._window_menu.addAction(self._mapgroup)
 		
 		help_action = Action(u"Help", "gui/icons/help.png")
@@ -345,10 +344,30 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self.showMapView(mapview)
 		
+		events.preMapClosed.connect(self._mapRemoved)
 		events.mapAdded.send(sender=self, map=map)
 		
 		return mapview
-	
+		
+	def _mapRemoved(self, mapview):
+		events.preMapClosed.disconnect(self._mapRemoved)
+		
+		index = self._mapviewlist.index(mapview)-1
+		self._mapviewlist.remove(mapview)
+		
+		# Remove tab
+		for map_action in self._mapgroup.getActions():
+			if map_action.text == unicode(mapview.getMap().getId()):
+				self._mapgroup.removeAction(map_action)
+				break
+				
+		# Change mapview
+		if index >= 0:
+			self.showMapView(self._mapviewlist[index])
+		else:
+			self._mapview = None
+			self.getEngine().getView().clearCameras()
+
 	def openFile(self, path):
 		""" Opens a file """
 		try:
@@ -361,7 +380,6 @@ class Editor(ApplicationBase, MainWindow):
 			errormsg += u"Error: "+unicode(sys.exc_info()[1])
 			ErrorDialog(errormsg)
 			return None
-			
 	
 	def saveAll(self):
 		""" Saves all open maps """

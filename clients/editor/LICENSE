@@ -13,6 +13,7 @@ Affected files:
 gui/icons/add_instance.png
 gui/icons/add_layer.png
 gui/icons/cycle_styles.png
+gui/icons/close_map.png
 gui/icons/delete_layer.png
 gui/icons/edit.png
 gui/icons/erase_instance.png

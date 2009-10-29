@@ -84,6 +84,7 @@ class LayerTool(plugin.Plugin):
 		self.toggle()
 		
 		events.postMapShown.connect(self.update)
+		events.preMapClosed.connect(self._mapClosed)
 
 	def disable(self):
 		""" Disable plugin """
@@ -93,6 +94,7 @@ class LayerTool(plugin.Plugin):
 		self._container.hide()
 		
 		events.postMapShown.disconnect(self.update)
+		events.preMapClosed.disconnect(self._mapClosed)
 		
 		self._editor._tools_menu.removeAction(self._action_show)
 
@@ -105,6 +107,10 @@ class LayerTool(plugin.Plugin):
 		return u"Layertool"
 	
 	#--- End plugin functions ---#
+	def _mapClosed(self):
+		self.update(mapview=None)
+		
+	
 	def showLayerWizard(self):
 		""" Show layer wizard """
 		if not self._mapview: return

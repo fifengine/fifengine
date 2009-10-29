@@ -51,6 +51,7 @@ class FileManager(object):
 
 		newAction = Action(u"New map", "gui/icons/new_map.png")
 		loadAction = Action(u"Open", "gui/icons/load_map.png")
+		closeAction = Action(u"Close", "gui/icons/close_map.png")
 		saveAction = Action(u"Save", "gui/icons/save_map.png")
 		saveAsAction = Action(u"Save as", "gui/icons/save_mapas.png")
 		saveAllAction = Action(u"Save all", "gui/icons/save_allmaps.png")
@@ -59,6 +60,7 @@ class FileManager(object):
 		
 		newAction.helptext = u"Create new map"
 		loadAction.helptext = u"Open existing map"
+		closeAction.helptext = u"Close map"
 		saveAction.helptext = u"Save map"
 		saveAsAction.helptext = u"Save map as"
 		saveAllAction.helptext = u"Save all opened maps"
@@ -67,6 +69,7 @@ class FileManager(object):
 		
 		action.activated.connect(self.showMapWizard, sender=newAction)
 		action.activated.connect(self.showLoadDialog, sender=loadAction)
+		action.activated.connect(self.closeCurrentMap, sender=closeAction)
 		action.activated.connect(self.save, sender=saveAction)
 		action.activated.connect(self.saveAs, sender=saveAsAction)
 		action.activated.connect(self.editor.saveAll, sender=saveAllAction)
@@ -79,12 +82,16 @@ class FileManager(object):
 		eventlistener = self.editor.getEventListener()
 		eventlistener.getKeySequenceSignal(fife.Key.N, ["ctrl"]).connect(self.showMapWizard)
 		eventlistener.getKeySequenceSignal(fife.Key.O, ["ctrl"]).connect(self.showLoadDialog)
+		eventlistener.getKeySequenceSignal(fife.Key.W, ["ctrl"]).connect(self.closeCurrentMap)
 		eventlistener.getKeySequenceSignal(fife.Key.S, ["ctrl"]).connect(self.save)
 		eventlistener.getKeySequenceSignal(fife.Key.S, ["ctrl", "shift"]).connect(self.editor.saveAll)
 		
 		fileGroup = ActionGroup()
 		fileGroup.addAction(newAction)
 		fileGroup.addAction(loadAction)
+		fileGroup.addSeparator()
+		fileGroup.addAction(closeAction)
+		fileGroup.addSeparator()
 		fileGroup.addAction(saveAction)
 		fileGroup.addAction(saveAsAction)
 		fileGroup.addAction(saveAllAction)
@@ -96,6 +103,14 @@ class FileManager(object):
 		self.editor.getToolBar().insertSeparator(None, 1)
 		self.editor._file_menu.insertAction(fileGroup, 0)
 		self.editor._file_menu.insertSeparator(None, 1)
+		
+	def closeCurrentMap(self):
+		mapview = self.editor.getActiveMapView()
+		if mapview is None:
+			print "No map to close"
+			return
+			
+		mapview.close()
 
 	def showLoadDialog(self):
 		if self._filebrowser is None:

@@ -101,10 +101,16 @@ class ToolBar(Panel):
 		self._insertButton(action, position)
 		
 	def _updateActionGroup(self, sender):
-		position = self._actions.index(sender)
-		self.removeAction(sender)
-		self.insertAction(sender, position)
-		self.adaptLayout(False)
+		if isinstance(sender, ActionGroup):
+			# Toolbar didn't properly handle events where
+			# an action in actiongroup was removed
+			self._updateToolbar()
+		else:
+			position = self._actions.index(sender)
+			self.removeAction(sender)
+			self.insertAction(sender, position)
+			self.adaptLayout()
+		
 		
 	def _insertButton(self, action, position):
 		actions = [action]
