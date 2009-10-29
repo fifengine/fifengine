@@ -54,31 +54,27 @@ class FileBrowser(object):
 
 	def showBrowser(self):
 		if self._widget:
+			self.setDirectory(self.path)
 			self._widget.show()
 			return
+		
 		self._widget = pychan.loadXML(self.guixmlpath)
 		self._widget.mapEvents({
-			'dirList'       : self._setDirectory,
+			'dirList'       : self._selectDir,
 			'selectButton'  : self._selectFile,
 			'closeButton'   : self._widget.hide
 		})
-		self._setDirectory()
 		if self.savefile:
 			self._file_entry = widgets.TextField(name='saveField', text=u'')	
 			self._widget.findChild(name="fileColumn").addChild(self._file_entry)
-		self._widget.show()
-
-	def _setDirectory(self):
-		selection = self._widget.collectData('dirList')
-		if not (selection < 0):
-			new_dir = u2s(self.dir_list[selection])
-			lst = self.path.split('/')
-			if new_dir == '..' and lst[-1] != '..' and lst[-1] != '.':
-				lst.pop()
-			else:
-				lst.append(new_dir)
-			self.path = '/'.join(lst)
 			
+		self.setDirectory(self.path)
+		self._widget.show()
+		
+	def setDirectory(self, path):
+		self.path = path
+		if not self._widget: return
+		
 		def decodeList(list):
 			fs_encoding = sys.getfilesystemencoding()
 			if fs_encoding is None: fs_encoding = "ascii"
@@ -90,8 +86,6 @@ class FileBrowser(object):
 					newList.append(unicode(i, fs_encoding, 'replace'))
 					print "WARNING: Could not decode item:", i
 			return newList
-			
-		
 
 		self.dir_list = []
 		self.file_list = []
@@ -105,6 +99,21 @@ class FileBrowser(object):
 			'dirList'  : self.dir_list,
 			'fileList' : self.file_list
 		})
+		
+		self._widget.adaptLayout()
+
+	def _selectDir(self):
+		selection = self._widget.collectData('dirList')
+		if selection >= 0 and selection < len(self.dir_list):
+			new_dir = u2s(self.dir_list[selection])
+			lst = self.path.split('/')
+			if new_dir == '..' and lst[-1] != '..' and lst[-1] != '.':
+				lst.pop()
+			else:
+				lst.append(new_dir)
+			 
+			path = '/'.join(lst)
+			self.setDirectory(path)
 
 	def _selectFile(self):
 		self._widget.hide()
