@@ -21,7 +21,9 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-""" a tool for FIFEdit to edit object and instance attributes """
+""" a tool for FIFEdit to edit camera attributes.  It does not
+currently support multiple cameras.
+"""
 
 import fife
 import pychan
@@ -198,9 +200,6 @@ class CameraEdit(plugin.Plugin):
 	def _createGui(self):
 		""" Create the basic gui container """
 		self._container =  pychan.loadXML('gui/cameradialog.xml')
-		
-		#self._container.findChild(name="mapLabel").hide()
-		#self._container.findChild(name="mapBox").hide()
 		
 		self._ok_button = self._container.findChild(name="okButton")
 		self._cancel_button = self._container.findChild(name="cancelButton")
