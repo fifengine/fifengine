@@ -17,17 +17,17 @@
 					<Add option="-DLOG_ENABLED" />
 					<Add directory="..\..\..\..\engine" />
 					<Add directory="..\..\..\..\engine\core" />
-					<Add directory="..\..\includes\mingw\boost_1_38_0" />
-					<Add directory="..\..\includes\mingw\libguichan" />
-					<Add directory="..\..\includes\mingw\libogg" />
-					<Add directory="..\..\includes\mingw\libpng" />
-					<Add directory="..\..\includes\mingw\libvorbis" />
-					<Add directory="..\..\includes\mingw\openal" />
-					<Add directory="..\..\includes\mingw\python25" />
-					<Add directory="..\..\includes\mingw\sdl" />
-					<Add directory="..\..\includes\mingw\sdl_image" />
-					<Add directory="..\..\includes\mingw\sdl_ttf" />
-					<Add directory="..\..\includes\mingw\zlib" />
+					<Add directory="..\..\includes\boost_1_38_0" />
+					<Add directory="..\..\includes\libguichan" />
+					<Add directory="..\..\includes\libogg" />
+					<Add directory="..\..\includes\libpng" />
+					<Add directory="..\..\includes\libvorbis" />
+					<Add directory="..\..\includes\openal" />
+					<Add directory="..\..\includes\python26" />
+					<Add directory="..\..\includes\sdl" />
+					<Add directory="..\..\includes\sdl_image" />
+					<Add directory="..\..\includes\sdl_ttf" />
+					<Add directory="..\..\includes\zlib" />
 				</Compiler>
 				<Linker>
 					<Add library="..\..\static_libs\mingw\libguichan_opengl.a" />
@@ -49,7 +49,7 @@
 					<Add library="..\..\static_libs\mingw\libboost_system.a" />
 					<Add library="..\..\applications\mingw\lib\libopengl32.a" />
 					<Add library="..\..\applications\mingw\lib\libglu32.a" />
-					<Add library="..\..\static_libs\mingw\python25\libpython25.a" />
+					<Add library="..\..\static_libs\mingw\python26\libpython26.a" />
 				</Linker>
 			</Target>
 		</Build>
