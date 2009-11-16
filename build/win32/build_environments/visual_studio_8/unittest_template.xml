@@ -21,7 +21,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\..\engine;..\..\..\..\..\engine\core;..\includes;..\..\..\includes\msvc2005\libguichan;..\..\..\includes\msvc2005\unittest++;..\..\..\includes\msvc2005\libogg;..\..\..\includes\msvc2005\openal-soft;..\..\..\includes\msvc2005\sdl;..\..\..\includes\msvc2005\sdl_image;..\..\..\includes\msvc2005\sdl_ttf;..\..\..\includes\msvc2005\zlib;..\..\..\includes\msvc2005\libvorbis;..\..\..\includes\msvc2005\libpng;..\..\..\includes\msvc2005\python;..\..\..\includes\msvc2005\boost_1_38_0" PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="3" Detect64BitPortabilityProblems="true" DebugInformationFormat="4"/>
+			<Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\..\engine;..\..\..\..\..\engine\core;..\includes;..\..\..\includes\libguichan;..\..\..\includes\unittest++;..\..\..\includes\libogg;..\..\..\includes\openal-soft;..\..\..\includes\sdl;..\..\..\includes\sdl_image;..\..\..\includes\sdl_ttf;..\..\..\includes\zlib;..\..\..\includes\libvorbis;..\..\..\includes\libpng;..\..\..\includes\python;..\..\..\includes\boost_1_38_0" PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE" MinimalRebuild="true" BasicRuntimeChecks="3" RuntimeLibrary="3" UsePrecompiledHeader="0" WarningLevel="3" Detect64BitPortabilityProblems="true" DebugInformationFormat="4"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
@@ -41,7 +41,7 @@
 			<Tool Name="VCXMLDataGeneratorTool"/>
 			<Tool Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool Name="VCMIDLTool"/>
-			<Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\..\engine;..\..\..\..\..\engine\core;..\includes;..\..\..\includes\msvc2005\libguichan;..\..\..\includes\msvc2005\unittest++;..\..\..\includes\msvc2005\libogg;..\..\..\includes\msvc2005\openal-soft;..\..\..\includes\msvc2005\sdl;..\..\..\includes\msvc2005\sdl_image;..\..\..\includes\msvc2005\sdl_ttf;..\..\..\includes\msvc2005\zlib;..\..\..\includes\msvc2005\libvorbis;..\..\..\includes\msvc2005\libpng;..\..\..\includes\msvc2005\python25;..\..\..\includes\msvc2005\boost_1_38_0" PreprocessorDefinitions="WIN32;_CONSOLE" MinimalRebuild="true" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="3" Detect64BitPortabilityProblems="true" DebugInformationFormat="3"/>
+			<Tool Name="VCCLCompilerTool" Optimization="0" AdditionalIncludeDirectories="..\..\..\..\..\engine;..\..\..\..\..\engine\core;..\includes;..\..\..\includes\libguichan;..\..\..\includes\unittest++;..\..\..\includes\libogg;..\..\..\includes\openal-soft;..\..\..\includes\sdl;..\..\..\includes\sdl_image;..\..\..\includes\sdl_ttf;..\..\..\includes\zlib;..\..\..\includes\libvorbis;..\..\..\includes\libpng;..\..\..\includes\python26;..\..\..\includes\boost_1_38_0" PreprocessorDefinitions="WIN32;_CONSOLE" MinimalRebuild="true" RuntimeLibrary="2" UsePrecompiledHeader="0" WarningLevel="3" Detect64BitPortabilityProblems="true" DebugInformationFormat="3"/>
 			<Tool Name="VCManagedResourceCompilerTool"/>
 			<Tool Name="VCResourceCompilerTool"/>
 			<Tool Name="VCPreLinkEventTool"/>
