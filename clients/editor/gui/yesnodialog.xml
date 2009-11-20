@@ -1,0 +1,9 @@
+<Window name="Input" title="Input box:">
+	<VBox>
+		<Label name="prompt" text="Enter your data:"/>
+		<HBox>
+			<Button name="okButton" text="OK"/>
+			<Button name="cancelButton" text="Cancel"/>
+		</HBox>
+	</VBox>
+</Window>

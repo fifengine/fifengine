@@ -49,6 +49,7 @@ from gui.mainwindow import MainWindow
 from gui.mapeditor import MapEditor
 from gui.menubar import Menu, MenuBar
 from gui.error import ErrorDialog
+from gui.yesnodialog import YesNoDialog
 from mapview import MapView
 from settings import Settings
 
@@ -66,6 +67,7 @@ class Editor(ApplicationBase, MainWindow):
 		Editor.editor = self
 	
 		self._filemanager = None
+		self._open_files = []
 	
 		self._params = params
 		self._eventlistener = None
@@ -344,35 +346,71 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self.showMapView(mapview)
 		
-		events.preMapClosed.connect(self._mapRemoved)
+		events.preMapClosed.connect(self._preMapRemoved)
+		events.postMapClosed.connect(self._postMapRemoved)
 		events.mapAdded.send(sender=self, map=map)
 		
 		return mapview
 		
-	def _mapRemoved(self, mapview):
-		events.preMapClosed.disconnect(self._mapRemoved)
-		
-		index = self._mapviewlist.index(mapview)-1
-		self._mapviewlist.remove(mapview)
+	def _preMapRemoved(self, sender, mapview):
+		events.preMapClosed.disconnect(self._preMapRemoved)
+	
+		# Remove from open files list
+		try:
+			path = mapview.getMap().getResourceLocation().getFilename()
+			try:
+				self._open_files.remove(path)
+			except ValueError:
+				pass
+		except RuntimeError:
+			# Mapview is not saved
+			return
 		
 		# Remove tab
 		for map_action in self._mapgroup.getActions():
 			if map_action.text == unicode(mapview.getMap().getId()):
 				self._mapgroup.removeAction(map_action)
 				break
-				
+			
+	def _postMapRemoved(self, mapview):
+		events.postMapClosed.disconnect(self._postMapRemoved)
+		
+		# Remove from mapviewlist
+		index = self._mapviewlist.index(mapview)-1
+		self._mapviewlist.remove(mapview)
+		
 		# Change mapview
 		if index >= 0:
 			self.showMapView(self._mapviewlist[index])
 		else:
 			self._mapview = None
 			self.getEngine().getView().clearCameras()
+			
+	def getMapviewByPath(self, path):
+		mappath = ""
+		for mv in self._mapviewlist:
+			try:
+				mappath = mv.getMap().getResourceLocation().getFilename()
+			except RuntimeError:
+				# Mapview is not saved yet
+				continue
+				
+			if mappath == path:
+				return mv
 
 	def openFile(self, path):
+		if path in self._open_files:
+			# Map is already open, ask user if he wants to reload the map
+			mapview = self.getMapviewByPath(path)
+			YesNoDialog("Map is already open. Do you want to reload it?", cbwa(self.reloadMapview, mapview=mapview))
+			return
+	
 		""" Opens a file """
 		try:
 			map = loaders.loadMapFile(path, self.engine)
-			return self.newMapView(map)
+			mapview = self.newMapView(map)
+			self._open_files.append(path)
+			return mapview
 		except:
 			traceback.print_exc(sys.exc_info()[1])
 			errormsg = u"Opening map failed:\n"
@@ -380,6 +418,19 @@ class Editor(ApplicationBase, MainWindow):
 			errormsg += u"Error: "+unicode(sys.exc_info()[1])
 			ErrorDialog(errormsg)
 			return None
+			
+	def reloadMapview(self, mapview=None):
+		if mapview is None:
+			mapview = self._mapview
+			
+		if mapview is None:
+			print "Can't reload map: No maps are open."
+			return
+			
+		path = mapview.getMap().getResourceLocation().getFilename()
+		mapview.close()
+		self.openFile(path)
+			
 	
 	def saveAll(self):
 		""" Saves all open maps """

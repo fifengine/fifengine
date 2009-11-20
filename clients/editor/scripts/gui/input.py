@@ -29,7 +29,7 @@ class InputDialog(object):
 	Input supplies a text box for entering data. The result is passed to onEntry.
 	onEntry - the function to call when a input is complete. Accepts one argument: a string of text.
 	"""
-	def __init__(self, prompt, onEntry, onCancel):
+	def __init__(self, prompt, onEntry, onCancel=None):
 		self._callback = onEntry
 		self._cancelCallback = onCancel
 
@@ -50,6 +50,7 @@ class InputDialog(object):
 		self._widget.hide()
 		
 	def _cancel(self):
-		self._cancelCallback()
+		if self._cancelCallback:
+			self._cancelCallback()
 		self._widget.hide()
 
