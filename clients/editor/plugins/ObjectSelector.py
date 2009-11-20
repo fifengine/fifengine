@@ -298,8 +298,6 @@ class ObjectSelector(plugin.Plugin):
 				self.objects.selected = i
 				break
 				
-				
-		self.mainScrollArea.adaptLayout(False)
 		scrollY = (self.objects.real_font.getHeight() + 0) * self.objects.selected
 		self.mainScrollArea.real_widget.setVerticalScrollAmount(scrollY)
 
@@ -334,9 +332,10 @@ class ObjectSelector(plugin.Plugin):
 		if not self.object:
 			if len(objects) > 0:
 				self.objectSelected(objects[0])
-				
-		self.mainScrollArea.adaptLayout(False)
+		
 		self.mainScrollArea.real_widget.setVerticalScrollAmount(self.objects.selected_item.y)
+		
+		self.objects.adaptLayout(False)
 
 
 	def objectSelected(self, obj):
@@ -364,7 +363,7 @@ class ObjectSelector(plugin.Plugin):
 		if height > 200: height = 200
 		self.preview.parent.max_height = height
 		
-		self.gui.adaptLayout(False)
+		self.gui.adaptLayout()
 		
 	def scrollToObject(self, object):
 		# Select namespace
@@ -397,7 +396,7 @@ class ObjectSelector(plugin.Plugin):
 		elif self.mode == 'preview':
 			self.fillPreviewList()
 
-		self.gui.adaptLayout(False)
+		self.gui.adaptLayout()
 
 	def _getImage(self, obj):
 		""" Returns an image for the given object.
