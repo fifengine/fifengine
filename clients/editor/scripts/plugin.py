@@ -45,7 +45,7 @@ class PluginManager:
 				files.append(os.path.splitext(f)[0])
 				
 		for f in files:
-			importPlugin = self._settings.get("Plugins", f, False)
+			importPlugin = self._settings.get("Plugins", f, True)
 			if importPlugin:
 				try:
 					print "Importing plugin:", f
