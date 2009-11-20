@@ -344,24 +344,27 @@ class ObjectSelector(plugin.Plugin):
 		been selected.
 		@param obj: fife.Object instance"""
 
-		self.setPreview(obj)
-		
 		events.onObjectSelected.send(sender=self, object=obj)
-
-		self.gui.adaptLayout(False)
 		
 	# Set preview image
-	def setPreview(self, object):
+	def setPreview(self, object, sender=None):
 		if not object: return
 		if self.object and object == self.object:
 			return
-			
+		
 		self.object = object
-		self.scrollToObject(object)
+		
+		# We do not want to autoscroll the list when the user manually 
+		# selects an object from the object selector
+		if sender is not self:
+			self.scrollToObject(object)
+		
 		self.preview.image = self._getImage(object)
 		height = self.preview.image.getHeight();
 		if height > 200: height = 200
 		self.preview.parent.max_height = height
+		
+		self.gui.adaptLayout(False)
 		
 	def scrollToObject(self, object):
 		# Select namespace
