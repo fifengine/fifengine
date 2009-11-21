@@ -136,6 +136,9 @@ class FileManager(object):
 			return
 			
 		fname = '/'.join([path, filename])
+		fname = fname.lower()
+		if os.path.splitext(fname)[1] != ".xml":
+			fname = fname + ".xml"
 		mapview.saveAs(fname)
 		
 	def saveAs(self):

@@ -129,9 +129,21 @@ class Editor(ApplicationBase, MainWindow):
 		import fifelog
 		
 		logModules = self._settings.get("FIFE", "LogModules")
+		loglevel = self._settings.get("FIFE", "LogLevel", "Warn");
+			
 		self.log = fifelog.LogManager(self.engine, self._settings.get("FIFE", "LogToPrompt"), self._settings.get("FIFE", "LogToFile"))
 		if logModules:
 			self.log.setVisibleModules(*logModules)
+			
+		if loglevel == "Debug":
+			loglevel = fife.LogManager.LEVEL_DEBUG
+		elif loglevel == "Log":
+			loglevel = fife.LogManager.LEVEL_LOG
+		elif loglevel == "Error":
+			loglevel = fife.LogManager.LEVEL_ERROR
+		else:
+			loglevel = fife.LogManager.LEVEL_WARN
+		self.log.lm.setLevelFilter(loglevel)
 		
 	def _initTools(self):
 		""" Initializes tools """
@@ -402,7 +414,7 @@ class Editor(ApplicationBase, MainWindow):
 		if path in self._open_files:
 			# Map is already open, ask user if he wants to reload the map
 			mapview = self.getMapviewByPath(path)
-			YesNoDialog("Map is already open. Do you want to reload it?", cbwa(self.reloadMapview, mapview=mapview))
+			YesNoDialog(u"Map is already open. Do you want to reload it?", cbwa(self.reloadMapview, mapview=mapview))
 			return
 	
 		""" Opens a file """
