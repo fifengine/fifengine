@@ -29,6 +29,7 @@ except:
 
 import loaders
 from serializers import *
+from fife_utils import *
 import time
 
 FORMAT = '1.0'
@@ -88,10 +89,13 @@ class XMLMapLoader(fife.ResourceLoader):
 		try:
 			self.map = self.model.createMap(str(id))
 			self.map.setResourceFile(self.source)
-		except fife.Exception, e: # NameClash appears as general fife.Exception; any ideas?
-			print e.getMessage()
-			print ''.join(['File: ', self.source, '. The map ', str(id), ' already exists! Ignoring map definition.'])
-			return None
+		except fife.Exception, e:
+			if is_fife_exc(fife.NameClash, e):
+				msg = e.getMessage()+" "
+				msg = msg + X+''.join(['File: ', self.source, '. The map ', str(id), ' already exists! Ignoring map definition.'])
+				logger.log(fife.LogManager.LEVEL_WARN, msg)
+				return None
+			raise
 
 		# xml-specific directory imports. This is used by xml savers.
 		self.map.importDirs = []
@@ -124,7 +128,7 @@ class XMLMapLoader(fife.ResourceLoader):
 
 			# Don't parse duplicate imports
 			if (dir,file) in parsedImports:
-				print "Duplicate import:" ,(dir,file)
+				logger.log(fife.LogManager.LEVEL_WARN, "Duplicate import:" + str((dir, file)))
 				continue
 			parsedImports[(dir,file)] = 1
 
@@ -136,7 +140,7 @@ class XMLMapLoader(fife.ResourceLoader):
 				loaders.loadImportDirRec(dir, self.engine)
 				map.importDirs.append(dir)
 			else:
-				print 'Empty import statement?'
+				logger.log(fife.LogManager.LEVEL_WARN, 'Empty import statement?')
 				
 			if self.callback:
 				i += 1				
@@ -187,7 +191,7 @@ class XMLMapLoader(fife.ResourceLoader):
 				layer_obj = map.createLayer(str(id), cellgrid)
 			except fife.Exception, e:
 				print e.getMessage()
-				print 'The layer ' + str(id) + ' already exists! Ignoring this layer.'
+				logger.log(fife.LogManager.LEVEL_WARN, 'The layer ' + str(id) + ' already exists! Ignoring this layer.')
 				continue
 
 			strgy = fife.CELL_EDGES_ONLY
@@ -238,7 +242,8 @@ class XMLMapLoader(fife.ResourceLoader):
 
 			object = self.model.getObject(str(objectID), str(nspace))
 			if not object:
-				print ''.join(['Object with id=', str(objectID), ' ns=', str(nspace), ' could not be found. Omitting...'])
+				msg = 'Object with id=' + str(objectID) + ' ns=' + str(nspace) + ' could not be found. Omitting...'
+				logger.log(fife.LogManager.LEVEL_WARN, msg)
 				continue
 
 			x = instance.get('x')
@@ -328,7 +333,7 @@ class XMLMapLoader(fife.ResourceLoader):
 				cam.setTilt(float(tilt))
 				cam.setZoom(float(zoom))
 			except fife.Exception, e:
-				print e.getMessage()
+				logger.log(fife.LogManager.LEVEL_WARN, "Error when parsing cameras: "+e.getMessage())
 				
 			if self.callback:
 				i += 1

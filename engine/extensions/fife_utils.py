@@ -41,7 +41,7 @@ def is_fife_exc(type, original_exc):
 	ret = False
 	m = _exc_re.search(str(original_exc))
 	if m:
-		if m.group(1) == type('').getTypeStr():
+		if m.group(1) == type('is_fife_exc test').getTypeStr():
 			ret = True
 	return ret
 

@@ -24,7 +24,7 @@
 import fife, sys, os
 from traceback import print_exc
 
-__all__ = ('ET', 'SerializerError', 'InvalidFormat', 'WrongFileType', 'NameClash', 'NotFound', 'warn', 'root_subfile', 'reverse_root_subfile')
+__all__ = ('ET', 'SerializerError', 'InvalidFormat', 'WrongFileType', 'NameClash', 'NotFound', 'root_subfile', 'reverse_root_subfile', 'logger')
 
 try:
 	import xml.etree.cElementTree as ET
@@ -45,9 +45,8 @@ class NameClash(SerializerError):
 
 class NotFound(SerializerError):
 	pass
-
-def warn(self, msg):
-	print 'Warning (%s): %s' % (self.filename, msg)
+	
+logger = fife.Logger(fife.LM_LOADERS)
 
 def root_subfile(masterfile, subfile):
 	'''

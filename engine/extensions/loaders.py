@@ -26,7 +26,7 @@
 import fife
 
 from serializers.xmlmap import XMLMapLoader
-from serializers import WrongFileType, NameClash
+from serializers import WrongFileType, NameClash, logger
 
 from serializers.xmlobject import XMLObjectLoader
 
@@ -45,7 +45,7 @@ def loadMapFile(path, engine, callback=None):
 	"""
 	map_loader = XMLMapLoader(engine, callback)
 	map = map_loader.loadResource(fife.ResourceLocation(path))
-	print "--- Loading map took: ", map_loader.time_to_load, " seconds."
+	logger.log(fife.LogManager.LEVEL_LOG, "--- Loading map took: " + str(map_loader.time_to_load) + " seconds.")
 	return map
 
 
@@ -54,13 +54,12 @@ def loadImportFile(path, engine):
 	res = None
 	try:
 		res = object_loader.loadResource(fife.ResourceLocation(path))
-		print 'imported object file ' + path
+		logger.log(fife.LogManager.LEVEL_LOG, 'imported object file ' + path)
 	except WrongFileType:
-		pass
-#		print 'ignored non-object file ' + path
+		logger.log(fife.LogManager.LEVEL_LOG, 'ignored non-object file ' + path)
 	except NameClash:
-		pass
-#		print 'ignored already loaded file ' + path
+		logger.log(fife.LogManager.LEVEL_LOG, 'ignored already loaded file ' + path)
+	
 	return res
 
 def loadImportDir(path, engine):
