@@ -96,6 +96,11 @@ class MapController(object):
 		layers = [l for l in self._map.getLayers() if l.getId() == layerid]
 		if len(layers) == 1:
 			self._layer = layers[0]
+			events.layerSelected.send(sender=self, layer=layers[0], mapcontroller=self)
+			
+	def getLayer(self):
+		""" Returns active layer """
+		return self._layer
 
 	def deselectSelection(self):
 		""" Deselects all selected cells """
