@@ -37,6 +37,7 @@ postMapClosed = Signal(providing_args=["mapview"])
 onInstancesSelected = Signal(providing_args=["instances"])
 onObjectSelected = Signal(providing_args=["object"])
 onObjectsImported = Signal(providing_args=[])
+layerSelected = Signal(providing_args=["mapcontroller", "layer"])
 
 # Signals emitted by EventListener
 onQuit			= Signal(providing_args=[])

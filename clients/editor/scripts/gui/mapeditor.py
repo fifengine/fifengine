@@ -93,6 +93,7 @@ class MapEditor:
 		events.mouseWheelMovedUp.connect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.connect(self.mouseWheelMovedDown)
 		events.onPump.connect(self.pump)
+		events.layerSelected.connect(self._layerSelected)
 		
 	def _clear(self):
 		self._clearToolbarButtons()
@@ -109,6 +110,7 @@ class MapEditor:
 		events.mouseWheelMovedUp.disconnect(self.mouseWheelMovedUp)
 		events.mouseWheelMovedDown.disconnect(self.mouseWheelMovedDown)
 		events.onPump.disconnect(self.pump)
+		events.layerSelected.disconnect(self._layerSelected)
 		
 	def _mapChanged(self, sender, mapview):
 		self.setController(mapview.getController())
@@ -155,6 +157,18 @@ class MapEditor:
 	def _resetCursor(self):
 		cursor = self._editor.getEngine().getCursor()
 		cursor.set(fife.CURSOR_NATIVE, fife.NC_ARROW)
+		
+	def _layerSelected(self, sender, mapcontroller, layer):
+		gridrenderer = self._controller._camera.getRenderer('GridRenderer')
+		gridrenderer.clearActiveLayers()
+		if layer is not None:
+			gridrenderer.addActiveLayer(self._controller.getLayer())
+
+		blockrenderer = self._controller._camera.getRenderer('BlockingInfoRenderer')
+		blockrenderer.clearActiveLayers()
+		if layer is not None:
+			blockrenderer.addActiveLayer(self._controller.getLayer())
+		
 		
 	def setObject(self, object):
 		self._object = object
@@ -512,6 +526,9 @@ class MapEditor:
 		elif keystr == 't':
 			gridrenderer = self._controller._camera.getRenderer('GridRenderer')
 			gridrenderer.setEnabled(not gridrenderer.isEnabled())
+			gridrenderer.clearActiveLayers()
+			if self._controller.getLayer() is not None:
+				gridrenderer.addActiveLayer(self._controller.getLayer())
 
 		elif keystr == 'b':
 			blockrenderer = self._controller._camera.getRenderer('BlockingInfoRenderer')
