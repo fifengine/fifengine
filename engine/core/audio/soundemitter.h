@@ -54,7 +54,7 @@ namespace FIFE {
 
 		/** Returns the emitter-id
 		 */
-		unsigned int getID() {
+		unsigned int getID() const{
 			return m_emitterid;
 		}
 
@@ -140,7 +140,7 @@ namespace FIFE {
 		 *
 		 * @return Returns true if the audio data is stereo, false if mono.
 		 */
-		bool isStereo() {
+		bool isStereo() const{
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->isStereo();
 			}
@@ -149,7 +149,7 @@ namespace FIFE {
 
 		/** Returns the bit resolution
 		 */
-		short getBitResolution() {
+		short getBitResolution() const {
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->getBitResolution();
 			}
@@ -158,7 +158,7 @@ namespace FIFE {
 
 		/** Returns the sample rate
 		 */
-		unsigned long getSampleRate() {
+		unsigned long getSampleRate() const{
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->getSampleRate();
 			}

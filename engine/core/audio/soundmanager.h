@@ -54,7 +54,7 @@ namespace FIFE {
 		 * @param emitterid The id of the Emitter
 		 *
 		 */
-		SoundEmitter* getEmitter(unsigned int emitterid);
+		SoundEmitter* getEmitter(unsigned int emitterid) const;
 		
 		/** Returns a pointer to an allocated emitter-instance
 		 */
@@ -66,7 +66,7 @@ namespace FIFE {
 		
 		/** Returns an openAL context
 		 */
-		ALCcontext* getContext() {
+		ALCcontext* getContext() const {
 			return m_context;
 		}
 		
@@ -113,7 +113,7 @@ namespace FIFE {
 		
 		/** Returns true if audio module is active
 		 */
-		bool isActive() {
+		bool isActive() const{
 			return m_device != NULL;
 		}
 		

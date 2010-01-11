@@ -57,13 +57,13 @@ namespace FIFE {
 		/** Gets the type of this command
 		 * @return type of this command
 		 */
-		CommandType getCommandType() { return m_commandtype; }
+		CommandType getCommandType() const { return m_commandtype; }
 		void setCommandType(CommandType type) { m_commandtype = type; }
 
 		/** Gets the code of this command. Meaning of code depends on the command type
 		 * @return code of this command
 		 */
-		int getCode() { return m_code; }
+		int getCode() const { return m_code; }
 		void setCode(int code) { m_code = code; }
 
 		virtual void consume() { Event::consume(); }

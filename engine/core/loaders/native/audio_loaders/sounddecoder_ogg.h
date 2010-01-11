@@ -49,7 +49,7 @@ namespace FIFE {
 		
 		/** Returns the decoded length of the file in bytes
 		 */
-		unsigned long getDecodedLength() {
+		unsigned long getDecodedLength() const{
 			return m_declength;
 		}
 		
@@ -70,7 +70,7 @@ namespace FIFE {
 		 *
 		 * The length of the buffer is returned by getBufferSize().
 		 */
-		void *getBuffer() {
+		void *getBuffer() const{
 			return m_data;
 		}
 		

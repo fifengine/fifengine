@@ -1,171 +1,295 @@
 import os, sys
-from utils.util_scripts.path import path as upath
+import utils.scons.scons_utils as utils
+from distutils.sysconfig import get_python_lib
 
-opts = Options('options.py', ARGUMENTS)
-opts.Add(BoolOption('debug',  'Build with debuginfos and without optimisations', 1))
-opts.Add(BoolOption('tests',  'Build testcases in unit_tests', 0))
-opts.Add(BoolOption('noengine',  'Prevents building of engine, use e.g. for util/test tweaking', 0))
-opts.Add(BoolOption('opengl', 'Compile OpenGL support', 1))
-opts.Add(EnumOption('script', 'Selects generated scripting language bindings', 'python', allowed_values=('python', 'lua')))
-opts.Add(BoolOption('profile', 'Build with profiling information', 0))
-opts.Add(BoolOption('projectfiles_only',  "Creates IDE project files only. If defined, won't build code. " +
-                    "Note that normal builds generate these files also automatically.", 0))
-opts.Add(BoolOption('utils',  'Build utilities', 0))
-opts.Add(BoolOption('ext',  'Build external dependencies', 0))
-opts.Add(BoolOption('docs',  "Generates static analysis documentation into doc-folder. If defined, won't build code", 0))
-opts.Add(BoolOption('zip', 'Enable ZIP archive support', 1))
-opts.Add(BoolOption('log', 'Enables logging for the engine', 1))
+_sep = os.path.sep
 
-opts.Add(BoolOption('rend_camzone', 'Enables camera zone renderer', 0))
-opts.Add(BoolOption('rend_grid', 'Enables grid renderer', 0))
+vars = Variables()
+vars.Add(PathVariable('DESTDIR', 
+			'Destination directory (prepended to prefix)',
+			None,
+			PathVariable.PathAccept ))
 
-# Platform-specific prefix directories
-if sys.platform == 'linux2':
-	opts.Add(PathOption('PREFIX', 'Directory to install under', '/usr'))
+#propagate the invoking users complete external environment
+env = Environment(variables = vars, 
+			ENV = os.environ,
+			DESTDIR = '${DESTDIR}')
 
-#env = Environment(options = opts, ENV = {'PATH' : os.environ['PATH']})
-env = Environment(options = opts, ENV = os.environ)
-env.Replace(SCONS_ROOT_PATH=str(upath('.').abspath()))
-rootp = env['SCONS_ROOT_PATH']
+env.EnsureSConsVersion(1,2)
 
-Help(opts.GenerateHelpText(env))
+#**************************************************************************
+#add any command line options here
+#**************************************************************************
+AddOption('--release',
+		dest='release',
+		action="store_true",
+		help='Builds the release version of the binaries',
+		default=False)
+		
+AddOption('--disable-opengl',
+		dest='disable-opengl',
+		action="store_true",
+		help='Disable OpenGL support',
+		default=False)		
 
-# helper functions
-def tryConfigCommand(context, cmd):
-	ret = context.TryAction(cmd)[0]
-	context.Result(ret)
-	if ret:
-		context.env.ParseConfig(cmd)
-	return ret
+AddOption('--disable-zip',
+		dest='disable-zip',
+		action="store_true",
+		help='Disable ZIP archive support',
+		default=False)	
 
-def importConfig(config):
-	module = __import__(config)
-	parts = config.split('.')
-	for part in parts[1:]:
-		module = getattr(module, part)
-	return module
+AddOption('--disable-log',
+		dest='disable-log',
+		action="store_true",
+		help='Disable engine logging support',
+		default=False)	
 
-def getPlatformConfig():
-	pathparts = ('build', '%s-config' % sys.platform)
-	filename = os.path.join(*pathparts)
-	sconsfilename = '.'.join(pathparts)
-	if os.path.exists(filename + '.py'):
-		return importConfig(sconsfilename)
-	else:
-		print 'no custom platform-config found (searched: %s.py)' % filename
-		filename += '-dist'
-		sconsfilename += '-dist'
-		if os.path.exists(filename + '.py'):
-			return importConfig(sconsfilename)
-		print 'no platform-config found (searched: %s.py)' % filename
-		Exit(1)
+AddOption('--enable-rend-camzone',
+		dest='enable-rend-camzone',
+		action="store_true",
+		help='Enables camera zone renderer',
+		default=False)
+		
+AddOption('--enable-rend-grid',
+		dest='enable-rend-grid',
+		action="store_true",
+		help='Enables camera grid renderer',
+		default=False)
 
-# custom checks
-def checkPKG(context, name):
-	context.Message('Checking for %s (using pkg-config)... ' % name)
-	return tryConfigCommand(context, 'pkg-config --libs --cflags \'%s\'' % name)
-
-def checkConf(context, name):
-	binary = '%s-config' % name.lower()
-	context.Message('Checking for %s (using %s)... ' % (name, binary))
-	configcall = '%s --libs --cflags' %binary
-	return tryConfigCommand(context, configcall)
-
-def checkSimpleLib(context, liblist, header = '', lang = 'c++', required = 1):
-	for lib in liblist:
-		ret = checkPKG(context, lib)
-		if ret:
-			return ret
-
-		ret = checkConf(context, lib)
-		if ret:
-			return ret
-
-		if len(header):
-			ret = conf.CheckLibWithHeader(lib, header, lang)
-		else:
-			ret = conf.CheckLib(lib,language=lang)
-
-		if ret:
-#			print "ret: " + ret
-			if not lib in conf.env['LIBS']:
-				conf.env.Append(LIBS = [lib])
-			return ret
-
-	if required:
-		print 'required lib %s not found :(' % lib
-		Exit(1)
-
-	return False
-
-if env['projectfiles_only']:
-	Export('env')
-	SConscript(['engine/SConscript'])
-elif env['docs']:
-	_jp = os.path.join
-	# should prolly be done using scons builders...
-	try:
-		print "removing old documentation directories"
-		upath('doc/doxygen/html').rmtree()
-	except OSError:
-		pass
-	print "generating new doxygen documentation"
-	os.system('doxygen ' + _jp('doc', 'doxygen', 'doxyfile'))
-	print "doxygen documentation created succesfully"
-
-elif env['ext']:
-	Export('env')
-	SConscript('ext/SConscript')
+AddOption('--enable-profile',
+		dest='enable-profile',
+		action="store_true",
+		help='Build with profiling information',
+		default=False)
+		
+AddOption('--prefix',
+		dest='prefix',
+		nargs=1, type='string',
+		action='store',
+		metavar='DIR',
+		help='installation prefix')
+		
+AddOption('--python-prefix',
+		dest='python-prefix',
+		nargs=1, type='string',
+		action='store',
+		metavar='DIR',
+		help='Python module installation prefix')
+		
+#**************************************************************************
+#save command line options here
+#**************************************************************************
+if GetOption('release'):
+	debug = 0
 else:
-	platformConfig = getPlatformConfig()
-	env = platformConfig.initEnvironment(env)
-	conf = Configure(env, 
-                     custom_tests = {'checkConf': checkConf, 'checkPKG': checkPKG, 'checkSimpleLib': checkSimpleLib},
-					 conf_dir = '#/build/.sconf_temp',
-					 log_file = '#/build/config.log')
+	debug = 1
 	
-	platformConfig.addExtras(conf)
-	env = conf.Finish()
+if GetOption('disable-opengl'):
+	opengl = 0
+else:
+	opengl = 1
 
-	if sys.platform == "win32":
-		env.Append(CPPFLAGS = ['-Wall'])
+if GetOption('disable-zip'):
+	zip = 0
+else:
+	zip = 1
+
+if GetOption('disable-log'):
+	log = 0
+else:
+	log = 1
+
+if GetOption('enable-rend-camzone'):
+	rend_camzone = 1
+else:
+	rend_camzone = 0
+
+if GetOption('enable-rend-grid'):
+	rend_grid = 1
+else:
+	rend_grid = 0
+
+if GetOption('enable-profile'):
+	profile = 1
+else:
+	profile = 0
+
+#set the default installation directories.
+prefix = GetOption('prefix')
+if prefix is None:
+	if sys.platform == 'win32':
+		prefix = '\\fife'
+	elif sys.platform == 'darwin':
+		prefix = '/opt/local'
 	else:
-		env.Append(CPPFLAGS = ['-Wall']) # removed old style cast warnings for now (swig creates these)
+		prefix = '/usr/local'
+
+pythonprefix = GetOption('python-prefix')
+if pythonprefix is None:
+	pythonprefix = get_python_lib()
+
+if env.has_key('DESTDIR'):
+	prefix = env['DESTDIR'] + prefix
+	pythonprefix = env['DESTDIR'] + pythonprefix
+
+#**************************************************************************
+#get platform specific information
+#**************************************************************************
+platformConfig = utils.getPlatformConfig()
+env = platformConfig.initEnvironment(env)
+env = platformConfig.addExtras(env, opengl)
+
+#**************************************************************************
+#define custom library/header check functions
+#**************************************************************************
+conf = Configure(env,
+		custom_tests = {'checkPKG': utils.checkPKG,
+				'checkConf': utils.checkConf },
+				conf_dir = os.path.join('#','build','.sconf_temp'),
+				log_file = os.path.join('#','build','config.log'),
+				clean=True)
 	
-	if env['debug'] == 1:
-		env.Append(CPPFLAGS = ['-ggdb', '-O0'])
-	else:
-		if os.getenv('CXXFLAGS'):
-			env.Append(CPPFLAGS = Split(os.environ['CXXFLAGS']))
+def checkForLib(lib, header='', language='c++'):
+	ret = conf.checkPKG(lib)
+	if not ret:
+		ret = conf.checkConf(lib)
+		if not ret:
+			if len(header):
+				ret = conf.CheckLibWithHeader(libs=lib, header=header, language=language)
+			else:
+				ret = conf.CheckLib(library=lib, language=language)
+					
+	return ret
+	
+def checkForLibs(liblist, required=1, language='c++'):
+	ret = 0
+	for lib, header in liblist:
+		if (isinstance(lib, tuple)):
+			for item in lib:
+				ret = checkForLib(item, header, language)
+					
+				if ret:
+					env.AppendUnique(LIBS = [item])
+					break
 		else:
-			env.Append(CPPFLAGS = ['-O2'])
+			ret = checkForLib(lib, header, language)
+			if ret:
+				env.AppendUnique(LIBS=[lib])
 	
-	if env['profile']:
-		env.Append(CPPFLAGS = ['-pg'])
-		env.Append(LINKFLAGS = ['-pg'])
-	
-	definemap = {
-		'opengl': 'HAVE_OPENGL',
-		'zip': 'HAVE_ZIP',
-		'log': 'LOG_ENABLED',
-		'rend_camzone': 'RENDER_CAMZONES',
-		'rend_grid': 'RENDER_GRID',
-	}
-	for k, v in definemap.items():
-		if env[k]:
-			env.Append(CPPDEFINES = [v])
-	
-	Export('env')
-	
-	if not env['noengine']:
-		SConscript('engine/SConscript')
-	
-	env.Append(LIBPATH = ['#/engine'])
+		if required and not ret:
+			if (isinstance(lib, tuple)):
+				for item in lib:
+					print 'Required lib %s not found!' %item
+			else:
+				print 'Required lib %s not found!' %lib
+			Exit(1)
+		
+#**************************************************************************
+#check the existence of required libraries and headers
+#**************************************************************************
+required_libs = platformConfig.getRequiredLibs(opengl)
+optional_libs = platformConfig.getOptionalLibs(opengl)
 
-	if env['tests']:
-		SConscript('tests/core_tests/SConscript')
+required_headers = platformConfig.getRequiredHeaders(opengl)
 
-	if env['utils']:
-		SConscript([str(p) for p in upath('utils').walkfiles('SConscript')])
+# do not run the check for dependencies if you are running
+# a clean or building the external dependencies
+if not GetOption('clean') and 'ext' not in COMMAND_LINE_TARGETS:
+	if required_libs:
+		checkForLibs(required_libs, required = 1)
+	if optional_libs:
+		checkForLibs(optional_libs, required = 0)
+	if required_headers:
+		for h in required_headers:
+			conf.CheckHeader(h)
 
-# vim: set filetype=python: 
+#**************************************************************************
+#set variables based on command line options
+#**************************************************************************
+if debug:
+	env.AppendUnique(CXXFLAGS=['-ggdb', '-O0', '-D_DEBUG'])
+	engine_var_dir = os.path.join('build','engine','debug')
+	tests_var_dir = os.path.join('build','tests','debug')
+	print "Building DEBUG binaries..."
+else:
+	env.AppendUnique(CXXFLAGS=['-O2'])
+	engine_var_dir = os.path.join('build','engine','release')
+	tests_var_dir = os.path.join('build','tests','release')
+	print "Building RELEASE binaries..."
+
+if opengl: 
+	env.Append(CPPDEFINES = ['HAVE_OPENGL'])
+if zip:
+	env.Append(CPPDEFINES = ['HAVE_ZIP'])
+if log:
+	env.Append(CPPDEFINES = ['LOG_ENABLED'])
+if rend_camzone:
+	env.Append(CPPDEFINES = ['RENDER_CAMZONES'])
+if rend_grid:
+	env.Append(CPPDEFINES = ['RENDER_GRID'])
+if profile:
+	env.Append(CPPFLAGS = ['-pg'])
+	env.Append(LINKFLAGS = ['-pg'])
+	
+#last but not least get any CXXFLAGS passed to scons via command line
+if ARGUMENTS.get('CXXFLAGS'):
+	env.AppendUnique(CXXFLAGS = Split(ARGUMENTS.get('CXXFLAGS'))) 
+else:
+	env.AppendUnique(CXXFLAGS=['-Wall', '-Wno-unused'])
+
+#**************************************************************************
+#global compiler flags used for ALL targets
+#**************************************************************************
+env.Append(CPPPATH='#engine/core')
+
+#**************************************************************************
+#variables to pass to the SConscript
+#TODO: clean this up a bit.  Should probably make sure unittest++ exists.
+#**************************************************************************
+opts = {'SRC' : os.path.join(os.getcwd(), 'engine',),
+		'DEBUG' : debug,
+		'PREFIX' : prefix,
+		'TESTLIBS' : ['fife', 'UnitTest++'],
+		'PYTHON_PREFIX' : pythonprefix,
+		'WRAP_COPY_DEST' : os.path.join('#engine', 'swigwrappers', 'python'),
+		'PYLIB_COPY_DEST' : os.path.join('#engine', 'python', 'fife')}
+
+if debug:
+	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'debug')
+else:
+	opts['LIBPATH'] = os.path.join(os.getcwd(), 'build', 'engine', 'release')
+
+#**************************************************************************
+#target for static and shared libraries
+#**************************************************************************
+Export('env')
+
+#build the engine
+env.SConscript('engine/SConscript', variant_dir=engine_var_dir, duplicate=0, exports='opts')
+
+#build the engine tests
+env.SConscript('tests/core_tests/SConscript', variant_dir=tests_var_dir, duplicate=0, exports='opts')
+
+#build the external dependencies
+env.SConscript('ext/SConscript')
+
+#**************************************************************************
+#documentation target
+#**************************************************************************
+def generate_docs(target = None, source = None, env = None):
+	os.system('doxygen $SOURCES')
+
+doc_builder = Builder(action = generate_docs)
+env.Append(BUILDERS = {'BuildDocs': doc_builder})
+Alias('docs', env.BuildDocs('docs', os.path.join('doc', 'doxygen', 'doxyfile')))
+
+#**************************************************************************
+#Set the default target
+#**************************************************************************
+#clear the default target
+Default()
+#make fife-python the default target
+Default('fife-python')
+
+# vim: set filetype=python:
+

@@ -41,8 +41,8 @@
 
 using namespace FIFE;
 
-static const std::string COMPRESSED_FILE = "../../tests/data/dat1vfstest.dat";
-static const std::string RAW_FILE = "../../tests/data/test.map";
+static const std::string COMPRESSED_FILE = "tests/data/dat1vfstest.dat";
+static const std::string RAW_FILE = "tests/data/test.map";
 
 TEST(DAT1_test){
 	

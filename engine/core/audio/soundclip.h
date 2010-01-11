@@ -66,7 +66,7 @@ namespace FIFE {
 		 * 
 		 * @return Returns true if streaming is required, false if not.
 		 */
-		bool isStream() {
+		bool isStream() const {
 			return m_isstream;
 		}
 		
@@ -75,14 +75,14 @@ namespace FIFE {
 		 *
 		 * @return Returns the number of buffers.
 		 */
-		unsigned int countBuffers() {
+		unsigned int countBuffers() const {
 			return m_buffervec.at(0)->usedbufs;
 		}
 		
 		/** Returns the array of buffers for queuing
 		 *
 		 */
-		ALuint* getBuffers(unsigned int streamid = 0) {
+		ALuint* getBuffers(unsigned int streamid = 0) const {
 			return m_buffervec.at(streamid)->buffers;
 		}
 		
@@ -104,7 +104,7 @@ namespace FIFE {
 		
 		/** Gets the stream position
 		 */
-		float getStreamPos(unsigned int streamid, SoundPositionType type);
+		float getStreamPos(unsigned int streamid, SoundPositionType type) const;
 		
 		/** Refill a processed buffer with new data
 		 * 
@@ -129,7 +129,7 @@ namespace FIFE {
 		
 		/** Returns the attached decoder
 		 */
-		SoundDecoder* getDecoder() {
+		SoundDecoder* getDecoder() const {
 			return m_decoder;
 		}
 		

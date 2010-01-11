@@ -35,9 +35,8 @@
 namespace gcn {
 
 	UTF8TextBox::UTF8TextBox(const std::string & text)
-		:TextBox(text)
+		:TextBox(text), mStringEditor(new UTF8StringEditor())
 	{
-		mStringEditor = new UTF8StringEditor();
 	}
 
 	UTF8TextBox::~ UTF8TextBox()

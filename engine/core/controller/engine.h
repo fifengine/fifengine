@@ -109,59 +109,59 @@ namespace FIFE {
 
 		/** Provides access point to the SoundManager
 		 */
-		SoundManager* getSoundManager() { return m_soundmanager; }
+		SoundManager* getSoundManager() const { return m_soundmanager; }
 		
 		/** Provides access point to the EventManager
 		 */
-		EventManager* getEventManager() { return m_eventmanager; }
+		EventManager* getEventManager() const { return m_eventmanager; }
 		
 		/** Provides access point to the TimeManager
 		 */
-		TimeManager* getTimeManager() { return m_timemanager; }
+		TimeManager* getTimeManager() const { return m_timemanager; }
 		
 		/** Provides access point to the GuiManager
 		 */
-		GUIManager* getGuiManager() { return m_guimanager; }
+		GUIManager* getGuiManager() const { return m_guimanager; }
 		
 		/** Provides access point to the ImagePool
 		 */
-		ImagePool* getImagePool() { return m_imagepool; }
+		ImagePool* getImagePool() const { return m_imagepool; }
 		
 		/** Provides access point to the AnimationPool
 		 */
-		AnimationPool* getAnimationPool() { return m_animpool; }
+		AnimationPool* getAnimationPool() const { return m_animpool; }
 
 		/** Provides access point to the SoundClipPool
 		 */
-		SoundClipPool* getSoundClipPool() { return m_soundclippool; }
+		SoundClipPool* getSoundClipPool() const { return m_soundclippool; }
 		
 		/** Provides access point to the RenderBackend
 		 */
-		RenderBackend* getRenderBackend() { return m_renderbackend; }
+		RenderBackend* getRenderBackend() const { return m_renderbackend; }
 		
 		/** Provides access point to the Model
 		 */
-		Model* getModel() { return m_model; }
+		Model* getModel() const { return m_model; }
 		
 		/** Provides access point to the View
 		 */
-		View* getView() { return m_view; }
+		View* getView() const { return m_view; }
 		
 		/** Provides access point to the LogManager
 		 */
-		LogManager* getLogManager() { return m_logmanager; }
+		LogManager* getLogManager() const { return m_logmanager; }
 		
 		/** Returns default font used in the engine
 		 */
-		GuiFont* getDefaultFont() { return m_defaultfont; }
+		GuiFont* getDefaultFont() const { return m_defaultfont; }
 		
 		/** Provides access point to the VFS
 		 */
-		VFS* getVFS() { return m_vfs; }
+		VFS* getVFS() const { return m_vfs; }
 		
 		/** Returns cursor used in the engine
 		 */
-		Cursor* getCursor() { return m_cursor; }
+		Cursor* getCursor() const { return m_cursor; }
 
 	private:
 		void preInit();

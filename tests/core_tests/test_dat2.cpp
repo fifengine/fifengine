@@ -41,8 +41,8 @@
 
 using namespace FIFE;
 
-static const std::string COMPRESSED_FILE = "../data/dat2vfstest.dat";
-static const std::string RAW_FILE = "../data/test.map";
+static const std::string COMPRESSED_FILE = "tests/data/dat2vfstest.dat";
+static const std::string RAW_FILE = "tests/data/test.map";
 TEST(DAT2_test){
 	
 	boost::shared_ptr<TimeManager> timemanager(new TimeManager());

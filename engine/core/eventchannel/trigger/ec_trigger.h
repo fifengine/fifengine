@@ -51,7 +51,7 @@ namespace FIFE {
 	  registerListener(listener);
 	}
 
-	Trigger() { };
+	Trigger() { }
 
 	virtual ~Trigger(){
 	  m_triggers.clear();
@@ -76,13 +76,13 @@ namespace FIFE {
 	}
 
 	void pollTriggers(){
-	  for (std::list<Trigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
+	  for (std::list<Trigger*>::iterator it = m_triggers.begin(), it_end =m_triggers.end(); it != it_end; ++it) {
 		(*it)->pollTrigger();
 	  }
 	}
 
 	void fireTrigger(){
-	  for (std::list<ITriggerListener*>::iterator it = m_listeners.begin(); it!=m_listeners.end(); ++it) {
+	  for (std::list<ITriggerListener*>::iterator it = m_listeners.begin(), it_end = m_listeners.end(); it != it_end; ++it) {
 		(*it)->triggerFired();
 	  }
 	}

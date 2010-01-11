@@ -74,7 +74,7 @@ namespace FIFE {
 		
 		/** Gets the source of the event.
 		 */
-		virtual IEventSource* getSource() { return m_eventsource; }
+		virtual IEventSource* getSource() const { return m_eventsource; }
 		
 		/** Sets the source of the event.
 		 */
@@ -84,7 +84,7 @@ namespace FIFE {
 		 * FIXME: This is a bit of a hack, using forward declared guichan pointer
 		 *        Should use something non-guichan specific
 		 */
-		virtual gcn::Widget* getSourceWidget() { return m_sourcewidget; }
+		virtual gcn::Widget* getSourceWidget() const { return m_sourcewidget; }
 		
 		/** Set the source of the (widget) event. @see getSourceWidget
 		 */

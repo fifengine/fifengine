@@ -116,13 +116,13 @@ namespace FIFE {
 			 *
 			 * @return The top container.
 			 */
-			gcn::Container* getTopContainer() { return m_gcn_topcontainer; }
+			gcn::Container* getTopContainer() const { return m_gcn_topcontainer; }
 			
 			/** Gets the console.
 			 *
 			 * @return The console.
 			 */
-			Console* getConsole() { return m_console; };
+			Console* getConsole() const { return m_console; };
 
 			/** Set the global font properties.
 			 */
@@ -142,7 +142,7 @@ namespace FIFE {
 			MouseEvent translateMouseEvent(const gcn::MouseEvent& evt);
 
 		protected:
-			int convertGuichanKeyToFifeKey(int value);
+			static int convertGuichanKeyToFifeKey(int value);
 
 		private:
 			// The Guichan GUI.

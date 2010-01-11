@@ -45,7 +45,7 @@ namespace FIFE {
 		
 		/** Returns the decoded length of the file in bytes
 		 */
-		virtual unsigned long getDecodedLength() = 0;
+		virtual unsigned long getDecodedLength() const = 0;
 		
 		/** A stream or not?
 		 * 
@@ -56,7 +56,7 @@ namespace FIFE {
 		 * @return Return true for a streaming decoder, false if the sound is 
 		 * decoded in one buffer
 		 */
-		bool needsStreaming() { return getDecodedLength() > MAX_KEEP_IN_MEM; }
+		bool needsStreaming() const { return getDecodedLength() > MAX_KEEP_IN_MEM; }
 		
 		/** Sets the current position in the file (in bytes)
 		 *
@@ -75,7 +75,7 @@ namespace FIFE {
 		 *
 		 * The length of the buffer is returned by getBufferSize().
 		 */
-		virtual void *getBuffer() = 0;
+		virtual void *getBuffer() const = 0;
 		
 		/** Returns the byte-size of the buffer returned by getBuffer().
 		 */
@@ -89,13 +89,13 @@ namespace FIFE {
 		 * 
 		 * @return Returns true if the audio data is stereo, false if mono.
 		 */		
-		bool isStereo() {
+		bool isStereo() const {
 			return m_isstereo;
 		}
 		
 		/** Returns the openAL-Format of the audio file
 		 */
-		ALenum getALFormat() {
+		ALenum getALFormat() const {
 			if (m_isstereo) {
 				return m_is8bit ? AL_FORMAT_STEREO8 : AL_FORMAT_STEREO16;
 			} else {
@@ -105,13 +105,13 @@ namespace FIFE {
 		
 		/** Returns the bit resolution
 		 */
-		short getBitResolution() {
+		short getBitResolution() const {
 			return m_is8bit ? 8 : 16; 
 		}
 		
 		/** Returns the sample rate
 		 */
-		unsigned long getSampleRate() {
+		unsigned long getSampleRate() const{
 			return m_samplerate;
 		}
 		

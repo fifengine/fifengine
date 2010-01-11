@@ -165,22 +165,21 @@ namespace FIFE {
 		caption += boost::lexical_cast<std::string>(fps);
 		m_status->setCaption( caption );
 	}
-
+	
 	void Console::updateAnimation() {
-		if( m_hiding ) {
-			setPosition( getX(), getY() - m_animationDelta);
-		} else {
-			setPosition( getX(), getY() + m_animationDelta);
+	    if (m_hiding){
+		setPosition(getX(), getY() - m_animationDelta);
+		if (getY() <= m_hiddenPos){
+		    doHide();
+		    m_animationTimer.stop();
 		}
-
-		if( !m_hiding && getY() >= 0 ) {
-			setPosition( getX(), 0 );
-			m_animationTimer.stop();
+	    }else{
+		setPosition(getX(), getY() + m_animationDelta);
+		if (getY() >= 0){
+		    setPosition(getX(), 0);
+		    m_animationTimer.stop();
 		}
-		if( m_hiding && getY() <= m_hiddenPos ) {
-			doHide();
-			m_animationTimer.stop();
-		}
+	    }
 	}
 
 	void Console::clear() {
@@ -246,7 +245,7 @@ namespace FIFE {
 				FL_WARN(_log, LMsg("ConsoleExecuter not bind, but command received: ") << cmd.c_str());
 			}
 		}
-		catch (FIFE::Exception & e) {
+		catch (const FIFE::Exception & e) {
 			FL_WARN(_log, LMsg("Console caught exception: ") << e.getMessage());
 			println(e.getMessage());
 		}

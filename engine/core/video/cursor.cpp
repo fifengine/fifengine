@@ -79,6 +79,7 @@ namespace FIFE {
 		m_drag_id(0),
 		m_cursor_type(CURSOR_NATIVE),
 		m_drag_type(CURSOR_NONE),
+		m_native_cursor(NULL),
 		m_renderbackend(renderbackend),
 		m_imgpool(imgpool),
 		m_animpool(animpool),
@@ -86,7 +87,6 @@ namespace FIFE {
 		m_drag_animtime(0),
 		m_drag_offset_x(0),
 		m_drag_offset_y(0),
-		m_native_cursor(NULL),
 		m_timemanager(TimeManager::instance()) {
 		assert(m_timemanager);
 		set(m_cursor_type, m_cursor_id);

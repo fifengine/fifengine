@@ -1,34 +1,82 @@
-import glob, sys
+import os,sys
+from utils.util_scripts.path import path as upath
 
-Import('env')
+Import('env', 'opts')
 
-env = env.Copy()
-env.Append(CPPPATH = ['#/engine/core'])
-env.Append(LIBPATH = ['#/engine/core'])
-
-env.Append(LIBS = ['libfife','libUnitTest++'])
-
-if sys.platform == 'darwin':
-	env.Append(LIBPATH = ['/System/Library'])
-	env.Append(LINKFLAGS='-framework SDL')
-	env.Append(LINKFLAGS='-framework SDL_image')
-	env.Append(LINKFLAGS='-framework SDL_ttf')
-        env.Append(LINKFLAGS=['-Wl'])
+if env.has_key('LIBS'):
+	libs = list(env['LIBS'])
+	libs.append(opts['TESTLIBS'])
 else:
-        env.Append(LINKFLAGS=['-Wl,-rpath,../../ext/install/lib,-rpath,../../engine'])
+	libs = ""
 
-# The test_fife.py script relies on this specific layout.
-# Check it, if you change something here
-env.Program('testprog_rect', ['test_rect.cpp'])
-env.Program('testprog_dat1', ['test_dat1.cpp'])
-env.Program('testprog_dat2', ['test_dat2.cpp'])
-env.Program('testprog_gui', ['test_gui.cpp'])
-env.Program('testprog_images', ['test_images.cpp'])
-env.Program('testprog_imagepool', ['test_imagepool.cpp'])
-env.Program('testprog_vfs', ['test_vfs.cpp'])
+if env.has_key('LIBPATH'):
+	lib_path = list(env['LIBPATH'])
+	lib_path.append(opts['LIBPATH'])
+else:
+	lib_path = ""
 
+source_path = opts['SRC']
 
-if env['zip']:
-	env.Program('testprog_zip', ['test_zip.cpp'])
+if env.has_key('CPPPATH'):
+	core_path = list(env['CPPPATH'])
+	core_path.append(os.path.join(source_path, 'core'))
+else:
+	core_path = ""
 
-# vim: set filetype=python :
+Alias('test_dat1', 
+      env.Program('test_dat1', 
+                  'test_dat1.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
+
+Alias('test_dat2', 
+      env.Program('test_dat2', 
+                  'test_dat2.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
+
+Alias('test_gui', 
+      env.Program('test_gui', 
+                  'test_gui.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
+
+Alias('test_imagepool', 
+      env.Program('test_imagepool', 
+                  'test_imagepool.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
+
+Alias('test_images', 
+      env.Program('test_images', 
+                  'test_images.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
+
+Alias('test_rect', 
+      env.Program('test_rect', 
+                  'test_rect.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
+
+Alias('test_vgs', 
+      env.Program('test_vfs', 
+                  'test_vfs.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
+
+Alias('test_zip', 
+      env.Program('test_zip', 
+                  'test_zip.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
+
+Alias('tests', ['test_dat1','test_dat2','test_gui','test_imagepool','test_images','test_rect','test_vfs','test_zip'])

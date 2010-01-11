@@ -79,12 +79,9 @@ namespace FIFE {
 		return val;
 	}
 
-	bool Animation::isValidIndex(int index) {
+	bool Animation::isValidIndex(int index) const{
 		int size = m_frames.size();
-		if ((size == 0) || (index > (size - 1)) || (index < 0)) {
-			return false;
-		}
-		return true;
+		return size > 0 && index >= 0 && index < size; 
 	}
 
 	Image* Animation::getFrame(int index) {
@@ -99,7 +96,7 @@ namespace FIFE {
 		return getFrame(getFrameIndex(timestamp));
 	}
 
-	int Animation::getFrameDuration(int index) {
+	int Animation::getFrameDuration(int index) const{
 		if (isValidIndex(index)) {
 			return m_frames[index].duration;
 		} else {
@@ -112,7 +109,7 @@ namespace FIFE {
 	}
 
 	void Animation::setDirection(unsigned int direction) {
-		m_direction = direction % 360;
+		m_direction %= 360;
 	}
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */

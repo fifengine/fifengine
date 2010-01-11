@@ -40,7 +40,7 @@ namespace FIFE {
 	public:
 		GUIEventListener();
 		virtual ~GUIEventListener();
-		virtual void action(const gcn::ActionEvent& actionEvent) {};
+		virtual void action(const gcn::ActionEvent& actionEvent) {}
 	};
 
 }

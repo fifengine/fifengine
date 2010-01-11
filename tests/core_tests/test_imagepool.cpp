@@ -51,9 +51,9 @@
 
 using namespace FIFE;
 
-static const std::string IMAGE_FILE = "../../tests/data/beach_e1.png";
-static const std::string SUBIMAGE_FILE = "../../tests/data/rpg_tiles_01.png";
-static const std::string ANIM_FILE = "../../tests/data/crate_full_001.xml";
+static const std::string IMAGE_FILE = "tests/data/beach_e1.png";
+static const std::string SUBIMAGE_FILE = "tests/data/rpg_tiles_01.png";
+static const std::string ANIM_FILE = "tests/data/crate_full_001.xml";
 
 // Environment
 struct environment {

@@ -51,8 +51,8 @@ namespace FIFE {
 	SoundManager::~SoundManager() {
 
 		// free all soundemitters
-		std::vector<SoundEmitter*>::iterator it;
-		for (it = m_emittervec.begin(); it != m_emittervec.end(); ++it) {
+
+		for (std::vector<SoundEmitter*>::iterator it = m_emittervec.begin(), it_end = m_emittervec.end(); it != it_end;  ++it) {
 			if ((*it) != NULL) {
 				delete (*it);
 			}
@@ -103,7 +103,7 @@ namespace FIFE {
 		alListenerf(AL_GAIN, m_volume);
 	}
 
-	SoundEmitter* SoundManager::getEmitter(unsigned int emitterid) {
+	SoundEmitter* SoundManager::getEmitter(unsigned int emitterid) const{
 		return m_emittervec.at(emitterid);
 	}
 
