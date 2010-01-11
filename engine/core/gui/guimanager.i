@@ -34,7 +34,7 @@ namespace FIFE {
 	%feature("notabstract") GUIManager;
 	class GUIManager {
 	public:
-		Console* getConsole();
+		Console* getConsole() const;
 		void add(gcn::Widget* widget);
 		void remove(gcn::Widget* widget);
 		GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);

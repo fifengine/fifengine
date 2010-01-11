@@ -1,0 +1,112 @@
+== 0.3.0 (January 20th, 2010) ==
+
+=== Engine ===
+  * Moved to Python 2.6 (#345)
+  * Fixed layer and instance transparency (#378)
+  * Added UTF8 support
+  * SCons build system has been re-written (#328)
+  * Fixed a layer visibility bug where the toggleInstancesVisible and setInstanceVisible functions were not working correctly. (#335)
+  * Added adaptive pathfinding (#347)
+  * Fixed building FIFE on OS X (#360)
+  * Fixed setActionRuntime() (#373)
+  * Upgraded guichan in ext to 0.8.2 (#420)
+  * Removed UnitTest++ from ext (#421)
+  * Changed the way the fife python module is imported ( see http://wiki.fifengine.de/Importing_Python_Module )
+  
+=== Editor ===
+  * Fixed editor but where the map didn't render after saving (#333)
+  * Added a rudimentary camera editor plugin
+  * "Save As" is now functional (#382)
+  
+=== PyChan ===
+  * Fixed an input problem when a dropdown box is clicked on (#337)
+  * Switched to new content structure (#336)
+  * Fixed pychan event_map to support callable objects (#374)
+  * Fixed the pychan demo (#363)
+  * Fixed a pychan problem where unkown characters were displayed when holding the shift key (#383)
+  
+=== Documentation ===
+  * Fixed some doxygen documentation problems (#343)
+  * Created python coding standards article (#372)
+  * Created "Bug Report" template (#409)
+  
+=== Misc ===
+  * New versioning scheme (x.y.z) instead of (yyyy.r)
+  * Moved extensions and fife.py to <FIFE>/engine/python/fife
+  * Moved rio_de_hola and pychan_demo to <FIFE>/demos
+  * Moved some misc scripts to <FIFE>/tools
+  * Moved the FIFE editor to <FIFE>/editor
+
+
+
+== 2008.1 (July, 2008) ==
+
+=== Model improvements & simplifications ===
+ * Elevations removed (Fallout legacy).
+ * Support for namespaces:
+  * New resource infrastructure migrated into whole engine. This enables:
+   * uniform pooling for all resources that need to be pooled.
+   * uniform loading for all resources (model stuff, images, sounds...).
+   * uniform saving for resources which support saving (model stuff).
+  * Datasets are now stored in a flat list in model instead of dataset hierarchy.
+  * Changes in model are now bookkeeped. Observer interfaces provided for change listeners.
+   * This enables e.g. reacting only to changes instead of polling on every round.
+   * Also critical enabler for triggers.
+  * Instances now support initial rotation value.
+  * Objects support default actions.
+  * Further model cleanup.
+
+=== XML format changes ===
+ * All resources are now defined with principle 1 file / 1 resource.
+ * Importing of objects can now be done also based on directories where they are contained.
+ * Relative paths are now used instead of absolute ones.
+
+=== Loaders ===
+ * All loading happens now from python (tinyxml dependency removed).
+ * Improved error reporting.
+
+=== Editor ===
+ * Possibility to move instances on map.
+ * Possibility to rotate instances on map.
+ * Possibility to zoom the map (OpenGL mode only).
+ * Painting with currently selected instance (e.g. large ground areas).
+ * Importing of multiple objects based on given directory.
+ * Initial map creation wizard (still work in progress).
+
+=== Rio de hola ===
+ * More assets:
+  * Graphics, sounds, music...
+  * Two new maps matching the storyline.
+  * Rio de hola now conforms to package structure: http://wiki.fifengine.de/Fife_Package_Specification
+  * Popup menu integration, demonstration of actions (kick, talk).
+
+=== Pychan improvements ===
+ * Hiding of scrollbars.
+ * Text wrapping.
+ * A lot of smaller improvements. 
+
+=== Functionality ===
+ * Pixel perfect instance picking (taking transparency into account).
+ * Ability to get list of instances from given screen rectangle.
+ * Distance calculations made easy, exposed to scripts.
+ * Instance outlining.
+ * Instance coloring.
+ * Screenshots are now saved in png format (instead of bmp).
+ * Stereo sound support in linux (introduced with the help of openal-soft).
+
+=== Video / view improvements ===
+ * Both renderbackend and separate images can now render graphical primitives (e.g. lines, dots..).
+ * Each camera now has separate set of renderers. Allows truly adjusting cameras independently.
+ * Zooming capability (currently properly supported only by OpenGL backend).
+ * Support for drag cursor definitions.
+ * OpenGL graphics chunking size is now definable in settings. Should help e.g. with large backgrounds.
+ * GenericRenderer adding customised rendering capabilities for scripts.
+
+=== Misc. changes ===
+ * Initial package structure defined for FIFE clients.
+ * Updated guichan to the latest release 0.8.1.
+ * Usage of unittest++ instead of boost unittests.
+ * Lots of bug fixes.
+
+=== Non-code related changes ===
+ * Switch from GPL 2.0 to LGPL 2.1 (or newer).

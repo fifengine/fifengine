@@ -38,8 +38,7 @@ namespace FIFE {
 	using namespace gcn;
 
 
-	CommandLine::CommandLine() : gcn::UTF8TextField() {
-		m_history_position = 0;
+	CommandLine::CommandLine() : gcn::UTF8TextField(), m_history_position(0) {
 
 		m_blinkTimer.setInterval(500);
 		m_blinkTimer.setCallback(boost::bind(&CommandLine::toggleCaretVisible,this));
@@ -70,27 +69,28 @@ namespace FIFE {
 
 	void CommandLine::keyPressed(gcn::KeyEvent &keyEvent) {
 		gcn::Key key = keyEvent.getKey();
-
-		if (key.getValue() == Key::LEFT && mCaretPosition > 0)
+		int keyType = key.getValue();
+		
+		if (keyType == Key::LEFT && mCaretPosition > 0)
 		{
 			UTF8TextField::keyPressed(keyEvent);
 		}
-		else if (key.getValue() == Key::RIGHT && mCaretPosition < mText.size())
+		else if (keyType == Key::RIGHT && mCaretPosition < mText.size())
 		{
 			UTF8TextField::keyPressed(keyEvent);
 		}
-		else if (key.getValue() == Key::DOWN && !m_history.empty())
+		else if (keyType == Key::DOWN && !m_history.empty())
 		{
 			if( m_history_position < m_history.size() ) {
-				++m_history_position;
-				if( m_history_position == m_history.size() ) {
+				
+				if( ++m_history_position == m_history.size() ) {
 					setText( m_cmdline ); 
 				} else {
 					setText( m_history[m_history_position] ); 
 				}
 			};
 		}
-		else if (key.getValue() == Key::UP && !m_history.empty())
+		else if (keyType == Key::UP && !m_history.empty())
 		{
 			if( m_history_position > 0 ) {
 				if( m_history_position == m_history.size() ) {
@@ -100,15 +100,15 @@ namespace FIFE {
 				setText( m_history[m_history_position] ); 
 			};
 		}
-		else if (key.getValue() == Key::DELETE && mCaretPosition < mText.size())
+		else if (keyType == Key::DELETE && mCaretPosition < mText.size())
 		{
 			UTF8TextField::keyPressed(keyEvent);
 		}
-		else if (key.getValue() == Key::BACKSPACE && mCaretPosition > 0)
+		else if (keyType  == Key::BACKSPACE && mCaretPosition > 0)
 		{
 			UTF8TextField::keyPressed(keyEvent);
 		}
-		else if (key.getValue() == Key::ENTER)
+		else if (keyType == Key::ENTER)
 		{
 			if( mText != "" ) {
 				if(m_callback) {
@@ -119,11 +119,11 @@ namespace FIFE {
 				setText("");
 			}
 		}
-		else if (key.getValue() == Key::HOME)
+		else if (keyType == Key::HOME)
 		{
 			mCaretPosition = 0;
 		}    
-		else if (key.getValue() == Key::END)
+		else if (keyType == Key::END)
 		{
 			mCaretPosition = mText.size();
 		}    

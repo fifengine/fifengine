@@ -33,14 +33,14 @@
 
 // Win32
 #if defined( WIN32 )
-#include "src/UnitTest++.h"
-#include "src/TestReporterStdout.h"
+#include "../../ext/UnitTest++/src/UnitTest++.h"
+#include "../../ext/UnitTest++/src/TestReporterStdout.h"
 #endif
 
 // Macintosh
 #if defined( __APPLE_CC__ )
-#include "../../ext/UnitTest++/src/UnitTest++.h"
-#include "../../ext/UnitTest++/src/TestReporterStdout.h"
+#include <unittest++/UnitTest++.h>
+#include <unittest++/TestReporterStdout.h>
 #endif
 
 // 3rd party library includes

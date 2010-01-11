@@ -83,7 +83,7 @@ namespace FIFE {
 		CommandType getCommandType();
 		void setCommandType(CommandType type);
 
-		int getCode();
+		int getCode() const;
 		void setCode(int code);
 
 		virtual void setSource(IEventSource* source);

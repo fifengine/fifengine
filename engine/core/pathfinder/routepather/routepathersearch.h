@@ -108,18 +108,18 @@ namespace FIFE {
 
                 //An enumeration of the searches current status.
                 SearchStatus    m_status;
+                
+                //The start coordinate as an int.
+                int             m_startCoordInt;
+                
+                //The destination coordinate as an int.
+                int             m_destCoordInt;
+                
+                //The next coordinate to check out.
+                int             m_next;
 
                 //The class to use to calculate the heuristic value.
                 Heuristic*                m_heuristic;
-
-		//The destination coordinate as an int.
-		int                       m_destCoordInt;
-
-		//The start coordinate as an int.
-		int                       m_startCoordInt;
-
-		//The next coordinate int to check out.
-		int                       m_next;
 
 		//The shortest path tree.
 		std::vector<int>          m_spt;

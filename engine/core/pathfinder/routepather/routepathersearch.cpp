@@ -40,15 +40,21 @@
 
 namespace FIFE {
 	RoutePatherSearch::RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace)
-		: m_destCoordInt(0), m_startCoordInt(0), m_next(0), m_to(to), m_from(from), m_sessionId(session_id), m_searchspace(searchSpace), m_status(search_status_incomplete){
-		m_startCoordInt = m_searchspace->convertCoordToInt(from.getLayerCoordinates());
-		int max_index = m_searchspace->getMaxIndex();
-		m_destCoordInt = m_searchspace->convertCoordToInt(to.getLayerCoordinates());
+		: m_to(to), 
+		  m_from(from), 
+		  m_sessionId(session_id), 
+		  m_searchspace(searchSpace), 
+		  m_status(search_status_incomplete), 
+		  m_startCoordInt(searchSpace->convertCoordToInt(from.getLayerCoordinates())),
+		  m_destCoordInt(searchSpace->convertCoordToInt(to.getLayerCoordinates())),
+		  m_next(0),
+		  m_heuristic(Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType())) 
+	{
 		m_sortedfrontier.pushElement(PriorityQueue<int, float>::value_type(m_startCoordInt, 0.0f));
+		int max_index = m_searchspace->getMaxIndex();
 		m_spt.resize(max_index + 1, -1);
 		m_sf.resize(max_index + 1, -1);
-		m_gCosts.resize(max_index + 1, 0.0f);
-                m_heuristic = Heuristic::getHeuristic(searchSpace->getLayer()->getCellGrid()->getType());
+		m_gCosts.resize(max_index + 1, 0.0f);;
 	}
 
 

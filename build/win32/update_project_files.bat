@@ -4,7 +4,7 @@ SET _SWIG="%_%\applications\swigwin-1.3.40"
 
 :: To avoid path collisions the following line was commented out and replaced with a slightly different version
 :: SET PATH=%Path%;%_%\applications\scons;%_%\applications\mingw\bin
-SET PATH=%_%\applications\scons;%_%\applications\mingw\bin
+SET PATH=%_%\applications\scons;%_%\applications\mingw\bin;c:\python26
 
 :: Delete old generated project files to ensure that they get generated from scratch again
 cd %_%\build_environments
@@ -14,8 +14,8 @@ del visual_studio_9\fife.vcproj
 
 :: Goto TRUNK and call SCons
 cd \
-cd %_%\..\..\
-scons projectfiles_only=1
+cd "%_%\..\..\"
+python build\win32\applications\scons\scons.py --release projects
 
 :: Return us to the directory we started from
 cd %_%

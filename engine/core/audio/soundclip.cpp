@@ -108,7 +108,7 @@ namespace FIFE {
 		return false;
 	}
 	
-	float SoundClip::getStreamPos(unsigned int streamid, SoundPositionType type) {
+	float SoundClip::getStreamPos(unsigned int streamid, SoundPositionType type) const{
 		unsigned long pos = m_buffervec.at(streamid)->deccursor;
 		switch(type) {
 			case SD_BYTE_POS:

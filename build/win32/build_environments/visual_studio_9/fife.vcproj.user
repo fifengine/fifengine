@@ -6,20 +6,20 @@
 	>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
+			Name="Debug_python|Win32"
 			>
 			<DebugSettings
 				Command="python"
-				WorkingDirectory="..\..\..\..\clients\rio_de_hola"
+				WorkingDirectory="&quot;..\..\..\..\demos\rio_de_hola&quot;"
 				CommandArguments="run.py"
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Release_python|Win32"
 			>
 			<DebugSettings
 				Command="python"
-				WorkingDirectory="..\..\..\..\clients\rio_de_hola"
+				WorkingDirectory="&quot;..\..\..\..\demos\rio_de_hola&quot;"
 				CommandArguments="run.py"
 			/>
 		</Configuration>

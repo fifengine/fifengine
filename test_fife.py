@@ -38,12 +38,11 @@ def resolve_test_modules(directory):
 	
 def run_core_tests(progs):
 	prevdir = os.getcwd()
-	os.chdir(genpath('tests/core_tests'))
 	
 	errors, failures = [], []
 	for prog in progs:
 		print '\n===== Running %s =====' % prog
-		if os.system(os.sep.join(('.', prog))):
+		if os.system(os.sep.join(('build','tests','debug', prog))):
 			errors.append(prog)
 	os.chdir(prevdir)
 	return errors, failures

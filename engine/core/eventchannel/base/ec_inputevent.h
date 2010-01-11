@@ -49,7 +49,7 @@ namespace FIFE {
 			m_isshiftpressed(false), 
 			m_iscontrolpressed(false), 
 			m_isaltpressed(false), 
-			m_ismetapressed(false) {};
+			m_ismetapressed(false) {}
 
 		/** Destructor.
 		*/

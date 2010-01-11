@@ -88,7 +88,7 @@ namespace FIFE {
 		/** Gets the frame duration for given (indexed) frame. Returns negative value in case
 		 * of incorrect index
 		 */
-		int getFrameDuration(int index);
+		int getFrameDuration(int index) const;
 
 		/** Get the number of frames
 		 */
@@ -105,7 +105,7 @@ namespace FIFE {
 		/** Gets the action frame.
 		 * @see setActionFrame
 		 */
-		int getActionFrame() { return m_action_frame; }
+		int getActionFrame() const { return m_action_frame; }
 
 		/** Animation direction tells how this animation is associated
 		 * with movement when played starting from frame 0
@@ -120,11 +120,11 @@ namespace FIFE {
 		 * @see setDirection
 		 * @return direction for this animation
 		 */
-		unsigned int getDirection() { return m_direction; }
+		unsigned int getDirection() const { return m_direction; }
 
 		/** Gets the total duration for the whole animation
 		 */
-		int getDuration() { return m_animation_endtime; }
+		unsigned int getDuration() const { return m_animation_endtime; }
 
 	private:
 		/** Contains information about one animation frame (duration + frame index + frame pointer)
@@ -137,7 +137,7 @@ namespace FIFE {
 
 		/** Checks for animation frame index overflows
 		 */
-		bool isValidIndex(int index);
+		bool isValidIndex(int index) const;
 
 		// Map of timestamp + associated frame
 		std::map<unsigned int, FrameInfo> m_framemap;

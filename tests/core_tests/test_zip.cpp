@@ -52,8 +52,8 @@ struct environment {
 
 using namespace FIFE;
 
-static const std::string COMPRESSED_FILE = "../../tests/data/testmap.zip";
-static const std::string RAW_FILE = "../../tests/data/test.map";
+static const std::string COMPRESSED_FILE = "tests/data/testmap.zip";
+static const std::string RAW_FILE = "tests/data/test.map";
 
 TEST(test_decoder) {
 	environment env;

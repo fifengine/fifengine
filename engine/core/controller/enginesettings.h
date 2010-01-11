@@ -182,7 +182,7 @@ namespace FIFE {
 	
 		/** @see setImageChunkingSize
 		 */
-		unsigned int getImageChunkingSize() {
+		unsigned int getImageChunkingSize() const {
 			return m_image_chunking_size;
 		}
 
