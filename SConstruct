@@ -114,7 +114,9 @@ if GetOption('enable-profile'):
 else:
 	profile = 0
 
-#set the default installation directories.
+#**************************************************************************
+#set the installation directories.
+#**************************************************************************
 prefix = GetOption('prefix')
 if prefix is None:
 	if sys.platform == 'win32':
@@ -204,15 +206,37 @@ if not GetOption('clean') and 'ext' not in COMMAND_LINE_TARGETS:
 			conf.CheckHeader(h)
 
 #**************************************************************************
-#set variables based on command line options
+#set variables based on command line and environment options
 #**************************************************************************
+
+if os.environ.has_key('SWIG'):
+	env['SWIG'] = os.environ['SWIG']
+
+haveusercxxflags = False
+
+if os.environ.has_key('CXXFLAGS'):
+	usercxxflags = Split(os.environ['CXXFLAGS'])
+	haveusercxxflags = True
+elif ARGUMENTS.get('CXXFLAGS'):
+	usercxxflags = Split(ARGUMENTS.get('CXXFLAGS'))
+	haveusercxxflags = True
+
 if debug:
-	env.AppendUnique(CXXFLAGS=['-ggdb', '-O0', '-D_DEBUG'])
+	if haveusercxxflags:
+		env.AppendUnique(usercxxflags)
+	else:	
+		env.AppendUnique(CXXFLAGS=['-O0', '-Wall', '-Wno-unused'])
+		
+	env.AppendUnique(CXXFLAGS=['-ggdb', '-D_DEBUG'])
 	engine_var_dir = os.path.join('build','engine','debug')
 	tests_var_dir = os.path.join('build','tests','debug')
 	print "Building DEBUG binaries..."
 else:
-	env.AppendUnique(CXXFLAGS=['-O2'])
+	if haveusercxxflags:
+		env.AppendUnique(usercxxflags)
+	else:	
+		env.AppendUnique(CXXFLAGS=['-O2', '-Wall', '-Wno-unused'])
+	
 	engine_var_dir = os.path.join('build','engine','release')
 	tests_var_dir = os.path.join('build','tests','release')
 	print "Building RELEASE binaries..."
@@ -228,15 +252,9 @@ if rend_camzone:
 if rend_grid:
 	env.Append(CPPDEFINES = ['RENDER_GRID'])
 if profile:
-	env.Append(CPPFLAGS = ['-pg'])
+	env.Append(CXXFLAGS = ['-pg'])
 	env.Append(LINKFLAGS = ['-pg'])
 	
-#last but not least get any CXXFLAGS passed to scons via command line
-if ARGUMENTS.get('CXXFLAGS'):
-	env.AppendUnique(CXXFLAGS = Split(ARGUMENTS.get('CXXFLAGS'))) 
-else:
-	env.AppendUnique(CXXFLAGS=['-Wall', '-Wno-unused'])
-
 #**************************************************************************
 #global compiler flags used for ALL targets
 #**************************************************************************

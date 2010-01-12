@@ -19,9 +19,6 @@ def initEnvironment(env):
 	env.Append(CPPPATH = include_dirs)
 	env.Append(LIBPATH = lib_dirs)
 
-	if os.environ.has_key('SWIG'):
-		env['SWIG'] = os.environ['SWIG']
-
 	return env
 	
 def addExtras(env, opengl):
