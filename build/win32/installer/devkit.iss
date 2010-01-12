@@ -6,10 +6,11 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{3AB310BE-CEF4-4A38-A2E2-55A55DA42A06}
-AppName=FIFE Win32 DevKit December 2009
-AppVerName=FIFE Win32 DevKit December 2009
-AppPublisher=FIFE team
+AppId={{FE01A2E9-77CE-4293-B667-2FA8A184D4E7}
+AppName=FIFE Development Kit (January 2010)
+; Version is yyyy.mm
+AppVerName=FIFE DevKit 2010.01
+AppPublisher=FIFE Team
 AppPublisherURL=http://www.fifengine.de/
 AppSupportURL=http://www.fifengine.de/
 AppUpdatesURL=http://www.fifengine.de/
@@ -21,7 +22,7 @@ AllowNoIcons=yes
 LicenseFile=license.rtf
 Compression=lzma
 SolidCompression=yes
-OutputBaseFilename=FIFE_Win32_DevKit_Dec2009
+OutputBaseFilename=FIFE_Development_Kit_Jan2010
 OutputDir=.
 DisableReadyPage=yes
 ; This will require some testing. We can't install to Program files if the user is not an admin.
@@ -47,7 +48,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "..\applications\scons\*"; DestDir: "{app}\applications\scons"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\applications\swigwin-1.3.40\*"; DestDir: "{app}\applications\swigwin-1.3.40"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\includes\*"; DestDir: "{app}\includes"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\README_DevKit_Dec2009.txt"; DestDir:"{app}"; Flags: isreadme
+Source: "README_DevKit_Jan2010.txt"; DestDir:"{app}"; Flags: isreadme
 
 ; MinGW
 Source: "..\applications\mingw\*"; DestDir: "{app}\applications\mingw"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
