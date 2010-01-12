@@ -4,6 +4,10 @@ from distutils.sysconfig import get_python_lib
 
 _sep = os.path.sep
 
+#**************************************************************************
+#add any command line options here
+#**************************************************************************
+
 vars = Variables()
 vars.Add(PathVariable('DESTDIR', 
 			'Destination directory (prepended to prefix)',
@@ -17,13 +21,10 @@ env = Environment(variables = vars,
 
 env.EnsureSConsVersion(1,2)
 
-#**************************************************************************
-#add any command line options here
-#**************************************************************************
-AddOption('--release',
-		dest='release',
+AddOption('--enable-debug',
+		dest='enable-debug',
 		action="store_true",
-		help='Builds the release version of the binaries',
+		help='Builds the debug version of the binaries',
 		default=False)
 		
 AddOption('--disable-opengl',
@@ -79,10 +80,10 @@ AddOption('--python-prefix',
 #**************************************************************************
 #save command line options here
 #**************************************************************************
-if GetOption('release'):
-	debug = 0
-else:
+if GetOption('enable-debug'):
 	debug = 1
+else:
+	debug = 0
 	
 if GetOption('disable-opengl'):
 	opengl = 0
