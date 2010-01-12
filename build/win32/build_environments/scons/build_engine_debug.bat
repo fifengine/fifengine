@@ -11,7 +11,7 @@ SET PATH=%_%\..\..\applications\scons;%_%\..\..\applications\mingw\bin;c:\python
 :: Goto TRUNK and call SCons
 cd \
 cd "%_%\..\..\..\.."
-python build\win32\applications\scons\scons.py fife-python
+python build\win32\applications\scons\scons.py --enable-debug fife-python
 
 :: Return us to the directory we started from
 cd %_%

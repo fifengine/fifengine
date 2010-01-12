@@ -11,7 +11,7 @@ SET PATH=%_%\..\..\applications\scons;%_%\..\..\applications\mingw\bin;c:\python
 :: Goto TRUNK and call SCons
 cd \
 cd "%_%\..\..\..\.."
-python build\win32\applications\scons\scons.py --release install-python > "%_%\engine_install_log.txt" 2>&1
+python build\win32\applications\scons\scons.py install-python > "%_%\engine_install_log.txt" 2>&1
 
 :: Return us to the directory we started from
 cd %_%

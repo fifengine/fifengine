@@ -14,7 +14,7 @@ del "%_%\engine_build_log.txt"
 :: Goto TRUNK and call SCons
 cd \
 cd "%_%\..\..\..\.."
-python build\win32\applications\scons\scons.py --debug=presub --release fife-python >> "%_%\engine_build_log.txt" 2>&1
+python build\win32\applications\scons\scons.py fife-python >> "%_%\engine_build_log.txt" 2>&1
 
 :: Return us to the directory we started from
 cd %_%
