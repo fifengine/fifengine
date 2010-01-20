@@ -2,68 +2,116 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="_fife.pyd" />
-		<Option pch_mode="0" />
-		<Option compiler="gcc" />
+		<Option title="fife" />
+		<Option makefile="SConstruct" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<MakeCommands>
+			<Build command="" />
+			<CompileFile command="" />
+			<Clean command="" />
+			<DistClean command="" />
+		</MakeCommands>
 		<Build>
-			<Target title="default">
-				<Option output="..\..\..\..\engine\swigwrappers\python\_fife.pyd" prefix_auto="0" extension_auto="0" />
+			<Target title="Debug_python">
+				<Option output="fife.cbp" prefix_auto="1" extension_auto="0" />
+				<Option object_output="obj\Debug\" />
 				<Option type="3" />
-				<Option compiler="gcc" />
+				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-DHAVE_OPENGL" />
-					<Add option="-DHAVE_ZIP" />
-					<Add option="-DLOG_ENABLED" />
-					<Add directory="..\..\..\..\engine" />
-					<Add directory="..\..\..\..\engine\core" />
-					<Add directory="..\..\includes\boost_1_38_0" />
-					<Add directory="..\..\includes\libguichan" />
-					<Add directory="..\..\includes\libogg" />
-					<Add directory="..\..\includes\libpng" />
-					<Add directory="..\..\includes\libvorbis" />
-					<Add directory="..\..\includes\openal" />
-					<Add directory="..\..\includes\python26" />
-					<Add directory="..\..\includes\sdl" />
-					<Add directory="..\..\includes\sdl_image" />
-					<Add directory="..\..\includes\sdl_ttf" />
-					<Add directory="..\..\includes\zlib" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option="/Zi" />
+					<Add option="/D_DEBUG" />
 				</Compiler>
 				<Linker>
-					<Add library="..\..\static_libs\mingw\libguichan_opengl.a" />
-					<Add library="..\..\static_libs\mingw\libguichan_sdl.a" />
-					<Add library="..\..\static_libs\mingw\libguichan.a" />
-					<Add library="..\..\applications\mingw\lib\libmingw32.a" />
-					<Add library="..\..\static_libs\mingw\libzlib.a" />
-					<Add library="..\..\static_libs\mingw\libvorbis.a" />
-					<Add library="..\..\static_libs\mingw\libogg.a" />
-					<Add library="..\..\static_libs\mingw\libvorbisfile.a" />
-					<Add library="..\..\static_libs\mingw\libpng.a" />
-					<Add library="..\..\static_libs\mingw\SDL_image.lib" />
-					<Add library="..\..\static_libs\mingw\libSDLmain.a" />
-					<Add library="..\..\static_libs\mingw\libSDL.dll.a" />
-					<Add library="..\..\static_libs\mingw\OpenAl32.lib" />
-					<Add library="..\..\static_libs\mingw\SDL_ttf.lib" />
-					<Add library="..\..\static_libs\mingw\libboost_filesystem.a" />
-					<Add library="..\..\static_libs\mingw\libboost_regex.a" />
-					<Add library="..\..\static_libs\mingw\libboost_system.a" />
-					<Add library="..\..\applications\mingw\lib\libopengl32.a" />
-					<Add library="..\..\applications\mingw\lib\libglu32.a" />
-					<Add library="..\..\static_libs\mingw\python26\libpython26.a" />
+					<Add option="/DEBUG" />
 				</Linker>
+				<MakeCommands>
+					<Build command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile --enable-debug install-python" />
+					<CompileFile command="" />
+					<Clean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c --enable-debug install-python" />
+					<DistClean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c --enable-debug install-python" />
+				</MakeCommands>
+			</Target>
+			<Target title="Release_python">
+				<Option output="bin\Release\fife" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/Ox" />
+					<Add option="/DNDEBUG" />
+				</Compiler>
+				<MakeCommands>
+					<Build command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile install-python" />
+					<CompileFile command="" />
+					<Clean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c install-python" />
+					<DistClean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c install-python" />
+				</MakeCommands>
+			</Target>
+			<Target title="Debug_static">
+				<Option output="fife" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<MakeCommands>
+					<Build command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile --enable-debug fife-static" />
+					<CompileFile command="" />
+					<Clean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c --enable-debug fife-static" />
+					<DistClean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c --enable-debug fife-static" />
+				</MakeCommands>
+			</Target>
+			<Target title="Debug_shared">
+				<Option output="fife" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<MakeCommands>
+					<Build command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile --enable-debug fife-shared" />
+					<CompileFile command="" />
+					<Clean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c --enable-debug fife-shared" />
+					<DistClean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c --enable-debug fife-shared" />
+				</MakeCommands>
+			</Target>
+			<Target title="Release_static">
+				<Option output="fife" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<MakeCommands>
+					<Build command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile fife-static" />
+					<CompileFile command="" />
+					<Clean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c fife-static" />
+					<DistClean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c fife-static" />
+				</MakeCommands>
+			</Target>
+			<Target title="Release_shared">
+				<Option output="fife" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<MakeCommands>
+					<Build command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile fife-shared" />
+					<CompileFile command="" />
+					<Clean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c fife-shared" />
+					<DistClean command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile -c fife-shared" />
+				</MakeCommands>
 			</Target>
 		</Build>
-		<VirtualTargets>
-			<Add alias="All" targets="default;" />
-		</VirtualTargets>
 		<Compiler>
-			<Add option="-O3" />
-			<Add option="-Wall" />
+			<Add option="/W3" />
 		</Compiler>
 __FILE_INSERTION_POINT__
 		<Extensions>
 			<code_completion />
-			<envvars />
 			<debugger />
 		</Extensions>
 	</Project>

@@ -5,13 +5,16 @@ def initEnvironment(env):
 	#a hack to stop passing the -nologo flag to mingw
 	env['CCFLAGS'] = SCons.Util.CLVar('') 
 	
-	path = os.environ['_']
-	win32_swig_dir = os.environ['_SWIG']
+	path = os.getcwd()
 	
-	env.AppendENVPath('PATH', win32_swig_dir)
+	swigdir = os.path.join(path, 'build', 'win32', 'applications', 'swigwin-1.3.40')
+	mingwbindir = os.path.join(path, 'build', 'win32', 'applications', 'mingw', 'bin')
 	
-	includepath = os.path.join(path, '..', '..', 'includes')
-	staticlibpath = os.path.join(path, '..', '..', 'static_libs','mingw')
+	env.AppendENVPath('PATH', swigdir)
+	env.AppendENVPath('PATH', mingwbindir)
+	
+	includepath = os.path.join(path, 'build', 'win32', 'includes')
+	staticlibpath = os.path.join(path, 'build', 'win32', 'static_libs', 'mingw')
 
 	env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\sdl_image', includepath + '\\zlib', includepath + '\\libguichan', includepath + '\\boost_1_38_0', includepath + '\\libvorbis', includepath + '\\libpng', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\python26', includepath + '\\unittest++'])
 	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python26'])

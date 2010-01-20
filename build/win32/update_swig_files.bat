@@ -9,7 +9,7 @@ SET PATH=%_%\applications\scons;%_%\applications\mingw\bin;c:\python26
 :: Goto TRUNK and call SCons
 cd \
 cd "%_%\..\..\"
-python build\win32\applications\scons\scons.py --release fife-swig
+python build\win32\applications\scons\scons.py fife-swig
 
 :: Return us to the directory we started from
 cd %_%
