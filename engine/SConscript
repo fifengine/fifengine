@@ -75,8 +75,8 @@ projectfiles = compilefiles + headerfiles
 
 msvcproj = env.MSVCProject(os.path.join('..', '..','..', builders.msvcbuildpath, 'fife'), projectfiles)
 msvcproj9 = env.MSVCProject9(os.path.join('..', '..','..', builders.msvcbuildpath9, 'fife'), projectfiles)
-cbproj_win32 = env.CodeblocksProjectWin32(os.path.join('..', '..','..', builders.cbbuildpath_win32, 'fife_engine'), projectfiles)
-cbproj_linux = env.CodeblocksProjectLinux(os.path.join('..', '..','..', builders.cbbuildpath_linux, 'fife_engine'), projectfiles)
+cbproj_win32 = env.CodeblocksProjectWin32(os.path.join('..', '..','..', builders.cbbuildpath_win32, 'fife'), projectfiles)
+cbproj_linux = env.CodeblocksProjectLinux(os.path.join('..', '..','..', builders.cbbuildpath_linux, 'fife'), projectfiles)
 
 
 #**************************************************************************

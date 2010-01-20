@@ -8,14 +8,14 @@ SET PATH=%_%\applications\scons;%_%\applications\mingw\bin;c:\python26
 
 :: Delete old generated project files to ensure that they get generated from scratch again
 cd %_%\build_environments
-del code_blocks\fife_engine.cbp
+del code_blocks\fife.cbp
 del visual_studio_8\fife.vcproj
 del visual_studio_9\fife.vcproj
 
 :: Goto TRUNK and call SCons
 cd \
 cd "%_%\..\..\"
-python build\win32\applications\scons\scons.py --release projects
+python build\win32\applications\scons\scons.py projects
 
 :: Return us to the directory we started from
 cd %_%
