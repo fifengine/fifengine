@@ -27,14 +27,14 @@
 // Platform specific includes
 // Linux
 #if defined( __unix__ )
-#include "../../ext/UnitTest++/src/UnitTest++.h"
-#include "../../ext/UnitTest++/src/TestReporterStdout.h"
+#include <unittest++/UnitTest++.h>
+#include <unittest++/TestReporterStdout.h>
 #endif
 
 // Win32
 #if defined( WIN32 )
-#include "../../ext/UnitTest++/src/UnitTest++.h"
-#include "../../ext/UnitTest++/src/TestReporterStdout.h"
+#include <UnitTest++.h>
+#include <TestReporterStdout.h>
 #endif
 
 // Macintosh
