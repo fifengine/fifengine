@@ -160,7 +160,6 @@ namespace FIFE {
 			mutable type_usedfiles m_usedfiles;
 
 			std::set<std::string> filterList(const std::set<std::string>& list, const std::string& fregex) const;
-			std::string lower(const std::string&) const;
 			VFSSource* getSourceForFile(const std::string& file) const;
 	};
 
