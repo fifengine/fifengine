@@ -117,11 +117,10 @@ namespace FIFE {
 	}
 
 	VFSSource* VFS::getSourceForFile(const std::string& file) const {
-		std::string lowerpath = lower(file);
 		type_sources::const_iterator i = std::find_if(m_sources.begin(), m_sources.end(),
-										 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), lowerpath));
+										 boost::bind2nd(boost::mem_fun(&VFSSource::fileExists), file));
 		if (i == m_sources.end()) {
-			FL_WARN(_log, LMsg("no source for ") << lowerpath << " found");
+			FL_WARN(_log, LMsg("no source for ") << file << " found");
 			return 0;
 		}
 
@@ -129,7 +128,7 @@ namespace FIFE {
 	}
 
 	bool VFS::exists(const std::string& file) const {
-		return getSourceForFile(lower(file));
+		return getSourceForFile(file);
 	}
 
 	bool VFS::isDirectory(const std::string& path) const {
@@ -155,40 +154,20 @@ namespace FIFE {
 	}
 
 	RawData* VFS::open(const std::string& path) {
-		std::string lowerpath = lower(path);
-		FL_DBG(_log, LMsg("Opening: ") << lowerpath);
+		FL_DBG(_log, LMsg("Opening: ") << path);
 
-		VFSSource* source = getSourceForFile(lowerpath);
+		VFSSource* source = getSourceForFile(path);
 		if (!source)
 			throw NotFound(path);
 
-		return source->open(lowerpath);
-	}
-
-	std::string VFS::lower(const std::string& str) const {
-		std::string result;
-		result.resize(str.size());
-		bool found_uppercase = false;
-		for(unsigned i=0; i != str.size(); ++i)
-		{
-			result[i] = tolower(str[i]);
-			found_uppercase |= result[i] != str[i];
-		}
-		if( found_uppercase )
-		{
-			FL_WARN(_log, LMsg("Case mismatch: given '") << str
-				<< "', FIFE will use '" << result
-				<< "' - Please only use lower case filenames to avoid problems with different file systems.");
-		}
-		return result;
+		return source->open(path);
 	}
 
 	std::set<std::string> VFS::listFiles(const std::string& pathstr) const {
-		std::string lowerpath = lower(pathstr);
 		std::set<std::string> list;
 		type_sources::const_iterator end = m_sources.end();
 		for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
-			std::set<std::string> sourcelist = (*i)->listFiles(lowerpath);
+			std::set<std::string> sourcelist = (*i)->listFiles(pathstr);
 			list.insert(sourcelist.begin(), sourcelist.end());
 		}
 
@@ -196,17 +175,15 @@ namespace FIFE {
 	}
 
 	std::set<std::string> VFS::listFiles(const std::string& path, const std::string& filterregex) const {
-		std::string lowerpath = lower(path);
-		std::set<std::string> list = listFiles(lowerpath);
+		std::set<std::string> list = listFiles(path);
 		return filterList(list, filterregex);
 	}
 
 	std::set<std::string> VFS::listDirectories(const std::string& pathstr) const {
-		std::string lowerpath = lower(pathstr);
 		std::set<std::string> list;
 		type_sources::const_iterator end = m_sources.end();
 		for (type_sources::const_iterator i = m_sources.begin(); i != end; ++i) {
-			std::set<std::string> sourcelist = (*i)->listDirectories(lowerpath);
+			std::set<std::string> sourcelist = (*i)->listDirectories(pathstr);
 			list.insert(sourcelist.begin(), sourcelist.end());
 		}
 
@@ -214,7 +191,7 @@ namespace FIFE {
 	}
 
 	std::set<std::string> VFS::listDirectories(const std::string& path, const std::string& filterregex) const {
-		std::set<std::string> list = listDirectories(lower(path));
+		std::set<std::string> list = listDirectories(path);
 		return filterList(list, filterregex);
 	}
 
