@@ -47,7 +47,6 @@ std::string FIFE::VFSSource::fixPath(std::string path) const
 	if (!path.size())
 		return path;
 
-	std::transform(path.begin(), path.end(), path.begin(), tolower);
 	size_t pos;
 	while ((pos = path.find('\\')) != std::string::npos)
 		path[pos] = '/';
