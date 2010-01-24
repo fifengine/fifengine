@@ -37,7 +37,64 @@
   * Moved some misc scripts to <FIFE>/tools
   * Moved the FIFE editor to <FIFE>/editor
 
+== 2009.0 (January 7th, 2009) ==
 
+=== Engine ===
+  * Merged input rework branch
+  * Possibility to hide instances/instance visuals
+  * Added input and focus events
+  * Modified clicklabel to provide a mouse listener for hover events
+  * Use strings as grouping in generic renderer instead of numbers
+  * Omission of a camera viewport in xml map files now indicate that the camera should use the full window
+  * Added removeActionListener to SWIG export
+  * Some improvements to Scons build scripts
+  * Prepared basicapplication to use WindowTitle and WindowIcon from clients' settings.py
+  * Logger now ignores non-existing log modules (warns to prompt)
+  * Pools now have a function called purgeLoadedResources which deletes all loaded resources that have a reference count of zero.
+  * Movie: Switched to using FIFE::Image instead of Overlays
+  * Reworked matrix vector multiplication
+  * OpenAL-soft patch for OSS support
+
+Optimizations:
+  * Added hasing to pool to improve techdemo loading time
+  * Lazy loading for animations
+  * Combined events to reduce lag
+  * Small optimizations for instance renderer
+
+Bugs:
+  * Initialize instance visuals properly
+  * Fixed false positives when searching for instances in a rectangle
+  * Fixed a horrendous misconception in Pool. The map was sorted by pointer comparison.
+  * Fix for textwrapping
+  * Fixed bug where instances couldn't change layer
+  * Fixed a small bug when initializing OpenGL
+  * Fixed a scons issue where libraries checked for C instead of C++
+  * Fixed a shutdown order problem
+  * Fixed segfault on shutdown when profiling was activated (#334)
+  * Fixed: Editors camera doesn't show map after saving (#333)
+  * Fixed: FIFE crashes with a segmentation fault (#297)
+
+=== Pychan ===
+  * Modified pychan to accept RGBA colors
+  * More documentation for layout system
+  * adaptLayout now acts a bit smarter
+  * Fix for scrollarea bug
+
+=== Rio de hola === 
+  * Improved some graphics and added some new ones
+  * Profiling support
+
+=== Editor ===
+  * Scrolling support
+  * Added an undo feature to the map-editor
+  * Object editor plugin
+  * Some bug fixes
+
+=== Documentation ===
+  * Updated the map format article to reflect the datasets changes (#323)
+
+=== Misc ===
+  * Removed old testmaps
 
 == 2008.1 (July, 2008) ==
 
