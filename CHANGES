@@ -2,28 +2,90 @@
 
 === Engine ===
   * Moved to Python 2.6 (#345)
-  * Fixed layer and instance transparency (#378)
+  * Upgraded guichan in ext to 0.8.2 (#420)
+
   * Added UTF8 support
   * SCons build system has been re-written (#328)
-  * Fixed a layer visibility bug where the toggleInstancesVisible and setInstanceVisible functions were not working correctly. (#335)
+  * Support for native mouse cursors
+  * The background of Label widgets will be painted
   * Added adaptive pathfinding (#347)
-  * Fixed building FIFE on OS X (#360)
-  * Fixed setActionRuntime() (#373)
-  * Upgraded guichan in ext to 0.8.2 (#420)
+  * Modified CellSelectionRenderer to support multiple cell selection
+
+  * Added method Layer::getInstancesAt()
+  * Added SoundEmitter::setCallback()
+  * Added a setRolloff() function to the SoundEmitter class.
+  * Added function to fife_utils: getUserDataDirectory. Returns the proper path to save setting and data files depending on OS. 
   * Removed UnitTest++ from ext (#421)
   * Changed the way the fife python module is imported ( see http://wiki.fifengine.de/Importing_Python_Module )
+  * The serializers will use LogManager instead of printing directly to the console
+
+  * GuiManager: Proper translation of Guichan key events to FIFE key events
+  * Proper size calculation for ToggleButton
+  * Fixed a layer visibility bug where the toggleInstancesVisible and setInstanceVisible functions were not working correctly. (#335)
+  * Fixed building FIFE on OS X (#360)
+  * Fixed setActionRuntime() (#373)
+  * Fixed unreliable time handling when changing time factors.
+  * Fixed a bug in the OpenGl renderer where the last chunk of images would not be displayed when image_height % chunk_size was 0.
+  * Fixed layer and instance transparency (#378)
+  * Fixed a lot of small bugs
+
+=== Rio de hola ===
+  * Made rio_de_hola save its settings to the proper OS folder.
+  * Added a prefix to cameras in Rio de Hola to avoid name clashes
+  * Fixed second camera in rio so multiple Camera.setLocation calls are handled correctly
+  * More documentation has been written
   
 === Editor ===
-  * Fixed editor but where the map didn't render after saving (#333)
-  * Added a rudimentary camera editor plugin
-  * "Save As" is now functional (#382)
+  * Rewrote editor:
+    - Improved GUI:
+      - Resizable windows
+      - Docking
+      - Toolbars, menubar, statusbar
+      - Model/View approach to toolbar and menubar buttons
+    - New signal event system based on the one from django
+    - Support for opening multiple maps
+    - Better plugin support
+  * New plugin: LayerTool
+  * New plugin: LightEdit
+  * New plugin: CameraEdit
+  * Enhanced ObjectSelector
+  * Enhanced ObjectEdit
+  * New tool: ObjectPicker. Click on an instance on the map to set the current object to the instance object
+  * Ability to select cells and perform actions on them (move, delete, fill, ...)
+  * New type of scrolling: Press middle mouse button and move the mouse
+  * New icons based on Bluesphere
+  * Made the editor save its settings to the proper OS folder.
+  * Fixed editor bug where the map didn't render after saving (#333)
+  * Fixed a lot of bugs, and made a lot of new ones ;-)
   
 === PyChan ===
-  * Fixed an input problem when a dropdown box is clicked on (#337)
+  * New greedy layout engine: Widgets is now able to expand in addition to shrinking
+  * New events: mouseWheelMovedUp and mouseWheelMovedDown
+
+  * Added the position_technique attribute
+  * Added Widget.removeAllChildren() method
+  * Added a new method Widget.getNamedChildren
+  * New method: Widget.insertChild()
+  * New method: Widget.insertChildBefore()
+  * New property: is_focusable
+  * New properties: min_size, max_size
+  * Moved helptext property from C++ to pychan
+  * New togglebutton widget
+
+  * ScrollArea: Size is not static anymore (can shrink and expand)
+  * Allow objects with a call attribute to be used as event callbacks
+  * Removed unused TimerListener
   * Switched to new content structure (#336)
+  * Made the distribute and mapEvents methods faster
+  * Added a small decorator for profiling rarely called functions
+  * Optimized adaptLayout()
+  * Added fast path for Widget.findChild(name=name). Roughly 10x faster
+
+  * Fixed an input problem when a dropdown box is clicked on (#337)
   * Fixed pychan event_map to support callable objects (#374)
   * Fixed the pychan demo (#363)
   * Fixed a pychan problem where unkown characters were displayed when holding the shift key (#383)
+  * Lots of bug fixes
   
 === Documentation ===
   * Fixed some doxygen documentation problems (#343)
@@ -36,6 +98,7 @@
   * Moved rio_de_hola and pychan_demo to <FIFE>/demos
   * Moved some misc scripts to <FIFE>/tools
   * Moved the FIFE editor to <FIFE>/editor
+  * Added a Win32 installer for FIFE and the win32 SDK
 
 == 2009.0 (January 7th, 2009) ==
 
