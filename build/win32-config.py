@@ -10,8 +10,8 @@ def initEnvironment(env):
 	swigdir = os.path.join(path, 'build', 'win32', 'applications', 'swigwin-1.3.40')
 	mingwbindir = os.path.join(path, 'build', 'win32', 'applications', 'mingw', 'bin')
 	
-	env.AppendENVPath('PATH', swigdir)
-	env.AppendENVPath('PATH', mingwbindir)
+	env.PrependENVPath('PATH', swigdir)
+	env.PrependENVPath('PATH', mingwbindir)
 	
 	includepath = os.path.join(path, 'build', 'win32', 'includes')
 	staticlibpath = os.path.join(path, 'build', 'win32', 'static_libs', 'mingw')
