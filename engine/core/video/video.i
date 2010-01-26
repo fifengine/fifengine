@@ -39,6 +39,8 @@ namespace FIFE {
 	class Point;
 	class ResourceLocation;
 
+	%apply uint8_t *OUTPUT { uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a };
+
 	class AbstractImage {
 	public:
 		virtual ~AbstractImage() {}

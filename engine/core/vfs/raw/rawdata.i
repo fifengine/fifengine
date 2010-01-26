@@ -28,6 +28,8 @@
 
 namespace FIFE {
 	%apply std::string &OUTPUT { std::string& outbuffer };
+	%apply uint8_t *OUTPUT { uint8_t* buffer };
+	
 	class RawData {
 		public:
 			RawData(RawDataSource* datasource);
