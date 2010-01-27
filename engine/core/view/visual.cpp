@@ -40,16 +40,16 @@
 namespace FIFE {
 
 	static Logger _log(LM_VIEW);
-	
+
 	Visual2DGfx::Visual2DGfx(): m_transparency(0), m_visible(true) {
 	}
-	
+
 	Visual2DGfx::~Visual2DGfx() {
 	}
-	
+
 	ObjectVisual::ObjectVisual() {
 	}
-	
+
 	ObjectVisual* ObjectVisual::create(Object* object) {
 		if (object->getVisual<ObjectVisual>()) {
 			throw Duplicate("Object already contains visualization");
@@ -58,25 +58,25 @@ namespace FIFE {
 		object->adoptVisual(v);
 		return v;
 	}
-	
+
 	ObjectVisual::~ObjectVisual() {
 	}
-	
+
 	void ObjectVisual::addStaticImage(unsigned int angle, int image_index) {
 		m_angle2img[angle % 360] = image_index;
 	}
-			
+
 	int ObjectVisual::getStaticImageIndexByAngle(int angle) {
 		int closestMatch = 0;
 		return getIndexByAngle(angle, m_angle2img, closestMatch);
 	}
-	
+
 	int ObjectVisual::getClosestMatchingAngle(int angle) {
 		int closestMatch = 0;
 		getIndexByAngle(angle, m_angle2img, closestMatch);
 		return closestMatch;
 	}
-	
+
 	void ObjectVisual::getStaticImageAngles(std::vector<int>& angles) {
 		angles.clear();
 		type_angle2id::const_iterator i(m_angle2img.begin());
@@ -85,7 +85,7 @@ namespace FIFE {
 			++i;
 		}
 	}
-	
+
 	const int STATIC_IMAGE_NOT_INITIALIZED = -2;
 	const int STATIC_IMAGE_NOT_FOUND = -1;
 
@@ -107,12 +107,12 @@ namespace FIFE {
 		m_cached_static_img_id = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
  		m_cached_static_img_angle = angle;
 		return m_cached_static_img_id;
-	}	
-	
-	InstanceVisual::InstanceVisual(): 
+	}
+
+	InstanceVisual::InstanceVisual():
 		m_stackposition(0) {
 	}
-	
+
 	InstanceVisual* InstanceVisual::create(Instance* instance) {
 		if (instance->getVisual<InstanceVisual>()) {
 			throw Duplicate("Instance already contains visualization");
@@ -121,13 +121,13 @@ namespace FIFE {
 		instance->setVisual(v);
 		return v;
 	}
-	
+
 	InstanceVisual::~InstanceVisual() {
 	}
-	
+
 	ActionVisual::ActionVisual(): m_animations() {
 	}
-	
+
 	ActionVisual* ActionVisual::create(Action* action) {
 		if (action->getVisual<ActionVisual>()) {
 			throw Duplicate("Action already contains visualization");
@@ -136,7 +136,7 @@ namespace FIFE {
 		action->adoptVisual(v);
 		return v;
 	}
-	
+
 	ActionVisual::~ActionVisual() {
 	}
 
@@ -147,5 +147,14 @@ namespace FIFE {
 	int ActionVisual::getAnimationIndexByAngle(int angle) {
 		int closestMatch = 0;
 		return getIndexByAngle(angle, m_animations, closestMatch);
+	}
+
+	void ActionVisual::getActionImageAngles(std::vector<int>& angles) {
+		angles.clear();
+		type_angle2id::const_iterator i(m_animations.begin());
+		while (i != m_animations.end()) {
+			angles.push_back(i->first);
+			++i;
+		}
 	}
 }

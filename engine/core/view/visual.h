@@ -214,6 +214,10 @@ namespace FIFE {
 		 */
 		int getAnimationIndexByAngle(int angle);
 
+		/** Returns list of available angles for this Action
+		 */
+		void getActionImageAngles(std::vector<int>& angles);
+
 	private:
 		/** Constructor
 		 */

@@ -62,12 +62,14 @@ namespace FIFE {
 	};
 	%template(get2dGfxVisual) Instance::getVisual<InstanceVisual>;
 	
+	%apply std::vector<int> &OUTPUT { std::vector<int>& angles };
 	class ActionVisual: public Visual2DGfx {
 	public:
 		static ActionVisual* create(Action* action);
 		virtual ~ActionVisual();
 		void addAnimation(unsigned int angle, int animation_index);
 		int getAnimationIndexByAngle(int angle);
+		void getActionImageAngles(std::vector<int>& angles);
 	private:
 		ActionVisual();
 	};
