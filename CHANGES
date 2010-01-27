@@ -1,3 +1,10 @@
+== 0.3.1 (March, 2010) ==
+
+=== Engine ===
+  * Updated a lot of the python source files to have the correct headers
+  * Fixed SWIG wrappers that didn't handle simple output parameters (#340)
+
+
 == 0.3.0 (January 20th, 2010) ==
 
 === Engine ===
@@ -56,6 +63,9 @@
   * New icons based on Bluesphere
   * Made the editor save its settings to the proper OS folder.
   * Fixed editor bug where the map didn't render after saving (#333)
+  * Editor can now re-open a map (#381)
+  * Fixed a problem navigating directory structure with the filebrowser (#377)
+  * Filebrowser now refreshes when expected (#391)
   * Fixed a lot of bugs, and made a lot of new ones ;-)
   
 === PyChan ===
