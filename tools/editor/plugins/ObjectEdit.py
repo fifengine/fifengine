@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 
-# ###################################################
-# Copyright (C) 2008 The Zero-Projekt team
-# http://zero-projekt.net
-# info@zero-projekt.net
-# This file is part of Zero "Was vom Morgen blieb"
+# ####################################################################
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.de
+#  This file is part of FIFE.
 #
-# The Zero-Projekt codebase is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+#  FIFE is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the
-# Free Software Foundation, Inc.,
-# 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-# ###################################################
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the
+#  Free Software Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+# ####################################################################
 
 """ a tool for FIFEdit to edit object and instance attributes """
 
@@ -279,6 +278,7 @@ class ObjectEdit(plugin.Plugin):
 					break
 											
 			image = self._anim_data['obj'].getFrameByTimestamp(dur)	
+			print image.getResourceFile()
 			self.container.findChild(name="animTest").image = image.getResourceFile()
 			self.container.findChild(name="animTest").size= (250,250)
 			self.container.findChild(name="animTest").min_size= (250,250)
@@ -525,8 +525,6 @@ class ObjectEdit(plugin.Plugin):
 		"""
 			- grabs all available data from both object and instance
 		
-			FIXME:
-				1.) we need to fix the instance rotation / rotation issue
 		"""
 		visual = None
 		self._avail_rotations = []
@@ -563,13 +561,7 @@ class ObjectEdit(plugin.Plugin):
 			print 'Fetching visual of object - failed. :/'
 			raise			
 
-#		print "Camera tilt: ", self._camera.getTilt()
-#		print "Camera rotation: ", self._camera.getRotation()
-#		print "Instance rotation: ", instance.getRotation()
-
-#		self._fixed_rotation = int(instance.getRotation() + abs( self._camera.getRotation() ) )		
 		self._fixed_rotation = instance.getRotation()
-#		self._fixed_rotation = visual.getClosestMatchingAngle(self._fixed_rotation)	
 
 		index = visual.getStaticImageIndexByAngle(self._fixed_rotation)
 
@@ -603,27 +595,12 @@ class ObjectEdit(plugin.Plugin):
 		if not self._animation:
 			rotations = visual.getStaticImageAngles()
 			for angle in rotations:
-#				angle += int(abs( self._camera.getRotation() ))
 				self._avail_rotations.append(angle)
 	
 			self._image_default_x_offset = self._image.getXShift()
 			self._image_default_y_offset = self._image.getYShift()
 		else:
-			# these doesn't work correctly
-#			rotations = [0,60,120,180,240,300]
-
-			# testbench to get valid angles
-#			angle = 0
-#			rotations = []
-#			while angle != 360:
-#				angle += 10
-#				rotations.append(angle)
-
-			# estimated angles (for hex!) to make things work - use testbench to test 
-			# various angles and note down the working ones (watch instance 
-			# rotation and the animation rotations shown in the gui; valid
-			# angles are given once the rotations are in sync
-			self._avail_rotations = [9,69,139,169,249,319]
+			self._avail_rotations = object.getDefaultAction().get2dGfxVisual().getActionImageAngles()
 
 	def input(self, instances):
 		"""
