@@ -524,7 +524,14 @@ namespace FIFE {
 					drawpt = toScreenCoordinates( instance->getLocationRef().getMapCoordinates() );
 					vc.facing_angle = angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
 				}
-				angle += instance->getRotation();
+				
+				//This is to fix ticket #361.  I would rather not have to put this here.
+				//It should be handled in a more appropriate spot like within Instance::setFacingLocation().  
+				//It ensures the instances rotation is in sync with it's facing direction.
+				if (angle < 0) {
+					angle = 360+angle;
+				}
+				instance->setRotation(angle);
 
 				Image* image = NULL;
 				Action* action = instance->getCurrentAction();
