@@ -176,6 +176,8 @@ class Editor(ApplicationBase, MainWindow):
 		self._initActions()
 		
 		self._toolbox.show()
+		
+		events.preMapClosed.connect(self._mapRemoved)
 
 	def _initActions(self):
 		""" Initializes toolbar and menubar buttons """
@@ -344,14 +346,11 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self.showMapView(mapview)
 		
-		events.preMapClosed.connect(self._mapRemoved)
 		events.mapAdded.send(sender=self, map=map)
 		
 		return mapview
 		
 	def _mapRemoved(self, mapview):
-		events.preMapClosed.disconnect(self._mapRemoved)
-		
 		index = self._mapviewlist.index(mapview)-1
 		self._mapviewlist.remove(mapview)
 		
@@ -362,7 +361,9 @@ class Editor(ApplicationBase, MainWindow):
 				break
 				
 		# Change mapview
-		if index >= 0:
+		if len(self._mapviewlist) > 0:
+			if index < 0: 
+				index = 0
 			self.showMapView(self._mapviewlist[index])
 		else:
 			self._mapview = None
