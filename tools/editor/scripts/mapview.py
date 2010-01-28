@@ -149,7 +149,7 @@ class MapView:
 		for cam in view.getCameras():
 			if cam.getLocationRef().getMap().getId() == self._map.getId():
 				cam.setEnabled(False)
-				#view.removeCamera(cam)
+				view.removeCamera(cam)
 		view.resetRenderers()
 		
 		# Unload the map from FIFE
