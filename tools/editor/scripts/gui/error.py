@@ -21,7 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-import fife.extensions.pychan
+from fife.extensions import pychan
 import fife.extensions.pychan.widgets as widgets
 
 class ErrorDialog(object):
