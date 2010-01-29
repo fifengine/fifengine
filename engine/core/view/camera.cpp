@@ -53,9 +53,9 @@
 namespace FIFE {
 	static Logger _log(LM_CAMERA);
 
-	Camera::Camera(const std::string& id, 
-		Layer *layer, 
-		Rect viewport, 
+	Camera::Camera(const std::string& id,
+		Layer *layer,
+		Rect viewport,
 		ExactModelCoordinate emc,
 		RenderBackend* renderbackend,
 		ImagePool* ipool,
@@ -147,7 +147,7 @@ namespace FIFE {
 			m_prev_origo = m_cur_origo;
 		}
 		m_location = location;
-		
+
 		CellGrid* cg = NULL;
 		if (m_location.getLayer()) {
 			cg = m_location.getLayer()->getCellGrid();
@@ -157,9 +157,9 @@ namespace FIFE {
 		if (!cg) {
 			throw Exception("Camera layer has no cellgrid specified");
 		}
-		
+
 		updateMatrices();
-		
+
 		m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
 	}
 
@@ -184,7 +184,7 @@ namespace FIFE {
 		m_image_dimensions[layer] = p;
 		return p;
 	}
-	
+
 	Location Camera::getLocation() const {
 		return m_location;
 	}
@@ -192,7 +192,7 @@ namespace FIFE {
 	Location& Camera::getLocationRef() {
 		return m_location;
 	}
-	
+
 	void Camera::setViewPort(const Rect& viewport) {
 		m_viewport = viewport;
 	}
@@ -204,7 +204,7 @@ namespace FIFE {
 	void Camera::setEnabled(bool enabled) {
 		m_enabled = enabled;
 	}
-	
+
 	bool Camera::isEnabled() {
 		return m_enabled;
 	}
@@ -230,7 +230,7 @@ namespace FIFE {
 		int dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
 		screen_coords.z = static_cast<int>(tan(m_tilt * (M_PI / 180.0)) * static_cast<double>(dy));
 	}
-	
+
 	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords, bool z_calculated) {
 		if (!z_calculated) {
 			calculateZValue(screen_coords);
@@ -288,7 +288,7 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   tilt=") << m_tilt << " rot=" << m_rotation);
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
-	
+
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
 		const std::vector<Instance*>& layer_instances = m_layer_to_instances[&layer];
@@ -321,7 +321,7 @@ namespace FIFE {
 			}
 		}
 	}
-	
+
 	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
 		const std::vector<Instance*>& layer_instances = m_layer_to_instances[&layer];
@@ -362,7 +362,7 @@ namespace FIFE {
 			}
 		}
 	}
-	
+
 	void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates) {
 		instances.clear();
 		const std::vector<Instance*>& layer_instances = m_layer_to_instances[loc.getLayer()];
@@ -404,21 +404,21 @@ namespace FIFE {
 		setLocation(loc);
 		updateMatrices();
 	}
-	
+
 	void Camera::refresh() {
 		updateMatrices();
 		m_iswarped = true;
 	}
-	
+
 	void Camera::resetUpdates() {
 		m_iswarped = false;
 		m_prev_origo = m_cur_origo;
 	}
-	
+
 	bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs) {
 		return (lhs->getPipelinePosition() < rhs->getPipelinePosition());
 	}
-	
+
 	void Camera::addRenderer(RendererBase* renderer) {
 		renderer->setRendererListener(this);
 		m_renderers[renderer->getName()] = renderer;
@@ -427,11 +427,11 @@ namespace FIFE {
 		}
 		m_pipeline.sort(pipelineSort);
 	}
-	
+
 	void Camera::onRendererPipelinePositionChanged(RendererBase* renderer) {
 		m_pipeline.sort(pipelineSort);
 	}
-	
+
 	void Camera::onRendererEnabledChanged(RendererBase* renderer) {
 		assert(m_renderers[renderer->getName()]);
 		if (renderer->isEnabled()) {
@@ -446,7 +446,7 @@ namespace FIFE {
 	RendererBase* Camera::getRenderer(const std::string& name) {
 		return m_renderers[name];
 	}
-	
+
 	class InstanceDistanceSort {
 	public:
 		Camera* cam;
@@ -473,7 +473,7 @@ namespace FIFE {
 
 	void Camera::render() {
 		ScreenPoint cammove = m_prev_origo - m_cur_origo;
-		
+
 		Map* map = m_location.getMap();
 		if (!map) {
 			FL_ERR(_log, "No map for camera found");
@@ -482,10 +482,10 @@ namespace FIFE {
 		//if ((!map->isChanged()) && (!m_iswarped) && (cammove == ScreenPoint(0,0,0))) {
 		//	return;
 		//}
-		
+
 		// update each layer
 		m_renderbackend->pushClipArea(getViewPort());
-		
+
 		m_layer_to_instances.clear();
 
 		const std::list<Layer*>& layers = map->getLayers();
@@ -505,7 +505,7 @@ namespace FIFE {
 				if(!visual->isVisible())
 					continue;
 				InstanceVisualCacheItem& vc = visual->getCacheItem(this);
-				
+
 				// use cached values if there is no need to do full recalculation
 				ScreenPoint drawpt;
 				int angle = 0;
@@ -522,16 +522,11 @@ namespace FIFE {
 					//drawpt.z = toScreenCoordinates( instance->getLocationRef().getMapCoordinates() ).z;
 				} else {
 					drawpt = toScreenCoordinates( instance->getLocationRef().getMapCoordinates() );
-					vc.facing_angle = angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
+					vc.facing_angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
+					angle = vc.facing_angle;
 				}
-				
-				//This is to fix ticket #361.  I would rather not have to put this here.
-				//It should be handled in a more appropriate spot like within Instance::setFacingLocation().  
-				//It ensures the instances rotation is in sync with it's facing direction.
-				if (angle < 0) {
-					angle = 360+angle;
-				}
-				instance->setRotation(angle);
+
+				angle += instance->getRotation();
 
 				Image* image = NULL;
 				Action* action = instance->getCurrentAction();
@@ -561,7 +556,7 @@ namespace FIFE {
 				if (image) {
 					vc.image = image;
 					vc.screenpoint = drawpt;
-					
+
 					int w = image->getWidth();
 					int h = image->getHeight();
 					drawpt.x -= w / 2;
@@ -569,7 +564,7 @@ namespace FIFE {
 					drawpt.y -= h / 2;
 					drawpt.y += image->getYShift();
 					Rect r = Rect(drawpt.x, drawpt.y, w, h);
-					
+
 					vc.dimensions = r;
 					if (m_zoom != 1.0) {
 						// NOTE: Due to image alignment, there is additional additions and substractions on image dimensions
@@ -583,7 +578,7 @@ namespace FIFE {
 						r.y = vc.dimensions.y - static_cast<unsigned int>(ceil(static_cast<double>(r.h - vc.dimensions.h) / 2)) + yo - 1;
 						vc.dimensions = r;
 					}
-					
+
 					if (vc.dimensions.intersects(getViewPort())) {
 						instances_to_render.push_back(instance);
 					}
