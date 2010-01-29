@@ -80,6 +80,7 @@ class MapView:
 		
 		engine = self._editor.getEngine()
 		engine.getView().resetRenderers()
+		
 		for cam in engine.getView().getCameras():
 			cam.setEnabled(False)
 
@@ -146,10 +147,11 @@ class MapView:
 
 		# Remove cameras
 		view = self._editor.getEngine().getView()
-		for cam in view.getCameras():
+		for cam in view.getCameras()[:]:
 			if cam.getLocationRef().getMap().getId() == self._map.getId():
 				cam.setEnabled(False)
 				view.removeCamera(cam)
+				
 		view.resetRenderers()
 		
 		# Unload the map from FIFE
@@ -158,5 +160,4 @@ class MapView:
 		self._cleanUp()
 		
 		events.postMapClosed.send(sender=self, mapview=self)
-
 	
