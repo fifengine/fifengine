@@ -147,7 +147,7 @@ class MapView:
 
 		# Remove cameras
 		view = self._editor.getEngine().getView()
-		for cam in view.getCameras()[:]:
+		for cam in list(view.getCameras()):
 			if cam.getLocationRef().getMap().getId() == self._map.getId():
 				cam.setEnabled(False)
 				view.removeCamera(cam)
