@@ -5,7 +5,7 @@
 			<Label text="Resolution:" />
 			<Label text="Renderer:" />
 		</VBox>
-		<VBox>
+		<VBox min_size="120,60">
 			<DropDown name="screen_resolution" min_size="120,0" />
 			<DropDown name="render_backend" min_size="120,0" />
 		</VBox>
