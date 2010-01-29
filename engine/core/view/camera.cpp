@@ -39,6 +39,7 @@
 #include "model/structures/location.h"
 #include "util/log/logger.h"
 #include "util/math/fife_math.h"
+#include "util/math/angles.h"
 #include "util/time/timemanager.h"
 #include "video/renderbackend.h"
 #include "video/image.h"
@@ -526,13 +527,21 @@ namespace FIFE {
 					angle = vc.facing_angle;
 				}
 
-				angle += instance->getRotation();
+				//generate angle based on camera rotation and instance rotation
+				angle = angle + m_rotation + instance->getRotation();
 
 				Image* image = NULL;
 				Action* action = instance->getCurrentAction();
 				if (action) {
 					FL_DBG(_log, "Instance has action");
-					int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(angle);
+					int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(vc.facing_angle + m_rotation);
+
+					int facing_angle;
+					if (vc.facing_angle < 0){
+						facing_angle = 360+vc.facing_angle; //make it a positive angle
+					}
+					instance->setRotation(facing_angle);  //update so the animation has correct rotation
+
 					Animation& animation = m_apool->getAnimation(animation_id);
 					unsigned int animtime = instance->getActionRuntime() % animation.getDuration();
 					image = animation.getFrameByTimestamp(animtime);

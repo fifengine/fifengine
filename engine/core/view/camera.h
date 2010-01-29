@@ -67,10 +67,10 @@ namespace FIFE {
 		 * @param ipool to use with rendering
 		 * @param apool to use with rendering
 		 */
-		Camera(const std::string& id, 
+		Camera(const std::string& id,
 			Layer* layer,
 			Rect viewport,
-			ExactModelCoordinate emc, 
+			ExactModelCoordinate emc,
 			RenderBackend* renderbackend,
 			ImagePool* ipool,
 			AnimationPool* apool);
@@ -126,7 +126,7 @@ namespace FIFE {
 		 * @return Point Point containing x=width and y=height
 		 */
 		void setCellImageDimensions(unsigned int width, unsigned int height);
-		
+
 		/** Gets screen cell image dimensions.
 		 * @see setCellImageDimensions
 		 * @return Point containing x=width and y=height
@@ -137,7 +137,7 @@ namespace FIFE {
 		* @return Point Point containing x=width and y=height
 		*/
 		Point getCellImageDimensions(Layer* layer);
-		
+
 		/** Sets the location for camera
 		 * @param location location (center point) to render
 		 */
@@ -168,7 +168,7 @@ namespace FIFE {
 		/** Returns instance where camera is attached. NULL if not attached
 		 */
 		Instance* getAttached() const { return m_attachedto; }
-		
+
 		/** Sets the viewport for camera
 		 * viewport is rectangle inside the view where camera renders
 		 * @param viewport area for camera render
@@ -199,32 +199,14 @@ namespace FIFE {
 		/** Gets if camera is enabled / disabled
 		 */
 		bool isEnabled();
-		
-		/** Gets angle of vector defined by given locations and camera properties (e.g. rotation)
-		 *  @return angle in polar coordinates
-		 */
-		inline int getAngleBetween(const Location& loc1, const Location& loc2) {
-			static const double VECTOR_MULTIP = 100000.0;
-			ExactModelCoordinate c1 = loc1.getMapCoordinates();
-			ExactModelCoordinate c2 = loc2.getMapCoordinates();
-			ExactModelCoordinate cd((c2.x - c1.x) * VECTOR_MULTIP, (c2.y - c1.y) * VECTOR_MULTIP, 0);
-			c2.x = c1.x + cd.x;
-			c2.y = c1.y + cd.y;
-			ScreenPoint pt1 = this->toScreenCoordinates(c1);
-			ScreenPoint pt2 = this->toScreenCoordinates(c2);
-			double dy = (pt2.y - pt1.y);
-			double dx = (pt2.x - pt1.x);
-			int angle = static_cast<int>(atan2(-dy,dx)*(180.0/M_PI));
-			return angle;
-		}
-		
+
 		/** Returns instances that match given screen coordinate
 		 * @param screen_coords screen coordinates to be used for hit search
 		 * @param layer layer to use for search
 		 * @param instances list of instances that is filled based on hit test results
 		 */
 		void getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances);
-		
+
 		/** Returns instances that match given screen coordinate
 		 * @param screen_point1 top left screen coordinates to be used for hit search
 		 * @param screen_point2 right bottom screen coordinates to be used for hit search
@@ -240,7 +222,7 @@ namespace FIFE {
 		 * @param use_exactcoordinates if true, comparison is done using exact coordinates. if not, cell coordinates are used
 		 */
 		void getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates=false);
-		
+
 		/** General update routine.
 		 * In this function, the camera's position gets updated when its attached
 		 * to another instance.
@@ -272,18 +254,18 @@ namespace FIFE {
 		/** resets active layer information on all renderers.
 		 */
 		void resetRenderers();
-		
+
 		/** calculates z-value for given screenpoint
 		 */
 		void calculateZValue(ScreenPoint& screen_coords);
 
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 		void onRendererEnabledChanged(RendererBase* renderer);
-		
+
 		/** Renders camera
 		 */
 		void render();
-		
+
 	private:
 		std::string m_id;
 
@@ -294,7 +276,7 @@ namespace FIFE {
 		 * - setTilt
 		 */
 		void updateMatrices();
-		
+
 		/** Updates camera reference scale
 		 * Reference scale is in a sense an internal zooming factor,
 		 * which adjusts cell dimensions in logical space to ones shown on
@@ -306,7 +288,7 @@ namespace FIFE {
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
-		
+
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
 		double m_tilt;
@@ -325,16 +307,16 @@ namespace FIFE {
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
 		bool m_iswarped;
-		
+
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;
 		bool m_updated; // false, if view has never been updated before
-	
+
 		RenderBackend* m_renderbackend;
 		ImagePool* m_ipool;
 		AnimationPool* m_apool;
-		
+
 		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
 		t_layer_to_instances m_layer_to_instances;
 	};
