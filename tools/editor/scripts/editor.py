@@ -86,6 +86,8 @@ class Editor(ApplicationBase, MainWindow):
 		self._tools_menu = None
 		self._help_menu = None
 		
+		self._change_map = -1
+		
 		self._settings = None
 		
 		self._help_dialog = None
@@ -317,7 +319,7 @@ class Editor(ApplicationBase, MainWindow):
 		""" Switches to mapview. """
 		if mapview is None or mapview == self._mapview:
 			return
-			
+		
 		events.preMapShown.send(sender=self, mapview=mapview)
 		self._mapview = mapview
 		self._mapview.show()
@@ -364,7 +366,7 @@ class Editor(ApplicationBase, MainWindow):
 		if len(self._mapviewlist) > 0:
 			if index < 0: 
 				index = 0
-			self.showMapView(self._mapviewlist[index])
+			self._change_map = index
 		else:
 			self._mapview = None
 			self.getEngine().getView().clearCameras()
@@ -405,6 +407,16 @@ class Editor(ApplicationBase, MainWindow):
 			self._initTools()
 			if self._params: self.openFile(self._params)
 			self._inited = True
+			
+		# FIXME: This isn't very nice, but it is needed to change the map
+		#		 outside the callback.
+		if self._change_map >= 0 and len(self._mapviewlist) > 0:
+			if self._change_map >= len(self._mapviewlist):
+				self._change_map = len(self._mapviewlist)-1
+			mapview = self._mapviewlist[self._change_map]
+			
+			self.showMapView(mapview)
+			self._change_map = -1
 		
 		events.onPump.send(sender=self)
 		
