@@ -536,10 +536,11 @@ namespace FIFE {
 					FL_DBG(_log, "Instance has action");
 					int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(vc.facing_angle + m_rotation);
 
-					int facing_angle;
-					if (vc.facing_angle < 0){
-						facing_angle = 360+vc.facing_angle; //make it a positive angle
+					int facing_angle = vc.facing_angle;
+					if (facing_angle < 0){
+						facing_angle = 360+facing_angle; //make it a positive angle
 					}
+					facing_angle %= 360;
 					instance->setRotation(facing_angle);  //update so the animation has correct rotation
 
 					Animation& animation = m_apool->getAnimation(animation_id);
