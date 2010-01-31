@@ -36,6 +36,7 @@ vars.Add(PathVariable('DESTDIR',
 			'Destination directory (prepended to prefix)',
 			None,
 			PathVariable.PathAccept ))
+#vars.Add('CXXFLAGS', "")
 
 #propagate the invoking users complete external environment
 env = Environment(variables = vars, 
@@ -247,7 +248,7 @@ elif ARGUMENTS.get('CXXFLAGS'):
 
 if debug:
 	if haveusercxxflags:
-		env.AppendUnique(usercxxflags)
+		env.AppendUnique(CXXFLAGS=usercxxflags)
 	else:	
 		env.AppendUnique(CXXFLAGS=['-O0', '-Wall', '-Wno-unused'])
 		
@@ -257,7 +258,7 @@ if debug:
 	print "Building DEBUG binaries..."
 else:
 	if haveusercxxflags:
-		env.AppendUnique(usercxxflags)
+		env.AppendUnique(CXXFLAGS=usercxxflags)
 	else:	
 		env.AppendUnique(CXXFLAGS=['-O2', '-Wall', '-Wno-unused'])
 	
