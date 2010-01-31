@@ -109,13 +109,11 @@ cbproj_linux = env.CodeblocksProjectLinux(os.path.join('..', '..','..', builders
 if sys.platform == 'win32':
 	sharedlib = env.SharedLibrary(target = 'fife',
 								  source = compilefiles,
-								  LINKFLAGS=['-Wl'],
 								  OBJPREFIX='shared_',
 								  SHLIBEMITTER = '')
 else:
 	sharedlib = env.SharedLibrary(target = 'fife',
-								  source = compilefiles,
-								  LINKFLAGS=['-Wl'])
+								  source = compilefiles)
 
 #**************************************************************************
 #python library target
@@ -130,7 +128,6 @@ pythonlib = env.SharedLibrary(target = 'fife',
 							  OBJPREFIX='py_',
 							  SHLIBPREFIX='_',
 							  SHLIBSUFFIX=dest_suffix,
-							  LINKFLAGS=['-Wl'],
 							  SHLIBEMITTER = '')
 
 pythonext = env.PythonExtensions(target = [os.path.join('swigwrappers', 'python' ,'fife_wrap.cc'), os.path.join('python', 'fife', 'fife.py')],
