@@ -62,11 +62,6 @@ class ObjectEdit(plugin.Plugin):
 		- save offsets to object file
 		- outline highlighting of the selected object
 		- animation viewer
-
-	FIXME:
-		- add static and blocking flag to save routine
-		- fix animation rotation (FIFE has no method yet to export all 
-		  angles of an animation to python)
 	"""
 	def __init__(self):
 		self.active = False
@@ -126,10 +121,12 @@ class ObjectEdit(plugin.Plugin):
 		
 		self._showAction = Action(unicode(self.getName(),"utf-8"), checkable=True)
 		scripts.gui.action.activated.connect(self.toggle_gui, sender=self._showAction)
-		
+	
 		self._editor._tools_menu.addAction(self._showAction)
 		
 		events.onInstancesSelected.connect(self.input)
+		events.preMapClosed.connect(self.hide)
+		events.preMapShown.connect(self.hide)
 		
 		self._reset()		
 		self.create_gui()
@@ -144,6 +141,8 @@ class ObjectEdit(plugin.Plugin):
 		self.removeAllChildren()
 		
 		events.onInstancesSelected.disconnect(self.input)
+		events.preMapClosed.disconnect(self.hide)
+		events.preMapShown.disconnect(self.hide)
 		
 		self._editor._tools_menu.removeAction(self._showAction)
 
@@ -153,7 +152,7 @@ class ObjectEdit(plugin.Plugin):
 
 	def getName(self):
 		""" plugin method """
-		return "Object editor v2"
+		return "Object editor"
 
 	def create_gui(self):
 		"""
@@ -224,16 +223,19 @@ class ObjectEdit(plugin.Plugin):
 		""" show previous anim frame """
 		if self._anim_data['current'] > 0:
 			self._anim_data['current'] -= 1
-			self.update_gui()
+		else:
+			self._anim_data['current'] = self._anim_data['frames']
+
+		self.update_gui()
 		
 	def next_anim_frame(self):
 		""" show next anim frame and reset animation frame to 0 if playback looping is active"""
-		if self._anim_timer.loop and (self._anim_data['current'] == self._anim_data['frames']):
-			self._anim_data['current'] = 0
-		
 		if self._anim_data['current'] < self._anim_data['frames']:
 			self._anim_data['current'] += 1
-			self.update_gui()
+		else:
+			self._anim_data['current'] = 0
+			
+		self.update_gui()
 		
 	def anim_start_frame(self):
 		""" set start frame of animation """
@@ -257,6 +259,9 @@ class ObjectEdit(plugin.Plugin):
 			updates the gui widgets with current instance data
 			
 		"""
+		if self._instances is None: return
+		
+		
 		# show the image we retrieved from an animated object
 		if self._animation:
 			if not self._gui_anim_panel_wrapper.findChild(name="animation_panel"):
@@ -278,7 +283,6 @@ class ObjectEdit(plugin.Plugin):
 					break
 											
 			image = self._anim_data['obj'].getFrameByTimestamp(dur)	
-			print image.getResourceFile()
 			self.container.findChild(name="animTest").image = image.getResourceFile()
 			self.container.findChild(name="animTest").size= (250,250)
 			self.container.findChild(name="animTest").min_size= (250,250)
@@ -298,7 +302,7 @@ class ObjectEdit(plugin.Plugin):
 		else:
 			x_offset = unicode( 0 )
 			y_offset = unicode( 0 )
-			
+		
 		self.container.distributeInitialData({
 			'select_rotations' 	: self._avail_rotations,
 			'instance_id'		: unicode( self._instances[0].getId() ),
@@ -315,10 +319,10 @@ class ObjectEdit(plugin.Plugin):
 			if self._fixed_rotation in self._avail_rotations:
 				index = self._avail_rotations.index( self._fixed_rotation )
 				self._gui_rotation_dropdown._setSelected(index)
-			else:
-				print "Internal FIFE rotation: ", self._instances[0].getRotation()
-				print "Fixed rotation (cam rot) ", self._fixed_rotation + int(abs(self._camera.getRotation()))
-				print "Collected rots from object ", self._avail_rotations
+#			else:
+#				print "Internal FIFE rotation: ", self._instances[0].getRotation()
+#				print "Fixed rotation (cam rot) ", self._fixed_rotation + int(abs(self._camera.getRotation()))
+#				print "Collected rots from object ", self._avail_rotations
 				
 
 		self.container.adaptLayout(False)			
@@ -352,7 +356,7 @@ class ObjectEdit(plugin.Plugin):
 			@param	value:	the modifier for the x offset
 		"""		
 		if self._animation:
-			print "Offset changes of animations are not supported yet"
+			self._editor.getStatusBar().setText(u"Offset changes of animations are not supported yet")
 			return
 		
 		if self._image is not None:
@@ -369,7 +373,7 @@ class ObjectEdit(plugin.Plugin):
 			@param	value:	the modifier for the y offset
 		"""
 		if self._animation:
-			print "Offset changes of animations are not supported yet"
+			self._editor.getStatusBar().setText(u"Offset changes of animations are not supported yet")
 			return
 		
 		if self._image is not None:
@@ -387,7 +391,7 @@ class ObjectEdit(plugin.Plugin):
 			- parse user data in case user think strings are considered to be integer offset values...
 		"""
 		if self._animation:
-			print "Editing animated instances is not supported yet"
+			self._editor.getStatusBar().setText(u"Editing animated instances is not supported yet")
 			return		
 		
 		xoffset = self._gui_xoffset_textfield._getText()
@@ -402,9 +406,10 @@ class ObjectEdit(plugin.Plugin):
 			existing_instances = self._editor.getActiveMapView().getController()._layer.getInstances(instance_id)
 			if len(existing_instances) <= 0:
 				self._instances[0].setId(instance_id)
-				print "Set new instance id: ", instance_id		
+				msg = unicode("Set new instance id: " + str(instance_id))
+				self._editor.getStatusBar().setText(msg)
 			else:
-				print "Instance ID is already in use."
+				self._editor.getStatusBar().setText(u"Instance ID is already in use.")
 		
 		# update rotation
 		angle = self.eval_gui_rotation()
@@ -558,7 +563,7 @@ class ObjectEdit(plugin.Plugin):
 		try:
 			visual = object.get2dGfxVisual()
 		except:
-			print 'Fetching visual of object - failed. :/'
+			self._editor.getStatusBar().setText(u"Fetching visual of object failed")
 			raise			
 
 		self._fixed_rotation = instance.getRotation()
@@ -602,6 +607,17 @@ class ObjectEdit(plugin.Plugin):
 		else:
 			self._avail_rotations = object.getDefaultAction().get2dGfxVisual().getActionImageAngles()
 
+	def show(self):
+		""" show the plugin gui - and update it """
+		self.update_gui()
+		self.container.show()	
+		self.container.adaptLayout(False)						
+	
+	def hide(self):
+		""" hide the plugin gui - and reset it """
+		self.container.hide()
+		self._reset()		
+
 	def input(self, instances):
 		"""
 			if called _and_ the user wishes to edit offsets,
@@ -619,13 +635,10 @@ class ObjectEdit(plugin.Plugin):
 					
 				self._layer = self._editor.getActiveMapView().getController()._layer
 			
-				if self._instances != ():
+				if self._instances:
 					self.highlight_selected_instance()
 					self.get_instance_data()
-					self.update_gui()
-					self.container.show()
+
+					self.show()
 				else:
-					self._reset()
-					self.container.hide()
-					
-		self.container.adaptLayout(False)						
+					self.hide()
