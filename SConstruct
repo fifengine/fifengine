@@ -252,7 +252,7 @@ if debug:
 		env.AppendUnique(CXXFLAGS=['-O0', '-Wall', '-Wno-unused'])
 		
 	env.AppendUnique(CXXFLAGS=['-g', '-D_DEBUG'])
-	env.AppendUnique(LINKFLAGS=['-Wl')
+	env.AppendUnique(LINKFLAGS=['-Wl'])
 	engine_var_dir = os.path.join('build','engine','debug')
 	tests_var_dir = os.path.join('build','tests','debug')
 	print "Building DEBUG binaries..."
