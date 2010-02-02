@@ -291,6 +291,7 @@ env.Append(CPPPATH='#engine/core')
 #TODO: clean this up a bit.  Should probably make sure unittest++ exists.
 #**************************************************************************
 opts = {'SRC' : os.path.join(os.getcwd(), 'engine',),
+		'DLLPATH' : os.path.join(os.getcwd(), 'build', 'win32', 'binaries', 'mingw'),
 		'DEBUG' : debug,
 		'PREFIX' : prefix,
 		'TESTLIBS' : ['fife', 'UnitTest++'],
