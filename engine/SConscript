@@ -56,6 +56,16 @@ swigfiles = [f for f in allfiles_base if utils.is_swigfile(f)]
 intfiles = utils.filter_by_dir(['swigwrappers'], swigfiles)
 compilefiles = utils.filter_by_dir(['swigwrappers'], implfiles)
 
+if sys.platform == 'win32':
+	dllpath = upath(opts['DLLPATH'])
+	dllfilelist = list(dllpath.walkfiles('*.dll'))
+	dllfiles = list()
+	for f in dllfilelist:
+		dllfiles.append(utils.relpath(f,opts['DLLPATH'])) 
+	
+	
+
+
 
 #**************************************************************************
 #python
@@ -173,6 +183,13 @@ install_python_lib = env.Install(pypath, pythonlib)
 install_python_module = env.Install(pypath, ['#/engine/python/fife/fife.py','#/engine/python/fife/__init__.py'])
 install_python_extensions = env.InstallAs(extdestfilelist, extensionfiles)
 
+if sys.platform == 'win32':
+	dlldestfilelist = utils.gen_dest_files(pypath, dllfiles)
+	dlldestfilelist2 = utils.gen_dest_files(os.path.join(engine_path, 'python', 'fife'), dllfiles)
+	
+	install_dlls = env.InstallAs(dlldestfilelist, dllfilelist)
+	install_dlls2 = env.InstallAs(dlldestfilelist2, dllfilelist)
+
 #**************************************************************************
 #Alias definitions
 #**************************************************************************
@@ -188,6 +205,9 @@ alias_static = Alias('fife-static', staticlib)
 alias_swig = Alias('fife-swig', [pythonext, copy_cmd2, copy_cmd3])
 alias_python = Alias('fife-python', [pythonlib, copy_cmd, alias_swig])
 Alias('fife', [alias_shared, alias_static, alias_python])
+
+if sys.platform == 'win32':
+	Alias('install-dlls', [install_dlls, install_dlls2])
 
 alias_install_shared = Alias('install-shared', install_shared)
 alias_install_static = Alias('install-static', install_static)
