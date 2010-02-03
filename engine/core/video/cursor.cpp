@@ -87,6 +87,8 @@ namespace FIFE {
 		m_drag_animtime(0),
 		m_drag_offset_x(0),
 		m_drag_offset_y(0),
+		m_mx(0),
+		m_my(0),
 		m_timemanager(TimeManager::instance()) {
 		assert(m_timemanager);
 		set(m_cursor_type, m_cursor_id);
@@ -128,12 +130,10 @@ namespace FIFE {
 	}
 	
 	void Cursor::draw() {
-		int mx = 0;
-		int my = 0;
+		SDL_GetMouseState(&m_mx, &m_my);
 		if ((m_cursor_type == CURSOR_NATIVE) && (m_drag_type == CURSOR_NONE)) {
 			return;
 		}
-		SDL_GetMouseState(&mx, &my);
 		
 		// render possible drag image
 		Image* img = NULL;
@@ -145,7 +145,7 @@ namespace FIFE {
  			img = anim.getFrameByTimestamp(animtime);
 		}
 		if (img) {
-			Rect area(mx + m_drag_offset_x + img->getXShift(), my + m_drag_offset_y + img->getYShift(), img->getWidth(), img->getHeight());
+			Rect area(m_mx + m_drag_offset_x + img->getXShift(), m_my + m_drag_offset_y + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img->render(area);
 			m_renderbackend->popClipArea();
@@ -161,7 +161,7 @@ namespace FIFE {
 			img = anim.getFrameByTimestamp(animtime);
 		}
 		if (img) {
-			Rect area(mx + img->getXShift(), my + img->getYShift(), img->getWidth(), img->getHeight());
+			Rect area(m_mx + img->getXShift(), m_my + img->getYShift(), img->getWidth(), img->getHeight());
 			m_renderbackend->pushClipArea(area, false);
 			img->render(area);
 			m_renderbackend->popClipArea();
