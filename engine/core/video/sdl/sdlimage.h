@@ -50,26 +50,24 @@ namespace FIFE {
 
 	protected:
 		void setClipArea(const Rect& cliparea, bool clear);
-	
+
 	private:
 		// Call this before rendering
 		void finalize();
-		
+
 		/** SDL Alpha Optimizer
 		 * This tries to convert an image with a fake alpha channel
 		 * to an RGB image when the channel can be reasonably be replaced
 		 * by an colorkey.
 		 */
 		SDL_Surface* optimize(SDL_Surface* surface);
-		
+
 		void resetSdlimage();
-		
+
 		// SDLSurface used to create the SDLImage.
 		Uint8 m_last_alpha;
 		// Is the surface already optimized for rendering
 		bool m_finalized;
-		// Wether to try to optimize alpha out ...
-		bool m_optimize_alpha;
 	};
 
 }
