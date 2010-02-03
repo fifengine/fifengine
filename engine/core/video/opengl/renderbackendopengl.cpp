@@ -132,7 +132,9 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::startFrame() {
+		glDisable(GL_SCISSOR_TEST);
 		glClear(GL_COLOR_BUFFER_BIT);
+		glEnable(GL_SCISSOR_TEST);
 	}
 
 	void RenderBackendOpenGL::endFrame() {
@@ -173,7 +175,7 @@ namespace FIFE {
 	Image* RenderBackendOpenGL::createImage(const uint8_t* data, unsigned int width, unsigned int height) {
 		return new GLImage(data, width, height);
 	}
-	
+
 	bool RenderBackendOpenGL::putPixel(int x, int y, int r, int g, int b) {
 		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
 			return false;
@@ -184,7 +186,7 @@ namespace FIFE {
 		glEnd();
 		return true;
 	}
-	
+
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
 		glColor4ub(r, g, b, 255);
 		glBegin(GL_LINES);
@@ -196,7 +198,7 @@ namespace FIFE {
 		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
 		glEnd();
 	}
-	
+
 	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
 	        glColor4ub(r, g, b, 165);
 		glBegin(GL_QUADS);
@@ -206,5 +208,5 @@ namespace FIFE {
 		glVertex3f(p4.x, p4.y, 0);
 		glEnd();
 	}
-	
+
 }
