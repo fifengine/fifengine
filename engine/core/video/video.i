@@ -201,6 +201,8 @@ namespace FIFE {
 		unsigned int getId() const;
 		MouseCursorType getDragType() const;
 		unsigned int getDragId() const;
+		unsigned int getX() const;
+		unsigned int getY() const;
 	
 	private:
 		Cursor(ImagePool* imgpool, AnimationPool* animpool);

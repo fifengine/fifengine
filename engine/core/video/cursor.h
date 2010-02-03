@@ -124,6 +124,14 @@ namespace FIFE {
 		 */
 		unsigned int getDragId() const { return m_drag_id; }
 
+		/** Gets the current mouse x position
+		 */
+		unsigned int getX() const {return m_mx;}
+
+		/** Gets the current mouse y position
+		 */
+		unsigned int getY() const {return m_my;}
+
 	protected:
 		/** Sets the cursor to a native type.
 		  * @param cursor_id Resource id to native cursor, or one of the values in NativeCursor
@@ -156,6 +164,8 @@ namespace FIFE {
 		
 		int m_drag_offset_x;
 		int m_drag_offset_y;
+		int m_mx;
+		int m_my;
 		TimeManager* m_timemanager;
 	};
 
