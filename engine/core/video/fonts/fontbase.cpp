@@ -182,7 +182,7 @@ namespace FIFE {
 		std::list<std::pair<size_t,std::string::const_iterator> > break_pos;
 		bool firstLine = true;
 
-		while( pos != text.end() )
+		while( pos != text.end())
 		{
 			break_pos.clear();
 			if( !firstLine ) {
@@ -190,7 +190,7 @@ namespace FIFE {
 			} else {
 				firstLine = false;
 			}
-
+			
 			bool haveNewLine = false;
 			while( getWidth(line) < render_width && pos != text.end() )
 			{
@@ -219,9 +219,13 @@ namespace FIFE {
 				// No break position and line length smaller than 2
 				// means the renderwidth is really screwed. Just continue
 				// appending single character lines.
-				if( utf8::distance(line.begin(),line.end()) <= 1 ) {
+				if( utf8::distance(line.begin(),line.end()) <= 1 && line != "\n") {
 					output.append(line);
 					continue;
+				}
+				
+				if (line == "\n") {
+					++pos;
 				}
 
 				// We can't do hyphenation here,
