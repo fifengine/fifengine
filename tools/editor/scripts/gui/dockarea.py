@@ -180,4 +180,7 @@ class DockArea(widgets.VBox, ResizableBase):
 			
 			ResizableBase.mouseReleased(self, event)
 			self.min_size = (0,0) # Override changes done in ResizableBase
+		
+		#FIXME: This is a little bit of a hack to fix Ticket #444
+		self.adaptLayout()
 				
