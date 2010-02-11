@@ -72,6 +72,7 @@ class FileBrowser(object):
 		self._widget.show()
 		
 	def setDirectory(self, path):
+		path_copy = self.path
 		self.path = path
 		if not self._widget: return
 		
@@ -86,15 +87,24 @@ class FileBrowser(object):
 					newList.append(unicode(i, fs_encoding, 'replace'))
 					print "WARNING: Could not decode item:", i
 			return newList
+	
+		dir_list_copy = list(self.dir_list)
+		file_list_copy = list(self.file_list)
 
 		self.dir_list = []
 		self.file_list = []
 		
-		dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
-		file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(self.path))
-				
-		self.dir_list = decodeList(dir_list)
-		self.file_list = decodeList(file_list)
+		try:
+			dir_list = ('..',) + filter(lambda d: not d.startswith('.'), self.engine.getVFS().listDirectories(self.path))
+			file_list = filter(lambda f: f.split('.')[-1] in self.extensions, self.engine.getVFS().listFiles(self.path))
+			self.dir_list = decodeList(dir_list)
+			self.file_list = decodeList(file_list)
+		except:
+			self.path = path_copy
+			self.dir_list = list(dir_list_copy)
+			self.file_list = list(file_list_copy)
+			print "WARNING: Tried to browse to directory that is not accessible!"
+
 		self._widget.distributeInitialData({
 			'dirList'  : self.dir_list,
 			'fileList' : self.file_list
