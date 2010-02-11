@@ -33,7 +33,7 @@
 #include "vfs/raw/rawdata.h"
 #include "vfs/raw/rawdatafile.h"
 #include "util/log/logger.h"
-
+#include "util/base/exception.h"
 #include "vfsdirectory.h"
 
 namespace bfs = boost::filesystem;
@@ -84,19 +84,24 @@ namespace FIFE {
 			dir.append(path);
 		}
 
-		bfs::path boost_path(dir);
-		if (!bfs::exists(boost_path) || !bfs::is_directory(boost_path))
-			return list;
+		try {
+			bfs::path boost_path(dir);
+			if (!bfs::exists(boost_path) || !bfs::is_directory(boost_path))
+				return list;
 
-		bfs::directory_iterator end;
-		for (bfs::directory_iterator i(boost_path); i != end; ++i) {
-			if (bfs::is_directory(*i) != directorys)
-				continue;
+			bfs::directory_iterator end;
+			for	(bfs::directory_iterator i(boost_path); i != end; ++i) {
+				if (bfs::is_directory(*i) != directorys)
+					continue;
 
-			// This only works with boost 1.34 and up
-			// list.insert(i->path().leaf());
-			// This one should be ok with both 1.33 and above
-			list.insert(i->leaf());
+				// This only works with boost 1.34 and up
+				// list.insert(i->path().leaf());
+				// This one should be ok with both 1.33 and above
+				list.insert(i->leaf());
+			}
+		}
+		catch (const bfs::filesystem_error& ex) {
+			throw Exception(ex.what());
 		}
 
 		return list;
