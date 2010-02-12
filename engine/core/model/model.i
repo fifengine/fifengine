@@ -40,7 +40,7 @@ namespace FIFE {
 
 	class Model: public FifeClass {
 	public:
-		Model();
+		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, ImagePool* imagepool, AnimationPool* animpool);
 		~Model();
 
 		Map* createMap(const std::string& identifier);

@@ -35,16 +35,26 @@
 #include "structures/layer.h"
 #include "structures/instance.h"
 #include "util/base/exception.h"
+#include "view/rendererbase.h"
+#include "video/renderbackend.h"
+#include "video/imagepool.h"
+#include "video/animationpool.h"
 
 #include "model.h"
 
 namespace FIFE {
 
-	Model::Model(): 
+	Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers,
+					ImagePool* imagepool, AnimationPool* animpool): 
 		FifeClass(),
 		m_last_namespace(NULL),
+		m_renderbackend(renderbackend),
+		m_renderers(renderers),
+		m_imagepool(imagepool),
+		m_animpool(animpool),
 		m_timeprovider(NULL) {
-	}
+
+		}
 
 	Model::~Model() {
 		purge(m_maps);
@@ -58,11 +68,12 @@ namespace FIFE {
 	Map* Model::createMap(const std::string& identifier) {
 		std::list<Map*>::const_iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {
-			if(identifier == (*it)->getId())
+			if(identifier == (*it)->getId()) {
 				throw NameClash(identifier);
+			}
 		}
 
-		Map* map = new Map(identifier, &m_timeprovider);
+		Map* map = new Map(identifier, m_renderbackend, m_renderers, m_imagepool, m_animpool, &m_timeprovider);
 		m_maps.push_back(map);
 		return map;
 	}
@@ -105,7 +116,7 @@ namespace FIFE {
 				return *it;
 		}
 
-		throw NotFound(std::string("Tried to get non-existant map: ") + identifier + ".");
+		throw NotFound(std::string("Tried to get non-existent map: ") + identifier + ".");
 	}
 
 	void Model::deleteMap(Map* map) {

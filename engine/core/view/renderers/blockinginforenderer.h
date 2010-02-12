@@ -34,7 +34,6 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class View;
 
 	class BlockingInfoRenderer: public RendererBase {
 	public:

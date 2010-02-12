@@ -28,16 +28,19 @@
 
 namespace FIFE {
   class Layer;
+  class Camera;
 }
 
 namespace std {
   %template(LayerList) list<FIFE::Layer*>;
+  %template(CameraVector) std::vector<FIFE::Camera*>;
 }
 
 namespace FIFE {
 
 	class Layer;
 	class Map;
+	class Rect;
 
 	%feature("director") MapChangeListener;
 	class MapChangeListener {
@@ -51,7 +54,7 @@ namespace FIFE {
 	class Map : public ResourceClass {
 		public:
 
-			Map(const std::string& identifier, TimeProvider* tp_master=NULL);
+			Map(const std::string& identifier, RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, ImagePool* imagepool, AnimationPool* animpool, TimeProvider* tp_master=NULL);
 			~Map();
 
 			const std::string& getId() const;
@@ -73,5 +76,9 @@ namespace FIFE {
 			void removeChangeListener(MapChangeListener* listener);
 			bool isChanged();
 			std::vector<Layer*>& getChangedLayers();
+			Camera* addCamera(const std::string& id, Layer *layer, const Rect& viewport, const ExactModelCoordinate& emc);
+			void removeCamera(const std::string& id);
+			Camera* getCamera(const std::string& id);
+			std::vector<Camera*>& getCameras();
 	};
 }

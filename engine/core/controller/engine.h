@@ -56,12 +56,12 @@ namespace FIFE {
 	class TimeManager;
 	class ImagePool;
 	class AnimationPool;
-	class View;
 	class Model;
 	class LogManager;
 	class GuiFont;
 	class Cursor;
 	class SoundClipPool;
+	class RendererBase;
 
 
 	/** Engine acts as a controller to the whole system
@@ -143,10 +143,6 @@ namespace FIFE {
 		 */
 		Model* getModel() const { return m_model; }
 		
-		/** Provides access point to the View
-		 */
-		View* getView() const { return m_view; }
-		
 		/** Provides access point to the LogManager
 		 */
 		LogManager* getLogManager() const { return m_logmanager; }
@@ -177,13 +173,14 @@ namespace FIFE {
 		VFS* m_vfs;
 		Model* m_model;
 		gcn::Graphics* m_gui_graphics;
-		View* m_view;
 		LogManager* m_logmanager;
 		GuiFont* m_defaultfont;
 		Cursor* m_cursor;
 		bool m_destroyed;
 		
 		EngineSettings m_settings;
+
+		std::vector<RendererBase*> m_renderers;
 
 #ifdef USE_COCOA
 		objc_object *m_autoreleasePool;

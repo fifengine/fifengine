@@ -33,12 +33,12 @@ namespace FIFE {
 	class AnimationPool;
 	class SoundClipPool;
 	class RenderBackend;
-	class View;
 	class Model;
 	class LogManager;
 	class GuiFont;
 	class VFS;
 	class Cursor;
+	class RendererBase;
 
 	class EngineSettings {
 	public:
@@ -99,7 +99,6 @@ namespace FIFE {
 		AnimationPool* getAnimationPool();
 		SoundClipPool* getSoundClipPool();
 		RenderBackend* getRenderBackend();
-		View* getView();
 		Model* getModel();
 		LogManager* getLogManager();
 		GuiFont* getDefaultFont();

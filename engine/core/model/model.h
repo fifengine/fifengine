@@ -41,6 +41,10 @@
 
 namespace FIFE {
 
+	class RenderBackend;
+	class RendererBase;
+	class ImagePool;
+	class AnimationPool;
 	class MetaModel;
 	class AbstractPather;
 	class Object;
@@ -54,7 +58,8 @@ namespace FIFE {
 		/** Constructor
 		 *
 		 */
-		Model();
+		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, 
+				ImagePool* imagepool, AnimationPool* animpool);
 
 		/** Destructor
 		 *
@@ -169,6 +174,12 @@ namespace FIFE {
 		std::vector<CellGrid*> m_adopted_grids;
 		std::vector<CellGrid*> m_created_grids;
 		TimeProvider m_timeprovider;
+
+		RenderBackend* m_renderbackend;
+		ImagePool* m_imagepool;
+		AnimationPool* m_animpool;
+
+		std::vector<RendererBase*> m_renderers;
 	};
 
 }; //FIFE
