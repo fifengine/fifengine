@@ -174,22 +174,28 @@ class MapController(object):
 
 		return instances
 
-	def getInstancesFromPosition(self, position):
+	def getInstancesFromPosition(self, position, layer=None):
 		""" Returns all instances on a specified position """
-		if not self._layer:
+		if not self._layer and not layer:
 			if self.debug: print 'No layer assigned in getInstancesFromPosition'
 			return
 		if not position:
 			if self.debug: print 'No position assigned in getInstancesFromPosition'
 			return
 
-		loc = fife.Location(self._layer)
+		if layer:
+			loc = fife.Location(layer)
+		else:
+			loc = fife.Location(self._layer)
 		if type(position) == fife.ExactModelCoordinate:
 			loc.setExactLayerCoordinates(position)
 		else:
 			loc.setLayerCoordinates(position)
 			
-		instances = self._layer.getInstancesAt(loc)
+		if layer:
+			instances = layer.getInstancesAt(loc)
+		else:
+			instances = self._layer.getInstancesAt(loc)
 
 		return instances
 
@@ -213,7 +219,7 @@ class MapController(object):
 		""" Called when a undo operation is done """
 		self._undo = False
 
-	def placeInstance(self, position, object):
+	def placeInstance(self, position, object, layer=None):
 		""" Places an instance of object at position. Any existing instances on position are removed. """
 		mname = 'placeInstance'
 		if not object:
@@ -242,25 +248,28 @@ class MapController(object):
 			self._undomanager.startGroup("Placed instance")
 			self.removeInstances(instances)
 
-		inst = self._layer.createInstance(object, position)
+		if layer:
+			inst = layer.createInstance(object, position)
+		else:
+			inst = self._layer.createInstance(object, position)
 		fife.InstanceVisual.create(inst)
 		
 		if not self._undo:
-			redocall = cbwa(self.placeInstance, position, object)
-			undocall = cbwa(self.removeInstanceOfObjectAt, position, object)
+			redocall = cbwa(self.placeInstance, position, object, inst.getLocation().getLayer())
+			undocall = cbwa(self.removeInstanceOfObjectAt, position, object, inst.getLocation().getLayer())
 			undoobject = undomanager.UndoObject(undocall, redocall, "Placed instance")
 			self._undomanager.addAction(undoobject)
 			self._undomanager.endGroup()
 			
-	def removeInstanceOfObjectAt(self, position, object):
+	def removeInstanceOfObjectAt(self, position, object, layer=None):
 		""" Removes the first instance of object it can find on position """
-		instances = self.getInstancesFromPosition(position)
+		instances = self.getInstancesFromPosition(position, layer)
 		for i in instances:
 			if i.getObject().getId() == object.getId() and i.getObject().getNamespace() == object.getNamespace():
-				self.removeInstances([i])
+				self.removeInstances([i],layer)
 				return
 					
-	def removeInstances(self, instances):
+	def removeInstances(self, instances, layer=None):
 		""" Removes all provided instances """
 		mname = 'removeInstances'
 		if not instances:
@@ -273,12 +282,15 @@ class MapController(object):
 			if not self._undo:
 				object = i.getObject()
 				position = i.getLocation().getExactLayerCoordinates()
-				undocall = cbwa(self.placeInstance, position, object)
-				redocall = cbwa(self.removeInstanceOfObjectAt, position, object)
+				undocall = cbwa(self.placeInstance, position, object, i.getLocation().getLayer())
+				redocall = cbwa(self.removeInstanceOfObjectAt, position, object, i.getLocation().getLayer())
 				undoobject = undomanager.UndoObject(undocall, redocall, "Removed instance")
 				self._undomanager.addAction(undoobject)
-				
-			self._layer.deleteInstance(i)
+			
+			if layer:
+				layer.deleteInstance(i)
+			else:
+				self._layer.deleteInstance(i)
 
 	def moveInstances(self, instances, moveBy, exact=False):
 		""" Moves provided instances by moveBy. If exact is false, the instances are
