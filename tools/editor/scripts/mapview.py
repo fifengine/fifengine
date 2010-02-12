@@ -79,12 +79,12 @@ class MapView:
 		_camera = None
 		
 		engine = self._editor.getEngine()
-		engine.getView().resetRenderers()
 		
-		for cam in engine.getView().getCameras():
+		for cam in self._map.getCameras():
+			cam.resetRenderers()
 			cam.setEnabled(False)
 
-		for cam in engine.getView().getCameras():
+		for cam in self._map.getCameras():
 			if cam.getLocationRef().getMap().getId() == self._map.getId():
 				rb = engine.getRenderBackend()
 				cam.setViewPort(fife.Rect(0, 0, rb.getScreenWidth(), rb.getScreenHeight()))
@@ -144,15 +144,9 @@ class MapView:
 		events.preMapClosed.send(sender=self, mapview=self)
 		
 		self._controller.cleanUp()
-
-		# Remove cameras
-		view = self._editor.getEngine().getView()
-		for cam in list(view.getCameras()):
-			if cam.getLocationRef().getMap().getId() == self._map.getId():
-				cam.setEnabled(False)
-				view.removeCamera(cam)
 				
-		view.resetRenderers()
+		for cam in self._map.getCameras():
+			cam.resetRenderers()
 		
 		# Unload the map from FIFE
 		self._editor.getEngine().getModel().deleteMap(self._map)

@@ -33,8 +33,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/structures/location.h"
-#include "util/math/matrix.h"
 #include "util/structures/rect.h"
+#include "util/math/matrix.h"
 
 #include "rendererbase.h"
 
@@ -42,6 +42,7 @@ namespace FIFE {
 
 	typedef Point3D ScreenPoint;
 	class Layer;
+	class Rect;
 	class Instance;
 	class ImagePool;
 	class AnimationPool;
@@ -58,9 +59,9 @@ namespace FIFE {
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
 		 * @param id identifier for the camera
-		 * @param layer layer where camera is bind. Camera is bind to a layer for two reasons:
+		 * @param layer layer where camera is bound. Camera is bound to a layer for two reasons:
 		 *   * camera's scaling is done based on cell image dimensions. Cell image is layer based (@see setCellImageDimensions)
-		 *   * camera could be bind to a pather, which operates on layer
+		 *   * camera could be bound to a pather, which operates on layer
 		 * @param viewport used viewport for the camera. Viewport is measured in pixels in relation to game main screen
 		 * @param emc coordinate, where camera is focused on given layer
 		 * @param renderbackend to use with rendering
@@ -69,8 +70,8 @@ namespace FIFE {
 		 */
 		Camera(const std::string& id,
 			Layer* layer,
-			Rect viewport,
-			ExactModelCoordinate emc,
+			const Rect& viewport,
+			const ExactModelCoordinate& emc,
 			RenderBackend* renderbackend,
 			ImagePool* ipool,
 			AnimationPool* apool);

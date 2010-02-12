@@ -75,7 +75,6 @@ class World(EventListenerBase):
 		self.engine = engine
 		self.eventmanager = engine.getEventManager()
 		self.model = engine.getModel()
-		self.view = self.engine.getView()
 		self.filename = ''
 		self.pump_ctr = 0 # for testing purposis
 		self.ctrldown = False
@@ -199,13 +198,13 @@ class World(EventListenerBase):
 		camera_prefix = camera_prefix.rpartition('/')[2] # Remove path
 		camera_prefix += '_'
 		
-		for cam in self.view.getCameras():
+		for cam in self.map.getCameras():
 			camera_id = cam.getId().replace(camera_prefix, '')
 			self.cameras[camera_id] = cam
+			cam.resetRenderers()
 			
 		self.cameras['main'].attach(self.hero.agent)
 
-		self.view.resetRenderers()
 		# Floating text renderers currntly only support one font.
 		# ... so we set that up.
 		# You'll se that for our demo we use a image font, so we have to specify the font glyphs
@@ -274,7 +273,6 @@ class World(EventListenerBase):
 			c.setEnabled(not c.isEnabled())
 		elif keystr == 'r':
 			self.model.deleteMaps()
-			self.view.clearCameras()
 			self.load(self.filename)
 		elif keystr == 'o':
 			self.target_rotation = (self.target_rotation + 90) % 360

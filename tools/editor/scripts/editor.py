@@ -319,6 +319,13 @@ class Editor(ApplicationBase, MainWindow):
 		""" Switches to mapview. """
 		if mapview is None or mapview == self._mapview:
 			return
+			
+		if self._mapview != None and mapview != self._mapview:
+			# need to disable the cameras from the previous map
+			# if it exists before switching
+			if self._mapview.getMap() != None:
+				for cam in self._mapview.getMap().getCameras():
+					cam.setEnabled(False)
 		
 		events.preMapShown.send(sender=self, mapview=mapview)
 		self._mapview = mapview
@@ -354,6 +361,10 @@ class Editor(ApplicationBase, MainWindow):
 		
 	def _mapRemoved(self, mapview):
 		index = self._mapviewlist.index(mapview)-1
+		
+		for cam in mapview.getMap().getCameras():
+			cam.setEnabled(False)
+			
 		self._mapviewlist.remove(mapview)
 		
 		# Remove tab
@@ -369,7 +380,6 @@ class Editor(ApplicationBase, MainWindow):
 			self._change_map = index
 		else:
 			self._mapview = None
-			self.getEngine().getView().clearCameras()
 
 	def openFile(self, path):
 		""" Opens a file """

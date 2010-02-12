@@ -31,18 +31,31 @@
 // Second block: files included from the same folder
 #include "util/base/exception.h"
 #include "util/structures/purge.h"
+#include "util/structures/rect.h"
+#include "view/camera.h"
+#include "view/rendererbase.h"
+#include "video/renderbackend.h"
+#include "video/imagepool.h"
+#include "video/animationpool.h"
 
 #include "map.h"
 #include "layer.h"
 
 namespace FIFE {
 
-	Map::Map(const std::string& identifier, TimeProvider* tp_master):
+	Map::Map(const std::string& identifier, RenderBackend* renderBackend, 
+			const std::vector<RendererBase*>& renderers, ImagePool* imagePool, 
+			AnimationPool* animPool, TimeProvider* tp_master):
 		m_id(identifier), 
 		m_timeprovider(tp_master),
 		m_changelisteners(),
 		m_changedlayers(),
-		m_changed(false) {
+		m_changed(false),
+		m_renderbackend(renderBackend),
+		m_imagepool(imagePool),
+		m_animpool(animPool),
+		m_renderers(renderers) {
+
 	}
 
 	Map::~Map() {
@@ -127,6 +140,16 @@ namespace FIFE {
 				++i;
 			}
 		}
+
+		// loop over cameras and update if enabled
+		std::vector<Camera*>::iterator camIter = m_cameras.begin();
+		for ( ; camIter != m_cameras.end(); ++camIter) {
+			if ((*camIter)->isEnabled()) {
+				(*camIter)->update();
+				(*camIter)->render();
+			}
+		}
+
 		bool retval = m_changed;
 		m_changed = false;
 		return retval;
@@ -145,6 +168,61 @@ namespace FIFE {
 			}
 			++i;
 		}
+	}
+
+	Camera* Map::addCamera(const std::string &id, Layer *layer, 
+							const Rect& viewport, const ExactModelCoordinate& emc) {
+		if (layer == NULL) {
+			throw NotSupported("Must have valid layer for camera");
+		}
+
+		if (getCamera(id)) {
+			std::string errorStr = "Camera: " + id + " already exists";
+			throw NameClash(errorStr);
+		}
+
+		// create new camera and add to list of cameras
+		Camera* camera = new Camera(id, layer, viewport, emc, m_renderbackend, m_imagepool, m_animpool);
+		m_cameras.push_back(camera);
+
+		std::vector<RendererBase*>::iterator iter = m_renderers.begin();
+		for ( ; iter != m_renderers.end(); ++iter) {
+			camera->addRenderer((*iter)->clone());
+		}
+
+		return camera;
+	}
+
+	void Map::removeCamera(const std::string &id) {
+		std::vector<Camera*>::iterator iter = m_cameras.begin();
+		for ( ; iter != m_cameras.end(); ++iter) {
+			if ((*iter)->getId() == id) {
+				// camera has been found delete it
+				delete *iter;
+
+				// now remove it from the vector
+				// note this invalidates iterators, but we do not need
+				// to worry about it in this case since we are done
+				m_cameras.erase(iter);
+
+				break;
+			}
+		}
+	}
+
+	Camera* Map::getCamera(const std::string &id) {
+		std::vector<Camera*>::iterator iter = m_cameras.begin();
+		for ( ; iter != m_cameras.end(); ++iter) {
+			if ((*iter)->getId() == id) {
+				return *iter;
+			}
+		}
+
+		return NULL;
+	}
+
+	std::vector<Camera*>& Map::getCameras() {
+		return m_cameras;
 	}
 
 } //FIFE

@@ -41,9 +41,15 @@
 
 namespace FIFE {
 
+	class RendererBase;
+	class RenderBackend;
+	class ImagePool;
+	class AnimationPool;
 	class Layer;
 	class CellGrid;
 	class Map;
+	class Camera;
+	class Rect;
 
 	/** Listener interface for changes happening on map
 	 */
@@ -86,7 +92,9 @@ namespace FIFE {
 			 * To add map to model, one should call Model::addMap (otherwise
 			 * map is not registered with the engine properly)
 			 */
-			Map(const std::string& identifier, TimeProvider* tp_master=NULL);
+			Map(const std::string& identifier, RenderBackend* renderbackend, 
+				const std::vector<RendererBase*>& renderers, ImagePool* imagepool, 
+				AnimationPool* animpool, TimeProvider* tp_master=NULL);
 
 			/** Destructor
 			 */
@@ -164,6 +172,24 @@ namespace FIFE {
 			*/
 			std::vector<Layer*>& getChangedLayers() { return m_changedlayers; }
 
+			/** Adds camera to the map. The Map takes ownership of the camera
+				so don't delete it.
+			*/
+			Camera* addCamera(const std::string& id, Layer *layer, 
+								const Rect& viewport, const ExactModelCoordinate& emc);
+
+			/** Removes a camera from the map
+			*/
+			void removeCamera(const std::string& id);
+
+			/** Get a camera by its identifier.
+			*/
+			Camera* getCamera(const std::string& id);
+
+			/** Get a list containing all cameras.
+			*/
+			std::vector<Camera*>& getCameras();
+			
 		private:
 			std::string m_id;
 
@@ -179,6 +205,16 @@ namespace FIFE {
 			// holds changed layers after each update
 			std::vector<Layer*> m_changedlayers;
 			
+			// holds the cameras attached to this map
+			std::vector<Camera*> m_cameras;
+
+			RenderBackend* m_renderbackend;
+			ImagePool* m_imagepool;
+			AnimationPool* m_animpool;
+
+			// holds handles to all created renderers
+			std::vector<RendererBase*> m_renderers;
+
 			// true, if something was changed on map during previous update (layer change, creation, deletion)
 			bool m_changed;
 	};

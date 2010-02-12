@@ -82,13 +82,16 @@ class MapController(object):
 		if not self._map.getLayers():
 			raise AttributeError('Editor error: map ' + self._map.getId() + ' has no layers. Cannot edit.')
 
-		for cam in self._engine.getView().getCameras():
+		for cam in self._map.getCameras():
 			if cam.getLocationRef().getMap().getId() == self._map.getId():
 				self._camera = cam
 				break
 
 		self._layer = self._map.getLayers()[0]
 
+	def getMap(self):
+		return self._map
+	
 	def selectLayer(self, layerid):
 		""" Select layer to be edited """
 		self.deselectSelection()

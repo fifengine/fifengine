@@ -286,7 +286,7 @@ class LayerTool(plugin.Plugin):
 		
 		# FIFE will crash if we try to delete the layer which is in use by a camera
 		# so we will set the camera to another layer instead
-		for cam in self._editor.getEngine().getView().getCameras():
+		for cam in map.getCameras:
 			if cam.getLocationRef().getMap().getId() != map.getId():
 				continue
 				

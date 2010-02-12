@@ -163,7 +163,8 @@ class LayerDialog(object):
 		layer.setPathingStrategy(pathing)
 		layer.setLayerTransparency(transparency)
 		
-		self.engine.getView().resetRenderers()
+		for cam in self.map.getCameras():
+			cam.resetRenderers()
 		
 		# Hide dialog and call back
 		self._widget.hide()

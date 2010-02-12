@@ -218,7 +218,7 @@ class ModelSaver:
 
 	# Save the linked camera of a map.
 	def write_camera( self, map ):
-		cameralist = self.engine.getView().getCameras()
+		cameralist = map.getCameras()
 
 		for cam in cameralist:
 			if cam.getLocationRef().getMap().getId() == map.getId():

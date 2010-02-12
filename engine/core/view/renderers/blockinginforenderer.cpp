@@ -36,7 +36,6 @@
 #include "model/structures/location.h"
 
 #include "view/camera.h"
-#include "view/view.h"
 #include "blockinginforenderer.h"
 
 

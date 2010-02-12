@@ -138,7 +138,7 @@ namespace FIFE {
 	class GenericRenderer: public RendererBase {
 	public:
 		GenericRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
-		~GeometricRenderer();
+		~GenericRenderer();
 		std::string getName();
 		static GenericRenderer* getInstance(IRendererContainer* cnt);
 		void addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);

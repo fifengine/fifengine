@@ -63,7 +63,6 @@
 #include "pathfinder/routepather/routepather.h"
 #include "model/metamodel/grids/hexgrid.h"
 #include "model/metamodel/grids/squaregrid.h"
-#include "view/view.h"
 #include "view/renderers/camerazonerenderer.h"
 #include "view/renderers/quadtreerenderer.h"
 #include "view/renderers/gridrenderer.h"
@@ -101,7 +100,6 @@ namespace FIFE {
 		m_vfs(0),
 		m_model(0),
 		m_gui_graphics(0),
-		m_view(0),
 		m_logmanager(0),
 		m_cursor(0),
 		m_settings() {
@@ -231,27 +229,25 @@ namespace FIFE {
 		m_soundmanager = new SoundManager(m_soundclippool);
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
+		FL_LOG(_log, "Creating renderers");
+		m_renderers.push_back(new CameraZoneRenderer(m_renderbackend, 0, m_imagepool));
+		m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10, m_imagepool, m_animpool));
+		m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
+		m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
+		m_renderers.push_back(new BlockingInfoRenderer(m_renderbackend, 40));
+		m_renderers.push_back(new FloatingTextRenderer(m_renderbackend, 50, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_renderers.push_back(new QuadTreeRenderer(m_renderbackend, 60));
+		m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70, dynamic_cast<AbstractFont*>(m_defaultfont)));
+		m_renderers.push_back(new GenericRenderer(m_renderbackend, 80, m_imagepool, m_animpool));
+
 		FL_LOG(_log, "Creating model");
-		m_model = new Model();
+		m_model = new Model(m_renderbackend, m_renderers, m_imagepool, m_animpool);
 		FL_LOG(_log, "Adding pathers to model");
-//		m_model->adoptPather(new LinearPather());
 		m_model->adoptPather(new RoutePather());
 		FL_LOG(_log, "Adding grid prototypes to model");
 		m_model->adoptCellGrid(new SquareGrid());
 		m_model->adoptCellGrid(new HexGrid());
 
-		FL_LOG(_log, "Creating view");
-		m_view = new View(m_renderbackend, m_imagepool, m_animpool);
-		FL_LOG(_log, "Creating renderers to view");
-		m_view->addRenderer(new CameraZoneRenderer(m_renderbackend, 0, m_imagepool));
-		m_view->addRenderer(new InstanceRenderer(m_renderbackend, 10, m_imagepool, m_animpool));
-		m_view->addRenderer(new GridRenderer(m_renderbackend, 20));
-		m_view->addRenderer(new CellSelectionRenderer(m_renderbackend, 30));
-		m_view->addRenderer(new BlockingInfoRenderer(m_renderbackend, 40));
-		m_view->addRenderer(new FloatingTextRenderer(m_renderbackend, 50, dynamic_cast<AbstractFont*>(m_defaultfont)));
-		m_view->addRenderer(new QuadTreeRenderer(m_renderbackend, 60));
-		m_view->addRenderer(new CoordinateRenderer(m_renderbackend, 70, dynamic_cast<AbstractFont*>(m_defaultfont)));
-		m_view->addRenderer(new GenericRenderer(m_renderbackend, 80, m_imagepool, m_animpool));
 		m_cursor = new Cursor(m_imagepool, m_animpool, m_renderbackend);
 		FL_LOG(_log, "Engine intialized");
 	}
@@ -265,7 +261,6 @@ namespace FIFE {
 	void Engine::destroy() {
 		FL_LOG(_log, "Destructing engine");
  		delete m_cursor;
- 		delete m_view;
 		delete m_model;
 		delete m_soundmanager;
 		delete m_guimanager;
@@ -277,6 +272,14 @@ namespace FIFE {
 		delete m_animpool;
 		delete m_imagepool;
 		delete m_eventmanager;
+
+		// properly remove all the renderers created during init
+		std::vector<RendererBase*>::iterator rendererIter = m_renderers.begin();
+		for ( ; rendererIter != m_renderers.end(); ++rendererIter)
+		{
+			delete *rendererIter;
+		}
+		m_renderers.clear();
 
 		m_renderbackend->deinit();
 		delete m_renderbackend;
@@ -303,7 +306,6 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_timemanager->update();
 		m_model->update();
-		m_view->update();
 		m_guimanager->turn();
 		m_cursor->draw();
 		m_renderbackend->endFrame();
