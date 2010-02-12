@@ -292,9 +292,11 @@ class MapController(object):
 			else:
 				self._layer.deleteInstance(i)
 
-	def moveInstances(self, instances, moveBy, exact=False):
+	def moveInstances(self, instances, moveBy, exact=False, origLoc=None, origFacing=None):
 		""" Moves provided instances by moveBy. If exact is false, the instances are
-		snapped to closest cell. """
+		snapped to closest cell. origLoc and origFacing are only set when an undo/redo
+		operation takes place and will have no effect and should not be used under normal
+		circumstances."""
 		mname = 'moveInstances'
 		if not self._layer:
 			if self.debug: print 'No layer assigned in %s' % mname
@@ -317,8 +319,21 @@ class MapController(object):
 				newCoords = loc.getLayerCoordinates() + moveBy
 				loc.setLayerCoordinates(newCoords)
 				f.setLayerCoordinates(f.getLayerCoordinates() + moveBy)
-			i.setLocation(loc)
-			i.setFacingLocation(f)
+				
+			if not self._undo:
+				undocall = cbwa(self.moveInstances, [i], moveBy, exact, i.getLocation(), i.getFacingLocation())
+				redocall = cbwa(self.moveInstances, [i], moveBy, exact, i.getLocation(), i.getFacingLocation())
+				undoobject = undomanager.UndoObject(undocall, redocall, "Moved instance")
+				self._undomanager.addAction(undoobject)
+				i.setLocation(loc)
+				i.setFacingLocation(f)
+				
+			else:
+				assert(origLoc)
+				assert(origFacing)
+				i.setLocation(origLoc)
+				i.setFacingLocation(origFacing)
+
 
 	def rotateCounterClockwise(self):
 		""" Rotates map counterclockwise by 90 degrees """
