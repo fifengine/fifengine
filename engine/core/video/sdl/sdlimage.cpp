@@ -31,6 +31,7 @@
 // Second block: files included from the same folder
 #include "util/log/logger.h"
 #include "util/structures/rect.h"
+#include "video/renderbackend.h"
 
 #include "renderbackendsdl.h"
 #include "sdlblendingfunctions.h"
@@ -53,6 +54,7 @@ namespace FIFE {
 		m_last_alpha = 255;
 		m_finalized = false;
 		m_isalphaoptimized = false;
+		m_colorkey = RenderBackend::instance()->getColorKey();
 	}
 	
 	SDLImage::~SDLImage() { }
@@ -231,9 +233,16 @@ namespace FIFE {
 		}
 		m_finalized = true;
 		SDL_Surface *old_surface = m_surface;
+		Uint32 key = SDL_MapRGB(m_surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
 
 		if (m_surface->format->Amask == 0) {
 			SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, 255);
+
+			// only use color key if feature is enabled
+			if (RenderBackend::instance()->isColorKeyEnabled()) {
+				SDL_SetColorKey(m_surface, SDL_SRCCOLORKEY, key);
+			}
+
 			m_surface = SDL_DisplayFormat(m_surface);
 		} else {
 			RenderBackendSDL* be = static_cast<RenderBackendSDL*>(RenderBackend::instance());
@@ -242,6 +251,12 @@ namespace FIFE {
 				m_surface = optimize(m_surface);
 			} else  {
 				SDL_SetAlpha(m_surface, SDL_SRCALPHA, 255);
+
+				// only use color key if feature is enabled
+				if (RenderBackend::instance()->isColorKeyEnabled()) {
+					SDL_SetColorKey(m_surface, SDL_SRCCOLORKEY, key);
+				}
+
 				m_surface = SDL_DisplayFormatAlpha(m_surface);
 			}
 		}
@@ -359,10 +374,17 @@ namespace FIFE {
 		                                        src->format->Rmask,  src->format->Gmask,
 		                                        src->format->Bmask, 0);
 		bpp = dst->format->BytesPerPixel;
-		Uint32 key = SDL_MapRGB(dst->format,
-		                        (((keycolor & 0xf00) >> 4) | 0xf),
-		                        ((keycolor & 0xf0) | 0xf),
-		                        (((keycolor & 0xf) << 4) | 0xf));
+		
+		Uint32 key = SDL_MapRGB(dst->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
+
+		// if the global color key feature is disabled, then use the manually found color key
+		if (!RenderBackend::instance()->isColorKeyEnabled()) {
+			key = SDL_MapRGB(dst->format,
+							(((keycolor & 0xf00) >> 4) | 0xf),
+							((keycolor & 0xf0) | 0xf),
+							(((keycolor & 0xf) << 4) | 0xf));
+		}
+		
 		if(SDL_MUSTLOCK(src)) {
 			SDL_LockSurface(src);
 		}

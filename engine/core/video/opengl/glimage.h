@@ -29,6 +29,7 @@
 #include "util/base/fife_stdint.h"
 
 // 3rd party library includes
+#include <SDL_video.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -117,6 +118,7 @@ namespace FIFE {
 		SDLImage* m_sdlimage;
 		
 		unsigned int m_chunk_size;
+		SDL_Color m_colorkey;
 	};
 }
 

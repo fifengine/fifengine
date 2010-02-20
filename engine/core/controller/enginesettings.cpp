@@ -50,7 +50,11 @@ namespace FIFE {
 		m_defaultfontpath(""),
 		m_defaultfontsize(8),
 		m_defaultfontglyphs(""),
-		m_image_chunking_size(256) {
+		m_image_chunking_size(256),
+		m_iscolorkeyenabled(false) {
+			m_colorkey.r = 255;
+			m_colorkey.g = 0;
+			m_colorkey.b = 255;
 	}
 	
 	EngineSettings::~EngineSettings() {
@@ -159,6 +163,23 @@ namespace FIFE {
 	void EngineSettings::setWindowIcon(const std::string& icon) {
 		m_windowicon = icon;
 	}
-	
+
+	void EngineSettings::setColorKeyEnabled(bool colorkeyenable) {
+		m_iscolorkeyenabled = colorkeyenable;
+	}
+
+	bool EngineSettings::isColorKeyEnabled() const {
+		return m_iscolorkeyenabled;
+	}
+
+	void EngineSettings::setColorKey(Uint8 r, Uint8 g, Uint8 b) {
+		m_colorkey.r = r;
+		m_colorkey.g = g;
+		m_colorkey.b = b;
+	}
+
+	const SDL_Color& EngineSettings::getColorKey() const {
+		return m_colorkey;
+	}
 }
 

@@ -175,14 +175,14 @@ namespace FIFE {
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());
 		if (rbackend == "SDL") {
-			m_renderbackend = new RenderBackendSDL();
+			m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
 			FL_LOG(_log, "SDL Render backend created");
 		} else {
 #ifdef HAVE_OPENGL
-			m_renderbackend = new RenderBackendOpenGL();
+			m_renderbackend = new RenderBackendOpenGL(m_settings.getColorKey());
 			FL_LOG(_log, "OpenGL Render backend created");
 #else
-			m_renderbackend = new RenderBackendSDL();
+			m_renderbackend = new RenderBackendSDL(m_settings.getColorKey());
 			// Remember  the choice so we pick the right graphics class.
 			rbackend = "SDL";
 			FL_WARN(_log, "Tried to select OpenGL, even though it is not compiled into the engine. Falling back to SDL Render backend");
@@ -190,6 +190,7 @@ namespace FIFE {
 		}
 		FL_LOG(_log, "Initializing render backend");
 		m_renderbackend->setChunkingSize(m_settings.getImageChunkingSize());
+		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
 		m_renderbackend->init();
 
 		FL_LOG(_log, "Creating main screen");

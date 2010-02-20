@@ -68,6 +68,7 @@ namespace FIFE {
 		Uint8 m_last_alpha;
 		// Is the surface already optimized for rendering
 		bool m_finalized;
+		SDL_Color m_colorkey;
 	};
 
 }

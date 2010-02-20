@@ -54,6 +54,7 @@ namespace FIFE {
 			~SubImageFont() {}
 		private:
 			ImagePool& m_pool;
+			SDL_Color m_colorkey;
 	};
 
 }

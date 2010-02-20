@@ -52,7 +52,7 @@ namespace FIFE {
 		/** Constructor.
 		 * @param name The name of the new renderbackend.
 		 */
-		RenderBackend();
+		RenderBackend(const SDL_Color& colorkey);
 		
 		/** Destructor.
 		 */
@@ -134,10 +134,28 @@ namespace FIFE {
 		void setChunkingSize(unsigned int size);
 		unsigned int getChunkingSize();
 
+		/** Sets whether to use the colorkey feature
+		*/
+		void setColorKeyEnabled(bool colorkeyenable);
+
+		/** Gets whether the colorkey feature is in use
+		*/
+		bool isColorKeyEnabled() const;
+
+		/** Sets the global colorkey to use for images
+		 */ 
+		void setColorKey(const SDL_Color& colorkey);
+
+		/** Gets the global colorkey setting
+		 */ 
+		const SDL_Color& getColorKey() const;
+
 	protected:
 		Image* m_screen;
 		bool m_isalphaoptimized;
 		unsigned int m_chunkingsize;
+		bool m_iscolorkeyenabled;
+		SDL_Color m_colorkey;
 	};
 }
 

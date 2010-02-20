@@ -62,6 +62,7 @@ namespace FIFE {
 		m_last_col_width = 0;
 		m_last_row_height = 0;
 		m_chunk_size = RenderBackend::instance()->getChunkingSize();
+		m_colorkey = RenderBackend::instance()->getColorKey();
 	}
 	
 	void GLImage::cleanup() {
@@ -231,15 +232,19 @@ namespace FIFE {
 					for (unsigned int x = 0; x < data_chunk_width; ++x) {
 						unsigned int pos = (y + j*m_chunk_size)*pitch + (x + i*m_chunk_size) * 4;
 
-						// FIXME
-						// The following code might not be endianness correct
+						uint8_t r = data[pos + 3];
+						uint8_t g = data[pos + 2];
+						uint8_t b = data[pos + 1];
+						uint8_t a = data[pos + 0];
 
-						uint8_t r = data[pos + 0];
-						uint8_t g = data[pos + 1];
-						uint8_t b = data[pos + 2];
-						uint8_t a = data[pos + 3];
+						if (RenderBackend::instance()->isColorKeyEnabled()) {
+							// only set alpha to zero if colorkey feature is enabled
+							if (r == m_colorkey.r && g == m_colorkey.g && b == m_colorkey.b) {
+								a = 0;
+							}
+						}
 
-						oglbuffer[(y*chunk_width) + x] = (r << 24) | (g << 16) | (b << 8) | a;
+						oglbuffer[(y*chunk_width) + x] = r | (g << 8) | (b << 16) | (a<<24);
 					}
 				}
 

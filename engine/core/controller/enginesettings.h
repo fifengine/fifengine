@@ -186,17 +186,41 @@ namespace FIFE {
 			return m_image_chunking_size;
 		}
 
+		/** Sets the title of the window
+		 */
 		void setWindowTitle(const std::string& title);
 
+		/** Gets the current window title
+		 */
 		std::string getWindowTitle() const {
 			return m_windowtitle;
 		}
 	
+		/** Sets the icon that appears in the window title bar
+		 */
 		void setWindowIcon(const std::string& icon);
 
+		/** Gets the icon in the window title bar
+		 */
 		std::string getWindowIcon() const {
 			return m_windowicon;
 		}
+
+		/** Sets whether to use the colorkey feature
+		 */
+		void setColorKeyEnabled(bool colorkeyenable);
+
+		/** Gets whether the colorkey feature is in use
+		 */
+		bool isColorKeyEnabled() const;
+
+		/** Sets the global colorkey to use for images
+		 */
+		void setColorKey(Uint8 r, Uint8 g, Uint8 b);
+
+		/** Gets the global colorkey setting
+		 */
+		const SDL_Color& getColorKey() const;
 		
 	private:
 		unsigned int m_bitsperpixel;
@@ -214,6 +238,8 @@ namespace FIFE {
 		unsigned int m_defaultfontsize;
 		std::string m_defaultfontglyphs;
 		unsigned int m_image_chunking_size;
+		bool m_iscolorkeyenabled;
+		SDL_Color m_colorkey;
 	};
 
 }//FIFE

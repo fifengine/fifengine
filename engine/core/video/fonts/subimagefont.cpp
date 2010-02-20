@@ -53,6 +53,7 @@ namespace FIFE {
 		int image_id = m_pool.addResourceFromFile(filename);
 		Image& img = dynamic_cast<Image&>(m_pool.get(image_id));
 		SDL_Surface* surface = img.getSurface();
+		m_colorkey = RenderBackend::instance()->getColorKey();
 
 		if( !surface ) {
 			throw CannotOpenFile(filename);
@@ -77,21 +78,28 @@ namespace FIFE {
 
 		src.h = surface->h;
 		src.y = 0;
-
+		
 		uint32_t separator = pixels[0];
-		while(x < surface->w && pixels[x] == separator)
-			++x;
-		uint32_t colorkey = pixels[x];
+		uint32_t colorkey = SDL_MapRGB(surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
+
+		// if colorkey feature is not enabled then manually find the color key in the font
+		if (!RenderBackend::instance()->isColorKeyEnabled()) {	
+			while(x < surface->w && pixels[x] == separator) {
+				++x;
+			}
+			
+			colorkey = pixels[x];
+		}
+		
+		// Disable alpha blending, so that we use color keying
+		SDL_SetAlpha(surface,0,255);
+		SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
 		FL_DBG(_log, LMsg("image_font")
 			<< " glyph separator is " 
 			<< pprint(reinterpret_cast<void*>(separator))
 			<< " transparent color is " 
 			<< pprint(reinterpret_cast<void*>(colorkey)));
-
-		// Disable alpha blending, so that we use colorkeying
-		SDL_SetAlpha(surface,0,255);
-		SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
 		// Finally extract all glyphs
 		std::string::const_iterator text_it = glyphs.begin();

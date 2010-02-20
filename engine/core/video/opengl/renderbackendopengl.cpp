@@ -36,7 +36,7 @@
 
 namespace FIFE {
 
-	RenderBackendOpenGL::RenderBackendOpenGL() : RenderBackend() {
+	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
 		// Get the pixelformat we want.
 		SDL_Surface* testsurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 1, 1, 32,
 				RMASK, GMASK, BMASK ,AMASK);

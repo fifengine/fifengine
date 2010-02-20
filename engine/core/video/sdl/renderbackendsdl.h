@@ -40,7 +40,7 @@ namespace FIFE {
 	 */
 	class RenderBackendSDL : public RenderBackend {
 	public:
-		RenderBackendSDL();
+		RenderBackendSDL(const SDL_Color& colorkey);
 		virtual ~RenderBackendSDL();
 		const std::string& getName() const;
 

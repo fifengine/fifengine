@@ -74,6 +74,10 @@ namespace FIFE {
 		std::string getWindowTitle() const;
 		void setWindowIcon(const std::string& icon);
 		std::string getWindowIcon() const;
+		void setColorKeyEnabled(bool colorkeyenable);
+		bool isColorKeyEnabled() const;
+		void setColorKey(Uint8 r, Uint8 g, Uint8 b);
+		const SDL_Color& getColorKey() const;
 		
 	private:
 		EngineSettings();
