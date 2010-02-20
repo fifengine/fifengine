@@ -76,7 +76,7 @@ def getRequiredLibs(opengl):
 			(('boost_filesystem', 'boost_filesystem-gcc', 'boost_filesystem-gcc41', 'boost_filesystem-mt'), 'boost/filesystem.hpp'),
 			(('boost_regex', 'boost_regex-gcc', 'boost_regex-gcc41', 'boost_regex-mt'), 'boost/regex.hpp'),
 			('png', 'png.h'),
-			(('xcursor', 'Xcursor'), '')]
+			('Xcursor', '')]
 	
 	if (opengl):
 		libs.append(('guichan_opengl', ''))
