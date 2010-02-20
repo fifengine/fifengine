@@ -37,5 +37,9 @@ LogToFile           = 0
 FontGlyphs          = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\""
 Font                = 'fonts/freefont/FreeMono.ttf'
 
+# optional color key settings
+ColorKeyEnabled		= 0
+ColorKey			= 255,0,255
+
 WindowTitle			= 'Pychan demo [FIFE Client]'
 WindowIcon			= 'gui/icons/pychan_logo.png'

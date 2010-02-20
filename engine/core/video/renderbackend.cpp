@@ -34,8 +34,12 @@ namespace FIFE {
 	const unsigned int DEFAULT_CHUNKING_SIZE = 256;
 	const unsigned int MAX_CHUNKING_SIZE = 262144;  // pixels!
 	
-	RenderBackend::RenderBackend(): 
-		m_screen(NULL), m_isalphaoptimized(false), m_chunkingsize(DEFAULT_CHUNKING_SIZE) {
+	RenderBackend::RenderBackend(const SDL_Color& colorkey): 
+		m_screen(NULL), 
+		m_isalphaoptimized(false), 
+		m_chunkingsize(DEFAULT_CHUNKING_SIZE),
+		m_iscolorkeyenabled(false),
+		m_colorkey(colorkey) {
 	}
 
 
@@ -121,5 +125,21 @@ namespace FIFE {
 	
 	unsigned int RenderBackend::getChunkingSize() {
 		return m_chunkingsize;
+	}
+
+	void RenderBackend::setColorKeyEnabled(bool colorkeyenable) {
+		m_iscolorkeyenabled = colorkeyenable;
+	}
+
+	bool RenderBackend::isColorKeyEnabled() const {
+		return m_iscolorkeyenabled;
+	}
+
+	void RenderBackend::setColorKey(const SDL_Color& colorkey) {
+		m_colorkey = colorkey;
+	}
+
+	const SDL_Color& RenderBackend::getColorKey() const {
+		return m_colorkey;
 	}
 }

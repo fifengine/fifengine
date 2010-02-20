@@ -39,7 +39,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
-	RenderBackendSDL::RenderBackendSDL() : RenderBackend() {
+	RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
 	}
 
 

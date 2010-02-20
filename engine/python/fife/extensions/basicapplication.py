@@ -103,7 +103,16 @@ class ApplicationBase(object):
 		engineSetting.setScreenWidth(settings.ScreenWidth)
 		engineSetting.setScreenHeight(settings.ScreenHeight)
 
-
+		try:
+			engineSetting.setColorKeyEnabled(settings.ColorKeyEnabled)
+		except:
+			pass
+			
+		try:
+			engineSetting.setColorKey(*settings.ColorKey)
+		except:
+			pass
+			
 		try:
 			engineSetting.setWindowTitle(settings.WindowTitle)
 			engineSetting.setWindowIcon(settings.WindowIcon)

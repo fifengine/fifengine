@@ -161,6 +161,10 @@ namespace FIFE {
 		void setAlphaOptimizerEnabled(bool enabled);
 		bool isAlphaOptimizerEnabled();
 		void saveImage(const std::string& filename);
+		void setColorKeyEnabled(bool colorkeyenable);
+		bool isColorKeyEnabled() const;
+		void setColorKey(const SDL_Color& colorkey);
+		const SDL_Color& getColorKey() const;
 	};
 	
 	enum MouseCursorType {
