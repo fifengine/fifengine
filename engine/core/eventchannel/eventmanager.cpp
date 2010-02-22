@@ -56,16 +56,20 @@ namespace FIFE {
 	}
 
 	template<typename T>
-	void removeListener(std::vector<T>& vec, T& listener) {
+	void removeListener(std::deque<T>& vec, T& listener) {
 		vec.push_back(listener);
 	}
 
 	template<typename T>
-	void addListener(std::vector<T>& vec, T& listener) {
+	void addListener(std::deque<T>& vec, T& listener) {
 		vec.push_back(listener);
 	}
 
 	void EventManager::addCommandListener(ICommandListener* listener) {
+		addListener<ICommandListener*>(m_pending_commandlisteners, listener);
+	}
+
+	void EventManager::addCommandListenerFront(ICommandListener* listener) {
 		addListener<ICommandListener*>(m_pending_commandlisteners, listener);
 	}
 
@@ -77,11 +81,19 @@ namespace FIFE {
 		addListener<IKeyListener*>(m_pending_keylisteners, listener);
 	}
 
+	void EventManager::addKeyListenerFront(IKeyListener* listener) {
+		addListener<IKeyListener*>(m_pending_keylisteners_front, listener);
+	}
+
 	void EventManager::removeKeyListener(IKeyListener* listener) {
 		removeListener<IKeyListener*>(m_pending_kldeletions, listener);
 	}
 
 	void EventManager::addMouseListener(IMouseListener* listener) {
+		addListener<IMouseListener*>(m_pending_mouselisteners, listener);
+	}
+
+	void EventManager::addMouseListenerFront(IMouseListener* listener) {
 		addListener<IMouseListener*>(m_pending_mouselisteners, listener);
 	}
 
@@ -93,13 +105,17 @@ namespace FIFE {
 		addListener<ISdlEventListener*>(m_pending_sdleventlisteners, listener);
 	}
 
+	void EventManager::addSdlEventListenerFront(ISdlEventListener* listener) {
+		addListener<ISdlEventListener*>(m_pending_sdleventlisteners, listener);
+	}
+
 	void EventManager::removeSdlEventListener(ISdlEventListener* listener) {
 		removeListener<ISdlEventListener*>(m_pending_sdldeletions, listener);
 	}
 
 	void EventManager::dispatchCommand(Command& command) {
 		if(!m_pending_commandlisteners.empty()) {
-			std::vector<ICommandListener*>::iterator i = m_pending_commandlisteners.begin();
+			std::deque<ICommandListener*>::iterator i = m_pending_commandlisteners.begin();
 			while (i != m_pending_commandlisteners.end()) {
 				m_commandlisteners.push_back(*i);
 				++i;
@@ -107,10 +123,19 @@ namespace FIFE {
 			m_pending_commandlisteners.clear();
 		}
 
+		if(!m_pending_commandlisteners_front.empty()) {
+			std::deque<ICommandListener*>::iterator i = m_pending_commandlisteners_front.begin();
+			while (i != m_pending_commandlisteners_front.end()) {
+				m_commandlisteners.push_front(*i);
+				++i;
+			}
+			m_pending_commandlisteners_front.clear();
+		}
+
 		if (!m_pending_cldeletions.empty()) {
-			std::vector<ICommandListener*>::iterator i = m_pending_cldeletions.begin();
+			std::deque<ICommandListener*>::iterator i = m_pending_cldeletions.begin();
 			while (i != m_pending_cldeletions.end()) {
-				std::vector<ICommandListener*>::iterator j = m_commandlisteners.begin();
+				std::deque<ICommandListener*>::iterator j = m_commandlisteners.begin();
 				while (j != m_commandlisteners.end()) {
 					if(*j == *i) {
 						m_commandlisteners.erase(j);
@@ -123,7 +148,7 @@ namespace FIFE {
 			m_pending_cldeletions.clear();
 		}
 
-		std::vector<ICommandListener*>::iterator i = m_commandlisteners.begin();
+		std::deque<ICommandListener*>::iterator i = m_commandlisteners.begin();
 		while (i != m_commandlisteners.end()) {
 			(*i)->onCommand(command);
 			if (command.isConsumed()) {
@@ -135,7 +160,7 @@ namespace FIFE {
 
 	void EventManager::dispatchKeyEvent(KeyEvent& evt) {
 		if(!m_pending_keylisteners.empty()) {
-			std::vector<IKeyListener*>::iterator i = m_pending_keylisteners.begin();
+			std::deque<IKeyListener*>::iterator i = m_pending_keylisteners.begin();
 			while (i != m_pending_keylisteners.end()) {
 				m_keylisteners.push_back(*i);
 				++i;
@@ -143,10 +168,19 @@ namespace FIFE {
 			m_pending_keylisteners.clear();
 		}
 
+		if(!m_pending_keylisteners_front.empty()) {
+			std::deque<IKeyListener*>::iterator i = m_pending_keylisteners_front.begin();
+			while (i != m_pending_keylisteners_front.end()) {
+				m_keylisteners.push_front(*i);
+				++i;
+			}
+			m_pending_keylisteners_front.clear();
+		}
+
 		if (!m_pending_kldeletions.empty()) {
-			std::vector<IKeyListener*>::iterator i = m_pending_kldeletions.begin();
+			std::deque<IKeyListener*>::iterator i = m_pending_kldeletions.begin();
 			while (i != m_pending_kldeletions.end()) {
-				std::vector<IKeyListener*>::iterator j = m_keylisteners.begin();
+				std::deque<IKeyListener*>::iterator j = m_keylisteners.begin();
 				while (j != m_keylisteners.end()) {
 					if(*j == *i) {
 						m_keylisteners.erase(j);
@@ -159,7 +193,7 @@ namespace FIFE {
 			m_pending_kldeletions.clear();
 		}
 
-		std::vector<IKeyListener*>::iterator i = m_keylisteners.begin();
+		std::deque<IKeyListener*>::iterator i = m_keylisteners.begin();
 		while (i != m_keylisteners.end()) {
 			switch (evt.getType()) {
 				case KeyEvent::PRESSED:
@@ -177,7 +211,7 @@ namespace FIFE {
 
 	void EventManager::dispatchMouseEvent(MouseEvent& evt) {
 		if(!m_pending_mouselisteners.empty()) {
-			std::vector<IMouseListener*>::iterator i = m_pending_mouselisteners.begin();
+			std::deque<IMouseListener*>::iterator i = m_pending_mouselisteners.begin();
 			while (i != m_pending_mouselisteners.end()) {
 				m_mouselisteners.push_back(*i);
 				++i;
@@ -185,10 +219,19 @@ namespace FIFE {
 			m_pending_mouselisteners.clear();
 		}
 
+		if(!m_pending_mouselisteners_front.empty()) {
+			std::deque<IMouseListener*>::iterator i = m_pending_mouselisteners_front.begin();
+			while (i != m_pending_mouselisteners_front.end()) {
+				m_mouselisteners.push_front(*i);
+				++i;
+			}
+			m_pending_mouselisteners_front.clear();
+		}
+
 		if (!m_pending_mldeletions.empty()) {
-			std::vector<IMouseListener*>::iterator i = m_pending_mldeletions.begin();
+			std::deque<IMouseListener*>::iterator i = m_pending_mldeletions.begin();
 			while (i != m_pending_mldeletions.end()) {
-				std::vector<IMouseListener*>::iterator j = m_mouselisteners.begin();
+				std::deque<IMouseListener*>::iterator j = m_mouselisteners.begin();
 				while (j != m_mouselisteners.end()) {
 					if(*j == *i) {
 						m_mouselisteners.erase(j);
@@ -201,7 +244,7 @@ namespace FIFE {
 			m_pending_mldeletions.clear();
 		}
 
-		std::vector<IMouseListener*>::iterator i = m_mouselisteners.begin();
+		std::deque<IMouseListener*>::iterator i = m_mouselisteners.begin();
 		while (i != m_mouselisteners.end()) {
 			switch (evt.getType()) {
 				case MouseEvent::MOVED:
@@ -244,7 +287,7 @@ namespace FIFE {
 	bool EventManager::dispatchSdlEvent(SDL_Event& evt) {
 		bool ret = false;
 		if (!m_pending_sdleventlisteners.empty()) {
-			std::vector<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners.begin();
+			std::deque<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners.begin();
 			while(i != m_pending_sdleventlisteners.end()) {
 				m_sdleventlisteners.push_back(*i);
 				++i;
@@ -252,10 +295,19 @@ namespace FIFE {
 			m_pending_sdleventlisteners.clear();
 		}
 
+		if (!m_pending_sdleventlisteners_front.empty()) {
+			std::deque<ISdlEventListener*>::iterator i = m_pending_sdleventlisteners_front.begin();
+			while(i != m_pending_sdleventlisteners_front.end()) {
+				m_sdleventlisteners.push_front(*i);
+				++i;
+			}
+			m_pending_sdleventlisteners_front.clear();
+		}
+
 		if (!m_pending_sdldeletions.empty()) {
-			std::vector<ISdlEventListener*>::iterator i = m_pending_sdldeletions.begin();
+			std::deque<ISdlEventListener*>::iterator i = m_pending_sdldeletions.begin();
 			while (i != m_pending_sdldeletions.end()) {
-				std::vector<ISdlEventListener*>::iterator j = m_sdleventlisteners.begin();
+				std::deque<ISdlEventListener*>::iterator j = m_sdleventlisteners.begin();
 				while (j != m_sdleventlisteners.end()) {
 					if(*j == *i) {
 						m_sdleventlisteners.erase(j);
@@ -268,7 +320,7 @@ namespace FIFE {
 			m_pending_sdldeletions.clear();
 		}
 
-		std::vector<ISdlEventListener*>::iterator i = m_sdleventlisteners.begin();
+		std::deque<ISdlEventListener*>::iterator i = m_sdleventlisteners.begin();
 		while (i != m_sdleventlisteners.end()) {
 			ret = ret || (*i)->onSdlEvent(evt);
 			++i;
@@ -468,7 +520,7 @@ namespace FIFE {
 		keyevt.setNumericPad(keysym.sym >= SDLK_KP0 && keysym.sym <= SDLK_KP_EQUALS);
 		keyevt.setKey(Key(static_cast<Key::KeyType>(keysym.sym), keysym.unicode));
 	}
-	
+
 	void EventManager::fillModifiers(InputEvent& evt) {
 		evt.setAltPressed(m_keystatemap[Key::ALT_GR] |
 			m_keystatemap[Key::LEFT_ALT] |

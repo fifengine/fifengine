@@ -24,7 +24,7 @@
 
 // Standard C++ library includes
 //
-#include <vector>
+#include <deque>
 #include <map>
 #include <list>
 
@@ -64,11 +64,11 @@ namespace FIFE {
 
 	/**  Event Manager manages all events related to FIFE
 	 */
-	class EventManager: 
+	class EventManager:
 		public ICommandController,
-		public IKeyController, 
-		public IMouseController, 
-		public ISdlEventController, 
+		public IKeyController,
+		public IMouseController,
+		public ISdlEventController,
 		public IEventSource,
 		public ITriggerController {
 	public:
@@ -81,13 +81,17 @@ namespace FIFE {
 		virtual ~EventManager();
 
 		void addCommandListener(ICommandListener* listener);
+		void addCommandListenerFront(ICommandListener* listener);
 		void removeCommandListener(ICommandListener* listener);
 		void dispatchCommand(Command& command);
 		void addKeyListener(IKeyListener* listener);
+		void addKeyListenerFront(IKeyListener* listener);
 		void removeKeyListener(IKeyListener* listener);
 		void addMouseListener(IMouseListener* listener);
+		void addMouseListenerFront(IMouseListener* listener);
 		void removeMouseListener(IMouseListener* listener);
 		void addSdlEventListener(ISdlEventListener* listener);
+		void addSdlEventListenerFront(ISdlEventListener* listener);
 		void removeSdlEventListener(ISdlEventListener* listener);
 		EventSourceType getEventSourceType();
 
@@ -95,7 +99,7 @@ namespace FIFE {
 		void unregisterTrigger(Trigger& trigger);
 
 		/** Process the SDL event queue.
-		 * This is to be called only by the engine itself once per frame. 
+		 * This is to be called only by the engine itself once per frame.
 		 * It passes appropriate events to their listeners
 		 */
 		void processEvents();
@@ -120,22 +124,26 @@ namespace FIFE {
 		void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt);
 
 		void pollTriggers();
-		
-		std::vector<ICommandListener*> m_commandlisteners;
-		std::vector<ICommandListener*> m_pending_commandlisteners;
-		std::vector<ICommandListener*> m_pending_cldeletions;
 
-		std::vector<IKeyListener*> m_keylisteners;
-		std::vector<IKeyListener*> m_pending_keylisteners;
-		std::vector<IKeyListener*> m_pending_kldeletions;
+		std::deque<ICommandListener*> m_commandlisteners;
+		std::deque<ICommandListener*> m_pending_commandlisteners;
+		std::deque<ICommandListener*> m_pending_commandlisteners_front;
+		std::deque<ICommandListener*> m_pending_cldeletions;
 
-		std::vector<IMouseListener*> m_mouselisteners;
-		std::vector<IMouseListener*> m_pending_mouselisteners;
-		std::vector<IMouseListener*> m_pending_mldeletions;
+		std::deque<IKeyListener*> m_keylisteners;
+		std::deque<IKeyListener*> m_pending_keylisteners;
+		std::deque<IKeyListener*> m_pending_keylisteners_front;
+		std::deque<IKeyListener*> m_pending_kldeletions;
 
-		std::vector<ISdlEventListener*> m_sdleventlisteners;
-		std::vector<ISdlEventListener*> m_pending_sdleventlisteners;
-		std::vector<ISdlEventListener*> m_pending_sdldeletions;
+		std::deque<IMouseListener*> m_mouselisteners;
+		std::deque<IMouseListener*> m_pending_mouselisteners;
+		std::deque<IMouseListener*> m_pending_mouselisteners_front;
+		std::deque<IMouseListener*> m_pending_mldeletions;
+
+		std::deque<ISdlEventListener*> m_sdleventlisteners;
+		std::deque<ISdlEventListener*> m_pending_sdleventlisteners;
+		std::deque<ISdlEventListener*> m_pending_sdleventlisteners_front;
+		std::deque<ISdlEventListener*> m_pending_sdldeletions;
 
 		std::map<int, bool> m_keystatemap;
 		IKeyFilter* m_keyfilter;
