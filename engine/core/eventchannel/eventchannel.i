@@ -179,10 +179,13 @@ namespace FIFE {
 		EventManager();
 		virtual ~EventManager();
 		void addCommandListener(ICommandListener* listener);
+		void addCommandListenerFront(ICommandListener* listener);
 		void removeCommandListener(ICommandListener* listener);
 		void addKeyListener(IKeyListener* listener);
+		void addKeyListenerFront(IKeyListener* listener);
 		void removeKeyListener(IKeyListener* listener);
 		void addMouseListener(IMouseListener* listener);
+		void addMouseListenerFront(IMouseListener* listener);
 		void removeMouseListener(IMouseListener* listener);
 		EventSourceType getEventSourceType();
 		void dispatchCommand(Command& command);
