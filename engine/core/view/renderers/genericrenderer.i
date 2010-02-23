@@ -107,6 +107,20 @@ namespace FIFE {
 		uint8_t m_green;
 		uint8_t m_blue;
 	};
+	
+	class GenericRendererVertexInfo : public GenericRendererElementInfo {
+	public:
+		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
+		GenericRendererVertexInfo(GenericRendererNode center, int size, uint8_t r, uint8_t g, uint8_t b);
+		virtual ~GenericRendererVertexInfo() {};
+	private:
+		GenericRendererNode m_center;
+		int m_size;
+		uint8_t m_red;
+		uint8_t m_green;
+		uint8_t m_blue;
+	};
+	
 	class GenericRendererImageInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
@@ -144,6 +158,7 @@ namespace FIFE {
 		void addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
 		void addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
 		void addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
+		void addVertex(const std::string &group, GenericRendererNode n, int size, uint8_t r, uint8_t g, uint8_t b);
 		void addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text);
 		void addImage(const std::string &group, GenericRendererNode n, int image);
 		void addAnimation(const std::string &group, GenericRendererNode n, int animation);

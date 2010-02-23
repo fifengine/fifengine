@@ -196,7 +196,7 @@ namespace FIFE {
 		Point p2 = m_edge2.getCalculatedPoint(cam, layer, instances);
 		renderbackend->drawLine(p1, p2, m_red, m_green, m_blue);
 	}
-	
+
 	GenericRendererPointInfo::GenericRendererPointInfo(GenericRendererNode anchor, uint8_t r, uint8_t g, uint8_t b):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
@@ -208,7 +208,7 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
 		renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue);
 	}
-	
+
 	GenericRendererQuadInfo::GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b):
 		GenericRendererElementInfo(),
 		m_edge1(n1),
@@ -226,7 +226,20 @@ namespace FIFE {
 		Point p4 = m_edge4.getCalculatedPoint(cam, layer, instances);
 		renderbackend->drawQuad(p1, p2, p3, p4, m_red, m_green, m_blue);
 	}
-	
+
+	GenericRendererVertexInfo::GenericRendererVertexInfo(GenericRendererNode center, int size, uint8_t r, uint8_t g, uint8_t b):
+		GenericRendererElementInfo(),
+		m_center(center),
+		m_size(size),
+		m_red(r),
+		m_green(g),
+		m_blue(b) {
+	}
+	void GenericRendererVertexInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = m_center.getCalculatedPoint(cam, layer, instances);
+		renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue);
+	}
+
 	GenericRendererImageInfo::GenericRendererImageInfo(GenericRendererNode anchor, int image):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
@@ -242,7 +255,7 @@ namespace FIFE {
 		r.h = img->getHeight();
 		img->render(r);
 	}
-	
+
 	GenericRendererAnimationInfo::GenericRendererAnimationInfo(GenericRendererNode anchor, int animation):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
@@ -262,7 +275,7 @@ namespace FIFE {
 		r.h = img->getHeight();
 		img->render(r);
 	}
-	
+
 	GenericRendererTextInfo::GenericRendererTextInfo(GenericRendererNode anchor, AbstractFont* font, std::string text):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
@@ -279,11 +292,11 @@ namespace FIFE {
 		r.h = img->getHeight();
 		img->render(r);
 	}
-	
+
 	GenericRenderer* GenericRenderer::getInstance(IRendererContainer* cnt) {
 		return dynamic_cast<GenericRenderer*>(cnt->getRenderer("GenericRenderer"));
 	}
-	
+
 	GenericRenderer::GenericRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
@@ -318,6 +331,10 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererQuadInfo(n1, n2, n3, n4, r, g, b);
 		m_groups[group].push_back(info);
 	}
+	void GenericRenderer::addVertex(const std::string &group, GenericRendererNode n, int size, uint8_t r, uint8_t g, uint8_t b) {
+		GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b);
+		m_groups[group].push_back(info);
+	}
 	void GenericRenderer::addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text) {
 		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
@@ -330,6 +347,7 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}
+
 	void GenericRenderer::removeAll(const std::string &group) {
 		std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
 		for (;info_it != m_groups[group].end(); ++info_it) {

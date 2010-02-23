@@ -64,7 +64,7 @@ namespace FIFE {
 		m_chunk_size = RenderBackend::instance()->getChunkingSize();
 		m_colorkey = RenderBackend::instance()->getColorKey();
 	}
-	
+
 	void GLImage::cleanup() {
 		for (unsigned int i = 0; i < m_rows*m_cols; ++i) {
 			glDeleteTextures(1, &m_textureids[i]);
@@ -94,14 +94,14 @@ namespace FIFE {
 		// the amount of "zooming" for the image
 		float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
 		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
-		
+
 		// rectangle used for drawing
 		Rect target;
-		// zooming causes scaling sometimes to round pixels incorrectly. Instead of 
+		// zooming causes scaling sometimes to round pixels incorrectly. Instead of
 		//  recalculating it all, store the values from previous round and calculate
 		//  new x & y
 		Rect prev;
-		
+
 		/// setting transparency for the whole primitive:
 		glColor4ub( 255, 255, 255, alpha );
 
@@ -119,7 +119,7 @@ namespace FIFE {
 			} else {
 				target.x = rect.x;
 			}
-			
+
 			for (unsigned int j = 0; j < m_rows; ++j) {
 				if (j == m_rows-1) {
 					row_fill_ratio = m_last_row_fill_ratio;
@@ -134,7 +134,7 @@ namespace FIFE {
 					target.y = rect.y;
 				}
 				prev = target;
-				
+
 				glBindTexture(GL_TEXTURE_2D, m_textureids[j*m_cols + i]);
 				glBegin(GL_QUADS);
 					glTexCoord2f(0.0f, 0.0f);
@@ -262,32 +262,32 @@ namespace FIFE {
 			}
 		}
 	}
-	
+
 	void GLImage::saveImage(const std::string& filename) {
 		const unsigned int swidth = getWidth();
 		const unsigned int sheight = getHeight();
 		Uint32 rmask, gmask, bmask, amask;
 		SDL_Surface *surface = NULL;
-		uint8_t *pixels; 
-		
+		uint8_t *pixels;
+
 		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
 		#else
 		rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
 		#endif
 
-		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth, 
-			sheight, 24, 
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth,
+			sheight, 24,
 			rmask, gmask, bmask, 0);
-		
+
 		if(surface == NULL) {
 			return;
 		}
-		
+
 		SDL_LockSurface(surface);
 		pixels = new uint8_t[swidth * sheight * 3];
 		glReadPixels(0, 0, swidth, sheight, GL_RGB, GL_UNSIGNED_BYTE, reinterpret_cast<GLvoid*>(pixels));
-		
+
 		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
 		// Copy the "reversed_image" memory to the "image" memory
 		for (int y = (sheight - 1); y >= 0; --y) {
@@ -299,7 +299,7 @@ namespace FIFE {
 			// Advance a row in the output surface.
 			imagepixels += surface->pitch;
 		}
-		
+
 		SDL_UnlockSurface(surface);
 		saveAsPng(filename, *surface);
 		SDL_FreeSurface(surface);
@@ -314,19 +314,24 @@ namespace FIFE {
 	        	glClear(GL_COLOR_BUFFER_BIT);
 		}
 	}
-	
+
 	bool GLImage::putPixel(int x, int y, int r, int g, int b) {
 		cleanup();
 		return m_sdlimage->putPixel(x, y, r, g, b);
 	}
-	
+
 	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
 		cleanup();
 		m_sdlimage->drawLine(p1, p2, r, g, b);
-	}	
-	
+	}
+
 	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
 		cleanup();
 		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b);
+	}
+
+	void GLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b) {
+		cleanup();
+		m_sdlimage->drawVertex(p, size, r, g, b);
 	}
 }
