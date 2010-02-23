@@ -170,7 +170,20 @@ class Widget(object):
 				self.hide()
 			self.findChild(name=name).capture( _quitThisDialog , group_name = "__execute__" )
 		self.show()
+		self.is_focusable = True
+		self.requestFocus()
 		return get_manager().mainLoop()
+
+	def requestFocus(self):
+		"""
+		Requests focus.  
+		
+		The widget must be focusable in order for this to work.  See 
+		the is_focusable property.
+		
+		"""
+
+		self.real_widget.requestFocus()
 
 	def match(self,**kwargs):
 		"""
