@@ -41,16 +41,16 @@
 
 namespace FIFE {
 	class Rect;
-	
+
 	class AbstractImage {
 	public:
 		virtual ~AbstractImage() {}
-			
+
 		/** Get the surface used by this image
 		 * @return pointer to used surface
 		 */
 		virtual SDL_Surface* getSurface() = 0;
-		
+
 		/** Returns the @b maximum width occupied by this image.
 		 * This should return the maximum width that could be covered by the
 		 * image.
@@ -60,16 +60,16 @@ namespace FIFE {
 		/** Returns the @b maximum height occupied by this image.
 		 */
 		virtual unsigned int getHeight() const = 0;
-		
+
 		/** Gets the area of the image
 		 * @return Image area in rect
 		 */
 		virtual const Rect& getArea() = 0;
-		
+
 		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
 		 */
  		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
-		
+
 		/** Draws line between given points with given RGBA
 		 */
 		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
@@ -77,7 +77,11 @@ namespace FIFE {
 		/** Draws quad between given points with given RGBA
 		 */
 		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
-		
+
+		/** Draws a quad that represents a vertex with given RGBA
+		 */
+		virtual void drawVertex(const Point& p, const uint8_t size, int r, int g, int b) = 0;
+
 		/** Returns pixel RGBA values from given position
 		 */
 		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
@@ -97,23 +101,23 @@ namespace FIFE {
 		 *  @see pushClipArea
 		 */
 		virtual const Rect& getClipArea() const = 0;
-		
+
 		/** Saves the image using given filename
 		 */
 		virtual void saveImage(const std::string& filename) = 0;
-		
+
 		/** Enable or disable the alpha 'optimizing' code
 		 *
 		 * @param optimize Wether the image shall be analysed for 'fake' alpha images.
 		 * Only implemented by and useful for the SDL backend at the moment.
 		 */
 		virtual void setAlphaOptimizerEnabled(bool enabled) = 0;
-		
+
 		/** @see setAlphaOptimizerEnabled
 		 */
 		virtual bool isAlphaOptimizerEnabled() = 0;
 	};
-	
+
 	/** Base Class for Images.
 	 */
 	class Image : public ResourceClass, public AbstractImage {
@@ -145,12 +149,12 @@ namespace FIFE {
 		 * @param alpha The alpha value, with which to draw self.
 		 */
 		void render(const Rect& rect, unsigned char alpha = 255);
-		
+
 		/** Removes underlying SDL_Surface from the image (if exists) and returns this
 		 * @note this effectively causes SDL_Surface not to be freed on destruction
 		 */
 		SDL_Surface* detachSurface();
-		
+
 		virtual ~Image();
 		SDL_Surface* getSurface() { return m_surface; }
 		unsigned int getWidth() const;
@@ -170,7 +174,7 @@ namespace FIFE {
 		const Rect& getClipArea() const;
 		void setAlphaOptimizerEnabled(bool enabled) { m_isalphaoptimized = enabled; }
 		bool isAlphaOptimizerEnabled() { return m_isalphaoptimized; }
-		
+
 	protected:
 		/** Sets given clip area into image
 		 *  @see pushClipArea
@@ -182,7 +186,7 @@ namespace FIFE {
 		 *  @see pushClipArea
 		 */
 		virtual void clearClipArea();
-		
+
 		// The SDL Surface used.
 		SDL_Surface* m_surface;
 		// The X shift of the Image
@@ -196,11 +200,11 @@ namespace FIFE {
 			bool clearing;
 		};
 		std::stack<ClipInfo> m_clipstack;
-		
+
 		// image area
 		Rect m_area;
-		bool m_isalphaoptimized;	
-	
+		bool m_isalphaoptimized;
+
 	private:
 		void reset(SDL_Surface* surface);
 	};

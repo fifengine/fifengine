@@ -200,7 +200,7 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-	        glColor4ub(r, g, b, 165);
+		glColor4ub(r, g, b, 165);
 		glBegin(GL_QUADS);
 		glVertex3f(p1.x, p1.y, 0);
 		glVertex3f(p2.x, p2.y, 0);
@@ -209,4 +209,23 @@ namespace FIFE {
 		glEnd();
 	}
 
+	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, int r, int g, int b){
+
+		GLfloat width;
+
+		glGetFloatv(GL_LINE_WIDTH, &width);
+		glLineWidth(1.0);
+
+		glBegin(GL_LINE_LOOP);
+		glColor4ub(r, g, b, 255);
+
+		glVertex3f(p.x-size, p.y+size, 0);
+		glVertex3f(p.x+size, p.y+size, 0);
+		glVertex3f(p.x+size, p.y-size, 0);
+		glVertex3f(p.x-size, p.y-size, 0);
+
+		glEnd();
+
+		glLineWidth(width);
+	}
 }
