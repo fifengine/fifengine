@@ -104,7 +104,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		self.parse_layers(mapelt, self.map)	
 		
 		self.parse_cameras(mapelt, self.map)
-
+		
 		return self.map
 
 	def parse_imports(self, mapelt, map):
@@ -328,10 +328,14 @@ class XMLMapLoader(fife.ResourceLoader):
 				cam.setRotation(float(rotation))
 				cam.setTilt(float(tilt))
 				cam.setZoom(float(zoom))
+				
+				renderer = fife.InstanceRenderer.getInstance(cam)
+				renderer.activateAllLayers(map)
+				
 			except fife.Exception, e:
 				print e.getMessage()
 				
 			if self.callback:
 				i += 1
 				self.callback('loaded camera: ' +  str(id), float( i / len(tmplist) * 0.25 + 0.75 ) )	
-			
+

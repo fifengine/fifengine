@@ -212,11 +212,17 @@ class World(EventListenerBase):
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
 		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, str(TDS.readSetting("FontGlyphs", strip=False)));
 		renderer.changeDefaultFont(textfont)
-
+		renderer.activateAllLayers(self.map)
+		
+		# Activate the grid renderer on all layers
+		renderer = self.cameras['main'].getRenderer('GridRenderer')
+		renderer.activateAllLayers(self.map)
+		
 		# The small camera shouldn't be cluttered by the 'humm di dums' of our hero.
 		# So we disable the renderer simply by setting its font to None.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['small'])
 		renderer.changeDefaultFont(None)
+		
 
 		# The following renderers are used for debugging.
 		# Note that by default ( that is after calling View.resetRenderers or Camera.resetRenderers )

@@ -88,6 +88,15 @@ class MapController(object):
 				break
 
 		self._layer = self._map.getLayers()[0]
+		
+		gridrenderer = self._camera.getRenderer('GridRenderer')
+		gridrenderer.activateAllLayers(self._map)
+
+		blockrenderer = self._camera.getRenderer('BlockingInfoRenderer')
+		blockrenderer.activateAllLayers(self._map)
+
+		cellrenderer = self._camera.getRenderer('CellSelectionRenderer')
+		cellrenderer.activateAllLayers(self._map)
 
 	def getMap(self):
 		return self._map
