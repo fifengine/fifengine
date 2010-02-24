@@ -468,7 +468,6 @@ namespace FIFE {
 		for (; r_it != m_renderers.end(); ++r_it) {
 			Map* map = m_location.getMap();
 			r_it->second->reset();
-			r_it->second->activateAllLayers(map);
 		}
 	}
 
