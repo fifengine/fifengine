@@ -44,8 +44,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 
 === Editor ===
   * Can now re-load a map (#381)
-  * Opening more than one map open and then closing them no longer causes a 
-    crash (#441)
+  * Opening more than one map and then closing them no longer causes a crash 
+    (#441)
   * Undo/Redo works properly if you select different layers (#443)
   * Docked widgets no longer shrink when you click inside them (#444)
   * Object editor can now skip to first and last frames of an animation (#448)
