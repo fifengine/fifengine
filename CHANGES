@@ -1,19 +1,34 @@
-== 0.3.1 (March, 2010) ==
+
+__/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_        
+ _\/\\\///////////___\/////\\\///___\/\\\///////////___\/\\\///////////__       
+  _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________      
+   _\/\\\\\\\\\\\__________\/\\\______\/\\\\\\\\\\\______\/\\\\\\\\\\\_____     
+    _\/\\\///////___________\/\\\______\/\\\///////_______\/\\\///////______    
+     _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________   
+      _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________  
+       _\/\\\_______________/\\\\\\\\\\\__\/\\\______________\/\\\\\\\\\\\\\\\_ 
+        _\///_______________\///////////___\///_______________\///////////////__
+
+================================================================================
+== 0.3.1 (March, 2010)                                                        ==
+================================================================================
 
 === Engine ===
   * Updated a lot of the python source files to have the correct headers
   * Fixed SWIG wrappers that didn't handle simple output parameters (#340)
   * Added color key support for both OpenGL and SDL renderer (#451, #146)
-  * Changed the EventManager to use deque rather than vectors for storing listeners (#454)
-  * Added the ability to prepend event listeners to the front of the listener list (#454)
+  * Changed the EventManager to use deque rather than vectors for storing 
+    listeners (#454)
+  * Added the ability to prepend event listeners to the front of the listener 
+    list (#454)
   * Updated instance rotation values to be valid in all cases (#361)
-  * Fixed an instance where pychan widgets get filled with unknown characters (#383)
   * VFS no longer crashes when entering a restricted path (#413)
   * Filename case is no longer transformed to be lower case (#418)
   * OpenGL renderer now clears the backbuffer correctly (#392)
   * Added the ability to render Vertexes (#455)
   * Camera names no longer clash when loading multiple maps (#342)
-  * All layers are no longer activated when calling Camera::resetRenderers() (#457)
+  * All layers are no longer activated when calling Camera::resetRenderers() 
+    (#457)
   * Word wrapping in a pychan label now works as expected (#408)
   * SWIG wrappers now handle all simple output parameters (#340)
   * Added ActionVisual::getActionImageAngles()
@@ -29,7 +44,8 @@
 
 === Editor ===
   * Can now re-load a map (#381)
-  * Opening more than one map open and then closing them no longer causes a crash (#441)
+  * Opening more than one map open and then closing them no longer causes a 
+    crash (#441)
   * Undo/Redo works properly if you select different layers (#443)
   * Docked widgets no longer shrink when you click inside them (#444)
   * Object editor can now skip to first and last frames of an animation (#448)
@@ -49,7 +65,11 @@
   * Fixed a couple python import lines (#440)
   * Added Widget.requestFocus()
 
-== 0.3.0 (January 20th, 2010) ==
+
+
+================================================================================
+== 0.3.0 (January 20th, 2010)                                                 ==
+================================================================================
 
 === Engine ===
   * Moved to Python 2.6 (#345)
@@ -65,25 +85,31 @@
   * Added method Layer::getInstancesAt()
   * Added SoundEmitter::setCallback()
   * Added a setRolloff() function to the SoundEmitter class.
-  * Added function to fife_utils: getUserDataDirectory. Returns the proper path to save setting and data files depending on OS. 
+  * Added function to fife_utils: getUserDataDirectory. Returns the proper path 
+    to save setting and data files depending on OS. 
   * Removed UnitTest++ from ext (#421)
-  * Changed the way the fife python module is imported ( see http://wiki.fifengine.de/Importing_Python_Module )
-  * The serializers will use LogManager instead of printing directly to the console
+  * Changed the way the fife python module is imported ( see 
+    http://wiki.fifengine.de/Importing_Python_Module )
+  * The serializers will use LogManager instead of printing directly to the 
+    console
 
   * GuiManager: Proper translation of Guichan key events to FIFE key events
   * Proper size calculation for ToggleButton
-  * Fixed a layer visibility bug where the toggleInstancesVisible and setInstanceVisible functions were not working correctly. (#335)
+  * Fixed a layer visibility bug where the toggleInstancesVisible and 
+    setInstanceVisible functions were not working correctly. (#335)
   * Fixed building FIFE on OS X (#360)
   * Fixed setActionRuntime() (#373)
   * Fixed unreliable time handling when changing time factors.
-  * Fixed a bug in the OpenGl renderer where the last chunk of images would not be displayed when image_height % chunk_size was 0.
+  * Fixed a bug in the OpenGl renderer where the last chunk of images would not 
+    be displayed when image_height % chunk_size was 0.
   * Fixed layer and instance transparency (#378)
   * Fixed a lot of small bugs
 
 === Rio de hola ===
   * Made rio_de_hola save its settings to the proper OS folder.
   * Added a prefix to cameras in Rio de Hola to avoid name clashes
-  * Fixed second camera in rio so multiple Camera.setLocation calls are handled correctly
+  * Fixed second camera in rio so multiple Camera.setLocation calls are handled 
+    correctly
   * More documentation has been written
   
 === Editor ===
@@ -101,8 +127,10 @@
   * New plugin: CameraEdit
   * Enhanced ObjectSelector
   * Enhanced ObjectEdit
-  * New tool: ObjectPicker. Click on an instance on the map to set the current object to the instance object
-  * Ability to select cells and perform actions on them (move, delete, fill, ...)
+  * New tool: ObjectPicker. Click on an instance on the map to set the current 
+    object to the instance object
+  * Ability to select cells and perform actions on them (move, delete, fill, 
+    ...)
   * New type of scrolling: Press middle mouse button and move the mouse
   * New icons based on Bluesphere
   * Made the editor save its settings to the proper OS folder.
@@ -113,7 +141,8 @@
   * Fixed a lot of bugs, and made a lot of new ones ;-)
   
 === PyChan ===
-  * New greedy layout engine: Widgets is now able to expand in addition to shrinking
+  * New greedy layout engine: Widgets is now able to expand in addition to 
+    shrinking
   * New events: mouseWheelMovedUp and mouseWheelMovedDown
 
   * Added the position_technique attribute
@@ -138,7 +167,8 @@
   * Fixed an input problem when a dropdown box is clicked on (#337)
   * Fixed pychan event_map to support callable objects (#374)
   * Fixed the pychan demo (#363)
-  * Fixed a pychan problem where unkown characters were displayed when holding the shift key (#383)
+  * Fixed a pychan problem where unkown characters were displayed when holding 
+    the shift key (#383)
   * Lots of bug fixes
   
 === Documentation ===
@@ -154,7 +184,11 @@
   * Moved the FIFE editor to <FIFE>/editor
   * Added a Win32 installer for FIFE and the win32 SDK
 
-== 2009.0 (January 7th, 2009) ==
+
+
+================================================================================
+== 2009.0 (January 7th, 2009)                                                 ==
+================================================================================
 
 === Engine ===
   * Merged input rework branch
@@ -162,12 +196,15 @@
   * Added input and focus events
   * Modified clicklabel to provide a mouse listener for hover events
   * Use strings as grouping in generic renderer instead of numbers
-  * Omission of a camera viewport in xml map files now indicate that the camera should use the full window
+  * Omission of a camera viewport in xml map files now indicate that the camera 
+    should use the full window
   * Added removeActionListener to SWIG export
   * Some improvements to Scons build scripts
-  * Prepared basicapplication to use WindowTitle and WindowIcon from clients' settings.py
+  * Prepared basicapplication to use WindowTitle and WindowIcon from clients' 
+    settings.py
   * Logger now ignores non-existing log modules (warns to prompt)
-  * Pools now have a function called purgeLoadedResources which deletes all loaded resources that have a reference count of zero.
+  * Pools now have a function called purgeLoadedResources which deletes all 
+    loaded resources that have a reference count of zero.
   * Movie: Switched to using FIFE::Image instead of Overlays
   * Reworked matrix vector multiplication
   * OpenAL-soft patch for OSS support
@@ -181,7 +218,8 @@ Optimizations:
 Bugs:
   * Initialize instance visuals properly
   * Fixed false positives when searching for instances in a rectangle
-  * Fixed a horrendous misconception in Pool. The map was sorted by pointer comparison.
+  * Fixed a horrendous misconception in Pool. The map was sorted by pointer 
+    comparison.
   * Fix for textwrapping
   * Fixed bug where instances couldn't change layer
   * Fixed a small bug when initializing OpenGL
@@ -213,7 +251,11 @@ Bugs:
 === Misc ===
   * Removed old testmaps
 
-== 2008.1 (July, 2008) ==
+
+
+================================================================================
+== 2008.1 (July, 2008)                                                        ==
+================================================================================
 
 === Model improvements & simplifications ===
  * Elevations removed (Fallout legacy).
@@ -222,9 +264,12 @@ Bugs:
    * uniform pooling for all resources that need to be pooled.
    * uniform loading for all resources (model stuff, images, sounds...).
    * uniform saving for resources which support saving (model stuff).
-  * Datasets are now stored in a flat list in model instead of dataset hierarchy.
-  * Changes in model are now bookkeeped. Observer interfaces provided for change listeners.
-   * This enables e.g. reacting only to changes instead of polling on every round.
+  * Datasets are now stored in a flat list in model instead of dataset 
+    hierarchy.
+  * Changes in model are now bookkeeped. Observer interfaces provided for change 
+    listeners.
+   * This enables e.g. reacting only to changes instead of polling on every 
+     round.
    * Also critical enabler for triggers.
   * Instances now support initial rotation value.
   * Objects support default actions.
@@ -232,7 +277,8 @@ Bugs:
 
 === XML format changes ===
  * All resources are now defined with principle 1 file / 1 resource.
- * Importing of objects can now be done also based on directories where they are contained.
+ * Importing of objects can now be done also based on directories where they are 
+   contained.
  * Relative paths are now used instead of absolute ones.
 
 === Loaders ===
@@ -251,7 +297,8 @@ Bugs:
  * More assets:
   * Graphics, sounds, music...
   * Two new maps matching the storyline.
-  * Rio de hola now conforms to package structure: http://wiki.fifengine.de/Fife_Package_Specification
+  * Rio de hola now conforms to package structure: 
+    http://wiki.fifengine.de/Fife_Package_Specification
   * Popup menu integration, demonstration of actions (kick, talk).
 
 === Pychan improvements ===
@@ -269,11 +316,14 @@ Bugs:
  * Stereo sound support in linux (introduced with the help of openal-soft).
 
 === Video / view improvements ===
- * Both renderbackend and separate images can now render graphical primitives (e.g. lines, dots..).
- * Each camera now has separate set of renderers. Allows truly adjusting cameras independently.
+ * Both renderbackend and separate images can now render graphical primitives 
+   (e.g. lines, dots..).
+ * Each camera now has separate set of renderers. Allows truly adjusting cameras 
+   independently.
  * Zooming capability (currently properly supported only by OpenGL backend).
  * Support for drag cursor definitions.
- * OpenGL graphics chunking size is now definable in settings. Should help e.g. with large backgrounds.
+ * OpenGL graphics chunking size is now definable in settings. Should help e.g. 
+   with large backgrounds.
  * GenericRenderer adding customised rendering capabilities for scripts.
 
 === Misc. changes ===
