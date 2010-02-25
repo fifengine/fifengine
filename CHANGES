@@ -3,7 +3,51 @@
 === Engine ===
   * Updated a lot of the python source files to have the correct headers
   * Fixed SWIG wrappers that didn't handle simple output parameters (#340)
+  * Added color key support for both OpenGL and SDL renderer (#451, #146)
+  * Changed the EventManager to use deque rather than vectors for storing listeners (#454)
+  * Added the ability to prepend event listeners to the front of the listener list (#454)
+  * Updated instance rotation values to be valid in all cases (#361)
+  * Fixed an instance where pychan widgets get filled with unknown characters (#383)
+  * VFS no longer crashes when entering a restricted path (#413)
+  * Filename case is no longer transformed to be lower case (#418)
+  * OpenGL renderer now clears the backbuffer correctly (#392)
+  * Added the ability to render Vertexes (#455)
+  * Camera names no longer clash when loading multiple maps (#342)
+  * All layers are no longer activated when calling Camera::resetRenderers() (#457)
+  * Word wrapping in a pychan label now works as expected (#408)
+  * SWIG wrappers now handle all simple output parameters (#340)
+  * Added ActionVisual::getActionImageAngles()
+  * Added Cursor::getX() and Cursor::getY()
 
+=== Build System ===
+  * FIFE now builds as expected on win32 using the FIFE dev kit.
+  * Win32 batch scripts no longer overwrite users PATH variable (#429)
+  * Requied DLLs are now installed as required on win32 (#430)
+  * CXXFLAGS should now be honored
+  * Fixed a problem with the dependency checks when using pkg-config on linux
+  * Added OpenBSD support
+
+=== Editor ===
+  * Can now re-load a map (#381)
+  * Opening more than one map open and then closing them no longer causes a crash (#441)
+  * Undo/Redo works properly if you select different layers (#443)
+  * Docked widgets no longer shrink when you click inside them (#444)
+  * Object editor can now skip to first and last frames of an animation (#448)
+  * Object editor sends some messages for the user to the editor status bar
+  * Cleaned up object editor by adding preMapClosed and preMapShown events
+  * Object editor now uses getActionImageAngles() to fetch animation angles
+  * Object editor animation views should now work with all clients
+  * Added undo/redo support for the moving of instances
+  
+=== Extensions ===
+  * File Browser now refreshes correctly (#391)
+  
+=== Docs ===
+  * Fixed the Linux:Scons tutorial (#422)
+
+=== Pychan ===
+  * Fixed a couple python import lines (#440)
+  * Added Widget.requestFocus()
 
 == 0.3.0 (January 20th, 2010) ==
 
