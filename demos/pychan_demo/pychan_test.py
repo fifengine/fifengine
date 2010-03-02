@@ -112,6 +112,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		from dynamic import DynamicExample
 		from styling import StylingExample
 		from sliders import SliderExample
+		from colortester import ColorExample
 		self.examples = {
 			'Absolute Positioning' : PyChanExample('gui/absolute.xml'),
 			'All Widgets' : PyChanExample('gui/all_widgets.xml'),
@@ -119,6 +120,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 			'Dynamic Widgets' : DynamicExample(),
 			'Sliders' : SliderExample(),
 			'ScrollArea' : PyChanExample('gui/scrollarea.xml'),
+			'Colortester': ColorExample(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())
