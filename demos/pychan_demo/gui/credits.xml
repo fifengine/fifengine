@@ -1,7 +1,7 @@
-<Window title="Credits.">
+<Window title="Credits." size="500,500">
 	<Label text="These guys contributed to FIFE. Man!" />
-	<ScrollArea size="400,400" vertical_scrollbar="0">
-		<TextBox name="creditText" filename="../../doc/AUTHORS"/>
+	<ScrollArea min_size="400,400" max_size="400,400" size="400,400" vertical_scrollbar="0">
+		<TextBox name="creditText" filename="../../AUTHORS"/>
 	</ScrollArea>
 	<HBox>
 		<Spacer />
