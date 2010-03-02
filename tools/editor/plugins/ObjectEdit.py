@@ -163,18 +163,6 @@ class ObjectEdit(plugin.Plugin):
 		"""
 		self.container = pychan.loadXML('gui/objectedit.xml')
 		self.container.mapEvents({
-			'x_offset_up' 		: cbwa(self.change_offset_x, 1),
-			'x_offset_dn' 		: cbwa(self.change_offset_x, -1),
-			
-			'x_offset/mouseWheelMovedUp'	: cbwa(self.change_offset_x, 1),
-			'x_offset/mouseWheelMovedDown': cbwa(self.change_offset_x, -1),
-
-			'y_offset_up' 		: cbwa(self.change_offset_y, 1),
-			'y_offset_dn' 		: cbwa(self.change_offset_y, -1),
-			
-			'y_offset/mouseWheelMovedUp'	: cbwa(self.change_offset_x, 1),
-			'y_offset/mouseWheelMovedDown': cbwa(self.change_offset_x, -1),
-			
 			'use_data'			: self.use_user_data,
 			'change_data'		: self.save_user_data,
 			
@@ -183,6 +171,18 @@ class ObjectEdit(plugin.Plugin):
 			'anim_start_pos' 	: self.anim_start_frame,
 			'anim_end_pos'		: self.anim_end_frame,
 		})
+		
+		self.container.findChild(name="x_offset_up").capture(self.change_offset, "mousePressed")
+		self.container.findChild(name="x_offset_dn").capture(self.change_offset, "mousePressed")
+		self._gui_x_offset = self.container.findChild(name="x_offset")
+		self._gui_x_offset.capture(self.change_offset, "mouseWheelMovedUp")
+		self._gui_x_offset.capture(self.change_offset, "mouseWheelMovedDown")
+
+		self.container.findChild(name="y_offset_up").capture(self.change_offset, "mousePressed")
+		self.container.findChild(name="y_offset_dn").capture(self.change_offset, "mousePressed")
+		self._gui_y_offset = self.container.findChild(name="y_offset")
+		self._gui_y_offset.capture(self.change_offset, "mouseWheelMovedUp")
+		self._gui_y_offset.capture(self.change_offset, "mouseWheelMovedDown")
 
 		self._gui_anim_panel_wrapper = self.container.findChild(name="animation_panel_wrapper")
 		self._gui_anim_panel = self._gui_anim_panel_wrapper.findChild(name="animation_panel")
@@ -251,21 +251,10 @@ class ObjectEdit(plugin.Plugin):
 		""" set end frame of animation """		
 		self._anim_data['current'] = self._anim_data['frames']
 		self.update_gui()
-	
-	def set_default_offset(self, axis):
-		""" set default image offset for given axis """
-		if axis == 'x':
-			self.set_offset(x=self._image_default_x_offset)
-		elif axis == 'y':
-			self.set_offset(y=self._image_default_y_offset)
 
 	def update_gui(self):
-		"""
-			updates the gui widgets with current instance data
-			
-		"""
+		""" updates the gui widgets with current instance data """
 		if self._instances is None: return
-		
 		
 		# show the image we retrieved from an animated object
 		if self._animation:
@@ -349,41 +338,37 @@ class ObjectEdit(plugin.Plugin):
 	def highlight_selected_instance(self):
 		""" highlights selected instance """
 		self.renderer.removeAllOutlines() 
-		self.renderer.addOutlined(self._instances[0], WHITE["r"], WHITE["g"], WHITE["b"], OUTLINE_SIZE)		
+		self.renderer.addOutlined(self._instances[0], WHITE["r"], WHITE["g"], WHITE["b"], OUTLINE_SIZE)
 			
-	def change_offset_x(self, value=1):
+	def change_offset(self, event, widget):
+		""" widget callback: change the offset of an object 
+		
+		@type	event:	object
+		@param	event:	FIFE mouseevent or keyevent
+		@type	widget:	object
+		@param	widget:	pychan widget
 		"""
-			- callback for changing x offset
-			- changes x offset of current instance (image)
-			- updates gui
-			
-			@type	value:	int
-			@param	value:	the modifier for the x offset
-		"""		
 		if self._animation:
 			self._editor.getStatusBar().setText(u"Offset changes of animations are not supported yet")
 			return
 		
-		if self._image is not None:
-			self._image.setXShift(self._image.getXShift() + value)
-			self.update_gui()
+		etype = event.getType()
+		
+		x = self._image.getXShift()
+		y = self._image.getYShift()
+		
+		if etype == fife.MouseEvent.WHEEL_MOVED_UP or widget.name.endswith("up"):
+			modifier = 1
+		elif etype == fife.MouseEvent.WHEEL_MOVED_DOWN or widget.name.endswith("dn"):
+			modifier = -1
 
-	def change_offset_y(self, value=1):
-		"""
-			- callback for changing y offset
-			- changes y offset of current instance (image)
-			- updates gui
-			
-			@type	value:	int
-			@param	value:	the modifier for the y offset
-		"""
-		if self._animation:
-			self._editor.getStatusBar().setText(u"Offset changes of animations are not supported yet")
-			return
-		
-		if self._image is not None:
-			self._image.setYShift(self._image.getYShift() + value)
-			self.update_gui()
+		if widget.name.startswith("x"):
+			x += modifier
+		elif widget.name.startswith("y"):
+			y += modifier
+
+		self.set_offset(x, y)
+		self.update_gui()
 
 	def use_user_data(self):
 		"""
@@ -624,10 +609,13 @@ class ObjectEdit(plugin.Plugin):
 		self._reset()		
 
 	def input(self, instances):
-		"""
-			if called _and_ the user wishes to edit offsets,
+		""" if called _and_ the user wishes to edit offsets,
 			gets instance data and show gui
-			
+
+			(we only use the top instance of the selected cell)
+
+		@type	instances:	list
+		@param	instances:	a list of instances in the selected cell 
 		"""
 		if instances != self._instances:
 			if self.active is True:
