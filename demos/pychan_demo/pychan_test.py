@@ -26,7 +26,13 @@
 
 import sys, os, re
 
+fife_path = os.path.join('..','..','engine','python')
+if os.path.isdir(fife_path) and fife_path not in sys.path:
+	sys.path.insert(0,fife_path)
+
 from fife import fife
+print "Using the FIFE python module found here: ", os.path.dirname(fife.__file__)
+
 from fife.extensions import fifelog
 from fife.extensions import basicapplication
 from fife.extensions import pychan
@@ -153,7 +159,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 		"""
 		# We use PyChan's synchronous execution feature here.
 		pychan.loadXML('gui/credits.xml').execute({ 'okButton' : "Yay!" })
-
+		
 class TestXMLApplication(basicapplication.ApplicationBase):
 	"""
 	Test Application. Run the pychan_test.py file
