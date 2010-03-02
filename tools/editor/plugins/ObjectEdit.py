@@ -35,7 +35,6 @@ import scripts.plugin as plugin
 from scripts.events import *
 from scripts.gui.action import Action
 
-
 import os
 try:
 	import xml.etree.cElementTree as ET
@@ -167,8 +166,14 @@ class ObjectEdit(plugin.Plugin):
 			'x_offset_up' 		: cbwa(self.change_offset_x, 1),
 			'x_offset_dn' 		: cbwa(self.change_offset_x, -1),
 			
+			'x_offset/mouseWheelMovedUp'	: cbwa(self.change_offset_x, 1),
+			'x_offset/mouseWheelMovedDown': cbwa(self.change_offset_x, -1),
+
 			'y_offset_up' 		: cbwa(self.change_offset_y, 1),
 			'y_offset_dn' 		: cbwa(self.change_offset_y, -1),
+			
+			'y_offset/mouseWheelMovedUp'	: cbwa(self.change_offset_x, 1),
+			'y_offset/mouseWheelMovedDown': cbwa(self.change_offset_x, -1),
 			
 			'use_data'			: self.use_user_data,
 			'change_data'		: self.save_user_data,
@@ -438,16 +443,16 @@ class ObjectEdit(plugin.Plugin):
 		self.tree = ET.parse(file)
 		
 		img_lst = self.tree.findall("image")
-		
+
 		# apply changes to the XML structure due to current user settings in the gui
 		for img_tag in img_lst:
-			if img_tag.attrib["direction"] == self._avail_rotations[self._gui_rotation_dropdown._getSelected()]:
+			if img_tag.attrib["direction"] == str(self._avail_rotations[self._gui_rotation_dropdown._getSelected()]):
 				img_tag.attrib["x_offset"] = self._gui_xoffset_textfield._getText()
 				img_tag.attrib["y_offset"] = self._gui_yoffset_textfield._getText()
 				break
 
 		xmlcontent = ET.tostring(self.tree.getroot())
-		
+
 		# save xml data beneath the <?fife type="object"?> definition into the object file
 		tmp = open(file, 'w')
 		tmp.write('<?fife type="object"?>\n')
