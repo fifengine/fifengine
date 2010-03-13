@@ -380,14 +380,8 @@ class ObjectEdit(plugin.Plugin):
 			FIXME:
 			- parse user data in case user think strings are considered to be integer offset values...
 		"""
-		if self._animation:
-			self._editor.getStatusBar().setText(u"Editing animated instances is not supported yet")
-			return		
-		
-		xoffset = self._gui_xoffset_textfield._getText()
-		yoffset = self._gui_yoffset_textfield._getText()
-		
 		instance_id = str(self._gui_instance_id_textfield._getText())
+		msg = ''
 		
 		if instance_id == "":
 			instance_id = "None"
@@ -400,7 +394,15 @@ class ObjectEdit(plugin.Plugin):
 				self._editor.getStatusBar().setText(msg)
 			else:
 				self._editor.getStatusBar().setText(u"Instance ID is already in use.")
-		
+
+		if self._animation:
+			msg = msg + "\n" + u"Editing offset and rotation of animated instances is not supported yet"
+			self._editor.getStatusBar().setText(msg)
+			return
+
+		xoffset = self._gui_xoffset_textfield._getText()
+		yoffset = self._gui_yoffset_textfield._getText()
+
 		# update rotation
 		angle = self.eval_gui_rotation()
 		self.set_rotation(angle)
