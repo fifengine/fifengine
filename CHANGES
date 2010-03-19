@@ -35,8 +35,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Added Cursor::getX() and Cursor::getY()
 
 === Build System ===
-  * FIFE now builds as expected on win32 using the FIFE dev kit.
-  * Win32 batch scripts no longer overwrite users PATH variable (#429)
+  * FIFE now builds as expected on win32 using the FIFE dev kit
+  * Win32 batch scripts no longer overwrite the users PATH variable (#429)
   * Requied DLLs are now installed as required on win32 (#430)
   * CXXFLAGS should now be honored
   * Fixed a problem with the dependency checks when using pkg-config on linux
@@ -53,6 +53,8 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Cleaned up object editor by adding preMapClosed and preMapShown events
   * Object editor now uses getActionImageAngles() to fetch animation angles
   * Object editor animation views should now work with all clients
+  * Object offsets can now be saved to the object.xml file
+  * Object offsets can now be manipulated by using the mousewheel
   * Added undo/redo support for the moving of instances
   
 === Extensions ===
@@ -64,6 +66,14 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 === Pychan ===
   * Fixed a couple python import lines (#440)
   * Added Widget.requestFocus()
+ 
+=== Rio De Hola ===
+  * Fixed the path to the AUTHORS file so the credits are displayed correctly
+  
+=== Misc ===
+  * Added color tester to pychan demo
+  * Demos now look for a local copy of FIFE before importing the installed version of FIFE
+  
 
 
 
