@@ -33,7 +33,7 @@ else:
 
 
 setup(name='fife',
-      version='0.3.0',
+      version='0.3.1',
       description='Flexible Isometric Free Engine',
       url='www.fifengine.de',
       packages = ['fife', 'fife.extensions', 'fife.extensions.pychan', 'fife.extensions.pychan.widgets', 'fife.extensions.pychan.widgets.ext', 'fife.extensions.serializers' ],
