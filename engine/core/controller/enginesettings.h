@@ -116,12 +116,12 @@ namespace FIFE {
 		
 		/** Sets if fake alpha is removed in SDL renderbackend
 		 */
-		void setSDLRemoveFakeAlpha(bool sldremovefakealpha);
+		void setSDLRemoveFakeAlpha(bool sdlremovefakealpha);
 		
 		/** Tells if fake alpha is removed in SDL renderbackend
 		 */
-		bool isSDLRemoveFakeAlpha(bool sldremovefakealpha) const {
-			return m_sldremovefakealpha;
+		bool isSDLRemoveFakeAlpha(bool sdlremovefakealpha) const {
+			return m_sdlremovefakealpha;
 		}
 		
 		/** Sets screen width (pixels)
@@ -227,7 +227,7 @@ namespace FIFE {
 		bool m_fullscreen;
 		float m_initialvolume;
 		std::string m_renderbackend;
-		bool m_sldremovefakealpha;
+		bool m_sdlremovefakealpha;
 		unsigned int m_screenwidth;
 		unsigned int m_screenheight;
 		std::string m_windowtitle;

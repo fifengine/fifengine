@@ -56,8 +56,8 @@ namespace FIFE {
 		void setRenderBackend(const std::string& renderbackend);
 		const std::string getRenderBackend() const;
 		std::vector<std::string> getPossibleRenderBackends();
-		void setSDLRemoveFakeAlpha(bool sldremovefakealpha);
-		bool isSDLRemoveFakeAlpha(bool sldremovefakealpha) const;
+		void setSDLRemoveFakeAlpha(bool sdlremovefakealpha);
+		bool isSDLRemoveFakeAlpha(bool sdlremovefakealpha) const;
 		void setScreenWidth(unsigned int screenwidth);
 		unsigned int getScreenWidth() const;
 		void setScreenHeight(unsigned int screenheight);

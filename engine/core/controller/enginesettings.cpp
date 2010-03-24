@@ -42,7 +42,7 @@ namespace FIFE {
 		m_fullscreen(false),
 		m_initialvolume(MAXIMUM_VOLUME / 2),
 		m_renderbackend("SDL"),
-		m_sldremovefakealpha(false),
+		m_sdlremovefakealpha(false),
 		m_screenwidth(800),
 		m_screenheight(600),
 		m_windowtitle("FIFE"),
@@ -132,8 +132,8 @@ namespace FIFE {
 		return tmp;
 	}
 	
-	void EngineSettings::setSDLRemoveFakeAlpha(bool sldremovefakealpha) {
-		m_sldremovefakealpha = sldremovefakealpha;
+	void EngineSettings::setSDLRemoveFakeAlpha(bool sdlremovefakealpha) {
+		m_sdlremovefakealpha = sdlremovefakealpha;
 	}
 	
 	void EngineSettings::setScreenWidth(unsigned int screenwidth) {
