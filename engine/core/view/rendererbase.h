@@ -156,6 +156,10 @@ namespace FIFE {
 		/** Returns if given layer is currently activated
 		 */
 		bool isActivedLayer(Layer* layer);
+
+		/** Returns list of activated layer
+		 */
+		std::list<Layer*> getActiveLayers() const {return m_active_layers;}
 		
 	
 	protected:
