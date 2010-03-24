@@ -29,9 +29,13 @@ namespace FIFE {
 	
 	class GenericRendererNode {
 	public:
+		GenericRendererNode(Instance* attached_instance, Location* relative_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
 		GenericRendererNode(Instance* attached_instance, Location* relative_location, const Point &relative_point = Point(0,0));
+		GenericRendererNode(Instance* attached_instance, Layer* relative_layer, const Point &relative_point = Point(0,0));
 		GenericRendererNode(Instance* attached_instance, const Point &relative_point = Point(0,0));
+		GenericRendererNode(Location* attached_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
 		GenericRendererNode(Location* attached_location, const Point &relative_point = Point(0,0));
+		GenericRendererNode(Layer* attached_layer, const Point &relative_point = Point(0,0));
 		GenericRendererNode(const Point &attached_point);
 		~GenericRendererNode();
 		
@@ -41,6 +45,7 @@ namespace FIFE {
 		void setAttached(Instance* attached_instance);
 		void setAttached(Location* attached_location, const Point &relative_point);
 		void setAttached(Location* attached_location);
+		void setAttached(Layer* attached_layer);
 		void setAttached(const Point &attached_point);
 		
 		void setRelative(Location* relative_location);
@@ -49,6 +54,7 @@ namespace FIFE {
 		
 		Instance* getAttachedInstance();
 		Location* getAttachedLocation();
+		Layer* getAttachedLayer();
 		Point getAttachedPoint();
 		
 		Location* getOffsetLocation();
@@ -56,12 +62,14 @@ namespace FIFE {
 		
 		Instance* getInstance();
 		Location* getLocation();
+		Layer* getLayer();
 		Point getPoint();
 
 		Point getCalculatedPoint(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
 	private:
 		Instance* m_instance;
 		Location* m_location;
+		Layer* m_layer;
 		Point m_point;
 	};
 	class GenericRendererElementInfo {
