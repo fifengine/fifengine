@@ -37,16 +37,16 @@ class Player(Ship):
 		oldpos = self.location
 		
 		if keystate['UP']:
-			self.applyThrust(fife.DoublePoint(0,-0.075))
+			self.applyThrust(fife.DoublePoint(0,-0.075), timedelta)
 			key = True
 		if keystate['DOWN']:
-			self.applyThrust(fife.DoublePoint(0,0.075))
+			self.applyThrust(fife.DoublePoint(0,0.075), timedelta)
 			key = True
 		if keystate['LEFT']:
-			self.applyThrust(fife.DoublePoint(-0.075,0))
+			self.applyThrust(fife.DoublePoint(-0.075,0), timedelta)
 			key = True
 		if keystate['RIGHT']:
-			self.applyThrust(fife.DoublePoint(0.075,0))
+			self.applyThrust(fife.DoublePoint(0.075,0), timedelta)
 			key = True
 			
 		if not key and self._velocity.length() > 0:
@@ -59,29 +59,41 @@ class Player(Ship):
 		topleft = camera.toMapCoordinates(fife.ScreenPoint(0,0))
 		bottomright = camera.toMapCoordinates(fife.ScreenPoint(1024,768))
 
-		#add a little padding to the left edge
-		topleft.x += 0.1
-		
 		camrect = Rect(topleft.x, topleft.y, bottomright.x - topleft.x, bottomright.y - topleft.y)
 	
 		#player bounding box
 		#TODO: make this configurable
+		xscale = self._layer.getCellGrid().getXScale()
+		yscale = self._layer.getCellGrid().getYScale()
 		pos = self.location.getExactLayerCoordinates()
 		bbox = Rect()
-		bbox.x = pos.x - 0.005
-		bbox.y = pos.y - 0.005
-		bbox.w = 0.01
-		bbox.h = 0.01
+		bbox.x = pos.x*xscale - 0.175
+		bbox.y = pos.y*yscale - 0.175
+		bbox.w = 0.25
+		bbox.h = 0.25
+
+		#add the padding to the edge
+		camrect.x += bbox.w
+		camrect.y += bbox.h
+		camrect.w -= 2*bbox.w
+		camrect.h -= 2*bbox.h
+
 		
 		if not bbox.intersects(camrect):
-			if pos.x < topleft.x:
-				pos.x += timedelta * 0.0005
-				oldpos.setExactLayerCoordinates(pos)
-				self._velocity.x = timedelta * 0.0005
+			if (bbox.x + bbox.w) < camrect.x:
+				#pos.x = (bbox.x + bbox.w/2 + 0.1) / xscale
+				#oldpos.setExactLayerCoordinates(pos)
+				self._velocity.x = (timedelta * 0.001) / xscale
+			
+#			elif (bbox.y + bbox.h) < camrect.y or (bbox.y - bbox.h) > camrect.y:
+#				pos.x += self._velocity.x * (timedelta/1000.0)
+#				oldpos.setExactLayerCoordinates(pos)
+#				self._velocity.y = 0
 			else:
 				self._velocity.x = 0
+				self._velocity.y = 0
 
-			self._velocity.y = 0
+
 
 			self.location = oldpos
 

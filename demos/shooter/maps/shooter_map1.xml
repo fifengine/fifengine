@@ -2,15 +2,12 @@
 <map id="tutorial1" format="1.0">
 	<import file="../objects/backgrounds/starfield/object.xml"></import>
 	<import file="../objects/ships/player/object.xml"></import>
+	<import file="../objects/ships/saucer1/object.xml"></import>
+	<import file="../objects/ships/saucer2/object.xml"></import>
 	<import file="../objects/projectiles/bullet1/object.xml"></import>
 	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="background" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
 		<instances>
 			<i o="starfield" ns="http://www.fifengine.de/xml/tutorial" x="-2.0" r="0" y="-1.0" z="0.0"></i>
-			<i r="0" x="-2.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="-2.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="-1.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="-1.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="-1.0" o="starfield" z="0.0" y="-1.0"></i>
 			<i r="0" x="0.0" o="starfield" z="0.0" y="-1.0"></i>
 			<i r="0" x="0.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="0.0" o="starfield" z="0.0" y="1.0"></i>
@@ -21,10 +18,7 @@
 			<i r="0" x="3.0" o="starfield" z="0.0" y="-1.0"></i>
 			<i r="0" x="3.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="2.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="2.0" o="starfield" z="0.0" y="1.0"></i>
 			<i r="0" x="3.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="-2.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="-1.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="0.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="1.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="2.0" o="starfield" z="0.0" y="2.0"></i>
@@ -33,8 +27,6 @@
 			<i r="0" x="4.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="4.0" o="starfield" z="0.0" y="1.0"></i>
 			<i r="0" x="4.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="-2.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="-1.0" o="starfield" z="0.0" y="-2.0"></i>
 			<i r="0" x="0.0" o="starfield" z="0.0" y="-2.0"></i>
 			<i r="0" x="1.0" o="starfield" z="0.0" y="-2.0"></i>
 			<i r="0" x="2.0" o="starfield" z="0.0" y="-2.0"></i>
@@ -235,11 +227,6 @@
 			<i r="0" x="40.0" o="starfield" z="0.0" y="-1.0"></i>
 			<i r="0" x="41.0" o="starfield" z="0.0" y="-1.0"></i>
 			<i r="0" x="42.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="-3.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="-3.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="-3.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="-3.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="-3.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="44.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="45.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="46.0" o="starfield" z="0.0" y="2.0"></i>
@@ -445,11 +432,18 @@
 			<i r="0" x="82.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="81.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="80.0" o="starfield" z="0.0" y="0.0"></i>
+			<i r="0" x="2.0" o="starfield" z="0.0" y="1.0"></i>
 		</instances>
 	</layer>
-	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="objects" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
+	<layer y_scale="0.25" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="objects" rotation="0.0" x_scale="0.25" x_offset="0.0" transparency="0">
 		<instances>
-			<i o="ship1" z="0.0" x="-1.0" r="0" y="0.0" id="player"></i>
+			<i o="ship1" z="0.0" x="7.0" r="0" y="0.0" id="player"></i>
+			<i r="0" x="20.0" o="saucer1" z="0.0" y="-2.0"></i>
+			<i r="0" x="20.0" o="saucer1" z="0.0" y="1.0"></i>
+			<i r="0" x="20.0" o="saucer1" z="0.0" y="4.0"></i>
+			<i r="0" x="20.0" o="saucer1" z="0.0" y="-5.0"></i>
+			<i r="0" x="26.0" o="saucer2" z="0.0" y="-3.0"></i>
+			<i r="0" x="26.0" o="saucer2" z="0.0" y="2.0"></i>
 		</instances>
 	</layer>
 	<camera ref_cell_height="256" zoom="1" rotation="0.0" ref_layer_id="background" ref_cell_width="256" id="main" tilt="0.0">

@@ -35,6 +35,9 @@ class Projectile(object):
 		self._ttl = timeToLive
 		self._starttime = 0
 		
+		self._xscale = self._layer.getCellGrid().getXScale()
+		self._yscale = self._layer.getCellGrid().getYScale()
+		
 	def create(self, location):
 		self._instance = self._layer.createInstance(self._obj, location.getExactLayerCoordinates(), "bullet")
 		fife.InstanceVisual.create(self._instance)
@@ -42,6 +45,8 @@ class Projectile(object):
 	def run(self, velocity, location, time):
 		if not self._running:
 			self._velocity = velocity
+			self._velocity.x /= self._xscale
+			self._velocity.y /= self._yscale
 		
 			self.create(location)
 			self._running = True
@@ -89,11 +94,12 @@ class Weapon(object):
 		self._ship = ship
 		self._firerate = firerate
 		self._lastfired = 0
+		self._projectileVelocity = fife.DoublePoint(0.075,0)
 		
 	def fire(self, curtime):
 		if (curtime - self._lastfired) > self._firerate:
 			pjctl = Projectile(self._model, "bullet1", self._layer, 2000 )
-			pjctl.run(fife.DoublePoint(0.075,0), self._ship.location, curtime)
+			pjctl.run(fife.DoublePoint(self._projectileVelocity.x,self._projectileVelocity.y), self._ship.location, curtime)
 			self._lastfired = curtime
 			return pjctl
 		

@@ -21,6 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+from math import sqrt
+
 from fife import fife
 from scripts.common.helpers import normalize
 from scripts.weapons import Weapon
@@ -30,6 +32,9 @@ class Ship(object):
 		self._scene = scene
 		self._name = shipName
 		self._layer = layer
+		self._xscale = self._layer.getCellGrid().getXScale()
+		self._yscale = self._layer.getCellGrid().getYScale()
+
 		if uniqInMap:
 			self._instance = self._layer.getInstance(self._name)
 		else:
@@ -38,7 +43,7 @@ class Ship(object):
 		
 		#velocity as a vector
 		self._velocity = fife.DoublePoint(0,0)
-		self._maxvelocity = 0.025
+		self._maxvelocity = 0.025/sqrt(self._xscale * self._yscale)
 		self._timedelta = 0
 		self._weapon = None
 
@@ -46,7 +51,7 @@ class Ship(object):
 		return self._maxvelocity
 		
 	def _setMaxVelocity(self, maxvel):
-		self._maxvelocity = maxvel
+		self._maxvelocity = maxvel/sqrt(self._xscale * self._yscale)
 
 	def _getLocation(self):
 		return self._instance.getLocation()
@@ -66,9 +71,9 @@ class Ship(object):
 	def _getWeapon(self, weapon):
 		return self._weapon
 		
-	def applyThrust(self, vector):
-		self._velocity.x += vector.x * (self._timedelta/1000.0)
-		self._velocity.y += vector.y * (self._timedelta/1000.0)
+	def applyThrust(self, vector, timedelta):
+		self._velocity.x += (vector.x * (timedelta/1000.0))/self._xscale
+		self._velocity.y += (vector.y * (timedelta/1000.0))/self._yscale
 		
 		if self._velocity.length() > self._maxvelocity:
 			norm = normalize(self._velocity)
@@ -98,8 +103,8 @@ class Ship(object):
 		norm.x *= brakingForce
 		norm.y *= brakingForce
 		
-		self._velocity.x += norm.x * (self._timedelta/1000.0)
-		self._velocity.y += norm.y * (self._timedelta/1000.0)
+		self._velocity.x += (norm.x * (self._timedelta/1000.0))/self._xscale
+		self._velocity.y += (norm.y * (self._timedelta/1000.0))/self._yscale
 		
 	def fire(self, curtime):
 		if self._weapon:

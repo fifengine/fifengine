@@ -1,0 +1,4 @@
+<?fife type="object"?>
+<object id="saucer2" namespace="http://www.fifengine.de/xml/tutorial" blocking="0" static="1">
+	<image source="saucer2.png" direction="0" />
+</object>
