@@ -1,0 +1,4 @@
+<?fife type="object"?>
+<object id="starfield" namespace="http://www.fifengine.de/xml/tutorial" blocking="0" static="1">
+	<image source="starfield.png" direction="0" />
+</object>
