@@ -1,0 +1,14 @@
+<VBox opaque='0'>
+	<HBox opaque='0'>
+			<Label text = "FPS: "/>
+			<Label name="fps" text="000"/>
+	</HBox>
+	<HBox opaque='0'>
+			<Label text = "Player Position: "/>
+			<Label name="position" text="x,y                           "/>
+	</HBox>
+	<HBox opaque='0'>
+			<Label text = "Player Velocity: "/>
+			<Label name="velocity" text="x,y                           "/>
+	</HBox>
+</VBox>
