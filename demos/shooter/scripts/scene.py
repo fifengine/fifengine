@@ -26,6 +26,9 @@ from scripts.ships.shipbase import Ship
 from scripts.ships.player import Player
 from scripts.common.helpers import Rect
 
+
+
+
 class Scene(object):
 	def __init__(self, engine, objectLayer):
 		self._engine = engine
@@ -47,14 +50,14 @@ class Scene(object):
 		timedelta = time - self._lasttime
 		self._lasttime = time
 		
-		self._player.update(timedelta, keystate, self._camera)
-		
 		#update camera location
-		loc = self._player.location
+		loc = self._camera.getLocation()
 		exactloc = self._camera.getLocation().getExactLayerCoordinates()
-		exactloc.x += timedelta * 0.0005
+		exactloc.x += timedelta * 0.001
 		loc.setExactLayerCoordinates(exactloc)
 		self._camera.setLocation(loc)
+
+		self._player.update(timedelta, keystate, self._camera)
 		
 		#update the list of projectiles
 		todelete = list()
