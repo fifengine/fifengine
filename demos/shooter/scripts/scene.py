@@ -50,6 +50,8 @@ class Scene(object):
 		self._nodes = list()
 		
 		self._player = Player(self._model, 'player', self._layer)
+		self._player.width = 0.075
+		self._player.height = 0.075
 		self._player.start()
 		
 		self._projectiles = list()
@@ -68,23 +70,22 @@ class Scene(object):
 			self._nodes.append(SceneNode())
 		
 		for instance in enemies:
-			loc = instance.getLocation().getExactLayerCoordinates()
-			
 			objectName = instance.getObject().getId()
 			print objectName
 			
 			enemy = Ship(self._model, 'enemy', self._layer, False)
 			enemy.instance = instance
-			enemy.width = 0.5
-			enemy.height = 0.5
-			enemy.velocity.x = -0.013
+			enemy.width = 0.075
+			enemy.height = 0.075
+			enemy.velocity.x = -0.13
 			enemy.start()
-			
+
+			loc = instance.getLocation().getExactLayerCoordinates()
 			nodeindex = int(loc.x * xscale)
 			self._nodes[nodeindex].spaceobjects.append(enemy)
 
-	def getObjectsInNode(self, node):
-		return self._nodes[node].instances
+	def getObjectsInNode(self, nodeindex):
+		return self._nodes[nodeindex].instances
 
 	def getObjectsInRange(self, rangeL, rangeR):
 		objects = list()

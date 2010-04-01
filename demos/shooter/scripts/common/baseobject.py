@@ -33,7 +33,7 @@ class SpaceObject(object):
 		self._xscale = self._layer.getCellGrid().getXScale()
 		self._yscale = self._layer.getCellGrid().getYScale()		
 		self._velocity = fife.DoublePoint(0,0)
-		self._maxvelocity = 1
+		self._maxvelocity = 1.25
 		self._timedelta = 0
 		self._boundingBox = Rect(0,0,0,0)
 		self._running = False
@@ -54,11 +54,11 @@ class SpaceObject(object):
 			shiploc = self.location
 			exactloc = shiploc.getExactLayerCoordinates()
 		
-			exactloc.x += self._velocity.x
-			exactloc.y += self._velocity.y
+			exactloc.x += self._velocity.x * (timedelta/1000.0)/self._xscale
+			exactloc.y += self._velocity.y * (timedelta/1000.0)/self._yscale
 		
-			self._boundingBox.x = exactloc.x - self._boundingBox.w/2
-			self._boundingBox.y = exactloc.y - self._boundingBox.h/2
+			self._boundingBox.x = (exactloc.x - self._boundingBox.w/2) * self._xscale
+			self._boundingBox.y = (exactloc.y - self._boundingBox.h/2) * self._yscale
 				
 			shiploc.setExactLayerCoordinates(exactloc)
 			self.location = shiploc
@@ -82,7 +82,7 @@ class SpaceObject(object):
 	
 	def applyBrake(self, brakingForce, timedelta):
 
-		if self._velocity.length() <= .001:
+		if self._velocity.length() <= .01:
 			self._velocity.x = 0
 			self._velocity.y = 0			
 			return
