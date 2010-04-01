@@ -88,6 +88,7 @@ class World(EventListenerBase):
 		
 		#give player the default weapon
 		self.scene.player.weapon = Weapon(self.model, self.map.getLayer('objects'), self.scene.player, 100)
+		self.scene.initScene(self.map)
 		
 	def initCameras(self):
 		"""

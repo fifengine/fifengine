@@ -22,22 +22,19 @@
 # ####################################################################
 
 from fife import fife
+from scripts.ships.shipbase import SpaceObject
 
-class Projectile(object):
+class Projectile(SpaceObject):
 	def __init__(self, model, projectileName, layer, timeToLive):
-		self._model = model
+		super(Projectile, self).__init__(model, projectileName, layer, False)
 		self._name = projectileName
 		self._layer = layer
-		self._instance = None
-		self._velocity = None
+
 		self._obj = self._model.getObject(self._name, "http://www.fifengine.de/xml/tutorial")
 		self._running = False	
 		self._ttl = timeToLive
 		self._starttime = 0
-		
-		self._xscale = self._layer.getCellGrid().getXScale()
-		self._yscale = self._layer.getCellGrid().getYScale()
-		
+	
 	def create(self, location):
 		self._instance = self._layer.createInstance(self._obj, location.getExactLayerCoordinates(), "bullet")
 		fife.InstanceVisual.create(self._instance)
@@ -58,12 +55,6 @@ class Projectile(object):
 			self._layer.deleteInstance(self._instance)
 			self._running = False
 		
-	def _getLocation(self):
-		return self._instance.getLocation()
-		
-	def _setLocation(self, loc):
-		self._instance.setLocation(loc)
-		
 	def _isRunning(self):
 		return self._running
 	
@@ -83,7 +74,6 @@ class Projectile(object):
 		else:
 			self.destroy()
 		
-	location = property(_getLocation,_setLocation)
 	running = property(_isRunning)
 	ttl = property(_getTTL)
 	

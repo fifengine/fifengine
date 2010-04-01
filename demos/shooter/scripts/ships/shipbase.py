@@ -24,46 +24,17 @@
 from math import sqrt
 
 from fife import fife
-from scripts.common.helpers import normalize
+from scripts.common.baseobject import SpaceObject
 from scripts.weapons import Weapon
 
-class Ship(object):
-	def __init__(self, scene, shipName, layer, uniqInMap=True):
-		self._scene = scene
-		self._name = shipName
-		self._layer = layer
-		self._xscale = self._layer.getCellGrid().getXScale()
-		self._yscale = self._layer.getCellGrid().getYScale()
 
-		if uniqInMap:
-			self._instance = self._layer.getInstance(self._name)
-		else:
-			#have to create instance here
-			self._instance = None
-		
-		#velocity as a vector
-		self._velocity = fife.DoublePoint(0,0)
+class Ship(SpaceObject):
+	def __init__(self, model, name, layer, findInstance=True):
+		super(Ship, self).__init__(model, name, layer, findInstance)
+
 		self._maxvelocity = 0.025/sqrt(self._xscale * self._yscale)
 		self._timedelta = 0
 		self._weapon = None
-
-	def _getMaxVelocity(self):
-		return self._maxvelocity
-		
-	def _setMaxVelocity(self, maxvel):
-		self._maxvelocity = maxvel/sqrt(self._xscale * self._yscale)
-
-	def _getLocation(self):
-		return self._instance.getLocation()
-		
-	def _setLocation(self, loc):
-		self._instance.setLocation(loc)
-
-	def _getInstance(self):
-		return self._instance
-	
-	def _getVelocity(self):
-		return self._velocity
 	
 	def _setWeapon(self, weapon):
 		self._weapon = weapon
@@ -71,71 +42,11 @@ class Ship(object):
 	def _getWeapon(self, weapon):
 		return self._weapon
 		
-	def applyThrust(self, vector, timedelta):
-		self._velocity.x += (vector.x * (timedelta/1000.0))/self._xscale
-		self._velocity.y += (vector.y * (timedelta/1000.0))/self._yscale
-		
-		if self._velocity.length() > self._maxvelocity:
-			norm = normalize(self._velocity)
-			self._velocity.x = norm.x * self._maxvelocity
-			self._velocity.y = norm.y * self._maxvelocity
-		
-	
-	def applyBrake(self, brakingForce):
-
-		if self._velocity.length() <= .001:
-			self._velocity.x = 0
-			self._velocity.y = 0			
-			return
-		
-		#first normalize to get a unit vector of the direction we are traveling
-		norm = normalize(self._velocity)
-		if norm.length() == 0:
-			self._velocity.x = 0
-			self._velocity.y = 0
-			return
-			
-		#negate to get opposite direction
-		norm.x = norm.x * -1
-		norm.y = norm.y * -1
-		
-		#apply braking deceleration  
-		norm.x *= brakingForce
-		norm.y *= brakingForce
-		
-		self._velocity.x += (norm.x * (self._timedelta/1000.0))/self._xscale
-		self._velocity.y += (norm.y * (self._timedelta/1000.0))/self._yscale
-		
 	def fire(self, curtime):
 		if self._weapon:
 			return self._weapon.fire(curtime)
 		
 		return None
 	
-	def start(self):
-		pass
-
-	def update(self, timedelta):
-		self._timedelta = timedelta
-		
-		shiploc = self.location
-		exactloc = shiploc.getExactLayerCoordinates()
-		
-		exactloc.x += self._velocity.x
-		exactloc.y += self._velocity.y
-				
-		shiploc.setExactLayerCoordinates(exactloc)
-		self.location = shiploc
-	
-	def stop(self):
-		pass
-		
-	def destroy(self):
-		pass
-		
-	location = property(_getLocation,_setLocation)
-	instance = property(_getInstance)
-	velocity = property(_getVelocity)
-	maxvelocity = property(_getMaxVelocity, _setMaxVelocity)
 	weapon = property(_getWeapon, _setWeapon)
 	
