@@ -32,7 +32,6 @@ class Ship(SpaceObject):
 	def __init__(self, model, name, layer, findInstance=True):
 		super(Ship, self).__init__(model, name, layer, findInstance)
 
-		self._maxvelocity = 0.025/sqrt(self._xscale * self._yscale)
 		self._timedelta = 0
 		self._weapon = None
 	

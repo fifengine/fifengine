@@ -29,7 +29,7 @@ from scripts.common.helpers import Rect
 class Player(Ship):
 	def __init__(self, model, playerName, layer):
 		super(Player, self).__init__(model, playerName, layer)
-		self._bounds = Rect(-100,-100,200,200)
+
 		self._score = 0
 	
 	def _getScore(self):
@@ -44,20 +44,20 @@ class Player(Ship):
 		oldpos = self.location
 		
 		if keystate['UP']:
-			self.applyThrust(fife.DoublePoint(0,-0.075), timedelta)
+			self.applyThrust(fife.DoublePoint(0,-0.75), timedelta)
 			key = True
 		if keystate['DOWN']:
-			self.applyThrust(fife.DoublePoint(0,0.075), timedelta)
+			self.applyThrust(fife.DoublePoint(0,0.75), timedelta)
 			key = True
 		if keystate['LEFT']:
-			self.applyThrust(fife.DoublePoint(-0.075,0), timedelta)
+			self.applyThrust(fife.DoublePoint(-0.75,0), timedelta)
 			key = True
 		if keystate['RIGHT']:
-			self.applyThrust(fife.DoublePoint(0.075,0), timedelta)
+			self.applyThrust(fife.DoublePoint(0.75,0), timedelta)
 			key = True
 			
 		if not key and self._velocity.length() > 0:
-			self.applyBrake(0.075, timedelta)
+			self.applyBrake(0.75, timedelta)
 		
 		super(Player, self).update(timedelta)
 		
@@ -69,28 +69,21 @@ class Player(Ship):
 		camrect = Rect(topleft.x, topleft.y, bottomright.x - topleft.x, bottomright.y - topleft.y)
 	
 		#player bounding box
-		#TODO: make this configurable
 		xscale = self._layer.getCellGrid().getXScale()
 		yscale = self._layer.getCellGrid().getYScale()
-		pos = self.location.getExactLayerCoordinates()
-		bbox = Rect()
-		bbox.x = pos.x*xscale - 0.175
-		bbox.y = pos.y*yscale - 0.175
-		bbox.w = 0.25
-		bbox.h = 0.25
+
 
 		#add the padding to the edge
-		camrect.x += bbox.w
-		camrect.y += bbox.h
-		camrect.w -= 2*bbox.w
-		camrect.h -= 2*bbox.h
-
+		camrect.x += self._boundingBox.w
+		camrect.y += self._boundingBox.h
+		camrect.w -= 2*self._boundingBox.w
+		camrect.h -= 2*self._boundingBox.h
 		
-		if not bbox.intersects(camrect):
-			if (bbox.x + bbox.w) < camrect.x:
+		if not self._boundingBox.intersects(camrect):
+			if (self._boundingBox.x + self._boundingBox.w) < camrect.x:
 				#pos.x = (bbox.x + bbox.w/2 + 0.1) / xscale
 				#oldpos.setExactLayerCoordinates(pos)
-				self._velocity.x = (timedelta * 0.001) / xscale
+				self._velocity.x = (timedelta * 0.01) / xscale
 			
 #			elif (bbox.y + bbox.h) < camrect.y or (bbox.y - bbox.h) > camrect.y:
 #				pos.x += self._velocity.x * (timedelta/1000.0)

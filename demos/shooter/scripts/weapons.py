@@ -75,13 +75,13 @@ class Weapon(object):
 		self._ship = ship
 		self._firerate = firerate
 		self._lastfired = 0
-		self._projectileVelocity = fife.DoublePoint(0.075,0)
+		self._projectileVelocity = fife.DoublePoint(0.75,0)
 		
 	def fire(self, curtime):
 		if (curtime - self._lastfired) > self._firerate:
 			pjctl = Projectile(self._model, "bullet1", self._layer, 2000 )
-			pjctl.width = 0.05
-			pjctl.height = 0.05
+			pjctl.width = 0.025
+			pjctl.height = 0.025
 			pjctl.run(fife.DoublePoint(self._projectileVelocity.x,self._projectileVelocity.y), self._ship.location, curtime)
 			self._lastfired = curtime
 			return pjctl
