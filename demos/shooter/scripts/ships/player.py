@@ -27,8 +27,8 @@ from scripts.common.helpers import Rect
 
 
 class Player(Ship):
-	def __init__(self, scene, shipName, layer):
-		super(Player, self).__init__(scene, shipName, layer, True)
+	def __init__(self, model, playerName, layer):
+		super(Player, self).__init__(model, playerName, layer)
 		self._bounds = Rect(-100,-100,200,200)
 		
 	def update(self, timedelta, keystate, camera):
@@ -37,20 +37,20 @@ class Player(Ship):
 		oldpos = self.location
 		
 		if keystate['UP']:
-			self.applyThrust(fife.DoublePoint(0,-0.075), timedelta)
+			self.applyThrust(fife.DoublePoint(0,-0.0075), timedelta)
 			key = True
 		if keystate['DOWN']:
-			self.applyThrust(fife.DoublePoint(0,0.075), timedelta)
+			self.applyThrust(fife.DoublePoint(0,0.0075), timedelta)
 			key = True
 		if keystate['LEFT']:
-			self.applyThrust(fife.DoublePoint(-0.075,0), timedelta)
+			self.applyThrust(fife.DoublePoint(-0.0075,0), timedelta)
 			key = True
 		if keystate['RIGHT']:
-			self.applyThrust(fife.DoublePoint(0.075,0), timedelta)
+			self.applyThrust(fife.DoublePoint(0.0075,0), timedelta)
 			key = True
 			
 		if not key and self._velocity.length() > 0:
-			self.applyBrake(0.075)
+			self.applyBrake(0.0075, timedelta)
 		
 		super(Player, self).update(timedelta)
 		
