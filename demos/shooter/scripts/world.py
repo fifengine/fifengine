@@ -83,6 +83,7 @@ class World(EventListenerBase):
 		self.fpstext = self.mainwindow.findChild(name="fps")
 		self.velocitytext = self.mainwindow.findChild(name="velocity")
 		self.positiontext = self.mainwindow.findChild(name="position")
+		self.scoretext = self.mainwindow.findChild(name="score")
 		self.mainwindow.position = (0,0)
 		self.mainwindow.show()
 		
@@ -176,6 +177,9 @@ class World(EventListenerBase):
 		
 		vel = "%1.2f" % player.velocity.x + ", %1.2f" % player.velocity.y
 		self.velocitytext.text = unicode(vel)
+		
+		score = unicode(str(player.score))
+		self.scoretext.text = score
 		
 		
 		self.pump_ctr += 1

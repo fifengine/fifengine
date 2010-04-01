@@ -94,11 +94,11 @@ class Scene(object):
 			
 		return objects
 	
-	def checkCollision(self, instance1, instance2):
-		pos1 = instnace1.getLocation().getExactLayerCoordinates()
-		pos2 = instnace2.getLocation().getExactLayerCoordinates()
-		
-		
+	def removeObjectFromScene(self, obj):
+		for node in self._nodes:
+			if obj in node.spaceobjects:
+				node.spaceobjects.remove(obj)
+				return
 	
 	def attachCamera(self, cam):
 		self._camera = cam
@@ -123,32 +123,40 @@ class Scene(object):
 
 		#which scene nodes to use to update objects
 		leftnode = int(topleft.x)
-		rightnode = int(bottomright.x) + 2
+		rightnode = int(bottomright.x) + 1
 		
-		#update other objects on the screen
+		#get a list of objects on the screen
 		if leftnode < 0:
 			leftnode = 0
 		if rightnode > self._maxnodes:
 			rightnode = self._maxnodes
 		screenlist = self.getObjectsInRange(leftnode, rightnode)
 		
-		for cl in screenlist:
-			cl.update(timedelta)
+		#update objects on the screen
+		for obj in screenlist:
+			obj.update(timedelta)
 
 		#update the player
 		self._player.update(timedelta, keystate, self._camera)
 		
 		#update the list of projectiles
-		todelete = list()
+		projtodelete = list()
 		for p in self._projectiles:
 			p.update(timedelta)
+			#check to see if the projectile hit any object on the screen
 			for o in screenlist:
 				if p.boundingbox.intersects(o.boundingbox):
+					self._player.applyScore(100)
 					p.destroy()
 					o.destroy()
+					self.removeObjectFromScene(o)
+			
+			#build a list of projectiles to remove (ttl expired)
 			if not p.running:
-				todelete.append(p)
-		for p in todelete:
+				projtodelete.append(p)
+
+		#remove any non running projectiles 
+		for p in projtodelete:
 			self._projectiles.remove(p)
 		
 		#fire the currently selected gun

@@ -30,7 +30,14 @@ class Player(Ship):
 	def __init__(self, model, playerName, layer):
 		super(Player, self).__init__(model, playerName, layer)
 		self._bounds = Rect(-100,-100,200,200)
+		self._score = 0
+	
+	def _getScore(self):
+		return self._score
 		
+	def applyScore(self, sc):
+		self._score += sc
+	
 	def update(self, timedelta, keystate, camera):
 		key = False
 		
@@ -97,3 +104,5 @@ class Player(Ship):
 
 			self.location = oldpos
 
+
+	score = property(_getScore)
