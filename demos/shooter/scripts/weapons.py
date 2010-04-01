@@ -31,9 +31,10 @@ class Projectile(SpaceObject):
 		self._layer = layer
 
 		self._obj = self._model.getObject(self._name, "http://www.fifengine.de/xml/tutorial")
-		self._running = False	
+	
 		self._ttl = timeToLive
 		self._starttime = 0
+		self._totaltime = 0
 	
 	def create(self, location):
 		self._instance = self._layer.createInstance(self._obj, location.getExactLayerCoordinates(), "bullet")
@@ -55,26 +56,16 @@ class Projectile(SpaceObject):
 			self._layer.deleteInstance(self._instance)
 			self._running = False
 		
-	def _isRunning(self):
-		return self._running
-	
 	def _getTTL(self):
 		return self._ttl
 
-	def update(self, curtime):
-		if self._running and (curtime - self._starttime) < self._ttl:
-			projloc = self.location
-			exactloc = projloc.getExactLayerCoordinates()
-				
-			exactloc.x += self._velocity.x
-			exactloc.y += self._velocity.y
-						
-			projloc.setExactLayerCoordinates(exactloc)
-			self.location = projloc
+	def update(self, timedelta):
+		self._totaltime += timedelta
+		if self._running and (self._totaltime - self._starttime) < self._ttl:
+			super(Projectile, self).update(timedelta)
 		else:
 			self.destroy()
 		
-	running = property(_isRunning)
 	ttl = property(_getTTL)
 	
 class Weapon(object):
@@ -89,6 +80,8 @@ class Weapon(object):
 	def fire(self, curtime):
 		if (curtime - self._lastfired) > self._firerate:
 			pjctl = Projectile(self._model, "bullet1", self._layer, 2000 )
+			pjctl.width = 0.05
+			pjctl.height = 0.05
 			pjctl.run(fife.DoublePoint(self._projectileVelocity.x,self._projectileVelocity.y), self._ship.location, curtime)
 			self._lastfired = curtime
 			return pjctl
