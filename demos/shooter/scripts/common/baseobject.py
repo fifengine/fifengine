@@ -23,6 +23,7 @@
 
 from fife import fife
 from scripts.common.helpers import normalize
+from scripts.common.helpers import Rect
 
 class SpaceObject(object):
 	def __init__(self, model, name, layer, findInstance=True):
@@ -34,36 +35,44 @@ class SpaceObject(object):
 		self._velocity = fife.DoublePoint(0,0)
 		self._maxvelocity = 1
 		self._timedelta = 0
-		
+		self._boundingBox = Rect(0,0,0,0)
+		self._running = False
+			
 		if findInstance:
 			self._instance = self._layer.getInstance(self._name)
 		else:
 			self._instnace = None
 		
 	def start(self):
-		pass
+		if self._instance:
+			self._running = True
 
 	def update(self, timedelta):
-		self._timedelta = timedelta
+		if self._running:
+			self._timedelta = timedelta
 		
-		shiploc = self.location
-		exactloc = shiploc.getExactLayerCoordinates()
+			shiploc = self.location
+			exactloc = shiploc.getExactLayerCoordinates()
 		
-		exactloc.x += self._velocity.x
-		exactloc.y += self._velocity.y
+			exactloc.x += self._velocity.x
+			exactloc.y += self._velocity.y
+		
+			self._boundingBox.x = exactloc.x + self._boundingBox.w/2
+			self._boundingBox.y = exactloc.y + self._boundingBox.h/2
 				
-		shiploc.setExactLayerCoordinates(exactloc)
-		self.location = shiploc
+			shiploc.setExactLayerCoordinates(exactloc)
+			self.location = shiploc
 	
 	def stop(self):
-		pass
+		self._running = False
 		
 	def destroy(self):
-		pass
+		self._running = False
+		self._layer.deleteInstance(self._instance)
 		
 	def applyThrust(self, vector, timedelta):
-		self._velocity.x += (vector.x * (timedelta/100.0))/self._xscale
-		self._velocity.y += (vector.y * (timedelta/100.0))/self._yscale
+		self._velocity.x += (vector.x * (timedelta/1000.0))/self._xscale
+		self._velocity.y += (vector.y * (timedelta/1000.0))/self._yscale
 		
 		if self._velocity.length() > self._maxvelocity:
 			norm = normalize(self._velocity)
@@ -93,8 +102,11 @@ class SpaceObject(object):
 		norm.x *= brakingForce
 		norm.y *= brakingForce
 		
-		self._velocity.x += (norm.x * (timedelta/100.0))/self._xscale
-		self._velocity.y += (norm.y * (timedelta/100.0))/self._yscale
+		self._velocity.x += (norm.x * (timedelta/1000.0))/self._xscale
+		self._velocity.y += (norm.y * (timedelta/1000.0))/self._yscale
+
+	def _isRunning(self):
+		return self._running
 
 	def _getMaxVelocity(self):
 		return self._maxvelocity
@@ -116,8 +128,30 @@ class SpaceObject(object):
 	
 	def _getVelocity(self):
 		return self._velocity
+	
+	def _setVelocity(self, velocity):
+		self._velocity = velocity
 		
+	def _getBoundingBox(self):
+		return self._boundingBox
+
+	def _getW(self):
+		return self._boundingBox.w
+		
+	def _getH(self):
+		return self._boundingBox.h
+
+	def _setW(self, w):
+		self._boundingBox.w = w
+	
+	def _setH(self, h):
+		self._boundingBox.h = h
+
+	width = property(_getW, _setW)
+	height = property(_getH, _setH)
+	boundingbox = property(_getBoundingBox)	
 	location = property(_getLocation,_setLocation)
 	instance = property(_getInstance, _setInstance)
-	velocity = property(_getVelocity)
+	velocity = property(_getVelocity, _setVelocity)
 	maxvelocity = property(_getMaxVelocity, _setMaxVelocity)
+	running = property(_isRunning)

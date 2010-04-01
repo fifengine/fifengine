@@ -50,6 +50,8 @@ class Scene(object):
 		self._nodes = list()
 		
 		self._player = Player(self._model, 'player', self._layer)
+		self._player.start()
+		
 		self._projectiles = list()
 		self._lasttime = 0
 		
@@ -73,6 +75,10 @@ class Scene(object):
 			
 			enemy = Ship(self._model, 'enemy', self._layer, False)
 			enemy.instance = instance
+			enemy.width = 0.5
+			enemy.height = 0.5
+			enemy.velocity.x = -0.013
+			enemy.start()
 			
 			nodeindex = int(loc.x * xscale)
 			self._nodes[nodeindex].spaceobjects.append(enemy)
@@ -115,21 +121,31 @@ class Scene(object):
 		topleft = self._camera.toMapCoordinates(fife.ScreenPoint(0,0))
 		bottomright = self._camera.toMapCoordinates(fife.ScreenPoint(1024,768))
 
+		#which scene nodes to use to update objects
 		leftnode = int(topleft.x)
-		rightnode = int(bottomright.x) + 1
+		rightnode = int(bottomright.x) + 2
 		
+		#update other objects on the screen
 		if leftnode < 0:
 			leftnode = 0
 		if rightnode > self._maxnodes:
 			rightnode = self._maxnodes
-		collisionlist = self.getObjectsInRange(leftnode, rightnode)
+		screenlist = self.getObjectsInRange(leftnode, rightnode)
+		
+		for cl in screenlist:
+			cl.update(timedelta)
 
+		#update the player
 		self._player.update(timedelta, keystate, self._camera)
 		
 		#update the list of projectiles
 		todelete = list()
 		for p in self._projectiles:
-			p.update(time)
+			p.update(timedelta)
+			for o in screenlist:
+				if p.boundingbox.intersects(o.boundingbox):
+					p.destroy()
+					o.destroy()
 			if not p.running:
 				todelete.append(p)
 		for p in todelete:
