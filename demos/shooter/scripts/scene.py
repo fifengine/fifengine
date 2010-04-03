@@ -24,6 +24,7 @@
 from fife import fife
 from scripts.ships.shipbase import Ship
 from scripts.ships.player import Player
+from scripts.ships.enemies import *
 from scripts.common.helpers import Rect
 
 
@@ -73,11 +74,14 @@ class Scene(object):
 			objectName = instance.getObject().getId()
 			print objectName
 			
-			enemy = Ship(self._model, 'enemy', self._layer, False)
+			if objectName == "saucer1":
+				enemy = Saucer1(self._model, 'enemy', self._layer, False)
+			elif objectName == "saucer2":
+				enemy = Saucer2(self._model, 'enemy', self._layer, False)
+			else:
+				enemy = Ship(self._model, 'enemy', self._layer, False)
+				
 			enemy.instance = instance
-			enemy.width = 0.075
-			enemy.height = 0.075
-			enemy.velocity.x = -0.13
 			enemy.start()
 
 			loc = instance.getLocation().getExactLayerCoordinates()
