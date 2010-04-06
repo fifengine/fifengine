@@ -50,22 +50,24 @@ class Scene(object):
 		self._layer = objectLayer
 		self._nodes = list()
 		
-		self._player = Player(self, 'player')
-		self._player.width = 0.075
-		self._player.height = 0.075
-		self._player.start()
-		
+		self._player = None
 		self._projectiles = list()
-		self._lasttime = 0
 		
 		self._maxnodes = 128
 		self._xscale = 0
 		
 		self._time = 0
 		self._timedelta = 0
+		self._lasttime = 0
+		
+		self._xscale = self._layer.getCellGrid().getXScale()
+		self._yscale = self._layer.getCellGrid().getYScale()
 
 	def initScene(self, mapobj):
-		self._xscale = self._layer.getCellGrid().getXScale()
+		self._player = Player(self, 'player')
+		self._player.width = 0.075
+		self._player.height = 0.075
+		self._player.start()
 				
 		enemies = self._layer.getInstances('enemy')
 		
@@ -168,16 +170,14 @@ class Scene(object):
 
 		#update objects on the screen
 		for obj in screenlist:
-			obj.update(timedelta)
+			obj.update()
 			if obj.changedposition:
 				self.moveObjectInScene(obj)
 
-				#Testing enemy fire				
-				#prjct = obj.fire(time, fife.DoublePoint(-1,0))
-				#if prjct:
-				#	self._projectiles.append(prjct)
-			
 			if obj != self._player:
+				#TODO: enemy should fire weapon in their update function
+				obj.fire(fife.DoublePoint(-1,0))
+			
 				if obj.boundingbox.intersects(self._player.boundingbox):
 					#player touched an enemy.  Destroy player and 
 					#re-initialize scene
@@ -187,7 +187,7 @@ class Scene(object):
 		#update the list of projectiles
 		projtodelete = list()
 		for p in self._projectiles:
-			p.update(timedelta)
+			p.update()
 			#check to see if the projectile hit any object on the screen
 			for o in screenlist:
 				#cant get hit by your own bullet
@@ -196,7 +196,7 @@ class Scene(object):
 						self._player.applyScore(100)
 						p.destroy()
 						o.destroy()
-						#temporary...  the destroy functions should spawn an explosion
+						#TODO:  the destroy functions should spawn an explosion
 						#and also destroy the instance and remove itself from the scene
 						self.removeObjectFromScene(o)
 			

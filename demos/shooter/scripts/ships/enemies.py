@@ -24,7 +24,7 @@
 from fife import fife
 from scripts.ships.shipbase import Ship
 from scripts.common.helpers import Rect
-from scripts.weapons import Weapon
+from scripts.weapons import *
 
 
 class Saucer1(Ship):
@@ -36,13 +36,14 @@ class Saucer1(Ship):
 		self.height = 0.075
 		self.velocity.x = -0.5
 		
-		self.weapon = Weapon(self._scene, self, 1000)
+		self.weapon = Cannon(self._scene, self, 1000)
+		self.weapon.projectilevelocity = 0.4
 				
-	def update(self, timedelta):	
+	def update(self):	
 		if self._dir == 1:
-			self.applyThrust(fife.DoublePoint(0,-0.5), timedelta)
+			self.applyThrust(fife.DoublePoint(0,-0.5))
 		elif self._dir == 0:
-			self.applyThrust(fife.DoublePoint(0,0.5), timedelta)
+			self.applyThrust(fife.DoublePoint(0,0.5))
 					
 		if self._time >= 1000:
 			if self._dir == 1:
@@ -52,9 +53,9 @@ class Saucer1(Ship):
 				
 			self._time = 0
 		
-		self._time += timedelta
+		self._time += self._scene.timedelta
 		
-		super(Saucer1, self).update(timedelta)
+		super(Saucer1, self).update()
 		
 class Saucer2(Ship):
 	def __init__(self, scene, name, findInstance=True):
@@ -65,13 +66,14 @@ class Saucer2(Ship):
 		self.height = 0.2
 		self.velocity.x = -0.1
 		
-		self.weapon = Weapon(self._scene, self, 2000)
+		self.weapon = Cannon(self._scene, self, 2000)
+		self.weapon.projectilevelocity = 0.4
 				
-	def update(self, timedelta):	
+	def update(self):	
 		if self._dir == 1:
-			self.applyThrust(fife.DoublePoint(0,-0.25), timedelta)
+			self.applyThrust(fife.DoublePoint(0,-0.25))
 		elif self._dir == 0:
-			self.applyThrust(fife.DoublePoint(0,0.25), timedelta)
+			self.applyThrust(fife.DoublePoint(0,0.25))
 					
 		if self._time >= 2000:
 			if self._dir == 1:
@@ -81,6 +83,6 @@ class Saucer2(Ship):
 				
 			self._time = 0
 		
-		self._time += timedelta
+		self._time += self._scene.timedelta
 		
-		super(Saucer2, self).update(timedelta)
+		super(Saucer2, self).update()

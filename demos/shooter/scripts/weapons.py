@@ -44,7 +44,7 @@ class Projectile(SpaceObject):
 		self._instance = self._layer.createInstance(self._obj, location.getExactLayerCoordinates(), "bullet")
 		fife.InstanceVisual.create(self._instance)
 
-	def run(self, velocity, location, time):
+	def run(self, velocity, location):
 		if not self._running:
 			self._velocity = velocity
 			self._velocity.x /= self._xscale
@@ -53,7 +53,7 @@ class Projectile(SpaceObject):
 			self.create(location)
 			self._running = True
 			
-			self._starttime = time
+			self._starttime = self._scene.time
 		
 	def destroy(self):
 		if self._running and self._instance:
@@ -66,10 +66,10 @@ class Projectile(SpaceObject):
 	def _getOwner(self):
 		return self._owner
 
-	def update(self, timedelta):
-		self._totaltime += timedelta
-		if self._running and (self._totaltime - self._starttime) < self._ttl:
-			super(Projectile, self).update(timedelta)
+	def update(self):
+		self._totaltime += self._scene.timedelta
+		if self._running and self._totaltime < self._ttl:
+			super(Projectile, self).update()
 		else:
 			self.destroy()
 		
@@ -86,16 +86,34 @@ class Weapon(object):
 		self._lastfired = 0
 		self._projectileVelocity = 0.75
 		
-	def fire(self, curtime, direction):
+	def fire(self, direction):
+		return None
+		
+	def _getProjectileVelocity(self):
+		return self._projectileVelocity
+	
+	def _setProjectileVelocity(self, vel):
+		self._projectileVelocity = vel
+		
+	projectilevelocity = property(_getProjectileVelocity, _setProjectileVelocity)
+	
+class Cannon(Weapon):
+	def __init__(self, scene, ship, firerate):
+		super(Cannon, self).__init__(scene, ship, firerate)
+		
+		#cannon's projectile velocity
+		self._projectileVelocity = 0.75
+
+		
+	def fire(self, direction):
 		velocity = normalize(direction)
 		velocity.x = velocity.x * self._projectileVelocity
 		velocity.y = velocity.y * self._projectileVelocity
 	
-		if (curtime - self._lastfired) > self._firerate:
-			pjctl = Projectile(self._scene, self._ship, "bullet1", 2000 )
-			pjctl.run(velocity, self._ship.location, curtime)
-			self._lastfired = curtime
-			return pjctl
-		
-		return None
-	
+		if (self._scene.time - self._lastfired) > self._firerate:
+			pjctl = Projectile(self._scene, self._ship, "bullet1", 6000 )
+			pjctl.run(velocity, self._ship.location)
+			self._lastfired = self._scene.time
+			self._scene.addProjectileToScene(pjctl)
+			
+

@@ -24,6 +24,7 @@
 from fife import fife
 from scripts.ships.shipbase import Ship
 from scripts.common.helpers import Rect
+from scripts.weapons import *
 
 
 class Player(Ship):
@@ -32,6 +33,9 @@ class Player(Ship):
 
 		self._score = 0
 		self._maxvelocity = 1.5
+		
+		#give player the default weapon (the cannon)
+		self.weapon = Cannon(self._scene, self, 200)
 	
 	def _getScore(self):
 		return self._score
@@ -42,34 +46,32 @@ class Player(Ship):
 	def destroy(self):
 		print "player has been destroyed!"
 	
-	def update(self, timedelta):
+	def update(self):
 		key = False
 
 		oldpos = self.location
 		
 		if self._scene.keystate['UP']:
-			self.applyThrust(fife.DoublePoint(0,-1.5), timedelta)
+			self.applyThrust(fife.DoublePoint(0,-1.5))
 			key = True
 		if self._scene.keystate['DOWN']:
-			self.applyThrust(fife.DoublePoint(0,1.5), timedelta)
+			self.applyThrust(fife.DoublePoint(0,1.5))
 			key = True
 		if self._scene.keystate['LEFT']:
-			self.applyThrust(fife.DoublePoint(-1.5,0), timedelta)
+			self.applyThrust(fife.DoublePoint(-1.5,0))
 			key = True
 		if self._scene.keystate['RIGHT']:
-			self.applyThrust(fife.DoublePoint(1.5,0), timedelta)
+			self.applyThrust(fife.DoublePoint(1.5,0))
 			key = True
 		
 		#fire the currently selected gun
 		if self._scene.keystate['SPACE']:
-			prjct = self.fire(self._scene.time, fife.DoublePoint(1,0))
-			if prjct:
-				self._scene.addProjectileToScene(prjct)
+			self.fire(fife.DoublePoint(1,0))
 			
 		if not key and self._velocity.length() > 0:
-			self.applyBrake(1.5, timedelta)
+			self.applyBrake(1.5)
 		
-		super(Player, self).update(timedelta)
+		super(Player, self).update()
 		
 		#set up the players camera bounds
 		#TODO: grab screen resolution from somewhere
@@ -78,11 +80,6 @@ class Player(Ship):
 
 		camrect = Rect(topleft.x, topleft.y, bottomright.x - topleft.x, bottomright.y - topleft.y)
 	
-		#player bounding box
-		xscale = self._layer.getCellGrid().getXScale()
-		yscale = self._layer.getCellGrid().getYScale()
-
-
 		#add the padding to the edge
 		camrect.x += self._boundingBox.w
 		camrect.y += self._boundingBox.h
@@ -93,7 +90,7 @@ class Player(Ship):
 			if (self._boundingBox.x + self._boundingBox.w) < camrect.x:
 				#pos.x = (bbox.x + bbox.w/2 + 0.1) / xscale
 				#oldpos.setExactLayerCoordinates(pos)
-				self._velocity.x = (timedelta * 0.01) / xscale
+				self._velocity.x = (self._scene.timedelta * 0.01) / self._xscale
 			
 #			elif (bbox.y + bbox.h) < camrect.y or (bbox.y - bbox.h) > camrect.y:
 #				pos.x += self._velocity.x * (timedelta/1000.0)
