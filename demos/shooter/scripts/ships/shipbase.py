@@ -31,19 +31,18 @@ from scripts.weapons import Weapon
 class Ship(SpaceObject):
 	def __init__(self, scene, name, findInstance=True):
 		super(Ship, self).__init__(scene, name, findInstance)
-
-		self._timedelta = 0
+		
 		self._weapon = None
 	
 	def _setWeapon(self, weapon):
 		self._weapon = weapon
 		
-	def _getWeapon(self, weapon):
+	def _getWeapon(self):
 		return self._weapon
 		
-	def fire(self, curtime, direction):
+	def fire(self, direction):
 		if self._weapon:
-			return self._weapon.fire(curtime, direction)
+			return self._weapon.fire(direction)
 		
 		return None
 	

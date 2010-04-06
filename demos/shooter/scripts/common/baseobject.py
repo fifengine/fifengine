@@ -35,7 +35,6 @@ class SpaceObject(object):
 		self._yscale = self._layer.getCellGrid().getYScale()		
 		self._velocity = fife.DoublePoint(0,0)
 		self._maxvelocity = 1.25
-		self._timedelta = 0
 		self._boundingBox = Rect(0,0,0,0)
 		self._running = False
 		self._changedPosition = False
@@ -50,15 +49,13 @@ class SpaceObject(object):
 		if self._instance:
 			self._running = True
 
-	def update(self, timedelta):
+	def update(self):
 		if self._running:
-			self._timedelta = timedelta
-		
 			shiploc = self.location
 			exactloc = shiploc.getExactLayerCoordinates()
 		
-			exactloc.x += self._velocity.x * (timedelta/1000.0)/self._xscale
-			exactloc.y += self._velocity.y * (timedelta/1000.0)/self._yscale
+			exactloc.x += self._velocity.x * (self._scene.timedelta/1000.0)/self._xscale
+			exactloc.y += self._velocity.y * (self._scene.timedelta/1000.0)/self._yscale
 		
 			self._boundingBox.x = (exactloc.x - self._boundingBox.w/2) * self._xscale
 			self._boundingBox.y = (exactloc.y - self._boundingBox.h/2) * self._yscale
@@ -79,9 +76,9 @@ class SpaceObject(object):
 		self._running = False
 		self._layer.deleteInstance(self._instance)
 		
-	def applyThrust(self, vector, timedelta):
-		self._velocity.x += (vector.x * (timedelta/1000.0))/self._xscale
-		self._velocity.y += (vector.y * (timedelta/1000.0))/self._yscale
+	def applyThrust(self, vector):
+		self._velocity.x += (vector.x * (self._scene.timedelta/1000.0))/self._xscale
+		self._velocity.y += (vector.y * (self._scene.timedelta/1000.0))/self._yscale
 		
 		if self._velocity.length() > self._maxvelocity:
 			norm = normalize(self._velocity)
@@ -89,7 +86,7 @@ class SpaceObject(object):
 			self._velocity.y = norm.y * self._maxvelocity
 		
 	
-	def applyBrake(self, brakingForce, timedelta):
+	def applyBrake(self, brakingForce):
 
 		if self._velocity.length() <= .01:
 			self._velocity.x = 0
@@ -111,8 +108,8 @@ class SpaceObject(object):
 		norm.x *= brakingForce
 		norm.y *= brakingForce
 		
-		self._velocity.x += (norm.x * (timedelta/1000.0))/self._xscale
-		self._velocity.y += (norm.y * (timedelta/1000.0))/self._yscale
+		self._velocity.x += (norm.x * (self._scene.timedelta/1000.0))/self._xscale
+		self._velocity.y += (norm.y * (self._scene.timedelta/1000.0))/self._yscale
 
 	def _isRunning(self):
 		return self._running

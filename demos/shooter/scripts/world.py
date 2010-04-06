@@ -33,7 +33,6 @@ from fife.extensions.loaders import loadMapFile
 from scripts.ships.shipbase import Ship
 from scripts.ships.player import Player
 from scripts.scene import Scene
-from scripts.weapons import Weapon
 
 class World(EventListenerBase):
 	"""
@@ -76,8 +75,6 @@ class World(EventListenerBase):
 		self.map = loadMapFile(filename, self.engine)
 
 		self.scene = Scene(self.engine, self.map.getLayer('objects'))
-		#self.initPlayer()
-		self.initCameras()
 		
 		self.mainwindow = pychan.loadXML('gui/mainwindow.xml')
 		self.fpstext = self.mainwindow.findChild(name="fps")
@@ -87,9 +84,8 @@ class World(EventListenerBase):
 		self.mainwindow.position = (0,0)
 		self.mainwindow.show()
 		
-		#give player the default weapon
-		self.scene.player.weapon = Weapon(self.scene, self.scene.player, 200)
 		self.scene.initScene(self.map)
+		self.initCameras()
 		
 	def initCameras(self):
 		"""
