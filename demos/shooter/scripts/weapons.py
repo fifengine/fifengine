@@ -23,18 +23,22 @@
 
 from fife import fife
 from scripts.ships.shipbase import SpaceObject
+from scripts.common.helpers import normalize
 
 class Projectile(SpaceObject):
-	def __init__(self, model, projectileName, layer, timeToLive):
-		super(Projectile, self).__init__(model, projectileName, layer, False)
-		self._name = projectileName
-		self._layer = layer
+	def __init__(self, scene, owner, projectileName, timeToLive):
+		super(Projectile, self).__init__(scene, projectileName, False)
 
 		self._obj = self._model.getObject(self._name, "http://www.fifengine.de/xml/tutorial")
 	
 		self._ttl = timeToLive
 		self._starttime = 0
 		self._totaltime = 0
+		
+		self._owner = owner
+		
+		self.width = 0.025
+		self.height = 0.025
 	
 	def create(self, location):
 		self._instance = self._layer.createInstance(self._obj, location.getExactLayerCoordinates(), "bullet")
@@ -58,6 +62,9 @@ class Projectile(SpaceObject):
 		
 	def _getTTL(self):
 		return self._ttl
+	
+	def _getOwner(self):
+		return self._owner
 
 	def update(self, timedelta):
 		self._totaltime += timedelta
@@ -67,22 +74,26 @@ class Projectile(SpaceObject):
 			self.destroy()
 		
 	ttl = property(_getTTL)
+	owner = property(_getOwner)
 	
 class Weapon(object):
-	def __init__(self, model, layer, ship, firerate):
-		self._model = model
-		self._layer = layer
+	def __init__(self, scene, ship, firerate):
+		self._scene = scene
+		self._model = self._scene.model
+		self._layer = self._scene.objectlayer
 		self._ship = ship
 		self._firerate = firerate
 		self._lastfired = 0
-		self._projectileVelocity = fife.DoublePoint(0.75,0)
+		self._projectileVelocity = 0.75
 		
-	def fire(self, curtime):
+	def fire(self, curtime, direction):
+		velocity = normalize(direction)
+		velocity.x = velocity.x * self._projectileVelocity
+		velocity.y = velocity.y * self._projectileVelocity
+	
 		if (curtime - self._lastfired) > self._firerate:
-			pjctl = Projectile(self._model, "bullet1", self._layer, 2000 )
-			pjctl.width = 0.025
-			pjctl.height = 0.025
-			pjctl.run(fife.DoublePoint(self._projectileVelocity.x,self._projectileVelocity.y), self._ship.location, curtime)
+			pjctl = Projectile(self._scene, self._ship, "bullet1", 2000 )
+			pjctl.run(velocity, self._ship.location, curtime)
 			self._lastfired = curtime
 			return pjctl
 		

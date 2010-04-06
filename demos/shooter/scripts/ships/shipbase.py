@@ -29,8 +29,8 @@ from scripts.weapons import Weapon
 
 
 class Ship(SpaceObject):
-	def __init__(self, model, name, layer, findInstance=True):
-		super(Ship, self).__init__(model, name, layer, findInstance)
+	def __init__(self, scene, name, findInstance=True):
+		super(Ship, self).__init__(scene, name, findInstance)
 
 		self._timedelta = 0
 		self._weapon = None
@@ -41,9 +41,9 @@ class Ship(SpaceObject):
 	def _getWeapon(self, weapon):
 		return self._weapon
 		
-	def fire(self, curtime):
+	def fire(self, curtime, direction):
 		if self._weapon:
-			return self._weapon.fire(curtime)
+			return self._weapon.fire(curtime, direction)
 		
 		return None
 	
