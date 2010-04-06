@@ -28,13 +28,15 @@ from scripts.weapons import Weapon
 
 
 class Saucer1(Ship):
-	def __init__(self, model, name, layer, findInstance=True):
-		super(Saucer1, self).__init__(model, name, layer, findInstance)
+	def __init__(self, scene, name, findInstance=True):
+		super(Saucer1, self).__init__(scene, name, findInstance)
 		self._dir = 0
 		self._time = 500
 		self.width = 0.075
 		self.height = 0.075
 		self.velocity.x = -0.5
+		
+		self.weapon = Weapon(self._scene, self, 1000)
 				
 	def update(self, timedelta):	
 		if self._dir == 1:
@@ -55,13 +57,15 @@ class Saucer1(Ship):
 		super(Saucer1, self).update(timedelta)
 		
 class Saucer2(Ship):
-	def __init__(self, model, name, layer, findInstance=True):
-		super(Saucer2, self).__init__(model, name, layer, findInstance)
+	def __init__(self, scene, name, findInstance=True):
+		super(Saucer2, self).__init__(scene, name, findInstance)
 		self._dir = 0
 		self._time = 1000
 		self.width = 0.2
 		self.height = 0.2
 		self.velocity.x = -0.1
+		
+		self.weapon = Weapon(self._scene, self, 2000)
 				
 	def update(self, timedelta):	
 		if self._dir == 1:

@@ -50,7 +50,7 @@ class Scene(object):
 		self._layer = objectLayer
 		self._nodes = list()
 		
-		self._player = Player(self._model, 'player', self._layer)
+		self._player = Player(self, 'player')
 		self._player.width = 0.075
 		self._player.height = 0.075
 		self._player.start()
@@ -59,12 +59,15 @@ class Scene(object):
 		self._lasttime = 0
 		
 		self._maxnodes = 128
+		self._xscale = 0
+		
+		self._time = 0
+		self._timedelta = 0
 
 	def initScene(self, mapobj):
-		layer = mapobj.getLayer('objects')
-		xscale = layer.getCellGrid().getXScale()
+		self._xscale = self._layer.getCellGrid().getXScale()
 				
-		enemies = layer.getInstances('enemy')
+		enemies = self._layer.getInstances('enemy')
 		
 		#initialize our scene array to some arbitrary size
 		for i in range(0,self._maxnodes):
@@ -75,18 +78,22 @@ class Scene(object):
 			print objectName
 			
 			if objectName == "saucer1":
-				enemy = Saucer1(self._model, 'enemy', self._layer, False)
+				enemy = Saucer1(self, 'enemy', False)
 			elif objectName == "saucer2":
-				enemy = Saucer2(self._model, 'enemy', self._layer, False)
+				enemy = Saucer2(self, 'enemy', False)
 			else:
-				enemy = Ship(self._model, 'enemy', self._layer, False)
+				enemy = Ship(self, 'enemy', False)
 				
 			enemy.instance = instance
 			enemy.start()
 
 			loc = instance.getLocation().getExactLayerCoordinates()
-			nodeindex = int(loc.x * xscale)
+			nodeindex = int(loc.x * self._xscale)
+			enemy.scenenodeid = nodeindex
 			self._nodes[nodeindex].spaceobjects.append(enemy)
+			
+		#and finally add the player to the scene
+		self.addObjectToScene(self._player)
 
 	def getObjectsInNode(self, nodeindex):
 		return self._nodes[nodeindex].instances
@@ -98,6 +105,26 @@ class Scene(object):
 			objects.extend(self._nodes[i].spaceobjects)
 			
 		return objects
+		
+	def addObjectToScene(self, obj):
+		#TODO: search to ensure the object isn't already part of the scene
+		loc = obj.instance.getLocation().getExactLayerCoordinates()
+		nodeindex = int(loc.x * self._xscale)
+		
+		self._nodes[nodeindex].spaceobjects.append(obj)
+		obj.scenenodeid = nodeindex		
+
+	def addProjectileToScene(self, projectile):
+		self._projectiles.append(projectile)
+	
+	def moveObjectInScene(self, obj):
+		loc = obj.instance.getLocation().getExactLayerCoordinates()
+		nodeindex = int(loc.x * self._xscale)
+		
+		if nodeindex != obj.scenenodeid:
+			self._nodes[obj.scenenodeid].spaceobjects.remove(obj)
+			self._nodes[nodeindex].spaceobjects.append(obj)
+			obj.scenenodeid = nodeindex
 	
 	def removeObjectFromScene(self, obj):
 		for node in self._nodes:
@@ -109,16 +136,17 @@ class Scene(object):
 		self._camera = cam
 		self._camera.setLocation(self._player.location)
 		
-	def _getPlayer(self):
-		return self._player
-
 	def update(self, time, keystate):
-		timedelta = time - self._lasttime
-		self._lasttime = time
+		timedelta = time - self._time
+		self._timedelta = timedelta
+		self._time = time
+		
+		self._keystate = keystate
 		
 		#update camera location
 		loc = self._camera.getLocation()
 		exactloc = self._camera.getLocation().getExactLayerCoordinates()
+		#slowly move to the right
 		exactloc.x += timedelta * 0.001
 		loc.setExactLayerCoordinates(exactloc)
 		self._camera.setLocation(loc)
@@ -137,12 +165,24 @@ class Scene(object):
 			rightnode = self._maxnodes
 		screenlist = self.getObjectsInRange(leftnode, rightnode)
 		
+
 		#update objects on the screen
 		for obj in screenlist:
 			obj.update(timedelta)
+			if obj.changedposition:
+				self.moveObjectInScene(obj)
 
-		#update the player
-		self._player.update(timedelta, keystate, self._camera)
+				#Testing enemy fire				
+				#prjct = obj.fire(time, fife.DoublePoint(-1,0))
+				#if prjct:
+				#	self._projectiles.append(prjct)
+			
+			if obj != self._player:
+				if obj.boundingbox.intersects(self._player.boundingbox):
+					#player touched an enemy.  Destroy player and 
+					#re-initialize scene
+					self._player.destroy()
+		
 		
 		#update the list of projectiles
 		projtodelete = list()
@@ -150,25 +190,51 @@ class Scene(object):
 			p.update(timedelta)
 			#check to see if the projectile hit any object on the screen
 			for o in screenlist:
-				if p.boundingbox.intersects(o.boundingbox):
-					self._player.applyScore(100)
-					p.destroy()
-					o.destroy()
-					self.removeObjectFromScene(o)
+				#cant get hit by your own bullet
+				if p.owner != o:
+					if p.boundingbox.intersects(o.boundingbox):
+						self._player.applyScore(100)
+						p.destroy()
+						o.destroy()
+						#temporary...  the destroy functions should spawn an explosion
+						#and also destroy the instance and remove itself from the scene
+						self.removeObjectFromScene(o)
 			
 			#build a list of projectiles to remove (ttl expired)
 			if not p.running:
 				projtodelete.append(p)
 
-		#remove any non running projectiles 
+		#remove any expired projectiles 
 		for p in projtodelete:
 			self._projectiles.remove(p)
+
+				
+	def _getPlayer(self):
+		return self._player
 		
-		#fire the currently selected gun
-		if keystate['SPACE']:
-			prjct = self._player.fire(time)
-			if prjct:
-				self._projectiles.append(prjct)
+	def _getKeyState(self):
+		return self._keystate
+		
+	def _getCamera(self):
+		return self._camera
+		
+	def _getObjectLayer(self):
+		return self._layer
+		
+	def _getModel(self):
+		return self._model
+		
+	def _getTime(self):
+		return self._time
+	
+	def _getTimeDelta(self):
+		return self._timedelta
 
 	player = property(_getPlayer)
+	keystate = property(_getKeyState)
+	camera = property(_getCamera)
+	objectlayer = property(_getObjectLayer)
+	model = property(_getModel)
+	time = property(_getTime)
+	timedelta = property(_getTimeDelta)
 		

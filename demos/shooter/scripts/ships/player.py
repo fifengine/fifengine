@@ -27,44 +27,54 @@ from scripts.common.helpers import Rect
 
 
 class Player(Ship):
-	def __init__(self, model, playerName, layer):
-		super(Player, self).__init__(model, playerName, layer)
+	def __init__(self, scene, playerName):
+		super(Player, self).__init__(scene, playerName)
 
 		self._score = 0
+		self._maxvelocity = 1.5
 	
 	def _getScore(self):
 		return self._score
 		
 	def applyScore(self, sc):
 		self._score += sc
-	
-	def update(self, timedelta, keystate, camera):
-		key = False
 		
+	def destroy(self):
+		print "player has been destroyed!"
+	
+	def update(self, timedelta):
+		key = False
+
 		oldpos = self.location
 		
-		if keystate['UP']:
-			self.applyThrust(fife.DoublePoint(0,-0.75), timedelta)
+		if self._scene.keystate['UP']:
+			self.applyThrust(fife.DoublePoint(0,-1.5), timedelta)
 			key = True
-		if keystate['DOWN']:
-			self.applyThrust(fife.DoublePoint(0,0.75), timedelta)
+		if self._scene.keystate['DOWN']:
+			self.applyThrust(fife.DoublePoint(0,1.5), timedelta)
 			key = True
-		if keystate['LEFT']:
-			self.applyThrust(fife.DoublePoint(-0.75,0), timedelta)
+		if self._scene.keystate['LEFT']:
+			self.applyThrust(fife.DoublePoint(-1.5,0), timedelta)
 			key = True
-		if keystate['RIGHT']:
-			self.applyThrust(fife.DoublePoint(0.75,0), timedelta)
+		if self._scene.keystate['RIGHT']:
+			self.applyThrust(fife.DoublePoint(1.5,0), timedelta)
 			key = True
+		
+		#fire the currently selected gun
+		if self._scene.keystate['SPACE']:
+			prjct = self.fire(self._scene.time, fife.DoublePoint(1,0))
+			if prjct:
+				self._scene.addProjectileToScene(prjct)
 			
 		if not key and self._velocity.length() > 0:
-			self.applyBrake(0.75, timedelta)
+			self.applyBrake(1.5, timedelta)
 		
 		super(Player, self).update(timedelta)
 		
 		#set up the players camera bounds
 		#TODO: grab screen resolution from somewhere
-		topleft = camera.toMapCoordinates(fife.ScreenPoint(0,0))
-		bottomright = camera.toMapCoordinates(fife.ScreenPoint(1024,768))
+		topleft = self._scene.camera.toMapCoordinates(fife.ScreenPoint(0,0))
+		bottomright = self._scene.camera.toMapCoordinates(fife.ScreenPoint(1024,768))
 
 		camrect = Rect(topleft.x, topleft.y, bottomright.x - topleft.x, bottomright.y - topleft.y)
 	

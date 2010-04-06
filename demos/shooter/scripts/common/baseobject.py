@@ -26,9 +26,10 @@ from scripts.common.helpers import normalize
 from scripts.common.helpers import Rect
 
 class SpaceObject(object):
-	def __init__(self, model, name, layer, findInstance=True):
-		self._model = model
-		self._layer = layer
+	def __init__(self, scene, name, findInstance=True):
+		self._scene = scene
+		self._model = self._scene.model
+		self._layer = self._scene.objectlayer
 		self._name = name
 		self._xscale = self._layer.getCellGrid().getXScale()
 		self._yscale = self._layer.getCellGrid().getYScale()		
@@ -37,6 +38,8 @@ class SpaceObject(object):
 		self._timedelta = 0
 		self._boundingBox = Rect(0,0,0,0)
 		self._running = False
+		self._changedPosition = False
+		self._scenenodeid = -1
 			
 		if findInstance:
 			self._instance = self._layer.getInstance(self._name)
@@ -61,6 +64,12 @@ class SpaceObject(object):
 			self._boundingBox.y = (exactloc.y - self._boundingBox.h/2) * self._yscale
 				
 			shiploc.setExactLayerCoordinates(exactloc)
+			
+			if shiploc == self.location:
+				self._changePosition = False
+			else:
+				self._changedPosition = True
+			
 			self.location = shiploc
 	
 	def stop(self):
@@ -146,6 +155,15 @@ class SpaceObject(object):
 	
 	def _setH(self, h):
 		self._boundingBox.h = h
+		
+	def _changedPosition(self):
+		return self._changedPosition
+		
+	def _getNodeId(self):
+		return self._scenenodeid
+		
+	def _setNodeId(self, id):
+		self._scenenodeid = id
 
 	width = property(_getW, _setW)
 	height = property(_getH, _setH)
@@ -155,3 +173,5 @@ class SpaceObject(object):
 	velocity = property(_getVelocity, _setVelocity)
 	maxvelocity = property(_getMaxVelocity, _setMaxVelocity)
 	running = property(_isRunning)
+	changedposition = property(_changedPosition)
+	scenenodeid = property(_getNodeId, _setNodeId)
