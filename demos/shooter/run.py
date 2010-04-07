@@ -55,7 +55,8 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		keystr = evt.getKey().getAsString().lower()
 		consumed = False
 		if keyval == fife.Key.ESCAPE:
-			self.quit = True
+			#self.quit = True
+			self.world.showMainMenu()
 			evt.consume()
 
 	def onCommand(self, command):
@@ -63,14 +64,17 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		if self.quit:
 			command.consume()
 
-class Tutorial(ApplicationBase):
+class Shooter(ApplicationBase):
 	def __init__(self):
-		super(Tutorial,self).__init__()
+		super(Shooter,self).__init__()
 		pychan.init(self.engine, debug=False)
-		self.world = world.World(self.engine)
+		
+		self.world = world.World(self, self.engine)
 		self.listener = ApplicationListener(self.engine, self.world)
-		self.world.load("maps/shooter_map1.xml")
 
+	def requestQuit(self):
+		self.breakRequested = True
+		
 	def loadSettings(self):
 		"""
 		Load the settings from a python file and load them into the engine.
@@ -117,7 +121,7 @@ class Tutorial(ApplicationBase):
 			self.world.pump()
 
 def main():
-	app = Tutorial()
+	app = Shooter()
 	app.run()
 
 

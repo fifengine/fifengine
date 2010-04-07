@@ -34,6 +34,55 @@ from scripts.ships.shipbase import Ship
 from scripts.ships.player import Player
 from scripts.scene import Scene
 
+class MainMenu(object):
+	def __init__(self, world):
+		self._world = world
+		self._widget = pychan.loadXML('gui/mainmenu.xml')
+
+		self._continue = self._widget.findChild(name="continue")
+		self._newgame = self._widget.findChild(name="new_game")
+		self._credits = self._widget.findChild(name="credits")
+		self._highscores = self._widget.findChild(name="high_scores")
+		self._quit = self._widget.findChild(name="quit")
+		
+		self._widget.position = (0,0)
+
+		eventMap = {
+			'continue': self._world.continueGame,
+			'new_game': self._world.newGame,
+			'credits': self._world.showCredits,
+			'high_scores': self._world.showHighScores,
+			'quit': self._world.quit,
+		}
+
+		self._widget.mapEvents(eventMap)		
+		
+		self._continueMinWidth = self._continue.min_width
+		self._continueMinHeight = self._continue.min_height
+		self._continueMaxWidth = self._continue.max_width
+		self._continueMaxHeight = self._continue.max_height	
+
+		
+	def show(self, cont=False):
+		if cont:
+			self._continue.min_width = self._continueMinWidth
+			self._continue.min_height = self._continueMinHeight
+			self._continue.max_width = self._continueMaxWidth
+			self._continue.max_height = self._continueMaxHeight
+			
+		else:
+			self._continue.min_width = 0
+			self._continue.min_height = 0
+			self._continue.max_width = 0
+			self._continue.max_height = 0
+
+		self._continue.adaptLayout()
+		self._widget.show()
+		
+	def hide(self):
+		self._widget.hide()
+		
+
 class World(EventListenerBase):
 	"""
 	The world!
@@ -41,14 +90,13 @@ class World(EventListenerBase):
 	This class handles:
 	  setup of map view (cameras ...)
 	  loading the map
-	  GUI for right clicks
 	  handles mouse/key events which aren't handled by the GUI.
 	   ( by inheriting from EventlistenerBase )
 
-	That's obviously too much, and should get factored out.
 	"""
-	def __init__(self, engine):
+	def __init__(self, app, engine):
 		super(World, self).__init__(engine, regMouse=True, regKeys=True)
+		self._applictaion = app
 		self.engine = engine
 		self.timemanager = engine.getTimeManager()
 		self.eventmanager = engine.getEventManager()
@@ -59,33 +107,78 @@ class World(EventListenerBase):
 		self.pump_ctr = 0
 		self.map = None
 		self.scene = None
+		self._paused = True
+		self._pausedtime = 0
+		self._starttime = 0
+		
+		self._mainmenu = MainMenu(self)
+		self.showMainMenu()
+		
+		self._hudwindow = None
 
+	
+	def showMainMenu(self):
+		if self.scene:
+			self._paused = True
+			cont = True
+		else:
+			cont = False
+			
+		self._mainmenu.show(cont)
+		
+	def showCredits(self):
+		pass
+		
+	def showHighScores(self):
+		pass
+		
+	def quit(self):
+		self.reset()
+		self._applictaion.requestQuit()
+		
 	def reset(self):
-		"""
-		Clear the agent information and reset the moving secondary camera state.
-		"""
+		#TODO: ensure these get destroyed correctly
+		if self.map:
+			self.model.deleteMap(self.map)
+		self.map = None
+		
 		self.cameras = {}
+		self.scene = None
 
-	def load(self, filename):
+	def loadLevel(self, filename):
 		"""
-		Load a xml map and setup agents and cameras.
+		Load a xml map and setup cameras.
 		"""
 		self.filename = filename
 		self.reset()
-		self.map = loadMapFile(filename, self.engine)
+		self.map = loadMapFile(self.filename, self.engine)
 
 		self.scene = Scene(self.engine, self.map.getLayer('objects'))
 		
-		self.mainwindow = pychan.loadXML('gui/mainwindow.xml')
-		self.fpstext = self.mainwindow.findChild(name="fps")
-		self.velocitytext = self.mainwindow.findChild(name="velocity")
-		self.positiontext = self.mainwindow.findChild(name="position")
-		self.scoretext = self.mainwindow.findChild(name="score")
-		self.mainwindow.position = (0,0)
-		self.mainwindow.show()
+		if not self._hudwindow:
+			self._hudwindow = pychan.loadXML('gui/mainwindow.xml')
+			self.fpstext = self._hudwindow.findChild(name="fps")
+			self.velocitytext = self._hudwindow.findChild(name="velocity")
+			self.positiontext = self._hudwindow.findChild(name="position")
+			self.scoretext = self._hudwindow.findChild(name="score")
+			self._hudwindow.position = (0,0)
 		
 		self.scene.initScene(self.map)
 		self.initCameras()
+
+		self._hudwindow.show()
+		
+		self._starttime = self.timemanager.getTime()
+		
+
+	def newGame(self):
+		self.loadLevel("maps/shooter_map1.xml")
+		self._mainmenu.hide()
+		self._paused = False
+		
+	def continueGame(self):
+		self._mainmenu.hide()
+		self._paused = False
 		
 	def initCameras(self):
 		"""
@@ -113,6 +206,9 @@ class World(EventListenerBase):
 			self.keystate['RIGHT'] = True
 		elif keyval == fife.Key.SPACE:
 			self.keystate['SPACE'] = True
+		elif keyval == fife.Key.P:
+			self._paused = not self._paused
+			self._pausedtime += self.timemanager.getTime()
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self.keystate['CTRL'] = True
 
@@ -153,29 +249,39 @@ class World(EventListenerBase):
 		Called every frame.
 		"""
 		
+		if not self.scene:
+			return
+		
 		#update the scene
-		self.scene.update(self.timemanager.getTime(), self.keystate)
+		if not self._paused:
+			if self.scene.paused:
+				self.scene.unpause(self.timemanager.getTime() - self._starttime)
+				
+			self.scene.update(self.timemanager.getTime() - self._starttime, self.keystate)
 		
 		
-		#update the HUD
-		avgframe = self.timemanager.getAverageFrameTime()
-		if avgframe > 0:
-			fps = 1 / (avgframe / 1000)
+			#update the HUD
+			avgframe = self.timemanager.getAverageFrameTime()
+			if avgframe > 0:
+				fps = 1 / (avgframe / 1000)
+			else:
+				fps = 0
+			fpstxt = "%3.2f" % fps
+			self.fpstext.text = unicode(fpstxt)
+		
+			player = self.scene.player
+			exactcoords = player.location.getExactLayerCoordinates()
+			pos = "%1.2f" % exactcoords.x + ", %1.2f" % exactcoords.y
+			self.positiontext.text = unicode(pos)
+		
+			vel = "%1.2f" % player.velocity.x + ", %1.2f" % player.velocity.y
+			self.velocitytext.text = unicode(vel)
+		
+			score = unicode(str(player.score))
+			self.scoretext.text = score
+			
 		else:
-			fps = 0
-		fpstxt = "%3.2f" % fps
-		self.fpstext.text = unicode(fpstxt)
-		
-		player = self.scene.player
-		exactcoords = player.location.getExactLayerCoordinates()
-		pos = "%1.2f" % exactcoords.x + ", %1.2f" % exactcoords.y
-		self.positiontext.text = unicode(pos)
-		
-		vel = "%1.2f" % player.velocity.x + ", %1.2f" % player.velocity.y
-		self.velocitytext.text = unicode(vel)
-		
-		score = unicode(str(player.score))
-		self.scoretext.text = score
-		
+			if not self.scene.paused:
+				self.scene.pause(self.timemanager.getTime() - self._starttime)
 		
 		self.pump_ctr += 1
