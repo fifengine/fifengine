@@ -36,6 +36,8 @@ class Player(Ship):
 		
 		#give player the default weapon (the cannon)
 		self.weapon = Cannon(self._scene, self, 200)
+		
+		self._lives = 3
 	
 	def _getScore(self):
 		return self._score
@@ -44,6 +46,7 @@ class Player(Ship):
 		self._score += sc
 		
 	def destroy(self):
+		self._lives -= 1
 		print "player has been destroyed!"
 	
 	def update(self):
@@ -104,5 +107,8 @@ class Player(Ship):
 
 			self.location = oldpos
 
+	def _getLives(self):
+		return self._lives
 
 	score = property(_getScore)
+	lives = property(_getLives)

@@ -62,6 +62,9 @@ class Scene(object):
 		
 		self._xscale = self._layer.getCellGrid().getXScale()
 		self._yscale = self._layer.getCellGrid().getYScale()
+		
+		self._paused = False
+		self._timemod = 0
 
 	def initScene(self, mapobj):
 		self._player = Player(self, 'player')
@@ -96,6 +99,14 @@ class Scene(object):
 			
 		#and finally add the player to the scene
 		self.addObjectToScene(self._player)
+
+	def pause(self, time):
+		self._pausedtime = time
+		self._paused = True
+		
+	def unpause(self, time):
+		self._timemod += time - self._pausedtime
+		self._paused = False
 
 	def getObjectsInNode(self, nodeindex):
 		return self._nodes[nodeindex].instances
@@ -139,9 +150,9 @@ class Scene(object):
 		self._camera.setLocation(self._player.location)
 		
 	def update(self, time, keystate):
-		timedelta = time - self._time
+		timedelta = (time - self._timemod) - self._time
 		self._timedelta = timedelta
-		self._time = time
+		self._time = time - self._timemod
 		
 		self._keystate = keystate
 		
@@ -229,7 +240,10 @@ class Scene(object):
 	
 	def _getTimeDelta(self):
 		return self._timedelta
-
+		
+	def _getPaused(self):
+		return self._paused
+		
 	player = property(_getPlayer)
 	keystate = property(_getKeyState)
 	camera = property(_getCamera)
@@ -237,4 +251,4 @@ class Scene(object):
 	model = property(_getModel)
 	time = property(_getTime)
 	timedelta = property(_getTimeDelta)
-		
+	paused = property(_getPaused)	
