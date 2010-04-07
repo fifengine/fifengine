@@ -30,58 +30,11 @@ from scripts.common.eventlistenerbase import EventListenerBase
 from scripts.common.helpers import normalize
 from fife.extensions.loaders import loadMapFile
 
+from scripts.gui.guis import *
+
 from scripts.ships.shipbase import Ship
 from scripts.ships.player import Player
 from scripts.scene import Scene
-
-class MainMenu(object):
-	def __init__(self, world):
-		self._world = world
-		self._widget = pychan.loadXML('gui/mainmenu.xml')
-
-		self._continue = self._widget.findChild(name="continue")
-		self._newgame = self._widget.findChild(name="new_game")
-		self._credits = self._widget.findChild(name="credits")
-		self._highscores = self._widget.findChild(name="high_scores")
-		self._quit = self._widget.findChild(name="quit")
-		
-		self._widget.position = (0,0)
-
-		eventMap = {
-			'continue': self._world.continueGame,
-			'new_game': self._world.newGame,
-			'credits': self._world.showCredits,
-			'high_scores': self._world.showHighScores,
-			'quit': self._world.quit,
-		}
-
-		self._widget.mapEvents(eventMap)		
-		
-		self._continueMinWidth = self._continue.min_width
-		self._continueMinHeight = self._continue.min_height
-		self._continueMaxWidth = self._continue.max_width
-		self._continueMaxHeight = self._continue.max_height	
-
-		
-	def show(self, cont=False):
-		if cont:
-			self._continue.min_width = self._continueMinWidth
-			self._continue.min_height = self._continueMinHeight
-			self._continue.max_width = self._continueMaxWidth
-			self._continue.max_height = self._continueMaxHeight
-			
-		else:
-			self._continue.min_width = 0
-			self._continue.min_height = 0
-			self._continue.max_width = 0
-			self._continue.max_height = 0
-
-		self._continue.adaptLayout()
-		self._widget.show()
-		
-	def hide(self):
-		self._widget.hide()
-		
 
 class World(EventListenerBase):
 	"""
@@ -114,7 +67,8 @@ class World(EventListenerBase):
 		self._mainmenu = MainMenu(self)
 		self.showMainMenu()
 		
-		self._hudwindow = None
+		self._hudwindow = HeadsUpDisplay(self)
+		self._hudwindow.hide()
 
 	
 	def showMainMenu(self):
@@ -154,16 +108,8 @@ class World(EventListenerBase):
 		self.map = loadMapFile(self.filename, self.engine)
 
 		self.scene = Scene(self.engine, self.map.getLayer('objects'))
-		
-		if not self._hudwindow:
-			self._hudwindow = pychan.loadXML('gui/mainwindow.xml')
-			self.fpstext = self._hudwindow.findChild(name="fps")
-			self.velocitytext = self._hudwindow.findChild(name="velocity")
-			self.positiontext = self._hudwindow.findChild(name="position")
-			self.scoretext = self._hudwindow.findChild(name="score")
-			self._hudwindow.position = (0,0)
-		
 		self.scene.initScene(self.map)
+
 		self.initCameras()
 
 		self._hudwindow.show()
@@ -267,18 +213,18 @@ class World(EventListenerBase):
 			else:
 				fps = 0
 			fpstxt = "%3.2f" % fps
-			self.fpstext.text = unicode(fpstxt)
+			self._hudwindow.setFPSText(unicode(fpstxt))
 		
 			player = self.scene.player
 			exactcoords = player.location.getExactLayerCoordinates()
 			pos = "%1.2f" % exactcoords.x + ", %1.2f" % exactcoords.y
-			self.positiontext.text = unicode(pos)
+			self._hudwindow.setPositionText(unicode(pos))
 		
 			vel = "%1.2f" % player.velocity.x + ", %1.2f" % player.velocity.y
-			self.velocitytext.text = unicode(vel)
+			self._hudwindow.setVelocityText(unicode(vel))
 		
 			score = unicode(str(player.score))
-			self.scoretext.text = score
+			self._hudwindow.setScoreText(score)
 			
 		else:
 			if not self.scene.paused:
