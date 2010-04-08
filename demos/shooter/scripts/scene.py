@@ -116,6 +116,7 @@ class Scene(object):
 		if self._player.lives <= -1:
 			self._gameover = True
 			self._world.gameOver()
+			self.removeAllProjectiles()
 			return
 		
 		#TODO: Have to find a better way to do this.  If the player
@@ -129,15 +130,16 @@ class Scene(object):
 		self._player.location = oldpos
 		self._camera.setLocation(self._player.location)
 		
+		self.removeAllProjectiles()
+		
+	def removeAllProjectiles(self):
 		projtodelete = list()
 		for p in self._projectiles:
 			p.destroy()
 			projtodelete.append(p)
 			
 		for p in projtodelete:
-			self._projectiles.remove(p)
-			
-		print len(self._projectiles)
+			self._projectiles.remove(p)		
 		
 	def gameOver(self):
 		self._world.gameOver()
