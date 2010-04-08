@@ -82,6 +82,7 @@ class HeadsUpDisplay(object):
 		self._velocitytext = self._widget.findChild(name="velocity")
 		self._positiontext = self._widget.findChild(name="position")
 		self._scoretext = self._widget.findChild(name="score")
+		self._livestext = self._widget.findChild(name="lives")	
 		self._widget.position = (0,0)
 		
 	def show(self):
@@ -101,3 +102,16 @@ class HeadsUpDisplay(object):
 		
 	def setScoreText(self, text):
 		self._scoretext.text = text
+		
+	def setLivesText(self, text):
+		self._livestext.text = text
+		
+class GameOverDisplay(object):
+	def __init__(self):
+		self._widget = pychan.loadXML('gui/gameover.xml')
+		
+	def show(self):
+		self._widget.show()
+		
+	def hide(self):
+		self._widget.hide()

@@ -15,4 +15,8 @@
 			<Label text = "SCORE: "/>
 			<Label name="score" text="0                             "/>
 	</HBox>
+	<HBox opaque='0'>
+			<Label text = "Lives: "/>
+			<Label name="lives" text="0                             "/>
+	</HBox>
 </VBox>

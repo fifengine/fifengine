@@ -39,6 +39,9 @@ class Player(Ship):
 		
 		self._lives = 3
 	
+	def init(self):
+		self._lives = 3
+	
 	def _getScore(self):
 		return self._score
 		
@@ -47,9 +50,13 @@ class Player(Ship):
 		
 	def destroy(self):
 		self._lives -= 1
-		print "player has been destroyed!"
+		
+		if self._lives < 0:
+			self._lives = -1
+
 	
 	def update(self):
+	
 		key = False
 
 		oldpos = self.location

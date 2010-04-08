@@ -27,7 +27,6 @@ from scripts.ships.player import Player
 from scripts.ships.enemies import *
 from scripts.common.helpers import Rect
 
-
 class SceneNode(object):
 	def __init__(self, spaceobjects = None):
 		if not spaceobjects:
@@ -44,8 +43,9 @@ class SceneNode(object):
 	spaceobjects = property(_getObjects, _setObjects)
 
 class Scene(object):
-	def __init__(self, engine, objectLayer):
+	def __init__(self, world, engine, objectLayer):
 		self._engine = engine
+		self._world = world
 		self._model = engine.getModel()
 		self._layer = objectLayer
 		self._nodes = list()
@@ -65,11 +65,14 @@ class Scene(object):
 		
 		self._paused = False
 		self._timemod = 0
+		
+		self._gameover = False
 
 	def initScene(self, mapobj):
 		self._player = Player(self, 'player')
 		self._player.width = 0.075
 		self._player.height = 0.075
+		self._player.init()
 		self._player.start()
 				
 		enemies = self._layer.getInstances('enemy')
@@ -99,7 +102,7 @@ class Scene(object):
 			
 		#and finally add the player to the scene
 		self.addObjectToScene(self._player)
-
+		
 	def pause(self, time):
 		self._pausedtime = time
 		self._paused = True
@@ -107,6 +110,37 @@ class Scene(object):
 	def unpause(self, time):
 		self._timemod += time - self._pausedtime
 		self._paused = False
+		
+	def playerDied(self):
+		self._player.destroy()
+		if self._player.lives <= -1:
+			self._gameover = True
+			self._world.gameOver()
+			return
+		
+		#TODO: Have to find a better way to do this.  If the player
+		#dies too many times right at the start of the level he will
+		#get pushed past the edge of the map to the left.
+		#IDEA: count down to ready player to start again
+		oldpos = self._player.location
+		pos = oldpos.getExactLayerCoordinates()
+		pos.x -= 5
+		oldpos.setExactLayerCoordinates(pos)
+		self._player.location = oldpos
+		self._camera.setLocation(self._player.location)
+		
+		projtodelete = list()
+		for p in self._projectiles:
+			p.destroy()
+			projtodelete.append(p)
+			
+		for p in projtodelete:
+			self._projectiles.remove(p)
+			
+		print len(self._projectiles)
+		
+	def gameOver(self):
+		self._world.gameOver()
 
 	def getObjectsInNode(self, nodeindex):
 		return self._nodes[nodeindex].instances
@@ -181,7 +215,9 @@ class Scene(object):
 
 		#update objects on the screen
 		for obj in screenlist:
-			obj.update()
+			if not (obj == self._player and self._gameover):
+				obj.update()
+			
 			if obj.changedposition:
 				self.moveObjectInScene(obj)
 
@@ -192,7 +228,8 @@ class Scene(object):
 				if obj.boundingbox.intersects(self._player.boundingbox):
 					#player touched an enemy.  Destroy player and 
 					#re-initialize scene
-					self._player.destroy()
+					self.playerDied()
+					return
 		
 		
 		#update the list of projectiles
@@ -204,12 +241,18 @@ class Scene(object):
 				#cant get hit by your own bullet
 				if p.owner != o:
 					if p.boundingbox.intersects(o.boundingbox):
-						self._player.applyScore(100)
-						p.destroy()
-						o.destroy()
-						#TODO:  the destroy functions should spawn an explosion
-						#and also destroy the instance and remove itself from the scene
-						self.removeObjectFromScene(o)
+						if o != self._player:
+							self._player.applyScore(100)
+							p.destroy()
+							o.destroy()
+							#TODO:  the destroy functions should spawn an explosion
+							#and also destroy the instance and remove itself from the scene
+							self.removeObjectFromScene(o)
+						else:
+							#player got hit by a projectile
+							p.destroy()
+							self.playerDied()
+							return
 			
 			#build a list of projectiles to remove (ttl expired)
 			if not p.running:
