@@ -70,6 +70,8 @@ class World(EventListenerBase):
 		self._hudwindow = HeadsUpDisplay(self)
 		self._hudwindow.hide()
 
+		self._gameover = GameOverDisplay()
+		self._gameover.hide()		
 	
 	def showMainMenu(self):
 		if self.scene:
@@ -107,15 +109,18 @@ class World(EventListenerBase):
 		self.reset()
 		self.map = loadMapFile(self.filename, self.engine)
 
-		self.scene = Scene(self.engine, self.map.getLayer('objects'))
+		self.scene = Scene(self, self.engine, self.map.getLayer('objects'))
 		self.scene.initScene(self.map)
 
 		self.initCameras()
 
 		self._hudwindow.show()
+		self._gameover.hide()
 		
 		self._starttime = self.timemanager.getTime()
-		
+
+	def gameOver(self):
+		self._gameover.show()
 
 	def newGame(self):
 		self.loadLevel("maps/shooter_map1.xml")
@@ -225,6 +230,9 @@ class World(EventListenerBase):
 		
 			score = unicode(str(player.score))
 			self._hudwindow.setScoreText(score)
+			
+			lives = unicode(str(player.lives))
+			self._hudwindow.setLivesText(lives)
 			
 		else:
 			if not self.scene.paused:
