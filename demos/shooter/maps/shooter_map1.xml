@@ -454,10 +454,15 @@
 			<i r="0" id="diag_bottom_right" x="34.0" o="saucer1" z="0.0" y="8.0"></i>
 			<i r="0" id="diag_bottom_right" x="35.0" o="saucer1" z="0.0" y="9.0"></i>
 			
-			<i r="0" id="streaker" x="37.0" o="saucer1" z="0.0" y="-2.0"></i>
-			<i r="0" id="streaker" x="37.0" o="saucer1" z="0.0" y="1.0"></i>
-			<i r="0" id="streaker" x="37.0" o="saucer1" z="0.0" y="4.0"></i>
-			<i r="0" id="streaker" x="37.0" o="saucer1" z="0.0" y="-5.0"></i>			
+			<i r="0" id="dodge2" x="37.0" o="saucer2" z="0.0" y="-2.0"></i>
+			<i r="0" id="dodge2" x="37.0" o="saucer2" z="0.0" y="1.0"></i>
+			<i r="0" id="streaker" x="37.0" o="saucer2" z="0.0" y="4.0"></i>
+			<i r="0" id="streaker" x="37.0" o="saucer2" z="0.0" y="-5.0"></i>			
+
+		</instances>
+	</layer>
+	<layer y_scale="0.25" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="boundingbox" rotation="0.0" x_scale="0.25" x_offset="0.0" transparency="0">
+		<instances>
 
 		</instances>
 	</layer>

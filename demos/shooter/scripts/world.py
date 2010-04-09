@@ -22,6 +22,7 @@
 # ####################################################################
 
 from fife import fife
+import copy
 import math, random
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
@@ -71,8 +72,10 @@ class World(EventListenerBase):
 		self._hudwindow.hide()
 
 		self._gameover = GameOverDisplay()
-		self._gameover.hide()		
-	
+		self._gameover.hide()
+		
+		self._genericrenderer = None
+		
 	def showMainMenu(self):
 		if self.scene:
 			self._paused = True
@@ -118,6 +121,67 @@ class World(EventListenerBase):
 		self._gameover.hide()
 		
 		self._starttime = self.timemanager.getTime()
+		
+		self._genericrenderer = fife.GenericRenderer.getInstance(self.cameras['main'])
+		self._genericrenderer.clearActiveLayers()
+		self._genericrenderer.addActiveLayer(self.map.getLayer('objects'))
+		self._genericrenderer.setEnabled(True)
+
+
+	def renderBoundingBox(self, obj):
+		bbox = copy.copy(obj.boundingbox)
+		
+		#apply the object layer scale
+		bbox.x /= 0.25
+		bbox.y /= 0.25
+		bbox.w /= 0.25
+		bbox.h /= 0.25
+	
+		obj_topleft = fife.ExactModelCoordinate(bbox.x, bbox.y)
+		obj_topright = fife.ExactModelCoordinate(bbox.x + bbox.w, bbox.y)
+		obj_bottomright = fife.ExactModelCoordinate(bbox.x + bbox.w, bbox.y + bbox.h)
+		obj_bottomleft = fife.ExactModelCoordinate(bbox.x, bbox.y + bbox.h)
+		
+		loc_topleft = fife.Location()
+		loc_topleft.setLayer(self.map.getLayer('boundingbox'))
+		loc_topleft.setExactLayerCoordinates(obj_topleft)
+		
+		loc_topright = fife.Location()
+		loc_topright.setLayer(self.map.getLayer('boundingbox'))
+		loc_topright.setExactLayerCoordinates(obj_topright)
+		
+		loc_bottomright = fife.Location()
+		loc_bottomright.setLayer(self.map.getLayer('boundingbox'))
+		loc_bottomright.setExactLayerCoordinates(obj_bottomright)
+		
+		loc_bottomleft = fife.Location()
+		loc_bottomleft.setLayer(self.map.getLayer('boundingbox'))
+		loc_bottomleft.setExactLayerCoordinates(obj_bottomleft)
+		
+		node_topleft = fife.GenericRendererNode(loc_topleft)
+		node_topright = fife.GenericRendererNode(loc_topright)
+		node_bottomright = fife.GenericRendererNode(loc_bottomright)
+		node_bottomleft = fife.GenericRendererNode(loc_bottomleft)
+
+
+		self._genericrenderer.addLine("quads", node_topleft, node_topright, 255, 255, 255)
+		self._genericrenderer.addLine("quads", node_topright, node_bottomright, 255, 255, 255)
+		self._genericrenderer.addLine("quads", node_bottomright, node_bottomleft, 255, 255, 255)
+		self._genericrenderer.addLine("quads", node_bottomleft, node_topleft, 255, 255, 255)
+		
+		#had to do this or it would segfault
+		obj_topleft.thisown = 0
+		obj_topright.thisown = 0
+		obj_bottomright.thisown = 0
+		obj_bottomleft.thisown = 0
+		loc_topleft.thisown = 0
+		loc_topright.thisown = 0
+		loc_bottomright.thisown = 0
+		loc_bottomleft.thisown = 0				
+		node_topleft.thisown = 0
+		node_topright.thisown = 0
+		node_bottomright.thisown = 0
+		node_bottomleft.thisown = 0
 
 	def gameOver(self):
 		self._gameover.show()
@@ -199,6 +263,10 @@ class World(EventListenerBase):
 		"""
 		Called every frame.
 		"""
+	
+		if self._genericrenderer:
+			self._genericrenderer.removeAll("quads")
+
 		
 		if not self.scene:
 			return
