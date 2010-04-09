@@ -38,6 +38,7 @@ class Player(Ship):
 		self.weapon = Cannon(self._scene, self, 200)
 		
 		self._lives = 3
+		self._invulnerable = False
 	
 	def init(self):
 		self._lives = 3
@@ -49,15 +50,23 @@ class Player(Ship):
 		self._score += sc
 		
 	def destroy(self):
-		self._lives -= 1
+		if not self._flashing:
+			self._lives -= 1
 		
-		if self._lives < 0:
-			self._lives = -1
+			if self._lives < 0:
+				self._lives = -1
 
-	
+	def setInvulnerable(self, seconds):
+		self.flash(20, 20*seconds)
+		self._invulnerable = True
+
 	def update(self):
 	
 		key = False
+		
+		#player is no longer invulnerable
+		if not self._flashing and self._invulnerable:
+			self._invulnerable = False
 
 		oldpos = self.location
 		
@@ -116,6 +125,10 @@ class Player(Ship):
 
 	def _getLives(self):
 		return self._lives
+		
+	def _getInvulnerable(self):
+		return self._invulnerable
 
 	score = property(_getScore)
 	lives = property(_getLives)
+	invulnerable = property(_getInvulnerable)

@@ -69,26 +69,47 @@ class Scene(object):
 		self._gameover = False
 
 	def initScene(self, mapobj):
+		#initialize our scene array to some arbitrary size
+		for i in range(0,self._maxnodes):
+			self._nodes.append(SceneNode())
+
 		self._player = Player(self, 'player')
 		self._player.width = 0.075
 		self._player.height = 0.075
 		self._player.init()
 		self._player.start()
-				
-		enemies = self._layer.getInstances('enemy')
+
+		enemies = list()
 		
-		#initialize our scene array to some arbitrary size
-		for i in range(0,self._maxnodes):
-			self._nodes.append(SceneNode())
-		
+		temp = self._layer.getInstances('dodge1')
+		enemies.extend(temp)
+
+		temp = self._layer.getInstances('dodge2')
+		enemies.extend(temp)
+
+		temp = self._layer.getInstances("diag_top_right")
+		enemies.extend(temp)
+
+		temp = self._layer.getInstances("diag_bottom_right")
+		enemies.extend(temp)
+
+		temp = self._layer.getInstances("streaker")
+		enemies.extend(temp)
+
 		for instance in enemies:
-			objectName = instance.getObject().getId()
+			objectName = instance.getId()
 			print objectName
 			
-			if objectName == "saucer1":
+			if objectName == "dodge1":
 				enemy = Saucer1(self, 'enemy', False)
-			elif objectName == "saucer2":
+			elif objectName == "dodge2":
 				enemy = Saucer2(self, 'enemy', False)
+			elif objectName == "diag_top_right":
+				enemy = DiagSaucer(self, 'enemy', 0, False)
+			elif objectName == "diag_bottom_right":
+				enemy = DiagSaucer(self, 'enemy', 1, False)
+			elif objectName == "streaker":
+				enemy = Streaker(self, 'enemy', False)
 			else:
 				enemy = Ship(self, 'enemy', False)
 				
@@ -111,26 +132,16 @@ class Scene(object):
 		self._timemod += time - self._pausedtime
 		self._paused = False
 		
-	def playerDied(self):
+	def playerHit(self):
 		self._player.destroy()
 		if self._player.lives <= -1:
 			self._gameover = True
 			self._world.gameOver()
 			self.removeAllProjectiles()
 			return
-		
-		#TODO: Have to find a better way to do this.  If the player
-		#dies too many times right at the start of the level he will
-		#get pushed past the edge of the map to the left.
-		#IDEA: count down to ready player to start again
-		oldpos = self._player.location
-		pos = oldpos.getExactLayerCoordinates()
-		pos.x -= 5
-		oldpos.setExactLayerCoordinates(pos)
-		self._player.location = oldpos
-		self._camera.setLocation(self._player.location)
-		
-		self.removeAllProjectiles()
+
+		self._player.setInvulnerable(2)
+
 		
 	def removeAllProjectiles(self):
 		projtodelete = list()
@@ -140,9 +151,6 @@ class Scene(object):
 			
 		for p in projtodelete:
 			self._projectiles.remove(p)		
-		
-	def gameOver(self):
-		self._world.gameOver()
 
 	def getObjectsInNode(self, nodeindex):
 		return self._nodes[nodeindex].instances
@@ -230,8 +238,9 @@ class Scene(object):
 				if obj.boundingbox.intersects(self._player.boundingbox):
 					#player touched an enemy.  Destroy player and 
 					#re-initialize scene
-					self.playerDied()
-					return
+					if not self._player.invulnerable:
+						self.playerHit()
+					
 		
 		
 		#update the list of projectiles
@@ -252,9 +261,10 @@ class Scene(object):
 							self.removeObjectFromScene(o)
 						else:
 							#player got hit by a projectile
-							p.destroy()
-							self.playerDied()
-							return
+							if not self._player.invulnerable:
+								p.destroy()
+								self.playerHit()
+							
 			
 			#build a list of projectiles to remove (ttl expired)
 			if not p.running:
