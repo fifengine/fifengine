@@ -32,7 +32,7 @@ class Saucer1(Ship):
 		super(Saucer1, self).__init__(scene, name, findInstance)
 		self._dir = 0
 		self._time = 500
-		self.width = 0.075
+		self.width = 0.2
 		self.height = 0.075
 		self.velocity.x = -0.5
 		
@@ -91,7 +91,7 @@ class DiagSaucer(Ship):
 	def __init__(self, scene, name, direction, findInstance=True):
 		super(DiagSaucer, self).__init__(scene, name, findInstance)
 		self.width = 0.2
-		self.height = 0.2
+		self.height = 0.075
 		
 		if direction == 0:
 			self._ythrust = 0.25
@@ -108,6 +108,9 @@ class DiagSaucer(Ship):
 class Streaker(Ship):
 	def __init__(self, scene, name, findInstance=True):
 		super(Streaker, self).__init__(scene, name, findInstance)
+		
+		self.width = 0.2
+		self.height = 0.2		
 		
 		self._maxvelocity = 2.0
 		

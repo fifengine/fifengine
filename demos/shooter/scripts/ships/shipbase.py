@@ -62,6 +62,9 @@ class Ship(SpaceObject):
 		self._flashrate = rate * 2
 		self._flashnumber = number * 2
 	
+	def destroy(self):
+		self._scene.removeObjectFromScene(self)
+		super(Ship, self).destroy()
 	
 	def update(self):
 		if self._flashing:

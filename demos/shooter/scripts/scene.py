@@ -74,8 +74,6 @@ class Scene(object):
 			self._nodes.append(SceneNode())
 
 		self._player = Player(self, 'player')
-		self._player.width = 0.075
-		self._player.height = 0.075
 		self._player.init()
 		self._player.start()
 
@@ -137,7 +135,7 @@ class Scene(object):
 		if self._player.lives <= -1:
 			self._gameover = True
 			self._world.gameOver()
-			self.removeAllProjectiles()
+			#self.removeAllProjectiles()
 			return
 
 		self._player.setInvulnerable(2)
@@ -240,6 +238,9 @@ class Scene(object):
 					#re-initialize scene
 					if not self._player.invulnerable:
 						self.playerHit()
+						obj.destroy()
+						
+#			self._world.renderBoundingBox(obj)
 					
 		
 		
@@ -258,12 +259,14 @@ class Scene(object):
 							o.destroy()
 							#TODO:  the destroy functions should spawn an explosion
 							#and also destroy the instance and remove itself from the scene
-							self.removeObjectFromScene(o)
+							#self.removeObjectFromScene(o)
 						else:
 							#player got hit by a projectile
 							if not self._player.invulnerable:
 								p.destroy()
 								self.playerHit()
+			
+#			self._world.renderBoundingBox(p)
 							
 			
 			#build a list of projectiles to remove (ttl expired)

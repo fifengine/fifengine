@@ -34,6 +34,9 @@ class Player(Ship):
 		self._score = 0
 		self._maxvelocity = 1.5
 		
+		self.width = 0.22
+		self.height = 0.12		
+		
 		#give player the default weapon (the cannon)
 		self.weapon = Cannon(self._scene, self, 200)
 		
@@ -105,21 +108,26 @@ class Player(Ship):
 		camrect.w -= 2*self._boundingBox.w
 		camrect.h -= 2*self._boundingBox.h
 		
+		pos = oldpos.getExactLayerCoordinates()
+		
 		if not self._boundingBox.intersects(camrect):
 			if (self._boundingBox.x + self._boundingBox.w) < camrect.x:
-				#pos.x = (bbox.x + bbox.w/2 + 0.1) / xscale
-				#oldpos.setExactLayerCoordinates(pos)
-				self._velocity.x = (self._scene.timedelta * 0.01) / self._xscale
+				self._velocity.x = 0
+				pos.x += (camrect.x - (self._boundingBox.x + self._boundingBox.w))/self._xscale + 0.03
+				pos.y += self._velocity.y * (self._scene.timedelta/1000.0)/self._yscale
+				oldpos.setExactLayerCoordinates(pos)
 			
 #			elif (bbox.y + bbox.h) < camrect.y or (bbox.y - bbox.h) > camrect.y:
 #				pos.x += self._velocity.x * (timedelta/1000.0)
 #				oldpos.setExactLayerCoordinates(pos)
 #				self._velocity.y = 0
+			elif (self._boundingBox.y + self._boundingBox.h) < camrect.y or self._boundingBox.y > (camrect.y + camrect.h):
+				pos.x += self._velocity.x * (self._scene.timedelta/1000.0)/self._xscale
+				self._velocity.y = 0
+				oldpos.setExactLayerCoordinates(pos)
 			else:
 				self._velocity.x = 0
 				self._velocity.y = 0
-
-
 
 			self.location = oldpos
 

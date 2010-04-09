@@ -57,8 +57,8 @@ class SpaceObject(object):
 			exactloc.x += self._velocity.x * (self._scene.timedelta/1000.0)/self._xscale
 			exactloc.y += self._velocity.y * (self._scene.timedelta/1000.0)/self._yscale
 		
-			self._boundingBox.x = (exactloc.x - self._boundingBox.w/2) * self._xscale
-			self._boundingBox.y = (exactloc.y - self._boundingBox.h/2) * self._yscale
+			self._boundingBox.x = (exactloc.x * self._xscale - self._boundingBox.w/2)
+			self._boundingBox.y = (exactloc.y * self._yscale - self._boundingBox.h/2)
 				
 			shiploc.setExactLayerCoordinates(exactloc)
 			
