@@ -86,3 +86,34 @@ class Saucer2(Ship):
 		self._time += self._scene.timedelta
 		
 		super(Saucer2, self).update()
+		
+class DiagSaucer(Ship):
+	def __init__(self, scene, name, direction, findInstance=True):
+		super(DiagSaucer, self).__init__(scene, name, findInstance)
+		self.width = 0.2
+		self.height = 0.2
+		
+		if direction == 0:
+			self._ythrust = 0.25
+		else:
+			self._ythrust = -0.25
+		
+		self.weapon = Cannon(self._scene, self, 2000)
+		self.weapon.projectilevelocity = 0.4
+				
+	def update(self):	
+		self.applyThrust(fife.DoublePoint(-0.25,self._ythrust))
+		super(DiagSaucer, self).update()
+		
+class Streaker(Ship):
+	def __init__(self, scene, name, findInstance=True):
+		super(Streaker, self).__init__(scene, name, findInstance)
+		
+		self._maxvelocity = 2.0
+		
+		self.weapon = Cannon(self._scene, self, 2000)
+		self.weapon.projectilevelocity = 1.0
+				
+	def update(self):	
+		self.applyThrust(fife.DoublePoint(-0.40,0))
+		super(Streaker, self).update()
