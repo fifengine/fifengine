@@ -138,7 +138,7 @@ class Scene(object):
 			#self.removeAllProjectiles()
 			return
 
-		self._player.setInvulnerable(2)
+		#self._player.setInvulnerable(2)
 
 		
 	def removeAllProjectiles(self):

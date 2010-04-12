@@ -1,0 +1,9 @@
+<animation delay="200" namespace="http://www.fifengine.de/xml/tutorial" id="ship1:explode" x_offset="0" y_offset="0">
+	<frame source="ship1_0.png" />
+	<frame source="ship1_1.png" />
+	<frame source="ship1_2.png" />
+	<frame source="ship1_3.png" />
+	<frame source="ship1_4.png" />
+	<frame source="ship1_5.png" />
+</animation>
+

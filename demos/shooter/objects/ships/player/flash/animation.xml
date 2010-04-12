@@ -1,0 +1,5 @@
+<animation delay="50" namespace="http://www.fifengine.de/xml/tutorial" id="ship1:flash" x_offset="0" y_offset="0">
+	<frame source="ship1_0.png" />
+	<frame source="ship1_1.png" />
+</animation>
+

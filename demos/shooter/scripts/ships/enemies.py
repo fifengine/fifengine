@@ -22,10 +22,17 @@
 # ####################################################################
 
 from fife import fife
-from scripts.ships.shipbase import Ship
+from scripts.ships.shipbase import *
 from scripts.common.helpers import Rect
 from scripts.weapons import *
 
+
+class EnemyActionListener(ShipActionListener):
+	def __init__(self, ship):
+		super(PlayerActionListener, self).__init__(ship)
+
+	def onInstanceActionFinished(self, instance, action):
+		pass
 
 class Saucer1(Ship):
 	def __init__(self, scene, name, findInstance=True):
