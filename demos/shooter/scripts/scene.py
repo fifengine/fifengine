@@ -240,7 +240,7 @@ class Scene(object):
 						self.playerHit()
 						obj.destroy()
 						
-#			self._world.renderBoundingBox(obj)
+			self._world.renderBoundingBox(obj)
 					
 		
 		
@@ -253,20 +253,20 @@ class Scene(object):
 				#cant get hit by your own bullet
 				if p.owner != o:
 					if p.boundingbox.intersects(o.boundingbox):
-						if o != self._player:
+						if o != self._player and p.owner.isplayer:
 							self._player.applyScore(100)
 							p.destroy()
 							o.destroy()
 							#TODO:  the destroy functions should spawn an explosion
 							#and also destroy the instance and remove itself from the scene
 							#self.removeObjectFromScene(o)
-						else:
+						elif o == self._player:
 							#player got hit by a projectile
 							if not self._player.invulnerable:
 								p.destroy()
 								self.playerHit()
 			
-#			self._world.renderBoundingBox(p)
+			self._world.renderBoundingBox(p)
 							
 			
 			#build a list of projectiles to remove (ttl expired)

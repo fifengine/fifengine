@@ -40,6 +40,8 @@ class Ship(SpaceObject):
 		
 		#1 = on, 0 = invisible (off)
 		self._flashstate = 1
+		
+		self._isplayer = False
 	
 	def _setWeapon(self, weapon):
 		self._weapon = weapon
@@ -85,6 +87,10 @@ class Ship(SpaceObject):
 					self._flashnumber -= 1
 	
 		super(Ship, self).update()
+		
+	def _isPlayer(self):
+		return self._isplayer
 	
+	isplayer = property(_isPlayer)
 	weapon = property(_getWeapon, _setWeapon)
 	
