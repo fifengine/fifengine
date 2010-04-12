@@ -1,0 +1,9 @@
+<animation delay="100" namespace="http://www.fifengine.de/xml/tutorial" id="saucer2:explode" x_offset="0" y_offset="0">
+	<frame source="saucer2_0.png" />
+	<frame source="saucer2_1.png" />
+	<frame source="saucer2_2.png" />
+	<frame source="saucer2_3.png" />
+	<frame source="saucer2_4.png" />
+	<frame source="saucer2_5.png" />
+</animation>
+
