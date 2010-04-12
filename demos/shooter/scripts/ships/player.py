@@ -42,6 +42,8 @@ class Player(Ship):
 		
 		self._lives = 3
 		self._invulnerable = False
+		
+		self._isplayer = True
 	
 	def init(self):
 		self._lives = 3
