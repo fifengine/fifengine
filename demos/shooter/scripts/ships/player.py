@@ -22,11 +22,26 @@
 # ####################################################################
 
 from fife import fife
-from scripts.ships.shipbase import Ship
+from scripts.ships.shipbase import *
 from scripts.common.helpers import Rect
 from scripts.weapons import *
 
 
+class PlayerActionListener(ShipActionListener):
+	def __init__(self, ship):
+		super(PlayerActionListener, self).__init__(ship)
+
+	def onInstanceActionFinished(self, instance, action):
+		if action.getId() == 'explode':
+			self._ship.respawn()
+		if action.getId() == 'flash':
+			if self._ship._flashnumber > 0:
+				self._ship.instance.act('flash', self._ship.instance.getFacingLocation())
+				self._ship._flashnumber -= 1	
+			else:	
+				self._ship._flashing = False
+		
+		
 class Player(Ship):
 	def __init__(self, scene, playerName):
 		super(Player, self).__init__(scene, playerName)
@@ -44,53 +59,74 @@ class Player(Ship):
 		self._invulnerable = False
 		
 		self._isplayer = True
-	
+		self._dead = False
+		
+		self._actionlistener = PlayerActionListener(self)
+		
 	def init(self):
 		self._lives = 3
 	
 	def _getScore(self):
 		return self._score
 		
+	def respawn(self):
+		if self._lives >= 0:
+			self._dead = False
+			self.setInvulnerable(20)
+
+			campos = self._scene.camera.getLocation().getExactLayerCoordinates()
+			location = self.location
+			playerpos = location.getExactLayerCoordinates()
+			
+			playerpos.x = campos.x - 6.5
+			playerpos.y = campos.y
+			location.setExactLayerCoordinates(playerpos)
+			self.location = location
+		
+		else:
+			self._instance.get2dGfxVisual().setVisible(False)
+		
+	def setInvulnerable(self, seconds):
+		self._invulnerable = True
+		self.flash(seconds)
+		
 	def applyScore(self, sc):
 		self._score += sc
 		
 	def destroy(self):
-		if not self._flashing:
-			self._lives -= 1
-		
-			if self._lives < 0:
-				self._lives = -1
-
-	def setInvulnerable(self, seconds):
-		self.flash(20, 20*seconds)
-		self._invulnerable = True
+		if not self._invulnerable and not self._dead:
+			self._instance.act('explode', self._instance.getFacingLocation())
+			self._dead = True
+			self._invulnerable = True
+			self._lives -= 1		
 
 	def update(self):
 	
 		key = False
 		
 		#player is no longer invulnerable
-		if not self._flashing and self._invulnerable:
+		if not self._flashing and self._invulnerable and not self._dead:
 			self._invulnerable = False
 
 		oldpos = self.location
 		
-		if self._scene.keystate['UP']:
-			self.applyThrust(fife.DoublePoint(0,-1.5))
-			key = True
-		if self._scene.keystate['DOWN']:
-			self.applyThrust(fife.DoublePoint(0,1.5))
-			key = True
-		if self._scene.keystate['LEFT']:
-			self.applyThrust(fife.DoublePoint(-1.5,0))
-			key = True
-		if self._scene.keystate['RIGHT']:
-			self.applyThrust(fife.DoublePoint(1.5,0))
-			key = True
+		if not self._dead:
+			if self._scene.keystate['UP']:
+				self.applyThrust(fife.DoublePoint(0,-1.5))
+				key = True
+			if self._scene.keystate['DOWN']:
+				self.applyThrust(fife.DoublePoint(0,1.5))
+				key = True
+			if self._scene.keystate['LEFT']:
+				self.applyThrust(fife.DoublePoint(-1.5,0))
+				key = True
+			if self._scene.keystate['RIGHT']:
+				self.applyThrust(fife.DoublePoint(1.5,0))
+				key = True
 		
-		#fire the currently selected gun
-		if self._scene.keystate['SPACE']:
-			self.fire(fife.DoublePoint(1,0))
+			#fire the currently selected gun
+			if self._scene.keystate['SPACE']:
+				self.fire(fife.DoublePoint(1,0))
 			
 		if not key and self._velocity.length() > 0:
 			self.applyBrake(1.5)
@@ -139,6 +175,9 @@ class Player(Ship):
 	def _getInvulnerable(self):
 		return self._invulnerable
 
+	def _setInvulnerable(self, inv):
+		self._invulnerable = inv
+
 	score = property(_getScore)
 	lives = property(_getLives)
-	invulnerable = property(_getInvulnerable)
+	invulnerable = property(_getInvulnerable, _setInvulnerable)

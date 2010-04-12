@@ -299,7 +299,10 @@ class World(EventListenerBase):
 			score = unicode(str(player.score))
 			self._hudwindow.setScoreText(score)
 			
-			lives = unicode(str(player.lives))
+			ilives = player.lives
+			if ilives < 0:
+				ilives = 0
+			lives = unicode(str(ilives))
 			self._hudwindow.setLivesText(lives)
 			
 		else:
