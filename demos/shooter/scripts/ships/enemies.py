@@ -29,14 +29,16 @@ from scripts.weapons import *
 
 class EnemyActionListener(ShipActionListener):
 	def __init__(self, ship):
-		super(PlayerActionListener, self).__init__(ship)
+		super(EnemyActionListener, self).__init__(ship)
 
 	def onInstanceActionFinished(self, instance, action):
-		pass
+		if action.getId() == 'explode':
+			self._ship.removeFromScene()
 
 class Saucer1(Ship):
-	def __init__(self, scene, name, findInstance=True):
+	def __init__(self, scene, name, instance, findInstance=True):
 		super(Saucer1, self).__init__(scene, name, findInstance)
+		self._instance = instance
 		self._dir = 0
 		self._time = 500
 		self.width = 0.2
@@ -45,6 +47,8 @@ class Saucer1(Ship):
 		
 		self.weapon = Cannon(self._scene, self, 1000)
 		self.weapon.projectilevelocity = 0.4
+		
+		self._actionlistener = EnemyActionListener(self)
 				
 	def update(self):	
 		if self._dir == 1:
@@ -65,8 +69,9 @@ class Saucer1(Ship):
 		super(Saucer1, self).update()
 		
 class Saucer2(Ship):
-	def __init__(self, scene, name, findInstance=True):
+	def __init__(self, scene, name, instance, findInstance=True):
 		super(Saucer2, self).__init__(scene, name, findInstance)
+		self._instance = instance
 		self._dir = 0
 		self._time = 1000
 		self.width = 0.2
@@ -75,6 +80,8 @@ class Saucer2(Ship):
 		
 		self.weapon = Cannon(self._scene, self, 2000)
 		self.weapon.projectilevelocity = 0.4
+		
+		self._actionlistener = EnemyActionListener(self)
 				
 	def update(self):	
 		if self._dir == 1:
@@ -95,8 +102,9 @@ class Saucer2(Ship):
 		super(Saucer2, self).update()
 		
 class DiagSaucer(Ship):
-	def __init__(self, scene, name, direction, findInstance=True):
+	def __init__(self, scene, name, direction, instance, findInstance=True):
 		super(DiagSaucer, self).__init__(scene, name, findInstance)
+		self._instance = instance
 		self.width = 0.2
 		self.height = 0.075
 		
@@ -107,15 +115,17 @@ class DiagSaucer(Ship):
 		
 		self.weapon = Cannon(self._scene, self, 2000)
 		self.weapon.projectilevelocity = 0.4
+		
+		self._actionlistener = EnemyActionListener(self)
 				
 	def update(self):	
 		self.applyThrust(fife.DoublePoint(-0.25,self._ythrust))
 		super(DiagSaucer, self).update()
 		
 class Streaker(Ship):
-	def __init__(self, scene, name, findInstance=True):
+	def __init__(self, scene, name, instance, findInstance=True):
 		super(Streaker, self).__init__(scene, name, findInstance)
-		
+		self._instance = instance
 		self.width = 0.2
 		self.height = 0.2		
 		
@@ -123,6 +133,8 @@ class Streaker(Ship):
 		
 		self.weapon = Cannon(self._scene, self, 2000)
 		self.weapon.projectilevelocity = 1.0
+		
+		self._actionlistener = EnemyActionListener(self)
 				
 	def update(self):	
 		self.applyThrust(fife.DoublePoint(-0.40,0))

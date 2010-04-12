@@ -74,7 +74,6 @@ class SpaceObject(object):
 		
 	def destroy(self):
 		self._running = False
-		self._layer.deleteInstance(self._instance)
 		
 	def applyThrust(self, vector):
 		self._velocity.x += (vector.x * (self._scene.timedelta/1000.0))/self._xscale
@@ -110,6 +109,10 @@ class SpaceObject(object):
 		
 		self._velocity.x += (norm.x * (self._scene.timedelta/1000.0))/self._xscale
 		self._velocity.y += (norm.y * (self._scene.timedelta/1000.0))/self._yscale
+		
+	def removeFromScene(self):
+		self._scene.removeObjectFromScene(self)
+		self._layer.deleteInstance(self._instance)
 
 	def _isRunning(self):
 		return self._running

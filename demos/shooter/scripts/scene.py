@@ -99,19 +99,18 @@ class Scene(object):
 			print objectName
 			
 			if objectName == "dodge1":
-				enemy = Saucer1(self, 'enemy', False)
+				enemy = Saucer1(self, 'enemy', instance, False)
 			elif objectName == "dodge2":
-				enemy = Saucer2(self, 'enemy', False)
+				enemy = Saucer2(self, 'enemy', instance, False)
 			elif objectName == "diag_top_right":
-				enemy = DiagSaucer(self, 'enemy', 0, False)
+				enemy = DiagSaucer(self, 'enemy', 0, instance, False)
 			elif objectName == "diag_bottom_right":
-				enemy = DiagSaucer(self, 'enemy', 1, False)
+				enemy = DiagSaucer(self, 'enemy', 1, instance, False)
 			elif objectName == "streaker":
-				enemy = Streaker(self, 'enemy', False)
+				enemy = Streaker(self, 'enemy', instance, False)
 			else:
-				enemy = Ship(self, 'enemy', False)
+				enemy = Ship(self, 'enemy', instance, False)
 				
-			enemy.instance = instance
 			enemy.start()
 
 			loc = instance.getLocation().getExactLayerCoordinates()
@@ -231,16 +230,17 @@ class Scene(object):
 
 			if obj != self._player:
 				#TODO: enemy should fire weapon in their update function
-				obj.fire(fife.DoublePoint(-1,0))
+				if obj.running:
+					obj.fire(fife.DoublePoint(-1,0))
 			
-				if obj.boundingbox.intersects(self._player.boundingbox):
+				if obj.running and obj.boundingbox.intersects(self._player.boundingbox):
 					#player touched an enemy.  Destroy player and 
 					#re-initialize scene
 					if not self._player.invulnerable:
 						self.playerHit()
 						obj.destroy()
 						
-			self._world.renderBoundingBox(obj)
+#			self._world.renderBoundingBox(obj)
 					
 		
 		
@@ -252,7 +252,7 @@ class Scene(object):
 			for o in screenlist:
 				#cant get hit by your own bullet
 				if p.owner != o:
-					if p.boundingbox.intersects(o.boundingbox):
+					if o.running and p.boundingbox.intersects(o.boundingbox):
 						if o != self._player and p.owner.isplayer:
 							self._player.applyScore(100)
 							p.destroy()
@@ -266,7 +266,7 @@ class Scene(object):
 								p.destroy()
 								self.playerHit()
 			
-			self._world.renderBoundingBox(p)
+#			self._world.renderBoundingBox(p)
 							
 			
 			#build a list of projectiles to remove (ttl expired)

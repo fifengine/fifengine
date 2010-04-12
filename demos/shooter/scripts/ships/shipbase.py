@@ -67,8 +67,9 @@ class Ship(SpaceObject):
 		return None
 		
 	def destroy(self):
-		self._scene.removeObjectFromScene(self)
-		super(Ship, self).destroy()
+		if self._running:
+			self._instance.act('explode', self._instance.getFacingLocation())
+			super(Ship, self).destroy()
 	
 	def _isPlayer(self):
 		return self._isplayer
