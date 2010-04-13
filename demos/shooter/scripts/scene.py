@@ -275,7 +275,8 @@ class Scene(object):
 
 		#remove any expired projectiles 
 		for p in projtodelete:
-			self._projectiles.remove(p)
+			if p in self._projectiles:
+				self._projectiles.remove(p)
 
 				
 	def _getPlayer(self):

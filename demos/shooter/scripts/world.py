@@ -190,10 +190,12 @@ class World(EventListenerBase):
 		self._gameover.show()
 		
 		if self._highscores.isHighScore(self.scene.player.score):
-			self._highscores.addHighScore(HighScore("player", self.scene.player.score))
+			dlg = pychan.loadXML('gui/highscoredialog.xml')
+			dlg.execute({ 'okay' : "Yay!" })
+			name = dlg.findChild(name='name').text
+			self._highscores.addHighScore(HighScore(name, self.scene.player.score))
 			self._highscores.show()
 			
-
 
 	def newGame(self):
 		self.loadLevel("maps/shooter_map1.xml")
