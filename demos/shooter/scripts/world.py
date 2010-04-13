@@ -74,6 +74,9 @@ class World(EventListenerBase):
 		self._gameover = GameOverDisplay()
 		self._gameover.hide()
 		
+		self._highscores = HighScores(self)
+		self._highscores.hide()
+		
 		self._genericrenderer = None
 		
 	def showMainMenu(self):
@@ -89,7 +92,7 @@ class World(EventListenerBase):
 		pass
 		
 	def showHighScores(self):
-		pass
+		self._highscores.show()
 		
 	def quit(self):
 		self.reset()
@@ -185,6 +188,12 @@ class World(EventListenerBase):
 
 	def gameOver(self):
 		self._gameover.show()
+		
+		if self._highscores.isHighScore(self.scene.player.score):
+			self._highscores.addHighScore(HighScore("player", self.scene.player.score))
+			self._highscores.show()
+			
+
 
 	def newGame(self):
 		self.loadLevel("maps/shooter_map1.xml")
