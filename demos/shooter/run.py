@@ -49,7 +49,7 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			fife.Key.ESCAPE,])
 
 		self.quit = False
-
+		
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
@@ -68,6 +68,7 @@ class Shooter(ApplicationBase):
 	def __init__(self):
 		super(Shooter,self).__init__()
 		pychan.init(self.engine, debug=False)
+		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
 		self.world = world.World(self, self.engine)
 		self.listener = ApplicationListener(self.engine, self.world)

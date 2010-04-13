@@ -162,6 +162,7 @@ class HighScores(object):
 		for highscore in self._scores:
 			if score._score > highscore._score:
 				element = i
+				print element
 				break
 			i += 1
 				
@@ -331,7 +332,10 @@ class HighScores(object):
 		self.endElement('Button')
 	
 		self.endElement('VBox')
-		self.endElement('Container')		
+		self.endElement('Container')	
+		
+		self._xmlout.endDocument()
+		self._file.close()
 		
 	def show(self):
 		self._widget.show()
