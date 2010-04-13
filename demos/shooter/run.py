@@ -73,7 +73,10 @@ class Shooter(ApplicationBase):
 		self.listener = ApplicationListener(self.engine, self.world)
 
 	def requestQuit(self):
-		self.breakRequested = True
+		cmd = fife.Command()
+		cmd.setSource(None)
+		cmd.setCommandType(fife.CMD_QUIT_GAME)
+		self.engine.getEventManager().dispatchCommand(cmd)
 		
 	def loadSettings(self):
 		"""
@@ -84,7 +87,7 @@ class Shooter(ApplicationBase):
 		engineSetting = self.engine.getSettings()
 		engineSetting.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\"")
 		engineSetting.setDefaultFontPath("fonts/FreeSans.ttf")
-		engineSetting.setDefaultFontSize(12)
+		engineSetting.setDefaultFontSize(16)
 		engineSetting.setBitsPerPixel(16)
 		engineSetting.setScreenWidth(1024)
 		engineSetting.setScreenHeight(768)

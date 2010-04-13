@@ -437,7 +437,7 @@
 	</layer>
 	<layer y_scale="0.25" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="objects" rotation="0.0" x_scale="0.25" x_offset="0.0" transparency="0">
 		<instances>
-			<i o="ship1" z="0.0" x="7.0" r="0" y="0.0" id="player"></i>
+			<i o="ship1" z="1.0" x="7.0" r="0" y="0.0" id="player"></i>
 			<i r="0" id="dodge1" x="20.0" o="saucer1" z="0.0" y="-2.0"></i>
 			<i r="0" id="dodge1" x="20.0" o="saucer1" z="0.0" y="1.0"></i>
 			<i r="0" id="dodge1" x="20.0" o="saucer1" z="0.0" y="4.0"></i>
