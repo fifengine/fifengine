@@ -1,0 +1,12 @@
+<?fife type="object"?>
+<object id="boss1" namespace="http://www.fifengine.de/xml/tutorial" blocking="0" static="0">
+	<action id="fly">
+		<animation source="fly/animation.xml" direction="0" />
+	</action>
+	<action id="explode">
+		<animation source="explode/animation.xml" direction="0" />
+	</action>
+	<action id="flash">
+		<animation source="flash/animation.xml" direction="0" />
+	</action>
+</object>

@@ -274,10 +274,6 @@ class Scene(object):
 				self.moveObjectInScene(obj)
 
 			if obj != self._player:
-				#TODO: enemy should fire weapon in their update function
-				if obj.running:
-					obj.fire(fife.DoublePoint(-1,0))
-			
 				if obj.running and obj.boundingbox.intersects(self._player.boundingbox):
 					#player touched an enemy.  Destroy player and 
 					#re-initialize scene

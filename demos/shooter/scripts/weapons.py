@@ -124,5 +124,23 @@ class Cannon(Weapon):
 			pjctl.run(velocity, self._ship.location)
 			self._lastfired = self._scene.time
 			self._scene.addProjectileToScene(pjctl)
-			
+
+class FireBall(Weapon):
+	def __init__(self, scene, ship, firerate):
+		super(FireBall, self).__init__(scene, ship, firerate)
+		
+		#cannon's projectile velocity
+		self._projectileVelocity = 0.50
+
+		
+	def fire(self, direction):
+		velocity = normalize(direction)
+		velocity.x = velocity.x * self._projectileVelocity
+		velocity.y = velocity.y * self._projectileVelocity
+	
+		if (self._scene.time - self._lastfired) > self._firerate:
+			pjctl = Projectile(self._scene, self._ship, "fireball", 6000 )
+			pjctl.run(velocity, self._ship.location)
+			self._lastfired = self._scene.time
+			self._scene.addProjectileToScene(pjctl)	
 
