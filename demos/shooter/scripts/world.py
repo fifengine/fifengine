@@ -77,9 +77,12 @@ class World(EventListenerBase):
 		self._highscores = HighScores(self)
 		self._highscores.hide()
 		
+		self._winner = WinnerDisplay()
+		self._winner.hide()
+		
 		self._genericrenderer = None
 		
-		self._sceneended = False
+		self._gamecomplete = False
 		
 	def showMainMenu(self):
 		if self.scene:
@@ -101,7 +104,6 @@ class World(EventListenerBase):
 		self._applictaion.requestQuit()
 		
 	def reset(self):
-		#TODO: ensure these get destroyed correctly
 		if self.map:
 			self.model.deleteMap(self.map)
 		self.map = None
@@ -112,12 +114,15 @@ class World(EventListenerBase):
 			self.scene.destroyScene()
 			self.scene = None
 			
-		self._sceneended = False
+		self._gamecomplete = False
 
 	def loadLevel(self, filename):
 		"""
 		Load a xml map and setup cameras.
 		"""
+		
+		self.resetKeys()
+		
 		self.filename = filename
 		self.reset()
 		self.map = loadMapFile(self.filename, self.engine)
@@ -129,6 +134,7 @@ class World(EventListenerBase):
 
 		self._hudwindow.show()
 		self._gameover.hide()
+		self._winner.hide()
 		
 		self._starttime = self.timemanager.getTime()
 		
@@ -195,21 +201,20 @@ class World(EventListenerBase):
 
 	def gameOver(self):
 		self._gameover.show()
+		self._hudwindow.hide()
 		
-		if self._highscores.isHighScore(self.scene.player.score):
-			dlg = pychan.loadXML('gui/highscoredialog.xml')
-			dlg.execute({ 'okay' : "Yay!" })
-			name = dlg.findChild(name='name').text
-			
-			self._highscores.addHighScore(HighScore(name, self.scene.player.score))
-			self._highscores.show()
+		self.saveScore()
 	
 	def endLevel(self):
 		self._paused = True
-		self._sceneended = True
+		
+		#only one level so the game is over once you complete it.
+		self._gamecomplete = True
+		self._winner.show()
+		self._hudwindow.hide()
 
-	def showHighScoreDialog(self):
-		self._sceneended = False
+	def saveScore(self):
+		self._gamecomplete = False
 	
 		if self._highscores.isHighScore(self.scene.player.score):
 			score = self.scene.player.score
@@ -243,6 +248,14 @@ class World(EventListenerBase):
 				
 		self.scene.attachCamera(self.cameras['main'])
 		
+	def resetKeys(self):
+		self.keystate['UP'] = False
+		self.keystate['DOWN'] = False
+		self.keystate['LEFT'] = False
+		self.keystate['RIGHT'] = False
+		self.keystate['SPACE'] = False
+		self.keystate['CTRL'] = False
+
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
@@ -300,8 +313,8 @@ class World(EventListenerBase):
 		Called every frame.
 		"""
 	
-		if self._sceneended:
-			self.showHighScoreDialog()
+		if self._gamecomplete:
+			self.saveScore()
 			self.reset()
 	
 		if self._genericrenderer:
