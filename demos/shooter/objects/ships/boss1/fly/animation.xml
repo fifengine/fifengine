@@ -1,0 +1,3 @@
+<animation delay="2000" namespace="http://www.fifengine.de/xml/tutorial" id="boss1:fly" x_offset="0" y_offset="0">
+	<frame source="boss.png" />
+</animation>

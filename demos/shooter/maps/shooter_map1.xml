@@ -4,7 +4,9 @@
 	<import file="../objects/ships/player/object.xml"></import>
 	<import file="../objects/ships/saucer1/object.xml"></import>
 	<import file="../objects/ships/saucer2/object.xml"></import>
+	<import file="../objects/ships/boss1/object.xml"></import>
 	<import file="../objects/projectiles/bullet1/object.xml"></import>
+	<import file="../objects/projectiles/fireball/object.xml"></import>
 	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="background" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
 		<instances>
 			<i o="starfield" ns="http://www.fifengine.de/xml/tutorial" x="-2.0" r="0" y="-1.0" z="0.0"></i>
@@ -564,7 +566,7 @@
 			<i r="0" id="streaker" x="147.0" o="saucer2" z="0.0" y="4.0"></i>
 			<i r="0" id="streaker" x="147.0" o="saucer2" z="0.0" y="-5.0"></i>
 			
-			<i r="0" id="boss" x="147.0" o="saucer1" z="0.0" y="0.0"></i>
+			<i r="0" id="boss" x="147.0" o="boss1" z="0.0" y="0.0"></i>
 
 		</instances>
 	</layer>

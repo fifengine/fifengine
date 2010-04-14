@@ -1,0 +1,9 @@
+<animation delay="200" namespace="http://www.fifengine.de/xml/tutorial" id="boss1:explode" x_offset="0" y_offset="0">
+	<frame source="boss_0.png" />
+	<frame source="boss_1.png" />
+	<frame source="boss_2.png" />
+	<frame source="boss_3.png" />
+	<frame source="boss_4.png" />
+	<frame source="boss_5.png" />
+</animation>
+

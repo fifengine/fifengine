@@ -1,0 +1,5 @@
+<animation delay="25" namespace="http://www.fifengine.de/xml/tutorial" id="boss1:flash" x_offset="0" y_offset="0">
+	<frame source="boss_0.png" />
+	<frame source="boss_1.png" />
+</animation>
+
