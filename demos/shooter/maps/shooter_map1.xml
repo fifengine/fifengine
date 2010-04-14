@@ -563,6 +563,8 @@
 			<i r="0" id="dodge2" x="147.0" o="saucer2" z="0.0" y="1.0"></i>
 			<i r="0" id="streaker" x="147.0" o="saucer2" z="0.0" y="4.0"></i>
 			<i r="0" id="streaker" x="147.0" o="saucer2" z="0.0" y="-5.0"></i>
+			
+			<i r="0" id="boss" x="147.0" o="saucer1" z="0.0" y="0.0"></i>
 
 		</instances>
 	</layer>
