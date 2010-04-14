@@ -48,6 +48,9 @@ class Ship(SpaceObject):
 		self._flashing = False
 		
 		self._isplayer = False
+		
+		self._hitpoints = 0
+		self._scorevalue = 0
 	
 	def _setWeapon(self, weapon):
 		self._weapon = weapon
@@ -66,6 +69,11 @@ class Ship(SpaceObject):
 		
 		return None
 		
+	def applyHit(self, hp):
+		self._hitpoints -= hp
+		if self._hitpoints <= 0:
+			self.destroy()
+		
 	def destroy(self):
 		if self._running:
 			self._instance.act('explode', self._instance.getFacingLocation())
@@ -74,6 +82,20 @@ class Ship(SpaceObject):
 	def _isPlayer(self):
 		return self._isplayer
 	
+	
+	def _getHitPoints(self):
+		return self._hitpoints
+		
+	def _setHitPoints(self, hp):
+		self._hitpoints = hp
+		
+	def _getScoreValue(self):
+		return self._scorevalue
+	
+	def _setScoreValue(self, value):
+		self._scorevalue = value
+	
 	isplayer = property(_isPlayer)
 	weapon = property(_getWeapon, _setWeapon)
-	
+	hitpoints = property(_getHitPoints, _setHitPoints)
+	scorevalue = property(_getScoreValue, _setScoreValue)

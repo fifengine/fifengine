@@ -39,6 +39,8 @@ class Projectile(SpaceObject):
 		
 		self.width = 0.025
 		self.height = 0.025
+		
+		self._damage = 1
 	
 	def create(self, location):
 		self._instance = self._layer.createInstance(self._obj, location.getExactLayerCoordinates(), "bullet")
@@ -72,9 +74,16 @@ class Projectile(SpaceObject):
 			super(Projectile, self).update()
 		else:
 			self.destroy()
+			
+	def _getDamage(self):
+		return self._damage
+		
+	def _setDamage(self, dam):
+		self._damage = dam
 		
 	ttl = property(_getTTL)
 	owner = property(_getOwner)
+	damage = property(_getDamage, _setDamage)
 	
 class Weapon(object):
 	def __init__(self, scene, ship, firerate):

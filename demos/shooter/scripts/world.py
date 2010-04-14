@@ -79,6 +79,8 @@ class World(EventListenerBase):
 		
 		self._genericrenderer = None
 		
+		self._sceneended = False
+		
 	def showMainMenu(self):
 		if self.scene:
 			self._paused = True
@@ -105,7 +107,12 @@ class World(EventListenerBase):
 		self.map = None
 		
 		self.cameras = {}
-		self.scene = None
+		
+		if self.scene:
+			self.scene.destroyScene()
+			self.scene = None
+			
+		self._sceneended = False
 
 	def loadLevel(self, filename):
 		"""
@@ -193,9 +200,28 @@ class World(EventListenerBase):
 			dlg = pychan.loadXML('gui/highscoredialog.xml')
 			dlg.execute({ 'okay' : "Yay!" })
 			name = dlg.findChild(name='name').text
+			
 			self._highscores.addHighScore(HighScore(name, self.scene.player.score))
 			self._highscores.show()
+	
+	def endLevel(self):
+		#there is only one level so do the high score display
+		self._paused = True
+
+		if self._highscores.isHighScore(self.scene.player.score):
+			score = self.scene.player.score
+			#self.reset()
 			
+			dlg = pychan.loadXML('gui/highscoredialog.xml')
+			dlg.execute({ 'okay' : "Yay!" })
+			name = dlg.findChild(name='name').text
+			
+			#self._highscores.addHighScore(HighScore(name, score))
+			#self._highscores.show()
+			
+		self._sceneended = True
+
+
 
 	def newGame(self):
 		self.loadLevel("maps/shooter_map1.xml")
@@ -275,6 +301,10 @@ class World(EventListenerBase):
 		Called every frame.
 		"""
 	
+		if self._sceneended:
+			self.reset()
+			self.showMainMenu()	
+	
 		if self._genericrenderer:
 			self._genericrenderer.removeAll("quads")
 
@@ -319,5 +349,6 @@ class World(EventListenerBase):
 		else:
 			if not self.scene.paused:
 				self.scene.pause(self.timemanager.getTime() - self._starttime)
+		
 		
 		self.pump_ctr += 1

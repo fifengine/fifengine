@@ -67,11 +67,36 @@ class Scene(object):
 		self._timemod = 0
 		
 		self._gameover = False
+		
+		self._boss = None
+
+	def destroyScene(self):
+		nodestodelete = list()
+		objtodelete = list()
+	
+		for node in self._nodes:
+			nodestodelete.append(node)
+			for obj in node.spaceobjects:
+				objtodelete.append(node)
+			
+			for obj in objtodelete:
+				if obj in node.spaceobjects:
+					node.spaceobjects.remove(obj)
+				
+			objtodelete = list()
+					
+		for node in nodestodelete:
+			if node in self._nodes:
+				self._nodes.remove(node)
+			
+		self.removeAllProjectiles()
 
 	def initScene(self, mapobj):
 		#initialize our scene array to some arbitrary size
 		for i in range(0,self._maxnodes):
 			self._nodes.append(SceneNode())
+
+		self._boss = None
 
 		self._player = Player(self, 'player')
 		self._player.init()
@@ -94,6 +119,9 @@ class Scene(object):
 		temp = self._layer.getInstances("streaker")
 		enemies.extend(temp)
 
+		temp = self._layer.getInstances("boss")
+		enemies.extend(temp)
+
 		for instance in enemies:
 			objectName = instance.getId()
 			print objectName
@@ -108,6 +136,9 @@ class Scene(object):
 				enemy = DiagSaucer(self, 'enemy', 1, instance, False)
 			elif objectName == "streaker":
 				enemy = Streaker(self, 'enemy', instance, False)
+			elif objectName == "boss":
+				enemy = Boss(self, 'enemy', instance, False)
+				self._boss = enemy
 			else:
 				enemy = Ship(self, 'enemy', instance, False)
 				
@@ -120,6 +151,8 @@ class Scene(object):
 			
 		#and finally add the player to the scene
 		self.addObjectToScene(self._player)
+		
+		self.startCamera()
 		
 	def pause(self, time):
 		self._pausedtime = time
@@ -138,7 +171,9 @@ class Scene(object):
 			return
 
 		#self._player.setInvulnerable(2)
-
+		
+	def endLevel(self):
+		self._world.endLevel()
 		
 	def removeAllProjectiles(self):
 		projtodelete = list()
@@ -147,7 +182,8 @@ class Scene(object):
 			projtodelete.append(p)
 			
 		for p in projtodelete:
-			self._projectiles.remove(p)		
+			if p in self._projectiles:
+				self._projectiles.remove(p)		
 
 	def getObjectsInNode(self, nodeindex):
 		return self._nodes[nodeindex].instances
@@ -189,7 +225,13 @@ class Scene(object):
 	def attachCamera(self, cam):
 		self._camera = cam
 		self._camera.setLocation(self._player.location)
+	
+	def stopCamera(self):
+		self._cameraspeed = 0
 		
+	def startCamera(self):
+		self._cameraspeed = 0.001
+	
 	def update(self, time, keystate):
 		timedelta = (time - self._timemod) - self._time
 		self._timedelta = timedelta
@@ -201,13 +243,13 @@ class Scene(object):
 		loc = self._camera.getLocation()
 		exactloc = self._camera.getLocation().getExactLayerCoordinates()
 		#slowly move to the right
-		exactloc.x += timedelta * 0.001
+		exactloc.x += timedelta * self._cameraspeed
 		loc.setExactLayerCoordinates(exactloc)
 		self._camera.setLocation(loc)
 		
 		topleft = self._camera.toMapCoordinates(fife.ScreenPoint(0,0))
 		bottomright = self._camera.toMapCoordinates(fife.ScreenPoint(1024,768))
-
+		
 		#which scene nodes to use to update objects
 		leftnode = int(topleft.x)
 		rightnode = int(bottomright.x) + 1
@@ -218,10 +260,13 @@ class Scene(object):
 		if rightnode > self._maxnodes:
 			rightnode = self._maxnodes
 		screenlist = self.getObjectsInRange(leftnode, rightnode)
-		
 
 		#update objects on the screen
 		for obj in screenlist:
+			if obj == self._boss:
+				if bottomright.x > ((self._boss.location.getExactLayerCoordinates().x * self._xscale) + 0.5):
+					self.stopCamera()
+
 			if not (obj == self._player and self._gameover):
 				obj.update()
 			
@@ -254,12 +299,11 @@ class Scene(object):
 				if p.owner != o:
 					if o.running and p.boundingbox.intersects(o.boundingbox):
 						if o != self._player and p.owner.isplayer:
-							self._player.applyScore(100)
+							o.applyHit(p.damage)
+							#check if enemy ship was destroyed
+							if not o.running:
+								self._player.applyScore(o.scorevalue)
 							p.destroy()
-							o.destroy()
-							#TODO:  the destroy functions should spawn an explosion
-							#and also destroy the instance and remove itself from the scene
-							#self.removeObjectFromScene(o)
 						elif o == self._player:
 							#player got hit by a projectile
 							if not self._player.invulnerable:

@@ -35,6 +35,15 @@ class EnemyActionListener(ShipActionListener):
 		if action.getId() == 'explode':
 			self._ship.removeFromScene()
 
+class BossActionListener(ShipActionListener):
+	def __init__(self, ship):
+		super(BossActionListener, self).__init__(ship)
+
+	def onInstanceActionFinished(self, instance, action):
+		if action.getId() == 'explode':
+			self._ship.removeFromScene()
+			self._ship.endLevel()
+
 class Saucer1(Ship):
 	def __init__(self, scene, name, instance, findInstance=True):
 		super(Saucer1, self).__init__(scene, name, findInstance)
@@ -49,6 +58,9 @@ class Saucer1(Ship):
 		self.weapon.projectilevelocity = 0.4
 		
 		self._actionlistener = EnemyActionListener(self)
+		
+		self.hitpoints = 1
+		self.scorevalue = 50
 				
 	def update(self):	
 		if self._dir == 1:
@@ -82,6 +94,10 @@ class Saucer2(Ship):
 		self.weapon.projectilevelocity = 0.4
 		
 		self._actionlistener = EnemyActionListener(self)
+		
+		self.hitpoints = 2
+		self.scorevalue = 100
+
 				
 	def update(self):	
 		if self._dir == 1:
@@ -117,6 +133,9 @@ class DiagSaucer(Ship):
 		self.weapon.projectilevelocity = 0.4
 		
 		self._actionlistener = EnemyActionListener(self)
+		
+		self.hitpoints = 1
+		self.scorevalue = 50
 				
 	def update(self):	
 		self.applyThrust(fife.DoublePoint(-0.25,self._ythrust))
@@ -135,7 +154,33 @@ class Streaker(Ship):
 		self.weapon.projectilevelocity = 1.0
 		
 		self._actionlistener = EnemyActionListener(self)
-				
+		
+		self.hitpoints = 2
+		self.scorevalue = 150
+		
 	def update(self):	
 		self.applyThrust(fife.DoublePoint(-0.40,0))
 		super(Streaker, self).update()
+		
+class Boss(Ship):
+	def __init__(self, scene, name, instance, findInstance=True):
+		super(Boss, self).__init__(scene, name, findInstance)
+		self._instance = instance
+		self.width = 0.2
+		self.height = 0.2		
+		
+		self._maxvelocity = 2.0
+		
+		self.weapon = Cannon(self._scene, self, 1000)
+		self.weapon.projectilevelocity = 0.5
+		
+		self._actionlistener = BossActionListener(self)
+		
+		self.hitpoints = 20
+		self.scorevalue = 1000
+		
+	def endLevel(self):
+		self._scene.endLevel()
+		
+	def update(self):
+		super(Boss, self).update()
