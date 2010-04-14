@@ -205,23 +205,22 @@ class World(EventListenerBase):
 			self._highscores.show()
 	
 	def endLevel(self):
-		#there is only one level so do the high score display
 		self._paused = True
+		self._sceneended = True
 
+	def showHighScoreDialog(self):
+		self._sceneended = False
+	
 		if self._highscores.isHighScore(self.scene.player.score):
 			score = self.scene.player.score
-			#self.reset()
 			
 			dlg = pychan.loadXML('gui/highscoredialog.xml')
 			dlg.execute({ 'okay' : "Yay!" })
 			name = dlg.findChild(name='name').text
 			
-			#self._highscores.addHighScore(HighScore(name, score))
-			#self._highscores.show()
-			
-		self._sceneended = True
-
-
+			self._highscores.addHighScore(HighScore(name, score))
+			self._highscores.show()
+		
 
 	def newGame(self):
 		self.loadLevel("maps/shooter_map1.xml")
@@ -302,8 +301,8 @@ class World(EventListenerBase):
 		"""
 	
 		if self._sceneended:
+			self.showHighScoreDialog()
 			self.reset()
-			self.showMainMenu()	
 	
 		if self._genericrenderer:
 			self._genericrenderer.removeAll("quads")
