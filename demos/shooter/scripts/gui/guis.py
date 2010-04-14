@@ -76,6 +76,10 @@ class MainMenu(object):
 	def hide(self):
 		self._widget.hide()
 		
+	def isVisible(self):
+		return self._widget.isVisible()
+		
+	
 class HeadsUpDisplay(object):
 	def __init__(self, world):
 		self._world = world
@@ -112,6 +116,16 @@ class HeadsUpDisplay(object):
 class GameOverDisplay(object):
 	def __init__(self):
 		self._widget = pychan.loadXML('gui/gameover.xml')
+		
+	def show(self):
+		self._widget.show()
+		
+	def hide(self):
+		self._widget.hide()
+		
+class WinnerDisplay(object):
+	def __init__(self):
+		self._widget = pychan.loadXML('gui/winner.xml')
 		
 	def show(self):
 		self._widget.show()
@@ -343,3 +357,6 @@ class HighScores(object):
 	def hide(self):
 		self.saveHighScores()
 		self._widget.hide()
+
+	def isVisible(self):
+		return self._widget.isVisible()

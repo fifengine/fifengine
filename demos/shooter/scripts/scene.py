@@ -283,7 +283,8 @@ class Scene(object):
 					#re-initialize scene
 					if not self._player.invulnerable:
 						self.playerHit()
-						obj.destroy()
+						if obj != self._boss:
+							obj.destroy()
 						
 #			self._world.renderBoundingBox(obj)
 					
