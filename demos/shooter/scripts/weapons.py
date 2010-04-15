@@ -58,9 +58,11 @@ class Projectile(SpaceObject):
 			self._starttime = self._scene.time
 		
 	def destroy(self):
-		if self._running and self._instance:
+		if self._instance:
 			self._layer.deleteInstance(self._instance)
-			self._running = False
+			self._instance = None
+		
+		self._running = False
 		
 	def _getTTL(self):
 		return self._ttl
@@ -110,7 +112,6 @@ class Cannon(Weapon):
 	def __init__(self, scene, ship, firerate):
 		super(Cannon, self).__init__(scene, ship, firerate)
 		
-		#cannon's projectile velocity
 		self._projectileVelocity = 0.75
 
 		
@@ -129,7 +130,6 @@ class FireBall(Weapon):
 	def __init__(self, scene, ship, firerate):
 		super(FireBall, self).__init__(scene, ship, firerate)
 		
-		#cannon's projectile velocity
 		self._projectileVelocity = 0.50
 
 		

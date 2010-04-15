@@ -34,6 +34,8 @@ class EnemyActionListener(ShipActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		if action.getId() == 'explode':
 			self._ship.removeFromScene()
+			
+		super(EnemyActionListener, self).onInstanceActionFinished(instance, action)
 
 class BossActionListener(ShipActionListener):
 	def __init__(self, ship):
@@ -43,12 +45,9 @@ class BossActionListener(ShipActionListener):
 		if action.getId() == 'explode':
 			self._ship.removeFromScene()
 			self._ship.endLevel()
-		elif action.getId() == 'flash':
-			if self._ship._flashnumber > 0:
-				self._ship.instance.act('flash', self._ship.instance.getFacingLocation())
-				self._ship._flashnumber -= 1	
-			else:	
-				self._ship._flashing = False
+		
+		super(BossActionListener, self).onInstanceActionFinished(instance, action)
+
 				
 class Saucer1(Ship):
 	def __init__(self, scene, name, instance, findInstance=True):
@@ -107,7 +106,10 @@ class Saucer2(Ship):
 		self.hitpoints = 2
 		self.scorevalue = 100
 
-				
+	def applyHit(self, hp):
+		self.flash(1)
+		super(Saucer2, self).applyHit(hp)
+		
 	def update(self):	
 		if self._dir == 1:
 			self.applyThrust(fife.DoublePoint(0,-0.25))
@@ -171,6 +173,10 @@ class Streaker(Ship):
 		
 		self.hitpoints = 2
 		self.scorevalue = 150
+
+	def applyHit(self, hp):
+		self.flash(1)
+		super(Streaker, self).applyHit(hp)
 		
 	def update(self):	
 		self.applyThrust(fife.DoublePoint(-0.40,0))

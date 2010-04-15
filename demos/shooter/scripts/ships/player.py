@@ -34,12 +34,8 @@ class PlayerActionListener(ShipActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		if action.getId() == 'explode':
 			self._ship.respawn()
-		if action.getId() == 'flash':
-			if self._ship._flashnumber > 0:
-				self._ship.instance.act('flash', self._ship.instance.getFacingLocation())
-				self._ship._flashnumber -= 1	
-			else:	
-				self._ship._flashing = False
+		
+		super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
 		
 		
 class Player(Ship):
@@ -99,6 +95,9 @@ class Player(Ship):
 			self._dead = True
 			self._invulnerable = True
 			self._lives -= 1		
+
+	def fire(self, direction):
+		return self._weapon.fire(direction)
 
 	def update(self):
 	

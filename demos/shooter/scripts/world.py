@@ -80,6 +80,9 @@ class World(EventListenerBase):
 		self._winner = WinnerDisplay()
 		self._winner.hide()
 		
+		self._credits = CreditsDisplay(self)
+		self._credits.hide()
+		
 		self._genericrenderer = None
 		
 		self._gamecomplete = False
@@ -94,7 +97,7 @@ class World(EventListenerBase):
 		self._mainmenu.show(cont)
 		
 	def showCredits(self):
-		pass
+		self._credits.show()
 		
 	def showHighScores(self):
 		self._highscores.show()

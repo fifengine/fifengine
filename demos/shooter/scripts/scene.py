@@ -200,9 +200,9 @@ class Scene(object):
 		#TODO: search to ensure the object isn't already part of the scene
 		loc = obj.instance.getLocation().getExactLayerCoordinates()
 		nodeindex = int(loc.x * self._xscale)
-		
-		self._nodes[nodeindex].spaceobjects.append(obj)
+
 		obj.scenenodeid = nodeindex		
+		self._nodes[nodeindex].spaceobjects.append(obj)
 
 	def addProjectileToScene(self, projectile):
 		self._projectiles.append(projectile)
@@ -212,10 +212,12 @@ class Scene(object):
 		nodeindex = int(loc.x * self._xscale)
 		
 		if nodeindex != obj.scenenodeid:
-			self._nodes[obj.scenenodeid].spaceobjects.remove(obj)
-			self._nodes[nodeindex].spaceobjects.append(obj)
+			if obj in self._nodes[obj.scenenodeid].spaceobjects:
+				self._nodes[obj.scenenodeid].spaceobjects.remove(obj)
+
 			obj.scenenodeid = nodeindex
-	
+			self._nodes[nodeindex].spaceobjects.append(obj)
+
 	def removeObjectFromScene(self, obj):
 		for node in self._nodes:
 			if obj in node.spaceobjects:
@@ -317,6 +319,7 @@ class Scene(object):
 		#remove any expired projectiles 
 		for p in projtodelete:
 			if p in self._projectiles:
+				p.destroy()
 				self._projectiles.remove(p)
 
 				

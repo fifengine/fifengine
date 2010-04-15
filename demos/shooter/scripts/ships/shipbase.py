@@ -36,7 +36,13 @@ class ShipActionListener(fife.InstanceActionListener):
 		self._ship.instance.addActionListener(self)
 
 	def onInstanceActionFinished(self, instance, action):
-		pass
+		if action.getId() == 'flash':
+			if self._ship._flashing and self._ship._flashnumber > 0:
+				self._ship.instance.act('flash', self._ship.instance.getFacingLocation())
+				self._ship._flashnumber -= 1	
+			else:	
+				self._ship._flashing = False
+				self._ship._flashnumber = 0
 
 class Ship(SpaceObject):
 	def __init__(self, scene, name, findInstance=True):
@@ -64,7 +70,7 @@ class Ship(SpaceObject):
 		self._flashing = True	
 	
 	def fire(self, direction):
-		if self._weapon:
+		if self._weapon and self._hitpoints > 0:
 			return self._weapon.fire(direction)
 		
 		return None
