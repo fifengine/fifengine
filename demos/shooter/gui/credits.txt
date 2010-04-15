@@ -1,0 +1,8 @@
+This is the credits file.
+
+Information regarding who worked on this demo along
+with FIFE will go into this file.
+
+Thanks,
+
+The FIFE team!

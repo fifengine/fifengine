@@ -360,3 +360,20 @@ class HighScores(object):
 
 	def isVisible(self):
 		return self._widget.isVisible()
+		
+class CreditsDisplay(object):
+	def __init__(self, world):
+		self._world = world
+		self._widget = pychan.loadXML('gui/credits.xml')
+
+		eventMap = {
+			'close': self.hide,
+		}
+
+		self._widget.mapEvents(eventMap)
+		
+	def show(self):
+		self._widget.show()
+		
+	def hide(self):
+		self._widget.hide()
