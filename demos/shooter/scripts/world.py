@@ -51,16 +51,15 @@ class World(EventListenerBase):
 	def __init__(self, app, engine):
 		super(World, self).__init__(engine, regMouse=True, regKeys=True)
 		self._applictaion = app
-		self.engine = engine
-		self.timemanager = engine.getTimeManager()
-		self.eventmanager = engine.getEventManager()
-		self.model = engine.getModel()
-		self.filename = ''
-		self.keystate = { 'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'CTRL': False, 'SPACE': False, } 
-		self.dynamic_widgets = {}
-		self.pump_ctr = 0
-		self.map = None
-		self.scene = None
+		self._engine = engine
+		self._timemanager = engine.getTimeManager()
+		self._eventmanager = engine.getEventManager()
+		self._model = engine.getModel()
+		self._filename = ''
+		self._keystate = { 'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'CTRL': False, 'SPACE': False, } 
+		self._pump_ctr = 0
+		self._map = None
+		self._scene = None
 		self._paused = True
 		self._pausedtime = 0
 		self._starttime = 0
@@ -88,7 +87,7 @@ class World(EventListenerBase):
 		self._gamecomplete = False
 		
 	def showMainMenu(self):
-		if self.scene:
+		if self._scene:
 			self._paused = True
 			cont = True
 		else:
@@ -107,15 +106,15 @@ class World(EventListenerBase):
 		self._applictaion.requestQuit()
 		
 	def reset(self):
-		if self.map:
-			self.model.deleteMap(self.map)
-		self.map = None
+		if self._map:
+			self._model.deleteMap(self._map)
+		self._map = None
 		
 		self.cameras = {}
 		
-		if self.scene:
-			self.scene.destroyScene()
-			self.scene = None
+		if self._scene:
+			self._scene.destroyScene()
+			self._scene = None
 			
 		self._gamecomplete = False
 
@@ -126,12 +125,12 @@ class World(EventListenerBase):
 		
 		self.resetKeys()
 		
-		self.filename = filename
+		self._filename = filename
 		self.reset()
-		self.map = loadMapFile(self.filename, self.engine)
+		self._map = loadMapFile(self._filename, self._engine)
 
-		self.scene = Scene(self, self.engine, self.map.getLayer('objects'))
-		self.scene.initScene(self.map)
+		self._scene = Scene(self, self._engine, self._map.getLayer('objects'))
+		self._scene.initScene(self._map)
 
 		self.initCameras()
 
@@ -139,11 +138,11 @@ class World(EventListenerBase):
 		self._gameover.hide()
 		self._winner.hide()
 		
-		self._starttime = self.timemanager.getTime()
+		self._starttime = self._timemanager.getTime()
 		
 		self._genericrenderer = fife.GenericRenderer.getInstance(self.cameras['main'])
 		self._genericrenderer.clearActiveLayers()
-		self._genericrenderer.addActiveLayer(self.map.getLayer('objects'))
+		self._genericrenderer.addActiveLayer(self._map.getLayer('objects'))
 		self._genericrenderer.setEnabled(True)
 
 
@@ -162,19 +161,19 @@ class World(EventListenerBase):
 		obj_bottomleft = fife.ExactModelCoordinate(bbox.x, bbox.y + bbox.h)
 		
 		loc_topleft = fife.Location()
-		loc_topleft.setLayer(self.map.getLayer('boundingbox'))
+		loc_topleft.setLayer(self._map.getLayer('boundingbox'))
 		loc_topleft.setExactLayerCoordinates(obj_topleft)
 		
 		loc_topright = fife.Location()
-		loc_topright.setLayer(self.map.getLayer('boundingbox'))
+		loc_topright.setLayer(self._map.getLayer('boundingbox'))
 		loc_topright.setExactLayerCoordinates(obj_topright)
 		
 		loc_bottomright = fife.Location()
-		loc_bottomright.setLayer(self.map.getLayer('boundingbox'))
+		loc_bottomright.setLayer(self._map.getLayer('boundingbox'))
 		loc_bottomright.setExactLayerCoordinates(obj_bottomright)
 		
 		loc_bottomleft = fife.Location()
-		loc_bottomleft.setLayer(self.map.getLayer('boundingbox'))
+		loc_bottomleft.setLayer(self._map.getLayer('boundingbox'))
 		loc_bottomleft.setExactLayerCoordinates(obj_bottomleft)
 		
 		node_topleft = fife.GenericRendererNode(loc_topleft)
@@ -219,8 +218,8 @@ class World(EventListenerBase):
 	def saveScore(self):
 		self._gamecomplete = False
 	
-		if self._highscores.isHighScore(self.scene.player.score):
-			score = self.scene.player.score
+		if self._highscores.isHighScore(self._scene.player.score):
+			score = self._scene.player.score
 			
 			dlg = pychan.loadXML('gui/highscoredialog.xml')
 			dlg.execute({ 'okay' : "Yay!" })
@@ -245,61 +244,61 @@ class World(EventListenerBase):
 		This is done through Camera objects which offer a viewport on the map.
 		"""
 		
-		for cam in self.map.getCameras():
+		for cam in self._map.getCameras():
 			if cam.getId() == 'main':
 				self.cameras['main'] = cam
 				
-		self.scene.attachCamera(self.cameras['main'])
+		self._scene.attachCamera(self.cameras['main'])
 		
 	def resetKeys(self):
-		self.keystate['UP'] = False
-		self.keystate['DOWN'] = False
-		self.keystate['LEFT'] = False
-		self.keystate['RIGHT'] = False
-		self.keystate['SPACE'] = False
-		self.keystate['CTRL'] = False
+		self._keystate['UP'] = False
+		self._keystate['DOWN'] = False
+		self._keystate['LEFT'] = False
+		self._keystate['RIGHT'] = False
+		self._keystate['SPACE'] = False
+		self._keystate['CTRL'] = False
 
 
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		if keyval == fife.Key.UP:
-			self.keystate['UP'] = True
+			self._keystate['UP'] = True
 		elif keyval == fife.Key.DOWN:
-			self.keystate['DOWN'] = True
+			self._keystate['DOWN'] = True
 		elif keyval == fife.Key.LEFT:
-			self.keystate['LEFT'] = True
+			self._keystate['LEFT'] = True
 		elif keyval == fife.Key.RIGHT:
-			self.keystate['RIGHT'] = True
+			self._keystate['RIGHT'] = True
 		elif keyval == fife.Key.SPACE:
-			self.keystate['SPACE'] = True
+			self._keystate['SPACE'] = True
 		elif keyval == fife.Key.P:
 			self._paused = not self._paused
-			self._pausedtime += self.timemanager.getTime()
+			self._pausedtime += self._timemanager.getTime()
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
-			self.keystate['CTRL'] = True
+			self._keystate['CTRL'] = True
 
 	def keyReleased(self, evt):
 		keyval = evt.getKey().getValue()
 		if keyval == fife.Key.UP:
-			self.keystate['UP'] = False
+			self._keystate['UP'] = False
 		elif keyval == fife.Key.DOWN:
-			self.keystate['DOWN'] = False
+			self._keystate['DOWN'] = False
 		elif keyval == fife.Key.LEFT:
-			self.keystate['LEFT'] = False
+			self._keystate['LEFT'] = False
 		elif keyval == fife.Key.RIGHT:
-			self.keystate['RIGHT'] = False
+			self._keystate['RIGHT'] = False
 		elif keyval == fife.Key.SPACE:
-			self.keystate['SPACE'] = False
+			self._keystate['SPACE'] = False
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
-			self.keystate['CTRL'] = False
+			self._keystate['CTRL'] = False
 
 	def mouseWheelMovedUp(self, evt):
-		if self.keystate['CTRL']:
+		if self._keystate['CTRL']:
 			self.cameras['main'].setZoom(self.cameras['main'].getZoom() * 1.05)
 
 	def mouseWheelMovedDown(self, evt):
-		if self.keystate['CTRL']:
+		if self._keystate['CTRL']:
 			self.cameras['main'].setZoom(self.cameras['main'].getZoom() / 1.05)
 
 	def mousePressed(self, evt):
@@ -324,19 +323,19 @@ class World(EventListenerBase):
 			self._genericrenderer.removeAll("quads")
 
 		
-		if not self.scene:
+		if not self._scene:
 			return
 		
 		#update the scene
 		if not self._paused:
-			if self.scene.paused:
-				self.scene.unpause(self.timemanager.getTime() - self._starttime)
+			if self._scene.paused:
+				self._scene.unpause(self._timemanager.getTime() - self._starttime)
 				
-			self.scene.update(self.timemanager.getTime() - self._starttime, self.keystate)
+			self._scene.update(self._timemanager.getTime() - self._starttime, self._keystate)
 		
 		
 			#update the HUD
-			avgframe = self.timemanager.getAverageFrameTime()
+			avgframe = self._timemanager.getAverageFrameTime()
 			if avgframe > 0:
 				fps = 1 / (avgframe / 1000)
 			else:
@@ -344,7 +343,7 @@ class World(EventListenerBase):
 			fpstxt = "%3.2f" % fps
 			self._hudwindow.setFPSText(unicode(fpstxt))
 		
-			player = self.scene.player
+			player = self._scene.player
 			exactcoords = player.location.getExactLayerCoordinates()
 			pos = "%1.2f" % exactcoords.x + ", %1.2f" % exactcoords.y
 			self._hudwindow.setPositionText(unicode(pos))
@@ -362,8 +361,8 @@ class World(EventListenerBase):
 			self._hudwindow.setLivesText(lives)
 			
 		else:
-			if not self.scene.paused:
-				self.scene.pause(self.timemanager.getTime() - self._starttime)
+			if not self._scene.paused:
+				self._scene.pause(self._timemanager.getTime() - self._starttime)
 		
 		
-		self.pump_ctr += 1
+		self._pump_ctr += 1

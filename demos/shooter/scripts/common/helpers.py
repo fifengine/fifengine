@@ -22,6 +22,7 @@
 # ####################################################################
 
 from fife import fife
+import math
 
 
 def normalize(vector):
@@ -100,3 +101,14 @@ class Rect(object):
 	y = property(_getY, _setY)
 	w = property(_getW, _setW)
 	h = property(_getH, _setH)
+	
+def rotatePoint(origin, point, angle):
+	newp = fife.DoublePoint(0,0)
+	
+	theta = (angle * math.pi)/180
+	
+	newp.x = math.cos(theta) * (point.x - origin.x) - math.sin(theta) * (point.y - origin.y)
+	newp.y = math.sin(theta) * (point.x - origin.x) + math.cos(theta) * (point.y - origin.y)
+	
+	return newp
+	

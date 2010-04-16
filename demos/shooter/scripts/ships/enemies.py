@@ -205,7 +205,7 @@ class Boss(Ship):
 		
 		self._actionlistener = BossActionListener(self)
 		
-		self.hitpoints = 20
+		self.hitpoints = 30
 		self.scorevalue = 1000
 		
 	def endLevel(self):
@@ -226,3 +226,10 @@ class Boss(Ship):
 	def applyHit(self, hp):
 		self.flash(2)
 		super(Boss, self).applyHit(hp)
+		
+		if self.hitpoints == 20:
+			self.weapon = FireBallBurst(self._scene, self, 2000, 100, 10)
+			
+		elif self.hitpoints == 10:
+			self.weapon = FireBallSpread(self._scene, self, 2000)
+			
