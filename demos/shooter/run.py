@@ -43,25 +43,25 @@ from fife.extensions.pychan import widgets
 class ApplicationListener(eventlistenerbase.EventListenerBase):
 	def __init__(self, engine, world):
 		super(ApplicationListener, self).__init__(engine,regKeys=True,regCmd=True, regMouse=False, regConsole=True, regWidget=True)
-		self.engine = engine
-		self.world = world
+		self._engine = engine
+		self._world = world
 		engine.getEventManager().setNonConsumableKeys([
 			fife.Key.ESCAPE,])
 
-		self.quit = False
+		self._quit = False
 		
 	def keyPressed(self, evt):
 		keyval = evt.getKey().getValue()
 		keystr = evt.getKey().getAsString().lower()
 		consumed = False
 		if keyval == fife.Key.ESCAPE:
-			#self.quit = True
-			self.world.showMainMenu()
+			#self._quit = True
+			self._world.showMainMenu()
 			evt.consume()
 
 	def onCommand(self, command):
-		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
-		if self.quit:
+		self._quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
+		if self._quit:
 			command.consume()
 
 class Shooter(ApplicationBase):
@@ -70,8 +70,8 @@ class Shooter(ApplicationBase):
 		pychan.init(self.engine, debug=False)
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
-		self.world = world.World(self, self.engine)
-		self.listener = ApplicationListener(self.engine, self.world)
+		self._world = world.World(self, self.engine)
+		self._listener = ApplicationListener(self.engine, self._world)
 
 	def requestQuit(self):
 		cmd = fife.Command()
@@ -111,18 +111,18 @@ class Shooter(ApplicationBase):
 		#LogModules = list()
 		#LogModules.append("controller")
 		LogModules = ["controller",]
-		self.log = fifelog.LogManager(self.engine, 1, 0)
+		self._log = fifelog.LogManager(self.engine, 1, 0)
 		if LogModules:
-			self.log.setVisibleModules(*LogModules)
+			self._log.setVisibleModules(*LogModules)
 
 	def createListener(self):
 		pass # already created in constructor
 
 	def _pump(self):
-		if self.listener.quit:
+		if self._listener._quit:
 			self.breakRequested = True
 		else:
-			self.world.pump()
+			self._world.pump()
 
 def main():
 	app = Shooter()
