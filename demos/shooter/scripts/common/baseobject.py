@@ -42,6 +42,7 @@ class SpaceObject(object):
 			
 		if findInstance:
 			self._instance = self._layer.getInstance(self._name)
+			self._instance.thisown = 0
 		else:
 			self._instnace = None
 		
@@ -112,7 +113,9 @@ class SpaceObject(object):
 		
 	def removeFromScene(self):
 		self._scene.removeObjectFromScene(self)
-		self._layer.deleteInstance(self._instance)
+		if self._instance:
+			self._layer.deleteInstance(self._instance)
+			self._instance = None
 
 	def _isRunning(self):
 		return self._running

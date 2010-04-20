@@ -45,6 +45,7 @@ class Projectile(SpaceObject):
 	def create(self, location):
 		self._instance = self._layer.createInstance(self._obj, location.getExactLayerCoordinates(), "bullet")
 		fife.InstanceVisual.create(self._instance)
+		self._instance.thisown = 0
 
 	def run(self, velocity, location):
 		if not self._running:
