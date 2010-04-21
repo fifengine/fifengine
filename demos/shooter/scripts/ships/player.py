@@ -85,6 +85,7 @@ class Player(Ship):
 		
 		else:
 			self._instance.get2dGfxVisual().setVisible(False)
+			self._scene.gameOver()
 		
 	def setInvulnerable(self, milliseconds):
 		#50 is defined in the players "flash" animation file

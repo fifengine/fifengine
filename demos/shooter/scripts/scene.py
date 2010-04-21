@@ -162,11 +162,12 @@ class Scene(object):
 		self._timemod += time - self._pausedtime
 		self._paused = False
 		
-	def playerHit(self):
-		self._player.applyHit(1)
-		if self._player.lives <= -1:
-			self._gameover = True
-			self._world.gameOver()
+	def playerHit(self, damage):
+		self._player.applyHit(damage)
+		
+	def gameOver(self):
+		self._gameover = True
+		self._world.gameOver()
 		
 	def endLevel(self):
 		self._world.endLevel()
@@ -276,9 +277,9 @@ class Scene(object):
 					#player touched an enemy.  Destroy player and 
 					#re-initialize scene
 					if not self._player.invulnerable:
-						self.playerHit()
-						if obj != self._boss:
-							obj.destroy()
+						#collision damage of 1
+						self.playerHit(1)
+						obj.applyHit(1)
 						
 #			self._world.renderBoundingBox(obj)
 					
@@ -302,8 +303,8 @@ class Scene(object):
 						elif o == self._player:
 							#player got hit by a projectile
 							if not self._player.invulnerable:
+								self.playerHit(p.damage)
 								p.destroy()
-								self.playerHit()
 			
 #			self._world.renderBoundingBox(p)
 							

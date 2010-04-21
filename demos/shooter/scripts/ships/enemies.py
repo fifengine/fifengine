@@ -226,7 +226,9 @@ class Boss(Ship):
 		
 		if self.hitpoints == 20:
 			self.weapon = FireBallBurst(self._scene, self, 2000, 100, 10)
+			self.weapon.lastfired = self._scene.time
 			
 		elif self.hitpoints == 10:
 			self.weapon = FireBallSpread(self._scene, self, 2000)
+			self.weapon.lastfired = self._scene.time
 			
