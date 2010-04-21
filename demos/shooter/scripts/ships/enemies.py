@@ -32,21 +32,18 @@ class EnemyActionListener(ShipActionListener):
 		super(EnemyActionListener, self).__init__(ship)
 
 	def onInstanceActionFinished(self, instance, action):
-		if action.getId() == 'explode':
-			self._ship.removeFromScene()
-			
 		super(EnemyActionListener, self).onInstanceActionFinished(instance, action)
+
 
 class BossActionListener(ShipActionListener):
 	def __init__(self, ship):
 		super(BossActionListener, self).__init__(ship)
 
 	def onInstanceActionFinished(self, instance, action):
-		if action.getId() == 'explode':
-			self._ship.removeFromScene()
-			self._ship.endLevel()
-		
 		super(BossActionListener, self).onInstanceActionFinished(instance, action)
+
+		if action.getId() == 'explode':
+			self._ship.endLevel()
 
 				
 class Saucer1(Ship):

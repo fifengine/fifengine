@@ -23,7 +23,7 @@
 
 from fife import fife
 from scripts.ships.shipbase import *
-from scripts.common.helpers import Rect
+from scripts.common.helpers import *
 from scripts.weapons import *
 
 
@@ -32,10 +32,11 @@ class PlayerActionListener(ShipActionListener):
 		super(PlayerActionListener, self).__init__(ship)
 
 	def onInstanceActionFinished(self, instance, action):
+		super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
+		
 		if action.getId() == 'explode':
 			self._ship.respawn()
-		
-		super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
+
 		
 		
 class Player(Ship):
@@ -44,31 +45,34 @@ class Player(Ship):
 
 		self._score = 0
 		self._maxvelocity = 1.5
+		self._acceleration = 1.0
 		
 		self.width = 0.22
 		self.height = 0.12		
 		
-		#give player the default weapon (the cannon)
-		self.weapon = Cannon(self._scene, self, 200)
-		
-		self._lives = 3
-		self._invulnerable = False
-		
 		self._isplayer = True
-		self._dead = False
 		
 		self._actionlistener = PlayerActionListener(self)
+
+		self._lives = 3		
+		self.init()
 		
 	def init(self):
-		self._lives = 3
+		self._hitpoints = 2
+		self._dead = False
+		self._invulnerable = False
+
+		#give player the default weapon (the cannon)
+		self.weapon = Cannon(self._scene, self, 200)
+
 	
 	def _getScore(self):
 		return self._score
 		
 	def respawn(self):
 		if self._lives >= 0:
-			self._dead = False
-			self.setInvulnerable(20)
+			self.init()
+			self.setInvulnerable(1000)
 
 			campos = self._scene.camera.getLocation().getExactLayerCoordinates()
 			location = self.location
@@ -82,12 +86,23 @@ class Player(Ship):
 		else:
 			self._instance.get2dGfxVisual().setVisible(False)
 		
-	def setInvulnerable(self, seconds):
+	def setInvulnerable(self, milliseconds):
+		#50 is defined in the players "flash" animation file
+		#2 is the number of frames in the animation
+		#TODO: read these values somehow from the animation
+		number = (milliseconds / 50) / 2
+		
 		self._invulnerable = True
-		self.flash(seconds)
+		self.flash(number)
 		
 	def applyScore(self, sc):
 		self._score += sc
+		
+	def applyHit(self, hp):
+		if not self._invulnerable and not self._dead:
+			super(Player, self).applyHit(hp)
+			if not self._dead:
+				self.flash(1)
 		
 	def destroy(self):
 		if not self._invulnerable and not self._dead:
@@ -101,7 +116,8 @@ class Player(Ship):
 
 	def update(self):
 	
-		key = False
+		NSkey = False
+		EWkey = False
 		
 		#player is no longer invulnerable
 		if not self._flashing and self._invulnerable and not self._dead:
@@ -111,24 +127,35 @@ class Player(Ship):
 		
 		if not self._dead:
 			if self._scene.keystate['UP']:
-				self.applyThrust(fife.DoublePoint(0,-1.5))
-				key = True
+				self.applyThrust(fife.DoublePoint(0,-1*self._acceleration))
+				NSkey = True
 			if self._scene.keystate['DOWN']:
-				self.applyThrust(fife.DoublePoint(0,1.5))
-				key = True
+				self.applyThrust(fife.DoublePoint(0,self._acceleration))
+				NSkey = True
 			if self._scene.keystate['LEFT']:
-				self.applyThrust(fife.DoublePoint(-1.5,0))
-				key = True
+				self.applyThrust(fife.DoublePoint(-1*self._acceleration,0))
+				EWkey = True
 			if self._scene.keystate['RIGHT']:
-				self.applyThrust(fife.DoublePoint(1.5,0))
-				key = True
+				self.applyThrust(fife.DoublePoint(self._acceleration,0))
+				EWkey = True
+		
+			if NSkey and not EWkey:
+				if self._velocity.x != 0:
+					vel = self._acceleration * cmp(self._velocity.x, 0) * -1
+					self.applyThrust(fife.DoublePoint(vel, 0))
+			elif EWkey and not NSkey:
+				if self._velocity.y != 0:
+					vel = self._acceleration * cmp(self._velocity.y, 0) * -1
+					self.applyThrust(fife.DoublePoint(0, vel))
+			elif not NSkey and not EWkey:
+				self.applyBrake(self._acceleration)
 		
 			#fire the currently selected gun
 			if self._scene.keystate['SPACE']:
 				self.fire(fife.DoublePoint(1,0))
 			
-		if not key and self._velocity.length() > 0:
-			self.applyBrake(1.5)
+		if self._dead and self._velocity.length() > 0:
+			self.applyBrake(self._acceleration)
 		
 		super(Player, self).update()
 		
