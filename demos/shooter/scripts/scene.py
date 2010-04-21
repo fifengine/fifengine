@@ -163,14 +163,10 @@ class Scene(object):
 		self._paused = False
 		
 	def playerHit(self):
-		self._player.destroy()
+		self._player.applyHit(1)
 		if self._player.lives <= -1:
 			self._gameover = True
 			self._world.gameOver()
-			#self.removeAllProjectiles()
-			return
-
-		#self._player.setInvulnerable(2)
 		
 	def endLevel(self):
 		self._world.endLevel()

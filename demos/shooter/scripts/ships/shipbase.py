@@ -43,6 +43,9 @@ class ShipActionListener(fife.InstanceActionListener):
 			else:	
 				self._ship._flashing = False
 				self._ship._flashnumber = 0
+		
+		if action.getId() == 'explode' and not self._ship.isplayer:
+			self._ship.removeFromScene()
 
 class Ship(SpaceObject):
 	def __init__(self, scene, name, findInstance=True):
@@ -65,9 +68,10 @@ class Ship(SpaceObject):
 		return self._weapon
 	
 	def flash(self, number):
-		self._instance.act('flash', self._instance.getFacingLocation())
-		self._flashnumber = number
-		self._flashing = True	
+		if self._running:
+			self._instance.act('flash', self._instance.getFacingLocation())
+			self._flashnumber = number
+			self._flashing = True	
 	
 	def fire(self, direction):
 		if self._weapon and self._hitpoints > 0:
