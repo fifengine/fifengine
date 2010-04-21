@@ -107,8 +107,14 @@ def rotatePoint(origin, point, angle):
 	
 	theta = (angle * math.pi)/180
 	
-	newp.x = math.cos(theta) * (point.x - origin.x) - math.sin(theta) * (point.y - origin.y)
-	newp.y = math.sin(theta) * (point.x - origin.x) + math.cos(theta) * (point.y - origin.y)
+	costheta = math.cos(theta)
+	sintheta = math.sin(theta)
+	
+	x = point.x - origin.x
+	y = point.y - origin.y
+	
+	newp.x = costheta * x - sintheta * y
+	newp.y = sintheta * x + costheta * y
 	
 	return newp
 	

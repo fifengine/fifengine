@@ -107,7 +107,14 @@ class Weapon(object):
 	def _setProjectileVelocity(self, vel):
 		self._projectileVelocity = vel
 		
+	def _getLastFired(self):
+		return self._lastfired
+		
+	def _setLastFired(self, time):
+		self._lastfired = time
+		
 	projectilevelocity = property(_getProjectileVelocity, _setProjectileVelocity)
+	lastfired = property(_getLastFired, _setLastFired)
 	
 class Cannon(Weapon):
 	def __init__(self, scene, ship, firerate):

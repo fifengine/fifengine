@@ -205,7 +205,7 @@ class World(EventListenerBase):
 		self._gameover.show()
 		self._hudwindow.hide()
 		
-		self.saveScore()
+		self._gamecomplete = True
 	
 	def endLevel(self):
 		self._paused = True
@@ -315,10 +315,6 @@ class World(EventListenerBase):
 		Called every frame.
 		"""
 	
-		if self._gamecomplete:
-			self.saveScore()
-			self.reset()
-	
 		if self._genericrenderer:
 			self._genericrenderer.removeAll("quads")
 
@@ -327,7 +323,7 @@ class World(EventListenerBase):
 			return
 		
 		#update the scene
-		if not self._paused:
+		if not self._paused and not self._gamecomplete:
 			if self._scene.paused:
 				self._scene.unpause(self._timemanager.getTime() - self._starttime)
 				
@@ -363,6 +359,9 @@ class World(EventListenerBase):
 		else:
 			if not self._scene.paused:
 				self._scene.pause(self._timemanager.getTime() - self._starttime)
-		
+
+		if self._gamecomplete:
+			self.saveScore()
+			self.reset()		
 		
 		self._pump_ctr += 1
