@@ -25,6 +25,14 @@ from fife import fife
 from scripts.common.helpers import normalize
 from scripts.common.helpers import Rect
 
+
+SHTR_DEFAULT = 0
+SHTR_PLAYER = 1
+SHTR_LASTBOSS = 2
+SHTR_PROJECTILE = 3
+SHTR_ENEMYSHIP = 4
+
+
 class SpaceObject(object):
 	def __init__(self, scene, name, findInstance=True):
 		self._scene = scene
@@ -39,6 +47,7 @@ class SpaceObject(object):
 		self._running = False
 		self._changedPosition = False
 		self._scenenodeid = -1
+		self._type = SHTR_DEFAULT
 			
 		if findInstance:
 			self._instance = self._layer.getInstance(self._name)
@@ -113,9 +122,6 @@ class SpaceObject(object):
 		
 	def removeFromScene(self):
 		self._scene.queueObjectForRemoval(self)
-#		if self._instance:
-#			self._layer.deleteInstance(self._instance)
-#			self._instance = None
 
 	def _isRunning(self):
 		return self._running
@@ -167,7 +173,14 @@ class SpaceObject(object):
 		
 	def _setNodeId(self, id):
 		self._scenenodeid = id
+		
+	def _getType(self):
+		return self._type
+		
+	def _setType(self, objtype):
+		self._type = objtype
 
+	type = property(_getType, _setType)
 	width = property(_getW, _setW)
 	height = property(_getH, _setH)
 	boundingbox = property(_getBoundingBox)	

@@ -24,7 +24,7 @@
 from math import sqrt
 
 from fife import fife
-from scripts.common.baseobject import SpaceObject
+from scripts.common.baseobject import *
 from scripts.weapons import Weapon
 
 
@@ -44,7 +44,7 @@ class ShipActionListener(fife.InstanceActionListener):
 				self._ship._flashing = False
 				self._ship._flashnumber = 0
 		
-		if action.getId() == 'explode' and not self._ship.isplayer:
+		if action.getId() == 'explode' and not self._ship.type == SHTR_PLAYER:
 			self._ship.removeFromScene()
 
 class Ship(SpaceObject):
@@ -55,8 +55,6 @@ class Ship(SpaceObject):
 
 		self._flashnumber = 0
 		self._flashing = False
-		
-		self._isplayer = False
 		
 		self._hitpoints = 0
 		self._scorevalue = 0
@@ -89,10 +87,6 @@ class Ship(SpaceObject):
 			self._instance.act('explode', self._instance.getFacingLocation())
 			super(Ship, self).destroy()
 	
-	def _isPlayer(self):
-		return self._isplayer
-	
-	
 	def _getHitPoints(self):
 		return self._hitpoints
 		
@@ -105,7 +99,6 @@ class Ship(SpaceObject):
 	def _setScoreValue(self, value):
 		self._scorevalue = value
 	
-	isplayer = property(_isPlayer)
 	weapon = property(_getWeapon, _setWeapon)
 	hitpoints = property(_getHitPoints, _setHitPoints)
 	scorevalue = property(_getScoreValue, _setScoreValue)
