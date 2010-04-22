@@ -22,6 +22,7 @@
 # ####################################################################
 
 from fife import fife
+from scripts.common.baseobject import *
 from scripts.ships.shipbase import *
 from scripts.common.helpers import *
 from scripts.weapons import *
@@ -43,14 +44,14 @@ class Player(Ship):
 	def __init__(self, scene, playerName):
 		super(Player, self).__init__(scene, playerName)
 
+		self._type = SHTR_PLAYER
+
 		self._score = 0
 		self._maxvelocity = 1.5
 		self._acceleration = 1.0
 		
 		self.width = 0.22
 		self.height = 0.12		
-		
-		self._isplayer = True
 		
 		self._actionlistener = PlayerActionListener(self)
 

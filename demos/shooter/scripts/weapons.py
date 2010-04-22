@@ -22,7 +22,7 @@
 # ####################################################################
 
 from fife import fife
-from scripts.ships.shipbase import SpaceObject
+from scripts.common.baseobject import *
 from scripts.common.helpers import normalize, rotatePoint
 
 class Projectile(SpaceObject):
@@ -30,6 +30,8 @@ class Projectile(SpaceObject):
 		super(Projectile, self).__init__(scene, projectileName, False)
 
 		self._obj = self._model.getObject(self._name, "http://www.fifengine.de/xml/tutorial")
+	
+		self._type = SHTR_PROJECTILE
 	
 		self._ttl = timeToLive
 		self._starttime = 0
@@ -57,13 +59,6 @@ class Projectile(SpaceObject):
 			self._running = True
 			
 			self._starttime = self._scene.time
-		
-	def destroy(self):
-		if self._instance:
-			self._layer.deleteInstance(self._instance)
-			self._instance = None
-		
-		self._running = False
 		
 	def _getTTL(self):
 		return self._ttl
@@ -132,7 +127,7 @@ class Cannon(Weapon):
 			pjctl = Projectile(self._scene, self._ship, "bullet1", 3000 )
 			pjctl.run(velocity, self._ship.location)
 			self._lastfired = self._scene.time
-			self._scene.addProjectileToScene(pjctl)
+			self._scene.addObjectToScene(pjctl)
 
 class FireBall(Weapon):
 	def __init__(self, scene, ship, firerate):
@@ -150,7 +145,7 @@ class FireBall(Weapon):
 			pjctl = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl.run(velocity, self._ship.location)
 			self._lastfired = self._scene.time
-			self._scene.addProjectileToScene(pjctl)	
+			self._scene.addObjectToScene(pjctl)	
 			
 class FireBallBurst(Weapon):
 	def __init__(self, scene, ship, firerate, burstrate, burstnumber):
@@ -174,7 +169,7 @@ class FireBallBurst(Weapon):
 			if (self._scene.time - self._lastburstfired) > self._burstrate and self._burstcount > 0:
 				pjctl = Projectile(self._scene, self._ship, "fireball", 6000 )
 				pjctl.run(velocity, self._ship.location)
-				self._scene.addProjectileToScene(pjctl)
+				self._scene.addObjectToScene(pjctl)
 				
 				self._lastburstfired = self._scene.time
 				self._burstcount -= 1
@@ -210,31 +205,31 @@ class FireBallSpread(Weapon):
 			
 			pjctl1 = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl1.run(p1, self._ship.location)
-			self._scene.addProjectileToScene(pjctl1)
+			self._scene.addObjectToScene(pjctl1)
 			
 			pjctl2 = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl2.run(p2, self._ship.location)
-			self._scene.addProjectileToScene(pjctl2)
+			self._scene.addObjectToScene(pjctl2)
 	
 			pjctl3 = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl3.run(p3, self._ship.location)
-			self._scene.addProjectileToScene(pjctl3)
+			self._scene.addObjectToScene(pjctl3)
 			
 			pjctl4 = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl4.run(p4, self._ship.location)
-			self._scene.addProjectileToScene(pjctl4)
+			self._scene.addObjectToScene(pjctl4)
 	
 			pjctl5 = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl5.run(p5, self._ship.location)
-			self._scene.addProjectileToScene(pjctl5)
+			self._scene.addObjectToScene(pjctl5)
 			
 			pjctl6 = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl6.run(p6, self._ship.location)
-			self._scene.addProjectileToScene(pjctl6)
+			self._scene.addObjectToScene(pjctl6)
 			
 			pjctl7 = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl7.run(p7, self._ship.location)
-			self._scene.addProjectileToScene(pjctl7)
+			self._scene.addObjectToScene(pjctl7)
 			
 			self._lastfired = self._scene.time
 

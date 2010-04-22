@@ -22,7 +22,7 @@
 # ####################################################################
 
 from fife import fife
-from scripts.ships.shipbase import Ship
+from scripts.ships.shipbase import *
 from scripts.ships.player import Player
 from scripts.ships.enemies import *
 from scripts.common.helpers import Rect
@@ -68,8 +68,6 @@ class Scene(object):
 		self._timemod = 0
 		
 		self._gameover = False
-		
-		self._boss = None
 
 	def destroyScene(self):
 		nodestodelete = list()
@@ -96,8 +94,6 @@ class Scene(object):
 		#initialize our scene array to some arbitrary size
 		for i in range(0,self._maxnodes):
 			self._nodes.append(SceneNode())
-
-		self._boss = None
 
 		self._player = Player(self, 'player')
 		self._player.init()
@@ -139,7 +135,6 @@ class Scene(object):
 				enemy = Streaker(self, 'enemy', instance, False)
 			elif objectName == "boss":
 				enemy = Boss(self, 'enemy', instance, False)
-				self._boss = enemy
 			else:
 				enemy = Ship(self, 'enemy', instance, False)
 				
@@ -202,30 +197,35 @@ class Scene(object):
 		loc = obj.instance.getLocation().getExactLayerCoordinates()
 		nodeindex = int(loc.x * self._xscale)
 
-		obj.scenenodeid = nodeindex		
-		self._nodes[nodeindex].spaceobjects.append(obj)
-
-	def addProjectileToScene(self, projectile):
-		self._projectiles.append(projectile)
+		if nodeindex >= 0:
+			obj.scenenodeid = nodeindex
+			self._nodes[nodeindex].spaceobjects.append(obj)
+		else:
+			self.queueObjectForRemoval(obj)
 	
 	def moveObjectInScene(self, obj):
 		loc = obj.instance.getLocation().getExactLayerCoordinates()
 		nodeindex = int(loc.x * self._xscale)
 		
-		if nodeindex != obj.scenenodeid:
-			if obj in self._nodes[obj.scenenodeid].spaceobjects:
-				self._nodes[obj.scenenodeid].spaceobjects.remove(obj)
+		if nodeindex >= 0:
+			if nodeindex != obj.scenenodeid:
+				if obj in self._nodes[obj.scenenodeid].spaceobjects:
+					self._nodes[obj.scenenodeid].spaceobjects.remove(obj)
 
-			obj.scenenodeid = nodeindex
-			self._nodes[nodeindex].spaceobjects.append(obj)
+				self._nodes[nodeindex].spaceobjects.append(obj)
+			
+				obj.scenenodeid = nodeindex
+		else:
+			self.queueObjectForRemoval(obj)
 
 	def removeObjectFromScene(self, obj):
 		for node in self._nodes:
 			if obj in node.spaceobjects:
+				if obj.instance:
+					self._layer.deleteInstance(obj.instance)
+					obj.instance = None
 				node.spaceobjects.remove(obj)
-				self._layer.deleteInstance(obj.instance)
-				obj.instance = None
-				return
+				break
 	
 	def attachCamera(self, cam):
 		self._camera = cam
@@ -243,6 +243,13 @@ class Scene(object):
 		self._time = time - self._timemod
 		
 		self._keystate = keystate
+		
+		
+		#some garbage cleanup
+		for obj in self._objectstodelete:
+			self.removeObjectFromScene(obj)
+					
+		self._objectstodelete = list()
 		
 		#update camera location
 		loc = self._camera.getLocation()
@@ -268,17 +275,17 @@ class Scene(object):
 
 		#update objects on the screen
 		for obj in screenlist:
-			if obj == self._boss:
-				if bottomright.x > ((self._boss.location.getExactLayerCoordinates().x * self._xscale) + 0.5):
+			if obj.type == SHTR_LASTBOSS:
+				if bottomright.x > ((obj.location.getExactLayerCoordinates().x * self._xscale) + 0.5):
 					self.stopCamera()
 
-			if not (obj == self._player and self._gameover):
+			if not (obj.type == SHTR_PLAYER and self._gameover):
 				obj.update()
 			
 			if obj.changedposition:
 				self.moveObjectInScene(obj)
 
-			if obj != self._player:
+			if obj.type != SHTR_PLAYER and obj.type != SHTR_PROJECTILE:
 				if obj.running and obj.boundingbox.intersects(self._player.boundingbox):
 					#player touched an enemy.  Destroy player and 
 					#re-initialize scene
@@ -286,51 +293,34 @@ class Scene(object):
 						#collision damage of 1
 						self.playerHit(1)
 						obj.applyHit(1)
-						
-#			self._world.renderBoundingBox(obj)
-					
-		
-		
-		#update the list of projectiles
-		projtodelete = list()
-		for p in self._projectiles:
-			p.update()
-			#check to see if the projectile hit any object on the screen
-			for o in screenlist:
-				#cant get hit by your own bullet
-				if p.owner != o:
-					if o.running and p.boundingbox.intersects(o.boundingbox):
-						if o != self._player and p.owner.isplayer:
-							o.applyHit(p.damage)
-							#check if enemy ship was destroyed
-							if not o.running:
-								self._player.applyScore(o.scorevalue)
-							p.destroy()
-						elif o == self._player:
-							#player got hit by a projectile
-							if not self._player.invulnerable:
-								self.playerHit(p.damage)
-								p.destroy()
-			
-#			self._world.renderBoundingBox(p)
-							
-			
-			#build a list of projectiles to remove (ttl expired)
-			if not p.running:
-				projtodelete.append(p)
 
-		#remove any expired projectiles 
-		for p in projtodelete:
-			if p in self._projectiles:
-				p.destroy()
-				self._projectiles.remove(p)
-		
-		for obj in self._objectstodelete:
-			self.removeObjectFromScene(obj)
-			self._layer.deleteInstance(obj.instance)
-			obj.instance = None
+			elif obj.type == SHTR_PROJECTILE:
+				#could probably just get the nodes in the projectiles scenenode.
+				#use a range to be sure.
+				pcollide = self.getObjectsInRange(obj.scenenodeid - 1, obj.scenenodeid + 1)
+				
+				for o in pcollide:
+					#cant get hit by your own bullet
+					if obj.owner != o and o.type != SHTR_PROJECTILE:
+						if o.running and obj.boundingbox.intersects(o.boundingbox):
+							if o != self._player and obj.owner.type == SHTR_PLAYER:
+								o.applyHit(obj.damage)
+								#check if enemy ship was destroyed
+								if not o.running:
+									self._player.applyScore(o.scorevalue)
+								obj.destroy()
+							elif o == self._player:
+								#player got hit by a projectile
+								if not self._player.invulnerable:
+									self.playerHit(obj.damage)
+									obj.destroy()
 			
-		self._objectstodelete = list()
+				#queue list of projectiles to remove (ttl expired or has been destroyed)
+				if not obj.running:
+					self.queueObjectForRemoval(obj)
+
+#			self._world.renderBoundingBox(obj)			
+
 
 				
 	def _getPlayer(self):
