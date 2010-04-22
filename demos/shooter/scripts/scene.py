@@ -51,7 +51,6 @@ class Scene(object):
 		self._nodes = list()
 		
 		self._player = None
-		self._projectiles = list()
 		self._objectstodelete = list()
 		
 		self._maxnodes = 128
@@ -80,6 +79,9 @@ class Scene(object):
 			
 			for obj in objtodelete:
 				if obj in node.spaceobjects:
+					if obj.instance:
+						self._layer.deleteInstance(obj.instance)
+						obj.instance = None
 					node.spaceobjects.remove(obj)
 				
 			objtodelete = list()
@@ -88,8 +90,6 @@ class Scene(object):
 			if node in self._nodes:
 				self._nodes.remove(node)
 			
-		self.removeAllProjectiles()
-
 	def initScene(self, mapobj):
 		#initialize our scene array to some arbitrary size
 		for i in range(0,self._maxnodes):
@@ -170,16 +170,6 @@ class Scene(object):
 		
 	def queueObjectForRemoval(self, obj):
 		self._objectstodelete.append(obj)
-		
-	def removeAllProjectiles(self):
-		projtodelete = list()
-		for p in self._projectiles:
-			p.destroy()
-			projtodelete.append(p)
-			
-		for p in projtodelete:
-			if p in self._projectiles:
-				self._projectiles.remove(p)		
 
 	def getObjectsInNode(self, nodeindex):
 		return self._nodes[nodeindex].instances
@@ -199,7 +189,8 @@ class Scene(object):
 
 		if nodeindex >= 0:
 			obj.scenenodeid = nodeindex
-			self._nodes[nodeindex].spaceobjects.append(obj)
+			if not obj in self._nodes[nodeindex].spaceobjects:
+				self._nodes[nodeindex].spaceobjects.append(obj)
 		else:
 			self.queueObjectForRemoval(obj)
 	
@@ -236,6 +227,12 @@ class Scene(object):
 		
 	def startCamera(self):
 		self._cameraspeed = 0.001
+		
+	def collectGarbage(self):
+		for obj in self._objectstodelete:
+			self.removeObjectFromScene(obj)
+		
+		self._objectstodelete = list()
 	
 	def update(self, time, keystate):
 		timedelta = (time - self._timemod) - self._time
@@ -246,10 +243,7 @@ class Scene(object):
 		
 		
 		#some garbage cleanup
-		for obj in self._objectstodelete:
-			self.removeObjectFromScene(obj)
-					
-		self._objectstodelete = list()
+		self.collectGarbage()
 		
 		#update camera location
 		loc = self._camera.getLocation()
@@ -295,6 +289,12 @@ class Scene(object):
 						obj.applyHit(1)
 
 			elif obj.type == SHTR_PROJECTILE:
+			
+				#projectile went off the right edge of the screen.  Remove it from the scene.
+				if obj.scenenodeid >= rightnode:
+					self.queueObjectForRemoval(obj)
+					continue
+					
 				#could probably just get the nodes in the projectiles scenenode.
 				#use a range to be sure.
 				pcollide = self.getObjectsInRange(obj.scenenodeid - 1, obj.scenenodeid + 1)
