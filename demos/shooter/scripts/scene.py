@@ -52,6 +52,7 @@ class Scene(object):
 		
 		self._player = None
 		self._projectiles = list()
+		self._objectstodelete = list()
 		
 		self._maxnodes = 128
 		self._xscale = 0
@@ -172,6 +173,9 @@ class Scene(object):
 	def endLevel(self):
 		self._world.endLevel()
 		
+	def queueObjectForRemoval(self, obj):
+		self._objectstodelete.append(obj)
+		
 	def removeAllProjectiles(self):
 		projtodelete = list()
 		for p in self._projectiles:
@@ -219,6 +223,8 @@ class Scene(object):
 		for node in self._nodes:
 			if obj in node.spaceobjects:
 				node.spaceobjects.remove(obj)
+				self._layer.deleteInstance(obj.instance)
+				obj.instance = None
 				return
 	
 	def attachCamera(self, cam):
@@ -318,6 +324,13 @@ class Scene(object):
 			if p in self._projectiles:
 				p.destroy()
 				self._projectiles.remove(p)
+		
+		for obj in self._objectstodelete:
+			self.removeObjectFromScene(obj)
+			self._layer.deleteInstance(obj.instance)
+			obj.instance = None
+			
+		self._objectstodelete = list()
 
 				
 	def _getPlayer(self):

@@ -112,10 +112,10 @@ class SpaceObject(object):
 		self._velocity.y += (norm.y * (self._scene.timedelta/1000.0))/self._yscale
 		
 	def removeFromScene(self):
-		self._scene.removeObjectFromScene(self)
-		if self._instance:
-			self._layer.deleteInstance(self._instance)
-			self._instance = None
+		self._scene.queueObjectForRemoval(self)
+#		if self._instance:
+#			self._layer.deleteInstance(self._instance)
+#			self._instance = None
 
 	def _isRunning(self):
 		return self._running
