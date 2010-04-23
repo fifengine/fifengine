@@ -7,6 +7,8 @@
 	<import file="../objects/ships/boss1/object.xml"></import>
 	<import file="../objects/projectiles/bullet1/object.xml"></import>
 	<import file="../objects/projectiles/fireball/object.xml"></import>
+	<import file="../objects/powerups/cannonspread5/object.xml"></import>
+	<import file="../objects/powerups/extralife/object.xml"></import>
 	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="background" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
 		<instances>
 			<i o="starfield" ns="http://www.fifengine.de/xml/tutorial" x="-2.0" r="0" y="-1.0" z="0.0"></i>
@@ -461,6 +463,8 @@
 			<i r="0" id="streaker" x="37.0" o="saucer2" z="0.0" y="4.0"></i>
 			<i r="0" id="streaker" x="37.0" o="saucer2" z="0.0" y="-5.0"></i>	
 			
+			<i r="0" id="cannonspread5" x="39.0" o="cannonspread5" z="0.0" y="0.0"></i>
+			
 			<i r="0" id="dodge1" x="40.0" o="saucer1" z="0.0" y="-2.0"></i>
 			<i r="0" id="dodge1" x="40.0" o="saucer1" z="0.0" y="1.0"></i>
 			<i r="0" id="dodge1" x="40.0" o="saucer1" z="0.0" y="4.0"></i>
@@ -501,7 +505,9 @@
 			<i r="0" id="dodge2" x="77.0" o="saucer2" z="0.0" y="-2.0"></i>
 			<i r="0" id="dodge2" x="77.0" o="saucer2" z="0.0" y="1.0"></i>
 			<i r="0" id="streaker" x="77.0" o="saucer2" z="0.0" y="4.0"></i>
-			<i r="0" id="streaker" x="77.0" o="saucer2" z="0.0" y="-5.0"></i>				
+			<i r="0" id="streaker" x="77.0" o="saucer2" z="0.0" y="-5.0"></i>		
+			
+			<i r="0" id="extralife" x="79.0" o="extralife" z="0.0" y="0.0"></i>
 
 			<i r="0" id="dodge1" x="80.0" o="saucer1" z="0.0" y="-2.0"></i>
 			<i r="0" id="dodge1" x="80.0" o="saucer1" z="0.0" y="1.0"></i>
@@ -560,6 +566,8 @@
 			<i r="0" id="diag_bottom_right" x="143.0" o="saucer1" z="0.0" y="7.0"></i>
 			<i r="0" id="diag_bottom_right" x="144.0" o="saucer1" z="0.0" y="8.0"></i>
 			<i r="0" id="diag_bottom_right" x="145.0" o="saucer1" z="0.0" y="9.0"></i>
+			
+			<i r="0" id="cannonspread5" x="145.0" o="cannonspread5" z="0.0" y="0.0"></i>
 			
 			<i r="0" id="dodge2" x="147.0" o="saucer2" z="0.0" y="-2.0"></i>
 			<i r="0" id="dodge2" x="147.0" o="saucer2" z="0.0" y="1.0"></i>

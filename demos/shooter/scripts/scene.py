@@ -25,6 +25,7 @@ from fife import fife
 from scripts.ships.shipbase import *
 from scripts.ships.player import Player
 from scripts.ships.enemies import *
+from scripts.powerups import *
 from scripts.common.helpers import Rect
 
 class SceneNode(object):
@@ -100,6 +101,7 @@ class Scene(object):
 		self._player.start()
 
 		enemies = list()
+		powerups = list()
 		
 		temp = self._layer.getInstances('dodge1')
 		enemies.extend(temp)
@@ -118,10 +120,15 @@ class Scene(object):
 
 		temp = self._layer.getInstances("boss")
 		enemies.extend(temp)
+		
+		temp = self._layer.getInstances("cannonspread5")
+		powerups.extend(temp)
+
+		temp = self._layer.getInstances("extralife")
+		powerups.extend(temp)
 
 		for instance in enemies:
 			objectName = instance.getId()
-			print objectName
 			
 			if objectName == "dodge1":
 				enemy = Saucer1(self, 'enemy', instance, False)
@@ -144,6 +151,25 @@ class Scene(object):
 			nodeindex = int(loc.x * self._xscale)
 			enemy.scenenodeid = nodeindex
 			self._nodes[nodeindex].spaceobjects.append(enemy)
+			
+		for instance in powerups:
+			objectName = instance.getId()
+			
+			print objectName
+			
+			if objectName == "cannonspread5":
+				powerup = CannonSpread5PU(self, 'cannonspread5', instance, False)
+			elif objectName == "extralife":
+				powerup = ExtraLifePU(self, 'extralife', instance, False)
+			else:
+				powerup = PowerUp(self, 'powerup', instance, False)
+				
+			powerup.start()
+			
+			loc = instance.getLocation().getExactLayerCoordinates()
+			nodeindex = int(loc.x * self._xscale)
+			powerup.scenenodeid = nodeindex
+			self._nodes[nodeindex].spaceobjects.append(powerup)			
 			
 		#and finally add the player to the scene
 		self.addObjectToScene(self._player)
@@ -281,12 +307,15 @@ class Scene(object):
 
 			if obj.type != SHTR_PLAYER and obj.type != SHTR_PROJECTILE:
 				if obj.running and obj.boundingbox.intersects(self._player.boundingbox):
-					#player touched an enemy.  Destroy player and 
-					#re-initialize scene
-					if not self._player.invulnerable:
-						#collision damage of 1
-						self.playerHit(1)
-						obj.applyHit(1)
+					if obj.type == SHTR_ENEMYSHIP:
+						#player touched an enemy.  Destroy player and 
+						#re-initialize scene
+						if not self._player.invulnerable:
+							#collision damage of 1
+							self.playerHit(1)
+							obj.applyHit(1)
+					elif obj.type == SHTR_POWERUP:
+						obj.applyPowerUp(self._player)
 
 			elif obj.type == SHTR_PROJECTILE:
 			
@@ -301,7 +330,7 @@ class Scene(object):
 				
 				for o in pcollide:
 					#cant get hit by your own bullet
-					if obj.owner != o and o.type != SHTR_PROJECTILE:
+					if obj.owner != o and o.type != SHTR_PROJECTILE and o.type != SHTR_POWERUP:
 						if o.running and obj.boundingbox.intersects(o.boundingbox):
 							if o != self._player and obj.owner.type == SHTR_PLAYER:
 								o.applyHit(obj.damage)

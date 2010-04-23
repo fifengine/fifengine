@@ -31,6 +31,7 @@ SHTR_PLAYER = 1
 SHTR_LASTBOSS = 2
 SHTR_PROJECTILE = 3
 SHTR_ENEMYSHIP = 4
+SHTR_POWERUP = 5
 
 
 class SpaceObject(object):
@@ -143,6 +144,8 @@ class SpaceObject(object):
 	
 	def _setInstance(self, instance):
 		self._instance = instance
+		if self._instance:
+			self._instance.thisown = 0
 	
 	def _getVelocity(self):
 		return self._velocity
