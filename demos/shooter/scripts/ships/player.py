@@ -65,7 +65,6 @@ class Player(Ship):
 
 		#give player the default weapon (the cannon)
 		self.weapon = Cannon(self._scene, self, 200)
-
 	
 	def _getScore(self):
 		return self._score
@@ -92,7 +91,10 @@ class Player(Ship):
 		#50 is defined in the players "flash" animation file
 		#2 is the number of frames in the animation
 		#TODO: read these values somehow from the animation
-		number = (milliseconds / 50) / 2
+		number = int((milliseconds / 50) / 2)
+		
+		if number <= 0:
+			return
 		
 		self._invulnerable = True
 		self.flash(number)
@@ -178,27 +180,35 @@ class Player(Ship):
 		
 		if not self._boundingBox.intersects(camrect):
 			if (self._boundingBox.x + self._boundingBox.w) < camrect.x:
-				self._velocity.x = 0
+				if self._velocity.x < 0:
+					self._velocity.x = 0
 				pos.x += (camrect.x - (self._boundingBox.x + self._boundingBox.w))/self._xscale + 0.03
-				pos.y += self._velocity.y * (self._scene.timedelta/1000.0)/self._yscale
+				
+				if not ((self._boundingBox.y + self._boundingBox.h) < camrect.y) and not (self._boundingBox.y > (camrect.y + camrect.h)):
+					pos.y += self._velocity.y * (self._scene.timedelta/1000.0)/self._yscale
+					
 				oldpos.setExactLayerCoordinates(pos)
-			
-#			elif (bbox.y + bbox.h) < camrect.y or (bbox.y - bbox.h) > camrect.y:
-#				pos.x += self._velocity.x * (timedelta/1000.0)
-#				oldpos.setExactLayerCoordinates(pos)
-#				self._velocity.y = 0
-			elif (self._boundingBox.y + self._boundingBox.h) < camrect.y or self._boundingBox.y > (camrect.y + camrect.h):
-				pos.x += self._velocity.x * (self._scene.timedelta/1000.0)/self._xscale
-				self._velocity.y = 0
-				oldpos.setExactLayerCoordinates(pos)
-			else:
+			if self._boundingBox.x > ( camrect.x + camrect.w ):
 				self._velocity.x = 0
-				self._velocity.y = 0
+
+			if (self._boundingBox.y + self._boundingBox.h) < camrect.y:
+				if self._velocity.y < 0:
+					self._velocity.y = 0
+				pos.x += self._velocity.x * (self._scene.timedelta/1000.0)/self._xscale
+				oldpos.setExactLayerCoordinates(pos)			
+			if self._boundingBox.y > (camrect.y + camrect.h):
+				if self._velocity.y > 0:
+					self._velocity.y = 0
+				pos.x += self._velocity.x * (self._scene.timedelta/1000.0)/self._xscale
+				oldpos.setExactLayerCoordinates(pos)
 
 			self.location = oldpos
 
 	def _getLives(self):
 		return self._lives
+		
+	def _setLives(self, lives):
+		self._lives = lives
 		
 	def _getInvulnerable(self):
 		return self._invulnerable
@@ -207,5 +217,5 @@ class Player(Ship):
 		self._invulnerable = inv
 
 	score = property(_getScore)
-	lives = property(_getLives)
+	lives = property(_getLives, _setLives)
 	invulnerable = property(_getInvulnerable, _setInvulnerable)

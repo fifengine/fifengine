@@ -176,7 +176,6 @@ class HighScores(object):
 		for highscore in self._scores:
 			if score._score > highscore._score:
 				element = i
-				print element
 				break
 			i += 1
 				

@@ -232,4 +232,48 @@ class FireBallSpread(Weapon):
 			self._scene.addObjectToScene(pjctl7)
 			
 			self._lastfired = self._scene.time
+			
+class CannonSpread5(Weapon):
+	def __init__(self, scene, ship, firerate):
+		super(CannonSpread5, self).__init__(scene, ship, firerate)
+		
+		self._projectileVelocity = 1
+		
+	def fire(self, direction):
+	
+		if (self._scene.time - self._lastfired) > self._firerate:
+			velocity = normalize(direction)
+			velocity.x = velocity.x * self._projectileVelocity
+			velocity.y = velocity.y * self._projectileVelocity
+
+			origin = fife.DoublePoint(0,0)
+			
+			p2 = rotatePoint(origin, velocity, -10)
+			p3 = rotatePoint(origin, velocity, -5)
+			p4 = rotatePoint(origin, velocity, 0)
+			p5 = rotatePoint(origin, velocity, 5)
+			p6 = rotatePoint(origin, velocity, 10)
+			
+			pjctl2 = Projectile(self._scene, self._ship, "bullet1", 3000 )
+			pjctl2.run(p2, self._ship.location)
+			self._scene.addObjectToScene(pjctl2)
+	
+			pjctl3 = Projectile(self._scene, self._ship, "bullet1", 3000 )
+			pjctl3.run(p3, self._ship.location)
+			self._scene.addObjectToScene(pjctl3)
+			
+			pjctl4 = Projectile(self._scene, self._ship, "bullet1", 3000 )
+			pjctl4.run(p4, self._ship.location)
+			self._scene.addObjectToScene(pjctl4)
+	
+			pjctl5 = Projectile(self._scene, self._ship, "bullet1", 3000 )
+			pjctl5.run(p5, self._ship.location)
+			self._scene.addObjectToScene(pjctl5)
+			
+			pjctl6 = Projectile(self._scene, self._ship, "bullet1", 3000 )
+			pjctl6.run(p6, self._ship.location)
+			self._scene.addObjectToScene(pjctl6)
+			
+			
+			self._lastfired = self._scene.time
 

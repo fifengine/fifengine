@@ -50,7 +50,7 @@ class BossActionListener(ShipActionListener):
 class Saucer1(Ship):
 	def __init__(self, scene, name, instance, findInstance=True):
 		super(Saucer1, self).__init__(scene, name, findInstance)
-		self._instance = instance
+		self.instance = instance
 		self._type = SHTR_ENEMYSHIP
 		self._dir = 0
 		self._time = 500
@@ -90,7 +90,7 @@ class Saucer1(Ship):
 class Saucer2(Ship):
 	def __init__(self, scene, name, instance, findInstance=True):
 		super(Saucer2, self).__init__(scene, name, findInstance)
-		self._instance = instance
+		self.instance = instance
 		self._type = SHTR_ENEMYSHIP
 		self._dir = 0
 		self._time = 1000
@@ -133,7 +133,7 @@ class Saucer2(Ship):
 class DiagSaucer(Ship):
 	def __init__(self, scene, name, direction, instance, findInstance=True):
 		super(DiagSaucer, self).__init__(scene, name, findInstance)
-		self._instance = instance
+		self.instance = instance
 		self._type = SHTR_ENEMYSHIP
 		self.width = 0.2
 		self.height = 0.075
@@ -161,7 +161,7 @@ class DiagSaucer(Ship):
 class Streaker(Ship):
 	def __init__(self, scene, name, instance, findInstance=True):
 		super(Streaker, self).__init__(scene, name, findInstance)
-		self._instance = instance
+		self.instance = instance
 		self._type = SHTR_ENEMYSHIP
 		self.width = 0.2
 		self.height = 0.2		
@@ -196,7 +196,7 @@ class Streaker(Ship):
 class Boss(Ship):
 	def __init__(self, scene, name, instance, findInstance=True):
 		super(Boss, self).__init__(scene, name, findInstance)
-		self._instance = instance
+		self.instance = instance
 		self._type = SHTR_LASTBOSS
 		self.width = 0.85
 		self.height = 0.25		
