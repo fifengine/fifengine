@@ -24,6 +24,49 @@
 from fife import fife
 
 
+class SoundEmitter(object):
+	def __init__(self, fifeemitter, clipid, soundname ):
+		self._name = soundname
+		self._fifeemitter = fifeemitter
+		self._fifeclipid = clipid
+		self._gain = 255.0
+	
+	def play(self, looping=False):
+		self._fifeemitter.stop()
+		self._fifeemitter.setGain(float(self._gain)/255.0)
+		self._fifeemitter.setLooping(looping)
+		self._fifeemitter.play()
+		
+	def stop(self):
+		self._fifeemitter.stop()
+		
+	def _getGain(self):
+		return self._gain
+		
+	def _setGain(self, gain):
+		self._gain = float(gain)
+		
+	def _getClipID(self):
+		return self._fifeclipid
+	
+	def _getCallback(self):
+		return self._callback
+		
+	def _setCallback(self, cb):
+		self._callback = cb
+		
+	def _getFifeEmitter(self):
+		return self._fifeemitter
+		
+	def _setFifeEmitter(self, emitter):
+		self._fifeemitter = emitter
+	
+	clipid = property(_getClipID)
+	gain = property(_setGain, _getGain)
+	callback = property(_getCallback, _setCallback)
+	fifeemitter = property(_getFifeEmitter, _setFifeEmitter)
+	
+
 class SoundManager(object):
 	def __init__(self, engine):
 		self._engine = engine
@@ -31,33 +74,32 @@ class SoundManager(object):
 		self._soundmanager = self._engine.getSoundManager()
 		self._soundmanager.init()
 		
-		self._emitters = {}
+		self._emitters = list()
+		self._loadedclips = {}
 
-	def playSound(self, soundname, volume=255):
-		if soundname in self._emitters:
-			self._emitters[soundname].stop()
-			self._emitters[soundname].play()
+	def createSoundEmitter(self, filename):
+		if not filename in self._loadedclips:
+			clipid = self._engine.getSoundClipPool().addResourceFromFile(filename)
+			fifeemitter = self._soundmanager.createEmitter()
+			fifeemitter.setSoundClip(clipid)
+			self._loadedclips[filename] = clipid
+			emitter = SoundEmitter(fifeemitter, clipid, filename)
 		else:
-			#create an emitter for this sound
-			emitter = self._soundmanager.createEmitter()
-			clipid = self._engine.getSoundClipPool().addResourceFromFile(soundname)
-			emitter.setSoundClip(clipid)
-			emitter.setLooping(False)
-			
-			self._emitters[soundname] = emitter
-			self._emitters[soundname].thisown = 0
-			
-			self._emitters[soundname].play()
-			
-	def stopSound(self, soundname):
-		if soundname in self._emitters:
-			self._emitters[soundname].stop()
+			fifeemitter = self._soundmanager.createEmitter()
+			fifeemitter.setSoundClip(self._loadedclips[filename])
+			emitter = SoundEmitter(fifeemitter, self._loadedclips[filename], filename)
+		
+		self._emitters.append(emitter)
+		return emitter
+
+	def stopAllSounds(self):
+		for emitter in self._emitters:
+			emitter.stop()
 			
 	def destroy(self):
-		todelete = {}
 		for emitter in self._emitters:
-			self._emitters[emitter].stop()
-			clipid = self._emitters[emitter].getID()
-			self._soundmanager.releaseEmitter(clipid)
+			emitter.stop()
+			self._soundmanager.releaseEmitter(emitter.fifeemitter.getID())
+			emitter.fifeemitter = None			
 
-		self._emitters.clear()
+		self._loadedclips.clear()

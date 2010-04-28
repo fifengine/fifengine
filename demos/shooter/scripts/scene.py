@@ -69,6 +69,8 @@ class Scene(object):
 		self._timemod = 0
 		
 		self._gameover = False
+		
+		self._music = None
 
 	def destroyScene(self):
 		nodestodelete = list()
@@ -175,7 +177,8 @@ class Scene(object):
 		#and finally add the player to the scene
 		self.addObjectToScene(self._player)
 		
-		self._soundmanager.playSound("music/waynesmind2.ogg")
+		self._music = self._soundmanager.createSoundEmitter("music/waynesmind2.ogg")
+		self._music.play(True)
 		
 		self.startCamera()
 		
@@ -192,11 +195,11 @@ class Scene(object):
 		
 	def gameOver(self):
 		self._gameover = True
-		self._soundmanager.stopSound("music/waynesmind2.ogg")		
+		self._music.stop()		
 		self._world.gameOver()
 		
 	def endLevel(self):
-		self._soundmanager.stopSound("music/waynesmind2.ogg")
+		self._music.stop()
 		self._world.endLevel()
 		
 	def queueObjectForRemoval(self, obj):
