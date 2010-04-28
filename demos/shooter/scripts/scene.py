@@ -44,11 +44,12 @@ class SceneNode(object):
 	spaceobjects = property(_getObjects, _setObjects)
 
 class Scene(object):
-	def __init__(self, world, engine, objectLayer):
+	def __init__(self, world, engine, objectLayer, soundmanager):
 		self._engine = engine
 		self._world = world
 		self._model = engine.getModel()
 		self._layer = objectLayer
+		self._soundmanager = soundmanager
 		self._nodes = list()
 		
 		self._player = None
@@ -174,6 +175,8 @@ class Scene(object):
 		#and finally add the player to the scene
 		self.addObjectToScene(self._player)
 		
+		self._soundmanager.playSound("music/waynesmind2.ogg")
+		
 		self.startCamera()
 		
 	def pause(self, time):
@@ -189,9 +192,11 @@ class Scene(object):
 		
 	def gameOver(self):
 		self._gameover = True
+		self._soundmanager.stopSound("music/waynesmind2.ogg")		
 		self._world.gameOver()
 		
 	def endLevel(self):
+		self._soundmanager.stopSound("music/waynesmind2.ogg")
 		self._world.endLevel()
 		
 	def queueObjectForRemoval(self, obj):
