@@ -36,6 +36,7 @@ from scripts.gui.guis import *
 from scripts.ships.shipbase import Ship
 from scripts.ships.player import Player
 from scripts.scene import Scene
+from scripts.soundmanager import SoundManager
 
 class World(EventListenerBase):
 	"""
@@ -63,6 +64,8 @@ class World(EventListenerBase):
 		self._paused = True
 		self._pausedtime = 0
 		self._starttime = 0
+		
+		self._soundmanager = SoundManager(self._engine)
 		
 		self._mainmenu = MainMenu(self)
 		self.showMainMenu()
@@ -103,6 +106,7 @@ class World(EventListenerBase):
 		
 	def quit(self):
 		self.reset()
+		self._soundmanager.destroy()
 		self._applictaion.requestQuit()
 		
 	def reset(self):
@@ -129,7 +133,7 @@ class World(EventListenerBase):
 		self.reset()
 		self._map = loadMapFile(self._filename, self._engine)
 
-		self._scene = Scene(self, self._engine, self._map.getLayer('objects'))
+		self._scene = Scene(self, self._engine, self._map.getLayer('objects'), self._soundmanager)
 		self._scene.initScene(self._map)
 
 		self.initCameras()
