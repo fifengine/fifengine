@@ -64,20 +64,19 @@ namespace FIFE {
 	FloatingTextRenderer::~FloatingTextRenderer() {
 	}
 
-	void FloatingTextRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+	void FloatingTextRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		if (!m_font) {
 			return;
 		}
 		
-		std::vector<Instance*>::const_iterator instance_it = instances.begin();
+		RenderList::const_iterator instance_it = instances.begin();
 		const std::string* saytext = NULL;
 
 		for (;instance_it != instances.end(); ++instance_it) {
-			Instance* instance = *instance_it;
+			Instance* instance = (*instance_it)->instance;
 			saytext = instance->getSayText();
 			if (saytext) {
-				InstanceVisual* visual = instance->getVisual<InstanceVisual>();
-				const Rect& ir = visual->getCacheItem(cam).dimensions;
+				const Rect& ir = (*instance_it)->dimensions;
 				m_font->setColor(25,25,112);
 				Image* img = m_font->getAsImageMultiline(*saytext);
 				Rect r;

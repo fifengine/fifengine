@@ -103,7 +103,7 @@ namespace FIFE {
 	InstanceRenderer::~InstanceRenderer() {
 	}
 
-	void InstanceRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+	void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		// patch #335 by abeyer
 		if (!layer->areInstancesVisible()) {
 			FL_DBG(_log, "Layer instances hidden");
@@ -119,12 +119,12 @@ namespace FIFE {
 
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
 
-		std::vector<Instance*>::const_iterator instance_it = instances.begin();
+		RenderList::iterator instance_it = instances.begin(); 
 		for (;instance_it != instances.end(); ++instance_it) {
 			FL_DBG(_log, "Iterating instances...");
-			Instance* instance = (*instance_it);
+			Instance* instance = (*instance_it)->instance;
 			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
-
+			RenderItem& vc = **instance_it;
 			unsigned char trans = visual->getTransparency();
 
 			/**
@@ -137,7 +137,6 @@ namespace FIFE {
 				trans = layer_trans;
 			}
 
-			InstanceVisualCacheItem& vc = visual->getCacheItem(cam);
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 
 			if (any_effects) {
@@ -157,7 +156,7 @@ namespace FIFE {
 		}
 	}
 
-	Image* InstanceRenderer::bindOutline(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam) {
+	Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam) {
 		if (info.curimg == vc.image) {
 			return info.outline;
 		} else {
@@ -222,7 +221,7 @@ namespace FIFE {
 		return info.outline;
 	}
 
-	Image* InstanceRenderer::bindColoring(ColoringInfo& info, InstanceVisualCacheItem& vc, Camera* cam) {
+	Image* InstanceRenderer::bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam) {
 		if (info.curimg == vc.image) {
 			return info.overlay;
 		} else {

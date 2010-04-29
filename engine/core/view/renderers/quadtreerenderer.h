@@ -63,7 +63,7 @@ namespace FIFE {
 			 */
 			virtual ~QuadTreeRenderer();
 
-			void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
+			void render(Camera* cam, Layer* layer, RenderList& instances);
 
 			std::string getName() {
 				return "QuadTreeRenderer";

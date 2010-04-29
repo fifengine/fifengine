@@ -33,6 +33,8 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 
+#include "renderitem.h"
+
 namespace FIFE {
 	class Camera;
 	class Layer;
@@ -104,7 +106,7 @@ namespace FIFE {
 		 * @param instances instances on the current layer
 		 * @ see setPipelinePosition
 		 */
-		virtual void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) = 0;
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances) = 0;
 		
 		/** Name of the renderer
 		 */

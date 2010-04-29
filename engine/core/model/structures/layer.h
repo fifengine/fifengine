@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <set>
 
 // 3rd party library includes
 
@@ -238,6 +239,8 @@ namespace FIFE {
 			 */
 			std::vector<Instance*>& getChangedInstances() { return m_changedinstances; }
 
+			void setInstanceActivityStatus(Instance* instance, bool active);
+
 		protected:
 			std::string m_id;
 
@@ -249,6 +252,9 @@ namespace FIFE {
 
 			// all the instances on this layer
 			std::vector<Instance*> m_instances;
+
+			// all the active instances on this layer
+			std::set<Instance*> m_active_instances;
 
 			//The instance tree
 			InstanceTree* m_instanceTree;

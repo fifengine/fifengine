@@ -59,7 +59,7 @@ namespace FIFE {
 	GridRenderer::~GridRenderer() {
 	}
 
-	void GridRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+	void GridRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
@@ -134,9 +134,9 @@ namespace FIFE {
 
 
 		Rect cv = cam->getViewPort();
-		std::vector<Instance*>::const_iterator instance_it = instances.begin();
+		RenderList::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
-			Instance* instance = *instance_it;
+			Instance* instance = (*instance_it)->instance;
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
 			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();

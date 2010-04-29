@@ -82,7 +82,7 @@ namespace FIFE {
 	bool Animation::isValidIndex(int index) const{
 		int size = m_frames.size();
 		return size > 0 && index >= 0 && index < size; 
-	}
+		}
 
 	Image* Animation::getFrame(int index) {
 		if (isValidIndex(index)) {

@@ -19,10 +19,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_CAMERAZONERENDERER_H
-#define FIFE_CAMERAZONERENDERER_H
+#ifndef FIFE_VIEW_RENDERITEM_H
+#define FIFE_VIEW_RENDERITEM_H
 
 // Standard C++ library includes
+#include <vector>
 
 // 3rd party library includes
 
@@ -30,40 +31,45 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "view/rendererbase.h"
+
+#include "visual.h"
 
 namespace FIFE {
-	class RenderBackend;
-	class ImagePool;
 
-	class CameraZoneRenderer: public RendererBase {
-	public:
-		/** constructor.
-		 * @param renderbackend to use
-		 * @param position position for this renderer in rendering pipeline
-		 * @param imagepool image pool where from fetch images
-		 */
-		CameraZoneRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool);
+	class Instance;
 
-		CameraZoneRenderer(const CameraZoneRenderer& old);
+	class RenderItem {
+		public:
+			RenderItem();
+
+			Instance* instance;
+
+			/** Returns closest matching static image for given angle
+			* @return id for static image
+			* @see ObjectVisual::getStaticImageIndexByAngle
+			*/
+			int getStaticImageIndexByAngle(unsigned int angle, Instance* instance);
 		
-		RendererBase* clone();
+			// point where instance was drawn during the previous render
+			DoublePoint3D screenpoint;
+			
+			// dimensions of this visual on the virtual screen
+			Rect bbox;
 
-		/** Destructor.
-		 */
-		virtual ~CameraZoneRenderer();
-
-		void render(Camera* cam, Layer* layer, RenderList& instances);
-
-		std::string getName() { return "CameraZoneRenderer"; }
-
-		void setEnabled(bool enabled);
-
-	private:
-		ImagePool* m_imagepool;
-		Image* m_zone_image;
+			// dimensions of this visual during the previous render
+			Rect dimensions;
+			
+			// image used during previous render
+			Image* image;
+			
+			// current facing angle
+			int facing_angle;
+		private:
+			int m_cached_static_img_id;
+			int m_cached_static_img_angle;
 	};
 
+	typedef std::vector<RenderItem*> RenderList;
 }
 
 #endif

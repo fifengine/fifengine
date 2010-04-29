@@ -19,9 +19,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_CAMERAZONERENDERER_H
-#define FIFE_CAMERAZONERENDERER_H
-
 // Standard C++ library includes
 
 // 3rd party library includes
@@ -30,40 +27,36 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "view/rendererbase.h"
+#include "model/structures/instance.h"
+#include "model/metamodel/object.h"
+#include "model/metamodel/action.h"
+#include "util/resource/pool.h"
+
+#include "visual.h"
+#include "renderitem.h"
 
 namespace FIFE {
-	class RenderBackend;
-	class ImagePool;
+	const int STATIC_IMAGE_NOT_INITIALIZED = -2;
 
-	class CameraZoneRenderer: public RendererBase {
-	public:
-		/** constructor.
-		 * @param renderbackend to use
-		 * @param position position for this renderer in rendering pipeline
-		 * @param imagepool image pool where from fetch images
-		 */
-		CameraZoneRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool);
+	RenderItem::RenderItem():
+		screenpoint(),
+		dimensions(),
+		image(NULL),
+		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
+		m_cached_static_img_angle(0) {
+	}
 
-		CameraZoneRenderer(const CameraZoneRenderer& old);
-		
-		RendererBase* clone();
-
-		/** Destructor.
-		 */
-		virtual ~CameraZoneRenderer();
-
-		void render(Camera* cam, Layer* layer, RenderList& instances);
-
-		std::string getName() { return "CameraZoneRenderer"; }
-
-		void setEnabled(bool enabled);
-
-	private:
-		ImagePool* m_imagepool;
-		Image* m_zone_image;
-	};
-
+	int RenderItem::getStaticImageIndexByAngle(unsigned int angle, Instance* instance) {
+		if (static_cast<int>(angle) != m_cached_static_img_angle) {
+			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
+		}
+		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
+			return m_cached_static_img_id;
+		}
+		if(!instance->getObject()->getVisual<ObjectVisual>())
+			return Pool::INVALID_ID;
+		m_cached_static_img_id = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
+		m_cached_static_img_angle = angle;
+		return m_cached_static_img_id;
+	}
 }
-
-#endif

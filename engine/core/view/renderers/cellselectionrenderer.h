@@ -53,7 +53,7 @@ namespace FIFE {
 		 */
 		virtual ~CellSelectionRenderer();
 
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
+		void render(Camera* cam, Layer* layer, RenderList& instances);
 
 		/** Returns the renderer name */
 		std::string getName() { return "CellSelectionRenderer"; }

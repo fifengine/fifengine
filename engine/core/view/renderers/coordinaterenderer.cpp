@@ -82,7 +82,7 @@ namespace FIFE {
 
 	const int MIN_COORD = -9999999;
 	const int MAX_COORD = 9999999;
-	void CoordinateRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+	void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		m_layer_area.x = MAX_COORD;
 		m_layer_area.y = MAX_COORD;
 		m_layer_area.w = MIN_COORD;

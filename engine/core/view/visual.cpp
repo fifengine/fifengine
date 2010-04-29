@@ -86,30 +86,7 @@ namespace FIFE {
 		}
 	}
 
-	const int STATIC_IMAGE_NOT_INITIALIZED = -2;
-	const int STATIC_IMAGE_NOT_FOUND = -1;
-
-	InstanceVisualCacheItem::InstanceVisualCacheItem():
-		screenpoint(),
-		dimensions(),
-		image(NULL),
-		m_cached_static_img_id(STATIC_IMAGE_NOT_INITIALIZED),
-		m_cached_static_img_angle(0) {
-	}
-
-	int InstanceVisualCacheItem::getStaticImageIndexByAngle(unsigned int angle, Instance* instance) {
-		if (static_cast<int>(angle) != m_cached_static_img_angle) {
-			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
-		}
-		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {
-			return m_cached_static_img_id;
-		}
-		m_cached_static_img_id = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
- 		m_cached_static_img_angle = angle;
-		return m_cached_static_img_id;
-	}
-
-	InstanceVisual::InstanceVisual():
+	InstanceVisual::InstanceVisual(): 
 		m_stackposition(0) {
 	}
 

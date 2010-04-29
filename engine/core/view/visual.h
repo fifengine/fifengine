@@ -31,14 +31,16 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "model/metamodel/abstractvisual.h"
-#include "view/camera.h"
+#include "util/math/angles.h"
+#include "util/structures/rect.h"
 
 namespace FIFE {
 	class Object;
 	class Instance;
 	class Action;
 	class Image;
-
+	class Camera;
+	
 	/** Base class for all 2 dimensional visual classes
 	 * Visual classes are extensions to visualize the stuff in model (e.g. instances)
 	 * The reason why its separated is to keep model view-agnostic, so that we could
@@ -125,36 +127,6 @@ namespace FIFE {
 		type_angle2id m_angle2img;
 	};
 
-	/** InstanceVisualCacheItem caches values calculated by view
-	 * values are camera specific
-	 * Class should be used by engine itself only
-	 */
-	class InstanceVisualCacheItem {
-	public:
-		InstanceVisualCacheItem();
-
-		/** Returns closest matching static image for given angle
-		* @return id for static image
-		* @see ObjectVisual::getStaticImageIndexByAngle
-		*/
-		int getStaticImageIndexByAngle(unsigned int angle, Instance* instance);
-
-		// point where instance was drawn during the previous render
-		ScreenPoint screenpoint;
-
-		// dimensions of this visual during the previous render
-		Rect dimensions;
-
-		// image used during previous render
-		Image* image;
-
-		// current facing angle
-		int facing_angle;
-	private:
-		int m_cached_static_img_id;
-		int m_cached_static_img_angle;
-	};
-
 	/** Instance visual contains data that is needed to visualize the instance on screen
 	 */
 	class InstanceVisual: public Visual2DGfx {
@@ -179,18 +151,11 @@ namespace FIFE {
 		 */
 		int getStackPosition() { return m_stackposition; }
 
-		/** Get camera specific cache item for the visual
-		 *  @return cache item
-		 */
-		inline InstanceVisualCacheItem& getCacheItem(Camera* cam) { return m_cache[cam]; }
-
 	private:
 		/** Constructor
 		 */
 		InstanceVisual();
 		int m_stackposition;
-		// there is separate cache item for each camera
-		std::map<Camera*, InstanceVisualCacheItem> m_cache;
 	};
 
 	/** Action visual contains data that is needed to visualize different actions on screen

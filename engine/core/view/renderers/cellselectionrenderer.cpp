@@ -90,7 +90,7 @@ namespace FIFE {
 		}
 	}
 
-	void CellSelectionRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+	void CellSelectionRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		std::vector<Location>::const_iterator locit = m_locations.begin();
 
 		for (; locit != m_locations.end(); locit++) {

@@ -171,15 +171,15 @@ namespace FIFE {
 		setPosition(getX(), getY() - m_animationDelta);
 		if (getY() <= m_hiddenPos){
 		    doHide();
-		    m_animationTimer.stop();
+			m_animationTimer.stop();
 		}
 	    }else{
 		setPosition(getX(), getY() + m_animationDelta);
 		if (getY() >= 0){
 		    setPosition(getX(), 0);
-		    m_animationTimer.stop();
+			m_animationTimer.stop();
 		}
-	    }
+	}
 	}
 
 	void Console::clear() {

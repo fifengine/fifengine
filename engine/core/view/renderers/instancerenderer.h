@@ -37,7 +37,6 @@ namespace FIFE {
 	class RenderBackend;
 	class ImagePool;
 	class AnimationPool;
-	class InstanceVisualCacheItem;
 
 	class InstanceRenderer: public RendererBase {
 	public:
@@ -55,7 +54,7 @@ namespace FIFE {
 		/** Destructor.
 		 */
 		virtual ~InstanceRenderer();
-		void render(Camera* cam, Layer* layer, std::vector<Instance*>& instances);
+		void render(Camera* cam, Layer* layer, RenderList& instances);
 		std::string getName() { return "InstanceRenderer"; }
 
 		/** Marks given instance to be outlined with given parameters
@@ -123,8 +122,8 @@ namespace FIFE {
 		
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */
-		Image* bindOutline(OutlineInfo& info, InstanceVisualCacheItem& vc, Camera* cam);
-		Image* bindColoring(ColoringInfo& info, InstanceVisualCacheItem& vc, Camera* cam);
+		Image* bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam);
+		Image* bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam);
 	};
 }
 

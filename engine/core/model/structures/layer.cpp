@@ -68,11 +68,14 @@ namespace FIFE {
 	}
 
 	Instance* Layer::createInstance(Object* object, const ExactModelCoordinate& p, const std::string& id) {
-		Location l;
-		l.setLayer(this);
-		l.setExactLayerCoordinates(p);
+		Location location;
+		location.setLayer(this);
+		location.setExactLayerCoordinates(p);
 
-		Instance* instance = new Instance(object, l, id);
+		Instance* instance = new Instance(object, location, id);
+		if(instance->isActive()) {
+			setInstanceActivityStatus(instance, instance->isActive());
+		}
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
 
@@ -91,12 +94,16 @@ namespace FIFE {
             return false;
         }
 
-	    Location l;
-		l.setLayer(this);
-		l.setExactLayerCoordinates(p);
+	    Location location;
+		location.setLayer(this);
+		location.setExactLayerCoordinates(p);
+		instance->setLocation(location);
 
 		m_instances.push_back(instance);
 		m_instanceTree->addInstance(instance);
+		if(instance->isActive()) {
+			setInstanceActivityStatus(instance, instance->isActive());
+		}
 
 		std::vector<LayerChangeListener*>::iterator i = m_changelisteners.begin();
 		while (i != m_changelisteners.end()) {
@@ -113,7 +120,7 @@ namespace FIFE {
 			(*i)->onInstanceDelete(this, instance);
 			++i;
 		}
-
+		setInstanceActivityStatus(instance, false);
 		std::vector<Instance*>::iterator it = m_instances.begin();
 		for(; it != m_instances.end(); ++it) {
 			if(*it == instance) {
@@ -124,6 +131,14 @@ namespace FIFE {
 			}
 		}
 		m_changed = true;
+	}
+
+	void Layer::setInstanceActivityStatus(Instance* instance, bool active) {
+		if(active) {
+			m_active_instances.insert(instance);
+		} else {
+			m_active_instances.erase(instance);
+		}
 	}
 
 	Instance* Layer::getInstance(const std::string& id) {
@@ -232,8 +247,8 @@ namespace FIFE {
 
 	bool Layer::update() {
 		m_changedinstances.clear();
-		std::vector<Instance*>::iterator it = m_instances.begin();
-		for(; it != m_instances.end(); ++it) {
+		std::set<Instance*>::iterator it = m_active_instances.begin();
+		for(; it != m_active_instances.end(); ++it) {
 			if ((*it)->update() != ICHANGE_NO_CHANGES) {
 				m_changedinstances.push_back(*it);
 				m_changed = true;
