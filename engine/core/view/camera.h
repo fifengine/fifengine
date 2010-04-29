@@ -47,7 +47,9 @@ namespace FIFE {
 	class ImagePool;
 	class AnimationPool;
 	class RenderBackend;
-	typedef std::map<Layer*, std::vector<Instance*> > t_layer_to_instances;
+	class LayerCache;
+	class MapObserver;
+	typedef std::map<Layer*, RenderList > t_layer_to_instances;
 
 	/** Camera describes properties of a view port shown in the main screen
 	 *  Main screen can have multiple cameras active simultanously
@@ -56,6 +58,11 @@ namespace FIFE {
 	 */
 	class Camera: public IRendererListener, public IRendererContainer {
 	public:
+		enum Transform {
+			NormalTransform = 0,
+			WarpedTransform = 1
+		};
+
 		/** Constructor
 		 * Camera needs to be added to the view. If not done so, it is not rendered.
 		 * @param id identifier for the camera
@@ -149,6 +156,8 @@ namespace FIFE {
 		 */
 		Location getLocation() const;
 
+		Point3D getOrigin() const;
+
 		/** Gets a reference to the camera location
 		 * @note if you change returned location without calling Camera::setLocation(...),
 		 *       remember to call Camera::refresh() (otherwise camera transforms are not updated)
@@ -192,6 +201,14 @@ namespace FIFE {
 		 *  @return point in screen coordinates
 		 */
 		ScreenPoint toScreenCoordinates(ExactModelCoordinate map_coords);
+
+		/** Transforms given point from map coordinates to virtual screen coordinates
+		 *  @return point in screen coordinates
+		 */
+		DoublePoint3D toVirtualScreenCoordinates(ExactModelCoordinate map_coords);
+
+		ScreenPoint virtualScreenToScreen(const DoublePoint3D& p);
+		DoublePoint3D screenToVirtualScreen(const ScreenPoint& p);
 
 		/** Sets camera enabled / disabled
 		 */
@@ -266,9 +283,13 @@ namespace FIFE {
 		/** Renders camera
 		 */
 		void render();
-
 	private:
+		friend class MapObserver;
+		void addLayer(Layer* layer);
+		void removeLayer(Layer* layer);
+		void updateMap(Map* map);
 		std::string m_id;
+
 
 		/** Updates the camera transformation matrix T with requested values.
 		 * The requests are done using these functions :
@@ -292,6 +313,12 @@ namespace FIFE {
 
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
+
+		DoubleMatrix m_vs_matrix;
+		DoubleMatrix m_vs_inverse_matrix;
+		DoubleMatrix m_vscreen_2_screen;
+		DoubleMatrix m_screen_2_vscreen;
+
 		double m_tilt;
 		double m_rotation;
 		double m_zoom;
@@ -320,6 +347,10 @@ namespace FIFE {
 
 		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
 		t_layer_to_instances m_layer_to_instances;
+
+		std::map<Layer*,LayerCache*> m_cache;
+		MapObserver* m_map_observer;
+		Map* m_map;
 	};
 }
 #endif

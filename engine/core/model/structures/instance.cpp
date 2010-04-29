@@ -203,13 +203,23 @@ namespace FIFE {
 	void Instance::initializeChanges() {
 		if (!m_activity) {
 			m_activity = new InstanceActivity(*this);
+			if(m_location.getLayer()) {
+				m_location.getLayer()->setInstanceActivityStatus(this, true);
+			}
 		}
+	}
+	
+	bool Instance::isActive() const {
+		return bool(m_activity);
 	}
 
 	void Instance::setLocation(const Location& loc) {
-		initializeChanges();
 		m_location = loc;
-		bindTimeProvider();
+		if(isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
 	}
 
 	void Instance::setRotation(int rotation) {

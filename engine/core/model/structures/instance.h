@@ -250,6 +250,10 @@ namespace FIFE {
 		 * @returns marked changes
 		 */
 		InstanceChangeInfo update();
+		
+		/** If this returns true, the instance needs to be updated
+		 */
+		bool isActive() const;
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */

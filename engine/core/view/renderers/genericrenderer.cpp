@@ -205,7 +205,7 @@ namespace FIFE {
 		return m_point;
 	}
 
-	Point GenericRendererNode::getCalculatedPoint(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+	Point GenericRendererNode::getCalculatedPoint(Camera* cam, Layer* layer) {
 		ScreenPoint p;
 		if(m_instance != NULL) {
 			if(m_layer == NULL) {
@@ -239,9 +239,9 @@ namespace FIFE {
 		m_green(g),
 		m_blue(b) {
 	}
-	void GenericRendererLineInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p1 = m_edge1.getCalculatedPoint(cam, layer, instances);
-		Point p2 = m_edge2.getCalculatedPoint(cam, layer, instances);
+	void GenericRendererLineInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p1 = m_edge1.getCalculatedPoint(cam, layer);
+		Point p2 = m_edge2.getCalculatedPoint(cam, layer);
 		if(m_edge1.getLayer() == layer) {
 			renderbackend->drawLine(p1, p2, m_red, m_green, m_blue);
 		}
@@ -254,8 +254,8 @@ namespace FIFE {
 		m_green(g),
 		m_blue(b) {
 	}
-	void GenericRendererPointInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
+	void GenericRendererPointInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue);
 		}
@@ -271,11 +271,11 @@ namespace FIFE {
 		m_green(g),
 		m_blue(b) {
 	}
-	void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p1 = m_edge1.getCalculatedPoint(cam, layer, instances);
-		Point p2 = m_edge2.getCalculatedPoint(cam, layer, instances);
-		Point p3 = m_edge3.getCalculatedPoint(cam, layer, instances);
-		Point p4 = m_edge4.getCalculatedPoint(cam, layer, instances);
+	void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p1 = m_edge1.getCalculatedPoint(cam, layer);
+		Point p2 = m_edge2.getCalculatedPoint(cam, layer);
+		Point p3 = m_edge3.getCalculatedPoint(cam, layer);
+		Point p4 = m_edge4.getCalculatedPoint(cam, layer);
 		if(m_edge1.getLayer() == layer) {
 			renderbackend->drawQuad(p1, p2, p3, p4, m_red, m_green, m_blue);
 		}
@@ -289,8 +289,8 @@ namespace FIFE {
 		m_green(g),
 		m_blue(b) {
 	}
-	void GenericRendererVertexInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p = m_center.getCalculatedPoint(cam, layer, instances);
+	void GenericRendererVertexInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = m_center.getCalculatedPoint(cam, layer);
 		if(m_center.getLayer() == layer) {
 			renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue);
 		}
@@ -301,8 +301,8 @@ namespace FIFE {
 		m_anchor(anchor),
 		m_image(image) {
 	}
-	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
+	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
@@ -321,8 +321,8 @@ namespace FIFE {
 		m_start_time(TimeManager::instance()->getTime()),
 		m_time_scale(1.0) {
 	}
-	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
+	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			Animation& animation = animpool->getAnimation(m_animation);
 			int animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
@@ -342,8 +342,8 @@ namespace FIFE {
 		m_font(font),
 		m_text(text) {
 	}
-	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
-		Point p = m_anchor.getCalculatedPoint(cam, layer, instances);
+	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			Image* img = m_font->getAsImageMultiline(m_text);
 			Rect r;
@@ -419,7 +419,7 @@ namespace FIFE {
 		m_groups.erase(group);
 	}
 
-	void GenericRenderer::render(Camera* cam, Layer* layer, std::vector<Instance*>& instances) {
+	void GenericRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		std::map<std::string, std::vector<GenericRendererElementInfo*> >::iterator group_it = m_groups.begin();
 		for(; group_it != m_groups.end(); ++group_it) {
 			std::vector<GenericRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
