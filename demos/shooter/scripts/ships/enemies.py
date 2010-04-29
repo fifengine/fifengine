@@ -211,6 +211,8 @@ class Boss(Ship):
 		self.hitpoints = 30
 		self.scorevalue = 1000
 		
+		self._explodclip = self._scene.soundmanager.loadSoundClip("sounds/bossexplode.ogg")
+		
 	def endLevel(self):
 		self._scene.endLevel()
 		

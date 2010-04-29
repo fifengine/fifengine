@@ -177,8 +177,9 @@ class Scene(object):
 		#and finally add the player to the scene
 		self.addObjectToScene(self._player)
 		
-		self._music = self._soundmanager.createSoundEmitter("music/waynesmind2.ogg")
-		self._music.play(True)
+		self._music = self._soundmanager.loadSoundClip("music/waynesmind2.ogg")
+		self._music.looping = True
+		self._soundmanager.playClip(self._music)
 		
 		self.startCamera()
 		
@@ -195,11 +196,11 @@ class Scene(object):
 		
 	def gameOver(self):
 		self._gameover = True
-		self._music.stop()		
+		self._soundmanager.stopClip(self._music)		
 		self._world.gameOver()
 		
 	def endLevel(self):
-		self._music.stop()
+		self._soundmanager.stopClip(self._music)
 		self._world.endLevel()
 		
 	def queueObjectForRemoval(self, obj):
@@ -383,7 +384,10 @@ class Scene(object):
 		
 	def _getPaused(self):
 		return self._paused
-		
+
+	def _getSoundManager(self):
+		return self._soundmanager
+	
 	player = property(_getPlayer)
 	keystate = property(_getKeyState)
 	camera = property(_getCamera)
@@ -391,4 +395,5 @@ class Scene(object):
 	model = property(_getModel)
 	time = property(_getTime)
 	timedelta = property(_getTimeDelta)
-	paused = property(_getPaused)	
+	paused = property(_getPaused)
+	soundmanager = property(_getSoundManager)
