@@ -24,6 +24,7 @@
 from fife import fife
 from scripts.common.baseobject import *
 from scripts.common.helpers import normalize, rotatePoint
+from scripts.soundmanager import *
 
 class Projectile(SpaceObject):
 	def __init__(self, scene, owner, projectileName, timeToLive):
@@ -92,9 +93,10 @@ class Weapon(object):
 		self._firerate = firerate
 		self._lastfired = 0
 		self._projectileVelocity = 0.75
+		self._soundclip = None
 		
 	def fire(self, direction):
-		return None
+		pass
 		
 	def _getProjectileVelocity(self):
 		return self._projectileVelocity
@@ -116,6 +118,7 @@ class Cannon(Weapon):
 		super(Cannon, self).__init__(scene, ship, firerate)
 		
 		self._projectileVelocity = 0.75
+		self._soundclip = scene.soundmanager.loadSoundClip("sounds/cannon.ogg")
 
 		
 	def fire(self, direction):
@@ -128,14 +131,16 @@ class Cannon(Weapon):
 			pjctl.run(velocity, self._ship.location)
 			self._lastfired = self._scene.time
 			self._scene.addObjectToScene(pjctl)
+			if self._soundclip:
+				self._scene.soundmanager.playClip(self._soundclip)
 
 class FireBall(Weapon):
 	def __init__(self, scene, ship, firerate):
 		super(FireBall, self).__init__(scene, ship, firerate)
 		
 		self._projectileVelocity = 0.50
+		self._soundclip = scene.soundmanager.loadSoundClip("sounds/fireball.ogg")		
 
-		
 	def fire(self, direction):
 		velocity = normalize(direction)
 		velocity.x = velocity.x * self._projectileVelocity
@@ -146,13 +151,16 @@ class FireBall(Weapon):
 			pjctl.run(velocity, self._ship.location)
 			self._lastfired = self._scene.time
 			self._scene.addObjectToScene(pjctl)	
+			if self._soundclip:
+				self._scene.soundmanager.playClip(self._soundclip)
 			
 class FireBallBurst(Weapon):
 	def __init__(self, scene, ship, firerate, burstrate, burstnumber):
 		super(FireBallBurst, self).__init__(scene, ship, firerate)
 		
 		self._projectileVelocity = 0.50
-		
+		self._soundclip = scene.soundmanager.loadSoundClip("sounds/fireball.ogg")	
+
 		self._burstrate = burstrate
 		self._burstnumber = int(burstnumber)
 		self._burstcount = int(burstnumber)
@@ -170,6 +178,9 @@ class FireBallBurst(Weapon):
 				pjctl = Projectile(self._scene, self._ship, "fireball", 6000 )
 				pjctl.run(velocity, self._ship.location)
 				self._scene.addObjectToScene(pjctl)
+			
+				if self._soundclip:
+					self._scene.soundmanager.playClip(self._soundclip)		
 				
 				self._lastburstfired = self._scene.time
 				self._burstcount -= 1
@@ -179,12 +190,13 @@ class FireBallBurst(Weapon):
 				self._burstcount = int(self._burstnumber)
 				self._lastburstfired = 0
 				
+				
 class FireBallSpread(Weapon):
 	def __init__(self, scene, ship, firerate):
 		super(FireBallSpread, self).__init__(scene, ship, firerate)
 		
 		self._projectileVelocity = 0.50
-
+		self._soundclip = scene.soundmanager.loadSoundClip("sounds/fireball.ogg")
 		
 	def fire(self, direction):
 	
@@ -231,6 +243,9 @@ class FireBallSpread(Weapon):
 			pjctl7.run(p7, self._ship.location)
 			self._scene.addObjectToScene(pjctl7)
 			
+			if self._soundclip:
+				self._scene.soundmanager.playClip(self._soundclip)
+
 			self._lastfired = self._scene.time
 			
 class CannonSpread5(Weapon):
@@ -238,7 +253,8 @@ class CannonSpread5(Weapon):
 		super(CannonSpread5, self).__init__(scene, ship, firerate)
 		
 		self._projectileVelocity = 1
-		
+		self._soundclip = scene.soundmanager.loadSoundClip("sounds/cannon.ogg")
+
 	def fire(self, direction):
 	
 		if (self._scene.time - self._lastfired) > self._firerate:
@@ -274,6 +290,8 @@ class CannonSpread5(Weapon):
 			pjctl6.run(p6, self._ship.location)
 			self._scene.addObjectToScene(pjctl6)
 			
+			if self._soundclip:
+				self._scene.soundmanager.playClip(self._soundclip)
 			
 			self._lastfired = self._scene.time
 

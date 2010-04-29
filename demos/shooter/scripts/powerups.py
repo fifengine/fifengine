@@ -47,9 +47,12 @@ class CannonSpread5PU(PowerUp):
 		self._time = 1500
 		self._velocity.x = -0.25
 		self._velocity.y = 0
+		
+		self._pickupclip = self._scene.soundmanager.loadSoundClip("sounds/pickup.ogg")		
 	
 	def applyPowerUp(self, ship):
 		ship.weapon = CannonSpread5(self._scene, ship, 300)
+		self._scene.soundmanager.playClip(self._pickupclip)
 		self.destroy()
 		self._scene.queueObjectForRemoval(self)
 		
