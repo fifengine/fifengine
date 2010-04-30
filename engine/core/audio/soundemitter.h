@@ -165,6 +165,31 @@ namespace FIFE {
 			return 0;
 		}
 
+		/** Returns the length of the decoded length in bytes
+		 */
+		unsigned long getDecodedLength() const{
+			if (m_soundclip) {
+				return m_soundclip->getDecoder()->getDecodedLength();
+
+			}
+			return 0;
+		}
+
+		/** Returns the duration of the sound clip in milliseconds
+		 */
+		unsigned long getDuration() const{
+			if (m_soundclip) {
+				float samplerate = static_cast<float>(getSampleRate());
+				float bitres = static_cast<float>(getBitResolution());
+				float size = static_cast<float>(getDecodedLength());
+				float stereo = (isStereo() ? 2.0f : 1.0f);
+				float time = (( size / samplerate * bitres / 8.0f) * 1000.0f ) / stereo / 2.0f;
+
+				return static_cast<unsigned long>(time);
+			}
+			return 0;
+		 }
+
 		/** Sets the cursor position in the audio file
 		 */
 		void setCursor(SoundPositionType type, float value);
