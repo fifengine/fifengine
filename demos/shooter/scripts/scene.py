@@ -178,10 +178,14 @@ class Scene(object):
 		self.addObjectToScene(self._player)
 		
 		self._music = self._soundmanager.loadSoundClip("music/waynesmind2.ogg")
+		self._music.callback = self.musicHasFinished
 		self._music.looping = True
 		self._soundmanager.playClip(self._music)
 		
 		self.startCamera()
+
+	def musicHasFinished(self):
+		print self._music.name + " has finished playing.\n"
 		
 	def pause(self, time):
 		self._pausedtime = time

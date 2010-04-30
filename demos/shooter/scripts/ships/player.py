@@ -57,6 +57,7 @@ class Player(Ship):
 
 		self._lives = 3		
 		self.init()
+
 		
 	def init(self):
 		self._hitpoints = 2
@@ -111,6 +112,7 @@ class Player(Ship):
 	def destroy(self):
 		if not self._invulnerable and not self._dead:
 			self._instance.act('explode', self._instance.getFacingLocation())
+			self._scene.soundmanager.playClip(self._explodclip)
 			self._dead = True
 			self._invulnerable = True
 			self._lives -= 1		
