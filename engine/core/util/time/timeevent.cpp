@@ -29,13 +29,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "timemanager.h"
 #include "timeevent.h"
 
 namespace FIFE {
 
 	TimeEvent::TimeEvent(int period):
 		m_period(period),
-		m_last_updated(SDL_GetTicks()) {
+		m_last_updated(TimeManager::instance()->getTime()) {
 	}
 
 	TimeEvent::~TimeEvent() {
@@ -47,7 +48,7 @@ namespace FIFE {
 		if (m_period < 0) {
 			return;
 		} else if (m_period == 0 || time_delta >= m_period) {
-			updateEvent(time);
+			updateEvent(time_delta);
 			m_last_updated = time;
 		}
 	}
@@ -68,5 +69,5 @@ namespace FIFE {
 		m_last_updated = ms;
 	}
 
-	
+
 } //FIFE

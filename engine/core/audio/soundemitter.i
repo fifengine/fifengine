@@ -63,6 +63,8 @@ namespace FIFE {
 		bool isStereo();
 		short getBitResolution();
 		unsigned long getSampleRate();
+		unsigned long getDecodedLength();
+		unsigned long getDuration();
 
 		void setCursor(SoundPositionType type, float value);
 		float getCursor(SoundPositionType type);
