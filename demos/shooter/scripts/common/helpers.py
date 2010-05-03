@@ -117,4 +117,37 @@ def rotatePoint(origin, point, angle):
 	newp.y = sintheta * x + costheta * y
 	
 	return newp
+
+class Timer(fife.TimeEvent):
+	def __init__(self,manager, delay=0,callback=None,repeat=0):
+		super(Timer,self).__init__(delay)
+		self._is_registered = False
+		self._callback = callback
+		self._manager = manager
+		self.setPeriod(delay)
+		self._repeat = repeat
+		self._executed = 0
+
+	def start(self):
+		if self._is_registered:
+			return
+		self._is_registered = True
+		self._executed = 0
+		self._manager.registerEvent(self)
+
+	def stop(self):
+		if not self._is_registered:
+			return
+		self._is_registered = False
+		self._manager.unregisterEvent(self)
+
+	def updateEvent(self,delta):
+		if callable(self._callback):
+			self._callback()
+			
+		if self._repeat != 0:
+			self._executed += 1
+			if self._executed >= self._repeat:
+				self.stop()
+
 	

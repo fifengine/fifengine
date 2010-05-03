@@ -22,6 +22,7 @@
 # ####################################################################
 
 from fife import fife
+from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 """
 Convenient timers
@@ -92,8 +93,7 @@ def delayCall(delay,callback):
 	@return The timer.
 	"""
 	timer = Timer(delay)
-	def cbwa(c, *args):
-		c(*args)
+
 	def real_callback(c, t):
 		t.stop()
 		c()
