@@ -83,7 +83,7 @@ AddOption('--enable-rend-grid',
 AddOption('--enable-profile',
 		dest='enable-profile',
 		action="store_true",
-		help='Build with profiling information',
+		help='Build with profiling information.  This automatically enables debug.',
 		default=False)
 		
 AddOption('--prefix',
@@ -134,6 +134,7 @@ else:
 	rend_grid = 0
 
 if GetOption('enable-profile'):
+	debug = 1
 	profile = 1
 else:
 	profile = 0
