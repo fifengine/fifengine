@@ -179,11 +179,11 @@ namespace FIFE {
 		 */
 		unsigned long getDuration() const{
 			if (m_soundclip) {
-				float samplerate = static_cast<float>(getSampleRate());
-				float bitres = static_cast<float>(getBitResolution());
-				float size = static_cast<float>(getDecodedLength());
-				float stereo = (isStereo() ? 2.0f : 1.0f);
-				float time = (( size / samplerate * bitres / 8.0f) * 1000.0f ) / stereo / 2.0f;
+				double samplerate = static_cast<double>(getSampleRate()) / 1000.0;  //convert to milliseconds
+				double bitres = static_cast<double>(getBitResolution());
+				double size = static_cast<double>(getDecodedLength()) * 8.0;  //convert to bits
+				double stereo = (isStereo() ? 2.0 : 1.0);
+				double time = ( size / (samplerate * bitres) ) / stereo;
 
 				return static_cast<unsigned long>(time);
 			}

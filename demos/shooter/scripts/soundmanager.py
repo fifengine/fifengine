@@ -23,37 +23,8 @@
 
 from fife import fife
 
-class Timer(fife.TimeEvent):
-	def __init__(self,manager, delay=0,callback=None,repeat=0):
-		super(Timer,self).__init__(delay)
-		self._is_registered = False
-		self._callback = callback
-		self._manager = manager
-		self.setPeriod(delay)
-		self._repeat = repeat
-		self._executed = 0
-
-	def start(self):
-		if self._is_registered:
-			return
-		self._is_registered = True
-		self._executed = 0
-		self._manager.registerEvent(self)
-
-	def stop(self):
-		if not self._is_registered:
-			return
-		self._is_registered = False
-		self._manager.unregisterEvent(self)
-
-	def updateEvent(self,delta):
-		if callable(self._callback):
-			self._callback()
-			
-		if self._repeat != 0:
-			self._executed += 1
-			if self._executed >= self._repeat:
-				self.stop()
+from scripts.common.helpers import Timer
+from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 class SoundClip(object):
 	def __init__(self, soundmanager, clipid, soundname, emitter):
@@ -141,7 +112,7 @@ class SoundManager(object):
 			time = fifeemitter.getDuration()
 				
 			self._loadedclips[filename] = SoundClip(self, clipid, filename, fifeemitter)
-			self._loadedclips[filename].duration = time/2
+			self._loadedclips[filename].duration = time
 			self._emitters.append(fifeemitter)
 		
 		return self._loadedclips[filename]
@@ -151,23 +122,41 @@ class SoundManager(object):
 			if clip.callback:
 				if clip.timer:
 					clip.timer.stop()
-				clip.timer = Timer(self._engine.getTimeManager(), clip.duration, clip.callback, 1)
+					timer = None
+					
+				if clip.looping:
+					repeat = 0
+					print "setting up callback1"
+
+					def real_callback(c, e):
+						c()
+						print "in here"
+						e.stop()
+						e.play()
+
+					clip.callback = cbwa(real_callback, clip.callback, clip.fifeemitter)
+
+				else:
+					repeat = 1
+
+					
+				clip.timer = Timer(self._engine.getTimeManager(), clip.duration, clip.callback, repeat)
 				clip.timer.start()
 				
 			clip.fifeemitter.setGain(clip.gain)
-			clip.fifeemitter.setLooping(clip.looping)
+			#clip.fifeemitter.setLooping(clip.looping)
 			clip.fifeemitter.play()	
 		else:
 			clip = self.loadSoundClip(clip.name)
+			self.playClip(clip)
 				
 	def stopClip(self, clip):
 		if clip.fifeemitter:
 			clip.fifeemitter.stop()
-		else:
-			clip = self.loadSoundClip(clip.name)
 			
 		if clip.timer:
 			clip.timer.stop()
+			clip.timer = None
 
 	def stopAllSounds(self):
 		for clip in self._loadedclips.values():	
@@ -186,4 +175,3 @@ class SoundManager(object):
 			
 		self._emitters = list()
 		self._loadedclips.clear()
-		

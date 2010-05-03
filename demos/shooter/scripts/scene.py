@@ -185,7 +185,7 @@ class Scene(object):
 		self.startCamera()
 
 	def musicHasFinished(self):
-		print self._music.name + " has finished playing.\n"
+		print self._music.name + " has finished playing.  Starting it again...\n"
 		
 	def pause(self, time):
 		self._pausedtime = time
