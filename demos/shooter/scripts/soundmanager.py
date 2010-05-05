@@ -126,11 +126,8 @@ class SoundManager(object):
 					
 				if clip.looping:
 					repeat = 0
-					print "setting up callback1"
-
 					def real_callback(c, e):
 						c()
-						print "in here"
 						e.stop()
 						e.play()
 
@@ -138,7 +135,6 @@ class SoundManager(object):
 
 				else:
 					repeat = 1
-
 					
 				clip.timer = Timer(self._engine.getTimeManager(), clip.duration, clip.callback, repeat)
 				clip.timer.start()

@@ -158,8 +158,6 @@ class Scene(object):
 		for instance in powerups:
 			objectName = instance.getId()
 			
-			print objectName
-			
 			if objectName == "cannonspread5":
 				powerup = CannonSpread5PU(self, 'cannonspread5', instance, False)
 			elif objectName == "extralife":
