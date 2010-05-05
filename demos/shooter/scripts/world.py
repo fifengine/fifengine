@@ -50,7 +50,8 @@ class World(EventListenerBase):
 
 	"""
 	def __init__(self, app, engine):
-		super(World, self).__init__(engine, regMouse=True, regKeys=True)
+		super(World, self).__init__(engine, regKeys=True)
+
 		self._applictaion = app
 		self._engine = engine
 		self._timemanager = engine.getTimeManager()
@@ -251,7 +252,8 @@ class World(EventListenerBase):
 		for cam in self._map.getCameras():
 			if cam.getId() == 'main':
 				self.cameras['main'] = cam
-				
+		
+		#pass the camera to the scene as the scene controls the cameras position
 		self._scene.attachCamera(self.cameras['main'])
 		
 	def resetKeys(self):
@@ -297,23 +299,6 @@ class World(EventListenerBase):
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self._keystate['CTRL'] = False
 
-	def mouseWheelMovedUp(self, evt):
-		if self._keystate['CTRL']:
-			self.cameras['main'].setZoom(self.cameras['main'].getZoom() * 1.05)
-
-	def mouseWheelMovedDown(self, evt):
-		if self._keystate['CTRL']:
-			self.cameras['main'].setZoom(self.cameras['main'].getZoom() / 1.05)
-
-	def mousePressed(self, evt):
-		if evt.isConsumedByWidgets():
-			return
-
-		clickpoint = fife.ScreenPoint(evt.getX(), evt.getY())
-
-	def mouseMoved(self, evt):
-		pt = fife.ScreenPoint(evt.getX(), evt.getY())
-
 	def pump(self):
 		"""
 		Called every frame.
@@ -322,7 +307,7 @@ class World(EventListenerBase):
 		if self._genericrenderer:
 			self._genericrenderer.removeAll("quads")
 
-		
+		#scene hasn't been initialized.  Nothing to do.
 		if not self._scene:
 			return
 		
@@ -332,7 +317,6 @@ class World(EventListenerBase):
 				self._scene.unpause(self._timemanager.getTime() - self._starttime)
 				
 			self._scene.update(self._timemanager.getTime() - self._starttime, self._keystate)
-		
 		
 			#update the HUD
 			avgframe = self._timemanager.getAverageFrameTime()

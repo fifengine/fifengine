@@ -55,7 +55,6 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		keystr = evt.getKey().getAsString().lower()
 		consumed = False
 		if keyval == fife.Key.ESCAPE:
-			#self._quit = True
 			self._world.showMainMenu()
 			evt.consume()
 
@@ -68,6 +67,8 @@ class Shooter(ApplicationBase):
 	def __init__(self):
 		super(Shooter,self).__init__()
 		pychan.init(self.engine, debug=False)
+		
+		#This is requred if you want to use modal dialog boxes
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
 		self._world = world.World(self, self.engine)
@@ -82,7 +83,9 @@ class Shooter(ApplicationBase):
 	def loadSettings(self):
 		"""
 		Load the settings from a python file and load them into the engine.
-		Called in the ApplicationBase constructor.
+		Called in the ApplicationBase constructor.  I hard coded all the
+		settings in here to remove the complexity of loading settings from
+		an XML file which would be out of scope of this demo.
 		"""
 
 		engineSetting = self.engine.getSettings()
@@ -108,8 +111,7 @@ class Shooter(ApplicationBase):
 		"""
 		Initialize the LogManager.
 		"""
-		#LogModules = list()
-		#LogModules.append("controller")
+
 		LogModules = ["controller",]
 		self._log = fifelog.LogManager(self.engine, 1, 0)
 		if LogModules:

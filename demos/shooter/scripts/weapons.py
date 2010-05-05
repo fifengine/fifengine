@@ -27,6 +27,13 @@ from scripts.common.helpers import normalize, rotatePoint
 from scripts.soundmanager import *
 
 class Projectile(SpaceObject):
+	"""
+	Projectile
+
+	This is the entity that weapons fire.  Projectiles have an owner
+	and a time to live.  They are also what cause damage to ships
+	and other entities.
+	"""
 	def __init__(self, scene, owner, projectileName, timeToLive):
 		super(Projectile, self).__init__(scene, projectileName, False)
 
@@ -85,6 +92,14 @@ class Projectile(SpaceObject):
 	damage = property(_getDamage, _setDamage)
 	
 class Weapon(object):
+	"""
+	Weapon
+	
+	This class is a super class and is meant to be inherited and
+	not used directly.  You should implement fire() in the sub-
+	class.  The Weapon class spawns Projectile(s) and fires them
+	in the specified direction at a specified fire rate.
+	"""
 	def __init__(self, scene, ship, firerate):
 		self._scene = scene
 		self._model = self._scene.model
