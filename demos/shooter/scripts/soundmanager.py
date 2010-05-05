@@ -27,6 +27,13 @@ from scripts.common.helpers import Timer
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 class SoundClip(object):
+	"""
+	SoundClip
+
+	This class stores an instance of a FIFE SoundEmitter class along 
+	with some information about a sound clip (like gain and if its
+	looping).  All instances of SoundClip should be created by SoundManager.
+	"""
 	def __init__(self, soundmanager, clipid, soundname, emitter):
 		self._soundmanager = soundmanager
 		self._name = soundname
@@ -93,29 +100,40 @@ class SoundClip(object):
 	duration = property(_getDuration, _setDuration)
 
 class SoundManager(object):
+	"""
+	SoundManger
+
+	This class manages and plays all the sounds of the game.  
+	It creates SoundClips and ensures that there is only one 
+	FIFE SoundEmitter per unique sound.
+	"""
 	def __init__(self, engine):
 		self._engine = engine
 		
 		self._fifesoundmanager = self._engine.getSoundManager()
 		self._fifesoundmanager.init()
 		
-		self._emitters = []
 		self._loadedclips = {}
 		
 	def loadSoundClip(self, filename):
+		"""
+		Returns a valid SoundClip instance.
+		"""
 		if not self._loadedclips.has_key(filename):
 			clipid = self._engine.getSoundClipPool().addResourceFromFile(filename)
 			fifeemitter = self._fifesoundmanager.createEmitter()
 			fifeemitter.thisown = 0
 			fifeemitter.setSoundClip(clipid)
 			
-			time = fifeemitter.getDuration()
-				
-			self._loadedclips[filename] = SoundClip(self, clipid, filename, fifeemitter)
-			self._loadedclips[filename].duration = time
-			self._emitters.append(fifeemitter)
+			self._loadedclips[filename] = fifeemitter
+			clip = SoundClip(self, clipid, filename, fifeemitter)
+			clip.duration = fifeemitter.getDuration()
+		else:
+			fifeemitter = self._loadedclips[filename]
+			clip = SoundClip(self, fifeemitter.getID(), filename, fifeemitter)
+			clip.duration = fifeemitter.getDuration()
 		
-		return self._loadedclips[filename]
+		return clip
 		
 	def playClip(self, clip):
 		if clip.fifeemitter:
@@ -126,12 +144,13 @@ class SoundManager(object):
 					
 				if clip.looping:
 					repeat = 0
-					def real_callback(c, e):
+					def real_callback(c, e, g):
 						c()
 						e.stop()
+						e.setGain(g)
 						e.play()
 
-					clip.callback = cbwa(real_callback, clip.callback, clip.fifeemitter)
+					clip.callback = cbwa(real_callback, clip.callback, clip.fifeemitter, clip.gain)
 
 				else:
 					repeat = 1
@@ -140,7 +159,6 @@ class SoundManager(object):
 				clip.timer.start()
 				
 			clip.fifeemitter.setGain(clip.gain)
-			#clip.fifeemitter.setLooping(clip.looping)
 			clip.fifeemitter.play()	
 		else:
 			clip = self.loadSoundClip(clip.name)
@@ -155,19 +173,14 @@ class SoundManager(object):
 			clip.timer = None
 
 	def stopAllSounds(self):
-		for clip in self._loadedclips.values():	
-			self.stopClip(clip)
+		for emitter in self._loadedclips.values():	
+			emitter.stop()
 			
 	def destroy(self):
 		self.stopAllSounds()
 	
-		for emitter in self._emitters[:]:
+		for emitter in self._loadedclips.values():
 			self._fifesoundmanager.releaseEmitter(emitter.getID())
-			self._emitters.remove(emitter)
+			emitter = None
 		
-		for clip in self._loadedclips.values():
-			clip.fifeemitter = None
-		
-			
-		self._emitters = list()
 		self._loadedclips.clear()
