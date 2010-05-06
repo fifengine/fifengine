@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -139,6 +139,9 @@ class HighScore(object):
 		self._score = int(score)
 
 class HighScores(object):
+	"""
+	Handles all the high scores.  It saves and loads the high score file.
+	"""
 	def __init__(self, world):
 		self._world = world
 		self.load()
