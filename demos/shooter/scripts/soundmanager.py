@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -35,15 +35,33 @@ class SoundClip(object):
 	looping).  All instances of SoundClip should be created by SoundManager.
 	"""
 	def __init__(self, soundmanager, clipid, soundname, emitter):
+		"""
+		@param soundmanager A reference to the SoundManager
+		@param clipid The FIFE sound clip ID from the sound clip pool
+		@param soundname The filename of the sound
+		@param emitter A reference to the FIFE SoundEmitter associated with this clip
+		
+		"""
 		self._soundmanager = soundmanager
 		self._name = soundname
-		self._fifeclipid = clipid
+			
+		#The FIFE SoundEmitter associated with this SoundClip.
+		#Note that we do NOT own the emitter.
 		self._fifeemitter = emitter
 		self._fifeemitter.thisown = 0
+		self._fifeclipid = clipid
+				
+		#0 = mute, 255 = normal volume
 		self._gain = 255.0
 		self._looping = False
+		
+		#if you set the callback it will be executed after the sound
+		#has finished playing.
 		self._callback = None
+		
+		#length of the sound
 		self._duration = 0
+		
 		self._timer = None
 		
 	def _getClipID(self):
@@ -108,16 +126,24 @@ class SoundManager(object):
 	FIFE SoundEmitter per unique sound.
 	"""
 	def __init__(self, engine):
+		"""
+		@param engine A reference to the FIFE engine
+		"""
 		self._engine = engine
 		
 		self._fifesoundmanager = self._engine.getSoundManager()
 		self._fifesoundmanager.init()
 		
+		#A dict of fife emitters
 		self._loadedclips = {}
 		
 	def loadSoundClip(self, filename):
 		"""
 		Returns a valid SoundClip instance.
+		
+		@param filename the relative path and filename of the sound file
+		
+		@return Returns a new SoundClip instance.
 		"""
 		if not self._loadedclips.has_key(filename):
 			clipid = self._engine.getSoundClipPool().addResourceFromFile(filename)
@@ -136,6 +162,24 @@ class SoundManager(object):
 		return clip
 		
 	def playClip(self, clip):
+		"""
+		Plays a sound clip.  
+		
+		This function does not use the FIFE
+		emitters "looping" property to loop a sound.  Instead
+		it registers a new timer and uses the duration of the 
+		clip as the timer length.
+		
+		If the SoundClip is invalid (no fifeemitter) then
+		it attempts to load it before playing it.
+		
+		Note that this will stop any clips that use the same
+		FIFE emitter.  You cannot play the same sound more than
+		once at a time.
+		
+		@param clip The SoundClip to be played
+		"""
+		
 		if clip.fifeemitter:
 			if clip.callback:
 				if clip.timer:
@@ -165,6 +209,12 @@ class SoundManager(object):
 			self.playClip(clip)
 				
 	def stopClip(self, clip):
+		"""
+		Stops playing the sound clip.   Note that this will
+		affect all clips that use the same FIFE emitter.
+		
+		@parm clip The SoundClip to stop.
+		"""
 		if clip.fifeemitter:
 			clip.fifeemitter.stop()
 			
@@ -177,6 +227,10 @@ class SoundManager(object):
 			emitter.stop()
 			
 	def destroy(self):
+		"""
+		Releases all FIFE emitters.  This does not free the resources
+		from the FIFE sound clip pool.
+		"""
 		self.stopAllSounds()
 	
 		for emitter in self._loadedclips.values():

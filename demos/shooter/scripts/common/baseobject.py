@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -35,7 +35,19 @@ SHTR_POWERUP = 5
 
 
 class SpaceObject(object):
+	"""
+	Space Object
+	
+	This is the base class for all game objects.
+	"""
 	def __init__(self, scene, name, findInstance=True):
+		"""
+		@param scene A reference to the Scene
+		@param name The name of the space object
+		@param findInstance True if the instance you are looking for is already loaded
+		                    False if you want to load the instance yourself
+		
+		"""
 		self._scene = scene
 		self._model = self._scene.model
 		self._layer = self._scene.objectlayer
@@ -57,10 +69,17 @@ class SpaceObject(object):
 			self._instnace = None
 		
 	def start(self):
+		"""
+		You must execute this function for the object to be updated
+		"""
 		if self._instance:
 			self._running = True
 
 	def update(self):
+		"""
+		If the object is running this updates the FIFE instance location based on
+		the objects current velocity and time since last frame
+		"""
 		if self._running:
 			shiploc = self.location
 			exactloc = shiploc.getExactLayerCoordinates()
@@ -81,12 +100,25 @@ class SpaceObject(object):
 			self.location = shiploc
 	
 	def stop(self):
+		"""
+		Stops the object from being updated.
+		"""
 		self._running = False
 		
 	def destroy(self):
+		"""
+		You are meant to override this function to specify what happens when the object
+		gets destroyed
+		"""
 		self._running = False
 		
 	def applyThrust(self, vector):
+		"""
+		Applies a thrust vector to the object.  Note that objects do not have
+		mass or any inertia.
+		
+		@param vector A fife.DoublePoint() specifying the direction and intensity of thrust.
+		"""
 		self._velocity.x += (vector.x * (self._scene.timedelta/1000.0))/self._xscale
 		self._velocity.y += (vector.y * (self._scene.timedelta/1000.0))/self._yscale
 		
@@ -97,7 +129,11 @@ class SpaceObject(object):
 		
 	
 	def applyBrake(self, brakingForce):
-
+		"""
+		Applies a braking thrust in the opposite direction of the current velocity
+		
+		@param brakingForce a floating point value specifying how fast the object should decelerate
+		"""
 		if self._velocity.length() <= .01:
 			self._velocity.x = 0
 			self._velocity.y = 0			
@@ -122,6 +158,10 @@ class SpaceObject(object):
 		self._velocity.y += (norm.y * (self._scene.timedelta/1000.0))/self._yscale
 		
 	def removeFromScene(self):
+		"""
+		Queues this object to be removed from the scene.  The scene will remove the object
+		next time the garbage collection routines are called.
+		"""
 		self._scene.queueObjectForRemoval(self)
 
 	def _isRunning(self):
