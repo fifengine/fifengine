@@ -123,17 +123,6 @@ class IslandDemo(ApplicationBase):
 		self.listener = ApplicationListener(self.engine, self.world)
 		self.world.load(str(TDS.readSetting("MapFile")))
 
-		self.soundmanager = self.engine.getSoundManager()
-		self.soundmanager.init()
-
-		if int(TDS.readSetting("PlaySounds")):
-			# play track as background music
-			emitter = self.soundmanager.createEmitter()
-			id = self.engine.getSoundClipPool().addResourceFromFile('music/rio_de_hola.ogg')
-			emitter.setSoundClip(id)
-			emitter.setLooping(True)
-			emitter.play()
-
 	def loadSettings(self):
 		"""
 		Load the settings from a python file and load them into the engine.

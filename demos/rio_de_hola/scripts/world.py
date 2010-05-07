@@ -29,6 +29,7 @@ from fife.extensions.pychan import widgets
 from scripts.common.eventlistenerbase import EventListenerBase
 from fife.extensions.loaders import loadMapFile
 from fife.extensions.savers import saveMapFile
+from fife.extensions.soundmanager import SoundManager
 from agents.hero import Hero
 from agents.girl import Girl
 from agents.cloud import Cloud
@@ -81,6 +82,9 @@ class World(EventListenerBase):
 		self.instancemenu = None
 		self.instance_to_agent = {}
 		self.dynamic_widgets = {}
+
+		self.soundmanager = SoundManager(self.engine)
+		self.music = None
 
 	def show_instancemenu(self, clickpoint, instance):
 		"""
@@ -136,6 +140,9 @@ class World(EventListenerBase):
 		"""
 		Clear the agent information and reset the moving secondary camera state.
 		"""
+		if self.music:
+			self.music.stop()
+			
 		self.map, self.agentlayer = None, None
 		self.cameras = {}
 		self.hero, self.girl, self.clouds, self.beekeepers = None, None, [], []
@@ -147,6 +154,7 @@ class World(EventListenerBase):
 		"""
 		Load a xml map and setup agents and cameras.
 		"""
+		
 		self.filename = filename
 		self.reset()
 		self.map = loadMapFile(filename, self.engine)
@@ -154,6 +162,18 @@ class World(EventListenerBase):
 
 		self.initAgents()
 		self.initCameras()
+
+		if int(TDS.readSetting("PlaySounds")):
+			# play track as background music
+			self.music = self.soundmanager.createSoundEmitter('music/rio_de_hola.ogg')
+			self.music.looping = True
+			self.music.gain = 128.0
+			self.music.play()
+			
+			self.waves = self.soundmanager.createSoundEmitter('sounds/waves.ogg')
+			self.waves.looping = True
+			self.waves.gain = 16.0
+			self.waves.play()
 
 	def initAgents(self):
 		"""
