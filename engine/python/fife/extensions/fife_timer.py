@@ -28,22 +28,21 @@ Convenient timers
 =================
 
 Usage::
-  import timer
-  timer.init( my_fife_engine.getTimeManager() )
+  import fife.extensions.fife_timer
+  fife_timer.init( my_fife_engine.getTimeManager() )
   def spam():
      print "SPAM SPAM ",
-     return "More spam?" # a string is a true value, so it's repeated.
-  repeater = timer.repeatCall(500,spam)
+  repeater = fife_timer.repeatCall(500,spam)
   def stop_spam():
      repeater.stop()
      print "BACON EGGS AND SPAM"
-  timer.delayCall(50000,stop_spam)
+  fife_timer.delayCall(50000,stop_spam)
 
 """
 
 
 _manager = None
-_alltimers = {}
+_alltimers = []
 
 def init(timemanager):
 	"""
@@ -55,32 +54,63 @@ def init(timemanager):
 	_manager = timemanager
 
 class Timer(fife.TimeEvent):
-	def __init__(self,delay=0,callback=None):
-		super(Timer,self).__init__(0)
-		self.manager = _manager
-		self.is_registered = False
-		self.callback = callback
+	"""
+	Timer
+	
+	This class wraps the fife.TimeEvent class to make it easily usable from Python
+	It allows for a TimeEvent to be executed once or multiple times.
+	"""
+	def __init__(self,delay=0,callback=None,repeat=0):
+		"""
+		@param delay The delay in milliseconds to execute the callback
+		@param callback The function to execute
+		@param repeat The number of times to execute the callback.  1=once, 0=forever 
+		"""
+		super(Timer,self).__init__(delay)
+		self._is_registered = False
+		self._callback = callback
+		self._manager = _manager
 		self.setPeriod(delay)
+		self._repeat = repeat
+		self._executed = 0
 
 	def start(self):
-		if self.is_registered:
+		"""
+		Must be called before the timer will start
+		"""
+		if self._is_registered:
 			return
-		self.is_registered = True
+		self._is_registered = True
+		self._executed = 0
+		self._manager.registerEvent(self)
+
 		global _alltimers
-		_alltimers[self]=1
-		self.manager.registerEvent(self)
+		_alltimers.append(self)
 
 	def stop(self):
-		if not self.is_registered:
+		"""
+		Stops the timer
+		"""
+		if not self._is_registered:
 			return
-		self.is_registered = False
+		self._is_registered = False
+		self._manager.unregisterEvent(self)
+
 		global _alltimers
-		del _alltimers[self]
-		self.manager.unregisterEvent(self)
+		_alltimers.remove(self)
+
 
 	def updateEvent(self,delta):
-		if callable(self.callback):
-			self.callback()
+		"""
+		Should not be called directly.  This is called by FIFE.
+		"""
+		if callable(self._callback):
+			self._callback()
+			
+		if self._repeat != 0:
+			self._executed += 1
+			if self._executed >= self._repeat:
+				self.stop()
 
 def delayCall(delay,callback):
 	"""
@@ -91,18 +121,11 @@ def delayCall(delay,callback):
 
 	@return The timer.
 	"""
-	timer = Timer(delay)
-
-	def real_callback(c, t):
-		t.stop()
-		c()
-		
-	from fife.extensions.pychan.tools import callbackWithArguments as cbwa
-	timer.callback = cbwa(real_callback, callback, timer)
+	timer = Timer(delay, callback, 1)
 	timer.start()
 	return timer
 
-from traceback import print_exc
+
 def repeatCall(period,callback):
 	"""
 	Repeat a function call.
@@ -112,21 +135,11 @@ def repeatCall(period,callback):
 
 	@return The timer.
 
-	The call is repeated until the callback returns a False
-	value (i.e. None) or the timer is stopped.
+	The call is repeated until the timer is stopped.
 	"""
-	timer = Timer(period)
-	def real_callback():
-		try:
-			if not callback():
-				timer.stop()
-		except Exception:
-			print_exc()
-			timer.stop()
-
-	timer.callback = real_callback
+	timer = Timer(period, callback, 0)
 	timer.start()
 	return timer
 
-__all__ = [init,Timer,delayCall,repeatCall]
+__all__ = ['init','Timer','delayCall','repeatCall']
 

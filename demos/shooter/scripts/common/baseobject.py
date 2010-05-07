@@ -22,8 +22,8 @@
 # ####################################################################
 
 from fife import fife
-from scripts.common.helpers import normalize
-from scripts.common.helpers import Rect
+from fife.extensions.fife_math import normalize
+from fife.extensions.fife_math import Rect
 
 
 SHTR_DEFAULT = 0

@@ -86,8 +86,8 @@ class Ship(SpaceObject):
 		self._hitpoints = 0
 		self._scorevalue = 0
 		
-		self._hitclip = self._scene.soundmanager.loadSoundClip("sounds/hit.ogg")
-		self._explodclip = self._scene.soundmanager.loadSoundClip("sounds/explode.ogg")
+		self._hitclip = self._scene.soundmanager.createSoundEmitter("sounds/hit.ogg")
+		self._explodclip = self._scene.soundmanager.createSoundEmitter("sounds/explode.ogg")
 	
 	def _setWeapon(self, weapon):
 		self._weapon = weapon
@@ -127,7 +127,7 @@ class Ship(SpaceObject):
 		if self._hitpoints <= 0:
 			self.destroy()
 		else:
-			self._scene.soundmanager.playClip(self._hitclip)
+			self._hitclip.play()
 		
 	def destroy(self):
 		"""
@@ -135,7 +135,7 @@ class Ship(SpaceObject):
 		"""
 		if self._running:
 			self._instance.act('explode', self._instance.getFacingLocation())
-			self._scene.soundmanager.playClip(self._explodclip)
+			self._explodclip.play()
 			super(Ship, self).destroy()
 	
 	def _getHitPoints(self):

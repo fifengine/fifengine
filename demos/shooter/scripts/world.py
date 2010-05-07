@@ -26,9 +26,9 @@ import copy
 import math, random
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
+from fife.extensions.soundmanager import SoundManager
 
 from scripts.common.eventlistenerbase import EventListenerBase
-from scripts.common.helpers import normalize
 from fife.extensions.loaders import loadMapFile
 
 from scripts.gui.guis import *
@@ -36,7 +36,6 @@ from scripts.gui.guis import *
 from scripts.ships.shipbase import Ship
 from scripts.ships.player import Player
 from scripts.scene import Scene
-from scripts.soundmanager import SoundManager
 
 class World(EventListenerBase):
 	"""

@@ -26,7 +26,7 @@ from scripts.ships.shipbase import *
 from scripts.ships.player import Player
 from scripts.ships.enemies import *
 from scripts.powerups import *
-from scripts.common.helpers import Rect
+from fife.extensions.fife_math import Rect
 
 class SceneNode(object):
 	"""
@@ -209,7 +209,7 @@ class Scene(object):
 		#and finally add the player to the scene
 		self.addObjectToScene(self._player)
 		
-		self._music = self._soundmanager.loadSoundClip("music/waynesmind2.ogg")
+		self._music = self._soundmanager.createSoundEmitter("music/waynesmind2.ogg")
 		self._music.callback = self.musicHasFinished
 		self._music.looping = True
 		self._soundmanager.playClip(self._music)

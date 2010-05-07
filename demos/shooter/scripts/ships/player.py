@@ -24,7 +24,7 @@
 from fife import fife
 from scripts.common.baseobject import *
 from scripts.ships.shipbase import *
-from scripts.common.helpers import *
+from fife.extensions.fife_math import *
 from scripts.weapons import *
 
 
@@ -112,7 +112,7 @@ class Player(Ship):
 	def destroy(self):
 		if not self._invulnerable and not self._dead:
 			self._instance.act('explode', self._instance.getFacingLocation())
-			self._scene.soundmanager.playClip(self._explodclip)
+			self._explodclip.play()
 			self._dead = True
 			self._invulnerable = True
 			self._lives -= 1		

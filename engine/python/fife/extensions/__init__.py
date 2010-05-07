@@ -9,4 +9,6 @@ __all__ = [
 	'filebrowser',
 	'pythonize',
 	'savers',
+	'soundmanager',
+	'fife_math'
 ]
