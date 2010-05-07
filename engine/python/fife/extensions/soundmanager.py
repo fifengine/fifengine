@@ -212,7 +212,6 @@ class SoundManager(object):
 		
 		@param clip The SoundEmitter to be played
 		"""
-		
 		if clip.fifeemitter:
 			if clip.callback:
 				if clip.timer:
@@ -224,7 +223,7 @@ class SoundManager(object):
 					def real_callback(c, e, g):
 						c()
 						e.stop()
-						e.setGain(g)
+						e.setGain(float(g)/255.0)
 						e.play()
 
 					clip.callback = cbwa(real_callback, clip.callback, clip.fifeemitter, clip.gain)
@@ -232,10 +231,21 @@ class SoundManager(object):
 				else:
 					repeat = 1
 					
-				clip.timer = fife_timer.delayCall(clip.duration, clip.callback)
-				#clip.timer.start()
+				clip.timer = fife_timer.Timer(clip.duration, clip.callback, repeat)
+				clip.timer.start()
+			else:
+				if clip.looping:
+					def real_callback(e, g):
+						e.stop()
+						e.setGain(float(g)/255.0)
+						e.play()
+
+					clip.callback = cbwa(real_callback, clip.fifeemitter, clip.gain)
+					clip.timer = fife_timer.Timer(clip.duration, clip.callback, 0)
+					clip.timer.start()
+					
 				
-			clip.fifeemitter.setGain(clip.gain)
+			clip.fifeemitter.setGain(float(clip.gain)/255.0)
 			clip.fifeemitter.play()	
 		else:
 			clip = self.createSoundEmitter(clip.name)
