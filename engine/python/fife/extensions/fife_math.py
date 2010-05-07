@@ -24,14 +24,21 @@
 from fife import fife
 import math
 
+"""
+Math Library
+==================================
+
+This is a collection of useful 2D math functions/classes.
+"""
+
 
 def normalize(vector):
 	"""
-	Helper function to normalize a vector
+	Helper function to normalize a 2D vector
 	
-	@param vector a fife.DoublePoint() to be normalized
+	@param vector a L{fife.DoublePoint} to be normalized
 	
-	@return A normalized fife.DoublePoint()
+	@return A normalized L{fife.DoublePoint}
 	"""
 	norm = fife.DoublePoint(0,0) 
 		
@@ -50,7 +57,9 @@ class Rect(object):
 	Rect
 	
 	A class used to specify the bounding box of objects.  For use
-	with collision detection.
+	with collision detection.  This was written in python because
+	FIFE does not provide a Rect class that can use floating point
+	values.
 	"""
 	def __init__(self, x = 0, y = 0, w = 0, h = 0):
 		"""
@@ -66,9 +75,10 @@ class Rect(object):
 		
 	def intersects(self, rect):
 		"""
-		Returns if the rect intersects with this Rect.
+		Tests for intersection of rect.
 		
 		@param rect the Rect to perform the test against
+		@return True if the rectancles intersect, False if not.
 		"""
 		_x = self._x - rect.x;
 		_y = self._y - rect.y;
@@ -127,11 +137,11 @@ def rotatePoint(origin, point, angle):
 	"""
 	Rotates a point around the specified origin.
 	
-	@param origin A fife.DoublePoint() specifying the origin
-	@param point A fife.DoublePoint() to be rotated
-	@param angle The angle in which to rotate the point
+	@param origin A L{fife.DoublePoint} specifying the origin.
+	@param point A L{fife.DoublePoint} to be rotated.
+	@param angle The angle in which to rotate the point.
 	
-	@return A fife.DoublePoint() representing the rotated point
+	@return A L{fife.DoublePoint} representing the rotated point.
 	"""
 	newp = fife.DoublePoint(0,0)
 	
@@ -148,57 +158,4 @@ def rotatePoint(origin, point, angle):
 	
 	return newp
 
-class Timer(fife.TimeEvent):
-	"""
-	Timer
-	
-	This class wraps the fife.TimeEvent class to make it easily usable from Python
-	It allows for a TimeEvent to be executed once or multiple times.
-	"""
-	def __init__(self,manager, delay=0,callback=None,repeat=0):
-		"""
-		@param manager The FIFE time manager
-		@param delay The delay in milliseconds to execute the callback
-		@param callback The function to execute
-		@param repeat The number of times to execute the callback.  1=once, 0=forever 
-		"""
-		super(Timer,self).__init__(delay)
-		self._is_registered = False
-		self._callback = callback
-		self._manager = manager
-		self.setPeriod(delay)
-		self._repeat = repeat
-		self._executed = 0
-
-	def start(self):
-		"""
-		Must be called before the timer will start
-		"""
-		if self._is_registered:
-			return
-		self._is_registered = True
-		self._executed = 0
-		self._manager.registerEvent(self)
-
-	def stop(self):
-		"""
-		Stops the timer
-		"""
-		if not self._is_registered:
-			return
-		self._is_registered = False
-		self._manager.unregisterEvent(self)
-
-	def updateEvent(self,delta):
-		"""
-		Should not be called directly.  This is called by FIFE.
-		"""
-		if callable(self._callback):
-			self._callback()
-			
-		if self._repeat != 0:
-			self._executed += 1
-			if self._executed >= self._repeat:
-				self.stop()
-
-	
+__all__ = ['normalize','Rect','rotatePoint']

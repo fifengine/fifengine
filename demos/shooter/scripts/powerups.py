@@ -48,11 +48,11 @@ class CannonSpread5PU(PowerUp):
 		self._velocity.x = -0.25
 		self._velocity.y = 0
 		
-		self._pickupclip = self._scene.soundmanager.loadSoundClip("sounds/pickup.ogg")		
+		self._pickupclip = self._scene.soundmanager.createSoundEmitter("sounds/pickup.ogg")		
 	
 	def applyPowerUp(self, ship):
 		ship.weapon = CannonSpread5(self._scene, ship, 300)
-		self._scene.soundmanager.playClip(self._pickupclip)
+		self._pickupclip.play()
 		self.destroy()
 		self._scene.queueObjectForRemoval(self)
 		
@@ -78,11 +78,11 @@ class ExtraLifePU(PowerUp):
 	def __init__(self, scene, powerupName, instance, findInstance=True):
 		super(ExtraLifePU, self).__init__(scene, powerupName, instance, findInstance)
 		
-		self._pickupclip = self._scene.soundmanager.loadSoundClip("sounds/pickup.ogg")	
+		self._pickupclip = self._scene.soundmanager.createSoundEmitter("sounds/pickup.ogg")	
 	
 	def applyPowerUp(self, ship):
 		ship.lives += 1
-		self._scene.soundmanager.playClip(self._pickupclip)
+		self._pickupclip.play()
 		self.destroy()
 		self._scene.queueObjectForRemoval(self)	
 		
