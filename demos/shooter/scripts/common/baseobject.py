@@ -36,16 +36,17 @@ SHTR_POWERUP = 5
 
 class SpaceObject(object):
 	"""
-	Space Object
-	
-	This is the base class for all game objects.
+	Space Object is the base class for all game objects.
 	"""
 	def __init__(self, scene, name, findInstance=True):
 		"""
-		@param scene A reference to the Scene
-		@param name The name of the space object
-		@param findInstance True if the instance you are looking for is already loaded
-		                    False if you want to load the instance yourself
+		@param scene: A reference to the Scene
+		@type scene: L{Scene}
+		@param name: The name of the space object
+		@type name: C{string}
+		@param findInstance: True if the instance you are looking for is already loaded
+		                     False if you want to load the instance yourself
+		@type findInstance: C{boolean}
 		
 		"""
 		self._scene = scene
@@ -114,10 +115,12 @@ class SpaceObject(object):
 		
 	def applyThrust(self, vector):
 		"""
-		Applies a thrust vector to the object.  Note that objects do not have
-		mass or any inertia.
+		Applies a thrust vector to the object.  
 		
-		@param vector A fife.DoublePoint() specifying the direction and intensity of thrust.
+		@note: Objects do not have mass and therefore no inertia.
+		
+		@param vector A vector specifying the direction and intensity of thrust.
+		@type vector: L{fife.DoublePoint}
 		"""
 		self._velocity.x += (vector.x * (self._scene.timedelta/1000.0))/self._xscale
 		self._velocity.y += (vector.y * (self._scene.timedelta/1000.0))/self._yscale
@@ -132,7 +135,8 @@ class SpaceObject(object):
 		"""
 		Applies a braking thrust in the opposite direction of the current velocity
 		
-		@param brakingForce a floating point value specifying how fast the object should decelerate
+		@param brakingForce: a floating point value specifying how fast the object should decelerate
+		@type brakingForce: C{float}
 		"""
 		if self._velocity.length() <= .01:
 			self._velocity.x = 0

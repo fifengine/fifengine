@@ -69,10 +69,14 @@ class Ship(SpaceObject):
 	"""
 	def __init__(self, scene, name, findInstance=True):
 		"""
-		@param scene A reference to the Scene
-		@param name The name of the ship
-		@param findInstance True if the instance you are looking for is already loaded
-		                    False if you want to load the instance yourself
+		@param scene: A reference to the Scene
+		@type scene: L{Scene}
+		@param name: The name of the ship
+		@type name: C{string}
+		@param findInstance: True if the instance you are looking for is already loaded
+		                     False if you want to load the instance yourself
+		                     
+		@type findInstance: C{boolean}
 		
 		"""
 		
@@ -99,7 +103,7 @@ class Ship(SpaceObject):
 		"""
 		Playes the flash animation (or action) the specified number of times
 		
-		@param number an integer specifying the number of times to play the flash animation
+		@param number: An integer specifying the number of times to play the flash animation
 		"""
 		if self._running:
 			self._instance.act('flash', self._instance.getFacingLocation())
@@ -110,7 +114,7 @@ class Ship(SpaceObject):
 		"""
 		Fires the current weapon in the specified direction
 		
-		@param direction A fife.DoublePoint() specifying the direction to fire
+		@param direction: A L{fife.DoublePoint()} specifying the direction to fire
 		"""
 		if self._weapon and self._hitpoints > 0:
 			return self._weapon.fire(direction)
@@ -121,7 +125,7 @@ class Ship(SpaceObject):
 		"""
 		Removes the specified number of hit points.  Destroys the ship if necessary.
 		
-		@param hp The number of hit points to remove from the ship.
+		@param hp: The number of hit points to remove from the ship.
 		"""
 		self._hitpoints -= hp
 		if self._hitpoints <= 0:

@@ -62,9 +62,9 @@ class Timer(fife.TimeEvent):
 	"""
 	def __init__(self,delay=0,callback=None,repeat=0):
 		"""
-		@param delay The delay in milliseconds to execute the callback
-		@param callback The function to execute
-		@param repeat The number of times to execute the callback.  1=once, 0=forever 
+		@param delay: The delay in milliseconds to execute the callback
+		@param callback: The function to execute
+		@param repeat: The number of times to execute the callback.  1=once, 0=forever 
 		"""
 		super(Timer,self).__init__(delay)
 		self._is_registered = False
@@ -116,10 +116,11 @@ def delayCall(delay,callback):
 	"""
 	Delay a function call by a number of milliseconds.
 
-	@param delay Delay in milliseconds.
-	@param callback The function to call.
+	@param delay: Delay in milliseconds.
+	@param callback: The function to call.
 
 	@return The timer.
+	@rtype: L{Timer}
 	"""
 	timer = Timer(delay, callback, 1)
 	timer.start()
@@ -130,10 +131,11 @@ def repeatCall(period,callback):
 	"""
 	Repeat a function call.
 
-	@param period Period between calls in milliseconds.
-	@param callback The function to call.
+	@param period: Period between calls in milliseconds.
+	@param callback: The function to call.
 
-	@return The timer.
+	@return: The timer.
+	@rtype: L{Timer}
 
 	The call is repeated until the timer is stopped.
 	"""
