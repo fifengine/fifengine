@@ -36,9 +36,10 @@ def normalize(vector):
 	"""
 	Helper function to normalize a 2D vector
 	
-	@param vector a L{fife.DoublePoint} to be normalized
+	@param vector: a L{fife.DoublePoint} to be normalized
+	@type vector: L{fife.DoublePoint}
 	
-	@return A normalized L{fife.DoublePoint}
+	@return: A normalized L{fife.DoublePoint}
 	"""
 	norm = fife.DoublePoint(0,0) 
 		
@@ -54,7 +55,7 @@ def normalize(vector):
 	
 class Rect(object):
 	"""
-	Rect
+	A simple rectangle class that allows floating point values.
 	
 	A class used to specify the bounding box of objects.  For use
 	with collision detection.  This was written in python because
@@ -63,10 +64,14 @@ class Rect(object):
 	"""
 	def __init__(self, x = 0, y = 0, w = 0, h = 0):
 		"""
-		@param x The x coordinate
-		@param y The y coordinate
-		@param w The width
-		@param h The height
+		@param x: The x coordinate
+		@type x: C{int} or C{float}
+		@param y: The y coordinate
+		@type y: C{int} or C{float}
+		@param w: The width
+		@type w: C{int} or C{float}
+		@param h: The height
+		@type h: C{int} or C{float}
 		"""
 		self._x = x
 		self._y = y
@@ -77,8 +82,11 @@ class Rect(object):
 		"""
 		Tests for intersection of rect.
 		
-		@param rect the Rect to perform the test against
-		@return True if the rectancles intersect, False if not.
+		@param rect: the L{Rect} to perform the test against.
+		@type rect: L{Rect}
+		
+		@return: True if the rectancles intersect, False if not.
+		@rtype: C{boolean}
 		"""
 		_x = self._x - rect.x;
 		_y = self._y - rect.y;
@@ -137,11 +145,15 @@ def rotatePoint(origin, point, angle):
 	"""
 	Rotates a point around the specified origin.
 	
-	@param origin A L{fife.DoublePoint} specifying the origin.
-	@param point A L{fife.DoublePoint} to be rotated.
-	@param angle The angle in which to rotate the point.
+	@param origin: A L{fife.DoublePoint} specifying the origin.
+	@type origin: L{fife.DoublePoint}
+	@param point: A L{fife.DoublePoint} to be rotated.
+	@type point: L{fife.DoublePoint}
+	@param angle: The angle in which to rotate the point.
+	@type angle: C{int} or C{float}
 	
-	@return A L{fife.DoublePoint} representing the rotated point.
+	@return: A L{fife.DoublePoint} representing the rotated point.
+	@rtype: L{fife.DoublePoint}
 	"""
 	newp = fife.DoublePoint(0,0)
 	

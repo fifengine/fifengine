@@ -30,7 +30,7 @@ from fife.extensions.fife_math import Rect
 
 class SceneNode(object):
 	"""
-	SceneNode
+	A node in the scene graph.
 	
 	This represents a node in the scene.  The node stores a list
 	of objects that exist in the node.  This is used by the Scene
@@ -55,17 +55,21 @@ class SceneNode(object):
 
 class Scene(object):
 	"""
-	Scene
+	Master game scene.  Keeps track of all game objects.
 	
 	This is the meat and potatoes of the game.  This class takes care of the scene graph,
 	updating objects, destroying objects, collision detection, etc etc.
 	"""
 	def __init__(self, world, engine, objectLayer, soundmanager):
 		"""
-		@param world A reference to the master instance of the World class
-		@param engine A reference to the FIFE engine
-		@param objectLayer The layer that all objects exist on
-		@param soundmanager A reference to the SoundManager
+		@param world: A reference to the master instance of the World class
+		@type world: L{World}
+		@param engine: A reference to the FIFE engine
+		@type engine: L{fife.Engine}
+		@param objectLayer: The layer that all objects exist on
+		@type objectLayer: L{fife.Layer}
+		@param soundmanager: A reference to the SoundManager
+		@type soundmanager: L{fife.extensions.soundmanager.SoundManager}
 		"""
 		self._engine = engine
 		self._world = world
@@ -252,16 +256,16 @@ class Scene(object):
 
 	def getObjectsInNode(self, nodeindex):
 		"""
-		@param nodeindex the index of the node you which to retrieve objects from.
-		@return The list of objects in the specified node index
+		@param nodeindex: the index of the node you which to retrieve objects from.
+		@return: The list of objects in the specified node index
 		"""
 		return self._nodes[nodeindex].instances
 
 	def getObjectsInRange(self, rangeL, rangeR):
 		"""
-		@param rangeL the left most node index
-		@param rangeR the right most node index
-		@return A combined list of objects in the specified node index range (inclusive)
+		@param rangeL: the left most node index
+		@param rangeR: the right most node index
+		@return: A combined list of objects in the specified node index range (inclusive)
 		"""
 		objects = list()
 		
@@ -274,10 +278,10 @@ class Scene(object):
 		"""
 		Adds an object to the scene in the correct scene node
 		
-		@param obj The object to add to the scene
+		@param obj: The object to add to the scene
 		"""
 		
-		#TODO: search to ensure the object isn't already part of the scene
+		#@todo: search to ensure the object isn't already part of the scene
 		loc = obj.instance.getLocation().getExactLayerCoordinates()
 		nodeindex = int(loc.x * self._xscale)
 
@@ -293,7 +297,7 @@ class Scene(object):
 		When an object moves in the scene you should call this function to update
 		scene graph.  You MUST do this or the graph will be incorrect.
 		
-		@param obj The object to move in the scene
+		@param obj: The object to move in the scene
 		"""
 		
 		loc = obj.instance.getLocation().getExactLayerCoordinates()
@@ -318,7 +322,7 @@ class Scene(object):
 		This function releases any memory allocated for the object by deleting
 		the FIFE instance.
 		
-		@param obj The object to delete
+		@param obj: The object to delete
 		"""
 		for node in self._nodes:
 			if obj in node.spaceobjects:

@@ -89,9 +89,13 @@ class Player(Ship):
 			self._scene.gameOver()
 		
 	def setInvulnerable(self, milliseconds):
-		#50 is defined in the players "flash" animation file
-		#2 is the number of frames in the animation
-		#TODO: read these values somehow from the animation
+		"""
+		50 is defined in the players "flash" animation file
+		2 is the number of frames in the animation		
+		
+		@todo: read these values somehow from the animation
+		
+		"""
 		number = int((milliseconds / 50) / 2)
 		
 		if number <= 0:
@@ -166,7 +170,7 @@ class Player(Ship):
 		super(Player, self).update()
 		
 		#set up the players camera bounds
-		#TODO: grab screen resolution from somewhere
+		#@todo: grab screen resolution from somewhere
 		topleft = self._scene.camera.toMapCoordinates(fife.ScreenPoint(0,0))
 		bottomright = self._scene.camera.toMapCoordinates(fife.ScreenPoint(1024,768))
 

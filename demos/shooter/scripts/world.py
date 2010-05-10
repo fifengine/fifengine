@@ -151,6 +151,10 @@ class World(EventListenerBase):
 
 
 	def renderBoundingBox(self, obj):
+		"""
+		Just a hack to render an objects bounding box.
+		"""
+		
 		bbox = copy.copy(obj.boundingbox)
 		
 		#apply the object layer scale

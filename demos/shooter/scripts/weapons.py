@@ -27,13 +27,25 @@ from fife.extensions.fife_math import normalize, rotatePoint
 
 class Projectile(SpaceObject):
 	"""
-	Projectile
+	Represents a projectile (or bullet or fireball) in the scene.
 
 	This is the entity that weapons fire.  Projectiles have an owner
 	and a time to live.  They are also what cause damage to ships
 	and other entities.
 	"""
 	def __init__(self, scene, owner, projectileName, timeToLive):
+		"""
+		@param scene: The scene
+		@type scene: L{Scene}
+		@param owner: The ship that fired the projectile
+		@type owner: L{Ship}
+		@param projectileName: The name of the FIFE object to load
+		@type projectilName: C{string}
+		@param timeToLive: The length of time in milliseconds the projectile will 
+		remain active before destroying itself.
+		@type timeToLive: C{int}
+		
+		"""
 		super(Projectile, self).__init__(scene, projectileName, False)
 
 		self._obj = self._model.getObject(self._name, "http://www.fifengine.de/xml/tutorial")
@@ -52,11 +64,28 @@ class Projectile(SpaceObject):
 		self._damage = 1
 	
 	def create(self, location):
+		"""
+		Spawns the projectile.
+		
+		@param location: The location to create the projectile
+		@type location: L{fife.Location}
+		
+		@note: This is called by L{Projectile.run}
+		"""
 		self._instance = self._layer.createInstance(self._obj, location.getExactLayerCoordinates(), "bullet")
 		fife.InstanceVisual.create(self._instance)
 		self._instance.thisown = 0
 
 	def run(self, velocity, location):
+		"""
+		Start the projectile on it's path.
+		
+		@param velocity: The starting velocity of the projectile
+		@type velocity: L{fife.DoublePoint}
+		@param location: The location to create the projectile
+		@type location: L{fife.Location}
+		
+		"""
 		if not self._running:
 			self._velocity = velocity
 			self._velocity.x /= self._xscale
@@ -110,6 +139,12 @@ class Weapon(object):
 		self._soundclip = None
 		
 	def fire(self, direction):
+		"""
+		Fires the weapon in the specified direction.
+		
+		@param direction: A normalized vector specifying the direction to fire the projectile
+		@type direction: L{fife.DoublePoint}
+		"""
 		pass
 		
 	def _getProjectileVelocity(self):
