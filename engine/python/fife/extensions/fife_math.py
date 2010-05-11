@@ -21,9 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife import fife
-import math
-
 """
 Math Library
 ==================================
@@ -31,6 +28,8 @@ Math Library
 This is a collection of useful 2D math functions/classes.
 """
 
+from fife import fife
+import math
 
 def normalize(vector):
 	"""
@@ -145,14 +144,14 @@ def rotatePoint(origin, point, angle):
 	"""
 	Rotates a point around the specified origin.
 	
-	@param origin: A L{fife.DoublePoint} specifying the origin.
+	@param origin: A point specifying the origin.
 	@type origin: L{fife.DoublePoint}
-	@param point: A L{fife.DoublePoint} to be rotated.
+	@param point: The point to be rotated.
 	@type point: L{fife.DoublePoint}
 	@param angle: The angle in which to rotate the point.
 	@type angle: C{int} or C{float}
 	
-	@return: A L{fife.DoublePoint} representing the rotated point.
+	@return: The rotated point.
 	@rtype: L{fife.DoublePoint}
 	"""
 	newp = fife.DoublePoint(0,0)

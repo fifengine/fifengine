@@ -446,7 +446,7 @@ class Scene(object):
 				if not obj.running:
 					self.queueObjectForRemoval(obj)
 
-#			self._world.renderBoundingBox(obj)			
+			#self._world.renderBoundingBox(obj)			
 
 
 				
