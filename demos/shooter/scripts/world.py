@@ -57,7 +57,12 @@ class World(EventListenerBase):
 		self._eventmanager = engine.getEventManager()
 		self._model = engine.getModel()
 		self._filename = ''
-		self._keystate = { 'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'CTRL': False, 'SPACE': False, } 
+		self._keystate = { 'UP': False, 
+		                   'DOWN': False, 
+		                   'LEFT': False, 
+		                   'RIGHT': False, 
+		                   'CTRL': False, 
+		                   'SPACE': False, } 
 		self._pump_ctr = 0
 		self._map = None
 		self._scene = None
@@ -146,7 +151,7 @@ class World(EventListenerBase):
 		
 		self._genericrenderer = fife.GenericRenderer.getInstance(self.cameras['main'])
 		self._genericrenderer.clearActiveLayers()
-		self._genericrenderer.addActiveLayer(self._map.getLayer('objects'))
+		self._genericrenderer.addActiveLayer(self._map.getLayer('boundingbox'))
 		self._genericrenderer.setEnabled(True)
 
 
@@ -245,6 +250,10 @@ class World(EventListenerBase):
 	def continueGame(self):
 		self._mainmenu.hide()
 		self._paused = False
+		
+	def pauseGame(self):
+		self._paused = True
+		self._mainmenu.show(True)
 		
 	def initCameras(self):
 		"""

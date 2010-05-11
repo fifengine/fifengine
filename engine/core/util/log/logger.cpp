@@ -51,30 +51,30 @@ namespace FIFE {
 	Logger::Logger(logmodule_t module):
 		m_module(module) {
 	}
-	
+
 	Logger::~Logger() {
 	}
-	
+
 	void Logger::log(LogManager::LogLevel level, const std::string& msg) {
 		LogManager::instance()->log(level, m_module, msg);
 	}
-	
+
 	void Logger::log(LogManager::LogLevel level, const LMsg& msg) {
 		LogManager::instance()->log(level, m_module, msg.str);
 	}
-	
+
 	LogManager* LogManager::instance() {
 		if (!m_instance) {
 			m_instance = new LogManager();
 		}
 		return m_instance;
 	}
-	
+
 	LogManager::~LogManager() {
 		delete m_instance;
 	}
-	
-	
+
+
 	void LogManager::log(LogLevel level, logmodule_t module, const std::string& msg) {
 		if (level < m_level) {
 			return;
@@ -86,19 +86,19 @@ namespace FIFE {
 		switch (level) {
 			case LEVEL_DEBUG: lvlstr = "dbg";
 			break;
-			
+
 			case LEVEL_LOG: lvlstr = "log";
 			break;
-			
+
 			case LEVEL_WARN: lvlstr = "warn";
 			break;
-			
+
 			case LEVEL_ERROR: lvlstr = "error";
 			break;
-			
+
 			case LEVEL_PANIC: lvlstr = "panic";
 			break;
-			
+
 			default: lvlstr = "error";
 			break;
 		}
@@ -112,11 +112,11 @@ namespace FIFE {
 			abort();
 		}
 	}
-	
+
 	void LogManager::setLevelFilter(LogLevel level) {
 		m_level = level;
 	}
-	
+
 	LogManager::LogLevel LogManager::getLevelFilter() {
 		return m_level;
 	}
@@ -129,12 +129,12 @@ namespace FIFE {
   			addVisibleModule(moduleInfos[ind].parent);
  		}
 	}
-	
+
 	void LogManager::removeVisibleModule(logmodule_t module) {
 		validateModule(module);
 		m_modules[module] = false;
 	}
-	
+
 	void LogManager::clearVisibleModules() {
 		for (int i = 0; i < LM_MODULE_MAX; i++) {
 			m_modules[i] = false;
@@ -144,19 +144,27 @@ namespace FIFE {
 	void LogManager::setLogToPrompt(bool log_to_promt) {
 		m_logtoprompt = log_to_promt;
 	}
-	
+
 	bool LogManager::isLoggingToPrompt() {
 		return m_logtoprompt;
 	}
-	
+
 	void LogManager::setLogToFile(bool logtofile) {
+		if(logtofile){
+			m_logfile = new std::ofstream("fife.log");
+		}
+		else {
+			if (m_logfile){
+				delete m_logfile;
+			}
+		}
 		m_logtofile = logtofile;
 	}
-	
+
 	bool LogManager::isLoggingToFile() {
 		return m_logtofile;
 	}
-	
+
 	bool LogManager::isVisible(logmodule_t module) {
 		if (!m_modules[module]) {
 			return false;
@@ -166,24 +174,24 @@ namespace FIFE {
 		}
 		return true;
 	}
-		
+
 	LogManager::LogManager():
 		m_level(LEVEL_DEBUG),
 		module_check_stack(),
 		m_logtofile(false),
 		m_logtoprompt(false) {
 		validateModuleDescription(LM_CORE);
-		m_logfile = new std::ofstream("fife.log");
+		m_logfile = 0;
 		clearVisibleModules();
 	}
-	
+
 	void LogManager::validateModule(logmodule_t m) {
 		if ((m <= LM_CORE) || (m >= LM_MODULE_MAX)) {
 			std::cout << "Invalid module received in LogManager: " << m << ", aborting\n";
 			abort();
 		}
 	}
-	
+
 	void LogManager::validateModuleDescription(logmodule_t module) {
 		if (module == LM_CORE) {
 			for (int m = static_cast<int>(LM_CORE)+1; m < static_cast<int>(LM_MODULE_MAX); m++) {
@@ -205,7 +213,7 @@ namespace FIFE {
 			}
 		}
 	}
-	
+
 	std::string LogManager::getModuleName(logmodule_t module) {
 		return moduleInfos[module].name;
 	}

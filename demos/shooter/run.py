@@ -45,9 +45,6 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		super(ApplicationListener, self).__init__(engine,regKeys=True,regCmd=True, regMouse=False, regConsole=True, regWidget=True)
 		self._engine = engine
 		self._world = world
-		engine.getEventManager().setNonConsumableKeys([
-			fife.Key.ESCAPE,])
-
 		self._quit = False
 		
 	def keyPressed(self, evt):
@@ -112,11 +109,32 @@ class Shooter(ApplicationBase):
 		Initialize the LogManager.
 		"""
 
-		LogModules = ["controller",]
-		self._log = fifelog.LogManager(self.engine, 1, 0)
-		if LogModules:
-			self._log.setVisibleModules(*LogModules)
-
+		logmodules = ["controller",
+		              "event channel", 
+		              "audio",
+		              "model",
+		              "metamodel",
+		              "pool",
+		              "vfs",
+		              "video",
+		              "view",
+		              "camera",
+		              "util",
+		              "pool",
+		              "xml",
+		              "exception",
+		              "structures",
+		              "location",
+		              "native loaders",
+		              "loaders",
+		              "gui",
+		              "script"]
+		
+		#log to both the console and log file
+		self._log = fifelog.LogManager(self.engine, 1, 1)
+		if logmodules:
+			self._log.setVisibleModules(*logmodules)
+			
 	def createListener(self):
 		pass # already created in constructor
 

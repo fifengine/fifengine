@@ -42,6 +42,7 @@ namespace FIFE {
 		};
 		~LogManager();
 		
+		void log(LogLevel level, logmodule_t module, const std::string& msg);
 		void setLevelFilter(LogLevel level);
 		LogLevel getLevelFilter();
 		

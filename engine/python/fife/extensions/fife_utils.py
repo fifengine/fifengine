@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -20,13 +20,14 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
+
+""" This file contains some functions that may be useful """
+
 import fife, re, sys, os
 
 __all__ = ['is_fife_exc', 'getUserDataDirectory']
 
 _exc_re = re.compile(r'_\[(\w+)\]_')
-
-""" This file contains some functions that may be useful """
 
 def is_fife_exc(type, original_exc):
 	""" Checks if an exception is of given type.

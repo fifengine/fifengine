@@ -21,8 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife import fife
-
 """
 Convenient timers
 =================
@@ -40,6 +38,7 @@ Usage::
 
 """
 
+from fife import fife
 
 _manager = None
 _alltimers = []
@@ -119,7 +118,7 @@ def delayCall(delay,callback):
 	@param delay: Delay in milliseconds.
 	@param callback: The function to call.
 
-	@return The timer.
+	@return: The timer.
 	@rtype: L{Timer}
 	"""
 	timer = Timer(delay, callback, 1)
@@ -129,15 +128,13 @@ def delayCall(delay,callback):
 
 def repeatCall(period,callback):
 	"""
-	Repeat a function call.
+	Repeat a function call. The call is repeated until the timer is stopped.
 
 	@param period: Period between calls in milliseconds.
 	@param callback: The function to call.
 
 	@return: The timer.
 	@rtype: L{Timer}
-
-	The call is repeated until the timer is stopped.
 	"""
 	timer = Timer(period, callback, 0)
 	timer.start()

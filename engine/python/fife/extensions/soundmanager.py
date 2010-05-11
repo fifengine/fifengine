@@ -21,11 +21,6 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from fife import fife
-
-import fife.extensions.fife_timer as fife_timer
-from fife.extensions.pychan.tools import callbackWithArguments as cbwa
-
 """
 Sound Manager
 ==================================
@@ -45,6 +40,11 @@ Usage::
   emitter.play()
 
 """
+
+from fife import fife
+
+import fife.extensions.fife_timer as fife_timer
+from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 class SoundEmitter(object):
 	"""
