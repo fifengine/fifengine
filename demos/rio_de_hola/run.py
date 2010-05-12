@@ -39,10 +39,10 @@ from scripts.common import eventlistenerbase
 from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
-from settings import Setting
+from fife.extensions.fife_settings import Setting
 from fife.extensions.fife_utils import getUserDataDirectory
 
-TDS = Setting()
+TDS = Setting(app_name="rio_de_hola")
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
 	def __init__(self, engine, world):
@@ -128,8 +128,6 @@ class IslandDemo(ApplicationBase):
 		Load the settings from a python file and load them into the engine.
 		Called in the ApplicationBase constructor.
 		"""
-		import settings
-		self.settings = settings
 
 		engineSetting = self.engine.getSettings()
 		engineSetting.setDefaultFontGlyphs(str(TDS.readSetting("FontGlyphs", strip=False)))

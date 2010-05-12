@@ -35,9 +35,9 @@ from agents.girl import Girl
 from agents.cloud import Cloud
 from agents.beekeeper import Beekeeper
 from agents.agent import create_anonymous_agents
-from settings import Setting
+from fife.extensions.fife_settings import Setting
 
-TDS = Setting()
+TDS = Setting(app_name="rio_de_hola")
 
 class MapListener(fife.MapChangeListener):
 	def __init__(self, map):

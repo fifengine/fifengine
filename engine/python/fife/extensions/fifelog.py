@@ -102,7 +102,14 @@ class LogManager(object):
 	def setLevelFilter(self, fltr):
 		"""
 		Sets the minimum log level to view.
+		
 		@param fltr: The filter level
+		
+		Valid values:
+			fife.LogManager.LEVEL_DEBUG
+			fife.LogManager.LEVEL_LOG
+			fife.LogManager.LEVEL_WARN
+   			fife.LogManager.LEVEL_ERROR
 		"""
 		self.lm.setLevelFilter(fltr)
 		

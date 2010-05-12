@@ -23,9 +23,9 @@
 
 import random
 from agent import Agent
-from settings import Setting
+from fife.extensions.fife_settings import Setting
 
-TDS = Setting()
+TDS = Setting(app_name="rio_de_hola")
 
 _STATE_NONE, _STATE_IDLE, _STATE_RUN, _STATE_KICK, _STATE_TALK = xrange(5)
 
