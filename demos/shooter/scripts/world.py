@@ -48,11 +48,12 @@ class World(EventListenerBase):
 	   ( by inheriting from EventlistenerBase )
 
 	"""
-	def __init__(self, app, engine):
+	def __init__(self, app, engine, setting):
 		super(World, self).__init__(engine, regKeys=True)
 
 		self._applictaion = app
 		self._engine = engine
+		self._setting = setting
 		self._timemanager = engine.getTimeManager()
 		self._eventmanager = engine.getEventManager()
 		self._model = engine.getModel()
@@ -72,7 +73,7 @@ class World(EventListenerBase):
 		
 		self._soundmanager = SoundManager(self._engine)
 		
-		self._mainmenu = MainMenu(self)
+		self._mainmenu = MainMenu(self, self._setting)
 		self.showMainMenu()
 		
 		self._hudwindow = HeadsUpDisplay(self)

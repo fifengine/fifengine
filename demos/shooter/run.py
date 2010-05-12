@@ -39,6 +39,11 @@ from scripts.common import eventlistenerbase
 from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
+from fife.extensions.fife_settings import Setting
+
+TDS = Setting(app_name="shooter", 
+              settings_file="./settings.xml", 
+              settings_gui_xml="")
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
 	def __init__(self, engine, world):
@@ -67,8 +72,10 @@ class Shooter(ApplicationBase):
 		
 		#This is requred if you want to use modal dialog boxes
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
+
+		self._setting = TDS
 		
-		self._world = world.World(self, self.engine)
+		self._world = world.World(self, self.engine, self._setting)
 		self._listener = ApplicationListener(self.engine, self._world)
 
 	def requestQuit(self):
@@ -84,23 +91,29 @@ class Shooter(ApplicationBase):
 		settings in here to remove the complexity of loading settings from
 		an XML file which would be out of scope of this demo.
 		"""
-
+		
+		self._setting = TDS
+		
 		engineSetting = self.engine.getSettings()
-		engineSetting.setDefaultFontGlyphs(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\"")
-		engineSetting.setDefaultFontPath("fonts/FreeSans.ttf")
-		engineSetting.setDefaultFontSize(16)
-		engineSetting.setBitsPerPixel(16)
-		engineSetting.setScreenWidth(1024)
-		engineSetting.setScreenHeight(768)
-		engineSetting.setRenderBackend("OpenGL")
-		engineSetting.setFullScreen(0)
+		engineSetting.setDefaultFontGlyphs(str(self._setting.readSetting("FontGlyphs", strip=False)))
+		engineSetting.setDefaultFontPath(str(self._setting.readSetting("Font")))
+		engineSetting.setDefaultFontSize(int(self._setting.readSetting("DefaultFontSize")))
+		engineSetting.setBitsPerPixel(int(self._setting.readSetting("BitsPerPixel")))
+		engineSetting.setInitialVolume(float(self._setting.readSetting("InitialVolume")))
+		engineSetting.setSDLRemoveFakeAlpha(int(self._setting.readSetting("SDLRemoveFakeAlpha")))
+		engineSetting.setScreenWidth(int(self._setting.readSetting("ScreenWidth")))
+		engineSetting.setScreenHeight(int(self._setting.readSetting("ScreenHeight")))
+		engineSetting.setRenderBackend(str(self._setting.readSetting("RenderBackend")))
+		engineSetting.setFullScreen(int(self._setting.readSetting("FullScreen")))
 
 		try:
-			engineSetting.setWindowTitle("FIFE - Shooter")
+			engineSetting.setWindowTitle(str(self._setting.readSetting("WindowTitle")))
+			engineSetting.setWindowIcon(str(self._setting.readSetting("WindowIcon")))
 		except:
 			pass			
+
 		try:
-			engineSetting.setImageChunkingSize(256)
+			engineSetting.setImageChunkingSize(int(self._setting.readSetting("ImageChunkSize")))
 		except:
 			pass
 
@@ -109,6 +122,7 @@ class Shooter(ApplicationBase):
 		Initialize the LogManager.
 		"""
 
+		#@todo: load this from settings
 		logmodules = ["controller",
 		              "event channel", 
 		              "audio",
@@ -132,6 +146,7 @@ class Shooter(ApplicationBase):
 		
 		#log to both the console and log file
 		self._log = fifelog.LogManager(self.engine, 1, 1)
+		self._log.setLevelFilter(fife.LogManager.LEVEL_DEBUG)
 		if logmodules:
 			self._log.setVisibleModules(*logmodules)
 			

@@ -23,9 +23,9 @@
 
 from agent import Agent
 from fife import fife
-from settings import Setting
+from fife.extensions.fife_settings import Setting
 
-TDS = Setting()
+TDS = Setting(app_name="rio_de_hola")
 
 _STATE_NONE, _STATE_IDLE, _STATE_RUN, _STATE_FOLLOW = 0, 1, 2, 3
 

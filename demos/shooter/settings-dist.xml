@@ -1,0 +1,24 @@
+<Settings>
+	<FullScreen> 0 </FullScreen>
+	<PlaySounds> 1 </PlaySounds>
+	<RenderBackend> OpenGL </RenderBackend>
+	<ScreenWidth> 1024 </ScreenWidth>
+	<ScreenHeight> 768 </ScreenHeight>
+	<BitsPerPixel> 0 </BitsPerPixel>
+	<InitialVolume> 5.0 </InitialVolume>
+	<SDLRemoveFakeAlpha> 1 </SDLRemoveFakeAlpha>
+	<WindowTitle> FIFE - Shooter Demo </WindowTitle>
+	<WindowIcon> </WindowIcon>
+
+	<MapFile> maps/shrine.xml </MapFile>
+	<Font> fonts/FreeSans.ttf </Font>
+	<FontGlyphs> abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\"</FontGlyphs>
+	<DefaultFontSize> 16 </DefaultFontSize>
+	<LogModules> controller </LogModules>
+	<PychanDebug> False </PychanDebug>
+	<LogToPrompt> 1 </LogToPrompt>
+	<LogToFile> 0 </LogToFile>
+	<UsePsyco> False </UsePsyco>
+	<ProfilingOn> False </ProfilingOn>
+	<ImageChunkSize> 256 </ImageChunkSize>
+</Settings>

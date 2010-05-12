@@ -7,6 +7,7 @@
 	<VBox opaque='0' base_color="188, 0, 0" position="412,200" name="main_menu">
 		<Button name="continue" text="Continue" min_size="200,0" border_size="0"/>
 		<Button name="new_game" text="New Game" min_size="200,0" border_size="0"/>
+		<Button name="settings" text="Settings" min_size="200,0" border_size="0"/>
 		<Button name="high_scores" text="High Scores" min_size="200,0" border_size="0"/>
 		<Button name="credits" text="Credits" min_size="200,0" border_size="0"/>
 		<Button name="quit" text="Quit" min_size="200,0" border_size="0"/>

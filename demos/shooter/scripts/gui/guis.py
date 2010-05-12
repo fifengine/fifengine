@@ -29,8 +29,9 @@ from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesNSImpl
 
 class MainMenu(object):
-	def __init__(self, world):
+	def __init__(self, world, setting):
 		self._world = world
+		self._setting = setting
 		self._widget = pychan.loadXML('gui/mainmenu.xml')
 
 		self._continue = self._widget.findChild(name="continue")
@@ -44,6 +45,7 @@ class MainMenu(object):
 		eventMap = {
 			'continue': self._world.continueGame,
 			'new_game': self._world.newGame,
+			'settings': self._setting.onOptionsPress,
 			'credits': self._world.showCredits,
 			'high_scores': self._world.showHighScores,
 			'quit': self._world.quit,
