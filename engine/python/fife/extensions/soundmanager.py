@@ -192,6 +192,8 @@ class SoundManager(object):
 
 		self._fifesoundmanager = self._engine.getSoundManager()
 		self._fifesoundmanager.init()
+		
+		self._fifesoundmanager.setListenerOrientation(0,1,0)
 
 		# basic rolloff used for positional sounds
 		self._rolloff = 1
@@ -272,13 +274,21 @@ class SoundManager(object):
 
 				if clip.looping:
 					repeat = 0
-					def real_callback(c, e, g):
-						c()
-						e.stop()
-						e.setGain(float(g)/255.0)
-						e.play()
+					def real_callback(clip):
+						clip.callback()
+						clip.fifeemitter.stop()
+						clip.fifeemitter.setGain(float(clip.gain)/255.0)
+						if self.listenerposition and clip.position:
+							# Use 1 as z coordinate, no need to specify it
+							clip.fifeemitter.setPosition(clip.position[0], clip.position[1], 1)
+							clip.fifeemitter.setRolloff(clip.rolloff)
+						elif self.listenerposition and not clip.position:
+							clip.fifeemitter.setPosition(self._listenerposition[0], self._listenerposition[1], 1)
+							clip.fifeemitter.setRolloff(self.rolloff)
+			
+						clip.fifeemitter.play()
 
-					clip.callback = cbwa(real_callback, clip.callback, clip.fifeemitter, clip.gain)
+					clip.callback = cbwa(real_callback, clip)
 
 				else:
 					repeat = 1
@@ -287,12 +297,20 @@ class SoundManager(object):
 
 			else:
 				if clip.looping:
-					def real_callback(e, g):
-						e.stop()
-						e.setGain(float(g)/255.0)
-						e.play()
+					def real_callback(clip):
+						clip.fifeemitter.stop()
+						clip.fifeemitter.setGain(float(clip.gain)/255.0)
+						if self.listenerposition and clip.position:
+							# Use 1 as z coordinate, no need to specify it
+							clip.fifeemitter.setPosition(clip.position[0], clip.position[1], 1)
+							clip.fifeemitter.setRolloff(clip.rolloff)
+						elif self.listenerposition and not clip.position:
+							clip.fifeemitter.setPosition(self._listenerposition[0], self._listenerposition[1], 1)
+							clip.fifeemitter.setRolloff(self.rolloff)
+							
+						clip.fifeemitter.play()
 
-					clip.callback = cbwa(real_callback, clip.fifeemitter, clip.gain)
+					clip.callback = cbwa(real_callback, clip)
 					clip.timer = fife_timer.Timer(clip.duration, clip.callback, 0)
 
 			clip.fifeemitter.setGain(float(clip.gain)/255.0)
@@ -302,7 +320,7 @@ class SoundManager(object):
 				clip.fifeemitter.setPosition(clip.position[0], clip.position[1], 1)
 				clip.fifeemitter.setRolloff(clip.rolloff)
 			elif self.listenerposition and not clip.position:
-				clip.fifeemitter.setPosition(self.listenerposition[0], self.listenerposition[1], 1)
+				clip.fifeemitter.setPosition(self._listenerposition[0], self._listenerposition[1], 1)
 				clip.fifeemitter.setRolloff(self.rolloff)
 
 			clip.fifeemitter.play()
@@ -358,7 +376,7 @@ class SoundManager(object):
 		
 	def _setListenerPosition(self, position):
 		self._listenerposition = position
-		self._fifesoundmanager.setListenerPosition(self._listenerposition[0], self._listenerposition[1], 1)
+		self._fifesoundmanager.setListenerPosition(self._listenerposition[0], self._listenerposition[1], 10)
 
 	rolloff = property(_getRolloff, _setRolloff)
 	listenerposition = property(_getListenerPosition, _setListenerPosition)
