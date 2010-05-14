@@ -57,7 +57,7 @@ from gui.mapeditor import MapEditor
 from gui.menubar import Menu, MenuBar
 from gui.error import ErrorDialog
 from mapview import MapView
-from settings import Settings
+from fife.extensions.fife_settings import Setting
 
 def getEditor():
 	""" Returns the Global editor instance """
@@ -109,7 +109,7 @@ class Editor(ApplicationBase, MainWindow):
 		Load the settings from a python file and load them into the engine.
 		Called in the ApplicationBase constructor.
 		"""
-		self._settings = Settings()
+		self._settings = Setting(app_name="editor")
 		TDS = self._settings
 		
 		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""

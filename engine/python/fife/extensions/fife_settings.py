@@ -87,6 +87,7 @@ class Setting(object):
 		settings = Setting(app_name="myapp")
 		screen_width = settings.readSetting("ScreenWidth")
 	"""
+	
 	def __init__(self, app_name="", settings_file="", settings_gui_xml=""):
 		"""
 		Initializes the Setting object.
@@ -124,10 +125,212 @@ class Setting(object):
 		if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
 			shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
 		
+		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
+		self._root_element = self._tree.getroot()
+		self.validateTree()
+
+	def validateTree(self):
+		""" Iterates the settings tree and prints warning when an invalid tag is found """
+		for c in self._root_element.getchildren():
+			if c.tag != "Module":
+				print "Invalid tag in settings.xml. Expected Module, got: ", c.tag
+			elif c.get("name", "") == "":
+				print "Invalid tag in settings.xml. Module name is empty."
+			else:
+				for e in c.getchildren():
+					if e.tag != "Setting":
+						print "Invalid tag in settings.xml in module: ",c.tag,
+						print ". Expected Setting, got: ", e.tag
+					elif c.get("name", "") == "":
+						print "Invalid tag in settings.xml in module: ",c.tag,
+						print ". Setting name is empty", e.tag
+		
+	def getModuleTree(self, module):
+		""" 
+		Returns a module element from the settings tree. If no module with the specified
+		name exists, a new element will be created. 
+		
+		@param module: The module to get from the settings tree
+		@type module: C{string}
+		"""
+		if not isinstance(module, str) and not isinstance(module, unicode):
+			raise AttributeError("Settings:getModuleTree: Invalid type for module argument.")
+			
+		for c in self._root_element.getchildren():
+			if c.tag == "Module" and c.get("name", "") == module:
+				return c
+	
+		# Create module
+		return ET.SubElement(self._root_element, "Module", {"name":module})
+
+	def get(self, module, name, defaultValue=None):
+		""" Gets the value of a specified setting
+		
+		@param module: Name of the module to get the setting from
+		@param name: Setting name
+		@param defaultValue: Specifies the default value to return if the setting is not found
+		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
+		"""
+		if not isinstance(name, str) and not isinstance(name, unicode):
+			raise AttributeError("Settings:get: Invalid type for name argument.")
+		
+		moduleTree = self.getModuleTree(module)
+		element = None
+		for e in moduleTree.getchildren():
+			if e.tag == "Setting" and e.get("name", "") == name:
+				element = e
+				break
+		else: 
+			return defaultValue
+		
+		e_value = element.text
+		e_strip = element.get("strip", "1").strip().lower()
+		e_type	= str(element.get("type", "str")).strip()
+		
+		if e_value is None: 
+			return defaultValue
+		
+		# Strip value
+		if e_strip == "" or e_strip == "false" or e_strip == "no" or e_strip == "0":
+			e_strip = False
+		else: e_strip = True
+		
+		if e_type == "str" or e_type == "unicode":
+			if e_strip: e_value = e_value.strip()
+		else:
+			e_value = e_value.strip()
+		
+		# Return value
+		if e_type == 'int':
+			return int(e_value)
+		elif e_type == 'float':
+			return float(e_value)
+		elif e_type == 'bool':
+			e_value = e_value.lower()
+			if e_value == "" or e_value == "false" or e_value == "no" or e_value == "0":
+				return False
+			else:
+				return True
+		elif e_type == 'str':
+			return str(e_value)
+		elif e_type == 'unicode':
+			return unicode(e_value)
+		elif e_type == 'list':
+			return self._deserializeList(e_value)
+		elif e_type == 'dict':
+			return self._deserializeDict(e_value)
+
+	def set(self, module, name, value, extra_attrs={}):
+		"""
+		Sets a setting to specified value.
+		
+		@param module: Module where the setting should be set
+		@param name: Name of setting
+		@param value: Value to assign to setting
+		@type value: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
+		@param extra_attrs: Extra attributes to be stored in the XML-file
+		@type extra_attrs: C{dict}
+		"""
+		if not isinstance(name, str) and not isinstance(name, unicode):
+			raise AttributeError("Settings:set: Invalid type for name argument.")
+			
+		moduleTree = self.getModuleTree(module)
+		e_type = "str"
+		
+		if isinstance(value, bool): # This must be before int
+			e_type = "bool"
+			value = str(value)
+		elif isinstance(value, int):
+			e_type = "int"
+			value = str(value)
+		elif isinstance(value, float):
+			e_type = "float"
+			value = str(value)
+		elif isinstance(value, unicode):
+			e_type = "unicode"
+			value = unicode(value)
+		elif isinstance(value, list):
+			e_type = "list"
+			value = self._serializeList(value)
+		elif isinstance(value, dict):
+			e_type = "dict"
+			value = self._serializeDict(value)
+		else:
+			e_type = "str"
+			value = str(value)
+		
+		for e in moduleTree.getchildren():
+			if e.tag != "Setting": continue
+			if e.get("name", "") == name:
+				e.text = value
+				break
+		else:
+			attrs = {"name":name, "type":e_type}
+			for k in extra_attrs:
+				if k not in attrs:
+					attrs[k] = extra_args[k]
+			elm = ET.SubElement(moduleTree, "Setting", attrs)
+			elm.text = value
+
+	def saveSettings(self):
+		""" Writes the settings to the settings file """
+		self._indent(self._root_element)
+		self._tree.write(os.path.join(self._appdata, self._settings_file), 'UTF-8')
+		
+	def _indent(self, elem, level=0):
+		""" 
+		Adds whitespace, so the resulting XML-file is properly indented.
+		Shamelessly stolen from http://effbot.org/zone/element-lib.htm 
+		"""
+		i = "\n" + level*"  "
+		if len(elem):
+			if not elem.text or not elem.text.strip():
+				elem.text = i + "  "
+			if not elem.tail or not elem.tail.strip():
+				elem.tail = i
+			for elem in elem:
+				self._indent(elem, level+1)
+			if not elem.tail or not elem.tail.strip():
+				elem.tail = i
+		else:
+			if level and (not elem.tail or not elem.tail.strip()):
+				elem.tail = i
+		
+	# FIXME:
+	# These serialization functions are not reliable at all
+	# This will only serialize the first level of a dict or list
+	# It will not check the types nor the content for conflicts.
+	# Perhaps we should add a small serialization library?
+	def _serializeList(self, list):
+		""" Serializes a list, so it can be stored in a text file """
+		return " ; ".join(list)
+		
+	def _deserializeList(self, string):
+		""" Deserializes a list back into a list object """
+		return string.split(" ; ")
+
+	def _serializeDict(self, dict):
+		""" Serializes a list, so it can be stored in a text file """
+		serial = ""
+		for key in dict:
+			value = dict[key]
+			if serial != "": serial += " ; "
+			serial += str(key)+" : "+str(value)
+			
+		return serial
+	
+	def _deserializeDict(self, serial):
+		""" Deserializes a list back into a dict object """
+		dict = {}
+		items = serial.split(" ; ")
+		for i in items:
+			kv_pair = i.split(" : ")
+			dict[kv_pair[0]] = kv_pair[1]
+		return dict
 
 	def onOptionsPress(self):
 		"""
-		Opends the options dialog box.  Usually you would bind this to a button.
+		Opens the options dialog box.  Usually you would bind this to a button.
 		"""
 		self.changesRequireRestart = False
 		self.isSetToDefault = False
@@ -141,17 +344,47 @@ class Setting(object):
 				'render_backend' : ['OpenGL', 'SDL']
 			})
 			self.OptionsDlg.distributeData({
-				'screen_resolution' : self.Resolutions.index(str(self.readSetting("ScreenWidth")) + 'x' + str(self.readSetting("ScreenHeight"))),
-				'render_backend' : 0 if str(self.readSetting("RenderBackend")) == "OpenGL" else 1,
-				'enable_fullscreen' : int(self.readSetting("FullScreen")),
-				'enable_sound' : int(self.readSetting("PlaySounds"))
+				'screen_resolution' : self.Resolutions.index(str(self.get("FIFE", "ScreenWidth")) + 'x' + str(self.get("FIFE", "ScreenHeight"))),
+				'render_backend' : 0 if self.get("FIFE", "RenderBackend") == "OpenGL" else 1,
+				'enable_fullscreen' : self.get("FIFE", "FullScreen"),
+				'enable_sound' : self.get("FIFE", "PlaySounds")
 			})
 			self.OptionsDlg.mapEvents({
-				'okButton' : self.saveSettings,
+				'okButton' : self.applySettings,
 				'cancelButton' : self.OptionsDlg.hide,
 				'defaultButton' : self.setDefaults
 			})
 		self.OptionsDlg.show()
+
+	def applySettings(self):
+		"""
+		Writes the settings file.  If a change requires a restart of the engine
+		it notifies you with a small dialog box.
+		"""
+		screen_resolution, render_backend, enable_fullscreen, enable_sound = self.OptionsDlg.collectData('screen_resolution', 'render_backend', 'enable_fullscreen', 'enable_sound')
+		render_backend = 'OpenGL' if render_backend is 0 else 'SDL'
+		if render_backend != self.get("FIFE", "RenderBackend"):
+			self.set("FIFE", 'RenderBackend', render_backend)
+			self.changesRequireRestart = True
+		if int(enable_fullscreen) != int(self.get("FIFE", "FullScreen")):
+			self.set("FIFE", 'FullScreen', int(enable_fullscreen))
+			self.changesRequireRestart = True
+		if int(enable_sound) != int(self.get("FIFE", "PlaySounds")):
+			self.set("FIFE", 'PlaySounds', int(enable_sound))
+			self.changesRequireRestart = True
+		if screen_resolution != self.Resolutions.index(str(self.get("FIFE", "ScreenWidth")) + 'x' + str(self.get("FIFE", "ScreenHeight"))):
+			self.set("FIFE", 'ScreenWidth', int(self.Resolutions[screen_resolution].partition('x')[0]))
+			self.set("FIFE", 'ScreenHeight', int(self.Resolutions[screen_resolution].partition('x')[2]))
+			self.changesRequireRestart = True
+
+		if not self.isSetToDefault:
+			self.saveSettings()
+			
+		self.OptionsDlg.hide()
+		if self.changesRequireRestart:
+			RestartDlg = pychan.loadXML(StringIO(CHANGES_REQUIRE_RESTART))
+			RestartDlg.mapEvents({ 'closeButton' : RestartDlg.hide })
+			RestartDlg.show()
 
 	def setDefaults(self):
 		"""
@@ -160,71 +393,3 @@ class Setting(object):
 		shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
 		self.isSetToDefault = True
 		self.changesRequireRestart = True
-
-	def readSetting(self, name, type='int', strip=True, text=False):
-		if not hasattr(self, 'tree'):
-			self.tree = ET.parse(os.path.join(self._appdata, self._settings_file))
-			self.root_element = self.tree.getroot()
-		element = self.root_element.find(name)
-		if element is not None:
-			element_value = element.text
-			if element_value is None:
-				if type == 'int':
-					return 0
-				elif type == 'list':
-					list = []
-					return list
-			else:
-				if type == 'int':
-					return element_value.strip() if strip else element_value
-				elif type == 'list':
-					list = []
-					list_s = []
-					list = str(element_value.strip()).split(";")
-					for item in list:
-						item = item.strip()
-						if text:
-							item = item.replace('\\n', '\n')
-						list_s.append(item)
-					return list_s
-				elif type == 'bool':
-					return False if element_value.strip() == 'False' else True
-		else:
-			print 'Setting,', name, 'does not exist!'
-
-	def setSetting(self, name, value):
-		element = self.root_element.find(name)
-		if element is not None:
-			if value is not element.text:
-				element.text = str(value)
-		else:
-			print 'Setting,', name, 'does not exist!'
-
-	def saveSettings(self):
-		"""
-		Writes the settings file.  If a change requires a restart of the engine
-		it notifies you with a small dialog box.
-		"""
-		screen_resolution, render_backend, enable_fullscreen, enable_sound = self.OptionsDlg.collectData('screen_resolution', 'render_backend', 'enable_fullscreen', 'enable_sound')
-		render_backend = 'OpenGL' if render_backend is 0 else 'SDL'
-		if render_backend != str(self.readSetting("RenderBackend")):
-			self.setSetting('RenderBackend', render_backend)
-			self.changesRequireRestart = True
-		if int(enable_fullscreen) != int(self.readSetting("FullScreen")):
-			self.setSetting('FullScreen', int(enable_fullscreen))
-			self.changesRequireRestart = True
-		if int(enable_sound) != int(self.readSetting("PlaySounds")):
-			self.setSetting('PlaySounds', int(enable_sound))
-			self.changesRequireRestart = True
-		if screen_resolution != self.Resolutions.index(str(self.readSetting("ScreenWidth")) + 'x' + str(self.readSetting("ScreenHeight"))):
-			self.setSetting('ScreenWidth', int(self.Resolutions[screen_resolution].partition('x')[0]))
-			self.setSetting('ScreenHeight', int(self.Resolutions[screen_resolution].partition('x')[2]))
-			self.changesRequireRestart = True
-
-		if not self.isSetToDefault:
-			self.tree.write(os.path.join(self._appdata, self._settings_file))
-		self.OptionsDlg.hide()
-		if self.changesRequireRestart:
-			RestartDlg = pychan.loadXML(StringIO(CHANGES_REQUIRE_RESTART))
-			RestartDlg.mapEvents({ 'closeButton' : RestartDlg.hide })
-			RestartDlg.show()

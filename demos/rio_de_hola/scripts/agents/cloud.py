@@ -28,8 +28,8 @@ import random
 _STATE_NONE, _STATE_FLOATING, _STATE_DISAPPEAR, _STATE_APPEAR = 0, 1, 2, 3
 
 class Cloud(Agent):
-	def __init__(self, model, agentName, layer, uniqInMap=False):
-		super(Cloud, self).__init__(model, agentName, layer, uniqInMap)
+	def __init__(self, settings, model, agentName, layer, uniqInMap=False):
+		super(Cloud, self).__init__(settings, model, agentName, layer, uniqInMap)
 		self.state = _STATE_NONE
 
 	def isOutOfBounds(self, c):

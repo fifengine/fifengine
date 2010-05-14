@@ -118,47 +118,53 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 class IslandDemo(ApplicationBase):
 	def __init__(self):
 		super(IslandDemo,self).__init__()
-		pychan.init(self.engine, debug=TDS.readSetting("PychanDebug", type='bool'))
+		pychan.init(self.engine, debug=TDS.get("FIFE", "PychanDebug"))
 		self.world = world.World(self.engine)
 		self.listener = ApplicationListener(self.engine, self.world)
-		self.world.load(str(TDS.readSetting("MapFile")))
+		self.world.load(str(TDS.get("rio", "MapFile")))
 
 	def loadSettings(self):
 		"""
 		Load the settings from a python file and load them into the engine.
-		Called in the ApplicationBase constructor.
+		Called in the ApplicationBase constructor. 
 		"""
+		
+		self._setting = TDS
 
+		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
 		engineSetting = self.engine.getSettings()
-		engineSetting.setDefaultFontGlyphs(str(TDS.readSetting("FontGlyphs", strip=False)))
-		engineSetting.setDefaultFontPath(str(TDS.readSetting("Font")))
-		engineSetting.setDefaultFontSize(12)
-		engineSetting.setBitsPerPixel(int(TDS.readSetting("BitsPerPixel")))
-		engineSetting.setInitialVolume(float(TDS.readSetting("InitialVolume")))
-		engineSetting.setSDLRemoveFakeAlpha(int(TDS.readSetting("SDLRemoveFakeAlpha")))
-		engineSetting.setScreenWidth(int(TDS.readSetting("ScreenWidth")))
-		engineSetting.setScreenHeight(int(TDS.readSetting("ScreenHeight")))
-		engineSetting.setRenderBackend(str(TDS.readSetting("RenderBackend")))
-		engineSetting.setFullScreen(int(TDS.readSetting("FullScreen")))
+		engineSetting.setDefaultFontGlyphs(self._setting.get("FIFE", "FontGlyphs", glyphDft))
+		engineSetting.setDefaultFontPath(self._setting.get("FIFE", "Font", "fonts/FreeSans.ttf"))
+		engineSetting.setDefaultFontSize(self._setting.get("FIFE", "DefaultFontSize", 12))
+		engineSetting.setBitsPerPixel(self._setting.get("FIFE", "BitsPerPixel", 0))
+		engineSetting.setInitialVolume(self._setting.get("FIFE", "InitialVolume", 5.0))
+		engineSetting.setSDLRemoveFakeAlpha(self._setting.get("FIFE", "SDLRemoveFakeAlpha", 1))
+		engineSetting.setScreenWidth(self._setting.get("FIFE", "ScreenWidth", 1024))
+		engineSetting.setScreenHeight(self._setting.get("FIFE", "ScreenHeight", 768))
+		engineSetting.setRenderBackend(self._setting.get("FIFE", "RenderBackend", "OpenGL"))
+		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", 0))
 
-		try:
-			engineSetting.setWindowTitle(str(TDS.readSetting("WindowTitle")))
-			engineSetting.setWindowIcon(str(TDS.readSetting("WindowIcon")))
-		except:
-			pass			
-		try:
-			engineSetting.setImageChunkingSize(int(TDS.readSetting("ImageChunkSize")))
-		except:
-			pass
+		engineSetting.setWindowTitle(self._setting.get("FIFE", "WindowTitle", "No window title set"))
+		engineSetting.setWindowIcon(self._setting.get("FIFE", "WindowIcon", ""))
+		engineSetting.setImageChunkingSize(self._setting.get("FIFE", "ImageChunkSize", 256))
 
 	def initLogging(self):
 		"""
 		Initialize the LogManager.
 		"""
-		LogModules = TDS.readSetting("LogModules", type='list')
-		self.log = fifelog.LogManager(self.engine, int(TDS.readSetting("LogToPrompt")), int(TDS.readSetting("LogToFile")))
-		if LogModules:
-			self.log.setVisibleModules(*LogModules)
+		
+		engineSetting = self.engine.getSettings()
+		logmodules = self._setting.get("FIFE", "LogModules", "controller")
+
+		#log to both the console and log file
+		self._log = fifelog.LogManager(self.engine, 
+									   self._setting.get("FIFE", "LogToPrompt", "0"), 
+									   self._setting.get("FIFE", "LogToFile", "0"))
+
+		self._log.setLevelFilter(fife.LogManager.LEVEL_DEBUG)
+		
+		if logmodules:
+			self._log.setVisibleModules(*logmodules)
 
 	def createListener(self):
 		pass # already created in constructor
@@ -185,7 +191,7 @@ def main():
 
 
 if __name__ == '__main__':
-	if TDS.readSetting("ProfilingOn", type='bool'):
+	if TDS.get("FIFE", "ProfilingOn"):
 		import hotshot, hotshot.stats
 		print "Starting profiler"
 		prof = hotshot.Profile("fife.prof")
@@ -197,7 +203,7 @@ if __name__ == '__main__':
 		stats.sort_stats('time', 'calls')
 		stats.print_stats(20)
 	else:
-		if TDS.readSetting("UsePsyco", type='bool'):
+		if TDS.get("FIFE", "UsePsyco"):
 			# Import Psyco if available
 			try:
 				import psyco

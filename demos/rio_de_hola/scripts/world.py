@@ -163,7 +163,7 @@ class World(EventListenerBase):
 		self.initAgents()
 		self.initCameras()
 
-		if int(TDS.readSetting("PlaySounds")):
+		if int(TDS.get("FIFE", "PlaySounds")):
 			# play track as background music
 			self.music = self.soundmanager.createSoundEmitter('music/rio_de_hola.ogg')
 			self.music.looping = True
@@ -186,22 +186,22 @@ class World(EventListenerBase):
 		to the python agents for later reference.
 		"""
 		self.agentlayer = self.map.getLayer('TechdemoMapGroundObjectLayer')
-		self.hero = Hero(self.model, 'PC', self.agentlayer)
+		self.hero = Hero(TDS, self.model, 'PC', self.agentlayer)
 		self.instance_to_agent[self.hero.agent.getFifeId()] = self.hero
 		self.hero.start()
 
-		self.girl = Girl(self.model, 'NPC:girl', self.agentlayer)
+		self.girl = Girl(TDS, self.model, 'NPC:girl', self.agentlayer)
 		self.instance_to_agent[self.girl.agent.getFifeId()] = self.girl
 		self.girl.start()
 
-		self.beekeepers = create_anonymous_agents(self.model, 'beekeeper', self.agentlayer, Beekeeper)
+		self.beekeepers = create_anonymous_agents(TDS, self.model, 'beekeeper', self.agentlayer, Beekeeper)
 		for beekeeper in self.beekeepers:
 			self.instance_to_agent[beekeeper.agent.getFifeId()] = beekeeper
 			beekeeper.start()
 
 		# Clouds are currently defunct.
 		cloudlayer = self.map.getLayer('TechdemoMapTileLayer')
-		self.clouds = create_anonymous_agents(self.model, 'Cloud', cloudlayer, Cloud)
+		self.clouds = create_anonymous_agents(TDS, self.model, 'Cloud', cloudlayer, Cloud)
 		for cloud in self.clouds:
 			cloud.start(0.1, 0.05)
 
@@ -230,7 +230,7 @@ class World(EventListenerBase):
 		# You'll se that for our demo we use a image font, so we have to specify the font glyphs
 		# for that one.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['main'])
-		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, str(TDS.readSetting("FontGlyphs", strip=False)));
+		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
 		renderer.changeDefaultFont(textfont)
 		renderer.activateAllLayers(self.map)
 		
@@ -242,20 +242,19 @@ class World(EventListenerBase):
 		# So we disable the renderer simply by setting its font to None.
 		renderer = fife.FloatingTextRenderer.getInstance(self.cameras['small'])
 		renderer.changeDefaultFont(None)
-		
 
 		# The following renderers are used for debugging.
 		# Note that by default ( that is after calling View.resetRenderers or Camera.resetRenderers )
 		# renderers will be handed all layers. That's handled here.
 		renderer = self.cameras['main'].getRenderer('CoordinateRenderer')
 		renderer.clearActiveLayers()
-		renderer.addActiveLayer(self.map.getLayer(str(TDS.readSetting("CoordinateLayerName"))))
+		renderer.addActiveLayer(self.map.getLayer(str(TDS.get("rio", "CoordinateLayerName"))))
 
 		renderer = self.cameras['main'].getRenderer('QuadTreeRenderer')
 		renderer.setEnabled(True)
 		renderer.clearActiveLayers()
-		if str(TDS.readSetting("QuadTreeLayerName")):
-			renderer.addActiveLayer(self.map.getLayer(str(TDS.readSetting("QuadTreeLayerName"))))
+		if str(TDS.get("rio", "QuadTreeLayerName")):
+			renderer.addActiveLayer(self.map.getLayer(str(TDS.get("rio", "QuadTreeLayerName"))))
 
 		# Set up the second camera
 		# NOTE: We need to explicitly call setLocation, there's a bit of a messup in the Camera code.
@@ -370,10 +369,10 @@ class World(EventListenerBase):
 		instance = self.instancemenu.instance
 		self.hero.talk(instance.getLocationRef())
 		if instance.getObject().getId() == 'beekeeper':
-			beekeeperTexts = TDS.readSetting("beekeeperTexts", type='list', text=True)
+			beekeeperTexts = TDS.get("rio", "beekeeperTexts")
 			instance.say(random.choice(beekeeperTexts), 5000)
 		if instance.getObject().getId() == 'girl':
-			girlTexts = TDS.readSetting("girlTexts", type='list', text=True)
+			girlTexts = TDS.get("rio", "girlTexts")
 			instance.say(random.choice(girlTexts), 5000)
 
 	def onKickButtonPress(self):

@@ -25,8 +25,9 @@ from fife import fife
 from scripts.common.common import ProgrammingError
 
 class Agent(fife.InstanceActionListener):
-	def __init__(self, model, agentName, layer, uniqInMap=True):
+	def __init__(self, settings, model, agentName, layer, uniqInMap=True):
 		fife.InstanceActionListener.__init__(self)
+		self.settings = settings
 		self.model = model
 		self.agentName = agentName
 		self.layer = layer
@@ -41,14 +42,14 @@ class Agent(fife.InstanceActionListener):
 		raise ProgrammingError('No start defined for Agent')
 
 
-def create_anonymous_agents(model, objectName, layer, agentClass):
+def create_anonymous_agents(settings, model, objectName, layer, agentClass):
 	agents = []
 	instances = [a for a in layer.getInstances() if a.getObject().getId() == objectName]
 	i = 0
 	for a in instances:
 		agentName = '%s:i:%d' % (objectName, i)
 		i += 1
-		agent = agentClass(model, agentName, layer, False)
+		agent = agentClass(settings, model, agentName, layer, False)
 		agent.agent = a
 		a.addActionListener(agent)
 		agents.append(agent)
