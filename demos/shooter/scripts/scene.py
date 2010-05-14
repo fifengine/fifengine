@@ -377,6 +377,9 @@ class Scene(object):
 		loc.setExactLayerCoordinates(exactloc)
 		self._camera.setLocation(loc)
 		
+		#update the listener position
+		self._soundmanager.listenerposition = (exactloc.x, exactloc.y)
+		
 		topleft = self._camera.toMapCoordinates(fife.ScreenPoint(0,0))
 		bottomright = self._camera.toMapCoordinates(fife.ScreenPoint(1024,768))
 		

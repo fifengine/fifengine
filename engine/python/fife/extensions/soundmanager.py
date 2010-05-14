@@ -194,10 +194,13 @@ class SoundManager(object):
 		self._fifesoundmanager.init()
 
 		# basic rolloff used for positional sounds
-		self._rolloff = 1.9
+		self._rolloff = 1
 
 		#A dict of fife emitters
 		self._loadedclips = {}
+		
+		#A tuple representing the listener position (x,y)
+		self._listenerposition = None
 
 	def createSoundEmitter(self, filename, forceUnique=False, position=None):
 		"""
@@ -240,6 +243,7 @@ class SoundManager(object):
 		if position is not None:
 			clip.position = position
 			clip.rolloff = self.rolloff
+			
 		return clip
 
 	def playClip(self, clip):
@@ -280,7 +284,7 @@ class SoundManager(object):
 					repeat = 1
 
 				clip.timer = fife_timer.Timer(clip.duration, clip.callback, repeat)
-				#clip.timer.start()
+
 			else:
 				if clip.looping:
 					def real_callback(e, g):
@@ -290,17 +294,21 @@ class SoundManager(object):
 
 					clip.callback = cbwa(real_callback, clip.fifeemitter, clip.gain)
 					clip.timer = fife_timer.Timer(clip.duration, clip.callback, 0)
-					#clip.timer.start()
-
 
 			clip.fifeemitter.setGain(float(clip.gain)/255.0)
-			if clip.position is not None:
+
+			if self.listenerposition and clip.position:
 				# Use 1 as z coordinate, no need to specify it
 				clip.fifeemitter.setPosition(clip.position[0], clip.position[1], 1)
 				clip.fifeemitter.setRolloff(clip.rolloff)
+			elif self.listenerposition and not clip.position:
+				clip.fifeemitter.setPosition(self.listenerposition[0], self.listenerposition[1], 1)
+				clip.fifeemitter.setRolloff(self.rolloff)
+
 			clip.fifeemitter.play()
 			if clip.timer:
 				clip.timer.start()
+
 		else:
 			clip = self.createSoundEmitter(clip.name)
 			self.playClip(clip)
@@ -344,7 +352,15 @@ class SoundManager(object):
 
 	def _setRolloff(self, rolloff):
 		self._rolloff = rolloff
+		
+	def _getListenerPosition(self):
+		return self._listenerposition
+		
+	def _setListenerPosition(self, position):
+		self._listenerposition = position
+		self._fifesoundmanager.setListenerPosition(self._listenerposition[0], self._listenerposition[1], 1)
 
 	rolloff = property(_getRolloff, _setRolloff)
+	listenerposition = property(_getListenerPosition, _setListenerPosition)
 
 __all__ = ['SoundEmitter','SoundManager']

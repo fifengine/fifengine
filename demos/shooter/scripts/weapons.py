@@ -181,6 +181,8 @@ class Cannon(Weapon):
 			self._lastfired = self._scene.time
 			self._scene.addObjectToScene(pjctl)
 			if self._soundclip:
+				location = self._ship.location.getExactLayerCoordinates()
+				self._soundclip.position = (location.x, location.y)
 				self._soundclip.play()
 
 class FireBall(Weapon):
