@@ -28,13 +28,13 @@ Sound Manager
 This is a simple implementation of a sound manager that was originaly
 intended for the shooter demo.  It was functional enough that we decided
 to include it in the FIFE extensions.  This is by no means a fully featured
-implementation for several reasons.  It doesnt limit how many sounds can 
-play at once or allow the positioning of sounds.  It does however provide 
+implementation for several reasons.  It doesnt limit how many sounds can
+play at once or allow the positioning of sounds.  It does however provide
 a good starting point for a more advanced version of a sound manager.
 
 Usage::
   soundmanager = SoundManager(my_fife_engine)
-  
+
   emitter = soundmanager.createSoundEmitter("path/filename.ogg")
   emitter.gain = 128
   emitter.play()
@@ -50,10 +50,10 @@ class SoundEmitter(object):
 	"""
 	Wraps the L{fife.SoundEmitter} class.
 
-	This class wraps an instance of a L{fife.SoundEmitter} class along 
+	This class wraps an instance of a L{fife.SoundEmitter} class along
 	with some information about a sound clip (like gain and if its
 	looping).  All instances of SoundEmitter should be created by SoundManager.
-	
+
 	@todo: At some point this class will store positional information
 	and also be responsible for updating the L{fife.SoundEmitter} position.
 	"""
@@ -66,62 +66,65 @@ class SoundEmitter(object):
 		@param soundname: The filename of the sound
 		@type soundname: C{string}
 		@param emitter: A reference to the L{fife.SoundEmitter} associated with this clip
-		@type emitter: L{fife.SoundEmitter} 
-		
+		@type emitter: L{fife.SoundEmitter}
+
 		"""
 		self._soundmanager = soundmanager
 		self._name = soundname
-			
+
 		#The FIFE SoundEmitter associated with this SoundEmitter.
 		#Note that we do NOT own the emitter.
 		self._fifeemitter = emitter
 		self._fifeemitter.thisown = 0
 		self._fifeclipid = clipid
-				
+
 		#0 = mute, 255 = normal volume
 		self._gain = 255.0
 		self._looping = False
-		
+
 		#if you set the callback it will be executed after the sound
 		#has finished playing.
 		self._callback = None
-		
+
 		#length of the sound
 		self._duration = 0
-		
+
 		self._timer = None
-		
+
+		self._position = None
+		self._rolloff = 0
+
 	def play(self):
 		self._soundmanager.playClip(self)
-		
+
 	def stop(self):
 		self._soundmanager.stopClip(self)
-		
+
 	def _getClipID(self):
 		return self._fifeclipid
 
 	def _getGain(self):
 		return self._gain
-		
+
 	def _setGain(self, gain):
 		"""
 		Sets the volume of the L{SoundEmitter}.
-		
+
 		@param gain: Value should be from 0-255.  0 being mute and 255 being the normal
 		volume of the clip.
 		@type gain: C{int}
 		"""
 		self._gain = float(gain)
-		
+
 	def _getLooping(self):
 		return self._looping
-		
+
 	def _setLooping(self, looping):
 		self._looping = looping
-		
+
 	def _getFifeEmitter(self):
 		return self._fifeemitter
-		
+
 	def _setFifeEmitter(self, emitter):
 		self._fifeemitter = emitter
 		if self._fifeemitter:
@@ -134,20 +137,34 @@ class SoundEmitter(object):
 		return self._callback
 
 	def _setCallback(self, cb):
-		self._callback = cb	
-		
+		self._callback = cb
+
 	def _getDuration(self):
 		return self._duration
-	
+
 	def _setDuration(self, millliseconds):
 		self._duration = millliseconds
 
 	def _getTimer(self):
 		return self._timer
-		
+
 	def _setTimer(self, timer):
 		self._timer = timer
 
+	def _setPosition(self, position):
+		self._position = position
+
+	def _getPosition(self):
+		return self._position
+
+	def _setRolloff(self, rolloff):
+		self._rolloff = rolloff
+
+	def _getRolloff(self):
+		return self._rolloff
+
+	rolloff = property(_getRolloff, _setRolloff)
+	position = property(_getPosition, _setPosition)
 	timer = property(_getTimer, _setTimer)
 	clipid = property(_getClipID)
 	gain = property(_getGain, _setGain)
@@ -161,8 +178,8 @@ class SoundManager(object):
 	"""
 	A simple sound manager class.
 
-	This class manages and plays all the sounds of the game.  
-	It creates SoundEmitters and ensures that there is only one 
+	This class manages and plays all the sounds of the game.
+	It creates SoundEmitters and ensures that there is only one
 	L{fife.SoundEmitter} per unique sound.
 	"""
 	def __init__(self, engine):
@@ -170,26 +187,32 @@ class SoundManager(object):
 		@param engine: A reference to the FIFE engine
 		@type engine: L{fife.Engine}
 		"""
-		
+
 		self._engine = engine
-		
+
 		self._fifesoundmanager = self._engine.getSoundManager()
 		self._fifesoundmanager.init()
-		
+
+		# basic rolloff used for positional sounds
+		self._rolloff = 1.9
+
 		#A dict of fife emitters
 		self._loadedclips = {}
-		
-	def createSoundEmitter(self, filename, forceUnique=False):
+
+	def createSoundEmitter(self, filename, forceUnique=False, position=None):
 		"""
 		Returns a valid SoundEmitter instance.
-		
+
 		@param filename: The relative path and filename of the sound file
 		@type clip: C{string}
 		@param forceUnique: This forces a new L{fife.SoundEmitter} to be created.
-		This is useful if you want more than one instance of the same sound 
+		This is useful if you want more than one instance of the same sound
 		to be played at the same time.
 		@type forceUnique: C{boolean}
-		
+		@param position: The position on the map that the sound emitter
+		is to be created at.
+		@type position: L{tuple}
+
 		@return: Returns a new L{SoundEmitter} instance.
 		@rtype: L{SoundEmitter}
 		"""
@@ -198,7 +221,6 @@ class SoundManager(object):
 			fifeemitter = self._fifesoundmanager.createEmitter()
 			fifeemitter.thisown = 0
 			fifeemitter.setSoundClip(clipid)
-			
 			self._loadedclips[filename] = [fifeemitter]
 			clip = SoundEmitter(self, clipid, filename, fifeemitter)
 			clip.duration = fifeemitter.getDuration()
@@ -208,30 +230,33 @@ class SoundManager(object):
 				fifeemitter = self._fifesoundmanager.createEmitter()
 				fifeemitter.thisown = 0
 				fifeemitter.setSoundClip(clipid)
-				self._loadedclips[filename].append(fifeemitter)	
+				self._loadedclips[filename].append(fifeemitter)
 			else:
 				fifeemitter = self._loadedclips[filename][0]
-				
+
 			clip = SoundEmitter(self, fifeemitter.getID(), filename, fifeemitter)
 			clip.duration = fifeemitter.getDuration()
-		
+
+		if position is not None:
+			clip.position = position
+			clip.rolloff = self.rolloff
 		return clip
-		
+
 	def playClip(self, clip):
 		"""
-		Plays a sound clip.  
-		
+		Plays a sound clip.
+
 		This function does not use the L{fife.SoundEmitter}
-		"looping" property to loop a sound.  Instead it registers 
+		"looping" property to loop a sound.  Instead it registers
 		a new timer and uses the duration of the clip as the timer length.
-		
-		If the SoundEmitter is invalid (no fifeemitter) then it attempts 
+
+		If the SoundEmitter is invalid (no fifeemitter) then it attempts
 		to load it before playing it.
-		
+
 		@note: This will stop any clips that use the same L{fife.SoundEmitter}.
 		You cannot play the same sound more than once at a time unless you create
 		the SoundEmitter with the forceUnique paramater set to True.
-		
+
 		@param clip: The L{SoundEmitter} to be played
 		@type clip: L{SoundEmitter}
 		"""
@@ -240,7 +265,7 @@ class SoundManager(object):
 				if clip.timer:
 					clip.timer.stop()
 					timer = None
-					
+
 				if clip.looping:
 					repeat = 0
 					def real_callback(c, e, g):
@@ -253,7 +278,7 @@ class SoundManager(object):
 
 				else:
 					repeat = 1
-					
+
 				clip.timer = fife_timer.Timer(clip.duration, clip.callback, repeat)
 				#clip.timer.start()
 			else:
@@ -266,27 +291,31 @@ class SoundManager(object):
 					clip.callback = cbwa(real_callback, clip.fifeemitter, clip.gain)
 					clip.timer = fife_timer.Timer(clip.duration, clip.callback, 0)
 					#clip.timer.start()
-					
-				
+
+
 			clip.fifeemitter.setGain(float(clip.gain)/255.0)
+			if clip.position is not None:
+				# Use 1 as z coordinate, no need to specify it
+				clip.fifeemitter.setPosition(clip.position[0], clip.position[1], 1)
+				clip.fifeemitter.setRolloff(clip.rolloff)
 			clip.fifeemitter.play()
 			if clip.timer:
 				clip.timer.start()
 		else:
 			clip = self.createSoundEmitter(clip.name)
 			self.playClip(clip)
-				
+
 	def stopClip(self, clip):
 		"""
-		Stops playing the sound clip.   Note that this will stop all clips that 
+		Stops playing the sound clip.   Note that this will stop all clips that
 		use the same FIFE emitter.
-		
+
 		@param clip: The SoundEmitter to stop.
 		@type clip: L{SoundEmitter}
 		"""
 		if clip.fifeemitter:
 			clip.fifeemitter.stop()
-			
+
 		if clip.timer:
 			clip.timer.stop()
 			clip.timer = None
@@ -295,20 +324,27 @@ class SoundManager(object):
 		for emitterlist in self._loadedclips.values():
 			for emitter in emitterlist:
 				emitter.stop()
-			
+
 	def destroy(self):
 		"""
-		Releases all instances of L{fife.SoundEmitter}.  
-		
+		Releases all instances of L{fife.SoundEmitter}.
+
 		@note: This does not free the resources from the FIFE sound clip pool.
 		"""
 		self.stopAllSounds()
-	
+
 		for emitterlist in self._loadedclips.values():
 			for emitter in emitterlist:
 				self._fifesoundmanager.releaseEmitter(emitter.getID())
 				emitter = None
-		
+
 		self._loadedclips.clear()
+	def _getRolloff(self):
+		return self._rolloff
+
+	def _setRolloff(self, rolloff):
+		self._rolloff = rolloff
+
+	rolloff = property(_getRolloff, _setRolloff)
 
 __all__ = ['SoundEmitter','SoundManager']
