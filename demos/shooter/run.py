@@ -93,60 +93,39 @@ class Shooter(ApplicationBase):
 		"""
 		
 		self._setting = TDS
-		
+
+		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
 		engineSetting = self.engine.getSettings()
-		engineSetting.setDefaultFontGlyphs(str(self._setting.readSetting("FontGlyphs", strip=False)))
-		engineSetting.setDefaultFontPath(str(self._setting.readSetting("Font")))
-		engineSetting.setDefaultFontSize(int(self._setting.readSetting("DefaultFontSize")))
-		engineSetting.setBitsPerPixel(int(self._setting.readSetting("BitsPerPixel")))
-		engineSetting.setInitialVolume(float(self._setting.readSetting("InitialVolume")))
-		engineSetting.setSDLRemoveFakeAlpha(int(self._setting.readSetting("SDLRemoveFakeAlpha")))
-		engineSetting.setScreenWidth(int(self._setting.readSetting("ScreenWidth")))
-		engineSetting.setScreenHeight(int(self._setting.readSetting("ScreenHeight")))
-		engineSetting.setRenderBackend(str(self._setting.readSetting("RenderBackend")))
-		engineSetting.setFullScreen(int(self._setting.readSetting("FullScreen")))
+		engineSetting.setDefaultFontGlyphs(self._setting.get("FIFE", "FontGlyphs", glyphDft))
+		engineSetting.setDefaultFontPath(self._setting.get("FIFE", "Font", "fonts/FreeSans.ttf"))
+		engineSetting.setDefaultFontSize(self._setting.get("FIFE", "DefaultFontSize", 12))
+		engineSetting.setBitsPerPixel(self._setting.get("FIFE", "BitsPerPixel", 0))
+		engineSetting.setInitialVolume(self._setting.get("FIFE", "InitialVolume", 5.0))
+		engineSetting.setSDLRemoveFakeAlpha(self._setting.get("FIFE", "SDLRemoveFakeAlpha", 1))
+		engineSetting.setScreenWidth(self._setting.get("FIFE", "ScreenWidth", 1024))
+		engineSetting.setScreenHeight(self._setting.get("FIFE", "ScreenHeight", 768))
+		engineSetting.setRenderBackend(self._setting.get("FIFE", "RenderBackend", "OpenGL"))
+		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", 0))
 
-		try:
-			engineSetting.setWindowTitle(str(self._setting.readSetting("WindowTitle")))
-			engineSetting.setWindowIcon(str(self._setting.readSetting("WindowIcon")))
-		except:
-			pass			
-
-		try:
-			engineSetting.setImageChunkingSize(int(self._setting.readSetting("ImageChunkSize")))
-		except:
-			pass
+		engineSetting.setWindowTitle(self._setting.get("FIFE", "WindowTitle", "No window title set"))
+		engineSetting.setWindowIcon(self._setting.get("FIFE", "WindowIcon", ""))
+		engineSetting.setImageChunkingSize(self._setting.get("FIFE", "ImageChunkSize", 256))
 
 	def initLogging(self):
 		"""
 		Initialize the LogManager.
 		"""
-
-		#@todo: load this from settings
-		logmodules = ["controller",
-		              "event channel", 
-		              "audio",
-		              "model",
-		              "metamodel",
-		              "pool",
-		              "vfs",
-		              "video",
-		              "view",
-		              "camera",
-		              "util",
-		              "pool",
-		              "xml",
-		              "exception",
-		              "structures",
-		              "location",
-		              "native loaders",
-		              "loaders",
-		              "gui",
-		              "script"]
 		
+		engineSetting = self.engine.getSettings()
+		logmodules = self._setting.get("FIFE", "LogModules", "controller")
+
 		#log to both the console and log file
-		self._log = fifelog.LogManager(self.engine, 1, 1)
+		self._log = fifelog.LogManager(self.engine, 
+									   self._setting.get("FIFE", "LogToPrompt", "0"), 
+									   self._setting.get("FIFE", "LogToFile", "0"))
+
 		self._log.setLevelFilter(fife.LogManager.LEVEL_DEBUG)
+		
 		if logmodules:
 			self._log.setVisibleModules(*logmodules)
 			

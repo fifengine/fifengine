@@ -25,13 +25,13 @@ import random
 from agent import Agent
 from fife.extensions.fife_settings import Setting
 
-TDS = Setting(app_name="rio_de_hola")
+#TDS = Setting(app_name="rio_de_hola")
 
 _STATE_NONE, _STATE_IDLE, _STATE_RUN, _STATE_KICK, _STATE_TALK = xrange(5)
 
 class Hero(Agent):
-	def __init__(self, model, agentName, layer, uniqInMap=True):
-		super(Hero, self).__init__(model, agentName, layer, uniqInMap)
+	def __init__(self, settings, model, agentName, layer, uniqInMap=True):
+		super(Hero, self).__init__(settings, model, agentName, layer, uniqInMap)
 		self.state = _STATE_NONE
 		self.idlecounter = 1
 
@@ -42,7 +42,7 @@ class Hero(Agent):
 		else:
 			self.idlecounter += 1
 		if self.idlecounter % 7 == 0:
-			heroTexts = TDS.readSetting("heroTexts", type='list', text=True)
+			heroTexts = self.settings.get("rio", "heroTexts")
 			txtindex = random.randint(0, len(heroTexts) - 1)
 			instance.say(heroTexts[txtindex], 2500)
 
@@ -55,7 +55,7 @@ class Hero(Agent):
 
 	def run(self, location):
 		self.state = _STATE_RUN
-		self.agent.move('run', location, 4 * float(TDS.readSetting("TestAgentSpeed")))
+		self.agent.move('run', location, 4 * self.settings.get("rio", "TestAgentSpeed"))
 
 	def kick(self, target):
 		self.state = _STATE_KICK
