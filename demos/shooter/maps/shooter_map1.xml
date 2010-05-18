@@ -5,10 +5,11 @@
 	<import file="../objects/ships/saucer1/object.xml"></import>
 	<import file="../objects/ships/saucer2/object.xml"></import>
 	<import file="../objects/ships/boss1/object.xml"></import>
+	<import file="../objects/powerups/cannonspread5/object.xml"></import>
+	<import file="../objects/powerups/extralife/object.xml"></import>
 	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="background" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
 		<instances>
-			<i o="starfield" ns="http://www.fifengine.de/xml/tutorial" x="-2.0" r="0" y="-1.0" z="0.0"></i>
-			<i r="0" x="0.0" o="starfield" z="0.0" y="-1.0"></i>
+			<i o="starfield" ns="http://www.fifengine.de/xml/tutorial" x="0.0" r="0" y="-1.0" z="0.0"></i>
 			<i r="0" x="0.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="0.0" o="starfield" z="0.0" y="1.0"></i>
 			<i r="0" x="1.0" o="starfield" z="0.0" y="1.0"></i>
@@ -187,17 +188,6 @@
 			<i r="0" x="37.0" o="starfield" z="0.0" y="-2.0"></i>
 			<i r="0" x="38.0" o="starfield" z="0.0" y="-2.0"></i>
 			<i r="0" x="39.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="40.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="41.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="42.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="43.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="43.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="43.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="43.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="43.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="42.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="41.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="40.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="39.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="38.0" o="starfield" z="0.0" y="2.0"></i>
 			<i r="0" x="37.0" o="starfield" z="0.0" y="2.0"></i>
@@ -208,12 +198,6 @@
 			<i r="0" x="37.0" o="starfield" z="0.0" y="1.0"></i>
 			<i r="0" x="38.0" o="starfield" z="0.0" y="1.0"></i>
 			<i r="0" x="39.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="40.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="41.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="42.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="42.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="41.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="40.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="39.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="38.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="37.0" o="starfield" z="0.0" y="0.0"></i>
@@ -224,361 +208,130 @@
 			<i r="0" x="37.0" o="starfield" z="0.0" y="-1.0"></i>
 			<i r="0" x="38.0" o="starfield" z="0.0" y="-1.0"></i>
 			<i r="0" x="39.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="40.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="41.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="42.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="44.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="45.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="46.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="47.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="48.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="49.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="50.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="51.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="52.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="52.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="51.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="50.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="49.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="48.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="47.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="46.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="45.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="44.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="44.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="45.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="46.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="47.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="48.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="49.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="50.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="51.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="52.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="52.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="51.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="50.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="49.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="48.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="47.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="46.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="45.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="44.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="44.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="45.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="46.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="47.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="48.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="49.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="50.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="51.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="52.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="53.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="53.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="53.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="53.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="53.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="54.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="55.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="56.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="57.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="58.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="59.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="59.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="60.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="60.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="60.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="60.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="60.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="59.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="58.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="57.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="56.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="55.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="54.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="54.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="54.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="54.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="55.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="56.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="57.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="58.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="58.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="59.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="59.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="58.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="57.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="56.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="55.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="55.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="56.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="57.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="61.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="62.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="63.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="64.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="65.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="66.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="67.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="67.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="67.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="67.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="67.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="66.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="65.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="64.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="63.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="62.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="61.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="61.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="62.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="63.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="64.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="65.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="66.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="66.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="66.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="65.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="64.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="63.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="62.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="61.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="61.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="62.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="63.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="64.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="65.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="68.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="69.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="70.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="71.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="72.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="73.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="74.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="75.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="76.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="76.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="76.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="76.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="76.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="75.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="74.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="73.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="72.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="71.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="70.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="69.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="68.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="68.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="69.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="70.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="71.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="72.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="73.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="74.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="75.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="75.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="74.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="73.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="72.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="71.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="70.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="69.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="68.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="68.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="69.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="70.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="71.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="72.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="73.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="74.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="75.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="77.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="77.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="77.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="77.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="77.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="78.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="79.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="80.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="81.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="82.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="83.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="83.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="82.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="81.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="80.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="84.0" o="starfield" z="0.0" y="2.0"></i>
-			<i r="0" x="84.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="84.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="84.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="84.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="83.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="82.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="81.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="80.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="79.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="78.0" o="starfield" z="0.0" y="-2.0"></i>
-			<i r="0" x="78.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="78.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="78.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="79.0" o="starfield" z="0.0" y="1.0"></i>
-			<i r="0" x="79.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="79.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="80.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="81.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="82.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="83.0" o="starfield" z="0.0" y="-1.0"></i>
-			<i r="0" x="83.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="82.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="81.0" o="starfield" z="0.0" y="0.0"></i>
-			<i r="0" x="80.0" o="starfield" z="0.0" y="0.0"></i>
 			<i r="0" x="2.0" o="starfield" z="0.0" y="1.0"></i>
 		</instances>
 	</layer>
 	<layer y_scale="0.25" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="objects" rotation="0.0" x_scale="0.25" x_offset="0.0" transparency="0">
 		<instances>
 			<i o="ship1" z="1.0" x="7.0" r="0" y="0.0" id="player"></i>
-			<i r="0" id="dodge1" x="20.0" o="saucer1" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge1" x="20.0" o="saucer1" z="0.0" y="1.0"></i>
-			<i r="0" id="dodge1" x="20.0" o="saucer1" z="0.0" y="4.0"></i>
-			<i r="0" id="dodge1" x="20.0" o="saucer1" z="0.0" y="-5.0"></i>
-			<i r="0" id="dodge2" x="26.0" o="saucer2" z="0.0" y="-3.0"></i>
-			<i r="0" id="dodge2" x="26.0" o="saucer2" z="0.0" y="2.0"></i>
-			
-			<i r="0" id="diag_top_right" x="32.0" o="saucer1" z="0.0" y="-6.0"></i>
-			<i r="0" id="diag_top_right" x="33.0" o="saucer1" z="0.0" y="-7.0"></i>
-			<i r="0" id="diag_top_right" x="34.0" o="saucer1" z="0.0" y="-8.0"></i>
-			<i r="0" id="diag_top_right" x="35.0" o="saucer1" z="0.0" y="-9.0"></i>
-			<i r="0" id="diag_bottom_right" x="32.0" o="saucer1" z="0.0" y="6.0"></i>
-			<i r="0" id="diag_bottom_right" x="33.0" o="saucer1" z="0.0" y="7.0"></i>
-			<i r="0" id="diag_bottom_right" x="34.0" o="saucer1" z="0.0" y="8.0"></i>
-			<i r="0" id="diag_bottom_right" x="35.0" o="saucer1" z="0.0" y="9.0"></i>
-			
-			<i r="0" id="dodge2" x="37.0" o="saucer2" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge2" x="37.0" o="saucer2" z="0.0" y="1.0"></i>
-			<i r="0" id="streaker" x="37.0" o="saucer2" z="0.0" y="4.0"></i>
-			<i r="0" id="streaker" x="37.0" o="saucer2" z="0.0" y="-5.0"></i>	
-			
-			<i r="0" id="cannonspread5" x="39.0" o="cannonspread5" z="0.0" y="0.0"></i>
-			
-			<i r="0" id="dodge1" x="40.0" o="saucer1" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge1" x="40.0" o="saucer1" z="0.0" y="1.0"></i>
-			<i r="0" id="dodge1" x="40.0" o="saucer1" z="0.0" y="4.0"></i>
-			<i r="0" id="dodge1" x="40.0" o="saucer1" z="0.0" y="-5.0"></i>
-			<i r="0" id="dodge2" x="46.0" o="saucer2" z="0.0" y="-3.0"></i>
-			<i r="0" id="dodge2" x="46.0" o="saucer2" z="0.0" y="2.0"></i>
-			
-			<i r="0" id="diag_top_right" x="52.0" o="saucer1" z="0.0" y="-6.0"></i>
-			<i r="0" id="diag_top_right" x="53.0" o="saucer1" z="0.0" y="-7.0"></i>
-			<i r="0" id="diag_top_right" x="54.0" o="saucer1" z="0.0" y="-8.0"></i>
-			<i r="0" id="diag_top_right" x="55.0" o="saucer1" z="0.0" y="-9.0"></i>
-			<i r="0" id="diag_bottom_right" x="52.0" o="saucer1" z="0.0" y="6.0"></i>
-			<i r="0" id="diag_bottom_right" x="53.0" o="saucer1" z="0.0" y="7.0"></i>
-			<i r="0" id="diag_bottom_right" x="54.0" o="saucer1" z="0.0" y="8.0"></i>
-			<i r="0" id="diag_bottom_right" x="55.0" o="saucer1" z="0.0" y="9.0"></i>
-			
-			<i r="0" id="dodge2" x="57.0" o="saucer2" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge2" x="57.0" o="saucer2" z="0.0" y="1.0"></i>
-			<i r="0" id="streaker" x="57.0" o="saucer2" z="0.0" y="4.0"></i>
-			<i r="0" id="streaker" x="57.0" o="saucer2" z="0.0" y="-5.0"></i>
-			
-			<i r="0" id="dodge1" x="60.0" o="saucer1" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge1" x="60.0" o="saucer1" z="0.0" y="1.0"></i>
-			<i r="0" id="dodge1" x="60.0" o="saucer1" z="0.0" y="4.0"></i>
-			<i r="0" id="dodge1" x="60.0" o="saucer1" z="0.0" y="-5.0"></i>
-			<i r="0" id="dodge2" x="66.0" o="saucer2" z="0.0" y="-3.0"></i>
-			<i r="0" id="dodge2" x="66.0" o="saucer2" z="0.0" y="2.0"></i>
-			
-			<i r="0" id="diag_top_right" x="72.0" o="saucer1" z="0.0" y="-6.0"></i>
-			<i r="0" id="diag_top_right" x="73.0" o="saucer1" z="0.0" y="-7.0"></i>
-			<i r="0" id="diag_top_right" x="74.0" o="saucer1" z="0.0" y="-8.0"></i>
-			<i r="0" id="diag_top_right" x="75.0" o="saucer1" z="0.0" y="-9.0"></i>
-			<i r="0" id="diag_bottom_right" x="72.0" o="saucer1" z="0.0" y="6.0"></i>
-			<i r="0" id="diag_bottom_right" x="73.0" o="saucer1" z="0.0" y="7.0"></i>
-			<i r="0" id="diag_bottom_right" x="74.0" o="saucer1" z="0.0" y="8.0"></i>
-			<i r="0" id="diag_bottom_right" x="75.0" o="saucer1" z="0.0" y="9.0"></i>
-			
-			<i r="0" id="dodge2" x="77.0" o="saucer2" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge2" x="77.0" o="saucer2" z="0.0" y="1.0"></i>
-			<i r="0" id="streaker" x="77.0" o="saucer2" z="0.0" y="4.0"></i>
-			<i r="0" id="streaker" x="77.0" o="saucer2" z="0.0" y="-5.0"></i>		
-			
-			<i r="0" id="extralife" x="79.0" o="extralife" z="0.0" y="0.0"></i>
-
-			<i r="0" id="dodge1" x="80.0" o="saucer1" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge1" x="80.0" o="saucer1" z="0.0" y="1.0"></i>
-			<i r="0" id="dodge1" x="80.0" o="saucer1" z="0.0" y="4.0"></i>
-			<i r="0" id="dodge1" x="80.0" o="saucer1" z="0.0" y="-5.0"></i>
-			<i r="0" id="dodge2" x="86.0" o="saucer2" z="0.0" y="-3.0"></i>
-			<i r="0" id="dodge2" x="86.0" o="saucer2" z="0.0" y="2.0"></i>
-			
-			<i r="0" id="diag_top_right" x="92.0" o="saucer1" z="0.0" y="-6.0"></i>
-			<i r="0" id="diag_top_right" x="93.0" o="saucer1" z="0.0" y="-7.0"></i>
-			<i r="0" id="diag_top_right" x="94.0" o="saucer1" z="0.0" y="-8.0"></i>
-			<i r="0" id="diag_top_right" x="95.0" o="saucer1" z="0.0" y="-9.0"></i>
-			<i r="0" id="diag_bottom_right" x="92.0" o="saucer1" z="0.0" y="6.0"></i>
-			<i r="0" id="diag_bottom_right" x="93.0" o="saucer1" z="0.0" y="7.0"></i>
-			<i r="0" id="diag_bottom_right" x="94.0" o="saucer1" z="0.0" y="8.0"></i>
-			<i r="0" id="diag_bottom_right" x="95.0" o="saucer1" z="0.0" y="9.0"></i>
-			
-			<i r="0" id="dodge2" x="97.0" o="saucer2" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge2" x="97.0" o="saucer2" z="0.0" y="1.0"></i>
-			<i r="0" id="streaker" x="97.0" o="saucer2" z="0.0" y="4.0"></i>
-			<i r="0" id="streaker" x="97.0" o="saucer2" z="0.0" y="-5.0"></i>	
-			
-			<i r="0" id="dodge1" x="100.0" o="saucer1" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge1" x="100.0" o="saucer1" z="0.0" y="1.0"></i>
-			<i r="0" id="dodge1" x="100.0" o="saucer1" z="0.0" y="4.0"></i>
-			<i r="0" id="dodge1" x="100.0" o="saucer1" z="0.0" y="-5.0"></i>
-			<i r="0" id="dodge2" x="106.0" o="saucer2" z="0.0" y="-3.0"></i>
-			<i r="0" id="dodge2" x="106.0" o="saucer2" z="0.0" y="2.0"></i>
-			
-			<i r="0" id="diag_top_right" x="112.0" o="saucer1" z="0.0" y="-6.0"></i>
-			<i r="0" id="diag_top_right" x="113.0" o="saucer1" z="0.0" y="-7.0"></i>
-			<i r="0" id="diag_top_right" x="114.0" o="saucer1" z="0.0" y="-8.0"></i>
-			<i r="0" id="diag_top_right" x="115.0" o="saucer1" z="0.0" y="-9.0"></i>
-			<i r="0" id="diag_bottom_right" x="112.0" o="saucer1" z="0.0" y="6.0"></i>
-			<i r="0" id="diag_bottom_right" x="113.0" o="saucer1" z="0.0" y="7.0"></i>
-			<i r="0" id="diag_bottom_right" x="114.0" o="saucer1" z="0.0" y="8.0"></i>
-			<i r="0" id="diag_bottom_right" x="115.0" o="saucer1" z="0.0" y="9.0"></i>
-			
-			<i r="0" id="dodge2" x="127.0" o="saucer2" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge2" x="127.0" o="saucer2" z="0.0" y="1.0"></i>
-			<i r="0" id="streaker" x="127.0" o="saucer2" z="0.0" y="4.0"></i>
-			<i r="0" id="streaker" x="127.0" o="saucer2" z="0.0" y="-5.0"></i>
-			
-			<i r="0" id="dodge1" x="130.0" o="saucer1" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge1" x="130.0" o="saucer1" z="0.0" y="1.0"></i>
-			<i r="0" id="dodge1" x="130.0" o="saucer1" z="0.0" y="4.0"></i>
-			<i r="0" id="dodge1" x="130.0" o="saucer1" z="0.0" y="-5.0"></i>
-			<i r="0" id="dodge2" x="136.0" o="saucer2" z="0.0" y="-3.0"></i>
-			<i r="0" id="dodge2" x="136.0" o="saucer2" z="0.0" y="2.0"></i>
-			
-			<i r="0" id="diag_top_right" x="142.0" o="saucer1" z="0.0" y="-6.0"></i>
-			<i r="0" id="diag_top_right" x="143.0" o="saucer1" z="0.0" y="-7.0"></i>
-			<i r="0" id="diag_top_right" x="144.0" o="saucer1" z="0.0" y="-8.0"></i>
-			<i r="0" id="diag_top_right" x="145.0" o="saucer1" z="0.0" y="-9.0"></i>
-			<i r="0" id="diag_bottom_right" x="142.0" o="saucer1" z="0.0" y="6.0"></i>
-			<i r="0" id="diag_bottom_right" x="143.0" o="saucer1" z="0.0" y="7.0"></i>
-			<i r="0" id="diag_bottom_right" x="144.0" o="saucer1" z="0.0" y="8.0"></i>
-			<i r="0" id="diag_bottom_right" x="145.0" o="saucer1" z="0.0" y="9.0"></i>
-			
-			<i r="0" id="cannonspread5" x="145.0" o="cannonspread5" z="0.0" y="0.0"></i>
-			
-			<i r="0" id="dodge2" x="147.0" o="saucer2" z="0.0" y="-2.0"></i>
-			<i r="0" id="dodge2" x="147.0" o="saucer2" z="0.0" y="1.0"></i>
-			<i r="0" id="streaker" x="147.0" o="saucer2" z="0.0" y="4.0"></i>
-			<i r="0" id="streaker" x="147.0" o="saucer2" z="0.0" y="-5.0"></i>
-			
-			<i r="0" id="boss" x="147.0" o="boss1" z="0.0" y="0.0"></i>
-
+			<i o="saucer1" z="0.0" x="20.0" r="0" y="-2.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="20.0" r="0" y="1.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="20.0" r="0" y="4.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="20.0" r="0" y="-5.0" id="dodge1"></i>
+			<i o="saucer2" z="0.0" x="26.0" r="0" y="-3.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="26.0" r="0" y="2.0" id="dodge2"></i>
+			<i o="saucer1" z="0.0" x="32.0" r="0" y="-6.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="33.0" r="0" y="-7.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="34.0" r="0" y="-8.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="35.0" r="0" y="-9.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="32.0" r="0" y="6.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="33.0" r="0" y="7.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="34.0" r="0" y="8.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="35.0" r="0" y="9.0" id="diag_bottom_right"></i>
+			<i o="saucer2" z="0.0" x="35.0" r="0" y="-2.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="35.0" r="0" y="1.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="39.0" r="0" y="4.0" id="streaker"></i>
+			<i o="saucer2" z="0.0" x="39.0" r="0" y="-5.0" id="streaker"></i>
+			<i o="saucer1" z="0.0" x="47.0" r="0" y="-4.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="49.0" r="0" y="-4.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="51.0" r="0" y="-4.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="45.0" r="0" y="-4.0" id="dodge1"></i>
+			<i o="saucer2" z="0.0" x="48.0" r="0" y="2.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="45.0" r="0" y="2.0" id="dodge2"></i>
+			<i o="saucer1" z="0.0" x="54.0" r="0" y="-6.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="55.0" r="0" y="-7.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="56.0" r="0" y="-8.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="57.0" r="0" y="-9.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="48.0" r="0" y="6.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="49.0" r="0" y="7.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="50.0" r="0" y="8.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="51.0" r="0" y="9.0" id="diag_bottom_right"></i>
+			<i o="saucer2" z="0.0" x="57.0" r="0" y="-2.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="57.0" r="0" y="1.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="60.0" r="0" y="4.0" id="streaker"></i>
+			<i o="saucer2" z="0.0" x="60.0" r="0" y="-5.0" id="streaker"></i>
+			<i o="saucer1" z="0.0" x="64.0" r="0" y="3.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="62.0" r="0" y="3.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="60.0" r="0" y="3.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="66.0" r="0" y="3.0" id="dodge1"></i>
+			<i o="saucer2" z="0.0" x="65.0" r="0" y="-4.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="62.0" r="0" y="-4.0" id="dodge2"></i>
+			<i o="saucer1" z="0.0" x="72.0" r="0" y="-6.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="73.0" r="0" y="-7.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="74.0" r="0" y="-8.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="75.0" r="0" y="-9.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="72.0" r="0" y="6.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="73.0" r="0" y="7.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="74.0" r="0" y="8.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="75.0" r="0" y="9.0" id="diag_bottom_right"></i>
+			<i o="saucer2" z="0.0" x="77.0" r="0" y="-2.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="77.0" r="0" y="1.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="77.0" r="0" y="4.0" id="streaker"></i>
+			<i o="saucer2" z="0.0" x="77.0" r="0" y="-5.0" id="streaker"></i>
+			<i o="saucer1" z="0.0" x="80.0" r="0" y="-2.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="80.0" r="0" y="1.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="80.0" r="0" y="4.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="80.0" r="0" y="-5.0" id="dodge1"></i>
+			<i o="saucer2" z="0.0" x="86.0" r="0" y="-3.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="86.0" r="0" y="2.0" id="dodge2"></i>
+			<i o="saucer1" z="0.0" x="92.0" r="0" y="-6.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="93.0" r="0" y="-7.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="94.0" r="0" y="-8.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="95.0" r="0" y="-9.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="92.0" r="0" y="6.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="93.0" r="0" y="7.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="94.0" r="0" y="8.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="95.0" r="0" y="9.0" id="diag_bottom_right"></i>
+			<i o="saucer2" z="0.0" x="97.0" r="0" y="-2.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="97.0" r="0" y="1.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="97.0" r="0" y="4.0" id="streaker"></i>
+			<i o="saucer2" z="0.0" x="97.0" r="0" y="-5.0" id="streaker"></i>
+			<i o="saucer1" z="0.0" x="100.0" r="0" y="-2.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="100.0" r="0" y="1.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="100.0" r="0" y="4.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="100.0" r="0" y="-5.0" id="dodge1"></i>
+			<i o="saucer2" z="0.0" x="106.0" r="0" y="-3.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="106.0" r="0" y="2.0" id="dodge2"></i>
+			<i o="saucer1" z="0.0" x="112.0" r="0" y="-6.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="113.0" r="0" y="-7.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="114.0" r="0" y="-8.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="115.0" r="0" y="-9.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="112.0" r="0" y="6.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="113.0" r="0" y="7.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="114.0" r="0" y="8.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="115.0" r="0" y="9.0" id="diag_bottom_right"></i>
+			<i o="saucer2" z="0.0" x="136.0" r="0" y="-2.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="136.0" r="0" y="1.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="147.0" r="0" y="1.0" id="streaker"></i>
+			<i o="saucer2" z="0.0" x="147.0" r="0" y="-2.0" id="streaker"></i>
+			<i o="saucer1" z="0.0" x="132.0" r="0" y="4.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="132.0" r="0" y="-5.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="130.0" r="0" y="4.0" id="dodge1"></i>
+			<i o="saucer1" z="0.0" x="130.0" r="0" y="-5.0" id="dodge1"></i>
+			<i o="saucer2" z="0.0" x="136.0" r="0" y="-5.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="136.0" r="0" y="4.0" id="dodge2"></i>
+			<i o="saucer1" z="0.0" x="142.0" r="0" y="-6.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="143.0" r="0" y="-7.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="144.0" r="0" y="-8.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="145.0" r="0" y="-9.0" id="diag_top_right"></i>
+			<i o="saucer1" z="0.0" x="142.0" r="0" y="6.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="143.0" r="0" y="7.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="144.0" r="0" y="8.0" id="diag_bottom_right"></i>
+			<i o="saucer1" z="0.0" x="145.0" r="0" y="9.0" id="diag_bottom_right"></i>
+			<i o="saucer2" z="0.0" x="127.0" r="0" y="-2.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="127.0" r="0" y="1.0" id="dodge2"></i>
+			<i o="saucer2" z="0.0" x="147.0" r="0" y="4.0" id="streaker"></i>
+			<i o="saucer2" z="0.0" x="147.0" r="0" y="-5.0" id="streaker"></i>
+			<i o="boss1" z="0.0" x="147.0" r="0" y="0.0" id="boss"></i>
+			<i o="cannonspread5" z="0.0" x="49.0" r="0" y="-1.0" id="cannonspread5"></i>
+			<i r="0" x="132.0" o="cannonspread5" z="0.0" y="0.0"></i>
+			<i o="extralife" z="0.0" x="99.0" r="0" y="0.0" id="extralife"></i>
 		</instances>
 	</layer>
 	<layer y_scale="0.25" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="boundingbox" rotation="0.0" x_scale="0.25" x_offset="0.0" transparency="0">
 		<instances>
-
 		</instances>
 	</layer>
-	<camera ref_cell_height="256" zoom="1" rotation="0.0" ref_layer_id="background" ref_cell_width="256" id="main" tilt="0.0">
+	<camera ref_cell_height="256" zoom="0.513158118231" rotation="0.0" ref_layer_id="background" ref_cell_width="256" id="main" tilt="0.0">
 	</camera>
 </map>
