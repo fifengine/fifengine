@@ -324,7 +324,7 @@
 			<i o="saucer2" z="0.0" x="147.0" r="0" y="-5.0" id="streaker"></i>
 			<i o="boss1" z="0.0" x="147.0" r="0" y="0.0" id="boss"></i>
 			<i o="cannonspread5" z="0.0" x="49.0" r="0" y="-1.0" id="cannonspread5"></i>
-			<i r="0" x="132.0" o="cannonspread5" z="0.0" y="0.0"></i>
+			<i o="cannonspread5" z="0.0" x="132.0" r="0" y="0.0" id="cannonspread5"></i>
 			<i o="extralife" z="0.0" x="99.0" r="0" y="0.0" id="extralife"></i>
 		</instances>
 	</layer>
