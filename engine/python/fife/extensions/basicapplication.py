@@ -30,6 +30,7 @@ See the L{ApplicationBase} documentation.
 from fife import fife
 from fife.extensions import fifelog
 from fife.extensions.serializers.xmlanimation import XMLAnimationLoader
+from fife.extensions.fife_settings import Setting
 
 class ExitEventListener(fife.IKeyListener):
 	"""
@@ -68,7 +69,12 @@ class ApplicationBase(object):
 	to define runtime behavior of the application.
 
 	"""
-	def __init__(self):
+	def __init__(self, setting=None):
+		if setting:
+			self._setting = setting
+		else:
+			self._setting =  Setting(app_name="", settings_file="./settings.xml", settings_gui_xml="")
+	
 		self.engine = fife.Engine()
 
 		self.loadSettings()
@@ -88,38 +94,39 @@ class ApplicationBase(object):
 		Load the settings from a python file and load them into the engine.
 		Called in the ApplicationBase constructor.
 		"""
-		import settings
-		self.settings = settings
 
+		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
 		engineSetting = self.engine.getSettings()
-		engineSetting.setDefaultFontGlyphs(settings.FontGlyphs)
-		engineSetting.setDefaultFontPath(settings.Font)
-		engineSetting.setDefaultFontSize(12)
-		engineSetting.setBitsPerPixel(settings.BitsPerPixel)
-		engineSetting.setFullScreen(settings.FullScreen)
-		engineSetting.setInitialVolume(settings.InitialVolume)
-		engineSetting.setRenderBackend(settings.RenderBackend)
-		engineSetting.setSDLRemoveFakeAlpha(settings.SDLRemoveFakeAlpha)
-		engineSetting.setScreenWidth(settings.ScreenWidth)
-		engineSetting.setScreenHeight(settings.ScreenHeight)
+		engineSetting.setDefaultFontGlyphs(self._setting.get("FIFE", "FontGlyphs", glyphDft))
+		engineSetting.setDefaultFontPath(self._setting.get("FIFE", "Font", "fonts/FreeSans.ttf"))
+		engineSetting.setDefaultFontSize(self._setting.get("FIFE", "DefaultFontSize", 12))
+		engineSetting.setBitsPerPixel(self._setting.get("FIFE", "BitsPerPixel", 0))
+		engineSetting.setInitialVolume(self._setting.get("FIFE", "InitialVolume", 5.0))
+		engineSetting.setSDLRemoveFakeAlpha(self._setting.get("FIFE", "SDLRemoveFakeAlpha", 1))
+		engineSetting.setScreenWidth(self._setting.get("FIFE", "ScreenWidth", 1024))
+		engineSetting.setScreenHeight(self._setting.get("FIFE", "ScreenHeight", 768))
+		engineSetting.setRenderBackend(self._setting.get("FIFE", "RenderBackend", "OpenGL"))
+		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", 0))
 
 		try:
-			engineSetting.setColorKeyEnabled(settings.ColorKeyEnabled)
+			engineSetting.setColorKeyEnabled(self._setting.get("FIFE", "ColorKeyEnabled", False))
 		except:
 			pass
 			
 		try:
-			engineSetting.setColorKey(*settings.ColorKey)
+			key = self._setting.get("FIFE", "ColorKey", "255,255,255").split(',')
+			engineSetting.setColorKey(int(key[0]), int(key[1]), int(key[2]))
 		except:
 			pass
 			
 		try:
-			engineSetting.setWindowTitle(settings.WindowTitle)
-			engineSetting.setWindowIcon(settings.WindowIcon)
+			engineSetting.setWindowTitle(self._setting.get("FIFE", "WindowTitle", "No window title set"))
+			engineSetting.setWindowIcon(self._setting.get("FIFE", "WindowIcon", ""))
 		except:
 			pass			
+
 		try:
-			engineSetting.setImageChunkingSize(settings.ImageChunkSize)
+			engineSetting.setImageChunkingSize(self._setting.get("FIFE", "ImageChunkSize", 256))
 		except:
 			pass
 
@@ -127,10 +134,20 @@ class ApplicationBase(object):
 		"""
 		Initialize the LogManager.
 		"""
-		self.log = fifelog.LogManager(self.engine, self.settings.LogToPrompt, self.settings.LogToFile)
-		if self.settings.LogModules:
-			self.log.setVisibleModules(*self.settings.LogModules)
+		
+		engineSetting = self.engine.getSettings()
+		logmodules = self._setting.get("FIFE", "LogModules", ["controller"])
 
+		#log to both the console and log file
+		self._log = fifelog.LogManager(self.engine, 
+									   self._setting.get("FIFE", "LogToPrompt", "0"), 
+									   self._setting.get("FIFE", "LogToFile", "0"))
+
+		self._log.setLevelFilter(self._setting.get("FIFE", "LogLevelFilter", fife.LogManager.LEVEL_DEBUG))
+		
+		if logmodules:
+			self._log.setVisibleModules(*logmodules)		
+		
 	def createListener(self):
 		"""
 		This creates a default event listener, which will just close the program

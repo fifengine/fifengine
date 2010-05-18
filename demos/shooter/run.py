@@ -67,13 +67,11 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 
 class Shooter(ApplicationBase):
 	def __init__(self):
-		super(Shooter,self).__init__()
+		super(Shooter,self).__init__(TDS)
 		pychan.init(self.engine, debug=False)
 		
 		#This is requred if you want to use modal dialog boxes
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
-
-		self._setting = TDS
 		
 		self._world = world.World(self, self.engine, self._setting)
 		self._listener = ApplicationListener(self.engine, self._world)
@@ -84,50 +82,6 @@ class Shooter(ApplicationBase):
 		cmd.setCommandType(fife.CMD_QUIT_GAME)
 		self.engine.getEventManager().dispatchCommand(cmd)
 		
-	def loadSettings(self):
-		"""
-		Load the settings from a python file and load them into the engine.
-		Called in the ApplicationBase constructor.  I hard coded all the
-		settings in here to remove the complexity of loading settings from
-		an XML file which would be out of scope of this demo.
-		"""
-		
-		self._setting = TDS
-
-		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
-		engineSetting = self.engine.getSettings()
-		engineSetting.setDefaultFontGlyphs(self._setting.get("FIFE", "FontGlyphs", glyphDft))
-		engineSetting.setDefaultFontPath(self._setting.get("FIFE", "Font", "fonts/FreeSans.ttf"))
-		engineSetting.setDefaultFontSize(self._setting.get("FIFE", "DefaultFontSize", 12))
-		engineSetting.setBitsPerPixel(self._setting.get("FIFE", "BitsPerPixel", 0))
-		engineSetting.setInitialVolume(self._setting.get("FIFE", "InitialVolume", 5.0))
-		engineSetting.setSDLRemoveFakeAlpha(self._setting.get("FIFE", "SDLRemoveFakeAlpha", 1))
-		engineSetting.setScreenWidth(self._setting.get("FIFE", "ScreenWidth", 1024))
-		engineSetting.setScreenHeight(self._setting.get("FIFE", "ScreenHeight", 768))
-		engineSetting.setRenderBackend(self._setting.get("FIFE", "RenderBackend", "OpenGL"))
-		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", 0))
-
-		engineSetting.setWindowTitle(self._setting.get("FIFE", "WindowTitle", "No window title set"))
-		engineSetting.setWindowIcon(self._setting.get("FIFE", "WindowIcon", ""))
-		engineSetting.setImageChunkingSize(self._setting.get("FIFE", "ImageChunkSize", 256))
-
-	def initLogging(self):
-		"""
-		Initialize the LogManager.
-		"""
-		
-		engineSetting = self.engine.getSettings()
-		logmodules = self._setting.get("FIFE", "LogModules", "controller")
-
-		#log to both the console and log file
-		self._log = fifelog.LogManager(self.engine, 
-									   self._setting.get("FIFE", "LogToPrompt", "0"), 
-									   self._setting.get("FIFE", "LogToFile", "0"))
-
-		self._log.setLevelFilter(fife.LogManager.LEVEL_DEBUG)
-		
-		if logmodules:
-			self._log.setVisibleModules(*logmodules)
 			
 	def createListener(self):
 		pass # already created in constructor
