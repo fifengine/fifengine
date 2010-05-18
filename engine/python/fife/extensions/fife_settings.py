@@ -78,6 +78,16 @@ CHANGES_REQUIRE_RESTART="""\
 </Window>
 """
 
+EMPTY_SETTINGS="""\
+<?xml version='1.0' encoding='UTF-8'?>
+<Settings>
+	<Module name="FIFE">
+
+	</Module>
+
+</Settings>
+"""
+
 class Setting(object):
 	"""
 	This class manages loading and saving of game settings.
@@ -98,7 +108,7 @@ class Setting(object):
 		@type app_name: C{string}
 		@param settings_file: The name of the settings file.  If this parameter is
 		provided it will look for the setting file as you specify it, first looking 
-		in the working directory.
+		in the working directory.  It will NOT look in the users home directory.
 		@type settings_file: C{string}
 		@param settings_gui_xml: If you specify this parameter you can customize the look
 		of the settings dialog box.
@@ -123,7 +133,12 @@ class Setting(object):
 		
 		
 		if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
-			shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
+			if os.path.exists('settings-dist.xml'):
+				shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
+			else:
+				#no settings file found
+				tree = ET.parse(StringIO(EMPTY_SETTINGS))
+				tree.write(os.path.join(self._appdata, self._settings_file), 'UTF-8')
 		
 		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
 		self._root_element = self._tree.getroot()

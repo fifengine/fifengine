@@ -59,6 +59,8 @@ from gui.error import ErrorDialog
 from mapview import MapView
 from fife.extensions.fife_settings import Setting
 
+TDS = Setting(app_name="editor")
+
 def getEditor():
 	""" Returns the Global editor instance """
 	if Editor.editor is None:
@@ -95,50 +97,13 @@ class Editor(ApplicationBase, MainWindow):
 		
 		self._change_map = -1
 		
-		self._settings = None
+		self._settings = TDS
 		
 		self._help_dialog = None
 	
-		ApplicationBase.__init__(self, *args, **kwargs)
+		ApplicationBase.__init__(self, TDS, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
 		pychan.init(self.engine, debug=False)
-		
-
-	def loadSettings(self):
-		"""
-		Load the settings from a python file and load them into the engine.
-		Called in the ApplicationBase constructor.
-		"""
-		self._settings = Setting(app_name="editor")
-		TDS = self._settings
-		
-		glyphDft = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""
-		engineSetting = self.engine.getSettings()
-		engineSetting.setDefaultFontGlyphs(TDS.get("FIFE", "FontGlyphs", glyphDft))
-		engineSetting.setDefaultFontPath(TDS.get("FIFE", "Font", "fonts/FreeSans.ttf"))
-		engineSetting.setDefaultFontSize(12)
-		engineSetting.setBitsPerPixel(TDS.get("FIFE", "BitsPerPixel", 0))
-		engineSetting.setInitialVolume(TDS.get("FIFE", "InitialVolume", 5.0))
-		engineSetting.setSDLRemoveFakeAlpha(TDS.get("FIFE", "SDLRemoveFakeAlpha", 1))
-		engineSetting.setScreenWidth(TDS.get("FIFE", "ScreenWidth", 1024))
-		engineSetting.setScreenHeight(TDS.get("FIFE", "ScreenHeight", 768))
-		engineSetting.setRenderBackend(TDS.get("FIFE", "RenderBackend", "OpenGL"))
-		engineSetting.setFullScreen(TDS.get("FIFE", "FullScreen", 0))
-
-		engineSetting.setWindowTitle(TDS.get("FIFE", "WindowTitle", "No window title set"))
-		engineSetting.setWindowIcon(TDS.get("FIFE", "WindowIcon", ""))
-		engineSetting.setImageChunkingSize(TDS.get("FIFE", "ImageChunkSize", 256))
-
-	def initLogging(self):
-		"""
-		Initialize the LogManager.
-		"""
-		from fife.extensions import fifelog
-		
-		logModules = self._settings.get("FIFE", "LogModules")
-		self.log = fifelog.LogManager(self.engine, self._settings.get("FIFE", "LogToPrompt"), self._settings.get("FIFE", "LogToFile"))
-		if logModules:
-			self.log.setVisibleModules(*logModules)
 		
 	def _initTools(self):
 		""" Initializes tools """
