@@ -29,7 +29,7 @@ from fife.extensions.pychan import widgets
 from fife.extensions.soundmanager import SoundManager
 
 from scripts.common.eventlistenerbase import EventListenerBase
-from fife.extensions.loaders import loadMapFile
+from fife.extensions.loaders import loadMapFile, loadImportFile
 
 from scripts.gui.guis import *
 
@@ -137,6 +137,14 @@ class World(EventListenerBase):
 		
 		self._filename = filename
 		self.reset()
+		
+		#specific imports that needed to be added
+		#@todo: you should be able to add file imports via the map editor
+		loadImportFile("objects/projectiles/bullet1/object.xml", self._engine)
+		loadImportFile("objects/projectiles/fireball/object.xml", self._engine)
+		loadImportFile("objects/powerups/cannonspread5/object.xml", self._engine)
+		loadImportFile("objects/powerups/extralife/object.xml", self._engine)
+		
 		self._map = loadMapFile(self._filename, self._engine)
 
 		self._scene = Scene(self, self._engine, self._map.getLayer('objects'), self._soundmanager)
@@ -268,6 +276,7 @@ class World(EventListenerBase):
 		
 		#pass the camera to the scene as the scene controls the cameras position
 		self._scene.attachCamera(self.cameras['main'])
+		self.cameras['main'].setZoom(1.0)
 		
 	def resetKeys(self):
 		self._keystate['UP'] = False
