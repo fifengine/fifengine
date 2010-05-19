@@ -103,13 +103,16 @@ class Timer(fife.TimeEvent):
 		"""
 		Should not be called directly.  This is called by FIFE.
 		"""
-		if callable(self._callback):
-			self._callback()
-			
 		if self._repeat != 0:
 			self._executed += 1
 			if self._executed >= self._repeat:
+				print "in here"
 				self.stop()
+
+		if callable(self._callback):
+			print "calling event"
+			self._callback()
+
 
 def delayCall(delay,callback):
 	"""
