@@ -114,7 +114,7 @@ class ApplicationBase(object):
 			pass
 			
 		try:
-			key = self._setting.get("FIFE", "ColorKey", "255,255,255").split(',')
+			key = self._setting.get("FIFE", "ColorKey", "255,0,255").split(',')
 			engineSetting.setColorKey(int(key[0]), int(key[1]), int(key[2]))
 		except:
 			pass
