@@ -64,10 +64,10 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.quit = True
 			evt.consume()
 		elif keyval == fife.Key.F10:
-			self.engine.getGuiManager().getConsole().toggleShowHide()
+			self._engine.getGuiManager().getConsole().toggleShowHide()
 			evt.consume()
 		elif keystr == 'p':
-			self.engine.getRenderBackend().captureScreen('screenshot.png')
+			self._engine.getRenderBackend().captureScreen('screenshot.png')
 			evt.consume()
 
 	def onCommand(self, command):
@@ -81,11 +81,11 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 			self.quit = True
 			result = 'quitting'
 		elif command.lower() in ( 'help', 'help()' ):
-			self.engine.getGuiManager().getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
+			self._engine.getGuiManager().getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
 			result = "-- End of help --"
 		else:
 			pass
-			#result = self.world.onConsoleCommand(command)
+			result = self._gamecontroller.onConsoleCommand(command)
 		if not result:
 			try:
 				result = str(eval(command))
