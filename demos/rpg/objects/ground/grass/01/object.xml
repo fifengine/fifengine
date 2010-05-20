@@ -1,0 +1,4 @@
+<?fife type="object"?>
+<object id="grass:01" namespace="http://www.fifengine.de/xml/rpg" blocking="0" static="1">
+	<image source="45.png" direction="45" />
+</object>
