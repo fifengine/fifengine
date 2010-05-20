@@ -28,11 +28,30 @@ import sys, os, re, math, random, shutil
 
 from fife import fife
 
+from scripts.guicontroller import GUIController
+
 class GameController(object):
 	def __init__(self, application, engine, settings):
 		self._application = application
 		self._engine = engine
 		self._settings = settings
 		
+		self._guicontroller = GUIController(self, self._engine, self._settings)
+		
+		self._guicontroller.showMainMenu()
+	
+	def onConsoleCommand(self, command):
+		"""
+		Might be useful if you want to have the game parse a command
+		"""
+		result = ""
+		return result
+		
+	def newGame(self):
+		pass
+		
+	def quit(self):
+		self._application.requestQuit()
+
 	def pump(self):
 		pass
