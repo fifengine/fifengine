@@ -24,12 +24,12 @@
 # ####################################################################
 # This is the rio de hola client for FIFE.
 
-import sys, os, re, math, random, shutil
+import sys, os, re, math, random, shutil, time
+from datetime import datetime
 
 from fife import fife
 from fife.extensions import *
 from scripts.gamecontroller import GameController
-from scripts.common import eventlistenerbase
 from fife.extensions.basicapplication import ApplicationBase
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
@@ -43,32 +43,47 @@ class KeyFilter(fife.IKeyFilter):
 	def isFiltered(self, event):
 		return event.getKey().getValue() in self._keys
 
-class ApplicationListener(eventlistenerbase.EventListenerBase):
+class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter):
 	def __init__(self, engine, gamecontroller):
-		super(ApplicationListener, self).__init__(engine,regKeys=True,regCmd=True, regMouse=False, regConsole=True, regWidget=True)
 		self._engine = engine
 		self._gamecontroller = gamecontroller
+		self._eventmanager = self._engine.getEventManager()
 		
-		keyfilter = KeyFilter([fife.Key.ESCAPE])
-		keyfilter.__disown__()
+		fife.IKeyListener.__init__(self)
+		self._eventmanager.addKeyListener(self)
 		
-		self._engine.getEventManager().setKeyFilter(keyfilter)
-
+		fife.ICommandListener.__init__(self)
+		self._eventmanager.addCommandListener(self)
+		
+		fife.ConsoleExecuter.__init__(self)
+		self._engine.getGuiManager().getConsole().setConsoleExecuter(self)
+		
+		keyfilter = KeyFilter([fife.Key.ESCAPE, fife.Key.BACKQUOTE, fife.Key.PRINT_SCREEN])
+		keyfilter.__disown__()		
+		
+		self._eventmanager.setKeyFilter(keyfilter)
+		
 		self.quit = False
 
-	def keyPressed(self, evt):
-		keyval = evt.getKey().getValue()
-		keystr = evt.getKey().getAsString().lower()
-		consumed = False
+	def keyPressed(self, event):
+		keyval = event.getKey().getValue()
+		keystr = event.getKey().getAsString().lower()
+		
+		if event.isConsumed():
+			return
+		
 		if keyval == fife.Key.ESCAPE:
 			self.quit = True
-			evt.consume()
-		elif keyval == fife.Key.F10:
+			event.consume()
+		elif keyval == fife.Key.BACKQUOTE:
 			self._engine.getGuiManager().getConsole().toggleShowHide()
-			evt.consume()
-		elif keystr == 'p':
-			self._engine.getRenderBackend().captureScreen('screenshot.png')
-			evt.consume()
+			event.consume()
+		elif keyval == fife.Key.PRINT_SCREEN:
+			self._engine.getRenderBackend().captureScreen(time.strftime("%Y%m%d_%H%M%S", time.localtime()) + ".png")
+			event.consume()
+
+	def keyReleased(self, event):
+		pass
 
 	def onCommand(self, command):
 		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
@@ -94,6 +109,9 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 		if not result:
 			result = 'no result'
 		return result
+		
+	def onToolsClick(self):
+		print "No tools set up yet"
 
 class RPGApplication(ApplicationBase):
 	def __init__(self, TDS):
