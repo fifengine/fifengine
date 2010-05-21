@@ -96,10 +96,10 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			self.quit = True
 			result = 'quitting'
 		elif command.lower() in ( 'help', 'help()' ):
-			self._engine.getGuiManager().getConsole().println( open( 'misc/infotext.txt', 'r' ).read() )
-			result = "-- End of help --"
+			helptextfile = self._gamecontroller.settings.get("RPG", "HelpText", "misc/help.txt")
+			self._engine.getGuiManager().getConsole().println( open( helptextfile, 'r' ).read() )
+			result = "-OK-"
 		else:
-			pass
 			result = self._gamecontroller.onConsoleCommand(command)
 		if not result:
 			try:
@@ -107,7 +107,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			except:
 				pass
 		if not result:
-			result = 'no result'
+			result = 'Command Not Found...'
 		return result
 		
 	def onToolsClick(self):
@@ -139,5 +139,6 @@ class RPGApplication(ApplicationBase):
 	def _pump(self):
 		if self._listener.quit:
 			self.breakRequested = True
+			self._gamecontroller.endGame()
 		else:
 			self._gamecontroller.pump()

@@ -31,6 +31,22 @@ from fife import fife
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
 
+class KeyState(object):
+	def __init__(self):
+		self._keystate = { }
+		
+	def updateKey(self, key, state):
+		self._keystate[key] = state
+		
+	def checkKey(self, key):
+		if key in self._keystate:
+			return self._keystate[key]
+		else:
+			return False
+			
+	def reset(self):
+		self._keystate.clear()
+
 class GameListener(fife.IKeyListener, fife.IMouseListener):
 	def __init__(self, gamecontroller):
 		self._engine = gamecontroller.engine
@@ -83,15 +99,23 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			self.detach()
 			self._gamecontroller.guicontroller.showMainMenu()
 			event.consume()
+			
+		self._gamecontroller.keystate.updateKey(keyval, True)
 		
 	def keyReleased(self, event):
-		pass
+		keyval = event.getKey().getValue()
+		keystr = event.getKey().getAsString().lower()
+		
+		self._gamecontroller.keystate.updateKey(keyval, False)
+		
 		
 class GameController(object):
 	def __init__(self, application, engine, settings):
 		self._application = application
 		self._engine = engine
 		self._settings = settings
+		
+		self._keystate = KeyState()
 		
 		self._guicontroller = GUIController(self)
 		
@@ -112,6 +136,8 @@ class GameController(object):
 	def newGame(self):
 		self._guicontroller.hideMainMenu()
 		
+		self._keystate.reset()
+		
 		if self._scene:
 			self._scene.destroyScene()
 			self._scene = None
@@ -122,7 +148,13 @@ class GameController(object):
 		#start listening to events
 		self._listener.attach()
 		
+	def endGame(self):
+		if self._scene:
+			self._scene.destroyScene()
+			self._scene = None		
+		
 	def quit(self):
+		self.endGame()
 		self._application.requestQuit()
 
 	def pump(self):
@@ -139,6 +171,14 @@ class GameController(object):
 	def _getSettings(self):
 		return self._settings
 		
+	def _getScene(self):
+		return self._scene
+	
+	def _getKeyState(self):
+		return self._keystate
+	
 	guicontroller = property(_getGUIController) 
 	engine = property(_getEngine)
 	settings = property(_getSettings)
+	scene = property(_getScene)
+	keystate = property(_getKeyState)
