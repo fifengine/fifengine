@@ -27,48 +27,9 @@
 import sys, os, re, math, random, shutil
 
 from fife import fife
-from fife.extensions.loaders import loadMapFile
+from scripts.actors.baseactor import Actor
 
-from scripts.actors.player import Player
-
-class Scene(object):
-	def __init__(self, gamecontroller):
-		self._gamecontroller = gamecontroller
-		
-		self._map = None
-		self._cameras = {}
-		
-		self._actorlayer = None
-		
-		self._player = None
-		
-	def createScene(self, mapfilename):
-		if not self._map:
-			self._map = loadMapFile(mapfilename, self._gamecontroller.engine)
-		else:
-			self.destroyScene()
-
-		for cam in self._map.getCameras():
-			self._cameras[cam.getId()] = cam
-		
-		self._cameras[self._gamecontroller.settings.get("RPG", "DefaultCameraName", "camera1")].setZoom(1.0)
-		
-		self._actorlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ActorLayer", "actor_layer"))
-		
-	def destroyScene(self):
-		self._cameras.clear()
-		
-		if self._map:
-			self._gamecontroller.engine.getModel().deleteMap(self._map)
-		
-		self._map = None
-		self._actorlayer = None
-				
-	def updateScene(self):
-		pass
-		
-	def _getActorLayer(self):
-		return self._actorlayer
-		
-	actorlayer = property(_getActorLayer)
-		
+class Player(Actor):
+	def __init__(self, gamecontroller, playermodelname):
+		super(Player, self).__init__(gamecontroller, playermodelname, "player", True)
+		self._playermodelname = playermodelname

@@ -1,0 +1,3 @@
+help - This message
+exit - Quit the game
+quit - Quit the game
