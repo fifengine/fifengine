@@ -31,10 +31,10 @@ from fife.extensions import pychan
 from fife.extensions.pychan import widgets
 
 class MainMenu(object):
-	def __init__(self, guicontroller, gamecontroller, settings):
-		self._guicontroller = guicontroller
+	def __init__(self, gamecontroller):
+		self._guicontroller = gamecontroller.guicontroller
 		self._gamecontroller = gamecontroller
-		self._settings = settings
+		self._settings = gamecontroller.settings
 		self._widget = pychan.loadXML('gui/mainmenu.xml')
 
 		self._newgame = self._widget.findChild(name="new_game")
@@ -74,10 +74,10 @@ class Credits(object):
 	widget = property(_getWidget)		
 		
 class GUIController(object):
-	def __init__(self, gamecontroller, engine, settings):
+	def __init__(self, gamecontroller):
 		self._gamecontroller = gamecontroller
-		self._engine = engine
-		self._settings = settings
+		self._engine = gamecontroller.engine
+		self._settings = gamecontroller.settings
 		
 		self._mainmenu = None
 		self._credits = None
@@ -87,7 +87,7 @@ class GUIController(object):
 			self._mainmenu.widget.show()
 		else:
 			#load and show the main menu
-			self._mainmenu = MainMenu(self, self._gamecontroller, self._settings)
+			self._mainmenu = MainMenu(self._gamecontroller)
 			self._mainmenu.widget.show()
 		
 	def hideMainMenu(self):
