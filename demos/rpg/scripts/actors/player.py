@@ -27,7 +27,7 @@
 import sys, os, re, math, random, shutil
 
 from fife import fife
-from scripts.actors.baseactor import Actor
+from scripts.actors.baseactor import Actor, ActorStates
 
 class Player(Actor):
 	def __init__(self, gamecontroller, playermodelname):
