@@ -91,35 +91,35 @@ EMPTY_SETTINGS="""\
 class Setting(object):
 	"""
 	This class manages loading and saving of game settings.
-	
+
 	Usage::
 		from fife.extensions.fife_settings import Setting
 		settings = Setting(app_name="myapp")
 		screen_width = settings.readSetting("ScreenWidth")
 	"""
-	
+
 	def __init__(self, app_name="", settings_file="", settings_gui_xml=""):
 		"""
 		Initializes the Setting object.
-		
-		@param app_name: The applications name.  If this parameter is provided 
-		alone it will try to read the settings file from the users home directory. 
+
+		@param app_name: The applications name.  If this parameter is provided
+		alone it will try to read the settings file from the users home directory.
 		In windows this will be	something like:	C:\Documents and Settings\user\Application Data\fife
 		@type app_name: C{string}
 		@param settings_file: The name of the settings file.  If this parameter is
-		provided it will look for the setting file as you specify it, first looking 
+		provided it will look for the setting file as you specify it, first looking
 		in the working directory.  It will NOT look in the users home directory.
 		@type settings_file: C{string}
 		@param settings_gui_xml: If you specify this parameter you can customize the look
 		of the settings dialog box.
 		@note: As of now you MUST have all the elements of the default settings dialog box.
 		At some point we may make it customizable.
-		
+
 		"""
 		self._app_name = app_name
 		self._settings_file = settings_file
 		self._settings_gui_xml = settings_gui_xml
-	
+
 		if self._settings_file == "":
 			self._settings_file = "settings.xml"
 			self._appdata = getUserDataDirectory("fife", self._app_name)
@@ -127,11 +127,11 @@ class Setting(object):
 			self._appdata = os.path.dirname(self._settings_file)
 			self._settings_file = os.path.basename(self._settings_file)
 
-		
+
 		if self._settings_gui_xml == "":
 			self.settings_gui_xml = SETTINGS_GUI_XML
-		
-		
+
+
 		if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
 			if os.path.exists('settings-dist.xml'):
 				shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
@@ -139,7 +139,7 @@ class Setting(object):
 				#no settings file found
 				tree = ET.parse(StringIO(EMPTY_SETTINGS))
 				tree.write(os.path.join(self._appdata, self._settings_file), 'UTF-8')
-		
+
 		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
 		self._root_element = self._tree.getroot()
 		self.validateTree()
@@ -159,28 +159,28 @@ class Setting(object):
 					elif c.get("name", "") == "":
 						print "Invalid tag in settings.xml in module: ",c.tag,
 						print ". Setting name is empty", e.tag
-		
+
 	def getModuleTree(self, module):
-		""" 
+		"""
 		Returns a module element from the settings tree. If no module with the specified
-		name exists, a new element will be created. 
-		
+		name exists, a new element will be created.
+
 		@param module: The module to get from the settings tree
 		@type module: C{string}
 		"""
 		if not isinstance(module, str) and not isinstance(module, unicode):
 			raise AttributeError("Settings:getModuleTree: Invalid type for module argument.")
-			
+
 		for c in self._root_element.getchildren():
 			if c.tag == "Module" and c.get("name", "") == module:
 				return c
-	
+
 		# Create module
 		return ET.SubElement(self._root_element, "Module", {"name":module})
 
 	def get(self, module, name, defaultValue=None):
 		""" Gets the value of a specified setting
-		
+
 		@param module: Name of the module to get the setting from
 		@param name: Setting name
 		@param defaultValue: Specifies the default value to return if the setting is not found
@@ -188,33 +188,33 @@ class Setting(object):
 		"""
 		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("Settings:get: Invalid type for name argument.")
-		
+
 		moduleTree = self.getModuleTree(module)
 		element = None
 		for e in moduleTree.getchildren():
 			if e.tag == "Setting" and e.get("name", "") == name:
 				element = e
 				break
-		else: 
+		else:
 			return defaultValue
-		
+
 		e_value = element.text
 		e_strip = element.get("strip", "1").strip().lower()
 		e_type	= str(element.get("type", "str")).strip()
-		
-		if e_value is None: 
+
+		if e_value is None:
 			return defaultValue
-		
+
 		# Strip value
 		if e_strip == "" or e_strip == "false" or e_strip == "no" or e_strip == "0":
 			e_strip = False
 		else: e_strip = True
-		
+
 		if e_type == "str" or e_type == "unicode":
 			if e_strip: e_value = e_value.strip()
 		else:
 			e_value = e_value.strip()
-		
+
 		# Return value
 		if e_type == 'int':
 			return int(e_value)
@@ -238,7 +238,7 @@ class Setting(object):
 	def set(self, module, name, value, extra_attrs={}):
 		"""
 		Sets a setting to specified value.
-		
+
 		@param module: Module where the setting should be set
 		@param name: Name of setting
 		@param value: Value to assign to setting
@@ -248,10 +248,10 @@ class Setting(object):
 		"""
 		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("Settings:set: Invalid type for name argument.")
-			
+
 		moduleTree = self.getModuleTree(module)
 		e_type = "str"
-		
+
 		if isinstance(value, bool): # This must be before int
 			e_type = "bool"
 			value = str(value)
@@ -273,7 +273,7 @@ class Setting(object):
 		else:
 			e_type = "str"
 			value = str(value)
-		
+
 		for e in moduleTree.getchildren():
 			if e.tag != "Setting": continue
 			if e.get("name", "") == name:
@@ -291,11 +291,11 @@ class Setting(object):
 		""" Writes the settings to the settings file """
 		self._indent(self._root_element)
 		self._tree.write(os.path.join(self._appdata, self._settings_file), 'UTF-8')
-		
+
 	def _indent(self, elem, level=0):
-		""" 
+		"""
 		Adds whitespace, so the resulting XML-file is properly indented.
-		Shamelessly stolen from http://effbot.org/zone/element-lib.htm 
+		Shamelessly stolen from http://effbot.org/zone/element-lib.htm
 		"""
 		i = "\n" + level*"  "
 		if len(elem):
@@ -310,7 +310,7 @@ class Setting(object):
 		else:
 			if level and (not elem.tail or not elem.tail.strip()):
 				elem.tail = i
-		
+
 	# FIXME:
 	# These serialization functions are not reliable at all
 	# This will only serialize the first level of a dict or list
@@ -319,7 +319,7 @@ class Setting(object):
 	def _serializeList(self, list):
 		""" Serializes a list, so it can be stored in a text file """
 		return " ; ".join(list)
-		
+
 	def _deserializeList(self, string):
 		""" Deserializes a list back into a list object """
 		return string.split(" ; ")
@@ -331,9 +331,9 @@ class Setting(object):
 			value = dict[key]
 			if serial != "": serial += " ; "
 			serial += str(key)+" : "+str(value)
-			
+
 		return serial
-	
+
 	def _deserializeDict(self, serial):
 		""" Deserializes a list back into a dict object """
 		dict = {}
@@ -353,7 +353,7 @@ class Setting(object):
 		if not hasattr(self, 'OptionsDlg'):
 			self.OptionsDlg = None
 		if not self.OptionsDlg:
-			self.OptionsDlg = pychan.loadXML(StringIO(SETTINGS_GUI_XML))
+			self.OptionsDlg = pychan.loadXML(StringIO(self._settings_gui_xml))
 			self.OptionsDlg.distributeInitialData({
 				'screen_resolution' : self.Resolutions,
 				'render_backend' : ['OpenGL', 'SDL']
@@ -394,7 +394,7 @@ class Setting(object):
 
 		if not self.isSetToDefault:
 			self.saveSettings()
-			
+
 		self.OptionsDlg.hide()
 		if self.changesRequireRestart:
 			RestartDlg = pychan.loadXML(StringIO(CHANGES_REQUIRE_RESTART))
