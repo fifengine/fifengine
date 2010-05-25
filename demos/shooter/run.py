@@ -44,6 +44,8 @@ from fife.extensions.fife_settings import Setting
 TDS = Setting(app_name="shooter", 
               settings_file="./settings.xml", 
               settings_gui_xml="")
+              
+TDS.setAvailableScreenResolutions(["1024x768"])
 
 class ApplicationListener(eventlistenerbase.EventListenerBase):
 	def __init__(self, engine, world):

@@ -95,10 +95,11 @@ class Setting(object):
 	Usage::
 		from fife.extensions.fife_settings import Setting
 		settings = Setting(app_name="myapp")
-		screen_width = settings.readSetting("ScreenWidth")
+		screen_width = settings.get("FIFE", "ScreenWidth", 1024)
+		screen_height = settings.get("FIFE", "ScreenHeight", 768)
 	"""
 
-	def __init__(self, app_name="", settings_file="", settings_gui_xml=""):
+	def __init__(self, app_name="", settings_file="", settings_gui_xml="", changes_gui_xml=""):
 		"""
 		Initializes the Setting object.
 
@@ -119,6 +120,7 @@ class Setting(object):
 		self._app_name = app_name
 		self._settings_file = settings_file
 		self._settings_gui_xml = settings_gui_xml
+		self._changes_gui_xml = changes_gui_xml
 
 		if self._settings_file == "":
 			self._settings_file = "settings.xml"
@@ -129,7 +131,10 @@ class Setting(object):
 
 
 		if self._settings_gui_xml == "":
-			self.settings_gui_xml = SETTINGS_GUI_XML
+			self._settings_gui_xml = SETTINGS_GUI_XML
+			
+		if self._changes_gui_xml == "":
+			self._changes_gui_xml = CHANGES_REQUIRE_RESTART
 
 
 		if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
@@ -140,6 +145,12 @@ class Setting(object):
 				tree = ET.parse(StringIO(EMPTY_SETTINGS))
 				tree.write(os.path.join(self._appdata, self._settings_file), 'UTF-8')
 
+		#default settings
+		self._resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
+	
+		self.loadSettings()
+
+	def loadSettings(self):
 		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
 		self._root_element = self._tree.getroot()
 		self.validateTree()
@@ -342,33 +353,30 @@ class Setting(object):
 			kv_pair = i.split(" : ")
 			dict[kv_pair[0]] = kv_pair[1]
 		return dict
-
+		
 	def onOptionsPress(self):
 		"""
 		Opens the options dialog box.  Usually you would bind this to a button.
 		"""
 		self.changesRequireRestart = False
 		self.isSetToDefault = False
-		self.Resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
-		if not hasattr(self, 'OptionsDlg'):
-			self.OptionsDlg = None
-		if not self.OptionsDlg:
-			self.OptionsDlg = pychan.loadXML(StringIO(self._settings_gui_xml))
-			self.OptionsDlg.distributeInitialData({
-				'screen_resolution' : self.Resolutions,
-				'render_backend' : ['OpenGL', 'SDL']
-			})
-			self.OptionsDlg.distributeData({
-				'screen_resolution' : self.Resolutions.index(str(self.get("FIFE", "ScreenWidth")) + 'x' + str(self.get("FIFE", "ScreenHeight"))),
-				'render_backend' : 0 if self.get("FIFE", "RenderBackend") == "OpenGL" else 1,
-				'enable_fullscreen' : self.get("FIFE", "FullScreen"),
-				'enable_sound' : self.get("FIFE", "PlaySounds")
-			})
-			self.OptionsDlg.mapEvents({
-				'okButton' : self.applySettings,
-				'cancelButton' : self.OptionsDlg.hide,
-				'defaultButton' : self.setDefaults
-			})
+		
+		self.OptionsDlg = pychan.loadXML(StringIO(self._settings_gui_xml))
+		self.OptionsDlg.distributeInitialData({
+			'screen_resolution' : self._resolutions,
+			'render_backend' : ['OpenGL', 'SDL']
+		})
+		self.OptionsDlg.distributeData({
+			'screen_resolution' : self._resolutions.index(str(self.get("FIFE", "ScreenWidth")) + 'x' + str(self.get("FIFE", "ScreenHeight"))),
+			'render_backend' : 0 if self.get("FIFE", "RenderBackend") == "OpenGL" else 1,
+			'enable_fullscreen' : self.get("FIFE", "FullScreen"),
+			'enable_sound' : self.get("FIFE", "PlaySounds")
+		})
+		self.OptionsDlg.mapEvents({
+			'okButton' : self.applySettings,
+			'cancelButton' : self.OptionsDlg.hide,
+			'defaultButton' : self.setDefaults
+		})
 		self.OptionsDlg.show()
 
 	def applySettings(self):
@@ -387,24 +395,39 @@ class Setting(object):
 		if int(enable_sound) != int(self.get("FIFE", "PlaySounds")):
 			self.set("FIFE", 'PlaySounds', int(enable_sound))
 			self.changesRequireRestart = True
-		if screen_resolution != self.Resolutions.index(str(self.get("FIFE", "ScreenWidth")) + 'x' + str(self.get("FIFE", "ScreenHeight"))):
-			self.set("FIFE", 'ScreenWidth', int(self.Resolutions[screen_resolution].partition('x')[0]))
-			self.set("FIFE", 'ScreenHeight', int(self.Resolutions[screen_resolution].partition('x')[2]))
+		if screen_resolution != self._resolutions.index(str(self.get("FIFE", "ScreenWidth")) + 'x' + str(self.get("FIFE", "ScreenHeight"))):
+			self.set("FIFE", 'ScreenWidth', int(self._resolutions[screen_resolution].partition('x')[0]))
+			self.set("FIFE", 'ScreenHeight', int(self._resolutions[screen_resolution].partition('x')[2]))
 			self.changesRequireRestart = True
 
-		if not self.isSetToDefault:
-			self.saveSettings()
+		self.saveSettings()
 
 		self.OptionsDlg.hide()
 		if self.changesRequireRestart:
-			RestartDlg = pychan.loadXML(StringIO(CHANGES_REQUIRE_RESTART))
+			RestartDlg = pychan.loadXML(StringIO(self._changes_gui_xml))
 			RestartDlg.mapEvents({ 'closeButton' : RestartDlg.hide })
 			RestartDlg.show()
+
+	def setAvailableScreenResolutions(self, reslist):
+		"""
+		A list of valid default screen resolutions.   This should be called once
+		right after you instantiate Settings.
+		
+		Valid screen resolutions must be strings in the form of: WIDTHxHEIGHT
+		
+		Example:
+			settings.setAvailableScreenResolutions(["800x600", "1024x768"])
+		"""
+		self._resolutions = reslist
 
 	def setDefaults(self):
 		"""
 		Overwrites the setting file with the default settings-dist.xml file.
 		"""
 		shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
-		self.isSetToDefault = True
 		self.changesRequireRestart = True
+		self.loadSettings()
+		self.applySettings()
+		
+		if self.OptionsDlg:
+			self.OptionsDlg.hide()
