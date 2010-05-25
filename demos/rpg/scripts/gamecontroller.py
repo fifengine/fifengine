@@ -30,6 +30,7 @@ from fife import fife
 
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
+from fife.extensions.loaders import loadImportFile
 
 class KeyState(object):
 	def __init__(self):
@@ -55,15 +56,13 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		self._eventmanager = self._engine.getEventManager()
 		
 		fife.IMouseListener.__init__(self)
-		self._eventmanager.addMouseListener(self)
-	
 		fife.IKeyListener.__init__(self)
-		self._eventmanager.addKeyListener(self)
 		
 		self._attached = False
 		
 	def attach(self):
 		if not self._attached:
+			self._gamecontroller.keystate.reset()
 			self._eventmanager.addMouseListenerFront(self)
 			self._eventmanager.addKeyListenerFront(self)
 			self._attached = True
@@ -75,9 +74,37 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			self._attached = False
 		
 	def mousePressed(self, event):
-		pass
+		#mouse press was consumed by some pychan widget
+		if event.isConsumedByWidgets():
+			return
+
+		clickpoint = fife.ScreenPoint(event.getX(), event.getY())
+		if (event.getButton() == fife.MouseEvent.LEFT):
+			self._gamecontroller.scene.player.walk( self._gamecontroller.scene.getLocationAt(clickpoint) )
+			#self.hero.run( self.getLocationAt(clickpoint) )
+
+		if (event.getButton() == fife.MouseEvent.RIGHT):
+			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
+			print "selected instances on actor layer: ", [i.getObject().getId() for i in instances]
+			if instances:
+				#do something
+				pass
+				
 	def mouseReleased(self, event):
-		pass	
+		pass
+
+	def mouseMoved(self, event):
+		renderer = self._gamecontroller.instancerenderer
+		if renderer:
+			renderer.removeAllOutlines()
+		else:
+			return
+
+		pt = fife.ScreenPoint(event.getX(), event.getY())
+		instances = self.getInstancesAt(pt);
+		for i in instances:
+			renderer.addOutlined(i, 173, 255, 47, 2)
+
 	def mouseEntered(self, event):
 		pass
 	def mouseExited(self, event):
@@ -108,7 +135,6 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		
 		self._gamecontroller.keystate.updateKey(keyval, False)
 		
-		
 class GameController(object):
 	def __init__(self, application, engine, settings):
 		self._application = application
@@ -124,6 +150,7 @@ class GameController(object):
 		self._guicontroller.showMainMenu()
 		
 		self._scene = None
+		self._instancerenderer = None
 	
 	def onConsoleCommand(self, command):
 		"""
@@ -141,9 +168,13 @@ class GameController(object):
 		if self._scene:
 			self._scene.destroyScene()
 			self._scene = None
+			
+		loadImportFile("objects/actors/player/warrior/object.xml", self._engine)
 		
 		self._scene = Scene(self)
 		self._scene.createScene(self._settings.get("RPG", "TownMapFile", "maps/town.xml"))
+
+		self._instancerenderer = fife.InstanceRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
 
 		#start listening to events
 		self._listener.attach()
@@ -151,7 +182,8 @@ class GameController(object):
 	def endGame(self):
 		if self._scene:
 			self._scene.destroyScene()
-			self._scene = None		
+			self._scene = None
+			self._instancerenderer = None
 		
 	def quit(self):
 		self.endGame()
@@ -177,8 +209,12 @@ class GameController(object):
 	def _getKeyState(self):
 		return self._keystate
 	
+	def _getInstanceRenderer(self):
+		return self._instancerenderer
+	
 	guicontroller = property(_getGUIController) 
 	engine = property(_getEngine)
 	settings = property(_getSettings)
 	scene = property(_getScene)
 	keystate = property(_getKeyState)
+	instancerenderer = property(_getInstanceRenderer)

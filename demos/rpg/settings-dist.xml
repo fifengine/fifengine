@@ -26,8 +26,11 @@
 		<Setting name="TownMapFile" type="str"> maps/town.xml </Setting>
 		<Setting name="Level1MapFile" type="str"> maps/level1.xml </Setting>
 		<Setting name="DefaultCameraName" type="str"> camera1 </Setting>
+		<Setting name="DefaultZoom" type="float"> 2.0 </Setting>
 		<Setting name="ObjectNamespace" type="str"> http://www.fifengine.de/xml/rpg </Setting>
 		<Setting name="ActorLayer" type="str"> actor_layer </Setting>
 		<Setting name="HelpText" type="str"> misc/help.txt </Setting>
+		
+		<Setting name="DefaultActorWalkSpeed" type="float"> 2.5 </Setting>
 	</Module>
 </Settings>

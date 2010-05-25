@@ -36,6 +36,7 @@ class Scene(object):
 		self._gamecontroller = gamecontroller
 		
 		self._map = None
+		self._maincameraname = self._gamecontroller.settings.get("RPG", "DefaultCameraName", "camera1")
 		self._cameras = {}
 		
 		self._actorlayer = None
@@ -51,9 +52,11 @@ class Scene(object):
 		for cam in self._map.getCameras():
 			self._cameras[cam.getId()] = cam
 		
-		self._cameras[self._gamecontroller.settings.get("RPG", "DefaultCameraName", "camera1")].setZoom(1.0)
+		self._cameras[self._maincameraname].setZoom(self._gamecontroller.settings.get("RPG", "DefaultZoom", 2.0))
 		
 		self._actorlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ActorLayer", "actor_layer"))
+		
+		self._player = Player(self._gamecontroller, "warrior")
 		
 	def destroyScene(self):
 		self._cameras.clear()
@@ -63,12 +66,37 @@ class Scene(object):
 		
 		self._map = None
 		self._actorlayer = None
+		
+	def getInstancesAt(self, clickpoint):
+		"""
+		Query the main camera for instances on our actor layer.
+		"""
+		return self.cameras[self._maincameraname].getMatchingInstances(clickpoint, self._actorlayer)
+
+	def getLocationAt(self, clickpoint):
+		"""
+		Query the main camera for the Map location (on the agent layer)
+		that a screen point refers to.
+		"""
+		target_mapcoord = self._cameras[self._maincameraname].toMapCoordinates(clickpoint, False)
+		target_mapcoord.z = 0
+		location = fife.Location(self._actorlayer)
+		location.setMapCoordinates(target_mapcoord)
+		return location
 				
 	def updateScene(self):
 		pass
 		
 	def _getActorLayer(self):
 		return self._actorlayer
-		
+	
+	def _getCameras(self):
+		return self._cameras
+	
+	def _getPlayer(self):
+		return self._player
+	
 	actorlayer = property(_getActorLayer)
+	cameras = property(_getCameras)
+	player = property(_getPlayer)
 		

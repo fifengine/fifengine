@@ -29,6 +29,10 @@ import sys, os, re, math, random, shutil
 from fife import fife
 from fife.extensions.loaders import loadMapFile
 
+ActorStates = {'IDLE':0,
+			   'WALK':1,
+			   'ATTACK':2}
+
 class Actor(object):
 	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
 		"""
@@ -52,10 +56,13 @@ class Actor(object):
 		self._instance = None
 		
 		if createInstance:
-			self._createFIFEInstance(self._name)
+			self._createFIFEInstance()
 		else:
-			self._instance = self._gamecontroller.scene.layer.getInstance(self._id)
-			self._instance.thisown = 0			
+			self._instance = self._gamecontroller.scene.actorlayer.getInstance(self._id)
+			self._instance.thisown = 0
+			
+		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
+		self._state = ActorStates["IDLE"]
 		
 	def destroy(self):
 		"""
@@ -64,6 +71,10 @@ class Actor(object):
 		if self._instance :
 			self._gamecontroller.scene.actorlayer.deleteInstance(self._instance)
 			self._instance = None
+			
+	def walk(self, location):
+		self._state = ActorStates["WALK"]
+		self._instance.move('walk', location, self._walkspeed)
 	
 	def _createFIFEInstance(self):
 		"""
