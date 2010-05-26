@@ -75,6 +75,16 @@ class BaseGameObject(object):
 		if self._instance :
 			self._gamecontroller.scene.actorlayer.deleteInstance(self._instance)
 			self._instance = None	
+			
+	def setMapPosition(self, x, y):
+		curloc = self.location
+	
+		exactloc = self.location.getExactLayerCoordinates()
+		exactloc.x = x
+		exactloc.y = y
+				
+		curloc.setExactLayerCoordinates(exactloc)
+		self.location = curloc
 
 	def _createFIFEInstance(self):
 		"""

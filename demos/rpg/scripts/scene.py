@@ -29,6 +29,7 @@ import sys, os, re, math, random, shutil
 from fife import fife
 from fife.extensions.loaders import loadMapFile
 
+from scripts.actors.baseactor import Actor
 from scripts.actors.player import Player
 
 class Scene(object):
@@ -42,6 +43,7 @@ class Scene(object):
 		self._actorlayer = None
 		
 		self._player = None
+		self._npclist = []
 		
 	def createScene(self, mapfilename):
 		if not self._map:
@@ -58,14 +60,30 @@ class Scene(object):
 		
 		self._player = Player(self._gamecontroller, "warrior")
 		
+		mapname = os.path.splitext(os.path.basename(mapfilename))
+		for npc in self._gamecontroller.settings.get(mapname[0], "npclist", []):
+			(modelname, posx, posy) = self._gamecontroller.settings.get(mapname[0], npc, ["warrior", "0", "0"])
+			actor = Actor(self._gamecontroller, modelname, npc, True)
+			actor.setMapPosition(float(posx), float(posy))
+			self._npclist.append(actor)
+			
+		
 	def destroyScene(self):
 		self._cameras.clear()
 		
+		self._player.destroy()
+		
+		for npc in self._npclist:
+			npc.destroy()
+
 		if self._map:
 			self._gamecontroller.engine.getModel().deleteMap(self._map)
 		
 		self._map = None
 		self._actorlayer = None
+		
+		self._player = None
+		self._npclist = []
 		
 	def getInstancesAt(self, clickpoint):
 		"""
