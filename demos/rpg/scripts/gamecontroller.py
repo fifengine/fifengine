@@ -28,9 +28,12 @@ import sys, os, re, math, random, shutil
 
 from fife import fife
 
+from fife.extensions.soundmanager import SoundManager
+from fife.extensions.loaders import loadImportFile
+
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
-from fife.extensions.loaders import loadImportFile
+
 
 class KeyState(object):
 	def __init__(self):
@@ -54,6 +57,7 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		self._gamecontroller = gamecontroller
 		self._settings = gamecontroller.settings
 		self._eventmanager = self._engine.getEventManager()
+		self._soundmanager = SoundManager(self._engine)
 		
 		fife.IMouseListener.__init__(self)
 		fife.IKeyListener.__init__(self)
@@ -101,24 +105,29 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			return
 
 		pt = fife.ScreenPoint(event.getX(), event.getY())
-		instances = self.getInstancesAt(pt);
+		instances = self._gamecontroller.scene.getInstancesAt(pt);
+
 		for i in instances:
 			renderer.addOutlined(i, 173, 255, 47, 2)
 
 	def mouseEntered(self, event):
 		pass
+		
 	def mouseExited(self, event):
 		pass
+		
 	def mouseClicked(self, event):
 		pass
+		
 	def mouseWheelMovedUp(self, event):
 		pass	
+		
 	def mouseWheelMovedDown(self, event):
 		pass
-	def mouseMoved(self, event):
-		pass
+		
 	def mouseDragged(self, event):
 		pass
+		
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
 		keystr = event.getKey().getAsString().lower()
