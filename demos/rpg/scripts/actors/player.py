@@ -28,8 +28,20 @@ import sys, os, re, math, random, shutil
 
 from fife import fife
 from scripts.actors.baseactor import Actor, ActorStates
+from scripts.objects.baseobject import ObjectActionListener, BaseGameObject
+
+class PlayerActionListener(ObjectActionListener):
+	def __init__(self, gamecontroller, obj):
+		super(PlayerActionListener, self).__init__(gamecontroller, obj)
+
+	def onInstanceActionFinished(self, instance, action):
+		if action.getId() == 'walk':
+			print "player done walking"
+			#self._object.completeAction()
 
 class Player(Actor):
 	def __init__(self, gamecontroller, playermodelname):
 		super(Player, self).__init__(gamecontroller, playermodelname, "player", True)
 		self._playermodelname = playermodelname
+		
+		self._playeractionlistener = PlayerActionListener(self._gamecontroller, self)
