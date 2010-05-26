@@ -29,68 +29,42 @@ import sys, os, re, math, random, shutil
 from fife import fife
 from fife.extensions.loaders import loadMapFile
 
-ActorStates = {'IDLE':0,
+from scripts.objects.baseobject import ObjectActionListener, BaseGameObject
+
+ActorStates = {'STAND':0,
 			   'WALK':1,
 			   'ATTACK':2}
 
-class Actor(object):
+class ActorActionListener(ObjectActionListener):
+	def __init__(self, gamecontroller, obj):
+		super(ActorActionListener, self).__init__(gamecontroller, obj)
+
+	def onInstanceActionFinished(self, instance, action):
+		if action.getId() == 'walk':
+			self._object.stand()
+
+class Actor(BaseGameObject):
 	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
-		"""
-		@param gamecontroller: A reference to the master game controller
-		@param instancename: The name of the object to load.  The object's XML file must
-		be part of the map file or added with fife.extensions.loaders.loadImportFile
-		@param instanceid: used if you want to give a specific ID to the instance to
-		differenciate it from other instances
-		@param createInstance: If this is True it will attempt to be loaded from disk and not
-		use one that has already been loaded from the map file.  See the note about the 
-		instancename paramater above.
-		"""
-		self._gamecontroller = gamecontroller
-		self._fifeobject = None
-		self._name = instancename
-		if instanceid:
-			self._id = instanceid
-		else:
-			self._id = self._name
-			
-		self._instance = None
-		
-		if createInstance:
-			self._createFIFEInstance()
-		else:
-			self._instance = self._gamecontroller.scene.actorlayer.getInstance(self._id)
-			self._instance.thisown = 0
-			
+		super(Actor, self).__init__(gamecontroller, instancename, instanceid, createInstance)
+
 		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
-		self._state = ActorStates["IDLE"]
 		
-	def destroy(self):
-		"""
-		Deletes the FIFE instance from the actor layer on the map.
-		"""
-		if self._instance :
-			self._gamecontroller.scene.actorlayer.deleteInstance(self._instance)
-			self._instance = None
-			
+		self._actionlistener = ActorActionListener(self._gamecontroller, self)
+		
+		self.stand()
+
+	def stand(self):
+		self._state = ActorStates["STAND"]
+		self._instance.act('stand', self._instance.getFacingLocation())
+		
 	def walk(self, location):
 		self._state = ActorStates["WALK"]
 		self._instance.move('walk', location, self._walkspeed)
-	
-	def _createFIFEInstance(self):
-		"""
-		Should not be called directly.  Use the constructor!
-		"""
-		mapmodel = self._gamecontroller.engine.getModel()
-		self._fifeobject = mapmodel.getObject(self._name, self._gamecontroller.settings.get("RPG", "ObjectNamespace", "http://www.fifengine.de/xml/rpg"))
 		
-		self._instance = self._gamecontroller.scene.actorlayer.createInstance(self._fifeobject, fife.ModelCoordinate(0,0), self._id)
-		fife.InstanceVisual.create(self._instance)
-		self._instance.thisown = 0
-
-	def _getLocation(self):
-		return self._instance.getLocation()
-			
-	def _setLocation(self, loc):
-		self._instance.setLocation(loc)
-				
-	location = property(_getLocation,_setLocation)
+	def _getState(self):
+		return self._state
+		
+	def _setState(self, state):
+		self._state = state
+	
+	state = property(_getState, _setState)
