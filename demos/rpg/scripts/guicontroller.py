@@ -75,11 +75,17 @@ class Credits(Window):
 		self._widget.mapEvents(eventMap)
 	
 class QuestDialog(Window):
-	def __init__(self, guicontroller):
+	def __init__(self, guicontroller, questgiver):
 		super(QuestDialog, self).__init__(guicontroller)
 		self._widget = pychan.loadXML('gui/quest.xml')
+		self._questgiver = questgiver
+		self._quest = questgiver.getNextQuest()
+		
+		self._questname = self._widget.findChild(name="questname")
+		self._questname.text = unicode(self._quest.name)
 		
 		self._questtext = self._widget.findChild(name="questtext")
+		self._questtext.text = unicode(self._quest.text)
 
 		eventMap = {
 			'accept': self.questAccepted,
@@ -90,6 +96,7 @@ class QuestDialog(Window):
 		
 	def questAccepted(self):
 		print "quest has been accepted"
+		self._questgiver.activateQuest(self._quest)
 		self._widget.hide()
 	
 class GUIController(object):
@@ -126,6 +133,6 @@ class GUIController(object):
 			self._credits.widget.hide()
 			self._credits = None
 			
-	def showQuestDialog(self):
-		questdlg = QuestDialog(self._gamecontroller)
+	def showQuestDialog(self, questgiver):
+		questdlg = QuestDialog(self._gamecontroller, questgiver)
 		questdlg.widget.show()

@@ -4,4 +4,8 @@
     <Setting name="npclist" type="list"> Quiller </Setting>
     <Setting name="Quiller" type="list"> QUESTGIVER ; warrior ; 1.0 ; 1.0 </Setting>
   </Module>
+  <Module name="Quiller">
+  	<Setting name="questcount" type="int"> 1 </Setting>
+  	<Setting name="quest1" type="list"> Test quest ; This is the first quest you will get </Setting>
+  </Module>
 </Settings>
