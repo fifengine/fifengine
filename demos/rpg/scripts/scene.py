@@ -87,13 +87,13 @@ class Scene(object):
 		
 	def getInstancesAt(self, clickpoint):
 		"""
-		Query the main camera for instances on our actor layer.
+		Query the main camera for instances on the actor layer.
 		"""
 		return self.cameras[self._maincameraname].getMatchingInstances(clickpoint, self._actorlayer)
 
 	def getLocationAt(self, clickpoint):
 		"""
-		Query the main camera for the Map location (on the agent layer)
+		Query the main camera for the Map location (on the actor layer)
 		that a screen point refers to.
 		"""
 		target_mapcoord = self._cameras[self._maincameraname].toMapCoordinates(clickpoint, False)

@@ -35,6 +35,7 @@ class PlayerActionListener(ObjectActionListener):
 		super(PlayerActionListener, self).__init__(gamecontroller, obj)
 
 	def onInstanceActionFinished(self, instance, action):
+		super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
 		if action.getId() == 'walk':
 			print "player done walking"
 			#self._object.completeAction()
