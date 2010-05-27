@@ -34,6 +34,7 @@ from scripts.actors.baseactor import Actor
 from scripts.actors.baseactor import QuestGiver, Quest
 from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes
+from scripts.objects.items import BaseItem
 
 class Scene(object):
 	def __init__(self, gamecontroller):
@@ -47,7 +48,7 @@ class Scene(object):
 		
 		self._player = None
 		self._objectlist = {}
-		
+
 	def createScene(self, mapfilename):
 		if not self._map:
 			self._map = loadMapFile(mapfilename, self._gamecontroller.engine)
@@ -60,27 +61,38 @@ class Scene(object):
 		self._cameras[self._maincameraname].setZoom(self._gamecontroller.settings.get("RPG", "DefaultZoom", 2.0))
 		
 		self._actorlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ActorLayer", "actor_layer"))
+		self._itemlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ItemLayer", "item_layer"))
 		
 		self._player = Player(self._gamecontroller, "warrior")
 		
 		mapname = os.path.splitext(os.path.basename(mapfilename))
 		objectfile = "maps/" + mapname[0] + "_objects.xml"
+		itemfile = "maps/allobjects.xml"
 		objectsettings = Setting(app_name="",settings_file=objectfile)
+		itemsettings = Setting(app_name="", settings_file=itemfile)
 		
-		for npc in objectsettings.get(mapname[0], "npclist", []):
-			(objtype, modelname, posx, posy) = objectsettings.get(mapname[0], npc, ["NPC", "warrior", "0", "0"])
-			if objtype == "QUESTGIVER":
-				actor = QuestGiver(self._gamecontroller, modelname, npc, True)
-				questcount = objectsettings.get(npc, "questcount", 0)
+		for item in objectsettings.get("items", "itemlist", []):
+			itemdict = objectsettings.get("items", item, {})
+			modeldict = itemsettings.get("models", itemdict["typename"])
+			
+			newitem = BaseItem(self._gamecontroller, item, modeldict["model"])
+		
+		for npc in objectsettings.get("npcs", "npclist", []):
+			objdict = objectsettings.get("npcs", npc, {})
+			modeldict = itemsettings.get("models", objdict["typename"])
+			
+			if modeldict["type"] == "QUESTGIVER":
+				actor = QuestGiver(self._gamecontroller, modeldict["model"], npc, True)
+				questcount = itemsettings.get(npc, "questcount", 0)
 				for x in range(1,questcount+1):
 					quest = "quest" + str(x)
-					(qname, qtext) = objectsettings.get(npc, quest, [])
+					(qname, qtext) = itemsettings.get(npc, quest, [])
 					actor.addQuest(Quest(actor, qname, qtext))
 						
-			elif objtype == "NPC":
-				actor = Actor(self._gamecontroller, modelname, npc, True)
+			elif modeldict["type"] == "NPC":
+				actor = Actor(self._gamecontroller, modeldict["model"], npc, True)
 
-			actor.setMapPosition(float(posx), float(posy))
+			actor.setMapPosition(float(objdict["posx"]), float(objdict["posy"]))
 			self._objectlist[actor.instance.getId()] = actor
 			
 		
@@ -123,6 +135,9 @@ class Scene(object):
 		
 	def _getActorLayer(self):
 		return self._actorlayer
+		
+	def _getItemLayer(self):
+		return self._itemlayer
 	
 	def _getCameras(self):
 		return self._cameras
@@ -137,6 +152,7 @@ class Scene(object):
 		return self._map
 	
 	actorlayer = property(_getActorLayer)
+	itemlayer = property(_getItemLayer)
 	cameras = property(_getCameras)
 	player = property(_getPlayer)
 	objectlist = property(_getObjectList)

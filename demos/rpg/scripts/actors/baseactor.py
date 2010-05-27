@@ -54,13 +54,16 @@ class TalkAction(BaseAction):
 	def execute(self):
 		print "talking to: " + self._dest.instance.getId()
 		
-		if self._dest.haveQuest():
-			if not self._dest.activequest:
-				self._dest.offerNextQuest()
+		if self._dest.type == GameObjectTypes["QUESTGIVER"]:
+			if self._dest.haveQuest():
+				if not self._dest.activequest:
+					self._dest.offerNextQuest()
+				else:
+					self._dest.completeQuest()
 			else:
-				self._dest.completeQuest()
+				self._dest.instance.say("I've got nothing for you...  leave me alone.", 2500)
 		else:
-			self._dest.instance.say("I've got nothing for you...  leave me alone.", 2500)
+			self._dest.instance.say("Hello there!")
 
 ActorStates = {'STAND':0,
 			   'WALK':1,
@@ -77,6 +80,10 @@ class ActorActionListener(ObjectActionListener):
 
 class Actor(BaseGameObject):
 	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
+
+		if not hasattr(self, "_type"):
+			self._type = GameObjectTypes["NPC"]
+			
 		super(Actor, self).__init__(gamecontroller, instancename, instanceid, createInstance)
 
 		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
@@ -86,8 +93,6 @@ class Actor(BaseGameObject):
 		self._nextaction = None
 		
 		self.stand()
-		
-		self._type = GameObjectTypes["NPC"]
 
 	def stand(self):
 		self._state = ActorStates["STAND"]
@@ -144,9 +149,9 @@ class Quest(object):
 
 class QuestGiver(Actor):
 	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
+		self._type = GameObjectTypes["QUESTGIVER"]
 		super(QuestGiver, self).__init__(gamecontroller, instancename, instanceid, createInstance)
 	
-		self._type = GameObjectTypes["QUESTGIVER"]
 		self._quests = []
 		
 		self._activequest = None

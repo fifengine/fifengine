@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Settings>
+  <Module name="models">
+    <Setting name="GoldStack" type="dict"> type : ITEM ; model : goldstack </Setting>
+    <Setting name="Quiller" type="dict"> type : QUESTGIVER ; model : warrior </Setting>
+  </Module>
+  
+   <Module name="Quiller">
+   	<Setting name="questcount" type="int"> 2 </Setting>
+   	<Setting name="quest1" type="list"> Test quest ; This is the first quest you will get </Setting>
+   	<Setting name="quest2" type="list"> Second quest ; This is the second quest you will get </Setting>
+  </Module>
+</Settings>

@@ -71,20 +71,32 @@ class BaseGameObject(object):
 			
 		self._instance = None
 		
+		if not hasattr(self, "_type"):
+			self._type = GameObjectTypes["DEFAULT"]
+
 		if createInstance:
-			self._createFIFEInstance()
+			if self._type == GameObjectTypes["ITEM"]:
+				layer = self._gamecontroller.scene.itemlayer
+			else:
+				layer = self._gamecontroller.scene.actorlayer
+				
+			self._createFIFEInstance(layer)
 		else:
 			self._instance = self._gamecontroller.scene.actorlayer.getInstance(self._id)
 			self._instance.thisown = 0
 			
-		self._type = GameObjectTypes["DEFAULT"]
-			
+		
 	def destroy(self):
 		"""
 		Deletes the FIFE instance from the actor layer on the map.
 		"""
 		if self._instance :
-			self._gamecontroller.scene.actorlayer.deleteInstance(self._instance)
+			if self._type == GameObjectTypes["ITEM"]:
+				layer = self._gamecontroller.scene.itemlayer
+			else:
+				layer = self._gamecontroller.scene.actorlayer
+			
+			layer.deleteInstance(self._instance)
 			self._instance = None	
 			
 	def setMapPosition(self, x, y):
@@ -97,14 +109,14 @@ class BaseGameObject(object):
 		curloc.setExactLayerCoordinates(exactloc)
 		self.location = curloc
 
-	def _createFIFEInstance(self):
+	def _createFIFEInstance(self, layer):
 		"""
 		Should not be called directly.  Use the constructor!
 		"""
 		mapmodel = self._gamecontroller.engine.getModel()
 		self._fifeobject = mapmodel.getObject(self._name, self._gamecontroller.settings.get("RPG", "ObjectNamespace", "http://www.fifengine.de/xml/rpg"))
 		
-		self._instance = self._gamecontroller.scene.actorlayer.createInstance(self._fifeobject, fife.ModelCoordinate(0,0), self._id)
+		self._instance = layer.createInstance(self._fifeobject, fife.ModelCoordinate(0,0), self._id)
 		fife.InstanceVisual.create(self._instance)
 		self._instance.thisown = 0
 

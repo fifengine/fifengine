@@ -149,6 +149,10 @@
 			<i r="0" x="4.0" o="grass:01" z="0.0" y="8.0"></i>
 		</instances>
 	</layer>
+	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_only" grid_type="square" id="item_layer" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
+		<instances>
+		</instances>
+	</layer>
 	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_only" grid_type="square" id="actor_layer" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
 		<instances>
 		</instances>

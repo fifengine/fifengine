@@ -66,6 +66,8 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		
 		self._attached = False
 		
+		self._lastmousepos = (0.0,0.0)
+		
 	def attach(self):
 		if not self._attached:
 			self._gamecontroller.keystate.reset()
@@ -85,7 +87,9 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			return
 
 		clickpoint = fife.ScreenPoint(event.getX(), event.getY())
+
 		if (event.getButton() == fife.MouseEvent.LEFT):
+			self._lastmousepos = (clickpoint.x, clickpoint.y)
 			self._gamecontroller.scene.player.walk( self._gamecontroller.scene.getLocationAt(clickpoint) )
 			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
 			if instances:
@@ -133,7 +137,15 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		pass
 		
 	def mouseDragged(self, event):
-		pass
+		if event.isConsumedByWidgets():
+			return
+
+		clickpoint = fife.ScreenPoint(event.getX(), event.getY())
+		if (event.getButton() == fife.MouseEvent.LEFT):
+			if clickpoint.x > self._lastmousepos[0] + 5 or  clickpoint.x < self._lastmousepos[0] - 5 or clickpoint.y > self._lastmousepos[1] + 5 or clickpoint.y < self._lastmousepos[1] - 5:
+				self._gamecontroller.scene.player.walk( self._gamecontroller.scene.getLocationAt(clickpoint) )
+
+			self._lastmousepos = (clickpoint.x, clickpoint.y)
 		
 	def keyPressed(self, event):
 		keyval = event.getKey().getValue()
@@ -187,6 +199,7 @@ class GameController(object):
 			self._scene = None
 			
 		loadImportFile("objects/actors/player/warrior/object.xml", self._engine)
+		loadImportFile("objects/items/goldstack/object.xml", self._engine)
 		
 		self._scene = Scene(self)
 		self._scene.createScene(self._settings.get("RPG", "TownMapFile", "maps/town.xml"))
