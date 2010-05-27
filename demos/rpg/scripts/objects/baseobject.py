@@ -29,6 +29,15 @@ import sys, os, re, math, random, shutil
 from fife import fife
 from fife.extensions.loaders import loadMapFile
 
+GameObjectTypes = 	{
+						"DEFAULT": 0,
+						"ITEM":1,
+						"QUESTGIVER":2,
+						"PLAYER":3,
+						"NPC":4,
+						"ENEMY":5
+					}
+
 class ObjectActionListener(fife.InstanceActionListener):
 	def __init__(self, gamecontroller, obj):
 		fife.InstanceActionListener.__init__(self)
@@ -68,6 +77,8 @@ class BaseGameObject(object):
 			self._instance = self._gamecontroller.scene.actorlayer.getInstance(self._id)
 			self._instance.thisown = 0
 			
+		self._type = GameObjectTypes["DEFAULT"]
+			
 	def destroy(self):
 		"""
 		Deletes the FIFE instance from the actor layer on the map.
@@ -105,6 +116,10 @@ class BaseGameObject(object):
 				
 	def _getInstance(self):
 		return self._instance
-				
+	
+	def _getType(self):
+		return self._type
+	
 	location = property(_getLocation, _setLocation)
 	instance = property(_getInstance)
+	type = property(_getType)

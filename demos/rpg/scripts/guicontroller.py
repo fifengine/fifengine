@@ -30,11 +30,22 @@ from fife import fife
 from fife.extensions import pychan
 from fife.extensions.pychan import widgets
 
-class MainMenu(object):
+class Window(object):
 	def __init__(self, gamecontroller):
 		self._guicontroller = gamecontroller.guicontroller
 		self._gamecontroller = gamecontroller
 		self._settings = gamecontroller.settings
+		
+		self._widget = None
+		
+	def _getWidget(self):
+		return self._widget
+		
+	widget = property(_getWidget)
+
+class MainMenu(Window):
+	def __init__(self, gamecontroller):
+		super(MainMenu, self).__init__(gamecontroller)
 		self._widget = pychan.loadXML('gui/mainmenu.xml')
 
 		self._newgame = self._widget.findChild(name="new_game")
@@ -51,15 +62,10 @@ class MainMenu(object):
 		}
 
 		self._widget.mapEvents(eventMap)
-		
-	def _getWidget(self):
-		return self._widget
-		
-	widget = property(_getWidget)
 	
-class Credits(object):
+class Credits(Window):
 	def __init__(self, guicontroller):
-		self._guicontroller = guicontroller
+		super(Credits, self).__init__(gamecontroller)
 		self._widget = pychan.loadXML('gui/credits.xml')
 
 		eventMap = {
@@ -68,11 +74,24 @@ class Credits(object):
 
 		self._widget.mapEvents(eventMap)
 	
-	def _getWidget(self):
-		return self._widget
+class QuestDialog(Window):
+	def __init__(self, guicontroller):
+		super(QuestDialog, self).__init__(guicontroller)
+		self._widget = pychan.loadXML('gui/quest.xml')
 		
-	widget = property(_getWidget)		
+		self._questtext = self._widget.findChild(name="questtext")
+
+		eventMap = {
+			'accept': self.questAccepted,
+			'decline': self._widget.hide,
+		}
 		
+		self._widget.mapEvents(eventMap)
+		
+	def questAccepted(self):
+		print "quest has been accepted"
+		self._widget.hide()
+	
 class GUIController(object):
 	def __init__(self, gamecontroller):
 		self._gamecontroller = gamecontroller
@@ -106,3 +125,7 @@ class GUIController(object):
 		if self._credits:
 			self._credits.widget.hide()
 			self._credits = None
+			
+	def showQuestDialog(self):
+		questdlg = QuestDialog(self._gamecontroller)
+		questdlg.widget.show()

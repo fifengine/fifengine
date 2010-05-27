@@ -27,27 +27,30 @@
 import sys, os, re, math, random, shutil
 
 from fife import fife
-from scripts.actors.baseactor import Actor, ActorStates
-from scripts.objects.baseobject import ObjectActionListener, BaseGameObject, GameObjectTypes
 
-class PlayerActionListener(ObjectActionListener):
-	def __init__(self, gamecontroller, obj):
-		super(PlayerActionListener, self).__init__(gamecontroller, obj)
+from scripts.objects.baseobject import BaseGameObject, GameObjectTypes
 
-	def onInstanceActionFinished(self, instance, action):
-		super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
-		if action.getId() == 'walk':
-			print "player done walking"
-			#self._object.completeAction()
 
-class Player(Actor):
-	def __init__(self, gamecontroller, playermodelname):
-		super(Player, self).__init__(gamecontroller, playermodelname, "player", True)
-		self._playermodelname = playermodelname
+class BaseItem(BaseGameObject):
+	def __init__(self, gamecontroller, itemname, itemtype="unknown"):
+		super(Item, self).__init__(gamecontroller, itemtype, itemname, True)
 		
-		self._playeractionlistener = PlayerActionListener(self._gamecontroller, self)
+		self._type = GameObjectTypes["ITEM"]
 		
-		self._type = GameObjectTypes["PLAYER"]
+	def onPickUp(self):
+		#remove item from the map
+		self.destroy()
+	
+	def onDrop(self, dropx, dropy):
+		#recreate object
+		self._createFIFEInstance(self)
+		self.setMapPosition(dropx, dropy)
 		
-	def showQuestDialog(self):
-		self._gamecontroller.guicontroller.showQuestDialog()
+	def _getItemType(self):
+		return self._name
+		
+	def _getItemName(self):
+		return self._id
+	
+	itemtype = property(_getItemType)
+	itemname = property(_getItemName)
