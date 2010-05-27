@@ -167,7 +167,8 @@ class GameController(object):
 		
 		self._scene = None
 		self._instancerenderer = None
-	
+		self._floatingtextrenderer = None
+		
 	def onConsoleCommand(self, command):
 		"""
 		Might be useful if you want to have the game parse a command.
@@ -191,6 +192,8 @@ class GameController(object):
 		self._scene.createScene(self._settings.get("RPG", "TownMapFile", "maps/town.xml"))
 
 		self._instancerenderer = fife.InstanceRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
+		self._floatingtextrenderer = fife.FloatingTextRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
+		self._floatingtextrenderer.addActiveLayer(self._scene.actorlayer)
 
 		#start listening to events
 		self._listener.attach()
@@ -200,6 +203,7 @@ class GameController(object):
 			self._scene.destroyScene()
 			self._scene = None
 			self._instancerenderer = None
+			self._floatingtextrenderer = None
 		
 	def quit(self):
 		self.endGame()
