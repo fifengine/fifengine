@@ -33,9 +33,8 @@ from scripts.objects.baseobject import BaseGameObject, GameObjectTypes
 
 class BaseItem(BaseGameObject):
 	def __init__(self, gamecontroller, itemname, itemtype="unknown"):
-		super(Item, self).__init__(gamecontroller, itemtype, itemname, True)
-		
 		self._type = GameObjectTypes["ITEM"]
+		super(BaseItem, self).__init__(gamecontroller, itemtype, itemname, True)
 		
 	def onPickUp(self):
 		#remove item from the map
@@ -43,7 +42,7 @@ class BaseItem(BaseGameObject):
 	
 	def onDrop(self, dropx, dropy):
 		#recreate object
-		self._createFIFEInstance(self)
+		self._createFIFEInstance(self, self._gamecontroller.scene.itemlayer)
 		self.setMapPosition(dropx, dropy)
 		
 	def _getItemType(self):

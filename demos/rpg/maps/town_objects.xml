@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <Settings>
-  <Module name="town">
-    <Setting name="npclist" type="list"> Quiller </Setting>
-    <Setting name="Quiller" type="list"> QUESTGIVER ; warrior ; 1.0 ; 1.0 </Setting>
+  <Module name="items">
+  	<Setting name="itemlist" type="list"> gstack1 </Setting>
+    <Setting name="gstack1" type="dict"> typename : GoldStack ; value : 5000 ; posx : 1.0 ; posy : 1.0 </Setting>
   </Module>
-  <Module name="Quiller">
-  	<Setting name="questcount" type="int"> 1 </Setting>
-  	<Setting name="quest1" type="list"> Test quest ; This is the first quest you will get </Setting>
+  <Module name="npcs">
+  	<Setting name="npclist" type="list"> Quiller </Setting>
+    <Setting name="Quiller" type="dict"> typename : Quiller ; stat1 : 20 ; stat2 : 343 ; posx : 1.0 ; posy : 1.0 </Setting>
   </Module>
 </Settings>

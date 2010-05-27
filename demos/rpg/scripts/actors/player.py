@@ -42,9 +42,10 @@ class PlayerActionListener(ObjectActionListener):
 
 class Player(Actor):
 	def __init__(self, gamecontroller, playermodelname):
+		self._type = GameObjectTypes["PLAYER"]
 		super(Player, self).__init__(gamecontroller, playermodelname, "player", True)
 		self._playermodelname = playermodelname
 		
 		self._playeractionlistener = PlayerActionListener(self._gamecontroller, self)
 		
-		self._type = GameObjectTypes["PLAYER"]
+
