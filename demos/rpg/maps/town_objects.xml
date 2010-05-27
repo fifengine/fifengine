@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Settings>
+  <Module name="town">
+    <Setting name="npclist" type="list"> Quiller </Setting>
+    <Setting name="Quiller" type="list"> QUESTGIVER ; warrior ; 1.0 ; 1.0 </Setting>
+  </Module>
+</Settings>

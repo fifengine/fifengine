@@ -29,12 +29,14 @@ import sys, os, re, math, random, shutil
 from fife import fife
 from fife.extensions.loaders import loadMapFile
 
-from scripts.objects.baseobject import ObjectActionListener, BaseGameObject
+from scripts.objects.baseobject import ObjectActionListener, BaseGameObject, GameObjectTypes
 
 Actions = {'NONE':0,
 		   'PICKUP':1,
 		   'TALK':2,
-		   'HIT':3}
+		   'HIT':3,
+		   'OPEN':4,
+		   'ENTER':5}
 
 class BaseAction(object):
 	def __init__(self):
@@ -50,7 +52,8 @@ class TalkAction(BaseAction):
 		self._dest = destobj
 		
 	def execute(self):
-		print "talking"
+		print "talking to: " + self._dest.instance.getId()
+		self._source.showQuestDialog()
 
 ActorStates = {'STAND':0,
 			   'WALK':1,
@@ -76,6 +79,8 @@ class Actor(BaseGameObject):
 		self._nextaction = None
 		
 		self.stand()
+		
+		self._type = GameObjectTypes["NPC"]
 
 	def stand(self):
 		self._state = ActorStates["STAND"]
@@ -104,3 +109,13 @@ class Actor(BaseGameObject):
 	
 	state = property(_getState, _setState)
 	nextaction = property(_getNextAction, _setNextAction)
+
+class QuestGiver(Actor):
+	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
+		super(QuestGiver, self).__init__(gamecontroller, instancename, instanceid, createInstance)
+	
+		self._type = GameObjectTypes["QUESTGIVER"]
+		self._quests = []
+	
+	def addQuest(self, quest):
+		self._quests.append(quest)	

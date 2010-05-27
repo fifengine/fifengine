@@ -34,6 +34,7 @@ from fife.extensions.loaders import loadImportFile
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
 from scripts.actors.baseactor import TalkAction
+from scripts.objects.baseobject import GameObjectTypes
 
 
 class KeyState(object):
@@ -88,11 +89,15 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			self._gamecontroller.scene.player.walk( self._gamecontroller.scene.getLocationAt(clickpoint) )
 			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
 			if instances:
-				self._gamecontroller.scene.player.nextaction = TalkAction(self, self)
+				obj = self._gamecontroller.scene.objectlist[instances[0].getId()]
+				print obj.type
+				if obj.type == GameObjectTypes["QUESTGIVER"]:
+					action = TalkAction(self._gamecontroller.scene.player, obj)
+					self._gamecontroller.scene.player.nextaction = action
 
 		if (event.getButton() == fife.MouseEvent.RIGHT):
 			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
-			print "selected instances on actor layer: ", [i.getObject().getId() for i in instances]
+			print "selected instances on actor layer: ", [i.getId() for i in instances]
 			if instances:
 				#do something
 				pass

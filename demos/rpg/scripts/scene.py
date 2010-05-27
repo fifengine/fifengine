@@ -28,9 +28,12 @@ import sys, os, re, math, random, shutil
 
 from fife import fife
 from fife.extensions.loaders import loadMapFile
+from fife.extensions.fife_settings import Setting
 
 from scripts.actors.baseactor import Actor
+from scripts.actors.baseactor import QuestGiver
 from scripts.actors.player import Player
+from scripts.objects.baseobject import GameObjectTypes
 
 class Scene(object):
 	def __init__(self, gamecontroller):
@@ -43,7 +46,7 @@ class Scene(object):
 		self._actorlayer = None
 		
 		self._player = None
-		self._npclist = []
+		self._objectlist = {}
 		
 	def createScene(self, mapfilename):
 		if not self._map:
@@ -61,11 +64,18 @@ class Scene(object):
 		self._player = Player(self._gamecontroller, "warrior")
 		
 		mapname = os.path.splitext(os.path.basename(mapfilename))
-		for npc in self._gamecontroller.settings.get(mapname[0], "npclist", []):
-			(modelname, posx, posy) = self._gamecontroller.settings.get(mapname[0], npc, ["warrior", "0", "0"])
-			actor = Actor(self._gamecontroller, modelname, npc, True)
+		objectfile = "maps/" + mapname[0] + "_objects.xml"
+		objectsettings = Setting(app_name="",settings_file=objectfile)
+		
+		for npc in objectsettings.get(mapname[0], "npclist", []):
+			(objtype, modelname, posx, posy) = objectsettings.get(mapname[0], npc, ["NPC", "warrior", "0", "0"])
+			if objtype == "QUESTGIVER":
+				actor = QuestGiver(self._gamecontroller, modelname, npc, True)
+			elif objtype == "NPC":
+				actor = Actor(self._gamecontroller, modelname, npc, True)
+
 			actor.setMapPosition(float(posx), float(posy))
-			self._npclist.append(actor)
+			self._objectlist[actor.instance.getId()] = actor
 			
 		
 	def destroyScene(self):
@@ -73,8 +83,8 @@ class Scene(object):
 		
 		self._player.destroy()
 		
-		for npc in self._npclist:
-			npc.destroy()
+		for obj in self._objectlist.values():
+			obj.destroy()
 
 		if self._map:
 			self._gamecontroller.engine.getModel().deleteMap(self._map)
@@ -83,7 +93,7 @@ class Scene(object):
 		self._actorlayer = None
 		
 		self._player = None
-		self._npclist = []
+		self._objectlist.clear()
 		
 	def getInstancesAt(self, clickpoint):
 		"""
@@ -114,7 +124,11 @@ class Scene(object):
 	def _getPlayer(self):
 		return self._player
 	
+	def _getObjectList(self):
+		return self._objectlist
+	
 	actorlayer = property(_getActorLayer)
 	cameras = property(_getCameras)
 	player = property(_getPlayer)
+	objectlist = property(_getObjectList)
 		

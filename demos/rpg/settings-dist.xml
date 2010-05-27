@@ -33,9 +33,4 @@
 		
 		<Setting name="DefaultActorWalkSpeed" type="float"> 2.5 </Setting>
 	</Module>
-	
-	<Module name="town">
-		<Setting name="npclist" type="list"> Quiller </Setting>
-		<Setting name="Quiller" type="list"> warrior ; 0 ; 0</Setting>
-	</Module>
 </Settings>
