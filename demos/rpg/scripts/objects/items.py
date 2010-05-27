@@ -32,7 +32,7 @@ from scripts.objects.baseobject import BaseGameObject, GameObjectTypes
 
 
 class BaseItem(BaseGameObject):
-	def __init__(self, gamecontroller, itemname, itemtype="unknown"):
+	def __init__(self, gamecontroller, itemtype, itemname):
 		self._type = GameObjectTypes["ITEM"]
 		super(BaseItem, self).__init__(gamecontroller, itemtype, itemname, True)
 		
@@ -53,3 +53,17 @@ class BaseItem(BaseGameObject):
 	
 	itemtype = property(_getItemType)
 	itemname = property(_getItemName)
+	
+class GoldStack(BaseItem):
+	def __init__(self, gamecontroller, itemtype, itemname):
+		super(GoldStack, self).__init__(gamecontroller, itemtype, itemname)
+		
+		self._value = 0
+		
+	def _getValue(self):
+		return self._value
+		
+	def _setValue(self, value):
+		self._value = value
+		
+	value = property(_getValue, _setValue)
