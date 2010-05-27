@@ -33,6 +33,7 @@ from fife.extensions.loaders import loadImportFile
 
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
+from scripts.actors.baseactor import TalkAction
 
 
 class KeyState(object):
@@ -85,7 +86,9 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		clickpoint = fife.ScreenPoint(event.getX(), event.getY())
 		if (event.getButton() == fife.MouseEvent.LEFT):
 			self._gamecontroller.scene.player.walk( self._gamecontroller.scene.getLocationAt(clickpoint) )
-			#self.hero.run( self.getLocationAt(clickpoint) )
+			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
+			if instances:
+				self._gamecontroller.scene.player.nextaction = TalkAction(self, self)
 
 		if (event.getButton() == fife.MouseEvent.RIGHT):
 			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)

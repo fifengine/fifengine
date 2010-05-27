@@ -31,6 +31,27 @@ from fife.extensions.loaders import loadMapFile
 
 from scripts.objects.baseobject import ObjectActionListener, BaseGameObject
 
+Actions = {'NONE':0,
+		   'PICKUP':1,
+		   'TALK':2,
+		   'HIT':3}
+
+class BaseAction(object):
+	def __init__(self):
+		self._actiontype = Actions['NONE']
+		
+	def execute(self):
+		pass
+		
+class TalkAction(BaseAction):
+	def __init__(self, sourceobj, destobj):
+		self._actiontype = Actions['TALK']
+		self._source = sourceobj
+		self._dest = destobj
+		
+	def execute(self):
+		print "talking"
+
 ActorStates = {'STAND':0,
 			   'WALK':1,
 			   'ATTACK':2}
@@ -42,6 +63,7 @@ class ActorActionListener(ObjectActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		if action.getId() == 'walk':
 			self._object.stand()
+			self._object.performNextAction()
 
 class Actor(BaseGameObject):
 	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
@@ -50,6 +72,8 @@ class Actor(BaseGameObject):
 		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
 		
 		self._actionlistener = ActorActionListener(self._gamecontroller, self)
+		
+		self._nextaction = None
 		
 		self.stand()
 
@@ -61,10 +85,22 @@ class Actor(BaseGameObject):
 		self._state = ActorStates["WALK"]
 		self._instance.move('walk', location, self._walkspeed)
 		
+	def performNextAction(self):
+		if self._nextaction:
+			self._nextaction.execute()
+			self._nextaction = None
+		
 	def _getState(self):
 		return self._state
 		
 	def _setState(self, state):
 		self._state = state
+		
+	def _getNextAction(self):
+		return self._nextaction
+		
+	def _setNextAction(self, action):
+		self._nextaction = action
 	
 	state = property(_getState, _setState)
+	nextaction = property(_getNextAction, _setNextAction)
