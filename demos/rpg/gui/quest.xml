@@ -2,7 +2,7 @@
 	<VBox name="credits" position="312,200" opaque="1" base_color="188,0,0">
 		<HBox>
 			<Spacer />
-			<Label name="questlabel" border_size="0" text="Quest" />
+			<Label name="questname" border_size="0" text="Quest" />
 			<Spacer />
 		</HBox>
 		<HBox>

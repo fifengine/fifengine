@@ -31,7 +31,7 @@ from fife.extensions.loaders import loadMapFile
 from fife.extensions.fife_settings import Setting
 
 from scripts.actors.baseactor import Actor
-from scripts.actors.baseactor import QuestGiver
+from scripts.actors.baseactor import QuestGiver, Quest
 from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes
 
@@ -71,6 +71,12 @@ class Scene(object):
 			(objtype, modelname, posx, posy) = objectsettings.get(mapname[0], npc, ["NPC", "warrior", "0", "0"])
 			if objtype == "QUESTGIVER":
 				actor = QuestGiver(self._gamecontroller, modelname, npc, True)
+				questcount = objectsettings.get(npc, "questcount", 0)
+				for x in range(1,questcount+1):
+					quest = "quest" + str(x)
+					(qname, qtext) = objectsettings.get(npc, quest, [])
+					actor.addQuest(Quest(actor, qname, qtext))
+						
 			elif objtype == "NPC":
 				actor = Actor(self._gamecontroller, modelname, npc, True)
 

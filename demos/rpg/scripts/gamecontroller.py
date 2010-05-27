@@ -90,7 +90,6 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
 			if instances:
 				obj = self._gamecontroller.scene.objectlist[instances[0].getId()]
-				print obj.type
 				if obj.type == GameObjectTypes["QUESTGIVER"]:
 					action = TalkAction(self._gamecontroller.scene.player, obj)
 					self._gamecontroller.scene.player.nextaction = action

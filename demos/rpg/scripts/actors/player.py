@@ -37,7 +37,7 @@ class PlayerActionListener(ObjectActionListener):
 	def onInstanceActionFinished(self, instance, action):
 		super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
 		if action.getId() == 'walk':
-			print "player done walking"
+			pass
 			#self._object.completeAction()
 
 class Player(Actor):
@@ -48,6 +48,3 @@ class Player(Actor):
 		self._playeractionlistener = PlayerActionListener(self._gamecontroller, self)
 		
 		self._type = GameObjectTypes["PLAYER"]
-		
-	def showQuestDialog(self):
-		self._gamecontroller.guicontroller.showQuestDialog()

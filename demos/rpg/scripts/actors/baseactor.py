@@ -53,7 +53,12 @@ class TalkAction(BaseAction):
 		
 	def execute(self):
 		print "talking to: " + self._dest.instance.getId()
-		self._source.showQuestDialog()
+		
+		if self._dest.haveQuest():
+			if not self._dest.activequest:
+				self._dest.offerNextQuest()
+			else:
+				self._dest.completeQuest()
 
 ActorStates = {'STAND':0,
 			   'WALK':1,
@@ -110,12 +115,73 @@ class Actor(BaseGameObject):
 	state = property(_getState, _setState)
 	nextaction = property(_getNextAction, _setNextAction)
 
+class Quest(object):
+	def __init__(self, owner, questname, questtext):
+		self._owner = owner
+		self._name = questname
+		self._text = questtext
+	
+	def _getOwner(self):
+		return self._owner
+	
+	def _getName(self):
+		return self._name
+		
+	def _setName(self, questname):
+		self._name = questname
+		
+	def _getText(self):
+		return self._text
+		
+	def _setText(self, questtext):
+		self._text = questtext
+	
+	owner = property(_getOwner)
+	name = property(_getName, _setName)
+	text = property(_getText, _setText)
+
 class QuestGiver(Actor):
 	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
 		super(QuestGiver, self).__init__(gamecontroller, instancename, instanceid, createInstance)
 	
 		self._type = GameObjectTypes["QUESTGIVER"]
 		self._quests = []
+		
+		self._activequest = None
 	
 	def addQuest(self, quest):
-		self._quests.append(quest)	
+		self._quests.append(quest)
+		
+	def offerNextQuest(self):
+		if self._activequest:
+			return
+	
+		if len(self._quests) > 0:
+			self._gamecontroller.guicontroller.showQuestDialog(self)
+		
+	def getNextQuest(self):
+		if len(self._quests) > 0:
+			return self._quests[0]
+		
+		return None
+		
+	def activateQuest(self, quest):
+		self._activequest = quest
+			
+	def completeQuest(self):
+		#@todo check to see if requirements are met
+		if self._activequest in self._quests:
+			print "quest completed"
+			self._quests.remove(self._activequest)
+			self._activequest = None
+		else:
+			#something went wrong
+			self._activequest = None
+	
+	def haveQuest(self):
+		return len(self._quests) > 0
+	
+	def _getActiveQuest(self):
+		return self._activequest
+		
+	activequest = property(_getActiveQuest)
