@@ -133,8 +133,12 @@ class Scene(object):
 	def _getObjectList(self):
 		return self._objectlist
 	
+	def _getMap(self):
+		return self._map
+	
 	actorlayer = property(_getActorLayer)
 	cameras = property(_getCameras)
 	player = property(_getPlayer)
 	objectlist = property(_getObjectList)
+	map = property(_getMap)
 		

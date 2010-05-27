@@ -59,6 +59,8 @@ class TalkAction(BaseAction):
 				self._dest.offerNextQuest()
 			else:
 				self._dest.completeQuest()
+		else:
+			self._dest.instance.say("I've got nothing for you...  leave me alone.", 2500)
 
 ActorStates = {'STAND':0,
 			   'WALK':1,
