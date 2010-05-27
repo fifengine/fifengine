@@ -34,7 +34,7 @@ from scripts.actors.baseactor import Actor
 from scripts.actors.baseactor import QuestGiver, Quest
 from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes
-from scripts.objects.items import BaseItem
+from scripts.objects.items import BaseItem, GoldStack
 
 class Scene(object):
 	def __init__(self, gamecontroller):
@@ -75,7 +75,14 @@ class Scene(object):
 			itemdict = objectsettings.get("items", item, {})
 			modeldict = itemsettings.get("models", itemdict["typename"])
 			
-			newitem = BaseItem(self._gamecontroller, item, modeldict["model"])
+			if itemdict["typename"] == "GoldStack":
+				newitem = GoldStack(self._gamecontroller, modeldict["model"], item)
+				#newitem.value = itemdict["value"]
+				print itemdict["value"]
+			else:
+				newitem = BaseItem(self._gamecontroller, modeldict["model"], item)
+				
+			self._objectlist[newitem.instance.getId()] = newitem
 		
 		for npc in objectsettings.get("npcs", "npclist", []):
 			objdict = objectsettings.get("npcs", npc, {})
