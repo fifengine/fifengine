@@ -201,14 +201,30 @@ class GameController(object):
 		result = ""
 		
 		args = command.split(" ")
+		cmd = []
 		for arg in args:
 			arg = arg.strip()
+			if arg != "":
+				cmd.append(arg)
+		
 	
-		if args[0] == "spawn":
-			if len(args) != 4:
-				result = "Usage: spawn [itemid] [posx] [posy]"
+		if cmd[0] == "spawn":
+			result = "Usage: spawn [item|actor] [id] [posx] [posy]"
+			if len(cmd) != 5:
+				print len(cmd)
+				return result
 			else:
-				result = "Success!"
+				if cmd[1] == "item":
+					obj = self._scene.loadItem(cmd[2])
+				elif cmd[1] == "actor":
+					obj = self._scene.loadActor(cmd[2])
+				else:
+					return result
+				if obj:
+					self._scene.addObjectToScene(obj)
+					result = "Success!"
+				else:
+					result = "Error: Not Found!"
 			
 		return result
 		
