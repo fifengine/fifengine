@@ -142,8 +142,6 @@ class World(EventListenerBase):
 		#@todo: you should be able to add file imports via the map editor
 		loadImportFile("objects/projectiles/bullet1/object.xml", self._engine)
 		loadImportFile("objects/projectiles/fireball/object.xml", self._engine)
-		loadImportFile("objects/powerups/cannonspread5/object.xml", self._engine)
-		loadImportFile("objects/powerups/extralife/object.xml", self._engine)
 		
 		self._map = loadMapFile(self._filename, self._engine)
 
