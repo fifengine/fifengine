@@ -55,60 +55,70 @@ class Scene(object):
 		self._modelsettings = None
 
 	def loadItem(self, itemid):
-		itemdict = self._objectsettings.get("items", itemid, {})
-		modeldict = self._modelsettings.get("models", itemdict["typename"], {})
-			
-		loadImportFile(modeldict["file"], self._gamecontroller.engine)
+		try:
+			itemdict = self._objectsettings.get("items", itemid, {})
+			modeldict = self._modelsettings.get("models", itemdict["typename"], {})	
 		
-		if itemdict["typename"] == "GoldStack":
-			newitem = GoldStack(self._gamecontroller, modeldict["model"], itemid)
-			newitem.value = itemdict["value"]
-		else:
-			newitem = BaseItem(self._gamecontroller, modeldict["model"], itemid)
+			loadImportFile(modeldict["file"], self._gamecontroller.engine)
+		
+			if itemdict["typename"] == "GoldStack":
+				newitem = GoldStack(self._gamecontroller, modeldict["model"], itemid)
+				newitem.value = itemdict["value"]
+			else:
+				newitem = BaseItem(self._gamecontroller, modeldict["model"], itemid)
 			
-		newitem.setMapPosition(float(itemdict["posx"]), float(itemdict["posy"]))	
-				
+			newitem.setMapPosition(float(itemdict["posx"]), float(itemdict["posy"]))	
+			
+		except (KeyError) as e:
+			print "Error: ", e
+			newitem = None
+			
 		return newitem
 		
 	def loadActor(self, actorid):
-		objdict = self._objectsettings.get("npcs", actorid, {})
-		modeldict = self._modelsettings.get("models", objdict["typename"], {})
+		try:
+			objdict = self._objectsettings.get("npcs", actorid, {})
+			modeldict = self._modelsettings.get("models", objdict["typename"], {})
 			
-		loadImportFile(modeldict["file"], self._gamecontroller.engine)
-			
-		if modeldict["type"] == "QUESTGIVER":
-			actor = QuestGiver(self._gamecontroller, modeldict["model"], actorid, True)
-			questcount = self._modelsettings.get(actorid, "questcount", 0)
-			for x in range(1,questcount+1):
-				quest = "quest" + str(x)
-				questdict = self._modelsettings.get(actorid, quest, {})
-				quest = Quest(actor, questdict['name'], questdict['desc'])
+			loadImportFile(modeldict["file"], self._gamecontroller.engine)
+				
+			if modeldict["type"] == "QUESTGIVER":
+				actor = QuestGiver(self._gamecontroller, modeldict["model"], actorid, True)
+				questcount = self._modelsettings.get(actorid, "questcount", 0)
+				for x in range(1,questcount+1):
+					quest = "quest" + str(x)
+					questdict = self._modelsettings.get(actorid, quest, {})
+					quest = Quest(actor, questdict['name'], questdict['desc'])
 					
-				for ritem in questdict['items'].split(" , "):
-					if ritem == "GoldStack":
-						quest.addRequiredGold(int(questdict['value']))
-					else:
-						quest.addRequiredItem(ritem)
-					
-				actor.addQuest(quest)
+					for ritem in questdict['items'].split(" , "):
+						if ritem == "GoldStack":
+							quest.addRequiredGold(int(questdict['value']))
+						else:
+							quest.addRequiredItem(ritem)
 						
-		elif modeldict["type"] == "NPC":
-			actor = Actor(self._gamecontroller, modeldict["model"], npc, True)
+					actor.addQuest(quest)
+						
+			elif modeldict["type"] == "NPC":
+				actor = Actor(self._gamecontroller, modeldict["model"], npc, True)
 
-		actor.setMapPosition(float(objdict["posx"]), float(objdict["posy"]))
+			actor.setMapPosition(float(objdict["posx"]), float(objdict["posy"]))
+		
+		except (KeyError) as e:
+			print "Error: ", e
+			actor = None
 		
 		return actor
 
 	def loadItems(self, mapfilename):
 		for item in self._objectsettings.get("items", "itemlist", []):
 			newitem = self.loadItem(item)
-			self._objectlist[newitem.instance.getId()] = newitem
-			
+			self.addObjectToScene(newitem)
+						
 	def loadActors(self, mapfilename):
 		for npc in self._objectsettings.get("npcs", "npclist", []):
 			actor = self.loadActor(npc)
-			self._objectlist[actor.instance.getId()] = actor		
-		
+			self.addObjectToScene(actor)
+			
 	def loadPlayer(self):
 		"""
 		@todo: once we have all art assets this should be able to load one of 3 player models
@@ -189,7 +199,8 @@ class Scene(object):
 		return location
 	
 	def addObjectToScene(self, obj):
-		self._objectlist[obj.id] = obj
+		if not self._objectlist.has_key(obj.id):
+			self._objectlist[obj.id] = obj
 	
 	def removeObjectFromScene(self, obj):
 		obj.destroy()
