@@ -197,7 +197,19 @@ class GameController(object):
 		Might be useful if you want to have the game parse a command.
 		Not sure if I am going to keep this or not.
 		"""
+		
 		result = ""
+		
+		args = command.split(" ")
+		for arg in args:
+			arg = arg.strip()
+	
+		if args[0] == "spawn":
+			if len(args) != 4:
+				result = "Usage: spawn [itemid] [posx] [posy]"
+			else:
+				result = "Success!"
+			
 		return result
 		
 	def newGame(self):
