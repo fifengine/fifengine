@@ -48,4 +48,4 @@ class Player(Actor):
 		
 		self._playeractionlistener = PlayerActionListener(self._gamecontroller, self)
 		
-
+		self._inventory = []

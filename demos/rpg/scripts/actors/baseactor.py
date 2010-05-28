@@ -64,6 +64,15 @@ class TalkAction(BaseAction):
 				self._dest.instance.say("I've got nothing for you...  leave me alone.", 2500)
 		else:
 			self._dest.instance.say("Hello there!")
+			
+class PickUpItemAction(BaseAction):
+	def __init__(self, actor, item):
+		self._actiontype = Actions['PICKUP']
+		self._actor = actor
+		self._item = item
+		
+	def execute(self):
+		self._actor.pickUpItem(self._item)
 
 ActorStates = {'STAND':0,
 			   'WALK':1,
@@ -106,6 +115,15 @@ class Actor(BaseGameObject):
 		if self._nextaction:
 			self._nextaction.execute()
 			self._nextaction = None
+			
+	def pickUpItem(self, item):
+		self._inventory.append(item)
+		
+		#removes it from FIFE (to stop rendering the item)
+		item.destroy()
+		
+		#remove it from the scene
+		del self._gamecontroller.scene.objectlist[item.id]
 		
 	def _getState(self):
 		return self._state

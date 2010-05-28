@@ -24,6 +24,7 @@
 
 	<Module name="RPG">
 		<Setting name="TownMapFile" type="str"> maps/town.xml </Setting>
+		<Setting name="AllObjectFile" type="str"> maps/allobjects.xml </Setting>
 		<Setting name="Level1MapFile" type="str"> maps/level1.xml </Setting>
 		<Setting name="DefaultCameraName" type="str"> camera1 </Setting>
 		<Setting name="DefaultZoom" type="float"> 2.0 </Setting>

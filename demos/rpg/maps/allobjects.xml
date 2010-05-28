@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <Settings>
   <Module name="models">
-    <Setting name="GoldStack" type="dict"> type : ITEM ; model : goldstack </Setting>
-    <Setting name="Quiller" type="dict"> type : QUESTGIVER ; model : warrior </Setting>
+    <Setting name="Player" type="dict"> type : ITEM ; file : objects/actors/player/warrior/object.xml ; model : goldstack </Setting>
+    <Setting name="GoldStack" type="dict"> type : ITEM ; file : objects/items/goldstack/object.xml ; model : goldstack </Setting>
+    <Setting name="Quiller" type="dict"> type : QUESTGIVER ; file : objects/actors/player/warrior/object.xml ; model : warrior </Setting>
   </Module>
   
    <Module name="Quiller">

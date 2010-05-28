@@ -33,7 +33,7 @@ from fife.extensions.loaders import loadImportFile
 
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
-from scripts.actors.baseactor import TalkAction
+from scripts.actors.baseactor import TalkAction, PickUpItemAction
 from scripts.objects.baseobject import GameObjectTypes
 
 
@@ -91,12 +91,20 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		if (event.getButton() == fife.MouseEvent.LEFT):
 			self._lastmousepos = (clickpoint.x, clickpoint.y)
 			self._gamecontroller.scene.player.walk( self._gamecontroller.scene.getLocationAt(clickpoint) )
-			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
-			if instances:
-				obj = self._gamecontroller.scene.objectlist[instances[0].getId()]
+			actor_instances = self._gamecontroller.scene.getInstancesAt(clickpoint, self._gamecontroller.scene.actorlayer)
+			item_instances = self._gamecontroller.scene.getInstancesAt(clickpoint, self._gamecontroller.scene.itemlayer)
+			if actor_instances:
+				obj = self._gamecontroller.scene.objectlist[actor_instances[0].getId()]
 				if obj.type == GameObjectTypes["QUESTGIVER"]:
 					action = TalkAction(self._gamecontroller.scene.player, obj)
 					self._gamecontroller.scene.player.nextaction = action
+			
+			if item_instances:
+				obj = self._gamecontroller.scene.objectlist[item_instances[0].getId()]
+				if obj.type == GameObjectTypes["ITEM"]:
+					action = PickUpItemAction(self._gamecontroller.scene.player, obj)
+					self._gamecontroller.scene.player.nextaction = action
+					
 
 		if (event.getButton() == fife.MouseEvent.RIGHT):
 			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
@@ -116,10 +124,13 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			return
 
 		pt = fife.ScreenPoint(event.getX(), event.getY())
-		instances = self._gamecontroller.scene.getInstancesAt(pt);
-
-		for i in instances:
+		actor_instances = self._gamecontroller.scene.getInstancesAt(pt, self._gamecontroller.scene.actorlayer)
+		item_instances = self._gamecontroller.scene.getInstancesAt(pt, self._gamecontroller.scene.itemlayer)
+		for i in actor_instances:
 			renderer.addOutlined(i, 173, 255, 47, 2)
+			
+		for j in item_instances:
+			renderer.addOutlined(j, 173, 255, 47, 2)
 
 	def mouseEntered(self, event):
 		pass
@@ -197,9 +208,6 @@ class GameController(object):
 		if self._scene:
 			self._scene.destroyScene()
 			self._scene = None
-			
-		loadImportFile("objects/actors/player/warrior/object.xml", self._engine)
-		loadImportFile("objects/items/goldstack/object.xml", self._engine)
 		
 		self._scene = Scene(self)
 		self._scene.createScene(self._settings.get("RPG", "TownMapFile", "maps/town.xml"))
