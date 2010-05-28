@@ -102,8 +102,16 @@ class Scene(object):
 				questcount = modelsettings.get(npc, "questcount", 0)
 				for x in range(1,questcount+1):
 					quest = "quest" + str(x)
-					(qname, qtext) = modelsettings.get(npc, quest, [])
-					actor.addQuest(Quest(actor, qname, qtext))
+					questdict = modelsettings.get(npc, quest, {})
+					quest = Quest(actor, questdict['name'], questdict['desc'])
+					
+					for ritem in questdict['items'].split(" , "):
+						if ritem == "GoldStack":
+							quest.addRequiredGold(int(questdict['value']))
+						else:
+							quest.addRequiredItem(ritem)
+					
+					actor.addQuest(quest)
 						
 			elif modeldict["type"] == "NPC":
 				actor = Actor(self._gamecontroller, modeldict["model"], npc, True)
@@ -176,7 +184,14 @@ class Scene(object):
 		location = fife.Location(self._actorlayer)
 		location.setMapCoordinates(target_mapcoord)
 		return location
-				
+	
+	def addObjectToScene(self, obj):
+		self._objectlist[obj.id] = obj
+	
+	def removeObjectFromScene(self, obj):
+		obj.destroy()
+		del self._objectlist[obj.id]
+	
 	def updateScene(self):
 		pass
 		

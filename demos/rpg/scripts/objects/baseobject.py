@@ -134,8 +134,12 @@ class BaseGameObject(object):
 	
 	def _getId(self):
 		return self._id
+		
+	def _getModelName(self):
+		return self._name
 	
 	location = property(_getLocation, _setLocation)
 	instance = property(_getInstance)
 	type = property(_getType)
 	id = property(_getId)
+	modelname = property(_getModelName)

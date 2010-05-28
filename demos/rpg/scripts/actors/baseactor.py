@@ -61,7 +61,7 @@ class TalkAction(BaseAction):
 				else:
 					self._dest.completeQuest()
 			else:
-				self._dest.instance.say("I've got nothing for you...  leave me alone.", 2500)
+				self._dest.say("I've got nothing for you...  leave me alone.")
 		else:
 			self._dest.instance.say("Hello there!")
 			
@@ -100,6 +100,10 @@ class Actor(BaseGameObject):
 		self._actionlistener = ActorActionListener(self._gamecontroller, self)
 		
 		self._nextaction = None
+		self._inventory = []
+		self._maxinventoryitems = 20
+		
+		self._gold = 0
 		
 		self.stand()
 
@@ -111,19 +115,34 @@ class Actor(BaseGameObject):
 		self._state = ActorStates["WALK"]
 		self._instance.move('walk', location, self._walkspeed)
 		
+	def say(self, text):
+		self._instance.say(text, 2500)
+		
 	def performNextAction(self):
 		if self._nextaction:
 			self._nextaction.execute()
 			self._nextaction = None
 			
 	def pickUpItem(self, item):
-		self._inventory.append(item)
+		if len(self._inventory) >= self._maxinventoryitems:
+			return
+		else:
+			if item.modelname == "goldstack":
+				self._gold += item.value
+			else:
+				self._inventory.append(item)
 		
-		#removes it from FIFE (to stop rendering the item)
-		item.destroy()
+			item.onPickUp()
+			
+	def removeItemFromInventory(self, itemid):
+		itemtoremove = None
+		for item in self._inventory:
+			if item.id == itemid:
+				itemtoremove = item
 		
-		#remove it from the scene
-		del self._gamecontroller.scene.objectlist[item.id]
+		if itemtoremove:
+			self._inventory.remove(itemtoremove)
+		
 		
 	def _getState(self):
 		return self._state
@@ -137,14 +156,46 @@ class Actor(BaseGameObject):
 	def _setNextAction(self, action):
 		self._nextaction = action
 	
+	def _getGold(self):
+		return self._gold
+		
+	def _setGold(self, gold):
+		self._gold = gold
+		
+	def _getInventory(self):	
+		return self._inventory
+	
 	state = property(_getState, _setState)
 	nextaction = property(_getNextAction, _setNextAction)
+	gold = property(_getGold, _setGold)
+	inventory = property(_getInventory)
 
 class Quest(object):
 	def __init__(self, owner, questname, questtext):
 		self._owner = owner
 		self._name = questname
 		self._text = questtext
+		self._requireditems = []
+		self._requiredgold = 0
+		
+	def addRequiredItem(self, itemid):
+		self._requireditems.append(itemid)
+		
+	def addRequiredGold(self, goldcount):
+		self._requiredgold += goldcount
+		
+	def checkQuestCompleted(self, actor):
+		completed = False
+		
+		if self._requiredgold > 0:
+			if actor.gold >= self._requiredgold:
+				completed = True
+				
+		for item in self._requireditems:
+			if item in actor.inventory:
+				completed = True
+				
+		return completed
 	
 	def _getOwner(self):
 		return self._owner
@@ -161,9 +212,17 @@ class Quest(object):
 	def _setText(self, questtext):
 		self._text = questtext
 	
+	def _getRequiredGold(self):
+		return self._requiredgold
+	
+	def _getRequiredItems(self):
+		return self._requireditems
+	
 	owner = property(_getOwner)
 	name = property(_getName, _setName)
 	text = property(_getText, _setText)
+	requiredgold = property(_getRequiredGold)
+	requireditems = property(_getRequiredItems)
 
 class QuestGiver(Actor):
 	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
@@ -194,11 +253,18 @@ class QuestGiver(Actor):
 		self._activequest = quest
 			
 	def completeQuest(self):
-		#@todo check to see if requirements are met
 		if self._activequest in self._quests:
-			print "quest completed"
-			self._quests.remove(self._activequest)
-			self._activequest = None
+			if self._activequest.checkQuestCompleted(self._gamecontroller.scene.player):
+				self.say("That everything I need.  Thank you!")
+				self._gamecontroller.scene.player.gold = self._gamecontroller.scene.player.gold - self._activequest.requiredgold
+				
+				for itemid in self._activequest.requireditems:
+					self._gamecontroller.scene.player.removeItemFromInventory(itemid)
+					
+				self._quests.remove(self._activequest)
+				self._activequest = None
+			else:
+				self.say("Come back when you have all the items I requested!")
 		else:
 			#something went wrong
 			self._activequest = None
