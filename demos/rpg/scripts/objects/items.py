@@ -37,13 +37,15 @@ class BaseItem(BaseGameObject):
 		super(BaseItem, self).__init__(gamecontroller, itemtype, itemname, True)
 		
 	def onPickUp(self):
-		#remove item from the map
-		self.destroy()
+		#remove item from the scene
+		self._gamecontroller.scene.removeObjectFromScene(self)
 	
 	def onDrop(self, dropx, dropy):
 		#recreate object
 		self._createFIFEInstance(self, self._gamecontroller.scene.itemlayer)
 		self.setMapPosition(dropx, dropy)
+		
+		self._gamecontroller.scene.addObjectToScene(self)
 		
 	def _getItemType(self):
 		return self._name
@@ -64,6 +66,6 @@ class GoldStack(BaseItem):
 		return self._value
 		
 	def _setValue(self, value):
-		self._value = value
+		self._value = int(value)
 		
 	value = property(_getValue, _setValue)
