@@ -70,6 +70,7 @@ class BaseGameObject(object):
 			self._id = self._name
 			
 		self._instance = None
+		self._position = fife.DoublePoint(0.0, 0.0)
 		
 		if not hasattr(self, "_type"):
 			self._type = GameObjectTypes["DEFAULT"]
@@ -85,6 +86,8 @@ class BaseGameObject(object):
 			self._instance = self._gamecontroller.scene.actorlayer.getInstance(self._id)
 			self._instance.thisown = 0
 			
+		self._activated = True
+		
 		
 	def destroy(self):
 		"""
@@ -102,11 +105,11 @@ class BaseGameObject(object):
 	def setMapPosition(self, x, y):
 		curloc = self.location
 	
-		exactloc = self.location.getExactLayerCoordinates()
-		exactloc.x = x
-		exactloc.y = y
+		self._position = self.location.getExactLayerCoordinates()
+		self._position.x = x
+		self._position.y = y
 				
-		curloc.setExactLayerCoordinates(exactloc)
+		curloc.setExactLayerCoordinates(self._position)
 		self.location = curloc
 
 	def _createFIFEInstance(self, layer):
@@ -118,8 +121,11 @@ class BaseGameObject(object):
 		
 		self._instance = layer.createInstance(self._fifeobject, fife.ModelCoordinate(0,0), self._id)
 		fife.InstanceVisual.create(self._instance)
+			
 		self._instance.thisown = 0
-
+		
+		self.setMapPosition(self._position.x,self._position.y)
+		
 	def _getLocation(self):
 		return self._instance.getLocation()
 			
@@ -137,9 +143,25 @@ class BaseGameObject(object):
 		
 	def _getModelName(self):
 		return self._name
-	
+		
+	def _getPosition(self):
+		self._position = self.location.getExactLayerCoordinates()
+		return (self._position.x, self._position.y)
+		
+	def _setPosition(self, tuplexy):
+		self.setMapPosition(tuplexy[0],tuplexy[1])
+		
+	def _getActivated(self):
+		return self._activated
+		
+	def _setActivated(self, activate):
+		self._activated = activate
+			
+
 	location = property(_getLocation, _setLocation)
 	instance = property(_getInstance)
 	type = property(_getType)
 	id = property(_getId)
 	modelname = property(_getModelName)
+	position = property(_getPosition, _setPosition)
+	activated = property(_getActivated, _setActivated)

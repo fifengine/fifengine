@@ -42,6 +42,7 @@ class Scene(object):
 		self._gamecontroller = gamecontroller
 		
 		self._map = None
+		self._mapname = None
 		self._maincameraname = self._gamecontroller.settings.get("RPG", "DefaultCameraName", "camera1")
 		self._cameras = {}
 		
@@ -49,74 +50,63 @@ class Scene(object):
 		
 		self._player = None
 		self._objectlist = {}
+		
+		self._objectsettings = None
+		self._modelsettings = None
+
+	def loadItem(self, itemid):
+		itemdict = self._objectsettings.get("items", itemid, {})
+		modeldict = self._modelsettings.get("models", itemdict["typename"], {})
+			
+		loadImportFile(modeldict["file"], self._gamecontroller.engine)
+		
+		if itemdict["typename"] == "GoldStack":
+			newitem = GoldStack(self._gamecontroller, modeldict["model"], itemid)
+			newitem.value = itemdict["value"]
+		else:
+			newitem = BaseItem(self._gamecontroller, modeldict["model"], itemid)
+			
+		newitem.setMapPosition(float(itemdict["posx"]), float(itemdict["posy"]))	
+				
+		return newitem
+		
+	def loadActor(self, actorid):
+		objdict = self._objectsettings.get("npcs", actorid, {})
+		modeldict = self._modelsettings.get("models", objdict["typename"], {})
+			
+		loadImportFile(modeldict["file"], self._gamecontroller.engine)
+			
+		if modeldict["type"] == "QUESTGIVER":
+			actor = QuestGiver(self._gamecontroller, modeldict["model"], actorid, True)
+			questcount = self._modelsettings.get(actorid, "questcount", 0)
+			for x in range(1,questcount+1):
+				quest = "quest" + str(x)
+				questdict = self._modelsettings.get(actorid, quest, {})
+				quest = Quest(actor, questdict['name'], questdict['desc'])
+					
+				for ritem in questdict['items'].split(" , "):
+					if ritem == "GoldStack":
+						quest.addRequiredGold(int(questdict['value']))
+					else:
+						quest.addRequiredItem(ritem)
+					
+				actor.addQuest(quest)
+						
+		elif modeldict["type"] == "NPC":
+			actor = Actor(self._gamecontroller, modeldict["model"], npc, True)
+
+		actor.setMapPosition(float(objdict["posx"]), float(objdict["posy"]))
+		
+		return actor
 
 	def loadItems(self, mapfilename):
-		"""
-		@todo: create a new function "loadItem(self, itemname)" which takes care of
-		loading an individual item in case at some point in the game you want to
-		load one at some point.
-		"""
-		mapname = os.path.splitext(os.path.basename(mapfilename))
-		objectfile = "maps/" + mapname[0] + "_objects.xml"
-		modelfile = self._gamecontroller.settings.get("RPG", "AllObjectFile", "maps/allobjects.xml")
-		
-		objectsettings = Setting(app_name="",settings_file=objectfile)
-		modelsettings = Setting(app_name="", settings_file=modelfile)
-
-		for item in objectsettings.get("items", "itemlist", []):
-			itemdict = objectsettings.get("items", item, {})
-			modeldict = modelsettings.get("models", itemdict["typename"], {})
-			
-			loadImportFile(modeldict["file"], self._gamecontroller.engine)
-			
-			if itemdict["typename"] == "GoldStack":
-				newitem = GoldStack(self._gamecontroller, modeldict["model"], item)
-				newitem.value = itemdict["value"]
-			else:
-				newitem = BaseItem(self._gamecontroller, modeldict["model"], item)
-			
-			newitem.setMapPosition(float(itemdict["posx"]), float(itemdict["posy"]))	
+		for item in self._objectsettings.get("items", "itemlist", []):
+			newitem = self.loadItem(item)
 			self._objectlist[newitem.instance.getId()] = newitem
 			
 	def loadActors(self, mapfilename):
-		"""
-		@todo: create a new function "loadActor(self, actorname)" which takes care of
-		loading an individual actor in case at some point in the game you want to
-		load one at some point.
-		"""
-		mapname = os.path.splitext(os.path.basename(mapfilename))
-		objectfile = "maps/" + mapname[0] + "_objects.xml"
-		modelfile = self._gamecontroller.settings.get("RPG", "AllObjectFile", "maps/allobjects.xml")
-		
-		objectsettings = Setting(app_name="",settings_file=objectfile)
-		modelsettings = Setting(app_name="", settings_file=modelfile)
-
-		for npc in objectsettings.get("npcs", "npclist", []):
-			objdict = objectsettings.get("npcs", npc, {})
-			modeldict = modelsettings.get("models", objdict["typename"], {})
-			
-			loadImportFile(modeldict["file"], self._gamecontroller.engine)
-			
-			if modeldict["type"] == "QUESTGIVER":
-				actor = QuestGiver(self._gamecontroller, modeldict["model"], npc, True)
-				questcount = modelsettings.get(npc, "questcount", 0)
-				for x in range(1,questcount+1):
-					quest = "quest" + str(x)
-					questdict = modelsettings.get(npc, quest, {})
-					quest = Quest(actor, questdict['name'], questdict['desc'])
-					
-					for ritem in questdict['items'].split(" , "):
-						if ritem == "GoldStack":
-							quest.addRequiredGold(int(questdict['value']))
-						else:
-							quest.addRequiredItem(ritem)
-					
-					actor.addQuest(quest)
-						
-			elif modeldict["type"] == "NPC":
-				actor = Actor(self._gamecontroller, modeldict["model"], npc, True)
-
-			actor.setMapPosition(float(objdict["posx"]), float(objdict["posy"]))
+		for npc in self._objectsettings.get("npcs", "npclist", []):
+			actor = self.loadActor(npc)
 			self._objectlist[actor.instance.getId()] = actor		
 		
 	def loadPlayer(self):
@@ -135,6 +125,13 @@ class Scene(object):
 			self._map = loadMapFile(mapfilename, self._gamecontroller.engine)
 		else:
 			self.destroyScene()
+			
+		self._mapname = os.path.splitext(os.path.basename(mapfilename))[0]
+		objectfile = "maps/" + self._mapname + "_objects.xml"
+		modelfile = self._gamecontroller.settings.get("RPG", "AllObjectFile", "maps/allobjects.xml")
+		
+		self._objectsettings = Setting(app_name="",settings_file=objectfile)
+		self._modelsettings = Setting(app_name="", settings_file=modelfile)		
 
 		for cam in self._map.getCameras():
 			self._cameras[cam.getId()] = cam
@@ -161,13 +158,19 @@ class Scene(object):
 
 		if self._map:
 			self._gamecontroller.engine.getModel().deleteMap(self._map)
-		
+				
 		self._map = None
+		self._mapname = None
+		
 		self._actorlayer = None
+		self._itemlayer = None
 		
 		self._player = None
 		self._objectlist.clear()
 		
+		self._objectsettings = None
+		self._modelsettings = None
+			
 	def getInstancesAt(self, clickpoint, layer):
 		"""
 		Query the main camera for instances on the specified layer.
