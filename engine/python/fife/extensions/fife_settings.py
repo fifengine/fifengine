@@ -132,7 +132,7 @@ class Setting(object):
 
 		if self._settings_gui_xml == "":
 			self._settings_gui_xml = SETTINGS_GUI_XML
-			
+
 		if self._changes_gui_xml == "":
 			self._changes_gui_xml = CHANGES_REQUIRE_RESTART
 
@@ -147,7 +147,7 @@ class Setting(object):
 
 		#default settings
 		self._resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
-	
+
 		self.loadSettings()
 
 	def loadSettings(self):
@@ -353,15 +353,18 @@ class Setting(object):
 			kv_pair = i.split(" : ")
 			dict[kv_pair[0]] = kv_pair[1]
 		return dict
-		
+
 	def onOptionsPress(self):
 		"""
 		Opens the options dialog box.  Usually you would bind this to a button.
 		"""
 		self.changesRequireRestart = False
 		self.isSetToDefault = False
-		
-		self.OptionsDlg = pychan.loadXML(StringIO(self._settings_gui_xml))
+
+		if os.path.isfile(self._settings_gui_xml):
+			self.OptionsDlg = pychan.loadXML(self._settings_gui_xml)
+		else:
+			self.OptionsDlg = pychan.loadXML(StringIO(self._settings_gui_xml))
 		self.OptionsDlg.distributeInitialData({
 			'screen_resolution' : self._resolutions,
 			'render_backend' : ['OpenGL', 'SDL']
@@ -412,9 +415,9 @@ class Setting(object):
 		"""
 		A list of valid default screen resolutions.   This should be called once
 		right after you instantiate Settings.
-		
+
 		Valid screen resolutions must be strings in the form of: WIDTHxHEIGHT
-		
+
 		Example:
 			settings.setAvailableScreenResolutions(["800x600", "1024x768"])
 		"""
@@ -428,6 +431,6 @@ class Setting(object):
 		self.changesRequireRestart = True
 		self.loadSettings()
 		self.applySettings()
-		
+
 		if self.OptionsDlg:
 			self.OptionsDlg.hide()
