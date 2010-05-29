@@ -148,12 +148,22 @@ class Setting(object):
 		#default settings
 		self._resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
 
+		#Used to stylize the options gui
+		self._gui_style = "default"
+
 		self.loadSettings()
 
 	def loadSettings(self):
 		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
 		self._root_element = self._tree.getroot()
 		self.validateTree()
+
+	def setGuiStyle(self, style):
+		""" Set a custom gui style used for the option dialog.
+		@param style: Pychan style to be used
+		@type style: C{string}
+		"""
+		self._gui_style = style
 
 	def validateTree(self):
 		""" Iterates the settings tree and prints warning when an invalid tag is found """
@@ -365,6 +375,7 @@ class Setting(object):
 			self.OptionsDlg = pychan.loadXML(self._settings_gui_xml)
 		else:
 			self.OptionsDlg = pychan.loadXML(StringIO(self._settings_gui_xml))
+		self.OptionsDlg.stylize(self._gui_style)
 		self.OptionsDlg.distributeInitialData({
 			'screen_resolution' : self._resolutions,
 			'render_backend' : ['OpenGL', 'SDL']
