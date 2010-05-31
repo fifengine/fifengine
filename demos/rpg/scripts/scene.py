@@ -220,6 +220,12 @@ class Scene(object):
 		else:
 			obj.destroy()
 			raise ObjectAlreadyInSceneError
+			
+	def getObject(self, objid):
+		if self._objectlist.has_key(objid):
+			return self._objectlist[objid]
+		else:
+			return None
 	
 	def removeObjectFromScene(self, obj):
 		obj.destroy()
