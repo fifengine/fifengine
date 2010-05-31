@@ -95,7 +95,7 @@ class QuestDialog(Window):
 		self._widget.mapEvents(eventMap)
 		
 	def questAccepted(self):
-		print "quest has been accepted"
+		self._guicontroller._gamecontroller.logger.log_debug("Quest [" + self._quest.name + "] has been accepted")
 		self._questgiver.activateQuest(self._quest)
 		self._widget.hide()
 	

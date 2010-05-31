@@ -52,8 +52,6 @@ class TalkAction(BaseAction):
 		self._dest = destobj
 		
 	def execute(self):
-		print "talking to: " + self._dest.instance.getId()
-		
 		if self._dest.type == GameObjectTypes["QUESTGIVER"]:
 			if self._dest.haveQuest():
 				if not self._dest.activequest:

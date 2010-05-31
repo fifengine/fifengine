@@ -35,7 +35,7 @@ from scripts.scene import Scene
 from scripts.guicontroller import GUIController
 from scripts.actors.baseactor import TalkAction, PickUpItemAction
 from scripts.objects.baseobject import GameObjectTypes
-from scripts.misc.exceptions import ObjectNotFoundError
+from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
 
 
 class KeyState(object):
@@ -95,6 +95,9 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			actor_instances = self._gamecontroller.scene.getInstancesAt(clickpoint, self._gamecontroller.scene.actorlayer)
 			item_instances = self._gamecontroller.scene.getInstancesAt(clickpoint, self._gamecontroller.scene.itemlayer)
 			if actor_instances:
+				if actor_instances[0].getId() == "player":
+					return
+					
 				obj = self._gamecontroller.scene.objectlist[actor_instances[0].getId()]
 				if obj.type == GameObjectTypes["QUESTGIVER"]:
 					action = TalkAction(self._gamecontroller.scene.player, obj)
@@ -108,11 +111,10 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 					
 
 		if (event.getButton() == fife.MouseEvent.RIGHT):
-			instances = self._gamecontroller.scene.getInstancesAt(clickpoint)
-			print "selected instances on actor layer: ", [i.getId() for i in instances]
+			instances = self._gamecontroller.scene.getInstancesAt(clickpoint, self._gamecontroller.scene.actorlayer)
 			if instances:
-				#do something
-				pass
+				self._gamecontroller.logger.log_debug("Selected instance on actor layer: " + instances[0].getId())
+
 				
 	def mouseReleased(self, event):
 		pass
@@ -128,10 +130,11 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		actor_instances = self._gamecontroller.scene.getInstancesAt(pt, self._gamecontroller.scene.actorlayer)
 		item_instances = self._gamecontroller.scene.getInstancesAt(pt, self._gamecontroller.scene.itemlayer)
 		for i in actor_instances:
-			renderer.addOutlined(i, 173, 255, 47, 2)
+			if i.getId() != "player":
+				renderer.addOutlined(i, 173, 255, 47, 2)
 			
 		for j in item_instances:
-			renderer.addOutlined(j, 173, 255, 47, 2)
+			renderer.addOutlined(j, 255, 173, 47, 2)
 
 	def mouseEntered(self, event):
 		pass
@@ -221,12 +224,15 @@ class GameController(object):
 					else:
 						return result
 				except ObjectNotFoundError, e:
-					result = "Error while loading object: " + cmd[2]
+					result = "Error: Cannot load [" + cmd[2] + "].  It could not be found!"
 					obj = None
 					
 				if obj:
-					self._scene.addObjectToScene(obj)
-					result = "--OK--"
+					try:
+						self._scene.addObjectToScene(obj)
+						result = "--OK--"
+					except ObjectAlreadyInSceneError, e:
+						result = "Error: [" + cmd[2] + "] is already on the scene."
 			
 		return result
 		
@@ -282,6 +288,9 @@ class GameController(object):
 	
 	def _getInstanceRenderer(self):
 		return self._instancerenderer
+		
+	def _getLogManager(self):
+		return self._application.logger
 	
 	guicontroller = property(_getGUIController) 
 	engine = property(_getEngine)
@@ -289,3 +298,4 @@ class GameController(object):
 	scene = property(_getScene)
 	keystate = property(_getKeyState)
 	instancerenderer = property(_getInstanceRenderer)
+	logger = property(_getLogManager)

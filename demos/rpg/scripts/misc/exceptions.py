@@ -38,3 +38,10 @@ class ObjectNotFoundError(Exception):
 		
 	def __str__(self):
 		print "","Object was not found!"
+		
+class ObjectAlreadyInSceneError(Exception):
+	def __init__(self):
+		return
+		
+	def __str__(self):
+		print "","Object was already part of the scene!"
