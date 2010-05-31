@@ -37,7 +37,7 @@ from scripts.quests.basequest import Quest
 from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes
 from scripts.objects.items import BaseItem, GoldStack
-from scripts.misc.exceptions import ObjectNotFoundError
+from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
 
 class Scene(object):
 	def __init__(self, gamecontroller):
@@ -72,7 +72,7 @@ class Scene(object):
 			newitem.setMapPosition(float(itemdict["posx"]), float(itemdict["posy"]))	
 			
 		except KeyError, e:
-			raise FileFormatError
+			raise ObjectNotFoundError
 			
 		return newitem
 		
@@ -114,20 +114,26 @@ class Scene(object):
 			try:
 				newitem = self.loadItem(item)
 			except ObjectNotFoundError, e:
-				print "Error while loading item:", item
+				self._gamecontroller.logger.log_error("Error while loading item: " + item)
 				continue
-				
-			self.addObjectToScene(newitem)
+			
+			try:
+				self.addObjectToScene(newitem)
+			except ObjectAlreadyInSceneError, e:
+				self._gamecontroller.logger.log_error("Item already part of scene: " + newitem)
 						
 	def loadActors(self, mapfilename):
 		for npc in self._objectsettings.get("npcs", "npclist", []):
 			try:
 				actor = self.loadActor(npc)
 			except ObjectNotFoundError, e:
-				print "Error while loading actor:", actor
+				self._gamecontroller.logger.log_error("Error while loading actor:" + actor)
 				continue
-				
-			self.addObjectToScene(actor)
+			
+			try:
+				self.addObjectToScene(actor)
+			except ObjectAlreadyInSceneError, e:
+				self._gamecontroller.logger.log_error("Actor already part of scene:" + actor)
 			
 	def loadPlayer(self):
 		"""
@@ -211,6 +217,9 @@ class Scene(object):
 	def addObjectToScene(self, obj):
 		if not self._objectlist.has_key(obj.id):
 			self._objectlist[obj.id] = obj
+		else:
+			obj.destroy()
+			raise ObjectAlreadyInSceneError
 	
 	def removeObjectFromScene(self, obj):
 		obj.destroy()

@@ -152,3 +152,9 @@ class RPGApplication(ApplicationBase):
 			self._gamecontroller.endGame()
 		else:
 			self._gamecontroller.pump()
+			
+			
+	def _getLogManager(self):
+		return self._log
+		
+	logger = property(_getLogManager)
