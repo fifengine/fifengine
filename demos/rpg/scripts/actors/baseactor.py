@@ -34,7 +34,7 @@ from scripts.objects.baseobject import ObjectActionListener, BaseGameObject, Gam
 Actions = {'NONE':0,
 		   'PICKUP':1,
 		   'TALK':2,
-		   'HIT':3,
+		   'ATTACK':3,
 		   'OPEN':4,
 		   'ENTER':5}
 
