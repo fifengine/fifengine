@@ -1,3 +1,4 @@
-help - This message
-exit - Quit the game
-quit - Quit the game
+eval - Evaluate a python expression
+exit, quit - Quit the game
+help - Displays this message
+spawn - Spawns an item or actor

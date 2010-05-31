@@ -32,7 +32,8 @@ from fife.extensions.loaders import loadImportFile
 from fife.extensions.fife_settings import Setting
 
 from scripts.actors.baseactor import Actor
-from scripts.actors.baseactor import QuestGiver, Quest
+from scripts.actors.questgiver import QuestGiver
+from scripts.quests.basequest import Quest
 from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes
 from scripts.objects.items import BaseItem, GoldStack
