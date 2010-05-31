@@ -37,6 +37,7 @@ from scripts.quests.basequest import Quest
 from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes
 from scripts.objects.items import BaseItem, GoldStack
+from scripts.misc.exceptions import ObjectNotFoundError
 
 class Scene(object):
 	def __init__(self, gamecontroller):
@@ -70,9 +71,8 @@ class Scene(object):
 			
 			newitem.setMapPosition(float(itemdict["posx"]), float(itemdict["posy"]))	
 			
-		except (KeyError) as e:
-			print "Error: ", e
-			newitem = None
+		except KeyError, e:
+			raise FileFormatError
 			
 		return newitem
 		
@@ -104,20 +104,29 @@ class Scene(object):
 
 			actor.setMapPosition(float(objdict["posx"]), float(objdict["posy"]))
 		
-		except (KeyError) as e:
-			print "Error: ", e
-			actor = None
+		except KeyError, e:
+			raise ObjectNotFoundError
 		
 		return actor
 
 	def loadItems(self, mapfilename):
 		for item in self._objectsettings.get("items", "itemlist", []):
-			newitem = self.loadItem(item)
+			try:
+				newitem = self.loadItem(item)
+			except ObjectNotFoundError, e:
+				print "Error while loading item:", item
+				continue
+				
 			self.addObjectToScene(newitem)
 						
 	def loadActors(self, mapfilename):
 		for npc in self._objectsettings.get("npcs", "npclist", []):
-			actor = self.loadActor(npc)
+			try:
+				actor = self.loadActor(npc)
+			except ObjectNotFoundError, e:
+				print "Error while loading actor:", actor
+				continue
+				
 			self.addObjectToScene(actor)
 			
 	def loadPlayer(self):

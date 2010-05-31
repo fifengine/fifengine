@@ -35,6 +35,7 @@ from scripts.scene import Scene
 from scripts.guicontroller import GUIController
 from scripts.actors.baseactor import TalkAction, PickUpItemAction
 from scripts.objects.baseobject import GameObjectTypes
+from scripts.misc.exceptions import ObjectNotFoundError
 
 
 class KeyState(object):
@@ -210,20 +211,22 @@ class GameController(object):
 		if cmd[0] == "spawn":
 			result = "Usage: spawn [item|actor] [id] [posx] [posy]"
 			if len(cmd) != 5:
-				print len(cmd)
 				return result
 			else:
-				if cmd[1] == "item":
-					obj = self._scene.loadItem(cmd[2])
-				elif cmd[1] == "actor":
-					obj = self._scene.loadActor(cmd[2])
-				else:
-					return result
+				try:
+					if cmd[1] == "item":
+						obj = self._scene.loadItem(cmd[2])
+					elif cmd[1] == "actor":
+						obj = self._scene.loadActor(cmd[2])
+					else:
+						return result
+				except ObjectNotFoundError, e:
+					result = "Error while loading object: " + cmd[2]
+					obj = None
+					
 				if obj:
 					self._scene.addObjectToScene(obj)
 					result = "--OK--"
-				else:
-					result = "Error: Not Found!"
 			
 		return result
 		
