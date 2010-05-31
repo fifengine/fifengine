@@ -91,23 +91,33 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 			command.consume()
 
 	def onConsoleCommand(self, command):
-		result = ''
-		if command.lower() in ('quit', 'exit'):
+		result = ""
+		
+		args = command.split(" ")
+		cmd = []
+		for arg in args:
+			arg = arg.strip()
+			if arg != "":
+				cmd.append(arg)		
+		
+		if cmd[0].lower() in ('quit', 'exit'):
 			self.quit = True
 			result = 'quitting'
-		elif command.lower() in ( 'help', 'help()' ):
+		elif cmd[0].lower() in ( 'help' ):
 			helptextfile = self._gamecontroller.settings.get("RPG", "HelpText", "misc/help.txt")
 			self._engine.getGuiManager().getConsole().println( open( helptextfile, 'r' ).read() )
-			result = "-OK-"
+			result = "--OK--"
+		elif cmd[0].lower() in ( 'eval' ):
+			try:
+				result = str(eval(command.lstrip(cmd[0])))
+			except:
+				result = "Invalid eval statement..."
 		else:
 			result = self._gamecontroller.onConsoleCommand(command)
-		if not result:
-			try:
-				result = str(eval(command))
-			except:
-				pass
+			
 		if not result:
 			result = 'Command Not Found...'
+		
 		return result
 		
 	def onToolsClick(self):

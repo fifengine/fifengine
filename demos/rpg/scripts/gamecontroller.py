@@ -207,7 +207,6 @@ class GameController(object):
 			if arg != "":
 				cmd.append(arg)
 		
-	
 		if cmd[0] == "spawn":
 			result = "Usage: spawn [item|actor] [id] [posx] [posy]"
 			if len(cmd) != 5:
@@ -222,7 +221,7 @@ class GameController(object):
 					return result
 				if obj:
 					self._scene.addObjectToScene(obj)
-					result = "Success!"
+					result = "--OK--"
 				else:
 					result = "Error: Not Found!"
 			
