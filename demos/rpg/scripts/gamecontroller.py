@@ -212,7 +212,7 @@ class GameController(object):
 				cmd.append(arg)
 		
 		if cmd[0] == "spawn":
-			result = "Usage: spawn [item|actor] [id] [posx] [posy]"
+			result = "Usage: spawn [item|actor] [object id] [posx] [posy]"
 			if len(cmd) != 5:
 				return result
 			else:
@@ -230,9 +230,22 @@ class GameController(object):
 				if obj:
 					try:
 						self._scene.addObjectToScene(obj)
+						obj.position = (float(cmd[3]), float(cmd[4]))
 						result = "--OK--"
 					except ObjectAlreadyInSceneError, e:
 						result = "Error: [" + cmd[2] + "] is already on the scene."
+						
+		elif cmd[0] == "move":
+			result = "Usage: move [object id] [posx] [posy]"
+			if len(cmd) != 4:
+				return result
+			else:
+				obj = self._scene.getObject(cmd[1])
+				if obj:
+					obj.position = (float(cmd[2]), float(cmd[3]))
+					result = "--OK--"
+				else:
+					result = "Error: [" + cmd[1] + "] does not exist on the scene."
 			
 		return result
 		
