@@ -441,7 +441,7 @@ class Setting(object):
 				try:
 					value = entry.initialdata.index(value)
 				except ValueError:
-					raise ValueError(value + " is not a valid value for " + entry.name)
+					raise ValueError("\"" + value + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
 			entry.initializeWidget(widget, value)
 
 	def applySettings(self):
