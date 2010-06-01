@@ -74,7 +74,7 @@ class ApplicationBase(object):
 			self._setting = setting
 		else:
 			self._setting =  Setting(app_name="", settings_file="./settings.xml", settings_gui_xml="")
-	
+
 		self.engine = fife.Engine()
 
 		self.loadSettings()
@@ -103,27 +103,28 @@ class ApplicationBase(object):
 		engineSetting.setBitsPerPixel(self._setting.get("FIFE", "BitsPerPixel", 0))
 		engineSetting.setInitialVolume(self._setting.get("FIFE", "InitialVolume", 5.0))
 		engineSetting.setSDLRemoveFakeAlpha(self._setting.get("FIFE", "SDLRemoveFakeAlpha", 1))
-		engineSetting.setScreenWidth(self._setting.get("FIFE", "ScreenWidth", 1024))
-		engineSetting.setScreenHeight(self._setting.get("FIFE", "ScreenHeight", 768))
+		(width, height) = self._setting.get("FIFE", "ScreenResolution", "1024x768").split('x')
+		engineSetting.setScreenWidth(int(width))
+		engineSetting.setScreenHeight(int(height))
 		engineSetting.setRenderBackend(self._setting.get("FIFE", "RenderBackend", "OpenGL"))
-		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", 0))
+		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", False))
 
 		try:
 			engineSetting.setColorKeyEnabled(self._setting.get("FIFE", "ColorKeyEnabled", False))
 		except:
 			pass
-			
+
 		try:
 			key = self._setting.get("FIFE", "ColorKey", "255,0,255").split(',')
 			engineSetting.setColorKey(int(key[0]), int(key[1]), int(key[2]))
 		except:
 			pass
-			
+
 		try:
 			engineSetting.setWindowTitle(self._setting.get("FIFE", "WindowTitle", "No window title set"))
 			engineSetting.setWindowIcon(self._setting.get("FIFE", "WindowIcon", ""))
 		except:
-			pass			
+			pass
 
 		try:
 			engineSetting.setImageChunkingSize(self._setting.get("FIFE", "ImageChunkSize", 256))
@@ -134,20 +135,20 @@ class ApplicationBase(object):
 		"""
 		Initialize the LogManager.
 		"""
-		
+
 		engineSetting = self.engine.getSettings()
 		logmodules = self._setting.get("FIFE", "LogModules", ["controller"])
 
 		#log to both the console and log file
-		self._log = fifelog.LogManager(self.engine, 
-									   self._setting.get("FIFE", "LogToPrompt", "0"), 
+		self._log = fifelog.LogManager(self.engine,
+									   self._setting.get("FIFE", "LogToPrompt", "0"),
 									   self._setting.get("FIFE", "LogToFile", "0"))
 
 		self._log.setLevelFilter(self._setting.get("FIFE", "LogLevelFilter", fife.LogManager.LEVEL_DEBUG))
-		
+
 		if logmodules:
-			self._log.setVisibleModules(*logmodules)		
-		
+			self._log.setVisibleModules(*logmodules)
+
 	def createListener(self):
 		"""
 		This creates a default event listener, which will just close the program

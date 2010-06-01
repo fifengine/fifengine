@@ -88,6 +88,8 @@ EMPTY_SETTINGS="""\
 </Settings>
 """
 
+DEFAULT_MODULE = "FIFE"
+
 class Setting(object):
 	"""
 	This class manages loading and saving of game settings.
@@ -147,11 +149,58 @@ class Setting(object):
 
 		#default settings
 		self._resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
+		self._renderbackends = ['OpenGL', 'SDL']
 
 		#Used to stylize the options gui
 		self._gui_style = "default"
 
 		self.loadSettings()
+
+		# Holds SettingEntries
+		self._entries = []
+
+		self._initDefaultSettingEntries()
+
+	def _initDefaultSettingEntries(self):
+		"""Initializes the default fife setting entries. Not to be called from
+		outside this class."""
+		self.createAndAddEntry(DEFAULT_MODULE, "PlaySounds", "enable_sound",
+		              requiresrestart=True)
+		self.createAndAddEntry(DEFAULT_MODULE, "FullScreen", "enable_fullscreen",
+		              requiresrestart=True)
+		self.createAndAddEntry(DEFAULT_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
+		              requiresrestart=True)
+		self.createAndAddEntry(DEFAULT_MODULE, "RenderBackend", "render_backend", initialdata = self._renderbackends,
+		              requiresrestart=True)
+
+	def createAndAddEntry(self, module, name, widgetname, applyfunction=None, initialdata=None, requiresrestart=False):
+		""""
+		@param module: The Setting module this Entry belongs to
+		@type module: C{String}
+		@param name: The Setting's name
+		@type name: C{String}
+		@param widgetname: The name of the widget that is used to change this
+		setting
+		@type widgetname: C{String}
+		@param applyfunction: function that makes the changes when the Setting is
+		saved
+		@type applyfunction: C{function}
+		@param initialdata: If the widget supports the setInitialData() function
+		this can be used to set the initial data
+		@type initialdata: C{String} or C{Boolean}
+		@param requiresrestart: Whether or not the changing of this setting
+		requires a restart
+		@type requiresrestart: C{Boolean}
+		"""
+		entry = SettingEntry(module, name, widgetname, applyfunction, initialdata, requiresrestart)
+		self._entries.append(entry)
+
+	def addEntry(self, entry):
+		"""Adds a new C{SettingEntry} to the Settting
+		@param entry: A new SettingEntry that is to be added
+		@type entry: C{SettingEntry}
+		"""
+		self._entries.append(entry)
 
 	def loadSettings(self):
 		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
@@ -376,16 +425,7 @@ class Setting(object):
 		else:
 			self.OptionsDlg = pychan.loadXML(StringIO(self._settings_gui_xml))
 		self.OptionsDlg.stylize(self._gui_style)
-		self.OptionsDlg.distributeInitialData({
-			'screen_resolution' : self._resolutions,
-			'render_backend' : ['OpenGL', 'SDL']
-		})
-		self.OptionsDlg.distributeData({
-			'screen_resolution' : self._resolutions.index(str(self.get("FIFE", "ScreenWidth")) + 'x' + str(self.get("FIFE", "ScreenHeight"))),
-			'render_backend' : 0 if self.get("FIFE", "RenderBackend") == "OpenGL" else 1,
-			'enable_fullscreen' : self.get("FIFE", "FullScreen"),
-			'enable_sound' : self.get("FIFE", "PlaySounds")
-		})
+		self.fillWidgets()
 		self.OptionsDlg.mapEvents({
 			'okButton' : self.applySettings,
 			'cancelButton' : self.OptionsDlg.hide,
@@ -393,34 +433,52 @@ class Setting(object):
 		})
 		self.OptionsDlg.show()
 
+	def fillWidgets(self):
+		for entry in self._entries:
+			widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
+			value = self.get(entry.module, entry.name)
+			if type(entry.initialdata) is list:
+				try:
+					value = entry.initialdata.index(value)
+				except ValueError:
+					raise ValueError(value + " is not a valid value for " + entry.name)
+			entry.initializeWidget(widget, value)
+
 	def applySettings(self):
 		"""
 		Writes the settings file.  If a change requires a restart of the engine
 		it notifies you with a small dialog box.
 		"""
-		screen_resolution, render_backend, enable_fullscreen, enable_sound = self.OptionsDlg.collectData('screen_resolution', 'render_backend', 'enable_fullscreen', 'enable_sound')
-		render_backend = 'OpenGL' if render_backend is 0 else 'SDL'
-		if render_backend != self.get("FIFE", "RenderBackend"):
-			self.set("FIFE", 'RenderBackend', render_backend)
-			self.changesRequireRestart = True
-		if int(enable_fullscreen) != int(self.get("FIFE", "FullScreen")):
-			self.set("FIFE", 'FullScreen', int(enable_fullscreen))
-			self.changesRequireRestart = True
-		if int(enable_sound) != int(self.get("FIFE", "PlaySounds")):
-			self.set("FIFE", 'PlaySounds', int(enable_sound))
-			self.changesRequireRestart = True
-		if screen_resolution != self._resolutions.index(str(self.get("FIFE", "ScreenWidth")) + 'x' + str(self.get("FIFE", "ScreenHeight"))):
-			self.set("FIFE", 'ScreenWidth', int(self._resolutions[screen_resolution].partition('x')[0]))
-			self.set("FIFE", 'ScreenHeight', int(self._resolutions[screen_resolution].partition('x')[2]))
-			self.changesRequireRestart = True
+		for entry in self._entries:
+			widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
+			data = widget.getData()
+
+			# If the data is a list we need to get the correct selected data
+			# from the list. This is needed for e.g. dropdowns or listboxs
+			if type(entry.initialdata) is list:
+				value = entry.initialdata[data]
+				self.set(entry.module, entry.name, value)
+			else:
+				self.set(entry.module, entry.name, data)
+
+			if entry.requiresrestart:
+				self.changesRequireRestart = True
+			entry.onApply(widget)
 
 		self.saveSettings()
 
 		self.OptionsDlg.hide()
 		if self.changesRequireRestart:
-			RestartDlg = pychan.loadXML(StringIO(self._changes_gui_xml))
-			RestartDlg.mapEvents({ 'closeButton' : RestartDlg.hide })
-			RestartDlg.show()
+			self._showChangeRequireRestartDialog()
+
+
+	def _showChangeRequireRestartDialog(self):
+		"""Shows a dialog that informes the user that a restart is required
+		to perform the changes."""
+		RestartDlg = pychan.loadXML(StringIO(self._changes_gui_xml))
+		RestartDlg.mapEvents({ 'closeButton' : RestartDlg.hide })
+		RestartDlg.show()
+
 
 	def setAvailableScreenResolutions(self, reslist):
 		"""
@@ -441,7 +499,100 @@ class Setting(object):
 		shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
 		self.changesRequireRestart = True
 		self.loadSettings()
-		self.applySettings()
+		self._showChangeRequireRestartDialog()
 
 		if self.OptionsDlg:
 			self.OptionsDlg.hide()
+
+
+
+class SettingEntry(object):
+
+	def __init__(self, module, name, widgetname, applyfunction=None, initialdata=None, requiresrestart=False):
+		"""
+		@param module: The Setting module this Entry belongs to
+		@type module: C{String}
+		@param name: The Setting's name
+		@type name: C{String}
+		@param widgetname: The name of the widget that is used to change this
+		setting
+		@type widgetname: C{String}
+		@param applyfunction: function that makes the changes when the Setting is
+		saved
+		@type applyfunction: C{function}
+		@param initialdata: If the widget supports the setInitialData() function
+		this can be used to set the initial data
+		@type initialdata: C{String} or C{Boolean}
+		@param requiresrestart: Whether or not the changing of this setting
+		requires a restart
+		@type requiresrestart: C{Boolean}
+		"""
+		self._module = module
+		self._name = name
+		self._settingwidgetname = widgetname
+		self._requiresrestart = requiresrestart
+		self._initialdata = initialdata
+		self._applyfunction = applyfunction
+
+	def initializeWidget(self, widget, currentValue):
+		"""Initialize the widget with needed data"""
+		if self._initialdata is not None:
+			widget.setInitialData(self._initialdata)
+		widget.setData(currentValue)
+
+	def onApply(self, widget):
+		"""Implement actions that need to be taken when the setting is changed
+		here.
+		"""
+		if self._applyfunction is not None:
+			self._applyfunction(widget.getData())
+
+	def _getModule(self):
+		return self._module
+
+	def _setModule(self, module):
+		self._module = module
+
+	def _getName(self):
+		return self._name
+
+	def _setName(self, name):
+		self._name = name
+
+	def _getSettingWidgetName(self):
+		return self._settingwidgetname
+
+	def _setSettingWidgetName(self, settingwidgetname):
+		self._settingwidgetname = settingwidgetname
+
+	def _getRequiresRestart(self):
+		return self._requiresrestart
+
+	def _setRequiresRestart(self, requiresrestart):
+		self._requiresrestart = requiresrestart
+
+	def _getInitialData(self):
+		return self._initialdata
+
+	def _setInitialData(self, initialdata):
+		self._initialdata = initialdata
+
+	def _getApplyFunction(self):
+		return self._applyfunction
+
+	def _setApplyFunction(self, applyfunction):
+		self._applyfunction = applyfunction
+
+	module = property(_getModule, _setModule)
+	name = property(_getName, _setName)
+	settingwidgetname = property(_getSettingWidgetName, _setSettingWidgetName)
+	requiresrestart = property(_getRequiresRestart, _setRequiresRestart)
+	initialdata = property(_getInitialData, _setInitialData)
+	applyfunction = property(_getApplyFunction, _setApplyFunction)
+
+	def __str__(self):
+		return "SettingEntry: " +  self.name + " Module: " + self.module + " Widget: " + \
+		       self.settingwidgetname + " requiresrestart: " + str(self.requiresrestart) + \
+		       " initialdata: " + str(self.initialdata)
+
+
