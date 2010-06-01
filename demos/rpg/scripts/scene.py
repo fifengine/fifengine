@@ -33,7 +33,7 @@ from fife.extensions.fife_settings import Setting
 
 from scripts.actors.baseactor import Actor
 from scripts.actors.questgiver import QuestGiver
-from scripts.quests.basequest import Quest
+from scripts.quests.basequest import Quest, ReturnItemQuest, QuestTypes
 from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes
 from scripts.objects.items import BaseItem, GoldStack, Portal
@@ -93,13 +93,16 @@ class Scene(object):
 				for x in range(1,questcount+1):
 					quest = "quest" + str(x)
 					questdict = self._modelsettings.get(actorid, quest, {})
-					quest = Quest(actor, questdict['name'], questdict['desc'])
 					
-					for ritem in questdict['items'].split(" , "):
-						if ritem == "GoldStack":
-							quest.addRequiredGold(int(questdict['value']))
-						else:
-							quest.addRequiredItem(ritem)
+					if questdict['type'] == "RETURN_ITEM":
+						quest = ReturnItemQuest(actor, questdict['name'], questdict['desc'])
+						for ritem in questdict['items'].split(" , "):
+							if ritem == "GoldStack":
+								quest.addRequiredGold(int(questdict['value']))
+							else:
+								quest.addRequiredItem(ritem)
+					else:
+						quest = Quest(actor, questdict['name'], questdict['desc'])
 						
 					actor.addQuest(quest)
 						
@@ -141,7 +144,7 @@ class Scene(object):
 			except ObjectAlreadyInSceneError, e:
 				self._gamecontroller.logger.log_error("Actor already part of scene:" + actor)
 			
-	def loadPlayer(self):
+	def createPlayerObject(self):
 		"""
 		@todo: once we have all art assets this should be able to load one of 3 player models
 		"""
@@ -175,7 +178,7 @@ class Scene(object):
 		self.loadActors(mapfilename)		
 		
 		#finally load the player
-		self.loadPlayer()
+		self.createPlayerObject()
 		
 	def destroyScene(self):
 		for obj in self._objectlist.values():
