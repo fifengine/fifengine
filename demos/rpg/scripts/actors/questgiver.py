@@ -33,8 +33,7 @@ from scripts.actors.baseactor import Actor
 
 class QuestGiver(Actor):
 	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
-		self._type = GameObjectTypes["QUESTGIVER"]
-		super(QuestGiver, self).__init__(gamecontroller, instancename, instanceid, createInstance)
+		super(QuestGiver, self).__init__(gamecontroller, GameObjectTypes["QUESTGIVER"], instancename, instanceid, createInstance)
 	
 		self._quests = []
 		

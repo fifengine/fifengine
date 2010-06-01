@@ -30,6 +30,9 @@ from datetime import datetime
 from fife import fife
 
 class Quest(object):
+	"""
+	@todo: do a little refactoring here to split out the type of quests.
+	"""
 	def __init__(self, owner, questname, questtext):
 		self._owner = owner
 		self._name = questname

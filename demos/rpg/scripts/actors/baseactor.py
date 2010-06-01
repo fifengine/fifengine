@@ -71,6 +71,15 @@ class PickUpItemAction(BaseAction):
 		
 	def execute(self):
 		self._actor.pickUpItem(self._item)
+		
+class EnterPortalAction(BaseAction):
+	def __init__(self, actor, portal):
+		self._actiontype = Actions["ENTER"]
+		self._actor = actor
+		self._portal = portal
+		
+	def execute(self):
+		self._actor.enterPortal(self._portal)
 
 ActorStates = {'STAND':0,
 			   'WALK':1,
@@ -86,16 +95,10 @@ class ActorActionListener(ObjectActionListener):
 			self._object.performNextAction()
 
 class Actor(BaseGameObject):
-	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
-
-		if not hasattr(self, "_type"):
-			self._type = GameObjectTypes["NPC"]
-			
-		super(Actor, self).__init__(gamecontroller, instancename, instanceid, createInstance)
+	def __init__(self, gamecontroller, actortype, instancename, instanceid=None, createInstance=False):
+		super(Actor, self).__init__(gamecontroller, actortype, instancename, instanceid, createInstance)
 
 		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
-		
-		self._actionlistener = ActorActionListener(self._gamecontroller, self)
 		
 		self._nextaction = None
 		self._inventory = []
@@ -104,7 +107,7 @@ class Actor(BaseGameObject):
 		self._gold = 0
 		
 		self.stand()
-
+		
 	def stand(self):
 		self._state = ActorStates["STAND"]
 		self._instance.act('stand', self._instance.getFacingLocation())
@@ -130,8 +133,14 @@ class Actor(BaseGameObject):
 			else:
 				self._inventory.append(item)
 		
-			item.onPickUp()
+			item.onLeftClick()
 			
+	def enterPortal(self, portal):
+		if self._id == "player":
+			self._gamecontroller.switchMap(portal.dest)
+		else:
+			self._gamecontroller.scene.removeObjectFromScene(self._id)
+		
 	def removeItemFromInventory(self, itemid):
 		itemtoremove = None
 		for item in self._inventory:

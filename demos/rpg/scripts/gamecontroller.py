@@ -33,7 +33,7 @@ from fife.extensions.loaders import loadImportFile
 
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
-from scripts.actors.baseactor import TalkAction, PickUpItemAction
+from scripts.actors.baseactor import TalkAction, PickUpItemAction, EnterPortalAction
 from scripts.objects.baseobject import GameObjectTypes
 from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
 
@@ -60,7 +60,6 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		self._gamecontroller = gamecontroller
 		self._settings = gamecontroller.settings
 		self._eventmanager = self._engine.getEventManager()
-		self._soundmanager = SoundManager(self._engine)
 		
 		fife.IMouseListener.__init__(self)
 		fife.IKeyListener.__init__(self)
@@ -108,8 +107,10 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 				if obj.type == GameObjectTypes["ITEM"]:
 					action = PickUpItemAction(self._gamecontroller.scene.player, obj)
 					self._gamecontroller.scene.player.nextaction = action
+				elif obj.type == GameObjectTypes["PORTAL"]:
+					action = EnterPortalAction(self._gamecontroller.scene.player, obj)
+					self._gamecontroller.scene.player.nextaction = action
 					
-
 		if (event.getButton() == fife.MouseEvent.RIGHT):
 			instances = self._gamecontroller.scene.getInstancesAt(clickpoint, self._gamecontroller.scene.actorlayer)
 			if instances:
@@ -184,6 +185,8 @@ class GameController(object):
 		self._engine = engine
 		self._settings = settings
 		
+		self._soundmanager = SoundManager(self._engine)		
+		
 		self._keystate = KeyState()
 		
 		self._guicontroller = GUIController(self)
@@ -195,6 +198,9 @@ class GameController(object):
 		self._scene = None
 		self._instancerenderer = None
 		self._floatingtextrenderer = None
+		
+		self._switchmaprequested = False
+		self._newmap = None
 		
 	def onConsoleCommand(self, command):
 		"""
@@ -252,6 +258,14 @@ class GameController(object):
 	def newGame(self):
 		self._guicontroller.hideMainMenu()
 		
+		mapname = self._settings.get("RPG", "TownMapFile", "town")
+		self.loadMap(mapname)
+		
+		
+	def loadMap(self, mapname):
+		if self._listener:
+			self._listener.detach()
+		
 		self._keystate.reset()
 		
 		if self._scene:
@@ -259,17 +273,22 @@ class GameController(object):
 			self._scene = None
 		
 		self._scene = Scene(self)
-		self._scene.createScene(self._settings.get("RPG", "TownMapFile", "maps/town.xml"))
-
+		self._scene.createScene("maps/" + mapname + ".xml")
+		
 		self._instancerenderer = fife.InstanceRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
 		self._floatingtextrenderer = fife.FloatingTextRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
 		self._floatingtextrenderer.addActiveLayer(self._scene.actorlayer)
-
-		#start listening to events
-		self._listener.attach()
 		
+		if self._listener:
+			self._listener.attach()
+
+	def switchMap(self, newmapname):
+		self._switchmaprequested = True
+		self._newmap = newmapname
+	
 	def endGame(self):
 		if self._scene:
+			self._listener.detach()
 			self._scene.destroyScene()
 			self._scene = None
 			self._instancerenderer = None
@@ -280,6 +299,11 @@ class GameController(object):
 		self._application.requestQuit()
 
 	def pump(self):
+		if self._switchmaprequested:
+			self.loadMap(self._newmap)
+			self._newmap = None
+			self._switchmaprequested = False
+	
 		if self._scene:
 			self._scene.updateScene()
 		

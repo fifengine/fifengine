@@ -35,22 +35,29 @@ GameObjectTypes = 	{
 						"QUESTGIVER":2,
 						"PLAYER":3,
 						"NPC":4,
-						"ENEMY":5
+						"ENEMY":5,
+						"GOLD":6,
+						"PORTAL":7
 					}
 
 class ObjectActionListener(fife.InstanceActionListener):
 	def __init__(self, gamecontroller, obj):
 		fife.InstanceActionListener.__init__(self)
-		obj.instance.addActionListener(self)
 		self._gamecontroller = gamecontroller
 		self._object = obj
+		
+	def detachActionListener(self):
+		self._object.instance.removeActionListener(self)
+		
+	def attachActionListener(self):
+		self._object.instance.addActionListener(self)
 
 	def onInstanceActionFinished(self, instance, action):
 		pass
 
 
 class BaseGameObject(object):
-	def __init__(self, gamecontroller, instancename, instanceid=None, createInstance=False):
+	def __init__(self, gamecontroller, objtype, instancename, instanceid=None, createInstance=False):
 		"""
 		@param gamecontroller: A reference to the master game controller
 		@param instancename: The name of the object to load.  The object's XML file must
@@ -72,35 +79,36 @@ class BaseGameObject(object):
 		self._instance = None
 		self._position = fife.DoublePoint(0.0, 0.0)
 		
-		if not hasattr(self, "_type"):
-			self._type = GameObjectTypes["DEFAULT"]
+		self._actionlistener = None
+		
+		self._type = objtype
 
 		if createInstance:
-			if self._type == GameObjectTypes["ITEM"]:
-				layer = self._gamecontroller.scene.itemlayer
+			if self._type == GameObjectTypes["ITEM"] or self._type == GameObjectTypes["PORTAL"]:
+				self._layer = self._gamecontroller.scene.itemlayer
 			else:
-				layer = self._gamecontroller.scene.actorlayer
+				self._layer = self._gamecontroller.scene.actorlayer
 				
-			self._createFIFEInstance(layer)
+			self._createFIFEInstance(self._layer)
 		else:
-			self._instance = self._gamecontroller.scene.actorlayer.getInstance(self._id)
+			self._instance = self._layer.getInstance(self._id)
 			self._instance.thisown = 0
 			
 		self._activated = True
-		
 		
 	def destroy(self):
 		"""
 		Deletes the FIFE instance from the actor layer on the map.
 		"""
+		if self._actionlistener:
+			self._actionlistener.detachActionListener()	
+			self._actionlistener = None
+		
 		if self._instance :
-			if self._type == GameObjectTypes["ITEM"]:
-				layer = self._gamecontroller.scene.itemlayer
-			else:
-				layer = self._gamecontroller.scene.actorlayer
-			
-			layer.deleteInstance(self._instance)
-			self._instance = None	
+			self._layer.deleteInstance(self._instance)
+			self._instance = None
+		
+		self._activated = False
 			
 	def setMapPosition(self, x, y):
 		curloc = self.location
