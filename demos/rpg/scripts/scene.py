@@ -36,7 +36,7 @@ from scripts.actors.questgiver import QuestGiver
 from scripts.quests.basequest import Quest
 from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes
-from scripts.objects.items import BaseItem, GoldStack
+from scripts.objects.items import BaseItem, GoldStack, Portal
 from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
 
 class Scene(object):
@@ -63,9 +63,13 @@ class Scene(object):
 		
 			loadImportFile(modeldict["file"], self._gamecontroller.engine)
 		
-			if itemdict["typename"] == "GoldStack":
+			if modeldict["type"] == "GOLD":
 				newitem = GoldStack(self._gamecontroller, modeldict["model"], itemid)
 				newitem.value = itemdict["value"]
+			elif modeldict["type"] == "PORTAL":
+				print "portal"
+				newitem = Portal(self._gamecontroller, modeldict["model"], itemid)
+				newitem.dest = itemdict["dest"]
 			else:
 				newitem = BaseItem(self._gamecontroller, modeldict["model"], itemid)
 			
@@ -113,6 +117,7 @@ class Scene(object):
 		for item in self._objectsettings.get("items", "itemlist", []):
 			try:
 				newitem = self.loadItem(item)
+				self._gamecontroller.logger.log_debug("Loaded item: " + item)
 			except ObjectNotFoundError, e:
 				self._gamecontroller.logger.log_error("Error while loading item: " + item)
 				continue
@@ -126,8 +131,9 @@ class Scene(object):
 		for npc in self._objectsettings.get("npcs", "npclist", []):
 			try:
 				actor = self.loadActor(npc)
+				self._gamecontroller.logger.log_debug("Loaded actor: " + npc)
 			except ObjectNotFoundError, e:
-				self._gamecontroller.logger.log_error("Error while loading actor:" + actor)
+				self._gamecontroller.logger.log_error("Error while loading actor:" + npc)
 				continue
 			
 			try:
@@ -139,18 +145,16 @@ class Scene(object):
 		"""
 		@todo: once we have all art assets this should be able to load one of 3 player models
 		"""
-		modelfile = self._gamecontroller.settings.get("RPG", "AllObjectFile", "maps/allobjects.xml")
-		modelsettings = Setting(app_name="", settings_file=modelfile)
-		modeldict = modelsettings.get("models", "Player", {})
+		modeldict = self._modelsettings.get("models", "Player", {})
 	
 		loadImportFile(modeldict["file"], self._gamecontroller.engine)
 		self._player = Player(self._gamecontroller, "warrior")
 
 	def createScene(self, mapfilename):
-		if not self._map:
-			self._map = loadMapFile(mapfilename, self._gamecontroller.engine)
-		else:
+		if self._map:
 			self.destroyScene()
+			
+		self._map = loadMapFile(mapfilename, self._gamecontroller.engine)
 			
 		self._mapname = os.path.splitext(os.path.basename(mapfilename))[0]
 		objectfile = "maps/" + self._mapname + "_objects.xml"
@@ -162,8 +166,8 @@ class Scene(object):
 		for cam in self._map.getCameras():
 			self._cameras[cam.getId()] = cam
 		
-		self._cameras[self._maincameraname].setZoom(self._gamecontroller.settings.get("RPG", "DefaultZoom", 2.0))
-		
+		self._cameras[self._maincameraname].setZoom(self._gamecontroller.settings.get("RPG", "DefaultZoom", 1.0))
+
 		self._actorlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ActorLayer", "actor_layer"))
 		self._itemlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ItemLayer", "item_layer"))
 		
@@ -172,27 +176,32 @@ class Scene(object):
 		
 		#finally load the player
 		self.loadPlayer()
-	
 		
 	def destroyScene(self):
-		self._cameras.clear()
-		
-		self._player.destroy()
-		
 		for obj in self._objectlist.values():
 			obj.destroy()
 
+		self._objectlist.clear()
+		self._objectlist = {}
+		self._cameras.clear()
+		self._cameras = {}
+		
+		self._player.destroy()
+		self._player = None
+
+		for cam in self._map.getCameras():
+			cam.resetRenderers()
+
 		if self._map:
 			self._gamecontroller.engine.getModel().deleteMap(self._map)
+			
+		retval = self._gamecontroller.engine.getModel().deleteObjects()
 				
 		self._map = None
 		self._mapname = None
 		
 		self._actorlayer = None
 		self._itemlayer = None
-		
-		self._player = None
-		self._objectlist.clear()
 		
 		self._objectsettings = None
 		self._modelsettings = None

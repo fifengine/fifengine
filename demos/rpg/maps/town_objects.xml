@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <Settings>
   <Module name="items">
-  	<Setting name="itemlist" type="list"> gstack1 </Setting>
+  	<Setting name="itemlist" type="list"> gstack1 ; temple </Setting>
     <Setting name="gstack1" type="dict"> typename : GoldStack ; value : 5000 ; posx : 3.0 ; posy : 3.0 </Setting>
+    <Setting name="temple" type="dict"> typename : TempleEntrance ; dest : level1 ; posx : 3.0 ; posy : -2.0 </Setting>
   </Module>
   <Module name="npcs">
   	<Setting name="npclist" type="list"> Quiller </Setting>

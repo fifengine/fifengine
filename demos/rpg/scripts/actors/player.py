@@ -27,10 +27,10 @@
 import sys, os, re, math, random, shutil
 
 from fife import fife
-from scripts.actors.baseactor import Actor, ActorStates
-from scripts.objects.baseobject import ObjectActionListener, BaseGameObject, GameObjectTypes
+from scripts.actors.baseactor import Actor, ActorStates, ActorActionListener
+from scripts.objects.baseobject import BaseGameObject, GameObjectTypes
 
-class PlayerActionListener(ObjectActionListener):
+class PlayerActionListener(ActorActionListener):
 	def __init__(self, gamecontroller, obj):
 		super(PlayerActionListener, self).__init__(gamecontroller, obj)
 
@@ -38,12 +38,11 @@ class PlayerActionListener(ObjectActionListener):
 		super(PlayerActionListener, self).onInstanceActionFinished(instance, action)
 		if action.getId() == 'walk':
 			pass
-			#self._object.completeAction()
 
 class Player(Actor):
 	def __init__(self, gamecontroller, playermodelname):
-		self._type = GameObjectTypes["PLAYER"]
-		super(Player, self).__init__(gamecontroller, playermodelname, "player", True)
+		super(Player, self).__init__(gamecontroller, GameObjectTypes["PLAYER"], playermodelname, "player", True)
 		self._playermodelname = playermodelname
 		
-		self._playeractionlistener = PlayerActionListener(self._gamecontroller, self)
+		self._actionlistener = PlayerActionListener(self._gamecontroller, self)
+		self._actionlistener.attachActionListener()

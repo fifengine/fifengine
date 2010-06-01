@@ -32,11 +32,10 @@ from scripts.objects.baseobject import BaseGameObject, GameObjectTypes
 
 
 class BaseItem(BaseGameObject):
-	def __init__(self, gamecontroller, itemtype, itemname):
-		self._type = GameObjectTypes["ITEM"]
-		super(BaseItem, self).__init__(gamecontroller, itemtype, itemname, True)
+	def __init__(self, gamecontroller, objtype, itemtype, itemname):
+		super(BaseItem, self).__init__(gamecontroller, objtype, itemtype, itemname, True)
 		
-	def onPickUp(self):
+	def onLeftClick(self):
 		#remove item from the scene
 		self._gamecontroller.scene.removeObjectFromScene(self)
 	
@@ -58,7 +57,7 @@ class BaseItem(BaseGameObject):
 	
 class GoldStack(BaseItem):
 	def __init__(self, gamecontroller, itemtype, itemname):
-		super(GoldStack, self).__init__(gamecontroller, itemtype, itemname)
+		super(GoldStack, self).__init__(gamecontroller, GameObjectTypes["ITEM"], itemtype, itemname)
 		
 		self._value = 0
 		
@@ -69,3 +68,20 @@ class GoldStack(BaseItem):
 		self._value = int(value)
 		
 	value = property(_getValue, _setValue)
+	
+class Portal(BaseItem):
+	def __init__(self, gamecontroller, itemtype, itemname):
+		super(Portal, self).__init__(gamecontroller, GameObjectTypes["PORTAL"], itemtype, itemname)
+		
+		self._dest = None
+		
+	def onLeftClick(self):
+		pass
+		
+	def _getDest(self):
+		return self._dest
+		
+	def _setDest(self, dest):
+		self._dest = dest
+		
+	dest = property(_getDest, _setDest)
