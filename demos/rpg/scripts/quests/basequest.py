@@ -29,14 +29,41 @@ from datetime import datetime
 
 from fife import fife
 
+QuestTypes = {'DEFAULT':0,
+		   'RETURN_ITEM':1}
+
 class Quest(object):
-	"""
-	@todo: do a little refactoring here to split out the type of quests.
-	"""
 	def __init__(self, owner, questname, questtext):
 		self._owner = owner
 		self._name = questname
 		self._text = questtext
+		
+	def checkQuestCompleted(self, actor):
+		pass
+
+	def _getOwner(self):
+		return self._owner
+	
+	def _getName(self):
+		return self._name
+		
+	def _setName(self, questname):
+		self._name = questname
+		
+	def _getText(self):
+		return self._text
+		
+	def _setText(self, questtext):
+		self._text = questtext
+
+	owner = property(_getOwner)
+	name = property(_getName, _setName)
+	text = property(_getText, _setText)
+
+class ReturnItemQuest(Quest):
+	def __init__(self, owner, questname, questtext):
+		super(ReturnItemQuest, self).__init__(owner, questname, questtext)
+
 		self._requireditems = []
 		self._requiredgold = 0
 		
@@ -59,30 +86,11 @@ class Quest(object):
 				
 		return completed
 	
-	def _getOwner(self):
-		return self._owner
-	
-	def _getName(self):
-		return self._name
-		
-	def _setName(self, questname):
-		self._name = questname
-		
-	def _getText(self):
-		return self._text
-		
-	def _setText(self, questtext):
-		self._text = questtext
-	
 	def _getRequiredGold(self):
 		return self._requiredgold
 	
 	def _getRequiredItems(self):
 		return self._requireditems
 	
-	owner = property(_getOwner)
-	name = property(_getName, _setName)
-	text = property(_getText, _setText)
 	requiredgold = property(_getRequiredGold)
 	requireditems = property(_getRequiredItems)
-	

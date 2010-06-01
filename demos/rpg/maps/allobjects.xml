@@ -9,7 +9,7 @@
   
   <Module name="Quiller">
    	<Setting name="questcount" type="int"> 2 </Setting>
-   	<Setting name="quest1" type="dict"> name : Test quest ; desc : This is the first quest you will get ; items : GoldStack ; value : 5000 </Setting>
-   	<Setting name="quest2" type="dict"> name : Second quest ; desc : This is the second quest you will get ; items : GoldStack ; value : 5000 </Setting>
+   	<Setting name="quest1" type="dict"> type : RETURN_ITEM ; name : Test quest ; desc : This is the first quest you will get ; items : GoldStack ; value : 5000 </Setting>
+   	<Setting name="quest2" type="dict"> type : RETURN_ITEM ; name : Second quest ; desc : This is the second quest you will get ; items : GoldStack ; value : 5000 </Setting>
   </Module>
 </Settings>
