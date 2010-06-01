@@ -1,0 +1,4 @@
+<?fife type="object"?>
+<object id="temple_entrance" namespace="http://www.fifengine.de/xml/rpg" blocking="1" static="1">
+	<image source="temple_entrance_vines_45.png" direction="45" />
+</object>
