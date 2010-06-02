@@ -28,23 +28,12 @@ import sys, os, re, math, random, shutil
 
 from fife import fife
 
-from scripts.objects.baseobject import BaseGameObject, GameObjectTypes
+from scripts.objects.baseobject import BaseGameObject, GameObjectTypes, getModuleByType
 
 
 class BaseItem(BaseGameObject):
-	def __init__(self, gamecontroller, objtype, itemtype, itemname):
-		super(BaseItem, self).__init__(gamecontroller, objtype, itemtype, itemname, True)
-		
-	def onLeftClick(self):
-		#remove item from the scene
-		self._gamecontroller.scene.removeObjectFromScene(self)
-	
-	def onDrop(self, dropx, dropy):
-		#recreate object
-		self._createFIFEInstance(self, self._gamecontroller.scene.itemlayer)
-		self.setMapPosition(dropx, dropy)
-		
-		self._gamecontroller.scene.addObjectToScene(self)
+	def __init__(self, gamecontroller, layer, typename, itemtype, itemname):
+		super(BaseItem, self).__init__(gamecontroller, layer, typename, itemtype, itemname, True)
 		
 	def _getItemType(self):
 		return self._name
@@ -54,12 +43,47 @@ class BaseItem(BaseGameObject):
 	
 	itemtype = property(_getItemType)
 	itemname = property(_getItemName)
+
+class PickableItem(BaseItem):
+	def __init__(self, gamecontroller, layer, typename, itemtype, itemname):
+		super(PickableItem, self).__init__(gamecontroller, layer, typename, itemtype, itemname)
+		self._type = GameObjectTypes["ITEM"]
+
+	def onPickUp(self):
+		#remove item from the scene
+		self._gamecontroller.scene.removeObjectFromScene(self)
 	
-class GoldStack(BaseItem):
-	def __init__(self, gamecontroller, itemtype, itemname):
-		super(GoldStack, self).__init__(gamecontroller, GameObjectTypes["ITEM"], itemtype, itemname)
+	def onDrop(self, dropx, dropy):
+		#recreate object
+		self._createFIFEInstance(self, self._gamecontroller.scene.itemlayer)
+		self.setMapPosition(dropx, dropy)
+		
+		self._gamecontroller.scene.addObjectToScene(self)		
+	
+class GoldStack(PickableItem):
+	def __init__(self, gamecontroller, layer, typename, itemtype, itemname):
+		super(GoldStack, self).__init__(gamecontroller, layer, typename, itemtype, itemname)
 		
 		self._value = 0
+		
+	def serialize(self, settings):
+		super(GoldStack, self).serialize(settings)
+		
+		module = getModuleByType(self._type)
+		
+		lvars = settings.get(module, self._id, {})
+		lvars['value'] = self._value
+		
+		settings.set(module, self._id, lvars)
+
+	def deserialize(self, settings):
+		super(GoldStack, self).deserialize(settings)
+
+		module = getModuleByType(self._type)	
+
+		lvars = settings.get(module, self._id, {})
+		
+		self._value = int(lvars['value'])
 		
 	def _getValue(self):
 		return self._value
@@ -70,14 +94,31 @@ class GoldStack(BaseItem):
 	value = property(_getValue, _setValue)
 	
 class Portal(BaseItem):
-	def __init__(self, gamecontroller, itemtype, itemname):
-		super(Portal, self).__init__(gamecontroller, GameObjectTypes["PORTAL"], itemtype, itemname)
+	def __init__(self, gamecontroller, layer, typename, itemtype, itemname):
+		super(Portal, self).__init__(gamecontroller, layer, typename, itemtype, itemname)
+		self._type = GameObjectTypes["PORTAL"]
 		
 		self._dest = None
+	
+	def serialize(self, settings):
+		super(Portal, self).serialize(settings)
 		
-	def onLeftClick(self):
-		pass
+		module = getModuleByType(self._type)
 		
+		lvars = settings.get(module, self._id, {})
+		lvars['dest'] = self._dest
+		
+		settings.set(module, self._id, lvars)
+
+	def deserialize(self, settings):
+		super(Portal, self).deserialize(settings)
+
+		module = getModuleByType(self._type)	
+
+		lvars = settings.get(module, self._id, {})
+		
+		self._dest = lvars['dest']
+
 	def _getDest(self):
 		return self._dest
 		

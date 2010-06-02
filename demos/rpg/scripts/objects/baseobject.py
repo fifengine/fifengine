@@ -39,6 +39,16 @@ GameObjectTypes = 	{
 						"GOLD":6,
 						"PORTAL":7
 					}
+					
+def getModuleByType(objtype):
+	if objtype == GameObjectTypes["ITEM"] or objtype == GameObjectTypes["GOLD"] or objtype == GameObjectTypes["PORTAL"]:
+		module = "items"
+	elif objtype == GameObjectTypes["QUESTGIVER"] or objtype == GameObjectTypes["ENEMY"]:
+		module = "npcs"	
+	else:
+		module = "unknown"
+		
+	return module
 
 class ObjectActionListener(fife.InstanceActionListener):
 	def __init__(self, gamecontroller, obj):
@@ -57,7 +67,7 @@ class ObjectActionListener(fife.InstanceActionListener):
 
 
 class BaseGameObject(object):
-	def __init__(self, gamecontroller, objtype, instancename, instanceid=None, createInstance=False):
+	def __init__(self, gamecontroller, layer, typename, instancename, instanceid=None, createInstance=False):
 		"""
 		@param gamecontroller: A reference to the master game controller
 		@param instancename: The name of the object to load.  The object's XML file must
@@ -70,6 +80,8 @@ class BaseGameObject(object):
 		"""
 		self._gamecontroller = gamecontroller
 		self._fifeobject = None
+		
+		self._typename = typename	
 		self._name = instancename
 		if instanceid:
 			self._id = instanceid
@@ -81,18 +93,14 @@ class BaseGameObject(object):
 		
 		self._actionlistener = None
 		
-		self._type = objtype
+		self._type = GameObjectTypes["DEFAULT"]
+
+		self._layer = layer
 
 		if createInstance:
-			if self._type == GameObjectTypes["ITEM"] or self._type == GameObjectTypes["PORTAL"]:
-				self._layer = self._gamecontroller.scene.itemlayer
-			else:
-				self._layer = self._gamecontroller.scene.actorlayer
-				
 			self._createFIFEInstance(self._layer)
 		else:
-			self._instance = self._layer.getInstance(self._id)
-			self._instance.thisown = 0
+			self._instance = None
 			
 		self._activated = True
 		
@@ -119,6 +127,26 @@ class BaseGameObject(object):
 				
 		curloc.setExactLayerCoordinates(self._position)
 		self.location = curloc
+		
+	def serialize(self, settings):
+		lvars = {}
+		lvars['posx'] = self._position.x
+		lvars['posy'] = self._position.y
+		lvars['typename'] = self._typename
+		
+		module = getModuleByType(self._type)
+		
+		settings.set(module, self._id, lvars)
+
+	def deserialize(self, settings):
+		module = getModuleByType(self._type)	
+
+		lvars = settings.get(module, self._id, {})
+		
+		x = float(lvars['posx'])
+		y = float(lvars['posy'])
+		
+		self.setMapPosition(x,y)
 
 	def _createFIFEInstance(self, layer):
 		"""
@@ -133,6 +161,14 @@ class BaseGameObject(object):
 		self._instance.thisown = 0
 		
 		self.setMapPosition(self._position.x,self._position.y)
+		
+	def _findFIFEInstance(self, layer):
+		"""
+		@todo: throw InstanceNotFoundError
+		"""
+		self._instance = self._layer.getInstance(self._id)
+		if self._instance:
+			self._instance.thisown = 0		
 		
 	def _getLocation(self):
 		return self._instance.getLocation()

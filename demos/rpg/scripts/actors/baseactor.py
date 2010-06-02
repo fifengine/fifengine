@@ -30,6 +30,7 @@ from fife import fife
 from fife.extensions.loaders import loadMapFile
 
 from scripts.objects.baseobject import ObjectActionListener, BaseGameObject, GameObjectTypes
+from scripts.objects.items import GoldStack
 
 Actions = {'NONE':0,
 		   'PICKUP':1,
@@ -95,8 +96,10 @@ class ActorActionListener(ObjectActionListener):
 			self._object.performNextAction()
 
 class Actor(BaseGameObject):
-	def __init__(self, gamecontroller, actortype, instancename, instanceid=None, createInstance=False):
-		super(Actor, self).__init__(gamecontroller, actortype, instancename, instanceid, createInstance)
+	def __init__(self, gamecontroller, layer, typename, instancename, instanceid=None, createInstance=False):
+		super(Actor, self).__init__(gamecontroller, layer, typename, instancename, instanceid, createInstance)
+
+		self._type = GameObjectTypes["DEFAULT"]
 
 		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
 		
@@ -128,12 +131,12 @@ class Actor(BaseGameObject):
 		if len(self._inventory) >= self._maxinventoryitems:
 			return
 		else:
-			if item.modelname == "goldstack":
+			if type(item) == GoldStack:
 				self._gold += item.value
 			else:
 				self._inventory.append(item)
 		
-			item.onLeftClick()
+			item.onPickUp()
 			
 	def enterPortal(self, portal):
 		if self._id == "player":

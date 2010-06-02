@@ -35,7 +35,7 @@ from scripts.actors.baseactor import Actor
 from scripts.actors.questgiver import QuestGiver
 from scripts.quests.basequest import Quest, ReturnItemQuest, QuestTypes
 from scripts.actors.player import Player
-from scripts.objects.baseobject import GameObjectTypes
+from scripts.objects.baseobject import GameObjectTypes, getModuleByType
 from scripts.objects.items import BaseItem, GoldStack, Portal
 from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
 
@@ -60,20 +60,20 @@ class Scene(object):
 		try:
 			itemdict = self._objectsettings.get("items", itemid, {})
 			modeldict = self._modelsettings.get("models", itemdict["typename"], {})	
-		
+			print itemdict
+			print modeldict
 			loadImportFile(modeldict["file"], self._gamecontroller.engine)
 		
 			if modeldict["type"] == "GOLD":
-				newitem = GoldStack(self._gamecontroller, modeldict["model"], itemid)
+				newitem = GoldStack(self._gamecontroller, self.itemlayer, itemdict["typename"], modeldict["model"], itemid)
 				newitem.value = itemdict["value"]
 			elif modeldict["type"] == "PORTAL":
-				print "portal"
-				newitem = Portal(self._gamecontroller, modeldict["model"], itemid)
+				newitem = Portal(self._gamecontroller, self.itemlayer, itemdict["typename"], modeldict["model"], itemid)
 				newitem.dest = itemdict["dest"]
 			else:
-				newitem = BaseItem(self._gamecontroller, modeldict["model"], itemid)
+				newitem = BaseItem(self._gamecontroller, self.itemlayer, itemdict["typename"], modeldict["model"], itemid)
 			
-			newitem.setMapPosition(float(itemdict["posx"]), float(itemdict["posy"]))	
+			newitem.deserialize(self._objectsettings)
 			
 		except KeyError, e:
 			raise ObjectNotFoundError
@@ -88,7 +88,7 @@ class Scene(object):
 			loadImportFile(modeldict["file"], self._gamecontroller.engine)
 				
 			if modeldict["type"] == "QUESTGIVER":
-				actor = QuestGiver(self._gamecontroller, modeldict["model"], actorid, True)
+				actor = QuestGiver(self._gamecontroller, self.actorlayer, objdict["typename"], modeldict["model"], actorid, True)
 				questcount = self._modelsettings.get(actorid, "questcount", 0)
 				for x in range(1,questcount+1):
 					quest = "quest" + str(x)
@@ -107,7 +107,7 @@ class Scene(object):
 					actor.addQuest(quest)
 						
 			elif modeldict["type"] == "NPC":
-				actor = Actor(self._gamecontroller, modeldict["model"], npc, True)
+				actor = Actor(self._gamecontroller, self.actorlayer, objdict["typename"], modeldict["model"], npc, True)
 
 			actor.setMapPosition(float(objdict["posx"]), float(objdict["posy"]))
 		
@@ -129,6 +129,7 @@ class Scene(object):
 				self.addObjectToScene(newitem)
 			except ObjectAlreadyInSceneError, e:
 				self._gamecontroller.logger.log_error("Item already part of scene: " + newitem)
+				continue
 						
 	def loadActors(self, mapfilename):
 		for npc in self._objectsettings.get("npcs", "npclist", []):
@@ -143,6 +144,7 @@ class Scene(object):
 				self.addObjectToScene(actor)
 			except ObjectAlreadyInSceneError, e:
 				self._gamecontroller.logger.log_error("Actor already part of scene:" + actor)
+				continue
 			
 	def createPlayerObject(self):
 		"""
@@ -151,18 +153,32 @@ class Scene(object):
 		modeldict = self._modelsettings.get("models", "Player", {})
 	
 		loadImportFile(modeldict["file"], self._gamecontroller.engine)
-		self._player = Player(self._gamecontroller, "warrior")
+		self._player = Player(self._gamecontroller, self.actorlayer, "warrior")
+		
+		playerfilename = os.path.join("saves", "player_save.xml")
+		
+		if os.path.isfile(playerfilename):
+			player_settings = Setting(settings_file=playerfilename, copy_dist=False)
+			self._player.deserialize(player_settings)
 
-	def createScene(self, mapfilename):
+	def createScene(self, mapname):
+		mapfilename = os.path.join("maps", mapname + ".xml")
+		
 		if self._map:
 			self.destroyScene()
 			
 		self._map = loadMapFile(mapfilename, self._gamecontroller.engine)
 			
-		self._mapname = os.path.splitext(os.path.basename(mapfilename))[0]
-		objectfile = "maps/" + self._mapname + "_objects.xml"
+		self._mapname = mapname
+
+		if os.path.isfile(os.path.join("saves", mapname + "_save.xml")):
+			objectfile = os.path.join("saves", mapname + "_save.xml")
+		else:
+			objectfile = os.path.join("maps", mapname + "_objects.xml")
+
 		modelfile = self._gamecontroller.settings.get("RPG", "AllObjectFile", "maps/allobjects.xml")
 		
+		print objectfile
 		self._objectsettings = Setting(app_name="",settings_file=objectfile)
 		self._modelsettings = Setting(app_name="", settings_file=modelfile)		
 
@@ -242,6 +258,34 @@ class Scene(object):
 	def removeObjectFromScene(self, obj):
 		obj.destroy()
 		del self._objectlist[obj.id]
+		
+	def serialize(self):
+		filename = os.path.join("saves", self._mapname + "_save.xml")
+		playerfilename = os.path.join("saves", "player_save.xml")
+		settings = Setting(settings_file=filename, copy_dist=False)
+		player_settings = Setting(settings_file=playerfilename, copy_dist=False)
+		
+		itemlist = []
+		npclist = []
+		
+		for obj in self._objectlist.values():
+			obj.serialize(settings)
+			module = getModuleByType(obj.type)
+			if module == "items":
+				itemlist.append(obj.id)
+			elif module == "npcs":
+				npclist.append(obj.id)
+			
+		settings.set("items", "itemlist", itemlist)
+		settings.set("npcs", "npclist", npclist)
+		
+		self._player.serialize(player_settings)
+		
+		settings.saveSettings()
+		player_settings.saveSettings()
+		
+	def deserialize(self):
+		pass
 	
 	def updateScene(self):
 		pass
@@ -263,6 +307,9 @@ class Scene(object):
 	
 	def _getMap(self):
 		return self._map
+		
+	def _getMapName(self):
+		return self._mapname
 	
 	actorlayer = property(_getActorLayer)
 	itemlayer = property(_getItemLayer)
@@ -270,4 +317,5 @@ class Scene(object):
 	player = property(_getPlayer)
 	objectlist = property(_getObjectList)
 	map = property(_getMap)
+	mapname = property(_getMapName)
 		
