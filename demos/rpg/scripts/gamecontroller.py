@@ -24,7 +24,7 @@
 # ####################################################################
 # This is the rio de hola client for FIFE.
 
-import sys, os, re, math, random, shutil
+import sys, os, re, math, random, shutil, glob
 
 from fife import fife
 
@@ -258,6 +258,9 @@ class GameController(object):
 	def newGame(self):
 		self._guicontroller.hideMainMenu()
 		
+		for filename in glob.glob("saves\*.xml"):
+			os.remove(filename)
+		
 		mapname = self._settings.get("RPG", "TownMapFile", "town")
 		self.loadMap(mapname)
 		
@@ -273,7 +276,8 @@ class GameController(object):
 			self._scene = None
 		
 		self._scene = Scene(self)
-		self._scene.createScene("maps/" + mapname + ".xml")
+		
+		self._scene.createScene(mapname)
 		
 		self._instancerenderer = fife.InstanceRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
 		self._floatingtextrenderer = fife.FloatingTextRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
@@ -285,9 +289,13 @@ class GameController(object):
 	def switchMap(self, newmapname):
 		self._switchmaprequested = True
 		self._newmap = newmapname
+		
+		self._scene.serialize()
 	
 	def endGame(self):
 		if self._scene:
+			self._scene.serialize()
+		
 			self._listener.detach()
 			self._scene.destroyScene()
 			self._scene = None

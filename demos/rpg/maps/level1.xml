@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ascii"?>
 <map id="level1" format="1.0">
 	<import file="../objects/ground/grass/01/object.xml"></import>
-	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_only" grid_type="square" id="ground_layer" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
+	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="ground_layer" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
 		<instances>
 			<i o="grass:01" ns="http://www.fifengine.de/xml/rpg" x="-2.0" r="0" y="0.0" z="0.0"></i>
 			<i r="0" x="-2.0" o="grass:01" z="0.0" y="1.0"></i>
@@ -149,11 +149,11 @@
 			<i r="0" x="4.0" o="grass:01" z="0.0" y="8.0"></i>
 		</instances>
 	</layer>
-	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_only" grid_type="square" id="item_layer" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
+	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="item_layer" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
 		<instances>
 		</instances>
 	</layer>
-	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_only" grid_type="square" id="actor_layer" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
+	<layer y_scale="1.0" y_offset="0.0" pathing="cell_edges_and_diagonals" grid_type="square" id="actor_layer" rotation="0.0" x_scale="1.0" x_offset="0.0" transparency="0">
 		<instances>
 		</instances>
 	</layer>

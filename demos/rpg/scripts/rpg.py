@@ -89,6 +89,7 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
 		if self.quit:
 			command.consume()
+			self._gamecontroller.endGame()
 
 	def onConsoleCommand(self, command):
 		result = ""
@@ -149,7 +150,6 @@ class RPGApplication(ApplicationBase):
 	def _pump(self):
 		if self._listener.quit:
 			self.breakRequested = True
-			self._gamecontroller.endGame()
 		else:
 			self._gamecontroller.pump()
 			

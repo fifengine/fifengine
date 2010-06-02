@@ -81,9 +81,6 @@ CHANGES_REQUIRE_RESTART="""\
 EMPTY_SETTINGS="""\
 <?xml version='1.0' encoding='UTF-8'?>
 <Settings>
-	<Module name="FIFE">
-
-	</Module>
 
 </Settings>
 """
@@ -101,7 +98,7 @@ class Setting(object):
 		screen_height = settings.get("FIFE", "ScreenHeight", 768)
 	"""
 
-	def __init__(self, app_name="", settings_file="", settings_gui_xml="", changes_gui_xml=""):
+	def __init__(self, app_name="", settings_file="", settings_gui_xml="", changes_gui_xml="", copy_dist=True):
 		"""
 		Initializes the Setting object.
 
@@ -115,8 +112,8 @@ class Setting(object):
 		@type settings_file: C{string}
 		@param settings_gui_xml: If you specify this parameter you can customize the look
 		of the settings dialog box.
-		@note: As of now you MUST have all the elements of the default settings dialog box.
-		At some point we may make it customizable.
+		@param copy_dist: Copies the settings-dist.xml file to the settings_file location.  If
+		this is False it will create a new empty xml file.
 
 		"""
 		self._app_name = app_name
@@ -140,7 +137,7 @@ class Setting(object):
 
 
 		if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
-			if os.path.exists('settings-dist.xml'):
+			if os.path.exists('settings-dist.xml') and copy_dist:
 				shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
 			else:
 				#no settings file found
@@ -204,6 +201,7 @@ class Setting(object):
 
 	def loadSettings(self):
 		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
+			
 		self._root_element = self._tree.getroot()
 		self.validateTree()
 
