@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Settings>
+  <Module name="Quiller">
+   	<Setting name="questlist" type="list"> test_quest1 ; test_quest2 </Setting>
+   	<Setting name="test_quest1" type="dict"> type : RETURN_ITEM ; name : Test quest ; desc : This is the first quest you will get </Setting>
+   	<Setting name="test_quest2" type="dict"> type : RETURN_ITEM ; name : Second quest ; desc : This is the second quest you will get ; items : GoldStack ; value : 5000 </Setting>
+  </Module>
+  <Module name="test_quest1_items">
+  	<Setting name="itemlist" type="list"> gold1 </Setting>
+  	<Setting name="gold1" type="dict"> name : GOLD_COINS ; value : 5000 </Setting>
+  </Module>
+  <Module name="test_quest2_items">
+  	<Setting name="itemlist" type="list"> gold1 </Setting>
+  	<Setting name="gold1" type="dict"> name : GOLD_COINS ; value : 5000 </Setting>
+  </Module>
+</Settings>

@@ -96,8 +96,8 @@ class ActorActionListener(ObjectActionListener):
 			self._object.performNextAction()
 
 class Actor(BaseGameObject):
-	def __init__(self, gamecontroller, layer, typename, instancename, instanceid=None, createInstance=False):
-		super(Actor, self).__init__(gamecontroller, layer, typename, instancename, instanceid, createInstance)
+	def __init__(self, gamecontroller, layer, typename, baseobjectname, instancename, instanceid=None, createInstance=False):
+		super(Actor, self).__init__(gamecontroller, layer, typename, baseobjectname, instancename, instanceid, createInstance)
 
 		self._type = GameObjectTypes["DEFAULT"]
 

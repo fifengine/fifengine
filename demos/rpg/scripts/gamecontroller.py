@@ -218,28 +218,23 @@ class GameController(object):
 				cmd.append(arg)
 		
 		if cmd[0] == "spawn":
-			result = "Usage: spawn [item|actor] [object id] [posx] [posy]"
-			if len(cmd) != 5:
+			result = "Usage: spawn [object template] [posx] [posy]"
+			if len(cmd) != 4:
 				return result
 			else:
 				try:
-					if cmd[1] == "item":
-						obj = self._scene.loadItem(cmd[2])
-					elif cmd[1] == "actor":
-						obj = self._scene.loadActor(cmd[2])
-					else:
-						return result
+					obj = self._scene.loadObject(cmd[1])
 				except ObjectNotFoundError, e:
-					result = "Error: Cannot load [" + cmd[2] + "].  It could not be found!"
+					result = "Error: Cannot load [" + cmd[1] + "].  It could not be found!"
 					obj = None
 					
 				if obj:
 					try:
 						self._scene.addObjectToScene(obj)
-						obj.position = (float(cmd[3]), float(cmd[4]))
+						obj.position = (float(cmd[2]), float(cmd[3]))
 						result = "--OK--"
 					except ObjectAlreadyInSceneError, e:
-						result = "Error: [" + cmd[2] + "] is already on the scene."
+						result = "Error: [" + cmd[1] + "] is already on the scene."
 						
 		elif cmd[0] == "move":
 			result = "Usage: move [object id] [posx] [posy]"
@@ -252,6 +247,10 @@ class GameController(object):
 					result = "--OK--"
 				else:
 					result = "Error: [" + cmd[1] + "] does not exist on the scene."
+					
+		elif cmd[0] == "loadmap":
+			result = "Usage: loadmap [map name]"
+			
 			
 		return result
 		
@@ -290,6 +289,7 @@ class GameController(object):
 		self._switchmaprequested = True
 		self._newmap = newmapname
 		
+		#save before switching scenes
 		self._scene.serialize()
 	
 	def endGame(self):
