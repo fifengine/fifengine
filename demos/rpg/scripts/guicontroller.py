@@ -64,7 +64,7 @@ class MainMenu(Window):
 		self._widget.mapEvents(eventMap)
 	
 class Credits(Window):
-	def __init__(self, guicontroller):
+	def __init__(self, gamecontroller):
 		super(Credits, self).__init__(gamecontroller)
 		self._widget = pychan.loadXML('gui/credits.xml')
 
@@ -125,7 +125,7 @@ class GUIController(object):
 		if self._credits:
 			self._credits.widget.show()
 		else:
-			self._credits = Credits(self)
+			self._credits = Credits(self._gamecontroller)
 			self._credits.widget.show()
 		
 	def hideCredits(self):
