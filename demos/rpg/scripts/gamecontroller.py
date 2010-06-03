@@ -258,7 +258,7 @@ class GameController(object):
 	def newGame(self):
 		self._guicontroller.hideMainMenu()
 		
-		for filename in glob.glob("saves\*.xml"):
+		for filename in glob.glob(os.path.join("saves" , "*.xml")):
 			os.remove(filename)
 		
 		mapname = self._settings.get("RPG", "TownMapFile", "town")
