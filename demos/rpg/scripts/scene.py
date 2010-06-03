@@ -24,7 +24,7 @@
 # ####################################################################
 # This is the rio de hola client for FIFE.
 
-import sys, os, re, math, random, shutil
+import sys, os, re, math, random, shutil, uuid
 
 from fife import fife
 from fife.extensions.loaders import loadMapFile
@@ -55,97 +55,79 @@ class Scene(object):
 		
 		self._objectsettings = None
 		self._modelsettings = None
+		self._questsettings = None
 
-	def loadItem(self, itemid):
+	def loadObject(self, objectname, objectid=None, valuedict=None):
+		if objectid:
+			identifier = objectid
+		else:
+			#identifier = uuid.uuid1()
+			identifier = "blkdjfkdj"
+	
 		try:
-			itemdict = self._objectsettings.get("items", itemid, {})
-			modeldict = self._modelsettings.get("models", itemdict["typename"], {})	
-			print itemdict
+			objdict = self._modelsettings.get("objects", objectname, {})
+			modeldict = self._modelsettings.get("models", objdict["modelname"], {})
+			
+			print objdict
 			print modeldict
-			loadImportFile(modeldict["file"], self._gamecontroller.engine)
-		
-			if modeldict["type"] == "GOLD":
-				newitem = GoldStack(self._gamecontroller, self.itemlayer, itemdict["typename"], modeldict["model"], itemid)
-				newitem.value = itemdict["value"]
-			elif modeldict["type"] == "PORTAL":
-				newitem = Portal(self._gamecontroller, self.itemlayer, itemdict["typename"], modeldict["model"], itemid)
-				newitem.dest = itemdict["dest"]
-			else:
-				newitem = BaseItem(self._gamecontroller, self.itemlayer, itemdict["typename"], modeldict["model"], itemid)
-			
-			newitem.deserialize(self._objectsettings)
-			
-		except KeyError, e:
-			raise ObjectNotFoundError
-			
-		return newitem
-		
-	def loadActor(self, actorid):
-		try:
-			objdict = self._objectsettings.get("npcs", actorid, {})
-			modeldict = self._modelsettings.get("models", objdict["typename"], {})
 			
 			loadImportFile(modeldict["file"], self._gamecontroller.engine)
+			
+			if objdict["type"] == "GOLD":
+				newobject = GoldStack(self._gamecontroller, self.itemlayer, objdict["type"], objectname, modeldict["model"], identifier)
+			elif objdict["type"] == "PORTAL":
+				newobject = Portal(self._gamecontroller, self.itemlayer, objdict["type"], objectname, modeldict["model"], identifier)
+			elif objdict["type"] == "QUESTGIVER":
+				newobject = QuestGiver(self._gamecontroller, self.actorlayer, objdict["type"], objectname, modeldict["model"], identifier, True)
 				
-			if modeldict["type"] == "QUESTGIVER":
-				actor = QuestGiver(self._gamecontroller, self.actorlayer, objdict["typename"], modeldict["model"], actorid, True)
-				questcount = self._modelsettings.get(actorid, "questcount", 0)
-				for x in range(1,questcount+1):
-					quest = "quest" + str(x)
-					questdict = self._modelsettings.get(actorid, quest, {})
+				for quest in self._questsettings.get(identifier, "questlist", []):
+					questdict = self._questsettings.get(identifier, quest, {})
 					
 					if questdict['type'] == "RETURN_ITEM":
-						quest = ReturnItemQuest(actor, questdict['name'], questdict['desc'])
-						for ritem in questdict['items'].split(" , "):
-							if ritem == "GoldStack":
-								quest.addRequiredGold(int(questdict['value']))
+						questobj = ReturnItemQuest(newobject, questdict['name'], questdict['desc'])
+						for ritem in self._questsettings.get(quest+"_items", "itemlist", []):
+							itemdict = self._questsettings.get(quest+"_items", ritem, {})
+							if itemdict["name"] == "GOLD_COINS":
+								questobj.addRequiredGold(int(itemdict['value']))
 							else:
-								quest.addRequiredItem(ritem)
+								questobj.addRequiredItem(ritem)
 					else:
-						quest = Quest(actor, questdict['name'], questdict['desc'])
+						questobj = Quest(actor, questdict['name'], questdict['desc'])
 						
-					actor.addQuest(quest)
-						
-			elif modeldict["type"] == "NPC":
-				actor = Actor(self._gamecontroller, self.actorlayer, objdict["typename"], modeldict["model"], npc, True)
+					newobject.addQuest(questobj)
 
-			actor.setMapPosition(float(objdict["posx"]), float(objdict["posy"]))
+			elif objdict["type"] == "NPC":
+				newobject = Actor(self._gamecontroller, self.actorlayer, objdict["type"], objectname, modeldict["model"], identifier, True)
+			else:
+				return None
+				
+			if valuedict:
+				newobject.deserialize(valuedict)
+			else:
+				newobject.deserialize(objdict)
 		
 		except KeyError, e:
 			raise ObjectNotFoundError
-		
-		return actor
+			
+		return newobject
 
-	def loadItems(self, mapfilename):
-		for item in self._objectsettings.get("items", "itemlist", []):
+	def loadObjects(self, mapfilename):
+		for obj in self._objectsettings.get("objects", "objectlist", []):
 			try:
-				newitem = self.loadItem(item)
-				self._gamecontroller.logger.log_debug("Loaded item: " + item)
+				objdict = self._objectsettings.get("objects", obj, {})
+				newobj = self.loadObject(objdict["objectname"], obj, objdict)
+				self._gamecontroller.logger.log_debug("Loaded object: " + obj)
 			except ObjectNotFoundError, e:
-				self._gamecontroller.logger.log_error("Error while loading item: " + item)
+				self._gamecontroller.logger.log_error("Error while loading object: " + obj)
 				continue
-			
+				
 			try:
-				self.addObjectToScene(newitem)
+				if newobj:
+					self.addObjectToScene(newobj)
 			except ObjectAlreadyInSceneError, e:
-				self._gamecontroller.logger.log_error("Item already part of scene: " + newitem)
+				self._gamecontroller.logger.log_error("Object already part of scene:" + obj)
 				continue
-						
-	def loadActors(self, mapfilename):
-		for npc in self._objectsettings.get("npcs", "npclist", []):
-			try:
-				actor = self.loadActor(npc)
-				self._gamecontroller.logger.log_debug("Loaded actor: " + npc)
-			except ObjectNotFoundError, e:
-				self._gamecontroller.logger.log_error("Error while loading actor:" + npc)
-				continue
-			
-			try:
-				self.addObjectToScene(actor)
-			except ObjectAlreadyInSceneError, e:
-				self._gamecontroller.logger.log_error("Actor already part of scene:" + actor)
-				continue
-			
+	
 	def createPlayerObject(self):
 		"""
 		@todo: once we have all art assets this should be able to load one of 3 player models
@@ -159,7 +141,8 @@ class Scene(object):
 		
 		if os.path.isfile(playerfilename):
 			player_settings = Setting(settings_file=playerfilename, copy_dist=False)
-			self._player.deserialize(player_settings)
+			pvals = player_settings.get("player", "player", {})
+			self._player.deserialize(pvals)
 
 	def createScene(self, mapname):
 		mapfilename = os.path.join("maps", mapname + ".xml")
@@ -177,10 +160,11 @@ class Scene(object):
 			objectfile = os.path.join("maps", mapname + "_objects.xml")
 
 		modelfile = self._gamecontroller.settings.get("RPG", "AllObjectFile", "maps/allobjects.xml")
+		questfile = self._gamecontroller.settings.get("RPG", "QuestFile", "maps/quests.xml")
 		
-		print objectfile
-		self._objectsettings = Setting(app_name="",settings_file=objectfile)
-		self._modelsettings = Setting(app_name="", settings_file=modelfile)		
+		self._objectsettings = Setting(settings_file=objectfile)
+		self._modelsettings = Setting(settings_file=modelfile)
+		self._questsettings = Setting(settings_file=questfile)
 
 		for cam in self._map.getCameras():
 			self._cameras[cam.getId()] = cam
@@ -190,8 +174,9 @@ class Scene(object):
 		self._actorlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ActorLayer", "actor_layer"))
 		self._itemlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ItemLayer", "item_layer"))
 		
-		self.loadItems(mapfilename)
-		self.loadActors(mapfilename)		
+		#self.loadItems(mapfilename)
+		#self.loadActors(mapfilename)		
+		self.loadObjects(mapfilename)
 		
 		#finally load the player
 		self.createPlayerObject()
@@ -224,6 +209,7 @@ class Scene(object):
 		
 		self._objectsettings = None
 		self._modelsettings = None
+		self._questsettings = None
 			
 	def getInstancesAt(self, clickpoint, layer):
 		"""
@@ -250,6 +236,9 @@ class Scene(object):
 			raise ObjectAlreadyInSceneError
 			
 	def getObject(self, objid):
+		"""
+		@todo: throw ObjectNowFoundError
+		"""
 		if self._objectlist.has_key(objid):
 			return self._objectlist[objid]
 		else:
@@ -262,30 +251,27 @@ class Scene(object):
 	def serialize(self):
 		filename = os.path.join("saves", self._mapname + "_save.xml")
 		playerfilename = os.path.join("saves", "player_save.xml")
-		settings = Setting(settings_file=filename, copy_dist=False)
+		map_settings = Setting(settings_file=filename, copy_dist=False)
 		player_settings = Setting(settings_file=playerfilename, copy_dist=False)
 		
-		itemlist = []
-		npclist = []
+		objectlist = []
 		
 		for obj in self._objectlist.values():
-			obj.serialize(settings)
-			module = getModuleByType(obj.type)
-			if module == "items":
-				itemlist.append(obj.id)
-			elif module == "npcs":
-				npclist.append(obj.id)
+			ovals = obj.serialize()
+			map_settings.set("objects", obj.id, ovals)
+			objectlist.append(obj.id)
 			
-		settings.set("items", "itemlist", itemlist)
-		settings.set("npcs", "npclist", npclist)
+		map_settings.set("objects", "objectlist", objectlist)
 		
-		self._player.serialize(player_settings)
+		pvals = self._player.serialize()
+		player_settings.set("player", "player", pvals)
 		
-		settings.saveSettings()
+		map_settings.saveSettings()
 		player_settings.saveSettings()
 		
 	def deserialize(self):
-		pass
+		if self._mapname:
+			createScene(self._mapname)
 	
 	def updateScene(self):
 		pass

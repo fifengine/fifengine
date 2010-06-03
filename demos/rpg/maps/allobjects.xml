@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <Settings>
   <Module name="models">
-    <Setting name="Player" type="dict"> type : ITEM ; file : objects/actors/player/warrior/object.xml ; model : goldstack </Setting>
-    <Setting name="GoldStack" type="dict"> type : GOLD ; file : objects/items/goldstack/object.xml ; model : goldstack </Setting>
-    <Setting name="Quiller" type="dict"> type : QUESTGIVER ; file : objects/actors/player/warrior/object.xml ; model : warrior </Setting>
-	<Setting name="TempleEntrance" type="dict"> type : PORTAL ; file : objects/ground/temple_entrance/object.xml ; model : temple_entrance </Setting>
+    <Setting name="Player" type="dict"> file : objects/actors/player/warrior/object.xml ; model : goldstack </Setting>
+    <Setting name="GoldStack" type="dict"> file : objects/items/goldstack/object.xml ; model : goldstack </Setting>
+    <Setting name="Quiller" type="dict"> file : objects/actors/player/warrior/object.xml ; model : warrior </Setting>
+	<Setting name="TempleEntrance" type="dict"> file : objects/ground/temple_entrance/object.xml ; model : temple_entrance </Setting>
   </Module>
   
-  <Module name="Quiller">
-   	<Setting name="questcount" type="int"> 2 </Setting>
-   	<Setting name="quest1" type="dict"> type : RETURN_ITEM ; name : Test quest ; desc : This is the first quest you will get ; items : GoldStack ; value : 5000 </Setting>
-   	<Setting name="quest2" type="dict"> type : RETURN_ITEM ; name : Second quest ; desc : This is the second quest you will get ; items : GoldStack ; value : 5000 </Setting>
+  <Module name="objects">
+    <Setting name="goldstack" type="dict"> type : GOLD ; modelname : GoldStack ; value : 5000 </Setting>
+    <Setting name="templeportal" type="dict"> type : PORTAL ; modelname : TempleEntrance ; dest : town </Setting>
+    <Setting name="quiller" type="dict"> type : QUESTGIVER ; modelname : Quiller ; stat1 : 20 ; stat2 : 343 </Setting>
   </Module>
 </Settings>

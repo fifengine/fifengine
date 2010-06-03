@@ -67,7 +67,7 @@ class ObjectActionListener(fife.InstanceActionListener):
 
 
 class BaseGameObject(object):
-	def __init__(self, gamecontroller, layer, typename, instancename, instanceid=None, createInstance=False):
+	def __init__(self, gamecontroller, layer, typename, baseobjectname, instancename, instanceid=None, createInstance=False):
 		"""
 		@param gamecontroller: A reference to the master game controller
 		@param instancename: The name of the object to load.  The object's XML file must
@@ -81,7 +81,9 @@ class BaseGameObject(object):
 		self._gamecontroller = gamecontroller
 		self._fifeobject = None
 		
-		self._typename = typename	
+		self._typename = typename
+		self._baseobjectname = baseobjectname
+		
 		self._name = instancename
 		if instanceid:
 			self._id = instanceid
@@ -128,23 +130,19 @@ class BaseGameObject(object):
 		curloc.setExactLayerCoordinates(self._position)
 		self.location = curloc
 		
-	def serialize(self, settings):
+	def serialize(self):
 		lvars = {}
-		lvars['posx'] = self._position.x
-		lvars['posy'] = self._position.y
-		lvars['typename'] = self._typename
+		(x,y) = self.position
+		lvars['posx'] = x
+		lvars['posy'] = y
+		lvars['type'] = self._typename
+		lvars['objectname'] = self._baseobjectname
 		
-		module = getModuleByType(self._type)
-		
-		settings.set(module, self._id, lvars)
+		return lvars
 
-	def deserialize(self, settings):
-		module = getModuleByType(self._type)	
-
-		lvars = settings.get(module, self._id, {})
-		
-		x = float(lvars['posx'])
-		y = float(lvars['posy'])
+	def deserialize(self, valuedict):	
+		x = float(valuedict['posx'])
+		y = float(valuedict['posy'])
 		
 		self.setMapPosition(x,y)
 

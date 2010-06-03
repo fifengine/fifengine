@@ -32,8 +32,8 @@ from scripts.objects.baseobject import BaseGameObject, GameObjectTypes, getModul
 
 
 class BaseItem(BaseGameObject):
-	def __init__(self, gamecontroller, layer, typename, itemtype, itemname):
-		super(BaseItem, self).__init__(gamecontroller, layer, typename, itemtype, itemname, True)
+	def __init__(self, gamecontroller, layer, typename, baseobjectname, itemtype, itemname):
+		super(BaseItem, self).__init__(gamecontroller, layer, typename, baseobjectname, itemtype, itemname, True)
 		
 	def _getItemType(self):
 		return self._name
@@ -45,8 +45,8 @@ class BaseItem(BaseGameObject):
 	itemname = property(_getItemName)
 
 class PickableItem(BaseItem):
-	def __init__(self, gamecontroller, layer, typename, itemtype, itemname):
-		super(PickableItem, self).__init__(gamecontroller, layer, typename, itemtype, itemname)
+	def __init__(self, gamecontroller, layer, typename, baseobjectname, itemtype, itemname):
+		super(PickableItem, self).__init__(gamecontroller, layer, typename, baseobjectname, itemtype, itemname)
 		self._type = GameObjectTypes["ITEM"]
 
 	def onPickUp(self):
@@ -61,29 +61,21 @@ class PickableItem(BaseItem):
 		self._gamecontroller.scene.addObjectToScene(self)		
 	
 class GoldStack(PickableItem):
-	def __init__(self, gamecontroller, layer, typename, itemtype, itemname):
-		super(GoldStack, self).__init__(gamecontroller, layer, typename, itemtype, itemname)
+	def __init__(self, gamecontroller, layer, typename, baseobjectname, itemtype, itemname):
+		super(GoldStack, self).__init__(gamecontroller, layer, typename, baseobjectname, itemtype, itemname)
 		
 		self._value = 0
 		
-	def serialize(self, settings):
-		super(GoldStack, self).serialize(settings)
-		
-		module = getModuleByType(self._type)
-		
-		lvars = settings.get(module, self._id, {})
+	def serialize(self):
+		lvars = super(GoldStack, self).serialize()
 		lvars['value'] = self._value
+
+		return lvars
+
+	def deserialize(self, valuedict):
+		super(GoldStack, self).deserialize(valuedict)
 		
-		settings.set(module, self._id, lvars)
-
-	def deserialize(self, settings):
-		super(GoldStack, self).deserialize(settings)
-
-		module = getModuleByType(self._type)	
-
-		lvars = settings.get(module, self._id, {})
-		
-		self._value = int(lvars['value'])
+		self._value = int(valuedict['value'])
 		
 	def _getValue(self):
 		return self._value
@@ -94,30 +86,22 @@ class GoldStack(PickableItem):
 	value = property(_getValue, _setValue)
 	
 class Portal(BaseItem):
-	def __init__(self, gamecontroller, layer, typename, itemtype, itemname):
-		super(Portal, self).__init__(gamecontroller, layer, typename, itemtype, itemname)
+	def __init__(self, gamecontroller, layer, typename, baseobjectname, itemtype, itemname):
+		super(Portal, self).__init__(gamecontroller, layer, typename, baseobjectname, itemtype, itemname)
 		self._type = GameObjectTypes["PORTAL"]
 		
 		self._dest = None
 	
-	def serialize(self, settings):
-		super(Portal, self).serialize(settings)
-		
-		module = getModuleByType(self._type)
-		
-		lvars = settings.get(module, self._id, {})
+	def serialize(self):
+		lvars = super(Portal, self).serialize()
 		lvars['dest'] = self._dest
 		
-		settings.set(module, self._id, lvars)
+		return lvars
 
-	def deserialize(self, settings):
-		super(Portal, self).deserialize(settings)
+	def deserialize(self, valuedict):
+		super(Portal, self).deserialize(valuedict)
 
-		module = getModuleByType(self._type)	
-
-		lvars = settings.get(module, self._id, {})
-		
-		self._dest = lvars['dest']
+		self._dest = valuedict['dest']
 
 	def _getDest(self):
 		return self._dest

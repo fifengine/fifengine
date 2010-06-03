@@ -32,8 +32,8 @@ from scripts.objects.baseobject import BaseGameObject, GameObjectTypes
 from scripts.actors.baseactor import Actor
 
 class QuestGiver(Actor):
-	def __init__(self, gamecontroller, layer, typename, instancename, instanceid=None, createInstance=False):
-		super(QuestGiver, self).__init__(gamecontroller, layer, typename, instancename, instanceid, createInstance)
+	def __init__(self, gamecontroller, layer, typename, baseobjectname, instancename, instanceid=None, createInstance=False):
+		super(QuestGiver, self).__init__(gamecontroller, layer, typename, baseobjectname, instancename, instanceid, createInstance)
 		self._type = GameObjectTypes["QUESTGIVER"]
 	
 		self._quests = []

@@ -41,7 +41,7 @@ class PlayerActionListener(ActorActionListener):
 
 class Player(Actor):
 	def __init__(self, gamecontroller, layer, playermodelname):
-		super(Player, self).__init__(gamecontroller, layer, "Player", playermodelname, "player", True)
+		super(Player, self).__init__(gamecontroller, layer, "Player", "player", playermodelname, "player", True)
 		self._type = GameObjectTypes["PLAYER"]
 		
 		self._playermodelname = playermodelname
