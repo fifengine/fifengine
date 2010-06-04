@@ -61,15 +61,11 @@ class Scene(object):
 		if objectid:
 			identifier = objectid
 		else:
-			#identifier = uuid.uuid1()
-			identifier = "blkdjfkdj"
-	
+			identifier = str(uuid.uuid1())
+			
 		try:
 			objdict = self._modelsettings.get("objects", objectname, {})
 			modeldict = self._modelsettings.get("models", objdict["modelname"], {})
-			
-			print objdict
-			print modeldict
 			
 			loadImportFile(modeldict["file"], self._gamecontroller.engine)
 			

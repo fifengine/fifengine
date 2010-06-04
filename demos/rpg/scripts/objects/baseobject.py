@@ -102,7 +102,7 @@ class BaseGameObject(object):
 		if createInstance:
 			self._createFIFEInstance(self._layer)
 		else:
-			self._instance = None
+			self._findFIFEInstance(self._layer)
 			
 		self._activated = True
 		
@@ -140,9 +140,16 @@ class BaseGameObject(object):
 		
 		return lvars
 
-	def deserialize(self, valuedict):	
-		x = float(valuedict['posx'])
-		y = float(valuedict['posy'])
+	def deserialize(self, valuedict):
+		if valuedict.has_key("posx"):
+			x = float(valuedict['posx'])
+		else:
+			x = 0
+			
+		if valuedict.has_key("posy"):
+			y = float(valuedict['posy'])
+		else:
+			y = 0
 		
 		self.setMapPosition(x,y)
 
@@ -187,7 +194,10 @@ class BaseGameObject(object):
 		return self._name
 		
 	def _getPosition(self):
-		self._position = self.location.getExactLayerCoordinates()
+		#if there isn't a FIFE instance just return last known coordinates
+		if self._instance:
+			self._position = self.location.getExactLayerCoordinates()
+		
 		return (self._position.x, self._position.y)
 		
 	def _setPosition(self, tuplexy):
