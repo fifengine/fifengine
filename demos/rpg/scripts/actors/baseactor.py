@@ -152,7 +152,21 @@ class Actor(BaseGameObject):
 		
 		if itemtoremove:
 			self._inventory.remove(itemtoremove)
+
+	def serialize(self):
+		lvars = super(Actor, self).serialize()
+
+		lvars['gold'] = self._gold
 		
+		return lvars
+
+	def deserialize(self, valuedict):
+		super(Actor, self).deserialize(valuedict)
+		
+		if valuedict.has_key("gold"):
+			self._gold = int(valuedict['gold'])
+		else:
+			self._gold = 0
 		
 	def _getState(self):
 		return self._state

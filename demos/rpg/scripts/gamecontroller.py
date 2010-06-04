@@ -24,7 +24,7 @@
 # ####################################################################
 # This is the rio de hola client for FIFE.
 
-import sys, os, re, math, random, shutil, glob
+import sys, os, re, math, random, shutil, glob, uuid
 
 from fife import fife
 
@@ -218,12 +218,14 @@ class GameController(object):
 				cmd.append(arg)
 		
 		if cmd[0] == "spawn":
-			result = "Usage: spawn [object template] [posx] [posy]"
+			result = "Usage: spawn [object template] [posx] [posy] "
 			if len(cmd) != 4:
 				return result
 			else:
 				try:
-					obj = self._scene.loadObject(cmd[1])
+					id = str(uuid.uuid1())
+					valdict = { "posx" : float(cmd[2]), "posy" : float(cmd[3]) }
+					obj = self._scene.loadObject(cmd[1], id, valdict)
 				except ObjectNotFoundError, e:
 					result = "Error: Cannot load [" + cmd[1] + "].  It could not be found!"
 					obj = None
