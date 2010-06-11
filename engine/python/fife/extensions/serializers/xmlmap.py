@@ -318,11 +318,11 @@ class XMLMapLoader(fife.ResourceLoader):
 
 			try:
 				if viewport:
-					cam = map.addCamera(str(id), map.getLayer(str(ref_layer_id)),fife.Rect(*[int(c) for c in viewport.split(',')]),fife.ExactModelCoordinate(0,0,0))
+					cam = map.addCamera(str(id), map.getLayer(str(ref_layer_id)),fife.Rect(*[int(c) for c in viewport.split(',')]))
 
 				else:
 					screen = self.engine.getRenderBackend()
-					cam = map.addCamera(str(id), map.getLayer(str(ref_layer_id)),fife.Rect(0,0,screen.getScreenWidth(),screen.getScreenHeight()),fife.ExactModelCoordinate(0,0,0))
+					cam = map.addCamera(str(id), map.getLayer(str(ref_layer_id)),fife.Rect(0,0,screen.getScreenWidth(),screen.getScreenHeight()))
 
 				cam.setCellImageDimensions(int(ref_cell_width), int(ref_cell_height))
 				cam.setRotation(float(rotation))

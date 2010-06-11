@@ -76,7 +76,7 @@ namespace FIFE {
 			void removeChangeListener(MapChangeListener* listener);
 			bool isChanged();
 			std::vector<Layer*>& getChangedLayers();
-			Camera* addCamera(const std::string& id, Layer *layer, const Rect& viewport, const ExactModelCoordinate& emc);
+			Camera* addCamera(const std::string& id, Layer *layer, const Rect& viewport);
 			void removeCamera(const std::string& id);
 			Camera* getCamera(const std::string& id);
 			std::vector<Camera*>& getCameras();

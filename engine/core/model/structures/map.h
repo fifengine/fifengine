@@ -175,8 +175,7 @@ namespace FIFE {
 			/** Adds camera to the map. The Map takes ownership of the camera
 				so don't delete it.
 			*/
-			Camera* addCamera(const std::string& id, Layer *layer, 
-								const Rect& viewport, const ExactModelCoordinate& emc);
+			Camera* addCamera(const std::string& id, Layer *layer, const Rect& viewport);
 
 			/** Removes a camera from the map
 			*/
