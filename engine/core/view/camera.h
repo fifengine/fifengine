@@ -78,7 +78,6 @@ namespace FIFE {
 		Camera(const std::string& id,
 			Layer* layer,
 			const Rect& viewport,
-			const ExactModelCoordinate& emc,
 			RenderBackend* renderbackend,
 			ImagePool* ipool,
 			AnimationPool* apool);

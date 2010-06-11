@@ -79,7 +79,6 @@ namespace FIFE {
 	Camera::Camera(const std::string& id,
 		Layer *layer,
 		const Rect& viewport,
-		const ExactModelCoordinate& emc,
 		RenderBackend* renderbackend,
 		ImagePool* ipool,
 		AnimationPool* apool):
@@ -113,7 +112,6 @@ namespace FIFE {
 		m_map = 0;
 		Location location;
 		location.setLayer(layer);
-		location.setExactLayerCoordinates(emc);
 		setLocation(location);
 	}
 
