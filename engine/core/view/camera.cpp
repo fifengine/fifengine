@@ -294,7 +294,7 @@ namespace FIFE {
 		m_matrix.applyScale(scale, scale, scale);
 		m_matrix.applyRotate(-m_rotation, 0.0, 0.0, 1.0);
 		m_matrix.applyRotate(-m_tilt, 1.0, 0.0, 0.0);
-		m_matrix.applyTranslate(+m_viewport.w/2, +m_viewport.h/2, 0);
+		m_matrix.applyTranslate(+m_viewport.x+m_viewport.w/2, +m_viewport.y+m_viewport.h/2, 0);
 		m_inverse_matrix = m_matrix.inverse();
 
 
