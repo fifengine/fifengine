@@ -323,15 +323,15 @@ namespace FIFE {
 
 			item.dimensions.x = screen_point.x;
 			item.dimensions.y = screen_point.y;
-			item.dimensions.w = unsigned(double(item.bbox.w) * zoom + OVERDRAW);
-			item.dimensions.h = unsigned(double(item.bbox.h) * zoom + OVERDRAW);
+			item.dimensions.w = item.bbox.w;
+			item.dimensions.h = item.bbox.h;
 
 			if (zoom != 1.0) {
 				// NOTE: Due to image alignment, there is additional additions on image dimensions 
 				//       There's probabaly some better solution for this, but works "good enough" for now. 
 				//       In case additions are removed, gaps appear between tiles. 
-				item.dimensions.w = unsigned(ceil(double(item.bbox.w) * zoom)) + OVERDRAW;
-				item.dimensions.h = unsigned(ceil(double(item.bbox.h) * zoom)) + OVERDRAW;
+				item.dimensions.w = unsigned(double(item.bbox.w) * zoom + OVERDRAW);
+				item.dimensions.h = unsigned(double(item.bbox.h) * zoom + OVERDRAW);
 			}
 
 			if(item.dimensions.intersects(screen_viewport))
