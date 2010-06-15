@@ -55,7 +55,6 @@ class Scene(object):
 		
 		self._objectsettings = None
 		self._modelsettings = None
-		self._questsettings = None
 
 	def loadObject(self, objectname, objectid=None, valuedict=None):
 		if objectid:
@@ -75,31 +74,12 @@ class Scene(object):
 				newobject = Portal(self._gamecontroller, self.itemlayer, objdict["type"], objectname, modeldict["model"], identifier)
 			elif objdict["type"] == "QUESTGIVER":
 				newobject = QuestGiver(self._gamecontroller, self.actorlayer, objdict["type"], objectname, modeldict["model"], identifier, True)
-				
-				for quest in self._questsettings.get(identifier, "questlist", []):
-					questdict = self._questsettings.get(identifier, quest, {})
-					
-					if questdict['type'] == "RETURN_ITEM":
-						questobj = ReturnItemQuest(newobject.id, quest, questdict['name'], questdict['desc'])
-						for ritem in self._questsettings.get(quest+"_items", "itemlist", []):
-							itemdict = self._questsettings.get(quest+"_items", ritem, {})
-							if itemdict["name"] == "GOLD_COINS":
-								questobj.addRequiredGold(int(itemdict['value']))
-							else:
-								questobj.addRequiredItem(ritem)
-					else:
-						questobj = Quest(newobject.id, quest, questdict['name'], questdict['desc'])
-						
-					newobject.addQuest(questobj)
-					
-					#add quest to quest manager as well
-					self._gamecontroller.questmanager.addQuest(questobj)
-
 			elif objdict["type"] == "NPC":
 				newobject = Actor(self._gamecontroller, self.actorlayer, objdict["type"], objectname, modeldict["model"], identifier, True)
 			else:
 				return None
-				
+			
+			#if the valuedict is supplied it overrides the loaded default values
 			if valuedict:
 				newobject.deserialize(valuedict)
 			else:
@@ -163,7 +143,6 @@ class Scene(object):
 		
 		self._objectsettings = Setting(settings_file=objectfile)
 		self._modelsettings = Setting(settings_file=modelfile)
-		self._questsettings = Setting(settings_file=questfile)
 
 		for cam in self._map.getCameras():
 			self._cameras[cam.getId()] = cam
@@ -173,8 +152,6 @@ class Scene(object):
 		self._actorlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ActorLayer", "actor_layer"))
 		self._itemlayer = self._map.getLayer(self._gamecontroller.settings.get("RPG", "ItemLayer", "item_layer"))
 		
-		#self.loadItems(mapfilename)
-		#self.loadActors(mapfilename)		
 		self.loadObjects(mapfilename)
 		
 		#finally load the player
@@ -208,7 +185,6 @@ class Scene(object):
 		
 		self._objectsettings = None
 		self._modelsettings = None
-		self._questsettings = None
 			
 	def getInstancesAt(self, clickpoint, layer):
 		"""

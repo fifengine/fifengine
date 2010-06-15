@@ -293,6 +293,9 @@ class GameController(object):
 		
 		for filename in glob.glob(os.path.join("saves" , "*.xml")):
 			os.remove(filename)
+			
+		self._questmanager.destroy()
+		self._questmanager.initializeQuests()
 		
 		mapname = self._settings.get("RPG", "TownMapFile", "town")
 		self.loadMap(mapname)
@@ -340,6 +343,8 @@ class GameController(object):
 		"""
 		if self._scene:
 			self._scene.serialize()
+			
+			self._questmanager.destroy()
 		
 			self._listener.detach()
 			self._scene.destroyScene()
