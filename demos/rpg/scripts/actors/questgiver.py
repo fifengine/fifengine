@@ -36,20 +36,30 @@ class QuestGiver(Actor):
 		super(QuestGiver, self).__init__(gamecontroller, layer, typename, baseobjectname, instancename, instanceid, createInstance)
 		self._type = GameObjectTypes["QUESTGIVER"]
 	
-	def addQuest(self, quest):
-		pass
-		
 	def offerNextQuest(self):
+		"""
+		Brings up the quest dialog of there is a quest to be offered to the player.
+		"""
 		if self._gamecontroller.questmanager.getNextQuest(self.id):
 			self._gamecontroller.guicontroller.showQuestDialog(self)
 		
 	def getNextQuest(self):
+		"""
+		Returns the next quest that will be offered by this QuestGiver.
+		"""
 		return self._gamecontroller.questmanager.getNextQuest(self.id)
 		
 	def activateQuest(self, quest):
+		"""
+		This is called after the player accepts a quest.  It marks it as active or "in progress".
+		"""
 		self._gamecontroller.questmanager.activateQuest(quest)
 			
 	def completeQuest(self):
+		"""
+		Checks to see if the active quest owned by this QuestGiver is complete and 
+		removes the required items or gold from the players inventory.
+		"""
 		for activequest in self._gamecontroller.questmanager.activequests:
 			if activequest.ownerid == self.id:
 				if activequest.checkQuestCompleted(self._gamecontroller.scene.player):
@@ -65,6 +75,10 @@ class QuestGiver(Actor):
 					self.say("Come back when you have all the items I requested!")
 	
 	def haveQuest(self):
+		"""
+		Returns True if there is either an active quest or the QuestGiver has a new quest to give
+		the player.  Returns False otherwise.
+		"""
 		return bool(self._gamecontroller.questmanager.getNextQuest(self.id)) or bool(self._getActiveQuest())
 	
 	def _getActiveQuest(self):

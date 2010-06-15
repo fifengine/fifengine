@@ -81,10 +81,8 @@ class Player(Actor):
 		
 		for questid in activequests:
 			self._gamecontroller.questmanager.activateQuestById(questid)
-			print "loaded active quest: " + questid
 			
 		completedquests = valuedict['completedquests'].split(",")
 		
 		for questid in completedquests:
 			self._gamecontroller.questmanager.completeQuestById(questid)
-			print "loaded completed quest: " + questid

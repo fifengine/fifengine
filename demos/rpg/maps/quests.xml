@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <Settings>
+  <Module name="QuestGivers">
+    <Setting name="list" type="list"> Quiller </Setting>
+  </Module>
   <Module name="Quiller">
    	<Setting name="questlist" type="list"> test_quest1 ; test_quest2 </Setting>
    	<Setting name="test_quest1" type="dict"> type : RETURN_ITEM ; name : Test quest ; desc : This is the first quest you will get </Setting>

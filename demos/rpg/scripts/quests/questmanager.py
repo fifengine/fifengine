@@ -26,10 +26,42 @@
 
 from fife import fife
 
+from fife.extensions.fife_settings import Setting
+from scripts.quests.basequest import Quest, ReturnItemQuest, QuestTypes
+
 class QuestManager(object):
 	def __init__(self, gamecontroller):
 		self._gamecontroller = gamecontroller
+
+		self._questsettings = None
 		
+		self._quests = {}
+		self._activequests = []
+		self._completedquests = []
+		
+	def initializeQuests(self):
+		questfile = self._gamecontroller.settings.get("RPG", "QuestFile", "maps/quests.xml")
+		
+		self._questsettings = Setting(settings_file=questfile)
+		
+		for identifier in self._questsettings.get("QuestGivers", "list", []):
+			for quest in self._questsettings.get(identifier, "questlist", []):
+					questdict = self._questsettings.get(identifier, quest, {})
+					
+					if questdict['type'] == "RETURN_ITEM":
+						questobj = ReturnItemQuest(identifier, quest, questdict['name'], questdict['desc'])
+						for ritem in self._questsettings.get(quest+"_items", "itemlist", []):
+							itemdict = self._questsettings.get(quest+"_items", ritem, {})
+							if itemdict["name"] == "GOLD_COINS":
+								questobj.addRequiredGold(int(itemdict['value']))
+							else:
+								questobj.addRequiredItem(ritem)
+					else:
+						questobj = Quest(identifier, quest, questdict['name'], questdict['desc'])
+
+					self._gamecontroller.questmanager.addQuest(questobj)
+	
+	def destroy(self):
 		self._quests = {}
 		self._activequests = []
 		self._completedquests = []
