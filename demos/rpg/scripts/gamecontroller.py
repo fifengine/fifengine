@@ -36,9 +36,14 @@ from scripts.guicontroller import GUIController
 from scripts.actors.baseactor import TalkAction, PickUpItemAction, EnterPortalAction
 from scripts.objects.baseobject import GameObjectTypes
 from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
+from scripts.quests.questmanager import QuestManager
 
 
 class KeyState(object):
+	"""
+	Holds the current state of the keys on the keyboard (down or up).
+	False = down, True = up.
+	"""
 	def __init__(self):
 		self._keystate = { }
 		
@@ -52,9 +57,19 @@ class KeyState(object):
 			return False
 			
 	def reset(self):
+		"""
+		Empties the keystate dictionary (assumes all keys are False)
+		"""
 		self._keystate.clear()
 
 class GameListener(fife.IKeyListener, fife.IMouseListener):
+	"""
+	Main game listener.  Listens for Mouse and Keyboard events.
+	
+	This class also has the ability to attach and detach itself from
+	the event manager in cases where you do not want input processed (i.e. when
+	the main menu is visible).  It is NOT attached by default.
+	"""
 	def __init__(self, gamecontroller):
 		self._engine = gamecontroller.engine
 		self._gamecontroller = gamecontroller
@@ -69,6 +84,9 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		self._lastmousepos = (0.0,0.0)
 		
 	def attach(self):
+		"""
+		Attaches to the event manager.
+		"""
 		if not self._attached:
 			self._gamecontroller.keystate.reset()
 			self._eventmanager.addMouseListenerFront(self)
@@ -76,6 +94,9 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 			self._attached = True
 	
 	def detach(self):
+		"""
+		Detaches from the event manager.
+		"""
 		if self._attached:
 			self._eventmanager.removeMouseListener(self)
 			self._eventmanager.removeKeyListener(self)
@@ -180,6 +201,12 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 		self._gamecontroller.keystate.updateKey(keyval, False)
 		
 class GameController(object):
+	"""
+	The main game class.  
+	
+	This handles all game related code including setting up the scene, displaying user
+	interfaces, managing sound, etc etc.
+	"""
 	def __init__(self, application, engine, settings):
 		self._application = application
 		self._engine = engine
@@ -195,6 +222,8 @@ class GameController(object):
 		
 		self._guicontroller.showMainMenu()
 		
+		self._questmanager = QuestManager(self)
+		
 		self._scene = None
 		self._instancerenderer = None
 		self._floatingtextrenderer = None
@@ -204,8 +233,7 @@ class GameController(object):
 		
 	def onConsoleCommand(self, command):
 		"""
-		Might be useful if you want to have the game parse a command.
-		Not sure if I am going to keep this or not.
+		Parses game related console commands.
 		"""
 		
 		result = ""
@@ -257,6 +285,10 @@ class GameController(object):
 		return result
 		
 	def newGame(self):
+		"""
+		Removes any save games and starts a new game.
+		"""
+		
 		self._guicontroller.hideMainMenu()
 		
 		for filename in glob.glob(os.path.join("saves" , "*.xml")):
@@ -267,6 +299,10 @@ class GameController(object):
 		
 		
 	def loadMap(self, mapname):
+		"""
+		Creates the scene for the map and attaches the listener.		
+		"""
+	
 		if self._listener:
 			self._listener.detach()
 		
@@ -288,6 +324,10 @@ class GameController(object):
 			self._listener.attach()
 
 	def switchMap(self, newmapname):
+		"""
+		Queues a map switch for next frame.  This must be done next frame to ensure
+		all events pertaining to the current frame have finished being processed.
+		"""
 		self._switchmaprequested = True
 		self._newmap = newmapname
 		
@@ -295,6 +335,9 @@ class GameController(object):
 		self._scene.serialize()
 	
 	def endGame(self):
+		"""
+		Saves the game state and destroys the scene.
+		"""
 		if self._scene:
 			self._scene.serialize()
 		
@@ -321,6 +364,9 @@ class GameController(object):
 	def _getGUIController(self):
 		return self._guicontroller
 		
+	def _getQuestManager(self):
+			return self._questmanager
+	
 	def _getEngine(self):
 		return self._engine
 		
@@ -340,6 +386,7 @@ class GameController(object):
 		return self._application.logger
 	
 	guicontroller = property(_getGUIController) 
+	questmanager = property(_getQuestManager)
 	engine = property(_getEngine)
 	settings = property(_getSettings)
 	scene = property(_getScene)

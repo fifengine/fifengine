@@ -36,6 +36,11 @@ from fife.extensions.pychan import widgets
 from fife.extensions.fife_utils import getUserDataDirectory
 
 class KeyFilter(fife.IKeyFilter):
+	"""
+	This is the implementation of the fife.IKeyFilter class.
+	
+	Prevents any filtered keys from being consumed by guichan.
+	"""
 	def __init__(self, keys):
 		fife.IKeyFilter.__init__(self)
 		self._keys = keys
@@ -44,7 +49,15 @@ class KeyFilter(fife.IKeyFilter):
 		return event.getKey().getValue() in self._keys
 
 class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.ConsoleExecuter):
+	"""
+	Listens for window commands, console commands and keyboard input.
+	
+	Does not process game related input.	
+	"""
 	def __init__(self, engine, gamecontroller):
+		"""
+		Initializes all listeners and registers itself with the eventmanager.
+		"""
 		self._engine = engine
 		self._gamecontroller = gamecontroller
 		self._eventmanager = self._engine.getEventManager()
@@ -66,11 +79,14 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		self.quit = False
 
 	def keyPressed(self, event):
-		keyval = event.getKey().getValue()
-		keystr = event.getKey().getAsString().lower()
-		
+		"""
+		Processes any non game related keyboar input.
+		"""
 		if event.isConsumed():
 			return
+
+		keyval = event.getKey().getValue()
+		keystr = event.getKey().getAsString().lower()
 		
 		if keyval == fife.Key.ESCAPE:
 			self.quit = True
@@ -89,7 +105,6 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		self.quit = (command.getCommandType() == fife.CMD_QUIT_GAME)
 		if self.quit:
 			command.consume()
-			self._gamecontroller.endGame()
 
 	def onConsoleCommand(self, command):
 		result = ""
@@ -125,6 +140,11 @@ class ApplicationListener(fife.IKeyListener, fife.ICommandListener, fife.Console
 		print "No tools set up yet"
 
 class RPGApplication(ApplicationBase):
+	"""
+	The main application.  It inherits fife.extensions.ApplicationBase.
+	
+	Implements ApplicationBase._pump().
+	"""
 	def __init__(self, TDS):
 		super(RPGApplication,self).__init__(TDS)
 		self._settings = TDS
@@ -142,6 +162,11 @@ class RPGApplication(ApplicationBase):
 		return self._listener
 		
 	def requestQuit(self):
+		"""
+		Sends the quit command to the application's listener.  We could set
+		self.quitRequested to true also but this is a good example on how
+		to build and dispatch a fife.Command.
+		"""
 		cmd = fife.Command()
 		cmd.setSource(None)
 		cmd.setCommandType(fife.CMD_QUIT_GAME)
@@ -149,7 +174,8 @@ class RPGApplication(ApplicationBase):
 
 	def _pump(self):
 		if self._listener.quit:
-			self.breakRequested = True
+			self._gamecontroller.endGame()
+			self.quitRequested = True
 		else:
 			self._gamecontroller.pump()
 			
