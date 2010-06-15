@@ -80,7 +80,7 @@ class Scene(object):
 					questdict = self._questsettings.get(identifier, quest, {})
 					
 					if questdict['type'] == "RETURN_ITEM":
-						questobj = ReturnItemQuest(newobject, questdict['name'], questdict['desc'])
+						questobj = ReturnItemQuest(newobject.id, quest, questdict['name'], questdict['desc'])
 						for ritem in self._questsettings.get(quest+"_items", "itemlist", []):
 							itemdict = self._questsettings.get(quest+"_items", ritem, {})
 							if itemdict["name"] == "GOLD_COINS":
@@ -88,9 +88,12 @@ class Scene(object):
 							else:
 								questobj.addRequiredItem(ritem)
 					else:
-						questobj = Quest(actor, questdict['name'], questdict['desc'])
+						questobj = Quest(newobject.id, quest, questdict['name'], questdict['desc'])
 						
 					newobject.addQuest(questobj)
+					
+					#add quest to quest manager as well
+					self._gamecontroller.questmanager.addQuest(questobj)
 
 			elif objdict["type"] == "NPC":
 				newobject = Actor(self._gamecontroller, self.actorlayer, objdict["type"], objectname, modeldict["model"], identifier, True)

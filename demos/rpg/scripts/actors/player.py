@@ -44,7 +44,47 @@ class Player(Actor):
 		super(Player, self).__init__(gamecontroller, layer, "Player", "player", playermodelname, "player", True)
 		self._type = GameObjectTypes["PLAYER"]
 		
-		self._playermodelname = playermodelname
-		
 		self._actionlistener = PlayerActionListener(self._gamecontroller, self)
 		self._actionlistener.attachActionListener()
+		
+		self._quests = []
+		
+	def serialize(self):
+		lvars = super(Player, self).serialize()
+
+		activequests = ""
+
+		for quest in self._gamecontroller.questmanager.activequests:
+			if activequests == "":
+				activequests = quest.id
+			else:
+				activequests = activequests + "," + quest.id
+
+		lvars['activequests'] = activequests
+		
+		completedquests = ""
+
+		for quest in self._gamecontroller.questmanager.completedquests:
+			if completedquests == "":
+				completedquests = quest.id
+			else:
+				completedquests = completedquests + "," + quest.id
+
+		lvars['completedquests'] = completedquests
+		
+		return lvars
+
+	def deserialize(self, valuedict):
+		super(Player, self).deserialize(valuedict)
+		
+		activequests = valuedict['activequests'].split(",")
+		
+		for questid in activequests:
+			self._gamecontroller.questmanager.activateQuestById(questid)
+			print "loaded active quest: " + questid
+			
+		completedquests = valuedict['completedquests'].split(",")
+		
+		for questid in completedquests:
+			self._gamecontroller.questmanager.completeQuestById(questid)
+			print "loaded completed quest: " + questid

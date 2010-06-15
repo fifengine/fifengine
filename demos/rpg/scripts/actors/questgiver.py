@@ -36,50 +36,44 @@ class QuestGiver(Actor):
 		super(QuestGiver, self).__init__(gamecontroller, layer, typename, baseobjectname, instancename, instanceid, createInstance)
 		self._type = GameObjectTypes["QUESTGIVER"]
 	
-		self._quests = []
-		
-		self._activequest = None
-	
 	def addQuest(self, quest):
-		self._quests.append(quest)
+		pass
 		
 	def offerNextQuest(self):
-		if self._activequest:
-			return
-	
-		if len(self._quests) > 0:
+		if self._gamecontroller.questmanager.getNextQuest(self.id):
 			self._gamecontroller.guicontroller.showQuestDialog(self)
 		
 	def getNextQuest(self):
-		if len(self._quests) > 0:
-			return self._quests[0]
-		
-		return None
+		return self._gamecontroller.questmanager.getNextQuest(self.id)
 		
 	def activateQuest(self, quest):
-		self._activequest = quest
+		self._gamecontroller.questmanager.activateQuest(quest)
 			
 	def completeQuest(self):
-		if self._activequest in self._quests:
-			if self._activequest.checkQuestCompleted(self._gamecontroller.scene.player):
-				self.say("That everything I need.  Thank you!")
-				self._gamecontroller.scene.player.gold = self._gamecontroller.scene.player.gold - self._activequest.requiredgold
+		for activequest in self._gamecontroller.questmanager.activequests:
+			if activequest.ownerid == self.id:
+				if activequest.checkQuestCompleted(self._gamecontroller.scene.player):
+					self.say("That everything I need.  Thank you!")
+			
+					self._gamecontroller.scene.player.gold = self._gamecontroller.scene.player.gold - activequest.requiredgold
 				
-				for itemid in self._activequest.requireditems:
-					self._gamecontroller.scene.player.removeItemFromInventory(itemid)
-					
-				self._quests.remove(self._activequest)
-				self._activequest = None
-			else:
-				self.say("Come back when you have all the items I requested!")
-		else:
-			#something went wrong
-			self._activequest = None
+					for itemid in activequest.requireditems:
+						self._gamecontroller.scene.player.removeItemFromInventory(itemid)
+			
+					self._gamecontroller.questmanager.completeQuest(activequest)
+				else:
+					self.say("Come back when you have all the items I requested!")
 	
 	def haveQuest(self):
-		return len(self._quests) > 0
+		return bool(self._gamecontroller.questmanager.getNextQuest(self.id)) or bool(self._getActiveQuest())
 	
 	def _getActiveQuest(self):
-		return self._activequest
+		"""
+		Returns the first active quest in the list.  There should only be one
+		active quest per questgiver anyway.
+		"""
+		for quest in self._gamecontroller.questmanager.activequests:
+			if quest.ownerid == self.id:
+				return quest
 		
 	activequest = property(_getActiveQuest)
