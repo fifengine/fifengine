@@ -111,17 +111,29 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 
 		if (event.getButton() == fife.MouseEvent.LEFT):
 			self._lastmousepos = (clickpoint.x, clickpoint.y)
+			
+			#cancel last action
+			self._gamecontroller.scene.player.nextaction = None
+			
 			self._gamecontroller.scene.player.walk( self._gamecontroller.scene.getLocationAt(clickpoint) )
+			
 			actor_instances = self._gamecontroller.scene.getInstancesAt(clickpoint, self._gamecontroller.scene.actorlayer)
 			item_instances = self._gamecontroller.scene.getInstancesAt(clickpoint, self._gamecontroller.scene.itemlayer)
+			
 			if actor_instances:
-				if actor_instances[0].getId() == "player":
-					return
-					
-				obj = self._gamecontroller.scene.objectlist[actor_instances[0].getId()]
-				if obj.type == GameObjectTypes["QUESTGIVER"]:
-					action = TalkAction(self._gamecontroller.scene.player, obj)
-					self._gamecontroller.scene.player.nextaction = action
+				actor_instance = None
+				for actor in actor_instances:
+					if actor.getId() == "player":
+						continue
+					else:
+						actor_instance = actor
+						break
+				
+				if actor_instance:
+					obj = self._gamecontroller.scene.objectlist[actor_instance.getId()]
+					if obj.type == GameObjectTypes["QUESTGIVER"]:
+						action = TalkAction(self._gamecontroller.scene.player, obj)
+						self._gamecontroller.scene.player.nextaction = action
 			
 			if item_instances:
 				obj = self._gamecontroller.scene.objectlist[item_instances[0].getId()]
@@ -344,10 +356,10 @@ class GameController(object):
 		if self._scene:
 			self._scene.serialize()
 			
-			self._questmanager.destroy()
-		
 			self._listener.detach()
 			self._scene.destroyScene()
+			self._questmanager.destroy()
+			
 			self._scene = None
 			self._instancerenderer = None
 			self._floatingtextrenderer = None

@@ -110,6 +110,11 @@ class BaseGameObject(object):
 		"""
 		Deletes the FIFE instance from the actor layer on the map.
 		"""
+		
+		#This doesnt work
+		#self._instance.get2dGfxVisual().setVisible(False)
+
+		#remove from the scene instead
 		if self._actionlistener:
 			self._actionlistener.detachActionListener()	
 			self._actionlistener = None
@@ -119,6 +124,16 @@ class BaseGameObject(object):
 			self._instance = None
 		
 		self._activated = False
+		
+	def spawn(self, x, y):
+		#This doesnt work
+		#self._instance.get2dGfxVisual().setVisible(True)
+	
+		self._position.x = x
+		self._position.y = y
+		self._createFIFEInstance(self, self._layer)
+		
+		self._activated = True
 			
 	def setMapPosition(self, x, y):
 		curloc = self.location
@@ -160,12 +175,10 @@ class BaseGameObject(object):
 		mapmodel = self._gamecontroller.engine.getModel()
 		self._fifeobject = mapmodel.getObject(self._name, self._gamecontroller.settings.get("RPG", "ObjectNamespace", "http://www.fifengine.de/xml/rpg"))
 		
-		self._instance = layer.createInstance(self._fifeobject, fife.ModelCoordinate(0,0), self._id)
+		self._instance = layer.createInstance(self._fifeobject, fife.ExactModelCoordinate(self._position.x,self._position.y), self._id)
 		fife.InstanceVisual.create(self._instance)
 			
 		self._instance.thisown = 0
-		
-		self.setMapPosition(self._position.x,self._position.y)
 		
 	def _findFIFEInstance(self, layer):
 		"""
