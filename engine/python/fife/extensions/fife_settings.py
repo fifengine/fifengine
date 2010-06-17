@@ -85,7 +85,7 @@ EMPTY_SETTINGS="""\
 </Settings>
 """
 
-DEFAULT_MODULE = "FIFE"
+FIFE_MODULE = "FIFE"
 
 class Setting(object):
 	"""
@@ -121,6 +121,9 @@ class Setting(object):
 		self._settings_gui_xml = settings_gui_xml
 		self._changes_gui_xml = changes_gui_xml
 
+		# Holds SettingEntries
+		self._entries = {}
+
 		if self._settings_file == "":
 			self._settings_file = "settings.xml"
 			self._appdata = getUserDataDirectory("fife", self._app_name)
@@ -153,21 +156,19 @@ class Setting(object):
 
 		self.loadSettings()
 
-		# Holds SettingEntries
-		self._entries = []
 
 		self._initDefaultSettingEntries()
 
 	def _initDefaultSettingEntries(self):
 		"""Initializes the default fife setting entries. Not to be called from
 		outside this class."""
-		self.createAndAddEntry(DEFAULT_MODULE, "PlaySounds", "enable_sound",
+		self.createAndAddEntry(FIFE_MODULE, "PlaySounds", "enable_sound",
 		              requiresrestart=True)
-		self.createAndAddEntry(DEFAULT_MODULE, "FullScreen", "enable_fullscreen",
+		self.createAndAddEntry(FIFE_MODULE, "FullScreen", "enable_fullscreen",
 		              requiresrestart=True)
-		self.createAndAddEntry(DEFAULT_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
+		self.createAndAddEntry(FIFE_MODULE, "ScreenResolution", "screen_resolution", initialdata = self._resolutions,
 		              requiresrestart=True)
-		self.createAndAddEntry(DEFAULT_MODULE, "RenderBackend", "render_backend", initialdata = self._renderbackends,
+		self.createAndAddEntry(FIFE_MODULE, "RenderBackend", "render_backend", initialdata = self._renderbackends,
 		              requiresrestart=True)
 
 	def createAndAddEntry(self, module, name, widgetname, applyfunction=None, initialdata=None, requiresrestart=False):
@@ -190,18 +191,20 @@ class Setting(object):
 		@type requiresrestart: C{Boolean}
 		"""
 		entry = SettingEntry(module, name, widgetname, applyfunction, initialdata, requiresrestart)
-		self._entries.append(entry)
+		self.addEntry(entry)
 
 	def addEntry(self, entry):
 		"""Adds a new C{SettingEntry} to the Settting
 		@param entry: A new SettingEntry that is to be added
 		@type entry: C{SettingEntry}
 		"""
-		self._entries.append(entry)
+		if entry.module not in self._entries:
+			self._entries[entry.module] = {}
+		self._entries[entry.module][entry.name] = entry
 
 	def loadSettings(self):
 		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
-			
+
 		self._root_element = self._tree.getroot()
 		self.validateTree()
 
@@ -432,36 +435,39 @@ class Setting(object):
 		self.OptionsDlg.show()
 
 	def fillWidgets(self):
-		for entry in self._entries:
-			widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
-			value = self.get(entry.module, entry.name)
-			if type(entry.initialdata) is list:
-				try:
-					value = entry.initialdata.index(value)
-				except ValueError:
-					raise ValueError("\"" + value + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
-			entry.initializeWidget(widget, value)
+		for module in self._entries.itervalues():
+			for entry in module.itervalues():
+				widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
+				value = self.get(entry.module, entry.name)
+				if type(entry.initialdata) is list:
+					try:
+						value = entry.initialdata.index(value)
+					except ValueError:
+						raise ValueError("\"" + value + "\" is not a valid value for " + entry.name + ". Valid options: " + str(entry.initialdata))
+				entry.initializeWidget(widget, value)
 
 	def applySettings(self):
 		"""
 		Writes the settings file.  If a change requires a restart of the engine
 		it notifies you with a small dialog box.
 		"""
-		for entry in self._entries:
-			widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
-			data = widget.getData()
+		for module in self._entries.itervalues():
+			for entry in module.itervalues():
+				widget = self.OptionsDlg.findChildByName(entry.settingwidgetname)
+				data = widget.getData()
 
-			# If the data is a list we need to get the correct selected data
-			# from the list. This is needed for e.g. dropdowns or listboxs
-			if type(entry.initialdata) is list:
-				value = entry.initialdata[data]
-				self.set(entry.module, entry.name, value)
-			else:
+				# If the data is a list we need to get the correct selected data
+				# from the list. This is needed for e.g. dropdowns or listboxs
+				if type(entry.initialdata) is list:
+					data = entry.initialdata[data]
+
+				# only require restart if something really changed
+				if entry.requiresrestart and data != self.get(entry.module, entry.name):
+					self.changesRequireRestart = True
+
 				self.set(entry.module, entry.name, data)
 
-			if entry.requiresrestart:
-				self.changesRequireRestart = True
-			entry.onApply(widget)
+				entry.onApply(data)
 
 		self.saveSettings()
 
@@ -503,6 +509,15 @@ class Setting(object):
 			self.OptionsDlg.hide()
 
 
+	def _getEntries(self):
+		return self._entries
+
+	def _setEntries(self, entries):
+		self._entries = entries
+
+	entries = property(_getEntries, _setEntries)
+
+
 
 class SettingEntry(object):
 
@@ -538,12 +553,12 @@ class SettingEntry(object):
 			widget.setInitialData(self._initialdata)
 		widget.setData(currentValue)
 
-	def onApply(self, widget):
+	def onApply(self, data):
 		"""Implement actions that need to be taken when the setting is changed
 		here.
 		"""
 		if self._applyfunction is not None:
-			self._applyfunction(widget.getData())
+			self._applyfunction(data)
 
 	def _getModule(self):
 		return self._module
