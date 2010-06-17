@@ -421,10 +421,7 @@ class Setting(object):
 		self.changesRequireRestart = False
 		self.isSetToDefault = False
 
-		if os.path.isfile(self._settings_gui_xml):
-			self.OptionsDlg = pychan.loadXML(self._settings_gui_xml)
-		else:
-			self.OptionsDlg = pychan.loadXML(StringIO(self._settings_gui_xml))
+		self.OptionsDlg = self._loadWidget(self._settings_gui_xml)
 		self.OptionsDlg.stylize(self._gui_style)
 		self.fillWidgets()
 		self.OptionsDlg.mapEvents({
@@ -433,6 +430,14 @@ class Setting(object):
 			'defaultButton' : self.setDefaults
 		})
 		self.OptionsDlg.show()
+
+	def _loadWidget(self, dialog):
+		"""Loads a widget. Can load both files and pure xml strings"""
+		if os.path.isfile(self._settings_gui_xml):
+			return pychan.loadXML(dialog)
+		else:
+			return pychan.loadXML(StringIO(dialog))
+
 
 	def fillWidgets(self):
 		for module in self._entries.itervalues():
@@ -479,7 +484,8 @@ class Setting(object):
 	def _showChangeRequireRestartDialog(self):
 		"""Shows a dialog that informes the user that a restart is required
 		to perform the changes."""
-		RestartDlg = pychan.loadXML(StringIO(self._changes_gui_xml))
+		RestartDlg = self._loadWidget(self._changes_gui_xml)
+		RestartDlg.stylize(self._gui_style)
 		RestartDlg.mapEvents({ 'closeButton' : RestartDlg.hide })
 		RestartDlg.show()
 
