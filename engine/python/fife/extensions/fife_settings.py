@@ -478,10 +478,8 @@ class Setting(object):
 				# only require restart if something really changed
 				if entry.requiresrestart and data != self.get(entry.module, entry.name):
 					self.changesRequireRestart = True
-
-				self.set(entry.module, entry.name, data)
-
-				entry.onApply(data)
+					self.set(entry.module, entry.name, data)
+					entry.onApply(data)
 
 		self.saveSettings()
 
