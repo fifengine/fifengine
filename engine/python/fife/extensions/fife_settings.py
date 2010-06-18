@@ -202,6 +202,15 @@ class Setting(object):
 			self._entries[entry.module] = {}
 		self._entries[entry.module][entry.name] = entry
 
+		# Make sure the new entry is available
+		if self.get(entry.module, entry.name) is None:
+			print "Updating", self._settings_file, "to the default, it is missing the entry:"\
+			      , entry.name ,"for module", entry.module
+			self.setDefaults()
+		if self.get(entry.module, entry.name) is None:
+			print "WARNING:", entry.module, ":", entry.name, "still not found!"
+			print "It's probably missing in settings-dist.xml as well!"
+
 	def loadSettings(self):
 		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
 
@@ -513,7 +522,6 @@ class Setting(object):
 
 		if self.OptionsDlg:
 			self.OptionsDlg.hide()
-
 
 	def _getEntries(self):
 		return self._entries
