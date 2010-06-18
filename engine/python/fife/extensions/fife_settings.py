@@ -475,11 +475,13 @@ class Setting(object):
 				if type(entry.initialdata) is list:
 					data = entry.initialdata[data]
 
-				# only require restart if something really changed
-				if entry.requiresrestart and data != self.get(entry.module, entry.name):
-					self.changesRequireRestart = True
+				# only take action if something really changed
+				if data != self.get(entry.module, entry.name):
 					self.set(entry.module, entry.name, data)
 					entry.onApply(data)
+
+					if entry.requiresrestart:
+						self.changesRequireRestart = True
 
 		self.saveSettings()
 
