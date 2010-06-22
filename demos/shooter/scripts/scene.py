@@ -450,8 +450,21 @@ class Scene(object):
 					self.queueObjectForRemoval(obj)
 
 			#self._world.renderBoundingBox(obj)			
-
-
+	
+		"""
+		Do some more cleanup.  Objects that leave the scene should be removed.
+		
+		@todo: Objects that leave the scene should be added to the scenes object removal
+		in the objects update function.  The current implementation is much slower.
+		"""
+		
+		worldlist = self.getObjectsInRange(0, self._maxnodes)
+		
+		for obj in worldlist:
+			if obj.scenenodeid < leftnode:
+				self.queueObjectForRemoval(obj)
+			if obj.type == SHTR_PROJECTILE and obj.scenenodeid > rightnode:
+				self.queueObjectForRemoval(obj)
 				
 	def _getPlayer(self):
 		return self._player
