@@ -22,7 +22,6 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-# This is the rio de hola client for FIFE.
 
 import sys, os, re, math, random, shutil, glob, uuid
 
@@ -305,9 +304,10 @@ class GameController(object):
 		
 		for filename in glob.glob(os.path.join("saves" , "*.xml")):
 			os.remove(filename)
-			
-		self._questmanager.destroy()
-		self._questmanager.initializeQuests()
+		
+		
+		self._questmanager.reset()
+		self._questmanager.deserialize()
 		
 		mapname = self._settings.get("RPG", "TownMapFile", "town")
 		self.loadMap(mapname)
@@ -358,7 +358,7 @@ class GameController(object):
 			
 			self._listener.detach()
 			self._scene.destroyScene()
-			self._questmanager.destroy()
+			self._questmanager.reset()
 			
 			self._scene = None
 			self._instancerenderer = None

@@ -22,7 +22,6 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-# This is the rio de hola client for FIFE.
 
 import sys, os, re, math, random, shutil
 
@@ -31,6 +30,7 @@ from fife.extensions.loaders import loadMapFile
 
 from scripts.objects.baseobject import ObjectActionListener, BaseGameObject, GameObjectTypes
 from scripts.objects.items import GoldStack
+from scripts.misc.serializer import Serializer
 
 Actions = {'NONE':0,
 		   'PICKUP':1,
@@ -60,7 +60,7 @@ class TalkAction(BaseAction):
 				else:
 					self._dest.completeQuest()
 			else:
-				self._dest.say("I've got nothing for you...  leave me alone.")
+				self._dest.showNoQuestDialog()
 		else:
 			self._dest.instance.say("Hello there!")
 			
@@ -95,19 +95,76 @@ class ActorActionListener(ObjectActionListener):
 			self._object.stand()
 			self._object.performNextAction()
 
+class ActorAttributes(Serializer):
+	def __init__(self, strength=0, dexterity=0, intelligence=0, health=0):
+		self._str = strength
+		self._dex = dexterity
+		self._int = intelligence
+		self._hp = health
+		
+	def serialize(self):
+		lvars['str'] = self._str
+		lvars['dex'] = self._dex
+		lvars['int'] = self._int
+		lvars['hp'] = self._hp
+		
+		return lvars
+		
+	def deserialize(self, valuedict):
+		if valuedict.has_key("str"):
+			self._str = int(valuedict['str'])
+		if valuedict.has_key("dex"):
+			self._dex = int(valuedict['dex'])
+		if valuedict.has_key("int"):
+			self._int = int(valuedict['int'])
+		if valuedict.has_key("hp"):
+			self._hp = int(valuedict['hp'])
+			
+	def _getStrength(self):
+		return self._str
+		
+	def _setStrength(self, strength):
+		self._str = strength
+	
+	def _getDexterity(self):
+		return self._dexterity
+		
+	def _setDexterity(self, dexterity):
+		self._dexterity = dexterity
+		
+	def _getIntelligence(self):
+		return self._int
+		
+	def _setIntelligence(self, intelligence):
+		self._int = intelligence
+		
+	def _getHealth(self):
+		return self._hp
+	
+	def _setHealth(self, health):
+		self._hp = health
+	
+	
+	strength = property(_getStrength, _setStrength)
+	dexterity = property(_getDexterity, _setDexterity)
+	intelligence = property(_getIntelligence, _setIntelligence)
+	health = property(_getHealth, _setHealth)
+			
+
 class Actor(BaseGameObject):
 	def __init__(self, gamecontroller, layer, typename, baseobjectname, instancename, instanceid=None, createInstance=False):
 		super(Actor, self).__init__(gamecontroller, layer, typename, baseobjectname, instancename, instanceid, createInstance)
 
 		self._type = GameObjectTypes["DEFAULT"]
 
-		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
-		
 		self._nextaction = None
 		self._inventory = []
 		self._maxinventoryitems = 20
+
+		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
 		
 		self._gold = 0
+		self._attributes = ActorAttributes()
 		
 		self.stand()
 		
@@ -128,21 +185,28 @@ class Actor(BaseGameObject):
 			self._nextaction = None
 			
 	def pickUpItem(self, item):
-		if len(self._inventory) >= self._maxinventoryitems:
-			return
+		if self.addItemToInventory(item):
+			item.onPickUp()		
 		else:
-			if type(item) == GoldStack:
-				self._gold += item.value
-			else:
-				self._inventory.append(item)
-		
-			item.onPickUp()
+			#could do something cool like throw the item back on the ground
+			pass
 			
 	def enterPortal(self, portal):
 		if self._id == "player":
 			self._gamecontroller.switchMap(portal.dest)
 		else:
 			self._gamecontroller.scene.removeObjectFromScene(self._id)
+
+	def addItemToInventory(self, item):
+		if len(self._inventory) >= self._maxinventoryitems:
+			return False
+		else:
+			if type(item) == GoldStack:
+				self._gold += item.value
+			else:
+				self._inventory.append(item)
+				
+		return True
 		
 	def removeItemFromInventory(self, itemid):
 		itemtoremove = None
@@ -167,6 +231,9 @@ class Actor(BaseGameObject):
 			self._gold = int(valuedict['gold'])
 		else:
 			self._gold = 0
+			
+		if valuedict.has_key("walk_speed"):
+			self._walkspeed = float(valuedict['walk_speed'])
 		
 	def _getState(self):
 		return self._state
@@ -189,7 +256,11 @@ class Actor(BaseGameObject):
 	def _getInventory(self):	
 		return self._inventory
 	
+	def _getAttributes(self):
+		return self._attributes
+	
 	state = property(_getState, _setState)
 	nextaction = property(_getNextAction, _setNextAction)
 	gold = property(_getGold, _setGold)
 	inventory = property(_getInventory)
+	attributes = property(_getAttributes)

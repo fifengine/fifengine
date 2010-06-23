@@ -7,7 +7,7 @@
 		</HBox>
 		<HBox>
 			<ScrollArea min_size="400,400" max_size="400,400" size="400,400" vertical_scrollbar="1">
-				<TextBox name="questtext"/>
+				<Label min_size="400,400" max_size="400,400" size="400,400" wrap_text="1" name="questtext"/>
 			</ScrollArea>
 		</HBox>
 		<HBox>

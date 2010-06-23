@@ -22,26 +22,50 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-# This is the rio de hola client for FIFE.
 
+class RPGDemoException(Exception):
+	def __init__(self, msg=None):
+		if msg:
+			self._msg = msg
+		else:
+			self._msg = None
 
-class InvalidCommandError(Exception):
-	def __init__(self):
-		return
+class InvalidCommandError(RPGDemoException):
+	def __init__(self, msg=None):
+		super(InvalidCommandError, self).__init__(msg)
+	
+	def __str__(self):
+		if self._msg:
+			return repr(self._msg)
+		else:
+			return repr("Command not found!")
+		
+class ObjectNotFoundError(RPGDemoException):
+	def __init__(self, msg=None):
+		super(ObjectNotFoundError, self).__init__(msg)
 		
 	def __str__(self):
-		print "","Command not found!"
+		if self._msg:
+			return repr(self._msg)
+		else:
+			return repr("Object was not found!")
 		
-class ObjectNotFoundError(Exception):
-	def __init__(self):
-		return
-		
-	def __str__(self):
-		print "","Object was not found!"
-		
-class ObjectAlreadyInSceneError(Exception):
-	def __init__(self):
-		return
+class ObjectAlreadyInSceneError(RPGDemoException):
+	def __init__(self, msg=None):
+		super(ObjectAlreadyInSceneError, self).__init__(msg)
 		
 	def __str__(self):
-		print "","Object was already part of the scene!"
+		if self._msg:
+			return repr(self._msg)
+		else:
+			return repr("Object was already part of the scene!")
+
+class InstanceNotFoundError(RPGDemoException):
+	def __init__(self, msg=None):
+		super(InstanceNotFoundError, self).__init__(msg)
+		
+	def __str__(self):
+		if self._msg:
+			return repr(self._msg)
+		else:
+			return repr("Instance was not found on layer!")

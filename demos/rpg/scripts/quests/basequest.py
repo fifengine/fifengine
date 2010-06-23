@@ -22,7 +22,6 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-# This is the rio de hola client for FIFE.
 
 import sys, os, re, math, random, shutil, time
 from datetime import datetime
@@ -38,6 +37,8 @@ class Quest(object):
 		self._questid = questid
 		self._name = questtitle
 		self._text = questtext
+		self._complete_dialog = "That everything I need.  Thank you!"
+		self._incomplete_dialog = "Come back when you have all the items I requested!"
 		
 	def __eq__(self, other):
 		return self._questid == other.id
