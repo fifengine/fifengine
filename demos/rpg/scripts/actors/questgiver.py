@@ -35,6 +35,8 @@ class QuestGiver(Actor):
 	def __init__(self, gamecontroller, layer, typename, baseobjectname, instancename, instanceid=None, createInstance=False):
 		super(QuestGiver, self).__init__(gamecontroller, layer, typename, baseobjectname, instancename, instanceid, createInstance)
 		self._type = GameObjectTypes["QUESTGIVER"]
+		
+		self._noquest_dialog = "I've got nothing for you...  leave me alone."
 	
 	def offerNextQuest(self):
 		"""
@@ -54,7 +56,10 @@ class QuestGiver(Actor):
 		This is called after the player accepts a quest.  It marks it as active or "in progress".
 		"""
 		self._gamecontroller.questmanager.activateQuest(quest)
-			
+	
+	def showNoQuestDialog(self):
+		self.say(self._noquest_dialog)
+	
 	def completeQuest(self):
 		"""
 		Checks to see if the active quest owned by this QuestGiver is complete and 
@@ -63,7 +68,7 @@ class QuestGiver(Actor):
 		for activequest in self._gamecontroller.questmanager.activequests:
 			if activequest.ownerid == self.id:
 				if activequest.checkQuestCompleted(self._gamecontroller.scene.player):
-					self.say("That everything I need.  Thank you!")
+					self.say(activequest._complete_dialog)
 			
 					self._gamecontroller.scene.player.gold = self._gamecontroller.scene.player.gold - activequest.requiredgold
 				
@@ -72,7 +77,7 @@ class QuestGiver(Actor):
 			
 					self._gamecontroller.questmanager.completeQuest(activequest)
 				else:
-					self.say("Come back when you have all the items I requested!")
+					self.say(activequest._incomplete_dialog)
 	
 	def haveQuest(self):
 		"""
@@ -80,6 +85,19 @@ class QuestGiver(Actor):
 		the player.  Returns False otherwise.
 		"""
 		return bool(self._gamecontroller.questmanager.getNextQuest(self.id)) or bool(self._getActiveQuest())
+
+	def serialize(self):
+		lvars = super(QuestGiver, self).serialize()
+
+		lvars['noquest_dialog'] = self._noquest_dialog
+	
+		return lvars
+
+	def deserialize(self, valuedict):
+		super(QuestGiver, self).deserialize(valuedict)
+		
+		self._noquest_dialog = valuedict['noquest_dialog']
+		
 	
 	def _getActiveQuest(self):
 		"""

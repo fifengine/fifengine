@@ -22,7 +22,6 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-# This is the rio de hola client for FIFE.
 
 import sys, os, re, math, random, shutil, uuid
 
@@ -38,8 +37,10 @@ from scripts.actors.player import Player
 from scripts.objects.baseobject import GameObjectTypes, getModuleByType
 from scripts.objects.items import BaseItem, GoldStack, Portal
 from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
+from scripts.misc.serializer import Serializer
 
-class Scene(object):
+
+class Scene(Serializer):
 	def __init__(self, gamecontroller):
 		self._gamecontroller = gamecontroller
 		
@@ -203,25 +204,34 @@ class Scene(object):
 		location.setMapCoordinates(target_mapcoord)
 		return location
 	
+	def getObject(self, objid):
+		"""
+		Throws ObjectNotFoundError when an object cannot be found on the scene
+		"""
+		
+		try:
+			return self._objectlist[objid]
+		except KeyError:
+			raise ObjectNotFoundError(objid + " was not found on the scene.")
+	
 	def addObjectToScene(self, obj):
 		if not self._objectlist.has_key(obj.id):
 			self._objectlist[obj.id] = obj
 		else:
 			obj.destroy()
 			raise ObjectAlreadyInSceneError
-			
-	def getObject(self, objid):
-		"""
-		@todo: throw ObjectNowFoundError
-		"""
-		if self._objectlist.has_key(objid):
-			return self._objectlist[objid]
-		else:
-			return None
-	
+
 	def removeObjectFromScene(self, obj):
+		"""
+		Throws ObjectNotFoundError when an object cannot be found on the scene
+		"""
+		
 		obj.destroy()
-		del self._objectlist[obj.id]
+		
+		try:
+			del self._objectlist[obj.id]
+		except KeyError:
+			raise ObjectNotFoundError(obj.id + " could not be removed from the scene as it was not found in the scene.")
 		
 	def serialize(self):
 		filename = os.path.join("saves", self._mapname + "_save.xml")

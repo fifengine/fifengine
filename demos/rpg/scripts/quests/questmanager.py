@@ -28,8 +28,9 @@ from fife import fife
 
 from fife.extensions.fife_settings import Setting
 from scripts.quests.basequest import Quest, ReturnItemQuest, QuestTypes
+from scripts.misc.serializer import Serializer
 
-class QuestManager(object):
+class QuestManager(Serializer):
 	def __init__(self, gamecontroller):
 		self._gamecontroller = gamecontroller
 
@@ -38,8 +39,11 @@ class QuestManager(object):
 		self._quests = {}
 		self._activequests = []
 		self._completedquests = []
-		
-	def initializeQuests(self):
+	
+	def serialize(self):
+		pass
+	
+	def deserialize(self, valuedict=None):
 		questfile = self._gamecontroller.settings.get("RPG", "QuestFile", "maps/quests.xml")
 		
 		self._questsettings = Setting(settings_file=questfile)
@@ -47,7 +51,6 @@ class QuestManager(object):
 		for identifier in self._questsettings.get("QuestGivers", "list", []):
 			for quest in self._questsettings.get(identifier, "questlist", []):
 					questdict = self._questsettings.get(identifier, quest, {})
-					
 					if questdict['type'] == "RETURN_ITEM":
 						questobj = ReturnItemQuest(identifier, quest, questdict['name'], questdict['desc'])
 						for ritem in self._questsettings.get(quest+"_items", "itemlist", []):
@@ -59,9 +62,15 @@ class QuestManager(object):
 					else:
 						questobj = Quest(identifier, quest, questdict['name'], questdict['desc'])
 
+					if questdict.has_key("quest_incomplete_dialog"):
+						questobj._incomplete_dialog = questdict['quest_incomplete_dialog']
+						
+					if questdict.has_key("quest_complete_dialog"):
+						questobj._complete_dialog = questdict['quest_complete_dialog']
+
 					self._gamecontroller.questmanager.addQuest(questobj)
 	
-	def destroy(self):
+	def reset(self):
 		self._quests = {}
 		self._activequests = []
 		self._completedquests = []
@@ -82,17 +91,27 @@ class QuestManager(object):
 		return None
 
 	def getNextQuest(self, ownerid):
-		for quest in self._quests[ownerid]:
-			if not quest in self._activequests and not quest in self._completedquests:
-				return quest
-				
+		if self._quests.has_key(ownerid):
+			for quest in self._quests[ownerid]:
+				if not quest in self._activequests and not quest in self._completedquests:
+					return quest
+
 		return None
 		
 	def activateQuest(self, quest):
+		"""
+		Adds the quest to the "active quests" list.  Note that this does NOT affect
+		the quest in any way.  It's just a way of keeping track of which quests
+		the player has accepted.
+		"""
 		if not quest in self._activequests:
 			self._activequests.append(quest)
 		
 	def completeQuest(self, quest):
+		"""
+		Marks the quest as completed.  Note that this does NOT modify the quest in
+		any way.  This is just a way to keep track of completed quests.
+		"""
 		if not quest in self._completedquests:
 			self._completedquests.append(quest)
 		

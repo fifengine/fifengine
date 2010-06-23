@@ -22,12 +22,14 @@
 #  Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
-# This is the rio de hola client for FIFE.
 
 import sys, os, re, math, random, shutil
 
 from fife import fife
 from fife.extensions.loaders import loadMapFile
+
+from scripts.misc.exceptions import *
+from scripts.misc.serializer import Serializer
 
 GameObjectTypes = 	{
 						"DEFAULT": 0,
@@ -66,7 +68,7 @@ class ObjectActionListener(fife.InstanceActionListener):
 		pass
 
 
-class BaseGameObject(object):
+class BaseGameObject(Serializer):
 	def __init__(self, gamecontroller, layer, typename, baseobjectname, instancename, instanceid=None, createInstance=False):
 		"""
 		@param gamecontroller: A reference to the master game controller
@@ -129,9 +131,12 @@ class BaseGameObject(object):
 		#This doesnt work
 		#self._instance.get2dGfxVisual().setVisible(True)
 	
-		self._position.x = x
-		self._position.y = y
-		self._createFIFEInstance(self, self._layer)
+		if self._instance:
+			self._setMapPostion(x,y)
+		else:
+			self._position.x = x
+			self._position.y = y
+			self._createFIFEInstance(self, self._layer)
 		
 		self._activated = True
 			
@@ -155,7 +160,10 @@ class BaseGameObject(object):
 		
 		return lvars
 
-	def deserialize(self, valuedict):
+	def deserialize(self, valuedict=None):
+		if not valuedict:
+			return
+		
 		if valuedict.has_key("posx"):
 			x = float(valuedict['posx'])
 		else:
@@ -179,14 +187,16 @@ class BaseGameObject(object):
 		fife.InstanceVisual.create(self._instance)
 			
 		self._instance.thisown = 0
-		
+	
 	def _findFIFEInstance(self, layer):
 		"""
-		@todo: throw InstanceNotFoundError
+		Throws InstanceNotFound if the instance was not found on the specified layer.
 		"""
 		self._instance = self._layer.getInstance(self._id)
 		if self._instance:
-			self._instance.thisown = 0		
+			self._instance.thisown = 0
+		else:
+			raise InstanceNotFoundError(self._id + " was not found on the layer!")
 		
 	def _getLocation(self):
 		return self._instance.getLocation()
