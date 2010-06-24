@@ -27,7 +27,7 @@ import sys, os, re, math, random, shutil
 
 from fife import fife
 
-from scripts.objects.baseobject import BaseGameObject, GameObjectTypes, getModuleByType
+from scripts.objects.baseobject import BaseGameObject, GameObjectTypes
 
 
 class BaseItem(BaseGameObject):

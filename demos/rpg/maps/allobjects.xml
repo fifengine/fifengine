@@ -10,6 +10,7 @@
   <Module name="objects">
     <Setting name="goldstack" type="dict"> type : GOLD ; modelname : GoldStack ; value : 5000 </Setting>
     <Setting name="templeportal" type="dict"> type : PORTAL ; modelname : TempleEntrance ; dest : town </Setting>
-    <Setting name="quiller" type="dict"> type : QUESTGIVER ; modelname : Quiller ; stat1 : 20 ; stat2 : 343 </Setting>
+    <Setting name="quiller" type="dict"> type : QUESTGIVER ; modelname : Quiller </Setting>
+    <Setting name="signenemy1" type="dict"> type : ENEMY ; modelname : Quiller </Setting>
   </Module>
 </Settings>
