@@ -62,7 +62,17 @@ class TalkAction(BaseAction):
 			else:
 				self._dest.showNoQuestDialog()
 		else:
-			self._dest.instance.say("Hello there!")
+			self._dest.say("Hello there!")
+			
+class AttackAction(BaseAction):	
+	def __init__(self, attacker, defender):
+		self._actiontype = Actions['ATTACK']
+		self._attacker = attacker
+		self._defender = defender
+		
+	def execute(self):
+		if self._defender.type == GameObjectTypes["ENEMY"]:
+			self._defender.say("Ouch")
 			
 class PickUpItemAction(BaseAction):
 	def __init__(self, actor, item):
@@ -154,8 +164,6 @@ class ActorAttributes(Serializer):
 class Actor(BaseGameObject):
 	def __init__(self, gamecontroller, layer, typename, baseobjectname, instancename, instanceid=None, createInstance=False):
 		super(Actor, self).__init__(gamecontroller, layer, typename, baseobjectname, instancename, instanceid, createInstance)
-
-		self._type = GameObjectTypes["DEFAULT"]
 
 		self._nextaction = None
 		self._inventory = []

@@ -32,7 +32,7 @@ from fife.extensions.loaders import loadImportFile
 
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController
-from scripts.actors.baseactor import TalkAction, PickUpItemAction, EnterPortalAction
+from scripts.actors.baseactor import TalkAction, AttackAction, PickUpItemAction, EnterPortalAction
 from scripts.objects.baseobject import GameObjectTypes
 from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
 from scripts.quests.questmanager import QuestManager
@@ -131,6 +131,12 @@ class GameListener(fife.IKeyListener, fife.IMouseListener):
 				if actor_instance:
 					obj = self._gamecontroller.scene.objectlist[actor_instance.getId()]
 					if obj.type == GameObjectTypes["QUESTGIVER"]:
+						action = TalkAction(self._gamecontroller.scene.player, obj)
+						self._gamecontroller.scene.player.nextaction = action
+					elif obj.type == GameObjectTypes["ENEMY"]:
+						action = AttackAction(self._gamecontroller.scene.player, obj)
+						self._gamecontroller.scene.player.nextaction = action
+					else:
 						action = TalkAction(self._gamecontroller.scene.player, obj)
 						self._gamecontroller.scene.player.nextaction = action
 			

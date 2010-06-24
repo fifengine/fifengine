@@ -34,7 +34,7 @@ from scripts.actors.baseactor import Actor
 from scripts.actors.questgiver import QuestGiver
 from scripts.quests.basequest import Quest, ReturnItemQuest, QuestTypes
 from scripts.actors.player import Player
-from scripts.objects.baseobject import GameObjectTypes, getModuleByType
+from scripts.objects.baseobject import GameObjectTypes
 from scripts.objects.items import BaseItem, GoldStack, Portal
 from scripts.misc.exceptions import ObjectNotFoundError, ObjectAlreadyInSceneError
 from scripts.misc.serializer import Serializer
@@ -75,7 +75,7 @@ class Scene(Serializer):
 				newobject = Portal(self._gamecontroller, self.itemlayer, objdict["type"], objectname, modeldict["model"], identifier)
 			elif objdict["type"] == "QUESTGIVER":
 				newobject = QuestGiver(self._gamecontroller, self.actorlayer, objdict["type"], objectname, modeldict["model"], identifier, True)
-			elif objdict["type"] == "NPC":
+			elif objdict["type"] == "ENEMY":
 				newobject = Actor(self._gamecontroller, self.actorlayer, objdict["type"], objectname, modeldict["model"], identifier, True)
 			else:
 				return None

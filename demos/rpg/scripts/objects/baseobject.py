@@ -42,16 +42,6 @@ GameObjectTypes = 	{
 						"PORTAL":7
 					}
 					
-def getModuleByType(objtype):
-	if objtype == GameObjectTypes["ITEM"] or objtype == GameObjectTypes["GOLD"] or objtype == GameObjectTypes["PORTAL"]:
-		module = "items"
-	elif objtype == GameObjectTypes["QUESTGIVER"] or objtype == GameObjectTypes["ENEMY"]:
-		module = "npcs"	
-	else:
-		module = "unknown"
-		
-	return module
-
 class ObjectActionListener(fife.InstanceActionListener):
 	def __init__(self, gamecontroller, obj):
 		fife.InstanceActionListener.__init__(self)
@@ -84,6 +74,7 @@ class BaseGameObject(Serializer):
 		self._fifeobject = None
 		
 		self._typename = typename
+		self._type = GameObjectTypes[typename]
 		self._baseobjectname = baseobjectname
 		
 		self._name = instancename
@@ -97,8 +88,6 @@ class BaseGameObject(Serializer):
 		
 		self._actionlistener = None
 		
-		self._type = GameObjectTypes["DEFAULT"]
-
 		self._layer = layer
 
 		if createInstance:
