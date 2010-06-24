@@ -100,7 +100,7 @@ class CameraDialog(object):
 			print 'Please enter positive integer values for rotation and tilt.'
 			return
 
-		cam = map.addCamera(str(id), layer, viewport, fife.ExactModelCoordinate(0,0,0))
+		cam = map.addCamera(str(id), layer, viewport)
 		cam.setCellImageDimensions(refw, refh)
 		cam.setRotation(rot)
 		cam.setTilt(tilt)
