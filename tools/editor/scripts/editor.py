@@ -105,6 +105,8 @@ class Editor(ApplicationBase, MainWindow):
 		MainWindow.__init__(self, *args, **kwargs)
 		pychan.init(self.engine, debug=False)
 		
+		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
+		
 	def _initTools(self):
 		""" Initializes tools """
 		self._pluginmanager = plugin.PluginManager(self.getSettings())
