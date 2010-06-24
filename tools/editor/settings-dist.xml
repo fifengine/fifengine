@@ -22,6 +22,7 @@
 	<Module name="Plugins">
 		<Setting name="HistoryManager" type="bool">True</Setting>
 		<Setting name="LayerTool" type="bool">True</Setting>
+		<Setting name="CameraEdit" type="bool">True</Setting>
 		<Setting name="ObjectEdit" type="bool">True</Setting>
 		<Setting name="ObjectSelector" type="bool">True</Setting>
 	</Module>

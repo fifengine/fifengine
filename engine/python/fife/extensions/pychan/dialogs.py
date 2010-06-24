@@ -42,7 +42,7 @@ class XMLDialog(object):
 		self.data= data
 		self.max_size=None
 		self.min_size=None
-		self.gui.capture(print_event,"mouseEntered")
+#		self.gui.capture(print_event,"mouseEntered")
 
 	def execute(self):
 		self.gui.distributeInitialData(self.initial_data)
@@ -87,7 +87,7 @@ class XMLDialog(object):
 MESSAGE_BOX_XML = """\
 <Window name="window" title="Message">
 <ScrollArea>
-<Label wrap_text="1" text="$MESSAGE" name="message" vexpanding="1"/>
+<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="1"/>
 </ScrollArea>
 <HBox>
 <Spacer/><Button min_size="50,0" name="okButton" text="OK"/>
@@ -98,7 +98,7 @@ MESSAGE_BOX_XML = """\
 YESNO_BOX_XML = """\
 <Window name="window" title="Question">
 <ScrollArea>
-<Label wrap_text="1" text="$MESSAGE" name="message" vexpanding="1"/>
+<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="1"/>
 </ScrollArea>
 <HBox>
 <Spacer/>
@@ -111,7 +111,7 @@ YESNO_BOX_XML = """\
 YESNOCANCEL_BOX_XML = """\
 <Window name="window" title="Question">
 <ScrollArea>
-<Label wrap_text="1" text="$MESSAGE" name="message" vexpanding="1"/>
+<Label wrap_text="1" text="$MESSAGE" name="message" vexpand="1"/>
 </ScrollArea>
 <HBox>
 <Spacer/>
@@ -163,32 +163,39 @@ def _make_text(message):
 
 def message(message="",caption="Message"):
 	text = _make_text(message)
-	dialog = XMLDialog(StringIO(MESSAGE_BOX_XML),
-		initial_data={'message':text,'window':caption})
+	dialog = XMLDialog(StringIO(MESSAGE_BOX_XML))
 	dialog.gui.findChild(name="message").max_width = screen_width()/2 - 50
+	dialog.gui.findChild(name="message").text = text
+	dialog.gui.findChild(name="window").title = caption
+
 	dialog.execute()
 
 def yesNo(message="",caption="Message"):
 	text = _make_text(message)
-	dialog = XMLDialog(StringIO(YESNO_BOX_XML),
-		initial_data={'message':text,'window':caption})
+	dialog = XMLDialog(StringIO(YESNO_BOX_XML))
 	dialog.gui.findChild(name="message").max_width = screen_width()/2 - 50
+	dialog.gui.findChild(name="message").text = text
+	dialog.gui.findChild(name="window").title = caption
+
 	return dialog.execute()
 
 def yesNoCancel(message="",caption="Message"):
 	text = _make_text(message)
-	dialog = XMLDialog(StringIO(YESNOCANCEL_BOX_XML),
-		initial_data={'message':text,'window':caption})
+	dialog = XMLDialog(StringIO(YESNOCANCEL_BOX_XML))
 	dialog.gui.findChild(name="message").max_width = screen_width()/2 - 50
+	dialog.gui.findChild(name="message").text = text
+	dialog.gui.findChild(name="window").title = caption
+
 	return dialog.execute()
 
 def select(message="",options=[],caption="Message"):
 	text = _make_text(message)
-	dialog = XMLDialog(StringIO(SELECT_BOX_XML),
-		initial_data={'message':text,'window':caption})
+	dialog = XMLDialog(StringIO(SELECT_BOX_XML))
 	dialog.size = screen_width()/3, 2*screen_height()/3
-
 	dialog.gui.findChild(name="message").max_width = screen_width()/2 - 50
+	dialog.gui.findChild(name="message").text = text
+	dialog.gui.findChild(name="window").title = caption
+	
 	listbox = dialog.gui.findChild(name="selection")
 	listbox.items = options
 	if dialog.execute():
@@ -202,9 +209,10 @@ def trace(f):
 			return pychan.tools.applyOnlySuitable(f,*args,**kwargs)
 
 		except Exception, e:
-			dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML),
-			  initial_data={'message':str(e)}
-			)
+			dialog = XMLDialog(StringIO(EXCEPTION_CATCHER_XML))
+			
+			dialog.gui.findChild(name="message").text = str(e)
+			
 			tb = traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback)
 			dialog.gui.findChild(name="traceback").text = "".join(tb)
 			dialog.min_size = screen_width()/2,3*screen_height()/4

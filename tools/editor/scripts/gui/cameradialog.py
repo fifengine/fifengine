@@ -23,6 +23,7 @@
 
 from fife import fife
 from fife.extensions import pychan
+from fife.extensions.pychan import dialogs
 
 class CameraDialog(object):
 	"""
@@ -61,19 +62,19 @@ class CameraDialog(object):
 	def _finished(self):
 		id = self._widget.collectData('idBox')
 		if id == '':
-			print 'Please enter a camera id.'
+			dialogs.message(message=unicode("Please enter a camera ID."), caption=unicode("Error"))
 			return
 
 		try:
 			map = self.engine.getModel().getMap(str(self._widget.collectData('mapBox')))
 		except fife.Exception:
-			print 'Cannot find the specified map id.'
+			dialogs.message(message=unicode("Cannot find the specified map id."), caption=unicode("Error"))
 			return
 
 		try:
 			layer = map.getLayer(str(self._widget.collectData('layerBox')))
 		except fife.Exception:
-			print 'Cannot find the specified layer id.'	
+			dialogs.message(message=unicode("Cannot find the specified layer id."), caption=unicode("Error"))
 			return
 
 		try:
@@ -83,21 +84,22 @@ class CameraDialog(object):
 
 			viewport = fife.Rect(*[int(c) for c in vals])
 		except ValueError:
-			print 'Please enter 4 comma (,) delimited values for viewport x,y,width,height.'
+			dialogs.message(message=unicode("Please enter 4 comma (,) delimited values for viewport x,y,width,height."), caption=unicode("Error"))
 			return
 
 		try:
 			refh = int(self._widget.collectData('refhBox'))
 			refw = int(self._widget.collectData('refwBox'))
 		except ValueError:
-			print 'Please enter positive integer values for reference width and height.'
+			dialogs.message(message=unicode("Please enter positive integer values for reference width and height."), caption=unicode("Error"))
 			return
 
 		try:
 			rot = int(self._widget.collectData('rotBox'))
 			tilt = int(self._widget.collectData('tiltBox'))
 		except ValueError:
-			print 'Please enter positive integer values for rotation and tilt.'
+			dialogs.message(message=unicode("Please enter positive integer values for rotation and tilt."), caption=unicode("Error"))
+
 			return
 
 		cam = map.addCamera(str(id), layer, viewport)

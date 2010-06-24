@@ -23,6 +23,7 @@
 
 from fife import fife
 from fife.extensions import pychan
+from fife.extensions.pychan import dialogs
 
 class LayerDialog(object):
 	""" The B{LayerDialog} provides a gui dialog for creating and editing layers.
@@ -86,33 +87,33 @@ class LayerDialog(object):
 		# Collect and validate data
 		layerId = self._widget.collectData('layerBox')
 		if layerId == '':
-			print 'Please enter a layer id.'
+			dialogs.message(message=unicode("Please enter a layer id."), caption=unicode("Error"))
 			return
 			
 		try:
 			x_offset = float(self._widget.collectData('xOffsetBox'))
 			y_offset = float(self._widget.collectData('yOffsetBox'))
 		except ValueError:
-			print 'Please enter integer or decimal values for offset.'
+			dialogs.message(message=unicode("Please enter integer or decimal values for offset."), caption=unicode("Error"))
 			return
 
 		try:
 			x_scale = float(self._widget.collectData('xScaleBox'))
 			y_scale = float(self._widget.collectData('yScaleBox'))
 		except ValueError:
-			print 'Please enter integer or decimal values for scale.'
+			dialogs.message(message=unicode("Please enter integer or decimal values for scale."), caption=unicode("Error"))
 			return
 
 		try:
 			rotation = float(self._widget.collectData('rotBox'))
 		except ValueError:
-			print 'Please enter integer or decimal value for rotation.'
+			dialogs.message(message=unicode("Please enter integer or decimal value for rotation."), caption=unicode("Error"))
 			return
 			
 		try:
 			transparency = int(self._widget.collectData('transBox'))
 		except ValueError:
-			print 'Please enter an integer value in the range of 0-255 for transparency.'
+			dialogs.message(message=unicode("Please enter an integer value in the range of 0-255 for transparency."), caption=unicode("Error"))
 			return
 			
 		
