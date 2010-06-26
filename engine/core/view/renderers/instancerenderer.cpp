@@ -259,22 +259,51 @@ namespace FIFE {
 	}
 
 	void InstanceRenderer::addOutlined(Instance* instance, int r, int g, int b, int width) {
-		OutlineInfo info;
-		info.r = r;
-		info.g = g;
-		info.b = b;
-		info.width = width;
+		OutlineInfo newinfo;
+		newinfo.r = r;
+		newinfo.g = g;
+		newinfo.b = b;
+		newinfo.width = width;
 
-		m_instance_outlines[instance] = info;
+		// attempts to insert the element into the outline map
+		// will return false in the second value of the pair if the instance already exists 
+		// in the map and the first value of the pair will then be an iterator to the 
+		// existing data for the instance
+		std::pair<InstanceToOutlines_t::iterator, bool> insertiter = m_instance_outlines.insert(std::make_pair(instance, newinfo));
+
+		if (insertiter.second == false)
+		{
+			// the insertion did not happen because the instance 
+			// already exists in the map so lets just update its outline info
+			OutlineInfo& info = insertiter.first->second;
+			info.r = r;
+			info.b = b;
+			info.g = g;
+			info.width = width;
+		}
 	}
 
 	void InstanceRenderer::addColored(Instance* instance, int r, int g, int b) {
-		ColoringInfo info;
-		info.r = r;
-		info.g = g;
-		info.b = b;
+		ColoringInfo newinfo;
+		newinfo.r = r;
+		newinfo.g = g;
+		newinfo.b = b;
+		
+		// attempts to insert the element into the coloring map
+		// will return false in the second value of the pair if the instance already exists 
+		// in the map and the first value of the pair will then be an iterator to the 
+		// existing data for the instance
+		std::pair<InstanceToColoring_t::iterator, bool> insertiter = m_instance_colorings.insert(std::make_pair(instance, newinfo));
 
-		m_instance_colorings[instance] = info;
+		if (insertiter.second == false)
+		{
+			// the insertion did not happen because the instance 
+			// already exists in the map so lets just update its coloring info
+			ColoringInfo& info = insertiter.first->second;
+			info.r = r;
+			info.b = b;
+			info.g = g;
+		}
 	}
 
 	void InstanceRenderer::removeOutlined(Instance* instance) {
