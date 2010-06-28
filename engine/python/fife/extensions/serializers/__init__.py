@@ -50,12 +50,12 @@ def warn(self, msg):
 	print 'Warning (%s): %s' % (self.filename, msg)
 
 def root_subfile(masterfile, subfile):
-	'''
+	"""
 	Returns new path for given subfile (path), which is rooted against masterfile
 	E.g. if masterfile is ./../foo/bar.xml and subfile is ./../foo2/subfoo.xml,
 	returned path is ../foo2/subfoo.xml
 	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
-	'''
+	"""
 	s = '/'
 
 	masterfile = norm_path(os.path.abspath(masterfile))
@@ -82,13 +82,13 @@ def root_subfile(masterfile, subfile):
 	return pathstr
 
 def reverse_root_subfile(masterfile, subfile):
-	'''
+	"""
 	does inverse operation to root_subfile. E.g. 
 	E.g. if masterfile is ./../foo/bar.xml and subfile is ../foo2/subfoo.xml,
 	returned path ./../foo2/subfoo.xml
 	Usually this function is used to convert saved paths into engine relative paths
 	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
-	'''
+	"""
 	s = '/'
 
 	masterfile = norm_path(os.path.abspath(masterfile)).split(s)[:-1]
@@ -97,10 +97,10 @@ def reverse_root_subfile(masterfile, subfile):
 	return root_subfile(masterfile, subfile)
 
 def norm_path(path):
-	'''
+	"""
 	Makes the path use '/' delimited separators. FIFE always uses these delimiters, but some os-related
   routines will default to os.path.sep.
-	'''
+	"""
 	if os.path.sep == '/':
 		return path
 

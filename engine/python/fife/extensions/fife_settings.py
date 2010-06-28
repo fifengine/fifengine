@@ -40,11 +40,6 @@ from fife.extensions import pychan
 from fife.extensions.fife_utils import getUserDataDirectory
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 
-try:
-	import xml.etree.cElementTree as ET
-except:
-	import xml.etree.ElementTree as ET
-
 SETTINGS_GUI_XML="""\
 <Window name="Settings" title="Settings">
 	<Label text="Settings menu!" />

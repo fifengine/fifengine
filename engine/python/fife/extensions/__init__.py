@@ -5,10 +5,12 @@ __all__ = [
 	'fife_compat',
 	'fife_timer',
 	'fife_utils',
+	'fife_settings',
 	'fifelog',
 	'filebrowser',
 	'pythonize',
 	'savers',
+	'loaders',
 	'soundmanager',
 	'fife_math'
 ]

@@ -23,11 +23,8 @@
 
 import os
 from StringIO import StringIO
-
-try:
-	import xml.etree.cElementTree as ET
-except:
-	import xml.etree.ElementTree as ET
+	
+from fife.extensions.serializers import ET, SerializerError, InvalidFormat, NotFound
 
 
 EMPTY_XML_FILE="""\
@@ -59,14 +56,15 @@ class SimpleXMLSerializer(object):
 		"""
 		Loads the XML file into memory and validates it.
 		
+		Raises a SerializerError exception if the file is not specified.
+		
 		@note: If the file does not exist it will automatically create a blank file for you.
 		"""
 		if filename:
 			self._file = filename
 		
 		if not self._file:
-			print "Cannot load file.  No filename specified!"
-			return
+			raise SerializerError("Cannot load file or create file.  No filename specified!")
 		
 		if not os.path.exists(self._file):
 			self._tree = ET.parse(StringIO(EMPTY_XML_FILE))
@@ -89,8 +87,7 @@ class SimpleXMLSerializer(object):
 			savefile = self._file
 				
 		if not savefile:
-			print "Cannot save file.  No filename specified!"
-			return
+			raise SerializerError("Cannot save file.  No filename specified!")
 	
 		""" Writes the settings to file """
 		self._indent(self._root_element)
@@ -166,7 +163,7 @@ class SimpleXMLSerializer(object):
 		@type extra_attrs: C{dict}
 		"""
 		if not isinstance(name, str) and not isinstance(name, unicode):
-			raise AttributeError("Settings:set: Invalid type for name argument.")
+			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for name argument.")
 
 		moduleTree = self._getModuleTree(module)
 		e_type = "str"
@@ -207,20 +204,22 @@ class SimpleXMLSerializer(object):
 			elm.text = value
 
 	def _validateTree(self):
-		""" Iterates the XML tree and prints warning when an invalid tag is found """
+		""" 
+		Iterates the XML tree and prints warning when an invalid tag is found.
+		
+		Raises an InvalidFormat exception if there is a format error.
+		"""
 		for c in self._root_element.getchildren():
 			if c.tag != "Module":
-				print "Invalid tag in " + self._file + ". Expected Module, got: ", c.tag
+				raise InvalidFormat("Invalid tag in " + self._file + ". Expected Module, got: " + c.tag)
 			elif c.get("name", "") == "":
-				print "Invalid tag in " + self._file + ". Module name is empty."
+				raise InvalidFormat("Invalid tag in " + self._file + ". Module name is empty.")
 			else:
 				for e in c.getchildren():
 					if e.tag != "Setting":
-						print "Invalid tag in " + self._file + " in module: ",c.tag,
-						print ". Expected Setting, got: ", e.tag
+						raise InvalidFormat("Invalid tag in " + self._file + " in module: " + c.tag + ". Expected Setting, got: " + e.tag)
 					elif c.get("name", "") == "":
-						print "Invalid tag in " + self._file + " in module: ",c.tag,
-						print ". Setting name is empty", e.tag
+						raise InvalidFormat("Invalid tag in " + self._file + " in module: " + c.tag + ". Setting name is empty" + e.tag)
 						
 	def _getModuleTree(self, module):
 		"""
