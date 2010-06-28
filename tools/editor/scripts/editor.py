@@ -103,9 +103,6 @@ class Editor(ApplicationBase, MainWindow):
 	
 		ApplicationBase.__init__(self, TDS, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
-		pychan.init(self.engine, debug=False)
-		
-		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
 	def _initTools(self):
 		""" Initializes tools """

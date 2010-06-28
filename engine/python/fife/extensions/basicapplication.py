@@ -30,6 +30,7 @@ See the L{ApplicationBase} documentation.
 from fife import fife
 from fife.extensions import fifelog
 from fife.extensions.serializers.xmlanimation import XMLAnimationLoader
+from fife.extensions import pychan
 from fife.extensions.fife_settings import Setting
 
 class ExitEventListener(fife.IKeyListener):
@@ -85,10 +86,13 @@ class ApplicationBase(object):
 		self._animationloader = XMLAnimationLoader(self.engine.getImagePool(), self.engine.getVFS())
 		self.engine.getAnimationPool().addResourceLoader(self._animationloader)
 
+		pychan.init(self.engine, debug=self._setting.get("FIFE", "PychanDebug", False))
+		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
+
 		self.quitRequested = False
 		self.breakRequested = False
 		self.returnValues = []
-
+		
 	def loadSettings(self):
 		"""
 		Load the settings from a python file and load them into the engine.

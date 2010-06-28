@@ -86,7 +86,6 @@ class DemoApplication(basicapplication.ApplicationBase):
 		super(DemoApplication,self).__init__()
 
 		# Init Pychan
-		pychan.init(self.engine,debug=False)
 		pychan.loadFonts("fonts/freefont.fontdef")
 		pychan.manager.setDefaultFont("FreeSans")
 		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)

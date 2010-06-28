@@ -70,10 +70,6 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 class Shooter(ApplicationBase):
 	def __init__(self):
 		super(Shooter,self).__init__(TDS)
-		pychan.init(self.engine, debug=False)
-		
-		#This is requred if you want to use modal dialog boxes
-		pychan.setupModalExecution(self.mainLoop,self.breakFromMainLoop)
 		
 		self._world = world.World(self, self.engine, self._setting)
 		self._listener = ApplicationListener(self.engine, self._world)
