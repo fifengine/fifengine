@@ -38,11 +38,12 @@ from StringIO import StringIO
 
 from fife.extensions import pychan
 from fife.extensions.fife_utils import getUserDataDirectory
+from fife.extensions.serializers.simplexml import SimpleXMLSerializer
+
 try:
 	import xml.etree.cElementTree as ET
 except:
 	import xml.etree.ElementTree as ET
-
 
 SETTINGS_GUI_XML="""\
 <Window name="Settings" title="Settings">
@@ -76,13 +77,6 @@ CHANGES_REQUIRE_RESTART="""\
 		<Button name="closeButton" text="Ok" />
 	</HBox>
 </Window>
-"""
-
-EMPTY_SETTINGS="""\
-<?xml version='1.0' encoding='UTF-8'?>
-<Settings>
-
-</Settings>
 """
 
 FIFE_MODULE = "FIFE"
@@ -123,6 +117,8 @@ class Setting(object):
 
 		# Holds SettingEntries
 		self._entries = {}
+		
+		self._xmlserializer = None
 
 		if self._settings_file == "":
 			self._settings_file = "settings.xml"
@@ -142,10 +138,6 @@ class Setting(object):
 		if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
 			if os.path.exists('settings-dist.xml') and copy_dist:
 				shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
-			else:
-				#no settings file found
-				tree = ET.parse(StringIO(EMPTY_SETTINGS))
-				tree.write(os.path.join(self._appdata, self._settings_file), 'UTF-8')
 
 		#default settings
 		self._resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
@@ -154,8 +146,8 @@ class Setting(object):
 		#Used to stylize the options gui
 		self._gui_style = "default"
 
+		#Initialize the XML serializer
 		self.loadSettings()
-
 
 		self._initDefaultSettingEntries()
 
@@ -212,51 +204,12 @@ class Setting(object):
 			print "It's probably missing in settings-dist.xml as well!"
 
 	def loadSettings(self):
-		self._tree = ET.parse(os.path.join(self._appdata, self._settings_file))
+		self._xmlserializer = SimpleXMLSerializer(os.path.join(self._appdata, self._settings_file))
 
-		self._root_element = self._tree.getroot()
-		self.validateTree()
-
-	def setGuiStyle(self, style):
-		""" Set a custom gui style used for the option dialog.
-		@param style: Pychan style to be used
-		@type style: C{string}
-		"""
-		self._gui_style = style
-
-	def validateTree(self):
-		""" Iterates the settings tree and prints warning when an invalid tag is found """
-		for c in self._root_element.getchildren():
-			if c.tag != "Module":
-				print "Invalid tag in settings.xml. Expected Module, got: ", c.tag
-			elif c.get("name", "") == "":
-				print "Invalid tag in settings.xml. Module name is empty."
-			else:
-				for e in c.getchildren():
-					if e.tag != "Setting":
-						print "Invalid tag in settings.xml in module: ",c.tag,
-						print ". Expected Setting, got: ", e.tag
-					elif c.get("name", "") == "":
-						print "Invalid tag in settings.xml in module: ",c.tag,
-						print ". Setting name is empty", e.tag
-
-	def getModuleTree(self, module):
-		"""
-		Returns a module element from the settings tree. If no module with the specified
-		name exists, a new element will be created.
-
-		@param module: The module to get from the settings tree
-		@type module: C{string}
-		"""
-		if not isinstance(module, str) and not isinstance(module, unicode):
-			raise AttributeError("Settings:getModuleTree: Invalid type for module argument.")
-
-		for c in self._root_element.getchildren():
-			if c.tag == "Module" and c.get("name", "") == module:
-				return c
-
-		# Create module
-		return ET.SubElement(self._root_element, "Module", {"name":module})
+	def saveSettings(self):
+		""" Writes the settings to the settings file """
+		if self._xmlserializer:
+			self._xmlserializer.save()
 
 	def get(self, module, name, defaultValue=None):
 		""" Gets the value of a specified setting
@@ -266,55 +219,11 @@ class Setting(object):
 		@param defaultValue: Specifies the default value to return if the setting is not found
 		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
 		"""
-		if not isinstance(name, str) and not isinstance(name, unicode):
-			raise AttributeError("Settings:get: Invalid type for name argument.")
-
-		moduleTree = self.getModuleTree(module)
-		element = None
-		for e in moduleTree.getchildren():
-			if e.tag == "Setting" and e.get("name", "") == name:
-				element = e
-				break
+		if self._xmlserializer:
+			return self._xmlserializer.get(module, name, defaultValue)
 		else:
-			return defaultValue
-
-		e_value = element.text
-		e_strip = element.get("strip", "1").strip().lower()
-		e_type	= str(element.get("type", "str")).strip()
-
-		if e_value is None:
-			return defaultValue
-
-		# Strip value
-		if e_strip == "" or e_strip == "false" or e_strip == "no" or e_strip == "0":
-			e_strip = False
-		else: e_strip = True
-
-		if e_type == "str" or e_type == "unicode":
-			if e_strip: e_value = e_value.strip()
-		else:
-			e_value = e_value.strip()
-
-		# Return value
-		if e_type == 'int':
-			return int(e_value)
-		elif e_type == 'float':
-			return float(e_value)
-		elif e_type == 'bool':
-			e_value = e_value.lower()
-			if e_value == "" or e_value == "false" or e_value == "no" or e_value == "0":
-				return False
-			else:
-				return True
-		elif e_type == 'str':
-			return str(e_value)
-		elif e_type == 'unicode':
-			return unicode(e_value)
-		elif e_type == 'list':
-			return self._deserializeList(e_value)
-		elif e_type == 'dict':
-			return self._deserializeDict(e_value)
-
+			return None
+	
 	def set(self, module, name, value, extra_attrs={}):
 		"""
 		Sets a setting to specified value.
@@ -326,103 +235,16 @@ class Setting(object):
 		@param extra_attrs: Extra attributes to be stored in the XML-file
 		@type extra_attrs: C{dict}
 		"""
-		if not isinstance(name, str) and not isinstance(name, unicode):
-			raise AttributeError("Settings:set: Invalid type for name argument.")
+		if self._xmlserializer:
+			self._xmlserializer.set(module, name, value, extra_attrs)
 
-		moduleTree = self.getModuleTree(module)
-		e_type = "str"
-
-		if isinstance(value, bool): # This must be before int
-			e_type = "bool"
-			value = str(value)
-		elif isinstance(value, int):
-			e_type = "int"
-			value = str(value)
-		elif isinstance(value, float):
-			e_type = "float"
-			value = str(value)
-		elif isinstance(value, unicode):
-			e_type = "unicode"
-			value = unicode(value)
-		elif isinstance(value, list):
-			e_type = "list"
-			value = self._serializeList(value)
-		elif isinstance(value, dict):
-			e_type = "dict"
-			value = self._serializeDict(value)
-		else:
-			e_type = "str"
-			value = str(value)
-
-		for e in moduleTree.getchildren():
-			if e.tag != "Setting": continue
-			if e.get("name", "") == name:
-				e.text = value
-				break
-		else:
-			attrs = {"name":name, "type":e_type}
-			for k in extra_attrs:
-				if k not in attrs:
-					attrs[k] = extra_args[k]
-			elm = ET.SubElement(moduleTree, "Setting", attrs)
-			elm.text = value
-
-	def saveSettings(self):
-		""" Writes the settings to the settings file """
-		self._indent(self._root_element)
-		self._tree.write(os.path.join(self._appdata, self._settings_file), 'UTF-8')
-
-	def _indent(self, elem, level=0):
+	def setGuiStyle(self, style):
+		""" Set a custom gui style used for the option dialog.
+		@param style: Pychan style to be used
+		@type style: C{string}
 		"""
-		Adds whitespace, so the resulting XML-file is properly indented.
-		Shamelessly stolen from http://effbot.org/zone/element-lib.htm
-		"""
-		i = "\n" + level*"  "
-		if len(elem):
-			if not elem.text or not elem.text.strip():
-				elem.text = i + "  "
-			if not elem.tail or not elem.tail.strip():
-				elem.tail = i
-			for elem in elem:
-				self._indent(elem, level+1)
-			if not elem.tail or not elem.tail.strip():
-				elem.tail = i
-		else:
-			if level and (not elem.tail or not elem.tail.strip()):
-				elem.tail = i
-
-	# FIXME:
-	# These serialization functions are not reliable at all
-	# This will only serialize the first level of a dict or list
-	# It will not check the types nor the content for conflicts.
-	# Perhaps we should add a small serialization library?
-	def _serializeList(self, list):
-		""" Serializes a list, so it can be stored in a text file """
-		return " ; ".join(list)
-
-	def _deserializeList(self, string):
-		""" Deserializes a list back into a list object """
-		return string.split(" ; ")
-
-	def _serializeDict(self, dict):
-		""" Serializes a list, so it can be stored in a text file """
-		serial = ""
-		for key in dict:
-			value = dict[key]
-			if serial != "": serial += " ; "
-			serial += str(key)+" : "+str(value)
-
-		return serial
-
-	def _deserializeDict(self, serial):
-		""" Deserializes a list back into a dict object """
-		dict = {}
-		items = serial.split(" ; ")
-		for i in items:
-			kv_pair = i.split(" : ")
-			dict[kv_pair[0]] = kv_pair[1]
-		return dict
-
+		self._gui_style = style
+		
 	def onOptionsPress(self):
 		"""
 		Opens the options dialog box.  Usually you would bind this to a button.
@@ -446,7 +268,6 @@ class Setting(object):
 			return pychan.loadXML(dialog)
 		else:
 			return pychan.loadXML(StringIO(dialog))
-
 
 	def fillWidgets(self):
 		for module in self._entries.itervalues():
@@ -518,10 +339,10 @@ class Setting(object):
 		shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
 		self.changesRequireRestart = True
 		self.loadSettings()
-		self._showChangeRequireRestartDialog()
+		#self._showChangeRequireRestartDialog()
 
-		if self.OptionsDlg:
-			self.OptionsDlg.hide()
+		#if self.OptionsDlg:
+		#	self.OptionsDlg.hide()
 
 	def _getEntries(self):
 		return self._entries
