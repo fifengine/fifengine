@@ -106,7 +106,7 @@ class MapView:
 			print "Camera is not associated with this map"
 			return
 			
-		self._camera = None
+		self._camera = camera
 	
 	def getController(self):
 		return self._controller

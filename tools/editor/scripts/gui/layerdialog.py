@@ -26,12 +26,13 @@ from fife.extensions import pychan
 from fife.extensions.pychan import dialogs
 
 class LayerDialog(object):
-	""" The B{LayerDialog} provides a gui dialog for creating and editing layers.
+	""" 
+	The B{LayerDialog} provides a gui dialog for creating and editing layers.
 	
 		FIXME:
 			- gridtypes can only be square for now
 			- pathing strategy 
-	"""
+    """
 	def __init__(self, engine, map, callback=None, onCancel=None, layer=None):
 		self.engine = engine
 		self.model = engine.getModel()

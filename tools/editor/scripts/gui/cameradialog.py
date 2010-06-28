@@ -106,6 +106,9 @@ class CameraDialog(object):
 		cam.setCellImageDimensions(refw, refh)
 		cam.setRotation(rot)
 		cam.setTilt(tilt)
+		
+		renderer = fife.InstanceRenderer.getInstance(cam)
+		renderer.activateAllLayers(map)
 	
 		self._widget.hide()
 
