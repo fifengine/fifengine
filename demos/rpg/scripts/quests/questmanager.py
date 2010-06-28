@@ -26,7 +26,7 @@
 
 from fife import fife
 
-from fife.extensions.fife_settings import Setting
+from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 from scripts.quests.basequest import Quest, ReturnItemQuest, QuestTypes
 from scripts.misc.serializer import Serializer
 
@@ -46,7 +46,7 @@ class QuestManager(Serializer):
 	def deserialize(self, valuedict=None):
 		questfile = self._gamecontroller.settings.get("RPG", "QuestFile", "maps/quests.xml")
 		
-		self._questsettings = Setting(settings_file=questfile)
+		self._questsettings = SimpleXMLSerializer(questfile)
 		
 		for identifier in self._questsettings.get("QuestGivers", "list", []):
 			for quest in self._questsettings.get(identifier, "questlist", []):

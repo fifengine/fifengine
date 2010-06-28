@@ -28,7 +28,7 @@ import sys, os, re, math, random, shutil, uuid
 from fife import fife
 from fife.extensions.loaders import loadMapFile
 from fife.extensions.loaders import loadImportFile
-from fife.extensions.fife_settings import Setting
+from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 
 from scripts.actors.baseactor import Actor
 from scripts.actors.questgiver import QuestGiver
@@ -120,7 +120,7 @@ class Scene(Serializer):
 		playerfilename = os.path.join("saves", "player_save.xml")
 		
 		if os.path.isfile(playerfilename):
-			player_settings = Setting(settings_file=playerfilename, copy_dist=False)
+			player_settings = SimpleXMLSerializer(playerfilename)
 			pvals = player_settings.get("player", "player", {})
 			self._player.deserialize(pvals)
 
@@ -142,8 +142,8 @@ class Scene(Serializer):
 		modelfile = self._gamecontroller.settings.get("RPG", "AllObjectFile", "maps/allobjects.xml")
 		questfile = self._gamecontroller.settings.get("RPG", "QuestFile", "maps/quests.xml")
 		
-		self._objectsettings = Setting(settings_file=objectfile)
-		self._modelsettings = Setting(settings_file=modelfile)
+		self._objectsettings = SimpleXMLSerializer(objectfile)
+		self._modelsettings = SimpleXMLSerializer(modelfile)
 
 		for cam in self._map.getCameras():
 			self._cameras[cam.getId()] = cam
@@ -236,8 +236,8 @@ class Scene(Serializer):
 	def serialize(self):
 		filename = os.path.join("saves", self._mapname + "_save.xml")
 		playerfilename = os.path.join("saves", "player_save.xml")
-		map_settings = Setting(settings_file=filename, copy_dist=False)
-		player_settings = Setting(settings_file=playerfilename, copy_dist=False)
+		map_settings = SimpleXMLSerializer(filename)
+		player_settings = SimpleXMLSerializer(playerfilename)
 		
 		objectlist = []
 		
@@ -251,8 +251,8 @@ class Scene(Serializer):
 		pvals = self._player.serialize()
 		player_settings.set("player", "player", pvals)
 		
-		map_settings.saveSettings()
-		player_settings.saveSettings()
+		map_settings.save()
+		player_settings.save()
 		
 	def deserialize(self):
 		if self._mapname:
