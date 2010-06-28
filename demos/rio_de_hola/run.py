@@ -118,7 +118,6 @@ class ApplicationListener(eventlistenerbase.EventListenerBase):
 class IslandDemo(ApplicationBase):
 	def __init__(self):
 		super(IslandDemo,self).__init__(TDS)
-		pychan.init(self.engine, debug=TDS.get("FIFE", "PychanDebug"))
 		self.world = world.World(self.engine)
 		self.listener = ApplicationListener(self.engine, self.world)
 		self.world.load(str(TDS.get("rio", "MapFile")))

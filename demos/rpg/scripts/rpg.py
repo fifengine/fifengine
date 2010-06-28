@@ -148,8 +148,6 @@ class RPGApplication(ApplicationBase):
 		super(RPGApplication,self).__init__(TDS)
 		self._settings = TDS
 		
-		pychan.init(self.engine, debug=self._settings.get("FIFE", "PychanDebug", False))
-		
 		self._gamecontroller = GameController(self, self.engine, self._settings)
 
 	def createListener(self):
