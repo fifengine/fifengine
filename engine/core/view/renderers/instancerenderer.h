@@ -98,6 +98,7 @@ namespace FIFE {
 			uint8_t g;
 			uint8_t b;
 			int width;
+			bool dirty;
 			Image* outline;
 			Image* curimg;
 			OutlineInfo();
@@ -109,6 +110,7 @@ namespace FIFE {
 			uint8_t r;
 			uint8_t g;
 			uint8_t b;
+			bool dirty;
 			Image* overlay;
 			Image* curimg;
 			ColoringInfo();
@@ -116,6 +118,7 @@ namespace FIFE {
 		};
 		typedef std::map<Instance*, OutlineInfo> InstanceToOutlines_t;
 		typedef std::map<Instance*, ColoringInfo> InstanceToColoring_t;
+		//typedef std::map<int, ColoringInfo> InstanceToColoring_t;
 		
 		InstanceToOutlines_t m_instance_outlines;
 		InstanceToColoring_t m_instance_colorings;

@@ -59,6 +59,7 @@ namespace FIFE {
 		g(0),
 		b(0),
 		width(1),
+		dirty(false),
 		outline(NULL),
 		curimg(NULL) {
 	}
@@ -66,6 +67,7 @@ namespace FIFE {
 		r(0),
 		g(0),
 		b(0),
+		dirty(false),
 		overlay(NULL),
 		curimg(NULL) {
 	}
@@ -161,7 +163,8 @@ namespace FIFE {
 	}
 
 	Image* InstanceRenderer::bindOutline(OutlineInfo& info, RenderItem& vc, Camera* cam) {
-		if (info.curimg == vc.image) {
+		if (!info.dirty && info.curimg == vc.image) {
+			// optimization for outline that has not changed
 			return info.outline;
 		} else {
 			info.curimg = vc.image;
@@ -222,19 +225,29 @@ namespace FIFE {
 		// In case of OpenGL backend, SDLImage needs to be converted
 		info.outline = m_renderbackend->createImage(img->detachSurface());
 		delete img;
+
+		if (info.outline) {
+			// mark outline as not dirty since we created it here
+			info.dirty = false;
+		}
+
 		return info.outline;
 	}
 
 	Image* InstanceRenderer::bindColoring(ColoringInfo& info, RenderItem& vc, Camera* cam) {
-		if (info.curimg == vc.image) {
+		if (!info.dirty && info.curimg == vc.image) {
+			// optimization for coloring overlay that has not changed
 			return info.overlay;
-		} else {
+		}
+		else {
 			info.curimg = vc.image;
 		}
+		
 		if (info.overlay) {
 			delete info.overlay; // delete old mask
 			info.overlay = NULL;
 		}
+
 		SDL_Surface* surface = vc.image->getSurface();
 		SDL_Surface* overlay_surface = SDL_ConvertSurface(surface, surface->format, surface->flags);
 
@@ -255,6 +268,12 @@ namespace FIFE {
 		// In case of OpenGL backend, SDLImage needs to be converted
 		info.overlay = m_renderbackend->createImage(img->detachSurface());
 		delete img;
+
+		if (info.overlay) {
+			// mark overlay coloring as not dirty since we created it here
+			info.dirty = false;
+		}
+
 		return info.overlay;
 	}
 
@@ -264,6 +283,7 @@ namespace FIFE {
 		newinfo.g = g;
 		newinfo.b = b;
 		newinfo.width = width;
+		newinfo.dirty = true;
 
 		// attempts to insert the element into the outline map
 		// will return false in the second value of the pair if the instance already exists 
@@ -271,15 +291,20 @@ namespace FIFE {
 		// existing data for the instance
 		std::pair<InstanceToOutlines_t::iterator, bool> insertiter = m_instance_outlines.insert(std::make_pair(instance, newinfo));
 
-		if (insertiter.second == false)
-		{
+		if (insertiter.second == false) {
 			// the insertion did not happen because the instance 
 			// already exists in the map so lets just update its outline info
 			OutlineInfo& info = insertiter.first->second;
-			info.r = r;
-			info.b = b;
-			info.g = g;
-			info.width = width;
+
+			if (info.r != r || info.g != g || info.b != b || info.width != width) {
+				// only update the outline info if its changed since the last call
+				// flag the outline info as dirty so it will get processed during rendering
+				info.r = r;
+				info.b = b;
+				info.g = g;
+				info.width = width;
+				info.dirty = true;
+			}
 		}
 	}
 
@@ -288,21 +313,27 @@ namespace FIFE {
 		newinfo.r = r;
 		newinfo.g = g;
 		newinfo.b = b;
-		
+		newinfo.dirty = true;
+
 		// attempts to insert the element into the coloring map
 		// will return false in the second value of the pair if the instance already exists 
 		// in the map and the first value of the pair will then be an iterator to the 
 		// existing data for the instance
 		std::pair<InstanceToColoring_t::iterator, bool> insertiter = m_instance_colorings.insert(std::make_pair(instance, newinfo));
 
-		if (insertiter.second == false)
-		{
+		if (insertiter.second == false) {
 			// the insertion did not happen because the instance 
 			// already exists in the map so lets just update its coloring info
 			ColoringInfo& info = insertiter.first->second;
-			info.r = r;
-			info.b = b;
-			info.g = g;
+
+			if (info.r != r || info.g != g || info.b != b) {
+				// only update the coloring info if its changed since the last call
+				// flag the coloring info as dirty so it will get processed during rendering
+				info.r = r;
+				info.b = b;
+				info.g = g;
+				info.dirty = true;
+			}
 		}
 	}
 
