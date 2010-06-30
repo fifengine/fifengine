@@ -128,10 +128,6 @@ namespace FIFE {
 			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
 			RenderItem& vc = **instance_it;
 			unsigned char trans = visual->getTransparency();
-			bool visible = visual->isVisible();
-
-			if(!visible)
-				continue;
 
 			/**
 			 *  the instance transparency value take precedence. If it's 0 use the layer trans

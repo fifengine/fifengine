@@ -311,7 +311,9 @@ namespace FIFE {
 				updateEntry(entry);
 
 			RenderItem& item = m_instances[entry.instance_index];
-			if(!item.image)
+			InstanceVisual* visual = item.instance->getVisual<InstanceVisual>();
+			bool visible = visual->isVisible();
+			if(!item.image || !visible)
 				continue;
 
 			Point3D screen_point = m_camera->virtualScreenToScreen(item.screenpoint);
