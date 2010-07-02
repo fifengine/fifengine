@@ -283,6 +283,10 @@ namespace FIFE {
 	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
 		const double OVERDRAW = 2.5;
 		renderlist.clear();
+		if(!m_layer->areInstancesVisible()) {
+			FL_DBG(_log, "Layer instances hidden");
+			return;
+		}
 		bool isWarped = transform == Camera::WarpedTransform;
 		if( isWarped )
 			fullUpdate();
@@ -296,6 +300,7 @@ namespace FIFE {
 		viewport.y = std::min(viewport_a.y, viewport_b.y);
 		viewport.w = std::max(viewport_a.x, viewport_b.x) - viewport.x;
 		viewport.h = std::max(viewport_a.y, viewport_b.y) - viewport.y;
+		unsigned char layer_trans = m_layer->getLayerTransparency();
 
 		// FL_LOG(_log, LMsg("camera-update viewport") << viewport);
 		std::vector<int> index_list;
@@ -313,8 +318,24 @@ namespace FIFE {
 			RenderItem& item = m_instances[entry.instance_index];
 			InstanceVisual* visual = item.instance->getVisual<InstanceVisual>();
 			bool visible = visual->isVisible();
-			if(!item.image || !visible)
+			unsigned char instance_trans = visual->getTransparency();
+			if(!item.image || !visible || (instance_trans == 255 && layer_trans == 0)
+									   || (instance_trans == 0 && layer_trans == 255)) {
 				continue;
+			}
+
+			if(layer_trans != 0) {
+				if(instance_trans != 0) {
+					short calc_trans = layer_trans - instance_trans;
+					if(calc_trans >= 0) {
+						instance_trans = calc_trans;
+					} else {
+						instance_trans = 0;
+					}
+				} else {
+					instance_trans = layer_trans;
+				}
+			}
 
 			Point3D screen_point = m_camera->virtualScreenToScreen(item.screenpoint);
 			// NOTE:
@@ -327,6 +348,8 @@ namespace FIFE {
 			item.dimensions.y = screen_point.y;
 			item.dimensions.w = item.bbox.w;
 			item.dimensions.h = item.bbox.h;
+
+			item.transparency = 255 - instance_trans;
 
 			if (zoom != 1.0) {
 				// NOTE: Due to image alignment, there is additional additions on image dimensions 

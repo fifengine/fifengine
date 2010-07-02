@@ -106,12 +106,6 @@ namespace FIFE {
 	}
 
 	void InstanceRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
-		// patch #335 by abeyer
-		if (!layer->areInstancesVisible()) {
-			FL_DBG(_log, "Layer instances hidden");
-			return;
-		}
-
 		FL_DBG(_log, "Iterating layer...");
 		CellGrid* cg = layer->getCellGrid();
 		if (!cg) {
@@ -125,36 +119,24 @@ namespace FIFE {
 		for (;instance_it != instances.end(); ++instance_it) {
 			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
-			InstanceVisual* visual = instance->getVisual<InstanceVisual>();
 			RenderItem& vc = **instance_it;
-			unsigned char trans = visual->getTransparency();
-
-			/**
-			 *  the instance transparency value take precedence. If it's 0 use the layer trans
-			 *
-			 *	\todo Instances cannot be completely opaque when their layer's transparency is non zero.
-			 */
-			if (trans == 0) {
-				unsigned char layer_trans = layer->getLayerTransparency();
-				trans = layer_trans;
-			}
 
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 
 			if (any_effects) {
 				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
 				if (outline_it != m_instance_outlines.end()) {
-					bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, 255-trans);
+					bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 				}
 
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				if (coloring_it != m_instance_colorings.end()) {
-					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, 255-trans);
+					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 					continue; // Skip normal rendering after drawing overlay
 				}
 			}
 
-			vc.image->render(vc.dimensions, 255-trans);
+			vc.image->render(vc.dimensions, vc.transparency);
 		}
 	}
 
