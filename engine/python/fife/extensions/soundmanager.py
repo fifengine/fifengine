@@ -239,7 +239,7 @@ class SoundManager(object):
 			else:
 				fifeemitter = self._loadedclips[filename][0]
 
-			clip = SoundEmitter(self, fifeemitter.getID(), filename, fifeemitter)
+			clip = SoundEmitter(self, fifeemitter.getId(), filename, fifeemitter)
 			clip.duration = fifeemitter.getDuration()
 
 		if position is not None:
@@ -361,7 +361,7 @@ class SoundManager(object):
 
 		for emitterlist in self._loadedclips.values():
 			for emitter in emitterlist:
-				self._fifesoundmanager.releaseEmitter(emitter.getID())
+				self._fifesoundmanager.releaseEmitter(emitter.getId())
 				emitter = None
 
 		self._loadedclips.clear()

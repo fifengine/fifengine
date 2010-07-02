@@ -106,17 +106,21 @@ class ActorActionListener(ObjectActionListener):
 			self._object.performNextAction()
 
 class ActorAttributes(Serializer):
-	def __init__(self, strength=0, dexterity=0, intelligence=0, health=0):
+	def __init__(self, strength=0, dexterity=0, intelligence=0, health=0, walkspeed=0):
 		self._str = strength
 		self._dex = dexterity
 		self._int = intelligence
 		self._hp = health
+		self._walkspeed = walkspeed
 		
 	def serialize(self):
+		lvars = {}
+		
 		lvars['str'] = self._str
 		lvars['dex'] = self._dex
 		lvars['int'] = self._int
 		lvars['hp'] = self._hp
+		lvars['walk_speed'] = self._walkspeed
 		
 		return lvars
 		
@@ -129,6 +133,8 @@ class ActorAttributes(Serializer):
 			self._int = int(valuedict['int'])
 		if valuedict.has_key("hp"):
 			self._hp = int(valuedict['hp'])
+		if valuedict.has_key("walk_speed"):
+			self._walkspeed = float(valuedict['walk_speed'])
 			
 	def _getStrength(self):
 		return self._str
@@ -154,11 +160,18 @@ class ActorAttributes(Serializer):
 	def _setHealth(self, health):
 		self._hp = health
 	
+	def _getWalkSpeed(self):
+		return self._walkspeed
+		
+	def _setWalkSpeed(self, walkspeed):
+		self._walkspeed = walkspeed
+	
 	
 	strength = property(_getStrength, _setStrength)
 	dexterity = property(_getDexterity, _setDexterity)
 	intelligence = property(_getIntelligence, _setIntelligence)
 	health = property(_getHealth, _setHealth)
+	walkspeed = property(_getWalkSpeed, _setWalkSpeed)
 			
 
 class Actor(BaseGameObject):
@@ -169,11 +182,12 @@ class Actor(BaseGameObject):
 		self._inventory = []
 		self._maxinventoryitems = 20
 
-		self._walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
-		
 		self._gold = 0
 		self._attributes = ActorAttributes()
-		
+
+		#set the default walkspeed
+		self._attributes.walkspeed = self._gamecontroller.settings.get("RPG", "DefaultActorWalkSpeed", 4.0)
+	
 		self.stand()
 		
 	def stand(self):
@@ -182,7 +196,7 @@ class Actor(BaseGameObject):
 		
 	def walk(self, location):
 		self._state = ActorStates["WALK"]
-		self._instance.move('walk', location, self._walkspeed)
+		self._instance.move('walk', location, self._attributes.walkspeed)
 		
 	def say(self, text):
 		self._instance.say(text, 2500)
@@ -230,6 +244,10 @@ class Actor(BaseGameObject):
 
 		lvars['gold'] = self._gold
 		
+		att_vars = self._attributes.serialize()
+		for key, value in att_vars.items():
+			lvars[key] = value
+		
 		return lvars
 
 	def deserialize(self, valuedict):
@@ -240,8 +258,7 @@ class Actor(BaseGameObject):
 		else:
 			self._gold = 0
 			
-		if valuedict.has_key("walk_speed"):
-			self._walkspeed = float(valuedict['walk_speed'])
+		self._attributes.deserialize(valuedict)
 		
 	def _getState(self):
 		return self._state
