@@ -42,7 +42,7 @@ namespace FIFE {
 		SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid);
 		~SoundEmitter();
 
-		unsigned int getID() const;
+		unsigned int getId() const;
 
 		void setSoundClip(unsigned int sound_id);
 		void reset(bool defaultall = false);
