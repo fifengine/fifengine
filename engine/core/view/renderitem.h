@@ -64,6 +64,9 @@ namespace FIFE {
 			
 			// current facing angle
 			int facing_angle;
+
+			// current transparency
+			unsigned char transparency;
 		private:
 			int m_cached_static_img_id;
 			int m_cached_static_img_angle;
