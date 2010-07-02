@@ -54,7 +54,7 @@ namespace FIFE {
 
 		/** Returns the emitter-id
 		 */
-		unsigned int getID() const{
+		unsigned int getId() const{
 			return m_emitterid;
 		}
 
