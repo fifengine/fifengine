@@ -48,11 +48,17 @@ class ObjectActionListener(fife.InstanceActionListener):
 		self._gamecontroller = gamecontroller
 		self._object = obj
 		
+		self._attached = False
+		
 	def detachActionListener(self):
-		self._object.instance.removeActionListener(self)
+		if self._attached:
+			self._object.instance.removeActionListener(self)
+			self._attached = False
 		
 	def attachActionListener(self):
-		self._object.instance.addActionListener(self)
+		if not self._attached:
+			self._object.instance.addActionListener(self)
+			self._attached = True
 
 	def onInstanceActionFinished(self, instance, action):
 		pass
@@ -97,18 +103,26 @@ class BaseGameObject(Serializer):
 			
 		self._activated = True
 		
+	def hide(self):
+		"""
+		Marks the FIFE instance as not visible
+		"""
+		if self._instance:
+			self._instance.get2dGfxVisual().setVisible(False)
+			
+	def show(self):
+		"""
+		Marks the FIFE instance as not visible
+		"""
+		if self._instance:
+			self._instance.get2dGfxVisual().setVisible(True)
+
 	def destroy(self):
 		"""
 		Deletes the FIFE instance from the actor layer on the map.
 		"""
-		
-		#This doesnt work
-		#self._instance.get2dGfxVisual().setVisible(False)
-
-		#remove from the scene instead
 		if self._actionlistener:
 			self._actionlistener.detachActionListener()	
-			self._actionlistener = None
 		
 		if self._instance :
 			self._layer.deleteInstance(self._instance)
@@ -117,15 +131,19 @@ class BaseGameObject(Serializer):
 		self._activated = False
 		
 	def spawn(self, x, y):
-		#This doesnt work
-		#self._instance.get2dGfxVisual().setVisible(True)
-	
+		"""
+		Creates a new FIFE instance and spawns it in the specified x y location
+		"""
 		if self._instance:
 			self._setMapPostion(x,y)
+			self.show()
 		else:
 			self._position.x = x
 			self._position.y = y
 			self._createFIFEInstance(self, self._layer)
+		
+		if self._actionlistener and self._instance:
+			self._actionlistener.attachActionListener()	
 		
 		self._activated = True
 			
@@ -221,11 +239,10 @@ class BaseGameObject(Serializer):
 	def _setActivated(self, activate):
 		self._activated = activate
 			
-
 	location = property(_getLocation, _setLocation)
 	instance = property(_getInstance)
 	type = property(_getType)
 	id = property(_getId)
 	modelname = property(_getModelName)
 	position = property(_getPosition, _setPosition)
-	activated = property(_getActivated, _setActivated)
+	active = property(_getActivated, _setActivated)

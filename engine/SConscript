@@ -112,17 +112,22 @@ cbproj_win32 = env.CodeblocksProjectWin32(os.path.join('..', '..','..', builders
 cbproj_linux = env.CodeblocksProjectLinux(os.path.join('..', '..','..', builders.cbbuildpath_linux, 'fife'), projectfiles)
 
 
+if opts['DEBUG'] and sys.platform == 'win32':
+	fife_tgt = 'fife_d'
+else:
+	fife_tgt = 'fife'
+
 #**************************************************************************
 #shared library target
 #**************************************************************************
 
 if sys.platform == 'win32':
-	sharedlib = env.SharedLibrary(target = 'fife',
+	sharedlib = env.SharedLibrary(target = fife_tgt,
 								  source = compilefiles,
 								  OBJPREFIX='shared_',
 								  SHLIBEMITTER = '')
 else:
-	sharedlib = env.SharedLibrary(target = 'fife',
+	sharedlib = env.SharedLibrary(target = fife_tgt,
 								  source = compilefiles)
 
 #**************************************************************************
@@ -133,7 +138,7 @@ if sys.platform == 'win32':
 else:
 	dest_suffix = '.so'
 	
-pythonlib = env.SharedLibrary(target = 'fife',
+pythonlib = env.SharedLibrary(target = fife_tgt,
 							  source = pyfiles,
 							  OBJPREFIX='py_',
 							  SHLIBPREFIX='_',
@@ -147,7 +152,11 @@ pythonext = env.PythonExtensions(target = [os.path.join('swigwrappers', 'python'
 							  SWIGOUTDIR=Dir('#/engine/python/fife').srcnode().path)
 							  
 
-copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_fife' + dest_suffix)
+if opts['DEBUG'] and sys.platform == 'win32':
+	copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_fife_d' + dest_suffix)
+else:
+	copy_dest = os.path.join(opts['PYLIB_COPY_DEST'], '_fife' + dest_suffix)
+	
 copy_cmd = env.Command(copy_dest, pythonlib, [Copy('$TARGET', '$SOURCE')])
 copy_cmd2 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fife_wrap.h'),
 				os.path.join('swigwrappers','python','fife_wrap.h'),
@@ -160,7 +169,7 @@ copy_cmd3 = env.Command(os.path.join(opts['WRAP_COPY_DEST'], 'fife_wrap.cc'),
 #static library target
 #**************************************************************************
 
-staticlib = env.StaticLibrary(target = 'fife',
+staticlib = env.StaticLibrary(target = fife_tgt,
 							  source = compilefiles,
 							  LINKFLAGS=['-Wl'])
 

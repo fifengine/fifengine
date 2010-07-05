@@ -49,7 +49,12 @@ def initEnvironment(env):
 	
 	
 def addExtras(env, opengl):
-	env.Append(LIBS = ['libguichan_sdl', 'libguichan', 'mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'libpng', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'boost_system', 'python26'])
+	env.Append(LIBS = ['libguichan_sdl', 'libguichan', 'mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'libpng', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'boost_system'])
+
+	if env['FIFE_DEBUG']:
+		env.Append(LIBS = ['python26_d'])
+	else:
+		env.Append(LIBS = ['python26'])
 
 	if opengl:
 		env.Prepend(LIBS = ['libguichan_opengl'])
