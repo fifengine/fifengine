@@ -105,8 +105,10 @@ AddOption('--python-prefix',
 #**************************************************************************
 if GetOption('enable-debug'):
 	debug = 1
+	env['FIFE_DEBUG'] = True
 else:
 	debug = 0
+	env['FIFE_DEBUG'] = False
 	
 if GetOption('disable-opengl'):
 	opengl = 0
