@@ -113,6 +113,11 @@ namespace FIFE {
 		Location location;
 		location.setLayer(layer);
 		setLocation(location);
+		if(m_renderbackend->getName() == "SDL") {
+			m_backendSDL = true;
+		} else {
+			m_backendSDL = false;
+		}
 	}
 
 	Camera::~Camera() {
@@ -124,6 +129,7 @@ namespace FIFE {
 			delete r_it->second;
 		}
 		m_renderers.clear();
+		m_renderbackend->isClearNeeded(true);
 		delete m_map_observer;
 	}
 
@@ -391,6 +397,59 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 
+	bool Camera::testRenderedViewPort() {
+		Map* map = m_location.getMap();
+		Rect cv = m_viewport;
+		int cv2x = cv.x+cv.w;
+		int cv2y = cv.y+cv.h;
+		bool trec1 = false, trec2 = false, trec3 = false, trec4 = false;
+		Rect rec1 = Rect(cv.x, cv.y, 1, 1);
+		Rect rec2 = Rect(cv.x, cv2y, 1, 1);
+		Rect rec3 = Rect(cv2x, cv.y, 1, 1);
+		Rect rec4 = Rect(cv2x, cv2y, 1, 1);
+
+		const std::list<Layer*>& layers = map->getLayers();
+		std::list<Layer*>::const_iterator layer_it = layers.begin();
+		const RenderList& layer_instances = m_layer_to_instances[*layer_it];
+		RenderList::const_iterator instance_it = layer_instances.begin();
+		for(; instance_it != layer_instances.end(); ++instance_it) {
+			Instance* i = (*instance_it)->instance;
+			const RenderItem& vc = **instance_it;
+			if(vc.dimensions.intersects(rec1) && !trec1) {
+				trec1 = true;
+			}
+			if(vc.dimensions.intersects(rec2) && !trec2) {
+				trec2 = true;
+			}
+			if(trec1 && trec2) {
+				break;
+			}
+		}
+		if(trec1 && trec2) {
+			RenderList::const_reverse_iterator instance_itr = layer_instances.rbegin();
+			for(; instance_itr != layer_instances.rend(); ++instance_itr) {
+				Instance* i = (*instance_itr)->instance;
+				const RenderItem& vc = **instance_itr;
+				if(vc.dimensions.intersects(rec3) && !trec3) {
+					trec3 = true;
+				}
+				if(vc.dimensions.intersects(rec4) && !trec4) {
+					trec4 = true;
+				}
+				if(trec3 && trec4) {
+					break;
+				}
+			}
+		}
+
+		if(trec1 && trec2 && trec3 && trec4) {
+			m_renderbackend->isClearNeeded(false);
+			return false;
+		}
+		m_renderbackend->isClearNeeded(true);
+		return true;
+	}
+
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
@@ -582,8 +641,12 @@ namespace FIFE {
 		//	return;
 		//}
 
+		if(m_backendSDL) {
+			m_renderbackend->pushClipArea(getViewPort());
+		} else {
+			m_renderbackend->pushClipArea(getViewPort(), testRenderedViewPort());
+		}
 		// update each layer
-		m_renderbackend->pushClipArea(getViewPort());
 // 		m_layer_to_instances.clear();
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();

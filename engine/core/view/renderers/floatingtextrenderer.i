@@ -32,6 +32,8 @@ namespace FIFE {
 	public:
 		virtual ~FloatingTextRenderer();
 		void changeDefaultFont(AbstractFont* font);
+		void setColor(Uint8 r, Uint8 g, Uint8 b);
+
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
 	private:

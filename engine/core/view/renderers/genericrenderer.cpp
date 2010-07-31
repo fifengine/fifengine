@@ -223,10 +223,8 @@ namespace FIFE {
 			p = cam->toScreenCoordinates(m_location->getMapCoordinates());
 		} else if(m_layer == NULL) {
 			const std::list<Layer*>& layers = cam->getRenderer("GenericRenderer")->getActiveLayers();
-			std::list<Layer*>::const_iterator layer_it = layers.begin();
-			for (; layer_it != layers.end(); ++layer_it) {
-				setAttached(*layer_it);
-			}
+			std::list<Layer*>::const_reverse_iterator layer_it = layers.rbegin();
+			setAttached(*layer_it);
 		}
 		return Point(m_point.x + p.x, m_point.y + p.y);
 	}
@@ -306,11 +304,13 @@ namespace FIFE {
 		if(m_anchor.getLayer() == layer) {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
+			Rect viewport = cam->getViewPort();
 			r.x = p.x-img->getWidth()/2;
 			r.y = p.y-img->getHeight()/2;
 			r.w = img->getWidth();
 			r.h = img->getHeight();
-			img->render(r);
+			if(r.intersects(viewport))
+				img->render(r);
 		}
 	}
 
@@ -328,11 +328,13 @@ namespace FIFE {
 			int animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 			Image* img = animation.getFrameByTimestamp(animtime);
 			Rect r;
+			Rect viewport = cam->getViewPort();
 			r.x = p.x-img->getWidth()/2;
 			r.y = p.y-img->getHeight()/2;
 			r.w = img->getWidth();
 			r.h = img->getHeight();
-			img->render(r);
+			if(r.intersects(viewport))
+				img->render(r);
 		}
 	}
 
@@ -347,11 +349,13 @@ namespace FIFE {
 		if(m_anchor.getLayer() == layer) {
 			Image* img = m_font->getAsImageMultiline(m_text);
 			Rect r;
+			Rect viewport = cam->getViewPort();
 			r.x = p.x-img->getWidth()/2;
 			r.y = p.y-img->getHeight()/2;
 			r.w = img->getWidth();
 			r.h = img->getHeight();
-			img->render(r);
+			if(r.intersects(viewport))
+				img->render(r);
 		}
 	}
 

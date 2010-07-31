@@ -36,6 +36,7 @@ namespace FIFE {
 		void selectLocation(const Location* loc);
 		void deselectLocation(const Location* loc);
 		const std::vector<Location> getLocations() const;
+		void setColor(Uint8 r, Uint8 g, Uint8 b);
 		
 	private:
 		CellSelectionRenderer(RenderBackend* renderbackend, int position);

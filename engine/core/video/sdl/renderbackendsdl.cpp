@@ -40,6 +40,7 @@ namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
 	RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
+		m_clear = true;
 	}
 
 
@@ -132,6 +133,10 @@ namespace FIFE {
 
 	Image* RenderBackendSDL::createImage(const uint8_t* data, unsigned int width, unsigned int height) {
 		return new SDLImage(data, width, height);
+	}
+
+	void RenderBackendSDL::isClearNeeded(bool clear) {
+		m_clear = clear;
 	}
 
 	bool RenderBackendSDL::putPixel(int x, int y, int r, int g, int b) {

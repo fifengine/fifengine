@@ -62,12 +62,15 @@ namespace FIFE {
 		 */
 		void changeDefaultFont(AbstractFont* font) { m_font = font; }
 		
+		void setColor(Uint8 r, Uint8 g, Uint8 b);
 		/** returns instance used in given view
 		 */
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
 		AbstractFont* m_font;
+		bool m_font_color;
+		SDL_Color m_color;
 	};
 
 }

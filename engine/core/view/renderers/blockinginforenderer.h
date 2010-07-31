@@ -50,12 +50,15 @@ namespace FIFE {
 		 */
 		virtual ~BlockingInfoRenderer();
 
-		void render(Camera* cam, Layer* layer, RenderList& instances);
-
 		std::string getName() { return "BlockingInfoRenderer"; }
-	private:
-	};
+		void render(Camera* cam, Layer* layer, RenderList& instances);
+		void setColor(Uint8 r, Uint8 g, Uint8 b);
 
+		static BlockingInfoRenderer* getInstance(IRendererContainer* cnt);
+
+	private:
+		SDL_Color m_color;
+	};
 }
 
 #endif

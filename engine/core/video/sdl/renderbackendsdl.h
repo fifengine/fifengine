@@ -54,6 +54,11 @@ namespace FIFE {
 		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
 		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
 		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b);
+
+		void isClearNeeded(bool clear);
+
+	private:
+		bool m_clear;
 	};
 
 }

@@ -32,6 +32,9 @@ import events
 import undomanager
 
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
+from fife.extensions.fife_settings import Setting
+
+TDS = Setting(app_name="editor")
 
 class MapController(object):
 	""" MapController provides an interface for editing maps """
@@ -51,6 +54,7 @@ class MapController(object):
 		undomanager.postUndo.connect(self._endUndo, sender=self._undomanager)
 		undomanager.postRedo.connect(self._endUndo, sender=self._undomanager)
 		self.debug = False
+		self._settings = TDS
 		
 		self.overwriteInstances = True # Remove instances on cell before placing new instance
 		
@@ -89,14 +93,25 @@ class MapController(object):
 
 		self._layer = self._map.getLayers()[0]
 		
-		gridrenderer = self._camera.getRenderer('GridRenderer')
+		gridrenderer = fife.GridRenderer.getInstance(self._camera)
 		gridrenderer.activateAllLayers(self._map)
+		color = str(self._settings.get("Colors", "Grid", "0,255,0"))
+		gridrenderer.setColor(*[int(c) for c in color.split(',')])
 
-		blockrenderer = self._camera.getRenderer('BlockingInfoRenderer')
+		blockrenderer = fife.BlockingInfoRenderer.getInstance(self._camera)
 		blockrenderer.activateAllLayers(self._map)
+		color = str(self._settings.get("Colors", "Blocking", "0,255,0"))
+		blockrenderer.setColor(*[int(c) for c in color.split(',')])
 
-		cellrenderer = self._camera.getRenderer('CellSelectionRenderer')
+		coordinaterenderer = fife.CoordinateRenderer.getInstance(self._camera)
+		coordinaterenderer.activateAllLayers(self._map)
+		color = str(self._settings.get("Colors", "Coordinate", "255,255,255"))
+		coordinaterenderer.setColor(*[int(c) for c in color.split(',')])		
+
+		cellrenderer = fife.CellSelectionRenderer.getInstance(self._camera)
 		cellrenderer.activateAllLayers(self._map)
+		color = str(self._settings.get("Colors", "CellSelection", "255,0,0"))
+		cellrenderer.setEnabled(True)
 
 	def getMap(self):
 		return self._map

@@ -102,6 +102,8 @@ namespace FIFE {
 		 * @return The new Image.
 		 */
 		virtual Image* createImage(SDL_Surface* surface) = 0;
+
+		virtual void isClearNeeded(bool clear) = 0;
 		
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.

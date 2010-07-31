@@ -189,6 +189,21 @@ class Editor(ApplicationBase, MainWindow):
 		test_action1.helptext = u"Cycles button styles. There are currently four button styles."
 		action.activated.connect(self._actionActivated, sender=test_action1)
 		self._view_menu.addAction(test_action1)
+
+		test_action2 = Action(u"Toggle Blocking")
+		test_action2.helptext = u"Toggles the blocking infos for the instances."
+		action.activated.connect(self.toggleBlocking, sender=test_action2)
+		self._view_menu.addAction(test_action2)
+
+		test_action3 = Action(u"Toggle Grid")
+		test_action3.helptext = u"Toggles the grids of the map."
+		action.activated.connect(self.toggleGrid, sender=test_action3)
+		self._view_menu.addAction(test_action3)
+
+		test_action4 = Action(u"Toggle Coordinates")
+		test_action4.helptext = u"Toggles the coordinates of the map."
+		action.activated.connect(self.toggleCoordinates, sender=test_action4)
+		self._view_menu.addAction(test_action4)		
 		
 		self._mapgroup = ActionGroup(exclusive=True, name="Mapgroup")
 		self._mapbar.addAction(self._mapgroup)
@@ -267,7 +282,34 @@ class Editor(ApplicationBase, MainWindow):
 			toolbox.y = ty
 			self._action_show_toolbox.setChecked(True)
 		toolbox.adaptLayout()
-			
+
+	def toggleBlocking(self, sender):
+		if self._mapview != None:
+			for cam in self._mapview.getMap().getCameras():			
+				r = fife.BlockingInfoRenderer.getInstance(cam)
+				r.setEnabled(not r.isEnabled())
+
+	def toggleGrid(self, sender):
+		if self._mapview != None:
+			for cam in self._mapview.getMap().getCameras():			
+				r = fife.GridRenderer.getInstance(cam)
+				r.setEnabled(not r.isEnabled())
+
+	def toggleCoordinates(self, sender):
+		if self._mapview != None:
+			for cam in self._mapview.getMap().getCameras():
+				r = fife.CoordinateRenderer.getInstance(cam)
+				if not r.isEnabled():
+					r.clearActiveLayers()
+					color = str(self._settings.get("Colors", "Coordinate", "255,255,255"))
+					r.setColor(*[int(c) for c in color.split(',')])
+					for layer in self._mapview.getMap().getLayers():
+						if layer.areInstancesVisible():
+							r.addActiveLayer(layer)
+					r.setEnabled(True)
+				else:
+					r.setEnabled(False)
+
 	def getToolbox(self): 
 		return self._toolbox
 	
