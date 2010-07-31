@@ -56,8 +56,10 @@ namespace FIFE {
 		virtual ~CoordinateRenderer();
 
 		void render(Camera* cam, Layer* layer, RenderList& instances);
-
 		std::string getName() { return "CoordinateRenderer"; }
+		void setColor(Uint8 r, Uint8 g, Uint8 b);
+
+		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
 		void adjustLayerArea();
@@ -66,6 +68,8 @@ namespace FIFE {
 		Location m_tmploc;
 		ExactModelCoordinate m_c;
 		AbstractFont* m_font;
+		bool m_font_color;
+		SDL_Color m_color;
 	};
 }
 

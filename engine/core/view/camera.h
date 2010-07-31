@@ -279,6 +279,7 @@ namespace FIFE {
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 		void onRendererEnabledChanged(RendererBase* renderer);
 
+		bool testRenderedViewPort();
 		/** Renders camera
 		 */
 		void render();
@@ -331,6 +332,7 @@ namespace FIFE {
 		double m_reference_scale;
 		bool m_enabled;
 		Instance* m_attachedto;
+		bool m_backendSDL;
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
 		bool m_iswarped;

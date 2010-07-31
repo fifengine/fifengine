@@ -54,21 +54,30 @@ namespace FIFE {
 		m_c(),
 		m_font(font) {
 		setEnabled(false);
+		m_font_color = false;
+		m_color = m_font->getColor();
 	}
 
  	CoordinateRenderer::CoordinateRenderer(const CoordinateRenderer& old):
+		RendererBase(old),
 		m_layer_area(),
 		m_tmploc(),
 		m_c(),
-		m_font(old.m_font) {
+		m_font(old.m_font),
+		m_font_color(old.m_font_color),
+		m_color(old.m_color) {
 		setEnabled(false);
+	}
+
+	RendererBase* CoordinateRenderer::clone() {
+		return new CoordinateRenderer(*this);
 	}
 	
 	CoordinateRenderer::~CoordinateRenderer() {
 	}
 
-	RendererBase* CoordinateRenderer::clone() {
-		return new CoordinateRenderer(*this);
+	CoordinateRenderer* CoordinateRenderer::getInstance(IRendererContainer* cnt) {
+		return dynamic_cast<CoordinateRenderer*>(cnt->getRenderer("CoordinateRenderer"));
 	}
 
 	void CoordinateRenderer::adjustLayerArea() {
@@ -100,6 +109,11 @@ namespace FIFE {
 		adjustLayerArea();
 
 		Rect r = Rect();
+		SDL_Color old_color = m_font->getColor();
+		if(old_color.r != m_color.r || old_color.g != m_color.g || old_color.b != m_color.b) {
+			m_font->setColor(m_color.r, m_color.g, m_color.b);
+			m_font_color = true;
+		}
 		for (int x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
 			for (int y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
 				ModelCoordinate mc(x, y);
@@ -109,7 +123,6 @@ namespace FIFE {
 				    (drawpt.y >= cv.y) && (drawpt.y <= cv.y + cv.h)) {
 					std::stringstream ss;
 					ss << mc.x <<","<< mc.y;
-					m_font->setColor(255,255,255);
 					Image * img = m_font->getAsImage(ss.str());
 					r.x = drawpt.x;
 					r.y = drawpt.y;
@@ -117,8 +130,17 @@ namespace FIFE {
 					r.h = img->getHeight();
 					img->render(r);
 				}
-
 			}
 		}
+		if(m_font_color) {
+			m_font->setColor(old_color.r, old_color.g, old_color.b);
+			m_font_color = false;
+		}
+	}
+
+	void CoordinateRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+		m_color.r = r;
+		m_color.g = g;
+		m_color.b = b;
 	}
 }

@@ -45,10 +45,15 @@ namespace FIFE {
 	BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int position):
 		RendererBase(renderbackend, position) {
 		setEnabled(false);
+		m_color.r = 0;
+		m_color.g = 255;
+		m_color.b = 0;
 	}
 
 	BlockingInfoRenderer::BlockingInfoRenderer(const BlockingInfoRenderer& old):
-		RendererBase(old) {
+		RendererBase(old),
+		m_color(old.m_color) {
+		setEnabled(false);
 	}
 
 	RendererBase* BlockingInfoRenderer::clone() {
@@ -56,6 +61,10 @@ namespace FIFE {
 	}
 
 	BlockingInfoRenderer::~BlockingInfoRenderer() {
+	}
+
+	BlockingInfoRenderer* BlockingInfoRenderer::getInstance(IRendererContainer* cnt) {
+		return dynamic_cast<BlockingInfoRenderer*>(cnt->getRenderer("BlockingInfoRenderer"));
 	}
 
 	void BlockingInfoRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
@@ -74,12 +83,32 @@ namespace FIFE {
 			}
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
+			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
 			int halfind = vertices.size() / 2;
+			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+			Point pt1(firstpt.x, firstpt.y);
+			Point pt2;
+			++it;
+			for (; it != vertices.end(); it++) {
+				ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
+				pt2.x = pts.x; pt2.y = pts.y;
+				Point cpt1 = pt1;
+				Point cpt2 = pt2;
+				m_renderbackend->drawLine(cpt1, cpt2, m_color.r, m_color.g, m_color.b);
+				pt1 = pt2;
+			}
+			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
 			ScreenPoint spt1 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[0]));
-			Point pt1(spt1.x, spt1.y);
+			Point pt3(spt1.x, spt1.y);
 			ScreenPoint spt2 = cam->toScreenCoordinates(cg->toMapCoordinates(vertices[halfind]));
-			Point pt2(spt2.x, spt2.y);
-			m_renderbackend->drawLine(pt1, pt2, 0, 255, 0);
+			Point pt4(spt2.x, spt2.y);
+			m_renderbackend->drawLine(pt3, pt4, m_color.r, m_color.g, m_color.b);
 		}
+	}
+
+	void BlockingInfoRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+		m_color.r = r;
+		m_color.g = g;
+		m_color.b = b;
 	}
 }

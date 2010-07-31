@@ -594,6 +594,11 @@ class MapEditor:
 			blockrenderer = self._controller._camera.getRenderer('BlockingInfoRenderer')
 			blockrenderer.setEnabled(not blockrenderer.isEnabled())
 
+		elif keystr == 'c':
+			#coordinaterenderer = self._controller._camera.getRenderer('CoordinateRenderer')
+			#coordinaterenderer.setEnabled(not coordinaterenderer.isEnabled())
+			self._editor.toggleCoordinates("Toggle Coordinates")
+			
 		elif keystr == 'z':
 			if self._eventlistener.controlPressed:
 				if self._eventlistener.altPressed:

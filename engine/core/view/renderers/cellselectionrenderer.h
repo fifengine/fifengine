@@ -76,10 +76,13 @@ namespace FIFE {
 		/** Returns selected locations
 		 */
 		const std::vector<Location> getLocations() const { return m_locations; }
+
+		void setColor(Uint8 r, Uint8 g, Uint8 b);
 		
 	private:
 		// selected locations
 		std::vector<Location> m_locations;
+		SDL_Color m_color;
 	};
 
 }

@@ -75,6 +75,7 @@ Misc:
         selection (toggle).
 - T   = shows / hides grid
 - B   = shows / hides blocking info
+- C   = shows / hides coordinates
 
 
 http://www.fifengine.de

@@ -44,12 +44,16 @@ namespace FIFE {
 
 	CellSelectionRenderer::CellSelectionRenderer(RenderBackend* renderbackend, int position):
 		RendererBase(renderbackend, position) {
-		setEnabled(true);
+		setEnabled(false);
+		m_color.r = 255;
+		m_color.g = 0;
+		m_color.b = 0;
 	}
 
  	CellSelectionRenderer::CellSelectionRenderer(const CellSelectionRenderer& old):
-		RendererBase(old) {
-		setEnabled(true);
+		RendererBase(old),
+		m_color(old.m_color) {
+		setEnabled(false);
 	}
 
 	RendererBase* CellSelectionRenderer::clone() {
@@ -117,10 +121,16 @@ namespace FIFE {
 				pt2.x = pts.x; pt2.y = pts.y;
 				Point cpt1 = pt1;
 				Point cpt2 = pt2;
-				m_renderbackend->drawLine(cpt1, cpt2, 255, 0, 0);
+				m_renderbackend->drawLine(cpt1, cpt2, m_color.r, m_color.g, m_color.b);
 				pt1 = pt2;
 			}
-			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), 255, 0, 0);
+			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
 		}
+	}
+
+	void CellSelectionRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+		m_color.r = r;
+		m_color.g = g;
+		m_color.b = b;
 	}
 }

@@ -48,13 +48,17 @@ namespace FIFE {
 	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font):
 		RendererBase(renderbackend, position),
 		m_font(font) {
-		setEnabled(true);
+		setEnabled(false);
+		m_font_color = false;
+		m_color = m_font->getColor();
 	}
 
  	FloatingTextRenderer::FloatingTextRenderer(const FloatingTextRenderer& old):
 		RendererBase(old),
-		m_font(old.m_font) {
-		setEnabled(true);
+		m_font(old.m_font),
+		m_font_color(old.m_font_color),
+		m_color(old.m_color) {
+		setEnabled(false);
 	}
 
 	RendererBase* FloatingTextRenderer::clone() {
@@ -71,7 +75,11 @@ namespace FIFE {
 
 		RenderList::const_iterator instance_it = instances.begin();
 		const std::string* saytext = NULL;
-
+		SDL_Color old_color = m_font->getColor();
+		if(old_color.r != m_color.r || old_color.g != m_color.g || old_color.b != m_color.b) {
+			m_font->setColor(m_color.r, m_color.g, m_color.b);
+			m_font_color = true;
+		}
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
 			saytext = instance->getSayText();
@@ -86,6 +94,16 @@ namespace FIFE {
 				img->render(r);
 			}
 		}
+		if(m_font_color) {
+			m_font->setColor(old_color.r, old_color.g, old_color.b);
+			m_font_color = false;
+		}
+	}
+
+	void FloatingTextRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+		m_color.r = r;
+		m_color.g = g;
+		m_color.b = b;
 	}
 
 	FloatingTextRenderer* FloatingTextRenderer::getInstance(IRendererContainer* cnt) {

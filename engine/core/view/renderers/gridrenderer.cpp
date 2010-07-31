@@ -45,10 +45,14 @@ namespace FIFE {
 	GridRenderer::GridRenderer(RenderBackend* renderbackend, int position):
 		RendererBase(renderbackend, position) {
 		setEnabled(false);
+		m_color.r = 0;
+		m_color.g = 255;
+		m_color.b = 0;
 	}
 
  	GridRenderer::GridRenderer(const GridRenderer& old):
-		RendererBase(old) {
+		RendererBase(old),
+		m_color(old.m_color) {
 		setEnabled(false);
 	}
 
@@ -57,6 +61,10 @@ namespace FIFE {
 	}
 
 	GridRenderer::~GridRenderer() {
+	}
+
+	GridRenderer* GridRenderer::getInstance(IRendererContainer* cnt) {
+		return dynamic_cast<GridRenderer*>(cnt->getRenderer("GridRenderer"));
 	}
 
 	void GridRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
@@ -73,67 +81,70 @@ namespace FIFE {
 //		//1,-1,1
 //		//-1,-1,1
 //		//-1,1,1
-		Point a,b,c,d;
-
-
-		ScreenPoint copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,1) );
-		ScreenPoint copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,1) );
-		Point coptt1(copt1.x,copt1.y);
-		Point coptt2(copt2.x,copt2.y);
-		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
-		a = coptt1;
-
-		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,1) );
-		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,1) );
-		coptt1 = Point(copt1.x,copt1.y);
-		coptt2 = Point(copt2.x,copt2.y);
-		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
-		b = coptt1;
-
-		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,1) );
-		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,1) );
-		coptt1 = Point(copt1.x,copt1.y);
-		coptt2 = Point(copt2.x,copt2.y);
-		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
-		c = coptt1;
-
-		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,1) );
-		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,1) );
-		coptt1 = Point(copt1.x,copt1.y);
-		coptt2 = Point(copt2.x,copt2.y);
-		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 20);
-		d = coptt1;
-
-		m_renderbackend->drawQuad(a,b,c,d,15, 15, 200);
+		//We don't need the elevation box atm
+//		Point a,b,c,d;
+//
+//
+//		ScreenPoint copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,1) );
+//		ScreenPoint copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,1) );
+//		Point coptt1(copt1.x,copt1.y);
+//		Point coptt2(copt2.x,copt2.y);
+//		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
+//		a = coptt1;
+//
+//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,1) );
+//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,1) );
+//		coptt1 = Point(copt1.x,copt1.y);
+//		coptt2 = Point(copt2.x,copt2.y);
+//		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
+//		b = coptt1;
+//
+//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,1) );
+//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,1) );
+//		coptt1 = Point(copt1.x,copt1.y);
+//		coptt2 = Point(copt2.x,copt2.y);
+//		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 200);
+//		c = coptt1;
+//
+//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,1) );
+//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,1) );
+//		coptt1 = Point(copt1.x,copt1.y);
+//		coptt2 = Point(copt2.x,copt2.y);
+//		m_renderbackend->drawLine(coptt1,coptt2 ,15, 15, 20);
+//		d = coptt1;
+//
+//		m_renderbackend->drawQuad(a,b,c,d,15, 15, 200);
 //
 //
 //		//draw back quad
-		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,-1) );
-		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,-1) );
-		coptt1 = Point(copt1.x,copt1.y);
-		coptt2 = Point(copt2.x,copt2.y);
-		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
-
-		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,-1) );
-		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,-1) );
-		coptt1 = Point(copt1.x,copt1.y);
-		coptt2 = Point(copt2.x,copt2.y);
-		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
-
-		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,-1) );
-		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,-1) );
-		coptt1 = Point(copt1.x,copt1.y);
-		coptt2 = Point(copt2.x,copt2.y);
-		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
-
-		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,-1) );
-		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,-1) );
-		coptt1 = Point(copt1.x,copt1.y);
-		coptt2 = Point(copt2.x,copt2.y);
-		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
+//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,-1) );
+//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,-1) );
+//		coptt1 = Point(copt1.x,copt1.y);
+//		coptt2 = Point(copt2.x,copt2.y);
+//		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
+//
+//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(-1,1,-1) );
+//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,-1) );
+//		coptt1 = Point(copt1.x,copt1.y);
+//		coptt2 = Point(copt2.x,copt2.y);
+//		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
+//
+//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,1,-1) );
+//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,-1) );
+//		coptt1 = Point(copt1.x,copt1.y);
+//		coptt2 = Point(copt2.x,copt2.y);
+//		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
+//
+//		copt1 =cam->toScreenCoordinates(ExactModelCoordinate(1,-1,-1) );
+//		copt2 =cam->toScreenCoordinates(ExactModelCoordinate(-1,-1,-1) );
+//		coptt1 = Point(copt1.x,copt1.y);
+//		coptt2 = Point(copt2.x,copt2.y);
+//		m_renderbackend->drawLine(coptt1,coptt2 ,200, 200, 200);
 
 
 		Rect cv = cam->getViewPort();
+		int cvx2 = cv.x+cv.w;
+		int cvy2 = cv.y+cv.h;
 		RenderList::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
@@ -146,22 +157,10 @@ namespace FIFE {
 			++it;
 			for (; it != vertices.end(); it++) {
 				ScreenPoint pts = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
-				pt2.x = pts.x; pt2.y = pts.y;
+				pt2.x = pts.x;
+				pt2.y = pts.y;
 				Point cpt1 = pt1;
 				Point cpt2 = pt2;
-				/* FIXME: limit grid drawing to current camera view port
-				   code below does not do it, but may act as a starting point
-
-				int cvx2 = cv.x+cv.w;
-				int cvy2 = cv.y+cv.h;
-
-				if (((pt1.x < cv.x) && (pt2.x < cv.x)) ||
-				    ((pt1.x > cvx2) && (pt2.x > cvx2)) ||
-				    ((pt1.y < cv.y) && (pt2.y < cv.y)) ||
-				    ((pt1.y > cvy2) && (pt2.y > cvy2))) {
-				    pt1 = pt2;
-				    continue;
-				}
 
 				if (cpt1.x < cv.x) cpt1.x = cv.x;
 				if (cpt2.x < cv.x) cpt2.x = cv.x;
@@ -171,11 +170,21 @@ namespace FIFE {
 				if (cpt2.x > cvx2) cpt2.x = cvx2;
 				if (cpt1.y > cvy2) cpt1.y = cvy2;
 				if (cpt2.y > cvy2) cpt2.y = cvy2;
-				*/
-				m_renderbackend->drawLine(cpt1, cpt2, 0, 255, 0);
+				
+				m_renderbackend->drawLine(cpt1, cpt2, m_color.r, m_color.g, m_color.b);
 				pt1 = pt2;
 			}
-			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), 0, 255, 0);
+			if ((pt2.x >= cv.x) && (pt2.x <= cvx2) && (pt2.y >= cv.y) && (pt2.y <= cvy2)) {
+				if ((firstpt.x >= cv.x) && (firstpt.x <= cvx2) && (firstpt.y >= cv.y) && (firstpt.y <= cvy2)) {
+					m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
+				}
+			}
 		}
+	}
+
+	void GridRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {
+		m_color.r = r;
+		m_color.g = g;
+		m_color.b = b;
 	}
 }

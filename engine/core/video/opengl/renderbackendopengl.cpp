@@ -43,6 +43,7 @@ namespace FIFE {
 
 		m_rgba_format = *(testsurface->format);
 		SDL_FreeSurface(testsurface);
+		m_clear = true;
 	}
 
 	const std::string& RenderBackendOpenGL::getName() const {
@@ -132,9 +133,11 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::startFrame() {
-		glDisable(GL_SCISSOR_TEST);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glEnable(GL_SCISSOR_TEST);
+		if(m_clear) {
+			glDisable(GL_SCISSOR_TEST);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glEnable(GL_SCISSOR_TEST);
+		}
 	}
 
 	void RenderBackendOpenGL::endFrame() {
@@ -176,11 +179,15 @@ namespace FIFE {
 		return new GLImage(data, width, height);
 	}
 
+	void RenderBackendOpenGL::isClearNeeded(bool clear) {
+		m_clear = clear;
+	}
+
 	bool RenderBackendOpenGL::putPixel(int x, int y, int r, int g, int b) {
 		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
 			return false;
 		}
-		glColor4ub(r, g, b, 255);
+		glColor3ub(r, g, b);
 		glBegin(GL_POINTS);
 		glVertex2i(x, y);
 		glEnd();
@@ -188,42 +195,38 @@ namespace FIFE {
 	}
 
 	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
-		glColor4ub(r, g, b, 255);
+		glColor3ub(r, g, b);
 		glBegin(GL_LINES);
-		glVertex3f(p1.x+0.5f, p1.y+0.5f, 0);
-		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
+		glVertex2f(p1.x+0.5f, p1.y+0.5f);
+		glVertex2f(p2.x+0.5f, p2.y+0.5f);
 		glEnd();
 
 		glBegin(GL_POINTS);
-		glVertex3f(p2.x+0.5f, p2.y+0.5f, 0);
+		glVertex2f(p2.x+0.5f, p2.y+0.5f);
 		glEnd();
 	}
 
 	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
 		glColor4ub(r, g, b, 165);
 		glBegin(GL_QUADS);
-		glVertex3f(p1.x, p1.y, 0);
-		glVertex3f(p2.x, p2.y, 0);
-		glVertex3f(p3.x, p3.y, 0);
-		glVertex3f(p4.x, p4.y, 0);
+		glVertex2f(p1.x, p1.y);
+		glVertex2f(p2.x, p2.y);
+		glVertex2f(p3.x, p3.y);
+		glVertex2f(p4.x, p4.y);
 		glEnd();
 	}
 
 	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, int r, int g, int b){
-
 		GLfloat width;
-
 		glGetFloatv(GL_LINE_WIDTH, &width);
 		glLineWidth(1.0);
 
+		glColor3ub(r, g, b);
 		glBegin(GL_LINE_LOOP);
-		glColor4ub(r, g, b, 255);
-
-		glVertex3f(p.x-size, p.y+size, 0);
-		glVertex3f(p.x+size, p.y+size, 0);
-		glVertex3f(p.x+size, p.y-size, 0);
-		glVertex3f(p.x-size, p.y-size, 0);
-
+		glVertex2f(p.x-size, p.y+size);
+		glVertex2f(p.x+size, p.y+size);
+		glVertex2f(p.x+size, p.y-size);
+		glVertex2f(p.x-size, p.y-size);
 		glEnd();
 
 		glLineWidth(width);
