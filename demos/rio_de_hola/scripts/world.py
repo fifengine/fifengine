@@ -233,6 +233,7 @@ class World(EventListenerBase):
 		textfont = self.engine.getGuiManager().createFont('fonts/rpgfont.png', 0, str(TDS.get("FIFE", "FontGlyphs")));
 		renderer.changeDefaultFont(textfont)
 		renderer.activateAllLayers(self.map)
+		renderer.setDefaultBackground(100, 255, 100, 50, 255, 50)
 		renderer.setEnabled(True)
 		
 		# Activate the grid renderer on all layers

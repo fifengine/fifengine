@@ -111,6 +111,7 @@ class MapController(object):
 		cellrenderer = fife.CellSelectionRenderer.getInstance(self._camera)
 		cellrenderer.activateAllLayers(self._map)
 		color = str(self._settings.get("Colors", "CellSelection", "255,0,0"))
+		cellrenderer.setColor(*[int(c) for c in color.split(',')])
 		cellrenderer.setEnabled(True)
 
 	def getMap(self):

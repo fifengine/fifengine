@@ -284,19 +284,19 @@ class Editor(ApplicationBase, MainWindow):
 		toolbox.adaptLayout()
 
 	def toggleBlocking(self, sender):
-		if self._mapview != None:
+		if self._mapview is not None:
 			for cam in self._mapview.getMap().getCameras():			
 				r = fife.BlockingInfoRenderer.getInstance(cam)
 				r.setEnabled(not r.isEnabled())
 
 	def toggleGrid(self, sender):
-		if self._mapview != None:
+		if self._mapview is not None:
 			for cam in self._mapview.getMap().getCameras():			
 				r = fife.GridRenderer.getInstance(cam)
 				r.setEnabled(not r.isEnabled())
 
 	def toggleCoordinates(self, sender):
-		if self._mapview != None:
+		if self._mapview is not None:
 			for cam in self._mapview.getMap().getCameras():
 				r = fife.CoordinateRenderer.getInstance(cam)
 				if not r.isEnabled():
