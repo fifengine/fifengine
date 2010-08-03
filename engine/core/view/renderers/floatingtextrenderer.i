@@ -33,6 +33,8 @@ namespace FIFE {
 		virtual ~FloatingTextRenderer();
 		void changeDefaultFont(AbstractFont* font);
 		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setDefaultBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 bbr, Uint8 bbg, Uint8 bbb);
+		void resetDefaultBackground();
 
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 

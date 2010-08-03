@@ -62,15 +62,32 @@ namespace FIFE {
 		 */
 		void changeDefaultFont(AbstractFont* font) { m_font = font; }
 		
+		/** Changes default font color
+		 * Only usefull for .ttf fonts
+		 */
 		void setColor(Uint8 r, Uint8 g, Uint8 b);
+
+		/** Set default background quad with border
+		 * first r,g,b values for background, second for border color
+		 */
+		void setDefaultBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 bbr, Uint8 bbg, Uint8 bbb);
+		
+		/** Disable the default background
+		 */
+		void resetDefaultBackground();
+
 		/** returns instance used in given view
 		 */
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
+		RenderBackend* m_renderbackend;
 		AbstractFont* m_font;
 		bool m_font_color;
 		SDL_Color m_color;
+		bool m_background;
+		SDL_Color m_backcolor;
+		SDL_Color m_backbordercolor;
 	};
 
 }
