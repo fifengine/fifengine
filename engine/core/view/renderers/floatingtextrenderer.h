@@ -65,16 +65,25 @@ namespace FIFE {
 		/** Changes default font color
 		 * Only usefull for .ttf fonts
 		 */
-		void setColor(Uint8 r, Uint8 g, Uint8 b);
+		void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
 
-		/** Set default background quad with border
-		 * first r,g,b values for background, second for border color
+		/** Set default background quad
+		 * r,g,b,a values for background
 		 */
-		void setDefaultBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 bbr, Uint8 bbg, Uint8 bbb);
+		void setDefaultBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 ba = 255);
+
+		/** Set default border
+		 * r,g,b,a values for border
+		 */
+		void setDefaultBorder(Uint8 bbr, Uint8 bbg, Uint8 bbb, Uint8 bba = 255);
 		
 		/** Disable the default background
 		 */
 		void resetDefaultBackground();
+
+		/** Disable the default border
+		 */
+		void resetDefaultBorder();
 
 		/** returns instance used in given view
 		 */
@@ -86,6 +95,7 @@ namespace FIFE {
 		bool m_font_color;
 		SDL_Color m_color;
 		bool m_background;
+		bool m_backborder;
 		SDL_Color m_backcolor;
 		SDL_Color m_backbordercolor;
 	};

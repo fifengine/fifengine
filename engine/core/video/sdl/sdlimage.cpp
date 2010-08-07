@@ -470,7 +470,7 @@ namespace FIFE {
 		return convert;
 	} // end optimize
 
-	bool SDLImage::putPixel(int x, int y, int r, int g, int b) {
+	bool SDLImage::putPixel(int x, int y, int r, int g, int b, int a) {
 		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
 			return false;
 		}
@@ -510,7 +510,7 @@ namespace FIFE {
 		return true;
 	}
 
-	void SDLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+	void SDLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
 		// Draw a line with Bresenham, imitated from guichan
 		int x1 = p1.x;
 		int x2 = p2.x;
@@ -537,7 +537,7 @@ namespace FIFE {
 				int p = 0;
 
 				for (int x = x1; x <= x2; x++) {
-					putPixel(x, y, r, g, b);
+					putPixel(x, y, r, g, b, a);
 					p += dy;
 					if (p * 2 >= dx) {
 						y++;
@@ -550,7 +550,7 @@ namespace FIFE {
 				int p = 0;
 
 				for (int x = x1; x <= x2; x++) {
-					putPixel(x, y, r, g, b);
+					putPixel(x, y, r, g, b, a);
 
 					p += dy;
 					if (p * 2 >= dx) {
@@ -578,7 +578,7 @@ namespace FIFE {
 				int p = 0;
 
 				for (int y = y1; y <= y2; y++) {
-					putPixel(x, y, r, g, b);
+					putPixel(x, y, r, g, b, a);
 					p += dx;
 					if (p * 2 >= dy) {
 						x++;
@@ -591,7 +591,7 @@ namespace FIFE {
 				int p = 0;
 
 				for (int y = y1; y <= y2; y++) {
-					putPixel(x, y, r, g, b);
+					putPixel(x, y, r, g, b, a);
 					p += dx;
 					if (p * 2 >= dy) {
 						x--;
@@ -602,23 +602,29 @@ namespace FIFE {
 		}
 	}
 
-	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-		drawLine(p1, p2, r, g, b);
-		drawLine(p2, p3, r, g, b);
-		drawLine(p3, p4, r, g, b);
-		drawLine(p4, p1, r, g, b);
+	void SDLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
+		drawLine(p1, p2, r, g, b, a);
+		drawLine(p2, p3, r, g, b, a);
+		drawLine(p3, p1, r, g, b, a);
 	}
 
-	void SDLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b){
+	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, int r, int g, int b, int a) {
+		drawLine(p1, p2, r, g, b, a);
+		drawLine(p2, p3, r, g, b, a);
+		drawLine(p3, p4, r, g, b, a);
+		drawLine(p4, p1, r, g, b, a);
+	}
+
+	void SDLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a){
 		Point p1 = Point(p.x-size, p.y+size);
 		Point p2 = Point(p.x+size, p.y+size);
 		Point p3 = Point(p.x+size, p.y-size);
 		Point p4 = Point(p.x-size, p.y-size);
 
-		drawLine(p1, p2, r, g, b);
-		drawLine(p2, p3, r, g, b);
-		drawLine(p3, p4, r, g, b);
-		drawLine(p4, p1, r, g, b);
+		drawLine(p1, p2, r, g, b, a);
+		drawLine(p2, p3, r, g, b, a);
+		drawLine(p3, p4, r, g, b, a);
+		drawLine(p4, p1, r, g, b, a);
 	}
 
 	void SDLImage::saveImage(const std::string& filename) {

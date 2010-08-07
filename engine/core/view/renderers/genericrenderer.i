@@ -79,7 +79,7 @@ namespace FIFE {
 
 	class GenericRendererLineInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
+		GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererLineInfo() {};
 	private:
 		GenericRendererNode m_edge1;
@@ -87,20 +87,35 @@ namespace FIFE {
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
+		uint8_t m_alpha;
 	};
 	class GenericRendererPointInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererPointInfo(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
+		GenericRendererPointInfo(GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererPointInfo() {};
 	private:
 		GenericRendererNode m_anchor;
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
+		uint8_t m_alpha;
+	};
+	class GenericRendererTriangleInfo : public GenericRendererElementInfo {
+	public:
+		GenericRendererTriangleInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+		virtual ~GenericRendererTriangleInfo() {};
+	private:
+		GenericRendererNode m_edge1;
+		GenericRendererNode m_edge2;
+		GenericRendererNode m_edge3;
+		uint8_t m_red;
+		uint8_t m_green;
+		uint8_t m_blue;
+		uint8_t m_alpha;
 	};
 	class GenericRendererQuadInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
+		GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererQuadInfo() {};
 	private:
 		GenericRendererNode m_edge1;
@@ -110,10 +125,11 @@ namespace FIFE {
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
+		uint8_t m_alpha;
 	};
 	class GenericRendererVertexInfo : public GenericRendererElementInfo {
 	public:
-		GenericRendererVertexInfo(GenericRendererNode center, int size, uint8_t r, uint8_t g, uint8_t b);
+		GenericRendererVertexInfo(GenericRendererNode center, int size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererVertexInfo() {};
 	private:
 		GenericRendererNode m_center;
@@ -121,6 +137,7 @@ namespace FIFE {
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
+		uint8_t m_alpha;
 	};
 	class GenericRendererImageInfo : public GenericRendererElementInfo {
 	public:
@@ -153,10 +170,11 @@ namespace FIFE {
 		~GenericRenderer();
 		std::string getName();
 		static GenericRenderer* getInstance(IRendererContainer* cnt);
-		void addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b);
-		void addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b);
-		void addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b);
-		void addVertex(const std::string &group, GenericRendererNode n, int size, uint8_t r, uint8_t g, uint8_t b);
+		void addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addTriangle(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addVertex(const std::string &group, GenericRendererNode n, int size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text);
 		void addImage(const std::string &group, GenericRendererNode n, int image);
 		void addAnimation(const std::string &group, GenericRendererNode n, int animation);

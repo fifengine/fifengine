@@ -229,37 +229,58 @@ namespace FIFE {
 		return Point(m_point.x + p.x, m_point.y + p.y);
 	}
 
-	GenericRendererLineInfo::GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b):
+	GenericRendererLineInfo::GenericRendererLineInfo(GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_edge1(n1),
 		m_edge2(n2),
 		m_red(r),
 		m_green(g),
-		m_blue(b) {
+		m_blue(b),
+		m_alpha(a) {
 	}
 	void GenericRendererLineInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p1 = m_edge1.getCalculatedPoint(cam, layer);
 		Point p2 = m_edge2.getCalculatedPoint(cam, layer);
 		if(m_edge1.getLayer() == layer) {
-			renderbackend->drawLine(p1, p2, m_red, m_green, m_blue);
+			renderbackend->drawLine(p1, p2, m_red, m_green, m_blue, m_alpha);
 		}
 	}
 
-	GenericRendererPointInfo::GenericRendererPointInfo(GenericRendererNode anchor, uint8_t r, uint8_t g, uint8_t b):
+	GenericRendererPointInfo::GenericRendererPointInfo(GenericRendererNode anchor, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_red(r),
 		m_green(g),
-		m_blue(b) {
+		m_blue(b),
+		m_alpha(a) {
 	}
 	void GenericRendererPointInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-			renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue);
+			renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue, m_alpha);
 		}
 	}
 
-	GenericRendererQuadInfo::GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b):
+	GenericRendererTriangleInfo::GenericRendererTriangleInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
+		GenericRendererElementInfo(),
+		m_edge1(n1),
+		m_edge2(n2),
+		m_edge3(n3),
+		m_red(r),
+		m_green(g),
+		m_blue(b),
+		m_alpha(a) {
+	}
+	void GenericRendererTriangleInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p1 = m_edge1.getCalculatedPoint(cam, layer);
+		Point p2 = m_edge2.getCalculatedPoint(cam, layer);
+		Point p3 = m_edge3.getCalculatedPoint(cam, layer);
+		if(m_edge1.getLayer() == layer) {
+			renderbackend->drawTriangle(p1, p2, p3, m_red, m_green, m_blue, m_alpha);
+		}
+	}
+
+	GenericRendererQuadInfo::GenericRendererQuadInfo(GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_edge1(n1),
 		m_edge2(n2),
@@ -267,7 +288,8 @@ namespace FIFE {
 		m_edge4(n4),
 		m_red(r),
 		m_green(g),
-		m_blue(b) {
+		m_blue(b),
+		m_alpha(a) {
 	}
 	void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p1 = m_edge1.getCalculatedPoint(cam, layer);
@@ -275,22 +297,23 @@ namespace FIFE {
 		Point p3 = m_edge3.getCalculatedPoint(cam, layer);
 		Point p4 = m_edge4.getCalculatedPoint(cam, layer);
 		if(m_edge1.getLayer() == layer) {
-			renderbackend->drawQuad(p1, p2, p3, p4, m_red, m_green, m_blue);
+			renderbackend->drawQuad(p1, p2, p3, p4, m_red, m_green, m_blue, m_alpha);
 		}
 	}
 
-	GenericRendererVertexInfo::GenericRendererVertexInfo(GenericRendererNode center, int size, uint8_t r, uint8_t g, uint8_t b):
+	GenericRendererVertexInfo::GenericRendererVertexInfo(GenericRendererNode center, int size, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_center(center),
 		m_size(size),
 		m_red(r),
 		m_green(g),
-		m_blue(b) {
+		m_blue(b),
+		m_alpha(a) {
 	}
 	void GenericRendererVertexInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p = m_center.getCalculatedPoint(cam, layer);
 		if(m_center.getLayer() == layer) {
-			renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue);
+			renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue, m_alpha);
 		}
 	}
 
@@ -385,20 +408,24 @@ namespace FIFE {
 
 	GenericRenderer::~GenericRenderer() {
 	}
-	void GenericRenderer::addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b) {
-		GenericRendererElementInfo* info = new GenericRendererLineInfo(n1, n2, r, g, b);
+	void GenericRenderer::addLine(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		GenericRendererElementInfo* info = new GenericRendererLineInfo(n1, n2, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b) {
-		GenericRendererElementInfo* info = new GenericRendererPointInfo(n, r, g, b);
+	void GenericRenderer::addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		GenericRendererElementInfo* info = new GenericRendererPointInfo(n, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b) {
-		GenericRendererElementInfo* info = new GenericRendererQuadInfo(n1, n2, n3, n4, r, g, b);
+	void GenericRenderer::addTriangle(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		GenericRendererElementInfo* info = new GenericRendererTriangleInfo(n1, n2, n3, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addVertex(const std::string &group, GenericRendererNode n, int size, uint8_t r, uint8_t g, uint8_t b) {
-		GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b);
+	void GenericRenderer::addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		GenericRendererElementInfo* info = new GenericRendererQuadInfo(n1, n2, n3, n4, r, g, b, a);
+		m_groups[group].push_back(info);
+	}
+	void GenericRenderer::addVertex(const std::string &group, GenericRendererNode n, int size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
 	void GenericRenderer::addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text) {

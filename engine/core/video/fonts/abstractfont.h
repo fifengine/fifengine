@@ -104,7 +104,7 @@ namespace FIFE {
 
 		/** Set the color the text should be rendered in
 		 */
-		virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;
+		virtual void setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a = 255) = 0;
 
 		/** Get the color the text was rendered in
 		 */

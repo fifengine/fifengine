@@ -49,9 +49,10 @@ namespace FIFE {
 		virtual unsigned int getHeight() const = 0;
 		virtual const Rect& getArea() = 0;
 		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
- 		virtual bool putPixel(int x, int y, int r, int g, int b) = 0;
-		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b) = 0;
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) = 0;
+ 		virtual bool putPixel(int x, int y, int r, int g, int b, int a = 255) = 0;
+		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255) = 0;
+		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255) = 0;
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255) = 0;
 		virtual void pushClipArea(const Rect& cliparea, bool clear=true) = 0;
 		virtual void popClipArea() = 0;
 		virtual const Rect& getClipArea() const = 0;
@@ -152,10 +153,11 @@ namespace FIFE {
 		unsigned int getScreenHeight() const { return getHeight(); }
 		const Rect& getArea();
 		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
- 		bool putPixel(int x, int y, int r, int g, int b);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
-		void drawVertex(const Point& p, int size,  int r, int g, int b);		
+ 		bool putPixel(int x, int y, int r, int g, int b, int a = 255);
+		void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255);
+		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
+		void drawVertex(const Point& p, int size,  int r, int g, int b, int a = 255);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;

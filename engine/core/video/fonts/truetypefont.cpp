@@ -49,7 +49,7 @@ namespace FIFE {
 		if (mFont == NULL) {
 			throw FIFE::CannotOpenFile(filename + " (" + TTF_GetError() + ")");
 		}
-		mColor.r = mColor.g = mColor.b = 255;
+		mColor.r = mColor.g = mColor.b = mColor.unused = 255;
 	}
 
 	TrueTypeFont::~TrueTypeFont() {
@@ -94,9 +94,10 @@ namespace FIFE {
 		return renderedText;
 	}
 
-	void TrueTypeFont::setColor(Uint8 r, Uint8 g, Uint8 b) {
+	void TrueTypeFont::setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 		mColor.r = r;
 		mColor.g = g;
 		mColor.b = b;
+		mColor.unused = a;
 	}
 }

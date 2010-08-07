@@ -66,7 +66,7 @@ namespace FIFE {
 			virtual int getHeight() const;
 
 			virtual SDL_Surface *renderString(const std::string& text);
-			virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+			virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
 
 		protected:
 			// A glyph (visible character) 
