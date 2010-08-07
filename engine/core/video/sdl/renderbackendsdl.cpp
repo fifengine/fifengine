@@ -139,20 +139,24 @@ namespace FIFE {
 		m_clear = clear;
 	}
 
-	bool RenderBackendSDL::putPixel(int x, int y, int r, int g, int b) {
-		return static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b);
+	bool RenderBackendSDL::putPixel(int x, int y, int r, int g, int b, int a) {
+		return static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b, a);
 	}
 
-	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
-		static_cast<SDLImage*>(m_screen)->drawLine(p1, p2, r, g, b);
+	void RenderBackendSDL::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
+		static_cast<SDLImage*>(m_screen)->drawLine(p1, p2, r, g, b, a);
 	}
 
-	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-		static_cast<SDLImage*>(m_screen)->drawQuad(p1, p2, p3, p4, r, g, b);
+	void RenderBackendSDL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
+		static_cast<SDLImage*>(m_screen)->drawTriangle(p1, p2, p3, r, g, b, a);
 	}
 
-	void RenderBackendSDL::drawVertex(const Point& p, const uint8_t size, int r, int g, int b){
-		static_cast<SDLImage*>(m_screen)->drawVertex(p, 2, r, g, b);
+	void RenderBackendSDL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
+		static_cast<SDLImage*>(m_screen)->drawQuad(p1, p2, p3, p4, r, g, b, a);
+	}
+
+	void RenderBackendSDL::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a){
+		static_cast<SDLImage*>(m_screen)->drawVertex(p, 2, r, g, b, a);
 	}
 
 }//FIFE

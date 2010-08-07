@@ -315,23 +315,28 @@ namespace FIFE {
 		}
 	}
 
-	bool GLImage::putPixel(int x, int y, int r, int g, int b) {
+	bool GLImage::putPixel(int x, int y, int r, int g, int b, int a) {
 		cleanup();
-		return m_sdlimage->putPixel(x, y, r, g, b);
+		return m_sdlimage->putPixel(x, y, r, g, b, a);
 	}
 
-	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
+	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
 		cleanup();
-		m_sdlimage->drawLine(p1, p2, r, g, b);
+		m_sdlimage->drawLine(p1, p2, r, g, b, a);
 	}
 
-	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
+	void GLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
 		cleanup();
-		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b);
+		m_sdlimage->drawTriangle(p1, p2, p3, r, g, b, a);
 	}
 
-	void GLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b) {
+	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
 		cleanup();
-		m_sdlimage->drawVertex(p, size, r, g, b);
+		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b, a);
+	}
+
+	void GLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a) {
+		cleanup();
+		m_sdlimage->drawVertex(p, size, r, g, b, a);
 	}
 }

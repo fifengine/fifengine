@@ -39,7 +39,7 @@ namespace FIFE {
 		virtual int getGlyphSpacing() const = 0;
 		virtual void setAntiAlias(bool antiAlias) = 0;
 		virtual bool isAntiAlias() = 0;
-		virtual void setColor(uint8_t r,uint8_t g,uint8_t b) = 0;
+		virtual void setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a = 255) = 0;
 		virtual SDL_Color getColor() const = 0;
 		virtual int getWidth(const std::string& text) const = 0;
 		virtual int getHeight() const = 0;
@@ -56,7 +56,7 @@ namespace FIFE {
 	public:
 		TrueTypeFont(const std::string& filename, int size);
 		virtual ~TrueTypeFont();
-		virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+		virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
 		virtual int getWidth(const std::string& text) const;
 		virtual int getHeight() const;
 	};
@@ -67,7 +67,7 @@ namespace FIFE {
 	public:
 		SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
 		virtual ~SubImageFont();
-		virtual void setColor(Uint8 r, Uint8 g, Uint8 b);
+		virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
 		virtual int getWidth(const std::string& text) const;
 		virtual int getHeight() const;
 	};

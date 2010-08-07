@@ -183,19 +183,22 @@ namespace FIFE {
 		m_clear = clear;
 	}
 
-	bool RenderBackendOpenGL::putPixel(int x, int y, int r, int g, int b) {
+	bool RenderBackendOpenGL::putPixel(int x, int y, int r, int g, int b, int a) {
 		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
 			return false;
 		}
-		glColor3ub(r, g, b);
+
+		glColor4ub(r, g, b, a);
+
 		glBegin(GL_POINTS);
 		glVertex2i(x, y);
 		glEnd();
 		return true;
 	}
 
-	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b) {
-		glColor3ub(r, g, b);
+	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
+		glColor4ub(r, g, b, a);
+
 		glBegin(GL_LINES);
 		glVertex2f(p1.x+0.5f, p1.y+0.5f);
 		glVertex2f(p2.x+0.5f, p2.y+0.5f);
@@ -206,8 +209,19 @@ namespace FIFE {
 		glEnd();
 	}
 
-	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b) {
-		glColor4ub(r, g, b, 165);
+	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
+		glColor4ub(r, g, b, a);
+		
+		glBegin(GL_TRIANGLES);
+		glVertex2f(p1.x, p1.y);
+		glVertex2f(p2.x, p2.y);
+		glVertex2f(p3.x, p3.y);
+		glEnd();
+	}
+
+	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
+		glColor4ub(r, g, b, a);
+		
 		glBegin(GL_QUADS);
 		glVertex2f(p1.x, p1.y);
 		glVertex2f(p2.x, p2.y);
@@ -216,12 +230,13 @@ namespace FIFE {
 		glEnd();
 	}
 
-	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, int r, int g, int b){
+	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a){
 		GLfloat width;
 		glGetFloatv(GL_LINE_WIDTH, &width);
 		glLineWidth(1.0);
 
-		glColor3ub(r, g, b);
+		glColor4ub(r, g, b, a);
+
 		glBegin(GL_LINE_LOOP);
 		glVertex2f(p.x-size, p.y+size);
 		glVertex2f(p.x+size, p.y+size);

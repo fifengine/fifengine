@@ -127,8 +127,8 @@ namespace FIFE {
 		return m_font->splitTextToWidth(text,render_width);
 	}
 
-	void GuiFont::setColor(uint8_t r,uint8_t g,uint8_t b) {
-		m_font->setColor(r, g, b);
+	void GuiFont::setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a) {
+		m_font->setColor(r, g, b, a);
 	}
 	
 	SDL_Color GuiFont::getColor() const {

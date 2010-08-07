@@ -44,10 +44,11 @@ namespace FIFE {
 		virtual ~SDLImage();
 		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
 		void saveImage(const std::string& filename);
- 		bool putPixel(int x, int y, int r, int g, int b);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b);
-		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b);
+ 		bool putPixel(int x, int y, int r, int g, int b, int a = 255);
+		void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255);
+		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
+		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255);
 
 	protected:
 		void setClipArea(const Rect& cliparea, bool clear);
