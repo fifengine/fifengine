@@ -40,46 +40,46 @@ namespace FIFE {
 
 	class GenericRendererNode {
 	public:
-		GenericRendererNode(Instance* attached_instance, Location* relative_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		GenericRendererNode(Instance* attached_instance, Location* relative_location, const Point &relative_point = Point(0,0));
+		GenericRendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
+		GenericRendererNode(Instance* attached_instance, const Location &relative_location, const Point &relative_point = Point(0,0));
 		GenericRendererNode(Instance* attached_instance, Layer* relative_layer, const Point &relative_point = Point(0,0));
 		GenericRendererNode(Instance* attached_instance, const Point &relative_point = Point(0,0));
-		GenericRendererNode(Location* attached_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
-		GenericRendererNode(Location* attached_location, const Point &relative_point = Point(0,0));
+		GenericRendererNode(const Location &attached_location, Layer* relative_layer, const Point &relative_point = Point(0,0));
+		GenericRendererNode(const Location &attached_location, const Point &relative_point = Point(0,0));
 		GenericRendererNode(Layer* attached_layer, const Point &relative_point = Point(0,0));
 		GenericRendererNode(const Point &attached_point);
 		~GenericRendererNode();
 		
-		void setAttached(Instance* attached_instance, Location* relative_location, const Point &relative_point);
-		void setAttached(Instance* attached_instance, Location* relative_location);
+		void setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point);
+		void setAttached(Instance* attached_instance, const Location &relative_location);
 		void setAttached(Instance* attached_instance, const Point &relative_point);
 		void setAttached(Instance* attached_instance);
-		void setAttached(Location* attached_location, const Point &relative_point);
-		void setAttached(Location* attached_location);
+		void setAttached(const Location &attached_location, const Point &relative_point);
+		void setAttached(const Location &attached_location);
 		void setAttached(Layer* attached_layer);
 		void setAttached(const Point &attached_point);
 		
-		void setRelative(Location* relative_location);
-		void setRelative(Location* relative_location, Point relative_point);
+		void setRelative(const Location &relative_location);
+		void setRelative(const Location &relative_location, Point relative_point);
 		void setRelative(const Point &relative_point);
 		
 		Instance* getAttachedInstance();
-		Location* getAttachedLocation();
+		Location getAttachedLocation();
 		Layer* getAttachedLayer();
 		Point getAttachedPoint();
 		
-		Location* getOffsetLocation();
+		Location getOffsetLocation();
 		Point getOffsetPoint();
 		
 		Instance* getInstance();
-		Location* getLocation();
+		Location getLocation();
 		Layer* getLayer();
 		Point getPoint();
 
 		Point getCalculatedPoint(Camera* cam, Layer* layer);
 	private:
 		Instance* m_instance;
-		Location* m_location;
+		Location m_location;
 		Layer* m_layer;
 		Point m_point;
 	};

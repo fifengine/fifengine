@@ -49,13 +49,13 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	GenericRendererNode::GenericRendererNode(Instance* attached_instance, Location* relative_location, Layer* relative_layer, const Point &relative_point):
+	GenericRendererNode::GenericRendererNode(Instance* attached_instance, const Location &relative_location, Layer* relative_layer, const Point &relative_point):
 		m_instance(attached_instance),
 		m_location(relative_location),
 		m_layer(relative_layer),
 		m_point(relative_point) {
 	}
-	GenericRendererNode::GenericRendererNode(Instance* attached_instance, Location* relative_location, const Point &relative_point):
+	GenericRendererNode::GenericRendererNode(Instance* attached_instance, const Location &relative_location, const Point &relative_point):
 		m_instance(attached_instance),
 		m_location(relative_location),
 		m_layer(NULL),
@@ -73,13 +73,13 @@ namespace FIFE {
 		m_layer(NULL),
 		m_point(relative_point) {
 	}
-	GenericRendererNode::GenericRendererNode(Location* attached_location, Layer* relative_layer, const Point &relative_point):
+	GenericRendererNode::GenericRendererNode(const Location &attached_location, Layer* relative_layer, const Point &relative_point):
 		m_instance(NULL),
 		m_location(attached_location),
 		m_layer(relative_layer),
 		m_point(relative_point) {
 	}
-	GenericRendererNode::GenericRendererNode(Location* attached_location, const Point &relative_point):
+	GenericRendererNode::GenericRendererNode(const Location &attached_location, const Point &relative_point):
 		m_instance(NULL),
 		m_location(attached_location),
 		m_layer(NULL),
@@ -100,12 +100,12 @@ namespace FIFE {
 	GenericRendererNode::~GenericRendererNode() {
 	}
 
-	void GenericRendererNode::setAttached(Instance* attached_instance, Location* relative_location, const Point &relative_point) {
+	void GenericRendererNode::setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point) {
 		m_instance = attached_instance;
 		m_location = relative_location;
 		m_point = relative_point;
 	}
-	void GenericRendererNode::setAttached(Instance* attached_instance, Location* relative_location) {
+	void GenericRendererNode::setAttached(Instance* attached_instance, const Location &relative_location) {
 		m_instance = attached_instance;
 		m_location = relative_location;
 	}
@@ -116,12 +116,12 @@ namespace FIFE {
 	void GenericRendererNode::setAttached(Instance* attached_instance) {
 		m_instance = attached_instance;
 	}
-	void GenericRendererNode::setAttached(Location* attached_location, const Point &relative_point) {
+	void GenericRendererNode::setAttached(const Location &attached_location, const Point &relative_point) {
 		m_instance = NULL;
 		m_location = attached_location;
 		m_point = relative_point;
 	}
-	void GenericRendererNode::setAttached(Location* attached_location) {
+	void GenericRendererNode::setAttached(const Location &attached_location) {
 		m_instance = NULL;
 		m_location = attached_location;
 	}
@@ -134,13 +134,13 @@ namespace FIFE {
 		m_point = attached_point;
 	}
 
-	void GenericRendererNode::setRelative(Location* relative_location) {
+	void GenericRendererNode::setRelative(const Location &relative_location) {
 		if(m_instance == NULL) {
 			throw NotSupported("No instance attached.");
 		}
 		m_location = relative_location;
 	}
-	void GenericRendererNode::setRelative(Location* relative_location, Point relative_point) {
+	void GenericRendererNode::setRelative(const Location &relative_location, Point relative_point) {
 		if(m_instance == NULL) {
 			throw NotSupported("No instance attached.");
 		}
@@ -160,7 +160,7 @@ namespace FIFE {
 		}
 		return m_instance;
 	}
-	Location* GenericRendererNode::getAttachedLocation() {
+	Location GenericRendererNode::getAttachedLocation() {
 		if(m_instance != NULL || m_location == NULL) {
 			throw NotSupported("No location attached.");
 		}
@@ -179,7 +179,7 @@ namespace FIFE {
 		return m_point;
 	}
 
-	Location* GenericRendererNode::getOffsetLocation() {
+	Location GenericRendererNode::getOffsetLocation() {
 		if(m_instance == NULL || m_location == NULL) {
 			throw NotSupported("No location as offset used.");
 		}
@@ -195,7 +195,7 @@ namespace FIFE {
 	Instance* GenericRendererNode::getInstance() {
 		return m_instance;
 	}
-	Location* GenericRendererNode::getLocation() {
+	Location GenericRendererNode::getLocation() {
 		return m_location;
 	}
 	Layer* GenericRendererNode::getLayer() {
@@ -212,15 +212,15 @@ namespace FIFE {
 				m_layer = m_instance->getLocation().getLayer();
 			}
 			if(m_location != NULL) {
-				p = cam->toScreenCoordinates(m_instance->getLocationRef().getMapCoordinates() + m_location->getMapCoordinates());
+				p = cam->toScreenCoordinates(m_instance->getLocationRef().getMapCoordinates() + m_location.getMapCoordinates());
 			} else {
 				p = cam->toScreenCoordinates(m_instance->getLocation().getMapCoordinates());
 			}
 		} else if(m_location != NULL) {
 			if(m_layer == NULL) {
-				m_layer = m_location->getLayer();
+				m_layer = m_location.getLayer();
 			}
-			p = cam->toScreenCoordinates(m_location->getMapCoordinates());
+			p = cam->toScreenCoordinates(m_location.getMapCoordinates());
 		} else if(m_layer == NULL) {
 			const std::list<Layer*>& layers = cam->getRenderer("GenericRenderer")->getActiveLayers();
 			std::list<Layer*>::const_reverse_iterator layer_it = layers.rbegin();
