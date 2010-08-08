@@ -291,6 +291,11 @@ class Widget(object):
 		This method is called just before the widget is shown.
 		You can override this in derived widgets to add finalization
 		behaviour.
+		
+		NOTE:
+			- if your widget is a container, you have to call
+			  _resetTiling(), as you will loose this call by using
+			  your override method
 		"""
 
 	def afterHide(self):
