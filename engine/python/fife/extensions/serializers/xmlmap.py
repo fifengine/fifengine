@@ -34,21 +34,26 @@ import time
 FORMAT = '1.0'
 
 class XMLMapLoader(fife.ResourceLoader):
-	def __init__(self, engine, callback):
+	def __init__(self, engine, callback, debug):
 		""" The XMLMapLoader parses the xml map using several section. 
 		Each section fires a callback (if given) which can e. g. be
 		used to show a progress bar.
 		
 		The callback sends two values, a string and a float (which shows
 		the overall process): callback(string, float)
-			
-		@param	engine	:	a pointer to fife.engine
+
+		@type	engine:		object
+		@param	engine:		a pointer to fife.engine
+		@type	callback:	function
 		@param	callback:	a callback with two arguments, optional
+		@type	debug:		bool
+		@param	debug:		flag to activate / deactivate print statements
 		"""
 		fife.ResourceLoader.__init__(self)
 		self.thisown = 0
 		
 		self.callback = callback
+		self.debug = debug
 
 		self.engine = engine
 		self.vfs = self.engine.getVFS()
@@ -124,19 +129,19 @@ class XMLMapLoader(fife.ResourceLoader):
 
 			# Don't parse duplicate imports
 			if (dir,file) in parsedImports:
-				print "Duplicate import:" ,(dir,file)
+				if self.debug: print "Duplicate import:" ,(dir,file)
 				continue
 			parsedImports[(dir,file)] = 1
 
 			if file and dir:
-				loaders.loadImportFile('/'.join(dir, file), self.engine)
+				loaders.loadImportFile('/'.join(dir, file), self.engine, self.debug)
 			elif file:
-				loaders.loadImportFile(file, self.engine)
+				loaders.loadImportFile(file, self.engine, self.debug)
 			elif dir:
-				loaders.loadImportDirRec(dir, self.engine)
+				loaders.loadImportDirRec(dir, self.engine, self.debug)
 				map.importDirs.append(dir)
 			else:
-				print 'Empty import statement?'
+				if self.debug: print 'Empty import statement?'
 				
 			if self.callback:
 				i += 1				
