@@ -246,7 +246,7 @@ namespace FIFE {
 			m_surface = SDL_DisplayFormat(m_surface);
 		} else {
 			RenderBackendSDL* be = static_cast<RenderBackendSDL*>(RenderBackend::instance());
-			m_isalphaoptimized &= be->isAlphaOptimizerEnabled();
+			m_isalphaoptimized = be->isAlphaOptimizerEnabled();
 			if( m_isalphaoptimized ) {
 				m_surface = optimize(m_surface);
 			} else  {
@@ -374,7 +374,7 @@ namespace FIFE {
 		                                        src->format->Rmask,  src->format->Gmask,
 		                                        src->format->Bmask, 0);
 		bpp = dst->format->BytesPerPixel;
-		
+
 		Uint32 key = SDL_MapRGB(dst->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
 
 		// if the global color key feature is disabled, then use the manually found color key
@@ -384,7 +384,7 @@ namespace FIFE {
 							((keycolor & 0xf0) | 0xf),
 							(((keycolor & 0xf) << 4) | 0xf));
 		}
-		
+
 		if(SDL_MUSTLOCK(src)) {
 			SDL_LockSurface(src);
 		}

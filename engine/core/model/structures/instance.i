@@ -27,6 +27,7 @@
 %include "model/metamodel/modelcoords.i"
 %include "model/metamodel/abstractvisual.i"
 %include "util/structures/utilstructures.i"
+%include "util/base/utilbase.i"
 %include "location.i"
 
 namespace FIFE {
@@ -62,7 +63,7 @@ namespace FIFE {
 		virtual void onInstanceChanged(Instance* instance, InstanceChangeInfo info) = 0;
 	};
 
-	class Instance : public ResourceClass {
+	class Instance : public FifeClass {
 	public:
 		Instance(Object* object, const Location& location, const std::string& identifier="");
 		virtual ~Instance();

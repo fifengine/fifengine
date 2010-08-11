@@ -24,12 +24,18 @@
 #include "model/metamodel/abstractpather.h"
 %}
 
+%include "model/structures/instance.i"
+
 namespace FIFE {
 	class Map;
 	
 	class AbstractPather {
 	public:
 		virtual ~AbstractPather();
+		virtual int getNextLocation(const Instance* instance, const Location& target, 
+		                            double distance_to_travel, Location& nextLocation,
+		                            Location& facingLocation, int session_id=-1, 
+									int priority = MEDIUM_PRIORITY) = 0;
 		virtual std::string getName() const = 0;
 	private:
 		AbstractPather();

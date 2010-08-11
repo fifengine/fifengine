@@ -104,6 +104,7 @@ namespace FIFE {
 
 	Instance::InstanceActivity::InstanceActivity(Instance& source):
 		m_location(source.m_location),
+		m_rotation(source.m_rotation),
 		m_facinglocation(),
 		m_action(),
 		m_speed(0),
@@ -130,6 +131,10 @@ namespace FIFE {
 		if (m_location != source.m_location) {
 			source.m_changeinfo |= ICHANGE_LOC;
 			m_location = source.m_location;
+		}
+		if (m_rotation != source.m_rotation) {
+			source.m_changeinfo |= ICHANGE_ROTATION;
+			m_rotation = source.m_rotation;
 		}
 		if (source.m_facinglocation && (m_facinglocation != *source.m_facinglocation)) {
 			source.m_changeinfo |= ICHANGE_FACING_LOC;
@@ -208,7 +213,7 @@ namespace FIFE {
 			}
 		}
 	}
-	
+
 	bool Instance::isActive() const {
 		return bool(m_activity);
 	}
@@ -224,7 +229,11 @@ namespace FIFE {
 
 	void Instance::setRotation(int rotation) {
 		m_rotation = rotation;
-		m_changeinfo |= ICHANGE_ROTATION;
+		if(isActive()) {
+			refresh();
+		} else {
+			initializeChanges();
+		}
 	}
 
 	void Instance::setId(const std::string& identifier) {
@@ -577,8 +586,8 @@ namespace FIFE {
                 }
         }
         void Instance::onInstanceDeleted(Instance* instance) {
-                if(m_activity && 
-                   m_activity->m_actioninfo && 
+                if(m_activity &&
+                   m_activity->m_actioninfo &&
                    m_activity->m_actioninfo->m_leader == instance) {
                         m_activity->m_actioninfo->m_leader = NULL;
                 }
