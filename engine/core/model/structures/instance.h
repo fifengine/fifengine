@@ -31,6 +31,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/fifeclass.h"
+
 #include "model/metamodel/object.h"
 #include "model/metamodel/abstractvisual.h"
 
@@ -60,7 +62,7 @@ namespace FIFE {
 		ICHANGE_ACTION = 0x0008,
 		ICHANGE_TIME_MULTIPLIER = 0x0010,
 		ICHANGE_SAYTEXT = 0x0020,
-		ICHANGE_ROTATION = 0x0040,  // NOTE! does not currently get updated onInstanceChange unless some other activity is performed
+		ICHANGE_ROTATION = 0x0040,
 	};
 	typedef unsigned int InstanceChangeInfo;
 
@@ -80,7 +82,7 @@ namespace FIFE {
 	/**
 	 *  An Instance is an "instantiation" of an Object at a Location.
 	 */
-	class Instance : public ResourceClass, public InstanceDeleteListener {
+	class Instance : public FifeClass, public InstanceDeleteListener {
 	public:
 
 		/** Constructor
@@ -250,7 +252,7 @@ namespace FIFE {
 		 * @returns marked changes
 		 */
 		InstanceChangeInfo update();
-		
+
 		/** If this returns true, the instance needs to be updated
 		 */
 		bool isActive() const;
@@ -289,7 +291,7 @@ namespace FIFE {
 		 */
 		inline InstanceChangeInfo getChangeInfo();
 
-		/** callback so other instances we depend on can notify us if they go away 
+		/** callback so other instances we depend on can notify us if they go away
 		*/
 		void onInstanceDeleted(Instance* instance);
 
@@ -318,6 +320,8 @@ namespace FIFE {
 			void update(Instance& source);
 			// location on previous round
 			Location m_location;
+			// rotation on previous round
+			int m_rotation;
 			// facing location on previous round
 			Location m_facinglocation;
 			// action on previous round. @NOTE: might become invalid, only used for address comparison

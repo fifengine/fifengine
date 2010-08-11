@@ -182,8 +182,8 @@ class Widget(object):
 		the is_focusable property.
 		
 		"""
-
-		self.real_widget.requestFocus()
+		if self.isVisible():
+			self.real_widget.requestFocus()
 
 	def match(self,**kwargs):
 		"""
