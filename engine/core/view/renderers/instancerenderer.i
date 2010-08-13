@@ -25,6 +25,8 @@
 %}
 
 namespace FIFE {
+	%apply const std::list<std::string> &OUTPUT {std::list<std::string> &groups};
+	
 	class Location;
 	class RenderBackend;
 	class ImagePool;
@@ -40,11 +42,12 @@ namespace FIFE {
 		void addColored(Instance* instance, int r, int g, int b);
 		void removeColored(Instance* instance);
 		void removeAllColored();
-		void addTransparentArea(Instance* instance, const std::string &groups, unsigned int w, unsigned int h, unsigned char trans, bool front = true);
+		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, unsigned int w, unsigned int h, unsigned char trans, bool front = true);
 		void removeTransparentArea(Instance* instance);
 		void removeAllTransparentAreas();
 		static InstanceRenderer* getInstance(IRendererContainer* cnt);
 	private:
 		InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
 	};
+	%clear std::list<std::string> &groups;
 }

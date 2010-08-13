@@ -162,16 +162,19 @@ namespace FIFE {
 					}
 
 					std::string str_name = instance->getObject()->getNamespace();
-					if(str_name.find(infoa.groups) != -1) {
-						ScreenPoint p;
-						Rect rec;
-						p = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
-						rec.x = p.x - infoa.w / 2;
-						rec.y = p.y - infoa.h / 2;
-						rec.w = infoa.w;
-						rec.h = infoa.h;
-						if(infoa.instance != instance && vc.dimensions.intersects(rec)) {
-							vc.transparency = 255 - infoa.trans;
+					std::list<std::string>::iterator group_it = infoa.groups.begin();
+					for(;group_it != infoa.groups.end(); ++group_it) {
+						if(str_name.find((*group_it)) != -1) {
+							ScreenPoint p;
+							Rect rec;
+							p = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
+							rec.x = p.x - infoa.w / 2;
+							rec.y = p.y - infoa.h / 2;
+							rec.w = infoa.w;
+							rec.h = infoa.h;
+							if(infoa.instance != instance && vc.dimensions.intersects(rec)) {
+								vc.transparency = 255 - infoa.trans;
+							}
 						}
 					}
 				}
@@ -371,10 +374,11 @@ namespace FIFE {
 		}
 	}
 
-	void InstanceRenderer::addTransparentArea(Instance* instance, const std::string &groups, unsigned int w, unsigned int h, unsigned char trans, bool front) {
+	void InstanceRenderer::addTransparentArea(Instance* instance, const std::list<std::string> &groups, unsigned int w, unsigned int h, unsigned char trans, bool front) {
 		AreaInfo newinfo;
 		newinfo.instance = instance;
 		newinfo.groups = groups;
+
 		newinfo.w = w;
 		newinfo.h = h;
 		newinfo.trans = trans;
