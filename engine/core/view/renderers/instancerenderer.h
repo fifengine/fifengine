@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <list>
 
 // 3rd party library includes
 
@@ -68,7 +69,7 @@ namespace FIFE {
 
 		/** Marks given instance to have an transparent area with given paramters
 		 */
-		void addTransparentArea(Instance* instance, const std::string &groups, unsigned int w, unsigned int h, unsigned char trans, bool front = true);
+		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, unsigned int w, unsigned int h, unsigned char trans, bool front = true);
 		
 		/** Removes instance from outlining list
 		 */
@@ -133,7 +134,8 @@ namespace FIFE {
 		class AreaInfo {
 		public:
 			Instance* instance;
-			std::string groups;
+			//std::string groups;
+			std::list<std::string> groups;
 			unsigned int w;
 			unsigned int h;
 			unsigned char trans;
