@@ -46,7 +46,8 @@ namespace FIFE {
 	Pool::~Pool() {
 		FL_LOG(_log, LMsg("Pool destroyed: ") << m_name);
 		printStatistics();
-		sanityCheck();
+		// This is only usefull for debugging
+		//sanityCheck();
 		reset();
 		std::vector<ResourceLoader*>::iterator loader;
 		for (loader = m_loaders.begin(); loader != m_loaders.end(); loader++) {
