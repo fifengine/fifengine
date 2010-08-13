@@ -128,7 +128,7 @@ namespace FIFE {
 		m_font_color = true;
 	}
 
-	void FloatingTextRenderer::setDefaultBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 ba) {
+	void FloatingTextRenderer::setBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 ba) {
 		m_backcolor.r = br;
 		m_backcolor.g = bg;
 		m_backcolor.b = bb;
@@ -137,7 +137,7 @@ namespace FIFE {
 		m_background = true;
 	}
 
-	void FloatingTextRenderer::setDefaultBorder(Uint8 bbr, Uint8 bbg, Uint8 bbb, Uint8 bba) {
+	void FloatingTextRenderer::setBorder(Uint8 bbr, Uint8 bbg, Uint8 bbb, Uint8 bba) {
 		m_backbordercolor.r = bbr;
 		m_backbordercolor.g = bbg;
 		m_backbordercolor.b = bbb;
@@ -146,11 +146,11 @@ namespace FIFE {
 		m_backborder = true;
 	}
 
-	void FloatingTextRenderer::resetDefaultBackground() {
+	void FloatingTextRenderer::resetBackground() {
 		m_background = false;
 	}
 
-	void FloatingTextRenderer::resetDefaultBorder() {
+	void FloatingTextRenderer::resetBorder() {
 		m_backborder = false;
 	}
 

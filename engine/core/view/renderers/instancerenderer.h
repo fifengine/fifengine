@@ -23,6 +23,7 @@
 #define FIFE_INSTANCERENDERER_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -64,6 +65,10 @@ namespace FIFE {
 		/** Marks given instance to be colored with given parameters
 		 */
 		void addColored(Instance* instance, int r, int g, int b);
+
+		/** Marks given instance to have an transparent area with given paramters
+		 */
+		void addTransparentArea(Instance* instance, const std::string &groups, unsigned int w, unsigned int h, unsigned char trans, bool front = true);
 		
 		/** Removes instance from outlining list
 		 */
@@ -72,6 +77,10 @@ namespace FIFE {
 		/** Removes instance from coloring list
 		 */
 		void removeColored(Instance* instance);
+
+		/** Removes instance form area list
+		 */
+		void removeTransparentArea(Instance* instance);
 		
 		/** Removes all outlines
 		 */
@@ -80,6 +89,10 @@ namespace FIFE {
 		/** Removes all coloring
 		 */
 		void removeAllColored();
+
+		/** Removes all transparent areas
+		 */
+		void removeAllTransparentAreas();
 		
 		/** Gets instance for interface access
 		 */
@@ -90,6 +103,7 @@ namespace FIFE {
 	private:
 		ImagePool* m_imagepool;
 		AnimationPool* m_animationpool;
+		bool m_area_layer;
 		
 		// contains per-instance information for outline drawing
 		class OutlineInfo {
@@ -116,12 +130,25 @@ namespace FIFE {
 			ColoringInfo();
 			~ColoringInfo();
 		};
+		class AreaInfo {
+		public:
+			Instance* instance;
+			std::string groups;
+			unsigned int w;
+			unsigned int h;
+			unsigned char trans;
+			bool front;
+			float z;
+			AreaInfo();
+			~AreaInfo();
+		};
 		typedef std::map<Instance*, OutlineInfo> InstanceToOutlines_t;
 		typedef std::map<Instance*, ColoringInfo> InstanceToColoring_t;
-		//typedef std::map<int, ColoringInfo> InstanceToColoring_t;
+		typedef std::map<Instance*, AreaInfo> InstanceToAreas_t;
 		
 		InstanceToOutlines_t m_instance_outlines;
 		InstanceToColoring_t m_instance_colorings;
+		InstanceToAreas_t m_instance_areas;
 		
 		/** Binds new outline (if needed) to the instance's OutlineInfo
 		 */

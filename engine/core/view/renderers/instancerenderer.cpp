@@ -72,12 +72,25 @@ namespace FIFE {
 		curimg(NULL) {
 	}
 
+	InstanceRenderer::AreaInfo::AreaInfo():
+		instance(NULL),
+		groups(),
+		w(1),
+		h(1),
+		trans(0),
+		front(true),
+		z(0) {
+	}
+
 	InstanceRenderer::OutlineInfo::~OutlineInfo() {
 		delete outline;
 	}
 
 	InstanceRenderer::ColoringInfo::~ColoringInfo() {
 		delete overlay;
+	}
+
+	InstanceRenderer::AreaInfo::~AreaInfo() {
 	}
 
 	InstanceRenderer* InstanceRenderer::getInstance(IRendererContainer* cnt) {
@@ -87,14 +100,16 @@ namespace FIFE {
 	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
-		m_animationpool(animpool) {
+		m_animationpool(animpool),
+		m_area_layer(false) {
 		setEnabled(true);
 	}
 
  	InstanceRenderer::InstanceRenderer(const InstanceRenderer& old):
 		RendererBase(old),
 		m_imagepool(old.m_imagepool),
-		m_animationpool(old.m_animationpool) {
+		m_animationpool(old.m_animationpool),
+		m_area_layer(old.m_area_layer) {
 		setEnabled(true);
 	}
 
@@ -115,11 +130,52 @@ namespace FIFE {
 
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
 
-		RenderList::iterator instance_it = instances.begin(); 
+		m_area_layer = false;
+		if(!m_instance_areas.empty()) {
+			InstanceToAreas_t::iterator area_it = m_instance_areas.begin();
+			for(;area_it != m_instance_areas.end(); area_it++) {
+				AreaInfo& info = area_it->second;
+				if(info.instance->getLocation().getLayer() == layer) {
+					if(info.front) {
+						DoublePoint3D instance_posv = cam->toVirtualScreenCoordinates(info.instance->getLocation().getMapCoordinates());
+						info.z = instance_posv.z;
+					}
+					m_area_layer = true;
+				}
+			}
+		}
+
+		RenderList::iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			FL_DBG(_log, "Iterating instances...");
 			Instance* instance = (*instance_it)->instance;
 			RenderItem& vc = **instance_it;
+
+			if(m_area_layer) {
+				InstanceToAreas_t::iterator areas_it = m_instance_areas.begin();
+				for(;areas_it != m_instance_areas.end(); areas_it++) {
+					AreaInfo& infoa = areas_it->second;
+					if(infoa.front) {
+						if(infoa.z >= vc.screenpoint.z) {
+							continue;
+						}
+					}
+
+					std::string str_name = instance->getObject()->getNamespace();
+					if(str_name.find(infoa.groups) != -1) {
+						ScreenPoint p;
+						Rect rec;
+						p = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
+						rec.x = p.x - infoa.w / 2;
+						rec.y = p.y - infoa.h / 2;
+						rec.w = infoa.w;
+						rec.h = infoa.h;
+						if(infoa.instance != instance && vc.dimensions.intersects(rec)) {
+							vc.transparency = 255 - infoa.trans;
+						}
+					}
+				}
+			}
 
 			FL_DBG(_log, LMsg("Instance layer coordinates = ") << instance->getLocationRef().getLayerCoordinates());
 
@@ -315,12 +371,39 @@ namespace FIFE {
 		}
 	}
 
+	void InstanceRenderer::addTransparentArea(Instance* instance, const std::string &groups, unsigned int w, unsigned int h, unsigned char trans, bool front) {
+		AreaInfo newinfo;
+		newinfo.instance = instance;
+		newinfo.groups = groups;
+		newinfo.w = w;
+		newinfo.h = h;
+		newinfo.trans = trans;
+		newinfo.front = front;
+
+
+		// attempts to insert the element into the area map
+		// will return false in the second value of the pair if the instance already exists 
+		// in the map and the first value of the pair will then be an iterator to the 
+		// existing data for the instance
+		std::pair<InstanceToAreas_t::iterator, bool> insertiter = m_instance_areas.insert(std::make_pair(instance, newinfo));
+
+		if (insertiter.second == false) {
+			// the insertion did not happen because the instance 
+			// already exists in the map so lets just update its area info
+			AreaInfo& info = insertiter.first->second;
+		}
+	}
+
 	void InstanceRenderer::removeOutlined(Instance* instance) {
 		m_instance_outlines.erase(instance);
 	}
 
 	void InstanceRenderer::removeColored(Instance* instance) {
 		m_instance_colorings.erase(instance);
+	}
+
+	void InstanceRenderer::removeTransparentArea(Instance* instance) {
+		m_instance_areas.erase(instance);
 	}
 
 	void InstanceRenderer::removeAllOutlines() {
@@ -331,9 +414,14 @@ namespace FIFE {
 		m_instance_colorings.clear();
 	}
 
+	void InstanceRenderer::removeAllTransparentAreas() {
+		m_instance_areas.clear();
+	}
+
 	void InstanceRenderer::reset() {
 		removeAllOutlines();
 		removeAllColored();
+		removeAllTransparentAreas();
 	}
 
 }

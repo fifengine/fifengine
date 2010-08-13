@@ -70,20 +70,20 @@ namespace FIFE {
 		/** Set default background quad
 		 * r,g,b,a values for background
 		 */
-		void setDefaultBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 ba = 255);
+		void setBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 ba = 255);
 
 		/** Set default border
 		 * r,g,b,a values for border
 		 */
-		void setDefaultBorder(Uint8 bbr, Uint8 bbg, Uint8 bbb, Uint8 bba = 255);
+		void setBorder(Uint8 bbr, Uint8 bbg, Uint8 bbb, Uint8 bba = 255);
 		
 		/** Disable the default background
 		 */
-		void resetDefaultBackground();
+		void resetBackground();
 
 		/** Disable the default border
 		 */
-		void resetDefaultBorder();
+		void resetBorder();
 
 		/** returns instance used in given view
 		 */
