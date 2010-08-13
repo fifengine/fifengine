@@ -12,6 +12,7 @@
 			</ScrollArea>
 			<TextBox text="TextBox" name="example7" />
 			<TextField text="TextField" name="example8" />
+			<Label text="Label" name="example9" />
 		</VBox>
 		<Spacer />
 		<VBox name="Slider_wrapper">

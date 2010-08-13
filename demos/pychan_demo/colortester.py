@@ -84,6 +84,7 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="example6").base_color = rgba
 		self.widget.findChild(name="example7").base_color = rgba
 		self.widget.findChild(name="example8").base_color = rgba
+		self.widget.findChild(name="example9").base_color = rgba
 		
 	def update_background_color(self):
 		"""
@@ -111,3 +112,4 @@ class ColorExample(PyChanExample):
 		self.widget.findChild(name="example6").background_color = rgba
 		self.widget.findChild(name="example7").background_color = rgba
 		self.widget.findChild(name="example8").background_color = rgba
+		self.widget.findChild(name="example9").background_color = rgba
