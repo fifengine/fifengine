@@ -120,6 +120,12 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::startFrame() {
+		SDL_Rect rect;
+		rect.x = 0;
+		rect.y = 0;
+		rect.w = getWidth();
+		rect.h = getHeight();
+		SDL_SetClipRect(m_screen->getSurface(), &rect);
 		SDL_FillRect(m_screen->getSurface(), 0, 0x00);
 	}
 
