@@ -52,6 +52,7 @@ namespace FIFE {
 			ALCcontext* getContext();
 			
 			void setVolume(float vol);
+			float getVolume() const;
 			void mute();
 			void unmute();
 			
