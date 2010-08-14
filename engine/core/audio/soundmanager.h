@@ -80,6 +80,12 @@ namespace FIFE {
 			}
 			alListenerf(AL_GAIN, vol);
 		}
+
+		/** Return the Master Volume
+		*/
+		float getVolume() const{
+			return m_volume;
+		}
 		
 		/** Mute
 		 */
