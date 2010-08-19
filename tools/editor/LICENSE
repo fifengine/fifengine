@@ -56,15 +56,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 Affected files:
 gui/icons/take_screenshot.png
 
-=== Undocumented assets ===
-Author:
-Unknown
+=== GIMP Icons ===
+Author: the GIMP team
 
 Download:
-Unknown
+http://gimp.org
 
 License:
-Unknown
+GPL 2.0
 
 Affected files:
 gui/icons/is_visible.png
