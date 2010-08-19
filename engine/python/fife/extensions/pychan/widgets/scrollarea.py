@@ -105,5 +105,21 @@ class ScrollArea(Widget):
 			self.content.width = max(self.content.width,self.width-5)
 			self.content.height = max(self.content.height,self.height-5)
 
+	def getVerticalMaxScroll(self):
+		return self.real_widget.getVerticalMaxScroll()
+	def getHorizontalMaxScroll(self):
+		return self.real_widget.getHorizontalMaxScroll()
+	def _getHorizontalScrollAmount(self):
+		return self.real_widget.getHorizontalScrollAmount()
+	def _setHorizontalScrollAmount(self, scroll_amount):
+		return self.real_widget.setHorizontalScrollAmount(scroll_amount)
+	def _getVerticalScrollAmount(self):
+		return self.real_widget.getVerticalScrollAmount()
+	def _setVerticalScrollAmount(self, scroll_amount):
+		return self.real_widget.setVerticalScrollAmount(scroll_amount)
+
 	vertical_scrollbar = property(_getVerticalScrollbar,_setVerticalScrollbar)
 	horizontal_scrollbar = property(_getHorizontalScrollbar,_setHorizontalScrollbar)
+
+	horizontal_scroll_amount = property(_getHorizontalScrollAmount, _setHorizontalScrollAmount)
+	vertical_scroll_amount = property(_getVerticalScrollAmount, _setVerticalScrollAmount)	
