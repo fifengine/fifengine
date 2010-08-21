@@ -148,7 +148,7 @@ namespace FIFE {
 				return *it;
 		}
 
-		throw NotFound(id);
+		return 0;
 	}
 
 	std::vector<Instance*> Layer::getInstances(const std::string& id) {
