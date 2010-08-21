@@ -240,9 +240,9 @@ namespace FIFE {
 			objectmap_t::const_iterator it = nspace->second.begin();
 			for(; it != nspace->second.end(); ++it )
 				object_list.push_back(it->second);
-			return object_list;
 		}
-		throw NotFound(name_space);
+
+		return object_list;
 	}
 
 	const Model::namespace_t* Model::selectNamespace(const std::string& name_space) const {
