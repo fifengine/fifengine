@@ -41,8 +41,8 @@ class SimpleXMLSerializer(object):
 	Usage::
 		from fife.extensions.serializers.simplexml import SimpleXMLSerializer
 		serializer = SimpleXMLSerializer(filename="somefile.xml")
-		settings.set("module_name", "variable_name", "value")
-		somevariable = settings.get("module_name", "variable_name", "default_value")
+		serializer.set("module_name", "variable_name", "value")
+		somevariable = serializer.get("module_name", "variable_name", "default_value")
 	"""
 	def __init__(self, filename=None):
 		self._file = filename
