@@ -95,7 +95,7 @@ class ColorAttr(Attr):
 				for c in (r,g,b):
 					if not 0 <= c < 256: raise ParserError("Expected a color (Failed: 0 <= %d <= 255)" %c)
 		except:
-			raise ParserError("Expected an color.")
+			raise ParserError("Expected a color.")
 
 		return r,g,b,a
 
