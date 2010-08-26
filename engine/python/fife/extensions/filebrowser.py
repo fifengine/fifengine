@@ -21,6 +21,8 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
+""" a filebrowser implementation for pychan """
+
 import pychan
 import pychan.widgets as widgets
 import sys
@@ -29,15 +31,32 @@ def u2s(string):
 	return string.encode(sys.getfilesystemencoding())
 
 class FileBrowser(object):
-	"""
-	FileBrowser displays directory and file listings from the vfs.
-	The fileSelected parameter is a callback invoked when a file selection has been made; its
-    signature must be fileSelected(path,filename). If selectdir is set, fileSelected's
-		filename parameter should be optional.
-	The savefile option provides a box for supplying a new filename that doesn't exist yet.
-  The selectdir option allows directories to be selected as well as files.
+	""" The B{FileBrowser} displays directory and file listings from the vfs.
+	
+		B{The fileSelected} parameter is a callback invoked when a file selection has been made; its
+		signature must be fileSelected(path,filename).
+		
+		B{If selectdir} is set, fileSelected's filename parameter should be optional.
+		
+		B{The savefile} option provides a box for supplying a new filename that doesn't exist yet.
+		
+		B{The selectdir} option allows directories to be selected as well as files.
 	"""
 	def __init__(self, engine, fileSelected, savefile=False, selectdir=False, extensions=('xml',), guixmlpath="gui/filebrowser.xml"):
+		"""
+		@type	engine:	object
+		@param	engine:	initiated instance of FIFE
+		@type	fileSelected:	function
+		@param	fileSelected:	callback invoked on file selection
+		@type	savefile:	bool
+		@param	savefile:	flag to provide a gui for an usergiven filename
+		@type	selectdir:	bool
+		@param	selectdir:	flag to fire fileSelected without filename
+		@type	extensions:	tuple
+		@param	extensions:	list of extensions the filebrowser should show (defaults to xml)
+		@type	guixmlpath:	string
+		@param	guixmlpath:	path to the xml guifile defaults to (gui/filebrowser.xml)
+		"""
 		self.engine = engine
 		self.fileSelected = fileSelected
 
@@ -53,6 +72,7 @@ class FileBrowser(object):
 		self.file_list = []
 
 	def showBrowser(self):
+		"""	create and / or show the gui """
 		if self._widget:
 			self.setDirectory(self.path)
 			self._widget.show()
@@ -72,6 +92,7 @@ class FileBrowser(object):
 		self._widget.show()
 		
 	def setDirectory(self, path):
+		""" sets the current directory according to path """
 		path_copy = self.path
 		self.path = path
 		if not self._widget: return
@@ -113,6 +134,7 @@ class FileBrowser(object):
 		self._widget.adaptLayout()
 
 	def _selectDir(self):
+		""" callback for directory ListBox """
 		selection = self._widget.collectData('dirList')
 		if selection >= 0 and selection < len(self.dir_list):
 			new_dir = u2s(self.dir_list[selection])
@@ -126,6 +148,7 @@ class FileBrowser(object):
 			self.setDirectory(path)
 
 	def _selectFile(self):
+		""" callback for selectButton, hides filebrowser """
 		self._widget.hide()
 		selection = self._widget.collectData('fileList')
 
