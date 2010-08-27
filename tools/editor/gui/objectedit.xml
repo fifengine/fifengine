@@ -1,4 +1,12 @@
 <Panel title="Object editor" position="10,700" min_size="200,250"> <!-- size="200,250" min_size="200,250" max_size="200,250" > -->
+	<HBox>
+		<Spacer min_size="150"/>
+		<ImageButton up_image="gui/icons/help.png" down_image="gui/icons/help.png" hover_image="gui/icons/help.png" name="show_help" text="      Help" />
+<!--
+		<ImageButton name="show_settings" text="Settings" />
+-->
+	</HBox>
+
 	<Label text="           Object" background_color="0,0,0" />
 	<HBox>
 		<Label text="Namespace:" min_size="85,20"/>
@@ -15,8 +23,6 @@
 		<Label text="Static:" min_size="45,20"/>
 		<TextBox text="0" name="object_static" min_size="20,20"/>
 	</HBox>
-
-	<Label text="          Selected Instance" background_color="0,0,0" />
 
 	<HBox>	 
 		<Label text="Select Rotation:" min_size="85,20" />
@@ -41,8 +47,10 @@
 		</HBox>
 	</VBox>
 
-	<Label text="Selected Instance" min_size="85,20" />
-	
+	<Button name="change_data" text="Save rotation"/>
+
+	<Label text="          Selected Instance" background_color="0,0,0" />
+
 	<HBox >	 
 		<Label text="Instance ID:" min_size="85,20"/>
 		<TextBox text="None" name="instance_id" min_size="30,20"/>
@@ -53,11 +61,9 @@
 	</HBox>
 
 	<HBox>
-		<Button name="use_data" text="Use"/>
+		<Button name="use_data" text="Set instance id"/>
 	</HBox>
 	<Spacer />
-	<Button name="change_data" text="Save rotation"/>
-
 
 	<Label text="          Animation viewer" background_color="0,0,0" />
 	<VBox name="animation_panel_wrapper">
