@@ -111,13 +111,17 @@ class DemoApplication(basicapplication.ApplicationBase):
 		# it later.
 		credits.capture(lambda : credits._setText(u"Credits"), event_name="mouseExited")
 
-		# Our list of examples
-		# We keep a dictionary of these and fill
-		# the ListBox on the left with its names.
+
+		# import example modules
 		from dynamic import DynamicExample
 		from styling import StylingExample
 		from sliders import SliderExample
 		from colortester import ColorExample
+		from poc_gui_animation import PocAnimations
+
+		# Our list of examples
+		# We keep a dictionary of these and fill
+		# the ListBox on the left with its names.
 		self.examples = {
 			'Absolute Positioning' : PyChanExample('gui/absolute.xml'),
 			'All Widgets' : PyChanExample('gui/all_widgets.xml'),
@@ -126,6 +130,7 @@ class DemoApplication(basicapplication.ApplicationBase):
 			'Sliders' : SliderExample(),
 			'ScrollArea' : PyChanExample('gui/scrollarea.xml'),
 			'Colortester': ColorExample(),
+			'GuiAnimations' : PocAnimations(),
 		}
 		self.demoList = self.gui.findChild(name='demoList')
 		self.demoList.items = sorted(self.examples.keys())
