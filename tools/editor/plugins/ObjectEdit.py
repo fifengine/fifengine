@@ -75,6 +75,8 @@ class ObjectEdit(plugin.Plugin):
 		
 		self.guidata = {}
 		self.objectdata = {}
+		
+		self._help_dialog = None
 
 	def _reset(self):
 		"""
@@ -153,6 +155,31 @@ class ObjectEdit(plugin.Plugin):
 		""" plugin method """
 		return "Object editor"
 
+	def _show_help(self):
+		""" shows the help dialog """
+		if self._help_dialog is not None:
+			self._help_dialog.show()
+			return
+		
+		self._help_dialog = pychan.loadXML("gui/help.xml")
+		self._help_dialog.title = u"Help (Object Editor)"
+		self._help_dialog.mapEvents({
+			"closeButton" : self._help_dialog.hide,
+		})
+		
+		# gimme some more space
+		_SIZE = (320,400)
+		scrollarea = self._help_dialog.findChildren(__class__=pychan.widgets.ScrollArea)[0]
+		scrollarea.size = _SIZE
+		scrollarea.min_size = _SIZE
+		scrollarea.max_size = _SIZE
+		
+		f = open('lang/help_object_edit.txt', 'r')
+		self._help_dialog.findChild(name="helpText").text = unicode(f.read())
+		f.close()
+		
+		self._help_dialog.show()
+
 	def create_gui(self):
 		"""
 			- creates the gui skeleton by loading the xml file
@@ -170,6 +197,8 @@ class ObjectEdit(plugin.Plugin):
 			'anim_right'		: self.next_anim_frame,
 			'anim_start_pos' 	: self.anim_start_frame,
 			'anim_end_pos'		: self.anim_end_frame,
+			
+			'show_help'	: self._show_help,
 		})
 		
 		self.container.findChild(name="x_offset_up").capture(self.change_offset, "mousePressed")
