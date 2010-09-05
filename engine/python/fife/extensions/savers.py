@@ -182,6 +182,7 @@ class ModelSaver:
 
 		for inst in layer.getInstances():
 			position = inst.getLocationRef().getExactLayerCoordinates()
+			
 			attr_vals = {
 				(None, 'o'): inst.getObject().getId(),
 				(None, 'x'): str(position.x),
@@ -197,6 +198,11 @@ class ModelSaver:
 				(None, 'r'): 'r',
 			}
 
+			visual = inst.get2dGfxVisual();
+			if visual:
+				attr_vals[(None, 'stackpos')] = str(visual.getStackPosition())
+				attr_names[(None, 'stackpos')] = 'stackpos'
+				
 			nspace = inst.getObject().getNamespace()
 			if nspace != self.nspace:
 				attr_vals[(None, 'ns')] = inst.getObject().getNamespace()
