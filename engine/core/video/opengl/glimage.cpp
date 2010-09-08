@@ -109,10 +109,10 @@ namespace FIFE {
 		for (unsigned int i = 0; i < m_cols; ++i) {
 			if (i == m_cols-1) {
 				col_fill_ratio = m_last_col_fill_ratio;
-				target.w = static_cast<int>(round(scale_y*m_last_col_width*m_last_col_fill_ratio));
+				target.w = static_cast<int>(round(scale_x*m_last_col_width*m_last_col_fill_ratio));
 			} else {
 				col_fill_ratio = 1.0;
-				target.w = static_cast<int>(round(scale_y*m_chunk_size));
+				target.w = static_cast<int>(round(scale_x*m_chunk_size));
 			}
 			if (i > 0) {
 				target.x = prev.x + prev.w;

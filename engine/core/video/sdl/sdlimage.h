@@ -71,6 +71,10 @@ namespace FIFE {
 		// Is the surface already optimized for rendering
 		bool m_finalized;
 		SDL_Color m_colorkey;
+		// Surface for zoom
+		SDL_Surface* m_zoom_surface;
+		float m_scale_x;
+		float m_scale_y;
 	};
 
 }
