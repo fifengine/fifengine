@@ -55,10 +55,16 @@ namespace FIFE {
 		m_finalized = false;
 		m_isalphaoptimized = false;
 		m_colorkey = RenderBackend::instance()->getColorKey();
+		m_scale_x = 1.0;
+		m_scale_y = 1.0;
+		m_zoom_surface = NULL;
 	}
 
-	SDLImage::~SDLImage() { }
-
+	SDLImage::~SDLImage() {
+		if (m_zoom_surface) {
+			SDL_FreeSurface(m_zoom_surface);
+		}
+	}
 
 	void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
 		SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha ) {
@@ -192,6 +198,121 @@ namespace FIFE {
 		SDL_UnlockSurface( dst );
 	}
 
+	void zoomSurface(SDL_Surface* src, SDL_Surface* dst) {
+		SDL_Color* src_pointer = (SDL_Color*)src->pixels;
+		SDL_Color* src_help_pointer = src_pointer;
+		SDL_Color* dst_pointer = (SDL_Color*)dst->pixels;
+
+		int x, y, *sx_ca, *sy_ca;
+		int dst_gap = dst->pitch - dst->w * dst->format->BytesPerPixel;
+		int sx = static_cast<int>(0xffff * src->w / dst->w);
+		int sy = static_cast<int>(0xffff * src->h / dst->h);
+		int sx_c = 0;
+		int sy_c = 0;
+
+		// Allocates memory and calculates row wide&height
+		int* sx_a = (int*)malloc((dst->w + 1) * sizeof(Uint32));
+		if (sx_a == NULL) {
+			return;
+		} else {
+			sx_ca = sx_a;
+			for (; x <= dst->w; x++) {
+				*sx_ca = sx_c;
+				sx_ca++;
+				sx_c &= 0xffff;
+				sx_c += sx;
+			}
+		}
+		int* sy_a = (int*)malloc((dst->h + 1) * sizeof(Uint32));
+		if (sy_a == NULL) {
+			free(sx_a);
+			return;
+		} else {
+			sy_ca = sy_a;
+			for (; y <= dst->h; y++) {
+				*sy_ca = sy_c;
+				sy_ca++;
+				sy_c &= 0xffff;
+				sy_c += sy;
+			}
+			sy_ca = sy_a;
+		}
+
+		// Transfers the image data
+
+		if(SDL_MUSTLOCK(src))
+			SDL_LockSurface(src);
+		if(SDL_MUSTLOCK(dst))
+			SDL_LockSurface(dst);
+
+		for (y = 0; y < dst->h; y++) {
+			src_pointer = src_help_pointer;
+			sx_ca = sx_a;
+			for (x = 0; x < dst->w; x++) {
+				*dst_pointer = *src_pointer;
+				sx_ca++;
+				src_pointer += (*sx_ca >> 16);
+				dst_pointer++;
+			}
+			sy_ca++;
+			src_help_pointer = (SDL_Color*)((Uint8*)src_help_pointer + (*sy_ca >> 16) * src->pitch);
+			dst_pointer = (SDL_Color*)((Uint8*)dst_pointer + dst_gap);
+		}
+
+		if(SDL_MUSTLOCK(dst))
+			SDL_UnlockSurface(dst);
+		if(SDL_MUSTLOCK(src))
+			SDL_UnlockSurface(src);
+
+		// Free memory
+		free(sx_a);
+		free(sy_a);
+	}
+
+	SDL_Surface* getZoomedSurface(SDL_Surface * src, double zoomx, double zoomy) {
+		if (src == NULL)
+			return NULL;
+
+		SDL_Surface *zoom_src;
+		SDL_Surface *zoom_dst;
+		int dst_w = static_cast<int>(round(src->w * zoomx));
+		int dst_h = static_cast<int>(round(src->h * zoomy));
+		if (dst_w < 1)
+			dst_w = 1;
+		if (dst_h < 1)
+			dst_h = 1;
+
+		// If source surface has no alpha channel then convert it
+		if (src->format->Amask == 0) {
+			Uint32 rmask, gmask, bmask, amask;
+			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+			rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
+			#else
+			rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
+			#endif
+
+			zoom_src = SDL_CreateRGBSurface(SDL_SWSURFACE, src->w, src->h, 32,
+					rmask, gmask,
+					bmask, amask);
+			SDL_BlitSurface(src, NULL, zoom_src, NULL);
+		} else {
+			zoom_src = src;
+		}
+		// Create destination surface
+		zoom_dst = SDL_CreateRGBSurface(SDL_SWSURFACE, dst_w, dst_h, 32,
+				zoom_src->format->Rmask, zoom_src->format->Gmask,
+				zoom_src->format->Bmask, zoom_src->format->Amask);
+
+		// Zoom surface
+		zoomSurface(zoom_src, zoom_dst);
+
+		return zoom_dst;
+	}
+
+	bool nearlyEqual(float a, float b) {
+		return ABS(a - b) <= 0.00001;
+	}
+
 	void SDLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
 		if (alpha == 0) {
 			return;
@@ -209,20 +330,59 @@ namespace FIFE {
 		r.w = rect.w;
 		r.h = rect.h;
 
+		float scale_x = static_cast<float>(rect.w) / static_cast<float>(m_surface->w);
+		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
+		bool zoomed = false;
+		bool equal = false;
+
+		if (!nearlyEqual(scale_x, 1.0) && !nearlyEqual(scale_y, 1.0)) {
+			zoomed = true;
+			if(nearlyEqual(m_scale_x, scale_x) && nearlyEqual(m_scale_y, scale_y)) {
+				equal = true;
+			} else {
+				m_scale_x = scale_x;
+				m_scale_y = scale_y;
+			}
+		}
+
 		if (m_surface->format->Amask == 0) {
 			// Image has no alpha channel. This allows us to use the per-surface alpha.
 			if (m_last_alpha != alpha) {
 				m_last_alpha = alpha;
 				SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
 			}
-			SDL_BlitSurface(m_surface, 0, surface, &r);
+			if (!zoomed) {
+				SDL_BlitSurface(m_surface, 0, surface, &r);
+			} else if (equal && m_zoom_surface) {
+				SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+			} else {
+				SDL_FreeSurface(m_zoom_surface);
+				m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
+				SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+			}
 		} else {
 			if( 255 != alpha ) {
 				// Special blitting routine with alpha blending:
 				// dst.rgb = ( src.rgb * src.a * alpha ) + ( dst.rgb * (255 - ( src.a * alpha ) ) );
-				SDL_BlitSurfaceWithAlpha( m_surface, 0, surface, &r, alpha );
+				if (!zoomed) {
+					SDL_BlitSurfaceWithAlpha( m_surface, 0, surface, &r, alpha );
+				} else if (equal && m_zoom_surface) {
+					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, surface, &r, alpha );
+				} else {
+					SDL_FreeSurface(m_zoom_surface);
+					m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
+					SDL_BlitSurfaceWithAlpha(m_zoom_surface, 0, surface, &r, alpha );
+				}
 			} else {
-				SDL_BlitSurface(m_surface, 0, surface, &r);
+				if (!zoomed) {
+					SDL_BlitSurface(m_surface, 0, surface, &r);
+				} else if (equal && m_zoom_surface) {
+					SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+				} else {
+					SDL_FreeSurface(m_zoom_surface);
+					m_zoom_surface = getZoomedSurface(m_surface, m_scale_x, m_scale_y);
+					SDL_BlitSurface(m_zoom_surface, 0, surface, &r);
+				}
 			}
 		}
 	}
@@ -236,8 +396,6 @@ namespace FIFE {
 		Uint32 key = SDL_MapRGB(m_surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
 
 		if (m_surface->format->Amask == 0) {
-			SDL_SetAlpha(m_surface, SDL_SRCALPHA | SDL_RLEACCEL, 255);
-
 			// only use color key if feature is enabled
 			if (RenderBackend::instance()->isColorKeyEnabled()) {
 				SDL_SetColorKey(m_surface, SDL_SRCCOLORKEY, key);
