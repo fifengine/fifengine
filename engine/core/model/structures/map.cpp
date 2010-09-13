@@ -43,19 +43,18 @@
 
 namespace FIFE {
 
-	Map::Map(const std::string& identifier, RenderBackend* renderBackend, 
-			const std::vector<RendererBase*>& renderers, ImagePool* imagePool, 
+	Map::Map(const std::string& identifier, RenderBackend* renderBackend,
+			const std::vector<RendererBase*>& renderers, ImagePool* imagePool,
 			AnimationPool* animPool, TimeProvider* tp_master):
-		m_id(identifier), 
+		m_id(identifier),
 		m_timeprovider(tp_master),
 		m_changelisteners(),
 		m_changedlayers(),
-		m_changed(false),
 		m_renderbackend(renderBackend),
 		m_imagepool(imagePool),
 		m_animpool(animPool),
-		m_renderers(renderers) {
-
+		m_renderers(renderers),
+		m_changed(false){
 	}
 
 	Map::~Map() {
@@ -98,7 +97,7 @@ namespace FIFE {
 			(*i)->onLayerCreate(this, layer);
 			++i;
 		}
-		
+
 		return layer;
 	}
 
@@ -161,7 +160,7 @@ namespace FIFE {
 		m_changed = false;
 		return retval;
 	}
-	
+
 	void Map::addChangeListener(MapChangeListener* listener) {
 		m_changelisteners.push_back(listener);
 	}

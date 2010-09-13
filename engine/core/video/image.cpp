@@ -34,12 +34,12 @@
 
 namespace FIFE {
 
-	Image::Image(SDL_Surface* surface): 
+	Image::Image(SDL_Surface* surface):
 		m_surface(NULL) {
 		reset(surface);
 	}
 
-	Image::Image(const uint8_t* data, unsigned int width, unsigned int height): 
+	Image::Image(const uint8_t* data, unsigned int width, unsigned int height):
 		m_surface(NULL) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
@@ -65,7 +65,7 @@ namespace FIFE {
 		m_area.x = m_area.y = m_area.w = m_area.h = 0;
 		m_surface = surface;
 	}
-	
+
 	Image::~Image() {
 		//assert(m_refcount == 0);
 		reset(NULL);
@@ -76,7 +76,7 @@ namespace FIFE {
 		m_surface = NULL;
 		return srf;
 	}
-	
+
 	unsigned int Image::getWidth() const {
 		if (!m_surface) {
 			return 0;
@@ -90,7 +90,7 @@ namespace FIFE {
 		}
 		return m_surface->h;
 	}
-	
+
 	const Rect& Image::getArea() {
 		m_area.w = getWidth();
 		m_area.h = getHeight();
@@ -113,24 +113,24 @@ namespace FIFE {
 			a = 0;
 			return;
 		}
-		
+
 		int bpp = m_surface->format->BytesPerPixel;
 		Uint8 *p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
-		uint32_t pixel;
+		uint32_t pixel = 0;
 		switch(bpp) {
 		case 1:
 			pixel = *p;
-		
+
 		case 2:
 			pixel = *(Uint16 *)p;
-		
+
 		case 3:
 			if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
 				pixel = p[0] << 16 | p[1] << 8 | p[2];
 			} else {
 				pixel = p[0] | p[1] << 8 | p[2] << 16;
 			}
-		
+
 		case 4:
 			pixel = *(Uint32 *)p;
 		}
@@ -148,7 +148,7 @@ namespace FIFE {
 		m_clipstack.push(ci);
 		setClipArea(cliparea, clear);
 	}
-	
+
 	void Image::popClipArea() {
 		assert(!m_clipstack.empty());
 		m_clipstack.pop();
@@ -159,7 +159,7 @@ namespace FIFE {
 			setClipArea(ci.r, ci.clearing);
 		}
 	}
-	
+
 	const Rect& Image::getClipArea() const {
 		if (m_clipstack.empty()) {
 			return m_clipstack.top().r;
@@ -187,36 +187,36 @@ namespace FIFE {
 		#endif
 
 		fp = fopen(filename.c_str(), "wb");
-			
+
 		if (fp == NULL) {
 			return;
 		}
 
 		//create the png file
-		pngptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 
+		pngptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
 		NULL, NULL, NULL);
 		if (pngptr == NULL) {
 			fclose(fp);
 			return;
 		}
-		
+
 		//create information struct
 		infoptr = png_create_info_struct(pngptr);
 		if (infoptr == NULL) {
 			fclose(fp);
 			png_destroy_write_struct(&pngptr, (png_infopp)NULL);
-			return;				
+			return;
 		}
-		
+
 		if (setjmp(png_jmpbuf(pngptr))) {
 			png_destroy_write_struct(&pngptr, &infoptr);
 			fclose(fp);
 			return;
 		}
-		
+
 		//initialize io
 		png_init_io(pngptr, fp);
-		
+
 		//lock the surface for access
 		SDL_LockSurface(&surface);
 
@@ -229,9 +229,9 @@ namespace FIFE {
 		}
 		else{}
 
-		png_set_IHDR(pngptr, infoptr, surface.w, surface.h, 8, colortype,	
+		png_set_IHDR(pngptr, infoptr, surface.w, surface.h, 8, colortype,
 			PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-		
+
 		png_write_info(pngptr, infoptr);
 		png_set_packing(pngptr);
 

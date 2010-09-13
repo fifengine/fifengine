@@ -45,16 +45,15 @@
 namespace FIFE {
 
 	Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers,
-					ImagePool* imagepool, AnimationPool* animpool): 
+					ImagePool* imagepool, AnimationPool* animpool):
 		FifeClass(),
 		m_last_namespace(NULL),
+		m_timeprovider(NULL),
 		m_renderbackend(renderbackend),
-		m_renderers(renderers),
 		m_imagepool(imagepool),
 		m_animpool(animpool),
-		m_timeprovider(NULL) {
-
-		}
+		m_renderers(renderers){
+	}
 
 	Model::~Model() {
 		purge(m_maps);
@@ -81,7 +80,7 @@ namespace FIFE {
 	void Model::adoptPather(AbstractPather* pather) {
 		m_pathers.push_back(pather);
 	}
-	
+
 	AbstractPather* Model::getPather(const std::string& pathername) {
 		std::vector<AbstractPather*>::const_iterator it = m_pathers.begin();
 		for(; it != m_pathers.end(); ++it) {
@@ -108,7 +107,7 @@ namespace FIFE {
 		return NULL;
 	}
 
-	
+
 	Map* Model::getMap(const std::string& identifier) const {
 		std::list<Map*>::const_iterator it = m_maps.begin();
 		for(; it != m_maps.end(); ++it) {

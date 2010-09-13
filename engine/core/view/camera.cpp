@@ -58,22 +58,22 @@ namespace FIFE {
 	class MapObserver : public MapChangeListener {
 		Camera* m_camera;
 
-	public: 
+	public:
 		MapObserver(Camera* camera) {
 			m_camera = camera;
-		} 
+		}
 		virtual ~MapObserver() {}
 
-		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) { 
-		} 
+		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) {
+		}
 
-		virtual void onLayerCreate(Map* map, Layer* layer) { 
-			m_camera->addLayer(layer); 
-		} 
+		virtual void onLayerCreate(Map* map, Layer* layer) {
+			m_camera->addLayer(layer);
+		}
 
-		virtual void onLayerDelete(Map* map, Layer* layer) { 
-			m_camera->removeLayer(layer); 
-		} 
+		virtual void onLayerDelete(Map* map, Layer* layer) {
+			m_camera->removeLayer(layer);
+		}
 	};
 
 	Camera::Camera(const std::string& id,
@@ -207,7 +207,7 @@ namespace FIFE {
 		// need to calculate screen-coordinates
 		// which depend on m_location.
 		updateMap(location.getMap());
-		
+
 		m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
 	}
 
@@ -278,11 +278,11 @@ namespace FIFE {
 	bool Camera::isEnabled() {
 		return m_enabled;
 	}
-	
+
 	Point3D Camera::getOrigin() const {
 		return m_cur_origo;
 	}
-	
+
 	void Camera::updateMatrices() {
 		double scale = m_reference_scale;
 		m_matrix.loadScale(scale, scale, scale);
@@ -320,7 +320,7 @@ namespace FIFE {
 		}
 		m_vscreen_2_screen[2*N + 2] = 1;
 		m_screen_2_vscreen = m_vscreen_2_screen.inverse();
-		
+
 		// FL_WARN(_log, LMsg("matrix: ") << m_matrix << " 1: " << m_matrix.inverse().mult4by4(m_matrix));
 // 		FL_WARN(_log, LMsg("vs2s matrix: ") << m_vscreen_2_screen << " s2vs matrix: " << m_screen_2_vscreen);
 	}
@@ -348,7 +348,7 @@ namespace FIFE {
 		DoublePoint3D  pt = (m_vs_matrix * p);
 		return pt;
 	}
-	
+
 	ScreenPoint Camera::virtualScreenToScreen(const DoublePoint3D& p) {
 		return doublePt2intPt(m_vscreen_2_screen * p);
 	}
@@ -371,7 +371,12 @@ namespace FIFE {
 		DoubleMatrix mtx;
 		mtx.loadRotate(m_rotation, 0.0, 0.0, 1.0);
 		mtx.applyRotate(m_tilt, 1.0, 0.0, 0.0);
-		double x1, x2, y1, y2;
+
+		double x1 = 0;
+		double x2 = 0;
+		double y1 = 0;
+		double y2 = 0;
+
 		for (unsigned int i = 0; i < vertices.size(); i++) {
 			vertices[i] = cg->toMapCoordinates(vertices[i]);
 			vertices[i] = mtx * vertices[i];

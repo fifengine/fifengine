@@ -216,7 +216,7 @@ namespace FIFE {
 			return;
 		} else {
 			sx_ca = sx_a;
-			for (; x <= dst->w; x++) {
+			for (x = 0; x <= dst->w; x++) {
 				*sx_ca = sx_c;
 				sx_ca++;
 				sx_c &= 0xffff;
@@ -229,7 +229,7 @@ namespace FIFE {
 			return;
 		} else {
 			sy_ca = sy_a;
-			for (; y <= dst->h; y++) {
+			for (y = 0; y <= dst->h; y++) {
 				*sy_ca = sy_c;
 				sy_ca++;
 				sy_c &= 0xffff;
