@@ -25,8 +25,6 @@
 %}
 
 namespace FIFE {
-	%apply const std::list<std::string> &OUTPUT {std::list<std::string> &groups};
-	
 	class Location;
 	class RenderBackend;
 	class ImagePool;
@@ -49,5 +47,4 @@ namespace FIFE {
 	private:
 		InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
 	};
-	%clear std::list<std::string> &groups;
 }
