@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -42,6 +42,7 @@ from fife import fife
 
 _manager = None
 _alltimers = []
+_deadtimers = []
 
 def init(timemanager):
 	"""
@@ -66,43 +67,73 @@ class Timer(fife.TimeEvent):
 		@param repeat: The number of times to execute the callback.  1=once, 0=forever 
 		"""
 		super(Timer,self).__init__(delay)
-		self._is_registered = False
+		self._active = False
 		self._callback = callback
 		self._manager = _manager
 		self.setPeriod(delay)
 		self._repeat = repeat
 		self._executed = 0
-
+		
 	def start(self):
 		"""
-		Must be called before the timer will start
+		Call this to start the timer.
+		
+		This registers the timer with the time manager.  The time manger then
+		calls the timers updateEvent() function when the delay time has passed.
 		"""
-		if self._is_registered:
+		if self._active:
 			return
-		self._is_registered = True
+		self._active = True
+		
 		self._executed = 0
+		
+		self.setLastUpdateTime(self._manager.getTime())
 		self._manager.registerEvent(self)
 
 		global _alltimers
+		global _deadtimers
+		
 		_alltimers.append(self)
-
+		
 	def stop(self):
 		"""
 		Stops the timer
+		
+		This unregisters the timer from the time manager.  The time manager does NOT
+		delete the timer so make sure you keep a reference to this timer and ensure
+		python doesnt delete the timer prematurely.
 		"""
-		if not self._is_registered:
+		if not self._active:
 			return
-		self._is_registered = False
+			
+		self._active = False
 		self._manager.unregisterEvent(self)
 
-		global _alltimers
-		_alltimers.remove(self)
 
+		#FIXME: See ticket #483 in trac.  This is a temporary solution and needs
+		#to be reworked.
+		
+		global _alltimers
+		global _deadtimers
+		
+		#clean up any dead timers
+		del _deadtimers[:]
+
+		#Ddd this timer to the dead timers list to be removed next time a timer
+		#is stopped.
+		_deadtimers.append(self)
+
+		#finally remove self from the global timer list
+		_alltimers.remove(self)
+		
 
 	def updateEvent(self,delta):
 		"""
-		Should not be called directly.  This is called by FIFE.
+		This is called by FIFE::TimeManager when the delay has passed.
+		
+		Should not be called directly.
 		"""
+		
 		if self._repeat != 0:
 			self._executed += 1
 			if self._executed >= self._repeat:
@@ -110,7 +141,7 @@ class Timer(fife.TimeEvent):
 
 		if callable(self._callback):
 			self._callback()
-
+			
 
 def delayCall(delay,callback):
 	"""

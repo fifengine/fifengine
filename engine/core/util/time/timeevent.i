@@ -33,5 +33,7 @@ namespace FIFE {
 		virtual void updateEvent(unsigned long time) = 0;
 		void setPeriod(int period);
 		int getPeriod();
+		unsigned long getLastUpdateTime();	
+		void setLastUpdateTime(unsigned long);	
 	};
 }
