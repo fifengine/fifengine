@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -67,7 +67,8 @@ from internal import get_manager
 import tools
 import traceback
 import weakref
-from fife.extensions import fife_timer as timer
+from fife.extensions.fife_timer import Timer
+from fife.extensions.pychan.tools import callbackWithArguments as cbwa
 
 EVENTS = [
 	"mouseEntered",
@@ -105,6 +106,7 @@ CALLBACK_NONE_MESSAGE = """\
 You passed None as parameter to %s.capture, which would normally remove a mapped event.
 But there was no event mapped. Did you accidently call a function instead of passing it?
 """
+
 class EventListenerBase(object):
 	"""
 	Redirector for event callbacks.
@@ -121,6 +123,9 @@ class EventListenerBase(object):
 		self.indent = 0
 		self.debug = get_manager().debug
 		self.is_attached = False
+		
+		self._timers = []
+		self._deadtimers = []		
 
 	def attach(self,widget):
 		"""
@@ -154,9 +159,22 @@ class EventListenerBase(object):
 			if name in self.events:
 				if self.debug: print "-"*self.indent, name
 				for f in self.events[name].itervalues():
-					def delayed_f():
+					def delayed_f(timer):
+						n_timer = timer()
 						f( event )
-					timer.delayCall(0,delayed_f)
+						
+#						del self._deadtimers[:]
+						
+						if n_timer in self._timers:
+#							self._deadtimers.append(n_timer)
+							self._timers.remove(n_timer)
+						
+							
+					timer = Timer(repeat=1)
+					timer._callback = cbwa(delayed_f, weakref.ref(timer))
+					timer.start()
+					
+					self._timers.append(timer)
 
 		except:
 			print name, repr(event)
@@ -328,3 +346,4 @@ def splitEventDescriptor(name):
 	if len(L) == 2:
 		L = L[0],L[1],"default"
 	return L
+
