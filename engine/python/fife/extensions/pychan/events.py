@@ -163,10 +163,11 @@ class EventListenerBase(object):
 						n_timer = timer()
 						f( event )
 						
-#						del self._deadtimers[:]
+						#FIXME: figure out a way to get rid of the dead timer list
+						del self._deadtimers[:]
 						
 						if n_timer in self._timers:
-#							self._deadtimers.append(n_timer)
+							self._deadtimers.append(n_timer)
 							self._timers.remove(n_timer)
 						
 							
