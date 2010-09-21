@@ -340,6 +340,9 @@ class GameController(object):
 		self._instancerenderer = fife.InstanceRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
 		self._floatingtextrenderer = fife.FloatingTextRenderer.getInstance(self._scene.cameras[self._settings.get("RPG", "DefaultCameraName", "camera1")])
 		self._floatingtextrenderer.addActiveLayer(self._scene.actorlayer)
+		self._floatingtextrenderer.setBackground(255, 100, 100, 165) 
+		self._floatingtextrenderer.setBorder(255, 50, 50)
+		self._floatingtextrenderer.setEnabled(True)
 		
 		if self._listener:
 			self._listener.attach()
