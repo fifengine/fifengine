@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -36,16 +36,16 @@ class Slider(Widget):
 	  - orientation: 1 = horizontal, 0=vertical
 	  - scale_start: float: default 0.0
 	  - scale_end: float: default 1.0
+	  - step_length: float: default scale_end/10
 
 	FIXME:
-		- set new attributes for marker & step length, value
 		- update docstrings
 	"""
 
 	HORIZONTAL = fife.Slider.HORIZONTAL
 	VERTICAL = fife.Slider.VERTICAL
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end'), FloatAttr('step_length')]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 
@@ -127,3 +127,5 @@ class Slider(Widget):
 	def getStepLength(self):
 		"""getStepLength(self) -> double"""
 		return self.real_widget.getStepLength()
+
+	step_length = property(getStepLength, setStepLength)
