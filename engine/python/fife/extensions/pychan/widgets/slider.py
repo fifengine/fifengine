@@ -37,7 +37,7 @@ class Slider(Widget):
 	  - scale_start: float: default 0.0
 	  - scale_end: float: default 1.0
 	  - step_length: float: default scale_end/10
-
+	  - marker_length: int: default 10
 	FIXME:
 		- update docstrings
 	"""
@@ -45,7 +45,7 @@ class Slider(Widget):
 	HORIZONTAL = fife.Slider.HORIZONTAL
 	VERTICAL = fife.Slider.VERTICAL
 
-	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end'), FloatAttr('step_length')]
+	ATTRIBUTES = Widget.ATTRIBUTES + [IntAttr('orientation'), FloatAttr('scale_start'), FloatAttr('scale_end'), FloatAttr('step_length'), IntAttr('marker_length')]
 	DEFAULT_HEXPAND = 1
 	DEFAULT_VEXPAND = 0
 
@@ -108,6 +108,7 @@ class Slider(Widget):
 	def getMarkerLength(self):
 		"""getMarkerLength(self) -> int"""
 		return self.real_widget.getMarkerLength()
+	marker_length = property(getMarkerLength, setMarkerLength)
 
 	def setOrientation(self, orientation):
 		"""setOrientation(self, Orientation orientation)"""
@@ -127,5 +128,4 @@ class Slider(Widget):
 	def getStepLength(self):
 		"""getStepLength(self) -> double"""
 		return self.real_widget.getStepLength()
-
 	step_length = property(getStepLength, setStepLength)
