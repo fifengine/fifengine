@@ -34,7 +34,28 @@ EMPTY_XML_FILE="""\
 </Settings>
 """
 
-class SimpleXMLSerializer(object):
+class SimpleSerializer(object):
+	"""
+	Use this as a base class for custom setting loaders/savers to use with the Setting class.
+	"""
+	
+	def __init__(self, filename=None):
+		pass
+		
+	def get(self, module, name, defaultValue=None):
+		pass
+		
+	def set(self, module, name, value, extra_attrs={}):
+		pass
+
+	def load(self, filename=None):
+		pass
+		
+	def save(self, filename=None):
+		pass
+		
+
+class SimpleXMLSerializer(SimpleSerializer):
 	"""
 	This class is a simple interface to get and store data in XML files.
 
@@ -49,14 +70,16 @@ class SimpleXMLSerializer(object):
 		self._tree = None
 		self._root_element = None
 		
-		if self._file:
-			self.load(self._file)
+		self._initialized = False
 		
 	def load(self, filename=None):
 		"""
 		Loads the XML file into memory and validates it.
 		
 		Raises a SerializerError exception if the file is not specified.
+		
+		@param filename: The file to load
+		@type filename: C{str}
 		
 		@note: If the file does not exist it will automatically create a blank file for you.
 		"""
@@ -79,8 +102,15 @@ class SimpleXMLSerializer(object):
 		"""
 		Saves the XML file.
 		
+		@param filename: The file to save
+		@type filename: C{str}
+		
 		@note: This Overwrites the file if it exists.
 		"""
+		if not self._initialized:
+			self.load()	
+			self._initialized = True
+		
 		if filename:
 			savefile = filename
 		else:
@@ -102,6 +132,10 @@ class SimpleXMLSerializer(object):
 		@param defaultValue: Specifies the default value to return if the variable is not found
 		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
 		"""
+		if not self._initialized:
+			self.load()
+			self._initialized = True
+		
 		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("SimpleXMLSerializer.get(): Invalid type for name argument.")
 
@@ -162,6 +196,10 @@ class SimpleXMLSerializer(object):
 		@param extra_attrs: Extra attributes to be stored in the XML-file
 		@type extra_attrs: C{dict}
 		"""
+		if not self._initialized:
+			self.load()
+			self._initialized = True
+		
 		if not isinstance(name, str) and not isinstance(name, unicode):
 			raise AttributeError("SimpleXMLSerializer.set(): Invalid type for name argument.")
 
