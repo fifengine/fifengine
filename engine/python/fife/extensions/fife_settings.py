@@ -87,7 +87,7 @@ class Setting(object):
 		screen_height = settings.get("FIFE", "ScreenHeight", 768)
 	"""
 
-	def __init__(self, app_name="", settings_file="", settings_gui_xml="", changes_gui_xml="", copy_dist=True):
+	def __init__(self, app_name="", settings_file="", settings_gui_xml="", changes_gui_xml="", copy_dist=True, serializer=None):
 		"""
 		Initializes the Setting object.
 
@@ -103,6 +103,8 @@ class Setting(object):
 		of the settings dialog box.
 		@param copy_dist: Copies the settings-dist.xml file to the settings_file location.  If
 		this is False it will create a new empty xml file.
+		@param serializer: Overrides the default XML serializer
+		@type serializer: C{SimpleSerializer}
 
 		"""
 		self._app_name = app_name
@@ -113,8 +115,6 @@ class Setting(object):
 		# Holds SettingEntries
 		self._entries = {}
 		
-		self._xmlserializer = None
-
 		if self._settings_file == "":
 			self._settings_file = "settings.xml"
 			self._appdata = getUserDataDirectory("fife", self._app_name)
@@ -141,9 +141,14 @@ class Setting(object):
 		#Used to stylize the options gui
 		self._gui_style = "default"
 
-		#Initialize the XML serializer
-		self.loadSettings()
-
+		#Initialize the serializer
+		if serializer:
+			self._serializer = serializer
+		else:
+			self._serializer = SimpleXMLSerializer()
+	
+		self._serializer.load(os.path.join(self._appdata, self._settings_file))
+		
 		self._initDefaultSettingEntries()
 
 	def _initDefaultSettingEntries(self):
@@ -198,13 +203,10 @@ class Setting(object):
 			print "WARNING:", entry.module, ":", entry.name, "still not found!"
 			print "It's probably missing in settings-dist.xml as well!"
 
-	def loadSettings(self):
-		self._xmlserializer = SimpleXMLSerializer(os.path.join(self._appdata, self._settings_file))
-
 	def saveSettings(self):
 		""" Writes the settings to the settings file """
-		if self._xmlserializer:
-			self._xmlserializer.save()
+		if self._serializer:
+			self._serializer.save()
 
 	def get(self, module, name, defaultValue=None):
 		""" Gets the value of a specified setting
@@ -214,8 +216,8 @@ class Setting(object):
 		@param defaultValue: Specifies the default value to return if the setting is not found
 		@type defaultValue: C{str} or C{unicode} or C{int} or C{float} or C{bool} or C{list} or C{dict}
 		"""
-		if self._xmlserializer:
-			return self._xmlserializer.get(module, name, defaultValue)
+		if self._serializer:
+			return self._serializer.get(module, name, defaultValue)
 		else:
 			return None
 	
@@ -230,8 +232,8 @@ class Setting(object):
 		@param extra_attrs: Extra attributes to be stored in the XML-file
 		@type extra_attrs: C{dict}
 		"""
-		if self._xmlserializer:
-			self._xmlserializer.set(module, name, value, extra_attrs)
+		if self._serializer:
+			self._serializer.set(module, name, value, extra_attrs)
 
 	def setGuiStyle(self, style):
 		""" Set a custom gui style used for the option dialog.
@@ -333,7 +335,7 @@ class Setting(object):
 		"""
 		shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
 		self.changesRequireRestart = True
-		self.loadSettings()
+		self.initSerializer()
 		#self._showChangeRequireRestartDialog()
 
 		#if self.OptionsDlg:
