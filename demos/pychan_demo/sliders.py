@@ -21,7 +21,7 @@
 #  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # ####################################################################
 
-from pychan_test import PyChanExample
+from pychan_demo import PyChanExample
 from fife.extensions import pychan
 
 class SliderExample(PyChanExample):

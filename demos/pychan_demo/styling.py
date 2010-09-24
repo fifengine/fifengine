@@ -25,7 +25,7 @@ from fife import fife
 
 from fife.extensions import pychan
 
-from pychan_test import PyChanExample
+from pychan_demo import PyChanExample
 
 STYLES= {
 'new default': {
