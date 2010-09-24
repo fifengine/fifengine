@@ -22,7 +22,7 @@
 # ####################################################################
 
 from fife.extensions import pychan
-from pychan_test import PyChanExample
+from pychan_demo import PyChanExample
 
 class DynamicExample(PyChanExample):
 	def __init__(self):

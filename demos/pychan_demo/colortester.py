@@ -23,7 +23,7 @@
 
 """ pychan demo app for testing rgba colors on widgets """
 
-from pychan_test import PyChanExample
+from pychan_demo import PyChanExample
 from fife.extensions import pychan
 
 class ColorExample(PyChanExample):

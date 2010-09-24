@@ -22,7 +22,7 @@
 
 """ proof-of-concept pychan demo app to test gui animations """
 
-from pychan_test import PyChanExample
+from pychan_demo import PyChanExample
 from fife.extensions import pychan
 
 from fife.extensions.pychan.tools import callbackWithArguments as cbwa
