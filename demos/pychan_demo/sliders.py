@@ -32,6 +32,7 @@ class SliderExample(PyChanExample):
 		self.widget.mapEvents({
 			'xslider': self.update,
 			'yslider': self.update,
+			'pbarslider' : self.update,
 			'closeButton':self.stop,
 		})
 		self.update()
@@ -50,3 +51,9 @@ class SliderExample(PyChanExample):
 			'xvalue' : unicode(icon.x),
 			'yvalue' : unicode(icon.y),
 		})
+		
+		#quick demo to show the percentage bar in action
+		pbarslider = self.widget.findChild(name="pbarslider")
+		pbar = self.widget.findChild(name="pbar")
+		
+		pbar.value = int(pbarslider.getValue())

@@ -44,6 +44,7 @@ from listbox import ListBox
 from dropdown import DropDown
 from scrollarea import ScrollArea
 from slider import Slider
+from percentagebar import PercentageBar
 
 # Global Widget Class registry
 
@@ -59,6 +60,7 @@ WIDGETS = {
 	"Icon" : Icon,
 	"Label" : Label,
 	"ClickLabel" : ClickLabel,
+	"PercentageBar" : PercentageBar,
 
 	# Button Widgets
 	"Button" : Button,
