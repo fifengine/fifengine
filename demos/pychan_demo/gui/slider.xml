@@ -7,5 +7,8 @@
 	<Slider name="xslider" scale_start="0" scale_end="300"/>
 	<HBox><Label hexpand="0" text="Y:"/><Label name="yvalue"/></HBox>
 	<Slider name="yslider" scale_start="0" scale_end="300"/>
+	<HBox><Label hexpand="0" text="Percentage Bar:"/><Label name="pvalue"/></HBox>
+	<Slider name="pbarslider" scale_start="0" scale_end="100"/>
+	<PercentageBar name="pbar" orientation="0" max_size="300,10" min_size="300,10" foreground_color="128,0,0"/>
 	<Button name="closeButton" text="Close"/>
 </Window>

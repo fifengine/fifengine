@@ -29,6 +29,7 @@
 #include "gui/widgets/togglebutton.h"
 #include "gui/widgets/clicklabel.h"
 #include "gui/widgets/icon2.hpp"
+#include "gui/widgets/percentagebar.hpp"
 %}
 
 namespace gcn {
@@ -421,6 +422,24 @@ namespace gcn {
 		Icon2(Image* image);
 		virtual ~Icon2();
 		void setImage(Image* image);
+	};
+	
+	%feature("notabstract") PercentageBar;
+	class PercentageBar: public Widget {
+	public:
+		PercentageBar();
+		virtual ~PercentageBar();
+		virtual void setForegroundImage(Image* image);
+        virtual void setOrientation(PercentageBar::Orientation orientation);
+        virtual PercentageBar::Orientation getOrientation() const;
+        virtual int getValue() const;
+        virtual void setValue(int value);
+		
+		enum Orientation
+		{
+			HORIZONTAL = 0,
+			VERTICAL
+		};
 	};
 }
 
