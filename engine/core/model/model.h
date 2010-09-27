@@ -58,14 +58,14 @@ namespace FIFE {
 		/** Constructor
 		 *
 		 */
-		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers, 
+		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers,
 				ImagePool* imagepool, AnimationPool* animpool);
 
 		/** Destructor
 		 *
 		 */
 		~Model();
-		
+
 		/** Add a map this model, and get a pointer to it.
 		 * The returned pointer is owned by the Model, so don't delete it!
 		 */
@@ -87,7 +87,7 @@ namespace FIFE {
 
 		/** Return the number of maps in this model
 		 */
-		size_t getNumMaps() const;
+		uint32_t getNumMaps() const;
 
 		/** Removes all maps from this model
 		 */
@@ -98,7 +98,7 @@ namespace FIFE {
 		std::list<std::string> getNamespaces() const;
 
 		/** Add an object to the metamodel.
-		 * 
+		 *
 		 * @param identifier A string for identifying this object; must be unique for its namespace.
 		 * @param parent Objects may optionally inherit values from a parent object.
 		 * @note This object belongs to the model, so don't delete the returned pointer
@@ -126,29 +126,29 @@ namespace FIFE {
 		/** Adds pather to model. Moves ownership to model
 		 */
 		void adoptPather(AbstractPather* pather);
-		
+
 		/** Returns pather corresponding given name. If none found, returns NULL
 		 */
 		AbstractPather* getPather(const std::string& pathername);
-		
+
 		/** Adds cellgrid to model. Moves ownership to model
 		 */
 		void adoptCellGrid(CellGrid* grid);
-		
+
 		/** Returns new copy of cellgrid corresponding given name. If none found, returns NULL
 		 */
 		CellGrid* getCellGrid(const std::string& gridtype);
-		
+
 		/** Called periodically to update events on model
 		 */
 		void update();
-		
+
 		/** Sets speed for the model. With speed 1.0, everything runs with normal speed.
 		 * With speed 2.0, clock is ticking twice as fast. With 0, everything gets paused.
 		 * Negavtive values are not supported (throws NotSupported exception).
 		 */
 		void setTimeMultiplier(float multip) { m_timeprovider.setMultiplier(multip); }
-		
+
 		/** Gets model speed. @see setTimeMultiplier.
 		 */
 		double getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }

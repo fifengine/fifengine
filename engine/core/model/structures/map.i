@@ -66,7 +66,7 @@ namespace FIFE {
 			std::list<Layer*> getLayers() const;
 			Layer* getLayer(const std::string& id);
 
-			size_t getNumLayers() const;
+			uint32_t getNumLayers() const;
 			void deleteLayers();
 			
 			void setTimeMultiplier(float multip);
