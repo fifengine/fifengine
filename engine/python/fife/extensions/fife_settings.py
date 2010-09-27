@@ -349,10 +349,9 @@ class Setting(object):
 		shutil.copyfile(self._default_settings_file, os.path.join(self._appdata, self._settings_file))
 		self.changesRequireRestart = True
 		self.initSerializer()
-		#self._showChangeRequireRestartDialog()
-
-		#if self.OptionsDlg:
-		#	self.OptionsDlg.hide()
+		
+		#update all widgets with the new data
+		self.fillWidgets()
 
 	def _getEntries(self):
 		return self._entries
