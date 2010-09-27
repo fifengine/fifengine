@@ -27,9 +27,6 @@ Settings
 
 This module provides a nice framework for loading and saving game settings.
 It is by no means complete but it does provide a good starting point.
-
-@note:  Please note that you MUST provide a default settings-dist.xml file
-in the root directory of your project for this module to function correctly.
 """
 
 import shutil
@@ -87,7 +84,7 @@ class Setting(object):
 		screen_height = settings.get("FIFE", "ScreenHeight", 768)
 	"""
 
-	def __init__(self, app_name="", settings_file="", settings_gui_xml="", changes_gui_xml="", copy_dist=True, serializer=None):
+	def __init__(self, app_name="", settings_file="", default_settings_file= "settings-dist.xml", settings_gui_xml="", changes_gui_xml="", copy_dist=True, serializer=None):
 		"""
 		Initializes the Setting object.
 
@@ -99,16 +96,21 @@ class Setting(object):
 		provided it will look for the setting file as you specify it, first looking
 		in the working directory.  It will NOT look in the users home directory.
 		@type settings_file: C{string}
+		@param default_settings_file: The name of the default settings file.  If the settings_file
+		does not exist this file will be copied into the place of the settings_file.  This file
+		must exist in the root directory of your project!
+		@type default_settings_file: C{string}
 		@param settings_gui_xml: If you specify this parameter you can customize the look
 		of the settings dialog box.
-		@param copy_dist: Copies the settings-dist.xml file to the settings_file location.  If
-		this is False it will create a new empty xml file.
+		@param copy_dist: Copies the default settings file to the settings_file location.  If
+		this is False it will create a new empty setting file.
 		@param serializer: Overrides the default XML serializer
 		@type serializer: C{SimpleSerializer}
 
 		"""
 		self._app_name = app_name
 		self._settings_file = settings_file
+		self._default_settings_file = default_settings_file
 		self._settings_gui_xml = settings_gui_xml
 		self._changes_gui_xml = changes_gui_xml
 
@@ -131,8 +133,8 @@ class Setting(object):
 
 
 		if not os.path.exists(os.path.join(self._appdata, self._settings_file)):
-			if os.path.exists('settings-dist.xml') and copy_dist:
-				shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
+			if os.path.exists(self._default_settings_file) and copy_dist:
+				shutil.copyfile(self._default_settings_file, os.path.join(self._appdata, self._settings_file))
 
 		#default settings
 		self._resolutions = ['640x480', '800x600', '1024x768', '1280x800', '1440x900']
@@ -147,10 +149,13 @@ class Setting(object):
 		else:
 			self._serializer = SimpleXMLSerializer()
 	
-		self._serializer.load(os.path.join(self._appdata, self._settings_file))
-		
+		self.initSerializer()
+	
 		self._initDefaultSettingEntries()
 
+	def initSerializer(self):
+		self._serializer.load(os.path.join(self._appdata, self._settings_file))
+		
 	def _initDefaultSettingEntries(self):
 		"""Initializes the default fife setting entries. Not to be called from
 		outside this class."""
@@ -201,12 +206,20 @@ class Setting(object):
 			self.setDefaults()
 		if self.get(entry.module, entry.name) is None:
 			print "WARNING:", entry.module, ":", entry.name, "still not found!"
-			print "It's probably missing in settings-dist.xml as well!"
 
-	def saveSettings(self):
-		""" Writes the settings to the settings file """
+
+	def saveSettings(self, filename=""):
+		""" Writes the settings to the settings file 
+		
+		@param filename: Specifies the file to save the settings to.  If it is not specified
+		the original settings file is used.
+		@type filename: C{string}
+		"""
 		if self._serializer:
-			self._serializer.save()
+			if filename == "":
+				self._serializer.save(os.path.join(self._appdata, self._settings_file))
+			else:
+				self._serializer.save(filename)
 
 	def get(self, module, name, defaultValue=None):
 		""" Gets the value of a specified setting
@@ -331,9 +344,9 @@ class Setting(object):
 
 	def setDefaults(self):
 		"""
-		Overwrites the setting file with the default settings-dist.xml file.
+		Overwrites the setting file with the default settings file.
 		"""
-		shutil.copyfile('settings-dist.xml', os.path.join(self._appdata, self._settings_file))
+		shutil.copyfile(self._default_settings_file, os.path.join(self._appdata, self._settings_file))
 		self.changesRequireRestart = True
 		self.initSerializer()
 		#self._showChangeRequireRestartDialog()
@@ -346,10 +359,12 @@ class Setting(object):
 
 	def _setEntries(self, entries):
 		self._entries = entries
+		
+	def _getSerializer(self):
+		return self._serializer
 
 	entries = property(_getEntries, _setEntries)
-
-
+	serializer = property(_getSerializer)
 
 class SettingEntry(object):
 
