@@ -49,6 +49,10 @@ class SimpleSerializer(object):
 		pass
 
 	def load(self, filename=None):
+		"""
+		@note: If the filename specified is empty this function MUST initialize an empty settings
+		file in whatever format you need.
+		"""
 		pass
 		
 	def save(self, filename=None):
