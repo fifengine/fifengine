@@ -78,7 +78,7 @@ namespace FIFE {
 		throw NotFound(id);
 	}
 
-	size_t Map::getNumLayers() const {
+	uint32_t Map::getNumLayers() const {
 		return m_layers.size();
 	}
 

@@ -56,7 +56,7 @@ namespace FIFE {
 	class MapChangeListener {
 	public:
 		virtual ~MapChangeListener() {};
-		
+
 		/** Called when some layer is changed on map. @see LayerChangeListener
 		 * Layer is effectively changed, in case some of its instances
 		 * is created, deleted or changed during latest update cycle
@@ -65,13 +65,13 @@ namespace FIFE {
 		 * @note Does not report layer creations and deletions
 		 */
 		virtual void onMapChanged(Map* map, std::vector<Layer*>& changedLayers) = 0;
-		
+
 		/** Called when some layer gets created on the map
 		 * @param map where change occurred
 		 * @param layer which got created
 		 */
 		virtual void onLayerCreate(Map* map, Layer* layer) = 0;
-		
+
 		/** Called when some instance gets deleted on layer
 		 * @param map where change occurred
 		 * @param layer which will be deleted
@@ -92,8 +92,8 @@ namespace FIFE {
 			 * To add map to model, one should call Model::addMap (otherwise
 			 * map is not registered with the engine properly)
 			 */
-			Map(const std::string& identifier, RenderBackend* renderbackend, 
-				const std::vector<RendererBase*>& renderers, ImagePool* imagepool, 
+			Map(const std::string& identifier, RenderBackend* renderbackend,
+				const std::vector<RendererBase*>& renderers, ImagePool* imagepool,
 				AnimationPool* animpool, TimeProvider* tp_master=NULL);
 
 			/** Destructor
@@ -126,7 +126,7 @@ namespace FIFE {
 
 			/** Get the overall number of layers
 			 */
-			size_t getNumLayers() const;
+			uint32_t getNumLayers() const;
 
 			/** Delete all layers from the map
 			 */
@@ -134,36 +134,36 @@ namespace FIFE {
 
 			/** Maps coordinate from one layer to another
 			 */
-			void getMatchingCoordinates(const ModelCoordinate& coord_to_map, const Layer* from_layer, 
+			void getMatchingCoordinates(const ModelCoordinate& coord_to_map, const Layer* from_layer,
 				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
 
 			/** Called periodically to update events on map
 			 * @returns true, if map was changed
 			 */
 			bool update();
-			
+
 			/** Sets speed for the map. See Model::setTimeMultiplier.
 			 */
 			void setTimeMultiplier(float multip) { m_timeprovider.setMultiplier(multip); }
-			
+
 			/** Gets model speed. @see setTimeMultiplier.
 			 */
 			float getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }
-			
+
 			/** Gets timeprovider used in the map
 			 */
 			TimeProvider* getTimeProvider() { return &m_timeprovider; }
-			
+
 			/** Adds new change listener
 			* @param listener to add
 			*/
 			void addChangeListener(MapChangeListener* listener);
-	
+
 			/** Removes associated change listener
 			* @param listener to remove
 			*/
 			void removeChangeListener(MapChangeListener* listener);
-			
+
 			/** Returns true, if map information was changed during previous update round
 			*/
 			bool isChanged() { return !m_changedlayers.empty(); }
@@ -188,7 +188,7 @@ namespace FIFE {
 			/** Get a list containing all cameras.
 			*/
 			std::vector<Camera*>& getCameras();
-			
+
 		private:
 			std::string m_id;
 
@@ -197,13 +197,13 @@ namespace FIFE {
 
 			Map(const Map& map);
 			Map& operator=(const Map& map);
-	
+
 			// listeners for map changes
 			std::vector<MapChangeListener*> m_changelisteners;
 
 			// holds changed layers after each update
 			std::vector<Layer*> m_changedlayers;
-			
+
 			// holds the cameras attached to this map
 			std::vector<Camera*> m_cameras;
 
