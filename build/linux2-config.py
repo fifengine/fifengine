@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -43,6 +43,8 @@ def initEnvironment(env):
 	
 	env.AppendENVPath('LD_RUN_PATH', os.path.join('..', '..', '..', extlibpath))
 	
+	env.AppendUnique(CXXFLAGS=["-DPNG_SKIP_SETJMP_CHECK"])
+
 	return env
 
 def addExtras(env, opengl):

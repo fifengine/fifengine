@@ -17,22 +17,9 @@ def build_guichan(target, source, env):
 		print 'Building failed: guichan'
 		Exit(1)
 
-def build_png(target, source, env):
-	print "======= FIFE EXTERNAL DEPENDENCY BUILD: LIBPNG ======="
-	failure = Execute(Action(['./configure',
-							  'make all-am',
-							  'make install prefix=%s' % installpath,
-							  'make install-data-hook prefix=%s' % installpath],
-		chdir=os.path.join(curpath, 'libpng-1.2.29')))
-	
-	if (failure):
-		print 'Building failed: png'
-		Exit(1)
-
 	
 ext_cmd = env.Command('ext_target',
 					  'install',
 					  [build_guichan,
-					   build_png,
 					   os.chdir(Dir('#').abspath)])
 Alias('ext', ext_cmd)
