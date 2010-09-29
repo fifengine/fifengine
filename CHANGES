@@ -10,6 +10,93 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
+== 0.3.2 (2010)                                                               ==
+================================================================================
+
+=== Engine ===
+  * Added a percentage bar widget (#411)
+  * Modified some size_t definitions to more appropriate ones (#152)
+  * Instance rotation changes are reported to the instance change listeners 
+    (#475)
+  * Fixed the GenericRenderingNode to no longer cause a segfault (#446)
+  * Fixed an API inconsistency in SoundEmitter (#461)
+  * There is no longer a memory leak when adding coloring overlays to instance 
+    (#472)
+  * instance.get2dGfsVisual().setVisible(False) now works as expected (#471)
+  * Removed the last 0(n) loop through instances when rendering (#419)
+  * Generic renderer now only renders objects on the specified layer (#458)
+  * Fixed a memory leak when deleting maps.  The camera was not being
+    deleted
+  * Removed the NotFound exceptions in layer.getInstance() and model.getObjects()
+    to be more consistent with the rest of the API
+  * Fixed a bug in RenderBackendSDL, the clip area was not properly set
+  * Renamed the backquad and border commands of the FloatingTextRenderer
+  * Added the TransparentArea commands to the InstanceRenderer
+  * Improved InstanceRenderer::addTransparentArea.  You can now pass a list
+    of namespaces to be marked as transparent
+  * Updated Instance to no longer derive from ResourceClass. It now derives from 
+    FifeClass directly
+  * Improved the floatingtextrenderer. Now you can set an alpha value for font, 
+    background quad and border. Split quad and border into own commands
+  * Added a triangle function to backend and genericrenderer, also added the 
+    functions to set an alpha value for geometric figures
+  * floatingtextrenderer now can change colors of the font via 
+    setColor(uint r, uint b, uint g)
+  * Added the colorbuffer patch with a small change due to SDL. Performance 
+    boost between 20-30% under OpenGL
+  * Improved the most renderers with setColor() function to allow the user to
+    modify the color used to render the primitives
+  * Fixed the genericrenderer.  It is now tested whether the images are in the 
+    viewport
+  * Fixed the gridrenderer to only render the grin within the viewport
+  * Changed the vertex functions in opengl/renderbackendopengl.cpp from vertex3f() 
+    to vertex2f()
+  * Moved the layer visibility and transparency, from instancerenderer.cpp to 
+    layercache.cpp and improved it (r3395) 
+  * Corrected the h,w calculation for zooming in layercache.cpp (r3369)
+  * Fixed the bug, that x,y camera position result in an screen offset. (r3369)
+
+=== Build System ===
+  * Removed libpng from ext (#385)
+  * Debug is now automatically enabled when you build with profiling enabled
+    (r3292)
+
+=== Editor ===
+  * Re-arranged the ObjectEdit gui to avoid misunderstandings
+  * Can now place instances (which are visible) on new maps again (r3392)  
+  
+=== Extensions ===
+  * Added the SimpleXMLSerializer extension
+  * Removed the XML portion out of fife_settings in favor of SimpleXMLSerializer
+  * Made the serializer used in fife_settings "pluggable"
+  * fife_settings widgets are now updated when the settings are reset to default
+  * Can now specify the default settings filename instead of using 
+    settings-dist.xml
+  * Fixed the write_instances function so it saves the stack position variable
+    of instance visual when saving maps
+  * Added getVolume() to the SoundManager
+  * Added debug flag to loaders to enable/disable annoying print spam on maploading
+  * BasicApplication now initializes pychan (r3388)
+  
+=== Docs ===
+  * Added some documentation to the filebrowser module
+  
+=== Pychan ===
+  * Timers are now handled correctly by pychan (#483)
+  * Can now modify the step length for sliders (#482)
+  * Built in pychan dialogs now work (r3384)
+  
+=== Demos ===
+  * Renamed <fife>/demos/pychan_demo/pychan_test.py to pychan_demo.py
+  * Added a new pychan demo - gui animations
+  * Added the Shooter demo
+  
+=== Misc ===
+  * Fixed some compiler warning messages
+  * Added license information for the gimp icon
+  
+
+================================================================================
 == 0.3.1 (March, 2010)                                                        ==
 ================================================================================
 
