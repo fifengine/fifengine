@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -24,7 +24,7 @@
 
 // Standard C++ library includes
 
-// Platform specific includes 
+// Platform specific includes
 #if defined( WIN32 ) && defined( _MSC_VER )
 #ifndef _SDL_H
 typedef signed __int8		int8_t;
@@ -41,6 +41,7 @@ typedef unsigned __int64	uint64_t;
 #endif
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -49,7 +50,7 @@ typedef unsigned __int64	uint64_t;
 
 // SDL masks for SDL_CreateRGBSurface
 namespace FIFE {
-#if 1 // tried "SDL_BYTEORDER != SDL_BIG_ENDIAN" with SDL.h inclusion, however this doesn't seem not work
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 	const int RMASK    = 0xff000000;
 	const int GMASK    = 0x00ff0000;
 	const int BMASK    = 0x0000ff00;
@@ -59,8 +60,8 @@ namespace FIFE {
 	const int GMASK    = 0x0000ff00;
 	const int BMASK    = 0x00ff0000;
 	const int AMASK    = 0xff000000;
-#endif	
+#endif
 	const int NULLMASK = 0x00000000;
-}
+} //FIFE
 
 #endif // FIFEINT_H

@@ -72,24 +72,10 @@ namespace FIFE {
 		void setClipArea(const Rect& cliparea, bool clear);
 
 	private:
-		// number of rows into which this image is sliced, so that it "becomes power of 2 compatible"
-		unsigned int m_rows;
-		// see m_rows
-		unsigned int m_cols;
-
-		// ratio of texture fill in last column. E.g. in case image width = 300, chunk = 256x256,
-		// last column chunk width = 64 -> ratio is (300-256) / 64 = 0.6875
-		// this means that texture fills 68.75% the last column
-		float m_last_col_fill_ratio;
-		// @see m_last_col_fill_ratio
-		float m_last_row_fill_ratio;
-
-		/** the width of last column to render. This is also power of two
-		 * (e.g. if chunks are 256x256 and image width = 300, last column = 64
-		 */
-		unsigned int m_last_col_width;
-		// see m_last_col_width
-		unsigned int m_last_row_height;
+		// texture coords to use
+		float m_col_tex_coord;
+		// @see m_col_tex_coord
+		float m_row_tex_coord;
 
 		/** Holds texture ids that are used to access textures in GL rendering context
 		 */
@@ -105,10 +91,9 @@ namespace FIFE {
 
 		//void saveAsPng(const std::string& filename, SDL_Surface& surface);
 
-		/** Generates chunks for render. For reference, see
-		 * http://developer.apple.com/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/chapter_10_section_4.html
+		/** Generates the GL Texture for use when rendering.
 		 */
-		void generateTextureChunks();
+		void generateGLTexture();
 
 		/** Original SDLImage where GLImage is created from
 		 * FIXME: at the moment SDLImage is used to draw graphics (e.g. line) on screen

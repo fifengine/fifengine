@@ -25,7 +25,7 @@
 // Standard C++ library includes
 #include <cmath>
 
-// Platform specific includes 
+// Platform specific includes
 
 // 3rd party library includes
 
@@ -38,7 +38,7 @@
 // Sort out the missing round function in MSVC:
 #if defined( WIN32 ) && defined( _MSC_VER )
 inline double round(const double x) {
-	return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); 
+	return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5);
 }
 #endif
 
@@ -51,5 +51,17 @@ inline double round(const double x) {
 #define M_PI        3.14159265358979323846
 
 #endif
+
+inline unsigned nextPow2(unsigned x)
+{
+	--x;
+	x |= x >> 1;
+	x |= x >> 2;
+	x |= x >> 4;
+	x |= x >> 8;
+	x |= x >> 16;
+	return ++x;
+}
+
 
 #endif // FIFE_UTIL_FIFE_MATH_H
