@@ -33,47 +33,16 @@
 #include "video/image.h"
 #include "gui/base/gui_image.h"
 #include "util/structures/rect.h"
+#include "video/opengl/fife_opengl.h"
 
 #include "opengl_gui_graphics.h"
 
 namespace FIFE {
-	struct GLEnable {
-		GLenum m_flag;
-		GLboolean m_oldval;
-		GLEnable(GLenum flag) : m_flag(flag) { 
-			glGetBooleanv(flag, &m_oldval);
-			if (!m_oldval) {
-				glEnable(flag);
-			}
-		}
-		~GLEnable() { 
-			if (!m_oldval) {
-				glDisable(m_flag);
-			}
-		}
-	};
-
-	struct GLDisable {
-		GLenum m_flag;
-		GLboolean m_oldval;
-		GLDisable(GLenum flag) : m_flag(flag) { 
-			glGetBooleanv(flag, &m_oldval);
-			if (m_oldval) {
-				glDisable(flag);
-			}
-		}
-		~GLDisable() { 
-			if (m_oldval) {
-				glEnable(m_flag);
-			}
-		}
-	};
-
 	OpenGLGuiGraphics::OpenGLGuiGraphics(ImagePool& pool): m_pool(pool) {
 		mTarget = SDL_GetVideoSurface();
 		assert(mTarget);
 		setTargetPlane(mTarget->w, mTarget->h);
-		
+
 	}
 
 	void OpenGLGuiGraphics::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {

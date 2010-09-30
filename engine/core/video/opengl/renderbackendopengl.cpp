@@ -134,9 +134,8 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::startFrame() {
 		if(m_clear) {
-			glDisable(GL_SCISSOR_TEST);
+			GLDisable flag(GL_SCISSOR_TEST);
 			glClear(GL_COLOR_BUFFER_BIT);
-			glEnable(GL_SCISSOR_TEST);
 		}
 	}
 
@@ -211,7 +210,7 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
 		glColor4ub(r, g, b, a);
-		
+
 		glBegin(GL_TRIANGLES);
 		glVertex2f(p1.x, p1.y);
 		glVertex2f(p2.x, p2.y);
@@ -221,7 +220,7 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
 		glColor4ub(r, g, b, a);
-		
+
 		glBegin(GL_QUADS);
 		glVertex2f(p1.x, p1.y);
 		glVertex2f(p2.x, p2.y);
