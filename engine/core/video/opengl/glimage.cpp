@@ -105,7 +105,7 @@ namespace FIFE {
 		/// setting transparency for the whole primitive:
 		glColor4ub( 255, 255, 255, alpha );
 
-		GLEnable flag(GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, m_textureids[0]);
 
 		glBegin(GL_QUADS);
@@ -121,6 +121,7 @@ namespace FIFE {
 			glTexCoord2f(m_col_tex_coord, 0.0f);
 			glVertex2i(rect.x + w, rect.y);
 		glEnd();
+		glDisable(GL_TEXTURE_2D);
 
 	}
 
