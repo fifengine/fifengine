@@ -52,8 +52,6 @@
 #include "eventchannel/sdl/ec_isdleventcontroller.h"
 #include "eventchannel/sdl/ec_isdleventlistener.h"
 
-#include "eventchannel/trigger/ec_itriggercontroller.h"
-
 namespace FIFE {
 
 	class ICommandListener;
@@ -69,8 +67,7 @@ namespace FIFE {
 		public IKeyController,
 		public IMouseController,
 		public ISdlEventController,
-		public IEventSource,
-		public ITriggerController {
+		public IEventSource {
 	public:
 		/** Constructor.
 		 */
@@ -83,20 +80,22 @@ namespace FIFE {
 		void addCommandListener(ICommandListener* listener);
 		void addCommandListenerFront(ICommandListener* listener);
 		void removeCommandListener(ICommandListener* listener);
+
 		void dispatchCommand(Command& command);
+
 		void addKeyListener(IKeyListener* listener);
 		void addKeyListenerFront(IKeyListener* listener);
 		void removeKeyListener(IKeyListener* listener);
+
 		void addMouseListener(IMouseListener* listener);
 		void addMouseListenerFront(IMouseListener* listener);
 		void removeMouseListener(IMouseListener* listener);
+
 		void addSdlEventListener(ISdlEventListener* listener);
 		void addSdlEventListenerFront(ISdlEventListener* listener);
 		void removeSdlEventListener(ISdlEventListener* listener);
-		EventSourceType getEventSourceType();
 
-		void registerTrigger(Trigger& trigger);
-		void unregisterTrigger(Trigger& trigger);
+		EventSourceType getEventSourceType();
 
 		/** Process the SDL event queue.
 		 * This is to be called only by the engine itself once per frame.
@@ -123,8 +122,6 @@ namespace FIFE {
 		void fillKeyEvent(const SDL_Event& sdlevt, KeyEvent& keyevt);
 		void fillMouseEvent(const SDL_Event& sdlevt, MouseEvent& mouseevt);
 
-		void pollTriggers();
-
 		std::deque<ICommandListener*> m_commandlisteners;
 		std::deque<ICommandListener*> m_pending_commandlisteners;
 		std::deque<ICommandListener*> m_pending_commandlisteners_front;
@@ -150,7 +147,6 @@ namespace FIFE {
 		int m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
 
-		std::list<Trigger*> m_triggers;
 	};
 } //FIFE
 
