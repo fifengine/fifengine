@@ -34,7 +34,6 @@
 #include "eventchannel/key/ec_ikeyfilter.h"
 #include "eventchannel/mouse/ec_mouseevent.h"
 #include "eventchannel/command/ec_command.h"
-#include "eventchannel/trigger/ec_trigger.h"
 
 #include "eventmanager.h"
 
@@ -382,7 +381,6 @@ namespace FIFE {
 			if(has_next_event)
 				event = next_event;
 		}
-		pollTriggers();
 	}
 
 	void EventManager::processActiveEvent(SDL_Event event) {
@@ -535,20 +533,6 @@ namespace FIFE {
 
 	EventSourceType EventManager::getEventSourceType() {
 		return ES_ENGINE;
-	}
-
-	void EventManager::registerTrigger(Trigger& trigger){
-		m_triggers.push_back(&trigger);
-	}
-
-	void EventManager::unregisterTrigger(Trigger& trigger){
-		m_triggers.remove(&trigger);
-	}
-
-	void EventManager::pollTriggers(){
-		for (std::list<Trigger*>::iterator it = m_triggers.begin(); it!=m_triggers.end(); ++it) {
-			(*it)->pollTrigger();
-		}
 	}
 
 	void EventManager::setKeyFilter(IKeyFilter* keyFilter) {
