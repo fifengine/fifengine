@@ -81,19 +81,29 @@ namespace FIFE {
 	%template(Point3D) PointType3D<int>;
 	%template(DoublePoint3D) PointType3D<double>;
 	
-	class Rect {
+	template <typename T> class RectType {
 	public:
-		int x;
-		int y;
-		int w;
-		int h;
-		explicit Rect(int x = 0, int y = 0, unsigned int width = 0, unsigned int height = 0);
-		int right() const;
-		int bottom() const;
-		bool operator==(const Rect& rect ) const;
-		bool contains( const Point& point ) const;
-		bool intersects( const Rect& rect ) const;
-		bool intersectInplace( const Rect& rect );
+		T x;
+		T y;
+		T w;
+		T h;
+		explicit RectType(T x = 0, T y = 0, T width = 0, T height = 0);
+		T right() const;
+		T bottom() const;
+		bool operator==(const RectType<T>& rect ) const;
+		bool contains( const PointType2D<T>& point ) const;
+		bool intersects( const RectType<T>& rect ) const;
+		bool intersectInplace( const RectType<T>& rect );
 	};
-	std::ostream& operator<<(std::ostream&, const Rect&);
+	
+	template<typename T>
+	std::ostream& operator<<(std::ostream&, const RectType<T>&);
+	
+	typedef RectType<int> Rect;
+	typedef RectType<float> FloatRect;
+	typedef RectType<double> DoubleRect;
+	
+	%template(Rect) RectType<int>;
+	%template(FloatRect) RectType<float>;
+	%template(DoubleRect) RectType<double>;
 }

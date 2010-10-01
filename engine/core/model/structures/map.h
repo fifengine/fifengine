@@ -36,6 +36,7 @@
 #include "util/base/resourceclass.h"
 #include "util/resource/resource.h"
 #include "model/metamodel/timeprovider.h"
+#include "util/structures/rect.h"
 
 #include "location.h"
 
@@ -49,7 +50,6 @@ namespace FIFE {
 	class CellGrid;
 	class Map;
 	class Camera;
-	class Rect;
 
 	/** Listener interface for changes happening on map
 	 */

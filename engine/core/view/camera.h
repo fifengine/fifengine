@@ -42,7 +42,6 @@ namespace FIFE {
 
 	typedef Point3D ScreenPoint;
 	class Layer;
-	class Rect;
 	class Instance;
 	class ImagePool;
 	class AnimationPool;

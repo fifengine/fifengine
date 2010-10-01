@@ -23,7 +23,7 @@
 
 from fife import fife
 from fife.extensions.fife_math import normalize
-from fife.extensions.fife_math import Rect
+from fife.fife import FloatRect as Rect
 
 
 SHTR_DEFAULT = 0

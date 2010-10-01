@@ -24,7 +24,7 @@
 from fife import fife
 from scripts.ships.shipbase import *
 from scripts.common.baseobject import *
-from fife.extensions.fife_math import Rect
+from fife.fife import FloatRect as Rect
 from scripts.weapons import *
 
 

@@ -52,94 +52,6 @@ def normalize(vector):
 	
 	return norm
 	
-class Rect(object):
-	"""
-	A simple rectangle class that allows floating point values.
-	
-	A class used to specify the bounding box of objects.  For use
-	with collision detection.  This was written in python because
-	FIFE does not provide a Rect class that can use floating point
-	values.
-	"""
-	def __init__(self, x = 0, y = 0, w = 0, h = 0):
-		"""
-		@param x: The x coordinate
-		@type x: C{int} or C{float}
-		@param y: The y coordinate
-		@type y: C{int} or C{float}
-		@param w: The width
-		@type w: C{int} or C{float}
-		@param h: The height
-		@type h: C{int} or C{float}
-		"""
-		self._x = x
-		self._y = y
-		self._w = w
-		self._h = h
-		
-	def intersects(self, rect):
-		"""
-		Tests for intersection of rect.
-		
-		@param rect: the L{Rect} to perform the test against.
-		@type rect: L{Rect}
-		
-		@return: True if the rectancles intersect, False if not.
-		@rtype: C{boolean}
-		"""
-		_x = self._x - rect.x;
-		_y = self._y - rect.y;
-		_w = self._w;
-		_h = self._h;
-
-		if _x < 0:
-			_w += _x
-			_x = 0
-
-		if _y < 0:
-			_h += _y
-			_y = 0
-
-		if _x + _w > rect.w:
-			_w = rect.w - _x
-
-		if _y + _h > rect.h:
-			_h = rect.h - _y
-			
-		if _w <= 0 or _h <= 0:
-			return False
-
-		return True
-
-	def _setX(self, x):
-		self._x = x
-		
-	def _getX(self):
-		return self._x
-
-	def _setY(self, y):
-		self._y = y
-		
-	def _getY(self):
-		return self._y
-		
-	def _setW(self, w):
-		self._w = w
-		
-	def _getW(self):
-		return self._w
-		
-	def _setH(self, h):
-		self._h = h
-		
-	def _getH(self):
-		return self._h
-		
-	x = property(_getX, _setX)
-	y = property(_getY, _setY)
-	w = property(_getW, _setW)
-	h = property(_getH, _setH)
-	
 def rotatePoint(origin, point, angle):
 	"""
 	Rotates a point around the specified origin.
@@ -169,4 +81,4 @@ def rotatePoint(origin, point, angle):
 	
 	return newp
 
-__all__ = ['normalize','Rect','rotatePoint']
+__all__ = ['normalize','rotatePoint']

@@ -26,7 +26,7 @@ from scripts.ships.shipbase import *
 from scripts.ships.player import Player
 from scripts.ships.enemies import *
 from scripts.powerups import *
-from fife.extensions.fife_math import Rect
+from fife.fife import FloatRect as Rect
 
 class SceneNode(object):
 	"""
