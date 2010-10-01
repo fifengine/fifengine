@@ -40,7 +40,6 @@
 #include "util/structures/rect.h"
 
 namespace FIFE {
-	class Rect;
 
 	class AbstractImage {
 	public:
