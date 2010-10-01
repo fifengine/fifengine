@@ -327,7 +327,7 @@ namespace FIFE {
 
 	void Camera::calculateZValue(ScreenPoint& screen_coords) {
 		int dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
-		screen_coords.z = static_cast<int>(tan(m_tilt * (M_PI / 180.0)) * static_cast<double>(dy));
+		screen_coords.z = static_cast<int>(tan(m_tilt * (DBL_PI / 180.0)) * static_cast<double>(dy));
 	}
 
 	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords, bool z_calculated) {

@@ -41,7 +41,6 @@ typedef unsigned __int64	uint64_t;
 #endif
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line

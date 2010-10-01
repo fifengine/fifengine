@@ -118,8 +118,8 @@ namespace FIFE {
 					y/=mag;
 					z/=mag;
 				}
-				T c = cos(angle*M_PI/180);
-				T s = sin(angle*M_PI/180);
+				T c = cos(angle*DBL_PI/180);
+				T s = sin(angle*DBL_PI/180);
 				m0 = x*x*(1-c)+c;
 				m1 = y*x*(1-c)+z*s;
 				m2 = z*x*(1-c)-y*s;
@@ -379,7 +379,7 @@ namespace FIFE {
 	 */
 	template<typename T>
 	std::ostream& operator<<(std::ostream& os, const Matrix<T>& m) {
-		
+
 		return os << "\n|" << m[0] << "," << m[4] << "," << m[8] << ","  << m[12] << "|\n" << \
 		               "|" << m[1] << "," << m[5] << "," << m[9] << ","  << m[13] << "|\n" << \
 		               "|" << m[2] << "," << m[6] << "," << m[10] << "," << m[14] << "|\n" << \

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -47,10 +47,31 @@ inline double round(const double x) {
 
 #endif
 
-#ifndef M_PI
-#define M_PI        3.14159265358979323846
+static const float FLT_ZERO_TOLERANCE = 1e-06f;
+static const float FLT_PI = 4.0f*std::atan(1.0f);
+static const float FLT_TWO_PI = 2.0f*FLT_PI;
+static const float FLT_HALF_PI = 0.5f*FLT_PI;
+static const float FLT_INVERSE_PI = 1.0f/FLT_PI;
+static const float FLT_INVERSE_TWO_PI = 1.0f/FLT_TWO_PI;
+static const float FLT_DEG_TO_RAD = FLT_PI/180.0f;
+static const float FLT_RAD_TO_DEG = 180.0f/FLT_PI;
+static const float FLT_LOG_2 = std::log(2.0f);
+static const float FLT_LOG_10 = std::log(10.0f);
+static const float FLT_INV_LOG_2 = 1.0f/std::log(2.0f);
+static const float FLT_INV_LOG_10 = 1.0f/std::log(10.0f);
 
-#endif
+static const double DBL_ZERO_TOLERANCE = 1e-08;
+static const double DBL_PI = 4.0*std::atan(1.0f);
+static const double DBL_TWO_PI = 2.0*DBL_PI;
+static const double DBL_HALF_PI = 0.5*DBL_PI;
+static const double DBL_INVERSE_PI = 1.0/DBL_PI;
+static const double DBL_INVERSE_TWO_PI = 1.0/DBL_TWO_PI;
+static const double DBL_DEG_TO_RAD = DBL_PI/180.0;
+static const double DBL_RAD_TO_DEG = 180.0/DBL_PI;
+static const double DBL_LOG_2 = std::log(2.0f);
+static const double DBL_LOG_10 = std::log(10.0f);
+static const double DBL_INV_LOG_2 = 1.0/std::log(2.0f);
+static const double DBL_INV_LOG_10 = 1.0/std::log(10.0f);
 
 inline unsigned nextPow2(unsigned x)
 {

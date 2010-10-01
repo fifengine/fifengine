@@ -44,26 +44,26 @@ namespace FIFE {
 		/** Constructor
 		 */
 		EngineSettings();
-		
+
 		/** Destructor
 		 */
 		~EngineSettings();
-		
+
 		/** Validates settings. On invalid settings, throws NotSet with message
 		 */
 		void validate() const;
-		
+
 		/** Sets bits per pixel
 		 * @see getPossibleBitsPerPixel
 		 */
 		void setBitsPerPixel(unsigned int bitsperpixel);
-		
+
 		/** Gets currently set bits per pixel value
 		 */
-		unsigned int getBitsPerPixel() const { 
+		unsigned int getBitsPerPixel() const {
 			return m_bitsperpixel;
 		}
-		
+
 		/** Gets all possible bits per pixel values
 		 */
 		std::vector<unsigned int> getPossibleBitsPerPixel() const;
@@ -74,116 +74,104 @@ namespace FIFE {
 
 		/** Sets fullscreen / windowed mode
 		 */
-		void setFullScreen(bool fullscreen) { 
+		void setFullScreen(bool fullscreen) {
 			m_fullscreen = fullscreen;
 		}
-		
+
 		/** True, if set to fullscreen. False = windowed
 		 */
-		bool isFullScreen() const { 
+		bool isFullScreen() const {
 			return m_fullscreen;
 		}
-		
+
 		/** Sets initial engine sound volume
 		 *  @see getInitialMaxVolume
 		 */
 		void setInitialVolume(float volume);
-		
+
 		/** Gets initial engine sound volume
 		 */
 		float getInitialVolume() const {
 			return m_initialvolume;
 		}
-		
+
 		/** Gets maximum volume that can be set
 		 */
 		float getMaxVolume() const;
-		
+
 		/** Sets name for renderbackend
 		 *  @see getPossibleRenderBackends
 		 */
 		void setRenderBackend(const std::string& renderbackend);
-		
+
 		/** Gets currently set renderbackend name
 		 */
 		const std::string getRenderBackend() const {
 			return m_renderbackend;
 		}
-		
+
 		/** Gets all possible renderbackend names
 		 */
 		std::vector<std::string> getPossibleRenderBackends();
-		
+
 		/** Sets if fake alpha is removed in SDL renderbackend
 		 */
 		void setSDLRemoveFakeAlpha(bool sdlremovefakealpha);
-		
+
 		/** Tells if fake alpha is removed in SDL renderbackend
 		 */
 		bool isSDLRemoveFakeAlpha(bool sdlremovefakealpha) const {
 			return m_sdlremovefakealpha;
 		}
-		
+
 		/** Sets screen width (pixels)
 		 */
 		void setScreenWidth(unsigned int screenwidth);
-		
+
 		/** Gets screen width (pixels)
 		 */
 		unsigned int getScreenWidth() const {
 			return m_screenwidth;
 		}
-		
+
 		/** Sets screen height (pixels)
 		 */
 		void setScreenHeight(unsigned int screenheight);
-		
+
 		/** Gets screen height (pixels)
 		 */
 		unsigned int getScreenHeight() const {
 			return m_screenheight;
 		}
-		
+
 		/** Sets path for default font
 		 */
 		void setDefaultFontPath(const std::string& defaultfontpath);
-		
+
 		/** Sets current path for default font
 		 */
 		std::string getDefaultFontPath() const {
 			return m_defaultfontpath;
 		}
-		
+
 		/** Sets size for default font
 		 */
 		void setDefaultFontSize(const unsigned int defaultfontsize);
-		
+
 		/** Gets size for default font
 		 */
 		unsigned int getDefaultFontSize() const {
 			return m_defaultfontsize;
 		}
-		
+
 		/** Sets glyphs for default font
 		 */
 		void setDefaultFontGlyphs(const std::string& defaultfontglyphs);
-		
+
 		/** Gets current glyphs for default font
 		 */
 		std::string getDefaultFontGlyphs() const {
 			return m_defaultfontglyphs;
-		}
-	
-		/** Sets image chunking size, @see RenderBackend::setChunkingSize
-		 */
-		void setImageChunkingSize(unsigned int size) {
-			m_image_chunking_size = size;
-		}
-	
-		/** @see setImageChunkingSize
-		 */
-		unsigned int getImageChunkingSize() const {
-			return m_image_chunking_size;
 		}
 
 		/** Sets the title of the window
@@ -195,7 +183,7 @@ namespace FIFE {
 		std::string getWindowTitle() const {
 			return m_windowtitle;
 		}
-	
+
 		/** Sets the icon that appears in the window title bar
 		 */
 		void setWindowIcon(const std::string& icon);
@@ -221,7 +209,7 @@ namespace FIFE {
 		/** Gets the global colorkey setting
 		 */
 		const SDL_Color& getColorKey() const;
-		
+
 	private:
 		unsigned int m_bitsperpixel;
 		bool m_fullscreen;
@@ -232,12 +220,11 @@ namespace FIFE {
 		unsigned int m_screenheight;
 		std::string m_windowtitle;
 		std::string m_windowicon;
-		
-		
+
+
 		std::string m_defaultfontpath;
 		unsigned int m_defaultfontsize;
 		std::string m_defaultfontglyphs;
-		unsigned int m_image_chunking_size;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
 	};
