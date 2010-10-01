@@ -38,8 +38,8 @@ namespace FIFE {
 
 	static const double HEX_WIDTH = 1;
 	static const double HEX_TO_EDGE = HEX_WIDTH / 2;
-	static const double HEX_TO_CORNER = 0.5 / cos(M_PI / 6);
-	static const double HEX_EDGE_HALF = HEX_TO_CORNER * sin(M_PI / 6);
+	static const double HEX_TO_CORNER = 0.5 / cos(DBL_PI / 6);
+	static const double HEX_EDGE_HALF = HEX_TO_CORNER * sin(DBL_PI / 6);
 	static const double VERTICAL_MULTIP = sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
 	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
 
@@ -138,7 +138,7 @@ namespace FIFE {
 		static std::string type("hexagonal");
 		return type;
 	}
-	
+
 	const std::string& HexGrid::getName() const {
 		static std::string hexGrid("Hex Grid");
 		return hexGrid;
@@ -185,32 +185,32 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
 		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
 		ModelCoordinate result;
-		
+
 		if ((y % 2) == 0) {
 			FL_DBG(_log, "In even row");
 			if ((1 - dy) < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In lower rect area");
 				result = ModelCoordinate(x, y+1);
-			} 
+			}
 			else if (dy < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In upper rect area");
 				if (dx > 0.5) {
 					FL_DBG(_log, "...on right");
 					result = ModelCoordinate(x+1, y);
-				} 
+				}
 				else {
 					FL_DBG(_log, "...on left");
 					result = ModelCoordinate(x, y);
 				}
-			} 
+			}
 			// in middle triangle area
 			else {
 				FL_DBG(_log, "In middle triangle area");
 				if (dx < 0.5) {
 					FL_DBG(_log, "In left triangles");
 					if (ptInTriangle(ExactModelCoordinate(dx, dy),
-					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF), 
-					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF),
+					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
 					                 )) {
 						FL_DBG(_log, "..upper part");
@@ -222,8 +222,8 @@ namespace FIFE {
 				} else {
 					FL_DBG(_log, "In right triangles");
 					if (ptInTriangle(ExactModelCoordinate(dx, dy),
-					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF), 
-					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF),
+					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * HEX_EDGE_HALF)
 					                 )) {
 						FL_DBG(_log, "..upper part");
@@ -233,31 +233,31 @@ namespace FIFE {
 						result = ModelCoordinate(x, y+1);
 					}
 				}
-			}		
-		} 
+			}
+		}
 		else {
 			FL_DBG(_log, "In uneven row");
 			if (dy < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In upper rect area");
 				result = ModelCoordinate(x, y);
-			} 
+			}
 			else if ((1 - dy) < HEX_EDGE_HALF) {
 				FL_DBG(_log, "In lower rect area");
 				if (dx > 0.5) {
 					FL_DBG(_log, "...on right");
 					result = ModelCoordinate(x+1, y+1);
-				} 
+				}
 				else {
 					FL_DBG(_log, "...on left");
 					result = ModelCoordinate(x, y+1);
 				}
-			} 
+			}
 			else {
 				FL_DBG(_log, "In middle triangle area");
 				if (dx < 0.5) {
 					FL_DBG(_log, "In left triangles");
 					if (ptInTriangle(ExactModelCoordinate(dx, dy),
-					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF), 
+					                 ExactModelCoordinate(0, VERTICAL_MULTIP * HEX_EDGE_HALF),
 					                 ExactModelCoordinate(0, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
 					                 )) {
@@ -270,8 +270,8 @@ namespace FIFE {
 				} else {
 					FL_DBG(_log, "In right triangles");
 					if (ptInTriangle(ExactModelCoordinate(dx, dy),
-					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF), 
-					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)), 
+					                 ExactModelCoordinate(1, VERTICAL_MULTIP * HEX_EDGE_HALF),
+					                 ExactModelCoordinate(1, VERTICAL_MULTIP * (1-HEX_EDGE_HALF)),
 					                 ExactModelCoordinate(0.5, VERTICAL_MULTIP * (1-HEX_EDGE_HALF))
 					                 )) {
 					        FL_DBG(_log, "..lower part");
@@ -298,29 +298,29 @@ namespace FIFE {
 			FL_DBG(_log, "on uneven row");
 		}
 		double tx, ty;
-		
+
 		#define ADD_PT(_x, _y) vtx.push_back(ExactModelCoordinate(_x, _y));
 		// FL_DBG(_log, LMsg("Added point ") << _x << ", " << _y)
 		ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
-		
+
 		ty = y - VERTICAL_MULTIP_INV * HEX_TO_CORNER;
 		tx = x - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
-		
+
 		ty = y - VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
-		
+
 		ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x + HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
-		
+
 		ty = y + VERTICAL_MULTIP_INV * HEX_TO_CORNER;
 		tx = x - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);
-		
+
 		ty = y + VERTICAL_MULTIP_INV * HEX_EDGE_HALF;
 		tx = x - HEX_TO_EDGE - getXZigzagOffset(ty) + horiz_shift;
 		ADD_PT(tx, ty);

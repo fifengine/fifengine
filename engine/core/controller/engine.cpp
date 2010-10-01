@@ -189,7 +189,6 @@ namespace FIFE {
 #endif
 		}
 		FL_LOG(_log, "Initializing render backend");
-		m_renderbackend->setChunkingSize(m_settings.getImageChunkingSize());
 		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
 		m_renderbackend->init();
 

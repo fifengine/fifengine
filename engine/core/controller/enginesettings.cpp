@@ -50,16 +50,15 @@ namespace FIFE {
 		m_defaultfontpath(""),
 		m_defaultfontsize(8),
 		m_defaultfontglyphs(""),
-		m_image_chunking_size(256),
 		m_iscolorkeyenabled(false) {
 			m_colorkey.r = 255;
 			m_colorkey.g = 0;
 			m_colorkey.b = 255;
 	}
-	
+
 	EngineSettings::~EngineSettings() {
 	}
-	
+
 	void EngineSettings::validate() const {
 		if (m_defaultfontpath == "") {
 			throw NotSet("Path for default font is not set");
@@ -91,7 +90,7 @@ namespace FIFE {
 		}
 		throw NotSupported("Given bits per pixel value is not supported");
 	}
-	
+
 	std::vector<unsigned int> EngineSettings::getPossibleBitsPerPixel() const {
 		std::vector<unsigned int> tmp;
 		tmp.push_back(0);
@@ -100,7 +99,7 @@ namespace FIFE {
 		tmp.push_back(32);
 		return tmp;
 	}
-	
+
 	void EngineSettings::setInitialVolume(float volume) {
 		if (volume > getMaxVolume()) {
 			throw NotSupported("Given volume exceeds maximum volume");
@@ -110,11 +109,11 @@ namespace FIFE {
 		}
 		m_initialvolume = volume;
 	}
-	
+
 	float EngineSettings::getMaxVolume() const {
 		return MAXIMUM_VOLUME;
 	}
-	
+
 	void EngineSettings::setRenderBackend(const std::string& renderbackend) {
 		std::vector<std::string> pv = getPossibleRenderBackends();
 		std::vector<std::string>::iterator i = std::find(pv.begin(), pv.end(), renderbackend);
@@ -124,42 +123,42 @@ namespace FIFE {
 		}
 		throw NotSupported("Given render backend is not supported");
 	}
-	
+
 	std::vector<std::string> EngineSettings::getPossibleRenderBackends() {
 		std::vector<std::string> tmp;
 		tmp.push_back("SDL");
 		tmp.push_back("OpenGL");
 		return tmp;
 	}
-	
+
 	void EngineSettings::setSDLRemoveFakeAlpha(bool sdlremovefakealpha) {
 		m_sdlremovefakealpha = sdlremovefakealpha;
 	}
-	
+
 	void EngineSettings::setScreenWidth(unsigned int screenwidth) {
 		m_screenwidth = screenwidth;
 	}
-	
+
 	void EngineSettings::setScreenHeight(unsigned int screenheight) {
 		m_screenheight = screenheight;
 	}
-	
+
 	void EngineSettings::setDefaultFontPath(const std::string& defaultfontpath) {
 		m_defaultfontpath = defaultfontpath;
 	}
-	
+
 	void EngineSettings::setDefaultFontSize(const unsigned int defaultfontsize) {
 		m_defaultfontsize = defaultfontsize;
 	}
-	
+
 	void EngineSettings::setDefaultFontGlyphs(const std::string& defaultfontglyphs) {
 		m_defaultfontglyphs = defaultfontglyphs;
 	}
-	
+
 	void EngineSettings::setWindowTitle(const std::string& title) {
 		m_windowtitle = title;
 	}
-	
+
 	void EngineSettings::setWindowIcon(const std::string& icon) {
 		m_windowicon = icon;
 	}

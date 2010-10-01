@@ -53,7 +53,7 @@ namespace FIFE {
 		 * @param name The name of the new renderbackend.
 		 */
 		RenderBackend(const SDL_Color& colorkey);
-		
+
 		/** Destructor.
 		 */
 		virtual ~RenderBackend();
@@ -95,7 +95,7 @@ namespace FIFE {
 		 * @return The new Image.
 		 */
 		virtual Image* createImage(const uint8_t* data, unsigned int width, unsigned int height) = 0;
-		
+
 		/** Helper function to create images from SDL_Surfaces.
 		 * Takes ownership over the surface.
 		 * @param surface The surface to convert.
@@ -104,7 +104,7 @@ namespace FIFE {
 		virtual Image* createImage(SDL_Surface* surface) = 0;
 
 		virtual void isClearNeeded(bool clear) = 0;
-		
+
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.
 		 */
@@ -113,7 +113,7 @@ namespace FIFE {
 		/** Creates a Screenshot and saves it to a file.
 		 */
 		void captureScreen(const std::string& filename);
-		
+
 		SDL_Surface* getSurface();
 		unsigned int getWidth() const;
 		unsigned int getHeight() const;
@@ -128,14 +128,6 @@ namespace FIFE {
 		bool isAlphaOptimizerEnabled();
 		void saveImage(const std::string& filename);
 
-		/** OpenGL image needs to be sliced into power of two sized chunks. 
-		 * You can adjust the size by calling this method.
-		 * Size can be anything (reasonable), it is always changed to the next biggest power of two value
-		 * @example values 50 -> 64, 340 -> 512
-		 */
-		void setChunkingSize(unsigned int size);
-		unsigned int getChunkingSize();
-
 		/** Sets whether to use the colorkey feature
 		*/
 		void setColorKeyEnabled(bool colorkeyenable);
@@ -145,11 +137,11 @@ namespace FIFE {
 		bool isColorKeyEnabled() const;
 
 		/** Sets the global colorkey to use for images
-		 */ 
+		 */
 		void setColorKey(const SDL_Color& colorkey);
 
 		/** Gets the global colorkey setting
-		 */ 
+		 */
 		const SDL_Color& getColorKey() const;
 
 	protected:

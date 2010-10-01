@@ -52,7 +52,7 @@ namespace FIFE {
 		double dy = (c2.y - c1.y);
 		double dx = (c2.x - c1.x);
 
-		int angle = static_cast<int>(atan2(-dy,dx)*(180.0/M_PI));
+		int angle = static_cast<int>(atan2(-dy,dx)*(180.0/DBL_PI));
 
 		return angle;
 	}
