@@ -113,6 +113,7 @@ class Setting(object):
 		self._default_settings_file = default_settings_file
 		self._settings_gui_xml = settings_gui_xml
 		self._changes_gui_xml = changes_gui_xml
+		self.OptionsDlg = None
 
 		# Holds SettingEntries
 		self._entries = {}
@@ -261,16 +262,23 @@ class Setting(object):
 		"""
 		self.changesRequireRestart = False
 		self.isSetToDefault = False
+		if not self.OptionsDlg:
+			self.loadSettingsDialog()
+		self.fillWidgets()
+		self.OptionsDlg.show()
 
+	def loadSettingsDialog(self):
+		"""
+		Load up the settings xml and return the widget.
+		"""
 		self.OptionsDlg = self._loadWidget(self._settings_gui_xml)
 		self.OptionsDlg.stylize(self._gui_style)
-		self.fillWidgets()
 		self.OptionsDlg.mapEvents({
 			'okButton' : self.applySettings,
 			'cancelButton' : self.OptionsDlg.hide,
 			'defaultButton' : self.setDefaults
 		})
-		self.OptionsDlg.show()
+		return self.OptionsDlg
 
 	def _loadWidget(self, dialog):
 		"""Loads a widget. Can load both files and pure xml strings"""
