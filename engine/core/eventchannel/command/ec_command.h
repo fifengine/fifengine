@@ -45,9 +45,9 @@ namespace FIFE {
 	public:
 		/** Constructor.
 		 */
-		Command(): 
+		Command():
 			Event(),
-			m_commandtype(CMD_UNKNOWN), 
+			m_commandtype(CMD_UNKNOWN),
 			m_code(0) {}
 
 		/** Destructor.
@@ -70,8 +70,6 @@ namespace FIFE {
 		virtual bool isConsumed() const { return Event::isConsumed(); }
 		virtual IEventSource* getSource() { return Event::getSource(); }
 		virtual void setSource(IEventSource* source) { Event::setSource(source); }
-		virtual gcn::Widget* getSourceWidget() { return Event::getSourceWidget(); }
-		virtual void setSourceWidget(gcn::Widget* widget) { Event::setSourceWidget(widget); }
 		virtual int getTimeStamp() const { return Event::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { Event::setTimeStamp(timestamp); }
 
