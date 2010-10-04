@@ -36,7 +36,7 @@
 #include "eventchannel/base/ec_inputevent.h"
 
 namespace FIFE {
-	
+
 	/**  Class for mouse events
 	 */
 	class MouseEvent: public InputEvent {
@@ -69,12 +69,12 @@ namespace FIFE {
 			MIDDLE = 4,
 			UNKNOWN_BUTTON = 8
 		};
-	
-	
+
+
 		/** Constructor.
 		*/
-		MouseEvent(): 
-			InputEvent(), 
+		MouseEvent():
+			InputEvent(),
 			m_eventtype(UNKNOWN_EVENT),
 			m_buttontype(UNKNOWN_BUTTON),
 			m_x(-1),
@@ -90,25 +90,25 @@ namespace FIFE {
 		 */
 		MouseButtonType getButton() const { return m_buttontype; }
 		void setButton(MouseButtonType type) { m_buttontype = type; }
-	
+
 		/**
 		 * Gets the type of the event.
 		 * @return the type of the event.
 		 */
 		MouseEventType getType() const { return m_eventtype; }
 		void setType(MouseEventType type) { m_eventtype = type; }
-	
+
 		/**
 		 * Gets the x coordinate of the mouse event. The coordinate is relative to
-		 * the source event source. 
+		 * the source event source.
 		 * @return the x coordinate of the mouse event.
 		 */
 		int getX() const { return m_x; }
 		void setX(int x) { m_x = x; }
-	
+
 		/**
 		 * Gets the y coordinate of the mouse event. The coordinate is relative to
-		 * the source event source. 
+		 * the source event source.
 		 * @return the y coordinate of the mouse event.
 		 */
 		int getY() const { return m_y; }
@@ -129,8 +129,6 @@ namespace FIFE {
 		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
 		virtual IEventSource* getSource() { return InputEvent::getSource(); }
 		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
-		virtual gcn::Widget* getSourceWidget() { return InputEvent::getSourceWidget(); }
-		virtual void setSourceWidget(gcn::Widget* widget) { InputEvent::setSourceWidget(widget); }
 		virtual int getTimeStamp() const { return InputEvent::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { InputEvent::setTimeStamp(timestamp); }
 
@@ -186,7 +184,7 @@ namespace FIFE {
 			}
 			return s;
 		}
-	
+
 		/** Returns string representation of given button type
 		*/
 		inline static std::string mouseButtonType2str(MouseButtonType t) {
@@ -209,7 +207,7 @@ namespace FIFE {
 			}
 			return s;
 		}
-		
+
 
 
 	private:
@@ -217,9 +215,9 @@ namespace FIFE {
 		MouseButtonType m_buttontype;
 		int m_x;
  		int m_y;
- 		
+
 	};
-	
+
 } //FIFE
 
 #endif

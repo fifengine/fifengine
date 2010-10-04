@@ -43,39 +43,39 @@ namespace FIFE {
 	public:
 		/** Constructor.
 		*/
-		InputEvent(): 
-			Event(), 
-			m_consumedbywidgets(false), 
-			m_isshiftpressed(false), 
-			m_iscontrolpressed(false), 
-			m_isaltpressed(false), 
+		InputEvent():
+			Event(),
+			m_consumedbywidgets(false),
+			m_isshiftpressed(false),
+			m_iscontrolpressed(false),
+			m_isaltpressed(false),
 			m_ismetapressed(false) {}
 
 		/** Destructor.
 		*/
 		~InputEvent() {}
 
-		/** Checks whether alt is pressed. 
+		/** Checks whether alt is pressed.
 		 */
 		virtual bool isAltPressed() const { return m_isaltpressed; }
 		virtual void setAltPressed(bool pressed) { m_isaltpressed = pressed; }
-		
-		/** Checks whether control is pressed. 
+
+		/** Checks whether control is pressed.
 		 */
 		virtual bool isControlPressed() const { return m_iscontrolpressed; }
 		virtual void setControlPressed(bool pressed) { m_iscontrolpressed = pressed; }
-		
-		/** Checks whether meta is pressed. 
+
+		/** Checks whether meta is pressed.
 		 */
 		virtual bool isMetaPressed() const { return m_ismetapressed; }
 		virtual void setMetaPressed(bool pressed) { m_ismetapressed = pressed; }
-		
-		/** Checks whether shift is pressed. 
+
+		/** Checks whether shift is pressed.
 		 */
 		virtual bool isShiftPressed() const { return m_isshiftpressed; }
 		virtual void setShiftPressed(bool pressed) { m_isshiftpressed = pressed; }
-		
-		/** Marks events as consumed by widget library. 
+
+		/** Marks events as consumed by widget library.
 		 */
 		virtual void consumedByWidgets() { m_consumedbywidgets = true; }
 		virtual bool isConsumedByWidgets() const { return m_consumedbywidgets; }
@@ -84,8 +84,6 @@ namespace FIFE {
 		virtual bool isConsumed() const { return Event::isConsumed(); }
 		virtual IEventSource* getSource() { return Event::getSource(); }
 		virtual void setSource(IEventSource* source) { Event::setSource(source); }
-		virtual gcn::Widget* getSourceWidget() { return Event::getSourceWidget(); }
-		virtual void setSourceWidget(gcn::Widget* widget) { Event::setSourceWidget(widget); }
 		virtual int getTimeStamp() const { return Event::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { Event::setTimeStamp(timestamp); }
 

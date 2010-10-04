@@ -43,10 +43,6 @@
 //
 #include "eventchannel/source/ec_ieventsource.h"
 
-namespace gcn {
-	class Widget;
-}
-
 namespace FIFE {
 	/**  Base class for all events
 	 */
@@ -54,8 +50,8 @@ namespace FIFE {
 	public:
 		/** Constructor.
 		*/
-		Event(): 
-			m_isconsumed(false), 
+		Event():
+			m_isconsumed(false),
 			m_eventsource(NULL),
 			m_timestamp(SDL_GetTicks()) {}
 
@@ -66,34 +62,24 @@ namespace FIFE {
 		/** Marks the event as consumed.
 		 */
 		virtual void consume() { m_isconsumed = true; }
-		
+
 		/** Checks if the event is consumed.
 		 * @return true if the event is consumed, false otherwise.
 		 */
 		virtual bool isConsumed() const { return m_isconsumed; }
-		
+
 		/** Gets the source of the event.
 		 */
 		virtual IEventSource* getSource() const { return m_eventsource; }
-		
+
 		/** Sets the source of the event.
 		 */
 		virtual void setSource(IEventSource* source) { m_eventsource = source; }
-		
-		/** Get the source of the (widget) event. Null for non-widget.
-		 * FIXME: This is a bit of a hack, using forward declared guichan pointer
-		 *        Should use something non-guichan specific
-		 */
-		virtual gcn::Widget* getSourceWidget() const { return m_sourcewidget; }
-		
-		/** Set the source of the (widget) event. @see getSourceWidget
-		 */
-		virtual void setSourceWidget(gcn::Widget* widget) { m_sourcewidget = widget; }
-		
+
 		/** Gets the timestamp of the event
 		 */
 		virtual int getTimeStamp() const { return m_timestamp; }
-		
+
 		/** Sets the timestamp of the event
 		 */
 		virtual void setTimeStamp(int timestamp ) { m_timestamp = timestamp; }
@@ -117,7 +103,7 @@ namespace FIFE {
 
 		/** Gets the debugstring of the event
 		 */
-		virtual std::string getDebugString() const { 
+		virtual std::string getDebugString() const {
 			std::stringstream ss;
 			ss << getName() << std::endl;
 			ss << getAttrStr() << std::endl;
@@ -127,7 +113,6 @@ namespace FIFE {
 	private:
 		bool m_isconsumed;
 		IEventSource* m_eventsource;
-		gcn::Widget* m_sourcewidget;
 		int m_timestamp;
 	};
 

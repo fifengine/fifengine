@@ -49,12 +49,12 @@ namespace FIFE {
 			PRESSED = 0,
 			RELEASED
 		};
-		
+
 		/** Constructor
 		 */
-		KeyEvent(): 
-			InputEvent(), 
-			m_eventtype(UNKNOWN), 
+		KeyEvent():
+			InputEvent(),
+			m_eventtype(UNKNOWN),
 			m_isnumericpad(false),
 			m_key(Key()) {}
 
@@ -64,10 +64,10 @@ namespace FIFE {
 
 		KeyEventType getType() const { return m_eventtype; }
 		void setType(KeyEventType type) { m_eventtype = type; }
-	
+
 		bool isNumericPad() const { return m_isnumericpad; }
 		void setNumericPad(bool ispad) { m_isnumericpad = ispad; }
-	
+
 		const Key& getKey() const { return m_key; }
 		void setKey(const Key& key) { m_key = key; }
 
@@ -86,8 +86,6 @@ namespace FIFE {
 		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
 		virtual IEventSource* getSource() { return InputEvent::getSource(); }
 		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
-		virtual gcn::Widget* getSourceWidget() { return InputEvent::getSourceWidget(); }
-		virtual void setSourceWidget(gcn::Widget* widget) { InputEvent::setSourceWidget(widget); }
 		virtual int getTimeStamp() const { return InputEvent::getTimeStamp(); }
 		virtual void setTimeStamp(int timestamp ) { InputEvent::setTimeStamp(timestamp); }
 
