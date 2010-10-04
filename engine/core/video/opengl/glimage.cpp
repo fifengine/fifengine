@@ -46,6 +46,8 @@ namespace FIFE {
 
 	GLImage::GLImage(const uint8_t* data, unsigned int width, unsigned int height):
 		Image(data, width, height) {
+		assert(m_surface);
+		m_sdlimage = new SDLImage(m_surface);
 
 		m_textureids = NULL;
 
@@ -63,7 +65,9 @@ namespace FIFE {
 	void GLImage::resetGlimage() {
 		cleanup();
 
-		m_chunk_size = 0;
+		m_chunk_size_w = 0;
+		m_chunk_size_h = 0;
+
 		m_colorkey = RenderBackend::instance()->getColorKey();
 	}
 
@@ -129,21 +133,13 @@ namespace FIFE {
 		const unsigned int width = m_surface->w;
 		const unsigned int height = m_surface->h;
 
-		uint32_t size;
-
-		if (width > height){
-			size = width;
-		}
-		else {
-			size = height;
-		}
-
 		//calculate the nearest larger power of 2
-		m_chunk_size = nextPow2(size);
+		m_chunk_size_w = nextPow2(width);
+		m_chunk_size_h = nextPow2(height);
 
 		// used to calculate the fill ratio for given chunk
-		m_col_tex_coord = static_cast<float>(m_surface->w%m_chunk_size) / static_cast<float>(m_chunk_size);
-		m_row_tex_coord = static_cast<float>(m_surface->h%m_chunk_size) / static_cast<float>(m_chunk_size);
+		m_col_tex_coord = static_cast<float>(m_surface->w%m_chunk_size_w) / static_cast<float>(m_chunk_size_w);
+		m_row_tex_coord = static_cast<float>(m_surface->h%m_chunk_size_h) / static_cast<float>(m_chunk_size_h);
 
 		if (m_col_tex_coord == 0.0f){
 			m_col_tex_coord = 1.0f;
@@ -163,8 +159,8 @@ namespace FIFE {
 		memset(m_textureids, 0x00, 1*sizeof(GLuint));
 
 
-		uint32_t* oglbuffer = new uint32_t[m_chunk_size * m_chunk_size];
-		memset(oglbuffer, 0x00, m_chunk_size*m_chunk_size*sizeof(uint32_t));
+		uint32_t* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
+		memset(oglbuffer, 0x00, m_chunk_size_w*m_chunk_size_h*sizeof(uint32_t));
 
 		for (unsigned int y = 0;  y < height; ++y) {
 			for (unsigned int x = 0; x < width; ++x) {
@@ -182,7 +178,7 @@ namespace FIFE {
 					}
 				}
 
-				oglbuffer[(y*m_chunk_size) + x] = r | (g << 8) | (b << 16) | (a<<24);
+				oglbuffer[(y*m_chunk_size_w) + x] = r | (g << 8) | (b << 16) | (a<<24);
 			}
 		}
 
@@ -194,7 +190,7 @@ namespace FIFE {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		// transfer data from sdl buffer
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size, m_chunk_size, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_chunk_size_w, m_chunk_size_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<GLvoid*>(oglbuffer));
 
 		delete[] oglbuffer;
 	}

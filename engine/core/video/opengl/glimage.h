@@ -104,7 +104,9 @@ namespace FIFE {
 		 */
 		SDLImage* m_sdlimage;
 
-		unsigned int m_chunk_size;
+		uint32_t m_chunk_size_w;
+		uint32_t m_chunk_size_h;
+
 		SDL_Color m_colorkey;
 	};
 }
