@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -31,7 +31,6 @@ namespace std{
 	%template(StringSet) set<std::string>;
 }
 
-typedef unsigned char uint8_t;
 namespace std {
 	%template(vectoru) vector<uint8_t>;
 };

@@ -24,6 +24,31 @@
 
 %feature("autodoc", "1");  // 0 == no param types, 1 == show param types
 
+/**
+ * Integer definitions (See swigs stdint.i implementation)
+ *
+ */
+
+/* Signed.  */
+typedef signed char		int8_t;
+typedef short int		int16_t;
+typedef int			int32_t;
+#if defined(SWIGWORDSIZE64)
+typedef long int		int64_t;
+#else
+typedef long long int		int64_t;
+#endif
+
+/* Unsigned.  */
+typedef unsigned char		uint8_t;
+typedef unsigned short int	uint16_t;
+typedef unsigned int		uint32_t;
+#if defined(SWIGWORDSIZE64)
+typedef unsigned long int	uint64_t;
+#else
+typedef unsigned long long int	uint64_t;
+#endif
+
 namespace std {
 	%template(StringVector) vector<std::string>;
 	%template(UintVector) vector<unsigned int>;

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -56,7 +56,7 @@ namespace FIFE {
 		/** Sets bits per pixel
 		 * @see getPossibleBitsPerPixel
 		 */
-		void setBitsPerPixel(unsigned int bitsperpixel);
+		void setBitsPerPixel(uint8_t bitsperpixel);
 
 		/** Gets currently set bits per pixel value
 		 */
@@ -66,11 +66,11 @@ namespace FIFE {
 
 		/** Gets all possible bits per pixel values
 		 */
-		std::vector<unsigned int> getPossibleBitsPerPixel() const;
+		std::vector<uint8_t> getPossibleBitsPerPixel() const;
 
 		/** Gets all possible screen resolutions
 		 */
-		std::vector<std::pair<unsigned int, unsigned int> > getPossibleResolutions() const;
+		std::vector<std::pair<uint16_t, uint16_t> > getPossibleResolutions() const;
 
 		/** Sets fullscreen / windowed mode
 		 */
@@ -126,7 +126,7 @@ namespace FIFE {
 
 		/** Sets screen width (pixels)
 		 */
-		void setScreenWidth(unsigned int screenwidth);
+		void setScreenWidth(uint16_t screenwidth);
 
 		/** Gets screen width (pixels)
 		 */
@@ -136,7 +136,7 @@ namespace FIFE {
 
 		/** Sets screen height (pixels)
 		 */
-		void setScreenHeight(unsigned int screenheight);
+		void setScreenHeight(uint16_t screenheight);
 
 		/** Gets screen height (pixels)
 		 */
@@ -156,11 +156,11 @@ namespace FIFE {
 
 		/** Sets size for default font
 		 */
-		void setDefaultFontSize(const unsigned int defaultfontsize);
+		void setDefaultFontSize(uint16_t defaultfontsize);
 
 		/** Gets size for default font
 		 */
-		unsigned int getDefaultFontSize() const {
+		uint16_t getDefaultFontSize() const {
 			return m_defaultfontsize;
 		}
 
@@ -204,26 +204,26 @@ namespace FIFE {
 
 		/** Sets the global colorkey to use for images
 		 */
-		void setColorKey(Uint8 r, Uint8 g, Uint8 b);
+		void setColorKey(uint8_t r, uint8_t g, uint8_t b);
 
 		/** Gets the global colorkey setting
 		 */
 		const SDL_Color& getColorKey() const;
 
 	private:
-		unsigned int m_bitsperpixel;
+		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
 		float m_initialvolume;
 		std::string m_renderbackend;
 		bool m_sdlremovefakealpha;
-		unsigned int m_screenwidth;
-		unsigned int m_screenheight;
+		uint16_t m_screenwidth;
+		uint16_t m_screenheight;
 		std::string m_windowtitle;
 		std::string m_windowicon;
 
 
 		std::string m_defaultfontpath;
-		unsigned int m_defaultfontsize;
+		uint16_t m_defaultfontsize;
 		std::string m_defaultfontglyphs;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
