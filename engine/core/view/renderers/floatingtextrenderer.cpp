@@ -93,22 +93,18 @@ namespace FIFE {
 				r.y = ir.y- img->getHeight(); /// make the text rect floating higher than the instance.
 				r.w = img->getWidth();
 				r.h = img->getHeight();
+
 				if(m_background || m_backborder) {
 					const int overdraw = 5;
-					Point p1 = Point(r.x-overdraw, r.y-overdraw);
-					Point p2 = Point(r.x+r.w+overdraw, r.y-overdraw);
-					Point p3 = Point(r.x+r.w+overdraw, r.y+r.h+overdraw);
-					Point p4 = Point(r.x-overdraw, r.y+r.h+overdraw);
+
+					Point p = Point(r.x-overdraw, r.y-overdraw);
 
 					if(m_background) {
-						m_renderbackend->drawQuad(p1, p2, p3, p4, m_backcolor.r, m_backcolor.g, m_backcolor.b, m_backcolor.unused);
+						m_renderbackend->fillRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backcolor.r, m_backcolor.g, m_backcolor.b, m_backcolor.unused);
 					}
 
 					if(m_backborder) {
-						m_renderbackend->drawLine(p1, p2, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.unused);
-						m_renderbackend->drawLine(p2, p3, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.unused);
-						m_renderbackend->drawLine(p3, p4, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.unused);
-						m_renderbackend->drawLine(p4, p1, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.unused);
+						m_renderbackend->drawRectangle(p, r.w+2*overdraw, r.h+2*overdraw, m_backbordercolor.r, m_backbordercolor.g, m_backbordercolor.b, m_backbordercolor.unused);
 					}
 				}
 				img->render(r);
@@ -119,7 +115,7 @@ namespace FIFE {
 		}
 	}
 
-	void FloatingTextRenderer::setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+	void FloatingTextRenderer::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		m_color.r = r;
 		m_color.g = g;
 		m_color.b = b;
@@ -128,7 +124,7 @@ namespace FIFE {
 		m_font_color = true;
 	}
 
-	void FloatingTextRenderer::setBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 ba) {
+	void FloatingTextRenderer::setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba) {
 		m_backcolor.r = br;
 		m_backcolor.g = bg;
 		m_backcolor.b = bb;
@@ -137,7 +133,7 @@ namespace FIFE {
 		m_background = true;
 	}
 
-	void FloatingTextRenderer::setBorder(Uint8 bbr, Uint8 bbg, Uint8 bbb, Uint8 bba) {
+	void FloatingTextRenderer::setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba) {
 		m_backbordercolor.r = bbr;
 		m_backbordercolor.g = bbg;
 		m_backbordercolor.b = bbb;

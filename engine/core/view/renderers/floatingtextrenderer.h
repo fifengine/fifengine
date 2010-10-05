@@ -44,9 +44,9 @@ namespace FIFE {
 		 * @param font default font used to render the texts
 		 */
 		FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
-		
+
 		FloatingTextRenderer(const FloatingTextRenderer& old);
-		
+
 		RendererBase* clone();
 
 		/** Destructor.
@@ -56,27 +56,27 @@ namespace FIFE {
 		void render(Camera* cam, Layer* layer, RenderList& instances);
 
 		std::string getName() { return "FloatingTextRenderer"; }
-		
+
 		/** Changes default font in the renderer
 		 * Note that this does not change the font ownership
 		 */
 		void changeDefaultFont(AbstractFont* font) { m_font = font; }
-		
+
 		/** Changes default font color
 		 * Only usefull for .ttf fonts
 		 */
-		void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
+		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
 		/** Set default background quad
 		 * r,g,b,a values for background
 		 */
-		void setBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 ba = 255);
+		void setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba = 255);
 
 		/** Set default border
 		 * r,g,b,a values for border
 		 */
-		void setBorder(Uint8 bbr, Uint8 bbg, Uint8 bbb, Uint8 bba = 255);
-		
+		void setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba = 255);
+
 		/** Disable the default background
 		 */
 		void resetBackground();

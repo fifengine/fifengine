@@ -77,6 +77,14 @@ namespace FIFE {
 		 */
 		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255) = 0;
 
+		/** Draws an axis parallel rectangle.
+		 */
+		virtual void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
+
+		/** Draws a filled axis parallel rectangle.
+		 */
+		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)  = 0;
+
 		/** Draws quad between given points with given RGBA
 		 */
 		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255) = 0;

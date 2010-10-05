@@ -759,6 +759,35 @@ namespace FIFE {
 		drawLine(p3, p1, r, g, b, a);
 	}
 
+	void SDLImage::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		Point p1, p2, p3, p4;
+
+		p1.x = p.x;
+		p1.y = p.y;
+		p2.x = p.x+w;
+		p2.y = p.y;
+		p3.x = p.x+w;
+		p3.y = p.y+h;
+		p4.x = p.x;
+		p4.y = p.y+h;
+
+		drawLine(p1, p2, r, g, b, a);
+		drawLine(p2, p3, r, g, b, a);
+		drawLine(p3, p4, r, g, b, a);
+		drawLine(p4, p1, r, g, b, a);
+	}
+
+	void SDLImage::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		SDL_Rect rect;
+		rect.x = p.x;
+		rect.y = p.y;
+		rect.w = w;
+		rect.h = h;
+
+		Uint32 color = SDL_MapRGBA(m_surface->format, r, g, b, a);
+		SDL_FillRect(m_surface, &rect, color);
+	}
+
 	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, int r, int g, int b, int a) {
 		drawLine(p1, p2, r, g, b, a);
 		drawLine(p2, p3, r, g, b, a);

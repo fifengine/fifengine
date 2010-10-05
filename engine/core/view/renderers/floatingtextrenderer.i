@@ -32,9 +32,9 @@ namespace FIFE {
 	public:
 		virtual ~FloatingTextRenderer();
 		void changeDefaultFont(AbstractFont* font);
-		void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-		void setBackground(Uint8 br, Uint8 bg, Uint8 bb, Uint8 ba = 255);
-		void setBorder(Uint8 bbr, Uint8 bbg, Uint8 bbb, Uint8 bba = 255);
+		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void setBackground(uint8_t br, uint8_t bg, uint8_t bb, uint8_t ba = 255);
+		void setBorder(uint8_t bbr, uint8_t bbg, uint8_t bbb, uint8_t bba = 255);
 		void resetBackground();
 		void resetBorder();
 
