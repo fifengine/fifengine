@@ -254,6 +254,16 @@ namespace FIFE {
 		m_sdlimage->drawTriangle(p1, p2, p3, r, g, b, a);
 	}
 
+	void GLImage::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		cleanup();
+		m_sdlimage->drawRectangle(p, w, h, r, g, b, a);
+	}
+
+	void GLImage::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		cleanup();
+		m_sdlimage->fillRectangle(p, w, h, r, g, b, a);
+	}
+
 	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
 		cleanup();
 		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b, a);

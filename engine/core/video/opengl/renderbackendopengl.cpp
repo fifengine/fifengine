@@ -218,6 +218,28 @@ namespace FIFE {
 		glEnd();
 	}
 
+	void RenderBackendOpenGL::drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		glColor4ub(r, g, b, a);
+
+		glBegin(GL_LINE_LOOP);
+		glVertex2f(p.x, p.y);
+		glVertex2f(p.x+w, p.y);
+		glVertex2f(p.x+w, p.y+h);
+		glVertex2f(p.x, p.y+h);
+		glEnd();
+	}
+
+	void RenderBackendOpenGL::fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		glColor4ub(r, g, b, a);
+
+		glBegin(GL_QUADS);
+		glVertex2f(p.x, p.y);
+		glVertex2f(p.x+w, p.y);
+		glVertex2f(p.x+w, p.y+h);
+		glVertex2f(p.x, p.y+h);
+		glEnd();
+	}
+
 	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
 		glColor4ub(r, g, b, a);
 
