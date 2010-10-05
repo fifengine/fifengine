@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -69,21 +69,21 @@ namespace FIFE {
 		}
 	}
 
-	std::vector<std::pair<unsigned int, unsigned int> > EngineSettings::getPossibleResolutions() const {
+	std::vector<std::pair<uint16_t, uint16_t> > EngineSettings::getPossibleResolutions() const {
 		SDL_Rect **modes = SDL_ListModes(NULL, ((getRenderBackend() != "SDL") ? (SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL) : 0) | (isFullScreen() ? SDL_FULLSCREEN : 0));
 		if(modes == (SDL_Rect **)0)
 			throw NotFound("No VideoMode Found");
 
-		std::vector<std::pair<unsigned int, unsigned int> > result;
+		std::vector<std::pair<uint16_t, uint16_t> > result;
 		if(modes != (SDL_Rect **)-1)
 			for(unsigned int i = 0; modes[i]; ++i)
-				result.push_back(std::pair<unsigned int, unsigned int>(modes[i]->w, modes[i]->h));
+				result.push_back(std::pair<uint16_t, uint16_t>(modes[i]->w, modes[i]->h));
 		return result;
 	}
 
-	void EngineSettings::setBitsPerPixel(unsigned int bitsperpixel) {
-		std::vector<unsigned int> pv = getPossibleBitsPerPixel();
-		std::vector<unsigned int>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);
+	void EngineSettings::setBitsPerPixel(uint8_t bitsperpixel) {
+		std::vector<uint8_t> pv = getPossibleBitsPerPixel();
+		std::vector<uint8_t>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);
 		if (i != pv.end()) {
 			m_bitsperpixel = bitsperpixel;
 			return;
@@ -91,8 +91,8 @@ namespace FIFE {
 		throw NotSupported("Given bits per pixel value is not supported");
 	}
 
-	std::vector<unsigned int> EngineSettings::getPossibleBitsPerPixel() const {
-		std::vector<unsigned int> tmp;
+	std::vector<uint8_t> EngineSettings::getPossibleBitsPerPixel() const {
+		std::vector<uint8_t> tmp;
 		tmp.push_back(0);
 		tmp.push_back(16);
 		tmp.push_back(24);
@@ -135,11 +135,11 @@ namespace FIFE {
 		m_sdlremovefakealpha = sdlremovefakealpha;
 	}
 
-	void EngineSettings::setScreenWidth(unsigned int screenwidth) {
+	void EngineSettings::setScreenWidth(uint16_t screenwidth) {
 		m_screenwidth = screenwidth;
 	}
 
-	void EngineSettings::setScreenHeight(unsigned int screenheight) {
+	void EngineSettings::setScreenHeight(uint16_t screenheight) {
 		m_screenheight = screenheight;
 	}
 
@@ -147,7 +147,7 @@ namespace FIFE {
 		m_defaultfontpath = defaultfontpath;
 	}
 
-	void EngineSettings::setDefaultFontSize(const unsigned int defaultfontsize) {
+	void EngineSettings::setDefaultFontSize(uint16_t defaultfontsize) {
 		m_defaultfontsize = defaultfontsize;
 	}
 
@@ -171,7 +171,7 @@ namespace FIFE {
 		return m_iscolorkeyenabled;
 	}
 
-	void EngineSettings::setColorKey(Uint8 r, Uint8 g, Uint8 b) {
+	void EngineSettings::setColorKey(uint8_t r, uint8_t g, uint8_t b) {
 		m_colorkey.r = r;
 		m_colorkey.g = g;
 		m_colorkey.b = b;

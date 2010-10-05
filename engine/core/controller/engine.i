@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -44,10 +44,10 @@ namespace FIFE {
 	public:
 		~EngineSettings();
 		void validate() const;
-		void setBitsPerPixel(unsigned int bitsperpixel);
-		unsigned int getBitsPerPixel() const;
-		std::vector<unsigned int> getPossibleBitsPerPixel() const;
-		std::vector<std::pair<unsigned int, unsigned int> > getPossibleResolutions() const;
+		void setBitsPerPixel(uint8_t bitsperpixel);
+		uint8_t getBitsPerPixel() const;
+		std::vector<uint8_t> getPossibleBitsPerPixel() const;
+		std::vector<std::pair<uint16_t, uint16_t> > getPossibleResolutions() const;
 		void setFullScreen(bool fullscreen);
 		bool isFullScreen() const;
 		void setInitialVolume(float volume);
@@ -58,14 +58,14 @@ namespace FIFE {
 		std::vector<std::string> getPossibleRenderBackends();
 		void setSDLRemoveFakeAlpha(bool sdlremovefakealpha);
 		bool isSDLRemoveFakeAlpha(bool sdlremovefakealpha) const;
-		void setScreenWidth(unsigned int screenwidth);
-		unsigned int getScreenWidth() const;
-		void setScreenHeight(unsigned int screenheight);
-		unsigned int getScreenHeight() const;
+		void setScreenWidth(uint16_t screenwidth);
+		uint16_t getScreenWidth() const;
+		void setScreenHeight(uint16_t screenheight);
+		uint16_t getScreenHeight() const;
 		void setDefaultFontPath(const std::string& defaultfontpath);
 		std::string getDefaultFontPath() const;
-		void setDefaultFontSize(const unsigned int defaultfontsize);
-		unsigned int getDefaultFontSize() const;
+		void setDefaultFontSize(uint16_t defaultfontsize);
+		uint16_t getDefaultFontSize() const;
 		void setDefaultFontGlyphs(const std::string& defaultfontglyphs);
 		std::string getDefaultFontGlyphs() const;
 		void setWindowTitle(const std::string& title);
@@ -74,7 +74,7 @@ namespace FIFE {
 		std::string getWindowIcon() const;
 		void setColorKeyEnabled(bool colorkeyenable);
 		bool isColorKeyEnabled() const;
-		void setColorKey(Uint8 r, Uint8 g, Uint8 b);
+		void setColorKey(uint8_t r, uint8_t g, uint8_t b);
 		const SDL_Color& getColorKey() const;
 		
 	private:
