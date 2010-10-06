@@ -40,7 +40,9 @@ namespace FIFE {
 
 	class ScreenMode {
 	public:
-		/** Constructors.
+		/** Default Constructor
+		 * @note You shouldn't construct these objects yourself.  This default
+		 * constructor was provided because swig complained that was none.
 		 */
 		ScreenMode();
 		ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint32_t SDLFlags);
@@ -51,14 +53,18 @@ namespace FIFE {
 		~ScreenMode() {};
 
 		/** Returns the width of the screen mode.
+		 * @note If both width and height are 0 it means that ALL modes are available
+		 * for use with the specified flags.  Most likely this is a windowed mode.
 		 */
 		uint16_t getWidth() const { return m_width; };
 
 		/** Returns the height of the screen mode.
+		 * @note If both width and height are 0 it means that ALL modes are available
+		 * for use with the specified flags.  Most likely this is a windowed mode.
 		 */
 		uint16_t getHeight() const { return m_height; };
 
-		/** Returns the number of bits per pixel this mode supports.
+		/** Returns the number of bits per pixel this mode uses.
 		 */
 		uint16_t getBPP() const { return m_bpp; };
 
@@ -66,7 +72,7 @@ namespace FIFE {
 		 */
 		uint32_t getSDLFlags() const { return m_SDLFlags; };
 
-		/** True if this is a fullscreen mode.  Fals if it is a windowed mode.
+		/** True if this is a fullscreen mode.  False if it is a windowed mode.
 		 */
 		bool isFullScreen() const { return (m_SDLFlags & SDL_FULLSCREEN) ? true : false;};
 
@@ -93,10 +99,12 @@ namespace FIFE {
 		~DeviceCaps();
 
 		void fillDeviceCaps();
-		std::vector<ScreenMode> getSupportedScreenModes() const {return m_screenModes;} ;
+		std::vector<ScreenMode> getSupportedScreenModes() const { return m_screenModes; };
+		std::string getDriverName() const { return m_driverName; };
 
 	private:
 		std::vector<ScreenMode> m_screenModes;
+		std::string m_driverName;
 
 	}; //DeviceCaps
 }
