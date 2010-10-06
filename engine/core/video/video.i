@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -28,11 +28,20 @@
 #include "video/animationpool.h"
 #include "video/renderbackend.h"
 #include "video/image_location.h"
+#include "video/devicecaps.h"
 #include "util/base/exception.h"
 %}
 
 %include "util/structures/utilstructures.i"
 %include "util/resource/resource.i"
+
+namespace FIFE {
+  class ScreenMode;
+}
+
+namespace std {
+	%template(ScreenModeVector) std::vector<FIFE::ScreenMode>;
+}
 
 namespace FIFE {
 	class Pool;
@@ -220,4 +229,27 @@ namespace FIFE {
 		Cursor(ImagePool* imgpool, AnimationPool* animpool);
 	};
 	
+	class ScreenMode {
+	public:
+		ScreenMode();
+		ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint32_t SDLFlags);
+		ScreenMode(const ScreenMode& rhs);
+		~ScreenMode();
+
+		uint16_t getWidth() const;
+		uint16_t getHeight() const;
+		uint16_t getBPP() const;
+		uint32_t getSDLFlags() const;
+		bool isFullScreen();
+		bool isOpenGL();
+	};
+
+	class DeviceCaps {
+	public:
+		DeviceCaps();
+		~DeviceCaps();
+
+		void fillDeviceCaps();
+		std::vector<ScreenMode> getSupportedScreenModes() const;
+	};
 }

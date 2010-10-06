@@ -40,6 +40,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "enginesettings.h"
+#include "video/devicecaps.h"
 
 namespace gcn {
 	class Graphics;
@@ -63,7 +64,6 @@ namespace FIFE {
 	class SoundClipPool;
 	class RendererBase;
 
-
 	/** Engine acts as a controller to the whole system
 	 * Responsibilities of the engine are:
 	 *  - Construct and initialize engine internals
@@ -83,7 +83,11 @@ namespace FIFE {
 		/** Gets settings class for engine
 		 */
 		EngineSettings& getSettings();
-		
+
+		/** Gets device capabilities
+		 */
+		DeviceCaps& getDeviceCaps();
+
 		/** Initializes the engine
 		 */
 		void init();
@@ -91,12 +95,12 @@ namespace FIFE {
 		/** Explicit destruction of engine
 		 */
 		void destroy();
-		
+
 		/** Initializes the continuous processing of the engine
 		 * Call this only once in your program
 		 */
 		void initializePumping();
-		
+
 		/** Finalizes the continuous processing of the engine
 		 * Call this only once in your program, after you have called
 		 * initializePumping + (pump() * N times)
@@ -110,23 +114,23 @@ namespace FIFE {
 		/** Provides access point to the SoundManager
 		 */
 		SoundManager* getSoundManager() const { return m_soundmanager; }
-		
+
 		/** Provides access point to the EventManager
 		 */
 		EventManager* getEventManager() const { return m_eventmanager; }
-		
+
 		/** Provides access point to the TimeManager
 		 */
 		TimeManager* getTimeManager() const { return m_timemanager; }
-		
+
 		/** Provides access point to the GuiManager
 		 */
 		GUIManager* getGuiManager() const { return m_guimanager; }
-		
+
 		/** Provides access point to the ImagePool
 		 */
 		ImagePool* getImagePool() const { return m_imagepool; }
-		
+
 		/** Provides access point to the AnimationPool
 		 */
 		AnimationPool* getAnimationPool() const { return m_animpool; }
@@ -134,34 +138,34 @@ namespace FIFE {
 		/** Provides access point to the SoundClipPool
 		 */
 		SoundClipPool* getSoundClipPool() const { return m_soundclippool; }
-		
+
 		/** Provides access point to the RenderBackend
 		 */
 		RenderBackend* getRenderBackend() const { return m_renderbackend; }
-		
+
 		/** Provides access point to the Model
 		 */
 		Model* getModel() const { return m_model; }
-		
+
 		/** Provides access point to the LogManager
 		 */
 		LogManager* getLogManager() const { return m_logmanager; }
-		
+
 		/** Returns default font used in the engine
 		 */
 		GuiFont* getDefaultFont() const { return m_defaultfont; }
-		
+
 		/** Provides access point to the VFS
 		 */
 		VFS* getVFS() const { return m_vfs; }
-		
+
 		/** Returns cursor used in the engine
 		 */
 		Cursor* getCursor() const { return m_cursor; }
 
 	private:
 		void preInit();
-		
+
 		RenderBackend* m_renderbackend;
 		GUIManager* m_guimanager;
 		EventManager* m_eventmanager;
@@ -177,8 +181,9 @@ namespace FIFE {
 		GuiFont* m_defaultfont;
 		Cursor* m_cursor;
 		bool m_destroyed;
-		
+
 		EngineSettings m_settings;
+		DeviceCaps m_devcaps;
 
 		std::vector<RendererBase*> m_renderers;
 

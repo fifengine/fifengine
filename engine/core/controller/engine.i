@@ -21,6 +21,7 @@
 %module fife
 %{
 #include "controller/engine.h"
+#include "video/devicecaps.h"
 %}
 
 namespace FIFE {
@@ -39,6 +40,7 @@ namespace FIFE {
 	class VFS;
 	class Cursor;
 	class RendererBase;
+	class DeviceCaps;
 
 	class EngineSettings {
 	public:
@@ -90,6 +92,8 @@ namespace FIFE {
 		void pump();
 
 		EngineSettings& getSettings();
+		DeviceCaps& getDeviceCaps();
+		
 		void init();
 		void destroy();
 

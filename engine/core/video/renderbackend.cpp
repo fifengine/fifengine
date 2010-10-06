@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "renderbackend.h"
+#include "video/devicecaps.h"
 
 namespace FIFE {
 
@@ -42,6 +43,12 @@ namespace FIFE {
 
 
 	RenderBackend::~RenderBackend() {
+	}
+
+	Image* RenderBackend::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon)
+	{
+		bool fs = (mode.getSDLFlags() & SDL_FULLSCREEN) ? true : false;
+		return createMainScreen(mode.getWidth(), mode.getHeight(), mode.getBPP(), fs, title, icon);
 	}
 
 	void RenderBackend::deinit() {

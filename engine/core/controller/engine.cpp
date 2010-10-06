@@ -48,6 +48,7 @@
 #include "audio/soundclippool.h"
 #include "video/renderbackend.h"
 #include "video/cursor.h"
+#include "video/devicecaps.h"
 #ifdef HAVE_OPENGL
 #include "video/opengl/renderbackendopengl.h"
 #include "gui/base/opengl/opengl_gui_graphics.h"
@@ -124,6 +125,10 @@ namespace FIFE {
 		return m_settings;
 	}
 
+	DeviceCaps& Engine::getDeviceCaps() {
+		return m_devcaps;
+	}
+
 	void Engine::preInit() {
 		m_logmanager = LogManager::instance();
 
@@ -191,6 +196,9 @@ namespace FIFE {
 		FL_LOG(_log, "Initializing render backend");
 		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
 		m_renderbackend->init();
+
+		FL_LOG(_log, "Querying device capabilities");
+		m_devcaps.fillDeviceCaps();
 
 		FL_LOG(_log, "Creating main screen");
 		m_renderbackend->createMainScreen(
