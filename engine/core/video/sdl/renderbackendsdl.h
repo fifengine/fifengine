@@ -57,11 +57,6 @@ namespace FIFE {
 		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
 		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255);
-
-		void isClearNeeded(bool clear);
-
-	private:
-		bool m_clear;
 	};
 
 }

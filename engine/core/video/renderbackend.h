@@ -103,7 +103,10 @@ namespace FIFE {
 		 */
 		virtual Image* createImage(SDL_Surface* surface) = 0;
 
-		virtual void isClearNeeded(bool clear) = 0;
+		/** Sets if the screen (backbuffer) should be cleared before rendering the next frame
+		 * @param clear true = clear screen before next frame, false = do not clear screen
+		 */
+		void setClearScreen(bool clear) { m_clear = clear; };
 
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.
@@ -146,6 +149,7 @@ namespace FIFE {
 
 	protected:
 		Image* m_screen;
+		bool m_clear;
 		bool m_isalphaoptimized;
 		unsigned int m_chunkingsize;
 		bool m_iscolorkeyenabled;
