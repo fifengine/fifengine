@@ -249,5 +249,17 @@ namespace FIFE {
 		void fillDeviceCaps();
 		std::vector<ScreenMode> getSupportedScreenModes() const;
 		std::string getDriverName() const;
+		
+		bool isHwSurfaceAvail() const;
+		bool isWindowManagerAvail() const;
+		bool isHwBlitAccel() const;
+		bool isHwColorkeyBlitAccel() const;
+		bool isHwAlphaBlitAccel() const;
+		bool isSwToHwBlitAccel() const;
+		bool isSwToHwColorkeyBlitAccel() const;
+		bool isSwToHwAlphaBlitAccel() const;
+		bool isBlitFillAccel() const;
+		
+		uint32_t getVideoMemory() const;
 	};
 }

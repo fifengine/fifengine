@@ -49,7 +49,17 @@ namespace FIFE {
 		m_SDLFlags = rhs.getSDLFlags();
 	}
 
-	DeviceCaps::DeviceCaps() {
+	DeviceCaps::DeviceCaps() :
+		m_hwAvailable(false),
+		m_wmAvailable(false),
+		m_hwBlitAccel(false),
+		m_hwCCBlitAccel(false),
+		m_hwToHwAlphaBlitAccel(false),
+		m_swToHwBlitAccel(false),
+		m_swToHwCCBlistAccel(false),
+		m_swToHwAlphaBlitAccel(false),
+		m_BlitFillAccel(false),
+		m_videoMem(0) {
 	}
 
 
@@ -119,6 +129,18 @@ namespace FIFE {
 			m_driverName = "Unknown";
 		}
 
+		const SDL_VideoInfo* vInfo = SDL_GetVideoInfo();
+
+		m_hwAvailable = vInfo->hw_available;
+		m_wmAvailable = vInfo->wm_available;
+		m_hwBlitAccel = vInfo->blit_hw;
+		m_hwCCBlitAccel = vInfo->blit_hw_CC;
+		m_hwToHwAlphaBlitAccel = vInfo->blit_hw_A;
+		m_swToHwBlitAccel = vInfo->blit_sw;
+		m_swToHwCCBlistAccel = vInfo->blit_sw_CC;
+		m_swToHwAlphaBlitAccel = vInfo->blit_sw_A;
+		m_BlitFillAccel = vInfo->blit_fill;
+		m_videoMem = vInfo->video_mem;
 	}
 
 } //FIFE
