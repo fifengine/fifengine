@@ -178,10 +178,6 @@ namespace FIFE {
 		return new GLImage(data, width, height);
 	}
 
-	void RenderBackendOpenGL::isClearNeeded(bool clear) {
-		m_clear = clear;
-	}
-
 	bool RenderBackendOpenGL::putPixel(int x, int y, int r, int g, int b, int a) {
 		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
 			return false;

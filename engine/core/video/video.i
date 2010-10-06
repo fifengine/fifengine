@@ -172,7 +172,7 @@ namespace FIFE {
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);
 		const SDL_Color& getColorKey() const;
-		void isClearNeeded(bool clear);
+		void setClearScreen(bool clear);
 	};
 	
 	enum MouseCursorType {

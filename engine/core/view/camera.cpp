@@ -129,7 +129,7 @@ namespace FIFE {
 			delete r_it->second;
 		}
 		m_renderers.clear();
-		m_renderbackend->isClearNeeded(true);
+		m_renderbackend->setClearScreen(true);
 		delete m_map_observer;
 	}
 
@@ -448,10 +448,10 @@ namespace FIFE {
 		}
 
 		if(trec1 && trec2 && trec3 && trec4) {
-			m_renderbackend->isClearNeeded(false);
+			m_renderbackend->setClearScreen(false);
 			return false;
 		}
-		m_renderbackend->isClearNeeded(true);
+		m_renderbackend->setClearScreen(true);
 		return true;
 	}
 

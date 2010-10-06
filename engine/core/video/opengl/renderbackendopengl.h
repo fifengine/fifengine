@@ -56,11 +56,8 @@ namespace FIFE {
 		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
 		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255);
 
-		void isClearNeeded(bool clear);
-
 	private:
 		SDL_PixelFormat m_rgba_format;
-		bool m_clear;
 	};
 
 }

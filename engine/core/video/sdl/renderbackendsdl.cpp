@@ -141,10 +141,6 @@ namespace FIFE {
 		return new SDLImage(data, width, height);
 	}
 
-	void RenderBackendSDL::isClearNeeded(bool clear) {
-		m_clear = clear;
-	}
-
 	bool RenderBackendSDL::putPixel(int x, int y, int r, int g, int b, int a) {
 		return static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b, a);
 	}
