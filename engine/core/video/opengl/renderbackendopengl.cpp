@@ -43,7 +43,7 @@ namespace FIFE {
 
 		m_rgba_format = *(testsurface->format);
 		SDL_FreeSurface(testsurface);
-		m_clear = true;
+		m_clear = false;
 	}
 
 	const std::string& RenderBackendOpenGL::getName() const {
@@ -62,6 +62,11 @@ namespace FIFE {
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
+	}
+
+	void RenderBackendOpenGL::clearBackBuffer() {
+		GLDisable flag(GL_SCISSOR_TEST);
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	Image* RenderBackendOpenGL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs, const std::string& title, const std::string& icon) {
@@ -134,8 +139,7 @@ namespace FIFE {
 
 	void RenderBackendOpenGL::startFrame() {
 		if(m_clear) {
-			GLDisable flag(GL_SCISSOR_TEST);
-			glClear(GL_COLOR_BUFFER_BIT);
+			clearBackBuffer();
 		}
 	}
 

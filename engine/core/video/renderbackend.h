@@ -75,6 +75,10 @@ namespace FIFE {
 		 */
 		virtual void init() = 0;
 
+		/** Forces a clear of the backbuffer
+		 */
+		virtual void clearBackBuffer() = 0;
+
 		/** Performs cleanup actions.
 		 */
 		virtual void deinit();
@@ -102,11 +106,6 @@ namespace FIFE {
 		 * @return The new Image.
 		 */
 		virtual Image* createImage(SDL_Surface* surface) = 0;
-
-		/** Sets if the screen (backbuffer) should be cleared before rendering the next frame
-		 * @param clear true = clear screen before next frame, false = do not clear screen
-		 */
-		void setClearScreen(bool clear) { m_clear = clear; };
 
 		/** Returns a pointer to the main screen Image
 		 * @return A pointer to the main screen Image, or 0 if no mainscreen exists.
@@ -146,6 +145,11 @@ namespace FIFE {
 		/** Gets the global colorkey setting
 		 */
 		const SDL_Color& getColorKey() const;
+
+		/** Sets if the backbuffer should be cleared before rendering the next frame.
+		 * @param clear true = clear screen before next frame, false = do not clear screen
+		 */
+		void setClearBackBuffer(bool clear) { m_clear = clear; };
 
 	protected:
 		Image* m_screen;

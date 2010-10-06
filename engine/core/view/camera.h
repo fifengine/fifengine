@@ -278,10 +278,15 @@ namespace FIFE {
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 		void onRendererEnabledChanged(RendererBase* renderer);
 
+		/** Use with OpenGL only! Checks to see if the entire viewport was rendered last frame.
+		 * If so it wont clear the backbuffer.
+		 */
 		bool testRenderedViewPort();
+
 		/** Renders camera
 		 */
 		void render();
+
 	private:
 		friend class MapObserver;
 		void addLayer(Layer* layer);

@@ -34,6 +34,7 @@ namespace FIFE {
 
 	RenderBackend::RenderBackend(const SDL_Color& colorkey):
 		m_screen(NULL),
+		m_clear(false),
 		m_isalphaoptimized(false),
 		m_iscolorkeyenabled(false),
 		m_colorkey(colorkey) {
