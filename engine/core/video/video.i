@@ -231,9 +231,6 @@ namespace FIFE {
 	
 	class ScreenMode {
 	public:
-		ScreenMode();
-		ScreenMode(uint16_t width, uint16_t height, uint16_t bpp, uint32_t SDLFlags);
-		ScreenMode(const ScreenMode& rhs);
 		~ScreenMode();
 
 		uint16_t getWidth() const;
@@ -251,5 +248,6 @@ namespace FIFE {
 
 		void fillDeviceCaps();
 		std::vector<ScreenMode> getSupportedScreenModes() const;
+		std::string getDriverName() const;
 	};
 }

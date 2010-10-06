@@ -57,10 +57,13 @@ namespace FIFE {
 	}
 
 	void DeviceCaps::fillDeviceCaps() {
+		int bufferSize = 256;
+		char buffer[bufferSize];
+
 		int numBPP = 1;
 		int bpps[numBPP];
 
-		int numResolutions = 15;
+		SDL_Rect **modes;
 
 		//FLAGS
 #ifdef HAVE_OPENGL
@@ -88,39 +91,32 @@ namespace FIFE {
 
 		bpps[0] = 32;
 
+		for (int i = 0; i < numBPP; ++i){
+			for (int j = 0; j < numFlags; ++j) {
+				modes = SDL_ListModes(NULL, flags[j]);
 
-		//RESOLUTIONS
-		int resolutions[15][2] = {
-			{640, 480},
-			{800, 600},
-			{1024, 768},
-			{1152, 864},
-			{1280, 768},
-			{1280, 800},
-			{1280, 960},
-			{1280, 1024},
-			{1366, 768},
-			{1440, 900},
-			{1600, 900},
-			{1600, 1200},
-			{1680, 1050},
-			{1920, 1080},
-			{1920, 1200}
-		};
+				if (modes == (SDL_Rect**)-1) {
+					//All screen modes are available with the specified flags (a windowed mode most likely)
+					ScreenMode mode = ScreenMode(0, 0, bpps[i], flags[j]);
+					m_screenModes.push_back(mode);
+					continue;
+				}
 
-		int bpp;
-
-		for (int i = 0; i < numBPP; i++){
-			for (int j = 0; j < numFlags; j++) {
-				for (int k = 0; k < numResolutions; k++) {
-					bpp = SDL_VideoModeOK(resolutions[k][0], resolutions[k][1], bpps[i], flags[j]);
+				for (int k = 0; modes[k]; ++k) {
+					int bpp = SDL_VideoModeOK(modes[k]->w, modes[k]->h, bpps[i], flags[j]);
 					if (bpp > 0) {
-//						std::cout << resolutions[k][0] << "x" << resolutions[k][1] << ":" << bpp << std::endl;
-						ScreenMode mode = ScreenMode(resolutions[k][0], resolutions[k][1], bpps[i], flags[j]);
+						ScreenMode mode = ScreenMode(modes[k]->w, modes[k]->h, bpps[i], flags[j]);
 						m_screenModes.push_back(mode);
 					}
 				}
 			}
+		}
+
+		if(SDL_VideoDriverName(buffer, bufferSize) != NULL) {
+			m_driverName = std::string(buffer);
+		}
+		else {
+			m_driverName = "Unknown";
 		}
 
 	}
