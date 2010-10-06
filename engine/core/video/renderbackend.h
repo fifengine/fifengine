@@ -45,6 +45,7 @@
 namespace FIFE {
 
 	class Image;
+	class ScreenMode;
 
 	 /** Abstract interface for all the renderbackends. */
 	class RenderBackend: public AbstractImage, public DynamicSingleton<RenderBackend> {
@@ -91,6 +92,8 @@ namespace FIFE {
 		 * @return The new Screen Image
 		 */
 		virtual Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen, const std::string& title, const std::string& icon) = 0;
+
+		Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
 
 		/** Creates an Image suitable for this renderbackend.
 		 * @param data Pointer to the imagedata (needs to be in RGBA, 8 bits per channel).
