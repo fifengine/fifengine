@@ -100,11 +100,66 @@ namespace FIFE {
 
 		void fillDeviceCaps();
 		std::vector<ScreenMode> getSupportedScreenModes() const { return m_screenModes; };
+
+		/** Returns the name of the current video driver.
+		 */
 		std::string getDriverName() const { return m_driverName; };
+
+		/** Is it possible to create hardware surfaces ?
+		 */
+		bool isHwSurfaceAvail() const { return m_hwAvailable; };
+
+		/** Is there a window manager available ?
+		 */
+		bool isWindowManagerAvail() const { return m_wmAvailable;} ;
+
+		/** Are hardware to hardware blits accelerated ?
+		 */
+		bool isHwBlitAccel() const { return m_hwBlitAccel; };
+
+		/** Are hardware to hardware colorkey blits accelerated ?
+		 */
+		bool isHwColorkeyBlitAccel() const { return m_hwCCBlitAccel; };
+
+		/** Are hardware to hardware alpha blits accelerated ?
+		 */
+		bool isHwAlphaBlitAccel() const { return m_hwToHwAlphaBlitAccel; };
+
+		/** Are software to hardware blits accelerated ?
+		 */
+		bool isSwToHwBlitAccel() const { return m_swToHwBlitAccel; };
+
+		/** Are software to hardware colorkey blits accelerated ?
+		 */
+		bool isSwToHwColorkeyBlitAccel() const { return m_swToHwCCBlistAccel; };
+
+		/** Are software to hardware alpha blits accelerated ?
+		 */
+		bool isSwToHwAlphaBlitAccel() const { return m_swToHwAlphaBlitAccel; };
+
+		/** Are color fills accelerated ?
+		 */
+		bool isBlitFillAccel() const { return m_BlitFillAccel; };
+
+		/** Total amount of video memory in Kilobytes, only valid if hardware sufaces are available.
+		 */
+		uint32_t getVideoMemory() const { return m_videoMem; };
 
 	private:
 		std::vector<ScreenMode> m_screenModes;
 		std::string m_driverName;
+
+		bool m_hwAvailable;
+		bool m_wmAvailable;
+		bool m_hwBlitAccel;
+		bool m_hwCCBlitAccel;
+		bool m_hwToHwAlphaBlitAccel;
+		bool m_swToHwBlitAccel;
+		bool m_swToHwCCBlistAccel;
+		bool m_swToHwAlphaBlitAccel;
+		bool m_BlitFillAccel;
+
+		uint32_t m_videoMem;
 
 	}; //DeviceCaps
 }
