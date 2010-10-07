@@ -195,7 +195,7 @@ namespace FIFE {
 		}
 		FL_LOG(_log, "Initializing render backend");
 		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
-		m_renderbackend->init();
+		m_renderbackend->init(m_settings.getVideoDriver());
 
 		FL_LOG(_log, "Querying device capabilities");
 		m_devcaps.fillDeviceCaps();

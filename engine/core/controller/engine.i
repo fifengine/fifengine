@@ -77,6 +77,8 @@ namespace FIFE {
 		bool isColorKeyEnabled() const;
 		void setColorKey(uint8_t r, uint8_t g, uint8_t b);
 		const SDL_Color& getColorKey() const;
+		void setVideoDriver(const std::string& driver);
+		const std::string& getVideoDriver() const;
 		
 	private:
 		EngineSettings();

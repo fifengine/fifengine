@@ -74,7 +74,7 @@ namespace FIFE {
 
 		/** Initializes the backend.
 		 */
-		virtual void init() = 0;
+		virtual void init(const std::string& driver) = 0;
 
 		/** Forces a clear of the backbuffer
 		 */

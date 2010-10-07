@@ -53,7 +53,12 @@ namespace FIFE {
 		return backend_name;
 	}
 
-	void RenderBackendSDL::init() {
+	void RenderBackendSDL::init(const std::string& driver) {
+		if (driver != "") {
+			std::string envVar = std::string("SDL_VIDEODRIVER=") + driver;
+			SDL_putenv(envVar.c_str());
+		}
+
 		if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
 			throw SDLException(SDL_GetError());
 

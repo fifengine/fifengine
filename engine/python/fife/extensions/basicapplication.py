@@ -112,6 +112,7 @@ class ApplicationBase(object):
 		engineSetting.setScreenHeight(int(height))
 		engineSetting.setRenderBackend(self._setting.get("FIFE", "RenderBackend", "OpenGL"))
 		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", False))
+		engineSetting.setVideoDriver(self._setting.get("FIFE", "VideoDriver", ""))
 
 		try:
 			engineSetting.setColorKeyEnabled(self._setting.get("FIFE", "ColorKeyEnabled", False))
