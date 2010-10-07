@@ -50,6 +50,7 @@ namespace FIFE {
 	}
 
 	DeviceCaps::DeviceCaps() :
+	    m_driverName("Invalid"),
 		m_hwAvailable(false),
 		m_wmAvailable(false),
 		m_hwBlitAccel(false),
@@ -60,10 +61,52 @@ namespace FIFE {
 		m_swToHwAlphaBlitAccel(false),
 		m_BlitFillAccel(false),
 		m_videoMem(0) {
+
+		fillAvailableDrivers();
 	}
 
 
 	DeviceCaps::~DeviceCaps() {
+	}
+
+	void DeviceCaps::reset() {
+		m_screenModes.clear();
+		m_driverName = "Invalid";
+		m_hwAvailable = false;
+		m_wmAvailable = false;
+		m_hwBlitAccel = false;
+		m_hwCCBlitAccel = false;
+		m_hwToHwAlphaBlitAccel = false;
+		m_swToHwBlitAccel = false;
+		m_swToHwCCBlistAccel = false;
+		m_swToHwAlphaBlitAccel = false;
+		m_BlitFillAccel = false;
+		m_videoMem = 0;
+	}
+
+
+	void DeviceCaps::fillAvailableDrivers() {
+		m_availableDrivers.clear();
+#if defined( __unix__ )
+		m_availableDrivers.push_back("x11");
+		m_availableDrivers.push_back("nanox");
+		m_availableDrivers.push_back("qtopia");
+		m_availableDrivers.push_back("fbcon");
+		m_availableDrivers.push_back("directfb");
+		m_availableDrivers.push_back("svgalib");
+#endif
+
+// Win32
+#if defined( WIN32 )
+		m_availableDrivers.push_back("directx");
+		m_availableDrivers.push_back("windib");
+#endif
+
+// Macintosh
+#if defined( __APPLE_CC__ )
+		m_availableDrivers.push_back("Quartz");
+		m_availableDrivers.push_back("x11");
+#endif
 	}
 
 	void DeviceCaps::fillDeviceCaps() {
@@ -74,6 +117,9 @@ namespace FIFE {
 		int bpps[numBPP];
 
 		SDL_Rect **modes;
+
+		//clear in case this is called twice
+		reset();
 
 		//FLAGS
 #ifdef HAVE_OPENGL
@@ -105,6 +151,11 @@ namespace FIFE {
 			for (int j = 0; j < numFlags; ++j) {
 				modes = SDL_ListModes(NULL, flags[j]);
 
+				if (modes == (SDL_Rect**)0) {
+					//no modes found
+					break;
+				}
+
 				if (modes == (SDL_Rect**)-1) {
 					//All screen modes are available with the specified flags (a windowed mode most likely)
 					ScreenMode mode = ScreenMode(0, 0, bpps[i], flags[j]);
@@ -119,6 +170,7 @@ namespace FIFE {
 						m_screenModes.push_back(mode);
 					}
 				}
+				modes = (SDL_Rect**)0;
 			}
 		}
 

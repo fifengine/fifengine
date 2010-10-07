@@ -21,7 +21,6 @@
 %module fife
 %{
 #include "controller/engine.h"
-#include "video/devicecaps.h"
 %}
 
 namespace FIFE {
