@@ -210,6 +210,10 @@ namespace FIFE {
 		 */
 		const SDL_Color& getColorKey() const;
 
+		void setVideoDriver(const std::string& driver);
+
+		const std::string& getVideoDriver() const;
+
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
@@ -227,6 +231,7 @@ namespace FIFE {
 		std::string m_defaultfontglyphs;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
+		std::string m_videodriver;
 	};
 
 }//FIFE

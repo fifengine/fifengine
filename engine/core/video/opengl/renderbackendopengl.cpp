@@ -55,7 +55,10 @@ namespace FIFE {
 	}
 
 
-	void RenderBackendOpenGL::init() {
+	void RenderBackendOpenGL::init(const std::string& driver) {
+
+		//note: driver has no affect on the opengl renderer so do nothing with it here.
+
 		Uint32 flags = SDL_INIT_VIDEO;
 		if (SDL_InitSubSystem(flags) < 0)
 			throw SDLException(SDL_GetError());

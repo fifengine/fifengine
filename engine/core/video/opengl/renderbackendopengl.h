@@ -44,7 +44,7 @@ namespace FIFE {
 		const std::string& getName() const;
 		void startFrame();
 		void endFrame();
-		void init();
+		void init(const std::string& driver);
 		void clearBackBuffer();
 
 		Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen, const std::string& title, const std::string& icon);

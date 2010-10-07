@@ -50,10 +50,21 @@ namespace FIFE {
 		m_defaultfontpath(""),
 		m_defaultfontsize(8),
 		m_defaultfontglyphs(""),
-		m_iscolorkeyenabled(false) {
+		m_iscolorkeyenabled(false){
 			m_colorkey.r = 255;
 			m_colorkey.g = 0;
 			m_colorkey.b = 255;
+
+#if defined( __unix__ )
+			m_videodriver = "x11";
+#elif defined( WIN32 )
+			m_videodriver = "windib";
+#elif defined( __APPLE_CC__ )
+			m_videodriver = "x11";
+#else
+			m_videodriver = "";
+#endif
+
 	}
 
 	EngineSettings::~EngineSettings() {
@@ -179,6 +190,14 @@ namespace FIFE {
 
 	const SDL_Color& EngineSettings::getColorKey() const {
 		return m_colorkey;
+	}
+
+	void EngineSettings::setVideoDriver(const std::string& driver) {
+		m_videodriver = driver;
+	}
+
+	const std::string& EngineSettings::getVideoDriver() const {
+		return m_videodriver;
 	}
 }
 
