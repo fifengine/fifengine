@@ -35,6 +35,7 @@
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
 #include "SDL_image.h"
+#include "SDL_getenv.h"
 
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
@@ -54,9 +55,11 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::init(const std::string& driver) {
+		char* buf;
 		if (driver != "") {
 			std::string envVar = std::string("SDL_VIDEODRIVER=") + driver;
-			SDL_putenv(envVar.c_str());
+			buf = const_cast<char*>(envVar.c_str());
+			putenv(buf);
 		}
 
 		if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
