@@ -98,7 +98,20 @@ namespace FIFE {
 		 */
 		~DeviceCaps();
 
+		/** Should be called AFTER SDL_Init() has been called
+		 */
 		void fillDeviceCaps();
+
+		/** Clears all information gathered for the device
+		 */
+		void reset();
+
+		/** Gets the available graphics drivers for your operating system
+		 */
+		std::vector<std::string> getAvailableDrivers() const { return m_availableDrivers; };
+
+		/** Returns a vector containing screen modes.
+		 */
 		std::vector<ScreenMode> getSupportedScreenModes() const { return m_screenModes; };
 
 		/** Returns the name of the current video driver.
@@ -148,6 +161,7 @@ namespace FIFE {
 	private:
 		std::vector<ScreenMode> m_screenModes;
 		std::string m_driverName;
+		std::vector<std::string> m_availableDrivers;
 
 		bool m_hwAvailable;
 		bool m_wmAvailable;
@@ -161,6 +175,9 @@ namespace FIFE {
 
 		uint32_t m_videoMem;
 
+		/** Called in the constructor.  No need for anyone to call this
+		 */
+		void fillAvailableDrivers();
 	}; //DeviceCaps
 }
 

@@ -249,7 +249,7 @@ namespace FIFE {
 		void fillDeviceCaps();
 		std::vector<ScreenMode> getSupportedScreenModes() const;
 		std::string getDriverName() const;
-		
+		std::vector<string> getAvailableDrivers() const;
 		bool isHwSurfaceAvail() const;
 		bool isWindowManagerAvail() const;
 		bool isHwBlitAccel() const;
