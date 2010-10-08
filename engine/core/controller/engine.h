@@ -86,7 +86,11 @@ namespace FIFE {
 
 		/** Gets device capabilities
 		 */
-		DeviceCaps& getDeviceCaps();
+		const DeviceCaps& getDeviceCaps() const;
+
+		/** Get current video mode
+		 */
+		const ScreenMode& getCurrentScreenMode() const;
 
 		/** Initializes the engine
 		 */
@@ -184,6 +188,8 @@ namespace FIFE {
 
 		EngineSettings m_settings;
 		DeviceCaps m_devcaps;
+
+		ScreenMode m_screenMode;
 
 		std::vector<RendererBase*> m_renderers;
 

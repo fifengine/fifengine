@@ -125,8 +125,12 @@ namespace FIFE {
 		return m_settings;
 	}
 
-	DeviceCaps& Engine::getDeviceCaps() {
+	const DeviceCaps& Engine::getDeviceCaps() const {
 		return m_devcaps;
+	}
+
+	const ScreenMode& Engine::getCurrentScreenMode() const{
+		return m_screenMode;
 	}
 
 	void Engine::preInit() {
@@ -200,12 +204,18 @@ namespace FIFE {
 		FL_LOG(_log, "Querying device capabilities");
 		m_devcaps.fillDeviceCaps();
 
-		FL_LOG(_log, "Creating main screen");
-		m_renderbackend->createMainScreen(
+		uint32_t bpp = m_settings.getBitsPerPixel();
+
+		m_screenMode = m_devcaps.getNearestScreenMode(
 			m_settings.getScreenWidth(),
 			m_settings.getScreenHeight(),
-			static_cast<unsigned char>(m_settings.getBitsPerPixel()),
-			m_settings.isFullScreen(),
+			(bpp ? bpp : 32) , //if it's 0 we use 32 bit as a default
+			rbackend,
+			m_settings.isFullScreen());
+
+		FL_LOG(_log, "Creating main screen");
+		m_renderbackend->createMainScreen(
+			m_screenMode,
 			m_settings.getWindowTitle(),
 			m_settings.getWindowIcon());
 		FL_LOG(_log, "Main screen created");

@@ -31,6 +31,7 @@
 #include "util/base/exception.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
+#include "video/devicecaps.h"
 
 #include "renderbackendsdl.h"
 #include "sdlimage.h"
@@ -78,11 +79,12 @@ namespace FIFE {
 		SDL_FillRect(m_screen->getSurface(), 0, 0x00);
 	}
 
-	Image* RenderBackendSDL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs, const std::string& title, const std::string& icon) {
-		Uint32 flags = 0;
-		if (fs) {
-			flags |= SDL_FULLSCREEN;
-		}
+	Image* RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
+		unsigned int width = mode.getWidth();
+		unsigned int height = mode.getHeight();
+		unsigned char bitsPerPixel = mode.getBPP();
+		bool fs = mode.isFullScreen();
+		Uint32 flags = mode.getSDLFlags();
 
 		if(icon != "") {
 			SDL_Surface *img = IMG_Load(icon.c_str());
