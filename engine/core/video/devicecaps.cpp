@@ -30,6 +30,8 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/exception.h"
+
 #include "devicecaps.h"
 
 namespace FIFE {
@@ -127,21 +129,21 @@ namespace FIFE {
 		Uint32 flags[numFlags];
 
 		//OpenGL, windowed, hw accel
-		flags[0] = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL;
+		flags[0] = ScreenMode::HW_WINDOWED_OPENGL;
 		//OpenGL, fullscree, hw accel
-		flags[1] = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL | SDL_FULLSCREEN;
+		flags[1] = ScreenMode::HW_FULLSCREEN_OPENGL;
 		//SDL, windowed
-		flags[2] = 0;
+		flags[2] = ScreenMode::WINDOWED_SDL;
 		//SDL, fullscreen
-		flags[3] = SDL_FULLSCREEN;
+		flags[3] = ScreenMode::FULLSCREEN_SDL;
 #else
 		int numFlags = 2;
 		Uint32 flags[numFlags];
 
 		//SDL, windowed
-		flags[0] = 0;
+		flags[0] = ScreenMode::WINDOWED_SDL;
 		//SDL, fullscreen
-		flags[1] = SDL_FULLSCREEN;
+		flags[1] = ScreenMode::FULLSCREEN_SDL;
 #endif
 		//BITS PER PIXEL
 
@@ -193,6 +195,64 @@ namespace FIFE {
 		m_swToHwAlphaBlitAccel = vInfo->blit_sw_A;
 		m_BlitFillAccel = vInfo->blit_fill;
 		m_videoMem = vInfo->video_mem;
+	}
+
+	ScreenMode DeviceCaps::getNearestScreenMode(uint32_t width, uint32_t height, uint32_t bpp, const std::string& renderer, bool fs) const {
+		ScreenMode mode;
+		bool foundMode = false;
+
+		bool widthCheck = false;
+		bool heightCheck = false;
+		bool bppCheck = false;
+		bool rendCheck = false;
+		bool fsCheck = false;
+
+
+		for (uint32_t i = 0; i < m_screenModes.size(); i++) {
+			if (m_screenModes[i].getWidth() == width) {
+				widthCheck = true;
+			}
+			if (m_screenModes[i].getHeight() == height) {
+				heightCheck = true;
+			}
+			if (m_screenModes[i].getBPP() == bpp) {
+				bppCheck = true;
+			}
+			if (m_screenModes[i].isFullScreen() == fs) {
+				fsCheck = true;
+			}
+
+			if ((m_screenModes[i].isOpenGL() && renderer == "OpenGL") || (!m_screenModes[i].isOpenGL() && renderer == "SDL")){
+				rendCheck = true;
+			}
+
+			//check for exact match
+			if (widthCheck && heightCheck && bppCheck && fsCheck && rendCheck) {
+				mode = m_screenModes[i];
+				foundMode = true;
+				break;
+			}
+
+			//@note When the width and height to 0 that means that all
+			//resolutions are supported
+			if (m_screenModes[i].getWidth() == 0 && m_screenModes[i].getHeight() == 0 && bppCheck && fsCheck && rendCheck) {
+				mode = ScreenMode(width, height, bpp, m_screenModes[i].getSDLFlags());
+				foundMode = true;
+				break;
+			}
+
+			widthCheck = false;
+			heightCheck = false;
+			bppCheck = false;
+			rendCheck = false;
+			fsCheck = false;
+		}
+
+		if (!foundMode) {
+			throw NotSupported("Could not find a maching screen mode for the values given!");
+		}
+
+		return mode;
 	}
 
 } //FIFE

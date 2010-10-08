@@ -45,12 +45,6 @@ namespace FIFE {
 	RenderBackend::~RenderBackend() {
 	}
 
-	Image* RenderBackend::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon)
-	{
-		bool fs = (mode.getSDLFlags() & SDL_FULLSCREEN) ? true : false;
-		return createMainScreen(mode.getWidth(), mode.getHeight(), mode.getBPP(), fs, title, icon);
-	}
-
 	void RenderBackend::deinit() {
 		delete m_screen;
 		m_screen = NULL;

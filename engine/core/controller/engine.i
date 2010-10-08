@@ -40,6 +40,7 @@ namespace FIFE {
 	class Cursor;
 	class RendererBase;
 	class DeviceCaps;
+	class ScreenMode;
 
 	class EngineSettings {
 	public:
@@ -93,7 +94,8 @@ namespace FIFE {
 		void pump();
 
 		EngineSettings& getSettings();
-		DeviceCaps& getDeviceCaps();
+		const DeviceCaps& getDeviceCaps() const;
+		const ScreenMode& getCurrentScreenMode() const;
 		
 		void init();
 		void destroy();

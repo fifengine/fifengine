@@ -37,7 +37,6 @@
 
 namespace FIFE {
 
-
 	class ScreenMode {
 	public:
 		/** Default Constructor
@@ -80,6 +79,16 @@ namespace FIFE {
 		 */
 		bool isOpenGL() const { return (m_SDLFlags & SDL_OPENGL) ? true : false; };
 
+
+		//OpenGL, windowed, hw accel
+		static const uint32_t HW_WINDOWED_OPENGL = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL;
+		//OpenGL, fullscreen, hw accel
+		static const uint32_t HW_FULLSCREEN_OPENGL = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL | SDL_FULLSCREEN;
+		//SDL, windowed
+		static const uint32_t WINDOWED_SDL = 0;
+		//SDL, fullscreen
+		static const uint32_t FULLSCREEN_SDL = SDL_FULLSCREEN;
+
 	private:
 		uint16_t m_width;
 		uint16_t m_height;
@@ -113,6 +122,10 @@ namespace FIFE {
 		/** Returns a vector containing screen modes.
 		 */
 		std::vector<ScreenMode> getSupportedScreenModes() const { return m_screenModes; };
+
+		/** Gets the nearest valid screen mode based on the arguments passed
+		 */
+		ScreenMode getNearestScreenMode(uint32_t width, uint32_t height, uint32_t bpp, const std::string& renderer, bool fs) const;
 
 		/** Returns the name of the current video driver.
 		 */
@@ -179,6 +192,8 @@ namespace FIFE {
 		 */
 		void fillAvailableDrivers();
 	}; //DeviceCaps
-}
+} //FIFE
+
+
 
 #endif //FIFE_DEVICECAPS_H

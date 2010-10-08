@@ -239,6 +239,11 @@ namespace FIFE {
 		uint32_t getSDLFlags() const;
 		bool isFullScreen();
 		bool isOpenGL();
+		
+		static const uint32_t HW_WINDOWED_OPENGL;
+		static const uint32_t HW_FULLSCREEN_OPENGL;
+		static const uint32_t WINDOWED_SDL;
+		static const uint32_t FULLSCREEN_SDL;
 	};
 
 	class DeviceCaps {

@@ -34,6 +34,8 @@
 
 namespace FIFE {
 
+	class ScreenMode;
+
 	/** The main class of the SDL-based renderer.
 	 *
 	 * @see RenderBackend
@@ -49,7 +51,7 @@ namespace FIFE {
 		void init(const std::string& driver);
 		void clearBackBuffer();
 
-		Image* createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fullscreen, const std::string& title, const std::string& icon);
+		Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
 		Image* createImage(const uint8_t* data, unsigned int width, unsigned int height);
 		Image* createImage(SDL_Surface* surface);
  		bool putPixel(int x, int y, int r, int g, int b, int a = 255);

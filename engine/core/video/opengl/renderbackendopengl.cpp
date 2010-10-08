@@ -28,6 +28,8 @@
 
 // FIFE includes
 #include "util/base/exception.h"
+#include "util/log/logger.h"
+#include "video/devicecaps.h"
 
 #include "fife_opengl.h"
 #include "glimage.h"
@@ -35,6 +37,7 @@
 #include "SDL_image.h"
 
 namespace FIFE {
+	static Logger _log(LM_VIDEO);
 
 	RenderBackendOpenGL::RenderBackendOpenGL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
 		// Get the pixelformat we want.
@@ -72,14 +75,15 @@ namespace FIFE {
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	Image* RenderBackendOpenGL::createMainScreen(unsigned int width, unsigned int height, unsigned char bitsPerPixel, bool fs, const std::string& title, const std::string& icon) {
+	Image* RenderBackendOpenGL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
+		unsigned int width = mode.getWidth();
+		unsigned int height = mode.getHeight();
+		unsigned char bitsPerPixel = mode.getBPP();
+		bool fs = mode.isFullScreen();
+		Uint32 flags = mode.getSDLFlags();
+
 		delete m_screen;
 		m_screen = 0;
-
-		Uint32 flags = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL;
-		if ( fs ) {
-			flags |= SDL_FULLSCREEN;
-		}
 
 		if(icon != "") {
 			SDL_Surface *img = IMG_Load(icon.c_str());
@@ -114,6 +118,10 @@ namespace FIFE {
 			}
 			screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
 		}
+
+		FL_LOG(_log, LMsg("RenderBackendOpenGL")
+			<< "Videomode " << width << "x" << height
+			<< " at " << int(bitsPerPixel) << " bpp");
 
 		SDL_WM_SetCaption(title.c_str(), 0);
 
