@@ -118,8 +118,6 @@ namespace FIFE {
 		int numBPP = 1;
 		int bpps[numBPP];
 
-		SDL_Rect **modes;
-
 		//clear in case this is called twice
 		reset();
 
@@ -148,31 +146,52 @@ namespace FIFE {
 		//BITS PER PIXEL
 
 		bpps[0] = 32;
+		
+		//COMMON FS RESOLUTIONS
+		int resolutions[15][2] = {
+			{640, 480},
+			{800, 600},
+			{1024, 768},
+			{1152, 864},
+			{1280, 768},
+			{1280, 800},
+			{1280, 960},
+			{1280, 1024},
+			{1366, 768},
+			{1440, 900},
+			{1600, 900},
+			{1600, 1200},
+			{1680, 1050},
+			{1920, 1080},
+			{1920, 1200}
+		};
+		int numRes = 15;
+
 
 		for (int i = 0; i < numBPP; ++i){
 			for (int j = 0; j < numFlags; ++j) {
-				modes = SDL_ListModes(NULL, flags[j]);
-
-				if (modes == (SDL_Rect**)0) {
-					//no modes found
-					break;
-				}
-
-				if (modes == (SDL_Rect**)-1) {
-					//All screen modes are available with the specified flags (a windowed mode most likely)
-					ScreenMode mode = ScreenMode(0, 0, bpps[i], flags[j]);
-					m_screenModes.push_back(mode);
-					continue;
-				}
-
-				for (int k = 0; modes[k]; ++k) {
-					int bpp = SDL_VideoModeOK(modes[k]->w, modes[k]->h, bpps[i], flags[j]);
-					if (bpp > 0) {
-						ScreenMode mode = ScreenMode(modes[k]->w, modes[k]->h, bpps[i], flags[j]);
-						m_screenModes.push_back(mode);
+				for ( int k = 0; k < numRes; ++k) {
+					int bpp;
+					if (flags[j] & SDL_FULLSCREEN) {
+						bpp = SDL_VideoModeOK(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
+						
+						if (bpp > 0) {
+							ScreenMode mode = ScreenMode(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
+							m_screenModes.push_back(mode);
+						}
 					}
+					else {  //windowed mode
+						//check an arbitrary value as we know all resolutions are supported in windowed mode.
+						//we are checking to make sure the bpp is supported here.
+						bpp = SDL_VideoModeOK(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
+						if (bpp > 0) {
+							ScreenMode mode = ScreenMode(0,0, bpps[i], flags[j]);
+							m_screenModes.push_back(mode);
+							break; //insert windowed mode once as all resolutions are supported.
+						}
+					}
+
 				}
-				modes = (SDL_Rect**)0;
 			}
 		}
 
@@ -197,7 +216,7 @@ namespace FIFE {
 		m_videoMem = vInfo->video_mem;
 	}
 
-	ScreenMode DeviceCaps::getNearestScreenMode(uint32_t width, uint32_t height, uint32_t bpp, const std::string& renderer, bool fs) const {
+	ScreenMode DeviceCaps::getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const {
 		ScreenMode mode;
 		bool foundMode = false;
 

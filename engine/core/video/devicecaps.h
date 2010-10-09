@@ -125,7 +125,7 @@ namespace FIFE {
 
 		/** Gets the nearest valid screen mode based on the arguments passed
 		 */
-		ScreenMode getNearestScreenMode(uint32_t width, uint32_t height, uint32_t bpp, const std::string& renderer, bool fs) const;
+		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
 
 		/** Returns the name of the current video driver.
 		 */
