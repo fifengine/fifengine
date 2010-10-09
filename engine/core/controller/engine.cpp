@@ -103,7 +103,8 @@ namespace FIFE {
 		m_gui_graphics(0),
 		m_logmanager(0),
 		m_cursor(0),
-		m_settings() {
+		m_settings(),
+		m_devcaps(){
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
 		// This is needed for SDL to function properly on MAC OS X.
@@ -308,9 +309,11 @@ namespace FIFE {
 
 		TTF_Quit();
 		SDL_Quit();
+		
 #ifdef USE_COCOA
 		objc_msgSend(m_autoreleasePool, sel_registerName("release"));
 #endif
+		
 		FL_LOG(_log, "================== Engine destructed ==================");
 		m_destroyed = true;
 		//delete m_logmanager;
