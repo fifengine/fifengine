@@ -34,8 +34,8 @@
 
 namespace FIFE {
 	static Logger _log(LM_POOL);
-	
-	Pool::Pool(const std::string& name): 
+
+	Pool::Pool(const std::string& name):
 		m_entries(),
 		m_location_to_entry(),
 		m_loaders(),
@@ -54,7 +54,7 @@ namespace FIFE {
 			delete (*loader);
 		}
 	}
-	
+
 	void Pool::reset() {
 		std::vector<PoolEntry*>::iterator entry;
 		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
@@ -88,12 +88,16 @@ namespace FIFE {
 		m_loaders.push_back(loader);
 	}
 
+	void Pool::clearResourceLoaders() {
+		m_loaders.clear();
+	}
+
 	int Pool::addResourceFromLocation(ResourceLocation* loc) {
 		ResourceLocationToEntry::const_iterator it = m_location_to_entry.find(loc);
 		if (it != m_location_to_entry.end()) {
 			return it->second;
 		}
-		
+
 		PoolEntry* entry = new PoolEntry();
 		entry->location = loc->clone();
 		m_entries.push_back(entry);
@@ -128,7 +132,7 @@ namespace FIFE {
 				msg << "#" << index << "<" << entry->location->getFilename()
 				    << "> in pool " << m_name;
 				FL_ERR(_log, msg);
-	      
+
 				throw NotFound(msg.str);
 			}
 
@@ -224,7 +228,7 @@ namespace FIFE {
 	void Pool::sanityCheck() {
 		// It is easy to mess up the important consistent
 		// less-than operator for the location classes.
-		// This will check if according to the '==' operator 
+		// This will check if according to the '==' operator
 		// entries are duplicate (=memory leaks).
 		// Slow and inaccurate. But should barf at real messups.
 		for(unsigned i = 0; i != m_entries.size(); ++i) {

@@ -54,7 +54,7 @@ namespace FIFE {
 	/**  Pool is used to optimize memory usage for resources
 	 *
 	 * Pool guarantees that there is minimal amount of resources
-	 *   used in cases when it is would possible that multiple 
+	 *   used in cases when it is would possible that multiple
 	 *   instances of the same data would be loaded into the memory.
 	 *   Pool is the owner for resources taking care of their deletion.
 	 */
@@ -77,11 +77,15 @@ namespace FIFE {
 		 */
 		virtual void addResourceLoader(ResourceLoader* loader);
 
+		/** Clear the resource loaders
+		 */
+		virtual void clearResourceLoaders();
+
 		/** Adds new resource into the pool using the given location.
 		 * @return The index of the resource in the pool.
 		 */
 		virtual int addResourceFromLocation(ResourceLocation* loc);
-		
+
 		/** This is a convenience version of addResourceFromLocation().
 		 * It converts the filename into a ResourceLocation and then
 		 * calls addResourceFromLocation.
@@ -92,13 +96,13 @@ namespace FIFE {
 		virtual int addResourceFromFile(const std::string& filename);
 
 		/** Gets resource from pool with given index
-		 * 
+		 *
 		 * @param inc Specifies weither this call will increase the ref counter
 		 */
 		virtual IResource& get(unsigned int index, bool inc = false);
-		
+
 		/** Removes the resource from pool if reference counter is null
-		 * 
+		 *
 		 * @param dec Specifies weither the ref counter will be decreased
 		 * before checking
 		 */

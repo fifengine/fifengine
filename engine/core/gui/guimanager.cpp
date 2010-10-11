@@ -53,7 +53,7 @@ namespace FIFE {
 	static Logger _log(LM_GUI);
 
 	GUIManager::GUIManager(ImagePool& pool) :
-		m_gcn_gui(new gcn::Gui()), 
+		m_gcn_gui(new gcn::Gui()),
 		m_focushandler(0),
 		m_gcn_topcontainer(new gcn::Container()),
 		m_imgloader(new GuiImageLoader(pool)) ,
@@ -88,8 +88,7 @@ namespace FIFE {
 	}
 
 	bool GUIManager::onSdlEvent(SDL_Event& evt) {
-		gcn::SDLInput *input = dynamic_cast<gcn::SDLInput*>(m_gcn_gui->getInput());
-		if (!input) {
+		if (!m_input) {
 			FL_WARN(_log, "GUIManager, GuichanGUI->getInput == 0 ... discarding events!");
 			return false;
 		}
@@ -98,7 +97,7 @@ namespace FIFE {
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
 				if( m_gcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) ) {
-					input->pushInput(evt);
+					m_input->pushInput(evt);
 					return true;
 				}
 				m_focushandler->focusNone();
@@ -107,14 +106,14 @@ namespace FIFE {
 			case SDL_MOUSEMOTION:
 				if( m_gcn_topcontainer->getWidgetAt(evt.button.x,evt.button.y) ) {
 					m_had_mouse = true;
-					input->pushInput(evt);
+					m_input->pushInput(evt);
 					return true;
 				}
 				if( m_had_mouse ) {
 					// We only keep the mouse if a widget/window has requested
 					// dragging.
 					m_had_mouse = bool(m_focushandler->getDraggedWidget());
-					input->pushInput(evt);
+					m_input->pushInput(evt);
 					return true;
 				}
 				return false;
@@ -122,7 +121,7 @@ namespace FIFE {
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
 				if(m_focushandler->getFocused()) {
-					input->pushInput(evt);
+					m_input->pushInput(evt);
 					return true;
 				}
 				return false;
@@ -189,7 +188,7 @@ namespace FIFE {
 			font = new SubImageFont(fontpath, fontglyphs, m_pool);
 		}
 		guifont = new GuiFont(font);
-		
+
 		m_fonts.push_back(guifont);
 		return guifont;
 	}
@@ -203,7 +202,7 @@ namespace FIFE {
 				return;
 			}
 			++i;
-		}	
+		}
 	}
 
 	GuiFont* GUIManager::setDefaultFont(const std::string& path, unsigned int size, const std::string& glyphs) {
@@ -244,7 +243,7 @@ namespace FIFE {
 		// Convert from guichan keyval to FIFE keyval
 		int keyval = gcnevt.getKey().getValue();
 		keyval = convertGuichanKeyToFifeKey(keyval);
-		
+
 		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval), keyval));
 
 		return keyevt;
@@ -460,7 +459,7 @@ namespace FIFE {
 					value = value - 'A' + 'a';
 				}
 
-				// FIXME: Accented characters (แ) will not get converted properly.
+				// FIXME: Accented characters (รก) will not get converted properly.
 				break;
 		}
 
