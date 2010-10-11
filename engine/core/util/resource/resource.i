@@ -76,7 +76,7 @@ namespace FIFE {
 		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
 		virtual void save(const std::string& filename, IResource* resource) { save(ResourceLocation(filename), resource); }
 	};
-	
+
 
 	enum { RES_LOADED = 0x01, RES_NON_LOADED  = 0x02};
 
@@ -89,13 +89,14 @@ namespace FIFE {
 		virtual int getResourceCount(int status);
 		virtual int purgeLoadedResources();
 		virtual void addResourceLoader(ResourceLoader* loader);
+		virtual void clearResourceLoaders();
 		virtual void release(unsigned int index, bool dec = false);
 		virtual IResource& get(unsigned int index, bool inc = false);
 		virtual void printStatistics();
 
 	private:
 		Pool();
-	};	
+	};
 
 	class ResourcePtr {
 	public:
