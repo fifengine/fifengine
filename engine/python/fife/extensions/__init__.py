@@ -11,6 +11,5 @@ __all__ = [
 	'pythonize',
 	'savers',
 	'loaders',
-	'soundmanager',
-	'fife_math'
+	'soundmanager'
 ]

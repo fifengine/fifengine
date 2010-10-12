@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -31,6 +31,7 @@ namespace FIFE {
 		T x;
 		T y;
 		explicit PointType2D(T _x = 0, T _y = 0);
+		PointType2D(const PointType2D<T>& rhs);
 		PointType2D<T> operator+(const PointType2D<T>& p) const;
 		PointType2D<T> operator-(const PointType2D<T>& p) const;
 		PointType2D<T>& operator+=(const PointType2D<T>& p);
@@ -40,6 +41,9 @@ namespace FIFE {
 		bool operator==(const PointType2D<T>& p) const;
 		bool operator!=(const PointType2D<T>& p) const;
 		T length() const;
+		void normalize();
+		void rotate(T angle);
+		void rotate(const PointType2D<T>& origin, T angle);
 	};
 
 	template<typename T>
@@ -60,6 +64,7 @@ namespace FIFE {
 		T y;
 		T z;
 		explicit PointType3D(T _x = 0, T _y = 0, T _z = 0);
+		PointType3D(const PointType3D<T>& rhs);
 		PointType3D<T> operator+(const PointType3D<T>& p) const;
 		PointType3D<T> operator-(const PointType3D<T>& p) const;
 		PointType3D<T>& operator+=(const PointType3D<T>& p);
@@ -69,6 +74,7 @@ namespace FIFE {
 		bool operator==(const PointType3D<T>& p) const;
 		bool operator!=(const PointType3D<T>& p) const;
 		T length() const;
+		void normalize();
 	};
 
 	template<typename T>

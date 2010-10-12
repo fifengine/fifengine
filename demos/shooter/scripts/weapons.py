@@ -23,7 +23,6 @@
 
 from fife import fife
 from scripts.common.baseobject import *
-from fife.extensions.fife_math import normalize, rotatePoint
 
 class Projectile(SpaceObject):
 	"""
@@ -171,7 +170,8 @@ class Cannon(Weapon):
 
 		
 	def fire(self, direction):
-		velocity = normalize(direction)
+		velocity = fife.DoublePoint(direction)
+		velocity.normalize()
 		velocity.x = velocity.x * self._projectileVelocity
 		velocity.y = velocity.y * self._projectileVelocity
 	
@@ -193,7 +193,8 @@ class FireBall(Weapon):
 		self._soundclip = scene.soundmanager.createSoundEmitter("sounds/fireball.ogg")		
 
 	def fire(self, direction):
-		velocity = normalize(direction)
+		velocity = fife.DoublePoint(direction)
+		velocity.normalize()
 		velocity.x = velocity.x * self._projectileVelocity
 		velocity.y = velocity.y * self._projectileVelocity
 	
@@ -220,7 +221,8 @@ class FireBallBurst(Weapon):
 
 		
 	def fire(self, direction):
-		velocity = normalize(direction)
+		velocity = fife.DoublePoint(direction)
+		velocity.normalize()
 		velocity.x = velocity.x * self._projectileVelocity
 		velocity.y = velocity.y * self._projectileVelocity
 	
@@ -252,19 +254,28 @@ class FireBallSpread(Weapon):
 	def fire(self, direction):
 	
 		if (self._scene.time - self._lastfired) > self._firerate:
-			velocity = normalize(direction)
+			velocity = fife.DoublePoint(direction)
+			velocity.normalize()
 			velocity.x = velocity.x * self._projectileVelocity
 			velocity.y = velocity.y * self._projectileVelocity
 
 			origin = fife.DoublePoint(0,0)
+		
+			p1 = fife.DoublePoint(velocity)
+			p2 = fife.DoublePoint(velocity)
+			p3 = fife.DoublePoint(velocity)
+			p4 = fife.DoublePoint(velocity)
+			p5 = fife.DoublePoint(velocity)
+			p6 = fife.DoublePoint(velocity)
+			p7 = fife.DoublePoint(velocity)
 			
-			p1 = rotatePoint(origin, velocity, -30)
-			p2 = rotatePoint(origin, velocity, -20)
-			p3 = rotatePoint(origin, velocity, -10)
-			p4 = rotatePoint(origin, velocity, 0)
-			p5 = rotatePoint(origin, velocity, 10)
-			p6 = rotatePoint(origin, velocity, 20)
-			p7 = rotatePoint(origin, velocity, 30)
+			p1.rotate(origin, -30)
+			p2.rotate(origin, -20)
+			p3.rotate(origin, -10)
+			p4.rotate(origin, 0)
+			p5.rotate(origin, 10)
+			p6.rotate(origin, 20)
+			p7.rotate(origin, 30)
 			
 			pjctl1 = Projectile(self._scene, self._ship, "fireball", 6000 )
 			pjctl1.run(p1, self._ship.location)
@@ -309,17 +320,24 @@ class CannonSpread5(Weapon):
 	def fire(self, direction):
 	
 		if (self._scene.time - self._lastfired) > self._firerate:
-			velocity = normalize(direction)
+			velocity = fife.DoublePoint(direction)
+			velocity.normalize()
 			velocity.x = velocity.x * self._projectileVelocity
 			velocity.y = velocity.y * self._projectileVelocity
 
 			origin = fife.DoublePoint(0,0)
 			
-			p2 = rotatePoint(origin, velocity, -10)
-			p3 = rotatePoint(origin, velocity, -5)
-			p4 = rotatePoint(origin, velocity, 0)
-			p5 = rotatePoint(origin, velocity, 5)
-			p6 = rotatePoint(origin, velocity, 10)
+			p2 = fife.DoublePoint(velocity)
+			p3 = fife.DoublePoint(velocity)
+			p4 = fife.DoublePoint(velocity)
+			p5 = fife.DoublePoint(velocity)
+			p6 = fife.DoublePoint(velocity)
+			
+			p2.rotate(origin, -10)
+			p3.rotate(origin, -5)
+			p4.rotate(origin, 0)
+			p5.rotate(origin, 5)
+			p6.rotate(origin, 10)
 			
 			pjctl2 = Projectile(self._scene, self._ship, "bullet1", 3000 )
 			pjctl2.run(p2, self._ship.location)

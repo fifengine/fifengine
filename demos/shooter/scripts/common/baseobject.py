@@ -22,7 +22,6 @@
 # ####################################################################
 
 from fife import fife
-from fife.extensions.fife_math import normalize
 from fife.fife import FloatRect as Rect
 
 
@@ -126,7 +125,8 @@ class SpaceObject(object):
 		self._velocity.y += (vector.y * (self._scene.timedelta/1000.0))/self._yscale
 		
 		if self._velocity.length() > self._maxvelocity:
-			norm = normalize(self._velocity)
+			norm = fife.DoublePoint(self._velocity)
+			norm.normalize()
 			self._velocity.x = norm.x * self._maxvelocity
 			self._velocity.y = norm.y * self._maxvelocity
 		
@@ -144,7 +144,9 @@ class SpaceObject(object):
 			return
 		
 		#first normalize to get a unit vector of the direction we are traveling
-		norm = normalize(self._velocity)
+		norm = fife.DoublePoint(self._velocity)
+		norm.normalize()
+		
 		if norm.length() == 0:
 			self._velocity.x = 0
 			self._velocity.y = 0

@@ -60,6 +60,11 @@ namespace FIFE {
 		explicit PointType2D(T _x = 0, T _y = 0): x(_x), y(_y) {
 		}
 
+		/** Copy Constructor
+		 */
+		PointType2D(const PointType2D<T>& rhs): x(rhs.x), y(rhs.y) {
+		}
+
 		/** Vector addition
 		 */
 		PointType2D<T> operator+(const PointType2D<T>& p) const {
@@ -120,7 +125,53 @@ namespace FIFE {
 			return static_cast<T>(sqrt(sq));
 		}
 
-		inline T& operator[] (int ind) { 
+		/** Normalizes the point
+		 */
+		void normalize() {
+			T invLength = 1.0/length();
+
+			//TODO: get rid of this static cast
+			if (invLength > static_cast<T>(DBL_ZERO_TOLERANCE)) {
+				x = x * invLength;
+				y = y * invLength;
+			}
+			else {
+				x = 0;
+				y = 0;
+			}
+		}
+
+		/** Rotates the point around the origin
+		 */
+		void rotate(T angle){
+			//TODO: get rid of this static cast
+			T theta = (angle * static_cast<T>(DBL_PI))/180;
+			T costheta = cos(theta);
+			T sintheta = sin(theta);
+
+			T nx = x;
+			T ny = y;
+
+			x = costheta * nx - sintheta * ny;
+			y = sintheta * nx + costheta * ny;
+		}
+
+		/** Rotates the point around an origin
+		 */
+		void rotate(const PointType2D<T>& origin, T angle){
+			//TODO: get rid of this static cast
+			T theta = (angle * static_cast<T>(DBL_PI))/180;
+			T costheta = cos(theta);
+			T sintheta = sin(theta);
+
+			T nx = x - origin.x;
+			T ny = y - origin.y;
+
+			x = costheta * nx - sintheta * ny;
+			y = sintheta * nx + costheta * ny;
+		}
+
+		inline T& operator[] (int ind) {
 			assert(ind > -1 && ind < 2);
 			return val[ind];
 		}
@@ -155,6 +206,11 @@ namespace FIFE {
 		 * Creates a with 0 as default values.
 		 */
 		explicit PointType3D(T _x = 0, T _y = 0, T _z = 0): x(_x), y(_y), z(_z) {
+		}
+
+		/** Copy Constructor
+		 */
+		PointType3D(const PointType3D<T>& rhs): x(rhs.x), y(rhs.y), z(rhs.z) {
 		}
 
 		/** Vector addition
@@ -219,9 +275,27 @@ namespace FIFE {
 			return static_cast<T>(sqrt(sq));
 		}
 
-		inline T& operator[] (int ind) { 
-			assert(ind > -1 && ind < 3); 
-			return val[ind]; 
+		/** Normalizes the point
+		 */
+		void normalize() {
+			T invLength = 1.0/length();
+
+			//TODO: get rid of this static cast
+			if (invLength > static_cast<T>(DBL_ZERO_TOLERANCE)) {
+				x = x * invLength;
+				y = y * invLength;
+				z = z * invLength;
+			}
+			else {
+				x = 0;
+				y = 0;
+				z = 0;
+			}
+		}
+
+		inline T& operator[] (int ind) {
+			assert(ind > -1 && ind < 3);
+			return val[ind];
 		}
 	};
 
