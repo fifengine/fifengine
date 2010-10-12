@@ -24,7 +24,6 @@
 from fife import fife
 from scripts.common.baseobject import *
 from scripts.ships.shipbase import *
-from fife.extensions.fife_math import *
 from scripts.weapons import *
 
 
