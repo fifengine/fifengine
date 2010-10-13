@@ -26,30 +26,55 @@
 
 namespace FIFE {
 
-	static const float FLT_ZERO_TOLERANCE;
-	static const float FLT_PI;
-	static const float FLT_TWO_PI;
-	static const float FLT_HALF_PI;
-	static const float FLT_INVERSE_PI;
-	static const float FLT_INVERSE_TWO_PI;
-	static const float FLT_DEG_TO_RAD;
-	static const float FLT_RAD_TO_DEG;
-	static const float FLT_LOG_2;
-	static const float FLT_LOG_10;
-	static const float FLT_INV_LOG_2;
-	static const float FLT_INV_LOG_10;
+	template <class numT>
+	struct float_traits { };
 
-	static const double DBL_ZERO_TOLERANCE;
-	static const double DBL_PI;
-	static const double DBL_TWO_PI;
-	static const double DBL_HALF_PI;
-	static const double DBL_INVERSE_PI;
-	static const double DBL_INVERSE_TWO_PI;
-	static const double DBL_DEG_TO_RAD;
-	static const double DBL_RAD_TO_DEG;
-	static const double DBL_LOG_2;
-	static const double DBL_LOG_10;
-	static const double DBL_INV_LOG_2;
-	static const double DBL_INV_LOG_10;
+	template <typename T>
+	class Math {
+	public:
+		typedef T num_type;
+		typedef float_traits<num_type> traits_type;
+
+		static inline num_type epsilon();
+		static inline num_type zeroTolerance();
+		static inline num_type max();
+		static inline num_type pi();
+		static inline num_type twoPi();
+		static inline num_type halfPi();
+		static inline num_type inversePi();
+		static inline num_type inverseTwoPi();
+		static inline num_type degToRad();
+		static inline num_type radToDeg();
+		static inline num_type log2();
+		static inline num_type log10();
+		static inline num_type invLog2();
+		static inline num_type invLog10();
+
+		static T ACos(T _val);
+		static T ASin(T _val);
+		static T ATan(T _val);
+		static T ATan2(T _x, T _y);
+		static T Ceil(T _val);
+		static T Cos(T _val);
+		static T Exp(T _val);
+		static T FAbs(T _val);
+		static T Floor(T _val);
+		static T FMod (T _x, T _y);
+		static T InvSqrt(T _val);
+		static T Log(T _val);
+		static T Log2(T _val);
+		static T Log10(T _val);
+		static T Pow(T _base, T _exponent);
+		static T Sin(T _val);
+		static T Sqr(T _val);
+		static T Sqrt(T _val);
+		static T Tan(T _val);
+	};
+
+	typedef Math<float> Mathf;
+	typedef Math<double> Mathd;
+	
+	%template(Mathf) Math<float>;
+	%template(Mathd) Math<double>;
 
 }

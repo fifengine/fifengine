@@ -210,7 +210,7 @@ namespace FIFE {
 		m_screenMode = m_devcaps.getNearestScreenMode(
 			m_settings.getScreenWidth(),
 			m_settings.getScreenHeight(),
-			(bpp ? bpp : 32) , //if it's 0 we use 32 bit as a default
+			bpp,
 			rbackend,
 			m_settings.isFullScreen());
 
@@ -309,11 +309,11 @@ namespace FIFE {
 
 		TTF_Quit();
 		SDL_Quit();
-		
+
 #ifdef USE_COCOA
 		objc_msgSend(m_autoreleasePool, sel_registerName("release"));
 #endif
-		
+
 		FL_LOG(_log, "================== Engine destructed ==================");
 		m_destroyed = true;
 		//delete m_logmanager;

@@ -21,6 +21,7 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <algorithm>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -49,6 +50,18 @@ namespace FIFE {
 		m_height = rhs.getHeight();
 		m_bpp = rhs.getBPP();
 		m_SDLFlags = rhs.getSDLFlags();
+	}
+
+	bool ScreenMode::operator <(const ScreenMode& rhs) const {
+		if (m_bpp < rhs.getBPP() ) {
+			return true;
+		}
+		else if (m_bpp == rhs.getBPP()) {
+			if (m_width < rhs.getWidth() || m_height < rhs.getHeight()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	DeviceCaps::DeviceCaps() :
@@ -115,7 +128,7 @@ namespace FIFE {
 		int bufferSize = 256;
 		char buffer[bufferSize];
 
-		int numBPP = 1;
+		int numBPP = 3;
 		int bpps[numBPP];
 
 		//clear in case this is called twice
@@ -145,8 +158,10 @@ namespace FIFE {
 #endif
 		//BITS PER PIXEL
 
-		bpps[0] = 32;
-		
+		bpps[0] = 16;
+		bpps[1] = 24;
+		bpps[2] = 32;
+
 		//COMMON FS RESOLUTIONS
 		int resolutions[15][2] = {
 			{640, 480},
@@ -174,10 +189,9 @@ namespace FIFE {
 					int bpp;
 					if (flags[j] & SDL_FULLSCREEN) {
 						bpp = SDL_VideoModeOK(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
-						
+
 						if (bpp > 0) {
-							ScreenMode mode = ScreenMode(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
-							m_screenModes.push_back(mode);
+							m_screenModes.push_back(ScreenMode(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]));
 						}
 					}
 					else {  //windowed mode
@@ -185,8 +199,7 @@ namespace FIFE {
 						//we are checking to make sure the bpp is supported here.
 						bpp = SDL_VideoModeOK(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
 						if (bpp > 0) {
-							ScreenMode mode = ScreenMode(0,0, bpps[i], flags[j]);
-							m_screenModes.push_back(mode);
+							m_screenModes.push_back(ScreenMode(0,0, bpps[i], flags[j]));
 							break; //insert windowed mode once as all resolutions are supported.
 						}
 					}
@@ -194,6 +207,11 @@ namespace FIFE {
 				}
 			}
 		}
+
+		//sort the list to keep the most preferred modes at the top of the selection process
+		//in getNearestScreenMode()
+		std::sort(m_screenModes.begin(), m_screenModes.end());
+		std::reverse(m_screenModes.begin(), m_screenModes.end());
 
 		if(SDL_VideoDriverName(buffer, bufferSize) != NULL) {
 			m_driverName = std::string(buffer);
@@ -259,6 +277,20 @@ namespace FIFE {
 				foundMode = true;
 				break;
 			}
+
+			//current screen bpp selected
+			if (widthCheck && heightCheck && bpp == 0 && fsCheck && rendCheck) {
+				mode = ScreenMode(width, height, bpp, m_screenModes[i].getSDLFlags());
+				foundMode = true;
+				break;
+			}
+
+			if (m_screenModes[i].getWidth() == 0 && m_screenModes[i].getHeight() == 0  && bpp == 0 && fsCheck && rendCheck) {
+				mode = ScreenMode(width, height, bpp, m_screenModes[i].getSDLFlags());
+				foundMode = true;
+				break;
+			}
+
 
 			widthCheck = false;
 			heightCheck = false;

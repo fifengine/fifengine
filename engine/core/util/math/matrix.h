@@ -118,8 +118,8 @@ namespace FIFE {
 					y/=mag;
 					z/=mag;
 				}
-				T c = cos(angle*DBL_PI/180);
-				T s = sin(angle*DBL_PI/180);
+				T c = Math<T>::Cos(angle*Math<T>::pi()/180);
+				T s = Math<T>::Sin(angle*Math<T>::pi()/180);
 				m0 = x*x*(1-c)+c;
 				m1 = y*x*(1-c)+z*s;
 				m2 = z*x*(1-c)-y*s;

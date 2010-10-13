@@ -38,8 +38,8 @@ namespace FIFE {
 
 	static const double HEX_WIDTH = 1;
 	static const double HEX_TO_EDGE = HEX_WIDTH / 2;
-	static const double HEX_TO_CORNER = 0.5 / cos(DBL_PI / 6);
-	static const double HEX_EDGE_HALF = HEX_TO_CORNER * sin(DBL_PI / 6);
+	static const double HEX_TO_CORNER = 0.5 / Mathd::Cos(Mathd::pi() / 6);
+	static const double HEX_EDGE_HALF = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
 	static const double VERTICAL_MULTIP = sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
 	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
 
