@@ -51,6 +51,8 @@ namespace FIFE {
 		 */
 		~ScreenMode() {};
 
+		bool operator <(const ScreenMode& rhs) const;
+
 		/** Returns the width of the screen mode.
 		 * @note If both width and height are 0 it means that ALL modes are available
 		 * for use with the specified flags.  Most likely this is a windowed mode.

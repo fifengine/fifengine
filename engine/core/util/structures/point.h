@@ -131,7 +131,7 @@ namespace FIFE {
 			T invLength = 1.0/length();
 
 			//TODO: get rid of this static cast
-			if (invLength > static_cast<T>(DBL_ZERO_TOLERANCE)) {
+			if (invLength > static_cast<T>(Mathd::zeroTolerance())) {
 				x = x * invLength;
 				y = y * invLength;
 			}
@@ -145,9 +145,9 @@ namespace FIFE {
 		 */
 		void rotate(T angle){
 			//TODO: get rid of this static cast
-			T theta = (angle * static_cast<T>(DBL_PI))/180;
-			T costheta = cos(theta);
-			T sintheta = sin(theta);
+			T theta = (angle * static_cast<T>(Mathd::pi()))/180;
+			T costheta = static_cast<T>(Mathd::Cos(theta));
+			T sintheta = static_cast<T>(Mathd::Sin(theta));
 
 			T nx = x;
 			T ny = y;
@@ -160,9 +160,9 @@ namespace FIFE {
 		 */
 		void rotate(const PointType2D<T>& origin, T angle){
 			//TODO: get rid of this static cast
-			T theta = (angle * static_cast<T>(DBL_PI))/180;
-			T costheta = cos(theta);
-			T sintheta = sin(theta);
+			T theta = (angle * static_cast<T>(Mathd::pi()))/180;
+			T costheta = static_cast<T>(Mathd::Cos(theta));
+			T sintheta = static_cast<T>(Mathd::Sin(theta));
 
 			T nx = x - origin.x;
 			T ny = y - origin.y;
@@ -281,7 +281,7 @@ namespace FIFE {
 			T invLength = 1.0/length();
 
 			//TODO: get rid of this static cast
-			if (invLength > static_cast<T>(DBL_ZERO_TOLERANCE)) {
+			if (invLength > static_cast<T>(Mathd::zeroTolerance())) {
 				x = x * invLength;
 				y = y * invLength;
 				z = z * invLength;
