@@ -26,6 +26,7 @@ from scripts.ships.shipbase import *
 from scripts.common.baseobject import *
 from fife.fife import FloatRect as Rect
 from scripts.weapons import *
+from fife.extensions import fife_timer
 
 
 class EnemyActionListener(ShipActionListener):
@@ -44,7 +45,7 @@ class BossActionListener(ShipActionListener):
 		super(BossActionListener, self).onInstanceActionFinished(instance, action)
 
 		if action.getId() == 'explode':
-			self._ship.endLevel()
+			self.delayed = fife_timer.delayCall(1000,self._ship.endLevel())
 
 				
 class Saucer1(Ship):
