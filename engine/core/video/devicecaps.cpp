@@ -125,19 +125,17 @@ namespace FIFE {
 	}
 
 	void DeviceCaps::fillDeviceCaps() {
-		int bufferSize = 256;
+		//buffer to store driver name
+		const uint32_t bufferSize = 256;
 		char buffer[bufferSize];
-
-		int numBPP = 3;
-		int bpps[numBPP];
 
 		//clear in case this is called twice
 		reset();
 
 		//FLAGS
 #ifdef HAVE_OPENGL
-		int numFlags = 4;
-		Uint32 flags[numFlags];
+		const uint32_t numFlags = 4;
+		uint32_t flags[numFlags];
 
 		//OpenGL, windowed, hw accel
 		flags[0] = ScreenMode::HW_WINDOWED_OPENGL;
@@ -148,22 +146,26 @@ namespace FIFE {
 		//SDL, fullscreen
 		flags[3] = ScreenMode::FULLSCREEN_SDL;
 #else
-		int numFlags = 2;
-		Uint32 flags[numFlags];
+		const uint32_tnumFlags = 2;
+		uint32_t flags[numFlags];
 
 		//SDL, windowed
 		flags[0] = ScreenMode::WINDOWED_SDL;
 		//SDL, fullscreen
 		flags[1] = ScreenMode::FULLSCREEN_SDL;
 #endif
+
 		//BITS PER PIXEL
+		const uint32_t numBPP = 3;
+		uint16_t bpps[numBPP];
 
 		bpps[0] = 16;
 		bpps[1] = 24;
 		bpps[2] = 32;
 
 		//COMMON FS RESOLUTIONS
-		int resolutions[15][2] = {
+		const uint32_t numRes = 15;
+		uint16_t resolutions[numRes][2] = {
 			{640, 480},
 			{800, 600},
 			{1024, 768},
@@ -180,13 +182,12 @@ namespace FIFE {
 			{1920, 1080},
 			{1920, 1200}
 		};
-		int numRes = 15;
 
 
-		for (int i = 0; i < numBPP; ++i){
-			for (int j = 0; j < numFlags; ++j) {
-				for ( int k = 0; k < numRes; ++k) {
-					int bpp;
+		for (uint32_t i = 0; i < numBPP; ++i){
+			for (uint32_t j = 0; j < numFlags; ++j) {
+				for ( uint32_t k = 0; k < numRes; ++k) {
+					uint16_t bpp;
 					if (flags[j] & SDL_FULLSCREEN) {
 						bpp = SDL_VideoModeOK(resolutions[k][0],resolutions[k][1], bpps[i], flags[j]);
 
