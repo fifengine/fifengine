@@ -92,9 +92,9 @@ namespace FIFE {
 		return result;
 	}
 
-	void EngineSettings::setBitsPerPixel(uint8_t bitsperpixel) {
-		std::vector<uint8_t> pv = getPossibleBitsPerPixel();
-		std::vector<uint8_t>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);
+	void EngineSettings::setBitsPerPixel(uint16_t bitsperpixel) {
+		std::vector<uint16_t> pv = getPossibleBitsPerPixel();
+		std::vector<uint16_t>::iterator i = std::find(pv.begin(), pv.end(), bitsperpixel);
 		if (i != pv.end()) {
 			m_bitsperpixel = bitsperpixel;
 			return;
@@ -102,8 +102,8 @@ namespace FIFE {
 		throw NotSupported("Given bits per pixel value is not supported");
 	}
 
-	std::vector<uint8_t> EngineSettings::getPossibleBitsPerPixel() const {
-		std::vector<uint8_t> tmp;
+	std::vector<uint16_t> EngineSettings::getPossibleBitsPerPixel() const {
+		std::vector<uint16_t> tmp;
 		tmp.push_back(0);
 		tmp.push_back(16);
 		tmp.push_back(24);

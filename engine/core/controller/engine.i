@@ -47,8 +47,8 @@ namespace FIFE {
 		~EngineSettings();
 		void validate() const;
 		void setBitsPerPixel(uint8_t bitsperpixel);
-		uint8_t getBitsPerPixel() const;
-		std::vector<uint8_t> getPossibleBitsPerPixel() const;
+		uint16_t getBitsPerPixel() const;
+		std::vector<uint16_t> getPossibleBitsPerPixel() const;
 		std::vector<std::pair<uint16_t, uint16_t> > getPossibleResolutions() const;
 		void setFullScreen(bool fullscreen);
 		bool isFullScreen() const;
