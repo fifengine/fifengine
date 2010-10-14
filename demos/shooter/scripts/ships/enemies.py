@@ -45,7 +45,7 @@ class BossActionListener(ShipActionListener):
 		super(BossActionListener, self).onInstanceActionFinished(instance, action)
 
 		if action.getId() == 'explode':
-			self.delayed = fife_timer.delayCall(1000,self._ship.endLevel())
+			self.delayed = fife_timer.delayCall(5000,self._ship.endLevel())
 
 				
 class Saucer1(Ship):

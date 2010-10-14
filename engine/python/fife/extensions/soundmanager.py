@@ -94,6 +94,9 @@ class SoundEmitter(object):
 		self._position = None
 		self._rolloff = 0
 
+	def __del__(self):
+		self._soundmanager.unregisterClip(self)
+
 	def play(self):
 		self._soundmanager.playClip(self)
 
@@ -201,6 +204,9 @@ class SoundManager(object):
 		#A dict of fife emitters
 		self._loadedclips = {}
 		
+		#A list of created clips
+		self._soundclips = []
+		
 		#A tuple representing the listener position (x,y)
 		self._listenerposition = None
 
@@ -245,7 +251,9 @@ class SoundManager(object):
 		if position is not None:
 			clip.position = position
 			clip.rolloff = self.rolloff
-			
+		
+		self._soundclips.append(clip)
+		
 		return clip
 
 	def playClip(self, clip):
@@ -331,6 +339,12 @@ class SoundManager(object):
 			clip = self.createSoundEmitter(clip.name)
 			self.playClip(clip)
 
+	def unregisterClip(self, clip):
+		self.stopClip(clip)
+		
+		if clip in self._soundclips:
+			self._soundclips.remove(clip)
+
 	def stopClip(self, clip):
 		"""
 		Stops playing the sound clip.   Note that this will stop all clips that
@@ -347,9 +361,8 @@ class SoundManager(object):
 			clip.timer = None
 
 	def stopAllSounds(self):
-		for emitterlist in self._loadedclips.values():
-			for emitter in emitterlist:
-				emitter.stop()
+		for clip in self._soundclips:
+			self.stopClip(clip)
 
 	def destroy(self):
 		"""
