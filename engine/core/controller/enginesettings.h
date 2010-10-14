@@ -56,17 +56,17 @@ namespace FIFE {
 		/** Sets bits per pixel
 		 * @see getPossibleBitsPerPixel
 		 */
-		void setBitsPerPixel(uint8_t bitsperpixel);
+		void setBitsPerPixel(uint16_t bitsperpixel);
 
 		/** Gets currently set bits per pixel value
 		 */
-		unsigned int getBitsPerPixel() const {
+		uint16_t getBitsPerPixel() const {
 			return m_bitsperpixel;
 		}
 
 		/** Gets all possible bits per pixel values
 		 */
-		std::vector<uint8_t> getPossibleBitsPerPixel() const;
+		std::vector<uint16_t> getPossibleBitsPerPixel() const;
 
 		/** Gets all possible screen resolutions
 		 */
@@ -130,7 +130,7 @@ namespace FIFE {
 
 		/** Gets screen width (pixels)
 		 */
-		unsigned int getScreenWidth() const {
+		uint16_t getScreenWidth() const {
 			return m_screenwidth;
 		}
 
@@ -140,7 +140,7 @@ namespace FIFE {
 
 		/** Gets screen height (pixels)
 		 */
-		unsigned int getScreenHeight() const {
+		uint16_t getScreenHeight() const {
 			return m_screenheight;
 		}
 

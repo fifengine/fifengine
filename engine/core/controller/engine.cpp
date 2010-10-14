@@ -205,7 +205,7 @@ namespace FIFE {
 		FL_LOG(_log, "Querying device capabilities");
 		m_devcaps.fillDeviceCaps();
 
-		uint32_t bpp = m_settings.getBitsPerPixel();
+		uint16_t bpp = m_settings.getBitsPerPixel();
 
 		m_screenMode = m_devcaps.getNearestScreenMode(
 			m_settings.getScreenWidth(),
