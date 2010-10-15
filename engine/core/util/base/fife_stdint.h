@@ -50,17 +50,17 @@ typedef unsigned __int64	uint64_t;
 // SDL masks for SDL_CreateRGBSurface
 namespace FIFE {
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	const int RMASK    = 0xff000000;
-	const int GMASK    = 0x00ff0000;
-	const int BMASK    = 0x0000ff00;
-	const int AMASK    = 0x000000ff;
+	const uint32_t RMASK    = 0xff000000;
+	const uint32_t GMASK    = 0x00ff0000;
+	const uint32_t BMASK    = 0x0000ff00;
+	const uint32_t AMASK    = 0x000000ff;
 #else
-	const int RMASK    = 0x000000ff;
-	const int GMASK    = 0x0000ff00;
-	const int BMASK    = 0x00ff0000;
-	const int AMASK    = 0xff000000;
+	const uint32_t RMASK    = 0x000000ff;
+	const uint32_t GMASK    = 0x0000ff00;
+	const uint32_t BMASK    = 0x00ff0000;
+	const uint32_t AMASK    = 0xff000000;
 #endif
-	const int NULLMASK = 0x00000000;
+	const int32_t NULLMASK = 0x00000000;
 } //FIFE
 
 #endif // FIFEINT_H

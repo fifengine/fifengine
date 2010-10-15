@@ -88,10 +88,6 @@ namespace FIFE {
 		 */
 		const DeviceCaps& getDeviceCaps() const;
 
-		/** Get current video mode
-		 */
-		const ScreenMode& getCurrentScreenMode() const;
-
 		/** Initializes the engine
 		 */
 		void init();

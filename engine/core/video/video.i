@@ -158,6 +158,7 @@ namespace FIFE {
 		Image* getScreenImage() const { return m_screen; };
 		void captureScreen(const std::string& filename);
 		SDL_Surface* getSurface();
+		const ScreenMode& getCurrentScreenMode() const;
 		unsigned int getWidth() const;
 		unsigned int getHeight() const;
 		unsigned int getScreenWidth() const { return getWidth(); }
@@ -239,11 +240,15 @@ namespace FIFE {
 		uint32_t getSDLFlags() const;
 		bool isFullScreen();
 		bool isOpenGL();
+		bool isSDL() const;
+		bool isSDLHardwareSurface() const;
 		
 		static const uint32_t HW_WINDOWED_OPENGL;
 		static const uint32_t HW_FULLSCREEN_OPENGL;
 		static const uint32_t WINDOWED_SDL;
+		static const uint32_t WINDOWED_SDL_DB_HW;
 		static const uint32_t FULLSCREEN_SDL;
+		static const uint32_t FULLSCREEN_SDL_DB_HW;
 	};
 
 	class DeviceCaps {

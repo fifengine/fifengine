@@ -80,6 +80,7 @@ namespace FIFE {
 	}
 
 	Image* RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
+		m_screenMode = mode;
 		unsigned int width = mode.getWidth();
 		unsigned int height = mode.getHeight();
 		unsigned char bitsPerPixel = mode.getBPP();
@@ -128,6 +129,13 @@ namespace FIFE {
 		FL_LOG(_log, LMsg("RenderBackendSDL")
 			<< "Videomode " << width << "x" << height
 			<< " at " << int(screen->format->BitsPerPixel) << " bpp");
+
+		//update the screen mode with the actual flags used
+
+		m_screenMode = ScreenMode(m_screenMode.getWidth(),
+		                          m_screenMode.getHeight(),
+		                          m_screenMode.getBPP(),
+		                          screen->flags);
 
 		SDL_WM_SetCaption(title.c_str(), NULL);
 

@@ -95,7 +95,6 @@ namespace FIFE {
 
 		EngineSettings& getSettings();
 		const DeviceCaps& getDeviceCaps() const;
-		const ScreenMode& getCurrentScreenMode() const;
 		
 		void init();
 		void destroy();
