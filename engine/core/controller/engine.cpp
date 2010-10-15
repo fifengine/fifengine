@@ -21,6 +21,7 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <algorithm>
 
 // 3rd party library includes
 #include <SDL.h>
@@ -200,7 +201,18 @@ namespace FIFE {
 		}
 		FL_LOG(_log, "Initializing render backend");
 		m_renderbackend->setColorKeyEnabled(m_settings.isColorKeyEnabled());
-		m_renderbackend->init(m_settings.getVideoDriver());
+
+		std::string driver = m_settings.getVideoDriver();
+		std::vector<std::string> drivers = m_devcaps.getAvailableDrivers();
+
+		if (driver != ""){
+			if (std::find (drivers.begin(), drivers.end(), driver) == drivers.end()) {
+				FL_WARN(_log, "Selected driver is not supported for your Operating System!  Reverting to default driver.");
+				driver = "";
+			}
+		}
+
+		m_renderbackend->init(driver);
 
 		FL_LOG(_log, "Querying device capabilities");
 		m_devcaps.fillDeviceCaps();
