@@ -56,8 +56,18 @@ namespace FIFE {
 		if (m_bpp < rhs.getBPP() ) {
 			return true;
 		}
+
 		else if (m_bpp == rhs.getBPP()) {
-			if (m_width < rhs.getWidth() || m_height < rhs.getHeight()) {
+			if (m_width == rhs.getWidth() && m_height == rhs.getHeight()){
+				if (!(m_SDLFlags & SDL_HWSURFACE) && (rhs.getSDLFlags() & SDL_HWSURFACE)) {
+					//I would like return true so that we prefer hardware surfaces but
+					//it really slows the engine down in fullscreen.  See the SDL FAQ for an
+					//explanation.
+					return false;
+				}
+			}
+
+			else if (m_width < rhs.getWidth() || m_height < rhs.getHeight()) {
 				return true;
 			}
 		}
@@ -134,7 +144,7 @@ namespace FIFE {
 
 		//FLAGS
 #ifdef HAVE_OPENGL
-		const uint32_t numFlags = 4;
+		const uint32_t numFlags = 6;
 		uint32_t flags[numFlags];
 
 		//OpenGL, windowed, hw accel
@@ -143,16 +153,25 @@ namespace FIFE {
 		flags[1] = ScreenMode::HW_FULLSCREEN_OPENGL;
 		//SDL, windowed
 		flags[2] = ScreenMode::WINDOWED_SDL;
+		//SDL, windowed, hw surface, double buffer
+		flags[3] = ScreenMode::WINDOWED_SDL_DB_HW;
 		//SDL, fullscreen
-		flags[3] = ScreenMode::FULLSCREEN_SDL;
+		flags[4] = ScreenMode::FULLSCREEN_SDL;
+		//SDL, fullscreen, hw surface, double buffer
+		flags[5] = ScreenMode::FULLSCREEN_SDL_DB_HW;
+
 #else
-		const uint32_tnumFlags = 2;
+		const uint32_tnumFlags = 4;
 		uint32_t flags[numFlags];
 
 		//SDL, windowed
 		flags[0] = ScreenMode::WINDOWED_SDL;
+		//SDL, windowed, hw surface, double buffer
+		flags[1] = ScreenMode::WINDOWED_SDL_DB_HW;
 		//SDL, fullscreen
-		flags[1] = ScreenMode::FULLSCREEN_SDL;
+		flags[2] = ScreenMode::FULLSCREEN_SDL;
+		//SDL, fullscreen, hw surface, double buffer
+		flags[3] = ScreenMode::FULLSCREEN_SDL_DB_HW;
 #endif
 
 		//BITS PER PIXEL

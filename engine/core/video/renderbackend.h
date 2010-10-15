@@ -39,13 +39,13 @@
 #include "util/base/singleton.h"
 #include "util/structures/point.h"
 #include "util/structures/rect.h"
+#include "video/devicecaps.h"
 
 #include "image.h"
 
 namespace FIFE {
 
 	class Image;
-	class ScreenMode;
 
 	 /** Abstract interface for all the renderbackends. */
 	class RenderBackend: public AbstractImage, public DynamicSingleton<RenderBackend> {
@@ -117,6 +117,11 @@ namespace FIFE {
 		void captureScreen(const std::string& filename);
 
 		SDL_Surface* getSurface();
+
+		/** Get current video mode
+		 */
+		const ScreenMode& getCurrentScreenMode() const;
+
 		unsigned int getWidth() const;
 		unsigned int getHeight() const;
 		unsigned int getScreenWidth() const { return getWidth(); }
@@ -158,6 +163,7 @@ namespace FIFE {
 		unsigned int m_chunkingsize;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
+		ScreenMode m_screenMode;
 	};
 }
 

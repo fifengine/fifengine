@@ -131,10 +131,6 @@ namespace FIFE {
 		return m_devcaps;
 	}
 
-	const ScreenMode& Engine::getCurrentScreenMode() const{
-		return m_screenMode;
-	}
-
 	void Engine::preInit() {
 		m_logmanager = LogManager::instance();
 

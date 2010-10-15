@@ -81,6 +81,14 @@ namespace FIFE {
 		 */
 		bool isOpenGL() const { return (m_SDLFlags & SDL_OPENGL) ? true : false; };
 
+		/** Is this screen mode an SDL only screen mode
+		 */
+		bool isSDL() const { return (!(m_SDLFlags & SDL_OPENGL)) ? true : false; };
+
+		/** Returns true if this is a SDL screen mode with the SDL hardware surface enabled
+		 */
+		bool isSDLHardwareSurface() const { return (m_SDLFlags & SDL_HWSURFACE) ? true : false; };
+
 
 		//OpenGL, windowed, hw accel
 		static const uint32_t HW_WINDOWED_OPENGL = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL;
@@ -88,8 +96,12 @@ namespace FIFE {
 		static const uint32_t HW_FULLSCREEN_OPENGL = SDL_OPENGL | SDL_HWPALETTE | SDL_HWACCEL | SDL_FULLSCREEN;
 		//SDL, windowed
 		static const uint32_t WINDOWED_SDL = 0;
+		//SDL, windowed, HW surface and double buffer
+		static const uint32_t WINDOWED_SDL_DB_HW = SDL_HWSURFACE | SDL_DOUBLEBUF;
 		//SDL, fullscreen
 		static const uint32_t FULLSCREEN_SDL = SDL_FULLSCREEN;
+		//SDL, fullscreen, HW surface and double buffer
+		static const uint32_t FULLSCREEN_SDL_DB_HW = SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
 
 	private:
 		uint16_t m_width;

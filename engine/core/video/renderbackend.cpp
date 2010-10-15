@@ -75,6 +75,10 @@ namespace FIFE {
 		return m_screen->getSurface();
 	}
 
+	const ScreenMode& RenderBackend::getCurrentScreenMode() const{
+		return m_screenMode;
+	}
+
 	unsigned int RenderBackend::getWidth() const {
 		assert(m_screen);
 		return m_screen->getWidth();
