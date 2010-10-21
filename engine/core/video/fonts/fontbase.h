@@ -48,7 +48,9 @@ namespace FIFE {
 	class FontBase: public AbstractFont {
 	public:
 		FontBase();
-		virtual ~FontBase() {}
+		virtual ~FontBase() {};
+
+		void invalidate();
 		void setRowSpacing (int spacing);
 		int getRowSpacing() const;
 		void setGlyphSpacing(int spacing);
@@ -56,15 +58,15 @@ namespace FIFE {
 		void setAntiAlias(bool antiAlias);
 		bool isAntiAlias();
 		virtual int getStringIndexAt(const std::string &text, int x) const;
-		
+
 		Image* getAsImage(const std::string& text);
 		Image* getAsImageMultiline(const std::string& text);
 		std::string splitTextToWidth (const std::string& text, int render_width);
 
 		SDL_Color getColor() const;
-		
-		virtual SDL_Surface* renderString(const std::string& text) = 0;		
-		
+
+		virtual SDL_Surface* renderString(const std::string& text) = 0;
+
 	protected:
 		TextRenderPool m_pool;
 

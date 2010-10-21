@@ -63,6 +63,17 @@ namespace FIFE {
 	class Cursor;
 	class SoundClipPool;
 	class RendererBase;
+	class Image;
+
+
+	class IEngineChangeListener {
+	public:
+		virtual ~IEngineChangeListener() {}
+
+		/** Screen mode has been changed
+		 */
+		virtual void onScreenModeChanged(const ScreenMode& newmode) = 0;
+	};
 
 	/** Engine acts as a controller to the whole system
 	 * Responsibilities of the engine are:
@@ -87,6 +98,16 @@ namespace FIFE {
 		/** Gets device capabilities
 		 */
 		const DeviceCaps& getDeviceCaps() const;
+
+		/** Changes the screen mode.
+		 * This should be called instead of the renderer's setScreenMode() function.
+		 * It takes care of any objects that need to be re-created after switching
+		 * screen modes.
+		 *
+		 * @param mode A valid ScreenMode retrieved from FIFE::DeviceCaps::getNearestScreenMode()
+		 * @return The new Screen Image
+		 */
+		Image* changeScreenMode(const ScreenMode& mode);
 
 		/** Initializes the engine
 		 */
@@ -163,6 +184,16 @@ namespace FIFE {
 		 */
 		Cursor* getCursor() const { return m_cursor; }
 
+		/** Adds new change listener
+		* @param listener to add
+		*/
+		void addChangeListener(IEngineChangeListener* listener);
+
+		/** Removes associated change listener
+		* @param listener to remove
+		*/
+		void removeChangeListener(IEngineChangeListener* listener);
+
 	private:
 		void preInit();
 
@@ -188,6 +219,8 @@ namespace FIFE {
 		ScreenMode m_screenMode;
 
 		std::vector<RendererBase*> m_renderers;
+
+		std::vector<IEngineChangeListener*> m_changelisteners;
 
 #ifdef USE_COCOA
 		objc_object *m_autoreleasePool;

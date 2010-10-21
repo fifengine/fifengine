@@ -99,7 +99,7 @@ namespace FIFE {
 		 *  The rsulting image is pooled, so it's not that time critical
 		 */
 		virtual Image* getAsImageMultiline(const std::string& text) = 0;
-		
+
 		virtual std::string splitTextToWidth (const std::string& text, int render_width) = 0;
 
 		/** Set the color the text should be rendered in
@@ -109,14 +109,16 @@ namespace FIFE {
 		/** Get the color the text was rendered in
 		 */
 		virtual SDL_Color getColor() const = 0;
-		
+
 		/** gets width of given text
 		 */
 		virtual int getWidth(const std::string& text) const = 0;
-		
+
 		/** gets height of this font
 		 */
 		virtual int getHeight() const = 0;
+
+		virtual void invalidate() = 0;
 	};
 }
 

@@ -155,6 +155,7 @@ namespace FIFE {
 	public:
 		virtual ~RenderBackend();
 		virtual const std::string& getName() const = 0;
+		
 		Image* getScreenImage() const { return m_screen; };
 		void captureScreen(const std::string& filename);
 		SDL_Surface* getSurface();
@@ -258,6 +259,7 @@ namespace FIFE {
 
 		void fillDeviceCaps();
 		std::vector<ScreenMode> getSupportedScreenModes() const;
+		ScreenMode getNearestScreenMode(uint16_t width, uint16_t height, uint16_t bpp, const std::string& renderer, bool fs) const;
 		std::string getDriverName() const;
 		std::vector<string> getAvailableDrivers() const;
 		bool isHwSurfaceAvail() const;

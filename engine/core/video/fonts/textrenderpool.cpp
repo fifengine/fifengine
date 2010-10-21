@@ -130,4 +130,12 @@ namespace FIFE {
 		if( m_poolSize == 0 )
 			m_collectTimer.stop();
 	}
+
+	void TextRenderPool::invalidateCachedText() {
+		type_pool::iterator it = m_pool.begin();
+		while (it != m_pool.end()) {
+			it->image->invalidate();
+			++it;
+		}
+	}
 }

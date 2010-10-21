@@ -74,6 +74,8 @@
 #include "view/renderers/cellselectionrenderer.h"
 #include "view/renderers/blockinginforenderer.h"
 #include "view/renderers/genericrenderer.h"
+#include "video/image.h"
+#include "gui/console/console.h"
 #include "engine.h"
 
 #ifdef USE_COCOA
@@ -105,7 +107,8 @@ namespace FIFE {
 		m_logmanager(0),
 		m_cursor(0),
 		m_settings(),
-		m_devcaps(){
+		m_devcaps(),
+		m_changelisteners() {
 #ifdef USE_COCOA
 		// The next lines ensure that Cocoa is initialzed correctly.
 		// This is needed for SDL to function properly on MAC OS X.
@@ -129,6 +132,26 @@ namespace FIFE {
 
 	const DeviceCaps& Engine::getDeviceCaps() const {
 		return m_devcaps;
+	}
+
+	Image* Engine::changeScreenMode(const ScreenMode& mode){
+		m_cursor->invalidate();
+		m_imagepool->invalidateLoadedImages();
+		m_defaultfont->invalidate();
+		m_guimanager->invalidateFonts();
+
+		Image* screen = m_renderbackend->setScreenMode(mode);
+
+		m_guimanager->resizeTopContainer(0,0,mode.getWidth(), mode.getHeight());
+		m_guimanager->getConsole()->reLayout();
+
+		std::vector<IEngineChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			(*i)->onScreenModeChanged(mode);
+			++i;
+		}
+
+		return screen;
 	}
 
 	void Engine::preInit() {
@@ -248,7 +271,7 @@ namespace FIFE {
 			m_settings.getDefaultFontSize(),
 			m_settings.getDefaultFontGlyphs());
 		FL_LOG(_log, "Initializing GUI manager");
-		m_guimanager->init(m_gui_graphics, m_settings.getScreenWidth(), m_settings.getScreenHeight());
+		m_guimanager->init(m_gui_graphics, m_renderbackend->getScreenWidth(), m_renderbackend->getScreenHeight());
 		FL_LOG(_log, "GUI manager initialized");
 		SDL_EnableUNICODE(1);
 
@@ -342,6 +365,21 @@ namespace FIFE {
 
 	void Engine::finalizePumping() {
 		// nothing here at the moment..
+	}
+
+	void Engine::addChangeListener(IEngineChangeListener* listener) {
+		m_changelisteners.push_back(listener);
+	}
+
+	void Engine::removeChangeListener(IEngineChangeListener* listener) {
+		std::vector<IEngineChangeListener*>::iterator i = m_changelisteners.begin();
+		while (i != m_changelisteners.end()) {
+			if ((*i) == listener) {
+				m_changelisteners.erase(i);
+				return;
+			}
+			++i;
+		}
 	}
 }//FIFE
 

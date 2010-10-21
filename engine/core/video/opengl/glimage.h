@@ -60,6 +60,7 @@ namespace FIFE {
 		GLImage(SDL_Surface* surface);
 		GLImage(const uint8_t* data, unsigned int width, unsigned int height);
 		virtual ~GLImage();
+		void invalidate();
 		void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255);
 		void saveImage(const std::string& filename);
  		bool putPixel(int x, int y, int r, int g, int b, int a = 255);

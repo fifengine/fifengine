@@ -61,6 +61,10 @@ namespace FIFE {
 			 */
 			~TextRenderPool();
 
+			/** Invalidates all cached text images
+			 */
+			void invalidateCachedText();
+
 			/** Get a string image
 			 */
 			Image* getRenderedText( FontBase* fontbase, const std::string& text);

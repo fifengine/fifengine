@@ -53,24 +53,37 @@ namespace FIFE {
 	}
 
 	bool ScreenMode::operator <(const ScreenMode& rhs) const {
-		if (m_bpp < rhs.getBPP() ) {
+
+		//sort by fullscreen first
+		if (!isFullScreen() && rhs.isFullScreen()){
+			return true;
+		}
+		else if (isFullScreen() && !rhs.isFullScreen()){
+			return false;
+		}
+
+		//next by bpp
+		if (m_bpp < rhs.getBPP()){
+			return true;
+		}
+		else if (m_bpp > rhs.getBPP()){
+			return false;
+		}
+
+		//then by screen dimentions
+		if (m_width == rhs.getWidth() && m_height == rhs.getHeight()){
+			if (!(m_SDLFlags & SDL_HWSURFACE) && (rhs.getSDLFlags() & SDL_HWSURFACE)) {
+				//I would like return true so that we prefer hardware surfaces but
+				//it really slows the engine down in fullscreen.  See the SDL FAQ for an
+				//explanation.
+				return false;
+			}
+		}
+
+		else if (m_width < rhs.getWidth() || m_height < rhs.getHeight()) {
 			return true;
 		}
 
-		else if (m_bpp == rhs.getBPP()) {
-			if (m_width == rhs.getWidth() && m_height == rhs.getHeight()){
-				if (!(m_SDLFlags & SDL_HWSURFACE) && (rhs.getSDLFlags() & SDL_HWSURFACE)) {
-					//I would like return true so that we prefer hardware surfaces but
-					//it really slows the engine down in fullscreen.  See the SDL FAQ for an
-					//explanation.
-					return false;
-				}
-			}
-
-			else if (m_width < rhs.getWidth() || m_height < rhs.getHeight()) {
-				return true;
-			}
-		}
 		return false;
 	}
 

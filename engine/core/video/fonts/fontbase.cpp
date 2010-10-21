@@ -50,6 +50,10 @@ namespace FIFE {
 			m_antiAlias(true) {
 	}
 
+	void FontBase::invalidate() {
+		m_pool.invalidateCachedText();
+	}
+
 	void FontBase::setRowSpacing(int spacing) {
 		mRowSpacing = spacing;
 	}
@@ -143,7 +147,7 @@ namespace FIFE {
 				}
 				lines.push_back(text_surface);
 			} while (it != text.end());
-			
+
 			render_height = (getRowSpacing() + getHeight()) * lines.size();
 			SDL_Surface* final_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 				render_width,render_height,32,
@@ -173,7 +177,7 @@ namespace FIFE {
 		const uint8_t newline_utf8 = '\n';
 		uint32_t newline;
 		utf8::utf8to32(&newline_utf8,&newline_utf8 + 1,&newline);
-		if (render_width <= 0 || text.empty()) { 
+		if (render_width <= 0 || text.empty()) {
 			return text;
 		}
 		std::string output;
@@ -190,7 +194,7 @@ namespace FIFE {
 			} else {
 				firstLine = false;
 			}
-			
+
 			bool haveNewLine = false;
 			while( getWidth(line) < render_width && pos != text.end() )
 			{
@@ -223,7 +227,7 @@ namespace FIFE {
 					output.append(line);
 					continue;
 				}
-				
+
 				if (line == "\n") {
 					++pos;
 				}

@@ -89,11 +89,12 @@ namespace FIFE {
 		m_drag_offset_y(0),
 		m_mx(0),
 		m_my(0),
-		m_timemanager(TimeManager::instance()) {
+		m_timemanager(TimeManager::instance()),
+		m_invalidated(false) {
 		assert(m_timemanager);
 		set(m_cursor_type, m_cursor_id);
 	}
-	
+
 	void Cursor::set(MouseCursorType ctype, unsigned int cursor_id) {
 		m_cursor_id = cursor_id;
 		m_cursor_type = ctype;
@@ -115,8 +116,9 @@ namespace FIFE {
 				m_animtime = m_timemanager->getTime();
 			}
 		}
+		m_invalidated = false;
 	}
-	
+
 	void Cursor::setDrag(MouseCursorType ctype, unsigned int drag_id, int drag_offset_x, int drag_offset_y) {
 		m_drag_type = ctype;
 		m_drag_id = drag_id;
@@ -128,13 +130,28 @@ namespace FIFE {
 			}
 		}
 	}
-	
+
+	void Cursor::invalidate() {
+		if (m_native_cursor != NULL) {
+			SDL_free(m_native_cursor->wm_cursor);
+			m_native_cursor->wm_cursor = NULL;
+			SDL_FreeCursor(m_native_cursor);
+			m_native_cursor = NULL;
+
+			m_invalidated = true;
+		}
+	}
+
 	void Cursor::draw() {
+		if (m_invalidated) {
+			set(m_cursor_type, m_cursor_id);
+		}
+
 		SDL_GetMouseState(&m_mx, &m_my);
 		if ((m_cursor_type == CURSOR_NATIVE) && (m_drag_type == CURSOR_NONE)) {
 			return;
 		}
-		
+
 		// render possible drag image
 		Image* img = NULL;
 		if (m_drag_type == CURSOR_IMAGE) {
@@ -150,7 +167,7 @@ namespace FIFE {
 			img->render(area);
 			m_renderbackend->popClipArea();
 		}
-		
+
 		// render possible cursor image
 		img = NULL;
 		if (m_cursor_type == CURSOR_IMAGE) {
@@ -324,7 +341,7 @@ namespace FIFE {
 		cursor->x_cursor = xCursor;
 		XSync(dsp, false);
 #endif
-		
+
 		m_native_cursor = curs2;
 		SDL_SetCursor(curs2);
 
