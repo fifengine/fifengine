@@ -66,7 +66,7 @@ class SpaceObject(object):
 			self._instance = self._layer.getInstance(self._name)
 			self._instance.thisown = 0
 		else:
-			self._instnace = None
+			self._instance = None
 		
 	def start(self):
 		"""
