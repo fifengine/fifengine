@@ -80,13 +80,6 @@ namespace FIFE {
 	}
 
 	Image* RenderBackendSDL::createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon){
-		m_screenMode = mode;
-		unsigned int width = mode.getWidth();
-		unsigned int height = mode.getHeight();
-		unsigned char bitsPerPixel = mode.getBPP();
-		bool fs = mode.isFullScreen();
-		Uint32 flags = mode.getSDLFlags();
-
 		if(icon != "") {
 			SDL_Surface *img = IMG_Load(icon.c_str());
 			if(img != NULL) {
@@ -94,55 +87,49 @@ namespace FIFE {
 			}
 		}
 
+		Image *image = setScreenMode(mode);
+
+		SDL_WM_SetCaption(title.c_str(), 0);
+
+		return image;
+	}
+
+	Image* RenderBackendSDL::setScreenMode(const ScreenMode& mode) {
+		uint16_t width = mode.getWidth();
+		uint16_t height = mode.getHeight();
+		uint16_t bitsPerPixel = mode.getBPP();
+		bool fs = mode.isFullScreen();
+		uint32_t flags = mode.getSDLFlags();
+
 		SDL_Surface* screen = NULL;
 
-		if( 0 == bitsPerPixel ) {
-			/// autodetect best mode
-			unsigned char possibleBitsPerPixel[] = {16, 24, 32, 0};
-			int i = 0;
-			while( true ) {
-				bitsPerPixel = possibleBitsPerPixel[i];
-				if( !bitsPerPixel ) {
-					// Last try, sometimes VideoModeOK seems to lie.
-					// Try bpp=0
-					screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
-					if( !screen ) {
-						throw SDLException("Videomode not available");
-					}
-					break;
-				}
-				bitsPerPixel = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
-				if ( bitsPerPixel ) {
-					screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
-					if( screen ) {
-						break;
-					}
-				}
-				++i;
+		if (bitsPerPixel != 0) {
+			uint16_t bpp = SDL_VideoModeOK(width, height, bitsPerPixel, flags);
+			if (!bpp){
+				throw SDLException("Selected video mode not supported!");
 			}
-		} else {
-			if ( !SDL_VideoModeOK(width, height, bitsPerPixel, flags) ) {
-				throw SDLException("Videomode not available");
-			}
-			screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
 		}
+
+		screen = SDL_SetVideoMode(width, height, bitsPerPixel, flags);
+		if( !screen ) {
+			throw SDLException("Unable to set video mode selected!");
+		}
+
 		FL_LOG(_log, LMsg("RenderBackendSDL")
 			<< "Videomode " << width << "x" << height
 			<< " at " << int(screen->format->BitsPerPixel) << " bpp");
 
 		//update the screen mode with the actual flags used
-
-		m_screenMode = ScreenMode(m_screenMode.getWidth(),
-		                          m_screenMode.getHeight(),
-		                          m_screenMode.getBPP(),
+		m_screenMode = ScreenMode(width,
+		                          height,
+		                          bitsPerPixel,
 		                          screen->flags);
-
-		SDL_WM_SetCaption(title.c_str(), NULL);
 
 		if (!screen) {
 			throw SDLException(SDL_GetError());
 		}
 
+		delete m_screen;
 		m_screen = new SDLImage(screen);
 		return m_screen;
 	}

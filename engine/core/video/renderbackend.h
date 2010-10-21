@@ -92,6 +92,12 @@ namespace FIFE {
 		 */
 		virtual Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon) = 0;
 
+		/** Sets the mainscreen display mode.
+		 * @param mode The ScreenMode to change the display to.  @see FIFE::ScreenMode.
+		 * @return The new Screen Image
+		 */
+		virtual Image* setScreenMode(const ScreenMode& mode) = 0;
+
 		/** Creates an Image suitable for this renderbackend.
 		 * @param data Pointer to the imagedata (needs to be in RGBA, 8 bits per channel).
 		 * @param width Width of the image.
@@ -118,7 +124,8 @@ namespace FIFE {
 
 		SDL_Surface* getSurface();
 
-		/** Get current video mode
+		/** Get current screen mode
+		 * @return The current screen mode
 		 */
 		const ScreenMode& getCurrentScreenMode() const;
 

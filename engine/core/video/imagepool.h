@@ -50,6 +50,16 @@ namespace FIFE {
 		 */
 		virtual ~ImagePool() {}
 
+		void invalidateLoadedImages() {
+			std::vector<PoolEntry*>::iterator it;
+			for (it = m_entries.begin(); it != m_entries.end(); it++) {
+				PoolEntry* entry = *it;
+				if( entry->resource) {
+					static_cast<Image*>(entry->resource)->invalidate();
+				}
+			}
+		}
+
 		inline Image& getImage(unsigned int index)  {
 			return static_cast<Image&>(get(index));
 		}

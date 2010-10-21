@@ -205,6 +205,14 @@ namespace FIFE {
 		}
 	}
 
+	void GUIManager::invalidateFonts() {
+		std::vector<GuiFont*>::iterator it = m_fonts.begin();
+		while (it != m_fonts.end()) {
+			(*it)->invalidate();
+			++it;
+		}
+	}
+
 	GuiFont* GUIManager::setDefaultFont(const std::string& path, unsigned int size, const std::string& glyphs) {
 		m_fontpath = path;
 		m_fontsize = size;

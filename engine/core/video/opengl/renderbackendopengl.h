@@ -50,6 +50,7 @@ namespace FIFE {
 		void clearBackBuffer();
 
 		Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
+		Image*  setScreenMode(const ScreenMode& mode);
 		Image* createImage(const uint8_t* data, unsigned int width, unsigned int height);
 		Image* createImage(SDL_Surface* surface);
  		bool putPixel(int x, int y, int r, int g, int b, int a = 255);

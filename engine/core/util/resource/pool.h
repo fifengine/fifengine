@@ -134,7 +134,7 @@ namespace FIFE {
 		 */
 		virtual void reset();
 
-	private:
+	protected:
 		class PoolEntry {
 		public:
 			PoolEntry(): resource(0), location(0), loader(0) {}

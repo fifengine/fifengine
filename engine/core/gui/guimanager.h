@@ -62,8 +62,8 @@ namespace FIFE {
 	 *
 	 * This class controls the GUI system in FIFE.
 	 */
-	class GUIManager : 
-		public DynamicSingleton<GUIManager>, 
+	class GUIManager :
+		public DynamicSingleton<GUIManager>,
 		public ISdlEventListener
 		 {
 		public:
@@ -85,14 +85,14 @@ namespace FIFE {
 			 * This will be called each frame.
 			 */
 			void turn();
-			
+
 			/** Inits the GUI Manager.
 			 * @param graphics backend specific grapchics object to use
 			 * @param screenWidth width for the gui top container
 			 * @param screenHeight height for the gui top container
 			 */
 			void init(gcn::Graphics* graphics, int screenWidth, int screenHeight);
-			
+
 			/** Resizes the top container.
 			 *
 			 * @param x The new starting X coordinate.
@@ -101,7 +101,7 @@ namespace FIFE {
 			 * @param height The new height.
 			 */
 			void resizeTopContainer(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
-			
+
 			/** Adds a new widget.
 			 *
 			 * @param A pointer to the widget to add.
@@ -117,7 +117,7 @@ namespace FIFE {
 			 * @return The top container.
 			 */
 			gcn::Container* getTopContainer() const { return m_gcn_topcontainer; }
-			
+
 			/** Gets the console.
 			 *
 			 * @return The console.
@@ -127,7 +127,7 @@ namespace FIFE {
 			/** Set the global font properties.
 			 */
 			GuiFont* setDefaultFont(const std::string& path, unsigned int size, const std::string& glyphs);
-			
+
 			/** Gets font with given properties. Note that font will be owned by guimanager
 			 */
 			GuiFont* createFont(const std::string& path = "", unsigned int size = 0, const std::string& glyphs = "");
@@ -135,6 +135,8 @@ namespace FIFE {
 			/** Releases given font.
 			 */
 			void releaseFont(GuiFont* font);
+
+			void invalidateFonts();
 
 			bool onSdlEvent(SDL_Event& evt);
 
@@ -172,7 +174,7 @@ namespace FIFE {
 			std::string m_fontpath;
 			std::string m_fontglyphs;
 			int m_fontsize;
-			
+
 			// true, if guichan logic has already been executed for this round
 			bool m_logic_executed;
 	};

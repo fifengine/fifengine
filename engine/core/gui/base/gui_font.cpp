@@ -38,15 +38,15 @@ namespace FIFE {
 	GuiFont::GuiFont(AbstractFont* font): m_font(font) {
 		assert(font);
 	}
-	
+
 	GuiFont::~GuiFont() {
 		delete m_font;
 	}
-	
+
 	int GuiFont::getStringIndexAt(const std::string& text, int x) const {
 		return m_font->getStringIndexAt(text, x);
 	}
-	
+
 	void GuiFont::drawString(gcn::Graphics* graphics, const std::string& text, int x, int y) {
 		if (text == "") {
 			return;
@@ -90,35 +90,35 @@ namespace FIFE {
 		}
 		image->render(rect);
 	}
-	
+
 	void GuiFont::setRowSpacing (int spacing) {
 		m_font->setRowSpacing(spacing);
 	}
-	
+
 	int GuiFont::getRowSpacing() const {
 		return m_font->getRowSpacing();
 	}
-	
+
 	void GuiFont::setGlyphSpacing(int spacing) {
 		m_font->setGlyphSpacing(spacing);
 	}
-	
+
 	int GuiFont::getGlyphSpacing() const {
 		return m_font->getGlyphSpacing();
 	}
-	
+
 	void GuiFont::setAntiAlias(bool antiAlias) {
 		m_font->setAntiAlias(antiAlias);
 	}
-	
+
 	bool GuiFont::isAntiAlias() {
 		return m_font->isAntiAlias();
 	}
-	
+
 	Image* GuiFont::getAsImage(const std::string& text) {
 		return m_font->getAsImage(text);
 	}
-	
+
 	Image* GuiFont::getAsImageMultiline(const std::string& text) {
 		return m_font->getAsImageMultiline(text);
 	}
@@ -130,16 +130,20 @@ namespace FIFE {
 	void GuiFont::setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a) {
 		m_font->setColor(r, g, b, a);
 	}
-	
+
 	SDL_Color GuiFont::getColor() const {
 		return m_font->getColor();
 	}
-	
+
 	int GuiFont::getWidth(const std::string& text) const {
 		return m_font->getWidth(text);
 	}
-	
+
 	int GuiFont::getHeight() const {
 		return m_font->getHeight();
+	}
+
+	void GuiFont::invalidate() {
+		m_font->invalidate();
 	}
 }

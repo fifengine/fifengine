@@ -43,7 +43,7 @@ namespace FIFE {
 		 */
 		GuiFont(AbstractFont* font);
 		virtual ~GuiFont();
-		
+
 		int getStringIndexAt(const std::string& text, int x) const;
 		void drawString(gcn::Graphics* graphics, const std::string& text, int x, int y);
 		void drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int x, int y);
@@ -61,7 +61,8 @@ namespace FIFE {
 		SDL_Color getColor() const;
 		int getWidth(const std::string& text) const;
 		int getHeight() const;
-		
+		void invalidate();
+
 	private:
 		AbstractFont* m_font;
 	};

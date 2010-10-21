@@ -146,6 +146,10 @@ namespace FIFE {
 		 */
 		Image(const uint8_t* data, unsigned int width, unsigned int height);
 
+		/** Invalidates the Image causing it to be reset or re-loaded
+		 */
+		virtual void invalidate() = 0;
+
 		/** Renders itself to the Destination surface at the rectangle rect.
 		 *
 		 * @param rect The position and clipping where to draw this image to.

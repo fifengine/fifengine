@@ -41,6 +41,7 @@ namespace FIFE {
 	class RendererBase;
 	class DeviceCaps;
 	class ScreenMode;
+	class Image;
 
 	class EngineSettings {
 	public:
@@ -85,6 +86,13 @@ namespace FIFE {
 		EngineSettings();
 	};	
 	
+	%feature("director") IEngineChangeListener;
+	class IEngineChangeListener {
+	public:
+		virtual ~IEngineChangeListener() {}
+		virtual void onScreenModeChanged(const ScreenMode& newmode) = 0;
+	};
+
 	class Engine {
 	public:
 		Engine();
@@ -95,6 +103,8 @@ namespace FIFE {
 
 		EngineSettings& getSettings();
 		const DeviceCaps& getDeviceCaps() const;
+		
+		Image* changeScreenMode(const ScreenMode& mode);
 		
 		void init();
 		void destroy();
@@ -112,5 +122,8 @@ namespace FIFE {
 		GuiFont* getDefaultFont();
 		VFS* getVFS();
 		Cursor* getCursor();
+		
+		void addChangeListener(IEngineChangeListener* listener);
+		void removeChangeListener(IEngineChangeListener* listener);
 	};
 }

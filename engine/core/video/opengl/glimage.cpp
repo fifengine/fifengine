@@ -62,6 +62,10 @@ namespace FIFE {
 		cleanup();
 	}
 
+	void GLImage::invalidate() {
+		resetGlimage();
+	}
+
 	void GLImage::resetGlimage() {
 		cleanup();
 
