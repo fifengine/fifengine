@@ -73,6 +73,8 @@ class Shooter(ApplicationBase):
 		
 		self._world = world.World(self, self.engine, self._setting)
 		self._listener = ApplicationListener(self.engine, self._world)
+		
+		self.engine.getRenderBackend().setClearBackBuffer(True)
 
 	def requestQuit(self):
 		cmd = fife.Command()

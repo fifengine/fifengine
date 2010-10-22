@@ -283,7 +283,6 @@ class SoundManager(object):
 				if clip.looping:
 					repeat = 0
 					def real_callback(clip):
-						clip.callback()
 						clip.fifeemitter.stop()
 						clip.fifeemitter.setGain(float(clip.gain)/255.0)
 						if self.listenerposition and clip.position:
