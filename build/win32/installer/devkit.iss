@@ -7,13 +7,13 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{FE01A2E9-77CE-4293-B667-2FA8A184D4E7}
-AppName=FIFE Development Kit (January 2010)
+AppName=FIFE Development Kit (November 2010)
 ; Version is yyyy.mm
-AppVerName=FIFE DevKit 2010.01
+AppVerName=FIFE DevKit 2010.11
 AppPublisher=FIFE Team
-AppPublisherURL=http://www.fifengine.de/
-AppSupportURL=http://www.fifengine.de/
-AppUpdatesURL=http://www.fifengine.de/
+AppPublisherURL=http://www.fifengine.net
+AppSupportURL=http://www.fifengine.net
+AppUpdatesURL=http://www.fifengine.net
 DefaultDirName={sd}\FIFE\build\win32\
 DefaultGroupName=FIFE\Devkit
 DirExistsWarning=No
@@ -22,7 +22,7 @@ AllowNoIcons=yes
 LicenseFile=license.rtf
 Compression=lzma
 SolidCompression=yes
-OutputBaseFilename=FIFE_Development_Kit_Jan2010
+OutputBaseFilename=FIFE_Development_Kit_Nov2010
 OutputDir=.
 DisableReadyPage=yes
 ; This will require some testing. We can't install to Program files if the user is not an admin.
@@ -46,9 +46,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 ; Common
 Source: "..\applications\scons\*"; DestDir: "{app}\applications\scons"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\applications\swigwin-1.3.40\*"; DestDir: "{app}\applications\swigwin-1.3.40"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\applications\swigwin-2.0.1\*"; DestDir: "{app}\applications\swigwin-2.0.1"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\includes\*"; DestDir: "{app}\includes"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "README_DevKit_Jan2010.txt"; DestDir:"{app}"; Flags: isreadme
+Source: "README_DevKit_Nov2010.txt"; DestDir:"{app}"; Flags: isreadme
 
 ; MinGW
 Source: "..\applications\mingw\*"; DestDir: "{app}\applications\mingw"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -64,7 +64,7 @@ Source: "..\binaries\msvc2008\*"; DestDir: "{app}\binaries\msvc2008"; Excludes: 
 Source: "..\static_libs\msvc2008\*"; DestDir: "{app}\static_libs\msvc2008"; Excludes: ".svn"; Components: compilers\msvc2008; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{cm:ProgramOnTheWeb,FIFE}"; Filename: "http://www.fifengine.de/"
+Name: "{group}\{cm:ProgramOnTheWeb,FIFE}"; Filename: "http://www.fifengine.net/"
 Name: "{group}\{cm:UninstallProgram,FIFE}"; Filename: "{uninstallexe}"
 
 
