@@ -22,7 +22,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Fixed an API inconsistency in SoundEmitter (#461)
   * There is no longer a memory leak when adding coloring overlays to instance 
     (#472)
-  * instance.get2dGfsVisual().setVisible(False) now works as expected (#471)
+  * instance.get2dGfxVisual().setVisible(False) now works as expected (#471)
   * Removed the last 0(n) loop through instances when rendering (#419)
   * Generic renderer now only renders objects on the specified layer (#458)
   * Fixed a memory leak when deleting maps.  The camera was not being
@@ -43,7 +43,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * floatingtextrenderer now can change colors of the font via 
     setColor(uint r, uint b, uint g)
   * Added the colorbuffer patch with a small change due to SDL. Performance 
-    boost between 20-30% under OpenGL
+    boost between under OpenGL
   * Improved the most renderers with setColor() function to allow the user to
     modify the color used to render the primitives
   * Fixed the genericrenderer.  It is now tested whether the images are in the 
@@ -55,6 +55,51 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
     layercache.cpp and improved it (r3395) 
   * Corrected the h,w calculation for zooming in layercache.cpp (r3369)
   * Fixed the bug, that x,y camera position result in an screen offset. (r3369)
+  * GLImage now only creates one "texture chunk" (r3445, r3452)
+  * Added nextPow2() math function (r3445)
+  * Fixed color mask definitions and use them throughout the engine (r3445)
+  * Moved the GLEnable and GLDisable structures to be globally accessible (r3445)
+  * Templatized Rect to extend it's functionality beyond integers (r3447)
+  * Added some typedefs: Rect, FloatRect, DoubleRect (r3447)
+  * Removed the unused "trigger" system as it was unused (r3449)
+  * Applied GreyGhosts patch to fife_settings. Allows the user to load the gui 
+    XML whenever they want. Also returns a reference to the dialog so it can be 
+    worked with outside of fife_settings. (r3451)
+  * Removed unused files containing the unused GUIEventListener class (r3453)
+  * Removed old and unused functions: set/getSourceWidget() (r3455)
+  * Added drawRectangle() and fillRectangle() functions to the renderers (r3456)
+  * Modified FIFE::FloatingTextRenderer? to use the new functions (r3456)
+  * Updated some data types in FIFE::FloatingTextRenderer to use integer types 
+    defined in fife_stdint.h (r3456)
+  * Added FIFE::DeviceCaps and FIFE::ScreenMode to detect valid screen modes
+  * Added the clearBackBuffer() function to the renderbackends (r3459)
+  * Added the ability to query the current running screen mode (r3467)
+  * Added a method to detect the closest supported screen mode (not 
+    complete yet). If no matching screen modes are detected an exception is 
+    thrown. (r3467)
+  * Small change to the way the screen is initialized. The screen mode now 
+    MUST be in the supported screen mode list before the screen will 
+    initialize. (r3467)
+  * Added clearResourceLoaders() to the Pool class. This can be used if different 
+    resourceloaders have to be added at a later point in time (running editor for 
+    example, a plugin might want to have it's own loader added) (r3469)
+  * Added the ability to normalize a 2D and 3D point (r3470)
+  * You can now rotate a 2D point around the origin or a specific point (r3470)
+  * Major improvements to fife_math.h and added corresponding Python bindings. 
+    Users now have access to FIFE's internal math functions. These functions 
+    are recommended to be used by all clients if required. Note: this may cause 
+    some problems with certain compilers. I hope this wont have to be reverted. 
+    TODO: remove the static constant globals somehow. (r3471)
+  * Adopted the new math functions for all subsystems (r3471)
+  * Added the ability to change screen modes on the fly. This works both in 
+    OpenGL and SDL modes. (#315)
+  * Added IEngineChangeListener so the client can update the cameras viewport 
+    if the screen mode has been changed. I chose to do it this way because the 
+    engine has no way to know which camera it should update. It will be up to 
+    the client to do it. (#315)
+  * The cursor surface is now correctly freed when exiting.  (r3483)
+  * Added DeviceCaps::getNearestScreenMode() for the client to request a 
+    supported screen mode. (#315)
 
 === Build System ===
   * Removed libpng from ext (#385)
@@ -77,6 +122,9 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Added getVolume() to the SoundManager
   * Added debug flag to loaders to enable/disable annoying print spam on maploading
   * BasicApplication now initializes pychan (r3388)
+  * loaders extension can now handle multiple loaders for different filetypes. A 
+    difference between map and object files is now being made! (r3469)
+  * Modified the sound manager to better take care of sound clips (r3476)
   
 === Docs ===
   * Added some documentation to the filebrowser module
@@ -90,6 +138,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Renamed <fife>/demos/pychan_demo/pychan_test.py to pychan_demo.py
   * Added a new pychan demo - gui animations
   * Added the Shooter demo
+  * Made the dynamic widget test in the pychan_demo work/look a little better (r3484)
   
 === Misc ===
   * Fixed some compiler warning messages

@@ -1,5 +1,16 @@
+
+__/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_        
+ _\/\\\///////////___\/////\\\///___\/\\\///////////___\/\\\///////////__       
+  _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________      
+   _\/\\\\\\\\\\\__________\/\\\______\/\\\\\\\\\\\______\/\\\\\\\\\\\_____     
+    _\/\\\///////___________\/\\\______\/\\\///////_______\/\\\///////______    
+     _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________   
+      _\/\\\__________________\/\\\______\/\\\______________\/\\\_____________  
+       _\/\\\_______________/\\\\\\\\\\\__\/\\\______________\/\\\\\\\\\\\\\\\_ 
+        _\///_______________\///////////___\///_______________\///////////////__
+        
 == Introduction ==
-Welcome to the FIFE v0.3.1 README. This snapshot is based on SVN revision XXXX.
+Welcome to the FIFE v0.3.2 README. This snapshot is based on SVN revision XXXX.
 
 == Table of contents ==
 1 Features
@@ -19,54 +30,68 @@ A complete list of the features that FIFE offers can be found at the project wik
 The source code (*.cpp, *.h & *.py) is licensed under LGPL 2.1 or newer:
  * http://www.gnu.org/licenses/lgpl-2.1.html
 
-Content was taken from a lot a lot of different 3rd party sources. Therefore each client directory comes with a separate LICENSE file that states the origin of the content, the author and the actual license it was published under.
+Content was taken from a lot a lot of different 3rd party sources. Therefore each 
+client directory comes with a separate LICENSE file that states the origin of the 
+content, the author and the actual license it was published under.
 
 
 == 3) FIFE Clients ==
 
 === 3.1) Editor ===
+The editor tool can be found within the <FIFE>/tools/editor directory. You can 
+launch it by running 'run.py'.  It is used to edit map files for the tech demo 
+(rio do hola).  Other clients extend it and use it to edit their maps.
 
-The editor tool can be found within the <FIFE>/tools/editor directory. You can launch it by running 'run.py'.  It is used to edit map files for the tech demo (rio do hola).  Other clients extend it and use it to edit their maps.
 
 === 3.2) Rio De Hola ===
+Rio de hola is a technology demo showing off many of the FIFE features.  It is 
+located in the <FIFE>/demos/rio_de_hola directory and can be launched by running 
+run.py.  It was at one time meant to be an example game but we have moved away 
+from that idea and it is now more of a technology demo and a playground for 
+developers to test their code.  It does serve as a good starting point for people 
+wishing to play around with FIFE or base your game off of.
 
-Rio de hola is a technology demo showing off many of the FIFE features.  It is located in the <FIFE>/demos/rio_de_hola directory and can be launched by running run.py.  It was at one time meant to be an example game but we have moved away from that idea and it is now more of a technology demo and a playground for developers to test their code.  It does serve as a good starting point for people wishing to play around with FIFE or base your game off of.
 
-=== 3.3) PyChan Example ===
+=== 3.3) Shooter Demo ===
+The Shooter demo was an attempt to show the versatility and flexibility of FIFE.
+It is a simple side scrolling shooter that has a main menu, one level and an
+end boss.  Try your luck and see if you can defeat the boss!
 
-Last but not least there is an example client residing in <FIFE>\demos\pychan_demo that shows how the pychan GUI library works. Start the GUI demo application by running pychan_test.py.
+=== 3.4) PyChan Example ===
+Last but not least there is an example client residing in <FIFE>\demos\pychan_demo 
+that shows how the pychan GUI library works. Start the GUI demo application by 
+running pychan_test.py.
 
-=== 3.4) Configuring the Clients ===
-The engine utilizes special settings files for configuring FIFE. This file is called settings.py and resides in the same directory as the <FIFE>/clients/<CLIENT>/run.py scripts. You can customize FIFE by editing this file.
+
+=== 3.5) Configuring the Clients ===
+The engine utilizes special settings files for configuring FIFE. This file is called 
+settings.py and resides in the same directory as the <FIFE>/clients/<CLIENT>/run.py 
+scripts. You can customize FIFE by editing this file.
+
 
 == 4) Known issues ==
- * Building the debug version of _fife.pyd fails with mingw
- * Win32 users tend to suffer from problems with the OpenAL drivers. If you don't hear sound while running a FIFE client, run oalinst.exe that ships with the Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
+ * Cannot build a usable debug version of _fife_d.pyd with mingw
+ * Win32 users tend to suffer from problems with the OpenAL drivers. If you don't 
+   hear sound while running a FIFE client, run oalinst.exe that ships with the 
+   Win32 FIFE Development Kit.  This is the latest OpenAL driver for Win32.
  * The unittests are broken on Win32 (if used in combination with scons & mingw).
- * Segfault when closing via windowmanger (#407)
- * VFS filename case issue (#418 and #380)
- * SWIG wrappers don't handle simple output parameters (#340)
- * Camera name clashes when opening maps with the same camera identifier (#342)
- * Python.exe crashes when linked against the guichan debug libs in MSVC2008 (#357)
- * Instance rotation problems (#361)
- * Widgts are not properly resized when loaded from XML (#367)
  * Cannot show/hide child widgets in containers (#357)
- * OpenGL leaves traces on screen after closing maps (#392)
- * Freeze when setting text in a label (#408)
- * VFS crashes when trying to enter a restricted path (#413)
- * SDL renderer does not support colorkeying and png images (#146)
- * UnitTests do not work when started with MSVS2005 (#352)
  * No non-renderable font image when a character is not found (#302)
- * FIFE does not compile with vanilla libpng sources (#385)
- * Guichan widgets do not correctly handle meta characters (shift, ctrl, alt, etc) (#412)
+ * Guichan widgets do not correctly handle meta characters (shift, ctrl, alt, 
+   etc) (#412)
  * Cameras must be attached to layers and not maps as they should be (#305)
  * Map editor clobbers custom attribues in map file (#379)
  * Darwin users will not have UTF8 support if they install guichan from MacPorts.
  
+
 == 5) Feedback ==
-We appreciate every kind of feedback concerning the release, the project in general and the bundled techdemo. Feedback is a great way to help us to improve FIFE. If you would like to get in contact with us and provide feedback you can either visit our IRC channel or our forums:
+We appreciate every kind of feedback concerning the release, the project in general 
+and the bundled techdemo. Feedback is a great way to help us to improve FIFE. If you 
+would like to get in contact with us and provide feedback you can either visit our 
+IRC channel or our forums:
  * http://wiki.fifengine.de/index.php?title=IRC
  * http://forums.fifengine.de/index.php?board=5.0
+
 
 == 6) Closing Notes ==
 Have fun with the release and let us know what you think about it!
