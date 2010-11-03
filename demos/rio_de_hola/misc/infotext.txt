@@ -1,4 +1,4 @@
-Welcome to the FIFE Rio de hola game, release 0.3.1
+Welcome to the FIFE Rio de hola game, release 0.3.2
 
 Keybindings:
 --------------
@@ -15,4 +15,4 @@ Keybindings:
 Have fun,
 The FIFE team
 
-http://www.fifengine.de
+http://www.fifengine.net

@@ -57,6 +57,7 @@ The Shooter demo was an attempt to show the versatility and flexibility of FIFE.
 It is a simple side scrolling shooter that has a main menu, one level and an
 end boss.  Try your luck and see if you can defeat the boss!
 
+
 === 3.4) PyChan Example ===
 Last but not least there is an example client residing in <FIFE>\demos\pychan_demo 
 that shows how the pychan GUI library works. Start the GUI demo application by 
@@ -81,8 +82,19 @@ scripts. You can customize FIFE by editing this file.
    etc) (#412)
  * Cameras must be attached to layers and not maps as they should be (#305)
  * Map editor clobbers custom attribues in map file (#379)
- * Darwin users will not have UTF8 support if they install guichan from MacPorts.
- 
+ * Must use modified guichan for UTF8 support (#432)
+ * Button Doesn't react to click when drawn below mouse poiner (#387)
+ * The spacer concept in pychan does not work as expected (#490)
+ * No soname for libfife.so (#435)
+ * Pychan dropdowns refuse to open if there is no space below (#445)
+ * Slider size is overwritten by label max_size when residing in the same 
+   (parent) box (#488)
+ * Map editor clobbers ccustom attributes (#379)
+ * Editor crashes after docking the object editor and closing map (#450)
+ * History bugs and (many) other related bugs (#452, #459)
+ * Cannot default zoom level for a camera (#467)
+ * Cannot add additional import statements (#468)
+ * Loaders contain a circular import (#478)
 
 == 5) Feedback ==
 We appreciate every kind of feedback concerning the release, the project in general 
