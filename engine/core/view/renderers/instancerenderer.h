@@ -95,9 +95,26 @@ namespace FIFE {
 		 */
 		void removeAllTransparentAreas();
 		
+		/** Add groups(Namespaces) into a list. All instances, whose namespace is in the list
+		 *  will not lighted from the LightRenderer.
+		 */
+		void addIgnoreLight(const std::list<std::string> &groups);
+
+		/** Removes groups(Namespaces) from the list
+		 */
+		void removeIgnoreLight(const std::list<std::string> &groups);
+
+		/** Removes all groups(Namespaces)
+		 */
+		void removeAllIgnoreLight();
+
 		/** Gets instance for interface access
 		 */
 		static InstanceRenderer* getInstance(IRendererContainer* cnt);
+
+		/** Provides access point to the RenderBackend
+		 */
+		RenderBackend* getRenderBackend() const {return m_renderbackend;}
 		
 		void reset();
 
@@ -105,6 +122,7 @@ namespace FIFE {
 		ImagePool* m_imagepool;
 		AnimationPool* m_animationpool;
 		bool m_area_layer;
+		std::list<std::string> m_unlit_groups;
 		
 		// contains per-instance information for outline drawing
 		class OutlineInfo {

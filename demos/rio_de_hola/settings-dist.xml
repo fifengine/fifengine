@@ -19,6 +19,7 @@
  		<Setting name="UsePsyco" type="bool"> False </Setting>
 		<Setting name="ProfilingOn" type="bool"> False </Setting>
 		<Setting name="LogToFile" type="int"> 0 </Setting>
+		<Setting name="Lighting" type="int"> 0 </Setting>
 	</Module>
 
 	<Module name="rio">

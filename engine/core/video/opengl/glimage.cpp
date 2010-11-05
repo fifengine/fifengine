@@ -110,7 +110,7 @@ namespace FIFE {
 		uint16_t w = static_cast<int>(round(scale_x*m_surface->w));
 		uint16_t h = static_cast<int>(round(scale_y*m_surface->h));
 
-		/// setting transparency for the whole primitive:
+		// setting transparency for the whole primitive:
 		glColor4ub( 255, 255, 255, alpha );
 
 		glEnable(GL_TEXTURE_2D);
@@ -239,7 +239,7 @@ namespace FIFE {
 		glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
 
 		if (clear) {
-	        	glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT);
 		}
 	}
 
@@ -276,5 +276,10 @@ namespace FIFE {
 	void GLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a) {
 		cleanup();
 		m_sdlimage->drawVertex(p, size, r, g, b, a);
+	}
+
+	void GLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
+		cleanup();
+		m_sdlimage->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
 	}
 }

@@ -29,6 +29,7 @@
 #if defined( __unix__ )
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glext.h>
 #endif
 
 // Win32
@@ -38,11 +39,13 @@
 #include <windows.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glext.h>
 #undef DELETE
 // MinGW
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glext.h>
 #endif
 #endif
 
@@ -50,6 +53,7 @@
 #if defined( __APPLE_CC__ )
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
 #endif
 
 // 3rd party library includes

@@ -152,6 +152,54 @@ namespace FIFE {
 		return new SDLImage(data, width, height);
 	}
 
+	void RenderBackendSDL::setLightingModel(unsigned int lighting) {
+		SDLException("Lighting not available under SDL");
+	}
+
+	unsigned int RenderBackendSDL::getLightingModel() const {
+		return 0;
+	}
+
+	void RenderBackendSDL::enableLighting() {
+	}
+
+	void RenderBackendSDL::disableLighting() {
+	}
+
+	void RenderBackendSDL::setLighting(float red, float green, float blue, float alpha) {
+	}
+
+	void RenderBackendSDL::resetLighting() {
+	}
+
+	void RenderBackendSDL::enableStencilTest() {
+	}
+
+	void RenderBackendSDL::disableStencilTest() {
+	}
+
+	void RenderBackendSDL::setStencilTest(uint8_t stencil_ref, unsigned int stencil_op, unsigned int stencil_func) {
+	}
+
+	void RenderBackendSDL::resetStencilBuffer(uint8_t buffer) {
+	}
+
+	uint8_t RenderBackendSDL::getStencilRef() const {
+		return 0;
+	}
+
+	void RenderBackendSDL::enableAlphaTest() {
+	}
+
+	void RenderBackendSDL::disableAlphaTest() {
+	}
+
+	void RenderBackendSDL::setAlphaTest(float ref_alpha) {
+	}
+
+	void RenderBackendSDL::changeBlending(int scr, int dst){
+	}
+	
 	bool RenderBackendSDL::putPixel(int x, int y, int r, int g, int b, int a) {
 		return static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b, a);
 	}
@@ -180,4 +228,7 @@ namespace FIFE {
 		static_cast<SDLImage*>(m_screen)->drawVertex(p, 2, r, g, b, a);
 	}
 
+	void RenderBackendSDL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue){
+		static_cast<SDLImage*>(m_screen)->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
+	}
 }//FIFE

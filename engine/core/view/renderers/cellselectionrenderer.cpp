@@ -109,6 +109,8 @@ namespace FIFE {
 				continue;
 			}
 
+			m_renderbackend->disableLighting();
+
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, loc.getLayerCoordinates());
 			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
@@ -125,6 +127,7 @@ namespace FIFE {
 				pt1 = pt2;
 			}
 			m_renderbackend->drawLine(pt2, Point(firstpt.x, firstpt.y), m_color.r, m_color.g, m_color.b);
+			m_renderbackend->enableLighting();
 		}
 	}
 

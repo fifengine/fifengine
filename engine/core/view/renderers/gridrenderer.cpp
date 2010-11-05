@@ -73,6 +73,7 @@ namespace FIFE {
 			FL_WARN(_log, "No cellgrid assigned to layer, cannot draw grid");
 			return;
 		}
+		m_renderbackend->disableLighting();
 //
 //
 //		//render elev_coord box
@@ -180,6 +181,7 @@ namespace FIFE {
 				}
 			}
 		}
+		m_renderbackend->enableLighting();
 	}
 
 	void GridRenderer::setColor(Uint8 r, Uint8 g, Uint8 b) {

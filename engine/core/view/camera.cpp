@@ -105,7 +105,9 @@ namespace FIFE {
 			m_renderbackend(renderbackend),
 			m_ipool(ipool),
 			m_apool(apool),
-			m_layer_to_instances() {
+			m_layer_to_instances(),
+			m_lighting(false),
+			m_light_colors() {
 
 		m_viewport = viewport;
 		m_map_observer = new MapObserver(this);
@@ -630,6 +632,29 @@ namespace FIFE {
 		m_layer_to_instances.erase(layer);
 	}
 
+	void Camera::setLightingColor(float red, float green, float blue, float alpha) {
+		m_lighting = true;
+		m_light_colors.clear();
+		m_light_colors.push_back(red);
+		m_light_colors.push_back(green);
+		m_light_colors.push_back(blue);
+		m_light_colors.push_back(alpha);
+	}
+
+	std::vector<float> Camera::getLightingColor() {
+		if(m_light_colors.empty()) {
+			for(int colors = 0; colors != 4; ++colors) {
+				m_light_colors.push_back(1.0f);
+			}
+		}
+		return m_light_colors;
+	}
+
+	void Camera::resetLightingColor() {
+		m_lighting = false;
+		m_renderbackend->resetLighting();
+	}
+
 	void Camera::render() {
 		Transform transform = NormalTransform;
 		if(m_iswarped)
@@ -645,13 +670,22 @@ namespace FIFE {
 		//	return;
 		//}
 
+		if (m_renderbackend->getLightingModel() != 0) {
+			m_renderbackend->resetStencilBuffer(0);
+			if (m_lighting) {
+				m_renderbackend->setLighting(m_light_colors[0], m_light_colors[1], m_light_colors[2], m_light_colors[3]);
+			}
+		}
+
 		if(m_backendSDL) {
 			m_renderbackend->pushClipArea(getViewPort());
 		} else {
 			m_renderbackend->pushClipArea(getViewPort(), testRenderedViewPort());
 		}
+
 		// update each layer
 // 		m_layer_to_instances.clear();
+
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
@@ -671,6 +705,11 @@ namespace FIFE {
 				}
 			}
 		}
+
+		if (m_lighting) {
+			m_renderbackend->resetLighting();
+		}
+
 		m_renderbackend->popClipArea();
 		resetUpdates();
 		m_updated = true;

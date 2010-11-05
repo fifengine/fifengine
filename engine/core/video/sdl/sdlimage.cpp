@@ -807,6 +807,9 @@ namespace FIFE {
 		drawLine(p4, p1, r, g, b, a);
 	}
 
+	void SDLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
+	}
+
 	void SDLImage::saveImage(const std::string& filename) {
 		if(m_surface) {
 			const unsigned int swidth = getWidth();

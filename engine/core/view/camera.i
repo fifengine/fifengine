@@ -63,6 +63,10 @@ namespace FIFE {
 		void getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates=false);
 		RendererBase* getRenderer(const std::string& name);
 		void resetRenderers();
+		
+		void setLightingColor(float red, float green, float blue, float alpha);
+		void resetLightingColor();
+		std::vector<float> getLightingColor();
 
 		void refresh();
 	private:

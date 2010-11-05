@@ -36,6 +36,7 @@
 #include "renderbackendopengl.h"
 #include "SDL_image.h"
 
+
 namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
@@ -47,6 +48,16 @@ namespace FIFE {
 		m_rgba_format = *(testsurface->format);
 		SDL_FreeSurface(testsurface);
 		m_clear = false;
+		m_lightmodel = 0;
+		m_light_enabled = false;
+		m_stencil_enabled = false;
+		m_alpha_enabled = false;
+		m_sten_ref = 0;
+		m_sten_buf = 0;
+		m_sten_op = 0;
+		m_sten_func = 0;
+		m_blend_src = GL_SRC_ALPHA;
+		m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
 	}
 
 	const std::string& RenderBackendOpenGL::getName() const {
@@ -66,8 +77,10 @@ namespace FIFE {
 		if (SDL_InitSubSystem(flags) < 0)
 			throw SDLException(SDL_GetError());
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // temporary hack
+
 	}
 
 	void RenderBackendOpenGL::clearBackBuffer() {
@@ -132,6 +145,7 @@ namespace FIFE {
 		glMatrixMode(GL_MODELVIEW);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -140,7 +154,7 @@ namespace FIFE {
 
 		glPointSize(1.0);
 		glLineWidth(1.0);
-
+		delete m_screen;
 		delete m_screen;
 		m_screen = new GLImage(screen);
 		return m_screen;
@@ -182,7 +196,7 @@ namespace FIFE {
 			return new GLImage(surface);
 		}
 
-		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE|SDL_SRCALPHA);
+		SDL_Surface* conv = SDL_ConvertSurface(surface, &m_rgba_format, SDL_SWSURFACE | SDL_SRCALPHA);
 		GLImage* image = new GLImage(conv);
 		SDL_FreeSurface( surface );
 		return image;
@@ -190,6 +204,183 @@ namespace FIFE {
 
 	Image* RenderBackendOpenGL::createImage(const uint8_t* data, unsigned int width, unsigned int height) {
 		return new GLImage(data, width, height);
+	}
+
+	void RenderBackendOpenGL::setLightingModel(unsigned int lighting) {
+		if (m_lightmodel != lighting) {
+			if (m_lightmodel == 1) {
+				disableLighting();
+				glDisable(GL_COLOR_MATERIAL);
+			} else if (lighting == 1) {
+				enableLighting();
+				glEnable(GL_LIGHT0);
+				glColorMaterial(GL_FRONT, GL_DIFFUSE);
+				glEnable(GL_COLOR_MATERIAL);
+			}
+			m_lightmodel = lighting;
+		}
+	}
+
+	unsigned int RenderBackendOpenGL::getLightingModel() const {
+		return m_lightmodel;
+	}
+
+	void RenderBackendOpenGL::enableLighting() {
+		if (m_lightmodel == 1 && !m_light_enabled) {
+			glEnable(GL_LIGHTING);
+			m_light_enabled = true;
+		}
+	}
+
+	void RenderBackendOpenGL::disableLighting() {
+		if (m_lightmodel == 1 && m_light_enabled) {
+			glDisable(GL_LIGHTING);
+			m_light_enabled = false;
+		}
+	}
+
+	void RenderBackendOpenGL::setLighting(float red, float green, float blue, float alpha) {
+		if (m_lightmodel == 1) {
+			GLfloat lightDiffuse[] = {red, green, blue, alpha};
+			glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+		} else if(m_lightmodel == 2) {
+			m_lred = red;
+			m_lgreen = green;
+			m_lblue = blue;
+			m_lalpha = alpha;
+		}
+	}
+
+	void RenderBackendOpenGL::resetLighting() {
+		if (m_lightmodel == 1) {
+			setLighting(1.0, 1.0, 1.0, 1.0);
+		} else if (m_lightmodel == 2 && m_lalpha > 0.01) {
+			uint16_t width = getScreenWidth();
+			uint16_t height = getScreenHeight();
+			Point p = Point(0,0);
+			setStencilTest(0, 0, 5);
+			fillRectangle(p, width, height, m_lred*255, m_lgreen*255, m_lblue*255, m_lalpha*255);
+			disableStencilTest();
+		}
+	}
+
+	void RenderBackendOpenGL::enableStencilTest() {
+		if (!m_stencil_enabled) {
+			glEnable(GL_STENCIL_TEST);
+			m_stencil_enabled = true;
+		}
+	}
+
+	void RenderBackendOpenGL::disableStencilTest() {
+		if (m_stencil_enabled) {
+			glDisable(GL_STENCIL_TEST);
+			m_stencil_enabled = false;
+		}
+	}
+
+	void RenderBackendOpenGL::setStencilTest(uint8_t stencil_ref, unsigned int stencil_op, unsigned int stencil_func) {
+		enableStencilTest();
+		if(m_sten_op != stencil_op) {
+			GLenum op;
+			m_sten_op = stencil_op;
+			switch(stencil_op) {
+				default :
+				case 0  : op = GL_KEEP; break;
+				case 1  : op = GL_ZERO; break;
+				case 2  : op = GL_REPLACE; break;
+				case 3  : op = GL_INCR; break;
+				case 4  : op = GL_DECR; break;
+				case 5  : op = GL_INVERT; break;
+			}
+			glStencilOp(GL_KEEP, GL_KEEP, op);
+		}
+
+		if(m_sten_ref != stencil_ref || m_sten_func != stencil_func) {
+			GLenum func;
+			m_sten_ref = stencil_ref;
+			m_sten_func = stencil_func;
+			switch(stencil_func) {
+				default :
+				case 0  : func = GL_NEVER; break;
+				case 1  : func = GL_LESS; break;
+				case 2  : func = GL_LEQUAL; break;
+				case 3  : func = GL_GREATER; break;
+				case 4  : func = GL_GEQUAL; break;
+				case 5  : func = GL_EQUAL; break;
+				case 6  : func = GL_NOTEQUAL; break;
+				case 7  : func = GL_ALWAYS; break;
+			}
+			glStencilFunc(func, stencil_ref, 0xff);
+		}
+	}
+
+	void RenderBackendOpenGL::resetStencilBuffer(uint8_t buffer) {
+		if (buffer != m_sten_buf) {
+			m_sten_buf = buffer;
+			glClearStencil(buffer);
+		}
+		GLDisable flag(GL_SCISSOR_TEST);
+		glClear(GL_STENCIL_BUFFER_BIT);
+	}
+
+	uint8_t RenderBackendOpenGL::getStencilRef() const {
+		return m_sten_ref;
+	}
+
+	void RenderBackendOpenGL::enableAlphaTest() {
+		if (!m_alpha_enabled) {
+			glEnable(GL_ALPHA_TEST);
+			m_alpha_enabled = true;
+		}
+	}
+
+	void RenderBackendOpenGL::disableAlphaTest() {
+		if (m_alpha_enabled) {
+			glDisable(GL_ALPHA_TEST);
+			m_alpha_enabled = false;
+		}
+	}
+
+	void RenderBackendOpenGL::setAlphaTest(float ref_alpha) {
+		enableAlphaTest();
+		glAlphaFunc(GL_GREATER, ref_alpha);
+	}
+
+	void RenderBackendOpenGL::changeBlending(int src, int dst) {
+		GLenum src_fact;
+		GLenum dst_fact;
+
+		switch(src) { 
+			case 0  : src_fact = GL_ZERO; break;
+			case 1  : src_fact = GL_ONE; break;
+			case 2  : src_fact = GL_DST_COLOR; break;
+			case 3  : src_fact = GL_ONE_MINUS_DST_COLOR; break;
+			case 4  : src_fact = GL_SRC_ALPHA; break;
+			case 5  : src_fact = GL_ONE_MINUS_SRC_ALPHA; break;
+			case 6  : src_fact = GL_DST_ALPHA; break;
+			case 7  : src_fact = GL_ONE_MINUS_DST_ALPHA; break;
+
+			default : src_fact = GL_DST_COLOR; break;
+		}
+
+		switch(dst) { 
+			case 0  : dst_fact = GL_ZERO; break;
+			case 1  : dst_fact = GL_ONE; break;
+			case 2  : dst_fact = GL_SRC_COLOR; break;
+			case 3  : dst_fact = GL_ONE_MINUS_SRC_COLOR; break;
+			case 4  : dst_fact = GL_SRC_ALPHA; break;
+			case 5  : dst_fact = GL_ONE_MINUS_SRC_ALPHA; break;
+			case 6  : dst_fact = GL_DST_ALPHA; break;
+			case 7  : dst_fact = GL_ONE_MINUS_DST_ALPHA; break;
+
+			default : dst_fact = GL_SRC_ALPHA; break;
+		}
+
+		if (m_blend_src != src_fact || m_blend_dst != dst_fact) {
+			m_blend_src = src_fact;
+			m_blend_dst = dst_fact;
+			glBlendFunc(src_fact, dst_fact);
+		}
 	}
 
 	bool RenderBackendOpenGL::putPixel(int x, int y, int r, int g, int b, int a) {
@@ -276,5 +467,22 @@ namespace FIFE {
 		glEnd();
 
 		glLineWidth(width);
+	}
+
+	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
+		glBegin(GL_TRIANGLE_FAN);
+		glColor4ub(red, green, blue, intensity);
+		glVertex2f(p.x, p.y);
+		if (m_lightmodel == 2) {
+			glColor4ub(0, 0, 0, intensity);
+		} else {
+			glColor4ub(0, 0, 0, 255);
+		}
+		for(float angle=0; angle<=Mathf::twoPi(); angle+=(Mathf::twoPi()/subdivisions)){
+			glVertex2f( radius*Mathf::Cos(angle)*xstretch + p.x,
+						radius*Mathf::Sin(angle)*ystretch + p.y);  
+		}
+		glVertex2f(p.x+radius*xstretch, p.y);
+		glEnd();
 	}
 }

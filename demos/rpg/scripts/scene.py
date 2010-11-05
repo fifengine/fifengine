@@ -27,8 +27,9 @@ import sys, os, re, math, random, shutil, uuid
 
 from fife import fife
 from fife.extensions.loaders import loadMapFile
-from fife.extensions.loaders import loadImportFile
+from fife.extensions.serializers.xml_loader_tools import loadImportFile
 from fife.extensions.serializers.simplexml import SimpleXMLSerializer
+from fife.extensions.serializers.xmlobject import XMLObjectLoader
 
 from scripts.actors.baseactor import Actor
 from scripts.actors.questgiver import QuestGiver
@@ -57,6 +58,13 @@ class Scene(Serializer):
 		self._objectsettings = None
 		self._modelsettings = None
 
+		self.obj_loader = XMLObjectLoader(
+			gamecontroller.engine.getImagePool(),
+			gamecontroller.engine.getAnimationPool(),
+			gamecontroller.engine.getModel(),
+			gamecontroller.engine.getVFS()
+		)
+
 	def loadObject(self, objectname, objectid=None, valuedict=None):
 		if objectid:
 			identifier = objectid
@@ -67,7 +75,7 @@ class Scene(Serializer):
 			objdict = self._modelsettings.get("objects", objectname, {})
 			modeldict = self._modelsettings.get("models", objdict["modelname"], {})
 			
-			loadImportFile(modeldict["file"], self._gamecontroller.engine)
+			loadImportFile(self.obj_loader, modeldict["file"], self._gamecontroller.engine)
 			
 			if objdict["type"] == "GOLD":
 				newobject = GoldStack(self._gamecontroller, self.itemlayer, objdict["type"], objectname, modeldict["model"], identifier)
@@ -114,7 +122,7 @@ class Scene(Serializer):
 		"""
 		modeldict = self._modelsettings.get("models", "Player", {})
 	
-		loadImportFile(modeldict["file"], self._gamecontroller.engine)
+		loadImportFile(self.obj_loader, modeldict["file"], self._gamecontroller.engine)
 		self._player = Player(self._gamecontroller, self.actorlayer, "warrior")
 		
 		playerfilename = os.path.join("saves", "player_save.xml")

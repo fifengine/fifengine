@@ -377,11 +377,36 @@ namespace FIFE {
 			r.y = p.y-img->getHeight()/2;
 			r.w = img->getWidth();
 			r.h = img->getHeight();
-			if(r.intersects(viewport))
+			if(r.intersects(viewport)) {
+				renderbackend->disableLighting();
 				img->render(r);
+				renderbackend->enableLighting();
+			}
 		}
 	}
 
+	GenericRendererResizeInfo::GenericRendererResizeInfo(GenericRendererNode anchor, int image, int width, int height):
+		GenericRendererElementInfo(),
+		m_anchor(anchor),
+		m_image(image),
+		m_width(width),
+		m_height(height){
+	}
+	void GenericRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+		Point p = m_anchor.getCalculatedPoint(cam, layer);
+		if(m_anchor.getLayer() == layer) {
+			Image* img = &imagepool->getImage(m_image);
+			Rect r;
+			r.x = p.x-m_width/2;
+			r.y = p.y-m_height/2;
+			r.w = m_width;
+			r.h = m_height;
+			renderbackend->disableLighting();
+			img->render(r);
+			renderbackend->enableLighting();
+		}
+	}
+	
 	GenericRenderer* GenericRenderer::getInstance(IRendererContainer* cnt) {
 		return dynamic_cast<GenericRenderer*>(cnt->getRenderer("GenericRenderer"));
 	}
@@ -440,7 +465,10 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}
-
+	void GenericRenderer::resizeImage(const std::string &group, GenericRendererNode n, int image, int width, int height) {
+		GenericRendererElementInfo* info = new GenericRendererResizeInfo(n, image, width, height);
+		m_groups[group].push_back(info);
+	}
 	void GenericRenderer::removeAll(const std::string &group) {
 		std::vector<GenericRendererElementInfo*>::const_iterator info_it = m_groups[group].begin();
 		for (;info_it != m_groups[group].end(); ++info_it) {

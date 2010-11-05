@@ -50,6 +50,21 @@ namespace FIFE {
 		void endFrame();
 		void init(const std::string& driver);
 		void clearBackBuffer();
+		void setLightingModel(unsigned int lighting);
+		unsigned int getLightingModel() const;
+		void enableLighting();
+		void disableLighting();
+		void setLighting(float red, float green, float blue, float alpha);
+		void resetLighting();
+		void enableStencilTest();
+		void disableStencilTest();
+		void setStencilTest(uint8_t stencil_ref, unsigned int stencil_op, unsigned int stencil_func);
+		void resetStencilBuffer(uint8_t buffer);
+		uint8_t getStencilRef() const;
+		void enableAlphaTest();
+		void disableAlphaTest();
+		void setAlphaTest(float ref_alpha);
+		void changeBlending(int scr, int dst);
 
 		Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
 		Image* setScreenMode(const ScreenMode& mode);
@@ -62,6 +77,7 @@ namespace FIFE {
 		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
 		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255);
+		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 	};
 
 }

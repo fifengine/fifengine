@@ -40,10 +40,12 @@
 #include "model/structures/instance.h"
 #include "model/structures/layer.h"
 #include "model/structures/location.h"
+#include "video/opengl/fife_opengl.h"
 
 #include "view/camera.h"
 #include "view/visual.h"
 #include "instancerenderer.h"
+
 
 namespace {
 	unsigned int scale(unsigned int val, double factor) {
@@ -129,6 +131,8 @@ namespace FIFE {
 		}
 
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
+		const bool unlit = !m_unlit_groups.empty();
+		unsigned int lm = m_renderbackend->getLightingModel();
 
 		m_area_layer = false;
 		if(!m_instance_areas.empty()) {
@@ -185,17 +189,56 @@ namespace FIFE {
 			if (any_effects) {
 				InstanceToOutlines_t::iterator outline_it = m_instance_outlines.find(instance);
 				if (outline_it != m_instance_outlines.end()) {
+					if (lm != 0) {
+						m_renderbackend->disableLighting();
+						m_renderbackend->setStencilTest(255, 2, 7);
+						m_renderbackend->setAlphaTest(0.0);
+						bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+						m_renderbackend->enableLighting();
+						m_renderbackend->setStencilTest(0, 2, 7);
+						vc.image->render(vc.dimensions, vc.transparency);
+						m_renderbackend->disableAlphaTest();
+						m_renderbackend->disableStencilTest();
+						continue;
+					}
 					bindOutline(outline_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
 				}
 
 				InstanceToColoring_t::iterator coloring_it = m_instance_colorings.find(instance);
 				if (coloring_it != m_instance_colorings.end()) {
+					m_renderbackend->disableLighting();
 					bindColoring(coloring_it->second, vc, cam)->render(vc.dimensions, vc.transparency);
+					m_renderbackend->enableLighting();
 					continue; // Skip normal rendering after drawing overlay
 				}
 			}
+			if(lm != 0) {
+				if(unlit) {
+					bool found = false;
+					std::string lit_name = instance->getObject()->getNamespace();
+					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
+					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
+						if(lit_name.find(*unlit_it) != -1) {
+							m_renderbackend->setStencilTest(255, 2, 7);
+							found = true;
+							break;
+						}
+					}
+					// This is very expensiv, we have to change it
+					if(!found)
+						m_renderbackend->setStencilTest(0, 1, 7);
 
+					m_renderbackend->setAlphaTest(0.0);
+					vc.image->render(vc.dimensions, vc.transparency);
+					continue;
+				}
+			}
 			vc.image->render(vc.dimensions, vc.transparency);
+
+		}
+		if(lm != 0) {
+			m_renderbackend->disableAlphaTest();
+			m_renderbackend->disableStencilTest();
 		}
 	}
 
@@ -422,10 +465,37 @@ namespace FIFE {
 		m_instance_areas.clear();
 	}
 
+	void InstanceRenderer::addIgnoreLight(const std::list<std::string> &groups) {
+		std::list<std::string>::const_iterator group_it = groups.begin();
+		for(;group_it != groups.end(); ++group_it) {
+			m_unlit_groups.push_back(*group_it);
+		}
+		m_unlit_groups.sort();
+		m_unlit_groups.unique();
+	}
+
+	void InstanceRenderer::removeIgnoreLight(const std::list<std::string> &groups) {
+		std::list<std::string>::const_iterator group_it = groups.begin();
+		for(;group_it != groups.end(); ++group_it) {
+			std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
+			for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
+				if((*group_it).find(*unlit_it) != -1) {
+					m_unlit_groups.remove(*unlit_it);
+					break;
+				}
+			}
+		}
+	}
+
+	void InstanceRenderer::removeAllIgnoreLight() {
+		m_unlit_groups.clear();
+	}
+
 	void InstanceRenderer::reset() {
 		removeAllOutlines();
 		removeAllColored();
 		removeAllTransparentAreas();
+		removeAllIgnoreLight();
 	}
 
 }
