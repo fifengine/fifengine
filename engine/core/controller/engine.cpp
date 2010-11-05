@@ -51,6 +51,7 @@
 #include "video/cursor.h"
 #include "video/devicecaps.h"
 #ifdef HAVE_OPENGL
+#include "video/opengl/fife_opengl.h"
 #include "video/opengl/renderbackendopengl.h"
 #include "gui/base/opengl/opengl_gui_graphics.h"
 #endif
@@ -74,6 +75,7 @@
 #include "view/renderers/cellselectionrenderer.h"
 #include "view/renderers/blockinginforenderer.h"
 #include "view/renderers/genericrenderer.h"
+#include "view/renderers/lightrenderer.h"
 #include "video/image.h"
 #include "gui/console/console.h"
 #include "engine.h"
@@ -256,6 +258,11 @@ namespace FIFE {
 		if( rbackend != "SDL" ) {
 			m_gui_graphics = new OpenGLGuiGraphics(*m_imagepool);
 		}
+
+		if (m_settings.getLightingModel() != 0) {
+			m_renderbackend->setLightingModel(m_settings.getLightingModel());
+		}
+
 #endif
 		if( rbackend == "SDL" ) {
 			m_gui_graphics = new SdlGuiGraphics(*m_imagepool);
@@ -289,6 +296,7 @@ namespace FIFE {
 		m_renderers.push_back(new QuadTreeRenderer(m_renderbackend, 60));
 		m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70, dynamic_cast<AbstractFont*>(m_defaultfont)));
 		m_renderers.push_back(new GenericRenderer(m_renderbackend, 80, m_imagepool, m_animpool));
+		m_renderers.push_back(new LightRenderer(m_renderbackend, 90, m_imagepool, m_animpool));
 
 		FL_LOG(_log, "Creating model");
 		m_model = new Model(m_renderbackend, m_renderers, m_imagepool, m_animpool);
@@ -358,8 +366,18 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_timemanager->update();
 		m_model->update();
+#ifdef HAVE_OPENGL
+		if (m_settings.getLightingModel() == 1) {
+			m_renderbackend->disableLighting();
+		}
+#endif
 		m_guimanager->turn();
 		m_cursor->draw();
+#ifdef HAVE_OPENGL
+		if (m_settings.getLightingModel() == 1) {
+			m_renderbackend->enableLighting();
+		}
+#endif
 		m_renderbackend->endFrame();
 	}
 

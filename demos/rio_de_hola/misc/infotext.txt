@@ -11,6 +11,8 @@ Keybindings:
 - R = Reload map (useful for map editing)
 - S = Second camera on / off
 - O = Rotate main camera
+- 1,2 = Change global light intensity
+- 3,4 = Change light source intensity
 
 Have fun,
 The FIFE team

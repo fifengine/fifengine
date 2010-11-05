@@ -127,6 +127,7 @@ namespace FIFE {
 		type_angle2id m_angle2img;
 	};
 
+
 	/** Instance visual contains data that is needed to visualize the instance on screen
 	 */
 	class InstanceVisual: public Visual2DGfx {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ascii"?>
-<Container base_color="0,0,0" border_size="0" opaque="0" position="0,0" name="HighScores" size="1024,768">
+<Container opaque="0" name="HighScores" border_size="0" position="0,0" size="1024,768" base_color="0,0,0">
 	<VBox name="high_score" position="412,200" opaque="1" base_color="188,0,0">
 		<HBox>
 			<Label name="high_scores" border_size="0" text="High Scores" min_size="100,0">

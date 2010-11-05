@@ -113,6 +113,7 @@ class ApplicationBase(object):
 		engineSetting.setRenderBackend(self._setting.get("FIFE", "RenderBackend", "OpenGL"))
 		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", False))
 		engineSetting.setVideoDriver(self._setting.get("FIFE", "VideoDriver", ""))
+		engineSetting.setLightingModel(self._setting.get("FIFE", "Lighting", 0))
 
 		try:
 			engineSetting.setColorKeyEnabled(self._setting.get("FIFE", "ColorKeyEnabled", False))

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
+#  Copyright (C) 2005-2010 by the FIFE team
 #  http://www.fifengine.de
 #  This file is part of FIFE.
 #
@@ -28,7 +27,7 @@ __all__ = ('ET', 'SerializerError', 'InvalidFormat', 'WrongFileType', 'NameClash
 
 try:
 	import xml.etree.cElementTree as ET
-except:
+except ImportError:
 	import xml.etree.ElementTree as ET
 
 class SerializerError(Exception):
@@ -105,3 +104,70 @@ def norm_path(path):
 		return path
 
 	return '/'.join(path.split(os.path.sep))	
+
+def loadImportFile(loader, path, engine, debug=False):
+	""" uses XMLObjectLoader to load import files from path
+	
+	@type	path:	string
+	@param	path:	path to import file
+	@type	debug:	bool
+	@param	debug:	flag to activate / deactivate print statements
+	"""
+	loader.loadResource(fife.ResourceLocation(path))
+	if debug: print 'imported object file ' + path
+
+def loadImportDir(loader, path, engine, debug=False):
+	""" helper function to call loadImportFile on a directory
+	
+	@type	path:	string
+	@param	path:	path to import directory
+	@type	debug:	bool
+	@param	debug:	flag to activate / deactivate print statements
+	"""
+	for _file in filter(lambda f: f.split('.')[-1] == 'xml', engine.getVFS().listFiles(path)):
+		loadImportFile(loader, '/'.join([path, _file]), engine, debug)
+
+def loadImportDirRec(loader, path, engine, debug=False):
+	""" helper function to call loadImportFile recursive on a directory
+
+	@type	path:	string
+	@param	path:	path to import directory
+	@type	debug:	bool
+	@param	debug:	flag to activate / deactivate print statements	
+	"""
+	loadImportDir(loader, path, engine, debug)
+
+	for _dir in filter(lambda d: not d.startswith('.'), engine.getVFS().listDirectories(path)):
+		loadImportDirRec(loader, '/'.join([path, _dir]), engine, debug)
+		
+def root_subfile(masterfile, subfile):
+	"""
+	Returns new path for given subfile (path), which is rooted against masterfile
+	E.g. if masterfile is ./../foo/bar.xml and subfile is ./../foo2/subfoo.xml,
+	returned path is ../foo2/subfoo.xml
+	NOTE: masterfile is expected to be *file*, not directory. subfile can be either
+	"""
+	s = '/'
+
+	masterfile = norm_path(os.path.abspath(masterfile))
+	subfile = norm_path(os.path.abspath(subfile))
+
+	master_fragments = masterfile.split(s)
+	sub_fragments = subfile.split(s)
+
+	master_leftovers = []
+	sub_leftovers = []
+
+	for i in xrange(len(master_fragments)):
+		try:
+			if master_fragments[i] == sub_fragments[i]:
+				master_leftovers = master_fragments[i+1:]
+				sub_leftovers = sub_fragments[i+1:]
+		except IndexError:
+			break
+
+	pathstr = ''
+	for f in master_leftovers[:-1]:
+		pathstr += '..' + s
+	pathstr += s.join(sub_leftovers)
+	return pathstr

@@ -214,6 +214,16 @@ namespace FIFE {
 
 		const std::string& getVideoDriver() const;
 
+		/** Sets the light model
+		 */
+		void setLightingModel(unsigned int lighting);
+
+		/** Gets the currently set light model
+		 */
+		unsigned int getLightingModel() const {
+			return m_lighting;
+		}
+
 	private:
 		uint8_t m_bitsperpixel;
 		bool m_fullscreen;
@@ -223,7 +233,7 @@ namespace FIFE {
 		uint16_t m_screenwidth;
 		uint16_t m_screenheight;
 		std::string m_windowtitle;
-		std::string m_windowicon;
+		std::string m_windowicon;		
 
 
 		std::string m_defaultfontpath;
@@ -232,6 +242,7 @@ namespace FIFE {
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
 		std::string m_videodriver;
+		unsigned int m_lighting;
 	};
 
 }//FIFE

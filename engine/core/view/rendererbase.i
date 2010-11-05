@@ -43,6 +43,7 @@ namespace FIFE {
 		void removeActiveLayer(Layer* layer);
 		void clearActiveLayers();
 		void activateAllLayers(Map* map);
+		std::list<Layer*> getActiveLayers() const {return m_active_layers;}
 	};
 	
 	class IRendererContainer {

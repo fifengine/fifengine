@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
+#  Copyright (C) 2005-2010 by the FIFE team
 #  http://www.fifengine.de
 #  This file is part of FIFE.
 #
@@ -83,6 +83,10 @@ class World(EventListenerBase):
 		self.instance_to_agent = {}
 		self.dynamic_widgets = {}
 
+		self.light_intensity = 1
+		self.light_sources = 0
+		self.lightmodel = int(TDS.get("FIFE", "Lighting"))
+
 		self.soundmanager = SoundManager(self.engine)
 		self.music = None
 
@@ -157,7 +161,7 @@ class World(EventListenerBase):
 		
 		self.filename = filename
 		self.reset()
-		self.map = loadMapFile(filename, self.engine)
+		self.map = loadMapFile(filename, self.engine, extensions = {'lights': True})
 		self.maplistener = MapListener(self.map)
 
 		self.initAgents()
@@ -259,6 +263,13 @@ class World(EventListenerBase):
 		if str(TDS.get("rio", "QuadTreeLayerName")):
 			renderer.addActiveLayer(self.map.getLayer(str(TDS.get("rio", "QuadTreeLayerName"))))
 
+		# If Light is enabled in settings then init the lightrenderer.
+		if self.lightmodel != 0:
+			renderer = fife.LightRenderer.getInstance(self.cameras['main'])
+			renderer.setEnabled(True)
+			renderer.clearActiveLayers()
+			renderer.addActiveLayer(self.map.getLayer('TechdemoMapGroundObjectLayer'))
+			
 		# Set up the second camera
 		# NOTE: We need to explicitly call setLocation, there's a bit of a messup in the Camera code.
 		self.cameras['small'].setLocation(self.hero.agent.getLocation())
@@ -304,6 +315,14 @@ class World(EventListenerBase):
 			self.load(self.filename)
 		elif keystr == 'o':
 			self.target_rotation = (self.target_rotation + 90) % 360
+		elif keystr == '2':
+			self.lightIntensity(0.1)
+		elif keystr == '1':
+			self.lightIntensity(-0.1)
+		elif keystr == '5':
+			self.lightSourceIntensity(25)
+		elif keystr == '4':
+			self.lightSourceIntensity(-25)
 		elif keyval in (fife.Key.LEFT_CONTROL, fife.Key.RIGHT_CONTROL):
 			self.ctrldown = True
 
@@ -353,6 +372,50 @@ class World(EventListenerBase):
 		for i in instances:
 			if i.getObject().getId() in ('girl', 'beekeeper'):
 				renderer.addOutlined(i, 173, 255, 47, 2)
+
+	def lightIntensity(self, value):
+		if self.light_intensity+value <= 1 and self.light_intensity+value >= 0:
+			self.light_intensity = self.light_intensity + value
+
+			if self.lightmodel == 1:
+				self.cameras['main'].setLightingColor(self.light_intensity, self.light_intensity, self.light_intensity, 1.0)
+
+			if self.lightmodel == 2:
+				self.cameras['main'].setLightingColor(0, 0, 0, 1-self.light_intensity)
+
+	def lightSourceIntensity(self, value):
+		if self.light_sources+value <= 255 and self.light_sources+value >= 0:
+			self.light_sources = self.light_sources+value
+			renderer = fife.LightRenderer.getInstance(self.cameras['main'])
+
+			renderer.removeAll("beekeeper_simple_light")
+			renderer.removeAll("hero_simple_light")
+			renderer.removeAll("girl_simple_light")
+
+			if self.lightmodel == 1:
+				node = fife.LightRendererNode(self.hero.agent)
+				renderer.addSimpleLight("hero_simple_light", node, self.light_sources, 64, 32, 1, 1, 255, 255, 255)
+
+				node = fife.LightRendererNode(self.girl.agent)		
+				renderer.addSimpleLight("girl_simple_light", node, self.light_sources, 64, 32, 1, 1, 255, 255, 255)
+
+				for beekeeper in self.beekeepers:
+					node = fife.LightRendererNode(beekeeper.agent)
+					renderer.addSimpleLight("beekeeper_simple_light", node, self.light_sources, 120, 32, 1, 1, 255, 255, 255)
+
+			if self.lightmodel == 2:
+				node = fife.LightRendererNode(self.hero.agent)
+				renderer.addSimpleLight("hero_simple_light", node, self.light_sources, 64, 32, 1, 1, 0, 0, 0)
+				renderer.addStencilTest("hero_simple_light")
+
+				node = fife.LightRendererNode(self.girl.agent)		
+				renderer.addSimpleLight("girl_simple_light", node, self.light_sources, 64, 32, 1, 1, 0, 0, 0)
+				renderer.addStencilTest("girl_simple_light")
+
+				for beekeeper in self.beekeepers:
+					node = fife.LightRendererNode(beekeeper.agent)
+					renderer.addSimpleLight("beekeeper_simple_light", node, 255, 120, 32, 1, 1, 0, 0, 0)
+					renderer.addStencilTest("beekeeper_simple_light")				
 
 	def onConsoleCommand(self, command):
 		result = ''

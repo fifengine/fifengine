@@ -43,6 +43,9 @@ namespace FIFE {
 		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, unsigned int w, unsigned int h, unsigned char trans, bool front = true);
 		void removeTransparentArea(Instance* instance);
 		void removeAllTransparentAreas();
+		void addIgnoreLight(const std::list<std::string> &groups);
+		void removeIgnoreLight(const std::list<std::string> &groups);
+		void removeAllIgnoreLight();
 		static InstanceRenderer* getInstance(IRendererContainer* cnt);
 	private:
 		InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);

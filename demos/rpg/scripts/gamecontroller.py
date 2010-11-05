@@ -28,7 +28,7 @@ import sys, os, re, math, random, shutil, glob, uuid
 from fife import fife
 
 from fife.extensions.soundmanager import SoundManager
-from fife.extensions.loaders import loadImportFile
+from fife.extensions.serializers.xml_loader_tools import loadImportFile
 
 from scripts.scene import Scene
 from scripts.guicontroller import GUIController

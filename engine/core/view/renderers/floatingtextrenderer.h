@@ -89,6 +89,10 @@ namespace FIFE {
 		 */
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
+		/** Provides access point to the RenderBackend
+		 */
+		RenderBackend* getRenderBackend() const {return m_renderbackend;}
+
 	private:
 		RenderBackend* m_renderbackend;
 		AbstractFont* m_font;

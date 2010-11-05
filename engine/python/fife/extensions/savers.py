@@ -174,6 +174,7 @@ class ModelSaver:
 			attrs = AttributesNSImpl(attr_vals, attr_names)
 			self.startElement('layer', attrs)
 			self.write_instances(layer)
+			self.write_lights(layer)
 			self.endElement('layer')
 
 	def write_instances(self, layer):
@@ -222,6 +223,102 @@ class ModelSaver:
 
 		self.endElement('instances')
 
+	def write_lights(self, layer):
+		attrs = AttributesNSImpl({}, {})
+		self.startElement('lights',  attrs)
+
+		cameras = layer.getMap().getCameras()
+		for cam in cameras:
+			hit = False
+			layers = cam.getRenderer("LightRenderer").getActiveLayers();
+			for lay in layers:
+				if lay.getId() == layer.getId():
+					hit = True
+
+			if hit == False: continue					
+			
+			renderer = fife.LightRenderer.getInstance(cam)
+			groups = renderer.getGroups()
+			for group in groups:
+				infos = renderer.getLightInfo(group)
+				for info in infos:
+					attr_vals = {}
+					attr_names = {}
+					type = info.getName()
+					attr_vals[(None, 'group')] = str(group)
+					attr_names[(None, 'group')] = 'group'
+					attr_vals[(None, 'type')] = str(type)
+					attr_names[(None, 'type')] = 'type'
+					attr_vals[(None, 'instance')] = str(info.getNode().getInstance().getId())
+					attr_names[(None, 'instance')] = 'instance'
+					if info.getSrcBlend() > -1:
+						attr_vals[(None, 'src')] = str(info.getSrcBlend())
+						attr_names[(None, 'src')] = 'src'
+					if info.getDstBlend() > -1:
+						attr_vals[(None, 'dst')] = str(info.getDstBlend())
+						attr_names[(None, 'dst')] = 'dst'
+					if info.getStencil() > -1:
+						attr_vals[(None, 's_ref')] = str(info.getStencil())
+						attr_names[(None, 's_ref')] = 's_ref'
+						attr_vals[(None, 'a_ref')] = str(info.getAlpha())
+						attr_names[(None, 'a_ref')] = 'a_ref'
+					
+					if type == 'simple':
+						if info.getRadius() > 0:
+							attr_vals[(None, 'radius')] = str(info.getRadius())
+							attr_names[(None, 'radius')] = 'radius'
+						if info.getColor():
+							color = info.getColor()
+							attr_vals[(None, 'color')] = '%d,%d,%d' % (color[0], color[1], color[2])
+							attr_vals[(None, 'intensity')] = str(color[3])
+							attr_names[(None, 'color')] = 'color'
+							attr_names[(None, 'intensity')] = 'intensity'
+
+						if info.getSubdivisions() is not 32:
+							attr_vals[(None, 'subdivisions')] = str(info.getSubdivisions())
+							attr_names[(None, 'subdivisions')] = 'subdivisions'
+						if info.getXStretch() > 1.001 or info.getXStretch() < 0.999:
+							attr_vals[(None, 'xstretch')] = str(info.getXStretch())
+							attr_names[(None, 'xstretch')] = 'xstretch'
+						if info.getYStretch() > 1.001 or info.getYStretch() < 0.999:
+							attr_vals[(None, 'ystretch')] = str(info.getYStretch())
+							attr_names[(None, 'ystretch')] = 'ystretch'
+
+					elif type == 'image':
+						if info.getId() == -1: continue
+						img = self.pool.getImage(info.getId());
+						name = img.getResourceFile()
+						attr_vals[(None, 'image')] = str('../' + name)
+						attr_names[(None, 'image')] = 'image'
+
+					elif type == 'animation':
+						if info.getId() == -1: continue
+						ani = self.anim_pool.getAnimation(info.getId());
+						count = 0
+						newstr = ''
+						image = ani.getFrame(ani.getActionFrame())
+						fname = image.getResourceFile()
+						strings = ([str(s) for s in fname.split('/')])
+						leng = len(strings) -1
+						while count < leng:
+							newstr = str(newstr + strings[count] + '/')
+							count += 1
+
+						name = str('../' + newstr + 'animation.' + fileExtensions[0])
+						attr_vals[(None, 'animation')] = str(name)
+						attr_names[(None, 'animation')] = 'animation'
+
+					else:
+						continue
+
+					attrs = AttributesNSImpl(attr_vals, attr_names)
+					self.file.write(self.indent_level)
+					self.xmlout.startElementNS((None, 'l'), 'l', attrs)
+					self.xmlout.endElementNS((None, 'l'), 'l')
+					self.file.write('\n')
+
+		self.endElement('lights')
+
 	# Save the linked camera of a map.
 	def write_camera( self, map ):
 		cameralist = map.getCameras()
@@ -256,6 +353,10 @@ class ModelSaver:
 					attr_names[(None,'viewport')] = 'viewport'
 					attr_vals[(None,'viewport')] = '%d,%d,%d,%d' % (viewport.x, viewport.y, viewport.w, viewport.h)
 
+				colors = cam.getLightingColor()
+				if colors[0] < 1.0 or colors[1] < 1.0 or colors[2] < 1.0 or colors[3] < 1.0:
+					attr_names[(None,'light_color')] = 'light_color'
+					attr_vals[(None,'light_color')] = '%f,%f,%f,%f' % (colors[0], colors[1], colors[2], colors[3])
 				attrs = AttributesNSImpl( attr_vals, attr_names )
 				self.startElement( 'camera', attrs );
 				self.endElement( 'camera' );

@@ -283,6 +283,10 @@ namespace FIFE {
 		 */
 		bool testRenderedViewPort();
 
+		void setLightingColor(float red, float green, float blue, float alpha);
+		void resetLightingColor();
+		std::vector<float> getLightingColor();
+
 		/** Renders camera
 		 */
 		void render();
@@ -356,6 +360,11 @@ namespace FIFE {
 		std::map<Layer*,LayerCache*> m_cache;
 		MapObserver* m_map_observer;
 		Map* m_map;
+
+		// is lighting enable
+		bool m_lighting;
+		// caches the light color for the camera
+		std::vector<float> m_light_colors;
 	};
 }
 #endif

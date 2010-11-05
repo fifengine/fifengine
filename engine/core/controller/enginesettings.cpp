@@ -50,6 +50,7 @@ namespace FIFE {
 		m_defaultfontpath(""),
 		m_defaultfontsize(8),
 		m_defaultfontglyphs(""),
+		m_lighting(0),
 		m_iscolorkeyenabled(false){
 			m_colorkey.r = 255;
 			m_colorkey.g = 0;
@@ -199,5 +200,13 @@ namespace FIFE {
 	const std::string& EngineSettings::getVideoDriver() const {
 		return m_videodriver;
 	}
+	void EngineSettings::setLightingModel(unsigned int lighting) {
+		if (lighting <= 2) {
+			m_lighting = lighting;
+			return;
+		}
+		throw NotSupported("Given light model is not supported");
+	}
+
 }
 

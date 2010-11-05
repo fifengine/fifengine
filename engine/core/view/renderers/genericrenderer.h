@@ -188,6 +188,17 @@ namespace FIFE {
 		AbstractFont* m_font;
 		std::string m_text;
 	};
+	class GenericRendererResizeInfo : public GenericRendererElementInfo {
+	public:
+		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
+		GenericRendererResizeInfo(GenericRendererNode n, int image, int width, int height);
+		virtual ~GenericRendererResizeInfo() {};
+	private:
+		GenericRendererNode m_anchor;
+		int m_image;
+		int m_width;
+		int m_height;
+	};
 	class GenericRenderer: public RendererBase {
 	public:
 		/** constructor.
@@ -218,6 +229,7 @@ namespace FIFE {
 		void addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text);
 		void addImage(const std::string &group, GenericRendererNode n, int image);
 		void addAnimation(const std::string &group, GenericRendererNode n, int animation);
+		void resizeImage(const std::string &group, GenericRendererNode n, int image, int width, int height);
 		void removeAll(const std::string &group);
 
 	private:

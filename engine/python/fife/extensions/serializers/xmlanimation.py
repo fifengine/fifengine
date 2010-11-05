@@ -22,7 +22,7 @@
 # ####################################################################
 
 from fife import fife
-from fife.extensions.serializers import *
+from fife.extensions.serializers import ET
 
 class XMLAnimationLoader(fife.ResourceLoader):
 	def __init__(self, imagepool, vfs):

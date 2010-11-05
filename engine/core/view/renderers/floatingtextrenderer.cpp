@@ -78,9 +78,15 @@ namespace FIFE {
 
 		RenderList::const_iterator instance_it = instances.begin();
 		const std::string* saytext = NULL;
+		unsigned int lm = m_renderbackend->getLightingModel();
 		SDL_Color old_color = m_font->getColor();
 		if(m_font_color) {
 			m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.unused);
+		}
+		if(lm != 0) {
+			m_renderbackend->disableLighting();
+			m_renderbackend->setStencilTest(255, 2, 7);
+			m_renderbackend->setAlphaTest(0.0);
 		}
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
@@ -109,6 +115,11 @@ namespace FIFE {
 				}
 				img->render(r);
 			}
+		}
+		if(lm != 0) {
+			m_renderbackend->disableAlphaTest();
+			m_renderbackend->disableStencilTest();
+			m_renderbackend->enableLighting();
 		}
 		if(m_font_color) {
 			m_font->setColor(old_color.r, old_color.g, old_color.b, old_color.unused);

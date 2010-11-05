@@ -81,6 +81,8 @@ namespace FIFE {
 		const SDL_Color& getColorKey() const;
 		void setVideoDriver(const std::string& driver);
 		const std::string& getVideoDriver() const;
+		void setLightingModel(unsigned int lighting);
+		unsigned int getLightingModel() const;
 		
 	private:
 		EngineSettings();

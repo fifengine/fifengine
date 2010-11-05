@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <vector>
 
 // Platform specific includes
 #include "util/base/fife_stdint.h"
@@ -79,6 +80,66 @@ namespace FIFE {
 		/** Forces a clear of the backbuffer
 		 */
 		virtual void clearBackBuffer() = 0;
+
+		/** Initializes the light.
+		 */
+		virtual void setLightingModel(unsigned int lighting) = 0;
+
+		/** Gets the current light model.
+		 */
+		virtual unsigned int getLightingModel() const = 0;
+
+		/** Enable the lighting.
+		 */
+		virtual void enableLighting() = 0;
+
+		/** Disable the lighting.
+		 */
+		virtual void disableLighting() = 0;
+
+		/** Set colors for lighting
+		 */
+		virtual void setLighting(float red, float green, float blue, float alpha) = 0;
+
+		/** Reset lighting with default values.
+		 */
+		virtual void resetLighting() = 0;
+
+		/** Enable the stencil test.
+		 */
+		virtual void enableStencilTest() = 0;
+
+		/** Disable the stencil test.
+		 */
+		virtual void disableStencilTest() = 0;
+
+		/** Set reference for the stencil test.
+		 */
+		virtual void setStencilTest(Uint8 stencil_ref, unsigned int stencil_op, unsigned int stencil_func) = 0;
+
+		/** Reset stencil buffer with given value.
+		 */
+		virtual void resetStencilBuffer(Uint8 buffer) = 0;
+
+		/** Return the reference value for the stencil test.
+		 */
+		virtual Uint8 getStencilRef() const = 0;
+
+		/** Enable the alpha test.
+		 */
+		virtual void enableAlphaTest() = 0;
+
+		/** Disable the stencil test.
+		 */
+		virtual void disableAlphaTest() = 0;
+
+		/** Set reference for the alpha test.
+		 */
+		virtual void setAlphaTest(float ref_alpha) = 0;
+
+		/** Change the Blendingmodel.
+		 */
+		virtual void changeBlending(int scr, int dst) = 0;
 
 		/** Performs cleanup actions.
 		 */

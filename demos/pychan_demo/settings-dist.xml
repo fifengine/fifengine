@@ -19,6 +19,7 @@
 		<Setting name="LogToFile" type="int"> 0 </Setting>
 		<Setting name="ColorKeyEnabled" type="bool"> False </Setting>
 		<Setting name="ColorKey" type="string"> 255,0,255 </Setting>
+    <Setting name="Lighting" type="int"> 0 </Setting>
 	</Module>
 
 </Settings>
