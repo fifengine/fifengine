@@ -29,7 +29,6 @@
 #if defined( __unix__ )
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glext.h>
 #endif
 
 // Win32
@@ -39,13 +38,11 @@
 #include <windows.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glext.h>
 #undef DELETE
 // MinGW
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glext.h>
 #endif
 #endif
 
