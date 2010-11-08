@@ -30,7 +30,7 @@ def initEnvironment(env):
 	
 	path = os.getcwd()
 	
-	swigdir = os.path.join(path, 'build', 'win32', 'applications', 'swigwin-1.3.40')
+	swigdir = os.path.join(path, 'build', 'win32', 'applications', 'swigwin-2.0.1')
 	mingwbindir = os.path.join(path, 'build', 'win32', 'applications', 'mingw', 'bin')
 	
 	env.PrependENVPath('PATH', swigdir)
@@ -39,8 +39,8 @@ def initEnvironment(env):
 	includepath = os.path.join(path, 'build', 'win32', 'includes')
 	staticlibpath = os.path.join(path, 'build', 'win32', 'static_libs', 'mingw')
 
-	env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\sdl_image', includepath + '\\zlib', includepath + '\\libguichan', includepath + '\\boost_1_38_0', includepath + '\\libvorbis', includepath + '\\libpng', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\python26', includepath + '\\unittest++\\src'])
-	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python26'])
+	env.Append(CPPPATH = [includepath + '\\libogg', includepath + '\\openal', includepath + '\\sdl_image', includepath + '\\zlib', includepath + '\\libguichan', includepath + '\\boost_1_38_0', includepath + '\\libvorbis', includepath + '\\libpng', includepath + '\\sdl_ttf', includepath + '\\sdl', includepath + '\\python27', includepath + '\\unittest++\\src'])
+	env.Append(LIBPATH = [staticlibpath, staticlibpath + '\\python27'])
 	
 	env.Tool('swig')
 	env.Tool('mingw')
@@ -52,9 +52,9 @@ def addExtras(env, opengl):
 	env.Append(LIBS = ['libguichan_sdl', 'libguichan', 'mingw32', 'zlib', 'vorbis', 'ogg', 'vorbisfile', 'libpng', 'SDL_image', 'SDLmain', 'SDL.dll', 'OpenAL32', 'SDL_ttf', 'boost_filesystem', 'boost_regex', 'boost_system'])
 
 	if env['FIFE_DEBUG']:
-		env.Append(LIBS = ['python26_d'])
+		env.Append(LIBS = ['python27_d'])
 	else:
-		env.Append(LIBS = ['python26'])
+		env.Append(LIBS = ['python27'])
 
 	if opengl:
 		env.Prepend(LIBS = ['libguichan_opengl'])
