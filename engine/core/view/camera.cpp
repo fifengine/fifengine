@@ -452,7 +452,6 @@ namespace FIFE {
 		if(trec1 && trec2 && trec3 && trec4) {
 			return false;
 		}
-		m_renderbackend->clearBackBuffer();
 		return true;
 	}
 

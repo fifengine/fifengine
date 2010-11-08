@@ -58,7 +58,7 @@ namespace FIFE {
 	void RenderBackend::pushClipArea(const Rect& cliparea, bool clear) {
 		assert(m_screen);
 		m_screen->pushClipArea(cliparea, clear);
-        }
+	}
 
 	void RenderBackend::popClipArea() {
 		assert(m_screen);
