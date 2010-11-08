@@ -42,7 +42,7 @@ namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
 	RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
-		m_clear = true;
+		m_clear = false;
 	}
 
 
@@ -199,7 +199,7 @@ namespace FIFE {
 
 	void RenderBackendSDL::changeBlending(int scr, int dst){
 	}
-	
+
 	bool RenderBackendSDL::putPixel(int x, int y, int r, int g, int b, int a) {
 		return static_cast<SDLImage*>(m_screen)->putPixel(x, y, r, g, b, a);
 	}
