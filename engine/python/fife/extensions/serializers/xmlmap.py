@@ -446,13 +446,7 @@ class XMLMapLoader(fife.ResourceLoader):
 		
 		for instance in instances:
 			_id = instance.get('id')
-			# check for istance id name clashes
-			if _id:
-				if bool(layer.getInstance(_id)):
-					print "Instance with id=%s, already exists. Omitting..." % _id
-					continue
-				_id = str(_id)
-			else:
+			if not _id:
 				_id = ''
 			
 			objectID = ''
