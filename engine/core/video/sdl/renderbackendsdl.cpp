@@ -42,7 +42,6 @@ namespace FIFE {
 	static Logger _log(LM_VIDEO);
 
 	RenderBackendSDL::RenderBackendSDL(const SDL_Color& colorkey) : RenderBackend(colorkey) {
-		m_clear = false;
 	}
 
 
@@ -135,9 +134,6 @@ namespace FIFE {
 	}
 
 	void RenderBackendSDL::startFrame() {
-		if (m_clear) {
-			clearBackBuffer();
-		}
 	}
 
 	void RenderBackendSDL::endFrame() {

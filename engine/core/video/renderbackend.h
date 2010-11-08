@@ -219,14 +219,8 @@ namespace FIFE {
 		 */
 		const SDL_Color& getColorKey() const;
 
-		/** Sets if the backbuffer should be cleared before rendering the next frame.
-		 * @param clear true = clear screen before next frame, false = do not clear screen
-		 */
-		void setClearBackBuffer(bool clear) { m_clear = clear; };
-
 	protected:
 		Image* m_screen;
-		bool m_clear;
 		bool m_isalphaoptimized;
 		unsigned int m_chunkingsize;
 		bool m_iscolorkeyenabled;

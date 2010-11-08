@@ -131,7 +131,6 @@ namespace FIFE {
 			delete r_it->second;
 		}
 		m_renderers.clear();
-		m_renderbackend->setClearBackBuffer(true);
 		delete m_map_observer;
 	}
 
