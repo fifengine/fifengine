@@ -6,7 +6,7 @@
 		<Option makefile="SConstruct" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
-		<Option compiler="msvc8" />
+		
 		<MakeCommands>
 			<Build command="" />
 			<CompileFile command="" />
@@ -18,7 +18,7 @@
 				<Option output="fife.cbp" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj\Debug\" />
 				<Option type="3" />
-				<Option compiler="msvc8" />
+				
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="/Zi /D_DEBUG" />
@@ -39,7 +39,7 @@
 				<Option output="bin\Release\fife" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Release\" />
 				<Option type="3" />
-				<Option compiler="msvc8" />
+				
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
@@ -57,7 +57,7 @@
 				<Option output="fife" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option type="2" />
-				<Option compiler="msvc8" />
+				
 				<Option createDefFile="1" />
 				<MakeCommands>
 					<Build command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile --enable-debug fife-static" />
@@ -69,7 +69,7 @@
 			<Target title="Debug_shared">
 				<Option output="fife" prefix_auto="1" extension_auto="1" />
 				<Option type="3" />
-				<Option compiler="msvc8" />
+				
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<MakeCommands>
@@ -83,7 +83,7 @@
 				<Option output="fife" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option type="2" />
-				<Option compiler="msvc8" />
+				
 				<Option createDefFile="1" />
 				<MakeCommands>
 					<Build command="python ../../applications/scons/scons.py -C ../../../../ -f $makefile fife-static" />
@@ -95,7 +95,7 @@
 			<Target title="Release_shared">
 				<Option output="fife" prefix_auto="1" extension_auto="1" />
 				<Option type="3" />
-				<Option compiler="msvc8" />
+				
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<MakeCommands>
