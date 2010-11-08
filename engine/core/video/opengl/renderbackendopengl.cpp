@@ -47,7 +47,6 @@ namespace FIFE {
 
 		m_rgba_format = *(testsurface->format);
 		SDL_FreeSurface(testsurface);
-		m_clear = false;
 		m_lightmodel = 0;
 		m_light_enabled = false;
 		m_stencil_enabled = false;
@@ -162,9 +161,6 @@ namespace FIFE {
 
 
 	void RenderBackendOpenGL::startFrame() {
-		if(m_clear) {
-			clearBackBuffer();
-		}
 	}
 
 	void RenderBackendOpenGL::endFrame() {
@@ -350,7 +346,7 @@ namespace FIFE {
 		GLenum src_fact;
 		GLenum dst_fact;
 
-		switch(src) { 
+		switch(src) {
 			case 0  : src_fact = GL_ZERO; break;
 			case 1  : src_fact = GL_ONE; break;
 			case 2  : src_fact = GL_DST_COLOR; break;
@@ -363,7 +359,7 @@ namespace FIFE {
 			default : src_fact = GL_DST_COLOR; break;
 		}
 
-		switch(dst) { 
+		switch(dst) {
 			case 0  : dst_fact = GL_ZERO; break;
 			case 1  : dst_fact = GL_ONE; break;
 			case 2  : dst_fact = GL_SRC_COLOR; break;
@@ -480,7 +476,7 @@ namespace FIFE {
 		}
 		for(float angle=0; angle<=Mathf::twoPi(); angle+=(Mathf::twoPi()/subdivisions)){
 			glVertex2f( radius*Mathf::Cos(angle)*xstretch + p.x,
-						radius*Mathf::Sin(angle)*ystretch + p.y);  
+						radius*Mathf::Sin(angle)*ystretch + p.y);
 		}
 		glVertex2f(p.x+radius*xstretch, p.y);
 		glEnd();

@@ -363,6 +363,11 @@ namespace FIFE {
 		m_eventmanager->processEvents();
 		m_renderbackend->startFrame();
 		m_timemanager->update();
+
+		if (m_model->getNumMaps() == 0) {
+			m_renderbackend->clearBackBuffer();
+		}
+
 		m_model->update();
 #ifdef HAVE_OPENGL
 		if (m_settings.getLightingModel() == 1) {

@@ -104,8 +104,6 @@ class Editor(ApplicationBase, MainWindow):
 		ApplicationBase.__init__(self, TDS, *args, **kwargs)
 		MainWindow.__init__(self, *args, **kwargs)
 		
-		self.engine.getRenderBackend().setClearBackBuffer(True)
-		
 	def _initTools(self):
 		""" Initializes tools """
 		self._pluginmanager = plugin.PluginManager(self.getSettings())
