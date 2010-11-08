@@ -69,8 +69,7 @@ After FIFE has been built successfully move into the <FIFE>/demos/rio_de_hola di
 
 
 === Win32 ===
-The Win32 package ships with precompiled binaries. Simply unpack the package to location of your choice. After that you'll need to install ActivePython 2.6:
- * http://downloads.activestate.com/ActivePython/windows/2.6/ActivePython-2.6.4.8-win32-x86.msi (for 32bit Windows systems)
- * http://downloads.activestate.com/ActivePython/windows/2.6/ActivePython-2.6.4.8-win64-x64-nopywin32.msi (for 64bit Windows systems)
+The Win32 package ships with precompiled binaries. Simply unpack the package to location of your choice. After that you'll need to install ActivePython 2.7:
+ * http://downloads.activestate.com/ActivePython/releases/2.7.0.2/ActivePython-2.7.0.2-win32-x86.msi
 
 Move into the <FIFE>\demos\rio_de_hola directory and start the run.py script. You can simply double-click with your mouse on it. It should be automatically associated with the Python interpreter after installing ActivePython.

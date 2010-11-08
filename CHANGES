@@ -75,7 +75,6 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
   * Updated some data types in FIFE::FloatingTextRenderer to use integer types 
     defined in fife_stdint.h (r3456)
   * Added FIFE::DeviceCaps and FIFE::ScreenMode to detect valid screen modes
-  * Added the clearBackBuffer() function to the renderbackends (r3459)
   * Added the ability to query the current running screen mode (r3467)
   * Added a method to detect the closest supported screen mode (not 
     complete yet). If no matching screen modes are detected an exception is 
