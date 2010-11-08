@@ -66,7 +66,6 @@
 #include "pathfinder/routepather/routepather.h"
 #include "model/metamodel/grids/hexgrid.h"
 #include "model/metamodel/grids/squaregrid.h"
-#include "view/renderers/camerazonerenderer.h"
 #include "view/renderers/quadtreerenderer.h"
 #include "view/renderers/gridrenderer.h"
 #include "view/renderers/instancerenderer.h"
@@ -287,7 +286,6 @@ namespace FIFE {
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
 		FL_LOG(_log, "Creating renderers");
-		m_renderers.push_back(new CameraZoneRenderer(m_renderbackend, 0, m_imagepool));
 		m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10, m_imagepool, m_animpool));
 		m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
 		m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
