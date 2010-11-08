@@ -97,7 +97,7 @@ namespace FIFE {
 		virtual int getStencil() { return 0; };
 		virtual float getAlpha() { return 0; };
 		virtual void removeStencil() {};
-		virtual std::vector<uint8_t> getColor() {};
+		virtual std::vector<uint8_t> getColor() { return std::vector<uint8_t>(); };
 		virtual float getRadius() { return 0; };
 		virtual int getSubdivisions() { return 0; };
 		virtual float getXStretch() { return 0; };
