@@ -10,10 +10,13 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
-== 0.3.2 (2010)                                                               ==
+== 0.3.2 (November 19th, 2010)                                                ==
 ================================================================================
 
 === Engine ===
+  * Removed the Camreazone renderer
+  * Added light support (OpenGL only) by merging the light branch.  Speacial
+    thanks to Helios for all his hard work in this area (#364)
   * Added a percentage bar widget (#411)
   * Modified some size_t definitions to more appropriate ones (#152)
   * Instance rotation changes are reported to the instance change listeners 
