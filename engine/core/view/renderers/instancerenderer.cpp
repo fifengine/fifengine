@@ -168,7 +168,7 @@ namespace FIFE {
 					std::string str_name = instance->getObject()->getNamespace();
 					std::list<std::string>::iterator group_it = infoa.groups.begin();
 					for(;group_it != infoa.groups.end(); ++group_it) {
-						if(str_name.find((*group_it)) != -1) {
+						if(str_name.find((*group_it)) != std::string::npos) {
 							ScreenPoint p;
 							Rect rec;
 							p = cam->toScreenCoordinates(infoa.instance->getLocation().getMapCoordinates());
@@ -218,7 +218,7 @@ namespace FIFE {
 					std::string lit_name = instance->getObject()->getNamespace();
 					std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
 					for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
-						if(lit_name.find(*unlit_it) != -1) {
+						if(lit_name.find(*unlit_it) != std::string::npos) {
 							m_renderbackend->setStencilTest(255, 2, 7);
 							found = true;
 							break;
@@ -479,7 +479,7 @@ namespace FIFE {
 		for(;group_it != groups.end(); ++group_it) {
 			std::list<std::string>::iterator unlit_it = m_unlit_groups.begin();
 			for(;unlit_it != m_unlit_groups.end(); ++unlit_it) {
-				if((*group_it).find(*unlit_it) != -1) {
+				if((*group_it).find(*unlit_it) != std::string::npos) {
 					m_unlit_groups.remove(*unlit_it);
 					break;
 				}

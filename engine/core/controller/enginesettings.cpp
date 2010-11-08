@@ -50,8 +50,8 @@ namespace FIFE {
 		m_defaultfontpath(""),
 		m_defaultfontsize(8),
 		m_defaultfontglyphs(""),
-		m_lighting(0),
-		m_iscolorkeyenabled(false){
+		m_iscolorkeyenabled(false),
+		m_lighting(0) {
 			m_colorkey.r = 255;
 			m_colorkey.g = 0;
 			m_colorkey.b = 255;
