@@ -570,7 +570,7 @@ class MapEditor:
 			
 		elif keystr == "i":
 			if self._mode != MapEditor.INSERTING:
-				self._setMode(INSERTING)
+				self._setMode(MapEditor.INSERTING)
 			else:
 				self._setMode(MapEditor.SELECTING)
 			
