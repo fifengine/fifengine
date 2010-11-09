@@ -455,7 +455,6 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
-		m_layer_to_instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -488,7 +487,6 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
-		m_layer_to_instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -529,7 +527,6 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates) {
 		instances.clear();
-		m_layer_to_instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[loc.getLayer()];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
