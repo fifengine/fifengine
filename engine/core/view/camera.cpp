@@ -416,10 +416,10 @@ namespace FIFE {
 
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
+		m_layer_to_instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[*layer_it];
 		RenderList::const_iterator instance_it = layer_instances.begin();
 		for(; instance_it != layer_instances.end(); ++instance_it) {
-			Instance* i = (*instance_it)->instance;
 			const RenderItem& vc = **instance_it;
 			if(vc.dimensions.intersects(rec1) && !trec1) {
 				trec1 = true;
@@ -434,7 +434,6 @@ namespace FIFE {
 		if(trec1 && trec2) {
 			RenderList::const_reverse_iterator instance_itr = layer_instances.rbegin();
 			for(; instance_itr != layer_instances.rend(); ++instance_itr) {
-				Instance* i = (*instance_itr)->instance;
 				const RenderItem& vc = **instance_itr;
 				if(vc.dimensions.intersects(rec3) && !trec3) {
 					trec3 = true;
@@ -456,6 +455,7 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
+		m_layer_to_instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -488,6 +488,7 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances) {
 		instances.clear();
+		m_layer_to_instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
@@ -528,6 +529,7 @@ namespace FIFE {
 
 	void Camera::getMatchingInstances(Location& loc, std::list<Instance*>& instances, bool use_exactcoordinates) {
 		instances.clear();
+		m_layer_to_instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[loc.getLayer()];
 		RenderList::const_iterator instance_it = layer_instances.end();
 		while (instance_it != layer_instances.begin()) {
