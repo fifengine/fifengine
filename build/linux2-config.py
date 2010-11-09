@@ -23,6 +23,7 @@
 
 import sys
 import os
+import platform
 
 pythonversion = 'python' + str(os.sys.version_info[0]) + '.' + str(os.sys.version_info[1])
 
@@ -80,6 +81,9 @@ def getRequiredLibs(opengl):
 			('png', 'png.h'),
 			('Xcursor', '')]
 	
+	if platform.platform().find('fedora'):
+		libs.insert(0,('boost_system', ''))
+
 	if (opengl):
 		libs.append(('guichan_opengl', ''))
 		
