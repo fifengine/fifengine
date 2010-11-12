@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -29,6 +29,12 @@
 
 namespace FIFE {
 
+	enum ResourceLocationType {
+		RES_TYPE_FILE = 0,
+		RES_TYPE_IMAGE = 1
+	};
+	
+	
 	class ResourceLocation {
 	public:
 		ResourceLocation(const std::string& filename);
@@ -37,9 +43,8 @@ namespace FIFE {
 		virtual bool operator ==(const ResourceLocation& loc) const;
 		virtual bool operator <(const ResourceLocation& loc) const;
 		virtual ResourceLocation* clone() const;
-
-	private:
-		ResourceLocation(const std::string& filename);
+		
+		ResourceLocationType getType() const;
 	};
 
 
@@ -76,9 +81,6 @@ namespace FIFE {
 		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
 		virtual void save(const std::string& filename, IResource* resource) { save(ResourceLocation(filename), resource); }
 	};
-
-
-	enum { RES_LOADED = 0x01, RES_NON_LOADED  = 0x02};
 
 	class Pool {
 	public:
