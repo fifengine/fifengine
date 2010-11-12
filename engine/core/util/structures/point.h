@@ -122,7 +122,7 @@ namespace FIFE {
 		T length() const {
 			double sq;
 			sq = x*x + y*y;
-			return static_cast<T>(sqrt(sq));
+			return static_cast<T>(Mathd::Sqrt(sq));
 		}
 
 		/** Normalizes the point

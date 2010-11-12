@@ -34,8 +34,10 @@
 
 namespace FIFE {
 
-#define RES_TYPE_FILE 0
-#define RES_TYPE_IMAGE 1
+	enum ResourceLocationType {
+		RES_TYPE_FILE = 0,
+		RES_TYPE_IMAGE = 1
+	};
 
 	/** Contains information about the Location of a Resource
 	 *
@@ -97,11 +99,11 @@ namespace FIFE {
 			return new ResourceLocation(m_filename);
 		}
 
-		int getType() const { return m_type; }
+		ResourceLocationType getType() const { return m_type; }
 
 	protected:
 		std::string m_filename;
-		int m_type;
+		ResourceLocationType m_type;
 	};
 } //FIFE
 
