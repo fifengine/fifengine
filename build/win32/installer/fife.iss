@@ -6,9 +6,9 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{99CDEFC4-8CC3-410A-ABB9-FC58F61DF70E}
-AppName=FIFE 0.3.1
+AppName=FIFE 0.3.2
 ; Version is yyyy.mm
-AppVerName=FIFE 0.3.1
+AppVerName=FIFE 0.3.2
 AppPublisher=FIFE Team
 AppPublisherURL=http://www.fifengine.net/
 AppSupportURL=http://www.fifengine.net/
@@ -21,7 +21,7 @@ AllowNoIcons=yes
 LicenseFile=license.rtf
 Compression=lzma
 SolidCompression=yes
-OutputBaseFilename=FIFE_0_3_1_installer_win32
+OutputBaseFilename=FIFE_0_3_2_installer_win32
 OutputDir=.
 DisableReadyPage=yes
 
@@ -60,11 +60,12 @@ Name: "{group}\Copying.txt"; Filename: "notepad.exe"; Parameters: "{app}\doc\Cop
 Name: "{group}\Changes.txt"; Filename: "notepad.exe"; Parameters: "{app}\doc\Changes.txt"
 Name: "{group}\tools\Map Editor"; Filename: "python.exe"; Parameters: """{app}\tools\editor\run.py"""; WorkingDir: "{app}\tools\editor"; Comment: "FIFE Editor"; Components: "tools"
 Name: "{group}\demos\Rio de hola"; Filename: "python.exe"; Parameters: """{app}\demos\rio_de_hola\run.py"""; WorkingDir: "{app}\demos\rio_de_hola"; Comment: "Techdemo"; Components: "demos"
+Name: "{group}\demos\Shooter"; Filename: "python.exe"; Parameters: """{app}\demos\shooter\run.py"""; WorkingDir: "{app}\demos\shooter"; Comment: "Side scrolling shooter demo"; Components: "demos"
 Name: "{group}\demos\Pychan demo"; Filename: "python.exe"; Parameters: """{app}\demos\pychan_demo\pychan_test.py"""; WorkingDir: "{app}\demos\pychan_demo"; Comment: "FIFE GUI demo"; Components: "demos"
 Name: "{group}\{cm:UninstallProgram,FIFE}"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\engine\fife-0.3.1.win32.exe";
+Filename: "{app}\engine\fife-0.3.2.win32.exe";
 
 
 
