@@ -21,7 +21,7 @@ AllowNoIcons=yes
 LicenseFile=license.rtf
 Compression=lzma
 SolidCompression=yes
-OutputBaseFilename=FIFE_0_3_2_installer_win32
+OutputBaseFilename=FIFE_0.3.2_installer_win32
 OutputDir=.
 DisableReadyPage=yes
 
@@ -55,7 +55,7 @@ Source: "..\..\..\demos\*"; DestDir: "{app}\demos"; Excludes: ".svn"; Flags: ign
 Source: "..\..\..\tools\*"; DestDir: "{app}\tools"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{cm:ProgramOnTheWeb,FIFE}"; Filename: "http://www.fifengine.de/"
+Name: "{group}\{cm:ProgramOnTheWeb,FIFE}"; Filename: "http://www.fifengine.net/"
 Name: "{group}\Copying.txt"; Filename: "notepad.exe"; Parameters: "{app}\doc\Copying.txt"
 Name: "{group}\Changes.txt"; Filename: "notepad.exe"; Parameters: "{app}\doc\Changes.txt"
 Name: "{group}\tools\Map Editor"; Filename: "python.exe"; Parameters: """{app}\tools\editor\run.py"""; WorkingDir: "{app}\tools\editor"; Comment: "FIFE Editor"; Components: "tools"
