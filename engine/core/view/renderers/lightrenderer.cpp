@@ -247,10 +247,12 @@ namespace FIFE {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			r.x = p.x-img->getWidth()/2;
-			r.y = p.y-img->getHeight()/2;
-			r.w = img->getWidth();
-			r.h = img->getHeight();
+			unsigned int widtht = round(img->getWidth() * cam->getZoom());
+			unsigned int height = round(img->getHeight() * cam->getZoom());
+			r.x = p.x-widtht/2;
+			r.y = p.y-height/2;
+			r.w = widtht;
+			r.h = height;
 			renderbackend->changeBlending(m_src, m_dst);
 			if(r.intersects(viewport))
 				img->render(r);
@@ -296,10 +298,12 @@ namespace FIFE {
 			Image* img = animation.getFrameByTimestamp(animtime);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			r.x = p.x-img->getWidth()/2;
-			r.y = p.y-img->getHeight()/2;
-			r.w = img->getWidth();
-			r.h = img->getHeight();
+			unsigned int widtht = round(img->getWidth() * cam->getZoom());
+			unsigned int height = round(img->getHeight() * cam->getZoom());
+			r.x = p.x-widtht/2;
+			r.y = p.y-height/2;
+			r.w = widtht;
+			r.h = height;
 			renderbackend->changeBlending(m_src, m_dst);
 			if(r.intersects(viewport))
 				img->render(r);
@@ -343,10 +347,12 @@ namespace FIFE {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			r.x = p.x-m_width/2;
-			r.y = p.y-m_height/2;
-			r.w = m_width;
-			r.h = m_height;
+			unsigned int widtht = round(m_width * cam->getZoom());
+			unsigned int height = round(m_height * cam->getZoom());
+			r.x = p.x-widtht/2;
+			r.y = p.y-height/2;
+			r.w = widtht;
+			r.h = height;
 			renderbackend->changeBlending(m_src, m_dst);
 			if(r.intersects(viewport))
 				img->render(r);
@@ -392,8 +398,9 @@ namespace FIFE {
 	void LightRendererSimpleLightInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
+			double zoom = cam->getZoom();
 			renderbackend->changeBlending(m_src, m_dst);
-			renderbackend->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions, m_xstretch, m_ystretch, m_red, m_green, m_blue);
+			renderbackend->drawLightPrimitive(p, m_intensity, m_radius, m_subdivisions, m_xstretch * zoom, m_ystretch * zoom, m_red, m_green, m_blue);
 		}
 	}
 	void LightRendererSimpleLightInfo::setStencil(uint8_t stencil_ref, float alpha_ref) {

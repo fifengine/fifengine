@@ -328,10 +328,12 @@ namespace FIFE {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			r.x = p.x-img->getWidth()/2;
-			r.y = p.y-img->getHeight()/2;
-			r.w = img->getWidth();
-			r.h = img->getHeight();
+			unsigned int widtht = round(img->getWidth() * cam->getZoom());
+			unsigned int height = round(img->getHeight() * cam->getZoom());
+			r.x = p.x-widtht/2;
+			r.y = p.y-height/2;
+			r.w = widtht;
+			r.h = height;
 			if(r.intersects(viewport))
 				img->render(r);
 		}
@@ -352,10 +354,12 @@ namespace FIFE {
 			Image* img = animation.getFrameByTimestamp(animtime);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			r.x = p.x-img->getWidth()/2;
-			r.y = p.y-img->getHeight()/2;
-			r.w = img->getWidth();
-			r.h = img->getHeight();
+			unsigned int widtht = round(img->getWidth() * cam->getZoom());
+			unsigned int height = round(img->getHeight() * cam->getZoom());
+			r.x = p.x-widtht/2;
+			r.y = p.y-height/2;
+			r.w = widtht;
+			r.h = height;
 			if(r.intersects(viewport))
 				img->render(r);
 		}
@@ -397,13 +401,16 @@ namespace FIFE {
 		if(m_anchor.getLayer() == layer) {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
-			r.x = p.x-m_width/2;
-			r.y = p.y-m_height/2;
-			r.w = m_width;
-			r.h = m_height;
-			renderbackend->disableLighting();
-			img->render(r);
-			renderbackend->enableLighting();
+			Rect viewport = cam->getViewPort();
+			unsigned int widtht = round(m_width * cam->getZoom());
+			unsigned int height = round(m_height * cam->getZoom());
+			r.x = p.x-widtht/2;
+			r.y = p.y-height/2;
+			r.w = widtht;
+			r.h = height;
+			if(r.intersects(viewport)) {
+				img->render(r);
+			}
 		}
 	}
 	
