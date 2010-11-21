@@ -25,6 +25,7 @@
 		<Setting name="CameraEdit" type="bool">True</Setting>
 		<Setting name="ObjectEdit" type="bool">True</Setting>
 		<Setting name="ObjectSelector" type="bool">True</Setting>
+    <Setting name="LightEdit" type="bool">True</Setting>
 	</Module>
   <Module name="Colors">
     <Setting name="Blocking" type="str">0,255,0</Setting>
