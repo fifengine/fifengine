@@ -26,6 +26,8 @@ from fife import fife
 from fife.extensions import pychan
 from fife.extensions import filebrowser
 from fife.extensions import loaders, savers
+from fife.extensions.serializers.xmlobject import XMLObjectLoader
+from fife.extensions.serializers.xml_loader_tools import loadImportFile, loadImportDir, loadImportDirRec
 import action
 import scripts.editor
 import fife.extensions.pychan.widgets as widgets
@@ -52,6 +54,13 @@ class FileManager(object):
 		self._filebrowser = None
 		self._importbrowser = None
 		self._savebrowser = None
+
+		self.obj_loader = XMLObjectLoader(
+			self.engine.getImagePool(),
+			self.engine.getAnimationPool(),
+			self.engine.getModel(),
+			self.engine.getVFS()
+		)		
 
 		newAction = Action(u"New map", "gui/icons/new_map.png")
 		loadAction = Action(u"Open", "gui/icons/load_map.png")
@@ -214,7 +223,7 @@ class FileManager(object):
 		
 		try:
 			if os.path.isfile(file):
-				loaders.loadImportFile(file, self.engine)
+				loadImportFile(self.obj_loader, file, self.engine)
 			else:
 				raise file+ " is not a file!"
 		except:
@@ -239,7 +248,7 @@ class FileManager(object):
 		
 		try:
 			if os.path.isdir(path):
-				loaders.loadImportDirRec(path, self.engine)
+				loadImportDirRec(self.obj_loader, path, self.engine)
 			else:
 				raise file+ " is not a directory!"
 		except:

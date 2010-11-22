@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
+#  Copyright (C) 2005-2010 by the FIFE team
 #  http://www.fifengine.de
 #  This file is part of FIFE.
 #
@@ -98,7 +98,8 @@ class Editor(ApplicationBase, MainWindow):
 		self._change_map = -1
 		
 		self._settings = TDS
-		
+
+		self._lighting_mode = int(TDS.get("FIFE", "Lighting"))		
 		self._help_dialog = None
 	
 		ApplicationBase.__init__(self, TDS, *args, **kwargs)
@@ -327,7 +328,10 @@ class Editor(ApplicationBase, MainWindow):
 		
 	def getSettings(self):
 		return self._settings;
-		
+
+	def getObject(self):
+		return self._mapeditor.getObject()
+
 	def showMapView(self, mapview):
 		""" Switches to mapview. """
 		if mapview is None or mapview == self._mapview:
@@ -339,6 +343,13 @@ class Editor(ApplicationBase, MainWindow):
 			if self._mapview.getMap() != None:
 				for cam in self._mapview.getMap().getCameras():
 					cam.setEnabled(False)
+		
+		# if light model is set then enable LightRenderer for all layers
+		if self._lighting_mode is not 0:
+			for cam in mapview.getMap().getCameras():
+				renderer = fife.LightRenderer.getInstance(cam)
+				renderer.activateAllLayers(mapview.getMap())
+				renderer.setEnabled(not renderer.isEnabled())
 		
 		events.preMapShown.send(sender=self, mapview=mapview)
 		self._mapview = mapview
@@ -397,7 +408,10 @@ class Editor(ApplicationBase, MainWindow):
 	def openFile(self, path):
 		""" Opens a file """
 		try:
+			if self._lighting_mode == 0:
 			map = loaders.loadMapFile(path, self.engine)
+			else:
+				map = loaders.loadMapFile(path, self.engine, extensions = {'lights': True})
 			return self.newMapView(map)
 		except:
 			traceback.print_exc(sys.exc_info()[1])

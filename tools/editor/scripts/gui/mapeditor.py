@@ -103,7 +103,11 @@ class MapEditor:
 	def setObject(self, object):
 		""" Set the object type to be paint onto map """
 		self._object = object
-		
+
+	def getObject(self):
+		""" Return the current object """
+		return self._object
+
 	def setController(self, controller):
 		""" Set the controller to use. """
 		if self._controller is not None:
