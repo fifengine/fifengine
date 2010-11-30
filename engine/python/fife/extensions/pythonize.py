@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # ####################################################################
-#  Copyright (C) 2005-2009 by the FIFE team
-#  http://www.fifengine.de
+#  Copyright (C) 2005-2010 by the FIFE team
+#  http://www.fifengine.net
 #  This file is part of FIFE.
 #
 #  FIFE is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ import re
 
 __all__ = ()
 
-fife.Exception.__str__ = fife.Exception.getMessage
+fife.Exception.__str__ = fife.Exception.what
 def _Color2Str(c):
 	return 'Color(%s)' % ','.join(map(str,(c.r,c.g,c.b,c.a)))
 fife.Color.__str__ = _Color2Str
