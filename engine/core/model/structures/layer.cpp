@@ -238,7 +238,7 @@ namespace FIFE {
 		m_instanceTree->findInstances(cellCoordinate, 0, 0, adjacentInstances);
 		bool blockingInstance = false;
 		for(std::list<Instance*>::const_iterator j = adjacentInstances.begin(); j != adjacentInstances.end(); ++j) {
-			if((*j)->getObject()->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
+			if((*j)->isBlocking() && (*j)->getLocationRef().getLayerCoordinates() == cellCoordinate) {
 				blockingInstance = true;
 			}
 		}

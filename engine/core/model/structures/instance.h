@@ -158,6 +158,14 @@ namespace FIFE {
 		 */
 		Location& getFacingLocationRef();
 
+		/** Sets if instance blocks movement
+		 */
+		void setBlocking(bool blocking);
+
+		/** Gets if instance blocks movement
+		 */
+		bool isBlocking() const;
+
 		/** Adds new instance action listener
 		 * @param listener to add
 		 */
@@ -359,6 +367,8 @@ namespace FIFE {
 		Location* m_facinglocation;
 		// instance visualization
 		AbstractVisual* m_visual;
+		// instance blocking info
+		bool m_blocking;
 
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);

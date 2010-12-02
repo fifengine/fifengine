@@ -19,6 +19,7 @@
 	<HBox>
 		<Label text="Blocking:" min_size="45,20"/>
 		<TextBox text="0" name="object_blocking" min_size="20,20"/>
+    <Button name="object_blocking_toggle" text="toggle" max_size="50,20"/>
 
 		<Label text="Static:" min_size="45,20"/>
 		<TextBox text="0" name="object_static" min_size="20,20"/>
@@ -47,7 +48,7 @@
 		</HBox>
 	</VBox>
 
-	<Button name="change_data" text="Save rotation"/>
+	<Button name="change_data" text="Save object data"/>
 
 	<Label text="          Selected Instance" background_color="0,0,0" />
 
@@ -59,10 +60,17 @@
 		<Label text="Instance rot:" min_size="85,20"/>
 		<TextBox text="0" name="instance_rotation" min_size="30,20"/>
 	</HBox>
+  <HBox >
+    <Label text="Instance blocking:" min_size="85,20"/>
+    <TextBox text="0" name="instance_blocking" min_size="30,20"/>
+  </HBox>
 
 	<HBox>
 		<Button name="use_data" text="Set instance id"/>
 	</HBox>
+  <HBox>
+    <Button name="instance_blocking_toggle" text="Toggle instance blocking"/>
+  </HBox>
 	<Spacer />
 
 	<Label text="          Animation viewer" background_color="0,0,0" />

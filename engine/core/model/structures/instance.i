@@ -76,6 +76,8 @@ namespace FIFE {
 		Location getTargetLocation() const;
 		void setRotation(int);
 		int getRotation() const;
+		void setBlocking(bool blocking);
+		bool isBlocking() const;
 		void addActionListener(InstanceActionListener* listener);
 		void removeActionListener(InstanceActionListener* listener);
 		void addChangeListener(InstanceChangeListener* listener);
