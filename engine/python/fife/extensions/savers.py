@@ -215,9 +215,12 @@ class ModelSaver:
 				attr_vals[(None, 'id')] = inst.getId()
 				attr_names[(None, 'id')] = 'id'
 
-			if inst.getObject().isBlocking() != inst.isBlocking():
-				attr_vals[(None, 'blocking')] = str(int(inst.isBlocking()))
-				attr_names[(None, 'blocking')] = 'blocking'
+			if inst.isOverrideBlocking():
+				attr_vals[(None, 'override_blocking')] = str(int(inst.isOverrideBlocking()))
+				attr_names[(None, 'override_blocking')] = 'override_blocking'
+				if inst.getObject().isBlocking() is not inst.isBlocking():
+					attr_vals[(None, 'blocking')] = str(int(inst.isBlocking()))
+					attr_names[(None, 'blocking')] = 'blocking'
 
 			attrs = AttributesNSImpl(attr_vals, attr_names)
 			self.file.write(self.indent_level)

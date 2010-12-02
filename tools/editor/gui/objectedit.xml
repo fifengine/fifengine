@@ -69,6 +69,9 @@
 		<Button name="use_data" text="Set instance id"/>
 	</HBox>
   <HBox>
+    <CheckBox name="override_blocking_toggle" text="Allowed to override blocking"/>
+  </HBox>
+  <HBox>
     <Button name="instance_blocking_toggle" text="Toggle instance blocking"/>
   </HBox>
 	<Spacer />

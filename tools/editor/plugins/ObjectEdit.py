@@ -329,7 +329,12 @@ class ObjectEdit(plugin.Plugin):
 		else:
 			x_offset = unicode( 0 )
 			y_offset = unicode( 0 )
-		
+
+		if self._instances[0].isOverrideBlocking():
+			self.container.findChild(name="override_blocking_toggle")._setMarked(True)
+		else:
+			self.container.findChild(name="override_blocking_toggle")._setMarked(False)
+
 		self.container.distributeInitialData({
 			'select_rotations' 	: self._avail_rotations,
 			'instance_id'		: unicode( self._instances[0].getId() ),
@@ -412,6 +417,7 @@ class ObjectEdit(plugin.Plugin):
 		@type	widget:	object
 		@param	widget:	pychan widget
 		"""
+		self.check_override_blocking()
 		object = self._instances[0].getObject()
 		object_id = object.getId()
 		blocking = not object.isBlocking()
@@ -424,7 +430,7 @@ class ObjectEdit(plugin.Plugin):
 				instance.setBlocking(blocking)
 
 		self._object_blocking = int(blocking)
-		self._instance_blocking = int(blocking)
+		self._instance_blocking = int(self._instances[0].isBlocking())
 
 		self.update_gui()
 
@@ -436,12 +442,20 @@ class ObjectEdit(plugin.Plugin):
 		@type	widget:	object
 		@param	widget:	pychan widget
 		"""
-
+		self.check_override_blocking()
 		instance = self._instances[0]
 		instance.setBlocking(not instance.isBlocking())
 		self._instance_blocking = int(instance.isBlocking())
 
 		self.update_gui()
+
+	def check_override_blocking(self):
+		instance = self._instances[0]
+		marked = self.container.findChild(name="override_blocking_toggle")._isMarked()
+		if marked:
+			instance.setOverrideBlocking(True)
+		else:
+			instance.setOverrideBlocking(False)
 
 	def use_user_data(self):
 		"""
