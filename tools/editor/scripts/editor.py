@@ -409,7 +409,7 @@ class Editor(ApplicationBase, MainWindow):
 		""" Opens a file """
 		try:
 			if self._lighting_mode == 0:
-			map = loaders.loadMapFile(path, self.engine)
+				map = loaders.loadMapFile(path, self.engine)
 			else:
 				map = loaders.loadMapFile(path, self.engine, extensions = {'lights': True})
 			return self.newMapView(map)
