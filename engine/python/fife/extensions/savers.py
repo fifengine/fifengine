@@ -215,6 +215,10 @@ class ModelSaver:
 				attr_vals[(None, 'id')] = inst.getId()
 				attr_names[(None, 'id')] = 'id'
 
+			if inst.getObject().isBlocking() != inst.isBlocking():
+				attr_vals[(None, 'blocking')] = str(int(inst.isBlocking()))
+				attr_names[(None, 'blocking')] = 'blocking'
+
 			attrs = AttributesNSImpl(attr_vals, attr_names)
 			self.file.write(self.indent_level)
 			self.xmlout.startElementNS((None, 'i'), 'i', attrs)

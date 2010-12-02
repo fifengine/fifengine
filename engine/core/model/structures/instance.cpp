@@ -182,7 +182,8 @@ namespace FIFE {
 		m_object(object),
 		m_location(location),
 		m_facinglocation(NULL),
-		m_visual(NULL) {
+		m_visual(NULL),
+		m_blocking(object->isBlocking()) {
 	}
 
 	Instance::~Instance() {
@@ -242,6 +243,14 @@ namespace FIFE {
 
 	void Instance::setId(const std::string& identifier) {
 		m_id = identifier;
+	}
+
+	void Instance::setBlocking(bool blocking) {
+		m_blocking = blocking;
+	}
+
+	bool Instance::isBlocking() const {
+		return m_blocking;
 	}
 
 	void Instance::addActionListener(InstanceActionListener* listener) {
