@@ -183,7 +183,8 @@ namespace FIFE {
 		m_location(location),
 		m_facinglocation(NULL),
 		m_visual(NULL),
-		m_blocking(object->isBlocking()) {
+		m_blocking(object->isBlocking()),
+		m_override_blocking(false) {
 	}
 
 	Instance::~Instance() {
@@ -246,7 +247,9 @@ namespace FIFE {
 	}
 
 	void Instance::setBlocking(bool blocking) {
-		m_blocking = blocking;
+		if (m_override_blocking) {
+			m_blocking = blocking;
+		}
 	}
 
 	bool Instance::isBlocking() const {
