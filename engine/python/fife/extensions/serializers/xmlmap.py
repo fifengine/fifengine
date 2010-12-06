@@ -501,6 +501,13 @@ class XMLMapLoader(fife.ResourceLoader):
 				rotation = int(rotation)
 			inst.setRotation(rotation)
 
+			over_block = instance.get('override_blocking')
+			if over_block is not None:
+				inst.setOverrideBlocking(bool(over_block))
+				blocking = instance.get('blocking')
+				if blocking is not None:
+					inst.setBlocking(bool(int(blocking)))
+
 			fife.InstanceVisual.create(inst)
 			
 			stackpos = instance.get('stackpos')
