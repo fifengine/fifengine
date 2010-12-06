@@ -16,7 +16,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
 === Engine ===
   * Instances now inherit blocking property from objects (#514)
   * Added additional flag to Instance for overriding blocking attribute (r3520)
-  * FIFE::Exception is now derrived from std::runtime_error.  (#511)
+  * FIFE::Exception is now derived from std::runtime_error.  (#511)
   * Fixed the image/animation functions to consider zoom level (r3513)
   
 === Editor ===
