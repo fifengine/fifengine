@@ -78,7 +78,7 @@ namespace FIFE {
 		RenderList::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;
-			if (!instance->getObject()->isBlocking()) {
+			if (!instance->getObject()->isBlocking() || !instance->isBlocking()) {
 				continue;
 			}
 			std::vector<ExactModelCoordinate> vertices;

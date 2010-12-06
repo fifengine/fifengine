@@ -158,6 +158,22 @@ namespace FIFE {
 		 */
 		Location& getFacingLocationRef();
 
+		/** Sets if instance blocks movement
+		 */
+		void setBlocking(bool blocking);
+
+		/** Gets if instance blocks movement
+		 */
+		bool isBlocking() const;
+
+		/** Sets if instance blocking can overriden
+		 */
+		void setOverrideBlocking(bool overblock) { m_override_blocking = overblock; }
+
+		/** Gets if instance blocking can overriden
+		 */
+		bool isOverrideBlocking() const { return m_override_blocking; }
+
 		/** Adds new instance action listener
 		 * @param listener to add
 		 */
@@ -359,6 +375,10 @@ namespace FIFE {
 		Location* m_facinglocation;
 		// instance visualization
 		AbstractVisual* m_visual;
+		// instance blocking info
+		bool m_blocking;
+		// allow to override the blocking property
+		bool m_override_blocking;
 
 		Instance(const Instance&);
 		Instance& operator=(const Instance&);

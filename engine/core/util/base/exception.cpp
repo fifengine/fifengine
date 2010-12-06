@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -34,15 +34,16 @@
 namespace FIFE {
 static Logger _log(LM_EXCEPTION);
 
-	Exception::Exception(const std::string& msg): m_message(msg) {
-		FL_WARN(_log, LMsg() << getMessage());
-		}
+	Exception::Exception(const std::string& msg): std::runtime_error(msg) {
+		FL_PANIC(_log, LMsg() << what());
+	}
 
-	Exception::~Exception() {}
+	Exception::~Exception() throw() {}
 
-	std::string Exception::getMessage() const {
+	const char* Exception::what() const throw() {
 		std::stringstream str;
-		str << "_[" << getTypeStr() << "]_ , " << m_message;
-		return str.str();
+
+		str << "_[" << getTypeStr() << "]_ , " << std::runtime_error::what();
+		return str.str().c_str();
 	}
 }//FIFE

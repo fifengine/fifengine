@@ -100,7 +100,8 @@ class ObjectEdit(plugin.Plugin):
 		self._rotation = None
 		self._avail_rotations = []
 		self._namespace = None	
-		self._blocking = 0
+		self._object_blocking = 0
+		self._instance_blocking = 0
 		self._static = 0
 		self._object_id = None	
 		self._instance_id = None
@@ -212,6 +213,9 @@ class ObjectEdit(plugin.Plugin):
 		self._gui_y_offset = self.container.findChild(name="y_offset")
 		self._gui_y_offset.capture(self.change_offset, "mouseWheelMovedUp")
 		self._gui_y_offset.capture(self.change_offset, "mouseWheelMovedDown")
+
+		self.container.findChild(name="object_blocking_toggle").capture(self.object_blocking_toggle, "mousePressed")
+		self.container.findChild(name="instance_blocking_toggle").capture(self.instance_blocking_toggle, "mousePressed")
 
 		self._gui_anim_panel_wrapper = self.container.findChild(name="animation_panel_wrapper")
 		self._gui_anim_panel = self._gui_anim_panel_wrapper.findChild(name="animation_panel")
@@ -325,7 +329,12 @@ class ObjectEdit(plugin.Plugin):
 		else:
 			x_offset = unicode( 0 )
 			y_offset = unicode( 0 )
-		
+
+		if self._instances[0].isOverrideBlocking():
+			self.container.findChild(name="override_blocking_toggle")._setMarked(True)
+		else:
+			self.container.findChild(name="override_blocking_toggle")._setMarked(False)
+
 		self.container.distributeInitialData({
 			'select_rotations' 	: self._avail_rotations,
 			'instance_id'		: unicode( self._instances[0].getId() ),
@@ -334,7 +343,8 @@ class ObjectEdit(plugin.Plugin):
 			'y_offset'			: y_offset,
 			'instance_rotation' : unicode( self._instances[0].getRotation() ),
 			'object_namespace'	: unicode( self._namespace ),
-			'object_blocking'	: unicode( self._blocking ),
+			'instance_blocking'	: unicode( self._instance_blocking ),
+			'object_blocking'	: unicode( self._object_blocking ),
 			'object_static'		: unicode( self._static ),
 		})
 		
@@ -398,6 +408,54 @@ class ObjectEdit(plugin.Plugin):
 
 		self.set_offset(x, y)
 		self.update_gui()
+
+	def object_blocking_toggle(self, event, widget):
+		""" widget callback: change the blocking of an instance 
+
+		@type	event:	object
+		@param	event:	FIFE mouseevent or keyevent
+		@type	widget:	object
+		@param	widget:	pychan widget
+		"""
+		self.check_override_blocking()
+		object = self._instances[0].getObject()
+		object_id = object.getId()
+		blocking = not object.isBlocking()
+		object.setBlocking(blocking)
+
+		instances = self._layer.getInstances()
+		for instance in instances:
+			object = instance.getObject()
+			if object.getId() == object_id:
+				instance.setBlocking(blocking)
+
+		self._object_blocking = int(blocking)
+		self._instance_blocking = int(self._instances[0].isBlocking())
+
+		self.update_gui()
+
+	def instance_blocking_toggle(self, event, widget):
+		""" widget callback: change the blocking of an instance 
+
+		@type	event:	object
+		@param	event:	FIFE mouseevent or keyevent
+		@type	widget:	object
+		@param	widget:	pychan widget
+		"""
+		self.check_override_blocking()
+		instance = self._instances[0]
+		instance.setBlocking(not instance.isBlocking())
+		self._instance_blocking = int(instance.isBlocking())
+
+		self.update_gui()
+
+	def check_override_blocking(self):
+		instance = self._instances[0]
+		marked = self.container.findChild(name="override_blocking_toggle")._isMarked()
+		if marked:
+			instance.setOverrideBlocking(True)
+		else:
+			instance.setOverrideBlocking(False)
 
 	def use_user_data(self):
 		"""
@@ -466,6 +524,9 @@ class ObjectEdit(plugin.Plugin):
 				img_tag.attrib["x_offset"] = self._gui_xoffset_textfield._getText()
 				img_tag.attrib["y_offset"] = self._gui_yoffset_textfield._getText()
 				break
+
+		block = self.tree.getroot()
+		block.attrib["blocking"] = str(int(self._object_blocking))
 
 		xmlcontent = ET.tostring(self.tree.getroot())
 
@@ -576,8 +637,11 @@ class ObjectEdit(plugin.Plugin):
 		self._rotation = angle
 		
 		if object.isBlocking():
-			self._blocking = 1
-			
+			self._object_blocking = 1
+
+		if instance.isBlocking():
+			self._instance_blocking = 1
+
 		if object.isStatic():
 			self._static = 1
 		
