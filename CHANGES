@@ -10,6 +10,22 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
 
 ================================================================================
+== 0.3.2r2 (December 6th, 2010)                                                ==
+================================================================================
+
+=== Engine ===
+  * Instances now inherit blocking property from objects (#514)
+  * Added additional flag to Instance for overriding blocking attribute (r3520)
+  * FIFE::Exception is now derrived from std::runtime_error.  (#511)
+  * Fixed the image/animation functions to consider zoom level (r3513)
+  
+=== Editor ===
+  * Added the light editor plugin (r3513)
+  
+=== Build System ===
+  * FIFE now builds on Fedora as expected
+
+================================================================================
 == 0.3.2 (November 19th, 2010)                                                ==
 ================================================================================
 
