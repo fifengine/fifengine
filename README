@@ -10,7 +10,7 @@ __/\\\\\\\\\\\\\\\___/\\\\\\\\\\\___/\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\_
         _\///_______________\///////////___\///_______________\///////////////__
         
 == Introduction ==
-Welcome to the FIFE v0.3.2 README. This snapshot is based on SVN revision XXXX.
+Welcome to the FIFE v0.3.2r2 README. This snapshot is based on SVN revision 3523.
 
 == Table of contents ==
 1 Features
@@ -23,7 +23,7 @@ Welcome to the FIFE v0.3.2 README. This snapshot is based on SVN revision XXXX.
 
 == 1) Features ==
 A complete list of the features that FIFE offers can be found at the project wiki:
- * http://wiki.fifengine.de/index.php?title=Engine_features
+ * http://wiki.fifengine.net/Features
 
 
 == 2) License ==
@@ -101,8 +101,8 @@ We appreciate every kind of feedback concerning the release, the project in gene
 and the bundled techdemo. Feedback is a great way to help us to improve FIFE. If you 
 would like to get in contact with us and provide feedback you can either visit our 
 IRC channel or our forums:
- * http://wiki.fifengine.de/index.php?title=IRC
- * http://forums.fifengine.de/index.php?board=5.0
+ * http://wiki.fifengine.net/IRC
+ * http://forums.fifengine.net/index.php?board=5.0
 
 
 == 6) Closing Notes ==
@@ -111,4 +111,4 @@ Have fun with the release and let us know what you think about it!
 
 http://www.fifengine.net/
 
-2010/11/19
+2010/12/06
