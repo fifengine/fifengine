@@ -49,7 +49,7 @@ Source: "..\..\..\CHANGES"; DestDir: "{app}\doc\"; DestName:"Changes.txt"
 Source: "..\..\..\README"; DestDir:"{app}"; DestName: "README.txt"; Flags: isreadme
 
 ; demos
-Source: "..\..\..\demos\*"; DestDir: "{app}\demos"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\demos\*"; DestDir: "{app}\demos"; Excludes: ".svn, rpg"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; tools
 Source: "..\..\..\tools\*"; DestDir: "{app}\tools"; Excludes: ".svn"; Flags: ignoreversion recursesubdirs createallsubdirs
