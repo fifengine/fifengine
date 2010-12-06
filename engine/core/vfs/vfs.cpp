@@ -85,7 +85,7 @@ namespace FIFE {
 				m_usedfiles.insert(path);
 				return source;
 			} catch (const Exception& ex) {
-				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (" << ex.getMessage() << ")");
+				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (" << ex.what() << ")");
 				continue;
 			} catch (...) {
 				FL_WARN(_log, LMsg(provider->getName()) << " thought it could load " << path << " but didn't succeed (unkown exception)");

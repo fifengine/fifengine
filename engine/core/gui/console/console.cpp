@@ -47,7 +47,7 @@ namespace FIFE {
 	const unsigned  Console::m_maxOutputRows = 50;
 	static Logger _log(LM_CONSOLE);
 
-	Console::Console() 
+	Console::Console()
 		: gcn::Container(),
 		m_consoleexec(0),
 		m_input(new CommandLine()),
@@ -90,7 +90,7 @@ namespace FIFE {
 	void Console::reLayout() {
 		Image* screen = RenderBackend::instance()->getScreenImage();
 		assert(screen);
-		
+
 		int w, h, b, input_h, bbar_h, button_w;
 		w = screen->getWidth() * 4/5;
 		h = screen->getHeight() * 4/5;
@@ -98,7 +98,7 @@ namespace FIFE {
 		input_h = getFont()->getHeight();
 		bbar_h = input_h;
 		button_w = 80;
-		
+
 		gcn::Color black(0x00,0,0,0xff);
 		gcn::Color white(0xff,0xff,0xff,0xff);
 		gcn::Color dark(50,60,50,0xff);
@@ -147,7 +147,7 @@ namespace FIFE {
 
 	Console::~Console() {
 		doHide();
-		
+
 		remove(m_input);
 		remove(m_outputscrollarea);
 		remove(m_status);
@@ -165,7 +165,7 @@ namespace FIFE {
 		caption += boost::lexical_cast<std::string>(fps);
 		m_status->setCaption( caption );
 	}
-	
+
 	void Console::updateAnimation() {
 	    if (m_hiding){
 		setPosition(getX(), getY() - m_animationDelta);
@@ -246,8 +246,8 @@ namespace FIFE {
 			}
 		}
 		catch (const FIFE::Exception & e) {
-			FL_WARN(_log, LMsg("Console caught exception: ") << e.getMessage());
-			println(e.getMessage());
+			FL_WARN(_log, LMsg("Console caught exception: ") << e.what());
+			println(e.what());
 		}
 	}
 

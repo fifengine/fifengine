@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2010 by the FIFE team                              *
+ *   http://www.fifengine.net                                               *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <string>
+#include <stdexcept>
 
 // 3rd party library includes
 
@@ -38,28 +39,24 @@ namespace FIFE {
 	 * All other exceptions derived from this merely adjust the error string
 	 * to be slightly more specific.
 	 */
-	class Exception {
+	class Exception : public std::runtime_error {
 	public:
-		/** Constructor. 
-		 * @param txt The error mesage to be stored.
+		/** Constructor.
+		 * @param msg The error mesage to be stored.
 		 */
 		Exception(const std::string& msg);
 
-		/** Destructor. 
+		/** Destructor.
 		 */
-		virtual ~Exception();
+		virtual ~Exception() throw();
 
 		/** Returns the error message.
 		 * @return The error message.
 		 */
-		std::string getMessage() const;
-		
+		virtual const char* what() const throw();
+
 		virtual const std::string& getTypeStr() const { static const std::string s = "Exception"; return s; }
 		virtual const std::string& getDescription() const { static const std::string s = "Generic FIFE exception"; return s; }
-
-	private:
-		// The error string.
-		std::string m_message;
 	};
 
 	#define FIFE_EXCEPTION_DECL(_name, _description) \
@@ -69,7 +66,7 @@ namespace FIFE {
 		const std::string& getTypeStr() const { static const std::string s = #_name; return s; } \
 		const std::string& getDescription() const { static const std::string s = _description; return s; } \
 	}
-	
+
 	FIFE_EXCEPTION_DECL(SDLException, "SDL reported something bad");
 	FIFE_EXCEPTION_DECL(NotFound, "Something was searched, but not found");
 	FIFE_EXCEPTION_DECL(NotSet, "Something was not set correctly");
@@ -84,7 +81,7 @@ namespace FIFE {
 	FIFE_EXCEPTION_DECL(EventException, "Error related to event functionality");
 	FIFE_EXCEPTION_DECL(GuiException, "Error related to gui functionality");
 	FIFE_EXCEPTION_DECL(InconsistencyDetected, "An inconsistency in FIFE internals was detected. Please report this is a FIFE Bug.");
-	
+
 	/** @bug The memory allocation in @c std::string might fail, resulting in terminate. */
 	FIFE_EXCEPTION_DECL(OutOfMemory, "Buy more ram ;)");
 

@@ -110,7 +110,7 @@ print s\n\
 #define _FIFE_EXC_HANDLER(_fife_exc_type, _converted_type) \
 	catch (FIFE::_fife_exc_type& _e) { \
 		PyErr_Clear(); \
-		SWIG_exception(_converted_type, _e.getMessage().c_str()); \
+		SWIG_exception(_converted_type, _e.what()); \
 	}
 
 #define _FIFE_DIRECTOR_EXC_HANDLER() \
