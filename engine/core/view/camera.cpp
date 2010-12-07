@@ -128,6 +128,7 @@ namespace FIFE {
 
 		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
 		for(; r_it != m_renderers.end(); ++r_it) {
+			r_it->second->reset();
 			delete r_it->second;
 		}
 		m_renderers.clear();
@@ -612,7 +613,7 @@ namespace FIFE {
 	void Camera::resetRenderers() {
 		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
 		for (; r_it != m_renderers.end(); ++r_it) {
-			Map* map = m_location.getMap();
+			//Map* map = m_location.getMap();
 			r_it->second->reset();
 		}
 	}

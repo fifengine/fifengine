@@ -190,5 +190,6 @@ namespace FIFE {
 		void addAnimation(const std::string &group, GenericRendererNode n, int animation);
 		void resizeImage(const std::string &group, GenericRendererNode n, int image, int width, int height);
 		void removeAll(const std::string &group);
+		void removeAll();
 	};
 }
