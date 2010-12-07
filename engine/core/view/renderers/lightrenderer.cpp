@@ -520,6 +520,14 @@ namespace FIFE {
 		m_groups[group].clear();
 		m_groups.erase(group);
 	}
+	// Remove all groups
+	void LightRenderer::removeAll() {
+		m_groups.clear();
+	}
+	// Clear all groups
+	void LightRenderer::reset() {
+		removeAll();
+	}
 	// Render
 	void LightRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		uint8_t lm = m_renderbackend->getLightingModel();

@@ -167,6 +167,7 @@ namespace FIFE {
 		std::list<std::string> getGroups();
 		std::vector<LightRendererElementInfo*> getLightInfo(const std::string &group);
 		void removeAll(const std::string &group);
+		void removeAll();
 	};
 }
 

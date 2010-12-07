@@ -409,9 +409,9 @@ namespace FIFE {
 			r.w = widtht;
 			r.h = height;
 			if(r.intersects(viewport)) {
-			img->render(r);
+				img->render(r);
+			}
 		}
-	}
 	}
 	
 	GenericRenderer* GenericRenderer::getInstance(IRendererContainer* cnt) {
@@ -483,6 +483,14 @@ namespace FIFE {
 		}
 		m_groups[group].clear();
 		m_groups.erase(group);
+	}
+	// Remove all groups
+	void GenericRenderer::removeAll() {
+		m_groups.clear();
+	}
+	// Clear all groups
+	void GenericRenderer::reset() {
+		removeAll();
 	}
 
 	void GenericRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
