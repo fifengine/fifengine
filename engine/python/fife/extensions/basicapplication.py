@@ -78,8 +78,8 @@ class ApplicationBase(object):
 
 		self.engine = fife.Engine()
 
-		self.loadSettings()
 		self.initLogging()
+		self.loadSettings()
 
 		self.engine.init()
 

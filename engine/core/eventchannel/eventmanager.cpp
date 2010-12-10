@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
+#include "util/log/logger.h"
 #include "eventchannel/key/ec_key.h"
 #include "eventchannel/key/ec_keyevent.h"
 #include "eventchannel/key/ec_ikeyfilter.h"
@@ -38,6 +39,7 @@
 #include "eventmanager.h"
 
 namespace FIFE {
+	static Logger _log(LM_EVTCHANNEL);
 
 	EventManager::EventManager():
 		m_commandlisteners(),
@@ -507,7 +509,9 @@ namespace FIFE {
 		} else if (sdlevt.type == SDL_KEYUP) {
 			keyevt.setType(KeyEvent::RELEASED);
 		} else {
-			throw EventException("Invalid event type in fillKeyEvent");
+			FL_WARN(_log, LMsg("fillKeyEvent()")
+				<< " Invalid key event type of " << sdlevt.type << ".  Ignoring event.");
+			return;
 		}
 		SDL_keysym keysym = sdlevt.key.keysym;
 
