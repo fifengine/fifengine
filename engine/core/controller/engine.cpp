@@ -124,7 +124,7 @@ namespace FIFE {
 		m_autoreleasePool =
 			objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
 #endif
-		preInit();
+		m_logmanager = LogManager::instance();
 	}
 
 	EngineSettings& Engine::getSettings() {
@@ -155,10 +155,10 @@ namespace FIFE {
 		return screen;
 	}
 
-	void Engine::preInit() {
-		m_logmanager = LogManager::instance();
+	void Engine::init() {
+		m_destroyed = false;
 
-		FL_LOG(_log, "================== Engine pre-init start =================");
+		FL_LOG(_log, "================== Engine initialize start =================");
 		m_timemanager = new TimeManager();
 		FL_LOG(_log, "Time manager created");
 
@@ -175,13 +175,6 @@ namespace FIFE {
 		//m_vfs->addProvider(ProviderDAT2());
 		//m_vfs->addProvider(ProviderDAT1());
 		FL_LOG(_log, "Engine pre-init done");
-		m_destroyed = false;
-	}
-
-	void Engine::init() {
-		FL_LOG(_log, "Engine initialize start");
-		m_settings.validate();
-		FL_LOG(_log, "Engine settings validated");
 
 		// If failed to init SDL throw exception.
 		if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {

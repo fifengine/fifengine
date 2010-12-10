@@ -195,8 +195,6 @@ namespace FIFE {
 		void removeChangeListener(IEngineChangeListener* listener);
 
 	private:
-		void preInit();
-
 		RenderBackend* m_renderbackend;
 		GUIManager* m_guimanager;
 		EventManager* m_eventmanager;

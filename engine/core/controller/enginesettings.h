@@ -49,10 +49,6 @@ namespace FIFE {
 		 */
 		~EngineSettings();
 
-		/** Validates settings. On invalid settings, throws NotSet with message
-		 */
-		void validate() const;
-
 		/** Sets bits per pixel
 		 * @see getPossibleBitsPerPixel
 		 */
@@ -67,10 +63,6 @@ namespace FIFE {
 		/** Gets all possible bits per pixel values
 		 */
 		std::vector<uint16_t> getPossibleBitsPerPixel() const;
-
-		/** Gets all possible screen resolutions
-		 */
-		std::vector<std::pair<uint16_t, uint16_t> > getPossibleResolutions() const;
 
 		/** Sets fullscreen / windowed mode
 		 */
@@ -233,7 +225,7 @@ namespace FIFE {
 		uint16_t m_screenwidth;
 		uint16_t m_screenheight;
 		std::string m_windowtitle;
-		std::string m_windowicon;		
+		std::string m_windowicon;
 
 
 		std::string m_defaultfontpath;

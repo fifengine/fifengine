@@ -46,11 +46,9 @@ namespace FIFE {
 	class EngineSettings {
 	public:
 		~EngineSettings();
-		void validate() const;
 		void setBitsPerPixel(uint8_t bitsperpixel);
 		uint16_t getBitsPerPixel() const;
 		std::vector<uint16_t> getPossibleBitsPerPixel() const;
-		std::vector<std::pair<uint16_t, uint16_t> > getPossibleResolutions() const;
 		void setFullScreen(bool fullscreen);
 		bool isFullScreen() const;
 		void setInitialVolume(float volume);
@@ -107,7 +105,7 @@ namespace FIFE {
 		const DeviceCaps& getDeviceCaps() const;
 		
 		Image* changeScreenMode(const ScreenMode& mode);
-		
+
 		void init();
 		void destroy();
 

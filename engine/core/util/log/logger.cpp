@@ -31,7 +31,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-// #include "guichan_addon/console.h"
 #include "modules.h"
 #include "logger.h"
 #include "util/base/exception.h"
