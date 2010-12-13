@@ -89,7 +89,6 @@ namespace FIFE {
 			m_rotation(0),
 			m_zoom(1),
 			m_location(),
-			m_prev_origo(ScreenPoint(0,0,0)),
 			m_cur_origo(ScreenPoint(0,0,0)),
 			m_viewport(),
 			m_screen_cell_width(1),
@@ -168,6 +167,7 @@ namespace FIFE {
 				m_zoom = 0.001;
 			}
 			updateMatrices();
+			m_updated = false;
 		}
 	}
 
@@ -184,10 +184,8 @@ namespace FIFE {
 	}
 
 	void Camera::setLocation(const Location& location) {
-		// initialize first set properly
-		if ((m_prev_origo == m_cur_origo) && (m_prev_origo == ScreenPoint(0,0,0))) {
-			m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
-			m_prev_origo = m_cur_origo;
+		if (m_location == location ) {
+			return;
 		}
 
 		CellGrid* cell_grid = NULL;
@@ -203,20 +201,21 @@ namespace FIFE {
 		m_location = location;
 		updateMatrices();
 
+		ExactModelCoordinate emc = m_location.getMapCoordinates();
+		m_cur_origo = toScreenCoordinates(emc);
+
 		// WARNING
 		// It is important that m_location is already set,
 		// as the updates which are triggered here
 		// need to calculate screen-coordinates
 		// which depend on m_location.
-		updateMap(location.getMap());
-
-		m_cur_origo = toScreenCoordinates(ExactModelCoordinate(0,0,0));
+		updateMap(m_location.getMap());
+		
+		m_updated = false;
 	}
 
-	void Camera::updateMap(Map* map)
-	{
-		if(m_map == map)
-		{
+	void Camera::updateMap(Map* map) {
+		if(m_map == map) {
 			return;
 		}
 		if(m_map) {
@@ -229,8 +228,9 @@ namespace FIFE {
 		if(map) {
 			map->addChangeListener(m_map_observer);
 			const std::list<Layer*>& layers = map->getLayers();
-			for(std::list<Layer*>::const_iterator i = layers.begin(); i !=layers.end(); ++i)
+			for(std::list<Layer*>::const_iterator i = layers.begin(); i !=layers.end(); ++i) {
 				addLayer(*i);
+			}
 		}
 		m_map = map;
 	}
@@ -345,7 +345,7 @@ namespace FIFE {
 		return pt;
 	}
 
-	DoublePoint3D  Camera::toVirtualScreenCoordinates(ExactModelCoordinate elevation_coords) {
+	DoublePoint3D Camera::toVirtualScreenCoordinates(ExactModelCoordinate elevation_coords) {
 		ExactModelCoordinate p = elevation_coords;
 		DoublePoint3D  pt = (m_vs_matrix * p);
 		return pt;
@@ -404,8 +404,7 @@ namespace FIFE {
 		FL_DBG(_log, LMsg("   m_screen_cell_width=") << m_screen_cell_width);
 	}
 
-	bool Camera::testRenderedViewPort() {
-		Map* map = m_location.getMap();
+	bool Camera::isViewPortFull() {
 		Rect cv = m_viewport;
 		int cv2x = cv.x+cv.w;
 		int cv2y = cv.y+cv.h;
@@ -415,9 +414,10 @@ namespace FIFE {
 		Rect rec3 = Rect(cv2x, cv.y, 1, 1);
 		Rect rec4 = Rect(cv2x, cv2y, 1, 1);
 
+		Map* map = m_location.getMap();
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
-		m_layer_to_instances.clear();
+
 		const RenderList& layer_instances = m_layer_to_instances[*layer_it];
 		RenderList::const_iterator instance_it = layer_instances.begin();
 		for(; instance_it != layer_instances.end(); ++instance_it) {
@@ -575,7 +575,7 @@ namespace FIFE {
 
 	void Camera::resetUpdates() {
 		m_iswarped = false;
-		m_prev_origo = m_cur_origo;
+		m_updated = true;
 	}
 
 	bool pipelineSort(const RendererBase* lhs, const RendererBase* rhs) {
@@ -613,7 +613,6 @@ namespace FIFE {
 	void Camera::resetRenderers() {
 		std::map<std::string, RendererBase*>::iterator r_it = m_renderers.begin();
 		for (; r_it != m_renderers.end(); ++r_it) {
-			//Map* map = m_location.getMap();
 			r_it->second->reset();
 		}
 	}
@@ -653,20 +652,44 @@ namespace FIFE {
 		m_renderbackend->resetLighting();
 	}
 
-	void Camera::render() {
-		Transform transform = NormalTransform;
-		if(m_iswarped)
-			  transform = WarpedTransform;
-		m_iswarped = false;
-
+	void Camera::updateRenderLists() {
 		Map* map = m_location.getMap();
 		if (!map) {
 			FL_ERR(_log, "No map for camera found");
 			return;
 		}
-		//if ((!map->isChanged()) && (!m_iswarped) && (cammove == ScreenPoint(0,0,0))) {
-		//	return;
-		//}
+
+		Transform transform = NormalTransform;
+		if (m_iswarped) {
+			transform = WarpedTransform;
+		}
+
+		const std::list<Layer*>& layers = map->getLayers();
+		std::list<Layer*>::const_iterator layer_it = layers.begin();
+		for (;layer_it != layers.end(); ++layer_it) {
+			LayerCache* cache = m_cache[*layer_it];
+			if(!cache) {
+				addLayer(*layer_it);
+				cache = m_cache[*layer_it];
+				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
+			}
+
+			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
+			if (cache->needUpdate() || m_iswarped || !m_updated) {
+				cache->update(transform, instances_to_render);
+			} else if (cache->needForced()) {
+				cache->updateForced();
+			}
+		}
+		resetUpdates();
+	}
+	
+	void Camera::render() {
+		updateRenderLists();
+		Map* map = m_location.getMap();
+		if (!map) {
+			return;
+		}
 
 		if (m_renderbackend->getLightingModel() != 0) {
 			m_renderbackend->resetStencilBuffer(0);
@@ -678,24 +701,14 @@ namespace FIFE {
 		if(m_backendSDL) {
 			m_renderbackend->pushClipArea(getViewPort());
 		} else {
-			m_renderbackend->pushClipArea(getViewPort(), testRenderedViewPort());
+			m_renderbackend->pushClipArea(getViewPort(), isViewPortFull());
 		}
-
-		// update each layer
-// 		m_layer_to_instances.clear();
 
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
-			LayerCache* cache = m_cache[*layer_it];
-			if(!cache) {
-				addLayer(*layer_it);
-				cache = m_cache[*layer_it];
-				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
-			}
 			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			cache->update(transform, instances_to_render);
-
+			
 			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 			for (; r_it != m_pipeline.end(); ++r_it) {
 				if ((*r_it)->isActivedLayer(*layer_it)) {
@@ -709,8 +722,6 @@ namespace FIFE {
 		}
 
 		m_renderbackend->popClipArea();
-		resetUpdates();
-		m_updated = true;
 	}
 
 }

@@ -54,27 +54,22 @@ namespace FIFE {
 
 	class CacheLayerChangeListener : public LayerChangeListener {
 	public:
-		CacheLayerChangeListener(LayerCache* cache)
-		{
+		CacheLayerChangeListener(LayerCache* cache)	{
 			m_cache = cache;
 		}
 		virtual ~CacheLayerChangeListener() {};
 
-		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& instances)
-		{
-			for(std::vector<Instance*>::iterator i = instances.begin();
-				i != instances.end(); ++i) {
+		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) {
+			for(std::vector<Instance*>::iterator i = instances.begin();	i != instances.end(); ++i) {
 				m_cache->updateInstance(*i);
 			}
 		}
 
-		virtual void onInstanceCreate(Layer* layer, Instance* instance)
-		{
+		virtual void onInstanceCreate(Layer* layer, Instance* instance)	{
 			m_cache->addInstance(instance);
 		}
 
-		virtual void onInstanceDelete(Layer* layer, Instance* instance)
-		{
+		virtual void onInstanceDelete(Layer* layer, Instance* instance)	{
 			m_cache->removeInstance(instance);
 		}
 	private:
@@ -87,6 +82,8 @@ namespace FIFE {
 		m_animation_pool = animation_pool;
 		m_layer = 0;
 		m_tree = 0;
+		m_needupdate = true;
+		m_forceupdate = false;
 	}
 
 	LayerCache::~LayerCache() {
@@ -111,6 +108,8 @@ namespace FIFE {
 			i != instances.end(); ++i) {
 			addInstance(*i);
 		}
+		m_needupdate = true;
+		m_forceupdate = false;
 	}
 
 	void LayerCache::addInstance(Instance* instance) {
@@ -129,6 +128,7 @@ namespace FIFE {
 		entry.entry_index = m_entries.size();
 		m_entries.push_back(entry);
 		updateEntry(m_entries.back());
+		m_needupdate = true;
 	}
 
 	void LayerCache::removeInstance(Instance* instance) {
@@ -144,20 +144,23 @@ namespace FIFE {
 		Entry& item = m_entries[m_instance_map[instance]];
 		assert(item.instance_index == m_instance_map[instance]);
 
-		if(item.node)
+		if(item.node) {
 			item.node->data().erase(item.entry_index);
+		}
 		item.node = 0;
-		item.instance_index = unsigned(-1);
+		item.instance_index = -1;
 		m_instance_map.erase(instance);
+		m_needupdate = true;
 	}
 
 	void LayerCache::updateInstance(Instance* instance) {
 		Entry& entry = m_entries[m_instance_map[instance]];
 		updateEntry(entry);
+		m_needupdate = true;
 	}
 
 	void LayerCache::updateEntry(LayerCache::Entry& item) {
-		if(item.instance_index ==  unsigned(-1)) {
+		if(item.instance_index ==  -1) {
 			return;
 		}
 		if(item.node) {
@@ -200,6 +203,7 @@ namespace FIFE {
 				facing_angle += 360;
 			}
 			instance->setRotation(facing_angle);
+			m_forceupdate = true;
 		}
 
 		if (image) {
@@ -280,16 +284,69 @@ namespace FIFE {
 		}
 	};
 
+	void LayerCache::updateForced() {
+		// NOTE
+		// An update is forced if the item has an animation/action.
+		// This update only happens if it is _already_ included in the viewport
+		// Nevertheless: Moving instances - which might move into the viewport will be updated
+		// By the layer change listener.
+
+		m_forceupdate = false;
+		if (m_instance_map.empty()) {
+			return;
+		}
+
+		std::map<Instance*,int>::iterator i_it = m_instance_map.begin();
+		for (;i_it != m_instance_map.end(); ++i_it) {
+			Entry& item = m_entries[i_it->second];
+			
+			if (!item.force_update) {
+				continue;
+			}
+			item.force_update = false;
+			if(item.instance_index == -1) {
+				continue;
+			}
+
+			Action* action = i_it->first->getCurrentAction();
+
+			if(action) {
+				Image* image = NULL;
+				RenderItem& render_item = m_instances[item.instance_index];
+				Instance* instance = render_item.instance;
+				render_item.facing_angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
+
+				int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(render_item.facing_angle + m_camera->getRotation());
+				Animation& animation = m_animation_pool->getAnimation(animation_id);
+				unsigned animation_time = instance->getActionRuntime() % animation.getDuration();
+				image = animation.getFrameByTimestamp(animation_time);
+
+				int facing_angle = render_item.facing_angle;
+				if (facing_angle < 0){
+					facing_angle += 360;
+				}
+				instance->setRotation(facing_angle);
+				if (image) {
+					render_item.image = image;
+					item.force_update = true;
+					m_forceupdate = true;
+				}
+			}
+		}
+	}
+
 	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
 		const double OVERDRAW = 2.5;
 		renderlist.clear();
+		m_needupdate = false;
 		if(!m_layer->areInstancesVisible()) {
 			FL_DBG(_log, "Layer instances hidden");
 			return;
 		}
 		bool isWarped = transform == Camera::WarpedTransform;
-		if( isWarped )
+		if( isWarped ) {
 			fullUpdate();
+		}
 
 		Rect viewport = m_camera->getViewPort();
 		Rect screen_viewport = viewport;
@@ -307,13 +364,6 @@ namespace FIFE {
 		collect(viewport, index_list);
 		for(unsigned i=0; i!=index_list.size();++i) {
 			Entry& entry = m_entries[index_list[i]];
-			// NOTE
-			// An update is forced if the item has an animation/action.
-			// This update only happens if it is _already_ included in the viewport
-			// Nevertheless: Moving instances - which might move into the viewport will be updated
-			// By the layer change listener.
-			if(entry.force_update)
-				updateEntry(entry);
 
 			RenderItem& item = m_instances[entry.instance_index];
 			InstanceVisual* visual = item.instance->getVisual<InstanceVisual>();
