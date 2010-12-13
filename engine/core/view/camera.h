@@ -154,6 +154,9 @@ namespace FIFE {
 		 */
 		Location getLocation() const;
 
+		/** Gets screen point for the camera location
+		 * @return camera screen point
+		 */
 		Point3D getOrigin() const;
 
 		/** Gets a reference to the camera location
@@ -278,11 +281,6 @@ namespace FIFE {
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 		void onRendererEnabledChanged(RendererBase* renderer);
 
-		/** Use with OpenGL only! Checks to see if the entire viewport was rendered last frame.
-		 * If so it wont clear the backbuffer.
-		 */
-		bool testRenderedViewPort();
-
 		void setLightingColor(float red, float green, float blue, float alpha);
 		void resetLightingColor();
 		std::vector<float> getLightingColor();
@@ -315,6 +313,15 @@ namespace FIFE {
 		 */
 		void updateReferenceScale();
 
+		/** Updates camera RenderLists
+		 */
+		void updateRenderLists();
+
+		/** Use with OpenGL only! Checks to see if the entire viewport was rendered last frame.
+		 * If so it wont clear the backbuffer.
+		 */
+		bool isViewPortFull();
+
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
@@ -331,7 +338,6 @@ namespace FIFE {
 		double m_rotation;
 		double m_zoom;
 		Location m_location;
-		ScreenPoint m_prev_origo;
 		ScreenPoint m_cur_origo;
 		Rect m_viewport;
 		bool m_view_updated;
@@ -343,12 +349,12 @@ namespace FIFE {
 		bool m_backendSDL;
 		// caches calculated image dimensions for already queried & calculated layers
 		std::map<Layer*, Point> m_image_dimensions;
-		bool m_iswarped;
+		bool m_iswarped; // true, if the geometry had changed
 
 		// list of renderers managed by the view
 		std::map<std::string, RendererBase*> m_renderers;
 		std::list<RendererBase*> m_pipeline;
-		bool m_updated; // false, if view has never been updated before
+		bool m_updated; // false, if view has not been updated
 
 		RenderBackend* m_renderbackend;
 		ImagePool* m_ipool;
