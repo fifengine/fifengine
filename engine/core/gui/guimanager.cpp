@@ -240,8 +240,10 @@ namespace FIFE {
 			keyevt.setType(KeyEvent::PRESSED);
 		else if(gcnevt.getType() == gcn::KeyEvent::RELEASED)
 			keyevt.setType(KeyEvent::RELEASED);
-		else
-			throw EventException("Invalid event type in fillKeyEvent");
+		else {
+			FL_WARN(_log, LMsg("GUIManager::translateKeyEvent() - ") << "Unknown event type: " << gcnevt.getType());
+			keyevt.setType(KeyEvent::UNKNOWN);
+		}
 		keyevt.setShiftPressed(gcnevt.isShiftPressed());
 		keyevt.setControlPressed(gcnevt.isControlPressed());
 		keyevt.setAltPressed(gcnevt.isAltPressed());

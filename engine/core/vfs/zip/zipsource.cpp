@@ -31,21 +31,21 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/exception.h"
 #include "vfs/raw/rawdata.h"
+#include "util/base/exception.h"
 #include "util/log/logger.h"
 
 #include "zipsource.h"
 #include "zipfilesource.h"
 
 namespace FIFE {
-	
+
 	static const uint32_t LF_HEADER = 0x04034b50;
 	static const uint32_t DE_HEADER = 0x08064b50;
 	static const uint32_t CF_HEADER = 0x02014b50;
 
 	static Logger _log(LM_LOADERS);
-	
+
 	ZipSource::ZipSource(VFS* vfs, const std::string& zip_file) : VFSSource(vfs),  m_zipfile(vfs->open(zip_file)) {
 		readIndex();
 	}
@@ -53,7 +53,7 @@ namespace FIFE {
 	ZipSource::~ZipSource() {
 		delete m_zipfile;
 	}
-	
+
 	bool ZipSource::fileExists(const std::string& file) const {
 		return m_files.find(file) != m_files.end();
 	}
@@ -78,7 +78,7 @@ namespace FIFE {
 			zstream.opaque = Z_NULL;
 			zstream.next_out = data;
 			zstream.avail_out = info.size_real;
-			
+
 			if (inflateInit2(&zstream, -15) != Z_OK) {
 				FL_ERR(_log, LMsg("inflateInit2 failed"));
 				delete[] data;
@@ -92,7 +92,7 @@ namespace FIFE {
 				} else {
 					FL_ERR(_log, LMsg("inflate failed without msg, err: ") << err);
 				}
-				
+
 				inflateEnd(&zstream);
 				delete[] data;
 				return 0;
@@ -170,17 +170,17 @@ namespace FIFE {
 	}
 
 
-	// FIXME: quick&very dirty.. 
+	// FIXME: quick&very dirty..
 	std::set<std::string> ZipSource::listFiles(const std::string& path) const {
 		std::set<std::string> result;
-		
+
 		std::string fixedPath = fixPath(path);
 		int path_len = path.length();
 		if (fixedPath[path_len - 1] != '/') {
 			fixedPath += '/';
 			path_len++;
 		}
-		
+
 		type_files::const_iterator end = m_files.end();
 		for (type_files::const_iterator i = m_files.begin(); i != end; ++i) {
 			std::string name = i->first;
@@ -190,7 +190,7 @@ namespace FIFE {
 				size_t pos = name.find("/");
 				if (pos != std::string::npos)
 					continue;
-				
+
 				result.insert(name);
 			}
 		}
@@ -198,7 +198,7 @@ namespace FIFE {
 		return result;
 	}
 
-	// FIXME: quick&very dirty.. 
+	// FIXME: quick&very dirty..
 	std::set<std::string> ZipSource::listDirectories(const std::string& path) const {
 		std::set<std::string> result;
 
