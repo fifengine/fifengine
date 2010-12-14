@@ -31,6 +31,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src dir
 #include "video/image.h"
+#include "util/log/logger.h"
 #include "gui/base/gui_image.h"
 #include "util/structures/rect.h"
 #include "video/opengl/fife_opengl.h"
@@ -38,6 +39,8 @@
 #include "opengl_gui_graphics.h"
 
 namespace FIFE {
+	static Logger _log(LM_GUI);
+
 	OpenGLGuiGraphics::OpenGLGuiGraphics(ImagePool& pool): m_pool(pool) {
 		mTarget = SDL_GetVideoSurface();
 		assert(mTarget);
@@ -61,7 +64,8 @@ namespace FIFE {
 			unsigned int alignment) {
 		if (mFont == NULL)
 		{
-			throw GCN_EXCEPTION("No font set.");
+			FL_ERR(_log, "OpenGLGuiGraphics::drawText() - No font set!");
+			return;
 		}
 
 		GLEnable flag(GL_TEXTURE_2D);
@@ -77,7 +81,8 @@ namespace FIFE {
 				mFont->drawString(this, text, x - mFont->getWidth(text), y);
 				break;
 			default:
-				throw GCN_EXCEPTION("Unknown alignment.");
+				FL_WARN(_log, LMsg("OpenGLGuiGraphics::drawText() - ") << "Unknown alignment: " << alignment);
+				mFont->drawString(this, text, x, y);
 		}
 	}
 

@@ -36,7 +36,7 @@
 #include "enginesettings.h"
 
 namespace FIFE {
-	static Logger _slog(LM_CONTROLLER);
+	static Logger _log(LM_CONTROLLER);
 
 	const float MAXIMUM_VOLUME = 10.0;
 
@@ -82,7 +82,7 @@ namespace FIFE {
 			return;
 		}
 
-		FL_WARN(_slog, LMsg("setBitsPerPixel() - ")
+		FL_WARN(_log, LMsg("EngineSettings::setBitsPerPixel() - ")
 			<< " Tried to set screen bpp to an unsupporded value of " << bitsperpixel <<
 			".  Setting bpp to use the default value of 0 (the current screen bpp)");
 
@@ -100,7 +100,7 @@ namespace FIFE {
 
 	void EngineSettings::setInitialVolume(float volume) {
 		if (volume > getMaxVolume() || volume < 0) {
-			FL_WARN(_slog, LMsg("setInitialVolume() - ")
+			FL_WARN(_log, LMsg("EngineSettings::setInitialVolume() - ")
 				<< " Tried to set initial volume to an unsupporded value of " << volume <<
 				".  Setting volume to the default value of 5 (minumum is 0, maximum is 10)");
 
@@ -122,7 +122,7 @@ namespace FIFE {
 			m_renderbackend = renderbackend;
 			return;
 		}
-		FL_WARN(_slog, LMsg("setRenderBackend() - ")
+		FL_WARN(_log, LMsg("EngineSettings::setRenderBackend() - ")
 			<< renderbackend << " is not a valid render backend " <<
 			".  Setting the render backend to the default value of \"SDL\".");
 
@@ -200,7 +200,7 @@ namespace FIFE {
 			return;
 		}
 
-		FL_WARN(_slog, LMsg("setLightingModel() - ")
+		FL_WARN(_log, LMsg("EngineSettings::setLightingModel() - ")
 			<< lighting << " is not a valid lighting model." <<
 			".  Setting the lighting model to the default value of 0 (off)");
 
