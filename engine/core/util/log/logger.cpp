@@ -83,29 +83,29 @@ namespace FIFE {
 		}
 		std::string lvlstr = "";
 		switch (level) {
-			case LEVEL_DEBUG: lvlstr = "dbg";
+			case LEVEL_DEBUG: lvlstr = "DEBUG";
 			break;
 
-			case LEVEL_LOG: lvlstr = "log";
+			case LEVEL_LOG: lvlstr = "LOG";
 			break;
 
-			case LEVEL_WARN: lvlstr = "warn";
+			case LEVEL_WARN: lvlstr = "WARN";
 			break;
 
-			case LEVEL_ERROR: lvlstr = "error";
+			case LEVEL_ERROR: lvlstr = "ERROR";
 			break;
 
-			case LEVEL_PANIC: lvlstr = "panic";
+			case LEVEL_PANIC: lvlstr = "PANIC";
 			break;
 
-			default: lvlstr = "error";
+			default: lvlstr = "ERROR";
 			break;
 		}
 		if (m_logtoprompt) {
-			std::cout << moduleInfos[module].name << ": " << lvlstr << ": " << msg << std::endl;
+			std::cout << moduleInfos[module].name << ":" << lvlstr << ":" << msg << std::endl;
 		}
 		if (m_logtofile) {
-			*m_logfile << moduleInfos[module].name << ": " << lvlstr << ": " << msg << std::endl;
+			*m_logfile << moduleInfos[module].name << ":" << lvlstr << ":" << msg << std::endl;
 		}
 		if (level == LEVEL_PANIC) {
 			abort();

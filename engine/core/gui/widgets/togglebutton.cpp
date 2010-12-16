@@ -27,24 +27,25 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <iostream>
 
 // 3rd party library includes
+#include <guichan/mouseevent.hpp>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include <iostream>
-
-#include <guichan/mouseevent.hpp>
+#include "util/log/logger.h"
 
 #include "togglebutton.h"
 
-
 namespace gcn {
+	static FIFE::Logger _log(LM_GUI);
+
 	ToggleButton::GroupMap ToggleButton::m_groupMap;
 
-	ToggleButton::ToggleButton(Image *up_file , Image *down_file, Image *hover_file, const std::string& caption, const std::string& group): 
+	ToggleButton::ToggleButton(Image *up_file , Image *down_file, Image *hover_file, const std::string& caption, const std::string& group):
 		Button(),
 		m_upImage(up_file),
 		m_downImage(down_file),
@@ -62,16 +63,16 @@ namespace gcn {
 
 		addActionListener(this);
 	}
-	
+
 	ToggleButton::~ToggleButton() {
 		setGroup(""); // Remove button from group
 	}
-	
+
 	void ToggleButton::setDownOffset(int x, int y) {
 		x_downoffset = x;
 		y_downoffset = y;
 	}
-	
+
 	void ToggleButton::draw(Graphics *graphics) {
 		Color faceColor = getBaseColor();
         Color highlightColor;
@@ -81,7 +82,7 @@ namespace gcn {
 		Image* img = NULL;
 		int xoffset = 0;
 		int yoffset = 0;
-		
+
 		if (isPressed() || m_toggled) {
 			faceColor = faceColor - 0x303030;
             faceColor.a = alpha;
@@ -116,7 +117,7 @@ namespace gcn {
 				img = m_upImage;
 			}
 		}
-		
+
 
 		graphics->setColor(faceColor);
         graphics->fillRectangle(Rectangle(1, 1, getDimension().width-1, getHeight() - 1));
@@ -149,13 +150,16 @@ namespace gcn {
 				textX = getWidth() - 4;
 				break;
 			default:
-				throw GCN_EXCEPTION("Unknown alignment.");
+				//use the default of Graphics::LEFT
+				textX = 4;
+				FL_WARN(_log, FIFE::LMsg("ToggleButton::draw() - ") << "Unknown alignment: "
+				              << getAlignment() << ".  Using the default of Graphics::LEFT");
 		}
 
 		graphics->setFont(getFont());
 		if (mCaption.size() > 0) {
 			if (isPressed())
-				graphics->drawText(getCaption(), textX + 1, 
+				graphics->drawText(getCaption(), textX + 1,
 						textY + 1, getAlignment());
 			else
 				graphics->drawText(getCaption(), textX, textY, getAlignment());
@@ -252,12 +256,12 @@ namespace gcn {
         return m_group;
     }
 
-	int ToggleButton::getDownXOffset() const { 
-		return x_downoffset; 
+	int ToggleButton::getDownXOffset() const {
+		return x_downoffset;
 	}
-	
-	int ToggleButton::getDownYOffset() const { 
-		return y_downoffset; 
+
+	int ToggleButton::getDownYOffset() const {
+		return y_downoffset;
 	}
 
 }
