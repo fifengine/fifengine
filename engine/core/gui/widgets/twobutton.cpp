@@ -28,11 +28,14 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/log/logger.h"
 
 #include "twobutton.h"
 
 namespace gcn {
-	TwoButton::TwoButton(Image *up_file , Image *down_file, Image *hover_file, const std::string& caption): 
+	static FIFE::Logger _log(LM_GUI);
+
+	TwoButton::TwoButton(Image *up_file , Image *down_file, Image *hover_file, const std::string& caption):
 		Button(),
 		m_upImage(up_file),
 		m_downImage(down_file),
@@ -44,20 +47,20 @@ namespace gcn {
 		adjustSize();
 		mCaption = caption;
 	}
-	
+
 	TwoButton::~TwoButton() {
 	}
-	
+
 	void TwoButton::setDownOffset(int x, int y) {
 		x_downoffset = x;
 		y_downoffset = y;
 	}
-	
+
 	void TwoButton::draw(Graphics *graphics) {
 		Image* img = m_upImage;
 		int xoffset = 0;
 		int yoffset = 0;
-		
+
 		if (isPressed()) {
 			if( m_downImage ) {
 				img = m_downImage;
@@ -69,7 +72,7 @@ namespace gcn {
 				img = m_hoverImage;
 			}
 		}
-		
+
 		if (img) {
 			graphics->drawImage(img, xoffset, yoffset);
 		}
@@ -89,13 +92,15 @@ namespace gcn {
 				textX = getWidth() - 4;
 				break;
 			default:
-				throw GCN_EXCEPTION("Unknown alignment.");
+				textX = 4;
+				FL_WARN(_log, FIFE::LMsg("TwoButton::draw() - ") << "Unknown alignment: "
+				              << getAlignment() << ".  Using the default of Graphics::LEFT");
 		}
 
 		graphics->setFont(getFont());
 		if (mCaption.size() > 0) {
 			if (isPressed())
-				graphics->drawText(getCaption(), textX + 1, 
+				graphics->drawText(getCaption(), textX + 1,
 						textY + 1, getAlignment());
 			else
 				graphics->drawText(getCaption(), textX, textY, getAlignment());
@@ -131,7 +136,7 @@ namespace gcn {
 		m_hoverImage = image;
 		adjustSize();
 	}
-		
+
 }
 /* vim: set noexpandtab: set shiftwidth=2: set tabstop=2: */
 

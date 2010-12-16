@@ -24,7 +24,6 @@
 // 3rd party library includes
 #include <guichan/opengl.hpp>
 #include <guichan/font.hpp>
-#include <guichan/exception.hpp>
 
 
 // FIFE includes
@@ -32,6 +31,7 @@
 // First block: files included from the FIFE root src dir
 #include "video/image.h"
 #include "util/log/logger.h"
+#include "util/base/exception.h"
 #include "gui/base/gui_image.h"
 #include "util/structures/rect.h"
 #include "video/opengl/fife_opengl.h"
@@ -61,11 +61,10 @@ namespace FIFE {
 	}
 
 	void OpenGLGuiGraphics::drawText(const std::string& text, int x, int y,
-			unsigned int alignment) {
+			uint32_t alignment) {
 		if (mFont == NULL)
 		{
-			FL_ERR(_log, "OpenGLGuiGraphics::drawText() - No font set!");
-			return;
+			throw GuiException("OpenGLGuiGraphics::drawText() - No font set!");
 		}
 
 		GLEnable flag(GL_TEXTURE_2D);

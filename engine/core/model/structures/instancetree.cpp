@@ -29,6 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
+#include "util/log/logger.h"
 #include "model/structures/instance.h"
 #include "util/structures/rect.h"
 
@@ -36,6 +37,7 @@
 
 
 namespace FIFE {
+	static Logger _log(LM_STRUCTURES);
 
 	InstanceTree::InstanceTree(): FifeClass() {
 	}
@@ -49,7 +51,8 @@ namespace FIFE {
 		InstanceList& list = node->data();
 		list.push_back(instance);
 		if( m_reverse.find(instance) != m_reverse.end() )
-			throw new InconsistencyDetected("Duplicate Instance.");
+			FL_WARN(_log, "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
+			return;
 		m_reverse[instance] = node;
 	}
 
@@ -57,7 +60,8 @@ namespace FIFE {
 		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
 		InstanceTreeNode * node = m_reverse[instance];
 		if( !node )
-			throw new InconsistencyDetected("Removing Ghost Instance.");
+			FL_WARN(_log, "InstanceTree::removeInstance() - Instance not part of tree.");
+			return;
 		m_reverse.erase(instance);
 		InstanceList& list = node->data();
 		for(InstanceList::iterator i = list.begin(); i != list.end(); ++i) {
@@ -66,7 +70,7 @@ namespace FIFE {
 				return;
 			}
 		}
-		throw new InconsistencyDetected("Removing Ghost Instance (not in list?).");
+		FL_WARN(_log, "InstanceTree::removeInstance() - Instance part of tree but not found in the expected tree node.");
 	}
 
 	class InstanceListCollector {
