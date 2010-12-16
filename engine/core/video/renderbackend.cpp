@@ -130,4 +130,15 @@ namespace FIFE {
 	const SDL_Color& RenderBackend::getColorKey() const {
 		return m_colorkey;
 	}
+
+	void RenderBackend::setBackgroundColor(uint8_t r, uint8_t g, uint8_t b) {
+		assert(m_screen);
+		m_screen->setBackgroundColor(r,g,b);
+	}
+
+	void RenderBackend::resetBackgroundColor() {
+		assert(m_screen);
+		m_screen->setBackgroundColor(0,0,0);
+	}
+
 }

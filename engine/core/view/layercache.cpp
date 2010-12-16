@@ -159,11 +159,14 @@ namespace FIFE {
 		m_needupdate = true;
 	}
 
-	void LayerCache::updateEntry(LayerCache::Entry& item) {
+	void LayerCache::updateEntry(LayerCache::Entry& item, bool full) {
 		if(item.instance_index ==  -1) {
 			return;
 		}
-		if(item.node) {
+		if (!item.force_update && !full) {
+			return;
+		}
+		if(item.node && full) {
 			item.node->data().erase(item.entry_index);
 		}
 		RenderItem& render_item = m_instances[item.instance_index];
@@ -185,7 +188,9 @@ namespace FIFE {
 			// Try static images then default action.
 			int image_id = render_item.getStaticImageIndexByAngle(angle, instance);
 			if(image_id == Pool::INVALID_ID) {
-				action = instance->getObject()->getDefaultAction();
+				if (!instance->getObject()->isStatic()) {
+					action = instance->getObject()->getDefaultAction();
+				}
 			} else {
 				image = &m_image_pool->getImage(image_id);
 			}
@@ -211,29 +216,31 @@ namespace FIFE {
 			h = image->getHeight();
 			xshift = image->getXShift();
 			yshift = image->getYShift();
+			render_item.image = image;
 		}
 
-		screen_position.x -= w / 2;
-		screen_position.x += xshift;
-		screen_position.y -= h / 2;
-		screen_position.y += yshift;
+		if (full) {
+			screen_position.x -= w / 2;
+			screen_position.x += xshift;
+			screen_position.y -= h / 2;
+			screen_position.y += yshift;
 
-		render_item.image = image;
-		render_item.screenpoint = screen_position;
+			render_item.screenpoint = screen_position;
 
-		render_item.bbox.x = screen_position.x;
-		render_item.bbox.y = screen_position.y;
-		render_item.bbox.w = w;
-		render_item.bbox.h = h;
+			render_item.bbox.x = screen_position.x;
+			render_item.bbox.y = screen_position.y;
+			render_item.bbox.w = w;
+			render_item.bbox.h = h;
 
-		render_item.dimensions.x = screen_position.x;
-		render_item.dimensions.y = screen_position.y;
-		render_item.dimensions.w = w;
-		render_item.dimensions.h = h;
+			render_item.dimensions.x = screen_position.x;
+			render_item.dimensions.y = screen_position.y;
+			render_item.dimensions.w = w;
+			render_item.dimensions.h = h;
 
-		CacheTree::Node* node = m_tree->find_container(render_item.bbox);
-		item.node = node;
-		node->data().insert(item.entry_index);
+			CacheTree::Node* node = m_tree->find_container(render_item.bbox);
+			item.node = node;
+			node->data().insert(item.entry_index);
+		}
 	}
 
 	class CacheTreeCollector {
@@ -299,39 +306,7 @@ namespace FIFE {
 		std::map<Instance*,int>::iterator i_it = m_instance_map.begin();
 		for (;i_it != m_instance_map.end(); ++i_it) {
 			Entry& item = m_entries[i_it->second];
-			
-			if (!item.force_update) {
-				continue;
-			}
-			item.force_update = false;
-			if(item.instance_index == -1) {
-				continue;
-			}
-
-			Action* action = i_it->first->getCurrentAction();
-
-			if(action) {
-				Image* image = NULL;
-				RenderItem& render_item = m_instances[item.instance_index];
-				Instance* instance = render_item.instance;
-				render_item.facing_angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
-
-				int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(render_item.facing_angle + m_camera->getRotation());
-				Animation& animation = m_animation_pool->getAnimation(animation_id);
-				unsigned animation_time = instance->getActionRuntime() % animation.getDuration();
-				image = animation.getFrameByTimestamp(animation_time);
-
-				int facing_angle = render_item.facing_angle;
-				if (facing_angle < 0){
-					facing_angle += 360;
-				}
-				instance->setRotation(facing_angle);
-				if (image) {
-					render_item.image = image;
-					item.force_update = true;
-					m_forceupdate = true;
-				}
-			}
+			updateEntry(item, false);
 		}
 	}
 

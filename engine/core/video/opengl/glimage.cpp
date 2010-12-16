@@ -239,6 +239,13 @@ namespace FIFE {
 		glScissor(cliparea.x, getHeight() - cliparea.y - cliparea.h, cliparea.w, cliparea.h);
 
 		if (clear) {
+			if (m_isbackgroundcolor) {
+				float red = float(m_backgroundcolor.r/255.0);
+				float green = float(m_backgroundcolor.g/255.0);
+				float blue = float(m_backgroundcolor.b/255.0);
+				glClearColor(red, green, blue, 0.0);
+				m_isbackgroundcolor = false;
+			}
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
 	}

@@ -185,6 +185,8 @@ namespace FIFE {
 		bool isColorKeyEnabled() const;
 		void setColorKey(const SDL_Color& colorkey);
 		const SDL_Color& getColorKey() const;
+		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
+		void resetBackgroundColor();
 	};
 	
 	enum MouseCursorType {

@@ -27,6 +27,7 @@
 #include <map>
 
 // 3rd party library includes
+#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -281,9 +282,36 @@ namespace FIFE {
 		void onRendererPipelinePositionChanged(RendererBase* renderer);
 		void onRendererEnabledChanged(RendererBase* renderer);
 
+		/** Sets lighting color
+		 */
 		void setLightingColor(float red, float green, float blue, float alpha);
+		/** Resets lighting color
+		 */
 		void resetLightingColor();
+		/** Returns a vector that contain the light color
+		 */
 		std::vector<float> getLightingColor();
+
+		/** Sets a color as overlay
+		 */
+		void setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+		/** Resets the color overlay
+		 */
+		void resetOverlayColor();
+		/** Sets a image as overlay,
+		 *  if fill is true the image gets the viewport size.
+		 */
+		void setOverlayImage(int id, bool fill = false);
+		/** Resets the image overlay
+		 */
+		void resetOverlayImage();
+		/** Sets a animation as overlay,
+		 *  if fill is true the animation gets the viewport size.
+		 */
+		void setOverlayAnimation(int id, bool fill = false);
+		/** Resets the animation overlay
+		 */
+		void resetOverlayAnimation();
 
 		/** Renders camera
 		 */
@@ -325,6 +353,10 @@ namespace FIFE {
 		/** Gets logical cell image dimensions for given layer
 		 */
 		DoublePoint getLogicalCellDimensions(Layer* layer);
+
+		/** Renders the overlay(color, image, animation) for the camera.
+		 */
+		void renderOverlay();
 
 		DoubleMatrix m_matrix;
 		DoubleMatrix m_inverse_matrix;
@@ -371,6 +403,17 @@ namespace FIFE {
 		bool m_lighting;
 		// caches the light color for the camera
 		std::vector<float> m_light_colors;
+
+		// overlay stuff
+		bool m_col_overlay;
+		bool m_img_overlay;
+		bool m_ani_overlay;
+		SDL_Color m_overlay_color;
+		int m_img_id;
+		int m_ani_id;
+		bool m_img_fill;
+		bool m_ani_fill;
+		unsigned int m_start_time;
 	};
 }
 #endif

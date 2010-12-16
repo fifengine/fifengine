@@ -219,6 +219,15 @@ namespace FIFE {
 		 */
 		const SDL_Color& getColorKey() const;
 
+		/** Set the background color
+		 */
+		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
+
+		/** Reset the background color to black
+		 */
+		void resetBackgroundColor();
+
+
 	protected:
 		Image* m_screen;
 		bool m_isalphaoptimized;
