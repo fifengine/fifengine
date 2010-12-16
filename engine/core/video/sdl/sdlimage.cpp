@@ -839,7 +839,11 @@ namespace FIFE {
 		rect.h = cliparea.h;
 		SDL_SetClipRect(m_surface, &rect);
 		if (clear) {
-			SDL_FillRect(m_surface, &rect, 0x00);
+			uint32_t color = 0;
+			if (m_isbackgroundcolor) {
+				color = SDL_MapRGB(m_surface->format, m_backgroundcolor.r, m_backgroundcolor.g, m_backgroundcolor.b);
+			}
+			SDL_FillRect(m_surface, &rect, color);
 		}
 	}
 }

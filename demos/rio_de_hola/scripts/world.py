@@ -167,6 +167,9 @@ class World(EventListenerBase):
 		self.initAgents()
 		self.initCameras()
 
+		#Set background color
+		self.engine.getRenderBackend().setBackgroundColor(80,80,255)
+
 		if int(TDS.get("FIFE", "PlaySounds")):
 			# play track as background music
 			self.music = self.soundmanager.createSoundEmitter('music/rio_de_hola.ogg')

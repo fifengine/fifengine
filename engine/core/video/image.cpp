@@ -64,6 +64,10 @@ namespace FIFE {
 		}
 		m_area.x = m_area.y = m_area.w = m_area.h = 0;
 		m_surface = surface;
+		m_isbackgroundcolor = false;
+		m_backgroundcolor.r = 0;
+		m_backgroundcolor.g = 0;
+		m_backgroundcolor.b = 0;
 	}
 
 	Image::~Image() {
@@ -139,6 +143,15 @@ namespace FIFE {
 
 	void Image::render(const Rect& rect, unsigned char alpha) {
 		render(rect, SDL_GetVideoSurface(), alpha);
+	}
+
+	void Image::setBackgroundColor(uint8_t r, uint8_t g, uint8_t b) {
+		if (r != m_backgroundcolor.r || g != m_backgroundcolor.g || b != m_backgroundcolor.b) {
+			m_isbackgroundcolor = true;
+			m_backgroundcolor.r = r;
+			m_backgroundcolor.g = g;
+			m_backgroundcolor.b = b;
+		}
 	}
 
 	void Image::pushClipArea(const Rect& cliparea, bool clear) {

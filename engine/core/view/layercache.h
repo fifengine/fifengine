@@ -89,7 +89,7 @@ namespace FIFE {
 		Layer* m_layer;
 		CacheLayerChangeListener* m_layer_observer;
 
-		void updateEntry(Entry& item);
+		void updateEntry(Entry& item, bool full = true);
 
 		std::map<Instance*,int> m_instance_map;
 		std::vector<Entry> m_entries;

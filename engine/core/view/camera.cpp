@@ -22,7 +22,6 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <SDL.h>
 
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
@@ -106,7 +105,10 @@ namespace FIFE {
 			m_apool(apool),
 			m_layer_to_instances(),
 			m_lighting(false),
-			m_light_colors() {
+			m_light_colors(),
+			m_col_overlay(false),
+			m_img_overlay(false),
+			m_ani_overlay(false) {
 
 		m_viewport = viewport;
 		m_map_observer = new MapObserver(this);
@@ -652,6 +654,94 @@ namespace FIFE {
 		m_renderbackend->resetLighting();
 	}
 
+	void Camera::setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+		m_col_overlay = true;
+		m_overlay_color.r = red;
+		m_overlay_color.g = green;
+		m_overlay_color.b = blue;
+		m_overlay_color.unused = alpha;
+	}
+
+	void Camera::resetOverlayColor() {
+		m_col_overlay = false;
+	}
+
+	void Camera::setOverlayImage(int id, bool fill) {
+		m_img_overlay = true;
+		m_img_id = id;
+		m_img_fill = fill;
+	}
+
+	void Camera::resetOverlayImage() {
+		m_img_overlay = false;
+	}
+
+	void Camera::setOverlayAnimation(int id, bool fill) {
+		m_ani_overlay = true;
+		m_ani_id = id;
+		m_ani_fill = fill;
+		m_start_time = 0;
+	}
+
+	void Camera::resetOverlayAnimation() {
+		m_ani_overlay = false;
+	}
+
+	void Camera::renderOverlay() {
+		if (!m_col_overlay && !m_img_overlay && !m_ani_overlay) {
+			return;
+		}
+		uint16_t width = m_viewport.w;
+		uint16_t height = m_viewport.h;
+		Point p = Point(0,0);
+		Rect r;
+
+		// color overlay
+		if (m_col_overlay) {
+			m_renderbackend->fillRectangle(p, width, height, m_overlay_color.r, m_overlay_color.g, m_overlay_color.b, m_overlay_color.unused);
+		}
+		// image overlay
+		if (m_img_overlay) {
+			Image* img = &m_ipool->getImage(m_img_id);
+			if (img) {
+				p = Point(m_viewport.w/2, m_viewport.h/2);
+				if (!m_img_fill) {
+					width = img->getWidth();
+					height = img->getHeight();
+				}
+				r.x = p.x-width/2;
+				r.y = p.y-height/2;
+				r.w = width;
+				r.h = height;
+				img->render(r);
+			}
+		}
+		// animation overlay
+		if (m_ani_overlay) {
+			Animation& animation = m_apool->getAnimation(m_ani_id);
+			if (m_start_time == 0) {
+				m_start_time = TimeManager::instance()->getTime();
+			}
+			int animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
+			Image* img = animation.getFrameByTimestamp(animtime);
+			if (img) {
+				p = Point(m_viewport.w/2, m_viewport.h/2);
+				if (m_ani_fill) {
+					width = m_viewport.w;
+					height = m_viewport.h;
+				} else {
+					width = img->getWidth();
+					height = img->getHeight();
+				}
+				r.x = p.x-width/2;
+				r.y = p.y-height/2;
+				r.w = width;
+				r.h = height;
+				img->render(r);
+			}
+		}
+	}
+
 	void Camera::updateRenderLists() {
 		Map* map = m_location.getMap();
 		if (!map) {
@@ -663,7 +753,7 @@ namespace FIFE {
 		if (m_iswarped) {
 			transform = WarpedTransform;
 		}
-
+		
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
@@ -677,9 +767,8 @@ namespace FIFE {
 			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
 			if (cache->needUpdate() || m_iswarped || !m_updated) {
 				cache->update(transform, instances_to_render);
-			} else if (cache->needForced()) {
-				cache->updateForced();
 			}
+			cache->updateForced();
 		}
 		resetUpdates();
 	}
@@ -717,6 +806,7 @@ namespace FIFE {
 			}
 		}
 
+		renderOverlay();
 		if (m_lighting) {
 			m_renderbackend->resetLighting();
 		}

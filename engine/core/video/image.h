@@ -174,6 +174,14 @@ namespace FIFE {
 		 */
 		SDL_Surface* detachSurface();
 
+		/** Choose a color to be used when the clip area is cleared
+		 * this function deselects an eventual previous background image
+		 * @param r Red color
+		 * @param g Green color
+		 * @param b Blue color
+		 */
+		void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
+
 		virtual ~Image();
 		SDL_Surface* getSurface() { return m_surface; }
 		unsigned int getWidth() const;
@@ -223,6 +231,8 @@ namespace FIFE {
 		// image area
 		Rect m_area;
 		bool m_isalphaoptimized;
+		bool m_isbackgroundcolor;
+		SDL_Color m_backgroundcolor;
 
 	private:
 		void reset(SDL_Surface* surface);
