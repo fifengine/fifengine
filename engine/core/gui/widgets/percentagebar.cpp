@@ -91,7 +91,7 @@ namespace gcn
         mValue = value;
     }
 
-   int32_tPercentageBar::getValue() const
+   int32_t PercentageBar::getValue() const
     {
         return mValue;
     }

@@ -30,6 +30,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/fife_stdint.h"
 
 namespace FIFE {
 
@@ -50,7 +51,7 @@ namespace FIFE {
  	 * @param n Number of pixels.
 	 */
 	void SDL_BlendRow_RGBA8_to_RGB8( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n );
-	
+
 	/** Blends one row of n pixels from src with n pixels of dst.
  	 *
  	 * @param src Source.
@@ -59,7 +60,7 @@ namespace FIFE {
  	 * @param n Number of pixels.
  	 */
 	void SDL_BlendRow_RGBA8_to_RGB565( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n );
-	
+
 	/** Blends one row of n pixels from src with n pixels of dst.
  	 *
  	 * @param src Source.

@@ -91,7 +91,7 @@ namespace FIFE {
 			 * @param screenWidth width for the gui top container
 			 * @param screenHeight height for the gui top container
 			 */
-			void init(gcn::Graphics* graphics, int32_t screenWidth, int32_t 
+			void init(gcn::Graphics* graphics, int32_t screenWidth, int32_t
 			screenHeight);
 
 			/** Resizes the top container.
@@ -145,7 +145,7 @@ namespace FIFE {
 			MouseEvent translateMouseEvent(const gcn::MouseEvent& evt);
 
 		protected:
-			staticint32_tconvertGuichanKeyToFifeKey(int32_t value);
+			static int32_t convertGuichanKeyToFifeKey(int32_t value);
 
 		private:
 			// The Guichan GUI.
