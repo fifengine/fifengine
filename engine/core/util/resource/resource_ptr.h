@@ -44,7 +44,7 @@ namespace FIFE {
 				m_ptr->addRef();
 		}
 
-		ResourcePtr(Pool* pool,int index) : m_ptr(0),m_pool(pool),m_index(index) {
+		ResourcePtr(Pool* pool,int32_t index) : m_ptr(0),m_pool(pool),m_index(index) {
 		}
 
 		ResourcePtr(const ResourcePtr& r)
@@ -147,7 +147,7 @@ namespace FIFE {
 		}
 		mutable IResource* m_ptr;
 		Pool* m_pool;
-		int m_index;
+		int32_t m_index;
 	};
 }
 #endif

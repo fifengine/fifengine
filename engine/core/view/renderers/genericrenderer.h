@@ -147,11 +147,11 @@ namespace FIFE {
 	class GenericRendererVertexInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		GenericRendererVertexInfo(GenericRendererNode center, int size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+		GenericRendererVertexInfo(GenericRendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		virtual ~GenericRendererVertexInfo() {};
 	private:
 		GenericRendererNode m_center;
-		int m_size;
+		int32_t m_size;
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
@@ -161,21 +161,21 @@ namespace FIFE {
 	class GenericRendererImageInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		GenericRendererImageInfo(GenericRendererNode n, int image);
+		GenericRendererImageInfo(GenericRendererNode n, int32_t image);
 		virtual ~GenericRendererImageInfo() {};
 	private:
 		GenericRendererNode m_anchor;
-		int m_image;
+		int32_t m_image;
 	};
 	class GenericRendererAnimationInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		GenericRendererAnimationInfo(GenericRendererNode n, int animation);
+		GenericRendererAnimationInfo(GenericRendererNode n, int32_t animation);
 		virtual ~GenericRendererAnimationInfo() {};
 	private:
 		GenericRendererNode m_anchor;
-		int m_animation;
-		unsigned int m_start_time;
+		int32_t m_animation;
+		uint32_t m_start_time;
 		float m_time_scale;
 	};
 	class GenericRendererTextInfo : public GenericRendererElementInfo {
@@ -191,13 +191,13 @@ namespace FIFE {
 	class GenericRendererResizeInfo : public GenericRendererElementInfo {
 	public:
 		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
-		GenericRendererResizeInfo(GenericRendererNode n, int image, int width, int height);
+		GenericRendererResizeInfo(GenericRendererNode n, int32_t image, int32_t width, int32_t height);
 		virtual ~GenericRendererResizeInfo() {};
 	private:
 		GenericRendererNode m_anchor;
-		int m_image;
-		int m_width;
-		int m_height;
+		int32_t m_image;
+		int32_t m_width;
+		int32_t m_height;
 	};
 	class GenericRenderer: public RendererBase {
 	public:
@@ -205,7 +205,7 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
 		 */
-		GenericRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
+		GenericRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool);
 
 		GenericRenderer(const GenericRenderer& old);
 
@@ -225,11 +225,11 @@ namespace FIFE {
 		void addPoint(const std::string &group, GenericRendererNode n, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addTriangle(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addQuad(const std::string &group, GenericRendererNode n1, GenericRendererNode n2, GenericRendererNode n3, GenericRendererNode n4, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void addVertex(const std::string &group, GenericRendererNode n, int size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+		void addVertex(const std::string &group, GenericRendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void addText(const std::string &group, GenericRendererNode n, AbstractFont* font, const std::string &text);
-		void addImage(const std::string &group, GenericRendererNode n, int image);
-		void addAnimation(const std::string &group, GenericRendererNode n, int animation);
-		void resizeImage(const std::string &group, GenericRendererNode n, int image, int width, int height);
+		void addImage(const std::string &group, GenericRendererNode n, int32_t image);
+		void addAnimation(const std::string &group, GenericRendererNode n, int32_t animation);
+		void resizeImage(const std::string &group, GenericRendererNode n, int32_t image, int32_t width, int32_t height);
 		void removeAll(const std::string &group);
 		void removeAll();
 		void reset();

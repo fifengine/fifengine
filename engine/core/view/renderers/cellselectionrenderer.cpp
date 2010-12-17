@@ -42,7 +42,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	CellSelectionRenderer::CellSelectionRenderer(RenderBackend* renderbackend, int position):
+	CellSelectionRenderer::CellSelectionRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position) {
 		setEnabled(false);
 		m_color.r = 255;

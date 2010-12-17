@@ -39,15 +39,15 @@ namespace FIFE {
 		unsigned char r, g, b, a;
 	};
 
-	void SDL_BlendRow_RGBA8_to_RGBA8( const unsigned char* src, unsigned char* dst, unsigned int alpha, int n ) {
+	void SDL_BlendRow_RGBA8_to_RGBA8( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n ) {
 		const ColorRGBA8* srcColor = reinterpret_cast< const ColorRGBA8* >( src );
 		ColorRGBA8* dstColor = reinterpret_cast< ColorRGBA8* >( dst );
 
-		for( int i = n; 0 < i; --i ) {
-			register unsigned int aMulA = alpha * srcColor->a;
+		for( int32_t i = n; 0 < i; --i ) {
+			register uint32_t aMulA = alpha * srcColor->a;
 
 			if( aMulA ) {
-				register unsigned int OneMin_aMulA = 65535 - aMulA;
+				register uint32_t OneMin_aMulA = 65535 - aMulA;
 				dstColor->r = ( aMulA * srcColor->r + OneMin_aMulA * dstColor->r ) >> 16;
 				dstColor->g = ( aMulA * srcColor->g + OneMin_aMulA * dstColor->g ) >> 16;
 				dstColor->b = ( aMulA * srcColor->b + OneMin_aMulA * dstColor->b ) >> 16;
@@ -58,14 +58,14 @@ namespace FIFE {
 		}
 	}
 
-	void SDL_BlendRow_RGBA8_to_RGB8( const unsigned char* src, unsigned char* dst, unsigned int alpha, int n ) {
+	void SDL_BlendRow_RGBA8_to_RGB8( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n ) {
 		const ColorRGBA8* srcColor = reinterpret_cast< const ColorRGBA8* >( src );
 		ColorRGB8* dstColor = reinterpret_cast< ColorRGB8* >( dst );
 
-		for( int i = n; 0 < i; --i ) {
-			register unsigned int aMulA = alpha * srcColor->a;
+		for( int32_t i = n; 0 < i; --i ) {
+			register uint32_t aMulA = alpha * srcColor->a;
 			if( aMulA ) {
-				register unsigned int OneMin_aMulA = 65535 - aMulA;
+				register uint32_t OneMin_aMulA = 65535 - aMulA;
 				dstColor->r = ( aMulA * srcColor->r + OneMin_aMulA * dstColor->r ) >> 16;
 				dstColor->g = ( aMulA * srcColor->g + OneMin_aMulA * dstColor->g ) >> 16;
 				dstColor->b = ( aMulA * srcColor->b + OneMin_aMulA * dstColor->b ) >> 16;
@@ -76,15 +76,15 @@ namespace FIFE {
 		}
 	}
 
-	void SDL_BlendRow_RGBA8_to_RGB565( const unsigned char* src, unsigned char* dst, unsigned int alpha, int n ) {
+	void SDL_BlendRow_RGBA8_to_RGB565( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n ) {
 		const ColorRGBA8* srcColor = reinterpret_cast< const ColorRGBA8* >( src );
 		unsigned short* dstColor = reinterpret_cast< unsigned short* >( dst );
 
-		for( int i = n; 0 < i; --i ) {
-			register unsigned int aMulA = ( alpha * srcColor->a ) >> 8;
+		for( int32_t i = n; 0 < i; --i ) {
+			register uint32_t aMulA = ( alpha * srcColor->a ) >> 8;
 			if( aMulA ) {
-				register unsigned int OneMin_aMulA = 255 - aMulA;
-				register unsigned int c = *dstColor;
+				register uint32_t OneMin_aMulA = 255 - aMulA;
+				register uint32_t c = *dstColor;
 				*dstColor = ( ( ( srcColor->b * aMulA ) +
 					( ( ( c & 0xF800 ) >> 8 ) * OneMin_aMulA ) ) & 0xF800 ) |
 					( ( ( ( srcColor->g * aMulA ) +
@@ -99,24 +99,24 @@ namespace FIFE {
 	}
 
 
-	void SDL_BlendRow_RGBA4_to_RGB565( const unsigned char* src, unsigned char* dst, unsigned int alpha, int n ) {
+	void SDL_BlendRow_RGBA4_to_RGB565( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n ) {
 		const unsigned short* srcColor = reinterpret_cast< const unsigned short* >( src );
 		unsigned short* dstColor = reinterpret_cast< unsigned short* >( dst );
 
-		for( int i = n; 0 < i; --i ) {
-			register unsigned int c1 = *dstColor;
-			register unsigned int c2 = *srcColor;
+		for( int32_t i = n; 0 < i; --i ) {
+			register uint32_t c1 = *dstColor;
+			register uint32_t c2 = *srcColor;
 
-			unsigned int aMulA = c2 & 0xF;
+			uint32_t aMulA = c2 & 0xF;
 			aMulA = ( alpha * aMulA ) / 15;	///< upgrade to range 0-255
 			if( aMulA ) {
-				register unsigned int OneMin_aMulA = 255 - aMulA;
-				register unsigned int result;
+				register uint32_t OneMin_aMulA = 255 - aMulA;
+				register uint32_t result;
 				result = ( ( ( ( c2 & 0xF000 ) | 0x0800 ) * aMulA ) + ( ( c1 & 0xF800 ) * OneMin_aMulA ) ) & 0xF80000;
 				result |= ( ( ( ( ( c2 & 0x0F00 ) >> 1 ) | 0x0040 ) * aMulA ) + ( ( c1 & 0x07E0 ) * OneMin_aMulA ) ) & 0x07E000;
 				result |= ( ( ( ( ( c2 & 0x00F0 ) >> 3 ) | 0x0001 ) * aMulA ) + ( ( c1 & 0x001F ) * OneMin_aMulA ) ) & 0x001F00;
 				/// multiplying by alpha resulted in shift.
-				*dstColor = static_cast< unsigned short int >( result >> 8 );
+				*dstColor = static_cast< unsigned short int32_t >( result >> 8 );
 			}
 
 			++dstColor;

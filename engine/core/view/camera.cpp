@@ -177,7 +177,7 @@ namespace FIFE {
 		return m_zoom;
 	}
 
-	void Camera::setCellImageDimensions(unsigned int width, unsigned int height) {
+	void Camera::setCellImageDimensions(uint32_t width, uint32_t height) {
 		m_screen_cell_width = width;
 		m_screen_cell_height = height;
 		updateReferenceScale();
@@ -253,8 +253,8 @@ namespace FIFE {
 		CellGrid* cg = layer->getCellGrid();
 		assert(cg);
 		DoublePoint dimensions = getLogicalCellDimensions(layer);
-		p.x = static_cast<int>(round(m_reference_scale * dimensions.x));
-		p.y = static_cast<int>(round(m_reference_scale * dimensions.y));
+		p.x = static_cast<int32_t>(round(m_reference_scale * dimensions.x));
+		p.y = static_cast<int32_t>(round(m_reference_scale * dimensions.y));
 		m_image_dimensions[layer] = p;
 		return p;
 	}
@@ -317,8 +317,8 @@ namespace FIFE {
 		// NOTE: mult4by4 is an in-place modification.
 		m_vscreen_2_screen.mult4by4(m_vs_inverse_matrix);
 		// set the z transformation to unity
-		const int N=4;
-		for(int i=0; i!=N; ++i) {
+		const int32_t N=4;
+		for(int32_t i=0; i!=N; ++i) {
 			  m_vscreen_2_screen[2*N + i] = 0;
 			  m_vscreen_2_screen[i*N + 2] = 0;
 		}
@@ -330,8 +330,8 @@ namespace FIFE {
 	}
 
 	void Camera::calculateZValue(ScreenPoint& screen_coords) {
-		int dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
-		screen_coords.z = static_cast<int>(Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy));
+		int32_t dy = -(screen_coords.y - toScreenCoordinates(m_location.getMapCoordinates()).y);
+		screen_coords.z = static_cast<int32_t>(Mathd::Tan(m_tilt * (Mathd::pi() / 180.0)) * static_cast<double>(dy));
 	}
 
 	ExactModelCoordinate Camera::toMapCoordinates(ScreenPoint screen_coords, bool z_calculated) {
@@ -381,7 +381,7 @@ namespace FIFE {
 		double y1 = 0;
 		double y2 = 0;
 
-		for (unsigned int i = 0; i < vertices.size(); i++) {
+		for (uint32_t i = 0; i < vertices.size(); i++) {
 			vertices[i] = cg->toMapCoordinates(vertices[i]);
 			vertices[i] = mtx * vertices[i];
 			if (i == 0) {
@@ -408,8 +408,8 @@ namespace FIFE {
 
 	bool Camera::isViewPortFull() {
 		Rect cv = m_viewport;
-		int cv2x = cv.x+cv.w;
-		int cv2y = cv.y+cv.h;
+		int32_t cv2x = cv.x+cv.w;
+		int32_t cv2y = cv.y+cv.h;
 		bool trec1 = false, trec2 = false, trec3 = false, trec4 = false;
 		Rect rec1 = Rect(cv.x, cv.y, 1, 1);
 		Rect rec2 = Rect(cv.x, cv2y, 1, 1);
@@ -467,8 +467,8 @@ namespace FIFE {
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
 				assert(vc.image);
 				Uint8 r, g, b, a;
-				int x = screen_coords.x - vc.dimensions.x;
-				int y = screen_coords.y - vc.dimensions.y;
+				int32_t x = screen_coords.x - vc.dimensions.x;
+				int32_t y = screen_coords.y - vc.dimensions.y;
 				if (m_zoom != 1.0) {
 					double fx = static_cast<double>(x);
 					double fy = static_cast<double>(y);
@@ -476,8 +476,8 @@ namespace FIFE {
 					double foh = static_cast<double>(vc.image->getHeight());
 					double fsw = static_cast<double>(vc.dimensions.w);
 					double fsh = static_cast<double>(vc.dimensions.h);
-					x = static_cast<int>(round(fx / fsw * fow));
-					y = static_cast<int>(round(fy / fsh * foh));
+					x = static_cast<int32_t>(round(fx / fsw * fow));
+					y = static_cast<int32_t>(round(fy / fsh * foh));
 				}
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				// instance is hit with mouse if not totally transparent
@@ -499,11 +499,11 @@ namespace FIFE {
 			if ((vc.dimensions.intersects(screen_rect))) {
 				assert(vc.image);
 				Uint8 r, g, b, a;
-				for(int xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
-					for(int yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
+				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
+					for(int32_t yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
 						if ((vc.dimensions.contains(Point(xx, yy)))) {
-							int x = xx - vc.dimensions.x;
-							int y = yy - vc.dimensions.y;
+							int32_t x = xx - vc.dimensions.x;
+							int32_t y = yy - vc.dimensions.y;
 							if (m_zoom != 1.0) {
 								double fx = static_cast<double>(x);
 								double fy = static_cast<double>(y);
@@ -511,8 +511,8 @@ namespace FIFE {
 								double foh = static_cast<double>(vc.image->getHeight());
 								double fsw = static_cast<double>(vc.dimensions.w);
 								double fsh = static_cast<double>(vc.dimensions.h);
-								x = static_cast<int>(round(fx / fsw * fow));
-								y = static_cast<int>(round(fy / fsh * foh));
+								x = static_cast<int32_t>(round(fx / fsw * fow));
+								y = static_cast<int32_t>(round(fy / fsh * foh));
 							}
 							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 							// instance is hit with mouse if not totally transparent
@@ -642,7 +642,7 @@ namespace FIFE {
 
 	std::vector<float> Camera::getLightingColor() {
 		if(m_light_colors.empty()) {
-			for(int colors = 0; colors != 4; ++colors) {
+			for(int32_t colors = 0; colors != 4; ++colors) {
 				m_light_colors.push_back(1.0f);
 			}
 		}
@@ -666,7 +666,7 @@ namespace FIFE {
 		m_col_overlay = false;
 	}
 
-	void Camera::setOverlayImage(int id, bool fill) {
+	void Camera::setOverlayImage(int32_t id, bool fill) {
 		m_img_overlay = true;
 		m_img_id = id;
 		m_img_fill = fill;
@@ -676,7 +676,7 @@ namespace FIFE {
 		m_img_overlay = false;
 	}
 
-	void Camera::setOverlayAnimation(int id, bool fill) {
+	void Camera::setOverlayAnimation(int32_t id, bool fill) {
 		m_ani_overlay = true;
 		m_ani_id = id;
 		m_ani_fill = fill;
@@ -722,7 +722,7 @@ namespace FIFE {
 			if (m_start_time == 0) {
 				m_start_time = TimeManager::instance()->getTime();
 			}
-			int animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
+			int32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 			Image* img = animation.getFrameByTimestamp(animtime);
 			if (img) {
 				p = Point(m_viewport.w/2, m_viewport.h/2);

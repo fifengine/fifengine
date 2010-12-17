@@ -83,8 +83,8 @@ namespace FIFE {
 				std::string text;
 				SDL_Color color;
 				bool antialias;
-				int glyph_spacing;
-				int row_spacing;
+				int32_t glyph_spacing;
+				int32_t row_spacing;
 				uint32_t timestamp;
 
 				Image* image;

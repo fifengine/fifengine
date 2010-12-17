@@ -52,7 +52,7 @@ namespace FIFE {
 		virtual ~IReferenceCounted();
 		virtual void addRef() = 0;
 		virtual void decRef() = 0;
-		virtual unsigned int getRefCount() = 0;
+		virtual uint32_t getRefCount() = 0;
 	};
 
 	class IResource: public IReferenceCounted {
@@ -62,9 +62,9 @@ namespace FIFE {
 		virtual const std::string& getResourceFile() = 0;
 		virtual void setResourceLocation(const ResourceLocation& location) = 0;
 		virtual void setResourceFile(const std::string& filename) = 0;
-		virtual int getPoolId() = 0;
-		virtual void setPoolId(int poolid) = 0;
-		virtual unsigned int getRefCount() = 0;
+		virtual int32_t getPoolId() = 0;
+		virtual void setPoolId(int32_t poolid) = 0;
+		virtual uint32_t getRefCount() = 0;
 	};
 
 	%warnfilter(473) ResourceLoader; // filter out "returning a pointer or reference in a director method is not recommended"
@@ -84,16 +84,16 @@ namespace FIFE {
 
 	class Pool {
 	public:
-		static const int INVALID_ID = -1;
+		static const int32_t INVALID_ID = -1;
 		virtual ~Pool();
-		virtual int addResourceFromFile(const std::string& filename);
-		virtual int addResourceFromLocation(ResourceLocation* loc);
-		virtual int getResourceCount(int status);
-		virtual int purgeLoadedResources();
+		virtual int32_t addResourceFromFile(const std::string& filename);
+		virtual int32_t addResourceFromLocation(ResourceLocation* loc);
+		virtual int32_t getResourceCount(int32_t status);
+		virtual int32_t purgeLoadedResources();
 		virtual void addResourceLoader(ResourceLoader* loader);
 		virtual void clearResourceLoaders();
-		virtual void release(unsigned int index, bool dec = false);
-		virtual IResource& get(unsigned int index, bool inc = false);
+		virtual void release(uint32_t index, bool dec = false);
+		virtual IResource& get(uint32_t index, bool inc = false);
 		virtual void printStatistics();
 
 	private:
@@ -103,7 +103,7 @@ namespace FIFE {
 	class ResourcePtr {
 	public:
 		ResourcePtr(IResource* ptr = 0);
-		ResourcePtr(Pool* pool,int index);
+		ResourcePtr(Pool* pool,int32_t index);
 		ResourcePtr(const ResourcePtr& r);
 		void release();
 		void load();

@@ -1,10 +1,10 @@
 namespace FIFE {
 	
-	%extend PointType2D<int> {
-		int getX() { return $self->x; }
-		int getY() { return $self->y; }
-		void setX(int _x) { $self->x = _x; }
-		void setY(int _y) { $self->y = _y; }
+	%extend PointType2D<int32_t> {
+		int32_t getX() { return $self->x; }
+		int32_t getY() { return $self->y; }
+		void setX(int32_t _x) { $self->x = _x; }
+		void setY(int32_t _y) { $self->y = _y; }
 		
 		std::string __str__() {
 			std::stringstream str;
@@ -26,7 +26,7 @@ namespace FIFE {
 		}
 	};
 	
-	%extend PointType3D<int> {
+	%extend PointType3D<int32_t> {
 		std::string __str__() {
 			std::stringstream str;
 			str << "Point3D" << *$self;
@@ -42,16 +42,16 @@ namespace FIFE {
 		}
 	};
 		
-	%extend RectType<int> {
-		int getX() { return $self->x; }
-		int getY() { return $self->y; }
-		void setX(int _x) { $self->x = _x; }
-		void setY(int _y) { $self->y = _y; }
+	%extend RectType<int32_t> {
+		int32_t getX() { return $self->x; }
+		int32_t getY() { return $self->y; }
+		void setX(int32_t _x) { $self->x = _x; }
+		void setY(int32_t _y) { $self->y = _y; }
 	
-		int getW() { return $self->w; }
-		int getH() { return $self->h; }
-		void setW(int _w) { $self->w = _w; }
-		void setH(int _h) { $self->h = _h; }
+		int32_t getW() { return $self->w; }
+		int32_t getH() { return $self->h; }
+		void setW(int32_t _w) { $self->w = _w; }
+		void setH(int32_t _h) { $self->h = _h; }
 	
 		std::string __str__() {
 			std::stringstream str;

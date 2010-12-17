@@ -62,7 +62,7 @@ namespace FIFE {
 		
 		/** Returns current game ticks, already scaled.
 		 */
-		unsigned int getGameTime() const;
+		uint32_t getGameTime() const;
 		
 	private:
 		TimeProvider* m_master;
@@ -78,7 +78,7 @@ namespace FIFE {
 	 * with related casting
 	 * @return multiplier * ticks
 	 */
-	unsigned int scaleTime(float multiplier, unsigned int ticks);
+	uint32_t scaleTime(float multiplier, uint32_t ticks);
 
 } //FIFE
 #endif

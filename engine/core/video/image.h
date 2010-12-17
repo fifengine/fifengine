@@ -54,11 +54,11 @@ namespace FIFE {
 		 * This should return the maximum width that could be covered by the
 		 * image.
 		 */
-		virtual unsigned int getWidth() const = 0;
+		virtual uint32_t getWidth() const = 0;
 
 		/** Returns the @b maximum height occupied by this image.
 		 */
-		virtual unsigned int getHeight() const = 0;
+		virtual uint32_t getHeight() const = 0;
 
 		/** Gets the area of the image
 		 * @return Image area in rect
@@ -67,15 +67,15 @@ namespace FIFE {
 
 		/** Writes pixel to given position. Returns true, if pixel was written (not out of bounds)
 		 */
- 		virtual bool putPixel(int x, int y, int r, int g, int b, int a = 255) = 0;
+ 		virtual bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
 
 		/** Draws line between given points with given RGBA
 		 */
-		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255) = 0;
+		virtual void drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
 
 		/** Draws triangle between given points with given RGBA
 		 */
-		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255) = 0;
+		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
 
 		/** Draws an axis parallel rectangle.
 		 */
@@ -87,19 +87,19 @@ namespace FIFE {
 
 		/** Draws quad between given points with given RGBA
 		 */
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255) = 0;
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
 
 		/** Draws a quad that represents a vertex with given RGBA
 		 */
-		virtual void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255) = 0;
+		virtual void drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
 
 		/** Draws a light primitive that based on a triangle fan
 		 */
-		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) = 0;
+		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) = 0;
 
 		/** Returns pixel RGBA values from given position
 		 */
-		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
+		virtual void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
 
 		/** Pushes clip area to clip stack
 		 *  Clip areas define which area is drawn on screen. Usable e.g. with viewports
@@ -148,7 +148,7 @@ namespace FIFE {
 		* @param width Width of the image.
 		* @param height Height of the image.
 		 */
-		Image(const uint8_t* data, unsigned int width, unsigned int height);
+		Image(const uint8_t* data, uint32_t width, uint32_t height);
 
 		/** Invalidates the Image causing it to be reset or re-loaded
 		 */
@@ -184,18 +184,18 @@ namespace FIFE {
 
 		virtual ~Image();
 		SDL_Surface* getSurface() { return m_surface; }
-		unsigned int getWidth() const;
-		unsigned int getHeight() const;
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
 		const Rect& getArea();
-		void setXShift(int xshift);
-		inline int getXShift() const {
+		void setXShift(int32_t xshift);
+		inline int32_t getXShift() const {
 			return m_xshift;
 		}
-		void setYShift(int yshift);
-		inline int getYShift() const {
+		void setYShift(int32_t yshift);
+		inline int32_t getYShift() const {
 			return m_yshift;
 		}
-		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;
@@ -217,9 +217,9 @@ namespace FIFE {
 		// The SDL Surface used.
 		SDL_Surface* m_surface;
 		// The X shift of the Image
-		int m_xshift;
+		int32_t m_xshift;
 		// The Y shift of the Image
-		int m_yshift;
+		int32_t m_yshift;
 
 		class ClipInfo {
 		public:

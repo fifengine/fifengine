@@ -102,7 +102,7 @@ namespace gcn {
 			 * @see getDownXOffset
 			 * @see getDownYOffset
 			 */
-			void setDownOffset(int x, int y);
+			void setDownOffset(int32_t x, int32_t y);
 
 			/**
 			 * Gets the number of pixels the image or text will be offset
@@ -111,7 +111,7 @@ namespace gcn {
 			 * @return Offset from left when button is pressed
 			 * @see setDownOffset
 			 */
-			int getDownXOffset() const;
+			int32_t getDownXOffset() const;
 
 			/**
 			 * Gets the number of pixels the image or text will be offset
@@ -120,7 +120,7 @@ namespace gcn {
 			 * @return Offset from top when button is pressed
 			 * @see setDownOffset
 			 */
-			int getDownYOffset() const;
+			int32_t getDownYOffset() const;
 
 			/**
 			 * Checks if the radio button is selected.
@@ -179,8 +179,8 @@ namespace gcn {
 
 			// Number of pixels the image/text will be offset from the top left
 			// corner, when the button is pressed or toggled
-			int x_downoffset;
-			int y_downoffset;
+			int32_t x_downoffset;
+			int32_t y_downoffset;
 
 			/**
 			 * Whether the button is toggled or not.

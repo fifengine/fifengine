@@ -43,7 +43,7 @@ namespace FIFE {
 		/** constructor.
 		 * @param renderbackend to use
 		 */
-		CellSelectionRenderer(RenderBackend* renderbackend, int position);
+		CellSelectionRenderer(RenderBackend* renderbackend, int32_t position);
 		
 		CellSelectionRenderer(const CellSelectionRenderer& old);
 		

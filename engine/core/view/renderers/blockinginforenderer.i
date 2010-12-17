@@ -36,7 +36,7 @@ namespace FIFE {
 		static BlockingInfoRenderer* getInstance(IRendererContainer* cnt);
 		
 	private:
-		BlockingInfoRenderer(RenderBackend* renderbackend, int position);
+		BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position);
 	};
 }
 

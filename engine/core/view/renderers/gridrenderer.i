@@ -36,7 +36,7 @@ namespace FIFE {
 		static GridRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
-		GridRenderer(RenderBackend* renderbackend, int position);
+		GridRenderer(RenderBackend* renderbackend, int32_t position);
 	};
 }
 

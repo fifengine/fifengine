@@ -32,18 +32,18 @@
 
 namespace FIFE {
 
-	RawDataMemSource::RawDataMemSource(unsigned int len) : m_data(new uint8_t[len]), m_datalen(len) {
+	RawDataMemSource::RawDataMemSource(uint32_t len) : m_data(new uint8_t[len]), m_datalen(len) {
 	}
 
 	RawDataMemSource::~RawDataMemSource() {
 		delete[] m_data;
 	}
 
-	unsigned int RawDataMemSource::getSize() const {
+	uint32_t RawDataMemSource::getSize() const {
 		return m_datalen;
 	}
 
-	void RawDataMemSource::readInto(uint8_t* buffer, unsigned int start, unsigned int length) {
+	void RawDataMemSource::readInto(uint8_t* buffer, uint32_t start, uint32_t length) {
 		std::copy(m_data + start, m_data + start + length, buffer);
 	}
 

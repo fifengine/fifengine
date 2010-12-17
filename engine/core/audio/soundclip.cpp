@@ -44,7 +44,7 @@ namespace FIFE {
 			SoundBufferEntry* ptr = new SoundBufferEntry();
 			
 			// iterate the bufs and fill them with data
-			for (int i = 0; i < BUFFER_NUM; i++) {
+			for (int32_t i = 0; i < BUFFER_NUM; i++) {
 				
 				if (m_decoder->decode(BUFFER_LEN)) {
 					// EOF or error
@@ -70,7 +70,7 @@ namespace FIFE {
 		}
 	}
 	
-	unsigned int SoundClip::beginStreaming() {
+	uint32_t SoundClip::beginStreaming() {
 		// create new sound buffer entry
 		SoundBufferEntry* ptr = new SoundBufferEntry();
 		ptr->usedbufs=0;
@@ -83,7 +83,7 @@ namespace FIFE {
 		return m_buffervec.size()-1;
 	}
 	
-	bool SoundClip::setStreamPos(unsigned int streamid, SoundPositionType type, float value) {
+	bool SoundClip::setStreamPos(uint32_t streamid, SoundPositionType type, float value) {
 		unsigned long pos = 0;
 		
 		// convert position to bytes
@@ -108,7 +108,7 @@ namespace FIFE {
 		return false;
 	}
 	
-	float SoundClip::getStreamPos(unsigned int streamid, SoundPositionType type) const{
+	float SoundClip::getStreamPos(uint32_t streamid, SoundPositionType type) const{
 		unsigned long pos = m_buffervec.at(streamid)->deccursor;
 		switch(type) {
 			case SD_BYTE_POS:
@@ -121,16 +121,16 @@ namespace FIFE {
 		return 0.0f;
 	}
 	
-	void SoundClip::acquireStream(unsigned int streamid) {
+	void SoundClip::acquireStream(uint32_t streamid) {
 		
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
 		
-		for (int i = 0; i < BUFFER_NUM; i++) {
+		for (int32_t i = 0; i < BUFFER_NUM; i++) {
 			getStream(streamid, ptr->buffers[i]);
 		}
 	}
 	
-	bool SoundClip::getStream(unsigned int streamid, ALuint buffer) {
+	bool SoundClip::getStream(uint32_t streamid, ALuint buffer) {
 		
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
 		
@@ -161,7 +161,7 @@ namespace FIFE {
 		return false;
 	}
 	
-	void SoundClip::quitStreaming(unsigned int streamid) {
+	void SoundClip::quitStreaming(uint32_t streamid) {
 		// release the buffers
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
 		alDeleteBuffers(BUFFER_NUM, ptr->buffers);
@@ -185,7 +185,7 @@ namespace FIFE {
 			// for non-streaming soundclips
 			SoundBufferEntry* ptr = m_buffervec.at(0);
 			
-			for(unsigned int i = 0; i < ptr->usedbufs; i++) {
+			for(uint32_t i = 0; i < ptr->usedbufs; i++) {
 				alDeleteBuffers(1, &ptr->buffers[i]);
 			}
 		}

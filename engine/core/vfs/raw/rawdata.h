@@ -63,27 +63,27 @@ namespace FIFE {
 			 *
 			 * @return the complete datalength
 			 */
-			unsigned int getDataLength() const;
+			uint32_t getDataLength() const;
 
 			/** get the current index
 			 *
 			 * @return the current index
 			 */
-			unsigned int getCurrentIndex() const;
+			uint32_t getCurrentIndex() const;
 
 			/** set the current index
 			 *
 			 * @param index the new index
 			 * @throws IndexOverflow if index is >= getDataLength()
 			 */
-			void setIndex(unsigned int index);
+			void setIndex(uint32_t index);
 
 			/** move the current index
 			 *
 			 * @param offset the offset
 			 * @throws IndexOverflow if we move outside the datalength
 			 */
-			void moveIndex(int offset);
+			void moveIndex(int32_t offset);
 
 			/** helper-function
 			 *
@@ -141,7 +141,7 @@ namespace FIFE {
 			/** Reads all data into the buffer
 			 * Created to especially fulfill python file interface requirements
 			 */
-			void read(std::string& outbuffer, int size=-1);
+			void read(std::string& outbuffer, int32_t size=-1);
 			
 			/** reads until a \\n is encountered or no more data is available
 			 *
@@ -170,7 +170,7 @@ namespace FIFE {
 
 			template <typename T> T revert(T value) const {
 				T retval;
-				for (unsigned int i = 0; i < sizeof(T); ++i)
+				for (uint32_t i = 0; i < sizeof(T); ++i)
 					reinterpret_cast<uint8_t*>(&retval)[i] = reinterpret_cast<uint8_t*>(&value)[sizeof(T)-1-i];
 
 				return retval;
@@ -193,7 +193,7 @@ namespace FIFE {
 
 		private:
 			RawData* m_rd;
-			unsigned int m_index;
+			uint32_t m_index;
 
 			IndexSaver(const IndexSaver&);
 			IndexSaver& operator=(const IndexSaver&) { return *this; }

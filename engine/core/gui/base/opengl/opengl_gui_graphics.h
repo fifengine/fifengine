@@ -40,11 +40,11 @@ namespace FIFE {
 		/** Constructor
 		 */
 		OpenGLGuiGraphics(ImagePool& pool);
-		virtual void drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height);
+		virtual void drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height);
 
-		virtual void drawText(const std::string& text, int x, int y, unsigned int alignment);
-		virtual void drawPoint(int x, int y);
-		virtual void drawLine(int x1, int y1, int x2, int y2);
+		virtual void drawText(const std::string& text, int32_t x, int32_t y, uint32_t alignment);
+		virtual void drawPoint(int32_t x, int32_t y);
+		virtual void drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
 		virtual void drawRectangle(const gcn::Rectangle& rectangle);
 
 	private:

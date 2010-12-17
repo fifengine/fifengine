@@ -45,7 +45,7 @@ namespace FIFE {
 		resetSdlimage();
 	 }
 
-	SDLImage::SDLImage(const uint8_t* data, unsigned int width, unsigned int height):
+	SDLImage::SDLImage(const uint8_t* data, uint32_t width, uint32_t height):
 		Image(data, width, height) {
 		resetSdlimage();
 	}
@@ -72,7 +72,7 @@ namespace FIFE {
 			return;
 		}
 
-		int screenX, screenY;
+		int32_t screenX, screenY;
 		if( dstRect ) {
 			screenX = dstRect->x;
 			screenY = dstRect->y;
@@ -81,7 +81,7 @@ namespace FIFE {
 			screenY = dst->clip_rect.y;
 		}
 
-		int width, height, tX, tY;
+		int32_t width, height, tX, tY;
 		if( srcRect ) {
 			tX = srcRect->x;
 			tY = srcRect->y;
@@ -103,26 +103,26 @@ namespace FIFE {
 		}
 
 		if( screenX < dst->clip_rect.x ) {
-			int dX = dst->clip_rect.x - screenX;
+			int32_t dX = dst->clip_rect.x - screenX;
 			screenX += dX;
 			width -= dX;
 			tX += dX;
 		}
 
 		if( ( screenX + width ) > ( dst->clip_rect.x + dst->clip_rect.w ) ) {
-			int dX = ( screenX + width ) - ( dst->clip_rect.x + dst->clip_rect.w );
+			int32_t dX = ( screenX + width ) - ( dst->clip_rect.x + dst->clip_rect.w );
 			width -= dX;
 		}
 
 		if( screenY < dst->clip_rect.y ) {
-			int dY = dst->clip_rect.y - screenY;
+			int32_t dY = dst->clip_rect.y - screenY;
 			screenY += dY;
 			height -= dY;
 			tY += dY;
 		}
 
 		if( ( screenY + height ) > ( dst->clip_rect.y + dst->clip_rect.h ) ) {
-			int dY = ( screenY + height ) - ( dst->clip_rect.y + dst->clip_rect.h );
+			int32_t dY = ( screenY + height ) - ( dst->clip_rect.y + dst->clip_rect.h );
 			height -= dY;
 		}
 
@@ -144,7 +144,7 @@ namespace FIFE {
 				switch( dst->format->BitsPerPixel ) {
 					case 16: {
 						if( 0xFFFF == ( dst->format->Rmask | dst->format->Gmask | dst->format->Bmask ) ) {
-							for( int y = height; y > 0; --y ) {
+							for( int32_t y = height; y > 0; --y ) {
 								SDL_BlendRow_RGBA8_to_RGB565( srcData, dstData, alpha, width );
 								srcData += src->pitch;
 								dstData += dst->pitch;
@@ -154,7 +154,7 @@ namespace FIFE {
 					break;
 
 					case 24: {
-						for( int y = height; y > 0; --y ) {
+						for( int32_t y = height; y > 0; --y ) {
 							SDL_BlendRow_RGBA8_to_RGB8( srcData, dstData, alpha, width );
 							srcData += src->pitch;
 							dstData += dst->pitch;
@@ -163,7 +163,7 @@ namespace FIFE {
 					break;
 
 					case 32: {
-						for( int y = height; y > 0; --y ) {
+						for( int32_t y = height; y > 0; --y ) {
 							SDL_BlendRow_RGBA8_to_RGBA8( srcData, dstData, alpha, width );
 							srcData += src->pitch;
 							dstData += dst->pitch;
@@ -181,7 +181,7 @@ namespace FIFE {
 				if( 0x000F == src->format->Amask ) {
 					if( ( 16 == dst->format->BitsPerPixel ) &&
 						( 0xFFFF == ( dst->format->Rmask | dst->format->Gmask | dst->format->Bmask ) ) ) {
-						for( int y = height; y > 0; --y ) {
+						for( int32_t y = height; y > 0; --y ) {
 							SDL_BlendRow_RGBA4_to_RGB565( srcData, dstData, alpha, width );
 							srcData += src->pitch;
 							dstData += dst->pitch;
@@ -203,15 +203,15 @@ namespace FIFE {
 		SDL_Color* src_help_pointer = src_pointer;
 		SDL_Color* dst_pointer = (SDL_Color*)dst->pixels;
 
-		int x, y, *sx_ca, *sy_ca;
-		int dst_gap = dst->pitch - dst->w * dst->format->BytesPerPixel;
-		int sx = static_cast<int>(0xffff * src->w / dst->w);
-		int sy = static_cast<int>(0xffff * src->h / dst->h);
-		int sx_c = 0;
-		int sy_c = 0;
+		int32_t x, y, *sx_ca, *sy_ca;
+		int32_t dst_gap = dst->pitch - dst->w * dst->format->BytesPerPixel;
+		int32_t sx = static_cast<int32_t>(0xffff * src->w / dst->w);
+		int32_t sy = static_cast<int32_t>(0xffff * src->h / dst->h);
+		int32_t sx_c = 0;
+		int32_t sy_c = 0;
 
 		// Allocates memory and calculates row wide&height
-		int* sx_a = (int*)malloc((dst->w + 1) * sizeof(Uint32));
+		int32_t* sx_a = (int32_t*)malloc((dst->w + 1) * sizeof(Uint32));
 		if (sx_a == NULL) {
 			return;
 		} else {
@@ -223,7 +223,7 @@ namespace FIFE {
 				sx_c += sx;
 			}
 		}
-		int* sy_a = (int*)malloc((dst->h + 1) * sizeof(Uint32));
+		int32_t* sy_a = (int32_t*)malloc((dst->h + 1) * sizeof(Uint32));
 		if (sy_a == NULL) {
 			free(sx_a);
 			return;
@@ -275,8 +275,8 @@ namespace FIFE {
 
 		SDL_Surface *zoom_src;
 		SDL_Surface *zoom_dst;
-		int dst_w = static_cast<int>(round(src->w * zoomx));
-		int dst_h = static_cast<int>(round(src->h * zoomy));
+		int32_t dst_w = static_cast<int32_t>(round(src->w * zoomx));
+		int32_t dst_h = static_cast<int32_t>(round(src->h * zoomy));
 		if (dst_w < 1)
 			dst_w = 1;
 		if (dst_h < 1)
@@ -311,7 +311,7 @@ namespace FIFE {
 			return;
 		}
 
-		if (rect.right() < 0 || rect.x > static_cast<int>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->h)) {
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int32_t>(screen->h)) {
 			return;
 		}
 		finalize();
@@ -425,15 +425,15 @@ namespace FIFE {
 
 		// As a reminder: src->format->Amask != 0 here
 
-		int transparent = 0;
-		int opaque = 0;
-		int semitransparent = 0;
-		int alphasum = 0;
-		int alphasquaresum = 0;
+		int32_t transparent = 0;
+		int32_t opaque = 0;
+		int32_t semitransparent = 0;
+		int32_t alphasum = 0;
+		int32_t alphasquaresum = 0;
 		bool colors[(1 << 12)];
 		memset(colors, 0, (1 << 12) * sizeof(bool));
 
-		int bpp = src->format->BytesPerPixel;
+		int32_t bpp = src->format->BytesPerPixel;
 		if(SDL_MUSTLOCK(src)) {
 			SDL_LockSurface(src);
 		}
@@ -441,8 +441,8 @@ namespace FIFE {
 			and the number of semitransparent pixels.
 			We also try to find a useable color.
 		*/
-		for(int y = 0;y < src->h;y++) {
-			for(int x = 0;x < src->w;x++) {
+		for(int32_t y = 0;y < src->h;y++) {
+			for(int32_t x = 0;x < src->w;x++) {
 				Uint8 *pixel = (Uint8 *) src->pixels + y * src->pitch + x * bpp;
 				Uint32 mapped = 0;
 				switch(bpp) {
@@ -486,8 +486,8 @@ namespace FIFE {
 				}
 			}
 		}
-		int avgalpha = (opaque + semitransparent) ? alphasum / (opaque + semitransparent) : 0;
-		int alphavariance = 0;
+		int32_t avgalpha = (opaque + semitransparent) ? alphasum / (opaque + semitransparent) : 0;
+		int32_t alphavariance = 0;
 
 		if(SDL_MUSTLOCK(src)) {
 			SDL_UnlockSurface(src);
@@ -507,8 +507,8 @@ namespace FIFE {
 		}
 
 		// check availability of a suitable color as colorkey
-		int keycolor = -1;
-		for(int i = 0;i < (1 << 12);i++) {
+		int32_t keycolor = -1;
+		for(int32_t i = 0;i < (1 << 12);i++) {
 			if(!colors[i]) {
 				keycolor = i;
 				break;
@@ -542,8 +542,8 @@ namespace FIFE {
 		if(SDL_MUSTLOCK(dst)) {
 			SDL_LockSurface(dst);
 		}
-		for(int y = 0;y < dst->h;y++) {
-			for(int x = 0;x < dst->w;x++) {
+		for(int32_t y = 0;y < dst->h;y++) {
+			for(int32_t x = 0;x < dst->w;x++) {
 				Uint8 *srcpixel = (Uint8 *) src->pixels + y * src->pitch + x * bpp;
 				Uint8 *dstpixel = (Uint8 *) dst->pixels + y * dst->pitch + x * bpp;
 				Uint32 mapped = 0;
@@ -621,12 +621,12 @@ namespace FIFE {
 		return convert;
 	} // end optimize
 
-	bool SDLImage::putPixel(int x, int y, int r, int g, int b, int a) {
+	bool SDLImage::putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a) {
 		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
 			return false;
 		}
 
-		int bpp = m_surface->format->BytesPerPixel;
+		int32_t bpp = m_surface->format->BytesPerPixel;
 		SDL_LockSurface(m_surface);
 		Uint8* p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
 		Uint32 pixel = SDL_MapRGB(m_surface->format, r, g, b);
@@ -661,14 +661,14 @@ namespace FIFE {
 		return true;
 	}
 
-	void SDLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
+	void SDLImage::drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a) {
 		// Draw a line with Bresenham, imitated from guichan
-		int x1 = p1.x;
-		int x2 = p2.x;
-		int y1 = p1.y;
-		int y2 = p2.y;
-		int dx = ABS(x2 - x1);
-		int dy = ABS(y2 - y1);
+		int32_t x1 = p1.x;
+		int32_t x2 = p2.x;
+		int32_t y1 = p1.y;
+		int32_t y2 = p2.y;
+		int32_t dx = ABS(x2 - x1);
+		int32_t dy = ABS(y2 - y1);
 
 		if (dx > dy) {
 			if (x1 > x2) {
@@ -684,10 +684,10 @@ namespace FIFE {
 			}
 
 			if (y1 < y2) {
-				int y = y1;
-				int p = 0;
+				int32_t y = y1;
+				int32_t p = 0;
 
-				for (int x = x1; x <= x2; x++) {
+				for (int32_t x = x1; x <= x2; x++) {
 					putPixel(x, y, r, g, b, a);
 					p += dy;
 					if (p * 2 >= dx) {
@@ -697,10 +697,10 @@ namespace FIFE {
 				}
 			}
 			else {
-				int y = y1;
-				int p = 0;
+				int32_t y = y1;
+				int32_t p = 0;
 
-				for (int x = x1; x <= x2; x++) {
+				for (int32_t x = x1; x <= x2; x++) {
 					putPixel(x, y, r, g, b, a);
 
 					p += dy;
@@ -725,10 +725,10 @@ namespace FIFE {
 			}
 
 			if (x1 < x2) {
-				int x = x1;
-				int p = 0;
+				int32_t x = x1;
+				int32_t p = 0;
 
-				for (int y = y1; y <= y2; y++) {
+				for (int32_t y = y1; y <= y2; y++) {
 					putPixel(x, y, r, g, b, a);
 					p += dx;
 					if (p * 2 >= dy) {
@@ -738,10 +738,10 @@ namespace FIFE {
 				}
 			}
 			else {
-				int x = x1;
-				int p = 0;
+				int32_t x = x1;
+				int32_t p = 0;
 
-				for (int y = y1; y <= y2; y++) {
+				for (int32_t y = y1; y <= y2; y++) {
 					putPixel(x, y, r, g, b, a);
 					p += dx;
 					if (p * 2 >= dy) {
@@ -753,7 +753,7 @@ namespace FIFE {
 		}
 	}
 
-	void SDLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
+	void SDLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a) {
 		drawLine(p1, p2, r, g, b, a);
 		drawLine(p2, p3, r, g, b, a);
 		drawLine(p3, p1, r, g, b, a);
@@ -788,14 +788,14 @@ namespace FIFE {
 		SDL_FillRect(m_surface, &rect, color);
 	}
 
-	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, int r, int g, int b, int a) {
+	void SDLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4, int32_t r, int32_t g, int32_t b, int32_t a) {
 		drawLine(p1, p2, r, g, b, a);
 		drawLine(p2, p3, r, g, b, a);
 		drawLine(p3, p4, r, g, b, a);
 		drawLine(p4, p1, r, g, b, a);
 	}
 
-	void SDLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a){
+	void SDLImage::drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a){
 		Point p1 = Point(p.x-size, p.y+size);
 		Point p2 = Point(p.x+size, p.y+size);
 		Point p3 = Point(p.x+size, p.y-size);
@@ -807,13 +807,13 @@ namespace FIFE {
 		drawLine(p4, p1, r, g, b, a);
 	}
 
-	void SDLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
+	void SDLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 	}
 
 	void SDLImage::saveImage(const std::string& filename) {
 		if(m_surface) {
-			const unsigned int swidth = getWidth();
-			const unsigned int sheight = getHeight();
+			const uint32_t swidth = getWidth();
+			const uint32_t sheight = getHeight();
 			SDL_Surface *surface = NULL;
 
 			surface = SDL_CreateRGBSurface(SDL_SWSURFACE, swidth,

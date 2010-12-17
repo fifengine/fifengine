@@ -35,8 +35,8 @@ namespace FIFE {
 		RendererBase();
 		virtual ~RendererBase();
 		virtual std::string getName() = 0;
-		int getPipelinePosition() { return m_position; }
-		void setPipelinePosition(int position);
+		int32_t getPipelinePosition() { return m_position; }
+		void setPipelinePosition(int32_t position);
 		void setEnabled(bool enabled);
 		bool isEnabled();
 		void addActiveLayer(Layer* layer);

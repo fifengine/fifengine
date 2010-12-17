@@ -63,15 +63,15 @@ namespace FIFE {
 		/** Gets the code of this command. Meaning of code depends on the command type
 		 * @return code of this command
 		 */
-		int getCode() const { return m_code; }
-		void setCode(int code) { m_code = code; }
+		int32_t getCode() const { return m_code; }
+		void setCode(int32_t code) { m_code = code; }
 
 		virtual void consume() { Event::consume(); }
 		virtual bool isConsumed() const { return Event::isConsumed(); }
 		virtual IEventSource* getSource() { return Event::getSource(); }
 		virtual void setSource(IEventSource* source) { Event::setSource(source); }
-		virtual int getTimeStamp() const { return Event::getTimeStamp(); }
-		virtual void setTimeStamp(int timestamp ) { Event::setTimeStamp(timestamp); }
+		virtual int32_t getTimeStamp() const { return Event::getTimeStamp(); }
+		virtual void setTimeStamp(int32_t timestamp ) { Event::setTimeStamp(timestamp); }
 
 		virtual const std::string& getName() const {
 			const static std::string eventName("Command");
@@ -82,7 +82,7 @@ namespace FIFE {
 
 	private:
 		CommandType m_commandtype;
-		int m_code;
+		int32_t m_code;
 		void* m_data1;
 		void* m_data2;
 	};

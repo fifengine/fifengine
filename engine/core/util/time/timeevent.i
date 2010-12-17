@@ -28,11 +28,11 @@ namespace FIFE {
 	%feature("director") TimeEvent;
 	class TimeEvent {
 	public:
-		TimeEvent(int period = -1);
+		TimeEvent(int32_t period = -1);
 		virtual ~TimeEvent();
 		virtual void updateEvent(unsigned long time) = 0;
-		void setPeriod(int period);
-		int getPeriod();
+		void setPeriod(int32_t period);
+		int32_t getPeriod();
 		unsigned long getLastUpdateTime();	
 		void setLastUpdateTime(unsigned long);	
 	};

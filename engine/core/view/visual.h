@@ -60,7 +60,7 @@ namespace FIFE {
 		/** Gets current transparency value (0-255)
 		 *  @return current transparency value
 		 */
-		unsigned int getTransparency() { return m_transparency; }
+		uint32_t getTransparency() { return m_transparency; }
 
 		/** Sets visibility value for object to be visualized
 		 *  @param visible is object visible or not
@@ -70,7 +70,7 @@ namespace FIFE {
 		/** Is instance visible or not
 		 *  @return is instance visible or not
 		 */
-		unsigned int isVisible() { return m_visible; }
+		uint32_t isVisible() { return m_visible; }
 
 	protected:
 		/** Constructor
@@ -103,21 +103,21 @@ namespace FIFE {
 		 *              (normal math notation)
 		  @param image_index index of image to use for given degress
 		 */
-		void addStaticImage(unsigned int angle, int image_index);
+		void addStaticImage(uint32_t angle, int32_t image_index);
 
 		/** Returns closest matching static image for given angle
 		 * @return id for static image
 		 */
-		int getStaticImageIndexByAngle(int angle);
+		int32_t getStaticImageIndexByAngle(int32_t angle);
 
 		/** Returns closest matching image angle for given angle
 		 * @return closest matching angle
 		 */
-		int getClosestMatchingAngle(int angle);
+		int32_t getClosestMatchingAngle(int32_t angle);
 
 		/** Returns list of available static image angles for this object
 		 */
-		void getStaticImageAngles(std::vector<int>& angles);
+		void getStaticImageAngles(std::vector<int32_t>& angles);
 
 	private:
 		/** Constructor
@@ -145,18 +145,18 @@ namespace FIFE {
 		 *  in the same location are drawn
 		 *  @param stackposition new stack position
 		 */
-		void setStackPosition(int stackposition) { m_stackposition = stackposition; }
+		void setStackPosition(int32_t stackposition) { m_stackposition = stackposition; }
 
 		/** Gets current stack position of instance
 		 *  @return current stack position
 		 */
-		int getStackPosition() { return m_stackposition; }
+		int32_t getStackPosition() { return m_stackposition; }
 
 	private:
 		/** Constructor
 		 */
 		InstanceVisual();
-		int m_stackposition;
+		int32_t m_stackposition;
 	};
 
 	/** Action visual contains data that is needed to visualize different actions on screen
@@ -173,16 +173,16 @@ namespace FIFE {
 
 		/** Adds new animation with given angle (degrees)
 		 */
-		void addAnimation(unsigned int angle, int animation_index);
+		void addAnimation(uint32_t angle, int32_t animation_index);
 
 		/** Gets index to animation closest to given angle
 		 * @return animation index, -1 if no animations available
 		 */
-		int getAnimationIndexByAngle(int angle);
+		int32_t getAnimationIndexByAngle(int32_t angle);
 
 		/** Returns list of available angles for this Action
 		 */
-		void getActionImageAngles(std::vector<int>& angles);
+		void getActionImageAngles(std::vector<int32_t>& angles);
 
 	private:
 		/** Constructor

@@ -67,15 +67,15 @@ namespace FIFE {
 		const long c_nThreshold             =    2;
 
 		char buffer[c_nRingBufferSize + c_nMatchLengthUpperLimit - 1];
-		int ibuf = 0;
-		int c;
+		int32_t ibuf = 0;
+		int32_t c;
 
-		int i;
-		int j;
-		int k;
-		int r;
+		int32_t i;
+		int32_t j;
+		int32_t k;
+		int32_t r;
 
-		unsigned int flags;
+		uint32_t flags;
 
 		for (i = 0; i < c_nRingBufferSize - c_nMatchLengthUpperLimit; i++) {
 			buffer[i] = ' ';

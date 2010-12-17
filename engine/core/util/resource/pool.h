@@ -62,7 +62,7 @@ namespace FIFE {
 	public:
 		/** Indicates invalid index for pool
 		 */
-		static const int INVALID_ID = -1;
+		static const int32_t INVALID_ID = -1;
 
 		/** Default constructor.
 		 *  @param name The name used in debug output.
@@ -84,7 +84,7 @@ namespace FIFE {
 		/** Adds new resource into the pool using the given location.
 		 * @return The index of the resource in the pool.
 		 */
-		virtual int addResourceFromLocation(ResourceLocation* loc);
+		virtual int32_t addResourceFromLocation(ResourceLocation* loc);
 
 		/** This is a convenience version of addResourceFromLocation().
 		 * It converts the filename into a ResourceLocation and then
@@ -93,31 +93,31 @@ namespace FIFE {
 		 * @param filename The file to be loaded.
 		 * @return The index of the resource in the pool.
 		 */
-		virtual int addResourceFromFile(const std::string& filename);
+		virtual int32_t addResourceFromFile(const std::string& filename);
 
 		/** Gets resource from pool with given index
 		 *
 		 * @param inc Specifies weither this call will increase the ref counter
 		 */
-		virtual IResource& get(unsigned int index, bool inc = false);
+		virtual IResource& get(uint32_t index, bool inc = false);
 
 		/** Removes the resource from pool if reference counter is null
 		 *
 		 * @param dec Specifies weither the ref counter will be decreased
 		 * before checking
 		 */
-		virtual void release(unsigned int index, bool dec = false);
+		virtual void release(uint32_t index, bool dec = false);
 
 		/** Purge all loaded resources.
 		 *  This will purge all loaded resources with a ref count of zero.
 		 *  Indices remain valid, though.
 		 *  @return Number of resources deleted.
 		 */
-		virtual int purgeLoadedResources();
+		virtual int32_t purgeLoadedResources();
 
 		/** Gets amount of resources in the pool with given status
 		 */
-		virtual int getResourceCount(int status);
+		virtual int32_t getResourceCount(int32_t status);
 
 		/** Prints the cache statistics to the log
 		 */
@@ -154,7 +154,7 @@ namespace FIFE {
 		void findAndSetProvider(PoolEntry& entry);
 
 		std::vector<PoolEntry*> m_entries;
-		typedef std::map<ResourceLocation*, int, ResourceLocationComparator> ResourceLocationToEntry;
+		typedef std::map<ResourceLocation*, int32_t, ResourceLocationComparator> ResourceLocationToEntry;
 		ResourceLocationToEntry m_location_to_entry;
 		std::vector<ResourceLoader*> m_loaders;
 		std::string m_name;

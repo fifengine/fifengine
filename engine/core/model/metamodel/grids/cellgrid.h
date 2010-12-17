@@ -81,7 +81,7 @@ namespace FIFE {
 		/** Gets the count of sides for a single cell
 		 *  @return count of sides for a single cell
 		 */
-		virtual unsigned int getCellSideCount() const = 0;
+		virtual uint32_t getCellSideCount() const = 0;
 
 		/** Transforms given point from layer coordinates to map coordinates
 		 *  @return point in map coordinates
@@ -192,7 +192,7 @@ namespace FIFE {
 		bool m_allow_diagonals;
 		
 	private:
-		int orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2);	
+		int32_t orientation(const ExactModelCoordinate& pt, const ExactModelCoordinate& pt1, const ExactModelCoordinate& pt2);	
 	};
 }
 

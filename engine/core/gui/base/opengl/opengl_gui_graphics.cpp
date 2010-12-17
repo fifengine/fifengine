@@ -48,7 +48,7 @@ namespace FIFE {
 
 	}
 
-	void OpenGLGuiGraphics::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {
+	void OpenGLGuiGraphics::drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
 		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
 		assert(g_img);
 		Image& fifeimg = m_pool.getImage(g_img->getPoolId());
@@ -60,7 +60,7 @@ namespace FIFE {
 		fifeimg.render(rect, mTarget);
 	}
 
-	void OpenGLGuiGraphics::drawText(const std::string& text, int x, int y,
+	void OpenGLGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y,
 			uint32_t alignment) {
 		if (mFont == NULL)
 		{
@@ -85,12 +85,12 @@ namespace FIFE {
 		}
 	}
 
-	void OpenGLGuiGraphics::drawPoint(int x, int y) {
+	void OpenGLGuiGraphics::drawPoint(int32_t x, int32_t y) {
 		GLDisable flag(GL_TEXTURE_2D);
 		gcn::OpenGLGraphics::drawPoint(x, y);
 	}
 
-	void OpenGLGuiGraphics::drawLine(int x1, int y1, int x2, int y2) {
+	void OpenGLGuiGraphics::drawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {
 		GLDisable flag(GL_TEXTURE_2D);
 		gcn::OpenGLGraphics::drawLine(x1, y1, x2, y2);
 	}

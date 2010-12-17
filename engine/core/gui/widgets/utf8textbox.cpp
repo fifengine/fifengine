@@ -127,15 +127,15 @@ namespace gcn {
 		}
 
 		else if (key.getValue() == Key::DELETE
-					&& mCaretColumn < (int)mTextRows[mCaretRow].size()
+					&& mCaretColumn < (int32_t)mTextRows[mCaretRow].size()
 					&& mEditable)
 		{
 			mCaretColumn = mStringEditor->eraseChar(mTextRows[mCaretRow], mCaretColumn);
 		}
 
 		else if (key.getValue() == Key::DELETE
-					&& mCaretColumn == (int)mTextRows[mCaretRow].size()
-					&& mCaretRow < ((int)mTextRows.size() - 1)
+					&& mCaretColumn == (int32_t)mTextRows[mCaretRow].size()
+					&& mCaretRow < ((int32_t)mTextRows.size() - 1)
 					&& mEditable)
 		{
 			mTextRows[mCaretRow] += mTextRows[mCaretRow + 1];
@@ -148,8 +148,8 @@ namespace gcn {
 
 			if (par != NULL)
 			{
-				int rowsPerPage = par->getChildrenArea().height / getFont()->getHeight();
-				int chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
+				int32_t rowsPerPage = par->getChildrenArea().height / getFont()->getHeight();
+				int32_t chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
 				mCaretRow -= rowsPerPage;
 
 				if (mCaretRow < 0)
@@ -166,11 +166,11 @@ namespace gcn {
 
 			if (par != NULL)
 			{
-				int rowsPerPage = par->getChildrenArea().height / getFont()->getHeight();
-				int chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
+				int32_t rowsPerPage = par->getChildrenArea().height / getFont()->getHeight();
+				int32_t chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
 				mCaretRow += rowsPerPage;
 
-				if (mCaretRow >= (int)mTextRows.size())
+				if (mCaretRow >= (int32_t)mTextRows.size())
 				{
 					mCaretRow = mTextRows.size() - 1;
 				}
@@ -201,15 +201,15 @@ namespace gcn {
 	}
 
 
-	void UTF8TextBox::setCaretColumnUTF8(int column)
+	void UTF8TextBox::setCaretColumnUTF8(int32_t column)
 	{
 		// no need to clip the column, mStringEditor handles it automaticly
 		mCaretColumn = mStringEditor->getOffset(mTextRows[mCaretRow], column);
 	}
 
-	void UTF8TextBox::setCaretRowUTF8(int row)
+	void UTF8TextBox::setCaretRowUTF8(int32_t row)
 	{
-		int chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
+		int32_t chars = mStringEditor->countChars(mTextRows[mCaretRow], mCaretColumn);
 		if (row < 0) {
 			row = 0;
 		} else if (row >= mTextRows.size()) {

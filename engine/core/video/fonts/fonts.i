@@ -33,16 +33,16 @@ namespace FIFE {
 	class AbstractFont {
 	public:
 		virtual ~AbstractFont();
-		virtual void setRowSpacing (int spacing) = 0;
-		virtual int getRowSpacing() const = 0;
-		virtual void setGlyphSpacing(int spacing) = 0;
-		virtual int getGlyphSpacing() const = 0;
+		virtual void setRowSpacing (int32_t spacing) = 0;
+		virtual int32_t getRowSpacing() const = 0;
+		virtual void setGlyphSpacing(int32_t spacing) = 0;
+		virtual int32_t getGlyphSpacing() const = 0;
 		virtual void setAntiAlias(bool antiAlias) = 0;
 		virtual bool isAntiAlias() = 0;
 		virtual void setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a = 255) = 0;
 		virtual SDL_Color getColor() const = 0;
-		virtual int getWidth(const std::string& text) const = 0;
-		virtual int getHeight() const = 0;
+		virtual int32_t getWidth(const std::string& text) const = 0;
+		virtual int32_t getHeight() const = 0;
 	};
 
 	class FontBase: public AbstractFont {
@@ -54,11 +54,11 @@ namespace FIFE {
 	%rename(TTFont) TrueTypeFont;
 	class TrueTypeFont: public FontBase {
 	public:
-		TrueTypeFont(const std::string& filename, int size);
+		TrueTypeFont(const std::string& filename, int32_t size);
 		virtual ~TrueTypeFont();
 		virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-		virtual int getWidth(const std::string& text) const;
-		virtual int getHeight() const;
+		virtual int32_t getWidth(const std::string& text) const;
+		virtual int32_t getHeight() const;
 	};
 
 	class ImagePool;
@@ -68,7 +68,7 @@ namespace FIFE {
 		SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool);
 		virtual ~SubImageFont();
 		virtual void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-		virtual int getWidth(const std::string& text) const;
-		virtual int getHeight() const;
+		virtual int32_t getWidth(const std::string& text) const;
+		virtual int32_t getHeight() const;
 	};
 }

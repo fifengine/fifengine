@@ -47,7 +47,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font):
+	CoordinateRenderer::CoordinateRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font):
 		RendererBase(renderbackend, position),
 		m_layer_area(),
 		m_tmploc(),
@@ -89,8 +89,8 @@ namespace FIFE {
 		m_layer_area.h = std::max(c.y, m_layer_area.h);
 	}
 
-	const int MIN_COORD = -9999999;
-	const int MAX_COORD = 9999999;
+	const int32_t MIN_COORD = -9999999;
+	const int32_t MAX_COORD = 9999999;
 	void CoordinateRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		m_layer_area.x = MAX_COORD;
 		m_layer_area.y = MAX_COORD;
@@ -114,8 +114,8 @@ namespace FIFE {
 			m_font->setColor(m_color.r, m_color.g, m_color.b);
 			m_font_color = true;
 		}
-		for (int x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
-			for (int y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
+		for (int32_t x = m_layer_area.x-1; x < m_layer_area.w+1; x++) {
+			for (int32_t y = m_layer_area.y-1; y < m_layer_area.h+1; y++) {
 				ModelCoordinate mc(x, y);
 				m_tmploc.setLayerCoordinates(mc);
 				ScreenPoint drawpt = cam->toScreenCoordinates(m_tmploc.getMapCoordinates());

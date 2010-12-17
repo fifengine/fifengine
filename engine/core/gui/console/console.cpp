@@ -91,7 +91,7 @@ namespace FIFE {
 		Image* screen = RenderBackend::instance()->getScreenImage();
 		assert(screen);
 
-		int w, h, b, input_h, bbar_h, button_w;
+		int32_t w, h, b, input_h, bbar_h, button_w;
 		w = screen->getWidth() * 4/5;
 		h = screen->getHeight() * 4/5;
 		b = 0;
@@ -265,7 +265,7 @@ namespace FIFE {
 		// Assure the maximum number of rows
 		if( m_output->getNumberOfRows() > m_maxOutputRows ) {
 			unsigned rows = m_output->getNumberOfRows();
-			int delta_rows = rows - m_maxOutputRows;
+			int32_t delta_rows = rows - m_maxOutputRows;
 			std::vector<std::string> rows_text;
 			for(size_t i=delta_rows; i != rows; ++i) {
 				rows_text.push_back(m_output->getTextRow(i));

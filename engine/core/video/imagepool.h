@@ -60,7 +60,7 @@ namespace FIFE {
 			}
 		}
 
-		inline Image& getImage(unsigned int index)  {
+		inline Image& getImage(uint32_t index)  {
 			return static_cast<Image&>(get(index));
 		}
 	};

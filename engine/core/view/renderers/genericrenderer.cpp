@@ -301,7 +301,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererVertexInfo::GenericRendererVertexInfo(GenericRendererNode center, int size, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
+	GenericRendererVertexInfo::GenericRendererVertexInfo(GenericRendererNode center, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 		GenericRendererElementInfo(),
 		m_center(center),
 		m_size(size),
@@ -317,7 +317,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererImageInfo::GenericRendererImageInfo(GenericRendererNode anchor, int image):
+	GenericRendererImageInfo::GenericRendererImageInfo(GenericRendererNode anchor, int32_t image):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image) {
@@ -328,8 +328,8 @@ namespace FIFE {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			unsigned int widtht = round(img->getWidth() * cam->getZoom());
-			unsigned int height = round(img->getHeight() * cam->getZoom());
+			uint32_t widtht = round(img->getWidth() * cam->getZoom());
+			uint32_t height = round(img->getHeight() * cam->getZoom());
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -339,7 +339,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererAnimationInfo::GenericRendererAnimationInfo(GenericRendererNode anchor, int animation):
+	GenericRendererAnimationInfo::GenericRendererAnimationInfo(GenericRendererNode anchor, int32_t animation):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
@@ -350,12 +350,12 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			Animation& animation = animpool->getAnimation(m_animation);
-			int animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
+			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 			Image* img = animation.getFrameByTimestamp(animtime);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			unsigned int widtht = round(img->getWidth() * cam->getZoom());
-			unsigned int height = round(img->getHeight() * cam->getZoom());
+			uint32_t widtht = round(img->getWidth() * cam->getZoom());
+			uint32_t height = round(img->getHeight() * cam->getZoom());
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -389,7 +389,7 @@ namespace FIFE {
 		}
 	}
 
-	GenericRendererResizeInfo::GenericRendererResizeInfo(GenericRendererNode anchor, int image, int width, int height):
+	GenericRendererResizeInfo::GenericRendererResizeInfo(GenericRendererNode anchor, int32_t image, int32_t width, int32_t height):
 		GenericRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -402,8 +402,8 @@ namespace FIFE {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			unsigned int widtht = round(m_width * cam->getZoom());
-			unsigned int height = round(m_height * cam->getZoom());
+			uint32_t widtht = round(m_width * cam->getZoom());
+			uint32_t height = round(m_height * cam->getZoom());
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -418,7 +418,7 @@ namespace FIFE {
 		return dynamic_cast<GenericRenderer*>(cnt->getRenderer("GenericRenderer"));
 	}
 
-	GenericRenderer::GenericRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
+	GenericRenderer::GenericRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool):
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
 		m_animationpool(animpool),
@@ -456,7 +456,7 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererQuadInfo(n1, n2, n3, n4, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addVertex(const std::string &group, GenericRendererNode n, int size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	void GenericRenderer::addVertex(const std::string &group, GenericRendererNode n, int32_t size, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 		GenericRendererElementInfo* info = new GenericRendererVertexInfo(n, size, r, g, b, a);
 		m_groups[group].push_back(info);
 	}
@@ -464,15 +464,15 @@ namespace FIFE {
 		GenericRendererElementInfo* info = new GenericRendererTextInfo(n, font, text);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addImage(const std::string &group, GenericRendererNode n, int image) {
+	void GenericRenderer::addImage(const std::string &group, GenericRendererNode n, int32_t image) {
 		GenericRendererElementInfo* info = new GenericRendererImageInfo(n, image);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::addAnimation(const std::string &group, GenericRendererNode n, int animation) {
+	void GenericRenderer::addAnimation(const std::string &group, GenericRendererNode n, int32_t animation) {
 		GenericRendererElementInfo* info = new GenericRendererAnimationInfo(n, animation);
 		m_groups[group].push_back(info);
 	}
-	void GenericRenderer::resizeImage(const std::string &group, GenericRendererNode n, int image, int width, int height) {
+	void GenericRenderer::resizeImage(const std::string &group, GenericRendererNode n, int32_t image, int32_t width, int32_t height) {
 		GenericRendererElementInfo* info = new GenericRendererResizeInfo(n, image, width, height);
 		m_groups[group].push_back(info);
 	}

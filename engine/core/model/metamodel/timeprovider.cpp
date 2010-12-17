@@ -62,15 +62,15 @@ namespace FIFE {
 		}
 	}
 	
-	unsigned int TimeProvider::getGameTime() const {
-		return static_cast<unsigned int>(getPreciseGameTime());
+	uint32_t TimeProvider::getGameTime() const {
+		return static_cast<uint32_t>(getPreciseGameTime());
 	}
 	
 	double TimeProvider::getPreciseGameTime() const {
 		return m_time_static + m_multiplier * ((m_master ? m_master->getPreciseGameTime() : static_cast<float>(TimeManager::instance()->getTime())) - m_time_scaled);
 	}
 	
-	unsigned int scaleTime(float multiplier, unsigned int ticks) {
-		return static_cast<unsigned int>(static_cast<float>(ticks) * multiplier);
+	uint32_t scaleTime(float multiplier, uint32_t ticks) {
+		return static_cast<uint32_t>(static_cast<float>(ticks) * multiplier);
 	}
 }

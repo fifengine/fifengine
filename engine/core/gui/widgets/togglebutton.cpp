@@ -68,7 +68,7 @@ namespace gcn {
 		setGroup(""); // Remove button from group
 	}
 
-	void ToggleButton::setDownOffset(int x, int y) {
+	void ToggleButton::setDownOffset(int32_t x, int32_t y) {
 		x_downoffset = x;
 		y_downoffset = y;
 	}
@@ -77,11 +77,11 @@ namespace gcn {
 		Color faceColor = getBaseColor();
         Color highlightColor;
 		Color shadowColor;
-        int alpha = getBaseColor().a;
+        int32_t alpha = getBaseColor().a;
 
 		Image* img = NULL;
-		int xoffset = 0;
-		int yoffset = 0;
+		int32_t xoffset = 0;
+		int32_t yoffset = 0;
 
 		if (isPressed() || m_toggled) {
 			faceColor = faceColor - 0x303030;
@@ -136,8 +136,8 @@ namespace gcn {
 			graphics->drawImage(img, xoffset, yoffset);
 		}
 
-		int textX;
-		int textY = getHeight() / 2 - getFont()->getHeight() / 2;
+		int32_t textX;
+		int32_t textY = getHeight() / 2 - getFont()->getHeight() / 2;
 		switch (getAlignment())
 		{
 			case Graphics::LEFT:
@@ -171,8 +171,8 @@ namespace gcn {
 	}
 
 	void ToggleButton::adjustSize() {
-		int w = 0;
-		int h = w;
+		int32_t w = 0;
+		int32_t h = w;
 		if( m_upImage ) {
 			w = m_upImage->getWidth();
 			h = m_upImage->getHeight();
@@ -187,8 +187,8 @@ namespace gcn {
 		}
 
 		if( mCaption.length() > 0 ) {
-			w = std::max(static_cast<int>(getFont()->getWidth(mCaption)+2*mSpacing), w);
-			h = std::max(static_cast<int>(getFont()->getHeight()+2*mSpacing), h);
+			w = std::max(static_cast<int32_t>(getFont()->getWidth(mCaption)+2*mSpacing), w);
+			h = std::max(static_cast<int32_t>(getFont()->getHeight()+2*mSpacing), h);
 		}
 
 		setWidth(w);
@@ -256,11 +256,11 @@ namespace gcn {
         return m_group;
     }
 
-	int ToggleButton::getDownXOffset() const {
+	int32_t ToggleButton::getDownXOffset() const {
 		return x_downoffset;
 	}
 
-	int ToggleButton::getDownYOffset() const {
+	int32_t ToggleButton::getDownYOffset() const {
 		return y_downoffset;
 	}
 

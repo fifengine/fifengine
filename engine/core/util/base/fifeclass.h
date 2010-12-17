@@ -35,7 +35,7 @@
 
 namespace FIFE {
 
-	typedef unsigned int fifeid_t;
+	typedef std::size_t fifeid_t;
 
 	/** Base class for all fife classes
 	 * Used e.g. to track instances over swig conversion
@@ -66,12 +66,12 @@ namespace FIFE {
 		/** Gets the current reference count
 		 *  @see addRef
 		 */
-		virtual unsigned int getRefCount() { return m_refcount; };
+		virtual uint32_t getRefCount() { return m_refcount; };
 		
 	private:
 		fifeid_t m_fifeid;
 		static fifeid_t m_curid;
-		unsigned int m_refcount;
+		uint32_t m_refcount;
 	};
 }
 

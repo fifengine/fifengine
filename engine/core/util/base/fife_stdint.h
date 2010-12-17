@@ -60,7 +60,7 @@ namespace FIFE {
 	const uint32_t BMASK    = 0x00ff0000;
 	const uint32_t AMASK    = 0xff000000;
 #endif
-	const int32_t NULLMASK = 0x00000000;
+	const uint32_t NULLMASK = 0x00000000;
 } //FIFE
 
 #endif // FIFEINT_H

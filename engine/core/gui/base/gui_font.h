@@ -44,23 +44,23 @@ namespace FIFE {
 		GuiFont(AbstractFont* font);
 		virtual ~GuiFont();
 
-		int getStringIndexAt(const std::string& text, int x) const;
-		void drawString(gcn::Graphics* graphics, const std::string& text, int x, int y);
-		void drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int x, int y);
-		std::string splitTextToWidth (const std::string& text, int render_width);
+		int32_t getStringIndexAt(const std::string& text, int32_t x) const;
+		void drawString(gcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y);
+		void drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y);
+		std::string splitTextToWidth (const std::string& text, int32_t render_width);
 
-		void setRowSpacing (int spacing);
-		int getRowSpacing() const;
-		void setGlyphSpacing(int spacing);
-		int getGlyphSpacing() const;
+		void setRowSpacing (int32_t spacing);
+		int32_t getRowSpacing() const;
+		void setGlyphSpacing(int32_t spacing);
+		int32_t getGlyphSpacing() const;
 		void setAntiAlias(bool antiAlias);
 		bool isAntiAlias();
 		Image* getAsImage(const std::string& text);
 		Image* getAsImageMultiline(const std::string& text);
 		void setColor(uint8_t r,uint8_t g,uint8_t b, uint8_t a = 255);
 		SDL_Color getColor() const;
-		int getWidth(const std::string& text) const;
-		int getHeight() const;
+		int32_t getWidth(const std::string& text) const;
+		int32_t getHeight() const;
 		void invalidate();
 
 	private:

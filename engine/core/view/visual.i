@@ -31,45 +31,45 @@ namespace FIFE {
 		void setTransparency(uint8_t transparency);
 		uint8_t getTransparency();
 		void setVisible(bool visible);
-		unsigned int isVisible();
+		uint32_t isVisible();
 	private:
 		Visual2DGfx();
 	};
 
-	%apply std::vector<int> &OUTPUT { std::vector<int>& angles };
+	%apply std::vector<int32_t> &OUTPUT { std::vector<int32_t>& angles };
 	class ObjectVisual: public Visual2DGfx {
 	public:
 		static ObjectVisual* create(Object* object);
 		virtual ~ObjectVisual();
-		void addStaticImage(unsigned int angle, int image_index);
-		int getStaticImageIndexByAngle(int angle);
-		int getClosestMatchingAngle(int angle);
-		void getStaticImageAngles(std::vector<int>& angles);
+		void addStaticImage(uint32_t angle, int32_t image_index);
+		int32_t getStaticImageIndexByAngle(int32_t angle);
+		int32_t getClosestMatchingAngle(int32_t angle);
+		void getStaticImageAngles(std::vector<int32_t>& angles);
 	private:
 		ObjectVisual();
 	};
 	%template(get2dGfxVisual) Object::getVisual<ObjectVisual>;
-	%clear std::vector<int> angles;
+	%clear std::vector<int32_t> angles;
 	
 	class InstanceVisual: public Visual2DGfx {
 	public:
 		static InstanceVisual* create(Instance* instance);
 		virtual ~InstanceVisual();
-		void setStackPosition(int stackposition);
-		int getStackPosition();
+		void setStackPosition(int32_t stackposition);
+		int32_t getStackPosition();
 	private:
 		InstanceVisual();
 	};
 	%template(get2dGfxVisual) Instance::getVisual<InstanceVisual>;
 	
-	%apply std::vector<int> &OUTPUT { std::vector<int>& angles };
+	%apply std::vector<int32_t> &OUTPUT { std::vector<int32_t>& angles };
 	class ActionVisual: public Visual2DGfx {
 	public:
 		static ActionVisual* create(Action* action);
 		virtual ~ActionVisual();
-		void addAnimation(unsigned int angle, int animation_index);
-		int getAnimationIndexByAngle(int angle);
-		void getActionImageAngles(std::vector<int>& angles);
+		void addAnimation(uint32_t angle, int32_t animation_index);
+		int32_t getAnimationIndexByAngle(int32_t angle);
+		void getActionImageAngles(std::vector<int32_t>& angles);
 	private:
 		ActionVisual();
 	};

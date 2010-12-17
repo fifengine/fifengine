@@ -102,7 +102,7 @@ namespace FIFE {
 		alListenerf(AL_GAIN, m_volume);
 	}
 
-	SoundEmitter* SoundManager::getEmitter(unsigned int emitterid) const{
+	SoundEmitter* SoundManager::getEmitter(uint32_t emitterid) const{
 		return m_emittervec.at(emitterid);
 	}
 
@@ -112,7 +112,7 @@ namespace FIFE {
 		return ptr;
 	}
 
-	void SoundManager::releaseEmitter(unsigned int emitterid) {
+	void SoundManager::releaseEmitter(uint32_t emitterid) {
 		SoundEmitter** ptr = &m_emittervec.at(emitterid);
 		delete *ptr;
 		*ptr = NULL;

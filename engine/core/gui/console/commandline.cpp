@@ -69,7 +69,7 @@ namespace FIFE {
 
 	void CommandLine::keyPressed(gcn::KeyEvent &keyEvent) {
 		gcn::Key key = keyEvent.getKey();
-		int keyType = key.getValue();
+		int32_t keyType = key.getValue();
 		
 		if (keyType == Key::LEFT && mCaretPosition > 0)
 		{
@@ -135,7 +135,7 @@ namespace FIFE {
 		fixScroll();
 	}
 
-	void CommandLine::drawCaret(gcn::Graphics * graphics, int x) {
+	void CommandLine::drawCaret(gcn::Graphics * graphics, int32_t x) {
 		if( !m_caretVisible )
 			return;
 

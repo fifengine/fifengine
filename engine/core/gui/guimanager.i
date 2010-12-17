@@ -37,7 +37,7 @@ namespace FIFE {
 		Console* getConsole() const;
 		void add(gcn::Widget* widget);
 		void remove(gcn::Widget* widget);
-		GuiFont* createFont(const std::string& path, unsigned int size, const std::string& glyphs);
+		GuiFont* createFont(const std::string& path, uint32_t size, const std::string& glyphs);
 		void releaseFont(GuiFont* font);
 
 		KeyEvent translateKeyEvent(const gcn::KeyEvent& evt);

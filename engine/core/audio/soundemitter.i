@@ -39,12 +39,12 @@ namespace FIFE {
 
 	class SoundEmitter {
 	public:
-		SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid);
+		SoundEmitter(SoundManager* manager, SoundClipPool* pool, uint32_t uid);
 		~SoundEmitter();
 
-		unsigned int getId() const;
+		uint32_t getId() const;
 
-		void setSoundClip(unsigned int sound_id);
+		void setSoundClip(uint32_t sound_id);
 		void reset(bool defaultall = false);
 		void release();
 

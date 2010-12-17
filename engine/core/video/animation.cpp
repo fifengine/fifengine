@@ -49,42 +49,42 @@ namespace FIFE {
 		// smart references.
 	}
 
-	void Animation::addFrame(ResourcePtr image, unsigned int duration) {
+	void Animation::addFrame(ResourcePtr image, uint32_t duration) {
 		FrameInfo info;
 		info.index = m_frames.size();
 		info.duration = duration;
 		info.image = image;
 		m_frames.push_back(info);
 
-		std::map<unsigned int, FrameInfo>::const_iterator i(m_framemap.end());
+		std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.end());
 		if (i == m_framemap.begin()) {
 			m_framemap[0] = info;
 			m_animation_endtime = duration;
 		} else {
 			--i;
-			unsigned int frametime = i->first + i->second.duration;
+			uint32_t frametime = i->first + i->second.duration;
 			m_framemap[frametime] = info;
 			m_animation_endtime = frametime + duration;
 		}
 		
 	}
 
-	int Animation::getFrameIndex(unsigned int timestamp) {
-		int val = -1;
-		if ((static_cast<int>(timestamp) <= m_animation_endtime) && (m_animation_endtime > 0)) {
-			std::map<unsigned int, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
+	int32_t Animation::getFrameIndex(uint32_t timestamp) {
+		int32_t val = -1;
+		if ((static_cast<int32_t>(timestamp) <= m_animation_endtime) && (m_animation_endtime > 0)) {
+			std::map<uint32_t, FrameInfo>::const_iterator i(m_framemap.upper_bound(timestamp));
 			--i;
 			val = i->second.index;
 		}
 		return val;
 	}
 
-	bool Animation::isValidIndex(int index) const{
-		int size = m_frames.size();
+	bool Animation::isValidIndex(int32_t index) const{
+		int32_t size = m_frames.size();
 		return size > 0 && index >= 0 && index < size; 
 	}
 
-	Image* Animation::getFrame(int index) {
+	Image* Animation::getFrame(int32_t index) {
 		if (isValidIndex(index)) {
 			return m_frames[index].image.get<Image>();
 		} else {
@@ -92,11 +92,11 @@ namespace FIFE {
 		}
 	}
 
-	Image* Animation::getFrameByTimestamp(unsigned int timestamp) {
+	Image* Animation::getFrameByTimestamp(uint32_t timestamp) {
 		return getFrame(getFrameIndex(timestamp));
 	}
 
-	int Animation::getFrameDuration(int index) const{
+	int32_t Animation::getFrameDuration(int32_t index) const{
 		if (isValidIndex(index)) {
 			return m_frames[index].duration;
 		} else {
@@ -104,11 +104,11 @@ namespace FIFE {
 		}
 	}
 
-	unsigned int Animation::getNumFrames() const {
+	uint32_t Animation::getNumFrames() const {
 		return m_frames.size();
 	}
 
-	void Animation::setDirection(unsigned int direction) {
+	void Animation::setDirection(uint32_t direction) {
 		m_direction %= 360;
 	}
 }

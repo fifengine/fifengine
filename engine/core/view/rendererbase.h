@@ -81,7 +81,7 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
 		 */
-		RendererBase(RenderBackend* renderbackend, int position);
+		RendererBase(RenderBackend* renderbackend, int32_t position);
 		
 		/** Copy Constructor
 		 */
@@ -114,14 +114,14 @@ namespace FIFE {
 		
 		/** Gets renderer position in the rendering pipeline
 		 */
-		int getPipelinePosition() const { return m_pipeline_position; }
+		int32_t getPipelinePosition() const { return m_pipeline_position; }
 		
 		/** Sets renderer position in the rendering pipeline
 		 *  Pipeline position defines in which order view calls the renderers when update occurs
 		 *  Note that renderers are called once per rendered layer, thus to update the
 		 *  whole screen, renderer might receive multiple calls
 		 */
-		void setPipelinePosition(int position);
+		void setPipelinePosition(int32_t position);
 		
 		/** Enables renderer
 		 */
@@ -172,7 +172,7 @@ namespace FIFE {
 	
 	private:
 		bool m_enabled;
-		int m_pipeline_position;
+		int32_t m_pipeline_position;
 		IRendererListener* m_listener;
 	};
 }

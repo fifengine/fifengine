@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2005-2010 by the FIFE team                              *
- *   http://www.fifengine.net                                               *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -91,14 +91,14 @@ namespace gcn
          *
          * @return The value of the percentage bar.
          */
-        int getValue() const;
+        int32_t getValue() const;
 
         /**
          * Sets the value of the percentage bar
          *
          * @param value In the range of 0-100.
          */
-        void setValue(int value);
+        void setValue(int32_t value);
 
 		// changed from private to allow derived instance access
 	protected:

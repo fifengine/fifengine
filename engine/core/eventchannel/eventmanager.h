@@ -142,9 +142,9 @@ namespace FIFE {
 		std::deque<ISdlEventListener*> m_pending_sdleventlisteners_front;
 		std::deque<ISdlEventListener*> m_pending_sdldeletions;
 
-		std::map<int, bool> m_keystatemap;
+		std::map<int32_t, bool> m_keystatemap;
 		IKeyFilter* m_keyfilter;
-		int m_mousestate;
+		int32_t m_mousestate;
 		MouseEvent::MouseButtonType m_mostrecentbtn;
 
 	};

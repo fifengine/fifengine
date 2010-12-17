@@ -39,7 +39,7 @@
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundEmitter::SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid) : m_manager(manager), m_pool(pool), m_source(0), m_soundclip(NULL), m_soundclipid(0), m_streamid(0),
+	SoundEmitter::SoundEmitter(SoundManager* manager, SoundClipPool* pool, uint32_t uid) : m_manager(manager), m_pool(pool), m_source(0), m_soundclip(NULL), m_soundclipid(0), m_streamid(0),
 															m_emitterid(uid), m_loop(false) {
 		if (!m_manager->isActive()) {
 			return;
@@ -95,7 +95,7 @@ namespace FIFE {
 		m_manager->releaseEmitter(m_emitterid);
 	}
 
-	void SoundEmitter::setSoundClip(unsigned int sound_id) {
+	void SoundEmitter::setSoundClip(uint32_t sound_id) {
 		m_soundclipid = sound_id;
 		m_soundclip = &(m_pool->getSoundClip(m_soundclipid));
 		m_soundclip->addRef();

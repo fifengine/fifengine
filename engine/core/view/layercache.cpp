@@ -175,18 +175,18 @@ namespace FIFE {
 		DoublePoint3D screen_position = m_camera->toVirtualScreenCoordinates(instance->getLocationRef().getMapCoordinates());
 
 		render_item.facing_angle = getAngleBetween(instance->getLocationRef(), instance->getFacingLocation());
-		int angle = m_camera->getRotation() + render_item.facing_angle + instance->getRotation();
+		int32_t angle = m_camera->getRotation() + render_item.facing_angle + instance->getRotation();
 
 		Image* image = NULL;
 		Action* action = instance->getCurrentAction();
-		int w = 0;
-		int h = 0;
-		int xshift = 0;
-		int yshift = 0;
+		int32_t w = 0;
+		int32_t h = 0;
+		int32_t xshift = 0;
+		int32_t yshift = 0;
 
 		if(!action) {
 			// Try static images then default action.
-			int image_id = render_item.getStaticImageIndexByAngle(angle, instance);
+			int32_t image_id = render_item.getStaticImageIndexByAngle(angle, instance);
 			if(image_id == Pool::INVALID_ID) {
 				if (!instance->getObject()->isStatic()) {
 					action = instance->getObject()->getDefaultAction();
@@ -198,12 +198,12 @@ namespace FIFE {
 		item.force_update = bool(action);
 
 		if(action) {
-			int animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(render_item.facing_angle + m_camera->getRotation());
+			int32_t animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(render_item.facing_angle + m_camera->getRotation());
 			Animation& animation = m_animation_pool->getAnimation(animation_id);
 			unsigned animation_time = instance->getActionRuntime() % animation.getDuration();
 			image = animation.getFrameByTimestamp(animation_time);
 
-			int facing_angle = render_item.facing_angle;
+			int32_t facing_angle = render_item.facing_angle;
 			if (facing_angle < 0){
 				facing_angle += 360;
 			}
@@ -244,26 +244,26 @@ namespace FIFE {
 	}
 
 	class CacheTreeCollector {
-			std::vector<int>& m_indices;
+			std::vector<int32_t>& m_indices;
 			Rect m_viewport;
 		public:
-			CacheTreeCollector(std::vector<int>& indices, const Rect& _viewport)
+			CacheTreeCollector(std::vector<int32_t>& indices, const Rect& _viewport)
 			: m_indices(indices), m_viewport(_viewport) {
 			}
-			bool visit(LayerCache::CacheTree::Node* node, int d = -1);
+			bool visit(LayerCache::CacheTree::Node* node, int32_t d = -1);
 	};
 
-	bool CacheTreeCollector::visit(LayerCache::CacheTree::Node* node, int d) {
+	bool CacheTreeCollector::visit(LayerCache::CacheTree::Node* node, int32_t d) {
 		if(!m_viewport.intersects(Rect(node->x(), node->y(),node->size(),node->size())))
 			return false;
-		std::set<int>& list = node->data();
-		for(std::set<int>::iterator i = list.begin(); i!=list.end();++i) {
+		std::set<int32_t>& list = node->data();
+		for(std::set<int32_t>::iterator i = list.begin(); i!=list.end();++i) {
 			m_indices.push_back(*i);
 		}
 		return true;
 	}
 
-	void LayerCache::collect(const Rect& viewport, std::vector<int>& index_list) {
+	void LayerCache::collect(const Rect& viewport, std::vector<int32_t>& index_list) {
 		CacheTree::Node * node = m_tree->find_container(viewport);
 		CacheTreeCollector collector(index_list, viewport);
 		node->apply_visitor(collector);
@@ -303,7 +303,7 @@ namespace FIFE {
 			return;
 		}
 
-		std::map<Instance*,int>::iterator i_it = m_instance_map.begin();
+		std::map<Instance*,int32_t>::iterator i_it = m_instance_map.begin();
 		for (;i_it != m_instance_map.end(); ++i_it) {
 			Entry& item = m_entries[i_it->second];
 			updateEntry(item, false);
@@ -335,7 +335,7 @@ namespace FIFE {
 		unsigned char layer_trans = m_layer->getLayerTransparency();
 
 		// FL_LOG(_log, LMsg("camera-update viewport") << viewport);
-		std::vector<int> index_list;
+		std::vector<int32_t> index_list;
 		collect(viewport, index_list);
 		for(unsigned i=0; i!=index_list.size();++i) {
 			Entry& entry = m_entries[index_list[i]];

@@ -51,7 +51,7 @@ namespace FIFE {
 		 */
 		virtual ~SoundClipPool() {}
 	
-		SoundClip& getSoundClip(unsigned int index)  {
+		SoundClip& getSoundClip(uint32_t index)  {
 			return dynamic_cast<SoundClip&>(get(index));
 		}
 	};

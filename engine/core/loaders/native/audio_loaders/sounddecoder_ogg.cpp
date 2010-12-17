@@ -50,7 +50,7 @@ namespace FIFE {
 			return len;
 		}
 
-		static int seek(void *datasource, ogg_int64_t offset, int whence) {
+		static int32_t seek(void *datasource, ogg_int64_t offset, int32_t whence) {
 			RawData* rdp = reinterpret_cast<RawData*>(datasource);
 			switch (whence) {
 				case SEEK_SET:
@@ -66,7 +66,7 @@ namespace FIFE {
 			return -1;
 		}
 		
-		static int close(void *datasource) { return 0; }
+		static int32_t close(void *datasource) { return 0; }
 		
 		static long tell(void *datasource) {
 			RawData* rdp = reinterpret_cast<RawData*>(datasource);
@@ -103,8 +103,8 @@ namespace FIFE {
 	}
 	
 	bool SoundDecoderOgg::decode(unsigned long length) {
-		int stream = 0;
-		int ret = 0;
+		int32_t stream = 0;
+		int32_t ret = 0;
 		
 		// release buffer and allocate new memory
 		releaseBuffer();

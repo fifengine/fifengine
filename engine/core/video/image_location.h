@@ -52,38 +52,38 @@ namespace FIFE {
 		/** Sets the X shift of the Image.
 		 * @param xshift The X shift of the Image
 		 */
-		virtual void setXShift(int xshift) { m_xshift = xshift; }
+		virtual void setXShift(int32_t xshift) { m_xshift = xshift; }
 
 		/** Gets the X shift of the Image
 		 * @return The X shift of the Image
 		 */
-		virtual int getXShift() const { return m_xshift; }
+		virtual int32_t getXShift() const { return m_xshift; }
 
 		/** Sets the Y shift of the Image
 		 * @param yshift The Y shift of the Image
 		 */
-		virtual void setYShift(int yshift) { m_yshift = yshift; }
+		virtual void setYShift(int32_t yshift) { m_yshift = yshift; }
 
 		/** Gets the Y shift of the Image
 		 * @param yshift The Y shift of the Image
 		 */
-		virtual int getYShift() const { return m_yshift; }
+		virtual int32_t getYShift() const { return m_yshift; }
 
 		/** Sets the width of the Image. Used e.g. with subimages
 		 */
-		virtual void setWidth(unsigned int width) { m_width = width; }
+		virtual void setWidth(uint32_t width) { m_width = width; }
 
 		/** Gets the width of the Image. Used e.g. with subimages
 		 */
-		virtual unsigned int getWidth() const { return m_width; }
+		virtual uint32_t getWidth() const { return m_width; }
 
 		/** Sets the height of the Image. Used e.g. with subimages
 		 */
-		virtual void setHeight(unsigned int height) { m_height = height; }
+		virtual void setHeight(uint32_t height) { m_height = height; }
 
 		/** Gets the height of the Image. Used e.g. with subimages
 		 */
-		virtual unsigned int getHeight() const { return m_height; }
+		virtual uint32_t getHeight() const { return m_height; }
 
 		/** Sets the parent source of the Image. Used e.g. with subimages
 		 */
@@ -98,10 +98,10 @@ namespace FIFE {
 		virtual ResourceLocation* clone() const;
 
 	private:
-		unsigned int m_xshift;
-		unsigned int m_yshift;
-		unsigned int m_width;
-		unsigned int m_height;
+		uint32_t m_xshift;
+		uint32_t m_yshift;
+		uint32_t m_width;
+		uint32_t m_height;
 		Image* m_parent_image;
 	};
 

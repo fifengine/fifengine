@@ -57,7 +57,7 @@ namespace FIFE {
 			 * @param filename the filename of the True Type Font.
 			 * @param size the size the font should be in.
 			 */
-			TrueTypeFont(const std::string& filename, int size);
+			TrueTypeFont(const std::string& filename, int32_t size);
 
 			/**
 			 * Destructor.
@@ -66,9 +66,9 @@ namespace FIFE {
 
 			// Inherited from Font
 
-			virtual int getWidth(const std::string& text) const;
+			virtual int32_t getWidth(const std::string& text) const;
 
-			virtual int getHeight() const;
+			virtual int32_t getHeight() const;
 
 
 			virtual SDL_Surface *renderString(const std::string& text);
@@ -78,9 +78,9 @@ namespace FIFE {
 		protected:
 			TTF_Font *mFont;
 
-			int mHeight;
-			int mGlyphSpacing;
-			int mRowSpacing;
+			int32_t mHeight;
+			int32_t mGlyphSpacing;
+			int32_t mRowSpacing;
 
 			std::string mFilename;
 			bool mAntiAlias;

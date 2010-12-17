@@ -44,7 +44,7 @@ namespace FIFE {
 		resetGlimage();
 	}
 
-	GLImage::GLImage(const uint8_t* data, unsigned int width, unsigned int height):
+	GLImage::GLImage(const uint8_t* data, uint32_t width, uint32_t height):
 		Image(data, width, height) {
 		assert(m_surface);
 		m_sdlimage = new SDLImage(m_surface);
@@ -93,7 +93,7 @@ namespace FIFE {
 		}
 
 		//not on the screen.  dont render
-		if (rect.right() < 0 || rect.x > static_cast<int>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int>(screen->h)) {
+		if (rect.right() < 0 || rect.x > static_cast<int32_t>(screen->w) || rect.bottom() < 0 || rect.y > static_cast<int32_t>(screen->h)) {
 			return;
 		}
 
@@ -107,8 +107,8 @@ namespace FIFE {
 		float scale_y = static_cast<float>(rect.h) / static_cast<float>(m_surface->h);
 
 		// apply the scale to the width and height of the image
-		uint16_t w = static_cast<int>(round(scale_x*m_surface->w));
-		uint16_t h = static_cast<int>(round(scale_y*m_surface->h));
+		uint16_t w = static_cast<int32_t>(round(scale_x*m_surface->w));
+		uint16_t h = static_cast<int32_t>(round(scale_y*m_surface->h));
 
 		// setting transparency for the whole primitive:
 		glColor4ub( 255, 255, 255, alpha );
@@ -134,8 +134,8 @@ namespace FIFE {
 	}
 
 	void GLImage::generateGLTexture() {
-		const unsigned int width = m_surface->w;
-		const unsigned int height = m_surface->h;
+		const uint32_t width = m_surface->w;
+		const uint32_t height = m_surface->h;
 
 		//calculate the nearest larger power of 2
 		m_chunk_size_w = nextPow2(width);
@@ -154,7 +154,7 @@ namespace FIFE {
 		}
 
 		uint8_t* data = static_cast<uint8_t*>(m_surface->pixels);
-		int pitch = m_surface->pitch;
+		int32_t pitch = m_surface->pitch;
 
 
 		assert(!m_textureids);
@@ -166,9 +166,9 @@ namespace FIFE {
 		uint32_t* oglbuffer = new uint32_t[m_chunk_size_w * m_chunk_size_h];
 		memset(oglbuffer, 0x00, m_chunk_size_w*m_chunk_size_h*sizeof(uint32_t));
 
-		for (unsigned int y = 0;  y < height; ++y) {
-			for (unsigned int x = 0; x < width; ++x) {
-				unsigned int pos = (y * pitch) + (x * 4);
+		for (uint32_t y = 0;  y < height; ++y) {
+			for (uint32_t x = 0; x < width; ++x) {
+				uint32_t pos = (y * pitch) + (x * 4);
 
 				uint8_t r = data[pos + 3];
 				uint8_t g = data[pos + 2];
@@ -200,8 +200,8 @@ namespace FIFE {
 	}
 
 	void GLImage::saveImage(const std::string& filename) {
-		const unsigned int swidth = getWidth();
-		const unsigned int sheight = getHeight();
+		const uint32_t swidth = getWidth();
+		const uint32_t sheight = getHeight();
 		SDL_Surface *surface = NULL;
 		uint8_t *pixels;
 
@@ -219,7 +219,7 @@ namespace FIFE {
 
 		uint8_t *imagepixels = reinterpret_cast<uint8_t*>(surface->pixels);
 		// Copy the "reversed_image" memory to the "image" memory
-		for (int y = (sheight - 1); y >= 0; --y) {
+		for (int32_t y = (sheight - 1); y >= 0; --y) {
 			uint8_t *rowbegin = pixels + y * swidth * 3;
 			uint8_t *rowend = rowbegin + swidth * 3;
 
@@ -250,17 +250,17 @@ namespace FIFE {
 		}
 	}
 
-	bool GLImage::putPixel(int x, int y, int r, int g, int b, int a) {
+	bool GLImage::putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a) {
 		cleanup();
 		return m_sdlimage->putPixel(x, y, r, g, b, a);
 	}
 
-	void GLImage::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
+	void GLImage::drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a) {
 		cleanup();
 		m_sdlimage->drawLine(p1, p2, r, g, b, a);
 	}
 
-	void GLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
+	void GLImage::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a) {
 		cleanup();
 		m_sdlimage->drawTriangle(p1, p2, p3, r, g, b, a);
 	}
@@ -275,17 +275,17 @@ namespace FIFE {
 		m_sdlimage->fillRectangle(p, w, h, r, g, b, a);
 	}
 
-	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
+	void GLImage::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a) {
 		cleanup();
 		m_sdlimage->drawQuad(p1, p2, p3, p4, r, g, b, a);
 	}
 
-	void GLImage::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a) {
+	void GLImage::drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a) {
 		cleanup();
 		m_sdlimage->drawVertex(p, size, r, g, b, a);
 	}
 
-	void GLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
+	void GLImage::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 		cleanup();
 		m_sdlimage->drawLightPrimitive(p, intensity, radius, subdivisions, xstretch, ystretch, red, green, blue);
 	}

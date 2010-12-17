@@ -36,7 +36,7 @@ namespace FIFE {
 		const std::string& getId();
 		void adoptVisual(AbstractVisual* visual);
 		template<typename T> T* getVisual() const;
-		void setDuration(unsigned int duration);
-		unsigned int getDuration();
+		void setDuration(uint32_t duration);
+		uint32_t getDuration();
 	};
 }

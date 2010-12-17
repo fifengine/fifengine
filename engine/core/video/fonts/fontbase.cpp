@@ -54,19 +54,19 @@ namespace FIFE {
 		m_pool.invalidateCachedText();
 	}
 
-	void FontBase::setRowSpacing(int spacing) {
+	void FontBase::setRowSpacing(int32_t spacing) {
 		mRowSpacing = spacing;
 	}
 
-	int FontBase::getRowSpacing() const {
+	int32_t FontBase::getRowSpacing() const {
 		return mRowSpacing;
 	}
 
-	void FontBase::setGlyphSpacing(int spacing) {
+	void FontBase::setGlyphSpacing(int32_t spacing) {
 		mGlyphSpacing = spacing;
 	}
 
-	int FontBase::getGlyphSpacing() const {
+	int32_t FontBase::getGlyphSpacing() const {
 		return mGlyphSpacing;
 	}
 
@@ -82,7 +82,7 @@ namespace FIFE {
 		return mColor;
 	}
 
-	int FontBase::getStringIndexAt(const std::string &text, int x) const {
+	int32_t FontBase::getStringIndexAt(const std::string &text, int32_t x) const {
 		assert( utf8::is_valid(text.begin(), text.end()) );
 		std::string::const_iterator cur;
 		if (text.size() == 0) return 0;
@@ -130,7 +130,7 @@ namespace FIFE {
 			std::vector<SDL_Surface*> lines;
 			std::string::const_iterator it = text.begin();
 			// split text as needed
-			int render_width = 0, render_height = 0;
+			int32_t render_width = 0, render_height = 0;
 			do {
 				uint32_t codepoint = 0;
 				std::string line;
@@ -156,7 +156,7 @@ namespace FIFE {
 				throw SDLException(std::string("CreateRGBSurface failed: ") + SDL_GetError());
 			}
 			SDL_FillRect(final_surface, 0, 0x00000000);
-			int ypos = 0;
+			int32_t ypos = 0;
 			for (std::vector<SDL_Surface*>::iterator i = lines.begin(); i != lines.end(); ++i) {
 				SDL_Rect dst_rect = { 0, 0, 0, 0 };
 				dst_rect.y = ypos;
@@ -172,7 +172,7 @@ namespace FIFE {
 		return image;
 	}
 
-	std::string FontBase::splitTextToWidth (const std::string& text, int render_width) {
+	std::string FontBase::splitTextToWidth (const std::string& text, int32_t render_width) {
 		const uint32_t whitespace = ' ';
 		const uint8_t newline_utf8 = '\n';
 		uint32_t newline;

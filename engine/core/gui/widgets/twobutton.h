@@ -48,16 +48,16 @@ namespace gcn {
 			void setDownImage(Image* image);
 			void setHoverImage(Image* image);
 			
-			void setDownOffset(int x, int y);
-			int getDownXOffset() { return x_downoffset; }
-			int getDownYOffset() { return y_downoffset; }
+			void setDownOffset(int32_t x, int32_t y);
+			int32_t getDownXOffset() { return x_downoffset; }
+			int32_t getDownYOffset() { return y_downoffset; }
 			
 		private:
 			Image *m_upImage;
 			Image *m_downImage;
 			Image *m_hoverImage;
-			int x_downoffset;
-			int y_downoffset;
+			int32_t x_downoffset;
+			int32_t y_downoffset;
 	};
 
 }

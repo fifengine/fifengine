@@ -91,7 +91,8 @@ namespace FIFE {
 			 * @param screenWidth width for the gui top container
 			 * @param screenHeight height for the gui top container
 			 */
-			void init(gcn::Graphics* graphics, int screenWidth, int screenHeight);
+			void init(gcn::Graphics* graphics, int32_t screenWidth, int32_t 
+			screenHeight);
 
 			/** Resizes the top container.
 			 *
@@ -100,7 +101,7 @@ namespace FIFE {
 			 * @param width The new width.
 			 * @param height The new height.
 			 */
-			void resizeTopContainer(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+			void resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
 			/** Adds a new widget.
 			 *
@@ -126,11 +127,11 @@ namespace FIFE {
 
 			/** Set the global font properties.
 			 */
-			GuiFont* setDefaultFont(const std::string& path, unsigned int size, const std::string& glyphs);
+			GuiFont* setDefaultFont(const std::string& path, uint32_t size, const std::string& glyphs);
 
 			/** Gets font with given properties. Note that font will be owned by guimanager
 			 */
-			GuiFont* createFont(const std::string& path = "", unsigned int size = 0, const std::string& glyphs = "");
+			GuiFont* createFont(const std::string& path = "", uint32_t size = 0, const std::string& glyphs = "");
 
 			/** Releases given font.
 			 */
@@ -144,7 +145,7 @@ namespace FIFE {
 			MouseEvent translateMouseEvent(const gcn::MouseEvent& evt);
 
 		protected:
-			static int convertGuichanKeyToFifeKey(int value);
+			staticint32_tconvertGuichanKeyToFifeKey(int32_t value);
 
 		private:
 			// The Guichan GUI.
@@ -173,7 +174,7 @@ namespace FIFE {
 			// default font settings
 			std::string m_fontpath;
 			std::string m_fontglyphs;
-			int m_fontsize;
+			int32_t m_fontsize;
 
 			// true, if guichan logic has already been executed for this round
 			bool m_logic_executed;

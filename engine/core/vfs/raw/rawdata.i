@@ -38,10 +38,10 @@ namespace FIFE {
 			std::vector<uint8_t> getDataInBytes();
 			std::vector<std::string> getDataInLines();
 
-			unsigned int getDataLength() const;
-			unsigned int getCurrentIndex() const;
-			void setIndex(unsigned int index);
-			void moveIndex(int offset);
+			uint32_t getDataLength() const;
+			uint32_t getCurrentIndex() const;
+			void setIndex(uint32_t index);
+			void moveIndex(int32_t offset);
 
 			void readInto(uint8_t* buffer, size_t len);
 			uint8_t read8();
@@ -50,7 +50,7 @@ namespace FIFE {
 			uint16_t read16Big();
 			uint32_t read32Big();
 
-			void read(std::string& outbuffer, int size=-1);
+			void read(std::string& outbuffer, int32_t size=-1);
 			std::string readString(size_t len);
 			bool getLine(std::string& buffer);
 	};

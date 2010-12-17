@@ -208,11 +208,11 @@ namespace FIFE {
 
 		/** Sets the light model
 		 */
-		void setLightingModel(unsigned int lighting);
+		void setLightingModel(uint32_t lighting);
 
 		/** Gets the currently set light model
 		 */
-		unsigned int getLightingModel() const {
+		uint32_t getLightingModel() const {
 			return m_lighting;
 		}
 
@@ -234,7 +234,7 @@ namespace FIFE {
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
 		std::string m_videodriver;
-		unsigned int m_lighting;
+		uint32_t m_lighting;
 	};
 
 }//FIFE

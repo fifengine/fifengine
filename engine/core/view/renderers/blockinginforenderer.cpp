@@ -42,7 +42,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int position):
+	BlockingInfoRenderer::BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position) {
 		setEnabled(false);
 		m_color.r = 0;
@@ -84,7 +84,7 @@ namespace FIFE {
 			std::vector<ExactModelCoordinate> vertices;
 			cg->getVertices(vertices, instance->getLocationRef().getLayerCoordinates());
 			std::vector<ExactModelCoordinate>::const_iterator it = vertices.begin();
-			int halfind = vertices.size() / 2;
+			int32_t halfind = vertices.size() / 2;
 			ScreenPoint firstpt = cam->toScreenCoordinates(cg->toMapCoordinates(*it));
 			Point pt1(firstpt.x, firstpt.y);
 			Point pt2;

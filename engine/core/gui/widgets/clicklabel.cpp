@@ -72,7 +72,7 @@ namespace gcn {
 		return mCaption;
 	}
 
-	void ClickLabel::setWidth(int width) {
+	void ClickLabel::setWidth(int32_t width) {
 		Widget::setWidth(width);
 		wrapText();
 	}
@@ -85,8 +85,8 @@ namespace gcn {
 			adjustSize();
 		}
 
-		int textX = 0;
-		int textY = 0;
+		int32_t textX = 0;
+		int32_t textY = 0;
 
 		graphics->setColor(getBackgroundColor());
 		graphics->fillRectangle(Rectangle(1, 1, getDimension().width-1, getHeight() - 1));

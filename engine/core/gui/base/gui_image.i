@@ -33,8 +33,8 @@ namespace gcn {
 		Image();
 		virtual ~Image();
 		static Image* load(const std::string& filename, bool convertToDisplayFormat = true);
-		virtual int getWidth() const = 0;
-		virtual int getHeight() const = 0;
+		virtual int32_t getWidth() const = 0;
+		virtual int32_t getHeight() const = 0;
 	};
 }
 
@@ -43,8 +43,8 @@ namespace FIFE {
 	class GuiImage: public gcn::Image {
 	public:
 		GuiImage();
-		GuiImage(int id, ImagePool& pool);
-		int getWidth() const;
-		int getHeight() const;
+		GuiImage(int32_t id, ImagePool& pool);
+		int32_t getWidth() const;
+		int32_t getHeight() const;
 	};
 }

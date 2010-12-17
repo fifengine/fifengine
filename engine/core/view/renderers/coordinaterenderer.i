@@ -36,7 +36,7 @@ namespace FIFE {
 		static CoordinateRenderer* getInstance(IRendererContainer* cnt);
 				
 	private:
-		CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		CoordinateRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font);
 	};
 }
 

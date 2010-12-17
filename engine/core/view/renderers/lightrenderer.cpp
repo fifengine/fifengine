@@ -231,7 +231,7 @@ namespace FIFE {
 		return Point(m_point.x + p.x, m_point.y + p.y);
 	}
 
-	LightRendererImageInfo::LightRendererImageInfo(LightRendererNode anchor, int image, int src, int dst):
+	LightRendererImageInfo::LightRendererImageInfo(LightRendererNode anchor, int32_t image, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -247,8 +247,8 @@ namespace FIFE {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			unsigned int widtht = round(img->getWidth() * cam->getZoom());
-			unsigned int height = round(img->getHeight() * cam->getZoom());
+			uint32_t widtht = round(img->getWidth() * cam->getZoom());
+			uint32_t height = round(img->getHeight() * cam->getZoom());
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -263,7 +263,7 @@ namespace FIFE {
 		m_stencil_ref = stencil_ref;
 		m_alpha_ref = alpha_ref;
 	}
-	int LightRendererImageInfo::getStencil() {
+	int32_t LightRendererImageInfo::getStencil() {
 		if(!m_stencil) {
 			return -1;
 		}
@@ -278,7 +278,7 @@ namespace FIFE {
 		m_alpha_ref = 0.0;
 	}
 	
-	LightRendererAnimationInfo::LightRendererAnimationInfo(LightRendererNode anchor, int animation, int src, int dst):
+	LightRendererAnimationInfo::LightRendererAnimationInfo(LightRendererNode anchor, int32_t animation, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_animation(animation),
@@ -294,12 +294,12 @@ namespace FIFE {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			Animation& animation = animpool->getAnimation(m_animation);
-			int animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
+			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 			Image* img = animation.getFrameByTimestamp(animtime);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			unsigned int widtht = round(img->getWidth() * cam->getZoom());
-			unsigned int height = round(img->getHeight() * cam->getZoom());
+			uint32_t widtht = round(img->getWidth() * cam->getZoom());
+			uint32_t height = round(img->getHeight() * cam->getZoom());
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -314,7 +314,7 @@ namespace FIFE {
 		m_stencil_ref = stencil_ref;
 		m_alpha_ref = alpha_ref;
 	}
-	int LightRendererAnimationInfo::getStencil() {
+	int32_t LightRendererAnimationInfo::getStencil() {
 		if(!m_stencil) {
 			return -1;
 		}
@@ -329,7 +329,7 @@ namespace FIFE {
 		m_alpha_ref = 0.0;
 	}
 
-	LightRendererResizeInfo::LightRendererResizeInfo(LightRendererNode anchor, int image, int width, int height, int src, int dst):
+	LightRendererResizeInfo::LightRendererResizeInfo(LightRendererNode anchor, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_image(image),
@@ -347,8 +347,8 @@ namespace FIFE {
 			Image* img = &imagepool->getImage(m_image);
 			Rect r;
 			Rect viewport = cam->getViewPort();
-			unsigned int widtht = round(m_width * cam->getZoom());
-			unsigned int height = round(m_height * cam->getZoom());
+			uint32_t widtht = round(m_width * cam->getZoom());
+			uint32_t height = round(m_height * cam->getZoom());
 			r.x = p.x-widtht/2;
 			r.y = p.y-height/2;
 			r.w = widtht;
@@ -363,7 +363,7 @@ namespace FIFE {
 		m_stencil_ref = stencil_ref;
 		m_alpha_ref = alpha_ref;
 	}
-	int LightRendererResizeInfo::getStencil() {
+	int32_t LightRendererResizeInfo::getStencil() {
 		if(!m_stencil) {
 			return -1;
 		}
@@ -378,7 +378,7 @@ namespace FIFE {
 		m_alpha_ref = 0.0;
 	}
 
-	LightRendererSimpleLightInfo::LightRendererSimpleLightInfo(LightRendererNode anchor, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int src, int dst):
+	LightRendererSimpleLightInfo::LightRendererSimpleLightInfo(LightRendererNode anchor, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
 		m_intensity(intensity),
@@ -408,7 +408,7 @@ namespace FIFE {
 		m_stencil_ref = stencil_ref;
 		m_alpha_ref = alpha_ref;
 	}
-	int LightRendererSimpleLightInfo::getStencil() {
+	int32_t LightRendererSimpleLightInfo::getStencil() {
 		if(!m_stencil) {
 			return -1;
 		}
@@ -435,7 +435,7 @@ namespace FIFE {
 		return dynamic_cast<LightRenderer*>(cnt->getRenderer("LightRenderer"));
 	}
 	
-	LightRenderer::LightRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
+	LightRenderer::LightRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool):
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
 		m_animationpool(animpool),
@@ -458,22 +458,22 @@ namespace FIFE {
 	LightRenderer::~LightRenderer() {
 	}
 	// Add a static lightmap
-	void LightRenderer::addImage(const std::string &group, LightRendererNode n, int image, int src, int dst) {
+	void LightRenderer::addImage(const std::string &group, LightRendererNode n, int32_t image, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererImageInfo(n, image, src, dst);
 		m_groups[group].push_back(info);
 	}
 	// Add a animation lightmap
-	void LightRenderer::addAnimation(const std::string &group, LightRendererNode n, int animation, int src, int dst) {
+	void LightRenderer::addAnimation(const std::string &group, LightRendererNode n, int32_t animation, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererAnimationInfo(n, animation, src, dst);
 		m_groups[group].push_back(info);
 	}
 	// Add a simple light
-	void LightRenderer::addSimpleLight(const std::string &group, LightRendererNode n, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int src, int dst) {
+	void LightRenderer::addSimpleLight(const std::string &group, LightRendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererSimpleLightInfo(n, intensity, radius, subdivisions, xstretch, ystretch, r, g, b, src, dst);
 		m_groups[group].push_back(info);
 	}
 	// Resize an Image
-	void LightRenderer::resizeImage(const std::string &group, LightRendererNode n, int image, int width, int height, int src, int dst) {
+	void LightRenderer::resizeImage(const std::string &group, LightRendererNode n, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst) {
 		LightRendererElementInfo* info = new LightRendererResizeInfo(n, image, width, height, src, dst);
 		m_groups[group].push_back(info);
 	}

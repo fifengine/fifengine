@@ -51,17 +51,17 @@ namespace FIFE {
 		virtual ~FontBase() {};
 
 		void invalidate();
-		void setRowSpacing (int spacing);
-		int getRowSpacing() const;
-		void setGlyphSpacing(int spacing);
-		int getGlyphSpacing() const;
+		void setRowSpacing (int32_t spacing);
+		int32_t getRowSpacing() const;
+		void setGlyphSpacing(int32_t spacing);
+		int32_t getGlyphSpacing() const;
 		void setAntiAlias(bool antiAlias);
 		bool isAntiAlias();
-		virtual int getStringIndexAt(const std::string &text, int x) const;
+		virtual int32_t getStringIndexAt(const std::string &text, int32_t x) const;
 
 		Image* getAsImage(const std::string& text);
 		Image* getAsImageMultiline(const std::string& text);
-		std::string splitTextToWidth (const std::string& text, int render_width);
+		std::string splitTextToWidth (const std::string& text, int32_t render_width);
 
 		SDL_Color getColor() const;
 
@@ -71,8 +71,8 @@ namespace FIFE {
 		TextRenderPool m_pool;
 
 		SDL_Color mColor;
-		int mGlyphSpacing;
-		int mRowSpacing;
+		int32_t mGlyphSpacing;
+		int32_t mRowSpacing;
 
 		std::string mFilename;
 		bool m_antiAlias;

@@ -52,10 +52,10 @@ namespace FIFE {
 		}
 		
 		void setMap(Map* map);
-		int getNextLocation(const Instance* instance, const Location& target, 
+		int32_t getNextLocation(const Instance* instance, const Location& target, 
 		                    double distance_to_travel, Location& nextLocation,
-		                    Location& facingLocation, int session_id=-1, 
-							int priority = MEDIUM_PRIORITY);
+		                    Location& facingLocation, int32_t session_id=-1, 
+							int32_t priority = MEDIUM_PRIORITY);
 
 		/** Updates the route pather.
 		 *
@@ -73,7 +73,7 @@ namespace FIFE {
 		 * @param session_id The id of the session to cancel.
 		 * @return True if the session could be canceled false otherwise.
 		 */
-		bool cancelSession(const int session_id);
+		bool cancelSession(const int32_t session_id);
 
 		/** Adds a search space to the route pather.
 		 *
@@ -92,11 +92,11 @@ namespace FIFE {
 		std::string getName() const { return "RoutePather"; };		
 	private:
 		typedef std::list<Location> Path;
-		typedef PriorityQueue<RoutePatherSearch*, int> SessionQueue;
-		typedef std::list<int> SessionList;
-		typedef std::map<int, Path> PathMap;
+		typedef PriorityQueue<RoutePatherSearch*, int32_t> SessionQueue;
+		typedef std::list<int32_t> SessionList;
+		typedef std::map<int32_t, Path> PathMap;
 		typedef std::map<Layer*, SearchSpace*> SearchSpaceMap;
-		typedef std::map<int, Location> LocationMap;
+		typedef std::map<int32_t, Location> LocationMap;
 		/** Makes the instance follow the given path.
 		 *
 		 * Calculates the next position the instance should move to given the 
@@ -116,7 +116,7 @@ namespace FIFE {
 		 *
 		 * @param sessionId The session id to store.
 		 */
-		void addSessionId(const int sessionId);
+		void addSessionId(const int32_t sessionId);
 		
 		/** Schedules a plan to be created for the given instance to reach the given
 		 * target; the session id is where the plan should be stored 
@@ -126,12 +126,12 @@ namespace FIFE {
 		 * @param session_id is which pathfinding slot to put the plan in
 		 * @param priority is the priority of the request
 		 */
-		void makePlan(const Instance *instance, const Location& target, int session_id, int priority);
+		void makePlan(const Instance *instance, const Location& target, int32_t session_id, int32_t priority);
 		
 		/** make a new session id 
 			@return the new session id
 		*/
-		int makeSessionId();
+		int32_t makeSessionId();
 		
 		/** are two locations equivalent from the perspective of pathing */
 		bool locationsEqual(const Location &a, const Location &b);
@@ -150,14 +150,14 @@ namespace FIFE {
 		 * 
 		 * @return true if one has, false otherwise.
 		 */
-		bool sessionIdValid(const int sessionId);
+		bool sessionIdValid(const int32_t sessionId);
 
 		/** Removes a session id from the session map.
 		 *
 		 * @param sessionId The session id to remove.
 		 * @return True if the sessionId could be removed, false otherwise.
 		 */
-		bool invalidateSessionId(const int sessionId);
+		bool invalidateSessionId(const int32_t sessionId);
 
 		//The map the search is running on.
 		Map*	       m_map;
@@ -178,10 +178,10 @@ namespace FIFE {
 		SearchSpaceMap m_searchspaces; 
 
 		//The next free session id.
-		int            m_nextFreeSessionId;
+		int32_t            m_nextFreeSessionId;
 
 		//The maximum number of ticks allowed.
-		int			   m_maxticks;
+		int32_t			   m_maxticks;
 	};
 }
 #endif

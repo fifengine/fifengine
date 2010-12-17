@@ -85,7 +85,7 @@ namespace FIFE {
 				return 0;
 			}
 
-			int err = inflate(&zstream, Z_FINISH);
+			int32_t err = inflate(&zstream, Z_FINISH);
 			if (err != Z_STREAM_END) {
 				if (zstream.msg) {
 					FL_ERR(_log, LMsg("inflate failed: ") << zstream.msg);
@@ -145,7 +145,7 @@ namespace FIFE {
 
 		std::string filename = m_zipfile->readString(fnamelen);
 		m_zipfile->moveIndex(extralen);
-		unsigned int offset = m_zipfile->getCurrentIndex();
+		uint32_t offset = m_zipfile->getCurrentIndex();
 		FL_DBG(_log, LMsg("found file: ") << filename << " (" << compsize << "/" << realsize << ") on offset " << offset);
 
 		m_zipfile->moveIndex(compsize);
@@ -175,7 +175,7 @@ namespace FIFE {
 		std::set<std::string> result;
 
 		std::string fixedPath = fixPath(path);
-		int path_len = path.length();
+		int32_t path_len = path.length();
 		if (fixedPath[path_len - 1] != '/') {
 			fixedPath += '/';
 			path_len++;
@@ -184,7 +184,7 @@ namespace FIFE {
 		type_files::const_iterator end = m_files.end();
 		for (type_files::const_iterator i = m_files.begin(); i != end; ++i) {
 			std::string name = i->first;
-			int len = name.length();
+			int32_t len = name.length();
 			if (len && name.find(fixedPath) == 0 && name[len - 1] != '/') {
 				name = name.substr(path_len);
 				size_t pos = name.find("/");
@@ -203,7 +203,7 @@ namespace FIFE {
 		std::set<std::string> result;
 
 		std::string fixedPath = fixPath(path);
-		int path_len = path.length();
+		int32_t path_len = path.length();
 		if (fixedPath[path_len - 1] != '/') {
 			fixedPath += '/';
 			path_len++;
@@ -212,7 +212,7 @@ namespace FIFE {
 		type_files::const_iterator end = m_files.end();
 		for (type_files::const_iterator i = m_files.begin(); i != end; ++i) {
 			std::string name = i->first;
-			int len = name.length();
+			int32_t len = name.length();
 			if (len && name.find(fixedPath) == 0 && name[len - 1] == '/' && len > path_len) {
 				name = name.substr(path_len);
 				size_t pos = name.find("/");

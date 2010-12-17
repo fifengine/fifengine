@@ -95,10 +95,10 @@ namespace FIFE {
 		set(m_cursor_type, m_cursor_id);
 	}
 
-	void Cursor::set(MouseCursorType ctype, unsigned int cursor_id) {
+	void Cursor::set(MouseCursorType ctype, uint32_t cursor_id) {
 		m_cursor_id = cursor_id;
 		m_cursor_type = ctype;
-		int mx, my;
+		int32_t mx, my;
 		SDL_GetMouseState(&mx, &my);
 
 		if (ctype == CURSOR_NATIVE) {
@@ -119,7 +119,7 @@ namespace FIFE {
 		m_invalidated = false;
 	}
 
-	void Cursor::setDrag(MouseCursorType ctype, unsigned int drag_id, int drag_offset_x, int drag_offset_y) {
+	void Cursor::setDrag(MouseCursorType ctype, uint32_t drag_id, int32_t drag_offset_x, int32_t drag_offset_y) {
 		m_drag_type = ctype;
 		m_drag_id = drag_id;
 		m_drag_offset_x = drag_offset_x;
@@ -158,7 +158,7 @@ namespace FIFE {
 			img = &m_imgpool->getImage(m_drag_id);
 		} else if (m_drag_type == CURSOR_ANIMATION) {
 			Animation& anim = m_animpool->getAnimation(m_drag_id);
-			int animtime = (m_timemanager->getTime() - m_drag_animtime) % anim.getDuration();
+			int32_t animtime = (m_timemanager->getTime() - m_drag_animtime) % anim.getDuration();
  			img = anim.getFrameByTimestamp(animtime);
 		}
 		if (img) {
@@ -174,7 +174,7 @@ namespace FIFE {
 			img = &m_imgpool->getImage(m_cursor_id);
 		} else if (m_cursor_type == CURSOR_ANIMATION) {
 			Animation& anim = m_animpool->getAnimation(m_cursor_id);
-			int animtime = (m_timemanager->getTime() - m_animtime) % anim.getDuration();
+			int32_t animtime = (m_timemanager->getTime() - m_animtime) % anim.getDuration();
 			img = anim.getFrameByTimestamp(animtime);
 		}
 		if (img) {
@@ -185,7 +185,7 @@ namespace FIFE {
 		}
 	}
 
-	unsigned int Cursor::getNativeId(unsigned int cursor_id) {
+	uint32_t Cursor::getNativeId(uint32_t cursor_id) {
 #if defined( WIN32 )
 		switch (cursor_id) {
 			case NC_ARROW:
@@ -273,7 +273,7 @@ namespace FIFE {
 		return cursor_id;
 	}
 
-	void Cursor::setNativeCursor(unsigned int cursor_id) {
+	void Cursor::setNativeCursor(uint32_t cursor_id) {
 #if defined( WIN32 ) || defined(__unix__)
 		// Check if a value in NativeCursors is requested
 		cursor_id = getNativeId(cursor_id);
