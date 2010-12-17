@@ -54,7 +54,7 @@ namespace FIFE {
 		 * @param emitterid The id of the Emitter
 		 *
 		 */
-		SoundEmitter* getEmitter(unsigned int emitterid) const;
+		SoundEmitter* getEmitter(uint32_t emitterid) const;
 		
 		/** Returns a pointer to an allocated emitter-instance
 		 */
@@ -62,7 +62,7 @@ namespace FIFE {
 		
 		/** Release an emitter-instance given by emitter-id
 		 */
-		void releaseEmitter(unsigned int emitterid);
+		void releaseEmitter(uint32_t emitterid);
 		
 		/** Returns an openAL context
 		 */

@@ -77,32 +77,32 @@ namespace gcn {
 		 * Sets caret column (UTF-8 aware).
 		 * @param column Caret column.
 		 */
-		void setCaretColumnUTF8(int column);
+		void setCaretColumnUTF8(int32_t column);
 
 		/**
 		 * Sets caret row  (UTF-8 aware).
 		 * @param row Caret row
 		 */
-		void setCaretRowUTF8(int row);
+		void setCaretRowUTF8(int32_t row);
 
 		/**
 		 * Sets caret row and column  (UTF-8 aware).
 		 * @param row Caret row.
 		 * @param column Caret column.
 		 */
-		void setCaretRowColumnUTF8(int row, int column);
+		void setCaretRowColumnUTF8(int32_t row, int32_t column);
 
 		/**
 		 * Gets caret column (UTF-8 aware).
 		 * @return Caret column.
 		 */
-		int getCaretColumnUTF8();
+		int32_t getCaretColumnUTF8();
 
 		/**
 		 * Gets caret column (UTF-8 aware).
 		 * @return Caret row.
 		 */
-		int getCaretRowUTF8();
+		int32_t getCaretRowUTF8();
 
 	protected:
 

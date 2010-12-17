@@ -48,8 +48,8 @@
 
 
 namespace {
-	unsigned int scale(unsigned int val, double factor) {
-		return static_cast<unsigned int>(ceil(static_cast<double>(val) * factor));
+	uint32_t scale(uint32_t val, double factor) {
+		return static_cast<uint32_t>(ceil(static_cast<double>(val) * factor));
 	}
 }
 
@@ -99,7 +99,7 @@ namespace FIFE {
 		return dynamic_cast<InstanceRenderer*>(cnt->getRenderer("InstanceRenderer"));
 	}
 
-	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool):
+	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool):
 		RendererBase(renderbackend, position),
 		m_imagepool(imagepool),
 		m_animationpool(animpool),
@@ -132,7 +132,7 @@ namespace FIFE {
 
 		const bool any_effects = !(m_instance_outlines.empty() && m_instance_colorings.empty());
 		const bool unlit = !m_unlit_groups.empty();
-		unsigned int lm = m_renderbackend->getLightingModel();
+		uint32_t lm = m_renderbackend->getLightingModel();
 
 		m_area_layer = false;
 		if(!m_instance_areas.empty()) {
@@ -264,17 +264,17 @@ namespace FIFE {
 		uint8_t r, g, b, a = 0;
 
 		// vertical sweep
-		for (unsigned int x = 0; x < img->getWidth(); x ++) {
+		for (uint32_t x = 0; x < img->getWidth(); x ++) {
 			uint8_t prev_a = 0;
-			for (unsigned int y = 0; y < img->getHeight(); y ++) {
+			for (uint32_t y = 0; y < img->getHeight(); y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
 					if (a < prev_a) {
-						for (unsigned int yy = y; yy < y + info.width; yy++) {
+						for (uint32_t yy = y; yy < y + info.width; yy++) {
 							img->putPixel(x, yy, info.r, info.g, info.b);
 						}
 					} else {
-						for (unsigned int yy = y - info.width; yy < y; yy++) {
+						for (uint32_t yy = y - info.width; yy < y; yy++) {
 							img->putPixel(x, yy, info.r, info.g, info.b);
 						}
 					}
@@ -283,17 +283,17 @@ namespace FIFE {
 			}
 		}
 		// horizontal sweep
-		for (unsigned int y = 0; y < img->getHeight(); y ++) {
+		for (uint32_t y = 0; y < img->getHeight(); y ++) {
 			uint8_t prev_a = 0;
-			for (unsigned int x = 0; x < img->getWidth(); x ++) {
+			for (uint32_t x = 0; x < img->getWidth(); x ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if ((a == 0 || prev_a == 0) && (a != prev_a)) {
 					if (a < prev_a) {
-						for (unsigned int xx = x; xx < x + info.width; xx++) {
+						for (uint32_t xx = x; xx < x + info.width; xx++) {
 							img->putPixel(xx, y, info.r, info.g, info.b);
 						}
 					} else {
-						for (unsigned int xx = x - info.width; xx < x; xx++) {
+						for (uint32_t xx = x - info.width; xx < x; xx++) {
 							img->putPixel(xx, y, info.r, info.g, info.b);
 						}
 					}
@@ -336,8 +336,8 @@ namespace FIFE {
 
 		uint8_t r, g, b, a = 0;
 
-		for (unsigned int x = 0; x < img->getWidth(); x ++) {
-			for (unsigned int y = 0; y < img->getHeight(); y ++) {
+		for (uint32_t x = 0; x < img->getWidth(); x ++) {
+			for (uint32_t y = 0; y < img->getHeight(); y ++) {
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				if (a > 0) {
 					img->putPixel(x, y, (r + info.r) >> 1, (g + info.g) >> 1, (b + info.b) >> 1);
@@ -357,7 +357,7 @@ namespace FIFE {
 		return info.overlay;
 	}
 
-	void InstanceRenderer::addOutlined(Instance* instance, int r, int g, int b, int width) {
+	void InstanceRenderer::addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width) {
 		OutlineInfo newinfo;
 		newinfo.r = r;
 		newinfo.g = g;
@@ -388,7 +388,7 @@ namespace FIFE {
 		}
 	}
 
-	void InstanceRenderer::addColored(Instance* instance, int r, int g, int b) {
+	void InstanceRenderer::addColored(Instance* instance, int32_t r, int32_t g, int32_t b) {
 		ColoringInfo newinfo;
 		newinfo.r = r;
 		newinfo.g = g;
@@ -417,7 +417,7 @@ namespace FIFE {
 		}
 	}
 
-	void InstanceRenderer::addTransparentArea(Instance* instance, const std::list<std::string> &groups, unsigned int w, unsigned int h, unsigned char trans, bool front) {
+	void InstanceRenderer::addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, unsigned char trans, bool front) {
 		AreaInfo newinfo;
 		newinfo.instance = instance;
 		newinfo.groups = groups;

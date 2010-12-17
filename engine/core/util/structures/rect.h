@@ -72,7 +72,7 @@ namespace FIFE {
 	/** A Rectangle on screen.
 	 *
 	 * This is a small helper class used for screen coordinate arithmetics.
-	 * The same thoughts reasong using @b int as value type as in Point apply.
+	 * The same thoughts reasong using @b int32_t as value type as in Point apply.
 	 *
 	 * @see Point
 	 */
@@ -244,7 +244,7 @@ namespace FIFE {
 		return true;
 	}
 
-	typedef RectType<int> Rect;
+	typedef RectType<int32_t> Rect;
 	typedef RectType<float> FloatRect;
 	typedef RectType<double> DoubleRect;
 

@@ -50,12 +50,12 @@ namespace FIFE {
 		virtual void setResourceLocation(const ResourceLocation& location);
 		virtual void setResourceFile(const std::string& filename);
 	
-		int getPoolId() { return m_poolid; }
-		void setPoolId(int poolid) { m_poolid = poolid; }
+		int32_t getPoolId() { return m_poolid; }
+		void setPoolId(int32_t poolid) { m_poolid = poolid; }
 		
 	private:
 		ResourceLocation* m_location;
-		int m_poolid;
+		int32_t m_poolid;
 	};
 }
 

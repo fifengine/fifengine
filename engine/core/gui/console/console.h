@@ -155,8 +155,8 @@ namespace FIFE {
 
 			std::string m_prompt;
 
-			int m_hiddenPos;
-			int m_animationDelta;
+			int32_t m_hiddenPos;
+			int32_t m_animationDelta;
 
 			bool m_hiding;
 

@@ -45,7 +45,7 @@ namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
 
-	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font):
+	FloatingTextRenderer::FloatingTextRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font):
 		RendererBase(renderbackend, position),
 		m_renderbackend(renderbackend),
 		m_font(font) {
@@ -78,7 +78,7 @@ namespace FIFE {
 
 		RenderList::const_iterator instance_it = instances.begin();
 		const std::string* saytext = NULL;
-		unsigned int lm = m_renderbackend->getLightingModel();
+		uint32_t lm = m_renderbackend->getLightingModel();
 		SDL_Color old_color = m_font->getColor();
 		if(m_font_color) {
 			m_font->setColor(m_color.r, m_color.g, m_color.b, m_color.unused);
@@ -101,7 +101,7 @@ namespace FIFE {
 				r.h = img->getHeight();
 
 				if(m_background || m_backborder) {
-					const int overdraw = 5;
+					const int32_t overdraw = 5;
 
 					Point p = Point(r.x-overdraw, r.y-overdraw);
 

@@ -44,7 +44,7 @@ namespace FIFE {
 	 */
 	class RoutePatherSearch {
 	public:
-		RoutePatherSearch(const int session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
+		RoutePatherSearch(const int32_t session_id, const Location& from, const Location& to, SearchSpace* searchSpace);
 
                 typedef std::list<Location> Path;
                 /** An enumeration of the different status the search can be in.
@@ -64,7 +64,7 @@ namespace FIFE {
                  *
                  * @return The searches session id in the pather.
                  */
-                int getSessionId() const {
+                int32_t getSessionId() const {
                         return m_sessionId;
                 }
 
@@ -80,7 +80,7 @@ namespace FIFE {
                  *
                  * @return An integer value representing the status, which is enumerated by this class.
                  */
-                int getSearchStatus() const {
+                int32_t getSearchStatus() const {
                         return m_status;
                 }
 
@@ -101,7 +101,7 @@ namespace FIFE {
                 Location                m_from;
 
                 //An integer containing the session id for this search.
-                int                             m_sessionId;
+                int32_t                             m_sessionId;
 
                 //A pointer to the pather that owns this search.
                 SearchSpace*    m_searchspace;
@@ -109,29 +109,29 @@ namespace FIFE {
                 //An enumeration of the searches current status.
                 SearchStatus    m_status;
                 
-                //The start coordinate as an int.
-                int             m_startCoordInt;
+                //The start coordinate as an int32_t.
+                int32_t             m_startCoordInt;
                 
-                //The destination coordinate as an int.
-                int             m_destCoordInt;
+                //The destination coordinate as an int32_t.
+                int32_t             m_destCoordInt;
                 
                 //The next coordinate to check out.
-                int             m_next;
+                int32_t             m_next;
 
                 //The class to use to calculate the heuristic value.
                 Heuristic*                m_heuristic;
 
 		//The shortest path tree.
-		std::vector<int>          m_spt;
+		std::vector<int32_t>          m_spt;
 
 		//The search frontier.
-		std::vector<int>	      m_sf;
+		std::vector<int32_t>	      m_sf;
 
 		//A table to hold the costs.
 		std::vector<float>		  m_gCosts;
 
 		//priority queue to hold nodes on the sf in order. 
-		PriorityQueue<int, float> m_sortedfrontier;
+		PriorityQueue<int32_t, float> m_sortedfrontier;
 	};
 }
 #endif

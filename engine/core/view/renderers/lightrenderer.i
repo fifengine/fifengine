@@ -76,16 +76,16 @@ namespace FIFE {
 	public:
 		virtual std::string getName() { return 0; };
 		virtual LightRendererNode* getNode() { return NULL; };
-		virtual int getId() { return -1; };
-		virtual int getSrcBlend() { return -1; };
-		virtual int getDstBlend() { return -1; };
+		virtual int32_t getId() { return -1; };
+		virtual int32_t getSrcBlend() { return -1; };
+		virtual int32_t getDstBlend() { return -1; };
 		virtual void setStencil(uint8_t stencil_ref, float alpha_ref) {};
-		virtual int getStencil() { return 0; };
+		virtual int32_t getStencil() { return 0; };
 		virtual float getAlpha() { return 0; };
 		virtual void removeStencil() {};
 		virtual std::vector<uint8_t> getColor() {};
 		virtual float getRadius() { return 0; };
-		virtual int getSubdivisions() { return 0; };
+		virtual int32_t getSubdivisions() { return 0; };
 		virtual float getXStretch() { return 0; };
 		virtual float getYStretch() { return 0; };
 		virtual ~LightRendererElementInfo() {};
@@ -93,75 +93,75 @@ namespace FIFE {
 
 	class LightRendererImageInfo : public LightRendererElementInfo {
 	public:
-		LightRendererImageInfo(LightRendererNode n, int image, int src, int dst);
+		LightRendererImageInfo(LightRendererNode n, int32_t image, int32_t src, int32_t dst);
 		virtual ~LightRendererImageInfo() {};
 	private:
 		LightRendererNode m_anchor;
-		int m_image;
-		int m_src;
-		int m_dst;
+		int32_t m_image;
+		int32_t m_src;
+		int32_t m_dst;
 		bool m_stencil;
 		uint8_t m_stencil_ref;
 		float m_alpha_ref;
 	};
 	class LightRendererAnimationInfo : public LightRendererElementInfo {
 	public:
-		LightRendererAnimationInfo(LightRendererNode n, int animation, int src, int dst);
+		LightRendererAnimationInfo(LightRendererNode n, int32_t animation, int32_t src, int32_t dst);
 		virtual ~LightRendererAnimationInfo() {};
 	private:
 		LightRendererNode m_anchor;
-		int m_animation;
-		int m_src;
-		int m_dst;
+		int32_t m_animation;
+		int32_t m_src;
+		int32_t m_dst;
 		bool m_stencil;
 		uint8_t m_stencil_ref;
 		float m_alpha_ref;
 	};
 	class LightRendererSimpleLightInfo : public LightRendererElementInfo {
 	public:
-		LightRendererSimpleLightInfo(LightRendererNode n, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int src, int dst);
+		LightRendererSimpleLightInfo(LightRendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src, int32_t dst);
 		virtual ~LightRendererSimpleLightInfo() {};
 	private:
 		LightRendererNode m_anchor;
 		uint8_t m_intensity;
 		float m_radius;
-		int m_subdivisions;
+		int32_t m_subdivisions;
 		float m_xstretch;
 		float m_ystretch;
 		uint8_t m_red;
 		uint8_t m_green;
 		uint8_t m_blue;
-		int m_src;
-		int m_dst;
+		int32_t m_src;
+		int32_t m_dst;
 		bool m_stencil;
 		uint8_t m_stencil_ref;
 		float m_alpha_ref;
 	};
 	class LightRendererResizeInfo : public LightRendererElementInfo {
 	public:
-		LightRendererResizeInfo(LightRendererNode n, int image, int width, int height, int src, int dst);
+		LightRendererResizeInfo(LightRendererNode n, int32_t image, int32_t width, int32_t height, int32_t src, int32_t dst);
 		virtual ~LightRendererResizeInfo() {};
 	private:
 		LightRendererNode m_anchor;
-		int m_image;
-		int m_width;
-		int m_height;
-		int m_src;
-		int m_dst;
+		int32_t m_image;
+		int32_t m_width;
+		int32_t m_height;
+		int32_t m_src;
+		int32_t m_dst;
 		bool m_stencil;
 		uint8_t m_stencil_ref;
 		float m_alpha_ref;
 	};
 	class LightRenderer: public RendererBase {
 	public:
-		LightRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
+		LightRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool);
 		~LightRenderer();
 		std::string getName();
 		static LightRenderer* getInstance(IRendererContainer* cnt);
-		void addImage(const std::string &group, LightRendererNode n, int image, int src=-1, int dst=-1);
-		void addAnimation(const std::string &group, LightRendererNode n, int animation, int src=-1, int dst=-1);
-		void addSimpleLight(const std::string &group, LightRendererNode n, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int src=-1, int dst=-1);
-		void resizeImage(const std::string &group, LightRendererNode n, int image, int width, int height, int src=-1, int dst=-1);
+		void addImage(const std::string &group, LightRendererNode n, int32_t image, int32_t src=-1, int32_t dst=-1);
+		void addAnimation(const std::string &group, LightRendererNode n, int32_t animation, int32_t src=-1, int32_t dst=-1);
+		void addSimpleLight(const std::string &group, LightRendererNode n, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t r, uint8_t g, uint8_t b, int32_t src=-1, int32_t dst=-1);
+		void resizeImage(const std::string &group, LightRendererNode n, int32_t image, int32_t width, int32_t height, int32_t src=-1, int32_t dst=-1);
 		void addStencilTest(const std::string &group, uint8_t stencil_ref=0, float alpha_ref=0.0);
 		void removeStencilTest(const std::string &group);
 		std::list<std::string> getGroups();

@@ -38,7 +38,7 @@ namespace FIFE {
 		setTarget(SDL_GetVideoSurface());
 	}
 
-	void SdlGuiGraphics::drawImage(const gcn::Image* image, int srcX, int srcY, int dstX, int dstY, int width, int height) {
+	void SdlGuiGraphics::drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
 		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
 		assert(g_img);
 		Image& fifeimg = m_pool.getImage(g_img->getPoolId());

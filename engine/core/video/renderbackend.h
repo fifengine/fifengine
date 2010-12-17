@@ -83,11 +83,11 @@ namespace FIFE {
 
 		/** Initializes the light.
 		 */
-		virtual void setLightingModel(unsigned int lighting) = 0;
+		virtual void setLightingModel(uint32_t lighting) = 0;
 
 		/** Gets the current light model.
 		 */
-		virtual unsigned int getLightingModel() const = 0;
+		virtual uint32_t getLightingModel() const = 0;
 
 		/** Enable the lighting.
 		 */
@@ -115,7 +115,7 @@ namespace FIFE {
 
 		/** Set reference for the stencil test.
 		 */
-		virtual void setStencilTest(Uint8 stencil_ref, unsigned int stencil_op, unsigned int stencil_func) = 0;
+		virtual void setStencilTest(Uint8 stencil_ref, uint32_t stencil_op, uint32_t stencil_func) = 0;
 
 		/** Reset stencil buffer with given value.
 		 */
@@ -139,7 +139,7 @@ namespace FIFE {
 
 		/** Change the Blendingmodel.
 		 */
-		virtual void changeBlending(int scr, int dst) = 0;
+		virtual void changeBlending(int32_t scr, int32_t dst) = 0;
 
 		/** Performs cleanup actions.
 		 */
@@ -165,7 +165,7 @@ namespace FIFE {
 		 * @param height Height of the image.
 		 * @return The new Image.
 		 */
-		virtual Image* createImage(const uint8_t* data, unsigned int width, unsigned int height) = 0;
+		virtual Image* createImage(const uint8_t* data, uint32_t width, uint32_t height) = 0;
 
 		/** Helper function to create images from SDL_Surfaces.
 		 * Takes ownership over the surface.
@@ -190,12 +190,12 @@ namespace FIFE {
 		 */
 		const ScreenMode& getCurrentScreenMode() const;
 
-		unsigned int getWidth() const;
-		unsigned int getHeight() const;
-		unsigned int getScreenWidth() const { return getWidth(); }
-		unsigned int getScreenHeight() const { return getHeight(); }
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
+		uint32_t getScreenWidth() const { return getWidth(); }
+		uint32_t getScreenHeight() const { return getHeight(); }
 		const Rect& getArea();
-		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;
@@ -231,7 +231,7 @@ namespace FIFE {
 	protected:
 		Image* m_screen;
 		bool m_isalphaoptimized;
-		unsigned int m_chunkingsize;
+		uint32_t m_chunkingsize;
 		bool m_iscolorkeyenabled;
 		SDL_Color m_colorkey;
 		ScreenMode m_screenMode;

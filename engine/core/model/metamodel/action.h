@@ -58,11 +58,11 @@ namespace FIFE {
 
 		/** Sets the duration for this action
 		 */
-		void setDuration(unsigned int duration) { m_duration = duration; }
+		void setDuration(uint32_t duration) { m_duration = duration; }
 
 		/** Gets the duration of this action
 		 */
-		unsigned int getDuration() { return m_duration; }
+		uint32_t getDuration() { return m_duration; }
 
 		/** Sets visualization to be used. Transfers ownership.
 		 */
@@ -77,7 +77,7 @@ namespace FIFE {
 		std::string m_id;
 
 		// duration of the action
-		unsigned int m_duration;
+		uint32_t m_duration;
 		// visualization for action
 		AbstractVisual* m_visual;
 	};

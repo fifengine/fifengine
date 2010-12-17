@@ -28,15 +28,15 @@ namespace FIFE {
 	class VFS;
 	class ZipFileSource : public RawDataSource {
 		public:
-			ZipFileSource(uint8_t* data, unsigned int datalen);
+			ZipFileSource(uint8_t* data, uint32_t datalen);
 			virtual ~ZipFileSource();
 
-			virtual unsigned int getSize() const;
-			virtual void readInto(uint8_t* target, unsigned int start, unsigned int len);
+			virtual uint32_t getSize() const;
+			virtual void readInto(uint8_t* target, uint32_t start, uint32_t len);
 
 		private:
 			uint8_t* m_data;
-			unsigned int m_datalen;
+			uint32_t m_datalen;
 
 	};
 

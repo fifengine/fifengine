@@ -37,13 +37,13 @@ namespace FIFE {
 	 * for which streaming is not used. (bytes)
 	 * Has to be <= than BUFFERLEN * 3.
    */
-	const unsigned int MAX_KEEP_IN_MEM = 3145728;
+	const uint32_t MAX_KEEP_IN_MEM = 3145728;
 
 	// The number of buffers used for streaming.
 	const short BUFFER_NUM = 3;
 	
 	// The length of one buffer. (bytes)
-	const unsigned int BUFFER_LEN = 1048576;
+	const uint32_t BUFFER_LEN = 1048576;
 
 }
 

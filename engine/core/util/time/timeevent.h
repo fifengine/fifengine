@@ -50,7 +50,7 @@ namespace FIFE {
 		 *
 		 * @param period The period of the event. See class description.
 		 */
-		TimeEvent(int period = -1);
+		TimeEvent(int32_t period = -1);
 		
 		/** Destructor.
 		 *
@@ -73,13 +73,13 @@ namespace FIFE {
 		 *
 		 * @param period The period of the event. See class description.
 		 */
-		void setPeriod(int period);
+		void setPeriod(int32_t period);
 
 		/** Get the period of the event.
 		 *
 		 * @return The period of the event. See class description.
 		 */
-		int getPeriod();		
+		int32_t getPeriod();		
 
 		/** Get the last time the event was updated.
 		 *
@@ -95,7 +95,7 @@ namespace FIFE {
 
     private:
 		// The period of the event. See the class description.
-		int m_period;
+		int32_t m_period;
 
 		// The last time the class was updated.
 		unsigned long m_last_updated;

@@ -49,13 +49,13 @@ namespace FIFE {
 	template<typename T>
 	std::ostream& operator<<(std::ostream& os, const PointType2D<T>& p);
 
-	typedef PointType2D<int> Point;
-	typedef PointType2D<int> IntPoint;
+	typedef PointType2D<int32_t> Point;
+	typedef PointType2D<int32_t> IntPoint;
 	typedef PointType2D<double> DoublePoint;
-	typedef PointType2D<int> IntPoint2D;
+	typedef PointType2D<int32_t> IntPoint2D;
 	typedef PointType2D<double> DoublePoint2D;
 
-	%template(Point) PointType2D<int>;
+	%template(Point) PointType2D<int32_t>;
 	%template(DoublePoint) PointType2D<double>;
 
 	template <typename T> class PointType3D {
@@ -80,11 +80,11 @@ namespace FIFE {
 	template<typename T>
 	std::ostream& operator<<(std::ostream& os, const PointType3D<T>& p);
 
-	typedef PointType3D<int> Point3D;
-	typedef PointType3D<int> IntPoint3D;
+	typedef PointType3D<int32_t> Point3D;
+	typedef PointType3D<int32_t> IntPoint3D;
 	typedef PointType3D<double> DoublePoint3D;
 
-	%template(Point3D) PointType3D<int>;
+	%template(Point3D) PointType3D<int32_t>;
 	%template(DoublePoint3D) PointType3D<double>;
 	
 	template <typename T> class RectType {
@@ -105,11 +105,11 @@ namespace FIFE {
 	template<typename T>
 	std::ostream& operator<<(std::ostream&, const RectType<T>&);
 	
-	typedef RectType<int> Rect;
+	typedef RectType<int32_t> Rect;
 	typedef RectType<float> FloatRect;
 	typedef RectType<double> DoubleRect;
 	
-	%template(Rect) RectType<int>;
+	%template(Rect) RectType<int32_t>;
 	%template(FloatRect) RectType<float>;
 	%template(DoubleRect) RectType<double>;
 }

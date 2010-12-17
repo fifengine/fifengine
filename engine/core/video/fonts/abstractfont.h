@@ -50,14 +50,14 @@ namespace FIFE {
 		 *
 		 * @param spacing the spacing in pixels.
 		 */
-		virtual void setRowSpacing (int spacing) = 0;
+		virtual void setRowSpacing (int32_t spacing) = 0;
 
 		/**
 		 * Gets the spacing between rows in pixels.
 		 *
 		 * @return the spacing.
 		 */
-		virtual int getRowSpacing() const = 0;
+		virtual int32_t getRowSpacing() const = 0;
 
 		/**
 		 * Sets the spacing between letters in pixels. Default is 0 pixels.
@@ -65,14 +65,14 @@ namespace FIFE {
 		 *
 		 * @param spacing the spacing in pixels.
 		 */
-		virtual void setGlyphSpacing(int spacing) = 0;
+		virtual void setGlyphSpacing(int32_t spacing) = 0;
 
 		/**
 		 * Gets the spacing between letters in pixels.
 		 *
 		 * @return the spacing.
 		 */
-		virtual int getGlyphSpacing() const = 0;
+		virtual int32_t getGlyphSpacing() const = 0;
 
 		/**
 		 * Sets the use of anti aliasing..
@@ -88,7 +88,7 @@ namespace FIFE {
 		 */
 		virtual bool isAntiAlias() = 0;
 
-		virtual int getStringIndexAt(const std::string &text, int x) const = 0;
+		virtual int32_t getStringIndexAt(const std::string &text, int32_t x) const = 0;
 
 		/** Gets given text as Image
 		 *  The rsulting image is pooled, so it's not that time critical
@@ -100,7 +100,7 @@ namespace FIFE {
 		 */
 		virtual Image* getAsImageMultiline(const std::string& text) = 0;
 
-		virtual std::string splitTextToWidth (const std::string& text, int render_width) = 0;
+		virtual std::string splitTextToWidth (const std::string& text, int32_t render_width) = 0;
 
 		/** Set the color the text should be rendered in
 		 */
@@ -112,11 +112,11 @@ namespace FIFE {
 
 		/** gets width of given text
 		 */
-		virtual int getWidth(const std::string& text) const = 0;
+		virtual int32_t getWidth(const std::string& text) const = 0;
 
 		/** gets height of this font
 		 */
-		virtual int getHeight() const = 0;
+		virtual int32_t getHeight() const = 0;
 
 		virtual void invalidate() = 0;
 	};

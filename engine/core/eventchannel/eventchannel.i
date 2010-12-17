@@ -54,7 +54,7 @@ namespace FIFE {
 		virtual void consume();
 		virtual bool isConsumed() const;
 		virtual IEventSource* getSource();
-		virtual int getTimeStamp() const;
+		virtual int32_t getTimeStamp() const;
 		virtual std::string getDebugString() const;
 		virtual const std::string& getName() const;
 		virtual ~IEvent() {}
@@ -82,11 +82,11 @@ namespace FIFE {
 		CommandType getCommandType();
 		void setCommandType(CommandType type);
 
-		int getCode() const;
-		void setCode(int code);
+		int32_t getCode() const;
+		void setCode(int32_t code);
 
 		virtual void setSource(IEventSource* source);
-		virtual void setTimeStamp(int timestamp);
+		virtual void setTimeStamp(int32_t timestamp);
 	};
 
 	%feature("director") ICommandListener;
@@ -141,8 +141,8 @@ namespace FIFE {
 			MIDDLE = 4,
 			UNKNOWN_BUTTON = 8
 		};
-		virtual int getX() const;
-		virtual int getY() const;
+		virtual int32_t getX() const;
+		virtual int32_t getY() const;
 		virtual MouseEventType getType() const;
 		virtual MouseButtonType getButton() const;
 		virtual ~IMouseEvent();

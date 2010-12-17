@@ -170,7 +170,7 @@ namespace FIFE {
 		 * @return An integer representing the result of the comparison operation. 1 being a is greather than b,
 		 *		   -1 being a is less than b and 0 meaning that they're equal.
 		 */
-		int compare(const value_type& a, const value_type& b);
+		int32_t compare(const value_type& a, const value_type& b);
 	};
 }
 
@@ -202,7 +202,7 @@ bool FIFE::PriorityQueue<index_type, priority_type>::changeElementPriority(const
 		return false;
 	}
 
-	int compare_res = compare(value_type(index, newPriority), (*i));
+	int32_t compare_res = compare(value_type(index, newPriority), (*i));
 
 	i->second = newPriority;
 
@@ -301,7 +301,7 @@ void FIFE::PriorityQueue<index_type, priority_type>::orderDown(ElementListIt i) 
 }
 
 template<typename index_type, typename priority_type>
-int FIFE::PriorityQueue<index_type, priority_type>::compare(const value_type& a, const value_type& b) { 
+int32_t FIFE::PriorityQueue<index_type, priority_type>::compare(const value_type& a, const value_type& b) { 
 	
 	if(m_ordering == Descending) {
 

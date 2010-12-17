@@ -39,13 +39,13 @@ namespace FIFE {
 		reset(surface);
 	}
 
-	Image::Image(const uint8_t* data, unsigned int width, unsigned int height):
+	Image::Image(const uint8_t* data, uint32_t width, uint32_t height):
 		m_surface(NULL) {
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, width,height, 32,
 		                                            RMASK, GMASK, BMASK ,AMASK);
 		SDL_LockSurface(surface);
 
-		unsigned int size = width * height * 4;
+		uint32_t size = width * height * 4;
 		uint8_t* pixeldata = static_cast<uint8_t*>(surface->pixels);
 		std::copy(data, data + size, pixeldata);
 		SDL_UnlockSurface(surface);
@@ -81,14 +81,14 @@ namespace FIFE {
 		return srf;
 	}
 
-	unsigned int Image::getWidth() const {
+	uint32_t Image::getWidth() const {
 		if (!m_surface) {
 			return 0;
 		}
 		return m_surface->w;
 	}
 
-	unsigned int Image::getHeight() const {
+	uint32_t Image::getHeight() const {
 		if (!m_surface) {
 			return 0;
 		}
@@ -101,15 +101,15 @@ namespace FIFE {
 		return m_area;
 	}
 
-	void Image::setXShift(int xshift) {
+	void Image::setXShift(int32_t xshift) {
 		m_xshift = xshift;
 	}
 
-	void Image::setYShift(int yshift) {
+	void Image::setYShift(int32_t yshift) {
 		m_yshift = yshift;
 	}
 
-	void Image::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
+	void Image::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
 		if ((x < 0) || (x >= m_surface->w) || (y < 0) || (y >= m_surface->h)) {
 			r = 0;
 			g = 0;
@@ -118,7 +118,7 @@ namespace FIFE {
 			return;
 		}
 
-		int bpp = m_surface->format->BytesPerPixel;
+		int32_t bpp = m_surface->format->BytesPerPixel;
 		Uint8 *p = (Uint8*)m_surface->pixels + y * m_surface->pitch + x * bpp;
 		uint32_t pixel = 0;
 		switch(bpp) {
@@ -189,7 +189,7 @@ namespace FIFE {
 		FILE *fp;
 		png_structp pngptr;
 		png_infop infoptr;
-		int colortype;
+		int32_t colortype;
 		png_bytep *rowpointers = NULL;
 
 		fp = fopen(filename.c_str(), "wb");
@@ -242,7 +242,7 @@ namespace FIFE {
 		png_set_packing(pngptr);
 
 		rowpointers = new png_bytep[surface.h];
-		for (int i = 0; i < surface.h; i++) {
+		for (int32_t i = 0; i < surface.h; i++) {
 			rowpointers[i] = (png_bytep)(Uint8 *)surface.pixels + i*surface.pitch;
 		}
 		//write the image

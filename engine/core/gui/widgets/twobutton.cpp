@@ -51,15 +51,15 @@ namespace gcn {
 	TwoButton::~TwoButton() {
 	}
 
-	void TwoButton::setDownOffset(int x, int y) {
+	void TwoButton::setDownOffset(int32_t x, int32_t y) {
 		x_downoffset = x;
 		y_downoffset = y;
 	}
 
 	void TwoButton::draw(Graphics *graphics) {
 		Image* img = m_upImage;
-		int xoffset = 0;
-		int yoffset = 0;
+		int32_t xoffset = 0;
+		int32_t yoffset = 0;
 
 		if (isPressed()) {
 			if( m_downImage ) {
@@ -78,8 +78,8 @@ namespace gcn {
 		}
 
 		graphics->setColor(getForegroundColor());
-		int textX;
-		int textY = getHeight() / 2 - getFont()->getHeight() / 2;
+		int32_t textX;
+		int32_t textY = getHeight() / 2 - getFont()->getHeight() / 2;
 		switch (getAlignment())
 		{
 			case Graphics::LEFT:
@@ -107,8 +107,8 @@ namespace gcn {
 		}
 	}
 	void TwoButton::adjustSize() {
-		int w = 0;
-		int h = w;
+		int32_t w = 0;
+		int32_t h = w;
 		if( m_upImage ) {
 			w = m_upImage->getWidth();
 			h = m_upImage->getHeight();

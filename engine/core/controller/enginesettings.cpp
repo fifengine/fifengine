@@ -194,7 +194,7 @@ namespace FIFE {
 	const std::string& EngineSettings::getVideoDriver() const {
 		return m_videodriver;
 	}
-	void EngineSettings::setLightingModel(unsigned int lighting) {
+	void EngineSettings::setLightingModel(uint32_t lighting) {
 		if (lighting <= 2 && lighting >=0) {
 			m_lighting = lighting;
 			return;

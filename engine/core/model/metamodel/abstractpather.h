@@ -64,10 +64,10 @@ namespace FIFE {
 		 * @param priority The priority to assign to search (high are pushed to the front of the queue).
 		 * @return session_id to use with further calls
 		 */
-		virtual int getNextLocation(const Instance* instance, const Location& target, 
+		virtual int32_t getNextLocation(const Instance* instance, const Location& target, 
 		                            double distance_to_travel, Location& nextLocation,
-		                            Location& facingLocation, int session_id=-1, 
-									int priority = MEDIUM_PRIORITY) = 0;
+		                            Location& facingLocation, int32_t session_id=-1, 
+									int32_t priority = MEDIUM_PRIORITY) = 0;
 
 		/** Updates the pather (should it need updating).
 		 *
@@ -87,7 +87,7 @@ namespace FIFE {
 		 * @param session_id The id of the session to cancel.
 		 * @return A boolean to signify whether the session was successfully found and cancelled.
 		 */
-		virtual bool cancelSession(const int session_id) = 0;
+		virtual bool cancelSession(const int32_t session_id) = 0;
 
 		/** Gets the name of this pather
 		 */

@@ -47,7 +47,7 @@ namespace FIFE {
 		 * @param imagepool image pool where from fetch images
 		 * @param animpool animation pool where from fetch images
 		 */
-		InstanceRenderer(RenderBackend* renderbackend, int position, ImagePool* imagepool, AnimationPool* animpool);
+		InstanceRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool);
 		
 		InstanceRenderer(const InstanceRenderer& old);
 		
@@ -61,15 +61,15 @@ namespace FIFE {
 
 		/** Marks given instance to be outlined with given parameters
 		 */
-		void addOutlined(Instance* instance, int r, int g, int b, int width);
+		void addOutlined(Instance* instance, int32_t r, int32_t g, int32_t b, int32_t width);
 		
 		/** Marks given instance to be colored with given parameters
 		 */
-		void addColored(Instance* instance, int r, int g, int b);
+		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b);
 
 		/** Marks given instance to have an transparent area with given paramters
 		 */
-		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, unsigned int w, unsigned int h, unsigned char trans, bool front = true);
+		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, unsigned char trans, bool front = true);
 		
 		/** Removes instance from outlining list
 		 */
@@ -130,7 +130,7 @@ namespace FIFE {
 			uint8_t r;
 			uint8_t g;
 			uint8_t b;
-			int width;
+			int32_t width;
 			bool dirty;
 			Image* outline;
 			Image* curimg;
@@ -154,8 +154,8 @@ namespace FIFE {
 			Instance* instance;
 			//std::string groups;
 			std::list<std::string> groups;
-			unsigned int w;
-			unsigned int h;
+			uint32_t w;
+			uint32_t h;
 			unsigned char trans;
 			bool front;
 			float z;

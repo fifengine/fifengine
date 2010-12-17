@@ -54,7 +54,7 @@ namespace FIFE {
 		/** Gets the current reference count
 		 *  @see addRef
 		 */
-		virtual unsigned int getRefCount() = 0;
+		virtual uint32_t getRefCount() = 0;
 	};
 
 	/** IResource is the internal representation of a loaded file.
@@ -76,8 +76,8 @@ namespace FIFE {
 		
 		/** returns -1 if not pooled, otherwise its a valid id
 		 */
-		virtual int getPoolId() = 0;
-		virtual void setPoolId(int poolid) = 0;
+		virtual int32_t getPoolId() = 0;
+		virtual void setPoolId(int32_t poolid) = 0;
 	};
 
 	/** ResourceLoader defines a class for loading resources. The resource returned is owned by

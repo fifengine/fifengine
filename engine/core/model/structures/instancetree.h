@@ -40,7 +40,7 @@ namespace FIFE {
 	class Instance;
 
 	class InstanceTree: public FifeClass {
-		static const int kTreeDepth = 2;
+		static const int32_t kTreeDepth = 2;
 	public:
 		typedef std::list<Instance*> InstanceList;
 		typedef QuadTree< InstanceList, kTreeDepth > InstanceQuadTree;
@@ -85,7 +85,7 @@ namespace FIFE {
 		 * @param h The height of the search area in Model Units.
 		 * @param lst vector reference that will be filled with all instances within that space.
 		 */
-		void findInstances(const ModelCoordinate& point, int w, int h, InstanceList& lst);
+		void findInstances(const ModelCoordinate& point, int32_t w, int32_t h, InstanceList& lst);
 		
 		/** See QuadNode::apply_visitor
 		 */

@@ -36,7 +36,7 @@ namespace FIFE {
 	}
 
 	gcn::Image* GuiImageLoader::load(const std::string& filename, bool convertToDisplayFormat) {
-		int id = m_pool.addResourceFromFile(filename);
+		int32_t id = m_pool.addResourceFromFile(filename);
 		return new GuiImage(id, m_pool);
 	}
 }

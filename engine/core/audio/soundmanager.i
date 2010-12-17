@@ -33,7 +33,7 @@ namespace FIFE {
 	class SoundClipPool: public Pool {
 	public:
 		virtual ~SoundClipPool();
-		inline SoundClip& getSoundClip(unsigned int index);
+		inline SoundClip& getSoundClip(uint32_t index);
 	private:
 		SoundClipPool();
 	};
@@ -46,8 +46,8 @@ namespace FIFE {
 			void init();
 			
 			SoundEmitter* createEmitter();
-			SoundEmitter* getEmitter(unsigned int emitterid);
-			void releaseEmitter(unsigned int emitterid);
+			SoundEmitter* getEmitter(uint32_t emitterid);
+			void releaseEmitter(uint32_t emitterid);
 			
 			ALCcontext* getContext();
 			

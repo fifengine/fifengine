@@ -74,7 +74,7 @@ namespace gcn
         }
     }
 
-    void PercentageBar::setValue(int value)
+    void PercentageBar::setValue(int32_t value)
     {
         if (value > 100)
         {
@@ -91,7 +91,7 @@ namespace gcn
         mValue = value;
     }
 
-    int PercentageBar::getValue() const
+   int32_tPercentageBar::getValue() const
     {
         return mValue;
     }

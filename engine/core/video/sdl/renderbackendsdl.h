@@ -50,34 +50,34 @@ namespace FIFE {
 		void endFrame();
 		void init(const std::string& driver);
 		void clearBackBuffer();
-		void setLightingModel(unsigned int lighting);
-		unsigned int getLightingModel() const;
+		void setLightingModel(uint32_t lighting);
+		uint32_t getLightingModel() const;
 		void enableLighting();
 		void disableLighting();
 		void setLighting(float red, float green, float blue, float alpha);
 		void resetLighting();
 		void enableStencilTest();
 		void disableStencilTest();
-		void setStencilTest(uint8_t stencil_ref, unsigned int stencil_op, unsigned int stencil_func);
+		void setStencilTest(uint8_t stencil_ref, uint32_t stencil_op, uint32_t stencil_func);
 		void resetStencilBuffer(uint8_t buffer);
 		uint8_t getStencilRef() const;
 		void enableAlphaTest();
 		void disableAlphaTest();
 		void setAlphaTest(float ref_alpha);
-		void changeBlending(int scr, int dst);
+		void changeBlending(int32_t scr, int32_t dst);
 
 		Image* createMainScreen(const ScreenMode& mode, const std::string& title, const std::string& icon);
 		Image* setScreenMode(const ScreenMode& mode);
-		Image* createImage(const uint8_t* data, unsigned int width, unsigned int height);
+		Image* createImage(const uint8_t* data, uint32_t width, uint32_t height);
 		Image* createImage(SDL_Surface* surface);
- 		bool putPixel(int x, int y, int r, int g, int b, int a = 255);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255);
-		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255);
+ 		bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255);
+		void drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a = 255);
+		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a = 255);
 		void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
-		void drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a = 255);
-		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a = 255);
+		void drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a = 255);
+		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 	};
 
 }

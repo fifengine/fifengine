@@ -48,7 +48,7 @@ namespace FIFE {
 
 	class LayerCache {
 	public:
-		typedef QuadTree<std::set<int> > CacheTree;
+		typedef QuadTree<std::set<int32_t> > CacheTree;
 
 		LayerCache(Camera* camera, ImagePool* image_pool, AnimationPool* animation_pool);
 		~LayerCache();
@@ -66,7 +66,7 @@ namespace FIFE {
 		void updateInstance(Instance* instance);
 
 	private:
-		void collect(const Rect& viewport, std::vector<int>& indices);
+		void collect(const Rect& viewport, std::vector<int32_t>& indices);
 		void reset();
 		void fullUpdate();
 
@@ -91,7 +91,7 @@ namespace FIFE {
 
 		void updateEntry(Entry& item, bool full = true);
 
-		std::map<Instance*,int> m_instance_map;
+		std::map<Instance*,int32_t> m_instance_map;
 		std::vector<Entry> m_entries;
 
 		CacheTree* m_tree;

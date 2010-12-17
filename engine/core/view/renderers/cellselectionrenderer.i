@@ -39,7 +39,7 @@ namespace FIFE {
 		void setColor(Uint8 r, Uint8 g, Uint8 b);
 		
 	private:
-		CellSelectionRenderer(RenderBackend* renderbackend, int position);
+		CellSelectionRenderer(RenderBackend* renderbackend, int32_t position);
 	};
 
 }

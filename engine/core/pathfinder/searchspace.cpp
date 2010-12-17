@@ -92,23 +92,23 @@ namespace FIFE {
 		return newcoords;
 	}
 
-	int SearchSpace::convertCoordToInt(const ModelCoordinate& coord) const {
+	int32_t SearchSpace::convertCoordToInt(const ModelCoordinate& coord) const {
 		ModelCoordinate newcoords = translateCoordsToSearchSpace(coord);
 		return newcoords.x + (newcoords.y * getWidth());
 	}
 
-	ModelCoordinate SearchSpace::convertIntToCoord(const int cell) const {
+	ModelCoordinate SearchSpace::convertIntToCoord(const int32_t cell) const {
 		ModelCoordinate coord;
-		int width = getWidth();
+		int32_t width = getWidth();
 		coord.x = (cell % width) + m_lowerX;
 		coord.y = (cell / width) + m_lowerY;
 		return coord;
 	}
 
-	int SearchSpace::getMaxIndex() const {
+	int32_t SearchSpace::getMaxIndex() const {
 
 		//max index = w * h.
-		int max_index = getWidth() + (getWidth() * getHeight());
+		int32_t max_index = getWidth() + (getWidth() * getHeight());
 		return max_index;
 	}
 }

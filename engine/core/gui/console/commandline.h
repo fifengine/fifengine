@@ -54,7 +54,7 @@ namespace FIFE {
 			~CommandLine();
 
 			void keyPressed(gcn::KeyEvent& keyEvent);
-			virtual void drawCaret(gcn::Graphics * graphics, int x);
+			virtual void drawCaret(gcn::Graphics * graphics, int32_t x);
 
 			/** Set callback on pressing the ENTER key
 			 */

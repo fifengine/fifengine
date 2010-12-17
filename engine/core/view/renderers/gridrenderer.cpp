@@ -42,7 +42,7 @@
 namespace FIFE {
 	static Logger _log(LM_VIEWVIEW);
 
-	GridRenderer::GridRenderer(RenderBackend* renderbackend, int position):
+	GridRenderer::GridRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position) {
 		setEnabled(false);
 		m_color.r = 0;
@@ -144,8 +144,8 @@ namespace FIFE {
 
 
 		Rect cv = cam->getViewPort();
-		int cvx2 = cv.x+cv.w;
-		int cvy2 = cv.y+cv.h;
+		int32_t cvx2 = cv.x+cv.w;
+		int32_t cvy2 = cv.y+cv.h;
 		RenderList::const_iterator instance_it = instances.begin();
 		for (;instance_it != instances.end(); ++instance_it) {
 			Instance* instance = (*instance_it)->instance;

@@ -28,6 +28,6 @@
 %include "util/structures/utilstructures.i"
 
 namespace FIFE {
-	%template(ModelCoordinate) PointType3D<int>;
+	%template(ModelCoordinate) PointType3D<int32_t>;
 	%template(ExactModelCoordinate) PointType3D<double>;
 }

@@ -70,8 +70,8 @@ namespace FIFE {
 		m_location_to_entry.clear();
 	}
 
-	int Pool::purgeLoadedResources() {
-		int count = 0;
+	int32_t Pool::purgeLoadedResources() {
+		int32_t count = 0;
 		std::vector<PoolEntry*>::iterator it;
 		for (it = m_entries.begin(); it != m_entries.end(); it++) {
 			PoolEntry* entry = *it;
@@ -92,7 +92,7 @@ namespace FIFE {
 		m_loaders.clear();
 	}
 
-	int Pool::addResourceFromLocation(ResourceLocation* loc) {
+	int32_t Pool::addResourceFromLocation(ResourceLocation* loc) {
 		ResourceLocationToEntry::const_iterator it = m_location_to_entry.find(loc);
 		if (it != m_location_to_entry.end()) {
 			return it->second;
@@ -106,12 +106,12 @@ namespace FIFE {
 		return index;
 	}
 
-	int Pool::addResourceFromFile(const std::string& filename) {
+	int32_t Pool::addResourceFromFile(const std::string& filename) {
 		ResourceLocation r = ResourceLocation(filename);
 		return addResourceFromLocation(&r);
 	}
 
-	IResource& Pool::get(unsigned int index, bool inc) {
+	IResource& Pool::get(uint32_t index, bool inc) {
 		if (index >= m_entries.size()) {
 			FL_ERR(_log, LMsg("Tried to get with index ") << index << ", only " << m_entries.size() << " items in pool " + m_name);
 			throw IndexOverflow( __FUNCTION__ );
@@ -156,7 +156,7 @@ namespace FIFE {
 		return *res;
 	}
 
-	void Pool::release(unsigned int index, bool dec) {
+	void Pool::release(uint32_t index, bool dec) {
 		if (index >= m_entries.size()) {
 			throw IndexOverflow( __FUNCTION__ );
 		}
@@ -175,8 +175,8 @@ namespace FIFE {
 		}
 	}
 
-	int Pool::getResourceCount(int status) {
-		int amount = 0;
+	int32_t Pool::getResourceCount(int32_t status) {
+		int32_t amount = 0;
 		std::vector<PoolEntry*>::iterator entry;
 		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
 			if (status & RES_LOADED) {
@@ -212,7 +212,7 @@ namespace FIFE {
 	void Pool::printStatistics() {
 		FL_LOG(_log, LMsg("Pool not loaded =") << getResourceCount(RES_NON_LOADED));
 		FL_LOG(_log, LMsg("Pool loaded     =") << getResourceCount(RES_LOADED));
-		int amount = 0;
+		int32_t amount = 0;
 		std::vector<PoolEntry*>::iterator entry;
 		for (entry = m_entries.begin(); entry != m_entries.end(); entry++) {
 			if ((*entry)->resource) {
@@ -232,7 +232,7 @@ namespace FIFE {
 		// entries are duplicate (=memory leaks).
 		// Slow and inaccurate. But should barf at real messups.
 		for(unsigned i = 0; i != m_entries.size(); ++i) {
-			int count = 0;
+			int32_t count = 0;
 			for(unsigned j = i+1; j < m_entries.size(); ++j) {
 				if( *m_entries[i]->location == *m_entries[j]->location )
 					count ++;

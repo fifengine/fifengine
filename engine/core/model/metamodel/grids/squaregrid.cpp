@@ -114,8 +114,8 @@ namespace FIFE {
 	ModelCoordinate SquareGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord) {
 		ExactModelCoordinate dblpt = toExactLayerCoordinates(map_coord);
 		ModelCoordinate result;
-		result.x = static_cast<int>(floor(dblpt.x));
-		result.y = static_cast<int>(floor(dblpt.y));
+		result.x = static_cast<int32_t>(floor(dblpt.x));
+		result.y = static_cast<int32_t>(floor(dblpt.y));
 		
 		if ((dblpt.x - static_cast<double>(result.x)) > 0.5) {
 			result.x++;

@@ -54,17 +54,17 @@ namespace FIFE {
 	public:
 		virtual ~AbstractImage() {}
 		virtual SDL_Surface* getSurface() = 0;
-		virtual unsigned int getWidth() const = 0;
-		virtual unsigned int getHeight() const = 0;
+		virtual uint32_t getWidth() const = 0;
+		virtual uint32_t getHeight() const = 0;
 		virtual const Rect& getArea() = 0;
-		virtual void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
- 		virtual bool putPixel(int x, int y, int r, int g, int b, int a = 255) = 0;
-		virtual void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255) = 0;
-		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255) = 0;
+		virtual void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) = 0;
+ 		virtual bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
+		virtual void drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
+		virtual void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
 		virtual void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
 		virtual void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) = 0;
-		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255) = 0;
-		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+		virtual void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a = 255) = 0;
+		virtual void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 		virtual void pushClipArea(const Rect& cliparea, bool clear=true) = 0;
 		virtual void popClipArea() = 0;
 		virtual const Rect& getClipArea() const = 0;
@@ -78,14 +78,14 @@ namespace FIFE {
 		void render(const Rect& rect, unsigned char alpha = 255);
 		virtual ~Image();
 		SDL_Surface* getSurface() { return m_surface; }
-		unsigned int getWidth() const;
-		unsigned int getHeight() const;
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
 		const Rect& getArea();
-		void setXShift(int xshift);
-		inline int getXShift() const;
-		void setYShift(int yshift);
-		inline int getYShift() const;
-		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+		void setXShift(int32_t xshift);
+		inline int32_t getXShift() const;
+		void setYShift(int32_t yshift);
+		inline int32_t getYShift() const;
+		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;
@@ -93,45 +93,45 @@ namespace FIFE {
 		bool isAlphaOptimizerEnabled();
 		void addRef();
 		void decRef();
-		unsigned int getRefCount();
+		uint32_t getRefCount();
 		
 	private:
 		Image(SDL_Surface* surface);
-		Image(const uint8_t* data, unsigned int width, unsigned int height);
+		Image(const uint8_t* data, uint32_t width, uint32_t height);
 	};
 	
 	class Animation: public ResourceClass {
 	public:
 		explicit Animation();
 		~Animation();
-		void addFrame(ResourcePtr image, unsigned int duration);
-		int getFrameIndex(unsigned int timestamp);
-		Image* getFrame(int index);
-		Image* getFrameByTimestamp(unsigned int timestamp);
-		int getFrameDuration(int index);
-		unsigned int getNumFrames() const;
-		void setActionFrame(int num);
-		int getActionFrame();
-		void setDirection(unsigned int direction);
-		unsigned int getDirection();
-		int getDuration();
+		void addFrame(ResourcePtr image, uint32_t duration);
+		int32_t getFrameIndex(uint32_t timestamp);
+		Image* getFrame(int32_t index);
+		Image* getFrameByTimestamp(uint32_t timestamp);
+		int32_t getFrameDuration(int32_t index);
+		uint32_t getNumFrames() const;
+		void setActionFrame(int32_t num);
+		int32_t getActionFrame();
+		void setDirection(uint32_t direction);
+		uint32_t getDirection();
+		int32_t getDuration();
 		void addRef();
 		void decRef();
-		unsigned int getRefCount();
+		uint32_t getRefCount();
 	};
 
 	class ImageLocation: public ResourceLocation {
 	public:
 		ImageLocation(const std::string& filename);
 		virtual ~ImageLocation() {};
-		virtual void setXShift(int xshift) { m_xshift = xshift; }
-		virtual int getXShift() const { return m_xshift; }
-		virtual void setYShift(int yshift) { m_yshift = yshift; }
-		virtual int getYShift() const { return m_yshift; }
-		virtual void setWidth(unsigned int width) { m_width = width; }
-		virtual unsigned int getWidth() const { return m_width; }
-		virtual void setHeight(unsigned int height) { m_height = height; }
-		virtual unsigned int getHeight() const { return m_height; }
+		virtual void setXShift(int32_t xshift) { m_xshift = xshift; }
+		virtual int32_t getXShift() const { return m_xshift; }
+		virtual void setYShift(int32_t yshift) { m_yshift = yshift; }
+		virtual int32_t getYShift() const { return m_yshift; }
+		virtual void setWidth(uint32_t width) { m_width = width; }
+		virtual uint32_t getWidth() const { return m_width; }
+		virtual void setHeight(uint32_t height) { m_height = height; }
+		virtual uint32_t getHeight() const { return m_height; }
 		virtual void setParentSource(Image* image) { m_parent_image = image; }
 		virtual Image* getParentSource() const { return m_parent_image; }
 	};
@@ -139,7 +139,7 @@ namespace FIFE {
 	class ImagePool: public Pool {
 	public:
 		virtual ~ImagePool();
-		inline Image& getImage(unsigned int index);
+		inline Image& getImage(uint32_t index);
 	private:
 		ImagePool();
 	};
@@ -147,7 +147,7 @@ namespace FIFE {
 	class AnimationPool: public Pool {
 	public:
 		virtual ~AnimationPool();
-		inline Animation& getAnimation(unsigned int index);
+		inline Animation& getAnimation(uint32_t index);
 	private:
 		AnimationPool();
 	};
@@ -161,20 +161,20 @@ namespace FIFE {
 		void captureScreen(const std::string& filename);
 		SDL_Surface* getSurface();
 		const ScreenMode& getCurrentScreenMode() const;
-		unsigned int getWidth() const;
-		unsigned int getHeight() const;
-		unsigned int getScreenWidth() const { return getWidth(); }
-		unsigned int getScreenHeight() const { return getHeight(); }
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
+		uint32_t getScreenWidth() const { return getWidth(); }
+		uint32_t getScreenHeight() const { return getHeight(); }
 		const Rect& getArea();
-		void getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
- 		bool putPixel(int x, int y, int r, int g, int b, int a = 255);
-		void drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a = 255);
-		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a = 255);
+		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+ 		bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255);
+		void drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a = 255);
+		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a = 255);
 		void drawRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		void fillRectangle(const Point& p, uint16_t w, uint16_t h, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
-		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a = 255);
-		void drawVertex(const Point& p, int size,  int r, int g, int b, int a = 255);
-		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
+		void drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a = 255);
+		void drawVertex(const Point& p, int32_t size,  int32_t r, int32_t g, int32_t b, int32_t a = 255);
+		void drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue);
 		void pushClipArea(const Rect& cliparea, bool clear=true);
 		void popClipArea();
 		const Rect& getClipArea() const;
@@ -221,14 +221,14 @@ namespace FIFE {
 	public:
 		virtual ~Cursor() {}
 		virtual void draw();
-		void set(MouseCursorType ctype, unsigned int cursor_id=0);
-		void setDrag(MouseCursorType ctype, unsigned int drag_id=0, int drag_offset_x=0, int drag_offset_y=0);
+		void set(MouseCursorType ctype, uint32_t cursor_id=0);
+		void setDrag(MouseCursorType ctype, uint32_t drag_id=0, int32_t drag_offset_x=0, int32_t drag_offset_y=0);
 		MouseCursorType getType() const;
-		unsigned int getId() const;
+		uint32_t getId() const;
 		MouseCursorType getDragType() const;
-		unsigned int getDragId() const;
-		unsigned int getX() const;
-		unsigned int getY() const;
+		uint32_t getDragId() const;
+		uint32_t getX() const;
+		uint32_t getY() const;
 	
 	private:
 		Cursor(ImagePool* imgpool, AnimationPool* animpool);

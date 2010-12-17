@@ -64,7 +64,7 @@ namespace FIFE {
 		ICHANGE_SAYTEXT = 0x0020,
 		ICHANGE_ROTATION = 0x0040,
 	};
-	typedef unsigned int InstanceChangeInfo;
+	typedef uint32_t InstanceChangeInfo;
 
 	class InstanceChangeListener {
 	public:
@@ -144,11 +144,11 @@ namespace FIFE {
 
 		/** Set the rotation offset of this instance
 		 */
-		void setRotation(int rotation);
+		void setRotation(int32_t rotation);
 
 		/** Get the rotation offset of this instance
 		 */
-		int getRotation() const { return m_rotation; }
+		int32_t getRotation() const { return m_rotation; }
 
 		/** Returns reference to the direction where instance is heading
 		 * Note: if instance didn't previously hadn't defined facing location
@@ -220,14 +220,14 @@ namespace FIFE {
 		 *  In case there is no current action, returns -1
 		 * @return action runtime
 		 */
-		unsigned int getActionRuntime();
+		uint32_t getActionRuntime();
 
 		/** Sets the time in milliseconds how long an action has been active
 		*  This was requested in Ticket #373.  This way the state
 		*  of the action can be saved and restored at a later time
 		*  @parm The action time offset that should be applied
 		*/
-		void setActionRuntime(unsigned int time_offset);
+		void setActionRuntime(uint32_t time_offset);
 
 		/** Performs given named action to the instance. While performing the action
 		 *  moves instance to given target with given speed
@@ -248,7 +248,7 @@ namespace FIFE {
 		 *  @param text text to say. If "" given, clear the text
 		 *  @param duration duration to show the text (in ms). If 0, shows forever
 		 */
-		void say(const std::string& text, unsigned int duration=0);
+		void say(const std::string& text, uint32_t duration=0);
 
 		/** Performs given named action to the instance. While performing the action
 		 *  follows given isntance with given speed
@@ -296,7 +296,7 @@ namespace FIFE {
 		/** Gets the scaled runtime in milliseconds
 		 * @return runtime
 		 */
-		unsigned int getRuntime();
+		uint32_t getRuntime();
 
 		/** Refreshes instance e.g. in case location is updated directly (not via setLocation)
 		 * In this case e.g. instance's master time provider is changed, so it needs to be updated
@@ -316,7 +316,7 @@ namespace FIFE {
 
 		// The rotation offset of this instance. This is in addition to possible camera rotation and
 		// intended for setting, for example, a rotation of a tile.
-		int m_rotation;
+		int32_t m_rotation;
 
 		/** InstanceActivity gets allocated in case there is some runtime
 		 * activity related to the instance. Keeping activity related variables
@@ -337,7 +337,7 @@ namespace FIFE {
 			// location on previous round
 			Location m_location;
 			// rotation on previous round
-			int m_rotation;
+			int32_t m_rotation;
 			// facing location on previous round
 			Location m_facinglocation;
 			// action on previous round. @NOTE: might become invalid, only used for address comparison

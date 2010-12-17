@@ -40,17 +40,17 @@ namespace FIFE {
 	class GuiImage : public gcn::Image {
 	public:
 		GuiImage();
-		GuiImage(int id, ImagePool& pool);
+		GuiImage(int32_t id, ImagePool& pool);
 		~GuiImage();
 		void free();
-		int getWidth() const;
-		int getHeight() const;
-		gcn::Color getPixel(int x, int y);
-		void putPixel(int x, int y, const gcn::Color& color);
+		int32_t getWidth() const;
+		int32_t getHeight() const;
+		gcn::Color getPixel(int32_t x, int32_t y);
+		void putPixel(int32_t x, int32_t y, const gcn::Color& color);
 		void convertToDisplayFormat();
-		int getPoolId() const { return m_poolid; }
+		int32_t getPoolId() const { return m_poolid; }
 	protected:
-		int m_poolid;
+		int32_t m_poolid;
 		ImagePool* m_pool;
 	};
 }

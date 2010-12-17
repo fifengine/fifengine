@@ -53,8 +53,8 @@ namespace FIFE {
 		
 	}
 
-	int ImageFontBase::getWidth(const std::string& text) const {
-		int w = 0;
+	int32_t ImageFontBase::getWidth(const std::string& text) const {
+		int32_t w = 0;
 		std::string::const_iterator text_it = text.begin();
 		while(text_it != text.end()) {
 			uint32_t codepoint = utf8::next(text_it,text.end());
@@ -72,7 +72,7 @@ namespace FIFE {
 		return w;
 	}
 
-	int ImageFontBase::getHeight() const {
+	int32_t ImageFontBase::getHeight() const {
 		return mHeight;
 	}
 

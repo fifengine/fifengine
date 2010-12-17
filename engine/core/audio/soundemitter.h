@@ -48,12 +48,12 @@ namespace FIFE {
 	public:
 		typedef boost::function0<void> type_callback;
 
-		SoundEmitter(SoundManager* manager, SoundClipPool* pool, unsigned int uid);
+		SoundEmitter(SoundManager* manager, SoundClipPool* pool, uint32_t uid);
 		~SoundEmitter();
 
 		/** Returns the emitter-id
 		 */
-		unsigned int getId() const{
+		uint32_t getId() const{
 			return m_emitterid;
 		}
 
@@ -78,7 +78,7 @@ namespace FIFE {
 		/** Sets the sound clip to be used by this emitter.
 		 * @param sound_id SoundClipPool id of the sound to be used.
 		 */
-		void setSoundClip(unsigned int sound_id);
+		void setSoundClip(uint32_t sound_id);
 
 		/** Sets the callback to use when the STREAM has finished being played.
 		 *  NOTE: This only works with streaming audio.
@@ -222,9 +222,9 @@ namespace FIFE {
 		SoundClipPool*	m_pool;
 		ALuint			m_source;			// The openAL-source
 		SoundClip*		m_soundclip;	// the attached soundclip
-		unsigned int	m_soundclipid;// id of the attached soundclip
-		unsigned int	m_streamid;		// the id of the stream
-		unsigned int	m_emitterid;	// the emitter-id
+		uint32_t	m_soundclipid;// id of the attached soundclip
+		uint32_t	m_streamid;		// the id of the stream
+		uint32_t	m_emitterid;	// the emitter-id
 		bool			m_loop;				// loop?
 		type_callback 	m_callback;
 	};

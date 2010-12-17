@@ -48,7 +48,7 @@ namespace FIFE {
 			virtual ~RawDataSource();
 
 			/** get the complete datasize */
-			virtual unsigned int getSize() const = 0;
+			virtual uint32_t getSize() const = 0;
 
 			/** read data from the source
 			 *
@@ -56,7 +56,7 @@ namespace FIFE {
 			 * @param start the startindex inside the source
 			 * @param length length bytes will be written into buffer
 			 */
-			virtual void readInto(uint8_t* buffer, unsigned int start, unsigned int length) = 0;
+			virtual void readInto(uint8_t* buffer, uint32_t start, uint32_t length) = 0;
 
 	};
 

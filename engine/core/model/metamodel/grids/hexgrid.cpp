@@ -148,7 +148,7 @@ namespace FIFE {
 		// each uneven row has shifted coordinate of 0.5 horizontally
 		// shift has to be gradual on vertical axis
 		double ay = ABS(y);
-		int i_layer_y = static_cast<int>(ay);
+		int32_t i_layer_y = static_cast<int32_t>(ay);
 		double offset = ay - static_cast<double>(i_layer_y);
 		if ((i_layer_y % 2) == 1) {
 			offset = 1 - offset;
@@ -174,14 +174,14 @@ namespace FIFE {
 	}
 
 	ModelCoordinate HexGrid::toLayerCoordinates(const ExactModelCoordinate& map_coord) {
-		FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int layer coords...");
+		FL_DBG(_log, LMsg("==============\nConverting map coords ") << map_coord << " to int32_t layer coords...");
 		ExactModelCoordinate elc = m_inverse_matrix * map_coord;
 		elc.y *= VERTICAL_MULTIP_INV;
 		ExactModelCoordinate lc = ExactModelCoordinate(floor(elc.x), floor(elc.y));
 		double dx = elc.x - lc.x;
 		double dy = elc.y - lc.y;
-		int x = static_cast<int>(lc.x);
-		int y = static_cast<int>(lc.y);
+		int32_t x = static_cast<int32_t>(lc.x);
+		int32_t y = static_cast<int32_t>(lc.y);
 		FL_DBG(_log, LMsg("elc=") << elc << ", lc=" << lc);
 		FL_DBG(_log, LMsg("x=") << x << ", y=" << y << ", dx=" << dx << ", dy=" << dy);
 		ModelCoordinate result;

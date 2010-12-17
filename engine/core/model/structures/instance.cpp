@@ -77,13 +77,13 @@ namespace FIFE {
 		// should action be repeated? used only for non-moving actions, moving ones repeat until movement is finished
 		bool m_repeating;
 		// action start time (ticks)
-		unsigned int m_action_start_time;
+		uint32_t m_action_start_time;
 		// action offset time (ticks) for resuming an action
-		unsigned int m_action_offset_time;
+		uint32_t m_action_offset_time;
 		// ticks since last call
-		unsigned int m_prev_call_time;
+		uint32_t m_prev_call_time;
 		// session id for pather
-		int m_pather_session_id;
+		int32_t m_pather_session_id;
 		// pather
 		AbstractPather* m_pather;
 		// leader for follow activity
@@ -92,14 +92,14 @@ namespace FIFE {
 
 	class SayInfo {
 	public:
-		SayInfo(const std::string& txt, unsigned int duration):
+		SayInfo(const std::string& txt, uint32_t duration):
 			m_txt(txt),
 			m_duration(duration),
 			m_start_time(0) {}
 
 		std::string m_txt;
-		unsigned int m_duration;
-		unsigned int m_start_time;
+		uint32_t m_duration;
+		uint32_t m_start_time;
 	};
 
 	Instance::InstanceActivity::InstanceActivity(Instance& source):
@@ -231,7 +231,7 @@ namespace FIFE {
 		}
 	}
 
-	void Instance::setRotation(int rotation) {
+	void Instance::setRotation(int32_t rotation) {
 		if(m_rotation != rotation) {
 			m_rotation = rotation;
 			if(isActive()) {
@@ -343,7 +343,7 @@ namespace FIFE {
 		setFacingLocation(direction);
 	}
 
-	void Instance::say(const std::string& text, unsigned int duration) {
+	void Instance::say(const std::string& text, uint32_t duration) {
 		initializeChanges();
 		delete m_activity->m_sayinfo;
 		m_activity->m_sayinfo = NULL;
@@ -373,7 +373,7 @@ namespace FIFE {
 		FL_DBG(_log, "Moving...");
 		ActionInfo* info = m_activity->m_actioninfo;
 		// timeslice for this movement
-		unsigned int timedelta = m_activity->m_timeprovider->getGameTime() - info->m_prev_call_time;
+		uint32_t timedelta = m_activity->m_timeprovider->getGameTime() - info->m_prev_call_time;
 		FL_DBG(_log, LMsg("timedelta ") <<  timedelta << " prevcalltime " << info->m_prev_call_time);
 		// how far we can travel
 		double distance_to_travel = (static_cast<double>(timedelta) / 1000.0) * info->m_speed;
@@ -507,7 +507,7 @@ namespace FIFE {
 		return *m_facinglocation;
 	}
 
-	unsigned int Instance::getActionRuntime() {
+	uint32_t Instance::getActionRuntime() {
 		if (m_activity && m_activity->m_actioninfo) {
 			if(!m_activity->m_timeprovider)
 				bindTimeProvider();
@@ -516,7 +516,7 @@ namespace FIFE {
 		return getRuntime();
 	}
 
-	void Instance::setActionRuntime(unsigned int time_offset) {
+	void Instance::setActionRuntime(uint32_t time_offset) {
 		m_activity->m_actioninfo->m_action_offset_time = time_offset;
 	}
 
@@ -573,7 +573,7 @@ namespace FIFE {
 		return 1.0;
 	}
 
-	unsigned int Instance::getRuntime() {
+	uint32_t Instance::getRuntime() {
 		if (m_activity) {
 			if(!m_activity->m_timeprovider)
 				bindTimeProvider();

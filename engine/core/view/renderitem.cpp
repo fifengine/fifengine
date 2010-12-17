@@ -36,7 +36,7 @@
 #include "renderitem.h"
 
 namespace FIFE {
-	const int STATIC_IMAGE_NOT_INITIALIZED = -2;
+	const int32_t STATIC_IMAGE_NOT_INITIALIZED = -2;
 
 	RenderItem::RenderItem():
 		screenpoint(),
@@ -46,8 +46,8 @@ namespace FIFE {
 		m_cached_static_img_angle(0) {
 	}
 
-	int RenderItem::getStaticImageIndexByAngle(unsigned int angle, Instance* instance) {
-		if (static_cast<int>(angle) != m_cached_static_img_angle) {
+	int32_t RenderItem::getStaticImageIndexByAngle(uint32_t angle, Instance* instance) {
+		if (static_cast<int32_t>(angle) != m_cached_static_img_angle) {
 			m_cached_static_img_id = STATIC_IMAGE_NOT_INITIALIZED;
 		}
 		if (m_cached_static_img_id != STATIC_IMAGE_NOT_INITIALIZED) {

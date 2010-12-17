@@ -136,7 +136,7 @@ namespace FIFE {
 		}
 	}
 
-	void GUIManager::resizeTopContainer(unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
+	void GUIManager::resizeTopContainer(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 		m_gcn_topcontainer->setDimension(gcn::Rectangle(x, y, width, height));
 	}
 
@@ -158,16 +158,16 @@ namespace FIFE {
 		}
 	}
 
-	void GUIManager::init(gcn::Graphics* graphics, int screenWidth, int screenHeight) {
+	void GUIManager::init(gcn::Graphics* graphics, int32_t screenWidth, int32_t screenHeight) {
 		m_gcn_gui->setGraphics(graphics);
 		resizeTopContainer(0, 0, screenWidth, screenHeight);
 		m_console = new Console();
 	}
 
-	GuiFont* GUIManager::createFont(const std::string& path, unsigned int size, const std::string& glyphs) {
+	GuiFont* GUIManager::createFont(const std::string& path, uint32_t size, const std::string& glyphs) {
 		std::string fontpath = path;
 		std::string fontglyphs = glyphs;
-		int fontsize = size;
+		int32_t fontsize = size;
 
 		// Set default settings if necessary
 		if(fontpath == "") {
@@ -213,7 +213,7 @@ namespace FIFE {
 		}
 	}
 
-	GuiFont* GUIManager::setDefaultFont(const std::string& path, unsigned int size, const std::string& glyphs) {
+	GuiFont* GUIManager::setDefaultFont(const std::string& path, uint32_t size, const std::string& glyphs) {
 		m_fontpath = path;
 		m_fontsize = size;
 		m_fontglyphs = glyphs;
@@ -251,7 +251,7 @@ namespace FIFE {
 		keyevt.setNumericPad(gcnevt.isNumericPad());
 
 		// Convert from guichan keyval to FIFE keyval
-		int keyval = gcnevt.getKey().getValue();
+		int32_t keyval = gcnevt.getKey().getValue();
 		keyval = convertGuichanKeyToFifeKey(keyval);
 
 		keyevt.setKey(Key(static_cast<Key::KeyType>(keyval), keyval));
@@ -318,7 +318,7 @@ namespace FIFE {
 	}
 
 
-	int GUIManager::convertGuichanKeyToFifeKey(int value) {
+	int32_t GUIManager::convertGuichanKeyToFifeKey(int32_t value) {
 
 		switch (value) {
 			case gcn::Key::TAB:

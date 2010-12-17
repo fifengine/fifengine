@@ -42,7 +42,7 @@ namespace FIFE {
 		virtual const std::string& getName() const = 0;
 		virtual bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
 		virtual float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target) = 0;
-		virtual unsigned int getCellSideCount() const = 0;
+		virtual uint32_t getCellSideCount() const = 0;
 		ExactModelCoordinate toMapCoordinates(const ModelCoordinate& layer_coords);
 		virtual ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords) = 0;
 		virtual ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord) = 0;
@@ -69,7 +69,7 @@ namespace FIFE {
 		const std::string& getType() const;
 		const std::string& getName() const;
 		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
-		unsigned int getCellSideCount() const { return 6; }
+		uint32_t getCellSideCount() const { return 6; }
 		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
 		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);
@@ -85,7 +85,7 @@ namespace FIFE {
 		const std::string& getName() const;
 		bool isAccessible(const ModelCoordinate& curpos, const ModelCoordinate& target);
 		float getAdjacentCost(const ModelCoordinate& curpos, const ModelCoordinate& target);
-		unsigned int getCellSideCount() const { return 4; }
+		uint32_t getCellSideCount() const { return 4; }
 		ExactModelCoordinate toMapCoordinates(const ExactModelCoordinate& layer_coords);
 		ModelCoordinate toLayerCoordinates(const ExactModelCoordinate& map_coord);
 		ExactModelCoordinate toExactLayerCoordinates(const ExactModelCoordinate& map_coord);

@@ -68,22 +68,22 @@ namespace FIFE {
 		return target;
 	}
 
-	unsigned int RawData::getDataLength() const {
+	uint32_t RawData::getDataLength() const {
 		return m_datasource->getSize();
 	}
 
-	unsigned int RawData::getCurrentIndex() const {
+	uint32_t RawData::getCurrentIndex() const {
 		return m_index_current;
 	}
 
-	void RawData::setIndex(unsigned int index) {
+	void RawData::setIndex(uint32_t index) {
 		if (index > getDataLength())
 			throw IndexOverflow(__FUNCTION__);
 
 		m_index_current = index;
 	}
 
-	void RawData::moveIndex(int offset) {
+	void RawData::moveIndex(int32_t offset) {
 		setIndex(getCurrentIndex() + offset);
 	}
 
@@ -130,7 +130,7 @@ namespace FIFE {
 		return ret;
 	}
 
-	void RawData::read(std::string& outbuffer, int size) {
+	void RawData::read(std::string& outbuffer, int32_t size) {
 		if ((size < 0) || ((size + m_index_current + 1) > getDataLength())) {
 			size = getDataLength() - m_index_current - 1;
 		}
@@ -160,7 +160,7 @@ namespace FIFE {
 	}
 
 	bool RawData::littleEndian() {
-		static int endian = 2;
+		static int32_t endian = 2;
 		if (endian == 2) {
 			uint32_t value = 0x01;
 			endian = reinterpret_cast<uint8_t*>(&value)[0];

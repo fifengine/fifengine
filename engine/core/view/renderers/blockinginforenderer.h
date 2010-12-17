@@ -40,7 +40,7 @@ namespace FIFE {
 		/** constructor.
 		 * @param renderbackend to use
 		 */
-		BlockingInfoRenderer(RenderBackend* renderbackend, int position);
+		BlockingInfoRenderer(RenderBackend* renderbackend, int32_t position);
 		
 		BlockingInfoRenderer(const BlockingInfoRenderer& old);
 

@@ -43,16 +43,16 @@ namespace FIFE {
 		delete m_font;
 	}
 
-	int GuiFont::getStringIndexAt(const std::string& text, int x) const {
+	int32_t GuiFont::getStringIndexAt(const std::string& text, int32_t x) const {
 		return m_font->getStringIndexAt(text, x);
 	}
 
-	void GuiFont::drawString(gcn::Graphics* graphics, const std::string& text, int x, int y) {
+	void GuiFont::drawString(gcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y) {
 		if (text == "") {
 			return;
 		}
 
-		int yoffset = getRowSpacing() / 2;
+		int32_t yoffset = getRowSpacing() / 2;
 
 		const gcn::ClipRectangle& clip = graphics->getCurrentClipArea();
 		FIFE::Rect rect;
@@ -69,12 +69,12 @@ namespace FIFE {
 		image->render(rect);
 	}
 
-	void GuiFont::drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int x, int y) {
+	void GuiFont::drawMultiLineString(gcn::Graphics* graphics, const std::string& text, int32_t x, int32_t y) {
 		if (text == "") {
 			return;
 		}
 
-		int yoffset = getRowSpacing() / 2;
+		int32_t yoffset = getRowSpacing() / 2;
 
 		const gcn::ClipRectangle& clip = graphics->getCurrentClipArea();
 
@@ -91,19 +91,19 @@ namespace FIFE {
 		image->render(rect);
 	}
 
-	void GuiFont::setRowSpacing (int spacing) {
+	void GuiFont::setRowSpacing (int32_t spacing) {
 		m_font->setRowSpacing(spacing);
 	}
 
-	int GuiFont::getRowSpacing() const {
+	int32_t GuiFont::getRowSpacing() const {
 		return m_font->getRowSpacing();
 	}
 
-	void GuiFont::setGlyphSpacing(int spacing) {
+	void GuiFont::setGlyphSpacing(int32_t spacing) {
 		m_font->setGlyphSpacing(spacing);
 	}
 
-	int GuiFont::getGlyphSpacing() const {
+	int32_t GuiFont::getGlyphSpacing() const {
 		return m_font->getGlyphSpacing();
 	}
 
@@ -123,7 +123,7 @@ namespace FIFE {
 		return m_font->getAsImageMultiline(text);
 	}
 
-	std::string GuiFont::splitTextToWidth (const std::string& text, int render_width) {
+	std::string GuiFont::splitTextToWidth (const std::string& text, int32_t render_width) {
 		return m_font->splitTextToWidth(text,render_width);
 	}
 
@@ -135,11 +135,11 @@ namespace FIFE {
 		return m_font->getColor();
 	}
 
-	int GuiFont::getWidth(const std::string& text) const {
+	int32_t GuiFont::getWidth(const std::string& text) const {
 		return m_font->getWidth(text);
 	}
 
-	int GuiFont::getHeight() const {
+	int32_t GuiFont::getHeight() const {
 		return m_font->getHeight();
 	}
 

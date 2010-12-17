@@ -38,7 +38,7 @@ namespace FIFE {
 	GuiImage::GuiImage(): gcn::Image(), m_poolid(Pool::INVALID_ID), m_pool(NULL) {
 	}
 
-	GuiImage::GuiImage(int id, ImagePool& pool): gcn::Image(), m_poolid(id), m_pool(&pool) {
+	GuiImage::GuiImage(int32_t id, ImagePool& pool): gcn::Image(), m_poolid(id), m_pool(&pool) {
 		 m_pool->getImage(m_poolid);
 	}
 
@@ -50,24 +50,24 @@ namespace FIFE {
 		// the imagepool should do this; should we tell it?
 	}
 
-	int GuiImage::getWidth() const {
+	int32_t GuiImage::getWidth() const {
 		if(m_poolid==Pool::INVALID_ID)
 			return 0;
 		return m_pool->getImage(m_poolid).getWidth();
 	}
 
-	int GuiImage::getHeight() const {
+	int32_t GuiImage::getHeight() const {
 		if(m_poolid==Pool::INVALID_ID)
 			return 0;
 		return m_pool->getImage(m_poolid).getHeight();
 	}
 
-	gcn::Color GuiImage::getPixel(int x, int y) {
+	gcn::Color GuiImage::getPixel(int32_t x, int32_t y) {
 		FL_PANIC(_log, "GuiImage::getPixel, not implemented");
 		return gcn::Color();
 	}
 
-	void GuiImage::putPixel(int x, int y, const gcn::Color& color) {
+	void GuiImage::putPixel(int32_t x, int32_t y, const gcn::Color& color) {
 		FL_PANIC(_log, "GuiImage::putPixel, not implemented");
 	}
 

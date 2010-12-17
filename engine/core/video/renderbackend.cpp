@@ -78,12 +78,12 @@ namespace FIFE {
 		return m_screenMode;
 	}
 
-	unsigned int RenderBackend::getWidth() const {
+	uint32_t RenderBackend::getWidth() const {
 		assert(m_screen);
 		return m_screen->getWidth();
 	}
 
-	unsigned int RenderBackend::getHeight() const {
+	uint32_t RenderBackend::getHeight() const {
 		assert(m_screen);
 		return m_screen->getHeight();
 	}
@@ -95,7 +95,7 @@ namespace FIFE {
 		return r;
 	}
 
-	void RenderBackend::getPixelRGBA(int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
+	void RenderBackend::getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
 		assert(m_screen);
 		m_screen->getPixelRGBA(x, y, r, g, b, a);
 	}

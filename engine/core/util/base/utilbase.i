@@ -30,7 +30,7 @@
 
 namespace FIFE {
 
-	typedef unsigned int fifeid_t;
+	typedef std::size_t fifeid_t;
 	
 	class FifeClass: public IReferenceCounted {
 	public:
@@ -38,7 +38,7 @@ namespace FIFE {
 		fifeid_t getFifeId();
 		void addRef();
 		void decRef();
-		unsigned int getRefCount();
+		uint32_t getRefCount();
 	};
 
 	class ResourceClass: public FifeClass, public IResource {
@@ -50,8 +50,8 @@ namespace FIFE {
 		virtual void setResourceLocation(const ResourceLocation& location);
 		virtual void setResourceFile(const std::string& filename);
 	
-		int getPoolId();
-		void setPoolId(int poolid);
+		int32_t getPoolId();
+		void setPoolId(int32_t poolid);
 	
 	private:
 		ResourceClass();

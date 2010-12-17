@@ -143,8 +143,8 @@ namespace FIFE {
 	
 	double Location::getCellOffsetDistance() const {
 		const ExactModelCoordinate& pt  = m_exact_layer_coords;
-		double dx = pt.x - static_cast<double>(static_cast<int>(pt.x));
-		double dy = pt.y - static_cast<double>(static_cast<int>(pt.y));
+		double dx = pt.x - static_cast<double>(static_cast<int32_t>(pt.x));
+		double dy = pt.y - static_cast<double>(static_cast<int32_t>(pt.y));
 		return sqrt(dx*dx + dy*dy);
 	}
 	

@@ -32,10 +32,10 @@ namespace FIFE {
 	class AbstractPather {
 	public:
 		virtual ~AbstractPather();
-		virtual int getNextLocation(const Instance* instance, const Location& target, 
+		virtual int32_t getNextLocation(const Instance* instance, const Location& target, 
 		                            double distance_to_travel, Location& nextLocation,
-		                            Location& facingLocation, int session_id=-1, 
-									int priority = MEDIUM_PRIORITY) = 0;
+		                            Location& facingLocation, int32_t session_id=-1, 
+									int32_t priority = MEDIUM_PRIORITY) = 0;
 		virtual std::string getName() const = 0;
 	private:
 		AbstractPather();

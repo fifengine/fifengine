@@ -122,7 +122,7 @@ namespace FIFE {
 
 	void LogManager::addVisibleModule(logmodule_t module) {
 		validateModule(module);
- 		int ind = static_cast<int>(module);
+ 		int32_t ind = static_cast<int32_t>(module);
  		m_modules[ind] = true;
  		if (moduleInfos[ind].parent != LM_CORE) {
   			addVisibleModule(moduleInfos[ind].parent);
@@ -135,7 +135,7 @@ namespace FIFE {
 	}
 
 	void LogManager::clearVisibleModules() {
-		for (int i = 0; i < LM_MODULE_MAX; i++) {
+		for (int32_t i = 0; i < LM_MODULE_MAX; i++) {
 			m_modules[i] = false;
 		}
 	}
@@ -193,7 +193,7 @@ namespace FIFE {
 
 	void LogManager::validateModuleDescription(logmodule_t module) {
 		if (module == LM_CORE) {
-			for (int m = static_cast<int>(LM_CORE)+1; m < static_cast<int>(LM_MODULE_MAX); m++) {
+			for (int32_t m = static_cast<int32_t>(LM_CORE)+1; m < static_cast<int32_t>(LM_MODULE_MAX); m++) {
 				if (moduleInfos[m].module != static_cast<logmodule_t>(m)) {
 					std::ostringstream stream;
 					stream << m;

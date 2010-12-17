@@ -29,7 +29,7 @@
 
 namespace FIFE {
 	typedef Point3D ScreenPoint;
-	%template(ScreenPoint) PointType3D<int>;
+	%template(ScreenPoint) PointType3D<int32_t>;
 	
 	%apply std::list<Instance*> &OUTPUT { std::list<Instance*>& instances };
 	class Camera: public IRendererContainer {
@@ -51,7 +51,7 @@ namespace FIFE {
 		Instance* getAttached() const;
 		void setViewPort(const Rect& viewport);
 		const Rect& getViewPort() const;
-		void setCellImageDimensions(unsigned int width, unsigned int height);
+		void setCellImageDimensions(uint32_t width, uint32_t height);
 		Point getCellImageDimensions();
 		ScreenPoint toScreenCoordinates(ExactModelCoordinate map_coords);
 		ExactModelCoordinate toMapCoordinates(ScreenPoint screen_coords, bool z_calculated=true);
@@ -70,9 +70,9 @@ namespace FIFE {
 
 		void setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 		void resetOverlayColor();
-		void setOverlayImage(int id, bool fill = false);
+		void setOverlayImage(int32_t id, bool fill = false);
 		void resetOverlayImage();
-		void setOverlayAnimation(int id, bool fill = false);
+		void setOverlayAnimation(int32_t id, bool fill = false);
 		void resetOverlayAnimation();
 	
 		void refresh();

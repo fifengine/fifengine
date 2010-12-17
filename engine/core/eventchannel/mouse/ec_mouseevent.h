@@ -103,16 +103,16 @@ namespace FIFE {
 		 * the source event source.
 		 * @return the x coordinate of the mouse event.
 		 */
-		int getX() const { return m_x; }
-		void setX(int x) { m_x = x; }
+		int32_t getX() const { return m_x; }
+		void setX(int32_t x) { m_x = x; }
 
 		/**
 		 * Gets the y coordinate of the mouse event. The coordinate is relative to
 		 * the source event source.
 		 * @return the y coordinate of the mouse event.
 		 */
-		int getY() const { return m_y; }
-		void setY(int y) { m_y = y; }
+		int32_t getY() const { return m_y; }
+		void setY(int32_t y) { m_y = y; }
 
 		virtual bool isAltPressed() const { return InputEvent::isAltPressed(); }
 		virtual void setAltPressed(bool pressed) { InputEvent::setAltPressed(pressed); }
@@ -129,8 +129,8 @@ namespace FIFE {
 		virtual bool isConsumedByWidgets() const { return InputEvent::isConsumedByWidgets(); }
 		virtual IEventSource* getSource() { return InputEvent::getSource(); }
 		virtual void setSource(IEventSource* source) { InputEvent::setSource(source); }
-		virtual int getTimeStamp() const { return InputEvent::getTimeStamp(); }
-		virtual void setTimeStamp(int timestamp ) { InputEvent::setTimeStamp(timestamp); }
+		virtual int32_t getTimeStamp() const { return InputEvent::getTimeStamp(); }
+		virtual void setTimeStamp(int32_t timestamp ) { InputEvent::setTimeStamp(timestamp); }
 
 		virtual const std::string& getName() const {
 			const static std::string eventName("MouseEvent");
@@ -213,8 +213,8 @@ namespace FIFE {
 	private:
 		MouseEventType m_eventtype;
 		MouseButtonType m_buttontype;
-		int m_x;
- 		int m_y;
+		int32_t m_x;
+ 		int32_t m_y;
 
 	};
 

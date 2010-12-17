@@ -49,7 +49,7 @@ namespace FIFE {
 	
 	struct SoundBufferEntry {
 		ALuint buffers[BUFFER_NUM];
-		unsigned int usedbufs;
+		uint32_t usedbufs;
 		unsigned long deccursor;
 	};
 	
@@ -75,47 +75,47 @@ namespace FIFE {
 		 *
 		 * @return Returns the number of buffers.
 		 */
-		unsigned int countBuffers() const {
+		uint32_t countBuffers() const {
 			return m_buffervec.at(0)->usedbufs;
 		}
 		
 		/** Returns the array of buffers for queuing
 		 *
 		 */
-		ALuint* getBuffers(unsigned int streamid = 0) const {
+		ALuint* getBuffers(uint32_t streamid = 0) const {
 			return m_buffervec.at(streamid)->buffers;
 		}
 		
 		/** Starts streaming the soundclip
 		 * @return Returns the streamid
 		 */
-		unsigned int beginStreaming();
+		uint32_t beginStreaming();
 		
 		/** Fills the streaming-buffers with initial data
 		 *
 		 * @param streamid The stream ID
 		 */
-		void acquireStream(unsigned int streamid);
+		void acquireStream(uint32_t streamid);
 		
 		/** Sets the stream position
 		 * @return True if position is invalid (EOF has been reached)
 		 */
-		bool setStreamPos(unsigned int streamid, SoundPositionType type, float value);
+		bool setStreamPos(uint32_t streamid, SoundPositionType type, float value);
 		
 		/** Gets the stream position
 		 */
-		float getStreamPos(unsigned int streamid, SoundPositionType type) const;
+		float getStreamPos(uint32_t streamid, SoundPositionType type) const;
 		
 		/** Refill a processed buffer with new data
 		 * 
 		 *  @return True if file was EOF
 		 *  @param streamid The stream ID
 		 */
-		bool getStream(unsigned int streamid, ALuint buffer);
+		bool getStream(uint32_t streamid, ALuint buffer);
 		
 		/** Quits Streaming
 		 */
-		void quitStreaming(unsigned int streamid);
+		void quitStreaming(uint32_t streamid);
 		
 		//void addRef() {
 		//	m_refcount++;
@@ -123,7 +123,7 @@ namespace FIFE {
 		//void decRef() {
 		//	m_refcount--;
 		//}
-	//	unsigned int getRefCount() {
+	//	uint32_t getRefCount() {
 	//		return m_refcount;
 	//	}
 		
@@ -134,7 +134,7 @@ namespace FIFE {
 		}
 		
 	private:
-		//unsigned int 		m_refcount;			// Reference count of that soundclip
+		//uint32_t 		m_refcount;			// Reference count of that soundclip
 		bool						m_isstream; 		// is stream?
 		SoundDecoder*		m_decoder;			// attached decoder
 		bool						m_deletedecoder;	// when loadFromDecoder-method is used, decoder shouldn't be deleted

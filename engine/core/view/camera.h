@@ -132,7 +132,7 @@ namespace FIFE {
 		 * one cell in the layer where camera is bind
 		 * @return Point Point containing x=width and y=height
 		 */
-		void setCellImageDimensions(unsigned int width, unsigned int height);
+		void setCellImageDimensions(uint32_t width, uint32_t height);
 
 		/** Gets screen cell image dimensions.
 		 * @see setCellImageDimensions
@@ -301,14 +301,14 @@ namespace FIFE {
 		/** Sets a image as overlay,
 		 *  if fill is true the image gets the viewport size.
 		 */
-		void setOverlayImage(int id, bool fill = false);
+		void setOverlayImage(int32_t id, bool fill = false);
 		/** Resets the image overlay
 		 */
 		void resetOverlayImage();
 		/** Sets a animation as overlay,
 		 *  if fill is true the animation gets the viewport size.
 		 */
-		void setOverlayAnimation(int id, bool fill = false);
+		void setOverlayAnimation(int32_t id, bool fill = false);
 		/** Resets the animation overlay
 		 */
 		void resetOverlayAnimation();
@@ -373,8 +373,8 @@ namespace FIFE {
 		ScreenPoint m_cur_origo;
 		Rect m_viewport;
 		bool m_view_updated;
-		unsigned int m_screen_cell_width;
-		unsigned int m_screen_cell_height;
+		uint32_t m_screen_cell_width;
+		uint32_t m_screen_cell_height;
 		double m_reference_scale;
 		bool m_enabled;
 		Instance* m_attachedto;
@@ -409,11 +409,11 @@ namespace FIFE {
 		bool m_img_overlay;
 		bool m_ani_overlay;
 		SDL_Color m_overlay_color;
-		int m_img_id;
-		int m_ani_id;
+		int32_t m_img_id;
+		int32_t m_ani_id;
 		bool m_img_fill;
 		bool m_ani_fill;
-		unsigned int m_start_time;
+		uint32_t m_start_time;
 	};
 }
 #endif

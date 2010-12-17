@@ -125,7 +125,7 @@ namespace FIFE {
 
 		FL_LOG(_log, LMsg("RenderBackendOpenGL")
 			<< "Videomode " << width << "x" << height
-			<< " at " << int(bitsPerPixel) << " bpp");
+			<< " at " << int32_t(bitsPerPixel) << " bpp");
 
 		//update the screen mode with the actual flags used
 		m_screenMode = ScreenMode(width,
@@ -198,11 +198,11 @@ namespace FIFE {
 		return image;
 	}
 
-	Image* RenderBackendOpenGL::createImage(const uint8_t* data, unsigned int width, unsigned int height) {
+	Image* RenderBackendOpenGL::createImage(const uint8_t* data, uint32_t width, uint32_t height) {
 		return new GLImage(data, width, height);
 	}
 
-	void RenderBackendOpenGL::setLightingModel(unsigned int lighting) {
+	void RenderBackendOpenGL::setLightingModel(uint32_t lighting) {
 		if (m_lightmodel != lighting) {
 			if (m_lightmodel == 1) {
 				disableLighting();
@@ -217,7 +217,7 @@ namespace FIFE {
 		}
 	}
 
-	unsigned int RenderBackendOpenGL::getLightingModel() const {
+	uint32_t RenderBackendOpenGL::getLightingModel() const {
 		return m_lightmodel;
 	}
 
@@ -274,7 +274,7 @@ namespace FIFE {
 		}
 	}
 
-	void RenderBackendOpenGL::setStencilTest(uint8_t stencil_ref, unsigned int stencil_op, unsigned int stencil_func) {
+	void RenderBackendOpenGL::setStencilTest(uint8_t stencil_ref, uint32_t stencil_op, uint32_t stencil_func) {
 		enableStencilTest();
 		if(m_sten_op != stencil_op) {
 			GLenum op;
@@ -342,7 +342,7 @@ namespace FIFE {
 		glAlphaFunc(GL_GREATER, ref_alpha);
 	}
 
-	void RenderBackendOpenGL::changeBlending(int src, int dst) {
+	void RenderBackendOpenGL::changeBlending(int32_t src, int32_t dst) {
 		GLenum src_fact;
 		GLenum dst_fact;
 
@@ -379,8 +379,8 @@ namespace FIFE {
 		}
 	}
 
-	bool RenderBackendOpenGL::putPixel(int x, int y, int r, int g, int b, int a) {
-		if ((x < 0) || (x >= (int)getWidth()) || (y < 0) || (y >= (int)getHeight())) {
+	bool RenderBackendOpenGL::putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a) {
+		if ((x < 0) || (x >= (int32_t)getWidth()) || (y < 0) || (y >= (int32_t)getHeight())) {
 			return false;
 		}
 
@@ -392,7 +392,7 @@ namespace FIFE {
 		return true;
 	}
 
-	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int r, int g, int b, int a) {
+	void RenderBackendOpenGL::drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a) {
 		glColor4ub(r, g, b, a);
 
 		glBegin(GL_LINES);
@@ -405,7 +405,7 @@ namespace FIFE {
 		glEnd();
 	}
 
-	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int r, int g, int b, int a) {
+	void RenderBackendOpenGL::drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a) {
 		glColor4ub(r, g, b, a);
 
 		glBegin(GL_TRIANGLES);
@@ -437,7 +437,7 @@ namespace FIFE {
 		glEnd();
 	}
 
-	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int r, int g, int b, int a) {
+	void RenderBackendOpenGL::drawQuad(const Point& p1, const Point& p2, const Point& p3, const Point& p4,  int32_t r, int32_t g, int32_t b, int32_t a) {
 		glColor4ub(r, g, b, a);
 
 		glBegin(GL_QUADS);
@@ -448,7 +448,7 @@ namespace FIFE {
 		glEnd();
 	}
 
-	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, int r, int g, int b, int a){
+	void RenderBackendOpenGL::drawVertex(const Point& p, const uint8_t size, int32_t r, int32_t g, int32_t b, int32_t a){
 		GLfloat width;
 		glGetFloatv(GL_LINE_WIDTH, &width);
 		glLineWidth(1.0);
@@ -465,7 +465,7 @@ namespace FIFE {
 		glLineWidth(width);
 	}
 
-	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
+	void RenderBackendOpenGL::drawLightPrimitive(const Point& p, uint8_t intensity, float radius, int32_t subdivisions, float xstretch, float ystretch, uint8_t red, uint8_t green, uint8_t blue) {
 		glBegin(GL_TRIANGLE_FAN);
 		glColor4ub(red, green, blue, intensity);
 		glVertex2f(p.x, p.y);

@@ -45,7 +45,7 @@ namespace FIFE {
 		 * @param position position for this renderer in rendering pipeline
 		 * @param font font used to render the coordinates
 		 */
-		CoordinateRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		CoordinateRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font);
 		
 		CoordinateRenderer(const CoordinateRenderer& old);
 		

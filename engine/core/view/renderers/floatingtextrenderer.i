@@ -41,7 +41,7 @@ namespace FIFE {
 		static FloatingTextRenderer* getInstance(IRendererContainer* cnt);
 
 	private:
-		FloatingTextRenderer(RenderBackend* renderbackend, int position, AbstractFont* font);
+		FloatingTextRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font);
 	};
 
 

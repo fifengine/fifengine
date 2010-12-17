@@ -444,10 +444,10 @@ namespace FIFE {
 		fillMouseEvent(event, mouseevt);
 		fillModifiers(mouseevt);
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			m_mousestate |= static_cast<int>(mouseevt.getButton());
+			m_mousestate |= static_cast<int32_t>(mouseevt.getButton());
 			m_mostrecentbtn = mouseevt.getButton();
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
-			m_mousestate &= ~static_cast<int>(mouseevt.getButton());
+			m_mousestate &= ~static_cast<int32_t>(mouseevt.getButton());
 		}
 		// fire scrollwheel events only once
 		if (event.button.button == SDL_BUTTON_WHEELDOWN || event.button.button == SDL_BUTTON_WHEELUP) {
