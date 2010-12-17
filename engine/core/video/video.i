@@ -75,7 +75,7 @@ namespace FIFE {
 	
 	class Image : public AbstractImage, public ResourceClass {
 	public:
-		void render(const Rect& rect, unsigned char alpha = 255);
+		void render(const Rect& rect, uint8_t alpha = 255);
 		virtual ~Image();
 		SDL_Surface* getSurface() { return m_surface; }
 		uint32_t getWidth() const;

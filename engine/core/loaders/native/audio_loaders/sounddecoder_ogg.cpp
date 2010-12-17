@@ -36,7 +36,7 @@
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
-	
+
 	/* OggVorbis Callback functions
 	 */
 	namespace OGG_cb {
@@ -65,9 +65,9 @@ namespace FIFE {
 			}
 			return -1;
 		}
-		
+
 		static int32_t close(void *datasource) { return 0; }
-		
+
 		static long tell(void *datasource) {
 			RawData* rdp = reinterpret_cast<RawData*>(datasource);
 			return (*rdp).getCurrentIndex();
@@ -75,25 +75,25 @@ namespace FIFE {
 	}
 
 	SoundDecoderOgg::SoundDecoderOgg(RawData* rdp) : m_file(rdp) {
-							
+
 		ov_callbacks ocb = {
 			OGG_cb::read, OGG_cb::seek, OGG_cb::close, OGG_cb::tell
 		};
-		
+
 		if (0 > ov_open_callbacks(m_file.get(), &m_ovf, 0, 0, ocb)) {
 			throw InvalidFormat("Error opening OggVorbis file");
 		}
-		
-		
+
+
 		vorbis_info *vi = ov_info(&m_ovf, -1);
 		if (!vi) {
 			throw InvalidFormat("Error fetching OggVorbis info");
 		}
-		
+
 		if (!ov_seekable(&m_ovf)) {
 			throw InvalidFormat("OggVorbis file has to be seekable");
 		}
-		
+
 		m_isstereo = vi->channels == 2;
 		m_samplerate = vi->rate;
 		m_is8bit = false;
@@ -101,31 +101,31 @@ namespace FIFE {
 		m_datasize = 0;
 		m_data = NULL;
 	}
-	
-	bool SoundDecoderOgg::decode(unsigned long length) {
+
+	bool SoundDecoderOgg::decode(uint64_t length) {
 		int32_t stream = 0;
 		int32_t ret = 0;
-		
+
 		// release buffer and allocate new memory
 		releaseBuffer();
 		m_data = new char[length];
-		
+
 		// decode the stream
 		m_datasize = 0;
 		do {
-			ret = ov_read(&m_ovf, m_data + m_datasize, 
-			              length-m_datasize, 0, 2, 1, &stream);            
+			ret = ov_read(&m_ovf, m_data + m_datasize,
+			              length-m_datasize, 0, 2, 1, &stream);
 			if (ret > 0) {
 				m_datasize += ret;
 			}
-			
+
 		} while (length-m_datasize > 0 && ret > 0);
-		
+
 		return m_datasize == 0;
 	}
-	
-	bool SoundDecoderOgg::setCursor(unsigned long pos) {
-		
+
+	bool SoundDecoderOgg::setCursor(uint64_t pos) {
+
 		if (ov_pcm_seek(&m_ovf, pos / ((m_isstereo ? 2 : 1) * 2)) == 0) {
 			return true;
 		}

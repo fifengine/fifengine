@@ -32,14 +32,14 @@
 namespace FIFE {
 
 	struct ColorRGB8 {
-		unsigned char r, g, b;
+		uint8_t r, g, b;
 	};
 
 	struct ColorRGBA8 {
-		unsigned char r, g, b, a;
+		uint8_t r, g, b, a;
 	};
 
-	void SDL_BlendRow_RGBA8_to_RGBA8( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n ) {
+	void SDL_BlendRow_RGBA8_to_RGBA8( const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n ) {
 		const ColorRGBA8* srcColor = reinterpret_cast< const ColorRGBA8* >( src );
 		ColorRGBA8* dstColor = reinterpret_cast< ColorRGBA8* >( dst );
 
@@ -58,7 +58,7 @@ namespace FIFE {
 		}
 	}
 
-	void SDL_BlendRow_RGBA8_to_RGB8( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n ) {
+	void SDL_BlendRow_RGBA8_to_RGB8( const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n ) {
 		const ColorRGBA8* srcColor = reinterpret_cast< const ColorRGBA8* >( src );
 		ColorRGB8* dstColor = reinterpret_cast< ColorRGB8* >( dst );
 
@@ -76,9 +76,9 @@ namespace FIFE {
 		}
 	}
 
-	void SDL_BlendRow_RGBA8_to_RGB565( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n ) {
+	void SDL_BlendRow_RGBA8_to_RGB565( const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n ) {
 		const ColorRGBA8* srcColor = reinterpret_cast< const ColorRGBA8* >( src );
-		unsigned short* dstColor = reinterpret_cast< unsigned short* >( dst );
+		uint16_t* dstColor = reinterpret_cast< uint16_t* >( dst );
 
 		for( int32_t i = n; 0 < i; --i ) {
 			register uint32_t aMulA = ( alpha * srcColor->a ) >> 8;
@@ -99,9 +99,9 @@ namespace FIFE {
 	}
 
 
-	void SDL_BlendRow_RGBA4_to_RGB565( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n ) {
-		const unsigned short* srcColor = reinterpret_cast< const unsigned short* >( src );
-		unsigned short* dstColor = reinterpret_cast< unsigned short* >( dst );
+	void SDL_BlendRow_RGBA4_to_RGB565( const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n ) {
+		const uint16_t* srcColor = reinterpret_cast< const uint16_t* >( src );
+		uint16_t* dstColor = reinterpret_cast< uint16_t* >( dst );
 
 		for( int32_t i = n; 0 < i; --i ) {
 			register uint32_t c1 = *dstColor;
@@ -116,7 +116,7 @@ namespace FIFE {
 				result |= ( ( ( ( ( c2 & 0x0F00 ) >> 1 ) | 0x0040 ) * aMulA ) + ( ( c1 & 0x07E0 ) * OneMin_aMulA ) ) & 0x07E000;
 				result |= ( ( ( ( ( c2 & 0x00F0 ) >> 3 ) | 0x0001 ) * aMulA ) + ( ( c1 & 0x001F ) * OneMin_aMulA ) ) & 0x001F00;
 				/// multiplying by alpha resulted in shift.
-				*dstColor = static_cast< unsigned short int32_t >( result >> 8 );
+				*dstColor = static_cast< uint16_t >( result >> 8 );
 			}
 
 			++dstColor;

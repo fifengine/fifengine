@@ -87,7 +87,7 @@ namespace FIFE {
 		m_row_tex_coord = 0;
 	}
 
-	void GLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
+	void GLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha) {
 		if (!m_textureids) {
 			generateGLTexture();
 		}

@@ -40,7 +40,7 @@ namespace FIFE {
 		void addColored(Instance* instance, int32_t r, int32_t g, int32_t b);
 		void removeColored(Instance* instance);
 		void removeAllColored();
-		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, unsigned char trans, bool front = true);
+		void addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, uint8_t trans, bool front = true);
 		void removeTransparentArea(Instance* instance);
 		void removeAllTransparentAreas();
 		void addIgnoreLight(const std::list<std::string> &groups);

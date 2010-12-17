@@ -31,8 +31,8 @@ namespace FIFE {
 		TimeManager();
 		virtual ~TimeManager();
 		void update();
-		unsigned long getTime() const;
-		unsigned long getTimeDelta() const;
+		uint64_t getTime() const;
+		uint64_t getTimeDelta() const;
 		double getAverageFrameTime() const;
 		void printStatistics() const;
 		void registerEvent(TimeEvent* event);

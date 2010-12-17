@@ -148,7 +148,7 @@ namespace FIFE {
 
 		/** Returns the bit resolution
 		 */
-		short getBitResolution() const {
+		int16_t getBitResolution() const {
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->getBitResolution();
 			}
@@ -157,7 +157,7 @@ namespace FIFE {
 
 		/** Returns the sample rate
 		 */
-		unsigned long getSampleRate() const{
+		uint64_t getSampleRate() const{
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->getSampleRate();
 			}
@@ -166,7 +166,7 @@ namespace FIFE {
 
 		/** Returns the length of the decoded length in bytes
 		 */
-		unsigned long getDecodedLength() const{
+		uint64_t getDecodedLength() const{
 			if (m_soundclip) {
 				return m_soundclip->getDecoder()->getDecodedLength();
 
@@ -176,7 +176,7 @@ namespace FIFE {
 
 		/** Returns the duration of the sound clip in milliseconds
 		 */
-		unsigned long getDuration() const{
+		uint64_t getDuration() const{
 			if (m_soundclip) {
 				double samplerate = static_cast<double>(getSampleRate()) / 1000.0;  //convert to milliseconds
 				double bitres = static_cast<double>(getBitResolution());
@@ -184,7 +184,7 @@ namespace FIFE {
 				double stereo = (isStereo() ? 2.0 : 1.0);
 				double time = ( size / (samplerate * bitres) ) / stereo;
 
-				return static_cast<unsigned long>(time);
+				return static_cast<uint64_t>(time);
 			}
 			return 0;
 		 }
@@ -212,7 +212,7 @@ namespace FIFE {
 	private:
 		/** Implementation of the pure virtual function from TimeEvent to update streaming
 		 */
-		virtual void updateEvent(unsigned long time);
+		virtual void updateEvent(uint64_t time);
 
 		/** Internal function to attach a soundclip to the source
 		 */

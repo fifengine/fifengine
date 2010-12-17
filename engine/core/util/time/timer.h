@@ -74,14 +74,14 @@ namespace FIFE {
 		 *
 		 *  Stops and destroys the timer.
 		 */
-		virtual ~Timer(); 
+		virtual ~Timer();
 
 		/** Set the interval in milliseconds
 		 *
 		 *  @param msec The interval
 		 *  If you use an intervall 0 the timer will fire every frame.
 		 */
-		void setInterval(unsigned long msec);
+		void setInterval(uint64_t msec);
 
 		/** Start the timer
 		 *
@@ -106,7 +106,7 @@ namespace FIFE {
 	protected:
 		bool m_active;
 		type_callback m_callback;
-		void updateEvent(unsigned long);
+		void updateEvent(uint64_t);
 	};
 
 }//FIFE

@@ -141,7 +141,7 @@ namespace FIFE {
 		SDL_GetRGBA(pixel, m_surface->format, r, g, b, a);
 	}
 
-	void Image::render(const Rect& rect, unsigned char alpha) {
+	void Image::render(const Rect& rect, uint8_t alpha) {
 		render(rect, SDL_GetVideoSurface(), alpha);
 	}
 

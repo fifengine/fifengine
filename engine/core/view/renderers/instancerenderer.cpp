@@ -322,7 +322,7 @@ namespace FIFE {
 		else {
 			info.curimg = vc.image;
 		}
-		
+
 		if (info.overlay) {
 			delete info.overlay; // delete old mask
 			info.overlay = NULL;
@@ -366,13 +366,13 @@ namespace FIFE {
 		newinfo.dirty = true;
 
 		// attempts to insert the element into the outline map
-		// will return false in the second value of the pair if the instance already exists 
-		// in the map and the first value of the pair will then be an iterator to the 
+		// will return false in the second value of the pair if the instance already exists
+		// in the map and the first value of the pair will then be an iterator to the
 		// existing data for the instance
 		std::pair<InstanceToOutlines_t::iterator, bool> insertiter = m_instance_outlines.insert(std::make_pair(instance, newinfo));
 
 		if (insertiter.second == false) {
-			// the insertion did not happen because the instance 
+			// the insertion did not happen because the instance
 			// already exists in the map so lets just update its outline info
 			OutlineInfo& info = insertiter.first->second;
 
@@ -396,13 +396,13 @@ namespace FIFE {
 		newinfo.dirty = true;
 
 		// attempts to insert the element into the coloring map
-		// will return false in the second value of the pair if the instance already exists 
-		// in the map and the first value of the pair will then be an iterator to the 
+		// will return false in the second value of the pair if the instance already exists
+		// in the map and the first value of the pair will then be an iterator to the
 		// existing data for the instance
 		std::pair<InstanceToColoring_t::iterator, bool> insertiter = m_instance_colorings.insert(std::make_pair(instance, newinfo));
 
 		if (insertiter.second == false) {
-			// the insertion did not happen because the instance 
+			// the insertion did not happen because the instance
 			// already exists in the map so lets just update its coloring info
 			ColoringInfo& info = insertiter.first->second;
 
@@ -417,7 +417,7 @@ namespace FIFE {
 		}
 	}
 
-	void InstanceRenderer::addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, unsigned char trans, bool front) {
+	void InstanceRenderer::addTransparentArea(Instance* instance, const std::list<std::string> &groups, uint32_t w, uint32_t h, uint8_t trans, bool front) {
 		AreaInfo newinfo;
 		newinfo.instance = instance;
 		newinfo.groups = groups;
@@ -429,13 +429,13 @@ namespace FIFE {
 
 
 		// attempts to insert the element into the area map
-		// will return false in the second value of the pair if the instance already exists 
-		// in the map and the first value of the pair will then be an iterator to the 
+		// will return false in the second value of the pair if the instance already exists
+		// in the map and the first value of the pair will then be an iterator to the
 		// existing data for the instance
 		std::pair<InstanceToAreas_t::iterator, bool> insertiter = m_instance_areas.insert(std::make_pair(instance, newinfo));
 
 		if (insertiter.second == false) {
-			// the insertion did not happen because the instance 
+			// the insertion did not happen because the instance
 			// already exists in the map so lets just update its area info
 			AreaInfo& info = insertiter.first->second;
 		}

@@ -41,7 +41,7 @@ namespace FIFE {
  	 * @param alpha Level of alphablending.
  	 * @param n Number of pixels.
  	 */
-	void SDL_BlendRow_RGBA8_to_RGBA8( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n );
+	void SDL_BlendRow_RGBA8_to_RGBA8( const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n );
 
 	/** Blends one row of n pixels from src with n pixels of dst.
  	 *
@@ -50,7 +50,7 @@ namespace FIFE {
  	 * @param alpha Level of alphablending.
  	 * @param n Number of pixels.
 	 */
-	void SDL_BlendRow_RGBA8_to_RGB8( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n );
+	void SDL_BlendRow_RGBA8_to_RGB8( const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n );
 
 	/** Blends one row of n pixels from src with n pixels of dst.
  	 *
@@ -59,7 +59,7 @@ namespace FIFE {
  	 * @param alpha Level of alphablending.
  	 * @param n Number of pixels.
  	 */
-	void SDL_BlendRow_RGBA8_to_RGB565( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n );
+	void SDL_BlendRow_RGBA8_to_RGB565( const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n );
 
 	/** Blends one row of n pixels from src with n pixels of dst.
  	 *
@@ -68,7 +68,7 @@ namespace FIFE {
  	 * @param alpha Level of alphablending.
  	 * @param n Number of pixels.
  	 */
-	void SDL_BlendRow_RGBA4_to_RGB565( const unsigned char* src, unsigned char* dst, uint32_t alpha, int32_t n );
+	void SDL_BlendRow_RGBA4_to_RGB565( const uint8_t* src, uint8_t* dst, uint32_t alpha, int32_t n );
 
 }
 
