@@ -30,18 +30,19 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/base/fife_stdint.h"
 
 namespace FIFE {
 
-	/** Interface for events to be registered with TimeManager.  
+	/** Interface for events to be registered with TimeManager.
 	*
 	* To register a class with TimeManager firstly derive a class
-	* from this and override the updateEvent() function. updateEvent() 
+	* from this and override the updateEvent() function. updateEvent()
 	* will be called periodically depending on the value of getPeriod()
 	* which can be set using the constructor or setPeriod(). A value
 	* of -1 will never be updated, 0 will updated every frame and a value
 	* over 0 defines the number of milliseconds between updates.
-	*  
+	*
 	* @see TimeManager
 	*/
 	class TimeEvent {
@@ -51,11 +52,11 @@ namespace FIFE {
 		 * @param period The period of the event. See class description.
 		 */
 		TimeEvent(int32_t period = -1);
-		
+
 		/** Destructor.
 		 *
 		 */
-		virtual ~TimeEvent(); 
+		virtual ~TimeEvent();
 
 		/** Update function to be overridden by client.
 		 *
@@ -79,19 +80,19 @@ namespace FIFE {
 		 *
 		 * @return The period of the event. See class description.
 		 */
-		int32_t getPeriod();		
+		int32_t getPeriod();
 
 		/** Get the last time the event was updated.
 		 *
 		 * @return Time of last update.
 		 */
-		unsigned long getLastUpdateTime();	
+		unsigned long getLastUpdateTime();
 
 		/** Set the last time the event was updated.
 		 *
 		 * @param Time of last update.
 		 */
-		void setLastUpdateTime(unsigned long);	
+		void setLastUpdateTime(unsigned long);
 
     private:
 		// The period of the event. See the class description.
