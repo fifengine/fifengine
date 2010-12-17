@@ -39,37 +39,37 @@ namespace FIFE {
 
 	SoundClip::SoundClip(SoundDecoder* decptr, bool deletedecoder) : m_isstream(decptr->needsStreaming()), m_decoder(decptr), m_deletedecoder(deletedecoder) {
 		if (!m_isstream) {
-			
+
 			// only for non-streaming buffers
 			SoundBufferEntry* ptr = new SoundBufferEntry();
-			
+
 			// iterate the bufs and fill them with data
 			for (int32_t i = 0; i < BUFFER_NUM; i++) {
-				
+
 				if (m_decoder->decode(BUFFER_LEN)) {
 					// EOF or error
 					break;
 				}
-				
+
 				// generate buffer and fill it with data
 				alGenBuffers(1, &ptr->buffers[i]);
-				
+
 				alBufferData(ptr->buffers[i], m_decoder->getALFormat(), m_decoder->getBuffer(),
 					m_decoder->getBufferSize(), m_decoder->getSampleRate());
-				
+
 				CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error copying data to buffers")
-					
+
 				ptr->usedbufs++;
 			}
-			
+
 			m_decoder->releaseBuffer();
-			
+
 			// push the buffer information to the vector
 			m_buffervec.push_back(ptr);
-			
+
 		}
 	}
-	
+
 	uint32_t SoundClip::beginStreaming() {
 		// create new sound buffer entry
 		SoundBufferEntry* ptr = new SoundBufferEntry();
@@ -77,39 +77,39 @@ namespace FIFE {
 		alGenBuffers(BUFFER_NUM, ptr->buffers);
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error creating streaming-buffers")
-		
+
 		m_buffervec.push_back(ptr);
-		
+
 		return m_buffervec.size()-1;
 	}
-	
+
 	bool SoundClip::setStreamPos(uint32_t streamid, SoundPositionType type, float value) {
-		unsigned long pos = 0;
-		
+		uint64_t pos = 0;
+
 		// convert position to bytes
 		switch (type) {
 			case SD_BYTE_POS:
-				pos = static_cast<unsigned long>(value);
+				pos = static_cast<uint64_t>(value);
 				break;
 			case SD_TIME_POS:
 				value *= m_decoder->getSampleRate();
 			case SD_SAMPLE_POS:
-				pos = static_cast<unsigned long>((m_decoder->getBitResolution() / 8) * (m_decoder->isStereo() ? 2 : 1) * value);
+				pos = static_cast<uint64_t>((m_decoder->getBitResolution() / 8) * (m_decoder->isStereo() ? 2 : 1) * value);
 				break;
 		}
-		
+
 		if (pos > m_decoder->getDecodedLength()) {
 			// EOF!
 			return true;
 		}
-		
+
 		// set cursor position
 		m_buffervec.at(streamid)->deccursor = pos;
 		return false;
 	}
-	
+
 	float SoundClip::getStreamPos(uint32_t streamid, SoundPositionType type) const{
-		unsigned long pos = m_buffervec.at(streamid)->deccursor;
+		uint64_t pos = m_buffervec.at(streamid)->deccursor;
 		switch(type) {
 			case SD_BYTE_POS:
 				return pos;
@@ -120,25 +120,25 @@ namespace FIFE {
 		}
 		return 0.0f;
 	}
-	
+
 	void SoundClip::acquireStream(uint32_t streamid) {
-		
+
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
-		
+
 		for (int32_t i = 0; i < BUFFER_NUM; i++) {
 			getStream(streamid, ptr->buffers[i]);
 		}
 	}
-	
+
 	bool SoundClip::getStream(uint32_t streamid, ALuint buffer) {
-		
+
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
-		
+
 		if (ptr->deccursor >= m_decoder->getDecodedLength()) {
 			// EOF!
 			return true;
 		}
-		
+
 		// set cursor of decoder
 		m_decoder->setCursor(ptr->deccursor);
 
@@ -150,29 +150,29 @@ namespace FIFE {
 		// fill the buffer with data
 		alBufferData(buffer, m_decoder->getALFormat(),
 			m_decoder->getBuffer(), m_decoder->getBufferSize(), m_decoder->getSampleRate());
-			
+
 		m_decoder->releaseBuffer();
-			
+
 		// update cursor
 		ptr->deccursor += BUFFER_LEN;
 
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error catching stream")
-		
+
 		return false;
 	}
-	
+
 	void SoundClip::quitStreaming(uint32_t streamid) {
 		// release the buffers
 		SoundBufferEntry* ptr = m_buffervec.at(streamid);
 		alDeleteBuffers(BUFFER_NUM, ptr->buffers);
 		ptr->buffers[0] = 0;
 	}
-	
+
 	SoundClip::~SoundClip() {
 		if (m_isstream) {
 			// erase all elements from the list
 			std::vector<SoundBufferEntry*>::iterator it;
-		
+
 			for (it = m_buffervec.begin(); it != m_buffervec.end(); ++it) {
 				if ((*it)->buffers[0] != 0) {
 					alDeleteBuffers(BUFFER_NUM, (*it)->buffers);
@@ -184,7 +184,7 @@ namespace FIFE {
 		else {
 			// for non-streaming soundclips
 			SoundBufferEntry* ptr = m_buffervec.at(0);
-			
+
 			for(uint32_t i = 0; i < ptr->usedbufs; i++) {
 				alDeleteBuffers(1, &ptr->buffers[i]);
 			}

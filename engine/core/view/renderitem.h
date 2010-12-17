@@ -49,24 +49,24 @@ namespace FIFE {
 			* @see ObjectVisual::getStaticImageIndexByAngle
 			*/
 			int32_t getStaticImageIndexByAngle(uint32_t angle, Instance* instance);
-		
+
 			// point where instance was drawn during the previous render
 			DoublePoint3D screenpoint;
-			
+
 			// dimensions of this visual on the virtual screen
 			Rect bbox;
 
 			// dimensions of this visual during the previous render
 			Rect dimensions;
-			
+
 			// image used during previous render
 			Image* image;
-			
+
 			// current facing angle
 			int32_t facing_angle;
 
 			// current transparency
-			unsigned char transparency;
+			uint8_t transparency;
 		private:
 			int32_t m_cached_static_img_id;
 			int32_t m_cached_static_img_angle;

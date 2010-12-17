@@ -32,16 +32,16 @@
 // Second block: files included from the same folder
 
 namespace FIFE {
-	
-	/* The max. length of a decoded audio data 
+
+	/* The max. length of a decoded audio data
 	 * for which streaming is not used. (bytes)
 	 * Has to be <= than BUFFERLEN * 3.
    */
 	const uint32_t MAX_KEEP_IN_MEM = 3145728;
 
 	// The number of buffers used for streaming.
-	const short BUFFER_NUM = 3;
-	
+	const int16_t BUFFER_NUM = 3;
+
 	// The length of one buffer. (bytes)
 	const uint32_t BUFFER_LEN = 1048576;
 

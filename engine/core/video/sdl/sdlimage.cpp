@@ -67,7 +67,7 @@ namespace FIFE {
 	}
 
 	void SDL_BlitSurfaceWithAlpha( const SDL_Surface* src, const SDL_Rect* srcRect,
-		SDL_Surface* dst,  SDL_Rect* dstRect, unsigned char alpha ) {
+		SDL_Surface* dst,  SDL_Rect* dstRect, uint8_t alpha ) {
 		if( 0 == alpha ) {
 			return;
 		}
@@ -132,8 +132,8 @@ namespace FIFE {
 
 		SDL_LockSurface( dst );
 
-		unsigned char* srcData = reinterpret_cast< unsigned char* > ( src->pixels );
-		unsigned char* dstData = reinterpret_cast< unsigned char* > ( dst->pixels );
+		uint8_t* srcData = reinterpret_cast< uint8_t* > ( src->pixels );
+		uint8_t* dstData = reinterpret_cast< uint8_t* > ( dst->pixels );
 
 		// move data pointers to the start of the pixels we're copying
 		srcData += tY * src->pitch  + tX * src->format->BytesPerPixel;
@@ -306,7 +306,7 @@ namespace FIFE {
 		return ABS(a - b) <= 0.00001;
 	}
 
-	void SDLImage::render(const Rect& rect, SDL_Surface* screen, unsigned char alpha) {
+	void SDLImage::render(const Rect& rect, SDL_Surface* screen, uint8_t alpha) {
 		if (alpha == 0) {
 			return;
 		}

@@ -62,13 +62,13 @@ namespace FIFE {
 		 *
 		 * @param time_delta Time.
 		 */
-		virtual void updateEvent(unsigned long time) = 0;
+		virtual void updateEvent(uint64_t time) = 0;
 
 		/** Called by TimeManager to update the event.
 		 *
 		 * @param time Current time. Used To check if its time to update.
 		 */
-		void managerUpdateEvent(unsigned long time);
+		void managerUpdateEvent(uint64_t time);
 
 		/** Set the period of the event.
 		 *
@@ -86,20 +86,20 @@ namespace FIFE {
 		 *
 		 * @return Time of last update.
 		 */
-		unsigned long getLastUpdateTime();
+		uint64_t getLastUpdateTime();
 
 		/** Set the last time the event was updated.
 		 *
 		 * @param Time of last update.
 		 */
-		void setLastUpdateTime(unsigned long);
+		void setLastUpdateTime(uint64_t);
 
     private:
 		// The period of the event. See the class description.
 		int32_t m_period;
 
 		// The last time the class was updated.
-		unsigned long m_last_updated;
+		uint64_t m_last_updated;
     };
 
 }//FIFE

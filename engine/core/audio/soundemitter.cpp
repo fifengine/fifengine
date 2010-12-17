@@ -126,7 +126,7 @@ namespace FIFE {
 		CHECK_OPENAL_LOG(_log, LogManager::LEVEL_ERROR, "error attaching sound clip")
 	}
 
-	void SoundEmitter::updateEvent(unsigned long time) {
+	void SoundEmitter::updateEvent(uint64_t time) {
 		ALint procs;
 		ALint bufs;
 		ALuint buffer;

@@ -160,14 +160,14 @@ namespace FIFE {
 		 * @param target Target surface to draw to, e.g. main screen or other image
 		 * @param alpha The alpha value, with which to draw self. opaque by default.
 		 */
-		virtual void render(const Rect& rect, SDL_Surface* dst, unsigned char alpha = 255) = 0;
+		virtual void render(const Rect& rect, SDL_Surface* dst, uint8_t alpha = 255) = 0;
 
 		/** Renders itself to the main screen at the rectangle rect.
 		 * Convenience function
 		 * @param rect The position and clipping where to draw this image to.
 		 * @param alpha The alpha value, with which to draw self.
 		 */
-		void render(const Rect& rect, unsigned char alpha = 255);
+		void render(const Rect& rect, uint8_t alpha = 255);
 
 		/** Removes underlying SDL_Surface from the image (if exists) and returns this
 		 * @note this effectively causes SDL_Surface not to be freed on destruction

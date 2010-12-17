@@ -332,7 +332,7 @@ namespace FIFE {
 		viewport.y = std::min(viewport_a.y, viewport_b.y);
 		viewport.w = std::max(viewport_a.x, viewport_b.x) - viewport.x;
 		viewport.h = std::max(viewport_a.y, viewport_b.y) - viewport.y;
-		unsigned char layer_trans = m_layer->getLayerTransparency();
+		uint8_t layer_trans = m_layer->getLayerTransparency();
 
 		// FL_LOG(_log, LMsg("camera-update viewport") << viewport);
 		std::vector<int32_t> index_list;
@@ -343,7 +343,7 @@ namespace FIFE {
 			RenderItem& item = m_instances[entry.instance_index];
 			InstanceVisual* visual = item.instance->getVisual<InstanceVisual>();
 			bool visible = visual->isVisible();
-			unsigned char instance_trans = visual->getTransparency();
+			uint8_t instance_trans = visual->getTransparency();
 			if(!item.image || !visible || (instance_trans == 255 && layer_trans == 0)
 									   || (instance_trans == 0 && layer_trans == 255)) {
 				continue;
@@ -351,7 +351,7 @@ namespace FIFE {
 
 			if(layer_trans != 0) {
 				if(instance_trans != 0) {
-					short calc_trans = layer_trans - instance_trans;
+					int16_t calc_trans = layer_trans - instance_trans;
 					if(calc_trans >= 0) {
 						instance_trans = calc_trans;
 					} else {
@@ -377,9 +377,9 @@ namespace FIFE {
 			item.transparency = 255 - instance_trans;
 
 			if (zoom != 1.0) {
-				// NOTE: Due to image alignment, there is additional additions on image dimensions 
-				//       There's probabaly some better solution for this, but works "good enough" for now. 
-				//       In case additions are removed, gaps appear between tiles. 
+				// NOTE: Due to image alignment, there is additional additions on image dimensions
+				//       There's probabaly some better solution for this, but works "good enough" for now.
+				//       In case additions are removed, gaps appear between tiles.
 				item.dimensions.w = unsigned(double(item.bbox.w) * zoom + OVERDRAW);
 				item.dimensions.h = unsigned(double(item.bbox.h) * zoom + OVERDRAW);
 			}

@@ -57,14 +57,14 @@ namespace FIFE {
 				LZSSDecode(&indata[0], bytesToRead, output);
 				// Note outindex is advanced inside LZSSDecode.
 			}
-			
+
 		}
 	}
 
-	void LZSSDecoder::LZSSDecode(uint8_t* in , long len, uint8_t* out) {
-		const long c_nRingBufferSize        = 4096;
-		const long c_nMatchLengthUpperLimit =   18;
-		const long c_nThreshold             =    2;
+	void LZSSDecoder::LZSSDecode(uint8_t* in , int64_t len, uint8_t* out) {
+		const int64_t c_nRingBufferSize        = 4096;
+		const int64_t c_nMatchLengthUpperLimit =   18;
+		const int64_t c_nThreshold             =    2;
 
 		char buffer[c_nRingBufferSize + c_nMatchLengthUpperLimit - 1];
 		int32_t ibuf = 0;

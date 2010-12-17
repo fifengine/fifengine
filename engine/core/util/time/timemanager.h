@@ -41,9 +41,9 @@ namespace FIFE {
 	 *
 	 * This class is in charge of storing the current time,
 	 * average frame time, as well as controlling periodic events.
-	 * Users of this class will have to manually register and 
+	 * Users of this class will have to manually register and
 	 * unregister events.
-	 *  
+	 *
 	 * @see TimeEvent
 	 */
 	class TimeManager : public DynamicSingleton<TimeManager> {
@@ -78,13 +78,13 @@ namespace FIFE {
 		 *
 		 * @return The time in milliseconds.
 		 */
-		unsigned long getTime() const;
+		uint64_t getTime() const;
 
 		/** Get the time since the last frame.
 		 *
 		 * @return Time since last frame in milliseconds.
 		 */
-		unsigned long getTimeDelta() const;
+		uint64_t getTimeDelta() const;
 
 		/** Gets average frame time
 		 *
@@ -98,9 +98,9 @@ namespace FIFE {
 
 	private:
 		/// Current time in milliseconds.
-		unsigned long m_current_time;
+		uint64_t m_current_time;
 		/// Time since last frame in milliseconds.
-		unsigned long m_time_delta;
+		uint64_t m_time_delta;
 		/// Average frame time in milliseconds.
 		double m_average_frame_time;
 

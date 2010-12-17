@@ -18,7 +18,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
- 
+
 #ifndef FIFE_SOUNDCLIP_H_
 #define FIFE_SOUNDCLIP_H_
 
@@ -38,7 +38,7 @@
 #include "sounddecoder.h"
 
 namespace FIFE {
-	
+
 	/** Different types of audio-file positions
 	 */
 	enum SoundPositionType {
@@ -46,30 +46,30 @@ namespace FIFE {
 		SD_TIME_POS,
 		SD_BYTE_POS
 	};
-	
+
 	struct SoundBufferEntry {
 		ALuint buffers[BUFFER_NUM];
 		uint32_t usedbufs;
-		unsigned long deccursor;
+		uint64_t deccursor;
 	};
-	
+
 	/**  Class to handle the buffers of an audio file
 	 */
 	class SoundClip : public ResourceClass {
 	public:
-	   
+
 	   SoundClip(SoundDecoder* decptr, bool deletedecoder = true);
-	
+
 		~SoundClip();
-		
+
 		/** Does this SoundClip require a streaming mechanism?
-		 * 
+		 *
 		 * @return Returns true if streaming is required, false if not.
 		 */
 		bool isStream() const {
 			return m_isstream;
 		}
-		
+
 		/** Returns the number of buffers used by the SoundClip
 		 * (only for non-streaming sound clips)
 		 *
@@ -78,45 +78,45 @@ namespace FIFE {
 		uint32_t countBuffers() const {
 			return m_buffervec.at(0)->usedbufs;
 		}
-		
+
 		/** Returns the array of buffers for queuing
 		 *
 		 */
 		ALuint* getBuffers(uint32_t streamid = 0) const {
 			return m_buffervec.at(streamid)->buffers;
 		}
-		
+
 		/** Starts streaming the soundclip
 		 * @return Returns the streamid
 		 */
 		uint32_t beginStreaming();
-		
+
 		/** Fills the streaming-buffers with initial data
 		 *
 		 * @param streamid The stream ID
 		 */
 		void acquireStream(uint32_t streamid);
-		
+
 		/** Sets the stream position
 		 * @return True if position is invalid (EOF has been reached)
 		 */
 		bool setStreamPos(uint32_t streamid, SoundPositionType type, float value);
-		
+
 		/** Gets the stream position
 		 */
 		float getStreamPos(uint32_t streamid, SoundPositionType type) const;
-		
+
 		/** Refill a processed buffer with new data
-		 * 
+		 *
 		 *  @return True if file was EOF
 		 *  @param streamid The stream ID
 		 */
 		bool getStream(uint32_t streamid, ALuint buffer);
-		
+
 		/** Quits Streaming
 		 */
 		void quitStreaming(uint32_t streamid);
-		
+
 		//void addRef() {
 		//	m_refcount++;
 		//}
@@ -126,13 +126,13 @@ namespace FIFE {
 	//	uint32_t getRefCount() {
 	//		return m_refcount;
 	//	}
-		
+
 		/** Returns the attached decoder
 		 */
 		SoundDecoder* getDecoder() const {
 			return m_decoder;
 		}
-		
+
 	private:
 		//uint32_t 		m_refcount;			// Reference count of that soundclip
 		bool						m_isstream; 		// is stream?

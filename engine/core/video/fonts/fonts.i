@@ -27,7 +27,7 @@
 #include "video/fonts/subimagefont.h"
 
 %}
-typedef unsigned char Uint8;
+typedef uint8_t Uint8;
 
 namespace FIFE {
 	class AbstractFont {

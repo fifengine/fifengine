@@ -100,7 +100,7 @@ namespace FIFE {
 		 * E.g. in case log message has LEVEL_WARN, but the filter treshold is LEVEL_ERROR,
 		 * log message is not outputted
 		 */
-		enum LogLevel {	
+		enum LogLevel {
 			LEVEL_DEBUG = 0,
 			LEVEL_LOG   = 1,
 			LEVEL_WARN  = 2,
@@ -262,7 +262,7 @@ namespace std {
 	basic_ostream<Ch,Tr>& operator<<( basic_ostream<Ch,Tr>& s, const FIFE::pprint& p ) {
 		s << "0x"
 			<< hex << setw( 2*sizeof(void*) ) << setfill('0')
-			<< reinterpret_cast<unsigned long>( p.p );
+			<< reinterpret_cast<uint64_t>( p.p );
 
 		return s;
 	}
