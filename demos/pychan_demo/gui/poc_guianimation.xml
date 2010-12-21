@@ -14,6 +14,13 @@
 		</HBox>
 	</VBox>
 	
+	<Container name="progress_wrapper" size="200,50" min_size="200,50" max_size="200,50">
+		<PercentageBar name="progressbar" orientation="0" size="200,50" max_size="200,50" min_size="200,50" foreground_color="55,0,0"/>
+<!--		
+		<PercentageBar name="progressbar2" orientation="0" size="200,50" max_size="200,50" min_size="200,50" image="gui/icons/pychan_logo.png"/>
+-->
+	</Container>
+	
 	<Container name="move_wrapper" size="200,105" min_size="200,105" max_size="200,105">
 		<Icon name="move" image="gui/icons/pychan_logo.png"/>
 	</Container>
