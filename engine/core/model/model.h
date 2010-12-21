@@ -87,7 +87,7 @@ namespace FIFE {
 
 		/** Return the number of maps in this model
 		 */
-		uint32_t getNumMaps() const;
+		uint32_t getMapCount() const;
 
 		/** Removes all maps from this model
 		 */

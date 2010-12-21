@@ -599,7 +599,7 @@ class ObjectEdit(plugin.Plugin):
 		self._anim_data = {}
 		self._anim_data['obj'] = animation
 		self._anim_data['id'] = animation_id
-		self._anim_data['frames'] = animation.getNumFrames()
+		self._anim_data['frames'] = animation.getFrameCount()
 		self._anim_data['current'] = 0
 		self._anim_data['actions'] = actions
 		self._anim_data['action_ids'] = action_ids

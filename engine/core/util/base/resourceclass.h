@@ -43,19 +43,38 @@ namespace FIFE {
 	public:
 		ResourceClass();
 		virtual ~ResourceClass();
-		
+
 		const ResourceLocation& getResourceLocation();
 		const std::string& getResourceFile();
 
 		virtual void setResourceLocation(const ResourceLocation& location);
 		virtual void setResourceFile(const std::string& filename);
-	
+
 		int32_t getPoolId() { return m_poolid; }
 		void setPoolId(int32_t poolid) { m_poolid = poolid; }
-		
+
+		/** Calling this method marks resource be used by some resource client.
+		 *  It adds one to resource counter that is kept up by the resource itself.
+		 *  When resource is about to be deleted (e.g. due to pooling algorithms),
+		 *  reference counter is inspected. In case value is non-zero, resource
+		 *  shouldn't be deleted.
+		 */
+		virtual void addRef() { m_refcount++; };
+
+		/** Calling this method unmarks resource be used by a resource client.
+		 *  @see addRef
+		 */
+		virtual void decRef() { m_refcount--; };
+
+		/** Gets the current reference count
+		 *  @see addRef
+		 */
+		virtual uint32_t getRefCount() { return m_refcount; };
+
 	private:
 		ResourceLocation* m_location;
 		int32_t m_poolid;
+		uint32_t m_refcount;
 	};
 }
 

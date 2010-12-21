@@ -357,7 +357,7 @@ namespace FIFE {
 		m_renderbackend->startFrame();
 		m_timemanager->update();
 
-		if (m_model->getNumMaps() == 0) {
+		if (m_model->getMapCount() == 0) {
 			m_renderbackend->clearBackBuffer();
 		}
 

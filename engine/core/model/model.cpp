@@ -129,7 +129,7 @@ namespace FIFE {
 		}
 	}
 
-	uint32_t Model::getNumMaps() const {
+	uint32_t Model::getMapCount() const {
 		return m_maps.size();
 	}
 

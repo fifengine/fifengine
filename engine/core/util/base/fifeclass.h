@@ -40,38 +40,19 @@ namespace FIFE {
 	/** Base class for all fife classes
 	 * Used e.g. to track instances over swig conversion
 	 */
-	class FifeClass: public virtual IReferenceCounted {
+	class FifeClass {
 	public:
-		FifeClass(): m_fifeid(m_curid++), m_refcount(0) { }
-		
-		virtual ~FifeClass() { assert(m_refcount == 0); }
-		
+		FifeClass(): m_fifeid(m_curid++) { }
+
+		virtual ~FifeClass() { }
+
 		/** Gets unique id of this instance inside the engine
 		 */
 		fifeid_t getFifeId() { return m_fifeid; }
-		
-		/** Calling this method marks resource be used by some resource client.
-		 *  It adds one to resource counter that is kept up by the resource itself.
-		 *  When resource is about to be deleted (e.g. due to pooling algorithms), 
-		 *  reference counter is inspected. In case value is non-zero, resource 
-		 *  shouldn't be deleted.
-		 */
-		virtual void addRef() { m_refcount++; };
 
-		/** Calling this method unmarks resource be used by a resource client.
-		 *  @see addRef
-		 */
-		virtual void decRef() { m_refcount--; };
-
-		/** Gets the current reference count
-		 *  @see addRef
-		 */
-		virtual uint32_t getRefCount() { return m_refcount; };
-		
 	private:
 		fifeid_t m_fifeid;
 		static fifeid_t m_curid;
-		uint32_t m_refcount;
 	};
 }
 

@@ -126,7 +126,7 @@ namespace FIFE {
 
 			/** Get the overall number of layers
 			 */
-			uint32_t getNumLayers() const;
+			uint32_t getLayerCount() const;
 
 			/** Delete all layers from the map
 			 */
