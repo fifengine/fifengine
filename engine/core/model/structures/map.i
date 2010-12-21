@@ -68,7 +68,9 @@ namespace FIFE {
 
 			uint32_t getNumLayers() const;
 			void deleteLayers();
-			
+
+			void getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max);
+
 			void setTimeMultiplier(float multip);
 			double getTimeMultiplier() const;
 			

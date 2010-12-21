@@ -137,6 +137,12 @@ namespace FIFE {
 			void getMatchingCoordinates(const ModelCoordinate& coord_to_map, const Layer* from_layer,
 				const Layer* to_layer, std::vector<ModelCoordinate>& matching_coords) const;
 
+			/** Retrieves the minimum/maximum coordinates of instances on the map.
+			 * @param min A reference to a ExactModelCoordinate that will hold the minimum coordinate.
+			 * @param max A reference to a ExactModelCoordinate that will hold the maximum coordinate.
+			 */
+			void getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max);
+
 			/** Called periodically to update events on map
 			 * @returns true, if map was changed
 			 */

@@ -130,6 +130,37 @@ namespace FIFE {
 		purge(m_layers);
 		m_layers.clear();
 	}
+	
+	void Map::getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max) {
+		Location lmin;
+		Location lmax;
+		std::list<Layer*>::iterator it = m_layers.begin();
+		Layer* layer = *it;
+		for (; it != m_layers.end(); ++it) {
+			ModelCoordinate newMin, newMax;
+			(*it)->getMinMaxCoordinates(newMin, newMax, layer);
+
+			if (newMin.x < min.x) {
+				min.x = newMin.x;
+			} 
+			if (newMax.x > max.x) {
+				max.x = newMax.x;
+			}
+			if (newMin.y < min.y) {
+				min.y = newMin.y;
+			}
+			if (newMax.y > max.y) {
+				max.y = newMax.y;
+			}
+		}
+		lmin.setLayer(layer);
+		lmax.setLayer(layer);
+		lmin.setExactLayerCoordinates(min);
+		lmax.setExactLayerCoordinates(max);
+
+		min = lmin.getMapCoordinates();
+		max = lmax.getMapCoordinates();
+	}
 
 	bool Map::update() {
 		m_changedlayers.clear();
