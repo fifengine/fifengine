@@ -66,7 +66,7 @@ namespace FIFE {
 			std::list<Layer*> getLayers() const;
 			Layer* getLayer(const std::string& id);
 
-			uint32_t getNumLayers() const;
+			uint32_t getLayerCount() const;
 			void deleteLayers();
 
 			void getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max);

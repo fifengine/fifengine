@@ -273,7 +273,7 @@ class LayerTool(plugin.Plugin):
 		""" Deletes the selected layer """
 		if not self._mapview: return
 		
-		if self._mapview.getMap().getNumLayers() <= 1:
+		if self._mapview.getMap().getLayerCount() <= 1:
 			print "Can't remove the last layer"
 			return
 		

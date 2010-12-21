@@ -38,12 +38,12 @@
 
 namespace FIFE {
 
-	Animation::Animation(): 
+	Animation::Animation():
 		m_action_frame(-1),
 		m_animation_endtime(-1),
 		m_direction(0) {
 		}
-	
+
 	Animation::~Animation() {
 		// note: we don't need to free the images, as they are handled via
 		// smart references.
@@ -66,7 +66,7 @@ namespace FIFE {
 			m_framemap[frametime] = info;
 			m_animation_endtime = frametime + duration;
 		}
-		
+
 	}
 
 	int32_t Animation::getFrameIndex(uint32_t timestamp) {
@@ -81,7 +81,7 @@ namespace FIFE {
 
 	bool Animation::isValidIndex(int32_t index) const{
 		int32_t size = m_frames.size();
-		return size > 0 && index >= 0 && index < size; 
+		return size > 0 && index >= 0 && index < size;
 	}
 
 	Image* Animation::getFrame(int32_t index) {
@@ -104,7 +104,7 @@ namespace FIFE {
 		}
 	}
 
-	uint32_t Animation::getNumFrames() const {
+	uint32_t Animation::getFrameCount() const {
 		return m_frames.size();
 	}
 

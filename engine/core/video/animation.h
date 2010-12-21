@@ -45,16 +45,16 @@ namespace FIFE {
 
 	/** Animation.
 	 *
-	 * A container of Images describing an animation. Animation itself does 
+	 * A container of Images describing an animation. Animation itself does
 	 * not take care of animating the images. Instead it contains images
-	 * having associated timestamps. It is the responsibility of the 
+	 * having associated timestamps. It is the responsibility of the
 	 * animation user to query frames based on current timestamp and show
 	 * returned images on screen.
 	 */
 	class Animation : public ResourceClass {
 	public:
 		/** Constructor.
-		 */ 
+		 */
 		explicit Animation();
 
 		/** Destructor. Decreases the reference count of all referred images.
@@ -92,7 +92,7 @@ namespace FIFE {
 
 		/** Get the number of frames
 		 */
-		uint32_t getNumFrames() const;
+		uint32_t getFrameCount() const;
 
 		/** Sets the action frame. Action frame is the frame when the related
 		 * action actually happens. E.g. in case of punch animation, action frame is

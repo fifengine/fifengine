@@ -34,31 +34,33 @@
 
 namespace FIFE {
 	ResourceClass::ResourceClass():
-		FifeClass(), 
+		FifeClass(),
 		m_location(NULL),
-		m_poolid(-1) {
+		m_poolid(-1),
+		m_refcount(0){
 	}
-	
+
 	ResourceClass::~ResourceClass() {
 		delete m_location;
+		assert(m_refcount == 0);
 	}
-	
+
 	const ResourceLocation& ResourceClass::getResourceLocation() {
 		if (m_location) {
 			return *m_location;
 		}
 		throw NotSet("Resource Location has not been set");
 	}
-	
+
 	const std::string& ResourceClass::getResourceFile() {
 		return getResourceLocation().getFilename();
 	}
-	
+
 	void ResourceClass::setResourceLocation(const ResourceLocation& location) {
 		delete m_location;
 		m_location = location.clone();
 	}
-	
+
 	void ResourceClass::setResourceFile(const std::string& filename) {
 		setResourceLocation(ResourceLocation(filename));
 	}

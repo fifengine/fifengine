@@ -57,7 +57,7 @@ namespace FIFE {
 		Object* getObject(const std::string& id, const std::string& name_space);
 		std::list<Object*> getObjects(const std::string& name_space) const;
 
-		uint32_t getNumMaps() const;
+		uint32_t getMapCount() const;
 		void deleteMaps();
 
 		AbstractPather* getPather(const std::string& pathername);

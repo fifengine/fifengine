@@ -109,7 +109,7 @@ namespace FIFE {
 		Image* getFrame(int32_t index);
 		Image* getFrameByTimestamp(uint32_t timestamp);
 		int32_t getFrameDuration(int32_t index);
-		uint32_t getNumFrames() const;
+		uint32_t getFrameCount() const;
 		void setActionFrame(int32_t num);
 		int32_t getActionFrame();
 		void setDirection(uint32_t direction);
