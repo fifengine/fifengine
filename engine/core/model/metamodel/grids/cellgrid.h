@@ -34,6 +34,7 @@
 #include "model/metamodel/modelcoords.h"
 #include "util/math/matrix.h"
 #include "util/base/fifeclass.h"
+#include "util/base/fife_stdint.h"
 
 namespace FIFE {
 	class CellGrid: public FifeClass {
