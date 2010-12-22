@@ -36,6 +36,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 //
+#include "util/base/fife_stdint.h"
 #include "eventchannel/command/ec_command.h"
 #include "eventchannel/command/ec_icommandcontroller.h"
 #include "eventchannel/command/ec_icommandlistener.h"
