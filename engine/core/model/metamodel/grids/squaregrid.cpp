@@ -37,12 +37,19 @@
 namespace FIFE {
 	static Logger _log(LM_SQUAREGRID);
 
-	SquareGrid::SquareGrid(bool allow_diagonals): 
+	SquareGrid::SquareGrid(bool allow_diagonals):
 		CellGrid(allow_diagonals) {
 	}
 
 	CellGrid* SquareGrid::clone() {
-		return new SquareGrid(this);
+		SquareGrid* nGrid = new SquareGrid(m_allow_diagonals);
+		nGrid->setRotation(m_rotation);
+		nGrid->setXScale(m_xscale);
+		nGrid->setYScale(m_yscale);
+		nGrid->setXShift(m_xshift);
+		nGrid->setYShift(m_yshift);
+
+		return nGrid;
 	}
 
 	SquareGrid::~SquareGrid() {
@@ -116,17 +123,17 @@ namespace FIFE {
 		ModelCoordinate result;
 		result.x = static_cast<int32_t>(floor(dblpt.x));
 		result.y = static_cast<int32_t>(floor(dblpt.y));
-		
+
 		if ((dblpt.x - static_cast<double>(result.x)) > 0.5) {
 			result.x++;
 		}
 		if ((dblpt.y - static_cast<double>(result.y)) > 0.5) {
 			result.y++;
 		}
-		
+
 		return result;
 	}
-	
+
 	void SquareGrid::getVertices(std::vector<ExactModelCoordinate>& vtx, const ModelCoordinate& cell) {
 		vtx.clear();
 		double x = static_cast<double>(cell.x);
