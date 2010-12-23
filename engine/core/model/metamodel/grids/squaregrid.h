@@ -37,7 +37,7 @@
 namespace FIFE {
 	class SquareGrid: public CellGrid {
 	public:
-		SquareGrid(bool allow_diagonals=false);
+		SquareGrid(bool allow_diagonals=true);
 		virtual ~SquareGrid();
 
 		const std::string& getType() const;
