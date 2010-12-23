@@ -32,6 +32,7 @@
 // Second block: files included from the same folder
 #include "view/rendererbase.h"
 #include "util/structures/quadtree.h"
+#include "model/structures/instancetree.h"
 
 namespace FIFE {
 	class RenderBackend;
@@ -44,7 +45,7 @@ namespace FIFE {
 			Camera *m_camera;
 			RenderVisitor(RenderBackend * rb, Layer * layer, Camera *camera);
 			~RenderVisitor();
-			template<typename T> bool visit(QuadNode<T,2>* node, int32_t d);
+			template<typename T> bool visit(QuadNode<T,InstanceTree::MIN_TREE_SIZE>* node, int32_t d);
 
 	};
 
@@ -54,9 +55,9 @@ namespace FIFE {
 			 * @param renderbackend to use
 			 */
 			QuadTreeRenderer(RenderBackend* renderbackend, int32_t position);
-			
+
 			QuadTreeRenderer(const QuadTreeRenderer& old);
-			
+
 			RendererBase* clone();
 
 			/** Destructor.

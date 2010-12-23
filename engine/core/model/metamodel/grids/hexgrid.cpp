@@ -53,7 +53,14 @@ namespace FIFE {
 	}
 
 	CellGrid* HexGrid::clone() {
-		return new HexGrid(this);
+		HexGrid* nGrid = new HexGrid(m_allow_diagonals);
+		nGrid->setRotation(m_rotation);
+		nGrid->setXScale(m_xscale);
+		nGrid->setYScale(m_yscale);
+		nGrid->setXShift(m_xshift);
+		nGrid->setYShift(m_yshift);
+
+		return nGrid;
 	}
 
 	HexGrid::~HexGrid() {

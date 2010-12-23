@@ -68,7 +68,7 @@ namespace FIFE {
 
 	RenderVisitor::~RenderVisitor() {}
 
-	template<typename T> bool RenderVisitor::visit(QuadNode<T,2>* node, int32_t d) {
+	template<typename T> bool RenderVisitor::visit(QuadNode<T,InstanceTree::MIN_TREE_SIZE>* node, int32_t d) {
 
 		if (d==0)
 			visited = 0;
