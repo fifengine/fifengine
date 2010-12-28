@@ -241,7 +241,7 @@ class XMLMapLoader(fife.ResourceLoader):
 			else:
 				transparency = int(transparency)
 
-			cellgrid = self.model.getCellGrid(grid_type)
+			cellgrid = self.model.createCellGrid(grid_type)
 			if not cellgrid: self._err('<layer> declared with invalid cellgrid type. (%s)' % grid_type)
 
 			cellgrid.setRotation(float(rotation))
@@ -256,6 +256,9 @@ class XMLMapLoader(fife.ResourceLoader):
 			except fife.Exception, e:
 				print e.getMessage()
 				print 'The layer ' + str(_id) + ' already exists! Ignoring this layer.'
+				
+				#layer was not created so we must delete the created cellgrid manually
+				del cellgrid
 				continue
 
 			strgy = fife.CELL_EDGES_ONLY

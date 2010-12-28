@@ -28,6 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/structures/purge.h"
+#include "util/log/logger.h"
 #include "model/metamodel/abstractpather.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/grids/cellgrid.h"
@@ -43,6 +44,7 @@
 #include "model.h"
 
 namespace FIFE {
+	static Logger _log(LM_MODEL);
 
 	Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers,
 					ImagePool* imagepool, AnimationPool* animpool):
@@ -61,7 +63,6 @@ namespace FIFE {
 			purge_map(nspace->second);
 		purge(m_pathers);
 		purge(m_created_grids);
-		purge(m_adopted_grids);
 	}
 
 	Map* Model::createMap(const std::string& identifier) {
@@ -88,6 +89,7 @@ namespace FIFE {
 				return *it;
 			}
 		}
+		FL_WARN(_log, "No pather of requested type \"" + pathername + "\" found.");
 		return NULL;
 	}
 
@@ -95,15 +97,15 @@ namespace FIFE {
 		m_adopted_grids.push_back(grid);
 	}
 
-	CellGrid* Model::getCellGrid(const std::string& gridtype) {
+	CellGrid* Model::createCellGrid(const std::string& gridtype) {
 		std::vector<CellGrid*>::const_iterator it = m_adopted_grids.begin();
 		for(; it != m_adopted_grids.end(); ++it) {
 			if ((*it)->getType() == gridtype) {
 				CellGrid* newcg = (*it)->clone();
-				m_created_grids.push_back(newcg);
 				return newcg;
 			}
 		}
+		FL_WARN(_log, "No cellgrid of requested type \"" + gridtype + "\" found.");
 		return NULL;
 	}
 
