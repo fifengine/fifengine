@@ -50,18 +50,20 @@ namespace FIFE {
 		InstanceTreeNode * node = m_tree.find_container(coords.x,coords.y,0,0);
 		InstanceList& list = node->data();
 		list.push_back(instance);
-		if( m_reverse.find(instance) != m_reverse.end() )
+		if( m_reverse.find(instance) != m_reverse.end() ) {
 			FL_WARN(_log, "InstanceTree::addInstance() - Duplicate Instance.  Ignoring.");
 			return;
+		}
 		m_reverse[instance] = node;
 	}
 
 	void InstanceTree::removeInstance(Instance* instance) {
 		ModelCoordinate coords = instance->getLocationRef().getLayerCoordinates();
 		InstanceTreeNode * node = m_reverse[instance];
-		if( !node )
+		if( !node ) {
 			FL_WARN(_log, "InstanceTree::removeInstance() - Instance not part of tree.");
 			return;
+		}
 		m_reverse.erase(instance);
 		InstanceList& list = node->data();
 		for(InstanceList::iterator i = list.begin(); i != list.end(); ++i) {
