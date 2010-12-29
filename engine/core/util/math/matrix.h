@@ -113,7 +113,7 @@ namespace FIFE {
 			inline Matrix& loadRotate(T angle, T x, T y, T z) {
 				register T magSqr = x*x + y*y + z*z;
 				if (magSqr != 1.0) {
-					register T mag = sqrt(magSqr);
+					register T mag = Math<T>::Sqrt(magSqr);
 					x/=mag;
 					y/=mag;
 					z/=mag;

@@ -40,7 +40,7 @@ namespace FIFE {
 	static const double HEX_TO_EDGE = HEX_WIDTH / 2;
 	static const double HEX_TO_CORNER = 0.5 / Mathd::Cos(Mathd::pi() / 6);
 	static const double HEX_EDGE_HALF = HEX_TO_CORNER * Mathd::Sin(Mathd::pi() / 6);
-	static const double VERTICAL_MULTIP = sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
+	static const double VERTICAL_MULTIP = Mathd::Sqrt(HEX_WIDTH*HEX_WIDTH - HEX_TO_EDGE*HEX_TO_EDGE);
 	static const double VERTICAL_MULTIP_INV = 1 / VERTICAL_MULTIP;
 
 	HexGrid::HexGrid(bool allow_diagonals): CellGrid(allow_diagonals) {
@@ -137,7 +137,7 @@ namespace FIFE {
 		} else {
 			double a = VERTICAL_MULTIP * m_yscale;
 			double b = HEX_TO_EDGE * m_xscale;
-			return sqrt((a * a) + (b * b));
+			return Mathf::Sqrt((a * a) + (b * b));
 		}
 	}
 

@@ -145,7 +145,7 @@ namespace FIFE {
 		const ExactModelCoordinate& pt  = m_exact_layer_coords;
 		double dx = pt.x - static_cast<double>(static_cast<int32_t>(pt.x));
 		double dy = pt.y - static_cast<double>(static_cast<int32_t>(pt.y));
-		return sqrt(dx*dx + dy*dy);
+		return Mathd::Sqrt(dx*dx + dy*dy);
 	}
 	
 	std::ostream& operator<<(std::ostream& os, const Location& l) {
@@ -161,7 +161,7 @@ namespace FIFE {
 		double ry = current.y - target.y;
 		double rz = current.z - target.z;
 		
-		return sqrt(rx*rx + ry*ry + rz*rz);
+		return Mathd::Sqrt(rx*rx + ry*ry + rz*rz);
 	}
 
 	double Location::getLayerDistanceTo(const Location& location) const{
@@ -172,6 +172,6 @@ namespace FIFE {
 		double ry = current.y - target.y;
 		double rz = current.z - target.z;
 		
-		return sqrt(rx*rx + ry*ry + rz*rz);
+		return Mathd::Sqrt(rx*rx + ry*ry + rz*rz);
 	}	
 }
