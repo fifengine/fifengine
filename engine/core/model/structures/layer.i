@@ -79,6 +79,7 @@ namespace FIFE {
 			void setInstancesVisible(bool vis);
 			void setLayerTransparency(uint8_t transparency);
 			uint8_t getLayerTransparency();
+			void getMinMaxCoordinates(ModelCoordinate& min, ModelCoordinate& max, const Layer* layer = 0) const;
 			bool cellContainsBlockingInstance(const ModelCoordinate& cellCoordinate);
 			void toggleInstancesVisible();
 			bool areInstancesVisible() const;

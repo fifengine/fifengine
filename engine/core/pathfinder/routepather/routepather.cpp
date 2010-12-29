@@ -174,7 +174,7 @@ namespace FIFE {
 		CellGrid* grid = instanceLoc.getLayer()->getCellGrid();
 		double dx = (targetPos.x - instancePos.x) * grid->getXScale();
 		double dy = (targetPos.y - instancePos.y) * grid->getYScale();
-		double distance = sqrt(dx * dx + dy * dy);
+		double distance = Mathd::Sqrt(dx * dx + dy * dy);
 		bool pop = false;
 		if(speed > distance) {
 			speed = distance;

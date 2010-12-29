@@ -32,7 +32,7 @@ class LayerDialog(object):
 		FIXME:
 			- gridtypes can only be square for now
 			- pathing strategy 
-    """
+	"""
 	def __init__(self, engine, map, callback=None, onCancel=None, layer=None):
 		self.engine = engine
 		self.model = engine.getModel()
@@ -135,10 +135,14 @@ class LayerDialog(object):
 		# Set up layer
 		layer = self.layer
 		cellgrid = None
-		
-		cellgrid = self.model.getCellGrid(grid_type)
+
+		if not layer:
+			cellgrid = self.model.createCellGrid(grid_type)
+		else:
+			cellgrid = layer.getCellGrid()
+
 		if not cellgrid:
-			print "Invalid grid type"
+			print "Invalid grid"
 			return
 
 		cellgrid.setRotation(rotation)
@@ -153,9 +157,10 @@ class LayerDialog(object):
 				
 			except fife.NameClash:
 				print 'The layer ' + str(layerId) + ' already exists!'
+				del cellgrid
 				return
 		else:
-			layer.setCellGrid(cellgrid)
+			layer.adoptCellGrid(cellgrid)
 			try:
 				layer.setId(str(layerId))
 			except fife.NameClash:

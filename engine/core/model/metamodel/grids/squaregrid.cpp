@@ -92,7 +92,7 @@ namespace FIFE {
 			return 0;
 		}
 		if (isAccessibleDiagonal(curpos, target)) {
-			return sqrt(m_xscale*m_xscale + m_yscale*m_yscale);
+			return Mathf::Sqrt(m_xscale*m_xscale + m_yscale*m_yscale);
 		}
 		if (curpos.x == target.x) {
 			return m_xscale;
