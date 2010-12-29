@@ -32,6 +32,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
+#include "util/log/logger.h"
 
 namespace FIFE {
 
@@ -57,12 +58,15 @@ namespace FIFE {
 
 		virtual const std::string& getTypeStr() const { static const std::string s = "Exception"; return s; }
 		virtual const std::string& getDescription() const { static const std::string s = "Generic FIFE exception"; return s; }
+
+	private:
+		std::string m_what;
 	};
 
 	#define FIFE_EXCEPTION_DECL(_name, _description) \
 	class _name : public Exception { \
 	public: \
-		_name(const std::string& msg) : Exception(msg) {} \
+		_name(const std::string& msg) : Exception(msg) { Logger _log(LM_EXCEPTION); FL_PANIC(_log, what()); } \
 		const std::string& getTypeStr() const { static const std::string s = #_name; return s; } \
 		const std::string& getDescription() const { static const std::string s = _description; return s; } \
 	}
