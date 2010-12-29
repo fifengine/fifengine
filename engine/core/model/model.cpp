@@ -231,7 +231,9 @@ namespace FIFE {
 			if( it !=  nspace->second.end() )
 				return it->second;
 		}
-		return 0;
+		FL_WARN(_log, "No object of requested named \"" + id + "\" in namespace \"" + name_space
+		              + "\" found.");
+		return NULL;
 	}
 
 	std::list<Object*> Model::getObjects(const std::string& name_space) const {
@@ -253,7 +255,9 @@ namespace FIFE {
 				return &(*nspace);
 			}
 		}
-		return 0;
+
+		FL_WARN(_log, "Unable to find namespace \"" + name_space + "\".");
+		return NULL;
 	}
 
 	Model::namespace_t* Model::selectNamespace(const std::string& name_space) {
@@ -267,7 +271,8 @@ namespace FIFE {
 			}
 		}
 		m_last_namespace = 0;
-		return 0;
+		FL_WARN(_log, "Unable to find namespace \"" + name_space + "\".");
+		return NULL;
 	}
 
 	void Model::update() {
