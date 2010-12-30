@@ -26,7 +26,7 @@
 // Standard C++ library includes
 
 // 3rd party library includes
-#include <guichan/rectangle.hpp>
+#include <guichan/rectangle.h>
 #include <guichan/graphics.hpp>
 
 // FIFE includes

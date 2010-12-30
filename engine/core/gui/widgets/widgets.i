@@ -28,8 +28,8 @@
 #include "gui/widgets/twobutton.h"
 #include "gui/widgets/togglebutton.h"
 #include "gui/widgets/clicklabel.h"
-#include "gui/widgets/icon2.hpp"
-#include "gui/widgets/percentagebar.hpp"
+#include "gui/widgets/icon2.h"
+#include "gui/widgets/percentagebar.h"
 %}
 
 namespace gcn {
