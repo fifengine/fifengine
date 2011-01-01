@@ -72,10 +72,10 @@ namespace FIFE {
 		std::vector<uint8_t> getOverlayColor();
 		void resetOverlayColor();
 		void setOverlayImage(int32_t id, bool fill = false);
-		uint32_t getOverlayImage();
+		int32_t getOverlayImage();
 		void resetOverlayImage();
 		void setOverlayAnimation(int32_t id, bool fill = false);
-		uint32_t getOverlayAnimation();
+		int32_t getOverlayAnimation();
 		void resetOverlayAnimation();
 	
 		void refresh();

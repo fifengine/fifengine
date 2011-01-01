@@ -544,8 +544,9 @@ namespace FIFE {
 					if ((*info_it)->getStencil() != -1) {
 						uint8_t sref = (*info_it)->getStencil();
 						float aref = (*info_it)->getAlpha();
-						if(info_it != group_it->second.begin())
+						if(info_it != group_it->second.begin()) {
 							sref += 1;
+						}
 						m_renderbackend->setStencilTest(sref, 3, 4);
 						m_renderbackend->setAlphaTest(aref);
 					} else if(lm == 1) {
@@ -555,14 +556,12 @@ namespace FIFE {
 						m_renderbackend->setStencilTest(1, 2, 4);
 						m_renderbackend->setAlphaTest(0);
 					}
-					(*info_it)->render(cam, layer, instances, m_renderbackend, m_imagepool, m_animationpool);
-					m_renderbackend->disableAlphaTest();
-					m_renderbackend->disableStencilTest();
-				} else {
-					(*info_it)->render(cam, layer, instances, m_renderbackend, m_imagepool, m_animationpool);
 				}
+				(*info_it)->render(cam, layer, instances, m_renderbackend, m_imagepool, m_animationpool);
 			}
 		}
+		m_renderbackend->disableAlphaTest();
+		m_renderbackend->disableStencilTest();
 		m_renderbackend->changeBlending(4, 5);
 		m_renderbackend->enableLighting();
 	}
