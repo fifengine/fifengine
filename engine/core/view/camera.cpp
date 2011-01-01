@@ -662,6 +662,15 @@ namespace FIFE {
 		m_overlay_color.unused = alpha;
 	}
 
+	std::vector<uint8_t> Camera::getOverlayColor() {
+		std::vector<uint8_t> colors;
+		colors.push_back(m_overlay_color.r);
+		colors.push_back(m_overlay_color.g);
+		colors.push_back(m_overlay_color.b);
+		colors.push_back(m_overlay_color.unused);
+		return colors;
+	}
+
 	void Camera::resetOverlayColor() {
 		m_col_overlay = false;
 	}
@@ -672,6 +681,14 @@ namespace FIFE {
 		m_img_fill = fill;
 	}
 
+	uint32_t Camera::getOverlayImage() {
+		uint32_t id = -1;
+		if (m_img_overlay) {
+			id = m_img_id;
+		}
+		return id;
+	}
+			
 	void Camera::resetOverlayImage() {
 		m_img_overlay = false;
 	}
@@ -681,6 +698,14 @@ namespace FIFE {
 		m_ani_id = id;
 		m_ani_fill = fill;
 		m_start_time = 0;
+	}
+
+	uint32_t Camera::getOverlayAnimation() {
+		uint32_t id = -1;
+		if (m_ani_overlay) {
+			id = m_ani_id;
+		}
+		return id;
 	}
 
 	void Camera::resetOverlayAnimation() {

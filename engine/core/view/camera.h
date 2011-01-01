@@ -295,6 +295,9 @@ namespace FIFE {
 		/** Sets a color as overlay
 		 */
 		void setOverlayColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+		/** Returns a vector that contain the overlay color
+		 */
+		std::vector<uint8_t> getOverlayColor();
 		/** Resets the color overlay
 		 */
 		void resetOverlayColor();
@@ -302,6 +305,9 @@ namespace FIFE {
 		 *  if fill is true the image gets the viewport size.
 		 */
 		void setOverlayImage(int32_t id, bool fill = false);
+		/** Returns the pool id of the overlay image
+		 */
+		uint32_t getOverlayImage();
 		/** Resets the image overlay
 		 */
 		void resetOverlayImage();
@@ -309,6 +315,9 @@ namespace FIFE {
 		 *  if fill is true the animation gets the viewport size.
 		 */
 		void setOverlayAnimation(int32_t id, bool fill = false);
+		/** Returns the pool id of the overlay animation
+		 */
+		uint32_t getOverlayAnimation();
 		/** Resets the animation overlay
 		 */
 		void resetOverlayAnimation();
