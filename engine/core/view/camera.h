@@ -307,7 +307,7 @@ namespace FIFE {
 		void setOverlayImage(int32_t id, bool fill = false);
 		/** Returns the pool id of the overlay image
 		 */
-		uint32_t getOverlayImage();
+		int32_t getOverlayImage();
 		/** Resets the image overlay
 		 */
 		void resetOverlayImage();
@@ -317,7 +317,7 @@ namespace FIFE {
 		void setOverlayAnimation(int32_t id, bool fill = false);
 		/** Returns the pool id of the overlay animation
 		 */
-		uint32_t getOverlayAnimation();
+		int32_t getOverlayAnimation();
 		/** Resets the animation overlay
 		 */
 		void resetOverlayAnimation();

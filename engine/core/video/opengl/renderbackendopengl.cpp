@@ -154,7 +154,7 @@ namespace FIFE {
 		glPointSize(1.0);
 		glLineWidth(1.0);
 		delete m_screen;
-		delete m_screen;
+
 		m_screen = new GLImage(screen);
 		return m_screen;
 	}
