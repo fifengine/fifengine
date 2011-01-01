@@ -693,27 +693,29 @@ namespace FIFE {
 		}
 		uint16_t width = m_viewport.w;
 		uint16_t height = m_viewport.h;
-		Point p = Point(0,0);
+		Point pm = Point(m_viewport.x + width/2, m_viewport.y + height/2);
 		Rect r;
 
 		// color overlay
 		if (m_col_overlay) {
+			Point p = Point(m_viewport.x, m_viewport.y);
 			m_renderbackend->fillRectangle(p, width, height, m_overlay_color.r, m_overlay_color.g, m_overlay_color.b, m_overlay_color.unused);
 		}
 		// image overlay
 		if (m_img_overlay) {
 			Image* img = &m_ipool->getImage(m_img_id);
 			if (img) {
-				p = Point(m_viewport.w/2, m_viewport.h/2);
-				if (!m_img_fill) {
-					width = img->getWidth();
-					height = img->getHeight();
+				if (m_img_fill) {
+					r.w = width;
+					r.h = height;
+				} else {
+					r.w = img->getWidth();
+					r.h = img->getHeight();
 				}
-				r.x = p.x-width/2;
-				r.y = p.y-height/2;
-				r.w = width;
-				r.h = height;
+				r.x = pm.x-r.w/2;
+				r.y = pm.y-r.h/2;
 				img->render(r);
+
 			}
 		}
 		// animation overlay
@@ -725,18 +727,15 @@ namespace FIFE {
 			int32_t animtime = scaleTime(1.0, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 			Image* img = animation.getFrameByTimestamp(animtime);
 			if (img) {
-				p = Point(m_viewport.w/2, m_viewport.h/2);
 				if (m_ani_fill) {
-					width = m_viewport.w;
-					height = m_viewport.h;
+					r.w = width;
+					r.h = height;
 				} else {
-					width = img->getWidth();
-					height = img->getHeight();
+					r.w = img->getWidth();
+					r.h = img->getHeight();
 				}
-				r.x = p.x-width/2;
-				r.y = p.y-height/2;
-				r.w = width;
-				r.h = height;
+				r.x = pm.x-r.w/2;
+				r.y = pm.y-r.h/2;
 				img->render(r);
 			}
 		}
