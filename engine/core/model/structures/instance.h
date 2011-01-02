@@ -251,7 +251,7 @@ namespace FIFE {
 		void say(const std::string& text, uint32_t duration=0);
 
 		/** Performs given named action to the instance. While performing the action
-		 *  follows given isntance with given speed
+		 *  follows given instance with given speed
 		 *  @param action_name name of the action
 		 *  @param leader followed instance
 		 *  @param speed speed used for movement. Units = distance 1 in layer coordinates per second
