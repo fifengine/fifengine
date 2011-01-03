@@ -456,7 +456,7 @@ namespace FIFE {
 		return true;
 	}
 
-	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances) {
+	void Camera::getMatchingInstances(ScreenPoint screen_coords, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
@@ -466,7 +466,7 @@ namespace FIFE {
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.contains(Point(screen_coords.x, screen_coords.y)))) {
 				assert(vc.image);
-				Uint8 r, g, b, a;
+				uint8_t r, g, b, a;
 				int32_t x = screen_coords.x - vc.dimensions.x;
 				int32_t y = screen_coords.y - vc.dimensions.y;
 				if (m_zoom != 1.0) {
@@ -481,14 +481,18 @@ namespace FIFE {
 				}
 				vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 				// instance is hit with mouse if not totally transparent
-				if (a != 0) {
+				if (alpha != 0) {
+					if (a >= alpha) {
+						instances.push_back(i);
+					}
+				} else if (a != 0) {
 					instances.push_back(i);
 				}
 			}
 		}
 	}
 
-	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances) {
+	void Camera::getMatchingInstances(Rect screen_rect, Layer& layer, std::list<Instance*>& instances, uint8_t alpha) {
 		instances.clear();
 		const RenderList& layer_instances = m_layer_to_instances[&layer];
 		RenderList::const_iterator instance_it = layer_instances.end();
@@ -498,7 +502,7 @@ namespace FIFE {
 			const RenderItem& vc = **instance_it;
 			if ((vc.dimensions.intersects(screen_rect))) {
 				assert(vc.image);
-				Uint8 r, g, b, a;
+				uint8_t r, g, b, a;
 				for(int32_t xx = screen_rect.x; xx < screen_rect.x + screen_rect.w; xx++) {
 					for(int32_t yy = screen_rect.y; yy < screen_rect.y + screen_rect.h; yy++) {
 						if ((vc.dimensions.contains(Point(xx, yy)))) {
@@ -516,7 +520,12 @@ namespace FIFE {
 							}
 							vc.image->getPixelRGBA(x, y, &r, &g, &b, &a);
 							// instance is hit with mouse if not totally transparent
-							if (a != 0) {
+							if (alpha != 0) {
+								if (a >= alpha) {
+									instances.push_back(i);
+									goto found_non_transparent_pixel;
+								}
+							} else if (a != 0) {
 								instances.push_back(i);
 								goto found_non_transparent_pixel;
 							}
@@ -784,7 +793,6 @@ namespace FIFE {
 		if (m_iswarped) {
 			transform = WarpedTransform;
 		}
-		
 		const std::list<Layer*>& layers = map->getLayers();
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
@@ -794,12 +802,10 @@ namespace FIFE {
 				cache = m_cache[*layer_it];
 				FL_ERR(_log, LMsg("Layer Cache miss! (This shouldn't happen!)") << (*layer_it)->getId());
 			}
-
 			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			if (cache->needUpdate() || m_iswarped || !m_updated) {
+			if (m_iswarped || !m_updated || cache->needUpdate()) {
 				cache->update(transform, instances_to_render);
 			}
-			cache->updateForced();
 		}
 		resetUpdates();
 	}
@@ -828,7 +834,6 @@ namespace FIFE {
 		std::list<Layer*>::const_iterator layer_it = layers.begin();
 		for (;layer_it != layers.end(); ++layer_it) {
 			RenderList& instances_to_render = m_layer_to_instances[*layer_it];
-			
 			std::list<RendererBase*>::iterator r_it = m_pipeline.begin();
 			for (; r_it != m_pipeline.end(); ++r_it) {
 				if ((*r_it)->isActivedLayer(*layer_it)) {
@@ -837,12 +842,10 @@ namespace FIFE {
 			}
 		}
 
-		renderOverlay();
 		if (m_lighting) {
 			m_renderbackend->resetLighting();
 		}
-
+		renderOverlay();
 		m_renderbackend->popClipArea();
 	}
-
 }

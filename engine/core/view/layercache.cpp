@@ -60,7 +60,8 @@ namespace FIFE {
 		virtual ~CacheLayerChangeListener() {};
 
 		virtual void onLayerChanged(Layer* layer, std::vector<Instance*>& instances) {
-			for(std::vector<Instance*>::iterator i = instances.begin();	i != instances.end(); ++i) {
+			for(std::vector<Instance*>::iterator i = instances.begin();
+				i != instances.end(); ++i) {
 				m_cache->updateInstance(*i);
 			}
 		}
@@ -82,8 +83,7 @@ namespace FIFE {
 		m_animation_pool = animation_pool;
 		m_layer = 0;
 		m_tree = 0;
-		m_needupdate = true;
-		m_forceupdate = false;
+		m_needupdate = false;
 	}
 
 	LayerCache::~LayerCache() {
@@ -109,7 +109,6 @@ namespace FIFE {
 			addInstance(*i);
 		}
 		m_needupdate = true;
-		m_forceupdate = false;
 	}
 
 	void LayerCache::addInstance(Instance* instance) {
@@ -159,16 +158,11 @@ namespace FIFE {
 		m_needupdate = true;
 	}
 
-	void LayerCache::updateEntry(LayerCache::Entry& item, bool full) {
-		if(item.instance_index ==  -1) {
+	void LayerCache::updateEntry(LayerCache::Entry& item) {
+		if(item.instance_index == -1) {
 			return;
 		}
-		if (!item.force_update && !full) {
-			return;
-		}
-		if(item.node && full) {
-			item.node->data().erase(item.entry_index);
-		}
+		
 		RenderItem& render_item = m_instances[item.instance_index];
 		Instance* instance = render_item.instance;
 
@@ -181,8 +175,6 @@ namespace FIFE {
 		Action* action = instance->getCurrentAction();
 		int32_t w = 0;
 		int32_t h = 0;
-		int32_t xshift = 0;
-		int32_t yshift = 0;
 
 		if(!action) {
 			// Try static images then default action.
@@ -208,36 +200,37 @@ namespace FIFE {
 				facing_angle += 360;
 			}
 			instance->setRotation(facing_angle);
-			m_forceupdate = true;
+			m_needupdate = true;
 		}
 
 		if (image) {
 			w = image->getWidth();
 			h = image->getHeight();
-			xshift = image->getXShift();
-			yshift = image->getYShift();
-			render_item.image = image;
+			
+			screen_position.x -= w / 2;
+			screen_position.x += image->getXShift();
+			screen_position.y -= h / 2;
+			screen_position.y += image->getYShift();
 		}
 
-		if (full) {
-			screen_position.x -= w / 2;
-			screen_position.x += xshift;
-			screen_position.y -= h / 2;
-			screen_position.y += yshift;
+		render_item.image = image;
+		if (render_item.screenpoint == screen_position) {
+			return;
+		}
+		render_item.screenpoint = screen_position;
 
-			render_item.screenpoint = screen_position;
+		render_item.bbox.x = screen_position.x;
+		render_item.bbox.y = screen_position.y;
+		render_item.bbox.w = w;
+		render_item.bbox.h = h;
 
-			render_item.bbox.x = screen_position.x;
-			render_item.bbox.y = screen_position.y;
-			render_item.bbox.w = w;
-			render_item.bbox.h = h;
+		render_item.dimensions = render_item.bbox;
 
-			render_item.dimensions.x = screen_position.x;
-			render_item.dimensions.y = screen_position.y;
-			render_item.dimensions.w = w;
-			render_item.dimensions.h = h;
-
-			CacheTree::Node* node = m_tree->find_container(render_item.bbox);
+		CacheTree::Node* node = m_tree->find_container(render_item.bbox);
+		if (node) {
+			if(item.node) {
+				item.node->data().erase(item.entry_index);
+			}
 			item.node = node;
 			node->data().insert(item.entry_index);
 		}
@@ -254,8 +247,9 @@ namespace FIFE {
 	};
 
 	bool CacheTreeCollector::visit(LayerCache::CacheTree::Node* node, int32_t d) {
-		if(!m_viewport.intersects(Rect(node->x(), node->y(),node->size(),node->size())))
+		if(!m_viewport.intersects(Rect(node->x(), node->y(),node->size(),node->size()))) {
 			return false;
+		}
 		std::set<int32_t>& list = node->data();
 		for(std::set<int32_t>::iterator i = list.begin(); i!=list.end();++i) {
 			m_indices.push_back(*i);
@@ -275,8 +269,9 @@ namespace FIFE {
 	}
 
 	void LayerCache::fullUpdate() {
-		for(unsigned i=0; i!=m_entries.size(); ++i)
+		for(unsigned i=0; i!=m_entries.size(); ++i) {
 			updateEntry(m_entries[i]);
+		}
 	}
 
 	class InstanceDistanceSort {
@@ -290,25 +285,6 @@ namespace FIFE {
 			return lhs->screenpoint.z < rhs->screenpoint.z;
 		}
 	};
-
-	void LayerCache::updateForced() {
-		// NOTE
-		// An update is forced if the item has an animation/action.
-		// This update only happens if it is _already_ included in the viewport
-		// Nevertheless: Moving instances - which might move into the viewport will be updated
-		// By the layer change listener.
-
-		m_forceupdate = false;
-		if (m_instance_map.empty()) {
-			return;
-		}
-
-		std::map<Instance*,int32_t>::iterator i_it = m_instance_map.begin();
-		for (;i_it != m_instance_map.end(); ++i_it) {
-			Entry& item = m_entries[i_it->second];
-			updateEntry(item, false);
-		}
-	}
 
 	void LayerCache::update(Camera::Transform transform, RenderList& renderlist) {
 		const double OVERDRAW = 2.5;
@@ -339,6 +315,14 @@ namespace FIFE {
 		collect(viewport, index_list);
 		for(unsigned i=0; i!=index_list.size();++i) {
 			Entry& entry = m_entries[index_list[i]];
+			// NOTE
+			// An update is forced if the item has an animation/action.
+			// This update only happens if it is _already_ included in the viewport
+			// Nevertheless: Moving instances - which might move into the viewport will be updated
+			// By the layer change listener.
+			if(entry.force_update || !isWarped) {
+				updateEntry(entry);
+			}
 
 			RenderItem& item = m_instances[entry.instance_index];
 			InstanceVisual* visual = item.instance->getVisual<InstanceVisual>();
@@ -351,7 +335,7 @@ namespace FIFE {
 
 			if(layer_trans != 0) {
 				if(instance_trans != 0) {
-					int16_t calc_trans = layer_trans - instance_trans;
+					uint8_t calc_trans = layer_trans - instance_trans;
 					if(calc_trans >= 0) {
 						instance_trans = calc_trans;
 					} else {
@@ -384,8 +368,9 @@ namespace FIFE {
 				item.dimensions.h = unsigned(double(item.bbox.h) * zoom + OVERDRAW);
 			}
 
-			if(item.dimensions.intersects(screen_viewport))
+			if(item.dimensions.intersects(screen_viewport)) {
 				renderlist.push_back(&item);
+			}
 		}
 
 		InstanceDistanceSort ids;
