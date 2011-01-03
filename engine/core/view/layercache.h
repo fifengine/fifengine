@@ -54,16 +54,15 @@ namespace FIFE {
 		~LayerCache();
 
 		void setLayer(Layer* layer);
+		
 		bool needUpdate() { return m_needupdate; }
 		void update(Camera::Transform transform, RenderList& renderlist);
-
-		bool needForced() { return m_forceupdate; }
-		void updateForced();
 
 		void addInstance(Instance* instance);
 		void removeInstance(Instance* instance);
 
 		void updateInstance(Instance* instance);
+
 
 	private:
 		void collect(const Rect& viewport, std::vector<int32_t>& indices);
@@ -89,15 +88,15 @@ namespace FIFE {
 		Layer* m_layer;
 		CacheLayerChangeListener* m_layer_observer;
 
-		void updateEntry(Entry& item, bool full = true);
+		void updateEntry(Entry& item);
 
 		std::map<Instance*,int32_t> m_instance_map;
 		std::vector<Entry> m_entries;
 
 		CacheTree* m_tree;
 		std::vector<RenderItem> m_instances;
+
 		bool m_needupdate;
-		bool m_forceupdate;
 	};
 
 }
