@@ -114,6 +114,7 @@ class ApplicationBase(object):
 		engineSetting.setFullScreen(self._setting.get("FIFE", "FullScreen", False))
 		engineSetting.setVideoDriver(self._setting.get("FIFE", "VideoDriver", ""))
 		engineSetting.setLightingModel(self._setting.get("FIFE", "Lighting", 0))
+		engineSetting.setBackBufferClearing(self._setting.get("FIFE", "Clearing", True))
 
 		try:
 			engineSetting.setColorKeyEnabled(self._setting.get("FIFE", "ColorKeyEnabled", False))
@@ -129,11 +130,6 @@ class ApplicationBase(object):
 		try:
 			engineSetting.setWindowTitle(self._setting.get("FIFE", "WindowTitle", "No window title set"))
 			engineSetting.setWindowIcon(self._setting.get("FIFE", "WindowIcon", ""))
-		except:
-			pass
-
-		try:
-			engineSetting.setImageChunkingSize(self._setting.get("FIFE", "ImageChunkSize", 256))
 		except:
 			pass
 
