@@ -358,10 +358,13 @@ namespace FIFE {
 		m_timemanager->update();
 
 		if (m_model->getMapCount() == 0) {
-			m_renderbackend->clearBackBuffer();
+			if (m_settings.getBackBufferClearing()) {
+				m_renderbackend->clearBackBuffer();
+			}
+		} else {
+			m_model->update();
 		}
 
-		m_model->update();
 #ifdef HAVE_OPENGL
 		if (m_settings.getLightingModel() == 1) {
 			m_renderbackend->disableLighting();

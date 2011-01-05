@@ -81,6 +81,8 @@ namespace FIFE {
 		const std::string& getVideoDriver() const;
 		void setLightingModel(uint32_t lighting);
 		uint32_t getLightingModel() const;
+		void setBackBufferClearing(bool clear);
+		bool getBackBufferClearing() const;
 		
 	private:
 		EngineSettings();

@@ -167,6 +167,7 @@ namespace FIFE {
 		uint32_t getScreenHeight() const { return getHeight(); }
 		const Rect& getArea();
 		void getPixelRGBA(int32_t x, int32_t y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a);
+		void changeBlending(int32_t src, int32_t dst);
  		bool putPixel(int32_t x, int32_t y, int32_t r, int32_t g, int32_t b, int32_t a = 255);
 		void drawLine(const Point& p1, const Point& p2, int32_t r, int32_t g, int32_t b, int32_t a = 255);
 		void drawTriangle(const Point& p1, const Point& p2, const Point& p3, int32_t r, int32_t g, int32_t b, int32_t a = 255);

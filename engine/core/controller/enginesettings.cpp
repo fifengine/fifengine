@@ -54,7 +54,8 @@ namespace FIFE {
 		m_defaultfontsize(8),
 		m_defaultfontglyphs("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&amp;`'*#=[]\\\""),
 		m_iscolorkeyenabled(false),
-		m_lighting(0) {
+		m_lighting(0),
+		m_buffer_clearing(true) {
 			m_colorkey.r = 255;
 			m_colorkey.g = 0;
 			m_colorkey.b = 255;
@@ -207,5 +208,8 @@ namespace FIFE {
 		m_lighting = 0;
 	}
 
+	void EngineSettings::setBackBufferClearing(bool clear) {
+		m_buffer_clearing = clear;
+	}
 }
 
