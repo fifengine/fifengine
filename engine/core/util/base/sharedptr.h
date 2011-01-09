@@ -1,5 +1,5 @@
 /**********************************************************************
-*	Filename: SharedPtr.h
+*	Filename: sharedptr.h
 *	
 *	Copyright (C) 2010, FIFE team
 *	http://www.fifengine.net
@@ -19,8 +19,8 @@
 *	You should have received a copy of the GNU Lesser General Public
 *	License along with FIFE. If not, see http://www.gnu.org/licenses/.
 ***********************************************************************/
-#ifndef SHARED_PTR_H_
-#define SHARED_PTR_H_
+#ifndef FIFE_SHARED_PTR_H_
+#define FIFE_SHARED_PTR_H_
 
 // Standard C++ library includes
 #include <cassert>
