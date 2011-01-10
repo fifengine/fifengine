@@ -195,6 +195,32 @@ TEST(case7) {
 	CHECK(shptr != shptr2);
 }
 
+/**
+* 1. Create a shared pointer to new data
+* 2. Create a copy of the shared pointer
+* 3. Reset the first shared pointer with new data
+* 4. Check the data values of the original shared pointer
+* 5. Check the data values of the copied shared pointer
+*/
+TEST(case8) {
+	SharedPtr<Data> shptr(new Data(2,4));
+	SharedPtr<Data> copy(shptr);
+
+	CHECK(copy.useCount() == 2);
+	shptr.reset(new Data(6,8));
+	CHECK(copy.useCount() == 1);
+
+	//shptr holding values we expect?
+	CHECK(shptr->x == 6);
+	CHECK(shptr->y == 8);
+
+	CHECK(copy->x == 2);
+	CHECK(copy->y == 4);
+
+	shptr.reset();
+	CHECK(!shptr);
+}
+
 int32_t main() {
 	return UnitTest::RunAllTests();
 }

@@ -158,10 +158,12 @@ namespace FIFE {
 
         /** reset this pointer to a null shared pointer
         * this can be used to lower the reference count
-        * of the shared resource
+        * of the shared resource or set the underlying pointer
+        * to different pointer.
         */
-        inline void reset() {
-            SharedPtr<T>().swap(*this);
+        inline void reset(T* ptr = 0) {
+			assert(ptr == 0 || ptr != m_ptr);
+            SharedPtr<T>(ptr).swap(*this);
         }
 
         /** returns the current reference count
