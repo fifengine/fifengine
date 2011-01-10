@@ -33,16 +33,32 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/sharedptr.h"
+#include "util/base/fife_stdint.h"
 
 using namespace FIFE;
 
 class Data {
 public:
-	int x,y;
+	int32_t x,y;
 
 	Data() : x(0), y(0) {}
-	Data(int _x, int _y) : x(_x), y(_y) {}
-	~Data() {}
+	Data(int32_t _x, int32_t _y) : x(_x), y(_y) {}
+
+	virtual ~Data() {}
+
+	virtual int32_t total() { return x+y; }
+};
+
+class SubData : public Data {
+public:
+	int32_t z;
+
+	SubData() : Data(0,0), z(0) {}
+	SubData(int32_t _x, int32_t _y, int32_t _z) : Data(_x, _y), z(_z) {}
+
+	virtual ~SubData() {}
+
+	virtual int32_t total() { return x+y+z; }
 };
 
 /**
@@ -127,6 +143,58 @@ TEST(case3) {
 	CHECK(!copy);
 }
 
-int main() {
+/**
+* 1. Create a shared pointer to new data
+* 2. Check to make sure unique returns true
+* 3. Create another shared pointer to same shared data using "=" or copy constructor
+* 4. Make sure unique on both shared pointers return false
+*/
+TEST(case4) {
+	SharedPtr<Data> shptr(new Data());
+	CHECK(shptr.unique());
+
+	SharedPtr<Data> copy(shptr);
+
+	CHECK(!shptr.unique());
+	CHECK(!copy.unique());
+}
+
+/**
+* 1. Create empty shared pointer using default constructor
+* 2. use shared pointer in condition such as an if statement to make sure it evaluates correctly
+*/
+TEST(case5) {
+	SharedPtr<Data> shptr();
+
+	CHECK(shptr);
+}
+
+/**
+* 1. Create a shared pointer of type base class to a dynamic object of the child class
+* 2. Call a virtual function using the "->" of the shared pointer and make sure the proper function overload is called.
+*/
+TEST(case6) {
+	SharedPtr<Data> shptr(new SubData(2,4,6));
+
+	CHECK(shptr->total() == 12);
+}
+
+/**
+* 1. Create a shared pointer to new data
+* 2. Create another shared pointer by using the copy constructor passing the first shared pointer as the parameter
+* 3. Create a third shared pointer to new data
+* 4. Check for equality of the first 2 shared pointers.
+* 5. Check for inequality of the first and 3rd shared pointers.
+*/
+TEST(case7) {
+	SharedPtr<Data> shptr(new Data(2,4));
+	SharedPtr<Data> copy(shptr);
+	SharedPtr<Data> shptr2(new Data(4,8));
+
+	CHECK(shptr == copy);
+	CHECK(shptr != shptr2);
+}
+
+int32_t main() {
 	return UnitTest::RunAllTests();
 }
