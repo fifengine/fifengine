@@ -78,5 +78,12 @@ Alias('test_zip',
 		  CPPPATH=core_path, 
 		  LIBS=libs, 
 		  LIBPATH=lib_path))
+		  
+Alias('test_sharedptr', 
+      env.Program('test_sharedptr', 
+                  'test_sharedptr.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
 
-Alias('tests', ['test_dat1','test_dat2','test_gui','test_imagepool','test_images','test_rect','test_vfs','test_zip'])
+Alias('tests', ['test_dat1','test_dat2','test_gui','test_imagepool','test_images','test_rect','test_vfs','test_zip', 'test_sharedptr'])
