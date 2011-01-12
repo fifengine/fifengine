@@ -164,9 +164,9 @@ TEST(case4) {
 * 2. use shared pointer in condition such as an if statement to make sure it evaluates correctly
 */
 TEST(case5) {
-	SharedPtr<Data> shptr();
+	SharedPtr<Data> shptr;
 
-	CHECK(shptr);
+	CHECK(shptr == 0);
 }
 
 /**
