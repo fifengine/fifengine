@@ -33,7 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/resourceclass.h"
+#include "util/base/fifeclass.h"
 #include "util/resource/resource.h"
 #include "model/metamodel/timeprovider.h"
 #include "util/structures/rect.h"
@@ -85,7 +85,7 @@ namespace FIFE {
 	 * The actual data is contained in \c Layer objects
 	 * @see Layer
 	 */
-	class Map : public ResourceClass {
+	class Map : public FifeClass {
 		public:
 
 			/** Construct a map

@@ -34,7 +34,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/resourceclass.h"
+#include "util/base/fifeclass.h"
 #include "model/metamodel/modelcoords.h"
 #include "model/metamodel/object.h"
 
@@ -90,7 +90,7 @@ namespace FIFE {
 
 	/** A basic layer on a map
 	 */
-	class Layer : public ResourceClass {
+	class Layer : public FifeClass {
 		public:
 			/** Constructor
 			 * Layers are created by calling addLayer from map, thus

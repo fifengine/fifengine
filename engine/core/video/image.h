@@ -34,16 +34,15 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/fife_stdint.h"
-#include "util/base/resourceclass.h"
 #include "util/resource/resource.h"
 #include "util/structures/point.h"
 #include "util/structures/rect.h"
 
 namespace FIFE {
 
-	class AbstractImage {
+	class IImage {
 	public:
-		virtual ~AbstractImage() {}
+		virtual ~IImage() {}
 
 		/** Get the surface used by this image
 		 * @return pointer to used surface
@@ -135,7 +134,7 @@ namespace FIFE {
 
 	/** Base Class for Images.
 	 */
-	class Image : public ResourceClass, public AbstractImage {
+	class Image : public IResource, public IImage {
 	public:
 		/** Constructor.
 		* @note Takes ownership of the SDL Surface
