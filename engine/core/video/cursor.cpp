@@ -39,8 +39,6 @@
 #include "util/time/timemanager.h"
 #include "util/log/logger.h"
 
-#include "imagepool.h"
-#include "animationpool.h"
 #include "animation.h"
 #include "image.h"
 #include "renderbackend.h"
@@ -74,15 +72,13 @@ struct WMcursor {
 namespace FIFE {
 	static Logger _log(LM_GUI); // We should have a log module for cursor
 
-	Cursor::Cursor(ImagePool* imgpool, AnimationPool* animpool, RenderBackend* renderbackend):
+	Cursor::Cursor(RenderBackend* renderbackend):
 		m_cursor_id(NC_ARROW),
 		m_drag_id(0),
 		m_cursor_type(CURSOR_NATIVE),
 		m_drag_type(CURSOR_NONE),
 		m_native_cursor(NULL),
 		m_renderbackend(renderbackend),
-		m_imgpool(imgpool),
-		m_animpool(animpool),
 		m_animtime(0),
 		m_drag_animtime(0),
 		m_drag_offset_x(0),
@@ -155,9 +151,13 @@ namespace FIFE {
 		// render possible drag image
 		Image* img = NULL;
 		if (m_drag_type == CURSOR_IMAGE) {
-			img = &m_imgpool->getImage(m_drag_id);
+//prock - 504
+//			img = &m_imgpool->getImage(m_drag_id);
+			img = NULL;
 		} else if (m_drag_type == CURSOR_ANIMATION) {
-			Animation& anim = m_animpool->getAnimation(m_drag_id);
+//prock - 504
+//			Animation& anim = m_animpool->getAnimation(m_drag_id);
+			Animation anim = Animation();
 			int32_t animtime = (m_timemanager->getTime() - m_drag_animtime) % anim.getDuration();
  			img = anim.getFrameByTimestamp(animtime);
 		}
@@ -171,9 +171,13 @@ namespace FIFE {
 		// render possible cursor image
 		img = NULL;
 		if (m_cursor_type == CURSOR_IMAGE) {
-			img = &m_imgpool->getImage(m_cursor_id);
+//prock - 504
+//			img = &m_imgpool->getImage(m_cursor_id);
+			img = NULL;
 		} else if (m_cursor_type == CURSOR_ANIMATION) {
-			Animation& anim = m_animpool->getAnimation(m_cursor_id);
+//prock - 504
+//			Animation& anim = m_animpool->getAnimation(m_cursor_id);
+			Animation anim = Animation();
 			int32_t animtime = (m_timemanager->getTime() - m_animtime) % anim.getDuration();
 			img = anim.getFrameByTimestamp(animtime);
 		}

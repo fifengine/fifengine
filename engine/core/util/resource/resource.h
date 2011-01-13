@@ -23,6 +23,7 @@
 #define FIFE_RESOURE_H
 
 // Standard C++ library includes
+#include <string>
 
 // 3rd party library includes
 
@@ -83,6 +84,7 @@ namespace FIFE {
 	};
 
 	typedef SharedPtr<IResource> ResourcePtr;
-}
+
+} //FIFE
 
 #endif

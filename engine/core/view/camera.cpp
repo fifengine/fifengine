@@ -42,9 +42,7 @@
 #include "util/time/timemanager.h"
 #include "video/renderbackend.h"
 #include "video/image.h"
-#include "video/imagepool.h"
 #include "video/animation.h"
-#include "video/animationpool.h"
 
 #include "camera.h"
 #include "layercache.h"
@@ -78,9 +76,7 @@ namespace FIFE {
 	Camera::Camera(const std::string& id,
 		Layer *layer,
 		const Rect& viewport,
-		RenderBackend* renderbackend,
-		ImagePool* ipool,
-		AnimationPool* apool):
+		RenderBackend* renderbackend):
 			m_id(id),
 			m_matrix(),
 			m_inverse_matrix(),
@@ -101,8 +97,6 @@ namespace FIFE {
 			m_pipeline(),
 			m_updated(false),
 			m_renderbackend(renderbackend),
-			m_ipool(ipool),
-			m_apool(apool),
 			m_layer_to_instances(),
 			m_lighting(false),
 			m_light_colors(),
@@ -212,7 +206,7 @@ namespace FIFE {
 		// need to calculate screen-coordinates
 		// which depend on m_location.
 		updateMap(m_location.getMap());
-		
+
 		m_updated = false;
 	}
 
@@ -629,7 +623,7 @@ namespace FIFE {
 	}
 
 	void Camera::addLayer(Layer* layer) {
-		m_cache[layer] = new LayerCache(this, m_ipool, m_apool);
+		m_cache[layer] = new LayerCache(this);
 		m_cache[layer]->setLayer(layer);
 		m_layer_to_instances[layer] = RenderList();
 	}
@@ -703,7 +697,7 @@ namespace FIFE {
 		}
 		return id;
 	}
-			
+
 	void Camera::resetOverlayImage() {
 		m_img_overlay = false;
 		m_img_id = -1;
@@ -745,7 +739,9 @@ namespace FIFE {
 		}
 		// image overlay
 		if (m_img_overlay) {
-			Image* img = &m_ipool->getImage(m_img_id);
+//prock - 504
+//			Image* img = &m_ipool->getImage(m_img_id);
+			Image* img = NULL;
 			if (img) {
 				if (m_img_fill) {
 					r.w = width;
@@ -761,7 +757,9 @@ namespace FIFE {
 		}
 		// animation overlay
 		if (m_ani_overlay) {
-			Animation& animation = m_apool->getAnimation(m_ani_id);
+//prock - 504
+//			Animation& animation = m_apool->getAnimation(m_ani_id);
+			Animation animation;
 			if (m_start_time == 0) {
 				m_start_time = TimeManager::instance()->getTime();
 			}
@@ -809,7 +807,7 @@ namespace FIFE {
 		}
 		resetUpdates();
 	}
-	
+
 	void Camera::render() {
 		updateRenderLists();
 		Map* map = m_location.getMap();

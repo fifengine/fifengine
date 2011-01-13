@@ -39,11 +39,10 @@
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundManager::SoundManager(SoundClipPool* pool) : m_context(0),
+	SoundManager::SoundManager() : m_context(0),
 				       m_device(0),
-	             m_pool(pool),
 				       m_mutevol(0),
-							 m_volume(1.0) {
+					   m_volume(1.0) {
 	}
 
 	SoundManager::~SoundManager() {
@@ -106,7 +105,7 @@ namespace FIFE {
 	}
 
 	SoundEmitter* SoundManager::createEmitter() {
-		SoundEmitter* ptr = new SoundEmitter(this, m_pool, m_emittervec.size());
+		SoundEmitter* ptr = new SoundEmitter(this, m_emittervec.size());
 		m_emittervec.push_back(ptr);
 		return ptr;
 	}

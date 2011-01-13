@@ -35,8 +35,6 @@
 #include "view/camera.h"
 #include "view/rendererbase.h"
 #include "video/renderbackend.h"
-#include "video/imagepool.h"
-#include "video/animationpool.h"
 
 #include "map.h"
 #include "layer.h"
@@ -44,15 +42,12 @@
 namespace FIFE {
 
 	Map::Map(const std::string& identifier, RenderBackend* renderBackend,
-			const std::vector<RendererBase*>& renderers, ImagePool* imagePool,
-			AnimationPool* animPool, TimeProvider* tp_master):
+			const std::vector<RendererBase*>& renderers, TimeProvider* tp_master):
 		m_id(identifier),
 		m_timeprovider(tp_master),
 		m_changelisteners(),
 		m_changedlayers(),
 		m_renderbackend(renderBackend),
-		m_imagepool(imagePool),
-		m_animpool(animPool),
 		m_renderers(renderers),
 		m_changed(false){
 	}
@@ -130,7 +125,7 @@ namespace FIFE {
 		purge(m_layers);
 		m_layers.clear();
 	}
-	
+
 	void Map::getMinMaxCoordinates(ExactModelCoordinate& min, ExactModelCoordinate& max) {
 		Location lmin;
 		Location lmax;
@@ -142,7 +137,7 @@ namespace FIFE {
 
 			if (newMin.x < min.x) {
 				min.x = newMin.x;
-			} 
+			}
 			if (newMax.x > max.x) {
 				max.x = newMax.x;
 			}
@@ -218,7 +213,7 @@ namespace FIFE {
 		}
 
 		// create new camera and add to list of cameras
-		Camera* camera = new Camera(id, layer, viewport, m_renderbackend, m_imagepool, m_animpool);
+		Camera* camera = new Camera(id, layer, viewport, m_renderbackend);
 		m_cameras.push_back(camera);
 
 		std::vector<RendererBase*>::iterator iter = m_renderers.begin();

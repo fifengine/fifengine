@@ -38,21 +38,26 @@
 #include "util/utf8/utf8.h"
 #include "video/image.h"
 #include "video/renderbackend.h"
-#include "video/imagepool.h"
 
 #include "subimagefont.h"
 
 namespace FIFE {
 	static Logger _log(LM_GUI);
 
-	SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs, ImagePool& pool) 
-		: ImageFontBase(), m_pool(pool) {
+	SubImageFont::SubImageFont(const std::string& filename, const std::string& glyphs)
+		: ImageFontBase() {
 
 		FL_LOG(_log, LMsg("guichan_image_font, loading ") << filename << " glyphs " << glyphs);
 
-		int32_t image_id = m_pool.addResourceFromFile(filename);
-		Image& img = dynamic_cast<Image&>(m_pool.get(image_id));
-		SDL_Surface* surface = img.getSurface();
+//prock - 504
+//		int32_t image_id = m_pool.addResourceFromFile(filename);
+		int32_t image_id = 0;
+
+//prock - 504
+//		Image& img = dynamic_cast<Image&>(m_pool.get(image_id));
+//		SDL_Surface* surface = img.getSurface();
+
+		SDL_Surface* surface = NULL;
 		m_colorkey = RenderBackend::instance()->getColorKey();
 
 		if( !surface ) {
@@ -78,27 +83,27 @@ namespace FIFE {
 
 		src.h = surface->h;
 		src.y = 0;
-		
+
 		uint32_t separator = pixels[0];
 		uint32_t colorkey = SDL_MapRGB(surface->format, m_colorkey.r, m_colorkey.g, m_colorkey.b);
 
 		// if colorkey feature is not enabled then manually find the color key in the font
-		if (!RenderBackend::instance()->isColorKeyEnabled()) {	
+		if (!RenderBackend::instance()->isColorKeyEnabled()) {
 			while(x < surface->w && pixels[x] == separator) {
 				++x;
 			}
-			
+
 			colorkey = pixels[x];
 		}
-		
+
 		// Disable alpha blending, so that we use color keying
 		SDL_SetAlpha(surface,0,255);
 		SDL_SetColorKey(surface,SDL_SRCCOLORKEY,colorkey);
 
 		FL_DBG(_log, LMsg("image_font")
-			<< " glyph separator is " 
+			<< " glyph separator is "
 			<< pprint(reinterpret_cast<void*>(separator))
-			<< " transparent color is " 
+			<< " transparent color is "
 			<< pprint(reinterpret_cast<void*>(colorkey)));
 
 		// Finally extract all glyphs

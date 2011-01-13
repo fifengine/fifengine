@@ -32,8 +32,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/imagepool.h"
-
 #include "gui_image.h"
 
 namespace FIFE {
@@ -42,10 +40,10 @@ namespace FIFE {
 	 */
 	class GuiImageLoader : public gcn::ImageLoader {
 	public:
-		GuiImageLoader(ImagePool& pool);
+		GuiImageLoader();
       		gcn::Image* load(const std::string& filename, bool convertToDisplayFormat = true);
 	private:
-		ImagePool& m_pool;
+
 	};
 
 }

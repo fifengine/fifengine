@@ -53,7 +53,7 @@ enum logmodule_t {
 	LM_HEXGRID,
 	LM_PATHFINDER,
 	LM_UTIL,
-	LM_POOL,
+	LM_RESMGR,
 	LM_VFS,
 	LM_VIDEO,
 	LM_VIEW,
@@ -88,7 +88,7 @@ enum logmodule_t {
 		    {LM_HEXGRID, LM_METAMODEL, "Hexgrid"}, \
 		{LM_PATHFINDER, LM_CORE, "Pathfinder"}, \
 		{LM_UTIL, LM_CORE, "Util"}, \
-		  {LM_POOL, LM_UTIL, "Pool"}, \
+		  {LM_RESMGR, LM_UTIL, "Resource Manager"}, \
 		{LM_VFS, LM_CORE, "VFS"}, \
 		{LM_VIDEO, LM_CORE, "Video" }, \
 		{LM_VIEW, LM_CORE, "View"}, \

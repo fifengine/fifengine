@@ -52,15 +52,14 @@
 namespace FIFE {
 	static Logger _log(LM_GUI);
 
-	GUIManager::GUIManager(ImagePool& pool) :
+	GUIManager::GUIManager() :
 		m_gcn_gui(new gcn::Gui()),
 		m_focushandler(0),
 		m_gcn_topcontainer(new gcn::Container()),
-		m_imgloader(new GuiImageLoader(pool)) ,
+		m_imgloader(new GuiImageLoader()) ,
 		m_input(new gcn::SDLInput()),
 		m_console(0),
 		m_fonts(),
-		m_pool(pool),
 		m_logic_executed(false) {
 
 		m_gcn_gui->setInput(m_input);
@@ -185,7 +184,7 @@ namespace FIFE {
 		if( boost::filesystem::extension(fontpath) == ".ttf" ) {
 			font = new TrueTypeFont(fontpath, fontsize);
 		} else {
-			font = new SubImageFont(fontpath, fontglyphs, m_pool);
+			font = new SubImageFont(fontpath, fontglyphs);
 		}
 		guifont = new GuiFont(font);
 

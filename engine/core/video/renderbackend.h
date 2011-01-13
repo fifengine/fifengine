@@ -49,7 +49,7 @@ namespace FIFE {
 	class Image;
 
 	 /** Abstract interface for all the renderbackends. */
-	class RenderBackend: public AbstractImage, public DynamicSingleton<RenderBackend> {
+	class RenderBackend: public IImage, public DynamicSingleton<RenderBackend> {
 	public:
 		/** Constructor.
 		 * @param name The name of the new renderbackend.

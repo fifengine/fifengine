@@ -44,9 +44,10 @@
 #include "vfs/zip/zipprovider.h"
 #endif
 #include "eventchannel/eventmanager.h"
-#include "video/imagepool.h"
-#include "video/animationpool.h"
-#include "audio/soundclippool.h"
+//prock - 504
+//#include "video/imagepool.h"
+//#include "video/animationpool.h"
+//#include "audio/soundclippool.h"
 #include "video/renderbackend.h"
 #include "video/cursor.h"
 #include "video/devicecaps.h"
@@ -99,9 +100,10 @@ namespace FIFE {
 		m_eventmanager(0),
 		m_soundmanager(0),
 		m_timemanager(0),
-		m_imagepool(0),
-		m_animpool(0),
-		m_soundclippool(0),
+//prock - 504
+//		m_imagepool(0),
+//		m_animpool(0),
+//		m_soundclippool(0),
 		m_vfs(0),
 		m_model(0),
 		m_gui_graphics(0),
@@ -137,7 +139,8 @@ namespace FIFE {
 
 	Image* Engine::changeScreenMode(const ScreenMode& mode){
 		m_cursor->invalidate();
-		m_imagepool->invalidateLoadedImages();
+//prock - 504
+//		m_imagepool->invalidateLoadedImages();
 		m_defaultfont->invalidate();
 		m_guimanager->invalidateFonts();
 
@@ -189,12 +192,13 @@ namespace FIFE {
 		m_eventmanager = new EventManager();
 
 		FL_LOG(_log, "Creating pools");
-		m_imagepool = new ImagePool();
-		m_animpool = new AnimationPool();
-		m_soundclippool = new SoundClipPool();
-		m_imagepool->addResourceLoader(new SubImageLoader());
-		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
-		m_soundclippool->addResourceLoader(new OggLoader(m_vfs));
+//prock - 504
+//		m_imagepool = new ImagePool();
+//		m_animpool = new AnimationPool();
+//		m_soundclippool = new SoundClipPool();
+//		m_imagepool->addResourceLoader(new SubImageLoader());
+//		m_imagepool->addResourceLoader(new ImageLoader(m_vfs));
+//		m_soundclippool->addResourceLoader(new OggLoader(m_vfs));
 
 		FL_LOG(_log, "Creating render backend");
 		std::string rbackend(m_settings.getRenderBackend());
@@ -248,7 +252,7 @@ namespace FIFE {
 
 #ifdef HAVE_OPENGL
 		if( rbackend != "SDL" ) {
-			m_gui_graphics = new OpenGLGuiGraphics(*m_imagepool);
+			m_gui_graphics = new OpenGLGuiGraphics();
 		}
 
 		if (m_settings.getLightingModel() != 0) {
@@ -257,10 +261,10 @@ namespace FIFE {
 
 #endif
 		if( rbackend == "SDL" ) {
-			m_gui_graphics = new SdlGuiGraphics(*m_imagepool);
+			m_gui_graphics = new SdlGuiGraphics();
 		}
 		FL_LOG(_log, "Constructing GUI manager");
-		m_guimanager = new GUIManager(*m_imagepool);
+		m_guimanager = new GUIManager();
 		FL_LOG(_log, "Events bind to GUI manager");
 		m_eventmanager->addSdlEventListener(m_guimanager);
 
@@ -275,29 +279,29 @@ namespace FIFE {
 		SDL_EnableUNICODE(1);
 
 		FL_LOG(_log, "Creating sound manager");
-		m_soundmanager = new SoundManager(m_soundclippool);
+		m_soundmanager = new SoundManager();
 		m_soundmanager->setVolume(static_cast<float>(m_settings.getInitialVolume()) / 10);
 
 		FL_LOG(_log, "Creating renderers");
-		m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10, m_imagepool, m_animpool));
+		m_renderers.push_back(new InstanceRenderer(m_renderbackend, 10));
 		m_renderers.push_back(new GridRenderer(m_renderbackend, 20));
 		m_renderers.push_back(new CellSelectionRenderer(m_renderbackend, 30));
 		m_renderers.push_back(new BlockingInfoRenderer(m_renderbackend, 40));
 		m_renderers.push_back(new FloatingTextRenderer(m_renderbackend, 50, dynamic_cast<AbstractFont*>(m_defaultfont)));
 		m_renderers.push_back(new QuadTreeRenderer(m_renderbackend, 60));
 		m_renderers.push_back(new CoordinateRenderer(m_renderbackend, 70, dynamic_cast<AbstractFont*>(m_defaultfont)));
-		m_renderers.push_back(new GenericRenderer(m_renderbackend, 80, m_imagepool, m_animpool));
-		m_renderers.push_back(new LightRenderer(m_renderbackend, 90, m_imagepool, m_animpool));
+		m_renderers.push_back(new GenericRenderer(m_renderbackend, 80));
+		m_renderers.push_back(new LightRenderer(m_renderbackend, 90));
 
 		FL_LOG(_log, "Creating model");
-		m_model = new Model(m_renderbackend, m_renderers, m_imagepool, m_animpool);
+		m_model = new Model(m_renderbackend, m_renderers);
 		FL_LOG(_log, "Adding pathers to model");
 		m_model->adoptPather(new RoutePather());
 		FL_LOG(_log, "Adding grid prototypes to model");
 		m_model->adoptCellGrid(new SquareGrid());
 		m_model->adoptCellGrid(new HexGrid());
 
-		m_cursor = new Cursor(m_imagepool, m_animpool, m_renderbackend);
+		m_cursor = new Cursor(m_renderbackend);
 		FL_LOG(_log, "Engine intialized");
 	}
 
@@ -318,9 +322,10 @@ namespace FIFE {
 		// Note the dependancy between image and animation pools
 		// as animations reference images they have to be deleted
 		// before clearing the image pool.
-		delete m_animpool;
-		delete m_imagepool;
-		delete m_eventmanager;
+//prock - 504
+//		delete m_animpool;
+//		delete m_imagepool;
+//		delete m_eventmanager;
 
 		// properly remove all the renderers created during init
 		std::vector<RendererBase*>::iterator rendererIter = m_renderers.begin();

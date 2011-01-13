@@ -40,9 +40,7 @@
 #include "util/math/angles.h"
 #include "video/renderbackend.h"
 #include "video/image.h"
-#include "video/imagepool.h"
 #include "video/animation.h"
-#include "video/animationpool.h"
 
 #include "camera.h"
 #include "layercache.h"
@@ -77,10 +75,8 @@ namespace FIFE {
 		LayerCache* m_cache;
 	};
 
-	LayerCache::LayerCache(Camera* camera, ImagePool* image_pool, AnimationPool* animation_pool) {
+	LayerCache::LayerCache(Camera* camera) {
 		m_camera = camera;
-		m_image_pool = image_pool;
-		m_animation_pool = animation_pool;
 		m_layer = 0;
 		m_tree = 0;
 		m_needupdate = false;
@@ -162,7 +158,7 @@ namespace FIFE {
 		if(item.instance_index == -1) {
 			return;
 		}
-		
+
 		RenderItem& render_item = m_instances[item.instance_index];
 		Instance* instance = render_item.instance;
 
@@ -179,19 +175,25 @@ namespace FIFE {
 		if(!action) {
 			// Try static images then default action.
 			int32_t image_id = render_item.getStaticImageIndexByAngle(angle, instance);
-			if(image_id == Pool::INVALID_ID) {
+//prock - 504
+//			if(image_id == Pool::INVALID_ID) {
+			if(image_id == -1) {
 				if (!instance->getObject()->isStatic()) {
 					action = instance->getObject()->getDefaultAction();
 				}
 			} else {
-				image = &m_image_pool->getImage(image_id);
+//prock - 504
+//				image = &m_image_pool->getImage(image_id);
+				image = NULL;
 			}
 		}
 		item.force_update = bool(action);
 
 		if(action) {
 			int32_t animation_id = action->getVisual<ActionVisual>()->getAnimationIndexByAngle(render_item.facing_angle + m_camera->getRotation());
-			Animation& animation = m_animation_pool->getAnimation(animation_id);
+//prock - 504
+//			Animation& animation = m_animation_pool->getAnimation(animation_id);
+			Animation animation;
 			unsigned animation_time = instance->getActionRuntime() % animation.getDuration();
 			image = animation.getFrameByTimestamp(animation_time);
 
@@ -206,7 +208,7 @@ namespace FIFE {
 		if (image) {
 			w = image->getWidth();
 			h = image->getHeight();
-			
+
 			screen_position.x -= w / 2;
 			screen_position.x += image->getXShift();
 			screen_position.y -= h / 2;

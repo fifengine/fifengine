@@ -39,6 +39,7 @@
 namespace FIFE {
 
 	Animation::Animation():
+		IResource(""),
 		m_action_frame(-1),
 		m_animation_endtime(-1),
 		m_direction(0) {
@@ -86,7 +87,9 @@ namespace FIFE {
 
 	Image* Animation::getFrame(int32_t index) {
 		if (isValidIndex(index)) {
-			return m_frames[index].image.get<Image>();
+//prock - 504
+//			return m_frames[index].image.get<Image>();
+			return NULL;
 		} else {
 			return NULL;
 		}

@@ -30,7 +30,6 @@
 #include "model/structures/instance.h"
 #include "model/metamodel/object.h"
 #include "model/metamodel/action.h"
-#include "util/resource/pool.h"
 
 #include "visual.h"
 #include "renderitem.h"
@@ -54,7 +53,10 @@ namespace FIFE {
 			return m_cached_static_img_id;
 		}
 		if(!instance->getObject()->getVisual<ObjectVisual>())
-			return Pool::INVALID_ID;
+//prock - 504
+//			return Pool::INVALID_ID;
+			return -1;
+
 		m_cached_static_img_id = instance->getObject()->getVisual<ObjectVisual>()->getStaticImageIndexByAngle(angle);
 		m_cached_static_img_angle = angle;
 		return m_cached_static_img_id;

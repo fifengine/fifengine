@@ -35,10 +35,10 @@
 namespace FIFE {
 
 	/** SubImageLoader for cropping another image */
-	class SubImageLoader : public ResourceLoader {
+	class SubImageLoader : public IResourceLoader {
 	public:
 		SubImageLoader() {}
-		virtual IResource* loadResource(const ResourceLocation& location);
+		virtual void load(IResource* res);
 	};
 
 }

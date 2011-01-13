@@ -41,7 +41,7 @@
 namespace FIFE {
 	static Logger _log(LM_GUI);
 
-	OpenGLGuiGraphics::OpenGLGuiGraphics(ImagePool& pool): m_pool(pool) {
+	OpenGLGuiGraphics::OpenGLGuiGraphics() {
 		mTarget = SDL_GetVideoSurface();
 		assert(mTarget);
 		setTargetPlane(mTarget->w, mTarget->h);
@@ -51,13 +51,15 @@ namespace FIFE {
 	void OpenGLGuiGraphics::drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height) {
 		const GuiImage* g_img = dynamic_cast<const GuiImage*>(image);
 		assert(g_img);
-		Image& fifeimg = m_pool.getImage(g_img->getPoolId());
+//prock - 504
+//		Image& fifeimg = m_pool.getImage(g_img->getPoolId());
 		const gcn::ClipRectangle& clip = getCurrentClipArea();
 		Rect rect(dstX, dstY, width, height);
 		rect.x += clip.xOffset;
 		rect.y += clip.yOffset;
 		GLEnable flag(GL_TEXTURE_2D);
-		fifeimg.render(rect, mTarget);
+//prock - 504
+//		fifeimg.render(rect, mTarget);
 	}
 
 	void OpenGLGuiGraphics::drawText(const std::string& text, int32_t x, int32_t y,

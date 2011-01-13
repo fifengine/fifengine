@@ -50,11 +50,11 @@ namespace FIFE {
 	public:
 		typedef QuadTree<std::set<int32_t> > CacheTree;
 
-		LayerCache(Camera* camera, ImagePool* image_pool, AnimationPool* animation_pool);
+		LayerCache(Camera* camera);
 		~LayerCache();
 
 		void setLayer(Layer* layer);
-		
+
 		bool needUpdate() { return m_needupdate; }
 		void update(Camera::Transform transform, RenderList& renderlist);
 
@@ -82,8 +82,6 @@ namespace FIFE {
 			bool force_update;
 		};
 
-		ImagePool* m_image_pool;
-		AnimationPool* m_animation_pool;
 		Camera* m_camera;
 		Layer* m_layer;
 		CacheLayerChangeListener* m_layer_observer;

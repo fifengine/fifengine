@@ -30,7 +30,6 @@
 // FIFE includes
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src dir
-#include "video/imagepool.h"
 
 namespace FIFE {
 	/** Overrides Guichan Graphics to enable usage of normal fife images & related facilities
@@ -39,7 +38,7 @@ namespace FIFE {
 	public:
 		/** Constructor
 		 */
-		OpenGLGuiGraphics(ImagePool& pool);
+		OpenGLGuiGraphics();
 		virtual void drawImage(const gcn::Image* image, int32_t srcX, int32_t srcY, int32_t dstX, int32_t dstY, int32_t width, int32_t height);
 
 		virtual void drawText(const std::string& text, int32_t x, int32_t y, uint32_t alignment);
@@ -49,7 +48,6 @@ namespace FIFE {
 
 	private:
 		SDL_Surface* mTarget;
-		ImagePool& m_pool;
 	};
 }
 

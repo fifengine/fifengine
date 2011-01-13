@@ -35,8 +35,6 @@ struct SDL_Cursor;
 
 namespace FIFE {
 
-	class ImagePool;
-	class AnimationPool;
 	class RenderBackend;
 	class TimeManager;
 
@@ -85,7 +83,7 @@ namespace FIFE {
 	public:
 		/** Constructor.
 		 */
-		Cursor(ImagePool* imgpool, AnimationPool* animpool, RenderBackend* renderbackend);
+		Cursor(RenderBackend* renderbackend);
 
 		/** Destructor.
 		 */
@@ -158,8 +156,6 @@ namespace FIFE {
 		SDL_Cursor* m_native_cursor;
 
 		RenderBackend* m_renderbackend;
-		ImagePool* m_imgpool;
-		AnimationPool* m_animpool;
 
 		uint32_t m_animtime;
 		uint32_t m_drag_animtime;

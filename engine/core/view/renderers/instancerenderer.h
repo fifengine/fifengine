@@ -37,8 +37,6 @@
 namespace FIFE {
 	class Location;
 	class RenderBackend;
-	class ImagePool;
-	class AnimationPool;
 
 	class InstanceRenderer: public RendererBase {
 	public:
@@ -47,7 +45,7 @@ namespace FIFE {
 		 * @param imagepool image pool where from fetch images
 		 * @param animpool animation pool where from fetch images
 		 */
-		InstanceRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool);
+		InstanceRenderer(RenderBackend* renderbackend, int32_t position);
 
 		InstanceRenderer(const InstanceRenderer& old);
 
@@ -119,8 +117,6 @@ namespace FIFE {
 		void reset();
 
 	private:
-		ImagePool* m_imagepool;
-		AnimationPool* m_animationpool;
 		bool m_area_layer;
 		std::list<std::string> m_unlit_groups;
 

@@ -37,7 +37,7 @@
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
 
-	SoundClip::SoundClip(SoundDecoder* decptr, bool deletedecoder) : m_isstream(decptr->needsStreaming()), m_decoder(decptr), m_deletedecoder(deletedecoder) {
+	SoundClip::SoundClip(SoundDecoder* decptr, bool deletedecoder) : IResource(""), m_isstream(decptr->needsStreaming()), m_decoder(decptr), m_deletedecoder(deletedecoder) {
 		if (!m_isstream) {
 
 			// only for non-streaming buffers

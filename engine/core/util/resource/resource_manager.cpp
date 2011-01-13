@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005-2008 by the FIFE team                              *
- *   http://www.fifengine.de                                               *
+ *   Copyright (C) 2005-2011 by the FIFE team                              *
+ *   http://www.fifengine.net                                              *
  *   This file is part of FIFE.                                            *
  *                                                                         *
  *   FIFE is free software; you can redistribute it and/or                 *
@@ -28,87 +28,92 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "resource.h"
 #include "resource_manager.h"
+#include "resource.h"
 
 namespace FIFE {
 
-	IResrouceManager::~IResourceManager() {
+	IResourceManager::~IResourceManager() {
 
 	}
 
-	void IResrouceManager::addChangeListener(IResourceManagerListener* listener);
-	void IResrouceManager::removeChangeListener(IResourceManagerListener* listener);
+	void addChangeListener(IResourceManagerListener* listener) {
 
-	std::size_t IResrouceManager::getMemoryUsed() const {
+	}
+
+	void removeChangeListener(IResourceManagerListener* listener){
+
+	}
+
+	std::size_t IResourceManager::getMemoryUsed() const {
 		return 0;
 	}
 
-	ResroucePtr IResrouceManager::add(IResource* res){
-		return ResourcePtr<IResource>;
+	ResourcePtr IResourceManager::add(IResource* res){
+		return ResourcePtr();
 	}
 
-	void IResrouceManager::reload(const std::string& name) {
-
-	}
-
-	void IResrouceManager::reload(ResourcePtr& res) {
+	void IResourceManager::reload(const std::string& name) {
 
 	}
 
-	void IResrouceManager::reloadAll() {
+	void IResourceManager::reload(ResourcePtr& res) {
 
 	}
 
-	void IResrouceManager::loadUnreferenced() {
+	void IResourceManager::reloadAll() {
 
 	}
 
-	void IResrouceManager::free(const std::string& name) {
+	void IResourceManager::loadUnreferenced() {
 
 	}
 
-	void IResrouceManager::free(ResourceHandle handle) {
+	void IResourceManager::free(const std::string& name) {
 
 	}
 
-	void IResrouceManager::freeAll() {
+	void IResourceManager::free(ResourceHandle handle) {
 
 	}
 
-	void IResrouceManager::freeUnreferenced() {
+	void IResourceManager::freeAll() {
 
 	}
 
-	void IResrouceManager::remove(ResourcePtr& resource) {
+	void IResourceManager::freeUnreferenced() {
 
 	}
 
-	void IResrouceManager::remove(const std::string& name) {
+	void IResourceManager::remove(ResourcePtr& resource) {
 
 	}
 
-	void IResrouceManager::remove(ResourceHandle handle) {
+	void IResourceManager::remove(const std::string& name) {
 
 	}
 
-	void IResrouceManager::removeAll() {
+	void IResourceManager::remove(ResourceHandle handle) {
 
 	}
 
-	void IResrouceManager::removeUnreferenced() {
+	void IResourceManager::removeAll() {
 
 	}
 
-	ResourcePtr IResrouceManager::get(const std::string& name) {
+	void IResourceManager::removeUnreferenced() {
 
 	}
 
-	ResourcePtr IResrouceManager::get(ResourceHandle handle) {
-
+	ResourcePtr IResourceManager::get(const std::string& name) {
+		return ResourcePtr();
 	}
 
-	ResrouceHandle IResrouceManager::getResourceHandle(const std::string& name) {
+	ResourcePtr IResourceManager::get(ResourceHandle handle) {
+		return ResourcePtr();
+	}
 
+	ResourceHandle IResourceManager::getResourceHandle(const std::string& name) {
+		return 0;
 	}
 } //FIFE

@@ -37,10 +37,10 @@ namespace FIFE {
 
 	/** ImageLoader for some basic formats like jpeg, png etc.
 	 */
-	class ImageLoader : public ResourceLoader {
+	class ImageLoader : public IResourceLoader {
 	public:
 		ImageLoader(VFS* vfs): m_vfs(vfs) {}
-		virtual IResource* loadResource(const ResourceLocation& location);
+		virtual void load(IResource* res);
 
 	private:
 		VFS* m_vfs;

@@ -18,7 +18,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
- 
+
 #ifndef FIFE_OGGLOADER_H_
 #define FIFE_OGGLOADER_H_
 
@@ -38,10 +38,10 @@ namespace FIFE {
 
 	class VFS;
 
-	class OggLoader : public ResourceLoader {
+	class OggLoader : public IResourceLoader {
 	public:
 		OggLoader(VFS* vfs) : m_vfs(vfs) { }
-		virtual IResource* loadResource(const ResourceLocation& location);
+		virtual void load(IResource* res);
 
 	private:
 		VFS* m_vfs;
