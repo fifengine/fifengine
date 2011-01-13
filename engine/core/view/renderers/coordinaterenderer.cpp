@@ -29,7 +29,6 @@
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
 #include "video/image.h"
-#include "video/imagepool.h"
 #include "video/fonts/abstractfont.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
@@ -72,7 +71,7 @@ namespace FIFE {
 	RendererBase* CoordinateRenderer::clone() {
 		return new CoordinateRenderer(*this);
 	}
-	
+
 	CoordinateRenderer::~CoordinateRenderer() {
 	}
 

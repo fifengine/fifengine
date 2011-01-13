@@ -42,7 +42,6 @@
 namespace FIFE {
 
 	FontBase::FontBase():
-			m_pool(),
 			mColor(),
 			mGlyphSpacing(0),
 			mRowSpacing(0),
@@ -51,7 +50,8 @@ namespace FIFE {
 	}
 
 	void FontBase::invalidate() {
-		m_pool.invalidateCachedText();
+//prock - 504
+//		m_pool.invalidateCachedText();
 	}
 
 	void FontBase::setRowSpacing(int32_t spacing) {
@@ -111,11 +111,14 @@ namespace FIFE {
 	}
 
 	Image* FontBase::getAsImage(const std::string& text) {
-		Image* image = m_pool.getRenderedText(this, text);
+//prock - 504
+//		Image* image = m_pool.getRenderedText(this, text);
+		Image* image = NULL;
 		if (!image) {
 			SDL_Surface* textSurface = renderString(text);
 			image = RenderBackend::instance()->createImage(textSurface);
-			m_pool.addRenderedText( this, text, image );
+//prock - 504
+//			m_pool.addRenderedText( this, text, image );
 		}
 		return image;
 	}
@@ -125,7 +128,9 @@ namespace FIFE {
 		uint32_t newline;
 		utf8::utf8to32(&newline_utf8,&newline_utf8 + 1,&newline);
 		//std::cout << "Text:" << text << std::endl;
-		Image* image = m_pool.getRenderedText(this, text);
+//prock - 504
+//		Image* image = m_pool.getRenderedText(this, text);
+		Image* image = NULL;
 		if (!image) {
 			std::vector<SDL_Surface*> lines;
 			std::string::const_iterator it = text.begin();
@@ -167,7 +172,8 @@ namespace FIFE {
 				SDL_FreeSurface(*i);
 			}
 			image = RenderBackend::instance()->createImage(final_surface);
-			m_pool.addRenderedText(this, text, image);
+//prock - 504
+//			m_pool.addRenderedText(this, text, image);
 		}
 		return image;
 	}

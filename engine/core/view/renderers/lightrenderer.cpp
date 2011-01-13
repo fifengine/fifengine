@@ -29,9 +29,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "video/imagepool.h"
 #include "video/animation.h"
-#include "video/animationpool.h"
 #include "video/fonts/abstractfont.h"
 #include "video/image.h"
 #include "video/opengl/glimage.h"
@@ -241,10 +239,12 @@ namespace FIFE {
 		m_stencil_ref(0),
 		m_alpha_ref(0.0) {
 	}
-	void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void LightRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-			Image* img = &imagepool->getImage(m_image);
+//prock - 504
+//			Image* img = &imagepool->getImage(m_image);
+			Image* img = NULL;
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(img->getWidth() * cam->getZoom());
@@ -277,7 +277,7 @@ namespace FIFE {
 		m_stencil_ref = 0;
 		m_alpha_ref = 0.0;
 	}
-	
+
 	LightRendererAnimationInfo::LightRendererAnimationInfo(LightRendererNode anchor, int32_t animation, int32_t src, int32_t dst):
 		LightRendererElementInfo(),
 		m_anchor(anchor),
@@ -290,10 +290,12 @@ namespace FIFE {
 		m_stencil_ref(0),
 		m_alpha_ref(0.0) {
 	}
-	void LightRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) { 
+	void LightRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-			Animation& animation = animpool->getAnimation(m_animation);
+//prock - 504
+//			Animation& animation = animpool->getAnimation(m_animation);
+			Animation animation;
 			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 			Image* img = animation.getFrameByTimestamp(animtime);
 			Rect r;
@@ -341,10 +343,12 @@ namespace FIFE {
 		m_stencil_ref(0),
 		m_alpha_ref(0.0) {
 	}
-	void LightRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void LightRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-			Image* img = &imagepool->getImage(m_image);
+//prock - 504
+//			Image* img = &imagepool->getImage(m_image);
+			Image* img = NULL;
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(m_width * cam->getZoom());
@@ -395,7 +399,7 @@ namespace FIFE {
 		m_stencil_ref(0),
 		m_alpha_ref(0.0) {
 	}
-	void LightRendererSimpleLightInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void LightRendererSimpleLightInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			double zoom = cam->getZoom();
@@ -434,19 +438,15 @@ namespace FIFE {
 	LightRenderer* LightRenderer::getInstance(IRendererContainer* cnt) {
 		return dynamic_cast<LightRenderer*>(cnt->getRenderer("LightRenderer"));
 	}
-	
-	LightRenderer::LightRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool):
+
+	LightRenderer::LightRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
-		m_imagepool(imagepool),
-		m_animationpool(animpool),
 		m_groups() {
 		setEnabled(false);
 	}
 
 	LightRenderer::LightRenderer(const LightRenderer& old):
 		RendererBase(old),
-		m_imagepool(old.m_imagepool),
-		m_animationpool(old.m_animationpool),
 		m_groups() {
 		setEnabled(false);
 	}
@@ -531,7 +531,7 @@ namespace FIFE {
 	// Render
 	void LightRenderer::render(Camera* cam, Layer* layer, RenderList& instances) {
 		uint8_t lm = m_renderbackend->getLightingModel();
-		
+
 		if (!layer->areInstancesVisible()) {
 			return;
 		}
@@ -557,7 +557,7 @@ namespace FIFE {
 						m_renderbackend->setAlphaTest(0);
 					}
 				}
-				(*info_it)->render(cam, layer, instances, m_renderbackend, m_imagepool, m_animationpool);
+				(*info_it)->render(cam, layer, instances, m_renderbackend);
 			}
 		}
 		m_renderbackend->disableAlphaTest();

@@ -40,7 +40,6 @@
 namespace FIFE {
 
 	class SoundManager;
-	class SoundClipPool;
 
 	/** The class for playing audio files
 	 */
@@ -48,7 +47,7 @@ namespace FIFE {
 	public:
 		typedef boost::function0<void> type_callback;
 
-		SoundEmitter(SoundManager* manager, SoundClipPool* pool, uint32_t uid);
+		SoundEmitter(SoundManager* manager, uint32_t uid);
 		~SoundEmitter();
 
 		/** Returns the emitter-id
@@ -219,7 +218,6 @@ namespace FIFE {
 		void attachSoundClip();
 
 		SoundManager*	m_manager;
-		SoundClipPool*	m_pool;
 		ALuint			m_source;			// The openAL-source
 		SoundClip*		m_soundclip;	// the attached soundclip
 		uint32_t	m_soundclipid;// id of the attached soundclip

@@ -44,8 +44,6 @@ namespace FIFE {
 	typedef Point3D ScreenPoint;
 	class Layer;
 	class Instance;
-	class ImagePool;
-	class AnimationPool;
 	class RenderBackend;
 	class LayerCache;
 	class MapObserver;
@@ -78,9 +76,7 @@ namespace FIFE {
 		Camera(const std::string& id,
 			Layer* layer,
 			const Rect& viewport,
-			RenderBackend* renderbackend,
-			ImagePool* ipool,
-			AnimationPool* apool);
+			RenderBackend* renderbackend);
 
 		/** Destructor
 		 */
@@ -398,8 +394,6 @@ namespace FIFE {
 		bool m_updated; // false, if view has not been updated
 
 		RenderBackend* m_renderbackend;
-		ImagePool* m_ipool;
-		AnimationPool* m_apool;
 
 		// caches layer -> instances structure between renders e.g. to fast query of mouse picking order
 		t_layer_to_instances m_layer_to_instances;

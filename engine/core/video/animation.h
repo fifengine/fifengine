@@ -37,7 +37,6 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/resource/resource.h"
-#include "util/resource/resource_ptr.h"
 
 namespace FIFE {
 
@@ -125,6 +124,10 @@ namespace FIFE {
 		/** Gets the total duration for the whole animation
 		 */
 		uint32_t getDuration() const { return m_animation_endtime; }
+
+		virtual size_t getSize() { return 0; }
+		virtual void load() { }
+		virtual void free() { }
 
 	private:
 		/** Contains information about one animation frame (duration + frame index + frame pointer)

@@ -30,9 +30,7 @@
 #include "video/renderbackend.h"
 #include "video/image.h"
 #include "video/sdl/sdlimage.h"
-#include "video/imagepool.h"
 #include "video/animation.h"
-#include "video/animationpool.h"
 #include "util/math/fife_math.h"
 #include "util/log/logger.h"
 #include "model/metamodel/grids/cellgrid.h"
@@ -99,18 +97,14 @@ namespace FIFE {
 		return dynamic_cast<InstanceRenderer*>(cnt->getRenderer("InstanceRenderer"));
 	}
 
-	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool):
+	InstanceRenderer::InstanceRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
-		m_imagepool(imagepool),
-		m_animationpool(animpool),
 		m_area_layer(false) {
 		setEnabled(true);
 	}
 
  	InstanceRenderer::InstanceRenderer(const InstanceRenderer& old):
 		RendererBase(old),
-		m_imagepool(old.m_imagepool),
-		m_animationpool(old.m_animationpool),
 		m_area_layer(old.m_area_layer) {
 		setEnabled(true);
 	}

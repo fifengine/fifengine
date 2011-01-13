@@ -27,7 +27,6 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "video/imagepool.h"
 #include "util/log/logger.h"
 
 #include "gui_image.h"
@@ -35,11 +34,12 @@
 namespace FIFE {
 	static Logger _log(LM_GUI);
 
-	GuiImage::GuiImage(): gcn::Image(), m_poolid(Pool::INVALID_ID), m_pool(NULL) {
+	GuiImage::GuiImage(): gcn::Image() {
 	}
 
-	GuiImage::GuiImage(int32_t id, ImagePool& pool): gcn::Image(), m_poolid(id), m_pool(&pool) {
-		 m_pool->getImage(m_poolid);
+	GuiImage::GuiImage(int32_t id): gcn::Image() {
+//prock - 504
+//		m_pool->getImage(m_poolid);
 	}
 
 	GuiImage::~GuiImage() {
@@ -51,15 +51,19 @@ namespace FIFE {
 	}
 
 	int32_t GuiImage::getWidth() const {
-		if(m_poolid==Pool::INVALID_ID)
-			return 0;
-		return m_pool->getImage(m_poolid).getWidth();
+//prock - 504
+//		if(m_poolid==Pool::INVALID_ID)
+//			return 0;
+//		return m_pool->getImage(m_poolid).getWidth();
+		return 0;
 	}
 
 	int32_t GuiImage::getHeight() const {
-		if(m_poolid==Pool::INVALID_ID)
-			return 0;
-		return m_pool->getImage(m_poolid).getHeight();
+//prock - 504
+//		if(m_poolid==Pool::INVALID_ID)
+//			return 0;
+//		return m_pool->getImage(m_poolid).getHeight();
+		return 0;
 	}
 
 	gcn::Color GuiImage::getPixel(int32_t x, int32_t y) {

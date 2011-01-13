@@ -40,18 +40,20 @@
 namespace FIFE {
   static Logger _log(LM_NATIVE_LOADERS);
 
-	IResource* OggLoader::loadResource(const ResourceLocation& location) {
-		std::string filename = location.getFilename();
+	void OggLoader::load(IResource* res) {
+//prock - 504
+//		std::string filename = location.getFilename();
+//		std::string filename = "blank";
 
-		SoundClip* ptr;
-		if(filename.find(".ogg", filename.size() - 4) != std::string::npos) {
-			RawData* rdptr = m_vfs->open(location.getFilename());
-			ptr = new SoundClip(new SoundDecoderOgg(rdptr));
-			ptr->setResourceLocation(location);
-		} else {
-			FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << filename << "\"!");
-			throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
-		}
-		return ptr;
-	}	
+//		SoundClip* ptr;
+//		if(filename.find(".ogg", filename.size() - 4) != std::string::npos) {
+//			RawData* rdptr = m_vfs->open(location.getFilename());
+//			ptr = new SoundClip(new SoundDecoderOgg(rdptr));
+//			ptr->setResourceLocation(location);
+//		} else {
+//			FL_WARN(_log, LMsg() << "No audio-decoder available for file \"" << filename << "\"!");
+//			throw InvalidFormat("Error: Ogg loader can't load files without ogg extension");
+//		}
+//		return ptr;
+	}
 }

@@ -35,12 +35,11 @@
 
 
 namespace FIFE {
-	class ImagePool;
 
 	class GuiImage : public gcn::Image {
 	public:
 		GuiImage();
-		GuiImage(int32_t id, ImagePool& pool);
+		GuiImage(int32_t id);
 		~GuiImage();
 		void free();
 		int32_t getWidth() const;
@@ -51,7 +50,6 @@ namespace FIFE {
 		int32_t getPoolId() const { return m_poolid; }
 	protected:
 		int32_t m_poolid;
-		ImagePool* m_pool;
 	};
 }
 

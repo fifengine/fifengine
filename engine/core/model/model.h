@@ -43,8 +43,6 @@ namespace FIFE {
 
 	class RenderBackend;
 	class RendererBase;
-	class ImagePool;
-	class AnimationPool;
 	class MetaModel;
 	class AbstractPather;
 	class Object;
@@ -58,8 +56,7 @@ namespace FIFE {
 		/** Constructor
 		 *
 		 */
-		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers,
-				ImagePool* imagepool, AnimationPool* animpool);
+		Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers);
 
 		/** Destructor
 		 *
@@ -153,6 +150,10 @@ namespace FIFE {
 		 */
 		double getTimeMultiplier() const { return m_timeprovider.getMultiplier(); }
 
+		virtual size_t getSize() { return 0; }
+		virtual void load() { }
+		virtual void free() { }
+
 	private:
 
 		std::list<Map*> m_maps;
@@ -176,8 +177,6 @@ namespace FIFE {
 		TimeProvider m_timeprovider;
 
 		RenderBackend* m_renderbackend;
-		ImagePool* m_imagepool;
-		AnimationPool* m_animpool;
 
 		std::vector<RendererBase*> m_renderers;
 	};

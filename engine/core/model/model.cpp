@@ -38,22 +38,20 @@
 #include "util/base/exception.h"
 #include "view/rendererbase.h"
 #include "video/renderbackend.h"
-#include "video/imagepool.h"
-#include "video/animationpool.h"
 
 #include "model.h"
 
 namespace FIFE {
 	static Logger _log(LM_MODEL);
 
-	Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers,
-					ImagePool* imagepool, AnimationPool* animpool):
-		FifeClass(),
+	Model::Model(RenderBackend* renderbackend, const std::vector<RendererBase*>& renderers)
+	:	FifeClass(),
 		m_last_namespace(NULL),
 		m_timeprovider(NULL),
 		m_renderbackend(renderbackend),
-		m_imagepool(imagepool),
-		m_animpool(animpool),
+//prock - 504
+//		m_imagepool(imagepool),
+//		m_animpool(animpool),
 		m_renderers(renderers){
 	}
 
@@ -73,7 +71,7 @@ namespace FIFE {
 			}
 		}
 
-		Map* map = new Map(identifier, m_renderbackend, m_renderers, m_imagepool, m_animpool, &m_timeprovider);
+		Map* map = new Map(identifier, m_renderbackend, m_renderers, &m_timeprovider);
 		m_maps.push_back(map);
 		return map;
 	}

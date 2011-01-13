@@ -50,7 +50,6 @@ namespace gcn {
 
 namespace FIFE {
 
-	class ImagePool;
 	class GuiImageLoader;
 	class Console;
 	class KeyEvent;
@@ -69,7 +68,7 @@ namespace FIFE {
 		public:
 			/** Constructor.
 			 */
-			GUIManager(ImagePool& pool);
+			GUIManager();
 			/** Destructor.
 			 */
 			virtual ~GUIManager();
@@ -167,9 +166,6 @@ namespace FIFE {
 
 			// Used to accept mouse motion events that leave widget space
 			bool m_had_mouse;
-
-			// pool used for images
-			ImagePool& m_pool;
 
 			// default font settings
 			std::string m_fontpath;

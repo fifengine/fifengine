@@ -32,6 +32,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/singleton.h"
+#include "util/base/fife_stdint.h"
 
 namespace FIFE {
 

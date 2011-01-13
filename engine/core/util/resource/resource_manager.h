@@ -19,11 +19,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA          *
  ***************************************************************************/
 
-#ifndef FIFE_RESOURE_H
-#define FIFE_RESOURE_H
+#ifndef FIFE_RESOURE_MANAGER_H
+#define FIFE_RESOURE_MANAGER_H
 
 // Standard C++ library includes
 #include <map>
+#include <string>
+#include <vector>
 
 // 3rd party library includes
 
@@ -35,74 +37,76 @@
 
 namespace FIFE {
 
-class IResourceManagerListener {
-public:
-	virtual ~IResourceManagerListener() {}
+	class IResourceManagerListener {
+	public:
+		virtual ~IResourceManagerListener() {}
 
-	virtual void onResourceLoadStart(const std::string& resName) = 0;
-	virtual void onResourceLoadComplete(const std::string& resName) = 0;
-	virtual void onResourceFreed(const std::string& resName) = 0;
-	virtual void onResourceRemoved(const std::string& resName) = 0;
-};
+		virtual void onResourceLoadStart(const std::string& resName) = 0;
+		virtual void onResourceLoadComplete(const std::string& resName) = 0;
+		virtual void onResourceFreed(const std::string& resName) = 0;
+		virtual void onResourceRemoved(const std::string& resName) = 0;
+	};
 
-class IResourceManager {
-public:
-	IResourceManager() { }
-	virtual ~IResourceManager();
+	class IResourceManager {
+	public:
+		IResourceManager() { }
+		virtual ~IResourceManager();
 
-	void addChangeListener(IResourceManagerListener* listener);
-	void removeChangeListener(IResourceManagerListener* listener);
+		void addChangeListener(IResourceManagerListener* listener);
+		void removeChangeListener(IResourceManagerListener* listener);
 
-	//gets the total amount of memory used by resources
-	virtual size_t getMemoryUsed() const;
+		//gets the total amount of memory used by resources
+		virtual size_t getMemoryUsed() const;
 
-	//creates a blank resource but does not load it immediately
-	virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0) = 0;
+		//creates a blank resource but does not load it immediately
+		virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0) = 0;
 
-	//creates a resources and loads it
-	virtual ResourcePtr load(const std::string& name, IResourceLoader* loader = 0) = 0;
+		//creates a resources and loads it
+		virtual ResourcePtr load(const std::string& name, IResourceLoader* loader = 0) = 0;
 
-	//add a resrouce to the manager that the manager did not load
-	virtual ResroucePtr add(IResource* res);
+		//add a resrouce to the manager that the manager did not load
+		virtual ResourcePtr add(IResource* res);
 
-	//forces a reload of a resource (even if it's not loaded)
-	virtual void reload(const std::string& name);
-	virtual void reload(ResourcePtr& res);
-	virtual void reloadAll();
+		//forces a reload of a resource (even if it's not loaded)
+		virtual void reload(const std::string& name);
+		virtual void reload(ResourcePtr& res);
+		virtual void reloadAll();
 
-	//loads all unreferenced resources
-	virtual void loadUnreferenced();
+		//loads all unreferenced resources
+		virtual void loadUnreferenced();
 
-	//free memory but dont remove from manager
-	virtual void free(const std::string& name);
-	virtual void free(ResourceHandle handle);
-	virtual void freeAll();
+		//free memory but dont remove from manager
+		virtual void free(const std::string& name);
+		virtual void free(ResourceHandle handle);
+		virtual void freeAll();
 
-	//all unreferenced resources will be freed but not removed from manager
-	virtual void freeUnreferenced();
+		//all unreferenced resources will be freed but not removed from manager
+		virtual void freeUnreferenced();
 
-	//free memory and remove from manager
-	virtual void remove(ResourcePtr& resource);
-	virtual void remove(const std::string& name);
-	virtual void remove(ResourceHandle handle);
-	virtual void removeAll();
+		//free memory and remove from manager
+		virtual void remove(ResourcePtr& resource);
+		virtual void remove(const std::string& name);
+		virtual void remove(ResourceHandle handle);
+		virtual void removeAll();
 
-	//frees and removes all unreferenced resources
-	virtual void removeUnreferenced();
+		//frees and removes all unreferenced resources
+		virtual void removeUnreferenced();
 
-	//get a shared pointer to the resource
-	//loads the resrouce if required
-	virtual ResourcePtr get(const std::string& name);
-	virtual ResourcePtr get(ResourceHandle handle);
+		//get a shared pointer to the resource
+		//loads the resrouce if required
+		virtual ResourcePtr get(const std::string& name);
+		virtual ResourcePtr get(ResourceHandle handle);
 
-	//get the resource handle by name
-	virtual ResrouceHandle getResourceHandle(const std::string& name);
+		//get the resource handle by name
+		virtual ResourceHandle getResourceHandle(const std::string& name);
 
-private:
-	typedef std::map< std::string, ResourcePtr > ResourceHandleMap;
-	ResourceHandleMap m_resHandleMap;
+	private:
+		typedef std::map< std::string, ResourcePtr > ResourceHandleMap;
+		ResourceHandleMap m_resHandleMap;
 
-	std::vector<IEngineChangeListener*> m_changelisteners;
-};
+		std::vector<IResourceManagerListener*> m_changelisteners;
+	};
+
+} //FIFE
 
 #endif

@@ -28,9 +28,7 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "video/renderbackend.h"
-#include "video/imagepool.h"
 #include "video/animation.h"
-#include "video/animationpool.h"
 #include "video/fonts/abstractfont.h"
 #include "video/image.h"
 #include "util/math/fife_math.h"
@@ -238,7 +236,7 @@ namespace FIFE {
 		m_blue(b),
 		m_alpha(a) {
 	}
-	void GenericRendererLineInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererLineInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p1 = m_edge1.getCalculatedPoint(cam, layer);
 		Point p2 = m_edge2.getCalculatedPoint(cam, layer);
 		if(m_edge1.getLayer() == layer) {
@@ -254,7 +252,7 @@ namespace FIFE {
 		m_blue(b),
 		m_alpha(a) {
 	}
-	void GenericRendererPointInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererPointInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			renderbackend->putPixel(p.x, p.y, m_red, m_green, m_blue, m_alpha);
@@ -271,7 +269,7 @@ namespace FIFE {
 		m_blue(b),
 		m_alpha(a) {
 	}
-	void GenericRendererTriangleInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererTriangleInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p1 = m_edge1.getCalculatedPoint(cam, layer);
 		Point p2 = m_edge2.getCalculatedPoint(cam, layer);
 		Point p3 = m_edge3.getCalculatedPoint(cam, layer);
@@ -291,7 +289,7 @@ namespace FIFE {
 		m_blue(b),
 		m_alpha(a) {
 	}
-	void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererQuadInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p1 = m_edge1.getCalculatedPoint(cam, layer);
 		Point p2 = m_edge2.getCalculatedPoint(cam, layer);
 		Point p3 = m_edge3.getCalculatedPoint(cam, layer);
@@ -310,7 +308,7 @@ namespace FIFE {
 		m_blue(b),
 		m_alpha(a) {
 	}
-	void GenericRendererVertexInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererVertexInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_center.getCalculatedPoint(cam, layer);
 		if(m_center.getLayer() == layer) {
 			renderbackend->drawVertex(p, m_size, m_red, m_green, m_blue, m_alpha);
@@ -322,10 +320,12 @@ namespace FIFE {
 		m_anchor(anchor),
 		m_image(image) {
 	}
-	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererImageInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-			Image* img = &imagepool->getImage(m_image);
+//prock - 504
+//			Image* img = &imagepool->getImage(m_image);
+			Image* img = NULL;
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(img->getWidth() * cam->getZoom());
@@ -346,10 +346,12 @@ namespace FIFE {
 		m_start_time(TimeManager::instance()->getTime()),
 		m_time_scale(1.0) {
 	}
-	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererAnimationInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-			Animation& animation = animpool->getAnimation(m_animation);
+//prock - 504
+//			Animation& animation = animpool->getAnimation(m_animation);
+			Animation animation;
 			int32_t animtime = scaleTime(m_time_scale, TimeManager::instance()->getTime() - m_start_time) % animation.getDuration();
 			Image* img = animation.getFrameByTimestamp(animtime);
 			Rect r;
@@ -371,7 +373,7 @@ namespace FIFE {
 		m_font(font),
 		m_text(text) {
 	}
-	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererTextInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
 			Image* img = m_font->getAsImageMultiline(m_text);
@@ -396,10 +398,12 @@ namespace FIFE {
 		m_width(width),
 		m_height(height){
 	}
-	void GenericRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {
+	void GenericRendererResizeInfo::render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {
 		Point p = m_anchor.getCalculatedPoint(cam, layer);
 		if(m_anchor.getLayer() == layer) {
-			Image* img = &imagepool->getImage(m_image);
+//prock - 504
+//			Image* img = &imagepool->getImage(m_image);
+			Image* img = NULL;
 			Rect r;
 			Rect viewport = cam->getViewPort();
 			uint32_t widtht = round(m_width * cam->getZoom());
@@ -413,23 +417,19 @@ namespace FIFE {
 			}
 		}
 	}
-	
+
 	GenericRenderer* GenericRenderer::getInstance(IRendererContainer* cnt) {
 		return dynamic_cast<GenericRenderer*>(cnt->getRenderer("GenericRenderer"));
 	}
 
-	GenericRenderer::GenericRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool):
+	GenericRenderer::GenericRenderer(RenderBackend* renderbackend, int32_t position):
 		RendererBase(renderbackend, position),
-		m_imagepool(imagepool),
-		m_animationpool(animpool),
 		m_groups() {
 		setEnabled(false);
 	}
 
 	GenericRenderer::GenericRenderer(const GenericRenderer& old):
 		RendererBase(old),
-		m_imagepool(old.m_imagepool),
-		m_animationpool(old.m_animationpool),
 		m_groups() {
 		setEnabled(false);
 	}
@@ -498,7 +498,7 @@ namespace FIFE {
 		for(; group_it != m_groups.end(); ++group_it) {
 			std::vector<GenericRendererElementInfo*>::const_iterator info_it = group_it->second.begin();
 			for (;info_it != group_it->second.end(); ++info_it) {
-				(*info_it)->render(cam, layer, instances, m_renderbackend, m_imagepool, m_animationpool);
+				(*info_it)->render(cam, layer, instances, m_renderbackend);
 			}
 		}
 	}

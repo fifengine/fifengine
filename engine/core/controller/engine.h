@@ -55,13 +55,10 @@ namespace FIFE {
 	class VFSSourceFactory;
 	class EventManager;
 	class TimeManager;
-	class ImagePool;
-	class AnimationPool;
 	class Model;
 	class LogManager;
 	class GuiFont;
 	class Cursor;
-	class SoundClipPool;
 	class RendererBase;
 	class Image;
 
@@ -148,18 +145,19 @@ namespace FIFE {
 		 */
 		GUIManager* getGuiManager() const { return m_guimanager; }
 
-		/** Provides access point to the ImagePool
-		 */
-		ImagePool* getImagePool() const { return m_imagepool; }
-
-		/** Provides access point to the AnimationPool
-		 */
-		AnimationPool* getAnimationPool() const { return m_animpool; }
-
-		/** Provides access point to the SoundClipPool
-		 */
-		SoundClipPool* getSoundClipPool() const { return m_soundclippool; }
-
+//prock - 504
+//		/** Provides access point to the ImagePool
+//		 */
+//		ImagePool* getImagePool() const { return m_imagepool; }
+//
+//		/** Provides access point to the AnimationPool
+//		 */
+//		AnimationPool* getAnimationPool() const { return m_animpool; }
+//
+//		/** Provides access point to the SoundClipPool
+//		 */
+//		SoundClipPool* getSoundClipPool() const { return m_soundclippool; }
+//
 		/** Provides access point to the RenderBackend
 		 */
 		RenderBackend* getRenderBackend() const { return m_renderbackend; }
@@ -200,9 +198,11 @@ namespace FIFE {
 		EventManager* m_eventmanager;
 		SoundManager* m_soundmanager;
 		TimeManager* m_timemanager;
-		ImagePool* m_imagepool;
-		AnimationPool* m_animpool;
-		SoundClipPool* m_soundclippool;
+//prock - 504
+//		ImagePool* m_imagepool;
+//		AnimationPool* m_animpool;
+//		SoundClipPool* m_soundclippool;
+
 		VFS* m_vfs;
 		Model* m_model;
 		gcn::Graphics* m_gui_graphics;

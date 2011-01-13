@@ -32,38 +32,37 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/base/exception.h"
-#include "util/resource/resource_location.h"
 #include "util/resource/resource.h"
 #include "vfs/raw/rawdata.h"
 #include "vfs/vfs.h"
 #include "video/renderbackend.h"
-#include "video/image_location.h"
 
 #include "image_loader.h"
 
-namespace FIFE { 
-	IResource* ImageLoader::loadResource(const ResourceLocation& location) {
-		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
-
-		const std::string& filename = location.getFilename();
-		boost::scoped_ptr<RawData> data (m_vfs->open(filename));
-		size_t datalen = data->getDataLength();
-		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
-		data->readInto(darray.get(), datalen);
-		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
-		SDL_Surface* surface = IMG_Load_RW(rwops, false);
-		SDL_FreeRW(rwops);
-		if( !surface ) {
-			return 0;
-		}
-
-		Image* res = RenderBackend::instance()->createImage(surface);
-		res->setResourceLocation(location);
-		if (loc) {
-			res->setXShift(loc->getXShift());
-			res->setYShift(loc->getYShift());
-		}
-		res->setAlphaOptimizerEnabled(true);
-		return res;
-	};
+namespace FIFE {
+	void ImageLoader::load(IResource* res) {
+//prock - 504
+//		const ImageLocation* loc = dynamic_cast<const ImageLocation*>(&location);
+//
+//		const std::string& filename = location.getFilename();
+//		boost::scoped_ptr<RawData> data (m_vfs->open(filename));
+//		size_t datalen = data->getDataLength();
+//		boost::scoped_array<uint8_t> darray(new uint8_t[datalen]);
+//		data->readInto(darray.get(), datalen);
+//		SDL_RWops* rwops = SDL_RWFromConstMem(darray.get(), datalen);
+//		SDL_Surface* surface = IMG_Load_RW(rwops, false);
+//		SDL_FreeRW(rwops);
+//		if( !surface ) {
+//			return 0;
+//		}
+//
+//		Image* res = RenderBackend::instance()->createImage(surface);
+//		res->setResourceLocation(location);
+//		if (loc) {
+//			res->setXShift(loc->getXShift());
+//			res->setYShift(loc->getYShift());
+//		}
+//		res->setAlphaOptimizerEnabled(true);
+//		return res;
+	}
 }

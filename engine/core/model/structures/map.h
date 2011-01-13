@@ -44,8 +44,6 @@ namespace FIFE {
 
 	class RendererBase;
 	class RenderBackend;
-	class ImagePool;
-	class AnimationPool;
 	class Layer;
 	class CellGrid;
 	class Map;
@@ -93,8 +91,7 @@ namespace FIFE {
 			 * map is not registered with the engine properly)
 			 */
 			Map(const std::string& identifier, RenderBackend* renderbackend,
-				const std::vector<RendererBase*>& renderers, ImagePool* imagepool,
-				AnimationPool* animpool, TimeProvider* tp_master=NULL);
+				const std::vector<RendererBase*>& renderers, TimeProvider* tp_master=NULL);
 
 			/** Destructor
 			 */
@@ -214,8 +211,6 @@ namespace FIFE {
 			std::vector<Camera*> m_cameras;
 
 			RenderBackend* m_renderbackend;
-			ImagePool* m_imagepool;
-			AnimationPool* m_animpool;
 
 			// holds handles to all created renderers
 			std::vector<RendererBase*> m_renderers;

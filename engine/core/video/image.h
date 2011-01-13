@@ -201,6 +201,10 @@ namespace FIFE {
 		void setAlphaOptimizerEnabled(bool enabled) { m_isalphaoptimized = enabled; }
 		bool isAlphaOptimizerEnabled() { return m_isalphaoptimized; }
 
+		virtual size_t getSize() { return 0; }
+		virtual void load() { }
+		virtual void free() { }
+
 	protected:
 		/** Sets given clip area into image
 		 *  @see pushClipArea

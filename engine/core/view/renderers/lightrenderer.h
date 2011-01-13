@@ -36,8 +36,6 @@
 namespace FIFE {
 	class RenderBackend;
 	class AbstractFont;
-	class ImagePool;
-	class AnimationPool;
 
 	class LightRendererNode {
 	public:
@@ -50,7 +48,7 @@ namespace FIFE {
 		LightRendererNode(Layer* attached_layer, const Point &relative_point = Point(0,0));
 		LightRendererNode(const Point &attached_point);
 		~LightRendererNode();
-		
+
 		void setAttached(Instance* attached_instance, const Location &relative_location, const Point &relative_point);
 		void setAttached(Instance* attached_instance, const Location &relative_location);
 		void setAttached(Instance* attached_instance, const Point &relative_point);
@@ -59,19 +57,19 @@ namespace FIFE {
 		void setAttached(const Location &attached_location);
 		void setAttached(Layer* attached_layer);
 		void setAttached(const Point &attached_point);
-		
+
 		void setRelative(const Location &relative_location);
 		void setRelative(const Location &relative_location, Point relative_point);
 		void setRelative(const Point &relative_point);
-		
+
 		Instance* getAttachedInstance();
 		Location getAttachedLocation();
 		Layer* getAttachedLayer();
 		Point getAttachedPoint();
-		
+
 		Location getOffsetLocation();
 		Point getOffsetPoint();
-		
+
 		Instance* getInstance();
 		Location getLocation();
 		Layer* getLayer();
@@ -87,7 +85,7 @@ namespace FIFE {
 
 	class LightRendererElementInfo {
 	public:
-		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool) {};
+		virtual void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend) {};
 		virtual std::string getName() { return 0; };
 		virtual LightRendererNode* getNode() { return NULL; };
 		virtual int32_t getId() { return -1; };
@@ -107,7 +105,7 @@ namespace FIFE {
 
 	class LightRendererImageInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
+		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "image"; };
 		LightRendererNode* getNode() { return &m_anchor; };
 		int32_t getId() { return m_image; };
@@ -130,7 +128,7 @@ namespace FIFE {
 	};
 	class LightRendererAnimationInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
+		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "animation"; };
 		LightRendererNode* getNode() { return &m_anchor; };
 		int32_t getId() { return m_animation; };
@@ -155,7 +153,7 @@ namespace FIFE {
 	};
 	class LightRendererSimpleLightInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
+		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "simple"; };
 		LightRendererNode* getNode() { return &m_anchor; };
 		int32_t getSrcBlend() { return m_src; };
@@ -189,7 +187,7 @@ namespace FIFE {
 	};
 	class LightRendererResizeInfo : public LightRendererElementInfo {
 	public:
-		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend, ImagePool* imagepool, AnimationPool* animpool);
+		void render(Camera* cam, Layer* layer, RenderList& instances, RenderBackend* renderbackend);
 		std::string getName() { return "resize"; };
 		LightRendererNode* getNode() { return &m_anchor; };
 		int32_t getId() { return m_image; };
@@ -218,10 +216,10 @@ namespace FIFE {
 		 * @param renderbackend to use
 		 * @param position position for this renderer in rendering pipeline
 		 */
-		LightRenderer(RenderBackend* renderbackend, int32_t position, ImagePool* imagepool, AnimationPool* animpool);
-		
+		LightRenderer(RenderBackend* renderbackend, int32_t position);
+
 		LightRenderer(const LightRenderer& old);
-		
+
 		RendererBase* clone();
 
 		/** Destructor.
@@ -247,8 +245,6 @@ namespace FIFE {
 		void reset();
 
 	private:
-		ImagePool* m_imagepool;
-		AnimationPool* m_animationpool;
 		std::map<std::string, std::vector<LightRendererElementInfo*> > m_groups;
 	};
 

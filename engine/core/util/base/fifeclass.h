@@ -24,6 +24,7 @@
 
 // Standard C++ library includes
 #include <cassert>
+#include <cstddef>
 
 // 3rd party library includes
 

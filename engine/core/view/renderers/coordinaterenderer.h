@@ -35,7 +35,6 @@
 
 namespace FIFE {
 	class RenderBackend;
-	class ImagePool;
 	class AbstractFont;
 
 	class CoordinateRenderer: public RendererBase {
@@ -46,9 +45,9 @@ namespace FIFE {
 		 * @param font font used to render the coordinates
 		 */
 		CoordinateRenderer(RenderBackend* renderbackend, int32_t position, AbstractFont* font);
-		
+
 		CoordinateRenderer(const CoordinateRenderer& old);
-		
+
 		RendererBase* clone();
 
 		/** Destructor.
