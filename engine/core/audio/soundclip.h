@@ -33,7 +33,7 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/base/resourceclass.h"
+#include "util/resource/resource.h"
 
 #include "sounddecoder.h"
 
@@ -55,7 +55,7 @@ namespace FIFE {
 
 	/**  Class to handle the buffers of an audio file
 	 */
-	class SoundClip : public ResourceClass {
+	class SoundClip : public IResource {
 	public:
 
 	   SoundClip(SoundDecoder* decptr, bool deletedecoder = true);

@@ -30,75 +30,59 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "resource_location.h"
+#include "util/base/sharedptr.h"
 
 namespace FIFE {
 
-	class IReferenceCounted {
+	typedef std::size_t ResourceHandle;
+
+	class IResource;
+
+	class IResourceLoader {
 	public:
-		virtual ~IReferenceCounted() { }
-		
-		/** Calling this method marks resource be used by some resource client.
-		 *  It adds one to resource counter that is kept up by the resource itself.
-		 *  When resource is about to be deleted (e.g. due to pooling algorithms), 
-		 *  reference counter is inspected. In case value is non-zero, resource 
-		 *  shouldn't be deleted.
-		 */
-		virtual void addRef() = 0;
+		IResourceLoader() { }
+		virtual ~IResourceLoader() { }
 
-		/** Calling this method unmarks resource be used by a resource client.
-		 *  @see addRef
-		 */
-		virtual void decRef() = 0;
-
-		/** Gets the current reference count
-		 *  @see addRef
-		 */
-		virtual uint32_t getRefCount() = 0;
+		virtual void load(IResource* resource) = 0;
 	};
 
-	/** IResource is the internal representation of a loaded file.
-	 * One resource is always associated with one file (resource location).
-	 */
-	class IResource: public virtual IReferenceCounted {
+	class IResource {
 	public:
+		enum ResourceState {
+			RES_NOT_LOADED,
+			RES_LOADED
+		};
+
+		IResource(const std::string& name, IResourceLoader* loader = 0)
+		: m_name(name),
+		  m_loader(loader),
+		  m_handle(m_curhandle++),
+		  m_state(RES_NOT_LOADED) { }
+
 		virtual ~IResource() { }
 
-		/** Get the location/file of this resource.
-		 */
-		virtual const ResourceLocation& getResourceLocation() = 0;
-		virtual const std::string& getResourceFile() = 0;
+		virtual const std::string& getName() { return m_name; }
 
-		/** Change the location/file of this resource.
-		 */
-		virtual void setResourceLocation(const ResourceLocation& location) = 0;
-		virtual void setResourceFile(const std::string& filename) = 0;
-		
-		/** returns -1 if not pooled, otherwise its a valid id
-		 */
-		virtual int32_t getPoolId() = 0;
-		virtual void setPoolId(int32_t poolid) = 0;
+		ResourceHandle getHandle() { return m_handle; }
+
+		virtual ResourceState getState() { return m_state; }
+		virtual void setState(ResourceState& state) { m_state = state; }
+
+		virtual size_t getSize() = 0;
+
+		virtual void load() = 0;
+		virtual void free() = 0;
+
+	private:
+		std::string m_name;
+		IResourceLoader* m_loader;
+		ResourceHandle m_handle;
+		ResourceState m_state;
+
+		static ResourceHandle m_curhandle;
 	};
 
-	/** ResourceLoader defines a class for loading resources. The resource returned is owned by
-	 * the caller, and must be deleted when finished.
-	 * In case allocation fails, or loader cannot load given location, NULL is returned
-	 */
-	class ResourceLoader {
-	public:
-		virtual ~ResourceLoader() { };
-		virtual IResource* loadResource(const ResourceLocation& location) = 0;
-	};
-
-	/** ResourceSaver defines a class for saving Resources. 
-	 */
-	class ResourceSaver {
-	public:
-		virtual ~ResourceSaver() { };
-
-		virtual void save(const ResourceLocation& location, IResource* resource) = 0;
-		virtual void save(const std::string& filename, IResource* resource) { save(ResourceLocation(filename), resource); }
-	};
+	typedef SharedPtr<IResource> ResourcePtr;
 }
 
 #endif

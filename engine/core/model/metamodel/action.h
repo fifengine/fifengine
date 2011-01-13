@@ -34,13 +34,13 @@
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
 #include "util/math/angles.h"
-#include "util/base/resourceclass.h"
+#include "util/base/fifeclass.h"
 
 #include "abstractvisual.h"
 
 namespace FIFE {
 
-	class Action : public ResourceClass {
+	class Action : public FifeClass {
 	public:
 		/** Constructor
 		 * Actions are created by calling addAction from object, thus
@@ -67,7 +67,7 @@ namespace FIFE {
 		/** Sets visualization to be used. Transfers ownership.
 		 */
 		void adoptVisual(AbstractVisual* visual) { m_visual = visual; }
-		
+
 		/** Gets used visualization
 		 */
 		template<typename T> T* getVisual() const { return reinterpret_cast<T*>(m_visual); }

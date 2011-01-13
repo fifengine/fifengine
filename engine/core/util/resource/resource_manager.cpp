@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 // Standard C++ library includes
+#include <map>
 
 // 3rd party library includes
 
@@ -27,42 +28,87 @@
 // These includes are split up in two parts, separated by one empty line
 // First block: files included from the FIFE root src directory
 // Second block: files included from the same folder
-#include "util/resource/resource_location.h"
-
-#include "exception.h"
-#include "resourceclass.h"
+#include "resource.h"
+#include "resource_manager.h"
 
 namespace FIFE {
-	ResourceClass::ResourceClass():
-		FifeClass(),
-		m_location(NULL),
-		m_poolid(-1),
-		m_refcount(0){
+
+	IResrouceManager::~IResourceManager() {
+
 	}
 
-	ResourceClass::~ResourceClass() {
-		delete m_location;
-		assert(m_refcount == 0);
+	void IResrouceManager::addChangeListener(IResourceManagerListener* listener);
+	void IResrouceManager::removeChangeListener(IResourceManagerListener* listener);
+
+	std::size_t IResrouceManager::getMemoryUsed() const {
+		return 0;
 	}
 
-	const ResourceLocation& ResourceClass::getResourceLocation() {
-		if (m_location) {
-			return *m_location;
-		}
-		throw NotSet("Resource Location has not been set");
+	ResroucePtr IResrouceManager::add(IResource* res){
+		return ResourcePtr<IResource>;
 	}
 
-	const std::string& ResourceClass::getResourceFile() {
-		return getResourceLocation().getFilename();
+	void IResrouceManager::reload(const std::string& name) {
+
 	}
 
-	void ResourceClass::setResourceLocation(const ResourceLocation& location) {
-		delete m_location;
-		m_location = location.clone();
+	void IResrouceManager::reload(ResourcePtr& res) {
+
 	}
 
-	void ResourceClass::setResourceFile(const std::string& filename) {
-		setResourceLocation(ResourceLocation(filename));
-	}
-}; //FIFE
+	void IResrouceManager::reloadAll() {
 
+	}
+
+	void IResrouceManager::loadUnreferenced() {
+
+	}
+
+	void IResrouceManager::free(const std::string& name) {
+
+	}
+
+	void IResrouceManager::free(ResourceHandle handle) {
+
+	}
+
+	void IResrouceManager::freeAll() {
+
+	}
+
+	void IResrouceManager::freeUnreferenced() {
+
+	}
+
+	void IResrouceManager::remove(ResourcePtr& resource) {
+
+	}
+
+	void IResrouceManager::remove(const std::string& name) {
+
+	}
+
+	void IResrouceManager::remove(ResourceHandle handle) {
+
+	}
+
+	void IResrouceManager::removeAll() {
+
+	}
+
+	void IResrouceManager::removeUnreferenced() {
+
+	}
+
+	ResourcePtr IResrouceManager::get(const std::string& name) {
+
+	}
+
+	ResourcePtr IResrouceManager::get(ResourceHandle handle) {
+
+	}
+
+	ResrouceHandle IResrouceManager::getResourceHandle(const std::string& name) {
+
+	}
+} //FIFE

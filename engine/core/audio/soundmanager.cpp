@@ -35,7 +35,6 @@
 
 #include "soundmanager.h"
 #include "soundemitter.h"
-#include "soundclippool.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);

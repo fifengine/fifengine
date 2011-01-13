@@ -34,7 +34,6 @@
 #include "util/base/exception.h"
 #include "soundemitter.h"
 #include "soundmanager.h"
-#include "soundclippool.h"
 
 namespace FIFE {
 	static Logger _log(LM_AUDIO);
@@ -77,7 +76,7 @@ namespace FIFE {
 			}
 
 			// release the soundclip
-			m_pool->release(m_soundclipid, true);
+			//m_pool->release(m_soundclipid, true);
 			m_soundclip = NULL;
 
 			// default source properties
@@ -97,8 +96,8 @@ namespace FIFE {
 
 	void SoundEmitter::setSoundClip(uint32_t sound_id) {
 		m_soundclipid = sound_id;
-		m_soundclip = &(m_pool->getSoundClip(m_soundclipid));
-		m_soundclip->addRef();
+		//m_soundclip = &(m_pool->getSoundClip(m_soundclipid));
+		//m_soundclip->addRef();
 
 		attachSoundClip();
 	}
