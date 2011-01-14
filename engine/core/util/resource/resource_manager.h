@@ -37,23 +37,10 @@
 
 namespace FIFE {
 
-	class IResourceManagerListener {
-	public:
-		virtual ~IResourceManagerListener() {}
-
-		virtual void onResourceLoadStart(const std::string& resName) = 0;
-		virtual void onResourceLoadComplete(const std::string& resName) = 0;
-		virtual void onResourceFreed(const std::string& resName) = 0;
-		virtual void onResourceRemoved(const std::string& resName) = 0;
-	};
-
 	class IResourceManager {
 	public:
 		IResourceManager() { }
 		virtual ~IResourceManager();
-
-		void addChangeListener(IResourceManagerListener* listener);
-		void removeChangeListener(IResourceManagerListener* listener);
 
 		//gets the total amount of memory used by resources
 		virtual size_t getMemoryUsed() const;
@@ -107,8 +94,6 @@ namespace FIFE {
 		typedef std::pair< ResourceHandle, ResourcePtr > ResourceHandleMapPair;
 
 		ResourceHandleMap m_resHandleMap;
-
-		std::vector<IResourceManagerListener*> m_changelisteners;
 	};
 
 } //FIFE

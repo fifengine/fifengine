@@ -40,28 +40,13 @@ namespace FIFE {
 
 	}
 
-	void IResourceManager::addChangeListener(IResourceManagerListener* listener) {
-		m_changelisteners.push_back(listener);
-	}
-
-	void IResourceManager::removeChangeListener(IResourceManagerListener* listener) {
-		std::vector<IResourceManagerListener*>::iterator i = m_changelisteners.begin();
-		while (i != m_changelisteners.end()) {
-			if ((*i) == listener) {
-				m_changelisteners.erase(i);
-				return;
-			}
-			++i;
-		}
-	}
-
 	std::size_t IResourceManager::getMemoryUsed() const {
 		std::size_t totalSize = 0;
 
 		ResourceHandleMapConstIterator it = m_resHandleMap.begin();
 
 		for ( ; it != m_resHandleMap.end(); it++) {
-			totalSize = it->second->getSize();
+			totalSize += it->second->getSize();
 		}
 
 		return totalSize;
@@ -71,8 +56,14 @@ namespace FIFE {
 		assert(res);
 
 		ResourcePtr resptr(res);
-		m_resHandleMap.insert ( ResourceHandleMapPair(res->getHandle(), resptr));
-		return resptr;
+
+		std::pair<ResourceHandleMapIterator, bool> returnValue;
+		returnValue = m_resHandleMap.insert ( ResourceHandleMapPair(res->getHandle(), resptr));
+
+		if (!returnValue.second)
+			FL_WARN(_log, LMsg("IResourceManager::add(IResource*) - ") << "Resource " << res->getName() << " already exists.... ignoring.");
+
+		return returnValue.first->second;
 	}
 
 	void IResourceManager::reload(const std::string& name) {
@@ -80,7 +71,9 @@ namespace FIFE {
 
 		for ( ; it != m_resHandleMap.end(); it++) {
 			if ( it->second->getName() == name ) {
-				it->second->free();
+				if ( it->second->getState() == IResource::RES_LOADED) {
+					it->second->free();
+				}
 				it->second->load();
 			}
 		}
@@ -91,7 +84,9 @@ namespace FIFE {
 
 		for ( ; it != m_resHandleMap.end(); it++) {
 			if ( it->second == res ) {
-				it->second->free();
+				if ( it->second->getState() == IResource::RES_LOADED) {
+					it->second->free();
+				}
 				it->second->load();
 			}
 		}
@@ -101,7 +96,9 @@ namespace FIFE {
 		ResourceHandleMapIterator it = m_resHandleMap.begin();
 
 		for ( ; it != m_resHandleMap.end(); it++) {
-			it->second->free();
+			if ( it->second->getState() == IResource::RES_LOADED) {
+				it->second->free();
+			}
 			it->second->load();
 		}
 	}
@@ -109,18 +106,21 @@ namespace FIFE {
 	void IResourceManager::loadUnreferenced() {
 		ResourceHandleMapIterator it = m_resHandleMap.begin();
 
+		int32_t count = 0;
 		for ( ; it != m_resHandleMap.end(); it++) {
-			if (it->second.useCount() == 1 ){  //count is 1 so only the map has a reference to it
+			if (it->second.useCount() == 1 && it->second->getState() != IResource::RES_LOADED){
 				it->second->load();
+				count++;
 			}
 		}
+		FL_DBG(_log, LMsg("IResourceManager::loadUnreferenced() - ") << "Loaded " << count << " unreferenced resources.");
 	}
 
 	void IResourceManager::free(const std::string& name) {
 		ResourceHandleMapIterator it = m_resHandleMap.begin();
 
 		for ( ; it != m_resHandleMap.end(); it++) {
-			if ( it->second->getName() == name ) {
+			if ( it->second->getName() == name && it->second->getState() == IResource::RES_LOADED) {
 				it->second->free();
 			}
 		}
@@ -129,16 +129,25 @@ namespace FIFE {
 	void IResourceManager::free(ResourceHandle handle) {
 		ResourceHandleMapConstIterator it = m_resHandleMap.find(handle);
 		if (it != m_resHandleMap.end()) {
-			it->second->free();
+			if ( it->second->getState() == IResource::RES_LOADED) {
+				it->second->free();
+			}
 		}
 	}
 
 	void IResourceManager::freeAll() {
 		ResourceHandleMapIterator it = m_resHandleMap.begin();
 
+		int32_t count = 0;
+
 		for ( ; it != m_resHandleMap.end(); it++) {
-			it->second->free();
+			if ( it->second->getState() == IResource::RES_LOADED) {
+				it->second->free();
+				count++;
+			}
 		}
+
+		FL_DBG(_log, LMsg("IResourceManager::freeAll() - ") << "Freed all " << count << " resources.");
 	}
 
 	void IResourceManager::freeUnreferenced() {
@@ -146,12 +155,12 @@ namespace FIFE {
 
 		int32_t count = 0;
 		for ( ; it != m_resHandleMap.end(); it++) {
-			if (it->second.useCount() == 1 ){  //count is 1 so only the map has a reference to it
+			if (it->second.useCount() == 1 && it->second->getState() == IResource::RES_LOADED ){
 				it->second->free();
 				count++;
 			}
 		}
-		FL_LOG(_log, LMsg("IResourceManager::freeUnreferenced() - ") << "Freed " << count << " unreferenced resources.");
+		FL_DBG(_log, LMsg("IResourceManager::freeUnreferenced() - ") << "Freed " << count << " unreferenced resources.");
 	}
 
 	void IResourceManager::remove(ResourcePtr& resource) {
@@ -190,7 +199,10 @@ namespace FIFE {
 	}
 
 	void IResourceManager::removeAll() {
+		int32_t count = m_resHandleMap.size();
 		m_resHandleMap.clear();
+
+		FL_DBG(_log, LMsg("IResourceManager::removeAll() - ") << "Removed all " << count << " resources.");
 	}
 
 	void IResourceManager::removeUnreferenced() {
@@ -204,7 +216,7 @@ namespace FIFE {
 			}
 		}
 
-		FL_LOG(_log, LMsg("IResourceManager::removeUnreferenced() - ") << "Removed " << count << " unreferenced resources.");
+		FL_DBG(_log, LMsg("IResourceManager::removeUnreferenced() - ") << "Removed " << count << " unreferenced resources.");
 	}
 
 	ResourcePtr IResourceManager::get(const std::string& name) {
