@@ -93,7 +93,15 @@ namespace FIFE {
 		typedef std::map< ResourceHandle, ResourcePtr >::const_iterator ResourceHandleMapConstIterator;
 		typedef std::pair< ResourceHandle, ResourcePtr > ResourceHandleMapPair;
 
+		typedef std::map< std::string, ResourceHandle > ResourceNameHandleMap;
+		typedef std::map< std::string, ResourceHandle >::iterator ResourceNameHandleMapIterator;
+		typedef std::map< std::string, ResourceHandle >::const_iterator ResourceNameHandleMapConstIterator;
+		typedef std::pair< std::string, ResourceHandle > ResourceNameHandleMapPair;
+
 		ResourceHandleMap m_resHandleMap;
+
+		//@todo implement this for faster name lookup
+		ResourceNameHandleMap m_resNameHandleMap;
 	};
 
 } //FIFE
