@@ -85,5 +85,12 @@ Alias('test_sharedptr',
 		  CPPPATH=core_path, 
 		  LIBS=libs, 
 		  LIBPATH=lib_path))
+		  
+Alias('test_resourcemgr', 
+      env.Program('test_resourcemgr', 
+                  'test_resourcemgr.cpp', 
+		  CPPPATH=core_path, 
+		  LIBS=libs, 
+		  LIBPATH=lib_path))
 
-Alias('tests', ['test_dat1','test_dat2','test_gui','test_imagepool','test_images','test_rect','test_vfs','test_zip', 'test_sharedptr'])
+Alias('tests', ['test_dat1','test_dat2','test_gui','test_imagepool','test_images','test_rect','test_vfs','test_zip', 'test_sharedptr', 'test_resourcemgr'])
