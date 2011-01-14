@@ -101,7 +101,11 @@ namespace FIFE {
 		virtual ResourceHandle getResourceHandle(const std::string& name);
 
 	private:
-		typedef std::map< std::string, ResourcePtr > ResourceHandleMap;
+		typedef std::map< ResourceHandle, ResourcePtr > ResourceHandleMap;
+		typedef std::map< ResourceHandle, ResourcePtr >::iterator ResourceHandleMapIterator;
+		typedef std::map< ResourceHandle, ResourcePtr >::const_iterator ResourceHandleMapConstIterator;
+		typedef std::pair< ResourceHandle, ResourcePtr > ResourceHandleMapPair;
+
 		ResourceHandleMap m_resHandleMap;
 
 		std::vector<IResourceManagerListener*> m_changelisteners;
