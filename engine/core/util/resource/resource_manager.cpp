@@ -224,11 +224,16 @@ namespace FIFE {
 
 		for ( ; it != m_resHandleMap.end(); it++) {
 			if ( it->second->getName() == name ) {
-				return it->second;
+				if ( it->second->getState() == IResource::RES_NOT_LOADED){
+					break;
+				}
+				else{
+					return it->second;
+				}
 			}
 		}
 
-		//not found... attempt to load
+		//not found (or not loaded)... attempt to load
 		ResourcePtr ptr = load(name);
 
 		if (!ptr){

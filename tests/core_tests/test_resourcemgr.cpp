@@ -55,13 +55,13 @@ public:
 
 	//creates a blank resource but does not load it immediately
 	virtual ResourcePtr create(const std::string& name, IResourceLoader* loader = 0){
-		TestResource* ptr = new TestResource("name", loader);
+		TestResource* ptr = new TestResource(name, loader);
 		return add(ptr);
 	}
 
 	//creates a resources and loads it
 	virtual ResourcePtr load(const std::string& name, IResourceLoader* loader = 0){
-		TestResource* ptr = new TestResource("name", loader);
+		TestResource* ptr = new TestResource(name, loader);
 		ptr->load();
 		return add(ptr);
 	}
@@ -72,7 +72,17 @@ TEST(case1) {
 
 	ResourcePtr ptr = resmgr.create("test_resource1");
 
-	CHECK(ptr);
+	CHECK(ptr->getState() == IResource::RES_NOT_LOADED);
+
+	ResourcePtr ptr2 = resmgr.get("test_resource1");
+
+	CHECK(ptr2->getState() == IResource::RES_LOADED);
+
+	CHECK(ptr == ptr2);
+
+	resmgr.free(ptr2->getHandle());
+
+	CHECK(ptr2->getState() == IResource::RES_NOT_LOADED);
 }
 
 int32_t main() {
